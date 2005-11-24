@@ -103,7 +103,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
     private boolean isSeparateBorderModel() {
         return getTableLM().getTable().isSeparateBorderModel();
     }
-
+    
     /**
      * @return the column setup of this table
      */
@@ -534,7 +534,9 @@ public class TableContentLayoutManager implements PercentBaseContext {
                             = primary.getCell().getCommonBorderPaddingBackground(); 
                         padding += cbpb.getPaddingBefore(false, primary.getCellLM());
                         padding += cbpb.getPaddingAfter(false, primary.getCellLM());
-                        int effRowHeight = effCellContentHeight + padding + borderWidths;
+                        int effRowHeight = effCellContentHeight 
+                                + padding + borderWidths
+                                + 2 * getTableLM().getHalfBorderSeparationBPD();
                         for (int previous = 0; previous < gu.getRowSpanIndex(); previous++) {
                             effRowHeight -= rowHeights[rgi - previous - 1].opt;
                         }
@@ -886,6 +888,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
             if (readyCount == 0) {
                 return 0;
             }
+            actualRowHeight += 2 * getTableLM().getHalfBorderSeparationBPD();
             lastRowHeight = actualRowHeight;
             
             //Add areas for row

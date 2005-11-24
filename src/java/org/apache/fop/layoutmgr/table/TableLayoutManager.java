@@ -71,6 +71,9 @@ public class TableLayoutManager extends BlockStackingLayoutManager
     private MinOptMax effSpaceBefore;
     private MinOptMax effSpaceAfter;
     
+    private int halfBorderSeparationBPD;
+    private int halfBorderSeparationIPD;
+    
     /**
      * Create a new table layout manager.
      * @param node the table FO
@@ -99,6 +102,16 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         foSpaceAfter = new SpaceVal(
                 getTable().getCommonMarginBlock().spaceAfter, this).getSpace();
         
+        if (getTable().isSeparateBorderModel()) {
+            this.halfBorderSeparationBPD = getTable().getBorderSeparation().getBPD().getLength()
+                    .getValue(this) / 2;
+            this.halfBorderSeparationIPD = getTable().getBorderSeparation().getIPD().getLength()
+                    .getValue(this) / 2;
+        } else {
+            this.halfBorderSeparationBPD = 0;
+            this.halfBorderSeparationIPD = 0;
+        }
+        
         if (!getTable().isAutoLayout() 
                 && getTable().getInlineProgressionDimension().getOptimum(this).getEnum() 
                     != EN_AUTO) {
@@ -120,6 +133,16 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         iIndents += getTable().getCommonMarginBlock().startIndent.getValue(this);
         iIndents += getTable().getCommonMarginBlock().endIndent.getValue(this);
         return iIndents;
+    }
+    
+    /** @return half the value of border-separation.block-progression-dimension. */
+    public int getHalfBorderSeparationBPD() {
+        return halfBorderSeparationBPD;
+    }
+
+    /** @return half the value of border-separation.inline-progression-dimension. */
+    public int getHalfBorderSeparationIPD() {
+        return halfBorderSeparationIPD;
     }
     
     /** @see org.apache.fop.layoutmgr.LayoutManager */
@@ -521,5 +544,5 @@ public class TableLayoutManager extends BlockStackingLayoutManager
             log.debug(this + ": Padding " + side + " -> " + effectiveLength);
         }
     }
-    
+
 }

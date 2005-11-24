@@ -316,6 +316,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
             = gu.getCell().getCommonBorderPaddingBackground(); 
         bpd -= cbpb.getPaddingBefore(false, this);
         bpd -= cbpb.getPaddingAfter(false, this);
+        bpd -= 2 * ((TableLayoutManager)getParent()).getHalfBorderSeparationBPD();
         return bpd;
     }
     
@@ -462,11 +463,6 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
             indent += getTableCell()
                     .getCommonBorderPaddingBackground().getPaddingStart(false, this);
             // set position
-            int halfBorderSep = 0;
-            if (isSeparateBorderModel()) {
-                halfBorderSep = getTableCell().getBorderSeparation().getLengthPair()
-                        .getIPD().getLength().getValue(this) / 2;
-            }
             int borderAdjust = 0;
             if (!isSeparateBorderModel()) {
                 if (gridUnit.hasSpanning()) {
@@ -477,8 +473,11 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
             } else {
                 //borderAdjust += gridUnit.getBorders().getBorderBeforeWidth(false);
             }
-            curBlockArea.setXOffset(xoffset + inRowIPDOffset + halfBorderSep + indent);
-            curBlockArea.setYOffset(yoffset - borderAdjust);
+            TableLayoutManager tableLM = (TableLayoutManager)getParent();
+            curBlockArea.setXOffset(xoffset + inRowIPDOffset 
+                    + tableLM.getHalfBorderSeparationIPD() + indent);
+            curBlockArea.setYOffset(yoffset - borderAdjust 
+                    + tableLM.getHalfBorderSeparationBPD());
             curBlockArea.setIPD(cellIPD);
             //curBlockArea.setHeight();
 

@@ -30,7 +30,7 @@
       </fo:layout-master-set>
       <fo:page-sequence master-reference="normal" id="retain">
         <fo:flow flow-name="xsl-region-body">
-          <fo:table table-layout="fixed" width="100%" border-collapse="separate" border-spacing="5pt" 
+          <fo:table table-layout="fixed" width="100%" border-collapse="separate" border-spacing="5pt 0pt" 
                 padding-before="20pt" padding-before.conditionality="retain" 
                 padding-after="20pt" padding-after.conditionality="retain" 
                 border-before-style="solid" border-before-width="5pt" border-before-width.conditionality="retain"
@@ -60,7 +60,7 @@ and threw it up on high and caught it; and this ball was her favorite plaything.
       </fo:page-sequence>
       <fo:page-sequence master-reference="normal" id="discard">
         <fo:flow flow-name="xsl-region-body">
-          <fo:table table-layout="fixed" width="100%" border-collapse="separate" border-spacing="5pt" 
+          <fo:table table-layout="fixed" width="100%" border-collapse="separate" border-spacing="5pt 0pt" 
                 padding-before="20pt" padding-before.conditionality="discard" 
                 padding-after="20pt" padding-after.conditionality="discard" 
                 border-before-style="solid" border-before-width="5pt" border-before-width.conditionality="discard"
