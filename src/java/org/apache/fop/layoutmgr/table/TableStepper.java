@@ -25,6 +25,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.ElementListUtils;
@@ -143,6 +144,7 @@ public class TableStepper {
                 }
                 int len = widths[i]; 
                 if (len > 0) {
+                    len += 2 * getTableLM().getHalfBorderSeparationBPD();
                     len += borderBefore[i] + borderAfter[i]; 
                     len += paddingBefore[i] + paddingAfter[i]; 
                 }
@@ -401,7 +403,7 @@ public class TableStepper {
             if (end[i] < elementLists[i].size()) {
                 start[i] = end[i] + 1;
                 if (end[i] + 1 < elementLists[i].size() 
-                        && getActivePrimaryGridUnit(i).isLastGridUnitRowSpan()) {
+                        && getActiveGridUnit(i).isLastGridUnitRowSpan()) {
                     rowPendingIndicator++;
                 }
             } else {
@@ -507,6 +509,7 @@ public class TableStepper {
             for (int prevRow = 0; prevRow < startRow[i]; prevRow++) {
                 baseWidth[i] += rowGroup[prevRow].getHeight().opt;
             }
+            baseWidth[i] += 2 * getTableLM().getHalfBorderSeparationBPD();
             baseWidth[i] += borderBefore[i] + borderAfter[i];
             baseWidth[i] += paddingBefore[i] + paddingAfter[i];
             if (end[i] >= start[i]) {
