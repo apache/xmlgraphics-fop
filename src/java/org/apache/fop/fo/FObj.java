@@ -55,12 +55,21 @@ public abstract class FObj extends FONode implements Constants {
     /** Markers added to this element. */
     protected Map markers = null;
 
+    static {
+        propertyListTable = new PropertyMaker[Constants.PROPERTY_COUNT + 1];
+        PropertyMaker[] list = FOPropertyMapping.getGenericMappings();
+        for (int i = 1; i < list.length; i++) {
+            if (list[i] != null) {
+                propertyListTable[i] = list[i];
+            }
+        }
+    }
+    
     /**
      * Create a new formatting object.
      * All formatting object classes extend this class.
      *
      * @param parent the parent node
-     * @todo move propertyListTable initialization someplace else?
      */
     public FObj(FONode parent) {
         super(parent);
@@ -74,16 +83,6 @@ public abstract class FObj extends FONode implements Constants {
                 if (foID == FO_FLOAT || foID == FO_FOOTNOTE
                     || foID == FO_FOOTNOTE_BODY) {
                         isOutOfLineFODescendant = true;
-                }
-            }
-        }
-        
-        if (propertyListTable == null) {
-            propertyListTable = new PropertyMaker[Constants.PROPERTY_COUNT + 1];
-            PropertyMaker[] list = FOPropertyMapping.getGenericMappings();
-            for (int i = 1; i < list.length; i++) {
-                if (list[i] != null) {
-                    propertyListTable[i] = list[i];
                 }
             }
         }
