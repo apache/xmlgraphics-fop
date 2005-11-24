@@ -817,7 +817,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
         Typeface tf = (Typeface) fontInfo.getFonts().get(fontname);
 
         //Determine position
-        int rx = currentIPPosition;
+        int rx = currentIPPosition + area.getBorderAndPaddingWidthStart();
         int bl = currentBPPosition + area.getOffset() + area.getBaselineOffset();
 
         useFont(fontname, fontsize);
