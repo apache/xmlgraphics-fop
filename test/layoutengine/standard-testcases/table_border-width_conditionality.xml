@@ -32,7 +32,7 @@
 				<fo:flow flow-name="xsl-region-body">
 					<fo:block>
 						<fo:block>Following Table has border-width.conditionality="discard"</fo:block>
-						<fo:table border-style="solid" border-width="1pt" border-color="black" border-collapse="separate" border-start-width.conditionality="discard" border-end-width.conditionality="discard">
+						<fo:table border-style="solid" border-width="1pt" border-color="black" border-collapse="separate" border-before-width.conditionality="discard" border-after-width.conditionality="discard">
 							<fo:table-column column-width="50%"/>
 							<fo:table-column column-width="50%"/>
 							<fo:table-body>
@@ -103,7 +103,7 @@
 							</fo:table-body>
 						</fo:table>
 						<fo:block>Next Table has border.conditionality="retain"</fo:block>
-						<fo:table border-style="solid" border-width="1pt" border-color="black" border-collapse="separate" border-start-width.conditionality="retain" border-end-width.conditionality="retain">
+						<fo:table border-style="solid" border-width="1pt" border-color="black" border-collapse="separate" border-before-width.conditionality="retain" border-after-width.conditionality="retain">
 							<fo:table-column column-width="50%"/>
 							<fo:table-column column-width="50%"/>
 							<fo:table-body>
@@ -179,10 +179,10 @@
 		</fo:root>
 	</fo>
 	<checks>
-		<!-- page1 test: table should have before border bu not after border-->
+		<!-- page1 test: table should have before border but not after border-->
 		<eval expected="(solid,#000000,1000)" xpath="//pageSequence/pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[2]/@border-before"/>
 		<eval expected="(none,#000000,0)" xpath="//pageSequence/pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[2]/@border-after"/>
-		<!-- page2 test: table should have after but no before -->
+		<!-- page2 test: table should have after but not before -->
 		<eval expected="(none,#000000,0)" xpath="//pageSequence/pageViewport[2]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[1]/@border-before"/>
 		<eval expected="(solid,#000000,1000)" xpath="//pageSequence/pageViewport[2]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[1]/@border-after"/>	
 		<!-- page3 test: table should have both before and after border -->
