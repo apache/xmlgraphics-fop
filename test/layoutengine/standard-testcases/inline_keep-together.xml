@@ -21,7 +21,7 @@
       This test checks keep-together.within-line.
     </p>
     <p>
-      This test builds on the results from normal-breaking6.xml.
+      This test builds on the results from page-breaking_6.xml.
     </p>
   </info>
   <fo>

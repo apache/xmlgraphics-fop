@@ -46,59 +46,65 @@
     <element-list category="breaker">
       <box w="0"/>
       <penalty w="0" p="INF"/>
-      <glue w="30000" aux="true"/>
+      <glue w="30000"/>
       
       <box w="14400"/>
       
-      <glue w="30000" aux="true"/> <!-- w="30000" is for the padding-after -->
+      <penalty w="0" p="INF"/>
+      <glue w="30000"/> <!-- w="30000" is for the padding-after -->
       <penalty w="0" p="0"/>
-      <glue w="-60000" aux="true"/> <!-- difference between break and no-break situation -->
+      <glue w="-60000"/> <!-- difference between break and no-break situation -->
       <box w="0"/>
       <penalty w="0" p="INF"/>
-      <glue w="30000" aux="true"/> <!-- w="30000" is for the padding-before -->
+      <glue w="30000"/> <!-- w="30000" is for the padding-before -->
       
       <box w="14400"/>
       
-      <glue w="30000" aux="true"/>
+      <penalty w="0" p="INF"/>
+      <glue w="30000"/>
       <penalty w="0" p="0"/>
-      <glue w="-60000" aux="true"/>
+      <glue w="-60000"/>
       <box w="0"/>
       <penalty w="0" p="INF"/>
-      <glue w="30000" aux="true"/>
+      <glue w="30000"/>
       
       <box w="14400"/>
 
-      <glue w="30000" aux="true"/>
+      <penalty w="0" p="INF"/>
+      <glue w="30000"/>
       <penalty w="0" p="0"/>
-      <glue w="-60000" aux="true"/>
+      <glue w="-60000"/>
       <box w="0"/>
       <penalty w="0" p="INF"/>
-      <glue w="30000" aux="true"/>
+      <glue w="30000"/>
       
       <box w="14400"/>
 
-      <glue w="30000" aux="true"/>
+      <penalty w="0" p="INF"/>
+      <glue w="30000"/>
       <penalty w="0" p="0"/>
-      <glue w="-60000" aux="true"/>
+      <glue w="-60000"/>
       <box w="0"/>
       <penalty w="0" p="INF"/>
-      <glue w="30000" aux="true"/>
+      <glue w="30000"/>
       
       <box w="14400"/>
 
-      <glue w="30000" aux="true"/>
+      <penalty w="0" p="INF"/>
+      <glue w="30000"/>
       <penalty w="0" p="0"/>
-      <glue w="-60000" aux="true"/>
+      <glue w="-60000"/>
       <box w="0"/>
       <penalty w="0" p="INF"/>
-      <glue w="30000" aux="true"/>
+      <glue w="30000"/>
       
       <box w="14400"/>
       
       <box w="0"/>
       <penalty w="0" p="INF"/>
-      <glue w="30000" aux="true"/>
+      <glue w="30000"/>
       
+      <skip>1</skip> <!-- helper box -->
       <skip>3</skip>
     </element-list>
   </checks>

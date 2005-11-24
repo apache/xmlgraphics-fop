@@ -52,8 +52,8 @@
     </fo:root>
   </fo>
   <checks>
-    <!-- 33800 = 5000 + 2 * 14400 -->
-    <eval expected="33800" xpath="//mainReference/span[1]/@bpd"/>
-    <eval expected="3" xpath="//mainReference/span[1]/flow"/>
+    <!-- 33800 = 2 * 5000 + 2 * 14400 -->
+    <eval expected="38800" xpath="//mainReference/span[1]/@bpd"/>
+    <eval expected="3" xpath="count(//mainReference/span[1]/flow)"/>
   </checks>
 </testcase>
