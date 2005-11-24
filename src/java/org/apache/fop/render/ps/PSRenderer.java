@@ -48,6 +48,7 @@ import org.apache.fop.area.inline.Character;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.InlineParent;
+import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.apps.FOUserAgent;
@@ -187,7 +188,6 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
     /** @see org.apache.fop.render.AbstractPathOrientedRenderer#clip() */
     protected void clip() {
         writeln("clip newpath");
-        //writeln("newpath");
     }
     
     /**
@@ -202,8 +202,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
     protected void clipRect(float x, float y, float width, float height) {
         try {
             gen.defineRect(x, y, width, height);
-            gen.writeln("clip");
-            //comment("clip here");
+            clip();
         } catch (IOException ioe) {
             handleIOTrouble(ioe);
         }
@@ -969,6 +968,77 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
         super.renderInlineParent(ip);
     }
     
+    /**
+     * @see org.apache.fop.render.AbstractRenderer#renderLeader(org.apache.fop.area.inline.Leader)
+     */
+    public void renderLeader(Leader area) {
+        renderInlineAreaBackAndBorders(area);
+
+        endTextObject();
+        saveGraphicsState();
+        int style = area.getRuleStyle();
+        float startx = (currentIPPosition + area.getBorderAndPaddingWidthStart()) / 1000f;
+        float starty = (currentBPPosition + area.getOffset()) / 1000f;
+        float endx = (currentIPPosition + area.getBorderAndPaddingWidthStart() 
+                        + area.getIPD()) / 1000f;
+        float ruleThickness = area.getRuleThickness() / 1000f;
+        ColorType col = (ColorType)area.getTrait(Trait.COLOR);
+
+        try {
+            switch (style) {
+                case EN_SOLID:
+                case EN_DASHED:
+                case EN_DOUBLE:
+                    drawBorderLine(startx, starty, endx, starty + ruleThickness, 
+                            true, true, style, col);
+                    break;
+                case EN_DOTTED:
+                    clipRect(startx, starty, endx - startx, ruleThickness);
+                    //This displaces the dots to the right by half a dot's width
+                    //TODO There's room for improvement here
+                    gen.concatMatrix(1, 0, 0, 1, ruleThickness / 2, 0);
+                    drawBorderLine(startx, starty, endx, starty + ruleThickness, 
+                            true, true, style, col);
+                    break;
+                case EN_GROOVE:
+                case EN_RIDGE:
+                    float half = area.getRuleThickness() / 2000f;
+    
+                    gen.useRGBColor(lightenColor(toColor(col), 0.6f));
+                    moveTo(startx, starty);
+                    lineTo(endx, starty);
+                    lineTo(endx, starty + 2 * half);
+                    lineTo(startx, starty + 2 * half);
+                    closePath();
+                    gen.writeln(" fill newpath");
+                    gen.useRGBColor(toColor(col));
+                    if (style == EN_GROOVE) {
+                        moveTo(startx, starty);
+                        lineTo(endx, starty);
+                        lineTo(endx, starty + half);
+                        lineTo(startx + half, starty + half);
+                        lineTo(startx, starty + 2 * half);
+                    } else {
+                        moveTo(endx, starty);
+                        lineTo(endx, starty + 2 * half);
+                        lineTo(startx, starty + 2 * half);
+                        lineTo(startx, starty + half);
+                        lineTo(endx - half, starty + half);
+                    }
+                    closePath();
+                    gen.writeln(" fill newpath");
+                    break;
+                default:
+                    throw new UnsupportedOperationException("rule style not supported");
+            }
+        } catch (IOException ioe) {
+            handleIOTrouble(ioe);
+        }
+
+        restoreGraphicsState();
+        super.renderLeader(area);
+    }
+
     /**
      * @see org.apache.fop.render.AbstractRenderer#renderImage(Image, Rectangle2D)
      */

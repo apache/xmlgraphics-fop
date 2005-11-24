@@ -121,6 +121,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
                 leaderArea = new Space();
                 leaderArea.setBPD(1);
             }
+            leaderArea.addTrait(Trait.COLOR, fobj.getColor());
         } else if (fobj.getLeaderPattern() == EN_SPACE) {
             leaderArea = new Space();
             leaderArea.setBPD(1);
