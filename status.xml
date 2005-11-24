@@ -11,8 +11,8 @@
 
   <changes>
     <release version="FOP Trunk">
-      <action context="Code" dev="[dev]" type="update">
-        [your text here]
+      <action context="Code" dev="LF, MM" type="add">
+        Support for hyphenation-ladder-count.
       </action>
     </release>
     <release version="0.90alpha1" date="Nov 2005">
