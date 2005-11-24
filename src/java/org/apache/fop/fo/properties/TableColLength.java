@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,7 +76,7 @@ public class TableColLength extends LengthProperty {
      */
     public double getNumericValue() {
         throw new UnsupportedOperationException(
-                "Must call getNumericValue with PercentageBaseContext");
+                "Must call getNumericValue with PercentBaseContext");
     }
 
     /**
@@ -92,7 +92,7 @@ public class TableColLength extends LengthProperty {
      */
     public int getValue() {
         throw new UnsupportedOperationException(
-                "Must call getValue with PercentageBaseContext");
+                "Must call getValue with PercentBaseContext");
     }
 
     /**
