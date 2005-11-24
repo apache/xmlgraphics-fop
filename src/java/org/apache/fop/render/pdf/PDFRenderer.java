@@ -1498,59 +1498,47 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         currentState.push();
         saveGraphicsState();
         int style = area.getRuleStyle();
-        boolean alt = false;
-        switch(style) {
-            case EN_SOLID:
-                currentStream.add("[] 0 d\n");
-            break;
-            case EN_DOTTED:
-                currentStream.add("[2] 0 d\n");
-            break;
-            case EN_DASHED:
-                currentStream.add("[6 4] 0 d\n");
-            break;
-            case EN_DOUBLE:
-            case EN_GROOVE:
-            case EN_RIDGE:
-                alt = true;
-            break;
-        }
         float startx = (currentIPPosition + area.getBorderAndPaddingWidthStart()) / 1000f;
         float starty = (currentBPPosition + area.getOffset()) / 1000f;
         float endx = (currentIPPosition + area.getBorderAndPaddingWidthStart() 
                         + area.getIPD()) / 1000f;
-        // PDF draws lines centered on the Y coordiante, therefore we need to
-        // add half of the line thickness to the Y positions.
-        if (!alt) {
-            updateLineWidth(area.getRuleThickness() / 1000f);
-            drawLine(startx, starty + area.getRuleThickness() / 2000f
-                    , endx, starty + area.getRuleThickness() / 2000f);
-        } else {
-            if (style == EN_DOUBLE) {
-                float third = area.getRuleThickness() / 3000f;
-                updateLineWidth(third);
-                drawLine(startx, starty + 0.5f * third, endx, starty + 0.5f * third);
+        float ruleThickness = area.getRuleThickness() / 1000f;
+        ColorType col = (ColorType)area.getTrait(Trait.COLOR);
 
-                drawLine(startx, (starty + 2.5f * third), endx, (starty + 2.5f * third));
-            } else {
+        switch (style) {
+            case EN_SOLID:
+            case EN_DASHED:
+            case EN_DOUBLE:
+                drawBorderLine(startx, starty, endx, starty + ruleThickness, 
+                        true, true, style, col);
+                break;
+            case EN_DOTTED:
+                clipRect(startx, starty, endx - startx, ruleThickness);
+                //This displaces the dots to the right by half a dot's width
+                //TODO There's room for improvement here
+                currentStream.add("1 0 0 1 " + (ruleThickness / 2) + " 0 cm\n");
+                drawBorderLine(startx, starty, endx, starty + ruleThickness, 
+                        true, true, style, col);
+                break;
+            case EN_GROOVE:
+            case EN_RIDGE:
                 float half = area.getRuleThickness() / 2000f;
 
-                currentStream.add("1 g\n");
+                setColor(lightenColor(toColor(col), 0.6f), true, null);
                 currentStream.add(startx + " " + starty + " m\n");
                 currentStream.add(endx + " " + starty + " l\n");
                 currentStream.add(endx + " " + (starty + 2 * half) + " l\n");
                 currentStream.add(startx + " " + (starty + 2 * half) + " l\n");
                 currentStream.add("h\n");
                 currentStream.add("f\n");
+                setColor(toColor(col), true, null);
                 if (style == EN_GROOVE) {
-                    currentStream.add("0 g\n");
                     currentStream.add(startx + " " + starty + " m\n");
                     currentStream.add(endx + " " + starty + " l\n");
                     currentStream.add(endx + " " + (starty + half) + " l\n");
                     currentStream.add((startx + half) + " " + (starty + half) + " l\n");
                     currentStream.add(startx + " " + (starty + 2 * half) + " l\n");
                 } else {
-                    currentStream.add("0 g\n");
                     currentStream.add(endx + " " + starty + " m\n");
                     currentStream.add(endx + " " + (starty + 2 * half) + " l\n");
                     currentStream.add(startx + " " + (starty + 2 * half) + " l\n");
@@ -1559,8 +1547,9 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                 }
                 currentStream.add("h\n");
                 currentStream.add("f\n");
-            }
-
+                break;
+            default:
+                throw new UnsupportedOperationException("rule style not supported");
         }
 
         restoreGraphicsState();
