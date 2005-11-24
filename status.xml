@@ -27,7 +27,12 @@
 
   <changes>
     <release version="FOP Trunk">
-      <action context="Code" dev="JM" type="update">
+      <action context="Code" dev="JM" type="fix">
+        Bugfix for a multi-threading problem:
+        propertyListTable initialization moved from the constructor to a static block in FONode.
+        This fixes NullPointerExceptions in PropertyList.
+      </action>
+      <action context="Code" dev="JM" type="fix">
         Bugfix for placement of text inside a text area when borders are present in PostScript output.
       </action>
       <action context="Code" dev="JM" type="update">
