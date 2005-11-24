@@ -28,6 +28,9 @@
   <changes>
     <release version="FOP Trunk">
       <action context="Code" dev="JM" type="update">
+        Bugfix for placement of text inside a text area when borders are present in PostScript output.
+      </action>
+      <action context="Code" dev="JM" type="update">
         Improvements on leader painting in PDF output.
       </action>
       <action context="Code" dev="JM" type="add">
