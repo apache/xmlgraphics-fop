@@ -32,7 +32,7 @@ import java.util.HashMap;
 public class PlanElementMapping extends ElementMapping {
 
     /** Plan Namespace */
-    public static final String NAMESPACE = "http://xml.apache.org/fop/plan"; 
+    public static final String NAMESPACE = "http://xmlgraphics.apache.org/fop/plan"; 
 
     public PlanElementMapping() {
         this.namespaceURI = NAMESPACE;

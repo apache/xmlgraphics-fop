@@ -79,7 +79,7 @@ This files shows next to the trivial usage of fo:block and fo:inline examples of
 
   </fo:block>
   <fo:block space-after.optimum="3pt" font-family="serif">FOP is part of Apache's XML project. The homepage of FOP is
-     <fo:inline font-style="italic" font-family="serif"><fo:basic-link color="blue" external-destination="http://xml.apache.org/fop">http://xml.apache.org/fop</fo:basic-link></fo:inline>
+     <fo:inline font-style="italic" font-family="serif"><fo:basic-link color="blue" external-destination="http://xmlgraphics.apache.org/fop">http://xmlgraphics.apache.org/fop</fo:basic-link></fo:inline>
   </fo:block>
 
 
@@ -129,7 +129,7 @@ This files shows next to the trivial usage of fo:block and fo:inline examples of
     <fo:block space-after.optimum="3pt" font-family="serif">b) An XML parser which supports SAX and DOM like
           <fo:inline font-style="italic" font-family="serif">Xerces-J</fo:inline>
 <fo:inline font-family="serif">
-      (http://xml.apache.org/xerces-j/index.html)
+      (http://xerces.apache.org/xerces-j/index.html)
    </fo:inline>.</fo:block>
     <fo:block space-after.optimum="3pt" font-family="serif">c) If you have to produce the flow objects files, which are the input for FOP,
        you need a transformation utility to create this files from your xml files.
@@ -140,7 +140,7 @@ This files shows next to the trivial usage of fo:block and fo:inline examples of
    </fo:inline>
        or <fo:inline font-style="italic" font-family="serif">XALAN</fo:inline>
 <fo:inline font-family="serif">
-      (http://xml.apache.org/xalan/index.html)
+      (http://xalan.apache.org/index.html)
    </fo:inline>.
     </fo:block>
 
@@ -232,7 +232,7 @@ This files shows next to the trivial usage of fo:block and fo:inline examples of
 <fo:inline font-family="serif">
       (faq.html)
    </fo:inline>. If you don't find a solution there,
-       you can ask for help on the list fop-dev@xml.apache.org. Maybe it's bug and
+       you can ask for help on the list fop-dev@xmlgraphics.apache.org. Maybe it's bug and
        maybe somebody is already working on it.
     </fo:block>
 
@@ -950,7 +950,7 @@ This files shows next to the trivial usage of fo:block and fo:inline examples of
       <fo:block space-after.optimum="3pt" font-family="serif">An XML parser which supports DOM like
          <fo:inline font-style="italic" font-family="serif">Xerces-J</fo:inline>
 <fo:inline font-family="serif">
-      (http://xml.apache.org/xerces-j/index.html)
+      (http://xerces.apache.org/xerces-j/index.html)
    </fo:inline>.</fo:block>
 
 
@@ -1002,12 +1002,12 @@ This files shows next to the trivial usage of fo:block and fo:inline examples of
 
   <fo:block  id="sec9" font-size="18pt" font-family="serif" line-height="20pt" space-before.optimum="20pt" space-after.optimum="14pt" >I)
       Getting involved</fo:block>
-  <fo:block space-after.optimum="3pt" font-family="serif">1. Subscribe to fop-dev@xml.apache.org by sending an email
-        to fop-dev-subscribe@xml.apache.org</fo:block>
+  <fo:block space-after.optimum="3pt" font-family="serif">1. Subscribe to fop-dev@xmlgraphics.apache.org by sending an email
+        to fop-dev-subscribe@xmlgraphics.apache.org</fo:block>
   <fo:block space-after.optimum="3pt" font-family="serif">2. Read the archives to fop-dev to get an idea of the issues being
         discussed. </fo:block>
-  <fo:block space-after.optimum="3pt" font-family="serif">3. Subscribe to fop-cvs@xml.apache.org by sending an email to
-        fop-cvs-subscribe@xml.apache.org (it is important
+  <fo:block space-after.optimum="3pt" font-family="serif">3. Subscribe to fop-cvs@xmlgraphics.apache.org by sending an email to
+        fop-cvs-subscribe@xmlgraphics.apache.org (it is important
         that you follow changes being made). </fo:block>
   <fo:block space-after.optimum="3pt" font-family="serif">4. Try :-) to wrap your head around the XSL working draft. </fo:block>
   <fo:block space-after.optimum="3pt" font-family="serif">5. Get CVS working on your system. </fo:block>
