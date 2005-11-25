@@ -58,7 +58,7 @@ All other options are set in the style attribute.
       <fo:block space-before.optimum="3pt" space-after.optimum="15pt">
 <fo:block space-after.optimum="5pt">
 <fo:instream-foreign-object>
-<plan xmlns="http://xml.apache.org/fop/plan" width="500" height="200" start="20020612" end="20020702">
+<plan xmlns="http://xmlgraphics.apache.org/fop/plan" width="500" height="200" start="20020612" end="20020702">
 <title>Example Plan</title>
 <events>
 

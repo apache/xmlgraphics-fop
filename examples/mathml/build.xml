@@ -137,7 +137,7 @@
     <manifest>
         <attribute name="Implementation-Title" value="${Name}"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="Apache Software Foundation (http://xml.apache.org/fop/)"/>
+        <attribute name="Implementation-Vendor" value="Apache Software Foundation (http://xmlgraphics.apache.org/fop/)"/>
         <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}])"/>
     </manifest>
     </jar>
