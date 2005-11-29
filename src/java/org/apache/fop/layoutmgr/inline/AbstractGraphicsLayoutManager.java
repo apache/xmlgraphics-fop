@@ -22,7 +22,6 @@ import java.awt.geom.Rectangle2D;
 import java.util.LinkedList;
 
 import org.apache.fop.area.Area;
-import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.LengthBase;
@@ -71,7 +70,6 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
 
         int bpd = -1;
         int ipd = -1;
-        boolean bpdauto = false;
         if (hasLH) {
             bpd = fobj.getLineHeight().getOptimum(this).getLength().getValue(this);
         } else {
@@ -130,20 +128,33 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
                 cwidth = fobj.getIntrinsicWidth();
                 cheight = fobj.getIntrinsicHeight();
             } else if (cwidth == -1) {
-                cwidth = (int)(fobj.getIntrinsicWidth() * (double)cheight 
-                    / fobj.getIntrinsicHeight());
+                if (fobj.getIntrinsicHeight() == 0) {
+                    cwidth = 0;
+                } else {
+                    cwidth = (int)(fobj.getIntrinsicWidth() * (double)cheight 
+                            / fobj.getIntrinsicHeight());
+                }
             } else if (cheight == -1) {
-                cheight = (int)(fobj.getIntrinsicHeight() * (double)cwidth 
-                    / fobj.getIntrinsicWidth());
+                if (fobj.getIntrinsicWidth() == 0) {
+                    cheight = 0;
+                } else {
+                    cheight = (int)(fobj.getIntrinsicHeight() * (double)cwidth 
+                            / fobj.getIntrinsicWidth());
+                }
             } else {
                 // adjust the larger
-                double rat1 = cwidth / fobj.getIntrinsicWidth();
-                double rat2 = cheight / fobj.getIntrinsicHeight();
-                if (rat1 < rat2) {
-                    // reduce cheight
-                    cheight = (int)(rat1 * fobj.getIntrinsicHeight());
-                } else if (rat1 > rat2) {
-                    cwidth = (int)(rat2 * fobj.getIntrinsicWidth());
+                if (fobj.getIntrinsicWidth() == 0 || fobj.getIntrinsicHeight() == 0) {
+                    cwidth = 0;
+                    cheight = 0;
+                } else {
+                    double rat1 = cwidth / fobj.getIntrinsicWidth();
+                    double rat2 = cheight / fobj.getIntrinsicHeight();
+                    if (rat1 < rat2) {
+                        // reduce cheight
+                        cheight = (int)(rat1 * fobj.getIntrinsicHeight());
+                    } else if (rat1 > rat2) {
+                        cwidth = (int)(rat2 * fobj.getIntrinsicWidth());
+                    }
                 }
             }
         }
