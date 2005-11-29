@@ -24,6 +24,7 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOPropertyMapping;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.properties.LengthPairProperty;
+import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fotreetest.ResultCollector;
 
@@ -73,6 +74,10 @@ public class AssertElement extends TestObj {
                 LengthPairProperty lpp = mainProp.getLengthPair();
                 if (lpp != null) {
                     prop = lpp.getComponent(FOPropertyMapping.getSubPropertyId(component));
+                }
+                LengthRangeProperty lrp = mainProp.getLengthRange();
+                if (lrp != null) {
+                    prop = lrp.getComponent(FOPropertyMapping.getSubPropertyId(component));
                 }
             }
             String s = String.valueOf(prop);
