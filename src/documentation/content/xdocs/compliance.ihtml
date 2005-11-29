@@ -2919,8 +2919,8 @@
       <td align="center">
         <a href="http://www.w3.org/TR/xsl/slice7.html#font-variant">&sect;7.8.8</a>
       </td>
-      <td class="no">
-        no
+      <td class="yes">
+        yes
       </td>
       <td class="no">
         no
