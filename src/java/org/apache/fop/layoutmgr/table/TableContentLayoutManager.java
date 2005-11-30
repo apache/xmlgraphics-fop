@@ -49,6 +49,7 @@ import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.MinOptMaxUtil;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
+import org.apache.fop.layoutmgr.SpaceResolver;
 import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.layoutmgr.SpaceResolver.SpaceHandlingBreakPosition;
 import org.apache.fop.traits.MinOptMax;
@@ -948,6 +949,9 @@ public class TableContentLayoutManager implements PercentBaseContext {
             cellLM.setContentHeight(contentHeight);
             cellLM.setRowHeight(effCellHeight);
             //cellLM.setRowHeight(row.getHeight().opt);
+            int prevBreak = ElementListUtils.determinePreviousBreak(pgu.getElements(), startPos);
+            SpaceResolver.performConditionalsNotification(pgu.getElements(), 
+                    startPos, endPos, prevBreak);
             cellLM.addAreas(new KnuthPossPosIter(pgu.getElements(), 
                     startPos, endPos + 1), layoutContext);
         }

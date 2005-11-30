@@ -146,4 +146,23 @@ public class ElementListUtils {
         return last.isForcedBreak();
     }
     
+    /**
+     * Determines the position of the previous break before the start index on an
+     * element list.
+     * @param elems the element list
+     * @param startIndex the start index
+     * @return the position of the previous break, or -1 if there was no previous break
+     */
+    public static int determinePreviousBreak(List elems, int startIndex) {
+        int prevBreak = startIndex - 1;
+        while (prevBreak >= 0) {
+            KnuthElement el = (KnuthElement)elems.get(prevBreak);
+            if (el.isPenalty() && el.getP() < KnuthElement.INFINITE) {
+                break;
+            }
+            prevBreak--;
+        }
+        return prevBreak;
+    }
+    
 }
