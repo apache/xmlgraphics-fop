@@ -359,7 +359,7 @@ public class FOUserAgent {
      *          misses the required attribute
      */
     public void initUserConfig() throws ConfigurationException {
-        log.info("Initializing User Agent Configuration");
+        log.debug("Initializing User Agent Configuration");
         if (userConfig.getChild("base", false) != null) {
             try {
                 String cfgBaseDir = userConfig.getChild("base").getValue(null);
