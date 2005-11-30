@@ -40,5 +40,11 @@
         information contained on the <a href="upgrading.html">Upgrading page</a>!
       </p>
     </section>
+    <section id="download">
+      <title>Download</title>
+      <p>
+        To download this version, please visit the <a href="../download.html">download page</a>.
+      </p>
+    </section>
   </body>
 </document>
