@@ -28,6 +28,19 @@
   <changes>
     <release version="FOP Trunk">
       <action context="Code" dev="JM" type="fix">
+        Bugfix: Space resolution was incomplete for content in table-cells. Conditional elements
+        didn't get removed.
+      </action>
+      <action contexn="Code" dev="JM" type="fix">
+        The validation check for non-zero borders and padding on a region-* is now turned off
+        when relaxed validation is active to improve compatibility with FO documents written 
+        for other FO implementations.
+      </action>
+      <action context="Code" dev="JM" type="fix">
+        Bugfix for "/ by zero" ArithmeticExceptions when an URL to a non-existing image is used 
+        and content-width and/or content-height is used.
+      </action>
+      <action context="Code" dev="JM" type="fix">
         Bugfix for a multi-threading problem:
         propertyListTable initialization moved from the constructor to a static block in FONode.
         This fixes NullPointerExceptions in PropertyList.

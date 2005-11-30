@@ -692,14 +692,14 @@ public class SpaceResolver {
      * @param effectiveList the effective element list
      * @param startElementIndex index of the first element in the part to be processed
      * @param endElementIndex index of the last element in the part to be processed
-     * @param lastBreak index of the the break possibility just before this part (used to
+     * @param prevBreak index of the the break possibility just before this part (used to
      *                  identify a break condition, lastBreak <= 0 represents a no-break condition)
      */
     public static void performConditionalsNotification(List effectiveList, 
-            int startElementIndex, int endElementIndex, int lastBreak) {
+            int startElementIndex, int endElementIndex, int prevBreak) {
         KnuthElement el = null;
-        if (lastBreak > 0) {
-            el = (KnuthElement)effectiveList.get(lastBreak);
+        if (prevBreak > 0) {
+            el = (KnuthElement)effectiveList.get(prevBreak);
         }
         SpaceResolver.SpaceHandlingBreakPosition beforeBreak = null;
         SpaceResolver.SpaceHandlingBreakPosition afterBreak = null;
