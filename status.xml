@@ -28,10 +28,14 @@
   <changes>
     <release version="FOP Trunk">
       <action context="Code" dev="JM" type="fix">
+        Bugfix: Relatively positioned BlockViewports (from block-containers) caused the paint 
+        cursor not be be properly advanced when space-before or space-after were present.
+      </action>
+      <action context="Code" dev="JM" type="fix">
         Bugfix: Space resolution was incomplete for content in table-cells. Conditional elements
         didn't get removed.
       </action>
-      <action contexn="Code" dev="JM" type="fix">
+      <action context="Code" dev="JM" type="fix">
         The validation check for non-zero borders and padding on a region-* is now turned off
         when relaxed validation is active to improve compatibility with FO documents written 
         for other FO implementations.
