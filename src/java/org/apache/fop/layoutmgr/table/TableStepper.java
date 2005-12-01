@@ -380,7 +380,9 @@ public class TableStepper {
         if (isBreakCondition()) {
             ((BreakElement)returnList.getLast()).setPenaltyValue(-KnuthPenalty.INFINITE);
         }
-        lastTCPos.setFlag(TableContentPosition.LAST_IN_ROWGROUP, true);
+        if (lastTCPos != null) {
+            lastTCPos.setFlag(TableContentPosition.LAST_IN_ROWGROUP, true);
+        }
         return returnList;
     }
     
