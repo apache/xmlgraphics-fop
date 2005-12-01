@@ -245,6 +245,10 @@
 Web site says: "This is a full blown Visual XPath Interpreter for the evaluation of any XPath expression and visual presentation of the resulting nodeset or scalar value."
 Requires Internet Explorer 5+.
 (freeware)</li>
+          <li>
+            [software] <jump href="http://www.ahmadsoft.org/fopbridge.html">FOP Bridge</jump> is an Eclipse plug-in
+            that allows to convert FO documents using Apache FOP directly inside the Eclipse workbench (LGPL).
+          </li>
         </ul>
       </section>
     </section>
