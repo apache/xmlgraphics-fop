@@ -534,15 +534,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             currentIPPosition = saveIP;
             currentBPPosition = saveBP;
             
-            //Adjust BP position (alloc BPD + spaces)
-            if (spaceBefore != null) {
-                currentBPPosition += spaceBefore.intValue();
-            }
             currentBPPosition += (int)(bv.getAllocBPD());
-            Integer spaceAfter = (Integer)bv.getTrait(Trait.SPACE_AFTER);
-            if (spaceAfter != null) {
-                currentBPPosition += spaceAfter.intValue();
-            }
         }
         //currentFontName = saveFontName;
     }
