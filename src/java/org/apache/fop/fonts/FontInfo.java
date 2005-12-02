@@ -111,10 +111,11 @@ public class FontInfo {
      * @param family font family
      * @param style font style
      * @param weight font weight
+     * @param substFont true if the font may be substituted with the default font if not found
      * @return internal key
      */
-    public String fontLookup(String family, String style,
-                             int weight) {
+    private String fontLookup(String family, String style,
+                             int weight, boolean substFont) {
         String key;
         // first try given parameters
         key = createFontKey(family, style, weight);
@@ -123,6 +124,9 @@ public class FontInfo {
             // then adjust weight, favouring normal or bold
             f = findAdjustWeight(family, style, weight);
 
+            if (!substFont && f == null) {
+                return null;
+            }
             // then try any family with orig weight
             if (f == null) {
                 notifyFontReplacement(key);
@@ -141,6 +145,46 @@ public class FontInfo {
         return f;
     }
 
+    /**
+     * Lookup a font.
+     * <br>
+     * Locate the font name for a given family, style and weight.
+     * The font name can then be used as a key as it is unique for
+     * the associated document.
+     * This also adds the font to the list of used fonts.
+     * @param family font family
+     * @param style font style
+     * @param weight font weight
+     * @return internal key
+     */
+    public String fontLookup(String family, String style,
+                             int weight) {
+        return fontLookup(family, style, weight, true);
+    }
+    
+    /**
+     * Lookup a font.
+     * <br>
+     * Locate the font name for a given family, style and weight.
+     * The font name can then be used as a key as it is unique for
+     * the associated document.
+     * This also adds the font to the list of used fonts.
+     * @param family font family (priority list)
+     * @param style font style
+     * @param weight font weight
+     * @return internal key
+     */
+    public String fontLookup(String[] family, String style,
+                             int weight) {
+        for (int i = 0; i < family.length; i++) {
+            String key = fontLookup(family[i], style, weight, (i >= family.length - 1));
+            if (key != null) {
+                return key;
+            }
+        }
+        throw new IllegalStateException("fontLookup must return a key on the last call");
+    }
+    
     private void notifyFontReplacement(String key) {
         if (loggedFontKeys == null) {
             loggedFontKeys = new java.util.HashSet();

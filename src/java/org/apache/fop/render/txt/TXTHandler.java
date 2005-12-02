@@ -385,7 +385,7 @@ public class TXTHandler extends AreaTreeHandler {
      */
     private void modifyCommonFont(CommonFont cf) {
         if (cf != null) {
-            cf.fontFamily = "Courier";
+            cf.overrideFontFamily("Courier");
             cf.fontSize = new FixedLength(MODIFIED_FONT_SIZE);
             cf.fontStretch = Constants.EN_NORMAL;
             cf.fontWeight = Constants.EN_NORMAL;

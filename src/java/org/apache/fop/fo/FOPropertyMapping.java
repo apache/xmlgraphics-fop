@@ -33,6 +33,7 @@ import org.apache.fop.fo.properties.CondLengthProperty;
 import org.apache.fop.fo.properties.CorrespondingPropertyMaker;
 import org.apache.fop.fo.properties.DimensionPropertyMaker;
 import org.apache.fop.fo.properties.EnumProperty;
+import org.apache.fop.fo.properties.FontFamilyProperty;
 import org.apache.fop.fo.properties.FontSizePropertyMaker;
 import org.apache.fop.fo.properties.FontStretchPropertyMaker;
 import org.apache.fop.fo.properties.GenericShorthandParser;
@@ -1074,7 +1075,7 @@ public class FOPropertyMapping implements Constants {
         PropertyMaker m;
 
         // font-family
-        m  = new StringProperty.Maker(PR_FONT_FAMILY);
+        m  = new FontFamilyProperty.Maker(PR_FONT_FAMILY);
         m.setInherited(true);
         m.setDefault("sans-serif");
         addPropertyMaker("font-family", m);

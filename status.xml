@@ -27,6 +27,14 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="add">
+        font-family list still not fully supported but a comma-separated list is now properly tokenized.
+        FOP will now go through all fonts in the list to find one that is available, but it doesn't 
+        do so per character, yet. 
+      </action>
+      <action context="Code" dev="JM" type="add">
+        Implemented "Overconstrained Geometry" rules (5.3.4, XSL 1.0) for the most important cases.
+      </action>
       <action context="Code" dev="JM" type="fix">
         Bugfix: Relatively positioned BlockViewports (from block-containers) caused the paint 
         cursor not be be properly advanced when space-before or space-after were present.

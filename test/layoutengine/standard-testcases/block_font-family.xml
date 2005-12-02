@@ -36,6 +36,9 @@
           <fo:block font-family="cursive">font-family="cursive"</fo:block>
           <fo:block font-family="fantasy">font-family="fantasy"</fo:block>
           <fo:block font-family="monospace">font-family="monospace"</fo:block>
+          <fo:block font-family="Helvetica,sans-serif,Symbol">font-family="Helvetica,sans-serif,Symbol"</fo:block>
+          <fo:block font-family="Helvetica, sans-serif, Symbol">font-family="Helvetica, sans-serif, Symbol"</fo:block>
+          <fo:block font-family="fantasy1,fantasy2,monospace,Symbol">font-family="fantasy1,fantasy2,monospace,Symbol"</fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
@@ -47,5 +50,8 @@
     <eval expected="Times-Roman" xpath="//flow/block[4]/lineArea/text/@font-name"/>
     <eval expected="Times-Roman" xpath="//flow/block[5]/lineArea/text/@font-name"/>
     <eval expected="Courier" xpath="//flow/block[6]/lineArea/text/@font-name"/>
+    <eval expected="Helvetica" xpath="//flow/block[7]/lineArea/text/@font-name"/>
+    <eval expected="Helvetica" xpath="//flow/block[8]/lineArea/text/@font-name"/>
+    <eval expected="Courier" xpath="//flow/block[9]/lineArea/text/@font-name"/>
   </checks>
 </testcase>

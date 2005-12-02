@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 The Apache Software Foundation.
+ * Copyright 2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@
 package org.apache.fop.fo.properties;
 
 // FOP
+import java.util.List;
+
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.PercentBaseContext;
@@ -37,7 +39,7 @@ public class CommonFont {
     /**
      * The "font-family" property.
      */
-    public String fontFamily;
+    private String[] fontFamily;
 
     /**
      * The "font-selection-strategy" property.
@@ -81,7 +83,15 @@ public class CommonFont {
      * @param pList The PropertyList to get properties from.
      */
     public CommonFont(PropertyList pList) throws PropertyException {
-        fontFamily = pList.get(Constants.PR_FONT_FAMILY).getString();
+        List lst = pList.get(Constants.PR_FONT_FAMILY).getList();
+        fontFamily = new String[lst.size()];
+        for (int i = 0, c = lst.size(); i < c; i++) {
+            fontFamily[i] = ((Property)lst.get(i)).getString();
+        }
+        if (fontFamily.length == 0) {
+            //Shouldn't happen, but we never know.
+            fontFamily = new String[] {"any"};
+        }
         fontSelectionStrategy = pList.get(Constants.PR_FONT_SELECTION_STRATEGY).getEnum();
         fontSize = pList.get(Constants.PR_FONT_SIZE).getLength();
         fontStretch = pList.get(Constants.PR_FONT_STRETCH).getEnum();
@@ -91,6 +101,25 @@ public class CommonFont {
         fontWeight = pList.get(Constants.PR_FONT_WEIGHT).getEnum();
     }
 
+    /** @return the first font-family name in the list */
+    public String getFirstFontFamily() {
+        return this.fontFamily[0];
+    }
+    
+    /** @return the font-family names */
+    public String[] getFontFamily() {
+        return this.fontFamily;
+    }
+    
+    /**
+     * Overrides the font-family.
+     * @param value the new font-family
+     */
+    public void overrideFontFamily(String value) {
+        this.fontFamily = new String[] {value};
+        
+    }
+    
     /**
      * Create and return a Font object based on the properties. 
      * 
@@ -135,11 +164,12 @@ public class CommonFont {
             // NOTE: this is incomplete. font-size may be specified with
             // various kinds of keywords too
             //int fontVariant = propertyList.get("font-variant").getEnum();
-            String fname = fontInfo.fontLookup(fontFamily, style,
+            String fname = fontInfo.fontLookup(getFontFamily(), style,
                                                font_weight);
             FontMetrics metrics = fontInfo.getMetricsFor(fname);
             fontState = new Font(fname, metrics, fontSize.getValue(context));
         }
         return fontState;
     }
+
 }

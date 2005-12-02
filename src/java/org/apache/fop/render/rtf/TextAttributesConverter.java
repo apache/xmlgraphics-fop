@@ -132,7 +132,7 @@ class TextAttributesConverter {
 
     private static void attrFont(CommonFont font, FOPRtfAttributes rtfAttr) {
         rtfAttr.set(RtfText.ATTR_FONT_FAMILY,
-                RtfFontManager.getInstance().getFontNumber(font.fontFamily));
+                RtfFontManager.getInstance().getFontNumber(font.getFirstFontFamily()));
         rtfAttr.setHalfPoints(RtfText.ATTR_FONT_SIZE, font.fontSize);
 
         if (font.fontWeight == Constants.EN_700
