@@ -112,7 +112,8 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
     }
     
 
-    private int getIPIndents() {
+    /** @see org.apache.fop.layoutmgr.BlockStackingLayoutManager#getIPIndents() */
+    protected int getIPIndents() {
         int iIndents = 0;
         int[] startEndBorderWidths = gridUnit.getStartEndBorderWidths();
         startBorderWidth += startEndBorderWidths[0];

@@ -159,6 +159,8 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
                 getListItemFO().getCommonMarginBlock().spaceBefore, this).getSpace();
         foSpaceAfter = new SpaceVal(
                 getListItemFO().getCommonMarginBlock().spaceAfter, this).getSpace();
+        startIndent = getListItemFO().getCommonMarginBlock().startIndent.getValue(this);
+        endIndent = getListItemFO().getCommonMarginBlock().endIndent.getValue(this); 
     }
 
     private void resetSpaces() {
@@ -168,13 +170,6 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         this.discardPaddingAfter = false;
         this.effSpaceBefore = foSpaceBefore;
         this.effSpaceAfter = foSpaceAfter;
-    }
-    
-    private int getIPIndents() {
-        int iIndents = 0;
-        iIndents += getListItemFO().getCommonMarginBlock().startIndent.getValue(this);
-        iIndents += getListItemFO().getCommonMarginBlock().endIndent.getValue(this);
-        return iIndents;
     }
     
     /** @see org.apache.fop.layoutmgr.LayoutManager */

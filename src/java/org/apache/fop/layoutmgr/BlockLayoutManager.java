@@ -68,6 +68,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
     }
 
     public void initialize() {
+        super.initialize();
         Font fs = getBlockFO().getCommonFont().getFontState(
                   getBlockFO().getFOEventHandler().getFontInfo(), this);
         
@@ -75,6 +76,8 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
         follow = -fs.getDescender();
         middleShift = -fs.getXHeight() / 2;
         lineHeight = getBlockFO().getLineHeight().getOptimum(this).getLength();
+        startIndent = getBlockFO().getCommonMarginBlock().startIndent.getValue(this);
+        endIndent = getBlockFO().getCommonMarginBlock().endIndent.getValue(this); 
         foSpaceBefore = new SpaceVal(getBlockFO().getCommonMarginBlock().spaceBefore, this)
                             .getSpace();
         foSpaceAfter = new SpaceVal(getBlockFO().getCommonMarginBlock().spaceAfter, this)
@@ -191,13 +194,6 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
         return llm;
     }
 
-    private int getIPIndents() {
-        int iIndents = 0;
-        iIndents += getBlockFO().getCommonMarginBlock().startIndent.getValue(this);
-        iIndents += getBlockFO().getCommonMarginBlock().endIndent.getValue(this);
-        return iIndents;
-    }
-    
     /**
      * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepTogether()
      */
@@ -413,9 +409,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
         if (curBlockArea == null) {
             curBlockArea = new Block();
 
-            int contentIPD = referenceIPD - getIPIndents();
-            
-            curBlockArea.setIPD(contentIPD/*parentwidth*/);
+            curBlockArea.setIPD(super.getContentAreaIPD());
 
             TraitSetter.addBreaks(curBlockArea, 
                     getBlockFO().getBreakBefore(), getBlockFO().getBreakAfter());
@@ -434,7 +428,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
                     discardPaddingBefore, discardPaddingAfter, false, false, this);
             TraitSetter.addMargins(curBlockArea,
                     getBlockFO().getCommonBorderPaddingBackground(), 
-                    getBlockFO().getCommonMarginBlock(),
+                    startIndent, endIndent,
                     this);
 
             setCurrentArea(curBlockArea); // ??? for generic operations
