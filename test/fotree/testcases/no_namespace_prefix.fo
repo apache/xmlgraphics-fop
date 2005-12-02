@@ -25,7 +25,7 @@
   <page-sequence master-reference="A4">
     <flow flow-name="xsl-region-body">
       <block>Hello World!
-        <test:assert property="font-family" expected="sans-serif"/>
+        <test:assert property="font-family" expected="[sans-serif]"/>
         <test:assert property="font-size" expected="12000mpt"/>
       </block>
     </flow>

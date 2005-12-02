@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import java.util.HashMap;
  * This class is heavily based on the epxression parser in James Clark's
  * XT, an XSLT processor.
  */
-public class PropertyParser extends PropertyTokenizer {
+public final class PropertyParser extends PropertyTokenizer {
     private PropertyInfo propInfo;    // Maker and propertyList related info
 
     private static final String RELUNIT = "em";
@@ -156,8 +156,7 @@ public class PropertyParser extends PropertyTokenizer {
                 break;
             case TOK_MINUS:
                 next();
-                prop =
-                    evalSubtraction(prop.getNumeric(),
+                prop = evalSubtraction(prop.getNumeric(),
                                     parseMultiplicativeExpr().getNumeric());
                 break;
             default:
@@ -215,7 +214,7 @@ public class PropertyParser extends PropertyTokenizer {
      * Checks that the current token is a right parenthesis
      * and throws an exception if this isn't the case.
      */
-    private final void expectRpar() throws PropertyException {
+    private void expectRpar() throws PropertyException {
         if (currentToken != TOK_RPAR) {
             throw new PropertyException("expected )");
         }
@@ -232,6 +231,10 @@ public class PropertyParser extends PropertyTokenizer {
      */
     private Property parsePrimaryExpr() throws PropertyException {
         Property prop;
+        if (currentToken == TOK_COMMA) {
+            //Simply skip commas, for example for font-family
+            next();
+        }
         switch (currentToken) {
         case TOK_LPAR:
             next();
@@ -296,9 +299,8 @@ public class PropertyParser extends PropertyTokenizer {
             prop = new ColorTypeProperty(currentTokenValue);
             break;
 
-        case TOK_FUNCTION_LPAR: {
-            Function function =
-                (Function)FUNCTION_TABLE.get(currentTokenValue);
+        case TOK_FUNCTION_LPAR:
+            Function function = (Function)FUNCTION_TABLE.get(currentTokenValue);
             if (function == null) {
                 throw new PropertyException("no such function: "
                                             + currentTokenValue);
@@ -309,7 +311,7 @@ public class PropertyParser extends PropertyTokenizer {
             prop = function.eval(parseArgs(function.nbArgs()), propInfo);
             propInfo.popFunction();
             return prop;
-        }
+        
         default:
             // TODO: add the token or the expr to the error message.
             throw new PropertyException("syntax error");
