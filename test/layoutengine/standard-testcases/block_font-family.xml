@@ -38,7 +38,7 @@
           <fo:block font-family="monospace">font-family="monospace"</fo:block>
           <fo:block font-family="Helvetica,sans-serif,Symbol">font-family="Helvetica,sans-serif,Symbol"</fo:block>
           <fo:block font-family="Helvetica, sans-serif, Symbol">font-family="Helvetica, sans-serif, Symbol"</fo:block>
-          <fo:block font-family="fantasy1,fantasy2,monospace,Symbol">font-family="fantasy1,fantasy2,monospace,Symbol"</fo:block>
+          <fo:block font-family="myfont1,myfont2,monospace,Symbol">font-family="myfont1,myfont2,monospace,Symbol"</fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
