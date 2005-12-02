@@ -59,6 +59,10 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     protected boolean firstVisibleMarkServed = false;
     /** Reference IPD available */
     protected int referenceIPD = 0;
+    /** the effective start-indent value */
+    protected int startIndent = 0;
+    /** the effective end-indent value */
+    protected int endIndent = 0;
     /**
      * Holds the (one-time use) fo:block space-before
      * and -after properties.  Large fo:blocks are split
@@ -175,6 +179,41 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     }
 
     /**
+     * Determines and sets the content area IPD based on available reference area IPD, start- and
+     * end-indent properties.
+     * end-indent is adjusted based on overconstrained geometry rules, if necessary.
+     * @return the resulting content area IPD
+     */
+    protected int updateContentAreaIPDwithOverconstrainedAdjust() {
+        int ipd = referenceIPD - (startIndent + endIndent);
+        if (ipd < 0) {
+            //5.3.4, XSL 1.0, Overconstrained Geometry
+            log.debug("Adjusting end-indent based on overconstrained geometry rules for " + fobj);
+            endIndent += ipd;
+            ipd = 0;
+            //TODO Should we skip layout for a block that has ipd=0?
+        }
+        setContentAreaIPD(ipd);
+        return ipd;
+    }
+    
+    /**
+     * Sets the content area IPD by directly supplying the value. 
+     * end-indent is adjusted based on overconstrained geometry rules, if necessary.
+     * @return the resulting content area IPD
+     */
+    protected int updateContentAreaIPDwithOverconstrainedAdjust(int contentIPD) {
+        int ipd = referenceIPD - (contentIPD + (startIndent + endIndent));
+        if (ipd < 0) {
+            //5.3.4, XSL 1.0, Overconstrained Geometry
+            log.debug("Adjusting end-indent based on overconstrained geometry rules for " + fobj);
+            endIndent += ipd;
+        }
+        setContentAreaIPD(contentIPD);
+        return contentIPD;
+    }
+    
+    /**
      * @see LayoutManager#getNextKnuthElements(LayoutContext, int)
      */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
@@ -189,20 +228,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
 
         referenceIPD = context.getRefIPD();
         
-        int iIndents = 0;
-        int bIndents = 0;
-        if (fobj instanceof org.apache.fop.fo.flow.Block) {
-            org.apache.fop.fo.flow.Block block = (org.apache.fop.fo.flow.Block)fobj;
-            iIndents = block.getCommonMarginBlock().startIndent.getValue(this) 
-                     + block.getCommonMarginBlock().endIndent.getValue(this);
-            bIndents = block.getCommonBorderPaddingBackground().getBPPaddingAndBorder(false, this);
-        }
-        int ipd = referenceIPD - iIndents;
-
-        MinOptMax stackSize = new MinOptMax();
-
-        // Set context for percentage property values.
-        setContentAreaIPD(ipd);
+        updateContentAreaIPDwithOverconstrainedAdjust();
 
         LinkedList returnedList = null;
         LinkedList contentList = new LinkedList();
@@ -231,12 +257,9 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             childLC.copyPendingMarksFrom(context);
             if (curLM instanceof LineLayoutManager) {
                 // curLM is a LineLayoutManager
-                // set stackLimit for lines
-                childLC.setStackLimit(new MinOptMax(ipd/*
-                                                         * - iIndents -
-                                                         * iTextIndent
-                                                         */));
-                childLC.setRefIPD(ipd);
+                // set stackLimit for lines (stack limit is now i-p-direction, not b-p-direction!)
+                childLC.setStackLimit(new MinOptMax(getContentAreaIPD()));
+                childLC.setRefIPD(getContentAreaIPD());
             } else {
                 // curLM is a ?
                 //childLC.setStackLimit(MinOptMax.subtract(context
@@ -1443,6 +1466,11 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         }
     }
 
+    /** @return the sum of start-indent and end-indent */
+    protected int getIPIndents() {
+        return startIndent + endIndent;
+    }
+    
     /**
      * Returns the IPD of the content area
      * @return the IPD of the content area

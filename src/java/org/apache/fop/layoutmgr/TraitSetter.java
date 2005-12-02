@@ -358,6 +358,42 @@ public class TraitSetter {
      * outside of the border rectangle to the area.
      * @param area the area to set the traits on.
      * @param bpProps the border, padding and background properties
+     * @param startIndent the effective start-indent value
+     * @param endIndent the effective end-indent value
+     * @param context the context for evaluation of percentages
+     */
+    public static void addMargins(Area area,
+                                  CommonBorderPaddingBackground bpProps,
+                                  int startIndent, int endIndent,
+                                  PercentBaseContext context) {
+        if (startIndent != 0) {
+            area.addTrait(Trait.START_INDENT, new Integer(startIndent));
+        }
+        
+        int spaceStart = startIndent
+                            - bpProps.getBorderStartWidth(false)
+                            - bpProps.getPaddingStart(false, context);
+        if (spaceStart != 0) {
+            area.addTrait(Trait.SPACE_START, new Integer(spaceStart));
+        }
+
+        if (endIndent != 0) {
+            area.addTrait(Trait.END_INDENT, new Integer(endIndent));
+        }
+        int spaceEnd = endIndent
+                            - bpProps.getBorderEndWidth(false)
+                            - bpProps.getPaddingEnd(false, context);
+        if (spaceEnd != 0) {
+            area.addTrait(Trait.SPACE_END, new Integer(spaceEnd));
+        }
+    }
+
+    /**
+     * Add space to a block area.
+     * Layout managers that create block areas can use this to add space
+     * outside of the border rectangle to the area.
+     * @param area the area to set the traits on.
+     * @param bpProps the border, padding and background properties
      * @param marginProps the margin properties.
      * @param context the context for evaluation of percentages
      */
@@ -366,27 +402,8 @@ public class TraitSetter {
                                   CommonMarginBlock marginProps,
                                   PercentBaseContext context) {
         int startIndent = marginProps.startIndent.getValue(context);
-        if (startIndent != 0) {
-            area.addTrait(Trait.START_INDENT, new Integer(startIndent));
-        }
-        
-        int spaceStart = marginProps.startIndent.getValue(context)
-                            - bpProps.getBorderStartWidth(false)
-                            - bpProps.getPaddingStart(false, context);
-        if (spaceStart != 0) {
-            area.addTrait(Trait.SPACE_START, new Integer(spaceStart));
-        }
-
         int endIndent = marginProps.endIndent.getValue(context);
-        if (endIndent != 0) {
-            area.addTrait(Trait.END_INDENT, new Integer(endIndent));
-        }
-        int spaceEnd = marginProps.endIndent.getValue(context)
-                            - bpProps.getBorderEndWidth(false)
-                            - bpProps.getPaddingEnd(false, context);
-        if (spaceEnd != 0) {
-            area.addTrait(Trait.SPACE_END, new Integer(spaceEnd));
-        }
+        addMargins(area, bpProps, startIndent, endIndent, context);
     }
 
     public static int getEffectiveSpace(double adjust, MinOptMax space) {

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2005 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks 5.3.4 "Overconstrained Geometry".
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block-container inline-progression-dimension="3in" block-progression-dimension="5pt" background-color="orange">
+            <fo:block/>
+          </fo:block-container>
+          <fo:block-container start-indent="5in - 2.5in" inline-progression-dimension="2.5in" block-progression-dimension="5pt" background-color="orange">
+            <fo:block/>
+          </fo:block-container>
+          <fo:block start-indent="3in" end-indent="2.5in" background-color="yellow" id="mainblock">5.3.4 Overconstrained Geometry</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- end-indent is expected to be modified from 180000 to 144000 due to 5.3.4, XSL 1.0 -->
+    <eval expected="0" xpath="//block[@prod-id = 'mainblock']/@ipd"/>
+    <eval expected="216000" xpath="//block[@prod-id = 'mainblock']/@start-indent"/>
+    <eval expected="144000" xpath="//block[@prod-id = 'mainblock']/@end-indent"/>
+  </checks>
+</testcase>

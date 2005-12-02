@@ -59,7 +59,6 @@ public class TableLayoutManager extends BlockStackingLayoutManager
 
     private Block curBlockArea;
 
-    private int contentIPD;
     private int referenceBPD;
     private double tableUnits;
     private boolean autoLayout = true;
@@ -101,6 +100,8 @@ public class TableLayoutManager extends BlockStackingLayoutManager
                 getTable().getCommonMarginBlock().spaceBefore, this).getSpace();
         foSpaceAfter = new SpaceVal(
                 getTable().getCommonMarginBlock().spaceAfter, this).getSpace();
+        startIndent = getTable().getCommonMarginBlock().startIndent.getValue(this);
+        endIndent = getTable().getCommonMarginBlock().endIndent.getValue(this); 
         
         if (getTable().isSeparateBorderModel()) {
             this.halfBorderSeparationBPD = getTable().getBorderSeparation().getBPD().getLength()
@@ -126,13 +127,6 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         this.discardPaddingAfter = false;
         this.effSpaceBefore = foSpaceBefore;
         this.effSpaceAfter = foSpaceAfter;
-    }
-    
-    private int getIPIndents() {
-        int iIndents = 0;
-        iIndents += getTable().getCommonMarginBlock().startIndent.getValue(this);
-        iIndents += getTable().getCommonMarginBlock().endIndent.getValue(this);
-        return iIndents;
     }
     
     /** @return half the value of border-separation.block-progression-dimension. */
@@ -164,19 +158,16 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         referenceIPD = context.getRefIPD();
 
         if (getTable().getInlineProgressionDimension().getOptimum(this).getEnum() != EN_AUTO) {
-            referenceIPD = getTable().getInlineProgressionDimension().getOptimum(this)
+            int contentIPD = getTable().getInlineProgressionDimension().getOptimum(this)
                     .getLength().getValue(this);
-            contentIPD = referenceIPD;
+            updateContentAreaIPDwithOverconstrainedAdjust(contentIPD);
         } else {
             if (!getTable().isAutoLayout()) {
                 log.info("table-layout=\"fixed\" and width=\"auto\", "
                         + "but auto-layout not supported " 
                         + "=> assuming width=\"100%\"");
             }
-            contentIPD = referenceIPD - getIPIndents();
-        }
-        if (referenceIPD > context.getRefIPD()) {
-            log.warn("Allocated IPD exceeds available reference IPD");
+            updateContentAreaIPDwithOverconstrainedAdjust();
         }
 
         // either works out table of column widths or if proportional-column-width function
@@ -195,9 +186,9 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         }
         // sets TABLE_UNITS in case where one or more oldColumns is defined using 
         // proportional-column-width
-        if (sumCols < contentIPD) {
+        if (sumCols < getContentAreaIPD()) {
             if (tableUnits == 0.0) {
-                this.tableUnits = (contentIPD - sumCols) / factors;
+                this.tableUnits = (getContentAreaIPD() - sumCols) / factors;
             }
         }
 
@@ -337,7 +328,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         LayoutContext lc = new LayoutContext(0);
 
 
-        lc.setRefIPD(contentIPD);
+        lc.setRefIPD(getContentAreaIPD());
         contentLM.setStartXOffset(startXOffset);
         contentLM.addAreas(parentIter, lc);
         tableHeight += contentLM.getUsedBPD();
@@ -357,7 +348,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
                 this);
         TraitSetter.addMargins(curBlockArea,
                 getTable().getCommonBorderPaddingBackground(), 
-                getTable().getCommonMarginBlock(),
+                startIndent, endIndent,
                 this);
         TraitSetter.addBreaks(curBlockArea, 
                 getTable().getBreakBefore(), getTable().getBreakAfter());
@@ -392,7 +383,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
             
             TraitSetter.setProducerID(curBlockArea, getTable().getId());
 
-            curBlockArea.setIPD(contentIPD);
+            curBlockArea.setIPD(getContentAreaIPD());
             
             setCurrentArea(curBlockArea);
         }
@@ -484,14 +475,6 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         }
     }
     
-    /**
-     * Returns the IPD of the content area
-     * @return the IPD of the content area
-     */
-    public int getContentAreaIPD() {
-        return referenceIPD;
-    }
-   
     /**
      * Returns the BPD of the content area
      * @return the BPD of the content area

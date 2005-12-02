@@ -92,6 +92,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                     .spaceBefore, this).getSpace();
         foBlockSpaceAfter = new SpaceVal(getBlockContainerFO().getCommonMarginBlock()
                     .spaceAfter, this).getSpace();
+        startIndent = getBlockContainerFO().getCommonMarginBlock().startIndent.getValue(this);
+        endIndent = getBlockContainerFO().getCommonMarginBlock().endIndent.getValue(this); 
 
         boolean rotated = (getBlockContainerFO().getReferenceOrientation() % 180 != 0);
         if (rotated) {
@@ -154,13 +156,6 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         return indents;
     }
     
-    private int getIPIndents() {
-        int iIndents = 0;
-        iIndents += getBlockContainerFO().getCommonMarginBlock().startIndent.getValue(this);
-        iIndents += getBlockContainerFO().getCommonMarginBlock().endIndent.getValue(this);
-        return iIndents;
-    }
-    
     private boolean isAbsoluteOrFixed() {
         return (abProps.absolutePosition == EN_ABSOLUTE) 
                 || (abProps.absolutePosition == EN_FIXED);
@@ -188,9 +183,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         
         autoHeight = false;
         //boolean rotated = (getBlockContainerFO().getReferenceOrientation() % 180 != 0);
-        referenceIPD = context.getRefIPD();
         int maxbpd = context.getStackLimit().opt;
-        int allocBPD, allocIPD;
+        int allocBPD;
         if (height.getEnum() == EN_AUTO 
                 || (!height.isAbsolute() && getAncestorBlockAreaBPD() <= 0)) {
             //auto height when height="auto" or "if that dimension is not specified explicitly 
@@ -201,15 +195,15 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             allocBPD = height.getValue(this); //this is the content-height
             allocBPD += getBPIndents();
         }
-        if (width.getEnum() == EN_AUTO) {
-            allocIPD = referenceIPD;
-        } else {
-            allocIPD = width.getValue(this); //this is the content-width
-            allocIPD += getIPIndents();
-        }
-
         vpContentBPD = allocBPD - getBPIndents();
-        setContentAreaIPD(allocIPD - getIPIndents());
+
+        referenceIPD = context.getRefIPD();
+        if (width.getEnum() == EN_AUTO) {
+            updateContentAreaIPDwithOverconstrainedAdjust();
+        } else {
+            int contentWidth = width.getValue(this);
+            updateContentAreaIPDwithOverconstrainedAdjust(contentWidth);
+        }
         
         double contentRectOffsetX = 0;
         contentRectOffsetX += getBlockContainerFO()
@@ -869,7 +863,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             //        this);
             TraitSetter.addMargins(viewportBlockArea, 
                     getBlockContainerFO().getCommonBorderPaddingBackground(),
-                    getBlockContainerFO().getCommonMarginBlock(),
+                    startIndent, endIndent,
                     this);
             
             viewportBlockArea.setCTM(absoluteCTM);
