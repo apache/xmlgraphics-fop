@@ -27,6 +27,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="update">
+        The border-collapse property on fo:table is now forced to the value "separate" until the collapsing
+        border has been implemented.
+      </action>
       <action context="Code" dev="JM" type="add">
         font-family list still not fully supported but a comma-separated list is now properly tokenized.
         FOP will now go through all fonts in the list to find one that is available, but it doesn't 

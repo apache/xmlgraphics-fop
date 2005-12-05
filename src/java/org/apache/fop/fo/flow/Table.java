@@ -129,8 +129,11 @@ public class Table extends TableFObj {
         defaultColumn.bind(colPList);
 
         if (borderCollapse != EN_SEPARATE) {
-            attributeWarning("The collapsing border model on an fo:table "
-                    + "is currently not supported by FOP");
+            //TODO Remove once the collapsing border is at least marginally working.
+            borderCollapse = EN_SEPARATE;
+            log.debug("A table has been forced to use the separate border model"
+                    + " (border-collapse=\"separate\") as the collapsing border model"
+                    + " is not implemented, yet.");
         }
         if (tableLayout == EN_AUTO) {
             attributeWarning("table-layout=\"auto\" is currently not supported by FOP");
