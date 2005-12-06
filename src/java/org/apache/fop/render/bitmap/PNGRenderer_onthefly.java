@@ -1,3 +1,21 @@
+/*
+ * Copyright 2005 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* $Id$ */
+
 package org.apache.fop.render.bitmap;
 
 import java.awt.image.RenderedImage;
@@ -10,6 +28,7 @@ import java.io.OutputStream;
 
 import org.apache.batik.ext.awt.image.codec.PNGEncodeParam;
 import org.apache.batik.ext.awt.image.codec.PNGImageEncoder;
+import org.apache.commons.io.IOUtils;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.render.java2d.Java2DRenderer;
@@ -36,14 +55,12 @@ public class PNGRenderer_onthefly extends Java2DRenderer {
     /** The OutputStream for the first Image */
     private OutputStream firstOutputStream;
 
-    /** default constructor */
-    public PNGRenderer_onthefly() {}
-
     /** @see org.apache.fop.render.AbstractRenderer */
     public String getMimeType() {
         return MIME_TYPE;
     }
 
+    /** @see org.apache.fop.render.Renderer#supportsOutOfOrder() */
     public boolean supportsOutOfOrder() {
         return true;
     }
@@ -76,6 +93,7 @@ public class PNGRenderer_onthefly extends Java2DRenderer {
         fileSyntax = s.substring(0, i);
     }
 
+    /** @see org.apache.fop.render.Renderer#renderPage(org.apache.fop.area.PageViewport) */
     public void renderPage(PageViewport pageViewport) throws IOException,
             FOPException {
 
@@ -86,9 +104,17 @@ public class PNGRenderer_onthefly extends Java2DRenderer {
         log.debug("Encoding page" + (getCurrentPageNumber() + 1));
         renderParams = PNGEncodeParam.getDefaultEncodeParam(image);
         OutputStream os = getCurrentOutputStream(getCurrentPageNumber());
-        PNGImageEncoder encoder = new PNGImageEncoder(os, renderParams);
-        encoder.encode(image);
-        os.flush();
+        if (os != null) {
+            try {
+                PNGImageEncoder encoder = new PNGImageEncoder(os, renderParams);
+                encoder.encode(image);
+            } finally {
+                //Only close self-created OutputStreams
+                if (os != firstOutputStream) {
+                    IOUtils.closeQuietly(os);
+                }
+            }
+        }
 
         setCurrentPageNumber(getCurrentPageNumber() + 1);
     }

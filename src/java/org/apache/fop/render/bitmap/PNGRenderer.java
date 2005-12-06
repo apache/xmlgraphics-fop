@@ -1,3 +1,21 @@
+/*
+ * Copyright 2005 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* $Id$ */
+
 package org.apache.fop.render.bitmap;
 
 import java.awt.image.RenderedImage;
@@ -10,6 +28,7 @@ import java.io.OutputStream;
 
 import org.apache.batik.ext.awt.image.codec.PNGEncodeParam;
 import org.apache.batik.ext.awt.image.codec.PNGImageEncoder;
+import org.apache.commons.io.IOUtils;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.PageViewport;
@@ -41,9 +60,6 @@ public class PNGRenderer extends Java2DRenderer {
     public String getMimeType() {
         return MIME_TYPE;
     }
-
-    /** default constructor */
-    public PNGRenderer() {}
 
     /** @see org.apache.fop.render.Renderer#startRenderer(java.io.OutputStream) */
     public void startRenderer(OutputStream outputStream) throws IOException {
@@ -79,6 +95,7 @@ public class PNGRenderer extends Java2DRenderer {
 
     }
 
+    /** @see org.apache.fop.render.Renderer#stopRenderer() */
     public void stopRenderer() throws IOException {
 
         super.stopRenderer();
@@ -91,24 +108,30 @@ public class PNGRenderer extends Java2DRenderer {
                         + " Stopping early after the first page.");
                 break;
             }
-            // Do the rendering: get the image for this page
-            RenderedImage image = (RenderedImage) getPageImage((PageViewport) pageViewportList
-                    .get(i));
-
-            // Encode this image
-            log.debug("Encoding page " + (i + 1));
-            renderParams = PNGEncodeParam.getDefaultEncodeParam(image);
-            
-            // Set resolution
-            float pixSzMM = userAgent.getPixelUnitToMillimeter();
-            // num Pixs in 1 Meter
-            int numPix = (int)((1000 / pixSzMM) + 0.5);
-            renderParams.setPhysicalDimension(numPix, numPix, 1); // 1 means 'pix/meter'
-            
-            // Encode PNG image
-            PNGImageEncoder encoder = new PNGImageEncoder(os, renderParams);
-            encoder.encode(image);
-            os.flush();
+            try {
+                // Do the rendering: get the image for this page
+                RenderedImage image = (RenderedImage) getPageImage((PageViewport) pageViewportList
+                        .get(i));
+    
+                // Encode this image
+                log.debug("Encoding page " + (i + 1));
+                renderParams = PNGEncodeParam.getDefaultEncodeParam(image);
+                
+                // Set resolution
+                float pixSzMM = userAgent.getPixelUnitToMillimeter();
+                // num Pixs in 1 Meter
+                int numPix = (int)((1000 / pixSzMM) + 0.5);
+                renderParams.setPhysicalDimension(numPix, numPix, 1); // 1 means 'pix/meter'
+                
+                // Encode PNG image
+                PNGImageEncoder encoder = new PNGImageEncoder(os, renderParams);
+                encoder.encode(image);
+            } finally {
+                //Only close self-created OutputStreams
+                if (os != firstOutputStream) {
+                    IOUtils.closeQuietly(os);
+                }
+            }
         }
     }
 

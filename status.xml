@@ -27,6 +27,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix">
+        Bugfix: Self-created OutputStreams in PNG Renderer were not properly closed.
+      </action>
       <action context="Code" dev="JM" type="update">
         The border-collapse property on fo:table is now forced to the value "separate" until the collapsing
         border has been implemented.
