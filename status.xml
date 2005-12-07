@@ -27,6 +27,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix" fixes-bug="37813">
+        Bugfix: A span="all" on the first block cause a subsequent page break and the first block
+        didn't span all columns.
+      </action>
       <action context="Code" dev="JM" type="fix">
         Bugfix: Self-created OutputStreams in PNG Renderer were not properly closed.
       </action>

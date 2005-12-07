@@ -51,6 +51,10 @@ public class MainReference extends Area {
      * @return the created span area.
      */
     public Span createSpan(boolean spanAll) {
+        if (spanAreas.size() > 0 && getCurrentSpan().getBPD() == 0) {
+            //Remove the current one if it is empty
+            spanAreas.remove(spanAreas.size() - 1);
+        }
         RegionViewport rv = parent.getRegionViewport();
         int ipdWidth = (int) parent.getIPD()
             - rv.getBorderAndPaddingWidthStart() - rv.getBorderAndPaddingWidthEnd();

@@ -439,6 +439,7 @@ public abstract class AbstractBreaker {
         BlockSequence blockList;
         if ((returnedList = getNextKnuthElements(childLC, alignment)) != null) {
             if (returnedList.size() == 0) {
+                nextSequenceStartsOn = handleSpanChange(childLC, nextSequenceStartsOn);
                 return nextSequenceStartsOn;
             }
             blockList = new BlockSequence(nextSequenceStartsOn);

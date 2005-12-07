@@ -29,6 +29,7 @@ import org.apache.fop.area.Footnote;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.Resolvable;
+import org.apache.fop.area.Span;
 
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.Marker;
@@ -326,7 +327,9 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                         + ", new start position: " + newStartPos);
 
                 //Handle page break right here to avoid any side-effects
-                handleBreakTrait(EN_PAGE);
+                if (newStartPos > 0) {
+                    handleBreakTrait(EN_PAGE);
+                }
                 pageBreakHandled = true;
                 //Update so the available BPD is reported correctly
                 pvProvider.setStartOfNextElementList(currentPageNum, 
