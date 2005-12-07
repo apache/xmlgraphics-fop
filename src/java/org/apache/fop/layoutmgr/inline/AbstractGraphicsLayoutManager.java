@@ -147,8 +147,8 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
                     cwidth = 0;
                     cheight = 0;
                 } else {
-                    double rat1 = cwidth / fobj.getIntrinsicWidth();
-                    double rat2 = cheight / fobj.getIntrinsicHeight();
+                    double rat1 = (double) cwidth / fobj.getIntrinsicWidth();
+                    double rat2 = (double) cheight / fobj.getIntrinsicHeight();
                     if (rat1 < rat2) {
                         // reduce cheight
                         cheight = (int)(rat1 * fobj.getIntrinsicHeight());
