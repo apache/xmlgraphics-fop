@@ -27,6 +27,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix" fixes-bug="37815" due-to="Tom Craddock">
+        Bugfix: The combination of content-width="scale-to-fit" and content-height="100%"
+        did not work as expected due to a datatype conversion bug.
+      </action>
       <action context="Code" dev="JM" type="fix" fixes-bug="37813">
         Bugfix: A span="all" on the first block cause a subsequent page break and the first block
         didn't span all columns.
