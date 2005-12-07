@@ -359,6 +359,15 @@ Fop fop = new Fop(MimeConstants.MIME_POSTSCRIPT, userAgent);]]></source>
         </p>
         <source>userAgent.setPDFEncryptionParams(new PDFEncryptionParams(null, "owner", false, false, true, true));</source>
       </li>
+      <li>
+        <p>
+          Enable an <strong>alternative set of rules for text indents</strong> that tries to mimic the behaviour of many commercial 
+          FO implementations that chose to break the specification in this aspect. The default of this option is 
+          'false' which causes Apache FOP to behave exactly as describes in the specification. To enable the 
+          alternative behaviour, call:
+        </p>
+        <source>userAgent.setBreakIndentInheritanceOnReferenceAreaBoundary(true);</source>
+      </li>
     </ul>
     <note>
       You should not reuse an FOUserAgent instance between FOP rendering runs although you can. Especially

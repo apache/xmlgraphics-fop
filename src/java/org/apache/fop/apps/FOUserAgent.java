@@ -111,6 +111,9 @@ public class FOUserAgent {
      * ability for FOP to halt on all content model violations if desired.   
      */ 
     private boolean strictValidation = true;
+    
+    /** @see #setBreakIndentInheritanceOnReferenceAreaBoundary(boolean) */
+    private boolean breakIndentInheritanceOnReferenceAreaBoundary = false;
 
     /* Additional fo.ElementMapping subclasses set by user */
     private List additionalElementMappings = null;
@@ -207,6 +210,31 @@ public class FOUserAgent {
         return strictValidation;
     }
 
+    /**
+     * @return true if the indent inheritance should be broken when crossing reference area 
+     *         boundaries (for more info, see the javadoc for the relative member variable)
+     */
+    public boolean isBreakIndentInheritanceOnReferenceAreaBoundary() {
+        return breakIndentInheritanceOnReferenceAreaBoundary;
+    }
+
+    /**
+     * Controls whether to enable a feature that breaks indent inheritance when crossing
+     * reference area boundaries.
+     * <p>
+     * This flag controls whether FOP will enable special code that breaks property
+     * inheritance for start-indent and end-indent when the evaluation of the inherited
+     * value would cross a reference area. This is described under
+     * http://wiki.apache.org/xmlgraphics-fop/IndentInheritance as is intended to
+     * improve interoperability with commercial FO implementations and to produce
+     * results that are more in line with the expectation of unexperienced FO users.
+     * Note: Enabling this features violates the XSL specification!
+     * @param value true to enable the feature
+     */
+    public void setBreakIndentInheritanceOnReferenceAreaBoundary(boolean value) {
+        this.breakIndentInheritanceOnReferenceAreaBoundary = value;
+    }
+    
     /**
      * Sets an explicit LayoutManagerMaker instance which overrides the one
      * defined by the AreaTreeHandler.
@@ -393,6 +421,13 @@ public class FOUserAgent {
                 = 25.4f / userConfig.getChild("resolution").getValueAsFloat(DEFAULT_RESOLUTION);
             log.info("resolution set to: " + resolution 
                     + "dpi (px2mm=" + getPixelUnitToMillimeter() + ")");
+        }
+        if (userConfig.getChild("strict-validation", false) != null) {
+            this.strictValidation = userConfig.getChild("strict-validation").getValueAsBoolean();
+        }
+        if (userConfig.getChild("break-indent-inheritance", false) != null) {
+            this.breakIndentInheritanceOnReferenceAreaBoundary 
+                = userConfig.getChild("break-indent-inheritance").getValueAsBoolean();
         }
         Configuration pageConfig = userConfig.getChild("default-page-settings");
         if (pageConfig.getAttribute("height", null) != null) {
@@ -615,7 +650,6 @@ public class FOUserAgent {
     public XMLHandlerRegistry getXMLHandlerRegistry() {
         return this.xmlHandlers;
     }
-    
     
 }
 
