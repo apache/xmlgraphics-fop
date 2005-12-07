@@ -19,6 +19,8 @@
 package org.apache.fop.fo.properties;
 
 import org.apache.fop.datatypes.Numeric;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.NumericOp;
 import org.apache.fop.fo.expr.PropertyException;
@@ -68,6 +70,19 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
      * @see CorrespondingPropertyMaker#compute(PropertyList)
      */
     public Property compute(PropertyList propertyList) throws PropertyException {
+        if (propertyList.getFObj().getUserAgent()
+                    .isBreakIndentInheritanceOnReferenceAreaBoundary()) {
+            return computeAlternativeRuleset(propertyList);
+        } else {
+            return computeConforming(propertyList);
+        }
+    }
+    
+    /**
+     * Calculate the corresponding value for start-indent and end-indent.  
+     * @see CorrespondingPropertyMaker#compute(PropertyList)
+     */
+    public Property computeConforming(PropertyList propertyList) throws PropertyException {
         PropertyList pList = getWMPropertyList(propertyList);
         if (pList == null) {
             return null;
@@ -97,6 +112,79 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
         
         Numeric v = new FixedLength(0);
         if (!propertyList.getFObj().generatesReferenceAreas()) {
+            // The inherited_value_of([start|end]-indent)
+            v = NumericOp.addition(v, propertyList.getInherited(baseMaker.propId).getNumeric());
+        }
+        // The corresponding absolute margin-[right|left}.
+        v = NumericOp.addition(v, margin);
+        v = NumericOp.addition(v, padding);
+        v = NumericOp.addition(v, border);
+        return (Property) v;
+    }
+    
+    private boolean isInherited(PropertyList pList) {
+        if (pList.getFObj().getUserAgent().isBreakIndentInheritanceOnReferenceAreaBoundary()) {
+            FONode nd = pList.getFObj().getParent(); 
+            return !((nd instanceof FObj) && ((FObj)nd).generatesReferenceAreas());
+        } else {
+            return true;
+        }
+    }
+    
+    /**
+     * Calculate the corresponding value for start-indent and end-indent.
+     * This method calculates indent following an alternative rule set that
+     * tries to mimic many commercial solutions that chose to violate the
+     * XSL specification.  
+     * @see CorrespondingPropertyMaker#compute(PropertyList)
+     */
+    public Property computeAlternativeRuleset(PropertyList propertyList) throws PropertyException {
+        PropertyList pList = getWMPropertyList(propertyList);
+        if (pList == null) {
+            return null;
+        }
+
+        // Calculate the values as described in 5.3.2.
+
+        Numeric padding = getCorresponding(paddingCorresponding, propertyList).getNumeric();
+        Numeric border = getCorresponding(borderWidthCorresponding, propertyList).getNumeric();
+        
+        int marginProp = pList.getWritingMode(lr_tb, rl_tb, tb_rl);
+
+        //Determine whether the nearest anscestor indent was specified through 
+        //start-indent|end-indent or through a margin property.
+        boolean marginNearest = false;
+        PropertyList pl = propertyList.getParentPropertyList();
+        while (pl != null) {
+            if (pl.getExplicit(baseMaker.propId) != null) {
+                break;
+            } else if (pl.getExplicitOrShorthand(marginProp) != null) {
+                marginNearest = true;
+                break;
+            }
+            pl = pl.getParentPropertyList();
+        }
+        
+        Numeric margin;
+        // Calculate the absolute margin.
+        if (propertyList.getExplicitOrShorthand(marginProp) == null) {
+            Property indent = propertyList.getExplicit(baseMaker.propId);
+            if (indent == null) {
+                //Neither start-indent nor margin is specified, use inherited
+                if (isInherited(propertyList) || !marginNearest) {
+                    return null;
+                } else {
+                    return new FixedLength(0);
+                }
+            } else {
+                return indent;
+            }
+        } else {
+            margin = propertyList.get(marginProp).getNumeric();
+        }
+        
+        Numeric v = new FixedLength(0);
+        if (isInherited(propertyList)) {
             // The inherited_value_of([start|end]-indent)
             v = NumericOp.addition(v, propertyList.getInherited(baseMaker.propId).getNumeric());
         }

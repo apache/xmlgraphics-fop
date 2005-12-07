@@ -76,6 +76,28 @@
         <td>Resolution in dpi (dots per inch) which is used internally.</td>
       </tr>
       <tr>
+        <td>strict-validation</td>
+        <td>Boolean (true, false)</td>
+        <td>
+          Setting this option to 'false' causes FOP to be more forgiving about XSL-FO validity, 
+          for example, you're allowed to specify a border on a region-body which is supported 
+          by some FO implementations but is non-standard. Note that such a border would 
+          currently have no effect in Apache FOP.</td>
+      </tr>
+      <tr>
+        <td>break-indent-inheritance</td>
+        <td>Boolean (true, false)</td>
+        <td>
+          Setting this option to 'true' causes FOP to use an alternative rule set to determine
+          text indents specified through margins, start-indent and end-indent. Many commercial
+          FO implementations have chosen to break the XSL specification in this aspect. This
+          option tries to mimic their behaviour. Please note that Apache FOP may still not
+          behave exactly like those implementations either because FOP has not fully matched
+          the desired behaviour and because the behaviour among the commercial implementations
+          varies. The default for this option (i.e. false) is to behave exactly like the 
+          specification describes.</td>
+      </tr>
+      <tr>
         <td>default-page-settings</td>
         <td>n/a</td>
         <td>
