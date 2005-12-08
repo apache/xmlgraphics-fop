@@ -349,6 +349,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                 AbstractBreaker.log.debug("restart: iOptPageCount= " + iOptPageCount
                         + " pageBreaks.size()= " + algRestart.getPageBreaks().size());
                 if (iOptPageCount > getCurrentPV().getBodyRegion().getColumnCount()) {
+                    AbstractBreaker.log.warn(
+                            "Breaking algorithm produced more columns than are available.");
                     /* reenable when everything works
                     throw new IllegalStateException(
                             "Breaking algorithm must not produce more columns than available.");
@@ -787,7 +789,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             PageViewport pv = getPageViewport(
                     false, pageIndex, RELTO_CURRENT_ELEMENT_LIST);
             while (idx < partCount) {
-                if ((idx < partCount - 1) && (colIndex >= pv.getCurrentSpan().getColumnCount())) {
+                if ((colIndex >= pv.getCurrentSpan().getColumnCount())) {
                     colIndex = 0;
                     pageIndex++;
                     pv = getPageViewport(
