@@ -762,6 +762,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
         public RowPainter(LayoutContext layoutContext) {
             this.layoutContext = layoutContext;
             Arrays.fill(firstRow, -1);
+            Arrays.fill(end, -1);
         }
         
         public int getAccumulatedBPD() {
@@ -898,7 +899,8 @@ public class TableContentLayoutManager implements PercentBaseContext {
                 GridUnit currentGU = lastRow.safelyGetGridUnit(i);
                 if ((gridUnits[i] != null) 
                         && (forcedFlush || ((end[i] == gridUnits[i].getElements().size() - 1))
-                                && (currentGU == null || currentGU.isLastGridUnitRowSpan()))) {
+                                && (currentGU == null || currentGU.isLastGridUnitRowSpan()))
+                    || (gridUnits[i] == null && currentGU != null)) {
                     //the last line in the "if" above is to avoid a premature end of an 
                     //row-spanned cell because no GridUnitParts are generated after a cell is
                     //finished with its content. currentGU can be null if there's no grid unit
@@ -907,13 +909,22 @@ public class TableContentLayoutManager implements PercentBaseContext {
                         log.debug((forcedFlush ? "FORCED " : "") + "flushing..." + i + " " 
                                 + start[i] + "-" + end[i]);
                     }
-                    addAreasForCell(gridUnits[i], start[i], end[i], 
-                            lastRow,  
-                            partLength[i], actualRowHeight);
-                    gridUnits[i] = null;
-                    start[i] = 0;
-                    end[i] = 0;
-                    partLength[i] = 0;
+                    PrimaryGridUnit gu = gridUnits[i];
+                    if (gu == null 
+                            && !currentGU.isEmpty() 
+                            && currentGU.getColSpanIndex() == 0 
+                            && currentGU.isLastGridUnitColSpan()) {
+                        gu = currentGU.getPrimary();
+                    }
+                    if (gu != null) {
+                        addAreasForCell(gu, start[i], end[i], 
+                                lastRow,  
+                                partLength[i], actualRowHeight);
+                        gridUnits[i] = null;
+                        start[i] = 0;
+                        end[i] = -1;
+                        partLength[i] = 0;
+                    }
                 }
             }
             return actualRowHeight;
@@ -950,8 +961,10 @@ public class TableContentLayoutManager implements PercentBaseContext {
             cellLM.setRowHeight(effCellHeight);
             //cellLM.setRowHeight(row.getHeight().opt);
             int prevBreak = ElementListUtils.determinePreviousBreak(pgu.getElements(), startPos);
-            SpaceResolver.performConditionalsNotification(pgu.getElements(), 
-                    startPos, endPos, prevBreak);
+            if (endPos >= 0) {
+                SpaceResolver.performConditionalsNotification(pgu.getElements(), 
+                        startPos, endPos, prevBreak);
+            }
             cellLM.addAreas(new KnuthPossPosIter(pgu.getElements(), 
                     startPos, endPos + 1), layoutContext);
         }

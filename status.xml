@@ -27,6 +27,11 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix">
+        Bugfix: Areas for table-cells that are broken over more than one page are now
+        generated even if all its content is already painted on a previous page. This
+        fixes strange effects like a table grid that is not completely painted.
+      </action>
       <action context="Code" dev="JM" type="fix" fixes-bug="37828">
         Bugfix: Column balancing produced strange break decisions in certain multi-column
         documents with large amounts of text.

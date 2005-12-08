@@ -260,8 +260,7 @@
     <name>Problems with border and padding on tables</name>
     <file>table_border_padding.xml</file>
     <description>The element list seems to not be fully correct, yet, causing
-    the layout to look odd. Furthermore, an already finished cell doesn't produce
-    an area on the next page when the table-row is broken over multiple pages.</description>
+    the layout to look odd.</description>
   </testcase>
   <testcase>
     <name>keep-with-previous doesn't work inside tables</name>

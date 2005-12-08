@@ -81,7 +81,7 @@
     <eval expected="cell4e" xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[4]/block[1]/block[5]/lineArea"/>
 
     <!-- page 2 -->
-    <eval expected="cell4f" xpath="//pageViewport[2]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[1]/block[1]/block[1]/lineArea"/>
-    <eval expected="cell4g" xpath="//pageViewport[2]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[1]/block[1]/block[2]/lineArea"/>
+    <eval expected="cell4f" xpath="//pageViewport[2]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[2]/block[1]/block[1]/lineArea"/>
+    <eval expected="cell4g" xpath="//pageViewport[2]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[2]/block[1]/block[2]/lineArea"/>
   </checks>
 </testcase>
