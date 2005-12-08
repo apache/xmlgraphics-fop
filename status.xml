@@ -27,6 +27,16 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix" fixes-bug="37828">
+        Bugfix: Column balancing produced strange break decisions in certain multi-column
+        documents with large amounts of text.
+      </action>
+      <action context="Code" dev="JM" type="add">
+        Added an alternative set of rules for calculating text indents which tries to mimic
+        the behaviour of many commercial FO implementations that chose to break the rules
+        in the FO specification in order to better meet the natural expectations of 
+        inexperienced FO users.
+      </action>
       <action context="Code" dev="JM" type="fix" fixes-bug="37815" due-to="Tom Craddock">
         Bugfix: The combination of content-width="scale-to-fit" and content-height="100%"
         did not work as expected due to a datatype conversion bug.
