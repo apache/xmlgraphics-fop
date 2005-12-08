@@ -97,8 +97,8 @@
     <eval expected="1" xpath="count(//pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block)"/>
     <eval expected="1" xpath="count(//pageViewport[@nr=3]/page/regionViewport/regionBody/mainReference/span/flow/block)"/>
     <eval expected="2" xpath="count(//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[2]/block)"/>
-    <eval expected="2" xpath="count(//pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[1]/block)"/>
-    <eval expected="1" xpath="count(//pageViewport[@nr=3]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[1]/block)"/>
+    <eval expected="2" xpath="count(//pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[2]/block)"/>
+    <eval expected="1" xpath="count(//pageViewport[@nr=3]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[2]/block)"/>
     
   </checks>
 </testcase>

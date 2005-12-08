@@ -39,7 +39,7 @@
             <fo:table-column column-width="proportional-column-width(9)"/>
             <fo:table-body>
               <fo:table-row>
-                <fo:table-cell background-color="yellow">
+                <fo:table-cell background-color="yellow" id="cell1a">
                   <fo:block>cell1</fo:block>
                 </fo:table-cell>
                 <fo:table-cell background-color="orange">
@@ -69,7 +69,7 @@ and threw it up on high and caught it; and this ball was her favorite plaything.
             <fo:table-column column-width="proportional-column-width(9)"/>
             <fo:table-body>
               <fo:table-row>
-                <fo:table-cell background-color="yellow">
+                <fo:table-cell background-color="yellow" id="cell1b">
                   <fo:block>cell1</fo:block>
                 </fo:table-cell>
                 <fo:table-cell background-color="orange">
@@ -199,5 +199,11 @@ and threw it up on high and caught it; and this ball was her favorite plaything.
 
     <eval expected="(solid,#000000,5000)" xpath="//pageViewport[@nr=4]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/@border-after"/>
     <eval expected="20000" xpath="//pageViewport[@nr=4]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/@padding-after"/>
+    
+    <!-- Additional check: areas for table-cells which are finished but its row continues on the subsequent page -->
+    <true xpath="boolean(//pageViewport[@nr=1]//block[@prod-id='cell1a'])"/>
+    <true xpath="boolean(//pageViewport[@nr=2]//block[@prod-id='cell1a'])"/>
+    <true xpath="boolean(//pageViewport[@nr=3]//block[@prod-id='cell1b'])"/>
+    <true xpath="boolean(//pageViewport[@nr=4]//block[@prod-id='cell1b'])"/>
   </checks>
 </testcase>
