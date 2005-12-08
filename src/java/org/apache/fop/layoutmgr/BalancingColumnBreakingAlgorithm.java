@@ -76,12 +76,18 @@ public class BalancingColumnBreakingAlgorithm extends PageBreakingAlgorithm {
             log.trace("balance=" + balance);
         }
         double absBalance = Math.abs(balance);
+        dem = absBalance;
         //Step 1: This does the rough balancing
-        if (balance <= 0) {
-            dem = absBalance;
+        if (columnCount > 2) {
+            if (balance > 0) {
+                //shorter parts are less desired than longer ones
+                dem = dem * 1.2f;
+            }
         } else {
-            //shorter parts are less desired than longer ones
-            dem = absBalance * 1.2f;
+            if (balance < 0) {
+                //shorter parts are less desired than longer ones
+                dem = dem * 1.2f;
+            }
         }
         //Step 2: This helps keep the trailing parts shorter than the previous ones 
         dem += (avgRestLen) / 1000f;
