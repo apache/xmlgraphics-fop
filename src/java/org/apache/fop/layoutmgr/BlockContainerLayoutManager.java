@@ -48,7 +48,6 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
     private CommonAbsolutePosition abProps;
     private FODimension relDims;
     private CTM absoluteCTM;
-    private boolean clip = false;
     private Length width;
     private Length height;
     //private int vpContentIPD;
@@ -139,6 +138,11 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                 .getOptimum(this).getLength().getValue(this);
     }
 
+    private boolean needClip() {
+        int overflow = getBlockContainerFO().getOverflow();
+        return (overflow == EN_HIDDEN || overflow == EN_ERROR_IF_OVERFLOW);
+    }
+    
     private int getSpaceBefore() {
         return foBlockSpaceBefore.opt;
     }
@@ -351,11 +355,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
 
             if (contentOverflows) {
                 log.warn("Contents overflow block-container viewport: clipping");
-                if (getBlockContainerFO().getOverflow() == EN_HIDDEN) {
-                    clip = true;
-                } else if (getBlockContainerFO().getOverflow() == EN_ERROR_IF_OVERFLOW) {
+                if (getBlockContainerFO().getOverflow() == EN_ERROR_IF_OVERFLOW) {
                     //TODO Throw layout exception
-                    clip = true;
                 }
             }
         }
@@ -497,11 +498,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             //TODO Maybe check for page overflow when autoHeight=true
             if (!autoHeight & (contentOverflows/*usedBPD > relDims.bpd*/)) {
                 log.warn("Contents overflow block-container viewport: clipping");
-                if (getBlockContainerFO().getOverflow() == EN_HIDDEN) {
-                    clip = true;
-                } else if (getBlockContainerFO().getOverflow() == EN_ERROR_IF_OVERFLOW) {
+                if (getBlockContainerFO().getOverflow() == EN_ERROR_IF_OVERFLOW) {
                     //TODO Throw layout exception
-                    clip = true;
                 }
             }
         }
@@ -867,7 +865,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                     this);
             
             viewportBlockArea.setCTM(absoluteCTM);
-            viewportBlockArea.setClip(clip);
+            viewportBlockArea.setClip(needClip());
             /*
             if (getSpaceBefore() != 0) {
                 viewportBlockArea.addTrait(Trait.SPACE_BEFORE, new Integer(getSpaceBefore()));

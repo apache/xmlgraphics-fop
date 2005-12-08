@@ -509,26 +509,21 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             x += borderPaddingStart / 1000f;
             y += borderPaddingBefore / 1000f;
 
-            // clip if necessary
-            if (bv.getClip()) {
-                saveGraphicsState();
-                float width = (float)bv.getIPD() / 1000f;
-                float height = (float)bv.getBPD() / 1000f;
-                clipRect(x, y, width, height);
-            }
-
             if (ctm != null) {
                 startVParea(ctm);
                 currentIPPosition = 0;
                 currentBPPosition = 0;
             }
+            // clip if necessary
+            if (bv.getClip()) {
+                float width = (float)bv.getIPD() / 1000f;
+                float height = (float)bv.getBPD() / 1000f;
+                clipRect(x, y, width, height);
+            }
+
             renderBlocks(bv, children);
             if (ctm != null) {
                 endVParea();
-            }
-
-            if (bv.getClip()) {
-                restoreGraphicsState();
             }
 
             currentIPPosition = saveIP;
