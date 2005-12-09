@@ -431,7 +431,7 @@ public class PropertyMaker implements Cloneable {
             }
             return newProp;
         } catch (PropertyException propEx) {
-            propEx.setLocator(fo.locator);
+            propEx.setLocator(fo.getLocator());
             propEx.setPropertyName(getName());
             throw propEx;
         }
