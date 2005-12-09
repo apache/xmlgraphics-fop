@@ -23,6 +23,7 @@ import java.util.ListIterator;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
+import org.xml.sax.helpers.LocatorImpl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -46,13 +47,13 @@ public abstract class FONode implements Cloneable {
     /** Parent FO node */
     protected FONode parent;
 
-    /**  Marks location of this object from the input FO
+    /** 
+     * Marks location of this object from the input FO
      *   Call locator.getSystemId(), getLineNumber(),
      *   getColumnNumber() for file, line, column
      *   information
      */
-    public Locator locator;
-    //TODO Make private or protected and access via getLocator()
+    protected Locator locator;
 
     /** Logger for fo-tree related messages **/
     protected static Log log = LogFactory.getLog(FONode.class);
@@ -102,7 +103,9 @@ public abstract class FONode implements Cloneable {
      */
     public void setLocator(Locator locator) {
         if (locator != null) {
-            this.locator = locator;
+            //Create a copy of the locator so the info is preserved when we need to
+            //give pointers during layout.
+            this.locator = new LocatorImpl(locator);
         }
     }
 

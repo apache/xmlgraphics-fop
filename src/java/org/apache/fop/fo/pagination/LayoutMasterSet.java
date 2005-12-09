@@ -143,7 +143,7 @@ public class LayoutMasterSet extends FObj {
             throw new ValidationException("'master-name' ("
                + masterName
                + ") must be unique "
-               + "across page-masters and page-sequence-masters", sPM.locator);
+               + "across page-masters and page-sequence-masters", sPM.getLocator());
         }
         this.simplePageMasters.put(masterName, sPM);
     }
@@ -183,7 +183,7 @@ public class LayoutMasterSet extends FObj {
             throw new ValidationException("'master-name' ("
                + masterName
                + ") must be unique "
-               + "across page-masters and page-sequence-masters", pSM.locator);
+               + "across page-masters and page-sequence-masters", pSM.getLocator());
         }
         this.pageSequenceMasters.put(masterName, pSM);
     }

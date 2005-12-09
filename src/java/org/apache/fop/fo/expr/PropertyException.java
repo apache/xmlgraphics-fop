@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,18 +35,23 @@ public class PropertyException extends FOPException {
     }
 
     /**
+     * Sets the property context information.
+     * @param propInfo the property info instance
      */
     public void setPropertyInfo(PropertyInfo propInfo) {
-        setLocator(propInfo.getFO().locator);
+        setLocator(propInfo.getFO().getLocator());
         propertyName = propInfo.getPropertyMaker().getName();
     }
 
     /**
+     * Sets the name of the property.
+     * @param propertyName the property name
      */
     public void setPropertyName(String propertyName) {
         this.propertyName = propertyName;
     }
 
+    /** @see java.lang.Throwable#getMessage()*/
     public String getMessage() {
         if (propertyName != null) {
             return super.getMessage() + "; property:'" + propertyName + "'";

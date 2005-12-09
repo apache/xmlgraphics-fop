@@ -185,11 +185,28 @@ public class FOTreeBuilder extends DefaultHandler {
     }
 
     /**
+     * This method enables to reduce memory consumption of the FO tree slightly. When it returns
+     * true no Locator is passed to the FO tree nodes which would copy the information into
+     * a SAX LocatorImpl instance.
+     * @return true if no context information should be stored on each node in the FO tree.
+     */
+    protected boolean isLocatorDisabled() {
+        //TODO make this configurable through the FOUserAgent so people can optimize memory
+        //consumption.
+        return false;
+    }
+    
+    /**
      * SAX Handler for locator
      * @see org.xml.sax.ContentHandler#setDocumentLocator(Locator)
      */
     public void setDocumentLocator(Locator locator) {
         this.locator = locator;
+    }
+    
+    /** @return a Locator instance if it is available and not disabled */
+    protected Locator getEffectiveLocator() {
+        return (isLocatorDisabled() ? null : this.locator);
     }
     
     /**
@@ -200,7 +217,7 @@ public class FOTreeBuilder extends DefaultHandler {
         throws FOPException {
             if (currentFObj != null) {
                 currentFObj.addCharacters(data, start, start + length, 
-                        currentPropertyList, locator);
+                        currentPropertyList, getEffectiveLocator());
             }
     }
 
@@ -270,7 +287,7 @@ public class FOTreeBuilder extends DefaultHandler {
         try {
             foNode = fobjMaker.make(currentFObj);
             propertyList = foNode.createPropertyList(currentPropertyList, foEventHandler);
-            foNode.processNode(localName, locator, attlist, propertyList);
+            foNode.processNode(localName, getEffectiveLocator(), attlist, propertyList);
             foNode.startOfNode();
         } catch (IllegalArgumentException e) {
             throw new SAXException(e);

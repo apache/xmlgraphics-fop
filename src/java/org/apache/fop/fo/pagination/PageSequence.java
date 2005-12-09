@@ -219,7 +219,7 @@ public class PageSequence extends FObj {
         if (hasFlowName(flowName)) {
             throw new ValidationException("duplicate flow-name \""
                 + flowName
-                + "\" found within fo:page-sequence", flow.locator);
+                + "\" found within fo:page-sequence", flow.getLocator());
         }
 
         if (!root.getLayoutMasterSet().regionNameExists(flowName) 
@@ -228,7 +228,7 @@ public class PageSequence extends FObj {
                 throw new ValidationException("flow-name \""
                     + flowName
                     + "\" could not be mapped to a region-name in the"
-                    + " layout-master-set", flow.locator);
+                    + " layout-master-set", flow.getLocator());
         }
     }
 
