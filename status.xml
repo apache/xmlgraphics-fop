@@ -28,6 +28,10 @@
   <changes>
     <release version="FOP Trunk">
       <action context="Code" dev="JM" type="fix">
+        The output file is now deleted when an exception occurs when calling FOP from
+        the command-line.
+      </action>
+      <action context="Code" dev="JM" type="fix">
         Bugfix: Areas for table-cells that are broken over more than one page are now
         generated even if all its content is already painted on a previous page. This
         fixes strange effects like a table grid that is not completely painted.

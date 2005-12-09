@@ -184,6 +184,9 @@ public class Main {
             if (options != null) {
                 options.getLogger().error("Exception", e);
             }
+            if (options.getOutputFile() != null) {
+                options.getOutputFile().delete();
+            }
             System.exit(1);
         }
     }
