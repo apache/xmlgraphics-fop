@@ -23,7 +23,9 @@ package org.apache.fop;
  * Note that this class can only find the version information if it's in the org.apache.fop package
  * as this package equals the one specified in the manifest.
  */
-public class Version {
+public final class Version {
+    
+    private Version() { }
 
     /**
      * Get the version of FOP

@@ -70,16 +70,16 @@ public abstract class FONode implements Cloneable {
     /**
      * Perform a shallow cloning operation,
      * set its parent, and optionally clean the list of child nodes
-     * @param parent the intended parent of the clone
+     * @param cloneparent the intended parent of the clone
      * @param removeChildren if true, clean the list of child nodes
      * @return the cloned FO node
      * @throws FOPException if there's a problem while cloning the node
      */
-    public FONode clone(FONode parent, boolean removeChildren)
+    public FONode clone(FONode cloneparent, boolean removeChildren)
                 throws FOPException {
         FONode foNode = (FONode) clone();
-        foNode.parent = parent;
-        parent.addChildNode(foNode);
+        foNode.parent = cloneparent;
+        cloneparent.addChildNode(foNode);
         return foNode;
     }
 
@@ -146,11 +146,11 @@ public abstract class FONode implements Cloneable {
      * @param elementName element name (e.g., "fo:block")
      * @param locator Locator object (ignored by default)
      * @param attlist Collection of attributes passed to us from the parser.
-     * @param parent the property list of the parent node
+     * @param pList the property list of the parent node
      * @throws FOPException for errors or inconsistencies in the attributes
     */
     public void processNode(String elementName, Locator locator, 
-            Attributes attlist, PropertyList parent) throws FOPException {
+            Attributes attlist, PropertyList pList) throws FOPException {
         if (log.isDebugEnabled()) {
             log.debug("Unhandled element: " + elementName 
                     + (locator != null ? " at " + getLocatorString(locator) : ""));
@@ -160,13 +160,13 @@ public abstract class FONode implements Cloneable {
     /**
      * Create a property list for this node. Return null if the node does not
      * need a property list.
-     * @param parent the closest parent propertylist. 
+     * @param pList the closest parent propertylist. 
      * @param foEventHandler The FOEventHandler where the PropertyListMaker 
      *              instance can be found.
      * @return A new property list.
      * @throws FOPException if there's a problem during processing
      */
-    protected PropertyList createPropertyList(PropertyList parent, FOEventHandler foEventHandler) 
+    protected PropertyList createPropertyList(PropertyList pList, FOEventHandler foEventHandler) 
                 throws FOPException {
         return null;
     }

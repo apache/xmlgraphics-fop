@@ -67,7 +67,6 @@ public class Fop implements Constants {
      * output format (ex. "application/pdf" for PDF).
      * @param outputFormat the MIME type of the output format to use (ex. "application/pdf").
      * @param ua FOUserAgent object
-     * @throws IllegalArgumentException if an unsupported renderer type was requested.
      */
     public Fop(String outputFormat, FOUserAgent ua) {
         this.outputFormat = outputFormat;
@@ -82,7 +81,6 @@ public class Fop implements Constants {
      * Constructor for FOP with a default FOUserAgent. It uses MIME types to select the 
      * output format (ex. "application/pdf" for PDF).
      * @param outputFormat the MIME type of the output format to use (ex. "application/pdf").
-     * @throws IllegalArgumentException if an unsupported renderer type was requested.
      */
     public Fop(String outputFormat) {
         this(outputFormat, null);
@@ -106,7 +104,6 @@ public class Fop implements Constants {
      * <li>Fop.RENDER_PNG</li>
      * </ul>
      * @param ua FOUserAgent object
-     * @throws IllegalArgumentException if an unsupported renderer type was requested.
      * @deprecated Use {@link org.apache.fop.apps.Fop#Fop(java.lang.String, FOUserAgent)} instead!
      *             This constructor will be removed.
      */

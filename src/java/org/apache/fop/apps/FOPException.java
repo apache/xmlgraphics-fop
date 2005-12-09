@@ -43,7 +43,8 @@ public class FOPException extends SAXException {
     /**
      * Constructs a new FOP exception with the specified detail message and location.
      * @param message the detail message
-     * @param systemId the system id of the FO document which is associated with the exception. May be null.
+     * @param systemId the system id of the FO document which is associated with the exception
+     *                 may be null.
      * @param line line number in the FO document which is associated with the exception.
      * @param column clolumn number in the line which is associated with the exception.
      */
@@ -96,7 +97,8 @@ public class FOPException extends SAXException {
 
     /**
      * Set a location associated with the exception.
-     * @param systemId the system id of the FO document which is associated with the exception. May be null.
+     * @param systemId the system id of the FO document which is associated with the exception;
+     *                 may be null.
      * @param line line number in the FO document which is associated with the exception.
      * @param column clolumn number in the line which is associated with the exception.
      */
@@ -108,6 +110,7 @@ public class FOPException extends SAXException {
 
     /**
      * Indicate whether a location was set.
+     * @return whether a location was set
      */
     public boolean isLocationSet() {
         // TODO: this is actually a dangerous assumption: A line
@@ -124,6 +127,7 @@ public class FOPException extends SAXException {
      *  SystemId:LL:CC: &amp;the message&amp;
      * </pre>
      * (the format used by most GNU tools)
+     * @return the detail message string of this FOP exception
      */
     public String getMessage() {
         if (isLocationSet()) {
