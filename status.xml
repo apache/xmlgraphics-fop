@@ -27,6 +27,11 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="add">
+        The command-line now automatically sets two parameters for any XSLT transformation:
+        "fop-output-format" contains the MIME type of the currently selected output format,
+        "fop-version" contains FOP's version number.
+      </action>
       <action context="Code" dev="JM" type="fix">
         The output file is now deleted when an exception occurs when calling FOP from
         the command-line.

@@ -28,7 +28,6 @@ import java.util.Vector;
 import org.apache.fop.Version;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.pdf.PDFEncryptionManager;
@@ -123,6 +122,8 @@ public class CommandLineOptions implements Constants {
                 }
                 checkSettings();
                 createUserConfig();
+                addXSLTParameter("fop-output-format", getOutputFormat());
+                addXSLTParameter("fop-version", Version.getVersion());
             }
         } catch (FOPException e) {
             printUsage();
@@ -157,6 +158,14 @@ public class CommandLineOptions implements Constants {
         return log;
     }
 
+    private void addXSLTParameter(String name, String value) {
+        if (xsltParams == null) {
+            xsltParams = new Vector();
+        }
+        xsltParams.addElement(name);
+        xsltParams.addElement(value);
+    }
+    
     /**
      * parses the commandline arguments
      * @return true if parse was successful and processing can continue, false
@@ -229,13 +238,9 @@ public class CommandLineOptions implements Constants {
                 System.out.println("FOP Version " + Version.getVersion());
             } else if (args[i].equals("-param")) {
                   if (i + 2 < args.length) {
-                      if (xsltParams == null) {
-                          xsltParams = new Vector();
-                      }
                       String name = args[++i];
-                      xsltParams.addElement(name);
                       String expression = args[++i];
-                      xsltParams.addElement(expression);
+                      addXSLTParameter(name, expression);
                   } else {
                     throw new FOPException("invalid param usage: use -param <name> <value>");
                   }
