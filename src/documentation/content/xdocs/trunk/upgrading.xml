@@ -53,7 +53,7 @@
           </note>
         </li>
         <li>
-          Extensions written for version 0.20.5 will not work with the new code!
+          Extensions and Renderers written for version 0.20.5 will not work with the new code!
         </li>
         <li>
           The PCL Renderer and the MIF Handler have not been resurrected, yet! They are currently non-functional
@@ -88,13 +88,17 @@
         </li>
         <li>
           As stated above empty table cells <code>&lt;fo:table-cell&gt;&lt;/fo:table-cell&gt;</code>
-          are not allowed.
+          are not allowed by the specification.
         </li>
         <li>
-          0.20.5 is not XSL-FO compliant with respect to sizing images or <code>instream-foreign-object</code>
+          0.20.5 is not XSL-FO compliant with respect to sizing images (<code>external-graphic</code>) 
+          or <code>instream-foreign-object</code>
           objects. If images or SVGs are sized differently in your outputs with the new FOP version
           check <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=37136">Bug 37136</a>
-          as it contains some hints on what to.
+          as it contains some hints on what to. The file 
+          <a href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/trunk/examples/fo/basic/images.fo?view=markup">
+          <code>"examples/fo/basic/images.fo"</code></a> has
+          a number of good examples that shows the new, more correct behaviour.
         </li>
         <li>
           The <code>fox:outline</code> extension not implemented in this version anymore. 
