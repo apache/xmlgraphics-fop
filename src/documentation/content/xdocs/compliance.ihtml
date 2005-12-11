@@ -59,6 +59,9 @@
       <strong><a href="#fo-object-link-section">Link and Multi Formatting Objects</a>: </strong><a href="#fo-object-basic-link">basic-link</a>, <a href="#fo-object-multi-switch">multi-switch</a>, <a href="#fo-object-multi-case">multi-case</a>, <a href="#fo-object-multi-toggle">multi-toggle</a>, <a href="#fo-object-multi-properties">multi-properties</a>, <a href="#fo-object-multi-property-set">multi-property-set</a>
     </li>
     <li>
+      <strong><a href="#fo-object-bookmarks-section">Formatting Objects for Bookmarks</a>: </strong><a href="#fo-object-bookmark-tree">bookmark-tree</a>, <a href="#fo-object-bookmark">bookmark</a>, <a href="#fo-object-bookmark-title">bookmark-title</a>
+    </li>
+    <li>
       <strong><a href="#fo-object-outofline-section">Out-of-line Formatting Objects</a>: </strong><a href="#fo-object-float">float</a>, <a href="#fo-object-footnote">footnote</a>, <a href="#fo-object-footnote-body">footnote-body</a>
     </li>
     <li>
@@ -1239,6 +1242,77 @@
       </td>
       <td align="center">
         &nbsp;
+      </td>
+    </tr>
+    <tr>
+      <td class="category" colspan="6">
+        <a name="fo-object-bookmarks-section">Formatting Objects for Bookmarks</a> (<a href="http://www.w3.org/TR/xsl11/#d0e14085">&sect;6.11 in XSL 1.1 WD</a>)
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a name="fo-object-bookmark-tree">bookmark-tree</a> (since XSL 1.1)
+      </td>
+      <td class="extended">
+        Extended
+      </td>
+      <td align="center">
+        <a href="http://www.w3.org/TR/xsl11/#fo_bookmark-tree">&sect;6.11.1 in XSL 1.1 WD</a>
+      </td>
+      <td class="no">
+        no
+      </td>
+      <td class="yes">
+        yes
+      </td>
+      <td align="left">
+        <ul>
+          <li>[0.20.5] Uses the proprietary fox:outline extension.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a name="fo-object-bookmark">bookmark</a> (since XSL 1.1)
+      </td>
+      <td class="extended">
+        Extended
+      </td>
+      <td align="center">
+        <a href="http://www.w3.org/TR/xsl11/#fo_bookmark">&sect;6.11.2 in XSL 1.1 WD</a>
+      </td>
+      <td class="no">
+        no
+      </td>
+      <td class="yes">
+        yes
+      </td>
+      <td align="left">
+        <ul>
+          <li>[0.20.5] Uses the proprietary fox:outline extension.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a name="fo-object-bookmark-title">bookmark-title</a> (since XSL 1.1)
+      </td>
+      <td class="extended">
+        Extended
+      </td>
+      <td align="center">
+        <a href="http://www.w3.org/TR/xsl11/#fo_bookmark-title">&sect;6.11.3 in XSL 1.1 WD</a>
+      </td>
+      <td class="no">
+        no
+      </td>
+      <td class="yes">
+        yes
+      </td>
+      <td align="left">
+        <ul>
+          <li>[0.20.5] Uses the proprietary fox:outline extension.</li>
+        </ul>
       </td>
     </tr>
     <tr>
