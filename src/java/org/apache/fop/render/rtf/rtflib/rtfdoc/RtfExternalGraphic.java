@@ -227,7 +227,7 @@ public class RtfExternalGraphic extends RtfElement {
     protected URL url = null;
 
     /**
-     * The height of the image
+     * The height of the image (in pixels)
      */
     protected int height = -1;
 
@@ -237,7 +237,7 @@ public class RtfExternalGraphic extends RtfElement {
     protected int heightPercent = -1;
 
     /**
-     * The desired height
+     * The desired height (in twips)
      */
     protected int heightDesired = -1;
 
@@ -247,7 +247,7 @@ public class RtfExternalGraphic extends RtfElement {
     protected boolean perCentH = false;
 
     /**
-     * The width of the image
+     * The width of the image (in pixels)
      */
     protected int width = -1;
 
@@ -257,7 +257,7 @@ public class RtfExternalGraphic extends RtfElement {
     protected int widthPercent = -1;
 
     /**
-     * The desired width
+     * The desired width (in twips)
      */
     protected int widthDesired = -1;
 
@@ -491,10 +491,10 @@ public class RtfExternalGraphic extends RtfElement {
             if (perCentW) {
                 writeControlWord("picscalex" + widthDesired);
             } else {
-                writeControlWord("picscalex" + widthDesired * 100 / width);
+                //writeControlWord("picscalex" + widthDesired * 100 / width);
+                writeControlWord("picwgoal" + widthDesired);
             }
 
-            writeControlWord("picwgoal" + widthDesired);
         } else if (scaleUniform && heightDesired != -1) {
             if (perCentH) {
                 writeControlWord("picscalex" + heightDesired);
@@ -507,10 +507,10 @@ public class RtfExternalGraphic extends RtfElement {
             if (perCentH) {
                 writeControlWord("picscaley" + heightDesired);
             } else {
-                writeControlWord("picscaley" + heightDesired * 100 / height);
+                //writeControlWord("picscaley" + heightDesired * 100 / height);
+                writeControlWord("pichgoal" + heightDesired);
             }
 
-            writeControlWord("pichgoal" + heightDesired);
         } else if (scaleUniform && widthDesired != -1) {
             if (perCentW) {
                 writeControlWord("picscaley" + widthDesired);
@@ -527,7 +527,7 @@ public class RtfExternalGraphic extends RtfElement {
     /**
      * Sets the desired height of the image.
      *
-     * @param theHeight The desired image height
+     * @param theHeight The desired image height (as a string in twips or as a percentage)
      */
     public void setHeight(String theHeight) {
         this.heightDesired = ImageUtil.getInt(theHeight);
@@ -537,7 +537,7 @@ public class RtfExternalGraphic extends RtfElement {
     /**
      * Sets the desired width of the image.
      *
-     * @param theWidth The desired image width
+     * @param theWidth The desired image width (as a string in twips or as a percentage)
      */
     public void setWidth(String theWidth) {
         this.widthDesired = ImageUtil.getInt(theWidth);
