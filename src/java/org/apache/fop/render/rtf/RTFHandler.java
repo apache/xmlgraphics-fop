@@ -88,6 +88,7 @@ import org.apache.fop.render.rtf.rtflib.tools.TableContext;
 import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
+import org.apache.fop.image.XMLImage;
 
 /**
  * RTF Handler: generates RTF output using the structure events from
@@ -932,24 +933,34 @@ public class RTFHandler extends FOEventHandler {
         }
 
         try {
-
-
-            final IRtfTextrunContainer c
-                = (IRtfTextrunContainer)builderContext.getContainer(
-                    IRtfTextrunContainer.class, true, this);
-
-            final RtfExternalGraphic newGraphic = c.getTextrun().newImage();
-
-            //set URL
             String url = eg.getURL();
-            newGraphic.setURL(url);
 
             //set image data
             ImageFactory fact = ImageFactory.getInstance();
             FopImage fopimage = fact.getImage(url, eg.getUserAgent());
             fopimage.load(FopImage.ORIGINAL_DATA);
 
-            newGraphic.setImageData(fopimage.getRessourceBytes());
+            byte[] rawData;
+            if ("image/svg+xml".equals(fopimage.getMimeType())) {
+                rawData = SVGConverter.convertToJPEG((XMLImage)fopimage);
+            } else {
+                rawData = fopimage.getRessourceBytes();
+            }
+            if (rawData == null) {
+                log.warn(FONode.decorateWithContextInfo(
+                        "Image could not be embedded: " + url, eg));
+                return;
+            }
+
+            final IRtfTextrunContainer c
+                = (IRtfTextrunContainer)builderContext.getContainer(
+                    IRtfTextrunContainer.class, true, this);
+
+            final RtfExternalGraphic newGraphic = c.getTextrun().newImage();
+    
+            //set URL
+            newGraphic.setURL(url);
+            newGraphic.setImageData(rawData);
 
             //set scaling
             if (eg.getScaling() == Constants.EN_UNIFORM) {
@@ -1002,10 +1013,12 @@ public class RTFHandler extends FOEventHandler {
             }
 
             //set width in rtf
-            newGraphic.setWidth((long) (contentwidth / 1000f) + "pt");
+            //newGraphic.setWidth((long) (contentwidth / 1000f) + "pt");
+            newGraphic.setWidth((long) (contentwidth / 50f) + "twips");
 
             //set height in rtf
-            newGraphic.setHeight((long) (contentheight / 1000f) + "pt");
+            //newGraphic.setHeight((long) (contentheight / 1000f) + "pt");
+            newGraphic.setHeight((long) (contentheight / 50f) + "twips");
 
             //TODO: make this configurable:
             //      int compression = m_context.m_options.getRtfExternalGraphicCompressionRate ();
