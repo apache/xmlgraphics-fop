@@ -3,7 +3,7 @@
 <module name="Checker">
   <module name="TreeWalker">
     <module name="RegexpHeader">
-      <property name="headerFile" value="checkstyle.header"/>
+      <property name="headerFile" value="${samedir}/checkstyle.header"/>
       <property name="severity" value="warning"/>
     </module>
     <module name="ArrayTypeStyleCheck">
