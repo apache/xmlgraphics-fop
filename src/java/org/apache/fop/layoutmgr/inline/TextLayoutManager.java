@@ -271,7 +271,9 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
          */
         while (posIter.hasNext()) {
             LeafPosition tbpNext = (LeafPosition) posIter.next();
-            //
+            if (tbpNext == null) {
+                continue; //Ignore elements without Positions
+            }
             if (tbpNext.getLeafPos() != -1) {
                 ai = (AreaInfo) vecAreaInfo.get(tbpNext.getLeafPos());
                 if (firstAreaInfoIndex == -1) {

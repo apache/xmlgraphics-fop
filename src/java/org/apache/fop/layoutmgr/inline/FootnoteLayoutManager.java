@@ -79,7 +79,7 @@ public class FootnoteLayoutManager extends AbstractLayoutManager
             //Inline part of the footnote is empty. Need to send back an auxiliary
             //zero-width, zero-height inline box so the footnote gets painted.
             KnuthSequence seq = new KnuthSequence(true);
-            seq.add(new KnuthInlineBox(0, null, null, true));
+            seq.add(new KnuthInlineBox(0, null, null, false));
             returnedList.add(seq);
         }
         setFinished(true);
@@ -106,7 +106,7 @@ public class FootnoteLayoutManager extends AbstractLayoutManager
                 ListIterator nestedIterator = seq.listIterator(seq.size());
                 while (nestedIterator.hasPrevious() && lastBox == null) {
                     KnuthElement element = (KnuthElement)nestedIterator.previous();
-                    if (element instanceof KnuthInlineBox) {
+                    if (element instanceof KnuthInlineBox && !element.isAuxiliary()) {
                         lastBox = (KnuthInlineBox) element;
                     }
                 }
@@ -114,6 +114,8 @@ public class FootnoteLayoutManager extends AbstractLayoutManager
         }
         if (lastBox != null) {
             lastBox.setFootnoteBodyLM(bodyLM);
+        } else {
+            throw new IllegalStateException("No anchor box was found for a footnote.");
         }
     }
 
