@@ -382,10 +382,13 @@ public class RtfExternalGraphic extends RtfElement {
         // Determine image file format
         String file = url.getFile ();
         imageformat = FormatBase.determineFormat(imagedata);
-        imageformat = imageformat.convert(imageformat, imagedata);
+        if (imageformat != null) {
+            imageformat = imageformat.convert(imageformat, imagedata);
+        }
         
-        if (imageformat.getType() == ImageConstants.I_NOT_SUPPORTED
-                | imageformat.getRtfTag() == "") {
+        if (imageformat == null 
+                || imageformat.getType() == ImageConstants.I_NOT_SUPPORTED
+                || "".equals(imageformat.getRtfTag())) {
             throw new ExternalGraphicException("The tag <fo:external-graphic> "
                     + "does not support "
                     + file.substring(file.lastIndexOf(".") + 1)

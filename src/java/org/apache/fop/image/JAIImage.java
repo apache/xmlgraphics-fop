@@ -177,5 +177,10 @@ public class JAIImage extends AbstractFopImage {
         }
     }
 
+    /** @see org.apache.fop.image.AbstractFopImage#loadOriginalData() */
+    protected boolean loadOriginalData() {
+        return loadDefaultOriginalData();
+    }
+    
 }
 

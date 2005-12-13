@@ -24,6 +24,7 @@ import java.awt.color.ICC_Profile;
 import java.io.InputStream;
 import java.awt.Color;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -204,6 +205,25 @@ public abstract class AbstractFopImage implements FopImage {
         return false;
     }
 
+    /**
+     * Load the original image data. This is generic code for use by any
+     * subclass that wants to use this from a loadOriginalData() implementation.
+     *
+     * @return true if the loading was successful
+     */
+    protected boolean loadDefaultOriginalData() {
+        try {
+            this.raw = IOUtils.toByteArray(inputStream);
+        } catch (java.io.IOException ex) {
+            log.error("Error while loading image (EMF): " + ex.getMessage(), ex);
+            return false;
+        } finally {
+            IOUtils.closeQuietly(inputStream);
+            inputStream = null;
+        }
+        return true;
+    }
+    
     /**
      * @return the image width (in pixels)
      */

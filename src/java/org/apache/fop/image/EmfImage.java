@@ -47,17 +47,7 @@ public class EmfImage extends AbstractFopImage {
      * @return true if loaded false for any error
      */
     protected boolean loadOriginalData() {
-        try {
-            this.raw = IOUtils.toByteArray(inputStream);
-        } catch (java.io.IOException ex) {
-            log.error("Error while loading image (EMF): " + ex.getMessage(), ex);
-            return false;
-        } finally {
-            IOUtils.closeQuietly(inputStream);
-            inputStream = null;
-        }
-
-        return true;
+        return loadDefaultOriginalData();
     }
 }
 
