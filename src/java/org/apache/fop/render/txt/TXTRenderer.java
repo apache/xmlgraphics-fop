@@ -556,9 +556,9 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#startVParea(CTM)
+     * @see org.apache.fop.render.AbstractRenderer#startVParea(CTM, Rectangle2D)
      */
-    protected void startVParea(CTM ctm) {
+    protected void startVParea(CTM ctm, Rectangle2D clippingRect) {
         currentState.push(ctm);
     }
 

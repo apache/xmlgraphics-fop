@@ -484,18 +484,23 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#startVParea(CTM)
+     * @see org.apache.fop.render.AbstractRenderer#startVParea(CTM, Rectangle2D)
      */
-    protected void startVParea(CTM ctm) {
+    protected void startVParea(CTM ctm, Rectangle2D clippingRect) {
         // Set the given CTM in the graphics state
         currentState.push();
         currentState.setTransform(
                 new AffineTransform(CTMHelper.toPDFArray(ctm)));
 
         saveGraphicsState();
+        if (clippingRect != null) {
+            clipRect((float)clippingRect.getX() / 1000f, 
+                    (float)clippingRect.getY() / 1000f, 
+                    (float)clippingRect.getWidth() / 1000f, 
+                    (float)clippingRect.getHeight() / 1000f);
+        }
         // multiply with current CTM
         currentStream.add(CTMHelper.toPDFString(ctm) + " cm\n");
-        // Set clip?
     }
 
     /**

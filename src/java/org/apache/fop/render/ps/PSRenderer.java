@@ -934,18 +934,21 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
     }
     
     /**
-     * @see org.apache.fop.render.AbstractRenderer#startVParea(CTM)
+     * @see org.apache.fop.render.AbstractRenderer#startVParea(CTM, Rectangle2D)
      */
-    protected void startVParea(CTM ctm) {
-
+    protected void startVParea(CTM ctm, Rectangle2D clippingRect) {
         saveGraphicsState();
+        if (clippingRect != null) {
+            clipRect((float)clippingRect.getX() / 1000f, 
+                    (float)clippingRect.getY() / 1000f, 
+                    (float)clippingRect.getWidth() / 1000f, 
+                    (float)clippingRect.getHeight() / 1000f);
+        }
         // multiply with current CTM
         final double[] matrix = ctm.toArray();
         matrix[4] /= 1000f;
         matrix[5] /= 1000f;
         concatMatrix(matrix);
-
-        // Set clip?
     }
 
     /**

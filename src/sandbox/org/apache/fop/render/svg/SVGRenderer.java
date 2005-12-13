@@ -19,6 +19,7 @@
 package org.apache.fop.render.svg;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.area.CTM;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.inline.ForeignObject;
@@ -421,6 +422,20 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
     /** @see org.apache.fop.render.XMLHandler#getNamespace() */
     public String getNamespace() {
         return SVG_NAMESPACE;
+    }
+
+    /**
+     * @see org.apache.fop.render.AbstractRenderer#startVParea(CTM, Rectangle2D)
+     */
+    protected void startVParea(CTM ctm, Rectangle2D clippingRect) {
+        // TODO Auto-generated method stub
+    }
+
+    /**
+     * @see org.apache.fop.render.AbstractRenderer#endVParea()
+     */
+    protected void endVParea() {
+        // TODO Auto-generated method stub
     }
 
 }

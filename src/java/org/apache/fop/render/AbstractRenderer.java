@@ -19,6 +19,8 @@
 package org.apache.fop.render;
 
 // Java
+import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -263,7 +265,7 @@ public abstract class AbstractRenderer
             handleRegionTraits(port);
 
             //  shouldn't the viewport have the CTM
-            startVParea(regionReference.getCTM());
+            startVParea(regionReference.getCTM(), port.isClip() ? view : null);
             // do after starting viewport area
             if (regionReference.getRegionClass() == FO_REGION_BODY) {
                 renderBodyRegion((BodyRegion) regionReference);
@@ -275,11 +277,19 @@ public abstract class AbstractRenderer
     }
 
     /**
-     * (todo) Description of the Method
+     * Establishes a new viewport area.
      *
-     * @param ctm  The coordinate transformation matrix to use
+     * @param ctm the coordinate transformation matrix to use
+     * @param clippingRect the clipping rectangle if the viewport should be clipping, 
+     *                     null if no clipping is performed.
      */
-    protected void startVParea(CTM ctm) { }
+    protected abstract void startVParea(CTM ctm, Rectangle2D clippingRect);
+
+    /**
+     * Signals exit from a viewport area. Subclasses can restore transformation matrices
+     * valid before the viewport area was started.
+     */
+    protected abstract void endVParea();
 
     /**
      * Handle the traits for a region
@@ -290,11 +300,6 @@ public abstract class AbstractRenderer
     protected void handleRegionTraits(RegionViewport rv) {
         // draw border and background
     }
-
-    /**
-     * (todo) Description of the Method
-     */
-    protected void endVParea() { }
 
     /**
      * Renders a region reference area.
@@ -434,11 +439,16 @@ public abstract class AbstractRenderer
             int saveIP = currentIPPosition;
             int saveBP = currentBPPosition;
 
+            Rectangle2D clippingRect = null;
+            if (bv.getClip()) {
+                clippingRect = new Rectangle(saveIP, saveBP, bv.getIPD(), bv.getIPD());
+            }
+            
             CTM ctm = bv.getCTM();
             currentIPPosition = 0;
             currentBPPosition = 0;
 
-            startVParea(ctm);
+            startVParea(ctm, clippingRect);
             handleBlockTraits(bv);
             renderBlocks(bv, children);
             endVParea();
