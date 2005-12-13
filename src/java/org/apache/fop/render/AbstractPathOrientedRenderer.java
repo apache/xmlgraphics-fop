@@ -19,6 +19,7 @@
 package org.apache.fop.render;
 
 import java.awt.Color;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 
@@ -429,9 +430,16 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
         float x, y;
         x = (float)(bv.getXOffset() + containingIPPosition) / 1000f;
         y = (float)(bv.getYOffset() + containingBPPosition) / 1000f;
+        //This is the content-rect
+        float width = (float)bv.getIPD() / 1000f;
+        float height = (float)bv.getBPD() / 1000f;
+        
 
         if (bv.getPositioning() == Block.ABSOLUTE
                 || bv.getPositioning() == Block.FIXED) {
+
+            currentIPPosition = bv.getXOffset();
+            currentBPPosition = bv.getYOffset();
 
             //For FIXED, we need to break out of the current viewports to the
             //one established by the page. We save the state stack for restoration
@@ -444,19 +452,12 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             CTM tempctm = new CTM(containingIPPosition, containingBPPosition);
             ctm = tempctm.multiply(ctm);
 
-            //This is the content-rect
-            float width = (float)bv.getIPD() / 1000f;
-            float height = (float)bv.getBPD() / 1000f;
-            
             //Adjust for spaces (from margin or indirectly by start-indent etc.
-            Integer spaceStart = (Integer) bv.getTrait(Trait.SPACE_START);
-            if (spaceStart != null) {
-                x += spaceStart.floatValue() / 1000;
-            }
-            Integer spaceBefore = (Integer) bv.getTrait(Trait.SPACE_BEFORE);
-            if (spaceBefore != null) {
-                y += spaceBefore.floatValue() / 1000;
-            }
+            x += bv.getSpaceStart() / 1000f;
+            currentIPPosition += bv.getSpaceStart();
+            
+            y += bv.getSpaceBefore() / 1000f;
+            currentBPPosition += bv.getSpaceBefore(); 
 
             float bpwidth = (borderPaddingStart + bv.getBorderAndPaddingWidthEnd()) / 1000f;
             float bpheight = (borderPaddingBefore + bv.getBorderAndPaddingWidthAfter()) / 1000f;
@@ -464,27 +465,20 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             drawBackAndBorders(bv, x, y, width + bpwidth, height + bpheight);
 
             //Now adjust for border/padding
-            x += borderPaddingStart / 1000f;
-            y += borderPaddingBefore / 1000f;
+            currentIPPosition += borderPaddingStart;
+            currentBPPosition += borderPaddingBefore;
             
+            Rectangle2D clippingRect = null;
             if (bv.getClip()) {
-                saveGraphicsState();
-                clipRect(x, y, width, height);
+                clippingRect = new Rectangle(currentIPPosition, currentBPPosition, 
+                        bv.getIPD(), bv.getBPD());
             }
 
-            startVParea(ctm);
-
+            startVParea(ctm, clippingRect);
             currentIPPosition = 0;
             currentBPPosition = 0;
-
             renderBlocks(bv, children);
             endVParea();
-
-            if (bv.getClip()) {
-                restoreGraphicsState();
-            }
-
-            // clip if necessary
 
             if (breakOutList != null) {
                 restoreStateStackAfterBreakOut(breakOutList);
@@ -494,37 +488,31 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             currentBPPosition = saveBP;
         } else {
 
-            Integer spaceBefore = (Integer)bv.getTrait(Trait.SPACE_BEFORE);
-            if (spaceBefore != null) {
-                currentBPPosition += spaceBefore.intValue();
-            }
+            currentBPPosition += bv.getSpaceBefore();
 
             //borders and background in the old coordinate system
             handleBlockTraits(bv);
+
+            //Advance to start of content area
+            currentIPPosition += bv.getStartIndent();
 
             CTM tempctm = new CTM(containingIPPosition, currentBPPosition);
             ctm = tempctm.multiply(ctm);
             
             //Now adjust for border/padding
-            x += borderPaddingStart / 1000f;
-            y += borderPaddingBefore / 1000f;
+            currentBPPosition += borderPaddingBefore;
 
-            if (ctm != null) {
-                startVParea(ctm);
-                currentIPPosition = 0;
-                currentBPPosition = 0;
-            }
-            // clip if necessary
+            Rectangle2D clippingRect = null;
             if (bv.getClip()) {
-                float width = (float)bv.getIPD() / 1000f;
-                float height = (float)bv.getBPD() / 1000f;
-                clipRect(x, y, width, height);
+                clippingRect = new Rectangle(currentIPPosition, currentBPPosition, 
+                        bv.getIPD(), bv.getBPD());
             }
-
+            
+            startVParea(ctm, clippingRect);
+            currentIPPosition = 0;
+            currentBPPosition = 0;
             renderBlocks(bv, children);
-            if (ctm != null) {
-                endVParea();
-            }
+            endVParea();
 
             currentIPPosition = saveIP;
             currentBPPosition = saveBP;

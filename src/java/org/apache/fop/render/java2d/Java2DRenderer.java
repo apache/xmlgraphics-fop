@@ -22,6 +22,7 @@ package org.apache.fop.render.java2d;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
@@ -52,13 +53,18 @@ import org.apache.fop.area.Block;
 import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.CTM;
 import org.apache.fop.area.PageViewport;
+import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.Character;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.area.inline.InlineBlockParent;
+import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.Leader;
+import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.TextArea;
+import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.Font;
@@ -347,26 +353,125 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#startVParea(CTM)
+     * Handle the traits for a region
+     * This is used to draw the traits for the given page region.
+     * (See Sect. 6.4.1.2 of XSL-FO spec.)
+     * @param region the RegionViewport whose region is to be drawn
+     * @TODO This is a copy from AbstractPathOrientedRenderer. Put this method in AbstractRenderer
      */
-    protected void startVParea(CTM ctm) {
+    protected void handleRegionTraits(RegionViewport region) {
+        Rectangle2D viewArea = region.getViewArea();
+        float startx = (float)(viewArea.getX() / 1000f);
+        float starty = (float)(viewArea.getY() / 1000f);
+        float width = (float)(viewArea.getWidth() / 1000f);
+        float height = (float)(viewArea.getHeight() / 1000f);
 
+        if (region.getRegionReference().getRegionClass() == FO_REGION_BODY) {
+            currentBPPosition = region.getBorderAndPaddingWidthBefore();
+            currentIPPosition = region.getBorderAndPaddingWidthStart();
+        }
+        drawBackAndBorders(region, startx, starty, width, height);
+    }
+
+    /**
+     * Render an inline viewport.
+     * This renders an inline viewport by clipping if necessary.
+     * @param viewport the viewport to handle
+     * @TODO This is a copy from AbstractPathOrientedRenderer. Put this method in AbstractRenderer
+     */
+    public void renderViewport(Viewport viewport) {
+
+        float x = currentIPPosition / 1000f;
+        float y = (currentBPPosition + viewport.getOffset()) / 1000f;
+        float width = viewport.getIPD() / 1000f;
+        float height = viewport.getBPD() / 1000f;
+        // TODO: Calculate the border rect correctly. 
+        float borderPaddingStart = viewport.getBorderAndPaddingWidthStart() / 1000f;
+        float borderPaddingBefore = viewport.getBorderAndPaddingWidthBefore() / 1000f;
+        float bpwidth = borderPaddingStart 
+                + (viewport.getBorderAndPaddingWidthEnd() / 1000f);
+        float bpheight = borderPaddingBefore
+                + (viewport.getBorderAndPaddingWidthAfter() / 1000f);
+
+        drawBackAndBorders(viewport, x, y, width + bpwidth, height + bpheight);
+
+        if (viewport.getClip()) {
+            saveGraphicsState();
+
+            clipRect(x + borderPaddingStart, y + borderPaddingBefore, width, height);
+        }
+        super.renderViewport(viewport);
+
+        if (viewport.getClip()) {
+            restoreGraphicsState();
+        }
+    }
+
+    /** Saves the graphics state of the rendering engine. */
+    protected void saveGraphicsState() {
         // push (and save) the current graphics state
         state.push();
+    }
+
+    /** Restores the last graphics state of the rendering engine. */
+    protected void restoreGraphicsState() {
+        state.pop();
+    }
+    
+    /**
+     * @see org.apache.fop.render.AbstractRenderer#startVParea(CTM, Rectangle2D)
+     */
+    protected void startVParea(CTM ctm, Rectangle2D clippingRect) {
+
+        saveGraphicsState();
+
+        if (clippingRect != null) {
+            clipRect((float)clippingRect.getX() / 1000f, 
+                    (float)clippingRect.getY() / 1000f, 
+                    (float)clippingRect.getWidth() / 1000f, 
+                    (float)clippingRect.getHeight() / 1000f);
+        }
 
         // Set the given CTM in the graphics state
-        state.setTransform(new AffineTransform(CTMHelper.toPDFArray(ctm)));
-
-        // TODO Set clip?
+        //state.setTransform(new AffineTransform(CTMHelper.toPDFArray(ctm)));
+        state.transform(new AffineTransform(CTMHelper.toPDFArray(ctm)));
     }
 
     /**
      * @see org.apache.fop.render.AbstractRenderer#endVParea()
      */
     protected void endVParea() {
-        state.pop();
+        restoreGraphicsState();
     }
 
+    /**
+     * @see org.apache.fop.render.AbstractRenderer
+     * @TODO This is a copy from AbstractPathOrientedRenderer. Put this method in AbstractRenderer
+     */
+    protected void renderInlineSpace(Space space) {
+        space.setBPD(0);
+        renderInlineAreaBackAndBorders(space);
+        super.renderInlineSpace(space);
+    }
+    
+    /**
+     * @see org.apache.fop.render.AbstractRenderer
+     * @TODO This is a copy from AbstractPathOrientedRenderer. Put this method in AbstractRenderer
+     */
+    protected void renderInlineParent(InlineParent ip) {
+        renderInlineAreaBackAndBorders(ip);
+        super.renderInlineParent(ip);
+    }
+
+    /**
+     * @see org.apache.fop.render.AbstractRenderer
+     * @TODO This is a copy from AbstractPathOrientedRenderer. Put this method in AbstractRenderer
+     */
+    protected void renderInlineBlockParent(InlineBlockParent ibp) {
+        renderInlineAreaBackAndBorders(ibp);
+        super.renderInlineBlockParent(ibp);
+    }
+    
     /**
      * @see org.apache.fop.render.AbstractRenderer#renderBlockViewport(BlockViewport,
      * List)
@@ -384,9 +489,17 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
         float x, y;
         x = (float) (bv.getXOffset() + containingIPPosition) / 1000f;
         y = (float) (bv.getYOffset() + containingBPPosition) / 1000f;
+        // This is the content-rect
+        float width = (float) bv.getIPD() / 1000f;
+        float height = (float) bv.getBPD() / 1000f;
+
 
         if (bv.getPositioning() == Block.ABSOLUTE
                 || bv.getPositioning() == Block.FIXED) {
+
+            currentIPPosition = bv.getXOffset();
+            currentBPPosition = bv.getYOffset();
+            
             // TODO not tested yet
             // For FIXED, we need to break out of the current viewports to the
             // one established by the page. We save the state stack for
@@ -411,19 +524,12 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
             CTM tempctm = new CTM(containingIPPosition, containingBPPosition);
             ctm = tempctm.multiply(ctm);
 
-            // This is the content-rect
-            float width = (float) bv.getIPD() / 1000f;
-            float height = (float) bv.getBPD() / 1000f;
-
             // Adjust for spaces (from margin or indirectly by start-indent etc.
-            Integer spaceStart = (Integer) bv.getTrait(Trait.SPACE_START);
-            if (spaceStart != null) {
-                x += spaceStart.floatValue() / 1000;
-            }
-            Integer spaceBefore = (Integer) bv.getTrait(Trait.SPACE_BEFORE);
-            if (spaceBefore != null) {
-                y += spaceBefore.floatValue() / 1000;
-            }
+            x += bv.getSpaceStart() / 1000f;
+            currentIPPosition += bv.getSpaceStart();
+            
+            y += bv.getSpaceBefore() / 1000f;
+            currentBPPosition += bv.getSpaceBefore(); 
 
             float bpwidth = (borderPaddingStart + bv
                     .getBorderAndPaddingWidthEnd()) / 1000f;
@@ -433,27 +539,20 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
             drawBackAndBorders(bv, x, y, width + bpwidth, height + bpheight);
 
             // Now adjust for border/padding
-            x += borderPaddingStart / 1000f;
-            y += borderPaddingBefore / 1000f;
+            currentIPPosition += borderPaddingStart;
+            currentBPPosition += borderPaddingBefore;
 
+            Rectangle2D clippingRect = null;
             if (bv.getClip()) {
-                // saves the graphics state in a stack
-                state.push();
-
-                clip(x, y, width, height);
+                clippingRect = new Rectangle(currentIPPosition, currentBPPosition, 
+                        bv.getIPD(), bv.getBPD());
             }
 
-            startVParea(ctm);
-
+            startVParea(ctm, clippingRect);
+            currentIPPosition = 0;
+            currentBPPosition = 0;
             renderBlocks(bv, children);
             endVParea();
-
-            if (bv.getClip()) {
-                // restores the last graphics state from the stack
-                state.pop();
-            }
-
-            // clip if necessary
 
             if (breakOutList != null) {
                 log.debug(
@@ -472,13 +571,13 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
 
         } else { // orientation = Block.STACK or RELATIVE
 
-            Integer spaceBefore = (Integer) bv.getTrait(Trait.SPACE_BEFORE);
-            if (spaceBefore != null) {
-                currentBPPosition += spaceBefore.intValue();
-            }
+            currentBPPosition += bv.getSpaceBefore();
 
             // borders and background in the old coordinate system
             handleBlockTraits(bv);
+
+            //Advance to start of content area
+            currentIPPosition += bv.getStartIndent();
 
             CTM tempctm = new CTM(containingIPPosition, currentBPPosition
                     + containingBPPosition);
@@ -488,66 +587,37 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
             x += borderPaddingStart / 1000f;
             y += borderPaddingBefore / 1000f;
 
-            // clip if necessary
+            Rectangle2D clippingRect = null;
             if (bv.getClip()) {
-                // saves the graphics state in a stack
-                state.push();
-                float width = (float) bv.getIPD() / 1000f;
-                float height = (float) bv.getBPD() / 1000f;
-                clip(x, y, width, height);
+                clippingRect = new Rectangle(currentIPPosition, currentBPPosition, 
+                        bv.getIPD(), bv.getBPD());
             }
-
-            if (ctm != null) {
-                startVParea(ctm);
-            }
+            
+            startVParea(ctm, clippingRect);
+            currentIPPosition = 0;
+            currentBPPosition = 0;
             renderBlocks(bv, children);
-            if (ctm != null) {
-                endVParea();
-            }
-
-            if (bv.getClip()) {
-                // restores the last graphics state from the stack
-                state.pop();
-            }
+            endVParea();
 
             currentIPPosition = saveIP;
             currentBPPosition = saveBP;
 
-            // Adjust BP position (alloc BPD + spaces)
-            if (spaceBefore != null) {
-                currentBPPosition += spaceBefore.intValue();
-            }
-            currentBPPosition += (int) (bv.getAllocBPD());
-            Integer spaceAfter = (Integer) bv.getTrait(Trait.SPACE_AFTER);
-            if (spaceAfter != null) {
-                currentBPPosition += spaceAfter.intValue();
-            }
+            currentBPPosition += (int)(bv.getAllocBPD());
         }
     }
 
     /**
-     * Clip an area.
-     */
-    protected void clip() {
-    // TODO via AWTGraphicsState.updateClip();
-    // currentStream.add("W\n");
-    // currentStream.add("n\n");
-    }
-
-    /**
      * Clip an area. write a clipping operation given coordinates in the current
-     * transform.
+     * transform. Coordinates are in points.
      *
      * @param x the x coordinate
      * @param y the y coordinate
      * @param width the width of the area
      * @param height the height of the area
      */
-    protected void clip(float x, float y, float width, float height) {
-        // TODO via AWTGraphicsState.updateClip();
-        // currentStream.add(x + " " + y + " " + width + " " + height + "
-        // re ");
-        clip();
+    protected void clipRect(float x, float y, float width, float height) {
+        Rectangle2D rect = new Rectangle2D.Float(x, y, width, height);
+        state.updateClip(rect);
     }
 
     /**
@@ -603,7 +673,8 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
             if (back.getFopImage() != null) {
                 FopImage fopimage = back.getFopImage();
                 if (fopimage != null && fopimage.load(FopImage.DIMENSIONS)) {
-                    clip(sx, sy, paddRectWidth, paddRectHeight);
+                    saveGraphicsState();
+                    clipRect(sx, sy, paddRectWidth, paddRectHeight);
                     int horzCount = (int) ((paddRectWidth * 1000 / fopimage
                             .getIntrinsicWidth()) + 1.0f);
                     int vertCount = (int) ((paddRectHeight * 1000 / fopimage
@@ -637,7 +708,7 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
                             putImage(back.getURL(), pos); // TODO test
                         }
                     }
-
+                    restoreGraphicsState();
                 } else {
                     log.warn(
                             "Can't find background image: " + back.getURL());
@@ -695,6 +766,33 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
         state.getGraph().fillRect((int) sx, (int) sy, (int) paddRectWidth,
                 (int) paddRectHeight);
     }
+    
+    /** 
+     * Common method to render the background and borders for any inline area.
+     * The all borders and padding are drawn outside the specified area.
+     * @param area the inline area for which the background, border and padding is to be
+     * rendered
+     * @TODO This is a copy from AbstractPathOrientedRenderer. Put this method in AbstractRenderer
+     */
+    protected void renderInlineAreaBackAndBorders(InlineArea area) {
+        float x = currentIPPosition / 1000f;
+        float y = (currentBPPosition + area.getOffset()) / 1000f;
+        float width = area.getIPD() / 1000f;
+        float height = area.getBPD() / 1000f;
+        float borderPaddingStart = area.getBorderAndPaddingWidthStart() / 1000f;
+        float borderPaddingBefore = area.getBorderAndPaddingWidthBefore() / 1000f;
+        float bpwidth = borderPaddingStart 
+                + (area.getBorderAndPaddingWidthEnd() / 1000f);
+        float bpheight = borderPaddingBefore
+                + (area.getBorderAndPaddingWidthAfter() / 1000f);
+        
+        if (height != 0.0f || bpheight != 0.0f && bpwidth != 0.0f) {
+            drawBackAndBorders(area, x, y - borderPaddingBefore
+                                , width + bpwidth
+                                , height + bpheight);
+        }
+        
+    }
 
     /**
      * Handle block traits. The block could be any sort of block with any
@@ -727,8 +825,9 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
      * @see org.apache.fop.render.AbstractRenderer#renderText(TextArea)
      */
     public void renderText(TextArea text) {
+        renderInlineAreaBackAndBorders(text);
 
-        float x = currentIPPosition;
+        float x = currentIPPosition + text.getBorderAndPaddingWidthStart();
         float y = currentBPPosition + text.getOffset() + text.getBaselineOffset(); // baseline
 
         String name = (String) text.getTrait(Trait.FONT_NAME);
@@ -747,17 +846,19 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
         // rendering text decorations
         FontMetrics metrics = fontInfo.getMetricsFor(name);
         Font fs = new Font(name, metrics, size);
-        renderTextDecoration(fs, text, y, x);
 
         super.renderText(text);
+
+        renderTextDecoration(fs, text, y, x);
     }
 
     /**
      * @see org.apache.fop.render.AbstractRenderer#renderCharacter(Character)
      */
     public void renderCharacter(Character ch) {
+        renderInlineAreaBackAndBorders(ch);
 
-        float x = currentIPPosition;
+        float x = currentIPPosition + ch.getBorderAndPaddingWidthStart();
         float y = currentBPPosition + ch.getOffset() + ch.getBaselineOffset(); // baseline
 
         String name = (String) ch.getTrait(Trait.FONT_NAME);
@@ -836,13 +937,15 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
      * @param area the leader area to render
      */
     public void renderLeader(Leader area) {
+        renderInlineAreaBackAndBorders(area);
 
         // TODO leader-length: 25%, 50%, 75%, 100% not working yet
         // TODO Colors do not work on Leaders yet
 
-        float startx = ((float) currentIPPosition) / 1000f;
+        float startx = (currentIPPosition + area.getBorderAndPaddingWidthStart()) / 1000f;
         float starty = ((currentBPPosition + area.getOffset()) / 1000f);
-        float endx = (currentIPPosition + area.getIPD()) / 1000f;
+        float endx = (currentIPPosition + area.getBorderAndPaddingWidthStart() 
+                + area.getIPD()) / 1000f;
 
         ColorType ct = (ColorType) area.getTrait(Trait.COLOR);
         state.updateColor(ct, true, null);
@@ -975,7 +1078,6 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
             renderDocument(doc, ns, pos);
         } else if ("image/eps".equals(mime)) {
             log.warn("EPS images are not supported by this renderer");
-            currentBPPosition += (h * 1000);
         } else if ("image/jpeg".equals(mime)) {
             if (!fopimage.load(FopImage.ORIGINAL_DATA)) {
                 return;
@@ -991,7 +1093,6 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
             state.getGraph().drawImage(awtImage, 
                     (int)(x / 1000f), (int)(y / 1000f), 
                     (int)(pos.getWidth() / 1000f), (int)(pos.getHeight() / 1000f), null);
-            currentBPPosition += (h * 1000);
         } else {
             if (!fopimage.load(FopImage.BITMAP)) {
                 log.warn("Loading of bitmap failed: " + url);
@@ -1020,7 +1121,6 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
             state.getGraph().drawImage(awtImage, 
                     (int)(x / 1000f), (int)(y / 1000f), 
                     (int)(pos.getWidth() / 1000f), (int)(pos.getHeight() / 1000f), null);
-            currentBPPosition += (h * 1000);
         }
     }
 

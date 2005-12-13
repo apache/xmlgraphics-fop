@@ -50,6 +50,7 @@ import org.apache.fop.area.BeforeFloat;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.BodyRegion;
+import org.apache.fop.area.CTM;
 import org.apache.fop.area.NormalFlow;
 import org.apache.fop.area.Footnote;
 import org.apache.fop.area.LineArea;
@@ -391,6 +392,9 @@ public class XMLRenderer extends PrintRenderer {
             addAreaAttributes(port);
             addTraitAttributes(port);
             addAttribute("rect", port.getViewArea());
+            if (port.isClip()) {
+                addAttribute("clipped", "true");
+            }
             startElement("regionViewport", atts);
             RegionReference region = port.getRegionReference();
             atts.clear();
@@ -420,6 +424,16 @@ public class XMLRenderer extends PrintRenderer {
             }
             endElement("regionViewport");
         }
+    }
+
+    /** @see org.apache.fop.render.AbstractRenderer */
+    protected void startVParea(CTM ctm, Rectangle2D clippingRect) {
+        //only necessary for graphical output
+    }
+
+    /** @see org.apache.fop.render.AbstractRenderer#endVParea() */
+    protected void endVParea() {
+        //only necessary for graphical output
     }
 
     /**

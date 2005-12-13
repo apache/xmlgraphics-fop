@@ -20,9 +20,11 @@ package org.apache.fop.render.pcl;
 
 // FOP
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.area.CTM;
 import org.apache.fop.render.PrintRenderer;
 
 // Java
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -155,6 +157,7 @@ public class PCLRenderer extends PrintRenderer {
         }
     }
 
+    /** @see org.apache.fop.render.Renderer#startRenderer(java.io.OutputStream) */
     public void startRenderer(OutputStream outputStream) throws IOException {
         log.info("rendering areas to PCL");
         log.fatal("The PCL Renderer is non-functional at this time. Please help resurrect it!");
@@ -176,12 +179,27 @@ public class PCLRenderer extends PrintRenderer {
         currentStream.add("\033" + "9\033&l0E");
     }
 
+    /** @see org.apache.fop.render.Renderer#stopRenderer() */
     public void stopRenderer() throws IOException {
     }
 
     /** @see org.apache.fop.render.AbstractRenderer */
     public String getMimeType() {
         return MIME_TYPE;
+    }
+
+    /**
+     * @see org.apache.fop.render.AbstractRenderer#startVParea(CTM, Rectangle2D)
+     */
+    protected void startVParea(CTM ctm, Rectangle2D clippingRect) {
+        // TODO Auto-generated method stub
+    }
+
+    /**
+     * @see org.apache.fop.render.AbstractRenderer#endVParea()
+     */
+    protected void endVParea() {
+        // TODO Auto-generated method stub
     }
 
 }
