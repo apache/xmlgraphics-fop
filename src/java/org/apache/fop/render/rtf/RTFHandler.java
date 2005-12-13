@@ -947,7 +947,8 @@ public class RTFHandler extends FOEventHandler {
                 rawData = fopimage.getRessourceBytes();
             }
             if (rawData == null) {
-                log.warn("Image could not be embedded: " + url);
+                log.warn(FONode.decorateWithContextInfo(
+                        "Image could not be embedded: " + url, eg));
                 return;
             }
 

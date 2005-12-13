@@ -449,6 +449,57 @@ public abstract class FONode implements Cloneable {
     }
 
     /**
+     * Decorates a log or warning message with context information on the given node.
+     * @param text the original message
+     * @param node the context node
+     * @return the decorated text
+     */
+    public static String decorateWithContextInfo(String text, FONode node) {
+        StringBuffer sb = new StringBuffer(text);
+        sb.append(" (").append(node.getContextInfo()).append(")");
+        return sb.toString();
+    }
+    
+    /**
+     * Returns a String containing as much context information as possible about a node. Call
+     * this methods only in exceptional conditions because this method may perform quite extensive
+     * information gathering inside the FO tree.
+     * @return a String containing 
+     */
+    public String getContextInfo() {
+        StringBuffer sb = new StringBuffer();
+        if (getLocalName() != null) {
+            sb.append(getName());
+            sb.append(", ");
+        }
+        if (this.locator != null) {
+            sb.append("location: ");
+            sb.append(getLocatorString(this.locator));
+        } else {
+            String s = gatherContextInfo();
+            if (s != null) {
+                sb.append("\"");
+                sb.append(s);
+                sb.append("\"");
+            } else {
+                sb.append("no context info available");
+            }
+        }
+        if (sb.length() > 80) {
+            sb.setLength(80);
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Gathers context information for the getContextInfo() method.
+     * @return the collected context information or null, if none is available
+     */
+    protected String gatherContextInfo() {
+        return null;
+    }
+    
+    /**
      * Returns the root node of this tree
      * @return the root node
      */

@@ -26,6 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.datatypes.PercentBaseContext;
 
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.flow.TableColumn;
 
@@ -96,10 +97,11 @@ public class ColumnSetup {
             if (index > maxColIndexReferenced) {
                 maxColIndexReferenced = index;
                 if (!(size == 1 && getColumn(1).isDefaultColumn())) {
-                    log.warn("There are fewer table-columns than are needed. Column " 
+                    log.warn(FONode.decorateWithContextInfo(
+                            "There are fewer table-columns than are needed. Column " 
                             + index + " was accessed although only " 
                             + size + " columns have been defined. "
-                            + "The last defined column will be reused.");
+                            + "The last defined column will be reused.", table));
                     if (!table.isAutoLayout()) {
                         log.warn("Please note that according XSL-FO 1.0 (7.26.9) says that "
                                 + "the 'column-width' property must be specified for every "
