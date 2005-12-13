@@ -617,5 +617,14 @@ public class FOText extends FONode {
     public String getNormalNamespacePrefix() {
         return null;
     }
+
+    /** @see org.apache.fop.fo.FONode#gatherContextInfo() */
+    protected String gatherContextInfo() {
+        if (getLocator() != null) {
+            return super.gatherContextInfo();
+        } else {
+            return new String(ca).trim();
+        }
+    }
     
 }

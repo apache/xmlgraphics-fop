@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.layoutmgr.AbstractBreaker.PageBreakPosition;
 
 import org.apache.fop.traits.MinOptMax;
@@ -697,14 +699,31 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         pageBreaks.addFirst(pageBreak);
     }
     
+    private int getPartCount() {
+        if (pageBreaks == null) {
+            return 0;
+        } else {
+            return pageBreaks.size();
+        }
+    }
+    
     public void updateData1(int total, double demerits) {
     }
 
     public void updateData2(KnuthNode bestActiveNode,
                             KnuthSequence sequence,
                             int total) {
-        //int difference = (bestActiveNode.line < total) ? bestActiveNode.difference : bestActiveNode.difference + fillerMinWidth;
+        //int difference = (bestActiveNode.line < total) 
+        //      ? bestActiveNode.difference : bestActiveNode.difference + fillerMinWidth;
         int difference = bestActiveNode.difference;
+        if (difference + bestActiveNode.availableShrink < 0) {
+            if (log.isWarnEnabled()) {
+                log.warn(FONode.decorateWithContextInfo(
+                        "Part/page " + (getPartCount() + 1) 
+                        + " overflows the available area in block-progression dimension.", 
+                        getFObj()));
+            }
+        }
         int blockAlignment = (bestActiveNode.line < total) ? alignment : alignmentLast;
         // it is always allowed to adjust space, so the ratio must be set regardless of
         // the value of the property display-align; the ratio must be <= 1
@@ -769,6 +788,11 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
 
     public LinkedList getFootnoteList(int index) {
         return (LinkedList) footnotesList.get(index);
+    }
+    
+    /** @return the associated top-level formatting object. */
+    public FObj getFObj() {
+        return topLevelLM.getFObj();
     }
     
     /** @see org.apache.fop.layoutmgr.BreakingAlgorithm#getLineWidth(int) */

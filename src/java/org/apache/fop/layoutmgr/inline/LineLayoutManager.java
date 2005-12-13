@@ -21,6 +21,7 @@ package org.apache.fop.layoutmgr.inline;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.properties.CommonHyphenation;
 import org.apache.fop.hyphenation.Hyphenation;
@@ -435,12 +436,23 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 addedPositions = 0;
             }
 
-            //log.debug("LLM> (" + (lineLayouts.getLineNumber(activePossibility) - addedPositions) + ") difference = " + difference + " ratio = " + ratio);
+            if (difference + bestActiveNode.availableShrink < 0) {
+                if (log.isWarnEnabled()) {
+                    log.warn(FONode.decorateWithContextInfo(
+                            "Line " + (addedPositions + 1) 
+                            + " of a paragraph overflows the available area.", getFObj()));
+                }
+            }
+            
+            //log.debug("LLM> (" + (lineLayouts.getLineNumber(activePossibility) - addedPositions) 
+            //    + ") difference = " + difference + " ratio = " + ratio);
             lineLayouts.addBreakPosition(makeLineBreakPosition(par,
-                                                               (bestActiveNode.line > 1 ? bestActiveNode.previous.position + 1: 0),
-                                                               bestActiveNode.position,
-                                                               bestActiveNode.availableShrink - (addedPositions > 0 ? 0 : ((Paragraph)par).lineFiller.opt - ((Paragraph)par).lineFiller.min), bestActiveNode.availableStretch, difference, ratio, indent),
-                                         activePossibility);
+                   (bestActiveNode.line > 1 ? bestActiveNode.previous.position + 1 : 0),
+                   bestActiveNode.position,
+                   bestActiveNode.availableShrink - (addedPositions > 0 
+                       ? 0 : ((Paragraph)par).lineFiller.opt - ((Paragraph)par).lineFiller.min), 
+                   bestActiveNode.availableStretch, 
+                   difference, ratio, indent), activePossibility);
             addedPositions++;
         }
 
@@ -453,7 +465,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         private LineBreakPosition makeLineBreakPosition(KnuthSequence par,
                                                         int firstElementIndex,
                                                         int lastElementIndex,
-                                                        int availableShrink, int availableStretch, int difference,
+                                                        int availableShrink, 
+                                                        int availableStretch, 
+                                                        int difference,
                                                         double ratio,
                                                         int indent) {
             // line height calculation - spaceBefore may differ from spaceAfter

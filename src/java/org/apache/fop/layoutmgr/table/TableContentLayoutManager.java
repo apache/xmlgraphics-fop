@@ -30,6 +30,7 @@ import org.apache.fop.area.Block;
 import org.apache.fop.area.Trait;
 import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.flow.TableBody;
@@ -478,7 +479,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
                         if ((elems.size() > 0) 
                                 && ((KnuthElement)elems.getLast()).isForcedBreak()) {
                             // a descendant of this block has break-after
-                            log.warn("Descendant of table-cell signals break: " 
+                            log.debug("Descendant of table-cell signals break: " 
                                     + primary.getCellLM().isFinished());
                         }
                         
@@ -556,12 +557,14 @@ public class TableContentLayoutManager implements PercentBaseContext {
             row.setHeight(rowHeights[rgi]);
             row.setExplicitHeight(explicitRowHeights[rgi]);
             if (effRowContentHeight > row.getExplicitHeight().max) {
-                log.warn("The contents of row " + (row.getIndex() + 1) 
+                log.warn(FONode.decorateWithContextInfo(
+                        "The contents of row " + (row.getIndex() + 1) 
                         + " are taller than they should be (there is a"
                         + " block-progression-dimension or height constraint on the indicated row)."
                         + " Due to its contents the row grows"
                         + " to " + effRowContentHeight + " millipoints, but the row shouldn't get"
-                        + " any taller than " + row.getExplicitHeight() + " millipoints.");
+                        + " any taller than " + row.getExplicitHeight() + " millipoints.", 
+                        row.getTableRow()));
             }
         }
         if (log.isDebugEnabled()) {

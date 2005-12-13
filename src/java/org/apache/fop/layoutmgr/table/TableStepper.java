@@ -25,7 +25,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.flow.Table;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.ElementListUtils;
@@ -418,8 +418,9 @@ public class TableStepper {
             if (activeRow < rowGroup.length - 1) {
                 TableRow rowFO = getActiveRow().getTableRow();
                 if (rowFO != null && rowFO.getBreakAfter() != Constants.EN_AUTO) {
-                    log.warn("break-after ignored on table-row because of row spanning "
-                            + "in progress (See XSL 1.0, 7.19.1)");
+                    log.warn(FONode.decorateWithContextInfo(
+                            "break-after ignored on table-row because of row spanning "
+                            + "in progress (See XSL 1.0, 7.19.1)", rowFO));
                 }
                 activeRow++;
                 if (log.isDebugEnabled()) {
@@ -433,8 +434,9 @@ public class TableStepper {
                 }
                 rowFO = getActiveRow().getTableRow();
                 if (rowFO != null && rowFO.getBreakBefore() != Constants.EN_AUTO) {
-                    log.warn("break-before ignored on table-row because of row spanning "
-                            + "in progress (See XSL 1.0, 7.19.2)");
+                    log.warn(FONode.decorateWithContextInfo(
+                            "break-before ignored on table-row because of row spanning "
+                            + "in progress (See XSL 1.0, 7.19.2)", rowFO));
                 }
             }
         }
@@ -450,7 +452,7 @@ public class TableStepper {
                 KnuthElement el = (KnuthElement)elementLists[i].get(end[i]);
                 if (el.isPenalty()) {
                     if (el.getP() <= -KnuthElement.INFINITE) {
-                        log.warn("FORCED break encountered!");
+                        log.debug("FORCED break encountered!");
                         forcedBreaks[i] = true;
                         break;
                     } else if (el.getP() < KnuthElement.INFINITE) {

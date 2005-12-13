@@ -316,6 +316,30 @@ public abstract class FObj extends FONode implements Constants {
     }
 */    
 
+    /** @see org.apache.fop.fo.FONode#gatherContextInfo() */
+    protected String gatherContextInfo() {
+        if (getLocator() != null) {
+            return super.gatherContextInfo();
+        } else {
+            ListIterator iter = getChildNodes();
+            if (iter == null) {
+                return null;
+            }
+            StringBuffer sb = new StringBuffer();
+            while (iter.hasNext()) {
+                FONode node = (FONode)iter.next();
+                String s = node.gatherContextInfo();
+                if (s != null) {
+                    if (sb.length() > 0) {
+                        sb.append(", ");
+                    }
+                    sb.append(s);
+                }
+            }
+            return (sb.length() > 0 ? sb.toString() : null);
+        }
+    }
+
     /**
      * Convenience method for validity checking.  Checks if the
      * incoming node is a member of the "%block;" parameter entity
