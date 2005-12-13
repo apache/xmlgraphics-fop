@@ -153,5 +153,10 @@ public class ImageIOImage extends AbstractFopImage {
         return true;
     }
 
+    /** @see org.apache.fop.image.AbstractFopImage#loadOriginalData() */
+    protected boolean loadOriginalData() {
+        return loadDefaultOriginalData();
+    }
+    
 }
 

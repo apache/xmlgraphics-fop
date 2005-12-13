@@ -165,6 +165,11 @@ public class GifImage extends AbstractFopImage {
         return true;
     }
 
+    /** @see org.apache.fop.image.AbstractFopImage#loadOriginalData() */
+    protected boolean loadOriginalData() {
+        return loadDefaultOriginalData();
+    }
+    
     /**
      * A dummy url connection for a gif image in an input stream.
      */

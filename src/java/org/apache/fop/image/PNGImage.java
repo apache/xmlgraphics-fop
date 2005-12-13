@@ -18,12 +18,17 @@
 
 package org.apache.fop.image;
 
+import java.awt.color.ColorSpace;
+import java.awt.color.ICC_Profile;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.apache.batik.ext.awt.image.codec.PNGRed;
 import org.apache.batik.ext.awt.image.codec.PNGDecodeParam;
 import org.apache.batik.ext.awt.image.codec.SeekableStream;
 import org.apache.batik.ext.awt.image.rendered.CachableRed;
+import org.apache.commons.io.IOUtils;
+import org.apache.fop.util.CMYKColorSpace;
 
 /**
  * FopImage object using PNG
@@ -58,6 +63,28 @@ public class PNGImage extends BatikImage {
                 * 25.4f / 1000f;
         }
         return red;
+    }
+    
+    /**
+     * Load the original PNG data.
+     * This loads the original PNG data as is into memory.
+     *
+     * @return true if loaded false for any error
+     */
+    protected boolean loadOriginalData() {
+        try {
+            seekableInput.seek(0);
+            this.raw = IOUtils.toByteArray(seekableInput);
+        
+        } catch (java.io.IOException ex) {
+            log.error("Error while loading raw image: " + ex.getMessage(), ex);
+            return false;
+        } finally {
+            IOUtils.closeQuietly(inputStream);
+            inputStream = null;
+        }
+
+        return true;
     }
     
 }
