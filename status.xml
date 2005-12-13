@@ -27,6 +27,29 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix" fixes-bug="37880">
+        Bugfix: Footnotes were lost if the footnote appeared in centered text.
+      </action>
+      <action context="Code" dev="JM" type="update">
+        Improved log and error messages in a number of places by adding additional
+        context information that should make it easier to find the location in the
+        source files.
+      </action>
+      <action context="Code" dev="JM" type="fix">
+        Fix to correct image sizes in RTF output.
+      </action>
+      <action context="Code" dev="JM" type="add">
+        First attempt at SVG support in RTF output. SVG images are converted to 300dpi JPEG
+        images internally.
+      </action>
+      <action context="Code" dev="JM" type="update">
+        Additional checks to detect text overflows. The overflow property is now properly
+        handled where applicable.
+      </action>
+      <action context="Code" dev="JM" type="update">
+        Source location information improved. If location information is not available,
+        the context information is provided based on text content.
+      </action>
       <action context="Code" dev="JM" type="add">
         The command-line now automatically sets two parameters for any XSLT transformation:
         "fop-output-format" contains the MIME type of the currently selected output format,
