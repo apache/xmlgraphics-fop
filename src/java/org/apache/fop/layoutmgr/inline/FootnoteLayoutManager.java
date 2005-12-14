@@ -30,12 +30,16 @@ import org.apache.fop.layoutmgr.KnuthSequence;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.Position;
 
+/**
+ * Layout manager for fo:footnote.
+ */
 public class FootnoteLayoutManager extends AbstractLayoutManager 
                                    implements InlineLevelLayoutManager {
 
     private Footnote footnote;
     private InlineStackingLayoutManager citationLM;
     private FootnoteBodyLayoutManager bodyLM;
+    private KnuthElement forcedAnchor;
 
     /**
      * Create a new footnote layout manager.
@@ -46,6 +50,7 @@ public class FootnoteLayoutManager extends AbstractLayoutManager
         footnote = node;
     }
     
+    /** @see org.apache.fop.layoutmgr.LayoutManager#initialize() */
     public void initialize() {
         // create an InlineStackingLM handling the fo:inline child of fo:footnote
         citationLM = new InlineLayoutManager(footnote.getFootnoteCitation());
@@ -54,6 +59,7 @@ public class FootnoteLayoutManager extends AbstractLayoutManager
         bodyLM = new FootnoteBodyLayoutManager(footnote.getFootnoteBody());
     }
 
+    /** @see org.apache.fop.layoutmgr.LayoutManager */
     public LinkedList getNextKnuthElements(LayoutContext context,
                                            int alignment) {
         // this is the only method that must be implemented:
@@ -79,7 +85,9 @@ public class FootnoteLayoutManager extends AbstractLayoutManager
             //Inline part of the footnote is empty. Need to send back an auxiliary
             //zero-width, zero-height inline box so the footnote gets painted.
             KnuthSequence seq = new KnuthSequence(true);
-            seq.add(new KnuthInlineBox(0, null, null, false));
+            //Need to use an aux. box, otherwise, the line height can't be forced to zero height.
+            forcedAnchor = new KnuthInlineBox(0, null, null, true);
+            seq.add(forcedAnchor);
             returnedList.add(seq);
         }
         setFinished(true);
@@ -106,7 +114,8 @@ public class FootnoteLayoutManager extends AbstractLayoutManager
                 ListIterator nestedIterator = seq.listIterator(seq.size());
                 while (nestedIterator.hasPrevious() && lastBox == null) {
                     KnuthElement element = (KnuthElement)nestedIterator.previous();
-                    if (element instanceof KnuthInlineBox && !element.isAuxiliary()) {
+                    if (element instanceof KnuthInlineBox && !element.isAuxiliary()
+                            || element == forcedAnchor) {
                         lastBox = (KnuthInlineBox) element;
                     }
                 }
@@ -115,10 +124,11 @@ public class FootnoteLayoutManager extends AbstractLayoutManager
         if (lastBox != null) {
             lastBox.setFootnoteBodyLM(bodyLM);
         } else {
-            throw new IllegalStateException("No anchor box was found for a footnote.");
+            //throw new IllegalStateException("No anchor box was found for a footnote.");
         }
     }
 
+    /** @see org.apache.fop.layoutmgr.inline.InlineLevelLayoutManager */
     public List addALetterSpaceTo(List oldList) {
         log.warn("null implementation of addALetterSpaceTo() called!");
         return oldList;
@@ -134,19 +144,25 @@ public class FootnoteLayoutManager extends AbstractLayoutManager
         log.warn(this.getClass().getName() + " should not receive a call to removeWordSpace(list)");
     }
 
+    /** @see org.apache.fop.layoutmgr.inline.InlineLevelLayoutManager */
     public void getWordChars(StringBuffer sbChars, Position pos) {
         log.warn("null implementation of getWordChars() called!");
     }
 
+    /** @see org.apache.fop.layoutmgr.inline.InlineLevelLayoutManager */
     public void hyphenate(Position pos, HyphContext hc) {
         log.warn("null implementation of hyphenate called!");
     }
 
+    /** @see org.apache.fop.layoutmgr.inline.InlineLevelLayoutManager */
     public boolean applyChanges(List oldList) {
         log.warn("null implementation of applyChanges() called!");
         return false;
     }
 
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#getChangedKnuthElements(java.util.List, int)
+     */
     public LinkedList getChangedKnuthElements(List oldList,
                                               int alignment) {
         log.warn("null implementation of getChangeKnuthElement() called!");
