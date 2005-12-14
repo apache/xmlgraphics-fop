@@ -18,7 +18,7 @@
 <testcase>
   <info>
     <p>
-      Regression check for an NPE in a block with no-wrap and hyphenation enabled.
+      Check for bug: Duplicate content and linefeeds as "#".
     </p>
   </info>
   <fo>
