@@ -1064,7 +1064,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                                                 0 : hyphenationLadderCount.getValue(),
                                         this);
    
-        if (hyphenationProperties.hyphenate == EN_TRUE) {
+        if (hyphenationProperties.hyphenate == EN_TRUE 
+                && fobj.getWrapOption() != EN_NO_WRAP) {
             findHyphenationPoints(currPar);
         }
    
@@ -1487,7 +1488,10 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 } else {
                     break;
                 }
+            } else if (currLM == null) {
+                break;
             }
+            //TODO Something's not right here. See block_hyphenation_linefeed_preserve.xml
             
             // collect word fragments, ignoring auxiliary elements;
             // each word fragment was created by a different TextLM
