@@ -418,7 +418,7 @@ public class FOUserAgent {
                     + "dpi (px2mm=" + getPixelUnitToMillimeter() + ")");
         } else if (userConfig.getChild("resolution", false) != null) {
             this.resolution 
-                = 25.4f / userConfig.getChild("resolution").getValueAsFloat(DEFAULT_RESOLUTION);
+                = userConfig.getChild("resolution").getValueAsFloat(DEFAULT_RESOLUTION);
             log.info("resolution set to: " + resolution 
                     + "dpi (px2mm=" + getPixelUnitToMillimeter() + ")");
         }
