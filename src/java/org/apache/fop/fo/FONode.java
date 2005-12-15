@@ -455,9 +455,13 @@ public abstract class FONode implements Cloneable {
      * @return the decorated text
      */
     public static String decorateWithContextInfo(String text, FONode node) {
-        StringBuffer sb = new StringBuffer(text);
-        sb.append(" (").append(node.getContextInfo()).append(")");
-        return sb.toString();
+        if (node != null) {
+            StringBuffer sb = new StringBuffer(text);
+            sb.append(" (").append(node.getContextInfo()).append(")");
+            return sb.toString();
+        } else {
+            return text;
+        }
     }
     
     /**

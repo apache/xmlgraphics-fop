@@ -21,6 +21,7 @@ package org.apache.fop.layoutmgr;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.fop.fo.FONode;
 import org.apache.fop.traits.MinOptMax;
 
 /**
@@ -427,9 +428,11 @@ public abstract class BreakingAlgorithm {
                         log.debug("first part doesn't fit into line, recovering: " 
                                 + node.fitRecoveryCounter);
                         if (node.fitRecoveryCounter > getMaxRecoveryAttempts()) {
-                            throw new RuntimeException("Some content could not fit "
+                            FONode contextFO = findContextFO(par, node.position + 1);
+                            throw new RuntimeException(FONode.decorateWithContextInfo(
+                                    "Some content could not fit "
                                     + "into a line/page after " + getMaxRecoveryAttempts() 
-                                    + " attempts. Giving up to avoid an endless loop.");
+                                    + " attempts. Giving up to avoid an endless loop.", contextFO));
                         }
                     } else {
                         lastForced = lastTooLong;
@@ -462,6 +465,33 @@ public abstract class BreakingAlgorithm {
 
         activeLines = null;
         return line;
+    }
+
+    /**
+     * This method tries to find the context FO for a position in a KnuthSequence.
+     * @param seq the KnuthSequence to inspect
+     * @param position the index of the position in the KnuthSequence
+     * @return the requested context FO note or null, if no context node could be determined
+     */
+    private FONode findContextFO(KnuthSequence seq, int position) {
+        KnuthElement el = seq.getElement(position);
+        while (el.getLayoutManager() == null && position < seq.size() - 1) {
+            position++;
+            el = seq.getElement(position);
+        }
+        Position pos = (el != null ? el.getPosition() : null);
+        LayoutManager lm = (pos != null ? pos.getLM() : null);
+        while (pos instanceof NonLeafPosition) {
+            pos = ((NonLeafPosition)pos).getPosition();
+            if (pos != null && pos.getLM() != null) {
+                lm = pos.getLM();
+            }
+        }
+        if (lm != null) {
+            return lm.getFObj();
+        } else {
+            return null;
+        }
     }
 
     protected void initialize() {
