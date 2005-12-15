@@ -916,7 +916,8 @@ public class TableContentLayoutManager implements PercentBaseContext {
                     if (gu == null 
                             && !currentGU.isEmpty() 
                             && currentGU.getColSpanIndex() == 0 
-                            && currentGU.isLastGridUnitColSpan()) {
+                            && currentGU.isLastGridUnitColSpan()
+                            && (forcedFlush || currentGU.isLastGridUnitRowSpan())) {
                         gu = currentGU.getPrimary();
                     }
                     if (gu != null) {

@@ -27,6 +27,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix">
+        Fixed a bug where the area for a finished cell that is broken over pages was 
+        created once for each row it was spanned over instead of only once.
+      </action>
       <action context="Code" dev="JM" type="add">
         Added checks that warn about tables and block-containers that are wider than
         the available content area.
