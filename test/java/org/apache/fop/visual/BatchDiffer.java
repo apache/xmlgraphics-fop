@@ -152,14 +152,14 @@ public class BatchDiffer {
     public void runBatch(Configuration cfg) {
         try {
             ProducerContext context = new ProducerContext();
-            context.setResolution(cfg.getChild("resolution").getValueAsInteger(72));
+            context.setTargetResolution(cfg.getChild("resolution").getValueAsInteger(72));
             String xslt = cfg.getChild("stylesheet").getValue(null);
             if (xslt != null) {
                 try {
                     context.setTemplates(context.getTransformerFactory().newTemplates(
                             new StreamSource(xslt)));
                 } catch (TransformerConfigurationException e) {
-                    // throw new RuntimeException("Error setting up stylesheet", e); // This is JDK 1.4 or later specific
+                    log.error("Error setting up stylesheet", e);
                     throw new RuntimeException("Error setting up stylesheet");
                 }
             }
@@ -252,7 +252,7 @@ public class BatchDiffer {
                 producers[i] = (BitmapProducer)clazz.newInstance();
                 ContainerUtil.configure(producers[i], children[i]);
             } catch (Exception e) {
-                // throw new RuntimeException("Error while setting up producers", e); // This is JDK 1.4 or later specific
+                log.error("Error setting up producers", e);
                 throw new RuntimeException("Error while setting up producers");
             }
         }

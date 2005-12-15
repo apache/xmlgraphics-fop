@@ -90,7 +90,7 @@ public class SVGReader implements ImageReader {
             try {
                 Loader loader = new Loader();
                 return loader.getImage(uri, bis, 
-                    ua.getPixelUnitToMillimeter());
+                    ua.getSourcePixelUnitToMillimeter());
             } catch (NoClassDefFoundError e) {
                 batik = false;
                 log.warn("Batik not in class path", e);

@@ -30,7 +30,7 @@ public class ProducerContext {
 
     private TransformerFactory tFactory;
     private Templates templates;
-    private int resolution;
+    private int targetResolution;
     private File targetDir;
     
     /**
@@ -46,16 +46,16 @@ public class ProducerContext {
     /**
      * @return the requested bitmap resolution in dpi for all bitmaps.
      */
-    public int getResolution() {
-        return resolution;
+    public int getTargetResolution() {
+        return targetResolution;
     }
 
     /**
      * Sets the requested bitmap resolution in dpi for all bitmaps.
      * @param resolution the resolution in dpi
      */
-    public void setResolution(int resolution) {
-        this.resolution = resolution;
+    public void setTargetResolution(int resolution) {
+        this.targetResolution = resolution;
     }
 
     /**

@@ -274,9 +274,11 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
                         + pageHeight + ")");
 
         double scaleX = scaleFactor 
-            * FOUserAgent.DEFAULT_PX2MM / userAgent.getPixelUnitToMillimeter();
+            * (25.4 / FOUserAgent.DEFAULT_TARGET_RESOLUTION) 
+            / userAgent.getTargetPixelUnitToMillimeter();
         double scaleY = scaleFactor
-            * FOUserAgent.DEFAULT_PX2MM / userAgent.getPixelUnitToMillimeter();
+            * (25.4 / FOUserAgent.DEFAULT_TARGET_RESOLUTION)
+            / userAgent.getTargetPixelUnitToMillimeter();
         int bitmapWidth = (int) ((pageWidth * scaleX) + 0.5);
         int bitmapHeight = (int) ((pageHeight * scaleY) + 0.5);
                 

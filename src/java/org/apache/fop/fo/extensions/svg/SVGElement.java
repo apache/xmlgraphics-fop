@@ -94,7 +94,7 @@ public class SVGElement extends SVGObj {
         }
 
         Element e = ((SVGDocument)doc).getRootElement();
-        final float ptmm = getUserAgent().getPixelUnitToMillimeter();
+        final float ptmm = getUserAgent().getSourcePixelUnitToMillimeter();
         // temporary svg context
         SVGContext dc = new SVGContext() {
             public float getPixelToMM() {
@@ -153,7 +153,7 @@ public class SVGElement extends SVGObj {
                                 SVGDOMImplementation.SVG_NAMESPACE_URI);
         //}
         int fontSize = 12;
-        Point2D p2d = getSize(fontSize, svgRoot, getUserAgent().getPixelUnitToMillimeter());
+        Point2D p2d = getSize(fontSize, svgRoot, getUserAgent().getSourcePixelUnitToMillimeter());
        ((SVGOMElement)e).setSVGContext(null);
 
         return p2d;

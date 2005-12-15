@@ -261,7 +261,7 @@ public class PSSVGHandler implements XMLHandler {
 
             SVGUserAgent ua
                  = new SVGUserAgent(
-                    context.getUserAgent().getPixelUnitToMillimeter(),
+                    context.getUserAgent().getSourcePixelUnitToMillimeter(),
                     new AffineTransform());
 
             GVTBuilder builder = new GVTBuilder();
