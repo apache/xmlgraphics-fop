@@ -35,7 +35,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.fo.Constants;
 
 /**
  * BitmapProducer implementation that uses the Java2DRenderer to create bitmaps.
@@ -63,7 +62,7 @@ public class BitmapProducerJava2D extends AbstractBitmapProducer implements Conf
     public BufferedImage produce(File src, ProducerContext context) {
         try {
             FOUserAgent userAgent = new FOUserAgent();
-            userAgent.setResolution(context.getResolution());
+            userAgent.setTargetResolution(context.getTargetResolution());
             userAgent.setBaseURL(src.getParentFile().toURL().toString());
             
             File outputFile = new File(context.getTargetDir(), src.getName() + ".java2d.png");

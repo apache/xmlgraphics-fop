@@ -118,7 +118,7 @@ public class PNGRenderer extends Java2DRenderer {
                 renderParams = PNGEncodeParam.getDefaultEncodeParam(image);
                 
                 // Set resolution
-                float pixSzMM = userAgent.getPixelUnitToMillimeter();
+                float pixSzMM = userAgent.getTargetPixelUnitToMillimeter();
                 // num Pixs in 1 Meter
                 int numPix = (int)((1000 / pixSzMM) + 0.5);
                 renderParams.setPhysicalDimension(numPix, numPix, 1); // 1 means 'pix/meter'

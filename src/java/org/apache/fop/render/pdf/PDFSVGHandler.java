@@ -27,8 +27,6 @@ import org.apache.fop.pdf.PDFState;
 import org.apache.fop.pdf.PDFStream;
 import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.svg.PDFBridgeContext;
-import org.apache.fop.svg.PDFTextElementBridge;
-import org.apache.fop.svg.PDFAElementBridge;
 import org.apache.fop.svg.PDFGraphics2D;
 import org.apache.fop.svg.SVGUserAgent;
 import org.apache.fop.fonts.FontInfo;
@@ -43,14 +41,12 @@ import org.apache.commons.logging.LogFactory;
 
 import java.io.OutputStream;
 
-import org.apache.batik.bridge.Bridge;
 import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.ViewBox;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 
 import org.apache.batik.gvt.GraphicsNode;
-import org.apache.batik.util.SVGConstants;
 
 import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGSVGElement;
@@ -227,12 +223,11 @@ public class PDFSVGHandler implements XMLHandler {
             int yOffset = pdfInfo.currentYPosition;
 
             log.debug("Generating SVG at " 
-                    + context.getUserAgent().getResolution()
+                    + context.getUserAgent().getTargetResolution()
                     + "dpi.");
+            final float deviceResolution = context.getUserAgent().getTargetResolution();
             
-            final int uaResolution = 72; //Should not be changed
-            final float deviceResolution 
-                        = context.getUserAgent().getResolution(); 
+            final float uaResolution = context.getUserAgent().getSourceResolution();
             SVGUserAgent ua = new SVGUserAgent(25.4f / uaResolution, new AffineTransform());
 
             GVTBuilder builder = new GVTBuilder();
@@ -280,14 +275,16 @@ public class PDFSVGHandler implements XMLHandler {
                               + yOffset / 1000f + " cm\n");
 
             SVGSVGElement svg = ((SVGDocument)doc).getRootElement();
-            //AffineTransform at = ViewBox.getPreserveAspectRatioTransform(svg, w / 1000f, h / 1000f);
+            //AffineTransform at = ViewBox.getPreserveAspectRatioTransform(
+            //                          svg, w / 1000f, h / 1000f);
             AffineTransform at = ViewBox.getPreserveAspectRatioTransform(svg,
                     pdfInfo.width / 1000f, pdfInfo.height / 1000f);
-            if (false && !at.isIdentity()) {
+            /*
+            if (!at.isIdentity()) {
                 double[] vals = new double[6];
                 at.getMatrix(vals);
                 pdfInfo.currentStream.add(CTMHelper.toPDFString(at, false) + " cm\n");
-            }
+            }*/
 
             if (pdfInfo.pdfContext == null) {
                 pdfInfo.pdfContext = pdfInfo.pdfPage;

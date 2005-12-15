@@ -291,7 +291,7 @@ public class CommandLineOptions implements Constants {
             throw new FOPException(
                     "if you use '-dpi', you must specify a resolution (dots per inch)");
         } else {
-            foUserAgent.setResolution(Integer.parseInt(args[i + 1]));
+            foUserAgent.setTargetResolution(Integer.parseInt(args[i + 1]));
             return 1;
         }
     }
@@ -769,7 +769,7 @@ public class CommandLineOptions implements Constants {
             + "  -c cfg.xml     use additional configuration file cfg.xml\n"
             + "  -l lang        the language to use for user information \n"
             + "  -r             relaxed/less strict validation (where available)\n"
-            + "  -dpi xxx       resolution in dots per inch (dpi) where xxx is a number\n"
+            + "  -dpi xxx       target resolution in dots per inch (dpi) where xxx is a number\n"
             + "  -s             for area tree XML, down to block areas only\n"
             + "  -v             to show FOP version being used\n\n"
             + "  -o [password]  PDF file will be encrypted with option owner password\n"

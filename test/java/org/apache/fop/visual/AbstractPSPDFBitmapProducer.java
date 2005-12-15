@@ -85,7 +85,7 @@ public abstract class AbstractPSPDFBitmapProducer extends AbstractBitmapProducer
         //Build command-line
         String cmd = MessageFormat.format(converter, 
                 new Object[] {inFile.toString(), outFile.toString(),
-                    Integer.toString(context.getResolution())});
+                    Integer.toString(context.getTargetResolution())});
         ConvertUtils.convert(cmd, null, null, log);
 
         if (!outFile.exists()) {
@@ -107,7 +107,7 @@ public abstract class AbstractPSPDFBitmapProducer extends AbstractBitmapProducer
     public BufferedImage produce(File src, ProducerContext context) {
         try {
             FOUserAgent userAgent = new FOUserAgent();
-            userAgent.setResolution(context.getResolution());
+            userAgent.setTargetResolution(context.getTargetResolution());
             userAgent.setBaseURL(src.getParentFile().toURL().toString());
 
             File tempOut = new File(context.getTargetDir(), 

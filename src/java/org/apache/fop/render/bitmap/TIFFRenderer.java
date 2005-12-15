@@ -130,8 +130,8 @@ public class TIFFRenderer extends Java2DRenderer {
         super.stopRenderer();
         log.debug("Starting Tiff encoding ...");
 
-        //Set resolution
-        float pixSzMM = userAgent.getPixelUnitToMillimeter();
+        //Set target resolution
+        float pixSzMM = userAgent.getTargetPixelUnitToMillimeter();
         // num Pixs in 100 Meters
         int numPix = (int)(((1000 * 100) / pixSzMM) + 0.5); 
         int denom = 100 * 100;  // Centimeters per 100 Meters;

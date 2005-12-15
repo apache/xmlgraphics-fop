@@ -157,7 +157,7 @@ public class Java2DSVGHandler implements XMLHandler {
             int x = info.currentXPosition;
             int y = info.currentYPosition;
             
-            float ptom = context.getUserAgent().getPixelUnitToMillimeter();
+            float ptom = context.getUserAgent().getSourcePixelUnitToMillimeter();
             SVGUserAgent ua = new SVGUserAgent(ptom, new AffineTransform());
             
             GVTBuilder builder = new GVTBuilder();
