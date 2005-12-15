@@ -942,6 +942,16 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             }
         }
         
+        // TODO
+        // Add zero width box to avoid any nbspace to be removed
+        // at the end of a paragraph.
+        // This is kind of a hack and should be removed once the
+        // whole line building and white space handling is revisited.
+        if (textArray[ai.iStartIndex] == NBSPACE) {
+            spaceElements.add
+                (new KnuthInlineBox(0, null,
+                                    notifyPos(new LeafPosition(this, -1)), false));
+        }
         return spaceElements;
     }
 
