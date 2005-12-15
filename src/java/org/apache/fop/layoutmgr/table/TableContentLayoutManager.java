@@ -728,7 +728,9 @@ public class TableContentLayoutManager implements PercentBaseContext {
                     lst.clear();
                 }
             } else {
-                log.debug("Ignoring position: " + pos);
+                if (log.isDebugEnabled()) {
+                    log.debug("Ignoring position: " + pos);
+                }
             }
         }
         if (body != null) {
