@@ -41,6 +41,7 @@ import org.apache.fop.traits.SpaceVal;
 import java.util.Iterator;
 import java.util.LinkedList;
 import org.apache.fop.datatypes.LengthBase;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 
 /**
@@ -170,6 +171,14 @@ public class TableLayoutManager extends BlockStackingLayoutManager
             updateContentAreaIPDwithOverconstrainedAdjust();
         }
 
+        if (getContentAreaIPD() > context.getRefIPD()) {
+            log.warn(FONode.decorateWithContextInfo(
+                    "The extent in inline-progression-direction (width) of a table is"
+                    + " bigger than the available space (" 
+                    + getContentAreaIPD() + "mpt > " + context.getRefIPD() + "mpt)", 
+                    getTable()));
+        }
+        
         // either works out table of column widths or if proportional-column-width function
         // is used works out total factor, so that value of single unit can be computed.
         int sumCols = 0;

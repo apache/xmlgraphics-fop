@@ -27,6 +27,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="add">
+        Added checks that warn about tables and block-containers that are wider than
+        the available content area.
+      </action>
       <action context="Code" dev="JM" type="fix" fixes-bug="37880">
         Bugfix: Footnotes were lost if the footnote appeared in centered text.
       </action>

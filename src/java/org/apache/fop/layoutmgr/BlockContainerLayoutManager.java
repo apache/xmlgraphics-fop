@@ -28,6 +28,7 @@ import org.apache.fop.area.Area;
 import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.Trait;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.BlockContainer;
 import org.apache.fop.fo.properties.CommonAbsolutePosition;
 import org.apache.fop.area.CTM;
@@ -225,6 +226,14 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         absoluteCTM = CTM.getCTMandRelDims(getBlockContainerFO().getReferenceOrientation(),
                 getBlockContainerFO().getWritingMode(), rect, relDims);
 
+        if (rect.getWidth() > context.getRefIPD()) {
+            log.warn(FONode.decorateWithContextInfo(
+                    "The extent in inline-progression-direction (width) of a block-container is"
+                    + " bigger than the available space (" 
+                    + rect.getWidth() + "mpt > " + context.getRefIPD() + "mpt)", 
+                    getBlockContainerFO()));
+        }
+        
         MinOptMax stackLimit = new MinOptMax(relDims.bpd);
 
         LinkedList returnedList = null;
