@@ -27,6 +27,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix" fixes-bug="37875">
+        Bugfix: Some content inside a table-header may not have been renderered on
+        pages n &gt; 1 in certain conditions.
+      </action>
       <action context="Code" dev="MM" type="fix">
         Fixed a bug where an empty line, i.e. a block containing only a &amp;nbsp;,
         was not rendered at all.

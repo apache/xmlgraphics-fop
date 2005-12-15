@@ -100,6 +100,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
      */
     private static class LineBreakPosition extends LeafPosition {
         private int iParIndex; // index of the Paragraph this Position refers to
+        private int iStartIndex; //index of the first element this Position refers to
         private int availableShrink;
         private int availableStretch;
         private int difference;
@@ -112,7 +113,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         private int spaceAfter;
         private int baseline;
 
-        LineBreakPosition(LayoutManager lm, int index, int iBreakIndex,
+        LineBreakPosition(LayoutManager lm, int index, int iStartIndex, int iBreakIndex,
                           int shrink, int stretch, int diff,
                           double ipdA, double adjust, int ind,
                           int lh, int lw, int sb, int sa, int bl) {
@@ -121,6 +122,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             availableStretch = stretch;
             difference = diff;
             iParIndex = index;
+            this.iStartIndex = iStartIndex;
             ipdAdjust = ipdA;
             dAdjust = adjust;
             startIndent = ind;
@@ -139,7 +141,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     private int effectiveAlignment;
     private Length textIndent;
     private Length lastLineEndIndent;
-    private int iIndents = 0;
     private CommonHyphenation hyphenationProperties;
     private Numeric hyphenationLadderCount;
     private int wrapOption = EN_WRAP;
@@ -152,8 +153,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
 
     private List knuthParagraphs = null;
     private int iReturnedLBP = 0;
-    private int iStartElement = 0;
-    private int iEndElement = 0;
 
     //     parameters of Knuth's algorithm:
     // penalty value for flagged penalties
@@ -531,13 +530,13 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             if (bZeroHeightLine) {
                 return new LineBreakPosition(thisLLM,
                                              knuthParagraphs.indexOf(par),
-                                             lastElementIndex,
+                                             firstElementIndex, lastElementIndex,
                                              availableShrink, availableStretch, difference, ratio, 0, indent,
                                              0, iLineWidth, 0, 0, 0);
             } else {
                 return new LineBreakPosition(thisLLM,
                                              knuthParagraphs.indexOf(par),
-                                             lastElementIndex,
+                                             firstElementIndex, lastElementIndex,
                                              availableShrink, availableStretch, difference, ratio, 0, indent,
                                              lineLead + lineFollow, 
                                              iLineWidth, spaceBefore, spaceAfter,
@@ -1038,7 +1037,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             }
         }
         LineBreakPosition lbp = new LineBreakPosition(this,
-                knuthParagraphs.indexOf(seq), seq.size() - 1,
+                knuthParagraphs.indexOf(seq), 0, seq.size() - 1,
                 lineShrink, lineStretch, 0, 0, 0, 0, lineHeight,
                 iLineWidth, 0, 0, 0);
         lineLayouts.addBreakPosition(lbp, 0);
@@ -1694,8 +1693,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     
                 LineBreakPosition lbp = (LineBreakPosition) pos;
                 iCurrParIndex = lbp.iParIndex;
-                KnuthSequence seq = (KnuthSequence) knuthParagraphs.get(iCurrParIndex); 
-                iEndElement = lbp.getLeafPos();
+                KnuthSequence seq = (KnuthSequence) knuthParagraphs.get(iCurrParIndex);
+                int iStartElement = lbp.iStartIndex;
+                int iEndElement = lbp.getLeafPos();
     
                 LineArea lineArea = new LineArea((lbp.getLeafPos() < seq.size() - 1 ? textAlignment : textAlignmentLast),
                                                  lbp.difference, lbp.availableStretch, lbp.availableShrink);
