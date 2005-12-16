@@ -49,9 +49,11 @@ public interface XMLHandler {
             Document doc, String ns) throws Exception;
     
     /**
-     * @return the MIME type for which this XMLHandler was written
+     * Checks if this XMLHandler supports handling an XML namespace for a particular renderer.
+     * @param renderer the renderer for which to check.
+     * @return true if this XML handler supports a particular renderer
      */
-    String getMimeType();
+    boolean supportsRenderer(Renderer renderer);
 
     /**
      * @return the XML namespace for the XML dialect this XMLHandler supports, 

@@ -155,8 +155,6 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
      */
     public void setUserAgent(FOUserAgent foUserAgent) {
         super.setUserAgent(foUserAgent);
-        Java2DSVGHandler xmlHandler = new Java2DSVGHandler(getMimeType());
-        userAgent.getXMLHandlerRegistry().addXMLHandler(xmlHandler);
         userAgent.setRendererOverride(this); // for document regeneration
     }
 
@@ -1148,14 +1146,14 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
         context = new RendererContext(this, getMimeType());
         context.setUserAgent(userAgent);
 
-        context.setProperty(Java2DSVGHandler.JAVA2D_STATE, state);
-        context.setProperty(Java2DSVGHandler.JAVA2D_XPOS,
+        context.setProperty(Java2DRendererContextConstants.JAVA2D_STATE, state);
+        context.setProperty(Java2DRendererContextConstants.XPOS,
                             new Integer(currentIPPosition + (int)pos.getX()));
-        context.setProperty(Java2DSVGHandler.JAVA2D_YPOS,
+        context.setProperty(Java2DRendererContextConstants.YPOS,
                             new Integer(currentBPPosition + (int)pos.getY()));
-        context.setProperty(Java2DSVGHandler.JAVA2D_WIDTH,
+        context.setProperty(Java2DRendererContextConstants.WIDTH,
                             new Integer((int)pos.getWidth()));
-        context.setProperty(Java2DSVGHandler.JAVA2D_HEIGHT,
+        context.setProperty(Java2DRendererContextConstants.HEIGHT,
                             new Integer((int) pos.getHeight()));
         
         renderXML(context, doc, ns);

@@ -20,6 +20,7 @@ package org.apache.fop.render.xml;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.render.Renderer;
 import org.apache.fop.render.XMLHandler;
 import org.apache.fop.render.RendererContext;
 
@@ -132,9 +133,9 @@ public class XMLXMLHandler implements XMLHandler {
         }
     }
 
-    /** @see org.apache.fop.render.XMLHandler#getMimeType() */
-    public String getMimeType() {
-        return XMLRenderer.XML_MIME_TYPE;
+    /** @see org.apache.fop.render.XMLHandler#supportsRenderer(org.apache.fop.render.Renderer) */
+    public boolean supportsRenderer(Renderer renderer) {
+        return (renderer instanceof XMLRenderer);
     }
 
     /** @see org.apache.fop.render.XMLHandler#getNamespace() */

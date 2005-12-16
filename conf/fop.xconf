@@ -79,14 +79,18 @@ the location of this file.
         -->
       </fonts>
 
-      <xmlHandler mime="text/svg+xml">
-      </xmlHandler>
+      <!-- This option lets you specify additional options on an XML handler -->
+      <!--xml-handler namespace="http://www.w3.org/2000/svg">
+        <stroke-text>false</stroke-text>
+      </xml-handler-->
 
     </renderer>
 
     <renderer mime="application/postscript">
-      <xmlHandler mime="image/svg+xml">
-      </xmlHandler>
+      <!-- This option lets you specify additional options on an XML handler -->
+      <!--xml-handler namespace="http://www.w3.org/2000/svg">
+        <stroke-text>false</stroke-text>
+      </xml-handler-->
     </renderer>
 
     <renderer mime="application/vnd.hp-PCL">

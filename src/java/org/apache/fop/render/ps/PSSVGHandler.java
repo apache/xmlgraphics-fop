@@ -23,12 +23,12 @@ import java.awt.geom.AffineTransform;
 import java.io.IOException;
 
 // DOM
-/* org.w3c.dom.Document is not imported to avoid conflict with
-   org.apache.fop.control.Document */
+import org.w3c.dom.Document;
 import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGSVGElement;
 
 // Batik
+import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.ViewBox;
@@ -37,6 +37,7 @@ import org.apache.batik.gvt.GraphicsNode;
 
 // FOP
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.render.Renderer;
 import org.apache.fop.render.XMLHandler;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.svg.SVGUserAgent;
@@ -51,45 +52,12 @@ import org.apache.commons.logging.LogFactory;
  * It renders SVG to the PostScript document using the PSGraphics2D.
  * The properties from the PostScript renderer are subject to change.
  *
- * @author <a href="mailto:fop-dev@xml.apache.org">Apache XML FOP Development Team</a>
  * @version $Id$
  */
-public class PSSVGHandler implements XMLHandler {
+public class PSSVGHandler implements XMLHandler, PSRendererContextConstants {
 
-    /**
-     * logging instance
-     */
-    private Log log = LogFactory.getLog(PSSVGHandler.class);
-
-    /**
-     * The PostScript generator that is being used to drawn into.
-     */
-    public static final String PS_GENERATOR = "psGenerator";
-
-    /**
-     * The font information for the PostScript renderer.
-     */
-    public static final String PS_FONT_INFO = "psFontInfo";
-
-    /**
-     * The width of the SVG graphic.
-     */
-    public static final String PS_WIDTH = "width";
-
-    /**
-     * The height of the SVG graphic.
-     */
-    public static final String PS_HEIGHT = "height";
-
-    /**
-     * The x position that this is being drawn at.
-     */
-    public static final String PS_XPOS = "xpos";
-
-    /**
-     * The y position that this is being drawn at.
-     */
-    public static final String PS_YPOS = "ypos";
+    /** logging instance */
+    private static Log log = LogFactory.getLog(PSSVGHandler.class);
 
     /**
      * Create a new PostScript XML handler for use by the PostScript renderer.
@@ -99,14 +67,11 @@ public class PSSVGHandler implements XMLHandler {
 
     /** @see org.apache.fop.render.XMLHandler */
     public void handleXML(RendererContext context, 
-                org.w3c.dom.Document doc, String ns) throws Exception {
+                Document doc, String ns) throws Exception {
         PSInfo psi = getPSInfo(context);
 
         if (SVGDOMImplementation.SVG_NAMESPACE_URI.equals(ns)) {
-            SVGHandler svghandler = new SVGHandler();
-            svghandler.renderSVGDocument(context, doc, psi);
-        } else {
-            //nop
+            renderSVGDocument(context, doc, psi);
         }
     }
 
@@ -120,10 +85,11 @@ public class PSSVGHandler implements XMLHandler {
         PSInfo psi = new PSInfo();
         psi.psGenerator = (PSGenerator)context.getProperty(PS_GENERATOR);
         psi.fontInfo = (org.apache.fop.fonts.FontInfo) context.getProperty(PS_FONT_INFO);
-        psi.width = ((Integer)context.getProperty(PS_WIDTH)).intValue();
-        psi.height = ((Integer)context.getProperty(PS_HEIGHT)).intValue();
-        psi.currentXPosition = ((Integer)context.getProperty(PS_XPOS)).intValue();
-        psi.currentYPosition = ((Integer)context.getProperty(PS_YPOS)).intValue();
+        psi.width = ((Integer)context.getProperty(WIDTH)).intValue();
+        psi.height = ((Integer)context.getProperty(HEIGHT)).intValue();
+        psi.currentXPosition = ((Integer)context.getProperty(XPOS)).intValue();
+        psi.currentYPosition = ((Integer)context.getProperty(YPOS)).intValue();
+        psi.cfg = (Configuration)context.getProperty(HANDLER_CONFIGURATION);
         return psi;
     }
 
@@ -136,14 +102,17 @@ public class PSSVGHandler implements XMLHandler {
         private PSGenerator psGenerator;
         /** see PS_FONT_INFO */
         private org.apache.fop.fonts.FontInfo fontInfo;
-        /** see PS_PAGE_WIDTH */
+        /** see WIDTH */
         private int width;
-        /** see PS_PAGE_HEIGHT */
+        /** see HEIGHT */
         private int height;
-        /** see PS_XPOS */
+        /** see XPOS */
         private int currentXPosition;
-        /** see PS_YPOS */
+        /** see YPOS */
         private int currentYPosition;
+        /** see HANDLER_CONFIGURATION */
+        private Configuration cfg;
+
         /**
          * Returns the PSGenerator.
          * @return PSGenerator
@@ -240,122 +209,134 @@ public class PSSVGHandler implements XMLHandler {
             this.height = height;
         }
 
+        /**
+         * Returns the height.
+         * @return int
+         */
+        public Configuration getHandlerConfiguration() {
+            return this.cfg;
+        }
+
+        /**
+         * Sets the handler configuration.
+         * @param cfg the configuration object
+         */
+        public void setHeight(Configuration cfg) {
+            this.cfg = cfg;
+        }
+
     }
 
     /**
-     * This method is placed in an inner class so that we don't get class
-     * loading errors if batik is not present.
+     * Render the svg document.
+     * @param context the renderer context
+     * @param doc the svg document
+     * @param psInfo the pdf information of the current context
      */
-    protected class SVGHandler {
-        /**
-         * Render the svg document.
-         * @param context the renderer context
-         * @param doc the svg document
-         * @param psInfo the pdf information of the current context
-         */
-        protected void renderSVGDocument(RendererContext context,
-                org.w3c.dom.Document doc, PSInfo psInfo) {
-            int xOffset = psInfo.currentXPosition;
-            int yOffset = psInfo.currentYPosition;
-            PSGenerator gen = psInfo.psGenerator;
+    protected void renderSVGDocument(RendererContext context,
+            Document doc, PSInfo psInfo) {
+        int xOffset = psInfo.currentXPosition;
+        int yOffset = psInfo.currentYPosition;
+        PSGenerator gen = psInfo.psGenerator;
 
-            SVGUserAgent ua
-                 = new SVGUserAgent(
-                    context.getUserAgent().getSourcePixelUnitToMillimeter(),
-                    new AffineTransform());
+        //Controls whether text painted by Batik is generated using text or path operations
+        boolean strokeText = false;
+        Configuration cfg = psInfo.getHandlerConfiguration();
+        if (cfg != null) {
+            strokeText = cfg.getChild("stroke-text", true).getValueAsBoolean(strokeText);
+        }
 
-            GVTBuilder builder = new GVTBuilder();
-            BridgeContext ctx = new BridgeContext(ua);
+        SVGUserAgent ua
+             = new SVGUserAgent(
+                context.getUserAgent().getSourcePixelUnitToMillimeter(),
+                new AffineTransform());
+
+        GVTBuilder builder = new GVTBuilder();
+        BridgeContext ctx = new BridgeContext(ua);
+        if (!strokeText) {
             PSTextPainter textPainter = new PSTextPainter(psInfo.getFontInfo());
             ctx.setTextPainter(textPainter);            
             PSTextElementBridge tBridge = new PSTextElementBridge(textPainter);
             ctx.putBridge(tBridge);
+        }
 
-            //PSAElementBridge aBridge = new PSAElementBridge();
-            // to get the correct transform we need to use the PDFState
-            AffineTransform transform = gen.getCurrentState().getTransform();
-            transform.translate(xOffset / 1000f, yOffset / 1000f);
-            //aBridge.setCurrentTransform(transform);
-            //ctx.putBridge(aBridge);
+        GraphicsNode root;
+        try {
+            root = builder.build(ctx, doc);
+        } catch (Exception e) {
+            log.error("SVG graphic could not be built: "
+                                   + e.getMessage(), e);
+            return;
+        }
+        // get the 'width' and 'height' attributes of the SVG document
+        float w = (float)ctx.getDocumentSize().getWidth() * 1000f;
+        float h = (float)ctx.getDocumentSize().getHeight() * 1000f;
 
-            GraphicsNode root;
+        float sx = psInfo.getWidth() / (float)w;
+        float sy = psInfo.getHeight() / (float)h;
+
+        ctx = null;
+        builder = null;
+
+        try {
+            gen.commentln("%FOPBeginSVG");
+            gen.saveGraphicsState();
+            /*
+             * Clip to the svg area.
+             * Note: To have the svg overlay (under) a text area then use
+             * an fo:block-container
+             */
+            gen.writeln("newpath");
+            gen.defineRect(xOffset / 1000f, yOffset / 1000f, 
+                    psInfo.getWidth() / 1000f, psInfo.getHeight() / 1000f);
+            gen.writeln("clip");
+            
+            // transform so that the coordinates (0,0) is from the top left
+            // and positive is down and to the right. (0,0) is where the
+            // viewBox puts it.
+            gen.concatMatrix(sx, 0, 0, sy, xOffset / 1000f, yOffset / 1000f);
+
+            SVGSVGElement svg = ((SVGDocument)doc).getRootElement();
+            AffineTransform at = ViewBox.getPreserveAspectRatioTransform(svg,
+                    psInfo.getWidth() / 1000f, psInfo.getHeight() / 1000f);
+            /*
+            if (!at.isIdentity()) {
+                double[] vals = new double[6];
+                at.getMatrix(vals);
+                gen.concatMatrix(vals);
+            }*/
+
+            final boolean textAsShapes = false;
+            PSGraphics2D graphics = new PSGraphics2D(textAsShapes, gen);
+            graphics.setGraphicContext(new org.apache.batik.ext.awt.g2d.GraphicContext());
+            AffineTransform transform = new AffineTransform();
+            // scale to viewbox
+            transform.translate(xOffset, yOffset);
+            gen.getCurrentState().concatMatrix(transform);
             try {
-                root = builder.build(ctx, doc);
+                root.paint(graphics);
             } catch (Exception e) {
-                log.error("SVG graphic could not be built: "
-                                       + e.getMessage(), e);
-                return;
-            }
-            // get the 'width' and 'height' attributes of the SVG document
-            float w = (float)ctx.getDocumentSize().getWidth() * 1000f;
-            float h = (float)ctx.getDocumentSize().getHeight() * 1000f;
-
-            float sx = psInfo.getWidth() / (float)w;
-            float sy = psInfo.getHeight() / (float)h;
-
-            ctx = null;
-            builder = null;
-
-            try {
-                gen.commentln("%FOPBeginSVG");
-                gen.saveGraphicsState();
-                /*
-                 * Clip to the svg area.
-                 * Note: To have the svg overlay (under) a text area then use
-                 * an fo:block-container
-                 */
-                gen.writeln("newpath");
-                gen.defineRect(xOffset / 1000f, yOffset / 1000f, 
-                        psInfo.getWidth() / 1000f, psInfo.getWidth() / 1000f);
-                //TODO Is the above correct? Twice getWidth??????????????
-                gen.writeln("clip");
-                
-                // transform so that the coordinates (0,0) is from the top left
-                // and positive is down and to the right. (0,0) is where the
-                // viewBox puts it.
-                gen.concatMatrix(sx, 0, 0, sy, xOffset / 1000f, yOffset / 1000f);
-
-                SVGSVGElement svg = ((SVGDocument)doc).getRootElement();
-                AffineTransform at = ViewBox.getPreserveAspectRatioTransform(svg,
-                        psInfo.getWidth() / 1000f, psInfo.getHeight() / 1000f);
-                if (false && !at.isIdentity()) {
-                    double[] vals = new double[6];
-                    at.getMatrix(vals);
-                    gen.concatMatrix(vals);
-                }
-
-                final boolean textAsShapes = false;
-                PSGraphics2D graphics = new PSGraphics2D(textAsShapes, gen);
-                graphics.setGraphicContext(new org.apache.batik.ext.awt.g2d.GraphicContext());
-                transform = new AffineTransform();
-                // scale to viewbox
-                transform.translate(xOffset, yOffset);
-                gen.getCurrentState().concatMatrix(transform);
-                try {
-                    root.paint(graphics);
-                } catch (Exception e) {
-                    log.error("SVG graphic could not be rendered: "
-                                           + e.getMessage(), e);
-                }
-
-                gen.restoreGraphicsState();
-                gen.commentln("%FOPEndSVG");
-            } catch (IOException ioe) {
                 log.error("SVG graphic could not be rendered: "
-                                       + ioe.getMessage(), ioe);
+                                       + e.getMessage(), e);
             }
+
+            gen.restoreGraphicsState();
+            gen.commentln("%FOPEndSVG");
+        } catch (IOException ioe) {
+            log.error("SVG graphic could not be rendered: "
+                                   + ioe.getMessage(), ioe);
         }
     }
 
-    /** @see org.apache.fop.render.XMLHandler#getMimeType() */
-    public String getMimeType() {
-        return PSRenderer.MIME_TYPE;
+    /** @see org.apache.fop.render.XMLHandler#supportsRenderer(org.apache.fop.render.Renderer) */
+    public boolean supportsRenderer(Renderer renderer) {
+        return (renderer instanceof PSRenderer);
     }
-
+    
     /** @see org.apache.fop.render.XMLHandler#getNamespace() */
     public String getNamespace() {
         return SVGDOMImplementation.SVG_NAMESPACE_URI;
     }
-    
+
 }
 
