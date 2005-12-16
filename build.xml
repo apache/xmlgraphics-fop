@@ -376,6 +376,11 @@ list of possible build targets.
       <patternset refid="exclude-jimi"/>
       <classpath refid="libs-build-classpath"/>
     </javac>
+    <copy todir="${build.classes.dir}">
+      <fileset dir="${src.java.dir}">
+        <include name="META-INF/**"/>
+      </fileset>
+    </copy>
     <mkdir dir="${build.viewer.resources.dir}"/>
     <copy todir="${build.viewer.resources.dir}">
       <fileset dir="${src.viewer.resources.dir}"/>
@@ -451,7 +456,7 @@ list of possible build targets.
     <tstamp>
       <format property="ts" pattern="yyyyMMdd-HHmmss-z"/>
     </tstamp>
-    <jar jarfile="${build.dir}/fop.jar" basedir="${build.classes.dir}" includes="org/**">
+    <jar jarfile="${build.dir}/fop.jar" basedir="${build.classes.dir}">
       <manifest>
         <attribute name="Main-Class" value="org.apache.fop.cli.Main"/>
         <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}])"/>

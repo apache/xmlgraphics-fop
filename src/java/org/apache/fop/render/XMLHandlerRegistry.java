@@ -19,6 +19,7 @@
 package org.apache.fop.render;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -38,7 +39,6 @@ public class XMLHandlerRegistry {
     /** Map containing XML handlers for various document types */
     private Map handlers = new java.util.HashMap();
     
-    
     /**
      * Default constructor.
      */
@@ -47,13 +47,11 @@ public class XMLHandlerRegistry {
     }
     
     /**
-     * Set the default XML handler for the given MIME type.
-     * @param mime MIME type
+     * Add a default XML handler which is able to handle any namespace.
      * @param handler XMLHandler to use
      */
-    private void setDefaultXMLHandler(String mime,
-                                     XMLHandler handler) {
-        addXMLHandler(mime, XMLHandler.HANDLE_ALL, handler);
+    private void setDefaultXMLHandler(XMLHandler handler) {
+        addXMLHandler(XMLHandler.HANDLE_ALL, handler);
     }
     
     /**
@@ -62,8 +60,7 @@ public class XMLHandlerRegistry {
      */
     public void addXMLHandler(String classname) {
         try {
-            XMLHandler handlerInstance =
-                (XMLHandler)Class.forName(classname).newInstance();
+            XMLHandler handlerInstance = (XMLHandler)Class.forName(classname).newInstance();
             addXMLHandler(handlerInstance);
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException("Could not find "
@@ -86,58 +83,53 @@ public class XMLHandlerRegistry {
      * @param handler the XMLHandler instance
      */
     public void addXMLHandler(XMLHandler handler) {
-        String mime = handler.getMimeType();
         String ns = handler.getNamespace();
         if (ns == null) {
-            setDefaultXMLHandler(mime, handler);
+            setDefaultXMLHandler(handler);
         } else {
-            addXMLHandler(mime, ns, handler);
+            addXMLHandler(ns, handler);
         }
     }
     
     /**
      * Add an XML handler for the given MIME type and XML namespace.
-     * @param mime MIME type
      * @param ns Namespace URI
      * @param handler XMLHandler to use
      */
-    private void addXMLHandler(String mime, String ns,
+    private void addXMLHandler(String ns,
                               XMLHandler handler) {
-        Map mh = (Map)handlers.get(mime);
-        if (mh == null) {
-            mh = new java.util.HashMap();
-            handlers.put(mime, mh);
+        List lst = (List)handlers.get(ns);
+        if (lst == null) {
+            lst = new java.util.ArrayList();
+            handlers.put(ns, lst);
         }
-        mh.put(ns, handler);
+        lst.add(handler);
     }
     
     /**
      * Returns an XMLHandler which handles an XML dialect of the given namespace and for
      * a specified output format defined by its MIME type.
-     * @param mime the MIME type of the output format
+     * @param renderer the Renderer for which to retrieve a Renderer
      * @param ns the XML namespace associated with the XML to be rendered
      * @return the XMLHandler responsible for handling the XML or null if none is available
      */
-    public XMLHandler getXMLHandler(String mime, String ns) {
-        XMLHandler handler = null;
+    public XMLHandler getXMLHandler(Renderer renderer, String ns) {
+        XMLHandler handler;
 
-        Map mh = (Map)handlers.get(mime);
-        if (mh != null) {
-            handler = (XMLHandler)mh.get(ns);
-            if (handler == null) {
-                handler = (XMLHandler)mh.get(XMLHandler.HANDLE_ALL);
-            }
+        List lst = (List)handlers.get(ns);
+        if (lst == null) {
+            lst = (List)handlers.get(XMLHandler.HANDLE_ALL);
         }
-        if (handler == null) {
-            mh = (Map)handlers.get(XMLHandler.HANDLE_ALL);
-            if (mh != null) {
-                handler = (XMLHandler)mh.get(ns);
-                if (handler == null) {
-                    handler = (XMLHandler)mh.get(XMLHandler.HANDLE_ALL);
+        if (lst != null) {
+            for (int i = 0, c = lst.size(); i < c; i++) {
+                //TODO Maybe add priorities later
+                handler = (XMLHandler)lst.get(i);
+                if (handler.supportsRenderer(renderer)) {
+                    return handler;
                 }
             }
         }
-        return handler;
+        return null; //No handler found
     }
     
     
@@ -147,8 +139,7 @@ public class XMLHandlerRegistry {
      */
     private void discoverXMLHandlers() {
         // add mappings from available services
-        Iterator providers =
-            Service.providers(XMLHandler.class);
+        Iterator providers = Service.providers(XMLHandler.class);
         if (providers != null) {
             while (providers.hasNext()) {
                 String str = (String)providers.next();

@@ -19,7 +19,6 @@
 package org.apache.fop.render;
 
 // Java
-import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
@@ -767,6 +766,39 @@ public abstract class AbstractRenderer
     }
 
     /**
+     * Returns the configuration subtree for a specific renderer.
+     * @param cfg the renderer configuration
+     * @param namespace the namespace (i.e. the XMLHandler) for which the configuration should
+     *                  be returned
+     * @return the requested configuration subtree, null if there's no configuration
+     */
+    public static Configuration getHandlerConfig(Configuration cfg, String namespace) {
+
+        if (cfg == null || namespace == null) {
+            return null;
+        }
+
+        Configuration handlerConfig = null;
+
+        Configuration[] children = cfg.getChildren("xml-handler");
+        for (int i = 0; i < children.length; ++i) {
+            try {
+                if (children[i].getAttribute("namespace").equals(namespace)) {
+                    handlerConfig = children[i];
+                    break;
+                }
+            } catch (ConfigurationException e) {
+                // silently pass over configurations without namespace
+            }
+        }
+        if (log.isDebugEnabled()) {
+            log.debug((handlerConfig == null ? "No" : "")
+                    + "XML handler configuration found for namespace " + namespace);
+        }
+        return handlerConfig;
+    }
+
+    /**
      * Render the xml document with the given xml namespace.
      * The Render Context is by the handle to render into the current
      * rendering target.
@@ -776,11 +808,19 @@ public abstract class AbstractRenderer
      */
     public void renderXML(RendererContext ctx, Document doc,
                           String namespace) {
-        String mime = ctx.getMimeType();
         XMLHandler handler = userAgent.getXMLHandlerRegistry().getXMLHandler(
-                mime, namespace);
+                this, namespace);
         if (handler != null) {
             try {
+                //Optional XML handler configuration
+                Configuration cfg = userAgent.getUserRendererConfig(getMimeType());
+                if (cfg != null) {
+                    cfg = getHandlerConfig(cfg, namespace);
+                    if (cfg != null) {
+                        ctx.setProperty(RendererContextConstants.HANDLER_CONFIGURATION, cfg);
+                    }
+                }
+                
                 handler.handleXML(ctx, doc, namespace);
             } catch (Throwable t) {
                 // could not handle document

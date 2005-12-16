@@ -29,21 +29,17 @@ import org.apache.fop.svg.SVGUtilities;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.apps.FOUserAgent;
 
-import org.w3c.dom.Node;
-import org.w3c.dom.svg.SVGSVGElement;
-import org.w3c.dom.svg.SVGDocument;
 /* org.w3c.dom.Document is not imported to avoid conflict with
    org.apache.fop.control.Document */
 import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
-import org.apache.batik.dom.util.XMLSupport;
 import org.apache.batik.transcoder.svg2svg.SVGTranscoder;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.TranscoderException;
-import org.apache.batik.dom.util.DOMUtilities;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -60,7 +56,7 @@ import org.apache.fop.render.RendererContext;
 /**
  * This is the SVG renderer.
  */
-public class SVGRenderer extends AbstractRenderer implements XMLHandler {
+public class SVGRenderer extends AbstractRenderer {
 
     /** SVG MIME type */
     public static final String SVG_MIME_TYPE = "image/svg+xml";
@@ -80,8 +76,6 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
 
     // first sequence title
     private LineArea docTitle = null;
-
-    private RendererContext context;
 
     private OutputStream ostream;
 
@@ -119,7 +113,6 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
      * Creates a new SVG renderer.
      */
     public SVGRenderer() {
-        context = new RendererContext(this, SVG_MIME_TYPE);
     }
 
     /**
@@ -127,7 +120,15 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
      */
     public void setUserAgent(FOUserAgent agent) {
         super.setUserAgent(agent);
-        userAgent.getXMLHandlerRegistry().addXMLHandler(this);
+        
+        //Note: This is done here as having two service lookup files in the same IDE project
+        //will end up with one overwriting the other when all sources are compiled in to the
+        //same target directory. Remove this code and add an entry in the XMLHandler resource
+        //file when this renderer exits the sandbox.
+        XMLHandler handler = agent.getXMLHandlerRegistry().getXMLHandler(this, SVG_NAMESPACE);
+        if (handler == null) {
+            agent.getXMLHandlerRegistry().addXMLHandler("org.apache.fop.render.svg.SVGSVGHandler");
+        }
     }
 
     /**
@@ -319,36 +320,33 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
     public void renderForeignObject(ForeignObject fo, Rectangle2D pos) {
         org.w3c.dom.Document doc = fo.getDocument();
         String ns = fo.getNameSpace();
-        renderXML(context, doc, ns);
+        renderDocument(doc, ns, pos);
     }
 
-    /** @see org.apache.fop.render.XMLHandler */
-    public void handleXML(RendererContext context, 
-                org.w3c.dom.Document doc, String ns) throws Exception {
-        if (SVG_NAMESPACE.equals(ns)) {
-            if (!(doc instanceof SVGDocument)) {
-                DOMImplementation impl =
-                  SVGDOMImplementation.getDOMImplementation();
-                doc = DOMUtilities.deepCloneDocument(doc, impl);
-            }
-            SVGSVGElement svg = ((SVGDocument) doc).getRootElement();
-            Element view = svgDocument.createElementNS(SVG_NAMESPACE, "svg");
-            Node newsvg = svgDocument.importNode(svg, true);
-            //view.setAttributeNS(null, "viewBox", "0 0 ");
-            view.setAttributeNS(null, "x", "" + currentIPPosition / 1000f);
-            view.setAttributeNS(null, "y", "" + currentBPPosition / 1000f);
+    /**
+     * Renders an XML document (SVG for example).
+     *
+     * @param doc DOM document representing the XML document
+     * @param ns Namespace for the document
+     * @param pos Position on the page
+     */
+    public void renderDocument(Document doc, String ns, Rectangle2D pos) {
+        RendererContext context;
+        context = new RendererContext(this, getMimeType());
+        context.setUserAgent(userAgent);
 
-            // this fixes a problem where the xmlns is repeated sometimes
-            Element ele = (Element) newsvg;
-            ele.setAttributeNS(XMLSupport.XMLNS_NAMESPACE_URI, "xmlns",
-                               SVG_NAMESPACE);
-            if (ele.hasAttributeNS(null, "xmlns")) {
-                ele.removeAttributeNS(null, "xmlns");
-            }
-
-            view.appendChild(newsvg);
-            currentPageG.appendChild(view);
-        }
+        context.setProperty(SVGRendererContextConstants.SVG_DOCUMENT, svgDocument);
+        context.setProperty(SVGRendererContextConstants.SVG_PAGE_G, currentPageG);
+        context.setProperty(SVGRendererContextConstants.XPOS,
+                            new Integer(currentIPPosition + (int)pos.getX()));
+        context.setProperty(SVGRendererContextConstants.YPOS,
+                            new Integer(currentBPPosition + (int)pos.getY()));
+        context.setProperty(SVGRendererContextConstants.WIDTH,
+                            new Integer((int)pos.getWidth()));
+        context.setProperty(SVGRendererContextConstants.HEIGHT,
+                            new Integer((int) pos.getHeight()));
+        
+        renderXML(context, doc, ns);
     }
 
     /**
@@ -417,11 +415,6 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
     /** @see org.apache.fop.render.AbstractRenderer */
     public String getMimeType() {
         return SVG_MIME_TYPE;
-    }
-
-    /** @see org.apache.fop.render.XMLHandler#getNamespace() */
-    public String getNamespace() {
-        return SVG_NAMESPACE;
     }
 
     /**

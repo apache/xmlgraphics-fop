@@ -27,6 +27,14 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="update">
+        Changed the XMLHandler interface so it doesn't report the MIME type it
+        supports but instead can report whether it supports a particular Renderer
+        implementation. XMLHandlers are now configurable.
+      </action>
+      <action context="Code" dev="JM" type="fix">
+        Fixed a bug where SVG content could be clipped when rendered to PostScript.
+      </action>
       <action context="Code" dev="JM" type="fix">
         Changed the way resolutions are handled. The single resolution in the user
         agent got split up into source and target resolutions. For more info, see

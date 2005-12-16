@@ -234,8 +234,6 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      */
     public void setUserAgent(FOUserAgent agent) {
         super.setUserAgent(agent);
-        PDFSVGHandler xmlHandler = new PDFSVGHandler();
-        userAgent.getXMLHandlerRegistry().addXMLHandler(xmlHandler);
     }
 
     /**
@@ -1468,25 +1466,25 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         context = new RendererContext(this, MIME_TYPE);
         context.setUserAgent(userAgent);
 
-        context.setProperty(PDFSVGHandler.PDF_DOCUMENT, pdfDoc);
-        context.setProperty(PDFSVGHandler.OUTPUT_STREAM, ostream);
-        context.setProperty(PDFSVGHandler.PDF_STATE, currentState);
-        context.setProperty(PDFSVGHandler.PDF_PAGE, currentPage);
-        context.setProperty(PDFSVGHandler.PDF_CONTEXT,
+        context.setProperty(PDFRendererContextConstants.PDF_DOCUMENT, pdfDoc);
+        context.setProperty(PDFRendererContextConstants.OUTPUT_STREAM, ostream);
+        context.setProperty(PDFRendererContextConstants.PDF_STATE, currentState);
+        context.setProperty(PDFRendererContextConstants.PDF_PAGE, currentPage);
+        context.setProperty(PDFRendererContextConstants.PDF_CONTEXT,
                     currentContext == null ? currentPage : currentContext);
-        context.setProperty(PDFSVGHandler.PDF_CONTEXT, currentContext);
-        context.setProperty(PDFSVGHandler.PDF_STREAM, currentStream);
-        context.setProperty(PDFSVGHandler.PDF_XPOS,
+        context.setProperty(PDFRendererContextConstants.PDF_CONTEXT, currentContext);
+        context.setProperty(PDFRendererContextConstants.PDF_STREAM, currentStream);
+        context.setProperty(PDFRendererContextConstants.XPOS,
                             new Integer(currentIPPosition + (int) pos.getX()));
-        context.setProperty(PDFSVGHandler.PDF_YPOS,
+        context.setProperty(PDFRendererContextConstants.YPOS,
                             new Integer(currentBPPosition + (int) pos.getY()));
-        context.setProperty(PDFSVGHandler.PDF_FONT_INFO, fontInfo);
-        context.setProperty(PDFSVGHandler.PDF_FONT_NAME, currentFontName);
-        context.setProperty(PDFSVGHandler.PDF_FONT_SIZE,
+        context.setProperty(PDFRendererContextConstants.PDF_FONT_INFO, fontInfo);
+        context.setProperty(PDFRendererContextConstants.PDF_FONT_NAME, currentFontName);
+        context.setProperty(PDFRendererContextConstants.PDF_FONT_SIZE,
                             new Integer(currentFontSize));
-        context.setProperty(PDFSVGHandler.PDF_WIDTH,
+        context.setProperty(PDFRendererContextConstants.WIDTH,
                             new Integer((int) pos.getWidth()));
-        context.setProperty(PDFSVGHandler.PDF_HEIGHT,
+        context.setProperty(PDFRendererContextConstants.HEIGHT,
                             new Integer((int) pos.getHeight()));
         renderXML(context, doc, ns);
 
