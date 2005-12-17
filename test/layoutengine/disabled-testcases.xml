@@ -56,6 +56,12 @@
     stacking constraints which it shouldn't.</description>
   </testcase>
   <testcase>
+    <name>Non breaking space removal</name>
+    <file>block_white-space_2.xml</file>
+    <description>A non breaking space is incorrectly
+    removed from the start of a line.</description>
+  </testcase>
+  <testcase>
     <name>block white-space-collapse 2</name>
     <file>block_white-space-collapse_2.xml</file>
   </testcase>

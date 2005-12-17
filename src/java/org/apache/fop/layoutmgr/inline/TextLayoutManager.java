@@ -950,7 +950,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         if (textArray[ai.iStartIndex] == NBSPACE) {
             spaceElements.add
                 (new KnuthInlineBox(0, null,
-                                    notifyPos(new LeafPosition(this, -1)), false));
+                                    notifyPos(new LeafPosition(this, -1)), true));
         }
         return spaceElements;
     }

@@ -33,6 +33,11 @@ public interface MimeConstants {
     /** HP's PCL (alternative MIME type) */
     String MIME_PCL_ALT         = "application/vnd.hp-PCL";
     
+    /** IBM's AFP */
+    String MIME_AFP             = "application/x-afp";
+    /** IBM's AFP (alternative MIME type) */
+    String MIME_AFP_ALT         = "application/vnd.ibm.modcap";
+    
     /** Plain text */
     String MIME_PLAIN_TEXT      = "text/plain";
     
@@ -49,6 +54,8 @@ public interface MimeConstants {
     /** Structured Vector Graphics */
     String MIME_SVG             = "image/svg+xml";
     
+    /** GIF images */
+    String MIME_GIF             = "image/gif";
     /** PNG images */
     String MIME_PNG             = "image/png";
     /** JPEG images */
