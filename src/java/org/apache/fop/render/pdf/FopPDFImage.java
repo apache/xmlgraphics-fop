@@ -29,7 +29,6 @@ import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.pdf.BitmapImage;
 
 import org.apache.fop.image.FopImage;
-import org.apache.fop.image.JpegImage;
 import org.apache.fop.image.EPSImage;
 import org.apache.fop.image.TIFFImage;
 
@@ -82,9 +81,8 @@ public class FopPDFImage implements PDFImage {
             pdfFilter.setApplied(true);
             isDCT = true;
 
-            JpegImage jpegimage = (JpegImage) fopImage;
-            ICC_Profile prof = jpegimage.getICCProfile();
-            PDFColorSpace pdfCS = toPDFColorSpace(jpegimage.getColorSpace());
+            ICC_Profile prof = fopImage.getICCProfile();
+            PDFColorSpace pdfCS = toPDFColorSpace(fopImage.getColorSpace());
             if (prof != null) {
                 pdfICCStream = doc.getFactory().makePDFICCStream();
                 pdfICCStream.setColorSpace(prof, pdfCS);

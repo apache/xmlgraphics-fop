@@ -226,6 +226,8 @@ public class CommandLineOptions implements Constants {
                 i = i + parseTextOutputOption(args, i);
             } else if (args[i].equals("-svg")) {
                 i = i + parseSVGOutputOption(args, i);
+            } else if (args[i].equals("-afp")) {
+                i = i + parseAFPOutputOption(args, i);
             } else if (args[i].equals("-foout")) {
                 i = i + parseFOOutputOption(args, i);
             } else if (args[i].equals("-out")) {
@@ -434,6 +436,17 @@ public class CommandLineOptions implements Constants {
         if ((i + 1 == args.length)
                 || (args[i + 1].charAt(0) == '-')) {
             throw new FOPException("you must specify the SVG output file");
+        } else {
+            outfile = new File(args[i + 1]);
+            return 1;
+        }
+    }
+
+    private int parseAFPOutputOption(String[] args, int i) throws FOPException {
+        setOutputMode(MimeConstants.MIME_AFP);
+        if ((i + 1 == args.length)
+                || (args[i + 1].charAt(0) == '-')) {
+            throw new FOPException("you must specify the AFP output file");
         } else {
             outfile = new File(args[i + 1]);
             return 1;

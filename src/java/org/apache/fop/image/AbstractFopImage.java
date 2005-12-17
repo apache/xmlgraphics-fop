@@ -20,6 +20,7 @@ package org.apache.fop.image;
 
 // Java
 import java.awt.color.ColorSpace;
+import java.awt.color.ICC_ColorSpace;
 import java.awt.color.ICC_Profile;
 import java.io.InputStream;
 import java.awt.Color;
@@ -271,6 +272,9 @@ public abstract class AbstractFopImage implements FopImage {
      * @return the icc profile or null if not applicable
      */
     public ICC_Profile getICCProfile() {
+        if (this.colorSpace != null && this.colorSpace instanceof ICC_ColorSpace) {
+            return ((ICC_ColorSpace)this.colorSpace).getProfile();
+        }
         return null;
     }
 

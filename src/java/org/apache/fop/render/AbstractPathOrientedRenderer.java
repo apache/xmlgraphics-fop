@@ -36,7 +36,7 @@ import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fonts.Typeface;
+import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.traits.BorderProps;
 
@@ -581,21 +581,21 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
     
     /**
      * Paints the text decoration marks.
-     * @param tf Current typeface
+     * @param fm Current typeface
      * @param fontsize Current font size
      * @param inline inline area to paint the marks for
      * @param baseline position of the baseline
      * @param startx start IPD
      */
-    protected void renderTextDecoration(Typeface tf, int fontsize, InlineArea inline, 
+    protected void renderTextDecoration(FontMetrics fm, int fontsize, InlineArea inline, 
                     int baseline, int startx) {
         boolean hasTextDeco = inline.hasUnderline() 
                 || inline.hasOverline() 
                 || inline.hasLineThrough();
         if (hasTextDeco) {
             endTextObject();
-            float descender = tf.getDescender(fontsize) / 1000f;
-            float capHeight = tf.getCapHeight(fontsize) / 1000f;
+            float descender = fm.getDescender(fontsize) / 1000f;
+            float capHeight = fm.getCapHeight(fontsize) / 1000f;
             float halfLineWidth = (descender / -8f) / 2f;
             float endx = (startx + inline.getIPD()) / 1000f;
             if (inline.hasUnderline()) {

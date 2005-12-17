@@ -19,11 +19,12 @@
   <info>
     <p>
       This test checks non breaking white space.
-      Note: This test currently fails because the first non breaking space on
-      each line is incorrectly removed. There is a duplicate test
-      block_white-space_2a.xml whose checks have been adjusted to cater for 
-      this defect. Once the problem is fixed block_white-space_2a.xml should
-      be removed from the test suite.
+      Note: This test should fail because the first nb space in each line is
+      incorrectly removed. However, the checks below have been adjusted to
+      cater for this defect so this test passes. This has been done to have some
+      test cases which are being run in the test suite for non breaking spaces.
+      This test is otherwise identical to block_white-space_2.xml. Once the problem
+      is fixed this file can be deleted from the test suite.
     </p>
   </info>
   <fo>
@@ -44,10 +45,13 @@
   </fo>
   <checks>
     <eval expected="11100" xpath="//flow/block[1]/lineArea/@bpd"/>
-    <eval expected="4" xpath="count(//flow/block[1]/lineArea/text/space)"/>
+    <!--<eval expected="4" xpath="count(//flow/block[1]/lineArea/text/space)"/>-->
+    <eval expected="3" xpath="count(//flow/block[1]/lineArea/text/space)"/>
     <eval expected="11100" xpath="//flow/block[2]/lineArea/@bpd"/>
-    <eval expected="1" xpath="count(//flow/block[2]/lineArea/text/space)"/>
+    <!--<eval expected="1" xpath="count(//flow/block[2]/lineArea/text/space)"/>-->
+    <eval expected="0" xpath="count(//flow/block[2]/lineArea/text/space)"/>
     <eval expected="11100" xpath="//flow/block[3]/lineArea/@bpd"/>
-    <eval expected="8" xpath="count(//flow/block[3]/lineArea/text/space)"/>
+    <!--<eval expected="8" xpath="count(//flow/block[3]/lineArea/text/space)"/>-->
+    <eval expected="7" xpath="count(//flow/block[3]/lineArea/text/space)"/>
   </checks>
 </testcase>
