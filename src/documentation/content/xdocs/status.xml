@@ -26,13 +26,11 @@
   <body>
     <section>
       <title>Status</title>
-      <p>[last updated October 30, 2005]</p>
+      <p>[last updated December 19, 2005]</p>
       <figure width="585" height="175" src="images/track.png" alt="Planning and branches of FOP development"/>
       <p>
-        This is the development status of Apache FOP. A branch has been created for
-        maintenance releases while the development is done to address various
-        performance and design issues. Development on the maintenance branch has
-        been halted as the focus was transferred entirely to the redesign effort.
+        This is the development status of Apache FOP. Development on the maintenance branch where 
+        FOP 0.20.5 came from has been halted as the focus was transferred entirely to the redesign effort.
       </p>
     </section>
     <section>
@@ -43,16 +41,12 @@
         to the spec and be able to handle large documents.
       </p>
       <p>
-        The first preview release will have the following: similar functionality
+        The first preview release (0.90alpha1) had similar functionality
         to previous FOP releases (although not in every point), some new features 
         (like keeps on all implemented FOs), a rough API and a suitable design for
-        developers to work on more functionality.
-      </p>
-      <p>
-        We originally targeted for October 2005 to publish the first preview release
-        but it takes a little longer than expected to prepare everything for the
-        release. The first (unstable) preview release can be expected in mid-November
-        2005.
+        developers to work on more functionality. It turned out that the new code
+        is more stable and useful than we thought. In the meantime many of the
+        problems reported since the initial release have already been resolved.
       </p>
       <p>
         We now have a good overall design and have been able to add several new features
@@ -67,11 +61,78 @@
         into the code. And we're glad to help you get jumpstarted. Just ask!
       </p>
       <p>
-        If you're looking for a road-map we have to disappoint you. This is Open
+        If you're looking for a long-term road-map we have to disappoint you. This is Open
         Source and we're mostly voluteers working in their free time. What we have
         is an idea where we want to go. How fast we get there depends on the 
         available time, on how well our ideas work out while developing and on you!
+        There's a <a href="http://wiki.apache.org/xmlgraphics-fop/RoadMap">document in the Wiki</a>
+        where you can get a glimpse of what points we're currently focusing on.
       </p>
+      <section id="component-status">
+        <title>Status of the individual components</title>
+        <p>
+          Not all the components of FOP currently have the same quality. The following
+          table tries to give you an overview:
+        </p>
+        <table>
+          <tr>
+            <th>Component</th>
+            <th>Status</th>
+          </tr>
+          <tr>
+            <td>API</td>
+            <td>beta, subject to change, though only in details</td>
+          </tr>
+          <tr>
+            <td>FO Tree</td>
+            <td>stable</td>
+          </tr>
+          <tr>
+            <td>Layout Engine</td>
+            <td>beta</td>
+          </tr>
+          <tr>
+            <td>Area Tree</td>
+            <td>stable</td>
+          </tr>
+          <tr>
+            <td>PDF (Library and Renderer)</td>
+            <td>stable (SVG: stable)</td>
+          </tr>
+          <tr>
+            <td>PostScript</td>
+            <td>stable (SVG: beta)</td>
+          </tr>
+          <tr>
+            <td>Java2D, AWT, Bitmap Renderers</td>
+            <td>beta, needs some detail work</td>
+          </tr>
+          <tr>
+            <td>Text Renderer</td>
+            <td>beta (feedback wanted)</td>
+          </tr>
+          <tr>
+            <td>RTF Handler</td>
+            <td>beta, restricted functionality compared to PDF/PS</td>
+          </tr>
+          <tr>
+            <td>PCL Renderer, SVG Renderer</td>
+            <td>non-functional in sandbox, help needed</td>
+          </tr>
+          <tr>
+            <td>Font Support</td>
+            <td>stable, but in redesign</td>
+          </tr>
+          <tr>
+            <td>Image Support</td>
+            <td>stable, but in need of a redesign</td>
+          </tr>
+          <tr>
+            <td>Hyphenation Subsystem</td>
+            <td>stable</td>
+          </tr>
+        </table>
+      </section>
     </section>
     <section>
       <title>Maintenance Status</title>
