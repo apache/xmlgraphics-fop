@@ -171,7 +171,8 @@ public class TableLayoutManager extends BlockStackingLayoutManager
             updateContentAreaIPDwithOverconstrainedAdjust();
         }
 
-        if (getContentAreaIPD() > context.getRefIPD()) {
+        int availableIPD = referenceIPD - getIPIndents();
+        if (getContentAreaIPD() > availableIPD) {
             log.warn(FONode.decorateWithContextInfo(
                     "The extent in inline-progression-direction (width) of a table is"
                     + " bigger than the available space (" 
