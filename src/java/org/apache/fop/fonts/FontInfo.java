@@ -286,8 +286,9 @@ public class FontInfo {
      * @return font metrics
      */
     public FontMetrics getMetricsFor(String fontName) {
-        usedFonts.put(fontName, fonts.get(fontName));
-        return (FontMetrics)fonts.get(fontName);
+        FontMetrics metrics = (FontMetrics)fonts.get(fontName);
+        usedFonts.put(fontName, metrics);
+        return metrics;
     }
 
     /**
