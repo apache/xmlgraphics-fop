@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/* $Id: Area.java,v 1.2 2004/02/27 17:41:26 jeremias Exp $ */
+/* $Id$ */
 
 package org.apache.fop.area;
 
@@ -25,6 +25,7 @@ import java.util.HashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.traits.BorderProps;
 
 // If the area appears more than once in the output
@@ -390,7 +391,11 @@ public class Area implements Serializable {
         if (props == null) {
             props = new java.util.HashMap(20);
         }
-        props.put(traitCode, prop);
+        if (prop instanceof ColorType) {
+            props.put(traitCode, Trait.Color.makeSerializable((ColorType)prop));
+        } else {
+            props.put(traitCode, prop);
+        }
     }
 
     /**

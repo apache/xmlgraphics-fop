@@ -423,6 +423,79 @@ public class Trait implements Serializable {
     }
 
     /**
+     * Serializable ColorType implementation for the area tree.
+     * @TODO Think about switching to java.awt.Color entirely!
+     */
+    public static class Color implements ColorType, Serializable {
+
+        private float red;
+        private float green;
+        private float blue;
+        private float alpha;
+        
+        /**
+         * Creates a new Color instance
+         * @param r the red component
+         * @param g the green component
+         * @param b the blue component
+         * @param a the alpha component
+         */
+        public Color(float r, float g, float b, float a) {
+            this.red = r;
+            this.green = g;
+            this.blue = b;
+            this.alpha = a;
+        }
+        
+        /**
+         * Copy constructor
+         * @param col the ColorType instance which shall be duplicated
+         */
+        public Color(ColorType col) {
+            this(col.getRed(), col.getGreen(), col.getBlue(), col.getAlpha());
+        }
+        
+        /** @see org.apache.fop.datatypes.ColorType#getRed() */
+        public float getRed() {
+            return this.red;
+        }
+
+        /** @see org.apache.fop.datatypes.ColorType#getGreen() */
+        public float getGreen() {
+            return this.green;
+        }
+
+        /** @see org.apache.fop.datatypes.ColorType#getBlue() */
+        public float getBlue() {
+            return this.blue;
+        }
+
+        /** @see org.apache.fop.datatypes.ColorType#getAlpha() */
+        public float getAlpha() {
+            return this.alpha;
+        }
+
+        /** @see org.apache.fop.datatypes.ColorType#getAWTColor() */
+        public java.awt.Color getAWTColor() {
+            return new java.awt.Color(red, green, blue, alpha);
+        }
+        
+        /**
+         * Converts a given color to a serializable instance if necessary.
+         * @param col the color
+         * @return the serializable color value.
+         */
+        public static ColorType makeSerializable(ColorType col) {
+            if (col instanceof Serializable) {
+                return col;
+            } else {
+                return new Color(col);
+            }
+        }
+        
+    }
+    
+    /**
      * Background trait structure.
      * Used for storing back trait information which are related.
      */
@@ -499,7 +572,7 @@ public class Trait implements Serializable {
          * @param color The color to set
          */
         public void setColor(ColorType color) {
-            this.color = color;
+            this.color = Color.makeSerializable(color);
         }
 
         /**

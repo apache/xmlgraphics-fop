@@ -21,6 +21,7 @@ package org.apache.fop.area;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.fo.Constants;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class LineArea extends Area {
      * that can be used in order to re-compute adjustement and / or indents when a
      * page-number or a page-number-citation is resolved
      */
-    private class LineAdjustingInfo {
+    private class LineAdjustingInfo implements Serializable {
         private int lineAlignment;
         private int difference;
         private int availableStretch;

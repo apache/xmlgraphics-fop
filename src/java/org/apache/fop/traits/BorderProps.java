@@ -18,6 +18,7 @@
  
 package org.apache.fop.traits;
 
+import org.apache.fop.area.Trait;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.Constants;
 
@@ -55,7 +56,7 @@ public class BorderProps implements Serializable {
     public BorderProps(int style, int width, ColorType color, int mode) {
         this.style = style;
         this.width = width;
-        this.color = color;
+        this.color = Trait.Color.makeSerializable(color);
         this.mode = mode;
     }
 
