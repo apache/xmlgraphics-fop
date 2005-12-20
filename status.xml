@@ -27,6 +27,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix" fixes-bug="37964">
+        Bugfix: hard breaks with even-page or odd-page were not handled correctly
+        when spaces were surrounding the break.
+      </action>
       <action context="Code" dev="JM" type="update">
         Changed the XMLHandler interface so it doesn't report the MIME type it
         supports but instead can report whether it supports a particular Renderer
