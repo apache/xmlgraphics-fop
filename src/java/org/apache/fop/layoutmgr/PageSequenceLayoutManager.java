@@ -29,7 +29,6 @@ import org.apache.fop.area.Footnote;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.Resolvable;
-import org.apache.fop.area.Span;
 
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.Marker;

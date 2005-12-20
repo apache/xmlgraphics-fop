@@ -18,8 +18,6 @@
 
 package org.apache.fop.layoutmgr;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -442,6 +440,7 @@ public class SpaceResolver {
         glue2shrink -= glue3.opt - glue3.min;
         
         boolean hasPrecedingNonBlock = false;
+        boolean forcedBreak = false;
         if (log.isDebugEnabled()) {
             log.debug("noBreakLength=" + noBreakLength 
                     + ", glue1=" + glue1 
@@ -458,12 +457,10 @@ public class SpaceResolver {
             iter.add(new KnuthPenalty(breakPoss.getPenaltyWidth(), breakPoss.getPenaltyValue(), 
                     false, breakPoss.getBreakClass(), 
                     new SpaceHandlingBreakPosition(this, breakPoss), false));
-            //if (glue2.isNonZero()) {
+            if (breakPoss.getPenaltyValue() <= -KnuthPenalty.INFINITE) {
+                return; //return early. Not necessary (even wrong) to add additional elements
+            }
             if (glue2w != 0 || glue2stretch != 0 || glue2shrink != 0) {
-                /*
-                iter.add(new KnuthGlue(glue2.opt, glue2.max - glue2.opt, glue2.opt - glue2.min, 
-                        (Position)null, true));
-                        */
                 iter.add(new KnuthGlue(glue2w, glue2stretch, glue2shrink, 
                         (Position)null, true));
             }
@@ -504,6 +501,7 @@ public class SpaceResolver {
         /**
          * Main constructor.
          * @param resolver the space resolver that provides the info about the actual situation
+         * @param breakPoss the original break possibility that creates this Position 
          */
         public SpaceHandlingBreakPosition(SpaceResolver resolver, BreakElement breakPoss) {
             super(null);
