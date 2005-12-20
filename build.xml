@@ -142,7 +142,7 @@ list of possible build targets.
   <property name="Name" value="Apache FOP"/>
   <property name="name" value="fop"/>
   <property name="NAME" value="FOP"/>
-  <property name="version" value="0.90svn"/>
+  <property name="version" value="0.91beta"/>
   <property name="year" value="1999-2005"/>
 
   <property name="javac.debug" value="on"/>
