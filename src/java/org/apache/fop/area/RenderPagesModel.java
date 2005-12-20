@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,6 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.Renderer;
-import org.apache.fop.render.RendererFactory;
 
 /**
  * This uses the AreaTreeModel to store the pages
@@ -109,8 +108,8 @@ public class RenderPagesModel extends AreaTreeModel {
         // it is more appropriate to do this after queued pages but
         // it will mean that the renderer has not prepared a page that
         // could be referenced
-        boolean done = renderer.supportsOutOfOrder() && page.isResolved();
-        if (done) {
+        boolean ready = renderer.supportsOutOfOrder() && page.isResolved();
+        if (ready) {
             try {
                 renderer.renderPage(page);
             } catch (Exception e) {

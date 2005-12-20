@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,11 @@
  
 package org.apache.fop.area;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.FontInfo;
+import org.xml.sax.SAXException;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -44,13 +46,21 @@ import java.io.BufferedInputStream;
 public class CachedRenderPagesModel extends RenderPagesModel {
     private Map pageMap = new HashMap();
 
+    /** Base directory to save temporary file in, typically points to the user's temp dir. */
+    protected File baseDir;
+    
     /**
-     * Constructor
-     * @see org.apache.fop.area.RenderPagesModel#RenderPagesModel(FOUserAgent, String, FontInfo, OutputStream)
+     * Main Constructor
+     * @param userAgent FOUserAgent object for process
+     * @param outputFormat the MIME type of the output format to use (ex. "application/pdf").
+     * @param fontInfo FontInfo object
+     * @param stream OutputStream
+     * @throws FOPException if the renderer cannot be properly initialized
      */
     public CachedRenderPagesModel (FOUserAgent userAgent, String outputFormat, 
             FontInfo fontInfo, OutputStream stream) throws FOPException {
         super(userAgent, outputFormat, fontInfo, stream);
+        this.baseDir = new File(System.getProperty("java.io.tmpdir"));
     }
 
     /**
@@ -64,14 +74,19 @@ public class CachedRenderPagesModel extends RenderPagesModel {
                     try {
                         // load page from cache
                         String name = (String)pageMap.get(p);
-                        File temp = new File(name);
-                        log.debug("page serialized to: " + temp.length());
+                        File tempFile = new File(baseDir, name);
+                        log.debug("Loading page from: " + tempFile);
                         ObjectInputStream in = new ObjectInputStream(
                                              new BufferedInputStream(
-                                               new FileInputStream(temp)));
-                        p.loadPage(in);
-                        in.close();
-                        temp.delete();
+                                               new FileInputStream(tempFile)));
+                        try {
+                            p.loadPage(in);
+                        } finally {
+                            IOUtils.closeQuietly(in);
+                        }
+                        if (!tempFile.delete()) {
+                            log.warn("Temporary file could not be deleted: " + tempFile);
+                        }
                         pageMap.remove(p);
                     } catch (Exception e) {
                         log.error(e);
@@ -102,6 +117,7 @@ public class CachedRenderPagesModel extends RenderPagesModel {
         }
         if (newpage != null && newpage.getPage() != null) {
             savePage(newpage);
+            newpage.clear();
         }
         return renderer.supportsOutOfOrder() || prepared.isEmpty();
     }
@@ -116,15 +132,28 @@ public class CachedRenderPagesModel extends RenderPagesModel {
         try {
             // save page to cache
             ObjectOutputStream tempstream;
-            String fname = "page" + page.toString() + ".ser";
+            String fname = "fop-page-" + page.toString() + ".ser";
+            File tempFile = new File(baseDir, fname);
+            tempFile.deleteOnExit();
             tempstream = new ObjectOutputStream(new BufferedOutputStream(
-                                                new FileOutputStream(fname)));
-            page.savePage(tempstream);
-            tempstream.close();
+                                                new FileOutputStream(tempFile)));
+            try {
+                page.savePage(tempstream);
+            } finally {
+                IOUtils.closeQuietly(tempstream);
+            }
             pageMap.put(page, fname);
+            if (log.isDebugEnabled()) {
+                log.debug("Page saved to temporary file: " + tempFile);
+            }
         } catch (Exception e) {
             log.error(e);
         }
+    }
+
+    /** @see org.apache.fop.area.RenderPagesModel#endDocument() */
+    public void endDocument() throws SAXException {
+        super.endDocument();
     }
 }
 

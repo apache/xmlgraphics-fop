@@ -80,8 +80,8 @@ public class AreaTreeHandler extends FOEventHandler {
     // the LayoutManager maker
     private LayoutManagerMaker lmMaker;
 
-    // AreaTreeModel in use
-    private AreaTreeModel model;
+    /** AreaTreeModel in use */
+    protected AreaTreeModel model;
 
     // The fo:root node of the document
     private Root rootFObj;
@@ -111,8 +111,7 @@ public class AreaTreeHandler extends FOEventHandler {
                 OutputStream stream) throws FOPException {
         super(userAgent);
 
-        model = new RenderPagesModel(userAgent, outputFormat, fontInfo,
-            stream);
+        setupModel(userAgent, outputFormat, stream);
             
         lmMaker = userAgent.getLayoutManagerMakerOverride();
         if (lmMaker == null) {
@@ -126,6 +125,19 @@ public class AreaTreeHandler extends FOEventHandler {
         }
     }
 
+    /**
+     * Sets up the AreaTreeModel instance for use by the AreaTreeHandler.
+     * @param userAgent FOUserAgent object for process
+     * @param outputFormat the MIME type of the output format to use (ex. "application/pdf").
+     * @param stream OutputStream
+     * @throws FOPException if the RenderPagesModel cannot be created
+     */
+    protected void setupModel(FOUserAgent userAgent, String outputFormat, 
+            OutputStream stream) throws FOPException {
+        model = new RenderPagesModel(userAgent, outputFormat, fontInfo,
+                stream);
+    }
+    
     /**
      * Get the area tree model for this area tree.
      *
