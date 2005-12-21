@@ -69,13 +69,13 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      */
     private PageSequence pageSeq;
 
-    private PageViewportProvider pvProvider;
+    private PageProvider pageProvider;
     
     /** 
-     * Current page-viewport-area being filled by
+     * Current page with page-viewport-area being filled by
      * the PSLM.
      */
-    private PageViewport curPV = null;
+    private Page curPage = null;
 
     /**
      * The FlowLayoutManager object, which processes
@@ -98,7 +98,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         super(pseq);
         this.areaTreeHandler = ath;
         this.pageSeq = pseq;
-        this.pvProvider = new PageViewportProvider(this.pageSeq);
+        this.pageProvider = new PageProvider(this.pageSeq);
     }
 
     /**
@@ -109,9 +109,9 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         return areaTreeHandler.getLayoutManagerMaker();
     }
 
-    /** @return the PageViewportProvider applicable to this page-sequence. */
-    public PageViewportProvider getPageViewportProvider() {
-        return this.pvProvider;
+    /** @return the PageProvider applicable to this page-sequence. */
+    public PageProvider getPageProvider() {
+        return this.pageProvider;
     }
     
     /**
@@ -135,7 +135,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         areaTreeHandler.getAreaTreeModel().startPageSequence(title);
         log.debug("Starting layout");
 
-        curPV = makeNewPage(false, false);
+        curPage = makeNewPage(false, false);
 
         addIDToPage(pageSeq.getId());
         Flow mainFlow = pageSeq.getMainFlow();
@@ -143,7 +143,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             makeFlowLayoutManager(this, mainFlow);
 
         PageBreaker breaker = new PageBreaker(this);
-        int flowBPD = (int) curPV.getBodyRegion().getRemainingBPD();
+        int flowBPD = (int)getCurrentPV().getBodyRegion().getRemainingBPD();
         breaker.doLayout(flowBPD);
         
         finishPage();
@@ -169,7 +169,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         
         /** @see org.apache.fop.layoutmgr.AbstractBreaker */
         protected void updateLayoutContext(LayoutContext context) {
-            int flowIPD = curPV.getCurrentSpan().getColumnWidth();
+            int flowIPD = getCurrentPV().getCurrentSpan().getColumnWidth();
             context.setRefIPD(flowIPD);
         }
         
@@ -177,9 +177,9 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             return null;  // unneeded for PSLM
         }
         
-        /** @see org.apache.fop.layoutmgr.AbstractBreaker#getPageViewportProvider() */
-        protected PageSequenceLayoutManager.PageViewportProvider getPageViewportProvider() {
-            return pvProvider;
+        /** @see org.apache.fop.layoutmgr.AbstractBreaker#getPageProvider() */
+        protected PageSequenceLayoutManager.PageProvider getPageProvider() {
+            return pageProvider;
         }
         
         /** @see org.apache.fop.layoutmgr.AbstractBreaker */
@@ -210,8 +210,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             }
             firstPart = false;
             pageBreakHandled = true;
-            pvProvider.setStartOfNextElementList(currentPageNum, 
-                    curPV.getCurrentSpan().getCurrentFlowIndex());
+            pageProvider.setStartOfNextElementList(currentPageNum, 
+                    getCurrentPV().getCurrentSpan().getCurrentFlowIndex());
             return super.getNextBlockList(childLC, nextSequenceStartsOn, blockLists);
         }
         
@@ -280,7 +280,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         }
         
         protected int getCurrentDisplayAlign() {
-            return curPV.getSPM().getRegion(Constants.FO_REGION_BODY).getDisplayAlign();
+            return curPage.getSimplePageMaster().getRegion(
+                    Constants.FO_REGION_BODY).getDisplayAlign();
         }
         
         protected boolean hasMoreContent() {
@@ -293,7 +294,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                         "xsl-footnote-separator");
                 // create a Block area that will contain the separator areas
                 separatorArea = new Block();
-                separatorArea.setIPD(curPV.getRegionReference(Constants.FO_REGION_BODY).getIPD());
+                separatorArea.setIPD(
+                        getCurrentPV().getRegionReference(Constants.FO_REGION_BODY).getIPD());
                 // create a StaticContentLM for the footnote separator
                 footnoteSeparatorLM = (StaticContentLayoutManager)
                     getLayoutManagerMaker().makeStaticContentLayoutManager(
@@ -309,7 +311,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             if (needColumnBalancing) {
                 AbstractBreaker.log.debug("Column balancing now!!!");
                 AbstractBreaker.log.debug("===================================================");
-                int restartPoint = pvProvider.getStartingPartIndexForLastPage(partCount);
+                int restartPoint = pageProvider.getStartingPartIndexForLastPage(partCount);
                 if (restartPoint > 0) {
                     addAreas(alg, restartPoint, originalList, effectiveList);
                 }
@@ -331,13 +333,13 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                 }
                 pageBreakHandled = true;
                 //Update so the available BPD is reported correctly
-                pvProvider.setStartOfNextElementList(currentPageNum, 
-                        curPV.getCurrentSpan().getCurrentFlowIndex());
+                pageProvider.setStartOfNextElementList(currentPageNum, 
+                        getCurrentPV().getCurrentSpan().getCurrentFlowIndex());
 
                 //Restart last page
                 PageBreakingAlgorithm algRestart = new BalancingColumnBreakingAlgorithm(
                         getTopLevelLM(),
-                        getPageViewportProvider(),
+                        getPageProvider(),
                         alignment, Constants.EN_START, footnoteSeparatorLength,
                         isPartOverflowRecoveryActivated(),
                         getCurrentPV().getBodyRegion().getColumnCount());
@@ -367,8 +369,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         
         protected void startPart(BlockSequence list, int breakClass) {
             AbstractBreaker.log.debug("startPart() breakClass=" + breakClass);
-            if (curPV == null) {
-                throw new IllegalStateException("curPV must not be null");
+            if (curPage == null) {
+                throw new IllegalStateException("curPage must not be null");
             }
             if (!pageBreakHandled) {
                 
@@ -382,8 +384,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                     // otherwise, we may simply need a new page
                     handleBreakTrait(breakClass);
                 }
-                pvProvider.setStartOfNextElementList(currentPageNum, 
-                        curPV.getCurrentSpan().getCurrentFlowIndex());
+                pageProvider.setStartOfNextElementList(currentPageNum, 
+                        getCurrentPV().getCurrentSpan().getCurrentFlowIndex());
             }
             pageBreakHandled = false;
             // add static areas and resolve any new id areas
@@ -393,7 +395,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         
         /** @see org.apache.fop.layoutmgr.AbstractBreaker#handleEmptyContent() */
         protected void handleEmptyContent() {
-            curPV.getPage().fakeNonEmpty();
+            getCurrentPV().getPage().fakeNonEmpty();
         }
         
         protected void finishPart(PageBreakingAlgorithm alg, PageBreakPosition pbp) {
@@ -417,7 +419,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                 }
                 // set the offset from the top margin
                 Footnote parentArea = (Footnote) getCurrentPV().getBodyRegion().getFootnote();
-                int topOffset = (int) curPV.getBodyRegion().getBPD() - parentArea.getBPD();
+                int topOffset = (int) getCurrentPV().getBodyRegion().getBPD() - parentArea.getBPD();
                 if (separatorArea != null) {
                     topOffset -= separatorArea.getBPD();
                 }
@@ -441,11 +443,19 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     
     /**
      * Provides access to the current page.
-     * @return the current PageViewport
+     * @return the current Page
      */
-    public PageViewport getCurrentPV() {
-        return curPV;
+    public Page getCurrentPage() {
+        return curPage;
     }
+
+    /**
+     * Provides access to the current page viewport.
+     * @return the current PageViewport
+     *//*
+    public PageViewport getCurrentPageViewport() {
+        return curPage.getPageViewport();
+    }*/
 
     /**
      * Provides access to this object
@@ -480,7 +490,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      */
     public void addIDToPage(String id) {
         if (id != null && id.length() > 0) {
-            areaTreeHandler.associateIDWithPageViewport(id, curPV);
+            areaTreeHandler.associateIDWithPageViewport(id, curPage.getPageViewport());
         }
     }
 
@@ -501,8 +511,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      * @param res the resolvable object that needs resolving
      */
     public void addUnresolvedArea(String id, Resolvable res) {
-        curPV.addUnresolvedIDRef(id, res);
-        areaTreeHandler.addUnresolvedIDRef(id, curPV);
+        curPage.getPageViewport().addUnresolvedIDRef(id, res);
+        areaTreeHandler.addUnresolvedIDRef(id, curPage.getPageViewport());
     }
 
     /**
@@ -529,7 +539,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         int boundary = rm.getRetrieveBoundary();               
         
         // get marker from the current markers on area tree
-        Marker mark = (Marker)curPV.getMarker(name, pos);
+        Marker mark = (Marker)getCurrentPV().getMarker(name, pos);
         if (mark == null && boundary != EN_PAGE) {
             // go back over pages until mark found
             // if document boundary then keep going
@@ -563,24 +573,25 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         }
     }
 
-    private PageViewport makeNewPage(boolean bIsBlank, boolean bIsLast) {
-        if (curPV != null) {
+    private Page makeNewPage(boolean bIsBlank, boolean bIsLast) {
+        if (curPage != null) {
             finishPage();
         }
 
         currentPageNum++;
 
-        curPV = pvProvider.getPageViewport(bIsBlank,
-                currentPageNum, PageViewportProvider.RELTO_PAGE_SEQUENCE);
+        curPage = pageProvider.getPage(bIsBlank,
+                currentPageNum, PageProvider.RELTO_PAGE_SEQUENCE);
 
         if (log.isDebugEnabled()) {
-            log.debug("[" + curPV.getPageNumberString() + (bIsBlank ? "*" : "") + "]");
+            log.debug("[" + curPage.getPageViewport().getPageNumberString() 
+                    + (bIsBlank ? "*" : "") + "]");
         }
-        return curPV;
+        return curPage;
     }
 
     private void layoutSideRegion(int regionID) {
-        SideRegion reg = (SideRegion)curPV.getSPM().getRegion(regionID);
+        SideRegion reg = (SideRegion)curPage.getSimplePageMaster().getRegion(regionID);
         if (reg == null) {
             return;
         }
@@ -596,7 +607,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     }
 
     private void finishPage() {
-        curPV.dumpMarkers();
+        curPage.getPageViewport().dumpMarkers();
         // Layout side regions
         layoutSideRegion(FO_REGION_BEFORE); 
         layoutSideRegion(FO_REGION_AFTER);
@@ -605,14 +616,14 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         
         // Try to resolve any unresolved IDs for the current page.
         // 
-        areaTreeHandler.tryIDResolution(curPV);
+        areaTreeHandler.tryIDResolution(curPage.getPageViewport());
         // Queue for ID resolution and rendering
-        areaTreeHandler.getAreaTreeModel().addPage(curPV);
+        areaTreeHandler.getAreaTreeModel().addPage(curPage.getPageViewport());
         if (log.isDebugEnabled()) {
-            log.debug("page finished: " + curPV.getPageNumberString() 
+            log.debug("page finished: " + curPage.getPageViewport().getPageNumberString() 
                     + ", current num: " + currentPageNum);
         }
-        curPV = null;
+        curPage = null;
     }
     
     /**
@@ -624,26 +635,26 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     private void handleBreakTrait(int breakVal) {
         if (breakVal == Constants.EN_ALL) {
             //break due to span change in multi-column layout
-            curPV.createSpan(true);
+            curPage.getPageViewport().createSpan(true);
             return;
         } else if (breakVal == Constants.EN_NONE) {
-            curPV.createSpan(false);
+            curPage.getPageViewport().createSpan(false);
             return;
         } else if (breakVal == Constants.EN_COLUMN || breakVal <= 0) {
-            if (curPV.getCurrentSpan().hasMoreFlows()) {
-                curPV.getCurrentSpan().moveToNextFlow();
+            if (curPage.getPageViewport().getCurrentSpan().hasMoreFlows()) {
+                curPage.getPageViewport().getCurrentSpan().moveToNextFlow();
             } else {
-                curPV = makeNewPage(false, false);
+                curPage = makeNewPage(false, false);
             }
             return;
         }
         log.debug("handling break-before after page " + currentPageNum 
             + " breakVal=" + breakVal);
         if (needBlankPageBeforeNew(breakVal)) {
-            curPV = makeNewPage(true, false);
+            curPage = makeNewPage(true, false);
         }
         if (needNewPage(breakVal)) {
-            curPV = makeNewPage(false, false);
+            curPage = makeNewPage(false, false);
         }
     }
 
@@ -653,7 +664,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      * @param breakVal - value of break-before or break-after trait.
      */
     private boolean needBlankPageBeforeNew(int breakVal) {
-        if (breakVal == Constants.EN_PAGE || (curPV.getPage().isEmpty())) {
+        if (breakVal == Constants.EN_PAGE || (curPage.getPageViewport().getPage().isEmpty())) {
             // any page is OK or we already have an empty page
             return false;
         } else {
@@ -671,7 +682,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      * @param breakVal - value of break-before or break-after trait.
      */
     private boolean needNewPage(int breakVal) {
-        if (curPV.getPage().isEmpty()) {
+        if (curPage.getPageViewport().getPage().isEmpty()) {
             if (breakVal == Constants.EN_PAGE) {
                 return false;
             } else if (currentPageNum % 2 == 0) { // even page
@@ -686,7 +697,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     
     
     /**
-     * <p>This class delivers PageViewport instances. It also caches them as necessary.
+     * <p>This class delivers Page instances. It also caches them as necessary.
      * </p>
      * <p>Additional functionality makes sure that surplus instances that are requested by the
      * page breaker are properly discarded, especially in situations where hard breaks cause
@@ -694,9 +705,9 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      * additional pages since it doesn't know exactly until the end how many pages it really needs.
      * </p>
      */
-    public class PageViewportProvider {
+    public class PageProvider {
         
-        private Log log = LogFactory.getLog(PageViewportProvider.class);
+        private Log log = LogFactory.getLog(PageProvider.class);
 
         /** Indices are evaluated relative to the first page in the page-sequence. */
         public static final int RELTO_PAGE_SEQUENCE = 0;
@@ -706,7 +717,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         private int startPageOfPageSequence;
         private int startPageOfCurrentElementList;
         private int startColumnOfCurrentElementList;
-        private List cachedPageViewports = new java.util.ArrayList();
+        private List cachedPages = new java.util.ArrayList();
         
         //Cache to optimize getAvailableBPD() calls
         private int lastRequestedIndex = -1;
@@ -716,7 +727,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
          * Main constructor.
          * @param ps The page-sequence the provider operates on
          */
-        public PageViewportProvider(PageSequence ps) {
+        public PageProvider(PageSequence ps) {
             this.startPageOfPageSequence = ps.getStartingPageNumber();
         }
         
@@ -754,20 +765,20 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             int c = index;
             int pageIndex = 0;
             int colIndex = startColumnOfCurrentElementList;
-            PageViewport pv = getPageViewport(
+            Page page = getPage(
                     false, pageIndex, RELTO_CURRENT_ELEMENT_LIST);
             while (c > 0) {
                 colIndex++;
-                if (colIndex >= pv.getCurrentSpan().getColumnCount()) {
+                if (colIndex >= page.getPageViewport().getCurrentSpan().getColumnCount()) {
                     colIndex = 0;
                     pageIndex++;
-                    pv = getPageViewport(
+                    page = getPage(
                             false, pageIndex, RELTO_CURRENT_ELEMENT_LIST);
                 }
                 c--;
             }
             this.lastRequestedIndex = index;
-            this.lastReportedBPD = pv.getBodyRegion().getRemainingBPD();
+            this.lastReportedBPD = page.getPageViewport().getBodyRegion().getRemainingBPD();
             if (log.isTraceEnabled()) {
                 log.trace("getAvailableBPD(" + index + ") -> " + lastReportedBPD);
             }
@@ -785,13 +796,13 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             int idx = 0;
             int pageIndex = 0;
             int colIndex = startColumnOfCurrentElementList;
-            PageViewport pv = getPageViewport(
+            Page page = getPage(
                     false, pageIndex, RELTO_CURRENT_ELEMENT_LIST);
             while (idx < partCount) {
-                if ((colIndex >= pv.getCurrentSpan().getColumnCount())) {
+                if ((colIndex >= page.getPageViewport().getCurrentSpan().getColumnCount())) {
                     colIndex = 0;
                     pageIndex++;
-                    pv = getPageViewport(
+                    page = getPage(
                             false, pageIndex, RELTO_CURRENT_ELEMENT_LIST);
                     result = idx;
                 }
@@ -802,29 +813,29 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         }
 
         /**
-         * Returns a PageViewport.
+         * Returns a Page.
          * @param bIsBlank true if this page is supposed to be blank.
          * @param index Index of the page (see relativeTo)
          * @param relativeTo Defines which value the index parameter should be evaluated relative 
-         * to. (One of PageViewportProvider.RELTO_*)
-         * @return the requested PageViewport
+         * to. (One of PageProvider.RELTO_*)
+         * @return the requested Page
          */
-        public PageViewport getPageViewport(boolean bIsBlank, int index, int relativeTo) {
+        public Page getPage(boolean bIsBlank, int index, int relativeTo) {
             if (relativeTo == RELTO_PAGE_SEQUENCE) {
-                return getPageViewport(bIsBlank, index);
+                return getPage(bIsBlank, index);
             } else if (relativeTo == RELTO_CURRENT_ELEMENT_LIST) {
                 int effIndex = startPageOfCurrentElementList + index;
                 effIndex += startPageOfPageSequence - 1;
-                return getPageViewport(bIsBlank, effIndex);
+                return getPage(bIsBlank, effIndex);
             } else {
                 throw new IllegalArgumentException(
                         "Illegal value for relativeTo: " + relativeTo);
             }
         }
         
-        private PageViewport getPageViewport(boolean bIsBlank, int index) {
+        private Page getPage(boolean bIsBlank, int index) {
             if (log.isTraceEnabled()) {
-                log.trace("getPageViewport(" + index + " " + bIsBlank);
+                log.trace("getPage(" + index + " " + bIsBlank);
             }
             int intIndex = index - startPageOfPageSequence;
             if (log.isTraceEnabled()) {
@@ -832,27 +843,27 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                     log.trace("blank page requested: " + index);
                 }
             }
-            while (intIndex >= cachedPageViewports.size()) {
+            while (intIndex >= cachedPages.size()) {
                 if (log.isTraceEnabled()) {
                     log.trace("Caching " + index);
                 }
-                cacheNextPageViewport(index, bIsBlank);
+                cacheNextPage(index, bIsBlank);
             }
-            PageViewport pv = (PageViewport)cachedPageViewports.get(intIndex);
-            if (pv.isBlank() != bIsBlank) {
+            Page page = (Page)cachedPages.get(intIndex);
+            if (page.getPageViewport().isBlank() != bIsBlank) {
                 log.debug("blank condition doesn't match. Replacing PageViewport.");
-                while (intIndex < cachedPageViewports.size()) {
-                    this.cachedPageViewports.remove(cachedPageViewports.size() - 1);
+                while (intIndex < cachedPages.size()) {
+                    this.cachedPages.remove(cachedPages.size() - 1);
                     if (!pageSeq.goToPreviousSimplePageMaster()) {
                         log.warn("goToPreviousSimplePageMaster() on the first page called!");
                     }
                 }
-                cacheNextPageViewport(index, bIsBlank);
+                cacheNextPage(index, bIsBlank);
             }
-            return pv;
+            return page;
         }
         
-        private void cacheNextPageViewport(int index, boolean bIsBlank) {
+        private void cacheNextPage(int index, boolean bIsBlank) {
             try {
                 String pageNumberString = pageSeq.makeFormattedPageNumber(index);
                 SimplePageMaster spm = pageSeq.getNextSimplePageMaster(
@@ -867,8 +878,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                         + spm.getMasterName() + "'.  FOP presently "
                         + "does not support this.");
                 }
-                PageViewport pv = new PageViewport(spm, pageNumberString, bIsBlank);
-                cachedPageViewports.add(pv);
+                Page page = new Page(spm, pageNumberString, bIsBlank);
+                cachedPages.add(page);
             } catch (FOPException e) {
                 //TODO Maybe improve. It'll mean to propagate this exception up several
                 //methods calls.

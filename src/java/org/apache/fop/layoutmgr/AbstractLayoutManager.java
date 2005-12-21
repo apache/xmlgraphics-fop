@@ -264,10 +264,15 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
     }
     
     /**
-     * @see org.apache.fop.layoutmgr.PageSequenceLayoutManager#getCurrentPV
+     * @see org.apache.fop.layoutmgr.PageSequenceLayoutManager#getCurrentPage
      */
+    public Page getCurrentPage() {
+        return getPSLM().getCurrentPage();
+    }  
+    
+    /** @return the current page viewport */
     public PageViewport getCurrentPV() {
-        return getPSLM().getCurrentPV();
+        return getPSLM().getCurrentPage().getPageViewport();
     }  
     
     /**

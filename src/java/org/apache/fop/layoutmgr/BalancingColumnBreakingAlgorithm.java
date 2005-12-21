@@ -35,12 +35,12 @@ public class BalancingColumnBreakingAlgorithm extends PageBreakingAlgorithm {
     private int idealPartLen;
     
     public BalancingColumnBreakingAlgorithm(LayoutManager topLevelLM,
-            PageSequenceLayoutManager.PageViewportProvider pvProvider,
+            PageSequenceLayoutManager.PageProvider pageProvider,
             int alignment, int alignmentLast,
             MinOptMax footnoteSeparatorLength,
             boolean partOverflowRecovery,
             int columnCount) {
-        super(topLevelLM, pvProvider, alignment, alignmentLast, 
+        super(topLevelLM, pageProvider, alignment, alignmentLast, 
                 footnoteSeparatorLength, partOverflowRecovery);
         this.columnCount = columnCount;
         this.considerTooShort = true; //This is important!

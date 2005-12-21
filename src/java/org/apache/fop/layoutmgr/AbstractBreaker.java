@@ -115,12 +115,12 @@ public abstract class AbstractBreaker {
     }
 
     /**
-     * Returns the PageViewportProvider if any. PageBreaker overrides this method because each
+     * Returns the PageProvider if any. PageBreaker overrides this method because each
      * page may have a different available BPD which needs to be accessible to the breaking
      * algorithm.
-     * @return the applicable PageViewportProvider, or null if not applicable
+     * @return the applicable PageProvider, or null if not applicable
      */
-    protected PageSequenceLayoutManager.PageViewportProvider getPageViewportProvider() {
+    protected PageSequenceLayoutManager.PageProvider getPageProvider() {
         return null;
     }
     
@@ -222,7 +222,7 @@ public abstract class AbstractBreaker {
                 log.debug("PLM> start of algorithm (" + this.getClass().getName() 
                         + "), flow BPD =" + flowBPD);
                 PageBreakingAlgorithm alg = new PageBreakingAlgorithm(getTopLevelLM(),
-                        getPageViewportProvider(),
+                        getPageProvider(),
                         alignment, alignmentLast, footnoteSeparatorLength,
                         isPartOverflowRecoveryActivated());
                 int iOptPageCount;

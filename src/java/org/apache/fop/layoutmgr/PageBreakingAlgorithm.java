@@ -31,7 +31,7 @@ import org.apache.fop.traits.MinOptMax;
 class PageBreakingAlgorithm extends BreakingAlgorithm {
 
     private LayoutManager topLevelLM;
-    private PageSequenceLayoutManager.PageViewportProvider pageViewportProvider;
+    private PageSequenceLayoutManager.PageProvider pageProvider;
     private LinkedList pageBreaks = null;
 
     private ArrayList footnotesList = null;
@@ -66,13 +66,13 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     private boolean storedValue = false;
 
     public PageBreakingAlgorithm(LayoutManager topLevelLM,
-                                 PageSequenceLayoutManager.PageViewportProvider pageViewportProvider,
+                                 PageSequenceLayoutManager.PageProvider pageProvider,
                                  int alignment, int alignmentLast,
                                  MinOptMax footnoteSeparatorLength,
                                  boolean partOverflowRecovery) {
         super(alignment, alignmentLast, true, partOverflowRecovery, 0);
         this.topLevelLM = topLevelLM;
-        this.pageViewportProvider = pageViewportProvider;
+        this.pageProvider = pageProvider;
         best = new BestPageRecords();
         this.footnoteSeparatorLength = (MinOptMax) footnoteSeparatorLength.clone();
         // add some stretch, to avoid a restart for every page containing footnotes
@@ -798,8 +798,8 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     /** @see org.apache.fop.layoutmgr.BreakingAlgorithm#getLineWidth(int) */
     protected int getLineWidth(int line) {
         int bpd;
-        if (pageViewportProvider != null) {
-            bpd = pageViewportProvider.getAvailableBPD(line);
+        if (pageProvider != null) {
+            bpd = pageProvider.getAvailableBPD(line);
         } else {
             bpd = super.getLineWidth(line);
         }

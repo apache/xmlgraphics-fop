@@ -721,14 +721,14 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
         }
         gen.writeDSCComment(DSCConstants.PAGE_RESOURCES, 
                 new Object[] {PSGenerator.ATEND});
-        gen.commentln("%FOPSimplePageMaster: " + page.getSPM().getMasterName());
+        gen.commentln("%FOPSimplePageMaster: " + page.getSimplePageMasterName());
         gen.writeDSCComment(DSCConstants.BEGIN_PAGE_SETUP);
         
         //Handle PSSetupCode instances on simple-page-master
-        if (page.getSPM().getExtensionAttachments().size() > 0) {
+        if (page.getExtensionAttachments().size() > 0) {
             List list = new java.util.ArrayList();
             //Extract all PSSetupCode instances from the attachment list on the s-p-m
-            Iterator i = page.getSPM().getExtensionAttachments().iterator();
+            Iterator i = page.getExtensionAttachments().iterator();
             while (i.hasNext()) {
                 ExtensionAttachment attachment = (ExtensionAttachment)i.next();
                 if (PSSetupCode.CATEGORY.equals(attachment.getCategory())) {
