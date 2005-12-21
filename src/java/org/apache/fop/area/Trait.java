@@ -486,13 +486,37 @@ public class Trait implements Serializable {
          * @return the serializable color value.
          */
         public static ColorType makeSerializable(ColorType col) {
-            if (col instanceof Serializable) {
+            if (col == null) {
+                return null;
+            } else if (col instanceof Serializable) {
                 return col;
             } else {
                 return new Color(col);
             }
         }
         
+        /** @see java.lang.Object#toString() */
+        public String toString() {
+            StringBuffer sbuf = new StringBuffer(8);
+            sbuf.append('#');
+            String s = Integer.toHexString((int)(red * 255.0));
+            if (s.length() == 1) {
+                sbuf.append('0');
+            }
+            sbuf.append(s);
+            s = Integer.toHexString((int)(green * 255.0));
+            if (s.length() == 1) {
+                sbuf.append('0');
+            }
+            sbuf.append(s);
+            s = Integer.toHexString((int)(blue * 255.0));
+            if (s.length() == 1) {
+                sbuf.append('0');
+            }
+            sbuf.append(s);
+            return sbuf.toString();
+        }
+
     }
     
     /**
