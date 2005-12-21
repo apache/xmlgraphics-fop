@@ -18,6 +18,11 @@
 <!--DOCTYPE disabled-testcases SYSTEM "disabled-testcases.dtd"-->
 <disabled-testcases>
   <testcase>
+    <name>break-after in nested block</name>
+    <file>block_break-after_2.xml</file>
+    <description>Content is swallowed when the break-after occurs on a nested block.</description>
+  </testcase>
+  <testcase>
     <name>Bugzilla #36391: reference-orientation</name>
     <file>block-container_reference-orientation_bug36391.xml</file>
     <description>There's a problem involving nested block-containers
