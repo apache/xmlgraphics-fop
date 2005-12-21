@@ -46,19 +46,18 @@ public class PageViewport implements Resolvable, Cloneable {
 
     private Page page;
     private Rectangle2D viewArea;
-    private boolean clip = false;
+    private String simplePageMasterName;
     private String pageNumberString = null;
     private int pageIndex = -1; //-1 = undetermined
-    private SimplePageMaster spm = null;
     private boolean blank;
 
     // list of id references and the rectangle on the page
-    private Map idReferences = null;
+    //private Map idReferences = null;
 
     // this keeps a list of currently unresolved areas or extensions
     // once an idref is resolved it is removed
     // when this is empty the page can be rendered
-    private HashMap unresolvedIDRefs = new HashMap();
+    private Map unresolvedIDRefs = new java.util.HashMap();
 
     private Map pendingResolved = null;
 
@@ -69,6 +68,10 @@ public class PageViewport implements Resolvable, Cloneable {
     private Map markerFirstAny = null;
     private Map markerLastEnd = null;
     private Map markerLastAny = null;
+    
+    //Arbitrary attachments to the page from extensions that need to pass information
+    //down to the renderers.
+    private List extensionAttachments = null;
 
     /**
      * logging instance
@@ -82,7 +85,8 @@ public class PageViewport implements Resolvable, Cloneable {
      * @param blank true if this is a blank page
      */
     public PageViewport(SimplePageMaster spm, String pageStr, boolean blank) {
-        this.spm = spm;
+        this.simplePageMasterName = spm.getMasterName();
+        this.extensionAttachments = spm.getExtensionAttachments();
         this.blank = blank;
         int pageWidth = spm.getPageWidth().getValue();
         int pageHeight = spm.getPageHeight().getValue();
@@ -93,25 +97,14 @@ public class PageViewport implements Resolvable, Cloneable {
     }
 
     /**
-     * Create a page viewport 
-     * @param spm SimplePageMaster indicating the page and region dimensions
-     * @param pageStr the page number as string.
-     * @param p Page Reference Area
-     * @param bounds Page Viewport dimensions
+     * Copy constructor. 
+     * @param original the original PageViewport to copy from
      */
-    public PageViewport(SimplePageMaster spm, String pageStr, Page p, Rectangle2D bounds) {
-        this.spm = spm;
-        this.pageNumberString = pageStr;
-        this.page = p;
-        this.viewArea = bounds;
-    }
-
-    /**
-     * Set if this viewport should clip.
-     * @param c true if this viewport should clip
-     */
-    public void setClip(boolean c) {
-        clip = c;
+    public PageViewport(PageViewport original) {
+        this.extensionAttachments = new java.util.ArrayList(original.extensionAttachments);
+        this.pageNumberString = original.pageNumberString;
+        this.page = (Page)original.page.clone();
+        this.viewArea = (Rectangle2D)original.viewArea.clone();
     }
 
     /**
@@ -280,11 +273,17 @@ public class PageViewport implements Resolvable, Cloneable {
                     Object key = iter.next();
                     if (!markerFirstStart.containsKey(key)) {
                         markerFirstStart.put(key, marks.get(key));
-                        log.trace("page " + pageNumberString + ": " + "Adding marker " + key + " to FirstStart");
+                        if (log.isTraceEnabled()) {
+                            log.trace("page " + pageNumberString + ": " 
+                                    + "Adding marker " + key + " to FirstStart");
+                        }
                     }
                     if (!markerFirstAny.containsKey(key)) {
                         markerFirstAny.put(key, marks.get(key));
-                        log.trace("page " + pageNumberString + ": " + "Adding marker " + key + " to FirstAny");
+                        if (log.isTraceEnabled()) {
+                            log.trace("page " + pageNumberString + ": " 
+                                    + "Adding marker " + key + " to FirstAny");
+                        }
                     }
                 }
                 if (markerLastStart == null) {
@@ -292,7 +291,10 @@ public class PageViewport implements Resolvable, Cloneable {
                 }
                 // last on page: replace all
                 markerLastStart.putAll(marks);
-                log.trace("page " + pageNumberString + ": " + "Adding all markers to LastStart");
+                if (log.isTraceEnabled()) {
+                    log.trace("page " + pageNumberString + ": " 
+                            + "Adding all markers to LastStart");
+                }
             } else {
                 if (markerFirstAny == null) {
                     markerFirstAny = new HashMap();
@@ -302,7 +304,10 @@ public class PageViewport implements Resolvable, Cloneable {
                     Object key = iter.next();
                     if (!markerFirstAny.containsKey(key)) {
                         markerFirstAny.put(key, marks.get(key));
-                        log.trace("page " + pageNumberString + ": " + "Adding marker " + key + " to FirstAny");
+                        if (log.isTraceEnabled()) {
+                            log.trace("page " + pageNumberString + ": " 
+                                    + "Adding marker " + key + " to FirstAny");
+                        }
                     }
                 }
             }
@@ -314,14 +319,20 @@ public class PageViewport implements Resolvable, Cloneable {
                 }
                 // last on page: replace all
                 markerLastEnd.putAll(marks);
-                log.trace("page " + pageNumberString + ": " + "Adding all markers to LastEnd");
+                if (log.isTraceEnabled()) {
+                    log.trace("page " + pageNumberString + ": " 
+                            + "Adding all markers to LastEnd");
+                }
             }
             if (markerLastAny == null) {
                 markerLastAny = new HashMap();
             }
             // last on page: replace all
             markerLastAny.putAll(marks);
-            log.trace("page " + pageNumberString + ": " + "Adding all markers to LastAny");
+            if (log.isTraceEnabled()) {
+                log.trace("page " + pageNumberString + ": " 
+                        + "Adding all markers to LastAny");
+            }
         }
     }
 
@@ -436,11 +447,7 @@ public class PageViewport implements Resolvable, Cloneable {
      * @return a copy of this page and associated viewports
      */
     public Object clone() {
-        Page p = (Page)page.clone();
-        PageViewport ret = new PageViewport(spm, pageNumberString, 
-                p, (Rectangle2D)viewArea.clone());
-        ret.pageNumberString = pageNumberString;
-        return ret;
+        return new PageViewport(this);
     }
 
     /**
@@ -461,11 +468,15 @@ public class PageViewport implements Resolvable, Cloneable {
         sb.append(getPageNumberString());
         return sb.toString();
     }
-    /**
-     * @return Returns the spm.
-     */
-    public SimplePageMaster getSPM() {
-        return spm;
+    
+    /** @return the name of the simple-page-master that created this page */
+    public String getSimplePageMasterName() {
+        return this.simplePageMasterName;
+    }
+    
+    /** @return the list of extension attachments for this page */
+    public List getExtensionAttachments() {
+        return this.extensionAttachments;
     }
     
     /** @return True if this is a blank page. */

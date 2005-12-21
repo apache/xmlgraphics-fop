@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-/* $Id: Page.java,v 1.4 2004/02/27 17:41:26 jeremias Exp $ */
+/* $Id$ */
 
 package org.apache.fop.area;
 
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.datatypes.LengthBase;
@@ -54,7 +54,7 @@ public class Page implements Serializable, Cloneable {
     private RegionViewport regionAfter = null;
 
     // temporary map of unresolved objects used when serializing the page
-    private HashMap unresolved = null;
+    private Map unresolved = null;
 
     /** Set to true to make this page behave as if it were not empty. */
     private boolean fakeNonEmpty = false;
@@ -269,9 +269,9 @@ public class Page implements Serializable, Cloneable {
     /**
      * Set the unresolved references on this page for serializing.
      *
-     * @param unres the HashMap of unresolved objects
+     * @param unres the Map of unresolved objects
      */
-    public void setUnresolvedReferences(HashMap unres) {
+    public void setUnresolvedReferences(Map unres) {
         unresolved = unres;
     }
 
@@ -282,7 +282,7 @@ public class Page implements Serializable, Cloneable {
      *
      * @return the de-serialized HashMap of unresolved objects
      */
-    public HashMap getUnresolvedReferences() {
+    public Map getUnresolvedReferences() {
         return unresolved;
     }
 

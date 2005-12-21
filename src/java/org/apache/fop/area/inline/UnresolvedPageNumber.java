@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,11 +30,14 @@ import java.util.List;
  * from an id reference.
  */
 public class UnresolvedPageNumber extends TextArea implements Resolvable {
+
     private boolean resolved = false;
     private String pageIDRef;
-    private Font font;
     private String text;
 
+    //Transient fields
+    private transient Font font;
+    
     /**
      * Create a new unresolvable page number.
      *
@@ -74,7 +77,7 @@ public class UnresolvedPageNumber extends TextArea implements Resolvable {
             removeText();
             addWord(page.getPageNumberString(), 0);
             // update ipd
-            updateIPD(getStringWidth(text));
+            updateIPD(font.getWordWidth(text));
             // set the Font object to null, as we don't need it any more
             font = null;
         }
@@ -101,15 +104,4 @@ public class UnresolvedPageNumber extends TextArea implements Resolvable {
         return true;
     }
 
-    /**
-     * @param str string to be measured
-     * @return width of the string
-     */
-    private int getStringWidth(String str) {
-        int width = 0;
-        for (int count = 0; count < str.length(); count++) {
-            width += font.getCharWidth(str.charAt(count));
-        }
-        return width;
-    }
 }
