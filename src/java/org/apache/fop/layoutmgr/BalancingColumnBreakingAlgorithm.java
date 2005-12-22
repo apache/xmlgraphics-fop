@@ -41,7 +41,7 @@ public class BalancingColumnBreakingAlgorithm extends PageBreakingAlgorithm {
             boolean partOverflowRecovery,
             int columnCount) {
         super(topLevelLM, pageProvider, alignment, alignmentLast, 
-                footnoteSeparatorLength, partOverflowRecovery);
+                footnoteSeparatorLength, partOverflowRecovery, false);
         this.columnCount = columnCount;
         this.considerTooShort = true; //This is important!
     }
