@@ -25,6 +25,7 @@ import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.fo.flow.Leader;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.layoutmgr.InlineKnuthSequence;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.KnuthPenalty;
@@ -227,7 +228,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
                                            int alignment) {
         MinOptMax ipd;
         curArea = get(context);
-        KnuthSequence seq = new KnuthSequence(true);
+        KnuthSequence seq = new InlineKnuthSequence();
 
         if (curArea == null) {
             setFinished(true);

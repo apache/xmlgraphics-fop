@@ -19,18 +19,16 @@
 package org.apache.fop.layoutmgr;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Represents a list of Knuth elements.
  */
-public class KnuthSequence extends ArrayList {
-    /** Number of elements to ignore at the beginning of the list. */ 
-    public int ignoreAtStart = 0;
-    /** Number of elements to ignore at the end of the list. */
-    public int ignoreAtEnd = 0;
-    // Is this an inline or a block sequence?
-    private boolean isInlineSequence = false;
-
+/**
+ * 
+ */
+public abstract class KnuthSequence extends ArrayList {
     /**
      * Creates a new and empty list.
      */
@@ -39,11 +37,11 @@ public class KnuthSequence extends ArrayList {
     }
 
     /**
-     * Creates a new and empty list, and sets isInlineSequence.
+     * Creates a new list from an existing list.
+     * @param list The list from which to create the new list.
      */
-    public KnuthSequence(boolean isInlineSequence) {
-        super();
-        this.isInlineSequence = isInlineSequence;
+    public KnuthSequence(List list) {
+        super(list);
     }
 
     /**
@@ -56,35 +54,51 @@ public class KnuthSequence extends ArrayList {
      * Finalizes a Knuth sequence.
      * @return a finalized sequence.
      */
-    public KnuthSequence endSequence() {
-        return endSequence(null);
+    public abstract KnuthSequence endSequence();
+
+    /**
+     * Can sequence be appended to this sequence?
+     * @param sequence The sequence that may be appended.
+     * @return whether the sequence can be appended to this sequence.
+     */
+    public abstract boolean canAppendSequence(KnuthSequence sequence);
+
+    /**
+     * Append sequence to this sequence if it can be appended.
+     * TODO In principle the LayoutManager can also be retrieved from the elements in the sequence.
+     * @param sequence The sequence that is to be appended.
+     * @param lm The LayoutManager for the Position that may have to be created. 
+     * @return whether the sequence was succesfully appended to this sequence.
+     */
+    public abstract boolean appendSequence(KnuthSequence sequence, LayoutManager lm);
+    
+    /**
+     * Append sequence to this sequence if it can be appended.
+     * If that is not possible, close this sequence.
+     * TODO In principle the LayoutManager can also be retrieved from the elements in the sequence.
+     * @param sequence The sequence that is to be appended.
+     * @param lm The LayoutManager for the Position that may have to be created. 
+     * @return whether the sequence was succesfully appended to this sequence.
+     */
+    public abstract boolean appendSequenceOrClose(KnuthSequence sequence, LayoutManager lm);
+    
+    /**
+     * Wrap the Positions of the elements of this sequence in a Position for LayoutManager lm.
+     * @param lm The LayoutManager for the Positions that will be created.
+     */
+    public void wrapPositions(LayoutManager lm) {
+        ListIterator listIter = listIterator();
+        KnuthElement element;
+        while (listIter.hasNext()) {
+            element = (KnuthElement) listIter.next();
+            element.setPosition
+            (lm.notifyPos(new NonLeafPosition(lm, element.getPosition())));
+        }
     }
     
     /**
-     * Finalizes a Knuth sequence.
-     * @param breakPosition a Position instance for the last penalty (may be null)
-     * @return a finalized sequence.
+     * @return the last element of this sequence.
      */
-    public KnuthSequence endSequence(Position breakPosition) {
-        // remove glue and penalty item at the end of the paragraph
-        while (this.size() > ignoreAtStart
-               && !((KnuthElement)this.get(this.size() - 1)).isBox()) {
-            this.remove(this.size() - 1);
-        }
-        if (this.size() > ignoreAtStart) {
-            // add the elements representing the space at the end of the last line
-            // and the forced break
-            this.add(new KnuthPenalty(0, KnuthElement.INFINITE, false, null, false));
-            this.add(new KnuthGlue(0, 10000000, 0, null, false));
-            this.add(new KnuthPenalty(0, -KnuthElement.INFINITE, false, breakPosition, false));
-            ignoreAtEnd = 3;
-            return this;
-        } else {
-            this.clear();
-            return null;
-        }
-    }
-
     public KnuthElement getLast() {
         int idx = size();
         if (idx == 0) {
@@ -93,6 +107,10 @@ public class KnuthSequence extends ArrayList {
         return (KnuthElement) get(idx - 1);
     }
 
+    /**
+     * Remove the last element of this sequence.
+     * @return the removed element.
+     */
     public KnuthElement removeLast() {
         int idx = size();
         if (idx == 0) {
@@ -101,6 +119,10 @@ public class KnuthSequence extends ArrayList {
         return (KnuthElement) remove(idx - 1);
     }
 
+    /**
+     * @param index The index of the element to be returned
+     * @return the element at index index.
+     */
     public KnuthElement getElement(int index) {
         return (KnuthElement) get(index);
     }
@@ -109,7 +131,6 @@ public class KnuthSequence extends ArrayList {
      * Is this an inline or a block sequence?
      * @return true if this is an inline sequence
      */
-    public boolean isInlineSequence() {
-        return isInlineSequence;
-    }
+    public abstract boolean isInlineSequence();
+
 }

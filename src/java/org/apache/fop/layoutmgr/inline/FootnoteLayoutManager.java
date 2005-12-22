@@ -25,6 +25,7 @@ import java.util.ListIterator;
 import org.apache.fop.fo.flow.Footnote;
 import org.apache.fop.layoutmgr.AbstractLayoutManager;
 import org.apache.fop.layoutmgr.FootnoteBodyLayoutManager;
+import org.apache.fop.layoutmgr.InlineKnuthSequence;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthSequence;
 import org.apache.fop.layoutmgr.LayoutContext;
@@ -84,7 +85,7 @@ public class FootnoteLayoutManager extends AbstractLayoutManager
         if (returnedList.size() == 0) {
             //Inline part of the footnote is empty. Need to send back an auxiliary
             //zero-width, zero-height inline box so the footnote gets painted.
-            KnuthSequence seq = new KnuthSequence(true);
+            KnuthSequence seq = new InlineKnuthSequence();
             //Need to use an aux. box, otherwise, the line height can't be forced to zero height.
             forcedAnchor = new KnuthInlineBox(0, null, null, true);
             seq.add(forcedAnchor);

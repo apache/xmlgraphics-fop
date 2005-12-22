@@ -219,4 +219,11 @@ public interface LayoutManager extends PercentBaseContext {
      */
     FObj getFObj();
     
+    /**
+     * Adds a Position to the Position participating in the first|last determination by assigning
+     * it a unique position index.
+     * @param pos the Position
+     * @return the same Position but with a position index
+     */
+    Position notifyPos(Position pos);
 }

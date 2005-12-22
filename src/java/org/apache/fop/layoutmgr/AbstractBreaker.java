@@ -56,7 +56,12 @@ public abstract class AbstractBreaker {
         }
     }
 
-    public class BlockSequence extends KnuthSequence {
+    public class BlockSequence extends BlockKnuthSequence {
+
+        /** Number of elements to ignore at the beginning of the list. */ 
+        public int ignoreAtStart = 0;
+        /** Number of elements to ignore at the end of the list. */
+        public int ignoreAtEnd = 0;
 
         /**
          * startOn represents where on the page/which page layout
@@ -76,8 +81,41 @@ public abstract class AbstractBreaker {
             return this.startOn;
         }
 
+        /**
+         * Finalizes a Knuth sequence.
+         * @return a finalized sequence.
+         */
+        public KnuthSequence endSequence() {
+            return endSequence(null);
+        }
+        
+        /**
+         * Finalizes a Knuth sequence.
+         * @param breakPosition a Position instance for the last penalty (may be null)
+         * @return a finalized sequence.
+         */
+        public KnuthSequence endSequence(Position breakPosition) {
+            // remove glue and penalty item at the end of the paragraph
+            while (this.size() > ignoreAtStart
+                   && !((KnuthElement)this.get(this.size() - 1)).isBox()) {
+                this.remove(this.size() - 1);
+            }
+            if (this.size() > ignoreAtStart) {
+                // add the elements representing the space at the end of the last line
+                // and the forced break
+                this.add(new KnuthPenalty(0, KnuthElement.INFINITE, false, null, false));
+                this.add(new KnuthGlue(0, 10000000, 0, null, false));
+                this.add(new KnuthPenalty(0, -KnuthElement.INFINITE, false, breakPosition, false));
+                ignoreAtEnd = 3;
+                return this;
+            } else {
+                this.clear();
+                return null;
+            }
+        }
+
         public BlockSequence endBlockSequence(Position breakPosition) {
-            KnuthSequence temp = super.endSequence(breakPosition);
+            KnuthSequence temp = endSequence(breakPosition);
             if (temp != null) {
                 BlockSequence returnSequence = new BlockSequence(startOn);
                 returnSequence.addAll(temp);

@@ -30,6 +30,7 @@ import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.BreakingAlgorithm;
 import org.apache.fop.layoutmgr.ElementListObserver;
+import org.apache.fop.layoutmgr.InlineKnuthSequence;
 import org.apache.fop.layoutmgr.KnuthBlockBox;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
@@ -187,7 +188,12 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     }
 
     // this class represents a paragraph
-    private class Paragraph extends KnuthSequence {
+    private class Paragraph extends InlineKnuthSequence {
+        /** Number of elements to ignore at the beginning of the list. */ 
+        private int ignoreAtStart = 0;
+        /** Number of elements to ignore at the end of the list. */
+        private int ignoreAtEnd = 0;
+
         // space at the end of the last line (in millipoints)
         private MinOptMax lineFiller;
         private int textAlignment;
@@ -200,7 +206,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
 
         public Paragraph(LineLayoutManager llm, int alignment, int alignmentLast,
                          int indent, int endIndent) {
-            super(true);
+            super();
             layoutManager = llm;
             textAlignment = alignment;
             textAlignmentLast = alignmentLast;
@@ -691,38 +697,106 @@ public class LineLayoutManager extends InlineStackingLayoutManager
      */
     private void collectInlineKnuthElements(LayoutContext context, MinOptMax availIPD) {
         LayoutContext inlineLC = new LayoutContext(context);
-
+        
         InlineLevelLayoutManager curLM;
         LinkedList returnedList = null;
         iLineWidth = context.getStackLimit().opt;
-
+        
         // convert all the text in a sequence of paragraphs made
         // of KnuthBox, KnuthGlue and KnuthPenalty objects
         boolean bPrevWasKnuthBox = false;
-
+        
         StringBuffer trace = new StringBuffer("LineLM:");
-
+        
         Paragraph lastPar = null;
-
+        
         while ((curLM = (InlineLevelLayoutManager) getChildLM()) != null) {
-            if ((returnedList
-                 = curLM.getNextKnuthElements(inlineLC,
-                                              effectiveAlignment))
-                != null) {
-                if (returnedList.size() == 0) {
-                    continue;
+            returnedList = curLM.getNextKnuthElements(inlineLC, effectiveAlignment);
+            if (returnedList == null) {
+                // curLM returned null; this can happen
+                // if it has nothing more to layout,
+                // so just iterate once more to see
+                // if there are other children
+                continue;
+            }
+            if (returnedList.size() == 0) {
+                continue;
+            }
+            
+            if (lastPar != null) {
+                KnuthSequence firstSeq = (KnuthSequence) returnedList.getFirst();
+                
+                // finish last paragraph before a new block sequence
+                if (!firstSeq.isInlineSequence()) {
+                    lastPar.endParagraph();
+                    ElementListObserver.observe(lastPar, "line", null);
+                    lastPar = null;
+                    if (log.isTraceEnabled()) {
+                        trace.append(" ]");
+                    }
+                    bPrevWasKnuthBox = false;
                 }
-
+                
+                // does the first element of the first paragraph add to an existing word?
                 if (lastPar != null) {
-                    Object firstObj;
-                    KnuthSequence firstSeq = null;
-                    firstObj = returnedList.getFirst();
-                    if (firstObj instanceof KnuthSequence) {
-                        firstSeq = (KnuthSequence) firstObj;
+                    KnuthElement thisElement;
+                    thisElement = (KnuthElement) firstSeq.get(0);
+                    if (thisElement.isBox() && !thisElement.isAuxiliary()
+                            && bPrevWasKnuthBox) {
+                        lastPar.addALetterSpace();
+                    }
+                }
+            }
+            
+            // loop over the KnuthSequences (and single KnuthElements) in returnedList
+            ListIterator iter = returnedList.listIterator();
+            while (iter.hasNext()) {
+                KnuthSequence sequence = (KnuthSequence) iter.next();
+                // the sequence contains inline Knuth elements
+                if (sequence.isInlineSequence()) {
+                    // look at the last element 
+                    KnuthElement lastElement;
+                    lastElement = (KnuthElement) sequence.getLast();
+                    if (lastElement == null) {
+                        throw new NullPointerException(
+                        "Sequence was empty! lastElement is null");
+                    }
+                    bPrevWasKnuthBox = lastElement.isBox() && lastElement.getW() != 0;
+                    
+                    // if last paragraph is open, add the new elements to the paragraph
+                    // else this is the last paragraph
+                    if (lastPar == null) { 
+                        lastPar = new Paragraph(this, 
+                                                textAlignment, textAlignmentLast, 
+                                                textIndent.getValue(this),
+                                                lastLineEndIndent.getValue(this));
+                        lastPar.startParagraph(availIPD.opt);
+                        if (log.isTraceEnabled()) {
+                            trace.append(" [");
+                        }
+                    } else {
+                        if (log.isTraceEnabled()) {
+                            trace.append(" +");
+                        }
+                    }
+                    lastPar.addAll(sequence);
+                    if (log.isTraceEnabled()) {
+                        trace.append(" I");
                     }
                     
-                    // finish last paragraph before a new block sequence
-                    if (firstSeq != null && !firstSeq.isInlineSequence()) {
+                    // finish last paragraph if it was closed with a linefeed
+                    if (lastElement.isPenalty()
+                            && ((KnuthPenalty) lastElement).getP()
+                            == -KnuthPenalty.INFINITE) {
+                        // a penalty item whose value is -inf
+                        // represents a preserved linefeed,
+                        // wich forces a line break
+                        lastPar.removeLast();
+                        if (lastPar.size() == 0) {
+                            //only a forced linefeed on this line 
+                            //-> compensate with a zero width box
+                            lastPar.add(new KnuthInlineBox(0, null, null, false));
+                        }
                         lastPar.endParagraph();
                         ElementListObserver.observe(lastPar, "line", null);
                         lastPar = null;
@@ -731,123 +805,23 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                         }
                         bPrevWasKnuthBox = false;
                     }
-                
-                    // does the first element of the first paragraph add to an existing word?
-                    if (lastPar != null) {
-                        KnuthElement thisElement;
-                        if (firstObj instanceof KnuthElement) {
-                            thisElement = (KnuthElement) firstObj;
-                        } else {
-                            thisElement = (KnuthElement) firstSeq.get(0);
-                        }
-                        if (thisElement.isBox() && !thisElement.isAuxiliary()
-                                && bPrevWasKnuthBox) {
-                            lastPar.addALetterSpace();
-                        }
+                } else { // the sequence is a block sequence
+                    /*
+                     // "wrap" the Position stored in each element of returnedList
+                      ListIterator listIter = sequence.listIterator();
+                      while (listIter.hasNext()) {
+                      KnuthElement returnedElement = (KnuthElement) listIter.next();
+                      returnedElement.setPosition
+                      (new NonLeafPosition(this,
+                      returnedElement.getPosition()));
+                      }
+                      */                        
+                    knuthParagraphs.add(sequence);
+                    if (log.isTraceEnabled()) {
+                        trace.append(" B");
                     }
-
                 }
-
-                
-                // loop over the KnuthSequences (and single KnuthElements) in returnedList
-                // (LeafNodeLM descendants may also skip wrapping elements in KnuthSequences
-                // to cause fewer container structures)
-                // TODO the mixture here adds a little to the complexity. Decide whether:
-                // - to leave as is and save some container instances
-                // - to use KnuthSequences exclusively (adjustments on leaf-type LMs necessary)
-                // See also FootnoteLM.addAnchor() as well as right above this comment
-                // for similar code. Or see http://svn.apache.org/viewcvs?rev=230779&view=rev 
-                ListIterator iter = returnedList.listIterator();
-                while (iter.hasNext()) {
-                    Object obj = iter.next();
-                    KnuthElement singleElement = null;
-                    KnuthSequence sequence = null;
-                    if (obj instanceof KnuthElement) {
-                        singleElement = (KnuthElement)obj;
-                    } else {
-                        sequence = (KnuthSequence)obj;
-                    }
-                    // the sequence contains inline Knuth elements
-                    if (singleElement != null || sequence.isInlineSequence()) {
-                        // look at the last element 
-                        KnuthElement lastElement;
-                        if (singleElement != null) {
-                            lastElement = singleElement;
-                        } else {
-                            lastElement = (KnuthElement) sequence.getLast();
-                            if (lastElement == null) {
-                                throw new NullPointerException(
-                                        "Sequence was empty! lastElement is null");
-                            }
-                        }
-                        bPrevWasKnuthBox = lastElement.isBox() && lastElement.getW() != 0;
-
-                        // if last paragraph is open, add the new elements to the paragraph
-                        // else this is the last paragraph
-                        if (lastPar == null) { 
-                            lastPar = new Paragraph(this, 
-                                                    textAlignment, textAlignmentLast, 
-                                                    textIndent.getValue(this), lastLineEndIndent.getValue(this));
-                            lastPar.startParagraph(availIPD.opt);
-                            if (log.isTraceEnabled()) {
-                                trace.append(" [");
-                            }
-                        } else {
-                            if (log.isTraceEnabled()) {
-                                trace.append(" +");
-                            }
-                        }
-                        if (singleElement != null) {
-                            lastPar.add(singleElement);
-                        } else {
-                            lastPar.addAll(sequence);
-                        }
-                        if (log.isTraceEnabled()) {
-                            trace.append(" I");
-                        }
-
-                        // finish last paragraph if it was closed with a linefeed
-                        if (lastElement.isPenalty()
-                                && ((KnuthPenalty) lastElement).getP()
-                                    == -KnuthPenalty.INFINITE) {
-                            // a penalty item whose value is -inf
-                            // represents a preserved linefeed,
-                            // wich forces a line break
-                            lastPar.removeLast();
-                            if (lastPar.size() == 0) {
-                                //only a forced linefeed on this line 
-                                //-> compensate with a zero width box
-                                lastPar.add(new KnuthInlineBox(0, null, null, false));
-                            }
-                            lastPar.endParagraph();
-                            ElementListObserver.observe(lastPar, "line", null);
-                            lastPar = null;
-                            if (log.isTraceEnabled()) {
-                                trace.append(" ]");
-                            }
-                            bPrevWasKnuthBox = false;
-                        }
-                    } else { // the sequence is a block sequence
-/*                        // "wrap" the Position stored in each element of returnedList
-                        ListIterator listIter = sequence.listIterator();
-                        while (listIter.hasNext()) {
-                            KnuthElement returnedElement = (KnuthElement) listIter.next();
-                            returnedElement.setPosition
-                                (new NonLeafPosition(this,
-                                                     returnedElement.getPosition()));
-                        }
-*/                        knuthParagraphs.add(sequence);
-                        if (log.isTraceEnabled()) {
-                            trace.append(" B");
-                        }
-                    }
-                } // end of loop over returnedList
-            } else {
-                // curLM returned null; this can happen
-                // if it has nothing more to layout,
-                // so just iterate once more to see
-                // if there are other children
-            }
+            } // end of loop over returnedList
         }
         if (lastPar != null) {
             lastPar.endParagraph();

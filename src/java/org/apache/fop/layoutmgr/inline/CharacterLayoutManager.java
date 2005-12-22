@@ -20,6 +20,7 @@ package org.apache.fop.layoutmgr.inline;
 
 import org.apache.fop.fo.flow.Character;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.layoutmgr.InlineKnuthSequence;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.KnuthPenalty;
@@ -84,7 +85,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         MinOptMax ipd;
         curArea = get(context);
-        KnuthSequence seq = new KnuthSequence(true);
+        KnuthSequence seq = new InlineKnuthSequence();
 
         if (curArea == null) {
             setFinished(true);

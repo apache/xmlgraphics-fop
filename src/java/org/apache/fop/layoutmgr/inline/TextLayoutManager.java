@@ -28,6 +28,7 @@ import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.flow.Inline;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.layoutmgr.InlineKnuthSequence;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthGlue;
@@ -459,7 +460,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         alignmentContext = context.getAlignmentContext();
 
         LinkedList returnList = new LinkedList();
-        KnuthSequence sequence = new KnuthSequence(true);
+        KnuthSequence sequence = new InlineKnuthSequence();
         AreaInfo ai = null;
         returnList.add(sequence);
 
@@ -487,10 +488,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                         (new KnuthGlue(lineEndBAP, 0, 0,
                                        new LeafPosition(this, -1), true));
                 }
-                sequence.add
-                    (new KnuthPenalty(0, -KnuthElement.INFINITE,
-                                      false, null, false));
-                sequence = new KnuthSequence(true);
+                sequence.endSequence();
+                sequence = new InlineKnuthSequence();
                 returnList.add(sequence);
 
                 // advance to the next character
