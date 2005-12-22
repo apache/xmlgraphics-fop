@@ -79,15 +79,21 @@ public class FontInfo {
      * @param style font style (normal, italic, oblique...)
      * @param weight font weight
      */
-    public void addFontProperties(String name, String family, String style,
-                                  int weight) {
+    public void addFontProperties(String name, String family, String style, int weight) {
+        addFontProperties(name, new FontTriplet(family, style, weight));
+    }
+
+    /**
+     * Adds a new font triplet.
+     * @param name internal key
+     * @param triplet the font triplet to associate with the internal key
+     */
+    public void addFontProperties(String name, FontTriplet triplet) {
         /*
          * add the given family, style and weight as a lookup for the font
          * with the given name
          */
-
-        String key = createFontKey(family, style, weight);
-        this.triplets.put(key, name);
+        this.triplets.put(triplet, name);
     }
 
     /**
@@ -114,37 +120,49 @@ public class FontInfo {
      * @param substFont true if the font may be substituted with the default font if not found
      * @return internal key
      */
-    private String fontLookup(String family, String style,
+    private FontTriplet fontLookup(String family, String style,
                              int weight, boolean substFont) {
-        String key;
+        FontTriplet startKey = createFontKey(family, style, weight); 
+        FontTriplet key = startKey;
         // first try given parameters
-        key = createFontKey(family, style, weight);
-        String f = (String)triplets.get(key);
+        String f = getInternalFontKey(key);
         if (f == null) {
             // then adjust weight, favouring normal or bold
-            f = findAdjustWeight(family, style, weight);
+            key = findAdjustWeight(family, style, weight);
+            f = getInternalFontKey(key);
 
             if (!substFont && f == null) {
                 return null;
             }
             // then try any family with orig weight
             if (f == null) {
-                notifyFontReplacement(key);
+                notifyFontReplacement(startKey);
                 key = createFontKey("any", style, weight);
-                f = (String)triplets.get(key);
+                f = getInternalFontKey(key);
             }
 
             // then use default
             if (f == null) {
-                f = (String)triplets.get(Font.DEFAULT_FONT);
+                key = Font.DEFAULT_FONT;
+                f = getInternalFontKey(key);
             }
-
         }
 
-        usedFonts.put(f, fonts.get(f));
-        return f;
+        if (f != null) {
+            return key;
+        } else {
+            return null;
+        }
     }
 
+    /**
+     * Tells this class that the font with the given internal name has been used.
+     * @param internalName the internal font name (F1, F2 etc.)
+     */
+    public void useFont(String internalName) {
+        usedFonts.put(internalName, fonts.get(internalName));
+    }
+    
     /**
      * Lookup a font.
      * <br>
@@ -155,9 +173,9 @@ public class FontInfo {
      * @param family font family
      * @param style font style
      * @param weight font weight
-     * @return internal key
+     * @return the font triplet of the font chosen
      */
-    public String fontLookup(String family, String style,
+    public FontTriplet fontLookup(String family, String style,
                              int weight) {
         return fontLookup(family, style, weight, true);
     }
@@ -172,20 +190,20 @@ public class FontInfo {
      * @param family font family (priority list)
      * @param style font style
      * @param weight font weight
-     * @return internal key
+     * @return font triplet of the font chosen
      */
-    public String fontLookup(String[] family, String style,
+    public FontTriplet fontLookup(String[] family, String style,
                              int weight) {
         for (int i = 0; i < family.length; i++) {
-            String key = fontLookup(family[i], style, weight, (i >= family.length - 1));
-            if (key != null) {
-                return key;
+            FontTriplet triplet = fontLookup(family[i], style, weight, (i >= family.length - 1));
+            if (triplet != null) {
+                return triplet;
             }
         }
         throw new IllegalStateException("fontLookup must return a key on the last call");
     }
     
-    private void notifyFontReplacement(String key) {
+    private void notifyFontReplacement(FontTriplet key) {
         if (loggedFontKeys == null) {
             loggedFontKeys = new java.util.HashSet();
         }
@@ -203,39 +221,43 @@ public class FontInfo {
      * @param weight font weight
      * @return internal key
      */
-    public String findAdjustWeight(String family, String style,
+    public FontTriplet findAdjustWeight(String family, String style,
                              int weight) {
-        String key;
+        FontTriplet key = null;
         String f = null;
         int newWeight = weight;
         if (newWeight < 400) {
             while (f == null && newWeight > 0) {
                 newWeight -= 100;
                 key = createFontKey(family, style, newWeight);
-                f = (String)triplets.get(key);
+                f = getInternalFontKey(key);
             }
         } else if (newWeight == 500) {
             key = createFontKey(family, style, 400);
-            f = (String)triplets.get(key);
+            f = getInternalFontKey(key);
         } else if (newWeight > 500) {
             while (f == null && newWeight < 1000) {
                 newWeight += 100;
                 key = createFontKey(family, style, newWeight);
-                f = (String)triplets.get(key);
+                f = getInternalFontKey(key);
             }
             newWeight = weight;
             while (f == null && newWeight > 400) {
                 newWeight -= 100;
                 key = createFontKey(family, style, newWeight);
-                f = (String)triplets.get(key);
+                f = getInternalFontKey(key);
             }
         }
-        if (f == null) {
+        if (f == null && weight != 400) {
             key = createFontKey(family, style, 400);
-            f = (String)triplets.get(key);
+            f = getInternalFontKey(key);
         }
 
-        return f;
+        if (f != null) {
+            return key;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -246,10 +268,19 @@ public class FontInfo {
      * @return True if available
      */
     public boolean hasFont(String family, String style, int weight) {
-        String key = createFontKey(family, style, weight);
+        FontTriplet key = createFontKey(family, style, weight);
         return this.triplets.containsKey(key);
     }
 
+    /**
+     * Returns the internal font key (F1, F2, F3 etc.) for a given triplet.
+     * @param triplet the font triplet
+     * @return the associated internal key or null, if not found
+     */
+    public String getInternalFontKey(FontTriplet triplet) {
+        return (String)triplets.get(triplet);
+    }
+    
     /**
      * Creates a key from the given strings.
      * @param family font family
@@ -257,9 +288,9 @@ public class FontInfo {
      * @param weight font weight
      * @return internal key
      */
-    public static String createFontKey(String family, String style,
+    public static FontTriplet createFontKey(String family, String style,
                                        int weight) {
-        return family + "," + style + "," + weight;
+        return new FontTriplet(family, style, weight);
     }
 
     /**
@@ -298,7 +329,7 @@ public class FontInfo {
      * @param fontName The font name we are looking for
      * @return The first triplet for the given font name
      */
-    private String getTripletFor(String fontName) {
+    public FontTriplet getTripletFor(String fontName) {
         List foundTriplets = new ArrayList();
         for (Iterator iter = triplets.entrySet().iterator(); iter.hasNext();) {
             Map.Entry tripletEntry = (Map.Entry) iter.next();
@@ -308,7 +339,7 @@ public class FontInfo {
         }
         if (foundTriplets.size() > 0) {
             Collections.sort(foundTriplets);
-            return (String)foundTriplets.get(0);
+            return (FontTriplet)foundTriplets.get(0);
         }
         return null;
     }
@@ -322,11 +353,12 @@ public class FontInfo {
      * @return font style
      */
     public String getFontStyleFor(String fontName) {
-        String triplet = getTripletFor(fontName);
+        FontTriplet triplet = getTripletFor(fontName);
         if (triplet != null) {
-            return triplet.substring(triplet.indexOf(',') + 1, triplet.lastIndexOf(','));
+            return triplet.getStyle();
+        } else {
+            return "";
         }
-        return "";
     }
     
     /**
@@ -337,12 +369,13 @@ public class FontInfo {
      * @param fontName internal key
      * @return font weight
      */
-    public String getFontWeightFor(String fontName) {
-        String triplet = getTripletFor(fontName);
+    public int getFontWeightFor(String fontName) {
+        FontTriplet triplet = getTripletFor(fontName);
         if (triplet != null) {
-            return triplet.substring(triplet.lastIndexOf(',') + 1);
+            return triplet.getWeight();
+        } else {
+            return 0;
         }
-        return "";
     }
     
 }

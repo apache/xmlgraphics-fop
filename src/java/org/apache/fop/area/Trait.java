@@ -23,6 +23,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.traits.BorderProps;
 
@@ -59,9 +60,9 @@ public class Trait implements Serializable {
     public static final Integer EXTERNAL_LINK = new Integer(2);
 
     /**
-     * The font name from the font setup.
+     * The font triplet for the current font.
      */
-    public static final Integer FONT_NAME = new Integer(3);
+    public static final Integer FONT = new Integer(3);
 
     /**
      * Font size for the current font.
@@ -227,8 +228,8 @@ public class Trait implements Serializable {
                           new TraitInfo("internal-link", String.class));
         TRAIT_INFO.put(EXTERNAL_LINK,
                           new TraitInfo("external-link", String.class));
-        TRAIT_INFO.put(FONT_NAME,
-                          new TraitInfo("font-family", String.class));
+        TRAIT_INFO.put(FONT,
+                          new TraitInfo("font", FontTriplet.class));
         TRAIT_INFO.put(FONT_SIZE,
                           new TraitInfo("font-size", Integer.class));
         TRAIT_INFO.put(COLOR, new TraitInfo("color", String.class));

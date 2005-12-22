@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,6 @@ package org.apache.fop.fonts;
 
 import java.util.Map;
 
-
-
-
 /**
  * This class holds font state information and provides access to the font
  * metrics.
@@ -30,17 +27,15 @@ import java.util.Map;
 public class Font {
 
     /** Default fallback key */
-    public static final String DEFAULT_FONT = "any,normal,400";
+    public static final FontTriplet DEFAULT_FONT = new FontTriplet("any", "normal", 400);
     /** Normal font weight */
     public static final int NORMAL = 400;
     /** Bold font weight */
     public static final int BOLD = 700;
 
     private String fontName;
+    private FontTriplet triplet;
     private int fontSize;
-    //private String fontFamily;
-    //private String fontStyle;
-    //private int fontWeight;
 
     /**
      * normal or small-caps font
@@ -52,11 +47,13 @@ public class Font {
     /**
      * Main constructor
      * @param key key of the font
+     * @param triplet the font triplet that was used to lookup this font (may be null)
      * @param met font metrics
      * @param fontSize font size
      */
-    public Font(String key, FontMetrics met, int fontSize) {
+    public Font(String key, FontTriplet triplet, FontMetrics met, int fontSize) {
         this.fontName = key;
+        this.triplet = triplet;
         this.metric = met;
         this.fontSize = fontSize;
     }
@@ -91,6 +88,11 @@ public class Font {
      */
     public String getFontName() {
         return fontName;
+    }
+    
+    /** @return the font triplet that selected this font */
+    public FontTriplet getFontTriplet() {
+        return this.triplet;
     }
 
     /**

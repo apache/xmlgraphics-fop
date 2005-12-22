@@ -32,6 +32,8 @@ import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonTextDecoration;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontTriplet;
 
 /**
  * This is a helper class used for setting common traits on areas.
@@ -407,6 +409,13 @@ public class TraitSetter {
         addMargins(area, bpProps, startIndent, endIndent, context);
     }
 
+    /**
+     * Returns the effective space length of a resolved space specifier based on the adjustment 
+     * value.
+     * @param adjust the adjustment value
+     * @param space the space specifier
+     * @return the effective space length
+     */
     public static int getEffectiveSpace(double adjust, MinOptMax space) {
         if (space == null) {
             return 0;
@@ -420,6 +429,13 @@ public class TraitSetter {
         return sp;
     }
     
+    /**
+     * Adds traits for space-before and space-after to an area.
+     * @param area the target area
+     * @param adjust the adjustment value
+     * @param spaceBefore the space-before space specifier
+     * @param spaceAfter the space-after space specifier
+     */
     public static void addSpaceBeforeAfter(Area area, double adjust, 
             MinOptMax spaceBefore, MinOptMax spaceAfter) {
         int space;
@@ -444,8 +460,13 @@ public class TraitSetter {
         area.addTrait(Trait.BREAK_BEFORE, new Integer(breakBefore));
     }
     
+    /**
+     * Adds font traits to an area
+     * @param area the target are
+     * @param font the font to use
+     */
     public static void addFontTraits(Area area, Font font) {
-        area.addTrait(Trait.FONT_NAME, font.getFontName());
+        area.addTrait(Trait.FONT, font.getFontTriplet());
         area.addTrait(Trait.FONT_SIZE, new Integer(font.getFontSize()));
     }
     

@@ -44,6 +44,7 @@ import org.apache.batik.gvt.renderer.StrokingTextPainter;
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontTriplet;
 
 /**
  * Renders the attributed character iterator of a <tt>TextNode</tt>.
@@ -176,22 +177,25 @@ public class PDFTextPainter implements TextPainter {
                 }
                 fontFamily = fam.getFamilyName();
                 if (fi.hasFont(fontFamily, style, weight)) {
-                    String fname = fontInfo.fontLookup(fontFamily, style,
+                    FontTriplet triplet = fontInfo.fontLookup(fontFamily, style,
                                                        weight);
+                    String fname = fontInfo.getInternalFontKey(triplet);
+                    fontInfo.useFont(fname);
                     FontMetrics metrics = fontInfo.getMetricsFor(fname);
                     int fsize = (int)(size.floatValue() * 1000);
-                    fontState = new Font(fname, metrics, fsize);
+                    fontState = new Font(fname, triplet, metrics, fsize);
                     found = true;
                     break;
                 }
             }
         }
         if (!found) {
-            String fname =
-              fontInfo.fontLookup("any", style, Font.NORMAL);
+            FontTriplet triplet = fontInfo.fontLookup("any", style, Font.NORMAL);
+            String fname = fontInfo.getInternalFontKey(triplet);
+            fontInfo.useFont(fname);
             FontMetrics metrics = fontInfo.getMetricsFor(fname);
             int fsize = (int)(size.floatValue() * 1000);
-            fontState = new Font(fname, metrics, fsize);
+            fontState = new Font(fname, triplet, metrics, fsize);
         } else {
             if (g2d instanceof PDFGraphics2D) {
                 ((PDFGraphics2D) g2d).setOverrideFontState(fontState);
