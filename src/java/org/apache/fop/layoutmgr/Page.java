@@ -32,15 +32,23 @@ public class Page {
     private SimplePageMaster spm;
     private PageViewport pageViewport;
     
-    public Page(SimplePageMaster spm, String pageStr, boolean blank) {
+    /**
+     * Main constructor
+     * @param spm the simple-page-master used for this page
+     * @param pageNumberStr the page number (as a String) 
+     * @param blank true if this is a blank page
+     */
+    public Page(SimplePageMaster spm, String pageNumberStr, boolean blank) {
         this.spm = spm;
-        this.pageViewport = new PageViewport(spm, pageStr, blank);
+        this.pageViewport = new PageViewport(spm, pageNumberStr, blank);
     }
     
+    /** @return the simple-page-master that created this page */
     public SimplePageMaster getSimplePageMaster() {
         return this.spm;
     }
     
+    /** @return the page viewport representing this page in the area tree */
     public PageViewport getPageViewport() {
         return this.pageViewport;
     }

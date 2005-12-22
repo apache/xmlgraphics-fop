@@ -78,9 +78,7 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
         text.setIPD(width);
         text.setBPD(font.getAscender() - font.getDescender());
         text.setBaselineOffset(font.getAscender());
-        text.addTrait(Trait.FONT_NAME, font.getFontName());
-        text.addTrait(Trait.FONT_SIZE,
-                        new Integer(font.getFontSize()));
+        TraitSetter.addFontTraits(text, font);
         text.addTrait(Trait.COLOR, fobj.getColor());        
 
         TraitSetter.addTextDecoration(text, fobj.getTextDecoration());
@@ -100,7 +98,7 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
         ta.setBPD(baseArea.getBPD());
         ta.setOffset(baseArea.getOffset());
         ta.setBaselineOffset(baseArea.getBaselineOffset());
-        ta.addTrait(Trait.FONT_NAME, font.getFontName()); //only to initialize the trait map
+        ta.addTrait(Trait.COLOR, fobj.getColor()); //only to initialize the trait map
         ta.getTraits().putAll(baseArea.getTraits());
         updateContent(ta);
         return ta;
