@@ -350,6 +350,13 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
     public boolean getGeneratesLineArea() {
         return holder instanceof LineArea;
     }
+
+    /* (non-Javadoc)
+     * @see org.apache.fop.layoutmgr.LayoutManager#notifyPos(org.apache.fop.layoutmgr.Position)
+     */
+    public Position notifyPos(Position pos) {
+        return pos;
+    }
    
 }
 

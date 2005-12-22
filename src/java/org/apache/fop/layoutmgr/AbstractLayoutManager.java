@@ -330,7 +330,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
      * @param pos the Position
      * @return the same Position but with a position index
      */
-    protected Position notifyPos(Position pos) {
+    public Position notifyPos(Position pos) {
         if (pos.getIndex() >= 0) {
             throw new IllegalStateException("Position already got its index");
         }

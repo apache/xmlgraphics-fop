@@ -26,6 +26,7 @@ import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.layoutmgr.AbstractLayoutManager;
+import org.apache.fop.layoutmgr.InlineKnuthSequence;
 import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.KnuthSequence;
@@ -265,7 +266,7 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
 
         // node is a fo:ExternalGraphic, fo:InstreamForeignObject,
         // fo:PageNumber or fo:PageNumberCitation
-        KnuthSequence seq = new KnuthSequence(true);
+        KnuthSequence seq = new InlineKnuthSequence();
 
         addKnuthElementsForBorderPaddingStart(seq);
         

@@ -34,6 +34,7 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.SpaceProperty;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.layoutmgr.BlockKnuthSequence;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthSequence;
@@ -197,12 +198,10 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
 
     /** @see org.apache.fop.layoutmgr.LayoutManager */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
-        InlineLevelLayoutManager curILM;
-        LayoutManager curLM, lastLM = null;
+        LayoutManager curLM;
 
         // the list returned by child LM
         LinkedList returnedList;
-        KnuthElement returnedElement;
 
         // the list which will be returned to the parent LM
         LinkedList returnList = new LinkedList();
@@ -273,125 +272,46 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
                 // just iterate once more to see if there is another child
                 continue;
             }
+            if (returnedList.size() == 0) {
+                continue;
+            }
             if (curLM instanceof InlineLevelLayoutManager) {
-                // close the last block sequence 
-                if (lastSequence != null && !lastSequence.isInlineSequence()) {
-                    lastSequence = null;
-                    if (log.isTraceEnabled()) {
-                        trace.append(" ]");
-                    }
-                }
                 // "wrap" the Position stored in each element of returnedList
                 ListIterator seqIter = returnedList.listIterator();
                 while (seqIter.hasNext()) {
                     KnuthSequence sequence = (KnuthSequence) seqIter.next();
-                    ListIterator listIter = sequence.listIterator();
-                    while (listIter.hasNext()) {
-                        returnedElement = (KnuthElement) listIter.next();
-                        returnedElement.setPosition
-                        (notifyPos(new NonLeafPosition(this,
-                                returnedElement.getPosition())));
-                    }
-                    if (!sequence.isInlineSequence()) {
-                        if (lastSequence != null && lastSequence.isInlineSequence()) {
-                            // log.error("Last inline sequence should be closed before"
-                            //                + " a block sequence");
-                            lastSequence.add(new KnuthPenalty(0, -KnuthElement.INFINITE,
-                                                   false, null, false));
-                            lastSequence = null;
-                            if (log.isTraceEnabled()) {
-                                trace.append(" ]");
-                            }
-                        }
-                        returnList.add(sequence);
-                        if (log.isTraceEnabled()) {
-                            trace.append(" B");
-                        }
-                    } else {
-                        if (lastSequence == null) {
-                            lastSequence = new KnuthSequence(true);
-                            returnList.add(lastSequence);
-                            if (!borderAdded) {
-                                addKnuthElementsForBorderPaddingStart(lastSequence);
-                                borderAdded = true;
-                            }
-                            if (log.isTraceEnabled()) {
-                                trace.append(" [");
-                            }
-                        } else {
-                            if (log.isTraceEnabled()) {
-                                trace.append(" +");
-                            }
-                        }
-                        lastSequence.addAll(sequence);
-                        if (log.isTraceEnabled()) {
-                            trace.append(" I");
-                        }
-                       // finish last paragraph if it was closed with a linefeed
-                        KnuthElement lastElement = (KnuthElement) sequence.getLast();
-                        if (lastElement.isPenalty()
-                                && ((KnuthPenalty) lastElement).getP()
-                                == -KnuthPenalty.INFINITE) {
-                            // a penalty item whose value is -inf
-                            // represents a preserved linefeed,
-                            // wich forces a line break
-                            lastSequence = null;
-                            if (log.isTraceEnabled()) {
-                                trace.append(" ]");
-                            }
-                        }
-                    }
+                    sequence.wrapPositions(this);
                 }
+                if (lastSequence != null && lastSequence.appendSequenceOrClose
+                        ((KnuthSequence) returnedList.get(0), this)) {
+                    returnedList.remove(0);
+                }
+                // add border and padding to the first complete sequence of this LM
+                if (!borderAdded && returnedList.size() != 0) {
+                    addKnuthElementsForBorderPaddingStart((KnuthSequence) returnedList.get(0));
+                    borderAdded = true;
+                }
+                returnList.addAll(returnedList);
             } else { // A block LM
-                // close the last inline sequence 
-                if (lastSequence != null && lastSequence.isInlineSequence()) {
-                    lastSequence.add(new KnuthPenalty(0, -KnuthElement.INFINITE,
-                                           false, null, false));
-                    lastSequence = null;
-                    if (log.isTraceEnabled()) {
-                        trace.append(" ]");
-                    }
+                // TODO For now avoid having two different block LMs in a single sequence
+                if (curLM != lastChildLM && lastSequence != null) {
+                    lastSequence.endSequence();
                 }
-                if (curLM != lastLM) {
-                    // close the last block sequence
-                    if (lastSequence != null && !lastSequence.isInlineSequence()) {
-                        lastSequence = null;
-                        if (log.isTraceEnabled()) {
-                            trace.append(" ]");
-                        }
-                    }
-                    lastLM = curLM;
-                }
-                if (lastSequence == null) {
-                    lastSequence = new KnuthSequence(false);
-                    returnList.add(lastSequence);
-                    if (log.isTraceEnabled()) {
-                        trace.append(" [");
-                    }
+                BlockKnuthSequence sequence = new BlockKnuthSequence(returnedList);
+                sequence.wrapPositions(this);
+                if (lastSequence == null || !lastSequence.appendSequenceOrClose(sequence, this)) {
+                    // add border and padding to the first complete sequence of this LM
                     if (!borderAdded) {
-                        addKnuthElementsForBorderPaddingStart(lastSequence);
+                        addKnuthElementsForBorderPaddingStart(sequence);
                         borderAdded = true;
                     }
-                } else {
-                    if (log.isTraceEnabled()) {
-                        trace.append(" +");
-                    }
-                }
-                ListIterator iter = returnedList.listIterator();
-                while (iter.hasNext()) {
-                    KnuthElement element = (KnuthElement) iter.next();
-                    element.setPosition
-                        (notifyPos(new NonLeafPosition(this,
-                                element.getPosition())));
-                }
-                lastSequence.addAll(returnedList);
-                if (log.isTraceEnabled()) {
-                    trace.append(" L");
+                    returnList.add(sequence);
                 }
             }
+            lastSequence = (KnuthSequence) returnList.getLast();
             lastChildLM = curLM;
         }
-
+        
         if (lastSequence != null) {
             addKnuthElementsForBorderPaddingEnd(lastSequence);
         }
@@ -541,7 +461,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
             int ipStart = borderAndPadding.getBorderStartWidth(false)
                          + borderAndPadding.getPaddingStart(false, this);
             if (ipStart > 0) {
-                returnList.add(new KnuthBox(ipStart, getAuxiliaryPosition(), true));
+                returnList.add(0,new KnuthBox(ipStart, getAuxiliaryPosition(), true));
             }
         }
     }
