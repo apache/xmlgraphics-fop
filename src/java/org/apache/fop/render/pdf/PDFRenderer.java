@@ -331,6 +331,8 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                                         intDest, yoffset, 
                                         bookmarkItem.showChildItems());
             }
+        } else {
+            log.warn("Unresolved bookmark item received: " + bookmarkItem.getIDRef());
         }
 
         for (int i = 0; i < bookmarkItem.getCount(); i++) {
