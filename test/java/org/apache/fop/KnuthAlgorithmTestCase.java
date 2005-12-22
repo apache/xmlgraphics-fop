@@ -20,6 +20,7 @@ package org.apache.fop;
 
 import java.util.List;
 
+import org.apache.fop.layoutmgr.BlockKnuthSequence;
 import org.apache.fop.layoutmgr.BreakingAlgorithm;
 import org.apache.fop.layoutmgr.ElementListObserver;
 import org.apache.fop.layoutmgr.KnuthBox;
@@ -41,7 +42,7 @@ public class KnuthAlgorithmTestCase extends TestCase {
     }
 
     private KnuthSequence getKnuthSequence1() {
-        KnuthSequence seq = new KnuthSequence();
+        KnuthSequence seq = new BlockKnuthSequence();
         for (int i = 0; i < 5; i++) {
             seq.add(new KnuthBox(0, null, true));
             seq.add(new KnuthPenalty(0, KnuthPenalty.INFINITE, false, null, true));
