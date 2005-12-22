@@ -55,6 +55,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fonts.FontSetup;
+import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.image.EPSImage;
 import org.apache.fop.image.FopImage;
@@ -808,7 +809,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
     
     private void renderText(AbstractTextArea area, String text) {
         renderInlineAreaBackAndBorders(area);
-        String fontname = (String)area.getTrait(Trait.FONT_NAME);
+        String fontname = getInternalFontNameForArea(area);
         int fontsize = area.getTraitAsInteger(Trait.FONT_SIZE);
 
         // This assumes that *all* CIDFonts use a /ToUnicode mapping

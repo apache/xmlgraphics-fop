@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,54 +18,89 @@
  
 package org.apache.fop.fonts;
 
+import java.io.Serializable;
+
 /**
- * FontTriplet contains information on name, weight, style of one font
+ * FontTriplet contains information on name, style and weight of one font
  */
-public class FontTriplet {
+public class FontTriplet implements Comparable, Serializable {
     
-    private String name, weight, style;
+    /** serial version UID */
+    private static final long serialVersionUID = 1168991106658033508L;
+    
+    private String name;
+    private String style;
+    private int weight;
+    
+    //This is only a cache
+    private transient String key;
     
     /**
      * Creates a new font triplet.
      * @param name font name
-     * @param weight font weight (normal, bold etc.)
      * @param style font style (normal, italic etc.)
+     * @param weight font weight (100, 200, 300...800, 900)
      */
-    public FontTriplet(String name, String weight, String style) {
+    public FontTriplet(String name, String style, int weight) {
         this.name = name;
-        this.weight = weight;
         this.style = style;
+        this.weight = weight;
     }
 
-    /**
-     * Returns the font name.
-     * @return the font name
-     */
+    /** @return the font name */
     public String getName() {
         return name;
     }
 
-    /**
-     * Returns the font weight.
-     * @return the font weight
-     */
-    public String getWeight() {
-        return weight;
-    }
-
-    /**
-     * Returns the font style.
-     * @return the font style
-     */
+    /** @return the font style */
     public String getStyle() {
         return style;
     }
     
-    /**
-     * @see java.lang.Object#toString()
-     */
-    public String toString() {
-        return getName() + "," + getStyle() + "," + getWeight();
+    /** @return the font weight */
+    public int getWeight() {
+        return weight;
     }
+
+    private String getKey() {
+        if (this.key == null) {
+            //This caches the combined key
+            this.key = getName() + "," + getStyle() + "," + getWeight();
+        }
+        return this.key;
+    }
+    
+    /** @see java.lang.Comparable#compareTo(java.lang.Object) */
+    public int compareTo(Object o) {
+        return getKey().compareTo(((FontTriplet)o).getKey());
+    }
+
+    /** @see java.lang.Object#hashCode() */
+    public int hashCode() {
+        return toString().hashCode();
+    }
+
+    /** @see java.lang.Object#equals(java.lang.Object) */
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        } else if (obj == this) {
+            return true;
+        } else {
+            if (obj instanceof FontTriplet) {
+                FontTriplet other = (FontTriplet)obj;
+                return (getName().equals(other.getName())
+                        && getStyle().equals(other.getStyle()) 
+                        && (getWeight() == other.getWeight()));
+            }
+        }
+        return false;
+    }
+
+    /** @see java.lang.Object#toString() */
+    public String toString() {
+        return getKey();
+    }
+
 }
 

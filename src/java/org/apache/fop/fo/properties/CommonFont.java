@@ -30,6 +30,7 @@ import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontMetrics;
+import org.apache.fop.fonts.FontTriplet;
 
 /**
  * Collection of properties used in
@@ -164,10 +165,12 @@ public class CommonFont {
             // NOTE: this is incomplete. font-size may be specified with
             // various kinds of keywords too
             //int fontVariant = propertyList.get("font-variant").getEnum();
-            String fname = fontInfo.fontLookup(getFontFamily(), style,
+            FontTriplet triplet = fontInfo.fontLookup(getFontFamily(), style,
                                                font_weight);
+            String fname = fontInfo.getInternalFontKey(triplet);
+            fontInfo.useFont(fname);
             FontMetrics metrics = fontInfo.getMetricsFor(fname);
-            fontState = new Font(fname, metrics, fontSize.getValue(context));
+            fontState = new Font(fname, triplet, metrics, fontSize.getValue(context));
         }
         return fontState;
     }

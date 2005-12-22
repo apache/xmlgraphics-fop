@@ -73,6 +73,7 @@ import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.fonts.FontSetup;
+import org.apache.fop.fonts.FontTriplet;
 
 /**
  * Renderer that renders areas to XML for debugging purposes.
@@ -120,6 +121,7 @@ public class XMLRenderer extends PrintRenderer {
      * @see org.apache.avalon.framework.configuration.Configurable#configure(Configuration)
      */
     public void configure(Configuration cfg) throws ConfigurationException {
+        super.configure(cfg);
         //Font configuration
         List cfgFonts = FontSetup.buildFontListFromConfiguration(cfg);
         if (this.fontList == null) {
@@ -281,12 +283,14 @@ public class XMLRenderer extends PrintRenderer {
                 if ("break-before".equals(name) || "break-after".equals(name)) {
                     continue;
                 }
-                String value = traitEntry.getValue().toString();
-                addAttribute(name, value);
-                if ("font-family".equals(name)) {
-                    addAttribute("font-name", fontInfo.getMetricsFor(value).getFontName());
-                    addAttribute("font-style", fontInfo.getFontStyleFor(value));
-                    addAttribute("font-weight", fontInfo.getFontWeightFor(value));
+                Object value = traitEntry.getValue();
+                if (Trait.getTraitName(Trait.FONT).equals(name)) {
+                    FontTriplet triplet = (FontTriplet)value;
+                    addAttribute("font-name", triplet.getName());
+                    addAttribute("font-style", triplet.getStyle());
+                    addAttribute("font-weight", triplet.getWeight());
+                } else {
+                    addAttribute(name, value.toString());
                 }
             }
         }

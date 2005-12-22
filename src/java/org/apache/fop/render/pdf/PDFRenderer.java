@@ -39,6 +39,7 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.area.Area;
 import org.apache.fop.area.CTM;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.Page;
@@ -56,6 +57,7 @@ import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.datatypes.ColorType;
+import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontSetup;
@@ -1011,18 +1013,17 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         beginTextObject();
         StringBuffer pdf = new StringBuffer();
 
-        String name = (String) ch.getTrait(Trait.FONT_NAME);
-        int size = ((Integer) ch.getTrait(Trait.FONT_SIZE)).intValue();
+        Font font = getFontFromArea(ch);
 
         // This assumes that *all* CIDFonts use a /ToUnicode mapping
-        Typeface tf = (Typeface) fontInfo.getFonts().get(name);
+        Typeface tf = (Typeface) fontInfo.getFonts().get(font.getFontName());
         boolean useMultiByte = tf.isMultiByte();
 
         // String startText = useMultiByte ? "<FEFF" : "(";
         String startText = useMultiByte ? "<" : "(";
         String endText = useMultiByte ? "> " : ") ";
 
-        updateFont(name, size, pdf);
+        updateFont(font.getFontName(), font.getFontSize(), pdf);
         ColorType ct = (ColorType) ch.getTrait(Trait.COLOR);
         if (ct != null) {
             updateColor(ct, true, pdf);
@@ -1066,14 +1067,12 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         String s = ch.getChar();
 
 
-        FontMetrics metrics = fontInfo.getMetricsFor(name);
-        Font fs = new Font(name, metrics, size);
-        escapeText(s, fs, useMultiByte, pdf);
+        escapeText(s, font, useMultiByte, pdf);
         pdf.append(endText);
 
         currentStream.add(pdf.toString());
 
-        renderTextDecoration(tf, size, ch, bl, rx);
+        renderTextDecoration(tf, font.getFontSize(), ch, bl, rx);
         
         super.renderCharacter(ch);
     }
@@ -1086,14 +1085,14 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         beginTextObject();
         StringBuffer pdf = new StringBuffer();
 
-        String name = (String) text.getTrait(Trait.FONT_NAME);
+        String fontName = getInternalFontNameForArea(text);
         int size = ((Integer) text.getTrait(Trait.FONT_SIZE)).intValue();
         
         // This assumes that *all* CIDFonts use a /ToUnicode mapping
-        Typeface tf = (Typeface) fontInfo.getFonts().get(name);
+        Typeface tf = (Typeface) fontInfo.getFonts().get(fontName);
         boolean useMultiByte = tf.isMultiByte();
         
-        updateFont(name, size, pdf);
+        updateFont(fontName, size, pdf);
         ColorType ct = (ColorType) text.getTrait(Trait.COLOR);
         updateColor(ct, true, pdf);
 
@@ -1143,9 +1142,8 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * @see org.apache.fop.render.AbstractRenderer#renderWord(WordArea)
      */
     public void renderWord(WordArea word) {
-        String name = (String) word.getParentArea().getTrait(Trait.FONT_NAME);
-        int size = ((Integer) word.getParentArea().getTrait(Trait.FONT_SIZE)).intValue();
-        Typeface tf = (Typeface) fontInfo.getFonts().get(name);
+        Font font = getFontFromArea(word.getParentArea());
+        Typeface tf = (Typeface) fontInfo.getFonts().get(font.getFontName());
         boolean useMultiByte = tf.isMultiByte();
 
         String startText = useMultiByte ? "<" : "(";
@@ -1157,9 +1155,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
 
         String s = word.getWord();
         
-        FontMetrics metrics = fontInfo.getMetricsFor(name);
-        Font fs = new Font(name, metrics, size);
-        escapeText(s, fs, useMultiByte, pdf);
+        escapeText(s, font, useMultiByte, pdf);
         pdf.append(endText);
         
         currentStream.add(pdf.toString());
@@ -1171,9 +1167,8 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * @see org.apache.fop.render.AbstractRenderer#renderSpace(SpaceArea)
      */
     public void renderSpace(SpaceArea space) {
-        String name = (String) space.getParentArea().getTrait(Trait.FONT_NAME);
-        int size = ((Integer) space.getParentArea().getTrait(Trait.FONT_SIZE)).intValue();
-        Typeface tf = (Typeface) fontInfo.getFonts().get(name);
+        Font font = getFontFromArea(space.getParentArea());
+        Typeface tf = (Typeface) fontInfo.getFonts().get(font.getFontName());
         boolean useMultiByte = tf.isMultiByte();
 
         String startText = useMultiByte ? "<" : "(";
@@ -1185,13 +1180,12 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
 
         String s = space.getSpace();
         
-        FontMetrics metrics = fontInfo.getMetricsFor(name);
-        Font fs = new Font(name, metrics, size);
-        escapeText(s, fs, useMultiByte, pdf);
+        escapeText(s, font, useMultiByte, pdf);
         pdf.append(endText);
         
         if (useMultiByte) {
-            pdf.append(-(((TextArea) space.getParentArea()).getTextWordSpaceAdjust() / (size / 1000)) + " ");
+            pdf.append(-(((TextArea) space.getParentArea()).getTextWordSpaceAdjust() 
+                    / (font.getFontSize() / 1000)) + " ");
         }
         
         currentStream.add(pdf.toString());

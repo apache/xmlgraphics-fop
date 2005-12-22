@@ -199,14 +199,10 @@ public class FontSetup {
                 for (int c = 0; c < triplets.size(); c++) {
                     FontTriplet triplet = (FontTriplet) triplets.get(c);
 
-                    int weight = FontUtil.parseCSS2FontWeight(triplet.getWeight());
                     if (log.isDebugEnabled()) {
-                        log.debug("Registering: " + triplet + " weight=" + weight);
+                        log.debug("Registering: " + triplet + " under " + internalName);
                     }
-                    fontInfo.addFontProperties(internalName,
-                                               triplet.getName(),
-                                               triplet.getStyle(),
-                                               weight);
+                    fontInfo.addFontProperties(internalName, triplet);
                 }
             }
         }
@@ -226,9 +222,10 @@ public class FontSetup {
             Configuration[] triple = font[i].getChildren("font-triplet");
             List tripleList = new java.util.ArrayList();
             for (int j = 0; j < triple.length; j++) {
+                int weight = FontUtil.parseCSS2FontWeight(triple[j].getAttribute("weight"));
                 tripleList.add(new FontTriplet(triple[j].getAttribute("name"),
-                                               triple[j].getAttribute("weight"),
-                                               triple[j].getAttribute("style")));
+                                               triple[j].getAttribute("style"),
+                                               weight));
             }
 
             EmbedFontInfo efi;
@@ -243,8 +240,8 @@ public class FontSetup {
                     FontTriplet triplet = (FontTriplet) tripleList.get(j);
                     log.debug("Font triplet "
                               + triplet.getName() + ", "
-                              + triplet.getWeight() + ", "
-                              + triplet.getStyle());
+                              + triplet.getStyle() + ", "
+                              + triplet.getWeight());
                 }
             }
 

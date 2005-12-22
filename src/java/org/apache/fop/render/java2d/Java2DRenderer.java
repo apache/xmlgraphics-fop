@@ -70,6 +70,7 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontMetrics;
+import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
 import org.apache.fop.image.XMLImage;
@@ -822,6 +823,25 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
     }
 
     /**
+     * Returns a Font object constructed based on the font traits in an area
+     * @param area the area from which to retrieve the font triplet information
+     * @return the requested Font instance or null if not found
+     * @todo This would make a nice opportunity for a cache!
+     */
+    protected Font getFontFromArea(Area area) {
+        FontTriplet triplet = (FontTriplet)area.getTrait(Trait.FONT);
+        String name = fontInfo.getInternalFontKey(triplet);
+        if (name != null) {
+            int size = ((Integer)area.getTrait(Trait.FONT_SIZE)).intValue();
+            FontMetrics metrics = fontInfo.getMetricsFor(name);
+            Font font = new Font(name, null, metrics, size);
+            return font;
+        } else {
+            return null;
+        }
+    }
+    
+    /**
      * @see org.apache.fop.render.AbstractRenderer#renderText(TextArea)
      */
     public void renderText(TextArea text) {
@@ -830,9 +850,8 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
         float x = currentIPPosition + text.getBorderAndPaddingWidthStart();
         float y = currentBPPosition + text.getOffset() + text.getBaselineOffset(); // baseline
 
-        String name = (String) text.getTrait(Trait.FONT_NAME);
-        int size = ((Integer) text.getTrait(Trait.FONT_SIZE)).intValue();
-        state.updateFont(name, size, null);
+        Font font = getFontFromArea(text);
+        state.updateFont(font.getFontName(), font.getFontSize(), null);
 
         ColorType ct = (ColorType) text.getTrait(Trait.COLOR);
         state.updateColor(ct, false, null);
@@ -844,12 +863,10 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
         // + x + ", y: " + y + state);
 
         // rendering text decorations
-        FontMetrics metrics = fontInfo.getMetricsFor(name);
-        Font fs = new Font(name, metrics, size);
 
         super.renderText(text);
 
-        renderTextDecoration(fs, text, y, x);
+        renderTextDecoration(font, text, y, x);
     }
 
     /**
@@ -861,9 +878,8 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
         float x = currentIPPosition + ch.getBorderAndPaddingWidthStart();
         float y = currentBPPosition + ch.getOffset() + ch.getBaselineOffset(); // baseline
 
-        String name = (String) ch.getTrait(Trait.FONT_NAME);
-        int size = ((Integer) ch.getTrait(Trait.FONT_SIZE)).intValue();
-        state.updateFont(name, size, null);
+        Font font = getFontFromArea(ch);
+        state.updateFont(font.getFontName(), font.getFontSize(), null);
 
         ColorType ct = (ColorType) ch.getTrait(Trait.COLOR);
         state.updateColor(ct, false, null);
@@ -875,9 +891,7 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
         // + x + ", y: " + y + state);
 
         // rendering text decorations
-        FontMetrics metrics = fontInfo.getMetricsFor(name);
-        Font fs = new Font(name, metrics, size);
-        renderTextDecoration(fs, ch, y, x);
+        renderTextDecoration(font, ch, y, x);
 
         super.renderCharacter(ch);
     }

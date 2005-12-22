@@ -62,6 +62,7 @@ import org.apache.commons.logging.LogFactory;
 //FOP
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.image.FopImage;
 
 /**
@@ -915,11 +916,13 @@ public class PSGraphics2D extends AbstractGraphics2D {
         String style = f.isItalic() ? "italic" : "normal";
         int weight = f.isBold() ? Font.BOLD : Font.NORMAL;
                 
-        String fontKey = fontInfo.findAdjustWeight(fontFamily, style, weight);
-        if (fontKey == null) {
-            fontKey = fontInfo.findAdjustWeight("sans-serif", style, weight);
+        FontTriplet triplet = fontInfo.findAdjustWeight(fontFamily, style, weight);
+        if (triplet == null) {
+            triplet = fontInfo.findAdjustWeight("sans-serif", style, weight);
         }
-        return new Font(fontKey, fontInfo.getMetricsFor(fontKey), fontSize);
+        String fontKey = fontInfo.getInternalFontKey(triplet);
+        fontInfo.useFont(fontKey);
+        return new Font(fontKey, triplet, fontInfo.getMetricsFor(fontKey), fontSize);
     }
 
     private void establishCurrentFont() throws IOException {

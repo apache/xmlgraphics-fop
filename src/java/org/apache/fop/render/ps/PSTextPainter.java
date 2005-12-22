@@ -48,6 +48,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontTriplet;
 
 /**
  * Renders the attributed character iterator of a <tt>TextNode</tt>.
@@ -384,19 +385,22 @@ public class PSTextPainter implements TextPainter {
                 }*/
                 fontFamily = fam.getFamilyName();
                 if (fontInfo.hasFont(fontFamily, style, weight)) {
-                    String fname = fontInfo.fontLookup(
+                    FontTriplet triplet = fontInfo.fontLookup(
                             fontFamily, style, weight);
+                    String fname = fontInfo.getInternalFontKey(triplet);
+                    fontInfo.useFont(fname);
                     FontMetrics metrics = fontInfo.getMetricsFor(fname);
                     int fsize = (int)(fontSize.floatValue() * 1000);
-                    return new Font(fname, metrics, fsize);
+                    return new Font(fname, triplet, metrics, fsize);
                 }
             }
         }
-        String fname = fontInfo.fontLookup(
-                "any", style, Font.NORMAL);
+        FontTriplet triplet = fontInfo.fontLookup("any", style, Font.NORMAL);
+        String fname = fontInfo.getInternalFontKey(triplet);
+        fontInfo.useFont(fname);
         FontMetrics metrics = fontInfo.getMetricsFor(fname);
         int fsize = (int)(fontSize.floatValue() * 1000);
-        return new Font(fname, metrics, fsize);
+        return new Font(fname, triplet, metrics, fsize);
     }
 
     private java.awt.Font makeAWTFont(AttributedCharacterIterator aci, Font font) {
