@@ -31,14 +31,16 @@ import org.apache.fop.fo.pagination.Region;
 public class RegionReference extends Area implements Cloneable {
     
     /** Reference to the region FO. */
-    protected Region regionFO;
+    //protected Region regionFO;
+    private int regionClass;
+    private String regionName;
     private CTM ctm;
     
 
     // the list of block areas from the static flow
     private ArrayList blocks = new ArrayList();
     
-    // the parent RegionViewport for this object
+    /** the parent RegionViewport for this object */
     protected RegionViewport regionViewport;
 
     /**
@@ -48,7 +50,19 @@ public class RegionReference extends Area implements Cloneable {
      * @param parent the viewport for this region.
      */
     public RegionReference(Region regionFO, RegionViewport parent) {
-        this.regionFO = regionFO;
+        this(regionFO.getNameId(), regionFO.getRegionName(), parent);
+    }
+
+    /**
+     * Create a new region reference area.
+     *
+     * @param regionClass the region class (as returned by Region.getNameId())
+     * @param regionName the name of the region (as returned by Region.getRegionName())
+     * @param parent the viewport for this region.
+     */
+    public RegionReference(int regionClass, String regionName, RegionViewport parent) {
+        this.regionClass = regionClass;
+        this.regionName = regionName;
         addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
         regionViewport = parent;
     }
@@ -97,12 +111,12 @@ public class RegionReference extends Area implements Cloneable {
      * @return the region class
      */
     public int getRegionClass() {
-        return regionFO.getNameId();
+        return this.regionClass;
     }
 
     /** @return the region name */
     public String getRegionName() {
-        return regionFO.getRegionName();
+        return this.regionName;
     }
     
     /**
@@ -121,7 +135,7 @@ public class RegionReference extends Area implements Cloneable {
      * @return a copy of this region reference area
      */
     public Object clone() {
-        RegionReference rr = new RegionReference(regionFO, regionViewport);
+        RegionReference rr = new RegionReference(regionClass, regionName, regionViewport);
         rr.ctm = ctm;
         rr.setIPD(getIPD());
         rr.blocks = (ArrayList)blocks.clone();

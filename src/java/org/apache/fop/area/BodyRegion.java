@@ -42,9 +42,23 @@ public class BodyRegion extends RegionReference {
      * @param parent the parent region viewport
      */
     public BodyRegion(RegionBody rb, RegionViewport parent) {
-        super(rb, parent);
-        this.columnCount = rb.getColumnCount();
-        this.columnGap = rb.getColumnGap();
+        this(rb.getNameId(), rb.getRegionName(), parent, rb.getColumnCount(), rb.getColumnGap());
+    }
+
+    /**
+     * Constructor which can read traits directly
+     * from an fo:region-body formatting object.
+     * @param regionClass the region class (as returned by Region.getNameId())
+     * @param regionName the name of the region (as returned by Region.getRegionName())
+     * @param parent the parent region viewport
+     * @param columnCount the number of columns
+     * @param columnGap the gap between columns
+     */
+    public BodyRegion(int regionClass, String regionName, RegionViewport parent, 
+            int columnCount, int columnGap) {
+        super(regionClass, regionName, parent);
+        this.columnCount = columnCount;
+        this.columnGap = columnGap;
         mainReference = new MainReference(this);
     }
 
@@ -127,7 +141,8 @@ public class BodyRegion extends RegionReference {
      * @return a shallow copy of this object
      */
     public Object clone() {
-        BodyRegion br = new BodyRegion((RegionBody) regionFO, regionViewport);
+        BodyRegion br = new BodyRegion(getRegionClass(), getRegionName(), regionViewport, 
+                getColumnCount(), getColumnGap());
         br.setCTM(getCTM());
         br.setIPD(getIPD());
         br.beforeFloat = beforeFloat;

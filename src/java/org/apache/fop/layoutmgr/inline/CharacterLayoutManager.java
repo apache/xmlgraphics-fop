@@ -97,8 +97,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
         curArea.setIPD(ipd.opt);
         curArea.setBPD(font.getAscender() - font.getDescender());
 
-        curArea.addTrait(Trait.FONT_NAME, font.getFontName());
-        curArea.addTrait(Trait.FONT_SIZE, new Integer(font.getFontSize()));
+        TraitSetter.addFontTraits(curArea, font);
         curArea.addTrait(Trait.COLOR, fobj.getColor());
 
         // TODO: may need some special handling for fo:character

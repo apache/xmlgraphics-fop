@@ -31,6 +31,7 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonTextDecoration;
+import org.apache.fop.fonts.Font;
 
 /**
  * This is a helper class used for setting common traits on areas.
@@ -441,6 +442,11 @@ public class TraitSetter {
     public static void addBreaks(Area area,  int breakBefore, int breakAfter) {
         area.addTrait(Trait.BREAK_AFTER, new Integer(breakAfter));
         area.addTrait(Trait.BREAK_BEFORE, new Integer(breakBefore));
+    }
+    
+    public static void addFontTraits(Area area, Font font) {
+        area.addTrait(Trait.FONT_NAME, font.getFontName());
+        area.addTrait(Trait.FONT_SIZE, new Integer(font.getFontSize()));
     }
     
     /**

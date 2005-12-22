@@ -77,9 +77,14 @@ public class UnresolvedPageNumber extends TextArea implements Resolvable {
             removeText();
             addWord(page.getPageNumberString(), 0);
             // update ipd
-            updateIPD(font.getWordWidth(text));
-            // set the Font object to null, as we don't need it any more
-            font = null;
+            if (font != null) {
+                updateIPD(font.getWordWidth(text));
+                // set the Font object to null, as we don't need it any more
+                font = null;
+            } else {
+                log.warn("Cannot update the IPD of an unresolved page number."
+                        + " No font information avilable.");
+            }
         }
     }
 

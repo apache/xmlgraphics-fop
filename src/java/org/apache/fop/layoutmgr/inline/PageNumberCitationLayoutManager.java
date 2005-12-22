@@ -119,8 +119,7 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
         TraitSetter.setProducerID(inline, fobj.getId());
         inline.setBPD(font.getAscender() - font.getDescender());
         inline.setBaselineOffset(font.getAscender());
-        inline.addTrait(Trait.FONT_NAME, font.getFontName());
-        inline.addTrait(Trait.FONT_SIZE, new Integer(font.getFontSize()));
+        TraitSetter.addFontTraits(inline, font);
         inline.addTrait(Trait.COLOR, fobj.getColor());
         TraitSetter.addTextDecoration(inline, fobj.getTextDecoration());
         
