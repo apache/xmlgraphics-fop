@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<testcase>
+  <info>
+    <p>
+      This test checks whether letterspacing is applied between across
+      fo:inline elements in the same word.
+    </p>
+  </info>
+  <fo>
+    <fo:root
+      xmlns:fo="http://www.w3.org/1999/XSL/Format"
+      xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="simpleA4"
+          page-height="5cm" page-width="15cm"
+          margin-top="2cm" margin-bottom="2cm"
+          margin-left="2cm" margin-right="2cm">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+
+      <fo:page-sequence master-reference="simpleA4">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block language="en" country="US">
+            <fo:inline letter-spacing="2pt"><fo:inline>nor</fo:inline><fo:inline>mal</fo:inline></fo:inline>
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="46672"
+xpath="//flow/block[1]/lineArea[1]/inlineparent[1]/@ipd" desc="IPD of
+containing inline area"/>
+    <eval expected="23340"
+xpath="//flow/block[1]/lineArea[1]/inlineparent[1]/inlineparent[1]/@ipd"
+desc="IPD of first contained inline area"/>
+    <eval expected="23340"
+xpath="//flow/block[1]/lineArea[1]/inlineparent[1]/inlineparent[1]/text/@ipd"
+desc="IPD of corresponding text area"/>
+  </checks>
+</testcase>

@@ -18,7 +18,11 @@
 
 package org.apache.fop.layoutmgr;
 
+import java.util.LinkedList;
 import java.util.List;
+
+import org.apache.fop.layoutmgr.inline.InlineLevelLayoutManager;
+import org.apache.fop.layoutmgr.inline.KnuthInlineBox;
 
 
 /**
@@ -65,6 +69,14 @@ public class InlineKnuthSequence extends KnuthSequence  {
         if (!canAppendSequence(sequence)) {
             return false;
         }
+        // does the first element of the first paragraph add to an existing word?
+        KnuthElement lastOldElement, firstNewElement;
+        lastOldElement = getLast();
+        firstNewElement = sequence.getElement(0);
+        if (firstNewElement.isBox() && !firstNewElement.isAuxiliary()
+                && lastOldElement.isBox() && lastOldElement.getW() != 0) {
+            addALetterSpace();
+        }
         addAll(sequence);
         return true;
     }
@@ -90,6 +102,41 @@ public class InlineKnuthSequence extends KnuthSequence  {
             isClosed = true;
         }
         return this;
+    }
+
+    public void addALetterSpace() {
+        KnuthBox prevBox = (KnuthBox) removeLast();
+        LinkedList oldList = new LinkedList();
+        // if there are two consecutive KnuthBoxes the
+        // first one does not represent a whole word,
+        // so it must be given one more letter space
+        if (!prevBox.isAuxiliary()) {
+            // if letter spacing is constant,
+            // only prevBox needs to be replaced;
+            oldList.add(prevBox);
+        } else {
+            // prevBox is the last element
+            // in the sub-sequence
+            //   <box> <aux penalty> <aux glue> <aux box>
+            // the letter space is added to <aux glue>,
+            // while the other elements are not changed
+            oldList.add(prevBox);
+            oldList.addFirst((KnuthGlue) removeLast());
+            oldList.addFirst((KnuthPenalty) removeLast());
+            oldList.addFirst((KnuthBox) removeLast());
+        }
+        // adding a letter space could involve, according to the text
+        // represented by oldList, replacing a glue element or adding
+        // new elements
+        addAll(((InlineLevelLayoutManager)
+                     prevBox.getLayoutManager())
+                    .addALetterSpaceTo(oldList));
+        if (((KnuthInlineBox) prevBox).isAnchor()) {
+            // prevBox represents a footnote citation: copy footnote info
+            // from prevBox to the new box
+            KnuthInlineBox newBox = (KnuthInlineBox) getLast();
+            newBox.setFootnoteBodyLM(((KnuthInlineBox) prevBox).getFootnoteBodyLM());
+        }
     }
 
 }

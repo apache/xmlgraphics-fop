@@ -339,40 +339,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             }
         }
 
-        private void addALetterSpace() {
-            KnuthBox prevBox = (KnuthBox) removeLast();
-            LinkedList oldList = new LinkedList();
-            // if there are two consecutive KnuthBoxes the
-            // first one does not represent a whole word,
-            // so it must be given one more letter space
-            if (!prevBox.isAuxiliary()) {
-                // if letter spacing is constant,
-                // only prevBox needs to be replaced;
-                oldList.add(prevBox);
-            } else {
-                // prevBox is the last element
-                // in the sub-sequence
-                //   <box> <aux penalty> <aux glue> <aux box>
-                // the letter space is added to <aux glue>,
-                // while the other elements are not changed
-                oldList.add(prevBox);
-                oldList.addFirst((KnuthGlue) removeLast());
-                oldList.addFirst((KnuthPenalty) removeLast());
-                oldList.addFirst((KnuthBox) removeLast());
-            }
-            // adding a letter space could involve, according to the text
-            // represented by oldList, replacing a glue element or adding
-            // new elements
-            addAll(((InlineLevelLayoutManager)
-                         prevBox.getLayoutManager())
-                        .addALetterSpaceTo(oldList));
-            if (((KnuthInlineBox) prevBox).isAnchor()) {
-                // prevBox represents a footnote citation: copy footnote info
-                // from prevBox to the new box
-                KnuthInlineBox newBox = (KnuthInlineBox) getLast();
-                newBox.setFootnoteBodyLM(((KnuthInlineBox) prevBox).getFootnoteBodyLM());
-            }
-        }
     }
 
     private class LineBreakingAlgorithm extends BreakingAlgorithm {
