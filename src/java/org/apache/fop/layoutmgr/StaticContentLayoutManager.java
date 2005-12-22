@@ -208,11 +208,15 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         int targetIPD = 0;
         int targetBPD = 0;
         int targetAlign = EN_AUTO;
+        boolean autoHeight = false;
         StaticContentBreaker breaker;
 
         if (getStaticContentFO().getFlowName().equals("xsl-footnote-separator")) {
             targetIPD = targetBlock.getIPD();
             targetBPD = targetBlock.getBPD();
+            if (targetBPD == 0) {
+                autoHeight = true;
+            }
             targetAlign = EN_BEFORE;
         } else {
             targetIPD = targetRegion.getIPD();
@@ -222,13 +226,15 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         setContentAreaIPD(targetIPD);
         setContentAreaBPD(targetBPD);
         breaker = new StaticContentBreaker(this, targetIPD, targetAlign);
-        breaker.doLayout(targetBPD);
+        breaker.doLayout(targetBPD, autoHeight);
         if (breaker.isOverflow()) {
-            if (!getStaticContentFO().getFlowName().equals("xsl-footnote-separator")
-                && regionFO.getOverflow() == EN_ERROR_IF_OVERFLOW) {
-                //TODO throw layout exception
+            if (!autoHeight) {
+                //Overflow handling
+                if (regionFO.getOverflow() == EN_ERROR_IF_OVERFLOW) {
+                    //TODO throw layout exception
+                }
+                log.warn("static-content overflows the available area.");
             }
-            log.warn("static-content overflows the available area.");
         }
     }
     

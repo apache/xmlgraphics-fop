@@ -179,6 +179,16 @@ public abstract class AbstractBreaker {
      * @param flowBPD the constant available block-progression-dimension (used for every part)
      */
     public void doLayout(int flowBPD) {
+        doLayout(flowBPD, false);
+    }
+    
+    /**
+     * Starts the page breaking process.
+     * @param flowBPD the constant available block-progression-dimension (used for every part)
+     * @param autoHeight true if warnings about overflows should be disabled because the
+     *                   the BPD is really undefined (for footnote-separators, for example)
+     */
+    public void doLayout(int flowBPD, boolean autoHeight) {
         LayoutContext childLC = createLayoutContext();
         childLC.setStackLimit(new MinOptMax(flowBPD));
 
@@ -224,7 +234,7 @@ public abstract class AbstractBreaker {
                 PageBreakingAlgorithm alg = new PageBreakingAlgorithm(getTopLevelLM(),
                         getPageViewportProvider(),
                         alignment, alignmentLast, footnoteSeparatorLength,
-                        isPartOverflowRecoveryActivated());
+                        isPartOverflowRecoveryActivated(), autoHeight);
                 int iOptPageCount;
 
                 BlockSequence effectiveList;

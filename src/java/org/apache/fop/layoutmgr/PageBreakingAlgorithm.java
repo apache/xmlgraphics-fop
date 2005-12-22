@@ -65,11 +65,14 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     private int storedBreakIndex = -1;
     private boolean storedValue = false;
 
+    //Controls whether overflows should be warned about or not
+    private boolean autoHeight = false;
+    
     public PageBreakingAlgorithm(LayoutManager topLevelLM,
                                  PageSequenceLayoutManager.PageViewportProvider pageViewportProvider,
                                  int alignment, int alignmentLast,
                                  MinOptMax footnoteSeparatorLength,
-                                 boolean partOverflowRecovery) {
+                                 boolean partOverflowRecovery, boolean autoHeight) {
         super(alignment, alignmentLast, true, partOverflowRecovery, 0);
         this.topLevelLM = topLevelLM;
         this.pageViewportProvider = pageViewportProvider;
@@ -79,6 +82,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         if (footnoteSeparatorLength.min == footnoteSeparatorLength.max) {
             footnoteSeparatorLength.max += 10000;
         }
+        this.autoHeight = autoHeight;
     }
 
     /**
@@ -717,7 +721,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         //      ? bestActiveNode.difference : bestActiveNode.difference + fillerMinWidth;
         int difference = bestActiveNode.difference;
         if (difference + bestActiveNode.availableShrink < 0) {
-            if (log.isWarnEnabled()) {
+            if (!autoHeight && log.isWarnEnabled()) {
                 log.warn(FONode.decorateWithContextInfo(
                         "Part/page " + (getPartCount() + 1) 
                         + " overflows the available area in block-progression dimension.", 
