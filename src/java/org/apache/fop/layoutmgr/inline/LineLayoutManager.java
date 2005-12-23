@@ -298,13 +298,13 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         private void removeElementsForTrailingSpaces() {
             LinkedList removedElements;
             InlineLevelLayoutManager inlineLM;
-            int effectiveAlignment = getEffectiveAlignment(textAlignment, textAlignmentLast);
+            int alignment = getEffectiveAlignment(textAlignment, textAlignmentLast);
             while (this.size() > ignoreAtStart
                    && ((KnuthElement) this.get(this.size() - 1)).isGlue()) {
                 removedElements = new LinkedList();
                 inlineLM = (InlineLevelLayoutManager)
                     ((KnuthElement) this.get(this.size() - 1)).getLayoutManager();
-                if (effectiveAlignment == EN_CENTER
+                if (alignment == EN_CENTER
                     || this.size() > 6
                        && ((KnuthElement) this.get(this.size() - 6)).isGlue()
                        && ((KnuthElement) this.get(this.size() - 5)).isPenalty()
@@ -319,7 +319,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     removedElements.addFirst((KnuthGlue) this.remove(this.size() - 1));
                     removedElements.addFirst((KnuthPenalty) this.remove(this.size() - 1));
                     removedElements.addFirst((KnuthGlue) this.remove(this.size() - 1));
-                } else if (effectiveAlignment == EN_START || effectiveAlignment == EN_END) {
+                } else if (alignment == EN_START || alignment == EN_END) {
                     // left- or right-aligned text: the pattern is
                     //     <glue> <penalty> <glue>
                     removedElements.addFirst((KnuthGlue) this.remove(this.size() - 1));
@@ -398,8 +398,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             int indent = 0;
             int difference = bestActiveNode.difference;
             int textAlign = (bestActiveNode.line < total) ? alignment : alignmentLast;
-            indent += (textAlign == Constants.EN_CENTER) ?
-                          difference / 2 : (textAlign == Constants.EN_END) ? difference : 0;
+            indent += (textAlign == Constants.EN_CENTER)
+                      ? difference / 2 : (textAlign == Constants.EN_END) ? difference : 0;
             indent += (bestActiveNode.line == 1 && bFirst) ? textIndent : 0;
             double ratio = (textAlign == Constants.EN_JUSTIFY
                 || difference < 0 && -difference <= bestActiveNode.availableShrink)
@@ -515,13 +515,15 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 return new LineBreakPosition(thisLLM,
                                              knuthParagraphs.indexOf(par),
                                              firstElementIndex, lastElementIndex,
-                                             availableShrink, availableStretch, difference, ratio, 0, indent,
+                                             availableShrink, availableStretch,
+                                             difference, ratio, 0, indent,
                                              0, iLineWidth, 0, 0, 0);
             } else {
                 return new LineBreakPosition(thisLLM,
                                              knuthParagraphs.indexOf(par),
                                              firstElementIndex, lastElementIndex,
-                                             availableShrink, availableStretch, difference, ratio, 0, indent,
+                                             availableShrink, availableStretch,
+                                             difference, ratio, 0, indent,
                                              lineLead + lineFollow, 
                                              iLineWidth, spaceBefore, spaceAfter,
                                              lineLead);
@@ -605,11 +607,11 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     /** @see org.apache.fop.layoutmgr.LayoutManager */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         Font fs = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo(), this);
-        alignmentContext = new AlignmentContext(fs, lineHeight.getValue(this), context.getWritingMode());
+        alignmentContext
+          = new AlignmentContext(fs, lineHeight.getValue(this), context.getWritingMode());
         context.setAlignmentContext(alignmentContext);
         // Get a break from currently active child LM
         // Set up constraints for inline level managers
-        InlineLevelLayoutManager curLM; // currently active LM
 
         // IPD remaining in line
         MinOptMax availIPD = context.getStackLimit();
@@ -784,16 +786,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                         bPrevWasKnuthBox = false;
                     }
                 } else { // the sequence is a block sequence
-                    /*
-                     // "wrap" the Position stored in each element of returnedList
-                      ListIterator listIter = sequence.listIterator();
-                      while (listIter.hasNext()) {
-                      KnuthElement returnedElement = (KnuthElement) listIter.next();
-                      returnedElement.setPosition
-                      (new NonLeafPosition(this,
-                      returnedElement.getPosition()));
-                      }
-                      */                        
+                    // the positions will be wrapped with this LM in postProcessLineBreaks
                     knuthParagraphs.add(sequence);
                     if (log.isTraceEnabled()) {
                         trace.append(" B");
@@ -951,14 +944,15 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         ListIterator paragraphsIterator
             = knuthParagraphs.listIterator(knuthParagraphs.size());
         lineLayoutsList = new ArrayList(knuthParagraphs.size());
+        LineLayoutPossibilities llPoss;
         while (paragraphsIterator.hasPrevious()) {
             KnuthSequence seq = (KnuthSequence) paragraphsIterator.previous();
             if (!seq.isInlineSequence()) {
-                lineLayouts = createBlockLineBreak(seq);
+                llPoss = createBlockLineBreak(seq);
             } else {
-                lineLayouts = findOptimalBreakingPoints(alignment, (Paragraph) seq);
+                llPoss = findOptimalBreakingPoints(alignment, (Paragraph) seq);
             }
-            lineLayoutsList.add(0, lineLayouts);
+            lineLayoutsList.add(0, llPoss);
         }
         
         setFinished(true);
@@ -976,13 +970,13 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     private LineLayoutPossibilities createBlockLineBreak(KnuthSequence seq) {
         //TODO Should this really create only a single LineBreakPosition???
         //This creates an implicit keep-together on the nested block-level FOs.
-        lineLayouts = new LineLayoutPossibilities();
-        lineLayouts.addPossibility(1, 0);
-        int lineHeight = 0, lineStretch = 0, lineShrink = 0;
+        LineLayoutPossibilities llPoss = new LineLayoutPossibilities();
+        llPoss.addPossibility(1, 0);
+        int localLineHeight = 0, lineStretch = 0, lineShrink = 0;
         ListIterator seqIterator = seq.listIterator();
         while (seqIterator.hasNext()) {
             KnuthElement element = (KnuthElement) seqIterator.next();
-            lineHeight += element.getW();
+            localLineHeight += element.getW();
             if (element.isGlue()) {
                 lineStretch += element.getY();
                 lineShrink += element.getZ();
@@ -990,10 +984,10 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         }
         LineBreakPosition lbp = new LineBreakPosition(this,
                 knuthParagraphs.indexOf(seq), 0, seq.size() - 1,
-                lineShrink, lineStretch, 0, 0, 0, 0, lineHeight,
+                lineShrink, lineStretch, 0, 0, 0, 0, localLineHeight,
                 iLineWidth, 0, 0, 0);
-        lineLayouts.addBreakPosition(lbp, 0);
-        return lineLayouts;
+        llPoss.addBreakPosition(lbp, 0);
+        return llPoss;
     }
 
     /**
@@ -1003,6 +997,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
      * @return the line layout possibilities for the paragraph
      */
     private LineLayoutPossibilities findOptimalBreakingPoints(int alignment, Paragraph currPar) {
+        // use the member lineLayouts, which is read by LineBreakingAlgorithm.updateData1 and 2
         lineLayouts = new LineLayoutPossibilities();
         double maxAdjustment = 1;
         int iBPcount = 0;
@@ -1011,8 +1006,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                                         textIndent.getValue(this), currPar.lineFiller.opt,
                                         lineHeight.getValue(this), lead, follow,
                                         (knuthParagraphs.indexOf(currPar) == 0),
-                                        hyphenationLadderCount.getEnum() == EN_NO_LIMIT ?
-                                                0 : hyphenationLadderCount.getValue(),
+                                        hyphenationLadderCount.getEnum() == EN_NO_LIMIT
+                                        ? 0 : hyphenationLadderCount.getValue(),
                                         this);
    
         if (hyphenationProperties.hyphenate == EN_TRUE 
@@ -1057,8 +1052,10 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 // the second try failed too, try with a huge threshold
                 // and force the algorithm to find
                 // a set of breaking points
-                log.debug("No set of breaking points found with maxAdjustment = " + maxAdjustment
-                                 + (hyphenationProperties.hyphenate == EN_TRUE ? " and hyphenation" : ""));
+                log.debug("No set of breaking points found with maxAdjustment = "
+                          + maxAdjustment
+                          + (hyphenationProperties.hyphenate == EN_TRUE
+                                  ? " and hyphenation" : ""));
                 maxAdjustment = 20;
                 iBPcount
                     = alg.findBreakingPoints(currPar,
@@ -1125,7 +1122,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 //returnList.add(new KnuthPenalty(0, 0, false, new Position(this), false));
             }
         
-            lineLayouts = (LineLayoutPossibilities)lineLayoutsList.get(p);
+            LineLayoutPossibilities llPoss;
+            llPoss = (LineLayoutPossibilities) lineLayoutsList.get(p);
             KnuthSequence seq = (KnuthSequence) knuthParagraphs.get(p);
 
             if (!seq.isInlineSequence()) {
@@ -1146,25 +1144,26 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                    create a multi-layout sequence whose elements will contain 
                    a conventional Position */
                 Position returnPosition = new LeafPosition(this, p);
-                createElements(returnList, lineLayouts, returnPosition);
+                createElements(returnList, llPoss, returnPosition);
             } else {
                 /* "normal" vertical alignment: create a sequence whose boxes
                    represent effective lines, and contain LineBreakPositions */
                 Position returnPosition = new LeafPosition(this, p);
                 int startIndex = 0;
                 for (int i = 0;
-                        i < lineLayouts.getChosenLineCount();
+                        i < llPoss.getChosenLineCount();
                         i++) {
                     if (!((BlockLevelLayoutManager) parentLM).mustKeepTogether()
                             && i >= fobj.getOrphans()
-                            && i <= lineLayouts.getChosenLineCount() - fobj.getWidows()
+                            && i <= llPoss.getChosenLineCount() - fobj.getWidows()
                             && returnList.size() > 0) {
                         // null penalty allowing a page break between lines
                         returnList.add(new BreakElement(
                                 returnPosition, 0, context));
                         //returnList.add(new KnuthPenalty(0, 0, false, returnPosition, false));
                     }
-                    int endIndex = ((LineBreakPosition) lineLayouts.getChosenPosition(i)).getLeafPos();
+                    int endIndex
+                      = ((LineBreakPosition) llPoss.getChosenPosition(i)).getLeafPos();
                     // create a list of the FootnoteBodyLM handling footnotes 
                     // whose citations are in this line
                     LinkedList footnoteList = new LinkedList();
@@ -1179,9 +1178,11 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                         }
                     }
                     startIndex = endIndex + 1;
-                    LineBreakPosition lbp = (LineBreakPosition) lineLayouts.getChosenPosition(i);
-                    returnList.add(new KnuthBlockBox(lbp.lineHeight + lbp.spaceBefore + lbp.spaceAfter
-                                                    , footnoteList, lbp, false));
+                    LineBreakPosition lbp
+                      = (LineBreakPosition) llPoss.getChosenPosition(i);
+                    returnList.add(new KnuthBlockBox
+                                   (lbp.lineHeight + lbp.spaceBefore + lbp.spaceAfter,
+                                    footnoteList, lbp, false));
                     /* // add stretch and shrink to the returnlist
                     if (!seq.isInlineSequence()
                             && lbp.availableStretch != 0 || lbp.availableShrink != 0) {
@@ -1199,7 +1200,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     }
 
 
-    private void createElements(List list, LineLayoutPossibilities lineLayouts,
+    private void createElements(List list, LineLayoutPossibilities llPoss,
                                 Position elementPosition) {
         /* number of normal, inner lines */
         int nInnerLines = 0;
@@ -1221,23 +1222,34 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         List breaker = new LinkedList();
 
         /* comment out the next lines in order to test particular situations */
-        if (fobj.getOrphans() + fobj.getWidows() <= lineLayouts.getMinLineCount()) {
-            nInnerLines = lineLayouts.getMinLineCount() - (fobj.getOrphans() + fobj.getWidows());
-            nOptionalLines = lineLayouts.getMaxLineCount() - lineLayouts.getOptLineCount();
-            nEliminableLines = lineLayouts.getOptLineCount() - lineLayouts.getMinLineCount();
-        } else if (fobj.getOrphans() + fobj.getWidows() <= lineLayouts.getOptLineCount()) {
-            nOptionalLines = lineLayouts.getMaxLineCount() - lineLayouts.getOptLineCount();
-            nEliminableLines = lineLayouts.getOptLineCount() - (fobj.getOrphans() + fobj.getWidows());
-            nConditionalEliminableLines = (fobj.getOrphans() + fobj.getWidows()) - lineLayouts.getMinLineCount();
-        } else if (fobj.getOrphans() + fobj.getWidows() <= lineLayouts.getMaxLineCount()) {
-            nOptionalLines = lineLayouts.getMaxLineCount() - (fobj.getOrphans() + fobj.getWidows());
-            nConditionalOptionalLines = (fobj.getOrphans() + fobj.getWidows()) - lineLayouts.getOptLineCount();
-            nConditionalEliminableLines = lineLayouts.getOptLineCount() - lineLayouts.getMinLineCount();
+        if (fobj.getOrphans() + fobj.getWidows() <= llPoss.getMinLineCount()) {
+            nInnerLines = llPoss.getMinLineCount()
+                          - (fobj.getOrphans() + fobj.getWidows());
+            nOptionalLines = llPoss.getMaxLineCount()
+                             - llPoss.getOptLineCount();
+            nEliminableLines = llPoss.getOptLineCount()
+                               - llPoss.getMinLineCount();
+        } else if (fobj.getOrphans() + fobj.getWidows() <= llPoss.getOptLineCount()) {
+            nOptionalLines = llPoss.getMaxLineCount()
+                             - llPoss.getOptLineCount();
+            nEliminableLines = llPoss.getOptLineCount()
+                               - (fobj.getOrphans() + fobj.getWidows());
+            nConditionalEliminableLines = (fobj.getOrphans() + fobj.getWidows())
+                                          - llPoss.getMinLineCount();
+        } else if (fobj.getOrphans() + fobj.getWidows() <= llPoss.getMaxLineCount()) {
+            nOptionalLines = llPoss.getMaxLineCount()
+                             - (fobj.getOrphans() + fobj.getWidows());
+            nConditionalOptionalLines = (fobj.getOrphans() + fobj.getWidows())
+                                        - llPoss.getOptLineCount();
+            nConditionalEliminableLines = llPoss.getOptLineCount()
+                                          - llPoss.getMinLineCount();
             nFirstLines -= nConditionalOptionalLines;
         } else {
-            nConditionalOptionalLines = lineLayouts.getMaxLineCount() - lineLayouts.getOptLineCount();
-            nConditionalEliminableLines = lineLayouts.getOptLineCount() - lineLayouts.getMinLineCount();
-            nFirstLines = lineLayouts.getOptLineCount();
+            nConditionalOptionalLines = llPoss.getMaxLineCount()
+                                        - llPoss.getOptLineCount();
+            nConditionalEliminableLines = llPoss.getOptLineCount()
+                                          - llPoss.getMinLineCount();
+            nFirstLines = llPoss.getOptLineCount();
             nLastLines = 0;
         }
         /* comment out the previous lines in order to test particular situations */
@@ -1353,10 +1365,12 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         //    totalAdj += lastElement.getW();
         //}
         //int lineNumberDifference = (int)((double) totalAdj / constantLineHeight);
-        int lineNumberDifference = (int) Math.round((double) totalAdj / constantLineHeight + (adj > 0 ? - 0.4 : 0.4));
+        int lineNumberDifference = (int) Math.round((double) totalAdj / constantLineHeight
+                                                    + (adj > 0 ? - 0.4 : 0.4));
         //log.debug("   LLM> variazione calcolata = " + ((double) totalAdj / constantLineHeight) + " variazione applicata = " + lineNumberDifference);
-        lineLayouts = (LineLayoutPossibilities)lineLayoutsList.get(pos.getLeafPos());
-        lineNumberDifference = lineLayouts.applyLineCountAdjustment(lineNumberDifference);
+        LineLayoutPossibilities llPoss;
+        llPoss = (LineLayoutPossibilities) lineLayoutsList.get(pos.getLeafPos());
+        lineNumberDifference = llPoss.applyLineCountAdjustment(lineNumberDifference);
         return lineNumberDifference * constantLineHeight;
     }
 
@@ -1372,16 +1386,17 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     public LinkedList getChangedKnuthElements(List oldList, int alignment) {
         LinkedList returnList = new LinkedList();
         for (int p = 0; p < knuthParagraphs.size(); p++) {
-            lineLayouts = (LineLayoutPossibilities)lineLayoutsList.get(p);
-            //log.debug("demerits of the chosen layout: " + lineLayouts.getChosenDemerits());
-            for (int i = 0; i < lineLayouts.getChosenLineCount(); i++) {
+            LineLayoutPossibilities llPoss;
+            llPoss = (LineLayoutPossibilities)lineLayoutsList.get(p);
+            //log.debug("demerits of the chosen layout: " + llPoss.getChosenDemerits());
+            for (int i = 0; i < llPoss.getChosenLineCount(); i++) {
                 if (!((BlockLevelLayoutManager) parentLM).mustKeepTogether()
                     && i >= fobj.getOrphans()
-                    && i <= lineLayouts.getChosenLineCount() - fobj.getWidows()) {
+                    && i <= llPoss.getChosenLineCount() - fobj.getWidows()) {
                     // null penalty allowing a page break between lines
                     returnList.add(new KnuthPenalty(0, 0, false, new Position(this), false));
                 }
-                LineBreakPosition lbp = (LineBreakPosition) lineLayouts.getChosenPosition(i);
+                LineBreakPosition lbp = (LineBreakPosition) llPoss.getChosenPosition(i);
                 //log.debug("LLM.getChangedKnuthElements> lineWidth= " + lbp.lineWidth + " difference= " + lbp.difference);
                 //log.debug("                             shrink= " + lbp.availableShrink + " stretch= " + lbp.availableStretch);
 
@@ -1401,7 +1416,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 }
                 returnList.add(new KnuthBlockBox(lbp.lineHeight,
                                                  contentIPD,
-                                                 (lbp.ipdAdjust != 0 ? lbp.lineWidth - lbp.difference : 0),
+                                                 (lbp.ipdAdjust != 0
+                                                         ? lbp.lineWidth - lbp.difference : 0),
                                                  lbp, false));
             }
         }
@@ -1615,6 +1631,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 setFinished(false);
                 iReturnedLBP--;
             }
+            // It is not clear that the member lineLayouts has the correct value;
+            // because the method is not called, this cannot be checked.
             while ((LineBreakPosition) lineLayouts.getChosenPosition(iReturnedLBP)
                    != (LineBreakPosition) resetPos) {
                 iReturnedLBP--;
@@ -1649,8 +1667,10 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 int iStartElement = lbp.iStartIndex;
                 int iEndElement = lbp.getLeafPos();
     
-                LineArea lineArea = new LineArea((lbp.getLeafPos() < seq.size() - 1 ? textAlignment : textAlignmentLast),
-                                                 lbp.difference, lbp.availableStretch, lbp.availableShrink);
+                LineArea lineArea
+                  = new LineArea((lbp.getLeafPos() < seq.size() - 1
+                                  ? textAlignment : textAlignmentLast),
+                                 lbp.difference, lbp.availableStretch, lbp.availableShrink);
                 lineArea.setStartIndent(lbp.startIndent);
                 lineArea.setBPD(lbp.lineHeight);
                 lineArea.setIPD(lbp.lineWidth);
@@ -1714,7 +1734,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                    to the paragraph horizontal alignment */
                 if (false && textAlignment == EN_JUSTIFY) {
                     // re-compute space adjust ratio
-                    int updatedDifference = context.getStackLimit().opt - lbp.lineWidth + lbp.difference;
+                    int updatedDifference = context.getStackLimit().opt
+                                            - lbp.lineWidth + lbp.difference;
                     double updatedRatio = 0.0;
                     if (updatedDifference > 0) {
                         updatedRatio = (float) updatedDifference / lbp.availableStretch;
