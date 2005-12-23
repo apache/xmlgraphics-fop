@@ -27,6 +27,8 @@
 
   <changes>
     <release version="FOP Trunk">
+    </release>
+    <release version="0.91beta" date="23 Dec 2005">
       <action context="Code" dev="JM" type="fix" fixes-bug="37964">
         Bugfix: hard breaks with even-page or odd-page were not handled correctly
         when spaces were surrounding the break.
@@ -165,7 +167,7 @@
         Support for hyphenation-ladder-count.
       </action>
     </release>
-    <release version="0.90alpha1" date="Nov 2005">
+    <release version="0.90alpha1" date="22 Nov 2005">
       <action context="Code" dev="all" type="update">
         <strong>Complete redesign of the FOP codebase</strong> in the period between Dec 2001 and Nov 2005. 
         There are just too many changes to list here. If you like to know details, run 
