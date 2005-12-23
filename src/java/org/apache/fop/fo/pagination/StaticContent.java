@@ -54,7 +54,7 @@ public class StaticContent extends Flow {
      * @see org.apache.fop.fo.FONode#endOfNode
      */
     protected void endOfNode() throws FOPException {
-        if (childNodes == null) {
+        if (childNodes == null && getUserAgent().validateStrictly()) {
             missingChildElementError("(%block;)+");
         }
         getFOEventHandler().endFlow(this);
