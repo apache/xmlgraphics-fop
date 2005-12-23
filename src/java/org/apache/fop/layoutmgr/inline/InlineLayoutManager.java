@@ -442,7 +442,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         LayoutManager lastLM = null; // last child LM in this iterator
         while (parentIter.hasNext()) {
             pos = (NonLeafPosition) parentIter.next();
-            if (pos.getPosition() != null) {
+            if (pos != null && pos.getPosition() != null) {
                 positionList.add(pos.getPosition());
                 lastLM = pos.getPosition().getLM();
                 lastPos = pos;

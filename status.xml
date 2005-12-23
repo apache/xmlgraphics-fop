@@ -34,6 +34,10 @@
         output format have been removed in favor or the constructors that use
         MIME types.
       </action>
+      <action context="Code" dev="MM" type="fix">
+        Fixed a bug where the linefeed-treatment property value "preserve" was not
+        honoured when used in conjunction with text-align="center".
+      </action>
       <action context="Code" dev="JM" type="fix" fixes-bug="37964">
         Bugfix: hard breaks with even-page or odd-page were not handled correctly
         when spaces were surrounding the break.
