@@ -29,6 +29,11 @@
     <release version="FOP Trunk">
     </release>
     <release version="0.91beta" date="23 Dec 2005">
+      <action context="Code" dev="JM" type="update">
+        Deprecated Fop constructors that use integer constants to select the
+        output format have been removed in favor or the constructors that use
+        MIME types.
+      </action>
       <action context="Code" dev="JM" type="fix" fixes-bug="37964">
         Bugfix: hard breaks with even-page or odd-page were not handled correctly
         when spaces were surrounding the break.
@@ -141,9 +146,9 @@
         didn't get removed.
       </action>
       <action context="Code" dev="JM" type="fix">
-        The validation check for non-zero borders and padding on a region-* is now turned off
-        when relaxed validation is active to improve compatibility with FO documents written 
-        for other FO implementations.
+        The validation check for non-zero borders and padding on a region-* and for empty static-content 
+        elements is now turned off when relaxed validation is active to improve compatibility with 
+        FO documents written for other FO implementations.
       </action>
       <action context="Code" dev="JM" type="fix">
         Bugfix for "/ by zero" ArithmeticExceptions when an URL to a non-existing image is used 
