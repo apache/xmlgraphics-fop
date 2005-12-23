@@ -4,23 +4,6 @@ $Id$
   APACHE FOP  -  README
 ==============================================================================
 
-+----------------------------------------------------------------------------+
-|                                                                            |
-|                      **** IMPORTANT! ****                                  |
-|                                                                            |
-| This release is the first after a big redesign effort on the whole FOP     |
-| codebase. This release is to be considered ALPHA quality and it is         |
-| intended as a preview release encouraging people to take a look at the new |
-| version and to provide feedback to the developers. Please not only report  |
-| to us problems you might experience but also tell us if it works for you.  |
-| If you find out that this version works fine for you, you're welcome to    |
-| use it but please test it thoroughly as we don't consider this release     |
-| ready for every production environment. Please read the following page for |
-| more detailed information:                                                 |
-| http://xmlgraphics.apache.org/fop/0.90/upgrading.html                      |
-|                                                                            |
-+----------------------------------------------------------------------------+
-
 Contents of this file:
  - What is FOP?
  - Where to get help?
@@ -76,26 +59,32 @@ Simply by typing "fop" on the command-line. Without any parameters you
 will receive a screen with instruction on how to call FOP from the
 command-line.
 
-For more details, see: http://xmlgraphics.apache.org/fop/0.90/running.html
+For more details, see: http://xmlgraphics.apache.org/fop/latest/running.html
 
 ==============================================================================
   RELEASE NOTES
 ==============================================================================
 
-Version 0.90alpha1
+Version 0.91 beta
 ---------------------
 
 We don't list all the changes since the 0.20.5 release, since this release 
 represents the first after a complete redesign of the FOP codebase. This 
-is basically a new software.
+is basically a new software. But the changes since 0.90 alpha 1 can be looked
+up under http://xmlgraphics.apache.org/fop/changes.html.
 
 Upgrading from 0.20.5:
-Please read http://xmlgraphics.apache.org/fop/0.90/upgrading.html
+Please read http://xmlgraphics.apache.org/fop/latest/upgrading.html
+
+The Apache FOP team asks you for your continued feedback on the new software.
+We're also interested in success stories with the new release. So if the
+latest version works fine for you, please tell us! And if it doesn't, you
+may tell us as well, of course. ;-)
 
 Caveats:
 
-    - This release is a preview release and not intended for use in a
-      production environment. Use at your own risk!
+    - This release is a beta release. If you intend to use this software 
+      in a production environment, please perform careful testing.
     - The API is not to be considered stable, yet. Please be prepared 
       for the API to be changed in a backwards-incompatible way.
     - You may experience different behaviour compared to version 0.20.5.
@@ -148,3 +137,5 @@ Known issues:
       and attempting to create columns implicitly from the first
       table row is not implemented, yet (Bugzilla #35656).
     - Leaders with the "rule" pattern don't work for PostScript output.
+    - break-after may in some cases cause subsequent content to be swallowed. 
+      Please use break-before, if possible.
