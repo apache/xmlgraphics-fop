@@ -47,9 +47,6 @@ import org.apache.fop.fo.FOTreeBuilder;
  */
 public class Fop implements Constants {
 
-    // desired output type: RENDER_PDF, RENDER_PS, etc.
-    //private int renderType = NOT_SET;
-    
     // desired output format: MIME type such as "application/pdf", "application/postscript" etc.
     private String outputFormat = null;
 
@@ -86,66 +83,6 @@ public class Fop implements Constants {
         this(outputFormat, null);
     }
 
-    /**
-     * Constructor for use with already-created FOUserAgents
-     * @param renderType the type of renderer to use.  Must be one of
-     * <ul>
-     * <li>Fop.RENDER_PDF</li>
-     * <li>Fop.RENDER_AWT</li>
-     * <li>Fop.RENDER_PRINT</li>
-     * <li>Fop.RENDER_MIF</li>
-     * <li>Fop.RENDER_XML</li>
-     * <li>Fop.RENDER_PCL</li>
-     * <li>Fop.RENDER_PS</li>
-     * <li>Fop.RENDER_TXT</li>
-     * <li>Fop.RENDER_SVG</li>
-     * <li>Fop.RENDER_RTF</li>
-     * <li>Fop.RENDER_TIFF</li>
-     * <li>Fop.RENDER_PNG</li>
-     * </ul>
-     * @param ua FOUserAgent object
-     * @deprecated Use {@link org.apache.fop.apps.Fop#Fop(java.lang.String, FOUserAgent)} instead!
-     *             This constructor will be removed.
-     */
-    public Fop(int renderType, FOUserAgent ua) {
-        this(getMimeTypeForRenderType(renderType), ua);
-    }
-
-    /**
-     * Constructor that creates a default FOUserAgent
-     * @see org.apache.fop.apps.Fop#Fop(int, FOUserAgent)
-     * @deprecated Use {@link org.apache.fop.apps.Fop#Fop(java.lang.String)} instead!
-     *             This constructor will be removed.
-     */
-    public Fop(int renderType) {
-        this(renderType, null);
-    }
-
-    private static String getMimeTypeForRenderType(int renderType) {
-        switch(renderType) {
-        case Constants.RENDER_PDF: return MimeConstants.MIME_PDF;
-        case Constants.RENDER_PS: return MimeConstants.MIME_POSTSCRIPT;
-        case Constants.RENDER_PCL: return MimeConstants.MIME_PCL;
-        case Constants.RENDER_MIF: return MimeConstants.MIME_MIF;
-        case Constants.RENDER_RTF: return MimeConstants.MIME_RTF;
-        case Constants.RENDER_SVG: return MimeConstants.MIME_SVG;
-        case Constants.RENDER_TXT: return MimeConstants.MIME_PLAIN_TEXT;
-
-        //Bitmap formats
-        case Constants.RENDER_PNG: return MimeConstants.MIME_PNG;
-        case Constants.RENDER_TIFF: return MimeConstants.MIME_TIFF;
-        
-        //Area tree XML: FOP-specific
-        case Constants.RENDER_XML: return MimeConstants.MIME_FOP_AREA_TREE;
-        
-        //Non-standard pseudo MIME types
-        case Constants.RENDER_AWT: return MimeConstants.MIME_FOP_AWT_PREVIEW;
-        case Constants.RENDER_PRINT: return MimeConstants.MIME_FOP_PRINT;
-        default:
-            throw new IllegalArgumentException("Illegal renderType value: " + renderType);
-        }
-    }
-    
     /**
      * Get the FOUserAgent instance for this process
      * @return the user agent
