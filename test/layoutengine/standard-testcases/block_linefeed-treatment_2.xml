@@ -36,19 +36,29 @@ of fo:inline elements.
       </fo:layout-master-set>
       <fo:page-sequence master-reference="master">
         <fo:flow flow-name="xsl-region-body">
-          <fo:block linefeed-treatment="preserve" text-align="center">
+          <fo:block background-color="silver"
+                    linefeed-treatment="preserve" text-align="center"
+                    margin-top="10pt" margin-bottom="10pt">
             <fo:inline font-weight="bold">Leasing a ...</fo:inline>
+
             <fo:inline>Contrat Nr.: W-113283...</fo:inline>
           </fo:block>
-          <fo:block linefeed-treatment="preserve" text-align="center">
+          <fo:block background-color="yellow"
+                    linefeed-treatment="preserve" text-align="center"
+                    margin-top="10pt" margin-bottom="10pt">
             <fo:inline font-weight="bold">Leasing a ...</fo:inline>
             <fo:inline>&#10;Contrat Nr.: W-113283...</fo:inline>
           </fo:block>
-          <fo:block linefeed-treatment="preserve">
+          <fo:block background-color="silver"
+                    linefeed-treatment="preserve"
+                    margin-top="10pt" margin-bottom="10pt">
             <fo:inline font-weight="bold">Leasing a ...</fo:inline>
+
             <fo:inline>Contrat Nr.: W-113283...</fo:inline>
           </fo:block>
-          <fo:block linefeed-treatment="preserve">
+          <fo:block background-color="yellow"
+                    linefeed-treatment="preserve"
+                    margin-top="10pt" margin-bottom="10pt">
             <fo:inline font-weight="bold">Leasing a ...</fo:inline>
             <fo:inline>&#10;Contrat Nr.: W-113283...</fo:inline>
           </fo:block>
@@ -61,12 +71,15 @@ of fo:inline elements.
   The result:
 
                        Leasing a ...
+                       
                     Contract Nr.: W-...
 
                        Leasing a ...
+                       
                     Contract Nr.: W-...
 
     Leasing a ...
+    
     Contract Nr.: W-...
 
     Leasing a ...
@@ -77,9 +90,9 @@ The result for the second case is lacking the linefeed at the start of
 the fo:inline. The results for the first and second cases are lacking
 the linefeed before the first line.
 -->
-    <eval expected="3" xpath="count(//flow/block[1]/lineArea)"/>
+    <eval expected="4" xpath="count(//flow/block[1]/lineArea)"/>
     <eval expected="4" xpath="count(//flow/block[2]/lineArea)"/>
-    <eval expected="3" xpath="count(//flow/block[3]/lineArea)"/>
+    <eval expected="4" xpath="count(//flow/block[3]/lineArea)"/>
     <eval expected="4" xpath="count(//flow/block[4]/lineArea)"/>
   </checks>
 </testcase>

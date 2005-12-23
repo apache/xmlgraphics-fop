@@ -56,13 +56,6 @@
     correctly.</description>
   </testcase>
   <testcase>
-    <name>linefeed treatment 2</name>
-    <file>block_linefeed-treatment_2.xml</file>
-    <description>This test checks linefeed preservation between and at
-    the start of fo:inline elements.</description>
-    <reference>http://marc.theaimsgroup.com/?t=113525808000001</reference>
-  </testcase>
-  <testcase>
     <name>Empty blocks produce fences</name>
     <file>block_space-before_space-after_8.xml</file>
     <description>An empty block currently produces a fence for

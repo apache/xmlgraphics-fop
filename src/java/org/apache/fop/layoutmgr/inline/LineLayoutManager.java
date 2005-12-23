@@ -338,7 +338,19 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 inlineLM.removeWordSpace(removedElements);
             }
         }
-
+        
+        /**
+         * @return true if the sequence contains a box
+         */
+        public boolean containsBox() {
+            for (int i = 0; i < this.size(); i++) {
+                KnuthElement el = (KnuthElement)this.get(i);
+                if (el.isBox()) {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 
     private class LineBreakingAlgorithm extends BreakingAlgorithm {
@@ -756,9 +768,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                             == -KnuthPenalty.INFINITE) {
                         // a penalty item whose value is -inf
                         // represents a preserved linefeed,
-                        // wich forces a line break
+                        // which forces a line break
                         lastPar.removeLast();
-                        if (lastPar.size() == 0) {
+                        if (!lastPar.containsBox()) {
                             //only a forced linefeed on this line 
                             //-> compensate with a zero width box
                             lastPar.add(new KnuthInlineBox(0, null, null, false));
@@ -798,7 +810,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         }
         log.trace(trace);
     }
-
+    
     /**
      * Find a set of breaking points.
      * This method is called only once by getNextBreakPoss, and it 
