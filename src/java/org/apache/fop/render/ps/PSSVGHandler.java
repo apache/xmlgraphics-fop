@@ -221,7 +221,7 @@ public class PSSVGHandler implements XMLHandler, PSRendererContextConstants {
          * Sets the handler configuration.
          * @param cfg the configuration object
          */
-        public void setHeight(Configuration cfg) {
+        public void setHandlerConfiguration(Configuration cfg) {
             this.cfg = cfg;
         }
 
