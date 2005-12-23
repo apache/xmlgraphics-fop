@@ -25,6 +25,15 @@
   </header>
   <body>
     <section>
+      <title>23 December 2005 - Apache FOP 0.91 beta released</title>
+      <p>
+        One month after the initial release we're happy present a "beta" grade
+        release of the new FOP codebase. It's mostly a bug fix release but also
+        contains a few new features. Thanks to all those who sent us feedback
+        on the initial release!
+      </p>
+    </section>
+    <section>
       <title>22 November 2005 - Apache FOP 0.90 alpha 1 released</title>
       <p>
         The Apache FOP team is proud to present to you the largely rewritten 

@@ -27,6 +27,13 @@
 
   <changes>
     <release version="FOP Trunk">
+    </release>
+    <release version="0.91beta" date="23 Dec 2005">
+      <action context="Code" dev="JM" type="update">
+        Deprecated Fop constructors that use integer constants to select the
+        output format have been removed in favor or the constructors that use
+        MIME types.
+      </action>
       <action context="Code" dev="MM" type="fix">
         Fixed a bug where the linefeed-treatment property value "preserve" was not
         honoured when used in conjunction with text-align="center".
@@ -143,9 +150,9 @@
         didn't get removed.
       </action>
       <action context="Code" dev="JM" type="fix">
-        The validation check for non-zero borders and padding on a region-* is now turned off
-        when relaxed validation is active to improve compatibility with FO documents written 
-        for other FO implementations.
+        The validation check for non-zero borders and padding on a region-* and for empty static-content 
+        elements is now turned off when relaxed validation is active to improve compatibility with 
+        FO documents written for other FO implementations.
       </action>
       <action context="Code" dev="JM" type="fix">
         Bugfix for "/ by zero" ArithmeticExceptions when an URL to a non-existing image is used 
@@ -169,7 +176,7 @@
         Support for hyphenation-ladder-count.
       </action>
     </release>
-    <release version="0.90alpha1" date="Nov 2005">
+    <release version="0.90alpha1" date="22 Nov 2005">
       <action context="Code" dev="all" type="update">
         <strong>Complete redesign of the FOP codebase</strong> in the period between Dec 2001 and Nov 2005. 
         There are just too many changes to list here. If you like to know details, run 

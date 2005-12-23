@@ -41,7 +41,7 @@
       W3C Recommendation</link>.
     </p>
     <p>
-      The latest unstable version of FOP (<link href="0.90/">0.90 alpha 1</link>) is the first preview release 
+      The latest unstable version of FOP (<link href="0.91/">0.91 beta</link>) is the first preview release 
       after a large redesign effort and implements a larger subset than 0.20.5 of the 
       <link href="http://www.w3.org/TR/2001/REC-xsl-20011015/">XSL-FO Version 1.0 W3C Recommendation</link>
       as well as some parts of the <link href="http://www.w3.org/TR/xsl11">XSL-FO Version 1.1 Working Draft</link>.
