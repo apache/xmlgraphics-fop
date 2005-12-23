@@ -41,6 +41,7 @@ The purpose of documenting it here is to facilitate consistency, ensure that the
         <li>Copy trunk documentation directory to a new directory with the version number and update any links and the .htaccess file for redirections.</li>
         <li>Update the index.xml for the new version.</li>
         <li>Update the version numbers on the compliance page.</li>
+        <li>Update the release branch in download.xml.</li>
         <li>Tag the source tree with the release ID. For example, if the release is 0.91beta:
           <code>svn copy https://svn.apache.org/repos/asf/xmlgraphics/fop/trunk https://svn.apache.org/repos/asf/xmlgraphics/fop/tags/fop-0_91beta</code></li>
         <li>Make a fresh checkout with the just created tag:
