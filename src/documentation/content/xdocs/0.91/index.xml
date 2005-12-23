@@ -18,7 +18,7 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <document>
   <header>
-    <title>Apache FOP 0.90 alpha 1</title>
+    <title>Apache FOP 0.91 beta</title>
     <version>$Revision: 201586 $</version>
   </header>
   <body>
@@ -31,6 +31,11 @@
         you to download the code and to play with it. We're still in the process of adding new major
         features and stabilizing the code. We welcome any feedback you might have and even more, any
         other form of help to get the project forward.
+      </p>
+      <p>
+        This second release is mostly a bug fix release but also contains a few new features compared
+        to 0.90alpha1. To see what has changed since the last release, please visit the 
+        <a href="../changes.html">Changes Page</a> and the <a href="../relnotes.html">Release Notes</a>.
       </p>
     </section>
     <section id="upgrading">

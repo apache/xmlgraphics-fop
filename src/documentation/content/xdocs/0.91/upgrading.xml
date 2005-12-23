@@ -31,16 +31,13 @@
       <ul>
         <li>
           More than half of the codebase has been rewritten over the last three years. The code is 
-          new and not as stable as version 0.20.5.
+          relatively new and possibly not as stable as version 0.20.5 in every regard.
         </li>
         <li>
           The API of FOP has changed considerably and is not backwards-compatible with version 0.20.5.
         </li>
         <li>
           The new API is not stable, yet. Please be aware that further changes might still occur!
-        </li>
-        <li>
-          The configuration file format has changed (see the <a href="configuration.html">Configuration page</a> for details).
         </li>
         <li>
           <p>
@@ -51,12 +48,15 @@
           <note label="An example">
             While FOP 0.20.5 allowed you to have empty <code>fo:table-cell</code> elements, the new code
             will complain about that (unless relaxed validation is enabled) because the specification
-            demands at least one block-level element (<code>(%block;)+</code>, see XSL-FO 1.0, 6.7.10)
+            demands at least one block-level element (<code>(%block;)+</code>, see 
+            <a href="http://www.w3.org/TR/xsl/slice6.html#fo_table-cell">XSL-FO 1.0, 6.7.10</a>)
             inside an <code>fo:table-cell</code> element.
           </note>
         </li>
         <li>
-          Extensions written for version 0.20.5 will not work with the new code!
+          Extensions and Renderers written for version 0.20.5 will not work with the new code! The new FOP 
+          extension for <a href="http://barcode4j.krysalis.org">Barcode4J</a> will be available in 
+          January 2006.
         </li>
         <li>
           The PCL Renderer and the MIF Handler have not been resurrected, yet! They are currently non-functional
@@ -91,13 +91,18 @@
         </li>
         <li>
           As stated above empty table cells <code>&lt;fo:table-cell&gt;&lt;/fo:table-cell&gt;</code>
-          are not allowed.
+          are not allowed by the specification. The same applies to empty <code>static-content</code>
+          and <code>block-container</code> elements, for example.
         </li>
         <li>
-          0.20.5 is not XSL-FO compliant with respect to sizing images or <code>instream-foreign-object</code>
+          0.20.5 is not XSL-FO compliant with respect to sizing images (<code>external-graphic</code>) 
+          or <code>instream-foreign-object</code>
           objects. If images or SVGs are sized differently in your outputs with the new FOP version
           check <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=37136">Bug 37136</a>
-          as it contains some hints on what to.
+          as it contains some hints on what to. The file 
+          <a href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/trunk/examples/fo/basic/images.fo?view=markup">
+          <code>"examples/fo/basic/images.fo"</code></a> has
+          a number of good examples that shows the new, more correct behaviour.
         </li>
         <li>
           The <code>fox:outline</code> extension not implemented in this version anymore. 

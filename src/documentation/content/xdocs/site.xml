@@ -85,9 +85,9 @@
   -->
   
   <!--
-  BEGIN Version 0.90 documentation tab
+  BEGIN Version 0.91 documentation tab
   -->
-  <trunk label="FOP 0.90 alpha 1" href="0.90/" tab="currentversion">
+  <trunk label="FOP 0.91 beta" href="0.91/" tab="currentversion">
     <about label="About" href="index.html"/>
     <upgrading label="Upgrading" href="upgrading.html"/>
     
@@ -111,7 +111,7 @@
     
   </trunk>
   <!--
-  END Version 0.90 documentation tab
+  END Version 0.91 documentation tab
   -->
   
   <!--

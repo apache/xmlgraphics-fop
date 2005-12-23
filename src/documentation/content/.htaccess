@@ -15,6 +15,7 @@ RedirectMatch Permanent ^/fop/servlets(.*) http://xmlgraphics.apache.org/fop/0.2
 # redirect to versioned documentation
 Redirect Temp /fop/stable http://xmlgraphics.apache.org/fop/0.20.5
 Redirect Temp /fop/current http://xmlgraphics.apache.org/fop/0.20.5
-Redirect Temp /fop/0.90alpha1 http://xmlgraphics.apache.org/fop/0.90
-Redirect Temp /fop/unstable http://xmlgraphics.apache.org/fop/0.90
-Redirect Temp /fop/latest http://xmlgraphics.apache.org/fop/0.90
+Redirect Temp /fop/0.90alpha1 http://xmlgraphics.apache.org/fop/0.91
+Redirect Temp /fop/0.91beta http://xmlgraphics.apache.org/fop/0.91
+Redirect Temp /fop/unstable http://xmlgraphics.apache.org/fop/0.91
+Redirect Temp /fop/latest http://xmlgraphics.apache.org/fop/0.91

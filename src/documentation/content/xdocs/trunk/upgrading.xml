@@ -31,7 +31,7 @@
       <ul>
         <li>
           More than half of the codebase has been rewritten over the last three years. The code is 
-          new and not as stable as version 0.20.5.
+          relatively new and possibly not as stable as version 0.20.5 in every regard.
         </li>
         <li>
           The API of FOP has changed considerably and is not backwards-compatible with version 0.20.5.
@@ -48,12 +48,15 @@
           <note label="An example">
             While FOP 0.20.5 allowed you to have empty <code>fo:table-cell</code> elements, the new code
             will complain about that (unless relaxed validation is enabled) because the specification
-            demands at least one block-level element (<code>(%block;)+</code>, see XSL-FO 1.0, 6.7.10)
+            demands at least one block-level element (<code>(%block;)+</code>, see 
+            <a href="http://www.w3.org/TR/xsl/slice6.html#fo_table-cell">XSL-FO 1.0, 6.7.10</a>)
             inside an <code>fo:table-cell</code> element.
           </note>
         </li>
         <li>
-          Extensions and Renderers written for version 0.20.5 will not work with the new code!
+          Extensions and Renderers written for version 0.20.5 will not work with the new code! The new FOP 
+          extension for <a href="http://barcode4j.krysalis.org">Barcode4J</a> will be available in 
+          January 2006.
         </li>
         <li>
           The PCL Renderer and the MIF Handler have not been resurrected, yet! They are currently non-functional
@@ -88,7 +91,8 @@
         </li>
         <li>
           As stated above empty table cells <code>&lt;fo:table-cell&gt;&lt;/fo:table-cell&gt;</code>
-          are not allowed by the specification.
+          are not allowed by the specification. The same applies to empty <code>static-content</code>
+          and <code>block-container</code> elements, for example.
         </li>
         <li>
           0.20.5 is not XSL-FO compliant with respect to sizing images (<code>external-graphic</code>) 
