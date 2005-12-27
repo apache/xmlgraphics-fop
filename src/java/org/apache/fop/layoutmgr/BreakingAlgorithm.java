@@ -474,7 +474,7 @@ public abstract class BreakingAlgorithm {
      * @return the requested context FO note or null, if no context node could be determined
      */
     private FONode findContextFO(KnuthSequence seq, int position) {
-        KnuthElement el = seq.getElement(position);
+        ListElement el = seq.getElement(position);
         while (el.getLayoutManager() == null && position < seq.size() - 1) {
             position++;
             el = seq.getElement(position);
