@@ -26,6 +26,7 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.flow.TableBody;
 import org.apache.fop.fo.flow.TableCell;
+import org.apache.fop.fo.flow.TableHeader;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.Property;
@@ -120,6 +121,21 @@ public class TableAttributesConverter {
 
         // Cell background color
         ColorType color = border.backgroundColor;
+        if (color == null) {
+            //If there is no background-color specified for the cell,
+            //then try to read it from table-row or table-header.
+            CommonBorderPaddingBackground brd = null;
+            
+            if (fobj.getParent() instanceof TableRow) {
+                TableRow parentRow=(TableRow)fobj.getParent();
+                brd = parentRow.getCommonBorderPaddingBackground();
+            } else if (fobj.getParent() instanceof TableHeader) {
+                TableHeader parentHeader=(TableHeader)fobj.getParent();
+                brd = parentHeader.getCommonBorderPaddingBackground();
+            }
+            
+            color = brd.backgroundColor;
+        }
         if ((color != null) 
                 && (color.getAlpha() != 0
                         || color.getRed() != 0
