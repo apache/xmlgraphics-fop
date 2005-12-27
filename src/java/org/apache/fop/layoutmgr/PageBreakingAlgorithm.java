@@ -367,7 +367,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                  index ++) {
                 if (par.getElement(index).isGlue() && par.getElement(index - 1).isBox()
                     || par.getElement(index).isPenalty() 
-                       && par.getElement(index).getP() < KnuthElement.INFINITE) {
+                       && ((KnuthElement) par.getElement(index)).getP() < KnuthElement.INFINITE) {
                     // break found
                     break;
                 }

@@ -88,9 +88,9 @@ public abstract class KnuthSequence extends ArrayList {
      */
     public void wrapPositions(LayoutManager lm) {
         ListIterator listIter = listIterator();
-        KnuthElement element;
+        ListElement element;
         while (listIter.hasNext()) {
-            element = (KnuthElement) listIter.next();
+            element = (ListElement) listIter.next();
             element.setPosition
             (lm.notifyPos(new NonLeafPosition(lm, element.getPosition())));
         }
@@ -99,32 +99,32 @@ public abstract class KnuthSequence extends ArrayList {
     /**
      * @return the last element of this sequence.
      */
-    public KnuthElement getLast() {
+    public ListElement getLast() {
         int idx = size();
         if (idx == 0) {
             return null; 
         }
-        return (KnuthElement) get(idx - 1);
+        return (ListElement) get(idx - 1);
     }
 
     /**
      * Remove the last element of this sequence.
      * @return the removed element.
      */
-    public KnuthElement removeLast() {
+    public ListElement removeLast() {
         int idx = size();
         if (idx == 0) {
             return null; 
         }
-        return (KnuthElement) remove(idx - 1);
+        return (ListElement) remove(idx - 1);
     }
 
     /**
      * @param index The index of the element to be returned
      * @return the element at index index.
      */
-    public KnuthElement getElement(int index) {
-        return (KnuthElement) get(index);
+    public ListElement getElement(int index) {
+        return (ListElement) get(index);
     }
 
     /**

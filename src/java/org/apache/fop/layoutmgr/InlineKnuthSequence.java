@@ -70,11 +70,11 @@ public class InlineKnuthSequence extends KnuthSequence  {
             return false;
         }
         // does the first element of the first paragraph add to an existing word?
-        KnuthElement lastOldElement, firstNewElement;
+        ListElement lastOldElement, firstNewElement;
         lastOldElement = getLast();
         firstNewElement = sequence.getElement(0);
-        if (firstNewElement.isBox() && !firstNewElement.isAuxiliary()
-                && lastOldElement.isBox() && lastOldElement.getW() != 0) {
+        if (firstNewElement.isBox() && !((KnuthElement) firstNewElement).isAuxiliary()
+                && lastOldElement.isBox() && ((KnuthElement) lastOldElement).getW() != 0) {
             addALetterSpace();
         }
         addAll(sequence);

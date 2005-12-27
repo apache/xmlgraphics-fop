@@ -41,6 +41,7 @@ import org.apache.fop.layoutmgr.KnuthSequence;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LeafPosition;
+import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
@@ -735,13 +736,13 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 // the sequence contains inline Knuth elements
                 if (sequence.isInlineSequence()) {
                     // look at the last element 
-                    KnuthElement lastElement;
-                    lastElement = (KnuthElement) sequence.getLast();
+                    ListElement lastElement;
+                    lastElement = sequence.getLast();
                     if (lastElement == null) {
                         throw new NullPointerException(
                         "Sequence was empty! lastElement is null");
                     }
-                    bPrevWasKnuthBox = lastElement.isBox() && lastElement.getW() != 0;
+                    bPrevWasKnuthBox = lastElement.isBox() && ((KnuthElement) lastElement).getW() != 0;
                     
                     // if last paragraph is open, add the new elements to the paragraph
                     // else this is the last paragraph
@@ -975,7 +976,11 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         int localLineHeight = 0, lineStretch = 0, lineShrink = 0;
         ListIterator seqIterator = seq.listIterator();
         while (seqIterator.hasNext()) {
-            KnuthElement element = (KnuthElement) seqIterator.next();
+            ListElement elt = (ListElement) seqIterator.next();
+            if (!(elt instanceof KnuthElement)) {
+                continue;
+            }
+            KnuthElement element = (KnuthElement) elt;
             localLineHeight += element.getW();
             if (element.isGlue()) {
                 lineStretch += element.getY();
@@ -1130,8 +1135,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 LinkedList targetList = new LinkedList();
                 ListIterator listIter = seq.listIterator();
                 while (listIter.hasNext()) {
-                    KnuthElement tempElement;
-                    tempElement = (KnuthElement) listIter.next();
+                    ListElement tempElement;
+                    tempElement = (ListElement) listIter.next();
                     if (tempElement.getLayoutManager() != this) {
                         tempElement.setPosition(notifyPos(new NonLeafPosition(this,
                                 tempElement.getPosition())));

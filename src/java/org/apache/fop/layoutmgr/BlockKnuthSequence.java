@@ -79,9 +79,9 @@ public class BlockKnuthSequence extends KnuthSequence {
      */
     public static boolean mustKeepTogether(BlockKnuthSequence sequence1,
                                            BlockKnuthSequence sequence2) {
-        KnuthElement element1 = (KnuthElement) sequence1.get(sequence1.size() - 1);
+        ListElement element1 = (ListElement) sequence1.get(sequence1.size() - 1);
         LayoutManager lm1 = (LayoutManager) element1.getLayoutManager();
-        KnuthElement element2 = (KnuthElement) sequence2.get(0);
+        ListElement element2 = (ListElement) sequence2.get(0);
         LayoutManager lm2 = (LayoutManager) element2.getLayoutManager();
         if (!lm1.equals(lm2)) {
             throw new IllegalStateException
