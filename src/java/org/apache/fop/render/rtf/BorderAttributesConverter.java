@@ -55,8 +55,10 @@ public class BorderAttributesConverter {
             //division by 50 to convert millipoints to twips
             attrs.set(IBorderAttributes.BORDER_WIDTH, border.getBorderWidth(side, false) / 50);
             attributes.set(controlWord, attrs);
-            attrs.setTwips(IBorderAttributes.BORDER_SPACE, border.getPadding(side, false, null));
-            attributes.set(controlWord, attrs);
+            //Don't set BORDER_SPACE, because it makes the table look quite broken: 
+            //vertical and horizontal borders don't meet at corners.
+            //attrs.setTwips(IBorderAttributes.BORDER_SPACE, border.getPadding(side, false, null));
+            //attributes.set(controlWord, attrs);
         } else {
             // Here padding specified, but corresponding border is not available
             
