@@ -40,6 +40,15 @@ UnresolvedElement in a list of ListElements is cast to a KnuthElement.
     </fo:root>
   </fo>
   <checks>
+    <true xpath="boolean(//flow/block[1]/lineArea[1]/inlineparent[1])"/>
+    <true xpath="boolean(//flow/block[1]/lineArea[2]/inlineparent[1])"/>
+    <true xpath="boolean(//flow/block[1]/lineArea[3]/inlineparent[1])"/>
+    <true xpath="boolean(//flow/block[1]/lineArea[4]/inlineblockparent[1])"/>
+    <true xpath="boolean(//flow/block[1]/lineArea[5]/inlineblockparent[1])"/>
+    <true xpath="boolean(//flow/block[1]/lineArea[6]/inlineblockparent[1])"/>
+    <true xpath="boolean(//flow/block[1]/lineArea[7]/inlineparent[1])"/>
+    <true xpath="boolean(//flow/block[1]/lineArea[8]/inlineparent[1])"/>
+    <true xpath="boolean(//flow/block[1]/lineArea[9]/inlineparent[1])"/>
   </checks>
 </testcase>
 				          
