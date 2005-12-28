@@ -105,7 +105,18 @@ public class InlineKnuthSequence extends KnuthSequence  {
     }
 
     public void addALetterSpace() {
-        KnuthBox prevBox = (KnuthBox) removeLast();
+        KnuthBox prevBox = (KnuthBox) getLast();
+        if (prevBox.isAuxiliary()
+            && (size() < 4
+                || !getElement(size()-2).isGlue()
+                || !getElement(size()-3).isPenalty()
+                || !getElement(size()-4).isBox()
+               )
+           ) {
+            // Not the sequence we are expecting
+            return;
+        }
+        removeLast();
         LinkedList oldList = new LinkedList();
         // if there are two consecutive KnuthBoxes the
         // first one does not represent a whole word,
