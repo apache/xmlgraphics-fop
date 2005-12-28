@@ -1777,7 +1777,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     && (!context.isLastArea() || parentIter.hasNext())) {
                     lineArea.setBPD(lineArea.getBPD() + context.getSpaceAfter());
                 }
-                lineArea.finalize();
+                lineArea.finalise();
                 parentLM.addChildArea(lineArea);
             } else if (pos instanceof NonLeafPosition) {
                 // Nested block-level content;

@@ -142,13 +142,6 @@
     NullPointerException.</description>
   </testcase>
   <testcase>
-    <name>ClassCastException caused by inline border</name>
-    <file>inline_border_bug37743.xml</file>
-    <description>A ClassCastException occurs during element list creation when an 
-    inline with a border is directly followed by character data.</description>
-    <reference>http://issues.apache.org/bugzilla/show_bug.cgi?id=37743</reference>
-  </testcase>
-  <testcase>
     <name>inline-container is not implemented, yet.</name>
     <file>inline-container_block_nested.xml</file>
     <description>inline-container is not implemented, yet. Content of an 
