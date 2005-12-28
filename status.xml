@@ -27,6 +27,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="MM" type="fix" fixes-bug="38053">
+        Bugfix: NullPointerException on certain fo:inline within lists.
+      </action>
       <action context="Code" dev="MM" type="fix" fixes-bug="37743">
         Bugfix: ClassCastException on certain fo:inline with border combinations.
       </action>
