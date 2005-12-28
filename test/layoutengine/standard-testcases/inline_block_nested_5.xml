@@ -18,37 +18,63 @@
 <testcase>
   <info>
     <p>
-      This test checks whether inline block content does not generate
-ClassCastExceptions. The exceptions would occur because an
-UnresolvedElement in a list of ListElements is cast to a KnuthElement.
+      This test checks fo:inlines which generate multiple consecutive
+inlineblockparent areas. Each inlineblockparent area should appear in
+its own line area. Two cases: 1. A block containing multiple
+lines. 2. A block containing multiple child blocks which must be kept
+together (so that there are not break positions between the positions
+for the blocks).
+    <p>
+      Implicitly this test checks whether inline block content does
+not generate ClassCastExceptions. The exceptions would occur because
+an UnresolvedElement in a list of ListElements would be cast to a
+KnuthElement.
+    </p>
     </p>
   </info>
   <fo>
-    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
+             xmlns:svg="http://www.w3.org/2000/svg">
       <fo:layout-master-set>
-        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+        <fo:simple-page-master master-name="normal"
+         page-width="5in" page-height="5in" margin="5pt">
           <fo:region-body/>
         </fo:simple-page-master>
       </fo:layout-master-set>
-
-      <fo:page-sequence master-reference="normal" white-space-collapse="true">
-        <fo:flow flow-name="xsl-region-body">
-          <fo:block id="svg"><fo:inline>This book is designed to be the clear, concise, normative reference to the DocBook DTD. This book is the official documentation for the DocBook DTD:<fo:block>A=B</fo:block><fo:block><fo:block>A1=B1,</fo:block><fo:block>A2=B2.</fo:block></fo:block>We hope to answer, definitively, all the questions you might have about all the elements and entities in DocBook. In particular, we cover the following subjects.</fo:inline>End of the DocBook blurb.</fo:block>
+      <fo:page-sequence master-reference="normal"
+       white-space-collapse="true" language="en">
+        <fo:flow flow-name="xsl-region-body" font-size="10pt">
+          <fo:block background-color="silver" margin="3pt 0pt 3pt 0pt">
+            <fo:inline>before block
+              <fo:block background-color="yellow"
+                        border="solid 1pt red">
+As far as the laws of mathematics refer to reality, they are not
+certain, and as far as they are certain, they do not refer to reality
+- Albert Einstein
+              </fo:block>
+after block</fo:inline>
+           </fo:block>
+          <fo:block background-color="silver" margin="3pt 0pt 3pt 0pt">
+            <fo:inline>before block
+              <fo:block keep-together.within-page="always"
+               background-color="yellow" border="solid 1pt red">
+                <fo:block>A1=B1,</fo:block>
+                <fo:block>A2=B2.</fo:block>
+              </fo:block>
+after block</fo:inline>
+          </fo:block>
         </fo:flow>
       </fo:page-sequence>
-
     </fo:root>
   </fo>
   <checks>
     <true xpath="boolean(//flow/block[1]/lineArea[1]/inlineparent[1])"/>
-    <true xpath="boolean(//flow/block[1]/lineArea[2]/inlineparent[1])"/>
-    <true xpath="boolean(//flow/block[1]/lineArea[3]/inlineparent[1])"/>
-    <true xpath="boolean(//flow/block[1]/lineArea[4]/inlineblockparent[1])"/>
-    <true xpath="boolean(//flow/block[1]/lineArea[5]/inlineblockparent[1])"/>
-    <true xpath="boolean(//flow/block[1]/lineArea[6]/inlineblockparent[1])"/>
-    <true xpath="boolean(//flow/block[1]/lineArea[7]/inlineparent[1])"/>
-    <true xpath="boolean(//flow/block[1]/lineArea[8]/inlineparent[1])"/>
-    <true xpath="boolean(//flow/block[1]/lineArea[9]/inlineparent[1])"/>
+    <true xpath="boolean(//flow/block[1]/lineArea[2]/inlineblockparent[1])"/>
+    <true xpath="boolean(//flow/block[1]/lineArea[3]/inlineblockparent[1])"/>
+    <true xpath="boolean(//flow/block[1]/lineArea[4]/inlineparent[1])"/>
+    <true xpath="boolean(//flow/block[2]/lineArea[1]/inlineparent[1])"/>
+    <true xpath="boolean(//flow/block[2]/lineArea[2]/inlineblockparent[1])"/>
+    <true xpath="boolean(//flow/block[2]/lineArea[3]/inlineblockparent[1])"/>
+    <true xpath="boolean(//flow/block[2]/lineArea[4]/inlineparent[1])"/>
   </checks>
 </testcase>
-				          

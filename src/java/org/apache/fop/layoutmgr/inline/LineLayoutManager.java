@@ -949,7 +949,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         while (paragraphsIterator.hasPrevious()) {
             KnuthSequence seq = (KnuthSequence) paragraphsIterator.previous();
             if (!seq.isInlineSequence()) {
-                llPoss = createBlockLineBreak(seq);
+                // This set of line layout possibilities does not matter;
+                // we only need an entry in lineLayoutsList.
+                llPoss = new LineLayoutPossibilities();
             } else {
                 llPoss = findOptimalBreakingPoints(alignment, (Paragraph) seq);
             }
@@ -960,39 +962,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     
         //Post-process the line breaks found
         return postProcessLineBreaks(alignment, context);
-    }
-
-    /**
-     * create a single line layout possibility with a single linebreak
-     * for a block sequence
-     * @param seq the Knuth sequence for which the linebreak is created
-     * @return the line layout possibilities for the paragraph
-     */
-    private LineLayoutPossibilities createBlockLineBreak(KnuthSequence seq) {
-        //TODO Should this really create only a single LineBreakPosition???
-        //This creates an implicit keep-together on the nested block-level FOs.
-        LineLayoutPossibilities llPoss = new LineLayoutPossibilities();
-        llPoss.addPossibility(1, 0);
-        int localLineHeight = 0, lineStretch = 0, lineShrink = 0;
-        ListIterator seqIterator = seq.listIterator();
-        while (seqIterator.hasNext()) {
-            ListElement elt = (ListElement) seqIterator.next();
-            if (!(elt instanceof KnuthElement)) {
-                continue;
-            }
-            KnuthElement element = (KnuthElement) elt;
-            localLineHeight += element.getW();
-            if (element.isGlue()) {
-                lineStretch += element.getY();
-                lineShrink += element.getZ();
-            }
-        }
-        LineBreakPosition lbp = new LineBreakPosition(this,
-                knuthParagraphs.indexOf(seq), 0, seq.size() - 1,
-                lineShrink, lineStretch, 0, 0, 0, 0, localLineHeight,
-                iLineWidth, 0, 0, 0);
-        llPoss.addBreakPosition(lbp, 0);
-        return llPoss;
     }
 
     /**
@@ -1654,184 +1623,204 @@ public class LineLayoutManager extends InlineStackingLayoutManager
      */
     public void addAreas(PositionIterator parentIter,
                          LayoutContext context) {
-        LayoutManager childLM;
-        LayoutContext lc = new LayoutContext(0);
-        lc.setAlignmentContext(alignmentContext);
-        int iCurrParIndex;
         while (parentIter.hasNext()) {
             Position pos = (Position) parentIter.next();
+            boolean isLastPosition = !parentIter.hasNext();
             if (pos instanceof LineBreakPosition) {
-                ListIterator seqIterator = null;
-                KnuthElement tempElement = null;
-                // the TLM which created the last KnuthElement in this line
-                LayoutManager lastLM = null;
-    
-                LineBreakPosition lbp = (LineBreakPosition) pos;
-                iCurrParIndex = lbp.iParIndex;
-                KnuthSequence seq = (KnuthSequence) knuthParagraphs.get(iCurrParIndex);
-                int iStartElement = lbp.iStartIndex;
-                int iEndElement = lbp.getLeafPos();
-    
-                LineArea lineArea
-                  = new LineArea((lbp.getLeafPos() < seq.size() - 1
-                                  ? textAlignment : textAlignmentLast),
-                                 lbp.difference, lbp.availableStretch, lbp.availableShrink);
-                lineArea.setStartIndent(lbp.startIndent);
-                lineArea.setBPD(lbp.lineHeight);
-                lineArea.setIPD(lbp.lineWidth);
-                lineArea.addTrait(Trait.SPACE_BEFORE, new Integer(lbp.spaceBefore));
-                lineArea.addTrait(Trait.SPACE_AFTER, new Integer(lbp.spaceAfter));
-                alignmentContext.resizeLine(lbp.lineHeight, lbp.baseline);
-
-                if (seq instanceof Paragraph) {
-                    Paragraph currPar = (Paragraph) seq;
-                    // ignore the first elements added by the LineLayoutManager
-                    iStartElement += (iStartElement == 0) ? currPar.ignoreAtStart : 0;
-                    
-                    // if this is the last line area that for this paragraph,
-                    // ignore the last elements added by the LineLayoutManager and
-                    // subtract the last-line-end-indent from the area ipd
-                    if (iEndElement == (currPar.size() - 1)) {
-                        iEndElement -= currPar.ignoreAtEnd;
-                        lineArea.setIPD(lineArea.getIPD() - lastLineEndIndent.getValue(this));
-                    }
-                }
-                
-                // ignore the last element in the line if it is a KnuthGlue object
-                seqIterator = seq.listIterator(iEndElement);
-                tempElement = (KnuthElement) seqIterator.next();
-                if (tempElement.isGlue()) {
-                    iEndElement--;
-                    // this returns the same KnuthElement
-                    seqIterator.previous();
-                    tempElement = (KnuthElement) seqIterator.previous();
-                }
-                lastLM = tempElement.getLayoutManager();
-    
-                // ignore KnuthGlue and KnuthPenalty objects
-                // at the beginning of the line
-                seqIterator = seq.listIterator(iStartElement);
-                tempElement = (KnuthElement) seqIterator.next();
-                while (!tempElement.isBox() && seqIterator.hasNext()) {
-                    tempElement = (KnuthElement) seqIterator.next();
-                    iStartElement++;
-                }
-    
-                // Add the inline areas to lineArea
-                PositionIterator inlinePosIter
-                    = new KnuthPossPosIter(seq, iStartElement,
-                                           iEndElement + 1);
-    
-                iStartElement = lbp.getLeafPos() + 1;
-                if (iStartElement == seq.size()) {
-                    // advance to next paragraph
-                    iStartElement = 0;
-                }
-    
-                lc.setSpaceAdjust(lbp.dAdjust);
-                lc.setIPDAdjust(lbp.ipdAdjust);
-                lc.setLeadingSpace(new SpaceSpecifier(true));
-                lc.setTrailingSpace(new SpaceSpecifier(false));
-                lc.setFlags(LayoutContext.RESOLVE_LEADING_SPACE, true);
-
-                /* extension (not in the XSL FO recommendation): if the left and right margins
-                   have been optimized, recompute indents and / or adjust ratio, according
-                   to the paragraph horizontal alignment */
-                if (false && textAlignment == EN_JUSTIFY) {
-                    // re-compute space adjust ratio
-                    int updatedDifference = context.getStackLimit().opt
-                                            - lbp.lineWidth + lbp.difference;
-                    double updatedRatio = 0.0;
-                    if (updatedDifference > 0) {
-                        updatedRatio = (float) updatedDifference / lbp.availableStretch;
-                    } else if (updatedDifference < 0) {
-                        updatedRatio = (float) updatedDifference / lbp.availableShrink;
-                    }
-                    lc.setIPDAdjust(updatedRatio);
-                    //log.debug("LLM.addAreas> old difference = " + lbp.difference + " new difference = " + updatedDifference);
-                    //log.debug("              old ratio = " + lbp.ipdAdjust + " new ratio = " + updatedRatio);
-                } else if (false && textAlignment == EN_CENTER) {
-                    // re-compute indent
-                    int updatedIndent = lbp.startIndent
-                                            + (context.getStackLimit().opt - lbp.lineWidth) / 2;
-                    lineArea.setStartIndent(updatedIndent);
-                } else if (false && textAlignment == EN_END) {
-                    // re-compute indent
-                    int updatedIndent = lbp.startIndent 
-                                            + (context.getStackLimit().opt - lbp.lineWidth);
-                    lineArea.setStartIndent(updatedIndent);
-                }
-
-                setCurrentArea(lineArea);
-                setChildContext(lc);
-                while ((childLM = inlinePosIter.getNextChildLM()) != null) {
-                    lc.setFlags(LayoutContext.LAST_AREA, (childLM == lastLM));
-                    childLM.addAreas(inlinePosIter, lc);
-                    lc.setLeadingSpace(lc.getTrailingSpace());
-                    lc.setTrailingSpace(new SpaceSpecifier(false));
-                }
-                
-                // when can this be null?
-                // if display-align is distribute, add space after 
-                if (context.getSpaceAfter() > 0
-                    && (!context.isLastArea() || parentIter.hasNext())) {
-                    lineArea.setBPD(lineArea.getBPD() + context.getSpaceAfter());
-                }
-                lineArea.finalise();
-                parentLM.addChildArea(lineArea);
-            } else if (pos instanceof NonLeafPosition) {
-                // Nested block-level content;
-                // go down the LM stack again;
-                // collect all consecutive NonLeafPosition objects,
-                // "unwrap" them and put the child positions in a new list.
-                LinkedList positionList = new LinkedList();
-                Position innerPosition;
-                innerPosition = ((NonLeafPosition) pos).getPosition();
-                positionList.add(innerPosition);
-                while (parentIter.hasNext()) {
-                    pos = (Position)parentIter.peekNext();
-                    if (!(pos instanceof NonLeafPosition)) {
-                        break;
-                    }
-                    pos = (Position) parentIter.next();
-                    innerPosition = ((NonLeafPosition) pos).getPosition();
-                    positionList.add(innerPosition);
-                }
-                
-                // do we have the last LM?
-                LayoutManager lastLM = null;
-                if (!parentIter.hasNext()) {
-                    lastLM = innerPosition.getLM();
-                }
-
-                // this may be wrong; not all areas belong inside a single line area
-                // see InlineStackingLM.addChildArea
-                LineArea lineArea = new LineArea();
-                setCurrentArea(lineArea);
-                setChildContext(lc);
-
-                PositionIterator childPosIter = new StackingIter(positionList.listIterator());
-                LayoutContext blocklc = new LayoutContext(0);
-                blocklc.setLeadingSpace(new SpaceSpecifier(true));
-                blocklc.setTrailingSpace(new SpaceSpecifier(false));
-                blocklc.setFlags(LayoutContext.RESOLVE_LEADING_SPACE, true);
-                while ((childLM = childPosIter.getNextChildLM()) != null) {
-                    // set last area flag
-                    blocklc.setFlags(LayoutContext.LAST_AREA,
-                            (context.isLastArea() && childLM == lastLM));
-                    blocklc.setStackLimit(context.getStackLimit());
-                    // Add the line areas to Area
-                    childLM.addAreas(childPosIter, blocklc);
-                    blocklc.setLeadingSpace(blocklc.getTrailingSpace());
-                    blocklc.setTrailingSpace(new SpaceSpecifier(false));
-                }
-                lineArea.updateExtentsFromChildren();
-                parentLM.addChildArea(lineArea);
+                addInlineArea(context, pos, isLastPosition);
+            } else if ((pos instanceof NonLeafPosition) && pos.generatesAreas()) {
+                addBlockArea(context, pos, isLastPosition);
             } else {
-                // pos was the Position inside a penalty item, nothing to do
+                /*                
+                 * pos was the Position inside a penalty item, nothing to do;
+                 * or Pos does not generate an area,
+                 * i.e. it stand for spaces, borders and padding.
+                 */            
             }
         }
         setCurrentArea(null); // ?? necessary
+    }
+
+    /**
+     * Add a line with inline content
+     * @param context the context for adding areas
+     * @param pos the position for which the line is generated
+     * @param isLastPosition true if this is the last position of this LM
+     */
+    private void addInlineArea(LayoutContext context, Position pos, boolean isLastPosition) {
+            ListIterator seqIterator = null;
+            KnuthElement tempElement = null;
+            // the TLM which created the last KnuthElement in this line
+            LayoutManager lastLM = null;
+            
+            LineBreakPosition lbp = (LineBreakPosition) pos;
+            int iCurrParIndex;
+            iCurrParIndex = lbp.iParIndex;
+            KnuthSequence seq = (KnuthSequence) knuthParagraphs.get(iCurrParIndex);
+            int iStartElement = lbp.iStartIndex;
+            int iEndElement = lbp.getLeafPos();
+            
+            LineArea lineArea
+              = new LineArea((lbp.getLeafPos() < seq.size() - 1
+                              ? textAlignment : textAlignmentLast),
+                              lbp.difference, lbp.availableStretch, lbp.availableShrink);
+            lineArea.setStartIndent(lbp.startIndent);
+            lineArea.setBPD(lbp.lineHeight);
+            lineArea.setIPD(lbp.lineWidth);
+            lineArea.addTrait(Trait.SPACE_BEFORE, new Integer(lbp.spaceBefore));
+            lineArea.addTrait(Trait.SPACE_AFTER, new Integer(lbp.spaceAfter));
+            alignmentContext.resizeLine(lbp.lineHeight, lbp.baseline);
+            
+            if (seq instanceof Paragraph) {
+                Paragraph currPar = (Paragraph) seq;
+                // ignore the first elements added by the LineLayoutManager
+                iStartElement += (iStartElement == 0) ? currPar.ignoreAtStart : 0;
+                
+                // if this is the last line area that for this paragraph,
+                // ignore the last elements added by the LineLayoutManager and
+                // subtract the last-line-end-indent from the area ipd
+                if (iEndElement == (currPar.size() - 1)) {
+                    iEndElement -= currPar.ignoreAtEnd;
+                    lineArea.setIPD(lineArea.getIPD() - lastLineEndIndent.getValue(this));
+                }
+            }
+            
+            // ignore the last element in the line if it is a KnuthGlue object
+            seqIterator = seq.listIterator(iEndElement);
+            tempElement = (KnuthElement) seqIterator.next();
+            if (tempElement.isGlue()) {
+                iEndElement--;
+                // this returns the same KnuthElement
+                seqIterator.previous();
+                tempElement = (KnuthElement) seqIterator.previous();
+            }
+            lastLM = tempElement.getLayoutManager();
+            
+            // ignore KnuthGlue and KnuthPenalty objects
+            // at the beginning of the line
+            seqIterator = seq.listIterator(iStartElement);
+            tempElement = (KnuthElement) seqIterator.next();
+            while (!tempElement.isBox() && seqIterator.hasNext()) {
+                tempElement = (KnuthElement) seqIterator.next();
+                iStartElement++;
+            }
+            
+            // Add the inline areas to lineArea
+            PositionIterator inlinePosIter
+              = new KnuthPossPosIter(seq, iStartElement, iEndElement + 1);
+            
+            iStartElement = lbp.getLeafPos() + 1;
+            if (iStartElement == seq.size()) {
+                // advance to next paragraph
+                iStartElement = 0;
+            }
+            
+            LayoutContext lc = new LayoutContext(0);
+            lc.setAlignmentContext(alignmentContext);
+            lc.setSpaceAdjust(lbp.dAdjust);
+            lc.setIPDAdjust(lbp.ipdAdjust);
+            lc.setLeadingSpace(new SpaceSpecifier(true));
+            lc.setTrailingSpace(new SpaceSpecifier(false));
+            lc.setFlags(LayoutContext.RESOLVE_LEADING_SPACE, true);
+            
+            /*
+             * extension (not in the XSL FO recommendation): if the left and right margins
+             * have been optimized, recompute indents and / or adjust ratio, according
+             * to the paragraph horizontal alignment
+             */
+            if (false && textAlignment == EN_JUSTIFY) {
+                // re-compute space adjust ratio
+                int updatedDifference = context.getStackLimit().opt
+                                        - lbp.lineWidth + lbp.difference;
+                double updatedRatio = 0.0;
+                if (updatedDifference > 0) {
+                    updatedRatio = (float) updatedDifference / lbp.availableStretch;
+                } else if (updatedDifference < 0) {
+                    updatedRatio = (float) updatedDifference / lbp.availableShrink;
+                }
+                lc.setIPDAdjust(updatedRatio);
+                //log.debug("LLM.addAreas> old difference = " + lbp.difference + " new difference = " + updatedDifference);
+                //log.debug("              old ratio = " + lbp.ipdAdjust + " new ratio = " + updatedRatio);
+            } else if (false && textAlignment == EN_CENTER) {
+                // re-compute indent
+                int updatedIndent = lbp.startIndent
+                                    + (context.getStackLimit().opt - lbp.lineWidth) / 2;
+                lineArea.setStartIndent(updatedIndent);
+            } else if (false && textAlignment == EN_END) {
+                // re-compute indent
+                int updatedIndent = lbp.startIndent 
+                                    + (context.getStackLimit().opt - lbp.lineWidth);
+                lineArea.setStartIndent(updatedIndent);
+            }
+            
+            setCurrentArea(lineArea);
+            setChildContext(lc);
+            LayoutManager childLM;
+            while ((childLM = inlinePosIter.getNextChildLM()) != null) {
+                lc.setFlags(LayoutContext.LAST_AREA, (childLM == lastLM));
+                childLM.addAreas(inlinePosIter, lc);
+                lc.setLeadingSpace(lc.getTrailingSpace());
+                lc.setTrailingSpace(new SpaceSpecifier(false));
+            }
+            
+            // when can this be null?
+            // if display-align is distribute, add space after 
+            if (context.getSpaceAfter() > 0
+                    && (!context.isLastArea() || !isLastPosition)) {
+                lineArea.setBPD(lineArea.getBPD() + context.getSpaceAfter());
+            }
+            lineArea.finalise();
+            parentLM.addChildArea(lineArea);
+    }
+    
+    /**
+     * Add a line with block content
+     * @param context the context for adding areas
+     * @param pos the position for which the line is generated
+     * @param isLastPosition true if this is the last position of this LM
+     */
+    private void addBlockArea(LayoutContext context, Position pos, boolean isLastPosition) {
+        /* Nested block-level content;
+         * go down the LM stack again;
+         * "unwrap" the positions and put the child positions in a new list.
+         * The positionList must contain one area-generating position,
+         * which creates one line area.
+         */
+        List positionList = new ArrayList(1);
+        Position innerPosition;
+        innerPosition = ((NonLeafPosition) pos).getPosition();
+        positionList.add(innerPosition);
+
+        // do we have the last LM?
+        LayoutManager lastLM = null;
+        if (isLastPosition) {
+            lastLM = innerPosition.getLM();
+        }
+        
+        LineArea lineArea = new LineArea();
+        setCurrentArea(lineArea);
+        LayoutContext lc = new LayoutContext(0);
+        lc.setAlignmentContext(alignmentContext);
+        setChildContext(lc);
+        
+        PositionIterator childPosIter = new StackingIter(positionList.listIterator());
+        LayoutContext blocklc = new LayoutContext(0);
+        blocklc.setLeadingSpace(new SpaceSpecifier(true));
+        blocklc.setTrailingSpace(new SpaceSpecifier(false));
+        blocklc.setFlags(LayoutContext.RESOLVE_LEADING_SPACE, true);
+        LayoutManager childLM;
+        while ((childLM = childPosIter.getNextChildLM()) != null) {
+            // set last area flag
+            blocklc.setFlags(LayoutContext.LAST_AREA,
+                             (context.isLastArea() && childLM == lastLM));
+            blocklc.setStackLimit(context.getStackLimit());
+            // Add the line areas to Area
+            childLM.addAreas(childPosIter, blocklc);
+            blocklc.setLeadingSpace(blocklc.getTrailingSpace());
+            blocklc.setTrailingSpace(new SpaceSpecifier(false));
+        }
+        lineArea.updateExtentsFromChildren();
+        parentLM.addChildArea(lineArea);
     }
 
     /**
