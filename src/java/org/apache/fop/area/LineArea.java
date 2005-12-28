@@ -190,7 +190,7 @@ public class LineArea extends Area {
                 // if the LineArea has already been added to the area tree,
                 // call finalize(); otherwise, wait for the LineLM to call it
                 if (adjustingInfo.bAddedToAreaTree) {
-                    finalize();
+                    finalise();
                 }
                 break;
             default:
@@ -203,7 +203,7 @@ public class LineArea extends Area {
      * and destroy the AdjustingInfo object if there are
      * no UnresolvedAreas left
      */
-    public void finalize() {
+    public void finalise() {
         if (adjustingInfo.lineAlignment == Constants.EN_JUSTIFY) {
             // justified line: apply the variation factor
             boolean bUnresolvedAreasPresent = false;
