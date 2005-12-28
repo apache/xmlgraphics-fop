@@ -2063,7 +2063,7 @@
         yes
       </td>
       <td class="partial">
-        yes
+        partial
       </td>
       <td align="partial">
         <ul>
@@ -2870,7 +2870,10 @@
       <td align="left">
         <ul>
           <li>
-            font-family lists are not supported, use a single font-family name
+            [0.20.5] font-family lists are not supported, use a single font-family name
+          </li>
+          <li>
+            [0.91 beta] font-family lists are allowed but glyph based font selection is not supported
           </li>
         </ul>
       </td>
@@ -3862,8 +3865,8 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="yes">
+        yes
       </td>
       <td align="center">
         &nbsp;
@@ -4702,7 +4705,7 @@
             [0.20.5] not value "page"
           </li>
           <li>
-            [0.91 beta] Not uspported
+            [0.91 beta] Not supported
           </li>
         </ul>
       </td>
