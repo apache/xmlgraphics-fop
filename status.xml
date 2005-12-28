@@ -27,6 +27,14 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="MM" type="fix" fixes-bug="37743">
+        Bugfix: ClassCastException on certain fo:inline with border combinations.
+      </action>
+      <action context="Code" dev="MM" type="fix">
+        Changed a method name in LineArea from finalize to finalise because it was
+        never intended for the method to be an override of the Java Object finalize
+        method. If invoked by the Java garbage collector it may cause a NPE.
+      </action>
     </release>
     <release version="0.91beta" date="23 Dec 2005">
       <action context="Code" dev="JM" type="update">
