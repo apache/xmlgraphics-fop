@@ -423,7 +423,9 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
             context.getTrailingSpace().addSpace(new SpaceVal(getSpaceEnd(), this));
         }
         
-        setTraits(areaCreated, !isLast(lastPos));
+        // Not sure if lastPos can legally be null or if that masks a different problem.
+        // But it seems to fix bug 38053.
+        setTraits(areaCreated, lastPos == null || !isLast(lastPos));
         parentLM.addChildArea(getCurrentArea());
 
         context.setFlags(LayoutContext.LAST_AREA, isLast);
