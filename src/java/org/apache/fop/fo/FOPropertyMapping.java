@@ -45,10 +45,12 @@ import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.fo.properties.LineHeightPropertyMaker;
 import org.apache.fop.fo.properties.ListProperty;
 import org.apache.fop.fo.properties.NumberProperty;
+import org.apache.fop.fo.properties.PageBreakShorthandParser;
 import org.apache.fop.fo.properties.PageDimensionMaker;
 import org.apache.fop.fo.properties.PositionShorthandParser;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.PropertyMaker;
+import org.apache.fop.fo.properties.ReferenceOrientationMaker;
 import org.apache.fop.fo.properties.SpaceProperty;
 import org.apache.fop.fo.properties.SpacePropertyMaker;
 import org.apache.fop.fo.properties.SpacingPropertyMaker;
@@ -1877,11 +1879,13 @@ public class FOPropertyMapping implements Constants {
         // break-after
         m  = new EnumProperty.Maker(PR_BREAK_AFTER);
         m.useGeneric(genericBreak);
+        m.addShorthand(s_generics[PR_PAGE_BREAK_AFTER]);
         addPropertyMaker("break-after", m);
 
         // break-before
         m  = new EnumProperty.Maker(PR_BREAK_BEFORE);
         m.useGeneric(genericBreak);
+        m.addShorthand(s_generics[PR_PAGE_BREAK_BEFORE]);
         addPropertyMaker("break-before", m);
 
         // keep-together
@@ -1889,6 +1893,7 @@ public class FOPropertyMapping implements Constants {
         m.useGeneric(genericKeep);
         m.setInherited(false);
         m.setDefault("auto");
+        m.addShorthand(s_generics[PR_PAGE_BREAK_INSIDE]);
         addPropertyMaker("keep-together", m);
 
         // keep-with-next
@@ -1896,6 +1901,7 @@ public class FOPropertyMapping implements Constants {
         m.useGeneric(genericKeep);
         m.setInherited(false);
         m.setDefault("auto");
+        m.addShorthand(s_generics[PR_PAGE_BREAK_AFTER]);
         addPropertyMaker("keep-with-next", m);
 
         // keep-with-previous
@@ -1903,6 +1909,7 @@ public class FOPropertyMapping implements Constants {
         m.useGeneric(genericKeep);
         m.setInherited(false);
         m.setDefault("auto");
+        m.addShorthand(s_generics[PR_PAGE_BREAK_BEFORE]);
         addPropertyMaker("keep-with-previous", m);
 
         // orphans
@@ -1939,7 +1946,7 @@ public class FOPropertyMapping implements Constants {
         addPropertyMaker("overflow", m);
 
         // reference-orientation
-        m  = new NumberProperty.Maker(PR_REFERENCE_ORIENTATION);
+        m  = new ReferenceOrientationMaker(PR_REFERENCE_ORIENTATION);
         m.setInherited(true);
         m.setDefault("0");
         addPropertyMaker("reference-orientation", m);
@@ -2686,21 +2693,36 @@ public class FOPropertyMapping implements Constants {
         addPropertyMaker("padding", m);
 
         // page-break-after
-        m  = new ToBeImplementedProperty.Maker(PR_PAGE_BREAK_AFTER);
+        m  = new EnumProperty.Maker(PR_PAGE_BREAK_AFTER);
         m.setInherited(false);
+        m.addEnum("auto", getEnumProperty(EN_AUTO, "AUTO"));
+        m.addEnum("always", getEnumProperty(EN_ALWAYS, "ALWAYS"));
+        m.addEnum("avoid", getEnumProperty(EN_AVOID, "AVOID"));
+        m.addEnum("left", getEnumProperty(EN_LEFT, "LEFT"));
+        m.addEnum("right", getEnumProperty(EN_RIGHT, "RIGHT"));
         m.setDefault("auto");
+        m.setDatatypeParser(new PageBreakShorthandParser());
         addPropertyMaker("page-break-after", m);
 
         // page-break-before
-        m  = new ToBeImplementedProperty.Maker(PR_PAGE_BREAK_BEFORE);
+        m  = new EnumProperty.Maker(PR_PAGE_BREAK_BEFORE);
         m.setInherited(false);
+        m.addEnum("auto", getEnumProperty(EN_AUTO, "AUTO"));
+        m.addEnum("always", getEnumProperty(EN_ALWAYS, "ALWAYS"));
+        m.addEnum("avoid", getEnumProperty(EN_AVOID, "AVOID"));
+        m.addEnum("left", getEnumProperty(EN_LEFT, "LEFT"));
+        m.addEnum("right", getEnumProperty(EN_RIGHT, "RIGHT"));
         m.setDefault("auto");
+        m.setDatatypeParser(new PageBreakShorthandParser());
         addPropertyMaker("page-break-before", m);
 
         // page-break-inside
-        m  = new ToBeImplementedProperty.Maker(PR_PAGE_BREAK_INSIDE);
+        m  = new EnumProperty.Maker(PR_PAGE_BREAK_INSIDE);
         m.setInherited(true);
+        m.addEnum("auto", getEnumProperty(EN_AUTO, "AUTO"));
+        m.addEnum("avoid", getEnumProperty(EN_AVOID, "AVOID"));
         m.setDefault("auto");
+        m.setDatatypeParser(new PageBreakShorthandParser());
         addPropertyMaker("page-break-inside", m);
 
         // pause
