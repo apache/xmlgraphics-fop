@@ -27,6 +27,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="AD" type="enhancement">
+        Added feature: support for page-break-* shorthands
+      </action>
       <action context="Code" dev="MM" type="fix" fixes-bug="38053">
         Bugfix: NullPointerException on certain fo:inline within lists.
       </action>
