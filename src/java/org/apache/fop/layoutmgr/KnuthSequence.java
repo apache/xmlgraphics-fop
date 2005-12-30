@@ -65,22 +65,53 @@ public abstract class KnuthSequence extends ArrayList {
 
     /**
      * Append sequence to this sequence if it can be appended.
-     * TODO In principle the LayoutManager can also be retrieved from the elements in the sequence.
      * @param sequence The sequence that is to be appended.
-     * @param lm The LayoutManager for the Position that may have to be created. 
+     * @param keepTogether Whether the two sequences must be kept together.
+     * @param breakElement The BreakElement that may be inserted between the two sequences. 
      * @return whether the sequence was succesfully appended to this sequence.
      */
-    public abstract boolean appendSequence(KnuthSequence sequence, LayoutManager lm);
+    public abstract boolean appendSequence(KnuthSequence sequence, boolean keepTogether,
+                                           BreakElement breakElement);
+    
+    /**
+     * Append sequence to this sequence if it can be appended.
+     * @param sequence The sequence that is to be appended.
+     * @return whether the sequence was succesfully appended to this sequence.
+     */
+    public abstract boolean appendSequence(KnuthSequence sequence);
     
     /**
      * Append sequence to this sequence if it can be appended.
      * If that is not possible, close this sequence.
-     * TODO In principle the LayoutManager can also be retrieved from the elements in the sequence.
      * @param sequence The sequence that is to be appended.
-     * @param lm The LayoutManager for the Position that may have to be created. 
      * @return whether the sequence was succesfully appended to this sequence.
      */
-    public abstract boolean appendSequenceOrClose(KnuthSequence sequence, LayoutManager lm);
+    public boolean appendSequenceOrClose(KnuthSequence sequence) {
+        if (!appendSequence(sequence)) {
+            endSequence();
+            return false;
+        } else {
+            return true;
+        }
+    }
+    
+    /**
+     * Append sequence to this sequence if it can be appended.
+     * If that is not possible, close this sequence.
+     * @param sequence The sequence that is to be appended.
+     * @param keepTogether Whether the two sequences must be kept together.
+     * @param breakElement The BreakElement that may be inserted between the two sequences. 
+     * @return whether the sequence was succesfully appended to this sequence.
+     */
+    public boolean appendSequenceOrClose(KnuthSequence sequence, boolean keepTogether,
+                                         BreakElement breakElement) {
+        if (!appendSequence(sequence, keepTogether, breakElement)) {
+            endSequence();
+            return false;
+        } else {
+            return true;
+        }
+    }
     
     /**
      * Wrap the Positions of the elements of this sequence in a Position for LayoutManager lm.

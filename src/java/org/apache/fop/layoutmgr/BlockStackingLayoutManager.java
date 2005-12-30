@@ -29,6 +29,7 @@ import org.apache.fop.area.Block;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.SpaceProperty;
+import org.apache.fop.layoutmgr.inline.InlineLayoutManager;
 import org.apache.fop.layoutmgr.inline.LineLayoutManager;
 import org.apache.fop.traits.MinOptMax;
 
@@ -309,9 +310,8 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                     if (mustKeepTogether() 
                             || context.isKeepWithNextPending()
                             || childLC.isKeepWithPreviousPending()) {
-                        //Clear keep pending flag
+                        // Clear keep pending flag
                         context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, false);
-                        childLC.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING, false);
                         // add an infinite penalty to forbid a break between
                         // blocks
                         contentList.add(new BreakElement(
@@ -368,11 +368,10 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                     return returnList;
                 }*/
             }
-            if (childLC.isKeepWithNextPending()) {
-                //Clear and propagate
-                childLC.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, false);
-                context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING);
-            }
+            // propagate and clear
+            context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, childLC.isKeepWithNextPending());
+            childLC.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, false);
+            childLC.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING, false);
             prevLM = curLM;
         }
 
@@ -617,6 +616,10 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                 }
                 fromIndex = workListIterator.previousIndex();
 
+                /*
+                 * TODO: why are KnuthPenalties added here,
+                 *       while in getNextKE they were changed to BreakElements?
+                 */
                 // there is another block after this one
                 if (bSomethingAdded
                     && (this.mustKeepTogether()
@@ -732,8 +735,12 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     /**
      * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepTogether()
      */
+    // default action: ask parentLM
     public boolean mustKeepTogether() {
-        return false;
+        return ((getParent() instanceof BlockLevelLayoutManager
+                    && ((BlockLevelLayoutManager) getParent()).mustKeepTogether())
+                || (getParent() instanceof InlineLayoutManager
+                    && ((InlineLayoutManager) getParent()).mustKeepTogether()));
     }
 
     /**

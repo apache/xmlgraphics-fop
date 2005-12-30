@@ -26,7 +26,8 @@ import org.apache.fop.layoutmgr.inline.KnuthInlineBox;
 
 
 /**
- * 
+ * Represents a list of inline Knuth elements.
+ * If closed, it represents all elements of a Knuth paragraph.
  */
 public class InlineKnuthSequence extends KnuthSequence  {
 
@@ -63,9 +64,9 @@ public class InlineKnuthSequence extends KnuthSequence  {
     }
 
     /* (non-Javadoc)
-     * @see org.apache.fop.layoutmgr.KnuthSequence#appendSequence(org.apache.fop.layoutmgr.KnuthSequence, org.apache.fop.layoutmgr.LayoutManager)
+     * @see org.apache.fop.layoutmgr.KnuthSequence#appendSequence(org.apache.fop.layoutmgr.KnuthSequence)
      */
-    public boolean appendSequence(KnuthSequence sequence, LayoutManager lm) {
+    public boolean appendSequence(KnuthSequence sequence) {
         if (!canAppendSequence(sequence)) {
             return false;
         }
@@ -82,17 +83,14 @@ public class InlineKnuthSequence extends KnuthSequence  {
     }
 
     /* (non-Javadoc)
-     * @see org.apache.fop.layoutmgr.KnuthSequence#appendSequenceOrClose(org.apache.fop.layoutmgr.KnuthSequence, org.apache.fop.layoutmgr.LayoutManager)
+     * @see KnuthSequence#appendSequence(KnuthSequence, boolean, BreakElement)
      */
-    public boolean appendSequenceOrClose(KnuthSequence sequence, LayoutManager lm) {
-        if (!appendSequence(sequence, lm)) {
-            endSequence();
-            return false;
-        } else {
-            return true;
-        }
+    public boolean appendSequence(KnuthSequence sequence, boolean keepTogether,
+                                  BreakElement breakElement) {
+        return appendSequence(sequence);
     }
 
+        
     /* (non-Javadoc)
      * @see org.apache.fop.layoutmgr.KnuthSequence#endSequence()
      */
@@ -108,9 +106,9 @@ public class InlineKnuthSequence extends KnuthSequence  {
         KnuthBox prevBox = (KnuthBox) getLast();
         if (prevBox.isAuxiliary()
             && (size() < 4
-                || !getElement(size()-2).isGlue()
-                || !getElement(size()-3).isPenalty()
-                || !getElement(size()-4).isBox()
+                || !getElement(size() - 2).isGlue()
+                || !getElement(size() - 3).isPenalty()
+                || !getElement(size() - 4).isBox()
                )
            ) {
             // Not the sequence we are expecting

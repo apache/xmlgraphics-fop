@@ -27,6 +27,7 @@ import org.apache.fop.area.Block;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.layoutmgr.inline.InlineLayoutManager;
 import org.apache.fop.layoutmgr.inline.InlineLevelLayoutManager;
 import org.apache.fop.layoutmgr.inline.LineLayoutManager;
 import org.apache.fop.traits.MinOptMax;
@@ -198,13 +199,15 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
      * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepTogether()
      */
     public boolean mustKeepTogether() {
-        //TODO Keeps will have to be more sophisticated sooner or later
+        // TODO Keeps will have to be more sophisticated sooner or later
         // TODO This is a quick fix for the fact that the parent is not always a BlockLevelLM;
         // eventually mustKeepTogether() must be moved up to the LM interface
-        return (getParent() instanceof BlockLevelLayoutManager
-                && ((BlockLevelLayoutManager) getParent()).mustKeepTogether()) 
-                || !getBlockFO().getKeepTogether().getWithinPage().isAuto()
-                || !getBlockFO().getKeepTogether().getWithinColumn().isAuto();
+        return (!getBlockFO().getKeepTogether().getWithinPage().isAuto()
+                || !getBlockFO().getKeepTogether().getWithinColumn().isAuto()
+                || (getParent() instanceof BlockLevelLayoutManager
+                    && ((BlockLevelLayoutManager) getParent()).mustKeepTogether())
+                || (getParent() instanceof InlineLayoutManager
+                    && ((InlineLayoutManager) getParent()).mustKeepTogether()));
     }
 
     /**
@@ -212,7 +215,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
      */
     public boolean mustKeepWithPrevious() {
         return !getBlockFO().getKeepWithPrevious().getWithinPage().isAuto()
-            || !getBlockFO().getKeepWithPrevious().getWithinColumn().isAuto();
+                || !getBlockFO().getKeepWithPrevious().getWithinColumn().isAuto();
     }
 
     /**
