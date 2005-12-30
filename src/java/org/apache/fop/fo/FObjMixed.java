@@ -57,10 +57,8 @@ public abstract class FObjMixed extends FObj {
     /** @see org.apache.fop.fo.FONode#endOfNode() */
     protected void endOfNode() throws FOPException {
         flushText();
-        if (getNameId() != FO_LEADER) {
-            getFOEventHandler().whiteSpaceHandler
-                .handleWhiteSpace(this, currentTextNode);
-        }
+        getFOEventHandler().whiteSpaceHandler
+            .handleWhiteSpace(this, currentTextNode);
         super.endOfNode();
     }
 
@@ -88,7 +86,7 @@ public abstract class FObjMixed extends FObj {
             if (currentTextNode == null) {
                 currentTextNode = child;
             }
-        } else if (getNameId() != FO_LEADER) {
+        } else {
             // handle white-space for all text up to here
             getFOEventHandler().whiteSpaceHandler
                 .handleWhiteSpace(this, currentTextNode, child);
