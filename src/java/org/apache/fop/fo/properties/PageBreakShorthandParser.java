@@ -21,6 +21,7 @@ package org.apache.fop.fo.properties;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.properties.KeepProperty;
 
 /**
  * Shorthand parser for page-break-before, page-break-after and page-break-inside.
@@ -41,9 +42,8 @@ public class PageBreakShorthandParser implements ShorthandParser {
                 || propId == Constants.PR_KEEP_WITH_NEXT
                 || propId == Constants.PR_KEEP_TOGETHER) {
             if (property.getEnum() == Constants.EN_AVOID) {
-                return new EnumProperty(Constants.EN_ALWAYS, "ALWAYS");
-            } else {
-                return new EnumProperty(Constants.EN_AUTO, "AUTO");
+                return maker.make(null, Constants.CP_WITHIN_PAGE, 
+                            propertyList, "always", propertyList.getFObj());
             }
         } else if (propId == Constants.PR_BREAK_BEFORE
                 || propId == Constants.PR_BREAK_AFTER) {
@@ -51,12 +51,12 @@ public class PageBreakShorthandParser implements ShorthandParser {
             case Constants.EN_ALWAYS:
                 return new EnumProperty(Constants.EN_PAGE, "PAGE");
             case Constants.EN_LEFT:
-                return new EnumProperty(Constants.EN_EVEN_PAGE, "EVEN-PAGE");
+                return new EnumProperty(Constants.EN_EVEN_PAGE, "EVEN_PAGE");
             case Constants.EN_RIGHT:
-                return new EnumProperty(Constants.EN_ODD_PAGE, "ODD-PAGE");
+                return new EnumProperty(Constants.EN_ODD_PAGE, "ODD_PAGE");
             case Constants.EN_AVOID:
             default:
-                return new EnumProperty(Constants.EN_AUTO, "AUTO");
+                //nop;
             }
         }
         return null;
