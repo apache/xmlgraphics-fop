@@ -92,7 +92,7 @@ in an
   </fo:root>
   </fo>
   <checks>
-    <eval expected="maybe" xpath="//flow/block[1]/block[1]/block[1]/block[1]/block[1]/block[1]/lineArea[2]"/>
+    <eval expected="maybe" xpath="//flow/block[1]/block[1]/block[1]/block[1]/block[1]/block[1]/lineArea[1]"/>
   </checks>
 </testcase>
 
