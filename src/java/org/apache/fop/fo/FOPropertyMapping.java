@@ -59,6 +59,7 @@ import org.apache.fop.fo.properties.TableBorderPrecedence;
 import org.apache.fop.fo.properties.TextDecorationProperty;
 import org.apache.fop.fo.properties.ToBeImplementedProperty;
 import org.apache.fop.fo.properties.VerticalAlignShorthandParser;
+import org.apache.fop.fo.properties.WhiteSpaceShorthandParser;
 
 /**
  * This class creates and returns an array of Property.Maker instances
@@ -1643,6 +1644,7 @@ public class FOPropertyMapping implements Constants {
         m.addEnum("treat-as-space", getEnumProperty(EN_TREAT_AS_SPACE, "TREAT_AS_SPACE"));
         m.addEnum("treat-as-zero-width-space", getEnumProperty(EN_TREAT_AS_ZERO_WIDTH_SPACE, "TREAT_AS_ZERO_WIDTH_SPACE"));
         m.setDefault("treat-as-space");
+        m.addShorthand(s_generics[PR_WHITE_SPACE]);
         addPropertyMaker("linefeed-treatment", m);
 
         // white-space-treatment
@@ -1654,6 +1656,7 @@ public class FOPropertyMapping implements Constants {
         m.addEnum("ignore-if-after-linefeed", getEnumProperty(EN_IGNORE_IF_AFTER_LINEFEED, "IGNORE_IF_AFTER_LINEFEED"));
         m.addEnum("ignore-if-surrounding-linefeed", getEnumProperty(EN_IGNORE_IF_SURROUNDING_LINEFEED, "IGNORE_IF_SURROUNDING_LINEFEED"));
         m.setDefault("ignore-if-surrounding-linefeed");
+        m.addShorthand(s_generics[PR_WHITE_SPACE]);
         addPropertyMaker("white-space-treatment", m);
 
         // text-align TODO: make it a StringProperty with enums.
@@ -1713,6 +1716,7 @@ public class FOPropertyMapping implements Constants {
         m.useGeneric(genericBoolean);
         m.setInherited(true);
         m.setDefault("true");
+        m.addShorthand(s_generics[PR_WHITE_SPACE]);
         addPropertyMaker("white-space-collapse", m);
 
         // wrap-option
@@ -1721,6 +1725,7 @@ public class FOPropertyMapping implements Constants {
         m.addEnum("wrap", getEnumProperty(EN_WRAP, "WRAP"));
         m.addEnum("no-wrap", getEnumProperty(EN_NO_WRAP, "NO_WRAP"));
         m.setDefault("wrap");
+        m.addShorthand(s_generics[PR_WHITE_SPACE]);
         addPropertyMaker("wrap-option", m);
     }
 
@@ -2763,6 +2768,16 @@ public class FOPropertyMapping implements Constants {
         m.setDefault("baseline");
         addPropertyMaker("vertical-align", m);
 
+        // white-space
+        m = new EnumProperty.Maker(PR_WHITE_SPACE);
+        m.setInherited(true);
+        m.addEnum("normal", getEnumProperty(EN_NORMAL, "NORMAL"));
+        m.addEnum("pre", getEnumProperty(EN_PRE, "PRE"));
+        m.addEnum("no-wrap", getEnumProperty(EN_NO_WRAP, "NO_WRAP"));
+        m.setDefault("normal");
+        m.setDatatypeParser(new WhiteSpaceShorthandParser());
+        addPropertyMaker("white-space", m);
+        
         // xml:lang
         m  = new ToBeImplementedProperty.Maker(PR_XML_LANG);
         m.setInherited(true);
