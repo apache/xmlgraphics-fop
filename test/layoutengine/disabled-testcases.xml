@@ -200,13 +200,6 @@
     lists, yet.</description>
   </testcase>
   <testcase>
-    <name>marker bug</name>
-    <file>marker_bug.xml</file>
-    <description>White space on direct inline-level children of a
-    marker is not handled correctly.</description>
-    <reference>http://www.nabble.com/fo%3Amarker-and-white-space-t553656.html</reference>
-  </testcase>
-  <testcase>
     <name>Page breaking doesn't deal with IPD changes</name>
     <file>page-breaking_4.xml</file>
     <description>Page breaking currently doesn't support changing available IPD 
