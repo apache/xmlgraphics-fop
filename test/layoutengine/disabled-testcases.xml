@@ -70,6 +70,9 @@
   <testcase>
     <name>block white-space-collapse 2</name>
     <file>block_white-space-collapse_2.xml</file>
+    <description>First line-break occurs after the fifth space following the
+    word 'each'. Trailing spaces not removed in layout. Note: the test passes
+    in case of text-align="justify".</description>
   </testcase>
   <testcase>
     <name>block white-space-treatment 1</name>
