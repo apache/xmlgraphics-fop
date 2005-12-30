@@ -1312,7 +1312,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
      * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepTogether
      */
     public boolean mustKeepTogether() {
-        return false;
+        return ((BlockLevelLayoutManager) getParent()).mustKeepTogether();
     }
 
     /**

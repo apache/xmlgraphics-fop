@@ -35,6 +35,8 @@ import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.SpaceProperty;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.layoutmgr.BlockKnuthSequence;
+import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
+import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthSequence;
@@ -196,6 +198,24 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         }
     }
 
+    /**
+     * @return true if this element must be kept together
+     */
+    // TODO Use the keep-together property on Inline as well
+    public boolean mustKeepTogether() {
+        return mustKeepTogether(this.getParent());
+    }
+
+    private boolean mustKeepTogether(LayoutManager lm) {
+        if (lm instanceof BlockLevelLayoutManager) {
+            return ((BlockLevelLayoutManager) lm).mustKeepTogether();
+        } else if (lm instanceof InlineLayoutManager) {
+            return ((InlineLayoutManager) lm).mustKeepTogether();
+        } else { 
+            return mustKeepTogether(lm.getParent());
+        }
+    }
+
     /** @see org.apache.fop.layoutmgr.LayoutManager */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         LayoutManager curLM;
@@ -267,6 +287,9 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
             }
             // get KnuthElements from curLM
             returnedList = curLM.getNextKnuthElements(childLC, alignment);
+            if (returnList.size() == 0 && childLC.isKeepWithPreviousPending()) {
+                childLC.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING, false);
+            }
             if (returnedList == null) {
                 // curLM returned null because it finished;
                 // just iterate once more to see if there is another child
@@ -276,6 +299,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
                 continue;
             }
             if (curLM instanceof InlineLevelLayoutManager) {
+                context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, false);
                 // "wrap" the Position stored in each element of returnedList
                 ListIterator seqIter = returnedList.listIterator();
                 while (seqIter.hasNext()) {
@@ -283,7 +307,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
                     sequence.wrapPositions(this);
                 }
                 if (lastSequence != null && lastSequence.appendSequenceOrClose
-                        ((KnuthSequence) returnedList.get(0), this)) {
+                        ((KnuthSequence) returnedList.get(0))) {
                     returnedList.remove(0);
                 }
                 // add border and padding to the first complete sequence of this LM
@@ -293,13 +317,21 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
                 }
                 returnList.addAll(returnedList);
             } else { // A block LM
-                // TODO For now avoid having two different block LMs in a single sequence
-                if (curLM != lastChildLM && lastSequence != null) {
-                    lastSequence.endSequence();
-                }
                 BlockKnuthSequence sequence = new BlockKnuthSequence(returnedList);
                 sequence.wrapPositions(this);
-                if (lastSequence == null || !lastSequence.appendSequenceOrClose(sequence, this)) {
+                boolean appended = false;
+                if (lastSequence != null) {
+                    if (lastSequence.canAppendSequence(sequence)) {
+                        BreakElement bk = new BreakElement(new Position(this), 0, context);
+                        boolean keepTogether = (mustKeepTogether()
+                                                || context.isKeepWithNextPending()
+                                                || childLC.isKeepWithPreviousPending());
+                        appended = lastSequence.appendSequenceOrClose(sequence, keepTogether, bk);
+                    } else {
+                        lastSequence.endSequence();
+                    }
+                }
+                if (!appended) {
                     // add border and padding to the first complete sequence of this LM
                     if (!borderAdded) {
                         addKnuthElementsForBorderPaddingStart(sequence);
@@ -307,6 +339,11 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
                     }
                     returnList.add(sequence);
                 }
+                // propagate and clear
+                context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING,
+                                 childLC.isKeepWithNextPending());
+                childLC.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, false);
+                childLC.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING, false);
             }
             lastSequence = (KnuthSequence) returnList.getLast();
             lastChildLM = curLM;
