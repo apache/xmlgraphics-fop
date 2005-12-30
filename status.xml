@@ -27,10 +27,13 @@
 
   <changes>
     <release version="FOP Trunk">
-      <action context="Code" dev="AD" type="enhancement">
+      <action context="Code" dev="AD" type="update">
+        Revision of refinement white-space handling.
+      </action>
+      <action context="Code" dev="AD" type="add">
         Added feature: support for white-space shorthand
       </action>
-      <action context="Code" dev="AD" type="enhancement">
+      <action context="Code" dev="AD" type="add">
         Added feature: support for page-break-* shorthands
       </action>
       <action context="Code" dev="MM" type="fix" fixes-bug="38053">

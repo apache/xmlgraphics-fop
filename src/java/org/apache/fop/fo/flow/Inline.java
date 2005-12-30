@@ -24,7 +24,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.CharIterator;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.InlineCharIterator;
+import org.apache.fop.fo.OneCharIterator;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonRelativePosition;
@@ -108,6 +108,7 @@ public class Inline extends InlineLevel {
        }
 
         checkId(id);
+        
         getFOEventHandler().startInline(this);
     }
 
@@ -182,13 +183,6 @@ public class Inline extends InlineLevel {
         return dominantBaseline;
     }
     
-    /**
-     * @see org.apache.fop.fo.FObjMixed#charIterator
-     */
-    public CharIterator charIterator() {
-        return new InlineCharIterator(this, commonBorderPaddingBackground);
-    }
-
     /** @see org.apache.fop.fo.FONode#getLocalName() */
     public String getLocalName() {
         return "inline";

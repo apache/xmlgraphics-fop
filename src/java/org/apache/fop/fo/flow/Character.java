@@ -158,7 +158,7 @@ public class Character extends FObj {
      * @see org.apache.fop.fo.FObj#charIterator
      */
     public CharIterator charIterator() {
-        return new TextCharIterator();
+        return new FOCharIterator(this);
     }
 
     /**
@@ -269,9 +269,14 @@ public class Character extends FObj {
         return FO_CHARACTER;
     }
     
-    private class TextCharIterator extends CharIterator {
+    private class FOCharIterator extends CharIterator {
 
-        private boolean bFirst = character != CharUtilities.CODE_EOT;
+        private boolean bFirst = true;
+        private Character foChar;
+        
+        FOCharIterator(Character foChar) {
+            this.foChar = foChar;
+        }
         
         public boolean hasNext() {
             return bFirst;
@@ -280,18 +285,20 @@ public class Character extends FObj {
         public char nextChar() {
             if (bFirst) {
                 bFirst = false;
-                return character;
+                return foChar.character;
             } else {
                 throw new NoSuchElementException();
             }
         }
 
         public void remove() {
-            character = CharUtilities.CODE_EOT;
+            foChar.character = CharUtilities.CODE_EOT;
+            getFOEventHandler().getXMLWhiteSpaceHandler()
+                .addDiscardableFOChar(foChar);
         }
 
         public void replaceChar(char c) {
-            character = c;
+            foChar.character = c;
         }
 
     }

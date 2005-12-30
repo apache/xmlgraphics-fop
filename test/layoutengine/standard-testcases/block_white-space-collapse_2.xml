@@ -41,7 +41,7 @@
             word  <fo:character character="&#xa;" />
 <fo:character character=" " /><fo:character character=" " />          and  
             linefeeds<fo:character character=" " /><fo:character character=" " />
-            everywhere<fo:character character=" " /> 
+            everywhere<fo:character character=" " />          
           </fo:block>
           <fo:block background-color="silver" margin="1pt 0pt 1pt 0pt">  
             <fo:block background-color="orange">
@@ -102,10 +102,6 @@
   </fo>
   <checks>
     <!-- The tests are currently incomplete but enough to fail -->
-    <eval expected="8" xpath="count(//flow/block[1]/lineArea[1]/text/word)"/>
-    <eval expected="35" xpath="count(//flow/block[1]/lineArea[1]/text/space)"/>
-    <eval expected="1" xpath="count(//flow/block[1]/lineArea[2]/text/word)"/>
-    <eval expected="0" xpath="count(//flow/block[1]/lineArea[2]/text/space)"/>
-    
+    <eval expected="60" xpath="count(//flow/block[1]/lineArea[1]/text/space)"/>
   </checks>
 </testcase>

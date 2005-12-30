@@ -83,6 +83,11 @@ public abstract class FOEventHandler {
     protected PropertyListMaker propertyListMaker;
 
     /**
+     * The XMLWhitespaceHandler for this tree
+     */
+    protected XMLWhiteSpaceHandler whiteSpaceHandler = new XMLWhiteSpaceHandler();
+    
+    /**
      * Main constructor
      * @param foUserAgent the apps.FOUserAgent instance for this process
      */
@@ -127,6 +132,14 @@ public abstract class FOEventHandler {
      */
     public void setPropertyListMaker(PropertyListMaker propertyListMaker) {
         this.propertyListMaker = propertyListMaker;
+    }
+    
+    /**
+     * Return the XMLWhiteSpaceHandler
+     * @return the whiteSpaceHandler
+     */
+    public XMLWhiteSpaceHandler getXMLWhiteSpaceHandler() {
+        return whiteSpaceHandler;
     }
 
     /**
