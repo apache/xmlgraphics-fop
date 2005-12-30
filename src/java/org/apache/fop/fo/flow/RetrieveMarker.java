@@ -43,7 +43,7 @@ import org.apache.fop.fo.ValidationException;
  * This will create a layout manager that will retrieve
  * a marker based on the information.
  */
-public class RetrieveMarker extends FObjMixed {
+public class RetrieveMarker extends FObj {
     // The value of properties relevant for fo:retrieve-marker.
     private String retrieveClassName;
     private int retrievePosition;

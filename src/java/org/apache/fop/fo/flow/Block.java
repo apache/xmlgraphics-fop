@@ -25,14 +25,10 @@ import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.CharIterator;
-import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.NullCharIterator;
 import org.apache.fop.fo.PropertyList;
-import org.apache.fop.fo.PropertySets;
-import org.apache.fop.fo.RecursiveCharIterator;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
@@ -43,7 +39,6 @@ import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.SpaceProperty;
-import org.apache.fop.util.CharUtilities;
 
 /*
   Modified by Mark Lillywhite mark-fop@inomial.com. The changes
@@ -109,12 +104,6 @@ public class Block extends FObjMixed {
     private boolean anythingLaidOut = false;
 
     /**
-     * Index of first inline-type FO seen in a sequence.
-     * Used during FO tree building to do white-space handling.
-     */
-    private FONode firstInlineChild = null;
-
-    /**
      * @param parent FONode that is the parent of this object
      *
      */
@@ -176,7 +165,6 @@ public class Block extends FObjMixed {
      */
     protected void endOfNode() throws FOPException {
         super.endOfNode();
-        handleWhiteSpace();
         getFOEventHandler().endBlock(this);
     }
 
@@ -348,173 +336,32 @@ public class Block extends FObjMixed {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#addChildNode(FONode)
+     * Accessor for the linefeed-treatment property
+     * 
+     * @return the enum value of linefeed-treatment
      */
-    public void addChildNode(FONode child) throws FOPException {
-        flushText();
-        // Handle whitespace based on values of properties
-        // Handle a sequence of inline-producing child nodes in
-        // one pass
-        if (child instanceof FOText
-            || PropertySets.generatesInlineAreas(child.getNameId())) {
-                if (firstInlineChild == null) {
-                    firstInlineChild = child;
-                }
-                // lastInlineChild = childNodes.size();
-        } else {
-            // Handle whitespace in preceeding inline areas if any
-            handleWhiteSpace();
-        }
-        super.addChildNode(child);
+    public int getLinefeedTreatment() {
+        return linefeedTreatment;
     }
     
     /**
-     * @see org.apache.fop.fo.FObj#notifyChildRemoval(org.apache.fop.fo.FONode)
+     * Accessor for the white-space-treatment property
+     * 
+     * @return the enum value of white-space-treatment
      */
-    protected void notifyChildRemoval(FONode node) {
-        if (node != null && node == firstInlineChild) {
-            firstInlineChild = null;
-        }
+    public int getWhitespaceTreatment() {
+        return whiteSpaceTreatment;
     }
-
-    private void handleWhiteSpace() {
-        //getLogger().debug("fo:block: handleWhiteSpace");
-        if (firstInlineChild == null) {
-            return; // Nothing to do
-        }
-        
-        boolean inWS = false; // True if we are in a run of white space
-        /*
-         * True if the last non white space char seen was a linefeed.
-         * We start from the beginning of a line so it defaults to True.
-         */
-        boolean prevWasLF = true; 
-
-        RecursiveCharIterator charIter =
-          new RecursiveCharIterator(this, firstInlineChild);
-        EOLchecker lfCheck = new EOLchecker(charIter);
-
-        while (charIter.hasNext()) {
-            char currentChar = charIter.nextChar();
-            int currentCharClass = CharUtilities.classOf(currentChar);
-            if (currentCharClass == CharUtilities.LINEFEED
-                && linefeedTreatment == EN_TREAT_AS_SPACE) {
-                // if we have a linefeed and it is suppose to be treated
-                // like a space, that's what we do and continue
-                currentChar = ' ';
-                charIter.replaceChar(' ');
-                currentCharClass = CharUtilities.classOf(currentChar);
-            }
-            switch (CharUtilities.classOf(currentChar)) {
-                case CharUtilities.XMLWHITESPACE:
-                    /* Some kind of whitespace character, except linefeed. */
-                    if (inWS && whiteSpaceCollapse == EN_TRUE) {
-                        // We are in a run of whitespace and should collapse
-                        // Just delete the char
-                        charIter.remove();
-                    } else {
-                        // Do the white space treatment here
-                        boolean bIgnore = false;
-
-                        switch (whiteSpaceTreatment) {
-                            case Constants.EN_IGNORE:
-                                bIgnore = true;
-                                break;
-                            case Constants.EN_IGNORE_IF_BEFORE_LINEFEED:
-                                bIgnore = linefeedTreatment == Constants.EN_PRESERVE
-                                            && lfCheck.nextIsLF();
-                                break;
-                            case Constants.EN_IGNORE_IF_SURROUNDING_LINEFEED:
-                                bIgnore = (prevWasLF
-                                           || (linefeedTreatment == Constants.EN_PRESERVE
-                                               && lfCheck.nextIsLF()));
-                                break;
-                            case Constants.EN_IGNORE_IF_AFTER_LINEFEED:
-                                bIgnore = prevWasLF;
-                                break;
-                            case Constants.EN_PRESERVE:
-                                // nothing to do now, replacement takes place later
-                                break;
-                        }
-                        // Handle ignore and replacement
-                        if (bIgnore) {
-                            charIter.remove();
-                        } else {
-                            // this is to retain a single space between words
-                            inWS = true;
-                            if (currentChar != '\u0020') {
-                                charIter.replaceChar('\u0020');
-                            }
-                        }
-                    }
-                    break;
-
-                case CharUtilities.LINEFEED:
-                    /* A linefeed */
-                    switch (linefeedTreatment) {
-                        case Constants.EN_IGNORE:
-                            charIter.remove();
-                            break;
-                        case Constants.EN_TREAT_AS_ZERO_WIDTH_SPACE:
-                            charIter.replaceChar(CharUtilities.ZERO_WIDTH_SPACE);
-                            inWS = false;
-                            break;
-                        case Constants.EN_PRESERVE:
-                            lfCheck.reset();
-                            inWS = false;
-                            prevWasLF = true; // for following whitespace
-                            break;
-                    }
-                    break;
-
-                case CharUtilities.EOT:
-                    // A "boundary" objects such as non-character inline
-                    // or nested block object was encountered.
-                    // If any whitespace run in progress, finish it.
-                    // FALL THROUGH
-
-                default:
-                    /* Any other character */
-                    inWS = prevWasLF = false;
-                    lfCheck.reset();
-                    break;
-            }
-        }
-        firstInlineChild = null;
+    
+    /**
+     * Accessor for the white-space-collapse property
+     * 
+     * @return the enum value of white-space-collapse
+     */
+    public int getWhitespaceCollapse() {
+        return whiteSpaceCollapse;
     }
-
-    private static class EOLchecker {
-        private boolean nextIsEOL = false;
-        private RecursiveCharIterator charIter;
-
-        EOLchecker(RecursiveCharIterator charIter) {
-            this.charIter = charIter;
-        }
-
-        boolean nextIsLF() {
-            if (nextIsEOL == false) {
-                CharIterator lfIter = charIter.mark();
-                while (lfIter.hasNext()) {
-                    int charClass = CharUtilities.classOf(lfIter.nextChar());
-                    if (charClass == CharUtilities.LINEFEED) {
-                        nextIsEOL = true;
-                        return nextIsEOL;
-                    } else if (charClass != CharUtilities.XMLWHITESPACE) {
-                        return nextIsEOL;
-                    }
-                }
-                // No more characters == end of block == end of line
-                nextIsEOL = true;
-                return nextIsEOL;
-            }
-            return nextIsEOL;
-        }
-
-        void reset() {
-            nextIsEOL = false;
-        }
-    }
-     
+    
     /** @see org.apache.fop.fo.FONode#charIterator() */
     public CharIterator charIterator() {
         return NullCharIterator.getInstance();

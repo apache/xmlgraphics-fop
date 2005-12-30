@@ -32,6 +32,9 @@ public abstract class FObjMixed extends FObj {
     /** Represents accumulated, pending FO text. See flushText(). */
     protected FOText ft = null;
     
+    /** Used for white-space handling; start CharIterator at node ... */
+    protected FONode currentTextNode;
+    
     /**
      * @param parent FONode that is the parent of this object
      */
@@ -54,6 +57,10 @@ public abstract class FObjMixed extends FObj {
     /** @see org.apache.fop.fo.FONode#endOfNode() */
     protected void endOfNode() throws FOPException {
         flushText();
+        if (getNameId() != FO_LEADER) {
+            getFOEventHandler().whiteSpaceHandler
+                .handleWhiteSpace(this, currentTextNode);
+        }
         super.endOfNode();
     }
 
@@ -72,11 +79,24 @@ public abstract class FObjMixed extends FObj {
         }
     }
 
+    /**
+     * @see org.apache.fop.fo.FONode#addChildNode(FONode)
+     */
     protected void addChildNode(FONode child) throws FOPException {
         flushText();
+        if (child instanceof FOText || child.getNameId() == FO_CHARACTER) {
+            if (currentTextNode == null) {
+                currentTextNode = child;
+            }
+        } else if (getNameId() != FO_LEADER) {
+            // handle white-space for all text up to here
+            getFOEventHandler().whiteSpaceHandler
+                .handleWhiteSpace(this, currentTextNode, child);
+            currentTextNode = null;
+        }
         super.addChildNode(child);
     }
-
+    
     /**
      * @return iterator for this object
      */
@@ -85,4 +105,3 @@ public abstract class FObjMixed extends FObj {
     }
     
 }
-

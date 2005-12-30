@@ -112,27 +112,27 @@
     <eval expected="12000" xpath="//flow/block[4]/lineArea/inlineparent/@ipd"/>
 
     <eval expected="360000" xpath="//flow/block[5]/lineArea/@ipd"/>
-    <eval expected="215456" xpath="//flow/block[5]/lineArea/inlineparent/@ipd"/>
+    <eval expected="211186" xpath="//flow/block[5]/lineArea/inlineparent/@ipd"/>
 
     <eval expected="360000" xpath="//flow/block[6]/lineArea/@ipd"/>
-    <eval expected="178155" xpath="//flow/block[6]/lineArea/leader/@ipd"/>
+    <eval expected="174081" xpath="//flow/block[6]/lineArea/leader/@ipd"/>
 
     <eval expected="360000" xpath="//flow/block[7]/lineArea/@ipd"/>
-    <eval expected="206165" xpath="//flow/block[7]/lineArea/space/@ipd"/>
+    <eval expected="201939" xpath="//flow/block[7]/lineArea/space/@ipd"/>
 
     <eval expected="360000" xpath="//flow/block[8]/lineArea/@ipd"/>
     <eval expected="161589" xpath="//flow/block[8]/lineArea/inlineparent/@ipd"/>
 
     <eval expected="360000" xpath="//flow/block[9]/lineArea/@ipd"/>
-    <eval expected="215088" xpath="//flow/block[9]/lineArea/@start-indent"/>
+    <eval expected="211752" xpath="//flow/block[9]/lineArea/@start-indent"/>
     <eval expected="12000" xpath="//flow/block[9]/lineArea/inlineparent/@ipd"/>
 
     <eval expected="360000" xpath="//flow/block[10]/lineArea/@ipd"/>
-    <eval expected="178404" xpath="//flow/block[10]/lineArea/@start-indent"/>
+    <eval expected="175068" xpath="//flow/block[10]/lineArea/@start-indent"/>
     <eval expected="12000" xpath="//flow/block[10]/lineArea/leader/@ipd"/>
 
     <eval expected="360000" xpath="//flow/block[11]/lineArea/@ipd"/>
-    <eval expected="205752" xpath="//flow/block[11]/lineArea/@start-indent"/>
+    <eval expected="202416" xpath="//flow/block[11]/lineArea/@start-indent"/>
     <eval expected="12000" xpath="//flow/block[11]/lineArea/space/@ipd"/>
 
     <eval expected="360000" xpath="//flow/block[12]/lineArea/@ipd"/>
@@ -140,15 +140,15 @@
     <eval expected="12000" xpath="//flow/block[12]/lineArea/inlineparent/@ipd"/>
 
     <eval expected="360000" xpath="//flow/block[13]/lineArea/@ipd"/>
-    <eval expected="100878" xpath="//flow/block[13]/lineArea/@start-indent"/>
+    <eval expected="99210" xpath="//flow/block[13]/lineArea/@start-indent"/>
     <eval expected="12000" xpath="//flow/block[13]/lineArea/inlineparent/@ipd"/>
 
     <eval expected="360000" xpath="//flow/block[14]/lineArea/@ipd"/>
-    <eval expected="82536" xpath="//flow/block[14]/lineArea/@start-indent"/>
+    <eval expected="80868" xpath="//flow/block[14]/lineArea/@start-indent"/>
     <eval expected="12000" xpath="//flow/block[14]/lineArea/leader/@ipd"/>
 
     <eval expected="360000" xpath="//flow/block[15]/lineArea/@ipd"/>
-    <eval expected="96210" xpath="//flow/block[15]/lineArea/@start-indent"/>
+    <eval expected="94542" xpath="//flow/block[15]/lineArea/@start-indent"/>
     <eval expected="12000" xpath="//flow/block[15]/lineArea/space/@ipd"/>
 
     <eval expected="360000" xpath="//flow/block[16]/lineArea/@ipd"/>
