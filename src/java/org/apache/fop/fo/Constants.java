@@ -661,33 +661,35 @@ public interface Constants {
     /** Property constant */
     int PR_VOLUME = 237;
     /** Property constant */
-    int PR_WHITE_SPACE_COLLAPSE = 238;
+    int PR_WHITE_SPACE = 238;
     /** Property constant */
-    int PR_WHITE_SPACE_TREATMENT = 239;
+    int PR_WHITE_SPACE_COLLAPSE = 239;
     /** Property constant */
-    int PR_WIDOWS = 240;
+    int PR_WHITE_SPACE_TREATMENT = 240;
     /** Property constant */
-    int PR_WIDTH = 241;
+    int PR_WIDOWS = 241;
     /** Property constant */
-    int PR_WORD_SPACING = 242;
+    int PR_WIDTH = 242;
     /** Property constant */
-    int PR_WRAP_OPTION = 243;
+    int PR_WORD_SPACING = 243;
     /** Property constant */
-    int PR_WRITING_MODE = 244;
+    int PR_WRAP_OPTION = 244;
     /** Property constant */
-    int PR_XML_LANG = 245;
+    int PR_WRITING_MODE = 245;
     /** Property constant */
-    int PR_Z_INDEX = 246;
+    int PR_XML_LANG = 246;
     /** Property constant */
-    int PR_INTRUSION_DISPLACE = 247;
+    int PR_Z_INDEX = 247;
+    /** Property constant */
+    int PR_INTRUSION_DISPLACE = 248;
     /** Property constant - XSL 1.1 */
-    int PR_INDEX_CLASS = 248;
+    int PR_INDEX_CLASS = 249;
     /** Property constant - XSL 1.1 */
-    int PR_INDEX_KEY = 249;
+    int PR_INDEX_KEY = 250;
     /** Property constant - Custom extension */
-    int PR_X_BLOCK_PROGRESSION_UNIT = 250;
+    int PR_X_BLOCK_PROGRESSION_UNIT = 251;
     /** Number of property constants defined */
-    int PROPERTY_COUNT = 250;
+    int PROPERTY_COUNT = 251;
 
     // compound property constants
 
@@ -1069,6 +1071,10 @@ public interface Constants {
     int EN_800 = 175;
     /** Enumeration constant */
     int EN_900 = 176;
+    /** Enumeration constant -- page-break-shorthand */
+    int EN_AVOID = 177;
+    /** Enumeration constant -- white-space shorthand */
+    int EN_PRE = 178;
     /** Number of enumeration constants defined */
-    int ENUM_COUNT = 176;
+    int ENUM_COUNT = 178;
 }
