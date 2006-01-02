@@ -27,6 +27,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="SP" type="update">
+        Improvements to the code for inline block content.
+      </action>
       <action context="Code" dev="MM" type="fix" fixes-bug="38089">
         Bugfix: Image height for BMP images was incorrectly calculated
       </action>
