@@ -40,7 +40,7 @@ public class BMPReader implements ImageReader {
     /** offset to width */
     private static final int WIDTH_OFFSET = 18;
     /** offset to height */
-    private static final int HEIGHT_OFFSET = 18;
+    private static final int HEIGHT_OFFSET = 22;
     /** offset to horizontal res */
     private static final int HRES_OFFSET = 38;
     /** offset to vertical res */

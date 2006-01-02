@@ -27,6 +27,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="MM" type="fix" fixes-bug="38089">
+        Bugfix: Image height for BMP images was incorrectly calculated
+      </action>
       <action context="Code" dev="AD" type="update">
         Revision of refinement white-space handling.
       </action>
