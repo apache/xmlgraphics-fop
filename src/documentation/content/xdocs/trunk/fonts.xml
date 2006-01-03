@@ -281,6 +281,16 @@ See <a href="#ttf-encoding">Table of TTF Encoding Options</a> for more details.<
           and "ZapfDingbats" you have to manually change the XML font metrics file and specify "SymbolEncoding"
           or "ZapfdingbatsEncoding" encoding respectively as the value for the "encoding" element.
         </p>
+        <p>Example:</p>
+        <source><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<font-metrics type="TYPE1">
+  <font-name>Symbol</font-name>
+  <embed/>
+  <encoding>SymbolEncoding</encoding>
+  <cap-height>673</cap-height>
+  <x-height>766</x-height>
+  [..]]]></source>
         <note>
           FOP does not currently comply with or support the PDF/A standard.
         </note>
