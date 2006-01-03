@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonAccessibility;
@@ -199,6 +198,11 @@ public class TableCell extends TableFObj {
         } else {
             blockItemFound = true;
         }
+    }
+
+    /** @see org.apache.fop.fo.FObj#generatesReferenceAreas() */
+    public boolean generatesReferenceAreas() {
+        return true;
     }
 
     /**
