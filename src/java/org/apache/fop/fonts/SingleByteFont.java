@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2004,2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,14 +23,26 @@ package org.apache.fop.fonts;
  */
 public class SingleByteFont extends CustomFont {
 
-    private final CodePointMapping mapping
-        = CodePointMapping.getMapping("WinAnsiEncoding");
+    private CodePointMapping mapping;
 
     private String encoding = "WinAnsiEncoding";
 
-    private int width[] = null;
+    private int[] width = null;
 
-
+    /**
+     * Main constructor.
+     */
+    public SingleByteFont() {
+        updateMapping();
+    }
+    
+    /**
+     * Updates the mapping variable based on the encoding.
+     */
+    protected void updateMapping() {
+        mapping = CodePointMapping.getMapping(getEncoding()); 
+    }
+    
     /**
      * @see org.apache.fop.fonts.FontDescriptor#isEmbeddable()
      */
@@ -47,6 +59,15 @@ public class SingleByteFont extends CustomFont {
     }
 
     /**
+     * Sets the encoding of the font.
+     * @param encoding the encoding (ex. "WinAnsiEncoding" or "SymbolEncoding")
+     */
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
+        updateMapping();
+    }
+
+    /**
      * @see org.apache.fop.fonts.FontMetrics#getWidth(int, int)
      */
     public int getWidth(int i, int size) {
@@ -59,10 +80,6 @@ public class SingleByteFont extends CustomFont {
     public int[] getWidths() {
         int[] arr = new int[width.length];
         System.arraycopy(width, 0, arr, 0, width.length - 1);
-        /*
-        for (int i = 0; i < arr.length; i++)
-            arr[i] *= size;
-        */
         return arr;
     }
 

@@ -27,6 +27,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="add">
+        The font loading code now reads the encoding value from the XML font metrics file
+        so that fonts like Symbol and ZapfDingbats can be embedded explicitely (Required by PDF/A).
+      </action>
       <action context="Code" dev="SP" type="update">
         Improvements to the code for inline block content.
       </action>

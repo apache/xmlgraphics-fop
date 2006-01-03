@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2004,2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -218,6 +218,10 @@ public class FontReader extends DefaultHandler {
             returnFont.setFontName(content);
         } else if ("ttc-name".equals(localName) && isCID) {
             multiFont.setTTCName(content);
+        } else if ("encoding".equals(localName)) {
+            if (singleFont != null && singleFont.getFontType() == FontType.TYPE1) {
+                singleFont.setEncoding(content);
+            }
         } else if ("cap-height".equals(localName)) {
             returnFont.setCapHeight(getInt(content));
         } else if ("x-height".equals(localName)) {
