@@ -1,6 +1,6 @@
 <?xml version="1.0" standalone="no"?>
 <!--
-  Copyright 1999-2005 The Apache Software Foundation
+  Copyright 1999-2006 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -267,6 +267,23 @@ While the document will be displayed correctly, the net effect of this is that s
 This will cause the whole font to be embedded in the pdf document.
 Characters will be WinAnsi encoded (as specified in the PDF spec), so you lose the ability to use characters from other character sets.
 See <a href="#ttf-encoding">Table of TTF Encoding Options</a> for more details.</p>
+      </section>
+      <section id="embedding-base14">
+        <title>Explicitely embedding the base 14 fonts</title>
+        <p>
+          There are cases where you might want to force the embedding of one or more of the base 14 fonts that
+          can normally be considered available on the target platform (viewer, printer). One of these cases is
+          PDF/A which mandates the embedding of even the base 14 fonts. Embedding a font such as Helvetica or
+          Courier is straight-forward. The "Symbol" and "ZapfDingbats" fonts, however, currently present a 
+          problem because FOP cannot correctly determine the encoding of these two single-byte fonts through
+          the PFM file. FOP now correctly interprets the "encoding" value in the XML font metrics file, but the
+          PFMReader application writes "UnknownEncoding" to the generated XML file. In order to embed "Symbol"
+          and "ZapfDingbats" you have to manually change the XML font metrics file and specify "SymbolEncoding"
+          or "ZapfdingbatsEncoding" encoding respectively as the value for the "encoding" element.
+        </p>
+        <note>
+          FOP does not currently comply with or support the PDF/A standard.
+        </note>
       </section>
     </section>
   </body>
