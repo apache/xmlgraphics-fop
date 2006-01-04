@@ -200,6 +200,20 @@
     lists, yet.</description>
   </testcase>
   <testcase>
+    <name>Whitespace around markers is not handled correctly</name>
+    <file>marker_white-space-collapse.xml</file>
+    <description>Whitespace within markers is handled according to the value of
+    the white-space-collapse property in the context of the fo:marker and not according to
+    the value of the property in the fo:retrieve-marker context.</description>
+  </testcase>
+  <testcase>
+    <name>Relative font sizes within markers are not handled correctly</name>
+    <file>marker_font-size.xml</file>
+    <description>Relative font sizes within markers are evaluated according to the
+    font size in the fo:marker context and not the font size in the fo:retrieve-marker
+    context.</description>
+  </testcase>
+  <testcase>
     <name>Page breaking doesn't deal with IPD changes</name>
     <file>page-breaking_4.xml</file>
     <description>Page breaking currently doesn't support changing available IPD 
