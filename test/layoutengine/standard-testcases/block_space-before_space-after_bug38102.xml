@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2006 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks if the element list is generated correctly if space-before.optimum is used
+      instead of space-before directly in the case where a nested block needs to shrink.
+      This tests bug #38102.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="1.5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>
+            <fo:block>line1</fo:block>
+            <fo:block space-before="16pt">line2</fo:block>
+            <fo:block space-before.optimum="16pt">line3</fo:block>
+            <fo:block>line4</fo:block>
+            <fo:block>line5</fo:block>
+          <fo:block>line6</fo:block>
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <element-list category="breaker">
+      <box w="14400"/>
+      
+      <penalty w="0" p="0"/>
+      
+      <glue w="16000" y="0" z="0"/>
+      <box w="14400"/>
+      
+      <penalty w="0" p="0"/>
+      
+      <glue w="16000" y="0" z="16000"/>
+      <box w="14400"/>
+      
+      <penalty w="0" p="0"/>
+      <box w="14400"/>
+      <penalty w="0" p="0"/>
+      <box w="14400"/>
+      <penalty w="0" p="0"/>
+      <box w="14400"/>
+      
+      <skip>3</skip>
+    </element-list>
+    <eval expected="1" xpath="count(//pageViewport)"/>
+    <eval expected="16000" xpath="//flow/block[1]/block[2]/@space-before"/>
+    <!-- The breaker needs to shrink the optimal 1600mpt to 5600mpt to fit everything into the one page -->
+    <eval expected="5600" xpath="//flow/block[1]/block[3]/@space-before"/>
+    <true xpath="//flow/@bpd = //regionBody/@bpd"/>
+  </checks>
+</testcase>

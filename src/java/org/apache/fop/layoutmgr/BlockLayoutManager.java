@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/* $Id: BlockLayoutManager.java,v 1.19 2004/05/26 04:22:39 gmazza Exp $ */
+/* $Id$ */
 
 package org.apache.fop.layoutmgr;
 
@@ -242,6 +242,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
         LayoutManager childLM = null;
         LayoutManager lastLM = null;
         LayoutContext lc = new LayoutContext(0);
+        lc.setSpaceAdjust(layoutContext.getSpaceAdjust());
         // set space after in the LayoutContext for children
         if (layoutContext.getSpaceAfter() > 0) {
             lc.setSpaceAfter(layoutContext.getSpaceAfter());
