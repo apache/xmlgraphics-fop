@@ -27,6 +27,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix" fixes-bug="38102">
+        Bugfix: Space was not adjusted if the space was on a nested block. This could
+        lead to content overflowing the bottom of a page.
+      </action>
       <action context="Code" dev="JM" type="fix">
         Bugfix: TableCell did not properly report that it generates reference-areas
         which could lead to wrong inherited values for start-indent and end-indent.
