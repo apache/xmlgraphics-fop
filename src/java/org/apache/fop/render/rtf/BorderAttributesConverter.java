@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -101,6 +101,14 @@ public class BorderAttributesConverter {
            return IBorderAttributes.BORDER_DOTTED;
        } else if (iBorderStyle == Constants.EN_DASHED) {
            return IBorderAttributes.BORDER_DASH;
+       } else if (iBorderStyle == Constants.EN_GROOVE) {
+           return IBorderAttributes.BORDER_ENGRAVE;
+       } else if (iBorderStyle == Constants.EN_RIDGE) {
+           return IBorderAttributes.BORDER_EMBOSS;
+       } else if (iBorderStyle == Constants.EN_INSET) {
+           return IBorderAttributes.BORDER_ENGRAVE;
+       } else if (iBorderStyle == Constants.EN_OUTSET) {
+           return IBorderAttributes.BORDER_EMBOSS;
 /*        } else if (iBorderStyle==Constants value.equals("hairline")) {
            return IBorderAttributes.BORDER_HAIRLINE;*/
 /*        } else if (iBorderStyle==Constant value.equals("dot-dash")) {
@@ -120,7 +128,7 @@ public class BorderAttributesConverter {
        } else if (iBorderStyle==Constant value.equals("engrave")) {
            return IBorderAttributes.BORDER_ENGRAVE;*/
        } else {
-           return null;
+           return IBorderAttributes.BORDER_SINGLE_THICKNESS;
        }
 
    }
