@@ -27,6 +27,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="add" fixes-bug="38132" due-to="Richard Wheeldon">
+        Added support for RFC2397 "data" URLs.
+      </action>
       <action context="Code" dev="JM" type="fix" fixes-bug="38132">
         Bugfix: Certain border styles could lead to a NullPointerException.
       </action>
