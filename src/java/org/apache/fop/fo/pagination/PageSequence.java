@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -139,7 +139,6 @@ public class PageSequence extends FObj {
             new PageNumberGenerator(format, groupingSeparator, groupingSize, letterValue);
 
         checkId(id);
-        initPageNumber();
         getFOEventHandler().startPageSequence(this);
     }
 
@@ -235,7 +234,7 @@ public class PageSequence extends FObj {
     /**
      * Initialize the current page number for the start of the page sequence.
      */
-    private void initPageNumber() {
+    public void initPageNumber() {
         int pageNumberType = 0;
         
         if (initialPageNumber.getEnum() != 0) {
@@ -510,5 +509,18 @@ public class PageSequence extends FObj {
      */
     public int getNameId() {
         return FO_PAGE_SEQUENCE;
+    }
+    /**
+     * get the forcePageCount value
+     */
+    public int getForcePageCount() {
+        return forcePageCount;
+    }
+
+    /**
+     * get the initial pagenumber property value
+     */
+    public Numeric getInitialPageNumber() {
+        return initialPageNumber;
     }
 }

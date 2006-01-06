@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ package org.apache.fop.layoutmgr;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.datatypes.Numeric;
 
 import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.area.AreaTreeModel;
@@ -145,8 +146,11 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         PageBreaker breaker = new PageBreaker(this);
         int flowBPD = (int)getCurrentPV().getBodyRegion().getRemainingBPD();
         breaker.doLayout(flowBPD);
-        
+
         finishPage();
+    }
+        
+    public void finishPageSequence() {
         pageSeq.getRoot().notifyPageSequenceFinished(currentPageNum,
                 (currentPageNum - startPageNum) + 1);
         areaTreeHandler.notifyPageSequenceFinished(pageSeq,
@@ -887,5 +891,73 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             }
         }
         
+    }
+
+    /*
+     * check if the page-number of the last page suits to the force-page-count property
+     */
+    public void doForcePageCount(Numeric nextPageSeqInitialPageNumber) {
+
+        int forcePageCount = pageSeq.getForcePageCount();
+
+        // xsl-spec version 1.0   (15.oct 2001)
+        // auto | even | odd | end-on-even | end-on-odd | no-force | inherit
+        // auto:
+        // Force the last page in this page-sequence to be an odd-page 
+        // if the initial-page-number of the next page-sequence is even. 
+        // Force it to be an even-page 
+        // if the initial-page-number of the next page-sequence is odd. 
+        // If there is no next page-sequence 
+        // or if the value of its initial-page-number is "auto" do not force any page.
+            
+
+        // if force-page-count is auto then set the value of forcePageCount 
+        // depending on the initial-page-number of the next page-sequence
+        if (forcePageCount == Constants.EN_AUTO) {
+            if (nextPageSeqInitialPageNumber.getEnum() != 0) {
+                // auto | auto-odd | auto-even
+                int nextPageSeqPageNumberType = nextPageSeqInitialPageNumber.getEnum();
+                if (nextPageSeqPageNumberType == Constants.EN_AUTO_ODD) {
+                    forcePageCount = Constants.EN_END_ON_EVEN;
+                } else if (nextPageSeqPageNumberType == Constants.EN_AUTO_EVEN) {
+                    forcePageCount = Constants.EN_END_ON_ODD;
+                } else {   // auto
+                    forcePageCount = Constants.EN_NO_FORCE;
+                }
+            } else { // <integer> for explicit page number
+                int nextPageSeqPageStart = nextPageSeqInitialPageNumber.getValue();
+                // spec rule
+                nextPageSeqPageStart = (nextPageSeqPageStart > 0) ? nextPageSeqPageStart : 1;
+                if (nextPageSeqPageStart % 2 == 0) {   // explicit even startnumber
+                    forcePageCount = Constants.EN_END_ON_ODD;
+                } else {    // explicit odd startnumber
+                    forcePageCount = Constants.EN_END_ON_EVEN;
+                }
+            }
+        }
+
+        if (forcePageCount == Constants.EN_EVEN) {
+            if ((currentPageNum - startPageNum + 1) % 2 != 0) { // we have a odd number of pages
+                curPage = makeNewPage(true, false);
+            }
+        } else if (forcePageCount == Constants.EN_ODD) {
+            if ((currentPageNum - startPageNum + 1) % 2 == 0) { // we have a even number of pages
+                curPage = makeNewPage(true, false);
+            }
+        } else if (forcePageCount == Constants.EN_END_ON_EVEN) {
+            if (currentPageNum % 2 != 0) { // we are now on a odd page
+                curPage = makeNewPage(true, false);
+            }
+        } else if (forcePageCount == Constants.EN_END_ON_ODD) {
+            if (currentPageNum % 2 == 0) { // we are now on a even page
+                curPage = makeNewPage(true, false);
+            }
+        } else if (forcePageCount == Constants.EN_NO_FORCE) {
+            // i hope: nothing special at all
+        }
+
+        if (curPage != null) {
+            finishPage();
+        }
     }
 }

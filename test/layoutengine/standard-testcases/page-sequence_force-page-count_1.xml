@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2006 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks the force-page-count property. See bug 38087.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+
+        <fo:simple-page-master master-name="defaultpage" 
+         page-height="29.7cm" page-width="21cm">
+          <fo:region-body region-name="text" 
+           margin-top="3cm" margin-bottom="3cm" 
+           margin-left="3cm" margin-right="3cm"/>
+          <fo:region-before region-name="header" 
+           extent="2.5cm" display-align="after"/>
+          <fo:region-after region-name="footer" 
+           extent="2.5cm" display-align="after"/>
+          <fo:region-start extent="3cm"/>
+          <fo:region-end extent="2cm"/>
+        </fo:simple-page-master>
+        <fo:simple-page-master master-name="emptypage" 
+         page-height="29.7cm" page-width="21cm">
+          <fo:region-body region-name="text" 
+           margin-top="3cm" margin-bottom="3cm" 
+           margin-left="3cm" margin-right="3cm"/>
+        </fo:simple-page-master>
+        <fo:page-sequence-master master-name="defaultsequence">
+          <fo:repeatable-page-master-alternatives>
+            <fo:conditional-page-master-reference 
+             blank-or-not-blank="blank" master-reference="defaultpage"/>
+            <fo:conditional-page-master-reference 
+             blank-or-not-blank="not-blank" master-reference="defaultpage"/>
+          </fo:repeatable-page-master-alternatives>
+        </fo:page-sequence-master>
+      </fo:layout-master-set>
+
+      <fo:page-sequence master-reference="defaultsequence">
+        <fo:static-content flow-name="header">
+          <fo:block text-align-last="end">
+            <fo:page-number/>
+          </fo:block>
+        </fo:static-content>
+        <fo:flow flow-name="text" font-family="Times Roman" font-size="12pt">
+         <fo:block>
+          1. Pageseq: ends odd, [#] / auto / next is auto-even -> nothing
+         </fo:block>
+         <fo:block>
+          expl: ends on {odd|even}, {odd,even} number of pages # / force-page-count / initial-page-number -> action
+         </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="defaultsequence" 
+       initial-page-number="auto-even">
+        <fo:static-content flow-name="header">
+          <fo:block text-align-last="end">
+            <fo:page-number/>
+         </fo:block>
+        </fo:static-content>
+        <fo:flow flow-name="text" font-family="Times Roman" font-size="12pt">
+         <fo:block>
+          2. Pageseq: ends even, [#] / auto / next is auto-even -> addpage
+         </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="defaultsequence" 
+       initial-page-number="auto-even">
+        <fo:static-content flow-name="header">
+          <fo:block text-align-last="end">
+            <fo:page-number/>
+         </fo:block>
+        </fo:static-content>
+        <fo:flow flow-name="text" font-family="Times Roman" font-size="12pt">
+         <fo:block>
+          3. Pageseq: ends even, [#] / auto / next is auto-odd -> nothing
+         </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="defaultsequence" 
+       initial-page-number="auto-odd">
+        <fo:static-content flow-name="header">
+          <fo:block text-align-last="end">
+            <fo:page-number/>
+         </fo:block>
+        </fo:static-content>
+        <fo:flow flow-name="text" font-family="Times Roman" font-size="12pt">
+         <fo:block>
+          4. Pageseq: ends odd, [#] / auto / next is auto-odd -> addpage
+         </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="defaultsequence" 
+       initial-page-number="auto-odd">
+        <fo:static-content flow-name="header">
+          <fo:block text-align-last="end">
+            <fo:page-number/>
+         </fo:block>
+        </fo:static-content>
+        <fo:flow flow-name="text" font-family="Times Roman" font-size="12pt">
+         <fo:block>
+          5. Pageseq: ends odd, [#] / auto / next is auto-even -> nothing
+         </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="defaultsequence" 
+       initial-page-number="auto-even">
+        <fo:static-content flow-name="header">
+          <fo:block text-align-last="end">
+            <fo:page-number/>
+         </fo:block>
+        </fo:static-content>
+        <fo:flow flow-name="text" font-family="Times Roman" font-size="12pt">
+         <fo:block>
+          6. Pageseq: ends even, [#] / auto / next is numeric even -> addpage
+         </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="defaultsequence" 
+       initial-page-number="20">
+        <fo:static-content flow-name="header">
+          <fo:block text-align-last="end">
+            <fo:page-number/>
+         </fo:block>
+        </fo:static-content>
+        <fo:flow flow-name="text" font-family="Times Roman" font-size="12pt">
+         <fo:block>
+          5. Pageseq: ends even, [#] / auto / next is numeric even -> addpage
+         </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="defaultsequence" 
+       initial-page-number="24">
+        <fo:static-content flow-name="header">
+          <fo:block text-align-last="end">
+            <fo:page-number/>
+         </fo:block>
+        </fo:static-content>
+        <fo:flow flow-name="text" font-family="Times Roman" font-size="12pt">
+         <fo:block>
+          6. Pageseq: ends even, [#] / auto / next is numeric odd -> nothing
+         </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="defaultsequence" 
+       initial-page-number="31">
+        <fo:static-content flow-name="header">
+          <fo:block text-align-last="end">
+            <fo:page-number/>
+         </fo:block>
+        </fo:static-content>
+        <fo:flow flow-name="text" font-family="Times Roman" font-size="12pt">
+         <fo:block>
+          7. Pageseq: ends odd, [#] / auto / next is numeric odd -> addpage
+         </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="defaultsequence" 
+       initial-page-number="35"
+       force-page-count="end-on-even">
+        <fo:static-content flow-name="header">
+          <fo:block text-align-last="end">
+            <fo:page-number/>
+         </fo:block>
+        </fo:static-content>
+        <fo:flow flow-name="text" font-family="Times Roman" font-size="12pt">
+         <fo:block>
+          101. Pageseq: ends odd, [#] / end-on-even/ [next is auto] -> addpage
+         </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="defaultsequence" 
+       force-page-count="end-on-even">
+        <fo:static-content flow-name="header">
+          <fo:block text-align-last="end">
+            <fo:page-number/>
+         </fo:block>
+        </fo:static-content>
+        <fo:flow flow-name="text" font-family="Times Roman" font-size="12pt">
+         <fo:block>
+          102a. Pageseq: see next page
+         </fo:block>
+         <fo:block break-before="page">
+          102b. Pageseq: ends even, [#] / end-on-even/ [next is auto] -> nothing
+         </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="defaultsequence" 
+       force-page-count="end-on-odd">
+        <fo:static-content flow-name="header">
+          <fo:block text-align-last="end">
+            <fo:page-number/>
+         </fo:block>
+        </fo:static-content>
+        <fo:flow flow-name="text" font-family="Times Roman" font-size="12pt">
+         <fo:block>
+          103. Pageseq: ends odd, [#] / end-on-odd/ [next is auto] -> nothing
+         </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="defaultsequence" 
+       force-page-count="end-on-odd">
+        <fo:static-content flow-name="header">
+          <fo:block text-align-last="end">
+            <fo:page-number/>
+         </fo:block>
+        </fo:static-content>
+        <fo:flow flow-name="text" font-family="Times Roman" font-size="12pt">
+         <fo:block>
+          104. Pageseq: ends even, [#] / end-on-odd/ [next is auto] -> addpage
+         </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="defaultsequence" 
+       force-page-count="even">
+        <fo:static-content flow-name="header">
+          <fo:block text-align-last="end">
+            <fo:page-number/>
+         </fo:block>
+        </fo:static-content>
+        <fo:flow flow-name="text" font-family="Times Roman" font-size="12pt">
+         <fo:block>
+          201. Pageseq: [ends], odd # / even / [next is auto] -> addpage
+         </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="defaultsequence" 
+       force-page-count="even">
+        <fo:static-content flow-name="header">
+          <fo:block text-align-last="end">
+            <fo:page-number/>
+         </fo:block>
+        </fo:static-content>
+        <fo:flow flow-name="text" font-family="Times Roman" font-size="12pt">
+         <fo:block>
+          202a. Pageseq: see next page
+         </fo:block>
+         <fo:block break-before="page">
+          13b. Pageseq: [ends], even # / even / [next is auto] -> nothing
+         </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="defaultsequence" 
+       force-page-count="odd">
+        <fo:static-content flow-name="header">
+          <fo:block text-align-last="end">
+            <fo:page-number/>
+         </fo:block>
+        </fo:static-content>
+        <fo:flow flow-name="text" font-family="Times Roman" font-size="12pt">
+         <fo:block>
+          203. Pageseq: [ends], odd # / odd / [next is auto] -> nothing
+         </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="defaultsequence" 
+       force-page-count="odd">
+        <fo:static-content flow-name="header">
+          <fo:block text-align-last="end">
+            <fo:page-number/>
+         </fo:block>
+        </fo:static-content>
+        <fo:flow flow-name="text" font-family="Times Roman" font-size="12pt">
+         <fo:block>
+          204a. Pageseq: see next page
+         </fo:block>
+         <fo:block break-before="page">
+          204b. Pageseq: [ends], even # / odd / [next is auto] -> addpage
+         </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="defaultsequence"
+       force-page-count="no-force">
+        <fo:static-content flow-name="header">
+          <fo:block text-align-last="end">
+            <fo:page-number/>
+         </fo:block>
+        </fo:static-content>
+        <fo:flow flow-name="text" font-family="Times Roman" font-size="12pt">
+         <fo:block>
+          301. Pageseq: ends even, [#] / no-force / next is auto-even -> nothing
+         </fo:block>
+         <fo:block>
+          Only to show the possibility of missing pagenumbers for 
+          force-page-count="no-force".
+         </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="defaultsequence"
+       initial-page-number="auto-even">
+        <fo:static-content flow-name="header">
+          <fo:block text-align-last="end">
+            <fo:page-number/>
+         </fo:block>
+        </fo:static-content>
+        <fo:flow flow-name="text" font-family="Times Roman" font-size="12pt">
+         <fo:block>
+          302. Pageseq: dont matter, dont matter # / auto / next is auto -> nothing
+         </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="defaultsequence">
+        <fo:static-content flow-name="header">
+          <fo:block text-align-last="end">
+            <fo:page-number/>
+         </fo:block>
+        </fo:static-content>
+        <fo:flow flow-name="text" font-family="Times Roman" font-size="12pt">
+         <fo:block>
+          999. Pageseq: dont matter, auto / no next
+         </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="1" xpath="//pageSequence[1]/pageViewport[1]/@nr"/>
+    <eval expected="2" xpath="//pageSequence[2]/pageViewport[1]/@nr"/>
+    <eval expected="3" xpath="//pageSequence[2]/pageViewport[2]/@nr"/>
+    <eval expected="4" xpath="//pageSequence[3]/pageViewport[1]/@nr"/>
+    <eval expected="5" xpath="//pageSequence[4]/pageViewport[1]/@nr"/>
+    <eval expected="6" xpath="//pageSequence[4]/pageViewport[2]/@nr"/>
+    <eval expected="7" xpath="//pageSequence[5]/pageViewport[1]/@nr"/>
+    <eval expected="8" xpath="//pageSequence[6]/pageViewport[1]/@nr"/>
+    <eval expected="9" xpath="//pageSequence[6]/pageViewport[2]/@nr"/>
+    <eval expected="20" xpath="//pageSequence[7]/pageViewport[1]/@nr"/>
+    <eval expected="21" xpath="//pageSequence[7]/pageViewport[2]/@nr"/>
+    <eval expected="24" xpath="//pageSequence[8]/pageViewport[1]/@nr"/>
+    <eval expected="31" xpath="//pageSequence[9]/pageViewport[1]/@nr"/>
+    <eval expected="32" xpath="//pageSequence[9]/pageViewport[2]/@nr"/>
+    <eval expected="35" xpath="//pageSequence[10]/pageViewport[1]/@nr"/>
+    <eval expected="36" xpath="//pageSequence[10]/pageViewport[2]/@nr"/>
+    <eval expected="37" xpath="//pageSequence[11]/pageViewport[1]/@nr"/>
+    <eval expected="38" xpath="//pageSequence[11]/pageViewport[2]/@nr"/>
+    <eval expected="39" xpath="//pageSequence[12]/pageViewport[1]/@nr"/>
+    <eval expected="40" xpath="//pageSequence[13]/pageViewport[1]/@nr"/>
+    <eval expected="41" xpath="//pageSequence[13]/pageViewport[2]/@nr"/>
+    <eval expected="42" xpath="//pageSequence[14]/pageViewport[1]/@nr"/>
+    <eval expected="43" xpath="//pageSequence[14]/pageViewport[2]/@nr"/>
+    <eval expected="44" xpath="//pageSequence[15]/pageViewport[1]/@nr"/>
+    <eval expected="45" xpath="//pageSequence[15]/pageViewport[2]/@nr"/>
+    <eval expected="46" xpath="//pageSequence[16]/pageViewport[1]/@nr"/>
+    <eval expected="47" xpath="//pageSequence[17]/pageViewport[1]/@nr"/>
+    <eval expected="48" xpath="//pageSequence[17]/pageViewport[2]/@nr"/>
+    <eval expected="49" xpath="//pageSequence[17]/pageViewport[3]/@nr"/>
+    <eval expected="50" xpath="//pageSequence[18]/pageViewport[1]/@nr"/>
+    <eval expected="52" xpath="//pageSequence[19]/pageViewport[1]/@nr"/>
+    <eval expected="53" xpath="//pageSequence[20]/pageViewport[1]/@nr"/>
+    <!-- blank pages, only the folio -->
+    <eval expected="3" xpath="//pageSequence[2]/pageViewport[2]"/>
+    <eval expected="6" xpath="//pageSequence[4]/pageViewport[2]"/>
+    <eval expected="9" xpath="//pageSequence[6]/pageViewport[2]"/>
+    <eval expected="21" xpath="//pageSequence[7]/pageViewport[2]"/>
+    <eval expected="32" xpath="//pageSequence[9]/pageViewport[2]"/>
+    <eval expected="36" xpath="//pageSequence[10]/pageViewport[2]"/>
+    <eval expected="41" xpath="//pageSequence[13]/pageViewport[2]"/>
+    <eval expected="43" xpath="//pageSequence[14]/pageViewport[2]"/>
+    <eval expected="49" xpath="//pageSequence[17]/pageViewport[3]"/>
+  </checks>
+</testcase>
