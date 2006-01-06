@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -97,6 +97,8 @@ public class AreaTreeHandler extends FOEventHandler {
 
      // The formatting results to be handed back to the caller.
     private FormattingResults results = new FormattingResults();
+
+    private PageSequenceLayoutManager prevPageSeqLM;
 
     private static Log log = LogFactory.getLog(AreaTreeHandler.class);
 
@@ -266,7 +268,15 @@ public class AreaTreeHandler extends FOEventHandler {
     /** @see org.apache.fop.fo.FOEventHandler */
     public void startPageSequence(PageSequence pageSequence) {
         rootFObj = pageSequence.getRoot();
-
+        // finish the previous pageSequence (handle force-page-count)
+        if (prevPageSeqLM != null) {
+            prevPageSeqLM.doForcePageCount(pageSequence.getInitialPageNumber());
+            prevPageSeqLM.finishPageSequence();
+            prevPageSeqLM = null;
+            // recalc pagenumber for the case that a new page is
+            // inserted by checkForcePageCount
+        }
+        pageSequence.initPageNumber();
         //extension attachments from fo:root
         wrapAndAddExtensionAttachments(rootFObj.getExtensionAttachments());
         //extension attachments from fo:declarations
@@ -303,6 +313,9 @@ public class AreaTreeHandler extends FOEventHandler {
             pageSLM = getLayoutManagerMaker().makePageSequenceLayoutManager(
                     this, pageSequence);
             pageSLM.activateLayout();
+            // preserve the current PageSequenceLayoutManger for the
+            // force-page-count check at the beginning of the next PageSequence
+            prevPageSeqLM = pageSLM; 
         }
     }
 
