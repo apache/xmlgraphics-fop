@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
  "http://www.w3.org/TR/html4/loose.dtd">
 <!--
-  Copyright 2002-2005 The Apache Software Foundation
+  Copyright 2002-2006 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -147,6 +147,39 @@
     </li>
     <li>
       <strong><a href="#fo-property-shorthand-section">Shorthand Properties</a>: </strong><a href="#fo-property-background">background</a>, <a href="#fo-property-background-position">background-position</a>, <a href="#fo-property-border">border</a>, <a href="#fo-property-border-bottom">border-bottom</a>, <a href="#fo-property-border-color">border-color</a>, <a href="#fo-property-border-left">border-left</a>, <a href="#fo-property-border-right">border-right</a>, <a href="#fo-property-border-style">border-style</a>, <a href="#fo-property-border-spacing">border-spacing</a>, <a href="#fo-property-border-top">border-top</a>, <a href="#fo-property-border-width">border-width</a>, <a href="#fo-property-cue">cue</a>, <a href="#fo-property-font">font</a>, <a href="#fo-property-margin">margin</a>, <a href="#fo-property-padding">padding</a>, <a href="#fo-property-page-break-after">page-break-after</a>, <a href="#fo-property-page-break-before">page-break-before</a>, <a href="#fo-property-page-break-inside">page-break-inside</a>, <a href="#fo-property-pause">pause</a>, <a href="#fo-property-position">position</a>, <a href="#fo-property-size">size</a>, <a href="#fo-property-vertical-align">vertical-align</a>, <a href="#fo-property-white-space">white-space</a>, <a href="#fo-property-xml:lang">xml:lang</a>
+    </li>
+  </ul>
+  <h2><a href="#fo-function-core-library-section">XSL-FO Core Function Library Support</a></h2>
+  <ul class="minitoc">
+    <li>
+      <strong><a href="#fo-function-number-section">Number Functions</a>:</strong>
+      <a href="#fo-function-floor">floor</a>, 
+      <a href="#fo-function-ceiling">ceiling</a>, 
+      <a href="#fo-function-round">round</a>, 
+      <a href="#fo-function-min">min</a>, 
+      <a href="#fo-function-max">max</a>, 
+      <a href="#fo-function-abs">abs</a>
+    </li>
+    <li>
+      <strong><a href="#fo-function-color-section">Color Functions</a>:</strong>
+      <a href="#fo-function-rgb">rgb</a>, 
+      <a href="#fo-function-rgb-icc">rgb-icc</a>, 
+      <a href="#fo-function-system-color">system-color</a>
+    </li>
+    <li>
+      <strong><a href="#fo-function-font-section">Font Functions</a>:</strong>
+      <a href="#fo-function-system-font">system-font</a>
+    </li>
+    <li>
+      <strong><a href="#fo-function-property-value-section">Property Value Functions</a>:</strong>
+      <a href="#fo-function-inherited-property-value">inherited-property-value</a>, 
+      <a href="#fo-function-label-end">label-end</a>, 
+      <a href="#fo-function-body-start">body-start</a>, 
+      <a href="#fo-function-from-parent">from-parent</a>, 
+      <a href="#fo-function-from-nearest-specified-value">from-nearest-specified-value</a>, 
+      <a href="#fo-function-from-table-column">from-table-column</a>, 
+      <a href="#fo-function-proportional-column-width">proportional-column-width</a>, 
+      <a href="#fo-function-merge-property-values">merge-property-values</a>
     </li>
   </ul>
   <h1><a name="fo-object-section">XSL-FO Object Support Table</a> (<a href="http://www.w3.org/TR/xsl/slice6.html#fo-section">&sect;6</a>)</h1>
@@ -6837,6 +6870,417 @@
       </td>
       <td align="center">
         <a href="http://www.w3.org/TR/xsl/slice7.html#xml:lang">&sect;7.29.24</a>
+      </td>
+      <td class="no">
+        no
+      </td>
+      <td class="no">
+        no
+      </td>
+      <td align="center">
+        &nbsp;
+      </td>
+    </tr>
+  </table>
+  <h1><a name="fo-function-core-library-section">XSL-FO Core Function Library Support Table</a> (<a href="http://www.w3.org/TR/xsl/slice5.html#section-N8434-Core-Function-Library">&sect;5.10</a>)</h1>
+  <p>
+    The following is a summary of FOP's current support for the XSL-FO Core Function Library.
+  </p>
+  <table border="1">
+    <tr>
+      <th rowspan="2">
+        Function Name
+      </th>
+      <th rowspan="2" align="center">
+        XSL-FO Conformance Level
+      </th>
+      <th rowspan="2" align="center">
+        Citation 
+      </th>
+      <th colspan="2" align="center">
+        Support&nbsp;in&nbsp;FOP
+      </th>
+      <th rowspan="2">
+        Comments 
+      </th>
+    </tr>
+    <tr>
+      <th align="center">
+        0.20.5 (current stable)
+      </th>
+      <th align="center">
+        0.91 beta (unstable)
+      </th>
+    </tr>
+    <tr>
+      <td class="category" colspan="6">
+        <a name="fo-function-number-section">Number Functions</a> (<a href="http://www.w3.org/TR/xsl/slice5.html#section-N8438-Number-Functions">&sect;5.10.1</a>)
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a name="fo-function-floor">floor</a>
+      </td>
+      <td class="basic">
+        Basic
+      </td>
+      <td align="center">
+        <a href="http://www.w3.org/TR/xsl/slice5.html#section-N8438-Number-Functions">&sect;5.10.1</a>
+      </td>
+      <td class="yes">
+        yes
+      </td>
+      <td class="yes">
+        yes
+      </td>
+      <td align="center">
+        &nbsp;
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a name="fo-function-ceiling">ceiling</a>
+      </td>
+      <td class="basic">
+        Basic
+      </td>
+      <td align="center">
+        <a href="http://www.w3.org/TR/xsl/slice5.html#section-N8438-Number-Functions">&sect;5.10.1</a>
+      </td>
+      <td class="yes">
+        yes
+      </td>
+      <td class="yes">
+        yes
+      </td>
+      <td align="center">
+        &nbsp;
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a name="fo-function-round">round</a>
+      </td>
+      <td class="basic">
+        Basic
+      </td>
+      <td align="center">
+        <a href="http://www.w3.org/TR/xsl/slice5.html#section-N8438-Number-Functions">&sect;5.10.1</a>
+      </td>
+      <td class="yes">
+        yes
+      </td>
+      <td class="yes">
+        yes
+      </td>
+      <td align="center">
+        &nbsp;
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a name="fo-function-min">min</a>
+      </td>
+      <td class="basic">
+        Basic
+      </td>
+      <td align="center">
+        <a href="http://www.w3.org/TR/xsl/slice5.html#section-N8438-Number-Functions">&sect;5.10.1</a>
+      </td>
+      <td class="yes">
+        yes
+      </td>
+      <td class="yes">
+        yes
+      </td>
+      <td align="center">
+        &nbsp;
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a name="fo-function-max">max</a>
+      </td>
+      <td class="basic">
+        Basic
+      </td>
+      <td align="center">
+        <a href="http://www.w3.org/TR/xsl/slice5.html#section-N8438-Number-Functions">&sect;5.10.1</a>
+      </td>
+      <td class="yes">
+        yes
+      </td>
+      <td class="yes">
+        yes
+      </td>
+      <td align="center">
+        &nbsp;
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a name="fo-function-abs">abs</a>
+      </td>
+      <td class="basic">
+        Basic
+      </td>
+      <td align="center">
+        <a href="http://www.w3.org/TR/xsl/slice5.html#section-N8438-Number-Functions">&sect;5.10.1</a>
+      </td>
+      <td class="yes">
+        yes
+      </td>
+      <td class="yes">
+        yes
+      </td>
+      <td align="center">
+        &nbsp;
+      </td>
+    </tr>
+    <tr>
+      <td class="category" colspan="6">
+        <a name="fo-function-color-section">Color Functions</a> (<a href="http://www.w3.org/TR/xsl/slice5.html#expr-color-functions">&sect;5.10.2</a>)
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a name="fo-function-rgb">rgb</a>
+      </td>
+      <td class="basic">
+        Basic
+      </td>
+      <td align="center">
+        <a href="http://www.w3.org/TR/xsl/slice5.html#expr-color-functions">&sect;5.10.2</a>
+      </td>
+      <td class="yes">
+        yes
+      </td>
+      <td class="yes">
+        yes
+      </td>
+      <td align="center">
+        &nbsp;
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a name="fo-function-rgb-icc">rgb-icc</a>
+      </td>
+      <td class="basic">
+        Basic
+      </td>
+      <td align="center">
+        <a href="http://www.w3.org/TR/xsl/slice5.html#expr-color-functions">&sect;5.10.2</a>
+      </td>
+      <td class="no">
+        no
+      </td>
+      <td class="no">
+        no
+      </td>
+      <td align="center">
+        &nbsp;
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a name="fo-function-system-color">system-color</a>
+      </td>
+      <td class="basic">
+        Basic
+      </td>
+      <td align="center">
+        <a href="http://www.w3.org/TR/xsl/slice5.html#expr-color-functions">&sect;5.10.2</a>
+      </td>
+      <td class="no">
+        no
+      </td>
+      <td class="no">
+        no
+      </td>
+      <td align="center">
+        &nbsp;
+      </td>
+    </tr>
+    <tr>
+      <td class="category" colspan="6">
+        <a name="fo-function-font-section">Font Functions</a> (<a href="http://www.w3.org/TR/xsl/slice5.html#section-N8601-Font-Functions">&sect;5.10.3</a>)
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a name="fo-function-system-font">system-font</a>
+      </td>
+      <td class="basic">
+        Basic
+      </td>
+      <td align="center">
+        <a href="http://www.w3.org/TR/xsl/slice5.html#section-N8601-Font-Functions">&sect;5.10.3</a>
+      </td>
+      <td class="no">
+        no
+      </td>
+      <td class="no">
+        no
+      </td>
+      <td align="center">
+        &nbsp;
+      </td>
+    </tr>
+    <tr>
+      <td class="category" colspan="6">
+        <a name="fo-function-property-value-section">Property Value Functions</a> (<a href="http://www.w3.org/TR/xsl/slice5.html#section-N8624-Property-Value-Functions">&sect;5.10.4</a>)
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a name="fo-function-inherited-property-value">inherited-property-value</a>
+      </td>
+      <td class="basic">
+        Basic
+      </td>
+      <td align="center">
+        <a href="http://www.w3.org/TR/xsl/slice5.html#section-N8624-Property-Value-Functions">&sect;5.10.4</a>
+      </td>
+      <td class="yes">
+        yes
+      </td>
+      <td class="yes">
+        yes
+      </td>
+      <td align="center">
+        &nbsp;
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a name="fo-function-label-end">label-end</a>
+      </td>
+      <td class="basic">
+        Basic
+      </td>
+      <td align="center">
+        <a href="http://www.w3.org/TR/xsl/slice5.html#section-N8624-Property-Value-Functions">&sect;5.10.4</a>
+      </td>
+      <td class="yes">
+        yes
+      </td>
+      <td class="yes">
+        yes
+      </td>
+      <td align="center">
+        &nbsp;
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a name="fo-function-body-start">body-start</a>
+      </td>
+      <td class="basic">
+        Basic
+      </td>
+      <td align="center">
+        <a href="http://www.w3.org/TR/xsl/slice5.html#section-N8624-Property-Value-Functions">&sect;5.10.4</a>
+      </td>
+      <td class="yes">
+        yes
+      </td>
+      <td class="yes">
+        yes
+      </td>
+      <td align="center">
+        &nbsp;
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a name="fo-function-from-parent">from-parent</a>
+      </td>
+      <td class="basic">
+        Basic
+      </td>
+      <td align="center">
+        <a href="http://www.w3.org/TR/xsl/slice5.html#section-N8624-Property-Value-Functions">&sect;5.10.4</a>
+      </td>
+      <td class="yes">
+        yes
+      </td>
+      <td class="yes">
+        yes
+      </td>
+      <td align="center">
+        &nbsp;
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a name="fo-function-from-nearest-specified-value">from-nearest-specified-value</a>
+      </td>
+      <td class="basic">
+        Basic
+      </td>
+      <td align="center">
+        <a href="http://www.w3.org/TR/xsl/slice5.html#section-N8624-Property-Value-Functions">&sect;5.10.4</a>
+      </td>
+      <td class="yes">
+        yes
+      </td>
+      <td class="yes">
+        yes
+      </td>
+      <td align="center">
+        &nbsp;
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a name="fo-function-from-table-column">from-table-column</a>
+      </td>
+      <td class="basic">
+        Basic
+      </td>
+      <td align="center">
+        <a href="http://www.w3.org/TR/xsl/slice5.html#section-N8624-Property-Value-Functions">&sect;5.10.4</a>
+      </td>
+      <td class="no">
+        no
+      </td>
+      <td class="no">
+        no
+      </td>
+      <td align="center">
+        &nbsp;
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a name="fo-function-proportional-column-width">proportional-column-width</a>
+      </td>
+      <td class="basic">
+        Basic
+      </td>
+      <td align="center">
+        <a href="http://www.w3.org/TR/xsl/slice5.html#section-N8624-Property-Value-Functions">&sect;5.10.4</a>
+      </td>
+      <td class="yes">
+        yes
+      </td>
+      <td class="yes">
+        yes
+      </td>
+      <td align="center">
+        &nbsp;
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a name="fo-function-merge-property-values">merge-property-values</a>
+      </td>
+      <td class="basic">
+        Basic
+      </td>
+      <td align="center">
+        <a href="http://www.w3.org/TR/xsl/slice5.html#section-N8624-Property-Value-Functions">&sect;5.10.4</a>
       </td>
       <td class="no">
         no
