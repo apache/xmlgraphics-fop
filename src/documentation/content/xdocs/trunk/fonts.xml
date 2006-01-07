@@ -241,9 +241,8 @@ It will display all of the font names and exit with an Exception.</p>
         <ul>
           <li>
             URLs are used to access the font metric and font files.
-            <!--Relative URLs are resolved relative to the fontBaseDir property (or baseDir) if available.-->
+            Relative URLs are resolved relative to the font-base property (or base) if available.
             See <a href="configuration.html">FOP: Configuration</a> for more information.
-            <note>Relative font URLs are currently not possible. You need to specify absolute URLs. Patches are welcome! :-)</note>
           </li>
           <li>The "kerning" and "embed-url" attributes are optional. Kerning is currently not used at all. If embedding is off, the output will position the text correctly (from the metrics file), but it will not be displayed or printed correctly unless the viewer has the applicable font available to their local system.</li>
           <li>When setting the embed-url attribute for Type 1 fonts, be sure to specify the PFB (actual font data), not PFM (font metrics) file that you used to generate the XML font metrics file.</li>

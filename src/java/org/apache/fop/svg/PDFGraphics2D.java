@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1023,7 +1023,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         preparePainting();
 
         FontInfo fontInfo = new FontInfo();
-        FontSetup.setup(fontInfo, null);
+        FontSetup.setup(fontInfo, null, null);
 
         PDFResources res = pdfDoc.getFactory().makeResources();
         PDFResourceContext context = new PDFResourceContext(res);

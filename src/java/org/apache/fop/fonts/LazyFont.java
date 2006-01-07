@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,18 @@
 /* $Id$ */
 
 package org.apache.fop.fonts;
-
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Map;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.apps.FOUserAgent;
+import org.xml.sax.InputSource;
 
 /**
  * This class is used to defer the loading of a font until it is really used.
@@ -38,16 +45,21 @@ public class LazyFont extends Typeface implements FontDescriptor {
     private Typeface realFont = null;
     private FontDescriptor realFontDescriptor = null;
 
+    private FOUserAgent userAgent = null;
+    
     /**
      * Main constructor
      * @param fontEmbedPath path to embeddable file (may be null)
      * @param metricsFileName path to the metrics XML file
      * @param useKerning True, if kerning should be enabled
+     * @param userAgent the environment for uri resoltuion
      */
-    public LazyFont(String fontEmbedPath, String metricsFileName, boolean useKerning) {
+    public LazyFont(String fontEmbedPath, String metricsFileName
+                    , boolean useKerning, FOUserAgent userAgent) {
         this.metricsFileName = metricsFileName;
         this.fontEmbedPath = fontEmbedPath;
         this.useKerning = useKerning;
+        this.userAgent = userAgent;
     }
 
     private void load() {
@@ -55,18 +67,41 @@ public class LazyFont extends Typeface implements FontDescriptor {
             isMetricsLoaded = true;
             try {
                 /**@todo Possible thread problem here */
-
-                FontReader reader = new FontReader(metricsFileName);
+                FontReader reader = null;
+                if (userAgent != null) {
+                    Source source = userAgent.resolveURI(metricsFileName
+                                                        , userAgent.getFontBaseURL());
+                    if (source == null) {
+                        log.error("Failed to create Source from metrics file " + metricsFileName);
+                        return;
+                    }
+                    InputStream in = null;
+                    if (source instanceof StreamSource) {
+                        in = ((StreamSource) source).getInputStream();
+                    }
+                    if (in == null && source.getSystemId() != null) {
+                        in = new java.net.URL(source.getSystemId()).openStream();
+                    }
+                    if (in == null) {
+                        log.error("Failed to create InputStream from Source for metrics file " 
+                                    + metricsFileName);
+                        return;
+                    }
+                    reader = new FontReader(new InputSource(in));
+                } else {
+                    reader 
+                        = new FontReader(new InputSource(new URL(metricsFileName).openStream()));
+                }
                 reader.setKerningEnabled(useKerning);
                 reader.setFontEmbedPath(fontEmbedPath);
+                reader.setUserAgent(userAgent);
                 realFont = reader.getFont();
                 if (realFont instanceof FontDescriptor) {
                     realFontDescriptor = (FontDescriptor) realFont;
                 }
                 // log.debug("Metrics " + metricsFileName + " loaded.");
             } catch (Exception ex) {
-                log.error("Failed to read font metrics file "
-                                     + metricsFileName, ex);
+                log.error("Failed to read font metrics file " + metricsFileName, ex);
             }
         }
     }

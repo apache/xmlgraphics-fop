@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,6 +66,8 @@ public final class ImageFactory {
                 "ImageIOImage", "org.apache.fop.image.ImageIOImage");
         ImageProvider gifImage = new ImageProvider("GIFImage", "org.apache.fop.image.GifImage");
         ImageProvider jpegImage = new ImageProvider("JPEGImage", "org.apache.fop.image.JpegImage");
+        ImageProvider jpegImageIOImage = new ImageProvider(
+                "JPEGImage", "org.apache.fop.image.JpegImageIOImage");
         ImageProvider bmpImage = new ImageProvider("BMPImage", "org.apache.fop.image.BmpImage");
         ImageProvider epsImage = new ImageProvider("EPSImage", "org.apache.fop.image.EPSImage");
         ImageProvider pngImage = new ImageProvider("PNGImage", "org.apache.fop.image.PNGImage");
@@ -82,6 +84,7 @@ public final class ImageFactory {
 
         imt = new ImageMimeType("image/jpeg");
         imageMimeTypes.put(imt.getMimeType(), imt);
+        imt.addProvider(jpegImageIOImage);
         imt.addProvider(jpegImage);
 
         imt = new ImageMimeType("image/bmp");
@@ -244,16 +247,14 @@ public final class ImageFactory {
             } catch (Exception e) {
                 log.debug("Error closing the InputStream for the image", e);
             }
-            log.error("No ImageReader for this type of image ("
-                    + href + ")");
+            log.error("No ImageReader for this type of image (" + href + ")");
             return null;
         }
         // Associate mime-type to FopImage class
         String imgMimeType = imgInfo.mimeType;
         Class imageClass = getImageClass(imgMimeType);
         if (imageClass == null) {
-            log.error("Unsupported image type ("
-                    + href + "): " + imgMimeType);
+            log.error("Unsupported image type (" + href + "): " + imgMimeType);
             return null;
         } else {
             if (log.isDebugEnabled()) {
@@ -294,8 +295,7 @@ public final class ImageFactory {
             return null;
         }
         if (!(imageInstance instanceof org.apache.fop.image.FopImage)) {
-            log.error("Error creating FopImage object ("
-                    + href + "): " + "class "
+            log.error("Error creating FopImage object (" + href + "): " + "class "
                     + imageClass.getName()
                     + " doesn't implement org.apache.fop.image.FopImage interface");
             return null;

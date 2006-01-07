@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2004, 2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,9 @@
 package org.apache.fop.fonts;
 
 import java.util.Map;
+import javax.xml.transform.Source;
+
+import org.apache.fop.apps.FOUserAgent;
 
 
 /**
@@ -30,7 +33,8 @@ public abstract class CustomFont extends Typeface
     private String fontName = null;
     private String embedFileName = null;
     private String embedResourceName = null;
-
+    private FOUserAgent userAgent = null;
+    
     private int capHeight = 0;
     private int xHeight = 0;
     private int ascender = 0;
@@ -45,7 +49,6 @@ public abstract class CustomFont extends Typeface
     private int lastChar = 255;
 
     private Map kerning = new java.util.HashMap();
-
 
     private boolean useKerning = true;
 
@@ -64,6 +67,17 @@ public abstract class CustomFont extends Typeface
      */
     public String getEmbedFileName() {
         return embedFileName;
+    }
+
+    /**
+     * Returns a Source representing an embeddable font file.
+     * @return Source for an embeddable font file or null if not available.
+     */
+    public Source getEmbedFileSource() {
+        if (userAgent != null && embedFileName != null) {
+            return userAgent.resolveURI(embedFileName, userAgent.getFontBaseURL());
+        }
+        return null;
     }
 
     /**
@@ -326,6 +340,14 @@ public abstract class CustomFont extends Typeface
      */
     public void setKerningEnabled(boolean enabled) {
         this.useKerning = enabled;
+    }
+
+    /**
+     * Sets the user agent environment. Needed for URI resolution
+     * @param userAgent the user agent
+     */
+    public void setUserAgent(FOUserAgent userAgent) {
+        this.userAgent = userAgent;
     }
 
     /**
