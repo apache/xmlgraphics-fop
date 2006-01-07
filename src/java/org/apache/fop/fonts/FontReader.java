@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004,2006 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,8 @@ import org.xml.sax.helpers.DefaultHandler;
 
 //FOP
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
+import org.xml.sax.InputSource;
 
 /**
  * Class for reading a metric.xml file and creating a font object.
@@ -61,7 +63,7 @@ public class FontReader extends DefaultHandler {
 
     private List bfranges = null;
 
-    private void createFont(String path) throws FOPException {
+    private void createFont(InputSource source) throws FOPException {
         XMLReader parser = null;
 
         try {
@@ -86,7 +88,7 @@ public class FontReader extends DefaultHandler {
         parser.setContentHandler(this);
 
         try {
-            parser.parse(path);
+            parser.parse(source);
         } catch (SAXException e) {
             throw new FOPException(e);
         } catch (IOException e) {
@@ -111,6 +113,14 @@ public class FontReader extends DefaultHandler {
         returnFont.setKerningEnabled(enabled);
     }
 
+    /**
+     * Sets the user agent environment. Needed for URI resolution
+     * @param userAgent the user agent
+     */
+    public void setUserAgent(FOUserAgent userAgent) {
+        returnFont.setUserAgent(userAgent);
+    }
+
 
     /**
      * Get the generated font object
@@ -123,11 +133,11 @@ public class FontReader extends DefaultHandler {
     /**
      * Construct a FontReader object from a path to a metric.xml file
      * and read metric data
-     * @param path URI to the font metric file
+     * @param source Source of the font metric file
      * @throws FOPException if loading the font fails
      */
-    public FontReader(String path) throws FOPException {
-        createFont(path);
+    public FontReader(InputSource source) throws FOPException {
+        createFont(source);
     }
 
     /**

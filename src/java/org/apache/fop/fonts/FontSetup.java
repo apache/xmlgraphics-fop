@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 /* $Id$ */
 
 package org.apache.fop.fonts;
+
+import org.apache.fop.apps.FOUserAgent;
 
 // FOP (base 14 fonts)
 import org.apache.fop.fonts.base14.Helvetica;
@@ -68,7 +70,7 @@ public class FontSetup {
      * @param fontInfo the font info object to set up
      * @param embedList ???
      */
-    public static void setup(FontInfo fontInfo, List embedList) {
+    public static void setup(FontInfo fontInfo, List embedList, FOUserAgent ua) {
 
         fontInfo.addMetrics("F1", new Helvetica());
         fontInfo.addMetrics("F2", new HelveticaOblique());
@@ -160,7 +162,7 @@ public class FontSetup {
                                    "normal", Font.NORMAL);
 
         /* Add configured fonts */
-        addConfiguredFonts(fontInfo, embedList, 15);
+        addConfiguredFonts(fontInfo, embedList, 15, ua);
     }
 
     /**
@@ -169,7 +171,8 @@ public class FontSetup {
      * @param fontInfoList
      * @param num starting index for internal font numbering
      */
-    public static void addConfiguredFonts(FontInfo fontInfo, List fontInfoList, int num) {
+    public static void addConfiguredFonts(FontInfo fontInfo, List fontInfoList
+                                        , int num, FOUserAgent userAgent) {
         if (fontInfoList == null) {
             return; //No fonts to process
         }
@@ -192,7 +195,8 @@ public class FontSetup {
                 */
                 LazyFont font = new LazyFont(configFontInfo.getEmbedFile(),
                                              metricsFile,
-                                             configFontInfo.getKerning());
+                                             configFontInfo.getKerning(), 
+                                             userAgent);
                 fontInfo.addMetrics(internalName, font);
 
                 List triplets = configFontInfo.getFontTriplets();

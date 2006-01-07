@@ -27,6 +27,12 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="MM" type="add" fixes-bug="36729">
+        Relative URLs for the font configuration attributes metrics-url and embed-url
+        are now supported. A new configuration property font-base has been added. It
+        sets the base URL against which relative font URLs are resolved. If font-base is
+        not set base is used.
+      </action>
       <action context="Code" dev="JM" type="add" fixes-bug="38132" due-to="Richard Wheeldon">
         Added support for RFC2397 "data" URLs.
       </action>

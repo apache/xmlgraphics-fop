@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,14 @@ package org.apache.fop.pdf;
 
 // Java
 import java.awt.geom.Rectangle2D;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Map;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
 
 // Apache libs
 import org.apache.commons.io.IOUtils;
@@ -1120,31 +1124,33 @@ public class PDFFactory {
 
         InputStream in = null;
         try {
-            // Get file first
-            if (font.getEmbedFileName() != null) {
+            Source source = font.getEmbedFileSource();
+            if (source == null && font.getEmbedResourceName() != null) {
+                source = new StreamSource(this.getClass()
+                        .getResourceAsStream(font.getEmbedResourceName()));
+            }
+            if (source == null) {
+                return null;
+            }
+            if (source instanceof StreamSource) {
+                in = ((StreamSource) source).getInputStream();
+            }
+            if (in == null && source.getSystemId() != null) {
                 try {
-                    in = getDocument().resolveURI(font.getEmbedFileName());
-                } catch (Exception e) {
-                    log.error("Failed to embed fontfile: "
-                                       + font.getEmbedFileName()
-                                       + "(" + e.getMessage() + ")");
+                    in = new java.net.URL(source.getSystemId()).openStream();
+                } catch (MalformedURLException e) {
+                    new FileNotFoundException(
+                            "File not found. URL could not be resolved: "
+                                    + e.getMessage());
                 }
             }
-
-            // Get resource
-            if (in == null && font.getEmbedResourceName() != null) {
-                try {
-                    in = new java.io.BufferedInputStream(
-                            this.getClass().getResourceAsStream(
-                                font.getEmbedResourceName()));
-                } catch (Exception e) {
-                    log.error(
-                                         "Failed to embed fontresource: "
-                                       + font.getEmbedResourceName()
-                                       + "(" + e.getMessage() + ")");
-                }
+            if (in == null) {
+                return null;
             }
-
+            //Make sure the InputStream is decorated with a BufferedInputStream
+            if (!(in instanceof java.io.BufferedInputStream)) {
+                in = new java.io.BufferedInputStream(in);
+            }
             if (in == null) {
                 return null;
             } else {

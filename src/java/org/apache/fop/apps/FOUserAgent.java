@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,7 +85,11 @@ public class FOUserAgent {
     /** Registry for XML handlers */
     private XMLHandlerRegistry xmlHandlers = new XMLHandlerRegistry();
     
+    /** The base URL for all URL resolutions, especially for external-graphics */
     private String baseURL;
+    
+    /** The base URL for all font URL resolutions */
+    private String fontBaseURL;
     
     /** A user settable URI Resolver */
     private URIResolver uriResolver = null;
@@ -389,29 +393,8 @@ public class FOUserAgent {
      */
     public void initUserConfig() throws ConfigurationException {
         log.debug("Initializing User Agent Configuration");
-        if (userConfig.getChild("base", false) != null) {
-            try {
-                String cfgBaseDir = userConfig.getChild("base").getValue(null);
-                if (cfgBaseDir != null) {
-                    File dir = new File(cfgBaseDir);
-                    if (dir.isDirectory()) {
-                        cfgBaseDir = "file://" + dir.getCanonicalPath() 
-                            + System.getProperty("file.separator");
-                        cfgBaseDir = cfgBaseDir.replace(
-                                System.getProperty("file.separator").charAt(0), '/');
-                    } else {
-                        //The next statement is for validation only
-                        new URL(cfgBaseDir);
-                    }
-                }
-                setBaseURL(cfgBaseDir);
-            } catch (MalformedURLException mue) {
-                log.error("Base URL in user config is malformed!");
-            } catch (IOException ioe) {
-                log.error("Error converting relative base directory to absolute URL.");
-            }
-            log.info("Base URL set to: " + baseURL);
-        }
+        setBaseURL(getBaseURLfromConfig("base"));
+        setFontBaseURL(getBaseURLfromConfig("font-base"));
         if (userConfig.getChild("source-resolution", false) != null) {
             this.sourceResolution 
                 = userConfig.getChild("source-resolution").getValueAsFloat(
@@ -444,6 +427,33 @@ public class FOUserAgent {
         }
     }
 
+    private String getBaseURLfromConfig(String name) {
+        if (userConfig.getChild(name, false) != null) {
+            try {
+                String cfgBaseDir = userConfig.getChild(name).getValue(null);
+                if (cfgBaseDir != null) {
+                    File dir = new File(cfgBaseDir);
+                    if (dir.isDirectory()) {
+                        cfgBaseDir = "file://" + dir.getCanonicalPath() 
+                            + System.getProperty("file.separator");
+                        cfgBaseDir = cfgBaseDir.replace(
+                                System.getProperty("file.separator").charAt(0), '/');
+                    } else {
+                        //The next statement is for validation only
+                        new URL(cfgBaseDir);
+                    }
+                }
+                log.info(name + " set to: " + cfgBaseDir);
+                return cfgBaseDir;
+            } catch (MalformedURLException mue) {
+                log.error("Base URL in user config is malformed!");
+            } catch (IOException ioe) {
+                log.error("Error converting relative base directory to absolute URL.");
+            }
+        }
+        return null;
+    }
+    
     /**
      * Returns the configuration subtree for a specific renderer.
      * @param mimeType MIME type of the renderer
@@ -492,6 +502,22 @@ public class FOUserAgent {
     }
 
     /**
+     * Sets the font base URL.
+     * @param fontBaseURL font base URL
+     */
+    public void setFontBaseURL(String fontBaseURL) {
+        this.fontBaseURL = fontBaseURL;
+    }
+
+    /**
+     * Returns the font base URL.
+     * @return the font base URL
+     */
+    public String getFontBaseURL() {
+        return this.fontBaseURL != null ? this.fontBaseURL : this.baseURL ;
+    }
+
+    /**
      * Sets the URI Resolver.
      * @param uriResolver the new URI resolver
      */
@@ -535,10 +561,24 @@ public class FOUserAgent {
      * @see org.apache.fop.apps.FOURIResolver
      */
     public Source resolveURI(String uri) {
+        return resolveURI(uri, getBaseURL());
+    }
+
+    /**
+     * Attempts to resolve the given URI.
+     * Will use the configured resolver and if not successful fall back
+     * to the default resolver.
+     * @param uri URI to access
+     * @param baseURL the base url to resolve against
+     * @return A {@link javax.xml.transform.Source} object, or null if the URI
+     * cannot be resolved. 
+     * @see org.apache.fop.apps.FOURIResolver
+     */
+    public Source resolveURI(String uri, String baseURL) {
         Source source = null;
         if (uriResolver != null) {
             try {
-                source = uriResolver.resolve(uri, getBaseURL());
+                source = uriResolver.resolve(uri, baseURL);
             } catch (TransformerException te) {
                 log.error("Attempt to resolve URI '" + uri + "' failed: ", te);
             }
@@ -546,7 +586,7 @@ public class FOUserAgent {
         if (source == null) {
             // URI Resolver not configured or returned null, use default resolver
             try {
-                source = foURIResolver.resolve(uri, getBaseURL());
+                source = foURIResolver.resolve(uri, baseURL);
             } catch (TransformerException te) {
                 log.error("Attempt to resolve URI '" + uri + "' failed: ", te);
             }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
+ * Copyright 2001-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -177,10 +177,7 @@ public class PSFontUtils {
     private static InputStream getInputStreamOnFont(PSGenerator gen, CustomFont font) 
                 throws IOException {
         if (font.isEmbeddable()) {
-            Source source = null;
-            if (font.getEmbedFileName() != null) {
-                source = gen.resolveURI(font.getEmbedFileName());
-            }
+            Source source = font.getEmbedFileSource();
             if (source == null && font.getEmbedResourceName() != null) {
                 source = new StreamSource(PSFontUtils.class
                         .getResourceAsStream(font.getEmbedResourceName()));
