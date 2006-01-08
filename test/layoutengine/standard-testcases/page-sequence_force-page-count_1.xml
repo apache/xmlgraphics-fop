@@ -393,5 +393,7 @@
     <eval expected="41" xpath="//pageSequence[13]/pageViewport[2]"/>
     <eval expected="43" xpath="//pageSequence[14]/pageViewport[2]"/>
     <eval expected="49" xpath="//pageSequence[17]/pageViewport[3]"/>
+    <!-- formatting results -->
+    <result expected="32" property="pagecount"/>
   </checks>
 </testcase>

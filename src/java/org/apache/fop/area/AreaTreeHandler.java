@@ -273,8 +273,6 @@ public class AreaTreeHandler extends FOEventHandler {
             prevPageSeqLM.doForcePageCount(pageSequence.getInitialPageNumber());
             prevPageSeqLM.finishPageSequence();
             prevPageSeqLM = null;
-            // recalc pagenumber for the case that a new page is
-            // inserted by checkForcePageCount
         }
         pageSequence.initPageNumber();
         //extension attachments from fo:root
@@ -341,6 +339,11 @@ public class AreaTreeHandler extends FOEventHandler {
      */
     public void endDocument() throws SAXException {
 
+        // finish the last pageSequence
+        if (prevPageSeqLM != null) {
+            prevPageSeqLM.finishPageSequence();
+            prevPageSeqLM = null;
+        }
         // process fo:bookmark-tree
         BookmarkTree bookmarkTree = rootFObj.getBookmarkTree();
         if (bookmarkTree != null) {
