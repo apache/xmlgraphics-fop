@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 The Apache Software Foundation.
+ * Copyright 2005-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 
 package org.apache.fop.layoutengine;
 
+import org.apache.fop.apps.FormattingResults;
 import org.w3c.dom.Document;
 
 /**
@@ -27,15 +28,19 @@ public class LayoutResult {
 
     private Document areaTree;
     private ElementListCollector elCollector;
+    private FormattingResults results;
     
     /**
      * Creates a new LayoutResult instance.
      * @param areaTree the area tree DOM
      * @param elCollector the element list collector
+     * @param results the formatting results
      */
-    public LayoutResult(Document areaTree, ElementListCollector elCollector) {
+    public LayoutResult(Document areaTree, ElementListCollector elCollector,
+                        FormattingResults results) {
         this.areaTree = areaTree;
         this.elCollector = elCollector;
+        this.results = results;
     }
  
     /** @return the generated area tree as DOM tree */
@@ -46,6 +51,13 @@ public class LayoutResult {
     /** @return the element list collector */
     public ElementListCollector getElementListCollector() {
         return this.elCollector;
+    }
+
+    /**
+     * @return Returns the results.
+     */
+    public FormattingResults getResults() {
+        return results;
     }
     
 }
