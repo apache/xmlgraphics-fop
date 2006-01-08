@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 The Apache Software Foundation.
+ * Copyright 2005-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FormattingResults;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.layoutmgr.ElementListObserver;
 import org.apache.fop.render.xml.XMLRenderer;
@@ -70,6 +71,7 @@ public class LayoutEngineTester {
         CHECK_CLASSES.put("true", TrueCheck.class);
         CHECK_CLASSES.put("eval", EvalCheck.class);
         CHECK_CLASSES.put("element-list", ElementListCheck.class);
+        CHECK_CLASSES.put("result", ResultCheck.class);
     }
     
     /**
@@ -113,6 +115,9 @@ public class LayoutEngineTester {
 
         ElementListCollector elCollector = new ElementListCollector();
         ElementListObserver.addObserver(elCollector);
+        
+        Fop fop;
+
         try {
             //Setup Transformer to convert the testcase XML to XSL-FO
             Transformer transformer = getTestcase2FOStylesheet().newTransformer();
@@ -129,7 +134,7 @@ public class LayoutEngineTester {
             atrenderer.setUserAgent(ua);
             atrenderer.setTransformerHandler(athandler);
             ua.setRendererOverride(atrenderer);
-            Fop fop = new Fop(MimeConstants.MIME_FOP_AREA_TREE, ua);
+            fop = new Fop(MimeConstants.MIME_FOP_AREA_TREE, ua);
             
             SAXResult fores = new SAXResult(fop.getDefaultHandler());
             transformer.transform(src, fores);
@@ -141,7 +146,8 @@ public class LayoutEngineTester {
         if (this.areaTreeBackupDir != null) {
             saveAreaTreeXML(doc, new File(this.areaTreeBackupDir, testFile.getName() + ".at.xml"));
         }
-        LayoutResult result = new LayoutResult(doc, elCollector);
+        FormattingResults results = fop.getResults();        
+        LayoutResult result = new LayoutResult(doc, elCollector, results);
         checkAll(testFile, result);
     }
     
