@@ -46,6 +46,8 @@ public class XMLWhiteSpaceHandler {
     private RecursiveCharIterator charIter;
     
     private List discardableFOCharacters;
+    private List pendingInlines;
+    private CharIterator firstWhiteSpaceInSeq;
     
     /**
      * Marks a Character object as discardable, so that it is effectively
@@ -80,19 +82,36 @@ public class XMLWhiteSpaceHandler {
         }
         charIter = new RecursiveCharIterator(fo, firstTextNode);
         inWhiteSpace = false;
-        if (fo.getNameId() == Constants.FO_BLOCK) {
-            int textNodeIndex = -1;
-            if (fo.childNodes != null) {
-                textNodeIndex = fo.childNodes.indexOf(firstTextNode);
-            }
-            afterLinefeed = (textNodeIndex == 0
-                    || ((FONode) fo.childNodes.get(textNodeIndex - 1))
-                            .getNameId() == Constants.FO_BLOCK);
+        int textNodeIndex = -1;
+        if (currentFO == currentBlock) {
+            textNodeIndex = fo.childNodes.indexOf(firstTextNode);
+            afterLinefeed = ((textNodeIndex == 0)
+                    || (textNodeIndex > 0
+                            && ((FONode) fo.childNodes.get(textNodeIndex - 1))
+                                .getNameId() == Constants.FO_BLOCK));
+            endOfBlock = (nextChild == null);
         }
-        endOfBlock = (nextChild == null && currentFO == currentBlock);
         nextChildIsBlock = (nextChild != null 
-                && nextChild.getNameId() == Constants.FO_BLOCK);
+                        && nextChild.getNameId() == Constants.FO_BLOCK);
         handleWhiteSpace();
+        if (inWhiteSpace) {
+            if (!endOfBlock && currentFO != currentBlock) {
+                /* means there is at least one trailing space in the
+                   inline FO that is about to end */
+                addPendingInline(fo);
+            } else if (pendingInlines != null) {
+                if (endOfBlock || nextChildIsBlock) {
+                    /* handle white-space for all trailing inlines*/
+                    for (int i = pendingInlines.size(); --i >= 0;) {
+                        PendingInline p = (PendingInline) pendingInlines.get(i);
+                        currentFO = p.fo;
+                        charIter = (RecursiveCharIterator) p.firstTrailingWhiteSpace;
+                        handleWhiteSpace();
+                    }
+                }
+                pendingInlines.clear();
+            }
+        }
     }
     
     /**
@@ -159,6 +178,9 @@ public class XMLWhiteSpaceHandler {
                         if (bIgnore) {
                             charIter.remove();
                         } else {
+                            if (!inWhiteSpace) {
+                                firstWhiteSpaceInSeq = charIter.mark();
+                            }
                             // this is to retain a single space between words
                             inWhiteSpace = true;
                             if (currentChar != '\u0020') {
@@ -190,7 +212,7 @@ public class XMLWhiteSpaceHandler {
 
                 case CharUtilities.EOT:
                     // A "boundary" objects such as non-character inline
-                    // or nested block object was encountered.
+                    // or nested block object was encountered. (? can't happen)
                     // If any whitespace run in progress, finish it.
                     // FALL THROUGH
 
@@ -209,12 +231,19 @@ public class XMLWhiteSpaceHandler {
         }
     }
     
+    private void addPendingInline(FObjMixed fo) {
+        if (pendingInlines == null) {
+            pendingInlines = new java.util.ArrayList(5);
+        }
+        pendingInlines.add(new PendingInline(fo, firstWhiteSpaceInSeq));
+    }
+    
     private class EOLchecker {
         private boolean nextIsEOL = false;
         private RecursiveCharIterator charIter;
 
-        EOLchecker(RecursiveCharIterator charIter) {
-            this.charIter = charIter;
+        EOLchecker(CharIterator charIter) {
+            this.charIter = (RecursiveCharIterator) charIter;
         }
 
         boolean beforeLinefeed() {
@@ -241,6 +270,16 @@ public class XMLWhiteSpaceHandler {
 
         void reset() {
             nextIsEOL = false;
+        }
+    }
+    
+    private class PendingInline {
+        protected FObjMixed fo;
+        protected CharIterator firstTrailingWhiteSpace;
+        
+        PendingInline(FObjMixed fo, CharIterator firstTrailingWhiteSpace) {
+            this.fo = fo;
+            this.firstTrailingWhiteSpace = firstTrailingWhiteSpace;
         }
     }
 }
