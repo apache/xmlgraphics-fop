@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -153,11 +153,30 @@ public class Span extends Area {
      * its own BPD extent.
      */
     public void notifyFlowsFinished() {
-        int maxFlowBPD = 0;
+        int maxFlowBPD = Integer.MIN_VALUE;
         for (int i = 0; i < colCount; i++) {
             maxFlowBPD = Math.max(maxFlowBPD, getNormalFlow(i).getAllocBPD());
         }
         bpd = maxFlowBPD;
+    }
+    
+    /**
+     * Indicates whether any child areas have been added to this span area.
+     *
+     * This is achieved by looping through each flow.
+     * @return true if no child areas have been added yet.
+     */
+    public boolean isEmpty() {
+        int areaCount = 0;
+        for (int i = 0; i < getColumnCount(); i++) {
+            NormalFlow flow = getNormalFlow(i);
+            if (flow != null) {
+                if (flow.getChildAreas() != null) {
+                    areaCount += flow.getChildAreas().size();
+                }
+            }
+        }
+        return (areaCount == 0);
     }
     
     /** @see java.lang.Object#toString() */
