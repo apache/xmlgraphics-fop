@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/* $Id: XMLRenderer.java,v 1.20 2004/04/25 04:45:28 gmazza Exp $ */
+/* $Id$ */
 
 package org.apache.fop.render.xml;
 
@@ -466,7 +466,6 @@ public class XMLRenderer extends PrintRenderer {
         addAreaAttributes(mr);
         addTraitAttributes(mr);
         addAttribute("columnGap", mr.getColumnGap());
-        addAttribute("width", mr.getWidth());
         startElement("mainReference", atts);
 
         Span span = null;
