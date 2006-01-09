@@ -44,14 +44,13 @@ public class RtfList extends RtfContainer {
     private RtfListStyle defaultListStyle;
     private Integer listTemplateId = null;
     private Integer listId = null;
+    static private Random listIdGenerator = new Random(0);
 
     /** Create an RTF list as a child of given container with given attributes */
     RtfList(RtfContainer parent, Writer w, RtfAttributes attr) throws IOException {
         super((RtfContainer)parent, w, attr);
 
         //random number generator for ids
-        Date runTime = new Date();
-        Random listIdGenerator = new Random(0);
         listId = new Integer(listIdGenerator.nextInt());
         listTemplateId = new Integer(listIdGenerator.nextInt());
 
