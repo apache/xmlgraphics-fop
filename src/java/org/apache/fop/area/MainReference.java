@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/* $Id: MainReference.java,v 1.2 2004/02/27 17:41:26 jeremias Exp $ */
+/* $Id$ */
 
 package org.apache.fop.area;
 
@@ -31,7 +31,6 @@ public class MainReference extends Area {
 
     private BodyRegion parent;
     private List spanAreas = new java.util.ArrayList();
-    private int width;
     private boolean isEmpty = true;
 
     /**
@@ -51,7 +50,7 @@ public class MainReference extends Area {
      * @return the created span area.
      */
     public Span createSpan(boolean spanAll) {
-        if (spanAreas.size() > 0 && getCurrentSpan().getBPD() == 0) {
+        if (spanAreas.size() > 0 && getCurrentSpan().isEmpty()) {
             //Remove the current one if it is empty
             spanAreas.remove(spanAreas.size() - 1);
         }
@@ -90,22 +89,15 @@ public class MainReference extends Area {
      */
     public boolean isEmpty() {
         if (isEmpty) {
-            int areaCount = 0;
+            boolean nonEmptyFound = false;
             if (spanAreas != null) {
                 for (Iterator spaniter = spanAreas.iterator(); spaniter.hasNext();) {
                     Span spanArea = (Span) spaniter.next();
-                    for (int i = 0; i < spanArea.getColumnCount(); i++) {
-                        NormalFlow flow = spanArea.getNormalFlow(i);
-                        if (flow != null) {
-                            if (flow.getChildAreas() != null) {
-                                areaCount += flow.getChildAreas().size();
-                            }
-                        }
-                    }
+                    nonEmptyFound |= !spanArea.isEmpty();
                 }
             }
 
-            isEmpty = (areaCount == 0);
+            isEmpty = !nonEmptyFound;
         }
         return isEmpty;
     }
@@ -118,15 +110,6 @@ public class MainReference extends Area {
     /** @return the column gap in millipoints */
     public int getColumnGap() {
         return parent.getColumnGap();
-    }
-
-    /**
-     * Get the width of this reference area.
-     *
-     * @return the width
-     */
-    public int getWidth() {
-        return width;
     }
 
 }

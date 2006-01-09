@@ -27,6 +27,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix" fixes-bug="38054">
+        Bugfix: Spans that end up with a negative height don't get swallowed anymore.
+      </action>
       <action context="Code" dev="MM" type="add" fixes-bug="36729">
         Relative URLs for the font configuration attributes metrics-url and embed-url
         are now supported. A new configuration property font-base has been added. It
