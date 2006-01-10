@@ -1,6 +1,6 @@
 <?xml version="1.0" standalone="no"?>
 <!--
-  Copyright 1999-2005 The Apache Software Foundation
+  Copyright 1999-2006 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -158,6 +158,10 @@
     <li>
       break-after may in some cases cause subsequent content to be swallowed. 
       Please use break-before, if possible.
+    </li>
+    <li>
+      Internal basic-links don't point to the exact location on a page, yet, as they
+      did in 0.20.5. Currently you land in the upper left corner of the page.
     </li>
   </ul>
 </section>

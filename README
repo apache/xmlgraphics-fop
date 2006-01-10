@@ -139,3 +139,6 @@ Known issues:
     - Leaders with the "rule" pattern don't work for PostScript output.
     - break-after may in some cases cause subsequent content to be swallowed. 
       Please use break-before, if possible.
+    - Internal basic-links don't point to the exact location on a page, yet, 
+      as they did in 0.20.5. Currently you land in the upper left corner of 
+      the page.
