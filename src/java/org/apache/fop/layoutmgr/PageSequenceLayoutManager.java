@@ -893,8 +893,10 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         
     }
 
-    /*
-     * check if the page-number of the last page suits to the force-page-count property
+    /**
+     * Act upon the force-page-count trait,
+     * in relation to the initial-page-number trait of the following page-sequence.
+     * @param nextPageSeqInitialPageNumber initial-page-number trait of next page-sequence
      */
     public void doForcePageCount(Numeric nextPageSeqInitialPageNumber) {
 
@@ -913,7 +915,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
 
         // if force-page-count is auto then set the value of forcePageCount 
         // depending on the initial-page-number of the next page-sequence
-        if (forcePageCount == Constants.EN_AUTO) {
+        if (nextPageSeqInitialPageNumber != null && forcePageCount == Constants.EN_AUTO) {
             if (nextPageSeqInitialPageNumber.getEnum() != 0) {
                 // auto | auto-odd | auto-even
                 int nextPageSeqPageNumberType = nextPageSeqInitialPageNumber.getEnum();
