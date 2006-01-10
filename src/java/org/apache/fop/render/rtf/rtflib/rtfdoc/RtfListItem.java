@@ -147,7 +147,7 @@ public class RtfListItem extends RtfContainer
             writeControlWord("pard");
         }
 
-        writeOneAttribute(RtfText.LEFT_INDENT_FIRST, attrib.getValue(RtfListTable.LIST_INDENT));
+        writeOneAttribute(RtfText.LEFT_INDENT_FIRST, "360"); //attrib.getValue(RtfListTable.LIST_INDENT));
         writeOneAttribute(RtfText.LEFT_INDENT_BODY, attrib.getValue(RtfText.LEFT_INDENT_BODY));
 
         // group for list setup info
