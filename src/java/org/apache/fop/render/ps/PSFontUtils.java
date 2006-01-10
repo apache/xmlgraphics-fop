@@ -32,6 +32,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.commons.io.EndianUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.fop.fonts.CustomFont;
+import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontType;
 import org.apache.fop.fonts.Glyphs;
@@ -67,6 +68,12 @@ public class PSFontUtils {
             Typeface tf = (Typeface)fonts.get(key);
             if (tf instanceof LazyFont) {
                 tf = ((LazyFont)tf).getRealFont();
+            }
+            if (tf == null) {
+                //This is to avoid an NPE if a malconfigured font is in the configuration but not
+                //used in the document. If it were used, we wouldn't get this far.
+                String fallbackKey = fontInfo.getInternalFontKey(Font.DEFAULT_FONT); 
+                tf = (Typeface)fonts.get(fallbackKey);
             }
             PSResource fontRes = new PSResource("font", tf.getFontName());
             fontResources.put(key, fontRes);
@@ -104,7 +111,9 @@ public class PSFontUtils {
         while (iter.hasNext()) {
             String key = (String)iter.next();
             Typeface fm = (Typeface)fonts.get(key);
-            if (null == fm.getEncoding()) {
+            if (fm instanceof LazyFont && ((LazyFont)fm).getRealFont() == null) {
+                continue;
+            } else if (null == fm.getEncoding()) {
                 //ignore (ZapfDingbats and Symbol run through here
                 //TODO: ZapfDingbats and Symbol should get getEncoding() fixed!
             } else if ("WinAnsiEncoding".equals(fm.getEncoding())) {
