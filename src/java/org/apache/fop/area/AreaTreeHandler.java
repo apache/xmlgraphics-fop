@@ -37,6 +37,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FormattingResults;
+import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fo.pagination.PageSequence;
@@ -265,15 +266,21 @@ public class AreaTreeHandler extends FOEventHandler {
         }
     }
 
-    /** @see org.apache.fop.fo.FOEventHandler */
-    public void startPageSequence(PageSequence pageSequence) {
-        rootFObj = pageSequence.getRoot();
-        // finish the previous pageSequence (handle force-page-count)
+    /**
+     * finish the previous pageSequence
+     */
+    private void finishPrevPageSequence(Numeric initialPageNumber) {
         if (prevPageSeqLM != null) {
-            prevPageSeqLM.doForcePageCount(pageSequence.getInitialPageNumber());
+            prevPageSeqLM.doForcePageCount(initialPageNumber);
             prevPageSeqLM.finishPageSequence();
             prevPageSeqLM = null;
         }
+    }
+
+    /** @see org.apache.fop.fo.FOEventHandler */
+    public void startPageSequence(PageSequence pageSequence) {
+        rootFObj = pageSequence.getRoot();
+        finishPrevPageSequence(pageSequence.getInitialPageNumber());
         pageSequence.initPageNumber();
         //extension attachments from fo:root
         wrapAndAddExtensionAttachments(rootFObj.getExtensionAttachments());
@@ -339,11 +346,7 @@ public class AreaTreeHandler extends FOEventHandler {
      */
     public void endDocument() throws SAXException {
 
-        // finish the last pageSequence
-        if (prevPageSeqLM != null) {
-            prevPageSeqLM.finishPageSequence();
-            prevPageSeqLM = null;
-        }
+        finishPrevPageSequence(null);
         // process fo:bookmark-tree
         BookmarkTree bookmarkTree = rootFObj.getBookmarkTree();
         if (bookmarkTree != null) {
