@@ -18,6 +18,7 @@
 
 package org.apache.fop.fonts;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -27,6 +28,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.xml.sax.InputSource;
 
@@ -62,9 +64,8 @@ public class LazyFont extends Typeface implements FontDescriptor {
         this.userAgent = userAgent;
     }
 
-    private void load() {
+    private void load(boolean fail) {
         if (!isMetricsLoaded) {
-            isMetricsLoaded = true;
             try {
                 /**@todo Possible thread problem here */
                 FontReader reader = null;
@@ -72,7 +73,13 @@ public class LazyFont extends Typeface implements FontDescriptor {
                     Source source = userAgent.resolveURI(metricsFileName
                                                         , userAgent.getFontBaseURL());
                     if (source == null) {
-                        log.error("Failed to create Source from metrics file " + metricsFileName);
+                        String err = "Cannot load font: failed to create Source from metrics file " 
+                            + metricsFileName; 
+                        if (fail) {
+                            throw new RuntimeException(err);
+                        } else {
+                            log.error(err);
+                        }
                         return;
                     }
                     InputStream in = null;
@@ -83,8 +90,13 @@ public class LazyFont extends Typeface implements FontDescriptor {
                         in = new java.net.URL(source.getSystemId()).openStream();
                     }
                     if (in == null) {
-                        log.error("Failed to create InputStream from Source for metrics file " 
-                                    + metricsFileName);
+                        String err = "Cannot load font: failed to create InputStream from"
+                            + " Source for metrics file " + metricsFileName; 
+                        if (fail) {
+                            throw new RuntimeException(err);
+                        } else {
+                            log.error(err);
+                        }
                         return;
                     }
                     reader = new FontReader(new InputSource(in));
@@ -100,9 +112,18 @@ public class LazyFont extends Typeface implements FontDescriptor {
                     realFontDescriptor = (FontDescriptor) realFont;
                 }
                 // log.debug("Metrics " + metricsFileName + " loaded.");
-            } catch (Exception ex) {
-                log.error("Failed to read font metrics file " + metricsFileName, ex);
+            } catch (FOPException fopex) {
+                log.error("Failed to read font metrics file " + metricsFileName, fopex);
+                if (fail) {
+                    throw new RuntimeException(fopex.getMessage());
+                }
+            } catch (IOException ioex) {
+                log.error("Failed to read font metrics file " + metricsFileName, ioex);
+                if (fail) {
+                    throw new RuntimeException(ioex.getMessage());
+                }
             }
+            isMetricsLoaded = true;
         }
     }
 
@@ -111,7 +132,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
      * @return the real font
      */
     public Typeface getRealFont() {
-        load();
+        load(false);
         return realFont;
     }
 
@@ -120,7 +141,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
      * @see org.apache.fop.fonts.Typeface#getEncoding()
      */
     public String getEncoding() {
-        load();
+        load(true);
         return realFont.getEncoding();
     }
 
@@ -128,7 +149,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
      * @see org.apache.fop.fonts.Typeface#mapChar(char)
      */
     public char mapChar(char c) {
-        load();
+        load(true);
         return realFont.mapChar(c);
     }
 
@@ -136,7 +157,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
      * @see org.apache.fop.fonts.Typeface#hasChar(char)
      */
     public boolean hasChar(char c) {
-        load();
+        load(true);
         return realFont.hasChar(c);
     }
 
@@ -152,7 +173,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
      * @see org.apache.fop.fonts.FontMetrics#getFontName()
      */
     public String getFontName() {
-        load();
+        load(true);
         return realFont.getFontName();
     }
 
@@ -160,7 +181,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
      * @see org.apache.fop.fonts.FontMetrics#getAscender(int)
      */
     public int getAscender(int size) {
-        load();
+        load(true);
         return realFont.getAscender(size);
     }
 
@@ -168,7 +189,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
      * @see org.apache.fop.fonts.FontMetrics#getCapHeight(int)
      */
     public int getCapHeight(int size) {
-        load();
+        load(true);
         return realFont.getCapHeight(size);
     }
 
@@ -176,7 +197,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
      * @see org.apache.fop.fonts.FontMetrics#getDescender(int)
      */
     public int getDescender(int size) {
-        load();
+        load(true);
         return realFont.getDescender(size);
     }
 
@@ -184,7 +205,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
      * @see org.apache.fop.fonts.FontMetrics#getXHeight(int)
      */
     public int getXHeight(int size) {
-        load();
+        load(true);
         return realFont.getXHeight(size);
     }
 
@@ -192,7 +213,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
      * @see org.apache.fop.fonts.FontMetrics#getWidth(int, int)
      */
     public int getWidth(int i, int size) {
-        load();
+        load(true);
         return realFont.getWidth(i, size);
     }
 
@@ -200,7 +221,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
      * @see org.apache.fop.fonts.FontMetrics#getWidths()
      */
     public int[] getWidths() {
-        load();
+        load(true);
         return realFont.getWidths();
     }
 
@@ -208,7 +229,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
      * @see org.apache.fop.fonts.FontMetrics#hasKerningInfo()
      */
     public boolean hasKerningInfo() {
-        load();
+        load(true);
         return realFont.hasKerningInfo();
     }
 
@@ -216,7 +237,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
      * @see org.apache.fop.fonts.FontMetrics#getKerningInfo()
      */
     public Map getKerningInfo() {
-        load();
+        load(true);
         return realFont.getKerningInfo();
     }
 
@@ -225,7 +246,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
      * @see org.apache.fop.fonts.FontDescriptor#getCapHeight()
      */
     public int getCapHeight() {
-        load();
+        load(true);
         return realFontDescriptor.getCapHeight();
     }
 
@@ -233,7 +254,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
      * @see org.apache.fop.fonts.FontDescriptor#getDescender()
      */
     public int getDescender() {
-        load();
+        load(true);
         return realFontDescriptor.getDescender();
     }
 
@@ -241,7 +262,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
      * @see org.apache.fop.fonts.FontDescriptor#getAscender()
      */
     public int getAscender() {
-        load();
+        load(true);
         return realFontDescriptor.getAscender();
     }
 
@@ -249,7 +270,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
      * @see org.apache.fop.fonts.FontDescriptor#getFlags()
      */
     public int getFlags() {
-        load();
+        load(true);
         return realFontDescriptor.getFlags();
     }
 
@@ -257,7 +278,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
      * @see org.apache.fop.fonts.FontDescriptor#getFontBBox()
      */
     public int[] getFontBBox() {
-        load();
+        load(true);
         return realFontDescriptor.getFontBBox();
     }
 
@@ -265,7 +286,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
      * @see org.apache.fop.fonts.FontDescriptor#getItalicAngle()
      */
     public int getItalicAngle() {
-        load();
+        load(true);
         return realFontDescriptor.getItalicAngle();
     }
 
@@ -273,7 +294,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
      * @see org.apache.fop.fonts.FontDescriptor#getStemV()
      */
     public int getStemV() {
-        load();
+        load(true);
         return realFontDescriptor.getStemV();
     }
 
@@ -281,7 +302,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
      * @see org.apache.fop.fonts.FontDescriptor#getFontType()
      */
     public FontType getFontType() {
-        load();
+        load(true);
         return realFontDescriptor.getFontType();
     }
 
@@ -289,7 +310,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
      * @see org.apache.fop.fonts.FontDescriptor#isEmbeddable()
      */
     public boolean isEmbeddable() {
-        load();
+        load(true);
         return realFontDescriptor.isEmbeddable();
     }
 
