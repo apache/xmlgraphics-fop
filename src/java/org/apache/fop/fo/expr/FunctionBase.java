@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,5 +32,10 @@ public abstract class FunctionBase implements Function {
         return null;
     }
 
+    /**
+     * @return false (by default don't pad arglist with property-name)
+     */
+    public boolean padArgsWithPropertyName() {
+        return false;
+    }
 }
-

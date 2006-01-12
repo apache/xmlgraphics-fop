@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -308,7 +308,7 @@ public final class PropertyParser extends PropertyTokenizer {
             next();
             // Push new function (for function context: getPercentBase())
             propInfo.pushFunction(function);
-            prop = function.eval(parseArgs(function.nbArgs()), propInfo);
+            prop = function.eval(parseArgs(function), propInfo);
             propInfo.popFunction();
             return prop;
         
@@ -324,13 +324,15 @@ public final class PropertyParser extends PropertyTokenizer {
      * Parse a comma separated list of function arguments. Each argument
      * may itself be an expression. This method consumes the closing right
      * parenthesis of the argument list.
-     * @param nbArgs The number of arguments expected by the function.
+     * @param function The function object for which the arguments are 
+     * collected.
      * @return An array of Property objects representing the arguments
      * found.
      * @throws PropertyException If the number of arguments found isn't equal
      * to the number expected.
      */
-    Property[] parseArgs(int nbArgs) throws PropertyException {
+    Property[] parseArgs(Function function) throws PropertyException {
+        int nbArgs = function.nbArgs();
         Property[] args = new Property[nbArgs];
         Property prop;
         int i = 0;
@@ -352,8 +354,12 @@ public final class PropertyParser extends PropertyTokenizer {
             }
             expectRpar();
         }
+        if (i == nbArgs - 1 && function.padArgsWithPropertyName()) {
+            args[i++] = new StringProperty(propInfo.getPropertyMaker().getName());
+        }
         if (nbArgs != i) {
-            throw new PropertyException("Wrong number of args for function");
+            throw new PropertyException("Expected " + nbArgs
+                                        + ", but got " + i + " args for function");
         }
         return args;
     }

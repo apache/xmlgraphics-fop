@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,13 @@ public class FromTableColumnFunction extends FunctionBase {
     }
 
     /**
+     * @return true (allow padding of arglist with property name)
+     */
+    public boolean padArgsWithPropertyName() {
+        return true;
+    }
+
+    /**
      *
      * @param args array of arguments, which should either be empty, or the
      * first of which should contain an NCName corresponding to a property name
@@ -45,10 +52,12 @@ public class FromTableColumnFunction extends FunctionBase {
      */
     public Property eval(Property[] args,
                          PropertyInfo pInfo) throws PropertyException {
+        /* uncomment when implementing
         String propName = args[0].getString();
         if (propName == null) {
-            //TODO Determine on which property this method was called.
+            throw new PropertyException("Incorrect parameter to from-table-column function");
         }
+        */
         throw new PropertyException("The from-table-column() function is not implemented, yet!");
     }
 
