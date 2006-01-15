@@ -129,12 +129,24 @@ public class TableAttributesConverter {
             if (fobj.getParent() instanceof TableRow) {
                 TableRow parentRow=(TableRow)fobj.getParent();
                 brd = parentRow.getCommonBorderPaddingBackground();
+                color = brd.backgroundColor;
             } else if (fobj.getParent() instanceof TableHeader) {
                 TableHeader parentHeader=(TableHeader)fobj.getParent();
                 brd = parentHeader.getCommonBorderPaddingBackground();
+                color = brd.backgroundColor;
             }
             
-            color = brd.backgroundColor;
+            if (color == null
+		    		&& fobj.getParent()!=null 
+		    		&& fobj.getParent().getParent()!=null 
+		    		&& fobj.getParent().getParent().getParent() instanceof Table) {
+            	
+            	Table table = (Table)fobj.getParent().getParent().getParent();
+            	brd = table.getCommonBorderPaddingBackground();
+            	color = brd.backgroundColor;
+            }
+            
+            
         }
         if ((color != null) 
                 && (color.getAlpha() != 0
