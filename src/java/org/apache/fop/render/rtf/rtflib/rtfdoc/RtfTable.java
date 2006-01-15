@@ -36,6 +36,7 @@ import java.io.IOException;
 public class RtfTable extends RtfContainer {
     private RtfTableRow row;
     private int highestRow = 0;
+    private Boolean isNestedTable = null;
 
     /** Added by Boris Poudérous on 07/22/2002 in order to process
      *  number-columns-spanned attribute */
@@ -104,15 +105,23 @@ public class RtfTable extends RtfContainer {
      * @throws IOException for I/O problems
      */
     protected void writeRtfPrefix() throws IOException {
-        writeGroupMark(true);
+    	if (isNestedTable()) {
+    		writeControlWordNS("pard");
+    	}
+    	
+        writeGroupMark(true);   
     }
-
+    
     /**
      * Overridden to write RTF suffix code, what comes after our children
      * @throws IOException for I/O problems
      */
     protected void writeRtfSuffix() throws IOException {
         writeGroupMark(false);
+        
+        if(isNestedTable()) {
+        	getRow().writeRowAndCellsDefintions();
+        }
     }
 
     /**
@@ -159,5 +168,37 @@ public class RtfTable extends RtfContainer {
 
         return super.getRtfAttributes();
     }
-    /** - end - */
+    
+    public boolean isNestedTable() {
+    	if (isNestedTable == null) {
+	    	RtfElement e=this;
+	    	while(e.parent != null) {
+	    		if (e.parent instanceof RtfTableCell) {
+	    			isNestedTable=new Boolean(true);
+	    			return true;
+	    		}
+	    		
+	    		e = e.parent;
+	    	}
+	    	
+	    	isNestedTable=new Boolean(false);
+    	} else {
+    		return isNestedTable.booleanValue();
+    	}
+    	
+    	return false;
+    }
+    
+    public RtfTableRow getRow() {
+    	RtfElement e=this;
+    	while(e.parent != null) {
+    		if (e.parent instanceof RtfTableRow) {
+    			return (RtfTableRow) e.parent;
+    		}
+    		
+    		e = e.parent;
+    	}
+    	
+    	return null;  
+    }
 }

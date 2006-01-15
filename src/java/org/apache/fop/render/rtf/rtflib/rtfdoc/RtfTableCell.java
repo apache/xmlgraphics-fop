@@ -141,6 +141,7 @@ implements IRtfParagraphContainer, IRtfListContainer, IRtfTableContainer,
         if (attrs == null) {
             attrs = new RtfAttributes();
         }
+        
         attrs.set("intbl");
 
         paragraph = new RtfParagraph(this, writer, attrs);
@@ -280,30 +281,39 @@ implements IRtfParagraphContainer, IRtfListContainer, IRtfTableContainer,
      * @throws IOException for I/O problems
      */
     protected void writeRtfSuffix() throws IOException {
-        // word97 hangs if cell does not contain at least one "par" control word
-        // TODO this is what causes the extra spaces in nested table of test
-        //      004-spacing-in-tables.fo,
-        // but if is not here we generate invalid RTF for word97
-
-        if (setCenter) {
-            writeControlWord("qc");
-        } else if (setRight) {
-            writeControlWord("qr");
-        } else {
-            writeControlWord("ql");
-        }
-
-
-
-        if (!containsText()) {
-            writeControlWord("intbl");
-
-            //R.Marra this create useless paragraph
-            //Seem working into Word97 with the "intbl" only
-//            writeControlWord("par");
-        }
-
-        writeControlWord("cell");
+    	if (getRow().getTable().isNestedTable()) {
+    		//nested table
+    		writeControlWordNS("nestcell");
+    		writeGroupMark(true);
+    		writeControlWord("nonesttables");
+    		writeControlWord("par");
+    		writeGroupMark(false);
+    	} else {
+	        // word97 hangs if cell does not contain at least one "par" control word
+	        // TODO this is what causes the extra spaces in nested table of test
+	        //      004-spacing-in-tables.fo,
+	        // but if is not here we generate invalid RTF for word97
+	
+	        if (setCenter) {
+	            writeControlWord("qc");
+	        } else if (setRight) {
+	            writeControlWord("qr");
+	        } else {
+	            writeControlWord("ql");
+	        }
+	
+	
+	        
+	        if (!containsText()) {
+	            writeControlWord("intbl");
+	
+	            //R.Marra this create useless paragraph
+	            //Seem working into Word97 with the "intbl" only
+	//            writeControlWord("par");
+	        }
+	
+	        writeControlWord("cell");
+    	}
     }
 
 
@@ -374,6 +384,7 @@ implements IRtfParagraphContainer, IRtfListContainer, IRtfTableContainer,
      * disabled for V0.3 - nested table support is not done yet
      * @throws IOException for I/O problems
      */
+    /*
     protected void writeRtfContent()
     throws IOException {
         int extraRowIndex = 0;
@@ -405,7 +416,7 @@ implements IRtfParagraphContainer, IRtfListContainer, IRtfTableContainer,
                 e.writeRtf();
             }
         }
-    }
+    }*/
 
     /**
      * A table cell always contains "useful" content, as it is here to take some
@@ -449,7 +460,10 @@ implements IRtfParagraphContainer, IRtfListContainer, IRtfTableContainer,
     public RtfTextrun getTextrun()
     throws IOException {
         RtfAttributes attrs = new RtfAttributes();
-        attrs.set("intbl");
+        
+        if(!getRow().getTable().isNestedTable()) {
+        	attrs.set("intbl");
+        }
         
         RtfTextrun textrun = RtfTextrun.getTextrun(this, writer, attrs);
 
@@ -458,5 +472,18 @@ implements IRtfParagraphContainer, IRtfListContainer, IRtfTableContainer,
         textrun.setSuppressLastPar(true);  
         
         return textrun;
+    }
+    
+    public RtfTableRow getRow() {
+    	RtfElement e=this;
+    	while(e.parent != null) {
+    		if (e.parent instanceof RtfTableRow) {
+    			return (RtfTableRow) e.parent;
+    		}
+    		
+    		e = e.parent;
+    	}
+    	
+    	return null;  
     }
 }
