@@ -46,6 +46,7 @@ import org.apache.fop.fo.flow.InstreamForeignObject;
 import org.apache.fop.fo.flow.Leader;
 import org.apache.fop.fo.flow.ListBlock;
 import org.apache.fop.fo.flow.ListItem;
+import org.apache.fop.fo.flow.ListItemBody;
 import org.apache.fop.fo.flow.ListItemLabel;
 import org.apache.fop.fo.flow.PageNumber;
 import org.apache.fop.fo.flow.Table;
@@ -1298,6 +1299,12 @@ public class RTFHandler extends FOEventHandler {
                 startList( (ListBlock) foNode);
             } else {
                 endList( (ListBlock) foNode);
+            }
+        } else if (foNode instanceof ListItemBody) {
+            if (bStart) {
+                startListBody();
+            } else {
+                endListBody();
             }
         } else if (foNode instanceof ListItem) {
             if (bStart) {
