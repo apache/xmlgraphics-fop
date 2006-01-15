@@ -38,7 +38,7 @@ import java.util.Iterator;
 
 public class RtfTableRow extends RtfContainer implements ITableAttributes {
     private RtfTableCell cell;
-    private RtfExtraRowSet extraRowSet;
+//    private RtfExtraRowSet extraRowSet;
     private int id;
     private int highestCell = 0;
 
@@ -132,13 +132,26 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
      */
     protected void writeRtfContent() throws IOException {
 
-        // create new extra row set to allow our cells to put nested tables
-        // in rows that will be rendered after this one
-        extraRowSet = new RtfExtraRowSet(writer);
-
-        // render the row and cells definitions
+    	if (getTable().isNestedTable()) {
+    		//nested table
+    		writeControlWord("intbl");
+    		writeControlWord("itap2");
+    	} else {
+    		//normal (not nested) table
+    		writeRowAndCellsDefintions();
+    	}
+        // now children can write themselves, we have the correct RTF prefix code
+        super.writeRtfContent();
+    }
+    
+    public void writeRowAndCellsDefintions() throws IOException {
+//    	 render the row and cells definitions
         writeControlWord("trowd");
-
+        
+        if (!getTable().isNestedTable()) {
+        	writeControlWord("itap0");
+        }
+        	
         //check for keep-together
         if (attrib != null && attrib.isSet(ITableAttributes.ROW_KEEP_TOGETHER)) {
             writeControlWord(ROW_KEEP_TOGETHER);
@@ -160,47 +173,6 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
                     attrib.getValue(ITableAttributes.ROW_HEIGHT));
         }
 
-        /**
-         * Added by Boris POUDEROUS on 07/02/2002
-         * in order to get the indexes of the cells preceding a cell that
-         * contains a nested table.
-         * Thus, the cells of the extra row will be merged with the cells above.
-         */
-        boolean nestedTableFound = false;
-        int index = 0; // Used to store the index of the cell that contains a nested table
-        int numberOfCellsBeforeNestedTable = 0;
-
-        java.util.Vector indexesFound = new java.util.Vector();
-        for (Iterator it = getChildren().iterator(); it.hasNext();) {
-            final RtfElement e = (RtfElement)it.next();
-
-            if (e instanceof RtfTableCell) {
-                if (!nestedTableFound) {
-                    ++numberOfCellsBeforeNestedTable;
-                }
-                for (Iterator it2 = ((RtfTableCell)e).getChildren().iterator(); it2.hasNext();) {
-                      final RtfElement subElement = (RtfElement)it2.next();
-                      if (subElement instanceof RtfTable) {
-                          nestedTableFound = true;
-                          indexesFound.addElement(new Integer(index));
-                        } else if (subElement instanceof RtfParagraph) {
-                           for (Iterator it3
-                                = ((RtfParagraph)subElement).getChildren().iterator(); 
-                                it3.hasNext();) {
-                                final RtfElement subSubElement = (RtfElement)it3.next();
-                                if (subSubElement instanceof RtfTable) {
-                                    nestedTableFound = true;
-                                    indexesFound.addElement(new Integer(index));
-                                  }
-                             }
-                        }
-                   }
-              }
-
-            index++;
-          }
-         /** - end - */
-
         // write X positions of our cells
         int xPos = 0;
         
@@ -209,37 +181,10 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
             xPos = ((Integer)leftIndent).intValue();
         }
         
-        index = 0;            // Line added by Boris POUDEROUS on 07/02/2002
+        int index = 0;
         for (Iterator it = getChildren().iterator(); it.hasNext();) {
             final RtfElement e = (RtfElement)it.next();
             if (e instanceof RtfTableCell) {
-                /**
-                 * Added by Boris POUDEROUS on 2002/07/02
-                 */
-                // If one of the row's child cells contains a nested table :
-                if (!indexesFound.isEmpty()) {
-                    for (int i = 0; i < indexesFound.size(); i++) {
-                        // If the current cell index is equals to the index of the cell that
-                        // contains a nested table => NO MERGE
-                        if (index == ((Integer)indexesFound.get(i)).intValue()) {
-                            break;
-
-                        // If the current cell index is lower than the index of the cell that
-                        // contains a nested table => START VERTICAL MERGE
-                        } else if (index < ((Integer)indexesFound.get(i)).intValue()) {
-                            ((RtfTableCell)e).setVMerge(RtfTableCell.MERGE_START);
-                            break;
-
-                        // If the current cell index is greater than the index of the cell that
-                        // contains a nested table => START VERTICAL MERGE
-                        } else if (index > ((Integer)indexesFound.get(i)).intValue()) {
-                            ((RtfTableCell)e).setVMerge(RtfTableCell.MERGE_START);
-                            break;
-                          }
-                      }
-                  }
-                /** - end - */
-
                 // Added by Normand Masse
                 // Adjust the cell's display attributes so the table's/row's borders
                 // are drawn properly.
@@ -276,11 +221,8 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
             }
           index++; // Added by Boris POUDEROUS on 2002/07/02
         }
-
-        newLine();
         
-        // now children can write themselves, we have the correct RTF prefix code
-        super.writeRtfContent();
+        newLine();
     }
 
     private void adjustBorderProperties(RtfTable parentTable) {
@@ -309,16 +251,29 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
      * @throws IOException for I/O problems
      */
     protected void writeRtfSuffix() throws IOException {
-        writeControlWord("row");
+    	if (getTable().isNestedTable()) {
+    		//nested table
+    		writeGroupMark(true);
+    		writeStarControlWord("nesttableprops");
+    		writeRowAndCellsDefintions();
+    		writeControlWordNS("nestrow");
+    		writeGroupMark(false);
+    		
+        	
+    		writeGroupMark(true);
+    		writeControlWord("nonesttables");
+    		writeControlWord("par");
+    		writeGroupMark(false);
+    	} else {
+    		writeControlWord("row");
+    	}
 
-        // write extra rows if any
-        extraRowSet.writeRtf();
         writeGroupMark(false);
     }
 
-    RtfExtraRowSet getExtraRowSet() {
-        return extraRowSet;
-    }
+//    RtfExtraRowSet getExtraRowSet() {
+//        return extraRowSet;
+//    }
 
     private void writePaddingAttributes()
     throws IOException {
@@ -364,5 +319,18 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
      */
     public boolean isHighestCell(int id) {
         return (highestCell == id) ? true : false;
+    }
+    
+    public RtfTable getTable() {
+    	RtfElement e=this;
+    	while(e.parent != null) {
+    		if (e.parent instanceof RtfTable) {
+    			return (RtfTable) e.parent;
+    		}
+    		
+    		e = e.parent;
+    	}
+    	
+    	return null;  
     }
 }
