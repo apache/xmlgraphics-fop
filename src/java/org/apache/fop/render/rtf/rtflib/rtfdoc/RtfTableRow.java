@@ -132,26 +132,26 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
      */
     protected void writeRtfContent() throws IOException {
 
-    	if (getTable().isNestedTable()) {
-    		//nested table
-    		writeControlWord("intbl");
-    		writeControlWord("itap2");
-    	} else {
-    		//normal (not nested) table
-    		writeRowAndCellsDefintions();
-    	}
+        if (getTable().isNestedTable()) {
+            //nested table
+            writeControlWord("intbl");
+            writeControlWord("itap2");
+        } else {
+            //normal (not nested) table
+            writeRowAndCellsDefintions();
+        }
         // now children can write themselves, we have the correct RTF prefix code
         super.writeRtfContent();
     }
     
     public void writeRowAndCellsDefintions() throws IOException {
-//    	 render the row and cells definitions
+        // render the row and cells definitions
         writeControlWord("trowd");
         
         if (!getTable().isNestedTable()) {
-        	writeControlWord("itap0");
+            writeControlWord("itap0");
         }
-        	
+
         //check for keep-together
         if (attrib != null && attrib.isSet(ITableAttributes.ROW_KEEP_TOGETHER)) {
             writeControlWord(ROW_KEEP_TOGETHER);
@@ -251,22 +251,21 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
      * @throws IOException for I/O problems
      */
     protected void writeRtfSuffix() throws IOException {
-    	if (getTable().isNestedTable()) {
-    		//nested table
-    		writeGroupMark(true);
-    		writeStarControlWord("nesttableprops");
-    		writeRowAndCellsDefintions();
-    		writeControlWordNS("nestrow");
-    		writeGroupMark(false);
-    		
-        	
-    		writeGroupMark(true);
-    		writeControlWord("nonesttables");
-    		writeControlWord("par");
-    		writeGroupMark(false);
-    	} else {
-    		writeControlWord("row");
-    	}
+        if (getTable().isNestedTable()) {
+            //nested table
+            writeGroupMark(true);
+            writeStarControlWord("nesttableprops");
+            writeRowAndCellsDefintions();
+            writeControlWordNS("nestrow");
+            writeGroupMark(false);
+
+            writeGroupMark(true);
+            writeControlWord("nonesttables");
+            writeControlWord("par");
+            writeGroupMark(false);
+        } else {
+            writeControlWord("row");
+        }
 
         writeGroupMark(false);
     }
@@ -322,15 +321,15 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
     }
     
     public RtfTable getTable() {
-    	RtfElement e=this;
-    	while(e.parent != null) {
-    		if (e.parent instanceof RtfTable) {
-    			return (RtfTable) e.parent;
-    		}
-    		
-    		e = e.parent;
-    	}
-    	
-    	return null;  
+        RtfElement e = this;
+        while (e.parent != null) {
+            if (e.parent instanceof RtfTable) {
+                return (RtfTable) e.parent;
+            }
+
+            e = e.parent;
+        }
+
+        return null;  
     }
 }
