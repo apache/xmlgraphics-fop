@@ -35,9 +35,9 @@ import java.util.Iterator;
  */
 
 public class RtfTableCell
-extends RtfContainer
-implements IRtfParagraphContainer, IRtfListContainer, IRtfTableContainer,
-       IRtfExternalGraphicContainer, IRtfTextrunContainer {
+        extends RtfContainer
+        implements IRtfParagraphContainer, IRtfListContainer, IRtfTableContainer,
+            IRtfExternalGraphicContainer, IRtfTextrunContainer {
     private RtfParagraph paragraph;
     private RtfList list;
     private RtfTable table;
@@ -281,39 +281,37 @@ implements IRtfParagraphContainer, IRtfListContainer, IRtfTableContainer,
      * @throws IOException for I/O problems
      */
     protected void writeRtfSuffix() throws IOException {
-    	if (getRow().getTable().isNestedTable()) {
-    		//nested table
-    		writeControlWordNS("nestcell");
-    		writeGroupMark(true);
-    		writeControlWord("nonesttables");
-    		writeControlWord("par");
-    		writeGroupMark(false);
-    	} else {
-	        // word97 hangs if cell does not contain at least one "par" control word
-	        // TODO this is what causes the extra spaces in nested table of test
-	        //      004-spacing-in-tables.fo,
-	        // but if is not here we generate invalid RTF for word97
-	
-	        if (setCenter) {
-	            writeControlWord("qc");
-	        } else if (setRight) {
-	            writeControlWord("qr");
-	        } else {
-	            writeControlWord("ql");
-	        }
-	
-	
-	        
-	        if (!containsText()) {
-	            writeControlWord("intbl");
-	
-	            //R.Marra this create useless paragraph
-	            //Seem working into Word97 with the "intbl" only
-	//            writeControlWord("par");
-	        }
-	
-	        writeControlWord("cell");
-    	}
+        if (getRow().getTable().isNestedTable()) {
+            //nested table
+            writeControlWordNS("nestcell");
+            writeGroupMark(true);
+            writeControlWord("nonesttables");
+            writeControlWord("par");
+            writeGroupMark(false);
+        } else {
+            // word97 hangs if cell does not contain at least one "par" control word
+            // TODO this is what causes the extra spaces in nested table of test
+            //      004-spacing-in-tables.fo,
+            // but if is not here we generate invalid RTF for word97
+
+            if (setCenter) {
+                writeControlWord("qc");
+            } else if (setRight) {
+                writeControlWord("qr");
+            } else {
+                writeControlWord("ql");
+            }
+
+            if (!containsText()) {
+                writeControlWord("intbl");
+
+                //R.Marra this create useless paragraph
+                //Seem working into Word97 with the "intbl" only
+                //writeControlWord("par");
+            }
+
+            writeControlWord("cell");
+        }
     }
 
 
@@ -457,12 +455,11 @@ implements IRtfParagraphContainer, IRtfListContainer, IRtfTableContainer,
         return result;
     }
     
-    public RtfTextrun getTextrun()
-    throws IOException {
+    public RtfTextrun getTextrun() throws IOException {
         RtfAttributes attrs = new RtfAttributes();
         
-        if(!getRow().getTable().isNestedTable()) {
-        	attrs.set("intbl");
+        if (!getRow().getTable().isNestedTable()) {
+            attrs.set("intbl");
         }
         
         RtfTextrun textrun = RtfTextrun.getTextrun(this, writer, attrs);
@@ -475,15 +472,15 @@ implements IRtfParagraphContainer, IRtfListContainer, IRtfTableContainer,
     }
     
     public RtfTableRow getRow() {
-    	RtfElement e=this;
-    	while(e.parent != null) {
-    		if (e.parent instanceof RtfTableRow) {
-    			return (RtfTableRow) e.parent;
-    		}
-    		
-    		e = e.parent;
-    	}
-    	
-    	return null;  
+        RtfElement e = this;
+        while (e.parent != null) {
+            if (e.parent instanceof RtfTableRow) {
+                return (RtfTableRow) e.parent;
+            }
+
+            e = e.parent;
+        }
+
+        return null;  
     }
 }

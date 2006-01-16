@@ -29,11 +29,9 @@ import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableHeader;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
-import org.apache.fop.fo.properties.Property;
 import org.apache.fop.render.rtf.BorderAttributesConverter;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.ITableAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
-import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfColorTable;
 
 /**
  * Contributor(s):
@@ -80,7 +78,8 @@ public class TableAttributesConverter {
     static RtfAttributes convertTableAttributes(Table fobj)
             throws FOPException {
         FOPRtfAttributes attrib = new FOPRtfAttributes();
-        attrib.setTwips(ITableAttributes.ATTR_ROW_LEFT_INDENT, fobj.getCommonMarginBlock().marginLeft);
+        attrib.setTwips(ITableAttributes.ATTR_ROW_LEFT_INDENT, 
+                fobj.getCommonMarginBlock().marginLeft);
         return attrib;
     }
 
@@ -111,12 +110,12 @@ public class TableAttributesConverter {
     static RtfAttributes convertCellAttributes(TableCell fobj)
     throws FOPException {
 
-        Property p;
-        RtfColorTable colorTable = RtfColorTable.getInstance();
+        //Property p;
+        //RtfColorTable colorTable = RtfColorTable.getInstance();
         
         FOPRtfAttributes attrib = new FOPRtfAttributes();
 
-        boolean isBorderPresent = false;
+        //boolean isBorderPresent = false;
         CommonBorderPaddingBackground border = fobj.getCommonBorderPaddingBackground();
 
         // Cell background color
@@ -127,23 +126,23 @@ public class TableAttributesConverter {
             CommonBorderPaddingBackground brd = null;
             
             if (fobj.getParent() instanceof TableRow) {
-                TableRow parentRow=(TableRow)fobj.getParent();
+                TableRow parentRow = (TableRow)fobj.getParent();
                 brd = parentRow.getCommonBorderPaddingBackground();
                 color = brd.backgroundColor;
             } else if (fobj.getParent() instanceof TableHeader) {
-                TableHeader parentHeader=(TableHeader)fobj.getParent();
+                TableHeader parentHeader = (TableHeader)fobj.getParent();
                 brd = parentHeader.getCommonBorderPaddingBackground();
                 color = brd.backgroundColor;
             }
             
             if (color == null
-		    		&& fobj.getParent()!=null 
-		    		&& fobj.getParent().getParent()!=null 
-		    		&& fobj.getParent().getParent().getParent() instanceof Table) {
-            	
-            	Table table = (Table)fobj.getParent().getParent().getParent();
-            	brd = table.getCommonBorderPaddingBackground();
-            	color = brd.backgroundColor;
+                    && fobj.getParent() != null 
+                    && fobj.getParent().getParent() != null 
+                    && fobj.getParent().getParent().getParent() instanceof Table) {
+
+                Table table = (Table)fobj.getParent().getParent().getParent();
+                brd = table.getCommonBorderPaddingBackground();
+                color = brd.backgroundColor;
             }
             
             
@@ -226,8 +225,8 @@ public class TableAttributesConverter {
             RtfAttributes rtfatts)
     throws FOPException {
 
-        Property p;
-        RtfColorTable colorTable = RtfColorTable.getInstance();
+        //Property p;
+        //RtfColorTable colorTable = RtfColorTable.getInstance();
 
         RtfAttributes attrib = null;
 
@@ -237,8 +236,8 @@ public class TableAttributesConverter {
             attrib = rtfatts;
         }
 
-        String attrValue;
-        boolean isBorderPresent = false;
+        //String attrValue;
+        //boolean isBorderPresent = false;
         //need to set a default width
 
         //check for keep-together row attribute

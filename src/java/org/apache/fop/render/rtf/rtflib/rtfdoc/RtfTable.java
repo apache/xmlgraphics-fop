@@ -105,10 +105,10 @@ public class RtfTable extends RtfContainer {
      * @throws IOException for I/O problems
      */
     protected void writeRtfPrefix() throws IOException {
-    	if (isNestedTable()) {
-    		writeControlWordNS("pard");
-    	}
-    	
+        if (isNestedTable()) {
+            writeControlWordNS("pard");
+        }
+
         writeGroupMark(true);   
     }
     
@@ -119,8 +119,8 @@ public class RtfTable extends RtfContainer {
     protected void writeRtfSuffix() throws IOException {
         writeGroupMark(false);
         
-        if(isNestedTable()) {
-        	getRow().writeRowAndCellsDefintions();
+        if (isNestedTable()) {
+            getRow().writeRowAndCellsDefintions();
         }
     }
 
@@ -169,36 +169,37 @@ public class RtfTable extends RtfContainer {
         return super.getRtfAttributes();
     }
     
+    /** @return true if the the table is a nested table */
     public boolean isNestedTable() {
-    	if (isNestedTable == null) {
-	    	RtfElement e=this;
-	    	while(e.parent != null) {
-	    		if (e.parent instanceof RtfTableCell) {
-	    			isNestedTable=new Boolean(true);
-	    			return true;
-	    		}
-	    		
-	    		e = e.parent;
-	    	}
-	    	
-	    	isNestedTable=new Boolean(false);
-    	} else {
-    		return isNestedTable.booleanValue();
-    	}
-    	
-    	return false;
+        if (isNestedTable == null) {
+            RtfElement e = this;
+            while (e.parent != null) {
+                if (e.parent instanceof RtfTableCell) {
+                    isNestedTable = Boolean.TRUE;
+                    return true;
+                }
+
+                e = e.parent;
+            }
+
+            isNestedTable = Boolean.FALSE;
+        } else {
+            return isNestedTable.booleanValue();
+        }
+
+        return false;
     }
     
     public RtfTableRow getRow() {
-    	RtfElement e=this;
-    	while(e.parent != null) {
-    		if (e.parent instanceof RtfTableRow) {
-    			return (RtfTableRow) e.parent;
-    		}
-    		
-    		e = e.parent;
-    	}
-    	
-    	return null;  
+        RtfElement e = this;
+        while (e.parent != null) {
+            if (e.parent instanceof RtfTableRow) {
+                return (RtfTableRow) e.parent;
+            }
+
+            e = e.parent;
+        }
+
+        return null;  
     }
 }
