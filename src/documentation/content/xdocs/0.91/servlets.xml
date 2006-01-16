@@ -107,7 +107,7 @@ public void init() throws ServletException {
     Transformer transformer = this.transformerFactory.newTransformer(xsltSrc);
 
     //Make sure the XSL transformation's result is piped through to FOP
-    Result res = new SAXResult(driver.getDefaultHandler());
+    Result res = new SAXResult(fop.getDefaultHandler());
 
     //Setup input
     Source src = new StreamSource(new File("foo.xml"));
