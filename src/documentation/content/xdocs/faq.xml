@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
-  Copyright 1999-2005 The Apache Software Foundation
+  Copyright 1999-2006 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -596,6 +596,25 @@ Check the following:</p>
         <p>See <link href="0.20.5/hyphenation.html#support">Hyphenation Support</link> for details and instructions on using hyphenation with FOP.</p>
         <p>Explicitly enable hyphenation for an appropriate XSL-FO element (fo:block, fo:character):</p>
         <source><![CDATA[<fo:block hyphenate="true">]]></source>
+      </answer>
+    </faq>
+    <faq id="indent-inheritance">
+      <question>When I use margins, my content in a nested table or block-containers gets indented twice. Is this a bug?</question>
+      <answer>
+        <p>
+          (Applies to version 0.90 and later)
+          No, although you might easily think so. The problem has to do 
+          with property inheritance of the start-indent and end-indent 
+          properties to which the margin properties are mapped. Apache 
+          FOP strictly adheres to the XSL-FO specification here which many 
+          other commercial FO implementations don't do to better meet end-user 
+          expectations. You can make FOP behave like these if you set 
+          <code>setBreakIndentInheritanceOnReferenceAreaBoundary(true)</code> 
+          on the FOUserAgent. The better way is to reset <code>start-indent</code>
+          and <code>end-indent</code> to "0pt" on table-body or block-container. 
+          For further details, please consult the 
+          <link href="http://wiki.apache.org/xmlgraphics-fop/IndentInheritance">Wiki page on Indent Inheritance</link>.
+        </p>
       </answer>
     </faq>
   </part>
