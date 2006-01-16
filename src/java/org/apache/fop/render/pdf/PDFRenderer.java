@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,6 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.area.Area;
 import org.apache.fop.area.CTM;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.Page;
@@ -57,11 +56,9 @@ import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.datatypes.ColorType;
-import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontSetup;
-import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
 import org.apache.fop.image.XMLImage;
@@ -72,6 +69,7 @@ import org.apache.fop.pdf.PDFEncryptionManager;
 import org.apache.fop.pdf.PDFFilterList;
 import org.apache.fop.pdf.PDFInfo;
 import org.apache.fop.pdf.PDFLink;
+import org.apache.fop.pdf.PDFNumber;
 import org.apache.fop.pdf.PDFOutline;
 import org.apache.fop.pdf.PDFPage;
 import org.apache.fop.pdf.PDFResourceContext;
@@ -524,6 +522,15 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         super.handleRegionTraits(region);
     }
 
+    /**
+     * Formats a float value (normally coordinates) as Strings.
+     * @param value the value
+     * @return the formatted value
+     */
+    protected static final String format(float value) {
+        return PDFNumber.doubleOut(value);
+    }
+    
     /** @see org.apache.fop.render.AbstractPathOrientedRenderer */
     protected void drawBorderLine(float x1, float y1, float x2, float y2, 
             boolean horz, boolean startOrBefore, int style, ColorType col) {
@@ -543,10 +550,11 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                         rep++;
                     }
                     unit = w / rep;
-                    currentStream.add("[" + unit + "] 0 d ");
-                    currentStream.add(h + " w\n");
+                    currentStream.add("[" + format(unit) + "] 0 d ");
+                    currentStream.add(format(h) + " w\n");
                     float ym = y1 + (h / 2);
-                    currentStream.add(x1 + " " + ym + " m " + x2 + " " + ym + " l S\n");
+                    currentStream.add(format(x1) + " " + format(ym) + " m " 
+                            + format(x2) + " " + format(ym) + " l S\n");
                 } else {
                     float unit = Math.abs(2 * w);
                     int rep = (int)(h / unit);
@@ -554,10 +562,11 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                         rep++;
                     }
                     unit = h / rep;
-                    currentStream.add("[" + unit + "] 0 d ");
-                    currentStream.add(w + " w\n");
+                    currentStream.add("[" + format(unit) + "] 0 d ");
+                    currentStream.add(format(w) + " w\n");
                     float xm = x1 + (w / 2);
-                    currentStream.add(xm + " " + y1 + " m " + xm + " " + y2 + " l S\n");
+                    currentStream.add(format(xm) + " " + format(y1) + " m " 
+                            + format(xm) + " " + format(y2) + " l S\n");
                 }
                 break;
             case Constants.EN_DOTTED:
@@ -570,10 +579,11 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                         rep++;
                     }
                     unit = w / rep;
-                    currentStream.add("[0 " + unit + "] 0 d ");
-                    currentStream.add(h + " w\n");
+                    currentStream.add("[0 " + format(unit) + "] 0 d ");
+                    currentStream.add(format(h) + " w\n");
                     float ym = y1 + (h / 2);
-                    currentStream.add(x1 + " " + ym + " m " + x2 + " " + ym + " l S\n");
+                    currentStream.add(format(x1) + " " + format(ym) + " m " 
+                            + format(x2) + " " + format(ym) + " l S\n");
                 } else {
                     float unit = Math.abs(2 * w);
                     int rep = (int)(h / unit);
@@ -581,10 +591,11 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                         rep++;
                     }
                     unit = h / rep;
-                    currentStream.add("[0 " + unit + " ] 0 d ");
-                    currentStream.add(w + " w\n");
+                    currentStream.add("[0 " + format(unit) + " ] 0 d ");
+                    currentStream.add(format(w) + " w\n");
                     float xm = x1 + (w / 2);
-                    currentStream.add(xm + " " + y1 + " m " + xm + " " + y2 + " l S\n");
+                    currentStream.add(format(xm) + " " + format(y1) + " m " 
+                            + format(xm) + " " + format(y2) + " l S\n");
                 }
                 break;
             case Constants.EN_DOUBLE:
@@ -592,18 +603,22 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                 currentStream.add("[] 0 d ");
                 if (horz) {
                     float h3 = h / 3;
-                    currentStream.add(h3 + " w\n");
+                    currentStream.add(format(h3) + " w\n");
                     float ym1 = y1 + (h3 / 2);
                     float ym2 = ym1 + h3 + h3;
-                    currentStream.add(x1 + " " + ym1 + " m " + x2 + " " + ym1 + " l S\n");
-                    currentStream.add(x1 + " " + ym2 + " m " + x2 + " " + ym2 + " l S\n");
+                    currentStream.add(format(x1) + " " + format(ym1) + " m " 
+                            + format(x2) + " " + format(ym1) + " l S\n");
+                    currentStream.add(format(x1) + " " + format(ym2) + " m " 
+                            + format(x2) + " " + format(ym2) + " l S\n");
                 } else {
                     float w3 = w / 3;
-                    currentStream.add(w3 + " w\n");
+                    currentStream.add(format(w3) + " w\n");
                     float xm1 = x1 + (w3 / 2);
                     float xm2 = xm1 + w3 + w3;
-                    currentStream.add(xm1 + " " + y1 + " m " + xm1 + " " + y2 + " l S\n");
-                    currentStream.add(xm2 + " " + y1 + " m " + xm2 + " " + y2 + " l S\n");
+                    currentStream.add(format(xm1) + " " + format(y1) + " m " 
+                            + format(xm1) + " " + format(y2) + " l S\n");
+                    currentStream.add(format(xm2) + " " + format(y1) + " m " 
+                            + format(xm2) + " " + format(y2) + " l S\n");
                 }
                 break;
             case Constants.EN_GROOVE:
@@ -616,30 +631,32 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                     Color uppercol = lightenColor(c, -colFactor);
                     Color lowercol = lightenColor(c, colFactor);
                     float h3 = h / 3;
-                    currentStream.add(h3 + " w\n");
+                    currentStream.add(format(h3) + " w\n");
                     float ym1 = y1 + (h3 / 2);
                     setColor(uppercol, false, null);
-                    currentStream.add(x1 + " " + ym1 + " m " + x2 + " " + ym1 + " l S\n");
+                    currentStream.add(format(x1) + " " + format(ym1) + " m " 
+                            + format(x2) + " " + format(ym1) + " l S\n");
                     setColor(c, false, null);
-                    currentStream.add(x1 + " " + (ym1 + h3) + " m " 
-                                        + x2 + " " + (ym1 + h3) + " l S\n");
+                    currentStream.add(format(x1) + " " + format(ym1 + h3) + " m " 
+                                        + format(x2) + " " + format(ym1 + h3) + " l S\n");
                     setColor(lowercol, false, null);
-                    currentStream.add(x1 + " " + (ym1 + h3 + h3) + " m " 
-                                        + x2 + " " + (ym1 + h3 + h3) + " l S\n");
+                    currentStream.add(format(x1) + " " + format(ym1 + h3 + h3) + " m " 
+                                        + format(x2) + " " + format(ym1 + h3 + h3) + " l S\n");
                 } else {
                     Color leftcol = lightenColor(c, -colFactor);
                     Color rightcol = lightenColor(c, colFactor);
                     float w3 = w / 3;
-                    currentStream.add(w3 + " w\n");
+                    currentStream.add(format(w3) + " w\n");
                     float xm1 = x1 + (w3 / 2);
                     setColor(leftcol, false, null);
-                    currentStream.add(xm1 + " " + y1 + " m " + xm1 + " " + y2 + " l S\n");
+                    currentStream.add(format(xm1) + " " + format(y1) + " m " 
+                            + format(xm1) + " " + format(y2) + " l S\n");
                     setColor(c, false, null);
-                    currentStream.add((xm1 + w3) + " " + y1 + " m " 
-                                        + (xm1 + w3) + " " + y2 + " l S\n");
+                    currentStream.add(format(xm1 + w3) + " " + format(y1) + " m " 
+                                        + format(xm1 + w3) + " " + format(y2) + " l S\n");
                     setColor(rightcol, false, null);
-                    currentStream.add((xm1 + w3 + w3) + " " + y1 + " m " 
-                                        + (xm1 + w3 + w3) + " " + y2 + " l S\n");
+                    currentStream.add(format(xm1 + w3 + w3) + " " + format(y1) + " m " 
+                                        + format(xm1 + w3 + w3) + " " + format(y2) + " l S\n");
                 }
                 break;
             }
@@ -651,16 +668,18 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                 Color c = toColor(col);
                 if (horz) {
                     c = lightenColor(c, (startOrBefore ? 1 : -1) * colFactor);
-                    currentStream.add(h + " w\n");
+                    currentStream.add(format(h) + " w\n");
                     float ym1 = y1 + (h / 2);
                     setColor(c, false, null);
-                    currentStream.add(x1 + " " + ym1 + " m " + x2 + " " + ym1 + " l S\n");
+                    currentStream.add(format(x1) + " " + format(ym1) + " m " 
+                            + format(x2) + " " + format(ym1) + " l S\n");
                 } else {
                     c = lightenColor(c, (startOrBefore ? 1 : -1) * colFactor);
-                    currentStream.add(w + " w\n");
+                    currentStream.add(format(w) + " w\n");
                     float xm1 = x1 + (w / 2);
                     setColor(c, false, null);
-                    currentStream.add(xm1 + " " + y1 + " m " + xm1 + " " + y2 + " l S\n");
+                    currentStream.add(format(xm1) + " " + format(y1) + " m " 
+                            + format(xm1) + " " + format(y2) + " l S\n");
                 }
                 break;
             }
@@ -670,13 +689,15 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                 setColor(toColor(col), false, null);
                 currentStream.add("[] 0 d ");
                 if (horz) {
-                    currentStream.add(h + " w\n");
+                    currentStream.add(format(h) + " w\n");
                     float ym = y1 + (h / 2);
-                    currentStream.add(x1 + " " + ym + " m " + x2 + " " + ym + " l S\n");
+                    currentStream.add(format(x1) + " " + format(ym) + " m " 
+                            + format(x2) + " " + format(ym) + " l S\n");
                 } else {
-                    currentStream.add(w + " w\n");
+                    currentStream.add(format(w) + " w\n");
                     float xm = x1 + (w / 2);
-                    currentStream.add(xm + " " + y1 + " m " + xm + " " + y2 + " l S\n");
+                    currentStream.add(format(xm) + " " + format(y1) + " m " 
+                            + format(xm) + " " + format(y2) + " l S\n");
                 }
         }
     }
@@ -688,7 +709,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     private void updateLineWidth(float width) {
         if (currentState.setLineWidth(width)) {
             //Only write if value has changed WRT the current line width
-            currentStream.add(width + " w\n");
+            currentStream.add(format(width) + " w\n");
         }
     }
     
@@ -702,7 +723,8 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * @param height the height of the area
      */
     protected void clipRect(float x, float y, float width, float height) {
-        currentStream.add(x + " " + y + " " + width + " " + height + " re ");
+        currentStream.add(format(x) + " " + format(y) + " " 
+                + format(width) + " " + format(height) + " re ");
         clip();
     }
 
@@ -720,7 +742,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * @param y y coordinate
      */
     protected void moveTo(float x, float y) {
-        currentStream.add(x + " " + y + " m ");
+        currentStream.add(format(x) + " " + format(y) + " m ");
     }
     
     /**
@@ -730,7 +752,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * @param y y coordinate
      */
     protected void lineTo(float x, float y) {
-        currentStream.add(x + " " + y + " l ");
+        currentStream.add(format(x) + " " + format(y) + " l ");
     }
     
     /**
@@ -746,7 +768,8 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      */
     protected void fillRect(float x, float y, float w, float h) {
         if (w != 0 && h != 0) {
-            currentStream.add(x + " " + y + " " + w + " " + h + " re f\n");
+            currentStream.add(format(x) + " " + format(y) + " " 
+                    + format(w) + " " + format(h) + " re f\n");
         }
     }
     
@@ -759,145 +782,10 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * @param endy the y end position
      */
     private void drawLine(float startx, float starty, float endx, float endy) {
-        currentStream.add(startx + " " + starty + " m ");
-        currentStream.add(endx + " " + endy + " l S\n");
+        currentStream.add(format(startx) + " " + format(starty) + " m ");
+        currentStream.add(format(endx) + " " + format(endy) + " l S\n");
     }
 
-    /**
-     * @see org.apache.fop.render.AbstractRenderer#renderBlockViewport(BlockViewport, List)
-     *//*
-    protected void renderBlockViewport(BlockViewport bv, List children) {
-        // clip and position viewport if necessary
-
-        // save positions
-        int saveIP = currentIPPosition;
-        int saveBP = currentBPPosition;
-        String saveFontName = currentFontName;
-
-        CTM ctm = bv.getCTM();
-        int borderPaddingStart = bv.getBorderAndPaddingWidthStart();
-        int borderPaddingBefore = bv.getBorderAndPaddingWidthBefore();
-        float x, y;
-        x = (float)(bv.getXOffset() + containingIPPosition) / 1000f;
-        y = (float)(bv.getYOffset() + containingBPPosition) / 1000f;
-
-        if (bv.getPositioning() == Block.ABSOLUTE
-                || bv.getPositioning() == Block.FIXED) {
-
-            //For FIXED, we need to break out of the current viewports to the
-            //one established by the page. We save the state stack for restoration
-            //after the block-container has been painted. See below.
-            List breakOutList = null;
-            if (bv.getPositioning() == Block.FIXED) {
-                breakOutList = breakOutOfStateStack();
-            }
-            
-            CTM tempctm = new CTM(containingIPPosition, containingBPPosition);
-            ctm = tempctm.multiply(ctm);
-
-            //This is the content-rect
-            float width = (float)bv.getIPD() / 1000f;
-            float height = (float)bv.getBPD() / 1000f;
-            
-            //Adjust for spaces (from margin or indirectly by start-indent etc.
-            Integer spaceStart = (Integer) bv.getTrait(Trait.SPACE_START);
-            if (spaceStart != null) {
-                x += spaceStart.floatValue() / 1000;
-            }
-            Integer spaceBefore = (Integer) bv.getTrait(Trait.SPACE_BEFORE);
-            if (spaceBefore != null) {
-                y += spaceBefore.floatValue() / 1000;
-            }
-
-            float bpwidth = (borderPaddingStart + bv.getBorderAndPaddingWidthEnd()) / 1000f;
-            float bpheight = (borderPaddingBefore + bv.getBorderAndPaddingWidthAfter()) / 1000f;
-
-            drawBackAndBorders(bv, x, y, width + bpwidth, height + bpheight);
-
-            //Now adjust for border/padding
-            x += borderPaddingStart / 1000f;
-            y += borderPaddingBefore / 1000f;
-            
-            if (bv.getClip()) {
-                saveGraphicsState();
-                clipRect(x, y, width, height);
-            }
-
-            startVParea(ctm);
-
-            currentIPPosition = 0;
-            currentBPPosition = 0;
-
-            renderBlocks(bv, children);
-            endVParea();
-
-            if (bv.getClip()) {
-                restoreGraphicsState();
-            }
-
-            // clip if necessary
-
-            if (breakOutList != null) {
-                restoreStateStackAfterBreakOut(breakOutList);
-            }
-            
-            currentIPPosition = saveIP;
-            currentBPPosition = saveBP;
-        } else {
-
-            Integer spaceBefore = (Integer)bv.getTrait(Trait.SPACE_BEFORE);
-            if (spaceBefore != null) {
-                currentBPPosition += spaceBefore.intValue();
-            }
-
-            //borders and background in the old coordinate system
-            handleBlockTraits(bv);
-
-            CTM tempctm = new CTM(containingIPPosition, currentBPPosition);
-            ctm = tempctm.multiply(ctm);
-            
-            //Now adjust for border/padding
-            x += borderPaddingStart / 1000f;
-            y += borderPaddingBefore / 1000f;
-
-            // clip if necessary
-            if (bv.getClip()) {
-                saveGraphicsState();
-                float width = (float)bv.getIPD() / 1000f;
-                float height = (float)bv.getBPD() / 1000f;
-                clipRect(x, y, width, height);
-            }
-
-            if (ctm != null) {
-                startVParea(ctm);
-                currentIPPosition = 0;
-                currentBPPosition = 0;
-            }
-            renderBlocks(bv, children);
-            if (ctm != null) {
-                endVParea();
-            }
-
-            if (bv.getClip()) {
-                restoreGraphicsState();
-            }
-
-            currentIPPosition = saveIP;
-            currentBPPosition = saveBP;
-            
-            //Adjust BP position (alloc BPD + spaces)
-            if (spaceBefore != null) {
-                currentBPPosition += spaceBefore.intValue();
-            }
-            currentBPPosition += (int)(bv.getAllocBPD());
-            Integer spaceAfter = (Integer)bv.getTrait(Trait.SPACE_AFTER);
-            if (spaceAfter != null) {
-                currentBPPosition += spaceAfter.intValue();
-            }
-        }
-        currentFontName = saveFontName;
-    }*/
-   
     /**
      * Breaks out of the state stack to handle fixed block-containers.
      * @return the saved state stack to recreate later
@@ -1048,17 +936,17 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         if (!textOpen || bl != prevWordY) {
             closeText();
 
-            pdf.append("1 0 0 -1 " + (rx / 1000f) + " " + (bl / 1000f) + " Tm "
-                       + (ch.getTextLetterSpaceAdjust() / 1000f) + " Tc "
-                       + (ch.getTextWordSpaceAdjust() / 1000f) + " Tw [" + startText);
+            pdf.append("1 0 0 -1 " + format(rx / 1000f) + " " + format(bl / 1000f) + " Tm "
+                       + format(ch.getTextLetterSpaceAdjust() / 1000f) + " Tc "
+                       + format(ch.getTextWordSpaceAdjust() / 1000f) + " Tw [" + startText);
             prevWordY = bl;
             textOpen = true;
         } else {
             closeText();
 
-            pdf.append("1 0 0 -1 " + (rx / 1000f) + " " + (bl / 1000f) + " Tm "
-                           + (ch.getTextLetterSpaceAdjust() / 1000f) + " Tc "
-                           + (ch.getTextWordSpaceAdjust() / 1000f) + " Tw [" + startText);
+            pdf.append("1 0 0 -1 " + format(rx / 1000f) + " " + format(bl / 1000f) + " Tm "
+                           + format(ch.getTextLetterSpaceAdjust() / 1000f) + " Tc "
+                           + format(ch.getTextWordSpaceAdjust() / 1000f) + " Tw [" + startText);
             textOpen = true;
         }
         prevWordWidth = ch.getIPD();
@@ -1115,17 +1003,17 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         if (!textOpen || bl != prevWordY) {
             closeText();
 
-            pdf.append("1 0 0 -1 " + (rx / 1000f) + " " + (bl / 1000f) + " Tm "
-                       + (text.getTextLetterSpaceAdjust() / 1000f) + " Tc "
-                       + (text.getTextWordSpaceAdjust() / 1000f) + " Tw [");
+            pdf.append("1 0 0 -1 " + format(rx / 1000f) + " " + format(bl / 1000f) + " Tm "
+                       + format(text.getTextLetterSpaceAdjust() / 1000f) + " Tc "
+                       + format(text.getTextWordSpaceAdjust() / 1000f) + " Tw [");
             prevWordY = bl;
             textOpen = true;
         } else {
             closeText();
 
-            pdf.append("1 0 0 -1 " + (rx / 1000f) + " " + (bl / 1000f) + " Tm "
-                       + (text.getTextLetterSpaceAdjust() / 1000f) + " Tc "
-                       + (text.getTextWordSpaceAdjust() / 1000f) + " Tw [");
+            pdf.append("1 0 0 -1 " + format(rx / 1000f) + " " + format(bl / 1000f) + " Tm "
+                       + format(text.getTextLetterSpaceAdjust() / 1000f) + " Tc "
+                       + format(text.getTextWordSpaceAdjust() / 1000f) + " Tw [");
             textOpen = true;
         }
         prevWordWidth = text.getIPD();
@@ -1184,8 +1072,9 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         pdf.append(endText);
         
         if (useMultiByte) {
-            pdf.append(-(((TextArea) space.getParentArea()).getTextWordSpaceAdjust() 
-                    / (font.getFontSize() / 1000)) + " ");
+            float tws = -(((TextArea) space.getParentArea()).getTextWordSpaceAdjust() 
+                    / (font.getFontSize() / 1000f));
+            pdf.append(format(tws) + " ");
         }
         
         currentStream.add(pdf.toString());
@@ -1327,7 +1216,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
 
             this.currentFontName = name;
             this.currentFontSize = size;
-            pdf = pdf.append("/" + name + " " + ((float) size / 1000f)
+            pdf = pdf.append("/" + name + " " + format((float) size / 1000f)
                               + " Tf\n");
         }
     }
@@ -1433,10 +1322,10 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      */
     protected void placeImage(float x, float y, float w, float h, int xobj) {
         saveGraphicsState();
-        currentStream.add(w + " 0 0 "
-                          + -h + " "
-                          + (currentIPPosition / 1000f + x) + " "
-                          + (currentBPPosition / 1000f + h + y) 
+        currentStream.add(format(w) + " 0 0 "
+                          + format(-h) + " "
+                          + format(currentIPPosition / 1000f + x) + " "
+                          + format(currentBPPosition / 1000f + h + y) 
                           + " cm\n" + "/Im" + xobj + " Do\n");
         restoreGraphicsState();
     }
@@ -1515,7 +1404,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                 clipRect(startx, starty, endx - startx, ruleThickness);
                 //This displaces the dots to the right by half a dot's width
                 //TODO There's room for improvement here
-                currentStream.add("1 0 0 1 " + (ruleThickness / 2) + " 0 cm\n");
+                currentStream.add("1 0 0 1 " + format(ruleThickness / 2) + " 0 cm\n");
                 drawBorderLine(startx, starty, endx, starty + ruleThickness, 
                         true, true, style, col);
                 break;
@@ -1524,25 +1413,25 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                 float half = area.getRuleThickness() / 2000f;
 
                 setColor(lightenColor(toColor(col), 0.6f), true, null);
-                currentStream.add(startx + " " + starty + " m\n");
-                currentStream.add(endx + " " + starty + " l\n");
-                currentStream.add(endx + " " + (starty + 2 * half) + " l\n");
-                currentStream.add(startx + " " + (starty + 2 * half) + " l\n");
+                currentStream.add(format(startx) + " " + format(starty) + " m\n");
+                currentStream.add(format(endx) + " " + format(starty) + " l\n");
+                currentStream.add(format(endx) + " " + format(starty + 2 * half) + " l\n");
+                currentStream.add(format(startx) + " " + format(starty + 2 * half) + " l\n");
                 currentStream.add("h\n");
                 currentStream.add("f\n");
                 setColor(toColor(col), true, null);
                 if (style == EN_GROOVE) {
-                    currentStream.add(startx + " " + starty + " m\n");
-                    currentStream.add(endx + " " + starty + " l\n");
-                    currentStream.add(endx + " " + (starty + half) + " l\n");
-                    currentStream.add((startx + half) + " " + (starty + half) + " l\n");
-                    currentStream.add(startx + " " + (starty + 2 * half) + " l\n");
+                    currentStream.add(format(startx) + " " + format(starty) + " m\n");
+                    currentStream.add(format(endx) + " " + format(starty) + " l\n");
+                    currentStream.add(format(endx) + " " + format(starty + half) + " l\n");
+                    currentStream.add(format(startx + half) + " " + format(starty + half) + " l\n");
+                    currentStream.add(format(startx) + " " + format(starty + 2 * half) + " l\n");
                 } else {
-                    currentStream.add(endx + " " + starty + " m\n");
-                    currentStream.add(endx + " " + (starty + 2 * half) + " l\n");
-                    currentStream.add(startx + " " + (starty + 2 * half) + " l\n");
-                    currentStream.add(startx + " " + (starty + half) + " l\n");
-                    currentStream.add((endx - half) + " " + (starty + half) + " l\n");
+                    currentStream.add(format(endx) + " " + format(starty) + " m\n");
+                    currentStream.add(format(endx) + " " + format(starty + 2 * half) + " l\n");
+                    currentStream.add(format(startx) + " " + format(starty + 2 * half) + " l\n");
+                    currentStream.add(format(startx) + " " + format(starty + half) + " l\n");
+                    currentStream.add(format(endx - half) + " " + format(starty + half) + " l\n");
                 }
                 currentStream.add("h\n");
                 currentStream.add("f\n");
