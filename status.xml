@@ -27,6 +27,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix">
+        Bugfix: Floating point numbers were not properly formatted in the PDF renderer
+        which could lead to error messages while opening a PDF in Acrobat Reader.
+      </action>
       <action  context="Code" dev="SP" type="update" fixes-bug="38098"
                due-to="Gerhard Oettl">
         Implement property name as default argument on some xsl-function calls.
