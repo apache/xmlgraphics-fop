@@ -35,7 +35,7 @@
           <fo:block font-size="12pt" space-after="5mm">Version <xsl:value-of select="$versionParam"/>
           </fo:block>
           <fo:block font-size="10pt">
-            <fo:table table-layout="fixed">
+            <fo:table table-layout="fixed" width="100%" border-collapse="separate">
               <fo:table-column column-width="4cm"/>
               <fo:table-column column-width="4cm"/>
               <fo:table-column column-width="5cm"/>
