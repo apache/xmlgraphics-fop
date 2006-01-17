@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,13 +57,13 @@ public class LineArea extends Area {
     
     private LineAdjustingInfo adjustingInfo = null;
 
-    private int stacking = LR;
+    //private int stacking = LR;
     // contains inline areas
     // has start indent and length, dominant baseline, height
     private int startIndent;
 
     // this is the offset for the dominant baseline
-    private int baseLine;
+    //private int baseLine;
 
     // this class can contain the dominant char styling info
     // this means that many renderers can optimise a bit
@@ -82,6 +82,8 @@ public class LineArea extends Area {
      * a new LineAdjustingInfo object is created
      * @param alignment alignment of this line
      * @param diff      difference between content width and line width
+     * @param stretch   the available stretch for any adjustments
+     * @param shrink    the available shrink for any adjustments
      */
     public LineArea(int alignment, int diff,
                     int stretch, int shrink) {
@@ -185,7 +187,8 @@ public class LineArea extends Area {
                 break;
             case Constants.EN_JUSTIFY:
                 // compute variation factor
-                adjustingInfo.variationFactor *= (float) (adjustingInfo.difference - ipdVariation) / adjustingInfo.difference;
+                adjustingInfo.variationFactor *= (float) (adjustingInfo.difference - ipdVariation)
+                        / adjustingInfo.difference;
                 adjustingInfo.difference -= ipdVariation;
                 // if the LineArea has already been added to the area tree,
                 // call finalize(); otherwise, wait for the LineLM to call it

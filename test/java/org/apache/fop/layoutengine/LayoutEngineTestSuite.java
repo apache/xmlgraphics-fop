@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 The Apache Software Foundation.
+ * Copyright 2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,8 @@
 
 package org.apache.fop.layoutengine;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -129,18 +126,11 @@ public class LayoutEngineTestSuite {
     }
     
     /**
-     * @return the test suite with all the tests (one for each XML file)
-     * @throws IOException in case of an I/O problem
+     * @return a Collection of File instances containing all the test cases set up for processing.
+     * @throws IOException if there's a problem gathering the list of test files
      */
-    public static Test suite() throws IOException {
-        TestSuite suite = new TestSuite();
-
+    public static Collection getTestFiles() throws IOException {
         File mainDir = new File("test/layoutengine");
-        File backupDir = new File("build/test-results/layoutengine");
-        backupDir.mkdirs();
-
-        final LayoutEngineTester tester = new LayoutEngineTester(backupDir);
-        
         IOFileFilter filter;
         String single = System.getProperty("fop.layoutengine.single");
         String startsWith = System.getProperty("fop.layoutengine.starts-with");
@@ -166,6 +156,22 @@ public class LayoutEngineTestSuite {
                     filter, TrueFileFilter.INSTANCE);
             files.addAll(privateFiles);
         }
+        return files;
+    }
+    
+    /**
+     * @return the test suite with all the tests (one for each XML file)
+     * @throws IOException in case of an I/O problem
+     */
+    public static Test suite() throws IOException {
+        TestSuite suite = new TestSuite();
+
+        File backupDir = new File("build/test-results/layoutengine");
+        backupDir.mkdirs();
+
+        Collection files = getTestFiles();
+
+        final LayoutEngineTester tester = new LayoutEngineTester(backupDir);
         Iterator i = files.iterator();
         while (i.hasNext()) {
             File f = (File)i.next();

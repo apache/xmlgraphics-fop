@@ -165,6 +165,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
      * @see org.apache.fop.fonts.Typeface#isMultiByte()
      */
     public boolean isMultiByte() {
+        load(true);
         return realFont.isMultiByte();
     }
 

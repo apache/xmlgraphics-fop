@@ -74,7 +74,7 @@
     <eval expected="10000" xpath="//flow/block[1]/lineArea/viewport/@padding-after"/>
     <eval expected="5000" xpath="//flow/block[1]/lineArea/viewport/@padding-start"/>
     <eval expected="20000" xpath="//flow/block[1]/lineArea/viewport/@padding-end"/>
-    <eval expected="20000 20000 20000 20000" xpath="//flow/block[1]/lineArea/viewport/foreignObject/@pos"/>
+    <eval expected="20000 20000 20000 20000" xpath="//flow/block[1]/lineArea/viewport/@pos"/>
     <!-- second i-f-o -->
     <eval expected="20000" xpath="//flow/block[2]/lineArea/viewport/@ipd"/>
     <eval expected="20000" xpath="//flow/block[2]/lineArea/viewport/@bpd"/>
@@ -90,6 +90,6 @@
     <eval expected="10000" xpath="//flow/block[2]/lineArea/viewport/@padding-after"/>
     <eval expected="5000" xpath="//flow/block[2]/lineArea/viewport/@padding-start"/>
     <eval expected="20000" xpath="//flow/block[2]/lineArea/viewport/@padding-end"/>
-    <eval expected="20000 20000 20000 20000" xpath="//flow/block[2]/lineArea/viewport/foreignObject/@pos"/>
+    <eval expected="20000 20000 20000 20000" xpath="//flow/block[2]/lineArea/viewport/@pos"/>
   </checks>
 </testcase>

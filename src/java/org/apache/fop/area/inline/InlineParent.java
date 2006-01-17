@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,11 +33,9 @@ public class InlineParent extends InlineArea {
      */
     protected List inlines = new ArrayList();
 
-    /**
-     * An inline parent is a reference area somay have clipping
-     */
-    protected boolean clip = false;
-
+    /** Controls whether the IPD is automatically adjusted based on the area's children. */
+    protected transient boolean autoSize;
+    
     /**
      * Create a new inline parent to add areas to.
      */
@@ -50,9 +48,14 @@ public class InlineParent extends InlineArea {
      * @param childArea the child area to add
      */
     public void addChildArea(Area childArea) {
+        if (inlines.size() == 0) {
+            autoSize = (getIPD() == 0);
+        }
         if (childArea instanceof InlineArea) {
             inlines.add(childArea);
-            increaseIPD(((InlineArea) childArea).getAllocIPD());
+            if (autoSize) {
+                increaseIPD(((InlineArea) childArea).getAllocIPD());
+            }
         }
     }
 

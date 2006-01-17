@@ -27,6 +27,12 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="add">
+        New feature: "Intermediate format" (IF). The IF is basically the XML dialect
+        written by the area tree renderer (XMLRenderer). A new parser for this format
+        allows reparsing a serialized and possibly modified area tree and rendering it
+        to the final target format.
+      </action>
       <action context="Code" dev="JM" type="fix">
         Bugfix: Floating point numbers were not properly formatted in the PDF renderer
         which could lead to error messages while opening a PDF in Acrobat Reader.

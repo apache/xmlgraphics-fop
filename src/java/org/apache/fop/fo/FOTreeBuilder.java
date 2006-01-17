@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,6 @@
 package org.apache.fop.fo;
 
 import java.io.OutputStream;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,7 +26,6 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FormattingResults;
 import org.apache.fop.area.AreaTreeHandler;
-import org.apache.fop.util.Service;
 import org.apache.fop.fo.ElementMapping.Maker;
 import org.apache.fop.fo.pagination.Root;
 import org.apache.fop.image.ImageFactory;
@@ -48,22 +43,12 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class FOTreeBuilder extends DefaultHandler {
 
-    /**
-     * Table mapping element names to the makers of objects
-     * representing formatting objects.
-     */
-    protected Map fobjTable = new java.util.HashMap();
-
-    /**
-     * logging instance
-     */
+    /** logging instance */
     protected Log log = LogFactory.getLog(FOTreeBuilder.class);
 
-    /**
-     * Set of mapped namespaces.
-     */
-    protected Set namespaces = new java.util.HashSet();
-
+    /** The registry for ElementMapping instances */
+    protected ElementMappingRegistry elementMappingRegistry;
+    
     /**
      * The root of the formatting object tree
      */
@@ -113,75 +98,7 @@ public class FOTreeBuilder extends DefaultHandler {
             }
         });
 
-        // Add standard element mappings
-        setupDefaultMappings();
-
-        // add additional ElementMappings defined within FOUserAgent
-        List addlEMs = foUserAgent.getAdditionalElementMappings();
-
-        if (addlEMs != null) {
-            for (int i = 0; i < addlEMs.size(); i++) {
-                addElementMapping((ElementMapping) addlEMs.get(i));
-            }
-        }
-    }
-
-    /**
-     * Sets all the element and property list mappings to their default values.
-     *
-     */
-    private void setupDefaultMappings() {
-        addElementMapping("org.apache.fop.fo.FOElementMapping");
-        addElementMapping("org.apache.fop.fo.extensions.svg.SVGElementMapping");
-        addElementMapping("org.apache.fop.fo.extensions.svg.BatikExtensionElementMapping");
-        addElementMapping("org.apache.fop.fo.extensions.ExtensionElementMapping");
-        addElementMapping("org.apache.fop.render.ps.extensions.PSExtensionElementMapping");
-
-        // add mappings from available services
-        Iterator providers = Service.providers(ElementMapping.class);
-        if (providers != null) {
-            while (providers.hasNext()) {
-                String str = (String)providers.next();
-                try {
-                    addElementMapping(str);
-                } catch (IllegalArgumentException e) {
-                    log.warn("Error while adding element mapping", e);
-                }
-
-            }
-        }
-    }
-
-    /**
-     * Add the element mapping with the given class name.
-     * @param mappingClassName the class name representing the element mapping.
-     * @throws IllegalArgumentException if there was not such element mapping.
-     */
-    public void addElementMapping(String mappingClassName)
-                throws IllegalArgumentException {
-
-        try {
-            ElementMapping mapping
-                = (ElementMapping)Class.forName(mappingClassName).newInstance();
-            addElementMapping(mapping);
-        } catch (ClassNotFoundException e) {
-            throw new IllegalArgumentException("Could not find "
-                                               + mappingClassName);
-        } catch (InstantiationException e) {
-            throw new IllegalArgumentException("Could not instantiate "
-                                               + mappingClassName);
-        } catch (IllegalAccessException e) {
-            throw new IllegalArgumentException("Could not access "
-                                               + mappingClassName);
-        } catch (ClassCastException e) {
-            throw new IllegalArgumentException(mappingClassName
-                                               + " is not an ElementMapping");
-        }
-    }
-
-    private void addElementMapping(ElementMapping mapping) {
-        this.fobjTable.put(mapping.getNamespaceURI(), mapping.getTable());
-        this.namespaces.add(mapping.getNamespaceURI().intern());
+        this.elementMappingRegistry = new ElementMappingRegistry(foUserAgent);
     }
 
     /**
@@ -340,27 +257,7 @@ public class FOTreeBuilder extends DefaultHandler {
      * @throws FOPException if a Maker could not be found for a bound namespace.
      */
     private Maker findFOMaker(String namespaceURI, String localName) throws FOPException {
-      Map table = (Map)fobjTable.get(namespaceURI);
-      Maker fobjMaker = null;
-      if (table != null) {
-          fobjMaker = (ElementMapping.Maker)table.get(localName);
-          // try default
-          if (fobjMaker == null) {
-              fobjMaker = (ElementMapping.Maker)table.get(ElementMapping.DEFAULT);
-          }
-      }
-
-      if (fobjMaker == null) {
-          if (namespaces.contains(namespaceURI.intern())) {
-                throw new FOPException(FONode.errorText(locator) 
-                    + "No element mapping definition found for "
-                    + FONode.getNodeString(namespaceURI, localName), locator);
-          } else {
-              log.warn("Unknown formatting object " + namespaceURI + "^" + localName);
-              fobjMaker = new UnknownXMLObj.Maker(namespaceURI);
-          }
-      }
-      return fobjMaker;
+        return elementMappingRegistry.findFOMaker(namespaceURI, localName, locator);
     }
 
     /** @see org.xml.sax.ErrorHandler#warning(org.xml.sax.SAXParseException) */

@@ -40,6 +40,7 @@ import org.xml.sax.helpers.AttributesImpl;
 
 // FOP
 import org.apache.fop.render.PrintRenderer;
+import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.XMLHandler;
 import org.apache.fop.apps.FOUserAgent;
@@ -60,6 +61,7 @@ import org.apache.fop.area.RegionReference;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Span;
 import org.apache.fop.area.Trait;
+import org.apache.fop.area.Trait.Background;
 import org.apache.fop.area.inline.Container;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
@@ -72,6 +74,8 @@ import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.WordArea;
+import org.apache.fop.fo.Constants;
+import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.fonts.FontTriplet;
 
@@ -99,6 +103,9 @@ public class XMLRenderer extends PrintRenderer {
     private boolean startedSequence = false;
     private RendererContext context;
 
+    /** If not null, the XMLRenderer will mimic another renderer by using its font setup. */
+    protected Renderer mimic;
+    
     /** TransformerHandler that the generated XML is written to */
     protected TransformerHandler handler;
     
@@ -137,10 +144,26 @@ public class XMLRenderer extends PrintRenderer {
     public void setUserAgent(FOUserAgent agent) {
         super.setUserAgent(agent);
 
-        //
-        //userAgent.addExtensionHandler();
-        XMLHandler handler = new XMLXMLHandler();
-        userAgent.getXMLHandlerRegistry().addXMLHandler(handler);
+        XMLHandler xmlHandler = new XMLXMLHandler();
+        userAgent.getXMLHandlerRegistry().addXMLHandler(xmlHandler);
+    }
+
+    /**
+     * Call this method to make the XMLRenderer mimic a different renderer by using its font
+     * setup. This is useful when working with the intermediate format parser.
+     * @param renderer the renderer to mimic
+     */
+    public void mimicRenderer(Renderer renderer) {
+        this.mimic = renderer;
+    }
+    
+    /** @see org.apache.fop.render.PrintRenderer#setupFontInfo(org.apache.fop.fonts.FontInfo) */
+    public void setupFontInfo(FontInfo inFontInfo) {
+        if (mimic != null) {
+            mimic.setupFontInfo(inFontInfo);
+        } else {
+            super.setupFontInfo(inFontInfo);
+        }
     }
 
     /**
@@ -280,6 +303,7 @@ public class XMLRenderer extends PrintRenderer {
             while (iter.hasNext()) {
                 Map.Entry traitEntry = (Map.Entry) iter.next();
                 String name = Trait.getTraitName(traitEntry.getKey());
+                Class clazz = Trait.getTraitClass(traitEntry.getKey());
                 if ("break-before".equals(name) || "break-after".equals(name)) {
                     continue;
                 }
@@ -289,6 +313,38 @@ public class XMLRenderer extends PrintRenderer {
                     addAttribute("font-name", triplet.getName());
                     addAttribute("font-style", triplet.getStyle());
                     addAttribute("font-weight", triplet.getWeight());
+                } else if (clazz.equals(Background.class)) {
+                    Background bkg = (Background)value;
+                    //TODO Remove the following line (makes changes in the test checks necessary)
+                    addAttribute(name, bkg.toString());
+                    if (bkg.getColor() != null) {
+                        addAttribute("bkg-color", bkg.getColor().toString());
+                    }
+                    if (bkg.getURL() != null) {
+                        addAttribute("bkg-img", bkg.getURL());
+                        String repString;
+                        int repeat = bkg.getRepeat();
+                        switch (repeat) {
+                        case Constants.EN_REPEAT:
+                            repString = "repeat";
+                            break;
+                        case Constants.EN_REPEATX:
+                            repString = "repeat-x";
+                            break;
+                        case Constants.EN_REPEATY:
+                            repString = "repeat-y";
+                            break;
+                        case Constants.EN_NOREPEAT:
+                            repString = "no-repeat";
+                            break;
+                        default:
+                            throw new IllegalStateException(
+                                    "Illegal value for repeat encountered: " + repeat);
+                        }
+                        addAttribute("bkg-repeat", repString);
+                        addAttribute("bkg-horz-offset", bkg.getHoriz());
+                        addAttribute("bkg-vert-offset", bkg.getVertical());
+                    }
                 } else {
                     addAttribute(name, value.toString());
                 }
@@ -404,6 +460,7 @@ public class XMLRenderer extends PrintRenderer {
             atts.clear();
             addAreaAttributes(region);
             addTraitAttributes(region);
+            addAttribute("name", region.getRegionName());
             addAttribute("ctm", region.getCTM().toString());
             if (region.getRegionClass() == FO_REGION_BEFORE) {
                 startElement("regionBefore", atts);
@@ -414,8 +471,13 @@ public class XMLRenderer extends PrintRenderer {
                 renderRegion(region);
                 endElement("regionStart");
             } else if (region.getRegionClass() == FO_REGION_BODY) {
+                BodyRegion body = (BodyRegion)region;
+                if (body.getColumnCount() != 1) {
+                    addAttribute("columnGap", body.getColumnGap());
+                    addAttribute("columnCount", body.getColumnCount());
+                }
                 startElement("regionBody", atts);
-                renderBodyRegion((BodyRegion) region);
+                renderBodyRegion(body);
                 endElement("regionBody");
             } else if (region.getRegionClass() == FO_REGION_END) {
                 startElement("regionEnd", atts);
@@ -465,7 +527,9 @@ public class XMLRenderer extends PrintRenderer {
         atts.clear();
         addAreaAttributes(mr);
         addTraitAttributes(mr);
-        addAttribute("columnGap", mr.getColumnGap());
+        if (mr.getColumnCount() != 1) {
+            addAttribute("columnGap", mr.getColumnGap());
+        }
         startElement("mainReference", atts);
 
         Span span = null;
@@ -473,6 +537,9 @@ public class XMLRenderer extends PrintRenderer {
         for (int count = 0; count < spans.size(); count++) {
             span = (Span) spans.get(count);
             atts.clear();
+            if (span.getColumnCount() != 1) {
+                addAttribute("columnCount", span.getColumnCount());
+            }
             addAreaAttributes(span);
             addTraitAttributes(span);
             startElement("span", atts);
@@ -506,14 +573,12 @@ public class XMLRenderer extends PrintRenderer {
         atts.clear();
         addAreaAttributes(block);
         addTraitAttributes(block);
+        int positioning = block.getPositioning();
         if (block instanceof BlockViewport) {
             BlockViewport bvp = (BlockViewport)block;
             boolean abspos = false;
-            if (bvp.getPositioning() == Block.ABSOLUTE) {
-                addAttribute("positioning", "absolute");
-                abspos = true;
-            } else if (bvp.getPositioning() == Block.FIXED) {
-                addAttribute("positioning", "fixed");
+            if (bvp.getPositioning() == Block.ABSOLUTE 
+                    || bvp.getPositioning() == Block.FIXED) {
                 abspos = true;
             }
             if (abspos) {
@@ -525,15 +590,24 @@ public class XMLRenderer extends PrintRenderer {
                 addAttribute("clipped", "true");
             }
         } else {
-            if (block.getPositioning() == Block.RELATIVE) {
-                addAttribute("positioning", "relative");
-            }
             if (block.getXOffset() != 0) {
                 addAttribute("left-offset", block.getXOffset());
             }
             if (block.getYOffset() != 0) {
                 addAttribute("top-offset", block.getYOffset());
             }
+        }
+        switch (positioning) {
+        case Block.RELATIVE:
+            addAttribute("positioning", "relative");
+            break;
+        case Block.ABSOLUTE:
+            addAttribute("positioning", "absolute");
+            break;
+        case Block.FIXED:
+            addAttribute("positioning", "fixed");
+            break;
+        default: //nop
         }
         startElement("block", atts);
         super.renderBlock(block);
@@ -563,6 +637,10 @@ public class XMLRenderer extends PrintRenderer {
         addAreaAttributes(viewport);
         addTraitAttributes(viewport);
         addAttribute("offset", viewport.getOffset());
+        addAttribute("pos", viewport.getContentPosition());
+        if (viewport.getClip()) {
+            addAttribute("clip", Boolean.toString(viewport.getClip()));
+        }
         startElement("viewport", atts);
         super.renderViewport(viewport);
         endElement("viewport");
@@ -576,7 +654,7 @@ public class XMLRenderer extends PrintRenderer {
         addAreaAttributes(image);
         addTraitAttributes(image);
         addAttribute("url", image.getURL());
-        addAttribute("pos", pos);
+        //addAttribute("pos", pos);
         startElement("image", atts);
         endElement("image");
     }
@@ -600,10 +678,10 @@ public class XMLRenderer extends PrintRenderer {
         atts.clear();
         addAreaAttributes(fo);
         addTraitAttributes(fo);
-        addAttribute("pos", pos);
+        String ns = fo.getNameSpace();
+        addAttribute("ns", ns);
         startElement("foreignObject", atts);
         Document doc = fo.getDocument();
-        String ns = fo.getNameSpace();
         context.setProperty(XMLXMLHandler.HANDLER, handler);
         renderXML(context, doc, ns);
         endElement("foreignObject");
@@ -709,36 +787,11 @@ public class XMLRenderer extends PrintRenderer {
      * @see org.apache.fop.render.AbstractRenderer#renderLeader(Leader)
      */
     protected void renderLeader(Leader area) {
-        String style = "solid";
-        switch (area.getRuleStyle()) {
-            case EN_DOTTED:
-                style = "dotted";
-                break;
-            case EN_DASHED:
-                style = "dashed";
-                break;
-            case EN_SOLID:
-                break;
-            case EN_DOUBLE:
-                style = "double";
-                break;
-            case EN_GROOVE:
-                style = "groove";
-                break;
-            case EN_RIDGE:
-                style = "ridge";
-                break;
-            case EN_NONE:
-                style = "none";
-                break;
-            default:
-                style = "--NYI--";
-        }
         atts.clear();
         addAreaAttributes(area);
         addTraitAttributes(area);
         addAttribute("offset", area.getOffset());
-        addAttribute("ruleStyle", style);
+        addAttribute("ruleStyle", area.getRuleStyleAsString());
         addAttribute("ruleThickness", area.getRuleThickness());
         startElement("leader", atts);
         endElement("leader");

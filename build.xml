@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-  Copyright 1999-2005 The Apache Software Foundation
+  Copyright 1999-2006 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -258,6 +258,22 @@ list of possible build targets.
       </not>
     </condition>
     <echo message="${junit.message}"/>
+
+    <condition property="xmlunit.present">
+      <and>
+        <available classname="org.custommonkey.xmlunit.XMLTestCase" classpathref="libs-build-classpath"/>
+        <isset property="junit.present"/>
+      </and>
+    </condition>
+    <condition property="xmlunit.message" value="XMLUnit Support PRESENT">
+      <equals arg1="${xmlunit.present}" arg2="true"/>
+    </condition>
+    <condition property="xmlunit.message" value="XMLUnit Support NOT Present - you can get it from http://xmlunit.sourceforge.net">
+      <not>
+        <equals arg1="${xmlunit.present}" arg2="true"/>
+      </not>
+    </condition>
+    <echo message="${xmlunit.message}"/>
    
   </target>
 
@@ -628,13 +644,22 @@ list of possible build targets.
   <!-- =================================================================== -->
   <!-- Testing                                                             -->
   <!-- =================================================================== -->
-  <target name="junit-compile" depends="package, transcoder-pkg" description="Runs FOP's JUnit tests" if="junit.present">
+  <target name="junit-with-xmlunit" depends="init-avail" if="xmlunit.present">
+    <patternset id="test-sources"/>
+  </target>
+  <target name="junit-without-xmlunit" depends="init-avail" unless="xmlunit.present">
+    <patternset id="test-sources">
+      <exclude name="**/intermediate/*"/>
+    </patternset>
+  </target>
+  <target name="junit-compile" depends="package, transcoder-pkg, junit-with-xmlunit, junit-without-xmlunit" description="Runs FOP's JUnit tests" if="junit.present">
     <mkdir dir="${build.dir}/test-classes"/>
     <javac destdir="${build.dir}/test-classes" fork="javac.fork"
            debug="${javac.debug}" deprecation="${javac.deprecation}"
            optimize="${javac.optimize}" source="${javac.source}"
            target="${javac.target}">
       <src path="${basedir}/test/java"/>
+      <patternset refid="test-sources"/>
       <classpath>
         <path refid="libs-build-classpath"/>
         <fileset dir="${build.dir}">
@@ -802,7 +827,30 @@ list of possible build targets.
     </junit>
   </target>
 
-  <target name="junit" depends="junit-basic, junit-transcoder, junit-layout, junit-fotree" description="Runs all of FOP's JUnit tests" if="junit.present">
+  <target name="junit-intermediate-format" depends="junit-compile" description="Runs FOP's intermediate format JUnit tests" if="xmlunit.present">
+    <echo message="Running intermediate format tests"/>
+    <junit haltonerror="no" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
+      <sysproperty key="basedir" value="${basedir}"/>
+      <sysproperty key="jawa.awt.headless" value="true"/>
+      <sysproperty key="fop.layoutengine.disabled" value="${layoutengine.disabled}"/>
+      <sysproperty key="fop.layoutengine.testset" value="standard"/>
+      <formatter type="brief" usefile="false"/>
+      <classpath>
+        <pathelement location="${build.dir}/test-classes"/>
+        <path refid="libs-build-classpath"/>
+        <fileset dir="build">
+          <include name="fop.jar"/>
+        </fileset>
+      </classpath>
+      <batchtest todir="${build.dir}/test-reports/fop">
+        <fileset dir="${build.dir}/test-classes">
+          <include name="org/apache/fop/intermediate/IntermediateFormatTestSuite.class"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <target name="junit" depends="junit-basic, junit-transcoder, junit-layout, junit-fotree, junit-intermediate-format" description="Runs all of FOP's JUnit tests" if="junit.present">
     <fail>
       <condition>
         <or>

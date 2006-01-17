@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -202,6 +202,9 @@ public class Trait implements Serializable {
     public static final Integer LINETHROUGH_COLOR = new Integer(36);
     
     private static final Map TRAIT_INFO = new HashMap();
+    
+    /** The list of simple traits in order to avoid iterators */
+    public static final Object[] TRAIT_LIST;
 
     private static class TraitInfo {
         private String name;
@@ -232,19 +235,19 @@ public class Trait implements Serializable {
                           new TraitInfo("font", FontTriplet.class));
         TRAIT_INFO.put(FONT_SIZE,
                           new TraitInfo("font-size", Integer.class));
-        TRAIT_INFO.put(COLOR, new TraitInfo("color", String.class));
+        TRAIT_INFO.put(COLOR, new TraitInfo("color", Color.class));
         TRAIT_INFO.put(PROD_ID, new TraitInfo("prod-id", String.class));
         TRAIT_INFO.put(BACKGROUND,
                           new TraitInfo("background", Background.class));
         TRAIT_INFO.put(UNDERLINE,
                           new TraitInfo("underline-score", Boolean.class));
-        TRAIT_INFO.put(UNDERLINE_COLOR, new TraitInfo("underline-score-color", String.class));
+        TRAIT_INFO.put(UNDERLINE_COLOR, new TraitInfo("underline-score-color", Color.class));
         TRAIT_INFO.put(OVERLINE,
                           new TraitInfo("overline-score", Boolean.class));
-        TRAIT_INFO.put(OVERLINE_COLOR, new TraitInfo("overline-score-color", String.class));
+        TRAIT_INFO.put(OVERLINE_COLOR, new TraitInfo("overline-score-color", Color.class));
         TRAIT_INFO.put(LINETHROUGH,
                           new TraitInfo("through-score", Boolean.class));
-        TRAIT_INFO.put(LINETHROUGH_COLOR, new TraitInfo("through-score-color", String.class));
+        TRAIT_INFO.put(LINETHROUGH_COLOR, new TraitInfo("through-score-color", Color.class));
         TRAIT_INFO.put(BLINK,
                           new TraitInfo("blink", Boolean.class));
         TRAIT_INFO.put(OFFSET, new TraitInfo("offset", Integer.class));
@@ -285,6 +288,8 @@ public class Trait implements Serializable {
                 new TraitInfo("is-reference-area", Boolean.class));
         TRAIT_INFO.put(IS_VIEWPORT_AREA,
                 new TraitInfo("is-viewport-area", Boolean.class));
+        
+        TRAIT_LIST = TRAIT_INFO.keySet().toArray();
     }
 
     /**
@@ -326,7 +331,7 @@ public class Trait implements Serializable {
      * @param oTraitCode the trait code to lookup
      * @return the class type for the trait
      */
-    private static Class getTraitClass(Object oTraitCode) {
+    public static Class getTraitClass(Object oTraitCode) {
         TraitInfo ti = (TraitInfo) TRAIT_INFO.get(oTraitCode);
         return (ti != null ? ti.getClazz() : null);
     }
@@ -496,6 +501,51 @@ public class Trait implements Serializable {
             }
         }
         
+        /** @see java.lang.Object#hashCode() */
+        public int hashCode() {
+            return toString().hashCode();
+        }
+
+        /** @see java.lang.Object#equals(java.lang.Object) */
+        public boolean equals(Object obj) {
+            if (obj == null) {
+                return false;
+            } else if (obj == this) {
+                return true;
+            } else {
+                if (obj instanceof ColorType) {
+                    ColorType other = (ColorType)obj;
+                    return getRed() == other.getRed()
+                            && getGreen() == other.getGreen() 
+                            && getBlue() == other.getBlue()
+                            && getAlpha() == other.getAlpha();
+                }
+            }
+            return false;
+        }
+
+        /**
+         * Returns a Color represtation of a string of the format "#RRGGBB".
+         * @param s the string
+         * @return the Color value
+         */
+        public static Color valueOf(String s) {
+            if (s == null) {
+                return null;
+            }
+            if (!s.startsWith("#")) {
+                throw new IllegalArgumentException("Color must start with '#'");
+            }
+            int r = Integer.parseInt(s.substring(1, 3), 16);
+            int g = Integer.parseInt(s.substring(3, 5), 16);
+            int b = Integer.parseInt(s.substring(5, 7), 16);
+            int a = 255;
+            if (s.length() > 7) {
+                a = Integer.parseInt(s.substring(7, 9), 16);
+            }
+            return new Color(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f);
+        }
+        
         /** @see java.lang.Object#toString() */
         public String toString() {
             StringBuffer sbuf = new StringBuffer(8);
@@ -515,6 +565,13 @@ public class Trait implements Serializable {
                 sbuf.append('0');
             }
             sbuf.append(s);
+            if (alpha != 1) {
+                s = Integer.toHexString((int)(alpha * 255.0));
+                if (s.length() == 1) {
+                    sbuf.append('0');
+                }
+                sbuf.append(s);
+            }
             return sbuf.toString();
         }
 
@@ -617,6 +674,14 @@ public class Trait implements Serializable {
         }
 
         /**
+         * Sets the image repetition behaviour for images.
+         * @param repeat The image repetition behaviour to set
+         */
+        public void setRepeat(String repeat) {
+            setRepeat(getConstantForRepeat(repeat));
+        }
+
+        /**
          * Sets the URL to the background image.
          * @param url The URL to set
          */
@@ -640,7 +705,31 @@ public class Trait implements Serializable {
             this.vertical = vertical;
         }
 
-       /**
+        private String getRepeatString() {
+            switch (getRepeat()) {
+            case Constants.EN_REPEAT: return "repeat";
+            case Constants.EN_REPEATX: return "repeat-x";
+            case Constants.EN_REPEATY: return "repeat-y";
+            case Constants.EN_NOREPEAT: return "no-repeat";
+            default: throw new IllegalStateException("Illegal repeat style: " + getRepeat());
+            }
+        }
+
+        private static int getConstantForRepeat(String repeat) {
+            if ("repeat".equalsIgnoreCase(repeat)) {
+                return Constants.EN_REPEAT;
+            } else if ("repeat-x".equalsIgnoreCase(repeat)) {
+                return Constants.EN_REPEATX;
+            } else if ("repeat-y".equalsIgnoreCase(repeat)) {
+                return Constants.EN_REPEATY;
+            } else if ("no-repeat".equalsIgnoreCase(repeat)) {
+                return Constants.EN_NOREPEAT;
+            } else {
+                throw new IllegalStateException("Illegal repeat style: " + repeat);
+            }
+        }
+        
+        /**
          * Return the string for debugging.
          * @see java.lang.Object#toString()
          */
@@ -649,23 +738,7 @@ public class Trait implements Serializable {
             sb.append("color=").append(color);
             if (url != null) {
                 sb.append(",url=").append(url);
-                sb.append(",repeat=");
-                switch (repeat) {
-                    case Constants.EN_REPEAT:
-                        sb.append("repeat");
-                        break;
-                    case Constants.EN_REPEATX:
-                        sb.append("repeat-x");
-                        break;
-                    case Constants.EN_REPEATY:
-                        sb.append("repeat-y");
-                        break;
-                    case Constants.EN_NOREPEAT:
-                        sb.append("no-repeat");
-                        break;
-                    default:
-                        sb.append("ILLEGAL!");
-                }
+                sb.append(",repeat=").append(getRepeatString());
                 sb.append(",horiz=").append(horiz);
                 sb.append(",vertical=").append(vertical);
             }

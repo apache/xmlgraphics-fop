@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -113,8 +113,11 @@ public class RenderPagesModel extends AreaTreeModel {
             try {
                 renderer.renderPage(page);
             } catch (Exception e) {
-                // use error handler to handle this FOP or IO Exception
-                log.error(e);
+                //TODO use error handler to handle this FOP or IO Exception or propagate exception
+                String err = "Error while rendering page " + page.getPageNumberString(); 
+                log.error(err, e);
+                throw new IllegalStateException("Fatal error occurred. Cannot continue. " 
+                        + e.getClass().getName() + ": " + err);
             }
             page.clear();
         } else {

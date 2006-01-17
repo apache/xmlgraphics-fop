@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2004,2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,8 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.image.analyser.XMLReader;
 import org.apache.fop.image.FopImage;
+import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
-
-import java.util.HashMap;
 
 /**
  * This class provides the element mapping for FOP.
@@ -34,10 +33,17 @@ public class PlanElementMapping extends ElementMapping {
     /** Plan Namespace */
     public static final String NAMESPACE = "http://xmlgraphics.apache.org/fop/plan"; 
 
+    /** Main constructor. */
     public PlanElementMapping() {
         this.namespaceURI = NAMESPACE;
     }
 
+    /** @see org.apache.fop.fo.ElementMapping#getDOMImplementation() */
+    public DOMImplementation getDOMImplementation() {
+        return getDefaultDOMImplementation();
+    }
+
+    /** @see org.apache.fop.fo.ElementMapping#initialize() */
     protected void initialize() {
         if (foObjs == null) {
             foObjs = new java.util.HashMap();

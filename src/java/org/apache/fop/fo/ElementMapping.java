@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2004,2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,11 @@
 package org.apache.fop.fo;
 
 import java.util.HashMap;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.DOMImplementation;
 
 /**
  * Abstract base class for Element Mappings (including FO Element Mappings)
@@ -55,14 +60,50 @@ public abstract class ElementMapping {
     public String getNamespaceURI() {
         return namespaceURI;
     }
+    
+    /**
+     * Returns the DOMImplementation used by this ElementMapping. The value returned may be null
+     * for cases where no DOM is used to represent the element tree (XSL-FO, for example). This
+     * method is used by the intermediate format to instantiate the right kind of DOM document
+     * for foreign objects. For example, SVG handled through Apache Batik has to use a special
+     * DOMImplementation.
+     * @return the DOMImplementation used by this ElementMapping, may be null
+     */
+    public DOMImplementation getDOMImplementation() {
+        return null; //For namespaces not used in foreign objects
+    }
 
+    /**
+     * @return the default DOMImplementation when no specialized DOM is necessary.
+     */
+    protected DOMImplementation getDefaultDOMImplementation() {
+        DocumentBuilderFactory fact = DocumentBuilderFactory.newInstance();
+        fact.setNamespaceAware(true);
+        fact.setValidating(false);
+        try {
+            return fact.newDocumentBuilder().getDOMImplementation();
+        } catch (ParserConfigurationException e) {
+            throw new RuntimeException(
+                    "Cannot return default DOM implementation: " + e.getMessage());
+        }
+    }
+    
     /**
      * Initializes the set of maker objects associated with this ElementMapping
      */
     protected abstract void initialize();
 
+    /**
+     * Base class for all Makers. It is responsible to return the right kind of FONode for a
+     * particular element.
+     */
     public static class Maker {
 
+        /**
+         * Creates a new FONode (or rather a specialized subclass of it).
+         * @param parent the parent FONode
+         * @return the newly created FONode instance
+         */
         public FONode make(FONode parent) {
             return null;
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -187,7 +187,7 @@ public class Page implements Serializable, Cloneable {
      * @param areaclass the area class of the region to set
      * @param port the region viewport to set
      */
-    private void setRegionViewport(int areaclass, RegionViewport port) {
+    public void setRegionViewport(int areaclass, RegionViewport port) {
         if (areaclass == Constants.FO_REGION_BEFORE) {
             regionBefore = port;
         } else if (areaclass == Constants.FO_REGION_START) {

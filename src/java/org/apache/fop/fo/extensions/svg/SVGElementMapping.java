@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2004,2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import org.apache.fop.fo.ElementMapping;
 
 import org.apache.batik.util.XMLResourceDescriptor;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.w3c.dom.DOMImplementation;
 
 /**
  * Setup the SVG element mapping.
@@ -33,11 +34,20 @@ import org.apache.batik.dom.svg.SVGDOMImplementation;
  * that create the SVG Document.
  */
 public class SVGElementMapping extends ElementMapping {
-    public static String URI = SVGDOMImplementation.SVG_NAMESPACE_URI;
-    private boolean batik = true;
+    
+    /** the SVG namespace */
+    public static final String URI = SVGDOMImplementation.SVG_NAMESPACE_URI;
+    
+    private boolean batikAvailable = true;
 
+    /** Main constructor. */
     public SVGElementMapping() {
         namespaceURI = URI;
+    }
+
+    /** @see org.apache.fop.fo.ElementMapping#getDOMImplementation() */
+    public DOMImplementation getDOMImplementation() {
+        return SVGDOMImplementation.getDOMImplementation();
     }
 
     /**
@@ -45,7 +55,7 @@ public class SVGElementMapping extends ElementMapping {
      * Batik classes that apparently need it (error messages, perhaps)
      * @return an XML parser classname
      */
-    private final String getAParserClassName() {
+    private String getAParserClassName() {
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             return factory.newSAXParser().getXMLReader().getClass().getName();
@@ -54,8 +64,9 @@ public class SVGElementMapping extends ElementMapping {
         }
     }
 
+    /** @see org.apache.fop.fo.ElementMapping#initialize() */
     protected void initialize() {
-        if (foObjs == null && batik == true) {
+        if (foObjs == null && batikAvailable) {
             // this sets the parser that will be used
             // by default (SVGBrokenLinkProvider)
             // normally the user agent value is used
@@ -69,7 +80,7 @@ public class SVGElementMapping extends ElementMapping {
             } catch (Throwable t) {
                 // if the classes are not available
                 // the DISPLAY is not checked
-                batik = false;
+                batikAvailable = false;
             }
         }
     }
@@ -85,4 +96,5 @@ public class SVGElementMapping extends ElementMapping {
             return new SVGElement(parent);
         }
     }
+
 }

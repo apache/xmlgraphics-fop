@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2004,2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import org.w3c.dom.Document;
  * This holds an xml document and the associated namespace.
  */
 public class ForeignObject extends Area {
+    
     private Document doc;
     private String namespace;
 
@@ -43,6 +44,23 @@ public class ForeignObject extends Area {
         namespace = ns;
     }
 
+    /**
+     * Create a new empty foreign object for which the DOM Document will be set later.
+     *
+     * @param ns the namespace of the document
+     */
+    public ForeignObject(String ns) {
+        namespace = ns;
+    }
+
+    /**
+     * Sets the DOM document for this foreign object.
+     * @param document the DOM document
+     */
+    public void setDocument(Document document) {
+        this.doc = document;
+    }
+    
     /**
      * Get the document for this foreign object.
      *
