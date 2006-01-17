@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2004,2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,17 +24,27 @@ import javax.xml.parsers.SAXParserFactory;
 import org.apache.batik.util.XMLResourceDescriptor;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.FONode;
+import org.w3c.dom.DOMImplementation;
 
 /**
  * This Element Mapping is for Batik SVG Extension elements
  * of the http://xml.apache.org/batik/ext namespace.
  */
 public class BatikExtensionElementMapping extends ElementMapping {
-    public static String URI = "http://xml.apache.org/batik/ext";
+    
+    /** Namespace URI for Batik extension elements */
+    public static final String URI = "http://xml.apache.org/batik/ext";
+    
     private boolean batikAvail = true;
 
+    /** Main constructor. */
     public BatikExtensionElementMapping() {
         namespaceURI = URI;
+    }
+
+    /** @see org.apache.fop.fo.ElementMapping#getDOMImplementation() */
+    public DOMImplementation getDOMImplementation() {
+        return null; //no DOMImplementation necessary here
     }
 
     /**
@@ -83,4 +93,5 @@ public class BatikExtensionElementMapping extends ElementMapping {
             return new SVGElement(parent);
         }
     }
+
 }

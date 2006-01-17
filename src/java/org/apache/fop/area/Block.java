@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,13 +77,10 @@ public class Block extends BlockParent {
      * @param autoHeight increase the height of the block.
      */
     public void addBlock(Block block, boolean autoHeight) {
-        if (children == null) {
-            children = new ArrayList();
-        }
         if (autoHeight) {
             bpd += block.getAllocBPD();
         }
-        children.add(block);
+        addChildArea(block);
     }
 
     /**
@@ -92,11 +89,8 @@ public class Block extends BlockParent {
      * @param line the line area to add
      */
     public void addLineArea(LineArea line) {
-        if (children == null) {
-            children = new ArrayList();
-        }
         bpd += line.getAllocBPD();
-        children.add(line);
+        addChildArea(line);
     }
 
     /**

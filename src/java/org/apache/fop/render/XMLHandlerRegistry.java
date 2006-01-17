@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 The Apache Software Foundation.
+ * Copyright 2005-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -117,9 +117,16 @@ public class XMLHandlerRegistry {
         XMLHandler handler;
 
         List lst = (List)handlers.get(ns);
-        if (lst == null) {
+        handler = getXMLHandler(renderer, lst);
+        if (handler == null) {
             lst = (List)handlers.get(XMLHandler.HANDLE_ALL);
+            handler = getXMLHandler(renderer, lst);
         }
+        return handler;
+    }
+
+    private XMLHandler getXMLHandler(Renderer renderer, List lst) {
+        XMLHandler handler;
         if (lst != null) {
             for (int i = 0, c = lst.size(); i < c; i++) {
                 //TODO Maybe add priorities later
@@ -131,7 +138,6 @@ public class XMLHandlerRegistry {
         }
         return null; //No handler found
     }
-    
     
     /**
      * Discovers XMLHandler implementations through the classpath and dynamically

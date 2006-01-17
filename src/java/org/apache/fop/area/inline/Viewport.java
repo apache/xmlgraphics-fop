@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2004,2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ public class Viewport extends InlineArea {
     private Area content;
     // clipping for the viewport
     private boolean clip = false;
-    // position of the cild area relative to this area
+    // position of the child area relative to this area
     private Rectangle2D contentPosition;
 
     /**
@@ -83,6 +83,14 @@ public class Viewport extends InlineArea {
         return contentPosition;
     }
 
+    /**
+     * Sets the content area.
+     * @param content the content area
+     */
+    public void setContent(Area content) {
+        this.content = content;
+    }
+    
     /**
      * Get the content area for this viewport.
      *

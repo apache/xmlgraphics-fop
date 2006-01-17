@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,6 @@
 /* $Id$ */
  
 package org.apache.fop.area;
-
-import java.util.ArrayList;
-import java.util.List;
 
 // may combine with before float into a conditional area
 
@@ -80,29 +77,9 @@ public class Footnote extends BlockParent {
      * @param child the block area.
      */
     public void addBlock(Block child) {
-        if (children == null) {
-            children = new ArrayList();
-        }
+        addChildArea(child);
         this.setBPD(this.getBPD() + child.getBPD());
-        children.add(child);
     }
 
-    /**
-     * Get all child areas.
-     *
-     * @return the list of child areas. Maybe null.
-     */
-    public List getChildAreas() {
-        return children;
-    }
-
-    /**
-     * Check whether there are child areas.
-     *
-     * @return the result.
-     */
-    public boolean isEmpty() {
-        return children == null || children.size() == 0;
-    }
 }
 

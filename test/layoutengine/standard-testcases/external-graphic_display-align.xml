@@ -60,26 +60,26 @@
     <eval expected="46080" xpath="//flow/block[2]/lineArea/viewport/@ipda"/>
     <eval expected="60000" xpath="//flow/block[2]/lineArea/viewport/@bpd"/>
     <eval expected="60000" xpath="//flow/block[2]/lineArea/viewport/@bpda"/>
-    <eval expected="0 0 46080 46080" xpath="//flow/block[2]/lineArea/viewport/image/@pos"/>
+    <eval expected="0 0 46080 46080" xpath="//flow/block[2]/lineArea/viewport/@pos"/>
     <eval expected="46080" xpath="//flow/block[4]/lineArea/viewport/@ipd"/>
     <eval expected="46080" xpath="//flow/block[4]/lineArea/viewport/@ipda"/>
     <eval expected="60000" xpath="//flow/block[4]/lineArea/viewport/@bpd"/>
     <eval expected="60000" xpath="//flow/block[4]/lineArea/viewport/@bpda"/>
-    <eval expected="0 0 46080 46080" xpath="//flow/block[4]/lineArea/viewport/image/@pos"/>
+    <eval expected="0 0 46080 46080" xpath="//flow/block[4]/lineArea/viewport/@pos"/>
     <eval expected="46080" xpath="//flow/block[6]/lineArea/viewport/@ipd"/>
     <eval expected="46080" xpath="//flow/block[6]/lineArea/viewport/@ipda"/>
     <eval expected="60000" xpath="//flow/block[6]/lineArea/viewport/@bpd"/>
     <eval expected="60000" xpath="//flow/block[6]/lineArea/viewport/@bpda"/>
-    <eval expected="0 0 46080 46080" xpath="//flow/block[6]/lineArea/viewport/image/@pos"/>
+    <eval expected="0 0 46080 46080" xpath="//flow/block[6]/lineArea/viewport/@pos"/>
     <eval expected="46080" xpath="//flow/block[8]/lineArea/viewport/@ipd"/>
     <eval expected="46080" xpath="//flow/block[8]/lineArea/viewport/@ipda"/>
     <eval expected="60000" xpath="//flow/block[8]/lineArea/viewport/@bpd"/>
     <eval expected="60000" xpath="//flow/block[8]/lineArea/viewport/@bpda"/>
-    <eval expected="0 6960 46080 46080" xpath="//flow/block[8]/lineArea/viewport/image/@pos"/>
+    <eval expected="0 6960 46080 46080" xpath="//flow/block[8]/lineArea/viewport/@pos"/>
     <eval expected="46080" xpath="//flow/block[10]/lineArea/viewport/@ipd"/>
     <eval expected="46080" xpath="//flow/block[10]/lineArea/viewport/@ipda"/>
     <eval expected="60000" xpath="//flow/block[10]/lineArea/viewport/@bpd"/>
     <eval expected="60000" xpath="//flow/block[10]/lineArea/viewport/@bpda"/>
-    <eval expected="0 13920 46080 46080" xpath="//flow/block[10]/lineArea/viewport/image/@pos"/>
+    <eval expected="0 13920 46080 46080" xpath="//flow/block[10]/lineArea/viewport/@pos"/>
   </checks>
 </testcase>

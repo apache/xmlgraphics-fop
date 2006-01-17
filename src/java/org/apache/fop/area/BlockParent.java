@@ -52,16 +52,21 @@ public class BlockParent extends Area {
     // orientation if reference area
     private int orientation = ORIENT_0;
 
+    /** @see org.apache.fop.area.Area#addChildArea(org.apache.fop.area.Area) */
+    public void addChildArea(Area childArea) {
+        if (children == null) {
+            children = new ArrayList();
+        }
+        children.add(childArea);
+    }
+    
     /**
      * Add the block area to this block parent.
      *
      * @param block the child block area to add
      */
     public void addBlock(Block block) {
-        if (children == null) {
-            children = new ArrayList();
-        }
-        children.add(block);
+        addChildArea(block);
     }
 
     /**
@@ -71,6 +76,15 @@ public class BlockParent extends Area {
      */
     public List getChildAreas() {
         return children;
+    }
+
+    /**
+     * Check whether there are child areas.
+     *
+     * @return the result.
+     */
+    public boolean isEmpty() {
+        return children == null || children.size() == 0;
     }
 
     /**

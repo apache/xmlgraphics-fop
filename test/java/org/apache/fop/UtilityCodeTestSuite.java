@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@
  
 package org.apache.fop;
 
+import org.apache.fop.traits.BorderPropsTestCase;
+import org.apache.fop.traits.TraitColorTestCase;
 import org.apache.fop.util.ASCII85InputStreamTestCase;
 import org.apache.fop.util.ASCII85OutputStreamTestCase;
 import org.apache.fop.util.PDFNumberTestCase;
@@ -41,6 +43,8 @@ public class UtilityCodeTestSuite {
         suite.addTest(new TestSuite(ASCII85OutputStreamTestCase.class));
         suite.addTest(new TestSuite(ASCII85InputStreamTestCase.class));
         suite.addTest(new TestSuite(PDFNumberTestCase.class));
+        suite.addTest(new TestSuite(TraitColorTestCase.class));
+        suite.addTest(new TestSuite(BorderPropsTestCase.class));
         //$JUnit-END$
         return suite;
     }

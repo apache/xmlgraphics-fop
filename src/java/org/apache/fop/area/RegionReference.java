@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,6 +67,11 @@ public class RegionReference extends Area implements Cloneable {
         regionViewport = parent;
     }
 
+    /** @see org.apache.fop.area.Area#addChildArea(org.apache.fop.area.Area) */
+    public void addChildArea(Area child) {
+        blocks.add(child);
+    }
+
     /**
      * Set the Coordinate Transformation Matrix which transforms content
      * coordinates in this region reference area which are specified in
@@ -125,7 +130,7 @@ public class RegionReference extends Area implements Cloneable {
      * @param block the block area to add
      */
     public void addBlock(Block block) {
-        blocks.add(block);
+        addChildArea(block);
     }
 
     /**

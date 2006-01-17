@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,10 @@ package org.apache.fop.traits;
 import org.apache.fop.area.Trait;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fonts.FontTriplet;
 
 import java.io.Serializable;
+import java.util.StringTokenizer;
 
 /**
  * Border properties.
@@ -61,6 +63,17 @@ public class BorderProps implements Serializable {
     }
 
     /**
+     * Constructs a new BorderProps instance.
+     * @param style border style (one of the XSL enum values for border style)
+     * @param width border width
+     * @param color border color
+     * @param mode border mode ((one of SEPARATE, COLLAPSE_INNER and COLLAPSE_OUTER)
+     */
+    public BorderProps(String style, int width, ColorType color, int mode) {
+        this(getConstantForStyle(style), width, color, mode);
+    }
+
+    /**
      * @param bp the border properties or null
      * @return the effective width of the clipped part of the border
      */
@@ -88,6 +101,83 @@ public class BorderProps implements Serializable {
         }
     }
     
+    private static int getConstantForStyle(String style) {
+        if ("none".equalsIgnoreCase(style)) {
+            return Constants.EN_NONE;
+        } else if ("hidden".equalsIgnoreCase(style)) {
+            return Constants.EN_HIDDEN;
+        } else if ("dotted".equalsIgnoreCase(style)) {
+            return Constants.EN_DOTTED;
+        } else if ("dashed".equalsIgnoreCase(style)) {
+            return Constants.EN_DASHED;
+        } else if ("solid".equalsIgnoreCase(style)) {
+            return Constants.EN_SOLID;
+        } else if ("double".equalsIgnoreCase(style)) {
+            return Constants.EN_DOUBLE;
+        } else if ("groove".equalsIgnoreCase(style)) {
+            return Constants.EN_GROOVE;
+        } else if ("ridge".equalsIgnoreCase(style)) {
+            return Constants.EN_RIDGE;
+        } else if ("inset".equalsIgnoreCase(style)) {
+            return Constants.EN_INSET;
+        } else if ("outset".equalsIgnoreCase(style)) {
+            return Constants.EN_OUTSET;
+        } else {
+            throw new IllegalStateException("Illegal border style: " + style);
+        }
+    }
+    
+    /** @see java.lang.Object#hashCode() */
+    public int hashCode() {
+        return toString().hashCode();
+    }
+
+    /** @see java.lang.Object#equals(java.lang.Object) */
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        } else if (obj == this) {
+            return true;
+        } else {
+            if (obj instanceof BorderProps) {
+                BorderProps other = (BorderProps)obj;
+                return (style == other.style)
+                        && color.equals(other.color) 
+                        && width == other.width
+                        && mode == other.mode;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns a BorderProps represtation of a string of the format as written by 
+     * BorderProps.toString().
+     * @param s the string
+     * @return a BorderProps instance
+     */
+    public static BorderProps valueOf(String s) {
+        if (s.startsWith("(") && s.endsWith(")")) {
+            s = s.substring(1, s.length() - 1);
+            StringTokenizer st = new StringTokenizer(s, ",");
+            String style = st.nextToken();
+            String color = st.nextToken();
+            int width = Integer.parseInt(st.nextToken());
+            int mode = SEPARATE;
+            if (st.hasMoreTokens()) {
+                String ms = st.nextToken();
+                if ("collapse-inner".equalsIgnoreCase(ms)) {
+                    mode = COLLAPSE_INNER;
+                } else if ("collapse-outer".equalsIgnoreCase(ms)) {
+                    mode = COLLAPSE_OUTER;
+                }
+            }
+            return new BorderProps(style, width, Trait.Color.valueOf(color), mode);
+        } else {
+            throw new IllegalArgumentException("BorderProps must be surrounded by parentheses");
+        }
+    }
+
     /** @see java.lang.Object#toString() */
     public String toString() {
         StringBuffer sbuf = new StringBuffer();
@@ -108,4 +198,5 @@ public class BorderProps implements Serializable {
         sbuf.append(')');
         return sbuf.toString();
     }
+
 }

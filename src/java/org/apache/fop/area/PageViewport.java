@@ -108,6 +108,16 @@ public class PageViewport implements Resolvable, Cloneable {
     }
 
     /**
+     * Constructor used by the area tree parser.
+     * @param viewArea the view area
+     * @param pageStr String representation of the page number
+     */
+    public PageViewport(Rectangle2D viewArea, String pageStr) {
+        this.viewArea = viewArea;
+        this.pageNumberString = pageStr;
+    }
+    
+    /**
      * Get the view area rectangle of this viewport.
      * @return the rectangle for this viewport
      */
@@ -121,6 +131,14 @@ public class PageViewport implements Resolvable, Cloneable {
      */
     public Page getPage() {
         return page;
+    }
+    
+    /**
+     * Sets the page object for this PageViewport.
+     * @param page the page
+     */
+    public void setPage(Page page) {
+        this.page = page;
     }
 
     /**
