@@ -132,6 +132,7 @@
 
     <features label="Features">
       <output label="Output Targets" href="output.html"/>
+      <if label="Intermediate Format" href="intermediate.html"/>
       <pdfencryption label="PDF Encryption" href="pdfencryption.html"/>
       <graphics label="Graphics" href="graphics.html"/>
       <fonts label="Fonts" href="fonts.html"/>
