@@ -43,6 +43,7 @@ import org.apache.fop.render.PrintRenderer;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.XMLHandler;
+import org.apache.fop.util.XMLizable;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.MimeConstants;
@@ -56,6 +57,8 @@ import org.apache.fop.area.NormalFlow;
 import org.apache.fop.area.Footnote;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.MainReference;
+import org.apache.fop.area.OffDocumentExtensionAttachment;
+import org.apache.fop.area.OffDocumentItem;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.RegionReference;
 import org.apache.fop.area.RegionViewport;
@@ -75,6 +78,7 @@ import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.fonts.FontTriplet;
@@ -114,6 +118,9 @@ public class XMLRenderer extends PrintRenderer {
     
     /** The OutputStream to write the generated XML to. */
     protected OutputStream out;
+
+    /** A list of ExtensionAttachements received through processOffDocumentItem() */
+    protected List extensionAttachments;
     
     /**
      * Creates a new XML renderer.
@@ -357,6 +364,28 @@ public class XMLRenderer extends PrintRenderer {
                   + (int) rect.getWidth() + " " + (int) rect.getHeight();
     }
 
+    private void handleDocumentExtensionAttachments() {
+        if (extensionAttachments != null && extensionAttachments.size() > 0) {
+            handleExtensionAttachments(extensionAttachments);
+            extensionAttachments.clear();
+        }
+    }
+    
+    /** @see org.apache.fop.render.AbstractRenderer#processOffDocumentItem() */
+    public void processOffDocumentItem(OffDocumentItem oDI) {
+        if (oDI instanceof OffDocumentExtensionAttachment) {
+            ExtensionAttachment attachment = ((OffDocumentExtensionAttachment)oDI).getAttachment();
+            if (extensionAttachments == null) {
+                extensionAttachments = new java.util.ArrayList();
+            }
+            extensionAttachments.add(attachment);
+        } else {
+            String warn = "Ignoring OffDocumentItem: " + oDI;
+            comment("WARNING: " + warn);
+            log.warn(warn);
+        }
+    }
+
     /**
      * @see org.apache.fop.render.Renderer#startRenderer(OutputStream)
      */
@@ -416,15 +445,45 @@ public class XMLRenderer extends PrintRenderer {
         addAttribute("nr", page.getPageNumberString());
         startElement("pageViewport", atts);
         startElement("page");
+        
+        handlePageExtensionAttachments(page);
         super.renderPage(page);
+        
         endElement("page");
         endElement("pageViewport");
     }
 
+    private void handleExtensionAttachments(List attachments) {
+        if (attachments != null && attachments.size() > 0) {
+            startElement("extension-attachments");
+            Iterator i = attachments.iterator();
+            while (i.hasNext()) {
+                ExtensionAttachment attachment = (ExtensionAttachment)i.next();
+                if (attachment instanceof XMLizable) {
+                    try {
+                        ((XMLizable)attachment).toSAX(this.handler);
+                    } catch (SAXException e) {
+                        log.error("Error while serializing Extension Attachment", e);
+                    }
+                } else {
+                    String warn = "Ignoring non-XMLizable ExtensionAttachment: " + attachment;
+                    comment("WARNING: " + warn);
+                    log.warn(warn);
+                }
+            }
+            endElement("extension-attachments");
+        }
+    }
+    
+    private void handlePageExtensionAttachments(PageViewport page) {
+        handleExtensionAttachments(page.getExtensionAttachments());
+    }
+    
     /**
      * @see org.apache.fop.render.Renderer#startPageSequence(LineArea)
      */
     public void startPageSequence(LineArea seqTitle) {
+        handleDocumentExtensionAttachments();
         if (startedSequence) {
             endElement("pageSequence");
         }

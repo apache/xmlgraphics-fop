@@ -32,6 +32,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 
 /**
@@ -490,6 +491,17 @@ public class PageViewport implements Resolvable, Cloneable {
     /** @return the name of the simple-page-master that created this page */
     public String getSimplePageMasterName() {
         return this.simplePageMasterName;
+    }
+    
+    /**
+     * Adds a new ExtensionAttachment instance to this page.
+     * @param attachment the ExtensionAttachment
+     */
+    public void addExtensionAttachment(ExtensionAttachment attachment) {
+        if (this.extensionAttachments == null) {
+            this.extensionAttachments = new java.util.ArrayList();
+        }
+        extensionAttachments.add(attachment);
     }
     
     /** @return the list of extension attachments for this page */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 The Apache Software Foundation.
+ * Copyright 2005-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,11 +21,15 @@ package org.apache.fop.render.ps.extensions;
 import java.io.Serializable;
 
 import org.apache.fop.fo.extensions.ExtensionAttachment;
+import org.apache.fop.util.XMLizable;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * This is the pass-through value object for the PostScript extension.
  */
-public class PSSetupCode implements ExtensionAttachment, Serializable {
+public class PSSetupCode implements ExtensionAttachment, Serializable, XMLizable {
 
     /** The category URI for this extension attachment. */
     public static final String CATEGORY = "apache:fop:extensions:postscript";
@@ -81,9 +85,26 @@ public class PSSetupCode implements ExtensionAttachment, Serializable {
         return CATEGORY;
     }
     
-    
     /** @see java.lang.Object#toString() */
     public String toString() {
         return "PSSetupCode(name=" + getName() + ")";
     }
+
+    private static final String ATT_NAME = "name";
+    private static final String ELEMENT = "ps-setup-code";
+    
+    /** @see org.apache.fop.util.XMLizable#toSAX(org.xml.sax.ContentHandler) */
+    public void toSAX(ContentHandler handler) throws SAXException {
+        AttributesImpl atts = new AttributesImpl();
+        if (name != null && name.length() > 0) {
+            atts.addAttribute(null, ATT_NAME, ATT_NAME, "CDATA", name);
+        }
+        handler.startElement(CATEGORY, ELEMENT, ELEMENT, atts);
+        if (content != null && content.length() > 0) {
+            char[] chars = content.toCharArray();
+            handler.characters(chars, 0, chars.length);
+        }
+        handler.endElement(CATEGORY, ELEMENT, ELEMENT);
+    }
+    
 }

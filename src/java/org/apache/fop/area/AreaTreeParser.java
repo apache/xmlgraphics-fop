@@ -51,11 +51,14 @@ import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.ElementMappingRegistry;
+import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
 import org.apache.fop.traits.BorderProps;
+import org.apache.fop.util.ContentHandlerFactory;
+import org.apache.fop.util.ContentHandlerFactoryRegistry;
 import org.apache.fop.util.DefaultErrorListener;
 
 import org.w3c.dom.DOMImplementation;
@@ -182,6 +185,7 @@ public class AreaTreeParser {
                 delegateStack.push(qName);
                 delegate.startElement(uri, localName, qName, attributes);
             } else if (domImplementation != null) {
+                //domImplementation is set so we need to start a new DOM building sub-process
                 TransformerHandler handler;
                 try {
                     handler = tFactory.newTransformerHandler();
@@ -196,6 +200,7 @@ public class AreaTreeParser {
                 ((ForeignObject)parent).setDocument(doc);
                 
                 //activate delegate for nested foreign document
+                domImplementation = null; //Not needed anymore now
                 this.delegate = handler;
                 delegateStack.push(qName);
                 delegate.startDocument();
@@ -405,15 +410,31 @@ public class AreaTreeParser {
                         setTraits(attributes, foreign);
                         getCurrentViewport().setContent(foreign);
                         areaStack.push(foreign);
+                    } else if ("extension-attachments".equals(localName)) {
+                        //TODO implement me
                     } else {
                         handled = false;
                     }
                 } else {
-                    handled = false;
+                    ContentHandlerFactory factory 
+                            = ContentHandlerFactoryRegistry.getInstance().getFactory(uri);
+                    if (factory != null) {
+                        delegate = factory.createContentHandler();
+                        delegateStack.push(qName);
+                        delegate.startDocument();
+                        delegate.startElement(uri, localName, qName, attributes);
+                    } else {
+                        handled = false;
+                    }
                 }
                 if (!handled) {
-                    throw new SAXException("Unhandled element " + localName 
-                            + " in namespace: " + uri);
+                    if (uri == null || uri.length() == 0) {
+                        throw new SAXException("Unhandled element " + localName 
+                                + " in namespace: " + uri);
+                    } else {
+                        log.warn("Unhandled element " + localName 
+                                + " in namespace: " + uri);
+                    }
                 }
             }
         }
@@ -438,6 +459,25 @@ public class AreaTreeParser {
             }
         }
         
+        /**
+         * Handles objects created by "sub-parsers" that implement the ObjectSource interface.
+         * An example of object handled here are ExtensionAttachments.
+         * @param obj the Object to be handled.
+         */
+        protected void handleExternallyGeneratedObject(Object obj) {
+            if (areaStack.size() == 0 && obj instanceof ExtensionAttachment) {
+                ExtensionAttachment attachment = (ExtensionAttachment)obj;
+                if (this.currentPageViewport == null) {
+                    this.treeModel.handleOffDocumentItem(
+                            new OffDocumentExtensionAttachment(attachment));
+                } else {
+                    this.currentPageViewport.addExtensionAttachment(attachment);
+                }
+            } else {
+                log.warn("Don't know how to handle externally generated object: " + obj);
+            }
+        }
+
         /** @see org.xml.sax.helpers.DefaultHandler */
         public void endElement(String uri, String localName, String qName) throws SAXException {
             if (delegate != null) {
@@ -445,8 +485,11 @@ public class AreaTreeParser {
                 delegateStack.pop();
                 if (delegateStack.size() == 0) {
                     delegate.endDocument();
-                    delegate = null;
-                    domImplementation = null;
+                    if (delegate instanceof ContentHandlerFactory.ObjectSource) {
+                        Object obj = ((ContentHandlerFactory.ObjectSource)delegate).getObject();
+                        handleExternallyGeneratedObject(obj);
+                    }
+                    delegate = null; //Sub-document is processed, return to normal processing
                 }
             } else {
                 if ("".equals(uri)) {
