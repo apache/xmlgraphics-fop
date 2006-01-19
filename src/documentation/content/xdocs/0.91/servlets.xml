@@ -61,7 +61,7 @@
                    HttpServletResponse response) throws ServletException {
     try {
         response.setContentType("application/pdf");
-        Fop fop = new Fop(Constants.RENDER_PDF);
+        Fop fop = new Fop(MimeConstants.MIME_PDF);
         fop.setOutputStream(response.getOutputStream());
         TransformerFactory factory = TransformerFactory.newInstance();
         Transformer transformer = factory.newTransformer();
@@ -96,7 +96,7 @@ public void init() throws ServletException {
 [..]
 
     //Setup FOP
-    Fop fop = new Fop(Constants.RENDER_PDF);
+    Fop fop = new Fop(MimeConstants.MIME_PDF);
 
     //Setup a buffer to obtain the content length
     ByteArrayOutputStream out = new ByteArrayOutputStream();

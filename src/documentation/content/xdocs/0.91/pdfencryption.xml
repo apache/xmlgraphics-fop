@@ -142,7 +142,7 @@ import org.apache.fop.pdf.PDFEncryptionParams;
 FOUserAgent userAgent = new FOUserAgent();
 useragent.setPDFEncryptionParams(new PDFEncryptionParams(
     null, "password", false, false, true, true));
-Fop fop = new Fop(Constants.RENDER_PDF, userAgent);
+Fop fop = new Fop(MimeConstants.MIME_PDF, userAgent);
 driver.setOutputStream(...]]></source>
       <p>
         The parameters for the constructor of PDFEncryptionParams are:
