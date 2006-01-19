@@ -129,8 +129,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         this.discardBorderAfter = false;        
         this.discardPaddingBefore = false;        
         this.discardPaddingAfter = false;
-        this.effSpaceBefore = foSpaceBefore;
-        this.effSpaceAfter = foSpaceAfter;
+        this.effSpaceBefore = null;
+        this.effSpaceAfter = null;
     }
 
     /** @return the content IPD */
@@ -241,17 +241,19 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         LinkedList contentList = new LinkedList();
         LinkedList returnList = new LinkedList();
         
-        if (!bBreakBeforeServed) {
+        if (!breakBeforeServed) {
             try {
                 if (addKnuthElementsForBreakBefore(returnList, context)) {
                     return returnList;
                 }
             } finally {
-                bBreakBeforeServed = true;
+                breakBeforeServed = true;
             }
         }
 
-        addKnuthElementsForSpaceBefore(returnList, alignment);
+        if (!firstVisibleMarkServed) {
+            addKnuthElementsForSpaceBefore(returnList, alignment);
+        }
         
         addKnuthElementsForBorderPaddingBefore(returnList, !firstVisibleMarkServed);
         firstVisibleMarkServed = true;

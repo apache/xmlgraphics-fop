@@ -126,8 +126,8 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         this.discardBorderAfter = false;        
         this.discardPaddingBefore = false;        
         this.discardPaddingAfter = false;
-        this.effSpaceBefore = foSpaceBefore;
-        this.effSpaceAfter = foSpaceAfter;
+        this.effSpaceBefore = null;
+        this.effSpaceAfter = null;
     }
     
     /** @return half the value of border-separation.block-progression-dimension. */
@@ -145,13 +145,13 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         
         LinkedList returnList = new LinkedList();
         
-        if (!bBreakBeforeServed) {
+        if (!breakBeforeServed) {
             try {
                 if (addKnuthElementsForBreakBefore(returnList, context)) {
                     return returnList;
                 }
             } finally {
-                bBreakBeforeServed = true;
+                breakBeforeServed = true;
             }
         }
 
@@ -202,7 +202,9 @@ public class TableLayoutManager extends BlockStackingLayoutManager
             }
         }
 
-        addKnuthElementsForSpaceBefore(returnList, alignment);
+        if (!firstVisibleMarkServed) {
+            addKnuthElementsForSpaceBefore(returnList, alignment);
+        }
         
         if (getTable().isSeparateBorderModel()) {
             addKnuthElementsForBorderPaddingBefore(returnList, !firstVisibleMarkServed);

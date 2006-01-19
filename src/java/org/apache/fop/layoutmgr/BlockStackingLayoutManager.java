@@ -55,7 +55,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     /** Only used to store the original list when createUnitElements is called */
     protected LinkedList storedList = null;
     /** Indicates whether break before has been served or not */
-    protected boolean bBreakBeforeServed = false;
+    protected boolean breakBeforeServed = false;
     /** Indicates whether the first visible mark has been returned by this LM, yet */
     protected boolean firstVisibleMarkServed = false;
     /** Reference IPD available */
@@ -235,17 +235,19 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         LinkedList contentList = new LinkedList();
         LinkedList returnList = new LinkedList();
 
-        if (!bBreakBeforeServed) {
+        if (!breakBeforeServed) {
             try {
                 if (addKnuthElementsForBreakBefore(returnList, context)) {
                     return returnList;
                 }
             } finally {
-                bBreakBeforeServed = true;
+                breakBeforeServed = true;
             }
         }
 
-        addKnuthElementsForSpaceBefore(returnList, alignment);
+        if (!firstVisibleMarkServed) {
+            addKnuthElementsForSpaceBefore(returnList, alignment);
+        }
         
         addKnuthElementsForBorderPaddingBefore(returnList, !firstVisibleMarkServed);
         firstVisibleMarkServed = true;
@@ -316,18 +318,10 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                         // blocks
                         contentList.add(new BreakElement(
                                 new Position(this), KnuthElement.INFINITE, context));
-                        /*
-                        contentList.add(new KnuthPenalty(0,
-                                KnuthElement.INFINITE, false,
-                                new Position(this), false));
-                        */
                     } else if (!((ListElement) contentList.getLast()).isGlue()) {
                         // add a null penalty to allow a break between blocks
                         contentList.add(new BreakElement(
                                 new Position(this), 0, context));
-                        /*
-                        contentList.add(new KnuthPenalty(0, 0, false,
-                                new Position(this), false));*/
                     } else {
                         // the last element in contentList is a glue;
                         // it is a feasible breakpoint, there is no need to add
@@ -763,22 +757,6 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
      * @param context the layout context
      */
     protected void addPendingMarks(LayoutContext context) {
-        SpaceProperty spaceBefore = getSpaceBeforeProperty();
-        if (spaceBefore != null
-                   && !(spaceBefore.getMinimum(this).getLength().getValue(this) == 0 
-                        && spaceBefore.getMaximum(this).getLength().getValue(this) == 0)) {
-            context.addPendingBeforeMark(new SpaceElement(getAuxiliaryPosition(), spaceBefore,
-                    RelSide.BEFORE, 
-                    true, false, this));
-        }
-        SpaceProperty spaceAfter = getSpaceAfterProperty();
-        if (spaceAfter != null
-                && !(spaceAfter.getMinimum(this).getLength().getValue(this) == 0 
-                     && spaceAfter.getMaximum(this).getLength().getValue(this) == 0)) {
-            context.addPendingAfterMark(new SpaceElement(getAuxiliaryPosition(), spaceAfter,
-                    RelSide.AFTER, 
-                    false, true, this));
-        }
         CommonBorderPaddingBackground borderAndPadding = getBorderPaddingBackground();
         if (borderAndPadding != null) {
             if (borderAndPadding.getBorderBeforeWidth(false) > 0) {

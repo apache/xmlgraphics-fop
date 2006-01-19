@@ -18,13 +18,13 @@
 <testcase>
   <info>
     <p>
-      This test checks space properties on table. Demonstrates that spaces are repeated on every generated area.
+      This test checks space properties on table. Demonstrates that spaces are only on the first (or last) generated area.
     </p>
   </info>
   <fo>
     <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
       <fo:layout-master-set>
-        <fo:simple-page-master master-name="normal" page-width="5in" page-height="30pt">
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="28pt">
           <fo:region-body/>
         </fo:simple-page-master>
       </fo:layout-master-set>
@@ -57,42 +57,23 @@
       <box w="0"/>
       <penalty w="0" p="INF"/>
       <glue w="5000"/>
+      
       <box w="10000"/>
       <penalty w="0" p="0"/>
-      <glue w="-5000"/>
-      
-      <box w="0"/>
-      <penalty w="0" p="INF"/>
-      <glue w="5000"/>
       <box w="10000"/>
       <penalty w="0" p="0"/>
-      <glue w="-5000"/>
-      
-      <box w="0"/>
-      <penalty w="0" p="INF"/>
-      <glue w="5000"/>
       <box w="10000"/>
       <penalty w="0" p="0"/>
-      <glue w="-5000"/>
-      
-      <box w="0"/>
-      <penalty w="0" p="INF"/>
-      <glue w="5000"/>
       <box w="10000"/>
       <penalty w="0" p="0"/>
-      <glue w="-5000"/>
-      
-      <box w="0"/>
-      <penalty w="0" p="INF"/>
-      <glue w="5000"/>
       <box w="10000"/>
       
       <skip>3</skip>
     </element-list>
     <eval expected="3" xpath="count(//pageViewport)"/>
     <eval expected="5000" xpath="//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/@space-before"/>
-    <eval expected="5000" xpath="//pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/@space-before"/>
-    <eval expected="5000" xpath="//pageViewport[@nr=3]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/@space-before"/>
+    <true xpath="not(boolean(//pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/@space-before))"/>
+    <true xpath="not(boolean(//pageViewport[@nr=3]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/@space-before))"/>
     <eval expected="1" xpath="count(//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span/flow/block)"/>
     <eval expected="1" xpath="count(//pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block)"/>
     <eval expected="1" xpath="count(//pageViewport[@nr=3]/page/regionViewport/regionBody/mainReference/span/flow/block)"/>

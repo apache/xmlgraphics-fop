@@ -260,6 +260,11 @@
     content to disappear.</description>
   </testcase>
   <testcase>
+    <name>Column Balancing problems</name>
+    <file>region-body_column-count_bug36356.xml</file>
+    <description>Column balancing doesn't work as expected.</description>
+  </testcase>
+  <testcase>
     <name>No background-images on table-body</name>
     <file>table-body_background-image.xml</file>
     <description>The backgrounds of table-body, table-header,
