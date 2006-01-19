@@ -125,7 +125,7 @@ out = proc.getOutputStream();]]></source>
   try {
     ByteArrayOutputStream fopout = new ByteArrayOutputStream();
     FileOutputStream outfile = new FileOutputStream(args[2]);
-    Fop fop = new Fop(Constants.RENDER_PDF);
+    Fop fop = new Fop(MimeConstants.MIME_PDF);
     fop.setOutputStream(fopout);
     
     Transformer transformer = TransformerFactory.newInstance().newTransformer(
