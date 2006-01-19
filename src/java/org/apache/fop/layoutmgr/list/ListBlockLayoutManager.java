@@ -109,8 +109,8 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
         this.discardBorderAfter = false;        
         this.discardPaddingBefore = false;        
         this.discardPaddingAfter = false;
-        this.effSpaceBefore = foSpaceBefore;
-        this.effSpaceAfter = foSpaceAfter;
+        this.effSpaceBefore = null;
+        this.effSpaceAfter = null;
     }
     
     /** @see org.apache.fop.layoutmgr.BlockStackingLayoutManager */
