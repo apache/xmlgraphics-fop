@@ -188,6 +188,7 @@ list of possible build targets.
   <property name="dist.src.dir" value="${basedir}/dist-src"/>
   <property name="dist.bin.result.dir" value="${dist.bin.dir}/${name}-${version}"/>
   <property name="dist.src.result.dir" value="${dist.src.dir}/${name}-${version}"/>
+  <property name="samedir" value="${basedir}"/>
 
   <!-- Importing Apache Forrest for building the docs -->
   <!--
