@@ -198,7 +198,7 @@ public class PSImageUtils {
      */
     public static void renderEPS(byte[] rawEPS, String name,
                     float x, float y, float w, float h,
-                    int bboxx, int bboxy, int bboxw, int bboxh,
+                    float bboxx, float bboxy, float bboxw, float bboxh,
                     PSGenerator gen) throws IOException {
         gen.notifyResourceUsage(PSProcSets.EPS_PROCSET, false);
         gen.writeln("%FOPBeginEPS: " + name);
