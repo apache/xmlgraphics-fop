@@ -442,7 +442,8 @@ public class XMLRenderer extends PrintRenderer {
     public void renderPage(PageViewport page) throws IOException, FOPException {
         atts.clear();
         addAttribute("bounds", page.getViewArea());
-        addAttribute("nr", page.getPageNumberString());
+        addAttribute("nr", page.getPageNumber());
+        addAttribute("formatted-nr", page.getPageNumberString());
         startElement("pageViewport", atts);
         startElement("page");
         

@@ -111,6 +111,9 @@ public abstract class AbstractRenderer
      */
     protected int containingIPPosition = 0;
 
+    /** the currently active PageViewport */
+    protected PageViewport currentPageViewport;
+    
     private Set warnedXMLHandlers;
     
     /**
@@ -159,6 +162,11 @@ public abstract class AbstractRenderer
     /** @see org.apache.fop.render.Renderer#getGraphics2DAdapter() */
     public Graphics2DAdapter getGraphics2DAdapter() {
         return null;
+    }
+    
+    /** @return the current PageViewport or null, if none is active */
+    protected PageViewport getCurrentPageViewport() {
+        return this.currentPageViewport;
     }
     
     /**
@@ -216,8 +224,13 @@ public abstract class AbstractRenderer
     public void renderPage(PageViewport page)
         throws IOException, FOPException {
 
-        Page p = page.getPage();
-        renderPageAreas(p);
+        this.currentPageViewport = page;
+        try {
+            Page p = page.getPage();
+            renderPageAreas(p);
+        } finally {
+            this.currentPageViewport = null;
+        }
     }
 
     /**

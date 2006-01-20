@@ -470,8 +470,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         
         currentFontName = "";
 
-        Page p = page.getPage();
-        renderPageAreas(p);
+        super.renderPage(page);
 
         this.pdfDoc.registerObject(currentStream);
         currentPage.setContents(currentStream);
@@ -1353,6 +1352,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
 
         context.setProperty(PDFRendererContextConstants.PDF_DOCUMENT, pdfDoc);
         context.setProperty(PDFRendererContextConstants.OUTPUT_STREAM, ostream);
+        context.setProperty(PDFRendererContextConstants.PAGE_VIEWPORT, getCurrentPageViewport());
         context.setProperty(PDFRendererContextConstants.PDF_STATE, currentState);
         context.setProperty(PDFRendererContextConstants.PDF_PAGE, currentPage);
         context.setProperty(PDFRendererContextConstants.PDF_CONTEXT,

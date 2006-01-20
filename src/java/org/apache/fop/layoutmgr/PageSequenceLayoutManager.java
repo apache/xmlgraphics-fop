@@ -882,7 +882,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                         + spm.getMasterName() + "'.  FOP presently "
                         + "does not support this.");
                 }
-                Page page = new Page(spm, pageNumberString, bIsBlank);
+                Page page = new Page(spm, index, pageNumberString, bIsBlank);
                 cachedPages.add(page);
             } catch (FOPException e) {
                 //TODO Maybe improve. It'll mean to propagate this exception up several

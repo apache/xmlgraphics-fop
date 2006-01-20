@@ -263,67 +263,72 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
      */
     public BufferedImage getPageImage(PageViewport pageViewport) {
 
-        Rectangle2D bounds = pageViewport.getViewArea();
-        pageWidth = (int) Math.round(bounds.getWidth() / 1000f);
-        pageHeight = (int) Math.round(bounds.getHeight() / 1000f);
+        this.currentPageViewport = pageViewport;
+        try {
+            Rectangle2D bounds = pageViewport.getViewArea();
+            pageWidth = (int) Math.round(bounds.getWidth() / 1000f);
+            pageHeight = (int) Math.round(bounds.getHeight() / 1000f);
 
-        log.info(
-                "Rendering Page " + pageViewport.getPageNumberString()
-                        + " (pageWidth " + pageWidth + ", pageHeight "
-                        + pageHeight + ")");
+            log.info(
+                    "Rendering Page " + pageViewport.getPageNumberString()
+                            + " (pageWidth " + pageWidth + ", pageHeight "
+                            + pageHeight + ")");
 
-        double scaleX = scaleFactor 
-            * (25.4 / FOUserAgent.DEFAULT_TARGET_RESOLUTION) 
-            / userAgent.getTargetPixelUnitToMillimeter();
-        double scaleY = scaleFactor
-            * (25.4 / FOUserAgent.DEFAULT_TARGET_RESOLUTION)
-            / userAgent.getTargetPixelUnitToMillimeter();
-        int bitmapWidth = (int) ((pageWidth * scaleX) + 0.5);
-        int bitmapHeight = (int) ((pageHeight * scaleY) + 0.5);
-                
-        
-        BufferedImage currentPageImage = new BufferedImage(
-                bitmapWidth, bitmapHeight, BufferedImage.TYPE_INT_ARGB);
-        // FIXME TYPE_BYTE_BINARY ?
+            double scaleX = scaleFactor 
+                * (25.4 / FOUserAgent.DEFAULT_TARGET_RESOLUTION) 
+                / userAgent.getTargetPixelUnitToMillimeter();
+            double scaleY = scaleFactor
+                * (25.4 / FOUserAgent.DEFAULT_TARGET_RESOLUTION)
+                / userAgent.getTargetPixelUnitToMillimeter();
+            int bitmapWidth = (int) ((pageWidth * scaleX) + 0.5);
+            int bitmapHeight = (int) ((pageHeight * scaleY) + 0.5);
+                    
+            
+            BufferedImage currentPageImage = new BufferedImage(
+                    bitmapWidth, bitmapHeight, BufferedImage.TYPE_INT_ARGB);
+            // FIXME TYPE_BYTE_BINARY ?
 
-        Graphics2D graphics = currentPageImage.createGraphics();
-        graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
-                RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-        if (antialiasing) {
-            graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON);
-            graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                    RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            Graphics2D graphics = currentPageImage.createGraphics();
+            graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+                    RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+            if (antialiasing) {
+                graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                        RenderingHints.VALUE_ANTIALIAS_ON);
+                graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            }
+            if (qualityRendering) {
+                graphics.setRenderingHint(RenderingHints.KEY_RENDERING,
+                        RenderingHints.VALUE_RENDER_QUALITY);
+            }
+
+            // transform page based on scale factor supplied
+            AffineTransform at = graphics.getTransform();
+            at.scale(scaleX, scaleY);
+            graphics.setTransform(at);
+
+            // draw page frame
+            graphics.setColor(Color.white);
+            graphics.fillRect(0, 0, pageWidth, pageHeight);
+            graphics.setColor(Color.black);
+            graphics.drawRect(-1, -1, pageWidth + 2, pageHeight + 2);
+            graphics.drawLine(pageWidth + 2, 0, pageWidth + 2, pageHeight + 2);
+            graphics.drawLine(pageWidth + 3, 1, pageWidth + 3, pageHeight + 3);
+            graphics.drawLine(0, pageHeight + 2, pageWidth + 2, pageHeight + 2);
+            graphics.drawLine(1, pageHeight + 3, pageWidth + 3, pageHeight + 3);
+
+            state = new Java2DGraphicsState(graphics, this.fontInfo, at);
+
+            // reset the current Positions
+            currentBPPosition = 0;
+            currentIPPosition = 0;
+
+            // this toggles the rendering of all areas
+            renderPageAreas(pageViewport.getPage());
+            return currentPageImage;
+        } finally {
+            this.currentPageViewport = null;
         }
-        if (qualityRendering) {
-            graphics.setRenderingHint(RenderingHints.KEY_RENDERING,
-                    RenderingHints.VALUE_RENDER_QUALITY);
-        }
-
-        // transform page based on scale factor supplied
-        AffineTransform at = graphics.getTransform();
-        at.scale(scaleX, scaleY);
-        graphics.setTransform(at);
-
-        // draw page frame
-        graphics.setColor(Color.white);
-        graphics.fillRect(0, 0, pageWidth, pageHeight);
-        graphics.setColor(Color.black);
-        graphics.drawRect(-1, -1, pageWidth + 2, pageHeight + 2);
-        graphics.drawLine(pageWidth + 2, 0, pageWidth + 2, pageHeight + 2);
-        graphics.drawLine(pageWidth + 3, 1, pageWidth + 3, pageHeight + 3);
-        graphics.drawLine(0, pageHeight + 2, pageWidth + 2, pageHeight + 2);
-        graphics.drawLine(1, pageHeight + 3, pageWidth + 3, pageHeight + 3);
-
-        state = new Java2DGraphicsState(graphics, this.fontInfo, at);
-
-        // reset the current Positions
-        currentBPPosition = 0;
-        currentIPPosition = 0;
-
-        // this toggles the rendering of all areas
-        renderPageAreas(pageViewport.getPage());
-        return currentPageImage;
     }
 
         
@@ -1169,6 +1174,8 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
                             new Integer((int)pos.getWidth()));
         context.setProperty(Java2DRendererContextConstants.HEIGHT,
                             new Integer((int) pos.getHeight()));
+        context.setProperty(Java2DRendererContextConstants.PAGE_VIEWPORT, 
+                            getCurrentPageViewport());
         
         renderXML(context, doc, ns);
     }
