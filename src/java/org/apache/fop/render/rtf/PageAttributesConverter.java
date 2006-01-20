@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2004,2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,6 +53,13 @@ class PageAttributesConverter {
             attrib.setTwips(RtfPage.PAGE_WIDTH, pagemaster.getPageWidth());
             attrib.setTwips(RtfPage.PAGE_HEIGHT, pagemaster.getPageHeight());
             
+            Object widthRaw = attrib.getValue(RtfPage.PAGE_WIDTH);
+            Object heightRaw = attrib.getValue(RtfPage.PAGE_HEIGHT);
+            if ((widthRaw instanceof Integer) && (heightRaw instanceof Integer)
+                    && ((Integer) widthRaw).intValue() > ((Integer) heightRaw).intValue()) {
+                attrib.set(RtfPage.LANDSCAPE);
+            }
+
             Length pageTop = pagemaster.getCommonMarginBlock().marginTop;
             Length pageBottom = pagemaster.getCommonMarginBlock().marginBottom;
             Length pageLeft = pagemaster.getCommonMarginBlock().marginLeft;

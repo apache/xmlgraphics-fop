@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2004,2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,6 +44,9 @@ extends RtfContainer {
     /** constant for page height */
     public static final String PAGE_HEIGHT = "paperh";
 
+    /** constant for landscape format */
+    public static final String LANDSCAPE = "landscape";
+
     /** constant for top margin */
     public static final String MARGIN_TOP = "margt";
     /** constant for bottom margin */
@@ -60,7 +63,7 @@ extends RtfContainer {
 
     /** String array of RtfPage attributes */
     public static final String[] PAGE_ATTR = new String[]{
-        PAGE_WIDTH, PAGE_HEIGHT, MARGIN_TOP, MARGIN_BOTTOM,
+        PAGE_WIDTH, PAGE_HEIGHT, LANDSCAPE, MARGIN_TOP, MARGIN_BOTTOM,
         MARGIN_LEFT, MARGIN_RIGHT, HEADERY, FOOTERY
     };
 
@@ -71,12 +74,12 @@ extends RtfContainer {
         attrib = attrs;
     }
 
-        /**
-         * RtfPage writes the attributes the attributes contained in the string
-         * PAGE_ATTR, if not null
-         * @throws IOException for I/O problems
-         */
-        protected void writeRtfContent() throws IOException {
+    /**
+     * RtfPage writes the attributes the attributes contained in the string
+     * PAGE_ATTR, if not null
+     * @throws IOException for I/O problems
+     */
+    protected void writeRtfContent() throws IOException {
         writeAttributes(attrib, PAGE_ATTR);
 
         if (attrib != null) {
@@ -85,7 +88,7 @@ extends RtfContainer {
 
             if ((widthRaw instanceof Integer) && (heightRaw instanceof Integer)
                     && ((Integer) widthRaw).intValue() > ((Integer) heightRaw).intValue()) {
-                writeControlWord("landscape");
+                writeControlWord(LANDSCAPE);
             }
         }
     }
