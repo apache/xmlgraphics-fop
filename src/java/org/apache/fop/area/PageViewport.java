@@ -48,6 +48,7 @@ public class PageViewport implements Resolvable, Cloneable {
     private Page page;
     private Rectangle2D viewArea;
     private String simplePageMasterName;
+    private int pageNumber = -1;
     private String pageNumberString = null;
     private int pageIndex = -1; //-1 = undetermined
     private boolean blank;
@@ -82,18 +83,20 @@ public class PageViewport implements Resolvable, Cloneable {
     /**
      * Create a page viewport.
      * @param spm SimplePageMaster indicating the page and region dimensions
+     * @param pageNumber the page number
      * @param pageStr String representation of the page number
      * @param blank true if this is a blank page
      */
-    public PageViewport(SimplePageMaster spm, String pageStr, boolean blank) {
+    public PageViewport(SimplePageMaster spm, int pageNumber, String pageStr, boolean blank) {
         this.simplePageMasterName = spm.getMasterName();
         this.extensionAttachments = spm.getExtensionAttachments();
         this.blank = blank;
         int pageWidth = spm.getPageWidth().getValue();
         int pageHeight = spm.getPageHeight().getValue();
-        pageNumberString = pageStr;
-        viewArea = new Rectangle(0, 0, pageWidth, pageHeight);
-        page = new Page(spm);
+        this.pageNumber = pageNumber;
+        this.pageNumberString = pageStr;
+        this.viewArea = new Rectangle(0, 0, pageWidth, pageHeight);
+        this.page = new Page(spm);
         createSpan(false);
     }
 
@@ -103,6 +106,7 @@ public class PageViewport implements Resolvable, Cloneable {
      */
     public PageViewport(PageViewport original) {
         this.extensionAttachments = new java.util.ArrayList(original.extensionAttachments);
+        this.pageNumber = original.pageNumber;
         this.pageNumberString = original.pageNumberString;
         this.page = (Page)original.page.clone();
         this.viewArea = (Rectangle2D)original.viewArea.clone();
@@ -111,10 +115,12 @@ public class PageViewport implements Resolvable, Cloneable {
     /**
      * Constructor used by the area tree parser.
      * @param viewArea the view area
+     * @param pageNumber the page number
      * @param pageStr String representation of the page number
      */
-    public PageViewport(Rectangle2D viewArea, String pageStr) {
+    public PageViewport(Rectangle2D viewArea, int pageNumber, String pageStr) {
         this.viewArea = viewArea;
+        this.pageNumber = pageNumber;
         this.pageNumberString = pageStr;
     }
     
@@ -144,6 +150,14 @@ public class PageViewport implements Resolvable, Cloneable {
 
     /**
      * Get the page number of this page.
+     * @return the integer value that represents this page
+     */
+    public int getPageNumber() {
+        return pageNumber;
+    }
+
+    /**
+     * Get the page number of this page.
      * @return the string that represents this page
      */
     public String getPageNumberString() {
@@ -152,6 +166,7 @@ public class PageViewport implements Resolvable, Cloneable {
 
     /**
      * Sets the page index of the page in this rendering run.
+     * (This is not the same as the page number!)
      * @param index the page index (zero-based), -1 if it is undetermined
      */
     public void setPageIndex(int index) {

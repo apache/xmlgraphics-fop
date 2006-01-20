@@ -26,6 +26,9 @@ public interface RendererContextConstants {
     /** The output stream that the document is being sent to. */
     String OUTPUT_STREAM = "outputStream";
     
+    /** The current PageViewport being rendered. */
+    String PAGE_VIEWPORT = "pageViewport";
+    
     /** The target width of the image being painted. */
     String WIDTH = "width";
 

@@ -218,7 +218,9 @@ public class AreaTreeParser {
                             throw new IllegalStateException("currentPageViewport must be null");
                         }
                         Rectangle2D viewArea = parseRect(attributes.getValue("bounds"));
-                        currentPageViewport = new PageViewport(viewArea, attributes.getValue("nr"));
+                        int pageNumber = getAttributeAsInteger(attributes, "nr", -1);
+                        String pageNumberString = attributes.getValue("formatted-nr");
+                        currentPageViewport = new PageViewport(viewArea, pageNumber, pageNumberString);
                     } else if ("page".equals(localName)) {
                         Page p = new Page();
                         currentPageViewport.setPage(p);

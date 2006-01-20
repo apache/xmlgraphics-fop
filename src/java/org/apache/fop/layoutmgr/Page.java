@@ -35,12 +35,13 @@ public class Page {
     /**
      * Main constructor
      * @param spm the simple-page-master used for this page
+     * @param pageNumber the page number (as an int)
      * @param pageNumberStr the page number (as a String) 
      * @param blank true if this is a blank page
      */
-    public Page(SimplePageMaster spm, String pageNumberStr, boolean blank) {
+    public Page(SimplePageMaster spm, int pageNumber, String pageNumberStr, boolean blank) {
         this.spm = spm;
-        this.pageViewport = new PageViewport(spm, pageNumberStr, blank);
+        this.pageViewport = new PageViewport(spm, pageNumber, pageNumberStr, blank);
     }
     
     /** @return the simple-page-master that created this page */

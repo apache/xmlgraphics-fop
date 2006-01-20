@@ -1079,6 +1079,8 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
                             new Integer(currentIPPosition + (int) pos.getX()));
         context.setProperty(PSRendererContextConstants.YPOS,
                             new Integer(currentBPPosition + (int) pos.getY()));
+        context.setProperty(PSRendererContextConstants.PAGE_VIEWPORT, 
+                            getCurrentPageViewport());
         
         renderXML(context, doc, ns);
     }
