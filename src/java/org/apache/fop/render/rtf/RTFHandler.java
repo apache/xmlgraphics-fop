@@ -66,6 +66,7 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfAfterContainer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfBeforeContainer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfListContainer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfTextrunContainer;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.ITableColumnsInfo;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAfter;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfBefore;
@@ -684,6 +685,8 @@ public class RTFHandler extends FOEventHandler {
             final RtfTableRow row = (RtfTableRow)builderContext.getContainer(RtfTableRow.class,
                     true, null);
 
+            int numberRowsSpanned = tc.getNumberRowsSpanned();
+            int numberColumnsSpanned = tc.getNumberColumnsSpanned();
 
             //while the current column is in row-spanning, act as if
             //a vertical merged cell would have been specified.
@@ -701,8 +704,25 @@ public class RTFHandler extends FOEventHandler {
             RtfAttributes atts = TableAttributesConverter.convertCellAttributes(tc);
             RtfTableCell cell = row.newTableCell((int)width, atts);
 
+//          process number-columns-spanned attribute
+            if (numberColumnsSpanned > 0) {
+                // Get the number of columns spanned
+                RtfTable table = row.getTable();
+                
+                // We widthdraw one cell because the first cell is already created
+                // (it's the current cell) !
+                int i = numberColumnsSpanned - 1;
+                while (i > 0) {
+                    tctx.selectNextColumn();
+                    
+                    row.newTableCellMergedHorizontally(
+                            0, null);
+                    
+                    i--;
+                }
+            }
+            
             //process number-rows-spanned attribute
-            int numberRowsSpanned = tc.getNumberRowsSpanned();
             if (numberRowsSpanned > 1) {
                 // Start vertical merge
                 cell.setVMerge(RtfTableCell.MERGE_START);
