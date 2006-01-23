@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/* $Id: TableContext.java 227252 2005-08-03 19:30:55Z jeremias $ */
+/* $Id$ */
 
 package org.apache.fop.render.rtf.rtflib.tools;
 
@@ -167,16 +167,24 @@ public class TableContext implements ITableColumnsInfo {
         }
     }
 
-     /** Added by Boris Poudérous on 07/22/2002 */
-     public int getColumnIndex() {
-       return colIndex;
-     }
-     /** - end - */
+    /**
+     * Set current column index.
+     * @param index New column index
+     */
+    public void setColumnIndex(int index) {
+        colIndex = index;
+    }
+    
+    /** Added by Boris Poudérous on 07/22/2002 */
+    public int getColumnIndex() {
+        return colIndex;
+    }
+    /** - end - */
 
-     /** Added by Boris Poudérous on 07/22/2002 */
-     public int getNumberOfColumns() {
-       return colWidths.size();
-     }
-     /** - end - */
+    /** Added by Boris Poudérous on 07/22/2002 */
+    public int getNumberOfColumns() {
+        return colWidths.size();
+    }
+    /** - end - */
 }
 

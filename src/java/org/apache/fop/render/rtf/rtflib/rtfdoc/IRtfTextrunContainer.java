@@ -32,5 +32,12 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTextrun;
  */
 
 public interface IRtfTextrunContainer {
+    
+    /**
+     * Returns the current RtfTextrun object.
+     * Opens a new one if necessary.
+     * @return The RtfTextrun object
+     * @throws IOException Thrown when an IO-problem occurs
+     */
     RtfTextrun getTextrun() throws IOException;
 }

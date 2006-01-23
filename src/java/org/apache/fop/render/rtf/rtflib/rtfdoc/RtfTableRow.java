@@ -110,8 +110,10 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
         highestCell++;
         // Added by Normand Masse
         // Inherit attributes from base cell for merge
-        RtfAttributes wAttributes = (RtfAttributes)attrs.clone();
-        wAttributes.unset("number-columns-spanned");
+        RtfAttributes wAttributes = null;
+        if (attrs != null) {
+            wAttributes = (RtfAttributes)attrs.clone();
+        }
 
         cell = new RtfTableCell(this, writer, cellWidth, wAttributes, highestCell);
         cell.setHMerge(RtfTableCell.MERGE_WITH_PREVIOUS);

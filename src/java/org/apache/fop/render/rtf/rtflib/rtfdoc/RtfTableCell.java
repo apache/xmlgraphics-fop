@@ -85,47 +85,6 @@ public class RtfTableCell
         id = idNum;
         parentRow = parent;
         this.cellWidth = cellWidth;
-
-    /** Added by Boris Poudérous on 07/22/2002 in order to process
-     *  number-columns-spanned attribute */
-    // If the cell is spanned horizontally
-    if (attrs.getValue("number-columns-spanned") != null) {
-        // Start horizontal merge
-        this.setHMerge(MERGE_START);
-
-        // Get the number of columns spanned
-        int nbMergedCells = ((Integer)attrs.getValue("number-columns-spanned")).intValue();
-
-        if (parent.parent instanceof RtfTable) {
-            // Get the context of the current table in order to get the width of each column
-            ITableColumnsInfo tableColumnsInfo
-                = ((RtfTable)parent.parent).getITableColumnsInfo();
-            tableColumnsInfo.selectFirstColumn();
-
-            // Reach the column index in table context corresponding to the current column cell
-            // id is the index of the current cell (it begins at 1)
-            // getColumnIndex() is the index of the current column in table context (it begins at 0)
-            //  => so we must widthdraw 1 when comparing these two variables.
-            while ((this.id - 1) != tableColumnsInfo.getColumnIndex()) {
-               tableColumnsInfo.selectNextColumn();
-            }
-
-            // We widthdraw one cell because the first cell is already created
-            // (it's the current cell) !
-            int i = nbMergedCells - 1;
-            while (i > 0) {
-                tableColumnsInfo.selectNextColumn();
-                // Added by Normand Masse
-                // Pass in the current cell's attributes so the 'merged' cell has the
-                // same display attributes.
-                parent.newTableCellMergedHorizontally((int)tableColumnsInfo.getColumnWidth(),
-                        attrs);
-
-                i--;
-              }
-          }
-      }
-      /** - end - */
     }
 
     /**
@@ -225,22 +184,29 @@ public class RtfTableCell
      *  @param widthOffset sum of the widths of preceeding cells in same row
      *  @return widthOffset + width of this cell
      */
-    int writeCellDef(int widthOffset) throws IOException {
+    int writeCellDef(int offset) throws IOException {
+        /*
+         * Don't write \clmgf or \clmrg. Instead add the widths
+         * of all spanned columns and create a single wider cell,
+         * because \clmgf and \clmrg won't work in last row of a
+         * table (Word2000 seems to do the same).
+         * Cause of this, dont't write horizontally merged cells.
+         * They just exist as placeholders in TableContext class,
+         * and are never written to RTF file.    
+         */
+        // horizontal cell merge codes
+        if (hMerge == MERGE_WITH_PREVIOUS) {
+            return offset;
+        }
+        
         newLine();
-        this.widthOffset = widthOffset;
+        this.widthOffset = offset;
 
         // vertical cell merge codes
         if (vMerge == MERGE_START) {
             writeControlWord("clvmgf");
         } else if (vMerge == MERGE_WITH_PREVIOUS) {
             writeControlWord("clvmrg");
-        }
-
-        // horizontal cell merge codes
-        if (hMerge == MERGE_START) {
-            writeControlWord("clmgf");
-        } else if (hMerge == MERGE_WITH_PREVIOUS) {
-            writeControlWord("clmrg");
         }
 
         /**
@@ -254,8 +220,39 @@ public class RtfTableCell
         writeAttributes (attrib, ITableAttributes.CELL_BORDER);
         writeAttributes (attrib, IBorderAttributes.BORDERS);
 
-        // cell width
-        final int xPos = widthOffset + this.cellWidth;
+        // determine cell width
+        int iCurrentWidth = this.cellWidth;
+        if (attrib.getValue("number-columns-spanned") != null) {
+            // Get the number of columns spanned
+            int nbMergedCells = ((Integer)attrib.getValue("number-columns-spanned")).intValue();
+
+            RtfTable tab = getRow().getTable();
+            
+            // Get the context of the current table in order to get the width of each column
+            ITableColumnsInfo tableColumnsInfo
+                = tab.getITableColumnsInfo();
+            
+            tableColumnsInfo.selectFirstColumn();
+
+            // Reach the column index in table context corresponding to the current column cell
+            // id is the index of the current cell (it begins at 1)
+            // getColumnIndex() is the index of the current column in table context (it begins at 0)
+            //  => so we must widthdraw 1 when comparing these two variables.
+            while ((this.id - 1) != tableColumnsInfo.getColumnIndex()) {
+               tableColumnsInfo.selectNextColumn();
+            }
+
+            // We widthdraw one cell because the first cell is already created
+            // (it's the current cell) !
+            int i = nbMergedCells - 1;
+            while (i > 0) {
+                tableColumnsInfo.selectNextColumn();
+                iCurrentWidth += (int)tableColumnsInfo.getColumnWidth();
+
+                i--;
+            }
+        }
+        final int xPos = offset + iCurrentWidth;
 
         //these lines added by Chris Scott, Westinghouse
         //some attributes need to be writting before opening block
@@ -275,12 +272,44 @@ public class RtfTableCell
         return xPos;
 
     }
+    
+    /**
+     * Overriden to avoid writing any it's a merged cell.
+     * @throws IOException for I/O problems
+     */
+    protected void writeRtfContent() throws IOException {
+       // Never write horizontally merged cells.
+       if (hMerge == MERGE_WITH_PREVIOUS) {
+           return;
+       }
+       
+       super.writeRtfContent();
+    }
+
+    /**
+     * Called before writeRtfContent; overriden to avoid writing
+     * any it's a merged cell.
+     * @throws IOException for I/O problems
+     */
+    protected void writeRtfPrefix() throws IOException {
+        // Never write horizontally merged cells.
+        if (hMerge == MERGE_WITH_PREVIOUS) {
+            return;
+        }
+        
+        super.writeRtfPrefix();
+    }
 
     /**
      * The "cell" control word marks the end of a cell
      * @throws IOException for I/O problems
      */
     protected void writeRtfSuffix() throws IOException {
+        // Never write horizontally merged cells.
+        if (hMerge == MERGE_WITH_PREVIOUS) {
+            return;
+        }
+        
         if (getRow().getTable().isNestedTable()) {
             //nested table
             writeControlWordNS("nestcell");
@@ -455,6 +484,12 @@ public class RtfTableCell
         return result;
     }
     
+    /**
+     * Returns the current RtfTextrun object.
+     * Opens a new one if necessary.
+     * @return The RtfTextrun object
+     * @throws IOException Thrown when an IO-problem occurs
+     */
     public RtfTextrun getTextrun() throws IOException {
         RtfAttributes attrs = new RtfAttributes();
         
@@ -471,6 +506,10 @@ public class RtfTableCell
         return textrun;
     }
     
+    /**
+     * Get the parent row.
+     * @return The parent row.
+     */
     public RtfTableRow getRow() {
         RtfElement e = this;
         while (e.parent != null) {
