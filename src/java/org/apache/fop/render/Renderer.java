@@ -122,6 +122,11 @@ public interface Renderer {
     Graphics2DAdapter getGraphics2DAdapter();
     
     /**
+     * @return the adapter for painting RenderedImages (or null if not supported)
+     */
+    ImageAdapter getImageAdapter();
+    
+    /**
      * This is called if the renderer supports out of order rendering. The
      * renderer should prepare the page so that a page further on in the set of
      * pages can be rendered. The body of the page should not be rendered. The

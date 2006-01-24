@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 The Apache Software Foundation.
+ * Copyright 2004-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,13 @@
  
 package org.apache.fop.render.ps;
 
+import java.awt.Dimension;
 import java.awt.color.ColorSpace;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.ColorModel;
+import java.awt.image.DataBuffer;
+import java.awt.image.Raster;
+import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -64,23 +70,38 @@ public class PSImageUtils {
                 return;
             }
         }
-        boolean iscolor = img.getColorSpace().getType()
-                          != ColorSpace.CS_GRAY;
         byte[] imgmap;
         if (img.getBitmapsSize() > 0) {
             imgmap = img.getBitmaps();
         } else {
             imgmap = img.getRessourceBytes();
         }
+        
+        String imgName = img.getMimeType() + " " + img.getOriginalURI();
+        Dimension imgDim = new Dimension(img.getWidth(), img.getHeight());
+        Rectangle2D targetRect = new Rectangle2D.Double(x, y, w, h);
+        boolean isJPEG = (img instanceof JpegImage);
+        writeImage(imgmap, imgDim, imgName, targetRect, isJPEG, 
+                img.getColorSpace(), gen);
+    }
+
+    private static void writeImage(byte[] img,
+            Dimension imgDim, String imgName,
+            Rectangle2D targetRect, 
+            boolean isJPEG, ColorSpace colorSpace,
+            PSGenerator gen) throws IOException {
+        boolean iscolor = colorSpace.getType() != ColorSpace.CS_GRAY;
 
         gen.saveGraphicsState();
-        gen.writeln(x + " " + y + " translate");
-        gen.writeln(w + " " + h + " scale");
+        gen.writeln(gen.formatDouble(targetRect.getX()) + " " 
+                + gen.formatDouble(targetRect.getY()) + " translate");
+        gen.writeln(gen.formatDouble(targetRect.getWidth()) + " " 
+                + gen.formatDouble(targetRect.getHeight()) + " scale");
 
-        gen.commentln("%FOPBeginBitmap: " + img.getMimeType() + " " + img.getOriginalURI());
-        if (img.getColorSpace().getType() == ColorSpace.TYPE_CMYK) {
+        gen.commentln("%FOPBeginBitmap: " + imgName);
+        if (colorSpace.getType() == ColorSpace.TYPE_CMYK) {
             gen.writeln("/DeviceCMYK setcolorspace");
-        } else if (img.getColorSpace().getType() == ColorSpace.CS_GRAY) {
+        } else if (colorSpace.getType() == ColorSpace.CS_GRAY) {
             gen.writeln("/DeviceGray setcolorspace");
         } else {
             gen.writeln("/DeviceRGB setcolorspace");
@@ -90,7 +111,7 @@ public class PSImageUtils {
         // Template: (RawData is used for the EOF signal only)
         // gen.write("/RawData currentfile <first filter> filter def");
         // gen.write("/Data RawData <second filter> <third filter> [...] def");
-        if (img instanceof JpegImage) {
+        if (isJPEG) {
             gen.writeln("/RawData currentfile /ASCII85Decode filter def");
             gen.writeln("/Data RawData << >> /DCTDecode filter def");
         } else {
@@ -104,10 +125,10 @@ public class PSImageUtils {
         }
         gen.writeln("<<");
         gen.writeln("  /ImageType 1");
-        gen.writeln("  /Width " + img.getWidth());
-        gen.writeln("  /Height " + img.getHeight());
+        gen.writeln("  /Width " + imgDim.width);
+        gen.writeln("  /Height " + imgDim.height);
         gen.writeln("  /BitsPerComponent 8");
-        if (img.getColorSpace().getType() == ColorSpace.TYPE_CMYK) {
+        if (colorSpace.getType() == ColorSpace.TYPE_CMYK) {
             if (false /*TODO img.invertImage()*/) {
                 gen.writeln("  /Decode [1 0 1 0 1 0 1 0]");
             } else {
@@ -119,8 +140,8 @@ public class PSImageUtils {
             gen.writeln("  /Decode [0 1]");
         }
         // Setup scanning for left-to-right and top-to-bottom
-        gen.writeln("  /ImageMatrix [" + img.getWidth() + " 0 0 "
-              + img.getHeight() + " 0 0]");
+        gen.writeln("  /ImageMatrix [" + imgDim.width + " 0 0 "
+              + imgDim.height + " 0 0]");
 
         gen.writeln("  /DataSource Data");
         gen.writeln(">>");
@@ -135,7 +156,7 @@ public class PSImageUtils {
 
         OutputStream out = gen.getOutputStream();
         out = new ASCII85OutputStream(out);
-        if (img instanceof JpegImage) {
+        if (isJPEG) {
             //nop
         } else {
             if (gen.getPSLevel() >= 3) {
@@ -144,7 +165,7 @@ public class PSImageUtils {
                 out = new RunLengthEncodeOutputStream(out);
             }
         }
-        out.write(imgmap);
+        out.write(img);
         if (out instanceof Finalizable) {
             ((Finalizable)out).finalizeStream();
         } else {
@@ -156,6 +177,95 @@ public class PSImageUtils {
         gen.restoreGraphicsState();
     }
 
+    /**
+     * Renders a bitmap image to PostScript.
+     * @param img image to render
+     * @param x x position
+     * @param y y position
+     * @param w width
+     * @param h height
+     * @param gen PS generator
+     * @throws IOException In case of an I/O problem while rendering the image
+     */
+    public static void renderBitmapImage(RenderedImage img, 
+                float x, float y, float w, float h, PSGenerator gen)
+                    throws IOException {
+        byte[] imgmap = getBitmapBytes(img);
+
+        String imgName = img.getClass().getName();
+        Dimension imgDim = new Dimension(img.getWidth(), img.getHeight());
+        Rectangle2D targetRect = new Rectangle2D.Double(x, y, w, h);
+        boolean isJPEG = false;
+        writeImage(imgmap, imgDim, imgName, targetRect, isJPEG, 
+                img.getColorModel().getColorSpace(), gen);
+    }
+
+    private static byte[] getBitmapBytes(RenderedImage img) {
+        int[] tmpMap = getRGB(img, 0, 0, img.getWidth(), img.getHeight(), null, 0, img.getWidth());
+        // Should take care of the ColorSpace and bitsPerPixel
+        byte[] bitmaps = new byte[img.getWidth() * img.getHeight() * 3];
+        for (int y = 0, my = img.getHeight(); y < my; y++) {
+            for (int x = 0, mx = img.getWidth(); x < mx; x++) {
+                int p = tmpMap[y * mx + x];
+                int r = (p >> 16) & 0xFF;
+                int g = (p >> 8) & 0xFF;
+                int b = (p) & 0xFF;
+                bitmaps[3 * (y * mx + x)] = (byte)(r & 0xFF);
+                bitmaps[3 * (y * mx + x) + 1] = (byte)(g & 0xFF);
+                bitmaps[3 * (y * mx + x) + 2] = (byte)(b & 0xFF);
+            }
+        }
+        return bitmaps;
+    }
+    
+    public static int[] getRGB(RenderedImage img,
+                int startX, int startY, int w, int h,
+                int[] rgbArray, int offset, int scansize) {
+        Raster raster = img.getData();
+        int yoff  = offset;
+        int off;
+        Object data;
+        int nbands = raster.getNumBands();
+        int dataType = raster.getDataBuffer().getDataType();
+        switch (dataType) {
+        case DataBuffer.TYPE_BYTE:
+            data = new byte[nbands];
+            break;
+        case DataBuffer.TYPE_USHORT:
+            data = new short[nbands];
+            break;
+        case DataBuffer.TYPE_INT:
+            data = new int[nbands];
+            break;
+        case DataBuffer.TYPE_FLOAT:
+            data = new float[nbands];
+            break;
+        case DataBuffer.TYPE_DOUBLE:
+            data = new double[nbands];
+            break;
+        default:
+            throw new IllegalArgumentException("Unknown data buffer type: "+
+                                               dataType);
+        }
+        
+        if (rgbArray == null) {
+            rgbArray = new int[offset+h*scansize];
+        }
+        
+        ColorModel colorModel = img.getColorModel();
+        for (int y = startY; y < startY+h; y++, yoff+=scansize) {
+            off = yoff;
+            for (int x = startX; x < startX+w; x++) {
+                rgbArray[off++] = colorModel.getRGB(raster.getDataElements(x,
+                                    y,
+                                    data));
+            }
+        }
+        
+        return rgbArray;
+
+    }
+    
     public static void renderEPS(EPSImage img, 
             float x, float y, float w, float h,
             PSGenerator gen) {

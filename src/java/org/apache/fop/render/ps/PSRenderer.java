@@ -21,6 +21,7 @@ package org.apache.fop.render.ps;
 // Java
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.OutputStream;
@@ -63,6 +64,7 @@ import org.apache.fop.image.ImageFactory;
 import org.apache.fop.image.XMLImage;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
+import org.apache.fop.render.ImageAdapter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.ps.extensions.PSSetupCode;
 import org.apache.fop.util.CharUtilities;
@@ -88,7 +90,7 @@ import org.w3c.dom.Document;
  * @author <a href="mailto:fop-dev@xmlgraphics.apache.org">Apache FOP Development Team</a>
  * @version $Id$
  */
-public class PSRenderer extends AbstractPathOrientedRenderer {
+public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAdapter {
 
     /** The MIME type for PostScript */
     public static final String MIME_TYPE = "application/postscript";
@@ -152,6 +154,11 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
     /** @see org.apache.fop.render.Renderer#getGraphics2DAdapter() */
     public Graphics2DAdapter getGraphics2DAdapter() {
         return new PSGraphics2DAdapter(this);
+    }
+
+    /** @see org.apache.fop.render.Renderer#getImageAdapter() */
+    public ImageAdapter getImageAdapter() {
+        return this;
     }
 
     /**
@@ -301,6 +308,16 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
         } catch (IOException ioe) {
             handleIOTrouble(ioe);
         }
+    }
+
+    public void paintImage(RenderedImage image, RendererContext context, int x, int y, int width, int height) throws IOException {
+        float fx = (float)x / 1000f;
+        x += currentIPPosition / 1000f;
+        float fy = (float)y / 1000f;
+        y += currentBPPosition / 1000f;
+        float fw = (float)width / 1000f;
+        float fh = (float)height / 1000f;
+        PSImageUtils.renderBitmapImage(image, fx, fy, fw, fh, gen);
     }
 
     /**
@@ -740,7 +757,8 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
         gen.writeDSCComment(DSCConstants.BEGIN_PAGE_SETUP);
         
         //Handle PSSetupCode instances on simple-page-master
-        if (page.getExtensionAttachments().size() > 0) {
+        if (page.getExtensionAttachments() != null 
+                && page.getExtensionAttachments().size() > 0) {
             List list = new java.util.ArrayList();
             //Extract all PSSetupCode instances from the attachment list on the s-p-m
             Iterator i = page.getExtensionAttachments().iterator();
@@ -1103,5 +1121,6 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
     public String getMimeType() {
         return MIME_TYPE;
     }
+
 
 }

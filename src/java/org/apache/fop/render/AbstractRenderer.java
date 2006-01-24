@@ -164,6 +164,11 @@ public abstract class AbstractRenderer
         return null;
     }
     
+    /** @see org.apache.fop.render.Renderer#getImageAdapter() */
+    public ImageAdapter getImageAdapter() {
+        return null;
+    }
+    
     /** @return the current PageViewport or null, if none is active */
     protected PageViewport getCurrentPageViewport() {
         return this.currentPageViewport;
