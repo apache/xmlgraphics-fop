@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/* $Id: LineLayoutManager.java,v 1.17 2004/04/02 10:38:29 cbowditch Exp $ */
+/* $Id$ */
 
 package org.apache.fop.layoutmgr.inline;
 
@@ -1664,7 +1664,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
               = new LineArea((lbp.getLeafPos() < seq.size() - 1
                               ? textAlignment : textAlignmentLast),
                               lbp.difference, lbp.availableStretch, lbp.availableShrink);
-            lineArea.setStartIndent(lbp.startIndent);
+            lineArea.addTrait(Trait.START_INDENT, new Integer(lbp.startIndent));
             lineArea.setBPD(lbp.lineHeight);
             lineArea.setIPD(lbp.lineWidth);
             lineArea.addTrait(Trait.SPACE_BEFORE, new Integer(lbp.spaceBefore));
@@ -1745,12 +1745,12 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 // re-compute indent
                 int updatedIndent = lbp.startIndent
                                     + (context.getStackLimit().opt - lbp.lineWidth) / 2;
-                lineArea.setStartIndent(updatedIndent);
+                lineArea.addTrait(Trait.START_INDENT, new Integer(updatedIndent));
             } else if (false && textAlignment == EN_END) {
                 // re-compute indent
                 int updatedIndent = lbp.startIndent 
                                     + (context.getStackLimit().opt - lbp.lineWidth);
-                lineArea.setStartIndent(updatedIndent);
+                lineArea.addTrait(Trait.START_INDENT, new Integer(updatedIndent));
             }
             
             setCurrentArea(lineArea);
