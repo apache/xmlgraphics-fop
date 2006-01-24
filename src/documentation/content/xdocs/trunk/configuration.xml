@@ -188,6 +188,55 @@
       The details on the font configuration can be found on the separate <a href="fonts.html">Fonts</a> page.
       Note especially the section entitled <a href="fonts.html#register">Register Fonts with FOP</a>.
     </p>
+    <section id="pdf-renderer">
+      <title>Special Settings for the PDF Renderer</title>
+      <p>
+        The configuration element for the PDF renderer contains two elements. One is for the font configuration
+        (please follow the link above) and one is for the "filter list". The filter list controls how the
+        individual objects in a PDF file are encoded. By default, all objects get "flate" encoded (i.e. simply 
+        compressed with the same algorithm that is also used in ZIP files). Most users don't need to change that
+        setting. For debugging purposes, it may be desired not to compress the internal objects at all so the
+        generated PDF commands can be read. In that case, you can simply use the following filter list. The 
+        second filter list (type="image") ensures that all images still get compressed but also ASCII-85 encoded
+        so the produced PDF file is still easily readable in a text editor.
+      </p>
+    <source><![CDATA[
+    <renderer mime="application/pdf">
+      <filterList>
+        <value>null</value>
+      </filterList>
+      <filterList type="image">
+        <value>flate</value>
+        <value>ascii-85</value>
+      </filterList>
+      
+      <fonts....
+    </renderer>]]></source>
+    </section>
+    <section id="ps-renderer">
+      <title>Special Settings for the PostScript Renderer</title>
+      <p>
+        Besides the normal font configuration (the same "fonts" element as for the PDF renderer) the PostScript
+        renderer has an additional setting to force landscape pages to be rotated to fit on a page inserted into
+        the printer in portrait mode. Set the value to "true" to activate this feature. The default is "false".
+        Example:
+      </p>
+    <source><![CDATA[
+    <renderer mime="application/postscript">
+      <auto-rotate-landscape>true</auto-rotate-landscape>
+      
+      <fonts>
+        <font metrics-url="arial.xml" kerning="yes" embed-url="arial.ttf">
+          <font-triplet name="Arial" style="normal" weight="normal"/>
+          <font-triplet name="ArialMT" style="normal" weight="normal"/>
+        </font>
+        <font metrics-url="arialb.xml" kerning="yes" embed-url="arialb.ttf">
+          <font-triplet name="Arial" style="normal" weight="bold"/>
+          <font-triplet name="ArialMT" style="normal" weight="bold"/>
+        </font>
+      </fonts>
+    </renderer>]]></source>
+    </section>
   </section>
   </body>
 </document>
