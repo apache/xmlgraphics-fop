@@ -105,7 +105,9 @@ public class PageViewport implements Resolvable, Cloneable {
      * @param original the original PageViewport to copy from
      */
     public PageViewport(PageViewport original) {
-        this.extensionAttachments = new java.util.ArrayList(original.extensionAttachments);
+        if (original.extensionAttachments != null) {
+            this.extensionAttachments = new java.util.ArrayList(original.extensionAttachments);
+        }
         this.pageNumber = original.pageNumber;
         this.pageNumberString = original.pageNumberString;
         this.page = (Page)original.page.clone();
