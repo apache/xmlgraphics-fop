@@ -57,14 +57,6 @@ public class LineArea extends Area {
     
     private LineAdjustingInfo adjustingInfo = null;
 
-    //private int stacking = LR;
-    // contains inline areas
-    // has start indent and length, dominant baseline, height
-    private int startIndent;
-
-    // this is the offset for the dominant baseline
-    //private int baseLine;
-
     // this class can contain the dominant char styling info
     // this means that many renderers can optimise a bit
 
@@ -122,17 +114,6 @@ public class LineArea extends Area {
     }
 
     /**
-     * Set the start indent of this line area.
-     * The start indent is used for offsetting the start of
-     * the inline areas for alignment or other indents.
-     *
-     * @param si the start indent value
-     */
-    public void setStartIndent(int si) {
-        startIndent = si;
-    }
-
-    /**
      * Get the start indent of this line area.
      * The start indent is used for offsetting the start of
      * the inline areas for alignment or other indents.
@@ -140,7 +121,11 @@ public class LineArea extends Area {
      * @return the start indent value
      */
     public int getStartIndent() {
-        return startIndent;
+        if (hasTrait(Trait.START_INDENT)) {
+            return getTraitAsInteger(Trait.START_INDENT);
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -179,11 +164,11 @@ public class LineArea extends Area {
                 break;
             case Constants.EN_CENTER:
                 // re-compute indent
-                startIndent -= ipdVariation / 2;
+                addTrait(Trait.START_INDENT, new Integer(getStartIndent() - ipdVariation / 2));
                 break;
             case Constants.EN_END:
                 // re-compute indent
-                startIndent -= ipdVariation;
+                addTrait(Trait.START_INDENT, new Integer(getStartIndent() - ipdVariation));
                 break;
             case Constants.EN_JUSTIFY:
                 // compute variation factor
