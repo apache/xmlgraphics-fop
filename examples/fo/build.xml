@@ -85,6 +85,16 @@
     </antcall>
   </target>
   <!-- =================================================================== -->
+  <!-- Produces new test RTF files                                         -->
+  <!-- =================================================================== -->
+  <target name="newRTF" depends="init" description="Creates a new set of RTF test files">
+    <antcall target="newTestFiles">
+      <param name="mimetype" value="application/rtf"/>
+      <param name="msglevel" value="warn"/>
+      <param name="outDir" value="${testDir}"/>
+    </antcall>
+  </target>
+  <!-- =================================================================== -->
   <!-- Produces new test ps files                                         -->
   <!-- =================================================================== -->
   <target name="newPS" depends="init" description="Creates a new set of PostScript test files">
