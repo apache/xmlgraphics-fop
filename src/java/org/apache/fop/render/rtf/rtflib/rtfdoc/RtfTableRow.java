@@ -146,6 +146,10 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
         super.writeRtfContent();
     }
     
+    /**
+     * 
+     * @throws IOException In case of a IO-problem
+     */
     public void writeRowAndCellsDefintions() throws IOException {
         // render the row and cells definitions
         writeControlWord("trowd");
@@ -190,36 +194,36 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
                 // Added by Normand Masse
                 // Adjust the cell's display attributes so the table's/row's borders
                 // are drawn properly.
-                RtfTableCell cell = (RtfTableCell)e;
+                RtfTableCell rtfcell = (RtfTableCell)e;
                 if (index == 0) {
-                    if (!cell.getRtfAttributes().isSet(ITableAttributes.CELL_BORDER_LEFT)) {
-                        cell.getRtfAttributes().set(ITableAttributes.CELL_BORDER_LEFT,
+                    if (!rtfcell.getRtfAttributes().isSet(ITableAttributes.CELL_BORDER_LEFT)) {
+                        rtfcell.getRtfAttributes().set(ITableAttributes.CELL_BORDER_LEFT,
                             (String)attrib.getValue(ITableAttributes.ROW_BORDER_LEFT));
                     }
                 }
 
                 if (index == this.getChildCount() - 1) {
-                    if (!cell.getRtfAttributes().isSet(ITableAttributes.CELL_BORDER_RIGHT)) {
-                        cell.getRtfAttributes().set(ITableAttributes.CELL_BORDER_RIGHT,
+                    if (!rtfcell.getRtfAttributes().isSet(ITableAttributes.CELL_BORDER_RIGHT)) {
+                        rtfcell.getRtfAttributes().set(ITableAttributes.CELL_BORDER_RIGHT,
                             (String)attrib.getValue(ITableAttributes.ROW_BORDER_RIGHT));
                     }
                 }
 
                 if (isFirstRow()) {
-                    if (!cell.getRtfAttributes().isSet(ITableAttributes.CELL_BORDER_TOP)) {
-                        cell.getRtfAttributes().set(ITableAttributes.CELL_BORDER_TOP,
+                    if (!rtfcell.getRtfAttributes().isSet(ITableAttributes.CELL_BORDER_TOP)) {
+                        rtfcell.getRtfAttributes().set(ITableAttributes.CELL_BORDER_TOP,
                             (String)attrib.getValue(ITableAttributes.ROW_BORDER_TOP));
                     }
                 }
 
                 if ((parentTable != null) && (parentTable.isHighestRow(id))) {
-                    if (!cell.getRtfAttributes().isSet(ITableAttributes.CELL_BORDER_BOTTOM)) {
-                        cell.getRtfAttributes().set(ITableAttributes.CELL_BORDER_BOTTOM,
+                    if (!rtfcell.getRtfAttributes().isSet(ITableAttributes.CELL_BORDER_BOTTOM)) {
+                        rtfcell.getRtfAttributes().set(ITableAttributes.CELL_BORDER_BOTTOM,
                             (String)attrib.getValue(ITableAttributes.ROW_BORDER_BOTTOM));
                     }
                 }
 
-                xPos = cell.writeCellDef(xPos);
+                xPos = rtfcell.writeCellDef(xPos);
             }
           index++; // Added by Boris POUDEROUS on 2002/07/02
         }
@@ -315,13 +319,17 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
     }
 
     /**
-     * @param id cell id to check
+     * @param cellId cell id to check
      * @return true if the cell is the highest cell
      */
-    public boolean isHighestCell(int id) {
-        return (highestCell == id) ? true : false;
+    public boolean isHighestCell(int cellId) {
+        return (highestCell == cellId) ? true : false;
     }
     
+    /**
+     * 
+     * @return Parent table of the row.
+     */
     public RtfTable getTable() {
         RtfElement e = this;
         while (e.parent != null) {
