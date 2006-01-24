@@ -129,6 +129,20 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
+     * Sets the landscape mode for this renderer.
+     * @param value false will normally generate a "pseudo-portrait" page, true will rotate
+     *              a "wider-than-long" page by 90 degrees. 
+     */
+    public void setAutoRotateLandscape(boolean value) {
+        this.autoRotateLandscape = value;
+    }
+
+    /** @return true if the renderer is configured to rotate landscape pages */
+    public boolean isAutoRotateLandscape() {
+        return this.autoRotateLandscape;
+    }
+
+    /**
      * @see org.apache.fop.render.Renderer#setUserAgent(FOUserAgent)
      */
     public void setUserAgent(FOUserAgent agent) {
