@@ -35,7 +35,6 @@ import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
-import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
@@ -134,9 +133,6 @@ public class PreviewPanel extends JPanel {
 
     /** Asynchronous reloader thread, used when reload() method is called. */
     private Reloader reloader;
-
-    /** The Fop object used for refreshing/reloading the view */
-    protected Fop fop;
 
     /**
      * Allows any mouse drag on the page area to scroll the display window.
@@ -303,9 +299,6 @@ public class PreviewPanel extends JPanel {
                 return;
             }
 
-            //Always recreate the Fop instance. It is a use-once only.
-            fop = new Fop(MimeConstants.MIME_FOP_AWT_PREVIEW, foUserAgent);
-
             pagePanels = null;
 
             int savedCurrentPage = currentPage;
@@ -341,7 +334,7 @@ public class PreviewPanel extends JPanel {
             try {
                 if (renderable != null) {
                     renderer.clearViewportList();
-                    renderable.render(fop);
+                    renderable.renderTo(foUserAgent, MimeConstants.MIME_FOP_AWT_PREVIEW);
                 }
             } catch (FOPException e) {
                 e.printStackTrace();

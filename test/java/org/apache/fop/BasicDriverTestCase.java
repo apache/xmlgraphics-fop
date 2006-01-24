@@ -110,11 +110,9 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
         File xmlFile = new File(getBaseDir(), "test/xml/1.xml");
         File xsltFile = new File(getBaseDir(), "test/xsl/doc.xsl");
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
-        Fop fop = new Fop(MimeConstants.MIME_PDF);
-        fop.setOutputStream(baout);
         
         InputHandler handler = new InputHandler(xmlFile, xsltFile, null);
-        handler.render(fop);
+        handler.renderTo(null, MimeConstants.MIME_PDF, baout);
         
         assertTrue("Generated PDF has zero length", baout.size() > 0);
     }

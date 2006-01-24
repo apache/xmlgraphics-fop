@@ -18,17 +18,16 @@
 
 package org.apache.fop.cli;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.MimeConstants;
 
 /**
@@ -141,37 +140,28 @@ public class Main {
         //System.out.println("static CL: " + Fop.class.getClassLoader().toString());
         CommandLineOptions options = null;
         FOUserAgent foUserAgent = null;
-        BufferedOutputStream bos = null;
+        OutputStream out = null;
 
         try {
             options = new CommandLineOptions();
             options.parse(args);
-            foUserAgent = options.getFOUserAgent();
             
-            Fop fop = null;
+            foUserAgent = options.getFOUserAgent();
             String outputFormat = options.getOutputFormat();
-            if (!MimeConstants.MIME_XSL_FO.equals(outputFormat)) {
-                fop = new Fop(outputFormat, foUserAgent);
-            }
 
             try {
                 if (options.getOutputFile() != null) {
-                    bos = new BufferedOutputStream(new FileOutputStream(
-                        options.getOutputFile()));
-                    if (fop != null) {
-                        fop.setOutputStream(bos);
-                        foUserAgent.setOutputFile(options.getOutputFile());
-                    }
+                    out = new java.io.BufferedOutputStream(
+                            new java.io.FileOutputStream(options.getOutputFile()));
+                    foUserAgent.setOutputFile(options.getOutputFile());
                 }
-                if (fop != null) {
-                    options.getInputHandler().render(fop);
+                if (!MimeConstants.MIME_XSL_FO.equals(outputFormat)) {
+                    options.getInputHandler().renderTo(foUserAgent, outputFormat, out);
                 } else {
-                    options.getInputHandler().transformTo(bos);
+                    options.getInputHandler().transformTo(out);
                 }
              } finally {
-                 if (bos != null) {
-                     bos.close();
-                 }
+                 IOUtils.closeQuietly(out);
              }
 
             // System.exit(0) called to close AWT/SVG-created threads, if any.

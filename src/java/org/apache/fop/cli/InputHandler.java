@@ -37,6 +37,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.render.awt.viewer.Renderable;
 
@@ -77,10 +78,18 @@ public class InputHandler implements ErrorListener, Renderable {
 
     /**
      * Generate a document, given an initialized Fop object
-     * @param fop -- Fop object
+     * @param userAgent the user agent
+     * @param outputFormat the output format to generate (MIME type, see MimeConstants)
+     * @param out the output stream to write the generated output to (may be null if not applicable)
      * @throws FOPException in case of an error during processing
      */
-    public void render(Fop fop) throws FOPException {
+    public void renderTo(FOUserAgent userAgent, String outputFormat, OutputStream out) 
+                throws FOPException {
+        
+        Fop fop = new Fop(outputFormat, userAgent);
+        if (out != null) {
+            fop.setOutputStream(out);
+        }
 
         // if base URL was not explicitly set in FOUserAgent, obtain here
         if (fop.getUserAgent().getBaseURL() == null) {
@@ -101,6 +110,11 @@ public class InputHandler implements ErrorListener, Renderable {
         transformTo(res);
     }
     
+    /** @see org.apache.fop.render.awt.viewer.Renderable */
+    public void renderTo(FOUserAgent userAgent, String outputFormat) throws FOPException {
+        renderTo(userAgent, outputFormat, null);
+    }
+
     /**
      * In contrast to render(Fop) this method only performs the XSLT stage and saves the
      * intermediate XSL-FO file to the output file.
@@ -112,7 +126,12 @@ public class InputHandler implements ErrorListener, Renderable {
         transformTo(res);
     }
     
-    private void transformTo(Result result) throws FOPException {
+    /**
+     * Transforms the input document to the input format expected by FOP using XSLT.
+     * @param result the Result object where the result of the XSL transformation is sent to
+     * @throws FOPException in case of an error during processing
+     */
+    protected void transformTo(Result result) throws FOPException {
         try {
             // Setup XSLT
             TransformerFactory factory = TransformerFactory.newInstance();

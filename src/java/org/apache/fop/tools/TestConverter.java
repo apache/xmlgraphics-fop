@@ -286,7 +286,6 @@ public class TestConverter {
 
             FOUserAgent userAgent = new FOUserAgent();
             userAgent.setBaseURL(baseURL);
-            Fop fop = new Fop(outputFormat, userAgent);
 
             userAgent.getRendererOptions().put("fineDetail", new Boolean(false));
             userAgent.getRendererOptions().put("consistentOutput", new Boolean(true));
@@ -302,9 +301,8 @@ public class TestConverter {
             outputFile.getParentFile().mkdirs();
             OutputStream outStream = new java.io.BufferedOutputStream(
                                  new java.io.FileOutputStream(outputFile));
-            fop.setOutputStream(outStream);
             logger.debug("ddir:" + destdir + " on:" + outputFile.getName());
-            inputHandler.render(fop);
+            inputHandler.renderTo(userAgent, outputFormat, outStream);
             outStream.close();
 
             // check difference

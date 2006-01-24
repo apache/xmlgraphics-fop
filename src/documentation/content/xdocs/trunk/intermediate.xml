@@ -101,6 +101,11 @@ try {
         <code>endDocument()</code> on the AreaTreeModel. This lets the Renderer know that the processing
         is now finished.
       </p>
+      <p>
+        The intermediate format can also be used from the <a href="running.html#standalone-start">command-line</a>
+        by using the "-atin" parameter for specifying the area tree XML as input file. You can also 
+        specify a "mimic renderer" by inserting a MIME type between "-at" and the output file.
+      </p>
       <section id="concat">
         <title>Concatenating Documents</title>
         <p>
