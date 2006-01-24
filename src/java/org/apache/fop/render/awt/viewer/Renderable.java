@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 The Apache Software Foundation.
+ * Copyright 2005-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 package org.apache.fop.render.awt.viewer;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FOUserAgent;
 
 /**
  * The interface is used by the AWT preview dialog to reload a document.
@@ -28,9 +28,11 @@ public interface Renderable {
 
     /**
      * Renders the pre-setup document.
-     * @param fop the Fop instance to do the FO processing with
+     * @param userAgent the user agent
+     * @param outputFormat the output format to generate (MIME type, see MimeConstants)
      * @exception FOPException if the FO processing fails
      */
-    void render(Fop fop) throws FOPException;
+    void renderTo(FOUserAgent userAgent, String outputFormat)
+            throws FOPException;
     
 }

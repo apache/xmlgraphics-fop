@@ -538,10 +538,7 @@ class FOPTaskStarter {
         try {
             FOUserAgent userAgent = new FOUserAgent();
             userAgent.setBaseURL(this.baseURL);
-            org.apache.fop.apps.Fop fop = new org.apache.fop.apps.Fop(
-                    outputFormat, userAgent);
-            fop.setOutputStream(out);
-            inputHandler.render(fop);
+            inputHandler.renderTo(userAgent, outputFormat, out);
         } catch (Exception ex) {
             throw new BuildException(ex);
         } finally {

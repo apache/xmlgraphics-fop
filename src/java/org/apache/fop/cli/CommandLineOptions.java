@@ -1,12 +1,12 @@
-/* 
- * Copyright 1999-2005 The Apache Software Foundation.
- * 
+/*
+ * Copyright 1999-2006 The Apache Software Foundation.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,10 +29,11 @@ import org.apache.fop.Version;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.fo.Constants;
 import org.apache.fop.pdf.PDFEncryptionManager;
 import org.apache.fop.pdf.PDFEncryptionParams;
 import org.apache.fop.render.awt.AWTRenderer;
+import org.apache.fop.render.Renderer;
+import org.apache.fop.render.xml.XMLRenderer;
 import org.apache.fop.util.CommandLineLogger;
 
 // commons logging
@@ -52,11 +53,24 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
 /**
  * Options parses the commandline arguments
  */
-public class CommandLineOptions implements Constants {
+public class CommandLineOptions {
 
     /** Used to indicate that only the result of the XSL transformation should be output */
     public static final int RENDER_NONE = -1;
-    
+
+    /* These following constants are used to describe the input (either .FO, .XML/.XSL or 
+     * intermediate format)
+     */
+
+    /** (input) not set */
+    public static final int NOT_SET = 0;
+    /** input: fo file */
+    public static final int FO_INPUT = 1;
+    /** input: xml+xsl file */
+    public static final int XSLT_INPUT = 2;
+    /** input: Area Tree XML file */
+    public static final int AREATREE_INPUT = 3;
+
     /* show configuration information */
     private Boolean showConfiguration = Boolean.FALSE;
     /* for area tree XML output, only down to block area level */
@@ -69,6 +83,8 @@ public class CommandLineOptions implements Constants {
     private File xsltfile = null;
     /* xml file (xslt transformation as input) */
     private File xmlfile = null;
+    /* area tree input file */
+    private File areatreefile = null;
     /* output file */
     private File outfile = null;
     /* input mode */
@@ -77,30 +93,32 @@ public class CommandLineOptions implements Constants {
     private String outputmode = null;
 
     private FOUserAgent foUserAgent;
-    
+
     private InputHandler inputHandler;
-    
+
     private Log log;
 
     private Vector xsltParams = null;
-    
+
+    private String mimicRenderer = null;
+
     /**
      * Construct a command line option object.
      */
     public CommandLineOptions() {
         LogFactory logFactory = LogFactory.getFactory();
-        
+
         // Enable the simple command line logging when no other logger is
         // defined.
         if (System.getProperty("org.apache.commons.logging.Log") == null) {
-            logFactory.setAttribute("org.apache.commons.logging.Log", 
+            logFactory.setAttribute("org.apache.commons.logging.Log",
                                             CommandLineLogger.class.getName());
             setLogLevel("info");
         }
 
         log = LogFactory.getLog("FOP");
     }
-    
+
     /**
      * Parse the command line arguments.
      * @param args the command line arguments.
@@ -108,12 +126,12 @@ public class CommandLineOptions implements Constants {
      * @throws FileNotFoundException if an input file wasn't found
      * @throws IOException if the the configuration file could not be loaded
      */
-    public void parse(String[] args) 
+    public void parse(String[] args)
             throws FOPException, IOException {
         boolean optionsParsed = true;
-        
+
         foUserAgent = new FOUserAgent();
-        
+
         try {
             optionsParsed = parseOptions(args);
             if (optionsParsed) {
@@ -132,14 +150,27 @@ public class CommandLineOptions implements Constants {
             printUsage();
             throw e;
         }
-        
+
         inputHandler = createInputHandler();
-        
+
         if (outputmode.equals(MimeConstants.MIME_FOP_AWT_PREVIEW)) {
             AWTRenderer renderer = new AWTRenderer();
             renderer.setRenderable(inputHandler); //set before user agent!
             renderer.setUserAgent(foUserAgent);
             foUserAgent.setRendererOverride(renderer);
+        } else if (outputmode.equals(MimeConstants.MIME_FOP_AREA_TREE)
+               && mimicRenderer != null) {
+            // render from FO to Intermediate Format
+            Renderer targetRenderer = foUserAgent.getRendererFactory().createRenderer(
+                   foUserAgent, mimicRenderer);
+            XMLRenderer xmlRenderer = new XMLRenderer();
+            xmlRenderer.setUserAgent(foUserAgent);
+
+            //Tell the XMLRenderer to mimic the target renderer
+            xmlRenderer.mimicRenderer(targetRenderer);
+
+            //Make sure the prepared XMLRenderer is used
+            foUserAgent.setRendererOverride(xmlRenderer);
         }
     }
 
@@ -149,7 +180,7 @@ public class CommandLineOptions implements Constants {
     public InputHandler getInputHandler() {
         return inputHandler;
     }
-    
+
     /**
      * Get the logger.
      * @return the logger
@@ -165,7 +196,7 @@ public class CommandLineOptions implements Constants {
         xsltParams.addElement(name);
         xsltParams.addElement(value);
     }
-    
+
     /**
      * parses the commandline arguments
      * @return true if parse was successful and processing can continue, false
@@ -197,6 +228,8 @@ public class CommandLineOptions implements Constants {
                 i = i + parseXSLInputOption(args, i);
             } else if (args[i].equals("-xml")) {
                 i = i + parseXMLInputOption(args, i);
+            } else if (args[i].equals("-atin")) {
+                i = i + parseAreaTreeInputOption(args, i);
             } else if (args[i].equals("-awt")) {
                 i = i + parseAWTOutputOption(args, i);
             } else if (args[i].equals("-pdf")) {
@@ -508,8 +541,26 @@ public class CommandLineOptions implements Constants {
         if ((i + 1 == args.length)
                 || (args[i + 1].charAt(0) == '-')) {
             throw new FOPException("you must specify the area-tree output file");
-        } else {
+          } else if ((i + 2 == args.length)
+                || (args[i + 2].charAt(0) == '-')) {
+            // only output file is specified
             outfile = new File(args[i + 1]);
+            return 1;
+        } else {
+            // mimic format and output file have been specified
+            mimicRenderer = args[i + 1];
+            outfile = new File(args[i + 2]);
+            return 2;
+        }
+    }
+
+    private int parseAreaTreeInputOption(String[] args, int i) throws FOPException {
+        inputmode = AREATREE_INPUT;
+        if ((i + 1 == args.length)
+                || (args[i + 1].charAt(0) == '-')) {
+            throw new FOPException("you must specify the Area Tree file for the '-atin' option");
+        } else {
+            areatreefile = new File(args[i + 1]);
             return 1;
         }
     }
@@ -524,7 +575,7 @@ public class CommandLineOptions implements Constants {
         }
         return foUserAgent.getPDFEncryptionParams();
     }
-    
+
     private int parsePDFOwnerPassword(String[] args, int i) throws FOPException {
         if ((i + 1 == args.length)
                 || (args[i + 1].charAt(0) == '-')) {
@@ -575,7 +626,7 @@ public class CommandLineOptions implements Constants {
             ((CommandLineLogger) log).setLogLevel(level);
         }
     }
-        
+
     /**
      * checks whether all necessary information has been given in a consistent way
      */
@@ -588,10 +639,10 @@ public class CommandLineOptions implements Constants {
             throw new FOPException("No output file specified");
         }
 
-        if ((outputmode.equals(MimeConstants.MIME_FOP_AWT_PREVIEW) 
-                || outputmode.equals(MimeConstants.MIME_FOP_PRINT)) 
+        if ((outputmode.equals(MimeConstants.MIME_FOP_AWT_PREVIEW)
+                || outputmode.equals(MimeConstants.MIME_FOP_PRINT))
                     && outfile != null) {
-            throw new FOPException("Output file may not be specified " 
+            throw new FOPException("Output file may not be specified "
                     + "for AWT or PRINT output");
         }
 
@@ -640,7 +691,24 @@ public class CommandLineOptions implements Constants {
                                                 + fofile.getAbsolutePath()
                                                 + " not found ");
             }
-
+        } else if (inputmode == AREATREE_INPUT) {
+            if (outputmode.equals(MimeConstants.MIME_XSL_FO)) {
+                throw new FOPException(
+                        "FO output mode is only available if you use -xml and -xsl");
+            } else if (outputmode.equals(MimeConstants.MIME_FOP_AREA_TREE)) {
+                throw new FOPException(
+                        "Area Tree Output is not available if Area Tree is used as input!");
+            }
+            if (xmlfile != null || xsltfile != null) {
+                log.warn("area tree input mode, but xmlfile or xslt file are set:");
+                log.error("xml file: " + xmlfile.toString());
+                log.error("xslt file: " + xsltfile.toString());
+            }
+            if (!areatreefile.exists()) {
+                throw new FileNotFoundException("Error: area tree file "
+                                              + areatreefile.getAbsolutePath()
+                                              + " not found ");
+            }
         }
     }    // end checkSettings
 
@@ -690,6 +758,8 @@ public class CommandLineOptions implements Constants {
         switch (inputmode) {
             case FO_INPUT:
                 return new InputHandler(fofile);
+            case AREATREE_INPUT:
+                return new AreaTreeInputHandler(areatreefile);
             case XSLT_INPUT:
                 return new InputHandler(xmlfile, xsltfile, xsltParams);
             default:
@@ -774,7 +844,7 @@ public class CommandLineOptions implements Constants {
     public static void printUsage() {
         System.err.println(
               "\nUSAGE\nFop [options] [-fo|-xml] infile [-xsl file] "
-                    + "[-awt|-pdf|-mif|-rtf|-tiff|-png|-pcl|-ps|-txt|-at|-print] <outfile>\n"
+                    + "[-awt|-pdf|-mif|-rtf|-tiff|-png|-pcl|-ps|-txt|-at [mime]|-print] <outfile>\n"
             + " [OPTIONS]  \n"
             + "  -d             debug mode   \n"
             + "  -x             dump configuration settings  \n"
@@ -795,9 +865,10 @@ public class CommandLineOptions implements Constants {
             + "  infile            xsl:fo input file (the same as the next) \n"
             + "  -fo  infile       xsl:fo input file  \n"
             + "  -xml infile       xml input file, must be used together with -xsl \n"
+            + "  -atin infile      area tree input file \n"
             + "  -xsl stylesheet   xslt stylesheet \n \n"
             + "  -param name value <value> to use for parameter <name> in xslt stylesheet\n"
-            + "                    (repeat '-param name value' for each parameter)\n \n" 
+            + "                    (repeat '-param name value' for each parameter)\n \n"
             + " [OUTPUT] \n"
             + "  outfile           input will be rendered as pdf file into outfile \n"
             + "  -pdf outfile      input will be rendered as pdf file (outfile req'd) \n"
@@ -810,7 +881,9 @@ public class CommandLineOptions implements Constants {
             + "  -ps outfile       input will be rendered as PostScript file (outfile req'd) \n"
             + "  -txt outfile      input will be rendered as text file (outfile req'd) \n"
             + "  -svg outfile      input will be rendered as an svg slides file (outfile req'd) \n"
-            + "  -at outfile       representation of area tree as XML (outfile req'd) \n"
+            + "  -at [mime] out    representation of area tree as XML (outfile req'd) \n"
+            + "                    specify optional mime output to allow AT to be converted\n"
+            + "                    to final format later\n"
             + "  -print            input file will be rendered and sent to the printer \n"
             + "                    see options with \"-print help\" \n"
             + "  -out mime outfile input will be rendered using the given MIME type\n"
@@ -878,6 +951,9 @@ public class CommandLineOptions implements Constants {
             }
         } else if (MimeConstants.MIME_FOP_AREA_TREE.equals(outputmode)) {
             log.info("area tree");
+            if (mimicRenderer != null) {
+              log.info("mimic renderer: " + mimicRenderer);
+            }
             log.info("output file: " + outfile.toString());
         } else {
             log.info(outputmode);
@@ -885,7 +961,7 @@ public class CommandLineOptions implements Constants {
         }
 
         log.info("OPTIONS");
-        
+
         if (userConfigFile != null) {
             log.info("user configuration file: "
                                  + userConfigFile.toString());

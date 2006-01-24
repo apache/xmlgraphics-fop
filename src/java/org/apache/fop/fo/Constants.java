@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2005 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,15 +30,8 @@ package org.apache.fop.fo;
  */
 public interface Constants {
 
-    /* These constants are used by apps.CommandLineOptions 
-       to describe the input (either .FO or .XML/.XSL) */
-       
-    /** (input) not set */
+    /** not set */
     int NOT_SET = 0;
-    /** input: fo file */
-    int FO_INPUT = 1;
-    /** input: xml+xsl file */
-    int XSLT_INPUT = 2;
 
     // element constants
     /** FObj base class */
@@ -165,26 +158,26 @@ public interface Constants {
     int FO_PAGE_SEQUENCE_WRAPPER = 60;
     /** Number of FO element constants defined */
     int FRM_OBJ_COUNT = 60;
-    
+
     // Masks
-    /** 
+    /**
      * For compound properties the property constant value is shifted by this amount.
      * The low order bits hold the constant for the component property.
      */
     int COMPOUND_SHIFT = 9;
-    /** 
+    /**
      * Mask that when applied to a compound property returns the constant of
      * the component property.
      */
     int PROPERTY_MASK = (1 << COMPOUND_SHIFT) - 1;
-    /** 
+    /**
      * Mask that when applied to a compound property returns the constant of
      * the compound property.
      */
     int COMPOUND_MASK = ~PROPERTY_MASK;
     /** Number of compund properties defined */
     int COMPOUND_COUNT = 11;
-    
+
     // property constants
     /** Property constant */
     int PR_ABSOLUTE_POSITION = 1;
