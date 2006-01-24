@@ -87,6 +87,9 @@ the location of this file.
     </renderer>
 
     <renderer mime="application/postscript">
+      <!-- This option forces the PS renderer to rotate landscape pages -->
+      <!--auto-rotate-landscape>true</auto-rotate-landscape-->
+      
       <!-- This option lets you specify additional options on an XML handler -->
       <!--xml-handler namespace="http://www.w3.org/2000/svg">
         <stroke-text>false</stroke-text>
