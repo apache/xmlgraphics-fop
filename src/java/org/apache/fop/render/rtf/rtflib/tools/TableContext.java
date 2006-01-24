@@ -64,36 +64,63 @@ public class TableContext implements ITableColumnsInfo {
 
     private boolean bNextRowBelongsToHeader = false;
 
+    /**
+     * 
+     * @param value Specifies, if next row belongs to header
+     */
     public void setNextRowBelongsToHeader(boolean value) {
         this.bNextRowBelongsToHeader = value;
     }
 
+    /**
+     * 
+     * @return true, if next row belongs to header
+     */
     public boolean getNextRowBelongsToHeader() {
         return bNextRowBelongsToHeader;
     }
 
+    /**
+     * 
+     * @param ctx BuilderContext
+     */
     public TableContext(BuilderContext ctx) {
         context = ctx;
     }
 
+    /**
+     * 
+     * @param width Width of next column
+     * @throws Exception
+     */
     public void setNextColumnWidth(Float width)
             throws Exception {
         colWidths.add(width);
     }
 
-    //Added by Peter Herweg on 2002-06-29
+    /**
+     * 
+     * @return RtfAttributes of current row-spanning cell
+     */
     public RtfAttributes getColumnRowSpanningAttrs() {
         return (RtfAttributes)colRowSpanningAttrs.get(colIndex);
     }
 
-    //Added by Peter Herweg on 2002-06-29
+    /**
+     * 
+     * @return Number of currently spanned rows
+     */
     public Integer getColumnRowSpanningNumber() {
         return (Integer)colRowSpanningNumber.get(colIndex);
     }
 
-    //Added by Peter Herweg on 2002-06-29
-    public void setCurrentColumnRowSpanning(Integer iRowSpanning,  RtfAttributes attrs)
-            throws Exception {
+    /**
+     * 
+     * @param iRowSpanning number of rows to span
+     * @param attrs RtfAttributes of row-spanning cell
+     */
+    public void setCurrentColumnRowSpanning(
+            Integer iRowSpanning,  RtfAttributes attrs) {
 
         if (colIndex < colRowSpanningNumber.size()) {
             colRowSpanningNumber.set(colIndex, iRowSpanning);
@@ -104,7 +131,11 @@ public class TableContext implements ITableColumnsInfo {
         }
     }
 
-    //Added by Peter Herweg on 2002-06-29
+    /**
+     * 
+     * @param iRowSpanning number of rows to span in next column
+     * @param attrs RtfAttributes of row-spanning cell
+     */
     public void setNextColumnRowSpanning(Integer iRowSpanning,
             RtfAttributes attrs) {
         colRowSpanningNumber.add(iRowSpanning);

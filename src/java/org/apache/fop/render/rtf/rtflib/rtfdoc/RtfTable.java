@@ -152,6 +152,10 @@ public class RtfTable extends RtfContainer {
         headerAttribs = attrs;
     }
 
+    /**
+     * 
+     * @return RtfAttributes of Header
+     */
     public RtfAttributes getHeaderAttribs() {
         return headerAttribs;
     }
@@ -190,6 +194,10 @@ public class RtfTable extends RtfContainer {
         return false;
     }
     
+    /**
+     * 
+     * @return Parent row table (for nested tables only)
+     */
     public RtfTableRow getRow() {
         RtfElement e = this;
         while (e.parent != null) {
