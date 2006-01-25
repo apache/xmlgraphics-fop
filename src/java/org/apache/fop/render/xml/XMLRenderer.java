@@ -309,13 +309,14 @@ public class XMLRenderer extends PrintRenderer {
             Iterator iter = traitMap.entrySet().iterator();
             while (iter.hasNext()) {
                 Map.Entry traitEntry = (Map.Entry) iter.next();
-                String name = Trait.getTraitName(traitEntry.getKey());
-                Class clazz = Trait.getTraitClass(traitEntry.getKey());
+                Object key = traitEntry.getKey();
+                String name = Trait.getTraitName(key);
+                Class clazz = Trait.getTraitClass(key);
                 if ("break-before".equals(name) || "break-after".equals(name)) {
                     continue;
                 }
                 Object value = traitEntry.getValue();
-                if (Trait.getTraitName(Trait.FONT).equals(name)) {
+                if (key == Trait.FONT) {
                     FontTriplet triplet = (FontTriplet)value;
                     addAttribute("font-name", triplet.getName());
                     addAttribute("font-style", triplet.getStyle());
@@ -351,6 +352,10 @@ public class XMLRenderer extends PrintRenderer {
                         addAttribute("bkg-repeat", repString);
                         addAttribute("bkg-horz-offset", bkg.getHoriz());
                         addAttribute("bkg-vert-offset", bkg.getVertical());
+                    }
+                } else if (key == Trait.START_INDENT || key == Trait.END_INDENT) {
+                    if (((Integer)value).intValue() != 0) {
+                        addAttribute(name, value.toString());
                     }
                 } else {
                     addAttribute(name, value.toString());
@@ -681,9 +686,6 @@ public class XMLRenderer extends PrintRenderer {
         atts.clear();
         addAreaAttributes(line);
         addTraitAttributes(line);
-        if (line.getStartIndent() != 0) {
-            addAttribute("start-indent", line.getStartIndent());
-        }
         startElement("lineArea", atts);
         super.renderLineArea(line);
         endElement("lineArea");
