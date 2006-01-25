@@ -537,11 +537,15 @@ public class RTFHandler extends FOEventHandler {
         }
 
         try {
-            Integer iWidth = new Integer(tc.getColumnWidth().getValue() / 1000);
+            Integer iWidth = 
+                new Integer(tc.getColumnWidth().getValue() / 1000);
             String strWidth = iWidth.toString() + "pt";
-            Float width = new Float(FoUnitsConverter.getInstance().convertToTwips(strWidth));
+            Float width = new Float(
+                    FoUnitsConverter.getInstance().convertToTwips(strWidth));
             builderContext.getTableContext().setNextColumnWidth(width);
-            builderContext.getTableContext().setNextColumnRowSpanning(new Integer(0), null);
+            builderContext.getTableContext().setNextColumnRowSpanning(
+                    new Integer(0), null);
+            builderContext.getTableContext().setNextFirstSpanningCol(false);
         } catch (Exception e) {
             log.error("startColumn: " + e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -722,6 +726,31 @@ public class RTFHandler extends FOEventHandler {
         if (bDefer) {
             return;
         }
+        
+        try {
+            TableContext tctx = builderContext.getTableContext();
+            final RtfTableRow row = (RtfTableRow)builderContext.getContainer(RtfTableRow.class,
+                    true, null);
+
+            //while the current column is in row-spanning, act as if
+            //a vertical merged cell would have been specified.
+            while (tctx.getNumberOfColumns() > tctx.getColumnIndex()
+                  && tctx.getColumnRowSpanningNumber().intValue() > 0) {
+                RtfTableCell vCell = row.newTableCellMergedVertically(
+                        (int)tctx.getColumnWidth(),
+                        tctx.getColumnRowSpanningAttrs());
+                
+                if (!tctx.getFirstSpanningCol()) {
+                    vCell.setHMerge(RtfTableCell.MERGE_WITH_PREVIOUS);
+                }
+                
+                tctx.selectNextColumn();
+            }
+        } catch (Exception e) {
+            log.error("endRow: " + e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        }
+
 
         builderContext.popContainer();
         builderContext.getTableContext().decreaseRowSpannings();
@@ -748,8 +777,14 @@ public class RTFHandler extends FOEventHandler {
             //a vertical merged cell would have been specified.
             while (tctx.getNumberOfColumns() > tctx.getColumnIndex()
                   && tctx.getColumnRowSpanningNumber().intValue() > 0) {
-                row.newTableCellMergedVertically((int)tctx.getColumnWidth(),
+                RtfTableCell vCell = row.newTableCellMergedVertically(
+                        (int)tctx.getColumnWidth(),
                         tctx.getColumnRowSpanningAttrs());
+                
+                if (!tctx.getFirstSpanningCol()) {
+                    vCell.setHMerge(RtfTableCell.MERGE_WITH_PREVIOUS);
+                }
+                
                 tctx.selectNextColumn();
             }
 
@@ -759,24 +794,6 @@ public class RTFHandler extends FOEventHandler {
             // create an RtfTableCell in the current RtfTableRow
             RtfAttributes atts = TableAttributesConverter.convertCellAttributes(tc);
             RtfTableCell cell = row.newTableCell((int)width, atts);
-
-//          process number-columns-spanned attribute
-            if (numberColumnsSpanned > 0) {
-                // Get the number of columns spanned
-                RtfTable table = row.getTable();
-                
-                // We widthdraw one cell because the first cell is already created
-                // (it's the current cell) !
-                int i = numberColumnsSpanned - 1;
-                while (i > 0) {
-                    tctx.selectNextColumn();
-                    
-                    row.newTableCellMergedHorizontally(
-                            0, null);
-                    
-                    i--;
-                }
-            }
             
             //process number-rows-spanned attribute
             if (numberRowsSpanned > 1) {
@@ -784,12 +801,43 @@ public class RTFHandler extends FOEventHandler {
                 cell.setVMerge(RtfTableCell.MERGE_START);
 
                 // set the number of rows spanned
-                tctx.setCurrentColumnRowSpanning(new Integer(numberRowsSpanned),
+                tctx.setCurrentColumnRowSpanning(new Integer(numberRowsSpanned), 
                         cell.getRtfAttributes());
             } else {
-                tctx.setCurrentColumnRowSpanning(new Integer(numberRowsSpanned), null);
+                tctx.setCurrentColumnRowSpanning(
+                        new Integer(numberRowsSpanned), null);
             }
 
+            //process number-columns-spanned attribute
+            if (numberColumnsSpanned > 0) {
+                // Get the number of columns spanned
+                RtfTable table = row.getTable();
+                tctx.setCurrentFirstSpanningCol(true);
+                
+                // We widthdraw one cell because the first cell is already created
+                // (it's the current cell) !
+                 for (int i = 0; i < numberColumnsSpanned - 1; ++i) {
+                    tctx.selectNextColumn();
+                    
+                    tctx.setCurrentFirstSpanningCol(false);
+                    RtfTableCell hCell = row.newTableCellMergedHorizontally(
+                            0, null);
+                    
+                    if (numberRowsSpanned > 1) {
+                        // Start vertical merge
+                        hCell.setVMerge(RtfTableCell.MERGE_START);
+
+                        // set the number of rows spanned
+                        tctx.setCurrentColumnRowSpanning(
+                                new Integer(numberRowsSpanned), 
+                                cell.getRtfAttributes());
+                    } else {
+                        tctx.setCurrentColumnRowSpanning(
+                                new Integer(numberRowsSpanned), null);
+                    }
+                }
+            }
+            
             builderContext.pushContainer(cell);
         } catch (Exception e) {
             log.error("startCell: " + e.getMessage());

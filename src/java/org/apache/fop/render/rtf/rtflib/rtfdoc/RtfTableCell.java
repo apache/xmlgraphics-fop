@@ -225,7 +225,7 @@ public class RtfTableCell
         if (attrib.getValue("number-columns-spanned") != null) {
             // Get the number of columns spanned
             int nbMergedCells = ((Integer)attrib.getValue("number-columns-spanned")).intValue();
-
+            
             RtfTable tab = getRow().getTable();
             
             // Get the context of the current table in order to get the width of each column

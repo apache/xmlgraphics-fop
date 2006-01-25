@@ -50,4 +50,10 @@ public interface ITableColumnsInfo {
 
     /** @return number of columns */
     int getNumberOfColumns();
+    
+    /**
+     * 
+     * @return true, if it's the first of multiple spanning columns
+     */
+    public boolean getFirstSpanningCol();
 }
