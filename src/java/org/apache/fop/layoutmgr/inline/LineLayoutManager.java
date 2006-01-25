@@ -1664,7 +1664,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
               = new LineArea((lbp.getLeafPos() < seq.size() - 1
                               ? textAlignment : textAlignmentLast),
                               lbp.difference, lbp.availableStretch, lbp.availableShrink);
-            lineArea.addTrait(Trait.START_INDENT, new Integer(lbp.startIndent));
+            if (lbp.startIndent != 0) {
+                lineArea.addTrait(Trait.START_INDENT, new Integer(lbp.startIndent));
+            }
             lineArea.setBPD(lbp.lineHeight);
             lineArea.setIPD(lbp.lineWidth);
             lineArea.addTrait(Trait.SPACE_BEFORE, new Integer(lbp.spaceBefore));
