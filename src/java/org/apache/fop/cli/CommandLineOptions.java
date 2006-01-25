@@ -153,12 +153,12 @@ public class CommandLineOptions {
 
         inputHandler = createInputHandler();
 
-        if (outputmode.equals(MimeConstants.MIME_FOP_AWT_PREVIEW)) {
+        if (MimeConstants.MIME_FOP_AWT_PREVIEW.equals(outputmode)) {
             AWTRenderer renderer = new AWTRenderer();
             renderer.setRenderable(inputHandler); //set before user agent!
             renderer.setUserAgent(foUserAgent);
             foUserAgent.setRendererOverride(renderer);
-        } else if (outputmode.equals(MimeConstants.MIME_FOP_AREA_TREE)
+        } else if (MimeConstants.MIME_FOP_AREA_TREE.equals(outputmode)
                && mimicRenderer != null) {
             // render from FO to Intermediate Format
             Renderer targetRenderer = foUserAgent.getRendererFactory().createRenderer(
