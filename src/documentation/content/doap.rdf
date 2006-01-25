@@ -3,16 +3,16 @@
 <rdf:RDF xml:lang="en"
          xmlns="http://usefulinc.com/ns/doap#" 
          xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
-         xmlns:asfext="http:projects.apache.org/ns/asfext#">
-  <Project rdf:about="http://httpd.apache.org/">
+         xmlns:asfext="http://projects.apache.org/ns/asfext#">
+  <Project rdf:about="http://xmlgraphics.apache.org/fop">
     <created>2006-01-21</created>
     <license rdf:resource="http://usefulinc.com/doap/licenses/asl20" />
     <name>Apache FOP</name>
     <homepage rdf:resource="http://xmlgraphics.apache.org/fop" />
-    <asfext:pmc rdf:resource="http://XML Graphics.apache.org" />
+    <asfext:pmc rdf:resource="http://XML%20Graphics.apache.org" />
     <shortdesc>The Apache Foundation's XSL Formatting Objects 'print formatter' implementation.</shortdesc>
     <description>FOP (Formatting Objects Processor) is the world's first print formatter driven by XSL formatting objects (XSL-FO) and the world's first output independent formatter. It is a Java application that reads a formatting object (FO) tree and renders the resulting pages to a specified output. Output formats  currently supported include PDF, PCL, PS, SVG, XML (area tree representation), Print, AWT, MIF and TXT. The primary output target is PDF.</description>
-    <bug-database rdf:resource="http://issues.apache.org/bugzilla/buglist.cgi?bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&email1=&emailtype1=substring&emailassigned_to1=1&email2=&emailtype2=substring&emailreporter2=1&bugidtype=include&bug_id=&changedin=&votes=&chfieldfrom=&chfieldto=Now&chfieldvalue=&product=Fop&short_desc=&short_desc_type=allwordssubstr&long_desc=&long_desc_type=allwordssubstr&bug_file_loc=&bug_file_loc_type=allwordssubstr&keywords=&keywords_type=anywords&field0-0-0=noop&type0-0-0=noop&value0-0-0=" />
+    <bug-database rdf:resource="http://issues.apache.org/bugzilla/buglist.cgi?bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;email1=&amp;emailtype1=substring&amp;emailassigned_to1=1&amp;email2=&amp;emailtype2=substring&amp;emailreporter2=1&amp;bugidtype=include&amp;bug_id=&amp;changedin=&amp;votes=&amp;chfieldfrom=&amp;chfieldto=Now&amp;chfieldvalue=&amp;product=Fop&amp;short_desc=&amp;short_desc_type=allwordssubstr&amp;long_desc=&amp;long_desc_type=allwordssubstr&amp;bug_file_loc=&amp;bug_file_loc_type=allwordssubstr&amp;keywords=&amp;keywords_type=anywords&amp;field0-0-0=noop&amp;type0-0-0=noop&amp;value0-0-0=" />
     <mailing-list rdf:resource="http://xmlgraphics.apache.org/fop/maillist.html" />
     <download-page rdf:resource="http://xmlgraphics.apache.org/fop/download.html" />
     <programming-language>Java</programming-language>
@@ -25,6 +25,13 @@
         <name>FOP</name>
         <created>2003-07-16</created>
         <revision>0.20.5</revision>
+      </Version>
+    </release>
+    <release>
+      <Version>
+        <name>FOP</name>
+        <created>2005-12-23</created>
+        <revision>0.91beta</revision>
       </Version>
     </release>
     <repository>
