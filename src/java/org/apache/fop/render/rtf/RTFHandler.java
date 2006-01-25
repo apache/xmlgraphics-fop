@@ -32,6 +32,9 @@ import org.xml.sax.SAXException;
 // FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.datatypes.LengthBase;
+import org.apache.fop.datatypes.PercentBaseContext;
+import org.apache.fop.datatypes.SimplePercentBaseContext;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.BasicLink;
@@ -57,6 +60,7 @@ import org.apache.fop.fo.flow.TableHeader;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fo.Constants;
@@ -121,6 +125,7 @@ public class RTFHandler extends FOEventHandler {
                                                //in current page-sequence
     private BuilderContext builderContext = new BuilderContext(null);
 
+    private SimplePageMaster pagemaster;
 
     /**
      * Creates a new RTF structure handler.
@@ -179,7 +184,7 @@ public class RTFHandler extends FOEventHandler {
 
             String reference = pageSeq.getMasterReference();
 
-            SimplePageMaster pagemaster
+            this.pagemaster
                     = pageSeq.getRoot().getLayoutMasterSet().getSimplePageMaster(reference);
 
             //only simple-page-master supported, so pagemaster may be null
@@ -232,7 +237,11 @@ public class RTFHandler extends FOEventHandler {
 
         try {
             log.debug("starting flow: " + fl.getFlowName());
-            if (fl.getFlowName().equals("xsl-region-body")) {
+            boolean handled = false;
+            Region regionBody = pagemaster.getRegion(Constants.FO_REGION_BODY);
+            Region regionBefore = pagemaster.getRegion(Constants.FO_REGION_BEFORE);
+            Region regionAfter = pagemaster.getRegion(Constants.FO_REGION_AFTER);
+            if (fl.getFlowName().equals(regionBody.getRegionName())) {
                 // if there is no header in current page-sequence but there has been
                 // a header in a previous page-sequence, insert an empty header.
                 if (bPrevHeaderSpecified && !bHeaderSpecified) {
@@ -256,8 +265,9 @@ public class RTFHandler extends FOEventHandler {
                                 (IRtfAfterContainer.class, true, this);
                     contAfter.newAfter(attr);
                 }
-
-            } else if (fl.getFlowName().equals("xsl-region-before")) {
+                handled = true;
+            } else if (regionBefore != null 
+                    && fl.getFlowName().equals(regionBefore.getRegionName())) {
                 bHeaderSpecified = true;
                 bPrevHeaderSpecified = true;
 
@@ -274,7 +284,9 @@ public class RTFHandler extends FOEventHandler {
 
                 RtfBefore before = c.newBefore(beforeAttributes);
                 builderContext.pushContainer(before);
-            } else if (fl.getFlowName().equals("xsl-region-after")) {
+                handled = true;
+            } else if (regionAfter != null 
+                    && fl.getFlowName().equals(regionAfter.getRegionName())) {
                 bFooterSpecified = true;
                 bPrevFooterSpecified = true;
 
@@ -292,6 +304,10 @@ public class RTFHandler extends FOEventHandler {
 
                 RtfAfter after = c.newAfter(afterAttributes);
                 builderContext.pushContainer(after);
+                handled = true;
+            }
+            if (!handled) {
+                log.warn("A " + fl.getLocalName() + " has been skipped: " + fl.getFlowName());
             }
         } catch (IOException ioe) {
             log.error("startFlow: " + ioe.getMessage());
@@ -312,11 +328,16 @@ public class RTFHandler extends FOEventHandler {
         }
 
         try {
-            if (fl.getFlowName().equals("xsl-region-body")) {
+            Region regionBody = pagemaster.getRegion(Constants.FO_REGION_BODY);
+            Region regionBefore = pagemaster.getRegion(Constants.FO_REGION_BEFORE);
+            Region regionAfter = pagemaster.getRegion(Constants.FO_REGION_AFTER);
+            if (fl.getFlowName().equals(regionBody.getRegionName())) {
                 //just do nothing
-            } else if (fl.getFlowName().equals("xsl-region-before")) {
+            } else if (regionBefore != null 
+                    && fl.getFlowName().equals(regionBefore.getRegionName())) {
                 builderContext.popContainer();
-            } else if (fl.getFlowName().equals("xsl-region-after")) {
+            } else if (regionAfter != null 
+                    && fl.getFlowName().equals(regionAfter.getRegionName())) {
                 builderContext.popContainer();
             }
         } catch (Exception e) {
@@ -1421,16 +1442,23 @@ public class RTFHandler extends FOEventHandler {
         if (foNode instanceof PageSequence) {
             PageSequence pageSequence = (PageSequence) foNode;
 
-            FONode regionBefore = (FONode) pageSequence.flowMap.get("xsl-region-before");
-            FONode regionAfter  = (FONode) pageSequence.flowMap.get("xsl-region-after");
-
+            Region regionBefore = pagemaster.getRegion(Constants.FO_REGION_BEFORE);
             if (regionBefore != null) {
-                recurseFONode(regionBefore);
+                FONode staticBefore = (FONode) pageSequence.flowMap.get(
+                        regionBefore.getRegionName());
+                if (staticBefore != null) {
+                    recurseFONode(staticBefore);
+                }
+            }
+            Region regionAfter = pagemaster.getRegion(Constants.FO_REGION_AFTER);
+            if (regionAfter != null) {
+                FONode staticAfter = (FONode) pageSequence.flowMap.get(
+                        regionAfter.getRegionName());
+                if (staticAfter != null) {
+                    recurseFONode(staticAfter);
+                }
             }
 
-            if (regionAfter != null) {
-                recurseFONode(regionAfter);
-            }
 
             recurseFONode( pageSequence.getMainFlow() );
         } else if (foNode instanceof Table) {
