@@ -45,7 +45,6 @@ public class TableContext implements ITableColumnsInfo {
     private int colIndex;
 
     /**
-     * Added by Peter Herweg on 2002-06-29
      * This ArrayList contains one element for each column in the table.
      * value == 0 means there is no row-spanning
      * value >  0 means there is row-spanning
@@ -54,13 +53,19 @@ public class TableContext implements ITableColumnsInfo {
     private final List colRowSpanningNumber = new java.util.ArrayList();
 
     /**
-     * Added by Peter Herweg on 2002-06-29
      * If there has a vertical merged cell to be created, its attributes are
      * inherited from the corresponding MERGE_START-cell.
      * For this purpose the attributes of a cell are stored in this array, as soon
      * as a number-rows-spanned attribute has been found.
      */
     private final List colRowSpanningAttrs = new java.util.ArrayList();
+    
+    /**
+     * This ArrayList contains one element for each column in the table.
+     * value == true means, it's the first of multiple spanned columns
+     * value == false meanst, it's NOT the first of multiple spanned columns
+     */
+    private final List colFirstSpanningCol = new java.util.ArrayList();
 
     private boolean bNextRowBelongsToHeader = false;
 
@@ -113,6 +118,15 @@ public class TableContext implements ITableColumnsInfo {
     public Integer getColumnRowSpanningNumber() {
         return (Integer)colRowSpanningNumber.get(colIndex);
     }
+    
+    /**
+     * 
+     * @return true, if it's the first of multiple spanning columns
+     */
+    public boolean getFirstSpanningCol() {
+        Boolean b = (Boolean) colFirstSpanningCol.get(colIndex);
+        return b.booleanValue();
+    }
 
     /**
      * 
@@ -141,6 +155,31 @@ public class TableContext implements ITableColumnsInfo {
         colRowSpanningNumber.add(iRowSpanning);
         colRowSpanningAttrs.add(colIndex, attrs);
     }
+    
+    /**
+     * 
+     * @param bFirstSpanningCol specifies, if it's the first of 
+     *                          multiple spanned columns
+     */
+    public void setCurrentFirstSpanningCol(
+            boolean bFirstSpanningCol) {
+
+        if (colIndex < colRowSpanningNumber.size()) {
+            colFirstSpanningCol.set(colIndex, new Boolean(bFirstSpanningCol));
+        } else {
+            colFirstSpanningCol.add(new Boolean(bFirstSpanningCol));
+        }
+    }
+
+    /**
+     * 
+     * @param bFirstSpanningCol specifies, if it's the first of 
+     *                          multiple spanned columns
+     */
+    public void setNextFirstSpanningCol(
+            boolean bFirstSpanningCol) {
+        colFirstSpanningCol.add(new Boolean(bFirstSpanningCol));
+    }
 
     /**
      * Added by Peter Herweg on 2002-06-29
@@ -160,6 +199,7 @@ public class TableContext implements ITableColumnsInfo {
 
             if (i.intValue() == 0) {
                 colRowSpanningAttrs.set(z, null);
+                colFirstSpanningCol.set(z, new Boolean(false));
             }
         }
     }
@@ -206,13 +246,17 @@ public class TableContext implements ITableColumnsInfo {
         colIndex = index;
     }
     
-    /** Added by Boris Poudérous on 07/22/2002 */
+    /**
+     * @return Index of current column 
+     */
     public int getColumnIndex() {
         return colIndex;
     }
     /** - end - */
 
-    /** Added by Boris Poudérous on 07/22/2002 */
+    /**
+     * @return Number of columns
+     */
     public int getNumberOfColumns() {
         return colWidths.size();
     }
