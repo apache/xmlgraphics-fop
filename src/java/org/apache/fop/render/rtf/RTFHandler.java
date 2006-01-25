@@ -60,6 +60,7 @@ import org.apache.fop.fo.flow.TableHeader;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.fo.pagination.PageSequenceMaster;
 import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.pagination.StaticContent;
@@ -174,6 +175,20 @@ public class RTFHandler extends FOEventHandler {
      */
     public void startPageSequence(PageSequence pageSeq)  {
         try {
+            //This is needed for region handling
+            if (this.pagemaster == null) {
+                String reference = pageSeq.getMasterReference();
+                this.pagemaster
+                        = pageSeq.getRoot().getLayoutMasterSet().getSimplePageMaster(reference);
+                if (this.pagemaster == null) {
+                    log.warn("Only simple-page-masters are supported on page-sequences: " + reference);
+                    log.warn("Using default simple-page-master from page-sequence-master...");
+                    PageSequenceMaster master 
+                        = pageSeq.getRoot().getLayoutMasterSet().getPageSequenceMaster(reference);
+                    this.pagemaster = master.getNextSimplePageMaster(false, false, false);
+                }
+            }
+
             if (bDefer) {
                 return;
             }
@@ -181,19 +196,13 @@ public class RTFHandler extends FOEventHandler {
             sect = docArea.newSection();
 
             //read page size and margins, if specified
-
-            String reference = pageSeq.getMasterReference();
-
-            this.pagemaster
-                    = pageSeq.getRoot().getLayoutMasterSet().getSimplePageMaster(reference);
-
             //only simple-page-master supported, so pagemaster may be null
             if (pagemaster != null) {
                 sect.getRtfAttributes().set(
                     PageAttributesConverter.convertPageAttributes(
                             pagemaster));
             } else {
-                log.warn("Only simple-page-masters are supported on page-sequences: " + reference);
+                log.warn("No simple-page-master could be determined!");
             }
 
             builderContext.pushContainer(sect);
@@ -204,6 +213,9 @@ public class RTFHandler extends FOEventHandler {
             // TODO could we throw Exception in all FOEventHandler events?
             log.error("startPageSequence: " + ioe.getMessage());
             //TODO throw new FOPException(ioe);
+        } catch (FOPException fope) {
+            // TODO could we throw Exception in all FOEventHandler events?
+            log.error("startPageSequence: " + fope.getMessage());
         }
     }
 
@@ -218,11 +230,13 @@ public class RTFHandler extends FOEventHandler {
             //Now process all deferred FOs.
             bDefer = false;
             recurseFONode(pageSeq);
+            this.pagemaster = null;
             bDefer = true;
 
             return;
         } else {
             builderContext.popContainer();
+            this.pagemaster = null;
         }
     }
 
