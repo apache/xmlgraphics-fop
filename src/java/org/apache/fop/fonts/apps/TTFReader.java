@@ -20,78 +20,36 @@ package org.apache.fop.fonts.apps;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
-import java.util.List;
 import java.util.Iterator;
+import java.util.Map;
+
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-//FOP
 import org.apache.fop.Version;
 import org.apache.fop.fonts.truetype.FontFileReader;
 import org.apache.fop.fonts.truetype.TTFCmapEntry;
 import org.apache.fop.fonts.truetype.TTFFile;
 import org.apache.fop.util.CommandLineLogger;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * A tool which reads TTF files and generates
  * XML font metrics file for use in FOP.
  */
-public class TTFReader {
-
-    /**
-     * logging instance
-     */
-    protected static Log log;
+public class TTFReader extends AbstractFontReader {
 
     /**
      * Main constructor.
      */
     public TTFReader() {
-        // Create logger if necessary here to allow embedding of TTFReader in
-        // other applications. There is a possible but harmless synchronization
-        // issue.
-        if (log == null) {
-            log = LogFactory.getLog(TTFReader.class);
-        }
+        super();
     }
     
-    /**
-     * Parse commandline arguments. put options in the HashMap and return
-     * arguments in the String array
-     * the arguments: -fn Perpetua,Bold -cn PerpetuaBold per.ttf Perpetua.xml
-     * returns a String[] with the per.ttf and Perpetua.xml. The hash
-     * will have the (key, value) pairs: (-fn, Perpetua) and (-cn, PerpetuaBold)
-     */
-    private static String[] parseArguments(Map options, String[] args) {
-        List arguments = new java.util.ArrayList();
-        for (int i = 0; i < args.length; i++) {
-            if (args[i].startsWith("-")) {
-                if ("-d".equals(args[i]) || "-q".equals(args[i])) {
-                    options.put(args[i], "");
-                } else if ((i + 1) < args.length && !args[i + 1].startsWith("-")) {
-                    options.put(args[i], args[i + 1]);
-                    i++;
-                } else {
-                    options.put(args[i], "");
-                }
-            } else {
-                arguments.add(args[i]);
-            }
-        }
-
-        return (String[])arguments.toArray(new String[0]);
-    }
-
-
     private static void displayUsage() {
         System.out.println(
                 "java " + TTFReader.class.getName() + " [options] fontfile.ttf xmlfile.xml");
@@ -158,14 +116,7 @@ public class TTFReader {
                                             CommandLineLogger.class.getName());
         }
 
-        //Determine log level
-        if (options.get("-d") != null) {
-            setLogLevel("debug");
-        } else if (options.get("-q") != null) {
-            setLogLevel("error");
-        } else {
-            setLogLevel("info");
-        }
+        determineLogLevel(options);
 
         TTFReader app = new TTFReader();
 
@@ -233,15 +184,6 @@ public class TTFReader {
                 log.error("Error while building XML font metrics file.", e);
                 System.exit(-1);
             }
-        }
-    }
-
-    private static void setLogLevel(String level) {
-        // Set the evel for future loggers.
-        LogFactory.getFactory().setAttribute("level", level);
-        if (log instanceof CommandLineLogger) {
-            // Set the level for the logger creates already.
-            ((CommandLineLogger) log).setLogLevel(level);
         }
     }
 
@@ -530,20 +472,6 @@ public class TTFReader {
         }
 
         return stb.toString();
-    }
-
-    private String escapeString(String str) {
-        StringBuffer esc = new StringBuffer();
-
-        for (int i = 0; i < str.length(); i++) {
-            if (str.charAt(i) == '\\') {
-                esc.append("\\\\");
-            } else {
-                esc.append(str.charAt(i));
-            }
-        }
-
-        return esc.toString();
     }
 
 }
