@@ -27,6 +27,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix" fixes-bug="38397">
+        Bugfix: Spanned cells could lead to an false error message about overlapping 
+        cells and ultimately a NullPointerException.
+      </action>
       <action context="Code" dev="JM" type="fix">
         Bugfix: Regions with non-standard names got ignored in RTF output leading to 
         missing headers and footers.

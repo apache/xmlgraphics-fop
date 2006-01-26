@@ -355,6 +355,9 @@ public class TableRowIterator {
                 colnum++;
             }
         }
+        if (pendingRowSpans < 0) {
+            throw new IllegalStateException("pendingRowSpans must not become negative!");
+        }
         
         //Transfer available cells to their slots
         colnum = 1;
@@ -368,9 +371,15 @@ public class TableRowIterator {
             //shouldn't happen here, since
             //overlapping cells already caught in 
             //fo.flow.TableCell.bind()...
-            if (safelyGetListItem(gridUnits, colnum - 1) != null) {
-                log.error("Overlapping cell at position " + colnum);
-                //TODO throw layout exception
+            GridUnit other = (GridUnit)safelyGetListItem(gridUnits, colnum - 1); 
+            if (other != null) {
+                String err = "A table-cell (" 
+                        + cell.getContextInfo() 
+                        + ") is overlapping with another (" 
+                        + other.getCell().getContextInfo() 
+                        + ") in column " + colnum;
+                throw new IllegalStateException(err 
+                        + " (this should have been catched by FO tree validation)");
             }
             TableColumn col = columns.getColumn(colnum);
 
@@ -390,12 +399,20 @@ public class TableRowIterator {
                 for (int j = 1; j < cell.getNumberColumnsSpanned(); j++) {
                     colnum++;
                     GridUnit guSpan = new GridUnit(gu, columns.getColumn(colnum), colnum - 1, j);
-                    if (safelyGetListItem(gridUnits, colnum - 1) != null) {
-                        log.error("Overlapping cell at position " + colnum);
-                        //TODO throw layout exception
+                    //TODO: remove the check below???
+                    other = (GridUnit)safelyGetListItem(gridUnits, colnum - 1); 
+                    if (other != null) {
+                        String err = "A table-cell (" 
+                            + cell.getContextInfo() 
+                            + ") is overlapping with another (" 
+                            + other.getCell().getContextInfo() 
+                            + ") in column " + colnum;
+                        throw new IllegalStateException(err 
+                            + " (this should have been catched by FO tree validation)");
                     }
                     safelySetListItem(gridUnits, colnum - 1, guSpan);
                     if (hasRowSpanningLeft) {
+                        pendingRowSpans++;
                         safelySetListItem(lastRowsSpanningCells, colnum - 1, gu);
                     }
                     horzSpan[j] = guSpan;
