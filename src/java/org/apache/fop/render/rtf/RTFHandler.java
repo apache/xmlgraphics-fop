@@ -32,9 +32,6 @@ import org.xml.sax.SAXException;
 // FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.datatypes.LengthBase;
-import org.apache.fop.datatypes.PercentBaseContext;
-import org.apache.fop.datatypes.SimplePercentBaseContext;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.BasicLink;
@@ -71,7 +68,6 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfAfterContainer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfBeforeContainer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfListContainer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfTextrunContainer;
-import org.apache.fop.render.rtf.rtflib.rtfdoc.ITableColumnsInfo;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAfter;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfBefore;
@@ -181,7 +177,8 @@ public class RTFHandler extends FOEventHandler {
                 this.pagemaster
                         = pageSeq.getRoot().getLayoutMasterSet().getSimplePageMaster(reference);
                 if (this.pagemaster == null) {
-                    log.warn("Only simple-page-masters are supported on page-sequences: " + reference);
+                    log.warn("Only simple-page-masters are supported on page-sequences: " 
+                            + reference);
                     log.warn("Using default simple-page-master from page-sequence-master...");
                     PageSequenceMaster master 
                         = pageSeq.getRoot().getLayoutMasterSet().getPageSequenceMaster(reference);
@@ -211,11 +208,11 @@ public class RTFHandler extends FOEventHandler {
             bFooterSpecified = false;
         } catch (IOException ioe) {
             // TODO could we throw Exception in all FOEventHandler events?
-            log.error("startPageSequence: " + ioe.getMessage());
+            log.error("startPageSequence: " + ioe.getMessage(), ioe);
             //TODO throw new FOPException(ioe);
         } catch (FOPException fope) {
             // TODO could we throw Exception in all FOEventHandler events?
-            log.error("startPageSequence: " + fope.getMessage());
+            log.error("startPageSequence: " + fope.getMessage(), fope);
         }
     }
 
@@ -537,8 +534,7 @@ public class RTFHandler extends FOEventHandler {
         }
 
         try {
-            Integer iWidth = 
-                new Integer(tc.getColumnWidth().getValue() / 1000);
+            Integer iWidth = new Integer(tc.getColumnWidth().getValue() / 1000);
             String strWidth = iWidth.toString() + "pt";
             Float width = new Float(
                     FoUnitsConverter.getInstance().convertToTwips(strWidth));
@@ -1070,6 +1066,10 @@ public class RTFHandler extends FOEventHandler {
             //set image data
             ImageFactory fact = ImageFactory.getInstance();
             FopImage fopimage = fact.getImage(url, eg.getUserAgent());
+            if (fopimage == null) {
+                log.error("Image could not be found: " + url);
+                return;
+            }
             fopimage.load(FopImage.ORIGINAL_DATA);
 
             byte[] rawData;
@@ -1162,7 +1162,7 @@ public class RTFHandler extends FOEventHandler {
                 }
             }
         } catch (Exception e) {
-            log.error("image: " + e.getMessage());
+            log.error("Error while handling an external-graphic: " + e.getMessage(), e);
         }
     }
 
