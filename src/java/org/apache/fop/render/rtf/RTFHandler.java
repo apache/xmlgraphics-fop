@@ -63,6 +63,8 @@ import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FOText;
+import org.apache.fop.layoutmgr.table.TableContentLayoutManager;
+import org.apache.fop.layoutmgr.table.TableLayoutManager;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.ITableAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfAfterContainer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfBeforeContainer;
@@ -534,7 +536,16 @@ public class RTFHandler extends FOEventHandler {
         }
 
         try {
-            Integer iWidth = new Integer(tc.getColumnWidth().getValue() / 1000);
+            Table tbl = (Table) tc.getParent();
+            
+            TableLayoutManager tlm
+                = new TableLayoutManager(tbl);
+            TableContentLayoutManager tclm
+                = new TableContentLayoutManager(tlm);
+            
+            Integer iWidth
+                = new Integer(tc.getColumnWidth().getValue(tclm) / 1000);
+            
             String strWidth = iWidth.toString() + "pt";
             Float width = new Float(
                     FoUnitsConverter.getInstance().convertToTwips(strWidth));
