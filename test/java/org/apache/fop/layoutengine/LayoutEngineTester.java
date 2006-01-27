@@ -132,7 +132,7 @@ public class LayoutEngineTester {
             ua.setBaseURL(testFile.getParentFile().toURL().toString());
             XMLRenderer atrenderer = new XMLRenderer();
             atrenderer.setUserAgent(ua);
-            atrenderer.setTransformerHandler(athandler);
+            atrenderer.setContentHandler(athandler);
             ua.setRendererOverride(atrenderer);
             fop = new Fop(MimeConstants.MIME_FOP_AREA_TREE, ua);
             

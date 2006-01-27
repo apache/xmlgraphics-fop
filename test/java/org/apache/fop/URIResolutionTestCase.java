@@ -153,7 +153,7 @@ public class URIResolutionTestCase extends AbstractFOPTestCase {
 
         XMLRenderer atrenderer = new XMLRenderer();
         atrenderer.setUserAgent(ua);
-        atrenderer.setTransformerHandler(athandler);
+        atrenderer.setContentHandler(athandler);
         ua.setRendererOverride(atrenderer);
         
         Fop fop = new Fop(MimeConstants.MIME_FOP_AREA_TREE, ua);
