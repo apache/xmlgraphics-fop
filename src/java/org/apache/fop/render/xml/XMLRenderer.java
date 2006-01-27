@@ -36,6 +36,7 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.w3c.dom.Document;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.ContentHandler;
 
@@ -111,7 +112,7 @@ public class XMLRenderer extends PrintRenderer {
     /** If not null, the XMLRenderer will mimic another renderer by using its font setup. */
     protected Renderer mimic;
 
-    /** TransformerHandler that the generated XML is written to */
+    /** ContentHandler that the generated XML is written to */
     protected ContentHandler handler;
 
     /** AttributesImpl instance that can be used during XML generation. */
@@ -196,6 +197,20 @@ public class XMLRenderer extends PrintRenderer {
         throw new RuntimeException(saxe.getMessage());
     }
 
+    /**
+     * Writes a comment to the generated XML.
+     * @param comment the comment
+     */
+    protected void comment(String comment) {
+        if (handler instanceof LexicalHandler) { 
+            try {
+                ((LexicalHandler) handler).comment(comment.toCharArray(), 0, comment.length());
+            } catch (SAXException saxe) {
+                handleSAXException(saxe);
+            }
+        }
+    }
+    
     /**
      * Starts a new element (without attributes).
      * @param tagName tag name of the element
@@ -405,6 +420,9 @@ public class XMLRenderer extends PrintRenderer {
             handler.startDocument();
         } catch (SAXException saxe) {
             handleSAXException(saxe);
+        }
+        if (userAgent.getProducer() != null) {
+            comment("Produced by " + userAgent.getProducer());
         }
         startElement("areaTree");
     }

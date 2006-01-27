@@ -192,7 +192,7 @@ public class AreaTreeParserTestCase extends XMLTestCase {
         
         XMLRenderer renderer = new XMLRenderer();
         renderer.mimicRenderer(targetRenderer);
-        renderer.setTransformerHandler(handler);
+        renderer.setContentHandler(handler);
         renderer.setUserAgent(userAgent);
 
         userAgent.setRendererOverride(renderer);
@@ -223,7 +223,7 @@ public class AreaTreeParserTestCase extends XMLTestCase {
         DOMResult domResult = new DOMResult();
         handler.setResult(domResult);
         XMLRenderer renderer = new XMLRenderer();
-        renderer.setTransformerHandler(handler);
+        renderer.setContentHandler(handler);
 
         FOUserAgent userAgent = createUserAgent();
         userAgent.setRendererOverride(renderer);
