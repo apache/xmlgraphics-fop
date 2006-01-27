@@ -55,4 +55,13 @@ class DummyTableColumnsInfo implements ITableColumnsInfo {
 
     public void selectNextColumn() {
     }
+
+    /* (non-Javadoc)
+     * @see org.apache.fop.render.rtf.rtflib.rtfdoc.ITableColumnsInfo#getFirstSpanningCol()
+     */
+    public boolean getFirstSpanningCol() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
 }
