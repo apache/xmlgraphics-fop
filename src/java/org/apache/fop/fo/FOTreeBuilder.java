@@ -48,6 +48,8 @@ public class FOTreeBuilder extends DefaultHandler {
 
     /** The registry for ElementMapping instances */
     protected ElementMappingRegistry elementMappingRegistry;
+    //TODO Remove the ElementMappingRegistry from here and move it to a new environmental class
+    //FOTreeBuilder should be a "one-use" component.
     
     /**
      * The root of the formatting object tree
@@ -75,6 +77,8 @@ public class FOTreeBuilder extends DefaultHandler {
     
     /** The user agent for this processing run. */
     private FOUserAgent userAgent;
+    
+    private boolean used = false;
     
     /**
      * FOTreeBuilder constructor
@@ -143,6 +147,11 @@ public class FOTreeBuilder extends DefaultHandler {
      * @see org.xml.sax.ContentHandler#startDocument()
      */
     public void startDocument() throws SAXException {
+        if (used) {
+            throw new IllegalStateException("FOTreeBuilder (and the Fop class) cannot be reused."
+                    + " Please instantiate a new instance.");
+        }
+        used = true;
         rootFObj = null;    // allows FOTreeBuilder to be reused
         if (log.isDebugEnabled()) {
             log.debug("Building formatting object tree");
@@ -300,14 +309,5 @@ public class FOTreeBuilder extends DefaultHandler {
         }
     }
     
-    /**
-     * Resets this object for another run.
-     */
-    public void reset() {
-        currentFObj = null;
-        rootFObj = null;
-        foEventHandler = null;
-    }
-
 }
 
