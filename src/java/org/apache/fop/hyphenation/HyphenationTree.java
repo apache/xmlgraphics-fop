@@ -40,7 +40,7 @@ public class HyphenationTree extends TernaryTree
             implements PatternConsumer, Serializable {
 
     /**
-     * value space: stores the inteletter values
+     * value space: stores the interletter values
      */
     protected ByteVector vspace;
 
@@ -469,7 +469,7 @@ public class HyphenationTree extends TernaryTree
         while (true) {
             System.out.print("l:\tload patterns from XML\n"
                     + "L:\tload patterns from serialized object\n"
-                    + "s:\tset minimun character count\n"
+                    + "s:\tset minimum character count\n"
                     + "w:\twrite hyphenation tree to object file\n"
                     + "h:\thyphenate\n"
                     + "f:\tfind pattern\n"
@@ -539,7 +539,7 @@ public class HyphenationTree extends TernaryTree
                                                 minCharCount));
             } else if (token.equals("b")) {
                 if (ht == null) {
-                    System.out.println("No patterns has been loaded.");
+                    System.out.println("No patterns have been loaded.");
                     break;
                 }
                 System.out.print("Word list filename: ");
@@ -572,7 +572,7 @@ public class HyphenationTree extends TernaryTree
                 long endtime = System.currentTimeMillis();
                 long result = endtime - starttime;
                 System.out.println(counter + " words in " + result
-                                   + " Millisekunden hyphenated");
+                                   + " Milliseconds hyphenated");
 
             } else if (token.equals("q")) {
                 break;

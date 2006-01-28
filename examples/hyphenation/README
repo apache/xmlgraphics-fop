@@ -1,0 +1,9 @@
+FOP Hyphenation Readme
+
+The hyphenation analysis is an addition to FOP that can be used to
+render a hyphenation tree in various ways, among which a complete tree
+representation.
+
+Building: ant compile
+
+Running: 
