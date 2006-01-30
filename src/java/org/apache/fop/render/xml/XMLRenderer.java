@@ -705,7 +705,7 @@ public class XMLRenderer extends PrintRenderer {
         addAttribute("offset", viewport.getOffset());
         addAttribute("pos", viewport.getContentPosition());
         if (viewport.getClip()) {
-            addAttribute("clip", Boolean.toString(viewport.getClip()));
+            addAttribute("clip", "true");
         }
         startElement("viewport", atts);
         super.renderViewport(viewport);
