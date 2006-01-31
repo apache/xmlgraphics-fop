@@ -81,7 +81,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
     }
     
     private boolean isSeparateBorderModel() {
-        return getTableCell().isSeparateBorderModel();
+        return getTable().isSeparateBorderModel();
     }
     
     /** @see org.apache.fop.layoutmgr.LayoutManager#initialize() */
@@ -138,7 +138,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
         cellIPD = referenceIPD;
         cellIPD -= getIPIndents();
         if (isSeparateBorderModel()) {
-            int borderSep = getTableCell().getBorderSeparation().getLengthPair()
+            int borderSep = getTable().getBorderSeparation().getLengthPair()
                     .getIPD().getLength().getValue(this);
             cellIPD -= borderSep;
         }

@@ -30,7 +30,6 @@ import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonRelativePosition;
-import org.apache.fop.fo.properties.LengthPairProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 
 /**
@@ -44,8 +43,6 @@ public class TableCell extends TableFObj {
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     private CommonRelativePosition commonRelativePosition;
     private LengthRangeProperty blockProgressionDimension;
-    private int borderCollapse; //inherited from fo:table
-    private LengthPairProperty borderSeparation; //inherited from fo:table
     private Numeric columnNumber;
     private int displayAlign;
     private int relativeAlign;
@@ -114,8 +111,6 @@ public class TableCell extends TableFObj {
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         commonRelativePosition = pList.getRelativePositionProps();
         blockProgressionDimension = pList.get(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange();
-        borderCollapse = pList.get(PR_BORDER_COLLAPSE).getEnum();
-        borderSeparation = pList.get(PR_BORDER_SEPARATION).getLengthPair();
         columnNumber = pList.get(PR_COLUMN_NUMBER).getNumeric();
         displayAlign = pList.get(PR_DISPLAY_ALIGN).getEnum();
         relativeAlign = pList.get(PR_RELATIVE_ALIGN).getEnum();
@@ -329,21 +324,6 @@ public class TableCell extends TableFObj {
         return (this.emptyCells == EN_SHOW);
     }
     
-    /** @return the "border-collapse" property (inherited from fo:table). */
-    public int getBorderCollapse() {
-        return borderCollapse;
-    }
-
-    /** @return true if the separate border model is active */
-    public boolean isSeparateBorderModel() {
-        return (getBorderCollapse() == EN_SEPARATE);
-    }
-    
-    /** @return the "border-separation" property (inherited from fo:table). */
-    public LengthPairProperty getBorderSeparation() {
-        return borderSeparation;
-    }
-
     /**
      * @return the "id" property.
      */
