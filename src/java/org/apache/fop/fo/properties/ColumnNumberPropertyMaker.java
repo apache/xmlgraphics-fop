@@ -18,6 +18,7 @@
 
 package org.apache.fop.fo.properties;
 
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
@@ -85,18 +86,43 @@ public class ColumnNumberPropertyMaker extends NumberProperty.Maker {
             throws PropertyException {
         
         Property p = super.get(0, propertyList, tryInherit, tryDefault);
-        FObj fo = propertyList.getFObj();
+        TableFObj fo = (TableFObj) propertyList.getFObj();
         TableFObj parent = (TableFObj) propertyList.getParentFObj();
+        int columnIndex = p.getNumeric().getValue();
         
-        if (p.getNumeric().getValue() <= 0) {
-            int columnIndex = parent.getCurrentColumnIndex();
+        if (columnIndex <= 0) {
             fo.getLogger().warn("Specified negative or zero value for "
                     + "column-number on " + fo.getName() + ": "
-                    + p.getNumeric().getValue() + " forced to " 
-                    + columnIndex);
-            return new NumberProperty(columnIndex);
+                    + columnIndex + " forced to " 
+                    + parent.getCurrentColumnIndex());
+            return new NumberProperty(parent.getCurrentColumnIndex());
         }
         //TODO: check for non-integer value and round
+        
+        if (fo.getNameId() == Constants.FO_TABLE_CELL) {
+            //check if any of the column-numbers occupied by this cell
+            //are already in use in the current row...
+            int i = -1;
+            int colspan = propertyList.get(Constants.PR_NUMBER_COLUMNS_SPANNED)
+                            .getNumeric().getValue();
+            while (++i < colspan) {
+                //if table has explicit columns and the column-number isn't
+                //assigned to any column, increment further until the next
+                //column is encountered
+                if (fo.getTable().getColumns() != null) {
+                    while (columnIndex <= fo.getTable().getColumns().size()
+                            && !fo.getTable().isColumnNumberUsed(columnIndex)) {
+                        columnIndex++;
+                    }
+                }
+                //if column-number is already in use by another cell
+                //in the current row => error!
+                if (parent.isColumnNumberUsed(columnIndex + i)) {
+                    throw new PropertyException("fo:table-cell overlaps in column "
+                            + (columnIndex + i));
+                }
+            }
+        }
         
         //if column-number was explicitly specified, force the parent's current
         //column index to the specified value, so that the updated index will

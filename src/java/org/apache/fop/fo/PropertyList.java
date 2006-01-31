@@ -245,24 +245,38 @@ abstract public class PropertyList {
      * @throws FOPException If an error occurs while building the PropertyList
      */
     public void addAttributesToList(Attributes attributes) {
-            /*
-             * If font-size is set on this FO, must set it first, since
-             * other attributes specified in terms of "ems" depend on it.
-             */
-            /** @todo When we do "shorthand" properties, must handle the
-             *  "font" property as well to see if font-size is set.
-             */
-            String attributeName = "font-size";
-            String attributeValue = attributes.getValue(attributeName);
+        /*
+         * If column-number/number-columns-spanned are specified, then we 
+         * need them before all others (possible from-table-column() on any 
+         * other property further in the list...
+         */
+        String attributeName = "column-number";
+        String attributeValue = attributes.getValue(attributeName);
+        convertAttributeToProperty(attributes, attributeName, 
+            attributeValue);
+        attributeName = "number-columns-spanned";
+        attributeValue = attributes.getValue(attributeName);
+        convertAttributeToProperty(attributes, attributeName, 
+            attributeValue);
+    
+        /*
+         * If font-size is set on this FO, must set it first, since
+         * other attributes specified in terms of "ems" depend on it.
+         */
+        /** @todo When we do "shorthand" properties, must handle the
+         *  "font" property as well to see if font-size is set.
+         */
+        attributeName = "font-size";
+        attributeValue = attributes.getValue(attributeName);
+        convertAttributeToProperty(attributes, attributeName, 
+            attributeValue);
+            
+        for (int i = 0; i < attributes.getLength(); i++) {
+            attributeName = attributes.getQName(i);
+            attributeValue = attributes.getValue(i);
             convertAttributeToProperty(attributes, attributeName, 
                 attributeValue);
-    
-            for (int i = 0; i < attributes.getLength(); i++) {
-                attributeName = attributes.getQName(i);
-                attributeValue = attributes.getValue(i);
-                convertAttributeToProperty(attributes, attributeName, 
-                    attributeValue);
-            }
+        }
     }
 
     /**

@@ -61,7 +61,36 @@
           </fo:block>
         </fo:block>
       </fo:block>
-      <!-- from-table-column (not implemented) -->
+      <fo:table border-collapse="separate" table-layout="fixed" width="100%">
+        <fo:table-column column-width="proportional-column-width(1)" 
+                         text-align="start" />
+        <fo:table-column column-width="proportional-column-width(1)" 
+                         text-align="center" />
+        <fo:table-column column-width="proportional-column-width(1)" 
+                         text-align="end" />
+        <fo:table-body>
+          <fo:table-cell starts-row="true">
+            <fo:block text-align="from-table-column()">
+              <test:assert property="text-align" expected="START" />
+              Start-aligned
+            </fo:block>
+          </fo:table-cell>
+          <fo:table-cell text-align="from-table-column()" column-number="3">
+            <test:assert property="text-align" expected="END" />
+            <fo:block>
+              <test:assert property="text-align" expected="END" />
+              End-aligned
+            </fo:block>
+          </fo:table-cell>
+          <fo:table-cell column-number="2">
+            <fo:block text-align="from-table-column()">
+              <test:assert property="text-align" expected="CENTER" />
+              Center-aligned
+            </fo:block>
+          </fo:table-cell>
+        </fo:table-body>
+      </fo:table>
+
       <!-- merge-property-value (not implemented) -->
     </fo:flow>
   </fo:page-sequence>

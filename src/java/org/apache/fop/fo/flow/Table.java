@@ -71,8 +71,8 @@ public class Table extends TableFObj {
 
     /** collection of columns in this table */
     protected List columns = null;
-    private BitSet usedColumnIndices = new BitSet();
     private int columnIndex = 1;
+    private BitSet usedColumnIndices = new BitSet();
     private TableBody tableHeader = null;
     private TableBody tableFooter = null;
   
@@ -212,8 +212,13 @@ public class Table extends TableFObj {
            missingChildElementError(
                    "(marker*,table-column*,table-header?,table-footer?,table-body+)");
         }
-        //release reference
-        usedColumnIndices = null;
+        if (columns != null && !columns.isEmpty()) {
+            for (int i = columns.size(); --i >= 0;) {
+                if (isColumnNumberUsed(i + 1)) {
+                    ((TableColumn) columns.get(i)).releasePropertyList();
+                }
+            }
+        }
         getFOEventHandler().endTable(this);
     }
 
@@ -259,11 +264,7 @@ public class Table extends TableFObj {
             //in case column is repeated:
             //for the time being, add the same column 
             //(colRepeat - 1) times to the columns list
-            //TODO: need to force the column-number
-            //TODO: need to make sure START/END BorderInfo
-            //      are completely independent instances (clones?)
-            //      = necessary for border-collapse="collapse"
-            //        if collapsing is handled in FOTree
+            //TODO: need to force the column-number (?)
             for (int i = colRepeat - 1; --i >= 0;) {
                 columns.add(col);
             }
@@ -277,6 +278,7 @@ public class Table extends TableFObj {
             columnIndex++;
         }
     }
+
     /** @return true of table-layout="auto" */
     public boolean isAutoLayout() {
         return (tableLayout != EN_FIXED);
@@ -426,6 +428,16 @@ public class Table extends TableFObj {
     }
 
     /**
+     * Checks if a certain column-number is already occupied
+     * 
+     * @param colNr the column-number to check
+     * @return true if column-number is already in use
+     */
+    public boolean isColumnNumberUsed(int colNr) {
+        return usedColumnIndices.get(colNr - 1);
+    }
+
+    /**
      * Sets the current column index of the given Table
      * (used by TableColumn.bind() in case the column-number
      * was explicitly specified)
@@ -435,14 +447,5 @@ public class Table extends TableFObj {
     public void setCurrentColumnIndex(int newIndex) {
         columnIndex = newIndex;
     }
-
-    /**
-     * Checks if a certain column-number is already occupied
-     * 
-     * @param colNr the column-number to check
-     * @return true if column-number is already in use
-     */
-    protected boolean isColumnNumberUsed(int colNr) {
-        return usedColumnIndices.get(colNr - 1);
-    }    
+    
 }

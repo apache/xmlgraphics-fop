@@ -26,9 +26,11 @@ import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.StaticPropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.fo.properties.Property;
 
 /**
  * Class modelling the fo:table-column object.
@@ -44,6 +46,7 @@ public class TableColumn extends TableFObj {
     // End of property values
     
     private boolean defaultColumn;
+    private StaticPropertyList pList = null;
     
     /**
      * @param parent FONode that is the parent of this object
@@ -86,6 +89,7 @@ public class TableColumn extends TableFObj {
             throw new PropertyException("number-columns-spanned must be 1 or bigger, "
                     + "but got " + numberColumnsSpanned.getValue());
         }
+        this.pList = new StaticPropertyList(this, pList);
     }
 
     /**
@@ -182,6 +186,25 @@ public class TableColumn extends TableFObj {
         }
         sb.append(" column-width=").append(getColumnWidth());
         return sb.toString();
+    }
+    
+    /**
+     * Retrieve a property value through its Id; used by from-table-column() function
+     * 
+     * @param propId    the id for the property to retrieve
+     * @return the requested Property
+     * @throws PropertyException
+     */
+    public Property getProperty(int propId) throws PropertyException {
+        return this.pList.getInherited(propId);
+    }
+    
+    /**
+     * Clear the reference to the PropertyList (retained for from-table-column())
+     *
+     */
+    protected void releasePropertyList() {
+        this.pList = null;
     }
 
 }
