@@ -144,7 +144,7 @@ public abstract class TableFObj extends FObj {
      * @param colNr the column-number to check
      * @return true if column-number is already in use
      */
-    protected boolean isColumnNumberUsed(int colNr) {
+    public boolean isColumnNumberUsed(int colNr) {
         return false;
     }
     
@@ -155,7 +155,7 @@ public abstract class TableFObj extends FObj {
      * @return  the base table instance
      * 
      */
-    protected Table getTable() {
+    public Table getTable() {
         if (this.getNameId() == FO_TABLE) {
             //node is a Table
             //=> return itself

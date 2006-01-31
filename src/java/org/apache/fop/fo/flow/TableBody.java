@@ -404,7 +404,7 @@ public class TableBody extends TableFObj {
      * @param   colNr   the column-number to check
      * @return true if column-number is already occupied
      */
-    protected boolean isColumnNumberUsed(int colNr) {
+    public boolean isColumnNumberUsed(int colNr) {
         return usedColumnIndices.get(colNr - 1);
     }    
 }

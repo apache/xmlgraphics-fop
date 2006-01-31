@@ -124,28 +124,6 @@ public class TableCell extends TableFObj {
         startsRow = pList.get(PR_STARTS_ROW).getEnum();
         width = pList.get(PR_WIDTH).getLength();
         super.bind(pList);
-        
-        //check if any of the column-numbers occupied by this cell
-        //are already in use in the current row...
-        int i = -1;
-        int columnIndex = columnNumber.getValue();
-        while (++i < getNumberColumnsSpanned()) {
-            //if table has explicit columns and the column-number isn't
-            //assigned to any column, increment further until the next
-            //column is encountered
-            if (getTable().columns != null) {
-                while (columnIndex <= getTable().columns.size()
-                        && !getTable().isColumnNumberUsed(columnIndex)) {
-                    columnIndex++;
-                }
-            }
-            //if column-number is already in use by another cell
-            //in the current row => error!
-            if (((TableFObj) parent).isColumnNumberUsed(columnIndex)) {
-                throw new FOPException("fo:table-cell overlaps in column "
-                        + columnIndex, locator);
-            }
-        }
     }
 
     /**

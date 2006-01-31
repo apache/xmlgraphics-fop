@@ -27,6 +27,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="AD" type="add">
+        Added support for the from-table-column() function.
+        (Thanks to gerhard.oettl.at.oesoft.at for the inspiration.)
+      </action>
       <action context="Code" dev="JM" type="fix" fixes-bug="38397">
         Bugfix: Spanned cells could lead to an false error message about overlapping 
         cells and ultimately a NullPointerException.

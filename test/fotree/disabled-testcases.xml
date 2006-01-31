@@ -31,4 +31,10 @@
     <file>inline-progression-dimension_negative.fo</file>
     <description>The code currently doesn't set negative values to 0mpt as mandated by the spec.</description>
   </testcase>
+  <testcase>
+    <name>Markers and core function evaluation</name>
+    <file>from-table-column_marker.fo</file>
+    <description>The code currently evaluates this function according to the column in which the 
+    marker appearsin the source document, rather than the column it is retrieved in.</description>
+  </testcase>
 </disabled-testcases>

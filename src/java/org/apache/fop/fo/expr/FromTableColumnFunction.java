@@ -18,6 +18,14 @@
 
 package org.apache.fop.fo.expr;
 
+import java.util.List;
+import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FOPropertyMapping;
+import org.apache.fop.fo.flow.Table;
+import org.apache.fop.fo.flow.TableFObj;
+import org.apache.fop.fo.flow.TableCell;
+import org.apache.fop.fo.flow.TableColumn;
 import org.apache.fop.fo.properties.Property;
 
 /**
@@ -52,13 +60,73 @@ public class FromTableColumnFunction extends FunctionBase {
      */
     public Property eval(Property[] args,
                          PropertyInfo pInfo) throws PropertyException {
-        /* uncomment when implementing
-        String propName = args[0].getString();
-        if (propName == null) {
-            throw new PropertyException("Incorrect parameter to from-table-column function");
+        
+        FObj fo = pInfo.getPropertyList().getFObj();
+        
+        /* obtain property Id for the property for which the function is being
+         * evaluated */
+        int propId = 0;
+        if (args.length == 0) {
+            propId = pInfo.getPropertyMaker().getPropId();
+        } else {
+            String propName = args[0].getString();
+            propId = FOPropertyMapping.getPropertyId(propName);
         }
-        */
-        throw new PropertyException("The from-table-column() function is not implemented, yet!");
+        
+        /* make sure we have a correct property id ... */
+        if (propId != -1) {
+            /* obtain column number for which the function is being evaluated: */
+            int columnNumber = -1;
+            int span = 0;
+            if (fo.getNameId() != Constants.FO_TABLE_CELL) {
+                // climb up to the nearest cell
+                do { 
+                    fo = (FObj) fo.getParent();
+                } while (fo.getNameId() != Constants.FO_TABLE_CELL
+                          && fo.getNameId() != Constants.FO_PAGE_SEQUENCE);
+                if (fo.getNameId() == Constants.FO_TABLE_CELL) {
+                    //column-number is available on the cell
+                    columnNumber = ((TableCell) fo).getColumnNumber();
+                    span = ((TableCell) fo).getNumberColumnsSpanned();
+                } else {
+                    //means no table-cell was found...
+                    throw new PropertyException("from-table-column() may only be used on "
+                            + "fo:table-cell or its descendants.");
+                }
+            } else {
+                //column-number is only accurately available through the propertyList
+                columnNumber = pInfo.getPropertyList().get(Constants.PR_COLUMN_NUMBER)
+                                    .getNumeric().getValue();
+                span = pInfo.getPropertyList().get(Constants.PR_NUMBER_COLUMNS_SPANNED)
+                                    .getNumeric().getValue();
+            }
+
+            /* return the property from the column */
+            Table t = ((TableFObj) fo).getTable();
+            List cols = t.getColumns();
+            if (cols == null) {
+                //no columns defined => no match: return default value
+                return pInfo.getPropertyList().get(propId, false, true);
+            } else {
+                if (t.isColumnNumberUsed(columnNumber)) {
+                    //easiest case: exact match
+                    return ((TableColumn) cols.get(columnNumber - 1)).getProperty(propId);
+                } else {
+                    //no exact match: try all spans...
+                    while (--span > 0 && !t.isColumnNumberUsed(++columnNumber)) {
+                        //nop: just increment/decrement
+                    }
+                    if (t.isColumnNumberUsed(columnNumber)) {
+                        return ((TableColumn) cols.get(columnNumber - 1)).getProperty(propId);
+                    } else {
+                        //no match: return default value
+                        return pInfo.getPropertyList().get(propId, false, true);
+                    }
+                }
+            }
+        } else {
+            throw new PropertyException("Incorrect parameter to from-table-column() function");
+        }
     }
 
 }
