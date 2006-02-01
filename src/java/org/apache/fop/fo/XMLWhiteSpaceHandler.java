@@ -34,6 +34,8 @@ public class XMLWhiteSpaceHandler {
     private boolean inWhiteSpace = false;
     // True if the last char was a linefeed
     private boolean afterLinefeed = true;
+    // Counter, increased every time a non-white-space is encountered
+    private int nonWhiteSpaceCount;
     
     private Block currentBlock;
     private FObj currentFO;
@@ -89,27 +91,45 @@ public class XMLWhiteSpaceHandler {
                     || (textNodeIndex > 0
                             && ((FONode) fo.childNodes.get(textNodeIndex - 1))
                                 .getNameId() == Constants.FO_BLOCK));
-            endOfBlock = (nextChild == null);
         }
+        endOfBlock = (nextChild == null && currentFO == currentBlock);
         nextChildIsBlock = (nextChild != null 
                         && nextChild.getNameId() == Constants.FO_BLOCK);
         handleWhiteSpace();
-        if (inWhiteSpace) {
-            if (!endOfBlock && currentFO != currentBlock) {
+        if (currentFO == currentBlock 
+                && pendingInlines != null 
+                && !pendingInlines.isEmpty()) {
+            /* current FO is a block, and has pending inlines */
+            if (endOfBlock || nextChildIsBlock) {
+                if (nonWhiteSpaceCount == 0) {
+                    /* handle white-space for all pending inlines*/
+                    PendingInline p;
+                    for (int i = pendingInlines.size(); --i >= 0;) {
+                        p = (PendingInline) pendingInlines.get(i);
+                        charIter = (RecursiveCharIterator) p.firstTrailingWhiteSpace;
+                        handleWhiteSpace();
+                        pendingInlines.remove(p);
+                    }
+                } else {
+                    /* there is non-white-space text between the pending
+                     * inline(s) and the end of the block;
+                     * clear list of pending inlines */
+                    pendingInlines.clear();
+                }
+            }
+        }
+        if (currentFO != currentBlock && nextChild == null) {
+            /* current FO is not a block, and is about to end */
+            if (nonWhiteSpaceCount > 0 && pendingInlines != null) {
+                /* there is non-white-space text between the pending 
+                 * inline(s) and the end of the non-block node; 
+                 * clear list of pending inlines */
+                pendingInlines.clear();
+            }
+            if (inWhiteSpace) {
                 /* means there is at least one trailing space in the
                    inline FO that is about to end */
                 addPendingInline(fo);
-            } else if (pendingInlines != null) {
-                if (endOfBlock || nextChildIsBlock) {
-                    /* handle white-space for all trailing inlines*/
-                    for (int i = pendingInlines.size(); --i >= 0;) {
-                        PendingInline p = (PendingInline) pendingInlines.get(i);
-                        currentFO = p.fo;
-                        charIter = (RecursiveCharIterator) p.firstTrailingWhiteSpace;
-                        handleWhiteSpace();
-                    }
-                }
-                pendingInlines.clear();
             }
         }
     }
@@ -131,8 +151,13 @@ public class XMLWhiteSpaceHandler {
     private void handleWhiteSpace() {
         
         EOLchecker lfCheck = new EOLchecker(charIter);
-
+        
+        nonWhiteSpaceCount = 0;
+        
         while (charIter.hasNext()) {
+            if (!inWhiteSpace) {
+                firstWhiteSpaceInSeq = charIter.mark();
+            }
             char currentChar = charIter.nextChar();
             int currentCharClass = CharUtilities.classOf(currentChar);
             if (currentCharClass == CharUtilities.LINEFEED
@@ -178,9 +203,6 @@ public class XMLWhiteSpaceHandler {
                         if (bIgnore) {
                             charIter.remove();
                         } else {
-                            if (!inWhiteSpace) {
-                                firstWhiteSpaceInSeq = charIter.mark();
-                            }
                             // this is to retain a single space between words
                             inWhiteSpace = true;
                             if (currentChar != '\u0020') {
@@ -220,6 +242,7 @@ public class XMLWhiteSpaceHandler {
                     // Any other character
                     inWhiteSpace = false;
                     afterLinefeed = false;
+                    nonWhiteSpaceCount++;
                     lfCheck.reset();
                     break;
             }
