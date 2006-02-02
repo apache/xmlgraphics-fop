@@ -27,6 +27,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix" fixes-bug="38453">
+        Bugfix: Text-decoration was not promoted if no text-decoration attribute was
+        specified on a nested element.
+      </action>
       <action context="Code" dev="AD" type="add">
         Added support for the from-table-column() function.
         (Thanks to gerhard.oettl.at.oesoft.at for the inspiration.)

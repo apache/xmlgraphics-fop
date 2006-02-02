@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2005 The Apache Software Foundation
+  Copyright 2005-2006 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@
         <fo:flow flow-name="xsl-region-body">
           <!-- nested inlines -->
           <fo:block>normal <fo:inline color="blue" text-decoration="underline">under <fo:inline color="red" font-size="14pt" text-decoration="line-through">through</fo:inline> <fo:inline text-decoration="none">none</fo:inline> under</fo:inline> normal</fo:block>
+          <fo:block color="blue" text-decoration="underline">Everything in this paragraph including this <fo:basic-link external-destination="http://xmlgraphics.apache.org/fop/">link</fo:basic-link> must be underlined.</fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
@@ -83,6 +84,10 @@
     <true xpath="not(//flow/block[1]/lineArea/*[3]/@through-score)"/>
     <eval xpath="name(//flow/block[1]/lineArea/*[3])" expected="text"/>
     <eval xpath="//flow/block[1]/lineArea/*[3]/@color" expected="#000000"/>
+    
+    <true xpath="//flow/block[2]/lineArea/text[1]/@underline-score"/>
+    <true xpath="//flow/block[2]/lineArea/inlineparent/text[1]/@underline-score"/>
+    <true xpath="//flow/block[2]/lineArea/text[2]/@underline-score"/>
     
   </checks>
 </testcase>

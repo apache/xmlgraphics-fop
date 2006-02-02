@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 The Apache Software Foundation.
+ * Copyright 2005-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,60 +68,63 @@ public class CommonTextDecoration {
             deco = calcTextDecoration(parentList);
         }
         //For rules, see XSL 1.0, chapters 5.5.6 and 7.16.4
-        List list = pList.get(Constants.PR_TEXT_DECORATION).getList();
-        Iterator i = list.iterator();
-        while (i.hasNext()) {
-            Property prop = (Property)i.next(); 
-            int prop_enum = prop.getEnum();
-            if (prop_enum == Constants.EN_NONE) {
-                if (deco != null) {
-                    deco.decoration = 0;
-                }
-                return deco;
-            } else if (prop_enum == Constants.EN_UNDERLINE) {
-                if (deco == null) {
-                    deco = new CommonTextDecoration();
-                }
-                deco.decoration |= UNDERLINE;
-                deco.underColor = pList.get(Constants.PR_COLOR).getColorType();
-            } else if (prop_enum == Constants.EN_NO_UNDERLINE) {
-                if (deco != null) {
-                    deco.decoration &= OVERLINE | LINE_THROUGH | BLINK;
+        Property textDecoProp = pList.getExplicit(Constants.PR_TEXT_DECORATION);
+        if (textDecoProp != null) {
+            List list = textDecoProp.getList();
+            Iterator i = list.iterator();
+            while (i.hasNext()) {
+                Property prop = (Property)i.next(); 
+                int propEnum = prop.getEnum();
+                if (propEnum == Constants.EN_NONE) {
+                    if (deco != null) {
+                        deco.decoration = 0;
+                    }
+                    return deco;
+                } else if (propEnum == Constants.EN_UNDERLINE) {
+                    if (deco == null) {
+                        deco = new CommonTextDecoration();
+                    }
+                    deco.decoration |= UNDERLINE;
                     deco.underColor = pList.get(Constants.PR_COLOR).getColorType();
-                }
-            } else if (prop_enum == Constants.EN_OVERLINE) {
-                if (deco == null) {
-                    deco = new CommonTextDecoration();
-                }
-                deco.decoration |= OVERLINE;
-                deco.overColor = pList.get(Constants.PR_COLOR).getColorType();
-            } else if (prop_enum == Constants.EN_NO_OVERLINE) {
-                if (deco != null) {
-                    deco.decoration &= UNDERLINE | LINE_THROUGH | BLINK;
+                } else if (propEnum == Constants.EN_NO_UNDERLINE) {
+                    if (deco != null) {
+                        deco.decoration &= OVERLINE | LINE_THROUGH | BLINK;
+                        deco.underColor = pList.get(Constants.PR_COLOR).getColorType();
+                    }
+                } else if (propEnum == Constants.EN_OVERLINE) {
+                    if (deco == null) {
+                        deco = new CommonTextDecoration();
+                    }
+                    deco.decoration |= OVERLINE;
                     deco.overColor = pList.get(Constants.PR_COLOR).getColorType();
-                }
-            } else if (prop_enum == Constants.EN_LINE_THROUGH) {
-                if (deco == null) {
-                    deco = new CommonTextDecoration();
-                }
-                deco.decoration |= LINE_THROUGH;
-                deco.throughColor = pList.get(Constants.PR_COLOR).getColorType();
-            } else if (prop_enum == Constants.EN_NO_LINE_THROUGH) {
-                if (deco != null) {
-                    deco.decoration &= UNDERLINE | OVERLINE | BLINK;
+                } else if (propEnum == Constants.EN_NO_OVERLINE) {
+                    if (deco != null) {
+                        deco.decoration &= UNDERLINE | LINE_THROUGH | BLINK;
+                        deco.overColor = pList.get(Constants.PR_COLOR).getColorType();
+                    }
+                } else if (propEnum == Constants.EN_LINE_THROUGH) {
+                    if (deco == null) {
+                        deco = new CommonTextDecoration();
+                    }
+                    deco.decoration |= LINE_THROUGH;
                     deco.throughColor = pList.get(Constants.PR_COLOR).getColorType();
+                } else if (propEnum == Constants.EN_NO_LINE_THROUGH) {
+                    if (deco != null) {
+                        deco.decoration &= UNDERLINE | OVERLINE | BLINK;
+                        deco.throughColor = pList.get(Constants.PR_COLOR).getColorType();
+                    }
+                } else if (propEnum == Constants.EN_BLINK) {
+                    if (deco == null) {
+                        deco = new CommonTextDecoration();
+                    }
+                    deco.decoration |= BLINK;
+                } else if (propEnum == Constants.EN_NO_BLINK) {
+                    if (deco != null) {
+                        deco.decoration &= UNDERLINE | OVERLINE | LINE_THROUGH;
+                    }
+                } else {
+                    throw new PropertyException("Illegal value encountered: " + prop.getString());
                 }
-            } else if (prop_enum == Constants.EN_BLINK) {
-                if (deco == null) {
-                    deco = new CommonTextDecoration();
-                }
-                deco.decoration |= BLINK;
-            } else if (prop_enum == Constants.EN_NO_BLINK) {
-                if (deco != null) {
-                    deco.decoration &= UNDERLINE | OVERLINE | LINE_THROUGH;
-                }
-            } else {
-                throw new PropertyException("Illegal value encountered: " + prop.getString());
             }
         }
         return deco;
