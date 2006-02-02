@@ -54,12 +54,13 @@ The purpose of documenting it here is to facilitate consistency, ensure that the
           <code>gpg -a -b --force-v3-sigs fop-0.91beta.tar.gz etc.</code></li>
         <li>Upload to people.apache.org. (An account on minotaur is needed):
           <code>scp fop-0.91beta*.tar.gz* 
-chrisg@www.apache.org:/www/www.apache.org/dist/xmlgraphics/fop/</code></li>
+chrisg@people.apache.org:/www/www.apache.org/dist/xmlgraphics/fop/</code></li>
         <li>Check permissions:
           <code>chmod 664 ... ; chgrp xmlgraphics ...</code></li>
         <li>Add MD5 sums: <code>md5 fop-0.91beta-bin.tar.gz &gt;
           fop-0.91beta-bin.tar.gz.md5</code></li>
         <li>Make a test download.</li>
+        <li>Update HEADER.html and README.html in people.apache.org:/www/www.apache.org/dist/xmlgraphics/fop/</li>
         <li>Wait 24 hours (for the mirrors to catch up).</li>
         <li>Post announcements on fop-dev and fop-user and other related mailing lists.</li>
         <li>Add bugzilla entry for the new release id.</li>
