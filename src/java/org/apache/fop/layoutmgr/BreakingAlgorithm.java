@@ -363,9 +363,11 @@ public abstract class BreakingAlgorithm {
 
         // index of the first KnuthBox in the sequence
         int firstBoxIndex = startIndex;
-        while (alignment != org.apache.fop.fo.Constants.EN_CENTER
-               && ! ((KnuthElement) par.get(firstBoxIndex)).isBox()) {
-            firstBoxIndex++;
+        if (alignment != org.apache.fop.fo.Constants.EN_CENTER) {
+            while (par.size() > firstBoxIndex
+                    && ! ((KnuthElement) par.get(firstBoxIndex)).isBox()) {
+                firstBoxIndex++;
+            }
         }
 
         // create an active node representing the starting point
