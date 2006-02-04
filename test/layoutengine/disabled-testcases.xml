@@ -68,6 +68,13 @@
     removed from the start of a line.</description>
   </testcase>
   <testcase>
+    <name>Non breaking spaces must not be breakable</name>
+    <file>block_white-space_3.xml</file>
+    <description>A non breaking space incorrectly
+    causes a break possibility. The element list is wrong.</description>
+    <reference>http://issues.apache.org/bugzilla/show_bug.cgi?id=38507</reference>
+  </testcase>
+  <testcase>
     <name>block white-space-collapse 2</name>
     <file>block_white-space-collapse_2.xml</file>
     <description>First line-break occurs after the fifth space following the
