@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-/* $Id: BorderAttributesConverter.java 198175 2004-11-24 21:07:31Z gmazza $ */
+/* $Id$ */
 
+package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 /*
  * This file is part of the RTF library of the FOP project, which was originally
@@ -24,7 +25,7 @@
  * the FOP project.
  */
 
-package org.apache.fop.render.rtf.rtflib.rtfdoc;
+
 
 /** Constants for RTF border attribute names. */
 
