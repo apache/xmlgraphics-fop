@@ -16,6 +16,7 @@
 
 /* $Id$ */
 
+package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 /*
  * This file is part of the RTF library of the FOP project, which was originally
@@ -23,8 +24,6 @@
  * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
  * the FOP project.
  */
-
-package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 /**
  * Options for configuring the rtf elements.

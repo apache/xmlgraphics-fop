@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+/* $Id:$ */
+
+package org.apache.fop.render.rtf.rtflib.rtfdoc;
+
 /* $Id$ */
 
 
@@ -23,8 +27,6 @@
  * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
  * the FOP project.
  */
-
-package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 /**
  * Constants for RTF table attribute names
@@ -42,6 +44,11 @@ public interface ITableAttributes {
 
     /** half the space between the cells of a table row in twips */
     String ATTR_RTF_15_TRGAPH = "trgaph";
+    
+    /**
+     *  Position of the leftmost edge of the table with respect to the
+     * left edge of its column
+     */
     String ATTR_ROW_LEFT_INDENT = "trleft";
     
     /** table row header */
@@ -124,6 +131,8 @@ public interface ITableAttributes {
 //Table row attributes
     /** row attribute, keep-together */
     String ROW_KEEP_TOGETHER = "trkeep";
+    
+    /** Height of a table row in twips */
     String ROW_HEIGHT = "trrh";
 
     /**
