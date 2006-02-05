@@ -32,6 +32,8 @@ import org.xml.sax.SAXException;
 // FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.datatypes.LengthBase;
+import org.apache.fop.datatypes.SimplePercentBaseContext;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.BasicLink;
@@ -63,8 +65,6 @@ import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FOText;
-import org.apache.fop.layoutmgr.table.TableContentLayoutManager;
-import org.apache.fop.layoutmgr.table.TableLayoutManager;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.ITableAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfAfterContainer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfBeforeContainer;
@@ -536,15 +536,23 @@ public class RTFHandler extends FOEventHandler {
         }
 
         try {
-            Table tbl = (Table) tc.getParent();
-            
-            TableLayoutManager tlm
-                = new TableLayoutManager(tbl);
-            TableContentLayoutManager tclm
-                = new TableContentLayoutManager(tlm);
+            /**
+             * Pass a SimplePercentBaseContext to getValue in order to
+             * avoid a NullPointerException, which occurs when you use
+             * proportional-column-width function in column-width attribute.
+             * Of course the results won't be correct, but at least the
+             * rest of the document will be rendered. Usage of the
+             * TableLayoutManager is not welcome due to design reasons and
+             * it also does not provide the correct values.
+             * TODO: Make proportional-column-width working for rtf output 
+             */
+             SimplePercentBaseContext context
+                = new SimplePercentBaseContext(null,
+                                               LengthBase.TABLE_UNITS,
+                                               100000);
             
             Integer iWidth
-                = new Integer(tc.getColumnWidth().getValue(tclm) / 1000);
+                = new Integer(tc.getColumnWidth().getValue(context) / 1000);
             
             String strWidth = iWidth.toString() + "pt";
             Float width = new Float(
