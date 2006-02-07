@@ -19,11 +19,6 @@
   <info>
     <p>
       This test checks non breaking white space.
-      Note: This test currently fails because the first non breaking space on
-      each line is incorrectly removed. There is a duplicate test
-      block_white-space_2a.xml whose checks have been adjusted to cater for 
-      this defect. Once the problem is fixed block_white-space_2a.xml should
-      be removed from the test suite.
     </p>
   </info>
   <fo>

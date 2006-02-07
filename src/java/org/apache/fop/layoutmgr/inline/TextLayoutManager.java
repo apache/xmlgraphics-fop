@@ -752,204 +752,141 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         LinkedList spaceElements = new LinkedList();
         LeafPosition mainPosition = new LeafPosition(this, leafValue);
         
-        // add a penalty to avoid the next glue element to be
-        // a feasible line break
         if (textArray[ai.iStartIndex] == NBSPACE) {
-            spaceElements.add
-            (new KnuthPenalty(0, KnuthElement.INFINITE, false,
-                    new LeafPosition(this, -1),
-                    false));
-        }
-        
-        switch (alignment) {
-        case EN_CENTER :
-            // centered text:
-            // if the second element is chosen as a line break these elements 
-            // add a constant amount of stretch at the end of a line and at the
-            // beginning of the next one, otherwise they don't add any stretch
-            /*
-            spaceElements.add
-            (new KnuthGlue(0, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
-                    new LeafPosition(this, -1), false));
-            spaceElements.add
-            (new KnuthPenalty(0,
-                    (textArray[ai.iStartIndex] == NBSPACE ? KnuthElement.INFINITE : 0),
-                    false, new LeafPosition(this, -1), false));
-            spaceElements.add
-            (new KnuthGlue(ai.ipdArea.opt,
-                    - 6 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
-                    mainPosition, false));
-            spaceElements.add
-            (new KnuthInlineBox(0, 0, 0, 0,
-                    new LeafPosition(this, -1), false));
-            spaceElements.add
-            (new KnuthPenalty(0, KnuthElement.INFINITE, false,
-                    new LeafPosition(this, -1), false));
-            spaceElements.add
-            (new KnuthGlue(0, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
-                    new LeafPosition(this, -1), false));
-            */
-            spaceElements.add
-                (new KnuthGlue(lineEndBAP, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
-                               new LeafPosition(this, -1), true));
-            spaceElements.add
-                (new KnuthPenalty(0,
-                        (textArray[ai.iStartIndex] == NBSPACE ? KnuthElement.INFINITE : 0),
+            // a non-breaking space
+            //TODO: other kinds of non-breaking spaces
+            if (alignment == EN_JUSTIFY) {
+                // the space can stretch and shrink, and must be preserved
+                // when starting a line
+                spaceElements.add(new KnuthInlineBox(0, null,
+                        notifyPos(new LeafPosition(this, -1)), true));
+                spaceElements.add(new KnuthPenalty(0, KnuthElement.INFINITE,
                         false, new LeafPosition(this, -1), false));
-            spaceElements.add
-                (new KnuthGlue(ai.ipdArea.opt - (lineStartBAP + lineEndBAP),
-                               -6 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
-                               mainPosition, false));
-            spaceElements.add
-                (new KnuthInlineBox(0, null,
-                                    notifyPos(new LeafPosition(this, -1)), true));
-            spaceElements.add
-                (new KnuthPenalty(0, KnuthElement.INFINITE, false,
-                                  new LeafPosition(this, -1), true));
-            spaceElements.add
-                (new KnuthGlue(lineStartBAP, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
-                               new LeafPosition(this, -1), true));
-            break;
-            
-        case EN_START  : // fall through
-        case EN_END    :
-            // left- or right-aligned text:
-            // if the second element is chosen as a line break these elements 
-            // add a constant amount of stretch at the end of a line, otherwise
-            // they don't add any stretch
-            /*
-            spaceElements.add
-            (new KnuthGlue(0, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
-                    new LeafPosition(this, -1), false));
-            spaceElements.add
-            (new KnuthPenalty(0, 0, false,
-                    new LeafPosition(this, -1), false));
-            spaceElements.add
-            (new KnuthGlue(ai.ipdArea.opt,
-                    - 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
-                    mainPosition, false));
-            */
-            if (lineStartBAP != 0 || lineEndBAP != 0) {
-                spaceElements.add
-                    (new KnuthGlue(lineEndBAP, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
-                                   new LeafPosition(this, -1), false));
-                spaceElements.add
-                    (new KnuthPenalty(0, 0, false,
-                                      new LeafPosition(this, -1), false));
-                spaceElements.add
-                    (new KnuthGlue(ai.ipdArea.opt - (lineStartBAP + lineEndBAP),
-                                   -3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
-                                   mainPosition, false));
-                spaceElements.add
-                    (new KnuthInlineBox(0, null,
-                                        notifyPos(new LeafPosition(this, -1)), false));
-                spaceElements.add
-                   (new KnuthPenalty(0, KnuthElement.INFINITE, false,
-                                     new LeafPosition(this, -1), false));
-                spaceElements.add
-                    (new KnuthGlue(lineStartBAP, 0, 0,
-                                   new LeafPosition(this, -1), false));
+                spaceElements.add(new KnuthGlue(ai.ipdArea.opt, ai.ipdArea.max - ai.ipdArea.opt, 
+                        ai.ipdArea.opt - ai.ipdArea.min, mainPosition, false));
             } else {
-                spaceElements.add
-                    (new KnuthGlue(0, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
-                                   new LeafPosition(this, -1), false));
-                spaceElements.add
-                    (new KnuthPenalty(0, 0, false,
-                                      new LeafPosition(this, -1), false));
-                spaceElements.add
-                    (new KnuthGlue(ai.ipdArea.opt,
-                                   -3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
-                                   mainPosition, false));
+                // the space does not need to stretch or shrink, and must be
+                // preserved when starting a line
+                spaceElements.add(new KnuthInlineBox(ai.ipdArea.opt, null,
+                        mainPosition, true));
             }
-            break;
-            
-        case EN_JUSTIFY:
-            // justified text:
-            // the stretch and shrink depends on the space width
-            /*
-            spaceElements.add
-            (new KnuthGlue(ai.ipdArea.opt,
-                    ai.ipdArea.max - ai.ipdArea.opt,
-                    ai.ipdArea.opt - ai.ipdArea.min,
-                    mainPosition, false));
-            */
-            if (lineStartBAP != 0 || lineEndBAP != 0) {
-                spaceElements.add
-                    (new KnuthGlue(lineEndBAP, 0, 0,
-                                   new LeafPosition(this, -1), false));
-                spaceElements.add
-                    (new KnuthPenalty(0, 0, false,
-                                      new LeafPosition(this, -1), false));
-                spaceElements.add
-                    (new KnuthGlue(ai.ipdArea.opt - (lineStartBAP + lineEndBAP),
-                                   ai.ipdArea.max - ai.ipdArea.opt,
-                                   ai.ipdArea.opt - ai.ipdArea.min,
-                                   mainPosition, false));
-                spaceElements.add
-                    (new KnuthInlineBox(0, null,
-                                        notifyPos(new LeafPosition(this, -1)), false));
-                spaceElements.add
-                    (new KnuthPenalty(0, KnuthElement.INFINITE, false,
-                                      new LeafPosition(this, -1), false));
-                spaceElements.add
-                    (new KnuthGlue(lineStartBAP, 0, 0,
-                                   new LeafPosition(this, -1), false));
-            } else {
-                spaceElements.add
-                    (new KnuthGlue(ai.ipdArea.opt,
-                            ai.ipdArea.max - ai.ipdArea.opt,
-                            ai.ipdArea.opt - ai.ipdArea.min,
+        } else {
+            // a breaking space
+            switch (alignment) {
+            case EN_CENTER:
+                // centered text:
+                // if the second element is chosen as a line break these elements 
+                // add a constant amount of stretch at the end of a line and at the
+                // beginning of the next one, otherwise they don't add any stretch
+                spaceElements.add(new KnuthGlue(lineEndBAP,
+                        3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
+                        new LeafPosition(this, -1), false));
+                spaceElements
+                        .add(new KnuthPenalty(
+                                0,
+                                (textArray[ai.iStartIndex] == NBSPACE ? KnuthElement.INFINITE
+                                        : 0), false,
+                                new LeafPosition(this, -1), false));
+                spaceElements.add(new KnuthGlue(ai.ipdArea.opt
+                        - (lineStartBAP + lineEndBAP), -6
+                        * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
+                        mainPosition, false));
+                spaceElements.add(new KnuthInlineBox(0, null,
+                        notifyPos(new LeafPosition(this, -1)), false));
+                spaceElements.add(new KnuthPenalty(0, KnuthElement.INFINITE,
+                        false, new LeafPosition(this, -1), false));
+                spaceElements.add(new KnuthGlue(lineStartBAP,
+                        3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
+                        new LeafPosition(this, -1), false));
+                break;
+
+            case EN_START: // fall through
+            case EN_END:
+                // left- or right-aligned text:
+                // if the second element is chosen as a line break these elements 
+                // add a constant amount of stretch at the end of a line, otherwise
+                // they don't add any stretch
+                if (lineStartBAP != 0 || lineEndBAP != 0) {
+                    spaceElements.add(new KnuthGlue(lineEndBAP,
+                            3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
+                            new LeafPosition(this, -1), false));
+                    spaceElements.add(new KnuthPenalty(0, 0, false,
+                            new LeafPosition(this, -1), false));
+                    spaceElements.add(new KnuthGlue(ai.ipdArea.opt
+                            - (lineStartBAP + lineEndBAP), -3
+                            * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
                             mainPosition, false));
-            }
-            break;
-            
-        default:
-            // last line justified, the other lines unjustified:
-            // use only the space stretch
-            /*
-            spaceElements.add
-            (new KnuthGlue(ai.ipdArea.opt,
-                    ai.ipdArea.max - ai.ipdArea.opt, 0,
-                    mainPosition, false));
-            */
-            if (lineStartBAP != 0 || lineEndBAP != 0) {
-                spaceElements.add
-                    (new KnuthGlue(lineEndBAP, 0, 0,
-                                   new LeafPosition(this, -1), false));
-                spaceElements.add
-                    (new KnuthPenalty(0, 0, false,
-                                      new LeafPosition(this, -1), false));
-                spaceElements.add
-                    (new KnuthGlue(ai.ipdArea.opt - (lineStartBAP + lineEndBAP),
-                                   ai.ipdArea.max - ai.ipdArea.opt, 0,
-                                   mainPosition, false));
-                spaceElements.add
-                    (new KnuthInlineBox(0, null,
-                                        notifyPos(new LeafPosition(this, -1)), false));
-                spaceElements.add
-                    (new KnuthPenalty(0, KnuthElement.INFINITE, false,
-                                      new LeafPosition(this, -1), false));
-                spaceElements.add
-                    (new KnuthGlue(lineStartBAP, 0, 0,
-                                   new LeafPosition(this, -1), false));
-            } else {
-                spaceElements.add
-                    (new KnuthGlue(ai.ipdArea.opt,
-                                    ai.ipdArea.max - ai.ipdArea.opt, 0,
-                                    mainPosition, false));
+                    spaceElements.add(new KnuthInlineBox(0, null,
+                            notifyPos(new LeafPosition(this, -1)), false));
+                    spaceElements.add(new KnuthPenalty(0,
+                            KnuthElement.INFINITE, false, new LeafPosition(
+                                    this, -1), false));
+                    spaceElements.add(new KnuthGlue(lineStartBAP, 0, 0,
+                            new LeafPosition(this, -1), false));
+                } else {
+                    spaceElements.add(new KnuthGlue(0,
+                            3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
+                            new LeafPosition(this, -1), false));
+                    spaceElements.add(new KnuthPenalty(0, 0, false,
+                            new LeafPosition(this, -1), false));
+                    spaceElements.add(new KnuthGlue(ai.ipdArea.opt, -3
+                            * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
+                            mainPosition, false));
+                }
+                break;
+
+            case EN_JUSTIFY:
+                // justified text:
+                // the stretch and shrink depends on the space width
+                if (lineStartBAP != 0 || lineEndBAP != 0) {
+                    spaceElements.add(new KnuthGlue(lineEndBAP, 0, 0,
+                            new LeafPosition(this, -1), false));
+                    spaceElements.add(new KnuthPenalty(0, 0, false,
+                            new LeafPosition(this, -1), false));
+                    spaceElements.add(new KnuthGlue(ai.ipdArea.opt
+                            - (lineStartBAP + lineEndBAP), ai.ipdArea.max
+                            - ai.ipdArea.opt, ai.ipdArea.opt - ai.ipdArea.min,
+                            mainPosition, false));
+                    spaceElements.add(new KnuthInlineBox(0, null,
+                            notifyPos(new LeafPosition(this, -1)), false));
+                    spaceElements.add(new KnuthPenalty(0,
+                            KnuthElement.INFINITE, false, new LeafPosition(
+                                    this, -1), false));
+                    spaceElements.add(new KnuthGlue(lineStartBAP, 0, 0,
+                            new LeafPosition(this, -1), false));
+                } else {
+                    spaceElements.add(new KnuthGlue(ai.ipdArea.opt,
+                            ai.ipdArea.max - ai.ipdArea.opt, ai.ipdArea.opt
+                                    - ai.ipdArea.min, mainPosition, false));
+                }
+                break;
+
+            default:
+                // last line justified, the other lines unjustified:
+                // use only the space stretch
+                if (lineStartBAP != 0 || lineEndBAP != 0) {
+                    spaceElements.add(new KnuthGlue(lineEndBAP, 0, 0,
+                            new LeafPosition(this, -1), false));
+                    spaceElements.add(new KnuthPenalty(0, 0, false,
+                            new LeafPosition(this, -1), false));
+                    spaceElements.add(new KnuthGlue(ai.ipdArea.opt
+                            - (lineStartBAP + lineEndBAP), ai.ipdArea.max
+                            - ai.ipdArea.opt, 0, mainPosition, false));
+                    spaceElements.add(new KnuthInlineBox(0, null,
+                            notifyPos(new LeafPosition(this, -1)), false));
+                    spaceElements.add(new KnuthPenalty(0,
+                            KnuthElement.INFINITE, false, new LeafPosition(
+                                    this, -1), false));
+                    spaceElements.add(new KnuthGlue(lineStartBAP, 0, 0,
+                            new LeafPosition(this, -1), false));
+                } else {
+                    spaceElements.add(new KnuthGlue(ai.ipdArea.opt,
+                            ai.ipdArea.max - ai.ipdArea.opt, 0, mainPosition,
+                            false));
+                }
             }
         }
         
-        // TODO
-        // Add zero width box to avoid any nbspace to be removed
-        // at the end of a paragraph.
-        // This is kind of a hack and should be removed once the
-        // whole line building and white space handling is revisited.
-        if (textArray[ai.iStartIndex] == NBSPACE) {
-            spaceElements.add
-                (new KnuthInlineBox(0, null,
-                                    notifyPos(new LeafPosition(this, -1)), true));
-        }
         return spaceElements;
     }
 

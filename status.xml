@@ -27,6 +27,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="LF" type="fix" fixes-bug="38507">
+        Bugfix: The elements representing a non-breaking space weren't always correct.
+      </action>
       <action context="Code" dev="JM" type="fix" fixes-bug="38453">
         Bugfix: Text-decoration was not promoted if no text-decoration attribute was
         specified on a nested element.
