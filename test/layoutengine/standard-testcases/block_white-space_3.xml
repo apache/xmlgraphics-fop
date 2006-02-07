@@ -32,6 +32,7 @@
         <fo:flow flow-name="xsl-region-body">
           <fo:block background-color="yellow">« text »</fo:block><!-- normal spaces here -->
           <fo:block background-color="red">«&#160;text&#160;»</fo:block>
+          <fo:block background-color="blue" text-align="justify">«&#160;text&#160;»</fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
@@ -60,16 +61,31 @@
       <box/>
 
       <!-- first nbsp -->
-      <penalty w="0" p="INF"/>
-      <glue w="3336" y="0" z="0"/>
-      <box w="0"/>
+      <box w="3336"/>
       
       <box/>
       
       <!-- second nbsp -->
-      <penalty w="0" p="INF"/>
-      <glue w="3336" y="0" z="0"/>
+      <box w="3336"/>
+      
+      <box/>
+      
+      <skip>3</skip>
+    </element-list>
+    <element-list category="line" index="2">
+      <box/>
+
+      <!-- first nbsp -->
       <box w="0"/>
+      <penalty w="0" p="inf"/>
+      <glue w="3336" y="1668" z="1112"/>
+      
+      <box/>
+      
+      <!-- second nbsp -->
+      <box w="0"/>
+      <penalty w="0" p="inf"/>
+      <glue w="3336" y="1668" z="1112"/>
       
       <box/>
       
