@@ -24,7 +24,6 @@ import java.util.HashMap;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.dom.util.XMLSupport;
 import org.apache.fop.apps.FOPException;
 import org.w3c.dom.Document;
@@ -87,6 +86,7 @@ public abstract class XMLObj extends FONode {
 
     /**
      * Returns the dimensions of the generated area in pts.
+     * @param view Point2D instance to receive the dimensions
      * @return the requested dimensions in pts.
      */
     public Point2D getDimension(Point2D view) {
@@ -207,7 +207,7 @@ public abstract class XMLObj extends FONode {
      * @param pList the currently applicable property list
      * @param locator location in fo source file.
      */
-    protected void addCharacters(char data[], int start, int length,
+    protected void addCharacters(char[] data, int start, int length,
                                  PropertyList pList, Locator locator) {
         String str = new String(data, start, length - start);
         org.w3c.dom.Text text = doc.createTextNode(str);
