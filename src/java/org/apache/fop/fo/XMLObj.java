@@ -24,6 +24,8 @@ import java.util.HashMap;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.batik.dom.util.XMLSupport;
 import org.apache.fop.apps.FOPException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -167,11 +169,16 @@ public abstract class XMLObj extends FONode {
             DocumentBuilderFactory fact = DocumentBuilderFactory.newInstance();
             fact.setNamespaceAware(true);
             doc = fact.newDocumentBuilder().newDocument();
-            Element el = doc.createElement(name);
+            Element el = doc.createElementNS(getNamespaceURI(), name);
             doc.appendChild(el);
 
             element = doc.getDocumentElement();
             buildTopLevel(doc, element);
+            if (!element.hasAttributeNS(XMLSupport.XMLNS_NAMESPACE_URI, "xmlns")) {
+                element.setAttributeNS(XMLSupport.XMLNS_NAMESPACE_URI, "xmlns",
+                                getNamespaceURI());
+            }
+            
         } catch (Exception e) {
             log.error("Error while trying to instantiate a DOM Document", e);
         }
