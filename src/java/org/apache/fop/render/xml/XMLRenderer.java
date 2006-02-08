@@ -454,6 +454,10 @@ public class XMLRenderer extends PrintRenderer {
         addAttribute("bounds", page.getViewArea());
         addAttribute("nr", page.getPageNumber());
         addAttribute("formatted-nr", page.getPageNumberString());
+        addAttribute("simple-page-master-name", page.getSimplePageMasterName());
+        if (page.isBlank()) {
+            addAttribute("blank", "true");
+        }
         startElement("pageViewport", atts);
         startElement("page");
 
