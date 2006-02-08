@@ -18,9 +18,6 @@
 
 package org.apache.fop.area;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.FontTriplet;
@@ -28,9 +25,6 @@ import org.apache.fop.image.FopImage;
 import org.apache.fop.traits.BorderProps;
 
 import java.io.Serializable;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Iterator;
 
 // properties should be serialized by the holder
 /**
@@ -39,14 +33,11 @@ import java.util.Iterator;
  */
 public class Trait implements Serializable {
 
-    /** Logger instance */
-    private static Log log = LogFactory.getLog(Trait.class);
-    
     /**
      * Id reference line, not resolved.
      * not sure if this is needed.
      */
-    public static final Integer ID_LINK = new Integer(0);
+    //public static final Integer ID_LINK = new Integer(0);
 
     /**
      * Internal link trait.
@@ -102,12 +93,12 @@ public class Trait implements Serializable {
     /**
      * Shadow offset.
      */
-    public static final Integer OFFSET = new Integer(13);
+    //public static final Integer OFFSET = new Integer(13);
 
     /**
      * The shadow for text.
      */
-    public static final Integer SHADOW = new Integer(14);
+    //public static final Integer SHADOW = new Integer(14);
 
     /**
      * The border start.
@@ -162,12 +153,12 @@ public class Trait implements Serializable {
     /**
      * break before
      */
-    public static final Integer BREAK_BEFORE = new Integer(25);
+    //public static final Integer BREAK_BEFORE = new Integer(25);
 
     /**
      * break after
      */
-    public static final Integer BREAK_AFTER = new Integer(26);
+    //public static final Integer BREAK_AFTER = new Integer(26);
 
     /**
      * The start-indent trait.
@@ -201,11 +192,11 @@ public class Trait implements Serializable {
     /** Trait for color of linethrough decorations when rendering inline parent. */
     public static final Integer LINETHROUGH_COLOR = new Integer(36);
     
-    private static final Map TRAIT_INFO = new HashMap();
+    /** Maximum value used by trait keys */
+    public static final int MAX_TRAIT_KEY = 36;
     
-    /** The list of simple traits in order to avoid iterators */
-    public static final Object[] TRAIT_LIST;
-
+    private static final TraitInfo[] TRAIT_INFO = new TraitInfo[MAX_TRAIT_KEY + 1];
+    
     private static class TraitInfo {
         private String name;
         private Class clazz; // Class of trait data
@@ -224,72 +215,66 @@ public class Trait implements Serializable {
         }
     }
 
+    private static void put(Integer key, TraitInfo info) {
+        TRAIT_INFO[key.intValue()] = info;
+    }
+    
     static {
         // Create a hashmap mapping trait code to name for external representation
-        TRAIT_INFO.put(ID_LINK, new TraitInfo("id-link", String.class));
-        TRAIT_INFO.put(INTERNAL_LINK,
-                          new TraitInfo("internal-link", String.class));
-        TRAIT_INFO.put(EXTERNAL_LINK,
-                          new TraitInfo("external-link", String.class));
-        TRAIT_INFO.put(FONT,
-                          new TraitInfo("font", FontTriplet.class));
-        TRAIT_INFO.put(FONT_SIZE,
-                          new TraitInfo("font-size", Integer.class));
-        TRAIT_INFO.put(COLOR, new TraitInfo("color", Color.class));
-        TRAIT_INFO.put(PROD_ID, new TraitInfo("prod-id", String.class));
-        TRAIT_INFO.put(BACKGROUND,
-                          new TraitInfo("background", Background.class));
-        TRAIT_INFO.put(UNDERLINE,
-                          new TraitInfo("underline-score", Boolean.class));
-        TRAIT_INFO.put(UNDERLINE_COLOR, new TraitInfo("underline-score-color", Color.class));
-        TRAIT_INFO.put(OVERLINE,
-                          new TraitInfo("overline-score", Boolean.class));
-        TRAIT_INFO.put(OVERLINE_COLOR, new TraitInfo("overline-score-color", Color.class));
-        TRAIT_INFO.put(LINETHROUGH,
-                          new TraitInfo("through-score", Boolean.class));
-        TRAIT_INFO.put(LINETHROUGH_COLOR, new TraitInfo("through-score-color", Color.class));
-        TRAIT_INFO.put(BLINK,
-                          new TraitInfo("blink", Boolean.class));
-        TRAIT_INFO.put(OFFSET, new TraitInfo("offset", Integer.class));
-        TRAIT_INFO.put(SHADOW, new TraitInfo("shadow", Integer.class));
-        TRAIT_INFO.put(BORDER_START,
+        //put(ID_LINK, new TraitInfo("id-link", String.class));
+        put(INTERNAL_LINK, new TraitInfo("internal-link", String.class));
+        put(EXTERNAL_LINK, new TraitInfo("external-link", String.class));
+        put(FONT,         new TraitInfo("font", FontTriplet.class));
+        put(FONT_SIZE,    new TraitInfo("font-size", Integer.class));
+        put(COLOR, new TraitInfo("color", Color.class));
+        put(PROD_ID, new TraitInfo("prod-id", String.class));
+        put(BACKGROUND,   new TraitInfo("background", Background.class));
+        put(UNDERLINE,    new TraitInfo("underline-score", Boolean.class));
+        put(UNDERLINE_COLOR, new TraitInfo("underline-score-color", Color.class));
+        put(OVERLINE,     new TraitInfo("overline-score", Boolean.class));
+        put(OVERLINE_COLOR, new TraitInfo("overline-score-color", Color.class));
+        put(LINETHROUGH,  new TraitInfo("through-score", Boolean.class));
+        put(LINETHROUGH_COLOR, new TraitInfo("through-score-color", Color.class));
+        put(BLINK,        new TraitInfo("blink", Boolean.class));
+        //put(OFFSET, new TraitInfo("offset", Integer.class));
+        //put(SHADOW, new TraitInfo("shadow", Integer.class));
+        put(BORDER_START,
                           new TraitInfo("border-start", BorderProps.class));
-        TRAIT_INFO.put(BORDER_END,
+        put(BORDER_END,
                           new TraitInfo("border-end", BorderProps.class));
-        TRAIT_INFO.put(BORDER_BEFORE,
+        put(BORDER_BEFORE,
                           new TraitInfo("border-before", BorderProps.class));
-        TRAIT_INFO.put(BORDER_AFTER,
+        put(BORDER_AFTER,
                           new TraitInfo("border-after", BorderProps.class));
-        TRAIT_INFO.put(PADDING_START,
+        put(PADDING_START,
                           new TraitInfo("padding-start", Integer.class));
-        TRAIT_INFO.put(PADDING_END,
+        put(PADDING_END,
                           new TraitInfo("padding-end", Integer.class));
-        TRAIT_INFO.put(PADDING_BEFORE,
+        put(PADDING_BEFORE,
                           new TraitInfo("padding-before", Integer.class));
-        TRAIT_INFO.put(PADDING_AFTER,
+        put(PADDING_AFTER,
                           new TraitInfo("padding-after", Integer.class));
-        TRAIT_INFO.put(SPACE_START,
+        put(SPACE_START,
                           new TraitInfo("space-start", Integer.class));
-        TRAIT_INFO.put(SPACE_END,
+        put(SPACE_END,
                           new TraitInfo("space-end", Integer.class));
-        TRAIT_INFO.put(BREAK_BEFORE,
-                          new TraitInfo("break-before", Integer.class));
-        TRAIT_INFO.put(BREAK_AFTER,
-                          new TraitInfo("break-after", Integer.class));
-        TRAIT_INFO.put(START_INDENT,
+        //put(BREAK_BEFORE,
+        //                  new TraitInfo("break-before", Integer.class));
+        //put(BREAK_AFTER,
+        //                  new TraitInfo("break-after", Integer.class));
+        put(START_INDENT,
                 new TraitInfo("start-indent", Integer.class));
-        TRAIT_INFO.put(END_INDENT,
+        put(END_INDENT,
                 new TraitInfo("end-indent", Integer.class));
-        TRAIT_INFO.put(SPACE_BEFORE,
+        put(SPACE_BEFORE,
                 new TraitInfo("space-before", Integer.class));
-        TRAIT_INFO.put(SPACE_AFTER,
+        put(SPACE_AFTER,
                 new TraitInfo("space-after", Integer.class));
-        TRAIT_INFO.put(IS_REFERENCE_AREA,
+        put(IS_REFERENCE_AREA,
                 new TraitInfo("is-reference-area", Boolean.class));
-        TRAIT_INFO.put(IS_VIEWPORT_AREA,
+        put(IS_VIEWPORT_AREA,
                 new TraitInfo("is-viewport-area", Boolean.class));
         
-        TRAIT_LIST = TRAIT_INFO.keySet().toArray();
     }
 
     /**
@@ -299,12 +284,7 @@ public class Trait implements Serializable {
      * @return the trait name
      */
     public static String getTraitName(Object traitCode) {
-        Object obj = TRAIT_INFO.get(traitCode);
-        if (obj != null) {
-            return ((TraitInfo) obj).getName();
-        } else {
-            return "unknown-trait-" + traitCode.toString();
-        }
+        return TRAIT_INFO[((Integer)traitCode).intValue()].getName();
     }
 
     /**
@@ -313,6 +293,7 @@ public class Trait implements Serializable {
      * @param sTraitName the name of the trait to find
      * @return the trait code object
      */
+    /*
     public static Object getTraitCode(String sTraitName) {
         Iterator iter = TRAIT_INFO.entrySet().iterator();
         while (iter.hasNext()) {
@@ -323,17 +304,16 @@ public class Trait implements Serializable {
             }
         }
         return null;
-    }
+    }*/
 
     /**
      * Get the data storage class for the trait.
      *
-     * @param oTraitCode the trait code to lookup
+     * @param traitCode the trait code to lookup
      * @return the class type for the trait
      */
-    public static Class getTraitClass(Object oTraitCode) {
-        TraitInfo ti = (TraitInfo) TRAIT_INFO.get(oTraitCode);
-        return (ti != null ? ti.getClazz() : null);
+    public static Class getTraitClass(Object traitCode) {
+        return TRAIT_INFO[((Integer)traitCode).intValue()].getClazz();
     }
 
     /**
@@ -396,6 +376,7 @@ public class Trait implements Serializable {
      * @param sTraitValue trait value as String
      * @return the trait value as object
      */
+    /*
     public static Object makeTraitValue(Object oCode, String sTraitValue) {
         // Get the code from the name
         // See what type of object it is
@@ -426,7 +407,7 @@ public class Trait implements Serializable {
 
 
         return null;
-    }
+    }*/
 
     /**
      * Serializable ColorType implementation for the area tree.

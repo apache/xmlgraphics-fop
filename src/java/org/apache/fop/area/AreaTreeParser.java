@@ -220,7 +220,11 @@ public class AreaTreeParser {
                         Rectangle2D viewArea = parseRect(attributes.getValue("bounds"));
                         int pageNumber = getAttributeAsInteger(attributes, "nr", -1);
                         String pageNumberString = attributes.getValue("formatted-nr");
-                        currentPageViewport = new PageViewport(viewArea, pageNumber, pageNumberString);
+                        String pageMaster = attributes.getValue("simple-page-master-name");
+                        boolean blank = getAttributeAsBoolean(attributes, "blank", false);
+                        currentPageViewport = new PageViewport(viewArea, 
+                                pageNumber, pageNumberString,
+                                pageMaster, blank);
                     } else if ("page".equals(localName)) {
                         Page p = new Page();
                         currentPageViewport.setPage(p);
@@ -233,7 +237,9 @@ public class AreaTreeParser {
                         rv = new RegionViewport(viewArea);
                         rv.setClip(getAttributeAsBoolean(attributes, "clipped", false));
                         setAreaAttributes(attributes, rv);
-                        setTraits(attributes, rv);
+                        setTraits(attributes, rv, SUBSET_COMMON);
+                        setTraits(attributes, rv, SUBSET_BOX);
+                        setTraits(attributes, rv, SUBSET_COLOR);
                         areaStack.push(rv);
                     } else if ("regionBefore".equals(localName)) {
                         pushNewRegionReference(attributes, Constants.FO_REGION_BEFORE);
@@ -321,7 +327,9 @@ public class AreaTreeParser {
                             block.setYOffset(getAttributeAsInteger(attributes, "top-offset", 0));
                         }
                         setAreaAttributes(attributes, block);
-                        setTraits(attributes, block);
+                        setTraits(attributes, block, SUBSET_COMMON);
+                        setTraits(attributes, block, SUBSET_BOX);
+                        setTraits(attributes, block, SUBSET_COLOR);
                         Area parent = (Area)areaStack.peek();
                         //BlockParent parent = getCurrentBlockParent();
                         parent.addChildArea(block);
@@ -329,7 +337,9 @@ public class AreaTreeParser {
                     } else if ("lineArea".equals(localName)) {
                         LineArea line = new LineArea();
                         setAreaAttributes(attributes, line);
-                        setTraits(attributes, line);
+                        setTraits(attributes, line, SUBSET_COMMON);
+                        setTraits(attributes, line, SUBSET_BOX);
+                        setTraits(attributes, line, SUBSET_COLOR);
                         BlockParent parent = getCurrentBlockParent();
                         parent.addChildArea(line);
                         areaStack.push(line);
@@ -337,7 +347,10 @@ public class AreaTreeParser {
                         InlineParent ip = new InlineParent();
                         ip.setOffset(getAttributeAsInteger(attributes, "offset", 0));
                         setAreaAttributes(attributes, ip);
-                        setTraits(attributes, ip);
+                        setTraits(attributes, ip, SUBSET_COMMON);
+                        setTraits(attributes, ip, SUBSET_BOX);
+                        setTraits(attributes, ip, SUBSET_COLOR);
+                        setTraits(attributes, ip, SUBSET_LINK);
                         Area parent = (Area)areaStack.peek();
                         parent.addChildArea(ip);
                         areaStack.push(ip);
@@ -345,7 +358,9 @@ public class AreaTreeParser {
                         InlineBlockParent ibp = new InlineBlockParent();
                         ibp.setOffset(getAttributeAsInteger(attributes, "offset", 0));
                         setAreaAttributes(attributes, ibp);
-                        setTraits(attributes, ibp);
+                        setTraits(attributes, ibp, SUBSET_COMMON);
+                        setTraits(attributes, ibp, SUBSET_BOX);
+                        setTraits(attributes, ibp, SUBSET_COLOR);
                         Area parent = (Area)areaStack.peek();
                         parent.addChildArea(ibp);
                         areaStack.push(ibp);
@@ -355,8 +370,12 @@ public class AreaTreeParser {
                         }
                         TextArea text = new TextArea();
                         setAreaAttributes(attributes, text);
-                        setTraits(attributes, text);
+                        setTraits(attributes, text, SUBSET_COMMON);
+                        setTraits(attributes, text, SUBSET_BOX);
+                        setTraits(attributes, text, SUBSET_COLOR);
+                        setTraits(attributes, text, SUBSET_FONT);
                         text.setBaselineOffset(getAttributeAsInteger(attributes, "baseline", 0));
+                        text.setOffset(getAttributeAsInteger(attributes, "offset", 0));
                         text.setTextLetterSpaceAdjust(getAttributeAsInteger(attributes, 
                                 "tlsadjust", 0));
                         text.setTextWordSpaceAdjust(getAttributeAsInteger(attributes, 
@@ -373,7 +392,10 @@ public class AreaTreeParser {
                     } else if ("leader".equals(localName)) {
                         Leader leader = new Leader();
                         setAreaAttributes(attributes, leader);
-                        setTraits(attributes, leader);
+                        setTraits(attributes, leader, SUBSET_COMMON);
+                        setTraits(attributes, leader, SUBSET_BOX);
+                        setTraits(attributes, leader, SUBSET_COLOR);
+                        setTraits(attributes, leader, SUBSET_FONT);
                         leader.setOffset(getAttributeAsInteger(attributes, "offset", 0));
                         String ruleStyle = attributes.getValue("ruleStyle");
                         if (ruleStyle != null) {
@@ -386,7 +408,9 @@ public class AreaTreeParser {
                     } else if ("viewport".equals(localName)) {
                         Viewport viewport = new Viewport(null);
                         setAreaAttributes(attributes, viewport);
-                        setTraits(attributes, viewport);
+                        setTraits(attributes, viewport, SUBSET_COMMON);
+                        setTraits(attributes, viewport, SUBSET_BOX);
+                        setTraits(attributes, viewport, SUBSET_COLOR);
                         viewport.setContentPosition(getAttributeAsRectangle2D(attributes, "pos"));
                         viewport.setClip(getAttributeAsBoolean(attributes, "clip", false));
                         viewport.setOffset(getAttributeAsInteger(attributes, "offset", 0));
@@ -397,7 +421,7 @@ public class AreaTreeParser {
                         String url = attributes.getValue("url");
                         Image image = new Image(url);
                         setAreaAttributes(attributes, image);
-                        setTraits(attributes, image);
+                        setTraits(attributes, image, SUBSET_COMMON);
                         getCurrentViewport().setContent(image);
                     } else if ("foreignObject".equals(localName)) {
                         String ns = attributes.getValue("ns");
@@ -409,7 +433,7 @@ public class AreaTreeParser {
                         }
                         ForeignObject foreign = new ForeignObject(ns);
                         setAreaAttributes(attributes, foreign);
-                        setTraits(attributes, foreign);
+                        setTraits(attributes, foreign, SUBSET_COMMON);
                         getCurrentViewport().setContent(foreign);
                         areaStack.push(foreign);
                     } else if ("extension-attachments".equals(localName)) {
@@ -549,8 +573,10 @@ public class AreaTreeParser {
                         } else {
                             Space space = new Space();
                             setAreaAttributes(lastAttributes, space);
-                            setTraits(lastAttributes, space);
-                            space.setOffset(getAttributeAsInteger(lastAttributes, "offset", 0));
+                            setTraits(lastAttributes, space, SUBSET_COMMON);
+                            setTraits(lastAttributes, space, SUBSET_BOX);
+                            setTraits(lastAttributes, space, SUBSET_COLOR);
+                            space.setOffset(offset);
                             Area parent = (Area)areaStack.peek();
                             parent.addChildArea(space);
                         }
@@ -558,7 +584,10 @@ public class AreaTreeParser {
                         String txt = content.toString();
                         Character ch = new Character(txt.charAt(0));
                         setAreaAttributes(lastAttributes, ch);
-                        setTraits(lastAttributes, ch);
+                        setTraits(lastAttributes, ch, SUBSET_COMMON);
+                        setTraits(lastAttributes, ch, SUBSET_BOX);
+                        setTraits(lastAttributes, ch, SUBSET_COLOR);
+                        setTraits(lastAttributes, ch, SUBSET_FONT);
                         ch.setOffset(getAttributeAsInteger(lastAttributes, "offset", 0));
                         ch.setBaselineOffset(getAttributeAsInteger(lastAttributes, "baseline", 0));
                         Area parent = (Area)areaStack.peek();
@@ -579,80 +608,104 @@ public class AreaTreeParser {
             area.setIPD(Integer.parseInt(attributes.getValue("ipd")));
             area.setBPD(Integer.parseInt(attributes.getValue("bpd")));
         }
+        
+        private static final Object[] SUBSET_COMMON = new Object[] {
+            Trait.PROD_ID};
+        private static final Object[] SUBSET_LINK = new Object[] {
+            Trait.INTERNAL_LINK, Trait.EXTERNAL_LINK};
+        private static final Object[] SUBSET_COLOR = new Object[] {
+            Trait.BACKGROUND, Trait.COLOR};
+        private static final Object[] SUBSET_FONT = new Object[] {
+            Trait.FONT, Trait.FONT_SIZE, Trait.BLINK,
+            Trait.OVERLINE, Trait.OVERLINE_COLOR, 
+            Trait.LINETHROUGH, Trait.LINETHROUGH_COLOR,
+            Trait.UNDERLINE, Trait.UNDERLINE_COLOR};
+        private static final Object[] SUBSET_BOX = new Object[] {
+            Trait.BORDER_BEFORE, Trait.BORDER_AFTER, Trait.BORDER_START, Trait.BORDER_END,
+            Trait.SPACE_BEFORE, Trait.SPACE_AFTER, Trait.SPACE_START, Trait.SPACE_END,
+            Trait.PADDING_BEFORE, Trait.PADDING_AFTER, Trait.PADDING_START, Trait.PADDING_END,
+            Trait.START_INDENT, Trait.END_INDENT,
+            Trait.IS_REFERENCE_AREA, Trait.IS_VIEWPORT_AREA};
 
-        private void setTraits(Attributes attributes, Area area) {
-            for (int i = 0, c = Trait.TRAIT_LIST.length; i < c; i++) {
-                Object trait = Trait.TRAIT_LIST[i];
-                Class cl = Trait.getTraitClass(trait);
-                if (cl == Boolean.class) {
-                    String value = attributes.getValue(Trait.getTraitName(trait));
-                    if (value != null) {
-                        area.addTrait(trait, Boolean.valueOf(value));
-                    }
-                } else if (cl == Integer.class) {
-                    String value = attributes.getValue(Trait.getTraitName(trait));
-                    if (value != null) {
-                        area.addTrait(trait, new Integer(value));
-                    }
-                } else if (cl == String.class) {
-                    String value = attributes.getValue(Trait.getTraitName(trait));
-                    if (value != null) {
-                        area.addTrait(trait, value);
-                    }
-                } else if (cl == FontTriplet.class) {
-                    String fontName = attributes.getValue("font-name");
-                    if (fontName != null) {
-                        String fontStyle = attributes.getValue("font-style");
-                        int fontWeight = getAttributeAsInteger(
-                                attributes, "font-weight", Font.NORMAL);
-                        area.addTrait(trait, 
-                                new FontTriplet(fontName, fontStyle, fontWeight));
-                    }
-                } else if (cl == Color.class) {
-                    String value = attributes.getValue(Trait.getTraitName(trait));
-                    if (value != null) {
-                        area.addTrait(trait, Color.valueOf(value));
-                    }
-                } else if (cl == Background.class) {
-                    String value = attributes.getValue(Trait.getTraitName(trait));
-                    if (value != null) {
-                        Background bkg = new Background();
-                        Color col = Color.valueOf(attributes.getValue("bkg-color"));
-                        if (col != null) {
-                            bkg.setColor(col);
-                        }
-                        String url = attributes.getValue("bkg-img");
-                        if (url != null) {
-                            bkg.setURL(url);
-                            
-                            ImageFactory fact = ImageFactory.getInstance();
-                            FopImage img = fact.getImage(url, userAgent);
-                            if (img == null) {
-                                log.error("Background image not available: " + url);
-                            } else {
-                                // load dimensions
-                                if (!img.load(FopImage.DIMENSIONS)) {
-                                    log.error("Cannot read background image dimensions: " 
-                                            + url);
+        private void setTraits(Attributes attributes, Area area, Object[] traitSubset) {
+            for (int i = 0, c = traitSubset.length; i < c; i++) {
+                Object trait = traitSubset[i];
+                String traitName = Trait.getTraitName(trait);
+                String value = attributes.getValue(traitName);
+                if (value != null) {
+                    Class cl = Trait.getTraitClass(trait);
+                    if (cl == Integer.class) {
+                        //if (value != null) {
+                            area.addTrait(trait, new Integer(value));
+                        //}
+                    } else if (cl == Boolean.class) {
+                        //String value = attributes.getValue(Trait.getTraitName(trait));
+                        //if (value != null) {
+                            area.addTrait(trait, Boolean.valueOf(value));
+                        //}
+                    } else if (cl == String.class) {
+                        //String value = attributes.getValue(Trait.getTraitName(trait));
+                        //if (value != null) {
+                            area.addTrait(trait, value);
+                        //}
+                    } else if (cl == Color.class) {
+                        //String value = attributes.getValue(Trait.getTraitName(trait));
+                        //if (value != null) {
+                            area.addTrait(trait, Color.valueOf(value));
+                        //}
+                    } else if (cl == Background.class) {
+                        //String value = attributes.getValue(Trait.getTraitName(trait));
+                        //if (value != null) {
+                            Background bkg = new Background();
+                            Color col = Color.valueOf(attributes.getValue("bkg-color"));
+                            if (col != null) {
+                                bkg.setColor(col);
+                            }
+                            String url = attributes.getValue("bkg-img");
+                            if (url != null) {
+                                bkg.setURL(url);
+                                
+                                ImageFactory fact = ImageFactory.getInstance();
+                                FopImage img = fact.getImage(url, userAgent);
+                                if (img == null) {
+                                    log.error("Background image not available: " + url);
+                                } else {
+                                    // load dimensions
+                                    if (!img.load(FopImage.DIMENSIONS)) {
+                                        log.error("Cannot read background image dimensions: " 
+                                                + url);
+                                    }
                                 }
+                                bkg.setFopImage(img);
+    
+                                String repeat = attributes.getValue("bkg-repeat");
+                                if (repeat != null) {
+                                    bkg.setRepeat(repeat);
+                                }
+                                bkg.setHoriz(getAttributeAsInteger(attributes, 
+                                        "bkg-horz-offset", 0));
+                                bkg.setVertical(getAttributeAsInteger(attributes, 
+                                        "bkg-vert-offset", 0));
                             }
-                            bkg.setFopImage(img);
-
-                            String repeat = attributes.getValue("bkg-repeat");
-                            if (repeat != null) {
-                                bkg.setRepeat(repeat);
-                            }
-                            bkg.setHoriz(getAttributeAsInteger(attributes, 
-                                    "bkg-horz-offset", 0));
-                            bkg.setVertical(getAttributeAsInteger(attributes, 
-                                    "bkg-vert-offset", 0));
-                        }
-                        area.addTrait(trait, bkg);
+                            area.addTrait(trait, bkg);
+                        //}
+                    } else if (cl == BorderProps.class) {
+                        //String value = attributes.getValue(Trait.getTraitName(trait));
+                        //if (value != null) {
+                            area.addTrait(trait, BorderProps.valueOf(value));
+                        //}
                     }
-                } else if (cl == BorderProps.class) {
-                    String value = attributes.getValue(Trait.getTraitName(trait));
-                    if (value != null) {
-                        area.addTrait(trait, BorderProps.valueOf(value));
+                } else {
+                    Class cl = Trait.getTraitClass(trait);
+                    if (cl == FontTriplet.class) {
+                        String fontName = attributes.getValue("font-name");
+                        if (fontName != null) {
+                            String fontStyle = attributes.getValue("font-style");
+                            int fontWeight = getAttributeAsInteger(
+                                    attributes, "font-weight", Font.NORMAL);
+                            area.addTrait(trait, 
+                                    new FontTriplet(fontName, fontStyle, fontWeight));
+                        }
                     }
                 }
             }

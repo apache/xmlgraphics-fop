@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -112,6 +112,8 @@ public class PageViewport implements Resolvable, Cloneable {
         this.pageNumberString = original.pageNumberString;
         this.page = (Page)original.page.clone();
         this.viewArea = (Rectangle2D)original.viewArea.clone();
+        this.simplePageMasterName = original.simplePageMasterName;
+        this.blank = original.blank;
     }
 
     /**
@@ -119,11 +121,16 @@ public class PageViewport implements Resolvable, Cloneable {
      * @param viewArea the view area
      * @param pageNumber the page number
      * @param pageStr String representation of the page number
+     * @param simplePageMasterName name of the original simple-page-master that generated this page
+     * @param blank true if this is a blank page
      */
-    public PageViewport(Rectangle2D viewArea, int pageNumber, String pageStr) {
+    public PageViewport(Rectangle2D viewArea, int pageNumber, String pageStr, 
+            String simplePageMasterName, boolean blank) {
         this.viewArea = viewArea;
         this.pageNumber = pageNumber;
         this.pageNumberString = pageStr;
+        this.simplePageMasterName = simplePageMasterName;
+        this.blank = blank;
     }
     
     /**
