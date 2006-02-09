@@ -179,8 +179,21 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         
         LinkedList returnList = new LinkedList();
         
+        if (!breakBeforeServed) {
+            try {
+                if (addKnuthElementsForBreakBefore(returnList, context)) {
+                    return returnList;
+                }
+            } finally {
+                breakBeforeServed = true;
+            }
+        }
+
         addKnuthElementsForSpaceBefore(returnList, alignment);
         
+        addKnuthElementsForBorderPaddingBefore(returnList, !firstVisibleMarkServed);
+        firstVisibleMarkServed = true;
+
         //Spaces, border and padding to be repeated at each break
         addPendingMarks(context);
 
@@ -222,7 +235,9 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         // "wrap" the Position inside each element
         wrapPositionElements(returnedList, returnList, true);
         
+        addKnuthElementsForBorderPaddingAfter(returnList, true);
         addKnuthElementsForSpaceAfter(returnList, alignment);
+        addKnuthElementsForBreakAfter(returnList, context);
 
         if (keepWithNextPendingOnLabel || keepWithNextPendingOnBody || mustKeepWithNext()) {
             context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING);

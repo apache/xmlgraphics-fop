@@ -27,6 +27,13 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix">
+        Bugfix: padding-top and padding-bottom on list-items could lead to wrong page
+        break decisions and thus to overlapping text.
+      </action>
+      <action context="Code" dev="JM" type="fix">
+        Bugfix: break-before and break-after were ignored on list-items.
+      </action>
       <action context="Code" dev="LF" type="fix" fixes-bug="38507">
         Bugfix: The elements representing a non-breaking space weren't always correct.
       </action>
