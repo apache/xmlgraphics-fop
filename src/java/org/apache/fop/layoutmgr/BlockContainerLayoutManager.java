@@ -276,7 +276,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                 // get elements from curLM
                 returnedList = curLM.getNextKnuthElements(childLC, alignment);
                 if (returnedList.size() == 1
-                        && ((KnuthElement)returnedList.getFirst()).isForcedBreak()) {
+                        && ((ListElement)returnedList.getFirst()).isForcedBreak()) {
                     // a descendant of this block has break-before
                     /*
                     if (returnList.size() == 0) {
@@ -306,15 +306,10 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                             // blocks
                             contentList.add(new BreakElement(
                                     new Position(this), KnuthElement.INFINITE, context));
-                            //contentList.add(new KnuthPenalty(0,
-                            //        KnuthElement.INFINITE, false,
-                            //        new Position(this), false));
-                        } else if (!((KnuthElement) contentList.getLast()).isGlue()) {
+                        } else if (!((ListElement) contentList.getLast()).isGlue()) {
                             // add a null penalty to allow a break between blocks
                             contentList.add(new BreakElement(
                                     new Position(this), 0, context));
-                            //contentList.add(new KnuthPenalty(0, 0, false,
-                            //        new Position(this), false));
                         } else {
                             // the last element in contentList is a glue;
                             // it is a feasible breakpoint, there is no need to add
