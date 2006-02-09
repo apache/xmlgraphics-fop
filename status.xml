@@ -28,6 +28,9 @@
   <changes>
     <release version="FOP Trunk">
       <action context="Code" dev="JM" type="fix">
+        Bugfix: Fixed two causes for ClassCastExceptions in BlockContainerLayoutManager.
+      </action>
+      <action context="Code" dev="JM" type="fix">
         Bugfix: padding-top and padding-bottom on list-items could lead to wrong page
         break decisions and thus to overlapping text.
       </action>
