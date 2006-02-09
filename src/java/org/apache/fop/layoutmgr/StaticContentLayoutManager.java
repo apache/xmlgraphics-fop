@@ -25,6 +25,7 @@ import java.util.ListIterator;
 import org.apache.fop.area.RegionReference;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.SideRegion;
 import org.apache.fop.fo.pagination.StaticContent;
@@ -233,7 +234,8 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
                 if (regionFO.getOverflow() == EN_ERROR_IF_OVERFLOW) {
                     //TODO throw layout exception
                 }
-                log.warn("static-content overflows the available area.");
+                log.warn(FONode.decorateWithContextInfo(
+                        "static-content overflows the available area.", fobj));
             }
         }
     }
