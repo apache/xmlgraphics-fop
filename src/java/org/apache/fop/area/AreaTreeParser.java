@@ -19,6 +19,7 @@
 package org.apache.fop.area;
 
 import java.awt.geom.Rectangle2D;
+import java.util.Map;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
@@ -113,6 +114,8 @@ public class AreaTreeParser {
     
     private static class Handler extends DefaultHandler {
      
+        private Map makers = new java.util.HashMap();
+        
         private AreaTreeModel treeModel;
         private FOUserAgent userAgent;
         private ElementMappingRegistry elementMappingRegistry;
@@ -128,11 +131,39 @@ public class AreaTreeParser {
         private ContentHandler delegate;
         private DOMImplementation domImplementation;
         
+        
         public Handler(AreaTreeModel treeModel, FOUserAgent userAgent, 
                 ElementMappingRegistry elementMappingRegistry) {
             this.treeModel = treeModel;
             this.userAgent = userAgent;
             this.elementMappingRegistry = elementMappingRegistry;
+            makers.put("areaTree", new AreaTreeMaker());
+            makers.put("page", new PageMaker());
+            makers.put("pageSequence", new PageSequenceMaker());
+            makers.put("pageViewport", new PageViewportMaker());
+            makers.put("regionViewport", new RegionViewportMaker());
+            makers.put("regionBefore", new RegionBeforeMaker());
+            makers.put("regionAfter", new RegionAfterMaker());
+            makers.put("regionStart", new RegionStartMaker());
+            makers.put("regionEnd", new RegionEndMaker());
+            makers.put("regionBody", new RegionBodyMaker());
+            makers.put("flow", new FlowMaker());
+            makers.put("mainReference", new MainReferenceMaker());
+            makers.put("span", new SpanMaker());
+            makers.put("footnote", new FootnoteMaker());
+            makers.put("beforeFloat", new BeforeFloatMaker());
+            makers.put("block", new BlockMaker());
+            makers.put("lineArea", new LineAreaMaker());
+            makers.put("inlineparent", new InlineParentMaker());
+            makers.put("inlineblockparent", new InlineBlockParentMaker());
+            makers.put("text", new TextMaker());
+            makers.put("word", new WordMaker());
+            makers.put("space", new SpaceMaker());
+            makers.put("char", new CharMaker());
+            makers.put("leader", new LeaderMaker());
+            makers.put("viewport", new ViewportMaker());
+            makers.put("image", new ImageMaker());
+            makers.put("foreignObject", new ForeignObjectMaker());
         }
 
         private static Rectangle2D parseRect(String rect) {
@@ -209,233 +240,9 @@ public class AreaTreeParser {
                 lastAttributes = attributes;
                 boolean handled = true;
                 if ("".equals(uri)) {
-                    if ("areaTree".equals(localName)) {
-                        //nop
-                    } else if ("pageSequence".equals(localName)) {
-                        treeModel.startPageSequence(null);
-                    } else if ("pageViewport".equals(localName)) {
-                        if (currentPageViewport != null) {
-                            throw new IllegalStateException("currentPageViewport must be null");
-                        }
-                        Rectangle2D viewArea = parseRect(attributes.getValue("bounds"));
-                        int pageNumber = getAttributeAsInteger(attributes, "nr", -1);
-                        String pageNumberString = attributes.getValue("formatted-nr");
-                        String pageMaster = attributes.getValue("simple-page-master-name");
-                        boolean blank = getAttributeAsBoolean(attributes, "blank", false);
-                        currentPageViewport = new PageViewport(viewArea, 
-                                pageNumber, pageNumberString,
-                                pageMaster, blank);
-                    } else if ("page".equals(localName)) {
-                        Page p = new Page();
-                        currentPageViewport.setPage(p);
-                    } else if ("regionViewport".equals(localName)) {
-                        RegionViewport rv = getCurrentRegionViewport();
-                        if (rv != null) {
-                            throw new IllegalStateException("Current RegionViewport must be null");
-                        }
-                        Rectangle2D viewArea = parseRect(attributes.getValue("rect"));
-                        rv = new RegionViewport(viewArea);
-                        rv.setClip(getAttributeAsBoolean(attributes, "clipped", false));
-                        setAreaAttributes(attributes, rv);
-                        setTraits(attributes, rv, SUBSET_COMMON);
-                        setTraits(attributes, rv, SUBSET_BOX);
-                        setTraits(attributes, rv, SUBSET_COLOR);
-                        areaStack.push(rv);
-                    } else if ("regionBefore".equals(localName)) {
-                        pushNewRegionReference(attributes, Constants.FO_REGION_BEFORE);
-                    } else if ("regionAfter".equals(localName)) {
-                        pushNewRegionReference(attributes, Constants.FO_REGION_AFTER);
-                    } else if ("regionStart".equals(localName)) {
-                        pushNewRegionReference(attributes, Constants.FO_REGION_START);
-                    } else if ("regionEnd".equals(localName)) {
-                        pushNewRegionReference(attributes, Constants.FO_REGION_END);
-                    } else if ("regionBody".equals(localName)) {
-                        BodyRegion body = getCurrentBodyRegion();
-                        if (body != null) {
-                            throw new IllegalStateException("Current BodyRegion must be null");
-                        }
-                        String regionName = attributes.getValue("name");
-                        int columnCount = getAttributeAsInteger(attributes, "columnCount", 1);
-                        int columnGap = getAttributeAsInteger(attributes, "columnGap", 0);
-                        RegionViewport rv = getCurrentRegionViewport();
-                        body = new BodyRegion(Constants.FO_REGION_BODY, 
-                                regionName, rv, columnCount, columnGap);
-                        body.setCTM(getAttributeAsCTM(attributes, "ctm"));
-                        setAreaAttributes(attributes, body);
-                        rv.setRegionReference(body);
-                        currentPageViewport.getPage().setRegionViewport(
-                                Constants.FO_REGION_BODY, rv);
-                        areaStack.push(body);
-                    } else if ("mainReference".equals(localName)) {
-                        //mainReference is created by the BodyRegion
-                        setAreaAttributes(attributes, getCurrentBodyRegion().getMainReference());
-                    } else if ("span".equals(localName)) {
-                        int ipd = getAttributeAsInteger(attributes, "ipd", 0);
-                        int columnCount = getAttributeAsInteger(attributes, "columnCount", 1);
-                        BodyRegion body = getCurrentBodyRegion();
-                        Span span = new Span(columnCount, 
-                                body.getColumnGap(), ipd);
-                        setAreaAttributes(attributes, span);
-                        body.getMainReference().getSpans().add(span);
-                        firstFlow = true;
-                    } else if ("flow".equals(localName)) {
-                        BodyRegion body = getCurrentBodyRegion();
-                        if (!firstFlow) {
-                            body.getMainReference().getCurrentSpan().moveToNextFlow();
-                        } else {
-                            firstFlow = false;
-                        }
-                        NormalFlow flow = body.getMainReference().getCurrentSpan().getCurrentFlow();
-                        setAreaAttributes(attributes, flow);
-                        areaStack.push(flow);
-                    } else if ("footnote".equals(localName)) {
-                        areaStack.push(getCurrentBodyRegion().getFootnote());
-                    } else if ("beforeFloat".equals(localName)) {
-                        areaStack.push(getCurrentBodyRegion().getBeforeFloat());
-                    } else if ("block".equals(localName)) {
-                        boolean isViewport = getAttributeAsBoolean(attributes, 
-                                "is-viewport-area", false);
-                        Block block;
-                        if (isViewport) {
-                            BlockViewport bv = new BlockViewport();
-                            bv.setClip(getAttributeAsBoolean(attributes, "clipped", false));
-                            bv.setCTM(getAttributeAsCTM(attributes, "ctm"));
-                            if (bv.getPositioning() != BlockViewport.RELATIVE) {
-                                bv.setXOffset(
-                                        getAttributeAsInteger(attributes, "left-position", 0));
-                                bv.setYOffset(
-                                        getAttributeAsInteger(attributes, "top-position", 0));
-                            }
-                            block = bv;
-                        } else {
-                            block = new Block();
-                        }
-                        String positioning = attributes.getValue("positioning");
-                        if ("absolute".equalsIgnoreCase(positioning)) {
-                            block.setPositioning(Block.ABSOLUTE);
-                        } else if ("fixed".equalsIgnoreCase(positioning)) {
-                            block.setPositioning(Block.FIXED);
-                        } else if ("relative".equalsIgnoreCase(positioning)) {
-                            block.setPositioning(Block.RELATIVE);
-                        } else {
-                            block.setPositioning(Block.STACK);
-                        }
-                        if (attributes.getValue("left-offset") != null) {
-                            block.setXOffset(getAttributeAsInteger(attributes, "left-offset", 0));
-                        }
-                        if (attributes.getValue("top-offset") != null) {
-                            block.setYOffset(getAttributeAsInteger(attributes, "top-offset", 0));
-                        }
-                        setAreaAttributes(attributes, block);
-                        setTraits(attributes, block, SUBSET_COMMON);
-                        setTraits(attributes, block, SUBSET_BOX);
-                        setTraits(attributes, block, SUBSET_COLOR);
-                        Area parent = (Area)areaStack.peek();
-                        //BlockParent parent = getCurrentBlockParent();
-                        parent.addChildArea(block);
-                        areaStack.push(block);
-                    } else if ("lineArea".equals(localName)) {
-                        LineArea line = new LineArea();
-                        setAreaAttributes(attributes, line);
-                        setTraits(attributes, line, SUBSET_COMMON);
-                        setTraits(attributes, line, SUBSET_BOX);
-                        setTraits(attributes, line, SUBSET_COLOR);
-                        BlockParent parent = getCurrentBlockParent();
-                        parent.addChildArea(line);
-                        areaStack.push(line);
-                    } else if ("inlineparent".equals(localName)) {
-                        InlineParent ip = new InlineParent();
-                        ip.setOffset(getAttributeAsInteger(attributes, "offset", 0));
-                        setAreaAttributes(attributes, ip);
-                        setTraits(attributes, ip, SUBSET_COMMON);
-                        setTraits(attributes, ip, SUBSET_BOX);
-                        setTraits(attributes, ip, SUBSET_COLOR);
-                        setTraits(attributes, ip, SUBSET_LINK);
-                        Area parent = (Area)areaStack.peek();
-                        parent.addChildArea(ip);
-                        areaStack.push(ip);
-                    } else if ("inlineblockparent".equals(localName)) {
-                        InlineBlockParent ibp = new InlineBlockParent();
-                        ibp.setOffset(getAttributeAsInteger(attributes, "offset", 0));
-                        setAreaAttributes(attributes, ibp);
-                        setTraits(attributes, ibp, SUBSET_COMMON);
-                        setTraits(attributes, ibp, SUBSET_BOX);
-                        setTraits(attributes, ibp, SUBSET_COLOR);
-                        Area parent = (Area)areaStack.peek();
-                        parent.addChildArea(ibp);
-                        areaStack.push(ibp);
-                    } else if ("text".equals(localName)) {
-                        if (getCurrentText() != null) {
-                            throw new IllegalStateException("Current Text must be null");
-                        }
-                        TextArea text = new TextArea();
-                        setAreaAttributes(attributes, text);
-                        setTraits(attributes, text, SUBSET_COMMON);
-                        setTraits(attributes, text, SUBSET_BOX);
-                        setTraits(attributes, text, SUBSET_COLOR);
-                        setTraits(attributes, text, SUBSET_FONT);
-                        text.setBaselineOffset(getAttributeAsInteger(attributes, "baseline", 0));
-                        text.setOffset(getAttributeAsInteger(attributes, "offset", 0));
-                        text.setTextLetterSpaceAdjust(getAttributeAsInteger(attributes, 
-                                "tlsadjust", 0));
-                        text.setTextWordSpaceAdjust(getAttributeAsInteger(attributes, 
-                                "twsadjust", 0));
-                        Area parent = (Area)areaStack.peek();
-                        parent.addChildArea(text);
-                        areaStack.push(text);
-                    } else if ("word".equals(localName)) {
-                        //handled in endElement
-                    } else if ("space".equals(localName)) {
-                        //handled in endElement
-                    } else if ("char".equals(localName)) {
-                        //handled in endElement
-                    } else if ("leader".equals(localName)) {
-                        Leader leader = new Leader();
-                        setAreaAttributes(attributes, leader);
-                        setTraits(attributes, leader, SUBSET_COMMON);
-                        setTraits(attributes, leader, SUBSET_BOX);
-                        setTraits(attributes, leader, SUBSET_COLOR);
-                        setTraits(attributes, leader, SUBSET_FONT);
-                        leader.setOffset(getAttributeAsInteger(attributes, "offset", 0));
-                        String ruleStyle = attributes.getValue("ruleStyle");
-                        if (ruleStyle != null) {
-                            leader.setRuleStyle(ruleStyle);
-                        }
-                        leader.setRuleThickness(
-                                getAttributeAsInteger(attributes, "ruleThickness", 0));
-                        Area parent = (Area)areaStack.peek();
-                        parent.addChildArea(leader);
-                    } else if ("viewport".equals(localName)) {
-                        Viewport viewport = new Viewport(null);
-                        setAreaAttributes(attributes, viewport);
-                        setTraits(attributes, viewport, SUBSET_COMMON);
-                        setTraits(attributes, viewport, SUBSET_BOX);
-                        setTraits(attributes, viewport, SUBSET_COLOR);
-                        viewport.setContentPosition(getAttributeAsRectangle2D(attributes, "pos"));
-                        viewport.setClip(getAttributeAsBoolean(attributes, "clip", false));
-                        viewport.setOffset(getAttributeAsInteger(attributes, "offset", 0));
-                        Area parent = (Area)areaStack.peek();
-                        parent.addChildArea(viewport);
-                        areaStack.push(viewport);
-                    } else if ("image".equals(localName)) {
-                        String url = attributes.getValue("url");
-                        Image image = new Image(url);
-                        setAreaAttributes(attributes, image);
-                        setTraits(attributes, image, SUBSET_COMMON);
-                        getCurrentViewport().setContent(image);
-                    } else if ("foreignObject".equals(localName)) {
-                        String ns = attributes.getValue("ns");
-                        this.domImplementation 
-                            = elementMappingRegistry.getDOMImplementationForNamespace(ns);
-                        if (this.domImplementation == null) {
-                            throw new SAXException("No DOMImplementation could be"
-                                    + " identified to handle namespace: " + ns);
-                        }
-                        ForeignObject foreign = new ForeignObject(ns);
-                        setAreaAttributes(attributes, foreign);
-                        setTraits(attributes, foreign, SUBSET_COMMON);
-                        getCurrentViewport().setContent(foreign);
-                        areaStack.push(foreign);
+                    Maker maker = (Maker)makers.get(localName);
+                    if (maker != null) {
+                        maker.startElement(attributes);
                     } else if ("extension-attachments".equals(localName)) {
                         //TODO implement me
                     } else {
@@ -464,6 +271,528 @@ public class AreaTreeParser {
                 }
             }
         }
+        
+        /** @see org.xml.sax.helpers.DefaultHandler */
+        public void endElement(String uri, String localName, String qName) throws SAXException {
+            if (delegate != null) {
+                delegate.endElement(uri, localName, qName);
+                delegateStack.pop();
+                if (delegateStack.size() == 0) {
+                    delegate.endDocument();
+                    if (delegate instanceof ContentHandlerFactory.ObjectSource) {
+                        Object obj = ((ContentHandlerFactory.ObjectSource)delegate).getObject();
+                        handleExternallyGeneratedObject(obj);
+                    }
+                    delegate = null; //Sub-document is processed, return to normal processing
+                }
+            } else {
+                if ("".equals(uri)) {
+                    Maker maker = (Maker)makers.get(localName);
+                    if (maker != null) {
+                        maker.endElement();
+                    }
+                } else {
+                    //log.debug("Ignoring " + localName + " in namespace: " + uri);
+                }
+                content.setLength(0); //Reset text buffer (see characters())
+            }
+        }
+        
+        // ============== Maker classes for the area tree objects =============
+        
+        private static interface Maker {
+            void startElement(Attributes attributes) throws SAXException;
+            void endElement();
+        }
+        
+        private abstract class AbstractMaker implements Maker {
+
+            public void startElement(Attributes attributes) throws SAXException {
+                //nop
+            }
+
+            public void endElement() {
+                //nop
+            }
+        }
+        
+        private class AreaTreeMaker extends AbstractMaker {
+            //no overrides
+        }
+        
+        private class PageSequenceMaker extends AbstractMaker {
+
+            public void startElement(Attributes attributes) {
+                treeModel.startPageSequence(null);
+            }
+        }
+        
+        private class PageViewportMaker extends AbstractMaker {
+
+            public void startElement(Attributes attributes) {
+                if (currentPageViewport != null) {
+                    throw new IllegalStateException("currentPageViewport must be null");
+                }
+                Rectangle2D viewArea = parseRect(attributes.getValue("bounds"));
+                int pageNumber = getAttributeAsInteger(attributes, "nr", -1);
+                String pageNumberString = attributes.getValue("formatted-nr");
+                String pageMaster = attributes.getValue("simple-page-master-name");
+                boolean blank = getAttributeAsBoolean(attributes, "blank", false);
+                currentPageViewport = new PageViewport(viewArea, 
+                        pageNumber, pageNumberString,
+                        pageMaster, blank);
+            }
+
+        }
+        
+        private class PageMaker extends AbstractMaker {
+
+            public void startElement(Attributes attributes) {
+                Page p = new Page();
+                currentPageViewport.setPage(p);
+            }
+
+            public void endElement() {
+                treeModel.addPage(currentPageViewport);
+                currentPageViewport = null;
+            }
+        }
+        
+        private class RegionViewportMaker extends AbstractMaker {
+
+            public void startElement(Attributes attributes) {
+                RegionViewport rv = getCurrentRegionViewport();
+                if (rv != null) {
+                    throw new IllegalStateException("Current RegionViewport must be null");
+                }
+                Rectangle2D viewArea = parseRect(attributes.getValue("rect"));
+                rv = new RegionViewport(viewArea);
+                rv.setClip(getAttributeAsBoolean(attributes, "clipped", false));
+                setAreaAttributes(attributes, rv);
+                setTraits(attributes, rv, SUBSET_COMMON);
+                setTraits(attributes, rv, SUBSET_BOX);
+                setTraits(attributes, rv, SUBSET_COLOR);
+                areaStack.push(rv);
+            }
+            
+            public void endElement() {
+                assertObjectOfClass(areaStack.pop(), RegionViewport.class);
+            }            
+        }
+        
+        private class RegionBeforeMaker extends AbstractMaker {
+
+            public void startElement(Attributes attributes) {
+                pushNewRegionReference(attributes, Constants.FO_REGION_BEFORE);
+            }
+            
+            public void endElement() {
+                assertObjectOfClass(areaStack.pop(), RegionReference.class);
+            }            
+        }
+
+        private class RegionAfterMaker extends AbstractMaker {
+
+            public void startElement(Attributes attributes) {
+                pushNewRegionReference(attributes, Constants.FO_REGION_AFTER);
+            }
+            
+            public void endElement() {
+                assertObjectOfClass(areaStack.pop(), RegionReference.class);
+            }            
+        }
+
+        private class RegionStartMaker extends AbstractMaker {
+
+            public void startElement(Attributes attributes) {
+                pushNewRegionReference(attributes, Constants.FO_REGION_START);
+            }
+            
+            public void endElement() {
+                assertObjectOfClass(areaStack.pop(), RegionReference.class);
+            }            
+        }
+        
+        private class RegionEndMaker extends AbstractMaker {
+
+            public void startElement(Attributes attributes) {
+                pushNewRegionReference(attributes, Constants.FO_REGION_END);
+            }
+            
+            public void endElement() {
+                assertObjectOfClass(areaStack.pop(), RegionReference.class);
+            }            
+        }
+
+        private class RegionBodyMaker extends AbstractMaker {
+
+            public void startElement(Attributes attributes) {
+                BodyRegion body = getCurrentBodyRegion();
+                if (body != null) {
+                    throw new IllegalStateException("Current BodyRegion must be null");
+                }
+                String regionName = attributes.getValue("name");
+                int columnCount = getAttributeAsInteger(attributes, "columnCount", 1);
+                int columnGap = getAttributeAsInteger(attributes, "columnGap", 0);
+                RegionViewport rv = getCurrentRegionViewport();
+                body = new BodyRegion(Constants.FO_REGION_BODY, 
+                        regionName, rv, columnCount, columnGap);
+                body.setCTM(getAttributeAsCTM(attributes, "ctm"));
+                setAreaAttributes(attributes, body);
+                rv.setRegionReference(body);
+                currentPageViewport.getPage().setRegionViewport(
+                        Constants.FO_REGION_BODY, rv);
+                areaStack.push(body);
+            }
+            
+            public void endElement() {
+                assertObjectOfClass(areaStack.pop(), BodyRegion.class);
+            }            
+        }
+
+        private class FlowMaker extends AbstractMaker {
+
+            public void startElement(Attributes attributes) {
+                BodyRegion body = getCurrentBodyRegion();
+                if (!firstFlow) {
+                    body.getMainReference().getCurrentSpan().moveToNextFlow();
+                } else {
+                    firstFlow = false;
+                }
+                NormalFlow flow = body.getMainReference().getCurrentSpan().getCurrentFlow();
+                setAreaAttributes(attributes, flow);
+                areaStack.push(flow);
+            }
+            
+            public void endElement() {
+                assertObjectOfClass(areaStack.pop(), NormalFlow.class);
+            }            
+        }
+        
+        private class MainReferenceMaker extends AbstractMaker {
+
+            public void startElement(Attributes attributes) {
+                //mainReference is created by the BodyRegion
+                setAreaAttributes(attributes, getCurrentBodyRegion().getMainReference());
+            }
+        }
+
+        private class SpanMaker extends AbstractMaker {
+
+            public void startElement(Attributes attributes) {
+                int ipd = getAttributeAsInteger(attributes, "ipd", 0);
+                int columnCount = getAttributeAsInteger(attributes, "columnCount", 1);
+                BodyRegion body = getCurrentBodyRegion();
+                Span span = new Span(columnCount, 
+                        body.getColumnGap(), ipd);
+                setAreaAttributes(attributes, span);
+                body.getMainReference().getSpans().add(span);
+                firstFlow = true;
+            }
+        }
+
+        private class FootnoteMaker extends AbstractMaker {
+
+            public void startElement(Attributes attributes) {
+                areaStack.push(getCurrentBodyRegion().getFootnote());
+            }
+            
+            public void endElement() {
+                assertObjectOfClass(areaStack.pop(), Footnote.class);
+            }            
+        }
+
+        private class BeforeFloatMaker extends AbstractMaker {
+
+            public void startElement(Attributes attributes) {
+                areaStack.push(getCurrentBodyRegion().getBeforeFloat());
+            }
+            
+            public void endElement() {
+                assertObjectOfClass(areaStack.pop(), BeforeFloat.class);
+            }            
+        }
+
+        private class BlockMaker extends AbstractMaker {
+
+            public void startElement(Attributes attributes) {
+                boolean isViewport = getAttributeAsBoolean(attributes, 
+                        "is-viewport-area", false);
+                Block block;
+                if (isViewport) {
+                    BlockViewport bv = new BlockViewport();
+                    bv.setClip(getAttributeAsBoolean(attributes, "clipped", false));
+                    bv.setCTM(getAttributeAsCTM(attributes, "ctm"));
+                    if (bv.getPositioning() != BlockViewport.RELATIVE) {
+                        bv.setXOffset(
+                                getAttributeAsInteger(attributes, "left-position", 0));
+                        bv.setYOffset(
+                                getAttributeAsInteger(attributes, "top-position", 0));
+                    }
+                    block = bv;
+                } else {
+                    block = new Block();
+                }
+                String positioning = attributes.getValue("positioning");
+                if ("absolute".equalsIgnoreCase(positioning)) {
+                    block.setPositioning(Block.ABSOLUTE);
+                } else if ("fixed".equalsIgnoreCase(positioning)) {
+                    block.setPositioning(Block.FIXED);
+                } else if ("relative".equalsIgnoreCase(positioning)) {
+                    block.setPositioning(Block.RELATIVE);
+                } else {
+                    block.setPositioning(Block.STACK);
+                }
+                if (attributes.getValue("left-offset") != null) {
+                    block.setXOffset(getAttributeAsInteger(attributes, "left-offset", 0));
+                }
+                if (attributes.getValue("top-offset") != null) {
+                    block.setYOffset(getAttributeAsInteger(attributes, "top-offset", 0));
+                }
+                setAreaAttributes(attributes, block);
+                setTraits(attributes, block, SUBSET_COMMON);
+                setTraits(attributes, block, SUBSET_BOX);
+                setTraits(attributes, block, SUBSET_COLOR);
+                Area parent = (Area)areaStack.peek();
+                //BlockParent parent = getCurrentBlockParent();
+                parent.addChildArea(block);
+                areaStack.push(block);
+            }
+            
+            public void endElement() {
+                assertObjectOfClass(areaStack.pop(), Block.class);
+            }            
+        }
+
+        private class LineAreaMaker extends AbstractMaker {
+
+            public void startElement(Attributes attributes) {
+                LineArea line = new LineArea();
+                setAreaAttributes(attributes, line);
+                setTraits(attributes, line, SUBSET_COMMON);
+                setTraits(attributes, line, SUBSET_BOX);
+                setTraits(attributes, line, SUBSET_COLOR);
+                BlockParent parent = getCurrentBlockParent();
+                parent.addChildArea(line);
+                areaStack.push(line);
+            }
+            
+            public void endElement() {
+                assertObjectOfClass(areaStack.pop(), LineArea.class);
+            }            
+        }
+
+        private class InlineParentMaker extends AbstractMaker {
+
+            public void startElement(Attributes attributes) {
+                InlineParent ip = new InlineParent();
+                ip.setOffset(getAttributeAsInteger(attributes, "offset", 0));
+                setAreaAttributes(attributes, ip);
+                setTraits(attributes, ip, SUBSET_COMMON);
+                setTraits(attributes, ip, SUBSET_BOX);
+                setTraits(attributes, ip, SUBSET_COLOR);
+                setTraits(attributes, ip, SUBSET_LINK);
+                Area parent = (Area)areaStack.peek();
+                parent.addChildArea(ip);
+                areaStack.push(ip);
+            }
+            
+            public void endElement() {
+                assertObjectOfClass(areaStack.pop(), InlineParent.class);
+            }            
+        }
+
+        private class InlineBlockParentMaker extends AbstractMaker {
+
+            public void startElement(Attributes attributes) {
+                InlineBlockParent ibp = new InlineBlockParent();
+                ibp.setOffset(getAttributeAsInteger(attributes, "offset", 0));
+                setAreaAttributes(attributes, ibp);
+                setTraits(attributes, ibp, SUBSET_COMMON);
+                setTraits(attributes, ibp, SUBSET_BOX);
+                setTraits(attributes, ibp, SUBSET_COLOR);
+                Area parent = (Area)areaStack.peek();
+                parent.addChildArea(ibp);
+                areaStack.push(ibp);
+            }
+            
+            public void endElement() {
+                assertObjectOfClass(areaStack.pop(), InlineBlockParent.class);
+            }            
+        }
+
+        private class TextMaker extends AbstractMaker {
+
+            public void startElement(Attributes attributes) {
+                if (getCurrentText() != null) {
+                    throw new IllegalStateException("Current Text must be null");
+                }
+                TextArea text = new TextArea();
+                setAreaAttributes(attributes, text);
+                setTraits(attributes, text, SUBSET_COMMON);
+                setTraits(attributes, text, SUBSET_BOX);
+                setTraits(attributes, text, SUBSET_COLOR);
+                setTraits(attributes, text, SUBSET_FONT);
+                text.setBaselineOffset(getAttributeAsInteger(attributes, "baseline", 0));
+                text.setOffset(getAttributeAsInteger(attributes, "offset", 0));
+                text.setTextLetterSpaceAdjust(getAttributeAsInteger(attributes, 
+                        "tlsadjust", 0));
+                text.setTextWordSpaceAdjust(getAttributeAsInteger(attributes, 
+                        "twsadjust", 0));
+                Area parent = (Area)areaStack.peek();
+                parent.addChildArea(text);
+                areaStack.push(text);
+            }
+            
+            public void endElement() {
+                assertObjectOfClass(areaStack.pop(), TextArea.class);
+            }            
+        }
+
+        private class WordMaker extends AbstractMaker {
+
+            public void endElement() {
+                int offset = getAttributeAsInteger(lastAttributes, "offset", 0);
+                String txt = content.toString();
+                WordArea word = new WordArea(txt, offset);
+                AbstractTextArea text = getCurrentText();
+                word.setParentArea(text);
+                text.addChildArea(word);
+            }            
+        }
+
+        private class SpaceMaker extends AbstractMaker {
+
+            public void endElement() {
+                int offset = getAttributeAsInteger(lastAttributes, "offset", 0);
+                String txt = content.toString();
+                //TODO the isAdjustable parameter is currently not used/implemented
+                if (txt.length() > 0) {
+                    SpaceArea space = new SpaceArea(txt.charAt(0), offset, false);
+                    AbstractTextArea text = getCurrentText();
+                    space.setParentArea(text);
+                    text.addChildArea(space);
+                } else {
+                    Space space = new Space();
+                    setAreaAttributes(lastAttributes, space);
+                    setTraits(lastAttributes, space, SUBSET_COMMON);
+                    setTraits(lastAttributes, space, SUBSET_BOX);
+                    setTraits(lastAttributes, space, SUBSET_COLOR);
+                    space.setOffset(offset);
+                    Area parent = (Area)areaStack.peek();
+                    parent.addChildArea(space);
+                }
+            }            
+        }
+
+        private class CharMaker extends AbstractMaker {
+
+            public void endElement() {
+                String txt = content.toString();
+                Character ch = new Character(txt.charAt(0));
+                setAreaAttributes(lastAttributes, ch);
+                setTraits(lastAttributes, ch, SUBSET_COMMON);
+                setTraits(lastAttributes, ch, SUBSET_BOX);
+                setTraits(lastAttributes, ch, SUBSET_COLOR);
+                setTraits(lastAttributes, ch, SUBSET_FONT);
+                ch.setOffset(getAttributeAsInteger(lastAttributes, "offset", 0));
+                ch.setBaselineOffset(getAttributeAsInteger(lastAttributes, "baseline", 0));
+                Area parent = (Area)areaStack.peek();
+                parent.addChildArea(ch);
+            }            
+        }
+
+        private class LeaderMaker extends AbstractMaker {
+
+            public void startElement(Attributes attributes) {
+                Leader leader = new Leader();
+                setAreaAttributes(attributes, leader);
+                setTraits(attributes, leader, SUBSET_COMMON);
+                setTraits(attributes, leader, SUBSET_BOX);
+                setTraits(attributes, leader, SUBSET_COLOR);
+                setTraits(attributes, leader, SUBSET_FONT);
+                leader.setOffset(getAttributeAsInteger(attributes, "offset", 0));
+                String ruleStyle = attributes.getValue("ruleStyle");
+                if (ruleStyle != null) {
+                    leader.setRuleStyle(ruleStyle);
+                }
+                leader.setRuleThickness(
+                        getAttributeAsInteger(attributes, "ruleThickness", 0));
+                Area parent = (Area)areaStack.peek();
+                parent.addChildArea(leader);
+            }
+            
+            public void endElement() {
+            }            
+        }
+
+        private class ViewportMaker extends AbstractMaker {
+
+            public void startElement(Attributes attributes) {
+                Viewport viewport = new Viewport(null);
+                setAreaAttributes(attributes, viewport);
+                setTraits(attributes, viewport, SUBSET_COMMON);
+                setTraits(attributes, viewport, SUBSET_BOX);
+                setTraits(attributes, viewport, SUBSET_COLOR);
+                viewport.setContentPosition(getAttributeAsRectangle2D(attributes, "pos"));
+                viewport.setClip(getAttributeAsBoolean(attributes, "clip", false));
+                viewport.setOffset(getAttributeAsInteger(attributes, "offset", 0));
+                Area parent = (Area)areaStack.peek();
+                parent.addChildArea(viewport);
+                areaStack.push(viewport);
+            }
+            
+            public void endElement() {
+                assertObjectOfClass(areaStack.pop(), Viewport.class);
+            }            
+        }
+        
+        private class ImageMaker extends AbstractMaker {
+
+            public void startElement(Attributes attributes) {
+                String url = attributes.getValue("url");
+                Image image = new Image(url);
+                setAreaAttributes(attributes, image);
+                setTraits(attributes, image, SUBSET_COMMON);
+                getCurrentViewport().setContent(image);
+            }
+        }
+        
+        private class ForeignObjectMaker extends AbstractMaker {
+
+            public void startElement(Attributes attributes) throws SAXException {
+                String ns = attributes.getValue("ns");
+                domImplementation 
+                    = elementMappingRegistry.getDOMImplementationForNamespace(ns);
+                if (domImplementation == null) {
+                    throw new SAXException("No DOMImplementation could be"
+                            + " identified to handle namespace: " + ns);
+                }
+                ForeignObject foreign = new ForeignObject(ns);
+                setAreaAttributes(attributes, foreign);
+                setTraits(attributes, foreign, SUBSET_COMMON);
+                getCurrentViewport().setContent(foreign);
+                areaStack.push(foreign);
+            }
+            
+            public void endElement() {
+                assertObjectOfClass(areaStack.pop(), ForeignObject.class);
+            }            
+        }
+
+        /*
+        private class ?Maker extends AbstractMaker {
+
+            public void startElement(Attributes attributes) {
+            }
+            
+            public void endElement() {
+            }            
+        }
+        */
+        
+        // ====================================================================
+        
 
         private void pushNewRegionReference(Attributes attributes, int side) {
             String regionName = attributes.getValue("name");
@@ -504,106 +833,6 @@ public class AreaTreeParser {
             }
         }
 
-        /** @see org.xml.sax.helpers.DefaultHandler */
-        public void endElement(String uri, String localName, String qName) throws SAXException {
-            if (delegate != null) {
-                delegate.endElement(uri, localName, qName);
-                delegateStack.pop();
-                if (delegateStack.size() == 0) {
-                    delegate.endDocument();
-                    if (delegate instanceof ContentHandlerFactory.ObjectSource) {
-                        Object obj = ((ContentHandlerFactory.ObjectSource)delegate).getObject();
-                        handleExternallyGeneratedObject(obj);
-                    }
-                    delegate = null; //Sub-document is processed, return to normal processing
-                }
-            } else {
-                if ("".equals(uri)) {
-                    if ("pageSequence".equals(localName)) {
-                        //end page-sequence
-                    } else if ("page".equals(localName)) {
-                        treeModel.addPage(currentPageViewport);
-                        currentPageViewport = null;
-                    } else if ("pageViewport".equals(localName)) {
-                        //nop
-                    } else if ("regionViewport".equals(localName)) {
-                        assertObjectOfClass(areaStack.pop(), RegionViewport.class);
-                    } else if ("regionBefore".equals(localName)) {
-                        assertObjectOfClass(areaStack.pop(), RegionReference.class);
-                    } else if ("regionAfter".equals(localName)) {
-                        assertObjectOfClass(areaStack.pop(), RegionReference.class);
-                    } else if ("regionStart".equals(localName)) {
-                        assertObjectOfClass(areaStack.pop(), RegionReference.class);
-                    } else if ("regionEnd".equals(localName)) {
-                        assertObjectOfClass(areaStack.pop(), RegionReference.class);
-                    } else if ("regionBody".equals(localName)) {
-                        assertObjectOfClass(areaStack.pop(), BodyRegion.class);
-                    } else if ("flow".equals(localName)) {
-                        assertObjectOfClass(areaStack.pop(), NormalFlow.class);
-                    } else if ("footnote".equals(localName)) {
-                        assertObjectOfClass(areaStack.pop(), Footnote.class);
-                    } else if ("beforeFloat".equals(localName)) {
-                        assertObjectOfClass(areaStack.pop(), BeforeFloat.class);
-                    } else if ("block".equals(localName)) {
-                        assertObjectOfClass(areaStack.pop(), Block.class);
-                    } else if ("lineArea".equals(localName)) {
-                        assertObjectOfClass(areaStack.pop(), LineArea.class);
-                    } else if ("inlineparent".equals(localName)) {
-                        assertObjectOfClass(areaStack.pop(), InlineParent.class);
-                    } else if ("inlineblockparent".equals(localName)) {
-                        assertObjectOfClass(areaStack.pop(), InlineBlockParent.class);
-                    } else if ("text".equals(localName)) {
-                        assertObjectOfClass(areaStack.pop(), TextArea.class);
-                    } else if ("word".equals(localName)) {
-                        int offset = getAttributeAsInteger(lastAttributes, "offset", 0);
-                        String txt = content.toString();
-                        WordArea word = new WordArea(txt, offset);
-                        AbstractTextArea text = getCurrentText();
-                        word.setParentArea(text);
-                        text.addChildArea(word);
-                    } else if ("space".equals(localName)) {
-                        int offset = getAttributeAsInteger(lastAttributes, "offset", 0);
-                        String txt = content.toString();
-                        //TODO the isAdjustable parameter is currently not used/implemented
-                        if (txt.length() > 0) {
-                            SpaceArea space = new SpaceArea(txt.charAt(0), offset, false);
-                            AbstractTextArea text = getCurrentText();
-                            space.setParentArea(text);
-                            text.addChildArea(space);
-                        } else {
-                            Space space = new Space();
-                            setAreaAttributes(lastAttributes, space);
-                            setTraits(lastAttributes, space, SUBSET_COMMON);
-                            setTraits(lastAttributes, space, SUBSET_BOX);
-                            setTraits(lastAttributes, space, SUBSET_COLOR);
-                            space.setOffset(offset);
-                            Area parent = (Area)areaStack.peek();
-                            parent.addChildArea(space);
-                        }
-                    } else if ("char".equals(localName)) {
-                        String txt = content.toString();
-                        Character ch = new Character(txt.charAt(0));
-                        setAreaAttributes(lastAttributes, ch);
-                        setTraits(lastAttributes, ch, SUBSET_COMMON);
-                        setTraits(lastAttributes, ch, SUBSET_BOX);
-                        setTraits(lastAttributes, ch, SUBSET_COLOR);
-                        setTraits(lastAttributes, ch, SUBSET_FONT);
-                        ch.setOffset(getAttributeAsInteger(lastAttributes, "offset", 0));
-                        ch.setBaselineOffset(getAttributeAsInteger(lastAttributes, "baseline", 0));
-                        Area parent = (Area)areaStack.peek();
-                        parent.addChildArea(ch);
-                    } else if ("viewport".equals(localName)) {
-                        assertObjectOfClass(areaStack.pop(), Viewport.class);
-                    } else if ("foreignObject".equals(localName)) {
-                        assertObjectOfClass(areaStack.pop(), ForeignObject.class);
-                    }
-                } else {
-                    //log.debug("Ignoring " + localName + " in namespace: " + uri);
-                }
-                content.setLength(0); //Reset text buffer (see characters())
-            }
-        }
-        
         private void setAreaAttributes(Attributes attributes, Area area) {
             area.setIPD(Integer.parseInt(attributes.getValue("ipd")));
             area.setBPD(Integer.parseInt(attributes.getValue("bpd")));
@@ -696,8 +925,8 @@ public class AreaTreeParser {
                         //}
                     }
                 } else {
-                    Class cl = Trait.getTraitClass(trait);
-                    if (cl == FontTriplet.class) {
+                    //Class cl = Trait.getTraitClass(trait);
+                    if (trait == Trait.FONT) {
                         String fontName = attributes.getValue("font-name");
                         if (fontName != null) {
                             String fontStyle = attributes.getValue("font-style");
