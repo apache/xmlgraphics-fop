@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -338,11 +338,6 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                 contentList.addAll(returnedList);
                 if (((ListElement) returnedList.getLast()).isForcedBreak()) {
                     // a descendant of this block has break-after
-                    if (curLM.isFinished()) {
-                        // there is no other content in this block;
-                        // it's useless to add space after before a page break
-                        setFinished(true);
-                    }
 
                     /* extension: conversione di tutta la sequenza fin'ora ottenuta */
                     if (bpUnit > 0) {
@@ -356,11 +351,6 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
 
                     return returnList;
                 }
-                /*
-                if (allocatedSpace.min > context.getStackLimit().max) {
-                    log.debug("Allocated space exceeds stack limit, returning early.");
-                    return returnList;
-                }*/
             }
             // propagate and clear
             context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, childLC.isKeepWithNextPending());
@@ -863,6 +853,8 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     /**
      * Creates Knuth elements for before border padding and adds them to the return list.
      * @param returnList return list to add the additional elements to
+     * @param isFirst true if this is the first time a layout manager instance needs to generate 
+     *                border and padding
      */
     protected void addKnuthElementsForBorderPaddingBefore(LinkedList returnList, boolean isFirst) {
         //Border and Padding (before)
@@ -888,6 +880,8 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     /**
      * Creates Knuth elements for after border padding and adds them to the return list.
      * @param returnList return list to add the additional elements to
+     * @param isLast true if this is the last time a layout manager instance needs to generate 
+     *               border and padding
      */
     protected void addKnuthElementsForBorderPaddingAfter(LinkedList returnList, boolean isLast) {
         //Border and Padding (after)
@@ -913,6 +907,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     /**
      * Creates Knuth elements for break-before and adds them to the return list.
      * @param returnList return list to add the additional elements to
+     * @param context the layout context
      * @return true if an element has been added due to a break-before.
      */
     protected boolean addKnuthElementsForBreakBefore(LinkedList returnList, 
@@ -922,6 +917,10 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             breakBefore = ((org.apache.fop.fo.flow.Block) fobj).getBreakBefore();
         } else if (fobj instanceof org.apache.fop.fo.flow.BlockContainer) {
             breakBefore = ((org.apache.fop.fo.flow.BlockContainer) fobj).getBreakBefore();
+        } else if (fobj instanceof org.apache.fop.fo.flow.ListBlock) {
+            breakBefore = ((org.apache.fop.fo.flow.ListBlock) fobj).getBreakBefore();
+        } else if (fobj instanceof org.apache.fop.fo.flow.ListItem) {
+            breakBefore = ((org.apache.fop.fo.flow.ListItem) fobj).getBreakBefore();
         } else if (fobj instanceof org.apache.fop.fo.flow.Table) {
             breakBefore = ((org.apache.fop.fo.flow.Table) fobj).getBreakBefore();
         }
@@ -932,8 +931,6 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             // return a penalty element, representing a forced page break
             returnList.add(new BreakElement(getAuxiliaryPosition(), 
                     0, -KnuthElement.INFINITE, breakBefore, context));
-            //returnList.add(new KnuthPenalty(0, -KnuthElement.INFINITE, false,
-            //        breakBefore, getAuxiliaryPosition(), false));
             return true;
         } else {
             return false;
@@ -943,6 +940,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     /**
      * Creates Knuth elements for break-after and adds them to the return list.
      * @param returnList return list to add the additional elements to
+     * @param context the layout context
      * @return true if an element has been added due to a break-after.
      */
     protected boolean addKnuthElementsForBreakAfter(LinkedList returnList, 
@@ -952,6 +950,10 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             breakAfter = ((org.apache.fop.fo.flow.Block) fobj).getBreakAfter();
         } else if (fobj instanceof org.apache.fop.fo.flow.BlockContainer) {
             breakAfter = ((org.apache.fop.fo.flow.BlockContainer) fobj).getBreakAfter();
+        } else if (fobj instanceof org.apache.fop.fo.flow.ListBlock) {
+            breakAfter = ((org.apache.fop.fo.flow.ListBlock) fobj).getBreakAfter();
+        } else if (fobj instanceof org.apache.fop.fo.flow.ListItem) {
+            breakAfter = ((org.apache.fop.fo.flow.ListItem) fobj).getBreakAfter();
         } else if (fobj instanceof org.apache.fop.fo.flow.Table) {
             breakAfter = ((org.apache.fop.fo.flow.Table) fobj).getBreakAfter();
         }
@@ -962,8 +964,6 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             // add a penalty element, representing a forced page break
             returnList.add(new BreakElement(getAuxiliaryPosition(), 
                     0, -KnuthElement.INFINITE, breakAfter, context));
-            //returnList.add(new KnuthPenalty(0, -KnuthElement.INFINITE, false,
-            //        breakAfter, getAuxiliaryPosition(), false));
             return true;
         } else {
             return false;
