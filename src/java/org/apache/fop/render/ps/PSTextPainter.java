@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2004,2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,6 @@ import org.apache.batik.gvt.renderer.StrokingTextPainter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
@@ -62,7 +61,7 @@ import org.apache.fop.fonts.FontTriplet;
  * (todo) use drawString(AttributedCharacterIterator iterator...) for some
  *
  * @author <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
- * @version $Id: PSTextPainter.java,v 1.15 2003/01/08 14:03:55 jeremias Exp $
+ * @version $Id$
  */
 public class PSTextPainter implements TextPainter {
     
@@ -387,20 +386,14 @@ public class PSTextPainter implements TextPainter {
                 if (fontInfo.hasFont(fontFamily, style, weight)) {
                     FontTriplet triplet = fontInfo.fontLookup(
                             fontFamily, style, weight);
-                    String fname = fontInfo.getInternalFontKey(triplet);
-                    fontInfo.useFont(fname);
-                    FontMetrics metrics = fontInfo.getMetricsFor(fname);
                     int fsize = (int)(fontSize.floatValue() * 1000);
-                    return new Font(fname, triplet, metrics, fsize);
+                    return fontInfo.getFontInstance(triplet, fsize);
                 }
             }
         }
         FontTriplet triplet = fontInfo.fontLookup("any", style, Font.NORMAL);
-        String fname = fontInfo.getInternalFontKey(triplet);
-        fontInfo.useFont(fname);
-        FontMetrics metrics = fontInfo.getMetricsFor(fname);
         int fsize = (int)(fontSize.floatValue() * 1000);
-        return new Font(fname, triplet, metrics, fsize);
+        return fontInfo.getFontInstance(triplet, fsize);
     }
 
     private java.awt.Font makeAWTFont(AttributedCharacterIterator aci, Font font) {

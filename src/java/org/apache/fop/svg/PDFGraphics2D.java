@@ -35,7 +35,6 @@ import org.apache.fop.pdf.BitmapImage;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontSetup;
-import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.image.JpegImage;
@@ -1396,14 +1395,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             String style = gFont.isItalic() ? "italic" : "normal";
             int weight = gFont.isBold() ? Font.BOLD : Font.NORMAL;
             FontTriplet triplet = fontInfo.fontLookup(n, style, weight);
-            String fname = fontInfo.getInternalFontKey(triplet);
-            fontInfo.useFont(fname);
-            FontMetrics metrics = fontInfo.getMetricsFor(fname);
-            fontState = new Font(fname, triplet, metrics, siz * 1000);
+            fontState = fontInfo.getFontInstance(triplet, siz * 1000);
         } else {
-            FontMetrics metrics = fontInfo.getMetricsFor(ovFontState.getFontName());
-            fontState = new Font(ovFontState.getFontName(), ovFontState.getFontTriplet(),
-                                      metrics, ovFontState.getFontSize());
+            fontState = fontInfo.getFontInstance(
+                    ovFontState.getFontTriplet(), ovFontState.getFontSize());
             ovFontState = null;
         }
         String name;

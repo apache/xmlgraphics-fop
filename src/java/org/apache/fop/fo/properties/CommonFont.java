@@ -150,7 +150,7 @@ public class CommonFont {
                 }
             }
 
-            String style = "normal";
+            String style;
             switch (fontStyle) {
             case Constants.EN_ITALIC: 
                 style = "italic";
@@ -161,16 +161,15 @@ public class CommonFont {
             case Constants.EN_BACKSLANT: 
                 style = "backslant";
                 break;
+            default:
+                style = "normal";
             }
             // NOTE: this is incomplete. font-size may be specified with
             // various kinds of keywords too
             //int fontVariant = propertyList.get("font-variant").getEnum();
             FontTriplet triplet = fontInfo.fontLookup(getFontFamily(), style,
                                                font_weight);
-            String fname = fontInfo.getInternalFontKey(triplet);
-            fontInfo.useFont(fname);
-            FontMetrics metrics = fontInfo.getMetricsFor(fname);
-            fontState = new Font(fname, triplet, metrics, fontSize.getValue(context));
+            fontState = fontInfo.getFontInstance(triplet, fontSize.getValue(context));
         }
         return fontState;
     }

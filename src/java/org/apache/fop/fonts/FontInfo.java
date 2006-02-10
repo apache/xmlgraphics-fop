@@ -54,6 +54,9 @@ public class FontInfo {
     
     private Collection loggedFontKeys;
 
+    /** Cache for Font instances. */
+    private Map fontInstanceCache = new java.util.HashMap();
+    
     /**
      * Main constructor
      */
@@ -80,7 +83,7 @@ public class FontInfo {
      * @param weight font weight
      */
     public void addFontProperties(String name, String family, String style, int weight) {
-        addFontProperties(name, new FontTriplet(family, style, weight));
+        addFontProperties(name, createFontKey(family, style, weight));
     }
 
     /**
@@ -161,6 +164,30 @@ public class FontInfo {
      */
     public void useFont(String internalName) {
         usedFonts.put(internalName, fonts.get(internalName));
+    }
+    
+    /**
+     * Retrieves a (possibly cached) Font instance based on a FontTriplet and a font size. 
+     * @param triplet the font triplet designating the requested font
+     * @param fontSize the font size
+     * @return the requested Font instance
+     */
+    public Font getFontInstance(FontTriplet triplet, int fontSize) {
+        Map sizes = (Map)fontInstanceCache.get(triplet);
+        if (sizes == null) {
+            sizes = new java.util.HashMap();
+            fontInstanceCache.put(triplet, sizes);
+        }
+        Integer size = new Integer(fontSize);
+        Font font = (Font)sizes.get(size);
+        if (font == null) {
+            String fname = getInternalFontKey(triplet);
+            useFont(fname);
+            FontMetrics metrics = getMetricsFor(fname);
+            font = new Font(fname, triplet, metrics, fontSize);
+            sizes.put(size, font);
+        }
+        return font;
     }
     
     /**
