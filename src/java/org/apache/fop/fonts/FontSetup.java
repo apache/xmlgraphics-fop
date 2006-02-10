@@ -227,7 +227,7 @@ public class FontSetup {
             List tripleList = new java.util.ArrayList();
             for (int j = 0; j < triple.length; j++) {
                 int weight = FontUtil.parseCSS2FontWeight(triple[j].getAttribute("weight"));
-                tripleList.add(new FontTriplet(triple[j].getAttribute("name"),
+                tripleList.add(FontInfo.createFontKey(triple[j].getAttribute("name"),
                                                triple[j].getAttribute("style"),
                                                weight));
             }

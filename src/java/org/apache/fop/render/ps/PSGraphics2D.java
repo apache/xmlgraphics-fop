@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -920,9 +920,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
         if (triplet == null) {
             triplet = fontInfo.findAdjustWeight("sans-serif", style, weight);
         }
-        String fontKey = fontInfo.getInternalFontKey(triplet);
-        fontInfo.useFont(fontKey);
-        return new Font(fontKey, triplet, fontInfo.getMetricsFor(fontKey), fontSize);
+        return fontInfo.getFontInstance(triplet, fontSize);
     }
 
     private void establishCurrentFont() throws IOException {

@@ -54,6 +54,7 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.ElementMappingRegistry;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
@@ -933,7 +934,7 @@ public class AreaTreeParser {
                             int fontWeight = getAttributeAsInteger(
                                     attributes, "font-weight", Font.NORMAL);
                             area.addTrait(trait, 
-                                    new FontTriplet(fontName, fontStyle, fontWeight));
+                                    FontInfo.createFontKey(fontName, fontStyle, fontWeight));
                         }
                     }
                 }

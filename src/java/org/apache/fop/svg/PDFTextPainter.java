@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2004,2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,6 @@ import org.apache.batik.gvt.font.GVTFontFamily;
 import org.apache.batik.bridge.SVGFontFamily;
 import org.apache.batik.gvt.renderer.StrokingTextPainter;
 
-import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
@@ -58,7 +57,7 @@ import org.apache.fop.fonts.FontTriplet;
  * (todo) use drawString(AttributedCharacterIterator iterator...) for some
  *
  * @author <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
- * @version $Id: PDFTextPainter.java,v 1.16 2003/03/07 09:51:25 jeremias Exp $
+ * @version $Id$
  */
 public class PDFTextPainter implements TextPainter {
     private FontInfo fontInfo;
@@ -179,11 +178,8 @@ public class PDFTextPainter implements TextPainter {
                 if (fi.hasFont(fontFamily, style, weight)) {
                     FontTriplet triplet = fontInfo.fontLookup(fontFamily, style,
                                                        weight);
-                    String fname = fontInfo.getInternalFontKey(triplet);
-                    fontInfo.useFont(fname);
-                    FontMetrics metrics = fontInfo.getMetricsFor(fname);
                     int fsize = (int)(size.floatValue() * 1000);
-                    fontState = new Font(fname, triplet, metrics, fsize);
+                    fontState = fontInfo.getFontInstance(triplet, fsize);
                     found = true;
                     break;
                 }
@@ -191,11 +187,8 @@ public class PDFTextPainter implements TextPainter {
         }
         if (!found) {
             FontTriplet triplet = fontInfo.fontLookup("any", style, Font.NORMAL);
-            String fname = fontInfo.getInternalFontKey(triplet);
-            fontInfo.useFont(fname);
-            FontMetrics metrics = fontInfo.getMetricsFor(fname);
             int fsize = (int)(size.floatValue() * 1000);
-            fontState = new Font(fname, triplet, metrics, fsize);
+            fontState = fontInfo.getFontInstance(triplet, fsize);
         } else {
             if (g2d instanceof PDFGraphics2D) {
                 ((PDFGraphics2D) g2d).setOverrideFontState(fontState);

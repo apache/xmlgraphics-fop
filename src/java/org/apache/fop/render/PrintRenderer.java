@@ -23,7 +23,6 @@ import org.apache.fop.area.Area;
 import org.apache.fop.area.Trait;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.fonts.FontTriplet;
 
@@ -64,19 +63,11 @@ public abstract class PrintRenderer extends AbstractRenderer {
      * Returns a Font object constructed based on the font traits in an area
      * @param area the area from which to retrieve the font triplet information
      * @return the requested Font instance or null if not found
-     * @todo This would make a nice opportunity for a cache!
      */
     protected Font getFontFromArea(Area area) {
         FontTriplet triplet = (FontTriplet)area.getTrait(Trait.FONT);
-        String name = fontInfo.getInternalFontKey(triplet);
-        if (name != null) {
-            int size = ((Integer)area.getTrait(Trait.FONT_SIZE)).intValue();
-            FontMetrics metrics = fontInfo.getMetricsFor(name);
-            Font font = new Font(name, null, metrics, size);
-            return font;
-        } else {
-            return null;
-        }
+        int size = ((Integer)area.getTrait(Trait.FONT_SIZE)).intValue();
+        return fontInfo.getFontInstance(triplet, size);
     }
     
     /**
