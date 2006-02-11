@@ -27,6 +27,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="add" fixes-bug="38618" due-to="Max Berger">
+        Added support for system-color() function.
+      </action>
       <action context="Code" dev="JM" type="fix">
         Bugfix: Fixed two causes for ClassCastExceptions in BlockContainerLayoutManager.
       </action>

@@ -688,7 +688,7 @@ public class FOPropertyMapping implements Constants {
         // background-color
         m  = new ColorTypeProperty.Maker(PR_BACKGROUND_COLOR) {
             protected Property convertPropertyDatatype(
-                    Property p, PropertyList propertyList, FObj fo) {
+                    Property p, PropertyList propertyList, FObj fo) throws PropertyException {
                 String nameval = p.getNCname();
                 if (nameval != null) {
                     return new ColorTypeProperty(nameval);

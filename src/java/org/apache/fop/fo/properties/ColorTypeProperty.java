@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import java.util.StringTokenizer;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.expr.PropertyException;
 
 /**
  * Superclass for properties that wrap ColorType values
@@ -63,8 +64,10 @@ public class ColorTypeProperty extends Property implements ColorType {
             super(propId);
         }
 
+        /** @see org.apache.fop.fo.properties.PropertyMaker */
         public Property convertProperty(Property p,
-                                        PropertyList propertyList, FObj fo) {
+                                        PropertyList propertyList, FObj fo) 
+                    throws PropertyException {
             if (p instanceof ColorTypeProperty) {
                 return p;
             }
@@ -93,8 +96,9 @@ public class ColorTypeProperty extends Property implements ColorType {
      * Set the colour given a particular String specifying either a
      * colour name or #RGB or #RRGGBB
      * @param value RGB value as String to be parsed
+     * @throws PropertyException if the value can't be parsed
      */
-    public ColorTypeProperty(String value) {
+    public ColorTypeProperty(String value) throws PropertyException {
         if (value.startsWith("#")) {
             try {
                 if (value.length() == 4) {
@@ -114,16 +118,12 @@ public class ColorTypeProperty extends Property implements ColorType {
                     this.blue = Integer.parseInt(value.substring(5), 16)
                     / 255f;
                 } else {
-                    this.red = 0;
-                    this.green = 0;
-                    this.blue = 0;
-                    //log.error("unknown colour format. Must be #RGB or #RRGGBB");
+                    throw new PropertyException("Unknown color format: "
+                            + value + ". Must be #RGB or #RRGGBB");
                 }
-            } catch (Exception e) {
-                this.red = 0;
-                this.green = 0;
-                this.blue = 0;
-                //log.error("unknown colour format. Must be #RGB or #RRGGBB");
+            } catch (NumberFormatException e) {
+                throw new PropertyException("Unknown color format: " + value
+                        + ". Must be #RGB or #RRGGBB");
             }
         } else if (value.startsWith("rgb(")) {
             int poss = value.indexOf("(");
@@ -135,43 +135,52 @@ public class ColorTypeProperty extends Property implements ColorType {
                     if (st.hasMoreTokens()) {
                         String str = st.nextToken().trim();
                         if (str.endsWith("%")) {
-                            this.red =
-                            Integer.parseInt(str.substring(0, str.length() - 1))
-                            * 2.55f;
+                            this.red = Float.parseFloat(str.substring(0, str
+                                    .length() - 1)) / 100.0f;
                         } else {
-                            this.red = Integer.parseInt(str) / 255f;
+                            this.red = Float.parseFloat(str) / 255f;
                         }
                     }
                     if (st.hasMoreTokens()) {
                         String str = st.nextToken().trim();
                         if (str.endsWith("%")) {
-                            this.green =
-                            Integer.parseInt(str.substring(0, str.length() - 1))
-                            * 2.55f;
+                            this.green = Float.parseFloat(str.substring(0, str
+                                    .length() - 1)) / 100.0f;
                         } else {
-                            this.green = Integer.parseInt(str) / 255f;
+                            this.green = Float.parseFloat(str) / 255f;
                         }
                     }
                     if (st.hasMoreTokens()) {
                         String str = st.nextToken().trim();
                         if (str.endsWith("%")) {
-                            this.blue =
-                            Integer.parseInt(str.substring(0, str.length() - 1))
-                            * 2.55f;
+                            this.blue = Float.parseFloat(str.substring(0, str
+                                    .length() - 1)) / 100.0f;
                         } else {
-                            this.blue = Integer.parseInt(str) / 255f;
+                            this.blue = Float.parseFloat(str) / 255f;
                         }
                     }
                 } catch (Exception e) {
-                    this.red = 0;
-                    this.green = 0;
-                    this.blue = 0;
-                    //log.error("unknown colour format. Must be #RGB or #RRGGBB");
+                    throw new PropertyException(
+                            "Arguments to rgb() must be [0..255] or [0%..100%]");
                 }
+            } else {
+                throw new PropertyException("Unknown color format: " + value
+                        + ". Must be rgb(r,g,b)");
             }
         } else if (value.startsWith("url(")) {
-            // refers to a gradient
+            throw new PropertyException(
+                    "Colors starting with url( are not yet supported!");
         } else {
+            if (value.startsWith("system-color(")) {
+                int poss = value.indexOf("(");
+                int pose = value.indexOf(")");
+                if (poss != -1 && pose != -1) {
+                    value = value.substring(poss + 1, pose);
+                } else {
+                    throw new PropertyException("Unknown color format: "
+                            + value + ". Must be system-color(x)");
+                }
+            }
             if (value.toLowerCase().equals("transparent")) {
                 this.red = 0;
                 this.green = 0;
@@ -189,13 +198,15 @@ public class ColorTypeProperty extends Property implements ColorType {
                     }
                 }
                 if (!found) {
-                    this.red = 0;
-                    this.green = 0;
-                    this.blue = 0;
-                    //log.error("unknown colour name: "
-                    //                       + value);
+                    throw new PropertyException("Unknown color name: " + value);
                 }
             }
+        }
+        if ((this.red < 0.0 || this.red > 1.0)
+                || (this.green < 0.0 || this.green > 1.0)
+                || (this.blue < 0.0 || this.blue > 1.0)
+                || (this.alpha < 0.0 || this.alpha > 1.0)) {
+            throw new PropertyException("Color values out of range");
         }
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2006 The Apache Software Foundation.
+ * Copyright 2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,49 +18,24 @@
  
 package org.apache.fop.fo.expr;
 
-import org.apache.fop.datatypes.PercentBaseContext;
-import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.properties.ColorTypeProperty;
 import org.apache.fop.fo.properties.Property;
 
 /**
- * Implements the rgb() function.
+ * Implements the system-color() function.
  */
-class RGBColorFunction extends FunctionBase {
+class SystemColorFunction extends FunctionBase {
     
     /** @see org.apache.fop.fo.expr.Function#nbArgs() */
     public int nbArgs() {
-        return 3;
-    }
-
-    /**
-     * @return an object which implements the PercentBase interface.
-     * Percents in arguments to this function are interpreted relative
-     * to 255.
-     */
-    public PercentBase getPercentBase() {
-        return new RGBPercentBase();
+        return 1;
     }
 
     /** @see org.apache.fop.fo.expr.Function */
     public Property eval(Property[] args,
                          PropertyInfo pInfo) throws PropertyException {
-        return new ColorTypeProperty("rgb(" + args[0] + "," + args[1] + "," + args[2] + ")");
+        return new ColorTypeProperty("system-color(" + args[0] + ")");
 
     }
 
-    static class RGBPercentBase implements PercentBase {
-        public int getDimension() {
-            return 0;
-        }
-
-        public double getBaseValue() {
-            return 255f;
-        }
-
-        public int getBaseLength(PercentBaseContext context) {
-            return 0;
-        }
-
-    }
 }
