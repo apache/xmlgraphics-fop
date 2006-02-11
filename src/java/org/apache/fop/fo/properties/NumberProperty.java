@@ -22,6 +22,7 @@ import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.expr.PropertyException;
 
 /**
  * Class for handling numeric properties
@@ -42,10 +43,12 @@ public class NumberProperty extends Property implements Numeric {
         }
 
         /**
+         * @throws PropertyException 
          * @see PropertyMaker#convertProperty
          */
         public Property convertProperty(Property p,
-                                        PropertyList propertyList, FObj fo) {
+                                        PropertyList propertyList, FObj fo) 
+                    throws PropertyException {
             if (p instanceof NumberProperty) {
                 return p;
             }

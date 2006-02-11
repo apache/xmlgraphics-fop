@@ -558,10 +558,11 @@ public class PropertyMaker implements Cloneable {
      * @param fo The parent FO for the FO whose property is being made.
      * why this is needed, or remove it from the signature).
      * @return an Property with the appropriate datatype used
+     * @throws PropertyException for invalid or inconsistent input
      */
     protected Property convertPropertyDatatype(Property p,
                                                PropertyList propertyList,
-                                               FObj fo) {
+                                               FObj fo) throws PropertyException {
         return null;
     }
 

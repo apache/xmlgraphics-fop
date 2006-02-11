@@ -50,6 +50,7 @@ public final class PropertyParser extends PropertyTokenizer {
         FUNCTION_TABLE.put("max", new MaxFunction());
         FUNCTION_TABLE.put("abs", new AbsFunction());
         FUNCTION_TABLE.put("rgb", new RGBColorFunction());
+        FUNCTION_TABLE.put("system-color", new SystemColorFunction());
         FUNCTION_TABLE.put("from-table-column", new FromTableColumnFunction());
         FUNCTION_TABLE.put("inherited-property-value",
                           new InheritedPropFunction());
@@ -66,7 +67,6 @@ public final class PropertyParser extends PropertyTokenizer {
         /**
          * * NOT YET IMPLEMENTED!!!
          * FUNCTION_TABLE.put("icc-color", new ICCcolorFunction());
-         * FUNCTION_TABLE.put("system-color", new SystemColorFunction());
          * FUNCTION_TABLE.put("system-font", new SystemFontFunction());
          *
          * FUNCTION_TABLE.put("merge-property-values", new MergePropsFunction());
