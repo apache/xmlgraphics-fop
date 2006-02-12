@@ -923,11 +923,30 @@ public class RTFHandler extends FOEventHandler {
         if (bDefer) {
             return;
         }
-
+        
         // create an RtfListItem in the current RtfList
         try {
-            final RtfList list = (RtfList)builderContext.getContainer(
+            RtfList list = (RtfList)builderContext.getContainer(
                     RtfList.class, true, this);
+            
+            /**
+             * If the current list already contains a list item, then close the
+             * list and open a new one, so every single list item gets its own
+             * list. This allows every item to have a different list label.
+             * If all the items would be in the same list, they had all the
+             * same label.
+             */
+            //TODO: do this only, if the labels content <> previous labels content
+            if (list.getChildCount() > 0) {
+                this.endListBody();
+                this.endList((ListBlock) li.getParent());
+                this.startList((ListBlock) li.getParent());
+                this.startListBody();
+                
+                list = (RtfList)builderContext.getContainer(
+                        RtfList.class, true, this);
+            }            
+            
             builderContext.pushContainer(list.newListItem());
         } catch (IOException ioe) {
             log.error("startList: " + ioe.getMessage());

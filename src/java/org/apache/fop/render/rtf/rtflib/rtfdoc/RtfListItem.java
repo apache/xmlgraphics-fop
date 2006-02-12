@@ -16,6 +16,7 @@
 
 /* $Id$ */
 
+package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 /*
  * This file is part of the RTF library of the FOP project, which was originally
@@ -23,8 +24,6 @@
  * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
  * the FOP project.
  */
-
-package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 import java.io.Writer;
 import java.io.IOException;
@@ -45,7 +44,9 @@ public class RtfListItem extends RtfContainer
     private RtfListStyle listStyle;
     private int number = 0;
 
-    /** special RtfParagraph that writes list item setup code before its content */
+    /** 
+     * special RtfParagraph that writes list item setup code before its content
+     */
     private class RtfListItemParagraph extends RtfParagraph {
 
         RtfListItemParagraph(RtfListItem rli, RtfAttributes attrs)
@@ -59,20 +60,39 @@ public class RtfListItem extends RtfContainer
         }
     }
 
+    /** 
+     * special RtfTextrun that is used as list item label
+     */
     public class RtfListItemLabel extends RtfTextrun implements IRtfTextrunContainer {
         
         private RtfListItem rtfListItem;
         
+        /**
+         * Constructs the RtfListItemLabel
+         * @param item The RtfListItem the label belongs to
+         * @throws IOException Thrown when an IO-problem occurs
+         */
         public RtfListItemLabel(RtfListItem item) throws IOException {
             super(null, item.writer, null); 
             
             rtfListItem = item;
         }
 
+        /**
+         * Returns the current RtfTextrun object.
+         * Opens a new one if necessary.
+         * @return The RtfTextrun object
+         * @throws IOException Thrown when an IO-problem occurs
+         */
         public RtfTextrun getTextrun() throws IOException {
             return this;
         }
         
+        /**
+         * Sets the content of the list item label.
+         * @param s Content of the list item label.
+         * @throws IOException Thrown when an IO-problem occurs
+         */
         public void addString(String s) throws IOException {
             
             final String label = s.trim();
@@ -94,7 +114,7 @@ public class RtfListItem extends RtfContainer
      * Close current paragraph if any and start a new one
      * @param attrs attributes of new paragraph
      * @return new RtfParagraph
-     * @throws IOException for I/O problems
+     * @throws IOException Thrown when an IO-problem occurs
      */
     public RtfParagraph newParagraph(RtfAttributes attrs) throws IOException {
         if (paragraph != null) {
@@ -107,7 +127,7 @@ public class RtfListItem extends RtfContainer
     /**
      * Close current paragraph if any and start a new one with default attributes
      * @return new RtfParagraph
-     * @throws IOException for I/O problems
+     * @throws IOException Thrown when an IO-problem occurs
      */
     public RtfParagraph newParagraph() throws IOException {
         return newParagraph(null);
@@ -119,6 +139,12 @@ public class RtfListItem extends RtfContainer
         parentList = parent;
     }
 
+
+    /**
+     * Get the current textrun.
+     * @return current RtfTextrun object
+     * @throws IOException Thrown when an IO-problem occurs
+     */
     public RtfTextrun getTextrun() throws IOException {
         RtfTextrun textrun = RtfTextrun.getTextrun(this, writer, null);
         textrun.setRtfListItem(this);
@@ -147,8 +173,11 @@ public class RtfListItem extends RtfContainer
             writeControlWord("pard");
         }
 
-        writeOneAttribute(RtfText.LEFT_INDENT_FIRST, "360"); //attrib.getValue(RtfListTable.LIST_INDENT));
-        writeOneAttribute(RtfText.LEFT_INDENT_BODY, attrib.getValue(RtfText.LEFT_INDENT_BODY));
+        writeOneAttribute(RtfText.LEFT_INDENT_FIRST, 
+                "360"); //attrib.getValue(RtfListTable.LIST_INDENT));
+            
+        writeOneAttribute(RtfText.LEFT_INDENT_BODY, 
+                attrib.getValue(RtfText.LEFT_INDENT_BODY));
 
         // group for list setup info
         writeGroupMark(true);
@@ -210,6 +239,10 @@ public class RtfListItem extends RtfContainer
         return parentList;
     }
     
+    /**
+     * Returns the list number
+     * @return list number
+     */
     public int getNumber() {
         return number;
     }

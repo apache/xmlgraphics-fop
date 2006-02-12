@@ -16,6 +16,7 @@
 
 /* $Id$ */
 
+package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 /*
  * This file is part of the RTF library of the FOP project, which was originally
@@ -23,8 +24,6 @@
  * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
  * the FOP project.
  */
-
-package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 import java.util.LinkedList;
 import java.util.Iterator;
@@ -111,6 +110,7 @@ public class RtfListTable extends RtfContainer {
     /**
      * Add List
      * @param list RtfList to add
+     * @return number of lists in the table after adding
      */
     public int addList(RtfList list) {
         if (lists == null) {
@@ -127,21 +127,25 @@ public class RtfListTable extends RtfContainer {
      * @throws IOException for I/O problems
      */
     public void writeRtfContent() throws IOException {
+        newLine();
         if (lists != null) {
             //write '\listtable'
-        writeGroupMark(true);
-        writeStarControlWordNS(LIST_TABLE);
+            writeGroupMark(true);
+            writeStarControlWordNS(LIST_TABLE);
+            newLine();
             for (Iterator it = lists.iterator(); it.hasNext();) {
                 final RtfList list = (RtfList)it.next();
                 writeListTableEntry(list);
+                newLine();
             }
             writeGroupMark(false);
-                
+               
+            newLine();
             //write '\listoveridetable'
-        writeGroupMark(true);
+            writeGroupMark(true);
             writeStarControlWordNS(LIST_OVR_TABLE);
             int z = 1;
-            
+            newLine();
             for (Iterator it = styles.iterator(); it.hasNext();) {
                 final RtfListStyle style = (RtfListStyle)it.next();
                         
@@ -155,9 +159,11 @@ public class RtfListTable extends RtfContainer {
 
                 writeGroupMark(false);
                 writeGroupMark(false);
+                newLine();
             }
             
             writeGroupMark(false);
+            newLine();
         }
     }
 
@@ -204,8 +210,9 @@ public class RtfListTable extends RtfContainer {
     }
 
     /**
-     * Change list style
+     * Add list style
      * @param ls ListStyle to set
+     * @return number of styles after adding
      */
     public int addRtfListStyle(RtfListStyle ls) {
         styles.add(ls);

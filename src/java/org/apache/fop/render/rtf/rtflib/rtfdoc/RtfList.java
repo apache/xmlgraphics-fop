@@ -16,6 +16,7 @@
 
 /* $Id$ */
 
+package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 /*
  * This file is part of the RTF library of the FOP project, which was originally
@@ -23,8 +24,6 @@
  * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
  * the FOP project.
  */
-
-package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 import java.io.Writer;
 import java.io.IOException;
@@ -44,7 +43,7 @@ public class RtfList extends RtfContainer {
     private RtfListStyle defaultListStyle;
     private Integer listTemplateId = null;
     private Integer listId = null;
-    static private Random listIdGenerator = new Random(0);
+    private static Random listIdGenerator = new Random(0);
 
     /** Create an RTF list as a child of given container with given attributes */
     RtfList(RtfContainer parent, Writer w, RtfAttributes attr) throws IOException {
@@ -77,10 +76,18 @@ public class RtfList extends RtfContainer {
         return item;
     }
 
+    /**
+     * Returns the Id of the list.
+     * @return Id of the list
+     */
     public Integer getListId() {
         return listId;
     }
     
+    /**
+     * Returns the Id of the list template.
+     * @return Id of the list template
+     */
     public Integer getListTemplateId() {
         return listTemplateId;
     }
@@ -101,6 +108,10 @@ public class RtfList extends RtfContainer {
         return defaultListStyle;
     }
     
+    /**
+     * Returns true, if the list has a parent table.
+     * @return true, if the list has a parent table
+     */
     public boolean getHasTableParent() {
         return hasTableParent;
     }
