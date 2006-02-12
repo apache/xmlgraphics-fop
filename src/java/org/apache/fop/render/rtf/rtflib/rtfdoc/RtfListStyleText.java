@@ -16,6 +16,7 @@
 
 /* $Id$ */
 
+package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 /*
  * This file is part of the RTF library of the FOP project, which was originally
@@ -23,7 +24,6 @@
  * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
  * the FOP project.
  */
-package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 //Java
 import java.io.IOException;
@@ -31,17 +31,25 @@ import java.io.IOException;
 //FOP
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfElement;
 
+/**
+ * Class to handle text list style.
+ */
 public class RtfListStyleText extends RtfListStyle {
     private String text;
     
+    /**
+     * Constructs a RtfListStyleText object.
+     * @param s Text to be displayed
+     */
     public RtfListStyleText(String s) {
         text = s;    
     }
     
     /**
-     * Gets call before a RtfListItem has to be written.
-     * 
+     * Gets called before a RtfListItem has to be written.
+     * @param item RtfListItem whose prefix has to be written
      * @see org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListStyle#writeListPrefix(RtfListItem)
+     * @throws IOException Thrown when an IO-problem occurs
      */
     public void writeListPrefix(RtfListItem item)
     throws IOException {
@@ -53,16 +61,18 @@ public class RtfListStyleText extends RtfListStyle {
                 item.getParentList().attrib.getValue(RtfListTable.LIST_INDENT));
         item.writeControlWord("pnf1");
         item.writeGroupMark(true);
-        item.writeControlWord("pndec");
+        //item.writeControlWord("pndec");
         item.writeOneAttribute(RtfListTable.LIST_FONT_TYPE, "2");
         item.writeControlWord("pntxtb " + text);
         item.writeGroupMark(false);
     }
     
     /**
-     * Gets call before a paragraph, which is contained by a RtfListItem has to be written.
+     * Gets called before a paragraph, which is contained by a RtfListItem has to be written.
      * 
+     * @param element RtfElement in whose context is to be written
      * @see org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListStyle#writeParagraphPrefix(RtfElement)
+     * @throws IOException Thrown when an IO-problem occurs
      */
     public void writeParagraphPrefix(RtfElement element)
     throws IOException {
@@ -72,9 +82,11 @@ public class RtfListStyleText extends RtfListStyle {
     }
     
     /**
-     * Gets call when the list table has to be written.
+     * Gets called when the list table has to be written.
      * 
+     * @param element RtfElement in whose context is to be written
      * @see org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListStyle#writeLevelGroup(RtfElement)
+     * @throws IOException Thrown when an IO-problem occurs
      */
     public void writeLevelGroup(RtfElement element)
     throws IOException {
