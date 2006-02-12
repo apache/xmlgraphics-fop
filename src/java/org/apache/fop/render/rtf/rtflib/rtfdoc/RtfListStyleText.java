@@ -97,7 +97,10 @@ public class RtfListStyleText extends RtfListStyle {
         if (text.length() < 10) {
             sCount = "0" + String.valueOf(text.length());
         } else {
-            sCount = String.valueOf(text.length());
+            sCount = String.valueOf(Integer.toHexString(text.length()));
+            if (sCount.length() == 1) {
+                sCount = "0" + sCount;
+            }
         }
         element.writeOneAttributeNS(
                 RtfListTable.LIST_TEXT_FORM, "\\'" + sCount + text);
