@@ -1068,6 +1068,18 @@ public interface Constants {
     int EN_AVOID = 177;
     /** Enumeration constant -- white-space shorthand */
     int EN_PRE = 178;
+    /** Enumeration constant -- font shorthand */
+    int EN_CAPTION = 179;
+    /** Enumeration constant -- font shorthand */
+    int EN_ICON = 180;
+    /** Enumeration constant -- font shorthand */
+    int EN_MENU = 181;
+    /** Enumeration constant -- font shorthand */
+    int EN_MESSAGE_BOX = 182;
+    /** Enumeration constant -- font shorthand */
+    int EN_SMALL_CAPTION = 183;
+    /** Enumeration constant -- font shorthand */
+    int EN_STATUS_BAR = 184;
     /** Number of enumeration constants defined */
-    int ENUM_COUNT = 178;
+    int ENUM_COUNT = 184;
 }
