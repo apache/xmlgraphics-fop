@@ -6635,7 +6635,11 @@
         partial
       </td>
       <td align="center">
-        [0.91 beta] Enum values other than "inherit" not yet supported.
+        <ul>
+          <li>
+            [0.91 beta] Enum values other than "inherit" not yet supported.
+          </li>
+        </ul>
       </td>
     </tr>
     <tr>
