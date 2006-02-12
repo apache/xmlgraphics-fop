@@ -94,7 +94,7 @@ public abstract class RtfElement {
      * the RTF file itself (for easier debugging), not its content.
      * @throws IOException in case of an I/O problem
      */
-    protected void newLine() throws IOException {
+    public void newLine() throws IOException {
         writer.write("\n");
     }
     

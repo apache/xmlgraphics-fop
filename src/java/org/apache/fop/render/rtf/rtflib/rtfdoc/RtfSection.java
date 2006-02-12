@@ -181,6 +181,7 @@ implements
      */
     protected void writeRtfPrefix() throws IOException {
         writeAttributes(attrib, RtfPage.PAGE_ATTR);
+        newLine();
         writeControlWord("sectd");
     }
 
