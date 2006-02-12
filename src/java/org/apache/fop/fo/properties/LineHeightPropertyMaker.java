@@ -17,7 +17,9 @@
 /* $Id$ */
 
 package org.apache.fop.fo.properties;
+
 import org.apache.fop.datatypes.Numeric;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
@@ -40,6 +42,23 @@ public class LineHeightPropertyMaker extends SpaceProperty.Maker {
         super(propId);
     }
 
+    /**
+     * @see PropertyMaker#make(PropertyList, String, FObj)
+     * @throws PropertyException 
+     */
+    public Property make(PropertyList propertyList, String value, FObj fo) 
+            throws PropertyException {
+        /* if value was specified as a number/length/percentage then 
+         * conditionality and precedence components are overridden
+         */
+        Property p = super.make(propertyList, value, fo);
+        p.getSpace().setConditionality(
+                new EnumProperty(Constants.EN_RETAIN, "RETAIN"), true);
+        p.getSpace().setPrecedence(
+                new EnumProperty(Constants.EN_FORCE, "FORCE"), true);
+        return p;
+    }
+    
     /**
      * Recalculate the line-height value based on the nearest specified
      * value.
@@ -65,9 +84,9 @@ public class LineHeightPropertyMaker extends SpaceProperty.Maker {
     public Property convertProperty(Property p,
             PropertyList propertyList,
             FObj fo) throws PropertyException {
-        Numeric numval = p.getNumeric();    
+        Numeric numval = p.getNumeric();
         if (numval != null && numval.getDimension() == 0) {
-            p = new PercentLength(numval.getNumericValue(), getPercentBase(fo,propertyList));
+            p = new PercentLength(numval.getNumericValue(), getPercentBase(fo, propertyList));
             Property spaceProp = super.convertProperty(p, propertyList, fo);
             spaceProp.setSpecifiedValue(String.valueOf(numval.getNumericValue()));
             return spaceProp;

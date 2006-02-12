@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,13 +42,14 @@ import org.apache.fop.fo.properties.PropertyMaker;
 /**
  * Class containing the collection of properties for a given FObj.
  */
-abstract public class PropertyList {
+public abstract class PropertyList {
 
     // writing-mode index
     private int writingMode;
 
     private static boolean[] inheritableProperty;
 
+    /** reference to the parent FO's propertyList **/
     protected PropertyList parentPropertyList = null;
     private FObj fobj = null;
 
@@ -56,6 +57,7 @@ abstract public class PropertyList {
 
     /**
      * Basic constructor.
+     * @param fObjToAttach  the FO this PropertyList should be attached to
      * @param parentPropertyList the PropertyList belonging to the new objects
      * parent
      */
@@ -72,7 +74,7 @@ abstract public class PropertyList {
     }
 
     /**
-     * @return the FObj object attached to the parentPropetyList
+     * @return the FObj object attached to the parentPropertyList
      */
     public FObj getParentFObj() {
         if (parentPropertyList != null) {
@@ -94,6 +96,7 @@ abstract public class PropertyList {
      * @param propId The id of the property whose value is desired.
      * @return The value if the property is explicitly set or set by
      * a shorthand property, otherwise null.
+     * @throws PropertyException ...
      */
     public Property getExplicitOrShorthand(int propId) throws PropertyException {
         /* Handle request for one part of a compound property */
@@ -109,14 +112,14 @@ abstract public class PropertyList {
      * @param propId The ID of the property whose value is desired.
      * @return The value if the property is explicitly set, otherwise null.
      */
-    abstract public Property getExplicit(int propId);
+    public abstract Property getExplicit(int propId);
 
     /**
      * Set an value defined explicitly on this FO.
      * @param propId The ID of the property to set.
      * @param value The value of the property.
      */
-    abstract public void putExplicit(int propId, Property value);
+    public abstract void putExplicit(int propId, Property value);
 
     /**
      * Return the value of this property inherited by this FO.
@@ -124,6 +127,7 @@ abstract public class PropertyList {
      * The property must be inheritable!
      * @param propId The ID of the property whose value is desired.
      * @return The inherited value, otherwise null.
+     * @throws PropertyException ...
      */
     public Property getInherited(int propId) throws PropertyException {
 
@@ -142,6 +146,7 @@ abstract public class PropertyList {
      * the default value.
      * @param propId The Constants ID of the property whose value is desired.
      * @return the Property corresponding to that name
+     * @throws PropertyException ...
      */
     public Property get(int propId) throws PropertyException {
         return get(propId, true, true);
@@ -152,6 +157,12 @@ abstract public class PropertyList {
      * this will try to compute it based on other properties, or if it is
      * inheritable, to return the inherited value. If all else fails, it returns
      * the default value.
+     * @param propId    the property's id
+     * @param bTryInherit   true for inherited properties, or when the inherited 
+     *                      value is needed
+     * @param bTryDefault   true when the default value may be used as a last resort
+     * @return the property
+     * @throws PropertyException ...
      */
     public Property get(int propId, boolean bTryInherit,
                          boolean bTryDefault) throws PropertyException {
@@ -167,6 +178,7 @@ abstract public class PropertyList {
      * @param propId The ID of the property whose value is desired.
      * @return The computed value if the property is explicitly set on some
      * ancestor of the current FO, else the initial value.
+     * @throws PropertyException ...
      */
     public Property getNearestSpecified(int propId) throws PropertyException {
         Property p = null;
@@ -189,6 +201,7 @@ abstract public class PropertyList {
      * @param propId The Constants ID of the property whose value is desired.
      * @return The computed value on the parent or the initial value if this
      * FO is the root or is in a different namespace from its parent.
+     * @throws PropertyException ...
      */
     public Property getFromParent(int propId) throws PropertyException {
         if (parentPropertyList != null) {
@@ -202,6 +215,7 @@ abstract public class PropertyList {
      * Set writing mode for this FO.
      * Use that from the nearest ancestor, including self, which generates
      * reference areas, or from root FO if no ancestor found.
+     * @throws PropertyException ...
      */
     public void setWritingMode() throws PropertyException {
         FObj p = fobj.findNearestAncestorFObj();
@@ -235,14 +249,16 @@ abstract public class PropertyList {
             case Constants.EN_LR_TB: return lrtb;
             case Constants.EN_RL_TB: return rltb;
             case Constants.EN_TB_RL: return tbrl;
+            default:
+                //nop
         }
         return -1;
     }
 
     /**
-     *
+     * Adds the attributes, passed in by the parser to the PropertyList
+     * 
      * @param attributes Collection of attributes passed to us from the parser.
-     * @throws FOPException If an error occurs while building the PropertyList
      */
     public void addAttributesToList(Attributes attributes) {
         /*
@@ -263,13 +279,20 @@ abstract public class PropertyList {
          * If font-size is set on this FO, must set it first, since
          * other attributes specified in terms of "ems" depend on it.
          */
-        /** @todo When we do "shorthand" properties, must handle the
-         *  "font" property as well to see if font-size is set.
-         */
-        attributeName = "font-size";
+        attributeName = "font";
         attributeValue = attributes.getValue(attributeName);
         convertAttributeToProperty(attributes, attributeName, 
-            attributeValue);
+                attributeValue);
+        if (attributeValue == null) {
+            /*
+             * font shorthand wasn't specified, so still need to process
+             * explicit font-size
+             */
+            attributeName = "font-size";
+            attributeValue = attributes.getValue(attributeName);
+            convertAttributeToProperty(attributes, attributeName, 
+                    attributeValue);
+        }
             
         for (int i = 0; i < attributes.getLength(); i++) {
             attributeName = attributes.getQName(i);

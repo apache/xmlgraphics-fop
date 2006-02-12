@@ -256,11 +256,10 @@ public class CompoundPropertyMaker extends PropertyMaker {
      * @param parentFO The parent FO for the FO whose property is being made.
      * @return a Property subclass object holding a "compound" property object
      *         initialized to the default values for each component.
-     * @throws PropertyException
+     * @throws PropertyException ...
      */
     protected Property makeCompound(PropertyList propertyList, FObj parentFO)
-        throws PropertyException
-    {
+        throws PropertyException {
         Property p = makeNewProperty();
         CompoundDatatype data = (CompoundDatatype) p.getObject();
         for (int i = 0; i < Constants.COMPOUND_COUNT; i++) {

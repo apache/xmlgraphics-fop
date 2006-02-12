@@ -36,7 +36,7 @@ public class SpacePropertyMaker extends CorrespondingPropertyMaker {
     }
 
     /**
-     * @see org.apache.fop.fo.properties.CorrespondingPropertyMaker#compute(org.apache.fop.fo.PropertyList)
+     * @see org.apache.fop.fo.properties.CorrespondingPropertyMaker#compute(PropertyList)
      */
     public Property compute(PropertyList propertyList) throws PropertyException {
         Property prop = super.compute(propertyList);

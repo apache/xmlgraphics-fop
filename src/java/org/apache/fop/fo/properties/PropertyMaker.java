@@ -59,7 +59,9 @@ public class PropertyMaker implements Cloneable {
     private PropertyMaker[] shorthands = null;
     private ShorthandParser datatypeParser;
 
+    /** default property **/
     protected Property defaultProperty;
+    /** Maker for 'corresponding' properties **/
     protected CorrespondingPropertyMaker corresponding;
 
     /**
@@ -257,11 +259,11 @@ public class PropertyMaker implements Cloneable {
             p = corresponding.compute(propertyList);
         } else {
             p = propertyList.getExplicit(propId);
-            if (p == null) {
-                p = this.compute(propertyList);
-            }
             if (p == null) {    // check for shorthand specification
                 p = getShorthand(propertyList);
+            }
+            if (p == null) {
+                p = this.compute(propertyList);
             }
         }
         if (p == null && tryInherit) {    
@@ -426,8 +428,7 @@ public class PropertyMaker implements Cloneable {
                 newProp = convertProperty(newProp, propertyList, fo);
             }
             if (newProp == null) {
-                throw new org.apache.fop.fo.expr.PropertyException(
-                        "No conversion defined " + pvalue);
+                throw new PropertyException("No conversion defined " + pvalue);
             }
             return newProp;
         } catch (PropertyException propEx) {
@@ -459,6 +460,15 @@ public class PropertyMaker implements Cloneable {
         return baseProperty;
     }
 
+    /**
+     * Converts a shorthand property
+     * 
+     * @param propertyList  the propertyList for which to convert
+     * @param prop          the shorthand property
+     * @param fo            ...
+     * @return  the converted property
+     * @throws PropertyException ...
+     */
     public Property convertShorthandProperty(PropertyList propertyList,
                                              Property prop, FObj fo)
         throws PropertyException {
@@ -467,13 +477,13 @@ public class PropertyMaker implements Cloneable {
             // If value is a name token, may be keyword or Enum
             String sval = prop.getNCname();
             if (sval != null) {
-                //log.debug("Convert shorthand ncname " + sval);
+                log.debug("Convert shorthand ncname " + sval);
                 pret = checkEnumValues(sval);
                 if (pret == null) {
                     /* Check for keyword shorthand values to be substituted. */
                     String pvalue = checkValueKeywords(sval);
                     if (!pvalue.equals(sval)) {
-                        // log.debug("Convert shorthand keyword" + pvalue);
+                        log.debug("Convert shorthand keyword" + pvalue);
                         // Substituted a value: must parse it
                         Property p = PropertyParser.parse(pvalue,
                                                  new PropertyInfo(this,
