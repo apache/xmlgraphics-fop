@@ -27,9 +27,9 @@ import org.apache.fop.fo.expr.PropertyException;
 /**
  * Superclass for properties wrapping a Length value.
  */
-abstract public class LengthProperty extends Property 
-    implements Length, Numeric
-{
+public abstract class LengthProperty extends Property 
+    implements Length, Numeric {
+    
     /**
      * Inner class for making instances of LengthProperty
      */
@@ -49,10 +49,6 @@ abstract public class LengthProperty extends Property
         public Property convertProperty(Property p,
                                         PropertyList propertyList,
                                         FObj fo) throws PropertyException {
-            Property prop = super.convertProperty(p, propertyList, fo);
-            if (prop != null) {
-                return prop;
-            }
             if (p instanceof EnumProperty) {
                 return new EnumLength(p);
             }
@@ -63,6 +59,7 @@ abstract public class LengthProperty extends Property
             if (val != null) {
                 return (Property) val;
             }
+            /* always null ?? */
             return convertPropertyDatatype(p, propertyList, fo);
         }
 

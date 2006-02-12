@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 The Apache Software Foundation.
+ * Copyright 2005-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +18,12 @@
 
 package org.apache.fop.fo.properties;
 
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.fo.flow.TableFObj;
 import org.apache.fop.fo.flow.TableBody;
+import org.apache.fop.fo.flow.TableFObj;
 
 /**
  * Maker class for the column-number property on table-cells and
@@ -126,7 +125,7 @@ public class ColumnNumberPropertyMaker extends NumberProperty.Maker {
         
         //if column-number was explicitly specified, force the parent's current
         //column index to the specified value, so that the updated index will
-        //be the correct initial value for the next cell (see Rec 7.26.8)
+        //be the correct initial value for the next cell/column (see Rec 7.26.8)
         if (propertyList.getExplicit(Constants.PR_COLUMN_NUMBER) != null) {
             parent.setCurrentColumnIndex(p.getNumeric().getValue());
         }

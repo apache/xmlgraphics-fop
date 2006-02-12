@@ -23,6 +23,9 @@ import java.util.Iterator;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
 
+/**
+ * Generic shorthand parser for ListProperties
+ */
 public class GenericShorthandParser implements ShorthandParser {
 
     /**
@@ -32,6 +35,7 @@ public class GenericShorthandParser implements ShorthandParser {
     }
 
     /**
+     * @param list  the ListProperty
      * @param index the index into the List of properties
      * @return the property from the List of properties at the index parameter
      */
@@ -42,9 +46,10 @@ public class GenericShorthandParser implements ShorthandParser {
             return null;
         }
     }
-
-    // Stores 1 to 3 values for border width, style, color
-    // Used for: border, border-top, border-right etc
+    
+    /**
+     * @see org.apache.fop.fo.properties.ShorthandParser#getValueForProperty()
+     */
     public Property getValueForProperty(int propId,
                                         Property property,
                                         PropertyMaker maker,
@@ -65,9 +70,11 @@ public class GenericShorthandParser implements ShorthandParser {
      * Converts a property name into a Property
      * @param propId the property ID in the Constants interface
      * @param maker the Property.Maker to be used in the conversion
+     * @param property ...
      * @param propertyList the PropertyList from which the Property should be
      * extracted
      * @return the Property matching the parameters, or null if not found
+     * @throws PropertyException (when?)
      */
     protected Property convertValueForProperty(int propId,
                                                Property property,

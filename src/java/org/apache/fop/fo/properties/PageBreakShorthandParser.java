@@ -21,7 +21,6 @@ package org.apache.fop.fo.properties;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.fo.properties.KeepProperty;
 
 /**
  * Shorthand parser for page-break-before, page-break-after and page-break-inside.

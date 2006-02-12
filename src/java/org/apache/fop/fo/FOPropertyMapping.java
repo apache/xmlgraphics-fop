@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,8 @@ import org.apache.fop.fo.properties.CorrespondingPropertyMaker;
 import org.apache.fop.fo.properties.DimensionPropertyMaker;
 import org.apache.fop.fo.properties.EnumProperty;
 import org.apache.fop.fo.properties.FontFamilyProperty;
+import org.apache.fop.fo.properties.FontShorthandParser;
+import org.apache.fop.fo.properties.FontShorthandProperty;
 import org.apache.fop.fo.properties.FontSizePropertyMaker;
 import org.apache.fop.fo.properties.FontStretchPropertyMaker;
 import org.apache.fop.fo.properties.GenericShorthandParser;
@@ -1081,13 +1083,15 @@ public class FOPropertyMapping implements Constants {
         m  = new FontFamilyProperty.Maker(PR_FONT_FAMILY);
         m.setInherited(true);
         m.setDefault("sans-serif");
+        m.addShorthand(s_generics[PR_FONT]);
         addPropertyMaker("font-family", m);
 
         // font-selection-strategy
         m  = new EnumProperty.Maker(PR_FONT_SELECTION_STRATEGY);
         m.setInherited(true);
         m.addEnum("auto", getEnumProperty(EN_AUTO, "AUTO"));
-        m.addEnum("character-by-character", getEnumProperty(EN_CHARACTER_BY_CHARACTER, "CHARACTER_BY_CHARACTER"));
+        m.addEnum("character-by-character", getEnumProperty(
+                EN_CHARACTER_BY_CHARACTER, "CHARACTER_BY_CHARACTER"));
         m.setDefault("auto");
         addPropertyMaker("font-selection-strategy", m);
 
@@ -1105,6 +1109,7 @@ public class FOPropertyMapping implements Constants {
         m.addEnum("larger", getEnumProperty(EN_LARGER, "LARGER"));
         m.addEnum("smaller", getEnumProperty(EN_SMALLER, "SMALLER"));
         m.setPercentBase(LengthBase.INH_FONTSIZE);
+        m.addShorthand(s_generics[PR_FONT]);
         addPropertyMaker("font-size", m);
 
         // font-stretch
@@ -1137,8 +1142,8 @@ public class FOPropertyMapping implements Constants {
         m.addEnum("italic", getEnumProperty(EN_ITALIC, "ITALIC"));
         m.addEnum("oblique", getEnumProperty(EN_OBLIQUE, "OBLIQUE"));
         m.addEnum("backslant", getEnumProperty(EN_BACKSLANT, "BACKSLANT"));
-
         m.setDefault("normal");
+        m.addShorthand(s_generics[PR_FONT]);
         addPropertyMaker("font-style", m);
 
         // font-variant
@@ -1147,6 +1152,7 @@ public class FOPropertyMapping implements Constants {
         m.addEnum("normal", getEnumProperty(EN_NORMAL, "NORMAL"));
         m.addEnum("small-caps", getEnumProperty(EN_SMALL_CAPS, "SMALL_CAPS"));
         m.setDefault("normal");
+        m.addShorthand(s_generics[PR_FONT]);
         addPropertyMaker("font-variant", m);
 
         // font-weight
@@ -1154,18 +1160,19 @@ public class FOPropertyMapping implements Constants {
         m.setInherited(true);
         m.addKeyword("normal", "400");
         m.addKeyword("bold", "700");
-        m.addEnum("bolder",getEnumProperty(EN_BOLDER, "BOLDER"));
-        m.addEnum("lighter",getEnumProperty(EN_LIGHTER, "LIGHTER"));
-        m.addEnum("100",getEnumProperty(EN_100, "100"));
-        m.addEnum("200",getEnumProperty(EN_200, "200"));
-        m.addEnum("300",getEnumProperty(EN_300, "300"));
-        m.addEnum("400",getEnumProperty(EN_400, "400"));
-        m.addEnum("500",getEnumProperty(EN_500, "500"));
-        m.addEnum("600",getEnumProperty(EN_600, "600"));
-        m.addEnum("700",getEnumProperty(EN_700, "700"));
-        m.addEnum("800",getEnumProperty(EN_800, "800"));
-        m.addEnum("900",getEnumProperty(EN_900, "900"));
+        m.addEnum("bolder", getEnumProperty(EN_BOLDER, "BOLDER"));
+        m.addEnum("lighter", getEnumProperty(EN_LIGHTER, "LIGHTER"));
+        m.addEnum("100", getEnumProperty(EN_100, "100"));
+        m.addEnum("200", getEnumProperty(EN_200, "200"));
+        m.addEnum("300", getEnumProperty(EN_300, "300"));
+        m.addEnum("400", getEnumProperty(EN_400, "400"));
+        m.addEnum("500", getEnumProperty(EN_500, "500"));
+        m.addEnum("600", getEnumProperty(EN_600, "600"));
+        m.addEnum("700", getEnumProperty(EN_700, "700"));
+        m.addEnum("800", getEnumProperty(EN_800, "800"));
+        m.addEnum("900", getEnumProperty(EN_900, "900"));
         m.setDefault("400");
+        m.addShorthand(s_generics[PR_FONT]);
         addPropertyMaker("font-weight", m);
     }
 
@@ -1614,9 +1621,10 @@ public class FOPropertyMapping implements Constants {
         m  = new LineHeightPropertyMaker(PR_LINE_HEIGHT);
         m.useGeneric(genericSpace);
         m.setInherited(true);
-        m.setDefault("normal", true);
         m.addKeyword("normal", "1.2");
         m.setPercentBase(LengthBase.FONTSIZE);
+        m.setDefault("normal", true);
+        m.addShorthand(s_generics[PR_FONT]);
         addPropertyMaker("line-height", m);
 
         // line-height-shift-adjustment
@@ -2677,9 +2685,16 @@ public class FOPropertyMapping implements Constants {
         addPropertyMaker("cue", m);
 
         // font
-        m  = new ToBeImplementedProperty.Maker(PR_FONT);
+        m  = new FontShorthandProperty.Maker(PR_FONT);
         m.setInherited(true);
+        m.addEnum("caption", getEnumProperty(EN_CAPTION, "CAPTION"));
+        m.addEnum("icon", getEnumProperty(EN_ICON, "ICON"));
+        m.addEnum("message-box", getEnumProperty(EN_MESSAGE_BOX, "MESSAGE_BOX"));
+        m.addEnum("menu", getEnumProperty(EN_MENU, "MENU"));
+        m.addEnum("small-caption", getEnumProperty(EN_SMALL_CAPTION, "SMALL_CAPTION"));
+        m.addEnum("status-bar", getEnumProperty(EN_STATUS_BAR, "STATUS_BAR"));
         m.setDefault("");
+        m.setDatatypeParser(new FontShorthandParser());
         addPropertyMaker("font", m);
 
         // margin

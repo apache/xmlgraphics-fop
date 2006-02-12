@@ -26,10 +26,15 @@ import org.apache.fop.fo.PropertyList;
  * values for absolute-position and relative-position.
  */
 public class PositionShorthandParser implements ShorthandParser {
+    
+    /**
+     * @see org.apache.fop.fo.properties.ShorthandParser#getValueForProperty()
+     */
     public Property getValueForProperty(int propId,
             Property property,
             PropertyMaker maker,
             PropertyList propertyList) {
+        
         int propVal = property.getEnum();
         if (propId == Constants.PR_ABSOLUTE_POSITION) {
             switch (propVal) {
@@ -40,6 +45,8 @@ public class PositionShorthandParser implements ShorthandParser {
                 return new EnumProperty(Constants.EN_ABSOLUTE, "ABSOLUTE");
             case Constants.EN_FIXED:
                 return new EnumProperty(Constants.EN_FIXED, "FIXED");
+            default:
+                //nop
             }
         }
         if (propId == Constants.PR_RELATIVE_POSITION) {
@@ -52,6 +59,8 @@ public class PositionShorthandParser implements ShorthandParser {
                 return new EnumProperty(Constants.EN_STATIC, "STATIC");
             case Constants.EN_FIXED:
                 return new EnumProperty(Constants.EN_STATIC, "STATIC");
+            default:
+                //nop
             }
         }
         return null;

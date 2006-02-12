@@ -6631,11 +6631,11 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="partial">
+        partial
       </td>
       <td align="center">
-        &nbsp;
+        [0.91 beta] Enum values other than "inherit" not yet supported.
       </td>
     </tr>
     <tr>

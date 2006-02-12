@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/* $Id: $ */
+/* $Id$ */
 
 package org.apache.fop.fo.properties;
 import org.apache.fop.fo.Constants;
