@@ -23,10 +23,10 @@
   </fo:layout-master-set>
   <fo:page-sequence master-reference="simpleA4">
     <fo:flow flow-name="xsl-region-body">
-      <fo:block font="10pt sans-serif">
-        <test:assert property="font-family" expected="[sans-serif]"/>
+      <fo:block font="bold 10pt 'Times New Roman'">
+        <test:assert property="font-family" expected="[Times New Roman]"/>
         <test:assert property="font-size" expected="10000mpt"/>
-        <test:assert property="font-weight" expected="400" />
+        <test:assert property="font-weight" expected="700" />
         <test:assert property="font-style" expected="NORMAL" />
         <test:assert property="line-height.optimum" expected="120.0%" />
         <test:assert property="font-variant" expected="NORMAL" />
