@@ -101,6 +101,11 @@ public class FontShorthandProperty extends ListProperty {
                             /* no list, just a single name 
                              * (or first name in the list)
                              */
+                            if (quoteIndex != -1) {
+                                /* a single name, quoted
+                                 */
+                                fromIndex = quoteIndex;
+                            }
                             m = FObj.getPropertyMakerFor(PROP_IDS[1]);
                             prop = m.make(propertyList, specVal.substring(fromIndex), fo);
                             newProp.addProperty(prop, 1);
@@ -112,6 +117,7 @@ public class FontShorthandProperty extends ListProperty {
                                  * fromIndex = index of the first quote
                                  */
                                 fromIndex = quoteIndex;
+                                quoteIndex = -1;
                             } else {
                                 fromIndex = value.lastIndexOf(' ', commaIndex) + 1;
                             }
