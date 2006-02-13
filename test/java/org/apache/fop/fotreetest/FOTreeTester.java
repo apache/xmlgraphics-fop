@@ -31,6 +31,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 
 import org.apache.fop.fotreetest.ext.TestElementMapping;
@@ -63,10 +64,12 @@ public class FOTreeTester {
         XMLReader reader = parser.getXMLReader();
         
         //Setup FOP for area tree rendering
-        FOUserAgent ua = new FOUserAgent();
+        FopFactory factory = FopFactory.newInstance();
+        factory.addElementMapping(new TestElementMapping());
+        
+        FOUserAgent ua = factory.newFOUserAgent();
         ua.setBaseURL(testFile.getParentFile().toURL().toString());
         ua.setFOEventHandlerOverride(new DummyFOEventHandler(ua));
-        ua.addElementMapping(new TestElementMapping());
 
         //Used to set values in the user agent through processing instructions
         reader = new PIListener(reader, ua);
@@ -100,7 +103,7 @@ public class FOTreeTester {
         /** @see org.xml.sax.helpers.XMLFilterImpl */
         public void processingInstruction(String target, String data) throws SAXException {
             if ("fop-useragent-break-indent-inheritance".equals(target)) {
-                userAgent.setBreakIndentInheritanceOnReferenceAreaBoundary(
+                userAgent.getFactory().setBreakIndentInheritanceOnReferenceAreaBoundary(
                         Boolean.valueOf(data).booleanValue());
             }
             super.processingInstruction(target, data);

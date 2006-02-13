@@ -116,7 +116,7 @@ public class AreaTreeHandler extends FOEventHandler {
 
         setupModel(userAgent, outputFormat, stream);
             
-        lmMaker = userAgent.getLayoutManagerMakerOverride();
+        lmMaker = userAgent.getFactory().getLayoutManagerMakerOverride();
         if (lmMaker == null) {
             lmMaker = new LayoutManagerMapping();
         }

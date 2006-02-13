@@ -48,9 +48,7 @@ public class FOTreeBuilder extends DefaultHandler {
 
     /** The registry for ElementMapping instances */
     protected ElementMappingRegistry elementMappingRegistry;
-    //TODO Remove the ElementMappingRegistry from here and move it to a new environmental class
-    //FOTreeBuilder should be a "one-use" component.
-    
+
     /**
      * The root of the formatting object tree
      */
@@ -91,7 +89,7 @@ public class FOTreeBuilder extends DefaultHandler {
         OutputStream stream) throws FOPException {
 
         this.userAgent = foUserAgent;
-        
+        this.elementMappingRegistry = userAgent.getFactory().getElementMappingRegistry();        
         //This creates either an AreaTreeHandler and ultimately a Renderer, or
         //one of the RTF-, MIF- etc. Handlers.
         foEventHandler = foUserAgent.getRendererFactory().createFOEventHandler(
@@ -101,8 +99,6 @@ public class FOTreeBuilder extends DefaultHandler {
                 return new StaticPropertyList(fobj, parentPropertyList);
             }
         });
-
-        this.elementMappingRegistry = new ElementMappingRegistry(foUserAgent);
     }
 
     /**
