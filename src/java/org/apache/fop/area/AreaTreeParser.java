@@ -108,8 +108,8 @@ public class AreaTreeParser {
      * @return the ContentHandler instance to receive the SAX stream from the area tree XML
      */
     public ContentHandler getContentHandler(AreaTreeModel treeModel, FOUserAgent userAgent) {
-        //TODO Retrieve this instance from the environment class once it has been created.
-        ElementMappingRegistry elementMappingRegistry = new ElementMappingRegistry(userAgent);
+        ElementMappingRegistry elementMappingRegistry 
+            = userAgent.getFactory().getElementMappingRegistry();
         return new Handler(treeModel, userAgent, elementMappingRegistry);
     }
     

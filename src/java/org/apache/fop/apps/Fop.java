@@ -45,7 +45,7 @@ import org.apache.fop.fo.FOTreeBuilder;
  * At the moment, it is recommended not to reuse an instance of this
  * class for more than one rendering run.
  */
-public class Fop implements Constants {
+public class Fop {
 
     // desired output format: MIME type such as "application/pdf", "application/postscript" etc.
     private String outputFormat = null;
