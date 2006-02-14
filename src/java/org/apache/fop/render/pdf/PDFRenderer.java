@@ -1251,7 +1251,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         }
 
         url = ImageFactory.getURL(url);
-        ImageFactory fact = ImageFactory.getInstance();
+        ImageFactory fact = userAgent.getFactory().getImageFactory();
         FopImage fopimage = fact.getImage(url, userAgent);
         if (fopimage == null) {
             return;

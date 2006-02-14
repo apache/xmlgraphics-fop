@@ -168,7 +168,8 @@ public class FOTreeBuilder extends DefaultHandler {
         foEventHandler.endDocument();
         
         //Notify the image factory that this user agent has expired.
-        ImageFactory.getInstance().removeContext(this.userAgent);
+        ImageFactory imageFactory = userAgent.getFactory().getImageFactory();
+        imageFactory.removeContext(this.userAgent);
     }
 
     /**
