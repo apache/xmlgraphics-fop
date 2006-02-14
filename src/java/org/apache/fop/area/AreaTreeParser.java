@@ -250,8 +250,9 @@ public class AreaTreeParser {
                         handled = false;
                     }
                 } else {
-                    ContentHandlerFactory factory 
-                            = ContentHandlerFactoryRegistry.getInstance().getFactory(uri);
+                    ContentHandlerFactoryRegistry registry
+                            = userAgent.getFactory().getContentHandlerFactoryRegistry();
+                    ContentHandlerFactory factory = registry.getFactory(uri);
                     if (factory != null) {
                         delegate = factory.createContentHandler();
                         delegateStack.push(qName);
