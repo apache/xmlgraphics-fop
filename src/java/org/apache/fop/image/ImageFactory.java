@@ -50,12 +50,13 @@ public final class ImageFactory {
      */
     protected static Log log = LogFactory.getLog(FopImage.class);
     
-    //private static ImageFactory factory = new ImageFactory();
-
     private HashMap imageMimeTypes = new HashMap();
     
     private ImageCache cache = new ContextImageCache(true);
 
+    /**
+     * Main constructor for the ImageFactory.
+     */
     public ImageFactory() {
         /* @todo The mappings set up below of image mime types to implementing
          * classes should be made externally configurable
