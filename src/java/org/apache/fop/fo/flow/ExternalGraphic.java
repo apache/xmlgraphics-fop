@@ -19,6 +19,7 @@
 package org.apache.fop.fo.flow;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
@@ -60,8 +61,9 @@ public class ExternalGraphic extends AbstractGraphics {
         
         //Additional processing: preload image
         url = ImageFactory.getURL(getSrc());
-        ImageFactory fact = ImageFactory.getInstance();
-        fopimage = fact.getImage(url, getUserAgent());
+        FOUserAgent userAgent = getUserAgent();
+        ImageFactory fact = userAgent.getFactory().getImageFactory();
+        fopimage = fact.getImage(url, userAgent);
         if (fopimage == null) {
             getLogger().error("Image not available: " + getSrc());
         } else {

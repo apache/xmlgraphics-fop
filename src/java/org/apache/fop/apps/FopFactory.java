@@ -31,6 +31,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.ElementMappingRegistry;
+import org.apache.fop.image.ImageFactory;
 import org.apache.fop.layoutmgr.LayoutManagerMaker;
 import org.apache.fop.render.RendererFactory;
 import org.apache.fop.render.XMLHandlerRegistry;
@@ -67,6 +68,8 @@ public class FopFactory {
     private ContentHandlerFactoryRegistry contentHandlerFactoryRegistry 
                 = new ContentHandlerFactoryRegistry();
     
+    private ImageFactory imageFactory = new ImageFactory();
+
     /** user configuration */
     private Configuration userConfig = null;
 
@@ -188,6 +191,11 @@ public class FopFactory {
     /** @return the content handler factory registry */
     public ContentHandlerFactoryRegistry getContentHandlerFactoryRegistry() {
         return this.contentHandlerFactoryRegistry;
+    }
+
+    /** @return the image factory */
+    public ImageFactory getImageFactory() {
+        return this.imageFactory;
     }
 
     /**

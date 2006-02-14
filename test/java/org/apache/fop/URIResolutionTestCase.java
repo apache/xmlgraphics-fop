@@ -79,12 +79,13 @@ public class URIResolutionTestCase extends AbstractFOPTestCase {
     }
     
     private void innerTestFO1(boolean withStream) throws Exception {
+        FOUserAgent ua = new FOUserAgent();
+
         //Reset the image caches to force URI resolution!
-        ImageFactory.getInstance().clearCaches();
+        ua.getFactory().getImageFactory().clearCaches();
         
         File foFile = new File(getBaseDir(), "test/xml/uri-resolution1.fo");
         
-        FOUserAgent ua = new FOUserAgent();
         MyURIResolver resolver = new MyURIResolver(withStream); 
         ua.setURIResolver(resolver);
         ua.setBaseURL(foFile.getParentFile().toURL().toString());

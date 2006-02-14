@@ -1058,7 +1058,7 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
         int y = currentBPPosition;
         String url = ImageFactory.getURL(pUrl);
 
-        ImageFactory fact = ImageFactory.getInstance();
+        ImageFactory fact = userAgent.getFactory().getImageFactory();
         FopImage fopimage = fact.getImage(url, userAgent);
 
         if (fopimage == null) {

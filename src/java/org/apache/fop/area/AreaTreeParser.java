@@ -896,7 +896,7 @@ public class AreaTreeParser {
                             if (url != null) {
                                 bkg.setURL(url);
                                 
-                                ImageFactory fact = ImageFactory.getInstance();
+                                ImageFactory fact = userAgent.getFactory().getImageFactory();
                                 FopImage img = fact.getImage(url, userAgent);
                                 if (img == null) {
                                     log.error("Background image not available: " + url);
