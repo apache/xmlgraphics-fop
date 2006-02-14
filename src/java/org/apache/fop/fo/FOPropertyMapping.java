@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.properties.BackgroundPositionShorthandParser;
 import org.apache.fop.fo.properties.BorderSpacingShorthandParser;
 import org.apache.fop.fo.properties.BorderWidthPropertyMaker;
 import org.apache.fop.fo.properties.BoxPropShorthandParser;
@@ -727,6 +728,7 @@ public class FOPropertyMapping implements Constants {
         m.addKeyword("center", "50%");
         m.addKeyword("right", "100%");
         m.setPercentBase(LengthBase.IMAGE_BACKGROUND_POSITION_HORIZONTAL);
+        m.addShorthand(s_generics[PR_BACKGROUND_POSITION]);
         addPropertyMaker("background-position-horizontal", m);
 
         // background-position-vertical
@@ -737,6 +739,7 @@ public class FOPropertyMapping implements Constants {
         m.addKeyword("center", "50%");
         m.addKeyword("bottom", "100%");
         m.setPercentBase(LengthBase.IMAGE_BACKGROUND_POSITION_VERTICAL);
+        m.addShorthand(s_generics[PR_BACKGROUND_POSITION]);
         addPropertyMaker("background-position-vertical", m);
 
         // border-before-color
@@ -2618,9 +2621,10 @@ public class FOPropertyMapping implements Constants {
         addPropertyMaker("background", m);
 
         // background-position
-        m  = new ToBeImplementedProperty.Maker(PR_BACKGROUND_POSITION);
+        m  = new ListProperty.Maker(PR_BACKGROUND_POSITION);
         m.setInherited(false);
-        m.setDefault("0%");
+        m.setDefault("0% 0%");
+        m.setDatatypeParser(new BackgroundPositionShorthandParser());
         addPropertyMaker("background-position", m);
 
         // border
