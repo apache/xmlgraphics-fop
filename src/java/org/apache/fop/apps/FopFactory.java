@@ -34,6 +34,7 @@ import org.apache.fop.fo.ElementMappingRegistry;
 import org.apache.fop.layoutmgr.LayoutManagerMaker;
 import org.apache.fop.render.RendererFactory;
 import org.apache.fop.render.XMLHandlerRegistry;
+import org.apache.fop.util.ContentHandlerFactoryRegistry;
 import org.xml.sax.SAXException;
 
 /**
@@ -61,6 +62,10 @@ public class FopFactory {
     
     /** The registry for ElementMapping instances */
     private ElementMappingRegistry elementMappingRegistry;
+
+    /** The registry for ContentHandlerFactory instance */ 
+    private ContentHandlerFactoryRegistry contentHandlerFactoryRegistry 
+                = new ContentHandlerFactoryRegistry();
     
     /** user configuration */
     private Configuration userConfig = null;
@@ -178,6 +183,11 @@ public class FopFactory {
     /** @return the element mapping registry */
     public ElementMappingRegistry getElementMappingRegistry() {
         return this.elementMappingRegistry;
+    }
+
+    /** @return the content handler factory registry */
+    public ContentHandlerFactoryRegistry getContentHandlerFactoryRegistry() {
+        return this.contentHandlerFactoryRegistry;
     }
 
     /**
