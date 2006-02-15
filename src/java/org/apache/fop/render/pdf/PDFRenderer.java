@@ -66,6 +66,7 @@ import org.apache.fop.pdf.PDFAnnotList;
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFEncryptionManager;
+import org.apache.fop.pdf.PDFEncryptionParams;
 import org.apache.fop.pdf.PDFFilterList;
 import org.apache.fop.pdf.PDFInfo;
 import org.apache.fop.pdf.PDFLink;
@@ -106,6 +107,21 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      */
     public static final String MIME_TYPE = MimeConstants.MIME_PDF;
 
+    /** PDF encryption parameter: all parameters as object, datatype: PDFEncryptionParams */
+    public static final String ENCRYPTION_PARAMS = "encryption-params";
+    /** PDF encryption parameter: user password, datatype: String */
+    public static final String USER_PASSWORD = "user-password";
+    /** PDF encryption parameter: owner password, datatype: String */
+    public static final String OWNER_PASSWORD = "owner-password";
+    /** PDF encryption parameter: Forbids printing, datatype: Boolean or "true"/"false" */
+    public static final String NO_PRINT = "noprint";
+    /** PDF encryption parameter: Forbids copying content, datatype: Boolean or "true"/"false" */
+    public static final String NO_COPY_CONTENT = "nocopy";
+    /** PDF encryption parameter: Forbids editing content, datatype: Boolean or "true"/"false" */
+    public static final String NO_EDIT_CONTENT = "noedit";
+    /** PDF encryption parameter: Forbids annotations, datatype: Boolean or "true"/"false" */
+    public static final String NO_ANNOTATIONS = "noannotations";
+    
     /** Controls whether comments are written to the PDF stream. */
     protected static final boolean WRITE_COMMENTS = true;
     
@@ -155,6 +171,9 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * the current page to add annotations to
      */
     protected PDFPage currentPage;
+    
+    /** the (optional) encryption parameters */
+    protected PDFEncryptionParams encryptionParams;
     
     /** The current Transform */
     protected AffineTransform currentBasicTransform;
@@ -229,11 +248,70 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         }
     }
 
+    private boolean booleanValueOf(Object obj) {
+        if (obj instanceof Boolean) {
+            return ((Boolean)obj).booleanValue();
+        } else if (obj instanceof String) {
+            return Boolean.valueOf((String)obj).booleanValue();
+        } else {
+            throw new IllegalArgumentException("Boolean or \"true\" or \"false\" expected.");
+        }
+    }
+    
     /**
      * @see org.apache.fop.render.Renderer#setUserAgent(FOUserAgent)
      */
     public void setUserAgent(FOUserAgent agent) {
         super.setUserAgent(agent);
+        PDFEncryptionParams params 
+                = (PDFEncryptionParams)agent.getRendererOptions().get(ENCRYPTION_PARAMS);
+        if (params != null) {
+            this.encryptionParams = params; //overwrite if available
+        }
+        String pwd;
+        pwd = (String)agent.getRendererOptions().get(USER_PASSWORD);
+        if (pwd != null) {
+            if (encryptionParams == null) {
+                this.encryptionParams = new PDFEncryptionParams();
+            }
+            this.encryptionParams.setUserPassword(pwd);
+        }
+        pwd = (String)agent.getRendererOptions().get(OWNER_PASSWORD);
+        if (pwd != null) {
+            if (encryptionParams == null) {
+                this.encryptionParams = new PDFEncryptionParams();
+            }
+            this.encryptionParams.setOwnerPassword(pwd);
+        }
+        Object setting;
+        setting = agent.getRendererOptions().get(NO_PRINT);
+        if (setting != null) {
+            if (encryptionParams == null) {
+                this.encryptionParams = new PDFEncryptionParams();
+            }
+            this.encryptionParams.setAllowPrint(!booleanValueOf(setting));
+        }
+        setting = agent.getRendererOptions().get(NO_COPY_CONTENT);
+        if (setting != null) {
+            if (encryptionParams == null) {
+                this.encryptionParams = new PDFEncryptionParams();
+            }
+            this.encryptionParams.setAllowCopyContent(!booleanValueOf(setting));
+        }
+        setting = agent.getRendererOptions().get(NO_EDIT_CONTENT);
+        if (setting != null) {
+            if (encryptionParams == null) {
+                this.encryptionParams = new PDFEncryptionParams();
+            }
+            this.encryptionParams.setAllowEditContent(!booleanValueOf(setting));
+        }
+        setting = agent.getRendererOptions().get(NO_ANNOTATIONS);
+        if (setting != null) {
+            if (encryptionParams == null) {
+                this.encryptionParams = new PDFEncryptionParams();
+            }
+            this.encryptionParams.setAllowEditAnnotations(!booleanValueOf(setting));
+        }
     }
 
     /**
@@ -255,8 +333,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         this.pdfDoc.outputHeader(stream);
 
         //Setup encryption if necessary
-        PDFEncryptionManager.setupPDFEncryption(
-                userAgent.getPDFEncryptionParams(), this.pdfDoc);
+        PDFEncryptionManager.setupPDFEncryption(encryptionParams, this.pdfDoc);
     }
 
     /**

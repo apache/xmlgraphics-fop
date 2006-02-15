@@ -41,6 +41,7 @@ import org.apache.fop.pdf.PDFEncryptionParams;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererFactory;
 import org.apache.fop.render.XMLHandlerRegistry;
+import org.apache.fop.render.pdf.PDFRenderer;
 
 /**
  * This is the user agent for FOP.
@@ -79,7 +80,6 @@ public class FOUserAgent {
     /** Our default resolver if none is set */
     private URIResolver foURIResolver = new FOURIResolver();
     
-    private PDFEncryptionParams pdfEncryptionParams;
     private float targetResolution = DEFAULT_TARGET_RESOLUTION;
     private Map rendererOptions = new java.util.HashMap();
     private File outputFile = null;
@@ -366,18 +366,23 @@ public class FOUserAgent {
     /**
      * Returns the parameters for PDF encryption.
      * @return the PDF encryption parameters, null if not applicable
+     * @deprecated Use (PDFEncryptionParams)getRendererOptions().get("encryption-params") 
+     *             instead.
      */
     public PDFEncryptionParams getPDFEncryptionParams() {
-        return pdfEncryptionParams;
+        return (PDFEncryptionParams)getRendererOptions().get(PDFRenderer.ENCRYPTION_PARAMS);
     }
 
     /**
      * Sets the parameters for PDF encryption.
      * @param pdfEncryptionParams the PDF encryption parameters, null to
      * disable PDF encryption
+     * @deprecated Use getRendererOptions().put("encryption-params", 
+     *             new PDFEncryptionParams(..)) instead or set every parameter separately: 
+     *             getRendererOptions().put("noprint", Boolean.TRUE).
      */
     public void setPDFEncryptionParams(PDFEncryptionParams pdfEncryptionParams) {
-        this.pdfEncryptionParams = pdfEncryptionParams;
+        getRendererOptions().put(PDFRenderer.ENCRYPTION_PARAMS, pdfEncryptionParams);
     }
 
 
