@@ -2640,30 +2640,35 @@ public class FOPropertyMapping implements Constants {
         // border-bottom
         m  = new ListProperty.Maker(PR_BORDER_BOTTOM);
         m.setInherited(false);
+        m.setDefault("");
         m.setDatatypeParser(new GenericShorthandParser());
         addPropertyMaker("border-bottom", m);
 
         // border-color
         m  = new ListProperty.Maker(PR_BORDER_COLOR);
         m.setInherited(false);
+        m.setDefault("");
         m.setDatatypeParser(new BoxPropShorthandParser());
         addPropertyMaker("border-color", m);
 
         // border-left
         m  = new ListProperty.Maker(PR_BORDER_LEFT);
         m.setInherited(false);
+        m.setDefault("");
         m.setDatatypeParser(new GenericShorthandParser());
         addPropertyMaker("border-left", m);
 
         // border-right
         m  = new ListProperty.Maker(PR_BORDER_RIGHT);
         m.setInherited(false);
+        m.setDefault("");
         m.setDatatypeParser(new GenericShorthandParser());
         addPropertyMaker("border-right", m);
 
         // border-style
         m  = new ListProperty.Maker(PR_BORDER_STYLE);
         m.setInherited(false);
+        m.setDefault("");
         m.setDatatypeParser(new BoxPropShorthandParser());
         addPropertyMaker("border-style", m);
 
@@ -2677,12 +2682,14 @@ public class FOPropertyMapping implements Constants {
         // border-top
         m  = new ListProperty.Maker(PR_BORDER_TOP);
         m.setInherited(false);
+        m.setDefault("");
         m.setDatatypeParser(new GenericShorthandParser());
         addPropertyMaker("border-top", m);
 
         // border-width
         m  = new ListProperty.Maker(PR_BORDER_WIDTH);
         m.setInherited(false);
+        m.setDefault("");
         m.setDatatypeParser(new BoxPropShorthandParser());
         addPropertyMaker("border-width", m);
 

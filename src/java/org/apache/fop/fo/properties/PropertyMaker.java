@@ -413,6 +413,12 @@ public class PropertyMaker implements Cloneable {
                 if ((propId & Constants.COMPOUND_MASK) != 0) {
                     newProp = getSubprop(newProp, propId & Constants.COMPOUND_MASK);
                 }
+                if (newProp.getString() == null) {
+                    log.warn("Specified value of \"inherit\" for "
+                            + FOPropertyMapping.getPropertyName(getPropId()) + " on "
+                            + propertyList.getFObj().getName() + ", but no "
+                            + "inherited or specified value found on the parent FO.");
+                }
             } else {
                 // Check for keyword shorthand values to be substituted. 
                 pvalue = checkValueKeywords(pvalue);
@@ -477,13 +483,13 @@ public class PropertyMaker implements Cloneable {
             // If value is a name token, may be keyword or Enum
             String sval = prop.getNCname();
             if (sval != null) {
-                log.debug("Convert shorthand ncname " + sval);
+                //log.debug("Convert shorthand ncname " + sval);
                 pret = checkEnumValues(sval);
                 if (pret == null) {
                     /* Check for keyword shorthand values to be substituted. */
                     String pvalue = checkValueKeywords(sval);
                     if (!pvalue.equals(sval)) {
-                        log.debug("Convert shorthand keyword" + pvalue);
+                        //log.debug("Convert shorthand keyword" + pvalue);
                         // Substituted a value: must parse it
                         Property p = PropertyParser.parse(pvalue,
                                                  new PropertyInfo(this,
@@ -525,8 +531,8 @@ public class PropertyMaker implements Cloneable {
      * file specifies a length value equivalent for these keywords,
      * such as "0.5pt" for "thin".
      * @param keyword the string value of property attribute.
-     * @return a String containing a parseable equivalent or null if
-     * the passed value isn't a keyword initializer for this Property.
+     * @return a String containing a parseable equivalent or null if 
+     * the passed value isn't a keyword initializer for this Property
      */
     protected String checkValueKeywords(String keyword) {
         if (keywords != null) {
