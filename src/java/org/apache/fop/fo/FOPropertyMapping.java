@@ -2623,6 +2623,9 @@ public class FOPropertyMapping implements Constants {
         // background-position
         m  = new ListProperty.Maker(PR_BACKGROUND_POSITION);
         m.setInherited(false);
+        m.addKeyword("left", "0% 50%");
+        m.addKeyword("center", "50% 50%");
+        m.addKeyword("right", "100% 50%");
         m.setDefault("0% 0%");
         m.setDatatypeParser(new BackgroundPositionShorthandParser());
         addPropertyMaker("background-position", m);
@@ -2630,6 +2633,7 @@ public class FOPropertyMapping implements Constants {
         // border
         m  = new ListProperty.Maker(PR_BORDER);
         m.setInherited(false);
+        m.setDefault("");
         m.setDatatypeParser(new GenericShorthandParser());
         addPropertyMaker("border", m);
 
