@@ -34,6 +34,7 @@ import org.apache.fop.pdf.PDFEncryptionManager;
 import org.apache.fop.pdf.PDFEncryptionParams;
 import org.apache.fop.render.awt.AWTRenderer;
 import org.apache.fop.render.Renderer;
+import org.apache.fop.render.pdf.PDFRenderer;
 import org.apache.fop.render.xml.XMLRenderer;
 import org.apache.fop.util.CommandLineLogger;
 
@@ -561,14 +562,17 @@ public class CommandLineOptions {
     }
 
     private PDFEncryptionParams getPDFEncryptionParams() throws FOPException {
-        if (foUserAgent.getPDFEncryptionParams() == null) {
+        PDFEncryptionParams params = (PDFEncryptionParams)foUserAgent.getRendererOptions().get(
+                        PDFRenderer.ENCRYPTION_PARAMS); 
+        if (params == null) {
             if (!PDFEncryptionManager.checkAvailableAlgorithms()) {
                 throw new FOPException("PDF encryption requested but it is not available."
                         + " Please make sure MD5 and RC4 algorithms are available.");
             }
-            foUserAgent.setPDFEncryptionParams(new PDFEncryptionParams());
+            params = new PDFEncryptionParams();
+            foUserAgent.getRendererOptions().put(PDFRenderer.ENCRYPTION_PARAMS, params);
         }
-        return foUserAgent.getPDFEncryptionParams();
+        return params;
     }
 
     private int parsePDFOwnerPassword(String[] args, int i) throws FOPException {
