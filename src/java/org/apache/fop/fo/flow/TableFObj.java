@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 The Apache Software Foundation.
+ * Copyright 2005-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -82,16 +82,15 @@ public abstract class TableFObj extends FObj {
                 && getTable().isSeparateBorderModel()
                 && getCommonBorderPaddingBackground().hasBorderInfo()) {
             attributeWarning("In the separate border model (border-collapse=\"separate\")"
-                    + ", borders cannot be specified on a " + getName() 
-                    + ", but a non-zero value for border was found. The border will be ignored. ");
+                    + ", borders are not applicable to " + getName() 
+                    + ", but a non-zero value for border was found.");
         }
         if (getNameId() != FO_TABLE //Separate check for fo:table in Table.java
                 && getNameId() != FO_TABLE_CELL
                 && getCommonBorderPaddingBackground().hasPadding(
                         ValidationPercentBaseContext.getPseudoContextForValidationPurposes())) {
-            attributeWarning(getName() + " does not have padding"
-                    + " (see the property list for " + getName() + " in XSL 1.0)"
-                    + ", but a non-zero value for padding was found. The padding will be ignored.");
+            attributeWarning("padding-* properties are not applicable to " + getName() 
+                    + ", but a non-zero value for padding was found.");
         }
     }
     
