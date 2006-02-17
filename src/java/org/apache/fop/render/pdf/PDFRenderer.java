@@ -62,6 +62,7 @@ import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
 import org.apache.fop.image.XMLImage;
+import org.apache.fop.pdf.PDFAMode;
 import org.apache.fop.pdf.PDFAnnotList;
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.pdf.PDFDocument;
@@ -109,6 +110,9 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      */
     public static final String MIME_TYPE = MimeConstants.MIME_PDF;
 
+    /** Rendering Options key for the PDF/A mode. */
+    public static final String PDF_A_MODE = "pdf-a-mode";
+
     /** Controls whether comments are written to the PDF stream. */
     protected static final boolean WRITE_COMMENTS = true;
     
@@ -117,6 +121,9 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      */
     protected PDFDocument pdfDoc;
 
+    /** the PDF/A mode (Default: disabled) */
+    protected PDFAMode pdfAMode = PDFAMode.DISABLED;
+    
     /**
      * Map of pages using the PageViewport as the key
      * this is used for prepared pages that cannot be immediately
@@ -230,6 +237,11 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         } else {
             this.fontList.addAll(cfgFonts);
         }
+        
+        String s = cfg.getChild(PDF_A_MODE, true).getValue(null);
+        if (s != null) {
+            this.pdfAMode = PDFAMode.valueOf(s);
+        }
     }
 
     /**
@@ -237,6 +249,10 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      */
     public void setUserAgent(FOUserAgent agent) {
         super.setUserAgent(agent);
+        String s = (String)agent.getRendererOptions().get(PDF_A_MODE);
+        if (s != null) {
+            this.pdfAMode = PDFAMode.valueOf(s);
+        }
     }
 
     /**
@@ -249,6 +265,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         ostream = stream;
         this.pdfDoc = new PDFDocument(
                 userAgent.getProducer() != null ? userAgent.getProducer() : "");
+        this.pdfDoc.setPDFAMode(this.pdfAMode);
         this.pdfDoc.setCreator(userAgent.getCreator());
         this.pdfDoc.setCreationDate(userAgent.getCreationDate());
         this.pdfDoc.getInfo().setAuthor(userAgent.getAuthor());

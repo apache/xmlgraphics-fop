@@ -35,4 +35,7 @@ public interface XMPConstants {
     /** Namespace URI for the XMP Basic Schema */
     String XMP_BASIC_NAMESPACE = "http://ns.adobe.com/xap/1.0/";
     
+    /** Namespace URI for the Adobe PDF Schema */
+    String ADOBE_PDF_NAMESPACE = "http://ns.adobe.com/pdf/1.3/";
+    
 }

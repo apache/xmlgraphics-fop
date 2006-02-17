@@ -23,6 +23,7 @@ import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -32,7 +33,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.extensions.xmp.XMPConstants;
 import org.w3c.dom.DOMImplementation;
@@ -127,6 +127,11 @@ public class PDFMetadata extends PDFStream {
     /** @see org.apache.fop.pdf.AbstractPDFStream#buildStreamDict(String) */
     protected String buildStreamDict(String lengthEntry) {
         final String filterEntry = getFilterList().buildFilterDictEntries();
+        if (getDocumentSafely().getPDFAMode().isPDFA1LevelB() 
+                && filterEntry != null && filterEntry.length() > 0) {
+            throw new PDFConformanceException(
+                    "The Filter key is prohibited when PDF/A-1 is active");
+        }
         final StringBuffer sb = new StringBuffer(128);
         sb.append(getObjectID());
         sb.append("<< ");
@@ -153,7 +158,8 @@ public class PDFMetadata extends PDFStream {
         Element desc, el;
         PDFInfo info = pdfDoc.getInfo();
         DateFormat pseudoISO8601DateFormat = new SimpleDateFormat(
-            "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSS");
+            "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSS'Z'");
+        pseudoISO8601DateFormat.setTimeZone(TimeZone.getTimeZone("GMT+00"));
         
         //Set creation date if not available, yet
         if (info.getCreationDate() == null) {
@@ -161,9 +167,12 @@ public class PDFMetadata extends PDFStream {
             info.setCreationDate(d);
         }
 
+        final String xmlns = "http://www.w3.org/2000/xmlns/";
+        
         //Dublin Core
         desc = doc.createElementNS(XMPConstants.RDF_NAMESPACE, "rdf:Description");
         desc.setAttribute("about", "");
+        desc.setAttributeNS(xmlns, "xmlns:dc", XMPConstants.DUBLIN_CORE_NAMESPACE);
         rdf.appendChild(desc);
         if (info.getAuthor() != null) {
             el = doc.createElementNS(XMPConstants.DUBLIN_CORE_NAMESPACE, "dc:creator");
@@ -187,6 +196,7 @@ public class PDFMetadata extends PDFStream {
         //XMP Basic Schema
         desc = doc.createElementNS(XMPConstants.RDF_NAMESPACE, "rdf:Description");
         desc.setAttribute("about", "");
+        desc.setAttributeNS(xmlns, "xmlns:xmp", XMPConstants.XMP_BASIC_NAMESPACE);
         rdf.appendChild(desc);
         el = doc.createElementNS(XMPConstants.XMP_BASIC_NAMESPACE, "xmp:createDate");
         desc.appendChild(el);
@@ -197,6 +207,24 @@ public class PDFMetadata extends PDFStream {
             el.appendChild(doc.createTextNode(info.getCreator()));
         }
         
+        //Adobe PDF Schema
+        desc = doc.createElementNS(XMPConstants.RDF_NAMESPACE, "rdf:Description");
+        desc.setAttribute("about", "");
+        desc.setAttributeNS(xmlns, "xmlns:pdf", XMPConstants.ADOBE_PDF_NAMESPACE);
+        rdf.appendChild(desc);
+        if (info.getKeywords() != null) {
+            el = doc.createElementNS(XMPConstants.ADOBE_PDF_NAMESPACE, "pdf:Keywords");
+            desc.appendChild(el);
+            el.appendChild(doc.createTextNode(info.getKeywords()));
+        }
+        if (info.getProducer() != null) {
+            el = doc.createElementNS(XMPConstants.ADOBE_PDF_NAMESPACE, "pdf:Producer");
+            desc.appendChild(el);
+            el.appendChild(doc.createTextNode(info.getProducer()));
+        }
+        el = doc.createElementNS(XMPConstants.ADOBE_PDF_NAMESPACE, "pdf:PDFVersion");
+        desc.appendChild(el);
+        el.appendChild(doc.createTextNode(pdfDoc.getPDFVersionString()));
         
         return doc;
     }
