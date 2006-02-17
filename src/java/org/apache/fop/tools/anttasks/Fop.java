@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.util.GlobPatternMapper;
 
 // Java
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -39,8 +40,12 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.cli.InputHandler;
 
+import org.apache.avalon.framework.configuration.Configuration;
+import org.apache.avalon.framework.configuration.ConfigurationException;
+import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
 import org.apache.commons.logging.impl.SimpleLog;
 import org.apache.commons.logging.Log;
+import org.xml.sax.SAXException;
 
 /**
  * Wrapper for FOP which allows it to be accessed from within an Ant task.
@@ -403,8 +408,20 @@ class FOPTaskStarter {
      */
     public void run() throws FOPException {
         //Setup configuration
+        Configuration userConfig = null;
         if (task.getUserconfig() != null) {
-            /**@todo implement me */
+            if (task.getUserconfig() != null) {
+                DefaultConfigurationBuilder configBuilder = new DefaultConfigurationBuilder();
+                try {
+                   userConfig = configBuilder.buildFromFile(task.getUserconfig());
+                } catch (SAXException e) {
+                   throw new FOPException(e);
+                } catch (ConfigurationException e) {
+                   throw new FOPException(e);
+                } catch (IOException e) {
+                   throw new FOPException(e);
+                }
+            }
         }
 
         //Set base directory
@@ -450,7 +467,7 @@ class FOPTaskStarter {
                 // output file is older than input file
                 if (task.getForce() || !outf.exists() 
                     || (task.getFofile().lastModified() > outf.lastModified() )) {
-                    render(task.getFofile(), outf, outputFormat);
+                    render(task.getFofile(), outf, outputFormat, userConfig);
                     actioncount++;
                 } else if (outf.exists() 
                         && (task.getFofile().lastModified() <= outf.lastModified() )) {
@@ -502,7 +519,7 @@ class FOPTaskStarter {
                 // output file is older than input file
                 if (task.getForce() || !outf.exists() 
                     || (f.lastModified() > outf.lastModified() )) {
-                    render(f, outf, outputFormat);
+                    render(f, outf, outputFormat, userConfig);
                     actioncount++;
                 } else if (outf.exists() && (f.lastModified() <= outf.lastModified() )) {
                     skippedcount++;
@@ -521,12 +538,13 @@ class FOPTaskStarter {
     }
 
     private void render(File foFile, File outFile,
-                        String outputFormat) throws FOPException {
+                        String outputFormat, Configuration userConfig) throws FOPException {
         InputHandler inputHandler = new InputHandler(foFile);
 
         OutputStream out = null;
         try {
             out = new java.io.FileOutputStream(outFile);
+            out = new BufferedOutputStream(out);
         } catch (Exception ex) {
             throw new BuildException("Failed to open " + outFile, ex);
         }
@@ -535,10 +553,15 @@ class FOPTaskStarter {
             task.log(foFile + " -> " + outFile, Project.MSG_INFO);
         }
 
+        boolean success = false;
         try {
             FOUserAgent userAgent = new FOUserAgent();
             userAgent.setBaseURL(this.baseURL);
+            if (userConfig != null) {
+                userAgent.setUserConfig(userConfig);
+            }
             inputHandler.renderTo(userAgent, outputFormat, out);
+            success = true;
         } catch (Exception ex) {
             throw new BuildException(ex);
         } finally {
@@ -546,6 +569,9 @@ class FOPTaskStarter {
                 out.close();
             } catch (IOException ioe) {
                 logger.error("Error closing output file", ioe);
+            }
+            if (!success) {
+                outFile.delete();
             }
         }
     }
