@@ -163,7 +163,7 @@ To unsubscribe: Send email to <link href="mailto:fop-dev-unsubscribe@xmlgraphics
         <ul>
           <li>If your changes include source code, make sure that it does not break FOP (i.e. make sure that FOP still compiles with your changes).</li>
           <li>If your changes include test files, review the <link href="testing.html">Testing page</link>.</li>
-          <li><link href="tools.html#cvs_patch">Create a patch file</link> for the differences to be applied to the existing code.</li>
+          <li><link href="tools.html#patches">Create a patch file</link> for the differences to be applied to the existing code.</li>
           <li><link href="../bugs.html#issues_new">Create a new bugzilla issue</link> for the patch. Include the text "[PATCH]" at the beginning of the description. Attach the patch file to the issue.</li>
         </ul>
         <p>One of the committers will test your patch and consider its implications for the project. They will then either commit it to the repository or explain on the issue why they did not. Depending on the work load and skill-sets of the various committers, it may take some time before a a submitted patch is addressed.</p>
