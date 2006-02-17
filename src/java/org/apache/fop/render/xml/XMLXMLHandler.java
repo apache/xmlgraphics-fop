@@ -38,7 +38,7 @@ public class XMLXMLHandler implements XMLHandler {
                 org.w3c.dom.Document doc, String ns) throws Exception {
         ContentHandler handler = (ContentHandler) context.getProperty(HANDLER);
 
-        DOM2SAX.writeDocument(doc, handler);
+        new DOM2SAX(handler).writeDocument(doc, true);
     }
 
     /** @see org.apache.fop.render.XMLHandler#supportsRenderer(org.apache.fop.render.Renderer) */
