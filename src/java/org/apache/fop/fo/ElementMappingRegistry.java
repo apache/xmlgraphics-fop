@@ -78,6 +78,8 @@ public class ElementMappingRegistry {
         addElementMapping("org.apache.fop.fo.extensions.svg.SVGElementMapping");
         addElementMapping("org.apache.fop.fo.extensions.svg.BatikExtensionElementMapping");
         addElementMapping("org.apache.fop.fo.extensions.ExtensionElementMapping");
+        addElementMapping("org.apache.fop.fo.extensions.xmp.XMPElementMapping");
+        addElementMapping("org.apache.fop.fo.extensions.xmp.RDFElementMapping");
         addElementMapping("org.apache.fop.render.ps.extensions.PSExtensionElementMapping");
 
         // add mappings from available services

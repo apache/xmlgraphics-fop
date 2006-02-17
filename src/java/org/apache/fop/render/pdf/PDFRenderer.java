@@ -41,7 +41,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.CTM;
 import org.apache.fop.area.LineArea;
-import org.apache.fop.area.Page;
+import org.apache.fop.area.OffDocumentExtensionAttachment;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
@@ -69,6 +69,7 @@ import org.apache.fop.pdf.PDFEncryptionManager;
 import org.apache.fop.pdf.PDFFilterList;
 import org.apache.fop.pdf.PDFInfo;
 import org.apache.fop.pdf.PDFLink;
+import org.apache.fop.pdf.PDFMetadata;
 import org.apache.fop.pdf.PDFNumber;
 import org.apache.fop.pdf.PDFOutline;
 import org.apache.fop.pdf.PDFPage;
@@ -82,6 +83,8 @@ import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.extensions.ExtensionAttachment;
+import org.apache.fop.fo.extensions.xmp.XMPMetadata;
 
 /*
 todo:
@@ -296,6 +299,11 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         // render Bookmark-Tree
         if (odi instanceof BookmarkData) {
             renderBookmarkTree((BookmarkData) odi);
+        } else if (odi instanceof OffDocumentExtensionAttachment) {
+            ExtensionAttachment attachment = ((OffDocumentExtensionAttachment)odi).getAttachment();
+            if (XMPMetadata.CATEGORY.equals(attachment.getCategory())) {
+                renderXMPMetadata((XMPMetadata)attachment);
+            }
         }
     }
 
@@ -340,6 +348,12 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         }
     }
     
+    private void renderXMPMetadata(XMPMetadata metadata) {
+        PDFMetadata pdfMetadata = pdfDoc.getFactory().makeMetadata(
+                metadata.getDocument(), metadata.isReadOnly());
+        pdfDoc.getRoot().setMetadata(pdfMetadata);
+    }
+
     /** @see org.apache.fop.render.Renderer#getGraphics2DAdapter() */
     public Graphics2DAdapter getGraphics2DAdapter() {
         return new PDFGraphics2DAdapter(this);
@@ -399,6 +413,14 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
             if (info.getTitle() == null) {
                 info.setTitle(str);
             }
+        }
+        if (pdfDoc.getRoot().getMetadata() == null) {
+            //If at this time no XMP metadata for the overall document has been set, create it
+            //from the PDFInfo object.
+            Document xmp = PDFMetadata.createXMPFromUserAgent(pdfDoc);
+            PDFMetadata pdfMetadata = pdfDoc.getFactory().makeMetadata(
+                    xmp, true);
+            pdfDoc.getRoot().setMetadata(pdfMetadata);
         }
     }
 

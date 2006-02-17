@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,6 +49,8 @@ public class PDFFilterList {
     public static final String TIFF_FILTER = "tiff";
     /** Key for the filter used for fonts */
     public static final String FONT_FILTER = "font";
+    /** Key for the filter used for metadata */
+    public static final String METADATA_FILTER = "metadata";
 
     private List filters = new java.util.ArrayList();
 

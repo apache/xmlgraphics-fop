@@ -29,6 +29,9 @@ import java.util.Map;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
+//W3C DOM
+import org.w3c.dom.Document;
+
 // Apache libs
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
@@ -55,7 +58,7 @@ public class PDFFactory {
 
     private PDFDocument document;
 
-    private Log log = LogFactory.getLog("org.apache.fop.pdf");
+    private Log log = LogFactory.getLog(PDFFactory.class);
 
     /**
      * Creates a new PDFFactory.
@@ -86,6 +89,7 @@ public class PDFFactory {
     public PDFRoot makeRoot(PDFPages pages) {
         //Make a /Pages object. This object is written in the trailer.
         PDFRoot pdfRoot = new PDFRoot(++this.document.objectcount, pages);
+        pdfRoot.setDocument(getDocument());
         getDocument().addTrailerObject(pdfRoot);
         return pdfRoot;
     }
@@ -97,6 +101,7 @@ public class PDFFactory {
      */
     public PDFPages makePages() {
         PDFPages pdfPages = new PDFPages(++(this.document.objectcount));
+        pdfPages.setDocument(getDocument());
         getDocument().addTrailerObject(pdfPages);
         return pdfPages;
     }
@@ -108,6 +113,7 @@ public class PDFFactory {
      */
     public PDFResources makeResources() {
         PDFResources pdfResources = new PDFResources(++this.document.objectcount);
+        pdfResources.setDocument(getDocument());
         getDocument().addTrailerObject(pdfResources);
         return pdfResources;
     }
@@ -129,6 +135,18 @@ public class PDFFactory {
         pdfInfo.setProducer(prod);
         getDocument().registerObject(pdfInfo);
         return pdfInfo;
+    }
+
+    /**
+     * Make a Metadata object.
+     * @param doc the DOM Document containing the XMP metadata.
+     * @param readOnly true if the metadata packet should be marked read-only
+     * @return the newly created Metadata object
+     */
+    public PDFMetadata makeMetadata(Document doc, boolean readOnly) {
+        PDFMetadata pdfMetadata = new PDFMetadata(doc, readOnly);
+        getDocument().registerObject(pdfMetadata);
+        return pdfMetadata;
     }
 
     /**
@@ -1301,7 +1319,5 @@ public class PDFFactory {
         getDocument().assignObjectNumber(obj);
         return obj;
     }
-
-
 
 }

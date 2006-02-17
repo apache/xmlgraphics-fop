@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2004,2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,7 +62,13 @@ public class PDFDocument {
      * the version of PDF supported which is 1.4
      */
     protected static final String PDF_VERSION = "1.4";
+    
+    /** Integer constant to represent PDF 1.3 */
+    public static final int PDF_VERSION_1_3 = 3;
 
+    /** Integer constant to represent PDF 1.4 */
+    public static final int PDF_VERSION_1_4 = 4;
+    
     /**
      * the encoding to use when converting strings to PDF commandos.
      */
@@ -98,6 +104,9 @@ public class PDFDocument {
      */
     protected int xref;
 
+    /** Indicates what PDF version is active */
+    protected int pdfVersion = PDF_VERSION_1_4;
+    
     /**
      * the /Root object
      */
@@ -234,6 +243,13 @@ public class PDFDocument {
         this.info = getFactory().makeInfo(prod);
     }
 
+    /**
+     * @return the integer representing the active PDF version (one of PDFDocument.PDF_VERSION_*)
+     */
+    public int getPDFVersion() {
+        return this.pdfVersion;
+    }
+    
     /**
      * Returns the factory for PDF objects.
      * @return PDFFactory the factory

@@ -18,7 +18,10 @@
 
 package org.apache.fop.util;
 
+import java.util.EventListener;
+
 import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
 
 /**
  * Factory interface implemented by classes that can instantiate ContentHandler subclasses which
@@ -33,8 +36,9 @@ public interface ContentHandlerFactory {
     
     /**
      * @return a new ContentHandler to handle a SAX stream
+     * @throws SAXException if there's an error while preparing the ContentHandler
      */
-    ContentHandler createContentHandler();
+    ContentHandler createContentHandler() throws SAXException;
     
     /**
      * Interface that ContentHandler implementations that parse Java objects from XML can implement
@@ -46,6 +50,25 @@ public interface ContentHandlerFactory {
          * @return the object parsed from the SAX stream (call valid after parsing)
          */
         Object getObject();
+     
+        /**
+         * Set a listener which gets notified when the object is fully built.
+         * @param listener the listener which gets notified
+         */
+        void setObjectBuiltListener(ObjectBuiltListener listener);
+    }
+    
+    /**
+     * EventListener interface for objects which want to get notified when ContentHandler
+     * implementing the ObjectSource interface has finished parsing.
+     */
+    public interface ObjectBuiltListener extends EventListener {
+        
+        /**
+         * Notifies the listener when the object is fully built.
+         * @param obj the newly built object
+         */
+        void notifyObjectBuilt(Object obj);
         
     }
     

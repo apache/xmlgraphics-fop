@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,6 +53,11 @@ public class PDFInfo extends PDFObject {
         this.producer = producer;
     }
 
+    /** @return the creator of the document or null if not set */
+    public String getCreator() {
+        return this.creator;
+    }
+    
     /**
      * set the creator string
      *
@@ -76,6 +81,11 @@ public class PDFInfo extends PDFObject {
         this.title = t;
     }
 
+    /** @return the author of the document or null if not set */
+    public String getAuthor() {
+        return this.author;
+    }
+    
     /**
      * set the author string
      *
@@ -85,6 +95,11 @@ public class PDFInfo extends PDFObject {
         this.author = a;
     }
 
+    /** @return the subject of the document or null if not set */
+    public String getSubject() {
+        return this.subject;
+    }
+    
     /**
      * set the subject string
      *
@@ -94,6 +109,11 @@ public class PDFInfo extends PDFObject {
         this.subject = s;
     }
 
+    /** @return the keywords for the document or null if not set */
+    public String getKeyword() {
+        return this.keywords;
+    }
+    
     /**
      * set the keywords string
      *
