@@ -147,9 +147,9 @@ public class MathMLElement extends MathMLObj {
     }
 
     /**
-     * @see org.apache.fop.fo.XMLObj#getDocumentNamespace()
+     * @see org.apache.fop.fo.FONode#getNamespaceURI()
      */
-    public String getDocumentNamespace() {
+    public String getNamespaceURI() {
         if (svgDoc == null) {
             return MathMLElementMapping.NAMESPACE;
         }
