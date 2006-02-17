@@ -278,6 +278,11 @@ public class PDFDocument {
         if (mode == null) {
             throw new NullPointerException("mode must not be null");
         }
+        if (mode == PDFAMode.PDFA_1A) {
+            throw new UnsupportedOperationException("PDF/A-1a is not implemented, yet");
+        } else if (mode == PDFAMode.PDFA_1B) {
+            log.warn("Please note: PDF/A-1b is 'WORK IN PROGRESS' and not fully supported, yet!");
+        }
         this.pdfAMode = mode;
     }
     

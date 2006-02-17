@@ -46,6 +46,7 @@ public final class PDFAMode {
     /** @return true if this mode obey the restrictions established by PDF/A-1b. */
     public boolean isPDFA1LevelB() {
         return (this != DISABLED);
+        //PDF/A-1a is a superset of PDF/A-1b!
     }
     
     /**
