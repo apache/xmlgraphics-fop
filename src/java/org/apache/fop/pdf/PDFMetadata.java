@@ -177,7 +177,11 @@ public class PDFMetadata extends PDFStream {
         if (info.getAuthor() != null) {
             el = doc.createElementNS(XMPConstants.DUBLIN_CORE_NAMESPACE, "dc:creator");
             desc.appendChild(el);
-            el.appendChild(doc.createTextNode(info.getAuthor()));
+            Element seq = doc.createElementNS(XMPConstants.RDF_NAMESPACE, "rdf:Seq");
+            el.appendChild(seq);
+            Element li = doc.createElementNS(XMPConstants.RDF_NAMESPACE, "rdf:li");
+            seq.appendChild(li);
+            li.appendChild(doc.createTextNode(info.getAuthor()));
         }
         if (info.getTitle() != null) {
             el = doc.createElementNS(XMPConstants.DUBLIN_CORE_NAMESPACE, "dc:title");
