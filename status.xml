@@ -27,6 +27,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="add">
+        Initial support for XMP metadata (PDF 1.4) under fo:declarations.
+      </action>
       <action context="Code" dev="AD" type="add">
         Added support for the background-position shorthand property.
       </action>

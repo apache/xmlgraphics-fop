@@ -76,7 +76,7 @@ public abstract class ElementMapping {
     /**
      * @return the default DOMImplementation when no specialized DOM is necessary.
      */
-    protected DOMImplementation getDefaultDOMImplementation() {
+    public static DOMImplementation getDefaultDOMImplementation() {
         DocumentBuilderFactory fact = DocumentBuilderFactory.newInstance();
         fact.setNamespaceAware(true);
         fact.setValidating(false);

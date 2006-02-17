@@ -20,8 +20,8 @@ package org.apache.fop.render.ps.extensions;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.area.AreaTreeParser;
 import org.apache.fop.util.ContentHandlerFactory;
+import org.apache.fop.util.ContentHandlerFactory.ObjectBuiltListener;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -39,6 +39,7 @@ public class PSExtensionHandler extends DefaultHandler
     private Attributes lastAttributes;
     
     private PSSetupCode returnedObject;
+    private ObjectBuiltListener listener;
     
     /** @see org.xml.sax.helpers.DefaultHandler */
     public void startElement(String uri, String localName, String qName, Attributes attributes) 
@@ -80,9 +81,27 @@ public class PSExtensionHandler extends DefaultHandler
         content.append(ch, start, length);
     }
 
-    /** @see org.apache.fop.area.AreaTreeParser.ObjectSource#getObject() */
+    /**
+     * @see org.xml.sax.helpers.DefaultHandler#endDocument()
+     */
+    public void endDocument() throws SAXException {
+        if (listener != null) {
+            listener.notifyObjectBuilt(getObject());
+        }
+    }
+
+    /**
+     * @see org.apache.fop.util.ContentHandlerFactory.ObjectSource#getObject()
+     */
     public Object getObject() {
         return returnedObject;
+    }
+
+    /**
+     * @see org.apache.fop.util.ContentHandlerFactory.ObjectSource
+     */
+    public void setObjectBuiltListener(ObjectBuiltListener listener) {
+        this.listener = listener;
     }
 
 }

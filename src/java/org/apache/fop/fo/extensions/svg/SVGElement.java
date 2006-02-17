@@ -22,6 +22,8 @@ package org.apache.fop.fo.extensions.svg;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.util.ContentHandlerFactory;
+import org.apache.fop.util.DOMBuilderContentHandlerFactory;
 
 import org.apache.batik.dom.svg.SVGOMDocument;
 import org.apache.batik.dom.svg.SVGOMElement;
@@ -58,6 +60,14 @@ public class SVGElement extends SVGObj {
         super(parent);
     }
 
+    /**
+     * @see org.apache.fop.fo.FONode#getContentHandlerFactory()
+     */
+    public ContentHandlerFactory getContentHandlerFactory() {
+        return new DOMBuilderContentHandlerFactory(getNamespaceURI(), 
+                SVGDOMImplementation.getDOMImplementation());
+    }
+    
     /**
      * @see org.apache.fop.fo.FONode#processNode
      */
@@ -287,5 +297,6 @@ public class SVGElement extends SVGObj {
             return 100;
         }
     }
+
 }
 

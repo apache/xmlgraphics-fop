@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.batik.dom.util.XMLSupport;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.util.ContentHandlerFactory.ObjectBuiltListener;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
@@ -35,7 +36,7 @@ import org.xml.sax.Locator;
  * Abstract class modelling generic, non-XSL-FO XML objects. Such objects are
  * stored in a DOM.
  */
-public abstract class XMLObj extends FONode {
+public abstract class XMLObj extends FONode implements ObjectBuiltListener {
 
     // temp reference for attributes
     private Attributes attr = null;
@@ -112,6 +113,12 @@ public abstract class XMLObj extends FONode {
         this.doc = doc;
         element = doc.createElementNS(getNamespaceURI(), name);
 
+        setAttributes(element, attr);
+        attr = null;
+        parent.appendChild(element);
+    }
+
+    private static void setAttributes(Element element, Attributes attr) {
         for (int count = 0; count < attr.getLength(); count++) {
             String rf = attr.getValue(count);
             String qname = attr.getQName(count);
@@ -128,10 +135,8 @@ public abstract class XMLObj extends FONode {
                 }
             }
         }
-        attr = null;
-        parent.appendChild(element);
     }
-
+    
     /**
      * Add the top-level element to the DOM document
      * @param doc DOM document
@@ -139,22 +144,7 @@ public abstract class XMLObj extends FONode {
      */
     public void buildTopLevel(Document doc, Element svgRoot) {
         // build up the info for the top level element
-        for (int count = 0; count < attr.getLength(); count++) {
-            String rf = attr.getValue(count);
-            String qname = attr.getQName(count);
-            int idx = qname.indexOf(":");
-            if (idx == -1) {
-                element.setAttribute(qname, rf);
-            } else {
-                String pref = qname.substring(0, idx);
-                String tail = qname.substring(idx + 1);
-                if (pref.equals("xmlns")) {
-                    ns.put(tail, rf);
-                } else {
-                    element.setAttributeNS((String)ns.get(pref), tail, rf);
-                }
-            }
-        }
+        setAttributes(element, attr);
     }
 
     /**
@@ -180,6 +170,7 @@ public abstract class XMLObj extends FONode {
             }
             
         } catch (Exception e) {
+            //TODO this is ugly because there may be subsequent failures like NPEs
             log.error("Error while trying to instantiate a DOM Document", e);
         }
         return doc;
@@ -214,5 +205,10 @@ public abstract class XMLObj extends FONode {
         element.appendChild(text);
     }
 
+    /** @see org.apache.fop.util.ContentHandlerFactory.ObjectBuiltListener */
+    public void notifyObjectBuilt(Object obj) {
+        this.doc = (Document)obj;
+    }
+    
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2004,2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,6 +53,9 @@ public class PDFRoot extends PDFObject {
      */
     private PDFOutline outline;
 
+    /** Optional Metadata object */
+    private PDFMetadata metadata;
+    
     private int pageMode = PAGEMODE_USENONE;
 
     /**
@@ -115,6 +118,23 @@ public class PDFRoot extends PDFObject {
     public PDFOutline getRootOutline() {
         return outline;
     }
+    
+    /**
+     * Set the optional Metadata object.
+     * @param meta the Metadata object
+     * @since PDF 1.4
+     */
+    public void setMetadata(PDFMetadata meta) {
+        this.metadata = meta;
+    }
+    
+    /**
+     * @return the Metadata object if set, null otherwise.
+     * @since PDF 1.4
+     */
+    public PDFMetadata getMetadata() {
+        return this.metadata;
+    }
 
     /**
      * @see org.apache.fop.pdf.PDFObject#toPDFString()
@@ -143,6 +163,10 @@ public class PDFRoot extends PDFObject {
                 default:
                 break;
             }
+        }
+        if (getMetadata() != null 
+                && getDocumentSafely().getPDFVersion() >= PDFDocument.PDF_VERSION_1_4) {
+            p.append("/Metadata " + getMetadata().referencePDF() + "\n");
         }
         p.append(">>\nendobj\n");
         return p.toString();

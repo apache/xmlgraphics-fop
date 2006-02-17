@@ -29,7 +29,11 @@ import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.fo.ElementMapping.Maker;
 import org.apache.fop.fo.pagination.Root;
 import org.apache.fop.image.ImageFactory;
+import org.apache.fop.util.ContentHandlerFactory;
+import org.apache.fop.util.ContentHandlerFactory.ObjectSource;
+import org.apache.fop.util.ContentHandlerFactory.ObjectBuiltListener;
 import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -56,16 +60,12 @@ public class FOTreeBuilder extends DefaultHandler {
      */
     protected Root rootFObj = null;
 
-    /**
-     * Current formatting object being handled
-     */
-    protected FONode currentFObj = null;
-
-    /**
-     * Current propertyList for the node being handled.
-     */
-    protected PropertyList currentPropertyList;
-
+    /** Main DefaultHandler that handles the FO namespace. */
+    protected MainFOHandler mainFOHandler;
+    
+    /** Current delegate ContentHandler to receive the SAX events */
+    protected ContentHandler delegate;
+    
     /**
      * The class that handles formatting and rendering to a stream
      * (mark-fop@inomial.com)
@@ -79,6 +79,8 @@ public class FOTreeBuilder extends DefaultHandler {
     private FOUserAgent userAgent;
     
     private boolean used = false;
+    
+    private int depth;
     
     /**
      * FOTreeBuilder constructor
@@ -135,11 +137,8 @@ public class FOTreeBuilder extends DefaultHandler {
      * @see org.xml.sax.ContentHandler#characters(char[], int, int)
      */
     public void characters(char[] data, int start, int length) 
-        throws FOPException {
-            if (currentFObj != null) {
-                currentFObj.addCharacters(data, start, start + length, 
-                        currentPropertyList, getEffectiveLocator());
-            }
+                throws SAXException {
+        delegate.characters(data, start, length);
     }
 
     /**
@@ -157,6 +156,9 @@ public class FOTreeBuilder extends DefaultHandler {
             log.debug("Building formatting object tree");
         }
         foEventHandler.startDocument();
+        this.mainFOHandler = new MainFOHandler(); 
+        this.mainFOHandler.startDocument();
+        this.delegate = this.mainFOHandler;
     }
 
     /**
@@ -164,8 +166,8 @@ public class FOTreeBuilder extends DefaultHandler {
      * @see org.xml.sax.ContentHandler#endDocument()
      */
     public void endDocument() throws SAXException {
+        this.delegate.endDocument();
         rootFObj = null;
-        currentFObj = null;
         if (log.isDebugEnabled()) {
             log.debug("Parsing of document complete");
         }
@@ -181,55 +183,8 @@ public class FOTreeBuilder extends DefaultHandler {
      */
     public void startElement(String namespaceURI, String localName, String rawName,
                              Attributes attlist) throws SAXException {
-
-        /* the node found in the FO document */
-        FONode foNode;
-        PropertyList propertyList;
-
-        // Check to ensure first node encountered is an fo:root
-        if (rootFObj == null) {
-            if (!namespaceURI.equals(FOElementMapping.URI) 
-                || !localName.equals("root")) {
-                throw new SAXException(new ValidationException(
-                    "Error: First element must be the fo:root formatting object. Found " 
-                        + FONode.getNodeString(namespaceURI, localName) + " instead."
-                        + " Please make sure you're producing a valid XSL-FO document."));
-            }
-        } else { // check that incoming node is valid for currentFObj
-            if (namespaceURI.equals(FOElementMapping.URI)) {
-                // currently no fox: elements to validate
-                // || namespaceURI.equals(ExtensionElementMapping.URI) */) {
-                try {
-                    currentFObj.validateChildNode(locator, namespaceURI, localName);
-                } catch (ValidationException e) {
-                    throw e;
-                }
-            }
-        }
-        
-        ElementMapping.Maker fobjMaker = findFOMaker(namespaceURI, localName);
-//      log.debug("found a " + fobjMaker.toString());
-
-        try {
-            foNode = fobjMaker.make(currentFObj);
-            propertyList = foNode.createPropertyList(currentPropertyList, foEventHandler);
-            foNode.processNode(localName, getEffectiveLocator(), attlist, propertyList);
-            foNode.startOfNode();
-        } catch (IllegalArgumentException e) {
-            throw new SAXException(e);
-        }
-
-        if (rootFObj == null) {
-            rootFObj = (Root) foNode;
-            rootFObj.setFOEventHandler(foEventHandler);
-        } else {
-            currentFObj.addChildNode(foNode);
-        }
-
-        currentFObj = foNode;
-        if (propertyList != null) {
-            currentPropertyList = propertyList;
-        }
+        this.depth++;
+        delegate.startElement(namespaceURI, localName, rawName, attlist);
     }
 
     /**
@@ -237,25 +192,17 @@ public class FOTreeBuilder extends DefaultHandler {
      * @see org.xml.sax.ContentHandler#endElement(String, String, String)
      */
     public void endElement(String uri, String localName, String rawName)
-                throws FOPException {
-        if (currentFObj == null) {
-            throw new IllegalStateException(
-                    "endElement() called for " + rawName + " where there is no current element.");
-        } else if (!currentFObj.getLocalName().equals(localName) 
-                || !currentFObj.getNamespaceURI().equals(uri)) {
-            log.warn("Mismatch: " + currentFObj.getLocalName() 
-                    + " (" + currentFObj.getNamespaceURI() 
-                    + ") vs. " + localName + " (" + uri + ")");
+                throws SAXException {
+        this.delegate.endElement(uri, localName, rawName);
+        this.depth--;
+        if (depth == 0) {
+            if (delegate != mainFOHandler) {
+                //Return from sub-handler back to main handler
+                delegate.endDocument();
+                delegate = mainFOHandler;
+                delegate.endElement(uri, localName, rawName);
+            }
         }
-        currentFObj.endOfNode();
-
-        if (currentPropertyList.getFObj() == currentFObj) {
-            currentPropertyList = currentPropertyList.getParentPropertyList();
-        }
-        if (currentFObj.getParent() == null) {
-            log.debug("endElement for top-level " + currentFObj.getName());
-        }
-        currentFObj = currentFObj.getParent();
     }
 
     /**
@@ -307,6 +254,138 @@ public class FOTreeBuilder extends DefaultHandler {
             //involving the layout engine.
             return null;   
         }
+    }
+    
+    /**
+     * Main DefaultHandler implementation which builds the FO tree.
+     */
+    private class MainFOHandler extends DefaultHandler {
+        
+        /**
+         * Current formatting object being handled
+         */
+        protected FONode currentFObj = null;
+
+        /**
+         * Current propertyList for the node being handled.
+         */
+        protected PropertyList currentPropertyList;
+
+        /**
+         * SAX Handler for the start of an element
+         * @see org.xml.sax.ContentHandler#startElement(String, String, String, Attributes)
+         */
+        public void startElement(String namespaceURI, String localName, String rawName,
+                                 Attributes attlist) throws SAXException {
+
+            /* the node found in the FO document */
+            FONode foNode;
+            PropertyList propertyList;
+
+            // Check to ensure first node encountered is an fo:root
+            if (rootFObj == null) {
+                if (!namespaceURI.equals(FOElementMapping.URI) 
+                    || !localName.equals("root")) {
+                    throw new SAXException(new ValidationException(
+                        "Error: First element must be the fo:root formatting object. Found " 
+                            + FONode.getNodeString(namespaceURI, localName) + " instead."
+                            + " Please make sure you're producing a valid XSL-FO document."));
+                }
+            } else { // check that incoming node is valid for currentFObj
+                if (namespaceURI.equals(FOElementMapping.URI)) {
+                    // currently no fox: elements to validate
+                    // || namespaceURI.equals(ExtensionElementMapping.URI) */) {
+                    try {
+                        currentFObj.validateChildNode(locator, namespaceURI, localName);
+                    } catch (ValidationException e) {
+                        throw e;
+                    }
+                }
+            }
+            
+            ElementMapping.Maker fobjMaker = findFOMaker(namespaceURI, localName);
+
+            try {
+                foNode = fobjMaker.make(currentFObj);
+                propertyList = foNode.createPropertyList(currentPropertyList, foEventHandler);
+                foNode.processNode(localName, getEffectiveLocator(), attlist, propertyList);
+                foNode.startOfNode();
+            } catch (IllegalArgumentException e) {
+                throw new SAXException(e);
+            }
+
+            ContentHandlerFactory chFactory = foNode.getContentHandlerFactory();
+            if (chFactory != null) {
+                ContentHandler subHandler = chFactory.createContentHandler();
+                if (subHandler instanceof ObjectSource 
+                        && foNode instanceof ObjectBuiltListener) {
+                    ((ObjectSource)subHandler).setObjectBuiltListener((ObjectBuiltListener)foNode);
+                }
+                
+                subHandler.startDocument();
+                subHandler.startElement(namespaceURI, localName, rawName, attlist);
+                depth = 1;
+                delegate = subHandler;
+            }
+            
+            if (rootFObj == null) {
+                rootFObj = (Root) foNode;
+                rootFObj.setFOEventHandler(foEventHandler);
+            } else {
+                currentFObj.addChildNode(foNode);
+            }
+
+            currentFObj = foNode;
+            if (propertyList != null) {
+                currentPropertyList = propertyList;
+            }
+        }
+
+        /**
+         * SAX Handler for the end of an element
+         * @see org.xml.sax.ContentHandler#endElement(String, String, String)
+         */
+        public void endElement(String uri, String localName, String rawName)
+                    throws SAXException {
+            if (currentFObj == null) {
+                throw new IllegalStateException(
+                        "endElement() called for " + rawName 
+                            + " where there is no current element.");
+            } else if (!currentFObj.getLocalName().equals(localName) 
+                    || !currentFObj.getNamespaceURI().equals(uri)) {
+                log.warn("Mismatch: " + currentFObj.getLocalName() 
+                        + " (" + currentFObj.getNamespaceURI() 
+                        + ") vs. " + localName + " (" + uri + ")");
+            }
+            currentFObj.endOfNode();
+
+            if (currentPropertyList.getFObj() == currentFObj) {
+                currentPropertyList = currentPropertyList.getParentPropertyList();
+            }
+            if (currentFObj.getParent() == null) {
+                log.debug("endElement for top-level " + currentFObj.getName());
+            }
+            currentFObj = currentFObj.getParent();
+        }
+
+        /**
+         * SAX Handler for characters
+         * @see org.xml.sax.ContentHandler#characters(char[], int, int)
+         */
+        public void characters(char[] data, int start, int length) 
+            throws FOPException {
+                if (currentFObj != null) {
+                    currentFObj.addCharacters(data, start, start + length, 
+                            currentPropertyList, getEffectiveLocator());
+                }
+        }
+
+        public void endDocument() throws SAXException {
+            currentFObj = null;
+        }
+
+        
+        
     }
     
 }

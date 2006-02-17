@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fo.extensions.svg.SVGElementMapping;
 import org.apache.fop.fo.pagination.Root;
 import org.apache.fop.util.CharUtilities;
+import org.apache.fop.util.ContentHandlerFactory;
 
 /**
  * Base class for nodes in the XML tree
@@ -565,6 +566,16 @@ public abstract class FONode implements Cloneable {
      * @return the extension attachment if one is created by the extension element, null otherwise.
      */
     public ExtensionAttachment getExtensionAttachment() {
+        return null;
+    }
+    
+    /**
+     * This method is overridden by extension elements and allows the extension element to return
+     * a ContentHandlerFactory. This factory can create ContentHandler implementations that handle
+     * foreign XML content by either building up a specific DOM, a Java object or something else.
+     * @return the ContentHandlerFactory or null if not applicable
+     */
+    public ContentHandlerFactory getContentHandlerFactory() {
         return null;
     }
     
