@@ -86,7 +86,7 @@ public class XMPMetadata implements ExtensionAttachment, Serializable, XMLizable
     
     /** @see org.apache.fop.util.XMLizable#toSAX(org.xml.sax.ContentHandler) */
     public void toSAX(ContentHandler handler) throws SAXException {
-        DOM2SAX.writeDocument(getDocument(), handler);
+        new DOM2SAX(handler).writeDocument(getDocument(), true);
     }
     
 }
