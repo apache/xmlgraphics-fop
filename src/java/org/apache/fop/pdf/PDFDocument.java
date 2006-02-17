@@ -58,10 +58,6 @@ import org.apache.commons.logging.LogFactory;
 public class PDFDocument {
 
     private static final Integer LOCATION_PLACEHOLDER = new Integer(0);
-    /**
-     * the version of PDF supported which is 1.4
-     */
-    protected static final String PDF_VERSION = "1.4";
     
     /** Integer constant to represent PDF 1.3 */
     public static final int PDF_VERSION_1_3 = 3;
@@ -106,6 +102,12 @@ public class PDFDocument {
 
     /** Indicates what PDF version is active */
     protected int pdfVersion = PDF_VERSION_1_4;
+    
+    /**
+     * Indicates the PDF/A-1 mode currently active. Defaults to "no restrictions", i.e. 
+     * PDF/A-1 not active.
+     */
+    protected PDFAMode pdfAMode = PDFAMode.DISABLED;
     
     /**
      * the /Root object
@@ -248,6 +250,35 @@ public class PDFDocument {
      */
     public int getPDFVersion() {
         return this.pdfVersion;
+    }
+    
+    /** @return the String representing the active PDF version */
+    public String getPDFVersionString() {
+        switch (getPDFVersion()) {
+        case PDF_VERSION_1_3:
+            return "1.3";
+        case PDF_VERSION_1_4:
+            return "1.4";
+        default:
+            throw new IllegalStateException("Unsupported PDF version selected");
+        }
+    }
+
+    /** @return the PDF/A mode currently active. */
+    public PDFAMode getPDFAMode() {
+        return this.pdfAMode;
+    }
+    
+    /**
+     * Sets the active PDF/A mode. This must be set immediately after calling the constructor so
+     * the checks will be activated.
+     * @param mode one of the PDFAMode constants
+     */
+    public void setPDFAMode(PDFAMode mode) {
+        if (mode == null) {
+            throw new NullPointerException("mode must not be null");
+        }
+        this.pdfAMode = mode;
     }
     
     /**
@@ -474,8 +505,10 @@ public class PDFDocument {
      * @param params The encryption parameters for the pdf file
      */
     public void setEncryption(PDFEncryptionParams params) {
-        this.encryption =
-            PDFEncryptionManager.newInstance(++this.objectcount, params);
+        if (getPDFAMode().isPDFA1LevelB()) {
+            throw new PDFConformanceException("PDF/A-1 doesn't allow encrypted PDFs");
+        }
+        this.encryption = PDFEncryptionManager.newInstance(++this.objectcount, params);
         ((PDFObject)this.encryption).setDocument(this);
         if (encryption != null) {
             /**@todo this cast is ugly. PDFObject should be transformed to an interface. */
@@ -824,13 +857,16 @@ public class PDFDocument {
     public void outputHeader(OutputStream stream) throws IOException {
         this.position = 0;
 
-        byte[] pdf = ("%PDF-" + PDF_VERSION + "\n").getBytes();
+        if (getPDFAMode().isPDFA1LevelB() && getPDFVersion() != PDF_VERSION_1_4) {
+            throw new PDFConformanceException("PDF version must be 1.4 for " + getPDFAMode());
+        }
+        
+        byte[] pdf = ("%PDF-" + getPDFVersionString() + "\n").getBytes();
         stream.write(pdf);
         this.position += pdf.length;
 
         // output a binary comment as recommended by the PDF spec (3.4.1)
-        byte[] bin =
-            {
+        byte[] bin = {
                 (byte)'%',
                 (byte)0xAA,
                 (byte)0xAB,

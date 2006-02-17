@@ -44,6 +44,11 @@ public class PDFInfo extends PDFObject {
      */
     private String creator;
 
+    /** @return the producer of the document or null if not set */
+    public String getProducer() {
+        return this.producer;
+    }
+    
     /**
      * set the producer string
      *
@@ -110,7 +115,7 @@ public class PDFInfo extends PDFObject {
     }
 
     /** @return the keywords for the document or null if not set */
-    public String getKeyword() {
+    public String getKeywords() {
         return this.keywords;
     }
     
