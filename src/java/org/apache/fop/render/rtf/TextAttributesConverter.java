@@ -50,7 +50,13 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfText;
  *  @author Chris Scott
  *  @author rmarra
  */
-class TextAttributesConverter {
+final class TextAttributesConverter {
+    
+    /**
+     * Constructor is private, because it's just a utility class.
+     */
+    private TextAttributesConverter() {
+    }
     
     /**
      * Converts all known text FO properties to RtfAttributes

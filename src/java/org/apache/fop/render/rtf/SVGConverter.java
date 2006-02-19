@@ -31,11 +31,17 @@ import org.apache.fop.image.XMLImage;
 /**
  * Helper class for converting SVG to bitmap images.
  */
-public class SVGConverter {
+public final class SVGConverter {
 
     /** logger instance */
     private static Log log = LogFactory.getLog(SVGConverter.class);
 
+    /**
+     * Constructor is private, because it's just a utility class.
+     */
+    private SVGConverter() {
+    }
+    
     /**
      * Converts a SVG image to a JPEG bitmap.
      * @param image the SVG image

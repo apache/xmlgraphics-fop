@@ -48,7 +48,7 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
  * Provides methods to convert the attributes to RtfAttributes.
  */
 
-public class TableAttributesConverter {
+public final class TableAttributesConverter {
 
     private static Log log = new SimpleLog("FOP/RTF");
 
@@ -57,7 +57,7 @@ public class TableAttributesConverter {
     //////////////////////////////////////////////////
 
     /**
-     * Constructor.
+     * Constructor is private, because it's just a utility class.
      */
     private TableAttributesConverter() {
     }

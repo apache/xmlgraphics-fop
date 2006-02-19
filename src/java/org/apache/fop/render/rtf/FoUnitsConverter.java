@@ -35,7 +35,7 @@ import org.apache.fop.apps.FOPException;
  *  for the JFOR project and is now integrated into FOP.
  */
 
-class FoUnitsConverter {
+final class FoUnitsConverter {
     private static final FoUnitsConverter INSTANCE = new FoUnitsConverter();
 
     /** points to twips: 1 twip is 1/20 of a point */
@@ -124,14 +124,14 @@ class FoUnitsConverter {
     /** convert a font size given in points like "12pt" */
     int convertFontSize(String size) throws FOPException {
         size = size.trim();
-        final String FONT_SUFFIX = "pt";
-        if (!size.endsWith(FONT_SUFFIX)) {
+        final String sFONTSUFFIX = "pt";
+        if (!size.endsWith(sFONTSUFFIX)) {
             throw new FOPException("Invalid font size '" + size + "', must end with '"
-                                   + FONT_SUFFIX + "'");
+                                   + sFONTSUFFIX + "'");
         }
 
         float result = 0;
-        size = size.substring(0, size.length() - FONT_SUFFIX.length());
+        size = size.substring(0, size.length() - sFONTSUFFIX.length());
         try {
             result = (Float.valueOf(size).floatValue());
         } catch (Exception e) {

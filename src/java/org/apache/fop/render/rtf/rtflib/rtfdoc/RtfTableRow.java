@@ -186,42 +186,81 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
             xPos = ((Integer)leftIndent).intValue();
         }
         
+        RtfAttributes tableBorderAttributes = getTable().getBorderAttributes();
+        
         int index = 0;
         for (Iterator it = getChildren().iterator(); it.hasNext();) {
             final RtfElement e = (RtfElement)it.next();
             if (e instanceof RtfTableCell) {
-                // Added by Normand Masse
+                
+                RtfTableCell rtfcell = (RtfTableCell)e;
+                
                 // Adjust the cell's display attributes so the table's/row's borders
                 // are drawn properly.
-                RtfTableCell rtfcell = (RtfTableCell)e;
+                
+                // get border attributes from table
                 if (index == 0) {
                     if (!rtfcell.getRtfAttributes().isSet(ITableAttributes.CELL_BORDER_LEFT)) {
                         rtfcell.getRtfAttributes().set(ITableAttributes.CELL_BORDER_LEFT,
-                            (String)attrib.getValue(ITableAttributes.ROW_BORDER_LEFT));
+                            (RtfAttributes) tableBorderAttributes.getValue(
+                                    ITableAttributes.CELL_BORDER_LEFT));
                     }
                 }
 
                 if (index == this.getChildCount() - 1) {
                     if (!rtfcell.getRtfAttributes().isSet(ITableAttributes.CELL_BORDER_RIGHT)) {
                         rtfcell.getRtfAttributes().set(ITableAttributes.CELL_BORDER_RIGHT,
-                            (String)attrib.getValue(ITableAttributes.ROW_BORDER_RIGHT));
+                            (RtfAttributes) tableBorderAttributes.getValue(
+                                    ITableAttributes.CELL_BORDER_RIGHT));
                     }
                 }
 
                 if (isFirstRow()) {
                     if (!rtfcell.getRtfAttributes().isSet(ITableAttributes.CELL_BORDER_TOP)) {
                         rtfcell.getRtfAttributes().set(ITableAttributes.CELL_BORDER_TOP,
-                            (String)attrib.getValue(ITableAttributes.ROW_BORDER_TOP));
+                            (RtfAttributes) (RtfAttributes) tableBorderAttributes.getValue(
+                                    ITableAttributes.CELL_BORDER_TOP));
                     }
                 }
 
                 if ((parentTable != null) && (parentTable.isHighestRow(id))) {
                     if (!rtfcell.getRtfAttributes().isSet(ITableAttributes.CELL_BORDER_BOTTOM)) {
                         rtfcell.getRtfAttributes().set(ITableAttributes.CELL_BORDER_BOTTOM,
-                            (String)attrib.getValue(ITableAttributes.ROW_BORDER_BOTTOM));
+                            (RtfAttributes) tableBorderAttributes.getValue(
+                                    ITableAttributes.CELL_BORDER_BOTTOM));
+                    }
+                }
+                
+                // get border attributes from row
+                if (index == 0) {
+                    if (!rtfcell.getRtfAttributes().isSet(ITableAttributes.CELL_BORDER_LEFT)) {
+                        rtfcell.getRtfAttributes().set(ITableAttributes.CELL_BORDER_LEFT,
+                            (String) attrib.getValue(ITableAttributes.ROW_BORDER_LEFT));
                     }
                 }
 
+                if (index == this.getChildCount() - 1) {
+                    if (!rtfcell.getRtfAttributes().isSet(ITableAttributes.CELL_BORDER_RIGHT)) {
+                        rtfcell.getRtfAttributes().set(ITableAttributes.CELL_BORDER_RIGHT,
+                            (String) attrib.getValue(ITableAttributes.ROW_BORDER_RIGHT));
+                    }
+                }
+
+                if (isFirstRow()) {
+                    if (!rtfcell.getRtfAttributes().isSet(ITableAttributes.CELL_BORDER_TOP)) {
+                        rtfcell.getRtfAttributes().set(ITableAttributes.CELL_BORDER_TOP,
+                            (String) attrib.getValue(ITableAttributes.ROW_BORDER_TOP));
+                    }
+                }
+
+                if ((parentTable != null) && (parentTable.isHighestRow(id))) {
+                    if (!rtfcell.getRtfAttributes().isSet(ITableAttributes.CELL_BORDER_BOTTOM)) {
+                        rtfcell.getRtfAttributes().set(ITableAttributes.CELL_BORDER_BOTTOM,
+                            (String) attrib.getValue(ITableAttributes.ROW_BORDER_BOTTOM));
+                    }
+                }
+
+                // write cell's definition
                 xPos = rtfcell.writeCellDef(xPos);
             }
           index++; // Added by Boris POUDEROUS on 2002/07/02
