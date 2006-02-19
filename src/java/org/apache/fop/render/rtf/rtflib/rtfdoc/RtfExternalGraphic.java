@@ -16,6 +16,7 @@
 
 /* $Id$ */
 
+package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 /*
  * This file is part of the RTF library of the FOP project, which was originally
@@ -23,8 +24,6 @@
  * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
  * the FOP project.
  */
-
-package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.fop.render.rtf.rtflib.tools.ImageConstants;
@@ -566,8 +565,8 @@ public class RtfExternalGraphic extends RtfElement {
      * @param imagedata Binary imagedata as read from file.
      * @throws IOException On error
      */
-    public void setImageData(byte[] imagedata) throws IOException {
-        this.imagedata = imagedata;
+    public void setImageData(byte[] data) throws IOException {
+        this.imagedata = data;
     }
 
     /**

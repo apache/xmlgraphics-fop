@@ -36,17 +36,28 @@ public class RTFFOEventHandlerMaker extends AbstractFOEventHandlerMaker {
         MimeConstants.MIME_RTF_ALT2};
     
     
-    /** @see org.apache.fop.render.AbstractFOEventHandlerMaker */
+    /**
+     * @see org.apache.fop.render.AbstractFOEventHandlerMaker
+     * @param ua FOUserAgent
+     * @param out OutputStream
+     * @return created RTFHandler
+     */
     public FOEventHandler makeFOEventHandler(FOUserAgent ua, OutputStream out) {
         return new RTFHandler(ua, out);
     }
 
-    /** @see org.apache.fop.render.AbstractFOEventHandlerMaker#needsOutputStream() */
+    /**
+     * @see org.apache.fop.render.AbstractFOEventHandlerMaker#needsOutputStream()
+     * @return true, if an outputstream is needed
+     */
     public boolean needsOutputStream() {
         return true;
     }
 
-    /** @see org.apache.fop.render.AbstractFOEventHandlerMaker#getSupportedMimeTypes() */
+    /**
+     * @see org.apache.fop.render.AbstractFOEventHandlerMaker#getSupportedMimeTypes()
+     * @return array of MIME types
+     */
     public String[] getSupportedMimeTypes() {
         return MIMES;
     }
