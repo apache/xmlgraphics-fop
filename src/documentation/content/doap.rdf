@@ -25,16 +25,14 @@
     <name>Apache FOP</name>
     <homepage rdf:resource="http://xmlgraphics.apache.org/fop" />
     <asfext:pmc rdf:resource="http://xmlgraphics.apache.org" />
-    <shortdesc>The Apache Foundation's XSL Formatting Objects 'print formatter' implementation.</shortdesc>
+    <shortdesc>The Apache Foundation's XSL Formatting Objects (XSL-FO) implementation.</shortdesc>
     <description>FOP (Formatting Objects Processor) is the world's first print formatter driven by XSL formatting objects (XSL-FO) and the world's first output independent formatter. It is a Java application that reads a formatting object (FO) tree and renders the resulting pages to a specified output. Output formats  currently supported include PDF, PCL, PS, SVG, XML (area tree representation), Print, AWT, MIF and TXT. The primary output target is PDF.</description>
     <bug-database rdf:resource="http://issues.apache.org/bugzilla/buglist.cgi?bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;email1=&amp;emailtype1=substring&amp;emailassigned_to1=1&amp;email2=&amp;emailtype2=substring&amp;emailreporter2=1&amp;bugidtype=include&amp;bug_id=&amp;changedin=&amp;votes=&amp;chfieldfrom=&amp;chfieldto=Now&amp;chfieldvalue=&amp;product=Fop&amp;short_desc=&amp;short_desc_type=allwordssubstr&amp;long_desc=&amp;long_desc_type=allwordssubstr&amp;bug_file_loc=&amp;bug_file_loc_type=allwordssubstr&amp;keywords=&amp;keywords_type=anywords&amp;field0-0-0=noop&amp;type0-0-0=noop&amp;value0-0-0=" />
     <mailing-list rdf:resource="http://xmlgraphics.apache.org/fop/maillist.html" />
     <download-page rdf:resource="http://xmlgraphics.apache.org/fop/download.html" />
     <programming-language>Java</programming-language>
-    <programming-language>XSL-FO</programming-language>
-    <category rdf:resource="http://projects.apache.org/category/XML" />
-    <category rdf:resource="http://projects.apache.org/category/Graphics" />
-    <category rdf:resource="http://projects.apache.org/category/XSL" />
+    <category rdf:resource="http://projects.apache.org/category/xml" />
+    <category rdf:resource="http://projects.apache.org/category/graphics" />
     <release>
       <Version>
         <name>Latest stable release</name>
