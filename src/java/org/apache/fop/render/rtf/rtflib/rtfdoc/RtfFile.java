@@ -16,6 +16,7 @@
 
 /* $Id$ */
 
+package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 /*
  * This file is part of the RTF library of the FOP project, which was originally
@@ -23,8 +24,6 @@
  * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
  * the FOP project.
  */
-
-package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 import org.apache.fop.render.rtf.rtflib.exceptions.RtfStructureException;
 import java.io.Writer;
@@ -128,7 +127,7 @@ extends RtfContainer {
      * @throws RtfStructureException for illegal RTF structure
      */
     public RtfPageArea startPageArea()
-    throws IOException, RtfStructureException {
+    throws IOException {
         if (pageArea != null) {
             throw new RtfStructureException("startPageArea called more than once");
         }
@@ -149,7 +148,7 @@ extends RtfContainer {
      * @throws RtfStructureException for illegal RTF structure
      */
     public RtfPageArea getPageArea()
-    throws IOException, RtfStructureException {
+    throws IOException {
         if (pageArea == null) {
             return startPageArea();
         }
@@ -164,7 +163,7 @@ extends RtfContainer {
      * @throws RtfStructureException for illegal RTF structure
      */
     public RtfDocumentArea startDocumentArea()
-    throws IOException, RtfStructureException {
+    throws IOException {
         if (docArea != null) {
             throw new RtfStructureException("startDocumentArea called more than once");
         }
@@ -187,7 +186,7 @@ extends RtfContainer {
      * @throws RtfStructureException for illegal RTF structure
      */
     public RtfDocumentArea getDocumentArea()
-    throws IOException, RtfStructureException {
+    throws IOException {
         if (docArea == null) {
             return startDocumentArea();
         }

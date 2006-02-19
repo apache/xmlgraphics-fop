@@ -16,6 +16,7 @@
 
 /* $Id$ */
 
+package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 /*
  * This file is part of the RTF library of the FOP project, which was originally
@@ -23,8 +24,6 @@
  * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
  * the FOP project.
  */
-
-package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 import java.io.Writer;
 import java.io.IOException;
@@ -232,6 +231,11 @@ implements
         closeCurrentBefore();
     }
     
+    /**
+     * Returns the current RtfTextrun.
+     * @return Current RtfTextrun
+     * @throws IOException Thrown when an IO-problem occurs.
+     */
     public RtfTextrun getTextrun()
     throws IOException {
         return RtfTextrun.getTextrun(this, writer, null);

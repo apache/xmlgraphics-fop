@@ -16,6 +16,7 @@
 
 /* $Id$ */
 
+package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 /*
  * This file is part of the RTF library of the FOP project, which was originally
@@ -23,8 +24,6 @@
  * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
  * the FOP project.
  */
-
-package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 import java.io.IOException;
 import java.util.Hashtable;
@@ -34,7 +33,7 @@ import java.util.Vector;
  *   RTF font table
  *  @author Andreas Putz a.putz@skynamics.com
  */
-public class RtfFontManager {
+public final class RtfFontManager {
     //////////////////////////////////////////////////
     // @@ Members
     //////////////////////////////////////////////////

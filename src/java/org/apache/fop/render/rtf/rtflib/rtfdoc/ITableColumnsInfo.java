@@ -16,6 +16,7 @@
 
 /* $Id$ */
 
+package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 /*
  * This file is part of the RTF library of the FOP project, which was originally
@@ -23,8 +24,6 @@
  * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
  * the FOP project.
  */
-
-package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 /**  Used to get information about tables, for example when handling nested tables
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
@@ -55,5 +54,5 @@ public interface ITableColumnsInfo {
      * 
      * @return true, if it's the first of multiple spanning columns
      */
-    public boolean getFirstSpanningCol();
+    boolean getFirstSpanningCol();
 }

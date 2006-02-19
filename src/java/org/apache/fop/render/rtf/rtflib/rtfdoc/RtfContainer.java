@@ -16,6 +16,7 @@
 
 /* $Id$ */
 
+package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 /*
  * This file is part of the RTF library of the FOP project, which was originally
@@ -23,8 +24,6 @@
  * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
  * the FOP project.
  */
-
-package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 import java.io.Writer;
 import java.util.LinkedList;
@@ -112,12 +111,12 @@ public class RtfContainer extends RtfElement {
     /**
      * Add by Boris Poudérous on 07/22/2002
      * Set the children list
-     * @param children list of child objects
+     * @param list list of child objects
      * @return true if process succeeded
      */
-    public boolean setChildren (List children) {
-      if (children instanceof LinkedList) {
-          this.children = (LinkedList)children;
+    public boolean setChildren (List list) {
+      if (list instanceof LinkedList) {
+          this.children = (LinkedList) list;
           return true;
         }
 
