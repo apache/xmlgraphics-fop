@@ -16,6 +16,7 @@
 
 /* $Id$ */
 
+package org.apache.fop.render.rtf;
 
 /*
  * This file is part of the RTF library of the FOP project, which was originally
@@ -23,8 +24,6 @@
  * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
  * the FOP project.
  */
-
-package org.apache.fop.render.rtf;
 
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
@@ -35,8 +34,14 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfText;
 /** Constants for RTF border attribute names, and a static method for converting
  *  fo attribute strings. */
 
-public class BorderAttributesConverter {
+public final class BorderAttributesConverter {
 
+    /**
+     * Constructor is private, because it's just a utility class.
+     */
+    private BorderAttributesConverter() {
+    }
+    
     /**
      * Create a border control word in attributes, with border properties 
      * as specified in color, style and width.

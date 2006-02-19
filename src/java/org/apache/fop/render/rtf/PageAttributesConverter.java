@@ -16,7 +16,6 @@
 
 /* $Id$ */
 
-
 package org.apache.fop.render.rtf;
 
 import org.apache.commons.logging.Log;
@@ -37,10 +36,16 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfPage;
  *  @author Peter Herweg, pherweg@web.de
  */
 
-class PageAttributesConverter {
+final class PageAttributesConverter {
 
     private static Log log = new SimpleLog("FOP/RTF");
 
+    /**
+     * Constructor is private, because it's just a utility class.
+     */
+    private PageAttributesConverter() {
+    }
+    
     /** convert xsl:fo attributes to RTF text attributes */
     static RtfAttributes convertPageAttributes(SimplePageMaster pagemaster) {
         FOPRtfAttributes attrib = new FOPRtfAttributes();

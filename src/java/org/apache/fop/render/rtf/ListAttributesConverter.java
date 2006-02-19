@@ -36,9 +36,20 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfText;
 /**
  * Provides methods to convert list attributes to RtfAttributes.
  */
-public class ListAttributesConverter {
+public final class ListAttributesConverter {
     
+    /**
+     * Constructor is private, because it's just a utility class.
+     */
+    private ListAttributesConverter() {
+    }
     
+    /**
+     * Reads an FO object's properties and adds returns them as RtfAttributes.
+     * @param fobj FO object
+     * @return RtfAttributes object which contains the read values.
+     * @throws FOPException Thrown when an IO-problem occurs.
+     */
     static RtfAttributes convertAttributes(ListBlock fobj)
     throws FOPException {
         

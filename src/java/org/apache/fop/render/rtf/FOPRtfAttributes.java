@@ -63,12 +63,18 @@ public class FOPRtfAttributes extends RtfAttributes {
         return this;
     }
 
+    /**
+     * Set an attribute that has a Color value.
+     * @param name name of attribute
+     * @param color value of attribute
+     * @return this (which now contains the new entry)
+     */
     public RtfAttributes set(String name, ColorType color) {
         int redComponent = ColorTypeProperty.convertChannelToInteger (color.getRed());
         int greenComponent = ColorTypeProperty.convertChannelToInteger (color.getGreen());
         int blueComponent = ColorTypeProperty.convertChannelToInteger (color.getBlue());
         set(name, RtfColorTable.getInstance().getColorNumber(
-                redComponent,greenComponent, blueComponent).intValue());
+                redComponent, greenComponent, blueComponent).intValue());
         return this;
     }
 }

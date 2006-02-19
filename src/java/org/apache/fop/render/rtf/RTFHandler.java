@@ -63,6 +63,7 @@ import org.apache.fop.fo.pagination.PageSequenceMaster;
 import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.pagination.StaticContent;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FOText;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.ITableAttributes;
@@ -497,13 +498,30 @@ public class RTFHandler extends FOEventHandler {
         TableContext tableContext = new TableContext(builderContext);
 
         try {
-            RtfAttributes atts
-                = TableAttributesConverter.convertTableAttributes(tbl);
-
             final IRtfTableContainer tc
                 = (IRtfTableContainer)builderContext.getContainer(
-                    IRtfTableContainer.class, true, null);
-            builderContext.pushContainer(tc.newTable(atts, tableContext));
+                        IRtfTableContainer.class, true, null);
+            
+            RtfAttributes atts
+                = TableAttributesConverter.convertTableAttributes(tbl);
+            
+            RtfTable table = tc.newTable(atts, tableContext);
+            
+            CommonBorderPaddingBackground border = tbl.getCommonBorderPaddingBackground();
+            RtfAttributes borderAttributes = new RtfAttributes();
+                    
+            BorderAttributesConverter.makeBorder(border, CommonBorderPaddingBackground.BEFORE,
+                    borderAttributes, ITableAttributes.CELL_BORDER_TOP);
+            BorderAttributesConverter.makeBorder(border, CommonBorderPaddingBackground.AFTER,
+                    borderAttributes, ITableAttributes.CELL_BORDER_BOTTOM);
+            BorderAttributesConverter.makeBorder(border, CommonBorderPaddingBackground.START,
+                    borderAttributes, ITableAttributes.CELL_BORDER_LEFT);
+            BorderAttributesConverter.makeBorder(border, CommonBorderPaddingBackground.END,
+                    borderAttributes,  ITableAttributes.CELL_BORDER_RIGHT);
+            
+            table.setBorderAttributes(borderAttributes);
+            
+            builderContext.pushContainer(table);
         } catch (Exception e) {
             log.error("startTable:" + e.getMessage());
             throw new RuntimeException(e.getMessage());

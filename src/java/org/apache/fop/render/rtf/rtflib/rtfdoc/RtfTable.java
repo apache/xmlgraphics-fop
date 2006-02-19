@@ -36,6 +36,7 @@ public class RtfTable extends RtfContainer {
     private RtfTableRow row;
     private int highestRow = 0;
     private Boolean isNestedTable = null;
+    private RtfAttributes borderAttributes = null;
 
     /** Added by Boris Poudérous on 07/22/2002 in order to process
      *  number-columns-spanned attribute */
@@ -208,5 +209,21 @@ public class RtfTable extends RtfContainer {
         }
 
         return null;  
+    }
+
+    /**
+     * Sets the RtfAttributes for the borders of the table.
+     * @param attributes Border attributes of the table.
+     */
+    public void setBorderAttributes(RtfAttributes attributes) {
+        borderAttributes = attributes;
+    }
+    
+    /**
+     * Returns the RtfAttributes for the borders of the table.
+     * @return Border attributes of the table.
+     */
+    public RtfAttributes getBorderAttributes() {
+        return borderAttributes;
     }
 }
