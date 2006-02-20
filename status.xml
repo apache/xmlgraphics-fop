@@ -27,6 +27,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="add" due-to="Jirí Mareš">
+        Support for "userconfig" attribute in FOP Ant Task.
+      </action>
       <action context="Code" dev="JM" type="add">
         Initial support for XMP metadata (PDF 1.4) under fo:declarations.
       </action>
