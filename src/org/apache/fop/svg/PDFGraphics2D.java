@@ -1362,6 +1362,16 @@ System.out.println("getting getNormalizingTransform");
             return null;
         }
         @jdk14codeend@
+        
+        @jdk14codestart@
+        /**
+         * @see java.awt.GraphicsConfiguration#createCompatibleVolatileImage(int, int, int)
+         * @since JDK 1.5
+         */
+        public java.awt.image.VolatileImage createCompatibleVolatileImage(int width, int height, int transparency) {
+            return null;
+        }
+        @jdk14codeend@
     }
 
     /**
