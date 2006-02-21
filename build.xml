@@ -671,6 +671,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
              bottom="Copyright &#169; ${year} Apache Software Foundation. All Rights Reserved."
              overview="${build.src}/overview.html"
              use="true"
+             source="${javac.source}"
              failonerror="true">
       <group title="Control and Startup">
         <package name="org.apache.fop.apps"/>

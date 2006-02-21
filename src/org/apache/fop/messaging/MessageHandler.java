@@ -159,9 +159,9 @@ public class MessageHandler {
             break;
         case EVENT:
             setMessage(message);
-            Enumeration enum = listeners.elements();
-            while (enum.hasMoreElements()) {
-                ((MessageListener)enum.nextElement()).processMessage(new MessageEvent(getMessage()));
+            Enumeration en = listeners.elements();
+            while (en.hasMoreElements()) {
+                ((MessageListener)en.nextElement()).processMessage(new MessageEvent(getMessage()));
             }
             break;
         case NONE:
@@ -208,11 +208,11 @@ public class MessageHandler {
             break;
         case EVENT:
             setMessage(message);
-            Enumeration enum = listeners.elements();
-            while (enum.hasMoreElements()) {
+            Enumeration en = listeners.elements();
+            while (en.hasMoreElements()) {
                 MessageEvent messEv = new MessageEvent(getMessage());
                 messEv.setMessageType(MessageEvent.ERROR);
-                ((MessageListener)enum.nextElement()).processMessage(messEv);
+                ((MessageListener)en.nextElement()).processMessage(messEv);
             }
             break;
         case NONE:
