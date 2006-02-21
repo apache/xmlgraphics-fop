@@ -47,7 +47,7 @@
     </asfext:standard>
     <asfext:standard>
       <asfext:title>Portable Document Format (PDF 1.4)</asfext:title>
-      <asfext:org>Adobe Systems Incorporated</asfext:org>
+      <asfext:body>Adobe Systems Incorporated</asfext:body>
       <asfext:id>PDF 1.4</asfext:id>
       <asfext:url rdf:resource="http://partners.adobe.com/public/developer/pdf/index_reference.html"/>
     </asfext:standard>
