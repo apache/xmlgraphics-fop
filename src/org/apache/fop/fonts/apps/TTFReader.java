@@ -426,14 +426,14 @@ public class TTFReader {
         }
 
         // Get kerning
-        Iterator enum;
+        Iterator iter;
         if (isCid)
-            enum = ttf.getKerning().keySet().iterator();
+            iter = ttf.getKerning().keySet().iterator();
         else
-            enum = ttf.getAnsiKerning().keySet().iterator();
+            iter = ttf.getAnsiKerning().keySet().iterator();
 
-        while (enum.hasNext()) {
-            Integer kpx1 = (Integer)enum.next();
+        while (iter.hasNext()) {
+            Integer kpx1 = (Integer)iter.next();
 
             el = doc.createElement("kerning");
             el.setAttribute("kpx1", kpx1.toString());
