@@ -53,13 +53,13 @@
     </asfext:standard>
     <asfext:standard>
       <asfext:title>PostScript</asfext:title>
-      <asfext:org>Adobe Systems Incorporated</asfext:org>
+      <asfext:body>Adobe Systems Incorporated</asfext:body>
       <asfext:id>PS</asfext:id>
       <asfext:url rdf:resource="http://partners.adobe.com/public/developer/ps/index_specs.html"/>
     </asfext:standard>
     <asfext:standard>
       <asfext:title>Rich Text Format (RTF 1.6)</asfext:title>
-      <asfext:org>Microsoft</asfext:org>
+      <asfext:body>Microsoft</asfext:body>
       <asfext:id>RTF 1.6</asfext:id>
       <asfext:url rdf:resource="http://msdn.microsoft.com/library/en-us/dnrtfspec/html/rtfspec.asp"/>
     </asfext:standard>
