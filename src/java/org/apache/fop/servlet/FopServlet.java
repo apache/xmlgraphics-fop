@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.URIResolver;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
@@ -37,6 +38,7 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.impl.SimpleLog;
 
 //FOP
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.MimeConstants;
@@ -78,6 +80,8 @@ public class FopServlet extends HttpServlet {
     protected SimpleLog log = null;
     /** The TransformerFactory to use to create Transformer instances */
     protected TransformerFactory transFactory = null;
+    /** URIResolver for use by this servlet */
+    protected URIResolver uriResolver; 
 
     /**
      * @see javax.servlet.GenericServlet#init()
@@ -85,7 +89,9 @@ public class FopServlet extends HttpServlet {
     public void init() throws ServletException {
         this.log = new SimpleLog("FOP/Servlet");
         log.setLevel(SimpleLog.LOG_LEVEL_WARN);
+        this.uriResolver = new ServletContextURIResolver(getServletContext());
         this.transFactory = TransformerFactory.newInstance();
+        this.transFactory.setURIResolver(this.uriResolver);
     }
 
     /**
@@ -152,6 +158,7 @@ public class FopServlet extends HttpServlet {
 
         //Setup the identity transformation
         Transformer transformer = this.transFactory.newTransformer();
+        transformer.setURIResolver(this.uriResolver);
 
         //Start transformation and rendering process
         return render(foSrc, transformer);
@@ -178,6 +185,7 @@ public class FopServlet extends HttpServlet {
 
         //Setup the XSL transformation
         Transformer transformer = this.transFactory.newTransformer(xsltSrc);
+        transformer.setURIResolver(this.uriResolver);
 
         //Start transformation and rendering process
         return render(xmlSrc, transformer);
@@ -201,7 +209,7 @@ public class FopServlet extends HttpServlet {
                 throws FOPException, TransformerException {
 
         //Setup FOP
-        Fop fop = new Fop(MimeConstants.MIME_PDF);
+        Fop fop = new Fop(MimeConstants.MIME_PDF, getFOUserAgent());
 
         //Setup output
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -215,6 +223,13 @@ public class FopServlet extends HttpServlet {
 
         //Return the result
         return out.toByteArray();
+    }
+    
+    /** @return a new FOUserAgent for FOP */
+    protected FOUserAgent getFOUserAgent() {
+        FOUserAgent userAgent = new FOUserAgent();
+        userAgent.setURIResolver(this.uriResolver);
+        return userAgent;
     }
 
 }
