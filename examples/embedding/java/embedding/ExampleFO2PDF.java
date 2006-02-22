@@ -35,8 +35,10 @@ import javax.xml.transform.sax.SAXResult;
 
 
 // FOP
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.FormattingResults;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.apps.PageSequenceResults;
@@ -58,8 +60,12 @@ public class ExampleFO2PDF {
         OutputStream out = null;
         
         try {
+            FopFactory fopFactory = FopFactory.newInstance();
+            // configure fopFactory as desired
+            FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
+            // configure foUserAgent as desired
             // Construct fop with desired output format
-            Fop fop = new Fop(MimeConstants.MIME_PDF);
+            Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, foUserAgent);
     
             // Setup output stream.  Note: Using BufferedOutputStream
             // for performance reasons (helpful with FileOutputStreams).
