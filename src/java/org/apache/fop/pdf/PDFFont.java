@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2004,2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -190,9 +190,22 @@ public class PDFFont extends PDFObject {
     }
 
     /**
+     * Validates the PDF object prior to serialization.
+     */
+    protected void validate() {
+        if (getDocumentSafely().getPDFAMode().isPDFA1LevelB()) {
+            if (this.getClass() == PDFFont.class) {
+                throw new PDFConformanceException("For PDF/A-1, all fonts, even the base 14"
+                    + " fonts, have to be embedded!");
+            }
+        }
+    }
+    
+    /**
      * @see org.apache.fop.pdf.PDFObject#toPDFString()
      */
     public String toPDFString() {
+        validate();
         StringBuffer p = new StringBuffer(128);
         p.append(getObjectID());
         p.append("<< /Type /Font\n/Subtype /"

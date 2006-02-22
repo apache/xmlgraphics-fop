@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2004,2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -88,6 +88,20 @@ public abstract class PDFFontNonBase14 extends PDFFont {
         this.descriptor = descriptor;
     }
 
+    /** @return the FontDescriptor or null if there is none */
+    public PDFFontDescriptor getDescriptor() {
+        return this.descriptor;
+    }
+    
+    /** @see org.apache.fop.pdf.PDFFont#validate() */
+    protected void validate() {
+        if (getDocumentSafely().getPDFAMode().isPDFA1LevelB()) {
+            if (this.getDescriptor().getFontFile() == null) {
+                throw new PDFConformanceException("For PDF/A-1, all fonts have to be embedded!");
+            }
+        }
+    }
+    
     /**
      * @see org.apache.fop.pdf.PDFFont#fillInPDF(StringBuffer)
      */

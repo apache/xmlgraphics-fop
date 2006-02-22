@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2004,2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -202,9 +202,12 @@ public class PDFCIDFont extends PDFObject {
         p.append("<< /Type /Font");
         p.append("\n/BaseFont /");
         p.append(this.basefont);
+        p.append(" \n/CIDToGIDMap ");
         if (cidMap != null) {
-            p.append(" \n/CIDToGIDMap ");
             p.append(cidMap.referencePDF());
+        } else {
+            p.append("/Identity");
+            //This is the default. We still write it because PDF/A requires it.
         }
         p.append(" \n/Subtype /");
         p.append(getPDFNameForCIDFontType(this.cidtype));

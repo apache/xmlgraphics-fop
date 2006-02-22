@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -94,6 +94,10 @@ public class PDFXObject extends AbstractPDFStream {
     
     private String buildDictionaryFromPS(String lengthEntry, 
                                          String dictEntries) {
+        if (getDocumentSafely().getPDFAMode().isPDFA1LevelB()) {
+            throw new PDFConformanceException("PostScript XObjects are prohibited when PDF/A"
+                    + " is active. Convert EPS graphics to another format.");
+        }
         StringBuffer sb = new StringBuffer(128);
         sb.append(getObjectID());
         sb.append("<</Type /XObject\n");

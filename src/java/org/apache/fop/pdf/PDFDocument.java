@@ -23,6 +23,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -882,6 +886,27 @@ public class PDFDocument {
         this.position += bin.length;
     }
 
+    /** @return the "ID" entry for the file trailer */
+    protected String getIDEntry() {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("MD5");
+            DateFormat df = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSS");
+            digest.update(df.format(new Date()).getBytes());
+            //Ignoring the filename here for simplicity even though it's recommended by the PDF spec
+            digest.update(String.valueOf(this.position).getBytes());
+            digest.update(getInfo().toPDF());
+            byte[] res = digest.digest();
+            String s = PDFText.toHex(res);
+            return "/ID [" + s + " " + s + "]";
+        } catch (NoSuchAlgorithmException e) {
+            if (getPDFAMode().isPDFA1LevelB()) {
+                throw new UnsupportedOperationException("MD5 not available: " + e.getMessage());
+            } else {
+                return ""; //Entry is optional if PDF/A is not active
+            }
+        }
+    }
+    
     /**
      * write the trailer
      *
@@ -919,6 +944,8 @@ public class PDFDocument {
                 + "\n"
                 + "/Info "
                 + this.info.referencePDF()
+                + "\n"
+                + getIDEntry()
                 + "\n"
                 + encryptEntry
                 + ">>\n"
