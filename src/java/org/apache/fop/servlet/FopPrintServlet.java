@@ -31,11 +31,13 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
+import javax.xml.transform.URIResolver;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
 // XML
 import org.apache.commons.logging.impl.SimpleLog;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.MimeConstants;
 
@@ -77,6 +79,8 @@ public class FopPrintServlet extends HttpServlet {
     
     /** The TransformerFactory to use to create Transformer instances */
     protected TransformerFactory transFactory = null;
+    /** URIResolver for use by this servlet */
+    protected URIResolver uriResolver; 
 
     /**
      * @see javax.servlet.GenericServlet#init()
@@ -84,7 +88,9 @@ public class FopPrintServlet extends HttpServlet {
     public void init() throws ServletException {
         this.log = new SimpleLog("FOP/Print Servlet");
         log.setLevel(SimpleLog.LOG_LEVEL_WARN);
+        this.uriResolver = new ServletContextURIResolver(getServletContext());
         this.transFactory = TransformerFactory.newInstance();
+        this.transFactory.setURIResolver(this.uriResolver);
     }
 
     /**
@@ -132,11 +138,12 @@ public class FopPrintServlet extends HttpServlet {
     public void renderFO(InputStream foFile,
                          HttpServletResponse response) throws ServletException {
         try {
-            Fop fop = new Fop(MimeConstants.MIME_FOP_PRINT);
+            Fop fop = new Fop(MimeConstants.MIME_FOP_PRINT, getFOUserAgent());
 
             // Setup JAXP
             TransformerFactory factory = TransformerFactory.newInstance();
             Transformer transformer = factory.newTransformer(); //identity transformer
+            transformer.setURIResolver(this.uriResolver);
             
             // Setup input for XSLT transformation
             Source src = new StreamSource(foFile);
@@ -163,11 +170,12 @@ public class FopPrintServlet extends HttpServlet {
     public void renderXML(File xmlfile, File xsltfile,
                           HttpServletResponse response) throws ServletException {
         try {
-            Fop fop = new Fop(MimeConstants.MIME_FOP_PRINT);
+            Fop fop = new Fop(MimeConstants.MIME_FOP_PRINT, getFOUserAgent());
 
             // Setup XSLT
             TransformerFactory factory = TransformerFactory.newInstance();
             Transformer transformer = factory.newTransformer(new StreamSource(xsltfile));
+            transformer.setURIResolver(this.uriResolver);
             
             // Setup input for XSLT transformation
             Source src = new StreamSource(xmlfile);
@@ -202,5 +210,13 @@ public class FopPrintServlet extends HttpServlet {
             throw new ServletException(ex);
         }
     }
+
+    /** @return a new FOUserAgent for FOP */
+    protected FOUserAgent getFOUserAgent() {
+        FOUserAgent userAgent = new FOUserAgent();
+        userAgent.setURIResolver(this.uriResolver);
+        return userAgent;
+    }
+
 }
 
