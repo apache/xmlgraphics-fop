@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2004,2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -114,6 +114,11 @@ public class PDFFontDescriptor extends PDFObject {
         this.fontfile = fontfile;
     }
 
+    /** @return the FontFile or null if the font is not embedded */
+    public AbstractPDFStream getFontFile() {
+        return this.fontfile;
+    }
+    
     // public void setCharSet(){}//for subset fonts
 
     /**

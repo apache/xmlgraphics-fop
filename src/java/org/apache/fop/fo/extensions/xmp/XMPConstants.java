@@ -37,5 +37,8 @@ public interface XMPConstants {
     
     /** Namespace URI for the Adobe PDF Schema */
     String ADOBE_PDF_NAMESPACE = "http://ns.adobe.com/pdf/1.3/";
+
+    /** Namespace URI for the PDF/A Identification Schema */
+    String PDF_A_IDENTIFICATION = "http://www.aiim.org/pdfa/ns/id";
     
 }

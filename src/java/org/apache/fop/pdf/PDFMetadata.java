@@ -230,6 +230,25 @@ public class PDFMetadata extends PDFStream {
         desc.appendChild(el);
         el.appendChild(doc.createTextNode(pdfDoc.getPDFVersionString()));
         
+        //PDF/A identification
+        PDFAMode pdfaMode = pdfDoc.getPDFAMode(); 
+        if (pdfaMode.isPDFA1LevelB()) {
+            desc = doc.createElementNS(XMPConstants.RDF_NAMESPACE, "rdf:Description");
+            desc.setAttribute("about", "");
+            desc.setAttributeNS(xmlns, "xmlns:pdfaid", XMPConstants.PDF_A_IDENTIFICATION);
+            rdf.appendChild(desc);
+            el = doc.createElementNS(XMPConstants.PDF_A_IDENTIFICATION, "pdfaid:part");
+            desc.appendChild(el);
+            el.appendChild(doc.createTextNode("1")); //PDF/A-1
+            el = doc.createElementNS(XMPConstants.PDF_A_IDENTIFICATION, "pdfaid:conformance");
+            desc.appendChild(el);
+            if (pdfaMode == PDFAMode.PDFA_1A) {
+                el.appendChild(doc.createTextNode("A")); //PDF/A-1a
+            } else {
+                el.appendChild(doc.createTextNode("B")); //PDF/A-1b
+            }
+        }
+        
         return doc;
     }
     
