@@ -19,9 +19,13 @@
 package org.apache.fop.apps;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
@@ -30,7 +34,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 // base64 support for "data" urls
+// TODO Move Base64 support from Batik to XML Graphics Commons
 import org.apache.batik.util.Base64DecodeStream;
+import org.apache.batik.util.Base64EncoderStream;
 
 /**
  * Provides FOP specific URI resolution.
@@ -95,7 +101,8 @@ public class FOURIResolver
             } else {
                 try {
                     /*
-                        This piece of code is based on the following statement in RFC2396 section 5.2:
+                        This piece of code is based on the following statement in 
+                        RFC2396 section 5.2:
 
                         3) If the scheme component is defined, indicating that the reference
                            starts with a scheme name, then the reference is interpreted as an
@@ -133,13 +140,53 @@ public class FOURIResolver
         }
         
         try {
-            return new StreamSource(absoluteURL.openStream(), absoluteURL.toExternalForm());
+            String effURL = absoluteURL.toExternalForm();
+            URLConnection connection = absoluteURL.openConnection();
+            connection.setAllowUserInteraction(false);
+            connection.setDoInput(true);
+            updateURLConnection(connection, href);
+            connection.connect();
+            return new StreamSource(connection.getInputStream(), effURL);
         } catch (java.io.IOException ioe) {
             log.error("Error with opening URL '" + href + "': " + ioe.getMessage(), ioe);
         }
         return null;
     }
 
+    /**
+     * This method allows you to set special values on a URLConnection just before the connect()
+     * method is called. Subclass FOURIResolver and override this method to do things like
+     * adding the user name and password for HTTP basic authentication.
+     * @param connection the URLConnection instance
+     * @param href the original URI
+     */
+    protected void updateURLConnection(URLConnection connection, String href) {
+        //nop
+    }
+    
+    /**
+     * This is a convenience method for users who want to override updateURLConnection for
+     * HTTP basic authentication. Simply call it using the right username and password.
+     * @param connection the URLConnection to set up for HTTP basic authentication
+     * @param username the username
+     * @param password the password
+     */
+    protected void applyHttpBasicAuthentication(URLConnection connection, 
+            String username, String password) {
+        String combined = username + ":" + password;
+        try {
+            ByteArrayOutputStream baout = new ByteArrayOutputStream(combined.length() * 2);
+            Base64EncoderStream base64 = new Base64EncoderStream(baout);
+            base64.write(combined.getBytes());
+            base64.close();
+            connection.setRequestProperty("Authorization", 
+                    "Basic " + new String(baout.toByteArray()));
+        } catch (IOException e) {
+            //won't happen. We're operating in-memory.
+            throw new RuntimeException("Error during base64 encodation of username/password");
+        }
+    }
+    
     /**
      * Returns the base URL as a java.net.URL.
      * If the base URL is not set a default URL pointing to the
