@@ -196,7 +196,7 @@ public class PDFFont extends PDFObject {
         if (getDocumentSafely().getPDFAMode().isPDFA1LevelB()) {
             if (this.getClass() == PDFFont.class) {
                 throw new PDFConformanceException("For PDF/A-1, all fonts, even the base 14"
-                    + " fonts, have to be embedded!");
+                    + " fonts, have to be embedded! Offending font: " + this.basefont);
             }
         }
     }
