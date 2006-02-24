@@ -23,6 +23,8 @@ import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.SideRegion;
 import org.apache.fop.fo.pagination.StaticContent;
+import org.apache.fop.fo.pagination.Title;
+import org.apache.fop.layoutmgr.inline.ContentLayoutManager;
 import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.area.Block;
 
@@ -66,6 +68,15 @@ public interface LayoutManagerMaker {
      */
     public FlowLayoutManager makeFlowLayoutManager(
         PageSequenceLayoutManager pslm, Flow flow);
+
+    /**
+     * Make a ContentLayoutManager object.
+     * @param pslm the parent PageSequenceLayoutManager object
+     * @param title the fo:title object this CLM will process
+     * @return The created ContentLayoutManager object
+     */
+    public ContentLayoutManager makeContentLayoutManager(
+        PageSequenceLayoutManager pslm, Title title);
 
     /**
      * Make a StaticContentLayoutManager object.

@@ -20,6 +20,8 @@ package org.apache.fop.layoutmgr.inline;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.flow.RetrieveMarker;
 import org.apache.fop.fo.pagination.Title;
 import org.apache.fop.layoutmgr.AbstractBaseLayoutManager;
 import org.apache.fop.layoutmgr.KnuthElement;
@@ -68,10 +70,14 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
     }
 
     /**
-     * Constructor using a fo:title formatting object and its
-     * PageSequenceLayoutManager parent.
+     * Constructor using a fo:title formatting object and its PageSequenceLayoutManager parent.
+     * throws IllegalStateException if the foTitle has no children.
+     * TODO: convert IllegalStateException to FOPException;
+     * also in makeLayoutManager and makeContentLayoutManager and callers.
+     * @param pslm the PageSequenceLayoutManager parent of this LM
+     * @param foTitle the Title FO for which this LM is made
      */
-    public ContentLayoutManager(Title foTitle, PageSequenceLayoutManager pslm) {
+    public ContentLayoutManager(PageSequenceLayoutManager pslm, Title foTitle) {
         // get breaks then add areas to title
         this.parentLM = pslm;
         holder = new LineArea();
@@ -80,10 +86,14 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
 
         // use special layout manager to add the inline areas
         // to the Title.
-        InlineLayoutManager lm;
-        lm = new InlineLayoutManager(foTitle);
-        addChildLM(lm);
-        fillArea(lm);
+        try {
+            LayoutManager lm = pslm.getLayoutManagerMaker().makeLayoutManager(foTitle);
+            addChildLM(lm);
+            fillArea(lm);
+        } catch (IllegalStateException e) {
+            log.warn("Title has no content");
+            throw e;
+        }
     }
 
     public void initialize() {
