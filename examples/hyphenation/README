@@ -6,4 +6,7 @@ representation.
 
 Building: ant compile
 
-Running: 
+Running: ./analyse or analyse.cmd
+
+You can specify an object file in a jar file as follows:
+/path/to/fop-hyph.jar:hyph/xx.hyp.
