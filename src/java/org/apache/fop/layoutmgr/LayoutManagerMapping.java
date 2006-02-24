@@ -64,6 +64,7 @@ import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.layoutmgr.inline.BasicLinkLayoutManager;
 import org.apache.fop.layoutmgr.inline.BidiLayoutManager;
 import org.apache.fop.layoutmgr.inline.CharacterLayoutManager;
+import org.apache.fop.layoutmgr.inline.ContentLayoutManager;
 import org.apache.fop.layoutmgr.inline.ExternalGraphicLayoutManager;
 import org.apache.fop.layoutmgr.inline.FootnoteLayoutManager;
 import org.apache.fop.layoutmgr.inline.ICLayoutManager;
@@ -174,6 +175,14 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     public FlowLayoutManager makeFlowLayoutManager(
             PageSequenceLayoutManager pslm, Flow flow) {
         return new FlowLayoutManager(pslm, flow);
+    }
+
+    /*
+     * @see org.apache.fop.layoutmgr.LayoutManagerMaker#makeContentLayoutManager(PageSequenceLayoutManager, Title)
+     */
+    public ContentLayoutManager makeContentLayoutManager(PageSequenceLayoutManager pslm,
+                                                         Title title) {
+        return new ContentLayoutManager(pslm, title);
     }
     
     /*

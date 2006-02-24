@@ -128,9 +128,13 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         LineArea title = null;
 
         if (pageSeq.getTitleFO() != null) {
-            ContentLayoutManager clm = new ContentLayoutManager(pageSeq
-                    .getTitleFO(), this);
-            title = (LineArea) clm.getParentArea(null);
+            try {
+                ContentLayoutManager clm = getLayoutManagerMaker().
+                    makeContentLayoutManager(this, pageSeq.getTitleFO());
+                title = (LineArea) clm.getParentArea(null);
+            } catch (IllegalStateException e) {
+                // empty title; do nothing
+            }
         }
 
         areaTreeHandler.getAreaTreeModel().startPageSequence(title);
