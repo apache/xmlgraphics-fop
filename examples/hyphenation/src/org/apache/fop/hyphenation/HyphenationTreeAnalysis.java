@@ -23,10 +23,13 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipEntry;
 
 /**
  * This class provides some useful methods to print the structure of a HyphenationTree object 
@@ -279,134 +282,151 @@ public class HyphenationTreeAnalysis extends TernaryTreeAnalysis {
      * Provide interactive access to a HyphenationTree object and its representation methods 
      * @param args the arguments
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         HyphenationTree ht = null;
         HyphenationTreeAnalysis hta = null;
         int minCharCount = 2;
         BufferedReader in = new BufferedReader(new java.io.InputStreamReader(System.in));
         while (true) {
             System.out.print("l:\tload patterns from XML\n"
-                    + "L:\tload patterns from serialized object\n"
-                    + "s:\tset minimun character count\n"
-                    + "w:\twrite hyphenation tree to object file\n"
-                    + "p:\tprint hyphenation tree to stdout\n"
-                    + "n:\tprint hyphenation tree nodes to stdout\n"
-                    + "c:\tprint compact hyphenation tree nodes to stdout\n"
-                    + "t:\tprint tree representation of hyphenation tree to stdout\n"
-                    + "h:\thyphenate\n"
-                    + "f:\tfind pattern\n"
-                    + "b:\tbenchmark\n"
-                    + "q:\tquit\n\n"
-                    + "Command:");
-            String token = in.readLine().trim();
-            if (token.equals("f")) {
-                System.out.print("Pattern: ");
-                token = in.readLine().trim();
-                System.out.println("Values: " + ht.findPattern(token));
-            } else if (token.equals("s")) {
-                System.out.print("Minimum value: ");
-                token = in.readLine().trim();
-                minCharCount = Integer.parseInt(token);
-            } else if (token.equals("l")) {
-                ht = new HyphenationTree();
-                hta = new HyphenationTreeAnalysis(ht);
-                System.out.print("XML file name: ");
-                token = in.readLine().trim();
-                ht.loadPatterns(token);
-            } else if (token.equals("L")) {
-                ObjectInputStream ois = null;
-                System.out.print("Object file name: ");
-                token = in.readLine().trim();
-                try {
-                    ois = new ObjectInputStream(new FileInputStream(token));
-                    ht = (HyphenationTree) ois.readObject();
+                             + "L:\tload patterns from serialized object\n"
+                             + "s:\tset minimun character count\n"
+                             + "w:\twrite hyphenation tree to object file\n"
+                             + "p:\tprint hyphenation tree to stdout\n"
+                             + "n:\tprint hyphenation tree nodes to stdout\n"
+                             + "c:\tprint compact hyphenation tree nodes to stdout\n"
+                             + "t:\tprint tree representation of hyphenation tree to stdout\n"
+                             + "h:\thyphenate\n"
+                             + "f:\tfind pattern\n"
+                             + "b:\tbenchmark\n"
+                             + "q:\tquit\n\n"
+                             + "Command:");
+            try {
+                String token = in.readLine().trim();
+                if (token.equals("f")) {
+                    System.out.print("Pattern: ");
+                    token = in.readLine().trim();
+                    System.out.println("Values: " + ht.findPattern(token));
+                } else if (token.equals("s")) {
+                    System.out.print("Minimum value: ");
+                    token = in.readLine().trim();
+                    minCharCount = Integer.parseInt(token);
+                } else if (token.equals("l")) {
+                    ht = new HyphenationTree();
                     hta = new HyphenationTreeAnalysis(ht);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    if (ois != null) {
-                        try {
-                            ois.close();
-                        } catch (IOException e) {
-                            //ignore
+                    System.out.print("XML file name: ");
+                    token = in.readLine().trim();
+                    try {
+                        ht.loadPatterns(token);
+                    } catch (HyphenationException e) {
+                        e.printStackTrace();
+                    }
+                } else if (token.equals("L")) {
+                    ObjectInputStream ois = null;
+                    System.out.print("Object file name: ");
+                    token = in.readLine().trim();
+                    try {
+                        String[] parts = token.split(":"); 
+                        InputStream is = null;
+                        if (parts.length == 1) {
+                            is = new FileInputStream(token);
+                        } else if (parts.length == 2) {
+                            ZipFile jar = new ZipFile(parts[0]);
+                            ZipEntry entry = new ZipEntry(jar.getEntry(parts[1]));
+                            is = jar.getInputStream(entry);
+                        }
+                        ois = new ObjectInputStream(is);
+                        ht = (HyphenationTree) ois.readObject();
+                        hta = new HyphenationTreeAnalysis(ht);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    } finally {
+                        if (ois != null) {
+                            try {
+                                ois.close();
+                            } catch (IOException e) {
+                                //ignore
+                            }
                         }
                     }
-                }
-            } else if (token.equals("w")) {
-                System.out.print("Object file name: ");
-                token = in.readLine().trim();
-                ObjectOutputStream oos = null;
-                try {
-                    oos = new ObjectOutputStream(new FileOutputStream(token));
-                    oos.writeObject(ht);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    if (oos != null) {
-                        try {
-                            oos.flush();
-                        } catch (IOException e) {
-                            //ignore
-                        }
-                        try {
-                            oos.close();
-                        } catch (IOException e) {
-                            //ignore
+                } else if (token.equals("w")) {
+                    System.out.print("Object file name: ");
+                    token = in.readLine().trim();
+                    ObjectOutputStream oos = null;
+                    try {
+                        oos = new ObjectOutputStream(new FileOutputStream(token));
+                        oos.writeObject(ht);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    } finally {
+                        if (oos != null) {
+                            try {
+                                oos.flush();
+                            } catch (IOException e) {
+                                //ignore
+                            }
+                            try {
+                                oos.close();
+                            } catch (IOException e) {
+                                //ignore
+                            }
                         }
                     }
-                }
-            } else if (token.equals("p")) {
-                System.out.print(hta);
-            } else if (token.equals("n")) {
-                System.out.print(hta.toNodes());
-            } else if (token.equals("c")) {
-                System.out.print(hta.toCompactNodes());
-            } else if (token.equals("t")) {
-                System.out.print(hta.toTree());
-            } else if (token.equals("h")) {
-                System.out.print("Word: ");
-                token = in.readLine().trim();
-                System.out.print("Hyphenation points: ");
-                System.out.println(ht.hyphenate(token, minCharCount,
-                                                minCharCount));
-            } else if (token.equals("b")) {
-                if (ht == null) {
-                    System.out.println("No patterns have been loaded.");
+                } else if (token.equals("p")) {
+                    System.out.print(hta);
+                } else if (token.equals("n")) {
+                    System.out.print(hta.toNodes());
+                } else if (token.equals("c")) {
+                    System.out.print(hta.toCompactNodes());
+                } else if (token.equals("t")) {
+                    System.out.print(hta.toTree());
+                } else if (token.equals("h")) {
+                    System.out.print("Word: ");
+                    token = in.readLine().trim();
+                    System.out.print("Hyphenation points: ");
+                    System.out.println(ht.hyphenate(token, minCharCount,
+                                                    minCharCount));
+                } else if (token.equals("b")) {
+                    if (ht == null) {
+                        System.out.println("No patterns have been loaded.");
+                        break;
+                    }
+                    System.out.print("Word list filename: ");
+                    token = in.readLine().trim();
+                    long starttime = 0;
+                    int counter = 0;
+                    try {
+                        BufferedReader reader = new BufferedReader(new FileReader(token));
+                        String line;
+                        
+                        starttime = System.currentTimeMillis();
+                        while ((line = reader.readLine()) != null) {
+                            // System.out.print("\nline: ");
+                            Hyphenation hyp = ht.hyphenate(line, minCharCount,
+                                                           minCharCount);
+                            if (hyp != null) {
+                                String hword = hyp.toString();
+                                // System.out.println(line);
+                                // System.out.println(hword);
+                            } else {
+                                // System.out.println("No hyphenation");
+                            }
+                            counter++;
+                        }
+                    } catch (Exception ioe) {
+                        System.out.println("Exception " + ioe);
+                        ioe.printStackTrace();
+                    }
+                    long endtime = System.currentTimeMillis();
+                    long result = endtime - starttime;
+                    System.out.println(counter + " words in " + result
+                                       + " Milliseconds hyphenated");
+                    
+                } else if (token.equals("q")) {
                     break;
                 }
-                System.out.print("Word list filename: ");
-                token = in.readLine().trim();
-                long starttime = 0;
-                int counter = 0;
-                try {
-                    BufferedReader reader = new BufferedReader(new FileReader(token));
-                    String line;
-
-                    starttime = System.currentTimeMillis();
-                    while ((line = reader.readLine()) != null) {
-                        // System.out.print("\nline: ");
-                        Hyphenation hyp = ht.hyphenate(line, minCharCount,
-                                                       minCharCount);
-                        if (hyp != null) {
-                            String hword = hyp.toString();
-                            // System.out.println(line);
-                            // System.out.println(hword);
-                        } else {
-                            // System.out.println("No hyphenation");
-                        }
-                        counter++;
-                    }
-                } catch (Exception ioe) {
-                    System.out.println("Exception " + ioe);
-                    ioe.printStackTrace();
-                }
-                long endtime = System.currentTimeMillis();
-                long result = endtime - starttime;
-                System.out.println(counter + " words in " + result
-                                   + " Milliseconds hyphenated");
-
-            } else if (token.equals("q")) {
-                break;
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
 
