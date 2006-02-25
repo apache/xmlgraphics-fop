@@ -15,7 +15,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<!-- $Id: $ -->
+<!-- $Id$ -->
 <!--DOCTYPE disabled-testcases SYSTEM "disabled-testcases.dtd"-->
 <disabled-testcases>
   <testcase>
@@ -175,6 +175,12 @@
     use-content leaders whose height is larger than the rest of the
     line.</description>
     <reference>http://www.nabble.com/leaders-with-leader-pattern%3D%22use-content%22-t546244.html</reference>
+  </testcase>
+  <testcase>
+    <name>linefeed-treatment in title</name>
+    <file>title_linefeed-treatment.xml</file>
+    <description>linefeed treatment and white space
+collapse are not performed on a fo:title</description>
   </testcase>
   <testcase>
     <name>keep-with-previous doesn't work in lists</name>
