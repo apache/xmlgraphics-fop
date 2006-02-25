@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.flow.Inline;
 import org.apache.fop.fo.flow.InlineLevel;
 import org.apache.fop.fo.flow.Leader;
+import org.apache.fop.fo.pagination.Title;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.SpaceProperty;
@@ -38,9 +39,7 @@ import org.apache.fop.layoutmgr.BlockKnuthSequence;
 import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.KnuthBox;
-import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthSequence;
-import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.layoutmgr.SpaceSpecifier;
@@ -48,7 +47,6 @@ import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
-import org.apache.fop.layoutmgr.inline.InlineStackingLayoutManager.StackingIter;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
 
@@ -104,10 +102,10 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         int padding = 0;
         font = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo(), this);
         lineHeight = fobj.getLineHeight();
-
+        borderProps = fobj.getCommonBorderPaddingBackground();
+        inlineProps = fobj.getCommonMarginInline();
+        
         if (fobj instanceof Inline) {
-            inlineProps = fobj.getCommonMarginInline();
-            borderProps = fobj.getCommonBorderPaddingBackground();
             alignmentAdjust = ((Inline)fobj).getAlignmentAdjust();
             alignmentBaseline = ((Inline)fobj).getAlignmentBaseline();
             baselineShift = ((Inline)fobj).getBaselineShift();
@@ -229,14 +227,21 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
 
         SpaceSpecifier leadingSpace = context.getLeadingSpace();
         
-        alignmentContext = new AlignmentContext(font
+        if (fobj instanceof Title) {
+            alignmentContext = new AlignmentContext(font,
+                                    lineHeight.getOptimum(this).getLength().getValue(this),
+                                    context.getWritingMode());
+                                                    
+        } else {
+            alignmentContext = new AlignmentContext(font
                                     , lineHeight.getOptimum(this).getLength().getValue(this)
                                     , alignmentAdjust
                                     , alignmentBaseline
                                     , baselineShift
                                     , dominantBaseline
                                     , context.getAlignmentContext());
-
+        }
+        
         childLC = new LayoutContext(context);
         childLC.setAlignmentContext(alignmentContext);
 

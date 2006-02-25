@@ -18,8 +18,8 @@
 <testcase>
   <info>
     <p>
-      This test checks that an empty fo:title does not cause a
-NullPointerException and does not generate any text.
+      This test checks that a fo:title is rendered to the area tree
+with the correct content, not causing a NullPointerException.
     </p>
   </info>
   <fo>
@@ -32,7 +32,7 @@ NullPointerException and does not generate any text.
       </fo:layout-master-set>
     
       <fo:page-sequence master-reference="small">
-        <fo:title/>
+        <fo:title>The <fo:inline color="red">title</fo:inline> of the <fo:inline font-size="medium">article</fo:inline></fo:title>
         <fo:flow flow-name="xsl-region-body">
           <fo:block/>
         </fo:flow>
@@ -40,6 +40,9 @@ NullPointerException and does not generate any text.
     </fo:root>
   </fo>
   <checks>
-    <eval expected="" xpath="//title"/>
+    <eval expected="The title of the article" xpath="//title"/>
+    <eval expected="4" xpath="count(//title/inlineparent/*)"/>
+    <eval expected="2" xpath="count(//title/inlineparent/inlineparent)"/>
+    <eval expected="2" xpath="count(//title/inlineparent/text)"/>
   </checks>
 </testcase>
