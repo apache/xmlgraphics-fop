@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,6 @@ package org.apache.fop.layoutmgr.inline;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.flow.RetrieveMarker;
 import org.apache.fop.fo.pagination.Title;
 import org.apache.fop.layoutmgr.AbstractBaseLayoutManager;
 import org.apache.fop.layoutmgr.KnuthElement;
@@ -259,6 +257,7 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
         LinkedList contentList = new LinkedList();
         LinkedList returnedList;
 
+        childLM.initialize();
         while (!childLM.isFinished()) {
             // get KnuthElements from childLM
             returnedList = childLM.getNextKnuthElements(context, alignment);
