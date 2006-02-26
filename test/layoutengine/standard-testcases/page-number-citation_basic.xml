@@ -55,19 +55,22 @@
     </fo:root>
   </fo>
   <checks>
-    <eval expected="page: 1 of 2" xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/lineArea"/>
-    <eval expected="page: 1, bof1 is on page 1" xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[2]/lineArea"/>
-    <eval expected="page: 1, bof2 is on page 11" xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[3]/lineArea"/>
+    <eval expected="2" xpath="count(//pageSequence)"/>
+    <eval expected="2" xpath="count(//pageSequence[1]/pageViewport)"/>
+    <eval expected="2" xpath="count(//pageSequence[2]/pageViewport)"/>
+    <eval expected="page: 1 of 2" xpath="//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/lineArea"/>
+    <eval expected="page: 1, bof1 is on page 1" xpath="//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span/flow/block[2]/lineArea"/>
+    <eval expected="page: 1, bof2 is on page 11" xpath="//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span/flow/block[3]/lineArea"/>
 
-    <eval expected="page: 2" xpath="//pageViewport[2]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/lineArea"/>
-    <eval expected="page: 2" xpath="//pageViewport[2]/page/regionViewport/regionBody/mainReference/span/flow/block[2]/lineArea"/>
-    <eval expected="page: 2 of 2" xpath="//pageViewport[2]/page/regionViewport/regionBody/mainReference/span/flow/block[3]/lineArea"/>
+    <eval expected="page: 2" xpath="//pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/lineArea"/>
+    <eval expected="page: 2" xpath="//pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[2]/lineArea"/>
+    <eval expected="page: 2 of 2" xpath="//pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[3]/lineArea"/>
 
-    <eval expected="page: 11 of 12" xpath="//pageViewport[3]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/lineArea"/>
-    <eval expected="page: 11" xpath="//pageViewport[3]/page/regionViewport/regionBody/mainReference/span/flow/block[2]/lineArea"/>
+    <eval expected="page: 11 of 12" xpath="//pageViewport[@nr=11]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/lineArea"/>
+    <eval expected="page: 11" xpath="//pageViewport[@nr=11]/page/regionViewport/regionBody/mainReference/span/flow/block[2]/lineArea"/>
 
-    <eval expected="page: 12, bof1 is on page 1" xpath="//pageViewport[4]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/lineArea"/>
-    <eval expected="page: 12, bof2 is on page 11" xpath="//pageViewport[4]/page/regionViewport/regionBody/mainReference/span/flow/block[2]/lineArea"/>
-    <eval expected="page: 12 of 12" xpath="//pageViewport[4]/page/regionViewport/regionBody/mainReference/span/flow/block[3]/lineArea"/>
+    <eval expected="page: 12, bof1 is on page 1" xpath="//pageViewport[@nr=12]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/lineArea"/>
+    <eval expected="page: 12, bof2 is on page 11" xpath="//pageViewport[@nr=12]/page/regionViewport/regionBody/mainReference/span/flow/block[2]/lineArea"/>
+    <eval expected="page: 12 of 12" xpath="//pageViewport[@nr=12]/page/regionViewport/regionBody/mainReference/span/flow/block[3]/lineArea"/>
   </checks>
 </testcase>

@@ -55,7 +55,6 @@ import org.apache.fop.fo.ElementMappingRegistry;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
 import org.apache.fop.traits.BorderProps;
@@ -127,6 +126,7 @@ public class AreaTreeParser {
         private PageViewport currentPageViewport;
         private Stack areaStack = new Stack();
         private boolean firstFlow;
+        private boolean pendingStartPageSequence;
         
         private Stack delegateStack = new Stack();
         private ContentHandler delegate;
@@ -141,6 +141,7 @@ public class AreaTreeParser {
             makers.put("areaTree", new AreaTreeMaker());
             makers.put("page", new PageMaker());
             makers.put("pageSequence", new PageSequenceMaker());
+            makers.put("title", new TitleMaker());
             makers.put("pageViewport", new PageViewportMaker());
             makers.put("regionViewport", new RegionViewportMaker());
             makers.put("regionBefore", new RegionBeforeMaker());
@@ -324,13 +325,34 @@ public class AreaTreeParser {
         private class PageSequenceMaker extends AbstractMaker {
 
             public void startElement(Attributes attributes) {
-                treeModel.startPageSequence(null);
+                pendingStartPageSequence = true;
+                //treeModel.startPageSequence(null); Done after title or on the first viewport
             }
+        }
+        
+        private class TitleMaker extends AbstractMaker {
+
+            public void startElement(Attributes attributes) {
+                LineArea line = new LineArea();
+                areaStack.push(line);
+            }
+
+            public void endElement() {
+                LineArea line = (LineArea)areaStack.pop();
+                treeModel.startPageSequence(line);
+                pendingStartPageSequence = false;
+            }
+            
+            
         }
         
         private class PageViewportMaker extends AbstractMaker {
 
             public void startElement(Attributes attributes) {
+                if (pendingStartPageSequence) {
+                    treeModel.startPageSequence(null);
+                    pendingStartPageSequence = false;
+                }
                 if (currentPageViewport != null) {
                     throw new IllegalStateException("currentPageViewport must be null");
                 }
