@@ -52,6 +52,8 @@ public class PageViewport implements Resolvable, Cloneable {
     private String pageNumberString = null;
     private int pageIndex = -1; //-1 = undetermined
     private boolean blank;
+    
+    private transient PageSequence pageSequence;
 
     // list of id references and the rectangle on the page
     //private Map idReferences = null;
@@ -131,6 +133,19 @@ public class PageViewport implements Resolvable, Cloneable {
         this.pageNumberString = pageStr;
         this.simplePageMasterName = simplePageMasterName;
         this.blank = blank;
+    }
+    
+    /**
+     * Sets the page sequence this page belongs to
+     * @param seq the page sequence
+     */
+    public void setPageSequence(PageSequence seq) {
+        this.pageSequence = seq;
+    }
+    
+    /** @return the page sequence this page belongs to */
+    public PageSequence getPageSequence() {
+        return this.pageSequence;
     }
     
     /**

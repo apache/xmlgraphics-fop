@@ -90,7 +90,9 @@ public class RenderPagesModel extends AreaTreeModel {
      */
     public void startPageSequence(LineArea title) {
         super.startPageSequence(title);
-        renderer.startPageSequence(title);
+        if (renderer.supportsOutOfOrder()) {
+            renderer.startPageSequence(title);
+        }
     }
 
     /**
@@ -110,6 +112,9 @@ public class RenderPagesModel extends AreaTreeModel {
         // could be referenced
         boolean ready = renderer.supportsOutOfOrder() && page.isResolved();
         if (ready) {
+            if (!renderer.supportsOutOfOrder() && page.getPageSequence().isFirstPage(page)) {
+                renderer.startPageSequence(this.currentPageSequence.getTitle());
+            }
             try {
                 renderer.renderPage(page);
             } catch (Exception e) {
@@ -149,6 +154,9 @@ public class RenderPagesModel extends AreaTreeModel {
         for (Iterator iter = prepared.iterator(); iter.hasNext();) {
             PageViewport p = (PageViewport)iter.next();
             if (p.isResolved() || renderUnresolved) {
+                if (!renderer.supportsOutOfOrder() && p.getPageSequence().isFirstPage(p)) {
+                    renderer.startPageSequence(this.currentPageSequence.getTitle());
+                }
                 try {
                     renderer.renderPage(p);
                     if (!p.isResolved()) {
