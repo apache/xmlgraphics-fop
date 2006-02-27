@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 The Apache Software Foundation.
+ * Copyright 2005-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,6 +76,14 @@ public class XMLWhiteSpaceHandler {
             this.linefeedTreatment = currentBlock.getLinefeedTreatment();
             this.whiteSpaceCollapse = currentBlock.getWhitespaceCollapse();
             this.whiteSpaceTreatment = currentBlock.getWhitespaceTreatment();
+        } else if (fo.getNameId() == Constants.FO_TITLE
+                || fo.getNameId() == Constants.FO_BOOKMARK_TITLE) {
+            /* Two special types of FO that can contain #PCDATA
+             * set properties to their initial values
+             */
+            this.linefeedTreatment = Constants.EN_TREAT_AS_SPACE;
+            this.whiteSpaceCollapse = Constants.EN_TRUE;
+            this.whiteSpaceTreatment = Constants.EN_IGNORE_IF_SURROUNDING_LINEFEED;
         }
         currentFO = fo;
         if (firstTextNode == null) {
