@@ -293,15 +293,16 @@ public abstract class PropertyList {
             convertAttributeToProperty(attributes, attributeName, 
                     attributeValue);
         }
-            
+        
+        String attributeNS;
         for (int i = 0; i < attributes.getLength(); i++) {
-          /* convert all attributes with the same namespace as the fo element for this fObj */
-          String attributeNS = attributes.getURI(i); 
-          if (attributeNS.length() == 0 || attributeNS.equals(fobj.getNamespaceURI())) {
-              attributeName = attributes.getQName(i);
-              attributeValue = attributes.getValue(i);
-              convertAttributeToProperty(attributes, attributeName, attributeValue);
-          }
+            /* convert all attributes with the same namespace as the fo element for this fObj */
+            attributeNS = attributes.getURI(i); 
+            if (attributeNS.length() == 0 || attributeNS.equals(fobj.getNamespaceURI())) {
+                attributeName = attributes.getQName(i);
+                attributeValue = attributes.getValue(i);
+                convertAttributeToProperty(attributes, attributeName, attributeValue);
+            }
         }
     }
 
