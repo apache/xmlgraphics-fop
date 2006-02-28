@@ -1688,31 +1688,45 @@ public class FOPropertyMapping implements Constants {
 
         // text-align-last
         m  = new EnumProperty.Maker(PR_TEXT_ALIGN_LAST) {
-            public Property compute(PropertyList propertyList) throws PropertyException {
-                Property corresponding = propertyList.get(PR_TEXT_ALIGN);
-                if (corresponding == null) {
-                    return null;
-                }
-                int correspondingValue = corresponding.getEnum();
-                if (correspondingValue == EN_JUSTIFY) {
-                    return getEnumProperty(EN_START, "START");
-                } else if (correspondingValue == EN_END) {
-                    return getEnumProperty(EN_END, "END");
-                } else if (correspondingValue == EN_START) {
-                    return getEnumProperty(EN_START, "START");
-                } else if (correspondingValue == EN_CENTER) {
-                    return getEnumProperty(EN_CENTER, "CENTER");
+            public Property convertProperty(Property p,
+                    PropertyList propertyList,
+                    FObj fo) throws PropertyException {
+                int en = p.getEnum();
+                if (en == EN_RELATIVE) {
+                    Property corresponding = propertyList.get(PR_TEXT_ALIGN);
+                    if (corresponding == null) {
+                        return p;
+                    }
+                    int correspondingValue = corresponding.getEnum();
+                    if (correspondingValue == EN_JUSTIFY) {
+                        return getEnumProperty(EN_START, "START");
+                    } else if (correspondingValue == EN_END) {
+                        return getEnumProperty(EN_END, "END");
+                    } else if (correspondingValue == EN_START) {
+                        return getEnumProperty(EN_START, "START");
+                    } else if (correspondingValue == EN_CENTER) {
+                        return getEnumProperty(EN_CENTER, "CENTER");
+                    } else {
+                        return p;
+                    }
                 } else {
-                    return null;
+                    return p;
                 }
             }
         };
         m.setInherited(true);
+        // Note: both 'end', 'right' and 'outside' are mapped to END
+        //       both 'start', 'left' and 'inside' are mapped to START
+        m.addEnum("relative", getEnumProperty(EN_RELATIVE, "RELATIVE"));
         m.addEnum("center", getEnumProperty(EN_CENTER, "CENTER"));
         m.addEnum("end", getEnumProperty(EN_END, "END"));
+        m.addEnum("right", getEnumProperty(EN_END, "END"));
         m.addEnum("start", getEnumProperty(EN_START, "START"));
+        m.addEnum("left", getEnumProperty(EN_START, "START"));
         m.addEnum("justify", getEnumProperty(EN_JUSTIFY, "JUSTIFY"));
-        m.setDefault("start");
+        m.addEnum("inside", getEnumProperty(EN_START, "START"));
+        m.addEnum("outside", getEnumProperty(EN_END, "END"));
+        m.setDefault("relative", true);
         addPropertyMaker("text-align-last", m);
 
         // text-indent
