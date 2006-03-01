@@ -150,7 +150,7 @@ list of possible build targets.
   <property name="javac.deprecation" value="on"/>
   <property name="javac.source" value="1.3"/>
   <property name="javac.target" value="1.3"/>
-  <property name="javac.fork" value="off"/>
+  <property name="javac.fork" value="no"/>
 
   <property name="junit.fork" value="on"/>
 
@@ -380,7 +380,7 @@ list of possible build targets.
   <target name="compile-java" depends="init, codegen" description="Compiles the source code">
     <!-- create directories -->
     <mkdir dir="${build.classes.dir}"/>
-    <javac destdir="${build.classes.dir}" fork="javac.fork" debug="${javac.debug}"
+    <javac destdir="${build.classes.dir}" fork="${javac.fork}" debug="${javac.debug}"
            deprecation="${javac.deprecation}" optimize="${javac.optimize}"
            source="${javac.source}" target="${javac.target}">
       <src path="${build.gensrc.dir}"/>
@@ -408,7 +408,7 @@ list of possible build targets.
     </copy>
 
     <mkdir dir="${build.sandbox-classes.dir}"/>
-    <javac destdir="${build.sandbox-classes.dir}" fork="javac.fork" debug="${javac.debug}"
+    <javac destdir="${build.sandbox-classes.dir}" fork="${javac.fork}" debug="${javac.debug}"
            deprecation="${javac.deprecation}" optimize="${javac.optimize}"
            source="${javac.source}" target="${javac.target}">
       <src path="${src.sandbox.dir}"/>
@@ -473,9 +473,16 @@ list of possible build targets.
     <tstamp>
       <format property="ts" pattern="yyyyMMdd-HHmmss-z"/>
     </tstamp>
+    
+    <pathconvert property="manifest.classpath" dirsep="/" pathsep=" " refid="libs-build-classpath">
+      <map from="${basedir}${file.separator}lib${file.separator}" to=""/>
+      <map from="${optional.lib.dir}${file.separator}" to=""/>
+    </pathconvert>
+
     <jar jarfile="${build.dir}/fop.jar" basedir="${build.classes.dir}">
       <manifest>
         <attribute name="Main-Class" value="org.apache.fop.cli.Main"/>
+        <attribute name="Class-Path" value="${manifest.classpath}"/>
         <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}])"/>
         <section name="org/apache/fop/">
           <attribute name="Specification-Title" value="XSL-FO - Extensible Stylesheet Language"/>
@@ -521,6 +528,7 @@ list of possible build targets.
         <include name="commons-logging*.jar"/>
         <include name="batik*.jar"/>
         <include name="commons-io*.jar"/>
+        <include name="xmlgraphics*.jar"/>
       </lib>
       <lib dir="${build.dir}">
         <include name="fop.jar"/>
@@ -573,6 +581,7 @@ list of possible build targets.
     <include name="commons-io*.jar"/>
     <include name="avalon-framework*.jar"/>
     <include name="commons-logging*.jar"/>
+    <include name="xmlgraphics*.jar"/>
   </fileset>
   
   <target name="uptodate-transcoder-pkg" depends="compile-java">
@@ -655,7 +664,7 @@ list of possible build targets.
   </target>
   <target name="junit-compile" depends="package, transcoder-pkg, junit-with-xmlunit, junit-without-xmlunit" description="Runs FOP's JUnit tests" if="junit.present">
     <mkdir dir="${build.dir}/test-classes"/>
-    <javac destdir="${build.dir}/test-classes" fork="javac.fork"
+    <javac destdir="${build.dir}/test-classes" fork="${javac.fork}"
            debug="${javac.debug}" deprecation="${javac.deprecation}"
            optimize="${javac.optimize}" source="${javac.source}"
            target="${javac.target}">
