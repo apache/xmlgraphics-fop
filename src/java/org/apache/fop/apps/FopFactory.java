@@ -459,10 +459,7 @@ public class FopFactory {
                 if (cfgBaseDir != null) {
                     File dir = new File(cfgBaseDir);
                     if (dir.isDirectory()) {
-                        cfgBaseDir = "file://" + dir.getCanonicalPath() 
-                            + System.getProperty("file.separator");
-                        cfgBaseDir = cfgBaseDir.replace(
-                                System.getProperty("file.separator").charAt(0), '/');
+                        cfgBaseDir = dir.toURL().toExternalForm(); 
                     } else {
                         //The next statement is for validation only
                         new URL(cfgBaseDir);
