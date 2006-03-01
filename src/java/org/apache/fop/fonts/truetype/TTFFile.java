@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2004,2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1043,9 +1043,13 @@ public class TTFFile {
             // This also assumes that psocriptnames exists ("H")
             // Should look it up int the cmap (that wouldn't help
             // for charsets without H anyway...)
+            // Same for xHeight with the letter "x"
             for (int i = 0; i < mtxTab.length; i++) {
                 if ("H".equals(mtxTab[i].getName())) {
                     capHeight = mtxTab[i].getBoundingBox()[3] - mtxTab[i].getBoundingBox()[1];
+                }
+                if ("x".equals(mtxTab[i].getName())) {
+                    xHeight = mtxTab[i].getBoundingBox()[3] - mtxTab[i].getBoundingBox()[1];
                 }
             }
         }

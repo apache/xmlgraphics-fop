@@ -28,6 +28,11 @@
   <changes>
     <release version="FOP Trunk">
       <action context="Code" dev="JM" type="fix">
+        Bugfix: Fixed a problem with certain TrueType fonts which are missing the "PCLT"
+        table, where a baseline-shift="sub" had no effect due to a missing x-height value.
+        (Note: This only affects TTFReader, so the font metric file has to be regenerated.)
+      </action>
+      <action context="Code" dev="JM" type="fix">
         Bugfix: When the base URL was specified as a file system path, the constructed
         URL was wrong.
       </action>
