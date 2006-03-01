@@ -27,6 +27,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix">
+        Bugfix: When the base URL was specified as a file system path, the constructed
+        URL was wrong.
+      </action>
       <action context="Code" dev="JM" type="add" due-to="Jirí Mareš">
         Support for "userconfig" attribute in FOP Ant Task.
       </action>
