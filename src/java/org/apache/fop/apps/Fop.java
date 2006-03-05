@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import java.io.OutputStream;
 import org.xml.sax.helpers.DefaultHandler;
 
 // FOP
-import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FOTreeBuilder;
 
 /**
@@ -58,6 +57,24 @@ public class Fop {
 
     // FOTreeBuilder object to maintain reference for access to results
     private FOTreeBuilder foTreeBuilder = null;
+
+    /**
+     * Constructor for use with already-created FOUserAgents. It uses MIME types to select the 
+     * output format (ex. "application/pdf" for PDF).
+     * @param outputFormat the MIME type of the output format to use (ex. "application/pdf").
+     * @param ua FOUserAgent object
+     * @param stream the output stream
+     */
+    public Fop(String outputFormat, FOUserAgent ua, OutputStream stream) {
+        this.outputFormat = outputFormat;
+
+        foUserAgent = ua;
+        if (foUserAgent == null) {
+            foUserAgent = new FOUserAgent();
+        }
+        
+        this.stream = stream;
+    }
 
     /**
      * Constructor for use with already-created FOUserAgents. It uses MIME types to select the 
