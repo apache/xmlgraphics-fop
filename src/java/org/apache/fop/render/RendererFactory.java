@@ -62,15 +62,12 @@ public class RendererFactory {
     }
     
     private void registerStandardRenderers() {
-        addRendererMaker(new org.apache.fop.render.pdf.PDFRendererMaker());
-        addRendererMaker(new org.apache.fop.render.ps.PSRendererMaker());
-        addRendererMaker(new org.apache.fop.render.txt.TXTRendererMaker());
-        addRendererMaker(new org.apache.fop.render.bitmap.PNGRendererMaker());
-        addRendererMaker(new org.apache.fop.render.bitmap.TIFFRendererMaker());
-        addRendererMaker(new org.apache.fop.render.bitmap.TIFFRendererMaker());
-        addRendererMaker(new org.apache.fop.render.xml.XMLRendererMaker());
-        addRendererMaker(new org.apache.fop.render.awt.AWTRendererMaker());
-        addRendererMaker(new org.apache.fop.render.print.PrintRendererMaker());
+        Iterator rendererMakers = Service.providers(AbstractRendererMaker.class); 
+        if (rendererMakers != null) {
+            while (rendererMakers.hasNext()) {
+                addRendererMaker((String) rendererMakers.next());
+            }
+        }
     }
     
     private void registerStandardEventHandlers() {
