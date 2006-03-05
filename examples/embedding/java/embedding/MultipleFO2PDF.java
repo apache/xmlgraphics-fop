@@ -43,6 +43,7 @@ import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.FormattingResults;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.apps.PageSequenceResults;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * This class demonstrates the conversion of multiple FO files to PDF using FOP.
@@ -73,14 +74,22 @@ public class MultipleFO2PDF {
         try {
             FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
             // configure foUserAgent as desired
-            // Construct fop with desired output format
-            fop = fopFactory.newFop(MimeConstants.MIME_PDF, foUserAgent);
     
             // Setup output stream.  Note: Using BufferedOutputStream
             // for performance reasons (helpful with FileOutputStreams).
             out = new FileOutputStream(pdf);
             out = new BufferedOutputStream(out);
-            fop.setOutputStream(out);
+
+            // Construct fop with desired output format and output stream
+            fop = fopFactory.newFop(MimeConstants.MIME_PDF, foUserAgent, out);
+
+            // This will also check the consistency of your setup
+            DefaultHandler handler;
+            try {
+                handler = fop.getDefaultHandler();
+            } catch (IllegalStateException e) {
+                throw new FOPException(e);
+            }
 
             // Setup JAXP using identity transformer
             TransformerFactory factory = TransformerFactory.newInstance();
@@ -90,7 +99,7 @@ public class MultipleFO2PDF {
             Source src = new StreamSource(fo);
 
             // Resulting SAX events (the generated FO) must be piped through to FOP
-            Result res = new SAXResult(fop.getDefaultHandler());
+            Result res = new SAXResult(handler);
             
             // Start XSLT transformation and FOP processing
             transformer.transform(src, res);

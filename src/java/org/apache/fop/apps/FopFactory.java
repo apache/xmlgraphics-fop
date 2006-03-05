@@ -20,6 +20,7 @@ package org.apache.fop.apps;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -154,6 +155,41 @@ public class FopFactory {
             throw new NullPointerException("The userAgent parameter must not be null!");
         }
         return new Fop(outputFormat, userAgent);
+    }
+    
+    /**
+     * Returns a new {@link Fop} instance. FOP will be configured with a default user agent 
+     * instance. Use this factory method if your output type requires an output stream.
+     * <p>
+     * MIME types are used to select the output format (ex. "application/pdf" for PDF). You can
+     * use the constants defined in {@link MimeConstants}.
+     * @param outputFormat the MIME type of the output format to use (ex. "application/pdf"). 
+     * @param stream the output stream
+     * @return the new Fop instance
+     */
+    public Fop newFop(String outputFormat, OutputStream stream) {
+        return new Fop(outputFormat, newFOUserAgent(), stream);
+    }
+
+    /**
+     * Returns a new {@link Fop} instance. Use this factory method if your output type
+     * requires an output stream and you want to configure this very rendering run,
+     * i.e. if you want to set some metadata like the title and author of the document
+     * you want to render. In that case, create a new {@link FOUserAgent} instance
+     * using {@link #newFOUserAgent()}.
+     * <p>
+     * MIME types are used to select the output format (ex. "application/pdf" for PDF). You can
+     * use the constants defined in {@link MimeConstants}.
+     * @param outputFormat the MIME type of the output format to use (ex. "application/pdf").
+     * @param userAgent the user agent that will be used to control the rendering run     
+     * @param stream the output stream
+     * @return the new Fop instance
+     */
+    public Fop newFop(String outputFormat, FOUserAgent userAgent, OutputStream stream) {
+        if (userAgent == null) {
+            throw new NullPointerException("The userAgent parameter must not be null!");
+        }
+        return new Fop(outputFormat, userAgent, stream);
     }
     
     /**
