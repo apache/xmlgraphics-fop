@@ -259,7 +259,6 @@ public class TableContentLayoutManager implements PercentBaseContext {
             //Check for break-after on the table-row at the end of the row group
             rowFO = rowGroup[rowGroup.length - 1].getTableRow(); 
             if (rowFO != null && rowFO.getBreakAfter() != Constants.EN_AUTO) {
-                log.info("break-after found");
                 if (returnList.size() > 0) {
                     ListElement last = (ListElement)returnList.getLast();
                     if (last instanceof KnuthPenalty) {
