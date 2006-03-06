@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 The Apache Software Foundation.
+ * Copyright 2004-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,24 +54,8 @@ public class RendererFactory {
      * Main constructor.
      */
     public RendererFactory() {
-        registerStandardRenderers();
         discoverRenderers();
-        
-        registerStandardEventHandlers();
         discoverFOEventHandlers();
-    }
-    
-    private void registerStandardRenderers() {
-        Iterator rendererMakers = Service.providers(AbstractRendererMaker.class); 
-        if (rendererMakers != null) {
-            while (rendererMakers.hasNext()) {
-                addRendererMaker((String) rendererMakers.next());
-            }
-        }
-    }
-    
-    private void registerStandardEventHandlers() {
-        addFOEventHandlerMaker(new org.apache.fop.render.rtf.RTFFOEventHandlerMaker());
     }
     
     /**
