@@ -502,7 +502,7 @@ public class FOUserAgent {
      * @see FopFactory#getPageHeight()
      */
     public String getPageHeight() {
-        return getFactory().getPageWidth();
+        return getFactory().getPageHeight();
     }
     
     /**
