@@ -175,7 +175,7 @@ try {
         JDK logging (available in JDKs 1.4 or higher) as its backend. You can configure Commons
         Logging to use an alternative backend, for example Log4J. Please consult the
         <a href="ext:jakarta/commons/logging">documentation for Jakarta Commons Logging</a> on
-        how to configure altentive backends.
+        how to configure alternative backends.
       </p>
     </section>
   
