@@ -61,7 +61,7 @@ public class InstreamForeignObject extends AbstractGraphics {
      * @see org.apache.fop.fo.FONode#endOfNode
      */
     protected void endOfNode() throws FOPException {
-        if (childNodes.size() != 1) {
+        if (childNodes == null || childNodes.size() != 1) {
             missingChildElementError("one (1) non-XSL namespace child");
         }
     }
