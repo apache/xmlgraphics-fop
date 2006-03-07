@@ -133,8 +133,9 @@ public class FopFactory {
      * use the constants defined in {@link MimeConstants}.
      * @param outputFormat the MIME type of the output format to use (ex. "application/pdf").     
      * @return the new Fop instance
+     * @throws FOPException when the constructor fails
      */
-    public Fop newFop(String outputFormat) {
+    public Fop newFop(String outputFormat) throws FOPException {
         return new Fop(outputFormat, newFOUserAgent());
     }
 
@@ -149,8 +150,9 @@ public class FopFactory {
      * @param outputFormat the MIME type of the output format to use (ex. "application/pdf").
      * @param userAgent the user agent that will be used to control the rendering run     
      * @return the new Fop instance
+     * @throws FOPException  when the constructor fails
      */
-    public Fop newFop(String outputFormat, FOUserAgent userAgent) {
+    public Fop newFop(String outputFormat, FOUserAgent userAgent) throws FOPException {
         if (userAgent == null) {
             throw new NullPointerException("The userAgent parameter must not be null!");
         }
@@ -166,8 +168,9 @@ public class FopFactory {
      * @param outputFormat the MIME type of the output format to use (ex. "application/pdf"). 
      * @param stream the output stream
      * @return the new Fop instance
+     * @throws FOPException when the constructor fails
      */
-    public Fop newFop(String outputFormat, OutputStream stream) {
+    public Fop newFop(String outputFormat, OutputStream stream) throws FOPException {
         return new Fop(outputFormat, newFOUserAgent(), stream);
     }
 
@@ -184,8 +187,9 @@ public class FopFactory {
      * @param userAgent the user agent that will be used to control the rendering run     
      * @param stream the output stream
      * @return the new Fop instance
+     * @throws FOPException when the constructor fails
      */
-    public Fop newFop(String outputFormat, FOUserAgent userAgent, OutputStream stream) {
+    public Fop newFop(String outputFormat, FOUserAgent userAgent, OutputStream stream) throws FOPException {
         if (userAgent == null) {
             throw new NullPointerException("The userAgent parameter must not be null!");
         }
@@ -199,8 +203,9 @@ public class FopFactory {
      * instance instead of the default ones created internally by FOP.
      * @param userAgent the user agent that will be used to control the rendering run     
      * @return the new Fop instance
+     * @throws FOPException when the constructor fails
      */
-    public Fop newFop(FOUserAgent userAgent) {
+    public Fop newFop(FOUserAgent userAgent) throws FOPException {
         if (userAgent.getRendererOverride() == null 
                 && userAgent.getFOEventHandlerOverride() == null) {
             throw new IllegalStateException("Either the overriding renderer or the overriding"

@@ -85,10 +85,12 @@ public class InputHandler implements ErrorListener, Renderable {
      */
     public void renderTo(FOUserAgent userAgent, String outputFormat, OutputStream out) 
                 throws FOPException {
-        
-        Fop fop = new Fop(outputFormat, userAgent);
+
+        Fop fop;
         if (out != null) {
-            fop.setOutputStream(out);
+            fop = new Fop(outputFormat, userAgent, out);
+        } else {
+            fop = new Fop(outputFormat, userAgent);
         }
 
         // if base URL was not explicitly set in FOUserAgent, obtain here

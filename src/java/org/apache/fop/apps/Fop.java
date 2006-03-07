@@ -64,8 +64,9 @@ public class Fop {
      * @param outputFormat the MIME type of the output format to use (ex. "application/pdf").
      * @param ua FOUserAgent object
      * @param stream the output stream
+     * @throws FOPException if setting up the DefaultHandler fails
      */
-    public Fop(String outputFormat, FOUserAgent ua, OutputStream stream) {
+    public Fop(String outputFormat, FOUserAgent ua, OutputStream stream) throws FOPException {
         this.outputFormat = outputFormat;
 
         foUserAgent = ua;
@@ -74,6 +75,8 @@ public class Fop {
         }
         
         this.stream = stream;
+        
+        createDefaultHandler();
     }
 
     /**
@@ -81,23 +84,28 @@ public class Fop {
      * output format (ex. "application/pdf" for PDF).
      * @param outputFormat the MIME type of the output format to use (ex. "application/pdf").
      * @param ua FOUserAgent object
+     * @throws FOPException if setting up the DefaultHandler fails
      */
-    public Fop(String outputFormat, FOUserAgent ua) {
+    public Fop(String outputFormat, FOUserAgent ua) throws FOPException {
         this.outputFormat = outputFormat;
 
         foUserAgent = ua;
         if (foUserAgent == null) {
             foUserAgent = new FOUserAgent();
         }
+        
+        createDefaultHandler();
     }
 
     /**
      * Constructor for FOP with a default FOUserAgent. It uses MIME types to select the 
      * output format (ex. "application/pdf" for PDF).
      * @param outputFormat the MIME type of the output format to use (ex. "application/pdf").
+     * @deprecated Use a constructor with an FOUserAgent instead!
      */
     public Fop(String outputFormat) {
-        this(outputFormat, null);
+        this.outputFormat = outputFormat;
+        foUserAgent = new FOUserAgent();
     }
 
     /**
@@ -118,19 +126,28 @@ public class Fop {
     }
 
     /**
-     * Returns a DefaultHandler object used to generate the document.
+     * Creates a DefaultHandler object used to generate the document.
      * Note this object implements the ContentHandler interface.
      * For processing with a Transformer object, this DefaultHandler object
      * can be used in the SAXResult constructor.
      * Alternatively, for processing with a SAXParser, this object can be
      * used as the DefaultHandler argument to its parse() methods.
      *
-     * @return a SAX DefaultHandler for handling the SAX events.
+     * @throws FOPException if setting up the DefaultHandler fails
+     */
+    private void createDefaultHandler() throws FOPException {
+        this.foTreeBuilder = new FOTreeBuilder(outputFormat, foUserAgent, stream);
+    }
+
+    /**
+     * Returns the DefaultHandler object used to generate the document.
+     * Checking for null and the exception is only for the deprecated constructor.
+     * @return the SAX DefaultHandler for handling the SAX events.
      * @throws FOPException if setting up the DefaultHandler fails
      */
     public DefaultHandler getDefaultHandler() throws FOPException {
         if (foTreeBuilder == null) {
-            this.foTreeBuilder = new FOTreeBuilder(outputFormat, foUserAgent, stream);
+            createDefaultHandler();
         }
         return this.foTreeBuilder;
     }
