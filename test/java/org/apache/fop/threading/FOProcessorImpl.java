@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 The Apache Software Foundation.
+ * Copyright 2004-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,8 +35,10 @@ import org.apache.avalon.framework.configuration.Configurable;
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.avalon.framework.activity.Initializable;
 
@@ -84,8 +86,9 @@ public class FOProcessorImpl extends AbstractLogEnabled
 
     public void process(InputStream in, Templates templates, OutputStream out) 
                 throws org.apache.fop.apps.FOPException, java.io.IOException {
-        Fop fop = new Fop(MimeConstants.MIME_PDF);
-        fop.setOutputStream(out);
+        FopFactory fopFactory = FopFactory.newInstance();
+        FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
+        Fop fop = new Fop(MimeConstants.MIME_PDF, foUserAgent, out);
 
         try {
             Transformer transformer;

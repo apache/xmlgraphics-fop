@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 The Apache Software Foundation.
+ * Copyright 2005-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -118,8 +118,7 @@ public abstract class AbstractPSPDFBitmapProducer extends AbstractBitmapProducer
                 OutputStream out = new FileOutputStream(tempOut);
                 out = new BufferedOutputStream(out);
                 try {
-                    Fop fop = new Fop(getTargetFormat(), userAgent);
-                    fop.setOutputStream(out);
+                    Fop fop = new Fop(getTargetFormat(), userAgent, out);
                     SAXResult res = new SAXResult(fop.getDefaultHandler());
                     
                     Transformer transformer = getTransformer(context);

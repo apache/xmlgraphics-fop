@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2004,2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,8 +36,10 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.SAXException;
 
 // FOP
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 
 /**
@@ -45,6 +47,9 @@ import org.apache.fop.apps.MimeConstants;
  * It uses a SAXParser with FOP as the DefaultHandler
  */
 public class ExampleFO2PDFUsingSAXParser {
+
+    // configure fopFactory as desired
+    private FopFactory fopFactory = FopFactory.newInstance();
 
     /**
      * Converts an FO file to a PDF file using FOP
@@ -61,17 +66,18 @@ public class ExampleFO2PDFUsingSAXParser {
                ParserConfigurationException,
                FOPException, SAXException, IOException {
 
+        FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
+        // configure foUserAgent as desired
+
         OutputStream out = null;
         
         try {
-            // Construct fop and setup output format
-            Fop fop = new Fop(MimeConstants.MIME_PDF);
-    
             // Setup output stream.  Note: Using BufferedOutputStream
             // for performance reasons (helpful with FileOutputStreams).
             out = new FileOutputStream(pdf);
             out = new BufferedOutputStream(out);
-            fop.setOutputStream(out);
+            // Construct fop and setup output format
+            Fop fop = new Fop(MimeConstants.MIME_PDF, foUserAgent, out);
 
             // Setup SAX parser
             // throws FactoryConfigurationError

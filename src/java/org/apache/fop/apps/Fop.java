@@ -120,6 +120,7 @@ public class Fop {
      * Set the OutputStream to use to output the result of the Render
      * (if applicable)
      * @param stream the stream to output the result of rendering to
+     * @deprecated Set the output stream in the constructor
      */
     public void setOutputStream(OutputStream stream) {
         this.stream = stream;

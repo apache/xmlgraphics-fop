@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,9 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.sax.SAXResult;
 
 //FOP
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 
 /**
@@ -65,15 +67,19 @@ public class ExampleXML2PDF {
             System.out.println();
             System.out.println("Transforming...");
             
-            // Construct fop with desired output format
-            Fop fop = new Fop(MimeConstants.MIME_PDF);
-            
+            // configure fopFactory as desired
+            FopFactory fopFactory = FopFactory.newInstance();
+
+            FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
+            // configure foUserAgent as desired
+
             // Setup output
             OutputStream out = new java.io.FileOutputStream(pdffile);
             out = new java.io.BufferedOutputStream(out);
             
             try {
-                fop.setOutputStream(out);
+                // Construct fop with desired output format
+                Fop fop = new Fop(MimeConstants.MIME_PDF, foUserAgent, out);
     
                 // Setup XSLT
                 TransformerFactory factory = TransformerFactory.newInstance();

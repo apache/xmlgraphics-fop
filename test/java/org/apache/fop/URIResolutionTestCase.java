@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 The Apache Software Foundation.
+ * Copyright 2005-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -117,10 +117,9 @@ public class URIResolutionTestCase extends AbstractFOPTestCase {
         ua.setURIResolver(resolver);
         ua.setBaseURL(foFile.getParentFile().toURL().toString());
 
-        Fop fop = new Fop(MimeConstants.MIME_PDF, ua);
-
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
-        fop.setOutputStream(baout);
+
+        Fop fop = new Fop(MimeConstants.MIME_PDF, ua, baout);
 
         Transformer transformer = tfactory.newTransformer(); //Identity transf.
         Source src = new StreamSource(foFile);

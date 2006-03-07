@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,8 +37,10 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.impl.SimpleLog;
 
 //FOP
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 
 /**
@@ -200,12 +202,17 @@ public class FopServlet extends HttpServlet {
     protected byte[] render(Source src, Transformer transformer)
                 throws FOPException, TransformerException {
 
-        //Setup FOP
-        Fop fop = new Fop(MimeConstants.MIME_PDF);
+        // configure fopFactory as desired
+        FopFactory fopFactory = FopFactory.newInstance();
+
+        FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
+        // configure foUserAgent as desired
 
         //Setup output
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        fop.setOutputStream(out);
+
+        //Setup FOP
+        Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, foUserAgent, out);
 
         //Make sure the XSL transformation's result is piped through to FOP
         Result res = new SAXResult(fop.getDefaultHandler());

@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 The Apache Software Foundation.
+ * Copyright 2005-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,8 +69,7 @@ public class BitmapProducerJava2D extends AbstractBitmapProducer implements Conf
             OutputStream out = new FileOutputStream(outputFile);
             out = new BufferedOutputStream(out);
             try {
-                Fop fop = new Fop(MimeConstants.MIME_PNG, userAgent);
-                fop.setOutputStream(out);
+                Fop fop = new Fop(MimeConstants.MIME_PNG, userAgent, out);
                 SAXResult res = new SAXResult(fop.getDefaultHandler());
                 
                 Transformer transformer = getTransformer(context);
