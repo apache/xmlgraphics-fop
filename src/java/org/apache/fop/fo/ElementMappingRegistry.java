@@ -74,14 +74,6 @@ public class ElementMappingRegistry {
      * Sets all the element and property list mappings to their default values.
      */
     private void setupDefaultMappings() {
-        addElementMapping("org.apache.fop.fo.FOElementMapping");
-        addElementMapping("org.apache.fop.fo.extensions.svg.SVGElementMapping");
-        addElementMapping("org.apache.fop.fo.extensions.svg.BatikExtensionElementMapping");
-        addElementMapping("org.apache.fop.fo.extensions.ExtensionElementMapping");
-        addElementMapping("org.apache.fop.fo.extensions.xmp.XMPElementMapping");
-        addElementMapping("org.apache.fop.fo.extensions.xmp.RDFElementMapping");
-        addElementMapping("org.apache.fop.render.ps.extensions.PSExtensionElementMapping");
-
         // add mappings from available services
         Iterator providers = Service.providers(ElementMapping.class);
         if (providers != null) {

@@ -1,0 +1,7 @@
+org.apache.fop.fo.FOElementMapping
+org.apache.fop.fo.extensions.svg.SVGElementMapping
+org.apache.fop.fo.extensions.svg.BatikExtensionElementMapping
+org.apache.fop.fo.extensions.ExtensionElementMapping
+org.apache.fop.fo.extensions.xmp.XMPElementMapping
+org.apache.fop.fo.extensions.xmp.RDFElementMapping
+org.apache.fop.render.ps.extensions.PSExtensionElementMapping
