@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2004, 2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 
 // FOP
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 
 
@@ -50,6 +52,9 @@ import org.apache.fop.apps.MimeConstants;
  */
 public class ExampleDOM2PDF {
 
+    // configure fopFactory as desired
+    private FopFactory fopFactory = FopFactory.newInstance();
+    
     /** xsl-fo namespace URI */
     protected static String foNS = "http://www.w3.org/1999/XSL/Format";
 
@@ -62,15 +67,16 @@ public class ExampleDOM2PDF {
      */
     public void convertDOM2PDF(Document xslfoDoc, File pdf) {
         try {
-            // Construct fop with desired output format
-            Fop fop = new Fop(MimeConstants.MIME_PDF);
-            
+            FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
+            // configure foUserAgent as desired
+    
             // Setup output
             OutputStream out = new java.io.FileOutputStream(pdf);
             out = new java.io.BufferedOutputStream(out);
     
             try {
-                fop.setOutputStream(out);
+                // Construct fop with desired output format and output stream
+                Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, foUserAgent, out);
                 
                 // Setup Identity Transformer
                 TransformerFactory factory = TransformerFactory.newInstance();

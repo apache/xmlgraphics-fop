@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -115,8 +115,7 @@ public final class GenericFOPTestCase extends TestCase {
         MessageDigest outDigest = MessageDigest.getInstance("MD5");
         DigestOutputStream out =
             new DigestOutputStream(new ByteArrayOutputStream(), outDigest);
-        Fop fop = new Fop(MimeConstants.MIME_PDF, foUserAgent);
-        fop.setOutputStream(out);
+        Fop fop = new Fop(MimeConstants.MIME_PDF, foUserAgent, out);
         InputSource source = new InputSource(new StringReader(fo));
         DigestFilter filter = new DigestFilter("MD5");
         filter.setParent(parserFactory.newSAXParser().getXMLReader());
