@@ -142,7 +142,7 @@ public class ExampleConcat {
         try {
             //Setup fonts and user agent
             FontInfo fontInfo = new FontInfo();
-            FOUserAgent userAgent = new FOUserAgent();
+            FOUserAgent userAgent = fopFactory.newFOUserAgent();
 
             //Construct the AreaTreeModel that will received the individual pages
             AreaTreeModel treeModel = new RenderPagesModel(userAgent, 

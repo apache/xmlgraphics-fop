@@ -41,6 +41,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.AreaTreeModel;
 import org.apache.fop.area.AreaTreeParser;
@@ -58,6 +59,9 @@ import org.w3c.dom.Document;
  */
 public class AreaTreeParserTestCase extends XMLTestCase {
 
+    // configure fopFactory as desired
+    private FopFactory fopFactory = FopFactory.newInstance();
+    
     private static SAXTransformerFactory tFactory 
             = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
     private static Templates stylesheet = null;
@@ -162,7 +166,7 @@ public class AreaTreeParserTestCase extends XMLTestCase {
     }
     
     private FOUserAgent createUserAgent() {
-        FOUserAgent userAgent = new FOUserAgent();
+        FOUserAgent userAgent = fopFactory.newFOUserAgent();
         try {
             userAgent.setBaseURL(testDir.toURL().toExternalForm());
         } catch (MalformedURLException e) {

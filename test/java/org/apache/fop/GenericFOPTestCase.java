@@ -32,6 +32,7 @@ import junit.framework.TestSuite;
 
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.util.DigestFilter;
 import org.xml.sax.InputSource;
@@ -46,6 +47,9 @@ import org.xml.sax.InputSource;
  */
 public final class GenericFOPTestCase extends TestCase {
 
+    // configure fopFactory as desired
+    private FopFactory fopFactory = FopFactory.newInstance();
+    
     protected SAXParserFactory parserFactory;
 
     public static Test suite() {
@@ -110,7 +114,7 @@ public final class GenericFOPTestCase extends TestCase {
 
     private void renderPDF(String fo, String digestIn, String digestOut)
         throws Exception {
-        FOUserAgent foUserAgent = new FOUserAgent();
+        FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
         foUserAgent.setCreationDate(new Date(10000));
         MessageDigest outDigest = MessageDigest.getInstance("MD5");
         DigestOutputStream out =

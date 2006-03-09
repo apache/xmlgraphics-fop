@@ -34,6 +34,7 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.commons.io.IOUtils;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 
 /**
@@ -51,6 +52,9 @@ import org.apache.fop.apps.MimeConstants;
  */
 public class BitmapProducerJava2D extends AbstractBitmapProducer implements Configurable {
 
+    // configure fopFactory as desired
+    private FopFactory fopFactory = FopFactory.newInstance();
+    
     private boolean deleteTempFiles;
 
     /** @see org.apache.avalon.framework.configuration.Configurable */
@@ -61,7 +65,7 @@ public class BitmapProducerJava2D extends AbstractBitmapProducer implements Conf
     /** @see org.apache.fop.visual.BitmapProducer */
     public BufferedImage produce(File src, ProducerContext context) {
         try {
-            FOUserAgent userAgent = new FOUserAgent();
+            FOUserAgent userAgent = fopFactory.newFOUserAgent();
             userAgent.setTargetResolution(context.getTargetResolution());
             userAgent.setBaseURL(src.getParentFile().toURL().toString());
             
