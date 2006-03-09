@@ -36,6 +36,7 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.commons.io.IOUtils;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
 
 /**
  * BitmapProducer implementation that uses the PS or PDF renderer and an external converter 
@@ -63,6 +64,9 @@ import org.apache.fop.apps.Fop;
 public abstract class AbstractPSPDFBitmapProducer extends AbstractBitmapProducer 
             implements Configurable {
 
+    // configure fopFactory as desired
+    private FopFactory fopFactory = FopFactory.newInstance();
+    
     private String converter;
     private boolean deleteTempFiles;
     
@@ -106,7 +110,7 @@ public abstract class AbstractPSPDFBitmapProducer extends AbstractBitmapProducer
     /** @see org.apache.fop.visual.BitmapProducer */
     public BufferedImage produce(File src, ProducerContext context) {
         try {
-            FOUserAgent userAgent = new FOUserAgent();
+            FOUserAgent userAgent = fopFactory.newFOUserAgent();
             userAgent.setTargetResolution(context.getTargetResolution());
             userAgent.setBaseURL(src.getParentFile().toURL().toString());
 

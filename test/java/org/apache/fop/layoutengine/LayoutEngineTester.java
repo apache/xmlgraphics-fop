@@ -42,6 +42,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.FormattingResults;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.layoutmgr.ElementListObserver;
@@ -58,6 +59,9 @@ import org.w3c.dom.NodeList;
 public class LayoutEngineTester {
 
     private static final Map CHECK_CLASSES = new java.util.HashMap();
+    
+    // configure fopFactory as desired
+    private FopFactory fopFactory = FopFactory.newInstance();
     
     private SAXTransformerFactory tfactory 
             = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
@@ -128,7 +132,7 @@ public class LayoutEngineTester {
             athandler.setResult(domres);
             
             //Setup FOP for area tree rendering
-            FOUserAgent ua = new FOUserAgent();
+            FOUserAgent ua = fopFactory.newFOUserAgent();
             ua.setBaseURL(testFile.getParentFile().toURL().toString());
             XMLRenderer atrenderer = new XMLRenderer();
             atrenderer.setUserAgent(ua);

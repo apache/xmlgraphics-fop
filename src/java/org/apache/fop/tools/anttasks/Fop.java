@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import java.util.List;
 // FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.cli.InputHandler;
 
@@ -301,6 +302,9 @@ public class Fop extends Task {
 
 class FOPTaskStarter {
 
+    // configure fopFactory as desired
+    private FopFactory fopFactory = FopFactory.newInstance();
+    
     private Fop task;
     private String baseURL = null;
 
@@ -536,7 +540,7 @@ class FOPTaskStarter {
         }
 
         try {
-            FOUserAgent userAgent = new FOUserAgent();
+            FOUserAgent userAgent = fopFactory.newFOUserAgent();
             userAgent.setBaseURL(this.baseURL);
             inputHandler.renderTo(userAgent, outputFormat, out);
         } catch (Exception ex) {

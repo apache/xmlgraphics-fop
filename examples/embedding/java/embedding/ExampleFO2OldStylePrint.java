@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import javax.xml.transform.sax.SAXResult;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.print.PrintRenderer;
 
@@ -44,6 +45,9 @@ import org.apache.fop.render.print.PrintRenderer;
  */
 public class ExampleFO2OldStylePrint {
 
+    // configure fopFactory as desired
+    private FopFactory fopFactory = FopFactory.newInstance();
+    
     /**
      * Prints an FO file using an old-style PrinterJob.
      * @param fo the FO file
@@ -60,7 +64,7 @@ public class ExampleFO2OldStylePrint {
         
         try {
             //Set up a custom user agent so we can supply our own renderer instance
-            FOUserAgent userAgent = new FOUserAgent();
+            FOUserAgent userAgent = fopFactory.newFOUserAgent();
             userAgent.setRendererOverride(renderer);
             
             // Construct fop with desired output format

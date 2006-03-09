@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.cli.InputHandler;
@@ -47,6 +47,9 @@ import org.apache.commons.logging.impl.SimpleLog;
  * pdf rendering.
  */
 public class TestConverter {
+    
+    // configure fopFactory as desired
+    private FopFactory fopFactory = FopFactory.newInstance();
     
     private boolean failOnly = false;
     private String outputFormat = MimeConstants.MIME_FOP_AREA_TREE;
@@ -284,7 +287,7 @@ public class TestConverter {
                                                          + xsl), null);
             }
 
-            FOUserAgent userAgent = new FOUserAgent();
+            FOUserAgent userAgent = fopFactory.newFOUserAgent();
             userAgent.setBaseURL(baseURL);
 
             userAgent.getRendererOptions().put("fineDetail", new Boolean(false));

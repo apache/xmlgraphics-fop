@@ -109,9 +109,10 @@ public class FOUserAgent {
     protected String keywords = null;
     
     /**
-     * Default constructor. <b>Provided for compatibility only. Please use the methods from 
-     * FopFactory to construct FOUserAgent instances!</b>
+     * Default constructor
      * @see org.apache.fop.apps.FopFactory
+     * @deprecated Provided for compatibility only. Please use the methods from 
+     *             FopFactory to construct FOUserAgent instances!
      */
     public FOUserAgent() {
         this(FopFactory.newInstance());

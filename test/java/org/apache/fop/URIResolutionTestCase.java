@@ -40,8 +40,8 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.image.ImageFactory;
 import org.apache.fop.render.xml.XMLRenderer;
 import org.apache.xpath.XPathAPI;
 import org.apache.xpath.objects.XObject;
@@ -52,6 +52,9 @@ import org.w3c.dom.Document;
  */
 public class URIResolutionTestCase extends AbstractFOPTestCase {
 
+    // configure fopFactory as desired
+    private FopFactory fopFactory = FopFactory.newInstance();
+    
     private SAXTransformerFactory tfactory 
             = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
 
@@ -79,7 +82,7 @@ public class URIResolutionTestCase extends AbstractFOPTestCase {
     }
     
     private void innerTestFO1(boolean withStream) throws Exception {
-        FOUserAgent ua = new FOUserAgent();
+        FOUserAgent ua = fopFactory.newFOUserAgent();
 
         //Reset the image caches to force URI resolution!
         ua.getFactory().getImageFactory().clearCaches();
@@ -112,7 +115,7 @@ public class URIResolutionTestCase extends AbstractFOPTestCase {
         //TODO This will only work when we can do URI resolution inside Batik!
         File foFile = new File(getBaseDir(), "test/xml/uri-resolution2.fo");
         
-        FOUserAgent ua = new FOUserAgent();
+        FOUserAgent ua = fopFactory.newFOUserAgent();
         MyURIResolver resolver = new MyURIResolver(false); 
         ua.setURIResolver(resolver);
         ua.setBaseURL(foFile.getParentFile().toURL().toString());
