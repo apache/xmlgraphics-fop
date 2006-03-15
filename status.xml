@@ -28,6 +28,9 @@
   <changes>
     <release version="FOP Trunk">
       <action context="Code" dev="JM" type="fix">
+        Bugfix: Fixed an NPE that was thrown when a table was used inside a footnote-body.
+      </action>
+      <action context="Code" dev="JM" type="fix">
         Bugfix: Fixed a problem with certain TrueType fonts which are missing the "PCLT"
         table, where a baseline-shift="sub" had no effect due to a missing x-height value.
         (Note: This only affects TTFReader, so the font metric file has to be regenerated.)
