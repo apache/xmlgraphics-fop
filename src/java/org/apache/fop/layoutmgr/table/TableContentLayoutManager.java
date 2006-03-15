@@ -120,7 +120,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
 
     /** @return the net footer height */
     protected int getFooterNetHeight() {
-        return this.headerNetHeight;
+        return this.footerNetHeight;
     }
 
     /** @return the header element list */

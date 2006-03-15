@@ -28,6 +28,10 @@
   <changes>
     <release version="FOP Trunk">
       <action context="Code" dev="JM" type="fix">
+        Bugfix: Fixed a copy/paste error in the table layout code that caused wrong page
+        break decisions when table-headers and/or table-footers are used.
+      </action>
+      <action context="Code" dev="JM" type="fix">
         Bugfix: Fixed an NPE that was thrown when a table was used inside a footnote-body.
       </action>
       <action context="Code" dev="JM" type="fix">
