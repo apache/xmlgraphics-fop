@@ -744,7 +744,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         }
         if (lastPar != null) {
             lastPar.endParagraph();
-            ElementListObserver.observe(lastPar, "line", null);
+            ElementListObserver.observe(lastPar, "line", fobj.getId());
             if (log.isTraceEnabled()) {
                 trace.append(" ]");
             }
@@ -1641,9 +1641,15 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 iEndElement--;
                 // this returns the same KnuthElement
                 seqIterator.previous();
-                tempElement = (KnuthElement) seqIterator.previous();
+                if (seqIterator.hasPrevious()) {
+                    tempElement = (KnuthElement) seqIterator.previous();
+                } else {
+                    tempElement = null;
+                }
             }
-            lastLM = tempElement.getLayoutManager();
+            if (tempElement != null) {
+                lastLM = tempElement.getLayoutManager();
+            }
             
             // ignore KnuthGlue and KnuthPenalty objects
             // at the beginning of the line
