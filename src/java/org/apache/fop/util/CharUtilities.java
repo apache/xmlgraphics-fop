@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,9 +53,13 @@ public class CharUtilities {
     public static final int XMLWHITESPACE = 4;
 
 
+    /** normal space */
+    public static final char SPACE = '\u0020';
+    /** non-breaking space */
+    public static final char NBSPACE = '\u00A0';
     /** zero-width space */
     public static final char ZERO_WIDTH_SPACE = '\u200B';
-    /** zero-width no-break space */
+    /** zero-width no-break space (= byte order mark) */
     public static final char ZERO_WIDTH_NOBREAK_SPACE = '\uFEFF';
     
     
@@ -89,22 +93,31 @@ public class CharUtilities {
      * @return True if the character is a normal space
      */
     public static boolean isBreakableSpace(char c) {
-        return (c == ' '
-               || (c >= '\u2000' && c <= '\u200B'));
-//         c == '\u2000'                   // en quad
-//         c == '\u2001'                   // em quad
-//         c == '\u2002'                   // en space
-//         c == '\u2003'                   // em space
-//         c == '\u2004'                   // three-per-em space
-//         c == '\u2005'                   // four--per-em space
-//         c == '\u2006'                   // six-per-em space
-//         c == '\u2007'                   // figure space
-//         c == '\u2008'                   // punctuation space
-//         c == '\u2009'                   // thin space
-//         c == '\u200A'                   // hair space
-//         c == '\u200B'                   // zero width space
+        return (c == SPACE || isFixedWidthSpace(c));
     }
-
+    
+    /**
+     * Method to determine if the character is a (breakable) fixed-width space.
+     * @param c the character to check
+     * @return true if the character has a fixed-width
+     */
+    public static boolean isFixedWidthSpace(char c) {
+        return (c >= '\u2000' && c <= '\u200B') || c == '\u3000';
+//      c == '\u2000'                   // en quad
+//      c == '\u2001'                   // em quad
+//      c == '\u2002'                   // en space
+//      c == '\u2003'                   // em space
+//      c == '\u2004'                   // three-per-em space
+//      c == '\u2005'                   // four--per-em space
+//      c == '\u2006'                   // six-per-em space
+//      c == '\u2007'                   // figure space
+//      c == '\u2008'                   // punctuation space
+//      c == '\u2009'                   // thin space
+//      c == '\u200A'                   // hair space
+//      c == '\u200B'                   // zero width space
+//      c == '\u3000'                   // ideographic space
+    }
+    
     /**
      * Method to determine if the character is a nonbreaking
      * space.
@@ -113,7 +126,7 @@ public class CharUtilities {
      */
     public static boolean isNonBreakableSpace(char c) {
         return
-            (c == '\u00A0'      // no-break space
+            (c == NBSPACE       // no-break space
             || c == '\u202F'    // narrow no-break space
             || c == '\u3000'    // ideographic space
             || c == ZERO_WIDTH_NOBREAK_SPACE);  // zero width no-break space
@@ -141,5 +154,30 @@ public class CharUtilities {
         boolean ret = (isBreakableSpace(c) || isNonBreakableSpace(c));
         return ret;
     }
+    
+    /**
+     * Indicates whether a character is classified as "Alphabetic" by the Unicode standard.
+     * @param ch the character
+     * @return true if the character is "Alphabetic"
+     */
+    public static boolean isAlphabetic(char ch) {
+        //http://www.unicode.org/Public/UNIDATA/UCD.html#Alphabetic
+        //Generated from: Other_Alphabetic + Lu + Ll + Lt + Lm + Lo + Nl
+        int generalCategory = Character.getType(ch);
+        switch (generalCategory) {
+        case Character.UPPERCASE_LETTER: //Lu
+        case Character.LOWERCASE_LETTER: //Ll
+        case Character.TITLECASE_LETTER: //Lt
+        case Character.MODIFIER_LETTER: //Lm
+        case Character.OTHER_LETTER: //Lo
+        case Character.LETTER_NUMBER: //Nl
+            return true;
+        default:
+            //TODO if (ch in Other_Alphabetic) return true; (Probably need ICU4J for that)
+            //Other_Alphabetic contains mostly more exotic characters
+            return false;
+        }
+    }
+    
 }
 

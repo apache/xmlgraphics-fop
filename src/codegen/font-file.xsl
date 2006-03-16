@@ -1,5 +1,5 @@
 <!--
-  Copyright 1999-2004 The Apache Software Foundation
+  Copyright 1999-2004,2006 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -35,6 +35,9 @@
   <xsl:template match="font-metrics">
 package org.apache.fop.fonts.base14;
 
+<xsl:if test="count(kerning) &gt; 0">
+import java.util.Map;
+</xsl:if>
 import org.apache.fop.fonts.FontType;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.fonts.CodePointMapping;
@@ -51,10 +54,29 @@ public class <xsl:value-of select="class-name"/> extends Typeface {
     private final static int[] width;
     private final CodePointMapping mapping =
         CodePointMapping.getMapping("<xsl:value-of select="$encoding"/>");
+<xsl:if test="count(kerning) &gt; 0">
+    private final static Map kerning;
+</xsl:if>
+
+    private boolean enableKerning = false;
 
     static {
         width = new int[256];
         <xsl:apply-templates select="widths"/>
+<xsl:if test="count(kerning) &gt; 0">
+        kerning = new java.util.HashMap();
+        Integer first, second;
+        Map pairs;
+        <xsl:apply-templates select="kerning"/>
+</xsl:if>
+    }
+
+    public <xsl:value-of select="class-name"/>() {
+        this(false);
+    }
+
+    public <xsl:value-of select="class-name"/>(boolean enableKerning) {
+        this.enableKerning = enableKerning;
     }
 
     public String getEncoding() {
@@ -98,19 +120,31 @@ public class <xsl:value-of select="class-name"/> extends Typeface {
     }
 
     public int[] getWidths() {
-        int[] arr = new int[getLastChar()-getFirstChar()+1];
-        System.arraycopy(width, getFirstChar(), arr, 0, getLastChar()-getFirstChar()+1);
-        //for( int i = 0; i &lt; arr.length; i++) arr[i] *= size;
+        int[] arr = new int[getLastChar() - getFirstChar() + 1];
+        System.arraycopy(width, getFirstChar(), arr, 0, getLastChar() - getFirstChar() + 1);
         return arr;
     }
 
+<xsl:choose>
+  <xsl:when test="count(kerning) &gt; 0">
     public boolean hasKerningInfo() {
-        return false;
+        return enableKerning;
+    }
+
+    public java.util.Map getKerningInfo() {
+        return kerning;
+    }
+  </xsl:when>
+  <xsl:otherwise>
+    public boolean hasKerningInfo() {
+        return false &amp; enableKerning;
     }
 
     public java.util.Map getKerningInfo() {
         return java.util.Collections.EMPTY_MAP;
     }
+  </xsl:otherwise>
+</xsl:choose>
 
     public char mapChar(char c) {
         char d = mapping.mapChar(c);
@@ -129,5 +163,20 @@ public class <xsl:value-of select="class-name"/> extends Typeface {
   </xsl:template>
 
   <xsl:template match="widths/char"><xsl:variable name="char-name" select="@name"/><xsl:variable name="char-num" select="$glyphs[@name = $char-name]/@codepoint"/><xsl:if test="$char-num!=''">        width[0x<xsl:value-of select="$char-num"/>] = <xsl:value-of select="@width"/>;</xsl:if></xsl:template>
+  
+  <xsl:template match="kerning">
+        first = new Integer(<xsl:value-of select="@kpx1"/>);
+        pairs = (Map)kerning.get(first);
+        if (pairs == null) {
+            pairs = new java.util.HashMap();
+            kerning.put(first, pairs);
+        }
+        <xsl:apply-templates select="pair"/>
+  </xsl:template>
+  
+  <xsl:template match="pair">
+        second = new Integer(<xsl:value-of select="@kpx2"/>);
+        pairs.put(second, new Integer(<xsl:value-of select="@kern"/>));
+  </xsl:template>
 </xsl:stylesheet>
 

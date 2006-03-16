@@ -18,8 +18,6 @@
 
 package org.apache.fop.fonts;
 
-import org.apache.fop.apps.FOUserAgent;
-
 // FOP (base 14 fonts)
 import org.apache.fop.fonts.base14.Helvetica;
 import org.apache.fop.fonts.base14.HelveticaBold;
@@ -68,22 +66,39 @@ public class FontSetup {
      * triplets for lookup.
      *
      * @param fontInfo the font info object to set up
-     * @param embedList ???
+     * @param embedList a list of EmbedFontInfo objects
+     * @param resolver the font resolver
      */
-    public static void setup(FontInfo fontInfo, List embedList, FOUserAgent ua) {
+    public static void setup(FontInfo fontInfo, List embedList, FontResolver resolver) {
+        setup(fontInfo, embedList, resolver, false);
+    }
 
-        fontInfo.addMetrics("F1", new Helvetica());
-        fontInfo.addMetrics("F2", new HelveticaOblique());
-        fontInfo.addMetrics("F3", new HelveticaBold());
-        fontInfo.addMetrics("F4", new HelveticaBoldOblique());
-        fontInfo.addMetrics("F5", new TimesRoman());
-        fontInfo.addMetrics("F6", new TimesItalic());
-        fontInfo.addMetrics("F7", new TimesBold());
-        fontInfo.addMetrics("F8", new TimesBoldItalic());
-        fontInfo.addMetrics("F9", new Courier());
-        fontInfo.addMetrics("F10", new CourierOblique());
-        fontInfo.addMetrics("F11", new CourierBold());
-        fontInfo.addMetrics("F12", new CourierBoldOblique());
+    /**
+     * Sets up the font info object.
+     *
+     * Adds metrics for basic fonts and useful family-style-weight
+     * triplets for lookup.
+     *
+     * @param fontInfo the font info object to set up
+     * @param embedList a list of EmbedFontInfo objects
+     * @param resolver the font resolver
+     * @param enableBase14Kerning true if kerning should be enabled for base 14 fonts
+     */
+    public static void setup(FontInfo fontInfo, List embedList, FontResolver resolver, 
+            boolean enableBase14Kerning) {
+
+        fontInfo.addMetrics("F1", new Helvetica(enableBase14Kerning));
+        fontInfo.addMetrics("F2", new HelveticaOblique(enableBase14Kerning));
+        fontInfo.addMetrics("F3", new HelveticaBold(enableBase14Kerning));
+        fontInfo.addMetrics("F4", new HelveticaBoldOblique(enableBase14Kerning));
+        fontInfo.addMetrics("F5", new TimesRoman(enableBase14Kerning));
+        fontInfo.addMetrics("F6", new TimesItalic(enableBase14Kerning));
+        fontInfo.addMetrics("F7", new TimesBold(enableBase14Kerning));
+        fontInfo.addMetrics("F8", new TimesBoldItalic(enableBase14Kerning));
+        fontInfo.addMetrics("F9", new Courier(enableBase14Kerning));
+        fontInfo.addMetrics("F10", new CourierOblique(enableBase14Kerning));
+        fontInfo.addMetrics("F11", new CourierBold(enableBase14Kerning));
+        fontInfo.addMetrics("F12", new CourierBoldOblique(enableBase14Kerning));
         fontInfo.addMetrics("F13", new Symbol());
         fontInfo.addMetrics("F14", new ZapfDingbats());
 
@@ -162,17 +177,18 @@ public class FontSetup {
                                    "normal", Font.NORMAL);
 
         /* Add configured fonts */
-        addConfiguredFonts(fontInfo, embedList, 15, ua);
+        addConfiguredFonts(fontInfo, embedList, 15, resolver);
     }
 
     /**
      * Add fonts from configuration file starting with internal name F<num>.
      * @param fontInfo the font info object to set up
-     * @param fontInfoList
+     * @param fontInfoList a list of EmbedFontInfo objects
      * @param num starting index for internal font numbering
+     * @param resolver the font resolver
      */
     public static void addConfiguredFonts(FontInfo fontInfo, List fontInfoList
-                                        , int num, FOUserAgent userAgent) {
+                                        , int num, FontResolver resolver) {
         if (fontInfoList == null) {
             return; //No fonts to process
         }
@@ -196,7 +212,7 @@ public class FontSetup {
                 LazyFont font = new LazyFont(configFontInfo.getEmbedFile(),
                                              metricsFile,
                                              configFontInfo.getKerning(), 
-                                             userAgent);
+                                             resolver);
                 fontInfo.addMetrics(internalName, font);
 
                 List triplets = configFontInfo.getFontTriplets();

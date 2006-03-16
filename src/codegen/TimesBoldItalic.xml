@@ -1,5 +1,5 @@
 <!--
-  Copyright 1999-2004 The Apache Software Foundation
+  Copyright 1999-2004,2006 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -258,4 +258,384 @@
       <char name="zcaron" width="389"/>
       <char name="zero" width="500"/>
    </widths>
+  <kerning kpx1="79">
+    <pair kern="-40" kpx2="65"/>
+    <pair kern="-50" kpx2="87"/>
+    <pair kern="-50" kpx2="89"/>
+    <pair kern="-40" kpx2="84"/>
+    <pair kern="0" kpx2="46"/>
+    <pair kern="-50" kpx2="86"/>
+    <pair kern="-40" kpx2="88"/>
+    <pair kern="0" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="107">
+    <pair kern="-10" kpx2="111"/>
+    <pair kern="0" kpx2="121"/>
+    <pair kern="-30" kpx2="101"/>
+  </kerning>
+  <kerning kpx1="112">
+    <pair kern="0" kpx2="121"/>
+  </kerning>
+  <kerning kpx1="80">
+    <pair kern="-55" kpx2="111"/>
+    <pair kern="-40" kpx2="97"/>
+    <pair kern="-85" kpx2="65"/>
+    <pair kern="-129" kpx2="46"/>
+    <pair kern="-50" kpx2="101"/>
+    <pair kern="-129" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="86">
+    <pair kern="-111" kpx2="111"/>
+    <pair kern="-30" kpx2="79"/>
+    <pair kern="-74" kpx2="58"/>
+    <pair kern="-10" kpx2="71"/>
+    <pair kern="-129" kpx2="44"/>
+    <pair kern="-74" kpx2="59"/>
+    <pair kern="-70" kpx2="45"/>
+    <pair kern="-55" kpx2="105"/>
+    <pair kern="-85" kpx2="65"/>
+    <pair kern="-111" kpx2="97"/>
+    <pair kern="-55" kpx2="117"/>
+    <pair kern="-129" kpx2="46"/>
+    <pair kern="-111" kpx2="101"/>
+  </kerning>
+  <kerning kpx1="118">
+    <pair kern="-15" kpx2="111"/>
+    <pair kern="0" kpx2="97"/>
+    <pair kern="-37" kpx2="46"/>
+    <pair kern="-15" kpx2="101"/>
+    <pair kern="-37" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="32">
+    <pair kern="-37" kpx2="65"/>
+    <pair kern="-70" kpx2="87"/>
+    <pair kern="0" kpx2="147"/>
+    <pair kern="-70" kpx2="89"/>
+    <pair kern="0" kpx2="84"/>
+    <pair kern="0" kpx2="145"/>
+    <pair kern="-70" kpx2="86"/>
+  </kerning>
+  <kerning kpx1="97">
+    <pair kern="0" kpx2="119"/>
+    <pair kern="0" kpx2="116"/>
+    <pair kern="0" kpx2="121"/>
+    <pair kern="0" kpx2="112"/>
+    <pair kern="0" kpx2="103"/>
+    <pair kern="0" kpx2="98"/>
+    <pair kern="0" kpx2="118"/>
+  </kerning>
+  <kerning kpx1="70">
+    <pair kern="-70" kpx2="111"/>
+    <pair kern="-40" kpx2="105"/>
+    <pair kern="-50" kpx2="114"/>
+    <pair kern="-95" kpx2="97"/>
+    <pair kern="-100" kpx2="65"/>
+    <pair kern="-129" kpx2="46"/>
+    <pair kern="-100" kpx2="101"/>
+    <pair kern="-129" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="85">
+    <pair kern="-45" kpx2="65"/>
+    <pair kern="0" kpx2="46"/>
+    <pair kern="0" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="100">
+    <pair kern="0" kpx2="100"/>
+    <pair kern="0" kpx2="119"/>
+    <pair kern="0" kpx2="121"/>
+    <pair kern="0" kpx2="46"/>
+    <pair kern="0" kpx2="118"/>
+    <pair kern="0" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="83">
+    <pair kern="0" kpx2="46"/>
+    <pair kern="0" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="122">
+    <pair kern="0" kpx2="111"/>
+    <pair kern="0" kpx2="101"/>
+  </kerning>
+  <kerning kpx1="68">
+    <pair kern="-25" kpx2="65"/>
+    <pair kern="-40" kpx2="87"/>
+    <pair kern="-50" kpx2="89"/>
+    <pair kern="0" kpx2="46"/>
+    <pair kern="-50" kpx2="86"/>
+    <pair kern="0" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="146">
+    <pair kern="0" kpx2="148"/>
+    <pair kern="-15" kpx2="100"/>
+    <pair kern="-74" kpx2="32"/>
+    <pair kern="-74" kpx2="146"/>
+    <pair kern="-15" kpx2="114"/>
+    <pair kern="-37" kpx2="116"/>
+    <pair kern="0" kpx2="108"/>
+    <pair kern="-74" kpx2="115"/>
+    <pair kern="-15" kpx2="118"/>
+  </kerning>
+  <kerning kpx1="58">
+    <pair kern="0" kpx2="32"/>
+  </kerning>
+  <kerning kpx1="119">
+    <pair kern="-15" kpx2="111"/>
+    <pair kern="-10" kpx2="97"/>
+    <pair kern="0" kpx2="104"/>
+    <pair kern="-37" kpx2="46"/>
+    <pair kern="-10" kpx2="101"/>
+    <pair kern="-37" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="75">
+    <pair kern="-25" kpx2="111"/>
+    <pair kern="-30" kpx2="79"/>
+    <pair kern="-20" kpx2="117"/>
+    <pair kern="-20" kpx2="121"/>
+    <pair kern="-25" kpx2="101"/>
+  </kerning>
+  <kerning kpx1="82">
+    <pair kern="-40" kpx2="79"/>
+    <pair kern="-18" kpx2="87"/>
+    <pair kern="-40" kpx2="85"/>
+    <pair kern="-18" kpx2="89"/>
+    <pair kern="-30" kpx2="84"/>
+    <pair kern="-18" kpx2="86"/>
+  </kerning>
+  <kerning kpx1="145">
+    <pair kern="0" kpx2="65"/>
+    <pair kern="-74" kpx2="145"/>
+  </kerning>
+  <kerning kpx1="103">
+    <pair kern="0" kpx2="111"/>
+    <pair kern="0" kpx2="105"/>
+    <pair kern="0" kpx2="114"/>
+    <pair kern="0" kpx2="97"/>
+    <pair kern="0" kpx2="121"/>
+    <pair kern="0" kpx2="46"/>
+    <pair kern="0" kpx2="103"/>
+    <pair kern="0" kpx2="101"/>
+    <pair kern="0" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="66">
+    <pair kern="-25" kpx2="65"/>
+    <pair kern="-10" kpx2="85"/>
+    <pair kern="0" kpx2="46"/>
+    <pair kern="0" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="98">
+    <pair kern="-20" kpx2="117"/>
+    <pair kern="0" kpx2="121"/>
+    <pair kern="-40" kpx2="46"/>
+    <pair kern="0" kpx2="108"/>
+    <pair kern="-10" kpx2="98"/>
+    <pair kern="0" kpx2="118"/>
+    <pair kern="0" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="81">
+    <pair kern="-10" kpx2="85"/>
+    <pair kern="0" kpx2="46"/>
+    <pair kern="0" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="44">
+    <pair kern="-95" kpx2="148"/>
+    <pair kern="0" kpx2="32"/>
+    <pair kern="-95" kpx2="146"/>
+  </kerning>
+  <kerning kpx1="102">
+    <pair kern="0" kpx2="148"/>
+    <pair kern="-10" kpx2="111"/>
+    <pair kern="0" kpx2="105"/>
+    <pair kern="55" kpx2="146"/>
+    <pair kern="0" kpx2="97"/>
+    <pair kern="-18" kpx2="102"/>
+    <pair kern="-10" kpx2="46"/>
+    <pair kern="0" kpx2="108"/>
+    <pair kern="-10" kpx2="101"/>
+    <pair kern="-10" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="84">
+    <pair kern="-95" kpx2="111"/>
+    <pair kern="-18" kpx2="79"/>
+    <pair kern="-37" kpx2="119"/>
+    <pair kern="-74" kpx2="58"/>
+    <pair kern="-37" kpx2="114"/>
+    <pair kern="0" kpx2="104"/>
+    <pair kern="-92" kpx2="44"/>
+    <pair kern="-74" kpx2="59"/>
+    <pair kern="-92" kpx2="45"/>
+    <pair kern="-37" kpx2="105"/>
+    <pair kern="-55" kpx2="65"/>
+    <pair kern="-92" kpx2="97"/>
+    <pair kern="-37" kpx2="117"/>
+    <pair kern="-37" kpx2="121"/>
+    <pair kern="-92" kpx2="46"/>
+    <pair kern="-92" kpx2="101"/>
+  </kerning>
+  <kerning kpx1="121">
+    <pair kern="0" kpx2="111"/>
+    <pair kern="0" kpx2="97"/>
+    <pair kern="-37" kpx2="46"/>
+    <pair kern="0" kpx2="101"/>
+    <pair kern="-37" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="120">
+    <pair kern="-10" kpx2="101"/>
+  </kerning>
+  <kerning kpx1="101">
+    <pair kern="0" kpx2="119"/>
+    <pair kern="0" kpx2="121"/>
+    <pair kern="0" kpx2="112"/>
+    <pair kern="0" kpx2="46"/>
+    <pair kern="0" kpx2="103"/>
+    <pair kern="-10" kpx2="98"/>
+    <pair kern="0" kpx2="120"/>
+    <pair kern="0" kpx2="118"/>
+    <pair kern="0" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="99">
+    <pair kern="-10" kpx2="107"/>
+    <pair kern="-10" kpx2="104"/>
+    <pair kern="0" kpx2="121"/>
+    <pair kern="0" kpx2="46"/>
+    <pair kern="0" kpx2="108"/>
+    <pair kern="0" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="87">
+    <pair kern="-80" kpx2="111"/>
+    <pair kern="-15" kpx2="79"/>
+    <pair kern="-55" kpx2="58"/>
+    <pair kern="0" kpx2="104"/>
+    <pair kern="-74" kpx2="44"/>
+    <pair kern="-55" kpx2="59"/>
+    <pair kern="-50" kpx2="45"/>
+    <pair kern="-37" kpx2="105"/>
+    <pair kern="-74" kpx2="65"/>
+    <pair kern="-85" kpx2="97"/>
+    <pair kern="-55" kpx2="117"/>
+    <pair kern="-55" kpx2="121"/>
+    <pair kern="-74" kpx2="46"/>
+    <pair kern="-90" kpx2="101"/>
+  </kerning>
+  <kerning kpx1="104">
+    <pair kern="0" kpx2="121"/>
+  </kerning>
+  <kerning kpx1="71">
+    <pair kern="0" kpx2="46"/>
+    <pair kern="0" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="105">
+    <pair kern="0" kpx2="118"/>
+  </kerning>
+  <kerning kpx1="65">
+    <pair kern="-50" kpx2="79"/>
+    <pair kern="-74" kpx2="146"/>
+    <pair kern="-74" kpx2="119"/>
+    <pair kern="-100" kpx2="87"/>
+    <pair kern="-65" kpx2="67"/>
+    <pair kern="0" kpx2="112"/>
+    <pair kern="-55" kpx2="81"/>
+    <pair kern="-60" kpx2="71"/>
+    <pair kern="-95" kpx2="86"/>
+    <pair kern="-74" kpx2="118"/>
+    <pair kern="0" kpx2="148"/>
+    <pair kern="-50" kpx2="85"/>
+    <pair kern="-30" kpx2="117"/>
+    <pair kern="-70" kpx2="89"/>
+    <pair kern="-74" kpx2="121"/>
+    <pair kern="-55" kpx2="84"/>
+  </kerning>
+  <kerning kpx1="147">
+    <pair kern="0" kpx2="65"/>
+    <pair kern="0" kpx2="145"/>
+  </kerning>
+  <kerning kpx1="78">
+    <pair kern="-30" kpx2="65"/>
+    <pair kern="0" kpx2="46"/>
+    <pair kern="0" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="115">
+    <pair kern="0" kpx2="119"/>
+  </kerning>
+  <kerning kpx1="111">
+    <pair kern="-25" kpx2="119"/>
+    <pair kern="-10" kpx2="121"/>
+    <pair kern="0" kpx2="103"/>
+    <pair kern="-10" kpx2="120"/>
+    <pair kern="-15" kpx2="118"/>
+  </kerning>
+  <kerning kpx1="114">
+    <pair kern="0" kpx2="111"/>
+    <pair kern="0" kpx2="100"/>
+    <pair kern="0" kpx2="107"/>
+    <pair kern="0" kpx2="114"/>
+    <pair kern="0" kpx2="99"/>
+    <pair kern="0" kpx2="112"/>
+    <pair kern="0" kpx2="103"/>
+    <pair kern="0" kpx2="108"/>
+    <pair kern="0" kpx2="113"/>
+    <pair kern="0" kpx2="118"/>
+    <pair kern="-65" kpx2="44"/>
+    <pair kern="0" kpx2="45"/>
+    <pair kern="0" kpx2="105"/>
+    <pair kern="0" kpx2="109"/>
+    <pair kern="0" kpx2="97"/>
+    <pair kern="0" kpx2="117"/>
+    <pair kern="0" kpx2="116"/>
+    <pair kern="0" kpx2="121"/>
+    <pair kern="-65" kpx2="46"/>
+    <pair kern="0" kpx2="110"/>
+    <pair kern="0" kpx2="115"/>
+    <pair kern="0" kpx2="101"/>
+  </kerning>
+  <kerning kpx1="108">
+    <pair kern="0" kpx2="119"/>
+    <pair kern="0" kpx2="121"/>
+  </kerning>
+  <kerning kpx1="76">
+    <pair kern="0" kpx2="148"/>
+    <pair kern="-55" kpx2="146"/>
+    <pair kern="-37" kpx2="87"/>
+    <pair kern="-37" kpx2="89"/>
+    <pair kern="-37" kpx2="121"/>
+    <pair kern="-18" kpx2="84"/>
+    <pair kern="-37" kpx2="86"/>
+  </kerning>
+  <kerning kpx1="148">
+    <pair kern="0" kpx2="32"/>
+  </kerning>
+  <kerning kpx1="109">
+    <pair kern="0" kpx2="117"/>
+    <pair kern="0" kpx2="121"/>
+  </kerning>
+  <kerning kpx1="89">
+    <pair kern="-111" kpx2="111"/>
+    <pair kern="-92" kpx2="45"/>
+    <pair kern="-55" kpx2="105"/>
+    <pair kern="-25" kpx2="79"/>
+    <pair kern="-92" kpx2="58"/>
+    <pair kern="-92" kpx2="97"/>
+    <pair kern="-74" kpx2="65"/>
+    <pair kern="-92" kpx2="117"/>
+    <pair kern="-74" kpx2="46"/>
+    <pair kern="-111" kpx2="101"/>
+    <pair kern="-92" kpx2="59"/>
+    <pair kern="-92" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="74">
+    <pair kern="-40" kpx2="111"/>
+    <pair kern="-40" kpx2="97"/>
+    <pair kern="-25" kpx2="65"/>
+    <pair kern="-40" kpx2="117"/>
+    <pair kern="-10" kpx2="46"/>
+    <pair kern="-40" kpx2="101"/>
+    <pair kern="-10" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="46">
+    <pair kern="-95" kpx2="148"/>
+    <pair kern="-95" kpx2="146"/>
+  </kerning>
+  <kerning kpx1="110">
+    <pair kern="0" kpx2="117"/>
+    <pair kern="0" kpx2="121"/>
+    <pair kern="-40" kpx2="118"/>
+  </kerning>
 </font-metrics>

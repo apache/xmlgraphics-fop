@@ -28,11 +28,6 @@ public class SpaceArea extends InlineArea {
     protected String space;
 
     /**
-     * The correction offset for the next area
-     */
-    protected int offset = 0;
-    
-    /**
      * Is this space adjustable?
      */
     protected boolean isAdjustable;
@@ -56,16 +51,8 @@ public class SpaceArea extends InlineArea {
         return new String(space);
     }
 
-    /**
-     * @return Returns the offset.
-     */
-    public int getOffset() {
-        return offset;
-    }
-    /**
-     * @param o The offset to set.
-     */
-    public void setOffset(int o) {
-        offset = o;
+    /** @return true if the space is adjustable (WRT word-space processing) */
+    public boolean isAdjustable() {
+        return this.isAdjustable;
     }
 }

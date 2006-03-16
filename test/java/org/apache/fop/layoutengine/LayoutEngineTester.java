@@ -19,12 +19,16 @@
 package org.apache.fop.layoutengine;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
@@ -46,10 +50,14 @@ import org.apache.fop.apps.FormattingResults;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.layoutmgr.ElementListObserver;
 import org.apache.fop.render.xml.XMLRenderer;
+import org.apache.xpath.XPathAPI;
+import org.apache.xpath.objects.XObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * Class for testing the FOP's layout engine using testcases specified in XML
@@ -105,11 +113,12 @@ public class LayoutEngineTester {
      * Runs a single layout engine test case.
      * @param testFile Test case to run
      * @throws TransformerException In case of an XSLT/JAXP problem
-     * @throws FOPException In case of a FOP problem
-     * @throws MalformedURLException if the base URL cannot be set
+     * @throws IOException In case of an I/O problem
+     * @throws SAXException In case of a problem during SAX processing
+     * @throws ParserConfigurationException In case of a problem with the XML parser setup
      */
     public void runTest(File testFile) 
-            throws TransformerException, FOPException, MalformedURLException {
+            throws TransformerException, SAXException, IOException, ParserConfigurationException {
         
         DOMResult domres = new DOMResult();
 
@@ -119,9 +128,19 @@ public class LayoutEngineTester {
         Fop fop;
 
         try {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            dbf.setNamespaceAware(true);
+            dbf.setValidating(false);
+            DocumentBuilder builder = dbf.newDocumentBuilder();
+            Document testDoc = builder.parse(testFile);
+            
+            XObject xo = XPathAPI.eval(testDoc, "/testcase/cfg/base14kerning");
+            String s = xo.str();
+            boolean base14kerning = ("true".equalsIgnoreCase(s));
+            
             //Setup Transformer to convert the testcase XML to XSL-FO
             Transformer transformer = getTestcase2FOStylesheet().newTransformer();
-            Source src = new StreamSource(testFile);
+            Source src = new DOMSource(testDoc);
             
             //Setup Transformer to convert the area tree to a DOM
             TransformerHandler athandler = tfactory.newTransformerHandler();
@@ -130,6 +149,7 @@ public class LayoutEngineTester {
             //Setup FOP for area tree rendering
             FOUserAgent ua = new FOUserAgent();
             ua.setBaseURL(testFile.getParentFile().toURL().toString());
+            ua.setBase14KerningEnabled(base14kerning);
             XMLRenderer atrenderer = new XMLRenderer();
             atrenderer.setUserAgent(ua);
             atrenderer.setContentHandler(athandler);

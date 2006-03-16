@@ -22,24 +22,25 @@ package org.apache.fop.area.inline;
  */
 public class WordArea extends InlineArea {
 
-    /**
-     * The text for this word area
-     */
+    /** The text for this word area */
     protected String word;
     
-    /**
-     * The correction offset for the next area
-     */
+    /** The correction offset for the next area */
     protected int offset = 0;
+    
+    /** An array of width for adjusting the individual letters (optional) */
+    protected int[] letterAdjust;
 
     /**
      * Create a word area
      * @param w the word string
      * @param o the offset for the next area
+     * @param la the letter adjust array (may be null)
      */
-    public WordArea(String w, int o) {
+    public WordArea(String w, int o, int[] la) {
         word = w;
         offset = o;
+        this.letterAdjust = la;
     }
 
     /**
@@ -61,4 +62,10 @@ public class WordArea extends InlineArea {
     public void setOffset(int o) {
         offset = o;
     }
+    
+    /** @return the array of letter adjust widths */
+    public int[] getLetterAdjustArray() {
+        return this.letterAdjust;
+    }
+    
 }

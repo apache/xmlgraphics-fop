@@ -23,6 +23,7 @@ import org.apache.fop.area.Area;
 import org.apache.fop.area.Trait;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontResolver;
 import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.fonts.FontTriplet;
 
@@ -46,7 +47,8 @@ public abstract class PrintRenderer extends AbstractRenderer {
      */
     public void setupFontInfo(FontInfo inFontInfo) {
         this.fontInfo = inFontInfo;
-        FontSetup.setup(fontInfo, fontList, userAgent);
+        FontResolver resolver = new DefaultFontResolver(userAgent);
+        FontSetup.setup(fontInfo, fontList, resolver, userAgent.isBase14KerningEnabled());
     }
 
     /**

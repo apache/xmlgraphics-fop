@@ -79,6 +79,7 @@ public class SpaceVal {
             // and stretch by a half;
             int spaceCharIPD = fs.getCharWidth(' ');
             MinOptMax space = new MinOptMax(-spaceCharIPD / 3, 0, spaceCharIPD / 2);
+            //TODO Adding 2 letter spaces here is not 100% correct. Spaces don't have letter spacing
             return new SpaceVal(
                     MinOptMax.add
                      (space, MinOptMax.multiply(letterSpacing.getSpace(), 2)),

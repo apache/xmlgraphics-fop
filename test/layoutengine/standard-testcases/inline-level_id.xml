@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2005 The Apache Software Foundation
+  Copyright 2005-2006 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -69,7 +69,7 @@
     <eval expected="page-number1" xpath="//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span/flow/block[4]/lineArea/text[2]/@prod-id"/>
     <eval expected="page-number-citation1" xpath="//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span/flow/block[5]/lineArea/text[2]/@prod-id"/>
     <eval expected="leader1" xpath="//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span/flow/block[6]/lineArea/inlineparent/@prod-id"/>
-    <eval expected="char1" xpath="//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span/flow/block[7]/lineArea/char/@prod-id"/>
+    <eval expected="char1" xpath="//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span/flow/block[7]/lineArea/text[2]/@prod-id"/>
     <!--eval expected="bidi1" xpath="//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span/flow/block[8]/lineArea/???/@prod-id"/-->
     <eval expected="link1" xpath="//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span/flow/block[9]/lineArea/inlineparent/@prod-id"/>
     <eval expected="ifo1" xpath="//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span/flow/block[10]/lineArea/viewport/@prod-id"/>

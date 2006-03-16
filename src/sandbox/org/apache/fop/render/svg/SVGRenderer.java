@@ -401,6 +401,7 @@ public class SVGRenderer extends AbstractRenderer {
     /**
      * @see org.apache.fop.render.AbstractRenderer#renderCharacter(Character)
      */
+/* deprecated
     public void renderCharacter(org.apache.fop.area.inline.Character ch) {
         Element text = SVGUtilities.createText(svgDocument,
                                                currentIPPosition / 1000,
@@ -411,6 +412,7 @@ public class SVGRenderer extends AbstractRenderer {
 
         super.renderCharacter(ch);
     }
+*/
 
     /** @see org.apache.fop.render.AbstractRenderer */
     public String getMimeType() {

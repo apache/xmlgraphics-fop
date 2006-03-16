@@ -168,6 +168,11 @@ public class MinOptMax implements java.io.Serializable, Cloneable {
         return (min != 0 || max != 0);
     }
 
+    /** @return true if this instance allows for shrinking or stretching */
+    public boolean isElastic() {
+        return (min != opt || opt != max);
+    }
+    
     /** @see java.lang.Object#toString() */
     public String toString() {
         StringBuffer sb = new StringBuffer();

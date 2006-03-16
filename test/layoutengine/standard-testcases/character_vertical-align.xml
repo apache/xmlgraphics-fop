@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2005 The Apache Software Foundation
+  Copyright 2005-2006 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -50,10 +50,10 @@
     </fo:root>
   </fo>
   <checks>
-    <eval expected="7180" xpath="//flow/block[1]/lineArea/char/@offset"/>
-    <eval expected="7180" xpath="//flow/block[2]/lineArea/char/@offset"/>
-    <eval expected="0" xpath="//flow/block[3]/lineArea/char/@offset"/>
-    <eval expected="4565" xpath="//flow/block[4]/lineArea/char/@offset"/>
-    <eval expected="9250" xpath="//flow/block[5]/lineArea/char/@offset"/>
+    <eval expected="7180" xpath="//flow/block[1]/lineArea/text[2]/@offset"/>
+    <eval expected="7180" xpath="//flow/block[2]/lineArea/text[2]/@offset"/>
+    <eval expected="0" xpath="//flow/block[3]/lineArea/text[2]/@offset"/>
+    <eval expected="4565" xpath="//flow/block[4]/lineArea/text[2]/@offset"/>
+    <eval expected="9250" xpath="//flow/block[5]/lineArea/text[2]/@offset"/>
   </checks>
 </testcase>

@@ -27,6 +27,12 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="add">
+        Added support for fixed-width spaces.
+      </action>
+      <action context="Code" dev="JM" type="add">
+        Added support for kerning.
+      </action>
       <action context="Code" dev="JM" type="fix">
         Bugfix: Fixed a copy/paste error in the table layout code that caused wrong page
         break decisions when table-headers and/or table-footers are used.

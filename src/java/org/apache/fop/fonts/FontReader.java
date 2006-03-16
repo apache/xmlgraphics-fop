@@ -34,7 +34,6 @@ import org.xml.sax.helpers.DefaultHandler;
 
 //FOP
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.FOUserAgent;
 import org.xml.sax.InputSource;
 
 /**
@@ -114,11 +113,11 @@ public class FontReader extends DefaultHandler {
     }
 
     /**
-     * Sets the user agent environment. Needed for URI resolution
-     * @param userAgent the user agent
+     * Sets the font resolver. Needed for URI resolution.
+     * @param resolver the font resolver
      */
-    public void setUserAgent(FOUserAgent userAgent) {
-        returnFont.setUserAgent(userAgent);
+    public void setResolver(FontResolver resolver) {
+        returnFont.setResolver(resolver);
     }
 
 

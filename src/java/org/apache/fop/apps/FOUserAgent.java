@@ -120,6 +120,9 @@ public class FOUserAgent {
     /** @see #setBreakIndentInheritanceOnReferenceAreaBoundary(boolean) */
     private boolean breakIndentInheritanceOnReferenceAreaBoundary = false;
 
+    /** Allows enabling kerning on the base 14 fonts, default is false */
+    private boolean enableBase14Kerning = false;
+    
     /* Additional fo.ElementMapping subclasses set by user */
     private List additionalElementMappings = null;
 
@@ -238,6 +241,19 @@ public class FOUserAgent {
      */
     public void setBreakIndentInheritanceOnReferenceAreaBoundary(boolean value) {
         this.breakIndentInheritanceOnReferenceAreaBoundary = value;
+    }
+    
+    /** @return true if kerning on base 14 fonts is enabled */
+    public boolean isBase14KerningEnabled() {
+        return this.enableBase14Kerning;
+    }
+    
+    /**
+     * Controls whether kerning is activated on base 14 fonts.
+     * @param value true if kerning should be activated
+     */
+    public void setBase14KerningEnabled(boolean value) {
+        this.enableBase14Kerning = value;
     }
     
     /**

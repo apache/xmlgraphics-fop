@@ -21,9 +21,6 @@ package org.apache.fop.fonts;
 import java.util.Map;
 import javax.xml.transform.Source;
 
-import org.apache.fop.apps.FOUserAgent;
-
-
 /**
  * Abstract base class for custom fonts loaded from files, for example.
  */
@@ -33,7 +30,7 @@ public abstract class CustomFont extends Typeface
     private String fontName = null;
     private String embedFileName = null;
     private String embedResourceName = null;
-    private FOUserAgent userAgent = null;
+    private FontResolver resolver = null;
     
     private int capHeight = 0;
     private int xHeight = 0;
@@ -48,7 +45,7 @@ public abstract class CustomFont extends Typeface
     private int firstChar = 0;
     private int lastChar = 255;
 
-    private Map kerning = new java.util.HashMap();
+    private Map kerning;
 
     private boolean useKerning = true;
 
@@ -74,10 +71,11 @@ public abstract class CustomFont extends Typeface
      * @return Source for an embeddable font file or null if not available.
      */
     public Source getEmbedFileSource() {
-        if (userAgent != null && embedFileName != null) {
-            return userAgent.resolveURI(embedFileName, userAgent.getFontBaseURL());
+        if (resolver != null && embedFileName != null) {
+            return resolver.resolve(embedFileName);
+        } else {
+            return null;
         }
-        return null;
     }
 
     /**
@@ -212,14 +210,14 @@ public abstract class CustomFont extends Typeface
      * @see org.apache.fop.fonts.FontMetrics#hasKerningInfo()
      */
     public final boolean hasKerningInfo() {
-        return (isKerningEnabled() & kerning.isEmpty());
+        return (isKerningEnabled() && (kerning != null) && !kerning.isEmpty());
     }
 
     /**
      * @see org.apache.fop.fonts.FontMetrics#getKerningInfo()
      */
     public final Map getKerningInfo() {
-        if (isKerningEnabled()) {
+        if (hasKerningInfo()) {
             return kerning;
         } else {
             return java.util.Collections.EMPTY_MAP;
@@ -343,17 +341,20 @@ public abstract class CustomFont extends Typeface
     }
 
     /**
-     * Sets the user agent environment. Needed for URI resolution
-     * @param userAgent the user agent
+     * Sets the font resolver. Needed for URI resolution.
+     * @param resolver the font resolver
      */
-    public void setUserAgent(FOUserAgent userAgent) {
-        this.userAgent = userAgent;
+    public void setResolver(FontResolver resolver) {
+        this.resolver = resolver;
     }
 
     /**
      * @see org.apache.fop.fonts.MutableFont#putKerningEntry(Integer, Map)
      */
     public void putKerningEntry(Integer key, Map value) {
+        if (kerning == null) {
+            kerning = new java.util.HashMap();
+        }
         this.kerning.put(key, value);
     }
 

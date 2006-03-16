@@ -47,7 +47,7 @@ import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.OffDocumentItem;
 import org.apache.fop.area.BookmarkData;
-import org.apache.fop.area.inline.Character;
+import org.apache.fop.area.inline.AbstractTextArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
@@ -83,6 +83,7 @@ import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
+import org.apache.fop.util.CharUtilities;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fo.extensions.xmp.XMPMetadata;
@@ -185,7 +186,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     /**
      * true if a TJ command is left to be written
      */
-    protected boolean textOpen = false;
+    //protected boolean textOpen = false;
 
     /**
      * true if a BT command has been written. 
@@ -196,18 +197,18 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * the previous Y coordinate of the last word written.
      * Used to decide if we can draw the next word on the same line.
      */
-    protected int prevWordY = 0;
+    //protected int prevWordY = 0;
 
     /**
      * the previous X coordinate of the last word written.
      * used to calculate how much space between two words
      */
-    protected int prevWordX = 0;
+    //protected int prevWordX = 0;
 
     /**
      * The width of the previous word. Used to calculate space between
      */
-    protected int prevWordWidth = 0;
+    //protected int prevWordWidth = 0;
 
     /**
      * reusable word area string buffer to reduce memory usage
@@ -402,6 +403,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     protected void beginTextObject() {
         if (!inTextMode) {
             currentStream.add("BT\n");
+            currentFontName = "";
             inTextMode = true;
         }
     }
@@ -931,79 +933,6 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderCharacter(Character)
-     */
-    public void renderCharacter(Character ch) {
-        renderInlineAreaBackAndBorders(ch);
-
-        beginTextObject();
-        StringBuffer pdf = new StringBuffer();
-
-        Font font = getFontFromArea(ch);
-
-        // This assumes that *all* CIDFonts use a /ToUnicode mapping
-        Typeface tf = (Typeface) fontInfo.getFonts().get(font.getFontName());
-        boolean useMultiByte = tf.isMultiByte();
-
-        // String startText = useMultiByte ? "<FEFF" : "(";
-        String startText = useMultiByte ? "<" : "(";
-        String endText = useMultiByte ? "> " : ") ";
-
-        updateFont(font.getFontName(), font.getFontSize(), pdf);
-        ColorType ct = (ColorType) ch.getTrait(Trait.COLOR);
-        if (ct != null) {
-            updateColor(ct, true, pdf);
-        }
-
-        // word.getOffset() = only height of text itself
-        // currentBlockIPPosition: 0 for beginning of line; nonzero
-        //  where previous line area failed to take up entire allocated space
-        int rx = currentIPPosition + ch.getBorderAndPaddingWidthStart();
-        int bl = currentBPPosition + ch.getOffset() + ch.getBaselineOffset();
-
-/*        log.debug("Text = " + ch.getTextArea() +
-            "; text width: " + ch.getWidth() +
-            "; BlockIP Position: " + currentBlockIPPosition +
-            "; currentBPPosition: " + currentBPPosition +
-            "; offset: " + ch.getOffset());
-*/
-        // Set letterSpacing
-        //float ls = fs.getLetterSpacing() / this.currentFontSize;
-        //pdf.append(ls).append(" Tc\n");
-
-        if (!textOpen || bl != prevWordY) {
-            closeText();
-
-            pdf.append("1 0 0 -1 " + format(rx / 1000f) + " " + format(bl / 1000f) + " Tm "
-                       + format(ch.getTextLetterSpaceAdjust() / 1000f) + " Tc "
-                       + format(ch.getTextWordSpaceAdjust() / 1000f) + " Tw [" + startText);
-            prevWordY = bl;
-            textOpen = true;
-        } else {
-            closeText();
-
-            pdf.append("1 0 0 -1 " + format(rx / 1000f) + " " + format(bl / 1000f) + " Tm "
-                           + format(ch.getTextLetterSpaceAdjust() / 1000f) + " Tc "
-                           + format(ch.getTextWordSpaceAdjust() / 1000f) + " Tw [" + startText);
-            textOpen = true;
-        }
-        prevWordWidth = ch.getIPD();
-        prevWordX = rx;
-
-        String s = ch.getChar();
-
-
-        escapeText(s, font, useMultiByte, pdf);
-        pdf.append(endText);
-
-        currentStream.add(pdf.toString());
-
-        renderTextDecoration(tf, font.getFontSize(), ch, bl, rx);
-        
-        super.renderCharacter(ch);
-    }
-
-    /**
      * @see org.apache.fop.render.AbstractRenderer#renderText(TextArea)
      */
     public void renderText(TextArea text) {
@@ -1028,39 +957,17 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         int rx = currentIPPosition + text.getBorderAndPaddingWidthStart();
         int bl = currentBPPosition + text.getOffset() + text.getBaselineOffset();
 
-/*        log.debug("Text = " + text.getTextArea() +
-            "; text width: " + text.getWidth() +
-            "; BlockIP Position: " + currentBlockIPPosition +
-            "; currentBPPosition: " + currentBPPosition +
-            "; offset: " + text.getOffset());
-*/
-        // Set letterSpacing
-        //float ls = fs.getLetterSpacing() / this.currentFontSize;
-        //pdf.append(ls).append(" Tc\n");
+        pdf.append("1 0 0 -1 " + format(rx / 1000f) + " " + format(bl / 1000f) + " Tm "
+                   /*+ format(text.getTextLetterSpaceAdjust() / 1000f) + " Tc\n"*/
+                   /*+ format(text.getTextWordSpaceAdjust() / 1000f) + " Tw ["*/);
 
-        if (!textOpen || bl != prevWordY) {
-            closeText();
-
-            pdf.append("1 0 0 -1 " + format(rx / 1000f) + " " + format(bl / 1000f) + " Tm "
-                       + format(text.getTextLetterSpaceAdjust() / 1000f) + " Tc "
-                       + format(text.getTextWordSpaceAdjust() / 1000f) + " Tw [");
-            prevWordY = bl;
-            textOpen = true;
-        } else {
-            closeText();
-
-            pdf.append("1 0 0 -1 " + format(rx / 1000f) + " " + format(bl / 1000f) + " Tm "
-                       + format(text.getTextLetterSpaceAdjust() / 1000f) + " Tc "
-                       + format(text.getTextWordSpaceAdjust() / 1000f) + " Tw [");
-            textOpen = true;
-        }
-        prevWordWidth = text.getIPD();
-        prevWordX = rx;
-
+        pdf.append("[");
         currentStream.add(pdf.toString());
 
         super.renderText(text);
 
+        currentStream.add("] TJ\n");
+        
         renderTextDecoration(tf, size, text, bl, rx);
     }
     
@@ -1072,17 +979,11 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         Typeface tf = (Typeface) fontInfo.getFonts().get(font.getFontName());
         boolean useMultiByte = tf.isMultiByte();
 
-        String startText = useMultiByte ? "<" : "(";
-        String endText = useMultiByte ? "> " : ") ";
-        
         StringBuffer pdf = new StringBuffer();
         
-        pdf.append(startText);
-
         String s = word.getWord();
-        
-        escapeText(s, font, useMultiByte, pdf);
-        pdf.append(endText);
+        escapeText(s, word.getLetterAdjustArray(), 
+                font, (AbstractTextArea)word.getParentArea(), useMultiByte, pdf);
         
         currentStream.add(pdf.toString());
 
@@ -1097,22 +998,21 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         Typeface tf = (Typeface) fontInfo.getFonts().get(font.getFontName());
         boolean useMultiByte = tf.isMultiByte();
 
-        String startText = useMultiByte ? "<" : "(";
-        String endText = useMultiByte ? "> " : ") ";
-        
-        StringBuffer pdf = new StringBuffer();
-        
-        pdf.append(startText);
-
         String s = space.getSpace();
         
-        escapeText(s, font, useMultiByte, pdf);
-        pdf.append(endText);
-        
-        if (useMultiByte) {
-            float tws = -(((TextArea) space.getParentArea()).getTextWordSpaceAdjust() 
-                    / (font.getFontSize() / 1000f));
-            pdf.append(format(tws) + " ");
+        StringBuffer pdf = new StringBuffer();
+
+        AbstractTextArea textArea = (AbstractTextArea)space.getParentArea();
+        escapeText(s, null, font, textArea, useMultiByte, pdf);
+
+        if (space.isAdjustable()) {
+            int tws = -((TextArea) space.getParentArea()).getTextWordSpaceAdjust()
+                         - 2 * textArea.getTextLetterSpaceAdjust();
+                    
+            if (tws != 0) {
+                pdf.append(format(tws / (font.getFontSize() / 1000f)));
+                pdf.append(" ");
+            }
         }
         
         currentStream.add(pdf.toString());
@@ -1123,15 +1023,19 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     /**
      * Escapes text according to PDF rules.
      * @param s Text to escape
+     * @param letterAdjust an array of widths for letter adjustment (may be null)
      * @param fs Font state
+     * @param parentArea the parent text area to retrieve certain traits from
      * @param useMultiByte Indicates the use of multi byte convention
      * @param pdf target buffer for the escaped text
      */
-    public void escapeText(String s, Font fs,
+    public void escapeText(String s, int[] letterAdjust,
+                           Font fs, AbstractTextArea parentArea,
                            boolean useMultiByte, StringBuffer pdf) {
         String startText = useMultiByte ? "<" : "(";
         String endText = useMultiByte ? "> " : ") ";
 
+        /*
         boolean kerningAvailable = false;
         Map kerning = fs.getKerning();
         if (kerning != null && !kerning.isEmpty()) {
@@ -1139,12 +1043,37 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
             //TODO Reenable me when the layout engine supports kerning, too
             log.warn("Kerning support is disabled until it is supported by the layout engine!");
         }
+        */
 
         int l = s.length();
 
+        float fontSize = fs.getFontSize() / 1000f;
+        boolean startPending = true;
         for (int i = 0; i < l; i++) {
-            char ch = fs.mapChar(s.charAt(i));
-
+            char orgChar = s.charAt(i);
+            char ch;
+            float glyphAdjust = 0;
+            if (fs.hasChar(orgChar)) {
+                ch = fs.mapChar(orgChar);
+                int tls = (i < l - 1 ? parentArea.getTextLetterSpaceAdjust() : 0);
+                glyphAdjust -= tls;
+            } else {
+                if (CharUtilities.isFixedWidthSpace(orgChar)) {
+                    //Fixed width space are rendered as spaces so copy/paste works in a reader
+                    ch = fs.mapChar(CharUtilities.SPACE);
+                    glyphAdjust = fs.getCharWidth(ch) - fs.getCharWidth(orgChar);
+                } else {
+                    ch = fs.mapChar(orgChar);
+                }
+            }
+            if (letterAdjust != null && i < l - 1) {
+                glyphAdjust -= letterAdjust[i + 1]; 
+            }
+            
+            if (startPending) {
+                pdf.append(startText);
+                startPending = false;
+            }
             if (!useMultiByte) {
                 if (ch > 127) {
                     pdf.append("\\");
@@ -1156,6 +1085,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                         case '\\':
                             pdf.append("\\");
                             break;
+                        default:
                     }
                     pdf.append(ch);
                 }
@@ -1163,24 +1093,16 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                 pdf.append(PDFText.toUnicodeHex(ch));
             }
 
-            if (kerningAvailable && (i + 1) < l) {
-                addKerning(pdf, (new Integer((int) ch)),
-                           (new Integer((int) fs.mapChar(s.charAt(i + 1)))
-                           ), kerning, startText, endText);
+            float adjust = glyphAdjust / fontSize;
+            
+            if (adjust != 0) {
+                pdf.append(endText).append(format(adjust)).append(' ');
+                startPending = true;
             }
+            
         }
-    }
-
-    private void addKerning(StringBuffer buf, Integer ch1, Integer ch2,
-                            Map kerning, String startText, String endText) {
-        Map kernPair = (Map) kerning.get(ch1);
-
-        if (kernPair != null) {
-            Integer width = (Integer) kernPair.get(ch2);
-            if (width != null) {
-                buf.append(endText).append(-width.intValue());
-                buf.append(' ').append(startText);
-            }
+        if (!startPending) {
+            pdf.append(endText);
         }
     }
 
@@ -1189,13 +1111,14 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * still and writes out the TJ command to the stream if we do
      */
     protected void closeText() {
+        /*
         if (textOpen) {
             currentStream.add("] TJ\n");
             textOpen = false;
             prevWordX = 0;
             prevWordY = 0;
             currentFontName = "";
-        }
+        }*/
     }
 
     /**
@@ -1319,6 +1242,11 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
             FopPDFImage pdfimage = new FopPDFImage(fopimage, url);
             int xobj = pdfDoc.addImage(currentContext, pdfimage).getXNumber();
             fact.releaseImage(url, userAgent);
+            
+            float w = (float)pos.getWidth() / 1000f;
+            float h = (float)pos.getHeight() / 1000f;
+            placeImage((float) pos.getX() / 1000,
+                       (float) pos.getY() / 1000, w, h, xobj);
         } else if ("image/jpeg".equals(mime) || "image/tiff".equals(mime)) {
             FopPDFImage pdfimage = new FopPDFImage(fopimage, url);
             int xobj = pdfDoc.addImage(currentContext, pdfimage).getXNumber();

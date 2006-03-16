@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ package org.apache.fop.area.inline;
 /**
  * Single character inline area.
  * This inline area holds a single character.
+ * @deprecated A TextArea with a single WordArea as its child should be used instead.
  */
 public class Character extends AbstractTextArea {
     // use a String instead of a character because if this character

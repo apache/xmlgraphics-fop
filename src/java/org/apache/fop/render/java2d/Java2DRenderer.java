@@ -55,7 +55,6 @@ import org.apache.fop.area.CTM;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
-import org.apache.fop.area.inline.Character;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.InlineArea;
@@ -863,33 +862,6 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
         super.renderText(text);
 
         renderTextDecoration(font, text, y, x);
-    }
-
-    /**
-     * @see org.apache.fop.render.AbstractRenderer#renderCharacter(Character)
-     */
-    public void renderCharacter(Character ch) {
-        renderInlineAreaBackAndBorders(ch);
-
-        float x = currentIPPosition + ch.getBorderAndPaddingWidthStart();
-        float y = currentBPPosition + ch.getOffset() + ch.getBaselineOffset(); // baseline
-
-        Font font = getFontFromArea(ch);
-        state.updateFont(font.getFontName(), font.getFontSize(), null);
-
-        ColorType ct = (ColorType) ch.getTrait(Trait.COLOR);
-        state.updateColor(ct, false, null);
-
-        String s = ch.getChar();
-        state.getGraph().drawString(s, x / 1000f, y / 1000f);
-
-        // getLogger().debug( "renderCharacter(): \"" + s + "\", x: "
-        // + x + ", y: " + y + state);
-
-        // rendering text decorations
-        renderTextDecoration(font, ch, y, x);
-
-        super.renderCharacter(ch);
     }
 
     /**
