@@ -1688,33 +1688,39 @@ public class FOPropertyMapping implements Constants {
 
         // text-align-last
         m  = new EnumProperty.Maker(PR_TEXT_ALIGN_LAST) {
-            public Property convertProperty(Property p,
-                    PropertyList propertyList,
-                    FObj fo) throws PropertyException {
-                int en = p.getEnum();
-                if (en == EN_RELATIVE) {
-                    Property corresponding = propertyList.get(PR_TEXT_ALIGN);
-                    if (corresponding == null) {
-                        return p;
+            public Property get(int subpropId, PropertyList propertyList,
+                    boolean bTryInherit, boolean bTryDefault) throws PropertyException {
+                Property p = super.get(subpropId, propertyList, bTryInherit, bTryDefault);
+                if (p != null && p.getEnum() == EN_RELATIVE) {
+                    //The default may have been returned, so check inherited value
+                    p = propertyList.getNearestSpecified(PR_TEXT_ALIGN_LAST);
+                    if (p.getEnum() == EN_RELATIVE) {
+                        return calcRelative(propertyList);
                     }
-                    int correspondingValue = corresponding.getEnum();
-                    if (correspondingValue == EN_JUSTIFY) {
-                        return getEnumProperty(EN_START, "START");
-                    } else if (correspondingValue == EN_END) {
-                        return getEnumProperty(EN_END, "END");
-                    } else if (correspondingValue == EN_START) {
-                        return getEnumProperty(EN_START, "START");
-                    } else if (correspondingValue == EN_CENTER) {
-                        return getEnumProperty(EN_CENTER, "CENTER");
-                    } else {
-                        return p;
-                    }
+                }
+                return p;
+            }
+
+            private Property calcRelative(PropertyList propertyList) throws PropertyException {
+                Property corresponding = propertyList.get(PR_TEXT_ALIGN);
+                if (corresponding == null) {
+                    return null;
+                }
+                int correspondingValue = corresponding.getEnum();
+                if (correspondingValue == EN_JUSTIFY) {
+                    return getEnumProperty(EN_START, "START");
+                } else if (correspondingValue == EN_END) {
+                    return getEnumProperty(EN_END, "END");
+                } else if (correspondingValue == EN_START) {
+                    return getEnumProperty(EN_START, "START");
+                } else if (correspondingValue == EN_CENTER) {
+                    return getEnumProperty(EN_CENTER, "CENTER");
                 } else {
-                    return p;
+                    return null;
                 }
             }
         };
-        m.setInherited(true);
+        m.setInherited(false); //Actually it's "true" but the special PropertyMaker compensates
         // Note: both 'end', 'right' and 'outside' are mapped to END
         //       both 'start', 'left' and 'inside' are mapped to START
         m.addEnum("relative", getEnumProperty(EN_RELATIVE, "RELATIVE"));

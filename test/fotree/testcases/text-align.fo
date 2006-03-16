@@ -24,14 +24,14 @@
   </fo:layout-master-set>
   <fo:page-sequence master-reference="A4">
     <fo:flow flow-name="xsl-region-body">
-      <!--fo:block text-align="justify">Hello World!
+      <fo:block text-align="justify">Hello World!
         <test:assert property="text-align" expected="JUSTIFY"/>
         <test:assert property="text-align-last" expected="START"/>
       </fo:block>
       <fo:block text-align="justify" text-align-last="relative">Hello World!
         <test:assert property="text-align" expected="JUSTIFY"/>
         <test:assert property="text-align-last" expected="START"/>
-      </fo:block-->
+      </fo:block>
       <fo:block text-align="end">Hello World!
         <test:assert property="text-align" expected="END"/>
         <test:assert property="text-align-last" expected="END"/>
@@ -49,10 +49,32 @@
         <test:assert property="text-align-last" expected="JUSTIFY"/>
       </fo:block>
       <fo:block text-align="justify" text-align-last="justify">
+        <!-- Checks inherited values -->
         <fo:block>Hello World!
           <test:assert property="text-align" expected="JUSTIFY"/>
           <test:assert property="text-align-last" expected="JUSTIFY"/>
         </fo:block>
+      </fo:block>
+      <fo:block text-align="end">
+        <fo:table table-layout="fixed" width="100%">
+          <fo:table-column number-columns-repeated="2" column-width="50%"/>
+          <fo:table-body>
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block text-align="center">center
+                  <test:assert property="text-align" expected="CENTER"/>
+                  <test:assert property="text-align-last" expected="CENTER"/>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block text-align="left">left
+                  <test:assert property="text-align" expected="START"/>
+                  <test:assert property="text-align-last" expected="START"/>
+                </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+          </fo:table-body>
+        </fo:table>
       </fo:block>
     </fo:flow>
   </fo:page-sequence>
