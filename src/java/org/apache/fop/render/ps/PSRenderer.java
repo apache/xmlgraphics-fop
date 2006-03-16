@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,18 +45,19 @@ import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.AbstractTextArea;
-import org.apache.fop.area.inline.Character;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.Leader;
+import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
+import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
+import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontSetup;
-import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.image.EPSImage;
 import org.apache.fop.image.FopImage;
@@ -233,6 +234,16 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         writeln(gen.formatDouble(x) + " " + gen.formatDouble(y) + " M");
     }
     
+    /**
+     * Moves the current point by (x, y) relative to the current position, 
+     * omitting any connecting line segment. 
+     * @param x x coordinate
+     * @param y y coordinate
+     */
+    protected void rmoveTo(float x, float y) {
+        writeln(gen.formatDouble(x) + " " + gen.formatDouble(y) + " RM");
+    }
+    
     /** @see org.apache.fop.render.AbstractPathOrientedRenderer#lineTo(float, float) */
     protected void lineTo(float x, float y) {
         writeln(gen.formatDouble(x) + " " + gen.formatDouble(y) + " lineto");
@@ -310,7 +321,9 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         }
     }
 
-    public void paintImage(RenderedImage image, RendererContext context, int x, int y, int width, int height) throws IOException {
+    /** @see org.apache.fop.render.ImageAdapter */
+    public void paintImage(RenderedImage image, RendererContext context, 
+            int x, int y, int width, int height) throws IOException {
         float fx = (float)x / 1000f;
         x += currentIPPosition / 1000f;
         float fy = (float)y / 1000f;
@@ -822,24 +835,9 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderCharacter(Character)
-     */
-    public void renderCharacter(Character ch) {
-        String text = ch.getChar();
-        renderText(ch, text);
-        super.renderCharacter(ch); //Updates IPD
-    }
-
-    /**
      * @see org.apache.fop.render.AbstractRenderer#renderText(TextArea)
      */
     public void renderText(TextArea area) {
-        String text = area.getText();
-        renderText(area, text);
-        super.renderText(area); //Updates IPD
-    }
-    
-    private void renderText(AbstractTextArea area, String text) {
         renderInlineAreaBackAndBorders(area);
         String fontname = getInternalFontNameForArea(area);
         int fontsize = area.getTraitAsInteger(Trait.FONT_SIZE);
@@ -861,24 +859,52 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
             }
         }
         
-        boolean kerningAvailable = false;
-        Map kerning = tf.getKerningInfo();
-        if (kerning != null && !kerning.isEmpty()) {
-            //kerningAvailable = true;
-            //TODO Fix me when kerning is supported by the layout engine
-            log.warn("Kerning info is available, but kerning is not yet implemented for"
-                    + " the PS renderer and not currently supported by the layout engine.");
-        }
-        
         beginTextObject();
         writeln("1 0 0 -1 " + gen.formatDouble(rx / 1000f) 
                 + " " + gen.formatDouble(bl / 1000f) + " Tm");
+        
+        super.renderText(area); //Updates IPD
+
+        renderTextDecoration(tf, fontsize, area, bl, rx);
+    }
+    
+    /**
+     * @see org.apache.fop.render.AbstractRenderer#renderWord(org.apache.fop.area.inline.WordArea)
+     */
+    protected void renderWord(WordArea word) {
+        renderText((TextArea)word.getParentArea(), word.getWord(), word.getLetterAdjustArray());
+        super.renderWord(word);
+    }
+
+    /**
+     * @see org.apache.fop.render.AbstractRenderer#renderSpace(org.apache.fop.area.inline.SpaceArea)
+     */
+    protected void renderSpace(SpaceArea space) {
+        AbstractTextArea textArea = (AbstractTextArea)space.getParentArea();
+        String s = space.getSpace();
+        char sp = s.charAt(0);
+        Font font = getFontFromArea(textArea);
+        
+        int tws = (space.isAdjustable() 
+                ? ((TextArea) space.getParentArea()).getTextWordSpaceAdjust() 
+                        + 2 * textArea.getTextLetterSpaceAdjust()
+                : 0);
+
+        rmoveTo((font.getCharWidth(sp) + tws) / 1000f, 0);
+        super.renderSpace(space);
+    }
+
+    private void renderText(AbstractTextArea area, String text, int[] letterAdjust) {
+        Font font = getFontFromArea(area);
+        Typeface tf = (Typeface) fontInfo.getFonts().get(font.getFontName());
 
         int initialSize = text.length();
         initialSize += initialSize / 2;
         StringBuffer sb = new StringBuffer(initialSize);
         int textLen = text.length();
-        if (area.getTextLetterSpaceAdjust() == 0 && area.getTextWordSpaceAdjust() == 0) {
+        if (letterAdjust == null 
+                && area.getTextLetterSpaceAdjust() == 0 
+                && area.getTextWordSpaceAdjust() == 0) {
             sb.append("(");
             for (int i = 0; i < textLen; i++) {
                 final char c = text.charAt(i);
@@ -893,17 +919,16 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
                 final char c = text.charAt(i);
                 final char mapped = tf.mapChar(c);
                 int wordSpace;
-                //TODO Synchronize word space behaviour with TextLayoutManager
-                //Check the other renderers, too!
-                if (CharUtilities.isAnySpace(mapped)
-                        && mapped != CharUtilities.ZERO_WIDTH_SPACE
-                        && mapped != CharUtilities.ZERO_WIDTH_NOBREAK_SPACE) {
+
+                if (CharUtilities.isAdjustableSpace(mapped)) {
                     wordSpace = area.getTextWordSpaceAdjust();
                 } else {
                     wordSpace = 0;
                 }
-                int cw = tf.getWidth(mapped, fontsize) / 1000;
-                offsets[i] = cw + area.getTextLetterSpaceAdjust() + wordSpace;
+                int cw = tf.getWidth(mapped, font.getFontSize()) / 1000;
+                int ladj = (letterAdjust != null && i < textLen - 1 ? letterAdjust[i + 1] : 0);
+                int tls = (i < textLen - 1 ? area.getTextLetterSpaceAdjust() : 0); 
+                offsets[i] = cw + ladj + tls + wordSpace;
                 PSGenerator.escapeChar(mapped, sb);
             }
             sb.append(")" + PSGenerator.LF + "[");
@@ -921,7 +946,6 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         }
         writeln(sb.toString());
 
-        renderTextDecoration(tf, fontsize, area, bl, rx);
     }
 
     /** @see org.apache.fop.render.AbstractPathOrientedRenderer#breakOutOfStateStack() */

@@ -111,17 +111,38 @@ public class Font {
         return metric.getXHeight(fontSize) / 1000;
     }
 
+    /** @return true if the font has kerning info */
+    public boolean hasKerning() {
+        return metric.hasKerningInfo();
+    }
+    
     /**
      * Returns the font's kerning table
      * @return the kerning table
      */
     public Map getKerning() {
-        Map ret = metric.getKerningInfo();
-        if (ret != null) {
-            return ret;
+        if (metric.hasKerningInfo()) {
+            return metric.getKerningInfo();
         } else {
             return java.util.Collections.EMPTY_MAP;
         }
+    }
+    
+    /**
+     * Returns the amount of kerning between two characters.
+     * @param ch1 first character
+     * @param ch2 second character
+     * @return the distance to adjust for kerning, 0 if there's no kerning
+     */
+    public int getKernValue(char ch1, char ch2) {
+        Map kernPair = (Map)getKerning().get(new Integer(ch1));
+        if (kernPair != null) {
+            Integer width = (Integer)kernPair.get(new Integer(ch2));
+            if (width != null) {
+                return width.intValue();
+            }
+        }
+        return 0;
     }
 
     /**
@@ -206,63 +227,50 @@ public class Font {
         if ((c == '\n') || (c == '\r') || (c == '\t') || (c == '\u00A0')) {
             width = getCharWidth(' ');
         } else {
-            width = getWidth(mapChar(c));
+            if (hasChar(c)) {
+                width = getWidth(mapChar(c));
+            } else {
+                width = -1;
+            }
             if (width <= 0) {
                 // Estimate the width of spaces not represented in
                 // the font
-                int em = getWidth(mapChar('m'));
-                int en = getWidth(mapChar('n'));
-                if (em <= 0) {
-                    em = 500 * getFontSize();
-                }
-                if (en <= 0) {
-                    en = em - 10;
-                }
+                int em = getFontSize(); //http://en.wikipedia.org/wiki/Em_(typography)
+                int en = em / 2; //http://en.wikipedia.org/wiki/En_(typography)
 
                 if (c == ' ') {
                     width = em;
-                }
-                if (c == '\u2000') {
+                } else if (c == '\u2000') {
                     width = en;
-                }
-                if (c == '\u2001') {
+                } else if (c == '\u2001') {
                     width = em;
-                }
-                if (c == '\u2002') {
+                } else if (c == '\u2002') {
                     width = em / 2;
-                }
-                if (c == '\u2003') {
+                } else if (c == '\u2003') {
                     width = getFontSize();
-                }
-                if (c == '\u2004') {
+                } else if (c == '\u2004') {
                     width = em / 3;
-                }
-                if (c == '\u2005') {
+                } else if (c == '\u2005') {
                     width = em / 4;
-                }
-                if (c == '\u2006') {
+                } else if (c == '\u2006') {
                     width = em / 6;
-                }
-                if (c == '\u2007') {
-                    width = getCharWidth(' ');
-                }
-                if (c == '\u2008') {
+                } else if (c == '\u2007') {
+                    width = getCharWidth('0');
+                } else if (c == '\u2008') {
                     width = getCharWidth('.');
-                }
-                if (c == '\u2009') {
+                } else if (c == '\u2009') {
                     width = em / 5;
-                }
-                if (c == '\u200A') {
-                    width = 5;
-                }
-                if (c == '\u200B') {
-                    width = 100;
-                }
-                if (c == '\u202F') {
+                } else if (c == '\u200A') {
+                    width = em / 10;
+                } else if (c == '\u200B') {
+                    width = 0;
+                } else if (c == '\u202F') {
                     width = getCharWidth(' ') / 2;
-                }
-                if (c == '\u3000') {
+                } else if (c == '\u3000') {
                     width = getCharWidth(' ') * 2;
+                } else {
+                    //Will be internally replaced by "#" if not found
+                    width = getWidth(mapChar(c));
                 }
             }
         }

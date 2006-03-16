@@ -54,7 +54,17 @@ public class TextArea extends AbstractTextArea {
      * @param offset the offset for the next area
      */
     public void addWord(String word, int offset) {
-        WordArea wordArea = new WordArea(word, offset);
+        addWord(word, offset, null);
+    }
+    
+    /**
+     * Create and add a WordArea child to this TextArea.
+     * 
+     * @param word   the word string
+     * @param offset the offset for the next area
+     */
+    public void addWord(String word, int offset, int[] letterAdjust) {
+        WordArea wordArea = new WordArea(word, offset, letterAdjust);
         addChildArea(wordArea);
         wordArea.setParentArea(this);
     }

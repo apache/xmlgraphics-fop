@@ -19,6 +19,7 @@
 package org.apache.fop.area;
 
 import java.awt.geom.Rectangle2D;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.StringTokenizer;
@@ -674,10 +675,27 @@ public class AreaTreeParser {
 
         private class WordMaker extends AbstractMaker {
 
+            private int[] toIntArray(String s) {
+                if (s == null || s.length() == 0) {
+                    return null;
+                }
+                StringTokenizer tokenizer = new StringTokenizer(s, " ");
+                List values = new java.util.ArrayList();
+                while (tokenizer.hasMoreTokens()) {
+                    values.add(new Integer(tokenizer.nextToken()));
+                }
+                int[] res = new int[values.size()];
+                for (int i = 0, c = res.length; i < c; i++) {
+                    res[i] = ((Integer)values.get(i)).intValue();
+                }
+                return res;
+            }
+            
             public void endElement() {
                 int offset = getAttributeAsInteger(lastAttributes, "offset", 0);
+                int[] letterAdjust = toIntArray(lastAttributes.getValue("letter-adjust"));
                 String txt = content.toString();
-                WordArea word = new WordArea(txt, offset);
+                WordArea word = new WordArea(txt, offset, letterAdjust);
                 AbstractTextArea text = getCurrentText();
                 word.setParentArea(text);
                 text.addChildArea(word);
@@ -691,7 +709,8 @@ public class AreaTreeParser {
                 String txt = content.toString();
                 //TODO the isAdjustable parameter is currently not used/implemented
                 if (txt.length() > 0) {
-                    SpaceArea space = new SpaceArea(txt.charAt(0), offset, false);
+                    boolean adjustable = getAttributeAsBoolean(lastAttributes, "adj", true);
+                    SpaceArea space = new SpaceArea(txt.charAt(0), offset, adjustable);
                     AbstractTextArea text = getCurrentText();
                     space.setParentArea(text);
                     text.addChildArea(space);

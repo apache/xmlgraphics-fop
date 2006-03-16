@@ -66,6 +66,7 @@ import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FOText;
+import org.apache.fop.render.DefaultFontResolver;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.ITableAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfAfterContainer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfBeforeContainer;
@@ -137,7 +138,7 @@ public class RTFHandler extends FOEventHandler {
         this.os = os;
         bDefer = true;
 
-        FontSetup.setup(fontInfo, null, userAgent);
+        FontSetup.setup(fontInfo, null, new DefaultFontResolver(userAgent));
     }
 
     /**

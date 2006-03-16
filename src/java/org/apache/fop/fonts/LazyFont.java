@@ -17,10 +17,8 @@
 /* $Id$ */
 
 package org.apache.fop.fonts;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 import javax.xml.transform.Source;
@@ -29,7 +27,6 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.FOUserAgent;
 import org.xml.sax.InputSource;
 
 /**
@@ -47,21 +44,21 @@ public class LazyFont extends Typeface implements FontDescriptor {
     private Typeface realFont = null;
     private FontDescriptor realFontDescriptor = null;
 
-    private FOUserAgent userAgent = null;
+    private FontResolver resolver = null;
     
     /**
      * Main constructor
      * @param fontEmbedPath path to embeddable file (may be null)
      * @param metricsFileName path to the metrics XML file
      * @param useKerning True, if kerning should be enabled
-     * @param userAgent the environment for uri resoltuion
+     * @param resolver the font resolver to handle font URIs
      */
     public LazyFont(String fontEmbedPath, String metricsFileName
-                    , boolean useKerning, FOUserAgent userAgent) {
+                    , boolean useKerning, FontResolver resolver) {
         this.metricsFileName = metricsFileName;
         this.fontEmbedPath = fontEmbedPath;
         this.useKerning = useKerning;
-        this.userAgent = userAgent;
+        this.resolver = resolver;
     }
 
     private void load(boolean fail) {
@@ -69,9 +66,8 @@ public class LazyFont extends Typeface implements FontDescriptor {
             try {
                 /**@todo Possible thread problem here */
                 FontReader reader = null;
-                if (userAgent != null) {
-                    Source source = userAgent.resolveURI(metricsFileName
-                                                        , userAgent.getFontBaseURL());
+                if (resolver != null) {
+                    Source source = resolver.resolve(metricsFileName);
                     if (source == null) {
                         String err = "Cannot load font: failed to create Source from metrics file " 
                             + metricsFileName; 
@@ -106,7 +102,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
                 }
                 reader.setKerningEnabled(useKerning);
                 reader.setFontEmbedPath(fontEmbedPath);
-                reader.setUserAgent(userAgent);
+                reader.setResolver(resolver);
                 realFont = reader.getFont();
                 if (realFont instanceof FontDescriptor) {
                     realFontDescriptor = (FontDescriptor) realFont;

@@ -47,6 +47,7 @@ import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.PageSequenceMaster;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fonts.FontSetup;
+import org.apache.fop.render.DefaultFontResolver;
 import org.xml.sax.SAXException;
 
 // TODO: do we really want every method throwing a SAXException
@@ -80,7 +81,7 @@ public class MIFHandler extends FOEventHandler {
     public MIFHandler(FOUserAgent ua, OutputStream os) {
         super(ua);
         outStream = os;
-        FontSetup.setup(fontInfo, null, ua);
+        FontSetup.setup(fontInfo, null, new DefaultFontResolver(ua));
     }
 
     /**

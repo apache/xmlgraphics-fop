@@ -108,6 +108,7 @@ public class XMLRenderer extends PrintRenderer {
 
     private boolean startedSequence = false;
     private RendererContext context;
+    private boolean compactFormat = false;
 
     /** If not null, the XMLRenderer will mimic another renderer by using its font setup. */
     protected Renderer mimic;
@@ -155,6 +156,10 @@ public class XMLRenderer extends PrintRenderer {
 
         XMLHandler xmlHandler = new XMLXMLHandler();
         userAgent.getXMLHandlerRegistry().addXMLHandler(xmlHandler);
+        Boolean b = (Boolean)userAgent.getRendererOptions().get("compact-format");
+        if (b != null) {
+            setCompactFormat(b.booleanValue());
+        }
     }
 
     /**
@@ -184,9 +189,12 @@ public class XMLRenderer extends PrintRenderer {
         this.handler = handler;
     }
 
-    private boolean isCoarseXml() {
-        return ((Boolean)
-            userAgent.getRendererOptions().get("fineDetail")).booleanValue();
+    public void setCompactFormat(boolean compact) {
+        this.compactFormat = compact;
+    }
+    
+    private boolean isDetailedFormat() {
+        return !this.compactFormat;
     }
 
     /**
@@ -291,16 +299,18 @@ public class XMLRenderer extends PrintRenderer {
     protected void addAreaAttributes(Area area) {
         addAttribute("ipd", area.getIPD());
         addAttribute("bpd", area.getBPD());
-        if (area.getIPD() != 0) {
-            addAttribute("ipda", area.getAllocIPD());
+        if (isDetailedFormat()) {
+            if (area.getIPD() != 0) {
+                addAttribute("ipda", area.getAllocIPD());
+            }
+            if (area.getBPD() != 0) {
+                addAttribute("bpda", area.getAllocBPD());
+            }
+            addAttribute("bap", area.getBorderAndPaddingWidthStart() + " "
+                    + area.getBorderAndPaddingWidthEnd() + " "
+                    + area.getBorderAndPaddingWidthBefore() + " "
+                    + area.getBorderAndPaddingWidthAfter());
         }
-        if (area.getBPD() != 0) {
-            addAttribute("bpda", area.getAllocBPD());
-        }
-        addAttribute("bap", area.getBorderAndPaddingWidthStart() + " "
-                + area.getBorderAndPaddingWidthEnd() + " "
-                + area.getBorderAndPaddingWidthBefore() + " "
-                + area.getBorderAndPaddingWidthAfter());
     }
 
     /**
@@ -758,20 +768,6 @@ public class XMLRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderCharacter(Character)
-     */
-    protected void renderCharacter(org.apache.fop.area.inline.Character ch) {
-        atts.clear();
-        addAreaAttributes(ch);
-        addTraitAttributes(ch);
-        addAttribute("offset", ch.getOffset());
-        addAttribute("baseline", ch.getBaselineOffset());
-        startElement("char", atts);
-        characters(ch.getChar());
-        endElement("char");
-    }
-
-    /**
      * @see org.apache.fop.render.AbstractRenderer#renderInlineSpace(Space)
      */
     protected void renderInlineSpace(Space space) {
@@ -809,6 +805,21 @@ public class XMLRenderer extends PrintRenderer {
     protected void renderWord(WordArea word) {
         atts.clear();
         addAttribute("offset", word.getOffset());
+        int[] letterAdjust = word.getLetterAdjustArray(); 
+        if (letterAdjust != null) {
+            StringBuffer sb = new StringBuffer(64);
+            boolean nonZeroFound = false;
+            for (int i = 0, c = letterAdjust.length; i < c; i++) {
+                if (i > 0) {
+                    sb.append(' ');
+                }
+                sb.append(letterAdjust[i]);
+                nonZeroFound |= (letterAdjust[i] != 0);
+            }
+            if (nonZeroFound) {
+                addAttribute("letter-adjust", sb.toString());
+            }
+        }
         startElement("word", atts);
         characters(word.getWord());
         endElement("word");
@@ -821,6 +832,9 @@ public class XMLRenderer extends PrintRenderer {
     protected void renderSpace(SpaceArea space) {
         atts.clear();
         addAttribute("offset", space.getOffset());
+        if (!space.isAdjustable()) {
+            addAttribute("adj", "false"); //default is true
+        }
         startElement("space", atts);
         characters(space.getSpace());
         endElement("space");

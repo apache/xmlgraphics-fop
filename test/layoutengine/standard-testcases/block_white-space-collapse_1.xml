@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2005 The Apache Software Foundation
+  Copyright 2005-2006 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -104,7 +104,8 @@
     <eval expected="2" xpath="count(//flow/block[1]/lineArea[1]/text[2]/word)"/>
     <eval expected="1" xpath="count(//flow/block[1]/lineArea[1]/text[2]/space)"/>
     <eval expected="1" xpath="count(//flow/block[1]/lineArea[1]/text[3]/word)"/>
-    <eval expected="1" xpath="count(//flow/block[1]/lineArea[1]/char)"/>
+    <eval expected=" " xpath="//flow/block[1]/lineArea[1]/text[3]/word"/>
+    <eval expected="1" xpath="count(//flow/block[1]/lineArea[1]/text[4]/word)"/>
     
     <eval expected="3" xpath="count(//flow/block[2]/block[1]/lineArea[1]/text/word)"/>
     <eval expected="2" xpath="count(//flow/block[2]/block[1]/lineArea[1]/text/space)"/>

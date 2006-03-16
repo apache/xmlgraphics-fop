@@ -68,14 +68,15 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
         hyphIPD = font.getCharWidth(fobj.getCommonHyphenation().hyphenationCharacter);
         borderProps = fobj.getCommonBorderPaddingBackground();
         setCommonBorderPaddingBackground(borderProps);
-        org.apache.fop.area.inline.Character chArea = getCharacterInlineArea(fobj);
+        org.apache.fop.area.inline.TextArea chArea = getCharacterInlineArea(fobj);
         chArea.setBaselineOffset(font.getAscender());
         setCurrentArea(chArea);
     }
 
-    private org.apache.fop.area.inline.Character getCharacterInlineArea(Character node) {
-        org.apache.fop.area.inline.Character ch 
-            = new org.apache.fop.area.inline.Character(node.getCharacter());
+    private org.apache.fop.area.inline.TextArea getCharacterInlineArea(Character node) {
+        org.apache.fop.area.inline.TextArea ch 
+            = new org.apache.fop.area.inline.TextArea();
+        ch.addWord(String.valueOf(node.getCharacter()), 0);
         TraitSetter.setProducerID(ch, node.getId());
         TraitSetter.addTextDecoration(ch, fobj.getTextDecoration());
         return ch;

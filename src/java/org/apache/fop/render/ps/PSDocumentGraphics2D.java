@@ -53,11 +53,6 @@ public class PSDocumentGraphics2D extends AbstractPSDocumentGraphics2D {
      */
     PSDocumentGraphics2D(boolean textAsShapes) {
         super(textAsShapes);
-
-        if (!textAsShapes) {
-            fontInfo = new FontInfo();
-            FontSetup.setup(fontInfo, null, null);
-        }
     }
 
     /**

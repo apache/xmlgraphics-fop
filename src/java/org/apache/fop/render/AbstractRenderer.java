@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,6 +49,7 @@ import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.RegionReference;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.OffDocumentItem;
+import org.apache.fop.area.inline.Character;
 import org.apache.fop.area.inline.Container;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
@@ -59,7 +60,6 @@ import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.TextArea;
-import org.apache.fop.area.inline.Character;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.apps.FOUserAgent;
@@ -204,9 +204,9 @@ public abstract class AbstractRenderer
         StringBuffer sb = new StringBuffer();
         for (int count = 0; count < children.size(); count++) {
             InlineArea inline = (InlineArea) children.get(count);
-            if (inline instanceof Character) {
-                sb.append(((Character) inline).getChar());
-            } else if (inline instanceof TextArea) {
+            //if (inline instanceof Character) {
+            //    sb.append(((Character) inline).getChar());
+            /*} else*/ if (inline instanceof TextArea) {
                 sb.append(((TextArea) inline).getText());
             } else if (inline instanceof InlineParent) {
                 sb.append(convertToString(
@@ -618,8 +618,8 @@ public abstract class AbstractRenderer
     protected void renderInlineArea(InlineArea inlineArea) {
         if (inlineArea instanceof TextArea) {
             renderText((TextArea) inlineArea);
-        } else if (inlineArea instanceof Character) {
-            renderCharacter((Character) inlineArea);
+        //} else if (inlineArea instanceof Character) {
+            //renderCharacter((Character) inlineArea);
         } else if (inlineArea instanceof WordArea) {
             renderWord((WordArea) inlineArea);
         } else if (inlineArea instanceof SpaceArea) {
@@ -640,6 +640,7 @@ public abstract class AbstractRenderer
     /**
      * Render the given Character.
      * @param ch the character to render
+     * @deprecated Only TextArea should be used. This method will be removed eventually.
      */
     protected void renderCharacter(Character ch) {
         currentIPPosition += ch.getAllocIPD();

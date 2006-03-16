@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2005 The Apache Software Foundation
+  Copyright 2005-2006 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -73,7 +73,8 @@
     <eval expected="8616" xpath="//flow/block[4]/lineArea/text/@baseline"/>
     <eval expected="0" xpath="//flow/block[5]/lineArea/inlineparent/@offset"/>
     <eval expected="8616" xpath="//flow/block[5]/lineArea/inlineparent/text/@baseline"/>
-    <eval expected="0" xpath="//flow/block[6]/lineArea/char/@offset"/>
-    <eval expected="8616" xpath="//flow/block[6]/lineArea/char/@baseline"/>
+    <eval expected="0" xpath="//flow/block[6]/lineArea/text/@offset"/>
+    <eval expected="0" xpath="//flow/block[6]/lineArea/text/word/@offset"/>
+    <eval expected="8616" xpath="//flow/block[6]/lineArea/text/@baseline"/>
   </checks>
 </testcase>
