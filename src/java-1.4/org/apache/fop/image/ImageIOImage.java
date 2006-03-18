@@ -56,6 +56,9 @@ public class ImageIOImage extends AbstractFopImage {
     
     /** @see org.apache.fop.image.AbstractFopImage#loadBitmap() */
     protected boolean loadBitmap() {
+        if (this.bitmaps != null) {
+            return true;
+        }
         try {
             inputStream.reset();
             BufferedImage imageData = ImageIO.read(inputStream);
