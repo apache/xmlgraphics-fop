@@ -150,14 +150,24 @@ public class FopPDFImage implements PDFImage {
      */
     public PDFColorSpace getColorSpace() {
         // DeviceGray, DeviceRGB, or DeviceCMYK
-        return toPDFColorSpace(fopImage.getColorSpace());
+        if (isCCF || isDCT || isPS) {
+            return toPDFColorSpace(fopImage.getColorSpace());
+        } else {
+            return toPDFColorSpace(ColorSpace.getInstance(ColorSpace.CS_sRGB));
+        }
     }
 
     /**
      * @see org.apache.fop.pdf.PDFImage#getBitsPerPixel()
      */
     public int getBitsPerPixel() {
-        return fopImage.getBitsPerPixel();
+        if (isCCF) {
+            return fopImage.getBitsPerPixel();
+        } else {
+            return 8; //TODO This is suboptimal, handling everything as RGB
+            //The image wrappers can mostly only return RGB bitmaps right now. This should
+            //be improved so the renderers can deal directly with RenderedImage instances.
+        }
     }
 
     /**

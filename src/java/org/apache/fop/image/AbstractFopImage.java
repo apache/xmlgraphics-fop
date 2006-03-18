@@ -216,7 +216,7 @@ public abstract class AbstractFopImage implements FopImage {
         try {
             this.raw = IOUtils.toByteArray(inputStream);
         } catch (java.io.IOException ex) {
-            log.error("Error while loading image (EMF): " + ex.getMessage(), ex);
+            log.error("Error while reading raw image: " + ex.getMessage(), ex);
             return false;
         } finally {
             IOUtils.closeQuietly(inputStream);

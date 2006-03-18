@@ -27,6 +27,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix">
+        Bugfix: CCITT Group 4 encoded TIFF images with multiple strips are now properly
+        embedded in PDF files.
+      </action>
       <action context="Code" dev="JM" type="add">
         Added support for fixed-width spaces.
       </action>
