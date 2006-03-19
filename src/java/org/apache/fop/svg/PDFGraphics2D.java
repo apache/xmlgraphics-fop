@@ -578,7 +578,6 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             BitmapImage fopimg = new BitmapImage("TempImage:"
                                           + img.toString(), buf.getWidth(),
                                           buf.getHeight(), result, ref);
-            fopimg.setTransparent(new PDFColor(255, 255, 255));
             imageInfo = pdfDoc.addImage(resourceContext, fopimg);
             //int xObjectNum = imageInfo.getXNumber();
 
@@ -1385,17 +1384,19 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         preparePainting();
 
         Font fontState;
+        AffineTransform fontTransform = null;
         if (ovFontState == null) {
             java.awt.Font gFont = getFont();
+            fontTransform = gFont.getTransform();
             String n = gFont.getFamily();
             if (n.equals("sanserif")) {
                 n = "sans-serif";
             }
-            int siz = gFont.getSize();
+            float siz = gFont.getSize2D();
             String style = gFont.isItalic() ? "italic" : "normal";
             int weight = gFont.isBold() ? Font.BOLD : Font.NORMAL;
             FontTriplet triplet = fontInfo.fontLookup(n, style, weight);
-            fontState = fontInfo.getFontInstance(triplet, siz * 1000);
+            fontState = fontInfo.getFontInstance(triplet, (int)(siz * 1000 + 0.5));
         } else {
             fontState = fontInfo.getFontInstance(
                     ovFontState.getFontTriplet(), ovFontState.getFontSize());
@@ -1465,10 +1466,18 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
         currentStream.write("BT\n");
 
-        //currentStream.write("1 0 0 -1 0 0 Tm [" + startText);
-        currentStream.write("1 0 0 -1 " 
-                + PDFNumber.doubleOut(x) + " " + PDFNumber.doubleOut(y) 
-                + " Tm [" + startText);
+        AffineTransform localTransform = new AffineTransform();
+        localTransform.translate(x, y);
+        if (fontTransform != null) {
+            localTransform.concatenate(fontTransform);
+        }
+        localTransform.scale(1, -1);
+        double[] lt = new double[6];
+        localTransform.getMatrix(lt);
+        currentStream.write(PDFNumber.doubleOut(lt[0]) + " "
+                + PDFNumber.doubleOut(lt[1]) + " " + PDFNumber.doubleOut(lt[2]) + " "
+                + PDFNumber.doubleOut(lt[3]) + " " + PDFNumber.doubleOut(lt[4]) + " "
+                + PDFNumber.doubleOut(lt[5]) + " Tm [" + startText);
 
         int l = s.length();
 
