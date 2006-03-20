@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,15 +18,11 @@
  
 package org.apache.fop.fonts.apps;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.Version;
@@ -207,24 +203,6 @@ public class TTFReader extends AbstractFontReader {
         return ttfFile;
     }
 
-
-    /**
-     * Writes the generated DOM Document to a file.
-     *
-     * @param   doc The DOM Document to save.
-     * @param   target The target filename for the XML file.
-     * @throws TransformerException if an error occurs during serialization
-     */
-    public void writeFontXML(org.w3c.dom.Document doc, String target) 
-                throws TransformerException {
-        log.info("Writing xml font file " + target + "...");
-
-        TransformerFactory factory = TransformerFactory.newInstance();
-        Transformer transformer = factory.newTransformer();
-        transformer.transform(
-                new javax.xml.transform.dom.DOMSource(doc),
-                new javax.xml.transform.stream.StreamResult(new File(target)));
-    }
 
     /**
      * Generates the font metrics file from the TTF/TTC file.
