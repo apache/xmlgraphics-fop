@@ -163,8 +163,19 @@ public class PDFFilterList {
             }
         }
         if (filterset == null || filterset.size() == 0) {
-            // built-in default to flate
-            addFilter(new FlateFilter());
+            if (METADATA_FILTER.equals(type)) {
+                //XMP metadata should not be embedded in clear-text
+                addFilter(new NullFilter());
+            } else if (JPEG_FILTER.equals(type)) {
+                //JPEG is already well compressed
+                addFilter(new NullFilter());
+            } else if (TIFF_FILTER.equals(type)) {
+                //CCITT-encoded images are already well compressed
+                addFilter(new NullFilter());
+            } else {
+                // built-in default to flate
+                addFilter(new FlateFilter());
+            }
         } else {
             for (int i = 0; i < filterset.size(); i++) {
                 String v = (String)filterset.get(i);
@@ -187,17 +198,24 @@ public class PDFFilterList {
             List parms = new java.util.ArrayList();
 
             // run the filters
+            int nonNullParams = 0;
             for (int count = 0; count < filters.size(); count++) {
                 PDFFilter filter = (PDFFilter)filters.get(count);
                 // place the names in our local vector in reverse order
-                names.add(0, filter.getName());
-                if (filter.getDecodeParms() != null) {
-                    parms.add(0, filter.getDecodeParms());
+                if (filter.getName().length() > 0) {
+                    names.add(0, filter.getName());
+                    if (filter.getDecodeParms() != null) {
+                        parms.add(0, filter.getDecodeParms());
+                        nonNullParams++;
+                    } else {
+                        parms.add(0, null);
+                    }
                 }
             }
 
             // now build up the filter entries for the dictionary
-            return buildFilterEntries(names) + buildDecodeParms(parms);
+            return buildFilterEntries(names) 
+                    + (nonNullParams > 0 ? buildDecodeParms(parms) : "");
         }
         return "";
 

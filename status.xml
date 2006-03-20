@@ -28,6 +28,10 @@
   <changes>
     <release version="FOP Trunk">
       <action context="Code" dev="JM" type="fix">
+        Bugfix: Certain filter combinations in PDF could lead to invalid PDFs. 
+        DecodeParams were not properly handled.
+      </action>
+      <action context="Code" dev="JM" type="fix">
         Bugfix: CCITT Group 4 encoded TIFF images with multiple strips are now properly
         embedded in PDF files.
       </action>
