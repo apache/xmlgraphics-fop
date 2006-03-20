@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,15 @@
  
 package org.apache.fop.fonts.apps;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
+
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -99,6 +106,44 @@ public abstract class AbstractFontReader {
             setLogLevel("error");
         } else {
             setLogLevel("info");
+        }
+    }
+
+    /**
+     * Writes the generated DOM Document to a file.
+     *
+     * @param   doc The DOM Document to save.
+     * @param   target The target filename for the XML file.
+     * @throws TransformerException if an error occurs during serialization
+     */
+    public void writeFontXML(org.w3c.dom.Document doc, String target) throws TransformerException {
+        writeFontXML(doc, new File(target));
+    }
+    
+    /**
+     * Writes the generated DOM Document to a file.
+     *
+     * @param   doc The DOM Document to save.
+     * @param   target The target file for the XML file.
+     * @throws TransformerException if an error occurs during serialization
+     */
+    public void writeFontXML(org.w3c.dom.Document doc, File target) throws TransformerException {
+        log.info("Writing xml font file " + target + "...");
+    
+        try {
+            OutputStream out = new java.io.FileOutputStream(target);
+            out = new java.io.BufferedOutputStream(out);
+            try {
+                TransformerFactory factory = TransformerFactory.newInstance();
+                Transformer transformer = factory.newTransformer();
+                transformer.transform(
+                        new javax.xml.transform.dom.DOMSource(doc),
+                        new javax.xml.transform.stream.StreamResult(out));
+            } finally {
+                out.close();
+            }
+        } catch (IOException ioe) {
+            throw new TransformerException("Error writing the output file", ioe);
         }
     }
     
