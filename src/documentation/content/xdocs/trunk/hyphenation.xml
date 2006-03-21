@@ -113,7 +113,7 @@
              be created from the supplied pattern(s)).</li>
             <li>Put the pattern source file(s) into a directory of your choice and 
              configure FOP to look for custom patterns in this directory, by setting the
-             <a href="configuration.html#hyphenation-dir">&lt;hyphenation-dir&gt;</a> 
+             <a href="configuration.html">&lt;hyphenation-base&gt;</a> 
              configuration option.</li>
           </ul>
         </li>

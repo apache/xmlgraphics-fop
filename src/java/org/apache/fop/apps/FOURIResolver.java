@@ -21,6 +21,7 @@ package org.apache.fop.apps;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -139,14 +140,17 @@ public class FOURIResolver
             }
         }
         
+        String effURL = absoluteURL.toExternalForm();
         try {
-            String effURL = absoluteURL.toExternalForm();
             URLConnection connection = absoluteURL.openConnection();
             connection.setAllowUserInteraction(false);
             connection.setDoInput(true);
             updateURLConnection(connection, href);
             connection.connect();
             return new StreamSource(connection.getInputStream(), effURL);
+        } catch (FileNotFoundException fnfe) {
+            //Note: This is on "debug" level since the caller is supposed to handle this
+            log.debug("File not found: " + effURL);
         } catch (java.io.IOException ioe) {
             log.error("Error with opening URL '" + href + "': " + ioe.getMessage(), ioe);
         }

@@ -20,7 +20,6 @@ package org.apache.fop.apps;
 
 // Java
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.util.Date;
@@ -42,6 +41,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.Version;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.FOEventHandler;
+import org.apache.fop.hyphenation.HyphenationTreeResolver;
 import org.apache.fop.layoutmgr.LayoutManagerMaker;
 import org.apache.fop.pdf.PDFEncryptionParams;
 import org.apache.fop.render.Renderer;
@@ -84,6 +84,9 @@ public class FOUserAgent {
     
     /** Registry for XML handlers */
     private XMLHandlerRegistry xmlHandlers = new XMLHandlerRegistry();
+    
+    /** The resolver for user-supplied hyphenation patterns */
+    private HyphenationTreeResolver hyphResolver;
     
     /** The base URL for all URL resolutions, especially for external-graphics */
     private String baseURL;
@@ -411,6 +414,14 @@ public class FOUserAgent {
         log.debug("Initializing User Agent Configuration");
         setBaseURL(getBaseURLfromConfig("base"));
         setFontBaseURL(getBaseURLfromConfig("font-base"));
+        final String hyphBase = getBaseURLfromConfig("hyphenation-base");
+        if (hyphBase != null) {
+            this.hyphResolver = new HyphenationTreeResolver() {
+                public Source resolve(String href) {
+                    return resolveURI(href, hyphBase);
+                }
+            };
+        }
         if (userConfig.getChild("source-resolution", false) != null) {
             this.sourceResolution 
                 = userConfig.getChild("source-resolution").getValueAsFloat(
@@ -460,8 +471,6 @@ public class FOUserAgent {
                 return cfgBaseDir;
             } catch (MalformedURLException mue) {
                 log.error("Base URL in user config is malformed!");
-            } catch (IOException ioe) {
-                log.error("Error converting relative base directory to absolute URL.");
             }
         }
         return null;
@@ -527,7 +536,7 @@ public class FOUserAgent {
      * @return the font base URL
      */
     public String getFontBaseURL() {
-        return this.fontBaseURL != null ? this.fontBaseURL : this.baseURL ;
+        return this.fontBaseURL != null ? this.fontBaseURL : this.baseURL;
     }
 
     /**
@@ -733,6 +742,11 @@ public class FOUserAgent {
      */
     public XMLHandlerRegistry getXMLHandlerRegistry() {
         return this.xmlHandlers;
+    }
+
+    /** @return the HyphenationTreeResolver for resolving user-supplied hyphenation patterns. */
+    public HyphenationTreeResolver getHyphenationTreeResolver() {
+        return this.hyphResolver;
     }
     
 }
