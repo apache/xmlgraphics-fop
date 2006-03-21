@@ -189,7 +189,8 @@ public class FopFactory {
      * @return the new Fop instance
      * @throws FOPException when the constructor fails
      */
-    public Fop newFop(String outputFormat, FOUserAgent userAgent, OutputStream stream) throws FOPException {
+    public Fop newFop(String outputFormat, FOUserAgent userAgent, OutputStream stream) 
+                throws FOPException {
         if (userAgent == null) {
             throw new NullPointerException("The userAgent parameter must not be null!");
         }
@@ -510,8 +511,6 @@ public class FopFactory {
                 return cfgBaseDir;
             } catch (MalformedURLException mue) {
                 log.error("Base URL in user config is malformed!");
-            } catch (IOException ioe) {
-                log.error("Error converting relative base directory to absolute URL.");
             }
         }
         return null;
