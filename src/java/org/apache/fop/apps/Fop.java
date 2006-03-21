@@ -71,7 +71,7 @@ public class Fop {
 
         foUserAgent = ua;
         if (foUserAgent == null) {
-            foUserAgent = new FOUserAgent();
+            foUserAgent = FopFactory.newInstance().newFOUserAgent();
         }
         
         this.stream = stream;
@@ -91,7 +91,7 @@ public class Fop {
 
         foUserAgent = ua;
         if (foUserAgent == null) {
-            foUserAgent = new FOUserAgent();
+            foUserAgent = FopFactory.newInstance().newFOUserAgent();
         }
         
         createDefaultHandler();
@@ -105,7 +105,7 @@ public class Fop {
      */
     public Fop(String outputFormat) {
         this.outputFormat = outputFormat;
-        foUserAgent = new FOUserAgent();
+        foUserAgent = FopFactory.newInstance().newFOUserAgent();
     }
 
     /**
