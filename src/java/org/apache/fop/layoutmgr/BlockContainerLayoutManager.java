@@ -344,7 +344,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         } else {
             MinOptMax range = new MinOptMax(relDims.ipd);
             BlockContainerBreaker breaker = new BlockContainerBreaker(this, range);
-            breaker.doLayout(relDims.bpd);
+            breaker.doLayout(relDims.bpd, autoHeight);
             boolean contentOverflows = false;
             if (!breaker.isEmpty()) {
                 contentOverflows = (breaker.deferredAlg.getPageBreaks().size() > 1);
@@ -495,7 +495,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
 
         MinOptMax range = new MinOptMax(relDims.ipd);
         BlockContainerBreaker breaker = new BlockContainerBreaker(this, range);
-        breaker.doLayout(relDims.bpd);
+        breaker.doLayout(relDims.bpd, autoHeight);
         boolean contentOverflows = breaker.isOverflow();
         LinkedList returnList = new LinkedList();
         if (!breaker.isEmpty()) {
