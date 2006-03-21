@@ -27,6 +27,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="add">
+        Reenabled loading of user-supplied hyphenation patterns that was available in
+        FOP 0.20.5. (See "hyphenation-base" option in the user configuration)
+      </action>
       <action context="Code" dev="JM" type="fix">
         Bugfix: Certain filter combinations in PDF could lead to invalid PDFs. 
         DecodeParams were not properly handled.

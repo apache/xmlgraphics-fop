@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2004,2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@
 package org.apache.fop.hyphenation;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -26,8 +27,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import org.xml.sax.InputSource;
 
 /**
  * This tree structure stores the hyphenation patterns in an efficient
@@ -38,6 +42,8 @@ import java.util.HashMap;
  */
 public class HyphenationTree extends TernaryTree 
             implements PatternConsumer, Serializable {
+
+    private static final long serialVersionUID = -7842107987915665573L;
 
     /**
      * value space: stores the interletter values
@@ -112,12 +118,30 @@ public class HyphenationTree extends TernaryTree
 
     /**
      * Read hyphenation patterns from an XML file.
+     * @param filename the filename
+     * @throws HyphenationException In case the parsing fails
      */
     public void loadPatterns(String filename) throws HyphenationException {
+        File f = new File(filename);
+        try {
+            InputSource src = new InputSource(f.toURL().toExternalForm());
+            loadPatterns(src);
+        } catch (MalformedURLException e) {
+            throw new HyphenationException("Error converting the File '" + f + "' to a URL: " 
+                    + e.getMessage());
+        }
+    }
+
+    /**
+     * Read hyphenation patterns from an XML file.
+     * @param source the InputSource for the file
+     * @throws HyphenationException In case the parsing fails
+     */
+    public void loadPatterns(InputSource source) throws HyphenationException {
         PatternParser pp = new PatternParser(this);
         ivalues = new TernaryTree();
 
-        pp.parse(filename);
+        pp.parse(source);
 
         // patterns/values should be now in the tree
         // let's optimize a bit

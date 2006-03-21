@@ -67,14 +67,22 @@
       </tr>
       <tr>
         <td>base</td>
-        <td>URL</td>
+        <td>URL or directory</td>
         <td>Specifies the base URL based on which relative URL will be resolved.</td>
       </tr>
       <tr>
         <td>font-base</td>
-        <td>URL</td>
+        <td>URL or directory</td>
         <td>Specifies the base URL based on which relative font URLs will be resolved.
         If not specified defaults to the base URL above.
+        </td>
+      </tr>
+      <tr>
+        <td>hyphenation-base</td>
+        <td>URL or directory</td>
+        <td>Specifies the base URL based on which relative URLs to hyphenation pattern 
+        files will be resolved. If not specified, support for user-supplied hyphenation 
+        patterns remains disabled.
         </td>
       </tr>
       <tr>

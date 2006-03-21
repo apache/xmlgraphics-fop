@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2004,2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,9 +28,12 @@ import org.xml.sax.Attributes;
 
 // Java
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
-import java.net.URL;
+
+import javax.xml.parsers.SAXParserFactory;
 
 /**
  * A SAX document handler to read and parse hyphenation patterns
@@ -72,73 +75,58 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
         this.consumer = consumer;
     }
 
+    /**
+     * Parses a hyphenation pattern file.
+     * @param filename the filename
+     * @throws HyphenationException In case of an exception while parsing
+     */
     public void parse(String filename) throws HyphenationException {
-        InputSource uri = fileInputSource(filename);
-
+        parse(new File(filename));
+    }
+    
+    /**
+     * Parses a hyphenation pattern file.
+     * @param file the pattern file
+     * @throws HyphenationException In case of an exception while parsing
+     */
+    public void parse(File file) throws HyphenationException {
         try {
-            parser.parse(uri);
+            InputSource src = new InputSource(file.toURL().toExternalForm());
+            parse(src);
+        } catch (MalformedURLException e) {
+            throw new HyphenationException("Error converting the File '" + file + "' to a URL: " 
+                    + e.getMessage());
+        }
+    }
+
+    /**
+     * Parses a hyphenation pattern file.
+     * @param source the InputSource for the file
+     * @throws HyphenationException In case of an exception while parsing
+     */
+    public void parse(InputSource source) throws HyphenationException {
+        try {
+            parser.parse(source);
+        } catch (FileNotFoundException fnfe) {
+            throw new HyphenationException("File not found: " + fnfe.getMessage());
+        } catch (IOException ioe) {
+            throw new HyphenationException(ioe.getMessage());
         } catch (SAXException e) {
             throw new HyphenationException(errMsg);
-        } catch (IOException e) {
-            throw new HyphenationException(e.getMessage());
-        } catch (NullPointerException e) {
-            throw new HyphenationException("SAX parser not available");
         }
     }
-
+    
     /**
-     * creates a SAX parser, using the value of org.xml.sax.parser
-     * defaulting to org.apache.xerces.parsers.SAXParser
-     *
+     * Creates a SAX parser using JAXP
      * @return the created SAX parser
      */
-    static XMLReader createParser() throws HyphenationException {
-        String parserClassName = System.getProperty("org.xml.sax.parser");
-        if (parserClassName == null) {
-            parserClassName = "org.apache.xerces.parsers.SAXParser";
-        }
-        // System.out.println("using SAX parser " + parserClassName);
-
+    static XMLReader createParser() {
         try {
-            return (XMLReader)Class.forName(parserClassName).newInstance();
-        } catch (ClassNotFoundException e) {
-            throw new HyphenationException("Could not find "
-                                           + parserClassName);
-        } catch (InstantiationException e) {
-            throw new HyphenationException("Could not instantiate "
-                                           + parserClassName);
-        } catch (IllegalAccessException e) {
-            throw new HyphenationException("Could not access "
-                                           + parserClassName);
-        } catch (ClassCastException e) {
-            throw new HyphenationException(parserClassName
-                                           + " is not a SAX driver");
-        }
-    }
-
-    /**
-     * create an InputSource from a file name
-     *
-     * @param filename the name of the file
-     * @return the InputSource created
-     */
-    protected static InputSource fileInputSource(String filename)
-            throws HyphenationException {
-
-        /* this code adapted from James Clark's in XT */
-        File file = new File(filename);
-        String path = file.getAbsolutePath();
-        String fSep = System.getProperty("file.separator");
-        if (fSep != null && fSep.length() == 1) {
-            path = path.replace(fSep.charAt(0), '/');
-        }
-        if (path.length() > 0 && path.charAt(0) != '/') {
-            path = '/' + path;
-        }
-        try {
-            return new InputSource(new URL("file", null, path).toString());
-        } catch (java.net.MalformedURLException e) {
-            throw new HyphenationException("unexpected MalformedURLException");
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            factory.setNamespaceAware(true);
+            return factory.newSAXParser().getXMLReader();
+        } catch (Exception e) {
+            throw new RuntimeException("Couldn't create XMLReader", e);
         }
     }
 
@@ -261,11 +249,11 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
     }
 
     //
-    // DocumentHandler methods
+    // ContentHandler methods
     //
 
     /**
-     * Start element.
+     * @see org.xml.sax.ContentHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
      */
     public void startElement(String uri, String local, String raw,
                              Attributes attrs) {
@@ -293,6 +281,9 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
         token.setLength(0);
     }
 
+    /**
+     * @see org.xml.sax.ContentHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
+     */
     public void endElement(String uri, String local, String raw) {
 
         if (token.length() > 0) {
@@ -328,7 +319,7 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
     }
 
     /**
-     * Characters.
+     * @see org.xml.sax.ContentHandler#characters(char[], int, int)
      */
     public void characters(char ch[], int start, int length) {
         StringBuffer chars = new StringBuffer(length);
@@ -362,7 +353,7 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
     //
 
     /**
-     * Warning.
+     * @see org.xml.sax.ErrorHandler#warning(org.xml.sax.SAXParseException)
      */
     public void warning(SAXParseException ex) {
         errMsg = "[Warning] " + getLocationString(ex) + ": "
@@ -370,14 +361,14 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
     }
 
     /**
-     * Error.
+     * @see org.xml.sax.ErrorHandler#error(org.xml.sax.SAXParseException)
      */
     public void error(SAXParseException ex) {
         errMsg = "[Error] " + getLocationString(ex) + ": " + ex.getMessage();
     }
 
     /**
-     * Fatal error.
+     * @see org.xml.sax.ErrorHandler#fatalError(org.xml.sax.SAXParseException)
      */
     public void fatalError(SAXParseException ex) throws SAXException {
         errMsg = "[Fatal Error] " + getLocationString(ex) + ": "
