@@ -233,7 +233,9 @@ public class CommandLineOptions {
             } else if (args[i].equals("-awt")) {
                 i = i + parseAWTOutputOption(args, i);
             } else if (args[i].equals("-pdf")) {
-                i = i + parsePDFOutputOption(args, i);
+                i = i + parsePDFOutputOption(args, i, null);
+            } else if (args[i].equals("-pdfa1b")) {
+                i = i + parsePDFOutputOption(args, i, "PDF/A-1b");
             } else if (args[i].equals("-mif")) {
                 i = i + parseMIFOutputOption(args, i);
             } else if (args[i].equals("-rtf")) {
@@ -371,13 +373,16 @@ public class CommandLineOptions {
         return 0;
     }
 
-    private int parsePDFOutputOption(String[] args, int i) throws FOPException {
+    private int parsePDFOutputOption(String[] args, int i, String pdfAMode) throws FOPException {
         setOutputMode(MimeConstants.MIME_PDF);
         if ((i + 1 == args.length)
                 || (args[i + 1].charAt(0) == '-')) {
             throw new FOPException("you must specify the PDF output file");
         } else {
             outfile = new File(args[i + 1]);
+            if (pdfAMode != null) {
+                foUserAgent.getRendererOptions().put("pdf-a-mode", pdfAMode);
+            }
             return 1;
         }
     }
@@ -870,17 +875,19 @@ public class CommandLineOptions {
             + "  -param name value <value> to use for parameter <name> in xslt stylesheet\n"
             + "                    (repeat '-param name value' for each parameter)\n \n"
             + " [OUTPUT] \n"
-            + "  outfile           input will be rendered as pdf file into outfile \n"
-            + "  -pdf outfile      input will be rendered as pdf file (outfile req'd) \n"
+            + "  outfile           input will be rendered as PDF into outfile\n"
+            + "  -pdf outfile      input will be rendered as PDF (outfile req'd)\n"
+            + "  -pdfa1b outfile   input will be rendered as PDF/A-1b compliant PDF\n"
+            + "                    (outfile req'd)\n"
             + "  -awt              input will be displayed on screen \n"
-            + "  -mif outfile      input will be rendered as mif file (outfile req'd)\n"
-            + "  -rtf outfile      input will be rendered as rtf file (outfile req'd)\n"
-            + "  -tiff outfile     input will be rendered as tiff file (outfile req'd)\n"
-            + "  -png outfile      input will be rendered as png file (outfile req'd)\n"
-            + "  -pcl outfile      input will be rendered as pcl file (outfile req'd) \n"
-            + "  -ps outfile       input will be rendered as PostScript file (outfile req'd) \n"
-            + "  -txt outfile      input will be rendered as text file (outfile req'd) \n"
-            + "  -svg outfile      input will be rendered as an svg slides file (outfile req'd) \n"
+            + "  -mif outfile      input will be rendered as MIF (FrameMaker) (outfile req'd)\n"
+            + "  -rtf outfile      input will be rendered as RTF (outfile req'd)\n"
+            + "  -tiff outfile     input will be rendered as TIFF (outfile req'd)\n"
+            + "  -png outfile      input will be rendered as PNG (outfile req'd)\n"
+            + "  -pcl outfile      input will be rendered as PCL (outfile req'd) \n"
+            + "  -ps outfile       input will be rendered as PostScript (outfile req'd) \n"
+            + "  -txt outfile      input will be rendered as plain text (outfile req'd) \n"
+            + "  -svg outfile      input will be rendered as an SVG slides file (outfile req'd) \n"
             + "  -at [mime] out    representation of area tree as XML (outfile req'd) \n"
             + "                    specify optional mime output to allow AT to be converted\n"
             + "                    to final format later\n"
@@ -893,6 +900,7 @@ public class CommandLineOptions {
             + "  -foout outfile    input will only be XSL transformed. The intermediate \n"
             + "                    XSL-FO file is saved and no rendering is performed. \n"
             + "                    (Only available if you use -xml and -xsl parameters)\n\n"
+            + "\n"
             + " [Examples]\n" + "  Fop foo.fo foo.pdf \n"
             + "  Fop -fo foo.fo -pdf foo.pdf (does the same as the previous line)\n"
             + "  Fop -xml foo.xml -xsl foo.xsl -pdf foo.pdf\n"
