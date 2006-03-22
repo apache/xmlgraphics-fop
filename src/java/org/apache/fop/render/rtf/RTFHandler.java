@@ -1563,7 +1563,7 @@ public class RTFHandler extends FOEventHandler {
 
             Region regionBefore = pagemaster.getRegion(Constants.FO_REGION_BEFORE);
             if (regionBefore != null) {
-                FONode staticBefore = (FONode) pageSequence.flowMap.get(
+                FONode staticBefore = (FONode) pageSequence.getFlowMap().get(
                         regionBefore.getRegionName());
                 if (staticBefore != null) {
                     recurseFONode(staticBefore);
@@ -1571,7 +1571,7 @@ public class RTFHandler extends FOEventHandler {
             }
             Region regionAfter = pagemaster.getRegion(Constants.FO_REGION_AFTER);
             if (regionAfter != null) {
-                FONode staticAfter = (FONode) pageSequence.flowMap.get(
+                FONode staticAfter = (FONode) pageSequence.getFlowMap().get(
                         regionAfter.getRegionName());
                 if (staticAfter != null) {
                     recurseFONode(staticAfter);

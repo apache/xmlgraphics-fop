@@ -19,7 +19,7 @@
 package org.apache.fop.fo.pagination;
 
 // Java
-import java.util.HashMap;
+import java.util.Map;
 
 import org.xml.sax.Locator;
 
@@ -34,6 +34,7 @@ import org.apache.fop.fo.ValidationException;
  * Implementation of the fo:page-sequence formatting object.
  */
 public class PageSequence extends FObj {
+    
     // The value of properties relevant for fo:page-sequence.
     private String country;
     private String format;
@@ -47,9 +48,7 @@ public class PageSequence extends FObj {
     private String masterReference;
     // End of property values
 
-    /**
-     * The parent root object
-     */
+    /** The parent root object */
     private Root root;
 
     // There doesn't seem to be anything in the spec requiring flows
@@ -57,12 +56,10 @@ public class PageSequence extends FObj {
     // defined in the page sequence, so all we need is this one hashmap
     // the set of flows includes StaticContent flows also
 
-    /**
-     * Map of flows to their flow name (flow-name, Flow)
-     */
-    public HashMap flowMap;
+    /** Map of flows to their flow name (flow-name, Flow) */
+    private Map flowMap;
 
-    public int startingPageNumber = 0;
+    private int startingPageNumber = 0;
     private PageNumberGenerator pageNumberGenerator;
 
     /**
@@ -72,8 +69,8 @@ public class PageSequence extends FObj {
      * The pageSequenceMaster is null if master-reference refers to a
      * simple-page-master.
      */
-    public SimplePageMaster simplePageMaster;
-    public PageSequenceMaster pageSequenceMaster;
+    private SimplePageMaster simplePageMaster;
+    private PageSequenceMaster pageSequenceMaster;
 
     /**
      * The fo:title object for this page-sequence.
@@ -119,13 +116,12 @@ public class PageSequence extends FObj {
      */
     protected void startOfNode() throws FOPException {
         this.root = (Root) parent;
-        flowMap = new HashMap();
+        flowMap = new java.util.HashMap();
 
-        this.simplePageMaster =
-                root.getLayoutMasterSet().getSimplePageMaster(masterReference);
+        this.simplePageMaster = root.getLayoutMasterSet().getSimplePageMaster(masterReference);
         if (this.simplePageMaster == null) {
-            this.pageSequenceMaster =
-                    root.getLayoutMasterSet().getPageSequenceMaster(masterReference);
+            this.pageSequenceMaster
+                    = root.getLayoutMasterSet().getPageSequenceMaster(masterReference);
             if (this.pageSequenceMaster == null) {
                 throw new ValidationException("master-reference '" + masterReference
                    + "' for fo:page-sequence matches no"
@@ -135,18 +131,14 @@ public class PageSequence extends FObj {
             }
         }
 
-        this.pageNumberGenerator =
-            new PageNumberGenerator(format, groupingSeparator, groupingSize, letterValue);
+        this.pageNumberGenerator = new PageNumberGenerator(
+                format, groupingSeparator, groupingSize, letterValue);
 
         checkId(id);
         getFOEventHandler().startPageSequence(this);
     }
 
-    /**
-     * Signal end of this xml element.
-     * This passes the end page sequence to the structure handler
-     * so it can act upon that.
-     */
+    /** @see org.apache.fop.fo.FONode#endOfNode() */
     protected void endOfNode() throws FOPException {
         if (mainFlow == null) {
            missingChildElementError("(title?,static-content*,flow)");
@@ -436,6 +428,11 @@ public class PageSequence extends FObj {
         return flowMap.containsKey(flowName);
     }
 
+    /** @return the flow map for this page-sequence */
+    public Map getFlowMap() {
+        return this.flowMap;
+    }
+    
     /**
      * Public accessor for determining the next page master to use within this page sequence.
      * @param page the page number of the page to be created
@@ -478,6 +475,7 @@ public class PageSequence extends FObj {
     /**
      * Retrieves the string representation of a page number applicable
      * for this page sequence
+     * @param pageNumber the page number
      * @return string representation of the page number
      */
     public String makeFormattedPageNumber(int pageNumber) {
@@ -492,9 +490,7 @@ public class PageSequence extends FObj {
         return root;
     }
 
-    /**
-     * Return the "master-reference" property.
-     */
+    /** @return the "master-reference" property. */
     public String getMasterReference() {
         return masterReference;
     }
@@ -504,23 +500,29 @@ public class PageSequence extends FObj {
         return "page-sequence";
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#getNameId()
-     */
+    /** @see org.apache.fop.fo.FObj#getNameId() */
     public int getNameId() {
         return FO_PAGE_SEQUENCE;
     }
-    /**
-     * get the forcePageCount value
-     */
+    
+    /** @return the force-page-count value */
     public int getForcePageCount() {
         return forcePageCount;
     }
 
-    /**
-     * get the initial pagenumber property value
-     */
+    /** @return the initial-page-number property value */
     public Numeric getInitialPageNumber() {
         return initialPageNumber;
     }
+    
+    /** @return the country property value */
+    public String getCountry() {
+        return this.country;
+    }
+    
+    /** @return the language property value */
+    public String getLanguage() {
+        return this.language;
+    }
+
 }
