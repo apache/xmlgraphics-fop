@@ -846,8 +846,6 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
     private LinkedList createElementsForASpace(int alignment,
             AreaInfo ai, int leafValue) {
-        //TODO: handling of special spaces
-        //      (U+2000 to U+200A fixed spaces, U+200B zero-width space)
         LinkedList spaceElements = new LinkedList();
         LeafPosition mainPosition = new LeafPosition(this, leafValue);
         
