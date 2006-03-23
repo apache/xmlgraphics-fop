@@ -331,6 +331,11 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         getParentArea(null);
         getPSLM().addIDToPage(getTable().getId());
 
+        // add space before, in order to implement display-align = "center" or "after"
+        if (layoutContext.getSpaceBefore() != 0) {
+            addBlockSpacing(0.0, new MinOptMax(layoutContext.getSpaceBefore()));
+        }
+
         int startXOffset = getTable().getCommonMarginBlock().startIndent.getValue(this);
         
         // add column, body then row areas
