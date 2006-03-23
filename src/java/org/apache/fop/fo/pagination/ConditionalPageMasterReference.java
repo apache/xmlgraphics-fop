@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -90,28 +90,32 @@ public class ConditionalPageMasterReference extends FObj {
      * matches.
      * @param isOddPage True if page number odd
      * @param isFirstPage True if page is first page
+     * @param isLastPage True if page is last page
      * @param isBlankPage True if page is blank
      * @return True if the conditions for this reference are met
      */
     protected boolean isValid(boolean isOddPage,
                               boolean isFirstPage,
+                              boolean isLastPage,
                               boolean isBlankPage) {
         // page-position
         if (isFirstPage) {
             if (pagePosition == EN_REST) {
                 return false;
             } else if (pagePosition == EN_LAST) {
-                // ?? how can one know at this point?
-                getLogger().debug("LAST PagePosition NYI");
+                return false;
+            }
+        } else if (isLastPage) {
+            if (pagePosition == EN_REST) {
+                return false;
+            } else if (pagePosition == EN_FIRST) {
                 return false;
             }
         } else {
             if (pagePosition == EN_FIRST) {
                 return false;
             } else if (pagePosition == EN_LAST) {
-                // ?? how can one know at this point?
-                getLogger().debug("LAST PagePosition NYI");
-                // potentially valid, don't return
+                return false;
             }
         }
 
@@ -139,11 +143,14 @@ public class ConditionalPageMasterReference extends FObj {
         return true;
     }
 
-    /**
-     * Returns the "master-reference" property.
-     */
+    /** @return the "master-reference" property. */
     public String getMasterReference() {
         return masterReference;
+    }
+    
+    /** @return the page-position property value */
+    public int getPagePosition() {
+        return this.pagePosition;
     }
     
     /** @see org.apache.fop.fo.FONode#getLocalName() */
@@ -151,9 +158,7 @@ public class ConditionalPageMasterReference extends FObj {
         return "conditional-page-master-reference";
     }
     
-    /**
-     * @see org.apache.fop.fo.FObj#getNameId()
-     */
+    /** @see org.apache.fop.fo.FObj#getNameId() */
     public int getNameId() {
         return FO_CONDITIONAL_PAGE_MASTER_REFERENCE;
     }

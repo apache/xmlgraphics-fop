@@ -28,6 +28,9 @@
   <changes>
     <release version="FOP Trunk">
       <action context="Code" dev="JM" type="add">
+        Initial support for page-position="last" added.
+      </action>
+      <action context="Code" dev="JM" type="add">
         Reenabled loading of user-supplied hyphenation patterns that was available in
         FOP 0.20.5. (See "hyphenation-base" option in the user configuration)
       </action>

@@ -991,4 +991,15 @@ public abstract class BreakingAlgorithm {
             bestActiveNode = bestActiveNode.previous;
         }
     }
+    
+    /** @return the alignment for normal lines/parts */
+    public int getAlignment() {
+        return this.alignment;
+    }
+
+    /** @return the alignment for the last line/part */
+    public int getAlignmentLast() {
+        return this.alignmentLast;
+    }
+
 }

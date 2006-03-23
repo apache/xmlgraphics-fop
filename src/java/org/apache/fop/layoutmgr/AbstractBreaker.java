@@ -318,13 +318,26 @@ public abstract class AbstractBreaker {
      */
     protected void addAreas(PageBreakingAlgorithm alg, int partCount, 
             BlockSequence originalList, BlockSequence effectiveList) {
+        addAreas(alg, 0, partCount, originalList, effectiveList);
+    }
+    
+    /**
+     * Phase 3 of Knuth algorithm: Adds the areas 
+     * @param alg PageBreakingAlgorithm instance which determined the breaks
+     * @param startPart index of the first part (page) to be rendered
+     * @param partCount number of parts (pages) to be rendered
+     * @param originalList original Knuth element list
+     * @param effectiveList effective Knuth element list (after adjustments)
+     */
+    protected void addAreas(PageBreakingAlgorithm alg, int startPart, int partCount, 
+            BlockSequence originalList, BlockSequence effectiveList) {
         LayoutContext childLC;
         // add areas
         ListIterator effectiveListIterator = effectiveList.listIterator();
         int startElementIndex = 0;
         int endElementIndex = 0;
         int lastBreak = -1;
-        for (int p = 0; p < partCount; p++) {
+        for (int p = startPart; p < startPart + partCount; p++) {
             PageBreakPosition pbp = (PageBreakPosition) alg.getPageBreaks().get(p);
 
             //Check the last break position for forced breaks
@@ -426,7 +439,8 @@ public abstract class AbstractBreaker {
 
                 /* *** *** non-standard extension *** *** */
                 if (displayAlign == Constants.EN_X_FILL) {
-                    int averageLineLength = optimizeLineLength(effectiveList, startElementIndex, endElementIndex);
+                    int averageLineLength = optimizeLineLength(effectiveList, 
+                            startElementIndex, endElementIndex);
                     if (averageLineLength != 0) {
                         childLC.setStackLimit(new MinOptMax(averageLineLength));
                     }

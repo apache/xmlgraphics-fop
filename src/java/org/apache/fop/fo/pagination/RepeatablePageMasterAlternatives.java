@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,6 +47,7 @@ public class RepeatablePageMasterAlternatives extends FObj
     private int numberConsumed = 0;
 
     private List conditionalPageMasterRefs;
+    private boolean hasPagePositionLast = false;
 
     /**
      * @see org.apache.fop.fo.FONode#FONode(FONode)
@@ -93,9 +94,9 @@ public class RepeatablePageMasterAlternatives extends FObj
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
-        if (!(FO_URI.equals(nsURI) &&
-            localName.equals("conditional-page-master-reference"))) {
-                invalidChildError(loc, nsURI, localName);
+        if (!(FO_URI.equals(nsURI)
+                && localName.equals("conditional-page-master-reference"))) {
+            invalidChildError(loc, nsURI, localName);
         }
     }
 
@@ -121,6 +122,7 @@ public class RepeatablePageMasterAlternatives extends FObj
      */
     public String getNextPageMasterName(boolean isOddPage,
                                         boolean isFirstPage,
+                                        boolean isLastPage,
                                         boolean isBlankPage) {
         if (getMaximumRepeats() != INFINITE) {
             if (numberConsumed < getMaximumRepeats()) {
@@ -128,12 +130,14 @@ public class RepeatablePageMasterAlternatives extends FObj
             } else {
                 return null;
             }
+        } else {
+            numberConsumed++;
         }
 
         for (int i = 0; i < conditionalPageMasterRefs.size(); i++) {
-            ConditionalPageMasterReference cpmr =
-                (ConditionalPageMasterReference)conditionalPageMasterRefs.get(i);
-            if (cpmr.isValid(isOddPage, isFirstPage, isBlankPage)) {
+            ConditionalPageMasterReference cpmr
+                = (ConditionalPageMasterReference)conditionalPageMasterRefs.get(i);
+            if (cpmr.isValid(isOddPage, isFirstPage, isLastPage, isBlankPage)) {
                 return cpmr.getMasterReference();
             }
         }
@@ -147,6 +151,9 @@ public class RepeatablePageMasterAlternatives extends FObj
      */
     public void addConditionalPageMasterReference(ConditionalPageMasterReference cpmr) {
         this.conditionalPageMasterRefs.add(cpmr);
+        if (cpmr.getPagePosition() == EN_LAST) {
+            this.hasPagePositionLast = true;
+        }
     }
 
     /** @see org.apache.fop.fo.pagination.SubSequenceSpecifier#reset() */
@@ -164,6 +171,11 @@ public class RepeatablePageMasterAlternatives extends FObj
         }
     }
     
+    /** @see org.apache.fop.fo.pagination.SubSequenceSpecifier#hasPagePositionLast() */
+    public boolean hasPagePositionLast() {
+        return this.hasPagePositionLast;
+    }
+    
     /** @see org.apache.fop.fo.FONode#getLocalName() */
     public String getLocalName() {
         return "repeatable-page-master-alternatives";
@@ -173,4 +185,5 @@ public class RepeatablePageMasterAlternatives extends FObj
     public int getNameId() {
         return FO_REPEATABLE_PAGE_MASTER_ALTERNATIVES;
     }
+
 }

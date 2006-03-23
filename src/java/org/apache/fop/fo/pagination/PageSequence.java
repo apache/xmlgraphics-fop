@@ -436,15 +436,18 @@ public class PageSequence extends FObj {
     /**
      * Public accessor for determining the next page master to use within this page sequence.
      * @param page the page number of the page to be created
-     * @param bIsFirstPage indicator whether this page is the first page of the
+     * @param isFirstPage indicator whether this page is the first page of the
      *      page sequence
-     * @param bIsBlank indicator whether the page will be blank
+     * @param isLastPage indicator whether this page is the last page of the
+     *      page sequence
+     * @param isBlank indicator whether the page will be blank
      * @return the SimplePageMaster to use for this page
      * @throws FOPException if there's a problem determining the page master
      */
     public SimplePageMaster getNextSimplePageMaster(int page, 
-            boolean bIsFirstPage,  
-            boolean bIsBlank) throws FOPException {
+            boolean isFirstPage,  
+            boolean isLastPage,  
+            boolean isBlank) throws FOPException {
 
         if (pageSequenceMaster == null) {
             return simplePageMaster;
@@ -453,11 +456,12 @@ public class PageSequence extends FObj {
         if (getLogger().isDebugEnabled()) {
             getLogger().debug("getNextSimplePageMaster(page=" + page
                     + " isOdd=" + isOddPage 
-                    + " isFirst=" + bIsFirstPage 
-                    + " isBlank=" + bIsBlank + ")");
+                    + " isFirst=" + isFirstPage 
+                    + " isLast=" + isLastPage 
+                    + " isBlank=" + isBlank + ")");
         }
         return pageSequenceMaster.getNextSimplePageMaster(isOddPage, 
-            bIsFirstPage, bIsBlank);
+            isFirstPage, isLastPage, isBlank);
     }
 
     /**
@@ -472,6 +476,15 @@ public class PageSequence extends FObj {
         }
     }
 
+    /** @return true if the page-sequence has a page-master with page-position="last" */
+    public boolean hasPagePositionLast() {
+        if (pageSequenceMaster == null) {
+            return false;
+        } else {
+            return pageSequenceMaster.hasPagePositionLast();
+        }
+    }
+    
     /**
      * Retrieves the string representation of a page number applicable
      * for this page sequence

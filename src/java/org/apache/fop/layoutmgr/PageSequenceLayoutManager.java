@@ -154,6 +154,9 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         finishPage();
     }
         
+    /**
+     * Finished the page-sequence and notifies everyone about it.
+     */
     public void finishPageSequence() {
         pageSeq.getRoot().notifyPageSequenceFinished(currentPageNum,
                 (currentPageNum - startPageNum) + 1);
@@ -318,62 +321,132 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         protected void doPhase3(PageBreakingAlgorithm alg, int partCount, 
                 BlockSequence originalList, BlockSequence effectiveList) {
             if (needColumnBalancing) {
-                AbstractBreaker.log.debug("Column balancing now!!!");
-                AbstractBreaker.log.debug("===================================================");
-                int restartPoint = pageProvider.getStartingPartIndexForLastPage(partCount);
-                if (restartPoint > 0) {
-                    addAreas(alg, restartPoint, originalList, effectiveList);
-                }
-                
-                int newStartPos;
-                if (restartPoint > 0) {
-                    PageBreakPosition pbp = (PageBreakPosition)
-                            alg.getPageBreaks().get(restartPoint - 1);
-                    newStartPos = pbp.getLeafPos();
+                doPhase3WithColumnBalancing(alg, partCount, originalList, effectiveList);
+            } else {
+                if (!hasMoreContent() && pageSeq.hasPagePositionLast()) {
+                    //last part is reached and we have a "last page" condition
+                    doPhase3WithLastPage(alg, partCount, originalList, effectiveList);
                 } else {
-                    newStartPos = 0;
+                    //Directly add areas after finding the breaks
+                    addAreas(alg, partCount, originalList, effectiveList);
                 }
-                AbstractBreaker.log.debug("Restarting at " + restartPoint 
-                        + ", new start position: " + newStartPos);
+            }
+        }
 
+        private void doPhase3WithLastPage(PageBreakingAlgorithm alg, int partCount, 
+                BlockSequence originalList, BlockSequence effectiveList) {
+            int newStartPos;
+            int restartPoint = pageProvider.getStartingPartIndexForLastPage(partCount);
+            if (restartPoint > 0) {
+                //Add definitive areas before last page
+                addAreas(alg, restartPoint, originalList, effectiveList);
+                //Get page break from which we restart
+                PageBreakPosition pbp = (PageBreakPosition)
+                        alg.getPageBreaks().get(restartPoint - 1);
+                newStartPos = pbp.getLeafPos();
                 //Handle page break right here to avoid any side-effects
                 if (newStartPos > 0) {
                     handleBreakTrait(EN_PAGE);
                 }
-                pageBreakHandled = true;
-                //Update so the available BPD is reported correctly
-                pageProvider.setStartOfNextElementList(currentPageNum, 
-                        getCurrentPV().getCurrentSpan().getCurrentFlowIndex());
+            } else {
+                newStartPos = 0;
+            }
+            AbstractBreaker.log.debug("Last page handling now!!!");
+            AbstractBreaker.log.debug("===================================================");
+            AbstractBreaker.log.debug("Restarting at " + restartPoint 
+                    + ", new start position: " + newStartPos);
 
-                //Restart last page
-                PageBreakingAlgorithm algRestart = new BalancingColumnBreakingAlgorithm(
-                        getTopLevelLM(),
-                        getPageProvider(),
-                        alignment, Constants.EN_START, footnoteSeparatorLength,
-                        isPartOverflowRecoveryActivated(),
-                        getCurrentPV().getBodyRegion().getColumnCount());
-                //alg.setConstantLineWidth(flowBPD);
-                int iOptPageCount = algRestart.findBreakingPoints(effectiveList,
-                            newStartPos,
-                            1, true, BreakingAlgorithm.ALL_BREAKS);
-                AbstractBreaker.log.debug("restart: iOptPageCount= " + iOptPageCount
-                        + " pageBreaks.size()= " + algRestart.getPageBreaks().size());
-                if (iOptPageCount > getCurrentPV().getBodyRegion().getColumnCount()) {
-                    AbstractBreaker.log.warn(
-                            "Breaking algorithm produced more columns than are available.");
-                    /* reenable when everything works
-                    throw new IllegalStateException(
-                            "Breaking algorithm must not produce more columns than available.");
-                    */
-                }
+            pageBreakHandled = true;
+            //Update so the available BPD is reported correctly
+            pageProvider.setStartOfNextElementList(currentPageNum, 
+                    getCurrentPV().getCurrentSpan().getCurrentFlowIndex());
+            pageProvider.setLastPageIndex(currentPageNum);
+
+            //Restart last page
+            PageBreakingAlgorithm algRestart = new PageBreakingAlgorithm(
+                    getTopLevelLM(),
+                    getPageProvider(),
+                    alg.getAlignment(), alg.getAlignmentLast(), 
+                    footnoteSeparatorLength,
+                    isPartOverflowRecoveryActivated(), false);
+            //alg.setConstantLineWidth(flowBPD);
+            int iOptPageCount = algRestart.findBreakingPoints(effectiveList,
+                        newStartPos,
+                        1, true, BreakingAlgorithm.ALL_BREAKS);
+            AbstractBreaker.log.debug("restart: iOptPageCount= " + iOptPageCount
+                    + " pageBreaks.size()= " + algRestart.getPageBreaks().size());
+            boolean replaceLastPage 
+                    = iOptPageCount <= getCurrentPV().getBodyRegion().getColumnCount(); 
+            if (replaceLastPage) {
+
+                //Replace last page
+                pslm.curPage = pageProvider.getPage(false, currentPageNum);
                 //Make sure we only add the areas we haven't added already
                 effectiveList.ignoreAtStart = newStartPos;
                 addAreas(algRestart, iOptPageCount, originalList, effectiveList);
-                AbstractBreaker.log.debug("===================================================");
             } else {
-                //Directly add areas after finding the breaks
-                addAreas(alg, partCount, originalList, effectiveList);
+                effectiveList.ignoreAtStart = newStartPos;
+                addAreas(alg, restartPoint, partCount - restartPoint, originalList, effectiveList);
+                //Add blank last page
+                pageProvider.setLastPageIndex(currentPageNum + 1);
+                pslm.curPage = makeNewPage(true, true);
             }
+            AbstractBreaker.log.debug("===================================================");
+        }
+
+        private void doPhase3WithColumnBalancing(PageBreakingAlgorithm alg, int partCount, 
+                BlockSequence originalList, BlockSequence effectiveList) {
+            AbstractBreaker.log.debug("Column balancing now!!!");
+            AbstractBreaker.log.debug("===================================================");
+            int newStartPos;
+            int restartPoint = pageProvider.getStartingPartIndexForLastPage(partCount);
+            if (restartPoint > 0) {
+                //Add definitive areas
+                addAreas(alg, restartPoint, originalList, effectiveList);
+                //Get page break from which we restart
+                PageBreakPosition pbp = (PageBreakPosition)
+                        alg.getPageBreaks().get(restartPoint - 1);
+                newStartPos = pbp.getLeafPos();
+                //Handle page break right here to avoid any side-effects
+                if (newStartPos > 0) {
+                    handleBreakTrait(EN_PAGE);
+                }
+            } else {
+                newStartPos = 0;
+            }
+            AbstractBreaker.log.debug("Restarting at " + restartPoint 
+                    + ", new start position: " + newStartPos);
+
+            pageBreakHandled = true;
+            //Update so the available BPD is reported correctly
+            pageProvider.setStartOfNextElementList(currentPageNum, 
+                    getCurrentPV().getCurrentSpan().getCurrentFlowIndex());
+
+            //Restart last page
+            PageBreakingAlgorithm algRestart = new BalancingColumnBreakingAlgorithm(
+                    getTopLevelLM(),
+                    getPageProvider(),
+                    alignment, Constants.EN_START, footnoteSeparatorLength,
+                    isPartOverflowRecoveryActivated(),
+                    getCurrentPV().getBodyRegion().getColumnCount());
+            //alg.setConstantLineWidth(flowBPD);
+            int iOptPageCount = algRestart.findBreakingPoints(effectiveList,
+                        newStartPos,
+                        1, true, BreakingAlgorithm.ALL_BREAKS);
+            AbstractBreaker.log.debug("restart: iOptPageCount= " + iOptPageCount
+                    + " pageBreaks.size()= " + algRestart.getPageBreaks().size());
+            if (iOptPageCount > getCurrentPV().getBodyRegion().getColumnCount()) {
+                AbstractBreaker.log.warn(
+                        "Breaking algorithm produced more columns than are available.");
+                /* reenable when everything works
+                throw new IllegalStateException(
+                        "Breaking algorithm must not produce more columns than available.");
+                */
+            }
+            //Make sure we only add the areas we haven't added already
+            effectiveList.ignoreAtStart = newStartPos;
+            addAreas(algRestart, iOptPageCount, originalList, effectiveList);
+            AbstractBreaker.log.debug("===================================================");
         }
         
         protected void startPart(BlockSequence list, int breakClass) {
@@ -728,6 +801,9 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         private int startColumnOfCurrentElementList;
         private List cachedPages = new java.util.ArrayList();
         
+        private int lastPageIndex = -1;
+        private int indexOfCachedLastPage = -1;
+        
         //Cache to optimize getAvailableBPD() calls
         private int lastRequestedIndex = -1;
         private int lastReportedBPD = -1;
@@ -754,6 +830,15 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             //Reset Cache
             this.lastRequestedIndex = -1;
             this.lastReportedBPD = -1;
+        }
+        
+        /**
+         * Sets the index of the last page. This is done as soon as the position of the last page
+         * is known or assumed.
+         * @param index the index relative to the first page in the page-sequence
+         */
+        public void setLastPageIndex(int index) {
+            this.lastPageIndex = index;
         }
         
         /**
@@ -823,60 +908,79 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
 
         /**
          * Returns a Page.
-         * @param bIsBlank true if this page is supposed to be blank.
+         * @param isBlank true if this page is supposed to be blank.
          * @param index Index of the page (see relativeTo)
          * @param relativeTo Defines which value the index parameter should be evaluated relative 
          * to. (One of PageProvider.RELTO_*)
          * @return the requested Page
          */
-        public Page getPage(boolean bIsBlank, int index, int relativeTo) {
+        public Page getPage(boolean isBlank, int index, int relativeTo) {
             if (relativeTo == RELTO_PAGE_SEQUENCE) {
-                return getPage(bIsBlank, index);
+                return getPage(isBlank, index);
             } else if (relativeTo == RELTO_CURRENT_ELEMENT_LIST) {
                 int effIndex = startPageOfCurrentElementList + index;
                 effIndex += startPageOfPageSequence - 1;
-                return getPage(bIsBlank, effIndex);
+                return getPage(isBlank, effIndex);
             } else {
                 throw new IllegalArgumentException(
                         "Illegal value for relativeTo: " + relativeTo);
             }
         }
         
-        private Page getPage(boolean bIsBlank, int index) {
+        private Page getPage(boolean isBlank, int index) {
+            boolean isLastPage = (lastPageIndex >= 0) && (index == lastPageIndex);
             if (log.isTraceEnabled()) {
-                log.trace("getPage(" + index + " " + bIsBlank);
+                log.trace("getPage(" + index + " " + (isBlank ? "blank" : "non-blank") 
+                        + (isLastPage ? " <LAST>" : "") + ")");
             }
             int intIndex = index - startPageOfPageSequence;
             if (log.isTraceEnabled()) {
-                if (bIsBlank) {
+                if (isBlank) {
                     log.trace("blank page requested: " + index);
+                }
+                if (isLastPage) {
+                    log.trace("last page requested: " + index);
                 }
             }
             while (intIndex >= cachedPages.size()) {
                 if (log.isTraceEnabled()) {
                     log.trace("Caching " + index);
                 }
-                cacheNextPage(index, bIsBlank);
+                cacheNextPage(index, isBlank, isLastPage);
             }
             Page page = (Page)cachedPages.get(intIndex);
-            if (page.getPageViewport().isBlank() != bIsBlank) {
+            boolean replace = false;
+            if (page.getPageViewport().isBlank() != isBlank) {
                 log.debug("blank condition doesn't match. Replacing PageViewport.");
-                while (intIndex < cachedPages.size()) {
-                    this.cachedPages.remove(cachedPages.size() - 1);
-                    if (!pageSeq.goToPreviousSimplePageMaster()) {
-                        log.warn("goToPreviousSimplePageMaster() on the first page called!");
-                    }
-                }
-                cacheNextPage(index, bIsBlank);
+                replace = true;
+            }
+            if ((isLastPage && indexOfCachedLastPage != intIndex)
+                    || (!isLastPage && indexOfCachedLastPage >= 0)) {
+                log.debug("last page condition doesn't match. Replacing PageViewport.");
+                replace = true;
+                indexOfCachedLastPage = (isLastPage ? intIndex : -1);
+            }
+            if (replace) {
+                disardCacheStartingWith(intIndex);
+                page = cacheNextPage(index, isBlank, isLastPage);
             }
             return page;
         }
+
+        private void disardCacheStartingWith(int index) {
+            while (index < cachedPages.size()) {
+                this.cachedPages.remove(cachedPages.size() - 1);
+                if (!pageSeq.goToPreviousSimplePageMaster()) {
+                    log.warn("goToPreviousSimplePageMaster() on the first page called!");
+                }
+            }
+        }
         
-        private void cacheNextPage(int index, boolean bIsBlank) {
+        private Page cacheNextPage(int index, boolean isBlank, boolean isLastPage) {
             try {
                 String pageNumberString = pageSeq.makeFormattedPageNumber(index);
                 SimplePageMaster spm = pageSeq.getNextSimplePageMaster(
-                        index, (startPageOfPageSequence == index), bIsBlank);
+                        index, (startPageOfPageSequence == index), isLastPage, isBlank);
                     
                 Region body = spm.getRegion(FO_REGION_BODY);
                 if (!pageSeq.getMainFlow().getFlowName().equals(body.getRegionName())) {
@@ -887,8 +991,9 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                         + spm.getMasterName() + "'.  FOP presently "
                         + "does not support this.");
                 }
-                Page page = new Page(spm, index, pageNumberString, bIsBlank);
+                Page page = new Page(spm, index, pageNumberString, isBlank);
                 cachedPages.add(page);
+                return page;
             } catch (FOPException e) {
                 //TODO Maybe improve. It'll mean to propagate this exception up several
                 //methods calls.

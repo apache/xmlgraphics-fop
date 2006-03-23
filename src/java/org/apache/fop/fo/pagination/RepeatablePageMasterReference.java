@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -91,6 +91,7 @@ public class RepeatablePageMasterReference extends FObj
      */
     public String getNextPageMasterName(boolean isOddPage,
                                         boolean isFirstPage,
+                                        boolean isLastPage,
                                         boolean isEmptyPage) {
         if (getMaximumRepeats() != INFINITE) {
             if (numberConsumed < getMaximumRepeats()) {
@@ -133,6 +134,11 @@ public class RepeatablePageMasterReference extends FObj
         }
     }
     
+    /** @see org.apache.fop.fo.pagination.SubSequenceSpecifier#hasPagePositionLast() */
+    public boolean hasPagePositionLast() {
+        return false;
+    }
+
     /** @see org.apache.fop.fo.FONode#getLocalName() */
     public String getLocalName() {
         return "repeatable-page-master-reference";
@@ -142,4 +148,5 @@ public class RepeatablePageMasterReference extends FObj
     public int getNameId() {
         return FO_REPEATABLE_PAGE_MASTER_REFERENCE;
     }
+
 }
