@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -159,16 +159,27 @@ public class PageSequenceMaster extends FObj {
         return (currentSubSequence != null);
     }
     
+    /** @return true if the page-sequence-master has a page-master with page-position="last" */
+    public boolean hasPagePositionLast() {
+        if (currentSubSequence != null) {
+            return currentSubSequence.hasPagePositionLast();
+        } else {
+            return false;
+        }
+    }
+    
     /**
      * Returns the next simple-page-master.
      * @param isOddPage True if the next page number is odd
      * @param isFirstPage True if the next page is the first
+     * @param isLastPage True if the next page is the last
      * @param isBlankPage True if the next page is blank
      * @return the requested page master
      * @throws FOPException if there's a problem determining the next page master
      */
     public SimplePageMaster getNextSimplePageMaster(boolean isOddPage,
                                                     boolean isFirstPage,
+                                                    boolean isLastPage,
                                                     boolean isBlankPage)
                                                       throws FOPException {
         if (currentSubSequence == null) {
@@ -179,7 +190,7 @@ public class PageSequenceMaster extends FObj {
             }
         }
         String pageMasterName = currentSubSequence
-            .getNextPageMasterName(isOddPage, isFirstPage, isBlankPage);
+            .getNextPageMasterName(isOddPage, isFirstPage, isLastPage, isBlankPage);
         boolean canRecover = true;
         while (pageMasterName == null) {
             SubSequenceSpecifier nextSubSequence = getNextSubSequence();
@@ -198,7 +209,7 @@ public class PageSequenceMaster extends FObj {
                 currentSubSequence = nextSubSequence;
             }
             pageMasterName = currentSubSequence
-                .getNextPageMasterName(isOddPage, isFirstPage, isBlankPage);
+                .getNextPageMasterName(isOddPage, isFirstPage, isLastPage, isBlankPage);
         }
         SimplePageMaster pageMaster = this.layoutMasterSet
             .getSimplePageMaster(pageMasterName);
