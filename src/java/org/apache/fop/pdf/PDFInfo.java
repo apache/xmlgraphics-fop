@@ -149,7 +149,7 @@ public class PDFInfo extends PDFObject {
         ByteArrayOutputStream bout = new ByteArrayOutputStream(128);
         try {
             bout.write(encode(getObjectID()));
-            bout.write(encode("<< /Type /Info\n"));
+            bout.write(encode("<<\n"));
             if (title != null) {
                 bout.write(encode("/Title "));
                 bout.write(encodeText(this.title));
