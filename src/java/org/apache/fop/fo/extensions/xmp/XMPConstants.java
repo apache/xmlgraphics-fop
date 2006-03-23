@@ -41,4 +41,10 @@ public interface XMPConstants {
     /** Namespace URI for the PDF/A Identification Schema */
     String PDF_A_IDENTIFICATION = "http://www.aiim.org/pdfa/ns/id";
     
+    /**
+     * Namespace URI for the PDF/A Identification Schema
+     * (from an older draft of ISO 19005-1, used by Adobe Acrobat)
+     */
+    String PDF_A_IDENTIFICATION_OLD = "http://www.aiim.org/pdfa/ns/id.html";
+    
 }

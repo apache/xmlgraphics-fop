@@ -45,6 +45,8 @@ import org.w3c.dom.Element;
  */
 public class PDFMetadata extends PDFStream {
     
+    private static final String XMLNS = "http://www.w3.org/2000/xmlns/";
+
     private Document xmpMetadata;
     private boolean readOnly = true;
 
@@ -167,12 +169,10 @@ public class PDFMetadata extends PDFStream {
             info.setCreationDate(d);
         }
 
-        final String xmlns = "http://www.w3.org/2000/xmlns/";
-        
         //Dublin Core
         desc = doc.createElementNS(XMPConstants.RDF_NAMESPACE, "rdf:Description");
-        desc.setAttribute("about", "");
-        desc.setAttributeNS(xmlns, "xmlns:dc", XMPConstants.DUBLIN_CORE_NAMESPACE);
+        desc.setAttributeNS(XMPConstants.RDF_NAMESPACE, "rdf:about", "");
+        desc.setAttributeNS(XMLNS, "xmlns:dc", XMPConstants.DUBLIN_CORE_NAMESPACE);
         rdf.appendChild(desc);
         if (info.getAuthor() != null) {
             el = doc.createElementNS(XMPConstants.DUBLIN_CORE_NAMESPACE, "dc:creator");
@@ -199,8 +199,8 @@ public class PDFMetadata extends PDFStream {
         
         //XMP Basic Schema
         desc = doc.createElementNS(XMPConstants.RDF_NAMESPACE, "rdf:Description");
-        desc.setAttribute("about", "");
-        desc.setAttributeNS(xmlns, "xmlns:xmp", XMPConstants.XMP_BASIC_NAMESPACE);
+        desc.setAttributeNS(XMPConstants.RDF_NAMESPACE, "rdf:about", "");
+        desc.setAttributeNS(XMLNS, "xmlns:xmp", XMPConstants.XMP_BASIC_NAMESPACE);
         rdf.appendChild(desc);
         el = doc.createElementNS(XMPConstants.XMP_BASIC_NAMESPACE, "xmp:createDate");
         desc.appendChild(el);
@@ -213,8 +213,8 @@ public class PDFMetadata extends PDFStream {
         
         //Adobe PDF Schema
         desc = doc.createElementNS(XMPConstants.RDF_NAMESPACE, "rdf:Description");
-        desc.setAttribute("about", "");
-        desc.setAttributeNS(xmlns, "xmlns:pdf", XMPConstants.ADOBE_PDF_NAMESPACE);
+        desc.setAttributeNS(XMPConstants.RDF_NAMESPACE, "rdf:about", "");
+        desc.setAttributeNS(XMLNS, "xmlns:pdf", XMPConstants.ADOBE_PDF_NAMESPACE);
         rdf.appendChild(desc);
         if (info.getKeywords() != null) {
             el = doc.createElementNS(XMPConstants.ADOBE_PDF_NAMESPACE, "pdf:Keywords");
@@ -233,23 +233,35 @@ public class PDFMetadata extends PDFStream {
         //PDF/A identification
         PDFAMode pdfaMode = pdfDoc.getPDFAMode(); 
         if (pdfaMode.isPDFA1LevelB()) {
-            desc = doc.createElementNS(XMPConstants.RDF_NAMESPACE, "rdf:Description");
-            desc.setAttribute("about", "");
-            desc.setAttributeNS(xmlns, "xmlns:pdfaid", XMPConstants.PDF_A_IDENTIFICATION);
-            rdf.appendChild(desc);
-            el = doc.createElementNS(XMPConstants.PDF_A_IDENTIFICATION, "pdfaid:part");
-            desc.appendChild(el);
-            el.appendChild(doc.createTextNode("1")); //PDF/A-1
-            el = doc.createElementNS(XMPConstants.PDF_A_IDENTIFICATION, "pdfaid:conformance");
-            desc.appendChild(el);
-            if (pdfaMode == PDFAMode.PDFA_1A) {
-                el.appendChild(doc.createTextNode("A")); //PDF/A-1a
-            } else {
-                el.appendChild(doc.createTextNode("B")); //PDF/A-1b
-            }
+            createPDFAIndentification(doc, rdf, 
+                    XMPConstants.PDF_A_IDENTIFICATION, "pdfaid", pdfaMode);
+            //Create the identification a second time with the old namespace to keep 
+            //Adobe Acrobat happy
+            createPDFAIndentification(doc, rdf, 
+                    XMPConstants.PDF_A_IDENTIFICATION_OLD, "pdfaid_1", pdfaMode);
         }
         
         return doc;
+    }
+
+    private static void createPDFAIndentification(Document doc, Element rdf, 
+            String pdfaNamespace, String prefix, PDFAMode pdfaMode) {
+        Element desc;
+        Element el;
+        desc = doc.createElementNS(XMPConstants.RDF_NAMESPACE, "rdf:Description");
+        desc.setAttributeNS(XMPConstants.RDF_NAMESPACE, "rdf:about", "");
+        desc.setAttributeNS(XMLNS, "xmlns:" + prefix, pdfaNamespace);
+        rdf.appendChild(desc);
+        el = doc.createElementNS(pdfaNamespace, prefix + ":part");
+        desc.appendChild(el);
+        el.appendChild(doc.createTextNode("1")); //PDF/A-1
+        el = doc.createElementNS(pdfaNamespace, prefix + ":conformance");
+        desc.appendChild(el);
+        if (pdfaMode == PDFAMode.PDFA_1A) {
+            el.appendChild(doc.createTextNode("A")); //PDF/A-1a
+        } else {
+            el.appendChild(doc.createTextNode("B")); //PDF/A-1b
+        }
     }
     
     
