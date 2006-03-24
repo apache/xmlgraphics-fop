@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,12 @@
 package org.apache.fop.image;
 
 // Java
-import java.io.ByteArrayOutputStream;
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_Profile;
 
 // FOP
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.fop.util.CMYKColorSpace;
 
 /**
@@ -36,6 +36,7 @@ import org.apache.fop.util.CMYKColorSpace;
 public class JpegImage extends AbstractFopImage {
     private ICC_Profile iccProfile = null;
     private boolean foundICCProfile = false;
+    private boolean hasAPPEMarker = false;
 
     /**
      * Create a jpeg image with the info.
@@ -55,7 +56,7 @@ public class JpegImage extends AbstractFopImage {
      */
     protected boolean loadOriginalData() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ByteArrayOutputStream iccStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream iccStream = null;
         int index = 0;
         boolean cont = true;
 
@@ -136,10 +137,28 @@ public class JpegImage extends AbstractFopImage {
                                               this.raw[index + 2],
                                               this.raw[index + 3]) + 2;
 
+                            if (iccStream == null) {
+                                iccStream = new ByteArrayOutputStream();
+                            }
                             iccStream.write(this.raw,
                                             index + 18, chunkSize - 18);
 
                         }
+
+                        index += calcBytes(this.raw[index + 2],
+                                           this.raw[index + 3]) + 2;
+                    // Check for Adobe APPE Marker
+                    } else if ((uByte(this.raw[index]) == 0xff
+                                && uByte(this.raw[index + 1]) == 0xee
+                                && uByte(this.raw[index + 2]) == 0
+                                && uByte(this.raw[index + 3]) == 14
+                                && "Adobe".equals(new String(this.raw, index + 4, 5)))) {
+                        // The reason for reading the APPE marker is that Adobe Photoshop
+                        // generates CMYK JPEGs with inverted values. The correct thing
+                        // to do would be to interpret the values in the marker, but for now
+                        // only assume that if APPE marker is present and colorspace is CMYK,
+                        // the image is inverted.
+                        hasAPPEMarker = true;
 
                         index += calcBytes(this.raw[index + 2],
                                            this.raw[index + 3]) + 2;
@@ -157,13 +176,15 @@ public class JpegImage extends AbstractFopImage {
                          + "JpegImage - Invalid JPEG Header.");
             return false;
         }
-        if (iccStream.size() > 0) {
-            byte[] align = new byte[((iccStream.size()) % 8) + 8];
-            try {
-                iccStream.write(align);
-            } catch (Exception ex) {
-                log.error("Error while aligning ICC stream: " + ex.getMessage(), ex);
-                return false;
+        if (iccStream != null && iccStream.size() > 0) {
+            int padding = (8 - (iccStream.size() % 8)) % 8;
+            if (padding != 0) {
+                try {
+                    iccStream.write(new byte[padding]);
+                } catch (Exception ex) {
+                    log.error("Error while aligning ICC stream: " + ex.getMessage(), ex);
+                    return false;
+                }
             }
             try {
                 iccProfile = ICC_Profile.getInstance(iccStream.toByteArray());
@@ -174,6 +195,9 @@ public class JpegImage extends AbstractFopImage {
         } else if (this.colorSpace == null) {
             log.error("ColorSpace not specified for JPEG image");
             return false;
+        }
+        if (hasAPPEMarker && this.colorSpace.getType() == ColorSpace.TYPE_CMYK) {
+            this.invertImage = true;
         }
         return true;
     }
