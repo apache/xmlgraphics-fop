@@ -40,6 +40,11 @@ In olden times when wishing still helped one, there lived a king whose daughters
 were all beautiful; and the youngest was so beautiful that the sun itself, which 
 has seen so much, was astonished whenever it shone in her face.
           </fo:block>
+          <fo:block last-line-end-indent="-20pt" end-indent="20pt" text-align="justify" text-align-last="justify" id="lastneg">
+In olden times when wishing still helped one, there lived a king whose daughters 
+were all beautiful; and the youngest was so beautiful that the sun itself, which 
+has seen so much, was astonished whenever it shone in her face.
+          </fo:block>
           <fo:block last-line-end-indent="50%" text-align="justify" text-align-last="justify" id="justify50">
 In olden times when wishing still helped one, there lived a king whose daughters 
 were all beautiful; and the youngest was so beautiful that the sun itself, which 
@@ -73,6 +78,11 @@ the nested block should be indented as well.
     <eval expected="360000" xpath="//block[@prod-id='justify']/lineArea[2]/text/@ipd"/>
     <eval expected="360000" xpath="//block[@prod-id='justify']/lineArea[3]/text/@ipd"/>
     <eval expected="340000" xpath="//block[@prod-id='justify']/lineArea[4]/text/@ipd"/>
+
+    <eval expected="340000" xpath="//block[@prod-id='last0']/lineArea[1]/text/@ipd"/>
+    <eval expected="340000" xpath="//block[@prod-id='last0']/lineArea[2]/text/@ipd"/>
+    <eval expected="340000" xpath="//block[@prod-id='last0']/lineArea[3]/text/@ipd"/>
+    <eval expected="360000" xpath="//block[@prod-id='last0']/lineArea[4]/text/@ipd"/>
 
     <eval expected="360000" xpath="//block[@prod-id='justify50']/lineArea[1]/text/@ipd"/>
     <eval expected="360000" xpath="//block[@prod-id='justify50']/lineArea[2]/text/@ipd"/>
