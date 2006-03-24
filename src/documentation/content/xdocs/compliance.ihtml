@@ -3920,8 +3920,8 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="yes">
+        yes
       </td>
       <td align="center">
         &nbsp;
@@ -4513,7 +4513,7 @@
             [0.20.5] works only in table rows
           </li>
           <li>
-            [0.91 beta] works on all implemented FOs.
+            [0.91 beta] works on all implemented block-level FOs, but not on inline-level FOs.
           </li>
           <li>
             [0.91 beta] &lt;integer&gt; values are not supported.
@@ -4543,7 +4543,7 @@
             [0.20.5] works only in table rows
           </li>
           <li>
-            [0.91 beta] works on all implemented FOs.
+            [0.91 beta] works on all implemented block-level FOs, but not on inline-level FOs.
           </li>
           <li>
             [0.91 beta] &lt;integer&gt; values are not supported.
@@ -4573,7 +4573,7 @@
             [0.20.5] works only in table rows
           </li>
           <li>
-            [0.91 beta] works on all implemented FOs, except list- and table-related FOs.
+            [0.91 beta] works on all implemented FOs, except list- and table-related and inline-level FOs.
           </li>
           <li>
             [0.91 beta] &lt;integer&gt; values are not supported.

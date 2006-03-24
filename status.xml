@@ -27,6 +27,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix">
+        Bugfix for invalid handling of ICC color profiles in JPEG images and for
+        dealing with CMYK JPEG images with the Adobe APPE marker.
+      </action>
       <action context="Code" dev="JM" type="add">
         Initial support for page-position="last" added.
       </action>
