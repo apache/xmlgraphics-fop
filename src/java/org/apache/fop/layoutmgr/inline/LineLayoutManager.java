@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,8 +73,10 @@ import org.apache.fop.traits.MinOptMax;
 public class LineLayoutManager extends InlineStackingLayoutManager 
                                implements BlockLevelLayoutManager {
 
-    private Block fobj; 
+    private Block fobj;
+    private boolean isFirstInBlock;
     
+    /** @see org.apache.fop.layoutmgr.LayoutManager#initialize() */
     public void initialize() {
         textAlignment = fobj.getTextAlign();
         textAlignmentLast = fobj.getTextAlignLast();
@@ -85,6 +87,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         wrapOption = fobj.getWrapOption();
         //
         effectiveAlignment = getEffectiveAlignment(textAlignment, textAlignmentLast);
+        isFirstInBlock = (this == getParent().getChildLMs().get(0));
     }
 
     private int getEffectiveAlignment(int alignment, int alignmentLast) {
@@ -238,9 +241,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
 
             // add the element representing text indentation
             // at the beginning of the first paragraph
-            if (knuthParagraphs.size() == 0
-                        && fobj.getTextIndent().getValue(layoutManager) != 0) {
-                this.add(new KnuthInlineBox(fobj.getTextIndent().getValue(layoutManager), null, 
+            if (isFirstInBlock && knuthParagraphs.size() == 0
+                        && textIndent != 0) {
+                this.add(new KnuthInlineBox(textIndent, null, 
                                       null, false));
                 ignoreAtStart++;
             }
@@ -348,7 +351,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             int textAlign = (bestActiveNode.line < total) ? alignment : alignmentLast;
             indent += (textAlign == Constants.EN_CENTER)
                       ? difference / 2 : (textAlign == Constants.EN_END) ? difference : 0;
-            indent += (bestActiveNode.line == 1 && bFirst) ? textIndent : 0;
+            indent += (bestActiveNode.line == 1 && bFirst && isFirstInBlock) ? textIndent : 0;
             double ratio = (textAlign == Constants.EN_JUSTIFY
                 || difference < 0 && -difference <= bestActiveNode.availableShrink)
                         ? bestActiveNode.adjustRatio : 0;
