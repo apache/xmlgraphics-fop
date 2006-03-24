@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2005 The Apache Software Foundation
+  Copyright 2005-2006 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -53,8 +53,8 @@ This is just for testing purpose and this line will be indented.
 
             <fo:block>This is the nested block.</fo:block>
 
-The text following the nested block should be indented as well. The text following 
-the nested block should be indented as well. 
+The text following the nested block should NOT indented. The text following 
+the nested block should NOT be indented. 
           </fo:block>
         </fo:flow>
       </fo:page-sequence>
@@ -89,7 +89,7 @@ the nested block should be indented as well.
 
     <eval expected="20000" xpath="//flow/block[3]/child::*[1]/@start-indent"/>
     <eval expected="20000" xpath="//flow/block[3]/child::*[2]/lineArea[1]/@start-indent"/>
-    <eval expected="20000" xpath="//flow/block[3]/child::*[3]/@start-indent"/>
+    <true xpath="boolean(not(//flow/block[3]/child::*[3]/@start-indent))"/>
     <true xpath="boolean(not(//flow/block[3]/child::*[4]/@start-indent))"/>
   </checks>
 </testcase>
