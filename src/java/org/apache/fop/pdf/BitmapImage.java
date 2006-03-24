@@ -172,6 +172,11 @@ public class BitmapImage implements PDFImage {
         return maskRef;
     }
 
+    /** @see org.apache.fop.pdf.PDFImage#isInverted() */
+    public boolean isInverted() {
+        return false;
+    }
+    
     /**
      * @see org.apache.fop.pdf.PDFImage#outputContents(OutputStream)
      */
@@ -208,7 +213,7 @@ public class BitmapImage implements PDFImage {
     public PDFFilter getPDFFilter() {
         return null;
     }
-    
+
 }
 
 

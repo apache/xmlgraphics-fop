@@ -390,6 +390,10 @@ public class PSGraphics2D extends AbstractGraphics2D {
             return this.mask;
         }
 
+        public boolean isInverted() {
+            return false;
+        }
+        
         public byte[] getBitmaps() {
             return this.bitmaps;
         }

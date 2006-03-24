@@ -131,13 +131,18 @@ public class PDFXObject extends AbstractPDFStream {
                   + "\n");
         }
 
-        /* PhotoShop generates CMYK values that's inverse,
-           this will invert the values - too bad if it's not
-           a PhotoShop image...
-         */
-        if (pdfimage.getColorSpace().getColorSpace()
-                == PDFColorSpace.DEVICE_CMYK) {
-            sb.append("/Decode [ 1.0 0.0 1.0 0.0 1.0 0.0 1.1 0.0 ]\n");
+        if (pdfimage.isInverted()) {
+            /* PhotoShop generates CMYK values that's inverse,
+             * this will invert the values - too bad if it's not
+             * a PhotoShop image...
+             */
+            if (pdfimage.getColorSpace().getColorSpace() == PDFColorSpace.DEVICE_CMYK) {
+                sb.append("/Decode [ 1.0 0.0 1.0 0.0 1.0 0.0 1.0 0.0 ]\n");
+            } else if (pdfimage.getColorSpace().getColorSpace() == PDFColorSpace.DEVICE_RGB) {
+                sb.append("/Decode [ 1.0 0.0 1.0 0.0 1.0 0.0 ]\n");
+            } else if (pdfimage.getColorSpace().getColorSpace() == PDFColorSpace.DEVICE_GRAY) {
+                sb.append("/Decode [ 1.0 0.0 ]\n");
+            }
         }
 
         if (pdfimage.isTransparent()) {
