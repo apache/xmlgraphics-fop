@@ -95,7 +95,9 @@ public class LazyFont extends Typeface implements FontDescriptor {
                         }
                         return;
                     }
-                    reader = new FontReader(new InputSource(in));
+                    InputSource src = new InputSource(in);
+                    src.setSystemId(source.getSystemId()); 
+                    reader = new FontReader(src);
                 } else {
                     reader 
                         = new FontReader(new InputSource(new URL(metricsFileName).openStream()));
