@@ -79,10 +79,10 @@ the nested block should be indented as well.
     <eval expected="360000" xpath="//block[@prod-id='justify']/lineArea[3]/text/@ipd"/>
     <eval expected="340000" xpath="//block[@prod-id='justify']/lineArea[4]/text/@ipd"/>
 
-    <eval expected="340000" xpath="//block[@prod-id='last0']/lineArea[1]/text/@ipd"/>
-    <eval expected="340000" xpath="//block[@prod-id='last0']/lineArea[2]/text/@ipd"/>
-    <eval expected="340000" xpath="//block[@prod-id='last0']/lineArea[3]/text/@ipd"/>
-    <eval expected="360000" xpath="//block[@prod-id='last0']/lineArea[4]/text/@ipd"/>
+    <eval expected="340000" xpath="//block[@prod-id='lastneg']/lineArea[1]/text/@ipd"/>
+    <eval expected="340000" xpath="//block[@prod-id='lastneg']/lineArea[2]/text/@ipd"/>
+    <eval expected="340000" xpath="//block[@prod-id='lastneg']/lineArea[3]/text/@ipd"/>
+    <eval expected="360000" xpath="//block[@prod-id='lastneg']/lineArea[4]/text/@ipd"/>
 
     <eval expected="360000" xpath="//block[@prod-id='justify50']/lineArea[1]/text/@ipd"/>
     <eval expected="360000" xpath="//block[@prod-id='justify50']/lineArea[2]/text/@ipd"/>
