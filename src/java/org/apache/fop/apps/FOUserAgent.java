@@ -462,9 +462,6 @@ public class FOUserAgent {
                     File dir = new File(cfgBaseDir);
                     if (dir.isDirectory()) {
                         cfgBaseDir = dir.toURL().toExternalForm(); 
-                    } else {
-                        //The next statement is for validation only
-                        new URL(cfgBaseDir);
                     }
                 }
                 log.info(name + " set to: " + cfgBaseDir);

@@ -52,7 +52,13 @@ public class ServletContextURIResolver implements URIResolver {
         if (href.startsWith(SERVLET_CONTEXT_PROTOCOL)) {
             return resolveServletContextURI(href.substring(SERVLET_CONTEXT_PROTOCOL.length()));
         } else {
-            return null;
+            if (base.startsWith(SERVLET_CONTEXT_PROTOCOL) && (href.indexOf(':') < 0)) {
+                String abs = base + href;
+                return resolveServletContextURI(
+                        abs.substring(SERVLET_CONTEXT_PROTOCOL.length()));
+            } else {
+                return null;
+            }
         }
     }
 
@@ -63,6 +69,9 @@ public class ServletContextURIResolver implements URIResolver {
      * @throws TransformerException if no URL can be constructed from the path
      */
     protected Source resolveServletContextURI(String path) throws TransformerException {
+        while (path.startsWith("//")) {
+            path = path.substring(1);
+        }
         try {
             URL url = this.servletContext.getResource(path);
             InputStream in = this.servletContext.getResourceAsStream(path);

@@ -204,7 +204,7 @@ public class FOURIResolver
                             ? new java.io.File("").toURL().toExternalForm() 
                             : baseURL);
         } catch (MalformedURLException mfue) {
-            log.error("Error with base URL: " + mfue.getMessage(), mfue);
+            log.error("Error with base URL \"" + baseURL + "\"): " + mfue.getMessage());
         }
         return null;
     }
