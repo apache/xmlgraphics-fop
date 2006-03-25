@@ -20,7 +20,7 @@
          xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
          xmlns:asfext="http://projects.apache.org/ns/asfext#">
   <Project rdf:about="http://xmlgraphics.apache.org/fop">
-    <created>2006-01-21</created>
+    <created>2006-03-25</created>
     <license rdf:resource="http://usefulinc.com/doap/licenses/asl20" />
     <name>Apache FOP</name>
     <homepage rdf:resource="http://xmlgraphics.apache.org/fop" />
@@ -33,36 +33,46 @@
     <programming-language>Java</programming-language>
     <category rdf:resource="http://projects.apache.org/category/xml" />
     <category rdf:resource="http://projects.apache.org/category/graphics" />
-    <asfext:standard>
-      <asfext:title>Extensible Stylesheet Language - Formatting Objects (XSL-FO 1.0)</asfext:title>
-      <asfext:body>W3C</asfext:body>
-      <asfext:id>XSL 1.0</asfext:id>
-      <asfext:url rdf:resource="http://www.w3.org/TR/xsl/"/>
-    </asfext:standard>
-    <asfext:standard>
+    <asfext:implements>
+      <asfext:Standard>
+        <asfext:title>Extensible Stylesheet Language - Formatting Objects (XSL-FO 1.0)</asfext:title>
+        <asfext:body>W3C</asfext:body>
+        <asfext:id>XSL 1.0</asfext:id>
+        <asfext:url rdf:resource="http://www.w3.org/TR/xsl/"/>
+      </asfext:Standard>
+    </asfext:implements>
+    <asfext:implements>
+      <asfext:Standard>
       <asfext:title>Extensible Stylesheet Language - Formatting Objects (XSL-FO 1.1)</asfext:title>
       <asfext:body>W3C</asfext:body>
       <asfext:id>XSL 1.1</asfext:id>
       <asfext:url rdf:resource="http://www.w3.org/TR/xsl11/"/>
-    </asfext:standard>
-    <asfext:standard>
+      </asfext:Standard>
+    </asfext:implements>
+    <asfext:implements>
+      <asfext:Standard>
       <asfext:title>Portable Document Format (PDF 1.4)</asfext:title>
       <asfext:body>Adobe Systems Incorporated</asfext:body>
       <asfext:id>PDF 1.4</asfext:id>
       <asfext:url rdf:resource="http://partners.adobe.com/public/developer/pdf/index_reference.html"/>
-    </asfext:standard>
-    <asfext:standard>
+      </asfext:Standard>
+    </asfext:implements>
+    <asfext:implements>
+      <asfext:Standard>
       <asfext:title>PostScript</asfext:title>
       <asfext:body>Adobe Systems Incorporated</asfext:body>
       <asfext:id>PS</asfext:id>
       <asfext:url rdf:resource="http://partners.adobe.com/public/developer/ps/index_specs.html"/>
-    </asfext:standard>
-    <asfext:standard>
+      </asfext:Standard>
+    </asfext:implements>
+    <asfext:implements>
+      <asfext:Standard>
       <asfext:title>Rich Text Format (RTF 1.6)</asfext:title>
       <asfext:body>Microsoft</asfext:body>
       <asfext:id>RTF 1.6</asfext:id>
       <asfext:url rdf:resource="http://msdn.microsoft.com/library/en-us/dnrtfspec/html/rtfspec.asp"/>
-    </asfext:standard>
+      </asfext:Standard>
+    </asfext:implements>
     <release>
       <Version>
         <name>Latest stable release</name>
