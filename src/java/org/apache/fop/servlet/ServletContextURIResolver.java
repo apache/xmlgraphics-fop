@@ -52,7 +52,9 @@ public class ServletContextURIResolver implements URIResolver {
         if (href.startsWith(SERVLET_CONTEXT_PROTOCOL)) {
             return resolveServletContextURI(href.substring(SERVLET_CONTEXT_PROTOCOL.length()));
         } else {
-            if (base.startsWith(SERVLET_CONTEXT_PROTOCOL) && (href.indexOf(':') < 0)) {
+            if (base != null 
+                    && base.startsWith(SERVLET_CONTEXT_PROTOCOL) 
+                    && (href.indexOf(':') < 0)) {
                 String abs = base + href;
                 return resolveServletContextURI(
                         abs.substring(SERVLET_CONTEXT_PROTOCOL.length()));
