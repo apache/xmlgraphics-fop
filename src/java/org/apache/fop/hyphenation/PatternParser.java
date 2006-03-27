@@ -126,7 +126,7 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
             factory.setNamespaceAware(true);
             return factory.newSAXParser().getXMLReader();
         } catch (Exception e) {
-            throw new RuntimeException("Couldn't create XMLReader", e);
+            throw new RuntimeException("Couldn't create XMLReader: " + e.getMessage());
         }
     }
 
