@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,9 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.cli.InputHandler;
 
@@ -37,6 +39,8 @@ import org.apache.fop.cli.InputHandler;
  * nothing obvious is broken after compiling.
  */
 public class BasicDriverTestCase extends AbstractFOPTestCase {
+
+    private FopFactory fopFactory = FopFactory.newInstance();
 
     /**
      * @see junit.framework.TestCase#TestCase(String)
@@ -50,10 +54,10 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
      * @throws Exception if anything fails
      */
     public void testFO2PDFWithJAXP() throws Exception {
+        FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
         File foFile = new File(getBaseDir(), "test/xml/bugtests/block.fo");
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
-        Fop fop = new Fop(MimeConstants.MIME_PDF);
-        fop.setOutputStream(baout);
+        Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, foUserAgent, baout);
         
         TransformerFactory factory = TransformerFactory.newInstance();
         Transformer transformer = factory.newTransformer(); //Identity transf.
@@ -69,10 +73,10 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
      * @throws Exception if anything fails
      */
     public void testFO2PSWithJAXP() throws Exception {
+        FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
         File foFile = new File(getBaseDir(), "test/xml/bugtests/block.fo");
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
-        Fop fop = new Fop(MimeConstants.MIME_POSTSCRIPT);
-        fop.setOutputStream(baout);
+        Fop fop = fopFactory.newFop(MimeConstants.MIME_POSTSCRIPT, foUserAgent, baout);
         
         TransformerFactory factory = TransformerFactory.newInstance();
         Transformer transformer = factory.newTransformer(); //Identity transf.
@@ -88,10 +92,10 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
      * @throws Exception if anything fails
      */
     public void testFO2RTFWithJAXP() throws Exception {
+        FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
         File foFile = new File(getBaseDir(), "test/xml/bugtests/block.fo");
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
-        Fop fop = new Fop(MimeConstants.MIME_RTF);
-        fop.setOutputStream(baout);
+        Fop fop = fopFactory.newFop(MimeConstants.MIME_RTF, foUserAgent, baout);
         
         TransformerFactory factory = TransformerFactory.newInstance();
         Transformer transformer = factory.newTransformer(); //Identity transf.
@@ -107,12 +111,13 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
      * @throws Exception if anything fails
      */
     public void testFO2PDFWithXSLTInputHandler() throws Exception {
+        FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
         File xmlFile = new File(getBaseDir(), "test/xml/1.xml");
         File xsltFile = new File(getBaseDir(), "test/xsl/doc.xsl");
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
         
         InputHandler handler = new InputHandler(xmlFile, xsltFile, null);
-        handler.renderTo(null, MimeConstants.MIME_PDF, baout);
+        handler.renderTo(foUserAgent, MimeConstants.MIME_PDF, baout);
         
         assertTrue("Generated PDF has zero length", baout.size() > 0);
     }

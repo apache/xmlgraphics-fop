@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 The Apache Software Foundation.
+ * Copyright 2005-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,8 +40,8 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.image.ImageFactory;
 import org.apache.fop.render.xml.XMLRenderer;
 import org.apache.xpath.XPathAPI;
 import org.apache.xpath.objects.XObject;
@@ -52,6 +52,9 @@ import org.w3c.dom.Document;
  */
 public class URIResolutionTestCase extends AbstractFOPTestCase {
 
+    // configure fopFactory as desired
+    private FopFactory fopFactory = FopFactory.newInstance();
+    
     private SAXTransformerFactory tfactory 
             = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
 
@@ -79,12 +82,13 @@ public class URIResolutionTestCase extends AbstractFOPTestCase {
     }
     
     private void innerTestFO1(boolean withStream) throws Exception {
+        FOUserAgent ua = fopFactory.newFOUserAgent();
+
         //Reset the image caches to force URI resolution!
-        ImageFactory.getInstance().clearCaches();
+        ua.getFactory().getImageFactory().clearCaches();
         
         File foFile = new File(getBaseDir(), "test/xml/uri-resolution1.fo");
         
-        FOUserAgent ua = new FOUserAgent();
         MyURIResolver resolver = new MyURIResolver(withStream); 
         ua.setURIResolver(resolver);
         ua.setBaseURL(foFile.getParentFile().toURL().toString());
@@ -111,15 +115,14 @@ public class URIResolutionTestCase extends AbstractFOPTestCase {
         //TODO This will only work when we can do URI resolution inside Batik!
         File foFile = new File(getBaseDir(), "test/xml/uri-resolution2.fo");
         
-        FOUserAgent ua = new FOUserAgent();
+        FOUserAgent ua = fopFactory.newFOUserAgent();
         MyURIResolver resolver = new MyURIResolver(false); 
         ua.setURIResolver(resolver);
         ua.setBaseURL(foFile.getParentFile().toURL().toString());
 
-        Fop fop = new Fop(MimeConstants.MIME_PDF, ua);
-
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
-        fop.setOutputStream(baout);
+
+        Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, ua, baout);
 
         Transformer transformer = tfactory.newTransformer(); //Identity transf.
         Source src = new StreamSource(foFile);
@@ -156,7 +159,7 @@ public class URIResolutionTestCase extends AbstractFOPTestCase {
         atrenderer.setContentHandler(athandler);
         ua.setRendererOverride(atrenderer);
         
-        Fop fop = new Fop(MimeConstants.MIME_FOP_AREA_TREE, ua);
+        Fop fop = fopFactory.newFop(ua);
 
         Transformer transformer = tfactory.newTransformer(); //Identity transf.
         Source src = new StreamSource(fo);

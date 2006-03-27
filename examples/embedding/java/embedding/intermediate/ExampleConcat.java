@@ -33,6 +33,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.AreaTreeModel;
 import org.apache.fop.area.AreaTreeParser;
@@ -52,6 +53,9 @@ import embedding.model.ProjectTeam;
  * files.
  */
 public class ExampleConcat {
+
+    // configure fopFactory as desired
+    private FopFactory fopFactory = FopFactory.newInstance();
 
     /**
      * Creates a sample ProjectTeam instance for this demo.
@@ -80,7 +84,7 @@ public class ExampleConcat {
                 throws IOException, FOPException, TransformerException {
         
         //Create a user agent
-        FOUserAgent userAgent = new FOUserAgent();
+        FOUserAgent userAgent = fopFactory.newFOUserAgent();
         
         //Create an instance of the target renderer so the XMLRenderer can use its font setup
         Renderer targetRenderer = userAgent.getRendererFactory().createRenderer(
@@ -96,14 +100,12 @@ public class ExampleConcat {
         //Make sure the prepared XMLRenderer is used
         userAgent.setRendererOverride(xmlRenderer);
         
-        // Construct fop (the MIME type here is unimportant due to the override on the user agent)
-        Fop fop = new Fop(MimeConstants.MIME_FOP_AREA_TREE, userAgent);
-
         // Setup output
         OutputStream out = new java.io.FileOutputStream(intermediate);
         out = new java.io.BufferedOutputStream(out);
         try {
-            fop.setOutputStream(out);
+            // Construct fop (the MIME type here is unimportant due to the override on the user agent)
+            Fop fop = new Fop(MimeConstants.MIME_FOP_AREA_TREE, userAgent, out);
 
             // Setup XSLT
             TransformerFactory factory = TransformerFactory.newInstance();
@@ -140,7 +142,7 @@ public class ExampleConcat {
         try {
             //Setup fonts and user agent
             FontInfo fontInfo = new FontInfo();
-            FOUserAgent userAgent = new FOUserAgent();
+            FOUserAgent userAgent = fopFactory.newFOUserAgent();
 
             //Construct the AreaTreeModel that will received the individual pages
             AreaTreeModel treeModel = new RenderPagesModel(userAgent, 

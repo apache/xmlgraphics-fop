@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2004,2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,8 +33,10 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.sax.SAXResult;
 
 // FOP
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 
 import embedding.model.ProjectTeam;
@@ -44,6 +46,9 @@ import embedding.model.ProjectTeam;
  * PDF using JAXP (XSLT) and FOP (XSL:FO).
  */
 public class ExampleObj2PDF {
+
+    // configure fopFactory as desired
+    private FopFactory fopFactory = FopFactory.newInstance();
 
     /**
      * Converts a ProjectTeam object to a PDF file.
@@ -57,14 +62,15 @@ public class ExampleObj2PDF {
     public void convertProjectTeam2PDF(ProjectTeam team, File xslt, File pdf) 
                 throws IOException, FOPException, TransformerException {
                     
-        // Construct fop with desired output format
-        Fop fop = new Fop(MimeConstants.MIME_PDF);
+        FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
+        // configure foUserAgent as desired
 
         // Setup output
         OutputStream out = new java.io.FileOutputStream(pdf);
         out = new java.io.BufferedOutputStream(out);
         try {
-            fop.setOutputStream(out);
+            // Construct fop with desired output format
+            Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, foUserAgent, out);
 
             // Setup XSLT
             TransformerFactory factory = TransformerFactory.newInstance();

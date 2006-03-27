@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,8 +35,10 @@ import javax.xml.transform.sax.SAXResult;
 
 
 // FOP
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.FormattingResults;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.apps.PageSequenceResults;
@@ -45,6 +47,9 @@ import org.apache.fop.apps.PageSequenceResults;
  * This class demonstrates the conversion of an FO file to PDF using FOP.
  */
 public class ExampleFO2PDF {
+
+    // configure fopFactory as desired
+    private FopFactory fopFactory = FopFactory.newInstance();
 
     /**
      * Converts an FO file to a PDF file using FOP
@@ -58,14 +63,16 @@ public class ExampleFO2PDF {
         OutputStream out = null;
         
         try {
-            // Construct fop with desired output format
-            Fop fop = new Fop(MimeConstants.MIME_PDF);
+            FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
+            // configure foUserAgent as desired
     
             // Setup output stream.  Note: Using BufferedOutputStream
             // for performance reasons (helpful with FileOutputStreams).
             out = new FileOutputStream(pdf);
             out = new BufferedOutputStream(out);
-            fop.setOutputStream(out);
+
+            // Construct fop with desired output format
+            Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, foUserAgent, out);
 
             // Setup JAXP using identity transformer
             TransformerFactory factory = TransformerFactory.newInstance();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 The Apache Software Foundation.
+ * Copyright 2005-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,18 +23,12 @@ import java.util.List;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.sax.SAXTransformerFactory;
-import javax.xml.transform.stream.StreamSource;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
-import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.apps.FopFactory;
 
 import org.apache.fop.fotreetest.ext.TestElementMapping;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLFilterImpl;
@@ -43,9 +37,6 @@ import org.xml.sax.helpers.XMLFilterImpl;
  * Test driver class for FO tree tests.
  */
 public class FOTreeTester {
-
-    private SAXTransformerFactory tfactory 
-            = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
 
     /**
      * Runs a test.
@@ -63,15 +54,17 @@ public class FOTreeTester {
         XMLReader reader = parser.getXMLReader();
         
         //Setup FOP for area tree rendering
-        FOUserAgent ua = new FOUserAgent();
+        FopFactory fopFactory = FopFactory.newInstance();
+        fopFactory.addElementMapping(new TestElementMapping());
+        
+        FOUserAgent ua = fopFactory.newFOUserAgent();
         ua.setBaseURL(testFile.getParentFile().toURL().toString());
         ua.setFOEventHandlerOverride(new DummyFOEventHandler(ua));
-        ua.addElementMapping(new TestElementMapping());
 
         //Used to set values in the user agent through processing instructions
         reader = new PIListener(reader, ua);
         
-        Fop fop = new Fop(MimeConstants.MIME_FOP_AREA_TREE, ua);
+        Fop fop = fopFactory.newFop(ua);
         
         reader.setContentHandler(fop.getDefaultHandler());
         reader.setDTDHandler(fop.getDefaultHandler());
@@ -100,7 +93,7 @@ public class FOTreeTester {
         /** @see org.xml.sax.helpers.XMLFilterImpl */
         public void processingInstruction(String target, String data) throws SAXException {
             if ("fop-useragent-break-indent-inheritance".equals(target)) {
-                userAgent.setBreakIndentInheritanceOnReferenceAreaBoundary(
+                userAgent.getFactory().setBreakIndentInheritanceOnReferenceAreaBoundary(
                         Boolean.valueOf(data).booleanValue());
             }
             super.processingInstruction(target, data);

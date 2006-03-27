@@ -39,6 +39,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.render.awt.viewer.Renderable;
 
 /**
@@ -85,10 +86,13 @@ public class InputHandler implements ErrorListener, Renderable {
      */
     public void renderTo(FOUserAgent userAgent, String outputFormat, OutputStream out) 
                 throws FOPException {
-        
-        Fop fop = new Fop(outputFormat, userAgent);
+
+        FopFactory factory = userAgent.getFactory();
+        Fop fop;
         if (out != null) {
-            fop.setOutputStream(out);
+            fop = factory.newFop(outputFormat, userAgent, out);
+        } else {
+            fop = factory.newFop(outputFormat, userAgent);
         }
 
         // if base URL was not explicitly set in FOUserAgent, obtain here

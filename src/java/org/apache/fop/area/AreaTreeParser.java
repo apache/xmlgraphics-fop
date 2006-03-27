@@ -108,8 +108,8 @@ public class AreaTreeParser {
      * @return the ContentHandler instance to receive the SAX stream from the area tree XML
      */
     public ContentHandler getContentHandler(AreaTreeModel treeModel, FOUserAgent userAgent) {
-        //TODO Retrieve this instance from the environment class once it has been created.
-        ElementMappingRegistry elementMappingRegistry = new ElementMappingRegistry(userAgent);
+        ElementMappingRegistry elementMappingRegistry 
+            = userAgent.getFactory().getElementMappingRegistry();
         return new Handler(treeModel, userAgent, elementMappingRegistry);
     }
     
@@ -252,8 +252,9 @@ public class AreaTreeParser {
                         handled = false;
                     }
                 } else {
-                    ContentHandlerFactory factory 
-                            = ContentHandlerFactoryRegistry.getInstance().getFactory(uri);
+                    ContentHandlerFactoryRegistry registry
+                            = userAgent.getFactory().getContentHandlerFactoryRegistry();
+                    ContentHandlerFactory factory = registry.getFactory(uri);
                     if (factory != null) {
                         delegate = factory.createContentHandler();
                         delegateStack.push(qName);
@@ -936,7 +937,7 @@ public class AreaTreeParser {
                             if (url != null) {
                                 bkg.setURL(url);
                                 
-                                ImageFactory fact = ImageFactory.getInstance();
+                                ImageFactory fact = userAgent.getFactory().getImageFactory();
                                 FopImage img = fact.getImage(url, userAgent);
                                 if (img == null) {
                                     log.error("Background image not available: " + url);

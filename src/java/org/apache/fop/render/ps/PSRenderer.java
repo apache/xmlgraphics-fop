@@ -279,7 +279,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
     protected void drawImage(String url, Rectangle2D pos) {
         endTextObject();
         url = ImageFactory.getURL(url);
-        ImageFactory fact = ImageFactory.getInstance();
+        ImageFactory fact = userAgent.getFactory().getImageFactory();
         FopImage fopimage = fact.getImage(url, userAgent);
         if (fopimage == null) {
             return;

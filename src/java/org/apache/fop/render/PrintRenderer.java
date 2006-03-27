@@ -48,7 +48,8 @@ public abstract class PrintRenderer extends AbstractRenderer {
     public void setupFontInfo(FontInfo inFontInfo) {
         this.fontInfo = inFontInfo;
         FontResolver resolver = new DefaultFontResolver(userAgent);
-        FontSetup.setup(fontInfo, fontList, resolver, userAgent.isBase14KerningEnabled());
+        FontSetup.setup(fontInfo, fontList, resolver, 
+                userAgent.getFactory().isBase14KerningEnabled());
     }
 
     /**

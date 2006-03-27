@@ -1520,11 +1520,11 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         // on an inline or wrapper below the block level.
         Hyphenation hyph
             = Hyphenator.hyphenate(hyphenationProperties.language,
-                                   hyphenationProperties.country,
-                                   getFObj().getUserAgent().getHyphenationTreeResolver(),
-                                   sbChars.toString(),
-                                   hyphenationProperties.hyphenationRemainCharacterCount,
-                                   hyphenationProperties.hyphenationPushCharacterCount);
+                               hyphenationProperties.country,
+                               getFObj().getUserAgent().getFactory().getHyphenationTreeResolver(),
+                               sbChars.toString(),
+                               hyphenationProperties.hyphenationRemainCharacterCount,
+                               hyphenationProperties.hyphenationPushCharacterCount);
         // They hyph structure contains the information we need
         // Now start from prev: reset to that position, ask that LM to get
         // a Position for the first hyphenation offset. If the offset isn't in

@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.LinkedList;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.layoutmgr.inline.AlignmentContext;
-import org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager.AreaInfo;
 
 /**
  * LayoutManager for the fo:character formatting object
@@ -146,7 +145,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
     /** @see InlineLevelLayoutManager#getWordChars(StringBuffer, Position) */
     public void getWordChars(StringBuffer sbChars, Position bp) {
         sbChars.append
-            (((org.apache.fop.area.inline.Character) curArea).getChar());
+            (((org.apache.fop.area.inline.TextArea) curArea).getText());
     }
 
     /** @see InlineLevelLayoutManager#hyphenate(Position, HyphContext) */

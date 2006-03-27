@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,25 +18,18 @@
 
 package org.apache.fop.servlet;
 
-import java.io.File;
-import java.io.InputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
 
-// JAXP
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
-import javax.xml.transform.URIResolver;
 import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.stream.StreamSource;
 
-// XML
-import org.apache.commons.logging.impl.SimpleLog;
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.MimeConstants;
@@ -58,164 +51,49 @@ import org.apache.fop.apps.MimeConstants;
  * Example URL: http://servername/fop/servlet/FopPrintServlet?fo=readme.fo
  * <br/>
  * Example URL: http://servername/fop/servlet/FopPrintServlet?xml=data.xml&xsl=format.xsl
- *
- * @author <a href="mailto:fop-dev@xml.apache.org">Apache XML FOP Development Team</a>
+ * <br/>
+ * <b>Note:</b> This servlet is derived from FopServlet. Most methods are inherited from the 
+ * superclass. Only the differences to the base class are necessary.
+ * 
+ * @author <a href="mailto:fop-dev@xmlgraphics.apache.org">Apache FOP Development Team</a>
  * @version $Id$
- * (todo) Doesn't work since there's no AWTRenderer at the moment. Revisit when
- * available.
- * (todo) Ev. add caching mechanism for Templates objects
  */
-public class FopPrintServlet extends HttpServlet {
-
-    /** Name of the parameter used for the XSL-FO file */
-    protected static final String FO_REQUEST_PARAM = "fo";
-    /** Name of the parameter used for the XML file */
-    protected static final String XML_REQUEST_PARAM = "xml";
-    /** Name of the parameter used for the XSLT file */
-    protected static final String XSLT_REQUEST_PARAM = "xslt";
-
-    /** Logger to give to FOP */
-    protected SimpleLog log = null;
-    
-    /** The TransformerFactory to use to create Transformer instances */
-    protected TransformerFactory transFactory = null;
-    /** URIResolver for use by this servlet */
-    protected URIResolver uriResolver; 
+public class FopPrintServlet extends FopServlet {
 
     /**
-     * @see javax.servlet.GenericServlet#init()
+     * @see org.apache.fop.servlet.FopServlet#render(javax.xml.transform.Source, 
+     *      javax.xml.transform.Transformer, javax.servlet.http.HttpServletResponse)
      */
-    public void init() throws ServletException {
-        this.log = new SimpleLog("FOP/Print Servlet");
-        log.setLevel(SimpleLog.LOG_LEVEL_WARN);
-        this.uriResolver = new ServletContextURIResolver(getServletContext());
-        this.transFactory = TransformerFactory.newInstance();
-        this.transFactory.setURIResolver(this.uriResolver);
-    }
+    protected void render(Source src, Transformer transformer, HttpServletResponse response)
+            throws FOPException, TransformerException, IOException {
 
-    /**
-     * @see javax.servlet.http.HttpServlet#doGet(HttpServletRequest, HttpServletResponse)
-     */
-    public void doGet(HttpServletRequest request,
-                      HttpServletResponse response) throws ServletException {
-        if (log == null) {
-            log = new SimpleLog("FOP/Print Servlet");
-            log.setLevel(SimpleLog.LOG_LEVEL_WARN);
-        }
-
-        try {
-            String foParam = request.getParameter(FO_REQUEST_PARAM);
-            String xmlParam = request.getParameter(XML_REQUEST_PARAM);
-            String xsltParam = request.getParameter(XSLT_REQUEST_PARAM);
-
-            if (foParam != null) {
-                InputStream file = new java.io.FileInputStream(foParam);
-                renderFO(file, response);
-            } else if ((xmlParam != null) && (xsltParam != null)) {
-                renderXML(new File(xmlParam), new File(xsltParam), response);
-            } else {
-                response.setContentType("text/html");
-
-                PrintWriter out = response.getWriter();
-                out.println("<html><title>Error</title>\n"
-                        + "<body><h1>FopServlet Error</h1>\n"
-                        + "<h3>No 'fo' or 'xml/xsl' "
-                        + "request param given.</h3></body>\n</html>");
-            }
-        } catch (ServletException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new ServletException(ex);
-        }
-    }
-
-    /**
-     * Renders an FO inputsource to the default printer.
-     * @param foFile The XSL-FO file
-     * @param response Response to write to
-     * @throws ServletException In case of a problem
-     */
-    public void renderFO(InputStream foFile,
-                         HttpServletResponse response) throws ServletException {
-        try {
-            Fop fop = new Fop(MimeConstants.MIME_FOP_PRINT, getFOUserAgent());
-
-            // Setup JAXP
-            TransformerFactory factory = TransformerFactory.newInstance();
-            Transformer transformer = factory.newTransformer(); //identity transformer
-            transformer.setURIResolver(this.uriResolver);
-            
-            // Setup input for XSLT transformation
-            Source src = new StreamSource(foFile);
-            
-            // Resulting SAX events (the generated FO) must be piped through to FOP
-            Result res = new SAXResult(fop.getDefaultHandler());
-            
-            // Start XSLT transformation and FOP processing
-            transformer.transform(src, res);
-            
-            reportOK (response);
-        } catch (Exception ex) {
-            throw new ServletException(ex);
-        }
-    }
-
-    /**
-     * Renders an FO generated using an XML and a stylesheet to the default printer.
-     * @param xmlfile XML file object
-     * @param xsltfile XSLT stylesheet 
-     * @param response HTTP response object
-     * @throws ServletException In case of a problem
-     */
-    public void renderXML(File xmlfile, File xsltfile,
-                          HttpServletResponse response) throws ServletException {
-        try {
-            Fop fop = new Fop(MimeConstants.MIME_FOP_PRINT, getFOUserAgent());
-
-            // Setup XSLT
-            TransformerFactory factory = TransformerFactory.newInstance();
-            Transformer transformer = factory.newTransformer(new StreamSource(xsltfile));
-            transformer.setURIResolver(this.uriResolver);
-            
-            // Setup input for XSLT transformation
-            Source src = new StreamSource(xmlfile);
+        FOUserAgent foUserAgent = getFOUserAgent();
         
-            // Resulting SAX events (the generated FO) must be piped through to FOP
-            Result res = new SAXResult(fop.getDefaultHandler());
-
-            // Start XSLT transformation and FOP processing
-            transformer.transform(src, res);
-
-            reportOK (response);
-        } catch (Exception ex) {
-            throw new ServletException(ex);
-        }
+        //Setup FOP
+        Fop fop = fopFactory.newFop(MimeConstants.MIME_FOP_PRINT, foUserAgent);
+        
+        //Make sure the XSL transformation's result is piped through to FOP
+        Result res = new SAXResult(fop.getDefaultHandler());
+        
+        //Start the transformation and rendering process
+        transformer.transform(src, res);
+        
+        //Return the result
+        reportOK(response);
     }
 
     // private helper, tell (browser) user that file printed
-    private void reportOK(HttpServletResponse response)
-                throws ServletException {
+    private void reportOK(HttpServletResponse response) throws IOException {
         String sMsg = "<html><title>Success</title>\n"
                 + "<body><h1>FopPrintServlet: </h1>"
-                + "<h3>The requested data was printed</h3></body></html>";
+                + "<h3>The requested data was printed to the default printer.</h3></body></html>";
 
         response.setContentType("text/html");
         response.setContentLength(sMsg.length());
 
-        try {
-            PrintWriter out = response.getWriter();
-            out.println(sMsg);
-            out.flush();
-        } catch (Exception ex) {
-            throw new ServletException(ex);
-        }
-    }
-
-    /** @return a new FOUserAgent for FOP */
-    protected FOUserAgent getFOUserAgent() {
-        FOUserAgent userAgent = new FOUserAgent();
-        userAgent.setURIResolver(this.uriResolver);
-        return userAgent;
+        PrintWriter out = response.getWriter();
+        out.println(sMsg);
+        out.flush();
     }
 
 }

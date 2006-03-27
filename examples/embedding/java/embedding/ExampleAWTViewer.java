@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2003,2005 The Apache Software Foundation.
+ * Copyright 1999-2003,2005-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,19 +37,29 @@ import org.apache.avalon.framework.ExceptionUtil;
 //FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.fo.Constants;
 
 /**
  * This class demonstrates the use of the AWT Viewer.
  */
 public class ExampleAWTViewer {
 
+    // configure fopFactory as desired
+    private FopFactory fopFactory = FopFactory.newInstance();
+
+    /**
+     * Display an FO file in the AWT Preview.
+     * @param fo the FO file
+     * @throws IOException In case of an I/O problem
+     * @throws FOPException In case of a problem during layout
+     * @throws TransformerException In case of a problem during XML processing
+     */
     public void viewFO(File fo)
                 throws IOException, FOPException, TransformerException {
 
         //Setup FOP
-        Fop fop = new Fop(MimeConstants.MIME_FOP_AWT_PREVIEW);
+        Fop fop = fopFactory.newFop(MimeConstants.MIME_FOP_AWT_PREVIEW);
 
         try {
 
@@ -68,6 +78,10 @@ public class ExampleAWTViewer {
         }
     }
 
+    /**
+     * Main method.
+     * @param args the command-line arguments
+     */
     public static void main(String[] args) {
         try {
             System.out.println("FOP ExampleAWTViewer\n");

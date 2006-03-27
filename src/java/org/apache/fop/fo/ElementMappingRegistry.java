@@ -25,7 +25,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.fo.ElementMapping.Maker;
 import org.apache.fop.util.Service;
 import org.w3c.dom.DOMImplementation;
@@ -54,14 +54,14 @@ public class ElementMappingRegistry {
     /**
      * Main constructor. Adds all default element mapping as well as detects ElementMapping
      * through the Service discovery.
-     * @param userAgent the user agent
+     * @param factory the Fop Factory
      */
-    public ElementMappingRegistry(FOUserAgent userAgent) {
+    public ElementMappingRegistry(FopFactory factory) {
         // Add standard element mappings
         setupDefaultMappings();
 
         // add additional ElementMappings defined within FOUserAgent
-        List addlEMs = userAgent.getAdditionalElementMappings();
+        List addlEMs = factory.getAdditionalElementMappings();
 
         if (addlEMs != null) {
             for (int i = 0; i < addlEMs.size(); i++) {

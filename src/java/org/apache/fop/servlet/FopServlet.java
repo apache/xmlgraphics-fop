@@ -19,6 +19,7 @@
 package org.apache.fop.servlet;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
@@ -37,10 +38,10 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.impl.SimpleLog;
 
-//FOP
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 
 /**
@@ -63,7 +64,7 @@ import org.apache.fop.apps.MimeConstants;
  * For this to work with Internet Explorer, you might need to append "&ext=.pdf"
  * to the URL.
  *
- * @author <a href="mailto:fop-dev@xml.apache.org">Apache XML FOP Development Team</a>
+ * @author <a href="mailto:fop-dev@xmlgraphics.apache.org">Apache FOP Development Team</a>
  * @version $Id$
  * (todo) Ev. add caching mechanism for Templates objects
  */
@@ -78,8 +79,10 @@ public class FopServlet extends HttpServlet {
 
     /** Logger to give to FOP */
     protected SimpleLog log = null;
-    /** The TransformerFactory to use to create Transformer instances */
+    /** The TransformerFactory used to create Transformer instances */
     protected TransformerFactory transFactory = null;
+    /** The FopFactory used to create Fop instances */
+    protected FopFactory fopFactory = null;
     /** URIResolver for use by this servlet */
     protected URIResolver uriResolver; 
 
@@ -92,6 +95,18 @@ public class FopServlet extends HttpServlet {
         this.uriResolver = new ServletContextURIResolver(getServletContext());
         this.transFactory = TransformerFactory.newInstance();
         this.transFactory.setURIResolver(this.uriResolver);
+        //Configure FopFactory as desired
+        this.fopFactory = FopFactory.newInstance();
+        this.fopFactory.setURIResolver(this.uriResolver);
+        configureFopFactory();
+    }
+    
+    /**
+     * This method is called right after the FopFactory is instantiated and can be overridden
+     * by subclasses to perform additional configuration.
+     */
+    protected void configureFopFactory() {
+        //Subclass and override this method to perform additional configuration
     }
 
     /**
@@ -106,26 +121,17 @@ public class FopServlet extends HttpServlet {
             String xsltParam = request.getParameter(XSLT_REQUEST_PARAM);
 
             //Analyze parameters and decide with method to use
-            byte[] content = null;
             if (foParam != null) {
-                content = renderFO(foParam);
+                renderFO(foParam, response);
             } else if ((xmlParam != null) && (xsltParam != null)) {
-                content = renderXML(xmlParam, xsltParam);
+                renderXML(xmlParam, xsltParam, response);
             } else {
+                response.setContentType("text/html");
                 PrintWriter out = response.getWriter();
                 out.println("<html><head><title>Error</title></head>\n"
                           + "<body><h1>FopServlet Error</h1><h3>No 'fo' "
                           + "request param given.</body></html>");
             }
-
-            if (content != null) {
-                //Send the result back to the client
-                response.setContentType("application/pdf");
-                response.setContentLength(content.length);
-                response.getOutputStream().write(content);
-                response.getOutputStream().flush();
-            }
-
         } catch (Exception ex) {
             throw new ServletException(ex);
         }
@@ -140,18 +146,27 @@ public class FopServlet extends HttpServlet {
         return new StreamSource(new File(param));
     }
 
+    private void sendPDF(byte[] content, HttpServletResponse response) throws IOException {
+        //Send the result back to the client
+        response.setContentType("application/pdf");
+        response.setContentLength(content.length);
+        response.getOutputStream().write(content);
+        response.getOutputStream().flush();
+    }
+    
     /**
      * Renders an XSL-FO file into a PDF file. The PDF is written to a byte
      * array that is returned as the method's result.
      * @param fo the XSL-FO file
-     * @return byte[] the rendered PDF file
+     * @param response HTTP response object
      * @throws FOPException If an error occurs during the rendering of the
      * XSL-FO
      * @throws TransformerException If an error occurs while parsing the input
      * file
+     * @throws IOException In case of an I/O problem
      */
-    protected byte[] renderFO(String fo)
-                throws FOPException, TransformerException {
+    protected void renderFO(String fo, HttpServletResponse response)
+                throws FOPException, TransformerException, IOException {
 
         //Setup source
         Source foSrc = convertString2Source(fo);
@@ -161,7 +176,7 @@ public class FopServlet extends HttpServlet {
         transformer.setURIResolver(this.uriResolver);
 
         //Start transformation and rendering process
-        return render(foSrc, transformer);
+        render(foSrc, transformer, response);
     }
 
     /**
@@ -170,14 +185,15 @@ public class FopServlet extends HttpServlet {
      * that is returned as the method's result.
      * @param xml the XML file
      * @param xslt the XSLT file
-     * @return byte[] the rendered PDF file
+     * @param response HTTP response object
      * @throws FOPException If an error occurs during the rendering of the
      * XSL-FO
      * @throws TransformerException If an error occurs during XSL
      * transformation
+     * @throws IOException In case of an I/O problem
      */
-    protected byte[] renderXML(String xml, String xslt)
-                throws FOPException, TransformerException {
+    protected void renderXML(String xml, String xslt, HttpServletResponse response)
+                throws FOPException, TransformerException, IOException {
 
         //Setup sources
         Source xmlSrc = convertString2Source(xml);
@@ -188,7 +204,7 @@ public class FopServlet extends HttpServlet {
         transformer.setURIResolver(this.uriResolver);
 
         //Start transformation and rendering process
-        return render(xmlSrc, transformer);
+        render(xmlSrc, transformer, response);
     }
 
     /**
@@ -199,21 +215,23 @@ public class FopServlet extends HttpServlet {
      * returned as the method's result.
      * @param src Input XML or XSL-FO
      * @param transformer Transformer to use for optional transformation
-     * @return byte[] the rendered PDF file
+     * @param response HTTP response object
      * @throws FOPException If an error occurs during the rendering of the
      * XSL-FO
      * @throws TransformerException If an error occurs during XSL
      * transformation
+     * @throws IOException In case of an I/O problem
      */
-    protected byte[] render(Source src, Transformer transformer)
-                throws FOPException, TransformerException {
+    protected void render(Source src, Transformer transformer, HttpServletResponse response)
+                throws FOPException, TransformerException, IOException {
 
-        //Setup FOP
-        Fop fop = new Fop(MimeConstants.MIME_PDF, getFOUserAgent());
+        FOUserAgent foUserAgent = getFOUserAgent();
 
         //Setup output
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        fop.setOutputStream(out);
+
+        //Setup FOP
+        Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, foUserAgent, out);
 
         //Make sure the XSL transformation's result is piped through to FOP
         Result res = new SAXResult(fop.getDefaultHandler());
@@ -222,13 +240,13 @@ public class FopServlet extends HttpServlet {
         transformer.transform(src, res);
 
         //Return the result
-        return out.toByteArray();
+        sendPDF(out.toByteArray(), response);
     }
     
     /** @return a new FOUserAgent for FOP */
     protected FOUserAgent getFOUserAgent() {
-        FOUserAgent userAgent = new FOUserAgent();
-        userAgent.setURIResolver(this.uriResolver);
+        FOUserAgent userAgent = fopFactory.newFOUserAgent();
+        //Configure foUserAgent as desired
         return userAgent;
     }
 

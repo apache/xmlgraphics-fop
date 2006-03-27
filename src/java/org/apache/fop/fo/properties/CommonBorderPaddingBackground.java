@@ -18,6 +18,7 @@
 
 package org.apache.fop.fo.properties;
 
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.PercentBaseContext;
@@ -158,8 +159,9 @@ public class CommonBorderPaddingBackground implements Cloneable {
             
             //Additional processing: preload image
             String url = ImageFactory.getURL(backgroundImage);
-            ImageFactory fact = ImageFactory.getInstance();
-            fopimage = fact.getImage(url, fobj.getUserAgent());
+            FOUserAgent userAgent = fobj.getUserAgent();
+            ImageFactory fact = userAgent.getFactory().getImageFactory();
+            fopimage = fact.getImage(url, userAgent);
             if (fopimage == null) {
                 fobj.getLogger().error("Background image not available: " + backgroundImage);
             } else {

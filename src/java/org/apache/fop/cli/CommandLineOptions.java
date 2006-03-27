@@ -28,11 +28,13 @@ import java.util.Vector;
 import org.apache.fop.Version;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.pdf.PDFEncryptionManager;
 import org.apache.fop.pdf.PDFEncryptionParams;
 import org.apache.fop.render.awt.AWTRenderer;
 import org.apache.fop.render.Renderer;
+import org.apache.fop.render.pdf.PDFRenderer;
 import org.apache.fop.render.xml.XMLRenderer;
 import org.apache.fop.util.CommandLineLogger;
 
@@ -41,14 +43,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 // SAX
-import org.xml.sax.XMLReader;
 import org.xml.sax.SAXException;
-import javax.xml.parsers.SAXParserFactory;
-
-// avalon configuration
-import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.ConfigurationException;
 
 /**
  * Options parses the commandline arguments
@@ -92,6 +87,7 @@ public class CommandLineOptions {
     /* output mode */
     private String outputmode = null;
 
+    private FopFactory factory = FopFactory.newInstance();
     private FOUserAgent foUserAgent;
 
     private InputHandler inputHandler;
@@ -130,7 +126,7 @@ public class CommandLineOptions {
             throws FOPException, IOException {
         boolean optionsParsed = true;
 
-        foUserAgent = new FOUserAgent();
+        foUserAgent = factory.newFOUserAgent();
 
         try {
             optionsParsed = parseOptions(args);
@@ -217,7 +213,7 @@ public class CommandLineOptions {
             } else if (args[i].equals("-d")) {
                 setLogOption("debug", "debug");
             } else if (args[i].equals("-r")) {
-                foUserAgent.setStrictValidation(false);
+                factory.setStrictValidation(false);
             } else if (args[i].equals("-dpi")) {
                 i = i + parseResolution(args, i);
             } else if (args[i].equals("-q") || args[i].equals("--quiet")) {
@@ -571,14 +567,17 @@ public class CommandLineOptions {
     }
 
     private PDFEncryptionParams getPDFEncryptionParams() throws FOPException {
-        if (foUserAgent.getPDFEncryptionParams() == null) {
+        PDFEncryptionParams params = (PDFEncryptionParams)foUserAgent.getRendererOptions().get(
+                        PDFRenderer.ENCRYPTION_PARAMS); 
+        if (params == null) {
             if (!PDFEncryptionManager.checkAvailableAlgorithms()) {
                 throw new FOPException("PDF encryption requested but it is not available."
                         + " Please make sure MD5 and RC4 algorithms are available.");
             }
-            foUserAgent.setPDFEncryptionParams(new PDFEncryptionParams());
+            params = new PDFEncryptionParams();
+            foUserAgent.getRendererOptions().put(PDFRenderer.ENCRYPTION_PARAMS, params);
         }
-        return foUserAgent.getPDFEncryptionParams();
+        return params;
     }
 
     private int parsePDFOwnerPassword(String[] args, int i) throws FOPException {
@@ -726,18 +725,11 @@ public class CommandLineOptions {
         if (userConfigFile == null) {
             return;
         }
-        XMLReader parser = createParser();
-        DefaultConfigurationBuilder configBuilder
-            = new DefaultConfigurationBuilder(parser);
-        Configuration userConfig = null;
         try {
-            userConfig = configBuilder.buildFromFile(userConfigFile);
+            factory.setUserConfig(userConfigFile);
         } catch (SAXException e) {
             throw new FOPException(e);
-        } catch (ConfigurationException e) {
-            throw new FOPException(e);
         }
-        foUserAgent.setUserConfig(userConfig);
      }
 
     /**
@@ -978,20 +970,5 @@ public class CommandLineOptions {
         }
     }
 
-    /**
-     * Creates <code>XMLReader</code> object using default
-     * <code>SAXParserFactory</code>
-     * @return the created <code>XMLReader</code>
-     * @throws FOPException if the parser couldn't be created or configured for proper operation.
-     */
-    private XMLReader createParser() throws FOPException {
-        try {
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            factory.setNamespaceAware(true);
-            return factory.newSAXParser().getXMLReader();
-        } catch (Exception e) {
-            throw new FOPException("Couldn't create XMLReader", e);
-        }
-    }
 }
 

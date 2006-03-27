@@ -51,7 +51,8 @@ class ImageLoader {
         if (!valid || image != null) {
             return image;
         }
-        image = ImageFactory.getInstance().loadImage(url, userAgent);
+        ImageFactory imageFactory = userAgent.getFactory().getImageFactory();
+        image = imageFactory.loadImage(url, userAgent);
         if (image == null) {
             cache.invalidateImage(url, userAgent);
             valid = false;
