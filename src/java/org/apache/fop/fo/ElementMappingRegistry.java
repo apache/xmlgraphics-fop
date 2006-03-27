@@ -59,15 +59,6 @@ public class ElementMappingRegistry {
     public ElementMappingRegistry(FopFactory factory) {
         // Add standard element mappings
         setupDefaultMappings();
-
-        // add additional ElementMappings defined within FOUserAgent
-        List addlEMs = factory.getAdditionalElementMappings();
-
-        if (addlEMs != null) {
-            for (int i = 0; i < addlEMs.size(); i++) {
-                addElementMapping((ElementMapping) addlEMs.get(i));
-            }
-        }
     }
     
     /**
@@ -116,7 +107,11 @@ public class ElementMappingRegistry {
         }
     }
 
-    private void addElementMapping(ElementMapping mapping) {
+    /**
+     * Add the element mapping.
+     * @param mapping the element mapping instance
+     */
+    public void addElementMapping(ElementMapping mapping) {
         this.fobjTable.put(mapping.getNamespaceURI(), mapping.getTable());
         this.namespaces.put(mapping.getNamespaceURI().intern(), mapping);
     }

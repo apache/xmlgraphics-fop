@@ -108,9 +108,6 @@ public class FopFactory {
     /** @see #setBreakIndentInheritanceOnReferenceAreaBoundary(boolean) */
     private boolean breakIndentInheritanceOnReferenceAreaBoundary = false;
 
-    /** Additional fo.ElementMapping subclasses set by user */
-    private List additionalElementMappings = null;
-
     /** Optional overriding LayoutManagerMaker */
     private LayoutManagerMaker lmMakerOverride = null;
     
@@ -260,18 +257,7 @@ public class FopFactory {
      * @param elementMapping the class name representing the element mapping.
      */
     public void addElementMapping(ElementMapping elementMapping) {
-        if (additionalElementMappings == null) {
-            additionalElementMappings = new java.util.ArrayList();
-        }
-        additionalElementMappings.add(elementMapping);
-    }
-
-    /**
-     * Returns the List of user-added ElementMapping class names
-     * @return List of Strings holding ElementMapping names.
-     */
-    public List getAdditionalElementMappings() {
-        return additionalElementMappings;
+        this.elementMappingRegistry.addElementMapping(elementMapping);
     }
 
     /**
