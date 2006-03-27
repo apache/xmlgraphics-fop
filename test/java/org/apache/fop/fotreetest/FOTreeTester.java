@@ -37,7 +37,16 @@ import org.xml.sax.helpers.XMLFilterImpl;
  * Test driver class for FO tree tests.
  */
 public class FOTreeTester {
+    
+    private FopFactory fopFactory = FopFactory.newInstance();
 
+    /**
+     * Main constructor
+     */
+    public FOTreeTester() {
+        fopFactory.addElementMapping(new TestElementMapping());
+    }
+    
     /**
      * Runs a test.
      * @param testFile the test file.
@@ -52,11 +61,7 @@ public class FOTreeTester {
         spf.setValidating(false);
         SAXParser parser = spf.newSAXParser();
         XMLReader reader = parser.getXMLReader();
-        
-        //Setup FOP for area tree rendering
-        FopFactory fopFactory = FopFactory.newInstance();
-        fopFactory.addElementMapping(new TestElementMapping());
-        
+                
         FOUserAgent ua = fopFactory.newFOUserAgent();
         ua.setBaseURL(testFile.getParentFile().toURL().toString());
         ua.setFOEventHandlerOverride(new DummyFOEventHandler(ua));
