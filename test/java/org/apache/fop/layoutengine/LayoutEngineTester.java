@@ -21,7 +21,6 @@ package org.apache.fop.layoutengine;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.net.MalformedURLException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -43,11 +42,10 @@ import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.FormattingResults;
-import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.layoutmgr.ElementListObserver;
 import org.apache.fop.render.xml.XMLRenderer;
 import org.apache.xpath.XPathAPI;
@@ -56,7 +54,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
@@ -66,6 +63,10 @@ import org.xml.sax.SAXException;
 public class LayoutEngineTester {
 
     private static final Map CHECK_CLASSES = new java.util.HashMap();
+    
+    // configure fopFactory as desired
+    private FopFactory fopFactory = FopFactory.newInstance();
+    private FopFactory fopFactoryWithBase14Kerning = FopFactory.newInstance();
     
     private SAXTransformerFactory tfactory 
             = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
@@ -89,6 +90,8 @@ public class LayoutEngineTester {
      */
     public LayoutEngineTester(File areaTreeBackupDir) {
         this.areaTreeBackupDir = areaTreeBackupDir;
+        fopFactory.setBase14KerningEnabled(false);
+        fopFactoryWithBase14Kerning.setBase14KerningEnabled(true);
     }
     
     private Templates getTestcase2FOStylesheet() throws TransformerConfigurationException {
@@ -137,6 +140,7 @@ public class LayoutEngineTester {
             XObject xo = XPathAPI.eval(testDoc, "/testcase/cfg/base14kerning");
             String s = xo.str();
             boolean base14kerning = ("true".equalsIgnoreCase(s));
+            FopFactory effFactory = (base14kerning ? fopFactoryWithBase14Kerning : fopFactory);
             
             //Setup Transformer to convert the testcase XML to XSL-FO
             Transformer transformer = getTestcase2FOStylesheet().newTransformer();
@@ -147,14 +151,13 @@ public class LayoutEngineTester {
             athandler.setResult(domres);
             
             //Setup FOP for area tree rendering
-            FOUserAgent ua = new FOUserAgent();
+            FOUserAgent ua = effFactory.newFOUserAgent();
             ua.setBaseURL(testFile.getParentFile().toURL().toString());
-            ua.setBase14KerningEnabled(base14kerning);
             XMLRenderer atrenderer = new XMLRenderer();
             atrenderer.setUserAgent(ua);
             atrenderer.setContentHandler(athandler);
             ua.setRendererOverride(atrenderer);
-            fop = new Fop(MimeConstants.MIME_FOP_AREA_TREE, ua);
+            fop = effFactory.newFop(ua);
             
             SAXResult fores = new SAXResult(fop.getDefaultHandler());
             transformer.transform(src, fores);

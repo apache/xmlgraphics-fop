@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2004, 2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,10 @@ package embedding;
 
 // Java
 import java.io.File;
-import java.io.IOException;
 import java.io.OutputStream;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
 
 //JAXP
 import javax.xml.transform.Transformer;
@@ -40,7 +40,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 
 // FOP
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 
 
@@ -50,6 +52,9 @@ import org.apache.fop.apps.MimeConstants;
  */
 public class ExampleDOM2PDF {
 
+    // configure fopFactory as desired
+    private FopFactory fopFactory = FopFactory.newInstance();
+    
     /** xsl-fo namespace URI */
     protected static String foNS = "http://www.w3.org/1999/XSL/Format";
 
@@ -57,20 +62,19 @@ public class ExampleDOM2PDF {
      * Converts a DOM Document to a PDF file using FOP.
      * @param xslfoDoc the DOM Document
      * @param pdf the target PDF file
-     * @throws IOException In case of an I/O problem
-     * @throws FOPException In case of a FOP problem
      */
     public void convertDOM2PDF(Document xslfoDoc, File pdf) {
         try {
-            // Construct fop with desired output format
-            Fop fop = new Fop(MimeConstants.MIME_PDF);
-            
+            FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
+            // configure foUserAgent as desired
+    
             // Setup output
             OutputStream out = new java.io.FileOutputStream(pdf);
             out = new java.io.BufferedOutputStream(out);
     
             try {
-                fop.setOutputStream(out);
+                // Construct fop with desired output format and output stream
+                Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, foUserAgent, out);
                 
                 // Setup Identity Transformer
                 TransformerFactory factory = TransformerFactory.newInstance();
@@ -113,38 +117,7 @@ public class ExampleDOM2PDF {
             System.out.println("PDF Output File: " + pdffile);
             System.out.println();
             
-            // Create a sample XSL-FO DOM document
-            Document foDoc = null;
-            Element root = null, ele1 = null, ele2 = null, ele3 = null;
-            
-            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-            dbf.setNamespaceAware(true);
-            DocumentBuilder db = dbf.newDocumentBuilder();
-            foDoc = db.newDocument();
-            
-            root = foDoc.createElementNS(foNS, "fo:root");
-            foDoc.appendChild(root);
-            
-            ele1 = foDoc.createElementNS(foNS, "fo:layout-master-set");
-            root.appendChild(ele1);
-            ele2 = foDoc.createElementNS(foNS, "fo:simple-page-master");
-            ele1.appendChild(ele2);
-            ele2.setAttributeNS(null, "master-name", "letter");
-            ele2.setAttributeNS(null, "page-height", "11in");
-            ele2.setAttributeNS(null, "page-width", "8.5in");
-            ele2.setAttributeNS(null, "margin-top", "1in");
-            ele2.setAttributeNS(null, "margin-bottom", "1in");
-            ele2.setAttributeNS(null, "margin-left", "1in");
-            ele2.setAttributeNS(null, "margin-right", "1in");
-            ele3 = foDoc.createElementNS(foNS, "fo:region-body");
-            ele2.appendChild(ele3);
-            ele1 = foDoc.createElementNS(foNS, "fo:page-sequence");
-            root.appendChild(ele1);
-            ele1.setAttributeNS(null, "master-reference", "letter");
-            ele2 = foDoc.createElementNS(foNS, "fo:flow");
-            ele1.appendChild(ele2);
-            ele2.setAttributeNS(null, "flow-name", "xsl-region-body");
-            addElement(ele2, "fo:block", "Hello World!");
+            Document foDoc = buildDOMDocument();
             
             ExampleDOM2PDF app = new ExampleDOM2PDF();
             app.convertDOM2PDF(foDoc, pdffile);
@@ -155,6 +128,47 @@ public class ExampleDOM2PDF {
             e.printStackTrace(System.err);
             System.exit(-1);
         }
+    }
+
+    /**
+     * Builds the example FO document as a DOM in memory.
+     * @return the FO document
+     * @throws ParserConfigurationException In case there is a problem creating a DOM document
+     */
+    private static Document buildDOMDocument() throws ParserConfigurationException {
+        // Create a sample XSL-FO DOM document
+        Document foDoc = null;
+        Element root = null, ele1 = null, ele2 = null, ele3 = null;
+        
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        DocumentBuilder db = dbf.newDocumentBuilder();
+        foDoc = db.newDocument();
+        
+        root = foDoc.createElementNS(foNS, "fo:root");
+        foDoc.appendChild(root);
+        
+        ele1 = foDoc.createElementNS(foNS, "fo:layout-master-set");
+        root.appendChild(ele1);
+        ele2 = foDoc.createElementNS(foNS, "fo:simple-page-master");
+        ele1.appendChild(ele2);
+        ele2.setAttributeNS(null, "master-name", "letter");
+        ele2.setAttributeNS(null, "page-height", "11in");
+        ele2.setAttributeNS(null, "page-width", "8.5in");
+        ele2.setAttributeNS(null, "margin-top", "1in");
+        ele2.setAttributeNS(null, "margin-bottom", "1in");
+        ele2.setAttributeNS(null, "margin-left", "1in");
+        ele2.setAttributeNS(null, "margin-right", "1in");
+        ele3 = foDoc.createElementNS(foNS, "fo:region-body");
+        ele2.appendChild(ele3);
+        ele1 = foDoc.createElementNS(foNS, "fo:page-sequence");
+        root.appendChild(ele1);
+        ele1.setAttributeNS(null, "master-reference", "letter");
+        ele2 = foDoc.createElementNS(foNS, "fo:flow");
+        ele1.appendChild(ele2);
+        ele2.setAttributeNS(null, "flow-name", "xsl-region-body");
+        addElement(ele2, "fo:block", "Hello World!");
+        return foDoc;
     }
 
     /**

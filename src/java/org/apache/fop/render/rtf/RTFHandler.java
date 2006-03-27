@@ -1121,8 +1121,9 @@ public class RTFHandler extends FOEventHandler {
             String url = eg.getURL();
 
             //set image data
-            ImageFactory fact = ImageFactory.getInstance();
-            FopImage fopimage = fact.getImage(url, eg.getUserAgent());
+            FOUserAgent userAgent = eg.getUserAgent();
+            ImageFactory fact = userAgent.getFactory().getImageFactory();
+            FopImage fopimage = fact.getImage(url, userAgent);
             if (fopimage == null) {
                 log.error("Image could not be found: " + url);
                 return;

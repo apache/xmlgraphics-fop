@@ -30,6 +30,7 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.AreaTreeModel;
 import org.apache.fop.area.AreaTreeParser;
@@ -46,6 +47,9 @@ import embedding.model.ProjectTeam;
  */
 public class ExampleStamp {
 
+    // configure fopFactory as desired
+    private FopFactory fopFactory = FopFactory.newInstance();
+    
     /**
      * Stamps an intermediate file and renders it to a PDF file.
      * @param atfile the intermediate file (area tree XML)
@@ -63,7 +67,7 @@ public class ExampleStamp {
         try {
             //Setup fonts and user agent
             FontInfo fontInfo = new FontInfo();
-            FOUserAgent userAgent = new FOUserAgent();
+            FOUserAgent userAgent = fopFactory.newFOUserAgent();
 
             //Construct the AreaTreeModel that will received the individual pages
             AreaTreeModel treeModel = new RenderPagesModel(userAgent, 

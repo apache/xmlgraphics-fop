@@ -229,7 +229,7 @@ public class RendererFactory {
                     if (out == null 
                             && userAgent.getRendererOverride() == null 
                             && rendMaker.needsOutputStream()) {
-                        throw new IllegalStateException(
+                        throw new FOPException(
                             "OutputStream has not been set");
                     }
                     //Found a Renderer so we need to construct an AreaTreeHandler.

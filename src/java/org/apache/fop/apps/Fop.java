@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import java.io.OutputStream;
 import org.xml.sax.helpers.DefaultHandler;
 
 // FOP
-import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FOTreeBuilder;
 
 /**
@@ -45,7 +44,7 @@ import org.apache.fop.fo.FOTreeBuilder;
  * At the moment, it is recommended not to reuse an instance of this
  * class for more than one rendering run.
  */
-public class Fop implements Constants {
+public class Fop {
 
     // desired output format: MIME type such as "application/pdf", "application/postscript" etc.
     private String outputFormat = null;
@@ -64,23 +63,54 @@ public class Fop implements Constants {
      * output format (ex. "application/pdf" for PDF).
      * @param outputFormat the MIME type of the output format to use (ex. "application/pdf").
      * @param ua FOUserAgent object
+     * @param stream the output stream
+     * @throws FOPException if setting up the DefaultHandler fails
+     * @deprecated End-users should use {@link FopFactory#newFop(String, FOUserAgent, OutputStream)} 
+     *             instead! This constructor will become invisible with FOP 1.0.
      */
-    public Fop(String outputFormat, FOUserAgent ua) {
+    public Fop(String outputFormat, FOUserAgent ua, OutputStream stream) throws FOPException {
         this.outputFormat = outputFormat;
 
         foUserAgent = ua;
         if (foUserAgent == null) {
-            foUserAgent = new FOUserAgent();
+            foUserAgent = FopFactory.newInstance().newFOUserAgent();
         }
+        
+        this.stream = stream;
+        
+        createDefaultHandler();
+    }
+
+    /**
+     * Constructor for use with already-created FOUserAgents. It uses MIME types to select the 
+     * output format (ex. "application/pdf" for PDF).
+     * @param outputFormat the MIME type of the output format to use (ex. "application/pdf").
+     * @param ua FOUserAgent object
+     * @throws FOPException if setting up the DefaultHandler fails
+     * @deprecated End-users should use {@link FopFactory#newFop(String, FOUserAgent)} instead!
+     *             This constructor will become invisible with FOP 1.0.
+     */
+    public Fop(String outputFormat, FOUserAgent ua) throws FOPException {
+        this.outputFormat = outputFormat;
+
+        foUserAgent = ua;
+        if (foUserAgent == null) {
+            foUserAgent = FopFactory.newInstance().newFOUserAgent();
+        }
+        
+        createDefaultHandler();
     }
 
     /**
      * Constructor for FOP with a default FOUserAgent. It uses MIME types to select the 
      * output format (ex. "application/pdf" for PDF).
      * @param outputFormat the MIME type of the output format to use (ex. "application/pdf").
+     * @deprecated End-users should use {@link FopFactory#newFop(String)} instead!
+     *             This constructor will become invisible with FOP 1.0.
      */
     public Fop(String outputFormat) {
-        this(outputFormat, null);
+        this.outputFormat = outputFormat;
+        foUserAgent = FopFactory.newInstance().newFOUserAgent();
     }
 
     /**
@@ -95,25 +125,36 @@ public class Fop implements Constants {
      * Set the OutputStream to use to output the result of the Render
      * (if applicable)
      * @param stream the stream to output the result of rendering to
+     * @deprecated Use one of the factory methods on {@link FopFactory} with an OutputStream
+     *             parameter instead. This method will be removed with FOP 1.0.
      */
     public void setOutputStream(OutputStream stream) {
         this.stream = stream;
     }
 
     /**
-     * Returns a DefaultHandler object used to generate the document.
+     * Creates a DefaultHandler object used to generate the document.
      * Note this object implements the ContentHandler interface.
      * For processing with a Transformer object, this DefaultHandler object
      * can be used in the SAXResult constructor.
      * Alternatively, for processing with a SAXParser, this object can be
      * used as the DefaultHandler argument to its parse() methods.
      *
-     * @return a SAX DefaultHandler for handling the SAX events.
+     * @throws FOPException if setting up the DefaultHandler fails
+     */
+    private void createDefaultHandler() throws FOPException {
+        this.foTreeBuilder = new FOTreeBuilder(outputFormat, foUserAgent, stream);
+    }
+
+    /**
+     * Returns the DefaultHandler object used to generate the document.
+     * Checking for null and the exception is only for the deprecated constructor.
+     * @return the SAX DefaultHandler for handling the SAX events.
      * @throws FOPException if setting up the DefaultHandler fails
      */
     public DefaultHandler getDefaultHandler() throws FOPException {
         if (foTreeBuilder == null) {
-            this.foTreeBuilder = new FOTreeBuilder(outputFormat, foUserAgent, stream);
+            createDefaultHandler();
         }
         return this.foTreeBuilder;
     }
@@ -140,6 +181,7 @@ public class Fop implements Constants {
      * Get the version of FOP
      * @return the version string
      * @deprecated Use {@link org.apache.fop.Version#getVersion()} instead!
+     *             This method will be removed with FOP 1.0.
      */
     public static String getVersion() {
         return org.apache.fop.Version.getVersion();

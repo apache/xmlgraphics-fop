@@ -61,10 +61,6 @@ public class AreaTreeInputHandler extends InputHandler {
     public void renderTo(FOUserAgent userAgent, String outputFormat, OutputStream out) 
                 throws FOPException {
         FontInfo fontInfo = new FontInfo();
-        FOUserAgent effUserAgent = userAgent;
-        if (effUserAgent == null) {
-            effUserAgent = new FOUserAgent();
-        }
         AreaTreeModel treeModel = new RenderPagesModel(userAgent, 
                 outputFormat, fontInfo, out);
         

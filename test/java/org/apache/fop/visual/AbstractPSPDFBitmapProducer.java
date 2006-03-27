@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 The Apache Software Foundation.
+ * Copyright 2005-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.commons.io.IOUtils;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
 
 /**
  * BitmapProducer implementation that uses the PS or PDF renderer and an external converter 
@@ -63,6 +64,9 @@ import org.apache.fop.apps.Fop;
 public abstract class AbstractPSPDFBitmapProducer extends AbstractBitmapProducer 
             implements Configurable {
 
+    // configure fopFactory as desired
+    private FopFactory fopFactory = FopFactory.newInstance();
+    
     private String converter;
     private boolean deleteTempFiles;
     
@@ -106,7 +110,7 @@ public abstract class AbstractPSPDFBitmapProducer extends AbstractBitmapProducer
     /** @see org.apache.fop.visual.BitmapProducer */
     public BufferedImage produce(File src, ProducerContext context) {
         try {
-            FOUserAgent userAgent = new FOUserAgent();
+            FOUserAgent userAgent = fopFactory.newFOUserAgent();
             userAgent.setTargetResolution(context.getTargetResolution());
             userAgent.setBaseURL(src.getParentFile().toURL().toString());
 
@@ -118,8 +122,7 @@ public abstract class AbstractPSPDFBitmapProducer extends AbstractBitmapProducer
                 OutputStream out = new FileOutputStream(tempOut);
                 out = new BufferedOutputStream(out);
                 try {
-                    Fop fop = new Fop(getTargetFormat(), userAgent);
-                    fop.setOutputStream(out);
+                    Fop fop = fopFactory.newFop(getTargetFormat(), userAgent, out);
                     SAXResult res = new SAXResult(fop.getDefaultHandler());
                     
                     Transformer transformer = getTransformer(context);

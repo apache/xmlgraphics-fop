@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 The Apache Software Foundation.
+ * Copyright 2005-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,17 +34,22 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.sax.SAXResult;
 
 // FOP
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 
 /**
  * This class demonstrates the conversion of an FO file to RTF using FOP.
  * <p>
  * Please note that this is practically the same as the ExampleFO2PDF example. Only
- * one parameter to the Fop contructor is different!
+ * the MIME parameter to the newFop() method is different!
  */
 public class ExampleFO2RTF {
+
+    // configure fopFactory as desired
+    private FopFactory fopFactory = FopFactory.newInstance();
 
     /**
      * Converts an FO file to a RTF file using FOP
@@ -55,18 +60,20 @@ public class ExampleFO2RTF {
      */
     public void convertFO2RTF(File fo, File rtf) throws IOException, FOPException {
         
+        FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
+        // configure foUserAgent as desired
+
         OutputStream out = null;
         
         try {
-            // Construct fop with desired output format
-            Fop fop = new Fop(MimeConstants.MIME_RTF);
-    
             // Setup output stream.  Note: Using BufferedOutputStream
             // for performance reasons (helpful with FileOutputStreams).
             out = new FileOutputStream(rtf);
             out = new BufferedOutputStream(out);
-            fop.setOutputStream(out);
 
+            // Construct fop with desired output format
+            Fop fop = fopFactory.newFop(MimeConstants.MIME_RTF, foUserAgent, out);
+    
             // Setup JAXP using identity transformer
             TransformerFactory factory = TransformerFactory.newInstance();
             Transformer transformer = factory.newTransformer(); // identity transformer

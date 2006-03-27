@@ -36,20 +36,8 @@ public class ContentHandlerFactoryRegistry {
     /** the logger */
     private static Log log = LogFactory.getLog(ContentHandlerFactoryRegistry.class);
     
-    private static ContentHandlerFactoryRegistry instance;
-    
     /** Map from namespace URIs to ContentHandlerFactories */
     private Map factories = new java.util.HashMap();
-    
-    /**
-     * @return a singleton instance of the ContentHandlerFactoryRegistry.
-     */
-    public static ContentHandlerFactoryRegistry getInstance() {
-        if (instance == null) {
-            instance = new ContentHandlerFactoryRegistry();
-        }
-        return instance;
-    }
     
     /**
      * Default constructor.

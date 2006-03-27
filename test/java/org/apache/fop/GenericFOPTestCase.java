@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import junit.framework.TestSuite;
 
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.util.DigestFilter;
 import org.xml.sax.InputSource;
@@ -46,6 +47,9 @@ import org.xml.sax.InputSource;
  */
 public final class GenericFOPTestCase extends TestCase {
 
+    // configure fopFactory as desired
+    private FopFactory fopFactory = FopFactory.newInstance();
+    
     protected SAXParserFactory parserFactory;
 
     public static Test suite() {
@@ -110,13 +114,12 @@ public final class GenericFOPTestCase extends TestCase {
 
     private void renderPDF(String fo, String digestIn, String digestOut)
         throws Exception {
-        FOUserAgent foUserAgent = new FOUserAgent();
+        FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
         foUserAgent.setCreationDate(new Date(10000));
         MessageDigest outDigest = MessageDigest.getInstance("MD5");
         DigestOutputStream out =
             new DigestOutputStream(new ByteArrayOutputStream(), outDigest);
-        Fop fop = new Fop(MimeConstants.MIME_PDF, foUserAgent);
-        fop.setOutputStream(out);
+        Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, foUserAgent, out);
         InputSource source = new InputSource(new StringReader(fo));
         DigestFilter filter = new DigestFilter("MD5");
         filter.setParent(parserFactory.newSAXParser().getXMLReader());

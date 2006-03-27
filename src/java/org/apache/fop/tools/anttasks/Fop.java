@@ -37,6 +37,7 @@ import java.util.List;
 // FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.cli.InputHandler;
 
@@ -306,6 +307,9 @@ public class Fop extends Task {
 
 class FOPTaskStarter {
 
+    // configure fopFactory as desired
+    private FopFactory fopFactory = FopFactory.newInstance();
+    
     private Fop task;
     private String baseURL = null;
 
@@ -555,11 +559,8 @@ class FOPTaskStarter {
 
         boolean success = false;
         try {
-            FOUserAgent userAgent = new FOUserAgent();
+            FOUserAgent userAgent = fopFactory.newFOUserAgent();
             userAgent.setBaseURL(this.baseURL);
-            if (userConfig != null) {
-                userAgent.setUserConfig(userConfig);
-            }
             inputHandler.renderTo(userAgent, outputFormat, out);
             success = true;
         } catch (Exception ex) {

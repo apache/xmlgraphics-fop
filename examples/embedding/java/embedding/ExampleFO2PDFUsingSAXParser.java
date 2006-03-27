@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2004,2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,8 +36,9 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.SAXException;
 
 // FOP
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
-import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 
 /**
@@ -46,32 +47,36 @@ import org.apache.fop.apps.MimeConstants;
  */
 public class ExampleFO2PDFUsingSAXParser {
 
+    // configure fopFactory as desired
+    private FopFactory fopFactory = FopFactory.newInstance();
+
     /**
      * Converts an FO file to a PDF file using FOP
      * @param fo the FO file
      * @param pdf the target PDF file
-     * @throws FactoryConfigurationError
-     * @throws ParserConfigurationException
-     * @throws SAXException
+     * @throws FactoryConfigurationError In case of a problem with the JAXP factory configuration
+     * @throws ParserConfigurationException In case of a problem with the parser configuration
+     * @throws SAXException In case of a problem during XML processing
      * @throws IOException In case of an I/O problem
-     * @throws FOPException In case of a FOP problem
      */
     public void convertFO2PDF(File fo, File pdf)
         throws FactoryConfigurationError,
                ParserConfigurationException,
-               FOPException, SAXException, IOException {
+               SAXException, IOException {
+
+        FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
+        // configure foUserAgent as desired
 
         OutputStream out = null;
         
         try {
-            // Construct fop and setup output format
-            Fop fop = new Fop(MimeConstants.MIME_PDF);
-    
             // Setup output stream.  Note: Using BufferedOutputStream
             // for performance reasons (helpful with FileOutputStreams).
             out = new FileOutputStream(pdf);
             out = new BufferedOutputStream(out);
-            fop.setOutputStream(out);
+            
+            // Construct fop and setup output format
+            Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, foUserAgent, out);
 
             // Setup SAX parser
             // throws FactoryConfigurationError
