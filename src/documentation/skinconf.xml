@@ -90,7 +90,7 @@ which will be used to configure the chosen Forrest skin.
   <favicon-url></favicon-url>
 
   <!-- The following used to construct a copyright statement -->
-  <year>1999-2005</year>
+  <year>1999-2006</year>
   <vendor>The Apache Software Foundation.</vendor>
   <!-- The optional copyright-link URL will be used as a link in the
     copyright statement
