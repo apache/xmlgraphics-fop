@@ -69,13 +69,15 @@
         The basic pattern to parse the IF format looks like this:
       </p>
       <source><![CDATA[
+FopFactory fopFactory = FopFactory.newInstance();      
+      
 // Setup output
 OutputStream out = new java.io.FileOutputStream(pdffile);
 out = new java.io.BufferedOutputStream(out);
 try {
     //Setup fonts and user agent
     FontInfo fontInfo = new FontInfo();
-    FOUserAgent userAgent = new FOUserAgent();
+    FOUserAgent userAgent = fopFactory.newFOUserAgent();
 
     //Construct the AreaTreeModel that will received the individual pages
     AreaTreeModel treeModel = new RenderPagesModel(userAgent, 

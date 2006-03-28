@@ -32,15 +32,22 @@
       to embedded applications as well as command-line use, such as options and performance.
     </p>
     <p>
-      To embed Apache FOP in your application, instantiate org.apache.fop.apps.Fop.
-      You'll tell FOP in the constructor which output format (i.e. Renderer) to use.
-      Afterwards, you'll set the OutputStream to use to output the results of the
-      rendering (where applicable). You can customize FOP's behaviour by supplying
+      To embed Apache FOP in your application, instantiate a new org.apache.fop.apps.FopFactory
+      instance and create a new org.apache.fop.apps.Fop instance through one of the factory
+      methods of FopFactory. There, you can specify which output format (i.e. Renderer) to use 
+      and you can optionally set the OutputStream to use to output the results of the
+      rendering. You can customize FOP's behaviour by supplying
       your own FOUserAgent instance. The FOUserAgent can, for example, be used to
       set your own Renderer instance (details below). Finally, you retrieve a SAX 
       DefaultHandler instance from the Fop instance to which you can send your
       FO file.
     </p>
+    <note>
+      We recently changed FOP's outer API to what we consider the final API. This might require
+      some changes in your application. The main reasons for these changes were performance
+      improvements due to better reuse of reusable objects and reduced use of static variables
+      for added flexibility in complex environments.
+    </note>
   </section>
   <section id="basics">
     <title>Basic Usage Pattern</title>
@@ -52,32 +59,36 @@
     <p>Here is the basic pattern to render an XSL-FO file to PDF:
     </p>
     <source><![CDATA[
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.MimeConstants;
 
 /*..*/
 
-// Step 1: Construct fop with desired output format
-Fop fop = new Fop(MimeConstants.MIME_PDF);
+// Step 1: Construct a FopFactory
+// (reuse if you plan to render multiple documents!)
+FopFactory fopFactory = FopFactory.newInstance();
 
 // Step 2: Setup output stream.
 // Note: Using BufferedOutputStream for performance reasons (helpful with FileOutputStreams).
 OutputStream out = new BufferedOutputStream(new FileOutputStream(new File("C:/Temp/myfile.pdf")));
-try {
-  fop.setOutputStream(out);
 
-  // Step 3: Setup JAXP using identity transformer
+try {
+  // Step 3: Construct fop with desired output format
+  Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, out);
+
+  // Step 4: Setup JAXP using identity transformer
   TransformerFactory factory = TransformerFactory.newInstance();
   Transformer transformer = factory.newTransformer(); // identity transformer
            
-  // Step 4: Setup input and output for XSLT transformation 
+  // Step 5: Setup input and output for XSLT transformation 
   // Setup input stream
   Source src = new StreamSource(new File("C:/Temp/myfile.fo"));
 
   // Resulting SAX events (the generated FO) must be piped through to FOP
   Result res = new SAXResult(fop.getDefaultHandler());
             
-  // Step 5: Start XSLT transformation and FOP processing
+  // Step 6: Start XSLT transformation and FOP processing
   transformer.transform(src, res);
 
 } finally {
@@ -89,16 +100,24 @@ try {
     </p>
     <ul>
       <li>
-        <strong>Step 1:</strong> You create a new Fop instance and set it up for PDF 
-        output.
+        <strong>Step 1:</strong> You create a new FopFactory instance. The FopFactory holds 
+        references to configuration information and cached data. It's important to reuse this
+        instance if you plan to render multiple documents during a JVM's lifetime.
       </li>
       <li>
-        <strong>Step 2:</strong> You tell FOP where to save the generated PDF file 
-        later. It's a good idea to buffer the OutputStream as demonstrated to improve 
-        performance.
+        <strong>Step 2:</strong> You set up an OutputStream that the generated document
+        will be written to. It's a good idea to buffer the OutputStream as demonstrated 
+        to improve performance.
       </li>
       <li>
-        <strong>Step 3:</strong> We recommend that you use JAXP Transformers even 
+        <strong>Step 3:</strong> You create a new Fop instance through one of the factory
+        methods on the FopFactory. You tell the FopFactory what your desired output format
+        is. This is done by using the MIME type of the desired output format (ex. "application/pdf").
+        You can use one of the MimeConstants.* constants. The second parameter is the
+        OutputStream you've setup up in step 2.
+      </li>
+      <li>
+        <strong>Step 4</strong> We recommend that you use JAXP Transformers even 
         if you don't do XSLT transformations to generate the XSL-FO file. This way 
         you can always use the same basic pattern. The example here sets up an 
         "identity transformer" which just passes the input (Source) unchanged to the 
@@ -106,7 +125,7 @@ try {
         XSLT transformations.
       </li>
       <li>
-        <strong>Step 4:</strong> Here you set up the input and output for the XSLT 
+        <strong>Step 5:</strong> Here you set up the input and output for the XSLT 
         transformation. The Source object is set up to load the "myfile.fo" file. 
         The Result is set up so the output of the XSLT transformation is sent to FOP. 
         The FO file is sent to FOP in the form of SAX events which is the most efficient 
@@ -114,7 +133,7 @@ try {
         because that affects performance negatively.
       </li>
       <li>
-        <strong>Step 5:</strong> Finally, we start the XSLT transformation by starting 
+        <strong>Step 6:</strong> Finally, we start the XSLT transformation by starting 
         the JAXP Transformer. As soon as the JAXP Transformer starts to send its output 
         to FOP, FOP itself starts its processing in the background. When the 
         <code>transform()</code> method returns FOP will also have finished converting 
@@ -141,11 +160,6 @@ try {
       to a file to check if that part generates the expected output. An example for that
       can be found in the <a href="#examples">Embedding examples</a> (See "ExampleXML2FO").
     </p>
-    <note>
-      Please be aware that you should not reuse a Fop instance for additional rendering runs.
-      Recreate a new instance for each rendering run. This is a relatively inexpensive 
-      operation and will be further optimized shortly.
-    </note>
     <section id="basic-logging">
       <title>Logging</title>
       <p>
@@ -187,7 +201,7 @@ try {
         document you'd like to render. FOP processing starts as soon as the DefaultHandler's
         <code>startDocument()</code> methods is called. Processing stops again when the
         DefaultHandler's <code>endDocument()</code> method is called. Please refer to the basic
-        usage pattern shown above to render a simply XSL-FO document.
+        usage pattern shown above to render a simple XSL-FO document.
       </p>
     </section>
 
@@ -255,140 +269,174 @@ try {
   <section id="config-internal">
     <title>Configuring Apache FOP Programmatically</title>
     <p>
-      Apache FOP provides a class called FOUserAgent which is used to customize FOP's
-      behaviour. If you wish to do that, the first step is to create your own instance
-      of FOUserAgent and pass that to the Fop constructor:
+      Apache FOP provides two levels on which you can customize FOP's
+      behaviour: the FopFactory and the user agent.
     </p>
-    <source><![CDATA[
-FOUserAgent userAgent = new FOUserAgent();
-Fop fop = new Fop(MimeConstants.MIME_POSTSCRIPT, userAgent);]]></source>
-    <p>
-      You can do all sorts of things on the user agent:
-    </p>
-    <ul>
-      <li>
-        <p>
-          The <strong>base URL</strong> to use when resolving relative URLs. Example:
-        </p>
-        <source>userAgent.setBaseURL("file:///C:/Temp/");</source>
-      </li>
-      <li>
-        <p>
-          The <strong>font base URL</strong> to use when resolving relative URLs for fonts. Example:
-        </p>
-        <source>userAgent.setFontBaseURL("file:///C:/Temp/fonts");</source>
-      </li>
-      <li>
-        <p>
-          Disable <strong>strict validation</strong>. When disabled FOP is less strict about the rules established by the XSL-FO specification. Example:
-        </p>
-        <source>userAgent.setStrictValidation(false);</source>
-      </li>
-      <li>
-        <p>
-          Set the <strong>producer</strong> of the document. This is metadata information that can be used for certain output formats such as PDF. The default producer is "Apache FOP". Example:
-        </p>
-        <source>userAgent.setProducer("MyKillerApplication");</source>
-      </li>
-      <li>
-        <p>
-          Set the <strong>creating user</strong> of the document. This is metadata information that can be used for certain output formats such as PDF. Example:
-        </p>
-        <source>userAgent.setCreator("John Doe");</source>
-      </li>
-      <li>
-        <p>
-          Set the <strong>author</strong> of the document. This is metadata information that can be used for certain output formats such as PDF. Example:
-        </p>
-        <source>userAgent.setAuthor("John Doe");</source>
-      </li>
-      <li>
-        <p>
-          Override the <strong>creation date and time</strong> of the document. This is metadata information that can be used for certain output formats such as PDF. Example:
-        </p>
-        <source>userAgent.setCreationDate(new Date());</source>
-      </li>
-      <li>
-        <p>
-          Set the <strong>title</strong> of the document. This is metadata information that can be used for certain output formats such as PDF. Example:
-        </p>
-        <source>userAgent.setTitle("Invoice No 138716847");</source>
-      </li>
-      <li>
-        <p>
-          Set the <strong>keywords</strong> of the document. This is metadata information that can be used for certain output formats such as PDF. Example:
-        </p>
-        <source>userAgent.setKeywords("XML XSL-FO");</source>
-      </li>
-      <li>
-        <p>
-          Set the <strong>source resolution</strong> for the document. This is used internally to determine the pixel 
-          size for SVG images and bitmap images without resolution information. Default: 72 dpi. Example:
-        </p>
-        <source>userAgent.setSourceResolution(96); //=96dpi (dots/pixels per Inch)</source>
-      </li>
-      <li>
-        <p>
-          Set the <strong>target resolution</strong> for the document. This is used to 
-          specify the output resolution for bitmap images generated by bitmap renderers 
-          (such as the TIFF renderer) and by bitmaps generated by Apache Batik for filter 
-          effects and such. Default: 72 dpi. Example:
-        </p>
-        <source>userAgent.setTargetResolution(300); //=300dpi (dots/pixels per Inch)</source>
-      </li>
-      <li>
-        <p>
-          Set <strong>your own Renderer instance</strong>. If you want to supply your own renderer or 
-          configure a Renderer in a special way you can give the instance to the FOUserAgent. Normally,
-          the Renderer instance is created by FOP. Example:
-        </p>
-        <source>userAgent.setRendererOverride(myRenderer); //myRenderer is an org.apache.fop.render.Renderer</source>
-      </li>
-      <li>
-        <p>
-          Set <strong>your own FOEventHandler instance</strong>. If you want to supply your own FOEventHandler or 
-          configure an FOEventHandler subclass in a special way you can give the instance to the FOUserAgent. Normally, 
-          the FOEventHandler instance is created by FOP. Example:
-        </p>
-        <source>userAgent.setFOEventHandlerOverride(myFOEventHandler); //myFOEventHandler is an org.apache.fop.fo.FOEventHandler</source>
-      </li>
-      <li>
-        <p>
-          Manually add a <strong>ElementMapping instance</strong>. If you want to supply a special FOP extension
-          you can give the instance to the FOUserAgent. Normally, the FOP extensions can be automatically detected 
-          (see the documentation on extension for more info).
-        </p>
-        <source>userAgent.addElementMapping(myElementMapping); //myElementMapping is a org.apache.fop.fo.ElementMapping</source>
-      </li>
-      <li>
-        <p>
-          Set a <strong>URIResolver</strong> for custom URI resolution. By supplying a JAXP URIResolver you can add
-          custom URI resolution functionality to FOP. For example, you can use 
-          <a href="ext:xml.apache.org/commons/resolver">Apache XML Commons Resolver</a> to make use of XCatalogs.
-        </p>
-        <source>userAgent.setURIResolver(myResolver); //myResolver is a javax.xml.transform.URIResolver</source>
-      </li>
-      <li>
-        <p>
-          Set the <strong>parameters for PDF encryption</strong> for the document. If you create PDF files you can 
-          instantiate and set an org.apache.fop.pdf.PDFEncryptionParams object. Example:
-        </p>
-        <source>userAgent.setPDFEncryptionParams(new PDFEncryptionParams(null, "owner", false, false, true, true));</source>
-      </li>
-      <li>
-        <p>
-          Enable an <strong>alternative set of rules for text indents</strong> that tries to mimic the behaviour of many commercial 
-          FO implementations that chose to break the specification in this aspect. The default of this option is 
-          'false' which causes Apache FOP to behave exactly as describes in the specification. To enable the 
-          alternative behaviour, call:
-        </p>
-        <source>userAgent.setBreakIndentInheritanceOnReferenceAreaBoundary(true);</source>
-      </li>
-    </ul>
-    <note>
-      You should not reuse an FOUserAgent instance between FOP rendering runs although you can. Especially
-      in multi-threaded environment, this is a bad idea.
-    </note>
+    <section id="fop-factory">
+      <title>Customizing the FopFactory</title>
+      <p>
+        The FopFactory holds configuration data and references to objects which are reusable over
+        multiple rendering runs. It's important to instantiate it only once (except in special 
+        environments) and reuse it every time to create new FOUserAgent and Fop instances.
+      </p>
+      <p>
+        You can set all sorts of things on the FopFactory:
+      </p>
+      <ul>
+        <li>
+          <p>
+            The <strong>font base URL</strong> to use when resolving relative URLs for fonts. Example:
+          </p>
+          <source>fopFactory.setFontBaseURL("file:///C:/Temp/fonts");</source>
+        </li>
+        <li>
+          <p>
+            Disable <strong>strict validation</strong>. When disabled FOP is less strict about the rules 
+            established by the XSL-FO specification. Example:
+          </p>
+          <source>fopFactory.setStrictValidation(false);</source>
+        </li>
+        <li>
+          <p>
+            Enable an <strong>alternative set of rules for text indents</strong> that tries to mimic the behaviour of many commercial 
+            FO implementations that chose to break the specification in this aspect. The default of this option is 
+            'false' which causes Apache FOP to behave exactly as describes in the specification. To enable the 
+            alternative behaviour, call:
+          </p>
+          <source>fopFactory.setBreakIndentInheritanceOnReferenceAreaBoundary(true);</source>
+        </li>
+        <li>
+          <p>
+            Set the <strong>source resolution</strong> for the document. This is used internally to determine the pixel 
+            size for SVG images and bitmap images without resolution information. Default: 72 dpi. Example:
+          </p>
+          <source>fopFactory.setSourceResolution(96); //=96dpi (dots/pixels per Inch)</source>
+        </li>
+        <li>
+          <p>
+            Manually add a <strong>ElementMapping instance</strong>. If you want to supply a special FOP extension
+            you can give the instance to the FOUserAgent. Normally, the FOP extensions can be automatically detected 
+            (see the documentation on extension for more info).
+          </p>
+          <source>fopFactory.addElementMapping(myElementMapping); //myElementMapping is a org.apache.fop.fo.ElementMapping</source>
+        </li>
+        <li>
+          <p>
+            Set a <strong>URIResolver</strong> for custom URI resolution. By supplying a JAXP URIResolver you can add
+            custom URI resolution functionality to FOP. For example, you can use 
+            <a href="ext:xml.apache.org/commons/resolver">Apache XML Commons Resolver</a> to make use of XCatalogs.
+          </p>
+          <source>fopFactory.setURIResolver(myResolver); //myResolver is a javax.xml.transform.URIResolver</source>
+          <note>
+            Both the FopFactory and the FOUserAgent have a method to set a URIResolver. The URIResolver on the FopFactory
+            is primarily used to resolve URIs on factory-level (hyphenation patterns, for example) and it is always used 
+            if no other URIResolver (for example on the FOUserAgent) resolved the URI first.
+          </note>
+        </li>
+      </ul>
+    </section>
+    <section id="user-agent">
+      <title>Customizing the User Agent</title>
+      <p>
+        The user agent is the entity that allows you to interact with a single rendering run, i.e. the processing of a single 
+        document. If you wish to customize the user agent's behaviour, the first step is to create your own instance
+        of FOUserAgent using the respective factory method on FopFactory and pass that 
+        to the factory method that will create a new Fop instance:
+      </p>
+      <source><![CDATA[
+  FopFactory fopFactory = FopFactory.newInstance(); //Reuse the FopFactory if possible!
+  FOUserAgent userAgent = fopFactory.newFOUserAgent();
+  Fop fop = fopFactory.newFop(MimeConstants.MIME_POSTSCRIPT, userAgent);]]></source>
+      <p>
+        You can do all sorts of things on the user agent:
+      </p>
+      <ul>
+        <li>
+          <p>
+            The <strong>base URL</strong> to use when resolving relative URLs. Example:
+          </p>
+          <source>userAgent.setBaseURL("file:///C:/Temp/");</source>
+        </li>
+        <li>
+          <p>
+            Set the <strong>producer</strong> of the document. This is metadata information that can be used for certain output formats such as PDF. The default producer is "Apache FOP". Example:
+          </p>
+          <source>userAgent.setProducer("MyKillerApplication");</source>
+        </li>
+        <li>
+          <p>
+            Set the <strong>creating user</strong> of the document. This is metadata information that can be used for certain output formats such as PDF. Example:
+          </p>
+          <source>userAgent.setCreator("John Doe");</source>
+        </li>
+        <li>
+          <p>
+            Set the <strong>author</strong> of the document. This is metadata information that can be used for certain output formats such as PDF. Example:
+          </p>
+          <source>userAgent.setAuthor("John Doe");</source>
+        </li>
+        <li>
+          <p>
+            Override the <strong>creation date and time</strong> of the document. This is metadata information that can be used for certain output formats such as PDF. Example:
+          </p>
+          <source>userAgent.setCreationDate(new Date());</source>
+        </li>
+        <li>
+          <p>
+            Set the <strong>title</strong> of the document. This is metadata information that can be used for certain output formats such as PDF. Example:
+          </p>
+          <source>userAgent.setTitle("Invoice No 138716847");</source>
+        </li>
+        <li>
+          <p>
+            Set the <strong>keywords</strong> of the document. This is metadata information that can be used for certain output formats such as PDF. Example:
+          </p>
+          <source>userAgent.setKeywords("XML XSL-FO");</source>
+        </li>
+        <li>
+          <p>
+            Set the <strong>target resolution</strong> for the document. This is used to 
+            specify the output resolution for bitmap images generated by bitmap renderers 
+            (such as the TIFF renderer) and by bitmaps generated by Apache Batik for filter 
+            effects and such. Default: 72 dpi. Example:
+          </p>
+          <source>userAgent.setTargetResolution(300); //=300dpi (dots/pixels per Inch)</source>
+        </li>
+        <li>
+          <p>
+            Set <strong>your own Renderer instance</strong>. If you want to supply your own renderer or 
+            configure a Renderer in a special way you can give the instance to the FOUserAgent. Normally,
+            the Renderer instance is created by FOP. Example:
+          </p>
+          <source>userAgent.setRendererOverride(myRenderer); //myRenderer is an org.apache.fop.render.Renderer</source>
+        </li>
+        <li>
+          <p>
+            Set <strong>your own FOEventHandler instance</strong>. If you want to supply your own FOEventHandler or 
+            configure an FOEventHandler subclass in a special way you can give the instance to the FOUserAgent. Normally, 
+            the FOEventHandler instance is created by FOP. Example:
+          </p>
+          <source>userAgent.setFOEventHandlerOverride(myFOEventHandler); //myFOEventHandler is an org.apache.fop.fo.FOEventHandler</source>
+        </li>
+        <li>
+          <p>
+            Set a <strong>URIResolver</strong> for custom URI resolution. By supplying a JAXP URIResolver you can add
+            custom URI resolution functionality to FOP. For example, you can use 
+            <a href="ext:xml.apache.org/commons/resolver">Apache XML Commons Resolver</a> to make use of XCatalogs.
+          </p>
+          <source>userAgent.setURIResolver(myResolver); //myResolver is a javax.xml.transform.URIResolver</source>
+          <note>
+            Both the FopFactory and the FOUserAgent have a method to set a URIResolver. The URIResolver on the FOUserAgent is
+            used for resolving URIs which are document-related. If it's not set or cannot resolve a URI, the URIResolver
+            from the FopFactory is used.
+          </note>
+        </li>
+      </ul>
+      <note>
+        You should not reuse an FOUserAgent instance between FOP rendering runs although you can. Especially
+        in multi-threaded environment, this is a bad idea.
+      </note>
+    </section>
   </section>
   <section id="config-external">
     <title>Using a Configuration File</title>
@@ -404,7 +452,11 @@ import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
 
 DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
 Configuration cfg = cfgBuilder.buildFromFile(new File("C:/Temp/mycfg.xml"));
-userAgent.setUserConfig(cfg);]]></source>
+fopFactory.setUserConfig(cfg);
+
+/* ..or.. */
+
+fopFactory.setUserConfig(new File("C:/Temp/mycfg.xml"));]]></source>
     <p>
       The layout of the configuration file is described on the <a href="configuration.html">Configuration page</a>.
     </p>
@@ -414,11 +466,10 @@ userAgent.setUserConfig(cfg);]]></source>
     <section id="object-reuse">
       <title>Object reuse</title>
       <p>
-        At the moment, the Fop instances shouldn't be reused. Please recreate
-        Fop and FOUserAgent instances for each rendering run until further notice.
-        We will likely add an additional object which will carry information
-        and configuration which can be reused between rendering runs to further
-        optimize this.
+        Fop instances shouldn't (and can't) be reused. Please recreate
+        Fop and FOUserAgent instances for each rendering run using the FopFactory.
+        This is a cheap operation as all reusable information is held in the 
+        FopFactory. That's why it's so important to reuse the FopFactory instance.
      </p>
     </section>
     <section id="awt">
@@ -481,14 +532,18 @@ userAgent.setUserConfig(cfg);]]></source>
         Use an XSLT compiler like <a class="fork" href="http://xml.apache.org/xalan-j/xsltc_usage.html">XSLTC</a>
         that comes with Xalan-J.
       </li>
+      <li>
+        Fine-tune your stylesheet to make the XSLT process more efficient and to create XSL-FO that can
+        be processed by FOP more efficiently. Less is more: Try to make use of property inheritance where possible.
+      </li>
     </ul>
   </section>
   <section id="multithreading">
     <title>Multithreading FOP</title>
     <p>
       Apache FOP may currently not be completely thread safe.
-      FOP uses some static variables (for example for the image cache). This code 
-      has not been fully tested for multi-threading issues, yet.
+      The code has not been fully tested for multi-threading issues, yet.
+      If you encounter any suspicious behaviour, please notify us.
     </p>
     <p>
       There is also a known issue with fonts being jumbled between threads when using 
