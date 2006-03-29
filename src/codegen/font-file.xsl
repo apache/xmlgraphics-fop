@@ -137,7 +137,7 @@ public class <xsl:value-of select="class-name"/> extends Typeface {
   </xsl:when>
   <xsl:otherwise>
     public boolean hasKerningInfo() {
-        return false &amp; enableKerning;
+        return false;
     }
 
     public java.util.Map getKerningInfo() {
