@@ -88,7 +88,7 @@ out = proc.getOutputStream();]]></source>
       <section id="pdf-fonts">
         <title>Fonts</title>
         <p>
-          PDF has a set of fonts that are always available to all PDF viewers,
+          PDF has a set of fonts that are always available to all PDF viewers;
           to quote from the PDF Specification:
 
           <em>"PDF prescribes a set of 14 standard fonts that can be used without prior
@@ -201,7 +201,7 @@ out = proc.getOutputStream();]]></source>
   <section id="ps-limitations">
     <title>Limitations</title>
     <ul>
-      <li>Images and SVG may not be display correctly. SVG support is far from being complete. No image transparency is available.</li>
+      <li>Images and SVG may not be displayed correctly. SVG support is far from being complete. No image transparency is available.</li>
       <li>Only Type 1 fonts are supported.</li>
       <li>Multibyte characters are not supported.</li>
       <li>PPD support is still missing.</li>
@@ -364,11 +364,12 @@ out = proc.getOutputStream();]]></source>
        This format creates an SVG document that has links between the pages.
        This is primarily for slides and creating svg images of pages.
        Large documents will create SVG files that are far too large for
-       and SVG viewer to handle. Since FO documents usually have text the
+       an SVG viewer to handle. Since FO documents usually have text the
        SVG document will have a large number of text elements.
        The font information for the text is obtained from the JVM in the
-       same way as the AWT viewer, if the SVG is view where the fonts are
-       different, such as another platform, then the page may appear wrong.
+       same way as for the AWT viewer. If the SVG is viewed on a
+       system where the fonts are different, such as another platform,
+       then the page may look wrong.
      </p>
    </section>
 </section>

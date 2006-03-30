@@ -32,15 +32,16 @@
       to embedded applications as well as command-line use, such as options and performance.
     </p>
     <p>
-      To embed Apache FOP in your application, instantiate a new org.apache.fop.apps.FopFactory
-      instance and create a new org.apache.fop.apps.Fop instance through one of the factory
-      methods of FopFactory. There, you can specify which output format (i.e. Renderer) to use 
-      and you can optionally set the OutputStream to use to output the results of the
-      rendering. You can customize FOP's behaviour by supplying
-      your own FOUserAgent instance. The FOUserAgent can, for example, be used to
-      set your own Renderer instance (details below). Finally, you retrieve a SAX 
-      DefaultHandler instance from the Fop instance to which you can send your
-      FO file.
+      To embed Apache FOP in your application, first create a new
+      org.apache.fop.apps.FopFactory instance. This object can be used to launch multiple
+      rendering runs. For each run, create a new org.apache.fop.apps.Fop instance through
+      one of the factory methods of FopFactory. In the method call you specify which output
+      format (i.e. Renderer) to use and, if the selected renderer requires an OutputStream,
+      which OutputStream to use for the results of the rendering. You can customize FOP's
+      behaviour in a rendering run by supplying your own FOUserAgent instance. The
+      FOUserAgent can, for example, be used to set your own Renderer instance (details
+      below). Finally, you retrieve a SAX DefaultHandler instance from the Fop object and
+      use that as the SAXResult of your transformation.
     </p>
     <note>
       We recently changed FOP's outer API to what we consider the final API. This might require
@@ -69,7 +70,7 @@ import org.apache.fop.apps.MimeConstants;
 // (reuse if you plan to render multiple documents!)
 FopFactory fopFactory = FopFactory.newInstance();
 
-// Step 2: Setup output stream.
+// Step 2: Set up output stream.
 // Note: Using BufferedOutputStream for performance reasons (helpful with FileOutputStreams).
 OutputStream out = new BufferedOutputStream(new FileOutputStream(new File("C:/Temp/myfile.pdf")));
 
@@ -100,7 +101,7 @@ try {
     </p>
     <ul>
       <li>
-        <strong>Step 1:</strong> You create a new FopFactory instance. The FopFactory holds 
+        <strong>Step 1:</strong> You create a new FopFactory instance. The FopFactory instance holds 
         references to configuration information and cached data. It's important to reuse this
         instance if you plan to render multiple documents during a JVM's lifetime.
       </li>
@@ -199,7 +200,7 @@ try {
         Once the Fop instance is set up, call <code>getDefaultHandler()</code> to obtain a SAX 
         DefaultHandler instance to which you can send the SAX events making up the XSL-FO 
         document you'd like to render. FOP processing starts as soon as the DefaultHandler's
-        <code>startDocument()</code> methods is called. Processing stops again when the
+        <code>startDocument()</code> method is called. Processing stops again when the
         DefaultHandler's <code>endDocument()</code> method is called. Please refer to the basic
         usage pattern shown above to render a simple XSL-FO document.
       </p>
@@ -214,10 +215,10 @@ try {
         on the basic usage pattern above is to set up the Transformer differently:
       </p>
       <source><![CDATA[
-  //before (without XSLT):
+  //without XSLT:
   //Transformer transformer = factory.newTransformer(); // identity transformer
   
-  //after (with XSLT):
+  //with XSLT:
   Source xslt = new StreamSource(new File("mystylesheet.xsl"));
   Transformer transformer = factory.newTransformer(xslt);]]></source>
     </section>
@@ -225,7 +226,7 @@ try {
   <section id="input">
     <title>Input Sources</title>
     <p>
-      The input XSL-FO document is always handled internally as SAX (see the 
+      The input XSL-FO document is always received by FOP as a SAX stream (see the 
       <a href="../dev/design/parsing.html">Parsing Design Document</a> for the rationale).
     </p>
     <p>
@@ -243,19 +244,19 @@ try {
         <strong>File:</strong> <code>Source src = new StreamSource(new File("C:/Temp/myinputfile.xml"));</code>
       </li>
       <li>
-        <strong>String:</strong> <code>Source src = new StreamSource(new StringReader(myString)); //myString is a String</code>
+        <strong>String:</strong> <code>Source src = new StreamSource(new StringReader(myString)); // myString is a String</code>
       </li>
       <li>
         <strong>InputStream:</strong> <code>Source src = new StreamSource(new MyInputStream(something));</code>
       </li>
       <li>
-        <strong>Byte Array:</strong> <code>Source src = new StreamSource(new ByteArrayInputStream(myBuffer)); //myBuffer is a byte[] here</code>
+        <strong>Byte Array:</strong> <code>Source src = new StreamSource(new ByteArrayInputStream(myBuffer)); // myBuffer is a byte[] here</code>
       </li>
       <li>
-        <strong>DOM:</strong> <code>Source src = new DOMSource(myDocument); //myDocument is a Document or a Node</code>
+        <strong>DOM:</strong> <code>Source src = new DOMSource(myDocument); // myDocument is a Document or a Node</code>
       </li>
       <li>
-        <strong>Java Objects:</strong> Please have a look at the <a href="#examples">Embedding examples</a> which contains an example for this.
+        <strong>Java Objects:</strong> Please have a look at the <a href="#examples">Embedding examples</a> which contain an example for this.
       </li>
     </ul>
     <p>
@@ -299,8 +300,8 @@ try {
         <li>
           <p>
             Enable an <strong>alternative set of rules for text indents</strong> that tries to mimic the behaviour of many commercial 
-            FO implementations that chose to break the specification in this aspect. The default of this option is 
-            'false' which causes Apache FOP to behave exactly as describes in the specification. To enable the 
+            FO implementations, that chose to break the specification in this respect. The default of this option is 
+            'false', which causes Apache FOP to behave exactly as described in the specification. To enable the 
             alternative behaviour, call:
           </p>
           <source>fopFactory.setBreakIndentInheritanceOnReferenceAreaBoundary(true);</source>
@@ -310,23 +311,23 @@ try {
             Set the <strong>source resolution</strong> for the document. This is used internally to determine the pixel 
             size for SVG images and bitmap images without resolution information. Default: 72 dpi. Example:
           </p>
-          <source>fopFactory.setSourceResolution(96); //=96dpi (dots/pixels per Inch)</source>
+          <source>fopFactory.setSourceResolution(96); // =96dpi (dots/pixels per Inch)</source>
         </li>
         <li>
           <p>
-            Manually add a <strong>ElementMapping instance</strong>. If you want to supply a special FOP extension
+            Manually add an <strong>ElementMapping instance</strong>. If you want to supply a special FOP extension
             you can give the instance to the FOUserAgent. Normally, the FOP extensions can be automatically detected 
-            (see the documentation on extension for more info).
+            (see the documentation on extension for more info). Example:
           </p>
-          <source>fopFactory.addElementMapping(myElementMapping); //myElementMapping is a org.apache.fop.fo.ElementMapping</source>
+          <source>fopFactory.addElementMapping(myElementMapping); // myElementMapping is a org.apache.fop.fo.ElementMapping</source>
         </li>
         <li>
           <p>
             Set a <strong>URIResolver</strong> for custom URI resolution. By supplying a JAXP URIResolver you can add
             custom URI resolution functionality to FOP. For example, you can use 
-            <a href="ext:xml.apache.org/commons/resolver">Apache XML Commons Resolver</a> to make use of XCatalogs.
+            <a href="ext:xml.apache.org/commons/resolver">Apache XML Commons Resolver</a> to make use of XCatalogs. Example:
           </p>
-          <source>fopFactory.setURIResolver(myResolver); //myResolver is a javax.xml.transform.URIResolver</source>
+          <source>fopFactory.setURIResolver(myResolver); // myResolver is a javax.xml.transform.URIResolver</source>
           <note>
             Both the FopFactory and the FOUserAgent have a method to set a URIResolver. The URIResolver on the FopFactory
             is primarily used to resolve URIs on factory-level (hyphenation patterns, for example) and it is always used 
@@ -340,12 +341,14 @@ try {
       <p>
         The user agent is the entity that allows you to interact with a single rendering run, i.e. the processing of a single 
         document. If you wish to customize the user agent's behaviour, the first step is to create your own instance
-        of FOUserAgent using the respective factory method on FopFactory and pass that 
+        of FOUserAgent using the appropriate factory method on FopFactory and pass that 
         to the factory method that will create a new Fop instance:
       </p>
       <source><![CDATA[
-  FopFactory fopFactory = FopFactory.newInstance(); //Reuse the FopFactory if possible!
+  FopFactory fopFactory = FopFactory.newInstance(); // Reuse the FopFactory if possible!
+  // do the following for each new rendering run
   FOUserAgent userAgent = fopFactory.newFOUserAgent();
+  // customize userAgent
   Fop fop = fopFactory.newFop(MimeConstants.MIME_POSTSCRIPT, userAgent, out);]]></source>
       <p>
         You can do all sorts of things on the user agent:
@@ -400,7 +403,7 @@ try {
             (such as the TIFF renderer) and by bitmaps generated by Apache Batik for filter 
             effects and such. Default: 72 dpi. Example:
           </p>
-          <source>userAgent.setTargetResolution(300); //=300dpi (dots/pixels per Inch)</source>
+          <source>userAgent.setTargetResolution(300); // =300dpi (dots/pixels per Inch)</source>
         </li>
         <li>
           <p>
@@ -408,7 +411,7 @@ try {
             configure a Renderer in a special way you can give the instance to the FOUserAgent. Normally,
             the Renderer instance is created by FOP. Example:
           </p>
-          <source>userAgent.setRendererOverride(myRenderer); //myRenderer is an org.apache.fop.render.Renderer</source>
+          <source>userAgent.setRendererOverride(myRenderer); // myRenderer is an org.apache.fop.render.Renderer</source>
         </li>
         <li>
           <p>
@@ -416,15 +419,15 @@ try {
             configure an FOEventHandler subclass in a special way you can give the instance to the FOUserAgent. Normally, 
             the FOEventHandler instance is created by FOP. Example:
           </p>
-          <source>userAgent.setFOEventHandlerOverride(myFOEventHandler); //myFOEventHandler is an org.apache.fop.fo.FOEventHandler</source>
+          <source>userAgent.setFOEventHandlerOverride(myFOEventHandler); // myFOEventHandler is an org.apache.fop.fo.FOEventHandler</source>
         </li>
         <li>
           <p>
             Set a <strong>URIResolver</strong> for custom URI resolution. By supplying a JAXP URIResolver you can add
             custom URI resolution functionality to FOP. For example, you can use 
-            <a href="ext:xml.apache.org/commons/resolver">Apache XML Commons Resolver</a> to make use of XCatalogs.
+            <a href="ext:xml.apache.org/commons/resolver">Apache XML Commons Resolver</a> to make use of XCatalogs. Example:
           </p>
-          <source>userAgent.setURIResolver(myResolver); //myResolver is a javax.xml.transform.URIResolver</source>
+          <source>userAgent.setURIResolver(myResolver); // myResolver is a javax.xml.transform.URIResolver</source>
           <note>
             Both the FopFactory and the FOUserAgent have a method to set a URIResolver. The URIResolver on the FOUserAgent is
             used for resolving URIs which are document-related. If it's not set or cannot resolve a URI, the URIResolver
@@ -496,9 +499,9 @@ fopFactory.setUserConfig(new File("C:/Temp/mycfg.xml"));]]></source>
       <p>
         To get the number of pages that were rendered by FOP you can call 
         <code>Fop.getResults()</code>. This returns a <code>FormattingResults</code> object 
-        where you can lookup the number of pages produced. It also gives you the 
+        where you can look up the number of pages produced. It also gives you the 
         page-sequences that were produced along with their id attribute and their 
-        number of pages. This is particularly useful if you render multiple 
+        numbers of pages. This is particularly useful if you render multiple 
         documents (each enclosed by a page-sequence) and have to know the number of 
         pages of each document.
       </p>
@@ -515,16 +518,16 @@ fopFactory.setUserConfig(new File("C:/Temp/mycfg.xml"));]]></source>
         (parser, XSL transformer, SQL datasource etc.).
       </li>
       <li>
-        Depending on the target OutputStream (in case of an FileOutputStream, but not 
+        Depending on the target OutputStream (in case of a FileOutputStream, but not 
         for a ByteArrayOutputStream, for example) it may improve performance considerably 
         if you buffer the OutputStream using a BufferedOutputStream: 
-        <code>fop.setOutputStream(new java.io.BufferedOutputStream(out));</code>
+        <code>out = new java.io.BufferedOutputStream(out);</code>
         <br/>
         Make sure you properly close the OutputStream when FOP is finished.
       </li>
       <li>
         Cache the stylesheet. If you use the same stylesheet multiple times 
-        you can setup a JAXP <code>Templates</code> object and reuse it each time you do
+        you can set up a JAXP <code>Templates</code> object and reuse it each time you do
         the XSL transformation.  (More information can be found
         <a class="fork" href="http://www.javaworld.com/javaworld/jw-05-2003/jw-0502-xsl.html">here</a>.)
       </li>
@@ -555,8 +558,6 @@ fopFactory.setUserConfig(new File("C:/Temp/mycfg.xml"));]]></source>
   <title>Examples</title>
   <p>
    The directory "{fop-dir}/examples/embedding" contains several working examples. 
-   In contrast to the examples above the examples here primarily use JAXP for 
-   XML access. This may be easier to understand for people familiar with JAXP.
   </p>
   <section id="ExampleFO2PDF">
     <title>ExampleFO2PDF.java</title>
@@ -608,8 +609,8 @@ performance is significantly higher with SAX.
 is a preparatory example for the next one. It's an example that 
 shows how an arbitrary Java object can be converted to XML. It's an often 
 needed task to do this. Often people create a DOM tree from a Java object and 
-use that. This is pretty straightforward. The example here however shows how
-to do this using SAX which will probably be faster and not even more 
+use that. This is pretty straightforward. The example here, however, shows how
+to do this using SAX, which will probably be faster and not even more 
 complicated once you know how this works.
     </p>
     <figure src="images/EmbeddingExampleObj2XML.png" alt="Example Java object to XML"/>
@@ -617,13 +618,13 @@ complicated once you know how this works.
 For this example we've created two classes: ProjectTeam and ProjectMember 
 (found in xml-fop/examples/embedding/java/embedding/model). They represent 
 the same data structure found in 
-xml-fop/examples/embedding/xml/xml/projectteam.xml. We want to serialize a 
-project team with several members which exist as Java objects to XML. 
+xml-fop/examples/embedding/xml/xml/projectteam.xml. We want to serialize to XML a 
+project team with several members which exist as Java objects. 
 Therefore we created the two classes: ProjectTeamInputSource and 
 ProjectTeamXMLReader (in the same place as ProjectTeam above).
     </p>
     <p>
-The XMLReader implementation (regard it as a special kind of XML parser)is 
+The XMLReader implementation (regard it as a special kind of XML parser) is 
 responsible for creating SAX events from the Java object. The InputSource 
 class is only used to hold the ProjectTeam object to be used.
     </p>
@@ -660,7 +661,7 @@ use a DOM tree as input for an XSL transformation.
     <p>This 
         <a href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/trunk/examples/embedding/java/embedding/ExampleSVG2PDF.java?view=markup">
             example</a>
-shows use of the PDF Transcoder, a sub-application within FOP.  
+shows the usage of the PDF Transcoder, a sub-application within FOP.  
 It is used to generate a PDF document from an SVG file.
     </p>
   </section>
