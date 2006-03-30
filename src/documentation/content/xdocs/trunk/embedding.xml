@@ -346,7 +346,7 @@ try {
       <source><![CDATA[
   FopFactory fopFactory = FopFactory.newInstance(); //Reuse the FopFactory if possible!
   FOUserAgent userAgent = fopFactory.newFOUserAgent();
-  Fop fop = fopFactory.newFop(MimeConstants.MIME_POSTSCRIPT, userAgent);]]></source>
+  Fop fop = fopFactory.newFop(MimeConstants.MIME_POSTSCRIPT, userAgent, out);]]></source>
       <p>
         You can do all sorts of things on the user agent:
       </p>
