@@ -42,8 +42,8 @@ $Id$
    -->
   <import file="../deploy.settings" optional="true"/>
 
-  <property name="deploy.scp.host" value="cvs.apache.org"/>
-  <property name="deploy.scp.dest" value="${deploy.scp.user}@people.apache.org:/www/xmlgraphics.apache.org/fop"/>
+  <property name="deploy.scp.host" value="people.apache.org"/>
+  <property name="deploy.scp.dest" value="${deploy.scp.user}@${deploy.scp.host}:/www/xmlgraphics.apache.org/fop"/>
   <target name="deploy.scp-alt" unless="build.failed" description="FB: Deploy to a remote location via scp">
     <if>
       <not><isset property="deploy.scp.passphrase"/></not>
