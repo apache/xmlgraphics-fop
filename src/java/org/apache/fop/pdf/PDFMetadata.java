@@ -23,7 +23,6 @@ import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.TimeZone;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -35,6 +34,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.extensions.xmp.XMPConstants;
+
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -46,6 +46,9 @@ import org.w3c.dom.Element;
 public class PDFMetadata extends PDFStream {
     
     private static final String XMLNS = "http://www.w3.org/2000/xmlns/";
+
+    private static DateFormat pseudoISO8601DateFormat = new SimpleDateFormat(
+        "yyyy'-'MM'-'dd'T'HH':'mm':'ssZ");
 
     private Document xmpMetadata;
     private boolean readOnly = true;
@@ -145,6 +148,16 @@ public class PDFMetadata extends PDFStream {
         return sb.toString();
     }
 
+    private static String formatDate(Date dt) {
+        String s = pseudoISO8601DateFormat.format(dt);
+        
+        //Now insert the colon that's not possible using SimpleDateFormat
+        int tzpos = s.length() - 4;
+        String tz = s.substring(tzpos);
+        s = s.substring(0, tzpos) + tz.substring(0, 2) + ":" + tz.substring(2);
+        return s;
+    }
+    
     /**
      * Creates an XMP document based on the settings on the PDF Document.
      * @param pdfDoc the PDF Document
@@ -159,15 +172,16 @@ public class PDFMetadata extends PDFStream {
         
         Element desc, el;
         PDFInfo info = pdfDoc.getInfo();
-        DateFormat pseudoISO8601DateFormat = new SimpleDateFormat(
-            "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSS'Z'");
-        pseudoISO8601DateFormat.setTimeZone(TimeZone.getTimeZone("GMT+00"));
         
         //Set creation date if not available, yet
         if (info.getCreationDate() == null) {
             Date d = new Date();
             info.setCreationDate(d);
         }
+        
+        //Important: Acrobat's preflight check for PDF/A-1b wants the creation date in the Info
+        //object and in the XMP metadata to have the same timezone or else it shows a validation
+        //error even if the times are essentially equal.
 
         //Dublin Core
         desc = doc.createElementNS(XMPConstants.RDF_NAMESPACE, "rdf:Description");
@@ -195,18 +209,18 @@ public class PDFMetadata extends PDFStream {
         }
         el = doc.createElementNS(XMPConstants.DUBLIN_CORE_NAMESPACE, "dc:date");
         desc.appendChild(el);
-        el.appendChild(doc.createTextNode(pseudoISO8601DateFormat.format(info.getCreationDate())));
+        el.appendChild(doc.createTextNode(formatDate(info.getCreationDate())));
         
         //XMP Basic Schema
         desc = doc.createElementNS(XMPConstants.RDF_NAMESPACE, "rdf:Description");
         desc.setAttributeNS(XMPConstants.RDF_NAMESPACE, "rdf:about", "");
         desc.setAttributeNS(XMLNS, "xmlns:xmp", XMPConstants.XMP_BASIC_NAMESPACE);
         rdf.appendChild(desc);
-        el = doc.createElementNS(XMPConstants.XMP_BASIC_NAMESPACE, "xmp:createDate");
+        el = doc.createElementNS(XMPConstants.XMP_BASIC_NAMESPACE, "xmp:CreateDate");
         desc.appendChild(el);
-        el.appendChild(doc.createTextNode(pseudoISO8601DateFormat.format(info.getCreationDate())));
+        el.appendChild(doc.createTextNode(formatDate(info.getCreationDate())));
         if (info.getCreator() != null) {
-            el = doc.createElementNS(XMPConstants.XMP_BASIC_NAMESPACE, "xmp:creatorTool");
+            el = doc.createElementNS(XMPConstants.XMP_BASIC_NAMESPACE, "xmp:CreatorTool");
             desc.appendChild(el);
             el.appendChild(doc.createTextNode(info.getCreator()));
         }

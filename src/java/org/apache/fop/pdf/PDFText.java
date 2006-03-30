@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2004,2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,20 +73,34 @@ public class PDFText extends PDFObject {
      * @return encoded text
      */
     public static final String escapeText(final String text) {
-        return escapeText(text, true);
+        return escapeText(text, false);
     }
     /**
      * Escape text (see 4.4.1 in PDF 1.3 specs)
      * @param text the text to encode
-     * @param hexMode true if the output should follow the hex encoding rules
+     * @param forceHexMode true if the output should follow the hex encoding rules
      * @return encoded text
      */
-    public static final String escapeText(final String text, boolean hexMode) {
+    public static final String escapeText(final String text, boolean forceHexMode) {
         if (text != null && text.length() > 0) {
+            boolean unicode = false;
+            boolean hexMode = false;
+            if (forceHexMode) {
+                hexMode = true;
+            } else {
+                for (int i = 0, c = text.length(); i < c; i++) {
+                    if (text.charAt(i) >= 128) {
+                        unicode = true;
+                        hexMode = true;
+                        break;
+                    }
+                }
+            }
+            
             if (hexMode) {
                 final byte[] uniBytes;
                 try {
-                    uniBytes = text.getBytes("UnicodeBig");
+                    uniBytes = text.getBytes("UTF-16");
                 } catch (java.io.UnsupportedEncodingException uee) {
                     throw new CascadingRuntimeException("Incompatible VM", uee);
                 }
@@ -96,22 +110,29 @@ public class PDFText extends PDFObject {
                 result.append("(");
                 final int l = text.length();
 
-                // byte order marker (0xfeff)
-                result.append("\\376\\377");
-                
-                for (int i = 0; i < l; i++) {
-                    final char ch = text.charAt(i);
-                    //if (ch < 128) {
-                    //    result.append('\u0000');
-                    //    result.append(ch);
-                    //} else {
+                if (unicode) {
+                    // byte order marker (0xfeff)
+                    result.append("\\376\\377");
+                    
+                    for (int i = 0; i < l; i++) {
+                        final char ch = text.charAt(i);
                         final int high = (ch & 0xff00) >>> 8;
                         final int low = ch & 0xff;
                         result.append("\\");
                         result.append(Integer.toOctalString(high));
                         result.append("\\");
                         result.append(Integer.toOctalString(low));
-                    //}
+                    }
+                } else {
+                    for (int i = 0; i < l; i++) {
+                        final char ch = text.charAt(i);
+                        if (ch < 256) {
+                            escapeStringChar(ch, result);
+                        } else {
+                            throw new IllegalStateException(
+                            "Can only treat text in 8-bit ASCII/PDFEncoding");
+                        }
+                    }
                 }
                 result.append(")");
                 return result.toString();
