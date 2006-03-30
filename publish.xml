@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-  Copyright 2005 The Apache Software Foundation
+  Copyright 2005-2006 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ $Id$
   <import file="../deploy.settings" optional="true"/>
 
   <property name="deploy.scp.host" value="cvs.apache.org"/>
-  <property name="deploy.scp.dest" value="${deploy.scp.user}@cvs.apache.org:/www/xmlgraphics.apache.org/fop"/>
+  <property name="deploy.scp.dest" value="${deploy.scp.user}@people.apache.org:/www/xmlgraphics.apache.org/fop"/>
   <target name="deploy.scp-alt" unless="build.failed" description="FB: Deploy to a remote location via scp">
     <if>
       <not><isset property="deploy.scp.passphrase"/></not>
