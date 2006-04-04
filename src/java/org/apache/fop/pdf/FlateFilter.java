@@ -18,10 +18,10 @@
  
 package org.apache.fop.pdf;
 
-import org.apache.fop.util.FlateEncodeOutputStream;
-
 import java.io.OutputStream;
 import java.io.IOException;
+
+import org.apache.xmlgraphics.util.io.FlateEncodeOutputStream;
 
 /**
  * A filter to deflate a stream.

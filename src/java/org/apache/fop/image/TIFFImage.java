@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 The Apache Software Foundation 
+ * Copyright 2004-2006 The Apache Software Foundation 
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,17 +21,17 @@ package org.apache.fop.image;
 import java.awt.color.ColorSpace;
 import java.io.IOException;
 
-import org.apache.batik.ext.awt.image.codec.SeekableStream;
-import org.apache.batik.ext.awt.image.codec.tiff.TIFFDirectory;
-import org.apache.batik.ext.awt.image.codec.tiff.TIFFField;
-import org.apache.batik.ext.awt.image.codec.tiff.TIFFImageDecoder;
-import org.apache.batik.ext.awt.image.rendered.CachableRed;
+import org.apache.xmlgraphics.image.codec.util.SeekableStream;
+import org.apache.xmlgraphics.image.codec.tiff.TIFFDirectory;
+import org.apache.xmlgraphics.image.codec.tiff.TIFFField;
+import org.apache.xmlgraphics.image.codec.tiff.TIFFImageDecoder;
+import org.apache.xmlgraphics.image.rendered.CachableRed;
 import org.apache.commons.io.IOUtils;
 
 /**
  * TIFF implementation using the Batik codecs.
  */
-public class TIFFImage extends BatikImage {
+public class TIFFImage extends XmlGraphicsCommonsImage {
 
     private int compression = 0;
     private int stripCount = 0;
@@ -62,10 +62,13 @@ public class TIFFImage extends BatikImage {
         return stripCount;
     }
 
-    /** @see org.apache.fop.image.BatikImage */
+    /**
+     * @see org.apache.fop.image.XmlGraphicsCommonsImage#decodeImage(
+     *          org.apache.xmlgraphics.image.codec.util.SeekableStream)
+     */
     protected CachableRed decodeImage(SeekableStream stream) throws IOException {
-        org.apache.batik.ext.awt.image.codec.tiff.TIFFImage img
-            = new org.apache.batik.ext.awt.image.codec.tiff.TIFFImage
+        org.apache.xmlgraphics.image.codec.tiff.TIFFImage img
+            = new org.apache.xmlgraphics.image.codec.tiff.TIFFImage
                 (stream, null, 0);
         TIFFDirectory dir = (TIFFDirectory)img.getProperty("tiff_directory");
         TIFFField fld = dir.getField(TIFFImageDecoder.TIFF_RESOLUTION_UNIT);

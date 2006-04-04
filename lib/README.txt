@@ -35,6 +35,14 @@ Normal Dependencies
     
     Apache License v2.0
 
+- Apache XML Graphics Commons
+
+    xmlgraphics-commons-*.jar
+    http://xmlgraphics.apache.org/
+    (Common Library for Apache Batik and Apache FOP)
+    
+    Apache License v2.0
+
 - Apache Batik
 
     batik-*.jar

@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 The Apache Software Foundation.
+ * Copyright 2005-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,8 @@ import java.io.IOException;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.Graphics2DImagePainter;
 import org.apache.fop.render.RendererContext;
+import org.apache.xmlgraphics.java2d.ps.PSGraphics2D;
+import org.apache.xmlgraphics.ps.PSGenerator;
 
 /**
  * Graphics2DAdapter implementation for PostScript.
@@ -75,7 +77,7 @@ public class PSGraphics2DAdapter implements Graphics2DAdapter {
 
         final boolean textAsShapes = false;
         PSGraphics2D graphics = new PSGraphics2D(textAsShapes, gen);
-        graphics.setGraphicContext(new org.apache.batik.ext.awt.g2d.GraphicContext());
+        graphics.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
         AffineTransform transform = new AffineTransform();
         // scale to viewbox
         transform.translate(fx, fy);

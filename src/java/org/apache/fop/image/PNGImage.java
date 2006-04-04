@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 The Apache Software Foundation 
+ * Copyright 2004-2006 The Apache Software Foundation 
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,17 +18,13 @@
 
 package org.apache.fop.image;
 
-import java.awt.color.ColorSpace;
-import java.awt.color.ICC_Profile;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.apache.batik.ext.awt.image.codec.PNGRed;
-import org.apache.batik.ext.awt.image.codec.PNGDecodeParam;
-import org.apache.batik.ext.awt.image.codec.SeekableStream;
-import org.apache.batik.ext.awt.image.rendered.CachableRed;
+import org.apache.xmlgraphics.image.codec.png.PNGRed;
+import org.apache.xmlgraphics.image.codec.png.PNGDecodeParam;
+import org.apache.xmlgraphics.image.codec.util.SeekableStream;
+import org.apache.xmlgraphics.image.rendered.CachableRed;
 import org.apache.commons.io.IOUtils;
-import org.apache.fop.util.CMYKColorSpace;
 
 /**
  * FopImage object using PNG
@@ -36,7 +32,7 @@ import org.apache.fop.util.CMYKColorSpace;
  * @see AbstractFopImage
  * @see FopImage
  */
-public class PNGImage extends BatikImage {
+public class PNGImage extends XmlGraphicsCommonsImage {
 
     /**
      * Constructs a new PNGImage instance.
@@ -48,7 +44,8 @@ public class PNGImage extends BatikImage {
     }
 
     /**
-     * @see org.apache.fop.image.BatikImage#decodeImage(org.apache.batik.ext.awt.image.codec.SeekableStream)
+     * @see org.apache.fop.image.XmlGraphicsCommonsImage#decodeImage(
+     *          org.apache.xmlgraphics.image.codec.util.SeekableStream)
      */
     protected CachableRed decodeImage(SeekableStream stream) throws IOException {
         PNGDecodeParam param = new PNGDecodeParam();

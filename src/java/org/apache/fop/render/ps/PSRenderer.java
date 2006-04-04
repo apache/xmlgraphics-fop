@@ -70,6 +70,12 @@ import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.ps.extensions.PSSetupCode;
 import org.apache.fop.util.CharUtilities;
 
+import org.apache.xmlgraphics.ps.DSCConstants;
+import org.apache.xmlgraphics.ps.PSGenerator;
+import org.apache.xmlgraphics.ps.PSProcSets;
+import org.apache.xmlgraphics.ps.PSResource;
+import org.apache.xmlgraphics.ps.PSState;
+
 import org.w3c.dom.Document;
 
 /**

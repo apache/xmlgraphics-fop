@@ -24,19 +24,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-//Avalon
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.avalon.framework.container.ContainerUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-//FOP
+import org.apache.xmlgraphics.util.Service;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.fo.FOEventHandler;
-import org.apache.fop.util.Service;
 
 /**
  * Factory for FOEventHandlers and Renderers.
@@ -268,12 +267,13 @@ public class RendererFactory {
             = Service.providers(Renderer.class);
         if (providers != null) {
             while (providers.hasNext()) {
-                String str = (String)providers.next();
+                AbstractRendererMaker maker = (AbstractRendererMaker)providers.next();
                 try {
                     if (log.isDebugEnabled()) {
-                        log.debug("Dynamically adding maker for Renderer: " + str);
+                        log.debug("Dynamically adding maker for Renderer: " 
+                                + maker.getClass().getName());
                     }
-                    addRendererMaker(str);
+                    addRendererMaker(maker);
                 } catch (IllegalArgumentException e) {
                     log.error("Error while adding maker for Renderer", e);
                 }
@@ -292,12 +292,13 @@ public class RendererFactory {
             = Service.providers(FOEventHandler.class);
         if (providers != null) {
             while (providers.hasNext()) {
-                String str = (String)providers.next();
+                AbstractFOEventHandlerMaker maker = (AbstractFOEventHandlerMaker)providers.next();
                 try {
                     if (log.isDebugEnabled()) {
-                        log.debug("Dynamically adding maker for FOEventHandler: " + str);
+                        log.debug("Dynamically adding maker for FOEventHandler: " 
+                                + maker.getClass().getName());
                     }
-                    addFOEventHandlerMaker(str);
+                    addFOEventHandlerMaker(maker);
                 } catch (IllegalArgumentException e) {
                     log.error("Error while adding maker for FOEventHandler", e);
                 }

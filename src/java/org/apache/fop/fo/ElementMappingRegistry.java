@@ -19,17 +19,19 @@
 package org.apache.fop.fo;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+
+import org.w3c.dom.DOMImplementation;
+import org.xml.sax.Locator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.xmlgraphics.util.Service;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.fo.ElementMapping.Maker;
-import org.apache.fop.util.Service;
-import org.w3c.dom.DOMImplementation;
-import org.xml.sax.Locator;
 
 /**
  * This class keeps track of all configured ElementMapping implementations which are responsible
@@ -69,9 +71,9 @@ public class ElementMappingRegistry {
         Iterator providers = Service.providers(ElementMapping.class);
         if (providers != null) {
             while (providers.hasNext()) {
-                String str = (String)providers.next();
+                ElementMapping mapping = (ElementMapping)providers.next();
                 try {
-                    addElementMapping(str);
+                    addElementMapping(mapping);
                 } catch (IllegalArgumentException e) {
                     log.warn("Error while adding element mapping", e);
                 }
