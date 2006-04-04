@@ -21,7 +21,7 @@ package org.apache.fop.pdf;
 import java.io.OutputStream;
 import java.io.IOException;
 
-import org.apache.fop.util.ASCIIHexOutputStream;
+import org.apache.xmlgraphics.util.io.ASCIIHexOutputStream;
 
 /**
  * ASCII Hex filter for PDF streams.

@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 The Apache Software Foundation 
+ * Copyright 2004-2006 The Apache Software Foundation 
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,24 +22,25 @@ import java.awt.Color;
 import java.awt.Transparency;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
+import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-import org.apache.batik.ext.awt.image.codec.SeekableStream;
-import org.apache.batik.ext.awt.image.codec.MemoryCacheSeekableStream;
-import org.apache.batik.ext.awt.image.codec.FileCacheSeekableStream;
-import org.apache.batik.ext.awt.image.rendered.Any2sRGBRed;
-import org.apache.batik.ext.awt.image.rendered.CachableRed;
+import org.apache.xmlgraphics.image.GraphicsUtil;
+import org.apache.xmlgraphics.image.codec.util.SeekableStream;
+import org.apache.xmlgraphics.image.codec.util.MemoryCacheSeekableStream;
+import org.apache.xmlgraphics.image.codec.util.FileCacheSeekableStream;
+import org.apache.xmlgraphics.image.rendered.CachableRed;
+
 import org.apache.commons.io.IOUtils;
 
 /**
- * FopImage object using TIFF
- * @author Eric SCHAEFFER
+ * Abstract FopImage implementation which uses the internal codecs from XML Graphics Commons.
  * @see AbstractFopImage
  * @see FopImage
  */
-public abstract class BatikImage extends AbstractFopImage {
+public abstract class XmlGraphicsCommonsImage extends AbstractFopImage {
 
     private byte[] softMask = null;
 
@@ -57,7 +58,7 @@ public abstract class BatikImage extends AbstractFopImage {
      * Constructs a new BatikImage instance.
      * @param imgReader basic metadata for the image
      */
-    public BatikImage(FopImage.ImageInfo imgReader) {
+    public XmlGraphicsCommonsImage(FopImage.ImageInfo imgReader) {
         super(imgReader);
     }
 
@@ -105,7 +106,7 @@ public abstract class BatikImage extends AbstractFopImage {
                         }
                     }
                 } else {
-                    cr = new Any2sRGBRed(cr);
+                    cr = GraphicsUtil.convertTosRGB(cr);
                 }
 
                 // Get our current ColorModel
@@ -187,32 +188,7 @@ public abstract class BatikImage extends AbstractFopImage {
 
                 this.bitmaps = new byte[this.width * this.height * 3];
 
-                WritableRaster wr = (WritableRaster)cr.getData();
-                BufferedImage bi = new BufferedImage
-                    (cm, wr.createWritableTranslatedChild(0, 0), 
-                     cm.isAlphaPremultiplied(), null);
-                int [] tmpMap = new int[this.width];
-                int idx = 0;
-                int sfIdx = 0;
-                for (int y = 0; y < this.height; y++) {
-                    tmpMap = bi.getRGB(0, y, this.width, 1, tmpMap, 0, this.width);
-                    if (softMask != null) {
-                        for (int x = 0; x < this.width; x++) {
-                            int pix = tmpMap[x];
-                            this.softMask[sfIdx++] = (byte)(pix >>> 24);
-                            this.bitmaps[idx++]    = (byte)((pix >>> 16) & 0xFF);
-                            this.bitmaps[idx++]    = (byte)((pix >>> 8)  & 0xFF);
-                            this.bitmaps[idx++]    = (byte)((pix)        & 0xFF);
-                        }
-                    } else {
-                        for (int x = 0; x < this.width; x++) {
-                            int pix = tmpMap[x];
-                            this.bitmaps[idx++] = (byte)((pix >> 16) & 0xFF);
-                            this.bitmaps[idx++] = (byte)((pix >> 8)  & 0xFF);
-                            this.bitmaps[idx++] = (byte)((pix)       & 0xFF);
-                        }
-                    }
-                }
+                constructBitmaps(cr, this.bitmaps, this.softMask);
             } catch (Exception ex) {
                 log.error("Error while loading image (Batik): " + ex.getMessage(), ex);
             } finally {
@@ -225,4 +201,37 @@ public abstract class BatikImage extends AbstractFopImage {
             }
         }
     }
-};
+
+    private static void constructBitmaps(RenderedImage red, byte[] bitmaps, byte[] softMask) {
+        WritableRaster wr = (WritableRaster)red.getData();
+        ColorModel cm = red.getColorModel();
+        BufferedImage bi = new BufferedImage
+            (cm, wr.createWritableTranslatedChild(0, 0), 
+             cm.isAlphaPremultiplied(), null);
+        int width = red.getWidth();
+        int height = red.getHeight();
+        int [] tmpMap = new int[width];
+        int idx = 0;
+        int sfIdx = 0;
+        for (int y = 0; y < height; y++) {
+            tmpMap = bi.getRGB(0, y, width, 1, tmpMap, 0, width);
+            if (softMask != null) {
+                for (int x = 0; x < width; x++) {
+                    int pix = tmpMap[x];
+                    softMask[sfIdx++] = (byte)(pix >>> 24);
+                    bitmaps[idx++]    = (byte)((pix >>> 16) & 0xFF);
+                    bitmaps[idx++]    = (byte)((pix >>> 8)  & 0xFF);
+                    bitmaps[idx++]    = (byte)((pix)        & 0xFF);
+                }
+            } else {
+                for (int x = 0; x < width; x++) {
+                    int pix = tmpMap[x];
+                    bitmaps[idx++] = (byte)((pix >> 16) & 0xFF);
+                    bitmaps[idx++] = (byte)((pix >> 8)  & 0xFF);
+                    bitmaps[idx++] = (byte)((pix)       & 0xFF);
+                }
+            }
+        }
+    }
+    
+}

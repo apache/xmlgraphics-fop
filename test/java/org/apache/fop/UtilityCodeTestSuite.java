@@ -20,8 +20,6 @@ package org.apache.fop;
 
 import org.apache.fop.traits.BorderPropsTestCase;
 import org.apache.fop.traits.TraitColorTestCase;
-import org.apache.fop.util.ASCII85InputStreamTestCase;
-import org.apache.fop.util.ASCII85OutputStreamTestCase;
 import org.apache.fop.util.PDFNumberTestCase;
 
 import junit.framework.Test;
@@ -40,8 +38,6 @@ public class UtilityCodeTestSuite {
         TestSuite suite = new TestSuite(
             "Test suite for FOP's utility classes");
         //$JUnit-BEGIN$
-        suite.addTest(new TestSuite(ASCII85OutputStreamTestCase.class));
-        suite.addTest(new TestSuite(ASCII85InputStreamTestCase.class));
         suite.addTest(new TestSuite(PDFNumberTestCase.class));
         suite.addTest(new TestSuite(TraitColorTestCase.class));
         suite.addTest(new TestSuite(BorderPropsTestCase.class));

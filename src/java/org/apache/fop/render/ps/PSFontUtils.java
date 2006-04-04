@@ -18,7 +18,6 @@
 
 package org.apache.fop.render.ps;
 
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,22 +28,20 @@ import java.util.Map;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.commons.io.EndianUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontType;
-import org.apache.fop.fonts.Glyphs;
 import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.fonts.Typeface;
-import org.apache.fop.util.ASCIIHexOutputStream;
-import org.apache.fop.util.SubInputStream;
+import org.apache.xmlgraphics.ps.DSCConstants;
+import org.apache.xmlgraphics.ps.PSGenerator;
+import org.apache.xmlgraphics.ps.PSResource;
 
 /**
  * Utility code for font handling in PostScript.
  */
-public class PSFontUtils {
+public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
 
     /**
      * Generates the PostScript code for the font dictionary.
@@ -133,56 +130,6 @@ public class PSFontUtils {
         return fontResources;
     }
 
-    /**
-     * This method reads a Type 1 font from a stream and embeds it into a PostScript stream.
-     * Note: Only the IBM PC Format as described in section 3.3 of the Adobe Technical Note #5040
-     * is supported.
-     * @param gen The PostScript generator
-     * @param in the InputStream from which to read the Type 1 font
-     * @throws IOException in case an I/O problem occurs
-     */
-    private static void embedType1Font(PSGenerator gen, InputStream in) throws IOException {
-        boolean finished = false;
-        while (!finished) {
-            int segIndicator = in.read();
-            if (segIndicator < 0) {
-                throw new IOException("Unexpected end-of-file while reading segment indicator");
-            } else if (segIndicator != 128) {
-                throw new IOException("Expected ASCII 128, found: " + segIndicator);
-            }
-            int segType = in.read();
-            if (segType < 0) {
-                throw new IOException("Unexpected end-of-file while reading segment type");
-            }
-            int dataSegLen = 0;
-            switch (segType) {
-                case 1: //ASCII
-                    dataSegLen = EndianUtils.readSwappedInteger(in);
-
-                    BufferedReader reader = new BufferedReader(
-                            new java.io.InputStreamReader(
-                                    new SubInputStream(in, dataSegLen), "US-ASCII"));
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        gen.writeln(line);
-                        }
-                    break;
-                case 2: //binary
-                    dataSegLen = EndianUtils.readSwappedInteger(in);
-
-                    SubInputStream sin = new SubInputStream(in, dataSegLen);
-                    ASCIIHexOutputStream hexOut = new ASCIIHexOutputStream(gen.getOutputStream());
-                    IOUtils.copy(sin, hexOut);
-                    gen.newLine();
-                    break;
-                case 3: //EOF
-                    finished = true;
-                    break;
-                default: throw new IOException("Unsupported segment type: " + segType);
-            }
-        }
-    }
-
     private static InputStream getInputStreamOnFont(PSGenerator gen, CustomFont font) 
                 throws IOException {
         if (font.isEmbeddable()) {
@@ -220,28 +167,4 @@ public class PSFontUtils {
         }
     }
 
-    private static void defineWinAnsiEncoding(PSGenerator gen) throws IOException {
-        gen.writeln("/WinAnsiEncoding [");
-        for (int i = 0; i < Glyphs.WINANSI_ENCODING.length; i++) {
-            if (i > 0) {
-                if ((i % 5) == 0) {
-                    gen.newLine();
-                } else {
-                    gen.write(" ");
-                }
-            }
-            final char ch = Glyphs.WINANSI_ENCODING[i];
-            final String glyphname = Glyphs.charToGlyphName(ch);
-            if ("".equals(glyphname)) {
-                gen.write("/" + Glyphs.NOTDEF);
-            } else {
-                gen.write("/");
-                gen.write(glyphname);
-            }
-        }
-        gen.newLine();
-        gen.writeln("] def");
-    }
-
-    
 }

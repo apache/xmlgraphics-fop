@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 The Apache Software Foundation.
+ * Copyright 2005-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,9 +26,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.batik.ext.awt.image.codec.PNGEncodeParam;
-import org.apache.batik.ext.awt.image.codec.PNGImageEncoder;
+import org.apache.xmlgraphics.image.codec.png.PNGEncodeParam;
+import org.apache.xmlgraphics.image.codec.png.PNGImageEncoder;
+
 import org.apache.commons.io.IOUtils;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.render.java2d.Java2DRenderer;

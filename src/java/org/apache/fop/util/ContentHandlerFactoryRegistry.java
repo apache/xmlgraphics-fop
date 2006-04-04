@@ -24,7 +24,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.fop.util.Service;
+import org.apache.xmlgraphics.util.Service;
 
 /**
  * This class holds references to various XML handlers used by FOP. It also
@@ -101,12 +101,13 @@ public class ContentHandlerFactoryRegistry {
         Iterator providers = Service.providers(ContentHandlerFactory.class);
         if (providers != null) {
             while (providers.hasNext()) {
-                String str = (String)providers.next();
+                ContentHandlerFactory factory = (ContentHandlerFactory)providers.next();
                 try {
                     if (log.isDebugEnabled()) {
-                        log.debug("Dynamically adding ContentHandlerFactory: " + str);
+                        log.debug("Dynamically adding ContentHandlerFactory: " 
+                                + factory.getClass().getName());
                     }
-                    addContentHandlerFactory(str);
+                    addContentHandlerFactory(factory);
                 } catch (IllegalArgumentException e) {
                     log.error("Error while adding ContentHandlerFactory", e);
                 }

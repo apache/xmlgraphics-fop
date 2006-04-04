@@ -18,6 +18,8 @@
 
 package org.apache.fop.render.ps;
 
+import org.apache.xmlgraphics.java2d.ps.AbstractPSDocumentGraphics2D;
+import org.apache.xmlgraphics.java2d.ps.PSDocumentGraphics2D;
 
 /**
  * This class enables to transcode an input to a PostScript document.
@@ -44,7 +46,6 @@ package org.apache.fop.render.ps;
  * millimeter conversion factor.
  *
  * @author <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
- * @author <a href="mailto:jeremias@apache.org">Jeremias Maerki</a>
  * @version $Id$
  */
 public class PSTranscoder extends AbstractPSTranscoder {
@@ -56,6 +57,7 @@ public class PSTranscoder extends AbstractPSTranscoder {
         super();
     }
 
+    /** @see AbstractPSTranscoder#createDocumentGraphics2D() */
     protected AbstractPSDocumentGraphics2D createDocumentGraphics2D() {
         return new PSDocumentGraphics2D(false);
     }

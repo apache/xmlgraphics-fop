@@ -31,8 +31,14 @@ import java.awt.Shape;
 import java.awt.Paint;
 import java.awt.Stroke;
 import java.awt.Color;
+import java.io.IOException;
 import java.util.List;
 import java.util.Iterator;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.apache.xmlgraphics.java2d.ps.PSGraphics2D;
 
 import org.apache.batik.dom.svg.SVGOMTextElement;
 import org.apache.batik.gvt.text.Mark;
@@ -42,8 +48,6 @@ import org.apache.batik.gvt.text.GVTAttributedCharacterIterator;
 import org.apache.batik.gvt.text.TextPaintInfo;
 import org.apache.batik.gvt.font.GVTFontFamily;
 import org.apache.batik.gvt.renderer.StrokingTextPainter;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
@@ -68,7 +72,8 @@ public class PSTextPainter implements TextPainter {
     /** the logger for this class */
     protected Log log = LogFactory.getLog(PSTextPainter.class);
     
-    private FontInfo fontInfo;
+    private NativeTextHandler nativeTextHandler;
+    //private FontInfo fontInfo;
 
     /**
      * Use the stroking text painter to get the bounds and shape.
@@ -79,10 +84,10 @@ public class PSTextPainter implements TextPainter {
 
     /**
      * Create a new PS text painter with the given font information.
-     * @param fontInfo the FontInfo object
+     * @param nativeTextHandler the NativeTextHandler instance used for text painting
      */
-    public PSTextPainter(FontInfo fontInfo) {
-        this.fontInfo = fontInfo;
+    public PSTextPainter(NativeTextHandler nativeTextHandler) {
+        this.nativeTextHandler = nativeTextHandler;
     }
 
     /**
@@ -188,7 +193,9 @@ public class PSTextPainter implements TextPainter {
         
         Object rcDel = aci.getAttribute(
                 GVTAttributedCharacterIterator.TextAttribute.TEXT_COMPOUND_DELIMITER);
-        if (!(rcDel instanceof SVGOMTextElement)) {
+        //Batik 1.6 returns null here which makes it impossible to determine whether this can
+        //be painted or not, i.e. fall back to stroking. :-(
+        if (/*rcDel != null &&*/ !(rcDel instanceof SVGOMTextElement)) {
             log.trace("-> spans found");
             hasunsupported = true; //Filter spans
         }
@@ -307,15 +314,17 @@ public class PSTextPainter implements TextPainter {
         }
         
         //Finally draw text
-        if (g2d instanceof PSGraphics2D) {
-            ((PSGraphics2D) g2d).setOverrideFont(font);
-        }
+        nativeTextHandler.setOverrideFont(font);
         try {
-            g2d.drawString(txt, (float)(loc.getX() + tx), (float)(loc.getY()));
-        } finally {
-            if (g2d instanceof PSGraphics2D) {
-                ((PSGraphics2D) g2d).setOverrideFont(null);
+            try {
+                nativeTextHandler.drawString(txt, (float)(loc.getX() + tx), (float)(loc.getY()));
+            } catch (IOException ioe) {
+                if (g2d instanceof PSGraphics2D) {
+                    ((PSGraphics2D)g2d).handleIOException(ioe);
+                }
             }
+        } finally {
+            nativeTextHandler.setOverrideFont(null);
         }
         loc.setLocation(loc.getX() + (double)advance, loc.getY());
         return loc;
@@ -370,6 +379,7 @@ public class PSTextPainter implements TextPainter {
         int weight = getWeight(aci);
 
         boolean found = false;
+        FontInfo fontInfo = nativeTextHandler.getFontInfo();
         String fontFamily = null;
         List gvtFonts = (List) aci.getAttribute(
                       GVTAttributedCharacterIterator.TextAttribute.GVT_FONT_FAMILIES);

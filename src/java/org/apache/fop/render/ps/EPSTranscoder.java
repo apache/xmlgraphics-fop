@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2004,2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,9 @@
 /* $Id$ */
  
 package org.apache.fop.render.ps;
+
+import org.apache.xmlgraphics.java2d.ps.AbstractPSDocumentGraphics2D;
+import org.apache.xmlgraphics.java2d.ps.EPSDocumentGraphics2D;
 
 /**
  * This class enables to transcode an input to a EPS document.
@@ -43,7 +46,6 @@ package org.apache.fop.render.ps;
  * millimeter conversion factor.
  *
  * @author <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
- * @author <a href="mailto:jeremias@apache.org">Jeremias Maerki</a>
  * @version $Id$
  */
 public class EPSTranscoder extends AbstractPSTranscoder {
@@ -55,6 +57,7 @@ public class EPSTranscoder extends AbstractPSTranscoder {
         super();
     }
 
+    /** @see AbstractPSTranscoder#createDocumentGraphics2D() */
     protected AbstractPSDocumentGraphics2D createDocumentGraphics2D() {
         return new EPSDocumentGraphics2D(false);
     }

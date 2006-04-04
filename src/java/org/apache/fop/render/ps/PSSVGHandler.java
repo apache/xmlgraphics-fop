@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,6 +41,8 @@ import org.apache.fop.render.Renderer;
 import org.apache.fop.render.XMLHandler;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.svg.SVGUserAgent;
+import org.apache.xmlgraphics.java2d.ps.PSGraphics2D;
+import org.apache.xmlgraphics.ps.PSGenerator;
 
 // Commons-Logging
 import org.apache.commons.logging.Log;
@@ -251,10 +253,16 @@ public class PSSVGHandler implements XMLHandler, PSRendererContextConstants {
                 context.getUserAgent().getSourcePixelUnitToMillimeter(),
                 new AffineTransform());
 
+        PSGraphics2D graphics = new PSGraphics2D(strokeText, gen);
+        graphics.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
+
         GVTBuilder builder = new GVTBuilder();
+        NativeTextHandler nativeTextHandler = null;
         BridgeContext ctx = new BridgeContext(ua);
         if (!strokeText) {
-            PSTextPainter textPainter = new PSTextPainter(psInfo.getFontInfo());
+            nativeTextHandler = new NativeTextHandler(graphics, psInfo.getFontInfo());
+            graphics.setCustomTextHandler(nativeTextHandler);
+            PSTextPainter textPainter = new PSTextPainter(nativeTextHandler);
             ctx.setTextPainter(textPainter);            
             PSTextElementBridge tBridge = new PSTextElementBridge(textPainter);
             ctx.putBridge(tBridge);
@@ -306,9 +314,6 @@ public class PSSVGHandler implements XMLHandler, PSRendererContextConstants {
                 gen.concatMatrix(vals);
             }*/
 
-            final boolean textAsShapes = false;
-            PSGraphics2D graphics = new PSGraphics2D(textAsShapes, gen);
-            graphics.setGraphicContext(new org.apache.batik.ext.awt.g2d.GraphicContext());
             AffineTransform transform = new AffineTransform();
             // scale to viewbox
             transform.translate(xOffset, yOffset);

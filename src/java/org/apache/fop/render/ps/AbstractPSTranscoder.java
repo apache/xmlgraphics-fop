@@ -24,7 +24,6 @@ import java.awt.Color;
 import java.io.IOException;
 
 import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.container.ContainerUtil;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.UnitProcessor;
 import org.apache.batik.transcoder.TranscoderException;
@@ -32,7 +31,11 @@ import org.apache.batik.transcoder.TranscoderOutput;
 
 import org.apache.batik.transcoder.image.ImageTranscoder;
 
+import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.svg.AbstractFOPTranscoder;
+import org.apache.xmlgraphics.java2d.ps.AbstractPSDocumentGraphics2D;
+import org.apache.xmlgraphics.java2d.ps.TextHandler;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.svg.SVGLength;
@@ -62,7 +65,6 @@ import org.w3c.dom.svg.SVGLength;
  * millimeter conversion factor.
  *
  * @author <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
- * @author <a href="mailto:jeremias@apache.org">Jeremias Maerki</a>
  * @version $Id$
  */
 public abstract class AbstractPSTranscoder extends AbstractFOPTranscoder {
@@ -92,15 +94,11 @@ public abstract class AbstractPSTranscoder extends AbstractFOPTranscoder {
         throws TranscoderException {
 
         graphics = createDocumentGraphics2D();
-        
-        try {
-            if (this.cfg != null) {
-                ContainerUtil.configure(graphics, this.cfg);
-            }
-            ContainerUtil.initialize(graphics);
-        } catch (Exception e) {
-            throw new TranscoderException(
-                "Error while setting up PDFDocumentGraphics2D", e);
+        if (!isTextStroked()) {
+            FontInfo fontInfo = new FontInfo();   
+            //TODO Do custom font configuration here somewhere/somehow 
+            FontSetup.setup(fontInfo, null, null);   
+            graphics.setCustomTextHandler(new NativeTextHandler(graphics, fontInfo));
         }
 
         super.transcode(document, uri, output);
@@ -117,18 +115,17 @@ public abstract class AbstractPSTranscoder extends AbstractFOPTranscoder {
                 UnitProcessor.HORIZONTAL_LENGTH, uctx);
         int h = (int)(heightInPt + 0.5);
         getLogger().trace("document size: " + w + "pt x " + h + "pt");
-        
 
         try {
             graphics.setupDocument(output.getOutputStream(), w, h);
-            graphics.setSVGDimension(width, height);
+            graphics.setViewportDimension(width, height);
 
             if (hints.containsKey(ImageTranscoder.KEY_BACKGROUND_COLOR)) {
                 graphics.setBackgroundColor
                     ((Color)hints.get(ImageTranscoder.KEY_BACKGROUND_COLOR));
         }
             graphics.setGraphicContext
-                (new org.apache.batik.ext.awt.g2d.GraphicContext());
+                (new org.apache.xmlgraphics.java2d.GraphicContext());
             graphics.setTransform(curTxf);
 
             this.root.paint(graphics);
@@ -138,17 +135,29 @@ public abstract class AbstractPSTranscoder extends AbstractFOPTranscoder {
             throw new TranscoderException(ex);
         }
     }
-
-    protected BridgeContext createBridgeContext() {
-        /*boolean stroke = true;
+    
+    /** @return true if text should be stroked rather than painted using text operators */
+    protected boolean isTextStroked() {
+        boolean stroke = false;
         if (hints.containsKey(KEY_STROKE_TEXT)) {
             stroke = ((Boolean)hints.get(KEY_STROKE_TEXT)).booleanValue();
-        }*/
+        }
+        return stroke;
+    }
+
+    /** @see org.apache.batik.transcoder.SVGAbstractTranscoder#createBridgeContext() */
+    protected BridgeContext createBridgeContext() {
 
         BridgeContext ctx = new BridgeContext(userAgent);
-        PSTextPainter textPainter = new PSTextPainter(graphics.getFontInfo());
-        ctx.setTextPainter(textPainter);
-        ctx.putBridge(new PSTextElementBridge(textPainter));
+        if (!isTextStroked()) {
+            TextHandler handler = graphics.getCustomTextHandler();
+            if (handler instanceof NativeTextHandler) {
+                NativeTextHandler nativeTextHandler = (NativeTextHandler)handler; 
+                PSTextPainter textPainter = new PSTextPainter(nativeTextHandler);
+                ctx.setTextPainter(textPainter);
+                ctx.putBridge(new PSTextElementBridge(textPainter));
+            }
+        }
 
         //ctx.putBridge(new PSImageElementBridge());
         return ctx;

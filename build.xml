@@ -75,6 +75,7 @@ list of possible build targets.
   <fileset dir="${basedir}" id="dist.bin.lib">
     <patternset id="dist.lib">
       <include name="lib/avalon-framework*"/>
+      <include name="lib/xmlgraphics-commons*"/>
       <include name="lib/batik*"/>
       <include name="lib/commons-io*"/>
       <include name="lib/commons-logging*"/>
@@ -581,7 +582,7 @@ list of possible build targets.
     <include name="commons-io*.jar"/>
     <include name="avalon-framework*.jar"/>
     <include name="commons-logging*.jar"/>
-    <include name="xmlgraphics*.jar"/>
+    <include name="xmlgraphics-commons*.jar"/>
   </fileset>
   
   <target name="uptodate-transcoder-pkg" depends="compile-java">
@@ -626,6 +627,11 @@ list of possible build targets.
         <include name="org/apache/commons/io/output/ProxyOutputStream.class"/>
         <include name="org/apache/commons/io/output/ByteArrayOutputStream.class"/>
         <include name="org/apache/commons/io/output/CountingOutputStream.class"/>
+        <!-- TODO Remove the following lines once Batik switches over to using XML Graphics Commons -->
+        <include name="org/apache/xmlgraphics/java2d/**"/>
+        <include name="org/apache/xmlgraphics/ps/**"/>
+        <include name="org/apache/xmlgraphics/fonts/**"/>
+        <include name="org/apache/xmlgraphics/util/io/**"/>
       </patternset>
       <fileset refid="transcoder-lib-files"/>
     </unjar>

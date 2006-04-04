@@ -21,7 +21,7 @@ package org.apache.fop.pdf;
 import java.io.OutputStream;
 import java.io.IOException;
 
-import org.apache.fop.util.ASCII85OutputStream;
+import org.apache.xmlgraphics.util.io.ASCII85OutputStream;
 
 /**
  * PDF Filter for ASCII85.

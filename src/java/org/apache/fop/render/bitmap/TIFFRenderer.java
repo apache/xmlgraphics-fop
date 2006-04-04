@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,12 +33,12 @@ import java.util.Iterator;
 
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
-import org.apache.batik.ext.awt.image.GraphicsUtil;
-import org.apache.batik.ext.awt.image.codec.tiff.TIFFEncodeParam;
-import org.apache.batik.ext.awt.image.codec.tiff.TIFFField;
-import org.apache.batik.ext.awt.image.codec.tiff.TIFFImageDecoder;
-import org.apache.batik.ext.awt.image.codec.tiff.TIFFImageEncoder;
-import org.apache.batik.ext.awt.image.rendered.FormatRed;
+import org.apache.xmlgraphics.image.GraphicsUtil;
+import org.apache.xmlgraphics.image.codec.tiff.TIFFEncodeParam;
+import org.apache.xmlgraphics.image.codec.tiff.TIFFField;
+import org.apache.xmlgraphics.image.codec.tiff.TIFFImageDecoder;
+import org.apache.xmlgraphics.image.codec.tiff.TIFFImageEncoder;
+import org.apache.xmlgraphics.image.rendered.FormatRed;
 import org.apache.commons.logging.Log;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.MimeConstants;

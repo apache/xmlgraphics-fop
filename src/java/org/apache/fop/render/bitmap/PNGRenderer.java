@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 The Apache Software Foundation.
+ * Copyright 2005-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,9 +26,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.batik.ext.awt.image.codec.PNGEncodeParam;
-import org.apache.batik.ext.awt.image.codec.PNGImageEncoder;
+import org.apache.xmlgraphics.image.writer.ImageWriter;
+import org.apache.xmlgraphics.image.writer.ImageWriterParams;
+import org.apache.xmlgraphics.image.writer.ImageWriterRegistry;
+
 import org.apache.commons.io.IOUtils;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.PageViewport;
@@ -49,9 +52,6 @@ public class PNGRenderer extends Java2DRenderer {
 
     /** The output directory where images are to be written */
     private File outputDir;
-
-    /** The PNGEncodeParam for the image */
-    private PNGEncodeParam renderParams;
 
     /** The OutputStream for the first Image */
     private OutputStream firstOutputStream;
@@ -115,17 +115,13 @@ public class PNGRenderer extends Java2DRenderer {
     
                 // Encode this image
                 log.debug("Encoding page " + (i + 1));
-                renderParams = PNGEncodeParam.getDefaultEncodeParam(image);
-                
-                // Set resolution
-                float pixSzMM = userAgent.getTargetPixelUnitToMillimeter();
-                // num Pixs in 1 Meter
-                int numPix = (int)((1000 / pixSzMM) + 0.5);
-                renderParams.setPhysicalDimension(numPix, numPix, 1); // 1 means 'pix/meter'
+                ImageWriterParams params = new ImageWriterParams();
+                params.setResolution(Math.round(userAgent.getTargetResolution()));
                 
                 // Encode PNG image
-                PNGImageEncoder encoder = new PNGImageEncoder(os, renderParams);
-                encoder.encode(image);
+                ImageWriter writer = ImageWriterRegistry.getInstance().getWriterFor(getMimeType());
+                log.debug("Writing image using " + writer.getClass().getName());
+                writer.writeImage(image, os, params);
             } finally {
                 //Only close self-created OutputStreams
                 if (os != firstOutputStream) {
