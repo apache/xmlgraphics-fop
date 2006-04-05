@@ -18,6 +18,7 @@
 
 package org.apache.fop.svg;
 
+import org.apache.fop.pdf.PDFConformanceException;
 import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.pdf.PDFResources;
 import org.apache.fop.pdf.PDFGState;
@@ -812,6 +813,12 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             currentStream.write(currentColour.getColorSpaceOut(fill));
         } else if (c.getColorSpace().getType()
                    == ColorSpace.TYPE_CMYK) {
+            if (pdfDoc.getPDFAMode().isPDFA1LevelB()) {
+                //See PDF/A-1, ISO 19005:1:2005(E), 6.2.3.3
+                //FOP is currently restricted to DeviceRGB if PDF/A-1 is active.
+                throw new PDFConformanceException(
+                        "PDF/A-1 does not allow mixing DeviceRGB and DeviceCMYK.");
+            }
             float[] cComps = c.getColorComponents(new float[3]);
             double[] cmyk = new double[3];
             for (int i = 0; i < 3; i++) {

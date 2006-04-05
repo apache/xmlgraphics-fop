@@ -18,6 +18,8 @@
  
 package org.apache.fop.pdf;
 
+import java.util.List;
+
 /**
  * class representing a Root (/Catalog) object
  */
@@ -55,6 +57,9 @@ public class PDFRoot extends PDFObject {
 
     /** Optional Metadata object */
     private PDFMetadata metadata;
+    
+    /** The array of OutputIntents */
+    private List outputIntents;
     
     private int pageMode = PAGEMODE_USENONE;
 
@@ -137,6 +142,17 @@ public class PDFRoot extends PDFObject {
     }
 
     /**
+     * Adds an OutputIntent to the PDF
+     * @param outputIntent the OutputIntent dictionary
+     */
+    public void addOutputIntent(PDFOutputIntent outputIntent) {
+        if (this.outputIntents == null) {
+            this.outputIntents = new java.util.ArrayList();
+        }
+        this.outputIntents.add(outputIntent);
+    }
+    
+    /**
      * @see org.apache.fop.pdf.PDFObject#toPDFString()
      */
     public String toPDFString() {
@@ -167,6 +183,19 @@ public class PDFRoot extends PDFObject {
         if (getMetadata() != null 
                 && getDocumentSafely().getPDFVersion() >= PDFDocument.PDF_VERSION_1_4) {
             p.append("/Metadata " + getMetadata().referencePDF() + "\n");
+        }
+        if (this.outputIntents != null 
+                && this.outputIntents.size() > 0
+                && getDocumentSafely().getPDFVersion() >= PDFDocument.PDF_VERSION_1_4) {
+            p.append("/OutputIntents [");
+            for (int i = 0, c = this.outputIntents.size(); i < c; i++) {
+                PDFOutputIntent outputIntent = (PDFOutputIntent)this.outputIntents.get(i);
+                if (i > 0) {
+                    p.append(" ");
+                }
+                p.append(outputIntent.referencePDF());
+            }
+            p.append("]\n");
         }
         p.append(">>\nendobj\n");
         return p.toString();
