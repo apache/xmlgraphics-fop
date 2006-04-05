@@ -373,6 +373,13 @@ which will be used to configure the chosen Forrest skin.
       <width>125</width>
       <height>125</height>
     </credit-->
+    <credit box-location="alt2">
+      <name>ApacheCon EU 2006</name>
+      <url>http://apachecon.com/</url>
+      <image>http://www.eu.apachecon.com/konferenzen/apachecon06/images/header-left.gif</image>
+      <width>150</width>
+      <height>50</height>
+    </credit>
     <!--<credit>
       <name>Built with Cocoon</name>
       <url>http://xml.apache.org/cocoon/</url>
