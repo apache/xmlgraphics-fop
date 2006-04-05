@@ -117,6 +117,8 @@ public class RenderPagesModel extends AreaTreeModel {
             }
             try {
                 renderer.renderPage(page);
+            } catch (RuntimeException re) {
+                throw re;
             } catch (Exception e) {
                 //TODO use error handler to handle this FOP or IO Exception or propagate exception
                 String err = "Error while rendering page " + page.getPageNumberString(); 
