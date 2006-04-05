@@ -67,8 +67,8 @@
         <source><![CDATA[proc = Runtime.getRuntime().exec("lp -d" + print_queue + " -o -dp -");
 out = proc.getOutputStream();]]></source>
         <p>
-          Set the OutputStream (out) to the PCLRenderer and it happily sends the
-          PCL to the UNIX printer queue.
+          Set the output MIME type to "application/x-pcl" (MimeConstants.MIME_PCL) and 
+          it happily sends the PCL to the UNIX printer queue.
         </p>
       </section>
     </section>
@@ -83,7 +83,8 @@ out = proc.getOutputStream();]]></source>
         compatible.
       </p>
       <p>
-        Note that FOP does not currently support "tagged PDF", PDF/X or PDF/A.
+        Note that FOP does not currently support "tagged PDF", PDF/X or PDF/A. Support
+        for PDF/A-1b is in the works, however.
       </p>
       <section id="pdf-fonts">
         <title>Fonts</title>
@@ -222,9 +223,13 @@ out = proc.getOutputStream();]]></source>
 <section id="xml">
   <title>XML (Area Tree XML)</title>
   <p>
-    This is for testing and verification. The XML created is simply
-    a representation of the internal area tree put into XML. It does
-    not perform any other purpose.
+    This is primarily for testing and verification. The XML created is simply
+    a representation of the internal area tree put into XML. We use that to verify
+    the functionality of FOP's layout engine.
+  </p>
+  <p>
+    The other use case of the Area Tree XML is as FOP's "intermediate format". More information
+    on that can be found on the page dedicated to the <a href="intermediate.html">Intermediate Format</a>.
   </p>
 </section>
 <section id="awt">
