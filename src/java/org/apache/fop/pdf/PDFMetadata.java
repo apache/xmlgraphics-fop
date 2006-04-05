@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import javax.xml.transform.OutputKeys;
@@ -48,7 +49,7 @@ public class PDFMetadata extends PDFStream {
     private static final String XMLNS = "http://www.w3.org/2000/xmlns/";
 
     private static DateFormat pseudoISO8601DateFormat = new SimpleDateFormat(
-        "yyyy'-'MM'-'dd'T'HH':'mm':'ssZ");
+        "yyyy'-'MM'-'dd'T'HH':'mm':'ss");
 
     private Document xmpMetadata;
     private boolean readOnly = true;
@@ -148,14 +149,42 @@ public class PDFMetadata extends PDFStream {
         return sb.toString();
     }
 
-    private static String formatDate(Date dt) {
-        String s = pseudoISO8601DateFormat.format(dt);
+    /**
+     * Formats a Date using ISO 8601 format in the default time zone.
+     * @param dt the date
+     * @return the formatted date
+     */
+    public static String formatISO8601Date(Date dt) {
+        //ISO 8601 cannot be expressed directly using SimpleDateFormat
+        StringBuffer sb = new StringBuffer(pseudoISO8601DateFormat.format(dt));
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(dt);
+        int offset = cal.get(Calendar.ZONE_OFFSET);
+        offset += cal.get(Calendar.DST_OFFSET);
+        offset /= (1000 * 60); //Convert to minutes
         
-        //Now insert the colon that's not possible using SimpleDateFormat
-        int tzpos = s.length() - 4;
-        String tz = s.substring(tzpos);
-        s = s.substring(0, tzpos) + tz.substring(0, 2) + ":" + tz.substring(2);
-        return s;
+        if (offset == 0) {
+            sb.append('Z');
+        } else {
+            int zoh = offset / 60;
+            int zom = Math.abs(offset % 60);
+            if (zoh > 0) {
+                sb.append('+');
+            } else {
+                sb.append('-');
+            }
+            if (zoh < 10) {
+                sb.append('0');
+            }
+            sb.append(zoh);
+            sb.append(':');
+            if (zom < 10) {
+                sb.append('0');
+            }
+            sb.append(zom);
+        }
+        
+        return sb.toString();
     }
     
     /**
@@ -209,7 +238,7 @@ public class PDFMetadata extends PDFStream {
         }
         el = doc.createElementNS(XMPConstants.DUBLIN_CORE_NAMESPACE, "dc:date");
         desc.appendChild(el);
-        el.appendChild(doc.createTextNode(formatDate(info.getCreationDate())));
+        el.appendChild(doc.createTextNode(formatISO8601Date(info.getCreationDate())));
         
         //XMP Basic Schema
         desc = doc.createElementNS(XMPConstants.RDF_NAMESPACE, "rdf:Description");
@@ -218,7 +247,7 @@ public class PDFMetadata extends PDFStream {
         rdf.appendChild(desc);
         el = doc.createElementNS(XMPConstants.XMP_BASIC_NAMESPACE, "xmp:CreateDate");
         desc.appendChild(el);
-        el.appendChild(doc.createTextNode(formatDate(info.getCreationDate())));
+        el.appendChild(doc.createTextNode(formatISO8601Date(info.getCreationDate())));
         if (info.getCreator() != null) {
             el = doc.createElementNS(XMPConstants.XMP_BASIC_NAMESPACE, "xmp:CreatorTool");
             desc.appendChild(el);
