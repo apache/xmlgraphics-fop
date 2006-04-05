@@ -35,9 +35,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 // base64 support for "data" urls
-// TODO Move Base64 support from Batik to XML Graphics Commons
-import org.apache.batik.util.Base64DecodeStream;
-import org.apache.batik.util.Base64EncoderStream;
+import org.apache.xmlgraphics.util.io.Base64DecodeStream;
+import org.apache.xmlgraphics.util.io.Base64EncodeStream;
 
 /**
  * Provides FOP specific URI resolution.
@@ -180,7 +179,7 @@ public class FOURIResolver
         String combined = username + ":" + password;
         try {
             ByteArrayOutputStream baout = new ByteArrayOutputStream(combined.length() * 2);
-            Base64EncoderStream base64 = new Base64EncoderStream(baout);
+            Base64EncodeStream base64 = new Base64EncodeStream(baout);
             base64.write(combined.getBytes());
             base64.close();
             connection.setRequestProperty("Authorization", 
