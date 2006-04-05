@@ -24,13 +24,10 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 
-import org.apache.batik.bridge.ViewBox;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.Graphics2DImagePainter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.svg.PDFGraphics2D;
-import org.w3c.dom.svg.SVGDocument;
-import org.w3c.dom.svg.SVGSVGElement;
 
 /**
  * Graphics2DAdapter implementation for PDF.
@@ -86,7 +83,7 @@ public class PDFGraphics2DAdapter implements Graphics2DAdapter {
                 pdfInfo.pdfContext, pdfInfo.pdfPage.referencePDF(),
                 renderer.currentFontName,
                 renderer.currentFontSize);
-        graphics.setGraphicContext(new org.apache.batik.ext.awt.g2d.GraphicContext());
+        graphics.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
         
         AffineTransform transform = new AffineTransform();
         transform.translate(fx, fy);
