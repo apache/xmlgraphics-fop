@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<fop version="1.0">
+  <renderers>
+    <renderer mime="application/pdf">
+      <fonts>
+        <font metrics-url="test/resources/fonts/glb12.ttf.xml" embed-url="test/resources/fonts/glb12.ttf">
+          <font-triplet name="Gladiator" style="normal" weight="normal"/>
+        </font>
+        <font metrics-url="test/resources/fonts/glb12.ttf.ansi.xml" embed-url="test/resources/fonts/glb12.ttf">
+          <font-triplet name="Gladiator-Ansi" style="normal" weight="normal"/>
+        </font>
+        <font metrics-url="test/resources/fonts/glb12.ttf.ansi.xml">
+          <font-triplet name="Gladiator-Non-Embedded" style="normal" weight="normal"/>
+        </font>
+      </fonts>
+    </renderer>
+  </renderers>
+</fop>

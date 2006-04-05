@@ -150,6 +150,16 @@ public class PDFFactory {
     }
 
     /**
+     * Make a OutputIntent dictionary.
+     * @return the newly created OutputIntent dictionary
+     */
+    public PDFOutputIntent makeOutputIntent() {
+        PDFOutputIntent outputIntent = new PDFOutputIntent();
+        getDocument().registerObject(outputIntent);
+        return outputIntent;
+    }
+
+    /**
      * Make a /Page object. The page is assigned an object number immediately
      * so references can already be made. The page must be added to the
      * PDFDocument later using addObject().

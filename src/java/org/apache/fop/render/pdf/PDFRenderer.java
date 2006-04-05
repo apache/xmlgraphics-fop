@@ -20,8 +20,12 @@ package org.apache.fop.render.pdf;
 
 // Java
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.awt.Color;
+import java.awt.color.ColorSpace;
+import java.awt.color.ICC_Profile;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
 import java.util.Iterator;
@@ -34,6 +38,7 @@ import org.w3c.dom.Document;
 // Avalon
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
+import org.apache.commons.io.IOUtils;
 
 // FOP
 import org.apache.fop.apps.FOPException;
@@ -69,11 +74,13 @@ import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFEncryptionManager;
 import org.apache.fop.pdf.PDFEncryptionParams;
 import org.apache.fop.pdf.PDFFilterList;
+import org.apache.fop.pdf.PDFICCStream;
 import org.apache.fop.pdf.PDFInfo;
 import org.apache.fop.pdf.PDFLink;
 import org.apache.fop.pdf.PDFMetadata;
 import org.apache.fop.pdf.PDFNumber;
 import org.apache.fop.pdf.PDFOutline;
+import org.apache.fop.pdf.PDFOutputIntent;
 import org.apache.fop.pdf.PDFPage;
 import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.pdf.PDFResources;
@@ -352,10 +359,61 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         this.pdfDoc.setFilterMap(filterMap);
         this.pdfDoc.outputHeader(stream);
 
+        if (pdfAMode.isPDFA1LevelB()) {
+            log.debug("PDF/A is active. Conformance Level: " + pdfAMode);
+            addPDFA1OutputIntent();
+        }
+        
         //Setup encryption if necessary
         PDFEncryptionManager.setupPDFEncryption(encryptionParams, this.pdfDoc);
     }
 
+    /**
+     * Adds an OutputIntent to the PDF as mandated by PDF/A-1 when uncalibrated color spaces
+     * are used (which is true if we use DeviceRGB to represent sRGB colors).
+     * @throws IOException in case of an I/O problem
+     */
+    private void addPDFA1OutputIntent() throws IOException {
+        PDFOutputIntent outputIntent = pdfDoc.getFactory().makeOutputIntent();
+        outputIntent.setSubtype(PDFOutputIntent.GTS_PDFA1);
+        PDFICCStream icc = pdfDoc.getFactory().makePDFICCStream();
+        ICC_Profile profile;
+        InputStream in = PDFDocument.class.getResourceAsStream("sRGB Color Space Profile.icm");
+        if (in != null) {
+            try {
+                profile = ICC_Profile.getInstance(in);
+            } finally {
+                IOUtils.closeQuietly(in);
+            }
+        } else {
+            //Fallback: Use the sRGB profile from the JRE (about 140KB)
+            profile = ICC_Profile.getInstance(ColorSpace.CS_sRGB);
+        }
+        String desc = getICCProfileDescription(profile);
+        
+        icc.setColorSpace(profile, null);
+        outputIntent.setDestOutputProfile(icc);
+        outputIntent.setOutputConditionIdentifier(desc);
+        outputIntent.setInfo(outputIntent.getOutputConditionIdentifier());
+        pdfDoc.getRoot().addOutputIntent(outputIntent);
+    }
+
+    private String getICCProfileDescription(ICC_Profile profile) {
+        byte[] data = profile.getData(ICC_Profile.icSigProfileDescriptionTag);
+        if (data == null) {
+            return null;
+        } else {
+            //Info on the data format: http://www.color.org/ICC-1_1998-09.PDF
+            int length = (data[8] << 3 * 8) | (data[9] << 2 * 8) | (data[10] << 8) | data[11];
+            length--; //Remove trailing NUL character
+            try {
+                return new String(data, 12, length, "US-ASCII");
+            } catch (UnsupportedEncodingException e) {
+                throw new UnsupportedOperationException("Incompatible VM");
+            }
+        }
+    }
+    
     /**
      * @see org.apache.fop.render.Renderer#stopRenderer()
      */

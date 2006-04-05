@@ -27,6 +27,27 @@ Apache FOP is part of Apache's XML Graphics project. The homepage of Apache
 FOP is http://xmlgraphics.apache.org/fop/.
     
     
+Legal information
+---------------------
+
+Apache FOP is published under the Apache License version 2.0. For the license
+text, please see the following files:
+- LICENSE
+- NOTICE
+
+Legal information on libraries used by Apache FOP can be found in the 
+"lib/README.txt" file.
+
+Here is a list of files included in Apache FOP but not published under Apache
+License version 2.0:
+- sRGB IEC61966-2.1 color profile
+  File: src/java/org/apache/fop/pdf/sRGB Color Space Profile.icm
+  Info: src/java/org/apache/fop/pdf/sRGB Color Space Profile.icm.LICENSE.txt
+- K3 3 of 9 barcode font (TrueType)
+  File: examples/fo/advanced/K3.TTF
+  Info: example/fo/advanced/K3.README
+
+    
 Where to get help?
 ---------------------    
     

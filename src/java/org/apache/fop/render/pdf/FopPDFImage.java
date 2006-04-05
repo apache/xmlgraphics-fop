@@ -17,6 +17,7 @@
 /* $Id$ */
 
 package org.apache.fop.render.pdf;
+import org.apache.fop.pdf.PDFConformanceException;
 import org.apache.fop.pdf.PDFFilterList;
 import org.apache.fop.pdf.PDFImage;
 import org.apache.fop.pdf.PDFFilter;
@@ -24,6 +25,7 @@ import org.apache.fop.pdf.PDFICCStream;
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.DCTFilter;
+import org.apache.fop.pdf.CCFFilter;
 import org.apache.fop.pdf.PDFColorSpace;
 import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.pdf.BitmapImage;
@@ -36,7 +38,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_Profile;
-import org.apache.fop.pdf.CCFFilter;
 
 /**
  * PDFImage implementation for the PDF renderer.
@@ -128,6 +129,17 @@ public class FopPDFImage implements PDFImage {
             fopimg.setColorSpace(new PDFColorSpace(PDFColorSpace.DEVICE_GRAY));
             PDFXObject xobj = doc.addImage(null, fopimg);
             softMaskRef = xobj.referencePDF();
+        }
+        if (doc.getPDFAMode().isPDFA1LevelB()) {
+            if (pdfCS != null
+                    && pdfCS.getColorSpace() != PDFColorSpace.DEVICE_RGB 
+                    && pdfCS.getColorSpace() != PDFColorSpace.DEVICE_GRAY
+                    && prof == null) {
+                //See PDF/A-1, ISO 19005:1:2005(E), 6.2.3.3
+                //FOP is currently restricted to DeviceRGB if PDF/A-1 is active.
+                throw new PDFConformanceException(
+                        "PDF/A-1 does not allow mixing DeviceRGB and DeviceCMYK.");
+            }
         }
     }
 
