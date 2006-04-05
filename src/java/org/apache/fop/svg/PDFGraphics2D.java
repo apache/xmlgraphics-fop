@@ -42,8 +42,9 @@ import org.apache.fop.image.JpegImage;
 import org.apache.fop.fonts.CIDFont;
 import org.apache.fop.render.pdf.FopPDFImage;
 
-import org.apache.batik.ext.awt.g2d.AbstractGraphics2D;
-import org.apache.batik.ext.awt.g2d.GraphicContext;
+import org.apache.xmlgraphics.java2d.AbstractGraphics2D;
+import org.apache.xmlgraphics.java2d.GraphicContext;
+
 import org.apache.batik.ext.awt.RadialGradientPaint;
 import org.apache.batik.ext.awt.LinearGradientPaint;
 import org.apache.batik.ext.awt.MultipleGradientPaint;

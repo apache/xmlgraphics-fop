@@ -161,7 +161,7 @@ public class PDFTranscoder extends AbstractFOPTranscoder
                     ((Color)hints.get(ImageTranscoder.KEY_BACKGROUND_COLOR));
             }
             graphics.setGraphicContext
-                (new org.apache.batik.ext.awt.g2d.GraphicContext());
+                (new org.apache.xmlgraphics.java2d.GraphicContext());
             graphics.preparePainting();
 
             graphics.transform(curTxf);

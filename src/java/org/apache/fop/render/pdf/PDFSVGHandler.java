@@ -228,7 +228,7 @@ public class PDFSVGHandler implements XMLHandler, PDFRendererContextConstants {
                 pdfInfo.pdfDoc,
                 pdfInfo.pdfContext, pdfInfo.pdfPage.referencePDF(),
                 pdfInfo.currentFontName, pdfInfo.currentFontSize);
-        graphics.setGraphicContext(new org.apache.batik.ext.awt.g2d.GraphicContext());
+        graphics.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
         pdfInfo.pdfState.push();
         AffineTransform transform = new AffineTransform();
         // scale to viewbox
