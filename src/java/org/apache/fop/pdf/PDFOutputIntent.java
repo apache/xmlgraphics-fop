@@ -18,8 +18,9 @@
 
 package org.apache.fop.pdf;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+
+import org.apache.commons.io.output.ByteArrayOutputStream;
 
 /**
  * Represents the OutputIntent dictionary.
@@ -118,7 +119,7 @@ public class PDFOutputIntent extends PDFObject {
     /**
      * Sets the destination ICC profile.
      * @param destOutputProfile An ICC profile stream defining the transformation from the PDF 
-     *                          document’s source colors to output device colorants.
+     *                          document's source colors to output device colorants.
      */
     public void setDestOutputProfile(PDFICCStream destOutputProfile) {
         this.destOutputProfile = destOutputProfile;
