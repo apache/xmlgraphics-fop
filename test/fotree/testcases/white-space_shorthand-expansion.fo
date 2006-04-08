@@ -37,7 +37,7 @@
           <test:assert property="wrap-option" expected="NO_WRAP" />
           Block 2: testing white-space="pre"
         </fo:block>
-        <fo:block white-space="no-wrap">
+        <fo:block white-space="nowrap">
           <test:assert property="linefeed-treatment" expected="TREAT_AS_SPACE" />
           <test:assert property="white-space-treatment" expected="IGNORE_IF_SURROUNDING_LINEFEED" />
           <test:assert property="white-space-collapse" expected="TRUE" />

@@ -64,18 +64,6 @@
     in case of text-align="justify".</description>
   </testcase>
   <testcase>
-    <name>block white-space-treatment 1</name>
-    <file>block_white-space-treatment_1.xml</file>
-    <description>White space around formatter generated linebreaks is
-    not removed correctly.</description>
-  </testcase>
-  <testcase>
-    <name>block white-space-treatment 2</name>
-    <file>block_white-space-treatment_2.xml</file>
-    <description>White space around formatter generated linebreaks is
-    not removed correctly.</description>
-  </testcase>
-  <testcase>
     <name>block word-spacing</name>
     <file>block_word-spacing.xml</file>
     <description>Word-spacing may not work as expected.</description>
