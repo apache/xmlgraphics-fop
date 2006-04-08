@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2005 The Apache Software Foundation
+  Copyright 2005-2006 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -19,8 +19,6 @@
   <info>
     <p>
       This test checks basic white space handling for white-space-collapse="false".
-      The test currently fails because white space around formatter generated
-      linebreaks is not removed correctly.
     </p>
   </info>
   <fo>
@@ -101,7 +99,43 @@
     </fo:root>
   </fo>
   <checks>
-    <!-- The tests are currently incomplete but enough to fail -->
-    <eval expected="60" xpath="count(//flow/block[1]/lineArea[1]/text/space)"/>
+    <eval expected="5" xpath="count(//flow/block[1]/lineArea[1]/text[1]/word)"/>
+    <eval expected="60" xpath="count(//flow/block[1]/lineArea[1]/text[1]/space)"/>
+    <eval expected="1" xpath="count(//flow/block[1]/lineArea[2]/text[1]/word)"/>
+    <eval expected="2" xpath="count(//flow/block[1]/lineArea[2]/text[1]/space)"/>
+    
+    <eval expected="3" xpath="count(//flow/block[2]/block[1]/lineArea[1]/text/word)"/>
+    <eval expected="2" xpath="count(//flow/block[2]/block[1]/lineArea[1]/text/space)"/>
+    <eval expected="3" xpath="count(//flow/block[2]/block[2]/lineArea[1]/text/word)"/>
+    <eval expected="2" xpath="count(//flow/block[2]/block[2]/lineArea[1]/text/space)"/>
+    
+    <eval expected="2" xpath="count(//flow/block[3]/lineArea[1]/inlineparent[1]/text/word)"/>
+    <eval expected="16" xpath="count(//flow/block[3]/lineArea[1]/inlineparent[1]/text/space)"/>
+    <eval expected="13" xpath="count(//flow/block[3]/lineArea[1]/text[1]/space)"/>
+    <eval expected="2" xpath="count(//flow/block[3]/lineArea[1]/inlineparent[2]/text/word)"/>
+    <eval expected="16" xpath="count(//flow/block[3]/lineArea[1]/inlineparent[2]/text/space)"/>
+    
+    <eval expected="2" xpath="count(//flow/block[4]/lineArea[1]/text[1]/word)"/>
+    <eval expected="16" xpath="count(//flow/block[4]/lineArea[1]/text[1]/space)"/>
+    <eval expected="2" xpath="count(//flow/block[4]/lineArea[1]/inlineparent[1]/text/word)"/>
+    <eval expected="31" xpath="count(//flow/block[4]/lineArea[1]/inlineparent[1]/text/space)"/>
+    <eval expected="1" xpath="count(//flow/block[4]/lineArea[1]/text[2]/word)"/>
+    <eval expected="13" xpath="count(//flow/block[4]/lineArea[1]/text[2]/space)"/>
+    
+    <eval expected="2" xpath="count(//flow/block[5]/lineArea[1]/inlineparent[1]/text/word)"/>
+    <eval expected="18" xpath="count(//flow/block[5]/lineArea[1]/inlineparent[1]/text/space)"/>
+    <eval expected="3" xpath="count(//flow/block[5]/lineArea[1]/inlineparent[1]/inlineparent[1]/text/word)"/>
+    <eval expected="17" xpath="count(//flow/block[5]/lineArea[1]/inlineparent[1]/inlineparent[1]/text/space)"/>
+
+    <eval expected="3" xpath="count(//flow/block[6]/lineArea[1]/inlineparent[1]/inlineparent[1]/text/word)"/>
+    <eval expected="19" xpath="count(//flow/block[6]/lineArea[1]/inlineparent[1]/inlineparent[1]/text/space)"/>
+    <eval expected="2" xpath="count(//flow/block[6]/lineArea[1]/inlineparent[1]/text/word)"/>
+    <eval expected="16" xpath="count(//flow/block[6]/lineArea[1]/inlineparent[1]/text/space)"/>
+
+    <eval expected="2" xpath="count(//flow/block[7]/lineArea[1]/text[1]/word)"/>
+    <eval expected="14" xpath="count(//flow/block[7]/lineArea[1]/text[1]/space)"/>
+    <eval expected="15" xpath="count(//flow/block[7]/lineArea[1]/inlineparent[1]/text[1]/space)"/>
+    <eval expected="3" xpath="count(//flow/block[7]/lineArea[1]/inlineparent[1]/inlineparent[1]/text/word)"/>
+    <eval expected="36" xpath="count(//flow/block[7]/lineArea[1]/inlineparent[1]/inlineparent[1]/text/space)"/>
   </checks>
 </testcase>

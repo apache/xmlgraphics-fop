@@ -2823,7 +2823,7 @@ public class FOPropertyMapping implements Constants {
         m.setInherited(true);
         m.addEnum("normal", getEnumProperty(EN_NORMAL, "NORMAL"));
         m.addEnum("pre", getEnumProperty(EN_PRE, "PRE"));
-        m.addEnum("no-wrap", getEnumProperty(EN_NO_WRAP, "NO_WRAP"));
+        m.addEnum("nowrap", getEnumProperty(EN_NO_WRAP, "NO_WRAP"));
         m.setDefault("normal");
         m.setDatatypeParser(new WhiteSpaceShorthandParser());
         addPropertyMaker("white-space", m);

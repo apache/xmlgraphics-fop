@@ -85,6 +85,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         hyphenationProperties = fobj.getCommonHyphenation();
         hyphenationLadderCount = fobj.getHyphenationLadderCount();
         wrapOption = fobj.getWrapOption();
+        whiteSpaceTreament = fobj.getWhitespaceTreatment();
         //
         effectiveAlignment = getEffectiveAlignment(textAlignment, textAlignmentLast);
         isFirstInBlock = (this == getParent().getChildLMs().get(0));
@@ -149,6 +150,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     private CommonHyphenation hyphenationProperties;
     private Numeric hyphenationLadderCount;
     private int wrapOption = EN_WRAP;
+    private int whiteSpaceTreament;
     //private LayoutProps layoutProps;
 
     private Length lineHeight;
@@ -1639,32 +1641,41 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 }
             }
             
-            // ignore the last element in the line if it is a KnuthGlue object
-            seqIterator = seq.listIterator(iEndElement);
-            tempElement = (KnuthElement) seqIterator.next();
-            if (tempElement.isGlue()) {
-                iEndElement--;
-                // this returns the same KnuthElement
-                seqIterator.previous();
-                if (seqIterator.hasPrevious()) {
-                    tempElement = (KnuthElement) seqIterator.previous();
-                } else {
-                    tempElement = null;
+            // Remove trailing spaces if allowed so
+            if (whiteSpaceTreament == EN_IGNORE_IF_SURROUNDING_LINEFEED
+                || whiteSpaceTreament == EN_IGNORE 
+                || whiteSpaceTreament == EN_IGNORE_IF_BEFORE_LINEFEED) {
+                // ignore the last element in the line if it is a KnuthGlue object
+                seqIterator = seq.listIterator(iEndElement);
+                tempElement = (KnuthElement) seqIterator.next();
+                if (tempElement.isGlue()) {
+                    iEndElement--;
+                    // this returns the same KnuthElement
+                    seqIterator.previous();
+                    if (seqIterator.hasPrevious()) {
+                        tempElement = (KnuthElement) seqIterator.previous();
+                    } else {
+                        tempElement = null;
+                    }
+                }
+                if (tempElement != null) {
+                    lastLM = tempElement.getLayoutManager();
                 }
             }
-            if (tempElement != null) {
-                lastLM = tempElement.getLayoutManager();
-            }
             
-            // ignore KnuthGlue and KnuthPenalty objects
-            // at the beginning of the line
-            seqIterator = seq.listIterator(iStartElement);
-            tempElement = (KnuthElement) seqIterator.next();
-            while (!tempElement.isBox() && seqIterator.hasNext()) {
+            // Remove leading spaces if allowed so
+            if (whiteSpaceTreament == EN_IGNORE_IF_SURROUNDING_LINEFEED
+                || whiteSpaceTreament == EN_IGNORE 
+                || whiteSpaceTreament == EN_IGNORE_IF_AFTER_LINEFEED) {
+                // ignore KnuthGlue and KnuthPenalty objects
+                // at the beginning of the line
+                seqIterator = seq.listIterator(iStartElement);
                 tempElement = (KnuthElement) seqIterator.next();
-                iStartElement++;
+                while (!tempElement.isBox() && seqIterator.hasNext()) {
+                    tempElement = (KnuthElement) seqIterator.next();
+                    iStartElement++;
+                }
             }
-            
             // Add the inline areas to lineArea
             PositionIterator inlinePosIter
               = new KnuthPossPosIter(seq, iStartElement, iEndElement + 1);

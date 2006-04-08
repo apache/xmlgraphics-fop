@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,6 +80,7 @@ public class FOText extends FONode {
     private ColorType color;
     private Property letterSpacing;
     private SpaceProperty lineHeight;
+    private int whiteSpaceTreatment;
     private int whiteSpaceCollapse;
     private int textTransform;
     private Property wordSpacing;
@@ -159,6 +160,7 @@ public class FOText extends FONode {
         lineHeight = pList.get(Constants.PR_LINE_HEIGHT).getSpace();
         letterSpacing = pList.get(Constants.PR_LETTER_SPACING);
         whiteSpaceCollapse = pList.get(Constants.PR_WHITE_SPACE_COLLAPSE).getEnum();
+        whiteSpaceTreatment = pList.get(Constants.PR_WHITE_SPACE_TREATMENT).getEnum();
         textTransform = pList.get(Constants.PR_TEXT_TRANSFORM).getEnum();
         wordSpacing = pList.get(Constants.PR_WORD_SPACING);
         wrapOption = pList.get(Constants.PR_WRAP_OPTION).getEnum();
@@ -575,6 +577,13 @@ public class FOText extends FONode {
      */
     public SpaceProperty getLineHeight() {
         return lineHeight;
+    }
+    
+    /**
+     * @return the "white-space-treatment" property
+     */
+    public int getWhitespaceTreatment() {
+        return whiteSpaceTreatment;
     }
     
     /**

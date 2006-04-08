@@ -25,6 +25,7 @@ import java.util.ListIterator;
 
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.TextArea;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.flow.Inline;
 import org.apache.fop.fonts.Font;
@@ -438,11 +439,13 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         for (int i = firstIndex; i <= lastIndex; i++) {
             areaInfo = (AreaInfo) vecAreaInfo.get(i);
             if (areaInfo.isSpace) {
-                // areaInfo stores information about a space
-                // add a space to the TextArea
-                char spaceChar = textArray[areaInfo.iStartIndex];
-                textArea.addSpace(spaceChar, 0, 
-                        CharUtilities.isAdjustableSpace(spaceChar));
+                // areaInfo stores information about spaces
+                // add the spaces to the TextArea
+                for (int j = areaInfo.iStartIndex; j < areaInfo.iBreakIndex; j++) {
+                    char spaceChar = textArray[j];
+                    textArea.addSpace(spaceChar, 0, 
+                            CharUtilities.isAdjustableSpace(spaceChar));
+                }
             } else {
                 // areaInfo stores information about a word fragment
                 if (wordStartIndex == -1) {
@@ -529,9 +532,29 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
         while (iNextStart < textArray.length) {
             char ch = textArray[iNextStart]; 
-            if (ch == CharUtilities.SPACE
-                || ch == CharUtilities.NBSPACE) {
-                // normal space or non-breaking space:
+            if (ch == CharUtilities.SPACE 
+                && foText.getWhitespaceTreatment() != Constants.EN_PRESERVE) {
+                // normal non preserved space - collect them all
+                // advance to the next character
+                iThisStart = iNextStart;
+                iNextStart++;
+                while (iNextStart < textArray.length 
+                    && textArray[iNextStart] == CharUtilities.SPACE) {
+                    iNextStart++;
+                }
+                // create the AreaInfo object
+                ai = new AreaInfo(iThisStart, (short) (iNextStart),
+                        (short) (iNextStart - iThisStart), (short) 0,
+                        MinOptMax.multiply(wordSpaceIPD, iNextStart - iThisStart),
+                        false, true); 
+                vecAreaInfo.add(ai);
+
+                // create the elements
+                sequence.addAll
+                    (createElementsForASpace(alignment, ai, vecAreaInfo.size() - 1));
+
+            } else if (ch == CharUtilities.SPACE || ch == CharUtilities.NBSPACE) {
+                // preserved space or non-breaking space:
                 // create the AreaInfo object
                 ai = new AreaInfo(iNextStart, (short) (iNextStart + 1),
                         (short) 1, (short) 0,
@@ -867,8 +890,9 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 spaceElements.add(new KnuthInlineBox(ai.ipdArea.opt, null,
                         mainPosition, true));
             }
-        } else {
-            // a breaking space
+        } else if (textArray[ai.iStartIndex] == CharUtilities.SPACE
+                    && foText.getWhitespaceTreatment() == Constants.EN_PRESERVE) {
+            // a breaking space that needs to be preserved
             switch (alignment) {
             case EN_CENTER:
                 // centered text:
@@ -884,6 +908,97 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                                 (textArray[ai.iStartIndex] == CharUtilities.NBSPACE 
                                         ? KnuthElement.INFINITE
                                         : 0), false,
+                                new LeafPosition(this, -1), false));
+                spaceElements.add(new KnuthGlue(
+                        - (lineStartBAP + lineEndBAP), -6
+                        * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
+                        new LeafPosition(this, -1), false));
+                spaceElements.add(new KnuthInlineBox(0, null,
+                        notifyPos(new LeafPosition(this, -1)), false));
+                spaceElements.add(new KnuthPenalty(0, KnuthElement.INFINITE,
+                        false, new LeafPosition(this, -1), false));
+                spaceElements.add(new KnuthGlue(ai.ipdArea.opt + lineStartBAP,
+                        3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
+                        mainPosition, false));
+                break;
+
+            case EN_START: // fall through
+            case EN_END:
+                // left- or right-aligned text:
+                // if the second element is chosen as a line break these elements 
+                // add a constant amount of stretch at the end of a line, otherwise
+                // they don't add any stretch
+                spaceElements.add(new KnuthGlue(lineEndBAP,
+                        3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
+                        new LeafPosition(this, -1), false));
+                spaceElements.add(new KnuthPenalty(0, 0, false,
+                        new LeafPosition(this, -1), false));
+                spaceElements.add(new KnuthGlue(
+                        - (lineStartBAP + lineEndBAP), -3
+                        * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
+                        new LeafPosition(this, -1), false));
+                spaceElements.add(new KnuthInlineBox(0, null,
+                        notifyPos(new LeafPosition(this, -1)), false));
+                spaceElements.add(new KnuthPenalty(0,
+                        KnuthElement.INFINITE, false, new LeafPosition(
+                                this, -1), false));
+                spaceElements.add(new KnuthGlue(ai.ipdArea.opt + lineStartBAP, 0, 0,
+                        mainPosition, false));
+                break;
+
+            case EN_JUSTIFY:
+                // justified text:
+                // the stretch and shrink depends on the space width
+                spaceElements.add(new KnuthGlue(lineEndBAP, 0, 0,
+                        new LeafPosition(this, -1), false));
+                spaceElements.add(new KnuthPenalty(0, 0, false,
+                        new LeafPosition(this, -1), false));
+                spaceElements.add(new KnuthGlue(
+                        - (lineStartBAP + lineEndBAP), ai.ipdArea.max
+                        - ai.ipdArea.opt, ai.ipdArea.opt - ai.ipdArea.min,
+                        new LeafPosition(this, -1), false));
+                spaceElements.add(new KnuthInlineBox(0, null,
+                        notifyPos(new LeafPosition(this, -1)), false));
+                spaceElements.add(new KnuthPenalty(0,
+                        KnuthElement.INFINITE, false, new LeafPosition(
+                                this, -1), false));
+                spaceElements.add(new KnuthGlue(lineStartBAP + ai.ipdArea.opt, 0, 0,
+                        mainPosition, false));
+                break;
+
+            default:
+                // last line justified, the other lines unjustified:
+                // use only the space stretch
+                spaceElements.add(new KnuthGlue(lineEndBAP, 0, 0,
+                        new LeafPosition(this, -1), false));
+                spaceElements.add(new KnuthPenalty(0, 0, false,
+                        new LeafPosition(this, -1), false));
+                spaceElements.add(new KnuthGlue(
+                        - (lineStartBAP + lineEndBAP), ai.ipdArea.max
+                        - ai.ipdArea.opt, 0,
+                        new LeafPosition(this, -1), false));
+                spaceElements.add(new KnuthInlineBox(0, null,
+                        notifyPos(new LeafPosition(this, -1)), false));
+                spaceElements.add(new KnuthPenalty(0,
+                        KnuthElement.INFINITE, false, new LeafPosition(
+                                this, -1), false));
+                spaceElements.add(new KnuthGlue(lineStartBAP + ai.ipdArea.opt, 0, 0,
+                        mainPosition, false));
+            }
+        } else {
+            // a (possible block) of breaking spaces
+            switch (alignment) {
+            case EN_CENTER:
+                // centered text:
+                // if the second element is chosen as a line break these elements 
+                // add a constant amount of stretch at the end of a line and at the
+                // beginning of the next one, otherwise they don't add any stretch
+                spaceElements.add(new KnuthGlue(lineEndBAP,
+                        3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
+                        new LeafPosition(this, -1), false));
+                spaceElements
+                        .add(new KnuthPenalty(
+                                0, 0, false,
                                 new LeafPosition(this, -1), false));
                 spaceElements.add(new KnuthGlue(ai.ipdArea.opt
                         - (lineStartBAP + lineEndBAP), -6
@@ -941,9 +1056,10 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                             new LeafPosition(this, -1), false));
                     spaceElements.add(new KnuthPenalty(0, 0, false,
                             new LeafPosition(this, -1), false));
-                    spaceElements.add(new KnuthGlue(ai.ipdArea.opt
-                            - (lineStartBAP + lineEndBAP), ai.ipdArea.max
-                            - ai.ipdArea.opt, ai.ipdArea.opt - ai.ipdArea.min,
+                    spaceElements.add(new KnuthGlue(
+                            ai.ipdArea.opt - (lineStartBAP + lineEndBAP),
+                            ai.ipdArea.max - ai.ipdArea.opt,
+                            ai.ipdArea.opt - ai.ipdArea.min,
                             mainPosition, false));
                     spaceElements.add(new KnuthInlineBox(0, null,
                             notifyPos(new LeafPosition(this, -1)), false));
@@ -954,8 +1070,9 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                             new LeafPosition(this, -1), false));
                 } else {
                     spaceElements.add(new KnuthGlue(ai.ipdArea.opt,
-                            ai.ipdArea.max - ai.ipdArea.opt, ai.ipdArea.opt
-                                    - ai.ipdArea.min, mainPosition, false));
+                            ai.ipdArea.max - ai.ipdArea.opt,
+                            ai.ipdArea.opt - ai.ipdArea.min,
+                            mainPosition, false));
                 }
                 break;
 
@@ -967,9 +1084,10 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                             new LeafPosition(this, -1), false));
                     spaceElements.add(new KnuthPenalty(0, 0, false,
                             new LeafPosition(this, -1), false));
-                    spaceElements.add(new KnuthGlue(ai.ipdArea.opt
-                            - (lineStartBAP + lineEndBAP), ai.ipdArea.max
-                            - ai.ipdArea.opt, 0, mainPosition, false));
+                    spaceElements.add(new KnuthGlue(
+                            ai.ipdArea.opt - (lineStartBAP + lineEndBAP),
+                            ai.ipdArea.max - ai.ipdArea.opt,
+                            0, mainPosition, false));
                     spaceElements.add(new KnuthInlineBox(0, null,
                             notifyPos(new LeafPosition(this, -1)), false));
                     spaceElements.add(new KnuthPenalty(0,
@@ -979,8 +1097,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                             new LeafPosition(this, -1), false));
                 } else {
                     spaceElements.add(new KnuthGlue(ai.ipdArea.opt,
-                            ai.ipdArea.max - ai.ipdArea.opt, 0, mainPosition,
-                            false));
+                            ai.ipdArea.max - ai.ipdArea.opt, 0,
+                            mainPosition, false));
                 }
             }
         }
