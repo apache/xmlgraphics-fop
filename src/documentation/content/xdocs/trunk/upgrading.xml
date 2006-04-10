@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2005 The Apache Software Foundation
+  Copyright 2005-2006 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -31,13 +31,17 @@
       <ul>
         <li>
           More than half of the codebase has been rewritten over the last three years. The code is 
-          relatively new and possibly not as stable as version 0.20.5 in every regard.
+          relatively new and possibly not as stable as version 0.20.5 in every regard. But the code
+          is <strong>quickly approaching production level</strong>, especially when you're happy 
+          with only PDF and PostScript output.
         </li>
         <li>
           The API of FOP has changed considerably and is not backwards-compatible with version 0.20.5.
         </li>
         <li>
-          The new API is not stable, yet. Please be aware that further changes might still occur!
+          There have been changes to the end-user API between 0.91 beta and 0.92 beta. With version 0.92, 
+          the API is now considered stable. Some methods have been deprecated and will be removed with
+          the next release. If you upgrade from 0.91 beta, you will need to adjust your Java code.
         </li>
         <li>
           <p>
@@ -64,14 +68,10 @@
         </li>
         <li>
           By looking at the <a href="../compliance.html">Compliance page</a> you might get the impression
-          that the new code is much more advanced than version 0.20.5. That's true but there are still
-          a few things that may not be handled as gracefully by the new code as by version 0.20.5.
+          that the new code is much more advanced than version 0.20.5. That's true but there may still
+          be a few things that may not be handled as gracefully by the new code as by version 0.20.5.
         </li>
       </ul>
-      <p>
-        So, please evaluate carefully before messing up your production environment! Actually we do 
-        recommend against using the FOP development version in a production system.
-      </p>
     </section>
     <section id="issues">
       <title>What you need to know when you upgrade!</title>

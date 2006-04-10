@@ -83,8 +83,8 @@ out = proc.getOutputStream();]]></source>
         compatible.
       </p>
       <p>
-        Note that FOP does not currently support "tagged PDF", PDF/X or PDF/A. Support
-        for PDF/A-1b is in the works, however.
+        Note that FOP does not currently support "tagged PDF", PDF/X or PDF/A-1a. 
+        <a href="pdfa.html">Support for PDF/A-1b</a> has recently been added, however.
       </p>
       <section id="pdf-fonts">
         <title>Fonts</title>
@@ -206,7 +206,6 @@ out = proc.getOutputStream();]]></source>
       <li>Only Type 1 fonts are supported.</li>
       <li>Multibyte characters are not supported.</li>
       <li>PPD support is still missing.</li>
-      <li>The renderer is not yet configurable.</li>
     </ul>
   </section>
 </section>
@@ -377,6 +376,23 @@ out = proc.getOutputStream();]]></source>
        then the page may look wrong.
      </p>
    </section>
+</section>
+<section id="wishlist">
+  <title>Wish list</title>
+  <p>
+    Apache FOP is easily extensible and allows you to add new output formats to enhance FOP's functionality. There's a number of output formats
+    which are on our wish list. We're looking for volunteers to help us implement them.
+  </p>
+  <ul>
+    <li>
+      <a href="http://en.wikipedia.org/wiki/Advanced_Function_Presentation">AFP (Advanced Function Presentation)</a>: 
+      The renderer has already been built and is in the process of being brought into the Apache FOP codebase.
+    </li>
+    <li>
+      <a href="http://en.wikipedia.org/wiki/OpenDocument">ODF (Open Document Format)</a>: 
+      The standardized successor to OpenOffice's file format.
+    </li>
+  </ul>
 </section>
 
   </body>
