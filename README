@@ -6,6 +6,7 @@ $Id$
 
 Contents of this file:
  - What is FOP?
+ - Legal Information
  - Where to get help?
  - How do I build FOP?
  - How do I run FOP?
@@ -21,13 +22,14 @@ Apache FOP is the world's first print formatter driven by XSL formatting
 objects. It is a Java application that reads a formatting object tree 
 conforming to the XSL 1.0 Recommendation (15 October 2001) and then turns it 
 into a PDF document, certain other output formats or allows you to preview it 
-directly on screen.
+directly on screen. Some parts of the XSL 1.1 specification (work in progress!)
+have also been implemented.
 
 Apache FOP is part of Apache's XML Graphics project. The homepage of Apache 
 FOP is http://xmlgraphics.apache.org/fop/.
     
     
-Legal information
+Legal Information
 ---------------------
 
 Apache FOP is published under the Apache License version 2.0. For the license
@@ -70,7 +72,7 @@ How do I build FOP?
 If you've downloaded a binary distribution, you don't need to build FOP.
 
 Otherwise, please follow the instructions found here:
-http://xmlgraphics.apache.org/fop/0.90/compiling.html
+http://xmlgraphics.apache.org/fop/latest/compiling.html
 
 
 How do I run FOP?
@@ -86,13 +88,13 @@ For more details, see: http://xmlgraphics.apache.org/fop/latest/running.html
   RELEASE NOTES
 ==============================================================================
 
-Version 0.91 beta
+Version 0.92 beta
 ---------------------
 
-We don't list all the changes since the 0.20.5 release, since this release 
-represents the first after a complete redesign of the FOP codebase. This 
-is basically a new software. But the changes since 0.90 alpha 1 can be looked
-up under http://xmlgraphics.apache.org/fop/changes.html.
+We don't list all the changes since the 0.20.5 release, since the codebase
+was practically rewritten in large areas as part of a big redesign effort.
+This is basically a new software. But the changes since 0.90 alpha 1 can be
+looked up under http://xmlgraphics.apache.org/fop/changes.html.
 
 Upgrading from 0.20.5:
 Please read http://xmlgraphics.apache.org/fop/latest/upgrading.html
@@ -106,8 +108,9 @@ Caveats:
 
     - This release is a beta release. If you intend to use this software 
       in a production environment, please perform careful testing.
-    - The API is not to be considered stable, yet. Please be prepared 
-      for the API to be changed in a backwards-incompatible way.
+    - With the latest changes, the API is now considered stable. Please 
+      note that the API has changed in a backwards-incompatible way since 
+      the last release.
     - You may experience different behaviour compared to version 0.20.5.
       Please consult the "Upgrading" page indicated above for details.
 
@@ -116,7 +119,6 @@ Known issues:
     - PCL, MIF and SVG support have not been restored, yet.
     - Java2D/AWT support contains some problems, for example with 
       block-containers.
-    - Support for kerning has not been restored, yet.
     - Auto table layout is not implemented, yet.
     - The collapsing border model on tables is not implemented, yet. Please 
       use border-collapse="separate" for now.
@@ -128,7 +130,6 @@ Known issues:
     - block-containers with no height currently don't create a fence for
       spaces as they should (they behave like a normal block).
     - Preserved linefeeds in fo:character are not handled correctly.
-    - Zero-width spaces are not handled correctly.
     - An empty block currently produces a fence for stacking constraints
       which it shouldn't.
     - There are several small problems around white space handling.
@@ -136,7 +137,6 @@ Known issues:
       too big and shrinking is allowed to happen.
     - Block-level content in fo:inlines may produce unwelcome results.
     - inline-container may not work as expected.
-    - letter-spacing and word-spacing properties may not work as expected.
     - leaders with leader-pattern="use-content" may not work as expected.
     - keep-with-previous doesn't work inside tables and lists, yet.
     - White space on direct inline-level children of a marker is not 
@@ -158,8 +158,6 @@ Known issues:
       and attempting to create columns implicitly from the first
       table row is not implemented, yet (Bugzilla #35656).
     - Leaders with the "rule" pattern don't work for PostScript output.
-    - break-after may in some cases cause subsequent content to be swallowed. 
-      Please use break-before, if possible.
     - Internal basic-links don't point to the exact location on a page, yet, 
       as they did in 0.20.5. Currently you land in the upper left corner of 
       the page.
