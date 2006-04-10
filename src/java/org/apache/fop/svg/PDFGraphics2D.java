@@ -60,6 +60,7 @@ import java.awt.Color;
 import java.awt.GraphicsConfiguration;
 /*  java.awt.Font is not imported to avoid confusion with
     org.apache.fop.fonts.Font */
+import java.awt.GradientPaint;
 import java.awt.Image;
 import java.awt.Shape;
 import java.awt.Stroke;
@@ -852,12 +853,25 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      *
      * @param paint the paint to convert to PDF
      * @param fill true if the paint should be set for filling
+     * @return true if the paint is handled natively, false if the paint should be rasterized
      */
     protected boolean applyPaint(Paint paint, boolean fill) {
         preparePainting();
 
         if (paint instanceof Color) {
             return true;
+        }
+        // convert java.awt.GradientPaint to LinearGradientPaint to avoid rasterization
+        if (paint instanceof GradientPaint) {
+            GradientPaint gpaint = (GradientPaint) paint;
+            paint = new LinearGradientPaint(
+                    (float) gpaint.getPoint1().getX(),
+                    (float) gpaint.getPoint1().getY(),
+                    (float) gpaint.getPoint2().getX(),
+                    (float) gpaint.getPoint2().getY(), 
+                    new float[] {0, 1}, 
+                    new Color[] {gpaint.getColor1(), gpaint.getColor2()},
+                    gpaint.isCyclic() ? LinearGradientPaint.REPEAT : LinearGradientPaint.NO_CYCLE);
         }
         if (paint instanceof LinearGradientPaint) {
             LinearGradientPaint gp = (LinearGradientPaint)paint;
