@@ -216,6 +216,10 @@ will produce incorrect results.</td>
             <td>Mandatory. Not embedding the font produces invalid PDF documents.</td>
           </tr>
         </table>
+        <warning>
+          You may experience failures with certain TrueType fonts, especially if they don't contain 
+          the so-called "cmap" table. TTFReader can currently not deal with font like this.
+        </warning>
       </section>
       <section id="truetype-collections-metrics">
         <title>TrueType Collections Font Metrics</title>
@@ -293,9 +297,6 @@ See <a href="#ttf-encoding">Table of TTF Encoding Options</a> for more details.<
   <cap-height>673</cap-height>
   <x-height>766</x-height>
   [..]]]></source>
-        <note>
-          FOP does not currently fully comply with or support the PDF/A standard. There's partial support for PDF/A-1b. This is "work-in-progress".
-        </note>
       </section>
     </section>
   </body>
