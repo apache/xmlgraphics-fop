@@ -51,6 +51,12 @@
     correctly.</description>
   </testcase>
   <testcase>
+    <name>white-space-treatment</name>
+    <file>block_white-space-treatment_3.xml</file>
+    <description>White space handling incorrectly stops at inline
+      boundaries when it comes to formatter generated line breaks.</description>
+  </testcase>
+  <testcase>
     <name>Empty blocks produce fences</name>
     <file>block_space-before_space-after_8.xml</file>
     <description>An empty block currently produces a fence for
