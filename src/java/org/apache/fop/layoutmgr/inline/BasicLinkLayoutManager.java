@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2004,2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 
 package org.apache.fop.layoutmgr.inline;
 
+import org.apache.fop.datatypes.URISpecification;
 import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.area.inline.InlineArea;
@@ -41,6 +42,7 @@ public class BasicLinkLayoutManager extends InlineLayoutManager {
         fobj = node;
     }
 
+    /** @see org.apache.fop.layoutmgr.inline.InlineLayoutManager#createArea(boolean) */
     protected InlineArea createArea(boolean bInlineParent) {
         InlineArea area = super.createArea(bInlineParent);
         setupBasicLinkArea(parentLM, area);
@@ -50,7 +52,8 @@ public class BasicLinkLayoutManager extends InlineLayoutManager {
     private void setupBasicLinkArea(LayoutManager parentLM,
                                       InlineArea area) {
          if (fobj.getExternalDestination() != null) {
-             area.addTrait(Trait.EXTERNAL_LINK, fobj.getExternalDestination());
+             area.addTrait(Trait.EXTERNAL_LINK, 
+                     URISpecification.getURL(fobj.getExternalDestination()));
          } else {
              String idref = fobj.getInternalDestination();
              PageViewport page = getPSLM().getFirstPVWithID(idref);

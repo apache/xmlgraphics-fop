@@ -27,6 +27,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix">
+        Bugfix: Allow URLs in basic-link's external-destination to be wrapped in "url()".
+      </action>
       <action context="Code" dev="MM" type="fix">
         Bugfix: Corrected enumerated property value for white-space property
         from "no-wrap" to "nowrap".

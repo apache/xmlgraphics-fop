@@ -37,6 +37,7 @@ import org.apache.commons.logging.LogFactory;
 // FOP
 import org.apache.fop.image.analyser.ImageReaderFactory;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.datatypes.URISpecification;
 
 
 /**
@@ -131,25 +132,7 @@ public final class ImageFactory {
      * @return the raw url
      */
     public static String getURL(String href) {
-        /*
-         * According to section 5.11 a <uri-specification> is:
-         * "url(" + URI + ")"
-         * according to 7.28.7 a <uri-specification> is:
-         * URI
-         * So handle both.
-         */
-        href = href.trim();
-        if (href.startsWith("url(") && (href.indexOf(")") != -1)) {
-            href = href.substring(4, href.indexOf(")")).trim();
-            if (href.startsWith("'") && href.endsWith("'")) {
-                href = href.substring(1, href.length() - 1);
-            } else if (href.startsWith("\"") && href.endsWith("\"")) {
-                href = href.substring(1, href.length() - 1);
-            }
-        } else {
-            // warn
-        }
-        return href;
+        return URISpecification.getURL(href);
     }
 
     /**
