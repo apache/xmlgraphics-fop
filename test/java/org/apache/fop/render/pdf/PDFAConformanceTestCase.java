@@ -73,7 +73,7 @@ public class PDFAConformanceTestCase extends TestCase {
         Source src = new StreamSource(foFile);
         SAXResult res = new SAXResult(fop.getDefaultHandler());
         transformer.transform(src, res);
-        if (true) {
+        if (false) {
             //Write to file for debugging
             outFile = new File(foFile.getParentFile(), foFile.getName() + ".pdf");
             FileUtils.writeByteArrayToFile(outFile, baout.toByteArray());
