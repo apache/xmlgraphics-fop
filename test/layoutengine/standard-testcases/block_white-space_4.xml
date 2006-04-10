@@ -88,7 +88,7 @@
       
       <box w="6672"/>
 
-      <skip>11</skip>
+      <skip>12</skip>
     </element-list>
     <eval expected="62040" xpath="//block[@prod-id='l-sp']/lineArea/text/@ipd"/>
     <eval expected="word" xpath="local-name(//block[@prod-id='l-sp']/lineArea/text/*[1])"/>
@@ -125,7 +125,7 @@
       
       <box w="6672"/>
 
-      <skip>15</skip>
+      <skip>16</skip>
     </element-list>
     <eval expected="60168" xpath="//block[@prod-id='l-thin-space']/lineArea/text/@ipd"/>
     <eval expected="word" xpath="local-name(//block[@prod-id='l-thin-space']/lineArea/text/*[1])"/>
@@ -162,7 +162,7 @@
       
       <box w="6672"/>
 
-      <skip>15</skip>
+      <skip>16</skip>
     </element-list>
     <eval expected="57768" xpath="//block[@prod-id='l-hair-space']/lineArea/text/@ipd"/>
     <true xpath="//block[@prod-id='l-hair-space']/lineArea/text/*[2]/@adj = 'false'"/>
@@ -192,7 +192,7 @@
       
       <box w="6672"/>
 
-      <skip>19</skip>
+      <skip>20</skip>
     </element-list>
     <eval expected="55368" xpath="//block[@prod-id='l-zwsp']/lineArea/text/@ipd"/>
     <true xpath="//block[@prod-id='l-zwsp']/lineArea/text/*[2]/@adj = 'false'"/>
@@ -207,7 +207,7 @@
       
       <box w="26016"/>
 
-      <skip>11</skip>
+      <skip>12</skip>
     </element-list>
     <eval expected="55368" xpath="//block[@prod-id='l-nosp']/lineArea/text/@ipd"/>
 
@@ -246,7 +246,7 @@
       
       <box w="6672"/>
 
-      <skip>23</skip>
+      <skip>24</skip>
     </element-list>
     <eval expected="60168" xpath="//block[@prod-id='c-thin-space']/lineArea/text/@ipd"/>
     <eval expected="word" xpath="local-name(//block[@prod-id='c-thin-space']/lineArea/text/*[1])"/>
@@ -277,7 +277,7 @@
       
       <box w="6672"/>
 
-      <skip>5</skip>
+      <skip>6</skip>
     </element-list>
     <eval expected="190804" xpath="//block[@prod-id='j-sp']/lineArea/text/@ipd"/>
     <eval expected="42921" xpath="//block[@prod-id='j-sp']/lineArea/text/@twsadjust"/>
@@ -300,7 +300,7 @@
       
       <box w="6672"/>
 
-      <skip>7</skip>
+      <skip>8</skip>
     </element-list>
     <eval expected="104277" xpath="//block[@prod-id='j-thin-space']/lineArea/text/@ipd"/>
     <eval expected="44109" xpath="//block[@prod-id='j-thin-space']/lineArea/text/@twsadjust"/>
@@ -325,7 +325,7 @@
       
       <box w="6672"/>
 
-      <skip>9</skip>
+      <skip>10</skip>
     </element-list>
     <eval expected="84280" xpath="//block[@prod-id='j-zwsp']/lineArea/text/@ipd"/>
     <eval expected="28912" xpath="//block[@prod-id='j-zwsp']/lineArea/text/@twsadjust"/>
@@ -350,7 +350,7 @@
       
       <box w="6672"/>
 
-      <skip>5</skip>
+      <skip>6</skip>
     </element-list>
     <eval expected="182404" xpath="//block[@prod-id='lsj-sp']/lineArea/text/@ipd"/>
     <eval expected="32121" xpath="//block[@prod-id='lsj-sp']/lineArea/text/@twsadjust"/>
@@ -374,7 +374,7 @@
       
       <box w="6672"/>
 
-      <skip>7</skip>
+      <skip>8</skip>
     </element-list>
     <eval expected="104777" xpath="//block[@prod-id='lsj-thin-space']/lineArea/text/@ipd"/>
     <eval expected="28609" xpath="//block[@prod-id='lsj-thin-space']/lineArea/text/@twsadjust"/>
@@ -400,7 +400,7 @@
       
       <box w="6672"/>
 
-      <skip>9</skip>
+      <skip>10</skip>
     </element-list>
     <eval expected="85480" xpath="//block[@prod-id='lsj-zwsp']/lineArea/text/@ipd"/>
     <eval expected="14112" xpath="//block[@prod-id='lsj-zwsp']/lineArea/text/@twsadjust"/>

@@ -32,6 +32,7 @@ import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.area.Trait;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
+import org.apache.fop.util.CharUtilities;
 
 import java.util.List;
 import java.util.LinkedList;
@@ -73,12 +74,17 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
     }
 
     private org.apache.fop.area.inline.TextArea getCharacterInlineArea(Character node) {
-        org.apache.fop.area.inline.TextArea ch 
+        org.apache.fop.area.inline.TextArea text 
             = new org.apache.fop.area.inline.TextArea();
-        ch.addWord(String.valueOf(node.getCharacter()), 0);
-        TraitSetter.setProducerID(ch, node.getId());
-        TraitSetter.addTextDecoration(ch, fobj.getTextDecoration());
-        return ch;
+        char ch = node.getCharacter();
+        if (CharUtilities.isAnySpace(ch)) {
+            text.addSpace(ch, 0, CharUtilities.isAdjustableSpace(ch));
+        } else {
+            text.addWord(String.valueOf(ch), 0);
+        }
+        TraitSetter.setProducerID(text, node.getId());
+        TraitSetter.addTextDecoration(text, fobj.getTextDecoration());
+        return text;
     }
 
     /** @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(LayoutContext, int) */
