@@ -103,8 +103,7 @@
     <eval expected="6" xpath="count(//flow/block[1]/lineArea[1]/text[1]/space)"/>
     <eval expected="2" xpath="count(//flow/block[1]/lineArea[1]/text[2]/word)"/>
     <eval expected="1" xpath="count(//flow/block[1]/lineArea[1]/text[2]/space)"/>
-    <eval expected="1" xpath="count(//flow/block[1]/lineArea[1]/text[3]/word)"/>
-    <eval expected=" " xpath="//flow/block[1]/lineArea[1]/text[3]/word"/>
+    <eval expected="1" xpath="count(//flow/block[1]/lineArea[1]/text[3]/space)"/>
     <eval expected="1" xpath="count(//flow/block[1]/lineArea[1]/text[4]/word)"/>
     
     <eval expected="3" xpath="count(//flow/block[2]/block[1]/lineArea[1]/text/word)"/>

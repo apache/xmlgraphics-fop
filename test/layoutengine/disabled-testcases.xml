@@ -57,11 +57,10 @@
     stacking constraints which it shouldn't.</description>
   </testcase>
   <testcase>
-    <name>block white-space-collapse 2</name>
-    <file>block_white-space-collapse_2.xml</file>
-    <description>First line-break occurs after the fifth space following the
-    word 'each'. Trailing spaces not removed in layout. Note: the test passes
-    in case of text-align="justify".</description>
+    <name>block white-space nbsp 2</name>
+    <file>block_white-space_nbsp_2.xml</file>
+    <description>The nbsp given as an fo:character is not adjustable and therefore
+    the justification does not work in this case.</description>
   </testcase>
   <testcase>
     <name>block word-spacing</name>

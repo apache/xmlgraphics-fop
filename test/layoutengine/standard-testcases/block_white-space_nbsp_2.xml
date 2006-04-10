@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2005 The Apache Software Foundation
+  Copyright 2006 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -18,7 +18,8 @@
 <testcase>
   <info>
     <p>
-      This test checks non breaking white space.
+      This test checks non breaking white space (nbsp) specified as fo:character. 
+      This is to check if a nbsb as fo:character is processed the same way as a normal nbsb.
     </p>
   </info>
   <fo>
@@ -30,9 +31,10 @@
       </fo:layout-master-set>
       <fo:page-sequence master-reference="normal" white-space-collapse="true">
         <fo:flow flow-name="xsl-region-body">
-          <fo:block background-color="silver">&#160;single&#160;nbsp&#160;around&#160;</fo:block>
-          <fo:block background-color="red">&#160;</fo:block>
-          <fo:block background-color="silver">&#160;&#160;after&#160;&#160;empty&#160;&#160;line&#160;&#160;</fo:block>
+          <fo:block background-color="silver">&#160;single<fo:character character="&#160;"/>nbsp&#160;around&#160;</fo:block>
+
+          <fo:block background-color="silver" text-align="justify" text-align-last="justify" space-before="5pt">&#160;single&#160;nbsp&#160;around&#160;</fo:block>
+          <fo:block background-color="silver" text-align="justify" text-align-last="justify">&#160;single<fo:character character="&#160;"/>nbsp&#160;around&#160;</fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
@@ -40,9 +42,11 @@
   <checks>
     <eval expected="11100" xpath="//flow/block[1]/lineArea/@bpd"/>
     <eval expected="4" xpath="count(//flow/block[1]/lineArea/text/space)"/>
-    <eval expected="11100" xpath="//flow/block[2]/lineArea/@bpd"/>
-    <eval expected="1" xpath="count(//flow/block[2]/lineArea/text/space)"/>
+    <!-- //flow/block[2] is only for reference -->
     <eval expected="11100" xpath="//flow/block[3]/lineArea/@bpd"/>
-    <eval expected="8" xpath="count(//flow/block[3]/lineArea/text/space)"/>
+    <eval expected="3" xpath="count(//flow/block[3]/lineArea/text/space)"/> <!-- last nbsp is removed by LineLM -->
+    
+    <!-- twsadjust must be the same for block 2 and 3 as they are supposed to be equivalent -->
+    <true xpath="//flow/block[2]/lineArea/text[1]/@twsadjust = //flow/block[3]/lineArea/text[1]/@twsadjust"/>
   </checks>
 </testcase>

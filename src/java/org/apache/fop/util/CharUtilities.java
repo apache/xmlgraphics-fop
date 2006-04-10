@@ -61,6 +61,8 @@ public class CharUtilities {
     public static final char ZERO_WIDTH_SPACE = '\u200B';
     /** zero-width no-break space (= byte order mark) */
     public static final char ZERO_WIDTH_NOBREAK_SPACE = '\uFEFF';
+    /** soft hyphen */
+    public static final char SOFT_HYPHEN = '\u00AD';
     
     
     /**
@@ -142,7 +144,7 @@ public class CharUtilities {
         //TODO: are there other kinds of adjustable spaces?
         return
             (c == '\u0020'    // normal space
-            /*|| c == ''*/);
+            || c == NBSPACE); // no-break space
     }
     
     /**
