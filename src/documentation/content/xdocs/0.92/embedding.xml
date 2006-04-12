@@ -500,7 +500,7 @@ userAgent.setUserConfig(cfg);]]></source>
   <section id="ExampleFO2PDF">
     <title>ExampleFO2PDF.java</title>
     <p>This
-        <a href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/tags/fop-0_91-beta/examples/embedding/java/embedding/ExampleFO2PDF.java?view=markup">
+        <a href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/tags/fop-0_92-beta/examples/embedding/java/embedding/ExampleFO2PDF.java?view=markup">
             example</a>
 demonstrates the basic usage pattern to transform an XSL-FO
 file to PDF using FOP.
@@ -510,7 +510,7 @@ file to PDF using FOP.
   <section id="ExampleXML2FO">
     <title>ExampleXML2FO.java</title>
     <p>This 
-        <a href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/tags/fop-0_91-beta/examples/embedding/java/embedding/ExampleXML2FO.java?view=markup">
+        <a href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/tags/fop-0_92-beta/examples/embedding/java/embedding/ExampleXML2FO.java?view=markup">
             example</a>
 has nothing to do with FOP. It is there to show you how an XML 
 file can be converted to XSL-FO using XSLT. The JAXP API is used to do the
@@ -522,7 +522,7 @@ classpath (ex. <a href="http://xml.apache.org/xalan-j">Xalan</a>).
   <section id="ExampleXML2PDF">
     <title>ExampleXML2PDF.java</title>
     <p>This 
-        <a href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/tags/fop-0_91-beta/examples/embedding/java/embedding/ExampleXML2PDF.java?view=markup">
+        <a href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/tags/fop-0_92-beta/examples/embedding/java/embedding/ExampleXML2PDF.java?view=markup">
         example</a>
 demonstrates how you can convert an arbitrary XML file to PDF 
 using XSLT and XSL-FO/FOP. It is a combination of the first two examples 
@@ -542,7 +542,7 @@ performance is significantly higher with SAX.
   <section id="ExampleObj2XML">
     <title>ExampleObj2XML.java</title>
     <p>This 
-    <a href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/tags/fop-0_91-beta/examples/embedding/java/embedding/ExampleObj2XML.java?view=markup">
+    <a href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/tags/fop-0_92-beta/examples/embedding/java/embedding/ExampleObj2XML.java?view=markup">
         example</a>
 is a preparatory example for the next one. It's an example that 
 shows how an arbitrary Java object can be converted to XML. It's an often 
@@ -575,7 +575,7 @@ used. For more detailed information see other resources on JAXP (ex.
   <section id="ExampleObj2PDF">
     <title>ExampleObj2PDF.java</title>
     <p>This 
-        <a href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/tags/fop-0_91-beta/examples/embedding/java/embedding/ExampleObj2PDF.java?view=markup">
+        <a href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/tags/fop-0_92-beta/examples/embedding/java/embedding/ExampleObj2PDF.java?view=markup">
             example</a>
 combines the previous and the third to demonstrate 
 how you can transform a Java object to a PDF directly in one smooth run
@@ -588,7 +588,7 @@ using FOP as before.
   <section id="ExampleDOM2PDF">
     <title>ExampleDOM2PDF.java</title>
     <p>This 
-        <a href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/tags/fop-0_91-beta/examples/embedding/java/embedding/ExampleDOM2PDF.java?view=markup">
+        <a href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/tags/fop-0_92-beta/examples/embedding/java/embedding/ExampleDOM2PDF.java?view=markup">
             example</a>
 has FOP use a DOMSource instead of a StreamSource in order to 
 use a DOM tree as input for an XSL transformation.
@@ -597,7 +597,7 @@ use a DOM tree as input for an XSL transformation.
   <section id="ExampleSVG2PDF">
     <title>ExampleSVG2PDF.java (PDF Transcoder example)</title>
     <p>This 
-        <a href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/tags/fop-0_91-beta/examples/embedding/java/embedding/ExampleSVG2PDF.java?view=markup">
+        <a href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/tags/fop-0_92-beta/examples/embedding/java/embedding/ExampleSVG2PDF.java?view=markup">
             example</a>
 shows use of the PDF Transcoder, a sub-application within FOP.  
 It is used to generate a PDF document from an SVG file.

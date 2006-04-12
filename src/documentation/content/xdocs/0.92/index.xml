@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 1999-2005 The Apache Software Foundation
+  Copyright 1999-2006 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <document>
   <header>
-    <title>Apache FOP 0.91 beta</title>
+    <title>Apache FOP 0.92 beta</title>
     <version>$Revision: 201586 $</version>
   </header>
   <body>
@@ -33,8 +33,8 @@
         other form of help to get the project forward.
       </p>
       <p>
-        This second release is mostly a bug fix release but also contains a few new features compared
-        to 0.90alpha1. To see what has changed since the last release, please visit the 
+        This third release contains many bug fix release and new features compared
+        to 0.91beta. To see what has changed since the last release, please visit the 
         <a href="../changes.html">Changes Page</a> and the <a href="../relnotes.html">Release Notes</a>.
       </p>
     </section>

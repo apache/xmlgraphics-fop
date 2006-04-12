@@ -27,6 +27,8 @@
 
   <changes>
     <release version="FOP Trunk">
+    </release>
+    <release version="0.92beta" date="18 Apr 2006">
       <action context="Code" dev="JM" type="fix">
         Bugfix: Fixed a division by zero problem in TTFReader and improved the detection
         of the capHeight and xHeight font metric values for TrueType fonts.
