@@ -128,7 +128,7 @@ Fop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-rtf|-tiff|-png|-pcl
   -fo  infile       xsl:fo input file
   -xml infile       xml input file, must be used together with -xsl
   -xsl stylesheet   xslt stylesheet
-
+  -atin infile      area tree input file
   -param name value <value> to use for parameter <name> in xslt stylesheet
                     (repeat '-param name value' for each parameter)
 
@@ -144,7 +144,9 @@ Fop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-rtf|-tiff|-png|-pcl
   -ps outfile       input will be rendered as PostScript file (outfile req'd)
   -txt outfile      input will be rendered as text file (outfile req'd)
   -svg outfile      input will be rendered as an svg slides file (outfile req'd)
-  -at outfile       representation of area tree as XML (outfile req'd)
+  -at [mime] out    representation of area tree as XML (outfile req'd)
+                    specify optional mime output to allow AT to be converted
+                    to final format later
   -print            input file will be rendered and sent to the printer
                     see options with "-print help"
   -out mime outfile input will be rendered using the given MIME type
