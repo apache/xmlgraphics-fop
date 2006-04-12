@@ -1,6 +1,6 @@
 <?xml version="1.0" standalone="no"?>
 <!--
-  Copyright 1999-2005 The Apache Software Foundation
+  Copyright 1999-2006 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -139,11 +139,11 @@ import org.apache.fop.pdf.PDFEncryptionParams;
 
 [..]
 
-FOUserAgent userAgent = new FOUserAgent();
-useragent.setPDFEncryptionParams(new PDFEncryptionParams(
+FOUserAgent userAgent = fopFactory.newFOUserAgent();
+useragent.getRendererOptions().put("encryption-params", new PDFEncryptionParams(
     null, "password", false, false, true, true));
-Fop fop = new Fop(MimeConstants.MIME_PDF, userAgent);
-driver.setOutputStream(...]]></source>
+Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent);
+[..]]]></source>
       <p>
         The parameters for the constructor of PDFEncryptionParams are:
       </p>
@@ -154,6 +154,18 @@ driver.setOutputStream(...]]></source>
         <li>allowCopyContent: true if copying content is allowed</li>
         <li>allowEditContent: true if editing content is allowed</li>
         <li>allowEditAnnotations: true if editing annotations is allowed</li>
+      </ol>
+      <p>
+        Alternatively, you can set each value separately in the Map provided by 
+        FOUserAgent.getRendererOptions() by using the following keys:
+      </p>
+      <ol>
+        <li>user-password: String</li>
+        <li>owner-password: String</li>
+        <li>noprint: Boolean or "true"/"false"</li>
+        <li>nocopy: Boolean or "true"/"false"</li>
+        <li>noedit: Boolean or "true"/"false"</li>
+        <li>noannotations: Boolean or "true"/"false"</li>
       </ol>
     </section>
     <section>
