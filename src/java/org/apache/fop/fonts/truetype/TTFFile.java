@@ -130,7 +130,7 @@ public class TTFFile {
         if (n < 0) {
             long rest1 = n % upem;
             long storrest = 1000 * rest1;
-            long ledd2 = rest1 / storrest;
+            long ledd2 = (storrest != 0 ? rest1 / storrest : 0);  
             ret = -((-1000 * n) / upem - (int)ledd2);
         } else {
             ret = (n / upem) * 1000 + ((n % upem) * 1000) / upem;
@@ -427,7 +427,7 @@ public class TTFFile {
         readIndexToLocation(in);
         readGlyf(in);
         readName(in);
-        readPCLT(in);
+        boolean pcltFound = readPCLT(in);
         // Read cmap table and fill in ansiwidths
         boolean valid = readCMAP(in);
         if (!valid) {
@@ -438,6 +438,9 @@ public class TTFFile {
         // print_max_min();
 
         readKerning(in);
+        if (!pcltFound) {
+            guessPCLTValuesFromBBox();
+        }
         return true;
     }
 
@@ -1020,7 +1023,7 @@ public class TTFFile {
      * @param in FontFileReader to read from
      * @throws IOException In case of a I/O problem
      */
-    private final void readPCLT(FontFileReader in) throws IOException {
+    private final boolean readPCLT(FontFileReader in) throws IOException {
         TTFDirTabEntry dirTab = (TTFDirTabEntry)dirTabs.get("PCLT");
         if (dirTab != null) {
             in.seekSet(dirTab.getOffset() + 4 + 4 + 2);
@@ -1037,21 +1040,50 @@ public class TTFFile {
             } else {
                 hasSerifs = true;
             }
+            return true;
         } else {
-            // Approximate capHeight from height of "H"
-            // It's most unlikly that a font misses the PCLT table
-            // This also assumes that psocriptnames exists ("H")
-            // Should look it up int the cmap (that wouldn't help
-            // for charsets without H anyway...)
-            // Same for xHeight with the letter "x"
-            for (int i = 0; i < mtxTab.length; i++) {
-                if ("H".equals(mtxTab[i].getName())) {
-                    capHeight = mtxTab[i].getBoundingBox()[3] - mtxTab[i].getBoundingBox()[1];
-                }
-                if ("x".equals(mtxTab[i].getName())) {
-                    xHeight = mtxTab[i].getBoundingBox()[3] - mtxTab[i].getBoundingBox()[1];
+            return false;
+        }
+    }
+
+    private void guessPCLTValuesFromBBox() {
+        // Approximate capHeight from height of "H"
+        // It's most unlikly that a font misses the PCLT table
+        // This also assumes that postscriptnames exists ("H")
+        // Should look it up int the cmap (that wouldn't help
+        // for charsets without H anyway...)
+        // Same for xHeight with the letter "x"
+        boolean capHeightFound = false;
+        boolean xHeightFound = false;
+        for (int i = 0; i < mtxTab.length; i++) {
+            if ("H".equals(mtxTab[i].getName())) {
+                capHeight = mtxTab[i].getBoundingBox()[3] - mtxTab[i].getBoundingBox()[1];
+                capHeightFound = true;
+            } else if ("x".equals(mtxTab[i].getName())) {
+                xHeight = mtxTab[i].getBoundingBox()[3] - mtxTab[i].getBoundingBox()[1];
+                xHeightFound = true;
+            } else {
+                // OpenType Fonts with a version 3.0 "post" table don't have glyph names.
+                // Use Unicode indices instead.
+                List unicodeIndex = mtxTab[i].getUnicodeIndex();
+                if (unicodeIndex.size() > 0) {
+                    //Only the first index is used
+                    char ch = (char)((Integer)unicodeIndex.get(0)).intValue();
+                    if (ch == 'H') {
+                        capHeight = mtxTab[i].getBoundingBox()[3] - mtxTab[i].getBoundingBox()[1];
+                        capHeightFound = true;
+                    } else if (ch == 'x') {
+                        xHeight = mtxTab[i].getBoundingBox()[3] - mtxTab[i].getBoundingBox()[1];
+                        xHeightFound = true;
+                    }
                 }
             }
+        }
+        if (!capHeightFound) {
+            log.warn("capHeight value could not be determined. The font may not work as expected.");
+        }
+        if (!xHeightFound) {
+            log.warn("xHeight value could not be determined. The font may not work as expected.");
         }
     }
 

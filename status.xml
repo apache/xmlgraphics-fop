@@ -28,6 +28,10 @@
   <changes>
     <release version="FOP Trunk">
       <action context="Code" dev="JM" type="fix">
+        Bugfix: Fixed a division by zero problem in TTFReader and improved the detection
+        of the capHeight and xHeight font metric values for TrueType fonts.
+      </action>
+      <action context="Code" dev="JM" type="fix">
         Bugfix: Allow URLs in basic-link's external-destination to be wrapped in "url()".
       </action>
       <action context="Code" dev="MM" type="fix">
