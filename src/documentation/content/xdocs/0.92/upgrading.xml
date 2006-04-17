@@ -40,7 +40,7 @@
         </li>
         <li>
           There have been changes to the end-user API between 0.91 beta and 0.92 beta. With version 0.92, 
-          the API is now considered stable. Some methods have been deprecated and will be removed with
+          <strong>the API is now considered stable</strong>. Some methods have been deprecated and will be removed with
           the next release. If you upgrade from 0.91 beta, you will need to adjust your Java code.
         </li>
         <li>
