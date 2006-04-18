@@ -15,8 +15,7 @@
   limitations under the License.
 -->
 <!-- $Id$ -->
-<!DOCTYPE faqs PUBLIC "-//APACHE//DTD FAQ V1.1//EN"
-    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/core/context/resources/schema/dtd/faq-v12.dtd">
+<!DOCTYPE faqs PUBLIC "-//APACHE//DTD FAQ V1.1//EN" "http://forrest.apache.org/dtd/faq-v12.dtd">
 
 <faqs title="FOP FAQ">
   <part id="part-general">
@@ -135,11 +134,12 @@
     <faq id="next-release">
       <question>When is the next released planned?</question>
       <answer>
-        <p> This depends on progress made so it is not possible to predict
-        	any dates. However, we think that at the current rate of progress
-        	we can start releasing again in the second half of 2005. If you
+        <p>
+          When it's ready and the committers have enough time to go through 
+          the time-consuming process of creating a release. We'll try to do
+          a new release every 3 or 4 months, but that's no promise. If you
         	want to speed up the process, consider to
-        	<link href="dev/index.html#involved">contribute</link> to FOP</p>
+        	<link href="dev/index.html#involved">contribute</link> to FOP.</p>
       </answer>
     </faq>
     <faq id="redesign">
@@ -495,7 +495,7 @@ Check the following:</p>
       don't work.</question>
       <answer>
         <p>
-          These properties are not implemented, except on table rows. In
+          These properties are not implemented on version 0.20.5 and earlier, except on table rows. In
           order to take advantage of them, you have to nest stuff to be
           kept together in a table.
         </p>
@@ -523,6 +523,9 @@ Check the following:</p>
     </fo:table-row>
   </fo:table-body>
 </fo:table>]]></source>
+        <p>
+          Consider upgrading to the latest version which supports keeps.
+        </p>
       </answer>
     </faq>
     <faq id="table-missing">
