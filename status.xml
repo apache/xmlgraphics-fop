@@ -28,6 +28,11 @@
   <changes>
     <release version="FOP Trunk">
       <action context="Code" dev="JM" type="fix">
+        Bugfix: The generation of the PDF "d" (setdash) command was assuming that
+        only integer values can be used but that isn't the case. Dash patterns 
+        PDFGraphics2D would be wrong in the process.
+      </action>
+      <action context="Code" dev="JM" type="fix">
         Bugfix: Fixed a division by zero problem in TTFReader and improved the detection
         of the capHeight and xHeight font metric values for TrueType fonts.
       </action>
