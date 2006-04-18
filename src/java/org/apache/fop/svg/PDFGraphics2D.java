@@ -1271,20 +1271,14 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             if (da != null) {
                 currentStream.write("[");
                 for (int count = 0; count < da.length; count++) {
-                    if (((int)da[count]) == 0) {
-                        // the dasharray units in pdf are (whole) numbers
-                        // in user space units, cannot be 0
-                        currentStream.write("1");
-                    } else {
-                        currentStream.write("" + ((int)da[count]));
-                    }
+                    currentStream.write(PDFNumber.doubleOut(da[count]));
                     if (count < da.length - 1) {
                         currentStream.write(" ");
                     }
                 }
                 currentStream.write("] ");
                 float offset = bs.getDashPhase();
-                currentStream.write(((int)offset) + " d\n");
+                currentStream.write(PDFNumber.doubleOut(offset) + " d\n");
             }
             int ec = bs.getEndCap();
             switch (ec) {
