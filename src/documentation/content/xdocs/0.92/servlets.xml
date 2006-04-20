@@ -1,6 +1,6 @@
 <?xml version="1.0" standalone="no"?>
 <!--
-  Copyright 1999-2005 The Apache Software Foundation
+  Copyright 1999-2006 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -46,6 +46,11 @@
       </ul>
       <p/>
       <p>The source code for the servlet can be found under {fop-dir}/src/java/org/apache/fop/servlet/FopServlet.java.</p>
+      <note>
+        This example servlet should not be used on a public web server connected to the Internet as it does not contain
+        any measures to prevent Denial-of-Service-Attacks. It is provided as an example and as a starting point for
+        your own servlet.
+      </note>
     </section>
     <section id="servlet">
       <title>Create your own Servlet</title>
@@ -57,14 +62,15 @@
         <p>
           Here is a minimal code snippet to demonstrate the basics:
         </p>
-        <source>public void doGet(HttpServletRequest request,
+        <source>private FopFactory fopFactory = FopFactory.newInstance();
+private TransformerFactory tFactory = TransformerFactory.newInstance();
+        
+public void doGet(HttpServletRequest request,
                    HttpServletResponse response) throws ServletException {
     try {
         response.setContentType("application/pdf");
-        Fop fop = new Fop(MimeConstants.MIME_PDF);
-        fop.setOutputStream(response.getOutputStream());
-        TransformerFactory factory = TransformerFactory.newInstance();
-        Transformer transformer = factory.newTransformer();
+        Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, response.getOutputStream());
+        Transformer transformer = tFactory.newTransformer();
         Source src = new StreamSource("foo.fo");
         Result res = new SAXResult(fop.getDefaultHandler());
         transformer.transform(src, res);
@@ -81,30 +87,29 @@
       <section id="xslt">
         <title>Adding XSL tranformation (XSLT)</title>
         <p>
-          A common requirement is the to transform an XML source to
+          A common requirement is to transform an XML source to
           XSL-FO using an XSL transformation. It is recommended to use
           JAXP for this task. The following snippet shows the basic
           code:
         </p>
-        <source>
-protected TransformerFactory transformerFactory;
+        <source>private FopFactory fopFactory = FopFactory.newInstance();
+private TransformerFactory tFactory = TransformerFactory.newInstance();
 
 public void init() throws ServletException {
-    this.transformerFactory = TransformerFactory.newInstance();
+    //Optionally customize the FopFactory and TransformerFactory here
 }
 
 [..]
 
-    //Setup FOP
-    Fop fop = new Fop(MimeConstants.MIME_PDF);
-
     //Setup a buffer to obtain the content length
     ByteArrayOutputStream out = new ByteArrayOutputStream();
-    fop.setOutputStream(out);
+
+    //Setup FOP
+    Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, out);
 
     //Setup Transformer
     Source xsltSrc = new StreamSource(new File("foo-xml2fo.xsl"));
-    Transformer transformer = this.transformerFactory.newTransformer(xsltSrc);
+    Transformer transformer = tFactory.newTransformer(xsltSrc);
 
     //Make sure the XSL transformation's result is piped through to FOP
     Result res = new SAXResult(fop.getDefaultHandler());
@@ -138,7 +143,7 @@ public void init() throws ServletException {
         </p>
         <p>
           Because you have an explicit <code>Transformer</code> object, you can also use it to 
-          explicitly set parameters for the transformation run.
+          explicitely set parameters for the transformation run.
         </p>
       </section>
       <section id="cfg">
@@ -252,4 +257,3 @@ public void init() throws ServletException {
     </section>
   </body>
 </document>
-<!-- Last Line of $RCSfile$ -->

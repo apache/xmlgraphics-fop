@@ -157,7 +157,9 @@ Known issues:
     - Omitting fo:table-column or having fo:table-column without a column-width 
       and attempting to create columns implicitly from the first
       table row is not implemented, yet (Bugzilla #35656).
-    - Leaders with the "rule" pattern don't work for PostScript output.
     - Internal basic-links don't point to the exact location on a page, yet, 
       as they did in 0.20.5. Currently you land in the upper left corner of 
       the page.
+
+Release notes for older FOP versions can be found on:
+http://xmlgraphics.apache.org/fop/relnotes.html

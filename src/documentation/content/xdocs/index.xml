@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 1999-2005 The Apache Software Foundation
+  Copyright 1999-2006 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@
       W3C Recommendation</link>.
     </p>
     <p>
-      The latest unstable version of FOP (<link href="0.91/">0.91 beta</link>) is the first preview release 
+      The latest version of FOP (<link href="0.92/">0.92 beta</link>) is the second preview release 
       after a large redesign effort and implements a larger subset than 0.20.5 of the 
       <link href="http://www.w3.org/TR/2001/REC-xsl-20011015/">XSL-FO Version 1.0 W3C Recommendation</link>
       as well as some parts of the <link href="http://www.w3.org/TR/xsl11">XSL-FO Version 1.1 Working Draft</link>.
