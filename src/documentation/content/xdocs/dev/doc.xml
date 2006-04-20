@@ -128,13 +128,13 @@ Maintenance branch releases either copy the trunk content to the maintenance bra
           The Apache distribution system mirrors distributions around the world. Since it uses
           <link href="http://httpd.apache.org/">Apache httpd</link> Module
           <link href="http://httpd.apache.org/docs/2.2/mod/mod_autoindex.html#headername">mod_autoindex</link>
-          you also need to manually update the HEADER.html &amp; READER.html files in
-          <code>/www/www.apache.org/dist/xmlgraphics/fop/</code> on
-          <code>people.apache.org</code>. Please be careful when doing stuff like that.
+          you also need to manually update the HEADER.html &amp; READER.html files on
+          <code>people.apache.org</code> in
+          <code>/www/www.apache.org/dist/xmlgraphics/fop/</code>.
         </p>
-        <note>
-          Please make sure you always have <strong>group rw permissions on all files</strong> under the /www directory!
-        </note>
+        <p>
+          Please be careful when doing stuff like that.
+        </p>
       </section>
       <section id="delete">
         <title>Deleting Documentation Files</title>
