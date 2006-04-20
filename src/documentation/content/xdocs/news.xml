@@ -1,6 +1,6 @@
 <?xml version="1.0" standalone="no"?>
 <!--
-  Copyright 1999-2005 The Apache Software Foundation
+  Copyright 1999-2006 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -24,6 +24,16 @@
     <version>$Revision$</version>
   </header>
   <body>
+    <section>
+      <title>18 April 2006 - Apache FOP 0.92 beta released</title>
+      <p>
+        A second "beta" grade release of the new FOP codebase with a modified and
+        now considered stable API. The release contains many bug fixes as well as
+        new features mainly related to even more extensive support of the XSL-FO
+        specification. This is expected to be the last "beta" release before we
+        go to a 1.0 release!
+      </p>
+    </section>
     <section>
       <title>23 December 2005 - Apache FOP 0.91 beta released</title>
       <p>

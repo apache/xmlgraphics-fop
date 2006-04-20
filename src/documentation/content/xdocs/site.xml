@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-  Copyright 2002-2005 The Apache Software Foundation
+  Copyright 2002-2006 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -85,9 +85,9 @@
   -->
   
   <!--
-  BEGIN Version 0.91 documentation tab
+  BEGIN Version 0.92 documentation tab
   -->
-  <trunk label="FOP 0.91 beta" href="0.91/" tab="currentversion">
+  <trunk label="FOP 0.92 beta" href="0.92/" tab="currentversion">
     <about label="About" href="index.html"/>
     <upgrading label="Upgrading" href="upgrading.html"/>
     
@@ -102,7 +102,9 @@
 
     <features label="Features">
       <output label="Output Targets" href="output.html"/>
+      <if label="Intermediate Format" href="intermediate.html"/>
       <pdfencryption label="PDF Encryption" href="pdfencryption.html"/>
+      <pdfa label="PDF/A" href="pdfa.html"/>
       <graphics label="Graphics" href="graphics.html"/>
       <fonts label="Fonts" href="fonts.html"/>
       <hyphenation label="Hyphenation" href="hyphenation.html"/>    
@@ -111,7 +113,7 @@
     
   </trunk>
   <!--
-  END Version 0.91 documentation tab
+  END Version 0.92 documentation tab
   -->
   
   <!--

@@ -1,6 +1,6 @@
 <?xml version="1.0" standalone="no"?>
 <!--
-  Copyright 1999-2005 The Apache Software Foundation
+  Copyright 1999-2006 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -67,8 +67,8 @@
         <source><![CDATA[proc = Runtime.getRuntime().exec("lp -d" + print_queue + " -o -dp -");
 out = proc.getOutputStream();]]></source>
         <p>
-          Set the OutputStream (out) to the PCLRenderer and it happily sends the
-          PCL to the UNIX printer queue.
+          Set the output MIME type to "application/x-pcl" (MimeConstants.MIME_PCL) and 
+          it happily sends the PCL to the UNIX printer queue.
         </p>
       </section>
     </section>
@@ -83,12 +83,13 @@ out = proc.getOutputStream();]]></source>
         compatible.
       </p>
       <p>
-        Note that FOP does not currently support "tagged PDF", PDF/X or PDF/A.
+        Note that FOP does not currently support "tagged PDF", PDF/X or PDF/A-1a. 
+        <a href="pdfa.html">Support for PDF/A-1b</a> has recently been added, however.
       </p>
       <section id="pdf-fonts">
         <title>Fonts</title>
         <p>
-          PDF has a set of fonts that are always available to all PDF viewers,
+          PDF has a set of fonts that are always available to all PDF viewers;
           to quote from the PDF Specification:
 
           <em>"PDF prescribes a set of 14 standard fonts that can be used without prior
@@ -125,8 +126,8 @@ out = proc.getOutputStream();]]></source>
   try {
     ByteArrayOutputStream fopout = new ByteArrayOutputStream();
     FileOutputStream outfile = new FileOutputStream(args[2]);
-    Fop fop = new Fop(MimeConstants.MIME_PDF);
-    fop.setOutputStream(fopout);
+    FopFactory fopFactory = FopFactory.newInstance();
+    Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, fopout);
     
     Transformer transformer = TransformerFactory.newInstance().newTransformer(
         new StreamSource(new File(args[1])));
@@ -201,11 +202,10 @@ out = proc.getOutputStream();]]></source>
   <section id="ps-limitations">
     <title>Limitations</title>
     <ul>
-      <li>Images and SVG may not be display correctly. SVG support is far from being complete. No image transparency is available.</li>
+      <li>Images and SVG may not be displayed correctly. SVG support is far from being complete. No image transparency is available.</li>
       <li>Only Type 1 fonts are supported.</li>
       <li>Multibyte characters are not supported.</li>
       <li>PPD support is still missing.</li>
-      <li>The renderer is not yet configurable.</li>
     </ul>
   </section>
 </section>
@@ -222,9 +222,13 @@ out = proc.getOutputStream();]]></source>
 <section id="xml">
   <title>XML (Area Tree XML)</title>
   <p>
-    This is for testing and verification. The XML created is simply
-    a representation of the internal area tree put into XML. It does
-    not perform any other purpose.
+    This is primarily for testing and verification. The XML created is simply
+    a representation of the internal area tree put into XML. We use that to verify
+    the functionality of FOP's layout engine.
+  </p>
+  <p>
+    The other use case of the Area Tree XML is as FOP's "intermediate format". More information
+    on that can be found on the page dedicated to the <a href="intermediate.html">Intermediate Format</a>.
   </p>
 </section>
 <section id="awt">
@@ -364,13 +368,31 @@ out = proc.getOutputStream();]]></source>
        This format creates an SVG document that has links between the pages.
        This is primarily for slides and creating svg images of pages.
        Large documents will create SVG files that are far too large for
-       and SVG viewer to handle. Since FO documents usually have text the
+       an SVG viewer to handle. Since FO documents usually have text the
        SVG document will have a large number of text elements.
        The font information for the text is obtained from the JVM in the
-       same way as the AWT viewer, if the SVG is view where the fonts are
-       different, such as another platform, then the page may appear wrong.
+       same way as for the AWT viewer. If the SVG is viewed on a
+       system where the fonts are different, such as another platform,
+       then the page may look wrong.
      </p>
    </section>
+</section>
+<section id="wishlist">
+  <title>Wish list</title>
+  <p>
+    Apache FOP is easily extensible and allows you to add new output formats to enhance FOP's functionality. There's a number of output formats
+    which are on our wish list. We're looking for volunteers to help us implement them.
+  </p>
+  <ul>
+    <li>
+      <a href="http://en.wikipedia.org/wiki/Advanced_Function_Presentation">AFP (Advanced Function Presentation)</a>: 
+      The renderer has already been built and is in the process of being brought into the Apache FOP codebase.
+    </li>
+    <li>
+      <a href="http://en.wikipedia.org/wiki/OpenDocument">ODF (Open Document Format)</a>: 
+      The standardized successor to OpenOffice's file format.
+    </li>
+  </ul>
 </section>
 
   </body>

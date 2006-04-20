@@ -27,6 +27,8 @@
 
   <changes>
     <release version="FOP Trunk">
+    </release>
+    <release version="0.92beta" date="18 Apr 2006">
       <action context="Code" dev="JM" type="fix">
         Bugfix: The generation of the PDF "d" (setdash) command was assuming that
         only integer values can be used but that isn't the case. Dash patterns 
