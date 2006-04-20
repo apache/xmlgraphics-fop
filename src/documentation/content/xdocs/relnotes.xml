@@ -53,7 +53,7 @@
   <p>Known Issues:</p>
   <ul>
     <li>
-      PCL, MIF and SVG support have not been restored, yet.
+      PCL, MIF and SVG output support have not been restored, yet.
     </li>
     <li>
       Java2D/AWT support contains some problems, for example with 
@@ -182,7 +182,7 @@
   <p>Known Issues:</p>
   <ul>
     <li>
-      PCL, MIF and SVG support have not been restored, yet.
+      PCL, MIF and SVG output support have not been restored, yet.
     </li>
     <li>
       Java2D/AWT support contains some problems, for example with 
@@ -323,7 +323,7 @@
   <p>Known Issues:</p>
   <ul>
     <li>
-      PCL, MIF and SVG support have not been restored, yet.
+      PCL, MIF and SVG output support have not been restored, yet.
     </li>
     <li>
       Java2D/AWT support contains some problems, for example with 

@@ -81,7 +81,7 @@
           </tr>
           <tr>
             <td>API</td>
-            <td>beta, subject to change, though only in details</td>
+            <td>beta, but finalized (feedback wanted)</td>
           </tr>
           <tr>
             <td>FO Tree</td>
@@ -89,7 +89,7 @@
           </tr>
           <tr>
             <td>Layout Engine</td>
-            <td>beta</td>
+            <td>stable</td>
           </tr>
           <tr>
             <td>Area Tree</td>
