@@ -27,6 +27,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix" fixes-bug="39285">
+        Bugfix: Fixed OutOfMemoryException with long data URLs (RFC 2397).
+      </action>
       <action context="Code" dev="JM" type="add" fixes-bug="39118" due-to="Pierre-Henri Kraus">
         Initial support for page-number-citation-last (XSL 1.1). Works without problems 
         only for page-sequence so far.

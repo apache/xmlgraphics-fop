@@ -72,6 +72,11 @@ public class FOURIResolver
     public Source resolve(String href, String base)
         throws javax.xml.transform.TransformerException {
         
+        //data URLs can be quite long so don't try to build a File (can lead to problems)
+        if (href.startsWith("data:")) {
+            return parseDataURI(href);
+        }
+        
         URL absoluteURL = null;
         File f = new File(href);
         if (f.exists()) {
@@ -80,8 +85,6 @@ public class FOURIResolver
             } catch (MalformedURLException mfue) {
                 log.error("Could not convert filename to URL: " + mfue.getMessage(), mfue); 
             }
-        } else if (href.startsWith("data:")) {
-            return parseDataURI(href);
         } else {
             URL baseURL = toBaseURL(base);
             if (baseURL == null) {
