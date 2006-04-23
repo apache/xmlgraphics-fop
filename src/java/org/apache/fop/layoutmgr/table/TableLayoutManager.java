@@ -20,6 +20,7 @@ package org.apache.fop.layoutmgr.table;
 
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.flow.Table;
+import org.apache.fop.fo.flow.TableFObj;
 import org.apache.fop.fo.flow.TableColumn;
 import org.apache.fop.fo.properties.TableColLength;
 import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
@@ -376,6 +377,8 @@ public class TableLayoutManager extends BlockStackingLayoutManager
 
         resetSpaces();
         curBlockArea = null;
+        
+        getPSLM().notifyEndOfLayout(((Table)getFObj()).getId());
     }
 
     /**

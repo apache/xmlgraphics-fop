@@ -37,10 +37,11 @@ import org.apache.fop.layoutmgr.TraitSetter;
 public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
 
     private PageNumberCitation fobj;
-    private Font font;
+    /** Font for the page-number-citation */
+    protected Font font;
     
-    // whether the page referred to by the citation has been resolved yet
-    private boolean resolved = false;
+    /** Indicates whether the page referred to by the citation has been resolved yet */
+    protected boolean resolved = false;
     
     /**
      * Constructor
@@ -97,40 +98,45 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
      */
     private InlineArea getPageNumberCitationInlineArea(LayoutManager parentLM) {
         PageViewport page = getPSLM().getFirstPVWithID(fobj.getRefId());
-        TextArea inline = null;
+        TextArea text = null;
         if (page != null) {
             String str = page.getPageNumberString();
             // get page string from parent, build area
-            TextArea text = new TextArea();
-            inline = text;
+            text = new TextArea();
             int width = getStringWidth(str);
             text.addWord(str, 0);
-            inline.setIPD(width);
-            
+            text.setIPD(width);
             resolved = true;
         } else {
             resolved = false;
-            inline = new UnresolvedPageNumber(fobj.getRefId(), font);
+            text = new UnresolvedPageNumber(fobj.getRefId(), font);
             String str = "MMM"; // reserve three spaces for page number
             int width = getStringWidth(str);
-            inline.setIPD(width);
-            
+            text.setIPD(width);
         }
-        TraitSetter.setProducerID(inline, fobj.getId());
-        inline.setBPD(font.getAscender() - font.getDescender());
-        inline.setBaselineOffset(font.getAscender());
-        TraitSetter.addFontTraits(inline, font);
-        inline.addTrait(Trait.COLOR, fobj.getColor());
-        TraitSetter.addTextDecoration(inline, fobj.getTextDecoration());
+        updateTextAreaTraits(text);
         
-        return inline;
+        return text;
+    }
+    
+    /**
+     * Updates the traits for the generated text area. 
+     * @param text the text area
+     */
+    protected void updateTextAreaTraits(TextArea text) {
+        TraitSetter.setProducerID(text, fobj.getId());
+        text.setBPD(font.getAscender() - font.getDescender());
+        text.setBaselineOffset(font.getAscender());
+        TraitSetter.addFontTraits(text, font);
+        text.addTrait(Trait.COLOR, fobj.getColor());
+        TraitSetter.addTextDecoration(text, fobj.getTextDecoration());
     }
     
     /**
      * @param str string to be measured
      * @return width (in millipoints ??) of the string
      */
-    private int getStringWidth(String str) {
+    protected int getStringWidth(String str) {
         int width = 0;
         for (int count = 0; count < str.length(); count++) {
             width += font.getCharWidth(str.charAt(count));

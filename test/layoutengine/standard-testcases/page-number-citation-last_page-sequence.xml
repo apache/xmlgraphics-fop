@@ -18,7 +18,7 @@
 <testcase>
   <info>
     <p>
-      This test checks page-position="last".
+      This test checks fo:page-number-citation-last associated to a page-sequence id.
     </p>
   </info>
   <fo>
@@ -123,46 +123,18 @@
     </fo:root>
   </fo>
   <checks>
+    <eval expected="2" xpath="count(//pageSequence)"/>
     <eval expected="4" xpath="count(//pageSequence[1]/pageViewport)"/>
-    <eval expected="1" xpath="//block[@prod-id='boxA0']/ancestor::pageViewport/@nr"/>
-    <eval expected="2" xpath="//block[@prod-id='boxA1']/ancestor::pageViewport/@nr"/>
-    <eval expected="2" xpath="//block[@prod-id='boxA2']/ancestor::pageViewport/@nr"/>
-    <eval expected="2" xpath="//block[@prod-id='boxA3']/ancestor::pageViewport/@nr"/>
-    <eval expected="2" xpath="//block[@prod-id='boxA4']/ancestor::pageViewport/@nr"/>
-    <eval expected="3" xpath="//block[@prod-id='boxA5']/ancestor::pageViewport/@nr"/>
-    <eval expected="3" xpath="//block[@prod-id='boxA6']/ancestor::pageViewport/@nr"/>
-    <eval expected="3" xpath="//block[@prod-id='boxA7']/ancestor::pageViewport/@nr"/>
-    <eval expected="3" xpath="//block[@prod-id='boxA8']/ancestor::pageViewport/@nr"/>
-    <eval expected="4" xpath="//block[@prod-id='boxA9']/ancestor::pageViewport/@nr"/>
-    <eval expected="4" xpath="//block[@prod-id='boxA10']/ancestor::pageViewport/@nr"/>
-    <eval expected="288000" xpath="//pageViewport[@nr='1']/descendant::regionBody/@bpd"/>
-    <eval expected="288000" xpath="//pageViewport[@nr='2']/descendant::regionBody/@bpd"/>
-    <eval expected="288000" xpath="//pageViewport[@nr='3']/descendant::regionBody/@bpd"/>
-    <eval expected="144000" xpath="//pageViewport[@nr='4']/descendant::regionBody/@bpd"/>
-    <eval expected="normal" xpath="//pageViewport[@nr='1']/@simple-page-master-name"/>
-    <eval expected="normal" xpath="//pageViewport[@nr='2']/@simple-page-master-name"/>
-    <eval expected="normal" xpath="//pageViewport[@nr='3']/@simple-page-master-name"/>
-    <eval expected="last" xpath="//pageViewport[@nr='4']/@simple-page-master-name"/>
-
     <eval expected="4" xpath="count(//pageSequence[2]/pageViewport)"/>
-    <eval expected="5" xpath="//block[@prod-id='boxB1']/ancestor::pageViewport/@nr"/>
-    <eval expected="5" xpath="//block[@prod-id='boxB2']/ancestor::pageViewport/@nr"/>
-    <eval expected="5" xpath="//block[@prod-id='boxB3']/ancestor::pageViewport/@nr"/>
-    <eval expected="5" xpath="//block[@prod-id='boxB4']/ancestor::pageViewport/@nr"/>
-    <eval expected="6" xpath="//block[@prod-id='boxB5']/ancestor::pageViewport/@nr"/>
-    <eval expected="6" xpath="//block[@prod-id='boxB6']/ancestor::pageViewport/@nr"/>
-    <eval expected="6" xpath="//block[@prod-id='boxB7']/ancestor::pageViewport/@nr"/>
-    <eval expected="6" xpath="//block[@prod-id='boxB8']/ancestor::pageViewport/@nr"/>
-    <eval expected="7" xpath="//block[@prod-id='boxB9']/ancestor::pageViewport/@nr"/>
-    <eval expected="7" xpath="//block[@prod-id='boxB10']/ancestor::pageViewport/@nr"/>
-    <eval expected="7" xpath="//block[@prod-id='boxB11']/ancestor::pageViewport/@nr"/>
-    <eval expected="288000" xpath="//pageViewport[@nr='5']/descendant::regionBody/@bpd"/>
-    <eval expected="288000" xpath="//pageViewport[@nr='6']/descendant::regionBody/@bpd"/>
-    <eval expected="288000" xpath="//pageViewport[@nr='7']/descendant::regionBody/@bpd"/>
-    <eval expected="144000" xpath="//pageViewport[@nr='8']/descendant::regionBody/@bpd"/>
-    <eval expected="normal" xpath="//pageViewport[@nr='5']/@simple-page-master-name"/>
-    <eval expected="normal" xpath="//pageViewport[@nr='6']/@simple-page-master-name"/>
-    <eval expected="normal" xpath="//pageViewport[@nr='7']/@simple-page-master-name"/>
-    <eval expected="last" xpath="//pageViewport[@nr='8']/@simple-page-master-name"/>
+    
+    <eval expected="page 1 of 4" xpath="//pageSequence[1]/pageViewport[@nr=1]/page/regionViewport[1]/regionAfter/block[2]/lineArea"/>
+    <eval expected="page 2 of 4" xpath="//pageSequence[1]/pageViewport[@nr=2]/page/regionViewport[1]/regionAfter/block[2]/lineArea"/>
+    <eval expected="page 3 of 4" xpath="//pageSequence[1]/pageViewport[@nr=3]/page/regionViewport[1]/regionAfter/block[2]/lineArea"/>
+    <eval expected="page 4 of 4" xpath="//pageSequence[1]/pageViewport[@nr=4]/page/regionViewport[1]/regionAfter/block[2]/lineArea"/>
+    
+    <eval expected="page 5 of 8" xpath="//pageSequence[2]/pageViewport[@nr=5]/page/regionViewport[1]/regionAfter/block[2]/lineArea"/>
+    <eval expected="page 6 of 8" xpath="//pageSequence[2]/pageViewport[@nr=6]/page/regionViewport[1]/regionAfter/block[2]/lineArea"/>
+    <eval expected="page 7 of 8" xpath="//pageSequence[2]/pageViewport[@nr=7]/page/regionViewport[1]/regionAfter/block[2]/lineArea"/>
+    <eval expected="page 8 of 8" xpath="//pageSequence[2]/pageViewport[@nr=8]/page/regionViewport[1]/regionAfter/block[2]/lineArea"/>
   </checks>
 </testcase>

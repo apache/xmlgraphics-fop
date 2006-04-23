@@ -395,6 +395,9 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
 
         curBlockArea = null;
         resetSpaces();
+        
+        // Notify end of block layout manager to the PSLM
+        getPSLM().notifyEndOfLayout(getBlockFO().getId());
     }
 
     /**

@@ -207,6 +207,8 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
 
         curBlockArea = null;
         resetSpaces();
+        
+        getPSLM().notifyEndOfLayout(((ListBlock)getFObj()).getId());
     }
 
     /**

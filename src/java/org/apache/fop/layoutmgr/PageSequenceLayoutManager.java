@@ -142,7 +142,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
 
         curPage = makeNewPage(false, false);
 
-        addIDToPage(pageSeq.getId());
+        
         Flow mainFlow = pageSeq.getMainFlow();
         childFLM = getLayoutManagerMaker().
             makeFlowLayoutManager(this, mainFlow);
@@ -158,12 +158,17 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      * Finished the page-sequence and notifies everyone about it.
      */
     public void finishPageSequence() {
+        if (!pageSeq.getId().equals("")) {
+            areaTreeHandler.signalIDProcessed(pageSeq.getId());
+        }
+
         pageSeq.getRoot().notifyPageSequenceFinished(currentPageNum,
                 (currentPageNum - startPageNum) + 1);
         areaTreeHandler.notifyPageSequenceFinished(pageSeq,
                 (currentPageNum - startPageNum) + 1);
         log.debug("Ending layout");
     }
+
 
     private class PageBreaker extends AbstractBreaker {
         
@@ -563,6 +568,21 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     }
 
     /**
+     * This returns the last PageViewport that contains an id trait
+     * matching the idref argument, or null if no such PV exists.
+     *
+     * @param idref the idref trait needing to be resolved 
+     * @return the last PageViewport that contains the ID trait
+     */
+    public PageViewport getLastPVWithID(String idref) {
+        List list = areaTreeHandler.getPageViewportsContainingID(idref);
+        if (list != null && list.size() > 0) {
+            return (PageViewport) list.get(list.size() - 1);
+        }
+        return null;
+    }
+    
+    /**
      * Add an ID reference to the current page.
      * When adding areas the area adds its ID reference.
      * For the page layout manager it adds the id reference
@@ -575,7 +595,35 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             areaTreeHandler.associateIDWithPageViewport(id, curPage.getPageViewport());
         }
     }
-
+    
+    /**
+     * Add an id reference of the layout manager in the AreaTreeHandler,
+     * if the id hasn't been resolved yet
+     * @param id the id to track
+     * @return a boolean indicating if the id has already been resolved
+     * TODO Maybe give this a better name
+     */
+    public boolean associateLayoutManagerID(String id) {
+        if (log.isDebugEnabled()) {
+            log.debug("associateLayoutManagerID(" + id + ")");
+        }
+        if (!areaTreeHandler.alreadyResolvedID(id)) {
+            areaTreeHandler.signalPendingID(id);
+            return false;
+        } else {
+            return true;
+        }
+    }
+    
+    /**
+     * Notify the areaTreeHandler that the LayoutManagers containing
+     * idrefs have finished creating areas
+     * @param id the id for which layout has finished
+     */
+    public void notifyEndOfLayout(String id) {
+        areaTreeHandler.signalIDProcessed(id);
+    }
+    
     /**
      * Identify an unresolved area (one needing an idref to be 
      * resolved, e.g. the internal-destination of an fo:basic-link)
@@ -669,6 +717,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             log.debug("[" + curPage.getPageViewport().getPageNumberString() 
                     + (bIsBlank ? "*" : "") + "]");
         }
+        
+        addIDToPage(pageSeq.getId());
         return curPage;
     }
 

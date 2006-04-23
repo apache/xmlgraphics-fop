@@ -27,6 +27,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="add" fixes-bug="39118" due-to="Pierre-Henri Kraus">
+        Initial support for page-number-citation-last (XSL 1.1). Works without problems 
+        only for page-sequence so far.
+      </action>
     </release>
     <release version="0.92beta" date="18 Apr 2006">
       <action context="Code" dev="JM" type="fix">

@@ -95,6 +95,9 @@ public class AreaTreeHandler extends FOEventHandler {
     // idref's whose target PageViewports have yet to be identified
     // Each idref has a HashSet of Resolvable objects containing that idref
     private Map unresolvedIDRefs = new HashMap();
+    
+    private Set unfinishedIDs = new HashSet();
+    private Set alreadyResolvedIDs = new HashSet();
 
      // The formatting results to be handed back to the caller.
     private FormattingResults results = new FormattingResults();
@@ -180,10 +183,61 @@ public class AreaTreeHandler extends FOEventHandler {
              * See if this ID is in the unresolved idref list, if so
              * resolve Resolvable objects tied to it.
              */
-            tryIDResolution(id, pv, pvList);
+            if (!unfinishedIDs.contains(id)) {
+              tryIDResolution(id, pv, pvList);
+            }
         } else {
             pvList.add(pv);
         }
+    }
+    
+    /**
+     * This method tie an ID to the areaTreeHandler until this one is
+     * ready to be processed. This is used in page-number-citation-last processing so we know
+     * when an id can be resolved.
+     * @param id the id of the object being processed
+     */
+    public void signalPendingID(String id) {
+        if (log.isDebugEnabled()) {
+            log.debug("signalPendingID(" + id + ")");
+        }
+        unfinishedIDs.add(id);
+    }
+    
+    /**
+     * Signals that all areas for the formatting object with the given ID have been generated.
+     * This is used to determine when page-number-citation-last ref-ids can be resolved.
+     * @param id the id of the formatting object which was just finished
+     */
+    public void signalIDProcessed(String id) {
+        if (log.isDebugEnabled()) {
+            log.debug("signalIDProcessed(" + id + ")");
+        }
+        
+        alreadyResolvedIDs.add(id);
+        if (!unfinishedIDs.contains(id)) {
+            return;
+        }
+        unfinishedIDs.remove(id);
+        
+        List pvList = (List) idLocations.get(id);
+        Set todo = (Set) unresolvedIDRefs.get(id);
+        if (todo != null) {
+            for (Iterator iter = todo.iterator(); iter.hasNext();) {
+                Resolvable res = (Resolvable) iter.next();
+                res.resolveIDRef(id, pvList);
+            }
+            unresolvedIDRefs.remove(id);
+        }
+    }
+    
+    /**
+     * Check if an ID has already been resolved
+     * @param id the id to check
+     * @return true if the ID has been resolved
+     */
+    public boolean alreadyResolvedID(String id) {
+        return (alreadyResolvedIDs.contains(id));
     }
 
     /**
@@ -197,8 +251,13 @@ public class AreaTreeHandler extends FOEventHandler {
         if (todo != null) {
             for (Iterator iter = todo.iterator(); iter.hasNext();) {
                 Resolvable res = (Resolvable) iter.next();
-                res.resolveIDRef(id, pvList);
+                if (!unfinishedIDs.contains(id)) {
+                    res.resolveIDRef(id, pvList);
+                } else {
+                    return;
+                }
             }
+            alreadyResolvedIDs.add(id);
             unresolvedIDRefs.remove(id);
         }
     }

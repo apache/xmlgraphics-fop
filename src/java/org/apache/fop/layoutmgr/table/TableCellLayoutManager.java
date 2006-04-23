@@ -252,6 +252,8 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
         //Space resolution
         SpaceResolver.resolveElementList(returnList);
         
+        getPSLM().notifyEndOfLayout(((TableCell)getFObj()).getId());
+        
         setFinished(true);
         return returnList;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -93,6 +93,8 @@ public class FOElementMapping extends ElementMapping {
             foObjs.put("page-number", new PageNumberMaker());
             foObjs.put("page-number-citation",
                            new PageNumberCitationMaker());
+            foObjs.put("page-number-citation-last",
+                    new PageNumberCitationLastMaker());
 
             // Formatting Objects for Tables
             foObjs.put("table-and-caption", new TableAndCaptionMaker());
@@ -343,6 +345,12 @@ public class FOElementMapping extends ElementMapping {
         }
     }
 
+    static class PageNumberCitationLastMaker extends ElementMapping.Maker {
+        public FONode make(FONode parent) {
+            return new org.apache.fop.fo.flow.PageNumberCitationLast(parent);
+        }
+    }
+    
     static class TableAndCaptionMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.TableAndCaption(parent);
