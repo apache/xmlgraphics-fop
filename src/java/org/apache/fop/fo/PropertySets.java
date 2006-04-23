@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 /* $Id$ */
 
-
 package org.apache.fop.fo;
 
 import org.apache.fop.fo.Constants;
@@ -28,7 +27,7 @@ public class PropertySets {
     private static BitSet can_have_markers = null;
     private static BitSet no_inline_areas = null;
 
-    private Element[] elements = new Element[Constants.FRM_OBJ_COUNT+1];
+    private Element[] elements = new Element[Constants.FRM_OBJ_COUNT + 1];
     private BitSet block_elems = new BitSet();
     private BitSet inline_elems = new BitSet();
 
@@ -58,6 +57,7 @@ public class PropertySets {
         inline_elems.set(Constants.FO_LEADER);
         inline_elems.set(Constants.FO_PAGE_NUMBER);
         inline_elems.set(Constants.FO_PAGE_NUMBER_CITATION);
+        inline_elems.set(Constants.FO_PAGE_NUMBER_CITATION_LAST);
         inline_elems.set(Constants.FO_BASIC_LINK);
         inline_elems.set(Constants.FO_MULTI_TOGGLE);
     }
@@ -679,6 +679,34 @@ public class PropertySets {
         elem.addProperty(Constants.PR_VISIBILITY);
         elem.addProperty(Constants.PR_WORD_SPACING);
         elem.addProperty(Constants.PR_WRAP_OPTION);
+        
+        elem = elements[Constants.FO_PAGE_NUMBER_CITATION_LAST];
+        elem.addProperties(CommonAccessibilityProperties);
+        elem.addProperties(CommonAuralProperties);
+        elem.addProperties(CommonBorderPaddingBackgroundProperties);
+        elem.addProperties(CommonFontProperties);
+        elem.addProperties(CommonMarginPropertiesInline);
+        elem.addProperties(CommonRelativePositionProperties);
+        elem.addProperty(Constants.PR_VERTICAL_ALIGN);
+        elem.addProperty(Constants.PR_ALIGNMENT_ADJUST);
+        elem.addProperty(Constants.PR_ALIGNMENT_BASELINE);
+        elem.addProperty(Constants.PR_BASELINE_SHIFT);
+        elem.addProperty(Constants.PR_DOMINANT_BASELINE);
+        elem.addProperty(Constants.PR_ID);
+        elem.addProperty(Constants.PR_KEEP_WITH_NEXT);
+        elem.addProperty(Constants.PR_KEEP_WITH_PREVIOUS);
+        elem.addProperty(Constants.PR_LETTER_SPACING);
+        elem.addProperty(Constants.PR_LINE_HEIGHT);
+        elem.addProperty(Constants.PR_REF_ID);
+        elem.addProperty(Constants.PR_SCORE_SPACES);
+        elem.addProperty(Constants.PR_TEXT_ALTITUDE);
+        elem.addProperty(Constants.PR_TEXT_DECORATION);
+        elem.addProperty(Constants.PR_TEXT_DEPTH);
+        elem.addProperty(Constants.PR_TEXT_SHADOW);
+        elem.addProperty(Constants.PR_TEXT_TRANSFORM);
+        elem.addProperty(Constants.PR_VISIBILITY);
+        elem.addProperty(Constants.PR_WORD_SPACING);
+        elem.addProperty(Constants.PR_WRAP_OPTION);
 
         elem = elements[Constants.FO_TABLE_AND_CAPTION];
         elem.addProperties(CommonAccessibilityProperties);
@@ -992,7 +1020,7 @@ public class PropertySets {
         elem.addProperty(Constants.PR_RETRIEVE_BOUNDARY);
 
         // Merge the attributes from the children into the parent.
-        for (boolean dirty = true; dirty; ) {
+        for (boolean dirty = true; dirty;) {
             dirty = false;
             for (int i = 1; i < elements.length; i++) {
                 dirty = dirty || elements[i].merge();
@@ -1009,9 +1037,9 @@ public class PropertySets {
      * on the array the number of set bits in the BitSet.
      */
     private static short[] makeSparseIndices(BitSet set) {
-        short[] indices = new short[Constants.PROPERTY_COUNT+1];
+        short[] indices = new short[Constants.PROPERTY_COUNT + 1];
         int j = 1;
-        for (int i = 0; i < Constants.PROPERTY_COUNT+1; i++) {
+        for (int i = 0; i < Constants.PROPERTY_COUNT + 1; i++) {
             if (set.get(i)) {
                 indices[i] = (short) j++;
             }
@@ -1022,7 +1050,7 @@ public class PropertySets {
 
     public static short[] getPropertySet(int elementId) {
         if (mapping == null) {
-            mapping = new short[Constants.FRM_OBJ_COUNT+1][];
+            mapping = new short[Constants.FRM_OBJ_COUNT + 1][];
             PropertySets ps = new PropertySets();
             ps.initializeElements();
             ps.initializeCommon();

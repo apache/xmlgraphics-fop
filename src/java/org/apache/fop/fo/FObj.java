@@ -378,6 +378,7 @@ public abstract class FObj extends FONode implements Constants {
                         || lName.equals("leader") 
                         || lName.equals("page-number") 
                         || lName.equals("page-number-citation")
+                        || lName.equals("page-number-citation-last")
                         || lName.equals("basic-link")
                         || (lName.equals("multi-toggle")
                                 && (getNameId() == FO_MULTI_CASE 

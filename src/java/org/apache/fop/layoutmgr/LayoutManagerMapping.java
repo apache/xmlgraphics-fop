@@ -15,6 +15,7 @@
  */
 
 /* $Id$ */
+
 package org.apache.fop.layoutmgr;
 
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ import org.apache.fop.fo.flow.ListBlock;
 import org.apache.fop.fo.flow.ListItem;
 import org.apache.fop.fo.flow.PageNumber;
 import org.apache.fop.fo.flow.PageNumberCitation;
+import org.apache.fop.fo.flow.PageNumberCitationLast;
 import org.apache.fop.fo.flow.RetrieveMarker;
 import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.flow.TableBody;
@@ -73,6 +75,7 @@ import org.apache.fop.layoutmgr.inline.InlineLevelLayoutManager;
 import org.apache.fop.layoutmgr.inline.InstreamForeignObjectLM;
 import org.apache.fop.layoutmgr.inline.LeaderLayoutManager;
 import org.apache.fop.layoutmgr.inline.PageNumberCitationLayoutManager;
+import org.apache.fop.layoutmgr.inline.PageNumberCitationLastLayoutManager;
 import org.apache.fop.layoutmgr.inline.PageNumberLayoutManager;
 import org.apache.fop.layoutmgr.inline.TextLayoutManager;
 import org.apache.fop.layoutmgr.inline.WrapperLayoutManager;
@@ -123,6 +126,8 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
         makers.put(PageNumber.class, new PageNumberLayoutManagerMaker());
         makers.put(PageNumberCitation.class,
                    new PageNumberCitationLayoutManagerMaker());
+        makers.put(PageNumberCitationLast.class,
+                new PageNumberCitationLastLayoutManagerMaker());
         makers.put(Table.class, new TableLayoutManagerMaker());
         makers.put(TableBody.class, new Maker());
         makers.put(TableColumn.class, new Maker());
@@ -349,6 +354,12 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
          }
     }
 
+    public static class PageNumberCitationLastLayoutManagerMaker extends Maker {
+        public void make(FONode node, List lms) {
+           lms.add(new PageNumberCitationLastLayoutManager((PageNumberCitationLast) node));
+        }
+    }
+    
     public static class TableLayoutManagerMaker extends Maker {
         public void make(FONode node, List lms) {
             Table table = (Table) node;

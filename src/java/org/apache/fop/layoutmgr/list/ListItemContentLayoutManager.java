@@ -171,6 +171,8 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
         flush();
 
         curBlockArea = null;
+        
+        getPSLM().notifyEndOfLayout(((AbstractListItemPart)getFObj()).getId());
     }
 
     /**

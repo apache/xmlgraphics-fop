@@ -535,6 +535,8 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
 
         curBlockArea = null;
         resetSpaces();
+        
+        getPSLM().notifyEndOfLayout(((ListItem)getFObj()).getId());
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -156,8 +156,10 @@ public interface Constants {
     int FO_BOOKMARK_TITLE = 59;
     /** FO element constant - XSL 1.1 */
     int FO_PAGE_SEQUENCE_WRAPPER = 60;
+    /** FO element constant - XSL 1.1 */
+    int FO_PAGE_NUMBER_CITATION_LAST = 61;
     /** Number of FO element constants defined */
-    int FRM_OBJ_COUNT = 60;
+    int FRM_OBJ_COUNT = 61;
 
     // Masks
     /**

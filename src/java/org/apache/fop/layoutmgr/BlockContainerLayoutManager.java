@@ -837,6 +837,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         viewportBlockArea = null;
         referenceArea = null;
         resetSpaces();
+        
+        getPSLM().notifyEndOfLayout(((BlockContainer)getFObj()).getId());
     }
     
     /**
