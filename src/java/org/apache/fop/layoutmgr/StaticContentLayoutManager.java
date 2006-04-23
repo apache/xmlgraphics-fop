@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.SideRegion;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.layoutmgr.inline.InlineLevelLayoutManager;
+import org.apache.fop.layoutmgr.inline.TextLayoutManager;
 import org.apache.fop.traits.MinOptMax;
 
 /**
@@ -302,10 +303,12 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
                 childLC.setWritingMode(context.getWritingMode());
 
                 LinkedList returnedList = null;
+                //The following is a HACK! Ignore leading and trailing white space 
+                boolean ignore = curLM instanceof TextLayoutManager;
                 if (!curLM.isFinished()) {
                     returnedList = curLM.getNextKnuthElements(childLC, alignment);
                 }
-                if (returnedList != null) {
+                if (returnedList != null && !ignore) {
                     lm.wrapPositionElements(returnedList, returnList);
                 }
             }
