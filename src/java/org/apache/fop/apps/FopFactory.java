@@ -571,7 +571,9 @@ public class FopFactory {
      */
     public Source resolveURI(String uri, String base) {
         Source source = null;
-        if (uriResolver != null) {
+        //RFC 2397 data URLs don't need to be resolved, just decode them.
+        boolean bypassURIResolution = uri.startsWith("data:");
+        if (!bypassURIResolution && uriResolver != null) {
             try {
                 source = uriResolver.resolve(uri, base);
             } catch (TransformerException te) {
