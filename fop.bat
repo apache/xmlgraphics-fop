@@ -56,5 +56,15 @@ set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\jai_codec.jar
 set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\fop-hyph.jar
 set LOCALCLASSPATH=%LOCALCLASSPATH%;%FOP_HYPHENATION_PATH%
 
-java %LOGCHOICE% %LOGLEVEL% -cp "%LOCALCLASSPATH%" org.apache.fop.cli.Main %FOP_CMD_LINE_ARGS%
+if "%JAVA_HOME%" == "" goto noJavaHome
+if not exist "%JAVA_HOME%\bin\java.exe" goto noJavaHome
+if "%JAVACMD%" == "" set JAVACMD=%JAVA_HOME%\bin\java
+goto runFop
+
+:noJavaHome
+if "%JAVACMD%" == "" set JAVACMD=java
+
+:runFop
+ECHO "%JAVACMD%"
+"%JAVACMD%" %LOGCHOICE% %LOGLEVEL% -cp "%LOCALCLASSPATH%" org.apache.fop.cli.Main %FOP_CMD_LINE_ARGS%
 
