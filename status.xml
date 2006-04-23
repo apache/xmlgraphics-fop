@@ -27,6 +27,11 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix">
+        Bugfix: Fixed ClassCastException when retrieve-marker is used as a direct child
+        if static-content in which case leading and trailing white space is not properly
+        removed.
+      </action>
       <action context="Code" dev="JM" type="fix" fixes-bug="39285">
         Bugfix: Fixed OutOfMemoryException with long data URLs (RFC 2397).
       </action>
