@@ -28,6 +28,10 @@
   <changes>
     <release version="FOP Trunk">
       <action context="Code" dev="JM" type="fix">
+        Bugfix: basic-links with internal destinations in documents with multiple 
+        page-sequences sometimes pointed at the wrong page.
+      </action>
+      <action context="Code" dev="JM" type="fix">
         Bugfix: Fixed ClassCastException when retrieve-marker is used as a direct child
         if static-content in which case leading and trailing white space is not properly
         removed.

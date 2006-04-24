@@ -48,6 +48,13 @@ public class PageViewport implements Resolvable, Cloneable {
     private Page page;
     private Rectangle2D viewArea;
     private String simplePageMasterName;
+    
+    /**
+     * Unique key to identify the page. pageNumberString and pageIndex are both no option 
+     * for this.
+     */
+    private String pageKey;
+    
     private int pageNumber = -1;
     private String pageNumberString = null;
     private int pageIndex = -1; //-1 = undetermined
@@ -206,6 +213,14 @@ public class PageViewport implements Resolvable, Cloneable {
     }
     
     /**
+     * Sets the unique key for this PageViewport that will be used to reference this page.
+     * @param key the unique key.
+     */
+    public void setKey(String key) {
+        this.pageKey = key;
+    }
+    
+    /**
      * Get the key for this page viewport.
      * This is used so that a serializable key can be used to
      * lookup the page or some other reference.
@@ -213,7 +228,10 @@ public class PageViewport implements Resolvable, Cloneable {
      * @return a unique page viewport key for this area tree
      */
     public String getKey() {
-        return toString();
+        if (this.pageKey == null) {
+            throw new IllegalStateException("No page key set on the PageViewport: " + toString());
+        }
+        return this.pageKey;
     }
 
     /**
