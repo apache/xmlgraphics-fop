@@ -175,7 +175,7 @@ public class TTFReader extends AbstractFontReader {
                     }
                 }
                 log.info("");
-                log.info("XML font metrics file successfullly created.");
+                log.info("XML font metrics file successfully created.");
             } catch (Exception e) {
                 log.error("Error while building XML font metrics file.", e);
                 System.exit(-1);
