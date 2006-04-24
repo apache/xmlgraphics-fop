@@ -360,12 +360,14 @@ public class AreaTreeParser {
                 }
                 Rectangle2D viewArea = parseRect(attributes.getValue("bounds"));
                 int pageNumber = getAttributeAsInteger(attributes, "nr", -1);
+                String key = attributes.getValue("key");
                 String pageNumberString = attributes.getValue("formatted-nr");
                 String pageMaster = attributes.getValue("simple-page-master-name");
                 boolean blank = getAttributeAsBoolean(attributes, "blank", false);
                 currentPageViewport = new PageViewport(viewArea, 
                         pageNumber, pageNumberString,
                         pageMaster, blank);
+                currentPageViewport.setKey(key);
             }
 
         }

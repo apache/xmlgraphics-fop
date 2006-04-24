@@ -1042,6 +1042,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                         + "does not support this.");
                 }
                 Page page = new Page(spm, index, pageNumberString, isBlank);
+                //Set unique key obtained from the AreaTreeHandler
+                page.getPageViewport().setKey(areaTreeHandler.generatePageViewportKey());
                 cachedPages.add(page);
                 return page;
             } catch (FOPException e) {

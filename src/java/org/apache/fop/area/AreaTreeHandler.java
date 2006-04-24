@@ -66,6 +66,8 @@ import org.apache.fop.layoutmgr.LayoutManagerMapping;
  */
 public class AreaTreeHandler extends FOEventHandler {
 
+    private static Log log = LogFactory.getLog(AreaTreeHandler.class);
+
     // show statistics after document complete?
     private boolean outputStatistics;
 
@@ -104,8 +106,8 @@ public class AreaTreeHandler extends FOEventHandler {
 
     private PageSequenceLayoutManager prevPageSeqLM;
 
-    private static Log log = LogFactory.getLog(AreaTreeHandler.class);
-
+    private int idGen = 0;
+    
     /**
      * Constructor.
      * @param userAgent FOUserAgent object for process
@@ -460,5 +462,15 @@ public class AreaTreeHandler extends FOEventHandler {
             model.handleOffDocumentItem(odi);
         }
     }
+    
+    /**
+     * Generates and returns a unique key for a page viewport.
+     * @return the generated key.
+     */
+    public String generatePageViewportKey() {
+        this.idGen++;
+        return "P" + this.idGen;
+    }
+    
 }
 
