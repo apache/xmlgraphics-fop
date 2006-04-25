@@ -557,6 +557,11 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             return false;
         }
 
+        /** @see org.apache.fop.layoutmgr.AbstractBreaker#isSinglePartFavored() */
+        protected boolean isSinglePartFavored() {
+            return true;
+        }
+
         public int getDifferenceOfFirstPart() {
             PageBreakPosition pbp = (PageBreakPosition)this.deferredAlg.getPageBreaks().getFirst();
             return pbp.difference;

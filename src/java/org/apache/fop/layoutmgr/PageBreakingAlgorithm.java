@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 The Apache Software Foundation.
+ * Copyright 2004-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.layoutmgr.AbstractBreaker.PageBreakPosition;
@@ -29,6 +31,9 @@ import org.apache.fop.layoutmgr.AbstractBreaker.PageBreakPosition;
 import org.apache.fop.traits.MinOptMax;
 
 class PageBreakingAlgorithm extends BreakingAlgorithm {
+
+    /** the logger for the class */
+    protected static Log classLog = LogFactory.getLog(PageBreakingAlgorithm.class);
 
     private LayoutManager topLevelLM;
     private PageSequenceLayoutManager.PageProvider pageProvider;
@@ -68,12 +73,17 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     //Controls whether overflows should be warned about or not
     private boolean autoHeight = false;
     
+    //Controls whether a single part should be forced if possible (ex. block-container)
+    private boolean favorSinglePart = false;
+    
     public PageBreakingAlgorithm(LayoutManager topLevelLM,
                                  PageSequenceLayoutManager.PageProvider pageProvider,
                                  int alignment, int alignmentLast,
                                  MinOptMax footnoteSeparatorLength,
-                                 boolean partOverflowRecovery, boolean autoHeight) {
+                                 boolean partOverflowRecovery, boolean autoHeight,
+                                 boolean favorSinglePart) {
         super(alignment, alignmentLast, true, partOverflowRecovery, 0);
+        this.log = classLog;
         this.topLevelLM = topLevelLM;
         this.pageProvider = pageProvider;
         best = new BestPageRecords();
@@ -83,6 +93,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
             footnoteSeparatorLength.max += 10000;
         }
         this.autoHeight = autoHeight;
+        this.favorSinglePart = favorSinglePart;
     }
 
     /**
@@ -583,9 +594,11 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         if (footnotesPending) {
             if (footnoteListIndex < footnotesList.size() - 1) {
                 // add demerits for the deferred footnotes
-                demerits += (footnotesList.size() - 1 - footnoteListIndex) * deferredFootnoteDemerits;
+                demerits += (footnotesList.size() - 1 - footnoteListIndex) 
+                                * deferredFootnoteDemerits;
             }
-            if (footnoteElementIndex < ((LinkedList) footnotesList.get(footnoteListIndex)).size() - 1) {
+            if (footnoteElementIndex 
+                    < ((LinkedList) footnotesList.get(footnoteListIndex)).size() - 1) {
                 // add demerits for the footnote split between pages
                 demerits += splitFootnoteDemerits;
             }
@@ -781,7 +794,15 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         KnuthNode bestActiveNode = null;
         for (int i = startLine; i < endLine; i++) {
             for (KnuthNode node = getNode(i); node != null; node = node.next) {
-                bestActiveNode = compareNodes(bestActiveNode, node);
+                if (favorSinglePart 
+                        && node.line > 1 
+                        && bestActiveNode != null
+                        && Math.abs(bestActiveNode.difference) < bestActiveNode.availableShrink) {
+                    //favor current best node, so just skip the current node because it would
+                    //result in more than one part
+                } else {
+                    bestActiveNode = compareNodes(bestActiveNode, node);
+                }
                 if (node != bestActiveNode) {
                     removeNode(i, node);
                 }

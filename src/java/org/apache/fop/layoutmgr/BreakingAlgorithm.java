@@ -41,8 +41,11 @@ import org.apache.fop.traits.MinOptMax;
  */
 public abstract class BreakingAlgorithm {
 
-    /** the logger */
-    protected static Log log = LogFactory.getLog(BreakingAlgorithm.class);
+    /** the logger for the class */
+    protected static Log classLog = LogFactory.getLog(BreakingAlgorithm.class);
+    
+    /** the logger for the instance */
+    protected Log log = classLog;
     
     protected static final int INFINITE_RATIO = 1000;
 
@@ -547,7 +550,8 @@ public abstract class BreakingAlgorithm {
     protected void considerLegalBreak(KnuthElement element, int elementIdx) {
 
         if (log.isTraceEnabled()) {
-            log.trace("Feasible breakpoint at " + par.indexOf(element) + " " + totalWidth + "+" + totalStretch + "-" + totalShrink);
+            log.trace("considerLegalBreak() at " + elementIdx 
+                    + " (" + totalWidth + "+" + totalStretch + "-" + totalShrink + "), parts/lines: "+ startLine + "-" + endLine);
             log.trace("\tCurrent active node list: " + activeNodeCount + " " + this.toString("\t"));
         }
 
@@ -691,7 +695,8 @@ public abstract class BreakingAlgorithm {
                 // the nodes in activeList must be ordered
                 // by line number and position;
                 if (log.isTraceEnabled()) {
-                    log.trace("\tInsert new break in list of " + activeNodeCount);
+                    log.trace("\tInsert new break in list of " + activeNodeCount 
+                            + " from fitness class " + i);
                 }
                 KnuthNode newNode = createNode(elementIdx, line + 1, i,
                                                newWidth, newStretch, newShrink);
