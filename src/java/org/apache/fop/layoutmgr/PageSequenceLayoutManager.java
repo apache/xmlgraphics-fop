@@ -373,7 +373,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                     getPageProvider(),
                     alg.getAlignment(), alg.getAlignmentLast(), 
                     footnoteSeparatorLength,
-                    isPartOverflowRecoveryActivated(), false);
+                    isPartOverflowRecoveryActivated(), false, false);
             //alg.setConstantLineWidth(flowBPD);
             int iOptPageCount = algRestart.findBreakingPoints(effectiveList,
                         newStartPos,

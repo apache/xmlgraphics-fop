@@ -153,6 +153,13 @@ public abstract class AbstractBreaker {
     }
 
     /**
+     * @return true if one a single part should be produced if possible (ex. for block-containers)
+     */
+    protected boolean isSinglePartFavored() {
+        return false;
+    }
+    
+    /**
      * Returns the PageProvider if any. PageBreaker overrides this method because each
      * page may have a different available BPD which needs to be accessible to the breaking
      * algorithm.
@@ -272,7 +279,7 @@ public abstract class AbstractBreaker {
                 PageBreakingAlgorithm alg = new PageBreakingAlgorithm(getTopLevelLM(),
                         getPageProvider(),
                         alignment, alignmentLast, footnoteSeparatorLength,
-                        isPartOverflowRecoveryActivated(), autoHeight);
+                        isPartOverflowRecoveryActivated(), autoHeight, isSinglePartFavored());
                 int iOptPageCount;
 
                 BlockSequence effectiveList;

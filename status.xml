@@ -27,6 +27,11 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="update">
+        Content in block-containers makes better use of shrink to fit content vertically
+        into the available area. This can be used indirectly to justify content vertically
+        in a block-container.
+      </action>
       <action context="Code" dev="JM" type="fix">
         Bugfix: basic-links with internal destinations in documents with multiple 
         page-sequences sometimes pointed at the wrong page.
