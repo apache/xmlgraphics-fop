@@ -51,7 +51,7 @@ us track these issues down.</p>
       <ul>
         <li>To help us ensure that the bug database is as useful as it should be, please
 use the <link href="gethelp.html">Getting Help</link> checklist to determine whether a bug report should be entered.</li>
-        <li>Review the <link href="http://issues.apache.org/bugzilla/bugwritinghelp.html">Apache Bug Writing Guidelines</link> before submitting your report.</li>
+        <li>Review the <link href="http://issues.apache.org/bugzilla/page.cgi?id=bug-writing.html">Apache Bug Writing Guidelines</link> before submitting your report.</li>
         <li>Enter a new issue report at <link href="http://issues.apache.org/bugzilla/enter_bug.cgi?product=Fop">The FOP issue database (Bugzilla)</link>.
 You will be asked to login to an existing Bugzilla account or to create a new
 one.
