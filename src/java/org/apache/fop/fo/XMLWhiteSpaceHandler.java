@@ -213,8 +213,7 @@ public class XMLWhiteSpaceHandler {
                         } else {
                             // this is to retain a single space between words
                             inWhiteSpace = true;
-                            if (currentChar != '\u0020' 
-                                    && whiteSpaceTreatment == Constants.EN_PRESERVE) {
+                            if (currentChar != '\u0020') {
                                 charIter.replaceChar('\u0020');
                             }
                         }
