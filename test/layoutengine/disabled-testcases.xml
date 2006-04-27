@@ -343,5 +343,4 @@
     <description>Long text cause an IndexOutOfBounds exception</description>
     <reference>http://issues.apache.org/bugzilla/show_bug.cgi?id=39414</reference>
   </testcase>
-  <testcase>
 </disabled-testcases>
