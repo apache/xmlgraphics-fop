@@ -1,2 +1,3 @@
+org.apache.fop.render.afp.AFPRendererMaker
 org.apache.fop.render.pcl.PCLRendererMaker
 org.apache.fop.render.svg.SVGRendererMaker
