@@ -47,13 +47,12 @@
     <name>linefeed-treatment</name>
     <file>block_linefeed-treatment.xml</file>
     <description>Preserved linefeeds in a fo:character are not handled
-    correctly. Zero width space characters are not handled
     correctly.</description>
   </testcase>
   <testcase>
     <name>white-space-treatment</name>
     <file>block_white-space-treatment_3.xml</file>
-    <description>White space handling incorrectly stops at inline
+    <description>White space handling incorrectly stops at fo:inline
       boundaries when it comes to formatter generated line breaks.</description>
   </testcase>
   <testcase>
@@ -338,4 +337,11 @@
     block-level element because its layout manager is written to handle only 
     inline content.</description>
   </testcase>
+  <testcase>
+    <name>Bugzilla #39414: block containing long text</name>
+    <file>block_bug39414.xml</file>
+    <description>Long text cause an IndexOutOfBounds exception</description>
+    <reference>http://issues.apache.org/bugzilla/show_bug.cgi?id=39414</reference>
+  </testcase>
+  <testcase>
 </disabled-testcases>
