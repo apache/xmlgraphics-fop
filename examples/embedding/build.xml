@@ -37,6 +37,7 @@
         <include name="xml-apis*.jar"/>
         <include name="xerces*.jar"/>
         <include name="xalan*.jar"/>
+        <include name="serializer*.jar"/>
         <include name="commons-io*.jar"/>
         <include name="commons-logging*.jar"/>
         <include name="xmlgraphics-commons*.jar"/>
