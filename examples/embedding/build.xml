@@ -34,7 +34,7 @@
      <fileset dir="${fop.lib.dir}">
         <include name="avalon-framework*.jar"/>
         <include name="batik*.jar"/>
-        <include name="xml-apis.jar"/>
+        <include name="xml-apis*.jar"/>
         <include name="xerces*.jar"/>
         <include name="xalan*.jar"/>
         <include name="commons-io*.jar"/>
