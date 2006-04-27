@@ -36,6 +36,7 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.sax.SAXResult;
 
 // FOP
+import org.apache.commons.io.IOUtils;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FOPException;
@@ -97,7 +98,7 @@ public class MultipleFO2PDF {
             // Start XSLT transformation and FOP processing
             transformer.transform(src, res);
         } finally {
-            out.close();
+            IOUtils.closeQuietly(out);
         }
 
         return fop.getResults();
@@ -131,7 +132,8 @@ public class MultipleFO2PDF {
                 }
                 File fofile = new File(baseDir, foname);
                 String pdfname = foname;
-                pdfname.replaceFirst("\\.fo", ".pdf");
+                int p = foname.lastIndexOf('.');
+                pdfname = foname.substring(0, p) + ".pdf";
                 File pdffile = new File(outDir, pdfname);
 
                 // transform and render
