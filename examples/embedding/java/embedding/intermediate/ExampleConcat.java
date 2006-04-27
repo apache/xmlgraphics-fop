@@ -104,8 +104,9 @@ public class ExampleConcat {
         OutputStream out = new java.io.FileOutputStream(intermediate);
         out = new java.io.BufferedOutputStream(out);
         try {
-            // Construct fop (the MIME type here is unimportant due to the override on the user agent)
-            Fop fop = new Fop(MimeConstants.MIME_FOP_AREA_TREE, userAgent, out);
+            // Construct fop (the MIME type here is unimportant due to the override
+            // on the user agent)
+            Fop fop = fopFactory.newFop(null, userAgent, out);
 
             // Setup XSLT
             TransformerFactory factory = TransformerFactory.newInstance();
