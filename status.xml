@@ -27,6 +27,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="MM" type="fix">
+        Bugfix: TABs were not correctly replaced by spaces in some circumstances.
+      </action>
       <action context="Code" dev="JM" type="update">
         Content in block-containers makes better use of shrink to fit content vertically
         into the available area. This can be used indirectly to justify content vertically
