@@ -18,34 +18,19 @@
 
 package org.apache.fop.fo.extensions;
 
-import org.apache.fop.fo.ElementMapping;
-import org.apache.fop.fo.UnknownXMLObj;
-
-import java.util.HashMap;
-
 /**
- * Element mapping for FOP's proprietary extension to XSL-FO.
+ * Element mapping for the old FOP extension namespace. It is simply mapped to the new namespace.
  */
-public class ExtensionElementMapping extends ElementMapping {
+public class OldExtensionElementMapping extends ExtensionElementMapping {
     
-    /** The FOP extension namespace URI */
-    public static final String URI = "http://xmlgraphics.apache.org/fop/extensions";
+    /** The old FOP extension namespace URI (FOP 0.20.5 and earlier) */
+    public static final String URI = "http://xml.apache.org/fop/extensions";
 
     /**
      * Constructor.
      */
-    public ExtensionElementMapping() {
+    public OldExtensionElementMapping() {
         namespaceURI = URI;
     }
 
-    /**
-     * Initialize the data structures.
-     */
-    protected void initialize() {
-        if (foObjs == null) {
-            foObjs = new HashMap();
-            foObjs.put("outline", new UnknownXMLObj.Maker(URI));
-            foObjs.put("label", new UnknownXMLObj.Maker(URI));
-        }
-    }
 }

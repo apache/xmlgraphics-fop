@@ -45,6 +45,7 @@ import org.apache.fop.render.PrintRenderer;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.XMLHandler;
+import org.apache.fop.util.QName;
 import org.apache.fop.util.XMLizable;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FOPException;
@@ -279,6 +280,16 @@ public class XMLRenderer extends PrintRenderer {
      * @param name name of the attribute
      * @param value value of the attribute
      */
+    protected void addAttribute(QName name, String value) {
+        atts.addAttribute(name.getNamespaceURI(), name.getLocalName(), name.getQName(), 
+                CDATA, value);
+    }
+
+    /**
+     * Adds a new attribute to the protected member variable "atts".
+     * @param name name of the attribute
+     * @param value value of the attribute
+     */
     protected void addAttribute(String name, int value) {
         addAttribute(name, Integer.toString(value));
     }
@@ -375,6 +386,13 @@ public class XMLRenderer extends PrintRenderer {
                     addAttribute(name, value.toString());
                 }
             }
+        }
+        
+        //Transfer foreign attributes
+        Iterator iter = area.getForeignAttributes().entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry entry = (Map.Entry)iter.next();
+            addAttribute((QName)entry.getKey(), (String)entry.getValue());
         }
     }
 

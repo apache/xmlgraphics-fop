@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -373,4 +373,12 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
                 && isFinished());
     }
 
+    /**
+     * Transfers foreign attributes from the formatting object to the area.
+     * @param targetArea the area to set the attributes on
+     */
+    protected void transferForeignAttributes(Area targetArea) {
+        Map atts = getFObj().getForeignAttributes();
+        targetArea.setForeignAttributes(atts);
+    }
 }

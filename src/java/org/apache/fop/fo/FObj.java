@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@
 package org.apache.fop.fo;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -29,6 +30,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.properties.PropertyMaker;
+import org.apache.fop.util.QName;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 
@@ -45,6 +47,9 @@ public abstract class FObj extends FONode implements Constants {
 
     /** The list of extension attachments, null if none */
     private List extensionAttachments = null;
+    
+    /** The map of foreign attributes, null if none */
+    private Map foreignAttributes = null;
     
     /** Used to indicate if this FO is either an Out Of Line FO (see rec)
         or a descendant of one.  Used during validateChildNode() FO 
@@ -471,6 +476,40 @@ public abstract class FObj extends FONode implements Constants {
             return Collections.EMPTY_LIST;
         } else {
             return extensionAttachments;
+        }
+    }
+
+    /**
+     * Adds a foreign attribute to this FObj.
+     * @param uri the namespace URI
+     * @param qName the fully qualified name
+     * @param value the attribute value
+     * @todo Handle this over FOP's property mechanism so we can use inheritance.
+     */
+    public void addForeignAttribute(String uri, 
+            String qName, String value) {
+        if (qName == null) {
+            throw new NullPointerException("Parameter qName must not be null");
+        }
+        if (foreignAttributes == null) {
+            foreignAttributes = new java.util.HashMap();
+        }
+        String localName = qName;
+        String prefix = null;
+        int p = localName.indexOf(':');
+        if (p > 0) {
+            prefix = localName.substring(0, p);
+            localName = localName.substring(p + 1);
+        }
+        foreignAttributes.put(new QName(uri, prefix, localName), value);
+    }
+    
+    /** @return the map of foreign attributes */
+    public Map getForeignAttributes() {
+        if (foreignAttributes == null) {
+            return Collections.EMPTY_MAP;
+        } else {
+            return foreignAttributes;
         }
     }
     

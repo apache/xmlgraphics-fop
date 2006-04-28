@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -115,7 +115,10 @@ public class RegionViewport extends Area implements Cloneable {
         RegionViewport rv = new RegionViewport((Rectangle2D)viewArea.clone());
         rv.regionReference = (RegionReference)regionReference.clone();
         if (props != null) {
-            rv.props = (HashMap)props.clone();
+            rv.props = new HashMap(props);
+        }
+        if (foreignAttributes != null) {
+            rv.foreignAttributes = new HashMap(foreignAttributes);
         }
         return rv;
     }

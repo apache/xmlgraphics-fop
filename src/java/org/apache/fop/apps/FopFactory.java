@@ -22,17 +22,23 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
-import java.util.List;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
 
+import org.xml.sax.SAXException;
+
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.ElementMappingRegistry;
 import org.apache.fop.hyphenation.HyphenationTreeResolver;
@@ -41,7 +47,6 @@ import org.apache.fop.layoutmgr.LayoutManagerMaker;
 import org.apache.fop.render.RendererFactory;
 import org.apache.fop.render.XMLHandlerRegistry;
 import org.apache.fop.util.ContentHandlerFactoryRegistry;
-import org.xml.sax.SAXException;
 
 /**
  * Factory class which instantiates new Fop and FOUserAgent instances. This class also holds
@@ -110,6 +115,8 @@ public class FopFactory {
 
     /** Optional overriding LayoutManagerMaker */
     private LayoutManagerMaker lmMakerOverride = null;
+
+    private Set ignoredNamespaces = new java.util.HashSet();
     
     /**
      * Main constructor.
@@ -429,6 +436,40 @@ public class FopFactory {
      */
     public void setPageWidth(String pageWidth) {
         this.pageWidth = pageWidth;
+    }
+    
+    /**
+     * Adds a namespace to the set of ignored namespaces.
+     * If FOP encounters a namespace which it cannot handle, it issues a warning except if this 
+     * namespace is in the ignored set.
+     * @param namespaceURI the namespace URI
+     */
+    public void ignoreNamespace(String namespaceURI) {
+        this.ignoredNamespaces.add(namespaceURI);
+    }
+    
+    /**
+     * Adds a collection of namespaces to the set of ignored namespaces.
+     * If FOP encounters a namespace which it cannot handle, it issues a warning except if this 
+     * namespace is in the ignored set.
+     * @param namespaceURIs the namespace URIs
+     */
+    public void ignoreNamespaces(Collection namespaceURIs) {
+        this.ignoredNamespaces.addAll(namespaceURIs);
+    }
+    
+    /**
+     * Indicates whether a namespace URI is on the ignored list.
+     * @param namespaceURI the namespace URI
+     * @return true if the namespace is ignored by FOP
+     */
+    public boolean isNamespaceIgnored(String namespaceURI) {
+        return this.ignoredNamespaces.contains(namespaceURI);
+    }
+    
+    /** @return the set of namespaces that are ignored by FOP */
+    public Set getIgnoredNamespace() {
+        return Collections.unmodifiableSet(this.ignoredNamespaces);
     }
     
     //------------------------------------------- Configuration stuff

@@ -163,4 +163,12 @@ public class ElementMappingRegistry {
         return mapping.getDOMImplementation();
     }
     
+    /**
+     * Indicates whether a namespace is known to FOP.
+     * @param namespaceURI the namespace URI
+     * @return true if the namespace is known.
+     */
+    public boolean isKnownNamespace(String namespaceURI) {
+        return this.namespaces.containsKey(namespaceURI);
+    }
 }
