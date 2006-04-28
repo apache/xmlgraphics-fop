@@ -15,8 +15,8 @@
  */
 
 /* $Id$ */
-package org.apache.fop.render.afp.fonts;
 
+package org.apache.fop.render.afp.fonts;
 
 /**
  * A font defined as a set of lines and curves as opposed to a bitmap font. An
@@ -154,7 +154,7 @@ public class OutlineFont extends AFPFont {
     public int[] getWidths(int size) {
 
         int[] widths =  _characterSet.getWidths();
-        for (int i = 0 ; i < widths.length; i++) {
+        for (int i = 0; i < widths.length; i++) {
             widths[i] = widths[i] / 1000 * size;
         }
         return widths;

@@ -76,6 +76,7 @@ public abstract class AFPFont extends Typeface {
     /**
      * Returns the character set for a given size
      * @param size the font size
+     * @return the character set object
      */
     public abstract CharacterSet getCharacterSet(int size);
 

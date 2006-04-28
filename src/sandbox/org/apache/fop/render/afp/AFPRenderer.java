@@ -1157,9 +1157,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                         }
                         convertToGrayScaleImage(io, fopimage.getBitmaps());
                     }
-                }
-                else
-                {
+                } else {
                     if (!fopimage.load(FopImage.BITMAP)) {
                         return;
                     }
@@ -1276,7 +1274,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
         // Create an AFPFontAttributes object from the current font details
         AFPFontAttributes afpFontAttributes =
-            new AFPFontAttributes(name, tf,_currentFontSize);
+            new AFPFontAttributes(name, tf, _currentFontSize);
 
         if (!_currentPageFonts.containsKey(afpFontAttributes.getFontKey())) {
             // Font not found on current page, so add the new one
@@ -1547,7 +1545,8 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
             || rotation == 270) {
             _portraitRotation = rotation;
         } else {
-            throw new IllegalArgumentException("The portrait rotation must be one of the values 0, 90, 180, 270");
+            throw new IllegalArgumentException("The portrait rotation must be one"
+                + " of the values 0, 90, 180, 270");
 
         }
 
@@ -1568,8 +1567,8 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
             || rotation == 270) {
             _landscapeRotation = rotation;
         } else {
-            throw new IllegalArgumentException("The landscape rotation must be one of the values 0, 90, 180, 270");
-
+            throw new IllegalArgumentException("The landscape rotation must be one"
+                + " of the values 0, 90, 180, 270");
         }
 
     }
@@ -1692,21 +1691,21 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         }
 
         ViewPortPos(Rectangle2D view, CTM ctm) {
-            ViewPortPos currentVP = (ViewPortPos)viewPortPositions.get(viewPortPositions.size()-1);
+            ViewPortPos currentVP = (ViewPortPos)viewPortPositions.get(viewPortPositions.size() - 1);
             int xOrigin;
             int yOrigin;
             int width;
             int height;
             switch (currentVP.rot) {
                 case 90:
-                    width = mpts2units(view.getHeight());;
+                    width = mpts2units(view.getHeight());
                     height = mpts2units(view.getWidth());
                     xOrigin = _pageWidth - width - mpts2units(view.getY()) - currentVP.y;
                     yOrigin = mpts2units(view.getX()) + currentVP.x;
                     break;
                 case 180:
                     width = mpts2units(view.getWidth());
-                    height = mpts2units(view.getHeight());;
+                    height = mpts2units(view.getHeight());
                     xOrigin = _pageWidth - width - mpts2units(view.getX()) - currentVP.x;
                     yOrigin = _pageHeight - height - mpts2units(view.getY()) - currentVP.y;
                     break;

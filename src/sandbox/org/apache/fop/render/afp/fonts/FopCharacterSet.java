@@ -15,6 +15,7 @@
  */
 
 /* $Id$ */
+
 package org.apache.fop.render.afp.fonts;
 
 import org.apache.fop.fonts.Typeface;
@@ -35,7 +36,7 @@ public class FopCharacterSet extends CharacterSet {
      * @param encoding the encoding of the font
      * @param name the character set name
      * @param size the font size
-     * @param Typeface the fop character set
+     * @param characterSet the fop character set
      */
     public FopCharacterSet(
         String codePage,

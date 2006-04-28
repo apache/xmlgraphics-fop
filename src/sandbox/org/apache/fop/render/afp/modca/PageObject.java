@@ -70,7 +70,7 @@ public class PageObject extends AbstractPageObject {
 
     /**
      * Adds an overlay to the page resources
-     * @param the overlay to add
+     * @param overlay the overlay to add
      */
     public void addOverlay(Overlay overlay) {
         if (_resourceGroup == null) {

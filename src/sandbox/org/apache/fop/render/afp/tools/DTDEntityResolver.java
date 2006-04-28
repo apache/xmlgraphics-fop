@@ -15,6 +15,7 @@
  */
 
 /* $Id$ */
+
 package org.apache.fop.render.afp.tools;
 
 import java.io.IOException;
@@ -67,11 +68,11 @@ public class DTDEntityResolver implements EntityResolver {
     throws IOException {
 
         URL resource = null;
-        if( AFP_DTD_1_2_ID.equals(publicId) ) {
+        if ( AFP_DTD_1_2_ID.equals(publicId) ) {
             resource = getResource( AFP_DTD_1_2_RESOURCE );
-        } else if( AFP_DTD_1_1_ID.equals(publicId) ) {
+        } else if ( AFP_DTD_1_1_ID.equals(publicId) ) {
             resource = getResource( AFP_DTD_1_1_RESOURCE );
-        } else if( AFP_DTD_1_0_ID.equals(publicId) ) {
+        } else if ( AFP_DTD_1_0_ID.equals(publicId) ) {
             throw new FontRuntimeException(
                 "The AFP Installed Font Definition 1.0 DTD is not longer supported" );
         } else if( systemId != null && systemId.indexOf("afp-fonts.dtd") >= 0 ) {
@@ -95,14 +96,14 @@ public class DTDEntityResolver implements EntityResolver {
      * @return the URL of the required resource
      * @throws FontRuntimeException if the resource could not be found.
      */
-    private URL getResource( String resourcePath ) {
+    private URL getResource(String resourcePath) {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         if (cl == null) {
             cl = ClassLoader.getSystemClassLoader();
         }
 
         URL resource = cl.getResource( resourcePath );
-        if( resource == null ) {
+        if (resource == null) {
             throw new FontRuntimeException( "Resource " + resourcePath +
                 " could not be found on the classpath" );
         }

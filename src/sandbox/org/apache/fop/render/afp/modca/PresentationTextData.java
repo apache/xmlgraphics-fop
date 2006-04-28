@@ -488,18 +488,18 @@ public class PresentationTextData extends AbstractAFPObject {
         ByteArrayOutputStream afpdata) {
 
         afpdata.write(new byte[] {
-              15		 // Control sequence length
-            , (byte)0x81         // Control sequence function type
-            , 0x00		 // Reserved; must be zero
-            , 0x01 		 // Color space - 0x01 = RGB
-            , 0x00		 // Reserved; must be zero
-            , 0x00		 // Reserved; must be zero
-            , 0x00		 // Reserved; must be zero
-            , 0x00		 // Reserved; must be zero
-            , 8			 // Number of bits in component 1
-            , 8			 // Number of bits in component 2
-            , 8			 // Number of bits in component 3
-            , 0			 // Number of bits in component 4
+              15                // Control sequence length
+            , (byte)0x81        // Control sequence function type
+            , 0x00              // Reserved; must be zero
+            , 0x01              // Color space - 0x01 = RGB
+            , 0x00              // Reserved; must be zero
+            , 0x00              // Reserved; must be zero
+            , 0x00              // Reserved; must be zero
+            , 0x00              // Reserved; must be zero
+            , 8                 // Number of bits in component 1
+            , 8                 // Number of bits in component 2
+            , 8                 // Number of bits in component 3
+            , 0                 // Number of bits in component 4
             , (byte)(col.getRed())   // Red intensity
             , (byte)(col.getGreen()) // Green intensity
             , (byte)(col.getBlue())  // Blue intensity

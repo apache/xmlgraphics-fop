@@ -15,6 +15,7 @@
  */
 
 /* $Id$ */
+
 package org.apache.fop.render.afp.exceptions;
 
 import java.io.PrintStream;
@@ -28,81 +29,81 @@ import java.io.PrintWriter;
  *
  */
 public abstract class NestedRuntimeException extends RuntimeException {
-
-	/** Root cause of this nested exception */
-	private Throwable _underlyingException;
-
-	/**
-	 * Construct a <code>NestedRuntimeException</code> with the specified detail message.
-	 * @param msg The detail message.
-	 */
-	public NestedRuntimeException(String msg) {
-		super(msg);
-	}
-
-	/**
-	 * Construct a <code>NestedRuntimeException</code> with the specified
-	 * detail message and nested exception.
-	 * @param msg The detail message.
-	 * @param t The nested exception.
-	 */
-	public NestedRuntimeException(String msg, Throwable t) {
-		super(msg);
-		_underlyingException = t;
-
-	}
-
-	/**
-	 * Gets the original triggering exception
-	 * @return The original exception as a throwable.
-	 */
-	public Throwable getUnderlyingException() {
-
-		return _underlyingException;
-
-	}
-
-	/**
-	 * Return the detail message, including the message from the nested
-	 * exception if there is one.
-	 * @return The detail message.
-	 */
-	public String getMessage() {
-
-		if (_underlyingException == null) {
-			return super.getMessage();
-		} else {
-			return super.getMessage()
-				+ "; nested exception is "
-				+ _underlyingException.getClass().getName();
-		}
-
-	}
-
-	/**
-	 * Print the composite message and the embedded stack trace to the specified stream.
-	 * @param ps the print stream
-	 */
-	public void printStackTrace(PrintStream ps) {
-		if (_underlyingException == null) {
-			super.printStackTrace(ps);
-		} else {
-			ps.println(this);
-			_underlyingException.printStackTrace(ps);
-		}
-	}
-
-	/**
-	 * Print the composite message and the embedded stack trace to the specified writer.
-	 * @param pw the print writer
-	 */
-	public void printStackTrace(PrintWriter pw) {
-		if (_underlyingException == null) {
-			super.printStackTrace(pw);
-		} else {
-			pw.println(this);
-			_underlyingException.printStackTrace(pw);
-		}
-	}
-
+    
+    /** Root cause of this nested exception */
+    private Throwable _underlyingException;
+    
+    /**
+     * Construct a <code>NestedRuntimeException</code> with the specified detail message.
+     * @param msg The detail message.
+     */
+    public NestedRuntimeException(String msg) {
+        super(msg);
+    }
+    
+    /**
+     * Construct a <code>NestedRuntimeException</code> with the specified
+     * detail message and nested exception.
+     * @param msg The detail message.
+     * @param t The nested exception.
+     */
+    public NestedRuntimeException(String msg, Throwable t) {
+        super(msg);
+        _underlyingException = t;
+        
+    }
+    
+    /**
+     * Gets the original triggering exception
+     * @return The original exception as a throwable.
+     */
+    public Throwable getUnderlyingException() {
+        
+        return _underlyingException;
+        
+    }
+    
+    /**
+     * Return the detail message, including the message from the nested
+     * exception if there is one.
+     * @return The detail message.
+     */
+    public String getMessage() {
+        
+        if (_underlyingException == null) {
+            return super.getMessage();
+        } else {
+            return super.getMessage()
+            + "; nested exception is "
+                + _underlyingException.getClass().getName();
+        }
+        
+    }
+    
+    /**
+     * Print the composite message and the embedded stack trace to the specified stream.
+     * @param ps the print stream
+     */
+    public void printStackTrace(PrintStream ps) {
+        if (_underlyingException == null) {
+            super.printStackTrace(ps);
+        } else {
+            ps.println(this);
+            _underlyingException.printStackTrace(ps);
+        }
+    }
+    
+    /**
+     * Print the composite message and the embedded stack trace to the specified writer.
+     * @param pw the print writer
+     */
+    public void printStackTrace(PrintWriter pw) {
+        if (_underlyingException == null) {
+            super.printStackTrace(pw);
+        } else {
+            pw.println(this);
+            _underlyingException.printStackTrace(pw);
+        }
+    }
+    
 }

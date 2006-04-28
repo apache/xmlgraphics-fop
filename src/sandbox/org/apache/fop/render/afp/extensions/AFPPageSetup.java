@@ -71,7 +71,7 @@ public class AFPPageSetup implements ExtensionAttachment, Serializable {
 
     /**
      * Sets the value
-     * @param value The value name to set.
+     * @param source The value name to set.
      */
     public void setValue(String source) {
         this.value = source;

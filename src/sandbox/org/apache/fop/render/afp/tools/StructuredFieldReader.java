@@ -58,6 +58,7 @@ public class StructuredFieldReader {
      * Get the next structured field as identified by the identifer
      * parameter (this must be a valid MO:DCA structured field.
      * @param identifier the three byte identifier
+     * @throws IOException
      */
     public byte[] getNext(byte[] identifier) throws IOException {
 
@@ -109,7 +110,8 @@ public class StructuredFieldReader {
                 length[0] = bufferData[b];
                 length[1] = bufferData[a];
 
-                int reclength = ((length[0] & 0xFF) << 8) + (length[1] & 0xFF)  - identifier.length -2;
+                int reclength = ((length[0] & 0xFF) << 8) 
+                                + (length[1] & 0xFF) - identifier.length - 2;
 
                 byte[] retval = new byte[reclength];
 
