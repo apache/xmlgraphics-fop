@@ -48,6 +48,7 @@ public class AFPAttribute extends StringProperty.Maker {
 
     /**
      * Overide the make method to return the property object
+     * @param propertyList the property list from which to make the property
      * @return property The property object.
      */
     public Property make(PropertyList propertyList) {

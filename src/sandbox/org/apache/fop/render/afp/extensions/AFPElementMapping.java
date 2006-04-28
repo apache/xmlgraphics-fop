@@ -47,7 +47,7 @@ public class AFPElementMapping extends ElementMapping {
     /**
      * The namespace used for AFP extensions
      */
-    public static final String NAMESPACE = "http://org.apache.fop/extensions/afp";
+    public static final String NAMESPACE = "http://xmlgraphics.apache.org/fop/extensions/afp";
 
     /**
      * The usual namespace prefix used for AFP extensions

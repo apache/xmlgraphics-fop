@@ -178,7 +178,7 @@ public class CharacterSetOrientation {
     /**
      * XHeight refers to the height of the lower case letters above
      * the baseline.
-     * @return heightX	the typical height of characters
+     * @return heightX the typical height of characters
      */
     public int getXHeight() {
         return _xHeight;
@@ -224,7 +224,7 @@ public class CharacterSetOrientation {
      * Descender depth is the distance from the character baseline to
      * the bottom of a character box. A negative descender depth signifies
      * that all of the graphic character is above the character baseline.
-     * @param descender	the descender value in millipoints
+     * @param descender the descender value in millipoints
      */
     public void setDescender(int descender) {
         _descender = descender;
@@ -250,7 +250,7 @@ public class CharacterSetOrientation {
      * Set the width (in 1/1000ths of a point size) of the character
      * identified by the parameter passed.
      * @param character the character for which the width is being set
-     * @param width	the widths of the character
+     * @param width the widths of the character
      */
     public void setWidth(int character, int width) {
 

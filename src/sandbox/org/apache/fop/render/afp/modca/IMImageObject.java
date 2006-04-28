@@ -59,7 +59,7 @@ public class IMImageObject extends AbstractNamedAFPObject {
     /**
      * Constructor for the image object with the specified name,
      * the name must be a fixed length of eight characters.
-     * @param name	The name of the image.
+     * @param name The name of the image.
      */
     public IMImageObject(String name) {
 
