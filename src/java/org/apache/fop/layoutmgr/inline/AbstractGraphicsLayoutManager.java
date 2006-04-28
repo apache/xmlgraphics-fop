@@ -209,6 +209,7 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
 
         Area viewportArea = getChildArea();
         TraitSetter.setProducerID(viewportArea, fobj.getId());
+        transferForeignAttributes(viewportArea);
 
         Viewport vp = new Viewport(viewportArea);
         TraitSetter.setProducerID(vp, fobj.getId());

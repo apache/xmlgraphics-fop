@@ -24,7 +24,7 @@ import org.xml.sax.Attributes;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.properties.CommonAbsolutePosition;
 import org.apache.fop.fo.properties.CommonAccessibility;
@@ -295,13 +295,20 @@ public abstract class PropertyList {
         }
         
         String attributeNS;
+        FopFactory factory = getFObj().getUserAgent().getFactory(); 
         for (int i = 0; i < attributes.getLength(); i++) {
             /* convert all attributes with the same namespace as the fo element for this fObj */
-            attributeNS = attributes.getURI(i); 
-            if (attributeNS.length() == 0 || attributeNS.equals(fobj.getNamespaceURI())) {
-                attributeName = attributes.getQName(i);
-                attributeValue = attributes.getValue(i);
+            attributeNS = attributes.getURI(i);
+            attributeName = attributes.getQName(i);
+            attributeValue = attributes.getValue(i);
+            if (attributeNS.length() == 0) {
                 convertAttributeToProperty(attributes, attributeName, attributeValue);
+            } else if (!factory.isNamespaceIgnored(attributeNS)) {
+                if (factory.getElementMappingRegistry().isKnownNamespace(attributeNS)) {
+                    getFObj().addForeignAttribute(attributeNS, attributeName, attributeValue);
+                } else {
+                    handleInvalidProperty(attributeName);
+                }
             }
         }
     }

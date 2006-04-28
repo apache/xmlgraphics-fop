@@ -304,6 +304,10 @@ public class FOTreeBuilder extends DefaultHandler {
 
             try {
                 foNode = fobjMaker.make(currentFObj);
+                if (rootFObj == null) {
+                    rootFObj = (Root) foNode;
+                    rootFObj.setFOEventHandler(foEventHandler);
+                }
                 propertyList = foNode.createPropertyList(currentPropertyList, foEventHandler);
                 foNode.processNode(localName, getEffectiveLocator(), attlist, propertyList);
                 foNode.startOfNode();
@@ -325,10 +329,7 @@ public class FOTreeBuilder extends DefaultHandler {
                 delegate = subHandler;
             }
             
-            if (rootFObj == null) {
-                rootFObj = (Root) foNode;
-                rootFObj.setFOEventHandler(foEventHandler);
-            } else {
+            if (currentFObj != null) {
                 currentFObj.addChildNode(foNode);
             }
 

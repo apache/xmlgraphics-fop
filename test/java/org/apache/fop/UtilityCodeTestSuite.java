@@ -21,6 +21,7 @@ package org.apache.fop;
 import org.apache.fop.traits.BorderPropsTestCase;
 import org.apache.fop.traits.TraitColorTestCase;
 import org.apache.fop.util.PDFNumberTestCase;
+import org.apache.fop.util.UnitConvTestCase;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -39,6 +40,7 @@ public class UtilityCodeTestSuite {
             "Test suite for FOP's utility classes");
         //$JUnit-BEGIN$
         suite.addTest(new TestSuite(PDFNumberTestCase.class));
+        suite.addTest(new TestSuite(UnitConvTestCase.class));
         suite.addTest(new TestSuite(TraitColorTestCase.class));
         suite.addTest(new TestSuite(BorderPropsTestCase.class));
         //$JUnit-END$

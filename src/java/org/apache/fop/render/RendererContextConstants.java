@@ -44,4 +44,10 @@ public interface RendererContextConstants {
     /** The configuration for the XMLHandler. */
     String HANDLER_CONFIGURATION = "cfg";
     
+    /**
+     * An optional Map (keys: QName, values: String) with attributes containing additional hints 
+     * for rendering.
+     */
+    String FOREIGN_ATTRIBUTES = "foreign-attributes";
+    
 }
