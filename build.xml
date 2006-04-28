@@ -134,6 +134,7 @@ list of possible build targets.
 
   <patternset id="exclude-jai">
     <exclude name="org/apache/fop/image/JAIImage.java" unless="jai.present"/>
+    <exclude name="org/apache/fop/render/pcl/JAIMonochromeBitmapConverter.java" unless="jai.present"/>
   </patternset>
 
   <patternset id="exclude-jce-dependencies">
@@ -416,6 +417,7 @@ list of possible build targets.
            source="${javac.source}" target="${javac.target}">
       <src path="${src.sandbox.dir}"/>
       <patternset includes="**/*.java"/>
+      <patternset refid="exclude-jai"/>
       <classpath>
         <path refid="libs-build-classpath"/>
         <pathelement location="${build.classes.dir}"/>
