@@ -19,7 +19,7 @@
   <info>
     <p>
       This test checks external-graphics and the handling of linebreaks.
-      It is unclear at the moment if consecutive images with intervening white space
+      It is unclear at the moment if consecutive images without intervening white space
       actually should have a linebreak opportunity between them or not. Fop currently
       takes the "there is no break opportunity" view and the checks test accordingly.
     </p>
