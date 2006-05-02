@@ -141,18 +141,6 @@ public class Java2DGraphicsState implements Constants, RendererState {
     }
 
     /**
-     * @see org.apache.fop.render.java2d.RendererState#updateColor(org.apache.fop.datatypes.ColorType,
-     * boolean, java.lang.StringBuffer)
-     */
-    public boolean updateColor(ColorType col, boolean fill, StringBuffer pdf) {
-        if (col == null) {
-            return false;
-        }
-        Color newCol = toColor(col);
-        return updateColor(newCol);
-    }
-
-    /**
      * Update the current Color
      * @param col the ColorType
      */
@@ -177,13 +165,13 @@ public class Java2DGraphicsState implements Constants, RendererState {
      */
     public boolean updateFont(String name, int size, StringBuffer pdf) {
 
-        boolean updateName = (!name.equals(getGraph().getFont().getFontName()));
-        boolean updateSize = (size != (getGraph().getFont().getSize()));
+        FontMetricsMapper mapper = (FontMetricsMapper)fontInfo.getMetricsFor(name);
+        boolean updateName = (!mapper.getFontName().equals(
+                                    getGraph().getFont().getFontName()));
+        boolean updateSize = (size != (getGraph().getFont().getSize() * 1000));
 
         if (updateName || updateSize) {
             // the font name and/or the font size have changed
-            FontMetricsMapper mapper = (FontMetricsMapper) fontInfo
-                    .getMetricsFor(name);
             java.awt.Font font = mapper.getFont(size);
 
             currentGraphics.setFont(font);
@@ -215,8 +203,8 @@ public class Java2DGraphicsState implements Constants, RendererState {
             switch (style) {
             case EN_DOTTED:
 
-                currentStroke = new BasicStroke(width, BasicStroke.CAP_BUTT,
-                        BasicStroke.JOIN_BEVEL, 0f, new float[] { 2f }, 0f);
+                currentStroke = new BasicStroke(width, BasicStroke.CAP_ROUND,
+                        BasicStroke.JOIN_BEVEL, 0f, new float[] {0, 2 * width}, width);
                 currentGraphics.setStroke(currentStroke);
 
                 currentStrokeWidth = width;
@@ -227,7 +215,7 @@ public class Java2DGraphicsState implements Constants, RendererState {
             case EN_DASHED:
 
                 currentStroke = new BasicStroke(width, BasicStroke.CAP_BUTT,
-                        BasicStroke.JOIN_BEVEL, 0f, new float[] { 8f, 2f }, 0f);
+                        BasicStroke.JOIN_BEVEL, 0f, new float[] {8f, 2f}, 0f);
                 currentGraphics.setStroke(currentStroke);
 
                 currentStrokeWidth = width;

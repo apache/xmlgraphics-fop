@@ -160,10 +160,45 @@ public class PCLGenerator {
      * @param y the Y coordinate (in millipoints)
      * @throws IOException In case of an I/O error
      */
-    public void setCursorPos(int x, int y) throws IOException {
-        writeCommand("*p" + (x / 100) + "h" + (y / 100) + "V");
+    public void setCursorPos(double x, double y) throws IOException {
+        if (x < 0) {
+            //A negative x value will result in a relative movement so go to "0" first.
+            //But this will most probably have no effect anyway since you can't paint to the left
+            //of the logical page
+            writeCommand("&a0h" + formatDouble2(x / 100) + "h" + formatDouble2(y / 100) + "V");
+        } else {
+            writeCommand("&a" + formatDouble2(x / 100) + "h" + formatDouble2(y / 100) + "V");
+        }
     }
 
+    /**
+     * Enters the HP GL/2 mode.
+     * @param restorePreviousHPGL2Cursor true if the previous HP GL/2 pen position should be 
+     *                                   restored, false if the current position is maintained
+     * @throws IOException In case of an I/O error
+     */
+    public void enterHPGL2Mode(boolean restorePreviousHPGL2Cursor) throws IOException {
+        if (restorePreviousHPGL2Cursor) {
+            writeCommand("%0B");
+        } else {
+            writeCommand("%1B");
+        }
+    }
+    
+    /**
+     * Enters the PCL mode.
+     * @param restorePreviousPCLCursor true if the previous PCL cursor position should be restored,
+     *                                 false if the current position is maintained
+     * @throws IOException In case of an I/O error
+     */
+    public void enterPCLMode(boolean restorePreviousPCLCursor) throws IOException {
+        if (restorePreviousPCLCursor) {
+            writeCommand("%0A");
+        } else {
+            writeCommand("%1A");
+        }
+    }
+    
     /**
      * Generate a filled rectangle
      *
@@ -428,24 +463,6 @@ public class PCLGenerator {
         int lastcount = -1;
         byte lastbyte = 0;
         int rlewidth = 0;
-        /*
-        int xres = (iw * 72000) / w;
-        int yres = (ih * 72000) / h;
-        int resolution = xres;
-        if (yres > xres)
-            resolution = yres;
-
-        if (resolution > 300)
-            resolution = 600;
-        else if (resolution > 150)
-            resolution = 300;
-        else if (resolution > 100)
-            resolution = 150;
-        else if (resolution > 75)
-            resolution = 100;
-        else
-            resolution = 75;
-            */
 
         // Transfer graphics data
         for (y = 0; y < imgh; y++) {
@@ -498,5 +515,5 @@ public class PCLGenerator {
         // End raster graphics
         writeCommand("*rB");
     }
-    
+
 }

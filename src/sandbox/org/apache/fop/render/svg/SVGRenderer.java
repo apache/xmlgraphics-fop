@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import org.apache.fop.area.CTM;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.inline.ForeignObject;
+import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.svg.SVGUtilities;
@@ -430,6 +431,10 @@ public class SVGRenderer extends AbstractRenderer {
      * @see org.apache.fop.render.AbstractRenderer#endVParea()
      */
     protected void endVParea() {
+        // TODO Auto-generated method stub
+    }
+
+    protected void renderInlineAreaBackAndBorders(InlineArea area) {
         // TODO Auto-generated method stub
     }
 

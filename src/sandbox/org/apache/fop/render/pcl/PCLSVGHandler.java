@@ -86,33 +86,35 @@ public class PCLSVGHandler implements XMLHandler, RendererContextConstants {
         int x = pclContext.getCurrentXPosition();
         int y = pclContext.getCurrentYPosition();
 
+        SVGUserAgent ua = new SVGUserAgent(
+                context.getUserAgent().getSourcePixelUnitToMillimeter(),
+                new AffineTransform());
+        GVTBuilder builder = new GVTBuilder();
+        final BridgeContext ctx = new BridgeContext(ua);
+
+        final GraphicsNode root;
+        try {
+            root = builder.build(ctx, doc);
+            
+        } catch (Exception e) {
+            log.error("SVG graphic could not be built: "
+                                   + e.getMessage(), e);
+            return;
+        }
+
         Graphics2DImagePainter painter = new Graphics2DImagePainter() {
 
             public void paint(Graphics2D g2d, Rectangle2D area) {
-                SVGUserAgent ua = new SVGUserAgent(
-                        context.getUserAgent().getSourcePixelUnitToMillimeter(),
-                        new AffineTransform());
-                GVTBuilder builder = new GVTBuilder();
-                BridgeContext ctx = new BridgeContext(ua);
+                
+                // If no viewbox is defined in the svg file, a viewbox of 100x100 is
+                // assumed, as defined in SVGUserAgent.getViewportSize()
+                float iw = (float) ctx.getDocumentSize().getWidth();
+                float ih = (float) ctx.getDocumentSize().getHeight();
+                float w = (float) area.getWidth();
+                float h = (float) area.getHeight();
+                g2d.scale(w / iw, h / ih);
 
-                GraphicsNode root;
-                try {
-                    root = builder.build(ctx, doc);
-                    
-                    // If no viewbox is defined in the svg file, a viewbox of 100x100 is
-                    // assumed, as defined in SVGUserAgent.getViewportSize()
-                    float iw = (float) ctx.getDocumentSize().getWidth() * 1000f;
-                    float ih = (float) ctx.getDocumentSize().getHeight() * 1000f;
-                    float w = (float) area.getWidth();
-                    float h = (float) area.getHeight();
-                    g2d.scale(w / iw, h / ih);
-
-                    root.paint(g2d);
-                } catch (Exception e) {
-                    log.error("SVG graphic could not be built: "
-                                           + e.getMessage(), e);
-                    return;
-                }
+                root.paint(g2d);
             }
 
             public Dimension getImageSize() {

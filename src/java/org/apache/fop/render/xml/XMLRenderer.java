@@ -605,6 +605,14 @@ public class XMLRenderer extends PrintRenderer {
     }
 
     /**
+     * @see org.apache.fop.render.AbstractRenderer#renderInlineAreaBackAndBorders(
+     *          org.apache.fop.area.inline.InlineArea)
+     */
+    protected void renderInlineAreaBackAndBorders(InlineArea area) {
+        //only necessary for graphical output
+    }
+
+    /**
      * @see org.apache.fop.render.AbstractRenderer#renderBeforeFloat(BeforeFloat)
      */
     protected void renderBeforeFloat(BeforeFloat bf) {

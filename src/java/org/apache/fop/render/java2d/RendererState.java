@@ -49,15 +49,6 @@ public interface RendererState {
     public abstract int getStackLevel();
 
     /**
-     * Establishes a new foreground or fill color.
-     * @param col the color to apply (null skips this operation)
-     * @param fill true to set the fill color, false for the foreground color
-     * @param pdf only used by the PDFRenderer, is set to null.
-     * @return true if the new Color changes the current Color
-     */
-    public abstract boolean updateColor(ColorType col, boolean fill, StringBuffer pdf);
-
-    /**
      * Set the current font name. Check if the font name will change and then
      * set the new name.
      *

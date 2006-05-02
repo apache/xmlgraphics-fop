@@ -79,7 +79,7 @@ public abstract class PrintRenderer extends AbstractRenderer {
      * @param factor factor by which to lighten up (negative values darken the color)
      * @return the modified color
      */
-    protected Color lightenColor(Color col, float factor) {
+    public static Color lightenColor(Color col, float factor) {
         float[] cols = new float[3];
         cols = col.getColorComponents(cols);
         if (factor > 0) {
