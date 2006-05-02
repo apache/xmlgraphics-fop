@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import java.util.Map;
 // FOP
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.fonts.FontType;
+import org.apache.fop.fonts.Typeface;
 
 
 /**
@@ -35,13 +36,7 @@ import org.apache.fop.fonts.FontType;
  * style as member varibles
  */
 
-public class FontMetricsMapper implements FontMetrics {
-
-    /**
-     * The first and last non space-character
-     */
-    private static final int FIRST_CHAR = 32;
-    private static final int LAST_CHAR = 255;
+public class FontMetricsMapper extends Typeface implements FontMetrics {
 
     /**
      * This is a Java2DFontMetrics that does the real calculation.
@@ -157,6 +152,20 @@ public class FontMetricsMapper implements FontMetrics {
         return false;
     }
 
+    /** @see org.apache.fop.fonts.Typeface#getEncoding() */
+    public String getEncoding() {
+        return null; //Not applicable to Java2D rendering
+    }
+
+    /** @see org.apache.fop.fonts.Typeface#mapChar(char) */
+    public char mapChar(char c) {
+        return c;
+    }
+
+    /** @see org.apache.fop.fonts.Typeface#hasChar(char) */
+    public boolean hasChar(char c) {
+        return metric.hasChar(family, style, Java2DFontMetrics.FONT_SIZE, c);
+    }
 
 }
 

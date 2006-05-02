@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 The Apache Software Foundation.
+ * Copyright 2005-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@
 
 package org.apache.fop.render;
 
-import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
@@ -30,9 +29,6 @@ import org.apache.fop.area.CTM;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.area.inline.InlineBlockParent;
-import org.apache.fop.area.inline.InlineParent;
-import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.Constants;
@@ -46,15 +42,6 @@ import org.apache.fop.traits.BorderProps;
  */
 public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
 
-    /**
-     * Converts a ColorType to a java.awt.Color (sRGB).
-     * @param col the color
-     * @return the converted color
-     */
-    protected Color toColor(ColorType col) {
-        return new Color(col.getRed(), col.getGreen(), col.getBlue());
-    }
-    
     /**
      * Handle block traits.
      * The block could be any sort of block with any positioning
@@ -208,6 +195,24 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             }
         }
 
+        Rectangle2D.Float borderRect = new Rectangle2D.Float(startx, starty, width, height);
+        drawBorders(borderRect, bpsBefore, bpsAfter, bpsStart, bpsEnd);
+    }
+
+    /**
+     * Draws borders.
+     * @param borderRect the border rectangle
+     * @param bpsBefore the border specification on the before side
+     * @param bpsAfter the border specification on the after side
+     * @param bpsStart the border specification on the start side
+     * @param bpsEnd the border specification on the end side
+     */
+    protected void drawBorders(Rectangle2D.Float borderRect, 
+            BorderProps bpsBefore, BorderProps bpsAfter, BorderProps bpsStart, BorderProps bpsEnd) {
+        float startx = borderRect.x;
+        float starty = borderRect.y;
+        float width = borderRect.width;
+        float height = borderRect.height;
         boolean[] b = new boolean[] {
             (bpsBefore != null), (bpsEnd != null), 
             (bpsAfter != null), (bpsStart != null)};
@@ -392,25 +397,6 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
                                 , height + bpheight);
         }
         
-    }
-    
-    /** @see org.apache.fop.render.AbstractRenderer#renderInlineSpace(Space) */
-    protected void renderInlineSpace(Space space) {
-        space.setBPD(0);
-        renderInlineAreaBackAndBorders(space);
-        super.renderInlineSpace(space);
-    }
-    
-    /** @see org.apache.fop.render.AbstractRenderer#renderInlineParent(InlineParent) */
-    protected void renderInlineParent(InlineParent ip) {
-        renderInlineAreaBackAndBorders(ip);
-        super.renderInlineParent(ip);
-    }
-
-    /** @see org.apache.fop.render.AbstractRenderer */
-    protected void renderInlineBlockParent(InlineBlockParent ibp) {
-        renderInlineAreaBackAndBorders(ibp);
-        super.renderInlineBlockParent(ibp);
     }
     
     /**

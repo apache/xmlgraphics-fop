@@ -19,13 +19,14 @@
 package org.apache.fop.render.java2d;
 
 // Java
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -44,40 +45,31 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+
+import org.w3c.dom.Document;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.area.Area;
-import org.apache.fop.area.Block;
-import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.CTM;
 import org.apache.fop.area.PageViewport;
-import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.area.inline.InlineBlockParent;
-import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.Leader;
-import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.TextArea;
-import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.fonts.FontTriplet;
+import org.apache.fop.fonts.Typeface;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
 import org.apache.fop.image.XMLImage;
-import org.apache.fop.render.AbstractRenderer;
+import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.pdf.CTMHelper;
-import org.apache.fop.traits.BorderProps;
-import org.w3c.dom.Document;
 
 /**
  * The <code>Java2DRenderer</code> class provides the abstract technical
@@ -103,7 +95,7 @@ import org.w3c.dom.Document;
  * }</code>
  *
  */
-public abstract class Java2DRenderer extends AbstractRenderer implements Printable {
+public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implements Printable {
 
     /** The scale factor for the image size, values: ]0 ; 1] */
     protected double scaleFactor = 1;
@@ -132,19 +124,11 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
     /** The current state, holds a Graphics2D and its context */
     protected Java2DGraphicsState state;
 
-    /** a Line2D.Float used to draw text decorations and leaders */
-    protected Line2D.Float line = new Line2D.Float();
-
-    /** Font configuration */
-    protected FontInfo fontInfo;
-
-    protected Map fontNames = new java.util.Hashtable();
-
-    protected Map fontStyles = new java.util.Hashtable();
-
     /** true if the renderer has finished rendering all the pages */
-    public boolean renderingDone;
+    private boolean renderingDone;
 
+    private GeneralPath currentPath = null;
+    
     /** Default constructor */
     public Java2DRenderer() {
     }
@@ -166,6 +150,7 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
      * @see org.apache.fop.render.Renderer#setupFontInfo(org.apache.fop.fonts.FontInfo)
      */
     public void setupFontInfo(FontInfo inFontInfo) {
+        //Don't call super.setupFontInfo() here! Java2D needs a special font setup
         // create a temp Image to test font metrics on
         fontInfo = inFontInfo;
         BufferedImage fontImage = new BufferedImage(100, 100,
@@ -186,14 +171,17 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
         scaleFactor = newScaleFactor;
     }
 
+    /** @return the scale factor */
     public double getScaleFactor() {
         return scaleFactor;
     }
 
+    /** @see org.apache.fop.render.Renderer#startRenderer(java.io.OutputStream) */
     public void startRenderer(OutputStream out) throws IOException {
         // do nothing by default
     }
 
+    /** @see org.apache.fop.render.Renderer#stopRenderer() */
     public void stopRenderer() throws IOException {
         log.debug("Java2DRenderer stopped");
         renderingDone = true;
@@ -204,6 +192,11 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
         }
     }
 
+    /** @return true if the renderer is not currently processing */
+    public boolean isRenderingDone() {
+        return this.renderingDone;
+    }
+    
     /**
      * @return The 0-based current page number
      */
@@ -243,11 +236,11 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
      *
      * @param pageViewport the <code>PageViewport</code> object supplied by
      * the Area Tree
+     * @throws IOException In case of an I/O error
      * @see org.apache.fop.render.Renderer
      */
-    public void renderPage(PageViewport pageViewport) 
-                throws IOException, FOPException {
-        // TODO clone
+    public void renderPage(PageViewport pageViewport) throws IOException {
+        // TODO clone?
         pageViewportList.add(pageViewport.clone());
         currentPageNumber++;
     }
@@ -331,8 +324,9 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
 
         
     /**
-     * Returns the page viewport
+     * Returns a page viewport.
      * @param pageNum the page number
+     * @return the requested PageViewport instance
      * @exception FOPException If the page is out of range.
      */
     public PageViewport getPageViewport(int pageNum) throws FOPException {
@@ -350,65 +344,10 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
      * @param pageNum the 0-based page number to generate
      * @return the <code>java.awt.image.BufferedImage</code> corresponding to
      * the page or null if the page doesn't exist.
-     * @throws FOPException
+     * @throws FOPException If there's a problem preparing the page image
      */
     public BufferedImage getPageImage(int pageNum) throws FOPException {
         return getPageImage(getPageViewport(pageNum));
-    }
-
-    /**
-     * Handle the traits for a region
-     * This is used to draw the traits for the given page region.
-     * (See Sect. 6.4.1.2 of XSL-FO spec.)
-     * @param region the RegionViewport whose region is to be drawn
-     * @TODO This is a copy from AbstractPathOrientedRenderer. Put this method in AbstractRenderer
-     */
-    protected void handleRegionTraits(RegionViewport region) {
-        Rectangle2D viewArea = region.getViewArea();
-        float startx = (float)(viewArea.getX() / 1000f);
-        float starty = (float)(viewArea.getY() / 1000f);
-        float width = (float)(viewArea.getWidth() / 1000f);
-        float height = (float)(viewArea.getHeight() / 1000f);
-
-        if (region.getRegionReference().getRegionClass() == FO_REGION_BODY) {
-            currentBPPosition = region.getBorderAndPaddingWidthBefore();
-            currentIPPosition = region.getBorderAndPaddingWidthStart();
-        }
-        drawBackAndBorders(region, startx, starty, width, height);
-    }
-
-    /**
-     * Render an inline viewport.
-     * This renders an inline viewport by clipping if necessary.
-     * @param viewport the viewport to handle
-     * @TODO This is a copy from AbstractPathOrientedRenderer. Put this method in AbstractRenderer
-     */
-    public void renderViewport(Viewport viewport) {
-
-        float x = currentIPPosition / 1000f;
-        float y = (currentBPPosition + viewport.getOffset()) / 1000f;
-        float width = viewport.getIPD() / 1000f;
-        float height = viewport.getBPD() / 1000f;
-        // TODO: Calculate the border rect correctly. 
-        float borderPaddingStart = viewport.getBorderAndPaddingWidthStart() / 1000f;
-        float borderPaddingBefore = viewport.getBorderAndPaddingWidthBefore() / 1000f;
-        float bpwidth = borderPaddingStart 
-                + (viewport.getBorderAndPaddingWidthEnd() / 1000f);
-        float bpheight = borderPaddingBefore
-                + (viewport.getBorderAndPaddingWidthAfter() / 1000f);
-
-        drawBackAndBorders(viewport, x, y, width + bpwidth, height + bpheight);
-
-        if (viewport.getClip()) {
-            saveGraphicsState();
-
-            clipRect(x + borderPaddingStart, y + borderPaddingBefore, width, height);
-        }
-        super.renderViewport(viewport);
-
-        if (viewport.getClip()) {
-            restoreGraphicsState();
-        }
     }
 
     /** Saves the graphics state of the rendering engine. */
@@ -449,467 +388,298 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer
-     * @TODO This is a copy from AbstractPathOrientedRenderer. Put this method in AbstractRenderer
+     * @see org.apache.fop.render.AbstractPathOrientedRenderer#restoreStateStackAfterBreakOut(
+     *          java.util.List)
      */
-    protected void renderInlineSpace(Space space) {
-        space.setBPD(0);
-        renderInlineAreaBackAndBorders(space);
-        super.renderInlineSpace(space);
-    }
-    
-    /**
-     * @see org.apache.fop.render.AbstractRenderer
-     * @TODO This is a copy from AbstractPathOrientedRenderer. Put this method in AbstractRenderer
-     */
-    protected void renderInlineParent(InlineParent ip) {
-        renderInlineAreaBackAndBorders(ip);
-        super.renderInlineParent(ip);
-    }
-
-    /**
-     * @see org.apache.fop.render.AbstractRenderer
-     * @TODO This is a copy from AbstractPathOrientedRenderer. Put this method in AbstractRenderer
-     */
-    protected void renderInlineBlockParent(InlineBlockParent ibp) {
-        renderInlineAreaBackAndBorders(ibp);
-        super.renderInlineBlockParent(ibp);
-    }
-    
-    /**
-     * @see org.apache.fop.render.AbstractRenderer#renderBlockViewport(BlockViewport,
-     * List)
-     */
-    protected void renderBlockViewport(BlockViewport bv, List children) {
-        // clip and position viewport if necessary
-
-        // save positions
-        int saveIP = currentIPPosition;
-        int saveBP = currentBPPosition;
-
-        CTM ctm = bv.getCTM();
-        int borderPaddingStart = bv.getBorderAndPaddingWidthStart();
-        int borderPaddingBefore = bv.getBorderAndPaddingWidthBefore();
-        float x, y;
-        x = (float) (bv.getXOffset() + containingIPPosition) / 1000f;
-        y = (float) (bv.getYOffset() + containingBPPosition) / 1000f;
-        // This is the content-rect
-        float width = (float) bv.getIPD() / 1000f;
-        float height = (float) bv.getBPD() / 1000f;
-
-
-        if (bv.getPositioning() == Block.ABSOLUTE
-                || bv.getPositioning() == Block.FIXED) {
-
-            currentIPPosition = bv.getXOffset();
-            currentBPPosition = bv.getYOffset();
-            
-            // TODO not tested yet
-            // For FIXED, we need to break out of the current viewports to the
-            // one established by the page. We save the state stack for
-            // restoration
-            // after the block-container has been painted. See below.
-            List breakOutList = null;
-            if (bv.getPositioning() == Block.FIXED) {
-                log.debug("Block.FIXED --> break out");
-                breakOutList = new java.util.ArrayList();
-                Graphics2D graph;
-                while (true) {
-                    graph = state.getGraph();
-                    if (state.pop() == null) {
-                        break;
-                    }
-                    breakOutList.add(0, graph); // Insert because of
-                    // stack-popping
-                    log.debug("Adding to break out list: " + graph);
-                }
-            }
-
-            CTM tempctm = new CTM(containingIPPosition, containingBPPosition);
-            ctm = tempctm.multiply(ctm);
-
-            // Adjust for spaces (from margin or indirectly by start-indent etc.
-            x += bv.getSpaceStart() / 1000f;
-            currentIPPosition += bv.getSpaceStart();
-            
-            y += bv.getSpaceBefore() / 1000f;
-            currentBPPosition += bv.getSpaceBefore(); 
-
-            float bpwidth = (borderPaddingStart + bv
-                    .getBorderAndPaddingWidthEnd()) / 1000f;
-            float bpheight = (borderPaddingBefore + bv
-                    .getBorderAndPaddingWidthAfter()) / 1000f;
-
-            drawBackAndBorders(bv, x, y, width + bpwidth, height + bpheight);
-
-            // Now adjust for border/padding
-            currentIPPosition += borderPaddingStart;
-            currentBPPosition += borderPaddingBefore;
-
-            Rectangle2D clippingRect = null;
-            if (bv.getClip()) {
-                clippingRect = new Rectangle(currentIPPosition, currentBPPosition, 
-                        bv.getIPD(), bv.getBPD());
-            }
-
-            startVParea(ctm, clippingRect);
-            currentIPPosition = 0;
-            currentBPPosition = 0;
-            renderBlocks(bv, children);
-            endVParea();
-
-            if (breakOutList != null) {
-                log.debug(
-                        "Block.FIXED --> restoring context after break-out");
-                Graphics2D graph;
-                Iterator i = breakOutList.iterator();
-                while (i.hasNext()) {
-                    graph = (Graphics2D) i.next();
-                    log.debug("Restoring: " + graph);
-                    state.push();
-                }
-            }
-
-            currentIPPosition = saveIP;
-            currentBPPosition = saveBP;
-
-        } else { // orientation = Block.STACK or RELATIVE
-
-            currentBPPosition += bv.getSpaceBefore();
-
-            // borders and background in the old coordinate system
-            handleBlockTraits(bv);
-
-            //Advance to start of content area
-            currentIPPosition += bv.getStartIndent();
-
-            CTM tempctm = new CTM(containingIPPosition, currentBPPosition
-                    + containingBPPosition);
-            ctm = tempctm.multiply(ctm);
-
-            // Now adjust for border/padding
-            x += borderPaddingStart / 1000f;
-            y += borderPaddingBefore / 1000f;
-
-            Rectangle2D clippingRect = null;
-            if (bv.getClip()) {
-                clippingRect = new Rectangle(currentIPPosition, currentBPPosition, 
-                        bv.getIPD(), bv.getBPD());
-            }
-            
-            startVParea(ctm, clippingRect);
-            currentIPPosition = 0;
-            currentBPPosition = 0;
-            renderBlocks(bv, children);
-            endVParea();
-
-            currentIPPosition = saveIP;
-            currentBPPosition = saveBP;
-
-            currentBPPosition += (int)(bv.getAllocBPD());
+    protected void restoreStateStackAfterBreakOut(List breakOutList) {
+        log.debug(
+                "Block.FIXED --> restoring context after break-out");
+        Graphics2D graph;
+        Iterator i = breakOutList.iterator();
+        while (i.hasNext()) {
+            graph = (Graphics2D) i.next();
+            log.debug("Restoring: " + graph);
+            state.push();
         }
     }
 
     /**
-     * Clip an area. write a clipping operation given coordinates in the current
-     * transform. Coordinates are in points.
-     *
-     * @param x the x coordinate
-     * @param y the y coordinate
-     * @param width the width of the area
-     * @param height the height of the area
+     * @see org.apache.fop.render.AbstractPathOrientedRenderer#breakOutOfStateStack()
+     */
+    protected List breakOutOfStateStack() {
+        List breakOutList;
+        log.debug("Block.FIXED --> break out");
+        breakOutList = new java.util.ArrayList();
+        Graphics2D graph;
+        while (true) {
+            graph = state.getGraph();
+            if (state.pop() == null) {
+                break;
+            }
+            breakOutList.add(0, graph); // Insert because of
+            // stack-popping
+            log.debug("Adding to break out list: " + graph);
+        }
+        return breakOutList;
+    }
+
+    /**
+     * @see org.apache.fop.render.AbstractPathOrientedRenderer#updateColor(
+     *          org.apache.fop.datatypes.ColorType, boolean)
+     */
+    protected void updateColor(ColorType col, boolean fill) {
+        state.updateColor(toColor(col));
+    }
+
+    /**
+     * @see org.apache.fop.render.AbstractPathOrientedRenderer#clip()
+     */
+    protected void clip() {
+        if (currentPath == null) {
+            throw new IllegalStateException("No current path available!");
+        }
+        state.updateClip(currentPath);
+        currentPath = null;
+    }
+
+    /**
+     * @see org.apache.fop.render.AbstractPathOrientedRenderer#closePath()
+     */
+    protected void closePath() {
+        currentPath.closePath();
+    }
+
+    /**
+     * @see org.apache.fop.render.AbstractPathOrientedRenderer#lineTo(float, float)
+     */
+    protected void lineTo(float x, float y) {
+        if (currentPath == null) {
+            currentPath = new GeneralPath();
+        }
+        currentPath.lineTo(x, y);
+    }
+
+    /**
+     * @see org.apache.fop.render.AbstractPathOrientedRenderer#moveTo(float, float)
+     */
+    protected void moveTo(float x, float y) {
+        if (currentPath == null) {
+            currentPath = new GeneralPath();
+        }
+        currentPath.moveTo(x, y);
+    }
+
+    /**
+     * @see org.apache.fop.render.AbstractPathOrientedRenderer#clipRect(float, float, float, float)
      */
     protected void clipRect(float x, float y, float width, float height) {
-        Rectangle2D rect = new Rectangle2D.Float(x, y, width, height);
-        state.updateClip(rect);
+        state.updateClip(new Rectangle2D.Float(x, y, width, height));
     }
 
     /**
-     * Draw the background and borders. This draws the background and border
-     * traits for an area given the position.
-     *
-     * @param area the area whose traits are used
-     * @param startx the start x position
-     * @param starty the start y position
-     * @param width the width of the area
-     * @param height the height of the area
+     * @see org.apache.fop.render.AbstractPathOrientedRenderer#fillRect(float, float, float, float)
      */
-    protected void drawBackAndBorders(Area area, float startx, float starty,
-            float width, float height) {
+    protected void fillRect(float x, float y, float width, float height) {
+        state.getGraph().fill(new Rectangle2D.Float(x, y, width, height));
+    }
+    
+    /**
+     * @see org.apache.fop.render.AbstractPathOrientedRenderer#drawBorderLine(
+     *          float, float, float, float, boolean, boolean, int, 
+     *          org.apache.fop.datatypes.ColorType)
+     */
+    protected void drawBorderLine(float x1, float y1, float x2, float y2, 
+            boolean horz, boolean startOrBefore, int style, ColorType col) {
+        Graphics2D g2d = state.getGraph();
+        drawBorderLine(new Rectangle2D.Float(x1, y1, x2 - x1, y2 - y1), 
+                horz, startOrBefore, style, toColor(col), g2d);
+    }
 
-        BorderProps bpsBefore = (BorderProps) area
-                .getTrait(Trait.BORDER_BEFORE);
-        BorderProps bpsAfter = (BorderProps) area.getTrait(Trait.BORDER_AFTER);
-        BorderProps bpsStart = (BorderProps) area.getTrait(Trait.BORDER_START);
-        BorderProps bpsEnd = (BorderProps) area.getTrait(Trait.BORDER_END);
-
-        // draw background
-        Trait.Background back;
-        back = (Trait.Background) area.getTrait(Trait.BACKGROUND);
-        if (back != null) {
-
-            // Calculate padding rectangle
-            float sx = startx;
-            float sy = starty;
-            float paddRectWidth = width;
-            float paddRectHeight = height;
-
-            if (bpsStart != null) {
-                sx += bpsStart.width / 1000f;
-                paddRectWidth -= bpsStart.width / 1000f;
-            }
-            if (bpsBefore != null) {
-                sy += bpsBefore.width / 1000f;
-                paddRectHeight -= bpsBefore.width / 1000f;
-            }
-            if (bpsEnd != null) {
-                paddRectWidth -= bpsEnd.width / 1000f;
-            }
-            if (bpsAfter != null) {
-                paddRectHeight -= bpsAfter.width / 1000f;
-            }
-
-            if (back.getColor() != null) {
-                drawBackground(back, sx, sy, paddRectWidth, paddRectHeight);
-            }
-
-            // background image
-            if (back.getFopImage() != null) {
-                FopImage fopimage = back.getFopImage();
-                if (fopimage != null && fopimage.load(FopImage.DIMENSIONS)) {
-                    saveGraphicsState();
-                    clipRect(sx, sy, paddRectWidth, paddRectHeight);
-                    int horzCount = (int) ((paddRectWidth * 1000 / fopimage
-                            .getIntrinsicWidth()) + 1.0f);
-                    int vertCount = (int) ((paddRectHeight * 1000 / fopimage
-                            .getIntrinsicHeight()) + 1.0f);
-                    if (back.getRepeat() == EN_NOREPEAT) {
-                        horzCount = 1;
-                        vertCount = 1;
-                    } else if (back.getRepeat() == EN_REPEATX) {
-                        vertCount = 1;
-                    } else if (back.getRepeat() == EN_REPEATY) {
-                        horzCount = 1;
+    /**
+     * Draw a border segment of an XSL-FO style border.
+     * @param lineRect the line defined by its bounding rectangle
+     * @param horz true for horizontal border segments, false for vertical border segments
+     * @param startOrBefore true for border segments on the start or before edge, 
+     *                      false for end or after.
+     * @param style the border style (one of Constants.EN_DASHED etc.)
+     * @param col the color for the border segment
+     * @param g2d the Graphics2D instance to paint to
+     */
+    public static void drawBorderLine(Rectangle2D.Float lineRect, 
+            boolean horz, boolean startOrBefore, int style, Color col, Graphics2D g2d) {
+        float x1 = lineRect.x;
+        float y1 = lineRect.y;
+        float x2 = x1 + lineRect.width;
+        float y2 = y1 + lineRect.height;
+        float w = lineRect.width;
+        float h = lineRect.height;
+        if ((w < 0) || (h < 0)) {
+            log.error("Negative extent received. Border won't be painted.");
+            return;
+        }
+        switch (style) {
+            case Constants.EN_DASHED: 
+                g2d.setColor(col);
+                if (horz) {
+                    float unit = Math.abs(2 * h);
+                    int rep = (int)(w / unit);
+                    if (rep % 2 == 0) {
+                        rep++;
                     }
-                    // change from points to millipoints
-                    sx *= 1000;
-                    sy *= 1000;
-                    if (horzCount == 1) {
-                        sx += back.getHoriz();
-                    }
-                    if (vertCount == 1) {
-                        sy += back.getVertical();
-                    }
-                    for (int x = 0; x < horzCount; x++) {
-                        for (int y = 0; y < vertCount; y++) {
-                            // place once
-                            Rectangle2D pos;
-                            pos = new Rectangle2D.Float(sx
-                                    + (x * fopimage.getIntrinsicWidth()), sy
-                                    + (y * fopimage.getIntrinsicHeight()),
-                                    fopimage.getIntrinsicWidth(), fopimage
-                                            .getIntrinsicHeight());
-                            putImage(back.getURL(), pos); // TODO test
-                        }
-                    }
-                    restoreGraphicsState();
+                    unit = w / rep;
+                    float ym = y1 + (h / 2);
+                    BasicStroke s = new BasicStroke(h, BasicStroke.CAP_BUTT, 
+                            BasicStroke.JOIN_MITER, 10.0f, new float[] {unit}, 0);
+                    g2d.setStroke(s);
+                    g2d.draw(new Line2D.Float(x1, ym, x2, ym));
                 } else {
-                    log.warn(
-                            "Can't find background image: " + back.getURL());
+                    float unit = Math.abs(2 * w);
+                    int rep = (int)(h / unit);
+                    if (rep % 2 == 0) {
+                        rep++;
+                    }
+                    unit = h / rep;
+                    float xm = x1 + (w / 2);
+                    BasicStroke s = new BasicStroke(w, BasicStroke.CAP_BUTT, 
+                            BasicStroke.JOIN_MITER, 10.0f, new float[] {unit}, 0);
+                    g2d.setStroke(s);
+                    g2d.draw(new Line2D.Float(xm, y1, xm, y2));
                 }
-            }
-        }
-
-        // draw border
-        // BORDER_BEFORE
-        if (bpsBefore != null) {
-            int borderWidth = (int) Math.round((bpsBefore.width / 1000f));
-            state.updateColor(bpsBefore.color);
-            state.getGraph().fillRect((int) startx, (int) starty, (int) width,
-                    borderWidth);
-        }
-        // BORDER_AFTER
-        if (bpsAfter != null) {
-            int borderWidth = (int) Math.round((bpsAfter.width / 1000f));
-            float sy = starty + height;
-            state.updateColor(bpsAfter.color);
-            state.getGraph().fillRect((int) startx,
-                    (int) (starty + height - borderWidth), (int) width,
-                    borderWidth);
-        }
-        // BORDER_START
-        if (bpsStart != null) {
-            int borderWidth = (int) Math.round((bpsStart.width / 1000f));
-            state.updateColor(bpsStart.color);
-            state.getGraph().fillRect((int) startx, (int) starty, borderWidth,
-                    (int) height);
-        }
-        // BORDER_END
-        if (bpsEnd != null) {
-            int borderWidth = (int) Math.round((bpsEnd.width / 1000f));
-            float sx = startx + width;
-            state.updateColor(bpsEnd.color);
-            state.getGraph().fillRect((int) (startx + width - borderWidth),
-                    (int) starty, borderWidth, (int) height);
+                break;
+            case Constants.EN_DOTTED:
+                g2d.setColor(col);
+                if (horz) {
+                    float unit = Math.abs(2 * h);
+                    int rep = (int)(w / unit);
+                    if (rep % 2 == 0) {
+                        rep++;
+                    }
+                    unit = w / rep;
+                    float ym = y1 + (h / 2);
+                    BasicStroke s = new BasicStroke(h, BasicStroke.CAP_ROUND, 
+                            BasicStroke.JOIN_MITER, 10.0f, new float[] {0, unit}, 0);
+                    g2d.setStroke(s);
+                    g2d.draw(new Line2D.Float(x1, ym, x2, ym));
+                } else {
+                    float unit = Math.abs(2 * w);
+                    int rep = (int)(h / unit);
+                    if (rep % 2 == 0) {
+                        rep++;
+                    }
+                    unit = h / rep;
+                    float xm = x1 + (w / 2);
+                    BasicStroke s = new BasicStroke(w, BasicStroke.CAP_ROUND, 
+                            BasicStroke.JOIN_MITER, 10.0f, new float[] {0, unit}, 0);
+                    g2d.setStroke(s);
+                    g2d.draw(new Line2D.Float(xm, y1, xm, y2));
+                }
+                break;
+            case Constants.EN_DOUBLE:
+                g2d.setColor(col);
+                if (horz) {
+                    float h3 = h / 3;
+                    float ym1 = y1 + (h3 / 2);
+                    float ym2 = ym1 + h3 + h3;
+                    BasicStroke s = new BasicStroke(h3);
+                    g2d.setStroke(s);
+                    g2d.draw(new Line2D.Float(x1, ym1, x2, ym1));
+                    g2d.draw(new Line2D.Float(x1, ym2, x2, ym2));
+                } else {
+                    float w3 = w / 3;
+                    float xm1 = x1 + (w3 / 2);
+                    float xm2 = xm1 + w3 + w3;
+                    BasicStroke s = new BasicStroke(w3);
+                    g2d.setStroke(s);
+                    g2d.draw(new Line2D.Float(xm1, y1, xm1, y2));
+                    g2d.draw(new Line2D.Float(xm2, y1, xm2, y2));
+                }
+                break;
+            case Constants.EN_GROOVE:
+            case Constants.EN_RIDGE:
+                float colFactor = (style == EN_GROOVE ? 0.4f : -0.4f);
+                if (horz) {
+                    Color uppercol = lightenColor(col, -colFactor);
+                    Color lowercol = lightenColor(col, colFactor);
+                    float h3 = h / 3;
+                    float ym1 = y1 + (h3 / 2);
+                    g2d.setStroke(new BasicStroke(h3));
+                    g2d.setColor(uppercol);
+                    g2d.draw(new Line2D.Float(x1, ym1, x2, ym1));
+                    g2d.setColor(col);
+                    g2d.draw(new Line2D.Float(x1, ym1 + h3, x2, ym1 + h3));
+                    g2d.setColor(lowercol);
+                    g2d.draw(new Line2D.Float(x1, ym1 + h3 + h3, x2, ym1 + h3 + h3));
+                } else {
+                    Color leftcol = lightenColor(col, -colFactor);
+                    Color rightcol = lightenColor(col, colFactor);
+                    float w3 = w / 3;
+                    float xm1 = x1 + (w3 / 2);
+                    g2d.setStroke(new BasicStroke(w3));
+                    g2d.setColor(leftcol);
+                    g2d.draw(new Line2D.Float(xm1, y1, xm1, y2));
+                    g2d.setColor(col);
+                    g2d.draw(new Line2D.Float(xm1 + w3, y1, xm1 + w3, y2));
+                    g2d.setColor(rightcol);
+                    g2d.draw(new Line2D.Float(xm1 + w3 + w3, y1, xm1 + w3 + w3, y2));
+                }
+                break;
+            case Constants.EN_INSET:
+            case Constants.EN_OUTSET:
+                colFactor = (style == EN_OUTSET ? 0.4f : -0.4f);
+                if (horz) {
+                    col = lightenColor(col, (startOrBefore ? 1 : -1) * colFactor);
+                    g2d.setStroke(new BasicStroke(h));
+                    float ym1 = y1 + (h / 2);
+                    g2d.setColor(col);
+                    g2d.draw(new Line2D.Float(x1, ym1, x2, ym1));
+                } else {
+                    col = lightenColor(col, (startOrBefore ? 1 : -1) * colFactor);
+                    float xm1 = x1 + (w / 2);
+                    g2d.setStroke(new BasicStroke(w));
+                    g2d.setColor(col);
+                    g2d.draw(new Line2D.Float(xm1, y1, xm1, y2));
+                }
+                break;
+            case Constants.EN_HIDDEN:
+                break;
+            default:
+                g2d.setColor(col);
+                if (horz) {
+                    float ym = y1 + (h / 2);
+                    g2d.setStroke(new BasicStroke(h));
+                    g2d.draw(new Line2D.Float(x1, ym, x2, ym));
+                } else {
+                    float xm = x1 + (w / 2);
+                    g2d.setStroke(new BasicStroke(w));
+                    g2d.draw(new Line2D.Float(xm, y1, xm, y2));
+                }
         }
     }
 
-    /**
-     * Draw the Background Rectangle of a given area.
-     *
-     * @param back the Trait.Background
-     * @param sx x coordinate of the rectangle to be filled.
-     * @param sy y the y coordinate of the rectangle to be filled.
-     * @param paddRectWidth the width of the rectangle to be filled.
-     * @param paddRectHeight the height of the rectangle to be filled.
-     */
-    protected void drawBackground(Trait.Background back, float sx, float sy,
-            float paddRectWidth, float paddRectHeight) {
-
-        state.updateColor(back.getColor());
-        state.getGraph().fillRect((int) sx, (int) sy, (int) paddRectWidth,
-                (int) paddRectHeight);
-    }
-    
-    /** 
-     * Common method to render the background and borders for any inline area.
-     * The all borders and padding are drawn outside the specified area.
-     * @param area the inline area for which the background, border and padding is to be
-     * rendered
-     * @TODO This is a copy from AbstractPathOrientedRenderer. Put this method in AbstractRenderer
-     */
-    protected void renderInlineAreaBackAndBorders(InlineArea area) {
-        float x = currentIPPosition / 1000f;
-        float y = (currentBPPosition + area.getOffset()) / 1000f;
-        float width = area.getIPD() / 1000f;
-        float height = area.getBPD() / 1000f;
-        float borderPaddingStart = area.getBorderAndPaddingWidthStart() / 1000f;
-        float borderPaddingBefore = area.getBorderAndPaddingWidthBefore() / 1000f;
-        float bpwidth = borderPaddingStart 
-                + (area.getBorderAndPaddingWidthEnd() / 1000f);
-        float bpheight = borderPaddingBefore
-                + (area.getBorderAndPaddingWidthAfter() / 1000f);
-        
-        if (height != 0.0f || bpheight != 0.0f && bpwidth != 0.0f) {
-            drawBackAndBorders(area, x, y - borderPaddingBefore
-                                , width + bpwidth
-                                , height + bpheight);
-        }
-        
-    }
-
-    /**
-     * Handle block traits. The block could be any sort of block with any
-     * positioning so this should render the traits such as border and
-     * background in its position.
-     *
-     * @param block the block to render the traits
-     */
-    protected void handleBlockTraits(Block block) {
-        // copied from pdf
-        int borderPaddingStart = block.getBorderAndPaddingWidthStart();
-        int borderPaddingBefore = block.getBorderAndPaddingWidthBefore();
-
-        float startx = currentIPPosition / 1000f;
-        float starty = currentBPPosition / 1000f;
-        float width = block.getIPD() / 1000f;
-        float height = block.getBPD() / 1000f;
-
-        startx += block.getStartIndent() / 1000f;
-        startx -= block.getBorderAndPaddingWidthStart() / 1000f;
-        width += borderPaddingStart / 1000f;
-        width += block.getBorderAndPaddingWidthEnd() / 1000f;
-        height += borderPaddingBefore / 1000f;
-        height += block.getBorderAndPaddingWidthAfter() / 1000f;
-
-        drawBackAndBorders(block, startx, starty, width, height);
-    }
-
-    /**
-     * Returns a Font object constructed based on the font traits in an area
-     * @param area the area from which to retrieve the font triplet information
-     * @return the requested Font instance or null if not found
-     */
-    protected Font getFontFromArea(Area area) {
-        FontTriplet triplet = (FontTriplet)area.getTrait(Trait.FONT);
-        int size = ((Integer)area.getTrait(Trait.FONT_SIZE)).intValue();
-        return fontInfo.getFontInstance(triplet, size);
-    }
-    
     /**
      * @see org.apache.fop.render.AbstractRenderer#renderText(TextArea)
      */
     public void renderText(TextArea text) {
         renderInlineAreaBackAndBorders(text);
 
-        float x = currentIPPosition + text.getBorderAndPaddingWidthStart();
-        float y = currentBPPosition + text.getOffset() + text.getBaselineOffset(); // baseline
+        int rx = currentIPPosition + text.getBorderAndPaddingWidthStart();
+        int bl = currentBPPosition + text.getOffset() + text.getBaselineOffset();
 
         Font font = getFontFromArea(text);
         state.updateFont(font.getFontName(), font.getFontSize(), null);
 
         ColorType ct = (ColorType) text.getTrait(Trait.COLOR);
-        state.updateColor(ct, false, null);
+        state.updateColor(ct);
 
         String s = text.getText();
-        state.getGraph().drawString(s, x / 1000f, y / 1000f);
-
-        // getLogger().debug("renderText(): \"" + s + "\", x: "
-        // + x + ", y: " + y + state);
-
-        // rendering text decorations
+        state.getGraph().drawString(s, rx / 1000f, bl / 1000f);
 
         super.renderText(text);
 
-        renderTextDecoration(font, text, y, x);
-    }
-
-    /**
-     * Paints the text decoration marks.
-     *
-     * @param fs Current font
-     * @param inline inline area to paint the marks for
-     * @param baseline position of the baseline
-     * @param startIPD start IPD
-     */
-    protected void renderTextDecoration(Font fs, InlineArea inline,
-            float baseline, float startIPD) {
-
-        boolean hasTextDeco = inline.hasUnderline() || inline.hasOverline()
-                || inline.hasLineThrough();
-
-        if (hasTextDeco) {
-            state.updateStroke((fs.getDescender() / (-8 * 1000f)),
-                    Constants.EN_SOLID);
-            float endIPD = startIPD + inline.getIPD();
-            if (inline.hasUnderline()) {
-                ColorType ct = (ColorType) inline
-                        .getTrait(Trait.UNDERLINE_COLOR);
-                state.updateColor(ct, false, null);
-                float y = baseline - fs.getDescender() / 2;
-                line.setLine(startIPD / 1000f, y / 1000f, endIPD / 1000f,
-                        y / 1000f);
-                state.getGraph().draw(line);
-            }
-            if (inline.hasOverline()) {
-                ColorType ct = (ColorType) inline
-                        .getTrait(Trait.OVERLINE_COLOR);
-                state.updateColor(ct, false, null);
-                float y = (float) (baseline - (1.1 * fs.getCapHeight()));
-                line.setLine(startIPD / 1000f, y / 1000f, endIPD / 1000f,
-                        y / 1000f);
-                state.getGraph().draw(line);
-            }
-            if (inline.hasLineThrough()) {
-                ColorType ct = (ColorType) inline
-                        .getTrait(Trait.LINETHROUGH_COLOR);
-                state.updateColor(ct, false, null);
-                float y = (float) (baseline - (0.45 * fs.getCapHeight()));
-                line.setLine(startIPD / 1000f, y / 1000f, endIPD / 1000f,
-                        y / 1000f);
-                state.getGraph().draw(line);
-            }
-        }
+        // rendering text decorations
+        Typeface tf = (Typeface) fontInfo.getFonts().get(font.getFontName());
+        int fontsize = text.getTraitAsInteger(Trait.FONT_SIZE);
+        renderTextDecoration(tf, fontsize, text, bl, rx);
     }
 
     /**
@@ -929,80 +699,62 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
         float endx = (currentIPPosition + area.getBorderAndPaddingWidthStart() 
                 + area.getIPD()) / 1000f;
 
-        ColorType ct = (ColorType) area.getTrait(Trait.COLOR);
-        state.updateColor(ct, true, null);
+        ColorType col = (ColorType) area.getTrait(Trait.COLOR);
+        state.updateColor(col);
 
+        Line2D line = new Line2D.Float();
         line.setLine(startx, starty, endx, starty);
-        float thickness = area.getRuleThickness() / 1000f;
+        float ruleThickness = area.getRuleThickness() / 1000f;
 
         int style = area.getRuleStyle();
         switch (style) {
         case EN_SOLID:
-        case EN_DOTTED:
         case EN_DASHED:
-            state.updateStroke(thickness, style);
-            state.getGraph().draw(line);
-            break;
         case EN_DOUBLE:
-
-            state.updateStroke(thickness / 3f, EN_SOLID); // only a third
-
-            // upper Leader
-            line.setLine(startx, starty, endx, starty);
-            state.getGraph().draw(line);
-            // lower Leader
-            line.setLine(startx, starty + 2 * thickness, endx, starty + 2
-                    * thickness);
-            state.getGraph().draw(line);
-
+            drawBorderLine(startx, starty, endx, starty + ruleThickness, 
+                    true, true, style, col);
             break;
-
+        case EN_DOTTED:
+            //TODO Dots should be shifted to the left by ruleThickness / 2
+            state.updateStroke(ruleThickness, style);
+            float rt2 = ruleThickness / 2f;
+            line.setLine(line.getX1(), line.getY1() + rt2, line.getX2(), line.getY2() + rt2);
+            state.getGraph().draw(line);
+            break;
         case EN_GROOVE:
-            // The rule looks as though it were carved into the canvas.
-            // (Top/left half of the rule's thickness is the
-            // color specified; the other half is white.)
-
-            state.updateStroke(thickness / 2f, EN_SOLID); // only the half
-
-            // upper Leader
-            line.setLine(startx, starty, endx, starty);
-            state.getGraph().draw(line);
-            // lower Leader
-            line.setLine(startx, starty + thickness, endx, starty + thickness);
-            state.getGraph().setColor(Color.white);
-            state.getGraph().draw(line);
-
-            // TODO the implementation could be nicer, f.eg. with triangles at
-            // the tip of the lines. See also RenderX's implementation (looks
-            // like a button)
-
-            break;
-
         case EN_RIDGE:
-            // The opposite of "groove", the rule looks as though it were
-            // coming out of the canvas. (Bottom/right half of the rule's
-            // thickness is the color specified; the other half is white.)
+            float half = area.getRuleThickness() / 2000f;
 
-            state.updateStroke(thickness / 2f, EN_SOLID); // only the half
-
-            // lower Leader
-            line.setLine(startx, starty + thickness, endx, starty + thickness);
-            state.getGraph().draw(line);
-            // upperLeader
-            line.setLine(startx, starty, endx, starty);
-            state.getGraph().setColor(Color.white);
-            state.getGraph().draw(line);
-
-            // TODO the implementation could be nicer, f.eg. with triangles at
-            // the tip of the lines. See also RenderX's implementation (looks
-            // like a button)
-
-            break;
+            state.updateColor(lightenColor(toColor(col), 0.6f));
+            moveTo(startx, starty);
+            lineTo(endx, starty);
+            lineTo(endx, starty + 2 * half);
+            lineTo(startx, starty + 2 * half);
+            closePath();
+            state.getGraph().fill(currentPath);
+            currentPath = null;
+            state.updateColor(toColor(col));
+            if (style == EN_GROOVE) {
+                moveTo(startx, starty);
+                lineTo(endx, starty);
+                lineTo(endx, starty + half);
+                lineTo(startx + half, starty + half);
+                lineTo(startx, starty + 2 * half);
+            } else {
+                moveTo(endx, starty);
+                lineTo(endx, starty + 2 * half);
+                lineTo(startx, starty + 2 * half);
+                lineTo(startx, starty + half);
+                lineTo(endx - half, starty + half);
+            }
+            closePath();
+            state.getGraph().fill(currentPath);
+            currentPath = null;
 
         case EN_NONE:
             // No rule is drawn
             break;
-
+        default:
         } // end switch
 
         super.renderLeader(area);
@@ -1015,20 +767,18 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
     public void renderImage(Image image, Rectangle2D pos) {
         // endTextObject();
         String url = image.getURL();
-        putImage(url, pos);
+        drawImage(url, pos);
     }
 
     /**
-     * Draws an image
-     *
-     * @param pUrl URL of the bitmap
-     * @param pos Position of the bitmap
+     * @see org.apache.fop.render.AbstractPathOrientedRenderer#drawImage(
+     *          java.lang.String, java.awt.geom.Rectangle2D)
      */
-    protected void putImage(String pUrl, Rectangle2D pos) {
+    protected void drawImage(String url, Rectangle2D pos) {
 
-        int x = currentIPPosition; // TODO + area.getXOffset();
-        int y = currentBPPosition;
-        String url = ImageFactory.getURL(pUrl);
+        int x = currentIPPosition + (int)Math.round(pos.getX());
+        int y = currentBPPosition + (int)Math.round(pos.getY());
+        url = ImageFactory.getURL(url);
 
         ImageFactory fact = userAgent.getFactory().getImageFactory();
         FopImage fopimage = fact.getImage(url, userAgent);
@@ -1060,21 +810,6 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
             renderDocument(doc, ns, pos);
         } else if ("image/eps".equals(mime)) {
             log.warn("EPS images are not supported by this renderer");
-        } else if ("image/jpeg".equals(mime)) {
-            if (!fopimage.load(FopImage.ORIGINAL_DATA)) {
-                return;
-            }
-
-            // TODO Load JPEGs rather through fopimage.load(FopImage.BITMAP),
-            // but JpegImage will need to be extended for that
-
-            // url = url.substring(7);
-            // url = "C:/eclipse/myWorkbenches/fop4/xml-fop/examples/fo" + url;
-            java.awt.Image awtImage = new javax.swing.ImageIcon(url).getImage();
-
-            state.getGraph().drawImage(awtImage, 
-                    (int)(x / 1000f), (int)(y / 1000f), 
-                    (int)(pos.getWidth() / 1000f), (int)(pos.getHeight() / 1000f), null);
         } else {
             if (!fopimage.load(FopImage.BITMAP)) {
                 log.warn("Loading of bitmap failed: " + url);
@@ -1090,7 +825,7 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
                     false, false,
                     ColorModel.OPAQUE, DataBuffer.TYPE_BYTE);
             SampleModel sampleModel = new PixelInterleavedSampleModel(
-                    DataBuffer.TYPE_BYTE, w, h, 3, w * 3, new int[] { 0, 1, 2 });
+                    DataBuffer.TYPE_BYTE, w, h, 3, w * 3, new int[] {0, 1, 2});
             DataBuffer dbuf = new DataBufferByte(raw, w * h * 3);
 
             WritableRaster raster = Raster.createWritableRaster(sampleModel,
@@ -1155,23 +890,33 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
 
         Graphics2D graphics = (Graphics2D) g;
         Java2DGraphicsState oldState = state;
-        BufferedImage image;
         try {
-          PageViewport viewport = getPageViewport(pageIndex);
-          AffineTransform at = graphics.getTransform();
-          state = new Java2DGraphicsState(graphics, this.fontInfo, at);
+            PageViewport viewport = getPageViewport(pageIndex);
+            AffineTransform at = graphics.getTransform();
+            state = new Java2DGraphicsState(graphics, this.fontInfo, at);
 
-          // reset the current Positions
-          currentBPPosition = 0;
-          currentIPPosition = 0;
+            // reset the current Positions
+            currentBPPosition = 0;
+            currentIPPosition = 0;
 
-          renderPageAreas(viewport.getPage());
-          return PAGE_EXISTS;
+            renderPageAreas(viewport.getPage());
+            return PAGE_EXISTS;
         } catch (FOPException e) {
             log.error(e);
             return NO_SUCH_PAGE;
         } finally {
-          oldState = state;
+            state = oldState;
         }
     }
+
+    /** @see org.apache.fop.render.AbstractPathOrientedRenderer#beginTextObject() */
+    protected void beginTextObject() {
+        //not necessary in Java2D
+    }
+
+    /** @see org.apache.fop.render.AbstractPathOrientedRenderer#endTextObject() */
+    protected void endTextObject() {
+        //not necessary in Java2D
+    }
+
 }

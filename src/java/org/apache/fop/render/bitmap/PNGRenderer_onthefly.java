@@ -95,9 +95,10 @@ public class PNGRenderer_onthefly extends Java2DRenderer {
         fileSyntax = s.substring(0, i);
     }
 
-    /** @see org.apache.fop.render.Renderer#renderPage(org.apache.fop.area.PageViewport) */
-    public void renderPage(PageViewport pageViewport) throws IOException,
-            FOPException {
+    /** 
+     * @see org.apache.fop.render.Renderer#renderPage(org.apache.fop.area.PageViewport)
+     */
+    public void renderPage(PageViewport pageViewport) throws IOException {
 
         // Do the rendering: get the image for this page
         RenderedImage image = (RenderedImage) getPageImage(pageViewport);

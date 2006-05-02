@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -98,7 +98,8 @@ public class FontSetup {
         // --> goes to  F12
         fontInfo.addMetrics("F12", metric);
 
-        metric = new FontMetricsMapper("Symbol", bolditalic, graphics);
+        metric = new FontMetricsMapper("Serif", normal, graphics);
+        //"Symbol" doesn't seem to work here, but "Serif" does the job just fine. *shrug*
         // --> goes to  F13 and F14
         fontInfo.addMetrics("F13", metric);
         fontInfo.addMetrics("F14", metric);

@@ -290,7 +290,7 @@ public class PreviewPanel extends JPanel {
     private class Reloader extends Thread {
 
         public void run() {
-            if (!renderer.renderingDone) {
+            if (!renderer.isRenderingDone()) {
                 // do not allow the reloading while FOP is still rendering
                 JOptionPane.showMessageDialog(previewArea,
                         "Cannot perform the requested operation until "

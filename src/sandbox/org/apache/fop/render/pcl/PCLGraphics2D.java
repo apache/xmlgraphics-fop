@@ -20,6 +20,7 @@ package org.apache.fop.render.pcl;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
@@ -28,6 +29,8 @@ import java.awt.Image;
 import java.awt.Paint;
 import java.awt.Shape;
 import java.awt.Stroke;
+import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
@@ -50,6 +53,9 @@ public class PCLGraphics2D extends AbstractGraphics2D {
     /** The PCL generator */
     protected PCLGenerator gen;
     
+    private boolean failOnUnsupportedFeature = true;
+    private boolean clippingDisabled = false;
+    
     /**
      * Create a new PCLGraphics2D.
      * @param gen the PCL Generator to paint with
@@ -70,7 +76,9 @@ public class PCLGraphics2D extends AbstractGraphics2D {
 
     /** @see java.awt.Graphics#create() */
     public Graphics create() {
-        return new PCLGraphics2D(this);
+        PCLGraphics2D copy = new PCLGraphics2D(this);
+        copy.setGraphicContext((GraphicContext)getGraphicContext().clone());
+        return copy;
     }
 
     /** @see java.awt.Graphics#dispose() */
@@ -95,6 +103,18 @@ public class PCLGraphics2D extends AbstractGraphics2D {
         ioe.printStackTrace();
     }
 
+    /**
+     * Raises an UnsupportedOperationException if this instance is configured to do so and an
+     * unsupported feature has been requested. Clients can make use of this to fall back to
+     * a more compatible way of painting a PCL graphic.
+     * @param msg the error message to be displayed
+     */
+    protected void handleUnsupportedFeature(String msg) {
+        if (this.failOnUnsupportedFeature) {
+            throw new UnsupportedOperationException(msg);
+        }
+    }
+    
     /** @see java.awt.Graphics2D#getDeviceConfiguration() */
     public GraphicsConfiguration getDeviceConfiguration() {
         return GraphicsEnvironment.getLocalGraphicsEnvironment().
@@ -114,18 +134,35 @@ public class PCLGraphics2D extends AbstractGraphics2D {
             if (da != null) {
                 
                 gen.writeText("UL1,");
-                for (int idx = 0, len = Math.min(20, da.length); idx < len; idx++) {
-                    gen.writeText(gen.formatDouble4(da[idx]));
+                int len = Math.min(20, da.length);
+                float patternLen = 0.0f;
+                for (int idx = 0; idx < len; idx++) {
+                    patternLen += da[idx];
+                }
+                if (len == 1) {
+                    patternLen *= 2;
+                }
+                for (int idx = 0; idx < len; idx++) {
+                    float perc = da[idx] * 100 / patternLen;
+                    gen.writeText(gen.formatDouble2(perc));
                     if (idx < da.length - 1) {
                         gen.writeText(",");
                     }
+                }
+                if (len == 1) {
+                    gen.writeText("," + gen.formatDouble2(da[0] * 100 / patternLen ));
+                    
                 }
                 gen.writeText(";");
                 /* TODO Dash phase NYI
                 float offset = bs.getDashPhase();
                 gen.writeln(gen.formatDouble4(offset) + " setdash");
                 */
-                gen.writeText("LT1;");
+                Point2D ptLen = new Point2D.Double(patternLen, 0);
+                //interpret as absolute length
+                getTransform().deltaTransform(ptLen, ptLen);
+                double transLen = UnitConv.pt2mm(ptLen.distance(0, 0));
+                gen.writeText("LT1," + gen.formatDouble4(transLen) + ",1;");
             } else {
                 gen.writeText("LT;");
             }
@@ -166,13 +203,13 @@ public class PCLGraphics2D extends AbstractGraphics2D {
             float lw = bs.getLineWidth();
             Point2D ptSrc = new Point2D.Double(lw, 0);
             //Pen widths are set as absolute metric values (WU0;)
-            Point2D ptDest = getTransform().transform(ptSrc, null);
+            Point2D ptDest = getTransform().deltaTransform(ptSrc, null);
             double transDist = UnitConv.pt2mm(ptDest.distance(0, 0));
             //System.out.println("--" + ptDest.distance(0, 0) + " " + transDist);
             gen.writeText(";PW" + gen.formatDouble4(transDist) + ";");
             
         } else {
-            System.err.println("Unsupported Stroke: " + stroke.getClass().getName());
+            handleUnsupportedFeature("Unsupported Stroke: " + stroke.getClass().getName());
         }
     }
 
@@ -187,7 +224,31 @@ public class PCLGraphics2D extends AbstractGraphics2D {
             int shade = gen.convertToPCLShade(col);
             gen.writeText("TR0;FT10," + shade + ";");
         } else {
-            System.err.println("Unsupported Paint: " + paint.getClass().getName());
+            handleUnsupportedFeature("Unsupported Paint: " + paint.getClass().getName());
+        }
+    }
+
+    private void writeClip(Shape imclip) throws IOException {
+        if (clippingDisabled) {
+            return;
+        }
+        if (imclip == null) {
+            //gen.writeText("IW;");
+        } else {
+            handleUnsupportedFeature("Clipping is not supported. Shape: " + imclip);
+            /* This is an attempt to clip using the "InputWindow" (IW) but this only allows to 
+             * clip a rectangular area. Force falling back to bitmap mode for now.
+            Rectangle2D bounds = imclip.getBounds2D();
+            Point2D p1 = new Point2D.Double(bounds.getX(), bounds.getY());
+            Point2D p2 = new Point2D.Double(
+                    bounds.getX() + bounds.getWidth(), bounds.getY() + bounds.getHeight());
+            getTransform().transform(p1, p1);
+            getTransform().transform(p2, p2);
+            gen.writeText("IW" + gen.formatDouble4(p1.getX())
+                    + "," + gen.formatDouble4(p2.getY())
+                    + "," + gen.formatDouble4(p2.getX())
+                    + "," + gen.formatDouble4(p1.getY()) + ";");
+            */
         }
     }
 
@@ -197,16 +258,17 @@ public class PCLGraphics2D extends AbstractGraphics2D {
             AffineTransform trans = getTransform();
     
             Shape imclip = getClip();
-            //writeClip(imclip);
-            //establishColor(getColor());
+            writeClip(imclip);
     
-            applyPaint(getPaint());
+            if (!Color.black.equals(getColor())) {
+                //TODO PCL 5 doesn't support colored pens, PCL5c has a pen color (PC) command
+                handleUnsupportedFeature("Only black is supported as stroke color: " + getColor());
+            }
             applyStroke(getStroke());
     
-            //gen.writeln("newpath");
             PathIterator iter = s.getPathIterator(trans);
-            processPathIterator(iter);
-            gen.writeText("EP;");
+            processPathIteratorStroke(iter);
+            writeClip(null);
         } catch (IOException ioe) {
             handleIOException(ioe);
         }
@@ -217,16 +279,13 @@ public class PCLGraphics2D extends AbstractGraphics2D {
         try {
             AffineTransform trans = getTransform();
             Shape imclip = getClip();
-            //writeClip(imclip);
+            writeClip(imclip);
             
-            //establishColor(getColor());
-
             applyPaint(getPaint());
 
             PathIterator iter = s.getPathIterator(trans);
-            processPathIterator(iter);
-            int fillMethod = (iter.getWindingRule() == PathIterator.WIND_EVEN_ODD ? 0 : 1);
-            gen.writeText("FP" + fillMethod + ";");
+            processPathIteratorFill(iter);
+            writeClip(null);
         } catch (IOException ioe) {
             handleIOException(ioe);
         }
@@ -237,97 +296,163 @@ public class PCLGraphics2D extends AbstractGraphics2D {
      * @param iter PathIterator to process
      * @throws IOException In case of an I/O problem.
      */
-    public void processPathIterator(PathIterator iter) throws IOException {
+    public void processPathIteratorStroke(PathIterator iter) throws IOException {
+        gen.writeText("\n");
         double[] vals = new double[6];
         boolean penDown = false;
-        boolean hasFirst = false;
-        double x = 0, firstX = 0;
-        double y = 0, firstY = 0;
-        boolean pendingPM0 = true;
-        penUp();
+        double x = 0;
+        double y = 0;
+        StringBuffer sb = new StringBuffer(256);
+        penUp(sb);
         while (!iter.isDone()) {
             int type = iter.currentSegment(vals);
             if (type == PathIterator.SEG_CLOSE) {
-                hasFirst = false;
-                /*
-                if (firstX != x && firstY != y) {
-                    plotAbsolute(firstX, firstY);
-                }*/
-                //penUp();
-                gen.writeText("PM1;");
+                gen.writeText("PM;");
+                gen.writeText(sb.toString());
+                gen.writeText("PM2;EP;");
+                sb.setLength(0);
                 iter.next();
                 continue;
-            }
-            if (type == PathIterator.SEG_MOVETO) {
+            } else if (type == PathIterator.SEG_MOVETO) {
+                gen.writeText(sb.toString());
+                sb.setLength(0);
                 if (penDown) {
-                    penUp();
+                    penUp(sb);
                     penDown = false;
                 }
             } else {
                 if (!penDown) {
-                    penDown();
+                    penDown(sb);
                     penDown = true;
                 }
             }
             switch (type) {
-            case PathIterator.SEG_CUBICTO:
-                x = vals[4];
-                y = vals[5];
-                bezierAbsolute(vals[0], vals[1], vals[2], vals[3], x, y);
-                break;
-            case PathIterator.SEG_LINETO:
-                x = vals[0];
-                y = vals[1];
-                plotAbsolute(x, y);
+            case PathIterator.SEG_CLOSE:
                 break;
             case PathIterator.SEG_MOVETO:
                 x = vals[0];
                 y = vals[1];
-                plotAbsolute(x, y);
+                plotAbsolute(x, y, sb);
+                gen.writeText(sb.toString());
+                sb.setLength(0);
+                break;
+            case PathIterator.SEG_LINETO:
+                x = vals[0];
+                y = vals[1];
+                plotAbsolute(x, y, sb);
+                break;
+            case PathIterator.SEG_CUBICTO:
+                x = vals[4];
+                y = vals[5];
+                bezierAbsolute(vals[0], vals[1], vals[2], vals[3], x, y, sb);
                 break;
             case PathIterator.SEG_QUADTO:
                 double originX = x;
                 double originY = y;
                 x = vals[2];
                 y = vals[3];
-                quadraticBezierAbsolute(originX, originY, vals[0], vals[1], x, y);
-                break;
-            case PathIterator.SEG_CLOSE:
+                quadraticBezierAbsolute(originX, originY, vals[0], vals[1], x, y, sb);
                 break;
             default:
                 break;
             }
+            iter.next();
+        }
+        sb.append("\n");
+        gen.writeText(sb.toString());
+    }
+    
+    /**
+     * Processes a path iterator generating the nexessary painting operations.
+     * @param iter PathIterator to process
+     * @throws IOException In case of an I/O problem.
+     */
+    public void processPathIteratorFill(PathIterator iter) throws IOException {
+        gen.writeText("\n");
+        double[] vals = new double[6];
+        boolean penDown = false;
+        double x = 0;
+        double y = 0;
+        boolean pendingPM0 = true;
+        StringBuffer sb = new StringBuffer(256);
+        penUp(sb);
+        while (!iter.isDone()) {
+            int type = iter.currentSegment(vals);
+            if (type == PathIterator.SEG_CLOSE) {
+                sb.append("PM1;");
+                iter.next();
+                continue;
+            } else if (type == PathIterator.SEG_MOVETO) {
+                if (penDown) {
+                    penUp(sb);
+                    penDown = false;
+                }
+            } else {
+                if (!penDown) {
+                    penDown(sb);
+                    penDown = true;
+                }
+            }
+            switch (type) {
+            case PathIterator.SEG_MOVETO:
+                x = vals[0];
+                y = vals[1];
+                plotAbsolute(x, y, sb);
+                break;
+            case PathIterator.SEG_LINETO:
+                x = vals[0];
+                y = vals[1];
+                plotAbsolute(x, y, sb);
+                break;
+            case PathIterator.SEG_CUBICTO:
+                x = vals[4];
+                y = vals[5];
+                bezierAbsolute(vals[0], vals[1], vals[2], vals[3], x, y, sb);
+                break;
+            case PathIterator.SEG_QUADTO:
+                double originX = x;
+                double originY = y;
+                x = vals[2];
+                y = vals[3];
+                quadraticBezierAbsolute(originX, originY, vals[0], vals[1], x, y, sb);
+                break;
+            default:
+                throw new IllegalStateException("Must not get here");
+            }
             if (pendingPM0) {
                 pendingPM0 = false;
-                gen.writeText("PM;");
-            }
-            if (!hasFirst) {
-                firstX = x;
-                firstY = y;
+                sb.append("PM;");
             }
             iter.next();
         }
-        gen.writeText("PM2;");
+        sb.append("PM2;");
+        fillPolygon(iter.getWindingRule(), sb);
+        sb.append("\n");
+        gen.writeText(sb.toString());
+    }
+    
+    private void fillPolygon(int windingRule, StringBuffer sb) {
+        int fillMethod = (windingRule == PathIterator.WIND_EVEN_ODD ? 0 : 1);
+        sb.append("FP").append(fillMethod).append(";");
     }
 
-    private void plotAbsolute(double x, double y) throws IOException {
-        gen.writeText("PA" + gen.formatDouble4(x) + ","
-                + gen.formatDouble4(y) + ";");
+    private void plotAbsolute(double x, double y, StringBuffer sb) {
+        sb.append("PA").append(gen.formatDouble4(x));
+        sb.append(",").append(gen.formatDouble4(y)).append(";");
     }
 
-    private void bezierAbsolute(double x1, double y1, double x2, double y2, double x3, double y3) 
-                throws IOException {
-        gen.writeText("BZ" + gen.formatDouble4(x1) + ","
-                + gen.formatDouble4(y1) + ","
-                + gen.formatDouble4(x2) + ","
-                + gen.formatDouble4(y2) + ","
-                + gen.formatDouble4(x3) + ","
-                + gen.formatDouble4(y3) + ";");
+    private void bezierAbsolute(double x1, double y1, double x2, double y2, double x3, double y3,
+            StringBuffer sb) {
+        sb.append("BZ").append(gen.formatDouble4(x1));
+        sb.append(",").append(gen.formatDouble4(y1));
+        sb.append(",").append(gen.formatDouble4(x2));
+        sb.append(",").append(gen.formatDouble4(y2));
+        sb.append(",").append(gen.formatDouble4(x3));
+        sb.append(",").append(gen.formatDouble4(y3)).append(";");
     }
 
     private void quadraticBezierAbsolute(double originX, double originY, 
-            double x1, double y1, double x2, double y2) 
-            throws IOException {
+            double x1, double y1, double x2, double y2, StringBuffer sb) {
         //Quadratic Bezier curve can be mapped to a normal bezier curve
         //See http://pfaedit.sourceforge.net/bezier.html
         double nx1 = originX + (2.0 / 3.0) * (x1 - originX);
@@ -336,28 +461,31 @@ public class PCLGraphics2D extends AbstractGraphics2D {
         double nx2 = nx1 + (1.0 / 3.0) * (x2 - originX);
         double ny2 = ny1 + (1.0 / 3.0) * (y2 - originY);
         
-        bezierAbsolute(nx1, ny1, nx2, ny2, x2, y2);
+        bezierAbsolute(nx1, ny1, nx2, ny2, x2, y2, sb);
     }
 
-    private void penDown() throws IOException {
-        gen.writeText("PD;");
+    private void penDown(StringBuffer sb) {
+        sb.append("PD;");
     }
 
-    private void penUp() throws IOException {
-        gen.writeText("PU;");
+    private void penUp(StringBuffer sb) {
+        sb.append("PU;");
     }
 
     /** @see java.awt.Graphics2D#drawString(java.lang.String, float, float) */
     public void drawString(String s, float x, float y) {
-        // TODO Auto-generated method stub
-        System.err.println("drawString NYI");
+        java.awt.Font awtFont = getFont();
+        FontRenderContext frc = getFontRenderContext();
+        GlyphVector gv = awtFont.createGlyphVector(frc, s);
+        Shape glyphOutline = gv.getOutline(x, y);
+        fill(glyphOutline);
     }
 
     /** @see java.awt.Graphics2D#drawString(java.text.AttributedCharacterIterator, float, float) */
     public void drawString(AttributedCharacterIterator iterator, float x,
             float y) {
         // TODO Auto-generated method stub
-        System.err.println("drawString NYI");
+        handleUnsupportedFeature("drawString NYI");
     }
 
     /**
@@ -365,8 +493,7 @@ public class PCLGraphics2D extends AbstractGraphics2D {
      *          java.awt.geom.AffineTransform)
      */
     public void drawRenderedImage(RenderedImage img, AffineTransform xform) {
-        // TODO Auto-generated method stub
-        System.err.println("drawRenderedImage NYI");
+        handleUnsupportedFeature("Bitmap images are not supported");
     }
 
     /**
@@ -374,8 +501,7 @@ public class PCLGraphics2D extends AbstractGraphics2D {
      *          java.awt.geom.AffineTransform)
      */
     public void drawRenderableImage(RenderableImage img, AffineTransform xform) {
-        // TODO Auto-generated method stub
-        System.err.println("drawRenderedImage NYI");
+        handleUnsupportedFeature("Bitmap images are not supported");
     }
 
     /**
@@ -384,8 +510,7 @@ public class PCLGraphics2D extends AbstractGraphics2D {
      */
     public boolean drawImage(Image img, int x, int y, int width, int height,
             ImageObserver observer) {
-        // TODO Auto-generated method stub
-        System.err.println("drawImage NYI");
+        handleUnsupportedFeature("Bitmap images are not supported");
         return false;
     }
 
@@ -393,21 +518,62 @@ public class PCLGraphics2D extends AbstractGraphics2D {
      * @see java.awt.Graphics#drawImage(java.awt.Image, int, int, java.awt.image.ImageObserver)
      */
     public boolean drawImage(Image img, int x, int y, ImageObserver observer) {
-        // TODO Auto-generated method stub
-        System.err.println("drawImage NYI");
+        handleUnsupportedFeature("Bitmap images are not supported");
         return false;
+        /*
+         * First attempt disabled.
+         * Reasons: Lack of transparency control, positioning and rotation issues
+        final int width = img.getWidth(observer);
+        final int height = img.getHeight(observer);
+        if (width == -1 || height == -1) {
+            return false;
+        }
+
+        Dimension size = new Dimension(width, height);
+        BufferedImage buf = buildBufferedImage(size);
+
+        java.awt.Graphics2D g = buf.createGraphics();
+        try {
+            g.setComposite(AlphaComposite.SrcOver);
+            g.setBackground(new Color(255, 255, 255));
+            g.setPaint(new Color(255, 255, 255));
+            g.fillRect(0, 0, width, height);
+            g.clip(new Rectangle(0, 0, buf.getWidth(), buf.getHeight()));
+
+            if (!g.drawImage(img, 0, 0, observer)) {
+                return false;
+            }
+        } finally {
+            g.dispose();
+        }
+
+        try {
+            AffineTransform at = getTransform();
+            gen.enterPCLMode(false);
+            //Shape imclip = getClip(); Clipping is not available in PCL
+            Point2D p1 = new Point2D.Double(x, y);
+            at.transform(p1, p1);
+            pclContext.getTransform().transform(p1, p1);
+            gen.setCursorPos(p1.getX(), p1.getY());
+            gen.paintBitmap(buf, 72); 
+            gen.enterHPGL2Mode(false);
+        } catch (IOException ioe) {
+            handleIOException(ioe);
+        }
+
+        return true;*/
     }
 
     /** @see java.awt.Graphics#copyArea(int, int, int, int, int, int) */
     public void copyArea(int x, int y, int width, int height, int dx, int dy) {
         // TODO Auto-generated method stub
-        System.err.println("copyArea NYI");
+        handleUnsupportedFeature("copyArea NYI");
     }
 
     /** @see java.awt.Graphics#setXORMode(java.awt.Color) */
     public void setXORMode(Color c1) {
         // TODO Auto-generated method stub
-        System.err.println("setXORMode NYI");
+        handleUnsupportedFeature("setXORMode NYI");
     }
 
     /**
@@ -422,6 +588,16 @@ public class PCLGraphics2D extends AbstractGraphics2D {
         fmg = bi.createGraphics();
     }
 
+    /**
+     * Creates a buffered image.
+     * @param size dimensions of the image to be created
+     * @return the buffered image
+     */
+    protected BufferedImage buildBufferedImage(Dimension size) {
+        return new BufferedImage(size.width, size.height,
+                                 BufferedImage.TYPE_BYTE_GRAY);
+    }
+    
     /** @see java.awt.Graphics#getFontMetrics(java.awt.Font) */
     public java.awt.FontMetrics getFontMetrics(java.awt.Font f) {
         return fmg.getFontMetrics(f);

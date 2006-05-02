@@ -19,6 +19,7 @@
 package org.apache.fop.render;
 
 // Java
+import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
@@ -63,6 +64,7 @@ import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.commons.logging.Log;
@@ -646,11 +648,21 @@ public abstract class AbstractRenderer
         currentIPPosition += ch.getAllocIPD();
     }
 
+    /** 
+     * Common method to render the background and borders for any inline area.
+     * The all borders and padding are drawn outside the specified area.
+     * @param area the inline area for which the background, border and padding is to be
+     * rendered
+     */
+    protected abstract void renderInlineAreaBackAndBorders(InlineArea area);
+    
     /**
      * Render the given Space.
      * @param space the space to render
      */
     protected void renderInlineSpace(Space space) {
+        space.setBPD(0);
+        renderInlineAreaBackAndBorders(space);
         // an inline space moves the inline progression position
         // for the current block by the width or height of the space
         // it may also have styling (only on this object) that needs
@@ -701,6 +713,7 @@ public abstract class AbstractRenderer
      * @param ip the inline parent to render
      */
     protected void renderInlineParent(InlineParent ip) {
+        renderInlineAreaBackAndBorders(ip);
         int saveIP = currentIPPosition;
         int saveBP = currentBPPosition;
         currentIPPosition += ip.getBorderAndPaddingWidthStart();
@@ -718,6 +731,7 @@ public abstract class AbstractRenderer
      * @param ibp the inline block parent to render
      */
     protected void renderInlineBlockParent(InlineBlockParent ibp) {
+        renderInlineAreaBackAndBorders(ibp);
         currentIPPosition += ibp.getBorderAndPaddingWidthStart();
         // For inline content the BP position is updated by the enclosing line area
         int saveBP = currentBPPosition;
@@ -866,6 +880,15 @@ public abstract class AbstractRenderer
      */
     public String getMimeType() {
         return null;
+    }
+
+    /**
+     * Converts a ColorType to a java.awt.Color (sRGB).
+     * @param col the color
+     * @return the converted color
+     */
+    protected Color toColor(ColorType col) {
+        return new Color(col.getRed(), col.getGreen(), col.getBlue());
     }
 }
 

@@ -113,9 +113,10 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
         dialogDisplay = show;
     }
 
-    /** @see org.apache.fop.render.Renderer#renderPage(org.apache.fop.area.PageViewport) */
-    public void renderPage(PageViewport pageViewport) 
-            throws IOException, FOPException {
+    /** 
+     * @see org.apache.fop.render.Renderer#renderPage(org.apache.fop.area.PageViewport)
+     */
+    public void renderPage(PageViewport pageViewport) throws IOException {
 
         super.renderPage(pageViewport);
         if (frame != null) {
@@ -263,7 +264,7 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
         state.push();
 
         ColorType ct = new ColorTypeProperty(0.7f, 0.7f, 0.7f);
-        state.updateColor(ct, true, null);
+        state.updateColor(ct);
         state.updateStroke(0.4f, EN_SOLID);
         state.getGraph().draw(
                 new Rectangle2D.Float(startx, starty, width, height));
@@ -271,4 +272,5 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
         // restores the last graphics state from the stack
         state.pop();
     }
+
 }

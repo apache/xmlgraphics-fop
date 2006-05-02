@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ public class Java2DFontMetrics {
     /**
      * The width of all 256 character, if requested
      */
-    private int width[] = null;
+    private int[] width = null;
 
     /**
      * The typical height of a small cap latter
@@ -289,6 +289,19 @@ public class Java2DFontMetrics {
          * this.size = size;
          * return fSized;
          */
+    }
+
+    /**
+     * Indicates whether the font contains a particular character/glyph.
+     * @param family font family (jave name) to use
+     * @param style font style (jave def.) to use
+     * @param size font size
+     * @param c the glyph to check
+     * @return true if the character is supported
+     */
+    public boolean hasChar(String family, int style, int size, char c) {
+        setFont(family, style, size);
+        return f1.canDisplay(c);
     }
 
 }
