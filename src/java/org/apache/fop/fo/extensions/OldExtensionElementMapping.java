@@ -18,10 +18,15 @@
 
 package org.apache.fop.fo.extensions;
 
+import java.util.HashMap;
+
+import org.apache.fop.fo.ElementMapping;
+import org.apache.fop.fo.UnknownXMLObj;
+
 /**
- * Element mapping for the old FOP extension namespace. It is simply mapped to the new namespace.
+ * Element mapping for the old FOP extension namespace.
  */
-public class OldExtensionElementMapping extends ExtensionElementMapping {
+public class OldExtensionElementMapping extends ElementMapping {
     
     /** The old FOP extension namespace URI (FOP 0.20.5 and earlier) */
     public static final String URI = "http://xml.apache.org/fop/extensions";
@@ -33,4 +38,14 @@ public class OldExtensionElementMapping extends ExtensionElementMapping {
         namespaceURI = URI;
     }
 
+    /**
+     * Initialize the data structures.
+     */
+    protected void initialize() {
+        if (foObjs == null) {
+            foObjs = new HashMap();
+            foObjs.put("outline", new UnknownXMLObj.Maker(URI));
+            foObjs.put("label", new UnknownXMLObj.Maker(URI));
+        }
+    }
 }
