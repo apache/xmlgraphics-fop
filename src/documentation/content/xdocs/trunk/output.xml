@@ -388,6 +388,167 @@ out = proc.getOutputStream();]]></source>
       </dl>
     </section-->
   </section>
+  <section id="afp">
+    <title>AFP</title>
+    <warning>The AFP Renderer is a new addition (27-Apr-2006) to the sandbox and as such not yet fully tested or feature complete.</warning>
+    <p>
+      The FOP AFP Renderer deals with creating documents conforming to the IBM AFP document architecture
+      also refered to as MO:DCA (Mixed Object Document Content Architecture).
+    </p>
+    <section id="afp-references">
+      <title>References</title>
+      <ul>
+        <li><a href="http://en.wikipedia.org/wiki/Advanced_Function_Presentation">AFP (Advanced Function Presentation)</a></li>
+        <li><a href="http://wiki.apache.org/xmlgraphics-fop/AFPResources">AFP Resources on the FOP WIKI</a></li>
+      </ul>
+    </section>
+    <section id="afp-limitations">
+      <title>Limitations</title>
+      <p>This list is most likely badly incomplete.</p>
+      <ul>
+        <li>
+          Clipping of text and graphics is not supported.
+        </li>
+        <li>
+          Only IBM outline and raster fonts and to a limited extend the original fonts built into FOP are supported.
+          Support for TrueType fonts may be added later.
+        </li>
+      </ul>
+    </section>
+    <section id="afp-configuration">
+      <title>Configuration</title>
+      <p>The AFP Renderer requires special configuration particularly related to fonts.
+      AFP Render configuration is done through the normal FOP configuration file. The MIME type
+      for the AFP Renderer is application/x-afp which means the AFP Renderer section in the FOP configuration file
+      looks like:</p>
+      <source><![CDATA[<renderer mime="application/x-afp">
+  <!-- AFP Renderer -->
+  ...
+</renderer>]]></source>
+      <p>There are 3 font configuration variants supported:</p>
+      <ol>
+        <li>IBM Raster fonts</li>
+        <li>IBM Outline fonts</li>
+        <li>FOP built-in Base14 fonts</li>
+      </ol>
+      <p>A typical raster font configuration looks like:</p>
+<source><![CDATA[      <!-- This is an example of mapping actual IBM raster fonts / code pages to a FOP font -->
+        <font>
+        <!-- The afp-font element defines the IBM code page, the matching Java encoding and the
+             path to the font -->
+        <afp-font type="raster" codepage="T1V10500" encoding="Cp500" path="fonts/ibm">
+          <!-- For a raster font a separate element for each font size is required providing
+               the font size and the corresponding IBM Character set name -->
+          <afp-raster-font size="7" characterset="C0N20070"/>
+          <afp-raster-font size="8" characterset="C0N20080"/>
+          <afp-raster-font size="10" characterset="C0N20000"/>
+          <afp-raster-font size="11" characterset="C0N200A0"/>
+          <afp-raster-font size="12" characterset="C0N200B0"/>
+          <afp-raster-font size="14" characterset="C0N200D0"/>
+          <afp-raster-font size="16" characterset="C0N200F0"/>
+          <afp-raster-font size="18" characterset="C0N200H0"/>
+          <afp-raster-font size="20" characterset="C0N200J0"/>
+          <afp-raster-font size="24" characterset="C0N200N0"/>
+          <afp-raster-font size="30" characterset="C0N200T0"/>
+          <afp-raster-font size="36" characterset="C0N200Z0"/>
+        </afp-font>
+        <!-- These are the usual FOP font triplets as they apply to this font -->
+        <font-triplet name="serif" style="normal" weight="normal"/>
+        <font-triplet name="Times" style="normal" weight="normal"/>
+        <font-triplet name="Times-Roman" style="normal" weight="normal"/>
+        <font-triplet name="TimesNewRoman" style="normal" weight="normal"/>
+      </font>]]></source>
+      <p>An outline font configuration is simpler as the individual font size entries are not required.
+      However, the characterset definition is now required within the afp-font element.</p>
+<source><![CDATA[      <font>
+          <afp-font type="outline" codepage="T1V10500" encoding="Cp500" characterset="CZH200  "
+             path="fonts/ibm" />
+          <font-triplet name="sans-serif" style="normal" weight="normal"/>
+          <font-triplet name="Helvetica" style="normal" weight="normal"/>
+          <font-triplet name="any" style="normal" weight="normal"/>
+      </font>
+]]></source>
+      <p>Experimentation has shown that the font metrics for the FOP built-in Base14 fonts are actually
+      very similar to some of the IBM outline and raster fonts. In cases were the IBM font files are not
+      available the path attribute in the afp-font element can be replaced by a base14-font attribute 
+      giving the name of the matching Base14 font. In this case the AFP Renderer will take the
+      font metrics from the built-in font.</p>
+<source><![CDATA[      <!-- The following are examples of defining outline fonts based on FOP built-in
+           font metrics for the Adobe Base14 fonts -->
+      <!-- sans-serif fonts based on Helvetica -->
+      <font>
+          <afp-font type="outline" codepage="T1V10500" encoding="Cp500" characterset="CZH200  "
+            base14-font="Helvetica" />
+          <font-triplet name="sans-serif" style="normal" weight="normal"/>
+          <font-triplet name="Helvetica" style="normal" weight="normal"/>
+          <font-triplet name="any" style="normal" weight="normal"/>
+      </font>
+      <font>
+          <afp-font type="outline" codepage="T1V10500" encoding="Cp500" characterset="CZH300  "
+            base14-font="HelveticaOblique" />
+          <font-triplet name="sans-serif" style="italic" weight="normal"/>
+          <font-triplet name="Helvetica" style="italic" weight="normal"/>
+          <font-triplet name="any" style="italic" weight="normal"/>
+      </font>
+      <font>
+          <afp-font type="outline" codepage="T1V10500" encoding="Cp500" characterset="CZH400  "
+            base14-font="HelveticaBold" />
+          <font-triplet name="sans-serif" style="normal" weight="bold"/>
+          <font-triplet name="Helvetica" style="normal" weight="bold"/>
+          <font-triplet name="any" style="normal" weight="bold"/>
+      </font>
+      <font>
+          <afp-font type="outline" codepage="T1V10500" encoding="Cp500" characterset="CZH500  "
+            base14-font="HelveticaBoldOblique" />
+          <font-triplet name="sans-serif" style="italic" weight="bold"/>
+          <font-triplet name="Helvetica" style="italic" weight="bold"/>
+          <font-triplet name="any" style="italic" weight="bold"/>
+      </font>
+      
+      <!-- serif fonts based on Times Roman -->
+      <font>
+          <afp-font type="outline" codepage="T1V10500" encoding="Cp500" characterset="CZN200  "
+            base14-font="TimesRoman" />
+          <font-triplet name="serif" style="normal" weight="normal"/>
+          <font-triplet name="Times" style="normal" weight="normal"/>
+          <font-triplet name="Times-Roman" style="normal" weight="normal"/>
+      </font>
+
+      <!-- The following are examples of defining raster fonts based on FOP built-in
+           font metrics for the Adobe Base14 fonts -->
+      <!-- monospaced fonts based on Courier -->
+      <font>
+        <afp-font type="raster" codepage="T1V10500" encoding="Cp500">
+          <afp-raster-font size="7" characterset="C0420070" base14-font="Courier"/>
+          <afp-raster-font size="8" characterset="C0420080" base14-font="Courier"/>
+          <afp-raster-font size="10" characterset="C0420000" base14-font="Courier"/>
+          <afp-raster-font size="12" characterset="C04200B0" base14-font="Courier"/>
+          <afp-raster-font size="14" characterset="C04200D0" base14-font="Courier"/>
+          <afp-raster-font size="20" characterset="C04200J0" base14-font="Courier"/>
+        </afp-font>
+        <font-triplet name="monospace" style="normal" weight="normal"/>
+        <font-triplet name="Courier" style="normal" weight="normal"/>
+      </font>
+      <font>
+        <afp-font type="raster" codepage="T1V10500" encoding="Cp500">
+          <afp-raster-font size="7" characterset="C0440070" base14-font="CourierBold"/>
+          <afp-raster-font size="8" characterset="C0440080" base14-font="CourierBold"/>
+          <afp-raster-font size="10" characterset="C0440000" base14-font="CourierBold"/>
+          <afp-raster-font size="12" characterset="C04400B0" base14-font="CourierBold"/>
+          <afp-raster-font size="14" characterset="C04400D0" base14-font="CourierBold"/>
+          <afp-raster-font size="20" characterset="C04400J0" base14-font="CourierBold"/>
+        </afp-font>
+        <font-triplet name="monospace" style="normal" weight="bold"/>
+        <font-triplet name="Courier" style="normal" weight="bold"/>
+      </font>]]></source>
+    </section>
+   <section id="afp-extensions">
+      <title>Extensions</title>
+      <p>The AFP Renderer supports the following extensions which can be embedded into the input 
+      fo document:</p>
+      <p>T.B.A</p>
+   </section>
+  </section>
   <section id="mif">
     <title>MIF</title>
     <warning>The MIF handler is in the sandbox and not yet functional in FOP Trunk!!! Please help us ressurrect this feature.</warning>
@@ -419,10 +580,6 @@ out = proc.getOutputStream();]]></source>
     which are on our wish list. We're looking for volunteers to help us implement them.
   </p>
   <ul>
-    <li>
-      <a href="http://en.wikipedia.org/wiki/Advanced_Function_Presentation">AFP (Advanced Function Presentation)</a>: 
-      The renderer has already been built and is in the process of being brought into the Apache FOP codebase.
-    </li>
     <li>
       <a href="http://en.wikipedia.org/wiki/OpenDocument">ODF (Open Document Format)</a>: 
       The standardized successor to OpenOffice's file format.
