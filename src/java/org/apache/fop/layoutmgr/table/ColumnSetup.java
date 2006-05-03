@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 The Apache Software Foundation.
+ * Copyright 2005-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,9 +61,10 @@ public class ColumnSetup {
             ListIterator iter = rawCols.listIterator();
             while (iter.hasNext()) {
                 TableColumn col = (TableColumn)iter.next();
-                if (col != null) {
-                    colnum = col.getColumnNumber();
+                if (col == null) {
+                    continue;
                 }
+                colnum = col.getColumnNumber();
                 for (int i = 0; i < col.getNumberColumnsRepeated(); i++) {
                     while (colnum > columns.size()) {
                         columns.add(null);
