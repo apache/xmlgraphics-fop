@@ -17,11 +17,12 @@
 /* $Id$ */
 
 package org.apache.fop.render.afp.modca;
+
+import java.awt.Color;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.fop.render.afp.AFPFontColor;
 import org.apache.fop.render.afp.fonts.AFPFont;
 import org.apache.fop.render.afp.tools.StringUtils;
 
@@ -179,7 +180,7 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
      * @param col
      *            The text color.
      */
-    public void createLine(int x1, int y1, int x2, int y2, int thickness, int rotation, AFPFontColor col) {
+    public void createLine(int x1, int y1, int x2, int y2, int thickness, int rotation, Color col) {
 
         if (_presentationTextObject == null) {
             _presentationTextObject = new PresentationTextObject();
@@ -210,7 +211,7 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
      * @param data
      *            the text data to create
      */
-    public void createText(int fontNumber, int x, int y, int rotation, AFPFontColor col, int vsci, int ica, byte[] data) {
+    public void createText(int fontNumber, int x, int y, int rotation, Color col, int vsci, int ica, byte[] data) {
 
         if (_presentationTextObject == null) {
             _presentationTextObject = new PresentationTextObject();

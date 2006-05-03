@@ -18,12 +18,12 @@
 
 package org.apache.fop.render.afp.modca;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.render.afp.AFPFontColor;
 import org.apache.fop.render.afp.fonts.AFPFont;
 import org.apache.fop.render.afp.tools.StringUtils;
 
@@ -347,7 +347,7 @@ public class AFPDataStream {
      * @param data
      *            the text data to create
      */
-    public void createText(int fontNumber, int x, int y, AFPFontColor col, int vsci, int ica, byte[] data) {
+    public void createText(int fontNumber, int x, int y, Color col, int vsci, int ica, byte[] data) {
 
         _currentPage.createText(fontNumber, x + _xOffset, y + _yOffset, _rotation, col, vsci, ica, data);
 
@@ -419,7 +419,7 @@ public class AFPDataStream {
      * @param col
      *            The text color.
      */
-    public void createLine(int x1, int y1, int x2, int y2, int thickness, AFPFontColor col) {
+    public void createLine(int x1, int y1, int x2, int y2, int thickness, Color col) {
 
         _currentPage.createLine(x1 + _xOffset, y1 + _yOffset, x2 + _xOffset, y2 + _yOffset, thickness, _rotation, col);
 
