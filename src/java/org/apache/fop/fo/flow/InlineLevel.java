@@ -18,9 +18,9 @@
 
 package org.apache.fop.fo.flow;
 
+import java.awt.Color;
+
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.datatypes.ColorType;
-import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.PropertyList;
@@ -43,7 +43,7 @@ public abstract class InlineLevel extends FObjMixed {
     protected CommonMarginInline commonMarginInline;
     protected CommonAural commonAural;
     protected CommonFont commonFont;
-    protected ColorType color;
+    protected Color color;
     protected SpaceProperty lineHeight;
     protected int visibility;
     // End of property values
@@ -64,7 +64,7 @@ public abstract class InlineLevel extends FObjMixed {
         commonMarginInline = pList.getMarginInlineProps();
         commonAural = pList.getAuralProps();
         commonFont = pList.getFontProps();
-        color = pList.get(PR_COLOR).getColorType();
+        color = pList.get(PR_COLOR).getColor();
         lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
         visibility = pList.get(PR_VISIBILITY).getEnum();
     }
@@ -93,7 +93,7 @@ public abstract class InlineLevel extends FObjMixed {
     /**
      * @return the "color" property.
      */
-    public ColorType getColor() {
+    public Color getColor() {
         return color;
     }
 

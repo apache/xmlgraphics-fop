@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,10 @@
 
 package org.apache.fop.fo.flow;
 
+import java.awt.Color;
+import java.util.NoSuchElementException;
+
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.CharIterator;
 import org.apache.fop.fo.FONode;
@@ -37,10 +39,7 @@ import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.SpaceProperty;
 import org.apache.fop.util.CharUtilities;
-
 import org.xml.sax.Locator;
-
-import java.util.NoSuchElementException;
 
 /**
  * This class represents the flow object 'fo:character'. Its use is defined by
@@ -68,7 +67,7 @@ public class Character extends FObj {
     private int alignmentBaseline;
     private Length baselineShift;
     private char character;
-    private ColorType color;
+    private Color color;
     private int dominantBaseline;
     private Length textDepth;
     private Length textAltitude;
@@ -117,7 +116,7 @@ public class Character extends FObj {
         alignmentBaseline = pList.get(PR_ALIGNMENT_BASELINE).getEnum();
         baselineShift = pList.get(PR_BASELINE_SHIFT).getLength();
         character = pList.get(PR_CHARACTER).getCharacter();
-        color = pList.get(PR_COLOR).getColorType();
+        color = pList.get(PR_COLOR).getColor();
         dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
         textDepth = pList.get(PR_TEXT_DEPTH).getLength();
         textAltitude = pList.get(PR_TEXT_ALTITUDE).getLength();
@@ -192,7 +191,7 @@ public class Character extends FObj {
     /**
      * @return the "color" property.
      */
-    public ColorType getColor() {
+    public Color getColor() {
         return color;
     }
 

@@ -21,7 +21,7 @@ package org.apache.fop.fo.properties;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.fop.datatypes.ColorType;
+import java.awt.Color;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
@@ -38,9 +38,9 @@ public class CommonTextDecoration {
     private static final int BLINK        = 8;
     
     private int decoration;
-    private ColorType underColor;
-    private ColorType overColor;
-    private ColorType throughColor;
+    private Color underColor;
+    private Color overColor;
+    private Color throughColor;
     
     /**
      * Creates a new CommonTextDecoration object with default values.
@@ -85,33 +85,33 @@ public class CommonTextDecoration {
                         deco = new CommonTextDecoration();
                     }
                     deco.decoration |= UNDERLINE;
-                    deco.underColor = pList.get(Constants.PR_COLOR).getColorType();
+                    deco.underColor = pList.get(Constants.PR_COLOR).getColor();
                 } else if (propEnum == Constants.EN_NO_UNDERLINE) {
                     if (deco != null) {
                         deco.decoration &= OVERLINE | LINE_THROUGH | BLINK;
-                        deco.underColor = pList.get(Constants.PR_COLOR).getColorType();
+                        deco.underColor = pList.get(Constants.PR_COLOR).getColor();
                     }
                 } else if (propEnum == Constants.EN_OVERLINE) {
                     if (deco == null) {
                         deco = new CommonTextDecoration();
                     }
                     deco.decoration |= OVERLINE;
-                    deco.overColor = pList.get(Constants.PR_COLOR).getColorType();
+                    deco.overColor = pList.get(Constants.PR_COLOR).getColor();
                 } else if (propEnum == Constants.EN_NO_OVERLINE) {
                     if (deco != null) {
                         deco.decoration &= UNDERLINE | LINE_THROUGH | BLINK;
-                        deco.overColor = pList.get(Constants.PR_COLOR).getColorType();
+                        deco.overColor = pList.get(Constants.PR_COLOR).getColor();
                     }
                 } else if (propEnum == Constants.EN_LINE_THROUGH) {
                     if (deco == null) {
                         deco = new CommonTextDecoration();
                     }
                     deco.decoration |= LINE_THROUGH;
-                    deco.throughColor = pList.get(Constants.PR_COLOR).getColorType();
+                    deco.throughColor = pList.get(Constants.PR_COLOR).getColor();
                 } else if (propEnum == Constants.EN_NO_LINE_THROUGH) {
                     if (deco != null) {
                         deco.decoration &= UNDERLINE | OVERLINE | BLINK;
-                        deco.throughColor = pList.get(Constants.PR_COLOR).getColorType();
+                        deco.throughColor = pList.get(Constants.PR_COLOR).getColor();
                     }
                 } else if (propEnum == Constants.EN_BLINK) {
                     if (deco == null) {
@@ -151,17 +151,17 @@ public class CommonTextDecoration {
     }
     
     /** @return the color of the underline mark */
-    public ColorType getUnderlineColor() {
+    public Color getUnderlineColor() {
         return this.underColor;
     }
     
     /** @return the color of the overline mark */
-    public ColorType getOverlineColor() {
+    public Color getOverlineColor() {
         return this.overColor;
     }
 
     /** @return the color of the line-through mark */
-    public ColorType getLineThroughColor() {
+    public Color getLineThroughColor() {
         return this.throughColor;
     }
 

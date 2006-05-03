@@ -52,7 +52,6 @@ import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.WordArea;
-import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
@@ -273,7 +272,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
     }
 
     /** @see org.apache.fop.render.AbstractPathOrientedRenderer */
-    protected void updateColor(ColorType col, boolean fill) {
+    protected void updateColor(Color col, boolean fill) {
         try {
             useColor(col);
         } catch (IOException ioe) {
@@ -419,8 +418,8 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         }
     }
 
-    private void useColor(ColorType col) throws IOException {
-        gen.useRGBColor(toColor(col));
+    private void useColor(Color col) throws IOException {
+        gen.useRGBColor(col);
     }
 
     /** @see org.apache.fop.render.AbstractPathOrientedRenderer#drawBackAndBorders(
@@ -441,7 +440,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
     
     /** @see org.apache.fop.render.AbstractPathOrientedRenderer */
     protected void drawBorderLine(float x1, float y1, float x2, float y2, 
-            boolean horz, boolean startOrBefore, int style, ColorType col) {
+            boolean horz, boolean startOrBefore, int style, Color col) {
         try {
             float w = x2 - x1;
             float h = y2 - y1;
@@ -528,28 +527,27 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
                 case Constants.EN_RIDGE:
                     float colFactor = (style == EN_GROOVE ? 0.4f : -0.4f);
                     gen.useDash(null);
-                    Color c = toColor(col);
                     if (horz) {
-                        Color uppercol = lightenColor(c, -colFactor);
-                        Color lowercol = lightenColor(c, colFactor);
+                        Color uppercol = lightenColor(col, -colFactor);
+                        Color lowercol = lightenColor(col, colFactor);
                         float h3 = h / 3;
                         gen.useLineWidth(h3);
                         float ym1 = y1 + (h3 / 2);
                         gen.useRGBColor(uppercol);
                         drawLine(x1, ym1, x2, ym1);
-                        gen.useRGBColor(c);
+                        gen.useRGBColor(col);
                         drawLine(x1, ym1 + h3, x2, ym1 + h3);
                         gen.useRGBColor(lowercol);
                         drawLine(x1, ym1 + h3 + h3, x2, ym1 + h3 + h3);
                     } else {
-                        Color leftcol = lightenColor(c, -colFactor);
-                        Color rightcol = lightenColor(c, colFactor);
+                        Color leftcol = lightenColor(col, -colFactor);
+                        Color rightcol = lightenColor(col, colFactor);
                         float w3 = w / 3;
                         gen.useLineWidth(w3);
                         float xm1 = x1 + (w3 / 2);
                         gen.useRGBColor(leftcol);
                         drawLine(xm1, y1, xm1, y2);
-                        gen.useRGBColor(c);
+                        gen.useRGBColor(col);
                         drawLine(xm1 + w3, y1, xm1 + w3, y2);
                         gen.useRGBColor(rightcol);
                         drawLine(xm1 + w3 + w3, y1, xm1 + w3 + w3, y2);
@@ -559,15 +557,14 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
                 case Constants.EN_OUTSET:
                     colFactor = (style == EN_OUTSET ? 0.4f : -0.4f);
                     gen.useDash(null);
-                    c = toColor(col);
                     if (horz) {
-                        c = lightenColor(c, (startOrBefore ? 1 : -1) * colFactor);
+                        Color c = lightenColor(col, (startOrBefore ? 1 : -1) * colFactor);
                         gen.useLineWidth(h);
                         float ym1 = y1 + (h / 2);
                         gen.useRGBColor(c);
                         drawLine(x1, ym1, x2, ym1);
                     } else {
-                        c = lightenColor(c, (startOrBefore ? 1 : -1) * colFactor);
+                        Color c = lightenColor(col, (startOrBefore ? 1 : -1) * colFactor);
                         gen.useLineWidth(w);
                         float xm1 = x1 + (w / 2);
                         gen.useRGBColor(c);
@@ -856,7 +853,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         int bl = currentBPPosition + area.getOffset() + area.getBaselineOffset();
 
         useFont(fontname, fontsize);
-        ColorType ct = (ColorType)area.getTrait(Trait.COLOR);
+        Color ct = (Color)area.getTrait(Trait.COLOR);
         if (ct != null) {
             try {
                 useColor(ct);
@@ -1046,7 +1043,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         float endx = (currentIPPosition + area.getBorderAndPaddingWidthStart() 
                         + area.getIPD()) / 1000f;
         float ruleThickness = area.getRuleThickness() / 1000f;
-        ColorType col = (ColorType)area.getTrait(Trait.COLOR);
+        Color col = (Color)area.getTrait(Trait.COLOR);
 
         try {
             switch (style) {
@@ -1068,14 +1065,14 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
                 case EN_RIDGE:
                     float half = area.getRuleThickness() / 2000f;
     
-                    gen.useRGBColor(lightenColor(toColor(col), 0.6f));
+                    gen.useRGBColor(lightenColor(col, 0.6f));
                     moveTo(startx, starty);
                     lineTo(endx, starty);
                     lineTo(endx, starty + 2 * half);
                     lineTo(startx, starty + 2 * half);
                     closePath();
                     gen.writeln(" fill newpath");
-                    gen.useRGBColor(toColor(col));
+                    gen.useRGBColor(col);
                     if (style == EN_GROOVE) {
                         moveTo(startx, starty);
                         lineTo(endx, starty);

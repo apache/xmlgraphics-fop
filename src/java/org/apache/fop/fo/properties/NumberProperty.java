@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2004,2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,10 @@
 
 package org.apache.fop.fo.properties;
 
-import org.apache.fop.datatypes.PercentBaseContext;
+import java.awt.Color;
+
 import org.apache.fop.datatypes.Numeric;
+import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
@@ -118,6 +120,7 @@ public class NumberProperty extends Property implements Numeric {
         return getNumericValue();
     }
 
+    /** @see org.apache.fop.datatypes.Numeric#getValue() */
     public int getValue() {
         return number.intValue();
     }
@@ -164,13 +167,14 @@ public class NumberProperty extends Property implements Numeric {
     }
 
     /**
-     * Convert NumberProperty to a ColorType. Not sure why this is needed.
-     * @return ColorType that corresponds to black
+     * Convert NumberProperty to a Color. Not sure why this is needed.
+     * @return Color that corresponds to black
      */
-    public ColorTypeProperty getColorType() {
+    public Color getColor() {
+        // TODO: Implement somehow
         // Convert numeric value to color ???
         // Convert to hexadecimal and then try to make it into a color?
-        return new ColorTypeProperty((float)0.0, (float)0.0, (float)0.0);
+        return Color.black;
     }
 
 }

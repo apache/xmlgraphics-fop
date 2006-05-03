@@ -19,6 +19,7 @@
 package org.apache.fop.render.pcl;
 
 //Java
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -58,7 +59,6 @@ import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.CTM;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Trait;
-import org.apache.fop.area.Trait.Color;
 import org.apache.fop.area.inline.AbstractTextArea;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
@@ -68,7 +68,6 @@ import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fonts.Font;
-import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.image.EPSImage;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
@@ -410,7 +409,7 @@ public class PCLRenderer extends PrintRenderer {
             if (col != null) {
                 //useColor(ct);
                 gen.setPatternTransparencyMode(false);
-                gen.selectCurrentPattern(gen.convertToPCLShade(col.getAWTColor()), 2);
+                gen.selectCurrentPattern(gen.convertToPCLShade(col), 2);
             }
             
             saveGraphicsState();
@@ -897,7 +896,7 @@ public class PCLRenderer extends PrintRenderer {
                 }
         
                 if (back.getColor() != null) {
-                    updateFillColor(back.getColor().getAWTColor());
+                    updateFillColor(back.getColor());
                     fillRect(sx, sy, paddRectWidth, paddRectHeight);
                 }
         
@@ -997,26 +996,26 @@ public class PCLRenderer extends PrintRenderer {
         float height = borderRect.height;
         if (bpsBefore != null) {
             int borderWidth = (int) Math.round((bpsBefore.width / 1000f));
-            updateFillColor(bpsBefore.color.getAWTColor());
+            updateFillColor(bpsBefore.color);
             fillRect((int) startx, (int) starty, (int) width,
                     borderWidth);
         }
         if (bpsAfter != null) {
             int borderWidth = (int) Math.round((bpsAfter.width / 1000f));
-            updateFillColor(bpsAfter.color.getAWTColor());
+            updateFillColor(bpsAfter.color);
             fillRect((int) startx,
                     (int) (starty + height - borderWidth), (int) width,
                     borderWidth);
         }
         if (bpsStart != null) {
             int borderWidth = (int) Math.round((bpsStart.width / 1000f));
-            updateFillColor(bpsStart.color.getAWTColor());
+            updateFillColor(bpsStart.color);
             fillRect((int) startx, (int) starty, borderWidth,
                     (int) height);
         }
         if (bpsEnd != null) {
             int borderWidth = (int) Math.round((bpsEnd.width / 1000f));
-            updateFillColor(bpsEnd.color.getAWTColor());
+            updateFillColor(bpsEnd.color);
             fillRect((int) (startx + width - borderWidth),
                     (int) starty, borderWidth, (int) height);
         }
@@ -1126,7 +1125,7 @@ public class PCLRenderer extends PrintRenderer {
                     Rectangle2D.Float lineRect = new Rectangle2D.Float(
                             sx1a, outery, ex1a - sx1a, innery - outery);
                     Java2DRenderer.drawBorderLine(lineRect, true, true, 
-                            bpsBefore.style, toColor(bpsBefore.color), g);
+                            bpsBefore.style, bpsBefore.color, g);
                     //restoreGraphicsState();
                 }
                 if (bpsEnd != null) {
@@ -1165,7 +1164,7 @@ public class PCLRenderer extends PrintRenderer {
                     Rectangle2D.Float lineRect = new Rectangle2D.Float(
                             innerx, sy1a, outerx - innerx, ey1a - sy1a);
                     Java2DRenderer.drawBorderLine(lineRect, false, false, 
-                            bpsEnd.style, toColor(bpsEnd.color), g);
+                            bpsEnd.style, bpsEnd.color, g);
                     //restoreGraphicsState();
                 }
                 if (bpsAfter != null) {
@@ -1204,7 +1203,7 @@ public class PCLRenderer extends PrintRenderer {
                     Rectangle2D.Float lineRect = new Rectangle2D.Float(
                             sx1a, innery, ex1a - sx1a, outery - innery);
                     Java2DRenderer.drawBorderLine(lineRect, true, false, 
-                            bpsAfter.style, toColor(bpsAfter.color), g);
+                            bpsAfter.style, bpsAfter.color, g);
                     //restoreGraphicsState();
                 }
                 if (bpsStart != null) {
@@ -1243,7 +1242,7 @@ public class PCLRenderer extends PrintRenderer {
                     Rectangle2D.Float lineRect = new Rectangle2D.Float(
                             outerx, sy1a, innerx - outerx, ey1a - sy1a);
                     Java2DRenderer.drawBorderLine(lineRect, false, false, 
-                            bpsStart.style, toColor(bpsStart.color), g);
+                            bpsStart.style, bpsStart.color, g);
                     //restoreGraphicsState();
                 }
             }

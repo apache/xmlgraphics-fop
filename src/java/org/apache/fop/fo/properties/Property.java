@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@
 package org.apache.fop.fo.properties;
 
 import java.util.List;
+import java.awt.Color;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,7 +30,6 @@ import org.apache.fop.fo.Constants;
 
 /**
  * Base class for all property objects
- * @author unascribed
  */
 public class Property {
     
@@ -44,10 +44,10 @@ public class Property {
 
     /**
      * Set the original value specified for the property attribute.
-     * @param specVal The specified value.
+     * @param value The specified value.
      */
-    public void setSpecifiedValue(String specVal) {
-        this.specVal = specVal;
+    public void setSpecifiedValue(String value) {
+        this.specVal = value;
     }
 
     /**
@@ -75,7 +75,7 @@ public class Property {
      * This method expects to be overridden by subclasses
      * @return ColorType property value
      */
-    public ColorTypeProperty getColorType() {
+    public Color getColor() {
         return null;
     }
 

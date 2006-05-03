@@ -18,6 +18,7 @@
 
 package org.apache.fop.area;
 
+import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 import java.util.Map;
@@ -35,10 +36,8 @@ import javax.xml.transform.sax.TransformerHandler;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.Trait.Background;
-import org.apache.fop.area.Trait.Color;
 import org.apache.fop.area.inline.AbstractTextArea;
 import org.apache.fop.area.inline.Character;
 import org.apache.fop.area.inline.ForeignObject;
@@ -53,16 +52,17 @@ import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.ElementMappingRegistry;
+import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
 import org.apache.fop.traits.BorderProps;
+import org.apache.fop.util.ColorUtil;
 import org.apache.fop.util.ContentHandlerFactory;
 import org.apache.fop.util.ContentHandlerFactoryRegistry;
 import org.apache.fop.util.DefaultErrorListener;
-
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.xml.sax.Attributes;
@@ -909,68 +909,58 @@ public class AreaTreeParser {
                 if (value != null) {
                     Class cl = Trait.getTraitClass(trait);
                     if (cl == Integer.class) {
-                        //if (value != null) {
-                            area.addTrait(trait, new Integer(value));
-                        //}
+                        area.addTrait(trait, new Integer(value));
                     } else if (cl == Boolean.class) {
-                        //String value = attributes.getValue(Trait.getTraitName(trait));
-                        //if (value != null) {
-                            area.addTrait(trait, Boolean.valueOf(value));
-                        //}
+                        area.addTrait(trait, Boolean.valueOf(value));
                     } else if (cl == String.class) {
-                        //String value = attributes.getValue(Trait.getTraitName(trait));
-                        //if (value != null) {
-                            area.addTrait(trait, value);
-                        //}
+                        area.addTrait(trait, value);
                     } else if (cl == Color.class) {
-                        //String value = attributes.getValue(Trait.getTraitName(trait));
-                        //if (value != null) {
-                            area.addTrait(trait, Color.valueOf(value));
-                        //}
+                        try {
+                            area.addTrait(trait, ColorUtil.parseColorString(value));
+                        } catch (PropertyException e) {
+                            throw new IllegalArgumentException(e.getMessage());
+                        }
                     } else if (cl == Background.class) {
-                        //String value = attributes.getValue(Trait.getTraitName(trait));
-                        //if (value != null) {
-                            Background bkg = new Background();
-                            Color col = Color.valueOf(attributes.getValue("bkg-color"));
-                            if (col != null) {
-                                bkg.setColor(col);
-                            }
-                            String url = attributes.getValue("bkg-img");
-                            if (url != null) {
-                                bkg.setURL(url);
-                                
-                                ImageFactory fact = userAgent.getFactory().getImageFactory();
-                                FopImage img = fact.getImage(url, userAgent);
-                                if (img == null) {
-                                    log.error("Background image not available: " + url);
-                                } else {
-                                    // load dimensions
-                                    if (!img.load(FopImage.DIMENSIONS)) {
-                                        log.error("Cannot read background image dimensions: " 
-                                                + url);
-                                    }
+                        Background bkg = new Background();
+                        try {
+                            Color col = ColorUtil
+                                    .parseColorString(attributes
+                                            .getValue("bkg-color"));
+                            bkg.setColor(col);
+                        } catch (PropertyException e) {
+                            throw new IllegalArgumentException(e.getMessage());
+                        }                            
+                        String url = attributes.getValue("bkg-img");
+                        if (url != null) {
+                            bkg.setURL(url);
+                            
+                            ImageFactory fact = userAgent.getFactory().getImageFactory();
+                            FopImage img = fact.getImage(url, userAgent);
+                            if (img == null) {
+                                log.error("Background image not available: " + url);
+                            } else {
+                                // load dimensions
+                                if (!img.load(FopImage.DIMENSIONS)) {
+                                    log.error("Cannot read background image dimensions: " 
+                                            + url);
                                 }
-                                bkg.setFopImage(img);
-    
-                                String repeat = attributes.getValue("bkg-repeat");
-                                if (repeat != null) {
-                                    bkg.setRepeat(repeat);
-                                }
-                                bkg.setHoriz(getAttributeAsInteger(attributes, 
-                                        "bkg-horz-offset", 0));
-                                bkg.setVertical(getAttributeAsInteger(attributes, 
-                                        "bkg-vert-offset", 0));
                             }
-                            area.addTrait(trait, bkg);
-                        //}
+                            bkg.setFopImage(img);
+
+                            String repeat = attributes.getValue("bkg-repeat");
+                            if (repeat != null) {
+                                bkg.setRepeat(repeat);
+                            }
+                            bkg.setHoriz(getAttributeAsInteger(attributes, 
+                                    "bkg-horz-offset", 0));
+                            bkg.setVertical(getAttributeAsInteger(attributes, 
+                                    "bkg-vert-offset", 0));
+                        }
+                        area.addTrait(trait, bkg);
                     } else if (cl == BorderProps.class) {
-                        //String value = attributes.getValue(Trait.getTraitName(trait));
-                        //if (value != null) {
-                            area.addTrait(trait, BorderProps.valueOf(value));
-                        //}
+                        area.addTrait(trait, BorderProps.valueOf(value));
                     }
                 } else {
-                    //Class cl = Trait.getTraitClass(trait);
                     if (trait == Trait.FONT) {
                         String fontName = attributes.getValue("font-name");
                         if (fontName != null) {

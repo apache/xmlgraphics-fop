@@ -20,7 +20,7 @@ package org.apache.fop.fo.expr;
 
 import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.datatypes.PercentBase;
-import org.apache.fop.fo.properties.ColorTypeProperty;
+import org.apache.fop.fo.properties.ColorProperty;
 import org.apache.fop.fo.properties.Property;
 
 /**
@@ -45,7 +45,7 @@ class RGBColorFunction extends FunctionBase {
     /** @see org.apache.fop.fo.expr.Function */
     public Property eval(Property[] args,
                          PropertyInfo pInfo) throws PropertyException {
-        return new ColorTypeProperty("rgb(" + args[0] + "," + args[1] + "," + args[2] + ")");
+        return new ColorProperty("rgb(" + args[0] + "," + args[1] + "," + args[2] + ")");
 
     }
 

@@ -19,36 +19,32 @@
 package org.apache.fop.render.xml;
 
 // Java
+import java.awt.Color;
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Iterator;
-import java.awt.geom.Rectangle2D;
 
 import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.sax.SAXTransformerFactory;
+import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.ConfigurationException;
 
 import org.w3c.dom.Document;
+
 import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.AttributesImpl;
-import org.xml.sax.ContentHandler;
 
-// FOP
-import org.apache.fop.render.PrintRenderer;
-import org.apache.fop.render.Renderer;
-import org.apache.fop.render.RendererContext;
-import org.apache.fop.render.XMLHandler;
+import org.apache.avalon.framework.configuration.Configuration;
+import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.fop.util.QName;
-import org.apache.fop.util.XMLizable;
-import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.BeforeFloat;
@@ -56,10 +52,10 @@ import org.apache.fop.area.Block;
 import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.BodyRegion;
 import org.apache.fop.area.CTM;
-import org.apache.fop.area.NormalFlow;
 import org.apache.fop.area.Footnote;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.MainReference;
+import org.apache.fop.area.NormalFlow;
 import org.apache.fop.area.OffDocumentExtensionAttachment;
 import org.apache.fop.area.OffDocumentItem;
 import org.apache.fop.area.PageViewport;
@@ -76,15 +72,21 @@ import org.apache.fop.area.inline.InlineBlockParent;
 import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.Space;
-import org.apache.fop.area.inline.Viewport;
-import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.SpaceArea;
+import org.apache.fop.area.inline.TextArea;
+import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.fonts.FontTriplet;
+import org.apache.fop.render.PrintRenderer;
+import org.apache.fop.render.Renderer;
+import org.apache.fop.render.RendererContext;
+import org.apache.fop.render.XMLHandler;
+import org.apache.fop.util.ColorUtil;
+import org.apache.fop.util.XMLizable;
 
 /**
  * Renderer that renders areas to XML for debugging purposes.
@@ -378,6 +380,9 @@ public class XMLRenderer extends PrintRenderer {
                         addAttribute("bkg-horz-offset", bkg.getHoriz());
                         addAttribute("bkg-vert-offset", bkg.getVertical());
                     }
+                } else if (clazz.equals(Color.class)) {
+                    Color c = (Color)value;
+                    addAttribute(name, ColorUtil.colorTOsRGBString(c));
                 } else if (key == Trait.START_INDENT || key == Trait.END_INDENT) {
                     if (((Integer)value).intValue() != 0) {
                         addAttribute(name, value.toString());

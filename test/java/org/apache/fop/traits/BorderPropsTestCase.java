@@ -18,10 +18,12 @@
 
 package org.apache.fop.traits;
 
-import org.apache.fop.area.Trait;
-import org.apache.fop.fo.Constants;
+import java.awt.Color;
 
 import junit.framework.TestCase;
+
+import org.apache.fop.fo.Constants;
+import org.apache.fop.util.ColorUtil;
 
 /**
  * Tests the BorderProps class.
@@ -33,9 +35,9 @@ public class BorderPropsTestCase extends TestCase {
      * @throws Exception if an error occurs
      */
     public void testSerialization() throws Exception {
-        Trait.Color col = new Trait.Color(1.0f, 1.0f, 0.5f, 1.0f);
+        Color col = new Color(1.0f, 1.0f, 0.5f, 1.0f);
         //Normalize: Avoid false alarms due to color conversion (rounding)
-        col = Trait.Color.valueOf(col.toString());
+        col = ColorUtil.parseColorString(ColorUtil.colorTOsRGBString(col));
         
         BorderProps b1 = new BorderProps(Constants.EN_DOUBLE, 1250, 
                 col, BorderProps.COLLAPSE_OUTER);

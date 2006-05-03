@@ -50,7 +50,6 @@ import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.WordArea;
-import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fonts.FontInfo;
@@ -862,10 +861,10 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     /**
      * Draw a border segment of an XSL-FO style border.
      * @see org.apache.fop.render.AbstractRenderer#drawBorderLine(float, float, float, float,
-     *       boolean, boolean, int, ColorType)
+     *       boolean, boolean, int, Color)
      */
     public void drawBorderLine(float x1, float y1, float x2, float y2,
-            boolean horz, boolean startOrBefore, int style, ColorType col) {
+            boolean horz, boolean startOrBefore, int style, Color col) {
         float w = x2 - x1;
         float h = y2 - y1;
         if ((w < 0) || (h < 0)) {
@@ -976,10 +975,9 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
             case Constants.EN_RIDGE:
             {
                 float colFactor = (style == EN_GROOVE ? 0.4f : -0.4f);
-                Color c = toColor(col);
                 if (horz) {
-                    Color uppercol = lightenColor(c, -colFactor);
-                    Color lowercol = lightenColor(c, colFactor);
+                    Color uppercol = lightenColor(col, -colFactor);
+                    Color lowercol = lightenColor(col, colFactor);
                     float h3 = h / 3;
                     float ym1 = y1;
                     _afpDataStream.createLine(
@@ -996,7 +994,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                         pts2units(x2),
                         pts2units(ym1 + h3),
                         pts2units(h3),
-                        new AFPFontColor(c)
+                        new AFPFontColor(col)
                     );
                     _afpDataStream.createLine(
                         pts2units(x1),
@@ -1007,8 +1005,8 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                         new AFPFontColor(lowercol)
                     );
                 } else {
-                    Color leftcol = lightenColor(c, -colFactor);
-                    Color rightcol = lightenColor(c, colFactor);
+                    Color leftcol = lightenColor(col, -colFactor);
+                    Color rightcol = lightenColor(col, colFactor);
                     float w3 = w / 3;
                     float xm1 = x1 + (w3 / 2);
                     _afpDataStream.createLine(
@@ -1025,7 +1023,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                         pts2units(xm1 + w3),
                         pts2units(y2),
                         pts2units(w3),
-                        new AFPFontColor(c)
+                        new AFPFontColor(col)
                     );
                     _afpDataStream.createLine(
                         pts2units(xm1 + w3 + w3),
@@ -1192,9 +1190,9 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Establishes a new foreground or fill color.
-     * @see org.apache.fop.render.AbstractRenderer#updateColor(ColorType, boolean)
+     * @see org.apache.fop.render.AbstractRenderer#updateColor(Color, boolean)
      */
-    public void updateColor(ColorType col, boolean fill) {
+    public void updateColor(Color col, boolean fill) {
         if (fill) {
             _currentColor = new AFPFontColor(col);
         }
@@ -1255,7 +1253,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         AFPFont tf = (AFPFont) fontInfo.getFonts().get(name);
         _currentFontFamily = name;
 
-        ColorType ct = (ColorType) ch.getTrait(Trait.COLOR);
+        Color col = (Color) ch.getTrait(Trait.COLOR);
 
         int vsci = mpts2units(tf.getWidth(' ', _currentFontSize) / 1000
                                 + ch.getTextWordSpaceAdjust()
@@ -1309,7 +1307,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                 afpFontAttributes.getFontReference(),
                 mpts2units(rx),
                 mpts2units(bl),
-                new AFPFontColor(ct),
+                new AFPFontColor(col),
                 vsci,
                 mpts2units(ch.getTextLetterSpaceAdjust()),
                 worddata.getBytes(encoding));
@@ -1338,7 +1336,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         _currentFontSize = ((Integer) text.getTrait(Trait.FONT_SIZE)).intValue();
         AFPFont tf = (AFPFont) fontInfo.getFonts().get(name);
 
-        ColorType ct = (ColorType) text.getTrait(Trait.COLOR);
+        Color col = (Color) text.getTrait(Trait.COLOR);
 
         int vsci = mpts2units(tf.getWidth(' ', _currentFontSize) / 1000
                                 + text.getTextWordSpaceAdjust()
@@ -1392,7 +1390,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                 afpFontAttributes.getFontReference(),
                 mpts2units(rx),
                 mpts2units(bl),
-                new AFPFontColor(ct),
+                new AFPFontColor(col),
                 vsci,
                 mpts2units(text.getTextLetterSpaceAdjust()),
                 worddata.getBytes(encoding));
@@ -1452,7 +1450,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         float endx = (currentIPPosition + area.getBorderAndPaddingWidthStart()
                         + area.getIPD()) / 1000f;
         float ruleThickness = area.getRuleThickness() / 1000f;
-        ColorType col = (ColorType)area.getTrait(Trait.COLOR);
+        Color col = (Color)area.getTrait(Trait.COLOR);
 
         switch (style) {
             case EN_SOLID:

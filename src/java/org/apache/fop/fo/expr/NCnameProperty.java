@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,10 @@
 
 package org.apache.fop.fo.expr;
 
+import java.awt.Color;
+
 import org.apache.fop.fo.properties.Property;
-import org.apache.fop.datatypes.ColorType;
+import org.apache.fop.util.ColorUtil;
 
 /**
  * Class for handling NC Name objects
@@ -37,13 +39,17 @@ public class NCnameProperty extends Property {
     }
 
     /**
-     * If a system color, return the corresponding value (appears to be
-     * unimplemented)
-     * @return ColorType object corresponding to the NCName
-     * @throws PropertyException in all cases currently
+     * If a system color, return the corresponding value.
+     * 
+     * @return Color object corresponding to the NCName
      */
-    public ColorType getColor() throws PropertyException {
-        throw new PropertyException("Not a Color");
+    public Color getColor()  {
+        try { 
+            return ColorUtil.parseColorString(ncName);
+        } catch (PropertyException e) {
+            //TODO: This should probably print an error message?
+            return null;
+        }
     }
 
     /**

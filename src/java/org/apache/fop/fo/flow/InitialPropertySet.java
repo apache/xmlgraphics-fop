@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,15 +19,15 @@
 package org.apache.fop.fo.flow;
 
 // XML
+import java.awt.Color;
+
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.fo.properties.ColorTypeProperty;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
@@ -45,7 +45,7 @@ public class InitialPropertySet extends FObj {
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     private CommonFont commonFont;
     private CommonRelativePosition commonRelativePosition;
-    private ColorTypeProperty color;
+    private Color color;
     private String id;
     // private ToBeImplementedProperty letterSpacing;
     private SpaceProperty lineHeight;
@@ -72,7 +72,7 @@ public class InitialPropertySet extends FObj {
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         commonFont = pList.getFontProps();
         commonRelativePosition = pList.getRelativePositionProps();
-        color = pList.get(PR_COLOR).getColorType();
+        color = pList.get(PR_COLOR).getColor();
         id = pList.get(PR_ID).getString();
         // letterSpacing = pList.get(PR_LETTER_SPACING);
         lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();

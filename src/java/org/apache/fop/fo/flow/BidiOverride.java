@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,18 +18,18 @@
 
 package org.apache.fop.fo.flow;
 
-import org.xml.sax.Locator;
+import java.awt.Color;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.fo.properties.ColorTypeProperty;
 import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.SpaceProperty;
+import org.xml.sax.Locator;
 
 /**
  * fo:bidi-override element.
@@ -44,7 +44,7 @@ public class BidiOverride extends FObjMixed {
     private CommonAural commonAural;
     private CommonFont commonFont;
     private CommonRelativePosition commonRelativePosition;
-    private ColorTypeProperty prColor;
+    private Color prColor;
     // private ToBeImplementedProperty prDirection;
     // private ToBeImplementedProperty prLetterSpacing;
     private SpaceProperty lineHeight;
@@ -86,7 +86,7 @@ public class BidiOverride extends FObjMixed {
         commonAural = pList.getAuralProps();
         commonFont = pList.getFontProps();
         commonRelativePosition = pList.getRelativePositionProps();
-        prColor = pList.get(PR_COLOR).getColorType();
+        prColor = pList.get(PR_COLOR).getColor();
         // prDirection = pList.get(PR_DIRECTION);
         // prLetterSpacing = pList.get(PR_LETTER_SPACING);
         lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();

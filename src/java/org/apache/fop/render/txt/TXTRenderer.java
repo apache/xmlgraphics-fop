@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
  
 package org.apache.fop.render.txt;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
@@ -32,7 +33,6 @@ import org.apache.fop.area.CTM;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.TextArea;
-import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.txt.border.AbstractBorderElement;
 import org.apache.fop.render.txt.border.BorderManager;
@@ -418,14 +418,17 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
      * Changes current filling char.
      * @see org.apache.fop.render.AbstractPathOrientedRenderer
      */
-    protected void updateColor(ColorType col, boolean fill) {
+    protected void updateColor(Color col, boolean fill) {
         if (col == null) {
             return;
         }
-        // fillShade evaluation was taken from fop-0.20.5 
-        double fillShade = 0.30f * col.getRed() 
-                         + 0.59f * col.getGreen() 
-                         + 0.11f * col.getBlue();
+        // fillShade evaluation was taken from fop-0.20.5
+        // TODO: This fillShase is catually the luminance component of the color
+        // transformed to the YUV (YPrBb) Colorspace. It should use standard
+        // Java methods for its conversion instead of the formula given here.
+        double fillShade = 0.30f / 255f * col.getRed() 
+                         + 0.59f / 255f * col.getGreen() 
+                         + 0.11f / 255f * col.getBlue();
         fillShade = 1 - fillShade;
         
         if (fillShade > 0.8f) {
@@ -494,7 +497,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
      * @see org.apache.fop.render.AbstractPathOrientedRenderer
      */
     protected void drawBorderLine(float x1, float y1, float x2, float y2,
-            boolean horz, boolean startOrBefore, int style, ColorType col) {
+            boolean horz, boolean startOrBefore, int style, Color col) {
 
         int borderHeight = bm.getHeight();
         int borderWidth = bm.getWidth();

@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,10 @@
 
 package org.apache.fop.render.rtf;
 
+import java.awt.Color;
+
 //FOP
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
@@ -29,7 +30,6 @@ import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.BlockContainer;
 import org.apache.fop.fo.flow.Inline;
 import org.apache.fop.fo.flow.PageNumber;
-import org.apache.fop.fo.properties.ColorTypeProperty;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonMarginBlock;
@@ -160,7 +160,7 @@ final class TextAttributesConverter {
     }
 
 
-    private static void attrFontColor(ColorType colorType, RtfAttributes rtfAttr) {
+    private static void attrFontColor(Color colorType, RtfAttributes rtfAttr) {
         // Cell background color
         if (colorType != null) {
            if (colorType.getAlpha() != 0
@@ -312,7 +312,7 @@ final class TextAttributesConverter {
      */
     private static void attrBackgroundColor(CommonBorderPaddingBackground bpb, 
                 RtfAttributes rtfAttr) {
-        ColorType fopValue = bpb.backgroundColor;
+        Color fopValue = bpb.backgroundColor;
         int rtfColor = 0;
         /* FOP uses a default background color of "transparent", which is
            actually a transparent black, which is generally not suitable as a
@@ -348,10 +348,11 @@ final class TextAttributesConverter {
     * @param fopColor the ColorType object to be converted
     * @return integer pointing into the RTF color table
     */
-   public static int convertFOPColorToRTF(ColorType fopColor) {
-       int redComponent = ColorTypeProperty.convertChannelToInteger (fopColor.getRed());
-       int greenComponent = ColorTypeProperty.convertChannelToInteger (fopColor.getGreen());
-       int blueComponent = ColorTypeProperty.convertChannelToInteger (fopColor.getBlue());
+   public static int convertFOPColorToRTF(Color fopColor) {
+       // TODO: This code is duplicated in FOPRtfAttributesConverter
+       int redComponent = fopColor.getRed();
+       int greenComponent = fopColor.getGreen();
+       int blueComponent = fopColor.getBlue();
        return RtfColorTable.getInstance().getColorNumber(redComponent,
                greenComponent, blueComponent).intValue();
    }

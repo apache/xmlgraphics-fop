@@ -53,8 +53,8 @@
       <fo:block background-color="#0000ff">
         Top Level Block: font-size="24pt" background-color="#0000ff"
         <fo:block>
-          <test:assert property="background-color" expected="#000000"/>
-          Nested Block: background-color=default
+          <test:assert property="background-color" expected="#00000000"/>
+          Nested Block: background-color=default (transparent)
           <fo:block background-color="from-nearest-specified-value()">
             <test:assert property="background-color" expected="#0000ff"/>
             Nested Block: background-color="from-nearest-specified-value()"

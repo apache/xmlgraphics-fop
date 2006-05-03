@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 The Apache Software Foundation.
+ * Copyright 2004-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,9 @@
 
 package org.apache.fop.fo.properties;
 
+import java.awt.Color;
+
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.Constants;
@@ -42,7 +43,7 @@ public class CommonBorderPaddingBackground implements Cloneable {
     /**
      * The "background-color" property.
      */
-    public ColorType backgroundColor;
+    public Color backgroundColor;
 
     /**
      * The "background-image" property.
@@ -79,10 +80,10 @@ public class CommonBorderPaddingBackground implements Cloneable {
     
     public static class BorderInfo implements Cloneable {
         private int mStyle; // Enum for border style
-        private ColorType mColor; // Border color
+        private Color mColor; // Border color
         private CondLengthProperty mWidth;
 
-        BorderInfo(int style, CondLengthProperty width, ColorType color) {
+        BorderInfo(int style, CondLengthProperty width, Color color) {
             mStyle = style;
             mWidth = width;
             mColor = color;
@@ -92,7 +93,7 @@ public class CommonBorderPaddingBackground implements Cloneable {
             return this.mStyle;
         }
         
-        public ColorType getColor() {
+        public Color getColor() {
             return this.mColor;
         }
         
@@ -142,7 +143,7 @@ public class CommonBorderPaddingBackground implements Cloneable {
     public CommonBorderPaddingBackground(PropertyList pList, FObj fobj) throws PropertyException {
         
         backgroundAttachment = pList.get(Constants.PR_BACKGROUND_ATTACHMENT).getEnum();
-        backgroundColor = pList.get(Constants.PR_BACKGROUND_COLOR).getColorType();
+        backgroundColor = pList.get(Constants.PR_BACKGROUND_COLOR).getColor();
         if (backgroundColor.getAlpha() == 0) {
             backgroundColor = null;
         }
@@ -206,7 +207,7 @@ public class CommonBorderPaddingBackground implements Cloneable {
         if (style != Constants.EN_NONE) {
             setBorderInfo(new BorderInfo(style,
                 pList.get(widthProp).getCondLength(),
-                pList.get(colorProp).getColorType()), side);
+                pList.get(colorProp).getColor()), side);
         }
     }
     
@@ -286,7 +287,7 @@ public class CommonBorderPaddingBackground implements Cloneable {
         }
     }
 
-    public ColorType getBorderColor(int side) {
+    public Color getBorderColor(int side) {
         if (borderInfo[side] != null) {
             return borderInfo[side].mColor;
         } else {
@@ -341,18 +342,19 @@ public class CommonBorderPaddingBackground implements Cloneable {
      * @return all the padding and border height.
      */
     public int getBPPaddingAndBorder(boolean bDiscard, PercentBaseContext context) {
-        return getPaddingBefore(bDiscard, context) + getPaddingAfter(bDiscard, context) +
-               getBorderBeforeWidth(bDiscard) + getBorderAfterWidth(bDiscard);        
+        return getPaddingBefore(bDiscard, context) + getPaddingAfter(bDiscard, context)
+               + getBorderBeforeWidth(bDiscard) + getBorderAfterWidth(bDiscard);        
     }
 
+    /** @see java.lang.Object#toString() */
     public String toString() {
-        return "CommonBordersAndPadding (Before, After, Start, End):\n" +
-        "Borders: (" + getBorderBeforeWidth(false) + ", " + getBorderAfterWidth(false) + ", " +
-        getBorderStartWidth(false) + ", " + getBorderEndWidth(false) + ")\n" +
-        "Border Colors: (" + getBorderColor(BEFORE) + ", " + getBorderColor(AFTER) + ", " +
-        getBorderColor(START) + ", " + getBorderColor(END) + ")\n" +
-        "Padding: (" + getPaddingBefore(false, null) + ", " + getPaddingAfter(false, null) + ", " +
-        getPaddingStart(false, null) + ", " + getPaddingEnd(false, null) + ")\n";
+        return "CommonBordersAndPadding (Before, After, Start, End):\n"
+            + "Borders: (" + getBorderBeforeWidth(false) + ", " + getBorderAfterWidth(false) + ", "
+            + getBorderStartWidth(false) + ", " + getBorderEndWidth(false) + ")\n"
+            + "Border Colors: (" + getBorderColor(BEFORE) + ", " + getBorderColor(AFTER) + ", "
+            + getBorderColor(START) + ", " + getBorderColor(END) + ")\n"
+            + "Padding: (" + getPaddingBefore(false, null) + ", " + getPaddingAfter(false, null) 
+            + ", " + getPaddingStart(false, null) + ", " + getPaddingEnd(false, null) + ")\n";
     }
 
     /**

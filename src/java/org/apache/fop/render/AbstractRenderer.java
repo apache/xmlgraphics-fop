@@ -19,7 +19,6 @@
 package org.apache.fop.render;
 
 // Java
-import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
@@ -64,7 +63,6 @@ import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.commons.logging.Log;
@@ -882,13 +880,5 @@ public abstract class AbstractRenderer
         return null;
     }
 
-    /**
-     * Converts a ColorType to a java.awt.Color (sRGB).
-     * @param col the color
-     * @return the converted color
-     */
-    protected Color toColor(ColorType col) {
-        return new Color(col.getRed(), col.getGreen(), col.getBlue());
-    }
 }
 

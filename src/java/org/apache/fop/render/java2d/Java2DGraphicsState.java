@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 The Apache Software Foundation.
+ * Copyright 2005-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import java.awt.geom.Area;
 import java.awt.geom.GeneralPath;
 import java.util.List;
 
-import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.FontInfo;
 
@@ -131,28 +130,6 @@ public class Java2DGraphicsState implements Constants, RendererState {
     }
 
     /**
-     * Converts a ColorType to a java.awt.Color (sRGB).
-     *
-     * @param col the color as a org.apache.fop.datatypes.ColorType
-     * @return the converted color as a java.awt.Color
-     */
-    public Color toColor(ColorType col) {
-        return new Color(col.getRed(), col.getGreen(), col.getBlue());
-    }
-
-    /**
-     * Update the current Color
-     * @param col the ColorType
-     */
-    public void updateColor(ColorType col) {
-        if (col == null) {
-            return;
-        }
-        Color newCol = toColor(col);
-        updateColor(newCol);
-    }
-
-    /**
      * @return the current java.awt.Color
      */
     public java.awt.Color getColor() {
@@ -238,6 +215,7 @@ public class Java2DGraphicsState implements Constants, RendererState {
         return update;
     }
 
+    /** @return the currently active Stroke */
     public BasicStroke getStroke() {
         return (BasicStroke) currentGraphics.getStroke();
     }
@@ -322,7 +300,7 @@ public class Java2DGraphicsState implements Constants, RendererState {
         return getGraph().getTransform();
     }
 
-    /** a verbose description of the current state */
+    /** @see java.lang.Object#toString() */
     public String toString() {
         String s = "AWTGraphicsState " + currentGraphics.toString()
                 + ", Stroke (width: " + currentStrokeWidth + " style: "
