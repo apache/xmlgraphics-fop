@@ -18,12 +18,15 @@
 
 package org.apache.fop.traits;
 
-import org.apache.fop.area.Trait;
+import java.awt.Color;
 
 import junit.framework.TestCase;
 
+import org.apache.fop.util.ColorUtil;
+
 /**
  * Tests the Trait.Color class.
+ * TODO: This actually tests the ColorUtil class now.
  */
 public class TraitColorTestCase extends TestCase {
 
@@ -32,12 +35,15 @@ public class TraitColorTestCase extends TestCase {
      * @throws Exception if an error occurs
      */
     public void testSerialization() throws Exception {
-        Trait.Color col = new Trait.Color(1.0f, 1.0f, 0.5f, 1.0f);
-        String s = col.toString();
-        assertEquals("#ffff7f", s);
+        Color col = new Color(1.0f, 1.0f, 0.5f, 1.0f);
+        String s = ColorUtil.colorTOsRGBString(col);
         
-        col = new Trait.Color(1.0f, 0.0f, 0.0f, 0.8f);
-        s = col.toString();
+        //This is what the old color spit out. Now it is 80 due to rounding 
+        //assertEquals("#ffff7f", s);
+        assertEquals("#ffff80", s);
+        
+        col = new Color(1.0f, 0.0f, 0.0f, 0.8f);
+        s = ColorUtil.colorTOsRGBString(col);
         assertEquals("#ff0000cc", s);
     }
     
@@ -46,19 +52,17 @@ public class TraitColorTestCase extends TestCase {
      * @throws Exception if an error occurs
      */
     public void testDeserialization() throws Exception {
-        float tolerance = 0.5f / 255; //due to color value conversion
+        Color col = ColorUtil.parseColorString("#ffff7f");
+        assertEquals(255, col.getRed());
+        assertEquals(255, col.getGreen());
+        assertEquals(127, col.getBlue());
+        assertEquals(255, col.getAlpha());
 
-        Trait.Color col = Trait.Color.valueOf("#ffff7f");
-        assertEquals(1.0f, col.getRed(), 0.0f);
-        assertEquals(1.0f, col.getGreen(), 0.0f);
-        assertEquals(0.5f, col.getBlue(), tolerance);
-        assertEquals(1.0f, col.getAlpha(), 0.0f);
-
-        col = Trait.Color.valueOf("#ff0000cc");
-        assertEquals(1.0f, col.getRed(), 0.0f);
-        assertEquals(0.0f, col.getGreen(), 0.0f);
-        assertEquals(0.0f, col.getBlue(), 0.0f);
-        assertEquals(0.8f, col.getAlpha(), tolerance);
+        col = ColorUtil.parseColorString("#ff0000cc");
+        assertEquals(255, col.getRed());
+        assertEquals(0, col.getGreen());
+        assertEquals(0, col.getBlue());
+        assertEquals(204, col.getAlpha());
     }
     
     /**
@@ -66,8 +70,8 @@ public class TraitColorTestCase extends TestCase {
      * @throws Exception if an error occurs
      */
     public void testEquals() throws Exception {
-        Trait.Color col1 = Trait.Color.valueOf("#ff0000cc");
-        Trait.Color col2 = Trait.Color.valueOf("#ff0000cc");
+        Color col1 = ColorUtil.parseColorString("#ff0000cc");
+        Color col2 = ColorUtil.parseColorString("#ff0000cc");
         assertTrue(col1 != col2);
         assertEquals(col1, col2);
     }

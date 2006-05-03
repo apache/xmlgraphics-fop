@@ -18,13 +18,13 @@
  
 package org.apache.fop.traits;
 
-import org.apache.fop.area.Trait;
-import org.apache.fop.datatypes.ColorType;
-import org.apache.fop.fo.Constants;
-import org.apache.fop.fonts.FontTriplet;
-
+import java.awt.Color;
 import java.io.Serializable;
 import java.util.StringTokenizer;
+
+import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.util.ColorUtil;
 
 /**
  * Border properties.
@@ -42,7 +42,7 @@ public class BorderProps implements Serializable {
     /** Border style (one of EN_*) */
     public int style; // Enum for border style
     /** Border color */
-    public ColorType color;
+    public Color color;
     /** Border width */
     public int width;
     /** Border mode (one of SEPARATE, COLLAPSE_INNER and COLLAPSE_OUTER) */
@@ -55,10 +55,10 @@ public class BorderProps implements Serializable {
      * @param color border color
      * @param mode border mode ((one of SEPARATE, COLLAPSE_INNER and COLLAPSE_OUTER)
      */
-    public BorderProps(int style, int width, ColorType color, int mode) {
+    public BorderProps(int style, int width, Color color, int mode) {
         this.style = style;
         this.width = width;
-        this.color = Trait.Color.makeSerializable(color);
+        this.color = color;
         this.mode = mode;
     }
 
@@ -69,7 +69,7 @@ public class BorderProps implements Serializable {
      * @param color border color
      * @param mode border mode ((one of SEPARATE, COLLAPSE_INNER and COLLAPSE_OUTER)
      */
-    public BorderProps(String style, int width, ColorType color, int mode) {
+    public BorderProps(String style, int width, Color color, int mode) {
         this(getConstantForStyle(style), width, color, mode);
     }
 
@@ -172,7 +172,14 @@ public class BorderProps implements Serializable {
                     mode = COLLAPSE_OUTER;
                 }
             }
-            return new BorderProps(style, width, Trait.Color.valueOf(color), mode);
+            Color c;
+            try {
+                c = ColorUtil.parseColorString(color);
+            } catch (PropertyException e) {
+                throw new IllegalArgumentException(e.getMessage());
+            } 
+            
+            return new BorderProps(style, width, c, mode);
         } else {
             throw new IllegalArgumentException("BorderProps must be surrounded by parentheses");
         }
@@ -184,7 +191,7 @@ public class BorderProps implements Serializable {
         sbuf.append('(');
         sbuf.append(getStyleString());
         sbuf.append(',');
-        sbuf.append(color);
+        sbuf.append(ColorUtil.colorTOsRGBString(color));
         sbuf.append(',');
         sbuf.append(width);
         if (mode != SEPARATE) {

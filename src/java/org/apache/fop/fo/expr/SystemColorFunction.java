@@ -18,7 +18,7 @@
  
 package org.apache.fop.fo.expr;
 
-import org.apache.fop.fo.properties.ColorTypeProperty;
+import org.apache.fop.fo.properties.ColorProperty;
 import org.apache.fop.fo.properties.Property;
 
 /**
@@ -34,7 +34,7 @@ class SystemColorFunction extends FunctionBase {
     /** @see org.apache.fop.fo.expr.Function */
     public Property eval(Property[] args,
                          PropertyInfo pInfo) throws PropertyException {
-        return new ColorTypeProperty("system-color(" + args[0] + ")");
+        return new ColorProperty("system-color(" + args[0] + ")");
 
     }
 

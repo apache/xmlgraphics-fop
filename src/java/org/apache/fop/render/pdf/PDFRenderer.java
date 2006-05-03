@@ -60,7 +60,6 @@ import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.area.inline.SpaceArea;
-import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontSetup;
@@ -707,7 +706,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     
     /** @see org.apache.fop.render.AbstractPathOrientedRenderer */
     protected void drawBorderLine(float x1, float y1, float x2, float y2, 
-            boolean horz, boolean startOrBefore, int style, ColorType col) {
+            boolean horz, boolean startOrBefore, int style, Color col) {
         float w = x2 - x1;
         float h = y2 - y1;
         if ((w < 0) || (h < 0)) {
@@ -716,7 +715,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         }
         switch (style) {
             case Constants.EN_DASHED: 
-                setColor(toColor(col), false, null);
+                setColor(col, false, null);
                 if (horz) {
                     float unit = Math.abs(2 * h);
                     int rep = (int)(w / unit);
@@ -744,7 +743,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                 }
                 break;
             case Constants.EN_DOTTED:
-                setColor(toColor(col), false, null);
+                setColor(col, false, null);
                 currentStream.add("1 J ");
                 if (horz) {
                     float unit = Math.abs(2 * h);
@@ -773,7 +772,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                 }
                 break;
             case Constants.EN_DOUBLE:
-                setColor(toColor(col), false, null);
+                setColor(col, false, null);
                 currentStream.add("[] 0 d ");
                 if (horz) {
                     float h3 = h / 3;
@@ -800,32 +799,31 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
             {
                 float colFactor = (style == EN_GROOVE ? 0.4f : -0.4f);
                 currentStream.add("[] 0 d ");
-                Color c = toColor(col);
                 if (horz) {
-                    Color uppercol = lightenColor(c, -colFactor);
-                    Color lowercol = lightenColor(c, colFactor);
+                    Color uppercol = lightenColor(col, -colFactor);
+                    Color lowercol = lightenColor(col, colFactor);
                     float h3 = h / 3;
                     currentStream.add(format(h3) + " w\n");
                     float ym1 = y1 + (h3 / 2);
                     setColor(uppercol, false, null);
                     currentStream.add(format(x1) + " " + format(ym1) + " m " 
                             + format(x2) + " " + format(ym1) + " l S\n");
-                    setColor(c, false, null);
+                    setColor(col, false, null);
                     currentStream.add(format(x1) + " " + format(ym1 + h3) + " m " 
                                         + format(x2) + " " + format(ym1 + h3) + " l S\n");
                     setColor(lowercol, false, null);
                     currentStream.add(format(x1) + " " + format(ym1 + h3 + h3) + " m " 
                                         + format(x2) + " " + format(ym1 + h3 + h3) + " l S\n");
                 } else {
-                    Color leftcol = lightenColor(c, -colFactor);
-                    Color rightcol = lightenColor(c, colFactor);
+                    Color leftcol = lightenColor(col, -colFactor);
+                    Color rightcol = lightenColor(col, colFactor);
                     float w3 = w / 3;
                     currentStream.add(format(w3) + " w\n");
                     float xm1 = x1 + (w3 / 2);
                     setColor(leftcol, false, null);
                     currentStream.add(format(xm1) + " " + format(y1) + " m " 
                             + format(xm1) + " " + format(y2) + " l S\n");
-                    setColor(c, false, null);
+                    setColor(col, false, null);
                     currentStream.add(format(xm1 + w3) + " " + format(y1) + " m " 
                                         + format(xm1 + w3) + " " + format(y2) + " l S\n");
                     setColor(rightcol, false, null);
@@ -839,7 +837,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
             {
                 float colFactor = (style == EN_OUTSET ? 0.4f : -0.4f);
                 currentStream.add("[] 0 d ");
-                Color c = toColor(col);
+                Color c = col;
                 if (horz) {
                     c = lightenColor(c, (startOrBefore ? 1 : -1) * colFactor);
                     currentStream.add(format(h) + " w\n");
@@ -860,7 +858,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
             case Constants.EN_HIDDEN:
                 break;
             default:
-                setColor(toColor(col), false, null);
+                setColor(col, false, null);
                 currentStream.add("[] 0 d ");
                 if (horz) {
                     currentStream.add(format(h) + " w\n");
@@ -1082,7 +1080,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         boolean useMultiByte = tf.isMultiByte();
         
         updateFont(fontName, size, pdf);
-        ColorType ct = (ColorType) text.getTrait(Trait.COLOR);
+        Color ct = (Color) text.getTrait(Trait.COLOR);
         updateColor(ct, true, pdf);
 
         // word.getOffset() = only height of text itself
@@ -1282,25 +1280,24 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * @param pdf StringBuffer to write the PDF code to, if null, the code is
      *     written to the current stream.
      */
-    private void updateColor(ColorType col, boolean fill, StringBuffer pdf) {
+    private void updateColor(Color col, boolean fill, StringBuffer pdf) {
         if (col == null) {
             return;
         }
-        Color newCol = toColor(col);
         boolean update = false;
         if (fill) {
-            update = currentState.setBackColor(newCol);
+            update = currentState.setBackColor(col);
         } else {
-            update = currentState.setColor(newCol);
+            update = currentState.setColor(col);
         }
 
         if (update) {
-            setColor(newCol, fill, pdf);
+            setColor(col, fill, pdf);
         }
     }
 
     /** @see org.apache.fop.render.AbstractPathOrientedRenderer */
-    protected  void updateColor(ColorType col, boolean fill) {
+    protected  void updateColor(Color col, boolean fill) {
         updateColor(col, fill, null);
     }
     
@@ -1492,7 +1489,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         float endx = (currentIPPosition + area.getBorderAndPaddingWidthStart() 
                         + area.getIPD()) / 1000f;
         float ruleThickness = area.getRuleThickness() / 1000f;
-        ColorType col = (ColorType)area.getTrait(Trait.COLOR);
+        Color col = (Color)area.getTrait(Trait.COLOR);
 
         switch (style) {
             case EN_SOLID:
@@ -1513,14 +1510,14 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
             case EN_RIDGE:
                 float half = area.getRuleThickness() / 2000f;
 
-                setColor(lightenColor(toColor(col), 0.6f), true, null);
+                setColor(lightenColor(col, 0.6f), true, null);
                 currentStream.add(format(startx) + " " + format(starty) + " m\n");
                 currentStream.add(format(endx) + " " + format(starty) + " l\n");
                 currentStream.add(format(endx) + " " + format(starty + 2 * half) + " l\n");
                 currentStream.add(format(startx) + " " + format(starty + 2 * half) + " l\n");
                 currentStream.add("h\n");
                 currentStream.add("f\n");
-                setColor(toColor(col), true, null);
+                setColor(col, true, null);
                 if (style == EN_GROOVE) {
                     currentStream.add(format(startx) + " " + format(starty) + " m\n");
                     currentStream.add(format(endx) + " " + format(starty) + " l\n");

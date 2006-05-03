@@ -80,8 +80,10 @@ public abstract class PrintRenderer extends AbstractRenderer {
      * @return the modified color
      */
     public static Color lightenColor(Color col, float factor) {
-        float[] cols = new float[3];
-        cols = col.getColorComponents(cols);
+        // TODO: This function converts the color into the sRGB namespace.
+        // This should be avoided if possible.
+        float[] cols = new float[4];
+        cols = col.getRGBComponents(cols);
         if (factor > 0) {
             cols[0] += (1.0 - cols[0]) * factor;
             cols[1] += (1.0 - cols[1]) * factor;
@@ -91,7 +93,7 @@ public abstract class PrintRenderer extends AbstractRenderer {
             cols[1] -= cols[1] * -factor;
             cols[2] -= cols[2] * -factor;
         }
-        return new Color(cols[0], cols[1], cols[2]);
+        return new Color(cols[0], cols[1], cols[2], cols[3]);
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-/* $Id: Block.java,v 1.14 2004/04/02 13:50:52 cbowditch Exp $ */
+/* $Id$ */
 
 package org.apache.fop.fo.flow;
+
+import java.awt.Color;
 
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.CharIterator;
@@ -73,7 +74,7 @@ public class Block extends FObjMixed {
     private CommonRelativePosition commonRelativePosition;
     private int breakAfter;
     private int breakBefore;
-    private ColorType color;
+    private Color color;
     private Length textDepth;
     private Length textAltitude;
     private int hyphenationKeep;
@@ -100,9 +101,6 @@ public class Block extends FObjMixed {
     private int wrapOption;
     // End of property values
     
-    // this may be helpful on other FOs too
-    private boolean anythingLaidOut = false;
-
     /**
      * @param parent FONode that is the parent of this object
      *
@@ -125,7 +123,7 @@ public class Block extends FObjMixed {
 
         breakAfter = pList.get(PR_BREAK_AFTER).getEnum();
         breakBefore = pList.get(PR_BREAK_BEFORE).getEnum();
-        color = pList.get(PR_COLOR).getColorType();
+        color = pList.get(PR_COLOR).getColor();
         textDepth = pList.get(PR_TEXT_DEPTH).getLength();
         textAltitude = pList.get(PR_TEXT_ALTITUDE).getLength();
         hyphenationKeep = pList.get(PR_HYPHENATION_KEEP).getEnum();
@@ -244,7 +242,7 @@ public class Block extends FObjMixed {
     /**
      * @return the "color" property.
      */
-    public ColorType getColor() {
+    public Color getColor() {
         return color;
     }
 

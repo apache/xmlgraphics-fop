@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2004,2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,10 @@
  
 package org.apache.fop.fo.expr;
 
+import java.awt.Color;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.datatypes.Numeric;
-import org.apache.fop.fo.properties.ColorTypeProperty;
 import org.apache.fop.fo.properties.Property;
 
 /**
@@ -75,38 +75,27 @@ public class NumericProperty extends Property implements Numeric, Length {
         return true;
     }
 
-    /**
-     * Cast this as a Numeric.
-     */
+    /** @see org.apache.fop.fo.properties.Property#getNumeric() */
     public Numeric getNumeric() {
         return this;
     }
 
-    /**
-     * Cast this as a number.
-     */
+    /** @see org.apache.fop.fo.properties.Property#getNumber() */
     public Number getNumber() {
         return new Double(value);
     }
 
-    /**
-     * @see org.apache.fop.datatypes.Numeric#getValue()
-     */
+    /** @see org.apache.fop.datatypes.Numeric#getValue() */
     public int getValue() {
         return (int) value;
     }
 
-    /**
-     * @see org.apache.fop.datatypes.Numeric#getValue(PercentBaseContext)
-     */
+    /** @see org.apache.fop.datatypes.Numeric#getValue(PercentBaseContext) */
     public int getValue(PercentBaseContext context) {
         return (int) value;
     }
 
-    /**
-     * Cast this as a length. That is only possible when the dimension is 
-     * one.
-     */
+    /** @see org.apache.fop.fo.properties.Property#getLength() */
     public Length getLength() {
         if (dim == 1) {
             return this;
@@ -115,25 +104,18 @@ public class NumericProperty extends Property implements Numeric, Length {
         return null;
     }
 
-    /**
-     * Cast this as a ColorTypeProperty.
-     */
-    public ColorTypeProperty getColorType() {
-        // try converting to numeric number and then to color
+    /** @see org.apache.fop.fo.properties.Property#getColor() */
+    public Color getColor() {
+        // TODO:  try converting to numeric number and then to color
         return null;
     }
 
-    /**
-     * Cast this as an Object.
-     */
+    /** @see org.apache.fop.fo.properties.Property#getObject() */
     public Object getObject() {
         return this;
     }
 
-    /**
-     * Return a string representation of this Numeric. It is only useable for
-     * debugging.
-     */
+    /** @see java.lang.Object#toString() */
     public String toString() {
         if (dim == 1) {
             return (int) value + "mpt";

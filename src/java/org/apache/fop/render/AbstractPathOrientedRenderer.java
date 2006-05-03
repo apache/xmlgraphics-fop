@@ -18,6 +18,7 @@
 
 package org.apache.fop.render;
 
+import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
@@ -30,7 +31,6 @@ import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.Viewport;
-import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.image.FopImage;
@@ -585,21 +585,21 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             float halfLineWidth = (descender / -8f) / 2f;
             float endx = (startx + inline.getIPD()) / 1000f;
             if (inline.hasUnderline()) {
-                ColorType ct = (ColorType) inline.getTrait(Trait.UNDERLINE_COLOR);
+                Color ct = (Color) inline.getTrait(Trait.UNDERLINE_COLOR);
                 float y = baseline - descender / 2f;
                 drawBorderLine(startx / 1000f, (y - halfLineWidth) / 1000f, 
                         endx, (y + halfLineWidth) / 1000f, 
                         true, true, Constants.EN_SOLID, ct);
             }
             if (inline.hasOverline()) {
-                ColorType ct = (ColorType) inline.getTrait(Trait.OVERLINE_COLOR);
+                Color ct = (Color) inline.getTrait(Trait.OVERLINE_COLOR);
                 float y = (float)(baseline - (1.1 * capHeight));
                 drawBorderLine(startx / 1000f, (y - halfLineWidth) / 1000f, 
                         endx, (y + halfLineWidth) / 1000f, 
                         true, true, Constants.EN_SOLID, ct);
             }
             if (inline.hasLineThrough()) {
-                ColorType ct = (ColorType) inline.getTrait(Trait.LINETHROUGH_COLOR);
+                Color ct = (Color) inline.getTrait(Trait.LINETHROUGH_COLOR);
                 float y = (float)(baseline - (0.45 * capHeight));
                 drawBorderLine(startx / 1000f, (y - halfLineWidth) / 1000f, 
                         endx, (y + halfLineWidth) / 1000f, 
@@ -655,7 +655,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
      * @param col the color to apply (null skips this operation)
      * @param fill true to set the fill color, false for the foreground color
      */
-    protected abstract void updateColor(ColorType col, boolean fill);
+    protected abstract void updateColor(Color col, boolean fill);
     
     /**
      * Draw an image at the indicated location.
@@ -677,6 +677,6 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
      * @param col the color for the border segment
      */
     protected abstract void drawBorderLine(float x1, float y1, float x2, float y2, 
-            boolean horz, boolean startOrBefore, int style, ColorType col);
+            boolean horz, boolean startOrBefore, int style, Color col);
     
 }

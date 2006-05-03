@@ -19,12 +19,11 @@
 package org.apache.fop.render.afp;
 
 import java.awt.Color;
-import org.apache.fop.datatypes.ColorType;
 
 /**
  * AFP only supports very basic colours and this object provides a simple
  * bean for the colour attributes.
- *
+ * @todo Is this class really necessary? Should be replaced with java.awt.Color, if possible.
  */
 public class AFPFontColor {
 
@@ -54,18 +53,6 @@ public class AFPFontColor {
         _red = red;
         _green = green;
         _blue = blue;
-
-    }
-
-    /**
-     * Constructor for the AFPColor Object
-     * @param col the org.apache.fop.datatypes.ColorType object
-     */
-    public AFPFontColor(ColorType col) {
-
-        _red = (int)(col.getRed() * 255);
-        _green = (int)(col.getGreen() * 255);
-        _blue = (int)(col.getBlue() * 255);
 
     }
 

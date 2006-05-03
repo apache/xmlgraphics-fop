@@ -86,6 +86,13 @@ public class JAIImage extends AbstractFopImage {
             ColorModel cm = imageOp.getColorModel();
             //this.bitsPerPixel = 8;
             this.bitsPerPixel = cm.getPixelSize();
+            
+            // TODO: the getRGB() function converts the image into the RGB
+            // colorspace. However, here we assume the image colorspace is kept.
+            // It should be either one of them, but not both. Unfortunately
+            // there are other hacks for images in the CMYK colorspace (e.g. in
+            // the PDF output) that would need to be changed as well.
+            
             //this.colorSpace = ColorSpace.getInstance(ColorSpace.CS_LINEAR_RGB);
             this.colorSpace = cm.getColorSpace();
             

@@ -19,11 +19,11 @@
 package org.apache.fop.fo;
 
 // Java
+import java.awt.Color;
 import java.util.NoSuchElementException;
 
 // FOP
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.pagination.Root;
@@ -77,7 +77,7 @@ public class FOText extends FONode {
     // The value of properties relevant for character.
     private CommonFont commonFont;
     private CommonHyphenation commonHyphenation;
-    private ColorType color;
+    private Color color;
     private Property letterSpacing;
     private SpaceProperty lineHeight;
     private int whiteSpaceTreatment;
@@ -156,7 +156,7 @@ public class FOText extends FONode {
         commonFont = pList.getFontProps();
         commonHyphenation = pList.getHyphenationProps();
         
-        color = pList.get(Constants.PR_COLOR).getColorType();
+        color = pList.get(Constants.PR_COLOR).getColor();
         lineHeight = pList.get(Constants.PR_LINE_HEIGHT).getSpace();
         letterSpacing = pList.get(Constants.PR_LETTER_SPACING);
         whiteSpaceCollapse = pList.get(Constants.PR_WHITE_SPACE_COLLAPSE).getEnum();
@@ -561,7 +561,7 @@ public class FOText extends FONode {
     /**
      * @return the "color" property.
      */
-    public ColorType getColor() {
+    public Color getColor() {
         return color;
     }
 

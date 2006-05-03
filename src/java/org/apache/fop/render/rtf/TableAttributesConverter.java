@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,9 @@
 
 package org.apache.fop.render.rtf;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.impl.SimpleLog;
+import java.awt.Color;
+
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.flow.TableBody;
@@ -29,7 +28,6 @@ import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableHeader;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
-import org.apache.fop.render.rtf.BorderAttributesConverter;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.ITableAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
 
@@ -49,8 +47,6 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
  */
 
 public final class TableAttributesConverter {
-
-    private static Log log = new SimpleLog("FOP/RTF");
 
     //////////////////////////////////////////////////
     // @@ Construction
@@ -119,7 +115,7 @@ public final class TableAttributesConverter {
         CommonBorderPaddingBackground border = fobj.getCommonBorderPaddingBackground();
 
         // Cell background color
-        ColorType color = border.backgroundColor;
+        Color color = border.backgroundColor;
         if (color == null) {
             //If there is no background-color specified for the cell,
             //then try to read it from table-row or table-header.

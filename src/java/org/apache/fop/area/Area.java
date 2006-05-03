@@ -26,7 +26,6 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.util.QName;
 
@@ -396,11 +395,7 @@ public class Area implements Serializable {
         if (props == null) {
             props = new java.util.HashMap(20);
         }
-        if (prop instanceof ColorType) {
-            props.put(traitCode, Trait.Color.makeSerializable((ColorType)prop));
-        } else {
-            props.put(traitCode, prop);
-        }
+        props.put(traitCode, prop);
     }
 
     /**

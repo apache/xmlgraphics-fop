@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,23 +19,23 @@
 package org.apache.fop.fo.pagination;
 
 // Java
+import java.awt.Color;
 import java.awt.color.ICC_ColorSpace;
 import java.awt.color.ICC_Profile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import org.xml.sax.Locator;
-
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.xml.sax.Locator;
 
 /**
  * The fo:color-profile formatting object.
+ * TODO: This needs to be implemented properly!
  * This loads the color profile when needed and resolves a requested color.
  */
 public class ColorProfile extends FObj {
@@ -89,7 +89,7 @@ public class ColorProfile extends FObj {
      * @param defB integer value for blue channel (0-255)?
      * @return the ColorType object corresponding to the input
      */
-    public ColorType getColor(int[] colorVals, int defR, int defG, int defB) {
+    public Color getColor(int[] colorVals, int defR, int defG, int defB) {
         // float[] rgbvals = colorSpace.toRGB(colorVals);
         // return new ColorType(rgbvals);
         return null;

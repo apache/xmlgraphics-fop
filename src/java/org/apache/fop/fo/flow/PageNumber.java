@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,11 @@
 
 package org.apache.fop.fo.flow;
 
+import java.awt.Color;
+
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
@@ -71,7 +72,7 @@ public class PageNumber extends FObj {
     //  End of property values
 
     // Properties which are not explicitely listed but are still applicable 
-    private ColorType color;
+    private Color color;
     
     /**
      * @param parent FONode that is the parent of this object
@@ -110,7 +111,7 @@ public class PageNumber extends FObj {
         wrapOption = pList.get(PR_WRAP_OPTION).getEnum();
 
         // implicit properties
-        color = pList.get(Constants.PR_COLOR).getColorType();
+        color = pList.get(Constants.PR_COLOR).getColor();
     }
 
     /**
@@ -143,7 +144,7 @@ public class PageNumber extends FObj {
     }
 
     /** @return the "color" property. */
-    public ColorType getColor() {
+    public Color getColor() {
         return color;
     }
 

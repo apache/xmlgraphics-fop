@@ -20,7 +20,7 @@ package org.apache.fop.fo.expr;
 
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.PercentBase;
-import org.apache.fop.fo.properties.ColorTypeProperty;
+import org.apache.fop.fo.properties.ColorProperty;
 import org.apache.fop.fo.properties.FixedLength;
 import org.apache.fop.fo.properties.ListProperty;
 import org.apache.fop.fo.properties.NumberProperty;
@@ -296,7 +296,7 @@ public final class PropertyParser extends PropertyTokenizer {
             break;
 
         case TOK_COLORSPEC:
-            prop = new ColorTypeProperty(currentTokenValue);
+            prop = new ColorProperty(currentTokenValue);
             break;
 
         case TOK_FUNCTION_LPAR:

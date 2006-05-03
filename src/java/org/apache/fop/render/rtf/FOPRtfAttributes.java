@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2004,2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,8 @@
 
 package org.apache.fop.render.rtf;
 
-import org.apache.fop.datatypes.ColorType;
+import java.awt.Color;
 import org.apache.fop.datatypes.Length;
-import org.apache.fop.fo.properties.ColorTypeProperty;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfColorTable;
 
@@ -69,10 +68,11 @@ public class FOPRtfAttributes extends RtfAttributes {
      * @param color value of attribute
      * @return this (which now contains the new entry)
      */
-    public RtfAttributes set(String name, ColorType color) {
-        int redComponent = ColorTypeProperty.convertChannelToInteger (color.getRed());
-        int greenComponent = ColorTypeProperty.convertChannelToInteger (color.getGreen());
-        int blueComponent = ColorTypeProperty.convertChannelToInteger (color.getBlue());
+    public RtfAttributes set(String name, Color color) {
+        // TODO: This code is duplicated in TextAttributesConverter
+        int redComponent = color.getRed();
+        int greenComponent = color.getGreen();
+        int blueComponent = color.getBlue();
         set(name, RtfColorTable.getInstance().getColorNumber(
                 redComponent, greenComponent, blueComponent).intValue());
         return this;

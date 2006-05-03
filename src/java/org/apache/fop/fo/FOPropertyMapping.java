@@ -28,7 +28,7 @@ import org.apache.fop.fo.properties.BorderSpacingShorthandParser;
 import org.apache.fop.fo.properties.BorderWidthPropertyMaker;
 import org.apache.fop.fo.properties.BoxPropShorthandParser;
 import org.apache.fop.fo.properties.CharacterProperty;
-import org.apache.fop.fo.properties.ColorTypeProperty;
+import org.apache.fop.fo.properties.ColorProperty;
 import org.apache.fop.fo.properties.ColumnNumberPropertyMaker;
 import org.apache.fop.fo.properties.CondLengthProperty;
 import org.apache.fop.fo.properties.CorrespondingPropertyMaker;
@@ -100,154 +100,7 @@ public class FOPropertyMapping implements Constants {
     public void createGenerics() {
         PropertyMaker sub;
 
-        genericColor = new ColorTypeProperty.Maker(0);
-        genericColor.addKeyword("aliceblue", "#f0f8ff");
-        genericColor.addKeyword("antiquewhite", "#faebd7");
-        genericColor.addKeyword("aqua", "#00ffff");
-        genericColor.addKeyword("aquamarine", "#7fffd4");
-        genericColor.addKeyword("azure", "#f0ffff");
-        genericColor.addKeyword("beige", "#f5f5dc");
-        genericColor.addKeyword("bisque", "#ffe4c4");
-        genericColor.addKeyword("black", "#000000");
-        genericColor.addKeyword("blanchedalmond", "#ffebcd");
-        genericColor.addKeyword("blue", "#0000ff");
-        genericColor.addKeyword("blueviolet", "#8a2be2");
-        genericColor.addKeyword("brown", "#a52a2a");
-        genericColor.addKeyword("burlywood", "#deb887");
-        genericColor.addKeyword("cadetblue", "#5f9ea0");
-        genericColor.addKeyword("chartreuse", "#7fff00");
-        genericColor.addKeyword("chocolate", "#d2691e");
-        genericColor.addKeyword("coral", "#ff7f50");
-        genericColor.addKeyword("cornflowerblue", "#6495ed");
-        genericColor.addKeyword("cornsilk", "#fff8dc");
-        genericColor.addKeyword("crimson", "#dc143c");
-        genericColor.addKeyword("cyan", "#00ffff");
-        genericColor.addKeyword("darkblue", "#00008b");
-        genericColor.addKeyword("darkcyan", "#008b8b");
-        genericColor.addKeyword("darkgoldenrod", "#b8860b");
-        genericColor.addKeyword("darkgray", "#a9a9a9");
-        genericColor.addKeyword("darkgreen", "#006400");
-        genericColor.addKeyword("darkgrey", "#a9a9a9");
-        genericColor.addKeyword("darkkhaki", "#bdb76b");
-        genericColor.addKeyword("darkmagenta", "#8b008b");
-        genericColor.addKeyword("darkolivegreen", "#556b2f");
-        genericColor.addKeyword("darkorange", "#ff8c00");
-        genericColor.addKeyword("darkorchid", "#9932cc");
-        genericColor.addKeyword("darkred", "#8b0000");
-        genericColor.addKeyword("darksalmon", "#e9967a");
-        genericColor.addKeyword("darkseagreen", "#8fbc8f");
-        genericColor.addKeyword("darkslateblue", "#483d8b");
-        genericColor.addKeyword("darkslategray", "#2f4f4f");
-        genericColor.addKeyword("darkslategrey", "#2f4f4f");
-        genericColor.addKeyword("darkturquoise", "#00ced1");
-        genericColor.addKeyword("darkviolet", "#9400d3");
-        genericColor.addKeyword("deeppink", "#ff1493");
-        genericColor.addKeyword("deepskyblue", "#00bfff");
-        genericColor.addKeyword("dimgray", "#696969");
-        genericColor.addKeyword("dimgrey", "#696969");
-        genericColor.addKeyword("dodgerblue", "#1e90ff");
-        genericColor.addKeyword("firebrick", "#b22222");
-        genericColor.addKeyword("floralwhite", "#fffaf0");
-        genericColor.addKeyword("forestgreen", "#228b22");
-        genericColor.addKeyword("fuchsia", "#ff00ff");
-        genericColor.addKeyword("gainsboro", "#dcdcdc");
-        genericColor.addKeyword("lightpink", "#ffb6c1");
-        genericColor.addKeyword("lightsalmon", "#ffa07a");
-        genericColor.addKeyword("lightseagreen", "#20b2aa");
-        genericColor.addKeyword("lightskyblue", "#87cefa");
-        genericColor.addKeyword("lightslategray", "#778899");
-        genericColor.addKeyword("lightslategrey", "#778899");
-        genericColor.addKeyword("lightsteelblue", "#b0c4de");
-        genericColor.addKeyword("lightyellow", "#ffffe0");
-        genericColor.addKeyword("lime", "#00ff00");
-        genericColor.addKeyword("limegreen", "#32cd32");
-        genericColor.addKeyword("linen", "#faf0e6");
-        genericColor.addKeyword("magenta", "#ff00ff");
-        genericColor.addKeyword("maroon", "#800000");
-        genericColor.addKeyword("mediumaquamarine", "#66cdaa");
-        genericColor.addKeyword("mediumblue", "#0000cd");
-        genericColor.addKeyword("mediumorchid", "#ba55d3");
-        genericColor.addKeyword("mediumpurple", "#9370db");
-        genericColor.addKeyword("mediumseagreen", "#3cb371");
-        genericColor.addKeyword("mediumslateblue", "#7b68ee");
-        genericColor.addKeyword("mediumspringgreen", "#00fa9a");
-        genericColor.addKeyword("mediumturquoise", "#48d1cc");
-        genericColor.addKeyword("mediumvioletred", "#c71585");
-        genericColor.addKeyword("midnightblue", "#191970");
-        genericColor.addKeyword("mintcream", "#f5fffa");
-        genericColor.addKeyword("mistyrose", "#ffe4e1");
-        genericColor.addKeyword("moccasin", "#ffe4b5");
-        genericColor.addKeyword("navajowhite", "#ffdead");
-        genericColor.addKeyword("navy", "#000080");
-        genericColor.addKeyword("oldlace", "#fdf5e6");
-        genericColor.addKeyword("olive", "#808000");
-        genericColor.addKeyword("olivedrab", "#6b8e23");
-        genericColor.addKeyword("orange", "#ffa500");
-        genericColor.addKeyword("orangered", "#ff4500");
-        genericColor.addKeyword("orchid", "#da70d6");
-        genericColor.addKeyword("palegoldenrod", "#eee8aa");
-        genericColor.addKeyword("palegreen", "#98fb98");
-        genericColor.addKeyword("paleturquoise", "#afeeee");
-        genericColor.addKeyword("palevioletred", "#db7093");
-        genericColor.addKeyword("papayawhip", "#ffefd5");
-        genericColor.addKeyword("peachpuff", "#ffdab9");
-        genericColor.addKeyword("peru", "#cd853f");
-        genericColor.addKeyword("pink", "#ffc0cb");
-        genericColor.addKeyword("plum", "#dda0dd");
-        genericColor.addKeyword("powderblue", "#b0e0e6");
-        genericColor.addKeyword("purple", "#800080");
-        genericColor.addKeyword("red", "#ff0000");
-        genericColor.addKeyword("rosybrown", "#bc8f8f");
-        genericColor.addKeyword("royalblue", "#4169e1");
-        genericColor.addKeyword("saddlebrown", "#8b4513");
-        genericColor.addKeyword("salmon", "#fa8072");
-        genericColor.addKeyword("ghostwhite", "#f8f8ff");
-        genericColor.addKeyword("gold", "#ffd700");
-        genericColor.addKeyword("goldenrod", "#daa520");
-        genericColor.addKeyword("gray", "#808080");
-        genericColor.addKeyword("grey", "#808080");
-        genericColor.addKeyword("green", "#008000");
-        genericColor.addKeyword("greenyellow", "#adff2f");
-        genericColor.addKeyword("honeydew", "#f0fff0");
-        genericColor.addKeyword("hotpink", "#ff69b4");
-        genericColor.addKeyword("indianred", "#cd5c5c");
-        genericColor.addKeyword("indigo", "#4b0082");
-        genericColor.addKeyword("ivory", "#fffff0");
-        genericColor.addKeyword("khaki", "#f0e68c");
-        genericColor.addKeyword("lavender", "#e6e6fa");
-        genericColor.addKeyword("lavenderblush", "#fff0f5");
-        genericColor.addKeyword("lawngreen", "#7cfc00");
-        genericColor.addKeyword("lemonchiffon", "#fffacd");
-        genericColor.addKeyword("lightblue", "#add8e6");
-        genericColor.addKeyword("lightcoral", "#f08080");
-        genericColor.addKeyword("lightcyan", "#e0ffff");
-        genericColor.addKeyword("lightgoldenrodyellow", "#fafad2");
-        genericColor.addKeyword("lightgray", "#d3d3d3");
-        genericColor.addKeyword("lightgreen", "#90ee90");
-        genericColor.addKeyword("lightgrey", "#d3d3d3");
-        genericColor.addKeyword("sandybrown", "#f4a460");
-        genericColor.addKeyword("seagreen", "#2e8b57");
-        genericColor.addKeyword("seashell", "#fff5ee");
-        genericColor.addKeyword("sienna", "#a0522d");
-        genericColor.addKeyword("silver", "#c0c0c0");
-        genericColor.addKeyword("skyblue", "#87ceeb");
-        genericColor.addKeyword("slateblue", "#6a5acd");
-        genericColor.addKeyword("slategray", "#708090");
-        genericColor.addKeyword("slategrey", "#708090");
-        genericColor.addKeyword("snow", "#fffafa");
-        genericColor.addKeyword("springgreen", "#00ff7f");
-        genericColor.addKeyword("steelblue", "#4682b4");
-        genericColor.addKeyword("tan", "#d2b48c");
-        genericColor.addKeyword("teal", "#008080");
-        genericColor.addKeyword("thistle", "#d8bfd8");
-        genericColor.addKeyword("tomato", "#ff6347");
-        genericColor.addKeyword("turquoise", "#40e0d0");
-        genericColor.addKeyword("violet", "#ee82ee");
-        genericColor.addKeyword("wheat", "#f5deb3");
-        genericColor.addKeyword("white", "#ffffff");
-        genericColor.addKeyword("whitesmoke", "#f5f5f5");
-        genericColor.addKeyword("yellow", "#ffff00");
-        genericColor.addKeyword("yellowgreen", "#9acd32");
+        genericColor = new ColorProperty.Maker(0);
 
         // GenericBoolean
         genericBoolean = new EnumProperty.Maker(0);
@@ -689,12 +542,12 @@ public class FOPropertyMapping implements Constants {
         addPropertyMaker("background-attachment", m);
 
         // background-color
-        m  = new ColorTypeProperty.Maker(PR_BACKGROUND_COLOR) {
+        m  = new ColorProperty.Maker(PR_BACKGROUND_COLOR) {
             protected Property convertPropertyDatatype(
                     Property p, PropertyList propertyList, FObj fo) throws PropertyException {
                 String nameval = p.getNCname();
                 if (nameval != null) {
-                    return new ColorTypeProperty(nameval);
+                    return new ColorProperty(nameval);
                 }
                 return super.convertPropertyDatatype(p, propertyList, fo);
             }
@@ -743,7 +596,7 @@ public class FOPropertyMapping implements Constants {
         addPropertyMaker("background-position-vertical", m);
 
         // border-before-color
-        m  = new ColorTypeProperty.Maker(PR_BORDER_BEFORE_COLOR);
+        m  = new ColorProperty.Maker(PR_BORDER_BEFORE_COLOR);
         m.useGeneric(genericColor);
         m.setInherited(false);
         m.setDefault("black");
@@ -773,7 +626,7 @@ public class FOPropertyMapping implements Constants {
         addPropertyMaker("border-before-width", m);
 
         // border-after-color
-        m  = new ColorTypeProperty.Maker(PR_BORDER_AFTER_COLOR);
+        m  = new ColorProperty.Maker(PR_BORDER_AFTER_COLOR);
         m.useGeneric(genericColor);
         m.setInherited(false);
         m.setDefault("black");
@@ -803,7 +656,7 @@ public class FOPropertyMapping implements Constants {
         addPropertyMaker("border-after-width", m);
 
         // border-start-color
-        m  = new ColorTypeProperty.Maker(PR_BORDER_START_COLOR);
+        m  = new ColorProperty.Maker(PR_BORDER_START_COLOR);
         m.useGeneric(genericColor);
         m.setInherited(false);
         m.setDefault("black");
@@ -833,7 +686,7 @@ public class FOPropertyMapping implements Constants {
         addPropertyMaker("border-start-width", m);
 
         // border-end-color
-        m  = new ColorTypeProperty.Maker(PR_BORDER_END_COLOR);
+        m  = new ColorProperty.Maker(PR_BORDER_END_COLOR);
         m.useGeneric(genericColor);
         m.setInherited(false);
         m.setDefault("black");
@@ -863,7 +716,7 @@ public class FOPropertyMapping implements Constants {
         addPropertyMaker("border-end-width", m);
 
         // border-top-color
-        m  = new ColorTypeProperty.Maker(PR_BORDER_TOP_COLOR);
+        m  = new ColorProperty.Maker(PR_BORDER_TOP_COLOR);
         m.useGeneric(genericColor);
         m.setInherited(false);
         m.setDefault("black");
@@ -899,7 +752,7 @@ public class FOPropertyMapping implements Constants {
         addPropertyMaker("border-top-width", bwm);
 
         // border-bottom-color
-        m  = new ColorTypeProperty.Maker(PR_BORDER_BOTTOM_COLOR);
+        m  = new ColorProperty.Maker(PR_BORDER_BOTTOM_COLOR);
         m.useGeneric(genericColor);
         m.setInherited(false);
         m.setDefault("black");
@@ -935,7 +788,7 @@ public class FOPropertyMapping implements Constants {
         addPropertyMaker("border-bottom-width", bwm);
 
         // border-left-color
-        m  = new ColorTypeProperty.Maker(PR_BORDER_LEFT_COLOR);
+        m  = new ColorProperty.Maker(PR_BORDER_LEFT_COLOR);
         m.useGeneric(genericColor);
         m.setInherited(false);
         m.setDefault("black");
@@ -971,7 +824,7 @@ public class FOPropertyMapping implements Constants {
         addPropertyMaker("border-left-width", bwm);
 
         // border-right-color
-        m  = new ColorTypeProperty.Maker(PR_BORDER_RIGHT_COLOR);
+        m  = new ColorProperty.Maker(PR_BORDER_RIGHT_COLOR);
         m.useGeneric(genericColor);
         m.setInherited(false);
         m.setDefault("black");
@@ -1844,7 +1697,7 @@ public class FOPropertyMapping implements Constants {
         PropertyMaker m;
 
         // color
-        m  = new ColorTypeProperty.Maker(PR_COLOR);
+        m  = new ColorProperty.Maker(PR_COLOR);
         m.useGeneric(genericColor);
         m.setInherited(true);
         m.setDefault("black");

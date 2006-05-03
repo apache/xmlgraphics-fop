@@ -55,10 +55,8 @@ import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
-import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.TextArea;
-import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
@@ -427,8 +425,8 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
      * @see org.apache.fop.render.AbstractPathOrientedRenderer#updateColor(
      *          org.apache.fop.datatypes.ColorType, boolean)
      */
-    protected void updateColor(ColorType col, boolean fill) {
-        state.updateColor(toColor(col));
+    protected void updateColor(Color col, boolean fill) {
+        state.updateColor(col);
     }
 
     /**
@@ -489,10 +487,10 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
      *          org.apache.fop.datatypes.ColorType)
      */
     protected void drawBorderLine(float x1, float y1, float x2, float y2, 
-            boolean horz, boolean startOrBefore, int style, ColorType col) {
+            boolean horz, boolean startOrBefore, int style, Color col) {
         Graphics2D g2d = state.getGraph();
         drawBorderLine(new Rectangle2D.Float(x1, y1, x2 - x1, y2 - y1), 
-                horz, startOrBefore, style, toColor(col), g2d);
+                horz, startOrBefore, style, col, g2d);
     }
 
     /**
@@ -668,8 +666,8 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         Font font = getFontFromArea(text);
         state.updateFont(font.getFontName(), font.getFontSize(), null);
 
-        ColorType ct = (ColorType) text.getTrait(Trait.COLOR);
-        state.updateColor(ct);
+        Color col = (Color) text.getTrait(Trait.COLOR);
+        state.updateColor(col);
 
         String s = text.getText();
         state.getGraph().drawString(s, rx / 1000f, bl / 1000f);
@@ -699,7 +697,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         float endx = (currentIPPosition + area.getBorderAndPaddingWidthStart() 
                 + area.getIPD()) / 1000f;
 
-        ColorType col = (ColorType) area.getTrait(Trait.COLOR);
+        Color col = (Color) area.getTrait(Trait.COLOR);
         state.updateColor(col);
 
         Line2D line = new Line2D.Float();
@@ -725,7 +723,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         case EN_RIDGE:
             float half = area.getRuleThickness() / 2000f;
 
-            state.updateColor(lightenColor(toColor(col), 0.6f));
+            state.updateColor(lightenColor(col, 0.6f));
             moveTo(startx, starty);
             lineTo(endx, starty);
             lineTo(endx, starty + 2 * half);
@@ -733,7 +731,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
             closePath();
             state.getGraph().fill(currentPath);
             currentPath = null;
-            state.updateColor(toColor(col));
+            state.updateColor(col);
             if (style == EN_GROOVE) {
                 moveTo(startx, starty);
                 lineTo(endx, starty);

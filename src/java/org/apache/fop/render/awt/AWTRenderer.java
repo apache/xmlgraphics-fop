@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,11 +26,12 @@ package org.apache.fop.render.awt;
  */
 
 // Java
+import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.geom.Rectangle2D;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.geom.Rectangle2D;
 import java.awt.print.PageFormat;
 import java.awt.print.Pageable;
 import java.awt.print.Paper;
@@ -42,8 +43,6 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.PageViewport;
-import org.apache.fop.datatypes.ColorType;
-import org.apache.fop.fo.properties.ColorTypeProperty;
 import org.apache.fop.render.awt.viewer.PreviewDialog;
 import org.apache.fop.render.awt.viewer.Renderable;
 import org.apache.fop.render.awt.viewer.Translator;
@@ -263,8 +262,8 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
         // saves the graphics state in a stack
         state.push();
 
-        ColorType ct = new ColorTypeProperty(0.7f, 0.7f, 0.7f);
-        state.updateColor(ct);
+        Color col = new Color(0.7f, 0.7f, 0.7f);
+        state.updateColor(col);
         state.updateStroke(0.4f, EN_SOLID);
         state.getGraph().draw(
                 new Rectangle2D.Float(startx, starty, width, height));

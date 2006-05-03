@@ -18,13 +18,14 @@
 
 package org.apache.fop.area;
 
-import org.apache.fop.datatypes.ColorType;
+import java.awt.Color;
+import java.io.Serializable;
+
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.traits.BorderProps;
-
-import java.io.Serializable;
+import org.apache.fop.util.ColorUtil;
 
 // properties should be serialized by the holder
 /**
@@ -61,7 +62,7 @@ public class Trait implements Serializable {
     public static final Integer FONT_SIZE = new Integer(4);
 
     /**
-     * The current colour.
+     * The current color.
      */
     public static final Integer COLOR = new Integer(7);
 
@@ -409,154 +410,6 @@ public class Trait implements Serializable {
         return null;
     }*/
 
-    /**
-     * Serializable ColorType implementation for the area tree.
-     * @TODO Think about switching to java.awt.Color entirely!
-     */
-    public static class Color implements ColorType, Serializable {
-
-        private float red;
-        private float green;
-        private float blue;
-        private float alpha;
-        
-        /**
-         * Creates a new Color instance
-         * @param r the red component
-         * @param g the green component
-         * @param b the blue component
-         * @param a the alpha component
-         */
-        public Color(float r, float g, float b, float a) {
-            this.red = r;
-            this.green = g;
-            this.blue = b;
-            this.alpha = a;
-        }
-        
-        /**
-         * Copy constructor
-         * @param col the ColorType instance which shall be duplicated
-         */
-        public Color(ColorType col) {
-            this(col.getRed(), col.getGreen(), col.getBlue(), col.getAlpha());
-        }
-        
-        /** @see org.apache.fop.datatypes.ColorType#getRed() */
-        public float getRed() {
-            return this.red;
-        }
-
-        /** @see org.apache.fop.datatypes.ColorType#getGreen() */
-        public float getGreen() {
-            return this.green;
-        }
-
-        /** @see org.apache.fop.datatypes.ColorType#getBlue() */
-        public float getBlue() {
-            return this.blue;
-        }
-
-        /** @see org.apache.fop.datatypes.ColorType#getAlpha() */
-        public float getAlpha() {
-            return this.alpha;
-        }
-
-        /** @see org.apache.fop.datatypes.ColorType#getAWTColor() */
-        public java.awt.Color getAWTColor() {
-            return new java.awt.Color(red, green, blue, alpha);
-        }
-        
-        /**
-         * Converts a given color to a serializable instance if necessary.
-         * @param col the color
-         * @return the serializable color value.
-         */
-        public static ColorType makeSerializable(ColorType col) {
-            if (col == null) {
-                return null;
-            } else if (col instanceof Serializable) {
-                return col;
-            } else {
-                return new Color(col);
-            }
-        }
-        
-        /** @see java.lang.Object#hashCode() */
-        public int hashCode() {
-            return toString().hashCode();
-        }
-
-        /** @see java.lang.Object#equals(java.lang.Object) */
-        public boolean equals(Object obj) {
-            if (obj == null) {
-                return false;
-            } else if (obj == this) {
-                return true;
-            } else {
-                if (obj instanceof ColorType) {
-                    ColorType other = (ColorType)obj;
-                    return getRed() == other.getRed()
-                            && getGreen() == other.getGreen() 
-                            && getBlue() == other.getBlue()
-                            && getAlpha() == other.getAlpha();
-                }
-            }
-            return false;
-        }
-
-        /**
-         * Returns a Color represtation of a string of the format "#RRGGBB".
-         * @param s the string
-         * @return the Color value
-         */
-        public static Color valueOf(String s) {
-            if (s == null) {
-                return null;
-            }
-            if (!s.startsWith("#")) {
-                throw new IllegalArgumentException("Color must start with '#'");
-            }
-            int r = Integer.parseInt(s.substring(1, 3), 16);
-            int g = Integer.parseInt(s.substring(3, 5), 16);
-            int b = Integer.parseInt(s.substring(5, 7), 16);
-            int a = 255;
-            if (s.length() > 7) {
-                a = Integer.parseInt(s.substring(7, 9), 16);
-            }
-            return new Color(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f);
-        }
-        
-        /** @see java.lang.Object#toString() */
-        public String toString() {
-            StringBuffer sbuf = new StringBuffer(8);
-            sbuf.append('#');
-            String s = Integer.toHexString((int)(red * 255.0));
-            if (s.length() == 1) {
-                sbuf.append('0');
-            }
-            sbuf.append(s);
-            s = Integer.toHexString((int)(green * 255.0));
-            if (s.length() == 1) {
-                sbuf.append('0');
-            }
-            sbuf.append(s);
-            s = Integer.toHexString((int)(blue * 255.0));
-            if (s.length() == 1) {
-                sbuf.append('0');
-            }
-            sbuf.append(s);
-            if (alpha != 1) {
-                s = Integer.toHexString((int)(alpha * 255.0));
-                if (s.length() == 1) {
-                    sbuf.append('0');
-                }
-                sbuf.append(s);
-            }
-            return sbuf.toString();
-        }
-
-    }
     
     /**
      * Background trait structure.
@@ -565,7 +418,7 @@ public class Trait implements Serializable {
     public static class Background implements Serializable {
 
         /** The background color if any. */
-        private ColorType color = null;
+        private Color color = null;
 
         /** The background image url if any. */
         private String url = null;
@@ -586,7 +439,7 @@ public class Trait implements Serializable {
          * Returns the background color.
          * @return background color, null if n/a
          */
-        public ColorType getColor() {
+        public Color getColor() {
             return color;
         }
 
@@ -634,8 +487,8 @@ public class Trait implements Serializable {
          * Sets the color.
          * @param color The color to set
          */
-        public void setColor(ColorType color) {
-            this.color = Color.makeSerializable(color);
+        public void setColor(Color color) {
+            this.color = color;
         }
 
         /**
@@ -716,9 +569,14 @@ public class Trait implements Serializable {
          */
         public String toString() {
             StringBuffer sb = new StringBuffer();
-            sb.append("color=").append(color);
+            if (color != null) {
+                sb.append("color=").append(ColorUtil.colorTOsRGBString(color));
+            }
             if (url != null) {
-                sb.append(",url=").append(url);
+                if (color != null) {
+                    sb.append(",");
+                }
+                sb.append("url=").append(url);
                 sb.append(",repeat=").append(getRepeatString());
                 sb.append(",horiz=").append(horiz);
                 sb.append(",vertical=").append(vertical);
