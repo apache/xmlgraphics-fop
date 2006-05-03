@@ -27,6 +27,13 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix" fixes-bug="38243" due-to="Gerhard Oettl">
+        Bugfix: Gaps in table-columns cause a NullPointerException.
+      </action>
+      <action context="Code" dev="JM" type="update" fixes-bug="38946" due-to="Max Berger">
+        Changed the internal representation of colors to use Java's own color infrastructure
+        instead of FOP's home-grown classes.
+      </action>
       <action context="Code" dev="MM" type="fix">
         Bugfix: TABs were not correctly replaced by spaces in some circumstances.
       </action>
