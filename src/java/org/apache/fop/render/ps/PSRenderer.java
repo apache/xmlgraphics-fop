@@ -45,7 +45,6 @@ import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.AbstractTextArea;
-import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.Leader;
@@ -66,6 +65,7 @@ import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.ImageAdapter;
 import org.apache.fop.render.RendererContext;
+import org.apache.fop.render.pdf.PDFRendererContextConstants;
 import org.apache.fop.render.ps.extensions.PSSetupCode;
 import org.apache.fop.util.CharUtilities;
 
@@ -281,7 +281,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
     }
 
     /** @see org.apache.fop.render.AbstractPathOrientedRenderer */
-    protected void drawImage(String url, Rectangle2D pos) {
+    protected void drawImage(String url, Rectangle2D pos, Map foreignAttributes) {
         endTextObject();
         url = ImageFactory.getURL(url);
         ImageFactory fact = userAgent.getFactory().getImageFactory();
@@ -307,7 +307,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
                 Document doc = ((XMLImage) fopimage).getDocument();
                 String ns = ((XMLImage) fopimage).getNameSpace();
 
-                renderDocument(doc, ns, pos);
+                renderDocument(doc, ns, pos, foreignAttributes);
             } else if ("image/svg+xml".equals(mime)) {
                 if (!fopimage.load(FopImage.ORIGINAL_DATA)) {
                     return;
@@ -315,7 +315,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
                 Document doc = ((XMLImage) fopimage).getDocument();
                 String ns = ((XMLImage) fopimage).getNameSpace();
 
-                renderDocument(doc, ns, pos);
+                renderDocument(doc, ns, pos, foreignAttributes);
             } else if (fopimage instanceof EPSImage) {
                 PSImageUtils.renderEPS((EPSImage)fopimage, x, y, w, h, gen);
             } else {
@@ -1108,40 +1108,16 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderForeignObject(ForeignObject, Rectangle2D)
+     * @see org.apache.fop.render.PrintRenderer#createRendererContext(
+     *          int, int, int, int, java.util.Map)
      */
-    public void renderForeignObject(ForeignObject fo, Rectangle2D pos) {
-        Document doc = fo.getDocument();
-        String ns = fo.getNameSpace();
-        renderDocument(doc, ns, pos);
-    }
-
-    /**
-     * Renders an XML document (SVG for example).
-     * @param doc DOM Document containing the XML document to be rendered
-     * @param ns Namespace for the XML document
-     * @param pos Position for the generated graphic/image
-     */
-    public void renderDocument(Document doc, String ns, Rectangle2D pos) {
-        endTextObject();
-        RendererContext context;
-        context = new RendererContext(this, MIME_TYPE);
-        context.setUserAgent(userAgent);
-
+    protected RendererContext createRendererContext(int x, int y, int width, int height, 
+            Map foreignAttributes) {
+        RendererContext context = super.createRendererContext(
+                x, y, width, height, foreignAttributes);
         context.setProperty(PSRendererContextConstants.PS_GENERATOR, this.gen);
         context.setProperty(PSRendererContextConstants.PS_FONT_INFO, fontInfo);
-        context.setProperty(PSRendererContextConstants.WIDTH,
-                            new Integer((int) pos.getWidth()));
-        context.setProperty(PSRendererContextConstants.HEIGHT,
-                            new Integer((int) pos.getHeight()));
-        context.setProperty(PSRendererContextConstants.XPOS,
-                            new Integer(currentIPPosition + (int) pos.getX()));
-        context.setProperty(PSRendererContextConstants.YPOS,
-                            new Integer(currentBPPosition + (int) pos.getY()));
-        context.setProperty(PSRendererContextConstants.PAGE_VIEWPORT, 
-                            getCurrentPageViewport());
-        
-        renderXML(context, doc, ns);
+        return context;
     }
 
     /** @see org.apache.fop.render.AbstractRenderer */

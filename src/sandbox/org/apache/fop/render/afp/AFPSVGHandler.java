@@ -16,23 +16,22 @@
 
 /* $Id$ */
 
-package org.apache.fop.render.pcl;
+package org.apache.fop.render.afp;
 
 // FOP
 import org.apache.fop.render.AbstractGenericSVGHandler;
 import org.apache.fop.render.Renderer;
 
 /**
- * PCL XML handler for SVG. Uses Apache Batik for SVG processing.
- * This handler handles XML for foreign objects when rendering to HP GL/2.
- * It renders SVG to HP GL/2 using the PCLGraphics2D.
- * @see PCLGraphics2DAdapter
+ * AFP XML handler for SVG. Uses Apache Batik for SVG processing.
+ * This handler handles XML for foreign objects and delegates to AFPGraphics2DAdapter.
+ * @see AFPGraphics2DAdapter
  */
-public class PCLSVGHandler extends AbstractGenericSVGHandler {
+public class AFPSVGHandler extends AbstractGenericSVGHandler {
 
     /** @see org.apache.fop.render.XMLHandler#supportsRenderer(org.apache.fop.render.Renderer) */
     public boolean supportsRenderer(Renderer renderer) {
-        return (renderer instanceof PCLRenderer);
+        return (renderer instanceof AFPRenderer);
     }
     
 }

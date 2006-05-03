@@ -45,6 +45,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.w3c.dom.Document;
 
@@ -68,6 +69,7 @@ import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.pdf.CTMHelper;
+import org.apache.fop.render.pdf.PDFRendererContextConstants;
 
 /**
  * The <code>Java2DRenderer</code> class provides the abstract technical
@@ -770,9 +772,9 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
 
     /**
      * @see org.apache.fop.render.AbstractPathOrientedRenderer#drawImage(
-     *          java.lang.String, java.awt.geom.Rectangle2D)
+     *          java.lang.String, java.awt.geom.Rectangle2D, java.util.Map)
      */
-    protected void drawImage(String url, Rectangle2D pos) {
+    protected void drawImage(String url, Rectangle2D pos, Map foreignAttributes) {
 
         int x = currentIPPosition + (int)Math.round(pos.getX());
         int y = currentBPPosition + (int)Math.round(pos.getY());
@@ -796,7 +798,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
             }
             Document doc = ((XMLImage) fopimage).getDocument();
             String ns = ((XMLImage) fopimage).getNameSpace();
-            renderDocument(doc, ns, pos);
+            renderDocument(doc, ns, pos, foreignAttributes);
 
         } else if ("image/svg+xml".equals(mime)) {
             if (!fopimage.load(FopImage.ORIGINAL_DATA)) {
@@ -805,7 +807,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
             Document doc = ((XMLImage) fopimage).getDocument();
             String ns = ((XMLImage) fopimage).getNameSpace();
 
-            renderDocument(doc, ns, pos);
+            renderDocument(doc, ns, pos, foreignAttributes);
         } else if ("image/eps".equals(mime)) {
             log.warn("EPS images are not supported by this renderer");
         } else {
@@ -840,40 +842,15 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderForeignObject(ForeignObject,
-     * Rectangle2D)
+     * @see org.apache.fop.render.PrintRenderer#createRendererContext(
+     *          int, int, int, int, java.util.Map)
      */
-    public void renderForeignObject(ForeignObject fo, Rectangle2D pos) {
-        Document doc = fo.getDocument();
-        String ns = fo.getNameSpace();
-        renderDocument(doc, ns, pos);
-    }
-
-    /**
-     * Renders an XML document (SVG for example).
-     *
-     * @param doc DOM document representing the XML document
-     * @param ns Namespace for the document
-     * @param pos Position on the page
-     */
-    public void renderDocument(Document doc, String ns, Rectangle2D pos) {
-        RendererContext context;
-        context = new RendererContext(this, getMimeType());
-        context.setUserAgent(userAgent);
-
+    protected RendererContext createRendererContext(int x, int y, int width, int height, 
+            Map foreignAttributes) {
+        RendererContext context = super.createRendererContext(
+                x, y, width, height, foreignAttributes);
         context.setProperty(Java2DRendererContextConstants.JAVA2D_STATE, state);
-        context.setProperty(Java2DRendererContextConstants.XPOS,
-                            new Integer(currentIPPosition + (int)pos.getX()));
-        context.setProperty(Java2DRendererContextConstants.YPOS,
-                            new Integer(currentBPPosition + (int)pos.getY()));
-        context.setProperty(Java2DRendererContextConstants.WIDTH,
-                            new Integer((int)pos.getWidth()));
-        context.setProperty(Java2DRendererContextConstants.HEIGHT,
-                            new Integer((int) pos.getHeight()));
-        context.setProperty(Java2DRendererContextConstants.PAGE_VIEWPORT, 
-                            getCurrentPageViewport());
-        
-        renderXML(context, doc, ns);
+        return context;
     }
 
     /**

@@ -19,6 +19,7 @@
 package org.apache.fop.render.afp;
 
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.io.OutputStream;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
@@ -38,6 +39,21 @@ public class SVGConverter extends ImageTranscoder {
     
     public void writeImage(BufferedImage img, TranscoderOutput output) {
         OutputStream os = output.getOutputStream();
+        try {
+            writeImage(img, os);
+        } catch (IOException ioe) {
+            //ignore
+            //TODO Handle IOException properly!
+        }
+    }
+
+    /**
+     * Writes a BufferedImage to an OutputStream as raw sRGB bitmaps.
+     * @param img the BufferedImage
+     * @param out the OutputStream
+     * @throws IOException In case of an I/O error.
+     */
+    public static void writeImage(BufferedImage img, OutputStream out) throws IOException {
         int w  = img.getWidth();
         int h  = img.getHeight();
         int[] tmpMap = img.getRGB(0, 0, w, h, null, 0, w);
@@ -47,13 +63,9 @@ public class SVGConverter extends ImageTranscoder {
                 int r = (p >> 16) & 0xFF;
                 int g = (p >> 8) & 0xFF;
                 int b = (p) & 0xFF;
-                try {
-                    os.write((byte)(r & 0xFF));
-                    os.write((byte)(g & 0xFF));
-                    os.write((byte)(b & 0xFF));
-                } catch (java.io.IOException ioex) {
-                    
-                }
+                out.write((byte)(r & 0xFF));
+                out.write((byte)(g & 0xFF));
+                out.write((byte)(b & 0xFF));
             }
         }
     }
@@ -69,6 +81,7 @@ public class SVGConverter extends ImageTranscoder {
      * Converts a SVG image to a TIFF bitmap.
      * @param image the SVG image
      * @return a byte array containing the TIFF image
+     * @todo Please rename! The method name is misleading.
      */
     public static byte[] convertToTIFF(XMLImage image) {
         // TIFFTranscoder transcoder = new TIFFTranscoder();
