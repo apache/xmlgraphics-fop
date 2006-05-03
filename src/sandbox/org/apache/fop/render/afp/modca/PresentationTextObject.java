@@ -17,11 +17,12 @@
 /* $Id$ */
 
 package org.apache.fop.render.afp.modca;
+
+import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import org.apache.fop.render.afp.AFPFontColor;
 
 /**
  * The Presentation Text object is the data object used in document processing
@@ -87,7 +88,7 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
      * @param data
      *            The text data to be created.
      */
-    public void createTextData(int fontNumber, int x, int y, AFPFontColor col, int vsci, int ica, byte[] data) {
+    public void createTextData(int fontNumber, int x, int y, Color col, int vsci, int ica, byte[] data) {
 
         // Use a default orientation of zero
         createTextData(fontNumber, x, y, 0, col, vsci, ica, data);
@@ -115,7 +116,7 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
      *            The text data to be created.
      */
     public void createTextData(int fontNumber, int x, int y, int orientation,
-        AFPFontColor col, int vsci, int ica, byte[] data) {
+        Color col, int vsci, int ica, byte[] data) {
 
         if (currentPresentationTextData == null) {
             startPresentationTextData();
@@ -151,7 +152,7 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
      * @param col
      *            The text color.
      */
-    public void createLineData(int x1, int y1, int x2, int y2, int thickness, AFPFontColor col) {
+    public void createLineData(int x1, int y1, int x2, int y2, int thickness, Color col) {
         // Default orientation
         createLineData(x1, y1, x2, y2, thickness, 0, col);
     }
@@ -176,7 +177,7 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
      *            The text color.
      */
     public void createLineData(int x1, int y1, int x2, int y2, int thickness,
-        int orientation, AFPFontColor col) {
+        int orientation, Color col) {
 
         if (currentPresentationTextData == null) {
             startPresentationTextData();

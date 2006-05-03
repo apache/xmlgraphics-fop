@@ -44,7 +44,6 @@ import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.RegionReference;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
-import org.apache.fop.area.inline.Character;
 import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.SpaceArea;
@@ -164,7 +163,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     /**
      * The current color object
      */
-    private AFPFontColor _currentColor = null;
+    private Color _currentColor = null;
 
     /**
      * The page font number counter, used to determine the next font reference
@@ -499,7 +498,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      */
     public void startRenderer(OutputStream outputStream) throws IOException {
         _currentPageFonts = new HashMap();
-        _currentColor = new AFPFontColor(255, 255, 255);
+        _currentColor = new Color(255, 255, 255);
         _afpDataStream = new AFPDataStream();
         _afpDataStream.setPortraitRotation(_portraitRotation);
         _afpDataStream.setLandscapeRotation(_landscapeRotation);
@@ -883,7 +882,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                         pts2units(x2),
                         pts2units(ym1),
                         pts2units(h3),
-                        new AFPFontColor(col)
+                        col
                     );
                     _afpDataStream.createLine(
                         pts2units(x1),
@@ -891,7 +890,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                         pts2units(x2),
                         pts2units(ym2),
                         pts2units(h3),
-                        new AFPFontColor(col)
+                        col
                     );
                 } else {
                     float w3 = w / 3;
@@ -903,7 +902,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                         pts2units(xm1),
                         pts2units(y2),
                         pts2units(w3),
-                        new AFPFontColor(col)
+                        col
                     );
                     _afpDataStream.createLine(
                         pts2units(xm2),
@@ -911,7 +910,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                         pts2units(xm2),
                         pts2units(y2),
                         pts2units(w3),
-                        new AFPFontColor(col)
+                        col
                     );
                 }
                 break;
@@ -925,7 +924,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                             pts2units(x1 + w2),
                             pts2units(y1),
                             pts2units(h),
-                            new AFPFontColor(col)
+                            col
                         );
                         x1 += 2 * w2;
                     }
@@ -938,7 +937,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                             pts2units(x1),
                             pts2units(y1 + h2),
                             pts2units(w),
-                            new AFPFontColor(col)
+                            col
                         );
                         y1 += 2 * h2;
                     }
@@ -953,7 +952,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                             pts2units(x1 + h),
                             pts2units(y1),
                             pts2units(h),
-                            new AFPFontColor(col)
+                            col
                         );
                         x1 += 2 * h;
                     }
@@ -965,7 +964,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                             pts2units(x1),
                             pts2units(y1 + w),
                             pts2units(w),
-                            new AFPFontColor(col)
+                            col
                         );
                         y1 += 2 * w;
                     }
@@ -986,7 +985,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                         pts2units(x2),
                         pts2units(ym1),
                         pts2units(h3),
-                        new AFPFontColor(uppercol)
+                        uppercol
                     );
                     _afpDataStream.createLine(
                         pts2units(x1),
@@ -994,7 +993,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                         pts2units(x2),
                         pts2units(ym1 + h3),
                         pts2units(h3),
-                        new AFPFontColor(col)
+                        col
                     );
                     _afpDataStream.createLine(
                         pts2units(x1),
@@ -1002,7 +1001,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                         pts2units(x2),
                         pts2units(ym1 + h3 + h3),
                         pts2units(h3),
-                        new AFPFontColor(lowercol)
+                        lowercol
                     );
                 } else {
                     Color leftcol = lightenColor(col, -colFactor);
@@ -1015,7 +1014,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                         pts2units(xm1),
                         pts2units(y2),
                         pts2units(w3),
-                        new AFPFontColor(leftcol)
+                        leftcol
                     );
                     _afpDataStream.createLine(
                         pts2units(xm1 + w3),
@@ -1023,7 +1022,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                         pts2units(xm1 + w3),
                         pts2units(y2),
                         pts2units(w3),
-                        new AFPFontColor(col)
+                        col
                     );
                     _afpDataStream.createLine(
                         pts2units(xm1 + w3 + w3),
@@ -1031,7 +1030,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                         pts2units(xm1 + w3 + w3),
                         pts2units(y2),
                         pts2units(w3),
-                        new AFPFontColor(rightcol)
+                        rightcol
                     );
                 }
                 break;
@@ -1047,7 +1046,8 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                     pts2units(horz ? x2 : x1),
                     pts2units(horz ? y1 : y2),
                     pts2units(Math.abs(horz ? (y2 - y1) : (x2 - x1))),
-                    new AFPFontColor(col));
+                    col
+                );
         }
     }
 
@@ -1194,7 +1194,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      */
     public void updateColor(Color col, boolean fill) {
         if (fill) {
-            _currentColor = new AFPFontColor(col);
+            _currentColor = col;
         }
     }
 
@@ -1240,90 +1240,6 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     public void renderImage(Image image, Rectangle2D pos) {
         String url = image.getURL();
         drawImage(url, pos);
-    }
-
-    /**
-     * @see org.apache.fop.render.AbstractRenderer#renderCharacter(Character)
-     */
-    public void renderCharacter(Character ch) {
-        renderInlineAreaBackAndBorders(ch);
-
-        String name = getInternalFontNameForArea(ch);
-        _currentFontSize = ((Integer) ch.getTrait(Trait.FONT_SIZE)).intValue();
-        AFPFont tf = (AFPFont) fontInfo.getFonts().get(name);
-        _currentFontFamily = name;
-
-        Color col = (Color) ch.getTrait(Trait.COLOR);
-
-        int vsci = mpts2units(tf.getWidth(' ', _currentFontSize) / 1000
-                                + ch.getTextWordSpaceAdjust()
-                                + ch.getTextLetterSpaceAdjust());
-
-        // word.getOffset() = only height of text itself
-        // currentBlockIPPosition: 0 for beginning of line; nonzero
-        //  where previous line area failed to take up entire allocated space
-        int rx = currentIPPosition + ch.getBorderAndPaddingWidthStart();
-        int bl = currentBPPosition + ch.getOffset() + ch.getBaselineOffset();
-
-        // Set letterSpacing
-        //float ls = fs.getLetterSpacing() / this.currentFontSize;
-
-        String worddata = ch.getChar();
-
-        // Create an AFPFontAttributes object from the current font details
-        AFPFontAttributes afpFontAttributes =
-            new AFPFontAttributes(name, tf, _currentFontSize);
-
-        if (!_currentPageFonts.containsKey(afpFontAttributes.getFontKey())) {
-            // Font not found on current page, so add the new one
-            _pageFontCounter++;
-            afpFontAttributes.setFontReference(_pageFontCounter);
-            _currentPageFonts.put(
-                afpFontAttributes.getFontKey(),
-                afpFontAttributes);
-
-        } else {
-            // Use the previously stored font attributes
-            afpFontAttributes =
-                (AFPFontAttributes) _currentPageFonts.get(afpFontAttributes.getFontKey());
-
-        }
-
-        // Try and get the encoding to use for the font
-        String encoding = null;
-
-        try {
-            encoding = tf.getCharacterSet(_currentFontSize).getEncoding();
-        } catch (Throwable ex) {
-            encoding = AFPConstants.EBCIDIC_ENCODING;
-            log.warn(
-                "renderTextArea():: Error getting encoding for font "
-                + " - using default encoding "
-                + encoding);
-        }
-
-        try {
-            _afpDataStream.createText(
-                afpFontAttributes.getFontReference(),
-                mpts2units(rx),
-                mpts2units(bl),
-                new AFPFontColor(col),
-                vsci,
-                mpts2units(ch.getTextLetterSpaceAdjust()),
-                worddata.getBytes(encoding));
-
-        } catch (UnsupportedEncodingException usee) {
-            log.error(
-                "renderWordArea:: Font "
-                + afpFontAttributes.getFontKey()
-                + " caused UnsupportedEncodingException");
-
-        }
-
-        super.renderCharacter(ch);
-
-        renderTextDecoration(tf, _currentFontSize, ch, bl, rx);
-
     }
 
     /**
@@ -1390,7 +1306,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                 afpFontAttributes.getFontReference(),
                 mpts2units(rx),
                 mpts2units(bl),
-                new AFPFontColor(col),
+                col,
                 vsci,
                 mpts2units(text.getTextLetterSpaceAdjust()),
                 worddata.getBytes(encoding));

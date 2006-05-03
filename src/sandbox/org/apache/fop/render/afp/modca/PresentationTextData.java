@@ -18,10 +18,10 @@
 
 package org.apache.fop.render.afp.modca;
 
+import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import org.apache.fop.render.afp.AFPFontColor;
 
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
@@ -80,7 +80,7 @@ public class PresentationTextData extends AbstractAFPObject {
     /**
      * The current color
      */
-    private AFPFontColor _currentColor = new AFPFontColor(0, 0, 0);
+    private Color _currentColor = new Color(0, 0, 0);
 
     /**
      * The current variable space increment
@@ -302,7 +302,7 @@ public class PresentationTextData extends AbstractAFPObject {
      * @throws MaximumSizeExceededException
      */
     public void createTextData(int fontNumber, int x, int y, int orientation,
-        AFPFontColor col, int vsci, int ica, byte[] data)
+        Color col, int vsci, int ica, byte[] data)
         throws MaximumSizeExceededException {
 
         ByteArrayOutputStream afpdata = new ByteArrayOutputStream();
@@ -340,7 +340,7 @@ public class PresentationTextData extends AbstractAFPObject {
         // Avoid unnecessary specification of the text color
         if (!col.equals(_currentColor)) {
             setExtendedTextColor(col, afpdata);
-            _currentColor.setTo(col);
+            _currentColor = col;
         }
 
         setCodedFont(BinaryUtils.convert(fontNumber)[0], afpdata);
@@ -380,7 +380,7 @@ public class PresentationTextData extends AbstractAFPObject {
      *            The text color.
      */
     public void createLineData(int x1, int y1, int x2, int y2, int thickness,
-        int orientation, AFPFontColor col) throws MaximumSizeExceededException {
+        int orientation, Color col) throws MaximumSizeExceededException {
 
         ByteArrayOutputStream afpdata = new ByteArrayOutputStream();
 
@@ -401,7 +401,7 @@ public class PresentationTextData extends AbstractAFPObject {
 
         if (!col.equals(_currentColor)) {
             setExtendedTextColor(col, afpdata);
-            _currentColor.setTo(col);
+            _currentColor = col;
         }
 
         if (y1 == y2) {
@@ -484,7 +484,7 @@ public class PresentationTextData extends AbstractAFPObject {
      * @param afpdata
      *            The output stream to which data should be written.
      */
-    private void setExtendedTextColor(AFPFontColor col,
+    private void setExtendedTextColor(Color col,
         ByteArrayOutputStream afpdata) {
 
         afpdata.write(new byte[] {
