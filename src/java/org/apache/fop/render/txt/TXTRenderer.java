@@ -24,6 +24,7 @@ import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
@@ -444,12 +445,12 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
         }
     }
 
-    /** 
-     * Does nothing. 
-     * @param url  String
-     * @param pos  Rectangle2D
+    /**
+     * @see org.apache.fop.render.AbstractPathOrientedRenderer#drawImage(
+     *          java.lang.String, java.awt.geom.Rectangle2D, java.util.Map)
      */
-    protected void drawImage(String url, Rectangle2D pos) {
+    protected void drawImage(String url, Rectangle2D pos, Map foreignAttributes) {
+        //No images are painted here
     }
     
     /**

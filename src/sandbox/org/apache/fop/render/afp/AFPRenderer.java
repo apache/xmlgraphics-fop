@@ -21,6 +21,7 @@ package org.apache.fop.render.afp;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
@@ -33,6 +34,7 @@ import java.util.Map;
 
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.Block;
@@ -77,6 +79,7 @@ import org.apache.fop.render.afp.modca.AFPConstants;
 import org.apache.fop.render.afp.modca.AFPDataStream;
 import org.apache.fop.render.afp.modca.ImageObject;
 import org.apache.fop.render.afp.modca.PageObject;
+import org.w3c.dom.Document;
 
 
 /**
@@ -565,8 +568,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /** @see org.apache.fop.render.Renderer#getGraphics2DAdapter() */
     public Graphics2DAdapter getGraphics2DAdapter() {
-        // TODO
-        return null;
+        return new AFPGraphics2DAdapter();
     }
 
     /**
@@ -1053,9 +1055,9 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Draw an image at the indicated location.
-     * @see org.apache.fop.render.AbstractRenderer#drawImage(String, Rectangle2D)
+     * @see org.apache.fop.render.AbstractRenderer#drawImage(String, Rectangle2D, Map)
      */
-    public void drawImage(String url, Rectangle2D pos) {
+    public void drawImage(String url, Rectangle2D pos, Map foreignAttributes) {
         String name = null;
         if (_pageSegmentsMap != null) {
             name = (String)_pageSegmentsMap.get(url);
@@ -1076,6 +1078,13 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
             }
             String mime = fopimage.getMimeType();
             if ("text/xml".equals(mime)) {
+                if (!fopimage.load(FopImage.ORIGINAL_DATA)) {
+                    return;
+                }
+                Document doc = ((XMLImage) fopimage).getDocument();
+                String ns = ((XMLImage) fopimage).getNameSpace();
+
+                renderDocument(doc, ns, pos, foreignAttributes);
             } else if (MimeConstants.MIME_SVG.equals(mime)) {
                 if (!fopimage.load(FopImage.ORIGINAL_DATA)) {
                     return;
@@ -1098,6 +1107,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                     convertToGrayScaleImage(io, SVGConverter.convertToTIFF((XMLImage)fopimage));
                 }
             } else if (MimeConstants.MIME_EPS.equals(mime)) {
+                log.warn("EPS images are not supported by this renderer");
             /*
             } else if (MimeConstants.MIME_JPEG.equals(mime)) {
                 if (!fopimage.load(FopImage.ORIGINAL_DATA)) {
@@ -1188,6 +1198,46 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         }
     }
 
+    /**
+     * Draws a BufferedImage to AFP.
+     * @param bi the BufferedImage
+     * @param resolution the resolution of the BufferedImage
+     * @param x the x coordinate (in mpt)
+     * @param y the y coordinate (in mpt)
+     * @param w the width of the viewport (in mpt)
+     * @param h the height of the viewport (in mpt)
+     */
+    public void drawBufferedImage(BufferedImage bi, int resolution, int x, int y, int w, int h) {
+        int afpx = mpts2units(x);
+        int afpy = mpts2units(y);
+        int afpw = mpts2units(w);
+        int afph = mpts2units(h);
+        ByteArrayOutputStream baout = new ByteArrayOutputStream();
+        try {
+            //Serialize image
+            SVGConverter.writeImage(bi, baout);
+            byte[] buf = baout.toByteArray();
+            
+            //Generate image
+            ImageObject io = _afpDataStream.getImageObject(afpx, afpy, afpw, afph);
+            io.setImageParameters(
+                resolution, resolution,
+                bi.getWidth(),
+                bi.getHeight()
+            );
+            if (colorImages) {
+                io.setImageIDESize((byte)24);
+                io.setImageData(buf);
+            } else {
+                //TODO Teach it how to handle grayscale BufferedImages directly
+                //because this is pretty inefficient
+                convertToGrayScaleImage(io, buf);
+            }
+        } catch (IOException ioe) {
+            log.error("Error while serializing bitmap: " + ioe.getMessage(), ioe);
+        }
+    }
+    
     /**
      * Establishes a new foreground or fill color.
      * @see org.apache.fop.render.AbstractRenderer#updateColor(Color, boolean)

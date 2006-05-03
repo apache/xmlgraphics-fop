@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ package org.apache.fop.render;
 import java.util.Map;
 
 //FOP
+import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.fop.apps.FOUserAgent;
 
 /**
@@ -101,5 +102,65 @@ public class RendererContext {
         return props.get(prop);
     }
 
+    /**
+     * Wrap the render context to allow easier access to its values.
+     *
+     * @param context the renderer context
+     * @return the generic renderer context wrapper
+     */
+    public static RendererContextWrapper wrapRendererContext(RendererContext context) {
+        RendererContextWrapper wrapper = new RendererContextWrapper(context);
+        return wrapper;
+    }
+
+    /**
+     * Base class for a wrapper around RendererContext to access its properties in a type-safe,
+     * renderer-specific way.
+     */
+    public static class RendererContextWrapper {
+
+        /** The wrapped RendererContext */
+        protected RendererContext context;
+        
+        /**
+         * Main constructor
+         * @param context the RendererContent instance
+         */
+        public RendererContextWrapper(RendererContext context) {
+            this.context = context;
+        }
+        
+        /** @return the currentXPosition */
+        public int getCurrentXPosition() {
+            return ((Integer)context.getProperty(RendererContextConstants.XPOS)).intValue();
+        }
+
+        /** @return the currentYPosition */
+        public int getCurrentYPosition() {
+            return ((Integer)context.getProperty(RendererContextConstants.YPOS)).intValue();
+        }
+
+        /** @return the width of the image */
+        public int getWidth() {
+            return ((Integer)context.getProperty(RendererContextConstants.WIDTH)).intValue();
+        }
+
+        /** @return the height of the image */
+        public int getHeight() {
+            return ((Integer)context.getProperty(RendererContextConstants.HEIGHT)).intValue();
+        }
+
+        /** @return the handler configuration */
+        public Configuration getHandlerConfiguration() {
+            return (Configuration)context.getProperty(
+                    RendererContextConstants.HANDLER_CONFIGURATION);
+        }
+
+        /** @return the foreign attributes */
+        public Map getForeignAttributes() {
+            return (Map)context.getProperty(RendererContextConstants.FOREIGN_ATTRIBUTES);
+        }
+        
+    }    
 }
 

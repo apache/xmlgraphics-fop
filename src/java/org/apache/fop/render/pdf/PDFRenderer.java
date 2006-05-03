@@ -54,7 +54,6 @@ import org.apache.fop.area.OffDocumentItem;
 import org.apache.fop.area.BookmarkData;
 import org.apache.fop.area.inline.AbstractTextArea;
 import org.apache.fop.area.inline.TextArea;
-import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.InlineParent;
@@ -1323,7 +1322,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /** @see org.apache.fop.render.AbstractPathOrientedRenderer */
-    protected void drawImage(String url, Rectangle2D pos) {
+    protected void drawImage(String url, Rectangle2D pos, Map foreignAttributes) {
         endTextObject();
         putImage(url, pos);
     }
@@ -1360,7 +1359,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
             Document doc = ((XMLImage) fopimage).getDocument();
             String ns = ((XMLImage) fopimage).getNameSpace();
 
-            renderDocument(doc, ns, pos);
+            renderDocument(doc, ns, pos, null);
         } else if ("image/svg+xml".equals(mime)) {
             if (!fopimage.load(FopImage.ORIGINAL_DATA)) {
                 return;
@@ -1368,7 +1367,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
             Document doc = ((XMLImage) fopimage).getDocument();
             String ns = ((XMLImage) fopimage).getNameSpace();
 
-            renderDocument(doc, ns, pos);
+            renderDocument(doc, ns, pos, null);
         } else if ("image/eps".equals(mime)) {
             FopPDFImage pdfimage = new FopPDFImage(fopimage, url);
             int xobj = pdfDoc.addImage(currentContext, pdfimage).getXNumber();
@@ -1428,49 +1427,26 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderForeignObject(ForeignObject, Rectangle2D)
+     * @see org.apache.fop.render.PrintRenderer#createRendererContext(
+     *          int, int, int, int, java.util.Map)
      */
-    public void renderForeignObject(ForeignObject fo, Rectangle2D pos) {
-        endTextObject();
-        Document doc = fo.getDocument();
-        String ns = fo.getNameSpace();
-        renderDocument(doc, ns, pos);
-    }
-
-    /**
-     * Renders an XML document (SVG for example).
-     * @param doc DOM document representing the XML document
-     * @param ns Namespace for the document
-     * @param pos Position on the page
-     */
-    public void renderDocument(Document doc, String ns, Rectangle2D pos) {
-        RendererContext context;
-        context = new RendererContext(this, MIME_TYPE);
-        context.setUserAgent(userAgent);
-
+    protected RendererContext createRendererContext(int x, int y, int width, int height, 
+            Map foreignAttributes) {
+        RendererContext context = super.createRendererContext(
+                x, y, width, height, foreignAttributes);
         context.setProperty(PDFRendererContextConstants.PDF_DOCUMENT, pdfDoc);
         context.setProperty(PDFRendererContextConstants.OUTPUT_STREAM, ostream);
-        context.setProperty(PDFRendererContextConstants.PAGE_VIEWPORT, getCurrentPageViewport());
         context.setProperty(PDFRendererContextConstants.PDF_STATE, currentState);
         context.setProperty(PDFRendererContextConstants.PDF_PAGE, currentPage);
         context.setProperty(PDFRendererContextConstants.PDF_CONTEXT,
                     currentContext == null ? currentPage : currentContext);
         context.setProperty(PDFRendererContextConstants.PDF_CONTEXT, currentContext);
         context.setProperty(PDFRendererContextConstants.PDF_STREAM, currentStream);
-        context.setProperty(PDFRendererContextConstants.XPOS,
-                            new Integer(currentIPPosition + (int) pos.getX()));
-        context.setProperty(PDFRendererContextConstants.YPOS,
-                            new Integer(currentBPPosition + (int) pos.getY()));
         context.setProperty(PDFRendererContextConstants.PDF_FONT_INFO, fontInfo);
         context.setProperty(PDFRendererContextConstants.PDF_FONT_NAME, currentFontName);
         context.setProperty(PDFRendererContextConstants.PDF_FONT_SIZE,
                             new Integer(currentFontSize));
-        context.setProperty(PDFRendererContextConstants.WIDTH,
-                            new Integer((int) pos.getWidth()));
-        context.setProperty(PDFRendererContextConstants.HEIGHT,
-                            new Integer((int) pos.getHeight()));
-        renderXML(context, doc, ns);
-
+        return context;
     }
 
     /**

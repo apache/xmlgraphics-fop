@@ -18,10 +18,7 @@
  
 package org.apache.fop.render.pcl;
 
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -30,7 +27,7 @@ import java.io.IOException;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.render.Graphics2DAdapter;
+import org.apache.fop.render.AbstractGraphics2DAdapter;
 import org.apache.fop.render.Graphics2DImagePainter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.util.UnitConv;
@@ -39,7 +36,7 @@ import org.apache.xmlgraphics.java2d.GraphicContext;
 /**
  * Graphics2DAdapter implementation for PCL and HP GL/2.
  */
-public class PCLGraphics2DAdapter implements Graphics2DAdapter {
+public class PCLGraphics2DAdapter extends AbstractGraphics2DAdapter {
 
     /** logging instance */
     private static Log log = LogFactory.getLog(PCLGraphics2DAdapter.class);
@@ -58,7 +55,7 @@ public class PCLGraphics2DAdapter implements Graphics2DAdapter {
         PCLRenderer pcl = (PCLRenderer)context.getRenderer();
         PCLGenerator gen = pcl.gen;
         
-        // get the 'width' and 'height' attributes of the SVG document
+        // get the 'width' and 'height' attributes of the image/document
         Dimension dim = painter.getImageSize();
         float imw = (float)dim.getWidth();
         float imh = (float)dim.getHeight();
@@ -109,35 +106,9 @@ public class PCLGraphics2DAdapter implements Graphics2DAdapter {
         }
         
         if (!painted) {
-            int resolution = 300; //TODO not hard-coded, please!
-            int bmw = UnitConv.mpt2px(pclContext.getWidth(), resolution);
-            int bmh = UnitConv.mpt2px(pclContext.getHeight(), resolution);
-            BufferedImage bi = new BufferedImage(
-                    bmw, bmh,
-                    BufferedImage.TYPE_BYTE_GRAY);
-            Graphics2D g2d = bi.createGraphics();
-            try {
-                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
-                    RenderingHints.VALUE_ANTIALIAS_OFF);
-                g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, 
-                    RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
-                g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, 
-                    RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-                
-                g2d.setBackground(Color.white);
-                g2d.setColor(Color.black);
-                g2d.clearRect(0, 0, bmw, bmh);
-                double sx = (double)bmw / pclContext.getWidth();
-                double sy = (double)bmh / pclContext.getHeight();
-                g2d.scale(sx, sy);
-
-                //Paint the SVG on the BufferedImage
-                Rectangle2D area = new Rectangle2D.Double(
-                        0.0, 0.0, pclContext.getWidth(), pclContext.getHeight());
-                painter.paint(g2d, area);
-            } finally {
-                g2d.dispose();
-            }
+            //Fallback solution: Paint to a BufferedImage
+            int resolution = (int)Math.round(context.getUserAgent().getTargetResolution());
+            BufferedImage bi = paintToBufferedImage(painter, pclContext, resolution, true);
 
             pcl.setCursorPos(x, y);
             gen.paintBitmap(bi, resolution);

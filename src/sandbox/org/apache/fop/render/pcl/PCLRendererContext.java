@@ -29,10 +29,8 @@ import org.apache.fop.util.QName;
  * Wrapper on the RendererContext to access the information structure for drawing 
  * the XML document.
  */
-public class PCLRendererContext {
+public class PCLRendererContext extends RendererContext.RendererContextWrapper {
 
-    private RendererContext context;
-    
     /**
      * Wrap the render context to allow easier access to its values.
      *
@@ -49,37 +47,7 @@ public class PCLRendererContext {
      * @param context the RendererContent instance
      */
     public PCLRendererContext(RendererContext context) {
-        this.context = context;
-    }
-    
-    /** @return the currentXPosition */
-    public int getCurrentXPosition() {
-        return ((Integer)context.getProperty(PCLSVGHandler.XPOS)).intValue();
-    }
-
-    /** @return the currentYPosition */
-    public int getCurrentYPosition() {
-        return ((Integer)context.getProperty(PCLSVGHandler.YPOS)).intValue();
-    }
-
-    /** @return the width of the image */
-    public int getWidth() {
-        return ((Integer)context.getProperty(PCLSVGHandler.WIDTH)).intValue();
-    }
-
-    /** @return the height of the image */
-    public int getHeight() {
-        return ((Integer)context.getProperty(PCLSVGHandler.HEIGHT)).intValue();
-    }
-
-    /** @return the handler configuration */
-    public Configuration getHandlerConfiguration() {
-        return (Configuration)context.getProperty(PCLSVGHandler.HANDLER_CONFIGURATION);
-    }
-
-    /** @return the foreign attributes */
-    public Map getForeignAttributes() {
-        return (Map)context.getProperty(PCLSVGHandler.FOREIGN_ATTRIBUTES);
+        super(context);
     }
     
     /** @return true if the SVG image should be rendered as a bitmap */

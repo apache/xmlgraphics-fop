@@ -776,54 +776,6 @@ public class PCLRenderer extends PrintRenderer {
         renderDocument(doc, ns, pos, fo.getForeignAttributes());
     }
 
-    /**
-     * Renders an XML document (SVG for example).
-     * @param doc the DOM Document containing the XML document to be rendered
-     * @param ns the namespace URI for the XML document
-     * @param pos the position for the generated graphic/image
-     * @param foreignAttributes the foreign attributes containing rendering hints, or null
-     */
-    public void renderDocument(Document doc, String ns, Rectangle2D pos, Map foreignAttributes) {
-        int x = currentIPPosition + (int) pos.getX(); 
-        int y = currentBPPosition + (int) pos.getY();
-        int width = (int)pos.getWidth();
-        int height = (int)pos.getHeight();
-        RendererContext context = createRendererContext(x, y, width, height, foreignAttributes);
-        
-        renderXML(context, doc, ns);
-    }
-
-    /**
-     * Creates a RendererContext for an image.
-     * @param x the x coordinate (in millipoints)
-     * @param y the y coordinate (in millipoints)
-     * @param width the width of the image (in millipoints)
-     * @param height the height of the image (in millipoints)
-     * @param foreignAttributes a Map or foreign attributes, may be null
-     * @return the RendererContext
-     */
-    protected RendererContext createRendererContext(int x, int y, int width, int height, 
-            Map foreignAttributes) {
-        RendererContext context;
-        context = new RendererContext(this, MIME_TYPE);
-        context.setUserAgent(userAgent);
-
-        context.setProperty(RendererContextConstants.WIDTH,
-                            new Integer(width));
-        context.setProperty(RendererContextConstants.HEIGHT,
-                            new Integer(height));
-        context.setProperty(RendererContextConstants.XPOS,
-                            new Integer(x));
-        context.setProperty(RendererContextConstants.YPOS,
-                            new Integer(y));
-        context.setProperty(RendererContextConstants.PAGE_VIEWPORT, 
-                            getCurrentPageViewport());
-        if (foreignAttributes != null) {
-            context.setProperty(RendererContextConstants.FOREIGN_ATTRIBUTES, foreignAttributes);
-        }
-        return context;
-    }
-
     /** 
      * Common method to render the background and borders for any inline area.
      * The all borders and padding are drawn outside the specified area.

@@ -22,6 +22,7 @@ import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
@@ -29,12 +30,14 @@ import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.CTM;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
+import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.traits.BorderProps;
+import org.w3c.dom.Document;
 
 /**
  * Abstract base class for renderers like PDF and PostScript where many painting operations
@@ -661,8 +664,18 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
      * Draw an image at the indicated location.
      * @param url the URI/URL of the image
      * @param pos the position of the image
+     * @param foreignAttributes an optional Map with foreign attributes, may be null
      */
-    protected abstract void drawImage(String url, Rectangle2D pos);
+    protected abstract void drawImage(String url, Rectangle2D pos, Map foreignAttributes);
+    
+    /**
+     * Draw an image at the indicated location.
+     * @param url the URI/URL of the image
+     * @param pos the position of the image
+     */
+    protected final void drawImage(String url, Rectangle2D pos) {
+        drawImage(url, pos, null);
+    }
     
     /**
      * Draw a border segment of an XSL-FO style border.
@@ -678,5 +691,15 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
      */
     protected abstract void drawBorderLine(float x1, float y1, float x2, float y2, 
             boolean horz, boolean startOrBefore, int style, Color col);
+
+    /**
+     * @see org.apache.fop.render.AbstractRenderer#renderForeignObject(ForeignObject, Rectangle2D)
+     */
+    public void renderForeignObject(ForeignObject fo, Rectangle2D pos) {
+        endTextObject();
+        Document doc = fo.getDocument();
+        String ns = fo.getNameSpace();
+        renderDocument(doc, ns, pos, fo.getForeignAttributes());
+    }
     
 }
