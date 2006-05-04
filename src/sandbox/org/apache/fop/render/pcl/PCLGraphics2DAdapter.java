@@ -74,6 +74,7 @@ public class PCLGraphics2DAdapter extends AbstractGraphics2DAdapter {
 
                 PCLGraphics2D graphics = new PCLGraphics2D(tempGen);
                 graphics.setGraphicContext(ctx);
+                graphics.setClippingDisabled(pclContext.isClippingDisabled());
                 Rectangle2D area = new Rectangle2D.Double(0.0, 0.0, imw, imh);
                 painter.paint(graphics, area);
                 
