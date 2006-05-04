@@ -95,6 +95,14 @@ public class PCLGraphics2D extends AbstractGraphics2D {
     }
 
     /**
+     * Allows to disable all clipping operations.
+     * @param value true if clipping should be disabled.
+     */
+    public void setClippingDisabled(boolean value) {
+        this.clippingDisabled = value;
+    }
+    
+    /**
      * Central handler for IOExceptions for this class.
      * @param ioe IOException to handle
      */

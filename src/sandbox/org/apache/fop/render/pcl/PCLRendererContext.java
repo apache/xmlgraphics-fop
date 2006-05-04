@@ -18,9 +18,6 @@
 
 package org.apache.fop.render.pcl;
 
-import java.util.Map;
-
-import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.util.QName;
@@ -54,7 +51,15 @@ public class PCLRendererContext extends RendererContext.RendererContextWrapper {
     public boolean paintAsBitmap() {
         QName qName = new QName(ExtensionElementMapping.URI, null, "conversion-mode");
         return getForeignAttributes() != null 
-             && "bitmap".equals(getForeignAttributes().get(qName));
+             && "bitmap".equalsIgnoreCase((String)getForeignAttributes().get(qName));
     }
+    
+    /** @return true if clipping is disabled inside the PCLGraphics2D. */
+    public boolean isClippingDisabled() {
+        QName qName = new QName(ExtensionElementMapping.URI, null, "disable-clipping");
+        return getForeignAttributes() != null 
+             && "true".equalsIgnoreCase((String)getForeignAttributes().get(qName));
+    }
+    
 
 }
