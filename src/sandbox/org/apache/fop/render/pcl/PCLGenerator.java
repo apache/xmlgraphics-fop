@@ -135,7 +135,34 @@ public class PCLGenerator {
     public void formFeed() throws IOException {
         out.write(12); //=OC ("FF", Form feed)
     }
+
+    /**
+     * Sets the unit of measure.
+     * @param value the resolution value (units per inch)
+     * @throws IOException In case of an I/O error
+     */
+    public void setUnitOfMeasure(int value) throws IOException {
+        writeCommand("&u" + value + "D");
+    }
     
+    /**
+     * Sets the raster graphics resolution
+     * @param value the resolution value (units per inch)
+     * @throws IOException In case of an I/O error
+     */
+    public void setRasterGraphicsResolution(int value) throws IOException {
+        writeCommand("*t" + value + "R");
+    }
+    
+    /**
+     * Selects the page size.
+     * @param selector the integer representing the page size
+     * @throws IOException In case of an I/O error
+     */
+    public void selectPageSize(int selector) throws IOException {
+        writeCommand("&l" + selector + "A");
+    }
+
     /**
      * Clears the horizontal margins.
      * @throws IOException In case of an I/O error
@@ -155,6 +182,25 @@ public class PCLGenerator {
     }
 
     /**
+     * The Text Length command can be used to define the bottom border. See the PCL specification
+     * for details.
+     * @param numberOfLines the number of lines
+     * @throws IOException In case of an I/O error
+     */
+    public void setTextLength(int numberOfLines) throws IOException {
+        writeCommand("&l" + numberOfLines + "F");
+    }
+
+    /**
+     * Sets the Vertical Motion Index (VMI).
+     * @param value the VMI value
+     * @throws IOException In case of an I/O error
+     */
+    public void setVMI(double value) throws IOException {
+        writeCommand("&l" + formatDouble4(value) + "C");
+    }
+
+    /**
      * Sets the cursor to a new absolute coordinate.
      * @param x the X coordinate (in millipoints)
      * @param y the Y coordinate (in millipoints)
@@ -171,6 +217,15 @@ public class PCLGenerator {
         }
     }
 
+    /**
+     * Changes the current print direction while maintaining the current cursor position.
+     * @param rotate the rotation angle (counterclockwise), one of 0, 90, 180 and 270.
+     * @throws IOException In case of an I/O error
+     */
+    public void changePrintDirection(int rotate) throws IOException {
+        writeCommand("&a" + rotate + "P");
+    }
+    
     /**
      * Enters the HP GL/2 mode.
      * @param restorePreviousHPGL2Cursor true if the previous HP GL/2 pen position should be 
@@ -200,16 +255,14 @@ public class PCLGenerator {
     }
     
     /**
-     * Generate a filled rectangle
+     * Generate a filled rectangle at the current cursor position.
      *
-     * @param x the x position of left edge in millipoints
-     * @param y the y position of top edge in millipoints
      * @param w the width in millipoints
      * @param h the height in millipoints
      * @param col the fill color
      * @throws IOException In case of an I/O error
      */
-    protected void fillRect(int x, int y, int w, int h, Color col) throws IOException {
+    protected void fillRect(int w, int h, Color col) throws IOException {
         if ((w == 0) || (h == 0)) {
             return;
         }
@@ -219,22 +272,14 @@ public class PCLGenerator {
             //y += h;
         }
 
-        int xpos = (x / 100);
-        if (xpos < 0) {
-            //A negative x coordinate can lead to a displaced rectangle (xpos must be >= 0) 
-            w += x;
-            xpos = 0;
-        }
-        writeCommand("*v1O");
-        writeCommand("&a" + formatDouble4(xpos) + "h" 
-                          + formatDouble4(y / 100) + "V");
+        setPatternTransparencyMode(false);
         writeCommand("*c" + formatDouble4(w / 100) + "h" 
                           + formatDouble4(h / 100) + "V");
         int lineshade = convertToPCLShade(col);
         writeCommand("*c" + lineshade + "G");
         writeCommand("*c2P");
         // Reset pattern transparency mode.
-        writeCommand("*v0O");
+        setPatternTransparencyMode(true);
     }
 
     /**
@@ -441,7 +486,7 @@ public class PCLGenerator {
         if (!isValidPCLResolution(resolution)) {
             throw new IllegalArgumentException("Invalid PCL resolution: " + resolution);
         }
-        writeCommand("*t" + resolution + "R");
+        setRasterGraphicsResolution(resolution);
         writeCommand("*r0f" + img.getHeight() + "t" + img.getWidth() + "s1A");
         Raster raster = img.getData();
         boolean monochrome = isMonochromeImage(img);

@@ -51,6 +51,8 @@ import org.apache.xmlgraphics.java2d.GraphicContext;
 // FOP
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.Area;
@@ -80,11 +82,15 @@ import org.apache.fop.render.RendererContextConstants;
 import org.apache.fop.render.java2d.Java2DRenderer;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.util.QName;
+import org.apache.fop.util.UnitConv;
 
 /**
  * Renderer for the PCL 5 printer language. It also uses HP GL/2 for certain graphic elements.
  */
 public class PCLRenderer extends PrintRenderer {
+
+    /** logging instance */
+    private static Log log = LogFactory.getLog(PCLRenderer.class);
 
     /** The MIME type for PCL */
     public static final String MIME_TYPE = MimeConstants.MIME_PCL_ALT;
@@ -99,6 +105,8 @@ public class PCLRenderer extends PrintRenderer {
     private Stack graphicContextStack = new Stack();
     private GraphicContext graphicContext = new GraphicContext();
 
+    private PCLPageDefinition currentPageDefinition;
+    private int currentPrintDirection = 0;
     private GeneralPath currentPath = null;
     private java.awt.Color currentFillColor = null;
     
@@ -298,25 +306,27 @@ public class PCLRenderer extends PrintRenderer {
     }
 
     private void selectPageFormat(long pagewidth, long pageheight) throws IOException {
-        
-        PCLPageDefinition pageDef = PCLPageDefinition.getPageDefinition(
+        this.currentPageDefinition = PCLPageDefinition.getPageDefinition(
                 pagewidth, pageheight, 1000);
-        if (pageDef != null) {
-            // Adjust for the offset into the logical page
-            graphicContext.translate(-pageDef.getLogicalPageXOffset(), 0);
-            if (pageDef.isLandscapeFormat()) {
-                gen.writeCommand("&l1O"); //Orientation
-            } else {
-                gen.writeCommand("&l0O"); //Orientation
-            }
+        if (this.currentPageDefinition == null) {
+            this.currentPageDefinition = PCLPageDefinition.getDefaultPageDefinition();
+            log.warn("Paper type could not be determined. Falling back to: " 
+                    + this.currentPageDefinition.getName());
+        }
+        log.debug("page size: " + currentPageDefinition.getPhysicalPageSize());
+        log.debug("logical page: " + currentPageDefinition.getLogicalPageRect());
+        gen.selectPageSize(this.currentPageDefinition.getSelector());
+        
+        if (this.currentPageDefinition.isLandscapeFormat()) {
+            gen.writeCommand("&l1O"); //Orientation
         } else {
-            // Adjust for the offset into the logical page
-            // X Offset to allow for PCL implicit 1/4" left margin (= 180 decipoints)
-            graphicContext.translate(-18000, 18000);
             gen.writeCommand("&l0O"); //Orientation
         }
         gen.clearHorizontalMargins();
         gen.setTopMargin(0);
+        gen.setVMI(0);
+        gen.setUnitOfMeasure(600);
+        gen.setRasterGraphicsResolution(600);
     }
 
     /** Saves the current graphics state on the stack. */
@@ -343,14 +353,95 @@ public class PCLRenderer extends PrintRenderer {
         //PCL cannot clip (only HP GL/2 can)
     }
 
+    private Point2D transformedPoint(float x, float y) {
+        return transformedPoint(Math.round(x), Math.round(y));
+    }
+    
+    private Point2D transformedPoint(int x, int y) {
+        AffineTransform at = graphicContext.getTransform();
+        if (log.isTraceEnabled()) {
+            log.trace("Current transform: " + at);
+        }
+        Point2D.Float orgPoint = new Point2D.Float(x, y);
+        Point2D.Float transPoint = new Point2D.Float();
+        at.transform(orgPoint, transPoint);
+        //At this point we have the absolute position in FOP's coordinate system
+        
+        //Now get PCL coordinates taking the current print direction and the logical page
+        //into account.
+        Dimension pageSize = currentPageDefinition.getPhysicalPageSize();
+        Rectangle logRect = currentPageDefinition.getLogicalPageRect();
+        switch (currentPrintDirection) {
+        case 0:
+            transPoint.x -= logRect.x;
+            transPoint.y -= logRect.y;
+            break;
+        case 90:
+            float ty = transPoint.x;
+            transPoint.x = pageSize.height - transPoint.y;
+            transPoint.y = ty;
+            transPoint.x -= logRect.y;
+            transPoint.y -= logRect.x;
+            break;
+        case 180:
+            transPoint.x = pageSize.width - transPoint.x;
+            transPoint.y = pageSize.height - transPoint.y;
+            transPoint.x -= pageSize.width - logRect.x - logRect.width;
+            transPoint.y -= pageSize.height - logRect.y - logRect.height;
+            //The next line is odd and is probably necessary due to the default value of the
+            //Text Length command: "1/2 inch less than maximum text length"
+            //I wonder why this isn't necessary for the 90° rotation. *shrug*
+            transPoint.y -= UnitConv.in2mpt(0.5);
+            break;
+        case 270:
+            float tx = transPoint.y;
+            transPoint.y = pageSize.width - transPoint.x;
+            transPoint.x = tx;
+            transPoint.x -= pageSize.height - logRect.y - logRect.height;
+            transPoint.y -= pageSize.width - logRect.x - logRect.width;
+            break;
+        default:
+            throw new IllegalStateException("Illegal print direction: " + currentPrintDirection);
+        }
+        return transPoint;
+    }
+    
+    private void changePrintDirection() {
+        AffineTransform at = graphicContext.getTransform();
+        int newDir;
+        try {
+            if (at.getScaleX() == 0 && at.getScaleY() == 0 
+                    && at.getShearX() == 1 && at.getShearY() == -1) {
+                newDir = 90;
+            } else if (at.getScaleX() == -1 && at.getScaleY() == -1 
+                    && at.getShearX() == 0 && at.getShearY() == 0) {
+                newDir = 180;
+            } else if (at.getScaleX() == 0 && at.getScaleY() == 0 
+                    && at.getShearX() == -1 && at.getShearY() == 1) {
+                newDir = 270;
+            } else {
+                newDir = 0;
+            }
+            if (newDir != this.currentPrintDirection) {
+                this.currentPrintDirection = newDir;
+                gen.changePrintDirection(this.currentPrintDirection);
+            }
+        } catch (IOException ioe) {
+            handleIOTrouble(ioe);
+        }
+    }
+
     /**
      * @see org.apache.fop.render.AbstractRenderer#startVParea(CTM, Rectangle2D)
      */
     protected void startVParea(CTM ctm, Rectangle2D clippingRect) {
         saveGraphicsState();
         AffineTransform at = new AffineTransform(ctm.toArray());
-        log.debug("startVPArea: " + at);
         graphicContext.transform(at);
+        changePrintDirection();
+        if (log.isDebugEnabled()) {
+            log.debug("startVPArea: " + at + " --> " + graphicContext.getTransform());
+        }
     }
 
     /**
@@ -358,6 +449,10 @@ public class PCLRenderer extends PrintRenderer {
      */
     protected void endVParea() {
         restoreGraphicsState();
+        changePrintDirection();
+        if (log.isDebugEnabled()) {
+            log.debug("endVPArea() --> " + graphicContext.getTransform());
+        }
     }
 
     /**
@@ -413,7 +508,6 @@ public class PCLRenderer extends PrintRenderer {
             }
             
             saveGraphicsState();
-            updatePrintDirection();
             graphicContext.translate(rx, bl);
             setCursorPos(0, 0);
         
@@ -448,7 +542,7 @@ public class PCLRenderer extends PrintRenderer {
         if (currentPath == null) {
             throw new IllegalStateException("No current path available!");
         }
-        //TODO Find a good way to do clipping
+        //TODO Find a good way to do clipping. PCL itself cannot clip.
         currentPath = null;
     }
 
@@ -488,9 +582,8 @@ public class PCLRenderer extends PrintRenderer {
      */
     protected void fillRect(float x, float y, float width, float height) {
         try {
-            Point2D p = transformedPoint(x * 1000, y * 1000);
-            gen.fillRect((int)p.getX(), (int)p.getY(), 
-                    (int)width * 1000, (int)height * 1000, 
+            setCursorPos(x * 1000, y * 1000);
+            gen.fillRect((int)width * 1000, (int)height * 1000, 
                     this.currentFillColor);
         } catch (IOException ioe) {
             handleIOTrouble(ioe);
@@ -505,41 +598,6 @@ public class PCLRenderer extends PrintRenderer {
         this.currentFillColor = color;
     }
 
-    private void updatePrintDirection() throws IOException {
-        AffineTransform at = graphicContext.getTransform();
-        if (log.isDebugEnabled()) {
-            log.debug(at.getScaleX() + " " + at.getScaleY() + " " 
-                    + at.getShearX() + " " + at.getShearY() );
-        }
-        if (at.getScaleX() == 0 && at.getScaleY() == 0 
-                && at.getShearX() == 1 && at.getShearY() == -1) {
-            gen.writeCommand("&a90P");
-        } else if (at.getScaleX() == -1 && at.getScaleY() == -1 
-                && at.getShearX() == 0 && at.getShearY() == 0) {
-            gen.writeCommand("&a180P");
-        } else if (at.getScaleX() == 0 && at.getScaleY() == 0 
-                && at.getShearX() == -1 && at.getShearY() == 1) {
-            gen.writeCommand("&a270P");
-        } else {
-            gen.writeCommand("&a0P");
-        }
-    }
-
-    private Point2D transformedPoint(float x, float y) {
-        return transformedPoint(Math.round(x), Math.round(y));
-    }
-    
-    private Point2D transformedPoint(int x, int y) {
-        AffineTransform at = graphicContext.getTransform();
-        if (log.isDebugEnabled()) {
-            log.debug("Current transform: " + at);
-        }
-        Point2D orgPoint = new Point2D.Float(x, y);
-        Point2D transPoint = new Point2D.Float();
-        at.transform(orgPoint, transPoint);
-        return transPoint;
-    }
-    
     /**
      * @see org.apache.fop.render.AbstractRenderer#renderWord(org.apache.fop.area.inline.WordArea)
      */
@@ -814,100 +872,94 @@ public class PCLRenderer extends PrintRenderer {
      */
     protected void drawBackAndBorders(Area area, float startx, float starty,
             float width, float height) {
-        try {
-            updatePrintDirection();
-            BorderProps bpsBefore = (BorderProps) area.getTrait(Trait.BORDER_BEFORE);
-            BorderProps bpsAfter = (BorderProps) area.getTrait(Trait.BORDER_AFTER);
-            BorderProps bpsStart = (BorderProps) area.getTrait(Trait.BORDER_START);
-            BorderProps bpsEnd = (BorderProps) area.getTrait(Trait.BORDER_END);
-        
-            // draw background
-            Trait.Background back;
-            back = (Trait.Background) area.getTrait(Trait.BACKGROUND);
-            if (back != null) {
-        
-                // Calculate padding rectangle
-                float sx = startx;
-                float sy = starty;
-                float paddRectWidth = width;
-                float paddRectHeight = height;
-        
-                if (bpsStart != null) {
-                    sx += bpsStart.width / 1000f;
-                    paddRectWidth -= bpsStart.width / 1000f;
-                }
-                if (bpsBefore != null) {
-                    sy += bpsBefore.width / 1000f;
-                    paddRectHeight -= bpsBefore.width / 1000f;
-                }
-                if (bpsEnd != null) {
-                    paddRectWidth -= bpsEnd.width / 1000f;
-                }
-                if (bpsAfter != null) {
-                    paddRectHeight -= bpsAfter.width / 1000f;
-                }
-        
-                if (back.getColor() != null) {
-                    updateFillColor(back.getColor());
-                    fillRect(sx, sy, paddRectWidth, paddRectHeight);
-                }
-        
-                // background image
-                if (back.getFopImage() != null) {
-                    FopImage fopimage = back.getFopImage();
-                    if (fopimage != null && fopimage.load(FopImage.DIMENSIONS)) {
-                        saveGraphicsState();
-                        clipRect(sx, sy, paddRectWidth, paddRectHeight);
-                        int horzCount = (int) ((paddRectWidth * 1000 / fopimage
-                                .getIntrinsicWidth()) + 1.0f);
-                        int vertCount = (int) ((paddRectHeight * 1000 / fopimage
-                                .getIntrinsicHeight()) + 1.0f);
-                        if (back.getRepeat() == EN_NOREPEAT) {
-                            horzCount = 1;
-                            vertCount = 1;
-                        } else if (back.getRepeat() == EN_REPEATX) {
-                            vertCount = 1;
-                        } else if (back.getRepeat() == EN_REPEATY) {
-                            horzCount = 1;
-                        }
-                        // change from points to millipoints
-                        sx *= 1000;
-                        sy *= 1000;
-                        if (horzCount == 1) {
-                            sx += back.getHoriz();
-                        }
-                        if (vertCount == 1) {
-                            sy += back.getVertical();
-                        }
-                        for (int x = 0; x < horzCount; x++) {
-                            for (int y = 0; y < vertCount; y++) {
-                                // place once
-                                Rectangle2D pos;
-                                // Image positions are relative to the currentIP/BP
-                                pos = new Rectangle2D.Float(
-                                        sx - currentIPPosition 
-                                            + (x * fopimage.getIntrinsicWidth()),
-                                        sy - currentBPPosition
-                                            + (y * fopimage.getIntrinsicHeight()),
-                                        fopimage.getIntrinsicWidth(),
-                                        fopimage.getIntrinsicHeight());
-                                drawImage(back.getURL(), pos, null);
-                            }
-                        }
-                        restoreGraphicsState();
-                    } else {
-                        log.warn(
-                                "Can't find background image: " + back.getURL());
+        BorderProps bpsBefore = (BorderProps) area.getTrait(Trait.BORDER_BEFORE);
+        BorderProps bpsAfter = (BorderProps) area.getTrait(Trait.BORDER_AFTER);
+        BorderProps bpsStart = (BorderProps) area.getTrait(Trait.BORDER_START);
+        BorderProps bpsEnd = (BorderProps) area.getTrait(Trait.BORDER_END);
+    
+        // draw background
+        Trait.Background back;
+        back = (Trait.Background) area.getTrait(Trait.BACKGROUND);
+        if (back != null) {
+    
+            // Calculate padding rectangle
+            float sx = startx;
+            float sy = starty;
+            float paddRectWidth = width;
+            float paddRectHeight = height;
+    
+            if (bpsStart != null) {
+                sx += bpsStart.width / 1000f;
+                paddRectWidth -= bpsStart.width / 1000f;
+            }
+            if (bpsBefore != null) {
+                sy += bpsBefore.width / 1000f;
+                paddRectHeight -= bpsBefore.width / 1000f;
+            }
+            if (bpsEnd != null) {
+                paddRectWidth -= bpsEnd.width / 1000f;
+            }
+            if (bpsAfter != null) {
+                paddRectHeight -= bpsAfter.width / 1000f;
+            }
+    
+            if (back.getColor() != null) {
+                updateFillColor(back.getColor());
+                fillRect(sx, sy, paddRectWidth, paddRectHeight);
+            }
+    
+            // background image
+            if (back.getFopImage() != null) {
+                FopImage fopimage = back.getFopImage();
+                if (fopimage != null && fopimage.load(FopImage.DIMENSIONS)) {
+                    saveGraphicsState();
+                    clipRect(sx, sy, paddRectWidth, paddRectHeight);
+                    int horzCount = (int) ((paddRectWidth * 1000 / fopimage
+                            .getIntrinsicWidth()) + 1.0f);
+                    int vertCount = (int) ((paddRectHeight * 1000 / fopimage
+                            .getIntrinsicHeight()) + 1.0f);
+                    if (back.getRepeat() == EN_NOREPEAT) {
+                        horzCount = 1;
+                        vertCount = 1;
+                    } else if (back.getRepeat() == EN_REPEATX) {
+                        vertCount = 1;
+                    } else if (back.getRepeat() == EN_REPEATY) {
+                        horzCount = 1;
                     }
+                    // change from points to millipoints
+                    sx *= 1000;
+                    sy *= 1000;
+                    if (horzCount == 1) {
+                        sx += back.getHoriz();
+                    }
+                    if (vertCount == 1) {
+                        sy += back.getVertical();
+                    }
+                    for (int x = 0; x < horzCount; x++) {
+                        for (int y = 0; y < vertCount; y++) {
+                            // place once
+                            Rectangle2D pos;
+                            // Image positions are relative to the currentIP/BP
+                            pos = new Rectangle2D.Float(
+                                    sx - currentIPPosition 
+                                        + (x * fopimage.getIntrinsicWidth()),
+                                    sy - currentBPPosition
+                                        + (y * fopimage.getIntrinsicHeight()),
+                                    fopimage.getIntrinsicWidth(),
+                                    fopimage.getIntrinsicHeight());
+                            drawImage(back.getURL(), pos, null);
+                        }
+                    }
+                    restoreGraphicsState();
+                } else {
+                    log.warn(
+                            "Can't find background image: " + back.getURL());
                 }
             }
-            
-            Rectangle2D.Float borderRect = new Rectangle2D.Float(startx, starty, width, height);
-            drawBorders(borderRect, bpsBefore, bpsAfter, bpsStart, bpsEnd);
-            
-        } catch (IOException ioe) {
-            handleIOTrouble(ioe);
         }
+        
+        Rectangle2D.Float borderRect = new Rectangle2D.Float(startx, starty, width, height);
+        drawBorders(borderRect, bpsBefore, bpsAfter, bpsStart, bpsEnd);
     }
 
     /**

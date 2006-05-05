@@ -18,6 +18,8 @@
 
 package org.apache.fop.render.pcl;
 
+import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.util.Iterator;
 import java.util.List;
 
@@ -29,45 +31,63 @@ import org.apache.fop.util.UnitConv;
 public class PCLPageDefinition {
 
     private static List pageDefinitions;
+    private static PCLPageDefinition defaultPageDefinition;
     
     private String name;
-    private long width; //in mpt
-    private long height; //in mpt
-    private int logicalPageXOffset; //in mpt
+    private int selector;
+    private Dimension physicalPageSize;
+    private Rectangle logicalPageRect;
     private boolean landscape;
     
     static {
         createPageDefinitions();
     }
     
-    public PCLPageDefinition(String name, long width, long height, int logicalPageXOffset) {
-        this(name, width, height, logicalPageXOffset, false);
-    }
-    
-    public PCLPageDefinition(String name, long width, long height, int logicalPageXOffset, 
-            boolean landscape) {
+    /**
+     * Main constructor
+     * @param name the name of the page definition
+     * @param selector the selector used by the <ESC>&l#A command (page size)
+     * @param physicalPageSize the physical page size
+     * @param logicalPageRect the rectangle defining the logical page
+     * @param landscape true if it is a landscape format
+     */
+    public PCLPageDefinition(String name, int selector, Dimension physicalPageSize, 
+            Rectangle logicalPageRect, boolean landscape) {
         this.name = name;
-        this.width = width;
-        this.height = height;
-        this.logicalPageXOffset = logicalPageXOffset;
+        this.selector = selector;
+        this.physicalPageSize = physicalPageSize;
+        this.logicalPageRect = logicalPageRect;
         this.landscape = landscape;
     }
     
+    /** @return the name of the page definition */
     public String getName() {
         return this.name;
     }
     
+    /** @return the selector used by the <ESC>&l#A command (page size) */
+    public int getSelector() {
+        return this.selector;
+    }
+    
+    /** @return true if it is a landscape format */
     public boolean isLandscapeFormat() {
         return this.landscape;
     }
-    
-    public int getLogicalPageXOffset() {
-        return this.logicalPageXOffset;
+
+    /** @return the physical page size */
+    public Dimension getPhysicalPageSize() {
+        return this.physicalPageSize;
     }
     
-    public boolean matches(long width, long height, int errorMargin) {
-        return (Math.abs(this.width - width) < errorMargin) 
-            && (Math.abs(this.height - height) < errorMargin);
+    /** @return the rectangle defining the logical page */
+    public Rectangle getLogicalPageRect() {
+        return this.logicalPageRect;
+    }
+    
+    private boolean matches(long width, long height, int errorMargin) {
+        return (Math.abs(this.physicalPageSize.width - width) < errorMargin) 
+            && (Math.abs(this.physicalPageSize.height - height) < errorMargin);
     }
     
     /** @see java.lang.Object#toString() */
@@ -75,6 +95,13 @@ public class PCLPageDefinition {
         return getName();
     }
 
+    /**
+     * Tries to determine a matching page definition.
+     * @param width the physical page width (in mpt)
+     * @param height the physical page height (in mpt)
+     * @param errorMargin the error margin for detecting the right page definition
+     * @return the page definition or null if no match was found
+     */
     public static PCLPageDefinition getPageDefinition(long width, long height, int errorMargin) {
         Iterator iter = pageDefinitions.iterator();
         while (iter.hasNext()) {
@@ -86,58 +113,80 @@ public class PCLPageDefinition {
         return null;
     }
     
+    /** @return the default page definition (letter) */
+    public static PCLPageDefinition getDefaultPageDefinition() {
+        return defaultPageDefinition;
+    }
+    
     /**
      * Converts an offset values for logical pages to millipoints. The values are given as pixels
      * in a 300dpi environment.
      * @param offset the offset as given in the PCL 5 specification (under "Printable Area")
      * @return the converted value in millipoints
      */
-    private static int convertLogicalPageXOffset(int offset) {
+    private static int convert300dpiDotsToMpt(int offset) {
         return (int)Math.round(((double)offset) * 72000 / 300);
+    }
+    
+    private static Dimension createPhysicalPageSizeInch(float width, float height) {
+        return new Dimension(
+                (int)Math.round(UnitConv.in2mpt(width)), 
+                (int)Math.round(UnitConv.in2mpt(height)));
+    }
+    
+    private static Dimension createPhysicalPageSizeMm(float width, float height) {
+        return new Dimension(
+                (int)Math.round(UnitConv.mm2mpt(width)), 
+                (int)Math.round(UnitConv.mm2mpt(height)));
+    }
+    
+    private static Rectangle createLogicalPageRect(int x, int y, int width, int height) {
+        return new Rectangle(convert300dpiDotsToMpt(x), convert300dpiDotsToMpt(y), 
+                convert300dpiDotsToMpt(width), convert300dpiDotsToMpt(height));
     }
     
     private static void createPageDefinitions() {
         pageDefinitions = new java.util.ArrayList();
-        pageDefinitions.add(new PCLPageDefinition("Letter", 
-                Math.round(UnitConv.in2mpt(8.5)), Math.round(UnitConv.in2mpt(11)),
-                convertLogicalPageXOffset(75)));
-        pageDefinitions.add(new PCLPageDefinition("Legal", 
-                Math.round(UnitConv.in2mpt(8.5)), Math.round(UnitConv.in2mpt(14)),
-                convertLogicalPageXOffset(75)));
-        pageDefinitions.add(new PCLPageDefinition("Executive", 
-                Math.round(UnitConv.in2mpt(7.25)), Math.round(UnitConv.in2mpt(10.5)),
-                convertLogicalPageXOffset(75)));
-        pageDefinitions.add(new PCLPageDefinition("Ledger", 
-                Math.round(UnitConv.in2mpt(11)), Math.round(UnitConv.in2mpt(17)),
-                convertLogicalPageXOffset(75)));
-        pageDefinitions.add(new PCLPageDefinition("A4", 
-                Math.round(UnitConv.mm2mpt(210)), Math.round(UnitConv.mm2mpt(297)),
-                convertLogicalPageXOffset(71)));
-        pageDefinitions.add(new PCLPageDefinition("A3", 
-                Math.round(UnitConv.mm2mpt(297)), Math.round(UnitConv.mm2mpt(420)),
-                convertLogicalPageXOffset(71)));
+        pageDefinitions.add(new PCLPageDefinition("Letter", 2,
+                createPhysicalPageSizeInch(8.5f, 11),
+                createLogicalPageRect(75, 0, 2400, 3300), false));
+        defaultPageDefinition = new PCLPageDefinition("Legal", 3, 
+                createPhysicalPageSizeInch(8.5f, 14),
+                createLogicalPageRect(75, 0, 2400, 4200), false);
+        pageDefinitions.add(defaultPageDefinition);
+        pageDefinitions.add(new PCLPageDefinition("Executive", 1, 
+                createPhysicalPageSizeInch(7.25f, 10.5f),
+                createLogicalPageRect(75, 0, 2025, 3150), false));
+        pageDefinitions.add(new PCLPageDefinition("Ledger", 6,
+                createPhysicalPageSizeInch(11, 17),
+                createLogicalPageRect(75, 0, 3150, 5100), false));
+        pageDefinitions.add(new PCLPageDefinition("A4", 26,
+                createPhysicalPageSizeMm(210, 297),
+                createLogicalPageRect(71, 0, 2338, 3507), false));
+        pageDefinitions.add(new PCLPageDefinition("A3", 27, 
+                createPhysicalPageSizeMm(297, 420),
+                createLogicalPageRect(71, 0, 3365, 4960), false));
 
         //TODO Add envelope definitions
         
-        pageDefinitions.add(new PCLPageDefinition("LetterL", 
-                Math.round(UnitConv.in2mpt(11)), Math.round(UnitConv.in2mpt(8.5)),
-                convertLogicalPageXOffset(60)));
-        pageDefinitions.add(new PCLPageDefinition("LegalL", 
-                Math.round(UnitConv.in2mpt(14)), Math.round(UnitConv.in2mpt(8.5)),
-                convertLogicalPageXOffset(60)));
-        pageDefinitions.add(new PCLPageDefinition("ExecutiveL", 
-                Math.round(UnitConv.in2mpt(10.5)), Math.round(UnitConv.in2mpt(7.25)),
-                convertLogicalPageXOffset(60)));
-        pageDefinitions.add(new PCLPageDefinition("LedgerL", 
-                Math.round(UnitConv.in2mpt(17)), Math.round(UnitConv.in2mpt(11)),
-                convertLogicalPageXOffset(60)));
-        pageDefinitions.add(new PCLPageDefinition("A4L", 
-                Math.round(UnitConv.mm2mpt(297)), Math.round(UnitConv.mm2mpt(210)),
-                convertLogicalPageXOffset(59), true));
-        pageDefinitions.add(new PCLPageDefinition("A3L", 
-                Math.round(UnitConv.mm2mpt(420)), Math.round(UnitConv.mm2mpt(297)),
-                convertLogicalPageXOffset(59)));
+        pageDefinitions.add(new PCLPageDefinition("LetterL", 2,
+                createPhysicalPageSizeInch(11, 8.5f),
+                createLogicalPageRect(60, 0, 3180, 2550), true));
+        pageDefinitions.add(new PCLPageDefinition("LegalL", 3,
+                createPhysicalPageSizeInch(14, 8.5f),
+                createLogicalPageRect(60, 0, 4080, 2550), true));
+        pageDefinitions.add(new PCLPageDefinition("ExecutiveL", 1, 
+                createPhysicalPageSizeInch(10.5f, 7.25f),
+                createLogicalPageRect(60, 0, 3030, 2175), true));
+        pageDefinitions.add(new PCLPageDefinition("LedgerL", 6,
+                createPhysicalPageSizeInch(17, 11),
+                createLogicalPageRect(60, 0, 4980, 3300), true));
+        pageDefinitions.add(new PCLPageDefinition("A4L", 26,
+                createPhysicalPageSizeMm(297, 210),
+                createLogicalPageRect(59, 0, 3389, 2480), true));
+        pageDefinitions.add(new PCLPageDefinition("A3L", 27,
+                createPhysicalPageSizeMm(420, 297),
+                createLogicalPageRect(59, 0, 4842, 3507), true));
     }
-
     
 }
