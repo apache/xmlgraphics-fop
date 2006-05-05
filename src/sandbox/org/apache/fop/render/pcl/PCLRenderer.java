@@ -390,7 +390,7 @@ public class PCLRenderer extends PrintRenderer {
             transPoint.y -= pageSize.height - logRect.y - logRect.height;
             //The next line is odd and is probably necessary due to the default value of the
             //Text Length command: "1/2 inch less than maximum text length"
-            //I wonder why this isn't necessary for the 90° rotation. *shrug*
+            //I wonder why this isn't necessary for the 90 degree rotation. *shrug*
             transPoint.y -= UnitConv.in2mpt(0.5);
             break;
         case 270:
