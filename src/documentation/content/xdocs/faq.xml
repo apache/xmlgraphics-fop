@@ -770,6 +770,29 @@ Can I control this?</question>
         <p>See <link href="0.20.5/graphics.html#svg-scaling">SVG Scaling</link>.</p>
       </answer>
     </faq>
+    <faq id="svg-attribute-required">
+      <question>FOP fails with something like "The attribute "width" of the element &lt;rect&gt; is required". What's wrong?</question>
+      <answer>
+        <p>
+          This phenomenon occurs since FOP 0.92 beta. It surfaced due to a change in the handling of non-FO namespaces. It's not a
+          bug in FOP, but rather in the dependent packages: Apache Batik, Apache Xalan-J and SAXON. The bug in Apache Batik will be 
+          fixed in the next release. In the latest release of Apache Xalan-J, the bug is already fixed. It only occurs in the Xalan
+          version bundled with Sun's JVM, because Sun uses a rather old version.
+        </p>
+        <p>
+          Bug description: In a namespace-enabled Level 3 DOM, an attribute in the default namespace must be set with 
+          <code>"null"</code> as the value for the namespace URI. SAX, on the other side, uses an empty string ("") to designate 
+          the default namespace. Many packages appear to not properly handle this difference in which case they still use the empty 
+          string as the namespace URI parameter for <code>org.w3c.dom.Element.setAttributeNS()</code>.
+        </p>
+        <p>
+          Work-around: Use the latest version of Apache Xalan-J. Note that starting with JDK 1.4 it's not enough to replace Xalan-J 
+          on the normal application classpath and you need to override the Xalan-J version bundled with the Sun JVM using the 
+          <link href="http://java.sun.com/j2se/1.4.2/docs/guide/standards/">Endorsed Standards Override Mechanism</link>, i.e.
+          you must place Xalan-J in the <code>"lib/endorsed"</code> directory of your JRE.
+        </p>
+      </answer>
+    </faq>
   </part>
   <part id="part-pdf">
     <title>PDF specific (includes Acrobat peculiarities)</title>
