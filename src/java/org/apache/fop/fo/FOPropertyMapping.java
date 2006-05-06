@@ -2669,6 +2669,7 @@ public class FOPropertyMapping implements Constants {
         m.addEnum("bottom", getEnumProperty(EN_BOTTOM, "BOTTOM"));
         m.setDatatypeParser(new VerticalAlignShorthandParser());
         m.setDefault("baseline");
+        m.setPercentBase(LengthBase.ALIGNMENT_ADJUST);
         addPropertyMaker("vertical-align", m);
 
         // white-space

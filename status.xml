@@ -27,6 +27,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="MM" type="fix">
+        Bugfix: Percentages in vertical-align property values were not correctly handled.
+      </action>
       <action context="Code" dev="JM" type="fix" fixes-bug="38243" due-to="Gerhard Oettl">
         Bugfix: Gaps in table-columns cause a NullPointerException.
       </action>
