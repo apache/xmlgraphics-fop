@@ -38,6 +38,7 @@ import org.apache.fop.fo.flow.RetrieveMarker;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.Region;
+import org.apache.fop.fo.pagination.RegionBody;
 import org.apache.fop.fo.pagination.SideRegion;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.pagination.StaticContent;
@@ -773,8 +774,23 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             curPage.getPageViewport().createSpan(false);
             return;
         } else if (breakVal == Constants.EN_COLUMN || breakVal <= 0) {
-            if (curPage.getPageViewport().getCurrentSpan().hasMoreFlows()) {
-                curPage.getPageViewport().getCurrentSpan().moveToNextFlow();
+            PageViewport pv = curPage.getPageViewport();
+            
+            //Check if previous page was spanned
+            boolean forceNewPageWithSpan = false;
+            RegionBody rb = (RegionBody)curPage.getSimplePageMaster().getRegion(
+                    Constants.FO_REGION_BODY);
+            if (breakVal < 0 
+                    && rb.getColumnCount() > 1 
+                    && pv.getCurrentSpan().getColumnCount() == 1) {
+                forceNewPageWithSpan = true;
+            }
+            
+            if (forceNewPageWithSpan) {
+                curPage = makeNewPage(false, false);
+                curPage.getPageViewport().createSpan(true);
+            } else if (pv.getCurrentSpan().hasMoreFlows()) {
+                pv.getCurrentSpan().moveToNextFlow();
             } else {
                 curPage = makeNewPage(false, false);
             }

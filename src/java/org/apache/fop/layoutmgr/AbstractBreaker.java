@@ -372,7 +372,8 @@ public abstract class AbstractBreaker {
 
             log.debug("PLM> part: " + (p + 1)
                     + ", start at pos " + startElementIndex
-                    + ", break at pos " + endElementIndex);
+                    + ", break at pos " + endElementIndex
+                    + ", break class = " + lastBreakClass);
 
             startPart(effectiveList, lastBreakClass);
             
