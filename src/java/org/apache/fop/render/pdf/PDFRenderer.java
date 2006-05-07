@@ -90,6 +90,7 @@ import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.util.CharUtilities;
+import org.apache.fop.util.ColorProfileUtil;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fo.extensions.xmp.XMPMetadata;
@@ -387,7 +388,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
             //Fallback: Use the sRGB profile from the JRE (about 140KB)
             profile = ICC_Profile.getInstance(ColorSpace.CS_sRGB);
         }
-        String desc = getICCProfileDescription(profile);
+        String desc = ColorProfileUtil.getICCProfileDescription(profile);
         
         icc.setColorSpace(profile, null);
         outputIntent.setDestOutputProfile(icc);
@@ -396,22 +397,6 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         pdfDoc.getRoot().addOutputIntent(outputIntent);
     }
 
-    private String getICCProfileDescription(ICC_Profile profile) {
-        byte[] data = profile.getData(ICC_Profile.icSigProfileDescriptionTag);
-        if (data == null) {
-            return null;
-        } else {
-            //Info on the data format: http://www.color.org/ICC-1_1998-09.PDF
-            int length = (data[8] << 3 * 8) | (data[9] << 2 * 8) | (data[10] << 8) | data[11];
-            length--; //Remove trailing NUL character
-            try {
-                return new String(data, 12, length, "US-ASCII");
-            } catch (UnsupportedEncodingException e) {
-                throw new UnsupportedOperationException("Incompatible VM");
-            }
-        }
-    }
-    
     /**
      * @see org.apache.fop.render.Renderer#stopRenderer()
      */

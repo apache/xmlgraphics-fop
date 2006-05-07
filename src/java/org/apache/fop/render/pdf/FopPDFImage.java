@@ -17,6 +17,8 @@
 /* $Id$ */
 
 package org.apache.fop.render.pdf;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fop.pdf.PDFConformanceException;
 import org.apache.fop.pdf.PDFFilterList;
 import org.apache.fop.pdf.PDFImage;
@@ -29,6 +31,7 @@ import org.apache.fop.pdf.CCFFilter;
 import org.apache.fop.pdf.PDFColorSpace;
 import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.pdf.BitmapImage;
+import org.apache.fop.util.ColorProfileUtil;
 
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.EPSImage;
@@ -43,6 +46,9 @@ import java.awt.color.ICC_Profile;
  * PDFImage implementation for the PDF renderer.
  */
 public class FopPDFImage implements PDFImage {
+
+    /** logging instance */
+    private static Log log = LogFactory.getLog(FopPDFImage.class);
 
     private FopImage fopImage;
     private PDFICCStream pdfICCStream = null;
@@ -114,8 +120,18 @@ public class FopPDFImage implements PDFImage {
         ICC_Profile prof = fopImage.getICCProfile();
         PDFColorSpace pdfCS = toPDFColorSpace(fopImage.getColorSpace());
         if (prof != null) {
-            pdfICCStream = doc.getFactory().makePDFICCStream();
-            pdfICCStream.setColorSpace(prof, pdfCS);
+            boolean defaultsRGB = ColorProfileUtil.isDefaultsRGB(prof);
+            if (log.isDebugEnabled()) {
+                String desc = ColorProfileUtil.getICCProfileDescription(prof);
+                log.debug("Image returns ICC profile: " + desc + ", default sRGB=" + defaultsRGB);
+            }
+            //TODO Instead of skipping the ICC profile for sRGB, let's think about embedding our 
+            //own sRGB profile instead, but if possible only once per PDF (Need a new structure in 
+            //the PDF library for that).
+            if (!defaultsRGB) {
+                pdfICCStream = doc.getFactory().makePDFICCStream();
+                pdfICCStream.setColorSpace(prof, pdfCS);
+            }
         }
         //Handle transparency mask if applicable
         if (fopImage.hasSoftMask()) {
