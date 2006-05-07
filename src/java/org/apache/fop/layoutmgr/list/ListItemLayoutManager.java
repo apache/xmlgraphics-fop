@@ -300,7 +300,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
                     p = KnuthPenalty.INFINITE;
                 }
                 //returnList.add(new KnuthPenalty(penaltyHeight, p, false, stepPosition, false));
-                returnList.add(new BreakElement(stepPosition, penaltyHeight, p, 0, context));
+                returnList.add(new BreakElement(stepPosition, penaltyHeight, p, -1, context));
             }
         }
 

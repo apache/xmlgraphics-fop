@@ -359,7 +359,7 @@ public class TableStepper {
                 clearBreakCondition();
             }
             //returnList.add(new KnuthPenalty(effPenaltyLen, p, false, penaltyPos, false));
-            returnList.add(new BreakElement(penaltyPos, effPenaltyLen, p, 0, context));
+            returnList.add(new BreakElement(penaltyPos, effPenaltyLen, p, -1, context));
 
             log.debug("step=" + step + " (+" + increase + ")"
                     + " box=" + boxLen 

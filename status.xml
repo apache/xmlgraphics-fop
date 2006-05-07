@@ -27,6 +27,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix" fixes-bug="39443">
+        Bugfix: Sections with span="all" lead to overlapping text if spanning multiple pages.
+      </action>
       <action context="Code" dev="MM" type="fix">
         Bugfix: Percentages in vertical-align property values were not correctly handled.
       </action>
