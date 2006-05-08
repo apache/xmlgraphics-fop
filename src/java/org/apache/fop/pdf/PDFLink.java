@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2004,2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,12 +71,21 @@ public class PDFLink extends PDFObject {
      * @see org.apache.fop.pdf.PDFObject#toPDFString()
      */
     public String toPDFString() {
+        String fFlag = "";
+        if (getDocumentSafely().getPDFAMode().isPDFA1LevelB()) {
+            int f = 0;
+            f |= 1 << (3 - 1); //Print, bit 3
+            f |= 1 << (4 - 1); //NoZoom, bit 4
+            f |= 1 << (5 - 1); //NoRotate, bit 5
+            fFlag = "/F " + f;
+        }
         String s = getObjectID()
                    + "<< /Type /Annot\n" + "/Subtype /Link\n" + "/Rect [ "
                    + (ulx) + " " + (uly) + " "
                    + (brx) + " " + (bry) + " ]\n" + "/C [ "
                    + this.color + " ]\n" + "/Border [ 0 0 0 ]\n" + "/A "
-                   + this.action.getAction() + "\n" + "/H /I\n>>\nendobj\n";
+                   + this.action.getAction() + "\n" + "/H /I\n"
+                   + fFlag + "\n>>\nendobj\n";
         return s;
     }
 
