@@ -189,17 +189,17 @@ public class Java2DFontMetrics {
     public int width(int i, String family, int style, int size) {
         int w;
         setFont(family, style, size);
-        // the output seems to look a little better if the
-        // space is rendered larger than given by
-        // the FontMetrics object
-        if (i <= 32) {
-            w = (int)(1.4 * fmt.charWidth(i) * FONT_FACTOR);
-        } else {
-            w = (int)(fmt.charWidth(i) * FONT_FACTOR);
-        }
+        w = internalCharWidth(i) * 1000;
         return w;
     }
 
+    private int internalCharWidth(int i) {
+        //w = (int)(fmt.charWidth(i) * 1000); //Not accurate enough!
+        char[] ch = {(char)i};
+        Rectangle2D rect = fmt.getStringBounds(ch, 0, 1, this.graphics);
+        return (int)Math.round(rect.getWidth() * 1000);
+    }
+    
     /**
      * Return widths (in 1/1000ths of point size) of all
      * characters
@@ -216,7 +216,7 @@ public class Java2DFontMetrics {
         }
         setFont(family, style, size);
         for (i = 0; i < 256; i++) {
-            width[i] = FONT_FACTOR * fmt.charWidth(i);
+            width[i] = 1000 * internalCharWidth(i);
         }
         return width;
     }
@@ -234,6 +234,7 @@ public class Java2DFontMetrics {
         boolean changed = false;
         Rectangle2D rect;
         TextLayout layout;
+        //TODO this seems bad. It rounds font sizes down to the next integer value (=pt)
         int s = (int)(size / 1000f);
 
         if (f1 == null) {

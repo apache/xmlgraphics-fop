@@ -89,6 +89,7 @@ public class Java2DGraphicsState implements Constants, RendererState {
             Graphics2D popped = (Graphics2D) stateStack.remove(stateStack
                     .size() - 1);
 
+            currentGraphics.dispose();
             currentGraphics = popped;
             return popped;
         } else {
