@@ -25,9 +25,11 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.color.ColorSpace;
+import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
@@ -54,10 +56,12 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.CTM;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Trait;
-import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
+import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.Leader;
+import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
+import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
@@ -69,7 +73,7 @@ import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.pdf.CTMHelper;
-import org.apache.fop.render.pdf.PDFRendererContextConstants;
+import org.apache.fop.util.CharUtilities;
 
 /**
  * The <code>Java2DRenderer</code> class provides the abstract technical
@@ -155,7 +159,11 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         fontInfo = inFontInfo;
         BufferedImage fontImage = new BufferedImage(100, 100,
                 BufferedImage.TYPE_INT_RGB);
-        FontSetup.setup(fontInfo, fontImage.createGraphics());
+        Graphics2D g = fontImage.createGraphics();
+        //The next line is important to get accurate font metrics!
+        g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, 
+                RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        FontSetup.setup(fontInfo, g);
     }
 
     /** @see org.apache.fop.render.Renderer#getGraphics2DAdapter() */
@@ -664,23 +672,103 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
 
         int rx = currentIPPosition + text.getBorderAndPaddingWidthStart();
         int bl = currentBPPosition + text.getOffset() + text.getBaselineOffset();
+        int saveIP = currentIPPosition;
 
         Font font = getFontFromArea(text);
         state.updateFont(font.getFontName(), font.getFontSize(), null);
-
-        Color col = (Color) text.getTrait(Trait.COLOR);
-        state.updateColor(col);
-
-        String s = text.getText();
-        state.getGraph().drawString(s, rx / 1000f, bl / 1000f);
-
-        super.renderText(text);
+        saveGraphicsState();
+        AffineTransform at = new AffineTransform();
+        at.translate(rx / 1000f, bl / 1000f);
+        state.transform(at);
+        renderText(text, state.getGraph(), font);
+        restoreGraphicsState();
+        
+        currentIPPosition = saveIP + text.getAllocIPD();
+        //super.renderText(text);
 
         // rendering text decorations
         Typeface tf = (Typeface) fontInfo.getFonts().get(font.getFontName());
         int fontsize = text.getTraitAsInteger(Trait.FONT_SIZE);
         renderTextDecoration(tf, fontsize, text, bl, rx);
     }
+
+    /**
+     * Renders a TextArea to a Graphics2D instance. Adjust the coordinate system so that the
+     * start of the baseline of the first character is at coordinate (0,0).
+     * @param text the TextArea
+     * @param g2d the Graphics2D to render to
+     * @param font the font to paint with
+     */
+    public static void renderText(TextArea text, Graphics2D g2d, Font font) {
+
+        Color col = (Color) text.getTrait(Trait.COLOR);
+        g2d.setColor(col);
+
+        float textCursor = 0;
+
+        Iterator iter = text.getChildAreas().iterator();
+        while (iter.hasNext()) {
+            InlineArea child = (InlineArea)iter.next();
+            if (child instanceof WordArea) {
+                WordArea word = (WordArea)child;
+                String s = word.getWord();
+                int[] letterAdjust = word.getLetterAdjustArray();
+                GlyphVector gv = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), s);
+                double additionalWidth = 0.0;
+                if (letterAdjust == null 
+                        && text.getTextLetterSpaceAdjust() == 0 
+                        && text.getTextWordSpaceAdjust() == 0) {
+                    //nop
+                } else {
+                    int[] offsets = getGlyphOffsets(s, font, text, letterAdjust);
+                    float cursor = 0.0f;
+                    for (int i = 0; i < offsets.length; i++) {
+                        Point2D pt = gv.getGlyphPosition(i);
+                        pt.setLocation(cursor, pt.getY());
+                        gv.setGlyphPosition(i, pt);
+                        cursor += offsets[i] / 1000f;
+                    }
+                    additionalWidth = cursor - gv.getLogicalBounds().getWidth();
+                }
+                g2d.drawGlyphVector(gv, textCursor, 0);
+                textCursor += gv.getLogicalBounds().getWidth() + additionalWidth;
+            } else if (child instanceof SpaceArea) {
+                SpaceArea space = (SpaceArea)child;
+                String s = space.getSpace();
+                char sp = s.charAt(0);
+                int tws = (space.isAdjustable() 
+                        ? text.getTextWordSpaceAdjust() 
+                                + 2 * text.getTextLetterSpaceAdjust()
+                        : 0);
+
+                textCursor += (font.getCharWidth(sp) + tws) / 1000f;
+            } else {
+                throw new IllegalStateException("Unsupported child element: " + child);
+            }
+        }
+    }
+    
+    private static int[] getGlyphOffsets(String s, Font font, TextArea text, 
+            int[] letterAdjust) {
+        int textLen = s.length();
+        int[] offsets = new int[textLen];
+        for (int i = 0; i < textLen; i++) {
+            final char c = s.charAt(i);
+            final char mapped = font.mapChar(c);
+            int wordSpace;
+
+            if (CharUtilities.isAdjustableSpace(mapped)) {
+                wordSpace = text.getTextWordSpaceAdjust();
+            } else {
+                wordSpace = 0;
+            }
+            int cw = font.getWidth(mapped);
+            int ladj = (letterAdjust != null && i < textLen - 1 ? letterAdjust[i + 1] : 0);
+            int tls = (i < textLen - 1 ? text.getTextLetterSpaceAdjust() : 0); 
+            offsets[i] = cw + ladj + tls + wordSpace;
+        }
+        return offsets;
+    }    
 
     /**
      * Render leader area. This renders a leader area which is an area with a
