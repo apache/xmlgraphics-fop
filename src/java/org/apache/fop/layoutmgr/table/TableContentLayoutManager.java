@@ -1127,6 +1127,11 @@ public class TableContentLayoutManager implements PercentBaseContext {
             }
         }
         
+        /** @see org.apache.fop.layoutmgr.Position#generatesAreas() */
+        public boolean generatesAreas() {
+            return true;
+        }
+
         /** @see java.lang.Object#toString() */
         public String toString() {
             StringBuffer sb = new StringBuffer("TableContentPosition:");
