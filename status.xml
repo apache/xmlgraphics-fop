@@ -27,6 +27,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix" fixes-bug="39443">
+        Bugfix: tables nested in inline elements caused a NullPointerException.
+      </action>
       <action context="Code" dev="JM" type="update">
         The default sRGB color profile provided by the Java class library is no longer
         embedded if it is encountered. This should reduce the PDF size considerably.

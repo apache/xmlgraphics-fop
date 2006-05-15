@@ -61,7 +61,6 @@ public class TableLayoutManager extends BlockStackingLayoutManager
 
     private Block curBlockArea;
 
-    private int referenceBPD;
     private double tableUnits;
     private boolean autoLayout = true;
 
@@ -156,7 +155,6 @@ public class TableLayoutManager extends BlockStackingLayoutManager
             }
         }
 
-        referenceBPD = context.getStackLimit().opt;
         referenceIPD = context.getRefIPD();
 
         if (getTable().getInlineProgressionDimension().getOptimum(this).getEnum() != EN_AUTO) {
@@ -449,7 +447,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
      */
     public boolean mustKeepTogether() {
         //TODO Keeps will have to be more sophisticated sooner or later
-        return ((BlockLevelLayoutManager)getParent()).mustKeepTogether() 
+        return super.mustKeepTogether() 
                 || !getTable().getKeepTogether().getWithinPage().isAuto()
                 || !getTable().getKeepTogether().getWithinColumn().isAuto();
     }
@@ -493,14 +491,6 @@ public class TableLayoutManager extends BlockStackingLayoutManager
                 return super.getBaseLength(lengthBase, fobj);
             }
         }
-    }
-    
-    /**
-     * Returns the BPD of the content area
-     * @return the BPD of the content area
-     */
-    public int getContentAreaBPD() {
-        return referenceBPD;
     }
     
     /** @see org.apache.fop.layoutmgr.ConditionalElementListener */
