@@ -56,10 +56,20 @@ public class Java2DFontMetrics {
     private int[] width = null;
 
     /**
-     * The typical height of a small cap latter
+     * The typical height of a small cap latter (often derived from "x", value in mpt)
      */
     private int xHeight = 0;
-
+    
+    /**
+     * The highest point of the font above the baseline (usually derived from "d", value in mpt)
+     */
+    private int ascender = 0;
+    
+    /**
+     * The lowest point of the font under the baseline (usually derived from "p", value in mpt)
+     */
+    private int descender = 0;
+    
     /**
      * Buffered font.
      * f1 is bufferd for metric measurements during layout.
@@ -111,7 +121,7 @@ public class Java2DFontMetrics {
      */
     public int getAscender(String family, int style, int size) {
         setFont(family, style, size);
-        // return (int)(FONT_FACTOR * fmt.getAscent());
+        return ascender * 1000;
 
         // workaround for sun bug on FontMetrics.getAscent()
         // http://developer.java.sun.com/developer/bugParade/bugs/4399887.html
@@ -132,9 +142,11 @@ public class Java2DFontMetrics {
          * 
          * xxxxx@xxxxx 2001-05-15
          */
+        /* I don't think this is right.
         int realAscent = fmt.getAscent()
                          - (fmt.getDescent() + fmt.getLeading());
         return FONT_FACTOR * realAscent;
+        */
     }
 
 
@@ -161,7 +173,7 @@ public class Java2DFontMetrics {
      */
     public int getDescender(String family, int style, int size) {
         setFont(family, style, size);
-        return (-1 * FONT_FACTOR * fmt.getDescent());
+        return descender * 1000;
     }
 
     /**
@@ -174,7 +186,7 @@ public class Java2DFontMetrics {
      */
     public int getXHeight(String family, int style, int size) {
         setFont(family, style, size);
-        return (int)(FONT_FACTOR * xHeight);
+        return xHeight * 1000;
     }
 
     /**
@@ -232,10 +244,9 @@ public class Java2DFontMetrics {
      */
     private boolean setFont(String family, int style, int size) {
         boolean changed = false;
-        Rectangle2D rect;
-        TextLayout layout;
         //TODO this seems bad. It rounds font sizes down to the next integer value (=pt)
         int s = (int)(size / 1000f);
+        //int s = size;
 
         if (f1 == null) {
             f1 = new Font(family, style, s);
@@ -255,9 +266,23 @@ public class Java2DFontMetrics {
             // else the font is unchanged from last time
         }
         if (changed) {
-            layout = new TextLayout("m", f1, graphics.getFontRenderContext());
+            //x-Height
+            TextLayout layout = new TextLayout("x", f1, graphics.getFontRenderContext());
+            Rectangle2D rect = layout.getBounds();
+            xHeight = (int)Math.round(-rect.getY() * 1000);
+            
+            //PostScript-compatible ascent
+            layout = new TextLayout("d", f1, graphics.getFontRenderContext());
             rect = layout.getBounds();
-            xHeight = (int)rect.getHeight();
+            ascender = (int)Math.round(-rect.getY() * 1000);
+            
+            //PostScript-compatible descent
+            layout = new TextLayout("p", f1, graphics.getFontRenderContext());
+            rect = layout.getBounds();
+            descender = (int)Math.round((rect.getY() + rect.getHeight()) * -1000);
+            
+            //Alternative way to get metrics but the ascender is again wrong for our purposes
+            //lineMetrics = f1.getLineMetrics("", graphics.getFontRenderContext());
         }
         // save the family and style for later comparison
         this.family = family;

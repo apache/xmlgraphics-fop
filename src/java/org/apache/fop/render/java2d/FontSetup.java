@@ -19,21 +19,49 @@
 package org.apache.fop.render.java2d;
 
 // FOP
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.FontTriplet;
 
 // Java
 import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
+import java.util.Set;
 
 /**
- * Sets up the AWT fonts. It is similar to
- * org.apache.fop.render.pdf.FontSetup.
+ * Sets up the Java2D/AWT fonts. It is similar to
+ * org.apache.fop.render.fonts.FontSetup.
  * Assigns the font (with metrics) to internal names like "F1" and
  * assigns family-style-weight triplets to the fonts.
  */
 public class FontSetup {
 
+    /** logging instance */
+    protected static Log log = LogFactory.getLog(FontSetup.class);
+    
+    private static final int LAST_PREDEFINED_FONT_NUMBER = 14;
 
+    private static final Set HARDCODED_FONT_NAMES;
+    
+    static {
+        HARDCODED_FONT_NAMES = new java.util.HashSet();
+        HARDCODED_FONT_NAMES.add("any");
+        HARDCODED_FONT_NAMES.add("sans-serif");
+        HARDCODED_FONT_NAMES.add("serif");
+        HARDCODED_FONT_NAMES.add("monospace");
+        
+        HARDCODED_FONT_NAMES.add("Helvetica");
+        HARDCODED_FONT_NAMES.add("Times");
+        HARDCODED_FONT_NAMES.add("Courier");
+        HARDCODED_FONT_NAMES.add("Symbol");
+        HARDCODED_FONT_NAMES.add("ZapfDingbats");
+        HARDCODED_FONT_NAMES.add("Times Roman");
+        HARDCODED_FONT_NAMES.add("Times-Roman");
+        HARDCODED_FONT_NAMES.add("Computer-Modern-Typewriter");
+    }
+    
     /**
      * Sets up the font info object.
      *
@@ -177,7 +205,63 @@ public class FontSetup {
         fontInfo.addFontProperties("F8", "Times Roman", "italic", Font.BOLD);
         fontInfo.addFontProperties("F9", "Computer-Modern-Typewriter",
                                    "normal", Font.NORMAL);
+        
+        configureInstalledAWTFonts(fontInfo, graphics, LAST_PREDEFINED_FONT_NUMBER + 1);
     }
 
+    private static void configureInstalledAWTFonts(FontInfo fontInfo, Graphics2D graphics, 
+            int startNumber) {
+        int num = startNumber;
+        GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        String[] allFontFamilies = env.getAvailableFontFamilyNames();
+        for (int i = 0; i < allFontFamilies.length; i++) {
+            String family = allFontFamilies[i];
+            if (HARDCODED_FONT_NAMES.contains(family)) {
+                continue; //skip
+            }
+
+            if (log.isDebugEnabled()) {
+                log.debug("Registering: " + family);
+            }
+            
+            //Java does not give info about what variants of a font is actually supported, so
+            //we simply register all the basic variants. If we use GraphicsEnvironment.getAllFonts()
+            //we don't get reliable info whether a font is italic or bold or both.
+            int fontStyle;
+            fontStyle = java.awt.Font.PLAIN;
+            registerFontTriplet(fontInfo, family, fontStyle, "F" + num, graphics);
+            num++;
+
+            fontStyle = java.awt.Font.ITALIC;
+            registerFontTriplet(fontInfo, family, fontStyle, "F" + num, graphics);
+            num++;
+
+            fontStyle = java.awt.Font.BOLD;
+            registerFontTriplet(fontInfo, family, fontStyle, "F" + num, graphics);
+            num++;
+
+            fontStyle = java.awt.Font.BOLD | java.awt.Font.ITALIC;
+            registerFontTriplet(fontInfo, family, fontStyle, "F" + num, graphics);
+            num++;
+        }
+    }
+
+    private static void registerFontTriplet(FontInfo fontInfo, String family, int fontStyle, 
+            String fontKey, Graphics2D graphics) {
+        FontMetricsMapper metric = new FontMetricsMapper(family, fontStyle, graphics);
+        fontInfo.addMetrics(fontKey, metric);
+        
+        int weight = Font.NORMAL;
+        if ((fontStyle & java.awt.Font.BOLD) != 0) {
+            weight = Font.BOLD;
+        }
+        String style = "normal";
+        if ((fontStyle & java.awt.Font.ITALIC) != 0) {
+            style = "italic";
+        }
+        FontTriplet triplet = FontInfo.createFontKey(family, style, weight);
+        fontInfo.addFontProperties(fontKey, triplet);
+    }
+    
 }
 
