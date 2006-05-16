@@ -27,6 +27,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix">
+        Bugfix: Improved baseline detection in TTFReader for TrueType fonts.
+      </action>
       <action context="Code" dev="JM" type="fix" fixes-bug="39443">
         Bugfix: tables nested in inline elements caused a NullPointerException.
       </action>

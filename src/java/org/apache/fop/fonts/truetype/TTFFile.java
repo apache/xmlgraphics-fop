@@ -89,8 +89,15 @@ public class TTFFile {
     private int underlinePosition = 0;
     private int underlineThickness = 0;
     private int xHeight = 0;
+    //Effective ascender/descender
     private int ascender = 0;
     private int descender = 0;
+    //Ascender/descender from hhea table
+    private int hheaAscender = 0;
+    private int hheaDescender = 0;
+    //Ascender/descender from OS/2 table
+    private int os2Ascender = 0;
+    private int os2Descender = 0;
 
     private short lastChar = 0;
 
@@ -232,8 +239,10 @@ public class TTFFile {
 
             for (int i = 0; i < cmapStartCounts.length; i++) {
 
-                log.debug(i + ": " + cmapStartCounts[i]
-                    + " - " + cmapEndCounts[i]);
+                if (log.isTraceEnabled()) {
+                    log.trace(i + ": " + cmapStartCounts[i]
+                                                         + " - " + cmapEndCounts[i]);
+                }
 
                 for (int j = cmapStartCounts[i]; j <= cmapEndCounts[i]; j++) {
 
@@ -269,18 +278,22 @@ public class TTFFile {
                                     ansiWidth[aIdx.intValue()] 
                                         = mtxTab[glyphIdx].getWx();
 
-                                    log.debug("Added width "
-                                            + mtxTab[glyphIdx].getWx()
-                                            + " uni: " + j
-                                            + " ansi: " + aIdx.intValue());
+                                    if (log.isTraceEnabled()) {
+                                        log.trace("Added width "
+                                                + mtxTab[glyphIdx].getWx()
+                                                + " uni: " + j
+                                                + " ansi: " + aIdx.intValue());
+                                    }
                                 }
                             }
 
-                            log.debug("Idx: "
-                                    + glyphIdx
-                                    + " Delta: " + cmapDeltas[i]
-                                    + " Unicode: " + j
-                                    + " name: " + mtxTab[glyphIdx].getName());
+                            if (log.isTraceEnabled()) {
+                                log.trace("Idx: "
+                                        + glyphIdx
+                                        + " Delta: " + cmapDeltas[i]
+                                        + " Unicode: " + j
+                                        + " name: " + mtxTab[glyphIdx].getName());
+                            }
                         } else {
                             glyphIdx = (j + cmapDeltas[i]) & 0xffff;
 
@@ -424,6 +437,7 @@ public class TTFFile {
         initAnsiWidths();
         readPostScript(in);
         readOS2(in);
+        determineAscDesc();
         readIndexToLocation(in);
         readGlyf(in);
         readName(in);
@@ -438,9 +452,7 @@ public class TTFFile {
         // print_max_min();
 
         readKerning(in);
-        if (!pcltFound) {
-            guessPCLTValuesFromBBox();
-        }
+        guessVerticalMetricsFromGlyphBBox();
         return true;
     }
 
@@ -693,6 +705,7 @@ public class TTFFile {
     protected void readFontHeader(FontFileReader in) throws IOException {
         seekTab(in, "head", 2 * 4 + 2 * 4 + 2);
         upem = in.readTTFUShort();
+        log.debug("unit per em: " + upem);
 
         in.skip(16);
 
@@ -727,21 +740,15 @@ public class TTFFile {
     protected void readHorizontalHeader(FontFileReader in)
             throws IOException {
         seekTab(in, "hhea", 4);
-        ascender = in.readTTFShort();    // Use sTypoAscender in "OS/2" table?
-        descender = in.readTTFShort();    // Use sTypoDescender in "OS/2" table?
-
+        hheaAscender = in.readTTFShort(); 
+        log.debug("hhea.Ascender: " + hheaAscender + " " + convertTTFUnit2PDFUnit(hheaAscender));
+        hheaDescender = in.readTTFShort();
+        log.debug("hhea.Descender: " + hheaDescender + " " + convertTTFUnit2PDFUnit(hheaDescender));
+        
         in.skip(2 + 2 + 3 * 2 + 8 * 2);
         nhmtx = in.readTTFUShort();
         log.debug("Number of horizontal metrics: " + nhmtx);
 
-        //Check OS/2 table for ascender/descender if necessary
-        if (ascender == 0 || descender == 0) {
-            seekTab(in, "OS/2", 68);
-            if (this.currentDirTab.getLength() >= 78) {
-                ascender = in.readTTFShort(); //sTypoAscender
-                descender = in.readTTFShort(); //sTypoDescender
-            }
-        }
 
     }
 
@@ -804,7 +811,7 @@ public class TTFFile {
         //Skip memory usage values
         in.skip(4 * 4);
 
-        log.debug("PostScript format: " + postFormat);
+        log.debug("PostScript format: 0x" + Integer.toHexString(postFormat));
         switch (postFormat) {
         case 0x00010000:
             log.debug("PostScript format 1");
@@ -828,8 +835,8 @@ public class TTFFile {
                     numGlyphStrings++;
                 }
 
-                if (log.isDebugEnabled()) {
-                    log.debug("PostScript index: " + mtxTab[i].getIndexAsString());
+                if (log.isTraceEnabled()) {
+                    log.trace("PostScript index: " + mtxTab[i].getIndexAsString());
                 }
             }
 
@@ -852,8 +859,8 @@ public class TTFFile {
                     if (!mtxTab[i].isIndexReserved()) {
                         int k = mtxTab[i].getIndex() - NMACGLYPHS;
 
-                        if (log.isDebugEnabled()) {
-                            log.debug(k + " i=" + i + " mtx=" + mtxTab.length
+                        if (log.isTraceEnabled()) {
+                            log.trace(k + " i=" + i + " mtx=" + mtxTab.length
                                 + " ps=" + psGlyphsBuffer.length);
                         }
 
@@ -886,6 +893,30 @@ public class TTFFile {
             } else {
                 isEmbeddable = true;
             }
+            in.skip(11 * 2);
+            in.skip(10); //panose array
+            in.skip(4 * 4); //unicode ranges
+            in.skip(4);
+            in.skip(3 * 2);
+            int v;
+            os2Ascender = in.readTTFShort(); //sTypoAscender
+            log.debug("sTypoAscender: " + os2Ascender 
+                        + " " + convertTTFUnit2PDFUnit(os2Ascender));
+            os2Descender = in.readTTFShort(); //sTypoDescender
+            log.debug("sTypoDescender: " + os2Descender 
+                        + " " + convertTTFUnit2PDFUnit(os2Descender));
+            v = in.readTTFShort(); //sTypoLineGap
+            log.debug("sTypoLineGap: " + v);
+            v = in.readTTFUShort(); //usWinAscent
+            log.debug("usWinAscent: " + v  + " " + convertTTFUnit2PDFUnit(v));
+            v = in.readTTFUShort(); //usWinDescent
+            log.debug("usWinDescent: " + v + " " + convertTTFUnit2PDFUnit(v));
+            in.skip(2 * 4);
+            v = in.readTTFShort(); //sxHeight
+            log.debug("sxHeight: " + v);
+            v = in.readTTFShort(); //sCapHeight
+            log.debug("sCapHeight: " + v);
+            
         } else {
             isEmbeddable = true;
         }
@@ -953,7 +984,9 @@ public class TTFFile {
                 mtxTab[i].bbox[2] = mtxTab[0].bbox[0];
                 mtxTab[i].bbox[3] = mtxTab[0].bbox[0]; */
             }
-            log.debug(mtxTab[i].toString(this));
+            if (log.isTraceEnabled()) {
+                log.trace(mtxTab[i].toString(this));
+            }
         }
     }
 
@@ -1028,8 +1061,12 @@ public class TTFFile {
         if (dirTab != null) {
             in.seekSet(dirTab.getOffset() + 4 + 4 + 2);
             xHeight = in.readTTFUShort();
+            log.debug("xHeight from PCLT: " + xHeight 
+                            + " " + convertTTFUnit2PDFUnit(xHeight));
             in.skip(2 * 2);
             capHeight = in.readTTFUShort();
+            log.debug("capHeight from PCLT: " + capHeight 
+                            + " " + convertTTFUnit2PDFUnit(capHeight));
             in.skip(2 + 16 + 8 + 6 + 1 + 1);
 
             int serifStyle = in.readTTFUByte();
@@ -1046,22 +1083,62 @@ public class TTFFile {
         }
     }
 
-    private void guessPCLTValuesFromBBox() {
+    /**
+     * Determines the right source for the ascender and descender values. The problem here is
+     * that the interpretation of these values is not the same for every font. There doesn't seem
+     * to be a uniform definition of an ascender and a descender. In some fonts
+     * the hhea values are defined after the Apple interpretation, but not in every font. The
+     * same problem is in the OS/2 table. FOP needs the ascender and descender to determine the
+     * baseline so we need values which add up more or less to the "em box". However, due to
+     * accent modifiers a character can grow beyond the em box. 
+     */
+    private void determineAscDesc() {
+        int hheaBoxHeight = hheaAscender - hheaDescender;
+        int os2BoxHeight = os2Ascender - os2Descender;
+        if (os2Ascender > 0 && os2BoxHeight <= upem) {
+            ascender = os2Ascender;
+            descender = os2Descender;
+        } else if (hheaAscender > 0 && hheaBoxHeight <= upem) {
+            ascender = hheaAscender;
+            descender = hheaDescender;
+        } else {
+            if (os2Ascender > 0) {
+                //Fall back to info from OS/2 if possible
+                ascender = os2Ascender;
+                descender = os2Descender;
+            } else {
+                ascender = hheaAscender;
+                descender = hheaDescender;
+            }
+        }
+
+        log.debug("Font box height: " + (ascender - descender));
+        if (ascender - descender > upem) {
+            log.warn("Ascender and descender together are larger than the em box."
+                    + " This could lead to a wrong baseline placement in Apache FOP.");
+        }
+    }
+
+    private void guessVerticalMetricsFromGlyphBBox() {
         // Approximate capHeight from height of "H"
-        // It's most unlikly that a font misses the PCLT table
+        // It's most unlikely that a font misses the PCLT table
         // This also assumes that postscriptnames exists ("H")
         // Should look it up int the cmap (that wouldn't help
         // for charsets without H anyway...)
         // Same for xHeight with the letter "x"
-        boolean capHeightFound = false;
-        boolean xHeightFound = false;
+        int localCapHeight = 0;
+        int localXHeight = 0;
+        int localAscender = 0;
+        int localDescender = 0;
         for (int i = 0; i < mtxTab.length; i++) {
             if ("H".equals(mtxTab[i].getName())) {
-                capHeight = mtxTab[i].getBoundingBox()[3] - mtxTab[i].getBoundingBox()[1];
-                capHeightFound = true;
+                localCapHeight = mtxTab[i].getBoundingBox()[3];
             } else if ("x".equals(mtxTab[i].getName())) {
-                xHeight = mtxTab[i].getBoundingBox()[3] - mtxTab[i].getBoundingBox()[1];
-                xHeightFound = true;
+                localXHeight = mtxTab[i].getBoundingBox()[3];
+            } else if ("d".equals(mtxTab[i].getName())) {
+                localAscender = mtxTab[i].getBoundingBox()[3];
+            } else if ("p".equals(mtxTab[i].getName())) {
+                localDescender = mtxTab[i].getBoundingBox()[1];
             } else {
                 // OpenType Fonts with a version 3.0 "post" table don't have glyph names.
                 // Use Unicode indices instead.
@@ -1070,20 +1147,45 @@ public class TTFFile {
                     //Only the first index is used
                     char ch = (char)((Integer)unicodeIndex.get(0)).intValue();
                     if (ch == 'H') {
-                        capHeight = mtxTab[i].getBoundingBox()[3] - mtxTab[i].getBoundingBox()[1];
-                        capHeightFound = true;
+                        localCapHeight = mtxTab[i].getBoundingBox()[3];
                     } else if (ch == 'x') {
-                        xHeight = mtxTab[i].getBoundingBox()[3] - mtxTab[i].getBoundingBox()[1];
-                        xHeightFound = true;
+                        localXHeight = mtxTab[i].getBoundingBox()[3];
+                    } else if (ch == 'd') {
+                        localAscender = mtxTab[i].getBoundingBox()[3];
+                    } else if (ch == 'p') {
+                        localDescender = mtxTab[i].getBoundingBox()[1];
                     }
                 }
             }
         }
-        if (!capHeightFound) {
-            log.warn("capHeight value could not be determined. The font may not work as expected.");
+        log.debug("Ascender from glyph 'd': " + localAscender 
+                + " " + convertTTFUnit2PDFUnit(localAscender));
+        log.debug("Descender from glyph 'p': " + localDescender
+                + " " + convertTTFUnit2PDFUnit(localDescender));
+        if (ascender - descender > upem) {
+            log.debug("Replacing specified ascender/descender with derived values to get values"
+                    + " which fit in the em box.");
+            ascender = localAscender;
+            descender = localDescender;
         }
-        if (!xHeightFound) {
-            log.warn("xHeight value could not be determined. The font may not work as expected.");
+
+        log.debug("xHeight from glyph 'x': " + localXHeight
+                + " " + convertTTFUnit2PDFUnit(localXHeight));
+        log.debug("CapHeight from glyph 'H': " + localCapHeight
+                + " " + convertTTFUnit2PDFUnit(localCapHeight));
+        if (capHeight == 0) {
+            capHeight = localCapHeight;
+            if (localCapHeight == 0) {
+                log.warn("capHeight value could not be determined."
+                        + " The font may not work as expected.");
+            }
+        }
+        if (xHeight == 0) {
+            xHeight = localXHeight;
+            if (xHeight == 0) {
+                log.warn("xHeight value could not be determined."
+                        + " The font may not work as expected.");
+            }
         }
     }
 
