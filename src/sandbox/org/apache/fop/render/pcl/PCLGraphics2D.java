@@ -47,6 +47,7 @@ import org.apache.xmlgraphics.java2d.GraphicContext;
 
 /**
  * Graphics2D implementation implementing PCL and HP GL/2.
+ * Note: This class cannot be used stand-alone to create full PCL documents.
  */
 public class PCLGraphics2D extends AbstractGraphics2D {
 

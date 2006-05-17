@@ -23,6 +23,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
@@ -70,6 +71,7 @@ import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.image.EPSImage;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
@@ -79,6 +81,8 @@ import org.apache.fop.render.Graphics2DImagePainter;
 import org.apache.fop.render.PrintRenderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.RendererContextConstants;
+import org.apache.fop.render.java2d.FontMetricsMapper;
+import org.apache.fop.render.java2d.FontSetup;
 import org.apache.fop.render.java2d.Java2DRenderer;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.util.QName;
@@ -140,6 +144,23 @@ public class PCLRenderer extends PrintRenderer {
     }
 
     /**
+     * @see org.apache.fop.render.Renderer#setupFontInfo(org.apache.fop.fonts.FontInfo)
+     */
+    public void setupFontInfo(FontInfo inFontInfo) {
+        //Don't call super.setupFontInfo() here!
+        //The PCLRenderer uses the Java2D FontSetup which needs a special font setup
+        //create a temp Image to test font metrics on
+        fontInfo = inFontInfo;
+        BufferedImage fontImage = new BufferedImage(100, 100,
+                BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = fontImage.createGraphics();
+        //The next line is important to get accurate font metrics!
+        g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, 
+                RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        FontSetup.setup(fontInfo, g);
+    }
+
+    /**
      * Central exception handler for I/O exceptions.
      * @param ioe IOException to handle
      */
@@ -160,13 +181,24 @@ public class PCLRenderer extends PrintRenderer {
         return this.graphicContext;
     }
     
+    /** @return the target resolution */
+    protected int getResolution() {
+        int resolution = (int)Math.round(userAgent.getTargetResolution());
+        if (resolution <= 300) {
+            return 300;
+        } else {
+            return 600;
+        }
+    }
+    
     /**
      * Sets the current font (NOTE: Hard-coded font mappings ATM!)
      * @param name the font name (internal F* names for now)
      * @param size the font size
+     * @return true if the font can be mapped to PCL
      * @throws IOException if an I/O problem occurs
      */
-    public void setFont(String name, float size) throws IOException {
+    public boolean setFont(String name, float size) throws IOException {
         int fontcode = 0;
         if (name.length() > 1 && name.charAt(0) == 'F') {
             try {
@@ -261,20 +293,25 @@ public class PCLRenderer extends PrintRenderer {
             gen.writeCommand("(s1p" + formattedSize + "v0s0b45101T");
             break;
         default:
-            gen.writeCommand("(0N");
-            gen.writeCommand("(s" + formattedSize + "V");
-            break;
+            //gen.writeCommand("(0N");
+            //gen.writeCommand("(s" + formattedSize + "V");
+            return false;
         }
+        return true;
     }
 
     /** @see org.apache.fop.render.Renderer#startRenderer(java.io.OutputStream) */
     public void startRenderer(OutputStream outputStream) throws IOException {
         log.debug("Rendering areas to PCL...");
         this.out = outputStream;
-        this.gen = new PCLGenerator(out);
+        this.gen = new PCLGenerator(out, getResolution());
 
         gen.universalEndOfLanguage();
-        gen.writeText("@PJL JOB NAME = \"" + userAgent.getTitle() + "\"\n");
+        gen.writeText("@PJL COMMENT Produced by " + userAgent.getProducer() + "\n");
+        if (userAgent.getTitle() != null) {
+            gen.writeText("@PJL JOB NAME = \"" + userAgent.getTitle() + "\"\n");
+        }
+        gen.writeText("@PJL SET RESOLUTION = " + getResolution() + "\n");
         gen.writeText("@PJL ENTER LANGUAGE = PCL\n");
         gen.resetPrinter();
     }
@@ -325,8 +362,8 @@ public class PCLRenderer extends PrintRenderer {
         gen.clearHorizontalMargins();
         gen.setTopMargin(0);
         gen.setVMI(0);
-        gen.setUnitOfMeasure(600);
-        gen.setRasterGraphicsResolution(600);
+        gen.setUnitOfMeasure(getResolution());
+        gen.setRasterGraphicsResolution(getResolution());
     }
 
     /** Saves the current graphics state on the stack. */
@@ -486,35 +523,76 @@ public class PCLRenderer extends PrintRenderer {
     /**
      * @see org.apache.fop.render.AbstractRenderer#renderText(TextArea)
      */
-    protected void renderText(TextArea area) {
-        //renderInlineAreaBackAndBorders(area);
-        String fontname = getInternalFontNameForArea(area);
-        int fontsize = area.getTraitAsInteger(Trait.FONT_SIZE);
+    protected void renderText(final TextArea text) {
+        renderInlineAreaBackAndBorders(text);
+        
+        String fontname = getInternalFontNameForArea(text);
+        int fontsize = text.getTraitAsInteger(Trait.FONT_SIZE);
 
         //Determine position
-        //int saveIP = currentIPPosition;
-        //int saveBP = currentBPPosition;
-        int rx = currentIPPosition + area.getBorderAndPaddingWidthStart();
-        int bl = currentBPPosition + area.getOffset() + area.getBaselineOffset();
+        int saveIP = currentIPPosition;
+        int rx = currentIPPosition + text.getBorderAndPaddingWidthStart();
+        int bl = currentBPPosition + text.getOffset() + text.getBaselineOffset();
 
         try {
-            setFont(fontname, fontsize);
-            Color col = (Color)area.getTrait(Trait.COLOR);
-            //this.currentFill = col;
-            if (col != null) {
-                //useColor(ct);
-                gen.setPatternTransparencyMode(false);
-                gen.selectCurrentPattern(gen.convertToPCLShade(col), 2);
+            final Color col = (Color)text.getTrait(Trait.COLOR);
+            boolean pclFont = setFont(fontname, fontsize);
+            if (pclFont) {
+                //this.currentFill = col;
+                if (col != null) {
+                    //useColor(ct);
+                    gen.setTransparencyMode(true, false);
+                    gen.selectCurrentPattern(gen.convertToPCLShade(col), 2);
+                }
+                
+                saveGraphicsState();
+                graphicContext.translate(rx, bl);
+                setCursorPos(0, 0);
+                gen.setTransparencyMode(true, true);
+                
+                super.renderText(text); //Updates IPD and renders words and spaces
+                restoreGraphicsState();
+            } else {
+                //Use Java2D to paint different fonts via bitmap
+                final Font font = getFontFromArea(text);
+                final int baseline = text.getBaselineOffset();
+                
+                //for cursive fonts, so the text isn't clipped
+                int extraWidth = font.getFontSize() / 3;
+                
+                Graphics2DAdapter g2a = getGraphics2DAdapter();
+                final Rectangle paintRect = new Rectangle(
+                        rx, currentBPPosition + text.getOffset(),
+                        text.getIPD() + extraWidth, text.getBPD());
+                RendererContext rc = createRendererContext(paintRect.x, paintRect.y, 
+                        paintRect.width, paintRect.height, null);
+                Map atts = new java.util.HashMap();
+                atts.put(new QName(ExtensionElementMapping.URI, null, "conversion-mode"), "bitmap");
+                rc.setProperty(RendererContextConstants.FOREIGN_ATTRIBUTES, atts);
+                
+                Graphics2DImagePainter painter = new Graphics2DImagePainter() {
+
+                    public void paint(Graphics2D g2d, Rectangle2D area) {
+                        FontMetricsMapper mapper = (FontMetricsMapper)fontInfo.getMetricsFor(
+                                font.getFontName());
+                        g2d.setFont(mapper.getFont(font.getFontSize()));
+                        g2d.translate(0, baseline);
+                        g2d.scale(1000, 1000);
+                        g2d.setColor(col);
+                        Java2DRenderer.renderText(text, g2d, font);
+                    }
+                    
+                    public Dimension getImageSize() {
+                        return paintRect.getSize();
+                    }
+                    
+                };
+                g2a.paintImage(painter, rc, 
+                        paintRect.x, paintRect.y, paintRect.width, paintRect.height);
+                currentIPPosition = saveIP + text.getAllocIPD();
             }
-            
-            saveGraphicsState();
-            graphicContext.translate(rx, bl);
-            setCursorPos(0, 0);
-        
-            super.renderText(area); //Updates IPD
         
             //renderTextDecoration(tf, fontsize, area, bl, rx);
-            restoreGraphicsState();
         } catch (IOException ioe) {
             handleIOTrouble(ioe);
         }
@@ -583,7 +661,7 @@ public class PCLRenderer extends PrintRenderer {
     protected void fillRect(float x, float y, float width, float height) {
         try {
             setCursorPos(x * 1000, y * 1000);
-            gen.fillRect((int)width * 1000, (int)height * 1000, 
+            gen.fillRect((int)(width * 1000), (int)(height * 1000), 
                     this.currentFillColor);
         } catch (IOException ioe) {
             handleIOTrouble(ioe);
@@ -625,7 +703,7 @@ public class PCLRenderer extends PrintRenderer {
         Font font = getFontFromArea(textArea);
         
         int tws = (space.isAdjustable() 
-                ? ((TextArea) space.getParentArea()).getTextWordSpaceAdjust() 
+                ? textArea.getTextWordSpaceAdjust() 
                         + 2 * textArea.getTextLetterSpaceAdjust()
                 : 0);
 
@@ -999,29 +1077,25 @@ public class PCLRenderer extends PrintRenderer {
         float width = borderRect.width;
         float height = borderRect.height;
         if (bpsBefore != null) {
-            int borderWidth = (int) Math.round((bpsBefore.width / 1000f));
+            float borderWidth = bpsBefore.width / 1000f;
             updateFillColor(bpsBefore.color);
-            fillRect((int) startx, (int) starty, (int) width,
-                    borderWidth);
+            fillRect(startx, starty, width, borderWidth);
         }
         if (bpsAfter != null) {
-            int borderWidth = (int) Math.round((bpsAfter.width / 1000f));
+            float borderWidth = bpsAfter.width / 1000f;
             updateFillColor(bpsAfter.color);
-            fillRect((int) startx,
-                    (int) (starty + height - borderWidth), (int) width,
-                    borderWidth);
+            fillRect(startx, (starty + height - borderWidth), 
+                    width, borderWidth);
         }
         if (bpsStart != null) {
-            int borderWidth = (int) Math.round((bpsStart.width / 1000f));
+            float borderWidth = bpsStart.width / 1000f;
             updateFillColor(bpsStart.color);
-            fillRect((int) startx, (int) starty, borderWidth,
-                    (int) height);
+            fillRect(startx, starty, borderWidth, height);
         }
         if (bpsEnd != null) {
-            int borderWidth = (int) Math.round((bpsEnd.width / 1000f));
+            float borderWidth = bpsEnd.width / 1000f;
             updateFillColor(bpsEnd.color);
-            fillRect((int) (startx + width - borderWidth),
-                    (int) starty, borderWidth, (int) height);
+            fillRect((startx + width - borderWidth), starty, borderWidth, height);
         }
     }
     

@@ -64,7 +64,7 @@ public class PCLGraphics2DAdapter extends AbstractGraphics2DAdapter {
         boolean paintAsBitmap = pclContext.paintAsBitmap();
         if (!paintAsBitmap) {
             ByteArrayOutputStream baout = new ByteArrayOutputStream();
-            PCLGenerator tempGen = new PCLGenerator(baout);
+            PCLGenerator tempGen = new PCLGenerator(baout, gen.getMaximumBitmapResolution());
             try {
                 GraphicContext ctx = (GraphicContext)pcl.getGraphicContext().clone();
 
@@ -109,7 +109,7 @@ public class PCLGraphics2DAdapter extends AbstractGraphics2DAdapter {
         if (!painted) {
             //Fallback solution: Paint to a BufferedImage
             int resolution = (int)Math.round(context.getUserAgent().getTargetResolution());
-            BufferedImage bi = paintToBufferedImage(painter, pclContext, resolution, true);
+            BufferedImage bi = paintToBufferedImage(painter, pclContext, resolution, true, false);
 
             pcl.setCursorPos(x, y);
             gen.paintBitmap(bi, resolution);
