@@ -20,12 +20,18 @@ package org.apache.fop.render;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.RenderingHints;
+import java.awt.Transparency;
+import java.awt.color.ColorSpace;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.ComponentColorModel;
+import java.awt.image.DataBuffer;
+import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.Graphics2DImagePainter;
 import org.apache.fop.render.RendererContext.RendererContextWrapper;
@@ -45,14 +51,22 @@ public abstract class AbstractGraphics2DAdapter implements Graphics2DAdapter {
      * @return the generated BufferedImage
      */
     protected BufferedImage paintToBufferedImage(Graphics2DImagePainter painter, 
-             RendererContextWrapper context, int resolution, boolean gray) {
+             RendererContextWrapper context, int resolution, boolean gray, boolean withAlpha) {
         int bmw = UnitConv.mpt2px(context.getWidth(), resolution);
         int bmh = UnitConv.mpt2px(context.getHeight(), resolution);
         BufferedImage bi;
         if (gray) {
-            bi = new BufferedImage(bmw, bmh, BufferedImage.TYPE_BYTE_GRAY);
+            if (withAlpha) {
+                bi = createGrayBufferedImageWithAlpha(bmw, bmh);
+            } else {
+                bi = new BufferedImage(bmw, bmh, BufferedImage.TYPE_BYTE_GRAY);
+            }
         } else {
-            bi = new BufferedImage(bmw, bmh, BufferedImage.TYPE_INT_ARGB);
+            if (withAlpha) {
+                bi = new BufferedImage(bmw, bmh, BufferedImage.TYPE_INT_ARGB);
+            } else {
+                bi = new BufferedImage(bmw, bmh, BufferedImage.TYPE_INT_RGB);
+            }
         }
         Graphics2D g2d = bi.createGraphics();
         try {
@@ -62,7 +76,9 @@ public abstract class AbstractGraphics2DAdapter implements Graphics2DAdapter {
             
             g2d.setBackground(Color.white);
             g2d.setColor(Color.black);
-            g2d.clearRect(0, 0, bmw, bmh);
+            if (!withAlpha) {
+                g2d.clearRect(0, 0, bmw, bmh);
+            }
             double sx = (double)bmw / context.getWidth();
             double sy = (double)bmh / context.getHeight();
             g2d.scale(sx, sy);
@@ -74,6 +90,28 @@ public abstract class AbstractGraphics2DAdapter implements Graphics2DAdapter {
         } finally {
             g2d.dispose();
         }
+        return bi;
+    }
+
+    private static BufferedImage createGrayBufferedImageWithAlpha(int width, int height) {
+        BufferedImage bi;
+        boolean alphaPremultiplied = true;
+        int bands = 2;
+        int[] bits = new int[bands];
+        for (int i = 0; i < bands; i++) {
+            bits[i] = 8;
+        }
+        ColorModel cm = new ComponentColorModel(
+                ColorSpace.getInstance(ColorSpace.CS_GRAY),
+                bits,
+                true, alphaPremultiplied,
+                Transparency.TRANSLUCENT,
+                DataBuffer.TYPE_BYTE);
+        WritableRaster wr = Raster.createInterleavedRaster(
+                DataBuffer.TYPE_BYTE,
+                width, height, bands,
+                new Point(0, 0));
+        bi = new BufferedImage(cm, wr, alphaPremultiplied, null);
         return bi;
     }
 

@@ -24,16 +24,23 @@ import java.awt.Graphics2D;
 import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
+import java.awt.image.ByteLookupTable;
 import java.awt.image.ColorConvertOp;
 import java.awt.image.ColorModel;
+import java.awt.image.DataBuffer;
 import java.awt.image.IndexColorModel;
+import java.awt.image.LookupOp;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
+import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
+
+import org.apache.xmlgraphics.image.GraphicsUtil;
 
 /**
  * This class provides methods for generating PCL print files.
@@ -52,6 +59,11 @@ public class PCLGenerator {
     
     private OutputStream out;
     
+    private boolean currentSourceTransparency = true;
+    private boolean currentPatternTransparency = true;
+    
+    private int maxBitmapResolution = PCL_RESOLUTIONS[PCL_RESOLUTIONS.length - 1];
+    
     /**
      * Main constructor.
      * @param out the OutputStream to write the PCL stream to
@@ -60,9 +72,34 @@ public class PCLGenerator {
         this.out = out;
     }
     
+    /**
+     * Main constructor.
+     * @param out the OutputStream to write the PCL stream to
+     * @param maxResolution the maximum resolution to encode bitmap images at
+     */
+    public PCLGenerator(OutputStream out, int maxResolution) {
+        this(out);
+        boolean found = false;
+        for (int i = 0; i < PCL_RESOLUTIONS.length; i++) {
+            if (PCL_RESOLUTIONS[i] == maxResolution) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            throw new IllegalArgumentException("Illegal value for maximum resolution!");
+        }
+        this.maxBitmapResolution = maxResolution;
+    }
+    
     /** @return the OutputStream that this generator writes to */
     public OutputStream getOutputStream() {
         return this.out;
+    }
+    
+    /** @return the maximum resolution to encode bitmap images at */
+    public int getMaximumBitmapResolution() {
+        return this.maxBitmapResolution;
     }
     
     /**
@@ -218,6 +255,22 @@ public class PCLGenerator {
     }
 
     /**
+     * Pushes the current cursor position on a stack (stack size: max 20 entries)
+     * @throws IOException In case of an I/O error
+     */
+    public void pushCursorPos() throws IOException {
+        writeCommand("&f0S");
+    }
+    
+    /**
+     * Pops the current cursor position from the stack.
+     * @throws IOException In case of an I/O error
+     */
+    public void popCursorPos() throws IOException {
+        writeCommand("&f1S");
+    }
+    
+    /**
      * Changes the current print direction while maintaining the current cursor position.
      * @param rotate the rotation angle (counterclockwise), one of 0, 90, 180 and 270.
      * @throws IOException In case of an I/O error
@@ -283,16 +336,39 @@ public class PCLGenerator {
     }
 
     /**
+     * Sets the source transparency mode.
+     * @param transparent true if transparent, false for opaque
+     * @throws IOException In case of an I/O error
+     */
+    public void setSourceTransparencyMode(boolean transparent) throws IOException {
+        setTransparencyMode(transparent, currentPatternTransparency);
+    }
+
+    /**
      * Sets the pattern transparency mode.
      * @param transparent true if transparent, false for opaque
      * @throws IOException In case of an I/O error
      */
     public void setPatternTransparencyMode(boolean transparent) throws IOException {
-        if (transparent) {
-            writeCommand("*v0O");
-        } else {
-            writeCommand("*v1O");
+        setTransparencyMode(currentSourceTransparency, transparent);
+    }
+
+    /**
+     * Sets the transparency modes.
+     * @param source source transparency: true if transparent, false for opaque
+     * @param pattern pattern transparency: true if transparent, false for opaque
+     * @throws IOException In case of an I/O error
+     */
+    public void setTransparencyMode(boolean source, boolean pattern) throws IOException {
+        if (source != currentSourceTransparency && pattern != currentPatternTransparency) {
+            writeCommand("*v" + (source ? '0' : '1') + "n" + (pattern ? '0' : '1') + "O");
+        } else if (source != currentSourceTransparency) {
+            writeCommand("*v" + (source ? '0' : '1') + "N");
+        } else if (pattern != currentPatternTransparency) {
+            writeCommand("*v" + (pattern ? '0' : '1') + "O");
         }
+        this.currentSourceTransparency = source;
+        this.currentPatternTransparency = pattern;
     }
 
     /**
@@ -323,7 +399,9 @@ public class PCLGenerator {
      * @throws IOException In case of an I/O error
      */
     public void selectCurrentPattern(int patternID, int pattern) throws IOException {
-        writeCommand("*c" + patternID + "G");
+        if (pattern > 1) {
+            writeCommand("*c" + patternID + "G");
+        }
         writeCommand("*v" + pattern + "T");
     }
 
@@ -389,6 +467,7 @@ public class PCLGenerator {
      * @return the resulting PCL resolution (one of 75, 100, 150, 200, 300, 600)
      */
     private int calculatePCLResolution(int resolution, boolean increased) {
+        int choice = -1;
         for (int i = PCL_RESOLUTIONS.length - 2; i >= 0; i--) {
             if (resolution > PCL_RESOLUTIONS[i]) {
                 int idx = i + 1;
@@ -397,10 +476,18 @@ public class PCLGenerator {
                 } else if (idx < PCL_RESOLUTIONS.length - 1) {
                     idx += increased ? 1 : 0;
                 }
-                return PCL_RESOLUTIONS[idx];
+                choice = idx;
+                break;
+                //return PCL_RESOLUTIONS[idx];
             }
         }
-        return PCL_RESOLUTIONS[increased ? 2 : 0];
+        if (choice < 0) {
+            choice = (increased ? 2 : 0);
+        }
+        while (choice > 0 && PCL_RESOLUTIONS[choice] > getMaximumBitmapResolution()) {
+            choice--;
+        }
+        return PCL_RESOLUTIONS[choice];
     }
     
     private boolean isValidPCLResolution(int resolution) {
@@ -419,6 +506,60 @@ public class PCLGenerator {
         }
     }
     
+    //Threshold table to convert an alpha channel (8-bit) into a clip mask (1-bit)
+    private static final byte[] THRESHOLD_TABLE = new byte[256];
+    static { // Initialize the arrays
+        for (int i = 0; i < 256; i++) {
+            THRESHOLD_TABLE[i] = (byte) ((i < 240) ? 255 : 0);
+        }
+    }    
+    
+    private RenderedImage getMask(RenderedImage img, Dimension targetDim) {
+        ColorModel cm = img.getColorModel(); 
+        if (cm.hasAlpha()) {
+            BufferedImage alpha = new BufferedImage(img.getWidth(), img.getHeight(), 
+                    BufferedImage.TYPE_BYTE_GRAY);
+            Raster raster = img.getData();
+            GraphicsUtil.copyBand(raster, cm.getNumColorComponents(), alpha.getRaster(), 0);
+
+            BufferedImageOp op1 = new LookupOp(new ByteLookupTable(0, THRESHOLD_TABLE), null);
+            BufferedImage alphat = op1.filter(alpha, null);
+
+            BufferedImage mask;
+            if (true) {
+                mask = new BufferedImage(targetDim.width, targetDim.height,
+                        BufferedImage.TYPE_BYTE_BINARY);
+            } else {
+                byte[] arr = {(byte)0, (byte)0xff};
+                ColorModel colorModel = new IndexColorModel(1, 2, arr, arr, arr);
+                WritableRaster wraster = Raster.createPackedRaster(DataBuffer.TYPE_BYTE,
+                                                   targetDim.width, targetDim.height, 1, 1, null);
+                mask = new BufferedImage(colorModel, wraster, false, null);
+            }
+            
+            Graphics2D g2d = mask.createGraphics();
+            try {
+                AffineTransform at = new AffineTransform();
+                double sx = targetDim.getWidth() / img.getWidth();
+                double sy = targetDim.getHeight() / img.getHeight();
+                at.scale(sx, sy);
+                g2d.drawRenderedImage(alphat, at);
+            } finally {
+                g2d.dispose();
+            }
+            /*
+            try {
+                BatchDiffer.saveAsPNG(alpha, new java.io.File("D:/out-alpha.png"));
+                BatchDiffer.saveAsPNG(mask, new java.io.File("D:/out-mask.png"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }*/
+            return mask;
+        } else {
+            return null;
+        }
+    }
+
     /**
      * Paint a bitmap at the current cursor position. The bitmap is converted to a monochrome
      * (1-bit) bitmap image.
@@ -433,9 +574,21 @@ public class PCLGenerator {
             Dimension orgDim = new Dimension(img.getWidth(), img.getHeight());
             Dimension effDim = getAdjustedDimension(orgDim, resolution, effResolution);
             boolean scaled = !orgDim.equals(effDim);
+            
+            //Transparency mask disabled. Doesn't work reliably
+            final boolean transparencyDisabled = true;
+            RenderedImage mask = (transparencyDisabled ? null : getMask(img, effDim)); 
+            if (mask != null) {
+                pushCursorPos();
+                selectCurrentPattern(0, 1); //Solid white
+                setTransparencyMode(true, true);
+                paintMonochromeBitmap(mask, effResolution);
+                popCursorPos();
+            }
+            
             BufferedImage src = null;
             if (img instanceof BufferedImage && !scaled) {
-                if (!isGrayscaleImage(img)) {
+                if (!isGrayscaleImage(img) || img.getColorModel().hasAlpha()) {
                     src = new BufferedImage(effDim.width, effDim.height, 
                             BufferedImage.TYPE_BYTE_GRAY);
                     ColorConvertOp op = new ColorConvertOp(
@@ -462,15 +615,16 @@ public class PCLGenerator {
             MonochromeBitmapConverter converter = createMonochromeBitmapConverter();
             converter.setHint("quality", "false");
 
-            long start = System.currentTimeMillis();
             BufferedImage buf = (BufferedImage)converter.convertToMonochrome(src);
-            long duration = System.currentTimeMillis() - start;
-            System.out.println(duration + " ms");
             
             RenderedImage red = buf;
+            selectCurrentPattern(0, 0); //Solid black
+            setTransparencyMode(mask != null, true);
             paintMonochromeBitmap(red, effResolution);
         } else {
             int effResolution = calculatePCLResolution(resolution);
+            setSourceTransparencyMode(false);
+            selectCurrentPattern(0, 0); //Solid black
             paintMonochromeBitmap(img, effResolution);
         }
     }
