@@ -85,6 +85,13 @@ public class AreaAdditionUtil {
                 // pos was created by this LM, so it must be ignored
             }
         }
+        if (firstPos == null) {
+            return; //Nothing to do, return early
+            //TODO This is a hack to avoid an NPE in the code block below.
+            //If there's no firstPos/lastPos there's currently no way to
+            //correctly determine first and last conditions. The Iterator
+            //doesn't give us that info.
+        }
         
         if (bslm != null && bslm.markers != null) {
             bslm.getCurrentPV().addMarkers(bslm.markers, true, 
