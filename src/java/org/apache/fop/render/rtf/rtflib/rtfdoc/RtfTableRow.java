@@ -198,36 +198,38 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
                 // Adjust the cell's display attributes so the table's/row's borders
                 // are drawn properly.
                 
-                // get border attributes from table
-                if (index == 0) {
-                    if (!rtfcell.getRtfAttributes().isSet(ITableAttributes.CELL_BORDER_LEFT)) {
-                        rtfcell.getRtfAttributes().set(ITableAttributes.CELL_BORDER_LEFT,
-                            (RtfAttributes) tableBorderAttributes.getValue(
-                                    ITableAttributes.CELL_BORDER_LEFT));
+                if (tableBorderAttributes != null) {
+                    // get border attributes from table
+                    if (index == 0) {
+                        String border = ITableAttributes.CELL_BORDER_LEFT;
+                        if (!rtfcell.getRtfAttributes().isSet(border)) {
+                            rtfcell.getRtfAttributes().set(border,
+                                (RtfAttributes) tableBorderAttributes.getValue(border));
+                        }
                     }
-                }
 
-                if (index == this.getChildCount() - 1) {
-                    if (!rtfcell.getRtfAttributes().isSet(ITableAttributes.CELL_BORDER_RIGHT)) {
-                        rtfcell.getRtfAttributes().set(ITableAttributes.CELL_BORDER_RIGHT,
-                            (RtfAttributes) tableBorderAttributes.getValue(
-                                    ITableAttributes.CELL_BORDER_RIGHT));
+                    if (index == this.getChildCount() - 1) {
+                        String border = ITableAttributes.CELL_BORDER_RIGHT;
+                        if (!rtfcell.getRtfAttributes().isSet(border)) {
+                            rtfcell.getRtfAttributes().set(border,
+                                (RtfAttributes) tableBorderAttributes.getValue(border));
+                        }
                     }
-                }
 
-                if (isFirstRow()) {
-                    if (!rtfcell.getRtfAttributes().isSet(ITableAttributes.CELL_BORDER_TOP)) {
-                        rtfcell.getRtfAttributes().set(ITableAttributes.CELL_BORDER_TOP,
-                            (RtfAttributes) (RtfAttributes) tableBorderAttributes.getValue(
-                                    ITableAttributes.CELL_BORDER_TOP));
+                    if (isFirstRow()) {
+                        String border = ITableAttributes.CELL_BORDER_TOP;
+                        if (!rtfcell.getRtfAttributes().isSet(border)) {
+                            rtfcell.getRtfAttributes().set(border,
+                                (RtfAttributes) tableBorderAttributes.getValue(border));
+                        }
                     }
-                }
 
-                if ((parentTable != null) && (parentTable.isHighestRow(id))) {
-                    if (!rtfcell.getRtfAttributes().isSet(ITableAttributes.CELL_BORDER_BOTTOM)) {
-                        rtfcell.getRtfAttributes().set(ITableAttributes.CELL_BORDER_BOTTOM,
-                            (RtfAttributes) tableBorderAttributes.getValue(
-                                    ITableAttributes.CELL_BORDER_BOTTOM));
+                    if ((parentTable != null) && (parentTable.isHighestRow(id))) {
+                        String border = ITableAttributes.CELL_BORDER_BOTTOM;
+                        if (!rtfcell.getRtfAttributes().isSet(border)) {
+                            rtfcell.getRtfAttributes().set(border,
+                                (RtfAttributes) tableBorderAttributes.getValue(border));
+                        }
                     }
                 }
                 
