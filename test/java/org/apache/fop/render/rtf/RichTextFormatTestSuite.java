@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-/* $Id: BasicDriverTestSuite.java 231325 2005-08-10 21:05:39Z jeremias $ */
+/* $Id$ */
  
-package org.apache.fop;
-
-import org.apache.fop.render.pdf.PDFAConformanceTestCase;
-import org.apache.fop.render.rtf.RichTextFormatTestSuite;
+package org.apache.fop.render.rtf;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * Test suite for basic functionality of FOP.
+ * Test suite for FOP's RTF library.
  */
-public class StandardTestSuite {
+public class RichTextFormatTestSuite {
 
     /**
      * Builds the test suite
@@ -35,12 +32,9 @@ public class StandardTestSuite {
      */
     public static Test suite() {
         TestSuite suite = new TestSuite(
-            "Basic functionality test suite for FOP");
+            "Test suite for RTF library");
         //$JUnit-BEGIN$
-        suite.addTest(BasicDriverTestSuite.suite());
-        suite.addTest(UtilityCodeTestSuite.suite());
-        suite.addTest(new TestSuite(PDFAConformanceTestCase.class));
-        suite.addTest(RichTextFormatTestSuite.suite());
+        suite.addTest(new TestSuite(Bug39607TestCase.class));
         //$JUnit-END$
         return suite;
     }
