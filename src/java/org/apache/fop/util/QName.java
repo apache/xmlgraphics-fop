@@ -54,6 +54,30 @@ public class QName implements Serializable {
         this.hashCode = toHashString().hashCode();
     }
     
+    /**
+     * Main constructor.
+     * @param namespaceURI the namespace URI
+     * @param qName the qualified name
+     */
+    public QName(String namespaceURI, String qName) {
+        if (qName == null) {
+            throw new NullPointerException("Parameter localName must not be null");
+        }
+        if (qName.length() == 0) {
+            throw new IllegalArgumentException("Parameter localName must not be empty");
+        }
+        this.namespaceURI = namespaceURI;
+        int p = qName.indexOf(':');
+        if (p > 0) {
+            this.prefix = qName.substring(0, p);
+            this.localName = qName.substring(p + 1);
+        } else {
+            this.prefix = null;
+            this.localName = qName;
+        }
+        this.hashCode = toHashString().hashCode();
+    }
+    
     /** @return the namespace URI */
     public String getNamespaceURI() {
         return this.namespaceURI;

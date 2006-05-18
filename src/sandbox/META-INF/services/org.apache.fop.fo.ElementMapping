@@ -1,1 +1,2 @@
 org.apache.fop.render.afp.extensions.AFPElementMapping
+org.apache.fop.render.pcl.extensions.PCLElementMapping

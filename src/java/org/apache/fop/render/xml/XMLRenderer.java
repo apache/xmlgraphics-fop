@@ -47,6 +47,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.Area;
+import org.apache.fop.area.AreaTreeObject;
 import org.apache.fop.area.BeforeFloat;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.BlockViewport;
@@ -393,11 +394,25 @@ public class XMLRenderer extends PrintRenderer {
             }
         }
         
-        //Transfer foreign attributes
-        Iterator iter = area.getForeignAttributes().entrySet().iterator();
+        transferForeignObjects(area);
+    }
+
+    private void transferForeignObjects(AreaTreeObject ato) {
+        Map prefixes = new java.util.HashMap();
+        Iterator iter = ato.getForeignAttributes().entrySet().iterator();
         while (iter.hasNext()) {
             Map.Entry entry = (Map.Entry)iter.next();
-            addAttribute((QName)entry.getKey(), (String)entry.getValue());
+            QName qname = (QName)entry.getKey();
+            prefixes.put(qname.getPrefix(), qname.getNamespaceURI());
+            addAttribute(qname, (String)entry.getValue());
+        }
+        //Namespace declarations
+        iter = prefixes.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry entry = (Map.Entry)iter.next();
+            String qn = "xmlns:" + (String)entry.getKey();
+            atts.addAttribute("", (String)entry.getKey(), qn, 
+                    CDATA, (String)entry.getValue());
         }
     }
 
@@ -492,6 +507,7 @@ public class XMLRenderer extends PrintRenderer {
         if (page.isBlank()) {
             addAttribute("blank", "true");
         }
+        transferForeignObjects(page);
         startElement("pageViewport", atts);
         startElement("page");
 

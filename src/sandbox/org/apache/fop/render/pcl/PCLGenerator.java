@@ -201,6 +201,18 @@ public class PCLGenerator {
     }
 
     /**
+     * Selects the paper source. The parameter is usually printer-specific. Usually, "1" is the 
+     * default tray, "2" is the manual paper feed, "3" is the manual envelope feed, "4" is the
+     * "lower" tray and "7" is "auto-select". Consult the technical reference for your printer
+     * for all available values.
+     * @param selector the integer representing the paper source/tray
+     * @throws IOException In case of an I/O error
+     */
+    public void selectPaperSource(int selector) throws IOException {
+        writeCommand("&l" + selector + "H");
+    }
+
+    /**
      * Clears the horizontal margins.
      * @throws IOException In case of an I/O error
      */
