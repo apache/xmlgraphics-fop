@@ -330,6 +330,11 @@
     <reference>http://issues.apache.org/bugzilla/show_bug.cgi?id=39560</reference>
   </testcase>
   <testcase>
+    <name>table-cell empty area with marker.xml</name>
+    <file>table-cell_empty_area_with_marker.xml</file>
+    <description>A table-cell producing an empty area does currently not add any markers to a page. See TODO entry in AreaAdditionUtil.</description>
+  </testcase>
+  <testcase>
     <name>Border conditionality on table</name>
     <file>table_border-width_conditionality.xml</file>
     <description>The code should be ok, but the test case uses shorthands and therefore
