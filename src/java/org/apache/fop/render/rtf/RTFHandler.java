@@ -1585,8 +1585,14 @@ public class RTFHandler extends FOEventHandler {
             Table table = (Table) foNode;
 
             //recurse all table-columns
-            for (Iterator it = table.getColumns().iterator(); it.hasNext();) {
-                recurseFONode( (FONode) it.next() );
+            if (table.getColumns() != null) {
+                for (Iterator it = table.getColumns().iterator(); it.hasNext();) {
+                    recurseFONode( (FONode) it.next() );
+                }
+            } else {
+                //TODO Implement implicit column setup handling!
+                log.warn("No table-columns found on table. RTF output requires that all"
+                        + " table-columns for a table are defined. Output will be incorrect.");
             }
 
             //recurse table-header

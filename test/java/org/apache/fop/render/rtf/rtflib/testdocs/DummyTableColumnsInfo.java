@@ -39,7 +39,7 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.ITableColumnsInfo;
 class DummyTableColumnsInfo implements ITableColumnsInfo {
 
     public float getColumnWidth() {
-        return INVALID_COLUM_WIDTH;
+        return INVALID_COLUMN_WIDTH;
     }
 
     public void selectFirstColumn() {

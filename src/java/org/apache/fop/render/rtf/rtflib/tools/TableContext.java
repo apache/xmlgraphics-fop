@@ -94,12 +94,10 @@ public class TableContext implements ITableColumnsInfo {
     }
 
     /**
-     * 
+     * Adds a column and sets its width. 
      * @param width Width of next column
-     * @throws Exception
      */
-    public void setNextColumnWidth(Float width)
-            throws Exception {
+    public void setNextColumnWidth(Float width) {
         colWidths.add(width);
     }
 
@@ -165,6 +163,9 @@ public class TableContext implements ITableColumnsInfo {
             boolean bFirstSpanningCol) {
 
         if (colIndex < colRowSpanningNumber.size()) {
+            while (colIndex >= colFirstSpanningCol.size()) {
+                setNextFirstSpanningCol(false);
+            }
             colFirstSpanningCol.set(colIndex, new Boolean(bFirstSpanningCol));
         } else {
             colFirstSpanningCol.add(new Boolean(bFirstSpanningCol));
@@ -229,13 +230,16 @@ public class TableContext implements ITableColumnsInfo {
      * 'number-columns-spanned' processing
      */
     public float getColumnWidth() {
-        try {
-            return ((Float)colWidths.get(colIndex)).floatValue();
-        } catch (IndexOutOfBoundsException ex) {
-            // this code contributed by Trembicki-Guy, Ed <GuyE@DNB.com>
-            log.warn("fo:table-column width not defined, using " + INVALID_COLUM_WIDTH);
-            return INVALID_COLUM_WIDTH;
+        if (colIndex < 0) {
+            throw new IllegalStateException("colIndex must not be negative!");
+        } else if (colIndex >= getNumberOfColumns()) {
+            log.warn("Column width for column " + (colIndex + 1) + " is not defined, using " 
+                    + INVALID_COLUMN_WIDTH);
+            while (colIndex >= getNumberOfColumns()) {
+                setNextColumnWidth(new Float(INVALID_COLUMN_WIDTH));
+            }
         }
+        return ((Float)colWidths.get(colIndex)).floatValue();
     }
 
     /**
