@@ -324,6 +324,12 @@
     <reference>http://issues.apache.org/bugzilla/show_bug.cgi?id=35656</reference>
   </testcase>
   <testcase>
+    <name>table in marker (Bug 39560)</name>
+    <file>table_in_marker_bug39560.xml</file>
+    <description>When a table is put in a marker and that is referenced using retrieve-marker, an NPE occurs during the cloning process.</description>
+    <reference>http://issues.apache.org/bugzilla/show_bug.cgi?id=39560</reference>
+  </testcase>
+  <testcase>
     <name>Border conditionality on table</name>
     <file>table_border-width_conditionality.xml</file>
     <description>The code should be ok, but the test case uses shorthands and therefore
