@@ -20,6 +20,8 @@ package org.apache.fop.layoutengine;
 
 import javax.xml.transform.TransformerException;
 
+import org.apache.xml.utils.PrefixResolver;
+import org.apache.xml.utils.PrefixResolverDefault;
 import org.apache.xpath.XPathAPI;
 import org.apache.xpath.objects.XObject;
 import org.w3c.dom.Node;
@@ -31,6 +33,7 @@ public class EvalCheck implements LayoutEngineCheck {
 
     private String expected;
     private String xpath;
+    private PrefixResolver prefixResolver;
     
     /**
      * Creates a new instance
@@ -49,13 +52,14 @@ public class EvalCheck implements LayoutEngineCheck {
     public EvalCheck(Node node) {
         this.expected = node.getAttributes().getNamedItem("expected").getNodeValue();
         this.xpath = node.getAttributes().getNamedItem("xpath").getNodeValue();
+        this.prefixResolver = new PrefixResolverDefault(node);
     }
     
     /** @see org.apache.fop.layoutengine.LayoutEngineCheck */
     public void check(LayoutResult result) {
         XObject res;
         try {
-            res = XPathAPI.eval(result.getAreaTree(), xpath);
+            res = XPathAPI.eval(result.getAreaTree(), xpath, prefixResolver);
         } catch (TransformerException e) {
             throw new RuntimeException("XPath evaluation failed: " + e.getMessage());
         }
@@ -71,6 +75,14 @@ public class EvalCheck implements LayoutEngineCheck {
     /** @see java.lang.Object#toString() */
     public String toString() {
         return "XPath: " + xpath;
+    }
+
+    private class MyPrefixResolver extends PrefixResolverDefault {
+        
+        public MyPrefixResolver(Node xpathExpressionContext) {
+            super(xpathExpressionContext);
+        }
+        
     }
     
 }

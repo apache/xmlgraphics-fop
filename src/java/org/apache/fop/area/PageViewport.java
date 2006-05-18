@@ -43,7 +43,7 @@ import org.apache.fop.fo.pagination.SimplePageMaster;
  * This is the level that creates the page.
  * The page (reference area) is then rendered inside the page object
  */
-public class PageViewport implements Resolvable, Cloneable {
+public class PageViewport extends AreaTreeObject implements Resolvable, Cloneable {
 
     private Page page;
     private Rectangle2D viewArea;

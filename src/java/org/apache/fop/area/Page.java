@@ -45,7 +45,7 @@ import org.apache.fop.layoutmgr.TraitSetter;
  * The page is cloneable so the page master can make copies of
  * the top level page and regions.
  */
-public class Page implements Serializable, Cloneable {
+public class Page extends AreaTreeObject implements Serializable, Cloneable {
     // contains before, start, body, end and after regions
     private RegionViewport regionBefore = null;
     private RegionViewport regionStart = null;

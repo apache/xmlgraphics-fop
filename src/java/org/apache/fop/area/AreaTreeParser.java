@@ -63,6 +63,7 @@ import org.apache.fop.util.ColorUtil;
 import org.apache.fop.util.ContentHandlerFactory;
 import org.apache.fop.util.ContentHandlerFactoryRegistry;
 import org.apache.fop.util.DefaultErrorListener;
+import org.apache.fop.util.QName;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.xml.sax.Attributes;
@@ -336,6 +337,7 @@ public class AreaTreeParser {
 
             public void startElement(Attributes attributes) {
                 LineArea line = new LineArea();
+                transferForeignObjects(attributes, line);
                 areaStack.push(line);
             }
 
@@ -367,6 +369,7 @@ public class AreaTreeParser {
                 currentPageViewport = new PageViewport(viewArea, 
                         pageNumber, pageNumberString,
                         pageMaster, blank);
+                transferForeignObjects(attributes, currentPageViewport);
                 currentPageViewport.setKey(key);
             }
 
@@ -394,6 +397,7 @@ public class AreaTreeParser {
                 }
                 Rectangle2D viewArea = parseRect(attributes.getValue("rect"));
                 rv = new RegionViewport(viewArea);
+                transferForeignObjects(attributes, rv);
                 rv.setClip(getAttributeAsBoolean(attributes, "clipped", false));
                 setAreaAttributes(attributes, rv);
                 setTraits(attributes, rv, SUBSET_COMMON);
@@ -464,6 +468,7 @@ public class AreaTreeParser {
                 RegionViewport rv = getCurrentRegionViewport();
                 body = new BodyRegion(Constants.FO_REGION_BODY, 
                         regionName, rv, columnCount, columnGap);
+                transferForeignObjects(attributes, body);
                 body.setCTM(getAttributeAsCTM(attributes, "ctm"));
                 setAreaAttributes(attributes, body);
                 rv.setRegionReference(body);
@@ -487,6 +492,7 @@ public class AreaTreeParser {
                     firstFlow = false;
                 }
                 NormalFlow flow = body.getMainReference().getCurrentSpan().getCurrentFlow();
+                transferForeignObjects(attributes, flow);
                 setAreaAttributes(attributes, flow);
                 areaStack.push(flow);
             }
@@ -500,7 +506,9 @@ public class AreaTreeParser {
 
             public void startElement(Attributes attributes) {
                 //mainReference is created by the BodyRegion
-                setAreaAttributes(attributes, getCurrentBodyRegion().getMainReference());
+                MainReference mr = getCurrentBodyRegion().getMainReference();
+                transferForeignObjects(attributes, mr);
+                setAreaAttributes(attributes, mr);
             }
         }
 
@@ -512,6 +520,7 @@ public class AreaTreeParser {
                 BodyRegion body = getCurrentBodyRegion();
                 Span span = new Span(columnCount, 
                         body.getColumnGap(), ipd);
+                transferForeignObjects(attributes, span);
                 setAreaAttributes(attributes, span);
                 body.getMainReference().getSpans().add(span);
                 firstFlow = true;
@@ -521,7 +530,9 @@ public class AreaTreeParser {
         private class FootnoteMaker extends AbstractMaker {
 
             public void startElement(Attributes attributes) {
-                areaStack.push(getCurrentBodyRegion().getFootnote());
+                Footnote fn = getCurrentBodyRegion().getFootnote();
+                transferForeignObjects(attributes, fn);
+                areaStack.push(fn);
             }
             
             public void endElement() {
@@ -532,7 +543,9 @@ public class AreaTreeParser {
         private class BeforeFloatMaker extends AbstractMaker {
 
             public void startElement(Attributes attributes) {
-                areaStack.push(getCurrentBodyRegion().getBeforeFloat());
+                BeforeFloat bf = getCurrentBodyRegion().getBeforeFloat(); 
+                transferForeignObjects(attributes, bf);
+                areaStack.push(bf);
             }
             
             public void endElement() {
@@ -576,6 +589,7 @@ public class AreaTreeParser {
                 if (attributes.getValue("top-offset") != null) {
                     block.setYOffset(getAttributeAsInteger(attributes, "top-offset", 0));
                 }
+                transferForeignObjects(attributes, block);
                 setAreaAttributes(attributes, block);
                 setTraits(attributes, block, SUBSET_COMMON);
                 setTraits(attributes, block, SUBSET_BOX);
@@ -613,6 +627,7 @@ public class AreaTreeParser {
 
             public void startElement(Attributes attributes) {
                 InlineParent ip = new InlineParent();
+                transferForeignObjects(attributes, ip);
                 ip.setOffset(getAttributeAsInteger(attributes, "offset", 0));
                 setAreaAttributes(attributes, ip);
                 setTraits(attributes, ip, SUBSET_COMMON);
@@ -633,6 +648,7 @@ public class AreaTreeParser {
 
             public void startElement(Attributes attributes) {
                 InlineBlockParent ibp = new InlineBlockParent();
+                transferForeignObjects(attributes, ibp);
                 ibp.setOffset(getAttributeAsInteger(attributes, "offset", 0));
                 setAreaAttributes(attributes, ibp);
                 setTraits(attributes, ibp, SUBSET_COMMON);
@@ -735,6 +751,7 @@ public class AreaTreeParser {
             public void endElement() {
                 String txt = content.toString();
                 Character ch = new Character(txt.charAt(0));
+                transferForeignObjects(lastAttributes, ch);
                 setAreaAttributes(lastAttributes, ch);
                 setTraits(lastAttributes, ch, SUBSET_COMMON);
                 setTraits(lastAttributes, ch, SUBSET_BOX);
@@ -751,6 +768,7 @@ public class AreaTreeParser {
 
             public void startElement(Attributes attributes) {
                 Leader leader = new Leader();
+                transferForeignObjects(attributes, leader);
                 setAreaAttributes(attributes, leader);
                 setTraits(attributes, leader, SUBSET_COMMON);
                 setTraits(attributes, leader, SUBSET_BOX);
@@ -775,6 +793,7 @@ public class AreaTreeParser {
 
             public void startElement(Attributes attributes) {
                 Viewport viewport = new Viewport(null);
+                transferForeignObjects(attributes, viewport);
                 setAreaAttributes(attributes, viewport);
                 setTraits(attributes, viewport, SUBSET_COMMON);
                 setTraits(attributes, viewport, SUBSET_BOX);
@@ -797,6 +816,7 @@ public class AreaTreeParser {
             public void startElement(Attributes attributes) {
                 String url = attributes.getValue("url");
                 Image image = new Image(url);
+                transferForeignObjects(attributes, image);
                 setAreaAttributes(attributes, image);
                 setTraits(attributes, image, SUBSET_COMMON);
                 getCurrentViewport().setContent(image);
@@ -814,6 +834,7 @@ public class AreaTreeParser {
                             + " identified to handle namespace: " + ns);
                 }
                 ForeignObject foreign = new ForeignObject(ns);
+                transferForeignObjects(attributes, foreign);
                 setAreaAttributes(attributes, foreign);
                 setTraits(attributes, foreign, SUBSET_COMMON);
                 getCurrentViewport().setContent(foreign);
@@ -825,17 +846,6 @@ public class AreaTreeParser {
             }            
         }
 
-        /*
-        private class ?Maker extends AbstractMaker {
-
-            public void startElement(Attributes attributes) {
-            }
-            
-            public void endElement() {
-            }            
-        }
-        */
-        
         // ====================================================================
         
 
@@ -844,6 +854,7 @@ public class AreaTreeParser {
             RegionViewport rv = getCurrentRegionViewport();
             RegionReference reg = new RegionReference(side, 
                     regionName, rv);
+            transferForeignObjects(attributes, reg);
             reg.setCTM(getAttributeAsCTM(attributes, "ctm"));
             setAreaAttributes(attributes, reg);
             rv.setRegionReference(reg);
@@ -1024,6 +1035,19 @@ public class AreaTreeParser {
             return new Rectangle2D.Double(values[0], values[1], values[2], values[3]);
         }
 
+        private void transferForeignObjects(Attributes atts, AreaTreeObject ato) {
+            for (int i = 0, c = atts.getLength(); i < c; i++) {
+                String ns = atts.getURI(i);
+                if (ns.length() > 0) {
+                    if ("http://www.w3.org/2000/xmlns/".equals(ns)) {
+                        continue;
+                    }
+                    QName qname = new QName(ns, atts.getQName(i));
+                    ato.setForeignAttribute(qname, atts.getValue(i));
+                }
+            }
+        }
+        
         /** @see org.xml.sax.ContentHandler#characters(char[], int, int) */
         public void characters(char[] ch, int start, int length) throws SAXException {
             if (delegate != null) {

@@ -19,15 +19,11 @@
 package org.apache.fop.area;
 
 import java.io.Serializable;
-
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.traits.BorderProps;
-import org.apache.fop.util.QName;
 
 // If the area appears more than once in the output
 // or if the area has external data it is cached
@@ -40,7 +36,7 @@ import org.apache.fop.util.QName;
 /**
  * Base object for all areas.
  */
-public class Area implements Serializable {
+public class Area extends AreaTreeObject implements Serializable {
     // stacking directions
     /**
      * Stacking left to right
@@ -132,9 +128,6 @@ public class Area implements Serializable {
      */
     protected Map props = null;
 
-    /** Foreign attributes */
-    protected Map foreignAttributes = null;
-    
     /**
      * logging instance
      */
@@ -459,57 +452,6 @@ public class Area implements Serializable {
             throw new IllegalArgumentException("Trait "
                     + oTraitCode.getClass().getName()
                     + " could not be converted to an integer");
-        }
-    }
-    
-    /**
-     * Sets a foreign attribute.
-     * @param name the qualified name of the attribute
-     * @param value the attribute value
-     */
-    public void setForeignAttribute(QName name, String value) {
-        if (this.foreignAttributes == null) {
-            this.foreignAttributes = new java.util.HashMap();
-        }
-        this.foreignAttributes.put(name, value);
-    }
-    
-    /**
-     * Set foreign attributes from a Map.
-     * @param atts a Map with attributes (keys: QName, values: String)
-     */
-    public void setForeignAttributes(Map atts) {
-        if (atts.size() == 0) {
-            return;
-        }
-        Iterator iter = atts.keySet().iterator();
-        while (iter.hasNext()) {
-            QName qName = (QName)iter.next();
-            String value = (String)atts.get(qName);
-            //The casting is only to ensure type safety (too bad we can't use generics, yet) 
-            setForeignAttribute(qName, value);
-        }
-    }
-    
-    /**
-     * Returns the value of a foreign attribute on the area.
-     * @param name the qualified name of the attribute
-     * @return the attribute value or null if it isn't set
-     */
-    public String getForeignAttributeValue(QName name) {
-        if (this.foreignAttributes != null) {
-            return (String)this.foreignAttributes.get(name);
-        } else {
-            return null;
-        }
-    }
-    
-    /** @return the foreign attributes associated with this area */
-    public Map getForeignAttributes() {
-        if (this.foreignAttributes != null) {
-            return Collections.unmodifiableMap(this.foreignAttributes);
-        } else {
-            return Collections.EMPTY_MAP;
         }
     }
     

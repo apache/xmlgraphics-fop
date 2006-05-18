@@ -84,6 +84,7 @@ import org.apache.fop.render.RendererContextConstants;
 import org.apache.fop.render.java2d.FontMetricsMapper;
 import org.apache.fop.render.java2d.FontSetup;
 import org.apache.fop.render.java2d.Java2DRenderer;
+import org.apache.fop.render.pcl.extensions.PCLElementMapping;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.util.QName;
 import org.apache.fop.util.UnitConv;
@@ -333,11 +334,22 @@ public class PCLRenderer extends PrintRenderer {
      */
     public void renderPage(PageViewport page) throws IOException, FOPException {
         saveGraphicsState();
+        
+        //Paper source
+        String paperSource = page.getForeignAttributeValue(
+                new QName(PCLElementMapping.NAMESPACE, null, "paper-source"));
+        if (paperSource != null) {
+            gen.selectPaperSource(Integer.parseInt(paperSource));
+        }
+        
+        //Page size
         final long pagewidth = Math.round(page.getViewArea().getWidth());
         final long pageheight = Math.round(page.getViewArea().getHeight());
         selectPageFormat(pagewidth, pageheight);
         
         super.renderPage(page);
+        
+        //Eject page
         gen.formFeed();
         restoreGraphicsState();
     }
