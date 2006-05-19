@@ -292,9 +292,13 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager
             element.setPosition(((NonLeafPosition)element.getPosition()).getPosition());
         }
 
-        oldList = ((InlineLevelLayoutManager)
-                   element.getLayoutManager()).addALetterSpaceTo(oldList);
-
+        // The last element may not have a layout manager (its position == null);
+        // this may happen if it is a padding box; see bug 39571.
+        InlineLevelLayoutManager LM = 
+            (InlineLevelLayoutManager) element.getLayoutManager();
+        if (LM != null) {
+            oldList = LM.addALetterSpaceTo(oldList);
+        }
         // "wrap" again the Position stored in each element of oldList
         oldListIterator = oldList.listIterator();
         while (oldListIterator.hasNext()) {
