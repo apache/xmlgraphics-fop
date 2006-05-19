@@ -106,12 +106,17 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
     /** Non-space characters on which we can end a line. */
     private static final String BREAK_CHARS = "-/";
 
+    /** Used to reduce instantiation of MinOptMax with zero length. Do not modify! */
+    private static final MinOptMax ZERO_MINOPTMAX = new MinOptMax(0);
+    
     private FOText foText;
     private char[] textArray;
-    /** Contains an array of widths to adjust for kerning and letter spacing */
+    /**
+     * Contains an array of widths to adjust for kerning. The first entry can
+     * be used to influence the start position of the first letter. The entry i+1 defines the
+     * cursor advancement after the character i. A null entry means no special advancement.
+     */
     private MinOptMax[] letterAdjustArray; //size = textArray.length + 1
-    /** The sum of all entries in the letterAdjustArray */
-    private MinOptMax totalLetterAdjust = new MinOptMax(0);
 
     private static final char NEWLINE = '\n';
 
@@ -310,8 +315,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             iLScount--;
         }
         
-        for (int i = ai.iStartIndex + 1; i < ai.iBreakIndex + 1; i++) {
-            MinOptMax ladj = letterAdjustArray[i]; 
+        for (int i = ai.iStartIndex; i < ai.iBreakIndex; i++) {
+            MinOptMax ladj = letterAdjustArray[i + 1]; 
             if (ladj != null && ladj.isElastic()) {
                 iLScount++;
             }
@@ -466,8 +471,10 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                     int[] letterAdjust = new int[wordChars.length()];
                     int lsCount = areaInfo.iLScount;
                     for (int letter = 0; letter < len; letter++) {
-                        MinOptMax adj = letterAdjustArray[letter + wordStartIndex + 1];
-                        letterAdjust[letter] = (adj != null ? adj.opt : 0);
+                        MinOptMax adj = letterAdjustArray[letter + wordStartIndex];
+                        if (letter > 0) {
+                            letterAdjust[letter] = (adj != null ? adj.opt : 0);
+                        }
                         if (lsCount > 0) {
                             letterAdjust[letter] += textArea.getTextLetterSpaceAdjust();
                             lsCount--;
@@ -492,7 +499,6 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         } else {
             letterAdjustArray[index].add(width);
         }
-        totalLetterAdjust.add(width);
     }
 
     private void addToLetterAdjust(int index, MinOptMax width) {
@@ -501,7 +507,6 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         } else {
             letterAdjustArray[index].add(width);
         }
-        totalLetterAdjust.add(width);
     }
 
     /**
@@ -625,7 +630,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                         char previous = textArray[i - 1];
                         kern = font.getKernValue(previous, c) * font.getFontSize() / 1000;
                         if (kern != 0) {
-                            addToLetterAdjust(i + 1, kern);
+                            //log.info("Kerning between " + previous + " and " + c + ": " + kern);
+                            addToLetterAdjust(i, kern);
                         }
                         wordIPD.add(kern);
                     }
@@ -761,9 +767,22 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
             hc.updateOffset(iStopIndex - iStartIndex);
 
+            //log.info("Word: " + new String(textArray, iStartIndex, iStopIndex - iStartIndex));
             for (int i = iStartIndex; i < iStopIndex; i++) {
                 char c = textArray[i];
                 newIPD.add(new MinOptMax(font.getCharWidth(c)));
+                //if (i > iStartIndex) {
+                if (i < iStopIndex) {
+                    MinOptMax la = this.letterAdjustArray[i + 1];
+                    if ((i == iStopIndex - 1) && bHyphenFollows) {
+                        //the letter adjust here needs to be handled further down during
+                        //element generation because it depends on hyph/no-hyph condition
+                        la = null;
+                    }
+                    if (la != null) {
+                        newIPD.add(la);
+                    }
+                }
             }
             // add letter spaces
             boolean bIsWordEnd
@@ -854,6 +873,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             iReturnedIndex++;
         } // end of while
         setFinished(true);
+        //ElementListObserver.observe(returnList, "text-changed", null);
         return returnList;
     }
 
@@ -1152,10 +1172,17 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         // extra-elements if the word fragment is the end of a syllable,
         // or it ends with a character that can be used as a line break
         if (ai.bHyphenated) {
+            MinOptMax widthIfNoBreakOccurs = null;
+            if (ai.iBreakIndex < textArray.length) {
+                //Add in kerning in no-break condition
+                widthIfNoBreakOccurs = letterAdjustArray[ai.iBreakIndex];
+            }
+            //if (ai.iBreakIndex)
+            
             // the word fragment ends at the end of a syllable:
             // if a break occurs the content width increases,
             // otherwise nothing happens
-            wordElements.addAll(createElementsForAHyphen(alignment, hyphIPD, new MinOptMax(0)));
+            wordElements.addAll(createElementsForAHyphen(alignment, hyphIPD, widthIfNoBreakOccurs));
         } else if (bSuppressibleLetterSpace) {
             // the word fragment ends with a character that acts as a hyphen
             // if a break occurs the width does not increase,
@@ -1167,6 +1194,9 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
     private LinkedList createElementsForAHyphen(int alignment,
             int widthIfBreakOccurs, MinOptMax widthIfNoBreakOccurs) {
+        if (widthIfNoBreakOccurs == null) {
+            widthIfNoBreakOccurs = ZERO_MINOPTMAX;
+        }
         LinkedList hyphenElements = new LinkedList();
         
         switch (alignment) {
