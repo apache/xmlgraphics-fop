@@ -140,7 +140,9 @@ public class InlineKnuthSequence extends KnuthSequence  {
         addAll(((InlineLevelLayoutManager)
                      prevBox.getLayoutManager())
                     .addALetterSpaceTo(oldList));
-        if (((KnuthInlineBox) prevBox).isAnchor()) {
+        // prevBox may not be a KnuthInlineBox;
+        // this may happen if it is a padding box; see bug 39571.
+        if ( prevBox instanceof KnuthInlineBox && ((KnuthInlineBox) prevBox).isAnchor()) {
             // prevBox represents a footnote citation: copy footnote info
             // from prevBox to the new box
             KnuthInlineBox newBox = (KnuthInlineBox) getLast();
