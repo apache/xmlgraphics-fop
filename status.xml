@@ -27,6 +27,22 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix">
+        Bugfix: The combination of hyphenation and kerning resulted in slightly ragged 
+        right ends for right-aligned and justified text.
+      </action>
+      <action context="Code" dev="JM" type="fix">
+        Bugfix: NullPointerException in AreaAdditionUtil in a table-cell spanning
+        multiple pages and with a marker.
+      </action>
+      <action context="Code" dev="JM" type="fix" fixes-bug="39533">
+        Bugfix: NullPointerException in RTF output when a table does not contain
+        table-columns.
+      </action>
+      <action context="Code" dev="JM" type="fix" fixes-bug="39607" due-to="Julien Aymé">
+        Bugfix: NullPointerException in RTF library when there are no borders on 
+        the parent table.
+      </action>
       <action context="Code" dev="JM" type="add">
        Automatic support for all fonts available to the Java2D subsystem for all
        Java2D-descendant renderers (TIFF, PNG, print, AWT).
