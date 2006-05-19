@@ -63,10 +63,9 @@
         </li>
         <li id="gm"><link href="mailto:gmazza@apache.org">Glen Mazza</link> (GM) is an information
             systems analyst from Arlington, Virginia, USA.</li>
-        <!-- Simon prefers the mail address with "AT", to stop spam, etc. -->
-        <li id="sp"><link href="mailto:spepping AT leverkruid.nl">Simon Pepping</link> (SP)
+        <li id="sp"><link href="mailto:spepping@apache.org">Simon Pepping</link> (SP)
             is a TeX/LaTeX and XML expert with Elsevier at its
-            Amsterdam office. See his <fork href="http://www.leverkruid.nl">home
+            Amsterdam office. See his <fork href="http://www.leverkruid.eu">home
             page</fork> for some of his private projects.</li>
         <li id="jp"><link href="mailto:pietsch@apache.org">J&#x00F6;rg Pietschmann</link> (JP)</li>
         <li id="ot"><link href="mailto:olegt@apache.org">Oleg Tkachenko</link> (OT)</li>
