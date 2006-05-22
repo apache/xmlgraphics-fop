@@ -41,9 +41,6 @@ import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.cli.InputHandler;
 
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.ConfigurationException;
-import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
 import org.apache.commons.logging.impl.SimpleLog;
 import org.apache.commons.logging.Log;
 import org.xml.sax.SAXException;
@@ -299,6 +296,10 @@ public class Fop extends Task {
             starter.run();
         } catch (FOPException ex) {
             throw new BuildException(ex);
+        } catch (IOException ioe) {
+            throw new BuildException(ioe);
+        } catch (SAXException saxex) {
+            throw new BuildException(saxex);
         }
 
     }
@@ -335,8 +336,9 @@ class FOPTaskStarter {
         return logger;
     }
 
-    FOPTaskStarter(Fop task) throws FOPException {
+    FOPTaskStarter(Fop task) throws SAXException, IOException {
         this.task = task;
+        fopFactory.setUserConfig(task.getUserconfig());
     }
 
     private static final String[][] SHORT_NAMES = {
@@ -350,7 +352,8 @@ class FOPTaskStarter {
         {"xml",  MimeConstants.MIME_FOP_AREA_TREE},
         {"tiff", MimeConstants.MIME_TIFF},
         {"tif",  MimeConstants.MIME_TIFF},
-        {"png",  MimeConstants.MIME_PNG}
+        {"png",  MimeConstants.MIME_PNG},
+        {"afp",  MimeConstants.MIME_AFP}
     };
 
     private String normalizeOutputFormat(String format) {
@@ -379,6 +382,8 @@ class FOPTaskStarter {
         {MimeConstants.MIME_PNG,             ".png"},
         {MimeConstants.MIME_JPEG,            ".jpg"},
         {MimeConstants.MIME_TIFF,            ".tif"},
+        {MimeConstants.MIME_AFP,             ".afp"},
+        {MimeConstants.MIME_AFP_ALT,         ".afp"},
         {MimeConstants.MIME_XSL_FO,          ".fo"}
     };
     
@@ -411,23 +416,6 @@ class FOPTaskStarter {
      * @see org.apache.fop.apps.Starter#run()
      */
     public void run() throws FOPException {
-        //Setup configuration
-        Configuration userConfig = null;
-        if (task.getUserconfig() != null) {
-            if (task.getUserconfig() != null) {
-                DefaultConfigurationBuilder configBuilder = new DefaultConfigurationBuilder();
-                try {
-                   userConfig = configBuilder.buildFromFile(task.getUserconfig());
-                } catch (SAXException e) {
-                   throw new FOPException(e);
-                } catch (ConfigurationException e) {
-                   throw new FOPException(e);
-                } catch (IOException e) {
-                   throw new FOPException(e);
-                }
-            }
-        }
-
         //Set base directory
         if (task.getBasedir() != null) {
             try {
@@ -471,7 +459,7 @@ class FOPTaskStarter {
                 // output file is older than input file
                 if (task.getForce() || !outf.exists() 
                     || (task.getFofile().lastModified() > outf.lastModified() )) {
-                    render(task.getFofile(), outf, outputFormat, userConfig);
+                    render(task.getFofile(), outf, outputFormat);
                     actioncount++;
                 } else if (outf.exists() 
                         && (task.getFofile().lastModified() <= outf.lastModified() )) {
@@ -523,7 +511,7 @@ class FOPTaskStarter {
                 // output file is older than input file
                 if (task.getForce() || !outf.exists() 
                     || (f.lastModified() > outf.lastModified() )) {
-                    render(f, outf, outputFormat, userConfig);
+                    render(f, outf, outputFormat);
                     actioncount++;
                 } else if (outf.exists() && (f.lastModified() <= outf.lastModified() )) {
                     skippedcount++;
@@ -542,7 +530,7 @@ class FOPTaskStarter {
     }
 
     private void render(File foFile, File outFile,
-                        String outputFormat, Configuration userConfig) throws FOPException {
+                        String outputFormat) throws FOPException {
         InputHandler inputHandler = new InputHandler(foFile);
 
         OutputStream out = null;
