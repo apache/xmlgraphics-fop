@@ -68,6 +68,7 @@ import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
+import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fonts.Font;
@@ -729,6 +730,40 @@ public class PCLRenderer extends PrintRenderer {
     }
 
     /**
+     * Render an inline viewport.
+     * This renders an inline viewport by clipping if necessary.
+     * @param viewport the viewport to handle
+     * @todo Copied from AbstractPathOrientedRenderer
+     */
+    public void renderViewport(Viewport viewport) {
+
+        float x = currentIPPosition / 1000f;
+        float y = (currentBPPosition + viewport.getOffset()) / 1000f;
+        float width = viewport.getIPD() / 1000f;
+        float height = viewport.getBPD() / 1000f;
+        // TODO: Calculate the border rect correctly. 
+        float borderPaddingStart = viewport.getBorderAndPaddingWidthStart() / 1000f;
+        float borderPaddingBefore = viewport.getBorderAndPaddingWidthBefore() / 1000f;
+        float bpwidth = borderPaddingStart 
+                + (viewport.getBorderAndPaddingWidthEnd() / 1000f);
+        float bpheight = borderPaddingBefore
+                + (viewport.getBorderAndPaddingWidthAfter() / 1000f);
+
+        drawBackAndBorders(viewport, x, y, width + bpwidth, height + bpheight);
+
+        if (viewport.getClip()) {
+            saveGraphicsState();
+
+            clipRect(x + borderPaddingStart, y + borderPaddingBefore, width, height);
+        }
+        super.renderViewport(viewport);
+
+        if (viewport.getClip()) {
+            restoreGraphicsState();
+        }
+    }
+
+    /**
      * @see org.apache.fop.render.AbstractRenderer#renderBlockViewport(BlockViewport, List)
      */
     protected void renderBlockViewport(BlockViewport bv, List children) {
@@ -924,9 +959,7 @@ public class PCLRenderer extends PrintRenderer {
             try {
                 setCursorPos(this.currentIPPosition + (int)pos.getX(),
                         this.currentBPPosition + (int)pos.getY());
-                int resolution = (int)Math.round(Math.max(fopimage.getHorizontalResolution(), 
-                                        fopimage.getVerticalResolution()));
-                gen.paintBitmap(img, resolution);
+                gen.paintBitmap(img, new Dimension((int)pos.getWidth(), (int)pos.getHeight()));
             } catch (IOException ioe) {
                 handleIOTrouble(ioe);
             }
