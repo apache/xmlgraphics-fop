@@ -315,6 +315,8 @@ public class PCLRenderer extends PrintRenderer {
         gen.writeText("@PJL SET RESOLUTION = " + getResolution() + "\n");
         gen.writeText("@PJL ENTER LANGUAGE = PCL\n");
         gen.resetPrinter();
+        gen.setUnitOfMeasure(getResolution());
+        gen.setRasterGraphicsResolution(getResolution());
     }
 
     /** @see org.apache.fop.render.Renderer#stopRenderer() */
@@ -357,6 +359,7 @@ public class PCLRenderer extends PrintRenderer {
     private void selectPageFormat(long pagewidth, long pageheight) throws IOException {
         this.currentPageDefinition = PCLPageDefinition.getPageDefinition(
                 pagewidth, pageheight, 1000);
+        
         if (this.currentPageDefinition == null) {
             this.currentPageDefinition = PCLPageDefinition.getDefaultPageDefinition();
             log.warn("Paper type could not be determined. Falling back to: " 
@@ -364,18 +367,15 @@ public class PCLRenderer extends PrintRenderer {
         }
         log.debug("page size: " + currentPageDefinition.getPhysicalPageSize());
         log.debug("logical page: " + currentPageDefinition.getLogicalPageRect());
-        gen.selectPageSize(this.currentPageDefinition.getSelector());
-        
         if (this.currentPageDefinition.isLandscapeFormat()) {
             gen.writeCommand("&l1O"); //Orientation
         } else {
             gen.writeCommand("&l0O"); //Orientation
         }
+        gen.selectPageSize(this.currentPageDefinition.getSelector());
+        
         gen.clearHorizontalMargins();
         gen.setTopMargin(0);
-        gen.setVMI(0);
-        gen.setUnitOfMeasure(getResolution());
-        gen.setRasterGraphicsResolution(getResolution());
     }
 
     /** Saves the current graphics state on the stack. */
@@ -761,7 +761,7 @@ public class PCLRenderer extends PrintRenderer {
             //after the block-container has been painted. See below.
             List breakOutList = null;
             if (bv.getPositioning() == Block.FIXED) {
-                //breakOutList = breakOutOfStateStack();
+                breakOutList = breakOutOfStateStack();
             }
             
             CTM tempctm = new CTM(containingIPPosition, containingBPPosition);
@@ -796,7 +796,7 @@ public class PCLRenderer extends PrintRenderer {
             endVParea();
 
             if (breakOutList != null) {
-                //restoreStateStackAfterBreakOut(breakOutList);
+                restoreStateStackAfterBreakOut(breakOutList);
             }
             
             currentIPPosition = saveIP;
@@ -835,6 +835,24 @@ public class PCLRenderer extends PrintRenderer {
             currentBPPosition += (int)(bv.getAllocBPD());
         }
         //currentFontName = saveFontName;
+    }
+
+    private List breakOutOfStateStack() {
+        log.debug("Block.FIXED --> break out");
+        List breakOutList = new java.util.ArrayList();
+        while (!this.graphicContextStack.empty()) {
+            breakOutList.add(0, this.graphicContext);
+            restoreGraphicsState();
+        }
+        return breakOutList;
+    }
+
+    private void restoreStateStackAfterBreakOut(List breakOutList) {
+        log.debug("Block.FIXED --> restoring context after break-out");
+        for (int i = 0, c = breakOutList.size(); i < c; i++) {
+            saveGraphicsState();
+            this.graphicContext = (GraphicContext)breakOutList.get(i);
+        }
     }
 
     /**
