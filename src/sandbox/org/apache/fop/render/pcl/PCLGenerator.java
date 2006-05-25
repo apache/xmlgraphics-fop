@@ -40,6 +40,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
+import org.apache.fop.util.UnitConv;
 import org.apache.xmlgraphics.image.GraphicsUtil;
 
 /**
@@ -506,7 +507,7 @@ public class PCLGenerator {
         return resolution == calculatePCLResolution(resolution);
     }
     
-    private Dimension getAdjustedDimension(Dimension orgDim, int orgResolution, 
+    private Dimension getAdjustedDimension(Dimension orgDim, double orgResolution, 
             int pclResolution) {
         if (orgResolution == pclResolution) {
             return orgDim;
@@ -576,17 +577,19 @@ public class PCLGenerator {
      * Paint a bitmap at the current cursor position. The bitmap is converted to a monochrome
      * (1-bit) bitmap image.
      * @param img the bitmap image
-     * @param resolution the original resolution of the image (in dpi)
+     * @param targetDim the target Dimention (in mpt)
      * @throws IOException In case of an I/O error
      */
-    public void paintBitmap(RenderedImage img, int resolution) throws IOException {
+    public void paintBitmap(RenderedImage img, Dimension targetDim) throws IOException {
+        double targetResolution = img.getWidth() / UnitConv.mpt2in(targetDim.width);
+        int resolution = (int)Math.round(targetResolution);
+        int effResolution = calculatePCLResolution(resolution, true);
+        Dimension orgDim = new Dimension(img.getWidth(), img.getHeight());
+        Dimension effDim = getAdjustedDimension(orgDim, targetResolution, effResolution);
+        boolean scaled = !orgDim.equals(effDim);
+
         boolean monochrome = isMonochromeImage(img);
         if (!monochrome) {
-            int effResolution = calculatePCLResolution(resolution, true);
-            Dimension orgDim = new Dimension(img.getWidth(), img.getHeight());
-            Dimension effDim = getAdjustedDimension(orgDim, resolution, effResolution);
-            boolean scaled = !orgDim.equals(effDim);
-            
             //Transparency mask disabled. Doesn't work reliably
             final boolean transparencyDisabled = true;
             RenderedImage mask = (transparencyDisabled ? null : getMask(img, effDim)); 
@@ -634,10 +637,26 @@ public class PCLGenerator {
             setTransparencyMode(mask != null, true);
             paintMonochromeBitmap(red, effResolution);
         } else {
-            int effResolution = calculatePCLResolution(resolution);
+            //TODO untested!
+            RenderedImage effImg = img;
+            if (scaled) {
+                BufferedImage buf = new BufferedImage(effDim.width, effDim.height, 
+                        BufferedImage.TYPE_BYTE_BINARY);
+                Graphics2D g2d = buf.createGraphics();
+                try {
+                    AffineTransform at = new AffineTransform();
+                    double sx = effDim.getWidth() / orgDim.getWidth();
+                    double sy = effDim.getHeight() / orgDim.getHeight();
+                    at.scale(sx, sy);
+                    g2d.drawRenderedImage(img, at);
+                } finally {
+                    g2d.dispose();
+                }
+                effImg = buf;
+            }
             setSourceTransparencyMode(false);
             selectCurrentPattern(0, 0); //Solid black
-            paintMonochromeBitmap(img, effResolution);
+            paintMonochromeBitmap(effImg, effResolution);
         }
     }
 
