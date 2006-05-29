@@ -89,10 +89,10 @@ public class UnresolvedPageNumber extends TextArea implements Resolvable {
      * @param pages the list of PageViewports associated with this ID
      */
     public void resolveIDRef(String id, List pages) {
-        if (log.isDebugEnabled()) {
-            log.debug("Resolving pageNumber: " + id);
-        }
-        if (pageIDRef.equals(id) && pages != null) {
+        if (!resolved && pageIDRef.equals(id) && pages != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Resolving pageNumber: " + id);
+            }
             resolved = true;
             PageViewport page;
             if (pageType == FIRST) {
