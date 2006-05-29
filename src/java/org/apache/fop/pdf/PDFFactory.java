@@ -1110,8 +1110,8 @@ public class PDFFactory {
                                          desc.getCapHeight(),
                                          desc.getFlags(),
                                          new PDFRectangle(desc.getFontBBox()),
-                                         desc.getStemV(),
-                                         desc.getItalicAngle());
+                                         desc.getItalicAngle(),
+                                         desc.getStemV());
         }
         getDocument().registerObject(descriptor);
 
