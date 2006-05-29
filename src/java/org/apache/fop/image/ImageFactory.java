@@ -79,8 +79,8 @@ public final class ImageFactory {
         
         ImageMimeType imt = new ImageMimeType("image/gif");
         imageMimeTypes.put(imt.getMimeType(), imt);
-        imt.addProvider(jaiImage);
         imt.addProvider(imageIoImage);
+        imt.addProvider(jaiImage);
         imt.addProvider(jimiImage);
         imt.addProvider(gifImage);
 
