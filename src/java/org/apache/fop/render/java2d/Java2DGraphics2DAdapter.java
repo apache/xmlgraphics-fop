@@ -61,7 +61,8 @@ public class Java2DGraphics2DAdapter implements Graphics2DAdapter {
         float sx = fwidth / (float)imw;
         float sy = fheight / (float)imh;
 
-        state.push();
+        Java2DRenderer renderer = (Java2DRenderer)context.getRenderer();
+        renderer.saveGraphicsState();
         state.getGraph().setColor(Color.black);
         state.getGraph().setBackground(Color.black);
         
@@ -79,7 +80,7 @@ public class Java2DGraphics2DAdapter implements Graphics2DAdapter {
         Rectangle2D area = new Rectangle2D.Double(0.0, 0.0, imw, imh);
         painter.paint(state.getGraph(), area);
 
-        state.pop();
+        renderer.restoreGraphicsState();
     
     }
 

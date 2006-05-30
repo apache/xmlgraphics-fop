@@ -260,7 +260,7 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
             float width, float height) {
 
         // saves the graphics state in a stack
-        state.push();
+        saveGraphicsState();
 
         Color col = new Color(0.7f, 0.7f, 0.7f);
         state.updateColor(col);
@@ -269,7 +269,7 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
                 new Rectangle2D.Float(startx, starty, width, height));
 
         // restores the last graphics state from the stack
-        state.pop();
+        restoreGraphicsState();
     }
 
 }

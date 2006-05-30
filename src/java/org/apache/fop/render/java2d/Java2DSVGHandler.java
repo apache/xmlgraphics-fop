@@ -22,11 +22,9 @@ import java.awt.geom.AffineTransform;
 
 import org.w3c.dom.Document;
 
-import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.XMLHandler;
 import org.apache.fop.render.RendererContext;
-import org.apache.fop.render.pdf.PDFRenderer;
 import org.apache.fop.svg.SVGUserAgent;
 
 // Commons-Logging
