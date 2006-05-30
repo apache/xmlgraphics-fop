@@ -48,6 +48,7 @@ import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 import org.w3c.dom.Document;
 
@@ -127,6 +128,8 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
 
     /** The current state, holds a Graphics2D and its context */
     protected Java2DGraphicsState state;
+    
+    private Stack stateStack = new Stack();
 
     /** true if the renderer has finished rendering all the pages */
     private boolean renderingDone;
@@ -317,13 +320,17 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
             graphics.drawLine(1, pageHeight + 3, pageWidth + 3, pageHeight + 3);
 
             state = new Java2DGraphicsState(graphics, this.fontInfo, at);
+            try {
+                // reset the current Positions
+                currentBPPosition = 0;
+                currentIPPosition = 0;
 
-            // reset the current Positions
-            currentBPPosition = 0;
-            currentIPPosition = 0;
+                // this toggles the rendering of all areas
+                renderPageAreas(pageViewport.getPage());
+            } finally {
+                state = null;
+            }
 
-            // this toggles the rendering of all areas
-            renderPageAreas(pageViewport.getPage());
             return currentPageImage;
         } finally {
             this.currentPageViewport = null;
@@ -361,12 +368,14 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     /** Saves the graphics state of the rendering engine. */
     protected void saveGraphicsState() {
         // push (and save) the current graphics state
-        state.push();
+        stateStack.push(state);
+        state = new Java2DGraphicsState(state);
     }
 
     /** Restores the last graphics state of the rendering engine. */
     protected void restoreGraphicsState() {
-        state.pop();
+        state.dispose();
+        state = (Java2DGraphicsState)stateStack.pop();
     }
     
     /**
@@ -396,39 +405,33 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     }
 
     /**
+     * @see org.apache.fop.render.AbstractPathOrientedRenderer#breakOutOfStateStack()
+     */
+    protected List breakOutOfStateStack() {
+        log.debug("Block.FIXED --> break out");
+        List breakOutList;
+        breakOutList = new java.util.ArrayList();
+        while (!stateStack.isEmpty()) {
+            breakOutList.add(0, state);
+            //We only pop, we don't dispose, because we can use the instances again later
+            state = (Java2DGraphicsState)stateStack.pop();
+        }
+        return breakOutList;
+    }
+
+    /**
      * @see org.apache.fop.render.AbstractPathOrientedRenderer#restoreStateStackAfterBreakOut(
      *          java.util.List)
      */
     protected void restoreStateStackAfterBreakOut(List breakOutList) {
-        log.debug(
-                "Block.FIXED --> restoring context after break-out");
-        Graphics2D graph;
+        log.debug("Block.FIXED --> restoring context after break-out");
+        
         Iterator i = breakOutList.iterator();
         while (i.hasNext()) {
-            graph = (Graphics2D) i.next();
-            log.debug("Restoring: " + graph);
-            state.push();
+            Java2DGraphicsState s = (Java2DGraphicsState)i.next();
+            stateStack.push(state);
+            state = s;
         }
-    }
-
-    /**
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer#breakOutOfStateStack()
-     */
-    protected List breakOutOfStateStack() {
-        List breakOutList;
-        log.debug("Block.FIXED --> break out");
-        breakOutList = new java.util.ArrayList();
-        Graphics2D graph;
-        while (true) {
-            graph = state.getGraph();
-            if (state.pop() == null) {
-                break;
-            }
-            breakOutList.add(0, graph); // Insert because of
-            // stack-popping
-            log.debug("Adding to break out list: " + graph);
-        }
-        return breakOutList;
     }
 
     /**
@@ -675,7 +678,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         int saveIP = currentIPPosition;
 
         Font font = getFontFromArea(text);
-        state.updateFont(font.getFontName(), font.getFontSize(), null);
+        state.updateFont(font.getFontName(), font.getFontSize());
         saveGraphicsState();
         AffineTransform at = new AffineTransform();
         at.translate(rx / 1000f, bl / 1000f);
@@ -951,8 +954,10 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
             return NO_SUCH_PAGE;
         }
 
+        if (state != null) {
+            throw new IllegalStateException("state must be null");
+        }
         Graphics2D graphics = (Graphics2D) g;
-        Java2DGraphicsState oldState = state;
         try {
             PageViewport viewport = getPageViewport(pageIndex);
             AffineTransform at = graphics.getTransform();
@@ -968,7 +973,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
             log.error(e);
             return NO_SUCH_PAGE;
         } finally {
-            state = oldState;
+            state = null;
         }
     }
 

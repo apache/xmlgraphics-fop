@@ -26,7 +26,6 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.GeneralPath;
-import java.util.List;
 
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.FontInfo;
@@ -37,7 +36,7 @@ import org.apache.fop.fonts.FontInfo;
  * <p>
  * The graphics context is updated with the updateXXX() methods.
  */
-public class Java2DGraphicsState implements Constants, RendererState {
+public class Java2DGraphicsState {
 
     /** Holds the datas of the current state */
     private Graphics2D currentGraphics;
@@ -47,8 +46,6 @@ public class Java2DGraphicsState implements Constants, RendererState {
     private float currentStrokeWidth;
 
     private int currentStrokeStyle;
-
-    private List stateStack = new java.util.ArrayList();
 
     /** Font configuration, passed from AWTRenderer */
     private FontInfo fontInfo;
@@ -71,48 +68,31 @@ public class Java2DGraphicsState implements Constants, RendererState {
     }
 
     /**
+     * Copy constructor.
+     * @param org the instance to copy
+     */
+    public Java2DGraphicsState(Java2DGraphicsState org) {
+        this.currentGraphics = (Graphics2D)org.currentGraphics.create(); 
+        this.fontInfo = org.fontInfo;
+        this.initialTransform = org.initialTransform;
+        this.currentStroke = org.currentStroke;
+        this.currentStrokeStyle = org.currentStrokeStyle;
+        this.currentStrokeWidth = org.currentStrokeWidth;
+    }
+    
+    /**
      * @return the currently valid state
      */
     public Graphics2D getGraph() {
         return currentGraphics;
     }
 
-    /** @see org.apache.fop.render.java2d.RendererState#push() */
-    public void push() {
-        Graphics2D tmpGraphics = (Graphics2D) currentGraphics.create();
-        stateStack.add(tmpGraphics);
+    /** Frees resources allocated by the current Graphics2D instance. */
+    public void dispose() {
+        this.currentGraphics.dispose();
+        this.currentGraphics = null;
+        
     }
-
-    /** @see org.apache.fop.render.java2d.RendererState#pop() */
-    public Graphics2D pop() {
-        if (getStackLevel() > 0) {
-            Graphics2D popped = (Graphics2D) stateStack.remove(stateStack
-                    .size() - 1);
-
-            currentGraphics.dispose();
-            currentGraphics = popped;
-            return popped;
-        } else {
-            return null;
-        }
-    }
-
-    /** @see org.apache.fop.render.java2d.RendererState#getStackLevel() */
-    public int getStackLevel() {
-        return stateStack.size();
-    }
-
-    /**
-     * Restore the state to a particular level. this can be used to restore to a
-     * known level without making multiple pop calls.
-     *
-     * @param stack the level to restore to
-     */
-    /*
-     * public void restoreLevel(int stack) { int pos = stack; while
-     * (stateStack.size() > pos + 1) { stateStack.remove(stateStack.size() - 1); }
-     * if (stateStack.size() > pos) { pop(); } }
-     */
 
     /**
      * Set the current background color. Check if the background color will
@@ -138,10 +118,14 @@ public class Java2DGraphicsState implements Constants, RendererState {
     }
 
     /**
-     * @see org.apache.fop.render.java2d.RendererState#updateFont(java.lang.String,
-     * int, java.lang.StringBuffer)
+     * Set the current font name. Check if the font name will change and then
+     * set the new name.
+     *
+     * @param name the new font name
+     * @param size the font size
+     * @return true if the new Font changes the current Font
      */
-    public boolean updateFont(String name, int size, StringBuffer pdf) {
+    public boolean updateFont(String name, int size) {
 
         FontMetricsMapper mapper = (FontMetricsMapper)fontInfo.getMetricsFor(name);
         boolean updateName = (!mapper.getFontName().equals(
@@ -159,15 +143,18 @@ public class Java2DGraphicsState implements Constants, RendererState {
         }
     }
 
-    /**
-     * @return the current java.awt.Font
-     */
+    /** @return the current java.awt.Font */
     public java.awt.Font getFont() {
         return currentGraphics.getFont();
     }
 
     /**
-     * @see org.apache.fop.render.java2d.RendererState#updateStroke(float, int)
+     * Sets the current Stroke. The line width should be set with
+     * updateLineWidth() before calling this method
+     *
+     * @param width the line width
+     * @param style the constant for the style of the line as an int
+     * @return true if the new Stroke changes the current Stroke
      */
     public boolean updateStroke(float width, int style) {
 
@@ -179,7 +166,7 @@ public class Java2DGraphicsState implements Constants, RendererState {
             update = true;
 
             switch (style) {
-            case EN_DOTTED:
+            case Constants.EN_DOTTED:
 
                 currentStroke = new BasicStroke(width, BasicStroke.CAP_ROUND,
                         BasicStroke.JOIN_BEVEL, 0f, new float[] {0, 2 * width}, width);
@@ -190,7 +177,7 @@ public class Java2DGraphicsState implements Constants, RendererState {
 
                 break;
 
-            case EN_DASHED:
+            case Constants.EN_DASHED:
 
                 currentStroke = new BasicStroke(width, BasicStroke.CAP_BUTT,
                         BasicStroke.JOIN_BEVEL, 0f, new float[] {8f, 2f}, 0f);
@@ -221,7 +208,13 @@ public class Java2DGraphicsState implements Constants, RendererState {
         return (BasicStroke) currentGraphics.getStroke();
     }
 
-    /** @see org.apache.fop.render.java2d.RendererState#updatePaint(java.awt.Paint) */
+    /**
+     * Set the current paint. This checks if the paint will change and then sets
+     * the current paint.
+     *
+     * @param p the new paint
+     * @return true if the new paint changes the current paint
+     */
     public boolean updatePaint(Paint p) {
         if (getGraph().getPaint() == null) {
             if (p != null) {
@@ -235,22 +228,12 @@ public class Java2DGraphicsState implements Constants, RendererState {
         return false;
     }
 
-    /** @see org.apache.fop.render.java2d.RendererState#checkClip(java.awt.Shape) */
-    // TODO implement and test
-    public boolean checkClip(Shape cl) {
-        if (getGraph().getClip() == null) {
-            if (cl != null) {
-                return true;
-            }
-        } else if (cl.equals(getGraph().getClip())) {
-            return true;
-        }
-        // TODO check for clips that are larger than the current
-        return false;
-    }
-
     /**
-     * @see org.apache.fop.render.java2d.RendererState#updateClip(java.awt.Shape)
+     * Set the current clip. This either sets a new clip or sets the clip to the
+     * intersect of the old clip and the new clip.
+     *
+     * @param cl the new clip in the current state
+     * @return true if the clip shape needed to be updated
      */
     public boolean updateClip(Shape cl) {
         if (getGraph().getClip() != null) {
@@ -264,40 +247,23 @@ public class Java2DGraphicsState implements Constants, RendererState {
     }
 
     /**
-     * @see org.apache.fop.render.java2d.RendererState#checkTransform(java.awt.geom.AffineTransform)
-     */
-    public boolean checkTransform(AffineTransform tf) {
-        return !tf.equals(getGraph().getTransform());
-    }
-
-    /**
-     * @see org.apache.fop.render.java2d.RendererState#setTransform(java.awt.geom.AffineTransform)
-     */
-    public void setTransform(AffineTransform tf) {
-        //apply initial transformation
-        getGraph().setTransform(initialTransform);
-        getGraph().transform(tf);
-    }
-
-    /**
-     * @see org.apache.fop.render.java2d.RendererState#transform(java.awt.geom.AffineTransform)
+     * Composes an AffineTransform object with the Transform in this Graphics2D
+     * according to the rule last-specified-first-applied.
+     * @see java.awt.Graphics2D#transform(AffineTransform tf).
+     *
+     * @param tf the transform to concatonate to the current level transform
      */
     public void transform(AffineTransform tf) {
         getGraph().transform(tf);
     }
 
     /**
-     * @see org.apache.fop.render.java2d.RendererState#getTransform()
+     * Get the current transform. This gets the combination of all transforms in
+     * the current state.
+     *
+     * @return the calculate combined transform for the current state
      */
     public AffineTransform getTransform() {
-        /*
-         * AffineTransform tf; AffineTransform at = new AffineTransform(); for
-         * (Iterator iter = stateStack.iterator(); iter.hasNext();) { Data d =
-         * (Data) iter.next(); tf = d.transform; at.concatenate(tf); }
-         * at.concatenate(getCurrentGraphics().transform);
-         *
-         * return at;
-         */
         return getGraph().getTransform();
     }
 
@@ -305,8 +271,8 @@ public class Java2DGraphicsState implements Constants, RendererState {
     public String toString() {
         String s = "AWTGraphicsState " + currentGraphics.toString()
                 + ", Stroke (width: " + currentStrokeWidth + " style: "
-                + currentStrokeStyle + "), " + getTransform()
-                + ", StackLevel: " + getStackLevel();
+                + currentStrokeStyle + "), " + getTransform();
         return s;
     }
+
 }
