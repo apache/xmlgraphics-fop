@@ -245,6 +245,27 @@
       </fonts>
     </renderer>]]></source>
     </section>
+    <section id="pcl-renderer">
+      <title>Special Settings for the PCL Renderer</title>
+      <p>
+        Non-standard fonts for the PCL renderer are made available through the Java2D subsystem which means that
+        you don't have to do any custom font configuration in this case but you have to use the font names
+        offered by Java.
+      </p>
+      <p>
+        Additionally, there's one setting that controls how borders are painted.
+      </p>
+<source><![CDATA[<renderer mime="application/vnd.hp-PCL">
+  <rendering>quality</rendering>
+</renderer>]]></source>
+      <p>
+        The default value for the "rendering" setting is "speed" which causes borders 
+        to be painted as plain rectangles. In this mode, no special borders (dotted, 
+        dashed etc.) are available. If you want support for all border modes, set the
+        value to "quality" as indicated above. This will cause the borders to be painted
+        as bitmaps.
+      </p>
+    </section>
   </section>
   </body>
 </document>
