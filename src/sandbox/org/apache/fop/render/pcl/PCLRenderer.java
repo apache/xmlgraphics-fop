@@ -128,6 +128,12 @@ public class PCLRenderer extends PrintRenderer {
     private boolean qualityBeforeSpeed = false;
     
     /**
+     * Controls whether all text should be painted as text. This is a fallback setting in case
+     * the mixture of native and bitmapped text does not provide the necessary quality.
+     */
+    private boolean allTextAsBitmaps = false;
+    
+    /**
      * Create the PCL renderer
      */
     public PCLRenderer() {
@@ -147,6 +153,16 @@ public class PCLRenderer extends PrintRenderer {
             throw new ConfigurationException(
                     "Valid values for 'rendering' are 'quality' and 'speed'. Value found: " 
                         + rendering);
+        }
+        String textRendering = cfg.getChild("text-rendering").getValue(null);
+        if ("bitmap".equalsIgnoreCase(textRendering)) {
+            this.allTextAsBitmaps = true;
+        } else if ("auto".equalsIgnoreCase(textRendering)) {
+            this.allTextAsBitmaps = false;
+        } else if (textRendering != null) {
+            throw new ConfigurationException(
+                    "Valid values for 'text-rendering' are 'auto' and 'bitmap'. Value found: " 
+                        + textRendering);
         }
     }
 
@@ -202,10 +218,17 @@ public class PCLRenderer extends PrintRenderer {
      * Sets the current font (NOTE: Hard-coded font mappings ATM!)
      * @param name the font name (internal F* names for now)
      * @param size the font size
+     * @param text the text to be rendered (used to determine if there are non-printable chars)
      * @return true if the font can be mapped to PCL
      * @throws IOException if an I/O problem occurs
      */
-    public boolean setFont(String name, float size) throws IOException {
+    public boolean setFont(String name, float size, String text) throws IOException {
+        byte[] encoded = text.getBytes("ISO-8859-1");
+        for (int i = 0, c = encoded.length; i < c; i++) {
+            if (encoded[i] == 0x3F && text.charAt(i) != '?') {
+                return false;
+            }
+        }
         int fontcode = 0;
         if (name.length() > 1 && name.charAt(0) == 'F') {
             try {
@@ -214,6 +237,7 @@ public class PCLRenderer extends PrintRenderer {
                 log.error(e);
             }
         }
+        //Note "(ON" selects ISO 8859-1 symbol set as used by PCLGenerator
         String formattedSize = gen.formatDouble2(size / 1000);
         switch (fontcode) {
         case 1:     // F1 = Helvetica
@@ -288,17 +312,19 @@ public class PCLRenderer extends PrintRenderer {
             break;
         case 13:    // F13 = Symbol
 
-            gen.writeCommand("(19M");
-            gen.writeCommand("(s1p" + formattedSize + "v0s0b16686T");
+            return false;
+            //gen.writeCommand("(19M");
+            //gen.writeCommand("(s1p" + formattedSize + "v0s0b16686T");
             // ECMA Latin 1 Symbol Set in Times Roman???
             // gen.writeCommand("(9U");
             // gen.writeCommand("(s1p" + formattedSize + "v0s0b25093T");
-            break;
+            //break;
         case 14:    // F14 = Zapf Dingbats
 
-            gen.writeCommand("(14L");
-            gen.writeCommand("(s1p" + formattedSize + "v0s0b45101T");
-            break;
+            return false;
+            //gen.writeCommand("(14L");
+            //gen.writeCommand("(s1p" + formattedSize + "v0s0b45101T");
+            //break;
         default:
             //gen.writeCommand("(0N");
             //gen.writeCommand("(s" + formattedSize + "V");
@@ -554,7 +580,9 @@ public class PCLRenderer extends PrintRenderer {
 
         try {
             final Color col = (Color)text.getTrait(Trait.COLOR);
-            boolean pclFont = setFont(fontname, fontsize);
+            boolean pclFont = allTextAsBitmaps 
+                    ? false
+                    : setFont(fontname, fontsize, text.getText()); 
             if (pclFont) {
                 //this.currentFill = col;
                 if (col != null) {
@@ -577,11 +605,15 @@ public class PCLRenderer extends PrintRenderer {
                 
                 //for cursive fonts, so the text isn't clipped
                 int extraWidth = font.getFontSize() / 3;
+                final FontMetricsMapper mapper = (FontMetricsMapper)fontInfo.getMetricsFor(
+                        font.getFontName());
+                int maxAscent = mapper.getMaxAscent(font.getFontSize()) / 1000;
+                final int additionalBPD = maxAscent - baseline;
                 
                 Graphics2DAdapter g2a = getGraphics2DAdapter();
                 final Rectangle paintRect = new Rectangle(
-                        rx, currentBPPosition + text.getOffset(),
-                        text.getIPD() + extraWidth, text.getBPD());
+                        rx, currentBPPosition + text.getOffset() - additionalBPD,
+                        text.getIPD() + extraWidth, text.getBPD() + additionalBPD);
                 RendererContext rc = createRendererContext(paintRect.x, paintRect.y, 
                         paintRect.width, paintRect.height, null);
                 Map atts = new java.util.HashMap();
@@ -592,10 +624,8 @@ public class PCLRenderer extends PrintRenderer {
                 Graphics2DImagePainter painter = new Graphics2DImagePainter() {
 
                     public void paint(Graphics2D g2d, Rectangle2D area) {
-                        FontMetricsMapper mapper = (FontMetricsMapper)fontInfo.getMetricsFor(
-                                font.getFontName());
                         g2d.setFont(mapper.getFont(font.getFontSize()));
-                        g2d.translate(0, baseline);
+                        g2d.translate(0, baseline + additionalBPD);
                         g2d.scale(1000, 1000);
                         g2d.setColor(col);
                         Java2DRenderer.renderText(text, g2d, font);

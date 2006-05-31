@@ -41,8 +41,16 @@ public interface FontMetrics {
     
 
     /**
+     * Returns the maximum ascent of the font described by this
+     * FontMetrics object. Note: This is not the same as getAscender().
+     * @param size font size
+     * @return ascent in milliponts
+     */
+    int getMaxAscent(int size);
+    
+    /**
      * Returns the ascent of the font described by this
-     * FontMetrics object.
+     * FontMetrics object. It returns the nominal ascent within the em box.
      * @param size font size
      * @return ascent in milliponts
      */

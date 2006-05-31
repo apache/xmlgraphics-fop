@@ -86,6 +86,13 @@ public class FontMetricsMapper extends Typeface implements FontMetrics {
     }
     
     /**
+     * @see org.apache.fop.fonts.FontMetrics#getMaxAscent(int)
+     */
+    public int getMaxAscent(int size) {
+        return metric.getMaxAscent(family, style, size);
+    }
+
+    /**
      * @see org.apache.fop.fonts.FontMetrics#getAscender(int)
      */
     public int getAscender(int size) {

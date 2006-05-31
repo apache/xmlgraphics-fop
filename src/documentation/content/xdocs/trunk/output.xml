@@ -369,10 +369,11 @@ out = proc.getOutputStream();]]></source>
     <section id="pcl-configuration">
       <title>Configuration</title>
       <p>
-        The PCL renderer configuration currently allows one setting:
+        The PCL renderer configuration currently allows the following settings:
       </p>
 <source><![CDATA[<renderer mime="application/vnd.hp-PCL">
   <rendering>quality</rendering>
+  <text-rendering>bitmap</text-rendering>
 </renderer>]]></source>
       <p>
         The default value for the "rendering" setting is "speed" which causes borders 
@@ -380,6 +381,12 @@ out = proc.getOutputStream();]]></source>
         dashed etc.) are available. If you want support for all border modes, set the
         value to "quality" as indicated above. This will cause the borders to be painted
         as bitmaps.
+      </p>
+      <p>
+        The default value for the "text-rendering" setting is "auto" which paints the
+        base fonts using PCL fonts. Non-base fonts are painted as bitmaps through Java2D.
+        If the mix of painting methods results in unwelcome output, you can set this
+        to "bitmap" which causes all text to be rendered as bitmaps.
       </p>
       <p>
         You can control the output resolution for the PCL using the "target resolution" 
