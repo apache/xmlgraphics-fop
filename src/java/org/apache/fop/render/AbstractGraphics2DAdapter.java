@@ -52,8 +52,8 @@ public abstract class AbstractGraphics2DAdapter implements Graphics2DAdapter {
      */
     protected BufferedImage paintToBufferedImage(Graphics2DImagePainter painter, 
              RendererContextWrapper context, int resolution, boolean gray, boolean withAlpha) {
-        int bmw = UnitConv.mpt2px(context.getWidth(), resolution);
-        int bmh = UnitConv.mpt2px(context.getHeight(), resolution);
+        int bmw = (int)Math.ceil(UnitConv.mpt2px(context.getWidth(), resolution));
+        int bmh = (int)Math.ceil(UnitConv.mpt2px(context.getHeight(), resolution));
         BufferedImage bi;
         if (gray) {
             if (withAlpha) {
@@ -79,6 +79,13 @@ public abstract class AbstractGraphics2DAdapter implements Graphics2DAdapter {
             if (!withAlpha) {
                 g2d.clearRect(0, 0, bmw, bmh);
             }
+            /* debug code
+            int off = 2;
+            g2d.drawLine(off, 0, off, bmh);
+            g2d.drawLine(bmw - off, 0, bmw - off, bmh);
+            g2d.drawLine(0, off, bmw, off);
+            g2d.drawLine(0, bmh - off, bmw, bmh - off);
+            */
             double sx = (double)bmw / context.getWidth();
             double sy = (double)bmh / context.getHeight();
             g2d.scale(sx, sy);
