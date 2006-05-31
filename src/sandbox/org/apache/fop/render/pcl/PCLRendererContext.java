@@ -60,6 +60,12 @@ public class PCLRendererContext extends RendererContext.RendererContextWrapper {
         return getForeignAttributes() != null 
              && "true".equalsIgnoreCase((String)getForeignAttributes().get(qName));
     }
+
+    public boolean isSourceTransparency() {
+        QName qName = new QName(ExtensionElementMapping.URI, null, "source-transparency");
+        return getForeignAttributes() != null 
+             && "true".equalsIgnoreCase((String)getForeignAttributes().get(qName));
+    }
     
 
 }

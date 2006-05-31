@@ -578,9 +578,11 @@ public class PCLGenerator {
      * (1-bit) bitmap image.
      * @param img the bitmap image
      * @param targetDim the target Dimention (in mpt)
+     * @param sourceTransparency true if the background should not be erased
      * @throws IOException In case of an I/O error
      */
-    public void paintBitmap(RenderedImage img, Dimension targetDim) throws IOException {
+    public void paintBitmap(RenderedImage img, Dimension targetDim, boolean sourceTransparency) 
+                throws IOException {
         double targetResolution = img.getWidth() / UnitConv.mpt2in(targetDim.width);
         int resolution = (int)Math.round(targetResolution);
         int effResolution = calculatePCLResolution(resolution, true);
@@ -634,7 +636,7 @@ public class PCLGenerator {
             
             RenderedImage red = buf;
             selectCurrentPattern(0, 0); //Solid black
-            setTransparencyMode(mask != null, true);
+            setTransparencyMode(sourceTransparency || mask != null, true);
             paintMonochromeBitmap(red, effResolution);
         } else {
             //TODO untested!
@@ -654,7 +656,7 @@ public class PCLGenerator {
                 }
                 effImg = buf;
             }
-            setSourceTransparencyMode(false);
+            setSourceTransparencyMode(sourceTransparency);
             selectCurrentPattern(0, 0); //Solid black
             paintMonochromeBitmap(effImg, effResolution);
         }

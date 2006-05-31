@@ -112,7 +112,7 @@ public class PCLGraphics2DAdapter extends AbstractGraphics2DAdapter {
             BufferedImage bi = paintToBufferedImage(painter, pclContext, resolution, true, false);
 
             pcl.setCursorPos(x, y);
-            gen.paintBitmap(bi, new Dimension(width, height));
+            gen.paintBitmap(bi, new Dimension(width, height), pclContext.isSourceTransparency());
         }
     }
 
