@@ -177,6 +177,14 @@ public class LazyFont extends Typeface implements FontDescriptor {
     }
 
     /**
+     * @see org.apache.fop.fonts.FontMetrics#getMaxAscent(int)
+     */
+    public int getMaxAscent(int size) {
+        load(true);
+        return realFont.getMaxAscent(size);
+    }
+
+    /**
      * @see org.apache.fop.fonts.FontMetrics#getAscender(int)
      */
     public int getAscender(int size) {

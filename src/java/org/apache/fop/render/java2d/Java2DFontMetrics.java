@@ -23,7 +23,10 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.FontMetrics;
+import java.awt.font.LineMetrics;
+import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
+import java.util.Map;
 
 /**
  * This is a FontMetrics to be used  for AWT  rendering.
@@ -97,6 +100,9 @@ public class Java2DFontMetrics {
      */
     private FontMetrics fmt = null;
 
+    /** A LineMetrics to access high-resolution metrics information. */
+    private LineMetrics lineMetrics;
+    
     /**
      * Temp graphics object needed to get the font metrics
      */
@@ -111,6 +117,19 @@ public class Java2DFontMetrics {
         this.graphics = graphics;
     }
 
+    /**
+     * Determines the font's maximum ascent of the Font described by the current
+     * FontMetrics object
+     * @param family font family (java name) to use
+     * @param style font style (java def.) to use
+     * @param size font size
+     * @return ascent in milliponts
+     */
+    public int getMaxAscent(String family, int style, int size) {
+        setFont(family, style, size);
+        return Math.round(lineMetrics.getAscent() * FONT_FACTOR);
+    }
+    
     /**
      * Determines the font ascent of the Font described by this
      * FontMetrics object
@@ -233,6 +252,19 @@ public class Java2DFontMetrics {
         return width;
     }
 
+    private Font getBaseFont(String family, int style, float size) {
+        Map atts = new java.util.HashMap();
+        atts.put(TextAttribute.FAMILY, family);
+        if ((style & Font.BOLD) != 0) {
+            atts.put(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
+        }
+        if ((style & Font.ITALIC) != 0) {
+            atts.put(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE);
+        }
+        atts.put(TextAttribute.SIZE, new Float(size)); //size in pt
+        return new Font(atts);
+    }
+    
     /**
      * Checks whether the font  for which values are
      * requested is the one used immediately before or
@@ -244,21 +276,19 @@ public class Java2DFontMetrics {
      */
     private boolean setFont(String family, int style, int size) {
         boolean changed = false;
-        //TODO this seems bad. It rounds font sizes down to the next integer value (=pt)
-        int s = (int)(size / 1000f);
-        //int s = size;
+        float s = size / 1000f;
 
         if (f1 == null) {
-            f1 = new Font(family, style, s);
+            f1 = getBaseFont(family, style, s);
             fmt = graphics.getFontMetrics(f1);
             changed = true;
         } else {
             if ((this.style != style) || !this.family.equals(family)
                     || this.size != s) {
                 if (family.equals(this.family)) {
-                    f1 = f1.deriveFont(style, (float)s);
+                    f1 = f1.deriveFont(style, s);
                 } else {
-                    f1 = new Font(family, style, s);
+                    f1 = getBaseFont(family, style, s);
                 }
                 fmt = graphics.getFontMetrics(f1);
                 changed = true;
@@ -282,7 +312,7 @@ public class Java2DFontMetrics {
             descender = (int)Math.round((rect.getY() + rect.getHeight()) * -1000);
             
             //Alternative way to get metrics but the ascender is again wrong for our purposes
-            //lineMetrics = f1.getLineMetrics("", graphics.getFontRenderContext());
+            lineMetrics = f1.getLineMetrics("", graphics.getFontRenderContext());
         }
         // save the family and style for later comparison
         this.family = family;

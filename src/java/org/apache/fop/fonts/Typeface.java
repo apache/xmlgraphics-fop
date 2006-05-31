@@ -54,5 +54,10 @@ public abstract class Typeface implements FontMetrics {
         return false;
     }
 
+    /** @see org.apache.fop.fonts.FontMetrics#getMaxAscent(int) */
+    public int getMaxAscent(int size) {
+        return getAscender(size);
+    }
+    
 }
 
