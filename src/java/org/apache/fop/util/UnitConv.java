@@ -101,8 +101,8 @@ public final class UnitConv {
      * @param resolution the resolution in dpi (dots per inch)
      * @return the value in pixels
      */
-    public static int mm2px(double mm, int resolution) {
-        return (int)Math.round(mm2in(mm) * resolution);
+    public static double mm2px(double mm, int resolution) {
+        return mm2in(mm) * resolution;
     }
 
     /**
@@ -111,8 +111,8 @@ public final class UnitConv {
      * @param resolution the resolution in dpi (dots per inch)
      * @return the value in pixels
      */
-    public static int mpt2px(double mpt, int resolution) {
-        return (int)Math.round(mpt2in(mpt) * resolution);
+    public static double mpt2px(double mpt, int resolution) {
+        return mpt2in(mpt) * resolution;
     }
 
 }
