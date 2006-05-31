@@ -101,6 +101,11 @@ public class PCLRenderer extends PrintRenderer {
     /** The MIME type for PCL */
     public static final String MIME_TYPE = MimeConstants.MIME_PCL_ALT;
 
+    private static final QName CONV_MODE 
+            = new QName(ExtensionElementMapping.URI, null, "conversion-mode");
+    private static final QName SRC_TRANSPARENCY 
+            = new QName(ExtensionElementMapping.URI, null, "source-transparency");
+    
     /** The OutputStream to write the PCL stream to */
     protected OutputStream out;
     
@@ -580,7 +585,8 @@ public class PCLRenderer extends PrintRenderer {
                 RendererContext rc = createRendererContext(paintRect.x, paintRect.y, 
                         paintRect.width, paintRect.height, null);
                 Map atts = new java.util.HashMap();
-                atts.put(new QName(ExtensionElementMapping.URI, null, "conversion-mode"), "bitmap");
+                atts.put(CONV_MODE, "bitmap");
+                atts.put(SRC_TRANSPARENCY, "true");
                 rc.setProperty(RendererContextConstants.FOREIGN_ATTRIBUTES, atts);
                 
                 Graphics2DImagePainter painter = new Graphics2DImagePainter() {
@@ -959,7 +965,9 @@ public class PCLRenderer extends PrintRenderer {
             try {
                 setCursorPos(this.currentIPPosition + (int)pos.getX(),
                         this.currentBPPosition + (int)pos.getY());
-                gen.paintBitmap(img, new Dimension((int)pos.getWidth(), (int)pos.getHeight()));
+                gen.paintBitmap(img, 
+                        new Dimension((int)pos.getWidth(), (int)pos.getHeight()), 
+                        false);
             } catch (IOException ioe) {
                 handleIOTrouble(ioe);
             }
@@ -1177,29 +1185,33 @@ public class PCLRenderer extends PrintRenderer {
         final Rectangle.Float effBorderRect = new Rectangle2D.Float(
                  borderRect.x - (currentIPPosition / 1000f),
                  borderRect.y - (currentBPPosition / 1000f),
-                 borderRect.width, borderRect.height);
+                 borderRect.width,
+                 borderRect.height);
         final Rectangle paintRect = new Rectangle(
-                (int)Math.round(borderRect.x * 1000),
-                (int)Math.round(borderRect.y * 1000), 
-                (int)Math.floor(borderRect.width * 1000) + 1,
-                (int)Math.floor(borderRect.height * 1000) + 1);
-        int xoffset = (bpsStart != null ? bpsStart.width : 0);
+                (int)Math.round(borderRect.x * 1000f),
+                (int)Math.round(borderRect.y * 1000f), 
+                (int)Math.floor(borderRect.width * 1000f) + 1,
+                (int)Math.floor(borderRect.height * 1000f) + 1);
+        //Add one pixel wide safety margin around the paint area
+        int pixelWidth = (int)Math.round(UnitConv.in2mpt(1) / userAgent.getTargetResolution());
+        final int xoffset = (bpsStart != null ? bpsStart.width : 0) + pixelWidth;
+        final int yoffset = pixelWidth;
         paintRect.x += xoffset;
-        paintRect.width += xoffset;
-        paintRect.width += (bpsEnd != null ? bpsEnd.width : 0);
+        paintRect.y += yoffset;
+        paintRect.width += 2 * pixelWidth;
+        paintRect.height += 2 * pixelWidth;
         
         RendererContext rc = createRendererContext(paintRect.x, paintRect.y, 
                 paintRect.width, paintRect.height, null);
-        if (false) {
-            Map atts = new java.util.HashMap();
-            atts.put(new QName(ExtensionElementMapping.URI, null, "conversion-mode"), "bitmap");
-            rc.setProperty(RendererContextConstants.FOREIGN_ATTRIBUTES, atts);
-        }
+        Map atts = new java.util.HashMap();
+        atts.put(CONV_MODE, "bitmap");
+        atts.put(SRC_TRANSPARENCY, "true");
+        rc.setProperty(RendererContextConstants.FOREIGN_ATTRIBUTES, atts);
         
         Graphics2DImagePainter painter = new Graphics2DImagePainter() {
 
             public void paint(Graphics2D g2d, Rectangle2D area) {
-                g2d.translate((bpsStart != null ? bpsStart.width : 0), 0);
+                g2d.translate(xoffset, yoffset);
                 g2d.scale(1000, 1000);
                 float startx = effBorderRect.x;
                 float starty = effBorderRect.y;
