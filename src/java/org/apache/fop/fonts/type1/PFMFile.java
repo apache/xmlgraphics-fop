@@ -19,11 +19,11 @@
 package org.apache.fop.fonts.type1;
 
 // Java
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -75,14 +75,35 @@ public class PFMFile {
      * @throws IOException In case of an I/O problem
      */
     public void load(InputStream inStream) throws IOException {
-        final byte[] buf = IOUtils.toByteArray(inStream);
-        final InputStream bufin = new java.io.ByteArrayInputStream(buf);
-        PFMInputStream in = new PFMInputStream(bufin);
-        /*final int version =*/ in.readShort();
-        final long filesize = in.readInt();
-        if (filesize != buf.length) {
-            log.warn("Effective file size is not the same as indicated in the header.");
+        InputStream bufin = inStream;
+        if (!bufin.markSupported()) {
+            bufin = new BufferedInputStream(bufin);
         }
+        PFMInputStream in = new PFMInputStream(bufin);
+        bufin.mark(16);
+        short sh1 = in.readByte();
+        short sh2 = in.readByte();
+        if (sh1 == 128 && sh2 == 1) {
+            //Found the first section header of a PFB file!
+            throw new IOException("Cannot parse PFM file. You probably specified the PFB file"
+                    + " of a Type 1 font as parameter instead of the PFM.");
+        }
+        bufin.reset();
+        byte[] b = new byte[16];
+        bufin.read(b);
+        if (new String(b, "US-ASCII").equalsIgnoreCase("StartFontMetrics")) {
+            //Found the header of a AFM file!
+            throw new IOException("Cannot parse PFM file. You probably specified the AFM file"
+                    + " of a Type 1 font as parameter instead of the PFM.");
+        }
+        bufin.reset();
+        final int version = in.readShort();
+        if (version != 256) {
+            log.warn("PFM version expected to be '256' but got '" + version + "'."
+                    + " Please make sure you specify the PFM as parameter"
+                    + " and not the PFB or the AFM.");
+        }
+        //final long filesize = in.readInt();
         bufin.reset();
 
         loadHeader(in);
