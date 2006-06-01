@@ -1224,7 +1224,7 @@ public class PCLRenderer extends PrintRenderer {
                 (int)Math.floor(borderRect.height * 1000f) + 1);
         //Add one pixel wide safety margin around the paint area
         int pixelWidth = (int)Math.round(UnitConv.in2mpt(1) / userAgent.getTargetResolution());
-        final int xoffset = (bpsStart != null ? bpsStart.width : 0) + pixelWidth;
+        final int xoffset = (int)Math.round(-effBorderRect.x * 1000f) + pixelWidth;
         final int yoffset = pixelWidth;
         paintRect.x += xoffset;
         paintRect.y += yoffset;
