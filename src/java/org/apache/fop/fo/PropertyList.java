@@ -301,7 +301,7 @@ public abstract class PropertyList {
             attributeNS = attributes.getURI(i);
             attributeName = attributes.getQName(i);
             attributeValue = attributes.getValue(i);
-            if (attributeNS.length() == 0) {
+            if (attributeNS == null || attributeNS.length() == 0) {
                 convertAttributeToProperty(attributes, attributeName, attributeValue);
             } else if (!factory.isNamespaceIgnored(attributeNS)) {
                 if (factory.getElementMappingRegistry().isKnownNamespace(attributeNS)) {
