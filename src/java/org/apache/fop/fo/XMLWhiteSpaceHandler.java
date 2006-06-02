@@ -44,7 +44,7 @@ public class XMLWhiteSpaceHandler {
     private int whiteSpaceCollapse;
     private FONode nextChild;
     private boolean endOfBlock;
-    private boolean nextChildIsBlock;
+    private boolean nextChildIsBlockLevel;
     private RecursiveCharIterator charIter;
     
     private List discardableFOCharacters;
@@ -101,14 +101,22 @@ public class XMLWhiteSpaceHandler {
                                 .getNameId() == Constants.FO_BLOCK));
         }
         endOfBlock = (nextChild == null && currentFO == currentBlock);
-        nextChildIsBlock = (nextChild != null 
-                        && nextChild.getNameId() == Constants.FO_BLOCK);
+        if (nextChild != null) {
+            int nextChildId = nextChild.getNameId();
+            nextChildIsBlockLevel = (nextChildId == Constants.FO_BLOCK
+                    || nextChildId == Constants.FO_TABLE_AND_CAPTION
+                    || nextChildId == Constants.FO_TABLE
+                    || nextChildId == Constants.FO_LIST_BLOCK
+                    || nextChildId == Constants.FO_BLOCK_CONTAINER);
+        } else {
+            nextChildIsBlockLevel = false;
+        }
         handleWhiteSpace();
         if (currentFO == currentBlock 
                 && pendingInlines != null 
                 && !pendingInlines.isEmpty()) {
             /* current FO is a block, and has pending inlines */
-            if (endOfBlock || nextChildIsBlock) {
+            if (endOfBlock || nextChildIsBlockLevel) {
                 if (nonWhiteSpaceCount == 0) {
                     /* handle white-space for all pending inlines*/
                     PendingInline p;
@@ -294,7 +302,7 @@ public class XMLWhiteSpaceHandler {
                 // No more characters == end of text run
                 // means EOL if there either is a nested block to be added,
                 // or if this is the last text node in the current block   
-                nextIsEOL = nextChildIsBlock || endOfBlock;
+                nextIsEOL = nextChildIsBlockLevel || endOfBlock;
             }
             return nextIsEOL;
         }
