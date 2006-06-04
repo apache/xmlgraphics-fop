@@ -38,8 +38,8 @@ public class UnitConvTestCase extends TestCase {
         assertEquals("in2mpt", 792000, UnitConv.in2mpt(11.0), 1.0 / 2); //height of a letter page
         assertEquals("mpt2in", 11.0, UnitConv.mpt2in(792000), 0.01 / 2); //height of a letter page
         
-        assertEquals("mm2px/72dpi", 842, UnitConv.mm2px(297, 72), 0.0001);
-        assertEquals("mm2px/300dpi", 3508, UnitConv.mm2px(297, 300), 0.0001);
+        assertEquals("mm2px/72dpi", (297.0/UnitConv.IN2MM) * 72, UnitConv.mm2px(297.0, 72), 0);
+        assertEquals("mm2px/300dpi", (297.0/UnitConv.IN2MM) * 300, UnitConv.mm2px(297.0, 300), 0);
     }
     
 }
