@@ -28,6 +28,9 @@
   <changes>
     <release version="FOP Trunk">
       <action context="Code" dev="JM" type="fix">
+        Bugfix: All fonts names were converted unnecessarily to lower case in RTF output.
+      </action>
+      <action context="Code" dev="JM" type="fix">
         Bugfix: The combination of hyphenation and kerning resulted in slightly ragged 
         right ends for right-aligned and justified text.
       </action>

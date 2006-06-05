@@ -116,16 +116,15 @@ public final class RtfFontManager {
      */
     public int getFontNumber (String family) {
 
-        family = family.toLowerCase ();
-        Object o = fontIndex.get (family);
+        Object o = fontIndex.get(getFontKey(family));
         int retVal;
 
         if (o == null) {
             addFont (family);
 
-            retVal = fontTable.size () - 1;
+            retVal = fontTable.size() - 1;
         } else {
-            retVal = ((Integer) o).intValue ();
+            retVal = ((Integer)o).intValue();
         }
 
         return retVal;
@@ -166,13 +165,17 @@ public final class RtfFontManager {
     // @@ Private methods
     //////////////////////////////////////////////////
 
+    private String getFontKey(String family) {
+        return family.toLowerCase();
+    }
+    
     /**
      * Adds a font to the table.
      *
-     * @param i Identifier of font
+     * @param family Identifier of font
      */
-    private void addFont (String family) {
-        fontIndex.put (family, new Integer (fontTable.size ()));
-        fontTable.addElement (family);
+    private void addFont(String family) {
+        fontIndex.put(getFontKey(family), new Integer(fontTable.size()));
+        fontTable.addElement(family);
     }
 }
