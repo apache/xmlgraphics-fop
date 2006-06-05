@@ -16,13 +16,6 @@
 
 /* $Id$ */
 
-
-
-/*
- * This file is part of the RTF library of the FOP project.
- */
-
-
 package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 // Java
@@ -132,7 +125,7 @@ public class RtfTextrun extends RtfContainer {
      * @param attrs  attributes to add
      * @throws IOException for I/O problems
      */
-    public void addOpenGroupMark(RtfAttributes attrs) throws IOException {
+    private void addOpenGroupMark(RtfAttributes attrs) throws IOException {
         RtfOpenGroupMark r = new RtfOpenGroupMark(this, writer, attrs);
     }
 
@@ -141,7 +134,7 @@ public class RtfTextrun extends RtfContainer {
      * 
      * @throws IOException for I/O problems
      */
-    public void addCloseGroupMark() throws IOException {
+    private void addCloseGroupMark() throws IOException {
         RtfCloseGroupMark r = new RtfCloseGroupMark(this, writer);
     }
     
@@ -209,6 +202,12 @@ public class RtfTextrun extends RtfContainer {
         rtfSpaceManager.popRtfSpaceSplitter();
     }
     
+    /**
+     * Inserts a footnote.
+     * 
+     * @return inserted footnote
+     * @throws IOException for I/O problems
+     */
     public RtfFootnote addFootnote() throws IOException {
         return new RtfFootnote(this, writer);
     }
@@ -242,21 +241,42 @@ public class RtfTextrun extends RtfContainer {
         }
     }
     
+    /**
+     * Inserts a page number.
+     * @param attr Attributes for the page number to insert.
+     * @throws IOException for I/O problems
+     */
     public void addPageNumber(RtfAttributes attr) throws IOException {
         RtfPageNumber r = new RtfPageNumber(this, writer, attr);
     }
     
+    /**
+     * Inserts a hyperlink.
+     * @param attr Attributes for the hyperlink to insert.
+     * @return inserted hyperlink
+     * @throws IOException for I/O problems
+     */
     public RtfHyperLink addHyperlink(RtfAttributes attr) throws IOException {
         return new RtfHyperLink(this, writer, attr);
     }
     
+    /**
+     * Inserts a bookmark.
+     * @param id Id for the inserted bookmark
+     * @throws IOException for I/O problems
+     */
     public void addBookmark(String id) throws IOException {
        if (id != "") {
             // if id is not empty, add boormark
            new RtfBookmark(this, writer, id);
        }
     }
-    
+
+    /**
+     * Inserts an image.
+     * @return inserted image
+     * @throws IOException for I/O problems
+     */
     public RtfExternalGraphic newImage() throws IOException {
         return new RtfExternalGraphic(this, writer);
     }
@@ -266,11 +286,12 @@ public class RtfTextrun extends RtfContainer {
      * @param container RtfContainer, which is the parent of the returned RtfTextrun
      * @param writer Writer of the given RtfContainer
      * @param attrs RtfAttributes which are to write at the beginning of the RtfTextrun
+     * @return new or existing RtfTextrun object.
      * @throws IOException for I/O problems
      */
     public static RtfTextrun getTextrun(RtfContainer container, Writer writer, RtfAttributes attrs)
             throws IOException {
-        Object obj;
+
         List list = container.getChildren();
                 
         if (list.size() == 0) {
@@ -279,9 +300,13 @@ public class RtfTextrun extends RtfContainer {
             list.add(textrun);
 
             return textrun;
-        } else if ((obj = list.get(list.size() - 1)) instanceof RtfTextrun ) {
+        }
+        
+        Object obj = list.get(list.size() - 1);
+
+        if (obj instanceof RtfTextrun) {
             //if the last child is a RtfTextrun, return it
-            return (RtfTextrun)obj;
+            return (RtfTextrun) obj;
         }
 
         //add a new RtfTextrun as the last child
@@ -310,6 +335,10 @@ public class RtfTextrun extends RtfContainer {
          * 2. To write the children
          * Maybe this can be done more efficient.
          */
+        
+        boolean bHasTableCellParent =
+            this.getParentOfClass(RtfTableCell.class) != null;
+        RtfAttributes attrBlockLevel = new RtfAttributes();
 
         //determine, if this RtfTextrun is the last child of its parent
         boolean bLast = false;
@@ -351,6 +380,11 @@ public class RtfTextrun extends RtfContainer {
             final RtfElement e = (RtfElement)it.next();
             final boolean bRtfParagraphBreak = (e instanceof RtfParagraphBreak);
 
+            if (bHasTableCellParent) {
+                attrBlockLevel.set(e.getRtfAttributes());
+            }
+            
+            
             /**
              * -Write RtfParagraphBreak only, if the previous visible child
              * was't also a RtfParagraphBreak.
@@ -386,13 +420,29 @@ public class RtfTextrun extends RtfContainer {
                 bPrevPar = bPrevPar && e.isEmpty();
                 bFirst = bFirst && e.isEmpty();
             }
+        } //for (Iterator it = ...)
+        
+        //
+        if (bHasTableCellParent) {
+            writeAttributes(attrBlockLevel, null);
         }
+        
     }
     
+    /**
+     * Set the parent list-item of the textrun.
+     * 
+     * @param listItem parent list-item of the textrun
+     */
     public void setRtfListItem(RtfListItem listItem) {
         rtfListItem = listItem;
     }
     
+    /**
+     * Gets the parent list-item of the textrun. 
+     * 
+     * @return parent list-item of the textrun
+     */
     public RtfListItem getRtfListItem() {
         return rtfListItem;
     }

@@ -178,6 +178,8 @@ final class TextAttributesConverter {
     private static void attrTextDecoration(CommonTextDecoration textDecoration, 
                 RtfAttributes rtfAttr) {
         if (textDecoration == null) {
+            rtfAttr.set(RtfText.ATTR_UNDERLINE, 0);
+            rtfAttr.set(RtfText.ATTR_STRIKETHROUGH, 0);
             return;
         }
                 

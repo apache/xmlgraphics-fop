@@ -327,7 +327,20 @@ public class RtfTableCell
             } else if (setRight) {
                 writeControlWord("qr");
             } else {
-                writeControlWord("ql");
+                RtfElement lastChild = null;
+                
+                if (getChildren().size() > 0) {
+                    lastChild = (RtfElement) getChildren().get(getChildren().size() - 1);
+                }
+                    
+                
+                if (lastChild != null
+                        && lastChild instanceof RtfTextrun) {
+                    //Don't write \ql in order to allow for example a right aligned paragraph 
+                    //in a not right aligned table-cell to write its \qr.
+                } else {
+                    writeControlWord("ql");
+                }                
             }
 
             if (!containsText()) {
