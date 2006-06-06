@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -81,7 +81,7 @@ public class Table extends TableFObj {
     private boolean tableHeaderFound = false;   
     private boolean tableFooterFound = false;   
     private boolean tableBodyFound = false; 
-   
+
     /** 
      * Default table-column used when no columns are specified. It is used
      * to handle inheritance (especially visibility) and defaults properly. */
@@ -210,7 +210,8 @@ public class Table extends TableFObj {
     protected void endOfNode() throws FOPException {
         if (!tableBodyFound) {
            missingChildElementError(
-                   "(marker*,table-column*,table-header?,table-footer?,table-body+)");
+                   "(marker*,table-column*,table-header?,table-footer?"
+                       + ",table-body+)");
         }
         if (columns != null && !columns.isEmpty()) {
             for (int i = columns.size(); --i >= 0;) {
@@ -228,13 +229,15 @@ public class Table extends TableFObj {
     protected void addChildNode(FONode child) throws FOPException {
         if ("fo:table-column".equals(child.getName())) {
             addColumnNode((TableColumn) child);
-        } else if ("fo:table-footer".equals(child.getName())) {
-            tableFooter = (TableBody)child;
-        } else if ("fo:table-header".equals(child.getName())) {
-            tableHeader = (TableBody)child;
         } else {
-            // add bodies
-            super.addChildNode(child);
+            if ("fo:table-footer".equals(child.getName())) {
+                tableFooter = (TableBody) child;
+            } else if ("fo:table-header".equals(child.getName())) {
+                tableHeader = (TableBody) child;
+            } else {
+                // add bodies
+                super.addChildNode(child);
+            }
         }
     }
 
@@ -243,9 +246,9 @@ public class Table extends TableFObj {
      * used for determining initial values for column-number
      * 
      * @param col   the column to add
-     * @throws FOPException
+     * @throws FOPException 
      */
-    private void addColumnNode(TableColumn col) throws FOPException {
+    private void addColumnNode(TableColumn col) {
         int colNumber = col.getColumnNumber();
         int colRepeat = col.getNumberColumnsRepeated();
         if (columns == null) {
@@ -270,13 +273,9 @@ public class Table extends TableFObj {
             }
         }
         //flag column indices used by this column
-        for (int i = colNumber - 1; i < colNumber - 1 + colRepeat; i++) {
-            usedColumnIndices.set(i);
-        }
-        //set index for the next column to use
-        while (usedColumnIndices.get(columnIndex - 1)) {
-            columnIndex++;
-        }
+        int startIndex = colNumber - 1;
+        int endIndex = startIndex + colRepeat;
+        flagColumnIndices(startIndex, endIndex);
     }
 
     /** @return true of table-layout="auto" */
@@ -299,7 +298,7 @@ public class Table extends TableFObj {
      * @return the requested table-body element
      */
     public TableBody getBody(int index) {
-        return (TableBody)childNodes.get(index);
+        return (TableBody) childNodes.get(index);
     }
 
     /** @return the body for the table-header. */
@@ -439,7 +438,7 @@ public class Table extends TableFObj {
 
     /**
      * Sets the current column index of the given Table
-     * (used by TableColumn.bind() in case the column-number
+     * (used by ColumnNumberPropertyMaker.make() in case the column-number
      * was explicitly specified)
      * 
      * @param   newIndex    the new value for column index
@@ -448,4 +447,23 @@ public class Table extends TableFObj {
         columnIndex = newIndex;
     }
     
+    /**
+     * @see org.apache.fop.fo.flow.TableFObj#flagColumnIndices(int, int)
+     */
+    protected void flagColumnIndices(int start, int end) {
+        for (int i = start; i < end; i++) {
+            usedColumnIndices.set(i);
+        }
+        //set index for the next column to use
+        while (usedColumnIndices.get(columnIndex - 1)) {
+            columnIndex++;
+        }
+    }
+    
+    /**
+     * @see org.apache.fop.fo.flow.TableFObj#existsUsedColumnIndices()
+     */
+    protected boolean existsUsedColumnIndices() {
+        return (usedColumnIndices != null);
+    }
 }

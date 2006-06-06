@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,7 @@ import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
-import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonAccessibility;
@@ -59,8 +57,8 @@ public class TableRow extends TableFObj {
 
     private boolean setup = false;
     
-    private List pendingSpans;
-    private BitSet usedColumnIndices;
+    protected List pendingSpans;
+    protected BitSet usedColumnIndices;
     private int columnIndex = 1;
 
     /**
@@ -75,7 +73,8 @@ public class TableRow extends TableFObj {
      */
     public void bind(PropertyList pList) throws FOPException {
         commonAccessibility = pList.getAccessibilityProps();
-        blockProgressionDimension = pList.get(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange();
+        blockProgressionDimension 
+            = pList.get(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange();
         commonAural = pList.getAuralProps();
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         commonRelativePosition = pList.getRelativePositionProps();
@@ -91,7 +90,8 @@ public class TableRow extends TableFObj {
     }
 
     /**
-     * Adds a cell to this row (skips marker handling done by FObj.addChildNode().
+     * Adds a cell to this row (skips marker handling done by 
+     * FObj.addChildNode().
      * Used by TableBody during the row building process when only cells are
      * used as direct children of a table-body/header/footer.
      * @param cell cell to add.
@@ -115,6 +115,12 @@ public class TableRow extends TableFObj {
         
         checkId(id);
         getFOEventHandler().startRow(this);
+        if (((TableBody) parent).isFirst(this) 
+                && getTable().columns == null ) {
+            if (pendingSpans == null) {
+                pendingSpans = new java.util.ArrayList();
+            }
+        }
     }
 
     /**
@@ -131,6 +137,7 @@ public class TableRow extends TableFObj {
             ((TableBody) parent).pendingSpans = pendingSpans;
         }
         ((TableBody) parent).resetColumnIndex();
+        columnIndex = 1;
         //release references
         pendingSpans = null;
         usedColumnIndices = null;
@@ -141,64 +148,14 @@ public class TableRow extends TableFObj {
      * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
      * XSL Content Model: (table-cell+)
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+    protected void validateChildNode(Locator loc, String nsURI, 
+                                     String localName) 
         throws ValidationException {
         if (!(FO_URI.equals(nsURI) && localName.equals("table-cell"))) {
             invalidChildError(loc, nsURI, localName);
         }
     }
     
-    /**
-     * @see org.apache.fop.fo.FONode#addChildNode(FONode)
-     */
-    protected void addChildNode(FONode child) throws FOPException {
-        TableCell cell = (TableCell) child;
-        int rowSpan = cell.getNumberRowsSpanned();
-        int colSpan = cell.getNumberColumnsSpanned();
-        if (((TableBody) parent).isFirst(this) 
-                && getTable().columns == null ) {
-            if (pendingSpans == null) {
-                pendingSpans = new java.util.ArrayList();
-            }
-            pendingSpans.add(null);
-            if (usedColumnIndices == null) {
-                usedColumnIndices = new BitSet();
-            }
-        }
-        //if the current cell spans more than one row,
-        //update pending span list for the next row
-        if (rowSpan > 1) {
-            for (int i = colSpan; --i >= 0;) {
-                pendingSpans.set(columnIndex - 1 + i, 
-                        new PendingSpan(rowSpan));
-            }
-        }
-        //flag column indices used by this cell,
-        //take into account that possibly not all column-numbers
-        //are used by columns in the parent table (if any),
-        //so a cell spanning three columns, might actually
-        //take up more than three columnIndices...
-        int startIndex = columnIndex - 1;
-        int endIndex = startIndex + colSpan;
-        if (getTable().columns != null) {
-            List cols = getTable().columns;
-            int tmpIndex = endIndex;
-            for (int i = startIndex; i <= tmpIndex; ++i) {
-                if (i < cols.size() && cols.get(i) == null) {
-                    endIndex++;
-                }
-            }
-        }
-        for (int i = startIndex; i < endIndex; i++) {
-            usedColumnIndices.set(i);
-        }
-        //update columnIndex for the next cell
-        while (usedColumnIndices.get(columnIndex - 1)) {
-            columnIndex++;
-        }
-        super.addChildNode(cell);
-    }
-
     /**
      * @return the "id" property.
      */
@@ -232,7 +189,8 @@ public class TableRow extends TableFObj {
     }
 
     /**
-     * Convenience method to check if a keep-together constraint is specified.
+     * Convenience method to check if a keep-together 
+     * constraint is specified.
      * @return true if keep-together is active.
      */
     public boolean mustKeepTogether() {
@@ -241,7 +199,8 @@ public class TableRow extends TableFObj {
     }
     
     /**
-     * Convenience method to check if a keep-with-next constraint is specified.
+     * Convenience method to check if a keep-with-next 
+     * constraint is specified.
      * @return true if keep-with-next is active.
      */
     public boolean mustKeepWithNext() {
@@ -250,7 +209,8 @@ public class TableRow extends TableFObj {
     }
     
     /**
-     * Convenience method to check if a keep-with-previous constraint is specified.
+     * Convenience method to check if a keep-with-previous 
+     * constraint is specified.
      * @return true if keep-with-previous is active.
      */
     public boolean mustKeepWithPrevious() {
@@ -301,7 +261,7 @@ public class TableRow extends TableFObj {
     /**
      * Sets the current column index to a specific value
      * in case a column-number was explicitly specified
-     * (used by TableCell.bind())
+     * (used by ColumnNumberPropertyMaker.make())
      * 
      * @param newIndex  new value for column index
      */
@@ -318,5 +278,25 @@ public class TableRow extends TableFObj {
      */
     public boolean isColumnNumberUsed(int colNr) {
         return usedColumnIndices.get(colNr - 1);
+    }
+    
+    /**
+     * @see org.apache.fop.fo.flow.TableFObj#flagColumnIndices(int, int)
+     */
+    protected void flagColumnIndices(int start, int end) {
+        for (int i = start; i < end; i++) {
+            usedColumnIndices.set(i);
+        }
+        // update columnIndex for the next cell
+        while (usedColumnIndices.get(columnIndex - 1)) {
+            columnIndex++;
+        }
+    }
+    
+    /**
+     * @see org.apache.fop.fo.flow.TableFObj#existsUsedColumnIndices()
+     */
+    protected boolean existsUsedColumnIndices() {
+        return (usedColumnIndices != null);
     }
 }
