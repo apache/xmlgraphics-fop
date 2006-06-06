@@ -170,5 +170,23 @@ public abstract class TableFObj extends FObj {
      * @return the Common Border, Padding, and Background Properties.
      */
     public abstract CommonBorderPaddingBackground getCommonBorderPaddingBackground();
-
+    
+    /**
+     * Flags column indices from <code>start</code> to <code>end</code>,
+     * and updates the current column index.
+     * Overridden for Table, TableBody, TableRow
+     * @param start start index
+     * @param end   end index
+     */
+    protected void flagColumnIndices(int start, int end) {
+        //nop
+    }
+    
+    /**
+     * Overridden for Table, TableBody, TableRow
+     * @return true if the usedColumnIndices BitSet exists, and is initialized
+     */
+    protected boolean existsUsedColumnIndices() {
+        return false;
+    }
 }

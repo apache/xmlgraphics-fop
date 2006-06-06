@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 1999-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ package org.apache.fop.fo.flow;
 import java.util.BitSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.xml.sax.Locator;
 
@@ -62,7 +63,7 @@ public class TableBody extends TableFObj {
     protected List pendingSpans;
     protected BitSet usedColumnIndices = new BitSet();
     private int columnIndex = 1;
-    private boolean firstRow = true;
+    protected boolean firstRow = true;
     
     /**
      * @param parent FONode that is the parent of the object
@@ -107,10 +108,15 @@ public class TableBody extends TableFObj {
                 getParent().removeChild(this);
             }
         }
-        /*
+        
         if (tableCellsFound) {
             convertCellsToRows();
-        }*/
+        }
+        
+        //reset column index (so that it would be
+        //correct if the table is cloned during
+        //marker retrieval)
+        resetColumnIndex();
         //release references
         savedPropertyList = null;
         pendingSpans = null;
@@ -138,9 +144,10 @@ public class TableBody extends TableFObj {
             } else if (localName.equals("table-cell")) {
                 tableCellsFound = true;
                 if (tableRowsFound) {
-                    invalidChildError(loc, nsURI, localName, "Either fo:table-rows" +
-                      " or fo:table-cells may be children of an " + getName() +
-                      " but not both");
+                    invalidChildError(loc, nsURI, localName, 
+                            "Either fo:table-rows or fo:table-cells "
+                            + "may be children of an " 
+                            + getName() + " but not both");
                 }  
             } else {
                 invalidChildError(loc, nsURI, localName);
@@ -151,83 +158,10 @@ public class TableBody extends TableFObj {
     }
     
     /**
-     * @see org.apache.fop.fo.FONode#addChildNode(FONode)
-     */
-    protected void addChildNode(FONode child) throws FOPException {
-        if (child.getNameId() == FO_TABLE_CELL) {
-            addCellNode( (TableCell) child);
-        } else {
-            super.addChildNode(child);
-        }
-    }
-
-    /**
-     * Adds a cell to the list of child nodes, and updates the columnIndex
-     * used for determining the initial value of column-number
-     * 
-     * @param cell  cell to add
-     * @throws FOPException
-     */
-    private void addCellNode(TableCell cell) throws FOPException {
-        //if firstRow flag is still true, the cell starts a row, 
-        //and there was a previous cell that didn't explicitly
-        //end the previous row => set firstRow flag to false
-        if (firstRow && cell.startsRow() && !lastCellEndedRow()) {
-            firstRow = false;
-        }
-        int rowSpan = cell.getNumberRowsSpanned();
-        int colSpan = cell.getNumberColumnsSpanned();
-        //if there were no explicit columns, pendingSpans
-        //will not be properly initialized for the first row
-        if (firstRow && getTable().columns == null) {
-            if (pendingSpans == null) {
-                pendingSpans = new java.util.ArrayList();
-            }
-            for (int i = colSpan; --i >= 0;) {
-                pendingSpans.add(null);
-            }
-        }
-        //if the current cell spans more than one row,
-        //update pending span list for the next row
-        if (rowSpan > 1) {
-            for (int i = colSpan; --i >= 0;) {
-                pendingSpans.set(columnIndex - 1 + i, 
-                        new PendingSpan(rowSpan));
-            }
-        }
-        //flag column indices used by this cell,
-        //take into account that possibly not all column-numbers
-        //are used by columns in the parent table (if any),
-        //so a cell spanning three columns, might actually
-        //take up more than three columnIndices...
-        int startIndex = columnIndex - 1;
-        int endIndex = startIndex + colSpan;
-        if (getTable().columns != null) {
-            List cols = getTable().columns;
-            int tmpIndex = endIndex;
-            for (int i = startIndex; i <= tmpIndex; ++i) {
-                if (i < cols.size() && cols.get(i) == null) {
-                    endIndex++;
-                }
-            }
-        }
-        for (int i = startIndex; i < endIndex; i++) {
-            usedColumnIndices.set(i);
-        }
-        setNextColumnIndex();
-        super.addChildNode(cell);
-        if (cell.endsRow()) {
-            if (firstRow) {
-                firstRow = false;
-            }
-            resetColumnIndex();
-        }
-    }
-
-    /**
      * If table-cells are used as direct children of a table-body|header|footer
      * they are replaced in this method by proper table-rows.
-     * @throws FOPException if there's a problem binding the TableRows properties.
+     * @throws FOPException if there's a problem binding the TableRow's 
+     *         properties.
      */
     private void convertCellsToRows() throws FOPException {
         //getLogger().debug("Converting cells to rows...");
@@ -236,14 +170,15 @@ public class TableBody extends TableFObj {
         Iterator i = cells.iterator();
         TableRow row = null;
         while (i.hasNext()) {
-            TableCell cell = (TableCell)i.next();
+            TableCell cell = (TableCell) i.next();
             if (cell.startsRow() && (row != null)) {
                 childNodes.add(row);
                 row = null;
             }
             if (row == null) {
                 row = new TableRow(this);
-                PropertyList pList = new StaticPropertyList(row, savedPropertyList);
+                PropertyList pList = new StaticPropertyList(row, 
+                        savedPropertyList);
                 pList.setWritingMode();
                 row.bind(pList);
             }
@@ -282,8 +217,9 @@ public class TableBody extends TableFObj {
      * @return true if the given table row is the first row of this body.
      */
     public boolean isFirst(TableRow obj) {
-        return (childNodes.size() > 0) 
-            && (childNodes.get(0) == obj);
+        return (childNodes == null 
+                || (!childNodes.isEmpty()
+                    && childNodes.get(0) == obj));
     }
 
     /**
@@ -291,15 +227,20 @@ public class TableBody extends TableFObj {
      * @return true if the given table row is the first row of this body.
      */
     public boolean isLast(TableRow obj) {
-        return (childNodes.size() > 0) 
-            && (childNodes.get(childNodes.size() - 1) == obj);
+        return (childNodes == null
+                || (childNodes.size() > 0 
+                    && childNodes.get(childNodes.size() - 1) == obj));
     }
     
     /**
-     * Initializes pending spans list; used for correctly
+     * Initializes list of pending row-spans; used for correctly
      * assigning initial value for column-number for the
      * cells of following rows
-     *
+     * (note: not literally mentioned in the Rec, but it is assumed
+     *  that, if the first cell in a given row spans two rows, then
+     *  the first cell of the following row will have an initial
+     *  column-number of 2, since the first column is already 
+     *  occupied...)
      */
     protected void initPendingSpans() {
         if (getTable().columns != null) {
@@ -307,6 +248,10 @@ public class TableBody extends TableFObj {
             pendingSpans = new java.util.ArrayList(tableCols.size());
             for (int i = tableCols.size(); --i >= 0;) {
                 pendingSpans.add(null);
+            }
+        } else {
+            if (firstRow && pendingSpans == null) {
+                pendingSpans = new java.util.ArrayList();
             }
         }
     }
@@ -322,8 +267,8 @@ public class TableBody extends TableFObj {
 
     /**
      * Sets the current column index to a specific value
-     * (used by TableCell.bind() in case the column-number
-     * was explicitly specified)
+     * (used by ColumnNumberPropertyMaker.make() in case the 
+     *  column-number was explicitly specified on the cell)
      * 
      * @param newIndex  the new column index
      */
@@ -384,13 +329,18 @@ public class TableBody extends TableFObj {
     /**
      * Checks whether the previous cell had 'ends-row="true"'
      * 
-     * @return false only if there was a previous cell, which
-     *         had ends-row="false" (implicit or explicit)
+     * @param currentCell   the cell for which the question is asked
+     * @return true if:
+     *          a) there is a previous cell, which
+     *             had ends-row="true"
+     *          b) there is no previous cell (implicit 
+     *             start of row)
      */
-    public boolean lastCellEndedRow() {
-        if (childNodes != null) {
-            FONode prevNode = (FONode) childNodes.get(childNodes.size() - 1);
-            if (prevNode.getNameId() == FO_TABLE_CELL) {
+    protected boolean lastCellEndedRow(TableCell currentCell) {
+        if (childNodes != null && childNodes.indexOf(currentCell) > 0) {
+            FONode prevNode = (FONode) childNodes.get(
+                    childNodes.indexOf(currentCell) - 1);
+            if (prevNode != null && prevNode.getNameId() == FO_TABLE_CELL) {
                 return ((TableCell) prevNode).endsRow();
             }
         }
@@ -399,13 +349,29 @@ public class TableBody extends TableFObj {
 
     /**
      * Checks whether a given column-number is already in use
-     * for the current row (used by TableCell.bind());
+     * for the current row;
      * 
      * @param   colNr   the column-number to check
      * @return true if column-number is already occupied
      */
     public boolean isColumnNumberUsed(int colNr) {
         return usedColumnIndices.get(colNr - 1);
-    }    
+    }
+    
+    /**
+     * @see org.apache.fop.fo.flow.TableFObj#flagColumnIndices(int, int)
+     */
+    protected void flagColumnIndices(int start, int end) {
+        for (int i = start; i < end; i++) {
+            usedColumnIndices.set(i);
+        }
+        setNextColumnIndex();
+    }
+    
+    /**
+     * @see org.apache.fop.fo.flow.TableFObj#existsUsedColumnIndices()
+     */
+    protected boolean existsUsedColumnIndices() {
+        return (usedColumnIndices != null);
+    }
 }
-

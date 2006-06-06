@@ -18,11 +18,14 @@
 
 package org.apache.fop.fo.properties;
 
+import java.util.Iterator;
+
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.flow.TableBody;
+import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableFObj;
 
 /**
@@ -32,40 +35,38 @@ import org.apache.fop.fo.flow.TableFObj;
  */
 public class ColumnNumberPropertyMaker extends NumberProperty.Maker {
 
+    /**
+     * Constructor
+     * @param propId    the id of the property for which the maker should be created
+     */
     public ColumnNumberPropertyMaker(int propId) {
         super(propId);
     }
 
     /**
-     * Set default column-number from parent's currentColumnIndex.
-     *
-     * @param   propertyList
-     * @return  the default value for column-number
-     * @throws  PropertyException
+     * @see PropertyMaker#make(PropertyList)
      */
     public Property make(PropertyList propertyList) throws PropertyException {
         FObj fo = propertyList.getFObj();
 
         if (fo.getNameId() == Constants.FO_TABLE_CELL
                 || fo.getNameId() == Constants.FO_TABLE_COLUMN) {
-            TableFObj parent = (TableFObj) propertyList.getParentFObj();
-            int columnIndex = parent.getCurrentColumnIndex();
             if (fo.getNameId() == Constants.FO_TABLE_CELL
-                    && parent.getNameId() == Constants.FO_TABLE_BODY) {
-                boolean startsRow = propertyList.get(Constants.PR_STARTS_ROW)
-                    .getEnum() == Constants.EN_TRUE;
-
-                //cell w/ starts-row="true", but previous cell
-                //didn't have ends-row="true", so index has still has
-                //to be reset (for other cases this already happened in
-                //body.addChildNode())
-                if (startsRow && !((TableBody) parent).lastCellEndedRow()) {
-                    //reset column index, and reassign...
-                    ((TableBody) parent).resetColumnIndex();
-                    columnIndex = parent.getCurrentColumnIndex();
+                    && fo.getParent().getNameId() != Constants.FO_TABLE_ROW
+                    && (propertyList.get(Constants.PR_STARTS_ROW).getEnum() 
+                            == Constants.EN_TRUE)) {
+                TableBody parent = (TableBody) fo.getParent();
+                TableCell prevCell = null;                
+                for (Iterator i = parent.getChildNodes(); 
+                        (i != null && i.hasNext());) {
+                    prevCell = (TableCell) i.next();
+                }
+                if (prevCell != null && !prevCell.endsRow()) {
+                    parent.resetColumnIndex();
                 }
             }
-            return new NumberProperty(columnIndex);
+            return new NumberProperty(((TableFObj) fo.getParent())
+                                        .getCurrentColumnIndex());
         } else {
             throw new PropertyException("column-number property is only allowed"
                     + " on fo:table-cell or fo:table-column, not on "
@@ -78,7 +79,8 @@ public class ColumnNumberPropertyMaker extends NumberProperty.Maker {
      * Return the parent's column index (initial value) in case 
      * of a negative or zero value
      * 
-     * @see org.apache.fop.fo.properties.PropertyMaker#get(int, PropertyList, boolean, boolean)
+     * @see org.apache.fop.fo.properties.PropertyMaker#get(
+     *                      int, PropertyList, boolean, boolean)
      */
     public Property get(int subpropId, PropertyList propertyList,
                         boolean tryInherit, boolean tryDefault) 
@@ -97,32 +99,7 @@ public class ColumnNumberPropertyMaker extends NumberProperty.Maker {
             return new NumberProperty(parent.getCurrentColumnIndex());
         }
         //TODO: check for non-integer value and round
-        
-        if (fo.getNameId() == Constants.FO_TABLE_CELL) {
-            //check if any of the column-numbers occupied by this cell
-            //are already in use in the current row...
-            int i = -1;
-            int colspan = propertyList.get(Constants.PR_NUMBER_COLUMNS_SPANNED)
-                            .getNumeric().getValue();
-            while (++i < colspan) {
-                //if table has explicit columns and the column-number isn't
-                //assigned to any column, increment further until the next
-                //column is encountered
-                if (fo.getTable().getColumns() != null) {
-                    while (columnIndex <= fo.getTable().getColumns().size()
-                            && !fo.getTable().isColumnNumberUsed(columnIndex)) {
-                        columnIndex++;
-                    }
-                }
-                //if column-number is already in use by another cell
-                //in the current row => error!
-                if (parent.isColumnNumberUsed(columnIndex + i)) {
-                    throw new PropertyException("fo:table-cell overlaps in column "
-                            + (columnIndex + i));
-                }
-            }
-        }
-        
+                
         //if column-number was explicitly specified, force the parent's current
         //column index to the specified value, so that the updated index will
         //be the correct initial value for the next cell/column (see Rec 7.26.8)

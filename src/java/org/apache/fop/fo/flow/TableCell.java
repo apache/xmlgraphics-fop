@@ -18,6 +18,9 @@
 
 package org.apache.fop.fo.flow;
 
+import java.util.BitSet;
+import java.util.List;
+
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
@@ -94,7 +97,7 @@ public class TableCell extends TableFObj {
      * Set to true if all content completely laid out.
      */
     private boolean bDone = false;
-
+    
     /**
      * @param parent FONode that is the parent of this object
      */
@@ -111,7 +114,6 @@ public class TableCell extends TableFObj {
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         commonRelativePosition = pList.getRelativePositionProps();
         blockProgressionDimension = pList.get(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange();
-        columnNumber = pList.get(PR_COLUMN_NUMBER).getNumeric();
         displayAlign = pList.get(PR_DISPLAY_ALIGN).getEnum();
         relativeAlign = pList.get(PR_RELATIVE_ALIGN).getEnum();
         emptyCells = pList.get(PR_EMPTY_CELLS).getEnum();
@@ -123,6 +125,13 @@ public class TableCell extends TableFObj {
         numberRowsSpanned = pList.get(PR_NUMBER_ROWS_SPANNED).getNumeric();
         startsRow = pList.get(PR_STARTS_ROW).getEnum();
         width = pList.get(PR_WIDTH).getLength();
+        
+        //Check to make sure we're not in retrieve-marker context
+        //TODO: Can this be generalized/extended to other FOs/Properties?
+        if (((TableFObj) parent).existsUsedColumnIndices()) {
+            columnNumber = pList.get(PR_COLUMN_NUMBER).getNumeric();
+        }
+        
         super.bind(pList);
     }
 
@@ -144,8 +153,8 @@ public class TableCell extends TableFObj {
             if (getUserAgent().validateStrictly()) {
                 missingChildElementError("marker* (%block;)+");
             } else if (childNodes != null && childNodes.size() > 0) {
-                getLogger().warn("fo:table-cell content that is not enclosed by a "
-                        + "fo:block will be dropped/ignored.");
+                getLogger().warn("fo:table-cell content that is not "
+                        + "enclosed by a fo:block will be dropped/ignored.");
             }
         }
         if ((startsRow() || endsRow()) 
@@ -153,9 +162,112 @@ public class TableCell extends TableFObj {
             getLogger().warn("starts-row/ends-row for fo:table-cells "
                     + "non-applicable for children of an fo:table-row.");
         }
+        updateParentColumnIndex();
         getFOEventHandler().endCell(this);
     }
 
+    private void updateParentColumnIndex() {
+        
+        int rowSpan = getNumberRowsSpanned();
+        int colSpan = getNumberColumnsSpanned();
+        int columnIndex = ((TableFObj) parent).getCurrentColumnIndex();
+        
+        int i = -1;
+        while (++i < colSpan) {
+            //if table has explicit columns and the column-number isn't
+            //assigned to any column, increment further until the next
+            //column is encountered
+            if (getTable().getColumns() != null) {
+                while (columnIndex <= getTable().getColumns().size()
+                        && !getTable().isColumnNumberUsed(columnIndex)) {
+                    columnIndex++;
+                }
+            }
+            //if column-number is already in use by another cell
+            //in the current row => error!
+            if (((TableFObj) parent).isColumnNumberUsed(columnIndex + i)) {
+                log.error("fo:table-cell overlaps in column "
+                        + (columnIndex + i));
+            }
+        }
+
+        if (parent.getNameId() == FO_TABLE_ROW) {
+            /* parent is a fo:table-row */
+            TableRow row = (TableRow) parent;
+            TableBody body = (TableBody) parent.getParent();
+            
+            if (body.isFirst(row) && getTable().columns == null ) {
+                row.pendingSpans.add(null);
+                if (row.usedColumnIndices == null) {
+                    row.usedColumnIndices = new BitSet();
+                }
+            }
+            //if the current cell spans more than one row,
+            //update pending span list for the next row
+            if (rowSpan > 1) {
+                for (i = colSpan; --i >= 0;) {
+                    row.pendingSpans.set(columnIndex - 1 + i, 
+                            new PendingSpan(rowSpan));
+                }
+            }
+        } else {
+            /* parent is (should be) a fo:table-body/-header/-footer */
+            TableBody body = (TableBody) parent;
+            
+            /* if body.firstRow is still true, and :
+             * a) the cell starts a row,
+             * b) there was a previous cell 
+             * c) that previous cell didn't explicitly end the previous row
+             *  => set firstRow flag to false
+             */
+            if (startsRow() && body.firstRow) {
+                if (!body.lastCellEndedRow(this)) {
+                    body.firstRow = false;
+                }
+            }
+            
+            /* if there were no explicit columns, pendingSpans
+             * will not be properly initialized for the first row...
+             */
+            if (body.firstRow && getTable().columns == null) {
+                for (i = colSpan; --i >= 0;) {
+                    body.pendingSpans.add(null);
+                }
+            }
+            
+            /* if the current cell spans more than one row,
+             * update pending span list for the next row
+             */
+            if (rowSpan > 1) {
+                for (i = colSpan; --i >= 0;) {
+                    body.pendingSpans.set(columnIndex - 1 + i, 
+                            new PendingSpan(rowSpan));
+                }
+            }
+        }
+        //flag column indices used by this cell,
+        //take into account that possibly not all column-numbers
+        //are used by columns in the parent table (if any),
+        //so a cell spanning three columns, might actually
+        //take up more than three columnIndices...
+        int startIndex = columnIndex - 1;
+        int endIndex = startIndex + colSpan;
+        if (getTable().columns != null) {
+            List cols = getTable().columns;
+            int tmpIndex = endIndex;
+            for (i = startIndex; i <= tmpIndex; ++i) {
+                if (i < cols.size() && cols.get(i) == null) {
+                    endIndex++;
+                }
+            }
+        }
+        ((TableFObj) parent).flagColumnIndices(startIndex, endIndex);
+        if (endsRow() && parent.getNameId() != FO_TABLE_ROW) {
+            ((TableBody) parent).firstRow = false;
+            ((TableBody) parent).resetColumnIndex();
+        }
+    }
+    
     /**
      * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
      * XSL Content Model: marker* (%block;)+
@@ -186,102 +298,6 @@ public class TableCell extends TableFObj {
     public void setStartOffset(int offset) {
         startOffset = offset;
     }
-
-    /**
-     * Calculate cell border and padding, including offset of content
-     * rectangle from the theoretical grid position.
-     */
-// TODO This whole method is not used it refers to padding which requires layout
-// context to evaluate
-//    private void calcBorders(CommonBorderPaddingBackground bp) {
-//        if (this.borderCollapse == EN_SEPARATE) {
-//            /*
-//             * Easy case.
-//             * Cell border is the property specified directly on cell.
-//             * Offset content rect by half the border-separation value,
-//             * in addition to the border and padding values. Note:
-//             * border-separate should only be specified on the table object,
-//             * but it inherits.
-//             */
-//            int iSep = borderSeparation.getIPD().getLength().getValue();
-//            this.startAdjust = iSep / 2 + bp.getBorderStartWidth(false)
-//                               + bp.getPaddingStart(false);
-//
-//            this.widthAdjust = startAdjust + iSep - iSep / 2
-//                               + bp.getBorderEndWidth(false)
-//                               + bp.getPaddingEnd(false);
-//
-//            // Offset of content rectangle in the block-progression direction
-//            int bSep = borderSeparation.getBPD().getLength().getValue();
-//            this.beforeOffset = bSep / 2
-//                                + bp.getBorderBeforeWidth(false)
-//                                + bp.getPaddingBefore(false);
-//
-//        } else {
-//            // System.err.println("Collapse borders");
-//            /*
-//             * Hard case.
-//             * Cell border is combination of other cell borders, or table
-//             * border for edge cells. Also seems to border values specified
-//             * on row and column FO in the table (if I read CR correclty.)
-//             */
-//
-//            // Set up before and after borders, taking into account row
-//            // and table border properties.
-//            // ??? What about table-body, header,footer
-//
-//            /*
-//             * We can't calculate before and after because we aren't sure
-//             * whether this row will be the first or last in its area, due
-//             * to redoing break decisions (at least in the "new" architecture.)
-//             * So in the general case, we will calculate two possible values:
-//             * the first/last one and the "middle" one.
-//             * Example: border-before
-//             * 1. If the cell is in the first row in the first table body, it
-//             * will combine with the last row of the header, or with the
-//             * top (before) table border if there is no header.
-//             * 2. Otherwise there are two cases:
-//             * a. the row is first in its (non-first) Area.
-//             * The border can combine with either:
-//             * i.  the last row of table-header and its cells, or
-//             * ii. the table before border (no table-header or it is
-//             * omitted on non-first Areas).
-//             * b. the row isn't first in its Area.
-//             * The border combines with the border of the previous
-//             * row and the cells which end in that row.
-//             */
-//
-//            /*
-//             * if-first
-//             * Calculate the effective border of the cell before-border,
-//             * it's parent row before-border, the last header row after-border,
-//             * the after border of the cell(s) which end in the last header
-//             * row.
-//             */
-//            /*
-//             * if-not-first
-//             * Calculate the effective border of the cell before-border,
-//             * it's parent row before-border, the previous row after-border,
-//             * the after border of the cell(s) which end in the previous
-//             * row.
-//             */
-//
-//
-//            /* ivan demakov */
-//            int borderStart = bp.getBorderStartWidth(false);
-//            int borderEnd = bp.getBorderEndWidth(false);
-//            int borderBefore = bp.getBorderBeforeWidth(false);
-//            int borderAfter = bp.getBorderAfterWidth(false);
-//
-//            this.startAdjust = borderStart / 2 + bp.getPaddingStart(false);
-//
-//            this.widthAdjust = startAdjust + borderEnd / 2
-//                               + bp.getPaddingEnd(false);
-//            this.beforeOffset = borderBefore / 2 + bp.getPaddingBefore(false);
-//            // Half border height to fix overestimate of area size!
-//            this.borderHeight = (borderBefore + borderAfter) / 2;
-//        }
-//    }
 
     /**
      * @return the Common Border, Padding, and Background Properties.
@@ -353,7 +369,7 @@ public class TableCell extends TableFObj {
     /**
      * @see org.apache.fop.fo.FObj#getNameId()
      */
-    public int getNameId() {
+    public final int getNameId() {
         return FO_TABLE_CELL;
     }
 }
