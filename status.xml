@@ -27,6 +27,13 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix">
+        Bugfix: Table headers were omitted when a table is a child of a block-container.
+      </action>
+      <action context="Code" dev="JM" type="fix">
+        Bugfix: Bookmarks in PDF will be generated even if some bookmarks cannot be
+        resolved.
+      </action>
       <action context="Code" dev="AD" type="fix" fixes-bug="39560">
         Bugfix: the interaction between the table FOs and properties package in
         determining initial values for column-number should be a one-time process,
