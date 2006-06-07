@@ -701,7 +701,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                 }
                 lastPos = pos;
             }
-            Position innerPosition = null;
+            Position innerPosition = pos;
             if (pos instanceof NonLeafPosition) {
                 innerPosition = ((NonLeafPosition)pos).getPosition();
             }
