@@ -103,6 +103,10 @@ public class TableColumn extends TableFObj {
      * @see org.apache.fop.fo.FONode#endOfNode
      */
     protected void endOfNode() throws FOPException {
+        //flag column indices used by this column
+        int startIndex = getColumnNumber() - 1;
+        int endIndex = startIndex + getNumberColumnsRepeated();
+        getTable().flagColumnIndices(startIndex, endIndex);
         getFOEventHandler().endColumn(this);
     }
 
