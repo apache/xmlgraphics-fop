@@ -413,6 +413,10 @@ public class AreaTreeHandler extends FOEventHandler {
         if (bookmarkTree != null) {
             BookmarkData data = new BookmarkData(bookmarkTree);
             addOffDocumentItem(data);
+            if (!data.isResolved()) {
+                //bookmarks did not fully resolve, add anyway. (hacky? yeah)
+                model.handleOffDocumentItem(data);
+            }
         }
 
         model.endDocument();
