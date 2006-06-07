@@ -272,10 +272,6 @@ public class Table extends TableFObj {
                 columns.add(col);
             }
         }
-        //flag column indices used by this column
-        int startIndex = colNumber - 1;
-        int endIndex = startIndex + colRepeat;
-        flagColumnIndices(startIndex, endIndex);
     }
 
     /** @return true of table-layout="auto" */
