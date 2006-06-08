@@ -72,15 +72,32 @@ public abstract class AbstractBreaker {
          */
         private int startOn;
 
-        public BlockSequence(int iStartOn) {
+        private int displayAlign;
+        
+        /**
+         * Creates a new BlockSequence.
+         * @param iStartOn the kind of page the sequence should start on. One of EN_ANY, EN_COLUMN, 
+         *                 EN_ODD_PAGE, EN_EVEN_PAGE.
+         * @param displayAlign the value for the display-align property
+         */
+        public BlockSequence(int iStartOn, int displayAlign) {
             super();
             startOn = iStartOn;
+            this.displayAlign = displayAlign;
         }
         
+        /**
+         * @return the kind of page the sequence should start on. One of EN_ANY, EN_COLUMN, 
+         *         EN_ODD_PAGE, EN_EVEN_PAGE.
+         */
         public int getStartOn() {
             return this.startOn;
         }
 
+        /** @return the value for the display-align property */
+        public int getDisplayAlign() {
+            return this.displayAlign;
+        }
         /**
          * Finalizes a Knuth sequence.
          * @return a finalized sequence.
@@ -103,10 +120,18 @@ public abstract class AbstractBreaker {
             if (this.size() > ignoreAtStart) {
                 // add the elements representing the space at the end of the last line
                 // and the forced break
-                this.add(new KnuthPenalty(0, KnuthElement.INFINITE, false, null, false));
-                this.add(new KnuthGlue(0, 10000000, 0, null, false));
-                this.add(new KnuthPenalty(0, -KnuthElement.INFINITE, false, breakPosition, false));
-                ignoreAtEnd = 3;
+                if (getDisplayAlign() == Constants.EN_X_DISTRIBUTE && isSinglePartFavored()) {
+                    this.add(new KnuthPenalty(0, -KnuthElement.INFINITE, 
+                                false, breakPosition, false));
+                    ignoreAtEnd = 1;
+                } else {
+                    this.add(new KnuthPenalty(0, KnuthElement.INFINITE, 
+                                false, null, false));
+                    this.add(new KnuthGlue(0, 10000000, 0, null, false));
+                    this.add(new KnuthPenalty(0, -KnuthElement.INFINITE, 
+                                false, breakPosition, false));
+                    ignoreAtEnd = 3;
+                }
                 return this;
             } else {
                 this.clear();
@@ -117,7 +142,7 @@ public abstract class AbstractBreaker {
         public BlockSequence endBlockSequence(Position breakPosition) {
             KnuthSequence temp = endSequence(breakPosition);
             if (temp != null) {
-                BlockSequence returnSequence = new BlockSequence(startOn);
+                BlockSequence returnSequence = new BlockSequence(startOn, displayAlign);
                 returnSequence.addAll(temp);
                 returnSequence.ignoreAtEnd = this.ignoreAtEnd;
                 return returnSequence;
@@ -125,6 +150,7 @@ public abstract class AbstractBreaker {
                 return null;
             }
         }
+
     }
 
     /** blockListIndex of the current BlockSequence in blockLists */
@@ -238,12 +264,18 @@ public abstract class AbstractBreaker {
         childLC.setStackLimit(new MinOptMax(flowBPD));
 
         if (getCurrentDisplayAlign() == Constants.EN_X_FILL) {
-            //EN_FILL is non-standard (by LF)
+            //EN_X_FILL is non-standard (by LF)
+            alignment = Constants.EN_JUSTIFY;
+        } else if (getCurrentDisplayAlign() == Constants.EN_X_DISTRIBUTE) {
+            //EN_X_DISTRIBUTE is non-standard (by LF)
             alignment = Constants.EN_JUSTIFY;
         } else {
             alignment = Constants.EN_START;
         }
         alignmentLast = Constants.EN_START;
+        if (isSinglePartFavored() && alignment == Constants.EN_JUSTIFY) {
+            alignmentLast = Constants.EN_JUSTIFY;
+        }
         childLC.setBPAlignment(alignment);
 
         BlockSequence blockList;
@@ -283,7 +315,7 @@ public abstract class AbstractBreaker {
                 int iOptPageCount;
 
                 BlockSequence effectiveList;
-                if (alignment == Constants.EN_JUSTIFY) {
+                if (getCurrentDisplayAlign() == Constants.EN_X_FILL) {
                     /* justification */
                     effectiveList = justifyBoxes(blockList, alg, flowBPD);
                 } else {
@@ -415,8 +447,10 @@ public abstract class AbstractBreaker {
             }
 
             if (startElementIndex <= endElementIndex) {
-                log.debug("     addAreas from " + startElementIndex
-                        + " to " + endElementIndex);
+                if (log.isDebugEnabled()) {
+                    log.debug("     addAreas from " + startElementIndex
+                            + " to " + endElementIndex);
+                }
                 childLC = new LayoutContext(0);
                 // set the space adjustment ratio
                 childLC.setSpaceAdjust(pbp.bpdAdjust);
@@ -512,7 +546,7 @@ public abstract class AbstractBreaker {
                 nextSequenceStartsOn = handleSpanChange(childLC, nextSequenceStartsOn);
                 return nextSequenceStartsOn;
             }
-            blockList = new BlockSequence(nextSequenceStartsOn);
+            blockList = new BlockSequence(nextSequenceStartsOn, getCurrentDisplayAlign());
             
             //Only implemented by the PSLM
             nextSequenceStartsOn = handleSpanChange(childLC, nextSequenceStartsOn);
@@ -767,7 +801,8 @@ public abstract class AbstractBreaker {
         // create a new sequence: the new elements will contain the
         // Positions
         // which will be used in the addAreas() phase
-        BlockSequence effectiveList = new BlockSequence(blockList.getStartOn());
+        BlockSequence effectiveList = new BlockSequence(blockList.getStartOn(), 
+                                                blockList.getDisplayAlign());
         effectiveList.addAll(getCurrentChildLM().getChangedKnuthElements(
                 blockList.subList(0, blockList.size() - blockList.ignoreAtEnd),
                 /* 0, */0));

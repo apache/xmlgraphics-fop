@@ -24,6 +24,7 @@ import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.layoutmgr.AbstractBreaker.PageBreakPosition;
@@ -512,9 +513,9 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
             } else if (prevSplitLength > 0) {
                 // prevIndex is -1 if we have added only some whole footnotes
                 footnoteListIndex = (prevIndex != -1) ? listIndex : listIndex - 1;
-                footnoteElementIndex = (prevIndex != -1) ?
-                    prevIndex : 
-                    ((LinkedList) footnotesList.get(footnoteListIndex)).size() - 1;
+                footnoteElementIndex = (prevIndex != -1)
+                    ? prevIndex 
+                    : ((LinkedList) footnotesList.get(footnoteListIndex)).size() - 1;
             }
             return prevSplitLength;
         }
@@ -636,8 +637,9 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                 // add a whole footnote
                 availableBPD -= ((Integer) lengthList.get(footnoteListIndex)).intValue()
                                 - insertedFootnotesLength;
-                insertedFootnotesLength = ((Integer) lengthList.get(footnoteListIndex)).intValue();
-                footnoteElementIndex = ((LinkedList) footnotesList.get(footnoteListIndex)).size() - 1;
+                insertedFootnotesLength = ((Integer)lengthList.get(footnoteListIndex)).intValue();
+                footnoteElementIndex
+                    = ((LinkedList)footnotesList.get(footnoteListIndex)).size() - 1;
             } else if ((split = getFootnoteSplit(footnoteListIndex, footnoteElementIndex,
                                                  insertedFootnotesLength, availableBPD, true))
                        > 0) {
@@ -650,7 +652,8 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                 // cannot add any content: create a new node and start again
                 KnuthPageNode node = (KnuthPageNode)
                                      createNode(lastNode.position, prevNode.line + 1, 1,
-                                                insertedFootnotesLength - prevNode.totalFootnotes, 0, 0,
+                                                insertedFootnotesLength - prevNode.totalFootnotes, 
+                                                0, 0,
                                                 0, 0, 0,
                                                 0, 0, prevNode);
                 addNode(node.line, node);
@@ -688,15 +691,15 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                 }
                 prevNode.next = n.next;
                 if (prevNode.next == null) {
-                    activeLines[line*2+1] = prevNode;
+                    activeLines[line * 2 + 1] = prevNode;
                 }
             } else {
                 log.error("Should be first");
             }
         } else {
-            activeLines[line*2] = node.next;
+            activeLines[line * 2] = node.next;
             if (node.next == null) {
-                activeLines[line*2+1] = null;
+                activeLines[line * 2 + 1] = null;
             }
             while (startLine < endLine && getNode(startLine) == null) {
                 startLine++;
@@ -741,7 +744,8 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                         getFObj()));
             }
         }
-        int blockAlignment = (bestActiveNode.line < total) ? alignment : alignmentLast;
+        boolean isNonLastPage = (bestActiveNode.line < total);
+        int blockAlignment = isNonLastPage ? alignment : alignmentLast;
         // it is always allowed to adjust space, so the ratio must be set regardless of
         // the value of the property display-align; the ratio must be <= 1
         double ratio = bestActiveNode.adjustRatio;
@@ -749,7 +753,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
             // page break with a negative difference:
             // spaces always have enough shrink
             difference = 0;
-        } else if (ratio <= 1 && bestActiveNode.line < total) {
+        } else if (ratio <= 1 && isNonLastPage) {
             // not-last page break with a positive difference smaller than the available stretch:
             // spaces can stretch to fill the whole difference
             difference = 0;
@@ -761,7 +765,12 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         } else {
             // last page with a positive difference:
             // spaces do not need to stretch
-            ratio = 0;
+            if (blockAlignment != Constants.EN_JUSTIFY) {
+                ratio = 0;
+            } else {
+                //Stretch as much as possible on last page
+                difference = 0;
+            }
         }
         // compute the indexes of the first footnote list and the first element in that list
         int firstListIndex = ((KnuthPageNode) bestActiveNode.previous).footnoteListIndex;
@@ -769,10 +778,10 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         if (footnotesList != null
             && firstElementIndex == ((LinkedList) footnotesList.get(firstListIndex)).size() - 1) {
             // advance to the next list
-            firstListIndex ++;
+            firstListIndex++;
             firstElementIndex = 0;
         } else {
-            firstElementIndex ++;
+            firstElementIndex++;
         }
 
         // add nodes at the beginning of the list, as they are found
