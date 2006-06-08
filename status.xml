@@ -27,6 +27,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="AD" type="fix" fixes-bug="39712">
+        Bugfix: components of the border-separation property weren't set when
+        in shorthand-mode, leading to a NPE being thrown.
+      </action>
       <action context="Code" dev="JM" type="fix">
         Bugfix: Table headers were omitted when a table is a child of a block-container.
       </action>
