@@ -33,6 +33,7 @@ public class EvalCheck implements LayoutEngineCheck {
 
     private String expected;
     private String xpath;
+    private double tolerance;
     private PrefixResolver prefixResolver;
     
     /**
@@ -52,6 +53,10 @@ public class EvalCheck implements LayoutEngineCheck {
     public EvalCheck(Node node) {
         this.expected = node.getAttributes().getNamedItem("expected").getNodeValue();
         this.xpath = node.getAttributes().getNamedItem("xpath").getNodeValue();
+        Node nd = node.getAttributes().getNamedItem("tolerance");
+        if (nd != null) {
+            this.tolerance = Double.parseDouble(nd.getNodeValue());
+        }
         this.prefixResolver = new PrefixResolverDefault(node);
     }
     
@@ -64,12 +69,21 @@ public class EvalCheck implements LayoutEngineCheck {
             throw new RuntimeException("XPath evaluation failed: " + e.getMessage());
         }
         String actual = res.str(); //Second str() seems to fail. D'oh!
-        if (!expected.equals(actual)) {
-            throw new RuntimeException(
-                    "Expected XPath expression to evaluate to '" + expected + "', but got '" 
-                    + actual + "' (" + this + ")");
+        if (tolerance != 0) {
+            double v1 = Double.parseDouble(expected);
+            double v2 = Double.parseDouble(actual);
+            if (Math.abs(v1 - v2) > tolerance) {
+                throw new RuntimeException(
+                        "Expected XPath expression to evaluate to '" + expected + "', but got '" 
+                        + actual + "' (" + this + ", outside tolerance)");
+            }
+        } else {
+            if (!expected.equals(actual)) {
+                throw new RuntimeException(
+                        "Expected XPath expression to evaluate to '" + expected + "', but got '" 
+                        + actual + "' (" + this + ")");
+            }
         }
-
     }
 
     /** @see java.lang.Object#toString() */
@@ -77,12 +91,4 @@ public class EvalCheck implements LayoutEngineCheck {
         return "XPath: " + xpath;
     }
 
-    private class MyPrefixResolver extends PrefixResolverDefault {
-        
-        public MyPrefixResolver(Node xpathExpressionContext) {
-            super(xpathExpressionContext);
-        }
-        
-    }
-    
 }

@@ -20,6 +20,8 @@ package org.apache.fop.layoutengine;
 
 import javax.xml.transform.TransformerException;
 
+import org.apache.xml.utils.PrefixResolver;
+import org.apache.xml.utils.PrefixResolverDefault;
 import org.apache.xpath.XPathAPI;
 import org.apache.xpath.objects.XBoolean;
 import org.apache.xpath.objects.XObject;
@@ -32,6 +34,7 @@ public class TrueCheck implements LayoutEngineCheck {
 
     private String xpath;
     private String failureMessage;
+    private PrefixResolver prefixResolver;
     
     /**
      * Creates a new instance
@@ -51,13 +54,14 @@ public class TrueCheck implements LayoutEngineCheck {
         if (nd != null) {
             this.failureMessage = nd.getNodeValue();
         }
+        this.prefixResolver = new PrefixResolverDefault(node);
     }
     
     /** @see org.apache.fop.layoutengine.LayoutEngineCheck */
     public void check(LayoutResult result) {
         XObject res;
         try {
-            res = XPathAPI.eval(result.getAreaTree(), xpath);
+            res = XPathAPI.eval(result.getAreaTree(), xpath, prefixResolver);
         } catch (TransformerException e) {
             throw new RuntimeException("XPath evaluation failed: " + e.getMessage());
         }
