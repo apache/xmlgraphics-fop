@@ -70,7 +70,7 @@ import org.apache.fop.fo.properties.WhiteSpaceShorthandParser;
  *
  * @todo Check multi-threading safety of the statics below
  */
-public class FOPropertyMapping implements Constants {
+public final class FOPropertyMapping implements Constants {
     private static Map s_htPropNames = new HashMap();
     private static Map s_htSubPropNames = new HashMap();
     private static Map s_htPropIds = new HashMap();
@@ -247,7 +247,7 @@ public class FOPropertyMapping implements Constants {
      * @param name name of the subproperty.
      * @param id   Id for the subproperty from CP_* in Constants.java.
      */
-    public static void addSubpropMakerName(String name, int id) {
+    private static void addSubpropMakerName(String name, int id) {
         s_htSubPropNames.put(name, new Integer(id));
         s_htPropIds.put(new Integer(id), name);
     }
@@ -1291,7 +1291,6 @@ public class FOPropertyMapping implements Constants {
         PropertyMaker m;
         LengthProperty.Maker l;
         DimensionPropertyMaker pdim;
-        CorrespondingPropertyMaker corr;
 
         // block-progression-dimension
         m = new LengthRangeProperty.Maker(PR_BLOCK_PROGRESSION_DIMENSION);
@@ -2258,11 +2257,13 @@ public class FOPropertyMapping implements Constants {
 
         sub = new LengthProperty.Maker(CP_BLOCK_PROGRESSION_DIRECTION);
         sub.setDefault("0pt");
+        sub.setByShorthand(true);
         m.addSubpropMaker(sub);
 
         sub = new LengthProperty.Maker(CP_INLINE_PROGRESSION_DIRECTION);
         sub.setDefault("0pt");
         m.addSubpropMaker(sub);
+        sub.setByShorthand(true);
         addPropertyMaker("border-separation", m);
 
         // border-start-precedence
@@ -2497,8 +2498,10 @@ public class FOPropertyMapping implements Constants {
         m  = new ListProperty.Maker(PR_BACKGROUND_POSITION);
         m.setInherited(false);
         m.addKeyword("left", "0% 50%");
-        m.addKeyword("center", "50% 50%");
         m.addKeyword("right", "100% 50%");
+        m.addKeyword("center", "50% 50%");
+        m.addKeyword("top", "50% 0%");
+        m.addKeyword("bottom", "50% 100%");
         m.setDefault("0% 0%");
         m.setDatatypeParser(new BackgroundPositionShorthandParser());
         addPropertyMaker("background-position", m);
