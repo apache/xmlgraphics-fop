@@ -233,7 +233,10 @@ out = proc.getOutputStream();]]></source>
 </section>
 <section id="awt">
   <title>Java2D/AWT</title>
-    <warning>The Java2D/AWT, Print and Bitmap renderers may not yet fully work as expected. There are some known bugs and missing features.</warning>
+    <p>
+      The Java2DRenderer provides the basic functionality for all 
+      Java2D-based output formats (AWT viewer, direct print, PNG, TIFF).
+    </p>
     <p>
       The AWT viewer shows a window with the pages displayed inside a
       Java graphic. It displays one page at a time.
@@ -258,8 +261,8 @@ out = proc.getOutputStream();]]></source>
   <p>
     Currently, two output formats are supported: PNG and TIFF. TIFF produces
     one file with multiple pages, while PNG output produces one file per
-    page. The quality of the bitmap depends on the resolution setting on the
-    FOUserAgent.
+    page. The quality of the bitmap depends on the target resolution setting 
+    on the FOUserAgent.
   </p>
 </section>
 <section id="txt">
