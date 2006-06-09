@@ -27,6 +27,12 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="update">
+        The Java2DRenderer (and therefore the print and bitmap renderers) is now
+        offering the same quality as the PDF and PS renderers. Note: There can still
+        be little differences between PDF and Print/PNG/TIFF because the latter uses
+        a different font metrics source.
+      </action>
       <action context="Code" dev="AD" type="fix" fixes-bug="39712">
         Bugfix: components of the border-separation property weren't set when
         in shorthand-mode, leading to a NPE being thrown.
