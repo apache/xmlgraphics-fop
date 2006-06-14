@@ -47,7 +47,7 @@ public class PDFColor extends PDFPathPaint {
      */
     public PDFColor(double theRed, double theGreen, double theBlue) {
         // super(theNumber);
-        this.colorSpace = new PDFColorSpace(PDFColorSpace.DEVICE_RGB);
+        this.colorSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
 
         this.red = theRed;
         this.green = theGreen;
@@ -60,7 +60,7 @@ public class PDFColor extends PDFPathPaint {
      * @param col the sRGB color
      */
     public PDFColor(java.awt.Color col) {
-        this.colorSpace = new PDFColorSpace(PDFColorSpace.DEVICE_RGB);
+        this.colorSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
         float[] comps = new float[3];
         comps = col.getColorComponents(comps);
 
@@ -94,7 +94,7 @@ public class PDFColor extends PDFPathPaint {
                     double theBlack) {
         // super(theNumber);//?
 
-        this.colorSpace = new PDFColorSpace(PDFColorSpace.DEVICE_CMYK);
+        this.colorSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_CMYK);
 
         this.cyan = theCyan;
         this.magenta = theMagenta;
@@ -110,13 +110,13 @@ public class PDFColor extends PDFPathPaint {
      */
     public List getVector() {
         List theColorVector = new ArrayList();
-        if (this.colorSpace.getColorSpace() == PDFColorSpace.DEVICE_RGB) {
+        if (this.colorSpace.getColorSpace() == PDFDeviceColorSpace.DEVICE_RGB) {
             // RGB
             theColorVector.add(new Double(this.red));
             theColorVector.add(new Double(this.green));
             theColorVector.add(new Double(this.blue));
         } else if (this.colorSpace.getColorSpace()
-                   == PDFColorSpace.DEVICE_CMYK) {
+                   == PDFDeviceColorSpace.DEVICE_CMYK) {
             // CMYK
             theColorVector.add(new Double(this.cyan));
             theColorVector.add(new Double(this.magenta));
@@ -229,15 +229,15 @@ public class PDFColor extends PDFPathPaint {
     public void setColorSpace(int theColorSpace) {
         int theOldColorSpace = this.colorSpace.getColorSpace();
         if (theOldColorSpace != theColorSpace) {
-            if (theOldColorSpace == PDFColorSpace.DEVICE_RGB) {
-                if (theColorSpace == PDFColorSpace.DEVICE_CMYK) {
+            if (theOldColorSpace == PDFDeviceColorSpace.DEVICE_RGB) {
+                if (theColorSpace == PDFDeviceColorSpace.DEVICE_CMYK) {
                     this.convertRGBtoCMYK();
                 } else  {
                     // convert to Gray?
                     this.convertRGBtoGRAY();
                 }
-            } else if (theOldColorSpace == PDFColorSpace.DEVICE_CMYK) {
-                if (theColorSpace == PDFColorSpace.DEVICE_RGB) {
+            } else if (theOldColorSpace == PDFDeviceColorSpace.DEVICE_CMYK) {
+                if (theColorSpace == PDFDeviceColorSpace.DEVICE_RGB) {
                     this.convertCMYKtoRGB();
                 } else {
                     // convert to Gray?
@@ -245,7 +245,7 @@ public class PDFColor extends PDFPathPaint {
                 }
             } else {
                 // used to be Gray
-                if (theColorSpace == PDFColorSpace.DEVICE_RGB) {
+                if (theColorSpace == PDFDeviceColorSpace.DEVICE_RGB) {
                     this.convertGRAYtoRGB();
                 } else {
                     // convert to CMYK?
@@ -270,7 +270,7 @@ public class PDFColor extends PDFPathPaint {
         double tempDouble;
 
         if (this.colorSpace.getColorSpace()
-                == PDFColorSpace.DEVICE_RGB) {       // colorspace is RGB
+                == PDFDeviceColorSpace.DEVICE_RGB) {       // colorspace is RGB
             // according to pdfspec 12.1 p.399
             // if the colors are the same then just use the g or G operator
             boolean same = false;
@@ -300,7 +300,7 @@ public class PDFColor extends PDFPathPaint {
                 }
             }
         } else if (this.colorSpace.getColorSpace()
-                  == PDFColorSpace.DEVICE_CMYK) {
+                  == PDFDeviceColorSpace.DEVICE_CMYK) {
             // colorspace is CMYK
 
             if (fillNotStroke) {

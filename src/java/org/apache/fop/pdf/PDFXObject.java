@@ -94,10 +94,7 @@ public class PDFXObject extends AbstractPDFStream {
     
     private String buildDictionaryFromPS(String lengthEntry, 
                                          String dictEntries) {
-        if (getDocumentSafely().getPDFAMode().isPDFA1LevelB()) {
-            throw new PDFConformanceException("PostScript XObjects are prohibited when PDF/A"
-                    + " is active. Convert EPS graphics to another format.");
-        }
+        getDocumentSafely().getProfile().verifyPSXObjectsAllowed();
         StringBuffer sb = new StringBuffer(128);
         sb.append(getObjectID());
         sb.append("<</Type /XObject\n");
@@ -126,8 +123,8 @@ public class PDFXObject extends AbstractPDFStream {
             sb.append("/ColorSpace [/ICCBased "
                 + pdfICCStream.referencePDF() + "]\n");
         } else {
-            PDFColorSpace cs = pdfimage.getColorSpace();
-            sb.append("/ColorSpace /" + cs.getColorSpacePDFString()
+            PDFDeviceColorSpace cs = pdfimage.getColorSpace();
+            sb.append("/ColorSpace /" + cs.getName()
                   + "\n");
         }
 
@@ -136,11 +133,11 @@ public class PDFXObject extends AbstractPDFStream {
              * this will invert the values - too bad if it's not
              * a PhotoShop image...
              */
-            if (pdfimage.getColorSpace().getColorSpace() == PDFColorSpace.DEVICE_CMYK) {
+            if (pdfimage.getColorSpace().getColorSpace() == PDFDeviceColorSpace.DEVICE_CMYK) {
                 sb.append("/Decode [ 1.0 0.0 1.0 0.0 1.0 0.0 1.0 0.0 ]\n");
-            } else if (pdfimage.getColorSpace().getColorSpace() == PDFColorSpace.DEVICE_RGB) {
+            } else if (pdfimage.getColorSpace().getColorSpace() == PDFDeviceColorSpace.DEVICE_RGB) {
                 sb.append("/Decode [ 1.0 0.0 1.0 0.0 1.0 0.0 ]\n");
-            } else if (pdfimage.getColorSpace().getColorSpace() == PDFColorSpace.DEVICE_GRAY) {
+            } else if (pdfimage.getColorSpace().getColorSpace() == PDFDeviceColorSpace.DEVICE_GRAY) {
                 sb.append("/Decode [ 1.0 0.0 ]\n");
             }
         }

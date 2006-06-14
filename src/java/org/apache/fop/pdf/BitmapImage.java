@@ -31,7 +31,7 @@ public class BitmapImage implements PDFImage {
     private int height;
     private int width;
     private int bitsPerPixel;
-    private PDFColorSpace colorSpace;
+    private PDFDeviceColorSpace colorSpace;
     private byte[] bitmaps;
     private String maskRef;
     private PDFColor transparent = null;
@@ -54,7 +54,7 @@ public class BitmapImage implements PDFImage {
         this.height = height;
         this.width = width;
         this.bitsPerPixel = 8;
-        this.colorSpace = new PDFColorSpace(PDFColorSpace.DEVICE_RGB);
+        this.colorSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
         this.bitmaps = data;
         maskRef = mask;
     }
@@ -103,7 +103,7 @@ public class BitmapImage implements PDFImage {
      *
      * @param cs the pdf color space
      */
-    public void setColorSpace(PDFColorSpace cs) {
+    public void setColorSpace(PDFDeviceColorSpace cs) {
         colorSpace = cs;
     }
 
@@ -113,7 +113,7 @@ public class BitmapImage implements PDFImage {
      *
      * @return the pdf doclor space
      */
-    public PDFColorSpace getColorSpace() {
+    public PDFDeviceColorSpace getColorSpace() {
         return colorSpace;
     }
 

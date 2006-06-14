@@ -24,6 +24,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.util.BitSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.xml.transform.Source;
@@ -34,6 +36,7 @@ import org.w3c.dom.Document;
 
 // Apache libs
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -435,7 +438,7 @@ public class PDFFactory {
      * @return the PDF shading that was created
      */
     public PDFShading makeShading(PDFResourceContext res, int theShadingType,
-                                  PDFColorSpace theColorSpace,
+                                  PDFDeviceColorSpace theColorSpace,
                                   List theBackground, List theBBox,
                                   boolean theAntiAlias, List theDomain,
                                   List theMatrix,
@@ -487,7 +490,7 @@ public class PDFFactory {
      * @return the PDF shading that was created
      */
     public PDFShading makeShading(PDFResourceContext res, int theShadingType,
-                                  PDFColorSpace theColorSpace,
+                                  PDFDeviceColorSpace theColorSpace,
                                   List theBackground, List theBBox,
                                   boolean theAntiAlias, List theCoords,
                                   List theDomain, PDFFunction theFunction,
@@ -540,7 +543,7 @@ public class PDFFactory {
      * @return the PDF shading that was created
      */
     public PDFShading makeShading(PDFResourceContext res, int theShadingType,
-                                  PDFColorSpace theColorSpace,
+                                  PDFDeviceColorSpace theColorSpace,
                                   List theBackground, List theBBox,
                                   boolean theAntiAlias,
                                   int theBitsPerCoordinate,
@@ -595,7 +598,7 @@ public class PDFFactory {
      * @return the PDF shading that was created
      */
     public PDFShading makeShading(PDFResourceContext res, int theShadingType,
-                                  PDFColorSpace theColorSpace,
+                                  PDFDeviceColorSpace theColorSpace,
                                   List theBackground, List theBBox,
                                   boolean theAntiAlias,
                                   int theBitsPerCoordinate,
@@ -718,7 +721,7 @@ public class PDFFactory {
      * @return the PDF pattern that was created
      */
     public PDFPattern makeGradient(PDFResourceContext res, boolean radial,
-                                   PDFColorSpace theColorspace,
+                                   PDFDeviceColorSpace theColorspace,
                                    List theColors, List theBounds,
                                    List theCoords, List theMatrix) {
         PDFShading myShad;
@@ -887,6 +890,7 @@ public class PDFFactory {
     }
 
     private String getGoToReference(String destination, float yoffset) {
+        getDocument().getProfile().verifyActionAllowed();
         String goToReference = null;
         PDFGoTo gt = new PDFGoTo(destination);
         gt.setYPosition(yoffset);
@@ -914,6 +918,7 @@ public class PDFFactory {
      * @return the pdf goto remote object
      */
     private PDFGoToRemote getGoToPDFAction(String file, String dest, int page) {
+        getDocument().getProfile().verifyActionAllowed();
         PDFFileSpec fileSpec = new PDFFileSpec(file);
         PDFFileSpec oldspec = getDocument().findFileSpec(fileSpec);
         if (oldspec == null) {
@@ -1122,8 +1127,45 @@ public class PDFFactory {
                 descriptor.setFontFile(desc.getFontType(), stream);
                 getDocument().registerObject(stream);
             }
+            CustomFont font = getCustomFont(desc);
+            if (font instanceof CIDFont) {
+                CIDFont cidFont = (CIDFont)font;
+                buildCIDSet(descriptor, cidFont);
+            }
         }
         return descriptor;
+    }
+
+    private void buildCIDSet(PDFFontDescriptor descriptor, CIDFont cidFont) {
+        BitSet cidSubset = new BitSet();
+        Iterator iter = cidFont.usedGlyphs.keySet().iterator();
+        while (iter.hasNext()) {
+            Integer cid = (Integer)iter.next();
+            cidSubset.set(cid.intValue());
+        }
+        PDFStream cidSet = makeStream(null, true);
+        ByteArrayOutputStream baout = new ByteArrayOutputStream(cidSubset.length() / 8 + 1);
+        int value = 0;
+        for (int i = 0, c = cidSubset.length(); i < c; i++) {
+            int shift = i % 8;
+            boolean b = cidSubset.get(i); 
+            if (b) {
+                value |= 1 << 7 - shift; 
+            }
+            if (shift == 7) {
+                baout.write(value);
+                value = 0;
+            }
+        }
+        baout.write(value);
+        try {
+            cidSet.setData(baout.toByteArray());
+            descriptor.setCIDSet(cidSet);
+        } catch (IOException ioe) {
+            log.error(
+                    "Failed to write CIDSet [" + cidFont + "] "
+                    + cidFont.getFontName(), ioe);
+        }
     }
 
     /**
@@ -1137,18 +1179,7 @@ public class PDFFactory {
                                                 + desc.getFontType());
         }
 
-        Typeface tempFont;
-        if (desc instanceof LazyFont) {
-            tempFont = ((LazyFont)desc).getRealFont();
-        } else {
-            tempFont = (Typeface)desc;
-        }
-        if (!(tempFont instanceof CustomFont)) {
-            throw new IllegalArgumentException(
-                      "FontDescriptor must be instance of CustomFont, but is a "
-                       + desc.getClass().getName());
-        }
-        CustomFont font = (CustomFont)tempFont;
+        CustomFont font = getCustomFont(desc);
 
         InputStream in = null;
         try {
@@ -1227,6 +1258,21 @@ public class PDFFactory {
         }
     }
 
+    private CustomFont getCustomFont(FontDescriptor desc) {
+        Typeface tempFont;
+        if (desc instanceof LazyFont) {
+            tempFont = ((LazyFont)desc).getRealFont();
+        } else {
+            tempFont = (Typeface)desc;
+        }
+        if (!(tempFont instanceof CustomFont)) {
+            throw new IllegalArgumentException(
+                      "FontDescriptor must be instance of CustomFont, but is a "
+                       + desc.getClass().getName());
+        }
+        return (CustomFont)tempFont;
+    }
+
 
     /* ========================= streams =================================== */
 
@@ -1258,7 +1304,7 @@ public class PDFFactory {
      * Create a PDFICCStream
      * @see PDFXObject
      * @see org.apache.fop.image.JpegImage
-     * @see org.apache.fop.pdf.PDFColorSpace
+     * @see org.apache.fop.pdf.PDFDeviceColorSpace
      * @return the new PDF ICC stream object
      */
     public PDFICCStream makePDFICCStream() {
@@ -1273,6 +1319,28 @@ public class PDFFactory {
     }
 
     /* ========================= misc. objects ============================= */
+
+    /**
+     * Makes a new ICCBased color space and registers it in the resource context.
+     * @param res the PDF resource context to add the shading, may be null
+     * @param explicitName the explicit name for the color space, may be null
+     * @param iccStream the ICC stream to associate with this color space
+     * @return the newly instantiated color space
+     */
+    public PDFICCBasedColorSpace makeICCBasedColorSpace(PDFResourceContext res,
+            String explicitName, PDFICCStream iccStream) {
+        PDFICCBasedColorSpace cs = new PDFICCBasedColorSpace(explicitName, iccStream);
+        
+        getDocument().registerObject(cs);
+
+        if (res != null) {
+            res.getPDFResources().addColorSpace(cs);
+        } else {
+            getDocument().getResources().addColorSpace(cs);
+        }
+        
+        return cs;
+    }
 
     /**
      * make an Array object (ex. Widths array for a font)

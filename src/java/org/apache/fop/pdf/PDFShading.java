@@ -47,7 +47,7 @@ public class PDFShading extends PDFObject {
     /**
      * A ColorSpace representing the colorspace. "DeviceRGB" is an example.
      */
-    protected PDFColorSpace colorSpace = null;
+    protected PDFDeviceColorSpace colorSpace = null;
 
     /**
      * The background color. Since shading is opaque,
@@ -163,7 +163,7 @@ public class PDFShading extends PDFObject {
      * It's optional, the default is the identity matrix
      * @param theFunction The PDF Function that maps an (x,y) location to a color
      */
-    public PDFShading(int theShadingType, PDFColorSpace theColorSpace,
+    public PDFShading(int theShadingType, PDFDeviceColorSpace theColorSpace,
                       List theBackground, List theBBox,
                       boolean theAntiAlias, List theDomain,
                       List theMatrix, PDFFunction theFunction) {
@@ -201,7 +201,7 @@ public class PDFShading extends PDFObject {
      *                  and end colors past the start and end points
      * The default is [false, false]
      */
-    public PDFShading(int theShadingType, PDFColorSpace theColorSpace,
+    public PDFShading(int theShadingType, PDFDeviceColorSpace theColorSpace,
                       List theBackground, List theBBox,
                       boolean theAntiAlias, List theCoords,
                       List theDomain, PDFFunction theFunction,
@@ -241,7 +241,7 @@ public class PDFShading extends PDFObject {
      * @param theDecode List of Doubles see PDF 1.3 spec pages 303 to 312.
      * @param theFunction the PDFFunction
      */
-    public PDFShading(int theShadingType, PDFColorSpace theColorSpace,
+    public PDFShading(int theShadingType, PDFDeviceColorSpace theColorSpace,
                       List theBackground, List theBBox,
                       boolean theAntiAlias, int theBitsPerCoordinate,
                       int theBitsPerComponent, int theBitsPerFlag,
@@ -280,7 +280,7 @@ public class PDFShading extends PDFObject {
      * @param theVerticesPerRow number of vertices in each "row" of the lattice.
      * @param theFunction The PDFFunction that's mapped on to this shape
      */
-    public PDFShading(int theShadingType, PDFColorSpace theColorSpace,
+    public PDFShading(int theShadingType, PDFDeviceColorSpace theColorSpace,
                       List theBackground, List theBBox,
                       boolean theAntiAlias, int theBitsPerCoordinate,
                       int theBitsPerComponent, List theDecode,
@@ -341,7 +341,7 @@ public class PDFShading extends PDFObject {
             + "<< \n/ShadingType " + this.shadingType + " \n");
         if (this.colorSpace != null) {
             p.append("/ColorSpace /"
-                     + this.colorSpace.getColorSpacePDFString() + " \n");
+                     + this.colorSpace.getName() + " \n");
         }
 
         if (this.background != null) {

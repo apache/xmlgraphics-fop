@@ -146,14 +146,17 @@ public class PDFInfo extends PDFObject {
      * @see org.apache.fop.pdf.PDFObject#toPDF()
      */
     public byte[] toPDF() {
+        PDFProfile profile = getDocumentSafely().getProfile(); 
         ByteArrayOutputStream bout = new ByteArrayOutputStream(128);
         try {
             bout.write(encode(getObjectID()));
             bout.write(encode("<<\n"));
-            if (title != null) {
+            if (title != null && title.length() > 0) {
                 bout.write(encode("/Title "));
                 bout.write(encodeText(this.title));
                 bout.write(encode("\n"));
+            } else {
+                profile.verifyTitleAbsent();
             }
             if (author != null) {
                 bout.write(encode("/Author "));
@@ -187,7 +190,23 @@ public class PDFInfo extends PDFObject {
             }
             bout.write(encode("/CreationDate "));
             bout.write(encodeString(formatDateTime(creationDate)));
-            bout.write(encode("\n>>\nendobj\n"));
+            bout.write(encode("\n"));
+            
+            if (profile.isModDateRequired()) {
+                bout.write(encode("/ModDate "));
+                bout.write(encodeString(formatDateTime(creationDate)));
+                bout.write(encode("\n"));
+            }
+            if (profile.isPDFXActive()) {
+                bout.write(encode("/GTS_PDFXVersion "));
+                bout.write(encodeString(profile.getPDFXMode().getName()));
+                bout.write(encode("\n"));
+            }
+            if (profile.isTrappedEntryRequired()) {
+                bout.write(encode("/Trapped /False\n"));
+            }
+            
+            bout.write(encode(">>\nendobj\n"));
         } catch (IOException ioe) {
             log.error("Ignored I/O exception", ioe);
         }

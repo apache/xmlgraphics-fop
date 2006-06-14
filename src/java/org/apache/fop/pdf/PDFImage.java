@@ -65,7 +65,7 @@ public interface PDFImage {
      *
      * @return the color space
      */
-    PDFColorSpace getColorSpace();
+    PDFDeviceColorSpace getColorSpace();
 
     /**
      * Get the bits per pixel for this image.

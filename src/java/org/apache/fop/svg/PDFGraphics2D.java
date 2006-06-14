@@ -22,7 +22,7 @@ import org.apache.fop.pdf.PDFConformanceException;
 import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.pdf.PDFResources;
 import org.apache.fop.pdf.PDFGState;
-import org.apache.fop.pdf.PDFColorSpace;
+import org.apache.fop.pdf.PDFDeviceColorSpace;
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.pdf.PDFState;
 import org.apache.fop.pdf.PDFNumber;
@@ -352,6 +352,9 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * @param linkType the type of link, internal or external
      */
     public void addLink(Rectangle2D bounds, AffineTransform trans, String dest, int linkType) {
+        if (!pdfDoc.getProfile().isAnnotationAllowed()) {
+            return;
+        }
         preparePainting();
         AffineTransform at = getTransform();
         Shape b = at.createTransformedShape(bounds);
@@ -563,7 +566,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                 BitmapImage fopimg = new BitmapImage("TempImageMask:"
                                              + img.toString(), buf.getWidth(),
                                              buf.getHeight(), mask, null);
-                fopimg.setColorSpace(new PDFColorSpace(PDFColorSpace.DEVICE_GRAY));
+                fopimg.setColorSpace(new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_GRAY));
                 PDFXObject xobj = pdfDoc.addImage(resourceContext, fopimg);
                 ref = xobj.referencePDF();
 
@@ -693,12 +696,12 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         }
 
         if (c.getAlpha() != 255) {
+            checkTransparencyAllowed();
             Map vals = new java.util.HashMap();
             vals.put(PDFGState.GSTATE_ALPHA_STROKE, 
                     new Float(c.getAlpha() / 255f));
             PDFGState gstate = pdfDoc.getFactory().makeGState(
                     vals, graphicsState.getGState());
-            //gstate.setAlpha(c.getAlpha() / 255f, false);
             resourceContext.addGState(gstate);
             currentStream.write("/" + gstate.getName() + " gs\n");
         }
@@ -815,7 +818,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             currentStream.write(currentColour.getColorSpaceOut(fill));
         } else if (c.getColorSpace().getType()
                    == ColorSpace.TYPE_CMYK) {
-            if (pdfDoc.getPDFAMode().isPDFA1LevelB()) {
+            if (pdfDoc.getProfile().getPDFAMode().isPDFA1LevelB()) {
                 //See PDF/A-1, ISO 19005:1:2005(E), 6.2.3.3
                 //FOP is currently restricted to DeviceRGB if PDF/A-1 is active.
                 throw new PDFConformanceException(
@@ -944,8 +947,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                 }
             }
 
-            PDFColorSpace aColorSpace;
-            aColorSpace = new PDFColorSpace(PDFColorSpace.DEVICE_RGB);
+            PDFDeviceColorSpace aColorSpace;
+            aColorSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
             PDFPattern myPat = pdfDoc.getFactory().makeGradient(
                     resourceContext, false, aColorSpace,
                     someColors, theBounds, theCoords, theMatrix);
@@ -1021,8 +1024,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                 float offset = fractions[count];
                 theBounds.add(new Double(offset));
             }
-            PDFColorSpace colSpace;
-            colSpace = new PDFColorSpace(PDFColorSpace.DEVICE_RGB);
+            PDFDeviceColorSpace colSpace;
+            colSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
 
             PDFPattern myPat = pdfDoc.getFactory().makeGradient
                 (resourceContext, true, colSpace,
@@ -1221,7 +1224,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             if (mask != null) {
                 BitmapImage fopimg = new BitmapImage
                     ("TempImageMask:" + pctx.toString(), devW, devH, mask, null);
-                fopimg.setColorSpace(new PDFColorSpace(PDFColorSpace.DEVICE_GRAY));
+                fopimg.setColorSpace(new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_GRAY));
                 PDFXObject xobj = pdfDoc.addImage(resourceContext, fopimg);
                 maskRef = xobj.referencePDF();
 
@@ -1439,6 +1442,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         int salpha = c.getAlpha();
 
         if (salpha != 255) {
+            checkTransparencyAllowed();
             Map vals = new java.util.HashMap();
             vals.put(PDFGState.GSTATE_ALPHA_NONSTROKE, new Float(salpha / 255f));
             PDFGState gstate = pdfDoc.getFactory().makeGState(
@@ -1687,6 +1691,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         }
 
         if (c.getAlpha() != 255) {
+            checkTransparencyAllowed();
             Map vals = new java.util.HashMap();
             vals.put(PDFGState.GSTATE_ALPHA_NONSTROKE, 
                     new Float(c.getAlpha() / 255f));
@@ -1728,6 +1733,11 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             currentStream.write("Q\n");
             graphicsState.pop();
         }
+    }
+
+    /** Checks whether the use of transparency is allowed. */
+    protected void checkTransparencyAllowed() {
+        pdfDoc.getProfile().verifyTransparencyAllowed("Java2D graphics");
     }
 
     /**

@@ -44,6 +44,7 @@ public class PDFFontDescriptor extends PDFObject {
     private int maxWidth = 0;
     private int missingWidth = 0;
     private AbstractPDFStream fontfile;
+    private AbstractPDFStream cidSet;
     // private String charSet = null;
 
     private FontType subtype;
@@ -119,6 +120,19 @@ public class PDFFontDescriptor extends PDFObject {
         return this.fontfile;
     }
     
+    /**
+     * Sets the CIDSet stream for this font descriptor. (Optional)
+     * @param cidSet the CIDSet stream
+     */
+    public void setCIDSet(AbstractPDFStream cidSet) {
+        this.cidSet = cidSet;
+    }
+    
+    /** @return the CIDSet stream or null if not applicable */
+    public AbstractPDFStream getCIDSet() {
+        return this.cidSet;
+    }
+    
     // public void setCharSet(){}//for subset fonts
 
     /**
@@ -176,6 +190,10 @@ public class PDFFontDescriptor extends PDFObject {
                 p.append("\n/FontFile2 ");
             }
             p.append(fontfile.referencePDF());
+        }
+        if (getCIDSet() != null) {
+            p.append("\n/CIDSet ");
+            p.append(getCIDSet().referencePDF());
         }
         // charSet for subset fonts // not yet implemented
         // CID optional field

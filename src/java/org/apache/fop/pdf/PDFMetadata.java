@@ -133,7 +133,7 @@ public class PDFMetadata extends PDFStream {
     /** @see org.apache.fop.pdf.AbstractPDFStream#buildStreamDict(String) */
     protected String buildStreamDict(String lengthEntry) {
         final String filterEntry = getFilterList().buildFilterDictEntries();
-        if (getDocumentSafely().getPDFAMode().isPDFA1LevelB() 
+        if (getDocumentSafely().getProfile().getPDFAMode().isPDFA1LevelB() 
                 && filterEntry != null && filterEntry.length() > 0) {
             throw new PDFConformanceException(
                     "The Filter key is prohibited when PDF/A-1 is active");
@@ -248,6 +248,12 @@ public class PDFMetadata extends PDFStream {
         el = doc.createElementNS(XMPConstants.XMP_BASIC_NAMESPACE, "xmp:CreateDate");
         desc.appendChild(el);
         el.appendChild(doc.createTextNode(formatISO8601Date(info.getCreationDate())));
+        PDFProfile profile = pdfDoc.getProfile(); 
+        if (profile.isModDateRequired()) {
+            el = doc.createElementNS(XMPConstants.XMP_BASIC_NAMESPACE, "xmp:ModifyDate");
+            desc.appendChild(el);
+            el.appendChild(doc.createTextNode(formatISO8601Date(info.getCreationDate())));
+        }
         if (info.getCreator() != null) {
             el = doc.createElementNS(XMPConstants.XMP_BASIC_NAMESPACE, "xmp:CreatorTool");
             desc.appendChild(el);
@@ -274,7 +280,7 @@ public class PDFMetadata extends PDFStream {
         el.appendChild(doc.createTextNode(pdfDoc.getPDFVersionString()));
         
         //PDF/A identification
-        PDFAMode pdfaMode = pdfDoc.getPDFAMode(); 
+        PDFAMode pdfaMode = pdfDoc.getProfile().getPDFAMode(); 
         if (pdfaMode.isPDFA1LevelB()) {
             createPDFAIndentification(doc, rdf, 
                     XMPConstants.PDF_A_IDENTIFICATION, "pdfaid", pdfaMode);

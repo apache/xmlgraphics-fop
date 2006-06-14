@@ -27,11 +27,8 @@ import java.io.OutputStream;
  */
 public class PDFICCStream extends PDFStream {
     
-    private int origLength;
-    private int len1, len3;
-
     private ICC_Profile cp;
-    private PDFColorSpace pdfColorSpace;
+    private PDFDeviceColorSpace pdfColorSpace;
 
     /**
      * @see org.apache.fop.pdf.PDFObject#PDFObject()
@@ -43,14 +40,19 @@ public class PDFICCStream extends PDFStream {
 
     /**
      * Sets the color space to encode in PDF.
-     * @param cp the ICC profile
+     * @param icc the ICC profile
      * @param alt the PDF color space
      */
-    public void setColorSpace(ICC_Profile cp, PDFColorSpace alt) {
-        this.cp = cp;
+    public void setColorSpace(ICC_Profile icc, PDFDeviceColorSpace alt) {
+        this.cp = icc;
         pdfColorSpace = alt;
     }
 
+    /** @return the ICC profile */
+    public ICC_Profile getICCProfile() {
+        return this.cp;
+    }
+    
     /**
      * overload the base object method so we don't have to copy
      * byte arrays around so much
@@ -81,7 +83,7 @@ public class PDFICCStream extends PDFStream {
         sb.append("/N " + cp.getNumComponents());
 
         if (pdfColorSpace != null) {
-            sb.append("\n/Alternate /" + pdfColorSpace.getColorSpacePDFString() + " ");
+            sb.append("\n/Alternate /" + pdfColorSpace.getName() + " ");
         }
 
         sb.append("\n/Length " + lengthEntry);

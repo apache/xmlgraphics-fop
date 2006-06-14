@@ -21,6 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.pdf.PDFConformanceException;
 import org.apache.fop.pdf.PDFFilterList;
+import org.apache.fop.pdf.PDFICCBasedColorSpace;
 import org.apache.fop.pdf.PDFImage;
 import org.apache.fop.pdf.PDFFilter;
 import org.apache.fop.pdf.PDFICCStream;
@@ -28,7 +29,7 @@ import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.DCTFilter;
 import org.apache.fop.pdf.CCFFilter;
-import org.apache.fop.pdf.PDFColorSpace;
+import org.apache.fop.pdf.PDFDeviceColorSpace;
 import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.pdf.BitmapImage;
 import org.apache.fop.util.ColorProfileUtil;
@@ -118,23 +119,35 @@ public class FopPDFImage implements PDFImage {
             fopImage.load(FopImage.BITMAP);
         }
         ICC_Profile prof = fopImage.getICCProfile();
-        PDFColorSpace pdfCS = toPDFColorSpace(fopImage.getColorSpace());
+        PDFDeviceColorSpace pdfCS = toPDFColorSpace(fopImage.getColorSpace());
         if (prof != null) {
             boolean defaultsRGB = ColorProfileUtil.isDefaultsRGB(prof);
+            String desc = ColorProfileUtil.getICCProfileDescription(prof);
             if (log.isDebugEnabled()) {
-                String desc = ColorProfileUtil.getICCProfileDescription(prof);
                 log.debug("Image returns ICC profile: " + desc + ", default sRGB=" + defaultsRGB);
             }
-            //TODO Instead of skipping the ICC profile for sRGB, let's think about embedding our 
-            //own sRGB profile instead, but if possible only once per PDF (Need a new structure in 
-            //the PDF library for that).
+            PDFICCBasedColorSpace cs = doc.getResources().getICCColorSpaceByProfileName(desc);
             if (!defaultsRGB) {
-                pdfICCStream = doc.getFactory().makePDFICCStream();
-                pdfICCStream.setColorSpace(prof, pdfCS);
+                if (cs == null) {
+                    pdfICCStream = doc.getFactory().makePDFICCStream();
+                    pdfICCStream.setColorSpace(prof, pdfCS);
+                    cs = doc.getFactory().makeICCBasedColorSpace(null, null, pdfICCStream);
+                } else {
+                    pdfICCStream = cs.getICCStream();
+                }
+            } else {
+                if (cs == null && "sRGB".equals(desc)) {
+                    //It's the default sRGB profile which we mapped to DefaultRGB in PDFRenderer
+                    cs = doc.getResources().getColorSpace("DefaultRGB");
+                }
+                pdfICCStream = cs.getICCStream();
             }
         }
         //Handle transparency mask if applicable
         if (fopImage.hasSoftMask()) {
+            doc.getProfile().verifyTransparencyAllowed(fopImage.getOriginalURI());
+            //TODO Implement code to combine image with background color if transparency is not
+            //allowed (need BufferedImage support for that)
             byte [] softMask = fopImage.getSoftMask();
             if (softMask == null) {
                 return;
@@ -142,19 +155,20 @@ public class FopPDFImage implements PDFImage {
             BitmapImage fopimg = new BitmapImage
                 ("Mask:" + key, fopImage.getWidth(), fopImage.getHeight(), 
                  softMask, null);
-            fopimg.setColorSpace(new PDFColorSpace(PDFColorSpace.DEVICE_GRAY));
+            fopimg.setColorSpace(new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_GRAY));
             PDFXObject xobj = doc.addImage(null, fopimg);
             softMaskRef = xobj.referencePDF();
         }
-        if (doc.getPDFAMode().isPDFA1LevelB()) {
+        if (doc.getProfile().getPDFAMode().isPDFA1LevelB()) {
             if (pdfCS != null
-                    && pdfCS.getColorSpace() != PDFColorSpace.DEVICE_RGB 
-                    && pdfCS.getColorSpace() != PDFColorSpace.DEVICE_GRAY
+                    && pdfCS.getColorSpace() != PDFDeviceColorSpace.DEVICE_RGB 
+                    && pdfCS.getColorSpace() != PDFDeviceColorSpace.DEVICE_GRAY
                     && prof == null) {
                 //See PDF/A-1, ISO 19005:1:2005(E), 6.2.3.3
                 //FOP is currently restricted to DeviceRGB if PDF/A-1 is active.
                 throw new PDFConformanceException(
-                        "PDF/A-1 does not allow mixing DeviceRGB and DeviceCMYK.");
+                        "PDF/A-1 does not allow mixing DeviceRGB and DeviceCMYK: " 
+                                + fopImage.getOriginalURI());
             }
         }
     }
@@ -176,7 +190,7 @@ public class FopPDFImage implements PDFImage {
     /**
      * @see org.apache.fop.pdf.PDFImage#getColorSpace()
      */
-    public PDFColorSpace getColorSpace() {
+    public PDFDeviceColorSpace getColorSpace() {
         // DeviceGray, DeviceRGB, or DeviceCMYK
         if (isCCF || isDCT || isPS) {
             return toPDFColorSpace(fopImage.getColorSpace());
@@ -320,21 +334,21 @@ public class FopPDFImage implements PDFImage {
      * @param cs ColorSpace instance
      * @return PDFColorSpace new converted object
      */
-    public static PDFColorSpace toPDFColorSpace(ColorSpace cs) {
+    public static PDFDeviceColorSpace toPDFColorSpace(ColorSpace cs) {
         if (cs == null) {
             return null;
         }
 
-        PDFColorSpace pdfCS = new PDFColorSpace(0);
+        PDFDeviceColorSpace pdfCS = new PDFDeviceColorSpace(0);
         switch(cs.getType()) {
             case ColorSpace.TYPE_CMYK:
-                pdfCS.setColorSpace(PDFColorSpace.DEVICE_CMYK);
+                pdfCS.setColorSpace(PDFDeviceColorSpace.DEVICE_CMYK);
             break;
             case ColorSpace.TYPE_RGB:
-                pdfCS.setColorSpace(PDFColorSpace.DEVICE_RGB);
+                pdfCS.setColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
             break;
             case ColorSpace.TYPE_GRAY:
-                pdfCS.setColorSpace(PDFColorSpace.DEVICE_GRAY);
+                pdfCS.setColorSpace(PDFDeviceColorSpace.DEVICE_GRAY);
             break;
         }
         return pdfCS;
