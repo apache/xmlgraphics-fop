@@ -338,7 +338,9 @@ class FOPTaskStarter {
 
     FOPTaskStarter(Fop task) throws SAXException, IOException {
         this.task = task;
-        fopFactory.setUserConfig(task.getUserconfig());
+        if (task.getUserconfig() != null) {
+            fopFactory.setUserConfig(task.getUserconfig());
+        }
     }
 
     private static final String[][] SHORT_NAMES = {
