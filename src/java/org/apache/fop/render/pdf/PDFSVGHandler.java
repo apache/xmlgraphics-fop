@@ -18,7 +18,9 @@
 
 package org.apache.fop.render.pdf;
 
+import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
 
@@ -26,9 +28,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGSVGElement;
 
+import org.apache.fop.render.AbstractGenericSVGHandler;
 import org.apache.fop.render.Renderer;
-import org.apache.fop.render.XMLHandler;
 import org.apache.fop.render.RendererContext;
+import org.apache.fop.render.RendererContextConstants;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFNumber;
 import org.apache.fop.pdf.PDFPage;
@@ -38,6 +41,8 @@ import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.svg.PDFBridgeContext;
 import org.apache.fop.svg.PDFGraphics2D;
 import org.apache.fop.svg.SVGUserAgent;
+import org.apache.fop.util.QName;
+import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fonts.FontInfo;
 
 // Commons-Logging
@@ -49,7 +54,6 @@ import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.ViewBox;
-import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.gvt.GraphicsNode;
 
 /**
@@ -58,28 +62,11 @@ import org.apache.batik.gvt.GraphicsNode;
  * It renders SVG to the PDF document using the PDFGraphics2D.
  * The properties from the PDF renderer are subject to change.
  */
-public class PDFSVGHandler implements XMLHandler, PDFRendererContextConstants {
+public class PDFSVGHandler extends AbstractGenericSVGHandler 
+            implements PDFRendererContextConstants {
 
     /** logging instance */
     private static Log log = LogFactory.getLog(PDFSVGHandler.class);
-
-
-    /**
-     * Create a new PDF XML handler for use by the PDF renderer.
-     */
-    public PDFSVGHandler() {
-    }
-
-    /** @see org.apache.fop.render.XMLHandler */
-    public void handleXML(RendererContext context, 
-                Document doc, String ns) throws Exception {
-        PDFInfo pdfi = getPDFInfo(context);
-
-        String svg = "http://www.w3.org/2000/svg";
-        if (svg.equals(ns)) {
-            renderSVGDocument(context, doc, pdfi);
-        }
-    }
 
     /**
      * Get the pdf information from the render context.
@@ -103,6 +90,12 @@ public class PDFSVGHandler implements XMLHandler, PDFRendererContextConstants {
         pdfi.currentXPosition = ((Integer)context.getProperty(XPOS)).intValue();
         pdfi.currentYPosition = ((Integer)context.getProperty(YPOS)).intValue();
         pdfi.cfg = (Configuration)context.getProperty(HANDLER_CONFIGURATION);
+        Map foreign = (Map)context.getProperty(RendererContextConstants.FOREIGN_ATTRIBUTES);
+        QName qName = new QName(ExtensionElementMapping.URI, null, "conversion-mode");
+        if (foreign != null 
+                && "bitmap".equalsIgnoreCase((String)foreign.get(qName))) {
+            pdfi.paintAsBitmap = true;
+        }
         return pdfi;
     }
 
@@ -138,16 +131,26 @@ public class PDFSVGHandler implements XMLHandler, PDFRendererContextConstants {
         public int currentYPosition;
         /** see PDF_HANDLER_CONFIGURATION */
         public Configuration cfg;
+        /** true if SVG should be rendered as a bitmap instead of natively */
+        public boolean paintAsBitmap;
     }
 
     /**
-     * Render the svg document.
-     * @param context the renderer context
-     * @param doc the svg document
-     * @param pdfInfo the pdf information of the current context
+     * @see org.apache.fop.render.AbstractGenericSVGHandler#renderSVGDocument(
+     *          org.apache.fop.render.RendererContext, org.w3c.dom.Document)
      */
     protected void renderSVGDocument(RendererContext context,
-            Document doc, PDFInfo pdfInfo) {
+            Document doc) {
+        PDFInfo pdfInfo = getPDFInfo(context);
+        if (pdfInfo.paintAsBitmap) {
+            try {
+                super.renderSVGDocument(context, doc);
+            } catch (IOException ioe) {
+                log.error("I/O error while rendering SVG graphic: "
+                                       + ioe.getMessage(), ioe);
+            }
+            return;
+        }
         int xOffset = pdfInfo.currentXPosition;
         int yOffset = pdfInfo.currentYPosition;
 
@@ -262,9 +265,4 @@ public class PDFSVGHandler implements XMLHandler, PDFRendererContextConstants {
     public boolean supportsRenderer(Renderer renderer) {
         return (renderer instanceof PDFRenderer);
     }
-    /** @see org.apache.fop.render.XMLHandler#getNamespace() */
-    public String getNamespace() {
-        return SVGDOMImplementation.SVG_NAMESPACE_URI;
-    }
-    
 }

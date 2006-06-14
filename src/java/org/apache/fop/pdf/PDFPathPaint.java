@@ -27,7 +27,7 @@ public abstract class PDFPathPaint extends PDFObject {
     /**
      * The color space for this paint
      */
-    protected PDFColorSpace colorSpace;
+    protected PDFDeviceColorSpace colorSpace;
 
     /**
      * Get the PDF string for setting the path paint.

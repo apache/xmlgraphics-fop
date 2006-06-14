@@ -130,6 +130,11 @@ public class RendererContext {
             this.context = context;
         }
         
+        /** @return the user agent */
+        public FOUserAgent getUserAgent() {
+            return context.getUserAgent();
+        }
+
         /** @return the currentXPosition */
         public int getCurrentXPosition() {
             return ((Integer)context.getProperty(RendererContextConstants.XPOS)).intValue();

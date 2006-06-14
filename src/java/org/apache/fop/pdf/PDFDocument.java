@@ -108,10 +108,9 @@ public class PDFDocument {
     protected int pdfVersion = PDF_VERSION_1_4;
     
     /**
-     * Indicates the PDF/A-1 mode currently active. Defaults to "no restrictions", i.e. 
-     * PDF/A-1 not active.
+     * Indicates which PDF profiles are active (PDF/A, PDF/X etc.)
      */
-    protected PDFAMode pdfAMode = PDFAMode.DISABLED;
+    protected PDFProfile pdfProfile = new PDFProfile(this);
     
     /**
      * the /Root object
@@ -142,8 +141,8 @@ public class PDFDocument {
     /**
      * the colorspace (0=RGB, 1=CMYK)
      */
-    protected PDFColorSpace colorspace =
-        new PDFColorSpace(PDFColorSpace.DEVICE_RGB);
+    protected PDFDeviceColorSpace colorspace =
+        new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
 
     /**
      * the counter for Pattern name numbering (e.g. 'Pattern1')
@@ -268,26 +267,9 @@ public class PDFDocument {
         }
     }
 
-    /** @return the PDF/A mode currently active. */
-    public PDFAMode getPDFAMode() {
-        return this.pdfAMode;
-    }
-    
-    /**
-     * Sets the active PDF/A mode. This must be set immediately after calling the constructor so
-     * the checks will be activated.
-     * @param mode one of the PDFAMode constants
-     */
-    public void setPDFAMode(PDFAMode mode) {
-        if (mode == null) {
-            throw new NullPointerException("mode must not be null");
-        }
-        if (mode == PDFAMode.PDFA_1A) {
-            throw new UnsupportedOperationException("PDF/A-1a is not implemented, yet");
-        } else if (mode == PDFAMode.PDFA_1B) {
-            //you got the green light!
-        }
-        this.pdfAMode = mode;
+    /** @return the PDF profile currently active. */
+    public PDFProfile getProfile() {
+        return this.pdfProfile;
     }
     
     /**
@@ -514,9 +496,7 @@ public class PDFDocument {
      * @param params The encryption parameters for the pdf file
      */
     public void setEncryption(PDFEncryptionParams params) {
-        if (getPDFAMode().isPDFA1LevelB()) {
-            throw new PDFConformanceException("PDF/A-1 doesn't allow encrypted PDFs");
-        }
+        getProfile().verifyEncryptionAllowed();
         this.encryption = PDFEncryptionManager.newInstance(++this.objectcount, params);
         ((PDFObject)this.encryption).setDocument(this);
         if (encryption != null) {
@@ -658,7 +638,7 @@ public class PDFDocument {
      *
      * @return the color space
      */
-    public PDFColorSpace getPDFColorSpace() {
+    public PDFDeviceColorSpace getPDFColorSpace() {
         return this.colorspace;
     }
 
@@ -866,9 +846,7 @@ public class PDFDocument {
     public void outputHeader(OutputStream stream) throws IOException {
         this.position = 0;
 
-        if (getPDFAMode().isPDFA1LevelB() && getPDFVersion() != PDF_VERSION_1_4) {
-            throw new PDFConformanceException("PDF version must be 1.4 for " + getPDFAMode());
-        }
+        getProfile().verifyPDFVersion();
         
         byte[] pdf = ("%PDF-" + getPDFVersionString() + "\n").getBytes();
         stream.write(pdf);
@@ -899,10 +877,10 @@ public class PDFDocument {
             String s = PDFText.toHex(res);
             return "/ID [" + s + " " + s + "]";
         } catch (NoSuchAlgorithmException e) {
-            if (getPDFAMode().isPDFA1LevelB()) {
+            if (getProfile().isIDEntryRequired()) {
                 throw new UnsupportedOperationException("MD5 not available: " + e.getMessage());
             } else {
-                return ""; //Entry is optional if PDF/A is not active
+                return ""; //Entry is optional if PDF/A or PDF/X are not active
             }
         }
     }

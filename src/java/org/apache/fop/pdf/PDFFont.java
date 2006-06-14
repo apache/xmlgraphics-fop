@@ -193,9 +193,10 @@ public class PDFFont extends PDFObject {
      * Validates the PDF object prior to serialization.
      */
     protected void validate() {
-        if (getDocumentSafely().getPDFAMode().isPDFA1LevelB()) {
+        if (getDocumentSafely().getProfile().isFontEmbeddingRequired()) {
             if (this.getClass() == PDFFont.class) {
-                throw new PDFConformanceException("For PDF/A-1, all fonts, even the base 14"
+                throw new PDFConformanceException("For " + getDocumentSafely().getProfile() 
+                    + ", all fonts, even the base 14"
                     + " fonts, have to be embedded! Offending font: " + this.basefont);
             }
         }

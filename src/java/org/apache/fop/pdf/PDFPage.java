@@ -157,11 +157,13 @@ public class PDFPage extends PDFResourceContext {
     public String toPDFString() {
         StringBuffer sb = new StringBuffer();
 
+        String box = "[ 0 0 " + getWidth() + " " + getHeight() + " ]";
         sb = sb.append(getObjectID()
                        + "<< /Type /Page\n" 
                        + "/Parent " + this.parentRef + "\n"
-                       + "/MediaBox [ 0 0 " + getWidth() + " "
-                       + getHeight() + " ]\n" 
+                       + "/MediaBox " + box + "\n" 
+                       + "/TrimBox " + box + "\n" //Needed for PDF/X
+                       + "/BleedBox " + box + "\n" //Recommended by PDF/X
                        + "/Resources " + this.resources.referencePDF() + "\n" 
                        + "/Contents " + this.contents.referencePDF() + "\n");
         if (this.annotList != null) {

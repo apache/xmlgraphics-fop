@@ -20,19 +20,23 @@ package org.apache.fop.render.pdf;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-import org.apache.fop.render.Graphics2DAdapter;
+import org.apache.fop.render.AbstractGraphics2DAdapter;
 import org.apache.fop.render.Graphics2DImagePainter;
 import org.apache.fop.render.RendererContext;
+import org.apache.fop.render.RendererContext.RendererContextWrapper;
 import org.apache.fop.svg.PDFGraphics2D;
 
 /**
  * Graphics2DAdapter implementation for PDF.
  */
-public class PDFGraphics2DAdapter implements Graphics2DAdapter {
+public class PDFGraphics2DAdapter extends AbstractGraphics2DAdapter {
 
     private PDFRenderer renderer;
 
@@ -50,7 +54,6 @@ public class PDFGraphics2DAdapter implements Graphics2DAdapter {
             int x, int y, int width, int height) throws IOException {
         
         PDFSVGHandler.PDFInfo pdfInfo = PDFSVGHandler.getPDFInfo(context);
-        
         float fwidth = width / 1000f;
         float fheight = height / 1000f;
         float fx = x / 1000f;
@@ -78,6 +81,9 @@ public class PDFGraphics2DAdapter implements Graphics2DAdapter {
 
 
         final boolean textAsShapes = false;
+        if (pdfInfo.pdfContext == null) {
+            pdfInfo.pdfContext = pdfInfo.pdfPage;
+        }
         PDFGraphics2D graphics = new PDFGraphics2D(textAsShapes, 
                 pdfInfo.fi, pdfInfo.pdfDoc,
                 pdfInfo.pdfContext, pdfInfo.pdfPage.referencePDF(),
@@ -91,13 +97,35 @@ public class PDFGraphics2DAdapter implements Graphics2DAdapter {
         graphics.setPDFState(pdfInfo.pdfState);
         graphics.setOutputStream(pdfInfo.outputStream);
 
-        Rectangle2D area = new Rectangle2D.Double(0.0, 0.0, imw, imh);
-        painter.paint(graphics, area);
+        if (pdfInfo.paintAsBitmap) {
+            //Fallback solution: Paint to a BufferedImage
+            int resolution = (int)Math.round(context.getUserAgent().getTargetResolution());
+            RendererContextWrapper ctx = RendererContext.wrapRendererContext(context);
+            BufferedImage bi = paintToBufferedImage(painter, ctx, resolution, false, false);
+
+            float scale = PDFRenderer.NORMAL_PDF_RESOLUTION 
+                            / context.getUserAgent().getTargetResolution();
+            graphics.drawImage(bi, new AffineTransform(scale, 0, 0, scale, 0, 0), null);
+        } else {
+            Rectangle2D area = new Rectangle2D.Double(0.0, 0.0, imw, imh);
+            painter.paint(graphics, area);
+        }
 
         pdfInfo.currentStream.add(graphics.getString());
         renderer.restoreGraphicsState();
         pdfInfo.pdfState.pop();
-    
+    }
+
+    /**
+     * @see org.apache.fop.render.AbstractGraphics2DAdapter#setRenderingHintsForBufferedImage(
+     *              java.awt.Graphics2D)
+     */
+    protected void setRenderingHintsForBufferedImage(Graphics2D g2d) {
+        super.setRenderingHintsForBufferedImage(g2d);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
+                RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, 
+                RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
     }
 
 }

@@ -95,9 +95,10 @@ public abstract class PDFFontNonBase14 extends PDFFont {
     
     /** @see org.apache.fop.pdf.PDFFont#validate() */
     protected void validate() {
-        if (getDocumentSafely().getPDFAMode().isPDFA1LevelB()) {
+        if (getDocumentSafely().getProfile().isFontEmbeddingRequired()) {
             if (this.getDescriptor().getFontFile() == null) {
-                throw new PDFConformanceException("For PDF/A-1, all fonts have to be embedded!");
+                throw new PDFConformanceException("For " + getDocumentSafely().getProfile() 
+                    + ", all fonts have to be embedded!");
             }
         }
     }

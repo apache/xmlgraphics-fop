@@ -27,6 +27,14 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="add">
+        Added support for PDF/A-1b and PDF/X-3:2003. (Note: this may still be a bit
+        incomplete. Feedback is welcome!)
+      </action>
+      <action context="Code" dev="JM" type="add">
+        The CIDSet object is now generated for CID fonts which are embedded in PDFs.
+        (Required by PDF/A).
+      </action>
       <action context="Code" dev="JM" type="update">
         The Java2DRenderer (and therefore the print and bitmap renderers) is now
         offering the same quality as the PDF and PS renderers. Note: There can still

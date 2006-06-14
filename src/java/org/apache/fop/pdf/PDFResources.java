@@ -21,6 +21,7 @@ package org.apache.fop.pdf;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.fonts.FontDescriptor;
+import org.apache.fop.util.ColorProfileUtil;
 
 // Java
 import java.util.Iterator;
@@ -62,6 +63,12 @@ public class PDFResources extends PDFObject {
      */
     protected Set gstates = new HashSet();
 
+    /** Map of color spaces (key: color space name) */
+    protected Map colorSpaces = new HashMap();
+    
+    /** Map of ICC color spaces (key: ICC profile description) */
+    protected Map iccColorSpaces = new HashMap();
+    
     /**
      * create a /Resources object.
      *
@@ -140,6 +147,37 @@ public class PDFResources extends PDFObject {
     }
 
     /**
+     * Add a ColorSpace dictionary to the resources.
+     * @param colorSpace the color space 
+     */
+    public void addColorSpace(PDFICCBasedColorSpace colorSpace) {
+        this.colorSpaces.put(colorSpace.getName(), colorSpace);
+        String desc = ColorProfileUtil.getICCProfileDescription(
+                colorSpace.getICCStream().getICCProfile());
+        this.iccColorSpaces.put(desc, colorSpace);
+    }
+
+    /**
+     * Returns a ICCBased color space by profile name.
+     * @param desc the name of the color space
+     * @return the requested color space or null if it wasn't found
+     */
+    public PDFICCBasedColorSpace getICCColorSpaceByProfileName(String desc) {
+        PDFICCBasedColorSpace cs = (PDFICCBasedColorSpace)this.iccColorSpaces.get(desc);
+        return cs;
+    }
+
+    /**
+     * Returns a color space by name.
+     * @param name the name of the color space
+     * @return the requested color space or null if it wasn't found
+     */
+    public PDFICCBasedColorSpace getColorSpace(String name) {
+        PDFICCBasedColorSpace cs = (PDFICCBasedColorSpace)this.colorSpaces.get(name);
+        return cs;
+    }
+
+    /**
      * represent the object in PDF
      * This adds the references to all the objects in the current
      * resource context.
@@ -214,6 +252,17 @@ public class PDFResources extends PDFObject {
                 PDFGState gs = (PDFGState)iter.next();
                 p = p.append("  /" + gs.getName() + " "
                              + gs.referencePDF()
+                             + "\n");
+            }
+            p = p.append(">>\n");
+        }
+
+        if (!this.colorSpaces.isEmpty()) {
+            p = p.append("/ColorSpace <<\n");
+            for (Iterator iter = colorSpaces.values().iterator(); iter.hasNext();) {
+                PDFICCBasedColorSpace colorSpace = (PDFICCBasedColorSpace)iter.next();
+                p = p.append("  /" + colorSpace.getName() + " "
+                             + colorSpace.referencePDF()
                              + "\n");
             }
             p = p.append(">>\n");

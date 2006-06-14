@@ -22,7 +22,7 @@ package org.apache.fop.render.pdf;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.awt.Color;
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_Profile;
@@ -31,6 +31,9 @@ import java.awt.geom.AffineTransform;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.List;
+
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
 
 // XML
 import org.w3c.dom.Document;
@@ -68,10 +71,12 @@ import org.apache.fop.image.XMLImage;
 import org.apache.fop.pdf.PDFAMode;
 import org.apache.fop.pdf.PDFAnnotList;
 import org.apache.fop.pdf.PDFColor;
+import org.apache.fop.pdf.PDFConformanceException;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFEncryptionManager;
 import org.apache.fop.pdf.PDFEncryptionParams;
 import org.apache.fop.pdf.PDFFilterList;
+import org.apache.fop.pdf.PDFICCBasedColorSpace;
 import org.apache.fop.pdf.PDFICCStream;
 import org.apache.fop.pdf.PDFInfo;
 import org.apache.fop.pdf.PDFLink;
@@ -85,6 +90,7 @@ import org.apache.fop.pdf.PDFResources;
 import org.apache.fop.pdf.PDFState;
 import org.apache.fop.pdf.PDFStream;
 import org.apache.fop.pdf.PDFText;
+import org.apache.fop.pdf.PDFXMode;
 import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Graphics2DAdapter;
@@ -118,6 +124,9 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      */
     public static final String MIME_TYPE = MimeConstants.MIME_PDF;
 
+    /** Normal PDF resolution (72dpi) */
+    public static final int NORMAL_PDF_RESOLUTION = 72;
+    
     /** PDF encryption parameter: all parameters as object, datatype: PDFEncryptionParams */
     public static final String ENCRYPTION_PARAMS = "encryption-params";
     /** PDF encryption parameter: user password, datatype: String */
@@ -134,6 +143,10 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     public static final String NO_ANNOTATIONS = "noannotations";
     /** Rendering Options key for the PDF/A mode. */
     public static final String PDF_A_MODE = "pdf-a-mode";
+    /** Rendering Options key for the PDF/X mode. */
+    public static final String PDF_X_MODE = "pdf-x-mode";
+    /** Rendering Options key for the ICC profile for the output intent. */
+    public static final String KEY_OUTPUT_PROFILE = "output-profile";
 
     /** Controls whether comments are written to the PDF stream. */
     protected static final boolean WRITE_COMMENTS = true;
@@ -145,6 +158,9 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
 
     /** the PDF/A mode (Default: disabled) */
     protected PDFAMode pdfAMode = PDFAMode.DISABLED;
+    
+    /** the PDF/X mode (Default: disabled) */
+    protected PDFXMode pdfXMode = PDFXMode.DISABLED;
     
     /**
      * Map of pages using the PageViewport as the key
@@ -190,6 +206,16 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     
     /** the (optional) encryption parameters */
     protected PDFEncryptionParams encryptionParams;
+
+    /** the ICC stream used as output profile by this document for PDF/A and PDF/X functionality. */
+    protected PDFICCStream outputProfile;
+    /** the ICC stream for the sRGB color space. */
+    //protected PDFICCStream sRGBProfile;
+    /** the default sRGB color space. */
+    protected PDFICCBasedColorSpace sRGBColorSpace;
+    
+    /** Optional URI to an output profile to be used. */
+    protected String outputProfileURI; 
     
     /** The current Transform */
     protected AffineTransform currentBasicTransform;
@@ -267,6 +293,14 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         if (s != null) {
             this.pdfAMode = PDFAMode.valueOf(s);
         }
+        s = cfg.getChild(PDF_X_MODE, true).getValue(null);
+        if (s != null) {
+            this.pdfXMode = PDFXMode.valueOf(s);
+        }
+        s = cfg.getChild(KEY_OUTPUT_PROFILE, true).getValue(null);
+        if (s != null) {
+            this.outputProfileURI = s;
+        }
     }
 
     private boolean booleanValueOf(Object obj) {
@@ -337,6 +371,14 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         if (s != null) {
             this.pdfAMode = PDFAMode.valueOf(s);
         }
+        s = (String)agent.getRendererOptions().get(PDF_X_MODE);
+        if (s != null) {
+            this.pdfXMode = PDFXMode.valueOf(s);
+        }
+        s = (String)agent.getRendererOptions().get(KEY_OUTPUT_PROFILE);
+        if (s != null) {
+            this.outputProfileURI = s;
+        }
     }
 
     /**
@@ -349,7 +391,8 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         ostream = stream;
         this.pdfDoc = new PDFDocument(
                 userAgent.getProducer() != null ? userAgent.getProducer() : "");
-        this.pdfDoc.setPDFAMode(this.pdfAMode);
+        this.pdfDoc.getProfile().setPDFAMode(this.pdfAMode);
+        this.pdfDoc.getProfile().setPDFXMode(this.pdfXMode);
         this.pdfDoc.setCreator(userAgent.getCreator());
         this.pdfDoc.setCreationDate(userAgent.getCreationDate());
         this.pdfDoc.getInfo().setAuthor(userAgent.getAuthor());
@@ -358,25 +401,32 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         this.pdfDoc.setFilterMap(filterMap);
         this.pdfDoc.outputHeader(stream);
 
+        //Setup encryption if necessary
+        PDFEncryptionManager.setupPDFEncryption(encryptionParams, this.pdfDoc);
+
+        addsRGBColorSpace();
+        if (this.outputProfileURI != null) {
+            addDefaultOutputProfile();
+        }
+        if (pdfXMode != PDFXMode.DISABLED) {
+            log.debug(pdfXMode + " is active.");
+            log.warn("Note: " + pdfXMode 
+                    + " support is work-in-progress and not fully implemented, yet!");
+            addPDFXOutputIntent();
+        }
         if (pdfAMode.isPDFA1LevelB()) {
             log.debug("PDF/A is active. Conformance Level: " + pdfAMode);
             addPDFA1OutputIntent();
         }
         
-        //Setup encryption if necessary
-        PDFEncryptionManager.setupPDFEncryption(encryptionParams, this.pdfDoc);
     }
 
-    /**
-     * Adds an OutputIntent to the PDF as mandated by PDF/A-1 when uncalibrated color spaces
-     * are used (which is true if we use DeviceRGB to represent sRGB colors).
-     * @throws IOException in case of an I/O problem
-     */
-    private void addPDFA1OutputIntent() throws IOException {
-        PDFOutputIntent outputIntent = pdfDoc.getFactory().makeOutputIntent();
-        outputIntent.setSubtype(PDFOutputIntent.GTS_PDFA1);
-        PDFICCStream icc = pdfDoc.getFactory().makePDFICCStream();
+    private void addsRGBColorSpace() throws IOException {
+        if (this.sRGBColorSpace != null) {
+            return;
+        }
         ICC_Profile profile;
+        PDFICCStream sRGBProfile = pdfDoc.getFactory().makePDFICCStream();
         InputStream in = PDFDocument.class.getResourceAsStream("sRGB Color Space Profile.icm");
         if (in != null) {
             try {
@@ -388,10 +438,77 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
             //Fallback: Use the sRGB profile from the JRE (about 140KB)
             profile = ICC_Profile.getInstance(ColorSpace.CS_sRGB);
         }
-        String desc = ColorProfileUtil.getICCProfileDescription(profile);
+        sRGBProfile.setColorSpace(profile, null);
         
-        icc.setColorSpace(profile, null);
-        outputIntent.setDestOutputProfile(icc);
+        //Map sRGB as default RGB profile for DeviceRGB
+        this.sRGBColorSpace = pdfDoc.getFactory().makeICCBasedColorSpace(
+                null, "DefaultRGB", sRGBProfile);
+    }
+    
+    private void addDefaultOutputProfile() throws IOException {
+        if (this.outputProfile != null) {
+            return;
+        }
+        ICC_Profile profile;
+        InputStream in = null;
+        if (this.outputProfileURI != null) {
+            this.outputProfile = pdfDoc.getFactory().makePDFICCStream();
+            Source src = userAgent.resolveURI(this.outputProfileURI);
+            if (src == null) {
+                throw new IOException("Output profile not found: " + this.outputProfileURI);
+            }
+            if (src instanceof StreamSource) {
+                in = ((StreamSource)src).getInputStream();
+            } else {
+                in = new URL(src.getSystemId()).openStream();
+            }
+            try {
+                profile = ICC_Profile.getInstance(in);
+            } finally {
+                IOUtils.closeQuietly(in);
+            }
+            this.outputProfile.setColorSpace(profile, null);
+        } else {
+            //Fall back to sRGB profile
+            outputProfile = sRGBColorSpace.getICCStream();
+        }
+    }
+    
+    /**
+     * Adds an OutputIntent to the PDF as mandated by PDF/A-1 when uncalibrated color spaces
+     * are used (which is true if we use DeviceRGB to represent sRGB colors).
+     * @throws IOException in case of an I/O problem
+     */
+    private void addPDFA1OutputIntent() throws IOException {
+        addDefaultOutputProfile();
+        
+        String desc = ColorProfileUtil.getICCProfileDescription(this.outputProfile.getICCProfile());
+        PDFOutputIntent outputIntent = pdfDoc.getFactory().makeOutputIntent();
+        outputIntent.setSubtype(PDFOutputIntent.GTS_PDFA1);
+        outputIntent.setDestOutputProfile(this.outputProfile);
+        outputIntent.setOutputConditionIdentifier(desc);
+        outputIntent.setInfo(outputIntent.getOutputConditionIdentifier());
+        pdfDoc.getRoot().addOutputIntent(outputIntent);
+    }
+
+    /**
+     * Adds an OutputIntent to the PDF as mandated by PDF/X when uncalibrated color spaces
+     * are used (which is true if we use DeviceRGB to represent sRGB colors).
+     * @throws IOException in case of an I/O problem
+     */
+    private void addPDFXOutputIntent() throws IOException {
+        addDefaultOutputProfile();
+        
+        String desc = ColorProfileUtil.getICCProfileDescription(this.outputProfile.getICCProfile());
+        int deviceClass = this.outputProfile.getICCProfile().getProfileClass();
+        if (deviceClass != ICC_Profile.CLASS_OUTPUT) {
+            throw new PDFConformanceException(pdfDoc.getProfile().getPDFXMode() + " requires that"
+                    + " the DestOutputProfile be an Output Device Profile. "
+                    + desc + " does not match that requirement.");
+        }
+        PDFOutputIntent outputIntent = pdfDoc.getFactory().makeOutputIntent();
+        outputIntent.setSubtype(PDFOutputIntent.GTS_PDFX);
+        outputIntent.setDestOutputProfile(this.outputProfile);
         outputIntent.setOutputConditionIdentifier(desc);
         outputIntent.setInfo(outputIntent.getOutputConditionIdentifier());
         pdfDoc.getRoot().addOutputIntent(outputIntent);
@@ -1015,36 +1132,40 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         // render contents
         super.renderInlineParent(ip);
 
-        // place the link over the top
-        Object tr = ip.getTrait(Trait.INTERNAL_LINK);
-        boolean internal = false;
-        String dest = null;
-        float yoffset = 0;
-        if (tr == null) {
-            dest = (String)ip.getTrait(Trait.EXTERNAL_LINK);
-        } else {
-            String pvKey = (String)tr;
-            dest = (String)pageReferences.get(pvKey);
-            if (dest != null) {
-                PageViewport pv = (PageViewport)pvReferences.get(pvKey);
-                Rectangle2D bounds = pv.getViewArea();
-                double h = bounds.getHeight();
-                yoffset = (float)h / 1000f;
-                internal = true;
+        if (pdfDoc.getProfile().isAnnotationAllowed()) {
+            // place the link over the top
+            Object tr = ip.getTrait(Trait.INTERNAL_LINK);
+            boolean internal = false;
+            String dest = null;
+            float yoffset = 0;
+            if (tr == null) {
+                dest = (String)ip.getTrait(Trait.EXTERNAL_LINK);
+            } else {
+                String pvKey = (String)tr;
+                dest = (String)pageReferences.get(pvKey);
+                if (dest != null) {
+                    PageViewport pv = (PageViewport)pvReferences.get(pvKey);
+                    Rectangle2D bounds = pv.getViewArea();
+                    double h = bounds.getHeight();
+                    yoffset = (float)h / 1000f;
+                    internal = true;
+                }
             }
-        }
-        if (dest != null) {
-            // add link to pdf document
-            Rectangle2D rect = new Rectangle2D.Float(start, top, width, height);
-            // transform rect to absolute coords
-            AffineTransform transform = currentState.getTransform();
-            rect = transform.createTransformedShape(rect).getBounds2D();
-            rect = currentBasicTransform.createTransformedShape(rect).getBounds2D();
+            if (dest != null) {
+                // add link to pdf document
+                Rectangle2D rect = new Rectangle2D.Float(start, top, width, height);
+                // transform rect to absolute coords
+                AffineTransform transform = currentState.getTransform();
+                rect = transform.createTransformedShape(rect).getBounds2D();
+                rect = currentBasicTransform.createTransformedShape(rect).getBounds2D();
 
-            int type = internal ? PDFLink.INTERNAL : PDFLink.EXTERNAL;
-            PDFLink pdflink = pdfDoc.getFactory().makeLink(
-                        rect, dest, type, yoffset);
-            currentPage.addAnnotation(pdflink);
+                int type = internal ? PDFLink.INTERNAL : PDFLink.EXTERNAL;
+                PDFLink pdflink = pdfDoc.getFactory().makeLink(
+                            rect, dest, type, yoffset);
+                currentPage.addAnnotation(pdflink);
+            }
+        } else {
+            log.warn("Skipping annotation for a link due to PDF profile: " + pdfDoc.getProfile());
         }
     }
 
