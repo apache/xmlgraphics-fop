@@ -22,7 +22,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.fo.FONode;
-import org.apache.fop.traits.MinOptMax;
 
 /**
  * The set of nodes is sorted into lines indexed into activeLines.
@@ -32,7 +31,7 @@ import org.apache.fop.traits.MinOptMax;
  * <p>
  * The set of active nodes can be traversed by 
  * <pre>
- * for (int line = startLine; line < endLine; line++) {
+ * for (int line = startLine; line &lt; endLine; line++) {
  *     for (KnuthNode node = getNode(line); node != null; node = node.next) {
  *         // Do something with 'node'
  *     }
@@ -47,28 +46,34 @@ public abstract class BreakingAlgorithm {
     /** the logger for the instance */
     protected Log log = classLog;
     
+    /** Maximum adjustment ration */
     protected static final int INFINITE_RATIO = 1000;
 
     private static final int MAX_RECOVERY_ATTEMPTS = 50;
 
     // constants identifying a subset of the feasible breaks
-    public static final int ALL_BREAKS = 0;            // all feasible breaks are ok
-    public static final int NO_FLAGGED_PENALTIES = 1; // this forbids hyphenation
-    public static final int ONLY_FORCED_BREAKS = 2;   // wrap-option = "no-wrap"
+    /** All feasible breaks are ok. */
+    public static final int ALL_BREAKS = 0;
+    /** This forbids hyphenation. */
+    public static final int NO_FLAGGED_PENALTIES = 1;
+    /** wrap-option = "no-wrap". */
+    public static final int ONLY_FORCED_BREAKS = 2;
 
     // parameters of Knuth's algorithm:
-    // penalty value for flagged penalties
+    /** Penalty value for flagged penalties. */
     private int flaggedPenalty = 50;
-    // demerit for consecutive lines ending at flagged penalties
+    /** Demerit for consecutive lines ending at flagged penalties. */
     protected int repeatedFlaggedDemerit = 50;
-    // demerit for consecutive lines belonging to incompatible fitness classes 
+    /** Demerit for consecutive lines belonging to incompatible fitness classes . */
     protected int incompatibleFitnessDemerit = 50;
-    // maximum number of consecutive lines ending with a flagged penalty
-    // only a value >= 1 is a significant limit  
+    /** Maximum number of consecutive lines ending with a flagged penalty.
+     * Only a value >= 1 is a significant limit.
+     */
     protected int maxFlaggedPenaltiesCount;
 
     /**
-     * The threshold for considering breaks to be acceptable.
+     * The threshold for considering breaks to be acceptable. The adjustment ratio must be
+     * inferior to this threshold.
      */
     private double threshold;
 
@@ -82,21 +87,37 @@ public abstract class BreakingAlgorithm {
      * -1 indicates that the line widths are different for each line.
      */
     protected int lineWidth = -1;
+    /** Force the algorithm to find a set of breakpoints, even if no feasible breakpoints
+     * exist.
+     */
     private boolean force =  false;
     /** If set to true, doesn't ignore break possibilities which are definitely too short. */
     protected boolean considerTooShort = false;
 
-    protected KnuthNode lastDeactivatedNode = null;
+    /** When in forced mode, the best node leading to a too long line. The line will be
+     * too long anyway, but this one will lead to a paragraph with fewest demerits.
+     */
     private KnuthNode lastTooLong;
+    /** When in forced mode, the best node leading to a too short line. The line will be
+     * too short anyway, but this one will lead to a paragraph with fewest demerits.
+     */
     private KnuthNode lastTooShort;
+    /** The node to be reactivated if no set of feasible breakpoints can be found for this
+     * paragraph.
+     */
     private KnuthNode lastDeactivated;
 
+    /** Alignment of the paragraph/page. One of EN_START, EN_JUSTIFY, etc. */
     protected int alignment;
+    /** Alignment of the paragraph's last line. */
     protected int alignmentLast;
+    /** Used to handle the text-indent property (indent the first line of a paragraph). */
     protected boolean bFirst;
 
     /**
-     * The set of active nodes.
+     * The set of active nodes in ascending line order. For each line l, activeLines[2l] contains a
+     * link to l's first active node, and activeLines[2l+1] a link to l's last active node. The
+     * line number l corresponds to the number of the line ending at the node's breakpoint.
      */
     protected KnuthNode[] activeLines;
     
@@ -131,11 +152,21 @@ public abstract class BreakingAlgorithm {
     protected int totalShrink = 0;
 
     protected BestRecords best;
-    private KnuthNode[] positions;
 
-    /** @see isPartOverflowRecoveryActivated() */
+    /** @see #isPartOverflowRecoveryActivated() */
     private boolean partOverflowRecoveryActivated = true;
 
+    /**
+     * Create a new instance.
+     * @param align alignment of the paragraph/page. One of EN_START, EN_JUSTIFY, etc. For
+     * pages EN_BEFORE, EN_AFTER are mapped to the corresponding inline properties
+     * (EN_START, EN_END)
+     * @param alignLast alignment of the paragraph's last line
+     * @param first for the text-indent property (indent the first line of a paragraph)
+     * @param partOverflowRecovery true if too long elements should be moved to the next line/part
+     * @param maxFlagCount maximum allowed number of consecutive lines ending at a flagged penalty
+     * item
+     */
     public BreakingAlgorithm(int align, int alignLast,
                              boolean first, boolean partOverflowRecovery,
                              int maxFlagCount) {
@@ -148,7 +179,9 @@ public abstract class BreakingAlgorithm {
     }
 
 
-    // this class represent a feasible breaking point
+    /**
+     * Class recording all the informations of a feasible breaking point.
+     */
     public class KnuthNode {
         /** index of the breakpoint represented by this node */
         public int position;
@@ -156,16 +189,16 @@ public abstract class BreakingAlgorithm {
         /** number of the line ending at this breakpoint */
         public int line;
 
-        /** fitness class of the line ending at his breakpoint */
+        /** fitness class of the line ending at this breakpoint. One of 0, 1, 2, 3. */
         public int fitness;
 
-        /** accumulated width of the KnuthElements */
+        /** accumulated width of the KnuthElements up to after this breakpoint. */
         public int totalWidth;
 
-        /** accumulated stretchability of the KnuthElements */
+        /** accumulated stretchability of the KnuthElements up to after this breakpoint. */
         public int totalStretch;
 
-        /** accumulated shrinkability of the KnuthElements */
+        /** accumulated shrinkability of the KnuthElements up to after this breakpoint. */
         public int totalShrink;
 
         /** adjustment ratio if the line ends at this breakpoint */
@@ -197,8 +230,8 @@ public abstract class BreakingAlgorithm {
         
         public KnuthNode(int position, int line, int fitness,
                          int totalWidth, int totalStretch, int totalShrink,
-                         double adjustRatio, int availableShrink, int availableStretch, int difference,
-                         double totalDemerits, KnuthNode previous) {
+                         double adjustRatio, int availableShrink, int availableStretch,
+                         int difference, double totalDemerits, KnuthNode previous) {
             this.position = position;
             this.line = line;
             this.fitness = fitness;
@@ -214,34 +247,43 @@ public abstract class BreakingAlgorithm {
         }
 
         public String toString() {
-            return "<KnuthNode at " + position + " " +
-            totalWidth + "+" + totalStretch + "-" + totalShrink +
-            " line:" + line +
-            " prev:" + (previous != null ? previous.position : -1) +
-            " dem:" + totalDemerits +
-            ">"; 
+            return "<KnuthNode at " + position + " "
+                    + totalWidth + "+" + totalStretch + "-" + totalShrink
+                    + " line:" + line + " prev:" + (previous != null ? previous.position : -1)
+                    + " dem:" + totalDemerits + ">"; 
         }
     }
 
-    // this class stores information about how the nodes
-    // which could start a line
-    // ending at the current element
+    /** Class that stores, for each fitness class, the best active node that could start
+     * a line of the corresponding fitness ending at the current element.
+     */
     protected class BestRecords {
         private static final double INFINITE_DEMERITS = Double.POSITIVE_INFINITY;
         //private static final double INFINITE_DEMERITS = 1E11;
 
-        private double bestDemerits[] = new double[4];
-        private KnuthNode bestNode[] = new KnuthNode[4];
-        private double bestAdjust[] = new double[4];
-        private int bestDifference[] = new int[4];
-        private int bestAvailableShrink[] = new int[4];
-        private int bestAvailableStretch[] = new int[4];
+        private double[] bestDemerits = new double[4];
+        private KnuthNode[] bestNode = new KnuthNode[4];
+        private double[] bestAdjust = new double[4];
+        private int[] bestDifference = new int[4];
+        private int[] bestAvailableShrink = new int[4];
+        private int[] bestAvailableStretch = new int[4];
+        /** Points to the fitness class which currently leads to the best demerits. */
         private int bestIndex = -1;
 
         public BestRecords() {
             reset();
         }
 
+        /** Registers the new best active node for the given fitness class.
+         * @param demerits the total demerits of the new optimal set of breakpoints
+         * @param node the node starting the line ending at the current element
+         * @param adjust adjustment ratio of the current line
+         * @param availableShrink how much the current line can be shrinked
+         * @param availableStretch how much the current line can be stretched
+         * @param difference difference between the width of the considered line and the
+         * width of the "real" line
+         * @param fitness fitness class of the current line
+         */
         public void addRecord(double demerits, KnuthNode node, double adjust,
                               int availableShrink, int availableStretch,
                               int difference, int fitness) {
@@ -263,6 +305,11 @@ public abstract class BreakingAlgorithm {
             return (bestIndex != -1);
         }
 
+        /**
+         * @param fitness fitness class (0, 1, 2 or 3, i.e. "tight" to "very loose")
+         * @return true if there is a set of feasible breakpoints registered for the
+         *              given fitness.
+         */
         public boolean notInfiniteDemerits(int fitness) {
             return (bestDemerits[fitness] != INFINITE_DEMERITS);
         }
@@ -300,8 +347,9 @@ public abstract class BreakingAlgorithm {
             }
         }
 
+        /** Reset when a new breakpoint is being considered. */
         public void reset() {
-            for (int i = 0; i < 4; i ++) {
+            for (int i = 0; i < 4; i++) {
                 bestDemerits[i] = INFINITE_DEMERITS;
                 // there is no need to reset the other arrays
             }
@@ -326,22 +374,44 @@ public abstract class BreakingAlgorithm {
         return this.partOverflowRecoveryActivated;
     }
 
-    public abstract void updateData1(int total, double demerits) ;
+    /** Empty method, hook for subclasses. Called before determining the optimal
+     * breakpoints corresponding to a given active node.
+     * @param total number of lines for the active node
+     * @param demerits total demerits of the paragraph for the active node
+     */
+    public abstract void updateData1(int total, double demerits);
 
+    /** Empty method, hook for subclasses. Called when determining the optimal breakpoints
+     * for a given active node.
+     * @param bestActiveNode a node in the chain of best active nodes, corresponding to
+     * one of the optimal breakpoints
+     * @param sequence the corresponding paragraph
+     * @param total the number of lines into which the paragraph will be broken
+     * @see #calculateBreakPoints(KnuthNode, KnuthSequence, int)
+     */
     public abstract void updateData2(KnuthNode bestActiveNode,
                                      KnuthSequence sequence,
-                                     int total) ;
+                                     int total);
 
     public void setConstantLineWidth(int lineWidth) {
         this.lineWidth = lineWidth;
     }
-    
+
+    /** @see #findBreakingPoints(KnuthSequence, int, double, boolean, int) */
     public int findBreakingPoints(KnuthSequence par, /*int lineWidth,*/
             double threshold, boolean force,
             int allowedBreaks) {
         return findBreakingPoints(par, 0, threshold, force, allowedBreaks);
     }
     
+    /** Finds an optimal set of breakpoints for the given paragraph.
+     * @param par the paragraph to break
+     * @param startIndex index of the Knuth element at which the breaking must start
+     * @param threshold upper bound of the adjustment ratio
+     * @param force true if a set of breakpoints must be found even if there are no
+     * feasible ones
+     * @param allowedBreaks one of ONLY_FORCED_BREAKS, NO_FLAGGED_PENALTIES, ALL_BREAKS
+     */
     public int findBreakingPoints(KnuthSequence par, int startIndex,
                                   /*int lineWidth,*/
                                   double threshold, boolean force,
@@ -368,7 +438,7 @@ public abstract class BreakingAlgorithm {
         int firstBoxIndex = startIndex;
         if (alignment != org.apache.fop.fo.Constants.EN_CENTER) {
             while (par.size() > firstBoxIndex
-                    && ! ((KnuthElement) par.get(firstBoxIndex)).isBox()) {
+                    && !((KnuthElement) par.get(firstBoxIndex)).isBox()) {
                 firstBoxIndex++;
             }
         }
@@ -409,8 +479,10 @@ public abstract class BreakingAlgorithm {
                 // consider all penalties, non-flagged penalties or non-forcing penalties
                 // according to the value of allowedBreaks
                 if (((KnuthPenalty) thisElement).getP() < KnuthElement.INFINITE
-                    && (!(allowedBreaks == NO_FLAGGED_PENALTIES) || !(((KnuthPenalty) thisElement).isFlagged()))
-                    && (!(allowedBreaks == ONLY_FORCED_BREAKS) || ((KnuthPenalty) thisElement).getP() == -KnuthElement.INFINITE)) {
+                    && (!(allowedBreaks == NO_FLAGGED_PENALTIES) 
+                            || !(((KnuthPenalty) thisElement).isFlagged()))
+                    && (!(allowedBreaks == ONLY_FORCED_BREAKS) 
+                            || ((KnuthPenalty) thisElement).getP() == -KnuthElement.INFINITE)) {
                     considerLegalBreak(thisElement, i);
                 }
                 previousIsBox = false;
@@ -499,30 +571,55 @@ public abstract class BreakingAlgorithm {
         }
     }
 
+    /** Resets the algorithm's variables. */
     protected void initialize() {
         this.totalWidth = 0;
         this.totalStretch = 0;
         this.totalShrink = 0;
     }
 
+    /** Creates a new active node for a feasible breakpoint at the given position. Only
+     * called in forced mode.
+     * @param position index of the element in the Knuth sequence
+     * @param line number of the line ending at the breakpoint
+     * @param fitness fitness class of the line ending at the breakpoint. One of 0, 1, 2, 3.
+     * @param totalWidth accumulated width of the KnuthElements up to after the breakpoint
+     * @param totalStretch accumulated stretchability of the KnuthElements up to after the
+     * breakpoint
+     * @param totalShrink accumulated shrinkability of the KnuthElements up to after the
+     * breakpoint
+     * @param adjustRatio adjustment ratio if the line ends at this breakpoint
+     * @param availableShrink available stretch of the line ending at this breakpoint
+     * @param availableStretch available shrink of the line ending at this breakpoint
+     * @param difference difference between target and actual line width
+     * @param totalDemerits minimum total demerits up to the breakpoint
+     * @param previous active node for the preceding breakpoint
+     */ 
     protected KnuthNode createNode(int position, int line, int fitness,
                                    int totalWidth, int totalStretch, int totalShrink,
-                                   double adjustRatio, int availableShrink, int availableStretch, int difference,
-                                   double totalDemerits, KnuthNode previous) {
+                                   double adjustRatio, int availableShrink, int availableStretch,
+                                   int difference, double totalDemerits, KnuthNode previous) {
         return new KnuthNode(position, line, fitness,
                              totalWidth, totalStretch, totalShrink,
                              adjustRatio, availableShrink, availableStretch,
                              difference, totalDemerits, previous);
     }
 
+    /** Creates a new active node for a break from the best active node of the given
+     * fitness class to the element at the given position.
+     * @see #createNode(int, int, int, int, int, int, double, int, int, int, double, KnuthNode)
+     * @see BreakingAlgorithm.BestRecords
+     */
     protected KnuthNode createNode(int position, int line, int fitness,
                                    int totalWidth, int totalStretch, int totalShrink) {
         return new KnuthNode(position, line, fitness,
-                             totalWidth, totalStretch, totalShrink,
-                             best.getAdjust(fitness), best.getAvailableShrink(fitness), best.getAvailableStretch(fitness),
-                             best.getDifference(fitness), best.getDemerits(fitness), best.getNode(fitness));
+                             totalWidth, totalStretch, totalShrink, best.getAdjust(fitness),
+                             best.getAvailableShrink(fitness), best.getAvailableStretch(fitness),
+                             best.getDifference(fitness), best.getDemerits(fitness),
+                             best.getNode(fitness));
     }
 
+    /** Empty method, hook for subclasses. */
     protected void handleBox(KnuthBox box) {
     }
 
@@ -534,7 +631,8 @@ public abstract class BreakingAlgorithm {
         totalWidth = restartingNode.totalWidth;
         totalStretch = restartingNode.totalStretch;
         totalShrink = restartingNode.totalShrink;
-        lastTooShort = lastTooLong = null;
+        lastTooShort = null;
+        lastTooLong = null;
         // the width, stretch and shrink already include the width,
         // stretch and shrink of the suppressed glues;
         // advance in the sequence in order to avoid taking into account
@@ -542,16 +640,22 @@ public abstract class BreakingAlgorithm {
         int restartingIndex = restartingNode.position;
         while (restartingIndex + 1 < par.size()
                && !(getElement(restartingIndex + 1).isBox())) {
-            restartingIndex ++;
+            restartingIndex++;
         }
         return restartingIndex;
     }
 
+    /** Determines if the given breakpoint is a feasible breakpoint. That is, if a decent
+     * line may be built between one of the currently active nodes and this breakpoint.
+     * @param element the paragraph's element to consider
+     * @param elementIdx the element's index inside the paragraph
+     */
     protected void considerLegalBreak(KnuthElement element, int elementIdx) {
 
         if (log.isTraceEnabled()) {
             log.trace("considerLegalBreak() at " + elementIdx 
-                    + " (" + totalWidth + "+" + totalStretch + "-" + totalShrink + "), parts/lines: "+ startLine + "-" + endLine);
+                    + " (" + totalWidth + "+" + totalStretch + "-" + totalShrink 
+                    + "), parts/lines: " + startLine + "-" + endLine);
             log.trace("\tCurrent active node list: " + activeNodeCount + " " + this.toString("\t"));
         }
 
@@ -660,6 +764,11 @@ public abstract class BreakingAlgorithm {
         }
     }
 
+    /**
+     * Adds new active nodes for breaks at the given element.
+     * @param line number of the previous line; this element will end line number (line+1)
+     * @param elementIdx the element's index
+     */
     private void addBreaks(int line, int elementIdx) {
         if (!best.hasRecords()) {
             return;
@@ -707,10 +816,11 @@ public abstract class BreakingAlgorithm {
     }
 
     /**
-     * Return the difference between the line width and the width of the break that
-     * ends in 'element'.
-     * @param activeNode
-     * @param element
+     * Return the difference between the natural width of a line that would be made
+     * between the given active node and the given element, and the available width of the
+     * real line.
+     * @param activeNode node for the previous breakpoint
+     * @param element currently considered breakpoint
      * @return The difference in width. Positive numbers mean extra space in the line,
      * negative number that the line overflows. 
      */
@@ -728,11 +838,11 @@ public abstract class BreakingAlgorithm {
      * Return the adjust ration needed to make up for the difference. A ration of 
      * <ul>
      *    <li>0 means that the break has the exact right width</li>
-     *    <li>&gt;= -1 && &lt; 0  means that the break is to wider than the line, 
+     *    <li>&gt;= -1 &amp;&amp; &lt; 0  means that the break is wider than the line, 
      *        but within the minimim values of the glues.</li> 
-     *    <li>&gt;0 && &lt 1 means that the break is smaller than the line width, 
+     *    <li>&gt;0 &amp;&amp; &lt; 1 means that the break is smaller than the line width, 
      *        but within the maximum values of the glues.</li>
-     *    <li>&gt 1 means that the break is too small to make up for the glues.</li> 
+     *    <li>&gt; 1 means that the break is too small to make up for the glues.</li> 
      * </ul>
      * @param activeNode
      * @param difference
@@ -760,14 +870,12 @@ public abstract class BreakingAlgorithm {
     }
     
     /**
-     * <p>Figure out the fitness class of this line (tight, loose,
+     * Figure out the fitness class of this line (tight, loose,
      * very tight or very loose).
-     * </p>
-     * <p>See the section on "More Bells and Whistles" in Knuth's 
+     * See the section on "More Bells and Whistles" in Knuth's 
      * "Breaking Paragraphs Into Lines".
-     * </p>
      * @param r
-     * @return
+     * @return the fitness class
      */
     private int computeFitness(double r) {
         if (r < -0.5) {
@@ -781,6 +889,17 @@ public abstract class BreakingAlgorithm {
         }
     }
 
+    /**
+     * Computes the demerits of the current breaking (that is, up to the given element),
+     * if the next-to-last chosen breakpoint is the given active node. This adds to the
+     * total demerits of the given active node, the demerits of a line starting at this
+     * node and ending at the given element.
+     * @param activeNode considered preceding line break
+     * @param element considered current line break
+     * @param fitnessClass fitness of the current line 
+     * @param r adjustment ratio for the current line
+     * @return the demerit of the current line
+     */
     protected double computeDemerits(KnuthNode activeNode, KnuthElement element, 
                                   int fitnessClass, double r) {
         double demerits = 0;
@@ -813,7 +932,7 @@ public abstract class BreakingAlgorithm {
                 if (prevElement.isPenalty()
                     && ((KnuthPenalty) prevElement).isFlagged()) {
                     // the previous line ends with a flagged penalty too
-                    flaggedPenaltiesCount ++;
+                    flaggedPenaltiesCount++;
                 } else {
                     // the previous line does not end with a flagged penalty,
                     // exit the loop
@@ -867,10 +986,10 @@ public abstract class BreakingAlgorithm {
     }
 
     /**
-     * Add a KnuthNode at the end of line 'line'. 
+     * Add a node at the end of the given line's existing active nodes.
      * If this is the first node in the line, adjust endLine accordingly.
-     * @param line
-     * @param node
+     * @param line number of the line ending at the node's corresponding breakpoint
+     * @param node the active node to add
      */
     protected void addNode(int line, KnuthNode node) {
         int headIdx = line * 2;
@@ -884,26 +1003,26 @@ public abstract class BreakingAlgorithm {
             activeLines[headIdx + 1].next = node;
         } else {
             activeLines[headIdx] = node;
-            endLine = line+1;
+            endLine = line + 1;
         }
         activeLines[headIdx + 1] = node;
         activeNodeCount++;
     }
 
     /**
-     * Remove the first node in line 'line'. If the line then becomes empty, adjust the
-     * startLine accordingly.
-     * @param line
-     * @param node
+     * Remove the first active node registered for the given line. If there is no more active node
+     * for this line, adjust the startLine accordingly.
+     * @param line number of the line ending at the node's corresponding breakpoint
+     * @param node the node to deactivate
      */
     protected void removeNode(int line, KnuthNode node) {
         KnuthNode n = getNode(line);
         if (n != node) {
             log.error("Should be first");
         } else {
-            activeLines[line*2] = node.next;
+            activeLines[line * 2] = node.next;
             if (node.next == null) {
-                activeLines[line*2+1] = null;
+                activeLines[line * 2 + 1] = null;
             }
             while (startLine < endLine && getNode(startLine) == null) {
                 startLine++;
@@ -912,43 +1031,20 @@ public abstract class BreakingAlgorithm {
         activeNodeCount--;
     }
 
+    /**
+     * Returns the first active node for the given line.
+     * @param line the line/part number
+     * @return the requested active node
+     */
     protected KnuthNode getNode(int line) {
         return activeLines[line * 2];
     }
 
     /**
-     * Return true if the position 'idx' is a legal breakpoint.
-     * @param idx
-     * @return
+     * Returns the line/part width of a given line/part.
+     * @param line the line/part number
+     * @return the width/length in millipoints
      */
-    private boolean isLegalBreakpoint(int idx) {
-        KnuthElement elm = getElement(idx);
-        if (elm.isPenalty() && elm.getP() != KnuthElement.INFINITE) {
-            return true;
-        } else if (idx > 0 && elm.isGlue() && getElement(idx-1).isBox()) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-    
-    public int getDifference(int line) {
-        return positions[line].difference;
-    }
-
-    public double getAdjustRatio(int line) {
-        return positions[line].adjustRatio;
-    }
-
-    public int getStart(int line) {
-        KnuthNode previous = positions[line].previous;
-        return line == 0 ? 0 : previous.position + 1; 
-    }
-
-    public int getEnd(int line) {
-        return positions[line].position;
-    }
-
     protected int getLineWidth(int line) {
         if (this.lineWidth < 0) {
             throw new IllegalStateException("lineWidth must be set" 
@@ -958,21 +1054,16 @@ public abstract class BreakingAlgorithm {
         }
     }
     
+    /** @return the constant line/part width or -1 if there is no such value */
     protected int getLineWidth() {
         return this.lineWidth;
     }
     
     /**
-     * Return a string representation of a MinOptMax in the form of a 
-     * "width+stretch-shrink". Useful only for debugging.
-     * @param mom
-     * @return 
+     * Creates a string representation of the active nodes. Used for debugging.
+     * @param prepend a string to prepend on each entry
+     * @return the requested string
      */
-    private static String width(MinOptMax mom) {
-        return mom.opt + "+" + (mom.max - mom.opt) + "-" + (mom.opt - mom.min); 
-
-    }
-
     public String toString(String prepend) {
         StringBuffer sb = new StringBuffer();
         sb.append("[\n");
@@ -985,8 +1076,14 @@ public abstract class BreakingAlgorithm {
         return sb.toString();
     }
 
-    protected abstract int filterActiveNodes() ;
+    protected abstract int filterActiveNodes();
 
+    /**
+     * Determines the set of optimal breakpoints corresponding to the given active node.
+     * @param node the active node
+     * @param par the corresponding paragraph
+     * @param total the number of lines into which the paragraph will be broken
+     */
     private void calculateBreakPoints(KnuthNode node, KnuthSequence par,
                                       int total) {
         KnuthNode bestActiveNode = node;

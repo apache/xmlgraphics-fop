@@ -591,6 +591,7 @@ public abstract class AbstractBreaker {
     }
 
     /**
+     * Returns the average width of all the lines in the given range.
      * @param effectiveList effective block list to work on
      * @param startElementIndex
      * @param endElementIndex

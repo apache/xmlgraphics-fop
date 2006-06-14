@@ -40,6 +40,7 @@ public class FootnoteLayoutManager extends AbstractLayoutManager
     private Footnote footnote;
     private InlineStackingLayoutManager citationLM;
     private FootnoteBodyLayoutManager bodyLM;
+    /** Represents the footnote citation **/
     private KnuthElement forcedAnchor;
 
     /**
