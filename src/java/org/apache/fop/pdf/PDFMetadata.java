@@ -20,25 +20,23 @@ package org.apache.fop.pdf;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
-import org.apache.fop.fo.ElementMapping;
-import org.apache.fop.fo.extensions.xmp.XMPConstants;
+import org.apache.xmlgraphics.xmp.Metadata;
+import org.apache.xmlgraphics.xmp.XMPSerializer;
+import org.apache.xmlgraphics.xmp.schemas.DublinCoreAdapter;
+import org.apache.xmlgraphics.xmp.schemas.DublinCoreSchema;
+import org.apache.xmlgraphics.xmp.schemas.XMPBasicAdapter;
+import org.apache.xmlgraphics.xmp.schemas.XMPBasicSchema;
+import org.apache.xmlgraphics.xmp.schemas.pdf.AdobePDFAdapter;
+import org.apache.xmlgraphics.xmp.schemas.pdf.AdobePDFSchema;
+import org.apache.xmlgraphics.xmp.schemas.pdf.PDFAAdapter;
+import org.apache.xmlgraphics.xmp.schemas.pdf.PDFAOldXMPSchema;
+import org.apache.xmlgraphics.xmp.schemas.pdf.PDFAXMPSchema;
 
-import org.w3c.dom.DOMImplementation;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 /**
  * Special PDFStream for Metadata.
@@ -46,20 +44,15 @@ import org.w3c.dom.Element;
  */
 public class PDFMetadata extends PDFStream {
     
-    private static final String XMLNS = "http://www.w3.org/2000/xmlns/";
-
-    private static DateFormat pseudoISO8601DateFormat = new SimpleDateFormat(
-        "yyyy'-'MM'-'dd'T'HH':'mm':'ss");
-
-    private Document xmpMetadata;
+    private Metadata xmpMetadata;
     private boolean readOnly = true;
 
     /** @see org.apache.fop.pdf.PDFObject#PDFObject() */
-    public PDFMetadata(Document xmp, boolean readOnly) {
+    public PDFMetadata(Metadata xmp, boolean readOnly) {
         super();
         if (xmp == null) {
             throw new NullPointerException(
-                    "DOM Document representing the metadata must no be null");
+                    "The parameter for the XMP Document must not be null");
         }
         this.xmpMetadata = xmp;
         this.readOnly = readOnly;
@@ -80,6 +73,11 @@ public class PDFMetadata extends PDFStream {
         return false; //XMP metadata packet must be scannable by non PDF-compatible readers
     }
 
+    /** @return the XMP metadata */
+    public Metadata getMetadata() {
+        return this.xmpMetadata;
+    }
+    
     /**
      * overload the base object method so we don't have to copy
      * byte arrays around so much
@@ -94,39 +92,14 @@ public class PDFMetadata extends PDFStream {
     
     /** @see org.apache.fop.pdf.AbstractPDFStream#outputRawStreamData(java.io.OutputStream) */
     protected void outputRawStreamData(OutputStream out) throws IOException {
-        final String encoding = "UTF-8";
-        out.write("<?xpacket begin=\"\uFEFF\" id=\"W5M0MpCehiHzreSzNTczkc9d\"?>\n"
-                .getBytes(encoding));
         try {
-            TransformerFactory tFactory = TransformerFactory.newInstance();
-            Transformer transformer = tFactory.newTransformer();
-            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-            transformer.setOutputProperty(OutputKeys.ENCODING, encoding);
-            transformer.setOutputProperty(OutputKeys.INDENT, "no");
-            DOMSource src = new DOMSource(this.xmpMetadata);
-            StreamResult res = new StreamResult(out);
-            transformer.transform(src, res);
-        } catch (TransformerConfigurationException e) {
+            XMPSerializer.writeXMPPacket(xmpMetadata, out, this.readOnly);
+        } catch (TransformerConfigurationException tce) {
             throw new IOException("Error setting up Transformer for XMP stream serialization: " 
-                    + e.getMessage());
-        } catch (TransformerException e) {
+                    + tce.getMessage());
+        } catch (SAXException saxe) {
             throw new IOException("Error while serializing XMP stream: " 
-                    + e.getMessage());
-        }
-        if (readOnly) {
-            out.write("\n<?xpacket end=\"r\"?>".getBytes(encoding));
-        } else {
-            //Create padding string (40 * 101 characters is more or less the recommended 4KB)
-            StringBuffer sb = new StringBuffer(101);
-            sb.append('\n');
-            for (int i = 0; i < 100; i++) {
-                sb.append(" ");
-            }
-            byte[] padding = sb.toString().getBytes(encoding);
-            for (int i = 0; i < 40; i++) {
-                out.write(padding);
-            }
-            out.write("\n<?xpacket end=\"w\"?>".getBytes(encoding));
+                    + saxe.getMessage());
         }
     }
     
@@ -150,58 +123,15 @@ public class PDFMetadata extends PDFStream {
     }
 
     /**
-     * Formats a Date using ISO 8601 format in the default time zone.
-     * @param dt the date
-     * @return the formatted date
-     */
-    public static String formatISO8601Date(Date dt) {
-        //ISO 8601 cannot be expressed directly using SimpleDateFormat
-        StringBuffer sb = new StringBuffer(pseudoISO8601DateFormat.format(dt));
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(dt);
-        int offset = cal.get(Calendar.ZONE_OFFSET);
-        offset += cal.get(Calendar.DST_OFFSET);
-        offset /= (1000 * 60); //Convert to minutes
-        
-        if (offset == 0) {
-            sb.append('Z');
-        } else {
-            int zoh = offset / 60;
-            int zom = Math.abs(offset % 60);
-            if (zoh > 0) {
-                sb.append('+');
-            } else {
-                sb.append('-');
-            }
-            if (zoh < 10) {
-                sb.append('0');
-            }
-            sb.append(zoh);
-            sb.append(':');
-            if (zom < 10) {
-                sb.append('0');
-            }
-            sb.append(zom);
-        }
-        
-        return sb.toString();
-    }
-    
-    /**
      * Creates an XMP document based on the settings on the PDF Document.
      * @param pdfDoc the PDF Document
-     * @return a DOM document representing the requested XMP metadata
+     * @return the requested XMP metadata
      */
-    public static Document createXMPFromUserAgent(PDFDocument pdfDoc) {
-        DOMImplementation domImplementation = ElementMapping.getDefaultDOMImplementation();
-        Document doc = domImplementation.createDocument(
-                XMPConstants.XMP_NAMESPACE, "x:xmpmeta", null);
-        Element rdf = doc.createElementNS(XMPConstants.RDF_NAMESPACE, "rdf:RDF");
-        doc.getDocumentElement().appendChild(rdf);
+    public static Metadata createXMPFromUserAgent(PDFDocument pdfDoc) {
+        Metadata meta = new Metadata();
         
-        Element desc, el;
         PDFInfo info = pdfDoc.getInfo();
-        
+
         //Set creation date if not available, yet
         if (info.getCreationDate() == null) {
             Date d = new Date();
@@ -213,105 +143,98 @@ public class PDFMetadata extends PDFStream {
         //error even if the times are essentially equal.
 
         //Dublin Core
-        desc = doc.createElementNS(XMPConstants.RDF_NAMESPACE, "rdf:Description");
-        desc.setAttributeNS(XMPConstants.RDF_NAMESPACE, "rdf:about", "");
-        desc.setAttributeNS(XMLNS, "xmlns:dc", XMPConstants.DUBLIN_CORE_NAMESPACE);
-        rdf.appendChild(desc);
+        DublinCoreAdapter dc = DublinCoreSchema.getAdapter(meta);
         if (info.getAuthor() != null) {
-            el = doc.createElementNS(XMPConstants.DUBLIN_CORE_NAMESPACE, "dc:creator");
-            desc.appendChild(el);
-            Element seq = doc.createElementNS(XMPConstants.RDF_NAMESPACE, "rdf:Seq");
-            el.appendChild(seq);
-            Element li = doc.createElementNS(XMPConstants.RDF_NAMESPACE, "rdf:li");
-            seq.appendChild(li);
-            li.appendChild(doc.createTextNode(info.getAuthor()));
+            dc.addCreator(info.getAuthor());
         }
         if (info.getTitle() != null) {
-            el = doc.createElementNS(XMPConstants.DUBLIN_CORE_NAMESPACE, "dc:title");
-            desc.appendChild(el);
-            el.appendChild(doc.createTextNode(info.getTitle()));
+            dc.setTitle(info.getTitle());
         }
         if (info.getSubject() != null) {
-            el = doc.createElementNS(XMPConstants.DUBLIN_CORE_NAMESPACE, "dc:subject");
-            desc.appendChild(el);
-            el.appendChild(doc.createTextNode(info.getSubject()));
+            dc.addSubject(info.getSubject());
         }
-        el = doc.createElementNS(XMPConstants.DUBLIN_CORE_NAMESPACE, "dc:date");
-        desc.appendChild(el);
-        el.appendChild(doc.createTextNode(formatISO8601Date(info.getCreationDate())));
-        
-        //XMP Basic Schema
-        desc = doc.createElementNS(XMPConstants.RDF_NAMESPACE, "rdf:Description");
-        desc.setAttributeNS(XMPConstants.RDF_NAMESPACE, "rdf:about", "");
-        desc.setAttributeNS(XMLNS, "xmlns:xmp", XMPConstants.XMP_BASIC_NAMESPACE);
-        rdf.appendChild(desc);
-        el = doc.createElementNS(XMPConstants.XMP_BASIC_NAMESPACE, "xmp:CreateDate");
-        desc.appendChild(el);
-        el.appendChild(doc.createTextNode(formatISO8601Date(info.getCreationDate())));
-        PDFProfile profile = pdfDoc.getProfile(); 
-        if (profile.isModDateRequired()) {
-            el = doc.createElementNS(XMPConstants.XMP_BASIC_NAMESPACE, "xmp:ModifyDate");
-            desc.appendChild(el);
-            el.appendChild(doc.createTextNode(formatISO8601Date(info.getCreationDate())));
-        }
-        if (info.getCreator() != null) {
-            el = doc.createElementNS(XMPConstants.XMP_BASIC_NAMESPACE, "xmp:CreatorTool");
-            desc.appendChild(el);
-            el.appendChild(doc.createTextNode(info.getCreator()));
-        }
-        
-        //Adobe PDF Schema
-        desc = doc.createElementNS(XMPConstants.RDF_NAMESPACE, "rdf:Description");
-        desc.setAttributeNS(XMPConstants.RDF_NAMESPACE, "rdf:about", "");
-        desc.setAttributeNS(XMLNS, "xmlns:pdf", XMPConstants.ADOBE_PDF_NAMESPACE);
-        rdf.appendChild(desc);
-        if (info.getKeywords() != null) {
-            el = doc.createElementNS(XMPConstants.ADOBE_PDF_NAMESPACE, "pdf:Keywords");
-            desc.appendChild(el);
-            el.appendChild(doc.createTextNode(info.getKeywords()));
-        }
-        if (info.getProducer() != null) {
-            el = doc.createElementNS(XMPConstants.ADOBE_PDF_NAMESPACE, "pdf:Producer");
-            desc.appendChild(el);
-            el.appendChild(doc.createTextNode(info.getProducer()));
-        }
-        el = doc.createElementNS(XMPConstants.ADOBE_PDF_NAMESPACE, "pdf:PDFVersion");
-        desc.appendChild(el);
-        el.appendChild(doc.createTextNode(pdfDoc.getPDFVersionString()));
-        
+        dc.addDate(info.getCreationDate());
+
         //PDF/A identification
         PDFAMode pdfaMode = pdfDoc.getProfile().getPDFAMode(); 
         if (pdfaMode.isPDFA1LevelB()) {
-            createPDFAIndentification(doc, rdf, 
-                    XMPConstants.PDF_A_IDENTIFICATION, "pdfaid", pdfaMode);
+            PDFAAdapter pdfa = PDFAXMPSchema.getAdapter(meta);
             //Create the identification a second time with the old namespace to keep 
             //Adobe Acrobat happy
-            createPDFAIndentification(doc, rdf, 
-                    XMPConstants.PDF_A_IDENTIFICATION_OLD, "pdfaid_1", pdfaMode);
+            PDFAAdapter pdfaOld = PDFAOldXMPSchema.getAdapter(meta);
+            pdfa.setPart(1);
+            pdfaOld.setPart(1);
+            if (pdfaMode == PDFAMode.PDFA_1A) {
+                pdfa.setConformance("A"); //PDF/A-1a
+                pdfaOld.setConformance("A"); //PDF/A-1a
+            } else {
+                pdfa.setConformance("B"); //PDF/A-1b
+                pdfaOld.setConformance("B"); //PDF/A-1b
+            }
         }
         
-        return doc;
+        //XMP Basic Schema
+        XMPBasicAdapter xmpBasic = XMPBasicSchema.getAdapter(meta);
+        xmpBasic.setCreateDate(info.getCreationDate());
+        PDFProfile profile = pdfDoc.getProfile(); 
+        if (profile.isModDateRequired()) {
+            xmpBasic.setModifyDate(info.getCreationDate());
+        }
+        if (info.getCreator() != null) {
+            xmpBasic.setCreatorTool(info.getCreator());
+        }
+
+        AdobePDFAdapter adobePDF = AdobePDFSchema.getAdapter(meta);
+        if (info.getKeywords() != null) {
+            adobePDF.setKeywords(info.getKeywords());
+        }
+        if (info.getProducer() != null) {
+            adobePDF.setProducer(info.getProducer());
+        }
+        adobePDF.setPDFVersion(pdfDoc.getPDFVersionString());
+        
+        
+        return meta;
     }
 
-    private static void createPDFAIndentification(Document doc, Element rdf, 
-            String pdfaNamespace, String prefix, PDFAMode pdfaMode) {
-        Element desc;
-        Element el;
-        desc = doc.createElementNS(XMPConstants.RDF_NAMESPACE, "rdf:Description");
-        desc.setAttributeNS(XMPConstants.RDF_NAMESPACE, "rdf:about", "");
-        desc.setAttributeNS(XMLNS, "xmlns:" + prefix, pdfaNamespace);
-        rdf.appendChild(desc);
-        el = doc.createElementNS(pdfaNamespace, prefix + ":part");
-        desc.appendChild(el);
-        el.appendChild(doc.createTextNode("1")); //PDF/A-1
-        el = doc.createElementNS(pdfaNamespace, prefix + ":conformance");
-        desc.appendChild(el);
-        if (pdfaMode == PDFAMode.PDFA_1A) {
-            el.appendChild(doc.createTextNode("A")); //PDF/A-1a
+    /**
+     * Updates the values in the Info object from the XMP metadata according to the rules defined
+     * in PDF/A-1 (ISO 19005-1:2005)
+     * @param meta the metadata
+     * @param info the Info object
+     */
+    public static void updateInfoFromMetadata(Metadata meta, PDFInfo info) {
+        DublinCoreAdapter dc = DublinCoreSchema.getAdapter(meta);
+        info.setTitle(dc.getTitle());
+        String[] creators = dc.getCreators();
+        if (creators != null && creators.length > 0) {
+            info.setAuthor(creators[0]);
         } else {
-            el.appendChild(doc.createTextNode("B")); //PDF/A-1b
+            info.setAuthor(null);
         }
+        String[] subjects = dc.getSubjects();
+        //PDF/A-1 defines dc:subject as "Text" but XMP defines it as "bag Text".
+        //We're simply doing the inverse from createXMPFromUserAgent() above.
+        if (subjects != null && subjects.length > 0) {
+            info.setSubject(subjects[0]);
+        } else {
+            info.setSubject(null);
+        }
+        
+        AdobePDFAdapter pdf = AdobePDFSchema.getAdapter(meta);
+        info.setKeywords(pdf.getKeywords());
+        info.setProducer(pdf.getProducer());
+        
+        XMPBasicAdapter xmpBasic = XMPBasicSchema.getAdapter(meta);
+        info.setCreator(xmpBasic.getCreatorTool());
+        Date d;
+        d = xmpBasic.getCreateDate();
+        xmpBasic.setCreateDate(d); //To make Adobe Acrobat happy (bug filed with Adobe)
+        //Adobe Acrobat doesn't like it when the xmp:CreateDate has a different timezone
+        //than Info/CreationDate
+        info.setCreationDate(d);
+        d = xmpBasic.getModifyDate();
+        xmpBasic.setModifyDate(d);
+        info.setModDate(d);
     }
-    
-    
 }

@@ -37,6 +37,7 @@ public class PDFInfo extends PDFObject {
     private String subject = null;
     private String keywords = null;
     private Date creationDate = null;
+    private Date modDate = null;
 
     /**
      * the name of the application that created the
@@ -142,6 +143,20 @@ public class PDFInfo extends PDFObject {
         creationDate = date;
     }
 
+    /** @return last modification date
+     */
+    public Date getModDate() {
+        return this.modDate;
+    }
+
+    /**
+     * Sets the date of the last modification.
+     * @param date the last modification date or null if there are no modifications
+     */
+    public void setModDate(Date date) {
+        this.modDate = date;
+    }
+
     /**
      * @see org.apache.fop.pdf.PDFObject#toPDF()
      */
@@ -192,9 +207,12 @@ public class PDFInfo extends PDFObject {
             bout.write(encodeString(formatDateTime(creationDate)));
             bout.write(encode("\n"));
             
-            if (profile.isModDateRequired()) {
+            if (profile.isModDateRequired() && this.modDate == null) {
+                this.modDate = this.creationDate;
+            }
+            if (this.modDate != null) {
                 bout.write(encode("/ModDate "));
-                bout.write(encodeString(formatDateTime(creationDate)));
+                bout.write(encodeString(formatDateTime(modDate)));
                 bout.write(encode("\n"));
             }
             if (profile.isPDFXActive()) {

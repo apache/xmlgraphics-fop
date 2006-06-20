@@ -53,6 +53,7 @@ import org.apache.fop.fonts.truetype.FontFileReader;
 import org.apache.fop.fonts.truetype.TTFSubSetFile;
 import org.apache.fop.fonts.type1.PFBData;
 import org.apache.fop.fonts.type1.PFBParser;
+import org.apache.xmlgraphics.xmp.Metadata;
 
 /**
  * This class provides method to create and register PDF objects.
@@ -146,8 +147,8 @@ public class PDFFactory {
      * @param readOnly true if the metadata packet should be marked read-only
      * @return the newly created Metadata object
      */
-    public PDFMetadata makeMetadata(Document doc, boolean readOnly) {
-        PDFMetadata pdfMetadata = new PDFMetadata(doc, readOnly);
+    public PDFMetadata makeMetadata(Metadata meta, boolean readOnly) {
+        PDFMetadata pdfMetadata = new PDFMetadata(meta, readOnly);
         getDocument().registerObject(pdfMetadata);
         return pdfMetadata;
     }
