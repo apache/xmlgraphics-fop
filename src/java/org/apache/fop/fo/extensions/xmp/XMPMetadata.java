@@ -21,9 +21,9 @@ package org.apache.fop.fo.extensions.xmp;
 import java.io.Serializable;
 
 import org.apache.fop.fo.extensions.ExtensionAttachment;
-import org.apache.fop.util.DOM2SAX;
 import org.apache.fop.util.XMLizable;
-import org.w3c.dom.Document;
+import org.apache.xmlgraphics.xmp.Metadata;
+import org.apache.xmlgraphics.xmp.XMPConstants;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
@@ -35,7 +35,7 @@ public class XMPMetadata implements ExtensionAttachment, Serializable, XMLizable
     /** The category URI for this extension attachment. */
     public static final String CATEGORY = XMPConstants.XMP_NAMESPACE;
     
-    private Document doc;
+    private Metadata meta;
     private boolean readOnly = true;
 
     /**
@@ -47,23 +47,23 @@ public class XMPMetadata implements ExtensionAttachment, Serializable, XMLizable
     
     /**
      * Default constructor.
-     * @param doc the DOM document containing the XMP metadata
+     * @param metadata the XMP metadata
      */
-    public XMPMetadata(Document doc) {
-        this.doc = doc;
+    public XMPMetadata(Metadata metadata) {
+        this.meta = metadata;
     }
     
-    /** @return the DOM document containing the XMP metadata */
-    public Document getDocument() {
-        return this.doc;
+    /** @return the XMP metadata */
+    public Metadata getMetadata() {
+        return this.meta;
     }
     
     /**
-     * Sets the DOM document containing the XMP metadata.
-     * @param document the DOM document
+     * Sets the XMP metadata.
+     * @param metadata the XMP metadata
      */
-    public void setDocument(Document document) {
-        this.doc = document;
+    public void setMetadata(Metadata metadata) {
+        this.meta = metadata;
     }
     
     /** @return true if the XMP metadata is marked read-only. */
@@ -86,7 +86,7 @@ public class XMPMetadata implements ExtensionAttachment, Serializable, XMLizable
     
     /** @see org.apache.fop.util.XMLizable#toSAX(org.xml.sax.ContentHandler) */
     public void toSAX(ContentHandler handler) throws SAXException {
-        new DOM2SAX(handler).writeDocument(getDocument(), true);
+        getMetadata().toSAX(handler);
     }
     
 }

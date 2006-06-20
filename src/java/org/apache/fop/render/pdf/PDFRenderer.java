@@ -100,22 +100,12 @@ import org.apache.fop.util.ColorProfileUtil;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fo.extensions.xmp.XMPMetadata;
-
-/*
-todo:
-
-word rendering and optimistion
-pdf state optimisation
-line and border
-background pattern
-writing mode
-text decoration
-
-*/
+import org.apache.xmlgraphics.xmp.Metadata;
+import org.apache.xmlgraphics.xmp.schemas.XMPBasicAdapter;
+import org.apache.xmlgraphics.xmp.schemas.XMPBasicSchema;
 
 /**
- * Renderer that renders areas to PDF
- *
+ * Renderer that renders areas to PDF.
  */
 public class PDFRenderer extends AbstractPathOrientedRenderer {
     
@@ -234,36 +224,9 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     protected Map filterMap;
 
     /**
-     * true if a TJ command is left to be written
-     */
-    //protected boolean textOpen = false;
-
-    /**
      * true if a BT command has been written. 
      */
     protected boolean inTextMode = false;
-
-    /**
-     * the previous Y coordinate of the last word written.
-     * Used to decide if we can draw the next word on the same line.
-     */
-    //protected int prevWordY = 0;
-
-    /**
-     * the previous X coordinate of the last word written.
-     * used to calculate how much space between two words
-     */
-    //protected int prevWordX = 0;
-
-    /**
-     * The width of the previous word. Used to calculate space between
-     */
-    //protected int prevWordWidth = 0;
-
-    /**
-     * reusable word area string buffer to reduce memory usage
-     */
-    //private StringBuffer wordAreaPDF = new StringBuffer();
 
     /**
      * create the PDF renderer
@@ -393,8 +356,8 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                 userAgent.getProducer() != null ? userAgent.getProducer() : "");
         this.pdfDoc.getProfile().setPDFAMode(this.pdfAMode);
         this.pdfDoc.getProfile().setPDFXMode(this.pdfXMode);
-        this.pdfDoc.setCreator(userAgent.getCreator());
-        this.pdfDoc.setCreationDate(userAgent.getCreationDate());
+        this.pdfDoc.getInfo().setCreator(userAgent.getCreator());
+        this.pdfDoc.getInfo().setCreationDate(userAgent.getCreationDate());
         this.pdfDoc.getInfo().setAuthor(userAgent.getAuthor());
         this.pdfDoc.getInfo().setTitle(userAgent.getTitle());
         this.pdfDoc.getInfo().setKeywords(userAgent.getKeywords());
@@ -601,8 +564,17 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     }
     
     private void renderXMPMetadata(XMPMetadata metadata) {
+        Metadata docXMP = metadata.getMetadata();
+        Metadata fopXMP = PDFMetadata.createXMPFromUserAgent(pdfDoc);
+        //Merge FOP's own metadata into the one from the XSL-FO document
+        fopXMP.mergeInto(docXMP);
+        XMPBasicAdapter xmpBasic = XMPBasicSchema.getAdapter(docXMP);
+        //Metadata was changed so update metadata date
+        xmpBasic.setMetadataDate(new java.util.Date());
+        PDFMetadata.updateInfoFromMetadata(docXMP, pdfDoc.getInfo());
+
         PDFMetadata pdfMetadata = pdfDoc.getFactory().makeMetadata(
-                metadata.getDocument(), metadata.isReadOnly());
+                docXMP, metadata.isReadOnly());
         pdfDoc.getRoot().setMetadata(pdfMetadata);
     }
 
@@ -670,7 +642,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         if (pdfDoc.getRoot().getMetadata() == null) {
             //If at this time no XMP metadata for the overall document has been set, create it
             //from the PDFInfo object.
-            Document xmp = PDFMetadata.createXMPFromUserAgent(pdfDoc);
+            Metadata xmp = PDFMetadata.createXMPFromUserAgent(pdfDoc);
             PDFMetadata pdfMetadata = pdfDoc.getFactory().makeMetadata(
                     xmp, true);
             pdfDoc.getRoot().setMetadata(pdfMetadata);

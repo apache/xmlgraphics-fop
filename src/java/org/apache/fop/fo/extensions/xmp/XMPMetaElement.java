@@ -18,21 +18,14 @@
 
 package org.apache.fop.fo.extensions.xmp;
 
-import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.XMLObj;
-import org.apache.fop.fo.extensions.ExtensionAttachment;
-import org.apache.fop.util.ContentHandlerFactory;
-import org.apache.fop.util.DOMBuilderContentHandlerFactory;
+import org.apache.xmlgraphics.xmp.XMPConstants;
 
 /**
  * Represents the top-level "xmpmeta" element used by XMP metadata.
  */
-public class XMPMetaElement extends XMLObj {
+public class XMPMetaElement extends AbstractMetadataElement {
 
-    private XMPMetadata attachment;
-    
     /**
      * Main constructor.
      * @param parent the parent formatting object
@@ -41,6 +34,11 @@ public class XMPMetaElement extends XMLObj {
         super(parent);
     }
     
+    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    public String getLocalName() {
+        return "xmpmeta";
+    }
+
     /** @see org.apache.fop.fo.FONode#getNormalNamespacePrefix() */
     public String getNormalNamespacePrefix() {
         return "x";
@@ -49,34 +47,6 @@ public class XMPMetaElement extends XMLObj {
     /** @see org.apache.fop.fo.FONode#getNamespaceURI() */
     public String getNamespaceURI() {
         return XMPConstants.XMP_NAMESPACE;
-    }
-
-    /**
-     * @see org.apache.fop.fo.FONode#getContentHandlerFactory()
-     */
-    public ContentHandlerFactory getContentHandlerFactory() {
-        return new DOMBuilderContentHandlerFactory(getNamespaceURI(), 
-                ElementMapping.getDefaultDOMImplementation());
-    }
-    
-    /** @see org.apache.fop.fo.FONode#getExtensionAttachment() */
-    public ExtensionAttachment getExtensionAttachment() {
-        if (parent instanceof FObj) {
-            if (attachment == null) {
-                attachment = new XMPMetadata(doc);
-            }
-            return attachment;
-        } else {
-            return super.getExtensionAttachment();
-        }
-    }
-
-    /**
-     * @see org.apache.fop.fo.XMLObj#notifyObjectBuilt(java.lang.Object)
-     */
-    public void notifyObjectBuilt(Object obj) {
-        super.notifyObjectBuilt(obj);
-        attachment.setDocument(doc);
     }
 
 }

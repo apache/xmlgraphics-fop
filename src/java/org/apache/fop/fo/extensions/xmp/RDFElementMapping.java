@@ -22,6 +22,7 @@ import java.util.HashMap;
 
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.ElementMapping;
+import org.apache.xmlgraphics.xmp.XMPConstants;
 
 import org.w3c.dom.DOMImplementation;
 
