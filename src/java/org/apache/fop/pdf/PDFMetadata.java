@@ -234,7 +234,9 @@ public class PDFMetadata extends PDFStream {
         //than Info/CreationDate
         info.setCreationDate(d);
         d = xmpBasic.getModifyDate();
-        xmpBasic.setModifyDate(d);
-        info.setModDate(d);
+        if (d != null) { //ModifyDate is only required for PDF/X
+            xmpBasic.setModifyDate(d);
+            info.setModDate(d);
+        }
     }
 }
