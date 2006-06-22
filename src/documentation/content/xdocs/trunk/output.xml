@@ -429,6 +429,8 @@ out = proc.getOutputStream();]]></source>
     </section>
     <section id="afp-configuration">
       <title>Configuration</title>
+      <section id="afp-font-config">
+        <title>Fonts</title>
       <p>The AFP Renderer requires special configuration particularly related to fonts.
       AFP Render configuration is done through the normal FOP configuration file. The MIME type
       for the AFP Renderer is application/x-afp which means the AFP Renderer section in the FOP configuration file
@@ -553,13 +555,87 @@ out = proc.getOutputStream();]]></source>
         <font-triplet name="monospace" style="normal" weight="bold"/>
         <font-triplet name="Courier" style="normal" weight="bold"/>
       </font>]]></source>
+      </section>
+      <section id="afp-image-config">
+        <title>Images</title>
+        <p>By default the AFP Renderer converts all images to 8 bit grey level.
+        This can be overridden by the &lt;images&gt; configuration element. Example:</p>
+      <source><![CDATA[
+      <images mode="color" />
+]]></source>
+      <p>This will put images as RGB images into the AFP output stream. The default setting is:</p>
+      <source><![CDATA[
+      <images mode="b+w" bits-per-pixel="8" />
+]]></source>
+      <p>Only the values "color" and "b+w" are allowed for the mode attribute. The bits-per-pixel
+      attribute is ignored if mode is "color". For "b+w" mode is must be 1, 4, or 8.</p>
+      </section>
     </section>
-   <section id="afp-extensions">
+    <section id="afp-extensions">
       <title>Extensions</title>
-      <p>The AFP Renderer supports the following extensions which can be embedded into the input 
-      fo document:</p>
-      <p>T.B.A</p>
-   </section>
+      <p>The AFP Renderer supports some AFP specific extensions which can be embedded into the input 
+      fo document. To use the extensions the appropriate namespace must be declared in the fo:root element like this:</p>
+      <source><![CDATA[
+      <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
+               xmlns:afp="http://xmlgraphics.apache.org/fop/extensions/afp">
+]]></source>
+      <section id="afp-page-overlay">
+        <title>Page Overlay Extension</title>
+        <p>The include-page-overlay extension element allows to define on a per simple-page-master basis a page overlay resource. Example:</p>
+      <source><![CDATA[
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="simple">
+          <afp:include-page-overlay name="O1SAMP1 " />
+          ...
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+]]></source>
+        <p>The mandatory name attribute must refer to an 8 character (space padded) resource name that
+        must be known in the AFP processing environment.</p>
+      </section>
+      <section id="afp-page-segment">
+        <title>Page Segment Extension</title>
+        <p>The include-page-segment extension element allows to define resource substitution for fo:external-graphics elements. 
+          Example:</p>
+      <source><![CDATA[
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
+     xmlns:afp="http://xmlgraphics.apache.org/fop/extensions/afp">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="simple">
+          <afp:include-page-segment name="S1ISLOGO" src="../../resources/images/bgimg300dpi.jpg" />
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+]]></source>
+        <p>The include-page-segment extension element can only occur within a simple-page-master.
+        Multiple include-page-segment extension elements within a simple-page-master are allowed.
+        The mandatory name attribute must refer to an 8 character 
+        (space padded) resource name that must be known in the AFP processing environment.
+        The value of the mandatory src attribute is compared against the value of the src attribute in
+        fo:external-graphic elements and if it is identical (string matching is used) in the generated
+        AFP the external graphic is replaced by a reference to the given resource.
+        </p>
+      </section>
+      <section id="afp-tag-logical-element">
+        <title>Tag Logical Element Extension</title>
+        <p>The tag-logical-element extension element allows to injects TLEs into the AFP output stream. Example: 
+          Example:</p>
+      <source><![CDATA[
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
+     xmlns:afp="http://xmlgraphics.apache.org/fop/extensions/afp">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="simple">
+          <afp:tag-logical-element name="The TLE Name" value="The TLE Value" />
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+]]></source>
+        <p>The tag-logical-element extension element can only occur within a simple-page-master.
+        Multiple tag-logical-element extension elements within a simple-page-master are allowed.
+        The name and value attributes are mandatory.
+        </p>
+      </section>
+    </section>
   </section>
   <section id="mif">
     <title>MIF</title>
