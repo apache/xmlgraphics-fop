@@ -1556,7 +1556,8 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     private void renderPageObjectExtensions(PageViewport page) {
 
         _pageSegmentsMap = null;
-        if (page.getExtensionAttachments().size() > 0) {
+        if (page.getExtensionAttachments() != null
+            && page.getExtensionAttachments().size() > 0) {
             //Extract all AFPPageSetup instances from the attachment list on the s-p-m
             Iterator i = page.getExtensionAttachments().iterator();
             while (i.hasNext()) {
