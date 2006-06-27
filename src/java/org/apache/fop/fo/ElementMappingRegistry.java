@@ -160,7 +160,11 @@ public class ElementMappingRegistry {
      */
     public DOMImplementation getDOMImplementationForNamespace(String namespaceURI) {
         ElementMapping mapping = (ElementMapping)this.namespaces.get(namespaceURI);
-        return mapping.getDOMImplementation();
+        if (mapping == null) {
+            return null;
+        } else {
+            return mapping.getDOMImplementation();
+        }
     }
     
     /**
