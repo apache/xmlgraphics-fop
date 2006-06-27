@@ -23,6 +23,7 @@ import java.awt.geom.Rectangle2D;
 import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
@@ -563,7 +564,11 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
     
     /** @return the list of extension attachments for this page */
     public List getExtensionAttachments() {
-        return this.extensionAttachments;
+        if (this.extensionAttachments == null) {
+            return Collections.EMPTY_LIST;
+        } else {
+            return this.extensionAttachments;
+        }
     }
     
     /** @return True if this is a blank page. */
