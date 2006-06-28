@@ -227,7 +227,9 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
      */
     public void endPage() {
 
-        _presentationTextObject.endControlSequence();
+        if (_presentationTextObject != null) {
+            _presentationTextObject.endControlSequence();
+        }
 
         _complete = true;
 
