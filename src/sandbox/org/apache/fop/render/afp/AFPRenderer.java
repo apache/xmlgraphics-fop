@@ -67,6 +67,7 @@ import org.apache.fop.image.TIFFImage;
 import org.apache.fop.image.XMLImage;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Graphics2DAdapter;
+import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.afp.extensions.AFPElementMapping;
 import org.apache.fop.render.afp.extensions.AFPPageSetup;
 import org.apache.fop.render.afp.fonts.AFPFontInfo;
@@ -1054,6 +1055,18 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
+     * @see org.apache.fop.render.PrintRenderer#createRendererContext(
+     *          int, int, int, int, java.util.Map)
+     */
+    protected RendererContext createRendererContext(int x, int y, int width, int height, Map foreignAttributes) {
+        RendererContext context;
+        context = super.createRendererContext(x, y, width, height, foreignAttributes);
+        context.setProperty(AFPRendererContextConstants.AFP_GRAYSCALE, 
+                new Boolean(!this.colorImages));
+        return context;
+    }
+
+    /**
      * Draw an image at the indicated location.
      * @see org.apache.fop.render.AbstractRenderer#drawImage(String, Rectangle2D, Map)
      */
@@ -1077,7 +1090,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                 return;
             }
             String mime = fopimage.getMimeType();
-            if ("text/xml".equals(mime)) {
+            if ("text/xml".equals(mime) || MimeConstants.MIME_SVG.equals(mime)) {
                 if (!fopimage.load(FopImage.ORIGINAL_DATA)) {
                     return;
                 }
@@ -1085,27 +1098,6 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                 String ns = ((XMLImage) fopimage).getNameSpace();
 
                 renderDocument(doc, ns, pos, foreignAttributes);
-            } else if (MimeConstants.MIME_SVG.equals(mime)) {
-                if (!fopimage.load(FopImage.ORIGINAL_DATA)) {
-                    return;
-                }
-                int x = mpts2units(pos.getX() + currentIPPosition);
-                int y = mpts2units(pos.getY() + currentBPPosition);
-                int w = mpts2units(pos.getWidth());
-                int h = mpts2units(pos.getHeight());
-                ImageObject io = _afpDataStream.getImageObject(x, y, w, h);
-                io.setImageParameters(
-                    (int)(fopimage.getHorizontalResolution() * 10),
-                    (int)(fopimage.getVerticalResolution() * 10),
-                    fopimage.getWidth(),
-                    fopimage.getHeight()
-                );
-                if (colorImages) {
-                    io.setImageIDESize((byte)24);
-                    io.setImageData(SVGConverter.convertToTIFF((XMLImage)fopimage));
-                } else {
-                    convertToGrayScaleImage(io, SVGConverter.convertToTIFF((XMLImage)fopimage));
-                }
             } else if (MimeConstants.MIME_EPS.equals(mime)) {
                 log.warn("EPS images are not supported by this renderer");
             /*
@@ -1199,6 +1191,29 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
+     * Writes a BufferedImage to an OutputStream as raw sRGB bitmaps.
+     * @param img the BufferedImage
+     * @param out the OutputStream
+     * @throws IOException In case of an I/O error.
+     */
+    public static void writeImage(BufferedImage img, OutputStream out) throws IOException {
+        int w  = img.getWidth();
+        int h  = img.getHeight();
+        int[] tmpMap = img.getRGB(0, 0, w, h, null, 0, w);
+        for (int i = 0; i < h; i++) {
+            for (int j = 0; j < w; j++) {
+                int p = tmpMap[i * w + j];
+                int r = (p >> 16) & 0xFF;
+                int g = (p >> 8) & 0xFF;
+                int b = (p) & 0xFF;
+                out.write((byte)(r & 0xFF));
+                out.write((byte)(g & 0xFF));
+                out.write((byte)(b & 0xFF));
+            }
+        }
+    }
+    
+    /**
      * Draws a BufferedImage to AFP.
      * @param bi the BufferedImage
      * @param resolution the resolution of the BufferedImage
@@ -1215,7 +1230,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
         try {
             //Serialize image
-            SVGConverter.writeImage(bi, baout);
+            writeImage(bi, baout);
             byte[] buf = baout.toByteArray();
             
             //Generate image
