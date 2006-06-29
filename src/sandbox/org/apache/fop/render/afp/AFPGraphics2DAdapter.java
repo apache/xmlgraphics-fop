@@ -43,10 +43,12 @@ public class AFPGraphics2DAdapter extends AbstractGraphics2DAdapter {
         RendererContext.RendererContextWrapper wrappedContext
                 = new RendererContext.RendererContextWrapper(context);
         AFPRenderer afp = (AFPRenderer)context.getRenderer();
+        Boolean grayObj = (Boolean)context.getProperty(AFPRendererContextConstants.AFP_GRAYSCALE);
+        boolean gray = (grayObj != null ? grayObj.booleanValue() : false);
         
         //Paint to a BufferedImage
         int resolution = (int)Math.round(context.getUserAgent().getTargetResolution());
-        BufferedImage bi = paintToBufferedImage(painter, wrappedContext, resolution, false, false);
+        BufferedImage bi = paintToBufferedImage(painter, wrappedContext, resolution, gray, false);
 
         afp.drawBufferedImage(bi, resolution, x, y, width, height);
     }
