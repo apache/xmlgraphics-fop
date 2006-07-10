@@ -136,6 +136,9 @@ public class CommandLineOptions {
                 }
                 checkSettings();
                 createUserConfig();
+                if (factory.getUserConfig() != null) {
+                    foUserAgent.configure(factory.getUserConfig());
+                }
                 addXSLTParameter("fop-output-format", getOutputFormat());
                 addXSLTParameter("fop-version", Version.getVersion());
             }

@@ -27,6 +27,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="MM" type="fix">
+        Bugfix: FOUserAgent specific configuration parameters specified in config file
+        were not set when FOP was invoked from command line.
+      </action>
       <action context="Code" dev="JM" type="add">
         Added support for PDF/A-1b and PDF/X-3:2003. (Note: this may still be a bit
         incomplete. Feedback is welcome!)

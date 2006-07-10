@@ -127,13 +127,8 @@ public class FOUserAgent {
             throw new NullPointerException("The factory parameter must not be null");
         }
         this.factory = factory;
-        try {
-            if (factory.getUserConfig() != null) {
-                configure(factory.getUserConfig());
-            }
-        } catch (ConfigurationException cfge) {
-            log.error("Error while initializing the user asgent: "
-                    + cfge.getMessage());
+        if (factory.getUserConfig() != null) {
+            configure(factory.getUserConfig());
         }
     }
     
@@ -287,7 +282,7 @@ public class FOUserAgent {
      * Configures the FOUserAgent through the factory's configuration. 
      * @see org.apache.avalon.framework.configuration.Configurable
      */
-    protected void configure(Configuration cfg) throws ConfigurationException {
+    public void configure(Configuration cfg) {
         setBaseURL(FopFactory.getBaseURLfromConfig(cfg, "base"));
         if (cfg.getChild("target-resolution", false) != null) {
             this.targetResolution 
