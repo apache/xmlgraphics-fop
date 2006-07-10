@@ -78,7 +78,20 @@ public class RtfStringConverter {
         if (str == null) {
             return;
         }
+        w.write(escape(str));
+    }
 
+    /**
+     * Escapes a String as required by the RTF spec.
+     * @param str String to be escaped
+     * @return the escaped string
+     */
+    public String escape(String str) {
+        if (str == null) {
+            return null;
+        }
+
+        StringBuffer sb = new StringBuffer(Math.max(16, str.length()));
         // TODO: could be made more efficient (binary lookup, etc.)
         for (int i = 0; i < str.length(); i++) {
             final Character c = new Character(str.charAt(i));
@@ -102,20 +115,21 @@ public class RtfStringConverter {
 
             if (replacement != null) {
                 // RTF-escaped char
-                w.write('\\');
-                w.write(replacement);
-                w.write(' ');
+                sb.append('\\');
+                sb.append(replacement);
+                sb.append(' ');
             } else if (c.charValue() > 127) {
                 // write unicode representation - contributed by Michel Jacobson
                 // <jacobson@idf.ext.jussieu.fr>
-                w.write("\\u");
-                w.write(Integer.toString((int)c.charValue()));
-                w.write("\\\'3f");
+                sb.append("\\u");
+                sb.append(Integer.toString((int)c.charValue()));
+                sb.append("\\\'3f");
             } else {
                 // plain char that is understood by RTF natively
-                w.write(c.charValue());
+                sb.append(c.charValue());
             }
         }
+        return sb.toString();
     }
-
+    
 }
