@@ -28,9 +28,6 @@ package org.apache.fop.render.awt;
 // Java
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
 import java.awt.print.PageFormat;
 import java.awt.print.Pageable;
@@ -44,8 +41,8 @@ import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.render.awt.viewer.PreviewDialog;
+import org.apache.fop.render.awt.viewer.StatusListener;
 import org.apache.fop.render.awt.viewer.Renderable;
-import org.apache.fop.render.awt.viewer.Translator;
 import org.apache.fop.render.java2d.Java2DRenderer;
 
 /**
@@ -58,9 +55,6 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
     /** The MIME type for AWT-Rendering */
     public static final String MIME_TYPE = MimeConstants.MIME_FOP_AWT_PREVIEW;
 
-    /** The resource bundle used for AWT messages. */
-    protected Translator translator = null;
-
     /** flag for debugging */
     public boolean debug;
 
@@ -68,29 +62,27 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
     public boolean dialogDisplay = true;
 
     /**
-     * The preview dialog frame used for display of the documents. Also used as
-     * the AWT Component for FontSetup in generating valid font measures.
-     */
-    protected PreviewDialog frame;
-
-    /**
      * Renderable instance that can be used to reload and re-render a document after 
      * modifications.
      */
     protected Renderable renderable;
+
+    /**
+     * Will be notified when rendering progresses 
+     */
+    protected StatusListener statusListener = null;
     
     /**
      * Creates a new AWTRenderer instance.
      */
     public AWTRenderer() {
-        translator = new Translator();
     }
 
     /** @see org.apache.fop.render.Renderer#setUserAgent(org.apache.fop.apps.FOUserAgent) */
     public void setUserAgent(FOUserAgent foUserAgent) {
         super.setUserAgent(foUserAgent);
         if (dialogDisplay) {
-            createPreviewDialog();
+            setStatusListener(PreviewDialog.createPreviewDialog(userAgent, this.renderable));
         }
     }
 
@@ -118,17 +110,16 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
     public void renderPage(PageViewport pageViewport) throws IOException {
 
         super.renderPage(pageViewport);
-        if (frame != null) {
-            frame.setInfo();
+        if (statusListener != null) {
+            statusListener.notifyPageRendered();
         }
     }
 
     /** @see org.apache.fop.render.Renderer#stopRenderer() */
     public void stopRenderer() throws IOException {
         super.stopRenderer();
-        if (frame != null) {
-            frame.setStatus(translator.getString("Status.Show"));
-            frame.reload(); // Refreshes view of page
+        if (statusListener != null) {
+            statusListener.notifyRendererStopped(); // Refreshes view of page
         }
     }
 
@@ -149,32 +140,7 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
                 / userAgent.getTargetPixelUnitToMillimeter();
         int bitmapWidth = (int) ((pageWidth * scaleX) + 0.5);
         int bitmapHeight = (int) ((pageHeight * scaleY) + 0.5);
-                return new Dimension(bitmapWidth, bitmapHeight);
-    }
-
-    /** Creates and initialize the AWT Viewer main window */
-    private PreviewDialog createPreviewDialog() {
-        frame = new PreviewDialog(userAgent, this.renderable);
-        frame.addWindowListener(new WindowAdapter() {
-            public void windowClosed(WindowEvent we) {
-                System.exit(0);
-            }
-        });
-
-        // Centers the window
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        Dimension frameSize = frame.getSize();
-        if (frameSize.height > screenSize.height) {
-            frameSize.height = screenSize.height;
-        }
-        if (frameSize.width > screenSize.width) {
-            frameSize.width = screenSize.width;
-        }
-        frame.setLocation((screenSize.width - frameSize.width) / 2,
-                (screenSize.height - frameSize.height) / 2);
-        frame.setStatus(translator.getString("Status.Build.FO.tree"));
-        frame.setVisible(true);
-        return frame;
+        return new Dimension(bitmapWidth, bitmapHeight);
     }
 
     /** @see java.awt.print.Pageable#getPageFormat(int) */
@@ -222,11 +188,6 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
         return true; // TODO true?
     }
 
-    /** @return the Translator for this renderer */
-    public Translator getTranslator() {
-        return translator;
-    }
-
     /** @see org.apache.fop.render.AbstractRenderer */
     public String getMimeType() {
         return MIME_TYPE;
@@ -270,6 +231,19 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
 
         // restores the last graphics state from the stack
         restoreGraphicsState();
+    }
+
+    /** @return the StatusListener. */
+    public StatusListener getStatusListener() {
+        return statusListener;
+    }
+
+    /**
+     * Sets a StatusListener this renderer uses to notify about events.
+     * @param statusListener The StatusListener to set.
+     */
+    public void setStatusListener(StatusListener statusListener) {
+        this.statusListener = statusListener;
     }
 
 }

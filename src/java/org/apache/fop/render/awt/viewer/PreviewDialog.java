@@ -33,6 +33,8 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 
@@ -60,7 +62,7 @@ import org.apache.fop.render.awt.AWTRenderer;
  * AWT Viewer main window.
  * Surrounds a PreviewPanel with a bunch of pretty buttons and controls.
  */
-public class PreviewDialog extends JFrame {
+public class PreviewDialog extends JFrame implements StatusListener {
 
     /** The Translator for localization */
     protected Translator translator;
@@ -99,7 +101,7 @@ public class PreviewDialog extends JFrame {
         renderer = (AWTRenderer) foUserAgent.getRendererOverride();
         this.foUserAgent = foUserAgent;
         this.renderable = renderable;
-        translator = renderer.getTranslator();
+        translator = new Translator();
 
         //Commands aka Actions
         Command printAction = new Command(translator.getString("Menu.Print"), "Print") {
@@ -237,6 +239,38 @@ public class PreviewDialog extends JFrame {
                                              GridBagConstraints.HORIZONTAL,
                                              new Insets(0, 0, 0, 0), 0, 0));
         getContentPane().add(statusBar, BorderLayout.SOUTH);
+    }
+    
+    /**
+     * Creates and initialize the AWT Viewer main window. 
+     * @param foUserAgent the FO user agent
+     * @param renderable the target for the rendering
+     * @return the newly initialized preview dialog
+     */
+    public static PreviewDialog createPreviewDialog(FOUserAgent foUserAgent, 
+                Renderable renderable) {
+        PreviewDialog frame = new PreviewDialog(foUserAgent, renderable);
+
+        frame.addWindowListener(new WindowAdapter() {
+            public void windowClosed(WindowEvent we) {
+                System.exit(0);
+            }
+        });
+
+        // Centers the window
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        Dimension frameSize = frame.getSize();
+        if (frameSize.height > screenSize.height) {
+            frameSize.height = screenSize.height;
+        }
+        if (frameSize.width > screenSize.width) {
+            frameSize.width = screenSize.width;
+        }
+        frame.setLocation((screenSize.width - frameSize.width) / 2,
+                    (screenSize.height - frameSize.height) / 2);
+        frame.setStatus(frame.translator.getString("Status.Build.FO.tree"));
+        frame.setVisible(true);
+        return frame;
     }
 
     /**
@@ -396,10 +430,16 @@ public class PreviewDialog extends JFrame {
         return menuBar;
     }
 
-    public void reload() {
-        previewPanel.reload();
+    /** @see org.apache.fop.render.awt.viewer.StatusListener#notifyRendererStopped() */
+    public void notifyRendererStopped() {
+        reload();
     }
 
+    private void reload() {
+        setStatus(translator.getString("Status.Show"));
+        previewPanel.reload();
+    }
+    
     /**
      * Changes the current visible page
      * @param number the page number to go to
@@ -407,7 +447,7 @@ public class PreviewDialog extends JFrame {
     public void goToPage(int number) {
         if (number != previewPanel.getPage()) {
             previewPanel.setPage(number);
-            setInfo();
+            notifyPageRendered();
         }
     }
 
@@ -570,7 +610,7 @@ public class PreviewDialog extends JFrame {
     /**
      * Updates the message to be shown in the info bar in a thread safe way.
      */
-    public void setInfo() {
+    public void notifyPageRendered() {
         SwingUtilities.invokeLater(new ShowInfo());
     }
 
