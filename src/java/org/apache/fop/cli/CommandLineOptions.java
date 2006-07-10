@@ -157,7 +157,7 @@ public class CommandLineOptions {
         if (MimeConstants.MIME_FOP_AWT_PREVIEW.equals(outputmode)) {
             //set the system look&feel for the preview dialog
             try {
-                if (false) UIManager.setLookAndFeel(
+                UIManager.setLookAndFeel(
                     UIManager.getSystemLookAndFeelClassName());
             } catch (Exception e) {
                 System.err.println("Couldn't set system look & feel!");
