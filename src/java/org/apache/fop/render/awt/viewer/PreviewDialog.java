@@ -149,14 +149,6 @@ public class PreviewDialog extends JFrame implements StatusListener {
             }
         };
 
-        //set the system look&feel
-        try {
-            UIManager.setLookAndFeel(
-                UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            System.err.println("Couldn't set system look & feel!");
-        }
-
         setTitle("FOP: AWT-" + translator.getString("Title.Preview"));
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
@@ -248,14 +240,16 @@ public class PreviewDialog extends JFrame implements StatusListener {
      * @return the newly initialized preview dialog
      */
     public static PreviewDialog createPreviewDialog(FOUserAgent foUserAgent, 
-                Renderable renderable) {
+                Renderable renderable, boolean asMainWindow) {
         PreviewDialog frame = new PreviewDialog(foUserAgent, renderable);
 
-        frame.addWindowListener(new WindowAdapter() {
-            public void windowClosed(WindowEvent we) {
-                System.exit(0);
-            }
-        });
+        if (asMainWindow) {
+            frame.addWindowListener(new WindowAdapter() {
+                public void windowClosed(WindowEvent we) {
+                    System.exit(0);
+                }
+            });
+        }
 
         // Centers the window
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
