@@ -63,7 +63,8 @@ public class RtfListStyleText extends RtfListStyle {
         item.writeGroupMark(true);
         //item.writeControlWord("pndec");
         item.writeOneAttribute(RtfListTable.LIST_FONT_TYPE, "2");
-        item.writeControlWord("pntxtb " + text);
+        item.writeControlWord("pntxtb");
+        RtfStringConverter.getInstance().writeRtfString(item.writer, text);
         item.writeGroupMark(false);
     }
     
@@ -103,7 +104,8 @@ public class RtfListStyleText extends RtfListStyle {
             }
         }
         element.writeOneAttributeNS(
-                RtfListTable.LIST_TEXT_FORM, "\\'" + sCount + text);
+                RtfListTable.LIST_TEXT_FORM, "\\'" + sCount 
+                    + RtfStringConverter.getInstance().escape(text));
         element.writeGroupMark(false);
             
         element.writeGroupMark(true);
