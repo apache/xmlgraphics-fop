@@ -61,6 +61,9 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
     /** If true, preview dialog is shown. */
     public boolean dialogDisplay = true;
 
+    /** true if the preview dialog should be the main window of the application */
+    private boolean previewAsMainWindow;
+
     /**
      * Renderable instance that can be used to reload and re-render a document after 
      * modifications.
@@ -71,18 +74,30 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
      * Will be notified when rendering progresses 
      */
     protected StatusListener statusListener = null;
+
     
     /**
      * Creates a new AWTRenderer instance.
      */
     public AWTRenderer() {
+        this(false);
+    }
+
+    /**
+     * Creates a new AWTRenderer instance.
+     * @param previewAsMainWindow true if the preview dialog created by the renderer should be
+     *                            the main window of the application.
+     */
+    public AWTRenderer(boolean previewAsMainWindow) {
+        this.previewAsMainWindow = previewAsMainWindow;
     }
 
     /** @see org.apache.fop.render.Renderer#setUserAgent(org.apache.fop.apps.FOUserAgent) */
     public void setUserAgent(FOUserAgent foUserAgent) {
         super.setUserAgent(foUserAgent);
         if (dialogDisplay) {
-            setStatusListener(PreviewDialog.createPreviewDialog(userAgent, this.renderable));
+            setStatusListener(PreviewDialog.createPreviewDialog(userAgent, this.renderable, 
+                    this.previewAsMainWindow));
         }
     }
 

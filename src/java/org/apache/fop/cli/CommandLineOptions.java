@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.Vector;
 
+import javax.swing.UIManager;
+
 import org.apache.fop.Version;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
@@ -153,7 +155,15 @@ public class CommandLineOptions {
         inputHandler = createInputHandler();
 
         if (MimeConstants.MIME_FOP_AWT_PREVIEW.equals(outputmode)) {
-            AWTRenderer renderer = new AWTRenderer();
+            //set the system look&feel for the preview dialog
+            try {
+                if (false) UIManager.setLookAndFeel(
+                    UIManager.getSystemLookAndFeelClassName());
+            } catch (Exception e) {
+                System.err.println("Couldn't set system look & feel!");
+            }
+
+            AWTRenderer renderer = new AWTRenderer(true);
             renderer.setRenderable(inputHandler); //set before user agent!
             renderer.setUserAgent(foUserAgent);
             foUserAgent.setRendererOverride(renderer);
