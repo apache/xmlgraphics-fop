@@ -20,6 +20,7 @@ package org.apache.fop.fo.properties;
 
 import java.awt.Color;
 
+import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.FObj;
@@ -164,6 +165,12 @@ public class NumberProperty extends Property implements Numeric {
      */
     public Numeric getNumeric() {
         return this;
+    }
+
+    /** @see org.apache.fop.fo.properties.Property#getLength() */
+    public Length getLength() {
+        //Assume pixels (like in HTML) when there's no unit
+        return new FixedLength(getNumericValue(), "px");
     }
 
     /**

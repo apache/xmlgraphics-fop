@@ -60,7 +60,7 @@ public class FixedLength extends LengthProperty {
     protected void convert(double dvalue, String unit) {
         // TODO: the whole routine smells fishy.
 
-        int assumedResolution = 1;    // points/pixel
+        int assumedResolution = 1;    // points/pixel = 72dpi
 
         if (unit.equals("in")) {
             dvalue = dvalue * 72;

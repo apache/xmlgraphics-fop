@@ -34,7 +34,6 @@ public abstract class LengthProperty extends Property
      * Inner class for making instances of LengthProperty
      */
     public static class Maker extends PropertyMaker {
-        private boolean autoOk = false;
 
         /**
          * @param propId the id of the property for which a Maker should be created
@@ -44,7 +43,9 @@ public abstract class LengthProperty extends Property
         }
 
         /**
-         * @see PropertyMaker#convertProperty
+         * @see org.apache.fop.fo.properties.PropertyMaker#convertProperty(
+         *          org.apache.fop.fo.properties.Property, org.apache.fop.fo.PropertyList, 
+         *          org.apache.fop.fo.FObj)
          */
         public Property convertProperty(Property p,
                                         PropertyList propertyList,
@@ -54,6 +55,10 @@ public abstract class LengthProperty extends Property
             }
             if (p instanceof LengthProperty) {
                 return p;
+            }
+            if (p instanceof NumberProperty) {
+                //Assume pixels (like in HTML) when there's no unit
+                return new FixedLength(p.getNumeric().getNumericValue(), "px");
             }
             Length val = p.getLength();
             if (val != null) {
@@ -82,7 +87,7 @@ public abstract class LengthProperty extends Property
     }
 
     /**
-     * Return the numeric dimension. Length always a dimension of 1.
+     * @return the numeric dimension. Length always a dimension of 1.
      */
     public int getDimension() {
         return 1;
