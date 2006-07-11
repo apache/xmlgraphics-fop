@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.UIManager;
@@ -88,7 +89,11 @@ public class CommandLineOptions {
     private int inputmode = NOT_SET;
     /* output mode */
     private String outputmode = null;
-
+    /* rendering options (for the user agent) */
+    private Map renderingOptions = new java.util.HashMap();
+    /* target resolution (for the user agent) */
+    private int targetResolution = 0;
+    
     private FopFactory factory = FopFactory.newInstance();
     private FOUserAgent foUserAgent;
 
@@ -128,8 +133,6 @@ public class CommandLineOptions {
             throws FOPException, IOException {
         boolean optionsParsed = true;
 
-        foUserAgent = factory.newFOUserAgent();
-
         try {
             optionsParsed = parseOptions(args);
             if (optionsParsed) {
@@ -138,8 +141,12 @@ public class CommandLineOptions {
                 }
                 checkSettings();
                 createUserConfig();
-                if (factory.getUserConfig() != null) {
-                    foUserAgent.configure(factory.getUserConfig());
+                
+                //Factory config is set up, now we can create the user agent
+                foUserAgent = factory.newFOUserAgent();
+                foUserAgent.getRendererOptions().putAll(renderingOptions);
+                if (targetResolution != 0) {
+                    foUserAgent.setTargetResolution(targetResolution);
                 }
                 addXSLTParameter("fop-output-format", getOutputFormat());
                 addXSLTParameter("fop-version", Version.getVersion());
@@ -337,7 +344,7 @@ public class CommandLineOptions {
             throw new FOPException(
                     "if you use '-dpi', you must specify a resolution (dots per inch)");
         } else {
-            foUserAgent.setTargetResolution(Integer.parseInt(args[i + 1]));
+            this.targetResolution = Integer.parseInt(args[i + 1]);
             return 1;
         }
     }
@@ -390,7 +397,7 @@ public class CommandLineOptions {
         } else {
             outfile = new File(args[i + 1]);
             if (pdfAMode != null) {
-                foUserAgent.getRendererOptions().put("pdf-a-mode", pdfAMode);
+                renderingOptions.put("pdf-a-mode", pdfAMode);
             }
             return 1;
         }
@@ -517,7 +524,7 @@ public class CommandLineOptions {
                 || (args[i + 1].charAt(0) != '-')) {
             mime = args[i + 1];
             if ("list".equals(mime)) {
-                String[] mimes = foUserAgent.getRendererFactory().listSupportedMimeTypes();
+                String[] mimes = factory.getRendererFactory().listSupportedMimeTypes();
                 System.out.println("Supported MIME types:");
                 for (int j = 0; j < mimes.length; j++) {
                     System.out.println("  " + mimes[j]);
@@ -580,7 +587,7 @@ public class CommandLineOptions {
     }
 
     private PDFEncryptionParams getPDFEncryptionParams() throws FOPException {
-        PDFEncryptionParams params = (PDFEncryptionParams)foUserAgent.getRendererOptions().get(
+        PDFEncryptionParams params = (PDFEncryptionParams)renderingOptions.get(
                         PDFRenderer.ENCRYPTION_PARAMS); 
         if (params == null) {
             if (!PDFEncryptionManager.checkAvailableAlgorithms()) {
@@ -588,7 +595,7 @@ public class CommandLineOptions {
                         + " Please make sure MD5 and RC4 algorithms are available.");
             }
             params = new PDFEncryptionParams();
-            foUserAgent.getRendererOptions().put(PDFRenderer.ENCRYPTION_PARAMS, params);
+            renderingOptions.put(PDFRenderer.ENCRYPTION_PARAMS, params);
         }
         return params;
     }
@@ -754,7 +761,7 @@ public class CommandLineOptions {
             throw new FOPException("Renderer has not been set!");
         }
         if (outputmode.equals(MimeConstants.MIME_FOP_AREA_TREE)) {
-            foUserAgent.getRendererOptions().put("fineDetail", isCoarseAreaXml());
+            renderingOptions.put("fineDetail", isCoarseAreaXml());
         }
         return outputmode;
     }
