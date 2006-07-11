@@ -68,10 +68,10 @@ public class ElementMappingRegistry {
      */
     private void setupDefaultMappings() {
         // add mappings from available services
-        Iterator providers = Service.providers(ElementMapping.class);
+        Iterator providers = Service.providers(ElementMapping.class, false);
         if (providers != null) {
             while (providers.hasNext()) {
-                ElementMapping mapping = (ElementMapping)providers.next();
+                String mapping = (String)providers.next();
                 try {
                     addElementMapping(mapping);
                 } catch (IllegalArgumentException e) {

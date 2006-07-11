@@ -27,6 +27,17 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix">
+        Bugfix: Potential multi-threading issue (ConcurrentModificationException) 
+        eliminated for ElementMapping classes.
+      </action>
+      <action context="Code" dev="JM" type="fix">
+        No more System.exit() and look &amp; feel setting calls inside the reusable
+        parts of the AWT viewer.
+      </action>
+      <action context="Code" dev="JM" type="fix">
+        Proper escaping of characters in list-items labels for RTF output.
+      </action>
       <action context="Code" dev="MM" type="fix">
         Bugfix: FOUserAgent specific configuration parameters specified in config file
         were not set when FOP was invoked from command line.
