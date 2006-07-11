@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<rdf:RDF xml:lang="en"
+         xmlns="http://www.w3.org/2002/12/cal/ical#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+<!--
+  =======================================================================
+
+   Copyright (c) 2006 The Apache Software Foundation.
+   All rights reserved.
+
+  =======================================================================
+-->
+<!--
+  Purpose of this file: It contains project-specific events that we'd like
+  published on http://asylum.zones.apache.org/rdfcal/
+-->
+  <version>2.0</version>
+  <Vevent>
+    <dtstart>2006-09-20</dtstart>
+    <dtend>2006-09-21</dtend>
+    <summary>Apache FOP at the OpenExpo</summary>
+    <description>Apache FOP is one of the open source projects presenting themselves at the OpenExpo which is some sort of successor to the lots.ch events. It is planned to provide FOP users the opportunity to ask questions and to have their problems looked at.
+
+The organizers are still looking for sponsors and open source projects which want to present themselves. The call for participation ends 2006-08-01. More info on their website.</description>
+    <location>Zürich, Switzerland</location>
+    <url>http://openexpo.org/index.php?id=19</url>
+    <status>CONFIRMED</status>
+    <organizer><cn>/ch/open</cn></organizer>
+    <uid>0b5b6bf63fe835203494794f2b293d3ce3b0a12f43d6abe24f63a33445ade89f</uid>
+    <class>PUBLIC</class>
+  </Vevent>
+</rdf:RDF>
