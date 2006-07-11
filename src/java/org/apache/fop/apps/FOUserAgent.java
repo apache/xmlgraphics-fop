@@ -282,7 +282,7 @@ public class FOUserAgent {
      * Configures the FOUserAgent through the factory's configuration. 
      * @see org.apache.avalon.framework.configuration.Configurable
      */
-    public void configure(Configuration cfg) {
+    protected void configure(Configuration cfg) {
         setBaseURL(FopFactory.getBaseURLfromConfig(cfg, "base"));
         if (cfg.getChild("target-resolution", false) != null) {
             this.targetResolution 
