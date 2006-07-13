@@ -713,35 +713,6 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         removeNode(prevNode.line, prevNode);
     }
 
-    protected void removeNode(int line, KnuthNode node) {
-        KnuthNode n = getNode(line);
-        if (n != node) {
-            if (footnotesPending) {
-                // nodes could be rightly deactivated in a different order
-                KnuthNode prevNode = null;
-                while (n != node) {
-                    prevNode = n;
-                    n = n.next;
-                }
-                prevNode.next = n.next;
-                if (prevNode.next == null) {
-                    activeLines[line * 2 + 1] = prevNode;
-                }
-            } else {
-                log.error("Should be first");
-            }
-        } else {
-            activeLines[line * 2] = node.next;
-            if (node.next == null) {
-                activeLines[line * 2 + 1] = null;
-            }
-            while (startLine < endLine && getNode(startLine) == null) {
-                startLine++;
-            }
-        }
-        activeNodeCount--;
-    }
-    
     /**
      * @return a list of PageBreakPosition elements
      */
