@@ -1010,19 +1010,29 @@ public abstract class BreakingAlgorithm {
     }
 
     /**
-     * Remove the first active node registered for the given line. If there is no more active node
+     * Remove the given active node registered for the given line. If there are no more active nodes
      * for this line, adjust the startLine accordingly.
      * @param line number of the line ending at the node's corresponding breakpoint
      * @param node the node to deactivate
      */
     protected void removeNode(int line, KnuthNode node) {
+        int headIdx = line * 2;
         KnuthNode n = getNode(line);
         if (n != node) {
-            log.error("Should be first");
+            // nodes could be rightly deactivated in a different order
+            KnuthNode prevNode = null;
+            while (n != node) {
+                prevNode = n;
+                n = n.next;
+            }
+            prevNode.next = n.next;
+            if (prevNode.next == null) {
+                activeLines[headIdx + 1] = prevNode;
+            }
         } else {
-            activeLines[line * 2] = node.next;
+            activeLines[headIdx] = node.next;
             if (node.next == null) {
-                activeLines[line * 2 + 1] = null;
+                activeLines[headIdx + 1] = null;
             }
             while (startLine < endLine && getNode(startLine) == null) {
                 startLine++;
