@@ -20,6 +20,9 @@ package org.apache.fop.image;
 
 // Java
 import java.io.InputStream;
+import java.lang.ref.Reference;
+import java.lang.ref.ReferenceQueue;
+import java.lang.ref.SoftReference;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Map;
@@ -28,6 +31,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
@@ -38,7 +43,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.image.analyser.ImageReaderFactory;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.datatypes.URISpecification;
-
 
 /**
  * Create FopImage objects (with a configuration file - not yet implemented).
@@ -99,6 +103,8 @@ public final class ImageFactory {
 
         imt = new ImageMimeType("image/png");
         imageMimeTypes.put(imt.getMimeType(), imt);
+        //Image I/O is faster and more memory-efficient than own codec for PNG
+        imt.addProvider(imageIoImage);
         imt.addProvider(pngImage);
 
         imt = new ImageMimeType("image/tga");
@@ -109,8 +115,9 @@ public final class ImageFactory {
 
         imt = new ImageMimeType("image/tiff");
         imageMimeTypes.put(imt.getMimeType(), imt);
-        imt.addProvider(tiffImage);
-        imt.addProvider(jaiImage);
+        imt.addProvider(tiffImage); //Slower but supports CCITT embedding
+        imt.addProvider(imageIoImage); //Fast but doesn't support CCITT embedding
+        imt.addProvider(jaiImage); //Fast but doesn't support CCITT embedding
 
         imt = new ImageMimeType("image/svg+xml");
         imageMimeTypes.put(imt.getMimeType(), imt);
@@ -357,12 +364,13 @@ class ContextImageCache implements ImageCache {
     private boolean collective;
     private Map contextStore = Collections.synchronizedMap(new java.util.HashMap());
     private Set invalid = null;
-    private Map weakStore = null;
+    private Map refStore = null;
+    private ReferenceQueue refQueue = new ReferenceQueue();
 
     public ContextImageCache(boolean col) {
         collective = col;
         if (collective) {
-            weakStore = Collections.synchronizedMap(new java.util.WeakHashMap());
+            refStore = Collections.synchronizedMap(new java.util.HashMap());
             invalid = Collections.synchronizedSet(new java.util.HashSet());
         }
     }
@@ -399,7 +407,14 @@ class ContextImageCache implements ImageCache {
                     }
                 }
                 if (im == null) {
-                    im = (ImageLoader) weakStore.get(url);
+                    Reference ref = (Reference)refStore.get(url);
+                    if (ref != null) {
+                        im = (ImageLoader) ref.get();
+                        if (im == null) {
+                            //Remove key if its value has been garbage collected
+                            refStore.remove(url);
+                        }
+                    }
                 }
             }
 
@@ -423,7 +438,7 @@ class ContextImageCache implements ImageCache {
         if (con != null) {
             if (collective) {
                 ImageLoader im = con.getImage(url);
-                weakStore.put(url, im);
+                refStore.put(url, wrapInReference(im, url));
             }
             con.releaseImage(url);
         }
@@ -443,14 +458,46 @@ class ContextImageCache implements ImageCache {
         }
     }
 
+    private Reference wrapInReference(Object obj, Object key) {
+        return new SoftReferenceWithKey(obj, key, refQueue);
+    }
+    
+    private static class SoftReferenceWithKey extends SoftReference {
+        
+        private Object key;
+        
+        public SoftReferenceWithKey(Object referent, Object key, ReferenceQueue q) {
+            super(referent, q);
+            this.key = key;
+        }
+    }
+    
     public void removeContext(FOUserAgent context) {
         Context con = (Context) contextStore.get(context);
         if (con != null) {
             if (collective) {
                 Map images = con.getImages();
-                weakStore.putAll(images);
+                Iterator iter = images.entrySet().iterator();
+                while (iter.hasNext()) {
+                    Entry entry = (Entry)iter.next();
+                    refStore.put(entry.getKey(), 
+                            wrapInReference(entry.getValue(), entry.getKey()));
+                }
             }
             contextStore.remove(context);
+        }
+        //House-keeping (remove cleared references)
+        checkReferenceQueue();
+    }
+    
+    /**
+     * Checks the reference queue if any references have been cleared and removes them from the
+     * cache.
+     */
+    private void checkReferenceQueue() {
+        SoftReferenceWithKey ref;
+        while ((ref = (SoftReferenceWithKey)refQueue.poll()) != null) {
+            refStore.remove(ref.key);
         }
     }
 
@@ -503,7 +550,7 @@ class ContextImageCache implements ImageCache {
 
     /** @see org.apache.fop.image.ImageCache#clearAll() */
     public void clearAll() {
-        this.weakStore.clear();
+        this.refStore.clear();
         this.invalid.clear();
         //The context-sensitive caches are not cleared so there are no negative side-effects
         //in a multi-threaded environment. Not that it's a good idea to use this method at

@@ -28,6 +28,15 @@
   <changes>
     <release version="FOP Trunk">
       <action context="Code" dev="JM" type="fix">
+        Fixed two memory-leaks in image handling. The image cache is finally working
+        properly.
+      </action>
+      <action context="Code" dev="JM" type="fix" fixes-bug="39608">
+        Let numeric property values without a unit be treated as pixels like in HTML.
+        This fixes certain NullPointerException when no units are specified.
+        (Note: the use of pixels in XSL-FO is discouraged!)
+      </action>
+      <action context="Code" dev="JM" type="fix">
         Bugfix: Potential multi-threading issue (ConcurrentModificationException) 
         eliminated for ElementMapping classes.
       </action>

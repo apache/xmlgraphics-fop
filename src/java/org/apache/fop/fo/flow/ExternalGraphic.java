@@ -41,7 +41,8 @@ public class ExternalGraphic extends AbstractGraphics {
 
     //Additional values
     private String url;
-    private FopImage fopimage;
+    private int intrinsicWidth;
+    private int intrinsicHeight;
     
     /**
      * Create a new External graphic node.
@@ -63,7 +64,7 @@ public class ExternalGraphic extends AbstractGraphics {
         url = ImageFactory.getURL(getSrc());
         FOUserAgent userAgent = getUserAgent();
         ImageFactory fact = userAgent.getFactory().getImageFactory();
-        fopimage = fact.getImage(url, userAgent);
+        FopImage fopimage = fact.getImage(url, userAgent);
         if (fopimage == null) {
             getLogger().error("Image not available: " + getSrc());
         } else {
@@ -71,6 +72,8 @@ public class ExternalGraphic extends AbstractGraphics {
             if (!fopimage.load(FopImage.DIMENSIONS)) {
                 getLogger().error("Cannot read image dimensions: " + getSrc());
             }
+            this.intrinsicWidth = fopimage.getIntrinsicWidth();
+            this.intrinsicHeight = fopimage.getIntrinsicHeight();
         }
         //TODO Report to caller so he can decide to throw an exception
     }
@@ -122,22 +125,14 @@ public class ExternalGraphic extends AbstractGraphics {
      * @see org.apache.fop.fo.flow.AbstractGraphics#getIntrinsicWidth()
      */
     public int getIntrinsicWidth() {
-        if (fopimage != null) {
-            return fopimage.getIntrinsicWidth();
-        } else {
-            return 0;
-        }
+        return this.intrinsicWidth;
     }
 
     /**
      * @see org.apache.fop.fo.flow.AbstractGraphics#getIntrinsicHeight()
      */
     public int getIntrinsicHeight() {
-        if (fopimage != null) {
-            return fopimage.getIntrinsicHeight();
-        } else {
-            return 0;
-        }
+        return this.intrinsicHeight;
     }
     
 }
