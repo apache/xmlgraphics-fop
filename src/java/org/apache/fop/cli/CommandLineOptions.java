@@ -33,8 +33,10 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.pdf.PDFAMode;
 import org.apache.fop.pdf.PDFEncryptionManager;
 import org.apache.fop.pdf.PDFEncryptionParams;
+import org.apache.fop.pdf.PDFXMode;
 import org.apache.fop.render.awt.AWTRenderer;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.pdf.PDFRenderer;
@@ -301,6 +303,8 @@ public class CommandLineOptions {
                 i = i + parsePDFOwnerPassword(args, i);
             } else if (args[i].equals("-u")) {
                 i = i + parsePDFUserPassword(args, i);
+            } else if (args[i].equals("-pdfprofile")) {
+                i = i + parsePDFProfile(args, i);
             } else if (args[i].equals("-noprint")) {
                 getPDFEncryptionParams().setAllowPrint(false);
             } else if (args[i].equals("-nocopy")) {
@@ -397,6 +401,9 @@ public class CommandLineOptions {
         } else {
             outfile = new File(args[i + 1]);
             if (pdfAMode != null) {
+                if (renderingOptions.get("pdf-a-mode") != null) {
+                    throw new FOPException("PDF/A mode already set");
+                }
                 renderingOptions.put("pdf-a-mode", pdfAMode);
             }
             return 1;
@@ -619,6 +626,33 @@ public class CommandLineOptions {
         } else {
             getPDFEncryptionParams().setUserPassword(args[i + 1]);
             return 1;
+        }
+    }
+
+    private int parsePDFProfile(String[] args, int i) throws FOPException {
+        if ((i + 1 == args.length)
+                || (args[i + 1].charAt(0) == '-')) {
+            throw new FOPException("You must specify a PDF profile");
+        } else {
+            String profile = args[i + 1];
+            PDFAMode pdfAMode = PDFAMode.valueOf(profile);
+            if (pdfAMode != null && pdfAMode != PDFAMode.DISABLED) {
+                if (renderingOptions.get("pdf-a-mode") != null) {
+                    throw new FOPException("PDF/A mode already set");
+                }
+                renderingOptions.put("pdf-a-mode", pdfAMode.getName());
+                return 1;
+            } else {
+                PDFXMode pdfXMode = PDFXMode.valueOf(profile);
+                if (pdfXMode != null && pdfXMode != PDFXMode.DISABLED) {
+                    if (renderingOptions.get("pdf-x-mode") != null) {
+                        throw new FOPException("PDF/X mode already set");
+                    }
+                    renderingOptions.put("pdf-x-mode", pdfXMode.getName());
+                    return 1;
+                }
+            }
+            throw new FOPException("Unsupported PDF profile: " + profile);
         }
     }
 
@@ -863,21 +897,23 @@ public class CommandLineOptions {
               "\nUSAGE\nFop [options] [-fo|-xml] infile [-xsl file] "
                     + "[-awt|-pdf|-mif|-rtf|-tiff|-png|-pcl|-ps|-txt|-at [mime]|-print] <outfile>\n"
             + " [OPTIONS]  \n"
-            + "  -d             debug mode   \n"
-            + "  -x             dump configuration settings  \n"
-            + "  -q             quiet mode  \n"
-            + "  -c cfg.xml     use additional configuration file cfg.xml\n"
-            + "  -l lang        the language to use for user information \n"
-            + "  -r             relaxed/less strict validation (where available)\n"
-            + "  -dpi xxx       target resolution in dots per inch (dpi) where xxx is a number\n"
-            + "  -s             for area tree XML, down to block areas only\n"
-            + "  -v             to show FOP version being used\n\n"
-            + "  -o [password]  PDF file will be encrypted with option owner password\n"
-            + "  -u [password]  PDF file will be encrypted with option user password\n"
-            + "  -noprint       PDF file will be encrypted without printing permission\n"
-            + "  -nocopy        PDF file will be encrypted without copy content permission\n"
-            + "  -noedit        PDF file will be encrypted without edit content permission\n"
-            + "  -noannotations PDF file will be encrypted without edit annotation permission\n\n"
+            + "  -d                debug mode   \n"
+            + "  -x                dump configuration settings  \n"
+            + "  -q                quiet mode  \n"
+            + "  -c cfg.xml        use additional configuration file cfg.xml\n"
+            + "  -l lang           the language to use for user information \n"
+            + "  -r                relaxed/less strict validation (where available)\n"
+            + "  -dpi xxx          target resolution in dots per inch (dpi) where xxx is a number\n"
+            + "  -s                for area tree XML, down to block areas only\n"
+            + "  -v                to show FOP version being used\n\n"
+            + "  -o [password]     PDF file will be encrypted with option owner password\n"
+            + "  -u [password]     PDF file will be encrypted with option user password\n"
+            + "  -noprint          PDF file will be encrypted without printing permission\n"
+            + "  -nocopy           PDF file will be encrypted without copy content permission\n"
+            + "  -noedit           PDF file will be encrypted without edit content permission\n"
+            + "  -noannotations    PDF file will be encrypted without edit annotation permission\n"
+            + "  -pdfprofile prof  PDF file will be generated with the specified profile\n"
+            + "                    (Examples for prof: PDF/A-1b or PDF/X-3:2003)\n\n"
             + " [INPUT]  \n"
             + "  infile            xsl:fo input file (the same as the next) \n"
             + "  -fo  infile       xsl:fo input file  \n"
@@ -890,7 +926,7 @@ public class CommandLineOptions {
             + "  outfile           input will be rendered as PDF into outfile\n"
             + "  -pdf outfile      input will be rendered as PDF (outfile req'd)\n"
             + "  -pdfa1b outfile   input will be rendered as PDF/A-1b compliant PDF\n"
-            + "                    (outfile req'd)\n"
+            + "                    (outfile req'd, same as \"-pdf outfile -pdfprofile PDF/A-1b\")\n"
             + "  -awt              input will be displayed on screen \n"
             + "  -mif outfile      input will be rendered as MIF (FrameMaker) (outfile req'd)\n"
             + "  -rtf outfile      input will be rendered as RTF (outfile req'd)\n"
