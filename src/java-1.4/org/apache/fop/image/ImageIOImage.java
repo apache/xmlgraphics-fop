@@ -23,11 +23,19 @@ import java.awt.Color;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.awt.image.BufferedImage;
+import java.util.Iterator;
 
 // ImageIO
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.stream.ImageInputStream;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.fop.util.UnitConv;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * FopImage object using ImageIO.
@@ -42,6 +50,10 @@ public class ImageIOImage extends AbstractFopImage {
      */
     public ImageIOImage(FopImage.ImageInfo info) {
         super(info);
+        if ("image/png".equals(info.mimeType)
+                || "image/tiff".equals(info.mimeType)) {
+            this.loaded = 0; //TODO The PNG and TIFF Readers cannot read the resolution, yet. 
+        }
     }
 
     /**
@@ -54,6 +66,15 @@ public class ImageIOImage extends AbstractFopImage {
         return true;
     }
     
+    private Element getChild(Element el, String name) {
+        NodeList nodes = el.getElementsByTagName(name);
+        if (nodes.getLength() > 0) {
+            return (Element)nodes.item(0);
+        } else {
+            return null;
+        }
+    }
+    
     /** @see org.apache.fop.image.AbstractFopImage#loadBitmap() */
     protected boolean loadBitmap() {
         if (this.bitmaps != null) {
@@ -61,8 +82,39 @@ public class ImageIOImage extends AbstractFopImage {
         }
         try {
             inputStream.reset();
-            BufferedImage imageData = ImageIO.read(inputStream);
-
+            ImageInputStream imgStream = ImageIO.createImageInputStream(inputStream);
+            Iterator iter = ImageIO.getImageReaders(imgStream);
+            if (!iter.hasNext()) {
+                log.error("No ImageReader found.");
+                return false;
+            }
+            ImageReader reader = (ImageReader)iter.next();
+            ImageReadParam param = reader.getDefaultReadParam();
+            reader.setInput(imgStream, true, false);
+            BufferedImage imageData = reader.read(0, param);
+            
+            //Read image resolution
+            IIOMetadata iiometa = reader.getImageMetadata(0);
+            if (iiometa != null && iiometa.isStandardMetadataFormatSupported()) {
+                Element metanode = (Element)iiometa.getAsTree("javax_imageio_1.0");
+                Element dim = getChild(metanode, "Dimension");
+                if (dim != null) {
+                    Element child;
+                    child = getChild(dim, "HorizontalPixelSize");
+                    if (child != null) {
+                        this.dpiHorizontal = UnitConv.IN2MM
+                                / Float.parseFloat(child.getAttribute("value"));
+                    }
+                    child = getChild(dim, "VerticalPixelSize");
+                    if (child != null) {
+                        this.dpiVertical = UnitConv.IN2MM
+                                / Float.parseFloat(child.getAttribute("value"));
+                    }
+                }
+            }
+            imgStream.close();
+            reader.dispose();
+            
             this.height = imageData.getHeight();
             this.width = imageData.getWidth();
 
