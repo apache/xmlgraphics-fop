@@ -27,6 +27,12 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix" fixes-bug="40062" due-to="Gilles Beaugeais">
+        Fixed handling for CCITT Group 4 TIFF images with fill order 2.
+      </action>
+      <action context="Code" dev="JM" type="fix" fixes-bug="40048" due-to="Igor Istomin">
+        Fixed setting of page margins in AWT Renderer like it was done in the print renderer.
+      </action>
       <action context="Code" dev="JM" type="fix">
         Fixed two memory-leaks in image handling. The image cache is finally working
         properly.
