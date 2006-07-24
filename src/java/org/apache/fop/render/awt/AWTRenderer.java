@@ -169,7 +169,6 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
             PageFormat pageFormat = new PageFormat();
     
             Paper paper = new Paper();
-            pageFormat.setPaper(paper);
     
             Rectangle2D dim = getPageViewport(pageIndex).getViewArea();
             double width = dim.getWidth();
@@ -186,6 +185,7 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
                 paper.setSize(width / 1000d, height / 1000d);
                 pageFormat.setOrientation(PageFormat.PORTRAIT);
             }
+            pageFormat.setPaper(paper);
             return pageFormat;
         } catch (FOPException fopEx) {
             throw new IndexOutOfBoundsException(fopEx.getMessage());
