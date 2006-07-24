@@ -399,6 +399,42 @@ out = proc.getOutputStream();]]></source>
         the size of the output file and the print quality.
       </p>
     </section>
+    <section id="pcl-extensions">
+      <title>Extensions</title>
+      <p>The PCL Renderer supports some PCL specific extensions which can be embedded 
+      into the input FO document. To use the extensions the appropriate namespace must 
+      be declared in the fo:root element like this:</p>
+      <source><![CDATA[
+      <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
+               xmlns:pcl="http://xmlgraphics.apache.org/fop/extensions/pcl">
+]]></source>
+      <section id="pcl-page-source">
+        <title>Page Source (Tray selection)</title>
+        <p>
+          The page-source extension attribute on fo:simple-page-master allows to 
+          select the paper tray the sheet for a particular simple-page-master is
+          to be taken from. Example:
+        </p>
+      <source><![CDATA[
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="simple" pcl:paper-source="2">
+          ...
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+]]></source>
+        <p>
+          Note: the tray number is a positive integer and the value depends on
+          the target printer. Not all PCL printers support the same paper trays.
+          Usually, 
+          "1" is the default tray,
+          "2" is the manual paper feed, 
+          "3" is the manual envelope feed, 
+          "4" is the "lower" tray and
+          "7" is "auto-select".
+          Consult the technical reference for your printer for all available values.
+        </p>
+      </section>
+    </section>
   </section>
   <section id="afp">
     <title>AFP</title>
