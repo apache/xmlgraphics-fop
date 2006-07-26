@@ -34,12 +34,14 @@ import java.awt.image.LookupOp;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.fop.util.UnitConv;
 import org.apache.xmlgraphics.image.GraphicsUtil;
 
@@ -64,6 +66,12 @@ public class PCLGenerator {
     private boolean currentPatternTransparency = true;
     
     private int maxBitmapResolution = PCL_RESOLUTIONS[PCL_RESOLUTIONS.length - 1];
+
+    /**
+     * true: Standard PCL shades are used (poor quality). false: user-defined pattern are used
+     * to create custom dither patterns for better grayscale quality.
+     */
+    private boolean usePCLShades = false;
     
     /**
      * Main constructor.
@@ -337,15 +345,69 @@ public class PCLGenerator {
         } else {
             //y += h;
         }
-
         setPatternTransparencyMode(false);
-        writeCommand("*c" + formatDouble4(w / 100) + "h" 
-                          + formatDouble4(h / 100) + "V");
-        int lineshade = convertToPCLShade(col);
-        writeCommand("*c" + lineshade + "G");
-        writeCommand("*c2P");
+        if (false) {
+            writeCommand("*c" + formatDouble4(w / 100) + "h" 
+                              + formatDouble4(h / 100) + "V");
+            int lineshade = convertToPCLShade(col);
+            writeCommand("*c" + lineshade + "G");
+            writeCommand("*c2P"); //Shaded fill
+        } else {
+            defineGrayscalePattern(col, 32);
+
+            writeCommand("*c" + formatDouble4(w / 100) + "h" 
+                              + formatDouble4(h / 100) + "V");
+            writeCommand("*c32G");
+            writeCommand("*c4P"); //User-defined pattern
+        }
         // Reset pattern transparency mode.
         setPatternTransparencyMode(true);
+    }
+
+    /**
+     * Generates a user-defined pattern for a dithering pattern matching the grayscale value
+     * of the color given.
+     * @param col the color to create the pattern for
+     * @param patternID the pattern ID to use
+     * @throws IOException In case of an I/O error
+     */
+    public void defineGrayscalePattern(Color col, int patternID) throws IOException {
+        ByteArrayOutputStream baout = new ByteArrayOutputStream();
+        DataOutputStream data = new DataOutputStream(baout);
+        data.writeByte(0); //Format
+        data.writeByte(0); //Continuation
+        data.writeByte(1); //Pixel Encoding
+        data.writeByte(0); //Reserved
+        data.writeShort(8); //Width in Pixels
+        data.writeShort(8); //Height in Pixels
+        //data.writeShort(600); //X Resolution (didn't manage to get that to work)
+        //data.writeShort(600); //Y Resolution
+        final int[] dither4x4 = {0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5};
+        int gray255 = convertToGray(col.getRed(), col.getGreen(), col.getBlue());
+        int gray17 = gray255 * 17 / 255;
+        
+        //Since a 4x4 pattern did not work, the 4x4 pattern is applied 4 times to an 8x8 pattern.
+        //Maybe this could be changed to use an 8x8 bayer dither pattern instead of the 4x4 one.
+        byte[] pattern = new byte[dither4x4.length / 8 * 4];
+        
+        for (int i = 0, c = dither4x4.length; i < c; i++) {
+            boolean dot = !(dither4x4[i] < gray17 - 1);
+            if (dot) {
+                int byteIdx = i / 4;
+                pattern[byteIdx] |= 1 << (i % 4); 
+                pattern[byteIdx] |= 1 << ((i % 4) + 4); 
+                pattern[byteIdx + 4] |= 1 << (i % 4); 
+                pattern[byteIdx + 4] |= 1 << ((i % 4) + 4); 
+            }
+        }
+        data.write(pattern);
+        if ((baout.size() % 2) > 0) {
+            baout.write(0);
+        }
+        writeCommand("*c" + patternID + "G");
+        writeCommand("*c" + baout.size() + "W");
+        baout.writeTo(this.out);
+        writeCommand("*c4Q"); //temporary pattern
     }
 
     /**
@@ -403,6 +465,24 @@ public class PCLGenerator {
     public final int convertToPCLShade(Color col) {
         float gray = convertToGray(col.getRed(), col.getGreen(), col.getBlue()) / 255f;
         return (int)(100 - (gray * 100f));
+    }
+    
+    /**
+     * Selects the current grayscale color (the given color is converted to grayscales).
+     * @param col the color
+     * @throws IOException In case of an I/O error
+     */
+    public void selectGrayscale(Color col) throws IOException {
+        if (col.equals(Color.black)) {
+            selectCurrentPattern(0, 0); //black
+        } else {
+            if (usePCLShades ) {
+                selectCurrentPattern(convertToPCLShade(col), 2);
+            } else {
+                defineGrayscalePattern(col, 32);
+                selectCurrentPattern(32, 4);
+            }
+        }
     }
     
     /**

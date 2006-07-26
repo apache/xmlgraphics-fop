@@ -588,7 +588,7 @@ public class PCLRenderer extends PrintRenderer {
                 if (col != null) {
                     //useColor(ct);
                     gen.setTransparencyMode(true, false);
-                    gen.selectCurrentPattern(gen.convertToPCLShade(col), 2);
+                    gen.selectGrayscale(col);
                 }
                 
                 saveGraphicsState();
