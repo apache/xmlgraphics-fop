@@ -56,6 +56,11 @@ public class PCLGenerator {
     /** A list of all supported resolutions in PCL (values in dpi) */
     public static final int[] PCL_RESOLUTIONS = new int[] {75, 100, 150, 200, 300, 600};
     
+    /** Selects a 4x4 Bayer dither matrix (17 grayscales) */
+    public static final int DITHER_MATRIX_4x4 = 4;
+    /** Selects a 8x8 Bayer dither matrix (65 grayscales) */
+    public static final int DITHER_MATRIX_8x8 = 8;
+    
     private final DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.US); 
     private final DecimalFormat df2 = new DecimalFormat("0.##", symbols);
     private final DecimalFormat df4 = new DecimalFormat("0.####", symbols);
@@ -346,14 +351,16 @@ public class PCLGenerator {
             //y += h;
         }
         setPatternTransparencyMode(false);
-        if (false) {
+        if (usePCLShades 
+                || Color.black.equals(col)
+                || Color.white.equals(col)) {
             writeCommand("*c" + formatDouble4(w / 100) + "h" 
                               + formatDouble4(h / 100) + "V");
             int lineshade = convertToPCLShade(col);
             writeCommand("*c" + lineshade + "G");
             writeCommand("*c2P"); //Shaded fill
         } else {
-            defineGrayscalePattern(col, 32);
+            defineGrayscalePattern(col, 32, DITHER_MATRIX_4x4);
 
             writeCommand("*c" + formatDouble4(w / 100) + "h" 
                               + formatDouble4(h / 100) + "V");
@@ -364,14 +371,44 @@ public class PCLGenerator {
         setPatternTransparencyMode(true);
     }
 
+    //Bayer dither matrices (4x4 and 8x8 are derived from the 2x2 matrix)
+    private static final int[] BAYER_D2 = new int[] {0, 2, 3, 1};
+    private static final int[] BAYER_D4;
+    private static final int[] BAYER_D8;
+    
+    static {
+        BAYER_D4 = deriveBayerMatrix(BAYER_D2);
+        BAYER_D8 = deriveBayerMatrix(BAYER_D4);
+    }
+    
+    private static void setValueInMatrix(int[] dn, int half, int part, int idx, int value) {
+        int xoff = (part & 1) * half;
+        int yoff = (part & 2) * half * half;
+        int matrixIndex = yoff + ((int)(idx / half) * half * 2) + (idx % half) + xoff;
+        dn[matrixIndex] = value;
+    }
+    
+    private static int[] deriveBayerMatrix(int[] d) {
+        int[] dn = new int[d.length * 4];
+        int half = (int)Math.sqrt(d.length);
+        for (int part = 0; part < 4; part++) {
+            for (int i = 0, c = d.length; i < c; i++) {
+                setValueInMatrix(dn, half, part, i, d[i] * 4 + BAYER_D2[part]);
+            }
+        }
+        return dn;
+    }
+    
     /**
      * Generates a user-defined pattern for a dithering pattern matching the grayscale value
      * of the color given.
      * @param col the color to create the pattern for
      * @param patternID the pattern ID to use
+     * @param ditherMatrixSize the size of the Bayer dither matrix to use (4 or 8 supported)
      * @throws IOException In case of an I/O error
      */
-    public void defineGrayscalePattern(Color col, int patternID) throws IOException {
+    public void defineGrayscalePattern(Color col, int patternID, int ditherMatrixSize) 
+            throws IOException {
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
         DataOutputStream data = new DataOutputStream(baout);
         data.writeByte(0); //Format
@@ -382,25 +419,41 @@ public class PCLGenerator {
         data.writeShort(8); //Height in Pixels
         //data.writeShort(600); //X Resolution (didn't manage to get that to work)
         //data.writeShort(600); //Y Resolution
-        final int[] dither4x4 = {0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5};
         int gray255 = convertToGray(col.getRed(), col.getGreen(), col.getBlue());
-        int gray17 = gray255 * 17 / 255;
         
-        //Since a 4x4 pattern did not work, the 4x4 pattern is applied 4 times to an 8x8 pattern.
-        //Maybe this could be changed to use an 8x8 bayer dither pattern instead of the 4x4 one.
-        byte[] pattern = new byte[dither4x4.length / 8 * 4];
-        
-        for (int i = 0, c = dither4x4.length; i < c; i++) {
-            boolean dot = !(dither4x4[i] < gray17 - 1);
-            if (dot) {
-                int byteIdx = i / 4;
-                pattern[byteIdx] |= 1 << (i % 4); 
-                pattern[byteIdx] |= 1 << ((i % 4) + 4); 
-                pattern[byteIdx + 4] |= 1 << (i % 4); 
-                pattern[byteIdx + 4] |= 1 << ((i % 4) + 4); 
+        if (ditherMatrixSize == 8) {
+            int gray65 = gray255 * 65 / 255;
+            
+            byte[] pattern = new byte[BAYER_D8.length / 8];
+            
+            for (int i = 0, c = BAYER_D8.length; i < c; i++) {
+                boolean dot = !(BAYER_D8[i] < gray65 - 1);
+                if (dot) {
+                    int byteIdx = i / 8;
+                    pattern[byteIdx] |= 1 << (i % 8); 
+                }
             }
+            data.write(pattern);
+        } else {
+            int gray17 = gray255 * 17 / 255;
+            
+            //Since a 4x4 pattern did not work, the 4x4 pattern is applied 4 times to an 
+            //8x8 pattern. Maybe this could be changed to use an 8x8 bayer dither pattern 
+            //instead of the 4x4 one.
+            byte[] pattern = new byte[BAYER_D4.length / 8 * 4];
+            
+            for (int i = 0, c = BAYER_D4.length; i < c; i++) {
+                boolean dot = !(BAYER_D4[i] < gray17 - 1);
+                if (dot) {
+                    int byteIdx = i / 4;
+                    pattern[byteIdx] |= 1 << (i % 4); 
+                    pattern[byteIdx] |= 1 << ((i % 4) + 4); 
+                    pattern[byteIdx + 4] |= 1 << (i % 4); 
+                    pattern[byteIdx + 4] |= 1 << ((i % 4) + 4); 
+                }
+            }
+            data.write(pattern);
         }
-        data.write(pattern);
         if ((baout.size() % 2) > 0) {
             baout.write(0);
         }
@@ -473,13 +526,15 @@ public class PCLGenerator {
      * @throws IOException In case of an I/O error
      */
     public void selectGrayscale(Color col) throws IOException {
-        if (col.equals(Color.black)) {
+        if (Color.black.equals(col)) {
             selectCurrentPattern(0, 0); //black
+        } else if (Color.white.equals(col)) {
+                selectCurrentPattern(0, 1); //white
         } else {
-            if (usePCLShades ) {
+            if (usePCLShades) {
                 selectCurrentPattern(convertToPCLShade(col), 2);
             } else {
-                defineGrayscalePattern(col, 32);
+                defineGrayscalePattern(col, 32, DITHER_MATRIX_4x4);
                 selectCurrentPattern(32, 4);
             }
         }
