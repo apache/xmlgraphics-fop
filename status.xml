@@ -27,6 +27,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix" fixes-bug="40106" due-to="Jeroen Meijer">
+        Compatibility fix for GCJ (GNU Classpath): Using "UTF-16BE" instead of "UnicodeBigUnmarked"
+        encoding.
+      </action>
       <action context="Code" dev="JM" type="fix" fixes-bug="40062" due-to="Gilles Beaugeais">
         Fixed handling for CCITT Group 4 TIFF images with fill order 2.
       </action>
