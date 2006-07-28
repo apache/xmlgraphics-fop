@@ -180,7 +180,7 @@ public class PDFText extends PDFObject {
         final byte[] uniBytes;
         try {
             final char[] a = {c};
-            uniBytes = new String(a).getBytes("UnicodeBigUnmarked");
+            uniBytes = new String(a).getBytes("UTF-16BE");
         } catch (java.io.UnsupportedEncodingException uee) {
             throw new CascadingRuntimeException("Incompatible VM", uee);
         }
