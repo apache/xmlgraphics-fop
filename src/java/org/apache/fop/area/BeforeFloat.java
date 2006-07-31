@@ -48,27 +48,12 @@ public class BeforeFloat extends BlockParent {
     }
 
     /**
-     * Get the height of this before float.
-     * It gets the height of the children and if there is a
-     * separator its height is also added.
-     *
-     * @return the height of the before float including separator
-     */
-//    public int getBPD() {
-//        int h = super.getBPD();
-//        if (separator != null) {
-//            h += separator.getBPD();
-//        }
-//        return h;
-//    }
-
-    /**
      * Add a block area as child to the footnote area
      *
      * @param child the block area.
      */
     public void addBlock(Block child) {
-        addChildArea(child);
+        super.addBlock(child);
         this.setBPD(this.getBPD() + child.getBPD());
     }
 }
