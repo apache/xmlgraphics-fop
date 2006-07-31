@@ -49,11 +49,12 @@
 	      "none", which will be split on two pages. The float anchor is
 	      just behind this <fo:inline
 		color="blue">word</fo:inline><fo:float float="none" color="red">
-		<fo:block>
+		<fo:block id="float-content">
 		  This is the float content. This is the float content. This is
 		  the float content. This is the float content. This is the
 		  float content. This is the float content. This is the float
-		  content.
+		  content. This is the float content. This is the float content. 
+          This is the float content.
 		</fo:block>
 	      </fo:float>
 	      This is the end of the block containing the float. This is the
@@ -73,11 +74,13 @@
   </fo>
   <checks>
     <eval expected="2" xpath="count(//pageViewport)"/>
-    <eval expected='This is a block containing a before-float with "float" set to "none".'
-      xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[2]/lineArea[1]/text[1]"/>
+    <eval expected='This is a block containing an fo:float with "float" set to "none", which'
+      xpath="//pageViewport[1]//flow/block[1]/block[2]/lineArea[1]/text[1]"/>
     <eval expected="This is the float content. This is the float content. This is the float"
-      xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[2]/block[1]/lineArea[1]/text[1]"/>
-    <eval expected="43200"
-      xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[2]/block[1]/@bpd"/>
+      xpath="//pageViewport[1]//flow/block[1]/block[2]/block[1]/lineArea[1]/text[1]"/>
+    <eval expected="28800"
+      xpath="//pageViewport[1]//flow/block[1]/block[2]/block[1]/@bpd"/>
+    <eval expected="28800"
+      xpath="//pageViewport[2]//block[@prod-id='float-content']/@bpd"/>
   </checks>
 </testcase>

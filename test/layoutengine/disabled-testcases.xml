@@ -357,12 +357,6 @@
     <reference>http://issues.apache.org/bugzilla/show_bug.cgi?id=39414</reference>
   </testcase>
   <testcase>
-    <name>fo:float float="none" should be split</name>
-    <file>float_float_none_2.xml</file>
-    <description>When float="none", it should be possible to split an fo:float
-      element on several pages.</description>
-  </testcase>
-  <testcase>
     <name>Before-floats when no stretch available</name>
     <file>before-float_not-deferred_no-stretch_2.xml</file>
     <description>Whereas there is room for placing the before-float on the same
