@@ -27,6 +27,7 @@ import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.area.AreaTreeModel;
 import org.apache.fop.area.Block;
+import org.apache.fop.area.BeforeFloat;
 import org.apache.fop.area.Footnote;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.LineArea;
@@ -89,7 +90,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     private int startPageNum = 0;
     private int currentPageNum = 0;
 
-    private Block separatorArea = null;
+    private Block footnoteSeparatorArea = null;
+    private Block floatSeparatorArea = null;
     
     /**
      * Constructor
@@ -180,6 +182,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         private boolean needColumnBalancing;
         
         private StaticContentLayoutManager footnoteSeparatorLM = null;
+        private StaticContentLayoutManager floatSeparatorLM = null;
 
         public PageBreaker(PageSequenceLayoutManager pslm) {
             this.pslm = pslm;
@@ -242,30 +245,53 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             }
 
             // scan contentList, searching for footnotes
-            boolean bFootnotesPresent = false;
+            boolean footnotesPresent = false;
+            boolean floatsPresent = false;
             if (contentList != null) {
                 ListIterator contentListIterator = contentList.listIterator();
                 while (contentListIterator.hasNext()) {
                     ListElement element = (ListElement) contentListIterator.next();
-                    if (element instanceof KnuthBlockBox
-                        && ((KnuthBlockBox) element).hasAnchors()) {
-                        // element represents a line with footnote citations
-                        bFootnotesPresent = true;
-                        LayoutContext footnoteContext = new LayoutContext(context);
-                        footnoteContext.setStackLimit(context.getStackLimit());
-                        footnoteContext.setRefIPD(getCurrentPV()
-                                .getRegionReference(Constants.FO_REGION_BODY).getIPD());
-                        LinkedList footnoteBodyLMs = ((KnuthBlockBox) element).getFootnoteBodyLMs();
-                        ListIterator footnoteBodyIterator = footnoteBodyLMs.listIterator();
-                        // store the lists of elements representing the footnote bodies
-                        // in the box representing the line containing their references
-                        while (footnoteBodyIterator.hasNext()) {
-                            FootnoteBodyLayoutManager fblm 
-                                = (FootnoteBodyLayoutManager) footnoteBodyIterator.next();
-                            fblm.setParent(childFLM);
-                            fblm.initialize();
-                            ((KnuthBlockBox) element).addElementList(
-                                    fblm.getNextKnuthElements(footnoteContext, alignment));
+                    if (element instanceof KnuthBlockBox) {
+                        if (((KnuthBlockBox) element).hasFootnoteAnchors()) {
+                            // element represents a line with footnote citations
+                            footnotesPresent = true;
+                            LayoutContext footnoteContext = new LayoutContext(context);
+                            footnoteContext.setStackLimit(context.getStackLimit());
+                            footnoteContext.setRefIPD(getCurrentPV()
+                                    .getRegionReference(Constants.FO_REGION_BODY).getIPD());
+                            LinkedList footnoteBodyLMs
+                                    = ((KnuthBlockBox) element).getFootnoteBodyLMs();
+                            ListIterator footnoteBodyIterator = footnoteBodyLMs.listIterator();
+                            // store the lists of elements representing the footnote bodies
+                            // in the box representing the line containing their references
+                            while (footnoteBodyIterator.hasNext()) {
+                                FootnoteBodyLayoutManager fblm 
+                                    = (FootnoteBodyLayoutManager) footnoteBodyIterator.next();
+                                fblm.setParent(childFLM);
+                                fblm.initialize();
+                                ((KnuthBlockBox) element).addFootnoteElementList(
+                                        fblm.getNextKnuthElements(footnoteContext, alignment));
+                            }
+                        }
+                        if (((KnuthBlockBox) element).hasFloatAnchors()) {
+                            // element represents a line with float citations
+                            floatsPresent = true;
+                            LayoutContext floatContext = new LayoutContext(context);
+                            floatContext.setStackLimit(context.getStackLimit());
+                            floatContext.setRefIPD(getCurrentPV()
+                                    .getRegionReference(Constants.FO_REGION_BODY).getIPD());
+                            LinkedList floatBodyLMs = ((KnuthBlockBox) element).getFloatBodyLMs();
+                            ListIterator floatBodyIterator = floatBodyLMs.listIterator();
+                            // store the lists of elements representing the footnote bodies
+                            // in the box representing the line containing their references
+                            while (floatBodyIterator.hasNext()) {
+                                FloatBodyLayoutManager fblm 
+                                    = (FloatBodyLayoutManager) floatBodyIterator.next();
+                                fblm.setParent(childFLM);
+                                fblm.initialize();
+                                ((KnuthBlockBox) element).addFloatElementList(
+                                        fblm.getNextKnuthElements(floatContext, alignment));
+                            }
                         }
                     }
                 }
@@ -273,7 +299,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
 
             // handle the footnote separator
             StaticContent footnoteSeparator;
-            if (bFootnotesPresent
+            if (footnotesPresent
                     && (footnoteSeparator = pageSeq.getStaticContent(
                                             "xsl-footnote-separator")) != null) {
                 // the footnote separator can contain page-dependent content such as
@@ -284,16 +310,41 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                 // always the same
 
                 // create a Block area that will contain the separator areas
-                separatorArea = new Block();
-                separatorArea.setIPD(pslm.getCurrentPV()
+                footnoteSeparatorArea = new Block();
+                footnoteSeparatorArea.setIPD(pslm.getCurrentPV()
                             .getRegionReference(Constants.FO_REGION_BODY).getIPD());
                 // create a StaticContentLM for the footnote separator
                 footnoteSeparatorLM = (StaticContentLayoutManager)
                     getLayoutManagerMaker().makeStaticContentLayoutManager(
-                    pslm, footnoteSeparator, separatorArea);
+                    pslm, footnoteSeparator, footnoteSeparatorArea);
                 footnoteSeparatorLM.doLayout();
 
-                footnoteSeparatorLength = new MinOptMax(separatorArea.getBPD());
+                footnoteSeparatorLength = new MinOptMax(footnoteSeparatorArea.getBPD());
+            }
+
+            // handle the float separator
+            StaticContent floatSeparator;
+            if (floatsPresent
+                    && (floatSeparator = pageSeq.getStaticContent(
+                                            "xsl-before-float-separator")) != null) {
+                // the float separator can contain page-dependent content such as
+                // page numbers or retrieve markers, so its areas cannot simply be 
+                // obtained now and repeated in each page;
+                // we need to know in advance the separator bpd: the actual separator
+                // could be different from page to page, but its bpd would likely be
+                // always the same
+
+                // create a Block area that will contain the separator areas
+                floatSeparatorArea = new Block();
+                floatSeparatorArea.setIPD(pslm.getCurrentPV()
+                            .getRegionReference(Constants.FO_REGION_BODY).getIPD());
+                // create a StaticContentLM for the float separator
+                floatSeparatorLM = (StaticContentLayoutManager)
+                    getLayoutManagerMaker().makeStaticContentLayoutManager(
+                    pslm, floatSeparator, floatSeparatorArea);
+                floatSeparatorLM.doLayout();
+
+                floatSeparatorLength = new MinOptMax(floatSeparatorArea.getBPD());
             }
             return contentList;
         }
@@ -312,14 +363,27 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                 StaticContent footnoteSeparator = pageSeq.getStaticContent(
                         "xsl-footnote-separator");
                 // create a Block area that will contain the separator areas
-                separatorArea = new Block();
-                separatorArea.setIPD(
+                footnoteSeparatorArea = new Block();
+                footnoteSeparatorArea.setIPD(
                         getCurrentPV().getRegionReference(Constants.FO_REGION_BODY).getIPD());
                 // create a StaticContentLM for the footnote separator
                 footnoteSeparatorLM = (StaticContentLayoutManager)
                     getLayoutManagerMaker().makeStaticContentLayoutManager(
-                    pslm, footnoteSeparator, separatorArea);
+                    pslm, footnoteSeparator, footnoteSeparatorArea);
                 footnoteSeparatorLM.doLayout();
+            }
+            if (floatSeparatorLM != null) {
+                StaticContent floatSeparator = pageSeq.getStaticContent(
+                        "xsl-before-float-separator");
+                // create a Block area that will contain the separator areas
+                floatSeparatorArea = new Block();
+                floatSeparatorArea.setIPD(
+                        getCurrentPV().getRegionReference(Constants.FO_REGION_BODY).getIPD());
+                // create a StaticContentLM for the float separator
+                floatSeparatorLM = (StaticContentLayoutManager)
+                    getLayoutManagerMaker().makeStaticContentLayoutManager(
+                    pslm, floatSeparator, floatSeparatorArea);
+                floatSeparatorLM.doLayout();
             }
 
             childFLM.addAreas(posIter, context);    
@@ -374,7 +438,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                     getTopLevelLM(),
                     getPageProvider(),
                     alg.getAlignment(), alg.getAlignmentLast(), 
-                    footnoteSeparatorLength,
+                    footnoteSeparatorLength, floatSeparatorLength,
                     isPartOverflowRecoveryActivated(), false, false);
             //alg.setConstantLineWidth(flowBPD);
             int iOptPageCount = algRestart.findBreakingPoints(effectiveList,
@@ -433,7 +497,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             PageBreakingAlgorithm algRestart = new BalancingColumnBreakingAlgorithm(
                     getTopLevelLM(),
                     getPageProvider(),
-                    alignment, Constants.EN_START, footnoteSeparatorLength,
+                    alignment, Constants.EN_START, footnoteSeparatorLength, floatSeparatorLength,
                     isPartOverflowRecoveryActivated(),
                     getCurrentPV().getBodyRegion().getColumnCount());
             //alg.setConstantLineWidth(flowBPD);
@@ -488,6 +552,26 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         }
         
         protected void finishPart(PageBreakingAlgorithm alg, PageBreakPosition pbp) {
+            // add float areas
+            if (pbp.floatFirstListIndex <= pbp.floatLastListIndex) {
+                // call addAreas() for each FloatBodyLM
+                for (int i = pbp.floatFirstListIndex; i <= pbp.floatLastListIndex; i++) {
+                    LinkedList elementList = alg.getFloatList(i);
+                    int firstIndex = 0;
+                    int lastIndex = elementList.size() - 1;
+
+                    SpaceResolver.performConditionalsNotification(elementList, 
+                            firstIndex, lastIndex, -1);
+                    LayoutContext childLC = new LayoutContext(0);
+                    AreaAdditionUtil.addAreas(null, 
+                            new KnuthPossPosIter(elementList, firstIndex, lastIndex + 1), 
+                            childLC);
+                }
+                // set the offset from the top margin
+                BeforeFloat parentArea
+                        = (BeforeFloat) getCurrentPV().getBodyRegion().getBeforeFloat();
+                parentArea.setSeparator(floatSeparatorArea);
+            }
             // add footnote areas
             if (pbp.footnoteFirstListIndex < pbp.footnoteLastListIndex
                 || pbp.footnoteFirstElementIndex <= pbp.footnoteLastElementIndex) {
@@ -508,12 +592,13 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                 }
                 // set the offset from the top margin
                 Footnote parentArea = (Footnote) getCurrentPV().getBodyRegion().getFootnote();
-                int topOffset = (int) getCurrentPV().getBodyRegion().getBPD() - parentArea.getBPD();
-                if (separatorArea != null) {
-                    topOffset -= separatorArea.getBPD();
+                int topOffset = (int) getCurrentPV().getBodyRegion().getBPD() - parentArea.getBPD()
+                        - ((BeforeFloat) getCurrentPV().getBodyRegion().getBeforeFloat()).getBPD();
+                if (footnoteSeparatorArea != null) {
+                    topOffset -= footnoteSeparatorArea.getBPD();
                 }
                 parentArea.setTop(topOffset);
-                parentArea.setSeparator(separatorArea);
+                parentArea.setSeparator(footnoteSeparatorArea);
             }
             getCurrentPV().getCurrentSpan().notifyFlowsFinished();
         }

@@ -148,6 +148,7 @@ public class InlineKnuthSequence extends KnuthSequence  {
             // from prevBox to the new box
             KnuthInlineBox newBox = (KnuthInlineBox) getLast();
             newBox.setFootnoteBodyLM(((KnuthInlineBox) prevBox).getFootnoteBodyLM());
+            newBox.setFloatBodyLM(((KnuthInlineBox) prevBox).getFloatBodyLM());
         }
     }
 

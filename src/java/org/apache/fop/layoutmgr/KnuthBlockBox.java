@@ -34,9 +34,20 @@ public class KnuthBlockBox extends KnuthBox {
      * it isn't possible to get the opt value stored in a MinOptMax object.
      */
     private int bpd;
-    private LinkedList footnoteList;
-    /** List of Knuth elements. This is a list of LinkedList elements. */
-    private LinkedList elementLists = null;
+    /** FootnoteBodyLayoutManagers corresponding to the footnotes cited on this line. */
+    private LinkedList footnoteLMList;
+    /** FloatBodyLayoutManagers corresponding to the floats cited on this line. */
+    private LinkedList floatLMList;
+    /**
+     * The Knuth sequences corresponding to the footnotes cited on this line. This is a List
+     * of List of KnuthElement objects.
+     */
+    private LinkedList footnoteElementLists = null;
+    /**
+     * The Knuth sequences corresponding to the floats cited on this line. This is a List
+     * of List of KnuthElement objects.
+     */
+    private LinkedList floatElementLists = null;
 
     /**
      * Creates a new box.
@@ -50,56 +61,96 @@ public class KnuthBlockBox extends KnuthBox {
         super(w, pos, bAux);
         ipdRange = (MinOptMax) range.clone();
         bpd = bpdim;
-        footnoteList = new LinkedList();
+        footnoteLMList = new LinkedList();
+        floatLMList = new LinkedList();
     }
 
     /**
      * Creates a new box.
      * @param w block progression dimension of this box
-     * @param list footnotes cited by elements in this box. The list contains the
-     * corresponding FootnoteBodyLayoutManagers 
+     * @param footnoteLMList footnotes cited by elements in this box. The list contains
+     * the corresponding FootnoteBodyLayoutManagers 
+     * @param floatLMList floats cited by elements in this box. The list contains the
+     * corresponding FloatBodyLayoutManagers 
      * @param pos the Position stored in this box
      * @param bAux is this box auxiliary?
      */
-    public KnuthBlockBox(int w, LinkedList list, Position pos, boolean bAux) {
+    public KnuthBlockBox(int w,
+                         LinkedList footnoteLMList,
+                         LinkedList floatLMList,
+                         Position pos,
+                         boolean bAux) {
         super(w, pos, bAux);
         ipdRange = new MinOptMax(0);
         bpd = 0;
-        footnoteList = new LinkedList(list);
+        this.footnoteLMList = new LinkedList(footnoteLMList);
+        this.floatLMList = new LinkedList(floatLMList);
     }
 
     /**
      * @return the LMs for the footnotes cited in this box.
      */
     public LinkedList getFootnoteBodyLMs() {
-        return footnoteList;
+        return footnoteLMList;
+    }
+
+    /**
+     * @return the LMs for the floats cited in this box.
+     */
+    public LinkedList getFloatBodyLMs() {
+        return floatLMList;
     }
 
     /**
      * @return true if this box contains footnote citations.
      */
-    public boolean hasAnchors() {
-        return (footnoteList.size() > 0);
+    public boolean hasFootnoteAnchors() {
+        return (footnoteLMList.size() > 0);
     }
 
     /**
-     * Adds the given list of Knuth elements to this box' list of elements.
-     * @param list elements corresponding to a footnote body
+     * @return true if this box contains float citations.
      */
-    public void addElementList(LinkedList list) {
-        if (elementLists == null) {
-            elementLists = new LinkedList();
+    public boolean hasFloatAnchors() {
+        return (floatLMList.size() > 0);
+    }
+
+    /**
+     * Adds a footnote to this box's list of footnotes.
+     * @param list KnuthElement instances corresponding to the footnote body
+     */
+    public void addFootnoteElementList(LinkedList list) {
+        if (footnoteElementLists == null) {
+            footnoteElementLists = new LinkedList();
         }
-        elementLists.add(list);
+        footnoteElementLists.add(list);
     }
 
     /**
-     * Returns the list of Knuth sequences registered by this box.
-     * @return a list of KnuthElement sequences corresponding to footnotes cited in this
-     * box
+     * Returns the list of footnotes cited by this box.
+     * @return a list of KnuthElement sequences corresponding to the footnote bodies
      */
-    public LinkedList getElementLists() {
-        return elementLists;
+    public LinkedList getFootnoteElementLists() {
+        return footnoteElementLists;
+    }
+
+    /**
+     * Adds a float to this box's list of floats.
+     * @param list KnuthElement instances corresponding to the float body
+     */
+    public void addFloatElementList(LinkedList list) {
+        if (floatElementLists == null) {
+            floatElementLists = new LinkedList();
+        }
+        floatElementLists.add(list);
+    }
+
+    /**
+     * Returns the list of floats cited by this box.
+     * @return a list of KnuthElement sequences corresponding to the float bodies
+     */
+    public LinkedList getFloatElementLists() {
+        return floatElementLists;
     }
 
     /**

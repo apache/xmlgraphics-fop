@@ -20,6 +20,7 @@
 package org.apache.fop.layoutmgr.inline;
 
 import org.apache.fop.layoutmgr.inline.AlignmentContext;
+import org.apache.fop.layoutmgr.FloatBodyLayoutManager;
 import org.apache.fop.layoutmgr.FootnoteBodyLayoutManager;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.Position;
@@ -27,6 +28,7 @@ import org.apache.fop.layoutmgr.Position;
 public class KnuthInlineBox extends KnuthBox {
     
     private FootnoteBodyLayoutManager footnoteBodyLM = null;
+    private FloatBodyLayoutManager floatBodyLM = null;
     private AlignmentContext alignmentContext = null;
 
     /**
@@ -64,13 +66,40 @@ public class KnuthInlineBox extends KnuthBox {
     }
 
     /**
-     * @return true if this box holds a reference to a FootnoteBodyLM
+     * @param fblm the FloatBodyLM this box must hold a reference to
+     */
+    public void setFloatBodyLM(FloatBodyLayoutManager fblm) {
+        floatBodyLM = fblm;
+    }
+
+    /**
+     * @return the FloatBodyLM this box holds a reference to
+     */
+    public FloatBodyLayoutManager getFloatBodyLM() {
+        return floatBodyLM;
+    }
+
+    /**
+     * @return true if this box holds a reference to an out-of-line object
      */
     public boolean isAnchor() {
+        return (footnoteBodyLM != null || floatBodyLM != null);
+    }
+
+    /**
+     * @return <code>true</code> if this box holds a reference to a footnote
+     */
+    public boolean isFootnoteAnchor() {
         return (footnoteBodyLM != null);
     }
-    
-    
+
+    /**
+     * @return <code>true</code> if this box holds a reference to a before-float
+     */
+    public boolean isFloatAnchor() {
+        return (floatBodyLM != null);
+    }
+
     /** @see java.lang.Object#toString() */
     public String toString() {
         StringBuffer sb = new StringBuffer(super.toString());

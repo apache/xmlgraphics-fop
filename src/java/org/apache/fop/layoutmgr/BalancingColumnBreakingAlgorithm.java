@@ -39,10 +39,11 @@ public class BalancingColumnBreakingAlgorithm extends PageBreakingAlgorithm {
             PageSequenceLayoutManager.PageProvider pageProvider,
             int alignment, int alignmentLast,
             MinOptMax footnoteSeparatorLength,
+            MinOptMax floatSeparatorLength,
             boolean partOverflowRecovery,
             int columnCount) {
         super(topLevelLM, pageProvider, alignment, alignmentLast, 
-                footnoteSeparatorLength, partOverflowRecovery, false, false);
+                footnoteSeparatorLength, floatSeparatorLength, partOverflowRecovery, false, false);
         this.columnCount = columnCount;
         this.considerTooShort = true; //This is important!
     }

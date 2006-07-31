@@ -992,7 +992,7 @@ public abstract class BreakingAlgorithm {
      * @param line number of the line ending at the node's corresponding breakpoint
      * @param node the active node to add
      */
-    protected void addNode(int line, KnuthNode node) {
+    public void addNode(int line, KnuthNode node) {
         int headIdx = line * 2;
         if (headIdx >= activeLines.length) {
             KnuthNode[] oldList = activeLines;
@@ -1016,7 +1016,7 @@ public abstract class BreakingAlgorithm {
      * @param line number of the line ending at the node's corresponding breakpoint
      * @param node the node to deactivate
      */
-    protected void removeNode(int line, KnuthNode node) {
+    public void removeNode(int line, KnuthNode node) {
         int headIdx = line * 2;
         KnuthNode n = getNode(line);
         if (n != node) {

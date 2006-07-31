@@ -43,17 +43,22 @@ public abstract class AbstractBreaker {
         int footnoteFirstElementIndex;
         int footnoteLastListIndex;
         int footnoteLastElementIndex;
+        int floatFirstListIndex;
+        int floatLastListIndex;
 
         PageBreakPosition(LayoutManager lm, int iBreakIndex,
-                          int ffli, int ffei, int flli, int flei,
+                          int fofli, int fofei, int folli, int folei,
+                          int flfli, int fllli,
                           double bpdA, int diff) {
             super(lm, iBreakIndex);
             bpdAdjust = bpdA;
             difference = diff;
-            footnoteFirstListIndex = ffli;
-            footnoteFirstElementIndex = ffei;
-            footnoteLastListIndex = flli;
-            footnoteLastElementIndex = flei;
+            footnoteFirstListIndex = fofli;
+            footnoteFirstElementIndex = fofei;
+            footnoteLastListIndex = folli;
+            footnoteLastElementIndex = folei;
+            floatFirstListIndex = flfli;
+            floatLastListIndex = fllli;
         }
     }
 
@@ -163,6 +168,7 @@ public abstract class AbstractBreaker {
     private int alignmentLast;
 
     protected MinOptMax footnoteSeparatorLength = new MinOptMax(0);
+    protected MinOptMax floatSeparatorLength = new MinOptMax(0);
 
     protected abstract int getCurrentDisplayAlign();
     protected abstract boolean hasMoreContent();
@@ -311,7 +317,7 @@ public abstract class AbstractBreaker {
                         + "), flow BPD =" + flowBPD);
                 PageBreakingAlgorithm alg = new PageBreakingAlgorithm(getTopLevelLM(),
                         getPageProvider(),
-                        alignment, alignmentLast, footnoteSeparatorLength,
+                        alignment, alignmentLast, footnoteSeparatorLength, floatSeparatorLength,
                         isPartOverflowRecoveryActivated(), autoHeight, isSinglePartFavored());
                 int iOptPageCount;
 

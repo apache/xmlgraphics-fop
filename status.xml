@@ -28,6 +28,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="add" fixes-bug="39777" due-to="Vincent Hennebert">
+        Initial support for fo:float with float="before" and float="none".
+      </action>
       <action context="Code" dev="JM" type="fix" fixes-bug="40106" due-to="Jeroen Meijer">
         Compatibility fix for GCJ (GNU Classpath): Using "UTF-16BE" instead of "UnicodeBigUnmarked"
         encoding.

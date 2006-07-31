@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      Test for before-floats. This a complex documents with several floats; some
+      may be put on the same page as their citation, others not.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="3in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+	  <fo:block space-after.minimum="2pt"
+		    space-after.optimum="6pt"
+		    space-after.maximum="12pt"
+		    orphans="1"
+		    widows="1">
+	    <fo:block space-after="inherit">
+	      This is a block with a float. This is a block with a float.
+	      This float has the number <fo:inline
+		color="blue">1</fo:inline><fo:float float="before" color="red">
+		<fo:block>
+		  This is the float content. This is the float content. This is
+		  the float content. This is the float content. This is the
+		  float content. This was the float number 1.
+		</fo:block>
+	      </fo:float>.
+	      This is a block with a float. This is a block with a float.
+	      This is a block with a float.
+	    </fo:block>
+	    <fo:block space-after="inherit">
+	      This is a block with a float. This is a block with a float.
+	      This float has the number <fo:inline
+		color="blue">2</fo:inline><fo:float float="before" color="red">
+		<fo:block>
+		  This is the float content. This is the float content. This is
+		  the float content. This is the float content. This is the
+		  float content. This was the float number 2.
+		</fo:block>
+	      </fo:float>.
+	      This is a block with a float. This is a block with a float.
+	      This is a block with a float.
+	    </fo:block>
+	    <fo:block space-after="inherit">
+	      This is a block without a float. This is a block without a float.
+	      This is a block without a float. This is a block without a float.
+	      This is a block without a float. This is a block without a float.
+	      This is a block without a float. This is a block without a float.
+	    </fo:block>
+	    <fo:block space-after="inherit">
+	      This is a block with a float. This is a block with a float.
+	      This float has the number <fo:inline
+		color="blue">3</fo:inline><fo:float float="before" color="red">
+		<fo:block>
+		  This is the float content. This is the float content. This is
+		  the float content. This is the float content. This is the
+		  float content. This was the float number 3.
+		</fo:block>
+	      </fo:float>.
+	      This is a block with a float. This is a block with a float.
+	      This is a block with a float.
+	    </fo:block>
+	    <fo:block space-after="inherit">
+	      This is a block without a float. This is a block without a float.
+	      This is a block without a float. This is a block without a float.
+	      This is a block without a float. This is a block without a float.
+	    </fo:block>
+	    <fo:block space-after="inherit">
+	      This is a block with a float. This is a block with a float.
+	      This float has the number <fo:inline
+		color="blue">4</fo:inline><fo:float float="before" color="red">
+		<fo:block>
+		  This is the float content. This is the float content. This is
+		  the float content. This is the float content. This is the
+		  float content. This was the float number 4.
+		</fo:block>
+	      </fo:float>.
+	      This is a block with a float. This is a block with a float.
+	      This is a block with a float.
+	    </fo:block>
+	    <fo:block space-after="inherit">
+	      This is a block without a float. This is a block without a float.
+	      This is a block without a float. This is a block without a float.
+	      This is a block without a float. This is a block without a float.
+	      This is a block without a float. This is a block without a float.
+	    </fo:block>
+	    <fo:block space-after="inherit">
+	      This is a block with a float. This is a block with a float.
+	      This float has the number <fo:inline
+		color="blue">5</fo:inline><fo:float float="before" color="red">
+		<fo:block>
+		  This is the float content. This is
+		  the float content. This is the float content. This is the
+		  float content. This is the float content. This is the float
+		  content. This is the float content. This is the float content.
+		  This is the float content. This is the float content. This is
+		  the float content. This is the float content. This is the
+		  float content. This is the float content. This is the float
+		  content. This is the float content. This is the float content.
+		  This was the float number 5.
+		</fo:block>
+	      </fo:float>.
+	      This is a block with a float. This is a block with a float.
+	      This is a block with a float.
+	    </fo:block>
+	    <fo:block space-after="inherit">
+	      This is a block without a float. This is a block without a float.
+	      This is a block without a float. This is a block without a float.
+	      This is a block without a float. This is a block without a float.
+	      This is a block without a float. This is a block without a float.
+	    </fo:block>
+	    <fo:block space-after="inherit">
+	      This is a block without a float. This is a block without a float.
+	      This is a block without a float. This is a block without a float.
+	      This is a block without a float. This is a block without a float.
+	      This is a block without a float. This is a block without a float.
+	    </fo:block>
+	    <fo:block space-after="inherit">
+	      This is a block without a float. This is a block without a float.
+	      This is a block without a float. This is a block without a float.
+	      This is a block without a float. This is a block without a float.
+	      This is a block without a float. This is a block without a float.
+	    </fo:block>
+	    <fo:block space-after="inherit">
+	      This is a block without a float. This is a block without a float.
+	      This is a block without a float. This is a block without a float.
+	      This is a block without a float. This is a block without a float.
+	      This is a block without a float. This is a block without a float.
+	    </fo:block>
+	  </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="5" xpath="count(//pageViewport)"/>
+    <!-- page 1 -->
+    <eval expected="2"
+	  xpath="count(//pageViewport[1]/page/regionViewport/regionBody/beforeFloat/block)"/>
+    <!-- float number 1 -->
+    <eval expected="the float number 1."
+          xpath="//pageViewport[1]/page/regionViewport/regionBody/beforeFloat/block[1]/lineArea[3]/text"/>
+    <eval expected="43200"
+          xpath="//pageViewport[1]/page/regionViewport/regionBody/beforeFloat/block[1]/@bpd"/>
+    <!-- float number 2 -->
+    <eval expected="the float number 2."
+          xpath="//pageViewport[1]/page/regionViewport/regionBody/beforeFloat/block[2]/lineArea[3]/text"/>
+    <eval expected="43200"
+          xpath="//pageViewport[1]/page/regionViewport/regionBody/beforeFloat/block[2]/@bpd"/>
+    <!-- page 2 -->
+    <eval expected="1"
+	  xpath="count(//pageViewport[2]/page/regionViewport/regionBody/beforeFloat/block)"/>
+    <!-- float number 3 -->
+    <eval expected="the float number 3."
+          xpath="//pageViewport[2]/page/regionViewport/regionBody/beforeFloat/block/lineArea[3]/text"/>
+    <eval expected="43200"
+          xpath="//pageViewport[2]/page/regionViewport/regionBody/beforeFloat/block/@bpd"/>
+    <!-- page 3 -->
+    <eval expected="1"
+	  xpath="count(//pageViewport[3]/page/regionViewport/regionBody/beforeFloat/block)"/>
+    <!-- float number 4 -->
+    <eval expected="the float number 4."
+          xpath="//pageViewport[3]/page/regionViewport/regionBody/beforeFloat/block/lineArea[3]/text"/>
+    <eval expected="43200"
+          xpath="//pageViewport[3]/page/regionViewport/regionBody/beforeFloat/block/@bpd"/>
+    <!-- page 4 -->
+    <eval expected="1"
+	  xpath="count(//pageViewport[4]/page/regionViewport/regionBody/beforeFloat/block)"/>
+    <!-- float number 5 -->
+    <eval expected="This is the float content. This was the float number 5."
+          xpath="//pageViewport[4]/page/regionViewport/regionBody/beforeFloat/block/lineArea[7]/text"/>
+    <eval expected="100800"
+          xpath="//pageViewport[4]/page/regionViewport/regionBody/beforeFloat/block/@bpd"/>
+    <!-- page 5 -->
+    <eval expected="0"
+	  xpath="count(//pageViewport[5]/page/regionViewport/regionBody/beforeFloat/block)"/>
+  </checks>
+</testcase>

@@ -1094,14 +1094,20 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     // create a list of the FootnoteBodyLM handling footnotes 
                     // whose citations are in this line
                     LinkedList footnoteList = new LinkedList();
+                    LinkedList floatList = new LinkedList();
                     ListIterator elementIterator = seq.listIterator(startIndex);
                     while (elementIterator.nextIndex() <= endIndex) {
                         KnuthElement element = (KnuthElement) elementIterator.next();
                         if (element instanceof KnuthInlineBox
                             && ((KnuthInlineBox) element).isAnchor()) {
-                            footnoteList.add(((KnuthInlineBox) element).getFootnoteBodyLM());
+                            if (((KnuthInlineBox) element).isFootnoteAnchor()) {
+                                footnoteList.add(((KnuthInlineBox) element).getFootnoteBodyLM());
+                            } else {
+                                floatList.add(((KnuthInlineBox) element).getFloatBodyLM());
+                            }
                         } else if (element instanceof KnuthBlockBox) {
                             footnoteList.addAll(((KnuthBlockBox) element).getFootnoteBodyLMs());
+                            floatList.addAll(((KnuthBlockBox) element).getFloatBodyLMs());
                         }
                     }
                     startIndex = endIndex + 1;
@@ -1109,7 +1115,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                       = (LineBreakPosition) llPoss.getChosenPosition(i);
                     returnList.add(new KnuthBlockBox
                                    (lbp.lineHeight + lbp.spaceBefore + lbp.spaceAfter,
-                                    footnoteList, lbp, false));
+                                    footnoteList, floatList, lbp, false));
                     /* // add stretch and shrink to the returnlist
                     if (!seq.isInlineSequence()
                             && lbp.availableStretch != 0 || lbp.availableShrink != 0) {

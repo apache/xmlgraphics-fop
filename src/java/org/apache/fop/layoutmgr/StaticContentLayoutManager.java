@@ -186,7 +186,8 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
      * @see org.apache.fop.layoutmgr.LayoutManager#addChildArea(Area)
      */
     public void addChildArea(Area childArea) {
-        if (getStaticContentFO().getFlowName().equals("xsl-footnote-separator")) {
+        if (getStaticContentFO().getFlowName().equals("xsl-footnote-separator")
+                || getStaticContentFO().getFlowName().equals("xsl-before-float-separator")) {
             targetBlock.addBlock((Block)childArea);
         } else {
             targetRegion.addBlock((Block)childArea);
@@ -197,7 +198,8 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
      * @see org.apache.fop.layoutmgr.LayoutManager#getParentArea(Area)
      */
     public Area getParentArea(Area childArea) {
-        if (getStaticContentFO().getFlowName().equals("xsl-footnote-separator")) {
+        if (getStaticContentFO().getFlowName().equals("xsl-footnote-separator")
+                || getStaticContentFO().getFlowName().equals("xsl-before-float-separator")) {
             return targetBlock;
         } else {
             return targetRegion;
@@ -214,7 +216,8 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         boolean autoHeight = false;
         StaticContentBreaker breaker;
 
-        if (getStaticContentFO().getFlowName().equals("xsl-footnote-separator")) {
+        if (getStaticContentFO().getFlowName().equals("xsl-footnote-separator")
+                || getStaticContentFO().getFlowName().equals("xsl-before-float-separator")) {
             targetIPD = targetBlock.getIPD();
             targetBPD = targetBlock.getBPD();
             if (targetBPD == 0) {

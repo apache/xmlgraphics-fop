@@ -54,17 +54,22 @@ public class BeforeFloat extends BlockParent {
      *
      * @return the height of the before float including separator
      */
-    public int getBPD() {
-        int h = super.getBPD();
-        if (separator != null) {
-            h += separator.getBPD();
-        }
-        return h;
-    }
+//    public int getBPD() {
+//        int h = super.getBPD();
+//        if (separator != null) {
+//            h += separator.getBPD();
+//        }
+//        return h;
+//    }
 
-    /** @see org.apache.fop.area.BlockParent#isEmpty() */
-    public boolean isEmpty() {
-        return true; // before floats are not yet implemented
+    /**
+     * Add a block area as child to the footnote area
+     *
+     * @param child the block area.
+     */
+    public void addBlock(Block child) {
+        addChildArea(child);
+        this.setBPD(this.getBPD() + child.getBPD());
     }
 }
 

@@ -28,6 +28,7 @@ import java.util.Iterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.FObjMixed;
@@ -37,6 +38,7 @@ import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.BlockContainer;
 import org.apache.fop.fo.flow.Character;
 import org.apache.fop.fo.flow.ExternalGraphic;
+import org.apache.fop.fo.flow.Float;
 import org.apache.fop.fo.flow.Footnote;
 import org.apache.fop.fo.flow.Inline;
 import org.apache.fop.fo.flow.InlineLevel;
@@ -69,6 +71,7 @@ import org.apache.fop.layoutmgr.inline.BidiLayoutManager;
 import org.apache.fop.layoutmgr.inline.CharacterLayoutManager;
 import org.apache.fop.layoutmgr.inline.ContentLayoutManager;
 import org.apache.fop.layoutmgr.inline.ExternalGraphicLayoutManager;
+import org.apache.fop.layoutmgr.inline.FloatLayoutManager;
 import org.apache.fop.layoutmgr.inline.FootnoteLayoutManager;
 import org.apache.fop.layoutmgr.inline.ICLayoutManager;
 import org.apache.fop.layoutmgr.inline.InlineLayoutManager;
@@ -109,6 +112,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
         makers.put(BidiOverride.class, new BidiOverrideLayoutManagerMaker());
         makers.put(Inline.class, new InlineLayoutManagerMaker());
         makers.put(Footnote.class, new FootnodeLayoutManagerMaker());
+        makers.put(Float.class, new FloatLayoutManagerMaker());
         makers.put(InlineContainer.class,
                    new InlineContainerLayoutManagerMaker());
         makers.put(BasicLink.class, new BasicLinkLayoutManagerMaker());
@@ -267,6 +271,16 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
                  lms.add(new InlineLayoutManager((InlineLevel) node));
              }
          }
+    }
+
+    public static class FloatLayoutManagerMaker extends Maker {
+        public void make(FONode node, List lms) {
+            if (((Float) node).getFloat() == Constants.EN_NONE) {
+                lms.add(new FloatBodyLayoutManager((Float) node));
+            } else {
+                lms.add(new FloatLayoutManager((Float) node));
+            }
+        }
     }
 
     public static class FootnodeLayoutManagerMaker extends Maker {

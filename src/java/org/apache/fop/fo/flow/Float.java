@@ -37,18 +37,21 @@ public class Float extends FObj {
     private int clear;
     // End of property values
 
-    static boolean notImplementedWarningGiven = false;
     
     /**
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
     public Float(FONode parent) {
         super(parent);
-        
-        if (!notImplementedWarningGiven) {
-            getLogger().warn("fo:float is not yet implemented.");
-            notImplementedWarningGiven = true;
-        }
+    }
+
+
+    public int getClear() {
+        return clear;
+    }
+
+    public int getFloat() {
+        return float_;
     }
 
     /**
