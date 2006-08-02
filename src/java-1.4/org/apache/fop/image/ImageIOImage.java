@@ -21,6 +21,7 @@ package org.apache.fop.image;
 
 // AWT
 import java.awt.Color;
+import java.awt.color.ColorSpace;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.awt.image.BufferedImage;
@@ -121,7 +122,9 @@ public class ImageIOImage extends AbstractFopImage {
 
             ColorModel cm = imageData.getColorModel();
             this.bitsPerPixel = cm.getComponentSize(0); //only use first, we assume all are equal
-            this.colorSpace = cm.getColorSpace();
+            //this.colorSpace = cm.getColorSpace();
+            //We currently force the image to sRGB
+            this.colorSpace = ColorSpace.getInstance(ColorSpace.CS_sRGB);
 
             int[] tmpMap = imageData.getRGB(0, 0, this.width,
                                             this.height, null, 0, this.width);
