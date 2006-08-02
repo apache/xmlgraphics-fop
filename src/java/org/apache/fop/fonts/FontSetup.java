@@ -46,6 +46,9 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
 // Java
 import java.util.List;
 
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+
 /**
  * Default fonts for FOP application; currently this uses PDF's fonts
  * by default.
@@ -194,6 +197,11 @@ public class FontSetup {
             return; //No fonts to process
         }
 
+        if (resolver == null) {
+            //Ensure that we have minimal font resolution capabilities
+            resolver = createMinimalFontResolver();
+        }
+        
         String internalName = null;
         //FontReader reader = null;
 
@@ -229,6 +237,18 @@ public class FontSetup {
         }
     }
 
+    /** @return a new FontResolver to be used by the font subsystem */
+    private static FontResolver createMinimalFontResolver() {
+        return new FontResolver() {
+
+            /** @see org.apache.fop.fonts.FontResolver#resolve(java.lang.String) */
+            public Source resolve(String href) {
+                //Minimal functionality here
+                return new StreamSource(href);
+            }
+            
+        };
+    }
     /**
      * Builds a list of EmbedFontInfo objects for use with the setup() method.
      * @param cfg Configuration object

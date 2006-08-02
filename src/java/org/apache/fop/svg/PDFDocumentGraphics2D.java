@@ -165,7 +165,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
      * @see org.apache.avalon.framework.activity.Initializable#initialize()
      */
     public void initialize() throws Exception {
-        if (this.fontInfo == null) {
+        if (this.fontInfo == null || this.cfg != null) {
             fontInfo = new FontInfo();
             FontSetup.setup(fontInfo, this.pdfContext.getFontList(), null);
             //FontState fontState = new FontState("Helvetica", "normal",
