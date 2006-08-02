@@ -29,6 +29,9 @@
   <changes>
     <release version="FOP Trunk">
       <action context="Code" dev="JM" type="fix">
+        Bugfix: Table headers and footers were swallowed when a table was nested in a list-block.
+      </action>
+      <action context="Code" dev="JM" type="fix">
         Fixed a bug with indent handling when margins are used on a surrounding block and 
         not start/end-indent.
       </action>

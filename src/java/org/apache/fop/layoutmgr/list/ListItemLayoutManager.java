@@ -288,7 +288,21 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
             int penaltyHeight = step 
                 + getMaxRemainingHeight(fullHeights, partialHeights) 
                 - totalHeight;
+            
+            //Additional penalty height from penalties in the source lists
+            int additionalPenaltyHeight = 0;
+            KnuthElement endEl = (KnuthElement)elementLists[0].get(end[0]);
+            if (endEl instanceof KnuthPenalty) {
+                additionalPenaltyHeight = ((KnuthPenalty)endEl).getW();
+            }
+            endEl = (KnuthElement)elementLists[1].get(end[1]);
+            if (endEl instanceof KnuthPenalty) {
+                additionalPenaltyHeight = Math.max(
+                        additionalPenaltyHeight, ((KnuthPenalty)endEl).getW());
+            }
+            
             int boxHeight = step - addedBoxHeight - penaltyHeight;
+            penaltyHeight += additionalPenaltyHeight; //Add AFTER calculating boxHeight!
 
             // add the new elements
             addedBoxHeight += boxHeight;
@@ -300,7 +314,6 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
                 if (keepWithNextActive || mustKeepTogether()) {
                     p = KnuthPenalty.INFINITE;
                 }
-                //returnList.add(new KnuthPenalty(penaltyHeight, p, false, stepPosition, false));
                 returnList.add(new BreakElement(stepPosition, penaltyHeight, p, -1, context));
             }
         }
