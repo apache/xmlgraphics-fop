@@ -28,6 +28,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix">
+        Fixed a bug with indent handling when margins are used on a surrounding block and 
+        not start/end-indent.
+      </action>
       <action context="Code" dev="JM" type="add" fixes-bug="39777" due-to="Vincent Hennebert">
         Initial support for fo:float with float="before" and float="none".
       </action>
