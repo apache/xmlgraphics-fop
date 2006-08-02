@@ -94,33 +94,32 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
         Numeric border = getCorresponding(borderWidthCorresponding, propertyList).getNumeric();
         
         int marginProp = pList.getWritingMode(lr_tb, rl_tb, tb_rl);
-        Numeric margin;
         // Calculate the absolute margin.
         if (propertyList.getExplicitOrShorthand(marginProp) == null) {
             Property indent = propertyList.getExplicit(baseMaker.propId);
             if (indent == null) {
-                //Neither start-indent nor margin is specified, use inherited
+                //Neither indent nor margin is specified, use inherited
                 return null;
+            } else {
+                //Use explicit indent directly
+                return indent;
             }
-            margin = propertyList.getExplicit(baseMaker.propId).getNumeric();
-            margin = NumericOp.subtraction(margin, 
-                    propertyList.getInherited(baseMaker.propId).getNumeric());
-            margin = NumericOp.subtraction(margin, padding);
-            margin = NumericOp.subtraction(margin, border);
         } else {
-            margin = propertyList.get(marginProp).getNumeric();
+            //Margin is used
+            Numeric margin = propertyList.get(marginProp).getNumeric();
+            
+            Numeric v = new FixedLength(0);
+            if (!propertyList.getFObj().generatesReferenceAreas()) {
+                // The inherited_value_of([start|end]-indent)
+                v = NumericOp.addition(v, propertyList.getInherited(baseMaker.propId).getNumeric());
+            }
+            // The corresponding absolute margin-[right|left}.
+            v = NumericOp.addition(v, margin);
+            v = NumericOp.addition(v, padding);
+            v = NumericOp.addition(v, border);
+            return (Property) v;
         }
         
-        Numeric v = new FixedLength(0);
-        if (!propertyList.getFObj().generatesReferenceAreas()) {
-            // The inherited_value_of([start|end]-indent)
-            v = NumericOp.addition(v, propertyList.getInherited(baseMaker.propId).getNumeric());
-        }
-        // The corresponding absolute margin-[right|left}.
-        v = NumericOp.addition(v, margin);
-        v = NumericOp.addition(v, padding);
-        v = NumericOp.addition(v, border);
-        return (Property) v;
     }
     
     private boolean isInherited(PropertyList pList) {
@@ -166,7 +165,6 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
             pl = pl.getParentPropertyList();
         }
         
-        Numeric margin;
         // Calculate the absolute margin.
         if (propertyList.getExplicitOrShorthand(marginProp) == null) {
             Property indent = propertyList.getExplicit(baseMaker.propId);
@@ -181,19 +179,20 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
                 return indent;
             }
         } else {
-            margin = propertyList.get(marginProp).getNumeric();
+            //Margin is used
+            Numeric margin = propertyList.get(marginProp).getNumeric();
+            
+            Numeric v = new FixedLength(0);
+            if (isInherited(propertyList)) {
+                // The inherited_value_of([start|end]-indent)
+                v = NumericOp.addition(v, propertyList.getInherited(baseMaker.propId).getNumeric());
+            }
+            // The corresponding absolute margin-[right|left}.
+            v = NumericOp.addition(v, margin);
+            v = NumericOp.addition(v, padding);
+            v = NumericOp.addition(v, border);
+            return (Property) v;
         }
-        
-        Numeric v = new FixedLength(0);
-        if (isInherited(propertyList)) {
-            // The inherited_value_of([start|end]-indent)
-            v = NumericOp.addition(v, propertyList.getInherited(baseMaker.propId).getNumeric());
-        }
-        // The corresponding absolute margin-[right|left}.
-        v = NumericOp.addition(v, margin);
-        v = NumericOp.addition(v, padding);
-        v = NumericOp.addition(v, border);
-        return (Property) v;
     }
     
     private Property getCorresponding(int[] corresponding, PropertyList propertyList)
