@@ -221,6 +221,20 @@
       
       <fonts....
     </renderer>]]></source>
+      <p>
+        Another (optional) setting specific to the PDF Renderer is an output color profile, an ICC 
+        color profile which indicates the target color space the PDF file is generated for. This 
+        setting is mainly used in conjunction with the <a href="pdfx.html">PDF/X</a> feature. 
+        An example:
+      </p>
+    <source><![CDATA[
+    <renderer mime="application/pdf">
+      <filterList...
+      
+      <output-profile>C:\FOP\Color\EuropeISOCoatedFOGRA27.icc</output-profile>
+      
+      <fonts....
+    </renderer>]]></source>
     </section>
     <section id="ps-renderer">
       <title>Special Settings for the PostScript Renderer</title>
