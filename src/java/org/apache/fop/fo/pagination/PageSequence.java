@@ -539,4 +539,12 @@ public class PageSequence extends FObj {
         return this.language;
     }
 
+    /**
+     * Releases a page-sequence's children after the page-sequence has been fully processed.
+     */
+    public void releasePageSequence() {
+        this.mainFlow = null;
+        this.flowMap.clear();
+    }
+    
 }

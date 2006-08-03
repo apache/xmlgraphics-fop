@@ -168,6 +168,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                 (currentPageNum - startPageNum) + 1);
         areaTreeHandler.notifyPageSequenceFinished(pageSeq,
                 (currentPageNum - startPageNum) + 1);
+        pageSeq.releasePageSequence();
         log.debug("Ending layout");
     }
 
