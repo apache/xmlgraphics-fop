@@ -33,6 +33,8 @@ import org.apache.fop.area.LineArea;
 import org.apache.fop.area.Resolvable;
 
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.flow.RetrieveMarker;
 
@@ -43,6 +45,7 @@ import org.apache.fop.fo.pagination.RegionBody;
 import org.apache.fop.fo.pagination.SideRegion;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.pagination.StaticContent;
+import org.apache.fop.layoutmgr.PageBreakingAlgorithm.PageBreakingLayoutListener;
 import org.apache.fop.layoutmgr.inline.ContentLayoutManager;
 
 import org.apache.fop.traits.MinOptMax;
@@ -192,8 +195,9 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             context.setRefIPD(flowIPD);
         }
         
+        /** @see org.apache.fop.layoutmgr.AbstractBreaker#getTopLevelLM() */
         protected LayoutManager getTopLevelLM() {
-            return null;  // unneeded for PSLM
+            return pslm;
         }
         
         /** @see org.apache.fop.layoutmgr.AbstractBreaker#getPageProvider() */
@@ -201,6 +205,32 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             return pageProvider;
         }
         
+        /**
+         * @see org.apache.fop.layoutmgr.AbstractBreaker#getLayoutListener()
+         */
+        protected PageBreakingLayoutListener getLayoutListener() {
+            return new PageBreakingLayoutListener() {
+
+                public void notifyOverflow(int part, FObj obj) {
+                    Page p = pageProvider.getPage(
+                                false, part, PageProvider.RELTO_CURRENT_ELEMENT_LIST);
+                    RegionBody body = (RegionBody)p.getSimplePageMaster().getRegion(
+                            Region.FO_REGION_BODY);
+                    String err = FONode.decorateWithContextInfo(
+                            "Content of the region-body on page " 
+                            + p.getPageViewport().getPageNumberString() 
+                            + " overflows the available area in block-progression dimension.", 
+                            obj);
+                    if (body.getOverflow() == Constants.EN_ERROR_IF_OVERFLOW) {
+                        throw new RuntimeException(err);
+                    } else {
+                        PageSequenceLayoutManager.log.warn(err);
+                    }
+                }
+                
+            };
+        }
+
         /** @see org.apache.fop.layoutmgr.AbstractBreaker */
         protected int handleSpanChange(LayoutContext childLC, int nextSequenceStartsOn) {
             needColumnBalancing = false;
@@ -373,7 +403,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             //Restart last page
             PageBreakingAlgorithm algRestart = new PageBreakingAlgorithm(
                     getTopLevelLM(),
-                    getPageProvider(),
+                    getPageProvider(), getLayoutListener(),
                     alg.getAlignment(), alg.getAlignmentLast(), 
                     footnoteSeparatorLength,
                     isPartOverflowRecoveryActivated(), false, false);
@@ -433,7 +463,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             //Restart last page
             PageBreakingAlgorithm algRestart = new BalancingColumnBreakingAlgorithm(
                     getTopLevelLM(),
-                    getPageProvider(),
+                    getPageProvider(), getLayoutListener(),
                     alignment, Constants.EN_START, footnoteSeparatorLength,
                     isPartOverflowRecoveryActivated(),
                     getCurrentPV().getBodyRegion().getColumnCount());
