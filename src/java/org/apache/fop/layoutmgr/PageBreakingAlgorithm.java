@@ -39,6 +39,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
 
     private LayoutManager topLevelLM;
     private PageSequenceLayoutManager.PageProvider pageProvider;
+    private PageBreakingLayoutListener layoutListener;
     /** List of PageBreakPosition elements. */
     private LinkedList pageBreaks = null;
 
@@ -94,6 +95,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     
     public PageBreakingAlgorithm(LayoutManager topLevelLM,
                                  PageSequenceLayoutManager.PageProvider pageProvider,
+                                 PageBreakingLayoutListener layoutListener,
                                  int alignment, int alignmentLast,
                                  MinOptMax footnoteSeparatorLength,
                                  boolean partOverflowRecovery, boolean autoHeight,
@@ -102,6 +104,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         this.log = classLog;
         this.topLevelLM = topLevelLM;
         this.pageProvider = pageProvider;
+        this.layoutListener = layoutListener;
         best = new BestPageRecords();
         this.footnoteSeparatorLength = (MinOptMax) footnoteSeparatorLength.clone();
         // add some stretch, to avoid a restart for every page containing footnotes
@@ -746,11 +749,15 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         //      ? bestActiveNode.difference : bestActiveNode.difference + fillerMinWidth;
         int difference = bestActiveNode.difference;
         if (difference + bestActiveNode.availableShrink < 0) {
-            if (!autoHeight && log.isWarnEnabled()) {
-                log.warn(FONode.decorateWithContextInfo(
-                        "Part/page " + (getPartCount() + 1) 
-                        + " overflows the available area in block-progression dimension.", 
-                        getFObj()));
+            if (!autoHeight) {
+                if (layoutListener != null) {
+                    layoutListener.notifyOverflow(bestActiveNode.line - 1, getFObj());
+                } else if (log.isWarnEnabled()) {
+                    log.warn(FONode.decorateWithContextInfo(
+                            "Part/page " + (bestActiveNode.line - 1) 
+                            + " overflows the available area in block-progression dimension.", 
+                            getFObj()));
+                }
             }
         }
         boolean isNonLastPage = (bestActiveNode.line < total);
@@ -850,6 +857,20 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
             log.trace("getLineWidth(" + line + ") -> " + bpd);
         }
         return bpd;
+    }
+    
+    /**
+     * Interface to notify about layout events during page breaking.
+     */
+    public interface PageBreakingLayoutListener {
+
+        /**
+         * Issued when an overflow is detected
+         * @param part the number of the part (page) this happens on
+         * @param obj the root FO object where this happens
+         */
+        void notifyOverflow(int part, FObj obj);
+        
     }
     
 }

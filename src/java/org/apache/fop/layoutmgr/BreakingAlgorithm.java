@@ -50,7 +50,7 @@ public abstract class BreakingAlgorithm {
     /** Maximum adjustment ration */
     protected static final int INFINITE_RATIO = 1000;
 
-    private static final int MAX_RECOVERY_ATTEMPTS = 50;
+    private static final int MAX_RECOVERY_ATTEMPTS = 5;
 
     // constants identifying a subset of the feasible breaks
     /** All feasible breaks are ok. */
@@ -156,6 +156,7 @@ public abstract class BreakingAlgorithm {
 
     /** @see #isPartOverflowRecoveryActivated() */
     private boolean partOverflowRecoveryActivated = true;
+    private KnuthNode lastRecovered;
 
     /**
      * Create a new instance.
@@ -495,6 +496,12 @@ public abstract class BreakingAlgorithm {
                 }
                 if (lastTooShort == null || lastForced.position == lastTooShort.position) {
                     if (isPartOverflowRecoveryActivated()) {
+                        if (this.lastRecovered == null) {
+                            this.lastRecovered = lastTooLong;
+                            if (log.isDebugEnabled()) {
+                                log.debug("Recovery point: " + lastRecovered);
+                            }
+                        }
                         // content would overflow, insert empty line/page and try again
                         KnuthNode node = createNode(
                                 lastTooLong.previous.position, lastTooLong.previous.line + 1, 1,
@@ -503,23 +510,34 @@ public abstract class BreakingAlgorithm {
                                 0, 0, lastTooLong.previous);
                         lastForced = node;
                         node.fitRecoveryCounter = lastTooLong.previous.fitRecoveryCounter + 1;
-                        log.debug("first part doesn't fit into line, recovering: " 
-                                + node.fitRecoveryCounter);
+                        if (log.isDebugEnabled()) {
+                            log.debug("first part doesn't fit into line, recovering: " 
+                                    + node.fitRecoveryCounter);
+                        }
                         if (node.fitRecoveryCounter > getMaxRecoveryAttempts()) {
-                            FONode contextFO = findContextFO(par, node.position + 1);
-                            throw new RuntimeException(FONode.decorateWithContextInfo(
-                                    "Some content could not fit "
-                                    + "into a line/page after " + getMaxRecoveryAttempts() 
-                                    + " attempts. Giving up to avoid an endless loop.", contextFO));
+                            while (lastForced.fitRecoveryCounter > 0) {
+                                lastForced = lastForced.previous;
+                                lastDeactivated = lastForced.previous;
+                                startLine--;
+                                endLine--;
+                            }
+                            lastForced = this.lastRecovered;
+                            this.lastRecovered = null;
+                            startLine = lastForced.line;
+                            endLine = lastForced.line;
+                            log.debug("rolled back...");
                         }
                     } else {
                         lastForced = lastTooLong;
                     }
                 } else {
                     lastForced = lastTooShort;
+                    this.lastRecovered = null;
                 }
 
-                log.debug("Restarting at node " + lastForced);
+                if (log.isDebugEnabled()) {
+                    log.debug("Restarting at node " + lastForced);
+                }
                 i = restartFrom(lastForced, i);
             }
         }

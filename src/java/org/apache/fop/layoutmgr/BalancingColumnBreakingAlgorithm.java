@@ -21,6 +21,7 @@ package org.apache.fop.layoutmgr;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.layoutmgr.PageBreakingAlgorithm.PageBreakingLayoutListener;
 import org.apache.fop.traits.MinOptMax;
 
 /**
@@ -37,11 +38,13 @@ public class BalancingColumnBreakingAlgorithm extends PageBreakingAlgorithm {
     
     public BalancingColumnBreakingAlgorithm(LayoutManager topLevelLM,
             PageSequenceLayoutManager.PageProvider pageProvider,
+            PageBreakingLayoutListener layoutListener,
             int alignment, int alignmentLast,
             MinOptMax footnoteSeparatorLength,
             boolean partOverflowRecovery,
             int columnCount) {
-        super(topLevelLM, pageProvider, alignment, alignmentLast, 
+        super(topLevelLM, pageProvider, layoutListener,
+                alignment, alignmentLast, 
                 footnoteSeparatorLength, partOverflowRecovery, false, false);
         this.columnCount = columnCount;
         this.considerTooShort = true; //This is important!

@@ -28,6 +28,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="update">
+        Changed the way overflowing pages are handled. The overflow property on region-body
+        is now used to define the behaviour.
+      </action>
       <action context="Code" dev="JM" type="fix">
         Fixed a memory-leak: The FO tree part of a page-sequence was not released when a
         page-sequence was finished.
