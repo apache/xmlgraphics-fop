@@ -42,20 +42,6 @@ import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.SpaceProperty;
 
-/*
-  Modified by Mark Lillywhite mark-fop@inomial.com. The changes
-  here are based on memory profiling and do not change functionality.
-  Essentially, the Block object had a pointer to a BlockArea object
-  that it created. The BlockArea was not referenced after the Block
-  was finished except to determine the size of the BlockArea, however
-  a reference to the BlockArea was maintained and this caused a lot of
-  GC problems, and was a major reason for FOP memory leaks. So,
-  the reference to BlockArea was made local, the required information
-  is now stored (instead of a reference to the complex BlockArea object)
-  and it appears that there are a lot of changes in this file, in fact
-  there are only a few sematic changes; mostly I just got rid of
-  "this." from blockArea since BlockArea is now local.
- */
  /**
   * Class modelling the fo:block object.
   */
@@ -361,6 +347,48 @@ public class Block extends FObjMixed {
         return whiteSpaceCollapse;
     }
     
+    /**
+     * @return Returns the commonAccessibility.
+     */
+    public CommonAccessibility getCommonAccessibility() {
+        return this.commonAccessibility;
+    }
+
+    /**
+     * @return Returns the commonAural.
+     */
+    public CommonAural getCommonAural() {
+        return this.commonAural;
+    }
+
+    /**
+     * @return Returns the commonRelativePosition.
+     */
+    public CommonRelativePosition getCommonRelativePosition() {
+        return this.commonRelativePosition;
+    }
+
+    /**
+     * @return Returns the hyphenationKeep.
+     */
+    public int getHyphenationKeep() {
+        return this.hyphenationKeep;
+    }
+
+    /**
+     * @return Returns the intrusionDisplace.
+     */
+    public int getIntrusionDisplace() {
+        return this.intrusionDisplace;
+    }
+
+    /**
+     * @return Returns the lineHeightShiftAdjustment.
+     */
+    public int getLineHeightShiftAdjustment() {
+        return this.lineHeightShiftAdjustment;
+    }
+
     /** @see org.apache.fop.fo.FONode#charIterator() */
     public CharIterator charIterator() {
         return NullCharIterator.getInstance();
@@ -377,4 +405,5 @@ public class Block extends FObjMixed {
     public int getNameId() {
         return FO_BLOCK;
     }
+    
 }

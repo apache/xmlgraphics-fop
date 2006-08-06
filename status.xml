@@ -28,6 +28,11 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="AD" type="fix">
+        Deferred property resolution for markers until they are actually retrieved,
+        which leads to percentages and relative font-sizes now getting the correct
+        values. Also deferred white-space-handling for markers.
+      </action>
       <action context="Code" dev="JM" type="update">
         Changed the way overflowing pages are handled. The overflow property on region-body
         is now used to define the behaviour.

@@ -22,6 +22,7 @@ package org.apache.fop.fo.flow;
 import java.util.BitSet;
 import java.util.List;
 
+import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
@@ -105,23 +106,29 @@ public class TableRow extends TableFObj {
     }
     
     /**
+     * @see org.apache.fop.fo.FONode#processNode(String, Locator, 
+     *                                  Attributes, PropertyList)
+     */
+    public void processNode(String elementName, Locator locator, 
+            Attributes attlist, PropertyList pList) throws FOPException {
+        if (!inMarker()) {
+            TableBody body = (TableBody) parent;
+            body.resetColumnIndex();
+            pendingSpans = body.pendingSpans;
+            usedColumnIndices = body.usedColumnIndices;
+            while (usedColumnIndices.get(columnIndex - 1)) {
+                columnIndex++;
+            }
+        }
+        super.processNode(elementName, locator, attlist, pList);
+    }
+
+    /**
      * @see org.apache.fop.fo.FONode#startOfNode
      */
     protected void startOfNode() throws FOPException {
-        pendingSpans = ((TableBody) parent).pendingSpans;
-        usedColumnIndices = ((TableBody) parent).usedColumnIndices;
-        while (usedColumnIndices.get(columnIndex - 1)) {
-            columnIndex++;
-        }
-        
         checkId(id);
         getFOEventHandler().startRow(this);
-        if (((TableBody) parent).isFirst(this) 
-                && getTable().columns == null ) {
-            if (pendingSpans == null) {
-                pendingSpans = new java.util.ArrayList();
-            }
-        }
     }
 
     /**
@@ -131,17 +138,10 @@ public class TableRow extends TableFObj {
         if (childNodes == null) {
             missingChildElementError("(table-cell+)");
         }
-        if (((TableBody) parent).isFirst(this) 
-                && getTable().columns == null ) {
-            //force parent body's pendingSpans
-            //to the one accumulated after processing this row
-            ((TableBody) parent).pendingSpans = pendingSpans;
+        if (!inMarker()) {
+            pendingSpans = null;
+            usedColumnIndices = null;
         }
-        ((TableBody) parent).resetColumnIndex();
-        columnIndex = 1;
-        //release references
-        pendingSpans = null;
-        usedColumnIndices = null;
         getFOEventHandler().endRow(this);
     }
 
@@ -155,7 +155,7 @@ public class TableRow extends TableFObj {
         if (!(FO_URI.equals(nsURI) && localName.equals("table-cell"))) {
             invalidChildError(loc, nsURI, localName);
         }
-    }
+    }    
     
     /**
      * @return the "id" property.
@@ -292,12 +292,5 @@ public class TableRow extends TableFObj {
         while (usedColumnIndices.get(columnIndex - 1)) {
             columnIndex++;
         }
-    }
-    
-    /**
-     * @see org.apache.fop.fo.flow.TableFObj#existsUsedColumnIndices()
-     */
-    protected boolean existsUsedColumnIndices() {
-        return (usedColumnIndices != null);
-    }
+    }    
 }

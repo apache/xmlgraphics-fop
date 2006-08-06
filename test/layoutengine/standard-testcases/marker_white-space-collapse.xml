@@ -52,7 +52,7 @@
           </fo:block>
         </fo:static-content>
         <fo:flow flow-name="xsl-region-body">
-          <fo:block background-color="red" white-space-collapse="false">
+          <fo:block background-color="red">
             <fo:marker marker-class-name="m1">
               <fo:block>
                 First   marker  with  whitespace  around
@@ -71,11 +71,12 @@
     </fo:root>
   </fo>
   <checks>
-    <!-- These checks do not have the correct values -->
-    <eval expected="1" xpath="count(//regionBefore/block[1]/block/lineArea/text/space)"/>
-    <eval expected="4" xpath="count(//regionBefore/block[2]/block/lineArea/text/space)"/>
+    <!-- preserve inter-word whitespace in the first block, 
+         collapse them in the second -->
+    <eval expected="9" xpath="count(//regionBefore/block[1]/block[1]/lineArea[1]/text/space)"/>
+    <eval expected="4" xpath="count(//regionBefore/block[2]/block[1]/lineArea[1]/text/space)"/>
 
-    <eval expected="1" xpath="count(//regionAfter/block[1]/block/lineArea/text/space)"/>
-    <eval expected="4" xpath="count(//regionAfter/block[2]/block/lineArea/text/space)"/>
+    <eval expected="8" xpath="count(//regionAfter/block[1]/block[1]/lineArea[1]/text/space)"/>
+    <eval expected="4" xpath="count(//regionAfter/block[2]/block[1]/lineArea[1]/text/space)"/>
   </checks>
 </testcase>

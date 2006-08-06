@@ -40,7 +40,6 @@ public class TableFooter extends TableBody {
      * @see org.apache.fop.fo.FONode#startOfNode
      */
     protected void startOfNode() throws FOPException {
-        initPendingSpans();
         //getFOEventHandler().startBody(this);
     }
 
