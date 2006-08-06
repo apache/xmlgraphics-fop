@@ -27,6 +27,7 @@ import org.xml.sax.Locator;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.ValidationPercentBaseContext;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.StaticPropertyList;
 import org.apache.fop.fo.ValidationException;
@@ -209,15 +210,19 @@ public class Table extends TableFObj {
      * @see org.apache.fop.fo.FONode#endOfNode
      */
     protected void endOfNode() throws FOPException {
+        
         if (!tableBodyFound) {
            missingChildElementError(
                    "(marker*,table-column*,table-header?,table-footer?"
                        + ",table-body+)");
         }
-        if (columns != null && !columns.isEmpty()) {
-            for (int i = columns.size(); --i >= 0;) {
-                if (isColumnNumberUsed(i + 1)) {
-                    ((TableColumn) columns.get(i)).releasePropertyList();
+        if (!inMarker()) {
+            if (columns != null && !columns.isEmpty()) {
+                for (int i = columns.size(); --i >= 0;) {
+                    TableColumn col = (TableColumn) columns.get(i);
+                    if (col != null) {
+                        col.releasePropertyList();
+                    }
                 }
             }
         }
@@ -229,7 +234,14 @@ public class Table extends TableFObj {
      */
     protected void addChildNode(FONode child) throws FOPException {
         if ("fo:table-column".equals(child.getName())) {
-            addColumnNode((TableColumn) child);
+            if (columns == null) {
+                columns = new java.util.ArrayList();
+            }
+            if (!inMarker()) {
+                addColumnNode((TableColumn) child);
+            } else {
+                columns.add((TableColumn) child);
+            }
         } else {
             if ("fo:table-footer".equals(child.getName())) {
                 tableFooter = (TableBody) child;
@@ -252,9 +264,6 @@ public class Table extends TableFObj {
     private void addColumnNode(TableColumn col) {
         int colNumber = col.getColumnNumber();
         int colRepeat = col.getNumberColumnsRepeated();
-        if (columns == null) {
-            columns = new java.util.ArrayList();
-        }
         if (columns.size() < colNumber) {
             //add nulls for non-occupied indices between
             //the last column up to and including the current one
@@ -273,6 +282,10 @@ public class Table extends TableFObj {
                 columns.add(col);
             }
         }
+        //flag column indices used by this column
+        int startIndex = columnIndex - 1;
+        int endIndex = startIndex + colRepeat;
+        flagColumnIndices(startIndex, endIndex);
     }
 
     /** @return true of table-layout="auto" */
@@ -458,9 +471,17 @@ public class Table extends TableFObj {
     }
     
     /**
-     * @see org.apache.fop.fo.flow.TableFObj#existsUsedColumnIndices()
+     * @see org.apache.fop.fo.FONode#clone(FONode, boolean)
      */
-    protected boolean existsUsedColumnIndices() {
-        return (usedColumnIndices != null);
+    public FONode clone(FONode parent, boolean removeChildren)
+        throws FOPException {
+        FObj fobj = (FObj) super.clone(parent, removeChildren);
+        if (removeChildren) {
+            Table t = (Table) fobj;
+            t.columns = null;
+            t.tableHeader = null;
+            t.tableFooter = null;
+        }
+        return fobj;
     }
 }

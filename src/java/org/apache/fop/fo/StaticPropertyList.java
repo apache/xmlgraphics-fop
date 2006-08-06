@@ -21,7 +21,7 @@ import org.apache.fop.fo.properties.Property;
 
 /**
  * A very fast implementation of PropertyList that uses arrays to store
- * the explit set properties and another array to store cached values.
+ * the explicit set properties and another array to store cached values.
  */
 public class StaticPropertyList extends PropertyList {
     private Property[] explicit;

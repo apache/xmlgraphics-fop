@@ -169,8 +169,11 @@ public abstract class PropertyList {
                          boolean bTryDefault) throws PropertyException {
 
         PropertyMaker propertyMaker = findMaker(propId & Constants.PROPERTY_MASK);
-        return propertyMaker.get(propId & Constants.COMPOUND_MASK, this,
-                                     bTryInherit, bTryDefault);
+        if (propertyMaker != null) {
+            return propertyMaker.get(propId & Constants.COMPOUND_MASK, this,
+                                         bTryInherit, bTryDefault);
+        }
+        return null;
     }
 
     /**
@@ -260,8 +263,11 @@ public abstract class PropertyList {
      * Adds the attributes, passed in by the parser to the PropertyList
      * 
      * @param attributes Collection of attributes passed to us from the parser.
+     * @throws ValidationException if there is an attribute that does not
+     *          map to a property id (strict validation only)
      */
-    public void addAttributesToList(Attributes attributes) {
+    public void addAttributesToList(Attributes attributes) 
+                    throws ValidationException {
         /*
          * If column-number/number-columns-spanned are specified, then we 
          * need them before all others (possible from-table-column() on any 
@@ -308,10 +314,39 @@ public abstract class PropertyList {
                 if (factory.getElementMappingRegistry().isKnownNamespace(attributeNS)) {
                     getFObj().addForeignAttribute(attributeNS, attributeName, attributeValue);
                 } else {
-                    handleInvalidProperty(attributeName);
+                    handleInvalidProperty(
+                            "Error processing foreign attribute: "
+                            + attributeNS + "/@" + attributeName, attributeName);
                 }
             }
         }
+    }
+    
+    /**
+     * Validates a property name.
+     * @param propertyName  the property name to check
+     * @return true if the base property name and the subproperty name (if any)
+     *           can be correctly mapped to an id
+     * @throws ValidationException in case the property name
+     *          is invalid for the FO namespace
+     */
+    protected boolean isValidPropertyName(String propertyName) 
+                throws ValidationException {
+
+        int propId = FOPropertyMapping.getPropertyId(
+                        findBasePropertyName(propertyName));
+        int subpropId = FOPropertyMapping.getSubPropertyId(
+                        findSubPropertyName(propertyName));
+        
+        if (propId == -1 
+                || (subpropId == -1 
+                        && findSubPropertyName(propertyName) != null)) {
+            StringBuffer errorMessage = new StringBuffer().append(
+                        "Invalid property name \'").append(propertyName);
+            handleInvalidProperty(errorMessage.toString(), propertyName);
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -319,58 +354,64 @@ public abstract class PropertyList {
      * @param attributes Collection of attributes
      * @param attributeName Attribute name to convert
      * @param attributeValue Attribute value to assign to property
+     * @throws ValidationException in case the property name is invalid 
+     *          for the FO namespace
      */
     private void convertAttributeToProperty(Attributes attributes,
                                             String attributeName,
-                                            String attributeValue) {
-                                                
-        PropertyMaker propertyMaker = null;
-        FObj parentFO = fobj.findNearestAncestorFObj();
+                                            String attributeValue) 
+                    throws ValidationException {
         
-        /* Handle "compound" properties, ex. space-before.minimum */
-        String basePropertyName = findBasePropertyName(attributeName);
-        String subPropertyName = findSubPropertyName(attributeName);
+        if (attributeValue != null) {
 
-        int propId = FOPropertyMapping.getPropertyId(basePropertyName);
+            if (!isValidPropertyName(attributeName)) {
+                //will log an error or throw an exception
+                return;
+            }
+            FObj parentFO = fobj.findNearestAncestorFObj();
+            
+    
+            /* Handle "compound" properties, ex. space-before.minimum */
+            String basePropertyName = findBasePropertyName(attributeName);
+            String subPropertyName = findSubPropertyName(attributeName);
 
-        propertyMaker = findMaker(propId);
-        if (propertyMaker == null) {
-            handleInvalidProperty(attributeName);
-            return;
-        }
-        if (attributeValue == null) {
-            return;
-        }
-        try {
-            Property prop = null;
-            if (subPropertyName == null) { // base attribute only found
-                /* Do nothing if the base property has already been created.
-                 * This is e.g. the case when a compound attribute was
-                 * specified before the base attribute; in these cases
-                 * the base attribute was already created in 
-                 * findBaseProperty()
-                 */
-                if (getExplicit(propId) != null) {
-                    return;
-                }
-                prop = propertyMaker.make(this, attributeValue, parentFO);
-            } else { // e.g. "leader-length.maximum"
-                Property baseProperty = findBaseProperty(attributes,
-                        parentFO, propId, basePropertyName, propertyMaker);
-                int subpropertyId = FOPropertyMapping.getSubPropertyId(subPropertyName);
-                if (subpropertyId == -1) {
-                    handleInvalidProperty(attributeName);
-                    return;
-                }
-                prop = propertyMaker.make(baseProperty, subpropertyId,
-                        this, attributeValue, parentFO);
+            int propId = FOPropertyMapping.getPropertyId(basePropertyName);
+            int subpropId = FOPropertyMapping.getSubPropertyId(subPropertyName);
+    
+            PropertyMaker propertyMaker = findMaker(propId);
+            if (propertyMaker == null) {
+                log.warn("No PropertyMaker registered for " + attributeName
+                        + ". Ignoring property.");
+                return;
             }
-            if (prop != null) {
-                putExplicit(propId, prop);
+
+            try {
+                Property prop = null;
+                if (subPropertyName == null) { // base attribute only found
+                    /* Do nothing if the base property has already been created.
+                     * This is e.g. the case when a compound attribute was
+                     * specified before the base attribute; in these cases
+                     * the base attribute was already created in 
+                     * findBaseProperty()
+                     */
+                    if (getExplicit(propId) != null) {
+                        return;
+                    }
+                    prop = propertyMaker.make(this, attributeValue, parentFO);
+                } else { // e.g. "leader-length.maximum"
+                    Property baseProperty = 
+                        findBaseProperty(attributes, parentFO, propId, 
+                                basePropertyName, propertyMaker);
+                    prop = propertyMaker.make(baseProperty, subpropId,
+                            this, attributeValue, parentFO);
+                }
+                if (prop != null) {
+                    putExplicit(propId, prop);
+                }
+            } catch (PropertyException e) {
+                log.error("Ignoring property: " 
+                        + attributeName + "=\"" + attributeValue + "\"");
             }
-        } catch (PropertyException e) {
-            // TODO: Add strict validation.
-            log.error(e.getMessage());
         }
     }
 
@@ -405,9 +446,19 @@ public abstract class PropertyList {
         return null;  // could not find base property
     }
 
-    private void handleInvalidProperty(String attributeName) {
-        if (!attributeName.startsWith("xmlns")) {
-            log.error("property '" + attributeName + "' ignored");
+    /**
+     * @param message ...
+     * @param propName ...
+     * @throws ValidationException ...
+     */
+    protected void handleInvalidProperty(String message, String propName) 
+                    throws ValidationException {
+        if (!propName.startsWith("xmlns")) {
+            if (fobj.getUserAgent().validateStrictly()) {
+                fobj.attributeError(message);
+            } else {
+                log.error(message + " Property ignored.");
+            }
         }
     }
 
@@ -418,7 +469,7 @@ public abstract class PropertyList {
      * @param attributeName String to be atomized
      * @return the base portion of the attribute
      */
-    private static String findBasePropertyName(String attributeName) {
+    protected static String findBasePropertyName(String attributeName) {
         int separatorCharIndex = attributeName.indexOf('.');
         String basePropertyName = attributeName;
         if (separatorCharIndex > -1) {
@@ -434,7 +485,7 @@ public abstract class PropertyList {
      * @param attributeName String to be atomized
      * @return the sub portion of the attribute
      */
-    private static String findSubPropertyName(String attributeName) {
+    protected static String findSubPropertyName(String attributeName) {
         int separatorCharIndex = attributeName.indexOf('.');
         String subpropertyName = null;
         if (separatorCharIndex > -1) {

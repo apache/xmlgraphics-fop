@@ -22,6 +22,7 @@ package org.apache.fop.fo.flow;
 import java.util.BitSet;
 import java.util.List;
 
+import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
@@ -30,10 +31,12 @@ import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonRelativePosition;
+import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 
 /**
@@ -59,6 +62,9 @@ public class TableCell extends TableFObj {
     private Numeric numberRowsSpanned;
     private int startsRow;
     private Length width;
+    private KeepProperty keepTogether;
+    private KeepProperty keepWithNext;
+    private KeepProperty keepWithPrevious;
     // End of property values
 
     /** used for FO validation */
@@ -95,11 +101,6 @@ public class TableCell extends TableFObj {
     protected int top;
 
     /**
-     * Set to true if all content completely laid out.
-     */
-    private boolean bDone = false;
-    
-    /**
      * @param parent FONode that is the parent of this object
      */
     public TableCell(FONode parent) {
@@ -122,16 +123,14 @@ public class TableCell extends TableFObj {
         height = pList.get(PR_HEIGHT).getLength();
         id = pList.get(PR_ID).getString();
         inlineProgressionDimension = pList.get(PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
+        columnNumber = pList.get(PR_COLUMN_NUMBER).getNumeric();
         numberColumnsSpanned = pList.get(PR_NUMBER_COLUMNS_SPANNED).getNumeric();
         numberRowsSpanned = pList.get(PR_NUMBER_ROWS_SPANNED).getNumeric();
         startsRow = pList.get(PR_STARTS_ROW).getEnum();
         width = pList.get(PR_WIDTH).getLength();
-        
-        //Check to make sure we're not in retrieve-marker context
-        //TODO: Can this be generalized/extended to other FOs/Properties?
-        if (((TableFObj) parent).existsUsedColumnIndices()) {
-            columnNumber = pList.get(PR_COLUMN_NUMBER).getNumeric();
-        }
+        keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
+        keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
+        keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
         
         super.bind(pList);
     }
@@ -163,112 +162,9 @@ public class TableCell extends TableFObj {
             getLogger().warn("starts-row/ends-row for fo:table-cells "
                     + "non-applicable for children of an fo:table-row.");
         }
-        updateParentColumnIndex();
         getFOEventHandler().endCell(this);
     }
 
-    private void updateParentColumnIndex() {
-        
-        int rowSpan = getNumberRowsSpanned();
-        int colSpan = getNumberColumnsSpanned();
-        int columnIndex = ((TableFObj) parent).getCurrentColumnIndex();
-        
-        int i = -1;
-        while (++i < colSpan) {
-            //if table has explicit columns and the column-number isn't
-            //assigned to any column, increment further until the next
-            //column is encountered
-            if (getTable().getColumns() != null) {
-                while (columnIndex <= getTable().getColumns().size()
-                        && !getTable().isColumnNumberUsed(columnIndex)) {
-                    columnIndex++;
-                }
-            }
-            //if column-number is already in use by another cell
-            //in the current row => error!
-            if (((TableFObj) parent).isColumnNumberUsed(columnIndex + i)) {
-                log.error("fo:table-cell overlaps in column "
-                        + (columnIndex + i));
-            }
-        }
-
-        if (parent.getNameId() == FO_TABLE_ROW) {
-            /* parent is a fo:table-row */
-            TableRow row = (TableRow) parent;
-            TableBody body = (TableBody) parent.getParent();
-            
-            if (body.isFirst(row) && getTable().columns == null ) {
-                row.pendingSpans.add(null);
-                if (row.usedColumnIndices == null) {
-                    row.usedColumnIndices = new BitSet();
-                }
-            }
-            //if the current cell spans more than one row,
-            //update pending span list for the next row
-            if (rowSpan > 1) {
-                for (i = colSpan; --i >= 0;) {
-                    row.pendingSpans.set(columnIndex - 1 + i, 
-                            new PendingSpan(rowSpan));
-                }
-            }
-        } else {
-            /* parent is (should be) a fo:table-body/-header/-footer */
-            TableBody body = (TableBody) parent;
-            
-            /* if body.firstRow is still true, and :
-             * a) the cell starts a row,
-             * b) there was a previous cell 
-             * c) that previous cell didn't explicitly end the previous row
-             *  => set firstRow flag to false
-             */
-            if (startsRow() && body.firstRow) {
-                if (!body.lastCellEndedRow(this)) {
-                    body.firstRow = false;
-                }
-            }
-            
-            /* if there were no explicit columns, pendingSpans
-             * will not be properly initialized for the first row...
-             */
-            if (body.firstRow && getTable().columns == null) {
-                for (i = colSpan; --i >= 0;) {
-                    body.pendingSpans.add(null);
-                }
-            }
-            
-            /* if the current cell spans more than one row,
-             * update pending span list for the next row
-             */
-            if (rowSpan > 1) {
-                for (i = colSpan; --i >= 0;) {
-                    body.pendingSpans.set(columnIndex - 1 + i, 
-                            new PendingSpan(rowSpan));
-                }
-            }
-        }
-        //flag column indices used by this cell,
-        //take into account that possibly not all column-numbers
-        //are used by columns in the parent table (if any),
-        //so a cell spanning three columns, might actually
-        //take up more than three columnIndices...
-        int startIndex = columnIndex - 1;
-        int endIndex = startIndex + colSpan;
-        if (getTable().columns != null) {
-            List cols = getTable().columns;
-            int tmpIndex = endIndex;
-            for (i = startIndex; i <= tmpIndex; ++i) {
-                if (i < cols.size() && cols.get(i) == null) {
-                    endIndex++;
-                }
-            }
-        }
-        ((TableFObj) parent).flagColumnIndices(startIndex, endIndex);
-        if (endsRow() && parent.getNameId() != FO_TABLE_ROW) {
-            ((TableBody) parent).firstRow = false;
-            ((TableBody) parent).resetColumnIndex();
-        }
-    }
-    
     /**
      * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
      * XSL Content Model: marker* (%block;)+
@@ -304,7 +200,7 @@ public class TableCell extends TableFObj {
      * @return the Common Border, Padding, and Background Properties.
      */
     public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
-        return commonBorderPaddingBackground;
+        return this.commonBorderPaddingBackground;
     }
 
     /**

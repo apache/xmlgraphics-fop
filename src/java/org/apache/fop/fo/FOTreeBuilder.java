@@ -246,7 +246,7 @@ public class FOTreeBuilder extends DefaultHandler {
      */
     public FormattingResults getResults() {
         if (getEventHandler() instanceof AreaTreeHandler) {
-            return ((AreaTreeHandler)getEventHandler()).getResults();
+            return ((AreaTreeHandler) getEventHandler()).getResults();
         } else {
             //No formatting results available for output formats no 
             //involving the layout engine.
@@ -268,6 +268,11 @@ public class FOTreeBuilder extends DefaultHandler {
          * Current propertyList for the node being handled.
          */
         protected PropertyList currentPropertyList;
+        
+        /**
+         * Current marker nesting-depth
+         */
+        private int nestedMarkerDepth = 0;
 
         /**
          * SAX Handler for the start of an element
@@ -278,16 +283,17 @@ public class FOTreeBuilder extends DefaultHandler {
 
             /* the node found in the FO document */
             FONode foNode;
-            PropertyList propertyList;
+            PropertyList propertyList = null;
 
             // Check to ensure first node encountered is an fo:root
             if (rootFObj == null) {
                 if (!namespaceURI.equals(FOElementMapping.URI) 
                     || !localName.equals("root")) {
-                    throw new SAXException(new ValidationException(
-                        "Error: First element must be the fo:root formatting object. Found " 
-                            + FONode.getNodeString(namespaceURI, localName) + " instead."
-                            + " Please make sure you're producing a valid XSL-FO document."));
+                    throw new ValidationException(
+                        "Error: First element must be the fo:root formatting object. "
+                        + "Found " + FONode.getNodeString(namespaceURI, localName) 
+                        + " instead."
+                        + " Please make sure you're producing a valid XSL-FO document.");
                 }
             } else { // check that incoming node is valid for currentFObj
                 if (namespaceURI.equals(FOElementMapping.URI)) {
@@ -301,7 +307,8 @@ public class FOTreeBuilder extends DefaultHandler {
                 }
             }
             
-            ElementMapping.Maker fobjMaker = findFOMaker(namespaceURI, localName);
+            ElementMapping.Maker fobjMaker = 
+                findFOMaker(namespaceURI, localName);
 
             try {
                 foNode = fobjMaker.make(currentFObj);
@@ -309,8 +316,17 @@ public class FOTreeBuilder extends DefaultHandler {
                     rootFObj = (Root) foNode;
                     rootFObj.setFOEventHandler(foEventHandler);
                 }
-                propertyList = foNode.createPropertyList(currentPropertyList, foEventHandler);
-                foNode.processNode(localName, getEffectiveLocator(), attlist, propertyList);
+                propertyList = foNode.createPropertyList(
+                                    currentPropertyList, foEventHandler);
+                foNode.processNode(localName, getEffectiveLocator(), 
+                                    attlist, propertyList);
+                if (foNode.getNameId() == Constants.FO_MARKER) {
+                    if (foEventHandler.inMarker()) {
+                        nestedMarkerDepth++;
+                    } else {
+                        foEventHandler.switchMarkerContext(true);
+                    }
+                }
                 foNode.startOfNode();
             } catch (IllegalArgumentException e) {
                 throw new SAXException(e);
@@ -321,11 +337,13 @@ public class FOTreeBuilder extends DefaultHandler {
                 ContentHandler subHandler = chFactory.createContentHandler();
                 if (subHandler instanceof ObjectSource 
                         && foNode instanceof ObjectBuiltListener) {
-                    ((ObjectSource)subHandler).setObjectBuiltListener((ObjectBuiltListener)foNode);
+                    ((ObjectSource) subHandler).setObjectBuiltListener(
+                            (ObjectBuiltListener) foNode);
                 }
                 
                 subHandler.startDocument();
-                subHandler.startElement(namespaceURI, localName, rawName, attlist);
+                subHandler.startElement(namespaceURI, localName, 
+                        rawName, attlist);
                 depth = 1;
                 delegate = subHandler;
             }
@@ -335,7 +353,7 @@ public class FOTreeBuilder extends DefaultHandler {
             }
 
             currentFObj = foNode;
-            if (propertyList != null) {
+            if (propertyList != null && !foEventHandler.inMarker()) {
                 currentPropertyList = propertyList;
             }
         }
@@ -356,11 +374,24 @@ public class FOTreeBuilder extends DefaultHandler {
                         + " (" + currentFObj.getNamespaceURI() 
                         + ") vs. " + localName + " (" + uri + ")");
             }
+            
             currentFObj.endOfNode();
-
-            if (currentPropertyList.getFObj() == currentFObj) {
-                currentPropertyList = currentPropertyList.getParentPropertyList();
+            
+            if (currentPropertyList != null
+                    && currentPropertyList.getFObj() == currentFObj
+                    && !foEventHandler.inMarker()) {
+                currentPropertyList = 
+                    currentPropertyList.getParentPropertyList();
             }
+            
+            if (currentFObj.getNameId() == Constants.FO_MARKER) {
+                if (nestedMarkerDepth == 0) {
+                    foEventHandler.switchMarkerContext(false);
+                } else {
+                    nestedMarkerDepth--;
+                }
+            }
+            
             if (currentFObj.getParent() == null) {
                 log.debug("endElement for top-level " + currentFObj.getName());
             }
@@ -373,19 +404,15 @@ public class FOTreeBuilder extends DefaultHandler {
          */
         public void characters(char[] data, int start, int length) 
             throws FOPException {
-                if (currentFObj != null) {
-                    currentFObj.addCharacters(data, start, start + length, 
-                            currentPropertyList, getEffectiveLocator());
-                }
+            if (currentFObj != null) {
+                currentFObj.addCharacters(data, start, start + length, 
+                        currentPropertyList, getEffectiveLocator());
+            }
         }
 
         public void endDocument() throws SAXException {
             currentFObj = null;
-        }
-
-        
-        
+        }        
     }
-    
 }
 

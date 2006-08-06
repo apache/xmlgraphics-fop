@@ -19,24 +19,24 @@
 
 package org.apache.fop.fo.flow;
 
-import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.ArrayList;
-
-import org.xml.sax.Locator;
-
-import org.apache.commons.logging.Log;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FOText;
+import org.apache.fop.fo.FOPropertyMapping;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FObjMixed;
+import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.StaticPropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.properties.Property;
+import org.apache.fop.fo.properties.PropertyMaker;
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+
 
 
 /**
@@ -44,7 +44,7 @@ import org.apache.fop.fo.ValidationException;
  * This will create a layout manager that will retrieve
  * a marker based on the information.
  */
-public class RetrieveMarker extends FObj {
+public class RetrieveMarker extends FObjMixed {
     // The value of properties relevant for fo:retrieve-marker.
     private String retrieveClassName;
     private int retrievePosition;
@@ -78,7 +78,9 @@ public class RetrieveMarker extends FObj {
         
         if (retrieveClassName == null || retrieveClassName.equals("")) {
             missingPropertyError("retrieve-class-name");
-        }        
+        }
+        
+        propertyList = pList.getParentPropertyList();
     }
     
     /**
@@ -90,40 +92,70 @@ public class RetrieveMarker extends FObj {
             invalidChildError(loc, nsURI, localName);
     }
 
-    protected PropertyList createPropertyList(PropertyList parent, 
-            FOEventHandler foEventHandler) throws FOPException {
-        // TODO: A special RetrieveMarkerPropertyList would be more memory
-        // efficient. Storing a StaticPropertyList like this will keep all
-        // the parent PropertyLists alive.
-        propertyList = new StaticPropertyList(this, parent);
-        return propertyList;
-    }
-
-    public PropertyList getPropertyList() {
-        return propertyList;
-    }
-
     /**
-     * Return the "retrieve-class-name" property.
+     * @return the "retrieve-class-name" property.
      */
     public String getRetrieveClassName() {
         return retrieveClassName;
     }
 
     /**
-     * Return the "retrieve-position" property.
+     * @return the "retrieve-position" property (enum value).
      */
     public int getRetrievePosition() {
         return retrievePosition;
     }
 
     /**
-     * Return the "retrieve-boundry" property.
+     * @return the "retrieve-boundary" property (enum value).
      */
     public int getRetrieveBoundary() {
         return retrieveBoundary;
     }
+    
+    private PropertyList createPropertyListFor(FObj fo, PropertyList parent) {
+        return getFOEventHandler().getPropertyListMaker().make(fo, parent);
+    }
 
+    private void cloneSingleNode(FONode child, FONode newParent,
+                            Marker marker, PropertyList parentPropertyList)
+        throws FOPException {
+
+        if (child != null) {
+            FONode newChild = child.clone(newParent, true);
+            if (child instanceof FObj) {
+                Marker.MarkerPropertyList pList;
+                PropertyList newPropertyList = createPropertyListFor(
+                            (FObj) newChild, parentPropertyList);
+                
+                pList = marker.getPropertyListFor(child);
+                newChild.processNode(
+                        child.getLocalName(),
+                        getLocator(),
+                        pList,
+                        newPropertyList);
+                if (newChild.getNameId() == FO_TABLE) {
+                    Table t = (Table) child;
+                    cloneSubtree(t.getColumns().listIterator(),
+                            newChild, marker, newPropertyList);
+                    cloneSingleNode(t.getTableHeader(),
+                            newChild, marker, newPropertyList);
+                    cloneSingleNode(t.getTableFooter(),
+                            newChild, marker, newPropertyList);
+                }
+                cloneSubtree(child.getChildNodes(), newChild,
+                        marker, newPropertyList);
+                if (newChild instanceof FObjMixed) {
+                    handleWhiteSpaceFor((FObjMixed) newChild);
+                }
+            } else if (child instanceof FOText) {
+                FOText ft = (FOText) newChild;
+                ft.bind(parentPropertyList);
+            }
+            addChildTo(newChild, (FObj) newParent);
+        }
+    }
+    
     /**
      * Clone the FO nodes in the parent iterator,
      * attach the new nodes to the new parent,
@@ -136,94 +168,48 @@ public class RetrieveMarker extends FObj {
      * @param descPLists the map of the new nodes to property lists
      */
     private void cloneSubtree(Iterator parentIter, FONode newParent,
-                              Marker marker, Map descPLists)
+                              Marker marker, PropertyList parentPropertyList)
         throws FOPException {
-        if (parentIter == null) return;
-        while (parentIter.hasNext()) {
-            FONode child = (FONode) parentIter.next();
-            FONode newChild = child.clone(newParent, true);
-            descPLists.put(newChild, marker.getPList(child));
-            cloneSubtree(child.getChildNodes(), newChild, marker, descPLists);
-        }
-    }
-
-    /**
-     * Clone the subtree of marker,
-     * and attach the new subtree to this node.
-     * The property lists are not cloned;
-     * the existing property lists of the direct children
-     * are reparented to the property list of this node.
-     * @param marker the marker that is to be cloned
-     * @param descPLists the map of the new nodes to property lists
-     */
-    private void cloneFromMarker(Marker marker, Map descPLists)
-        throws FOPException {
-        // release child nodes from a possible earlier layout
-        childNodes = new ArrayList();
-        Iterator markerIter = marker.getChildNodes();
-        cloneSubtree(markerIter, this, marker, descPLists);
-        // reparent the property lists of the direct children
-        for (Iterator iter = getChildNodes(); iter.hasNext(); ) {
-            FONode child = (FONode) iter.next();
-            Marker.MarkerPropertyList pList
-                = (Marker.MarkerPropertyList) descPLists.get(child);
-            if (pList != null) {
-                pList.setParentPropertyList(propertyList);
+        if (parentIter != null) {
+            FONode child;
+            while (parentIter.hasNext()) {
+                child = (FONode) parentIter.next();
+                cloneSingleNode(child, newParent, 
+                        marker, parentPropertyList);
             }
         }
     }
 
-    /**
-     * Bind the new nodes to the property values in this context
-     * @param descPLists the map of the new nodes to property lists
-     */
-    private void bindChildren(Map descPLists) throws FOPException {
-        for (Iterator i = descPLists.keySet().iterator(); i.hasNext(); ) {
-            FONode desc = (FONode) i.next();
-            PropertyList descPList;
-            if (desc instanceof FObj) {
-                descPList = (PropertyList) descPLists.get(desc);
-                ((FObj) desc).bind(descPList);
-            } else if (desc instanceof FOText) {
-                descPList = (PropertyList) descPLists.get(desc.getParent());
-                if (descPList == null) {
-                    descPList = propertyList;
-                }
-                ((FOText) desc).bind(descPList);
-            }
+    private void cloneFromMarker(Marker marker)
+        throws FOPException {
+        // clean up remnants from a possible earlier layout
+        if (childNodes != null) {
+            currentTextNode = null;
+            childNodes.removeAll(childNodes);
         }
+        cloneSubtree(marker.getChildNodes(), this, 
+                        marker, propertyList);
     }
 
     /**
-     * Clone the subtree of marker
-     * and bind the nodes to the property values in this context.
-     * The property lists are not cloned,
-     * but the subtree is attached to the property list of this node.
-     * This is only needed for the binding of the FO nodes.
-     * After that a subsequent retrieve-marker
-     * may reparent the property lists.
+     * Clone the subtree of the given marker
+     * 
      * @param marker the marker that is to be cloned
      */
     public void bindMarker(Marker marker) {
-        // assert(marker != null);
-        // catch empty marker
-        if (marker.getChildNodes() == null) {
-            return;
+        if (marker.getChildNodes() != null) {
+            try {
+                cloneFromMarker(marker);
+            } catch (FOPException exc) {
+                log.error("fo:retrieve-marker unable to clone "
+                        + "subtree of fo:marker (marker-class-name="
+                        + marker.getMarkerClassName() + ")", exc);
+                return;
+            }
+        } else if (log.isInfoEnabled()) {
+            log.info("Empty marker retrieved...");
         }
-        HashMap descPLists = new HashMap();
-        try {
-            cloneFromMarker(marker, descPLists);
-        } catch (FOPException exc) {
-            Log log = getLogger();
-            log.error("fo:retrieve-marker unable to clone subtree of fo:marker", exc);
-            return;
-        }
-        try {
-            bindChildren(descPLists);
-        } catch (FOPException exc) {
-            Log log = getLogger();
-            log.error("fo:retrieve-marker unable to rebind property values", exc);
-        }
+        return;
     }
 
     /** @see org.apache.fop.fo.FONode#getLocalName() */
@@ -236,5 +222,5 @@ public class RetrieveMarker extends FObj {
      */
     public int getNameId() {
         return FO_RETRIEVE_MARKER;
-    }
+    }    
 }

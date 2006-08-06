@@ -40,7 +40,6 @@ public class TableHeader extends TableBody {
      * @see org.apache.fop.fo.FONode#startOfNode
      */
     protected void startOfNode() throws FOPException {
-        initPendingSpans();
         //getFOEventHandler().startHeader(this);
     }
 

@@ -24,9 +24,9 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOPropertyMapping;
 import org.apache.fop.fo.flow.Table;
-import org.apache.fop.fo.flow.TableFObj;
 import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableColumn;
+import org.apache.fop.fo.flow.TableFObj;
 import org.apache.fop.fo.properties.Property;
 
 /**
