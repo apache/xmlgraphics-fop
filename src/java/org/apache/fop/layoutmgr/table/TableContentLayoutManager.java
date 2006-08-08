@@ -76,6 +76,8 @@ public class TableContentLayoutManager implements PercentBaseContext {
 
     private int startXOffset;
     private int usedBPD;
+    
+    private TableStepper stepper = new TableStepper(this);
         
     /**
      * Main constructor
@@ -577,8 +579,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
                 log.debug("  height=" + rowHeights[i] + " explicit=" + explicitRowHeights[i]);
             }
         }
-        TableStepper stepper = new TableStepper(this);
-        LinkedList returnedList = stepper.getCombinedKnuthElementsForRowGroup(
+        LinkedList returnedList = this.stepper.getCombinedKnuthElementsForRowGroup(
                 context, rowGroup, maxColumnCount, bodyType);
         if (returnedList != null) {
             returnList.addAll(returnedList);
