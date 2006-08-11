@@ -51,6 +51,11 @@ public class PDFAElementBridge extends AbstractGraphicsNodeBridge {
         transform = tf;
     }
 
+    /** @return the transformation matrix for links */
+    public AffineTransform getCurrentTransform() {
+        return this.transform;
+    }
+    
     /**
      * Returns 'a'.
      * @return the name of this node
