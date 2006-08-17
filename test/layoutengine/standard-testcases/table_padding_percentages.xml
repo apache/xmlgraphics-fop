@@ -31,7 +31,8 @@
       </fo:layout-master-set>
       <fo:page-sequence master-reference="normal" white-space-collapse="true">
         <fo:flow flow-name="xsl-region-body">
-          <fo:table margin="0pt" padding="5%" background-color="yellow" border-collapse="separate">
+          <fo:table table-layout="fixed" margin="0pt" padding="5%" 
+                    background-color="yellow" border-collapse="separate">
             <fo:table-column column-number="1" />
             <fo:table-column column-number="2" />
             <fo:table-column column-number="3" />
