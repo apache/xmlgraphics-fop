@@ -96,7 +96,7 @@
           </fo:block>
         </fo:static-content>
         <fo:flow flow-name="xsl-region-body">
-          <fo:table>
+          <fo:table table-layout="fixed">
             <fo:marker marker-class-name="test">fo:table</fo:marker>
             <fo:table-body>
               <fo:table-cell>
@@ -118,7 +118,7 @@
           </fo:block>
         </fo:static-content>
         <fo:flow flow-name="xsl-region-body">
-          <fo:table>
+          <fo:table table-layout="fixed">
             <fo:table-body>
               <fo:marker marker-class-name="test">fo:table-body</fo:marker>
               <fo:table-cell>
@@ -140,7 +140,7 @@
           </fo:block>
         </fo:static-content>
         <fo:flow flow-name="xsl-region-body">
-          <fo:table>
+          <fo:table table-layout="fixed">
             <fo:table-header>
               <fo:marker marker-class-name="test">fo:table-header</fo:marker>
               <fo:table-cell>
@@ -167,7 +167,7 @@
           </fo:block>
         </fo:static-content>
         <fo:flow flow-name="xsl-region-body">
-          <fo:table>
+          <fo:table table-layout="fixed">
             <fo:table-footer>
               <fo:marker marker-class-name="test">fo:table-footer</fo:marker>
               <fo:table-cell>
@@ -194,7 +194,7 @@
           </fo:block>
         </fo:static-content>
         <fo:flow flow-name="xsl-region-body">
-          <fo:table>
+          <fo:table table-layout="fixed">
             <fo:table-body>
               <fo:table-cell>
                 <fo:marker marker-class-name="test">fo:table-cell</fo:marker>
