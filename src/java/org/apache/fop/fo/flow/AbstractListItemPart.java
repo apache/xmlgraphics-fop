@@ -86,8 +86,19 @@ public abstract class AbstractListItemPart extends FObj {
      * @see org.apache.fop.fo.FONode#endOfNode
      */
     protected void endOfNode() throws FOPException {
-        if (!blockItemFound) {
-            missingChildElementError("marker* (%block;)+");
+        if (!this.blockItemFound) {
+            String contentModel = "marker* (%block;)+";
+            if (getUserAgent().validateStrictly()) {
+                missingChildElementError(contentModel);
+            } else {
+                StringBuffer message = new StringBuffer(
+                        errorText(getLocator()));
+                message.append(getName())
+                    .append(" is missing child elements. ")
+                    .append("Required Content Model: ")
+                    .append(contentModel);
+                getLogger().warn(message.toString());
+            }
         }
     }
 
@@ -100,6 +111,6 @@ public abstract class AbstractListItemPart extends FObj {
     public String getId() {
         return id;
     }
-
+    
 }
 
