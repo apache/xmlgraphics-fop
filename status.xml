@@ -28,11 +28,12 @@
 
   <changes>
     <release version="FOP Trunk">
-      <action context="Code" dev="AD" type="update" fixes-bug="40106" due-to="Gary Reed">
+      <action context="Code" dev="AD" type="update" fixes-bug="40270" due-to="Gary Reed">
         Added relaxed validation for empty list-item-*, as suggested by Gary Reed.
       </action>
       <action context="Code" dev="AD" type="update">
-        Modified function to log an error if used with table-layout=auto
+        Modified proportional-column-width() function to log an error if used 
+        with table-layout=auto
       </action>
       <action context="Code" dev="AD" type="fix">
         Deferred property resolution for markers until they are actually retrieved,
