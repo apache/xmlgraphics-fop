@@ -19,7 +19,7 @@
 
 package org.apache.fop.fo.expr;
 
-
+import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.TableColLength;
 
@@ -53,11 +53,18 @@ public class PPColWidthFunction extends FunctionBase {
             throw new PropertyException("Non numeric operand to "
                     + "proportional-column-width function");
         }
-        if (!pInfo.getPropertyList().getFObj().getName().equals("fo:table-column")) {
+        if (!"fo:table-column".equals(
+                pInfo.getPropertyList().getFObj().getName())) {
             throw new PropertyException("proportional-column-width function "
                     + "may only be used on table-column FO");
         }
-        // Check if table-layout is "fixed"...
+        
+        Table t = (Table) pInfo.getPropertyList().getParentFObj();
+        if (t.isAutoLayout()) {
+            throw new PropertyException("proportional-column-width() function "
+                    + "may only be used when fo:table has "
+                    + "table-layout=\"fixed\".");
+        }
         return new TableColLength(d.doubleValue(), pInfo.getFO());
     }
 
