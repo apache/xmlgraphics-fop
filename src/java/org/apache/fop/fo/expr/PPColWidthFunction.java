@@ -51,15 +51,14 @@ public class PPColWidthFunction extends FunctionBase {
         Number d = args[0].getNumber();
         if (d == null) {
             throw new PropertyException("Non numeric operand to "
-                    + "proportional-column-width function");
+                    + "proportional-column-width() function.");
         }
-        if (!"fo:table-column".equals(
-                pInfo.getPropertyList().getFObj().getName())) {
-            throw new PropertyException("proportional-column-width function "
-                    + "may only be used on table-column FO");
+        if (!"fo:table-column".equals(pInfo.getFO().getName())) {
+            throw new PropertyException("proportional-column-width() function "
+                    + "may only be used on fo:table-column.");
         }
         
-        Table t = (Table) pInfo.getPropertyList().getParentFObj();
+        Table t = (Table) pInfo.getFO().getParent();
         if (t.isAutoLayout()) {
             throw new PropertyException("proportional-column-width() function "
                     + "may only be used when fo:table has "
