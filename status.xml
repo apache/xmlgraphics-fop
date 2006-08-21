@@ -28,6 +28,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="AD" type="update">
+        Minor fix: correctly set negative values to zero.
+      </action>
       <action context="Code" dev="AD" type="update" fixes-bug="35656">
         Rework of default column-creation / column-width setting from
         cells in the first row.
