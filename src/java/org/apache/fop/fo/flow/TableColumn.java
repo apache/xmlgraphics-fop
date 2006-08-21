@@ -24,14 +24,13 @@ import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
-import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
-import org.apache.fop.fo.StaticPropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.Property;
+import org.apache.fop.fo.properties.TableColLength;
 
 /**
  * Class modelling the fo:table-column object.
@@ -39,15 +38,15 @@ import org.apache.fop.fo.properties.Property;
 public class TableColumn extends TableFObj {
     // The value of properties relevant for fo:table-column.
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
-    private Numeric columnNumber;
+    private int columnNumber;
     private Length columnWidth;
-    private Numeric numberColumnsRepeated;
-    private Numeric numberColumnsSpanned;
+    private int numberColumnsRepeated;
+    private int numberColumnsSpanned;
     private int visibility;
     // End of property values
     
     private boolean defaultColumn;
-    private StaticPropertyList pList = null;
+    private PropertyList pList = null;
     
     /**
      * @param parent FONode that is the parent of this object
@@ -71,22 +70,44 @@ public class TableColumn extends TableFObj {
      */
     public void bind(PropertyList pList) throws FOPException {
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
-        columnNumber = pList.get(PR_COLUMN_NUMBER).getNumeric();
+        columnNumber = pList.get(PR_COLUMN_NUMBER).getNumeric().getValue();
         columnWidth = pList.get(PR_COLUMN_WIDTH).getLength();
-        numberColumnsRepeated = pList.get(PR_NUMBER_COLUMNS_REPEATED).getNumeric();
-        numberColumnsSpanned = pList.get(PR_NUMBER_COLUMNS_SPANNED).getNumeric();
+        numberColumnsRepeated = pList.get(PR_NUMBER_COLUMNS_REPEATED)
+                                    .getNumeric().getValue();
+        numberColumnsSpanned = pList.get(PR_NUMBER_COLUMNS_SPANNED)
+                                    .getNumeric().getValue();
         visibility = pList.get(PR_VISIBILITY).getEnum();
         super.bind(pList);
         
-        if (numberColumnsRepeated.getValue() <= 0) {
+        if (numberColumnsRepeated <= 0) {
             throw new PropertyException("number-columns-repeated must be 1 or bigger, "
-                    + "but got " + numberColumnsRepeated.getValue());
+                    + "but got " + numberColumnsRepeated);
         }
-        if (numberColumnsSpanned.getValue() <= 0) {
+        if (numberColumnsSpanned <= 0) {
             throw new PropertyException("number-columns-spanned must be 1 or bigger, "
-                    + "but got " + numberColumnsSpanned.getValue());
+                    + "but got " + numberColumnsSpanned);
         }
-        this.pList = new StaticPropertyList(this, pList);
+        
+        /* check for unspecified width and replace with default of 
+         * proportional-column-width(1), in case of fixed table-layout
+         * warn only for explicit columns 
+         */
+        if (columnWidth.getEnum() == EN_AUTO) {
+            if (!this.defaultColumn && !getTable().isAutoLayout()) {
+                log.warn("table-layout=\"fixed\" and column-width unspecified "
+                        + "=> falling back to proportional-column-width(1)");
+            }
+            columnWidth = new TableColLength(1.0, this);
+        }
+        
+        /* in case of explicit columns, from-table-column()
+         * can be used on descendants of the table-cells, so
+         * we need a reference to the column's property list
+         * (cleared in Table.endOfNode())
+         */
+        if (!this.defaultColumn) {
+            this.pList = pList;
+        }
     }
 
     /**
@@ -107,7 +128,8 @@ public class TableColumn extends TableFObj {
      * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
      * XSL Content Model: empty
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+    protected void validateChildNode(Locator loc, 
+                        String nsURI, String localName) 
         throws ValidationException {
             invalidChildError(loc, nsURI, localName);
     }
@@ -138,17 +160,25 @@ public class TableColumn extends TableFObj {
      * @return the "column-number" property.
      */
     public int getColumnNumber() {
-        return columnNumber.getValue();
+        return columnNumber;
+    }
+    
+    /**
+     * Used for setting the column-number for an implicit column
+     * @param columnNumber
+     */
+    protected void setColumnNumber(int columnNumber) {
+        this.columnNumber = columnNumber;
     }
 
     /** @return value for number-columns-repeated. */
     public int getNumberColumnsRepeated() {
-        return numberColumnsRepeated.getValue();
+        return numberColumnsRepeated;
     }
     
     /** @return value for number-columns-spanned. */
     public int getNumberColumnsSpanned() {
-        return numberColumnsSpanned.getValue();
+        return numberColumnsSpanned;
     }
     
     /** @see org.apache.fop.fo.FONode#getLocalName() */
@@ -162,8 +192,10 @@ public class TableColumn extends TableFObj {
     }
     
     /**
-     * Indicates whether this table-column has been created as default column for this table in
-     * case no table-columns have been defined. Note that this only used to provide better
+     * Indicates whether this table-column has been created as 
+     * default column for this table in case no table-columns 
+     * have been defined. 
+     * Note that this only used to provide better
      * user feedback (see ColumnSetup).
      * @return true if this table-column has been created as default column
      */
@@ -176,31 +208,34 @@ public class TableColumn extends TableFObj {
         StringBuffer sb = new StringBuffer("fo:table-column");
         sb.append(" column-number=").append(getColumnNumber());
         if (getNumberColumnsRepeated() > 1) {
-            sb.append(" number-columns-repeated=").append(getNumberColumnsRepeated());
+            sb.append(" number-columns-repeated=")
+                .append(getNumberColumnsRepeated());
         }
         if (getNumberColumnsSpanned() > 1) {
-            sb.append(" number-columns-spanned=").append(getNumberColumnsSpanned());
+            sb.append(" number-columns-spanned=")
+                .append(getNumberColumnsSpanned());
         }
         sb.append(" column-width=").append(getColumnWidth());
         return sb.toString();
     }
     
     /**
-     * Retrieve a property value through its Id; used by from-table-column() function
+     * Retrieve a property value through its Id; used by 
+     * from-table-column() function
      * 
      * @param propId    the id for the property to retrieve
      * @return the requested Property
      * @throws PropertyException
      */
     public Property getProperty(int propId) throws PropertyException {
-        return this.pList.getInherited(propId);
+        return this.pList.get(propId);
     }
     
     /**
-     * Clear the reference to the PropertyList (retained for from-table-column())
-     *
+     * Clear the reference to the PropertyList (retained for 
+     * from-table-column())
      */
     protected void releasePropertyList() {
         this.pList = null;
-    }
+    }    
 }

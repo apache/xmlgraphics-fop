@@ -62,7 +62,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
 
     private Block curBlockArea;
 
-    private double tableUnits;
+    private double tableUnit;
     private boolean autoLayout = true;
 
     private boolean discardBorderBefore;
@@ -180,26 +180,11 @@ public class TableLayoutManager extends BlockStackingLayoutManager
                     getTable()));
         }
         
-        // either works out table of column widths or if proportional-column-width function
-        // is used works out total factor, so that value of single unit can be computed.
-        int sumCols = 0;
-        float factors = 0;
-        for (Iterator i = columns.iterator(); i.hasNext();) {
-            TableColumn column = (TableColumn) i.next();
-            if (column != null) {
-                Length width = column.getColumnWidth();
-                sumCols += width.getValue(this);
-                if (width instanceof TableColLength) {
-                    factors += ((TableColLength) width).getTableUnits();
-                }
-            }
-        }
-        // sets TABLE_UNITS in case where one or more oldColumns is defined using 
-        // proportional-column-width
-        if (sumCols < getContentAreaIPD()) {
-            if (tableUnits == 0.0) {
-                this.tableUnits = (getContentAreaIPD() - sumCols) / factors;
-            }
+        /* initialize unit to determine computed values
+         * for proportional-column-width()
+         */
+        if (tableUnit == 0.0) {
+            this.tableUnit = columns.computeTableUnit(this);
         }
 
         if (!firstVisibleMarkServed) {
@@ -480,6 +465,8 @@ public class TableLayoutManager extends BlockStackingLayoutManager
             switch (lengthBase) {
             case LengthBase.CONTAINING_BLOCK_WIDTH:
                 return getContentAreaIPD();
+            case LengthBase.TABLE_UNITS:
+                return (int) this.tableUnit;
             default:
                 log.error("Unknown base type for LengthBase.");
                 return 0;
@@ -487,7 +474,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         } else {
             switch (lengthBase) {
             case LengthBase.TABLE_UNITS:
-                return (int)this.tableUnits;
+                return (int) this.tableUnit;
             default:
                 return super.getBaseLength(lengthBase, fobj);
             }

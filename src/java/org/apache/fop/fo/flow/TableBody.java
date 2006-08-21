@@ -29,6 +29,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
@@ -186,8 +187,48 @@ public class TableBody extends TableFObj {
      */
     protected void addChildNode(FONode child) throws FOPException {
         if (!inMarker()) {
-            if (firstRow && child.getNameId() == FO_TABLE_ROW) {
-                firstRow = false;
+            if (firstRow) {
+                Table t = getTable();
+                
+                if (t.columns == null) {
+                    t.columns = new java.util.ArrayList();
+                }
+                
+                switch (child.getNameId()) {
+                case FO_TABLE_ROW:
+                    firstRow = false;
+                    break;
+                case FO_TABLE_CELL:
+                    TableCell cell = (TableCell) child;
+                    int colNr = cell.getColumnNumber();
+                    int colSpan = cell.getNumberColumnsSpanned();
+                    Length colWidth = null;
+
+                    if (cell.getWidth().getEnum() != EN_AUTO
+                            && colSpan == 1) {
+                        colWidth = cell.getWidth();
+                    }
+                    
+                    for (int i = colNr; i < colNr + colSpan; ++i) {
+                        if (t.columns.size() < i
+                                || t.columns.get(i - 1) == null) {
+                            t.addDefaultColumn(colWidth, 
+                                    i == colNr 
+                                        ? cell.getColumnNumber()
+                                        : 0);
+                        } else {
+                            TableColumn col = 
+                                (TableColumn) t.columns.get(i - 1);
+                            if (!col.isDefaultColumn()
+                                    && colWidth != null) {
+                                col.setColumnWidth(colWidth);
+                            }
+                        }
+                    }
+                    break;
+                default:
+                    //nop
+                }
             }
         }
         super.addChildNode(child);

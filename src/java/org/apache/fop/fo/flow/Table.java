@@ -25,6 +25,7 @@ import java.util.List;
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.ValidationPercentBaseContext;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
@@ -44,7 +45,8 @@ import org.apache.fop.fo.properties.LengthRangeProperty;
  * Class modelling the fo:table object.
  */
 public class Table extends TableFObj {
-    // The value of properties relevant for fo:table.
+    
+    /** properties */
     private CommonAccessibility commonAccessibility;
     private CommonAural commonAural;
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
@@ -58,23 +60,24 @@ public class Table extends TableFObj {
     private String id;
     private LengthRangeProperty inlineProgressionDimension;
     private int intrusionDisplace;
-    //private Length height;
     private KeepProperty keepTogether;
     private KeepProperty keepWithNext;
     private KeepProperty keepWithPrevious;
     private int tableLayout;
     private int tableOmitFooterAtBreak;
     private int tableOmitHeaderAtBreak;
-    //private Length width;
     private int writingMode;
-    // End of property values
 
     private static final int MINCOLWIDTH = 10000; // 10pt
 
     /** collection of columns in this table */
     protected List columns = null;
+    
+    /** helper variables for implicit column-numbering */
     private int columnIndex = 1;
     private BitSet usedColumnIndices = new BitSet();
+    
+    /** the table-header and -footer */
     private TableBody tableHeader = null;
     private TableBody tableFooter = null;
   
@@ -84,10 +87,12 @@ public class Table extends TableFObj {
     private boolean tableFooterFound = false;   
     private boolean tableBodyFound = false; 
 
-    /** 
-     * Default table-column used when no columns are specified. It is used
-     * to handle inheritance (especially visibility) and defaults properly. */
-    private TableColumn defaultColumn;
+    /**
+     * The table's property list. Used in case the table has 
+     * no explicit columns, as a parent property list to 
+     * internally generated TableColumns
+     */
+    private PropertyList propList;
     
     /**
      * @param parent FONode that is the parent of this object
@@ -113,23 +118,15 @@ public class Table extends TableFObj {
         id = pList.get(PR_ID).getString();
         inlineProgressionDimension = pList.get(PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
         intrusionDisplace = pList.get(PR_INTRUSION_DISPLACE).getEnum();
-        //height = pList.get(PR_HEIGHT).getLength();
         keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
         keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
         keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
         tableLayout = pList.get(PR_TABLE_LAYOUT).getEnum();
         tableOmitFooterAtBreak = pList.get(PR_TABLE_OMIT_FOOTER_AT_BREAK).getEnum();
         tableOmitHeaderAtBreak = pList.get(PR_TABLE_OMIT_HEADER_AT_BREAK).getEnum();
-        //width = pList.get(PR_WIDTH).getLength();
         writingMode = pList.get(PR_WRITING_MODE).getEnum();
         super.bind(pList);
-
-        //Create default column in case no table-columns will be defined.
-        defaultColumn = new TableColumn(this, true);
-        PropertyList colPList = new StaticPropertyList(defaultColumn, pList);
-        colPList.setWritingMode();
-        defaultColumn.bind(colPList);
-
+        
         if (borderCollapse != EN_SEPARATE) {
             //TODO Remove once the collapsing border is at least marginally working.
             borderCollapse = EN_SEPARATE;
@@ -140,13 +137,22 @@ public class Table extends TableFObj {
         if (tableLayout == EN_AUTO) {
             attributeWarning("table-layout=\"auto\" is currently not supported by FOP");
         }
-        if (!isSeparateBorderModel() && getCommonBorderPaddingBackground().hasPadding(
-                ValidationPercentBaseContext.getPseudoContextForValidationPurposes())) {
+        if (!isSeparateBorderModel() 
+                && getCommonBorderPaddingBackground().hasPadding(
+                        ValidationPercentBaseContext
+                            .getPseudoContextForValidationPurposes())) {
             //See "17.6.2 The collapsing border model" in CSS2
             attributeWarning("In collapsing border model a table does not have padding"
                     + " (see http://www.w3.org/TR/REC-CSS2/tables.html#collapsing-borders)"
                     + ", but a non-zero value for padding was found. The padding will be ignored.");
         }
+        
+        /* Store reference to the property list, so
+         * new lists can be created in case the table has no
+         * explicit columns
+         * (see addDefaultColumn())
+         */
+        this.propList = pList;
     }
 
     /**
@@ -164,19 +170,19 @@ public class Table extends TableFObj {
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
         if (FO_URI.equals(nsURI)) {
-            if (localName.equals("marker")) {
+            if ("marker".equals(localName)) {
                 if (tableColumnFound || tableHeaderFound || tableFooterFound 
                         || tableBodyFound) {
                    nodesOutOfOrderError(loc, "fo:marker", 
                        "(table-column*,table-header?,table-footer?,table-body+)");
                 }
-            } else if (localName.equals("table-column")) {
+            } else if ("table-column".equals(localName)) {
                 tableColumnFound = true;
                 if (tableHeaderFound || tableFooterFound || tableBodyFound) {
                     nodesOutOfOrderError(loc, "fo:table-column", 
                         "(table-header?,table-footer?,table-body+)");
                 }
-            } else if (localName.equals("table-header")) {
+            } else if ("table-header".equals(localName)) {
                 if (tableHeaderFound) {
                     tooManyNodesError(loc, "table-header");
                 } else {
@@ -186,7 +192,7 @@ public class Table extends TableFObj {
                             "(table-footer?,table-body+)"); 
                     }
                 }
-            } else if (localName.equals("table-footer")) {
+            } else if ("table-footer".equals(localName)) {
                 if (tableFooterFound) {
                     tooManyNodesError(loc, "table-footer");
                 } else {
@@ -196,7 +202,7 @@ public class Table extends TableFObj {
                             "(table-body+)");
                     }
                 }
-            } else if (localName.equals("table-body")) {
+            } else if ("table-body".equals(localName)) {
                 tableBodyFound = true;
             } else {
                 invalidChildError(loc, nsURI, localName);
@@ -217,23 +223,28 @@ public class Table extends TableFObj {
                        + ",table-body+)");
         }
         if (!inMarker()) {
-            if (columns != null && !columns.isEmpty()) {
-                for (int i = columns.size(); --i >= 0;) {
-                    TableColumn col = (TableColumn) columns.get(i);
-                    if (col != null) {
-                        col.releasePropertyList();
-                    }
+            /* clean up */
+            for (int i = columns.size(); --i >= 0;) {
+                TableColumn col = (TableColumn) columns.get(i);
+                if (col != null) {
+                    col.releasePropertyList();
                 }
             }
+            this.propList = null;
         }
         getFOEventHandler().endTable(this);
+        
     }
 
     /**
      * @see org.apache.fop.fo.FONode#addChildNode(FONode)
      */
     protected void addChildNode(FONode child) throws FOPException {
-        if ("fo:table-column".equals(child.getName())) {
+        
+        int childId = child.getNameId();
+        
+        switch (childId) {
+        case FO_TABLE_COLUMN:
             if (columns == null) {
                 columns = new java.util.ArrayList();
             }
@@ -242,16 +253,47 @@ public class Table extends TableFObj {
             } else {
                 columns.add((TableColumn) child);
             }
-        } else {
-            if ("fo:table-footer".equals(child.getName())) {
+            return;
+        case FO_MARKER:
+            super.addChildNode(child);
+            return;
+        default:
+            switch (childId) {
+            case FO_TABLE_FOOTER:
                 tableFooter = (TableBody) child;
-            } else if ("fo:table-header".equals(child.getName())) {
+                break;
+            case FO_TABLE_HEADER:
                 tableHeader = (TableBody) child;
-            } else {
-                // add bodies
+                break;
+            default:
                 super.addChildNode(child);
             }
         }
+    }
+    
+    /**
+     * Adds a default column to the columns list (called from 
+     * TableBody.addChildNode() when the table has no explicit 
+     * columns, and if processing the first row)
+     * 
+     * @param colWidth  the column's width (null if the default should be used)
+     * @param colNr     the column-number from the cell
+     * @throws FOPException  if there was an error creating the property list
+     */
+    protected void addDefaultColumn(Length colWidth, int colNr) 
+                    throws FOPException {
+        TableColumn defaultColumn = new TableColumn(this, true);
+        PropertyList pList = new StaticPropertyList(
+                                defaultColumn, this.propList);
+        pList.setWritingMode();
+        defaultColumn.bind(pList);
+        if (colWidth != null) {
+            defaultColumn.setColumnWidth(colWidth);
+        }
+        if (colNr != 0) {
+            defaultColumn.setColumnNumber(colNr);
+        }
+        addColumnNode(defaultColumn);
     }
 
     /**
@@ -262,17 +304,22 @@ public class Table extends TableFObj {
      * @throws FOPException 
      */
     private void addColumnNode(TableColumn col) {
+        
         int colNumber = col.getColumnNumber();
         int colRepeat = col.getNumberColumnsRepeated();
+        
         if (columns.size() < colNumber) {
-            //add nulls for non-occupied indices between
-            //the last column up to and including the current one
+            /* add nulls for non-occupied indices between
+            /* the last column up to and including the current one
+             */
             while (columns.size() < colNumber) {
                 columns.add(null);
             }
         }
-        //replace the null-value with the actual column
+        
+        /* replace the null-value with the actual column */
         columns.set(colNumber - 1, col);
+        
         if (colRepeat > 1) {
             //in case column is repeated:
             //for the time being, add the same column 
@@ -290,12 +337,12 @@ public class Table extends TableFObj {
 
     /** @return true of table-layout="auto" */
     public boolean isAutoLayout() {
-        return (tableLayout != EN_FIXED);
+        return (tableLayout == EN_AUTO);
     }
     
     /** @return the default table column */
     public TableColumn getDefaultColumn() {
-        return this.defaultColumn;
+        return (TableColumn) this.columns.get(0);
     }
     
     /** @return the list of table-column elements. */
