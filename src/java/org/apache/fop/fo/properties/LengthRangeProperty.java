@@ -283,7 +283,7 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
     /**
      * @return this.lengthRange cast as an Object
      */
-    protected Object getObject() {
+    public Object getObject() {
         return this;
     }
 
