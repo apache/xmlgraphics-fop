@@ -20,6 +20,7 @@
 package org.apache.fop.fo.properties;
 
 import org.apache.fop.datatypes.CompoundDatatype;
+import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
@@ -61,14 +62,49 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
         /**
          * @see CompoundPropertyMaker#convertProperty
          */        
-        public Property convertProperty(Property p, PropertyList propertyList, FObj fo)
-            throws PropertyException
-        {
+        public Property convertProperty(Property p, 
+                                PropertyList propertyList, FObj fo)
+                        throws PropertyException {
+            
             if (p instanceof LengthRangeProperty) {
                 return p;
             }
+            
+            if (this.propId == PR_BLOCK_PROGRESSION_DIMENSION
+                    || this.propId == PR_INLINE_PROGRESSION_DIMENSION) {
+                Length len = p.getLength();
+                if (len != null && len.getValue() < 0) {
+                    log.warn("Replaced negative value for " + getName()
+                            + " with 0mpt");
+                    p = new FixedLength(0);
+                }
+            }
+            
             return super.convertProperty(p, propertyList, fo);
         }
+        
+        
+        /**
+         * @see org.apache.fop.fo.properties.PropertyMaker#getSubprop()
+         */
+        protected Property setSubprop(Property baseProperty, int subpropertyId,
+                                        Property subproperty) {
+            CompoundDatatype val = (CompoundDatatype) baseProperty.getObject();
+            if (this.propId == PR_BLOCK_PROGRESSION_DIMENSION
+                    || this.propId == PR_INLINE_PROGRESSION_DIMENSION) {
+                Length len = subproperty.getLength();
+                if (len != null && len.getValue() < 0) {
+                    log.warn("Replaced negative value for " + getName()
+                            + " with 0mpt");
+                    val.setComponent(subpropertyId,
+                            new FixedLength(0), false);
+                    return baseProperty;
+                }
+            }
+            val.setComponent(subpropertyId, subproperty, false);
+            return baseProperty;
+        }
+
     }
 
 
@@ -186,8 +222,9 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
                 // opt is default and max is explicit or default
                 optimum = maximum;
             }
-        } else if (!optimum.isAuto() && !minimum.isAuto() && 
-                optimum.getLength().getValue(context) < minimum.getLength().getValue(context)) {
+        } else if (!optimum.isAuto() && !minimum.isAuto() 
+                    && optimum.getLength().getValue(context) 
+                        < minimum.getLength().getValue(context)) {
             if ((bfSet & MINSET) != 0) {
                 // if minimum is explicit, force opt to min
                 if ((bfSet & OPTSET) != 0) {
@@ -246,7 +283,7 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
     /**
      * @return this.lengthRange cast as an Object
      */
-    public Object getObject() {
+    protected Object getObject() {
         return this;
     }
 
