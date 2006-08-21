@@ -97,6 +97,13 @@ public class TableCaption extends FObj {
     }
 
     /**
+     * @return the Common Border, Padding, and Background Properties.
+     */
+    public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
+        return commonBorderPaddingBackground;
+    }
+
+    /**
      * Make sure content model satisfied, if so then tell the
      * FOEventHandler that we are at the end of the flow.
      * @see org.apache.fop.fo.FONode#endOfNode

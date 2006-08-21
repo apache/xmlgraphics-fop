@@ -118,7 +118,7 @@ public abstract class CollapsingBorderModel {
             case Constants.EN_RIDGE: return -4;
             case Constants.EN_OUTSET: return -5;
             case Constants.EN_GROOVE: return -6;
-            case Constants.EN_INSET: return -6;
+            case Constants.EN_INSET: return -7;
             default: throw new IllegalStateException("Illegal border style: " + style);
         }
     }

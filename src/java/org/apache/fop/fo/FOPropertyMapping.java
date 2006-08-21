@@ -2299,7 +2299,8 @@ public final class FOPropertyMapping implements Constants {
         // column-width
         m  = new LengthProperty.Maker(PR_COLUMN_WIDTH);
         m.setInherited(false);
-        m.setDefault("proportional-column-width(1)", true);
+        m.addEnum("auto", getEnumProperty(EN_AUTO, "AUTO"));
+        m.setDefault("auto");
         m.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
         addPropertyMaker("column-width", m);
 

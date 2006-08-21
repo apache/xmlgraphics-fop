@@ -19,10 +19,6 @@
 
 package org.apache.fop.fo.flow;
 
-import java.util.BitSet;
-import java.util.List;
-
-import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
@@ -31,7 +27,6 @@ import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
@@ -50,7 +45,7 @@ public class TableCell extends TableFObj {
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     private CommonRelativePosition commonRelativePosition;
     private LengthRangeProperty blockProgressionDimension;
-    private Numeric columnNumber;
+    private int columnNumber;
     private int displayAlign;
     private int relativeAlign;
     private int emptyCells;
@@ -58,8 +53,8 @@ public class TableCell extends TableFObj {
     private Length height;
     private String id;
     private LengthRangeProperty inlineProgressionDimension;
-    private Numeric numberColumnsSpanned;
-    private Numeric numberRowsSpanned;
+    private int numberColumnsSpanned;
+    private int numberRowsSpanned;
     private int startsRow;
     private Length width;
     private KeepProperty keepTogether;
@@ -123,9 +118,9 @@ public class TableCell extends TableFObj {
         height = pList.get(PR_HEIGHT).getLength();
         id = pList.get(PR_ID).getString();
         inlineProgressionDimension = pList.get(PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
-        columnNumber = pList.get(PR_COLUMN_NUMBER).getNumeric();
-        numberColumnsSpanned = pList.get(PR_NUMBER_COLUMNS_SPANNED).getNumeric();
-        numberRowsSpanned = pList.get(PR_NUMBER_ROWS_SPANNED).getNumeric();
+        columnNumber = pList.get(PR_COLUMN_NUMBER).getNumeric().getValue();
+        numberColumnsSpanned = pList.get(PR_NUMBER_COLUMNS_SPANNED).getNumeric().getValue();
+        numberRowsSpanned = pList.get(PR_NUMBER_ROWS_SPANNED).getNumeric().getValue();
         startsRow = pList.get(PR_STARTS_ROW).getEnum();
         width = pList.get(PR_WIDTH).getLength();
         keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
@@ -207,9 +202,9 @@ public class TableCell extends TableFObj {
      * @return the "column-number" property.
      */
     public int getColumnNumber() {
-        return columnNumber.getValue();
+        return columnNumber;
     }
-
+    
     /** @return true if "empty-cells" is "show" */
     public boolean showEmptyCells() {
         return (this.emptyCells == EN_SHOW);
@@ -226,14 +221,14 @@ public class TableCell extends TableFObj {
      * @return the "number-columns-spanned" property.
      */
     public int getNumberColumnsSpanned() {
-        return Math.max(numberColumnsSpanned.getValue(), 1);
+        return Math.max(numberColumnsSpanned, 1);
     }
 
     /**
      * @return the "number-rows-spanned" property.
      */
     public int getNumberRowsSpanned() {
-        return Math.max(numberRowsSpanned.getValue(), 1);
+        return Math.max(numberRowsSpanned, 1);
     }
     
     /**
@@ -246,6 +241,13 @@ public class TableCell extends TableFObj {
     /** @return the display-align property. */
     public int getDisplayAlign() {
         return displayAlign;
+    }
+    
+    /**
+     * @return the "width" property.
+     */
+    public Length getWidth() {
+        return width;
     }
     
     /** @return true if the cell starts a row. */

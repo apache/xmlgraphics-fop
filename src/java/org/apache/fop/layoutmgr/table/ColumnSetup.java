@@ -26,10 +26,12 @@ import java.util.ListIterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.datatypes.PercentBaseContext;
+import org.apache.fop.datatypes.Length;
 
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.flow.TableColumn;
+import org.apache.fop.fo.properties.TableColLength;
 
 /**
  * Class holding a number of columns making up the column setup of a row.
@@ -41,6 +43,8 @@ public class ColumnSetup {
 
     private Table table;
     private List columns = new java.util.ArrayList();
+    private List colWidths = new java.util.ArrayList();
+    
     private int maxColIndexReferenced = 0;
     
     /**
@@ -49,13 +53,11 @@ public class ColumnSetup {
      */
     public ColumnSetup(Table table) {
         this.table = table;
-        prepareExplicitColumns();
-        if (getColumnCount() == 0) {
-            createColumnsFromFirstRow();
-        }
+        prepareColumns();
+        initializeColumnWidths();
     }
     
-    private void prepareExplicitColumns() {
+    private void prepareColumns() {
         List rawCols = table.getColumns();
         if (rawCols != null) {
             int colnum = 1;
@@ -100,10 +102,11 @@ public class ColumnSetup {
                 maxColIndexReferenced = index;
                 if (!(size == 1 && getColumn(1).isDefaultColumn())) {
                     log.warn(FONode.decorateWithContextInfo(
-                            "There are fewer table-columns than are needed. Column " 
-                            + index + " was accessed although only " 
+                            "There are fewer table-columns than are needed. "
+                            + "Column " + index + " was accessed, but only "
                             + size + " columns have been defined. "
-                            + "The last defined column will be reused.", table));
+                            + "The last defined column will be reused."
+                        , table));
                     if (!table.isAutoLayout()) {
                         log.warn("Please note that according XSL-FO 1.0 (7.26.9) says that "
                                 + "the 'column-width' property must be specified for every "
@@ -111,9 +114,9 @@ public class ColumnSetup {
                     }
                 }
             }
-            return (TableColumn)columns.get(size - 1);
+            return (TableColumn) columns.get(size - 1);
         } else {
-            return (TableColumn)columns.get(index - 1);
+            return (TableColumn) columns.get(index - 1);
         }
     }
  
@@ -136,6 +139,7 @@ public class ColumnSetup {
         return this.columns.iterator();
     }
     
+    /*
     private void createColumnsFromFirstRow() {
         //TODO Create oldColumns from first row here 
         //--> rule 2 in "fixed table layout", see CSS2, 17.5.2
@@ -146,7 +150,69 @@ public class ColumnSetup {
             this.columns.add(table.getDefaultColumn());
         }
     }
+    */
 
+    /**
+     * Initializes the column's widths
+     * 
+     */
+    private void initializeColumnWidths() {
+        
+        TableColumn col;
+        Length colWidth;
+        
+        for (int i = columns.size(); --i >= 0;) {
+            if (columns.get(i) != null) {
+                col = (TableColumn) columns.get(i);
+                colWidth = col.getColumnWidth();
+                colWidths.add(0, colWidth);
+            }
+        }
+        colWidths.add(0, null);
+    }
+    
+    /**
+     * Works out the base unit for resolving proportional-column-width()
+     * [p-c-w(x) = x * base_unit_ipd]
+     * 
+     * @param tlm   the TableLayoutManager
+     * @return the computed base unit (in millipoint)
+     */
+    protected double computeTableUnit(TableLayoutManager tlm) {
+        
+        int sumCols = 0;
+        float factors = 0;
+        double unit = 0;
+        
+        /* calculate the total width (specified absolute/percentages), 
+         * and work out the total number of factors to use to distribute
+         * the remaining space (if any)
+         */
+        for (Iterator i = colWidths.iterator(); i.hasNext();) {
+            Length colWidth = (Length) i.next();
+            if (colWidth != null) {
+                sumCols += colWidth.getValue(tlm);
+                if (colWidth instanceof TableColLength) {
+                    factors += 
+                        ((TableColLength) colWidth).getTableUnits();
+                }
+            }
+        }
+        
+        /* distribute the remaining space over the accumulated 
+         * factors (if any) 
+         */
+        if (factors > 0) {
+            if (sumCols < tlm.getContentAreaIPD()) {
+                unit = (tlm.getContentAreaIPD() - sumCols) / factors;
+            } else {
+                log.warn("No space remaining to distribute over columns.");
+            }
+        }
+        
+        return unit;
+    }
+    
     /**
      * @param col column index (1 is first column)
      * @param context the context for percentage based calculations
@@ -154,9 +220,9 @@ public class ColumnSetup {
      */
     public int getXOffset(int col, PercentBaseContext context) {
         int xoffset = 0;
-        for (int i = 1; i < col; i++) {
-            if (getColumn(i) != null) {
-                xoffset += getColumn(i).getColumnWidth().getValue(context);
+        for (int i = col; --i >= 0;) {
+            if (colWidths.get(i) != null) {
+                xoffset += ((Length) colWidths.get(i)).getValue(context);
             }
         }
         return xoffset;

@@ -367,24 +367,27 @@ public abstract class TableFObj extends FObj {
             Property p = super.get(0, propertyList, tryInherit, tryDefault);
             TableFObj fo = (TableFObj) propertyList.getFObj();
             TableFObj parent = (TableFObj) propertyList.getParentFObj();
-            int columnIndex = p.getNumeric().getValue();
             
-            if (columnIndex <= 0) {
-                fo.getLogger().warn("Specified negative or zero value for "
-                        + "column-number on " + fo.getName() + ": "
-                        + columnIndex + " forced to " 
-                        + parent.getCurrentColumnIndex());
-                return new NumberProperty(parent.getCurrentColumnIndex());
-            }
-            //TODO: check for non-integer value and round
-                    
-            /* if column-number was explicitly specified, force the 
-             * parent's current column index to the specified value, 
-             * so that the updated index will be the correct initial 
-             * value for the next cell/column (see Rec 7.26.8)
-             */
-            if (propertyList.getExplicit(Constants.PR_COLUMN_NUMBER) != null) {
-                parent.setCurrentColumnIndex(p.getNumeric().getValue());
+            if (p != null) {
+                int columnIndex = p.getNumeric().getValue();
+                
+                if (columnIndex <= 0) {
+                    fo.getLogger().warn("Specified negative or zero value for "
+                            + "column-number on " + fo.getName() + ": "
+                            + columnIndex + " forced to " 
+                            + parent.getCurrentColumnIndex());
+                    return new NumberProperty(parent.getCurrentColumnIndex());
+                }
+                //TODO: check for non-integer value and round
+                        
+                /* if column-number was explicitly specified, force the 
+                 * parent's current column index to the specified value, 
+                 * so that the updated index will be the correct initial 
+                 * value for the next cell/column (see Rec 7.26.8)
+                 */
+                if (propertyList.getExplicit(Constants.PR_COLUMN_NUMBER) != null) {
+                    parent.setCurrentColumnIndex(p.getNumeric().getValue());
+                }
             }
             return p;
         }

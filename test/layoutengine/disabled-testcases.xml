@@ -292,14 +292,6 @@
     on table-cells, yet.</description>
   </testcase>
   <testcase>
-    <name>No table column setup based on the first row.</name>
-    <file>table-column_first-row-width.xml</file>
-    <description>According to the spec the table-columns can be set up
-    automatically based on values on the first row of a table. This is not
-    implemented, yet.</description>
-    <reference>http://issues.apache.org/bugzilla/show_bug.cgi?id=35656</reference>
-  </testcase>
-  <testcase>
     <name>No background-images on table-header</name>
     <file>table-header_background-image.xml</file>
     <description>The backgrounds of table-body, table-header,
@@ -310,12 +302,6 @@
     <file>table-row_keep-with-previous.xml</file>
     <description>Keep-with-previous doesn't work inside tables and
     lists, yet.</description>
-  </testcase>
-  <testcase>
-    <name>table table-layout fixed 2</name>
-    <file>table_table-layout_fixed_2.xml</file>
-    <description>TODO: Same as table-column_first-row-width.xml?</description>
-    <reference>http://issues.apache.org/bugzilla/show_bug.cgi?id=35656</reference>
   </testcase>
   <testcase>
     <name>table-cell empty area with marker.xml</name>
