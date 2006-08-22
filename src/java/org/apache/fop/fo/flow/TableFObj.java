@@ -378,7 +378,14 @@ public abstract class TableFObj extends FObj {
                             + parent.getCurrentColumnIndex());
                     return new NumberProperty(parent.getCurrentColumnIndex());
                 }
-                //TODO: check for non-integer value and round
+                
+                double tmpIndex = p.getNumeric().getNumericValue();
+                if (tmpIndex - columnIndex > 0.0) {
+                    columnIndex = (int) Math.round(tmpIndex);
+                    fo.getLogger().warn("Rounding specified column-number of "
+                            + tmpIndex + " to " + columnIndex);
+                    return new NumberProperty(columnIndex);
+                }
                         
                 /* if column-number was explicitly specified, force the 
                  * parent's current column index to the specified value, 

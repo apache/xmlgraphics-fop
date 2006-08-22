@@ -339,12 +339,7 @@ public class Table extends TableFObj {
     public boolean isAutoLayout() {
         return (tableLayout == EN_AUTO);
     }
-    
-    /** @return the default table column */
-    public TableColumn getDefaultColumn() {
-        return (TableColumn) this.columns.get(0);
-    }
-    
+
     /** @return the list of table-column elements. */
     public List getColumns() {
         return columns;
