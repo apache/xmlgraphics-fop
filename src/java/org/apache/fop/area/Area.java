@@ -456,7 +456,10 @@ public class Area extends AreaTreeObject implements Serializable {
         }
     }
     
-    /** @see java.lang.Object#toString() */
+    /**
+     * @see java.lang.Object#toString()
+     * @return ipd and bpd of area 
+     * */
     public String toString() {
         StringBuffer sb = new StringBuffer(super.toString());
         sb.append(" {ipd=").append(Integer.toString(getIPD()));
