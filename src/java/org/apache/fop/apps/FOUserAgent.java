@@ -280,7 +280,8 @@ public class FOUserAgent {
     }
 
     /**
-     * Configures the FOUserAgent through the factory's configuration. 
+     * Configures the FOUserAgent through the factory's configuration.
+     * @param cfg Avalon Configuration Object
      * @see org.apache.avalon.framework.configuration.Configurable
      */
     protected void configure(Configuration cfg) {

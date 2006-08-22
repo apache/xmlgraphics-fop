@@ -43,7 +43,7 @@ public class AreaTreeModel {
     /** the current page sequence */
     protected PageSequence currentPageSequence;
     private List offDocumentItems = new java.util.ArrayList();
-
+    /** logger instance */
     protected static Log log = LogFactory.getLog(AreaTreeModel.class);
 
     /**

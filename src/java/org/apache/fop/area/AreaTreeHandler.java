@@ -339,7 +339,10 @@ public class AreaTreeHandler extends FOEventHandler {
         }
     }
 
-    /** @see org.apache.fop.fo.FOEventHandler */
+    /**
+     * @see org.apache.fop.fo.FOEventHandler
+     * @param pageSequence is the pageSequence being started 
+     * */
     public void startPageSequence(PageSequence pageSequence) {
         rootFObj = pageSequence.getRoot();
         finishPrevPageSequence(pageSequence.getInitialPageNumber());
