@@ -28,6 +28,7 @@ import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthPairProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.fo.properties.Property;
+import org.apache.fop.fo.properties.SpaceProperty;
 import org.apache.fop.fotreetest.ResultCollector;
 
 import org.xml.sax.Attributes;
@@ -85,14 +86,23 @@ public class AssertElement extends TestObj {
                 if (kp != null) {
                     prop = kp.getComponent(FOPropertyMapping.getSubPropertyId(component));
                 }
+                SpaceProperty sp = mainProp.getSpace();
+                if (sp != null) {
+                    prop = sp.getComponent(FOPropertyMapping.getSubPropertyId(component));
+                }
             }
             String s = String.valueOf(prop);
             String expected = attlist.getValue("expected");
             if (!expected.equals(s)) {
-                collector.notifyException(new IllegalStateException("Property '" + propName 
-                        + "' expected to evaluate to '" + expected + "' but got: " + s
-                        + "\nLine #" + locator.getLineNumber() 
-                        + " Column #" + locator.getColumnNumber()));
+                collector.notifyException(
+                    new IllegalStateException(locator.getSystemId()
+                        + "\nProperty '" + propName 
+                        + "' expected to evaluate to '" + expected 
+                        + "' but got '" + s
+                        + "'\n(test:assert in " 
+                        + propertyList.getParentFObj().getName()
+                        + " at line #" + locator.getLineNumber() 
+                        + ", column #" + locator.getColumnNumber() + ")\n"));
             }
         }
         
