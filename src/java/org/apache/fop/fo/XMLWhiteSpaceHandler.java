@@ -31,11 +31,11 @@ import org.apache.fop.util.CharUtilities;
  */
 public class XMLWhiteSpaceHandler {
     
-    // True if we are in a run of white space
+    /** True if we are in a run of white space */
     private boolean inWhiteSpace = false;
-    // True if the last char was a linefeed
+    /** True if the last char was a linefeed */
     private boolean afterLinefeed = true;
-    // Counter, increased every time a non-white-space is encountered
+    /** Counter, increased every time a non-white-space is encountered */
     private int nonWhiteSpaceCount;
     
     private Block currentBlock;
@@ -50,6 +50,7 @@ public class XMLWhiteSpaceHandler {
     
     private List discardableFOCharacters;
     private List pendingInlines;
+    private List nestedBlockStack = new java.util.ArrayList(5);
     private CharIterator firstWhiteSpaceInSeq;
     
     /**
@@ -72,65 +73,66 @@ public class XMLWhiteSpaceHandler {
      * @param firstTextNode the node at which to start
      */
     public void handleWhiteSpace(FObjMixed fo, FONode firstTextNode) {
-        if (fo.getNameId() == Constants.FO_BLOCK
-                || fo.getNameId() == Constants.FO_RETRIEVE_MARKER) {
-            if (fo.getNameId() == Constants.FO_BLOCK) {
-                this.currentBlock = (Block) fo;
-            } else {
-                FONode ancestor = fo.parent;
-                while (ancestor.getNameId() != Constants.FO_BLOCK
-                        && ancestor.getNameId() != Constants.FO_STATIC_CONTENT) {
-                    ancestor = ancestor.getParent();
-                }
-                if (ancestor.getNameId() == Constants.FO_BLOCK) {
-                    this.currentBlock = (Block) ancestor;
-                }
-            }
-            if (currentBlock != null) {
-                this.linefeedTreatment = currentBlock.getLinefeedTreatment();
-                this.whiteSpaceCollapse = currentBlock.getWhitespaceCollapse();
-                this.whiteSpaceTreatment = 
-                    currentBlock.getWhitespaceTreatment();
-            } else {
-                /* fo:retrieve-marker as direct child of static-content
-                 * set properties to their initial values
+        
+        int foId = fo.getNameId();
+        
+        if (foId == Constants.FO_BLOCK) {
+            if (nextChild != null && currentBlock != null) {
+                /* if already in a block, push the current block 
+                 * onto the stack of nested blocks
                  */
-                this.linefeedTreatment = Constants.EN_TREAT_AS_SPACE;
-                this.whiteSpaceCollapse = Constants.EN_TRUE;
-                this.whiteSpaceTreatment = 
-                    Constants.EN_IGNORE_IF_SURROUNDING_LINEFEED;
+                pushNestedBlockStack();
             }
-        } else if (fo.getNameId() == Constants.FO_TITLE
-                || fo.getNameId() == Constants.FO_BOOKMARK_TITLE) {
-            /* Two special types of FO that can contain #PCDATA
-             * set properties to their initial values
-             */
-            this.linefeedTreatment = Constants.EN_TREAT_AS_SPACE;
-            this.whiteSpaceCollapse = Constants.EN_TRUE;
-            this.whiteSpaceTreatment = 
-                Constants.EN_IGNORE_IF_SURROUNDING_LINEFEED;
+            currentBlock = (Block) fo;
+        } else if (foId == Constants.FO_RETRIEVE_MARKER) {
+            /* look for the nearest block ancestor, if any */
+            FONode ancestor;
+            do {
+                ancestor = fo.getParent();
+            } while (ancestor.getNameId() != Constants.FO_BLOCK
+                    && ancestor.getNameId() != Constants.FO_STATIC_CONTENT);
+            
+            if (ancestor.getNameId() == Constants.FO_BLOCK) {
+                currentBlock = (Block) ancestor;
+            }
         }
+        
+        if (currentBlock != null) {
+            linefeedTreatment = currentBlock.getLinefeedTreatment();
+            whiteSpaceCollapse = currentBlock.getWhitespaceCollapse();
+            whiteSpaceTreatment = currentBlock.getWhitespaceTreatment();
+        } else {
+            linefeedTreatment = Constants.EN_TREAT_AS_SPACE;
+            whiteSpaceCollapse = Constants.EN_TRUE;
+            whiteSpaceTreatment = Constants.EN_IGNORE_IF_SURROUNDING_LINEFEED;
+        }
+        
         currentFO = fo;
+
         if (firstTextNode == null) {
             //nothing to do but initialize related properties
             return;
         }
+        
         charIter = new RecursiveCharIterator(fo, firstTextNode);
         inWhiteSpace = false;
-        int textNodeIndex = -1;
+        
         if (currentFO == currentBlock
                 || currentBlock == null
-                || (currentFO.getNameId() == Constants.FO_RETRIEVE_MARKER
+                || (foId == Constants.FO_RETRIEVE_MARKER
                         && currentFO.getParent() == currentBlock)) {
-            textNodeIndex = fo.childNodes.indexOf(firstTextNode);
-            afterLinefeed = ((textNodeIndex == 0)
-                    || (textNodeIndex > 0
+            int textNodeIndex = fo.childNodes.indexOf(firstTextNode);
+            afterLinefeed = (
+                    (textNodeIndex == 0)
+                        || (textNodeIndex > 0
                             && ((FONode) fo.childNodes.get(textNodeIndex - 1))
-                                .getNameId() == Constants.FO_BLOCK));
+                                    .getNameId() == Constants.FO_BLOCK));
         }
+        
         endOfBlock = (nextChild == null && currentFO == currentBlock);
+        
         if (nextChild != null) {
-            int nextChildId = nextChild.getNameId();
+            int nextChildId = this.nextChild.getNameId();
             nextChildIsBlockLevel = (
                     nextChildId == Constants.FO_BLOCK
                     || nextChildId == Constants.FO_TABLE_AND_CAPTION
@@ -140,7 +142,9 @@ public class XMLWhiteSpaceHandler {
         } else {
             nextChildIsBlockLevel = false;
         }
+        
         handleWhiteSpace();
+        
         if (currentFO == currentBlock 
                 && pendingInlines != null 
                 && !pendingInlines.isEmpty()) {
@@ -151,7 +155,8 @@ public class XMLWhiteSpaceHandler {
                     PendingInline p;
                     for (int i = pendingInlines.size(); --i >= 0;) {
                         p = (PendingInline) pendingInlines.get(i);
-                        charIter = (RecursiveCharIterator) p.firstTrailingWhiteSpace;
+                        charIter = 
+                            (RecursiveCharIterator) p.firstTrailingWhiteSpace;
                         handleWhiteSpace();
                         pendingInlines.remove(p);
                     }
@@ -163,24 +168,28 @@ public class XMLWhiteSpaceHandler {
                 }
             }
         }
-        if (currentFO != currentBlock && nextChild == null) {
-            /* current FO is not a block, and is about to end */
-            if (nonWhiteSpaceCount > 0 && pendingInlines != null) {
-                /* there is non-white-space text between the pending 
-                 * inline(s) and the end of the non-block node; 
-                 * clear list of pending inlines */
-                pendingInlines.clear();
-            }
-            if (inWhiteSpace) {
-                /* means there is at least one trailing space in the
-                   inline FO that is about to end */
-                addPendingInline(fo);
-            }
-        }
         
-        if (currentFO == currentBlock && nextChild == null) {
-            /* end of block: clear the reference */
-            currentBlock = null;
+        if (nextChild == null) {
+            if (currentFO != currentBlock) {
+                /* current FO is not a block, and is about to end */
+                if (nonWhiteSpaceCount > 0 && pendingInlines != null) {
+                    /* there is non-white-space text between the pending 
+                     * inline(s) and the end of the non-block node; 
+                     * clear list of pending inlines */
+                    pendingInlines.clear();
+                }
+                if (inWhiteSpace) {
+                    /* means there is at least one trailing space in the
+                       inline FO that is about to end */
+                    addPendingInline(fo);
+                }
+            } else {
+                /* end of block: clear the references and pop the 
+                 * nested block stack */
+                popNestedBlockStack();
+                currentFO = null;
+                charIter = null;
+            }
         }
     }
     
@@ -311,6 +320,23 @@ public class XMLWhiteSpaceHandler {
         pendingInlines.add(new PendingInline(fo, firstWhiteSpaceInSeq));
     }
     
+    private void pushNestedBlockStack() {
+        this.nestedBlockStack.add(
+                this.nestedBlockStack.size(), this.currentBlock);
+    }
+    
+    private void popNestedBlockStack() {
+        
+        if (this.nestedBlockStack.isEmpty()) {
+            this.currentBlock = null;
+        } else {
+            this.currentBlock = (Block) this.nestedBlockStack.get(
+                    this.nestedBlockStack.size() - 1);
+            this.nestedBlockStack.remove(this.currentBlock);
+        }
+        
+    }
+        
     private class EOLchecker {
         private boolean nextIsEOL = false;
         private RecursiveCharIterator charIter;
