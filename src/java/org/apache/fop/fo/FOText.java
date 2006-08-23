@@ -27,7 +27,6 @@ import java.util.NoSuchElementException;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.flow.Block;
-import org.apache.fop.fo.pagination.Root;
 import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonHyphenation;
 import org.apache.fop.fo.properties.CommonTextDecoration;
@@ -44,9 +43,6 @@ import org.xml.sax.Locator;
  * onto references to the character data in this object
  * longer than the lifetime of the object itself, causing
  * excessive memory consumption and OOM errors.
- *
- * @author unascribed
- * @author <a href="mailto:mark-fop@inomial.com">Mark Lillywhite</a>
  */
 public class FOText extends FONode {
 
@@ -70,12 +66,17 @@ public class FOText extends FONode {
      * to be processed.
      *
      * This value is originally equal to ca.length, but becomes 
-     * decremented during between-word whitespace removal by the flow.Block class,  
-     * via the TextCharIterator.remove() method below.
+     * decremented during between-word whitespace removal by the 
+     * XMLWhiteSpaceHandler via the TextCharIterator.remove() 
+     * method below.
      */
     public int endIndex = 0;
 
-    // The value of properties relevant for character.
+    /** properties relevant for PCDATA */
+    /* TODO: these are basically always the same as the parent FObj or FObjMixed
+     *      so maybe those can be removed, and the accessors could  
+     *      dispatch the call to the parent?
+     */
     private CommonFont commonFont;
     private CommonHyphenation commonHyphenation;
     private Color color;
@@ -87,16 +88,6 @@ public class FOText extends FONode {
     private Property wordSpacing;
     private int wrapOption;
     private Length baselineShift;
-    // End of property values
-
-    /**
-     * Keeps track of the last FOText object created within the current
-     * block. This is used to create pointers between such objects.
-     * TODO: As soon as the control hierarchy is straightened out, this static
-     * variable needs to become an instance variable in some parent object,
-     * probably the page-sequence.
-     */
-    private static FOText lastFOTextProcessed = null;
 
     /**
      * Points to the previous FOText object created within the current
@@ -227,23 +218,21 @@ public class FOText extends FONode {
     }
 
      /**
-     * This method is run as part of the ancestor Block's flushText(), to create xref pointers to
-     * the previous FOText objects within the same Block
+     * This method is run as part of the ancestor Block's flushText(), to 
+     * create xref pointers to the previous FOText objects within the same Block
      */
     protected void createBlockPointers(Block ancestorBlock) {
         this.ancestorBlock = ancestorBlock;
         // if the last FOText is a sibling, point to it, and have it point here
-        if (lastFOTextProcessed != null) {
-            if (lastFOTextProcessed.ancestorBlock == this.ancestorBlock) {
-                prevFOTextThisBlock = lastFOTextProcessed;
+        if (ancestorBlock.lastFOTextProcessed != null) {
+            if (ancestorBlock.lastFOTextProcessed.ancestorBlock 
+                    == this.ancestorBlock) {
+                prevFOTextThisBlock = ancestorBlock.lastFOTextProcessed;
                 prevFOTextThisBlock.nextFOTextThisBlock = this;
             } else {
                 prevFOTextThisBlock = null;
             }
         }
-        // save the current node in static field so the next guy knows where
-        // to look
-        lastFOTextProcessed = this;
         return;
     }
 
