@@ -36,6 +36,10 @@ public abstract class FObjMixed extends FObj {
     /** Used for white-space handling; start CharIterator at node ... */
     protected FONode currentTextNode;
     
+    /** Used in creating pointers between subsequent FOText nodes
+     *  in the same Block (for handling text-transform) */
+    protected FOText lastFOTextProcessed = null;
+    
     /**
      * @param parent FONode that is the parent of this object
      */
@@ -91,6 +95,7 @@ public abstract class FObjMixed extends FObj {
             ft = null;
             if (getNameId() == FO_BLOCK) {
                 lft.createBlockPointers((org.apache.fop.fo.flow.Block) this);
+                this.lastFOTextProcessed = lft;
             } else if (getNameId() != FO_MARKER
                     && getNameId() != FO_TITLE
                     && getNameId() != FO_BOOKMARK_TITLE) {
@@ -106,6 +111,7 @@ public abstract class FObjMixed extends FObj {
                 }
                 if (foNameId == FO_BLOCK) {
                     lft.createBlockPointers((org.apache.fop.fo.flow.Block) fo);
+                    ((FObjMixed) fo).lastFOTextProcessed = lft;
                 } else if (foNameId == FO_PAGE_SEQUENCE) {
                     log.error("Could not create block pointers."
                             + " FOText w/o Block ancestor.");
@@ -142,6 +148,5 @@ public abstract class FObjMixed extends FObj {
      */
     public CharIterator charIterator() {
         return new RecursiveCharIterator(this);
-    }
-    
+    }    
 }
