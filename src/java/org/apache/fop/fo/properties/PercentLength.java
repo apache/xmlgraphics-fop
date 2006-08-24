@@ -63,12 +63,13 @@ public class PercentLength extends LengthProperty {
     }
 
     /**
-     *
-     * @return the factor
-     * TODO: Should this really exists? 
+     * Used during property resolution to check for 
+     * negative percentages
+     * 
+     * @return the percentage value
      */
-    public double value() {
-        return factor;
+    protected double getPercentage() {
+        return factor * 100;
     }
 
     /**
@@ -113,7 +114,7 @@ public class PercentLength extends LengthProperty {
     public int getValue(PercentBaseContext context) {
         return (int) getNumericValue(context);
     }
-
+    
     /**
      * @return the String equivalent of this
      */

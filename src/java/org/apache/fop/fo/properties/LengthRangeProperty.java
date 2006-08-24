@@ -73,10 +73,14 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
             if (this.propId == PR_BLOCK_PROGRESSION_DIMENSION
                     || this.propId == PR_INLINE_PROGRESSION_DIMENSION) {
                 Length len = p.getLength();
-                if (len != null && len.getValue() < 0) {
-                    log.warn("Replaced negative value for " + getName()
-                            + " with 0mpt");
-                    p = new FixedLength(0);
+                if (len != null) {
+                    if ((len instanceof FixedLength && len.getValue() < 0)
+                            || (len instanceof PercentLength
+                                && ((PercentLength) len).getPercentage() < 0)) {
+                        log.warn("Replaced negative value for " + getName()
+                                + " with 0mpt");
+                        p = new FixedLength(0);
+                    }
                 }
             }
             
@@ -283,7 +287,7 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
     /**
      * @return this.lengthRange cast as an Object
      */
-    public Object getObject() {
+    protected Object getObject() {
         return this;
     }
 
