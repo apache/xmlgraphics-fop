@@ -97,7 +97,7 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
             if (this.propId == PR_BLOCK_PROGRESSION_DIMENSION
                     || this.propId == PR_INLINE_PROGRESSION_DIMENSION) {
                 Length len = subproperty.getLength();
-                if (len != null)
+                if (len != null) {
                     if ((len instanceof PercentLength
                                 && ((PercentLength) len).getPercentage() < 0)
                             || len.getValue() < 0) {
