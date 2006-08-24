@@ -40,7 +40,8 @@ import org.xml.sax.Locator;
 public abstract class FObj extends FONode implements Constants {
     
     /** the list of property makers */
-    private static PropertyMaker[] propertyListTable = null;
+    private static PropertyMaker[] propertyListTable
+                            = FOPropertyMapping.getGenericMappings();
     
     /** The immediate child nodes of this node. */
     protected List childNodes = null;
@@ -52,23 +53,12 @@ public abstract class FObj extends FONode implements Constants {
     private Map foreignAttributes = null;
     
     /** Used to indicate if this FO is either an Out Of Line FO (see rec)
-        or a descendant of one.  Used during validateChildNode() FO 
-        validation.
-    */
+     *  or a descendant of one. Used during FO validation.
+     */
     private boolean isOutOfLineFODescendant = false;
 
     /** Markers added to this element. */
-    protected Map markers = null;
-
-    static {
-        propertyListTable = new PropertyMaker[Constants.PROPERTY_COUNT + 1];
-        PropertyMaker[] list = FOPropertyMapping.getGenericMappings();
-        for (int i = 1; i < list.length; i++) {
-            if (list[i] != null) {
-                propertyListTable[i] = list[i];
-            }
-        }
-    }
+    private Map markers = null;
     
     /**
      * Create a new formatting object.
@@ -81,7 +71,7 @@ public abstract class FObj extends FONode implements Constants {
         
         // determine if isOutOfLineFODescendant should be set
         if (parent != null && parent instanceof FObj) {
-            if (((FObj)parent).getIsOutOfLineFODescendant()) {
+            if (((FObj) parent).getIsOutOfLineFODescendant()) {
                 isOutOfLineFODescendant = true;
             } else {
                 int foID = getNameId();
@@ -151,10 +141,11 @@ public abstract class FObj extends FONode implements Constants {
     /**
      * Setup the id for this formatting object.
      * Most formatting objects can have an id that can be referenced.
-     * This methods checks that the id isn't already used by another
-     * fo and sets the id attribute of this object.
-     * @param id ID to check
+     * This methods checks that the id isn't already used by another FO
+     * 
+     * @param id    the id to check
      * @throws ValidationException if the ID is already defined elsewhere
+     *                              (strict validation only)
      */
     protected void checkId(String id) throws ValidationException {
         if (!inMarker() && !id.equals("")) {
@@ -162,9 +153,25 @@ public abstract class FObj extends FONode implements Constants {
             if (!idrefs.contains(id)) {
                 idrefs.add(id);
             } else {
-                throw new ValidationException("Property id \"" + id 
-                        + "\" previously used; id values must be unique"
-                        + " in document.", locator);
+                if (getUserAgent().validateStrictly()) {
+                    throw new ValidationException("Property id \"" + id 
+                            + "\" previously used; id values must be unique"
+                            + " in document.", locator);
+                } else {
+                    if (log.isWarnEnabled()) {
+                        StringBuffer msg = new StringBuffer();
+                        msg.append("Found non-unique id on ").append(getName());
+                        if (locator.getLineNumber() != -1) {
+                            msg.append(" (at ").append(locator.getLineNumber())
+                                .append("/").append(locator.getColumnNumber())
+                                .append(")");
+                        }
+                        msg.append("\nAny reference to it will be considered "
+                                + "a reference to the first occurrence "
+                                + "in the document.");
+                        log.warn(msg);
+                    }
+                }
             }
         }
     }
@@ -200,7 +207,14 @@ public abstract class FObj extends FONode implements Constants {
         }
     }
 
-    protected static void addChildTo(FONode child, FObj parent) throws FOPException {
+    /**
+     * Used by RetrieveMarker during Marker-subtree cloning
+     * @param child     the (cloned) child node
+     * @param parent    the (cloned) parent node
+     * @throws FOPException when the child could not be added to the parent
+     */
+    protected static void addChildTo(FONode child, FObj parent) 
+                            throws FOPException {
         parent.addChildNode(child);
     }
     
@@ -275,7 +289,9 @@ public abstract class FObj extends FONode implements Constants {
 
     /**
      * Notifies a FObj that one of it's children is removed.
-     * This method is subclassed by Block to clear the firstInlineChild variable.
+     * This method is subclassed by Block to clear the 
+     * firstInlineChild variable in case it doesn't generate
+     * any areas (see addMarker()).
      * @param node the node that was removed
      */
     protected void notifyChildRemoval(FONode node) {
@@ -294,19 +310,16 @@ public abstract class FObj extends FONode implements Constants {
         if (childNodes != null) {
             // check for empty childNodes
             for (Iterator iter = childNodes.iterator(); iter.hasNext();) {
-                FONode node = (FONode)iter.next();
-                if (node instanceof FOText) {
-                    FOText text = (FOText)node;
-                    if (text.willCreateArea()) {
-                        getLogger().error("fo:marker must be an initial child: " + mcname);
-                        return;
-                    } else {
-                        iter.remove();
-                        notifyChildRemoval(node);
-                    }
-                } else {
-                    getLogger().error("fo:marker must be an initial child: " + mcname);
+                FONode node = (FONode) iter.next();
+                if (node instanceof FObj
+                        || (node instanceof FOText
+                                && ((FOText) node).willCreateArea())) {
+                    getLogger().error(
+                            "fo:marker must be an initial child: " + mcname);
                     return;
+                } else if (node instanceof FOText) {
+                    iter.remove();
+                    notifyChildRemoval(node);
                 }
             }
         }
@@ -329,21 +342,11 @@ public abstract class FObj extends FONode implements Constants {
     }
 
     /**
-     * @return th collection of Markers attached to this object
+     * @return the collection of Markers attached to this object
      */
     public Map getMarkers() {
         return markers;
     }
-
-    /*
-     * Return a string representation of the fo element.
-     * Deactivated in order to see precise ID of each fo element created
-     *    (helpful for debugging)
-     */
-/*    public String toString() {
-        return getName() + " at line " + line + ":" + column;
-    }
-*/    
 
     /** @see org.apache.fop.fo.FONode#gatherContextInfo() */
     protected String gatherContextInfo() {
@@ -356,7 +359,7 @@ public abstract class FObj extends FONode implements Constants {
             }
             StringBuffer sb = new StringBuffer();
             while (iter.hasNext()) {
-                FONode node = (FONode)iter.next();
+                FONode node = (FONode) iter.next();
                 String s = node.gatherContextInfo();
                 if (s != null) {
                     if (sb.length() > 0) {
@@ -412,7 +415,8 @@ public abstract class FObj extends FONode implements Constants {
                         || (lName.equals("multi-toggle")
                                 && (getNameId() == FO_MULTI_CASE 
                                         || findAncestor(FO_MULTI_CASE) > 0))
-                        || (lName.equals("footnote") && !isOutOfLineFODescendant)
+                        || (lName.equals("footnote") 
+                                && !isOutOfLineFODescendant)
                         || isNeutralItem(nsURI, lName)));
     }
 
@@ -448,9 +452,9 @@ public abstract class FObj extends FONode implements Constants {
     /**
      * Convenience method for validity checking.  Checks if the
      * current node has an ancestor of a given name.
-     * @param ancestorID -- Constants ID of node name to check for (e.g., FO_ROOT)
+     * @param ancestorID    ID of node name to check for (e.g., FO_ROOT)
      * @return number of levels above FO where ancestor exists, 
-     *    -1 if not found
+     *         -1 if not found
      */
     protected int findAncestor(int ancestorID) {
         int found = 1;
@@ -477,19 +481,23 @@ public abstract class FObj extends FONode implements Constants {
     }
 
     /**
-     * Add a new extension attachment to this FObj. See org.apache.fop.fo.FONode for details.
+     * Add a new extension attachment to this FObj. 
+     * (see org.apache.fop.fo.FONode for details)
+     * 
      * @param attachment the attachment to add.
      */
     public void addExtensionAttachment(ExtensionAttachment attachment) {
         if (attachment == null) {
-            throw new NullPointerException("Parameter attachment must not be null");
+            throw new NullPointerException(
+                    "Parameter attachment must not be null");
         }
         if (extensionAttachments == null) {
             extensionAttachments = new java.util.ArrayList();
         }
         if (log.isDebugEnabled()) {
-            getLogger().debug("ExtensionAttachment of category " + attachment.getCategory() 
-                    + " added to " + getName() + ": " + attachment);
+            getLogger().debug("ExtensionAttachment of category " 
+                    + attachment.getCategory() + " added to " 
+                    + getName() + ": " + attachment);
         }
         extensionAttachments.add(attachment);
     }
@@ -508,10 +516,12 @@ public abstract class FObj extends FONode implements Constants {
      * @param uri the namespace URI
      * @param qName the fully qualified name
      * @param value the attribute value
-     * @todo Handle this over FOP's property mechanism so we can use inheritance.
      */
     public void addForeignAttribute(String uri, 
-            String qName, String value) {
+                        String qName, String value) {
+        /* TODO: Handle this over FOP's property mechanism so we can use 
+         *       inheritance.
+         */
         if (qName == null) {
             throw new NullPointerException("Parameter qName must not be null");
         }
@@ -536,6 +546,4 @@ public abstract class FObj extends FONode implements Constants {
             return foreignAttributes;
         }
     }
-    
 }
-

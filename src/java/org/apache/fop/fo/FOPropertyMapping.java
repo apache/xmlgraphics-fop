@@ -76,8 +76,7 @@ public final class FOPropertyMapping implements Constants {
     private static Map s_htSubPropNames = new HashMap();
     private static Map s_htPropIds = new HashMap();
 
-    private static PropertyMaker[] s_generics =
-                new PropertyMaker[PROPERTY_COUNT + 1];
+    private static PropertyMaker[] s_generics = null;
 
     // The rest is only used during the building of the s_generics array.
     private Property[] enums = null;
@@ -98,7 +97,8 @@ public final class FOPropertyMapping implements Constants {
      * Create the generic property maker templates. These templates
      * are used be the actual makers as a parameter to .useGeneric(...).
      */
-    public void createGenerics() {
+    private void createGenerics() {
+        
         PropertyMaker sub;
 
         genericColor = new ColorProperty.Maker(0);
@@ -261,7 +261,7 @@ public final class FOPropertyMapping implements Constants {
      */
     private Property getEnumProperty(int enumValue, String text) {
         if (enums == null) {
-            enums = new Property[ENUM_COUNT+1];
+            enums = new Property[ENUM_COUNT + 1];
         }
         if (enums[enumValue] == null) {
             enums[enumValue] = new EnumProperty(enumValue, text);
@@ -274,48 +274,56 @@ public final class FOPropertyMapping implements Constants {
      * @return the maker array.
      */
     public static PropertyMaker[] getGenericMappings() {
-        FOPropertyMapping gp = new FOPropertyMapping();
-        // Create the shorthand first, they are referenced by the real properties.
-        gp.createShorthandProperties();
-        gp.createGenerics();
-        gp.createAccessibilityProperties();
-        gp.createAbsolutePositionProperties();
-        gp.createAuralProperties();
-        gp.createBorderPaddingBackgroundProperties();
-        gp.createFontProperties();
-        gp.createHyphenationProperties();
-        gp.createMarginBlockProperties();
-        gp.createMarginInlineProperties();
-        gp.createRelativePosProperties();
-        gp.createAreaAlignmentProperties();
-        gp.createAreaDimensionProperties();
-        gp.createBlockAndLineProperties();
-        gp.createCharacterProperties();
-        gp.createColorProperties();
-        gp.createFloatProperties();
-        gp.createKeepsAndBreaksProperties();
-        gp.createLayoutProperties();
-        gp.createLeaderAndRuleProperties();
-        gp.createDynamicProperties();
-        gp.createMarkersProperties();
-        gp.createNumberToStringProperties();
-        gp.createPaginationAndLayoutProperties();
-        gp.createTableProperties();
-        gp.createWritingModeProperties();
-        gp.createMiscProperties();
-
-        // Hardcode the subproperties.
-        addSubpropMakerName("length", CP_LENGTH);
-        addSubpropMakerName("conditionality", CP_CONDITIONALITY);
-        addSubpropMakerName("block-progression-direction", CP_BLOCK_PROGRESSION_DIRECTION);
-        addSubpropMakerName("inline-progression-direction", CP_INLINE_PROGRESSION_DIRECTION);
-        addSubpropMakerName("within-line", CP_WITHIN_LINE);
-        addSubpropMakerName("within-column", CP_WITHIN_COLUMN);
-        addSubpropMakerName("within-page", CP_WITHIN_PAGE);
-        addSubpropMakerName("minimum", CP_MINIMUM);
-        addSubpropMakerName("maximum", CP_MAXIMUM);
-        addSubpropMakerName("optimum", CP_OPTIMUM);
-        addSubpropMakerName("precedence", CP_PRECEDENCE);
+        
+        if (s_generics == null) {
+            /* this method was never called before */
+            s_generics = new PropertyMaker[PROPERTY_COUNT + 1];
+            FOPropertyMapping gp = new FOPropertyMapping();
+            
+            /* Create the shorthand first. They are 
+             * referenced by the real properties.
+             */
+            gp.createShorthandProperties();
+            gp.createGenerics();
+            gp.createAccessibilityProperties();
+            gp.createAbsolutePositionProperties();
+            gp.createAuralProperties();
+            gp.createBorderPaddingBackgroundProperties();
+            gp.createFontProperties();
+            gp.createHyphenationProperties();
+            gp.createMarginBlockProperties();
+            gp.createMarginInlineProperties();
+            gp.createRelativePosProperties();
+            gp.createAreaAlignmentProperties();
+            gp.createAreaDimensionProperties();
+            gp.createBlockAndLineProperties();
+            gp.createCharacterProperties();
+            gp.createColorProperties();
+            gp.createFloatProperties();
+            gp.createKeepsAndBreaksProperties();
+            gp.createLayoutProperties();
+            gp.createLeaderAndRuleProperties();
+            gp.createDynamicProperties();
+            gp.createMarkersProperties();
+            gp.createNumberToStringProperties();
+            gp.createPaginationAndLayoutProperties();
+            gp.createTableProperties();
+            gp.createWritingModeProperties();
+            gp.createMiscProperties();
+    
+            // Hardcode the subproperties.
+            addSubpropMakerName("length", CP_LENGTH);
+            addSubpropMakerName("conditionality", CP_CONDITIONALITY);
+            addSubpropMakerName("block-progression-direction", CP_BLOCK_PROGRESSION_DIRECTION);
+            addSubpropMakerName("inline-progression-direction", CP_INLINE_PROGRESSION_DIRECTION);
+            addSubpropMakerName("within-line", CP_WITHIN_LINE);
+            addSubpropMakerName("within-column", CP_WITHIN_COLUMN);
+            addSubpropMakerName("within-page", CP_WITHIN_PAGE);
+            addSubpropMakerName("minimum", CP_MINIMUM);
+            addSubpropMakerName("maximum", CP_MAXIMUM);
+            addSubpropMakerName("optimum", CP_OPTIMUM);
+            addSubpropMakerName("precedence", CP_PRECEDENCE);
+        }
 
         return s_generics;
     }
@@ -350,7 +358,11 @@ public final class FOPropertyMapping implements Constants {
         return -1;
     }
 
-    // returns a property, compound, or property.compound name
+    /**
+     * Returns the property name corresponding to the PR_* id
+     * @param id   the property id in Constants
+     * @return  the property name
+     */
     public static String getPropertyName(int id) {
         if (((id & Constants.COMPOUND_MASK) == 0)
                 || ((id & Constants.PROPERTY_MASK) == 0)) {
