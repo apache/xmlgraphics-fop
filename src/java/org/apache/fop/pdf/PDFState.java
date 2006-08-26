@@ -267,8 +267,17 @@ public class PDFState {
      * the current graphic state.
      *
      * @param tf the transform to concatonate to the current level transform
+     * @deprecated This method name is misleading. Use concatenate(AffineTransform) instead!
      */
     public void setTransform(AffineTransform tf) {
+        concatenate(tf);
+    }
+    
+    /**
+     * Concatenates the given AffineTransform to the current one.
+     * @param tf the transform to concatenate to the current level transform
+     */
+    public void concatenate(AffineTransform tf) {
         getData().concatenate(tf);
     }
 

@@ -28,6 +28,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix">
+        Bugfix: Corrected painting of shading patterns and position of links for SVG images
+        inside FO documents.
+      </action>
       <action context="Code" dev="AD" type="update">
         Minor fix: correctly set negative values to zero.
       </action>

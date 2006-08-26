@@ -355,7 +355,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
             scale(1 / s, 1 / s);
         }
         // Remember the transform we installed.
-        graphicsState.setTransform(at);
+        graphicsState.concatenate(at);
 
         pdfContext.increasePageCount();
     }
