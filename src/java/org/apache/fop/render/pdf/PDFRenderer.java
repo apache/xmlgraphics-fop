@@ -208,9 +208,6 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     /** Optional URI to an output profile to be used. */
     protected String outputProfileURI; 
     
-    /** The current Transform */
-    protected AffineTransform currentBasicTransform;
-
     /** drawing state */
     protected PDFState currentState = null;
 
@@ -704,16 +701,11 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
             .makeStream(PDFFilterList.CONTENT_FILTER, false);
 
         currentState = new PDFState();
-        /* This transform shouldn't affect PDFState as it only sets the basic
-         * coordinate system for the rendering process.
-         *
-        currentState.setTransform(new AffineTransform(1, 0, 0, -1, 0,
-                                   (int) Math.round(pageHeight / 1000)));
-        */
-        // Transform origin at top left to origin at bottom left
-        currentBasicTransform = new AffineTransform(1, 0, 0, -1, 0,
+        // Transform the PDF's default coordinate system (0,0 at lower left) to the PDFRenderer's
+        AffineTransform basicPageTransform = new AffineTransform(1, 0, 0, -1, 0,
                 pageHeight / 1000f);
-        currentStream.add(CTMHelper.toPDFString(currentBasicTransform, false) + " cm\n");
+        currentState.concatenate(basicPageTransform);
+        currentStream.add(CTMHelper.toPDFString(basicPageTransform, false) + " cm\n");
         
         
         currentFontName = "";
@@ -736,7 +728,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     protected void startVParea(CTM ctm, Rectangle2D clippingRect) {
         // Set the given CTM in the graphics state
         currentState.push();
-        currentState.setTransform(
+        currentState.concatenate(
                 new AffineTransform(CTMHelper.toPDFArray(ctm)));
 
         saveGraphicsState();
@@ -1069,7 +1061,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
             saveGraphicsState();
             AffineTransform at = data.getTransform();
             if (!at.isIdentity()) {
-                currentState.setTransform(at);
+                currentState.concatenate(at);
                 at.getMatrix(matrix);
                 tempctm = new CTM(matrix[0], matrix[1], matrix[2], matrix[3], 
                                   matrix[4] * 1000, matrix[5] * 1000);
@@ -1130,7 +1122,6 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                 // transform rect to absolute coords
                 AffineTransform transform = currentState.getTransform();
                 rect = transform.createTransformedShape(rect).getBounds2D();
-                rect = currentBasicTransform.createTransformedShape(rect).getBounds2D();
 
                 int type = internal ? PDFLink.INTERNAL : PDFLink.EXTERNAL;
                 PDFLink pdflink = pdfDoc.getFactory().makeLink(

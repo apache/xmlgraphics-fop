@@ -26,16 +26,12 @@ import java.awt.Color;
 import java.awt.geom.AffineTransform;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.svg.SVGAElement;
-import org.w3c.dom.svg.SVGDocument;
-import org.w3c.dom.svg.SVGSVGElement;
 
 import org.apache.fop.render.AbstractGenericSVGHandler;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.RendererContextConstants;
 import org.apache.fop.pdf.PDFDocument;
-import org.apache.fop.pdf.PDFNumber;
 import org.apache.fop.pdf.PDFPage;
 import org.apache.fop.pdf.PDFState;
 import org.apache.fop.pdf.PDFStream;
@@ -56,7 +52,6 @@ import org.apache.avalon.framework.configuration.Configuration;
 
 import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.bridge.BridgeContext;
-import org.apache.batik.bridge.ViewBox;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.util.SVGConstants;
@@ -173,11 +168,6 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
         AffineTransform resolutionScaling = new AffineTransform();
         resolutionScaling.scale(s, s);
         
-        //Transformation matrix that establishes the local coordinate system for the SVG graphic
-        //in relation to PDF's initial coordinate system.
-        AffineTransform baseTransform = (AffineTransform)renderer.currentBasicTransform.clone();
-        baseTransform.concatenate(pdfInfo.pdfState.getTransform());
-
         GVTBuilder builder = new GVTBuilder();
         
         //Controls whether text painted by Batik is generated using text or path operations
@@ -211,16 +201,12 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
         AffineTransform scaling = new AffineTransform(
                 sx, 0, 0, sy, xOffset / 1000f, yOffset / 1000f);
 
-        //Finish the baseTransform, now that we know everything
-        baseTransform.concatenate(scaling);
-        baseTransform.concatenate(resolutionScaling);
+        //Transformation matrix that establishes the local coordinate system for the SVG graphic
+        //in relation to the current coordinate system
+        AffineTransform imageTransform = new AffineTransform();
+        imageTransform.concatenate(scaling);
+        imageTransform.concatenate(resolutionScaling);
         
-        //Now that we have the full baseTransform, we can update the transformation matrix for
-        //the AElementBridge.
-        PDFAElementBridge aBridge = (PDFAElementBridge)ctx.getBridge(
-                SVGDOMImplementation.SVG_NAMESPACE_URI, SVGConstants.SVG_A_TAG);
-        aBridge.getCurrentTransform().setTransform(baseTransform);
-
         /*
          * Clip to the svg area.
          * Note: To have the svg overlay (under) a text area then use
@@ -236,7 +222,7 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
             pdfInfo.currentStream.add(CTMHelper.toPDFString(scaling, false) + " cm\n");
         }
 
-        SVGSVGElement svg = ((SVGDocument)doc).getRootElement();
+        //SVGSVGElement svg = ((SVGDocument)doc).getRootElement();
 
         if (pdfInfo.pdfContext == null) {
             pdfInfo.pdfContext = pdfInfo.pdfPage;
@@ -248,7 +234,8 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
         graphics.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
 
         if (!resolutionScaling.isIdentity()) {
-            pdfInfo.currentStream.add("%resolution scaling for " + uaResolution + " -> " + deviceResolution + "\n");
+            pdfInfo.currentStream.add("%resolution scaling for " + uaResolution 
+                        + " -> " + deviceResolution + "\n");
             pdfInfo.currentStream.add(
                     CTMHelper.toPDFString(resolutionScaling, false) + " cm\n");
             graphics.scale(1 / s, 1 / s);
@@ -256,8 +243,16 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
         
         pdfInfo.currentStream.add("%SVG start\n");
 
+        //Save state and update coordinate system for the SVG image
         pdfInfo.pdfState.push();
-        pdfInfo.pdfState.setTransform(baseTransform);
+        pdfInfo.pdfState.concatenate(imageTransform);
+
+        //Now that we have the complete transformation matrix for the image, we can update the 
+        //transformation matrix for the AElementBridge.
+        PDFAElementBridge aBridge = (PDFAElementBridge)ctx.getBridge(
+                SVGDOMImplementation.SVG_NAMESPACE_URI, SVGConstants.SVG_A_TAG);
+        aBridge.getCurrentTransform().setTransform(pdfInfo.pdfState.getTransform());
+
         graphics.setPDFState(pdfInfo.pdfState);
         graphics.setOutputStream(pdfInfo.outputStream);
         try {
