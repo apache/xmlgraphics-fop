@@ -20,6 +20,7 @@
 package org.apache.fop.fo;
 
 import java.util.List;
+import java.util.Stack;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.Character;
 import org.apache.fop.util.CharUtilities;
@@ -27,7 +28,40 @@ import org.apache.fop.util.CharUtilities;
 /**
  * Class encapsulating the functionality for white-space-handling
  * during refinement stage.
- *
+ * The <code>handleWhiteSpace()</code> methods are called during 
+ * FOTree-building and marker-cloning:
+ * <br>
+ * <ul>
+ * <li> from <code>FObjMixed.addChildNode()</code></li>
+ * <li> from <code>FObjMixed.endOfNode()</code></li>
+ * <li> from <code>FObjMixed.handleWhiteSpaceFor()</code></li>
+ * </ul>
+ * <br>
+ * Each time one of the variants is called, white-space is handled
+ * for all <code>FOText</code> or <code>Character</code> nodes that
+ * were added:
+ * <br>
+ * <ul>
+ * <li> either prior to <code>newChild</code> (and after the previous
+ *      non-text child node)</li>
+ * <li> or, if <code>newChild</code> is <code>null</code>,
+ *      after the previous non-text child</li>
+ * </ul>
+ * <br>
+ * The iteration always starts at <code>firstTextNode</code>, 
+ * goes on until the last text-node is reached, and deals only 
+ * with FOText nodes (characters are immediately removed) or 
+ * Character nodes (characters are kept track of and removed 
+ * from the list of child nodes later, when the iterator goes 
+ * out of scope)
+ * 
+ * Note: if the method is called from an inline's endOfNode(),
+ *   there is too little context to decide whether trailing
+ *   white-space may be removed, so the pending inline is stored
+ *   in a List, together with an iterator for which the next()
+ *   method returns the first in the trailing sequence of white-
+ *   space characters. This List is processed again at the end
+ *   of the ancestor block.
  */
 public class XMLWhiteSpaceHandler {
     
@@ -50,7 +84,7 @@ public class XMLWhiteSpaceHandler {
     
     private List discardableFOCharacters;
     private List pendingInlines;
-    private List nestedBlockStack = new java.util.ArrayList(5);
+    private Stack nestedBlockStack = new java.util.Stack();
     private CharIterator firstWhiteSpaceInSeq;
     
     /**
@@ -81,7 +115,7 @@ public class XMLWhiteSpaceHandler {
                 /* if already in a block, push the current block 
                  * onto the stack of nested blocks
                  */
-                pushNestedBlockStack();
+                nestedBlockStack.push(currentBlock);
             }
             currentBlock = (Block) fo;
         } else if (foId == Constants.FO_RETRIEVE_MARKER) {
@@ -186,7 +220,11 @@ public class XMLWhiteSpaceHandler {
             } else {
                 /* end of block: clear the references and pop the 
                  * nested block stack */
-                popNestedBlockStack();
+                if (!nestedBlockStack.empty()) {
+                    currentBlock = (Block) nestedBlockStack.pop();
+                } else {
+                    currentBlock = null;
+                }
                 currentFO = null;
                 charIter = null;
             }
@@ -230,7 +268,8 @@ public class XMLWhiteSpaceHandler {
             switch (CharUtilities.classOf(currentChar)) {
                 case CharUtilities.XMLWHITESPACE:
                     // Some kind of whitespace character, except linefeed.
-                    if (inWhiteSpace && whiteSpaceCollapse == Constants.EN_TRUE) {
+                    if (inWhiteSpace 
+                            && whiteSpaceCollapse == Constants.EN_TRUE) {
                         // We are in a run of whitespace and should collapse
                         // Just delete the char
                         charIter.remove();
@@ -253,7 +292,7 @@ public class XMLWhiteSpaceHandler {
                                 bIgnore = afterLinefeed;
                                 break;
                             case Constants.EN_PRESERVE:
-                                // nothing to do now, replacement takes place later
+                                //nothing to do now, replacement takes place later
                                 break;
                             default:
                                 //nop
@@ -320,23 +359,12 @@ public class XMLWhiteSpaceHandler {
         pendingInlines.add(new PendingInline(fo, firstWhiteSpaceInSeq));
     }
     
-    private void pushNestedBlockStack() {
-        this.nestedBlockStack.add(
-                this.nestedBlockStack.size(), this.currentBlock);
-    }
-    
-    private void popNestedBlockStack() {
-        
-        if (this.nestedBlockStack.isEmpty()) {
-            this.currentBlock = null;
-        } else {
-            this.currentBlock = (Block) this.nestedBlockStack.get(
-                    this.nestedBlockStack.size() - 1);
-            this.nestedBlockStack.remove(this.currentBlock);
-        }
-        
-    }
-        
+    /**
+     * Helper class, used during white-space handling to look ahead, and
+     * see if the next character is a linefeed (or if there will be
+     * an equivalent effect during layout, i.e. end-of-block or
+     * the following child is a block-level FO)
+     */
     private class EOLchecker {
         private boolean nextIsEOL = false;
         private RecursiveCharIterator charIter;
@@ -372,6 +400,11 @@ public class XMLWhiteSpaceHandler {
         }
     }
     
+    /**
+     * Helper class to store unfinished inline nodes together 
+     * with an iterator that starts at the first white-space
+     * character in the sequence of trailing white-space
+     */
     private class PendingInline {
         protected FObjMixed fo;
         protected CharIterator firstTrailingWhiteSpace;
