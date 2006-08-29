@@ -60,27 +60,21 @@
     <eval expected="normal" xpath="//flow/block[2]/lineArea/text/@font-style"/>
     <eval expected="italic" xpath="//flow/block[3]/lineArea/text/@font-style"/>
     <eval expected="oblique" xpath="//flow/block[4]/lineArea/text/@font-style"/>
-    <eval expected="normal" xpath="//flow/block[5]/lineArea/text/@font-style"/>
-    <eval expected="any" xpath="//flow/block[5]/lineArea/text/@font-name"/> <!-- style not registered -> any, normal -->
-    <eval expected="normal" xpath="//flow/block[6]/lineArea/text/@font-style"/>
-    <eval expected="serif" xpath="//flow/block[6]/lineArea/text/@font-name"/> <!-- illegal style -> back to default=serif, normal -->
+    <eval expected="normal" xpath="//flow/block[5]/lineArea/text/@font-style"/> <!-- style not registered -> normal -->
+    <eval expected="normal" xpath="//flow/block[6]/lineArea/text/@font-style"/> <!-- illegal style -> normal -->
 
     <eval expected="normal" xpath="//flow/block[7]/lineArea/text/@font-style"/>
     <eval expected="normal" xpath="//flow/block[8]/lineArea/text/@font-style"/>
     <eval expected="italic" xpath="//flow/block[9]/lineArea/text/@font-style"/>
     <eval expected="oblique" xpath="//flow/block[10]/lineArea/text/@font-style"/>
-    <eval expected="normal" xpath="//flow/block[11]/lineArea/text/@font-style"/>
-    <eval expected="any" xpath="//flow/block[11]/lineArea/text/@font-name"/> <!-- style not registered -> any, normal -->
-    <eval expected="normal" xpath="//flow/block[12]/lineArea/text/@font-style"/>
-    <eval expected="sans-serif" xpath="//flow/block[12]/lineArea/text/@font-name"/> <!-- illegal style -> back to default=sans-serif, normal -->
+    <eval expected="normal" xpath="//flow/block[11]/lineArea/text/@font-style"/> <!-- style not registered -> normal -->
+    <eval expected="normal" xpath="//flow/block[12]/lineArea/text/@font-style"/> <!-- illegal style -> normal -->
 
     <eval expected="normal" xpath="//flow/block[13]/lineArea/text/@font-style"/>
     <eval expected="normal" xpath="//flow/block[14]/lineArea/text/@font-style"/>
     <eval expected="italic" xpath="//flow/block[15]/lineArea/text/@font-style"/>
     <eval expected="oblique" xpath="//flow/block[16]/lineArea/text/@font-style"/>
-    <eval expected="normal" xpath="//flow/block[17]/lineArea/text/@font-style"/>
-    <eval expected="any" xpath="//flow/block[17]/lineArea/text/@font-name"/> <!-- style not registered -> any, normal -->
-    <eval expected="normal" xpath="//flow/block[18]/lineArea/text/@font-style"/>
-    <eval expected="monospace" xpath="//flow/block[18]/lineArea/text/@font-name"/> <!-- illegal style -> back to default=monospace, normal -->
+    <eval expected="normal" xpath="//flow/block[17]/lineArea/text/@font-style"/> <!-- style not registered -> normal -->
+    <eval expected="normal" xpath="//flow/block[18]/lineArea/text/@font-style"/> <!-- illegal style -> normal -->
   </checks>
 </testcase>

@@ -53,6 +53,9 @@ public class FontInfo {
     /** look up a font-name to get a font (that implements FontMetrics at least) */
     private Map fonts;
     
+    /** collection of missing fonts; used to make sure the user gets 
+     *  a warning for a missing font only once (not every time the font is used)
+     */
     private Collection loggedFontKeys;
 
     /** Cache for Font instances. */
@@ -121,7 +124,8 @@ public class FontInfo {
      * @param family font family
      * @param style font style
      * @param weight font weight
-     * @param substFont true if the font may be substituted with the default font if not found
+     * @param substFont true if the font may be substituted with the 
+     *                  default font if not found
      * @return internal key
      */
     private FontTriplet fontLookup(String family, String style,
@@ -138,9 +142,15 @@ public class FontInfo {
             if (!substFont && f == null) {
                 return null;
             }
-            // then try any family with orig weight
+            
+            // try the same font-family and weight with default style
             if (f == null) {
-                notifyFontReplacement(startKey);
+                key = createFontKey(family, "normal", weight);
+                f = getInternalFontKey(key);
+            }
+            
+            // then try any family with orig style/weight
+            if (f == null) {
                 key = createFontKey("any", style, weight);
                 f = getInternalFontKey(key);
             }
@@ -153,6 +163,9 @@ public class FontInfo {
         }
 
         if (f != null) {
+            if (key != startKey) {
+                notifyFontReplacement(startKey, key);
+            }
             return key;
         } else {
             return null;
@@ -231,13 +244,14 @@ public class FontInfo {
         throw new IllegalStateException("fontLookup must return a key on the last call");
     }
     
-    private void notifyFontReplacement(FontTriplet key) {
+    private void notifyFontReplacement(FontTriplet replacedKey, FontTriplet newKey) {
         if (loggedFontKeys == null) {
             loggedFontKeys = new java.util.HashSet();
         }
-        if (!loggedFontKeys.contains(key)) {
-            loggedFontKeys.add(key);
-            log.warn("Font '" + key + "' not found. Substituting with default font.");
+        if (!loggedFontKeys.contains(replacedKey)) {
+            loggedFontKeys.add(replacedKey);
+            log.warn("Font '" + replacedKey + "' not found. "
+                    + "Substituting with '" + newKey + "'.");
         }
     }
     
