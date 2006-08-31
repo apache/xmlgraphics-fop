@@ -143,19 +143,26 @@ public class FontInfo {
                 return null;
             }
             
-            // try the same font-family and weight with default style
+            // only if the font may be substituted
+            // fallback 1: try the same font-family and weight with default style
             if (f == null) {
                 key = createFontKey(family, "normal", weight);
                 f = getInternalFontKey(key);
             }
             
-            // then try any family with orig style/weight
+            // fallback 2: try the same font-family with default style and weight
+            if (f == null) {
+                key = createFontKey(family, "normal", 400);
+                f = getInternalFontKey(key);
+            }
+            
+            // fallback 3: try any family with orig style/weight
             if (f == null) {
                 key = createFontKey("any", style, weight);
                 f = getInternalFontKey(key);
             }
 
-            // then use default
+            // last resort: use default
             if (f == null) {
                 key = Font.DEFAULT_FONT;
                 f = getInternalFontKey(key);
