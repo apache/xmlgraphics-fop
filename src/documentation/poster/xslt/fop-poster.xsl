@@ -95,8 +95,13 @@
               <text x="360" y="560" style="fill:blue; font-size:12">
                 For more details, please visit: <a xlink:href="http://xmlgraphics.apache.org/fop/">http://xmlgraphics.apache.org/fop/</a>
               </text>
-              <text x="700" y="590" style="fill:gray; font-size:5">
-                Poster generated with Apache FOP and Apache Batik
+              <text style="fill:gray; font-size:5" text-anchor="end">
+                <tspan x="830" y="587">
+                  Poster generated with Apache FOP and Apache Batik
+                </tspan>
+                <tspan x="830" y="594">
+                  The sources for the poster are available under: <a xlink:href="http://svn.apache.org/repos/asf/xmlgraphics/fop/trunk/src/documentation/poster">http://svn.apache.org/repos/asf/xmlgraphics/fop/trunk/src/documentation/poster</a>
+                </tspan>
               </text>
             </g>
           </svg>
