@@ -76,7 +76,7 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
                 if (len != null) {
                     if ((len instanceof PercentLength
                                 && ((PercentLength) len).getPercentage() < 0)
-                            || len.getValue() < 0) {
+                            || (len.isAbsolute() && len.getValue() < 0)) {
                         log.warn("Replaced negative value for " + getName()
                                 + " with 0mpt");
                         p = new FixedLength(0);
