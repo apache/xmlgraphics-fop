@@ -25,13 +25,13 @@
   <fo>
     <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
       <fo:layout-master-set>
-        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+        <fo:simple-page-master master-name="normal" page-width="10in" page-height="5in">
           <fo:region-body/>
         </fo:simple-page-master>
       </fo:layout-master-set>
       <fo:page-sequence master-reference="normal" white-space-collapse="true">
         <fo:flow flow-name="xsl-region-body">
-          <fo:block font-family="monospace" white-space="pre"><![CDATA[
+          <fo:block font-family="monospace" font-size="8pt" white-space="pre"><![CDATA[
 /*
  * Copyright 1999-2006 The Apache Software Foundation.
  * 
@@ -1868,6 +1868,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
   </fo>
   <checks>
     <!-- Not a proper test !! -->
-    <eval expected="0 0 360000 360000" xpath="/areaTree/pageSequence/pageViewport/@bounds" desc="page size"/>
+    <eval expected="0 0 720000 360000" xpath="/areaTree/pageSequence/pageViewport/@bounds" desc="page size"/>
   </checks>
 </testcase>
