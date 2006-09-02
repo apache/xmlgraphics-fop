@@ -28,12 +28,16 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="AD" type="fix" fixes-bug="39414">
+        Split up FOText instances larger than 32K characters to avoid 
+        integer overflow during layout.
+      </action>
       <action context="Code" dev="JM" type="fix">
         Bugfix: Corrected painting of shading patterns and position of links for SVG images
         inside FO documents.
       </action>
       <action context="Code" dev="AD" type="update">
-        Minor fix: correctly set negative values to zero.
+        Minor fix: correctly set negative values for ipd/bpd to zero.
       </action>
       <action context="Code" dev="AD" type="update" fixes-bug="35656">
         Rework of default column-creation / column-width setting from
