@@ -323,10 +323,4 @@
     block-level element because its layout manager is written to handle only 
     inline content.</description>
   </testcase>
-  <testcase>
-    <name>Bugzilla #39414: block containing long text</name>
-    <file>block_bug39414.xml</file>
-    <description>Long text cause an IndexOutOfBounds exception</description>
-    <reference>http://issues.apache.org/bugzilla/show_bug.cgi?id=39414</reference>
-  </testcase>
 </disabled-testcases>
