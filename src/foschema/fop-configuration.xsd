@@ -152,6 +152,13 @@
         </xsd:sequence>
         <xsd:sequence>
           <xsd:annotation>
+            <xsd:documentation>The elements in this sequence apply only to the PNG renderer,
+          MIME type image/png.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:element name="transparent-page-background" type="xsd:boolean" default="false" minOccurs="0"/>
+        </xsd:sequence>
+        <xsd:sequence>
+          <xsd:annotation>
             <xsd:documentation>The elements in this sequence apply only to the text renderer,
           MIME type text/plain.</xsd:documentation>
           </xsd:annotation>

@@ -28,6 +28,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="add">
+        Configuration option in the Java2D-based renderers that allows to disable the default
+        white background in order to produce bitmap output with transparency.
+      </action>
       <action context="Code" dev="AD" type="fix" fixes-bug="39414">
         Split up FOText instances larger than 32K characters to avoid 
         integer overflow during layout.

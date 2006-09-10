@@ -53,6 +53,8 @@ import java.util.Stack;
 
 import org.w3c.dom.Document;
 
+import org.apache.avalon.framework.configuration.Configuration;
+import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.CTM;
@@ -71,6 +73,7 @@ import org.apache.fop.fonts.Typeface;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
 import org.apache.fop.image.XMLImage;
+import org.apache.fop.pdf.PDFAMode;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
@@ -103,6 +106,9 @@ import org.apache.fop.util.CharUtilities;
  */
 public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implements Printable {
 
+    /** Rendering Options key for the controlling the transparent page background option. */
+    public static final String JAVA2D_TRANSPARENT_PAGE_BACKGROUND = "transparent-page-background";
+
     /** The scale factor for the image size, values: ]0 ; 1] */
     protected double scaleFactor = 1;
 
@@ -127,6 +133,9 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     /** true if qualityRendering is set */
     protected boolean qualityRendering = true;
 
+    /** false: paints a non-transparent white background, true: for a transparent background */
+    protected boolean transparentPageBackground = false;
+    
     /** The current state, holds a Graphics2D and its context */
     protected Java2DGraphicsState state;
     
@@ -142,11 +151,29 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     }
 
     /**
+     * @see org.apache.fop.render.AbstractRenderer#configure(
+     *          org.apache.avalon.framework.configuration.Configuration)
+     */
+    public void configure(Configuration cfg) throws ConfigurationException {
+        super.configure(cfg);
+
+        String s = cfg.getChild(JAVA2D_TRANSPARENT_PAGE_BACKGROUND, true).getValue(null);
+        if (s != null) {
+            this.transparentPageBackground = "true".equalsIgnoreCase(s);
+        }
+    }
+
+    /**
      * @see org.apache.fop.render.Renderer#setUserAgent(org.apache.fop.apps.FOUserAgent)
      */
     public void setUserAgent(FOUserAgent foUserAgent) {
         super.setUserAgent(foUserAgent);
         userAgent.setRendererOverride(this); // for document regeneration
+        
+        String s = (String)userAgent.getRendererOptions().get(JAVA2D_TRANSPARENT_PAGE_BACKGROUND);
+        if (s != null) {
+            this.transparentPageBackground = "true".equalsIgnoreCase(s);
+        }
     }
 
     /** @return the FOUserAgent */
@@ -311,8 +338,10 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
             graphics.setTransform(at);
 
             // draw page frame
-            graphics.setColor(Color.white);
-            graphics.fillRect(0, 0, pageWidth, pageHeight);
+            if (!transparentPageBackground) {
+                graphics.setColor(Color.white);
+                graphics.fillRect(0, 0, pageWidth, pageHeight);
+            }
             graphics.setColor(Color.black);
             graphics.drawRect(-1, -1, pageWidth + 2, pageHeight + 2);
             graphics.drawLine(pageWidth + 2, 0, pageWidth + 2, pageHeight + 2);
