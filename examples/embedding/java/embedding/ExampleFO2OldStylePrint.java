@@ -60,11 +60,14 @@ public class ExampleFO2OldStylePrint {
         PrinterJob printerJob = PrinterJob.getPrinterJob();
         printerJob.setJobName("FOP Printing Example");
 
-        PrintRenderer renderer = new PrintRenderer(printerJob);
-        
         try {
             //Set up a custom user agent so we can supply our own renderer instance
             FOUserAgent userAgent = fopFactory.newFOUserAgent();
+
+            //Set up our own PrintRenderer instance so we can supply a special PrinterJob instance.
+            PrintRenderer renderer = new PrintRenderer(printerJob);
+            renderer.setUserAgent(userAgent);
+            
             userAgent.setRendererOverride(renderer);
             
             // Construct fop with desired output format (here, it is set through the user agent)
