@@ -633,6 +633,22 @@ out = proc.getOutputStream();]]></source>
     page. The quality of the bitmap depends on the target resolution setting 
     on the FOUserAgent.
   </p>
+    <section id="bitmap-configuration">
+      <title>Configuration</title>
+      <p>
+        The TIFF and PNG renderer configuration currently allows the following settings:
+      </p>
+<source><![CDATA[<renderer mime="image/png">
+  <transparent-page-background>true</transparent-page-background>
+  <fonts><!-- described elsewhere --></fonts>
+</renderer>]]></source>
+      <p>
+        The default value for the "transparent-page-background" setting is "false" which 
+        paints an opaque, white background for the whole image. If you set this to true,
+        no such background will be painted and you will get a transparent image if
+        an alpha channel is available in the output format.
+      </p>
+    </section>
 </section>
 <section id="txt">
   <title>TXT</title>

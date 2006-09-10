@@ -34,13 +34,16 @@ import java.util.Iterator;
 
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
+
+import org.apache.commons.logging.Log;
+
 import org.apache.xmlgraphics.image.GraphicsUtil;
 import org.apache.xmlgraphics.image.codec.tiff.TIFFEncodeParam;
 import org.apache.xmlgraphics.image.codec.tiff.TIFFField;
 import org.apache.xmlgraphics.image.codec.tiff.TIFFImageDecoder;
 import org.apache.xmlgraphics.image.codec.tiff.TIFFImageEncoder;
 import org.apache.xmlgraphics.image.rendered.FormatRed;
-import org.apache.commons.logging.Log;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.java2d.Java2DRenderer;
@@ -94,6 +97,7 @@ public class TIFFRenderer extends Java2DRenderer {
      * @see org.apache.avalon.framework.configuration.Configurable#configure(Configuration)
      */
     public void configure(Configuration cfg) throws ConfigurationException {
+        super.configure(cfg);
 
         //TODO Support output of monochrome bitmaps (fax-style)
         int comp = cfg.getChild("compression").getAttributeAsInteger("value", 1);
