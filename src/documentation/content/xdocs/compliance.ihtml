@@ -2080,7 +2080,7 @@
       <td align="left">
         <ul>
           <li>
-            [0.92 beta] not yet implemented on table-body, table-header and table-footer.
+            [0.92 beta] not yet implemented for table-column, table-body, table-header and table-footer.
           </li>
         </ul>
       </td>
@@ -2104,7 +2104,7 @@
       <td align="partial">
         <ul>
           <li>
-            [0.92 beta] not yet implemented on table-body, table-header and table-footer.
+            [0.92 beta] not yet implemented for table-column, table-body, table-header and table-footer.
           </li>
         </ul>
       </td>
