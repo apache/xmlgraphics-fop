@@ -59,6 +59,12 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
             return new LengthRangeProperty();
         }
 
+        private boolean isNegativeLength(Length len) {
+            return ((len instanceof PercentLength
+                        && ((PercentLength) len).getPercentage() < 0)
+                    || (len.isAbsolute() && len.getValue() < 0));
+        }
+        
         /**
          * @see CompoundPropertyMaker#convertProperty
          */        
@@ -74,11 +80,10 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
                     || this.propId == PR_INLINE_PROGRESSION_DIMENSION) {
                 Length len = p.getLength();
                 if (len != null) {
-                    if ((len instanceof PercentLength
-                                && ((PercentLength) len).getPercentage() < 0)
-                            || (len.isAbsolute() && len.getValue() < 0)) {
-                        log.warn("Replaced negative value for " + getName()
-                                + " with 0mpt");
+                    if (isNegativeLength(len)) {
+                        log.warn(FObj.decorateWithContextInfo(
+                                "Replaced negative value (" + len + ") for " + getName()
+                                + " with 0mpt", fo));
                         p = new FixedLength(0);
                     }
                 }
@@ -98,10 +103,8 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
                     || this.propId == PR_INLINE_PROGRESSION_DIMENSION) {
                 Length len = subproperty.getLength();
                 if (len != null) {
-                    if ((len instanceof PercentLength
-                                && ((PercentLength) len).getPercentage() < 0)
-                            || len.getValue() < 0) {
-                        log.warn("Replaced negative value for " + getName()
+                    if (isNegativeLength(len)) {
+                        log.warn("Replaced negative value (" + len + ") for " + getName()
                                 + " with 0mpt");
                         val.setComponent(subpropertyId,
                                 new FixedLength(0), false);
@@ -274,11 +277,12 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
         return this.optimum;
     }
 
+    /** @see java.lang.Object#toString() */
     public String toString() {
-        return "LengthRange[" +
-        "min:" + getMinimum(null).getObject() + 
-        ", max:" + getMaximum(null).getObject() + 
-        ", opt:" + getOptimum(null).getObject() + "]";
+        return "LengthRange["
+            + "min:" + getMinimum(null).getObject() 
+            + ", max:" + getMaximum(null).getObject() 
+            + ", opt:" + getOptimum(null).getObject() + "]";
     }
 
     /**
