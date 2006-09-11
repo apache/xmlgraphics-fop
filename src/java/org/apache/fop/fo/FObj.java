@@ -513,29 +513,20 @@ public abstract class FObj extends FONode implements Constants {
 
     /**
      * Adds a foreign attribute to this FObj.
-     * @param uri the namespace URI
-     * @param qName the fully qualified name
+     * @param attributeName the attribute name as a QName instance
      * @param value the attribute value
      */
-    public void addForeignAttribute(String uri, 
-                        String qName, String value) {
+    public void addForeignAttribute(QName attributeName, String value) {
         /* TODO: Handle this over FOP's property mechanism so we can use 
          *       inheritance.
          */
-        if (qName == null) {
-            throw new NullPointerException("Parameter qName must not be null");
+        if (attributeName == null) {
+            throw new NullPointerException("Parameter attributeName must not be null");
         }
         if (foreignAttributes == null) {
             foreignAttributes = new java.util.HashMap();
         }
-        String localName = qName;
-        String prefix = null;
-        int p = localName.indexOf(':');
-        if (p > 0) {
-            prefix = localName.substring(0, p);
-            localName = localName.substring(p + 1);
-        }
-        foreignAttributes.put(new QName(uri, prefix, localName), value);
+        foreignAttributes.put(attributeName, value);
     }
     
     /** @return the map of foreign attributes */

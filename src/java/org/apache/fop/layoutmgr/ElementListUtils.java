@@ -43,24 +43,20 @@ public class ElementListUtils {
                 //Convert all penalties no break inhibitors
                 if (breakPoss.getPenaltyValue() < KnuthPenalty.INFINITE) {
                     breakPoss.setPenaltyValue(KnuthPenalty.INFINITE);
-                    /*
-                    i.set(new KnuthPenalty(penalty.getW(), KnuthPenalty.INFINITE, 
-                            penalty.isFlagged(), penalty.getPosition(), penalty.isAuxiliary()));
-                    */
                 }
             } else if (el.isGlue()) {
                 i.previous();
                 if (el.isBox()) {
                     i.next();
                     i.add(new KnuthPenalty(0, KnuthPenalty.INFINITE, false, 
-                            /*new Position(getTableLM())*/null, false));
+                            null, false));
                 }
             }
         }
     }
     
     /**
-     * Removes all legal breaks in an element list. A constraint can be specified to limit the
+     * Removes legal breaks in an element list. A constraint can be specified to limit the
      * range in which the breaks are removed. Legal breaks occuring before at least 
      * constraint.opt space is filled will be removed.
      * @param elements the element list
@@ -68,29 +64,95 @@ public class ElementListUtils {
      * @return true if the opt constraint is bigger than the list contents
      */
     public static boolean removeLegalBreaks(LinkedList elements, MinOptMax constraint) {
+        return removeLegalBreaks(elements, constraint.opt);
+    }
+    
+    /**
+     * Removes legal breaks in an element list. A constraint can be specified to limit the
+     * range in which the breaks are removed. Legal breaks occuring before at least 
+     * constraint space is filled will be removed.
+     * @param elements the element list
+     * @param constraint value to restrict the range in which the breaks are removed.
+     * @return true if the constraint is bigger than the list contents
+     */
+    public static boolean removeLegalBreaks(LinkedList elements, int constraint) {
         int len = 0;
-        ListIterator i = elements.listIterator();
-        while (i.hasNext()) {
-            KnuthElement el = (KnuthElement)i.next();
+        ListIterator iter = elements.listIterator();
+        while (iter.hasNext()) {
+            ListElement el = (ListElement)iter.next();
             if (el.isPenalty()) {
                 KnuthPenalty penalty = (KnuthPenalty)el;
-                //Convert all penalties no break inhibitors
+                //Convert all penalties to break inhibitors
+                if (penalty.getP() < KnuthPenalty.INFINITE) {
+                    iter.set(new KnuthPenalty(penalty.getW(), KnuthPenalty.INFINITE, 
+                            penalty.isFlagged(), penalty.getPosition(), penalty.isAuxiliary()));
+                }
+            } else if (el.isGlue()) {
+                KnuthGlue glue = (KnuthGlue)el;
+                len += glue.getW();
+                iter.previous();
+                el = (ListElement)iter.previous();
+                iter.next();
+                if (el.isBox()) {
+                    iter.add(new KnuthPenalty(0, KnuthPenalty.INFINITE, false, 
+                            null, false));
+                }
+                iter.next();
+            } else if (el instanceof BreakElement) {
+                BreakElement breakEl = (BreakElement)el;
+                if (breakEl.getPenaltyValue() < KnuthPenalty.INFINITE) {
+                    breakEl.setPenaltyValue(KnuthPenalty.INFINITE);
+                }
+            } else {
+                KnuthElement kel = (KnuthElement)el;
+                len += kel.getW();
+            }
+            if (len >= constraint) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Removes legal breaks in an element list. A constraint can be specified to limit the
+     * range in which the breaks are removed. Legal breaks within the space specified through the
+     * constraint (starting from the end of the element list) will be removed.
+     * @param elements the element list
+     * @param constraint value to restrict the range in which the breaks are removed.
+     * @return true if the constraint is bigger than the list contents
+     */
+    public static boolean removeLegalBreaksFromEnd(LinkedList elements, int constraint) {
+        int len = 0;
+        ListIterator i = elements.listIterator(elements.size());
+        while (i.hasPrevious()) {
+            ListElement el = (ListElement)i.previous();
+            if (el.isPenalty()) {
+                KnuthPenalty penalty = (KnuthPenalty)el;
+                //Convert all penalties to break inhibitors
                 if (penalty.getP() < KnuthPenalty.INFINITE) {
                     i.set(new KnuthPenalty(penalty.getW(), KnuthPenalty.INFINITE, 
                             penalty.isFlagged(), penalty.getPosition(), penalty.isAuxiliary()));
                 }
             } else if (el.isGlue()) {
-                len += el.getW();
-                i.previous();
+                KnuthGlue glue = (KnuthGlue)el;
+                len += glue.getW();
+                el = (ListElement)i.previous();
+                i.next();
                 if (el.isBox()) {
-                    i.next();
                     i.add(new KnuthPenalty(0, KnuthPenalty.INFINITE, false, 
-                            /*new Position(getTableLM())*/null, false));
+                            null, false));
+                }
+            } else if (el instanceof BreakElement) {
+                BreakElement breakEl = (BreakElement)el;
+                if (breakEl.getPenaltyValue() < KnuthPenalty.INFINITE) {
+                    breakEl.setPenaltyValue(KnuthPenalty.INFINITE);
                 }
             } else {
-                len += el.getW();
+                KnuthElement kel = (KnuthElement)el;
+                len += kel.getW();
             }
-            if (len > constraint.opt) {
+            if (len >= constraint) {
                 return false;
             }
         }

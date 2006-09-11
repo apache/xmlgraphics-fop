@@ -29,6 +29,10 @@
   <changes>
     <release version="FOP Trunk">
       <action context="Code" dev="JM" type="add">
+        Extension properties fox:orphan-content-limit and fox:widow-content-limit which
+        help with list-block and table layout. See the documentation for details.
+      </action>
+      <action context="Code" dev="JM" type="add">
         Configuration option in the Java2D-based renderers that allows to disable the default
         white background in order to produce bitmap output with transparency.
       </action>

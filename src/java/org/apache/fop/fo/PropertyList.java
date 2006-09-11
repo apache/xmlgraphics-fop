@@ -39,6 +39,7 @@ import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.CommonTextDecoration;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.PropertyMaker;
+import org.apache.fop.util.QName;
 
 /**
  * Class containing the collection of properties for a given FObj.
@@ -311,8 +312,18 @@ public abstract class PropertyList {
             if (attributeNS == null || attributeNS.length() == 0) {
                 convertAttributeToProperty(attributes, attributeName, attributeValue);
             } else if (!factory.isNamespaceIgnored(attributeNS)) {
-                if (factory.getElementMappingRegistry().isKnownNamespace(attributeNS)) {
-                    getFObj().addForeignAttribute(attributeNS, attributeName, attributeValue);
+                ElementMapping mapping = factory.getElementMappingRegistry().getElementMapping(
+                        attributeNS);
+                if (mapping != null) {
+                    QName attName = new QName(attributeNS, attributeName);
+                    if (mapping.isAttributeProperty(attName) 
+                            && mapping.getStandardPrefix() != null) {
+                        convertAttributeToProperty(attributes, 
+                                mapping.getStandardPrefix() + ":" + attName.getLocalName(), 
+                                attributeValue);
+                    } else {
+                        getFObj().addForeignAttribute(attName, attributeValue);
+                    }
                 } else {
                     handleInvalidProperty(
                             "Error processing foreign attribute: "

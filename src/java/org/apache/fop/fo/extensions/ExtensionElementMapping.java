@@ -21,8 +21,10 @@ package org.apache.fop.fo.extensions;
 
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.UnknownXMLObj;
+import org.apache.fop.util.QName;
 
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * Element mapping for FOP's proprietary extension to XSL-FO.
@@ -32,6 +34,15 @@ public class ExtensionElementMapping extends ElementMapping {
     /** The FOP extension namespace URI */
     public static final String URI = "http://xmlgraphics.apache.org/fop/extensions";
 
+    private static final Set propertyAttributes = new java.util.HashSet();
+    
+    static {
+        //These are FOP's standard extension properties (fox:*)
+        propertyAttributes.add("block-progression-unit");
+        propertyAttributes.add("widow-content-limit");
+        propertyAttributes.add("orphan-content-limit");
+    }
+    
     /**
      * Constructor.
      */
@@ -49,4 +60,18 @@ public class ExtensionElementMapping extends ElementMapping {
             foObjs.put("label", new UnknownXMLObj.Maker(URI));
         }
     }
+    
+    /** @see org.apache.fop.fo.ElementMapping#getStandardPrefix() */
+    public String getStandardPrefix() {
+        return "fox";
+    }
+    
+    /** @see org.apache.fop.fo.ElementMapping#isAttributeProperty(org.apache.fop.util.QName) */
+    public boolean isAttributeProperty(QName attributeName) {
+        if (!URI.equals(attributeName.getNamespaceURI())) {
+            throw new IllegalArgumentException("The namespace URIs don't match");
+        }
+        return propertyAttributes.contains(attributeName.getLocalName());
+    }
+    
 }
