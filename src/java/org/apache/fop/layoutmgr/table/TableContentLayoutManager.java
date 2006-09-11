@@ -223,8 +223,6 @@ public class TableContentLayoutManager implements PercentBaseContext {
                     }
                 } else {
                     if (!firstBreakBeforeServed) {
-                        //returnList.add(new KnuthPenalty(0, -KnuthPenalty.INFINITE, 
-                        //        false, rowFO.getBreakBefore(), new Position(getTableLM()), true));
                         returnList.add(new BreakElement(new Position(getTableLM()),
                                 0, -KnuthPenalty.INFINITE, rowFO.getBreakBefore(), context));
                         iter.backToPreviousRow();
@@ -291,6 +289,18 @@ public class TableContentLayoutManager implements PercentBaseContext {
                 }
             }
         }
+
+        //fox:widow-content-limit
+        int widowContentLimit = getTableLM().getTable().getWidowContentLimit().getValue(); 
+        if (widowContentLimit != 0 && bodyType == TableRowIterator.BODY) {
+            ElementListUtils.removeLegalBreaks(returnList, widowContentLimit);
+        }
+        //fox:orphan-content-limit
+        int orphanContentLimit = getTableLM().getTable().getOrphanContentLimit().getValue(); 
+        if (orphanContentLimit != 0 && bodyType == TableRowIterator.BODY) {
+            ElementListUtils.removeLegalBreaksFromEnd(returnList, orphanContentLimit);
+        }
+        
         return returnList;
     }
 

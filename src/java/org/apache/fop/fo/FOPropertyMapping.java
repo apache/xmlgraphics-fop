@@ -1456,11 +1456,11 @@ public final class FOPropertyMapping implements Constants {
         l.setDefault("auto");
         addPropertyMaker("width", l);
 
-/*LF*/  // block-progression-unit (**CUSTOM EXTENSION**)
-/*LF*/  l  = new LengthProperty.Maker(PR_X_BLOCK_PROGRESSION_UNIT);
-/*LF*/  l.setInherited(false);
-/*LF*/  l.setDefault("0pt");
-/*LF*/  addPropertyMaker("block-progression-unit", l);
+        // fox:block-progression-unit (**CUSTOM EXTENSION**)
+        l  = new LengthProperty.Maker(PR_X_BLOCK_PROGRESSION_UNIT);
+        l.setInherited(false);
+        l.setDefault("0pt");
+        addPropertyMaker("fox:block-progression-unit", l);
     }
 
     private void createBlockAndLineProperties() {
@@ -1828,6 +1828,18 @@ public final class FOPropertyMapping implements Constants {
         m.setInherited(true);
         m.setDefault("2");
         addPropertyMaker("widows", m);
+        
+        // fox:widow-content-limit
+        m  = new LengthProperty.Maker(PR_X_WIDOW_CONTENT_LIMIT);
+        m.setInherited(true);
+        m.setDefault("0pt");
+        addPropertyMaker("fox:widow-content-limit", m);
+
+        // fox:orphan-content-limit
+        m  = new LengthProperty.Maker(PR_X_ORPHAN_CONTENT_LIMIT);
+        m.setInherited(true);
+        m.setDefault("0pt");
+        addPropertyMaker("fox:orphan-content-limit", m);
     }
 
     private void createLayoutProperties() {

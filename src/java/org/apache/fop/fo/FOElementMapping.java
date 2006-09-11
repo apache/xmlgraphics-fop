@@ -22,6 +22,8 @@ package org.apache.fop.fo;
 // Java
 import java.util.HashMap;
 
+import org.apache.fop.util.QName;
+
 /**
  * Element mapping class for all XSL-FO elements.
  */
@@ -136,6 +138,16 @@ public class FOElementMapping extends ElementMapping {
         }
     }
 
+    /** @see org.apache.fop.fo.ElementMapping#getStandardPrefix() */
+    public String getStandardPrefix() {
+        return "fo";
+    }
+    
+    /** @see org.apache.fop.fo.ElementMapping#isAttributeProperty(org.apache.fop.util.QName) */
+    public boolean isAttributeProperty(QName attributeName) {
+        return true; //All XSL-FO attributes are to be converted to properties.
+    }
+    
     static class RootMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.pagination.Root(parent);

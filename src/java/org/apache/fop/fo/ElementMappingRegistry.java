@@ -169,6 +169,16 @@ public class ElementMappingRegistry {
     }
     
     /**
+     * Returns an ElementMapping class for a namespace URI if there is one.
+     * @param namespaceURI the namespace URI
+     * @return the requested ElementMapping or null, if no ElementMapping for the namespace is
+     *         available.
+     */
+    public ElementMapping getElementMapping(String namespaceURI) {
+        return (ElementMapping)this.namespaces.get(namespaceURI);
+    }
+    
+    /**
      * Indicates whether a namespace is known to FOP.
      * @param namespaceURI the namespace URI
      * @return true if the namespace is known.

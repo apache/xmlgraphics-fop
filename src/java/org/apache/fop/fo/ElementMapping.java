@@ -24,6 +24,7 @@ import java.util.HashMap;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.fop.util.QName;
 import org.w3c.dom.DOMImplementation;
 
 /**
@@ -87,6 +88,21 @@ public abstract class ElementMapping {
             throw new RuntimeException(
                     "Cannot return default DOM implementation: " + e.getMessage());
         }
+    }
+
+    /** @return the standard namespace prefix for this namespace or null if it is not known. */
+    public String getStandardPrefix() {
+        return null;
+    }
+    
+    /**
+     * Indicates whether a particular attribute of the namespace is a property, i.e. the attribute
+     * value should be converted to a property value.
+     * @param attributeName the attribute name
+     * @return true if the attribute should be converted to a property
+     */
+    public boolean isAttributeProperty(QName attributeName) {
+        return false;
     }
     
     /**

@@ -86,6 +86,11 @@ public class SVGElementMapping extends ElementMapping {
         }
     }
 
+    /** @see org.apache.fop.fo.ElementMapping#getStandardPrefix() */
+    public String getStandardPrefix() {
+        return "svg";
+    }
+
     static class SVGMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new SVGObj(parent);

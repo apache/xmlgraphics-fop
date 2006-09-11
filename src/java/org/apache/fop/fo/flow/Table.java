@@ -67,6 +67,10 @@ public class Table extends TableFObj {
     private int tableOmitFooterAtBreak;
     private int tableOmitHeaderAtBreak;
     private int writingMode;
+    
+    /** extension properties */
+    private Length widowContentLimit;
+    private Length orphanContentLimit;
 
     private static final int MINCOLWIDTH = 10000; // 10pt
 
@@ -126,6 +130,10 @@ public class Table extends TableFObj {
         tableOmitHeaderAtBreak = pList.get(PR_TABLE_OMIT_HEADER_AT_BREAK).getEnum();
         writingMode = pList.get(PR_WRITING_MODE).getEnum();
         super.bind(pList);
+
+        //Bind extension properties
+        widowContentLimit = pList.get(PR_X_WIDOW_CONTENT_LIMIT).getLength();
+        orphanContentLimit = pList.get(PR_X_ORPHAN_CONTENT_LIMIT).getLength();
         
         if (borderCollapse != EN_SEPARATE) {
             //TODO Remove once the collapsing border is at least marginally working.
@@ -449,10 +457,18 @@ public class Table extends TableFObj {
     public LengthPairProperty getBorderSeparation() {
         return borderSeparation;
     }
+    
+    /** @return the "fox:widow-content-limit" extension property */
+    public Length getWidowContentLimit() {
+        return widowContentLimit;
+    }
 
-    /**
-     * @return the "id" property.
-     */
+    /** @return the "fox:orphan-content-limit" extension property */
+    public Length getOrphanContentLimit() {
+        return orphanContentLimit;
+    }
+
+    /** @return the "id" property. */
     public String getId() {
         return id;
     }
@@ -462,9 +478,7 @@ public class Table extends TableFObj {
         return "table";
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#getNameId()
-     */
+    /** @see org.apache.fop.fo.FObj#getNameId() */
     public int getNameId() {
         return FO_TABLE;
     }

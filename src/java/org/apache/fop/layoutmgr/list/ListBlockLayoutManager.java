@@ -23,6 +23,7 @@ import org.apache.fop.fo.flow.ListBlock;
 import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.ConditionalElementListener;
+import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.PositionIterator;
@@ -70,15 +71,6 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
         }
     }
 
-    /*
-    private class SectionPosition extends LeafPosition {
-        protected List list;
-        protected SectionPosition(LayoutManager lm, int pos, List l) {
-            super(lm, pos);
-            list = l;
-        }
-    }*/
-
     /**
      * Create a new list block layout manager.
      * @param node list-block to create the layout manager for
@@ -117,7 +109,21 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
     /** @see org.apache.fop.layoutmgr.BlockStackingLayoutManager */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         resetSpaces(); 
-        return super.getNextKnuthElements(context, alignment);
+        LinkedList returnList = super.getNextKnuthElements(context, alignment);
+
+        //fox:widow-content-limit
+        int widowRowLimit = getListBlockFO().getWidowContentLimit().getValue(); 
+        if (widowRowLimit != 0) {
+            ElementListUtils.removeLegalBreaks(returnList, widowRowLimit);
+        }
+
+        //fox:orphan-content-limit
+        int orphanRowLimit = getListBlockFO().getOrphanContentLimit().getValue(); 
+        if (orphanRowLimit != 0) {
+            ElementListUtils.removeLegalBreaksFromEnd(returnList, orphanRowLimit);
+        }
+
+        return returnList;
     }
    
     /** @see org.apache.fop.layoutmgr.LayoutManager#getChangedKnuthElements(java.util.List, int) */

@@ -55,6 +55,10 @@ public class ListBlock extends FObj {
     private Length provisionalLabelSeparation;
     // End of property values
 
+    /** extension properties */
+    private Length widowContentLimit;
+    private Length orphanContentLimit;
+    
     // used for child node validation
     private boolean hasListItem = false;
 
@@ -85,6 +89,10 @@ public class ListBlock extends FObj {
                 PR_PROVISIONAL_DISTANCE_BETWEEN_STARTS).getLength();
         provisionalLabelSeparation = pList.get(
                 PR_PROVISIONAL_LABEL_SEPARATION).getLength();
+
+        //Bind extension properties
+        widowContentLimit = pList.get(PR_X_WIDOW_CONTENT_LIMIT).getLength();
+        orphanContentLimit = pList.get(PR_X_ORPHAN_CONTENT_LIMIT).getLength();
     }
 
     /**
@@ -167,9 +175,17 @@ public class ListBlock extends FObj {
         return keepTogether;
     }
 
-    /**
-     * @return the "id" property.
-     */
+    /** @return the "fox:widow-content-limit" extension property */
+    public Length getWidowContentLimit() {
+        return widowContentLimit;
+    }
+
+    /** @return the "fox:orphan-content-limit" extension property */
+    public Length getOrphanContentLimit() {
+        return orphanContentLimit;
+    }
+
+    /** @return the "id" property. */
     public String getId() {
         return id;
     }
@@ -179,9 +195,7 @@ public class ListBlock extends FObj {
         return "list-block";
     }
     
-    /**
-     * @see org.apache.fop.fo.FObj#getNameId()
-     */
+    /** @see org.apache.fop.fo.FObj#getNameId() */
     public int getNameId() {
         return FO_LIST_BLOCK;
     }

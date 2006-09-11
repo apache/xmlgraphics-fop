@@ -682,10 +682,14 @@ public interface Constants {
     int PR_INDEX_CLASS = 249;
     /** Property constant - XSL 1.1 */
     int PR_INDEX_KEY = 250;
-    /** Property constant - Custom extension */
+    /** Property constant - FOP proprietary: Custom extension for line alignment */
     int PR_X_BLOCK_PROGRESSION_UNIT = 251;
+    /** Property constant - FOP proprietary: limit for widow content in lists and tables */
+    int PR_X_WIDOW_CONTENT_LIMIT = 252;
+    /** Property constant - FOP proprietary: limit for orphan content in lists and tables */
+    int PR_X_ORPHAN_CONTENT_LIMIT = 253;
     /** Number of property constants defined */
-    int PROPERTY_COUNT = 251;
+    int PROPERTY_COUNT = 253;
 
     // compound property constants
 
