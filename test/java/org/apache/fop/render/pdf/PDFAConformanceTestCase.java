@@ -38,11 +38,6 @@ public class PDFAConformanceTestCase extends BasePDFTestCase {
      */
     public PDFAConformanceTestCase(String name) {
         super(name);
-        try {
-            fopFactory.setUserConfig(new File("test/test.xconf"));
-        } catch (Exception e) {
-            throw new RuntimeException("Configuring the FopFactory failed: " + e.getMessage());
-        }
     }
 
     /** create an FOUserAgent for our tests */
