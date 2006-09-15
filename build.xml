@@ -193,6 +193,9 @@ list of possible build targets.
   <property name="dist.bin.result.dir" value="${dist.bin.dir}/${name}-${version}"/>
   <property name="dist.src.result.dir" value="${dist.src.dir}/${name}-${version}"/>
   <property name="samedir" value="${basedir}"/>
+  
+  <property name="junit.reports.dir" value="${build.dir}/test-reports"/>
+  <property name="junit.html.reports.dir" value="${build.dir}/test-reports/html"/>
 
   <!-- Importing Apache Forrest for building the docs -->
   <!--
@@ -676,7 +679,7 @@ list of possible build targets.
   </target>
   <target name="junit-compile" depends="package, transcoder-pkg, junit-with-xmlunit, junit-without-xmlunit" description="Runs FOP's JUnit tests" if="junit.present">
     <mkdir dir="${build.dir}/test-classes"/>
-    <mkdir dir="${build.dir}/test-reports"/>
+    <mkdir dir="${junit.reports.dir}"/>
     <javac destdir="${build.dir}/test-classes" fork="${javac.fork}"
            debug="${javac.debug}" deprecation="${javac.deprecation}"
            optimize="${javac.optimize}" source="${javac.source}"
@@ -699,6 +702,7 @@ list of possible build targets.
       <sysproperty key="jawa.awt.headless" value="true"/>
       <formatter type="brief" usefile="false"/>
       <formatter type="plain" usefile="true"/>
+      <formatter type="xml" usefile="true"/>
       <classpath>
         <pathelement location="${build.dir}/test-classes"/>
         <path refid="libs-build-classpath"/>
@@ -706,7 +710,7 @@ list of possible build targets.
           <include name="fop-transcoder.jar"/>
         </fileset>
       </classpath>
-      <test name="org.apache.fop.BasicTranscoderTestSuite" todir="${build.dir}/test-reports" outfile="TEST-transcoder"/>
+      <test name="org.apache.fop.BasicTranscoderTestSuite" todir="${junit.reports.dir}" outfile="TEST-transcoder"/>
     </junit>
     <echo message="Running basic functionality tests for fop-transcoder-allinone.jar"/>
     <!-- These are the same tests as in the block above but testing the "allinone" JAR
@@ -720,6 +724,7 @@ list of possible build targets.
       <sysproperty key="jawa.awt.headless" value="true"/>
       <formatter type="brief" usefile="false"/>
       <formatter type="plain" usefile="true"/>
+      <formatter type="xml" usefile="true"/>
       <classpath>
         <pathelement location="${build.dir}/test-classes"/>
         <fileset dir="build">
@@ -731,7 +736,7 @@ list of possible build targets.
           <include name="batik*.jar"/>
         </fileset>
       </classpath>
-      <test name="org.apache.fop.BasicTranscoderTestSuite" todir="${build.dir}/test-reports" outfile="TEST-transcoder-allinone"/>
+      <test name="org.apache.fop.BasicTranscoderTestSuite" todir="${junit.reports.dir}" outfile="TEST-transcoder-allinone"/>
     </junit>
   </target>
 
@@ -742,6 +747,7 @@ list of possible build targets.
       <sysproperty key="jawa.awt.headless" value="true"/>
       <formatter type="brief" usefile="false"/>
       <formatter type="plain" usefile="true"/>
+      <formatter type="xml" usefile="true"/>
       <classpath>
         <pathelement location="${build.dir}/test-classes"/>
         <path refid="libs-build-classpath"/>
@@ -749,7 +755,7 @@ list of possible build targets.
           <include name="fop.jar"/>
         </fileset>
       </classpath>
-      <test name="org.apache.fop.StandardTestSuite" todir="${build.dir}/test-reports"/>
+      <test name="org.apache.fop.StandardTestSuite" todir="${junit.reports.dir}"/>
     </junit>
   </target>
 
@@ -780,11 +786,12 @@ list of possible build targets.
       <sysproperty key="fop.layoutengine.testset" value="standard"/>
       <formatter type="brief" usefile="false"/>
       <formatter type="plain" usefile="true"/>
+      <formatter type="xml" usefile="true"/>
       <classpath>
         <pathelement location="${build.dir}/test-classes"/>
         <path refid="libs-run-classpath"/>
       </classpath>
-      <test name="org.apache.fop.layoutengine.LayoutEngineTestSuite" todir="${build.dir}/test-reports" outfile="TEST-layoutengine-standard"/>
+      <test name="org.apache.fop.layoutengine.LayoutEngineTestSuite" todir="${junit.reports.dir}" outfile="TEST-layoutengine-standard"/>
     </junit>
   </target>
 
@@ -797,11 +804,12 @@ list of possible build targets.
       <sysproperty key="fop.layoutengine.testset" value="hyphenation"/>
       <formatter type="brief" usefile="false"/>
       <formatter type="plain" usefile="true"/>
+      <formatter type="xml" usefile="true"/>
       <classpath>
         <pathelement location="${build.dir}/test-classes"/>
         <path refid="libs-run-classpath"/>
       </classpath>
-      <test name="org.apache.fop.layoutengine.LayoutEngineTestSuite" todir="${build.dir}/test-reports" outfile="TEST-layoutengine-hyphenation"/>
+      <test name="org.apache.fop.layoutengine.LayoutEngineTestSuite" todir="${junit.reports.dir}" outfile="TEST-layoutengine-hyphenation"/>
     </junit>
   </target>
 
@@ -815,6 +823,7 @@ list of possible build targets.
       <sysproperty key="fop.layoutengine.disabled" value="${fotree.disabled}"/>
       <formatter type="brief" usefile="false"/>
       <formatter type="plain" usefile="true"/>
+      <formatter type="xml" usefile="true"/>
       <classpath>
         <pathelement location="${build.dir}/test-classes"/>
         <path refid="libs-build-classpath"/>
@@ -822,7 +831,7 @@ list of possible build targets.
           <include name="fop.jar"/>
         </fileset>
       </classpath>
-      <test name="org.apache.fop.fotreetest.FOTreeTestSuite" todir="${build.dir}/test-reports" outfile="TEST-FO-tree"/>
+      <test name="org.apache.fop.fotreetest.FOTreeTestSuite" todir="${junit.reports.dir}" outfile="TEST-FO-tree"/>
     </junit>
   </target>
 
@@ -835,6 +844,7 @@ list of possible build targets.
       <sysproperty key="fop.layoutengine.testset" value="standard"/>
       <formatter type="brief" usefile="false"/>
       <formatter type="plain" usefile="true"/>
+      <formatter type="xml" usefile="true"/>
       <classpath>
         <pathelement location="${build.dir}/test-classes"/>
         <path refid="libs-build-classpath"/>
@@ -842,7 +852,7 @@ list of possible build targets.
           <include name="fop.jar"/>
         </fileset>
       </classpath>
-      <test name="org.apache.fop.intermediate.IntermediateFormatTestSuite" todir="${build.dir}/test-reports" outfile="TEST-intermediate-format"/>
+      <test name="org.apache.fop.intermediate.IntermediateFormatTestSuite" todir="${junit.reports.dir}" outfile="TEST-intermediate-format"/>
     </junit>
   </target>
 
@@ -861,9 +871,23 @@ NOTE:
 **************************************************************************
 * One or more of the Junit tests had Failures or Errors or were skipped! *
 *         Please check the output above for relevant messages.           *
+*    Or use the "junit-reports" target to generate HTML test reports.    *
 **************************************************************************
     </fail>
     <echo>All Junit tests passed!</echo>
+    <echo>Use the "junit-reports" target to generate HTML test reports</echo>
+  </target>
+
+  <!-- haven't made this dependent on "junit" as that would rerun all tests -->
+  <target name="junit-reports" description="Generates HTML test reports">
+    <mkdir dir="${junit.html.reports.dir}"/>
+    <junitreport todir="${junit.reports.dir}">
+      <fileset dir="${junit.reports.dir}">
+        <include name="TEST-*.xml"/>
+      </fileset>
+      <report format="frames" todir="${junit.html.reports.dir}"/>
+    </junitreport>
+    <echo>JUnit HTML test reports should be available in ${junit.html.reports.dir}</echo>
   </target>
 
   <!-- =================================================================== -->
