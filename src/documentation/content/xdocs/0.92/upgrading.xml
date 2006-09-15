@@ -40,7 +40,7 @@
           The API of FOP has changed considerably and is not backwards-compatible with version 0.20.5.
         </li>
         <li>
-          If you are using a configuration file, you have rebuild it in the new format. The format
+          If you are using a configuration file, you have to rebuild it in the new format. The format
           of the configuration files has changed since version 0.20.5. See conf/fop.xconf for
           an example configuration file. A XML Schema file can be found under
           src/foschema/fop-configuration.xsd.
