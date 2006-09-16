@@ -289,6 +289,47 @@
       </p>
     </section>
   </section>
+
+	<section>
+	  <title>When it does not work</title>
+
+	  <p>FOP searches the configuration file for the information it
+expects, at the position it expects. When that information is not
+present, FOP will not complain, it will just continue. When there is
+other information in the file, FOP will not complain, it will just
+ignore it. That means that when your configuration information is in
+the file but in a different XML element, or in a different XML path,
+than FOP expects, it will be silently ignored.</p>
+
+	  <p>Check the following possibilities:</p>
+
+	  <ul>
+		<li>The format of the configuration file has changed
+considerably between FOP 0.20.5 and FOP 1.0 and its beta versions. Did
+you convert your file to the new format?</li>
+
+		<li>The FOP distribution contains a schema for configuration
+files, at src/foschema/fop-configuration.xsd. Did you validate your
+configuration file against it? Add the following schema location to
+the <code>schema</code> element:
+
+<source><![CDATA[<fop
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation=
+"http://svn.apache.org/viewvc/xmlgraphics/fop/trunk/src/foschema/fop-configuration.xsd?view=co">]]>
+</source>
+
+and run the configuration file through a validating schema
+parser. Note that the schema cannot detect all errors, and that it is
+stricter about the order of some elements than FOP itself is.</li>
+
+		<li>Run FOP in debug mode (command line option
+<code>-d</code>). This makes FOP report which configuration
+information it finds. Check if FOP finds what you expect.</li>
+
+	  </ul>
+
+	</section>
   </body>
 </document>
 
