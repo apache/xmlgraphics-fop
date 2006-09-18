@@ -375,13 +375,6 @@ which will be used to configure the chosen Forrest skin.
       <height>125</height>
     </credit-->
     <credit box-location="alt2">
-      <name>ApacheCon Asia 2006 (14-17 August 2006)</name>
-      <url>http://www.asia.apachecon.com/</url>
-      <image>http://www.apache.org/ads/ApacheCon/234x60-2006-asia.gif</image>
-      <width>150</width>
-      <height>39</height>
-    </credit>
-    <credit box-location="alt2">
       <name>ApacheCon US 2006 (9-13 October 2006)</name>
       <url>http://www.us.apachecon.com/</url>
       <image>http://www.apache.org/ads/ApacheCon/234x60-2006-us.gif</image>
