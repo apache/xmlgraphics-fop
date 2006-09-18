@@ -152,8 +152,7 @@
         </xsd:sequence>
         <xsd:sequence>
           <xsd:annotation>
-            <xsd:documentation>The elements in this sequence apply only to the PNG renderer,
-          MIME type image/png.</xsd:documentation>
+            <xsd:documentation>The elements in this sequence apply only to the bitmap renderers (PNG and TIFF).</xsd:documentation>
           </xsd:annotation>
           <xsd:element name="transparent-page-background" type="xsd:boolean" default="false" minOccurs="0"/>
         </xsd:sequence>
@@ -165,6 +164,13 @@
           <xsd:element name="encoding" type="xsd:string" default="UTF-8" minOccurs="0"/>
         </xsd:sequence>
       </xsd:choice>
+      <xsd:sequence>
+        <xsd:annotation>
+          <xsd:documentation>The elements in this sequence apply only to the TIFF renderer,
+        MIME type image/tiff.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:element name="compression" type="xsd:string" minOccurs="0"/>
+      </xsd:sequence>
       <xsd:element name="fonts" minOccurs="0">
         <xsd:complexType>
           <xsd:sequence>
