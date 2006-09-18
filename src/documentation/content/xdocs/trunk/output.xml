@@ -649,6 +649,35 @@ out = proc.getOutputStream();]]></source>
         an alpha channel is available in the output format.
       </p>
     </section>
+    <section id="tiff-configuration">
+      <title>TIFF-specific Configuration</title>
+      <p>
+        In addition to the above values the TIFF renderer configuration allows some additional
+        settings:
+      </p>
+<source><![CDATA[<renderer mime="image/tiff">
+  <transparent-page-background>true</transparent-page-background>
+  <compression>CCITT T.6</compression>
+  <fonts><!-- described elsewhere --></fonts>
+</renderer>]]></source>
+      <p>
+        The default value for the "compression" setting is "PackBits" which 
+        which is a widely supported RLE compression scheme for TIFF. The set of compression
+        names to be used here matches the set that the Image I/O API uses. Note that
+        not all compression schemes may be available during runtime. This depends on the
+        actual codecs being available. Here is a list of possible values:
+      </p>
+      <ul>
+        <li>NONE (no compression)</li>
+        <li>PackBits (RLE, run-length encoding)</li>
+        <li>JPEG</li>
+        <li>Deflate</li>
+        <li>LZW</li>
+        <li>ZLib</li>
+        <li>CCITT T.4 (Fax Group 3)</li>
+        <li>CCITT T.6 (Fax Group 4)</li>
+      </ul>
+    </section>
 </section>
 <section id="txt">
   <title>TXT</title>
