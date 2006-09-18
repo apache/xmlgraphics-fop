@@ -677,6 +677,15 @@ out = proc.getOutputStream();]]></source>
         <li>CCITT T.4 (Fax Group 3)</li>
         <li>CCITT T.6 (Fax Group 4)</li>
       </ul>
+      <note>
+        If you want to use CCITT compression, please make sure you've got a J2SE 1.4 or later and
+        <a href="http://java.sun.com/products/java-media/jai/current.html">
+          Java Advanced Imaging Image I/O Tools
+        </a>
+        in your classpath. The Sun JRE doesn't come with a TIFF codec built in, so it has to be
+        added separately. The internal TIFF codec from XML Graphics Commons only supports PackBits,
+        Deflate and JPEG compression for writing.
+      </note>
     </section>
 </section>
 <section id="txt">
