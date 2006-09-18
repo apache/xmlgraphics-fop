@@ -38,13 +38,14 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.commons.logging.Log;
 
 import org.apache.xmlgraphics.image.GraphicsUtil;
-import org.apache.xmlgraphics.image.codec.tiff.TIFFEncodeParam;
-import org.apache.xmlgraphics.image.codec.tiff.TIFFField;
-import org.apache.xmlgraphics.image.codec.tiff.TIFFImageDecoder;
-import org.apache.xmlgraphics.image.codec.tiff.TIFFImageEncoder;
 import org.apache.xmlgraphics.image.rendered.FormatRed;
+import org.apache.xmlgraphics.image.writer.ImageWriter;
+import org.apache.xmlgraphics.image.writer.ImageWriterParams;
+import org.apache.xmlgraphics.image.writer.ImageWriterRegistry;
+import org.apache.xmlgraphics.image.writer.MultiImageWriter;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.java2d.Java2DRenderer;
 
@@ -74,9 +75,21 @@ public class TIFFRenderer extends Java2DRenderer {
     /** The MIME type for tiff-Rendering */
     public static final String MIME_TYPE = MimeConstants.MIME_TIFF;
 
-    /** */
-    private TIFFEncodeParam renderParams;
-
+    //private static final String COMPRESSION_NONE = "NONE";
+    //private static final String COMPRESSION_JPEG = "JPEG";
+    private static final String COMPRESSION_PACKBITS = "PackBits";
+    //private static final String COMPRESSION_DEFLATE = "Deflate";
+    //private static final String COMPRESSION_LZW = "LZW";
+    //private static final String COMPRESSION_ZLIB = "ZLib";
+    private static final String COMPRESSION_CCITT_T6 = "CCITT T.6"; //CCITT Group 4
+    private static final String COMPRESSION_CCITT_T4 = "CCITT T.4"; //CCITT Group 3
+    
+    /** ImageWriter parameters */
+    private ImageWriterParams writerParams;
+    
+    /** Image Type as parameter for the BufferedImage constructor (see BufferedImage.TYPE_*) */
+    private int bufferedImageType = BufferedImage.TYPE_INT_ARGB;
+    
     private OutputStream outputStream;
 
     /** @see org.apache.fop.render.AbstractRenderer */
@@ -86,9 +99,20 @@ public class TIFFRenderer extends Java2DRenderer {
 
     /** Creates TIFF renderer. */
     public TIFFRenderer() {
-        renderParams = new TIFFEncodeParam();
-        //Default to packbits compression which is widely supported
-        renderParams.setCompression(TIFFEncodeParam.COMPRESSION_PACKBITS);
+        writerParams = new ImageWriterParams();
+        writerParams.setCompressionMethod(COMPRESSION_PACKBITS);
+    }
+
+    /**
+     * @see org.apache.fop.render.java2d.Java2DRenderer#setUserAgent(
+     *          org.apache.fop.apps.FOUserAgent)
+     */
+    public void setUserAgent(FOUserAgent foUserAgent) {
+        super.setUserAgent(foUserAgent);
+
+        //Set target resolution
+        int dpi = Math.round(userAgent.getTargetResolution());
+        writerParams.setResolution(dpi);
     }
 
     /**
@@ -99,28 +123,20 @@ public class TIFFRenderer extends Java2DRenderer {
     public void configure(Configuration cfg) throws ConfigurationException {
         super.configure(cfg);
 
-        //TODO Support output of monochrome bitmaps (fax-style)
-        int comp = cfg.getChild("compression").getAttributeAsInteger("value", 1);
-        String name = null;
-        switch (comp) {
-        case TIFFEncodeParam.COMPRESSION_NONE:
-            name = "COMPRESSION_NONE";
-            break;
-        case TIFFEncodeParam.COMPRESSION_JPEG_TTN2:
-            name = "COMPRESSION_JPEG_TTN2";
-            break;
-        case TIFFEncodeParam.COMPRESSION_PACKBITS:
-            name = "COMPRESSION_PACKBITS";
-            break;
-        case TIFFEncodeParam.COMPRESSION_DEFLATE:
-            name = "COMPRESSION_DEFLATE";
-            break;
-        default:
-            log.info("TIFF compression not supported: " + comp);
-            return;
+        //set compression
+        String name = cfg.getChild("compression").getValue(COMPRESSION_PACKBITS);
+        //Some compression formats need a special image format:
+        if (name.equalsIgnoreCase(COMPRESSION_CCITT_T6)) {
+            bufferedImageType = BufferedImage.TYPE_BYTE_BINARY;
+        } else if (name.equalsIgnoreCase(COMPRESSION_CCITT_T4)) {
+            bufferedImageType = BufferedImage.TYPE_BYTE_BINARY;
+        } else {
+            bufferedImageType = BufferedImage.TYPE_INT_ARGB;
+        }
+        if (!"NONE".equalsIgnoreCase(name)) {
+            writerParams.setCompressionMethod(name);
         }
         log.info("TIFF compression set to " + name);
-
     }
 
     /** @see org.apache.fop.render.Renderer#startRenderer(java.io.OutputStream) */
@@ -131,49 +147,45 @@ public class TIFFRenderer extends Java2DRenderer {
 
     /** @see org.apache.fop.render.Renderer#stopRenderer() */
     public void stopRenderer() throws IOException {
-
         super.stopRenderer();
-        log.debug("Starting Tiff encoding ...");
-
-        //Set target resolution
-        float pixSzMM = userAgent.getTargetPixelUnitToMillimeter();
-        // num Pixs in 100 Meters
-        int numPix = (int)(((1000 * 100) / pixSzMM) + 0.5); 
-        int denom = 100 * 100;  // Centimeters per 100 Meters;
-        long [] rational = {numPix, denom};
-        TIFFField [] fields = {
-            new TIFFField(TIFFImageDecoder.TIFF_RESOLUTION_UNIT, 
-                          TIFFField.TIFF_SHORT, 1, 
-                          new char[] {(char)3}),
-            new TIFFField(TIFFImageDecoder.TIFF_X_RESOLUTION, 
-                          TIFFField.TIFF_RATIONAL, 1, 
-                          new long[][] {rational}),
-            new TIFFField(TIFFImageDecoder.TIFF_Y_RESOLUTION, 
-                          TIFFField.TIFF_RATIONAL, 1, 
-                          new long[][] {rational}) 
-                };
-        renderParams.setExtraFields(fields);
-
-        // Creates encoder
-        TIFFImageEncoder enc = new TIFFImageEncoder(outputStream, renderParams);
+        log.debug("Starting TIFF encoding ...");
 
         // Creates lazy iterator over generated page images
         Iterator pageImagesItr = new LazyPageImagesIterator(getNumberOfPages(), log);
 
-        // The first image to be passed to enc
-        RenderedImage first = (RenderedImage) pageImagesItr.next();
-
-        // The other images are set to the renderParams
-        renderParams.setExtraImages(pageImagesItr);
-
-        // Start encoding
-        enc.encode(first);
+        // Creates writer
+        ImageWriter writer = ImageWriterRegistry.getInstance().getWriterFor(getMimeType());
+        if (writer == null) {
+            throw new NullPointerException("No ImageWriter for " + getMimeType() + " available!");
+        }
+        if (writer.supportsMultiImageWriter()) {
+            MultiImageWriter multiWriter = writer.createMultiImageWriter(outputStream);
+            try {
+                // Write all pages/images
+                while (pageImagesItr.hasNext()) {
+                    RenderedImage img = (RenderedImage) pageImagesItr.next();
+                    multiWriter.writeImage(img, writerParams);
+                }
+            } finally {
+                multiWriter.close();
+            }
+        } else {
+            writer.writeImage((RenderedImage) pageImagesItr.next(), outputStream, writerParams);
+            if (pageImagesItr.hasNext()) {
+                log.error("Image encoder does not support multiple images. Only the first page"
+                        + " has been produced.");
+            }
+        }
 
         // Cleaning
         outputStream.flush();
         clearViewportList();
-        log.debug("Tiff encoding done.");
-
+        log.debug("TIFF encoding done.");
+    }
+    
+    /** @see org.apache.fop.render.java2d.Java2DRenderer#getBufferedImage(int, int) */
+    protected BufferedImage getBufferedImage(int bitmapWidth, int bitmapHeight) {
+        return new BufferedImage(bitmapWidth, bitmapHeight, bufferedImageType);
     }
 
     /** Private inner class to lazy page rendering. */
@@ -200,7 +212,9 @@ public class TIFFRenderer extends Java2DRenderer {
         }
 
         public Object next() {
-            log.debug("[" + (current + 1) + "]");
+            if (log.isDebugEnabled()) {
+                log.debug("[" + (current + 1) + "]");
+            }
 
             // Renders current page as image
             BufferedImage pageImage = null;
@@ -211,18 +225,10 @@ public class TIFFRenderer extends Java2DRenderer {
                 return null;
             }
 
-            switch (renderParams.getCompression()) {
-            // These types of compression require a monochrome image
-            /* these compression types are not supported by the Batik codec
-            case TIFFEncodeParam.COMPRESSION_GROUP3_1D:
-            case TIFFEncodeParam.COMPRESSION_GROUP3_2D:
-            case TIFFEncodeParam.COMPRESSION_GROUP4:
-                BufferedImage faxImage = new BufferedImage(
-                        pageImage.getWidth(), pageImage.getHeight(),
-                        BufferedImage.TYPE_BYTE_BINARY);
-                faxImage.getGraphics().drawImage(pageImage, 0, 0, null);
-                return faxImage;*/
-            default:
+            if (COMPRESSION_CCITT_T4.equalsIgnoreCase(writerParams.getCompressionMethod())
+                   || COMPRESSION_CCITT_T6.equalsIgnoreCase(writerParams.getCompressionMethod())) {
+                return pageImage;
+            } else {
                 //Decorate the image with a packed sample model for encoding by the codec
                 SinglePixelPackedSampleModel sppsm;
                 sppsm = (SinglePixelPackedSampleModel)pageImage.getSampleModel();

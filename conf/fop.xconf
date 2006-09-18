@@ -130,6 +130,15 @@ the location of this file.
     <renderer mime="application/awt">
     </renderer>
 
+    <renderer mime="image/png">
+      <!--transparent-page-background>true</transparent-page-background-->
+    </renderer>
+
+    <renderer mime="image/tiff">
+      <!--transparent-page-background>true</transparent-page-background-->
+      <!--compression>CCITT T.6</compression-->
+    </renderer>
+
     <renderer mime="text/xml">
     </renderer>
 

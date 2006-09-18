@@ -314,10 +314,8 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
             int bitmapHeight = (int) ((pageHeight * scaleY) + 0.5);
                     
             
-            BufferedImage currentPageImage = new BufferedImage(
-                    bitmapWidth, bitmapHeight, BufferedImage.TYPE_INT_ARGB);
-            // FIXME TYPE_BYTE_BINARY ?
-
+            BufferedImage currentPageImage = getBufferedImage(bitmapWidth, bitmapHeight);
+            
             Graphics2D graphics = currentPageImage.createGraphics();
             graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
                     RenderingHints.VALUE_FRACTIONALMETRICS_ON);
@@ -367,7 +365,18 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         }
     }
 
-        
+    /**
+     * Returns a specific <code>BufferedImage</code> to paint a page image on. This method can
+     * be overridden in subclasses to produce different image formats (ex. grayscale or b/w).
+     * @param bitmapWidth width of the image in pixels
+     * @param bitmapHeight heigth of the image in pixels
+     * @return the newly created BufferedImage
+     */
+    protected BufferedImage getBufferedImage(int bitmapWidth, int bitmapHeight) {
+       return new BufferedImage(
+                bitmapWidth, bitmapHeight, BufferedImage.TYPE_INT_ARGB);
+    }
+    
     /**
      * Returns a page viewport.
      * @param pageNum the page number
