@@ -40,7 +40,9 @@ public class PDFAConformanceTestCase extends BasePDFTestCase {
         super(name);
     }
 
-    /** create an FOUserAgent for our tests */
+    /** create an FOUserAgent for our tests 
+     *  @return an initialized FOUserAgent
+     * */
     protected FOUserAgent getUserAgent() {
       final FOUserAgent a = fopFactory.newFOUserAgent();
       a.getRendererOptions().put("pdf-a-mode", "PDF/A-1b");
