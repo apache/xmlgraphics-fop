@@ -20,6 +20,7 @@
 package org.apache.fop;
 
 import org.apache.fop.render.pdf.PDFAConformanceTestCase;
+import org.apache.fop.render.pdf.PDFCMapTestCase;
 import org.apache.fop.render.pdf.PDFEncodingTestCase;
 import org.apache.fop.render.rtf.RichTextFormatTestSuite;
 
@@ -43,6 +44,7 @@ public class StandardTestSuite {
         suite.addTest(UtilityCodeTestSuite.suite());
         suite.addTest(new TestSuite(PDFAConformanceTestCase.class));
         suite.addTest(new TestSuite(PDFEncodingTestCase.class));
+        suite.addTest(new TestSuite(PDFCMapTestCase.class));
         suite.addTest(RichTextFormatTestSuite.suite());
         //$JUnit-END$
         return suite;
