@@ -19,6 +19,7 @@
 
 package org.apache.fop.fonts;
 
+import java.io.IOException;
 import java.util.Map;
 import javax.xml.transform.Source;
 
@@ -69,14 +70,16 @@ public abstract class CustomFont extends Typeface
 
     /**
      * Returns a Source representing an embeddable font file.
-     * @return Source for an embeddable font file or null if not available.
+     * @return Source for an embeddable font file
+     * @throws IOException if embedFileName is not null but Source is not found
      */
-    public Source getEmbedFileSource() {
+    public Source getEmbedFileSource() throws IOException {
+        Source result = null;
         if (resolver != null && embedFileName != null) {
-            return resolver.resolve(embedFileName);
-        } else {
-            return null;
+            result = resolver.resolve(embedFileName);
+            if(result == null) throw new IOException("Unable to resolve Source '" + embedFileName + "' for embedded font");
         }
+        return result;
     }
 
     /**
