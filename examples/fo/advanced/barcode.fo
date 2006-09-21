@@ -12,10 +12,7 @@
         margin-left="5mm" 
         margin-top="5mm"/>
      <fo:region-after 
-        extent="4in" 
-        border-top-color="silver" 
-        border-top-style="dotted" 
-        border-top-width="0.13mm"/>
+        extent="4in" />
   </fo:simple-page-master>
 
   <fo:simple-page-master master-name="rest"
