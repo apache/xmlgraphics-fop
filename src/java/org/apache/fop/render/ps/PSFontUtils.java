@@ -21,23 +21,19 @@ package org.apache.fop.render.ps;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.util.Iterator;
 import java.util.Map;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.fop.fonts.CustomFont;
-import org.apache.fop.fonts.Font;
-import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.fonts.FontType;
-import org.apache.fop.fonts.LazyFont;
-import org.apache.fop.fonts.Typeface;
 import org.apache.xmlgraphics.ps.DSCConstants;
 import org.apache.xmlgraphics.ps.PSGenerator;
 import org.apache.xmlgraphics.ps.PSResource;
+
+import org.axsl.fontR.Font;
+import org.axsl.fontR.FontUse;
+import org.axsl.psR.Encoding;
 
 /**
  * Utility code for font handling in PostScript.
@@ -47,87 +43,73 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
     /**
      * Generates the PostScript code for the font dictionary.
      * @param gen PostScript generator to use for output
-     * @param fontInfo available fonts
+     * @param fontMap mappings of FontUses to their associated internal names
      * @return a Map of PSResource instances representing all defined fonts (key: font key)
      * @throws IOException in case of an I/O problem
      */
-    public static Map writeFontDict(PSGenerator gen, FontInfo fontInfo) 
+    public static Map writeFontDict(PSGenerator gen, FontMap fontMap) 
                 throws IOException {
         gen.commentln("%FOPBeginFontDict");
         gen.writeln("/FOPFonts 100 dict dup begin");
 
         // write("/gfF1{/Helvetica findfont} bd");
         // write("/gfF3{/Helvetica-Bold findfont} bd");
-        Map fonts = fontInfo.getFonts();
         Map fontResources = new java.util.HashMap();
-        Iterator iter = fonts.keySet().iterator();
+        Iterator iter = fontMap.getMappings().iterator();
         while (iter.hasNext()) {
-            String key = (String)iter.next();
-            Typeface tf = (Typeface)fonts.get(key);
-            if (tf instanceof LazyFont) {
-                tf = ((LazyFont)tf).getRealFont();
-            }
-            if (tf == null) {
-                //This is to avoid an NPE if a malconfigured font is in the configuration but not
-                //used in the document. If it were used, we wouldn't get this far.
-                String fallbackKey = fontInfo.getInternalFontKey(Font.DEFAULT_FONT); 
-                tf = (Typeface)fonts.get(fallbackKey);
-            }
-            PSResource fontRes = new PSResource("font", tf.getFontName());
-            fontResources.put(key, fontRes);
+            Map.Entry entry = (Map.Entry)iter.next();
+            String internalName = (String)entry.getValue();
+            FontUse fontUse = (FontUse)entry.getKey();
+            PSResource fontRes = new PSResource(PSResource.TYPE_FONT, internalName);
+            fontResources.put(internalName, fontRes);
             boolean embeddedFont = false;
-            if (FontType.TYPE1 == tf.getFontType()) {
-                if (tf instanceof CustomFont) {
-                    CustomFont cf = (CustomFont)tf;
-                    InputStream in = getInputStreamOnFont(gen, cf);
-                    if (in != null) {
-                        gen.writeDSCComment(DSCConstants.BEGIN_RESOURCE, 
-                                fontRes);
-                        embedType1Font(gen, in);
-                        gen.writeDSCComment(DSCConstants.END_RESOURCE);
-                        gen.notifyResourceUsage(fontRes, false);
-                        embeddedFont = true;
-                    }
-                }
+            Font font = fontUse.getFont();
+            if (font.getFontFormat() == Font.FORMAT_TYPE1
+                    && font.isEmbeddable()
+                    && !font.isPDFStandardFont()) {
+                gen.writeDSCComment(DSCConstants.BEGIN_RESOURCE, fontRes);
+                gen.writeByteArr(font.getContentsPostScriptHex(fontMap.getFontConsumer()));
+                gen.writeDSCComment(DSCConstants.END_RESOURCE);
+                gen.notifyResourceUsage(fontRes, false);
+                embeddedFont = true;
             }
             if (!embeddedFont) {
                 gen.writeDSCComment(DSCConstants.INCLUDE_RESOURCE, fontRes);
                 //Resource usage shall be handled by renderer
                 //gen.notifyResourceUsage(fontRes, true);
             }
-            gen.commentln("%FOPBeginFontKey: " + key);
-            gen.writeln("/" + key + " /" + tf.getFontName() + " def");
+            gen.commentln("%FOPBeginFontKey: " + internalName);
+            gen.writeln("/" + internalName + " /" + font.postscriptName() + " def");
             gen.commentln("%FOPEndFontKey");
         }
         gen.writeln("end def");
         gen.commentln("%FOPEndFontDict");
         gen.commentln("%FOPBeginFontReencode");
         defineWinAnsiEncoding(gen);
-        
+
         //Rewrite font encodings
-        iter = fonts.keySet().iterator();
+        iter = fontMap.getMappings().iterator();
         while (iter.hasNext()) {
-            String key = (String)iter.next();
-            Typeface fm = (Typeface)fonts.get(key);
-            if (fm instanceof LazyFont && ((LazyFont)fm).getRealFont() == null) {
-                continue;
-            } else if (null == fm.getEncoding()) {
+            FontUse fontUse = (FontUse)((Map.Entry)iter.next()).getKey();
+            Encoding encoding = fontUse.getEncoding();
+            if (encoding == null) {
                 //ignore (ZapfDingbats and Symbol run through here
                 //TODO: ZapfDingbats and Symbol should get getEncoding() fixed!
-            } else if ("WinAnsiEncoding".equals(fm.getEncoding())) {
-                gen.writeln("/" + fm.getFontName() + " findfont");
+            } else if (encoding.isPredefinedPS()) {
+                gen.writeln("/" + fontUse.postscriptName() + " findfont");
                 gen.writeln("dup length dict begin");
                 gen.writeln("  {1 index /FID ne {def} {pop pop} ifelse} forall");
-                gen.writeln("  /Encoding " + fm.getEncoding() + " def");
+                gen.writeln("  /Encoding " + encoding.getName() + " def");
                 gen.writeln("  currentdict");
                 gen.writeln("end");
-                gen.writeln("/" + fm.getFontName() + " exch definefont pop");
+                gen.writeln("/" + fontUse.postscriptName() + " exch definefont pop");
             } else {
                 gen.commentln("%WARNING: Only WinAnsiEncoding is supported. Font '" 
-                    + fm.getFontName() + "' asks for: " + fm.getEncoding());
+                    + fontUse.postscriptName() + "' asks for: " + encoding.getName());
             }
         }
         gen.commentln("%FOPEndFontReencode");
+        
         return fontResources;
     }
 

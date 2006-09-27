@@ -35,10 +35,11 @@ import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.traits.BorderProps;
 import org.w3c.dom.Document;
+
+import org.axsl.fontR.FontUse;
 
 /**
  * Abstract base class for renderers like PDF and PostScript where many painting operations
@@ -571,21 +572,21 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
     
     /**
      * Paints the text decoration marks.
-     * @param fm Current typeface
+     * @param fu Current font use
      * @param fontsize Current font size
      * @param inline inline area to paint the marks for
      * @param baseline position of the baseline
      * @param startx start IPD
      */
-    protected void renderTextDecoration(FontMetrics fm, int fontsize, InlineArea inline, 
+    protected void renderTextDecoration(FontUse fu, int fontsize, InlineArea inline, 
                     int baseline, int startx) {
         boolean hasTextDeco = inline.hasUnderline() 
                 || inline.hasOverline() 
                 || inline.hasLineThrough();
         if (hasTextDeco) {
             endTextObject();
-            float descender = fm.getDescender(fontsize) / 1000f;
-            float capHeight = fm.getCapHeight(fontsize) / 1000f;
+            float descender = fu.getFont().getDescender(fontsize) / 1000f;
+            float capHeight = fu.getFont().getCapHeight(fontsize) / 1000f;
             float halfLineWidth = (descender / -8f) / 2f;
             float endx = (startx + inline.getIPD()) / 1000f;
             if (inline.hasUnderline()) {

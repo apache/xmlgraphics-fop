@@ -31,8 +31,11 @@ import org.xml.sax.SAXException;
 // FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.Renderer;
+
+import org.axsl.fontR.Font;
+import org.axsl.fontR.FontConsumer;
+import org.axsl.fontR.FontException;
 
 /**
  * This uses the AreaTreeModel to store the pages
@@ -59,23 +62,29 @@ public class RenderPagesModel extends AreaTreeModel {
      * Create a new render pages model with the given renderer.
      * @param userAgent FOUserAgent object for process
      * @param outputFormat the MIME type of the output format to use (ex. "application/pdf").
-     * @param fontInfo FontInfo object
+     * @param fontConsumer FontConsumer object
      * @param stream OutputStream
      * @throws FOPException if the renderer cannot be properly initialized
      */
     public RenderPagesModel (FOUserAgent userAgent, String outputFormat, 
-        FontInfo fontInfo, OutputStream stream) throws FOPException {
+        FontConsumer fontConsumer, OutputStream stream) throws FOPException {
 
         super();
         renderer = userAgent.getRendererFactory().createRenderer(
                 userAgent, outputFormat);
 
         try {
-            renderer.setupFontInfo(fontInfo);
-            // check that the "any,normal,400" font exists
-            if (!fontInfo.isSetupValid()) {
-                throw new FOPException(
-                    "No default font defined by OutputConverter");
+            renderer.setupFontConsumer(fontConsumer);
+            // check that the default fallback font exists
+            try {
+                fontConsumer.selectFontXSL(Font.FONT_SELECTION_AUTO, new String[] {"any"},
+                        Font.FONT_STYLE_ANY,
+                        Font.FONT_WEIGHT_ANY,
+                        Font.FONT_VARIANT_ANY,
+                        Font.FONT_STRETCH_ANY,
+                        10000, ' ');
+            } catch (FontException e) {
+                throw new FOPException("No default font defined by OutputConverter");
             }
             renderer.startRenderer(stream);
         } catch (IOException e) {

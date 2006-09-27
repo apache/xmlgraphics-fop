@@ -19,10 +19,14 @@
  
 package org.apache.fop.svg;
 
+import java.net.MalformedURLException;
+
 import org.xml.sax.EntityResolver;
 
 import org.apache.commons.logging.impl.SimpleLog;
 import org.apache.commons.logging.Log;
+import org.apache.fop.pdf.FontMap;
+import org.apache.fop.tools.CommonsLogger;
 import org.apache.batik.bridge.UserAgent;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.dom.util.DocumentFactory;
@@ -33,13 +37,17 @@ import org.apache.batik.transcoder.SVGAbstractTranscoder;
 import org.apache.batik.transcoder.image.ImageTranscoder;
 import org.apache.batik.transcoder.keys.BooleanKey;
 import org.apache.batik.util.SVGConstants;
+import org.axsl.common.PseudoLogger;
+import org.axsl.font.FontConsumer;
+import org.axsl.font.FontException;
+import org.axsl.font.FontServer;
+import org.foray.font.FOrayFontServer;
 import org.w3c.dom.DOMImplementation;
 
 /**
  * This is the common base class of all of FOP's transcoders.
  */
-public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder
-            {
+public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder implements FontConsumer {
 
     /**
      * The key to specify whether to stroke text instead of using text 
@@ -59,19 +67,88 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder
     protected UserAgent userAgent = createUserAgent();
 
     private Log logger;
+    /** PseudoLogger wrapper around logger. For adaptation to the aXSL interface. */
+    private PseudoLogger pseudoLogger;
     private EntityResolver resolver;
 
+    private FontMap fontMap;
+    
+    private FontServer fontServer;
+    
     /**
      * Constructs a new FOP-style transcoder.
+     * 
+     * @param registerAllFonts if <code>true</code>, all the fonts know by font
+     * server will be given an internal font name (this is useful for the PS
+     * transcoder). Otherwise internal names will be assigned only when needed.
      */
-    public AbstractFOPTranscoder() {
+    public AbstractFOPTranscoder(boolean registerAllFonts) {
         hints.put(KEY_DOCUMENT_ELEMENT_NAMESPACE_URI,
                   SVGConstants.SVG_NAMESPACE_URI);
         hints.put(KEY_DOCUMENT_ELEMENT, SVGConstants.SVG_SVG_TAG);
         hints.put(KEY_DOM_IMPLEMENTATION,
                   SVGDOMImplementation.getDOMImplementation());
+
+        try {
+            fontServer = new FOrayFontServer(getPseudoLogger());
+            /* TODO vh: plug font config file */
+            ((FOrayFontServer) fontServer).setBaseFontURL(new java.net.URL("file://"));
+            ((FOrayFontServer) fontServer).setup(
+//                    new java.net.URL("file:///path/to/axsl-font-conf.xml"), null);
+            new java.net.URL(System.getProperty("font.config.file")), null);
+        } catch (MalformedURLException e) {
+            // Should never happen
+        } catch (FontException e) {
+            // TODO vh
+            e.printStackTrace();
+        }
+        
+        fontMap = new FontMap(this, registerAllFonts);
     }
     
+    /**
+     * @see org.axsl.font.FontConsumer#getFontServer()
+     */
+    public FontServer getFontServer() {
+        return fontServer;
+    }
+    
+    /**
+     * @see org.axsl.font.FontConsumer#getPseudoLogger()
+     */
+    public PseudoLogger getPseudoLogger() {
+        return pseudoLogger; 
+    }
+
+    /**
+     * @see org.axsl.font.FontConsumer#isUsingFreeStandingFonts()
+     */
+    public boolean isUsingFreeStandingFonts() {
+        return true;
+    }
+
+    /**
+     * @see org.axsl.font.FontConsumer#isUsingSystemFonts()
+     */
+    public boolean isUsingSystemFonts() {
+        return false;
+    }
+
+    /**
+     * @see org.axsl.font.FontConsumer#preferFreeStandingFonts()
+     */
+    public boolean preferFreeStandingFonts() {
+        return true;
+    }
+
+    /**
+     * Return the mappings of FontUses to their associated internal names.
+     * @return the font map associated to this transcoder.
+     */
+    protected FontMap getFontMap() {
+        return fontMap;
+    }
+
     /**
      * Creates and returns the default user agent for this transcoder. Override
      * this method if you need non-default behaviour.
@@ -83,6 +160,7 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder
     
     public void setLogger(Log logger) {
         this.logger = logger;
+        this.pseudoLogger = new CommonsLogger(logger);
     }
 
     /**

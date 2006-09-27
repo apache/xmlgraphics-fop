@@ -60,7 +60,7 @@ public class EPSTranscoder extends AbstractPSTranscoder {
 
     /** @see AbstractPSTranscoder#createDocumentGraphics2D() */
     protected AbstractPSDocumentGraphics2D createDocumentGraphics2D() {
-        return new EPSDocumentGraphics2D(false);
+        return new EPSDocumentGraphics2D(false, getFontMap());
     }
 
 }

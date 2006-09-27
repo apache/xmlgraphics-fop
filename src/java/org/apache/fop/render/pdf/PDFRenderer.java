@@ -48,6 +48,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.area.Area;
 import org.apache.fop.area.CTM;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.OffDocumentExtensionAttachment;
@@ -63,12 +64,10 @@ import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.area.inline.SpaceArea;
-import org.apache.fop.fonts.Typeface;
-import org.apache.fop.fonts.Font;
-import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
 import org.apache.fop.image.XMLImage;
+import org.apache.fop.pdf.FontMap;
 import org.apache.fop.pdf.PDFAMode;
 import org.apache.fop.pdf.PDFAnnotList;
 import org.apache.fop.pdf.PDFColor;
@@ -104,6 +103,10 @@ import org.apache.fop.fo.extensions.xmp.XMPMetadata;
 import org.apache.xmlgraphics.xmp.Metadata;
 import org.apache.xmlgraphics.xmp.schemas.XMPBasicAdapter;
 import org.apache.xmlgraphics.xmp.schemas.XMPBasicSchema;
+
+import org.axsl.fontR.Font;
+import org.axsl.fontR.FontConsumer;
+import org.axsl.fontR.FontUse;
 
 /**
  * Renderer that renders areas to PDF.
@@ -211,11 +214,16 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     /** drawing state */
     protected PDFState currentState = null;
 
-    /** Name of currently selected font */
-    protected String currentFontName = "";
-    /** Size of currently selected font */
+    /** Currently selected FontUse */
+    protected FontUse currentFontUse = null;
+    /** Size (in millipoints) of currently selected font */
     protected int currentFontSize = 0;
-    /** page height */
+    /**
+     * Font mappings of FontUse to internal name.
+     */
+    protected FontMap fontMap;
+    
+    /** page height */  
     protected int pageHeight;
 
     /** Registry of PDF filters */
@@ -231,8 +239,31 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      */
     public PDFRenderer() {
     }
-
+    
     /**
+     * Setup the font consumer.
+     * @param fontConsumer the font consumer.
+     */
+    public void setupFontConsumer(FontConsumer fontConsumer) {
+        super.setupFontConsumer(fontConsumer);
+        fontMap = new FontMap(fontConsumer);
+    }
+    
+    /**
+     * Return the font map associated to this renderer.
+     * @return the mappings of FontUse to internal names
+     */
+    public FontMap getFontMap() {
+        return fontMap;
+    }
+
+    // TODO vh: refactor
+    protected String getInternalFontNameForArea(Area area) {
+    	FontUse fontUse = (FontUse)area.getTrait(Trait.FONT);
+    	return fontMap.getInternalName(fontUse);
+	}
+
+	/**
      * Configure the PDF renderer.
      * Get the configuration to be used for pdf stream filters,
      * fonts etc.
@@ -242,13 +273,6 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         //PDF filters
         this.filterMap = PDFFilterList.buildFilterMapFromConfiguration(cfg);
 
-        //Font configuration
-        List cfgFonts = FontSetup.buildFontListFromConfiguration(cfg);
-        if (this.fontList == null) {
-            this.fontList = cfgFonts;
-        } else {
-            this.fontList.addAll(cfgFonts);
-        }
         
         String s = cfg.getChild(PDF_A_MODE, true).getValue(null);
         if (s != null) {
@@ -479,7 +503,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * @see org.apache.fop.render.Renderer#stopRenderer()
      */
     public void stopRenderer() throws IOException {
-        pdfDoc.getResources().addFonts(pdfDoc, fontInfo);
+        pdfDoc.getResources().addFonts(pdfDoc, fontMap);
         pdfDoc.outputTrailer(ostream);
 
         this.pdfDoc = null;
@@ -494,7 +518,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         currentContext = null;
         currentPage = null;
         currentState = null;
-        currentFontName = "";
+        currentFontUse = null;
     }
 
     /**
@@ -607,7 +631,6 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     protected void beginTextObject() {
         if (!inTextMode) {
             currentStream.add("BT\n");
-            currentFontName = "";
             inTextMode = true;
         }
     }
@@ -708,7 +731,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         currentStream.add(CTMHelper.toPDFString(basicPageTransform, false) + " cm\n");
         
         
-        currentFontName = "";
+        currentFontUse = null;
 
         super.renderPage(page);
 
@@ -757,7 +780,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * @param region the RegionViewport whose region is to be drawn
      */
     protected void handleRegionTraits(RegionViewport region) {
-        currentFontName = "";
+        currentFontUse = null;
         super.handleRegionTraits(region);
     }
 
@@ -1141,14 +1164,15 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         beginTextObject();
         StringBuffer pdf = new StringBuffer();
 
-        String fontName = getInternalFontNameForArea(text);
+        // TODO vh
+//        String fontName = getInternalFontNameForArea(text);
+        FontUse fontUse = (FontUse) text.getTrait(Trait.FONT);
         int size = ((Integer) text.getTrait(Trait.FONT_SIZE)).intValue();
         
         // This assumes that *all* CIDFonts use a /ToUnicode mapping
-        Typeface tf = (Typeface) fontInfo.getFonts().get(fontName);
-        boolean useMultiByte = tf.isMultiByte();
-        
-        updateFont(fontName, size, pdf);
+        boolean useMultiByte = fontUse.getFont().getFontComplexity() == Font.FONT_COMPOSITE;
+
+        updateFont(fontUse, size, pdf);
         Color ct = (Color) text.getTrait(Trait.COLOR);
         updateColor(ct, true, pdf);
 
@@ -1169,22 +1193,24 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
 
         currentStream.add("] TJ\n");
         
-        renderTextDecoration(tf, size, text, bl, rx);
+        renderTextDecoration(fontUse, size, text, bl, rx);
     }
     
     /**
      * @see org.apache.fop.render.AbstractRenderer#renderWord(WordArea)
      */
     public void renderWord(WordArea word) {
-        Font font = getFontFromArea(word.getParentArea());
-        Typeface tf = (Typeface) fontInfo.getFonts().get(font.getFontName());
-        boolean useMultiByte = tf.isMultiByte();
+    	// TODO vh
+//      Font font = getFontFromArea(word.getParentArea());
+        FontUse fontUse = (FontUse) word.getParentArea().getTrait(Trait.FONT);
+        int size = ((Integer) word.getParentArea().getTrait(Trait.FONT_SIZE)).intValue();
+        boolean useMultiByte = fontUse.getFont().getFontComplexity() == Font.FONT_COMPOSITE;
 
         StringBuffer pdf = new StringBuffer();
         
         String s = word.getWord();
         escapeText(s, word.getLetterAdjustArray(), 
-                font, (AbstractTextArea)word.getParentArea(), useMultiByte, pdf);
+                fontUse, size, (AbstractTextArea)word.getParentArea(), useMultiByte, pdf);
         
         currentStream.add(pdf.toString());
 
@@ -1195,23 +1221,25 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * @see org.apache.fop.render.AbstractRenderer#renderSpace(SpaceArea)
      */
     public void renderSpace(SpaceArea space) {
-        Font font = getFontFromArea(space.getParentArea());
-        Typeface tf = (Typeface) fontInfo.getFonts().get(font.getFontName());
-        boolean useMultiByte = tf.isMultiByte();
+    	// TODO vh
+//      Font font = getFontFromArea(space.getParentArea());
+        FontUse fontUse = (FontUse) space.getParentArea().getTrait(Trait.FONT);
+        int size = ((Integer) space.getParentArea().getTrait(Trait.FONT_SIZE)).intValue();
+        boolean useMultiByte = fontUse.getFont().getFontComplexity() == Font.FONT_COMPOSITE;
 
         String s = space.getSpace();
         
         StringBuffer pdf = new StringBuffer();
 
         AbstractTextArea textArea = (AbstractTextArea)space.getParentArea();
-        escapeText(s, null, font, textArea, useMultiByte, pdf);
+        escapeText(s, null, fontUse, size, textArea, useMultiByte, pdf);
 
         if (space.isAdjustable()) {
             int tws = -((TextArea) space.getParentArea()).getTextWordSpaceAdjust()
                          - 2 * textArea.getTextLetterSpaceAdjust();
                     
             if (tws != 0) {
-                pdf.append(format(tws / (font.getFontSize() / 1000f)));
+                pdf.append(format(tws / (size / 1000f)));
                 pdf.append(" ");
             }
         }
@@ -1225,46 +1253,46 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * Escapes text according to PDF rules.
      * @param s Text to escape
      * @param letterAdjust an array of widths for letter adjustment (may be null)
-     * @param fs Font state
+     * @param fontUse Font use
      * @param parentArea the parent text area to retrieve certain traits from
      * @param useMultiByte Indicates the use of multi byte convention
      * @param pdf target buffer for the escaped text
      */
     public void escapeText(String s, int[] letterAdjust,
-                           Font fs, AbstractTextArea parentArea,
+                           FontUse fontUse, int fontSize, AbstractTextArea parentArea,
                            boolean useMultiByte, StringBuffer pdf) {
         String startText = useMultiByte ? "<" : "(";
         String endText = useMultiByte ? "> " : ") ";
 
         /*
         boolean kerningAvailable = false;
-        Map kerning = fs.getKerning();
-        if (kerning != null && !kerning.isEmpty()) {
-            //kerningAvailable = true;
-            //TODO Reenable me when the layout engine supports kerning, too
-            log.warn("Kerning support is disabled until it is supported by the layout engine!");
-        }
+// TODO vh: kerning is available differently from FOrayFont
+//        Map kerning = font.getKerning();
+//        if (kerning != null && !kerning.isEmpty()) {
+//            //kerningAvailable = true;
+//            //TODO Reenable me when the layout engine supports kerning, too
+//            log.warn("Kerning support is disabled until it is supported by the layout engine!");
+//        }
         */
 
         int l = s.length();
 
-        float fontSize = fs.getFontSize() / 1000f;
         boolean startPending = true;
         for (int i = 0; i < l; i++) {
             char orgChar = s.charAt(i);
-            char ch;
+            int ch;
             float glyphAdjust = 0;
-            if (fs.hasChar(orgChar)) {
-                ch = fs.mapChar(orgChar);
+            if (fontUse.glyphAvailable(orgChar)) {
+                ch = fontUse.encodeCharacter(orgChar);
                 int tls = (i < l - 1 ? parentArea.getTextLetterSpaceAdjust() : 0);
                 glyphAdjust -= tls;
             } else {
                 if (CharUtilities.isFixedWidthSpace(orgChar)) {
                     //Fixed width space are rendered as spaces so copy/paste works in a reader
-                    ch = fs.mapChar(CharUtilities.SPACE);
-                    glyphAdjust = fs.getCharWidth(ch) - fs.getCharWidth(orgChar);
+                    ch = fontUse.encodeCharacter(CharUtilities.SPACE);
+                    glyphAdjust = fontUse.getFont().width(ch, fontSize) - fontUse.getFont().width(orgChar, fontSize);
                 } else {
-                    ch = fs.mapChar(orgChar);
+                    ch = fontUse.encodeCharacter(orgChar);
                 }
             }
             if (letterAdjust != null && i < l - 1) {
@@ -1288,13 +1316,13 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                             break;
                         default:
                     }
-                    pdf.append(ch);
+                    pdf.append((char)ch);
                 }
             } else {
                 pdf.append(PDFText.toUnicodeHex(ch));
             }
 
-            float adjust = glyphAdjust / fontSize;
+            float adjust = glyphAdjust / (fontSize / 1000f/*TODO vh: refactor*/);
             
             if (adjust != 0) {
                 pdf.append(endText).append(format(adjust)).append(' ');
@@ -1318,7 +1346,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
             textOpen = false;
             prevWordX = 0;
             prevWordY = 0;
-            currentFontName = "";
+            currentFontUse = null;
         }*/
     }
 
@@ -1370,14 +1398,15 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         updateColor(col, fill, null);
     }
     
-    private void updateFont(String name, int size, StringBuffer pdf) {
-        if ((!name.equals(this.currentFontName))
+    private void updateFont(FontUse fontUse, int size, StringBuffer pdf) {
+        if ((!fontUse.equals(this.currentFontUse))
                 || (size != this.currentFontSize)) {
             closeText();
 
-            this.currentFontName = name;
+            this.currentFontUse = fontUse;
             this.currentFontSize = size;
-            pdf = pdf.append("/" + name + " " + format((float) size / 1000f)
+            String internalName = (String) this.fontMap.getInternalName(fontUse);
+            pdf = pdf.append("/" + internalName + " " + format((float) size / 1000f)
                               + " Tf\n");
         }
     }
@@ -1512,8 +1541,9 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                     currentContext == null ? currentPage : currentContext);
         context.setProperty(PDFRendererContextConstants.PDF_CONTEXT, currentContext);
         context.setProperty(PDFRendererContextConstants.PDF_STREAM, currentStream);
-        context.setProperty(PDFRendererContextConstants.PDF_FONT_INFO, fontInfo);
-        context.setProperty(PDFRendererContextConstants.PDF_FONT_NAME, currentFontName);
+        // TODO vh: check
+        context.setProperty(PDFRendererContextConstants.PDF_FONT_CONSUMER, fontConsumer);
+        context.setProperty(PDFRendererContextConstants.PDF_FONT_USE, currentFontUse);
         context.setProperty(PDFRendererContextConstants.PDF_FONT_SIZE,
                             new Integer(currentFontSize));
         return context;

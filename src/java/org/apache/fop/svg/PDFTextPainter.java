@@ -23,7 +23,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 /* java.awt.Font is not imported to avoid confusion with
-   org.apache.fop.fonts.Font */
+   org.axsl.font.Font */
 import java.text.AttributedCharacterIterator;
 import java.awt.font.TextAttribute;
 import java.awt.Shape;
@@ -42,8 +42,11 @@ import org.apache.batik.gvt.font.GVTFontFamily;
 import org.apache.batik.bridge.SVGFontFamily;
 import org.apache.batik.gvt.renderer.StrokingTextPainter;
 
-import org.apache.fop.fonts.Font;
-import org.apache.fop.fonts.FontInfo;
+import org.axsl.font.Font;
+import org.axsl.font.FontConsumer;
+import org.axsl.font.FontException;
+import org.axsl.font.FontServer;
+import org.axsl.font.FontUse;
 import org.apache.fop.fonts.FontTriplet;
 
 /**
@@ -61,7 +64,7 @@ import org.apache.fop.fonts.FontTriplet;
  * @version $Id$
  */
 public class PDFTextPainter implements TextPainter {
-    private FontInfo fontInfo;
+    private FontConsumer fontConsumer;
 
     /**
      * Use the stroking text painter to get the bounds and shape.
@@ -74,8 +77,8 @@ public class PDFTextPainter implements TextPainter {
      * Create a new PDF text painter with the given font information.
      * @param fi the fint info
      */
-    public PDFTextPainter(FontInfo fi) {
-        fontInfo = fi;
+    public PDFTextPainter(FontConsumer fc) {
+        fontConsumer = fc;
     }
 
     /**
@@ -115,10 +118,12 @@ public class PDFTextPainter implements TextPainter {
         
         Paint forg = tpi.fillPaint;
         Paint strokePaint = tpi.strokePaint;
-        Float size = (Float) aci.getAttribute(TextAttribute.SIZE);
-        if (size == null) {
+        Float fsize = (Float) aci.getAttribute(TextAttribute.SIZE);
+        if (fsize == null) {
             return;
         }
+        int size = (int) (fsize.floatValue() * 1000f);
+        
         Stroke stroke = tpi.strokeStroke;
         /*
         Float xpos = (Float) aci.getAttribute(
@@ -157,18 +162,20 @@ public class PDFTextPainter implements TextPainter {
             return;
         }
 
-        String style = ((posture != null) && (posture.floatValue() > 0.0))
-                       ? "italic" : "normal";
-        int weight = ((taWeight != null)
-                       &&  (taWeight.floatValue() > 1.0)) ? Font.BOLD
-                       : Font.NORMAL;
+        byte style = ((posture != null) && (posture.floatValue() > 0.0))
+                       ? Font.FONT_STYLE_ITALIC : Font.FONT_STYLE_NORMAL;
+        short weight = ((taWeight != null)
+                       &&  (taWeight.floatValue() > 1.0)) ? Font.FONT_WEIGHT_BOLD
+                       : Font.FONT_WEIGHT_NORMAL;
 
-        Font fontState = null;
-        FontInfo fi = fontInfo;
-        boolean found = false;
+        FontUse fontUse = null;
+        FontServer fs = fontConsumer.getFontServer();
+        boolean found = true;
         String fontFamily = null;
         if (gvtFonts != null) {
             Iterator i = gvtFonts.iterator();
+            String[] fontFamilies = new String[gvtFonts.size()];
+            int index = 0;
             while (i.hasNext()) {
                 GVTFontFamily fam = (GVTFontFamily) i.next();
                 if (fam instanceof SVGFontFamily) {
@@ -185,44 +192,56 @@ public class PDFTextPainter implements TextPainter {
                     break;
                 }
             }
+            try {
+                fontUse = fs.selectFontXSL(fontConsumer, fontFamilies, style, weight,
+                        Font.FONT_VARIANT_NORMAL, Font.FONT_STRETCH_NORMAL, size, ch);
+                fontFamily = fontUse.postscriptName();
+            } catch (FontException f) {
+                found = false;
+            }
         }
         if (!found) {
-            FontTriplet triplet = fontInfo.fontLookup("any", style, Font.NORMAL);
-            int fsize = (int)(size.floatValue() * 1000);
-            fontState = fontInfo.getFontInstance(triplet, fsize);
+            try {
+                fontUse = fs.selectFontXSL(fontConsumer, new String[] {"any"},
+                        Font.FONT_STYLE_ANY,
+                        Font.FONT_WEIGHT_ANY,
+                        Font.FONT_VARIANT_ANY,
+                        Font.FONT_STRETCH_ANY,
+                        size, ch);
+            } catch (FontException e) { /* Should never happen */ }
         } else {
             if (g2d instanceof PDFGraphics2D) {
-                ((PDFGraphics2D) g2d).setOverrideFontState(fontState);
+                ((PDFGraphics2D) g2d).setOverrideFontUse(fontUse);
+                ((PDFGraphics2D) g2d).setOverrideFontSize(size);
             }
         }
         int fStyle = java.awt.Font.PLAIN;
-        if (weight == Font.BOLD) {
-            if (style.equals("italic")) {
+        if (weight == Font.FONT_WEIGHT_BOLD) {
+            if (style == Font.FONT_STYLE_ITALIC) {
                 fStyle = java.awt.Font.BOLD | java.awt.Font.ITALIC;
             } else {
                 fStyle = java.awt.Font.BOLD;
             }
         } else {
-            if (style.equals("italic")) {
+            if (style == Font.FONT_STYLE_ITALIC) {
                 fStyle = java.awt.Font.ITALIC;
             } else {
                 fStyle = java.awt.Font.PLAIN;
             }
         }
-        java.awt.Font font = new java.awt.Font(fontFamily, fStyle,
-                             (int)(fontState.getFontSize() / 1000));
+        java.awt.Font awtFont = new java.awt.Font(fontFamily, fStyle, size / 1000);
 
-        g2d.setFont(font);
+        g2d.setFont(awtFont);
 
-        float advance = getStringWidth(txt, fontState);
+        float advance = fontUse.getFont().width(txt, size, 0, 0) / 1000f;
         float tx = 0;
         if (anchor != null) {
             switch (anchor.getType()) {
                 case TextNode.Anchor.ANCHOR_MIDDLE:
-                    tx = -advance / 2;
+                    tx = -advance / 2000f; // convert back into points 
                     break;
                 case TextNode.Anchor.ANCHOR_END:
-                    tx = -advance;
+                    tx = -advance / 1000f;
             }
         }
         g2d.drawString(txt, (float)(loc.getX() + tx), (float)(loc.getY()));
@@ -257,26 +276,6 @@ public class PDFTextPainter implements TextPainter {
             hasunsupported = true;
         }
         return hasunsupported;
-    }
-
-    private float getStringWidth(String str, Font fontState) {
-        float wordWidth = 0;
-        float whitespaceWidth = fontState.getWidth(fontState.mapChar(' '));
-
-        for (int i = 0; i < str.length(); i++) {
-            float charWidth;
-            char c = str.charAt(i);
-            if (!((c == ' ') || (c == '\n') || (c == '\r') || (c == '\t'))) {
-                charWidth = fontState.getWidth(fontState.mapChar(c));
-                if (charWidth <= 0) {
-                    charWidth = whitespaceWidth;
-                }
-            } else {
-                charWidth = whitespaceWidth;
-            }
-            wordWidth += charWidth;
-        }
-        return wordWidth / 1000f;
     }
 
     /**
@@ -395,4 +394,3 @@ public class PDFTextPainter implements TextPainter {
     }
 
 }
-

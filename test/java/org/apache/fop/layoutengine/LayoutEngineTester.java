@@ -154,6 +154,9 @@ public class LayoutEngineTester {
             //Setup FOP for area tree rendering
             FOUserAgent ua = effFactory.newFOUserAgent();
             ua.setBaseURL(testFile.getParentFile().toURL().toString());
+            File fontCfgFile = new File("conf/fonts.xconf");
+//            File fontCfgFile = new File("../Tests/Config/axsl-font-conf.xml");
+            ua.setFontCfgURL(fontCfgFile.toURL());
             XMLRenderer atrenderer = new XMLRenderer();
             atrenderer.setUserAgent(ua);
             atrenderer.setContentHandler(athandler);

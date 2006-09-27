@@ -19,17 +19,17 @@
  
 package org.apache.fop.pdf;
 
-import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.fonts.Typeface;
-import org.apache.fop.fonts.FontDescriptor;
 import org.apache.fop.util.ColorProfileUtil;
 
-// Java
+//Java
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashMap;
-import java.util.HashSet;
+
+import org.axsl.fontR.FontConsumer;
+import org.axsl.fontR.FontUse;
 
 /**
  * class representing a /Resources object.
@@ -94,20 +94,14 @@ public class PDFResources extends PDFObject {
      * Add the fonts in the font info to this PDF document's Font Resources.
      * 
      * @param doc PDF document to add fonts to
-     * @param fontInfo font info object to get font information from
+     * @param fontMap pairs of font names and their associated internal names
      */
-   public void addFonts(PDFDocument doc, FontInfo fontInfo) {
-        Map fonts = fontInfo.getUsedFonts();
-        Iterator e = fonts.keySet().iterator();
-        while (e.hasNext()) {
-            String f = (String)e.next();
-            Typeface font = (Typeface)fonts.get(f);
-            FontDescriptor desc = null;
-            if (font instanceof FontDescriptor) {
-                desc = (FontDescriptor)font;
-            }
-            addFont(doc.getFactory().makeFont(
-                f, font.getFontName(), font.getEncoding(), font, desc));
+    public void addFonts(PDFDocument doc, FontMap fontMap) {
+        FontConsumer fontConsumer = fontMap.getFontConsumer();
+        FontUse[] usedFontUses = fontConsumer.getUsedFontUses();
+        for (int i = 0; i < usedFontUses.length; i++) {
+            String internalName = (String) fontMap.getInternalName(usedFontUses[i]);
+            addFont(doc.getFactory().makeFont(usedFontUses[i], internalName, fontConsumer));
         }
     }
 

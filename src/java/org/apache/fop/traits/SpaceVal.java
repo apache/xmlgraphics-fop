@@ -23,7 +23,9 @@ import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.SpaceProperty;
-import org.apache.fop.fonts.Font;
+
+import org.axsl.fontR.Font;
+import org.axsl.fontR.FontConsumer;
 
 /**
  * Store a single Space property value in simplified form, with all
@@ -72,13 +74,15 @@ public class SpaceVal {
         this.iPrecedence = iPrecedence;
     }
 
-    static public SpaceVal makeWordSpacing(Property wordSpacing, 
-                                           SpaceVal letterSpacing, 
-                                           Font fs) {
+    public static SpaceVal makeWordSpacing(Property wordSpacing,
+                                           SpaceVal letterSpacing,
+                                           Font fs,
+                                           FontConsumer fontConsumer,
+                                           int fontSize) {
         if (wordSpacing.getEnum() == Constants.EN_NORMAL) {
             // give word spaces the possibility to shrink by a third,
             // and stretch by a half;
-            int spaceCharIPD = fs.getCharWidth(' ');
+            int spaceCharIPD = fs.width(' ', fontSize);
             MinOptMax space = new MinOptMax(-spaceCharIPD / 3, 0, spaceCharIPD / 2);
             //TODO Adding 2 letter spaces here is not 100% correct. Spaces don't have letter spacing
             return new SpaceVal(
@@ -90,7 +94,7 @@ public class SpaceVal {
         }        
     }
 
-    static public SpaceVal makeLetterSpacing(Property letterSpacing) {
+    public static SpaceVal makeLetterSpacing(Property letterSpacing) {
         if (letterSpacing.getEnum() == Constants.EN_NORMAL) {
             // letter spaces are set to zero (or use different values?)
             return new SpaceVal(new MinOptMax(0), true, true, 0);

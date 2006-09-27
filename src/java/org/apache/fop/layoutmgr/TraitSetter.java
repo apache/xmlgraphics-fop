@@ -32,9 +32,7 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonTextDecoration;
-import org.apache.fop.fonts.Font;
-import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.fonts.FontTriplet;
+import org.axsl.fontR.FontUse;
 
 /**
  * This is a helper class used for setting common traits on areas.
@@ -468,9 +466,9 @@ public class TraitSetter {
      * @param area the target are
      * @param font the font to use
      */
-    public static void addFontTraits(Area area, Font font) {
-        area.addTrait(Trait.FONT, font.getFontTriplet());
-        area.addTrait(Trait.FONT_SIZE, new Integer(font.getFontSize()));
+    public static void addFontTraits(Area area, FontUse fontUse, int fontSize) {
+        area.addTrait(Trait.FONT, fontUse);
+        area.addTrait(Trait.FONT_SIZE, new Integer(fontSize));
     }
     
     /**

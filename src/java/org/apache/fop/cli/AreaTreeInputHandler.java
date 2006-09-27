@@ -28,10 +28,14 @@ import javax.xml.transform.sax.SAXResult;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.area.AreaTreeModel;
 import org.apache.fop.area.AreaTreeParser;
 import org.apache.fop.area.RenderPagesModel;
-import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fo.FOEventHandler;
+import org.axsl.fontR.FontConsumer;
+import org.foray.font.FOrayFontConsumer;
+import org.foray.font.FOrayFontServer;
 import org.xml.sax.SAXException;
 
 /**
@@ -61,9 +65,10 @@ public class AreaTreeInputHandler extends InputHandler {
     /** @see org.apache.fop.cli.InputHandler */
     public void renderTo(FOUserAgent userAgent, String outputFormat, OutputStream out) 
                 throws FOPException {
-        FontInfo fontInfo = new FontInfo();
+    	// TODO vh: really create a new FontConsumer?
+        FontConsumer fontConsumer = FOEventHandler.getFontServer().makeFontConsumer();
         AreaTreeModel treeModel = new RenderPagesModel(userAgent, 
-                outputFormat, fontInfo, out);
+                outputFormat, fontConsumer, out);
         
         //Iterate over all intermediate files
         AreaTreeParser parser = new AreaTreeParser();

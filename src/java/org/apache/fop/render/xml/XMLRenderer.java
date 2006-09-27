@@ -78,10 +78,9 @@ import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.WordArea;
+import org.axsl.font.FontUse;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
-import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.render.PrintRenderer;
 import org.apache.fop.render.Renderer;
@@ -144,13 +143,6 @@ public class XMLRenderer extends PrintRenderer {
      */
     public void configure(Configuration cfg) throws ConfigurationException {
         super.configure(cfg);
-        //Font configuration
-        List cfgFonts = FontSetup.buildFontListFromConfiguration(cfg);
-        if (this.fontList == null) {
-            this.fontList = cfgFonts;
-        } else {
-            this.fontList.addAll(cfgFonts);
-        }
     }
 
     /**
@@ -346,10 +338,11 @@ public class XMLRenderer extends PrintRenderer {
                 }
                 Object value = traitEntry.getValue();
                 if (key == Trait.FONT) {
-                    FontTriplet triplet = (FontTriplet)value;
-                    addAttribute("font-name", triplet.getName());
-                    addAttribute("font-style", triplet.getStyle());
-                    addAttribute("font-weight", triplet.getWeight());
+                    FontUse fontUse = (FontUse) traitEntry.getValue();
+                    addAttribute("font-name", fontUse.postscriptName());
+                    // Style and weight should be present in the postscript name
+//                    addAttribute("font-style", triplet.getStyle());
+//                    addAttribute("font-weight", triplet.getWeight());
                 } else if (clazz.equals(Background.class)) {
                     Background bkg = (Background)value;
                     //TODO Remove the following line (makes changes in the test checks necessary)

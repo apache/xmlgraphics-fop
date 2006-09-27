@@ -37,7 +37,6 @@ import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.gvt.GraphicsNode;
 
 // FOP
-import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.XMLHandler;
 import org.apache.fop.render.RendererContext;
@@ -48,6 +47,7 @@ import org.apache.xmlgraphics.ps.PSGenerator;
 // Commons-Logging
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.axsl.fontR.FontConsumer;
 
 /**
  * PostScript XML handler for SVG. Uses Apache Batik for SVG processing.
@@ -87,7 +87,8 @@ public class PSSVGHandler implements XMLHandler, PSRendererContextConstants {
     public static PSInfo getPSInfo(RendererContext context) {
         PSInfo psi = new PSInfo();
         psi.psGenerator = (PSGenerator)context.getProperty(PS_GENERATOR);
-        psi.fontInfo = (org.apache.fop.fonts.FontInfo) context.getProperty(PS_FONT_INFO);
+        // TODO vh: re-enable
+//        psi.fontConsumer = (FontConsumer) context.getProperty(PS_FONT_CONSUMER);
         psi.width = ((Integer)context.getProperty(WIDTH)).intValue();
         psi.height = ((Integer)context.getProperty(HEIGHT)).intValue();
         psi.currentXPosition = ((Integer)context.getProperty(XPOS)).intValue();
@@ -103,8 +104,8 @@ public class PSSVGHandler implements XMLHandler, PSRendererContextConstants {
 
         /** see PS_GENERATOR */
         private PSGenerator psGenerator;
-        /** see PS_FONT_INFO */
-        private org.apache.fop.fonts.FontInfo fontInfo;
+        /** see PS_FONT_CONSUMER */
+        private FontConsumer fontConsumer;
         /** see WIDTH */
         private int width;
         /** see HEIGHT */
@@ -133,19 +134,19 @@ public class PSSVGHandler implements XMLHandler, PSRendererContextConstants {
         }
 
         /**
-         * Returns the fontInfo.
-         * @return FontInfo
+         * Returns the font consumer.
+         * @return the font consumer
          */
-        public FontInfo getFontInfo() {
-            return fontInfo;
+        public FontConsumer getFontConsumer() {
+            return fontConsumer;
         }
 
         /**
-         * Sets the fontInfo.
-         * @param fontInfo The fontInfo to set
+         * Sets the font consumer.
+         * @param fontConsumer The font consumer to set
          */
-        public void setFontInfo(FontInfo fontInfo) {
-            this.fontInfo = fontInfo;
+        public void setFontConsumer(FontConsumer fontConsumer) {
+            this.fontConsumer = fontConsumer;
         }
 
         /**
@@ -261,7 +262,8 @@ public class PSSVGHandler implements XMLHandler, PSRendererContextConstants {
         NativeTextHandler nativeTextHandler = null;
         BridgeContext ctx = new BridgeContext(ua);
         if (!strokeText) {
-            nativeTextHandler = new NativeTextHandler(graphics, psInfo.getFontInfo());
+        	// TODO vh: re-enable
+            nativeTextHandler = null/*new NativeTextHandler(graphics, psInfo.getFontConsumer())*/;
             graphics.setCustomTextHandler(nativeTextHandler);
             PSTextPainter textPainter = new PSTextPainter(nativeTextHandler);
             ctx.setTextPainter(textPainter);            

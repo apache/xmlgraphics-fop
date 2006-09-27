@@ -93,7 +93,6 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTableCell;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfTableContainer;
 import org.apache.fop.render.rtf.rtflib.tools.BuilderContext;
 import org.apache.fop.render.rtf.rtflib.tools.TableContext;
-import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
 import org.apache.fop.image.XMLImage;
@@ -138,8 +137,6 @@ public class RTFHandler extends FOEventHandler {
         super(userAgent);
         this.os = os;
         bDefer = true;
-
-        FontSetup.setup(fontInfo, null, new DefaultFontResolver(userAgent));
     }
 
     /**

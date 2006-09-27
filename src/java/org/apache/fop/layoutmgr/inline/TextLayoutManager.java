@@ -29,7 +29,7 @@ import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.flow.Inline;
-import org.apache.fop.fonts.Font;
+import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.layoutmgr.InlineKnuthSequence;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
@@ -44,6 +44,10 @@ import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
 import org.apache.fop.util.CharUtilities;
+
+import org.axsl.fontR.Font;
+import org.axsl.fontR.FontConsumer;
+import org.axsl.fontR.FontUse;
 
 /**
  * LayoutManager for text (a sequence of characters) which generates one
@@ -121,7 +125,6 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
     private static final char NEWLINE = '\n';
 
-    private Font font = null;
     /** Start index of first character in this parent Area */
     private short iAreaStart = 0;
     /** Start index of next TextArea */
@@ -144,6 +147,11 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
     private SpaceVal halfLS; 
     /** Number of space characters after previous possible break position. */
     private int iNbSpacesPending;
+
+    private FontUse fontUse;
+    private Font font;
+    private FontConsumer fontConsumer;
+    private int fontSize;
 
     private boolean bChanged = false;
     private int iReturnedIndex = 0;
@@ -175,18 +183,26 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
     
     /** @see org.apache.fop.layoutmgr.LayoutManager#initialize */
     public void initialize() {
-        font = foText.getCommonFont().getFontState(foText.getFOEventHandler().getFontInfo(), this);
+        fontConsumer = foText.getFOEventHandler().getFontConsumer();
+        CommonFont commonFont = foText.getCommonFont();
+        fontUse = commonFont.getFontState(fontConsumer, this);
+        font = fontUse.getFont();
+        fontSize = commonFont.getFontSize(this);
+        // Register the characters of this text note for later font embedding
+        for (int i = 0; i < textArray.length; i++) {
+            fontUse.registerCharUsed(textArray[i]);
+        }
         
         // With CID fonts, space isn't neccesary currentFontState.width(32)
-        spaceCharIPD = font.getCharWidth(' ');
+        spaceCharIPD = font.width(' ', fontSize);
         // Use hyphenationChar property
-        hyphIPD = font.getCharWidth(foText.getCommonHyphenation().hyphenationCharacter);
+        hyphIPD = font.width(foText.getCommonHyphenation().hyphenationCharacter, fontSize);
         
         SpaceVal ls = SpaceVal.makeLetterSpacing(foText.getLetterSpacing());
         halfLS = new SpaceVal(MinOptMax.multiply(ls.getSpace(), 0.5),
                 ls.isConditional(), ls.isForcing(), ls.getPrecedence());
         
-        ws = SpaceVal.makeWordSpacing(foText.getWordSpacing(), ls, font);
+        ws = SpaceVal.makeWordSpacing(foText.getWordSpacing(), ls, font, fontConsumer, fontSize);
         // Make half-space: <space> on either side of a word-space)
         halfWS = new SpaceVal(MinOptMax.multiply(ws.getSpace(), 0.5),
                 ws.isConditional(), ws.isForcing(), ws.getPrecedence());
@@ -256,7 +272,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
         for (; iNextStart < iStopIndex; iNextStart++) {
             char c = textArray[iNextStart];
-            hyphIPD.opt += font.getCharWidth(c);
+            hyphIPD.opt += font.width(c, fontSize);
             // letter-space?
         }
         // Need to include hyphen size too, but don't count it in the
@@ -325,6 +341,9 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
         // add hyphenation character if the last word is hyphenated
         if (context.isLastArea() && ai.bHyphenated) {
+            // TODO vh: perhaps not the better place to register the hyphenation
+            // character for embedding
+            fontUse.registerCharUsed(foText.getCommonHyphenation().hyphenationCharacter);
             realWidth.add(new MinOptMax(hyphIPD));
         }
 
@@ -431,8 +450,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                                     adjust);
         }
         textArea.setIPD(width.opt + adjust);
-        textArea.setBPD(font.getAscender() - font.getDescender());
-        textArea.setBaselineOffset(font.getAscender());
+        textArea.setBPD(font.getAscender(fontSize) - font.getDescender(fontSize));
+        textArea.setBaselineOffset(font.getAscender(fontSize));
         if (textArea.getBPD() == alignmentContext.getHeight()) {
             textArea.setOffset(0);
         } else {
@@ -486,7 +505,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 }
             }
         }
-        TraitSetter.addFontTraits(textArea, font);
+        TraitSetter.addFontTraits(textArea, fontUse, fontSize);
         textArea.addTrait(Trait.COLOR, foText.getColor());
         
         TraitSetter.addTextDecoration(textArea, foText.getTextDecoration());
@@ -575,7 +594,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 iNextStart++;
             } else if (CharUtilities.isFixedWidthSpace(ch)) {
                 // create the AreaInfo object
-                MinOptMax ipd = new MinOptMax(font.getCharWidth(ch));
+                MinOptMax ipd = new MinOptMax(font.width(ch, fontSize));
                 ai = new AreaInfo(iNextStart, (short) (iNextStart + 1),
                         (short) 0, (short) 0,
                         ipd, false, true); 
@@ -616,20 +635,21 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 
                 //Word boundary found, process widths and kerning
                 int wordLength = iTempStart - iThisStart;
-                boolean kerning = font.hasKerning();
+                // TODO vh: info no longer available; impact on performance?
+//                boolean kerning = font.hasKerning();
                 MinOptMax wordIPD = new MinOptMax(0);
                 for (int i = iThisStart; i < iTempStart; i++) {
                     char c = textArray[i];
                     
                     //character width
-                    int charWidth = font.getCharWidth(c);
+                    int charWidth = font.width(c, fontSize);
                     wordIPD.add(charWidth);
                     
                     //kerning
                     int kern = 0;
-                    if (kerning && (i > iThisStart)) {
+                    if (/*kerning && */(i > iThisStart)) {
                         char previous = textArray[i - 1];
-                        kern = font.getKernValue(previous, c) * font.getFontSize() / 1000;
+                        kern = font.kern(previous, c) * fontSize / 1000;
                         if (kern != 0) {
                             //log.info("Kerning between " + previous + " and " + c + ": " + kern);
                             addToLetterAdjust(i, kern);
@@ -771,7 +791,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             //log.info("Word: " + new String(textArray, iStartIndex, iStopIndex - iStartIndex));
             for (int i = iStartIndex; i < iStopIndex; i++) {
                 char c = textArray[i];
-                newIPD.add(new MinOptMax(font.getCharWidth(c)));
+                newIPD.add(new MinOptMax(font.width(c, fontSize)));
                 //if (i > iStartIndex) {
                 if (i < iStopIndex) {
                     MinOptMax la = this.letterAdjustArray[i + 1];

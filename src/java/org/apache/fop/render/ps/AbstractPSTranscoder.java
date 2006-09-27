@@ -77,7 +77,7 @@ public abstract class AbstractPSTranscoder extends AbstractFOPTranscoder {
      * Constructs a new <tt>AbstractPSTranscoder</tt>.
      */
     public AbstractPSTranscoder() {
-        super();
+        super(true);
     }
 
     protected abstract AbstractPSDocumentGraphics2D createDocumentGraphics2D();

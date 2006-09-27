@@ -29,7 +29,9 @@ import java.awt.geom.Area;
 import java.awt.geom.GeneralPath;
 
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fonts.FontInfo;
+
+import org.axsl.fontR.FontConsumer;
+import org.axsl.fontR.FontUse;
 
 /**
  * Keeps information about the current state of the Graphics2D currentGraphics.
@@ -48,8 +50,8 @@ public class Java2DGraphicsState {
 
     private int currentStrokeStyle;
 
-    /** Font configuration, passed from AWTRenderer */
-    private FontInfo fontInfo;
+    /** Font consumer, passed from AWTRenderer */
+    private FontConsumer fontConsumer;
 
     /** Initial AffinTransform passed by the renderer, includes scaling-info */
     private AffineTransform initialTransform;
@@ -57,12 +59,12 @@ public class Java2DGraphicsState {
     /**
      * State for storing graphics state.
      * @param graphics the graphics associated with the BufferedImage
-     * @param fontInfo the FontInfo from the renderer
+     * @param fontConsumer the FontConsumer from the renderer
      * @param at the initial AffineTransform containing the scale transformation
      */
-    public Java2DGraphicsState(Graphics2D graphics, FontInfo fontInfo,
+    public Java2DGraphicsState(Graphics2D graphics, FontConsumer fontConsumer,
             AffineTransform at) {
-        this.fontInfo = fontInfo;
+        this.fontConsumer = fontConsumer;
         this.currentGraphics = graphics;
         this.initialTransform = at;
         currentGraphics.setTransform(at);
@@ -119,25 +121,42 @@ public class Java2DGraphicsState {
     }
 
     /**
+<<<<<<< .mine
+     * @see org.apache.fop.render.java2d.RendererState#updateFont(org.axsl.font.FontUse,
+     * int, java.lang.StringBuffer)
+=======
      * Set the current font name. Check if the font name will change and then
      * set the new name.
      *
      * @param name the new font name
      * @param size the font size
      * @return true if the new Font changes the current Font
+>>>>>>> .r448139
      */
+<<<<<<< .mine
+    public boolean updateFont(FontUse fontUse, int size, StringBuffer pdf) {
+=======
     public boolean updateFont(String name, int size) {
+>>>>>>> .r448139
 
+<<<<<<< .mine
+=======
         FontMetricsMapper mapper = (FontMetricsMapper)fontInfo.getMetricsFor(name);
         boolean updateName = (!mapper.getFontName().equals(
                                     getGraph().getFont().getFontName()));
         boolean updateSize = (size != (getGraph().getFont().getSize() * 1000));
+>>>>>>> .r448139
 
-        if (updateName || updateSize) {
+        java.awt.Font awtFont = fontUse.getFont().getAWTFont(fontConsumer, size);
+        if (!getGraph().getFont().equals(awtFont)) {
             // the font name and/or the font size have changed
+<<<<<<< .mine
+            currentGraphics.setFont(awtFont);
+=======
             java.awt.Font font = mapper.getFont(size);
 
             currentGraphics.setFont(font);
+>>>>>>> .r448139
             return true;
         } else {
             return false;

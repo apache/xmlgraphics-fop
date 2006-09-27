@@ -19,7 +19,6 @@
  
 package org.apache.fop.pdf;
 
-import org.apache.fop.fonts.FontType;
 
 /**
  * Class representing a TrueType font.
@@ -41,7 +40,7 @@ public class PDFFontTrueType extends PDFFontNonBase14 {
                            Object encoding) {
 
         /* generic creation of PDF object */
-        super(fontname, FontType.TRUETYPE, basefont, encoding /* , mapping */);
+        super(fontname, PDFFont.TRUETYPE, basefont, encoding /* , mapping */);
     }
 
 }

@@ -25,7 +25,7 @@ import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.TextUtilities;
 import org.apache.batik.gvt.GraphicsNode;
 
-import org.apache.fop.fonts.FontInfo;
+import org.axsl.font.FontConsumer;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -42,10 +42,10 @@ public class PDFTextElementBridge extends SVGTextElementBridge {
 
     /**
      * Constructs a new bridge for the &lt;text> element.
-     * @param fi the font infomration
+     * @param fc the font consumer
      */
-    public PDFTextElementBridge(FontInfo fi) {
-        pdfTextPainter = new PDFTextPainter(fi);
+    public PDFTextElementBridge(FontConsumer fc) {
+        pdfTextPainter = new PDFTextPainter(fc);
     }
 
     /**

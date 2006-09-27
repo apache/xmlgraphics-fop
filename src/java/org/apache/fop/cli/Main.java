@@ -174,6 +174,7 @@ public class Main {
         } catch (Exception e) {
             if (options != null) {
                 options.getLogger().error("Exception", e);
+                e.printStackTrace();
             }
             if (options.getOutputFile() != null) {
                 options.getOutputFile().delete();

@@ -19,7 +19,6 @@
  
 package org.apache.fop.pdf;
 
-import org.apache.fop.fonts.FontType;
 
 /**
  * Class representing a Type1 or MMType1 font (not necessary for the base 14).
@@ -45,7 +44,7 @@ public class PDFFontType1 extends PDFFontNonBase14 {
                         Object encoding) {
 
         /* generic creation of PDF object */
-        super(fontname, FontType.TYPE1, basefont, encoding);
+        super(fontname, PDFFont.TYPE1, basefont, encoding);
     }
 
 }

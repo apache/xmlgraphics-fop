@@ -19,8 +19,6 @@
  
 package org.apache.fop.pdf;
 
-import org.apache.fop.fonts.FontType;
-
 /**
  * Class representing a font descriptor (/FontDescriptor object).
  * <p>
@@ -48,7 +46,10 @@ public class PDFFontDescriptor extends PDFObject {
     private AbstractPDFStream cidSet;
     // private String charSet = null;
 
-    private FontType subtype;
+    /**
+     * Font type. One of PDFFont.TYPE0, TYPE1, MMTYPE1, TRUETYPE
+     */
+    private byte subtype;
 
     /**
      * Create the /FontDescriptor object
@@ -111,7 +112,7 @@ public class PDFFontDescriptor extends PDFObject {
      * @param subtype the font type defined in the font stream
      * @param fontfile the stream containing an embedded font
      */
-    public void setFontFile(FontType subtype, AbstractPDFStream fontfile) {
+    public void setFontFile(byte subtype, AbstractPDFStream fontfile) {
         this.subtype = subtype;
         this.fontfile = fontfile;
     }
@@ -185,7 +186,7 @@ public class PDFFontDescriptor extends PDFObject {
             p.append(leading);
         }
         if (fontfile != null) {
-            if (subtype == FontType.TYPE1) {
+            if (subtype == PDFFont.TYPE1) {
                 p.append("\n/FontFile ");
             } else {
                 p.append("\n/FontFile2 ");

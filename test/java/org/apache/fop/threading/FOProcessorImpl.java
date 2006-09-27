@@ -19,6 +19,7 @@
 
 package org.apache.fop.threading;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 

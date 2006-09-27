@@ -24,15 +24,16 @@ import java.awt.geom.AffineTransform;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.DocumentLoader;
 import org.apache.batik.bridge.UserAgent;
-import org.apache.fop.fonts.FontInfo;
+
+import org.axsl.font.FontConsumer;
 
 /**
  * BridgeContext which registers the custom bridges for PDF output.
  */
 public class PDFBridgeContext extends BridgeContext {
     
-    /** The font list. */
-    private final FontInfo fontInfo;
+    /** The font consumer. */
+    private final FontConsumer fontConsumer;
 
     private AffineTransform linkTransform;
     
@@ -40,51 +41,51 @@ public class PDFBridgeContext extends BridgeContext {
      * Constructs a new bridge context.
      * @param userAgent the user agent
      * @param loader the Document Loader to use for referenced documents.
-     * @param fontInfo the font list for the text painter, may be null
+     * @param fontConsumer the font consumer, may be null
      *                 in which case text is painted as shapes
      * @param linkTransform AffineTransform to properly place links,
      *                      may be null
      */
     public PDFBridgeContext(UserAgent userAgent,
                             DocumentLoader loader,
-                            FontInfo fontInfo,
+                            FontConsumer fontConsumer,
                             AffineTransform linkTransform) {
         super(userAgent, loader);
-        this.fontInfo = fontInfo;
+        this.fontConsumer = fontConsumer;
         this.linkTransform = linkTransform;
     }
 
     /**
      * Constructs a new bridge context.
      * @param userAgent the user agent
-     * @param fontInfo the font list for the text painter, may be null
+     * @param fontConsumer the font consumer, may be null
      *                 in which case text is painted as shapes
      * @param linkTransform AffineTransform to properly place links,
      *                      may be null
      */
-    public PDFBridgeContext(UserAgent userAgent, FontInfo fontInfo, 
+    public PDFBridgeContext(UserAgent userAgent, FontConsumer fontConsumer, 
                 AffineTransform linkTransform) {
         super(userAgent);
-        this.fontInfo = fontInfo;
+        this.fontConsumer = fontConsumer;
         this.linkTransform = linkTransform;
     }
 
     /**
      * Constructs a new bridge context.
      * @param userAgent the user agent
-     * @param fontInfo the font list for the text painter, may be null
+     * @param fontConsumer the font consumer, may be null
      *                 in which case text is painted as shapes
      */
-    public PDFBridgeContext(UserAgent userAgent, FontInfo fontInfo) {
-        this(userAgent, fontInfo, null);
+    public PDFBridgeContext(UserAgent userAgent, FontConsumer fontConsumer) {
+        this(userAgent, fontConsumer, null);
     }
 
     /** @see org.apache.batik.bridge.BridgeContext#registerSVGBridges() */
     public void registerSVGBridges() {
         super.registerSVGBridges();
 
-        if (fontInfo != null) {
-            putBridge(new PDFTextElementBridge(fontInfo));
+        if (fontConsumer != null) {
+            putBridge(new PDFTextElementBridge(fontConsumer));
         }
 
         PDFAElementBridge pdfAElementBridge = new PDFAElementBridge();
@@ -101,6 +102,6 @@ public class PDFBridgeContext extends BridgeContext {
     // Make sure any 'sub bridge contexts' also have our bridges.
     public BridgeContext createBridgeContext() {
         return new PDFBridgeContext(getUserAgent(), getDocumentLoader(),
-                                    fontInfo, linkTransform);
+                                    fontConsumer, linkTransform);
     }
 }

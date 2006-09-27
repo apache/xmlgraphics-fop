@@ -83,7 +83,7 @@ public class PDFTranscoder extends AbstractFOPTranscoder
      * Constructs a new <tt>ImageTranscoder</tt>.
      */
     public PDFTranscoder() {
-        super();
+        super(false);
         this.handler = new FOPErrorHandler();
     }
 
@@ -119,7 +119,7 @@ public class PDFTranscoder extends AbstractFOPTranscoder
                              TranscoderOutput output) 
         throws TranscoderException {
 
-        graphics = new PDFDocumentGraphics2D();
+        graphics = new PDFDocumentGraphics2D(getFontMap());
         
         try {
             if (this.cfg != null) {
@@ -180,7 +180,7 @@ public class PDFTranscoder extends AbstractFOPTranscoder
 
     /** @see org.apache.batik.transcoder.SVGAbstractTranscoder#createBridgeContext() */
     protected BridgeContext createBridgeContext() {
-        BridgeContext ctx = new PDFBridgeContext(userAgent, graphics.getFontInfo());
+        BridgeContext ctx = new PDFBridgeContext(userAgent, graphics.getFontConsumer());
         return ctx;
     }
 

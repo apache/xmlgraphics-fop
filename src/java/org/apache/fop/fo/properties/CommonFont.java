@@ -28,10 +28,12 @@ import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.fonts.Font;
-import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.fonts.FontMetrics;
-import org.apache.fop.fonts.FontTriplet;
+
+import org.axsl.fontR.Font;
+import org.axsl.fontR.FontConsumer;
+import org.axsl.fontR.FontException;
+import org.axsl.fontR.FontServer;
+import org.axsl.fontR.FontUse;
 
 /**
  * Collection of properties used in
@@ -78,13 +80,17 @@ public class CommonFont {
      */
     public int fontWeight;
 
-    private Font fontState;
+    private FontServer fontServer;
+
+    private FontUse fontUse;
 
     /**
      * Create a CommonFont object.
      * @param pList The PropertyList to get properties from.
+     * @param fontServer the server from which to get the font
      */
-    public CommonFont(PropertyList pList) throws PropertyException {
+    public CommonFont(PropertyList pList, FontServer fontServer)
+            throws PropertyException {
         List lst = pList.get(Constants.PR_FONT_FAMILY).getList();
         fontFamily = new String[lst.size()];
         for (int i = 0, c = lst.size(); i < c; i++) {
@@ -101,8 +107,17 @@ public class CommonFont {
         fontStyle = pList.get(Constants.PR_FONT_STYLE).getEnum();
         fontVariant = pList.get(Constants.PR_FONT_VARIANT).getEnum();
         fontWeight = pList.get(Constants.PR_FONT_WEIGHT).getEnum();
+        this.fontServer = fontServer;
     }
-
+    
+    /**
+     * Return the font size based on the properties.
+     * @return the font size in millipoints.
+     */
+    public int getFontSize(PercentBaseContext context) {
+        return fontSize.getValue(context);
+    }
+     
     /** @return the first font-family name in the list */
     public String getFirstFontFamily() {
         return this.fontFamily[0];
@@ -121,58 +136,78 @@ public class CommonFont {
         this.fontFamily = new String[] {value};
         
     }
-    
+
     /**
-     * Create and return a Font object based on the properties. 
+     * Return a font use based on the properties.
      * 
-     * @param fontInfo
-     * @return a Font object.
+     * @param fontConsumer font consumer to which the returned font use will be associated
+     * @return a FontUse instance corresponding to the properties
      */
-    public Font getFontState(FontInfo fontInfo, PercentBaseContext context) {
-        if (fontState == null) {
+    public FontUse getFontState(FontConsumer fontConsumer, PercentBaseContext context) {
+        if (fontUse == null) {
             /**@todo this is ugly. need to improve. */
 
-            int font_weight = 400;
+            short font_weight = Font.FONT_WEIGHT_ANY;
             if (fontWeight == Constants.EN_BOLDER) {
                 // +100 from inherited
             } else if (fontWeight == Constants.EN_LIGHTER) {
                 // -100 from inherited
             } else {
                 switch (fontWeight) {
-                case Constants.EN_100: font_weight = 100; break;
-                case Constants.EN_200: font_weight = 200; break;
-                case Constants.EN_300: font_weight = 300; break;
-                case Constants.EN_400: font_weight = 400; break;
-                case Constants.EN_500: font_weight = 500; break;
-                case Constants.EN_600: font_weight = 600; break;
-                case Constants.EN_700: font_weight = 700; break;
-                case Constants.EN_800: font_weight = 800; break;
-                case Constants.EN_900: font_weight = 900; break;
+                case Constants.EN_100: font_weight = Font.FONT_WEIGHT_100; break;
+                case Constants.EN_200: font_weight = Font.FONT_WEIGHT_200; break;
+                case Constants.EN_300: font_weight = Font.FONT_WEIGHT_300; break;
+                case Constants.EN_400: font_weight = Font.FONT_WEIGHT_400; break;
+                case Constants.EN_500: font_weight = Font.FONT_WEIGHT_500; break;
+                case Constants.EN_600: font_weight = Font.FONT_WEIGHT_600; break;
+                case Constants.EN_700: font_weight = Font.FONT_WEIGHT_700; break;
+                case Constants.EN_800: font_weight = Font.FONT_WEIGHT_800; break;
+                case Constants.EN_900: font_weight = Font.FONT_WEIGHT_900; break;
                 }
             }
 
-            String style;
+            byte style;
             switch (fontStyle) {
-            case Constants.EN_ITALIC: 
-                style = "italic";
-                break;
-            case Constants.EN_OBLIQUE: 
-                style = "oblique";
-                break;
-            case Constants.EN_BACKSLANT: 
-                style = "backslant";
-                break;
+            case Constants.EN_ITALIC: style = Font.FONT_STYLE_ITALIC; break;
+            case Constants.EN_OBLIQUE: style = Font.FONT_STYLE_OBLIQUE; break;
+            case Constants.EN_BACKSLANT: style = Font.FONT_STYLE_BACKSLANT; break;
             default:
-                style = "normal";
+                style = Font.FONT_STYLE_NORMAL;
             }
-            // NOTE: this is incomplete. font-size may be specified with
-            // various kinds of keywords too
-            //int fontVariant = propertyList.get("font-variant").getEnum();
-            FontTriplet triplet = fontInfo.fontLookup(getFontFamily(), style,
-                                               font_weight);
-            fontState = fontInfo.getFontInstance(triplet, fontSize.getValue(context));
+            byte variant = fontVariant == Constants.EN_SMALL_CAPS ? Font.FONT_VARIANT_SMALL_CAPS
+                    : Font.FONT_VARIANT_NORMAL;
+            byte stretch;
+            /* TODO vh: handle narrower and wider */
+            switch (fontStretch) {
+            case Constants.EN_NORMAL: stretch = Font.FONT_STRETCH_NORMAL; break;
+            case Constants.EN_ULTRA_CONDENSED: stretch = Font.FONT_STRETCH_ULTRA_CONDENSED; break;
+            case Constants.EN_EXTRA_CONDENSED: stretch = Font.FONT_STRETCH_EXTRA_CONDENSED; break;
+            case Constants.EN_CONDENSED: stretch = Font.FONT_STRETCH_CONDENSED; break;
+            case Constants.EN_SEMI_CONDENSED: stretch = Font.FONT_STRETCH_SEMI_CONDENSED; break;
+            case Constants.EN_SEMI_EXPANDED: stretch = Font.FONT_STRETCH_SEMI_EXPANDED; break;
+            case Constants.EN_EXPANDED: stretch = Font.FONT_STRETCH_EXPANDED; break;
+            case Constants.EN_EXTRA_EXPANDED: stretch = Font.FONT_STRETCH_EXTRA_EXPANDED; break;
+            case Constants.EN_ULTRA_EXPANDED: stretch = Font.FONT_STRETCH_ULTRA_EXPANDED; break;
+            default: stretch = Font.FONT_STRETCH_NORMAL;
+            }
+            try {
+                fontUse = fontConsumer.selectFontXSL(Font.FONT_SELECTION_AUTO/*TODO vh*/,
+                        getFontFamily(), style, font_weight, variant,
+                        stretch, fontSize.getValue(context), ' '/*TODO vh*/);
+            } catch (FontException e) {
+                try {
+                    fontUse = fontConsumer.selectFontXSL(Font.FONT_SELECTION_AUTO, new String[] {"any"},
+                            Font.FONT_STYLE_ANY,
+                            Font.FONT_WEIGHT_ANY,
+                            Font.FONT_VARIANT_ANY,
+                            Font.FONT_STRETCH_ANY,
+                            10000, ' ');
+                } catch (FontException e1) {
+                    // Should never happen (see area.RenderPagesModel)
+                }
+            }
         }
-        return fontState;
+        return fontUse;
     }
 
 }

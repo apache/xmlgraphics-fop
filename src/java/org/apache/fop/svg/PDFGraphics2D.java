@@ -19,6 +19,7 @@
 
 package org.apache.fop.svg;
 
+import org.apache.fop.pdf.FontMap;
 import org.apache.fop.pdf.PDFConformanceException;
 import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.pdf.PDFResources;
@@ -34,13 +35,7 @@ import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFLink;
 import org.apache.fop.pdf.PDFAnnotList;
 import org.apache.fop.pdf.BitmapImage;
-import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.fonts.Font;
-import org.apache.fop.fonts.FontSetup;
-import org.apache.fop.fonts.FontTriplet;
-import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.image.JpegImage;
-import org.apache.fop.fonts.CIDFont;
 import org.apache.fop.render.pdf.FopPDFImage;
 
 import org.apache.xmlgraphics.java2d.AbstractGraphics2D;
@@ -52,6 +47,11 @@ import org.apache.batik.ext.awt.MultipleGradientPaint;
 import org.apache.batik.ext.awt.RenderingHintsKeyExt;
 import org.apache.batik.gvt.PatternPaint;
 import org.apache.batik.gvt.GraphicsNode;
+
+import org.axsl.fontR.Font;
+import org.axsl.fontR.FontConsumer;
+import org.axsl.fontR.FontException;
+import org.axsl.fontR.FontUse;
 
 import java.text.AttributedCharacterIterator;
 import java.text.CharacterIterator;
@@ -141,15 +141,21 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     protected int[] jpegCount = {0};
 
     /**
-     * The current font information.
+     * The font map.
      */
-    protected FontInfo fontInfo;
+    protected FontMap fontMap;
 
     /**
      * The override font state used when drawing text and the font cannot be
      * set using java fonts.
      */
-    protected Font ovFontState = null;
+    protected FontUse ovFontUse = null;
+
+    /**
+     * The override font size (in millipoint) used when drawing text and the font cannot be
+     * set using java fonts.
+     */
+    protected int ovFontSize;
 
     /**
      * the current stream to add PDF commands to
@@ -157,14 +163,14 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     protected StringWriter currentStream = new StringWriter();
 
     /**
-     * the current (internal) font name
+     * the current font use
      */
-    protected String currentFontName;
+    protected FontUse currentFontUse;
 
     /**
      * the current font size in millipoints
      */
-    protected float currentFontSize;
+    protected int currentFontSize;
 
     /**
      * The output stream for the pdf document.
@@ -180,21 +186,20 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * existing document.
      *
      * @param textAsShapes if true then draw text as shapes
-     * @param fi the current font information
+     * @param fontMap the font map
      * @param doc the pdf document for creating pdf objects
      * @param page the current resource context or page
      * @param pref the PDF reference of the current page
-     * @param font the current font name
-     * @param size the current font size
+     * @param fontUse the current font use
+     * @param size the current font size in millipoints
      */
-    public PDFGraphics2D(boolean textAsShapes, FontInfo fi, PDFDocument doc,
-                         PDFResourceContext page, String pref, String font, float size) {
-        this(textAsShapes);
+    public PDFGraphics2D(boolean textAsShapes, FontMap fontMap, PDFDocument doc,
+                         PDFResourceContext page, String pref, FontUse fontUse, int size) {
+        this(textAsShapes, fontMap);
         pdfDoc = doc;
         resourceContext = page;
-        currentFontName = font;
+        currentFontUse = fontUse;
         currentFontSize = size;
-        fontInfo = fi;
         pageRef = pref;
         graphicsState = new PDFState();
     }
@@ -203,9 +208,11 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * Create a new PDFGraphics2D.
      *
      * @param textAsShapes true if drawing text as shapes
+     * @param fontMap the mappings of fonts to their corresponding internal names
      */
-    protected PDFGraphics2D(boolean textAsShapes) {
+    protected PDFGraphics2D(boolean textAsShapes, FontMap fontMap) {
         super(textAsShapes);
+        this.fontMap = fontMap;
     }
 
     /**
@@ -218,17 +225,26 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         super(g);
         this.pdfDoc = g.pdfDoc;
         this.resourceContext = g.resourceContext;
-        this.currentFontName = g.currentFontName;
+        this.currentFontUse = g.currentFontUse;
         this.currentFontSize = g.currentFontSize;
-        this.fontInfo = g.fontInfo;
+        this.fontMap = g.fontMap;
         this.pageRef = g.pageRef;
         this.graphicsState = g.graphicsState;
         this.currentStream = g.currentStream;
         this.jpegCount = g.jpegCount;
         this.outputStream = g.outputStream;
-        this.ovFontState = g.ovFontState;
+        this.ovFontUse = g.ovFontUse;
+        this.ovFontSize = g.ovFontSize;
     }
 
+    /**
+     * Return the font consumer associated to this document.
+     * @return the font consumer.
+     */
+    public FontConsumer getFontConsumer() {
+        return fontMap.getFontConsumer();
+    }
+    
     /**
      * Creates a new <code>Graphics</code> object that is
      * a copy of this <code>Graphics</code> object.
@@ -312,15 +328,27 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     }
     
     /**
-     * Set the override font state for drawing text.
+     * Set the override font use for drawing text.
      * This is used by the PDF text painter so that it can temporarily
      * set the font state when a java font cannot be used.
      * The next drawString will use this font state.
      *
-     * @param infont the font state to use
+     * @param infont the FontUse to use
      */
-    public void setOverrideFontState(Font infont) {
-        ovFontState = infont;
+    public void setOverrideFontUse(FontUse infont) {
+        ovFontUse = infont;
+    }
+
+    /**
+     * Set the override font size for drawing text.
+     * This is used by the PDF text painter so that it can temporarily
+     * set the font state when a java font cannot be used.
+     * The next drawString will use this font state.
+     *
+     * @param insize the font size to use
+     */
+    public void setOverrideFontSize(int insize) {
+        ovFontSize = insize;
     }
 
     /**
@@ -655,9 +683,9 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      */
     public void dispose() {
         pdfDoc = null;
-        fontInfo = null;
+        fontMap = null;
         currentStream = null;
-        currentFontName = null;
+        currentFontUse = null;
     }
 
     /**
@@ -1056,14 +1084,11 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     private boolean createPattern(PatternPaint pp, boolean fill) {
         preparePainting();
 
-        FontInfo fontInfo = new FontInfo();
-        FontSetup.setup(fontInfo, null, null);
-
         PDFResources res = pdfDoc.getFactory().makeResources();
         PDFResourceContext context = new PDFResourceContext(res);
-        PDFGraphics2D pattGraphic = new PDFGraphics2D(textAsShapes, fontInfo,
+        PDFGraphics2D pattGraphic = new PDFGraphics2D(textAsShapes, fontMap,
                                         pdfDoc, context, pageRef,
-                                        "", 0);
+                                        null, 0);
         pattGraphic.setGraphicContext(new GraphicContext());
         pattGraphic.gc.validateTransformStack();
         pattGraphic.setRenderingHints(this.getRenderingHints());
@@ -1127,7 +1152,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         /** @todo see if pdfDoc and res can be linked here,
         (currently res <> PDFDocument's resources) so addFonts() 
         can be moved to PDFDocument class */
-        res.addFonts(pdfDoc, fontInfo);
+//        res.addFonts(pdfDoc, fontInfo);
 
         PDFPattern myPat = pdfDoc.getFactory().makePattern(
                                 resourceContext, 1, res, 1, 1, bbox,
@@ -1413,35 +1438,49 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     public void drawString(String s, float x, float y) {
         preparePainting();
 
-        Font fontState;
         AffineTransform fontTransform = null;
-        if (ovFontState == null) {
+        FontUse fontUse = null;
+        int size;
+        if (ovFontUse == null) {
+            FontConsumer fontConsumer = fontMap.getFontConsumer();
             java.awt.Font gFont = getFont();
             fontTransform = gFont.getTransform();
             String n = gFont.getFamily();
             if (n.equals("sanserif")) {
                 n = "sans-serif";
             }
-            float siz = gFont.getSize2D();
-            String style = gFont.isItalic() ? "italic" : "normal";
-            int weight = gFont.isBold() ? Font.BOLD : Font.NORMAL;
-            FontTriplet triplet = fontInfo.fontLookup(n, style, weight);
-            fontState = fontInfo.getFontInstance(triplet, (int)(siz * 1000 + 0.5));
+            // TODO adapt
+//            size = gFont.getSize() * 1000;
+            size = (int) gFont.getSize2D() * 1000;
+            byte style = gFont.isItalic() ? Font.FONT_STYLE_ITALIC : Font.FONT_STYLE_NORMAL;
+            short weight = gFont.isBold() ? Font.FONT_WEIGHT_BOLD : Font.FONT_WEIGHT_NORMAL;
+            try {
+                fontUse = fontConsumer.selectFontXSL(Font.FONT_SELECTION_AUTO,
+                        new String[] {n}, style, weight, Font.FONT_VARIANT_NORMAL,
+                        Font.FONT_STRETCH_NORMAL, size, s.charAt(0));
+            } catch (FontException e) {
+                try {
+                    fontUse = fontConsumer.selectFontXSL(Font.FONT_SELECTION_AUTO,
+                            new String[] {"any"},
+                            Font.FONT_STYLE_ANY,
+                            Font.FONT_WEIGHT_ANY,
+                            Font.FONT_VARIANT_ANY,
+                            Font.FONT_STRETCH_ANY,
+                            size, s.charAt(0));
+                } catch (FontException e1) { /* Should never happen */ }
+            }
         } else {
-            fontState = fontInfo.getFontInstance(
-                    ovFontState.getFontTriplet(), ovFontState.getFontSize());
-            ovFontState = null;
+            fontUse = ovFontUse;
+            ovFontUse = null;
+            size = ovFontSize;
         }
-        String name;
-        float size;
-        name = fontState.getFontName();
-        size = (float)fontState.getFontSize() / 1000f;
-
-        if ((!name.equals(this.currentFontName))
+        
+        if ((!fontUse.equals(this.currentFontUse))
                 || (size != this.currentFontSize)) {
-            this.currentFontName = name;
+            this.currentFontUse = fontUse;
             this.currentFontSize = size;
-            currentStream.write("/" + name + " " + size + " Tf\n");
+            String name = fontMap.getInternalName(fontUse);
+            currentStream.write("/" + name + " " + ((float)size) / 1000f + " Tf\n");
 
         }
 
@@ -1465,22 +1504,15 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         Map kerning = null;
         boolean kerningAvailable = false;
 
+        /* TODO vh: kerning is yet unimplemented
         kerning = fontState.getKerning();
         if (kerning != null && !kerning.isEmpty()) {
             kerningAvailable = true;
         }
+        */
 
         // This assumes that *all* CIDFonts use a /ToUnicode mapping
-        boolean useMultiByte = false;
-        org.apache.fop.fonts.Typeface f =
-            (org.apache.fop.fonts.Typeface)fontInfo.getFonts().get(name);
-        if (f instanceof LazyFont) {
-            if (((LazyFont) f).getRealFont() instanceof CIDFont) {
-                useMultiByte = true;
-            }
-        } else if (f instanceof CIDFont) {
-            useMultiByte = true;
-        }
+        boolean useMultiByte = fontUse.getFont().getFontComplexity() == Font.FONT_COMPOSITE;
 
         // String startText = useMultiByte ? "<FEFF" : "(";
         String startText = useMultiByte ? "<" : "(";
@@ -1513,7 +1545,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         int l = s.length();
 
         for (int i = 0; i < l; i++) {
-            char ch = fontState.mapChar(s.charAt(i));
+            int ch = fontUse.encodeCharacter(s.charAt(i));
 
             if (!useMultiByte) {
                 if (ch > 127) {
@@ -1534,9 +1566,9 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             }
 
             if (kerningAvailable && (i + 1) < l) {
-                addKerning(currentStream, (new Integer((int)ch)),
-                           (new Integer((int)fontState.mapChar(s.charAt(i + 1)))),
-                           kerning, startText, endText);
+//                addKerning(currentStream, (new Integer((int)ch)),
+//                           (new Integer((int)fontState.mapChar(s.charAt(i + 1)))),
+//                           kerning, startText, endText);
             }
 
         }
@@ -1631,16 +1663,17 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                 ch = iterator.next()) {
             //Map attr = iterator.getAttributes();
 
-            String name = fontState.getFontName();
-            int size = fontState.getFontSize();
-            if ((!name.equals(this.currentFontName))
-                    || (size != this.currentFontSize)) {
-                this.currentFontName = name;
-                this.currentFontSize = size;
-                currentStream.write("/" + name + " " + (size / 1000)
-                                    + " Tf\n");
-
-            }
+            // TODO vh: commented out because obsolete
+            // anyway it couldn't work (NPE because fontState == null)
+//            int size = fontState.getFontSize();
+//            if ((!fontUse.equals(this.currentFontUse))
+//                    || (size != this.currentFontSize)) {
+//                this.currentFontUse = fontUse;
+//                this.currentFontSize = size;
+//                currentStream.write("/" + name + " " + (size / 1000)
+//                                    + " Tf\n");
+//
+//            }
 
             currentStream.write(PDFNumber.doubleOut(vals[0], DEC) + " "
                                 + PDFNumber.doubleOut(vals[1], DEC) + " "

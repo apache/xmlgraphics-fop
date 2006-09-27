@@ -19,8 +19,6 @@
  
 package org.apache.fop.pdf;
 
-import org.apache.fop.fonts.FontType;
-
 /**
  * Class representing a /Font object.
  * <p>
@@ -32,6 +30,31 @@ import org.apache.fop.fonts.FontType;
  */
 public class PDFFont extends PDFObject {
 
+    /* Copied from FOray PDFFont.java */
+    /** Font subtype indicating a composite font. */
+    public static final byte TYPE0 = 0;
+
+    /** Font subtype indicating a Type 1 simple font. */
+    public static final byte TYPE1 = 1;
+
+    /** Font subtype indicating a Multiple Master Type 1 simple font. */
+    public static final byte MMTYPE1 = 2;
+
+    /** Font subtype indicating a Type 3 simple font. */
+    public static final byte TYPE3 = 3;
+
+    /** Font subtype indicating a TrueType simple font. */
+    public static final byte TRUETYPE = 4;
+
+    /** Unknown font type. */
+    public static final byte OTHER = 5;
+
+    /** Font subtype names as output in the PDF. */
+    protected static final String[] TYPE_NAMES /* The order is important here. */
+            = {"Type0", "Type1", "MMType1", "Type3", "TrueType", "Other" };
+    /* End of copy from PDFFont.java */
+
+    
     /**
      * the internal name for the font (eg "F1")
      */
@@ -39,9 +62,9 @@ public class PDFFont extends PDFObject {
 
     /**
      * the font's subtype
-     * (as defined by the constants FontType: TYPE0, TYPE1, MMTYPE1, TYPE3, TRUETYPE)
+     * (as defined by the constants in PDFFont: TYPE0, TYPE1, MMTYPE1, TYPE3, TRUETYPE)
      */
-    protected FontType subtype;
+    protected byte subtype;
 
     /**
      * the base font name (eg "Helvetica")
@@ -70,7 +93,7 @@ public class PDFFont extends PDFObject {
      * @param basefont the base font name
      * @param encoding the character encoding schema used by the font
      */
-    public PDFFont(String fontname, FontType subtype,
+    public PDFFont(String fontname, byte subtype,
                    String basefont,
                    Object encoding /* , PDFToUnicode mapping */) {
 
@@ -89,29 +112,27 @@ public class PDFFont extends PDFObject {
      * factory method with the basic parameters
      *
      * @param fontname the internal name for the font
-     * @param subtype the font's subtype
+     * @param subtype the font's subtype (one of TYPE0, TYPE1, MMTYPE1, TYPE3 or TRUETYPE)
      * @param basefont the base font name
      * @param encoding the character encoding schema used by the font
      * @return the generated PDFFont object
      */
     public static PDFFont createFont(String fontname,
-                                     FontType subtype, String basefont,
+                                     byte subtype, String basefont,
                                      Object encoding) {
-        if (subtype == FontType.TYPE0) {
+        if (subtype == TYPE0) {
             return new PDFFontType0(fontname, basefont,
                                     encoding);
-        } else if ((subtype == FontType.TYPE1)
-                || (subtype == FontType.MMTYPE1)) {
-            return new PDFFontType1(fontname, basefont,
-                                    encoding);
-        } else if (subtype == FontType.TYPE3) {
-            //return new PDFFontType3(number, fontname, basefont, encoding);
+        } else if ((subtype == TYPE1)
+                || (subtype == MMTYPE1)) {
+            return new PDFFontType1(fontname, basefont, encoding);
+        } else if (subtype == TYPE3) {
+//            //return new PDFFontType3(number, fontname, basefont, encoding);
             return null; //NYI
-        } else if (subtype == FontType.TRUETYPE) {
-            return new PDFFontTrueType(fontname, basefont,
-                                       encoding);
+        } else if (subtype == TRUETYPE) {
+            return new PDFFontTrueType(fontname, basefont, encoding);
         } else {
-            return null;    // should not happend
+            return null;    // should not happen
         }
     }
 
@@ -120,7 +141,7 @@ public class PDFFont extends PDFObject {
      * for Type1, MMType1 and TrueType
      *
      * @param fontname the internal name for the font
-     * @param subtype the font's subtype
+     * @param subtype the font's subtype (one of TYPE0, TYPE1, MMTYPE1, TYPE3 or TRUETYPE)
      * @param basefont the base font name
      * @param encoding the character encoding schema used by the font
      * @param firstChar the first character code in the font
@@ -130,27 +151,27 @@ public class PDFFont extends PDFObject {
      * @return the generated PDFFont object
      */
     public static PDFFont createFont(String fontname,
-                                     FontType subtype, String basefont,
+                                     byte subtype, String basefont,
                                      Object encoding, int firstChar,
                                      int lastChar, PDFArray widths,
                                      PDFFontDescriptor descriptor) {
 
         PDFFontNonBase14 font;
-        if (subtype == FontType.TYPE0) {
+        if (subtype == TYPE0) {
             font = new PDFFontType0(fontname, basefont,
                                     encoding);
             font.setDescriptor(descriptor);
             return font;
-        } else if ((subtype == FontType.TYPE1) 
-                || (subtype == FontType.MMTYPE1)) {
+        } else if ((subtype == TYPE1) 
+                || (subtype == MMTYPE1)) {
             font = new PDFFontType1(fontname, basefont,
                                     encoding);
             font.setWidthMetrics(firstChar, lastChar, widths);
             font.setDescriptor(descriptor);
             return font;
-        } else if (subtype == FontType.TYPE3) {
+        } else if (subtype == TYPE3) {
             return null; //NYI, should not happend
-        } else if (subtype == FontType.TRUETYPE) {
+        } else if (subtype == TRUETYPE) {
             font = new PDFFontTrueType(fontname, basefont,
                                        encoding);
             font.setWidthMetrics(firstChar, lastChar, widths);
@@ -174,19 +195,15 @@ public class PDFFont extends PDFObject {
      * @param fontType font type
      * @return String corresponding PDF name
      */
-    protected String getPDFNameForFontType(FontType fontType) {
-        if (fontType == FontType.TYPE0) {
-            return fontType.getName();
-        } else if (fontType == FontType.TYPE1) {
-            return fontType.getName();
-        } else if (fontType == FontType.MMTYPE1) {
-            return fontType.getName();
-        } else if (fontType == FontType.TYPE3) {
-            return fontType.getName();
-        } else if (fontType == FontType.TRUETYPE) {
-            return fontType.getName();
-        } else {
-            throw new IllegalArgumentException("Unsupported font type: " + fontType.getName());
+    protected String getPDFNameForFontType(byte fontType) {
+        switch (fontType) {
+        case TYPE0:
+        case TYPE1:
+        case MMTYPE1:
+        case TYPE3:
+        case TRUETYPE: return TYPE_NAMES[fontType];
+        default:
+                throw new IllegalArgumentException("Unsupported font type");
         }
     }
 

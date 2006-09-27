@@ -33,6 +33,9 @@ the location of this file.
 
   <!-- Base URL for resolving relative URLs -->
   <base>.</base>
+  <!-- URL for the font-configuration file. If relative, then it is set
+  relative to the base URL -->
+  <font-config-file>/path/to/Fop/conf/fonts.xconf</font-config-file>
   
   <!-- Source resolution in dpi (dots/pixels per inch) for determining the size of pixels in SVG and bitmap images, default: 72dpi -->
   <source-resolution>72</source-resolution>

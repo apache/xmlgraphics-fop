@@ -25,7 +25,8 @@ import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.fo.flow.Leader;
-import org.apache.fop.fonts.Font;
+import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.layoutmgr.InlineKnuthSequence;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthGlue;
@@ -41,15 +42,19 @@ import org.apache.fop.traits.MinOptMax;
 
 import java.util.List;
 import java.util.LinkedList;
-import org.apache.fop.fo.FObj;
+
+import org.axsl.fontR.FontConsumer;
+import org.axsl.fontR.FontUse;
 
 /**
  * LayoutManager for the fo:leader formatting object
  */
 public class LeaderLayoutManager extends LeafNodeLayoutManager {
     private Leader fobj;
-    private Font font = null;
-    
+    FontUse fontUse = null;
+    private int fontSize;
+    private FontConsumer fontConsumer;
+
     private LinkedList contentList = null;
     private ContentLayoutManager clm = null;
     
@@ -67,7 +72,10 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
     
     /** @see org.apache.fop.layoutmgr.LayoutManager#initialize */
     public void initialize() {
-        font = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo(), this);
+        fontConsumer = fobj.getFOEventHandler().getFontConsumer();
+        CommonFont commonFont = fobj.getCommonFont();        
+        fontUse = commonFont.getFontState(fontConsumer, this);
+        fontSize = commonFont.getFontSize(this);
         // the property leader-alignment does not affect vertical positioning
         // (see section 7.21.1 in the XSL Recommendation)
         // setAlignment(node.getLeaderAlignment());
@@ -131,12 +139,13 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             TextArea t = new TextArea();
             char dot = '.'; // userAgent.getLeaderDotCharacter();
 
-            int width = font.getCharWidth(dot);
+            int width = fontUse.getFont().width(dot, fontSize);
+            fontUse.registerCharUsed(dot);
             t.addWord("" + dot, 0);
             t.setIPD(width);
             t.setBPD(width);
             t.setBaselineOffset(width);
-            TraitSetter.addFontTraits(t, font);
+            TraitSetter.addFontTraits(t, fontUse, fontSize);
             t.addTrait(Trait.COLOR, fobj.getColor());
             Space spacer = null;
             if (fobj.getLeaderPatternWidth().getValue(this) > width) {

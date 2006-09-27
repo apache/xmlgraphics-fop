@@ -49,16 +49,16 @@ import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.SpaceSpecifier;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.LineArea;
+import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.traits.MinOptMax;
 
 import java.util.ListIterator;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import org.apache.fop.area.Trait;
-import org.apache.fop.fonts.Font;
 
-import org.apache.fop.traits.MinOptMax;
+import org.axsl.fontR.FontUse;
 
 /**
  * LayoutManager for lines. It builds one or more lines containing
@@ -560,9 +560,13 @@ public class LineLayoutManager extends InlineStackingLayoutManager
 
     /** @see org.apache.fop.layoutmgr.LayoutManager */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
-        Font fs = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo(), this);
-        alignmentContext
-          = new AlignmentContext(fs, lineHeight.getValue(this), context.getWritingMode());
+        FontUse fontUse = fobj.getCommonFont().getFontState(
+                fobj.getFOEventHandler().getFontConsumer(), this);
+        int fontSize = fobj.getCommonFont().getFontSize(this);
+        alignmentContext = new AlignmentContext(fontUse.getFont(),
+                                                fontSize,
+                                                lineHeight.getValue(this),
+                                                context.getWritingMode());
         context.setAlignmentContext(alignmentContext);
         // Get a break from currently active child LM
         // Set up constraints for inline level managers

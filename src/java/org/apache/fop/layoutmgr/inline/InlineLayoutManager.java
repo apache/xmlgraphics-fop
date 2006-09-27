@@ -35,7 +35,6 @@ import org.apache.fop.fo.pagination.Title;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.SpaceProperty;
-import org.apache.fop.fonts.Font;
 import org.apache.fop.layoutmgr.BlockKnuthSequence;
 import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BreakElement;
@@ -50,6 +49,8 @@ import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
+
+import org.axsl.fontR.FontUse;
 
 /**
  * LayoutManager for objects which stack children in the inline direction,
@@ -66,7 +67,8 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
 
     private Position auxiliaryPosition;
 
-    private Font font;
+    private FontUse fontUse;
+    private int fontSize;
 
     /** The alignment adjust property */
     protected Length alignmentAdjust;
@@ -101,7 +103,9 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     /** @see LayoutManager#initialize */
     public void initialize() {
         int padding = 0;
-        font = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo(), this);
+        fontUse = fobj.getCommonFont().getFontState(
+                fobj.getFOEventHandler().getFontConsumer(), this);
+        fontSize = fobj.getCommonFont().getFontSize(this);
         lineHeight = fobj.getLineHeight();
         borderProps = fobj.getCommonBorderPaddingBackground();
         inlineProps = fobj.getCommonMarginInline();
@@ -229,12 +233,13 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         SpaceSpecifier leadingSpace = context.getLeadingSpace();
         
         if (fobj instanceof Title) {
-            alignmentContext = new AlignmentContext(font,
+            alignmentContext = new AlignmentContext(fontUse.getFont(), fontSize,
                                     lineHeight.getOptimum(this).getLength().getValue(this),
                                     context.getWritingMode());
                                                     
         } else {
-            alignmentContext = new AlignmentContext(font
+            alignmentContext = new AlignmentContext(fontUse.getFont()
+                                    , fontSize
                                     , lineHeight.getOptimum(this).getLength().getValue(this)
                                     , alignmentAdjust
                                     , alignmentBaseline

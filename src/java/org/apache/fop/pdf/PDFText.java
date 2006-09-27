@@ -176,11 +176,11 @@ public class PDFText extends PDFObject {
      * @param c character to encode
      * @return the encoded character
      */
-    public static final String toUnicodeHex(char c) {
+    public static final String toUnicodeHex(int c) {
         final StringBuffer buf = new StringBuffer(4);
         final byte[] uniBytes;
         try {
-            final char[] a = {c};
+            final char[] a = {(char)c/*TODO vh*/};
             uniBytes = new String(a).getBytes("UTF-16BE");
         } catch (java.io.UnsupportedEncodingException uee) {
             throw new CascadingRuntimeException("Incompatible VM", uee);

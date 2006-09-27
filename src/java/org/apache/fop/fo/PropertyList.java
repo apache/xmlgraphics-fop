@@ -648,7 +648,7 @@ public abstract class PropertyList {
      * @throws PropertyException if there's a problem while processing the properties
      */
     public CommonFont getFontProps() throws PropertyException {
-        return new CommonFont(this);
+        return new CommonFont(this, this.fobj.getFOEventHandler().getFontServer());
     }
     
     /**

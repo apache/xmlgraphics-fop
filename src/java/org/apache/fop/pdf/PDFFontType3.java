@@ -19,7 +19,6 @@
  
 package org.apache.fop.pdf;
 
-import org.apache.fop.fonts.FontType;
 
 /**
  * Class representing a Type3 font.
@@ -63,7 +62,7 @@ public class PDFFontType3 extends PDFFontNonBase14 {
                         Object encoding) {
 
         /* generic creation of PDF object */
-        super(fontname, FontType.TYPE3, basefont, encoding /* , mapping */);
+        super(fontname, PDFFont.TYPE3, basefont, encoding /* , mapping */);
 
         this.fontBBox = null;
         this.fontMatrix = null;
@@ -87,7 +86,7 @@ public class PDFFontType3 extends PDFFontNonBase14 {
                         PDFCharProcs charProcs) {
 
         /* generic creation of PDF object */
-        super(fontname, FontType.TYPE3, basefont, encoding /* , mapping */);
+        super(fontname, PDFFont.TYPE3, basefont, encoding /* , mapping */);
 
         this.fontBBox = fontBBox;
         this.fontMatrix = fontMatrix;

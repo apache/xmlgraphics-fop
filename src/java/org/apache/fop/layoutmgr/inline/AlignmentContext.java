@@ -23,7 +23,8 @@ import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.datatypes.SimplePercentBaseContext;
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fonts.Font;
+
+import org.axsl.fontR.Font;
 
 /**
  * The alignment context is carried within a LayoutContext and as
@@ -110,6 +111,7 @@ public class AlignmentContext implements Constants {
     /**
      * Creates a new instance of AlignmentContext
      * @param font the font
+     * @param fontSize the font size in millipoints
      * @param lineHeight the computed value of the lineHeight property
      * @param alignmentAdjust the alignment-adjust property
      * @param alignmentBaseline the alignment-baseline property
@@ -118,17 +120,18 @@ public class AlignmentContext implements Constants {
      * @param parentAlignmentContext the parent alignment context
      */
     public AlignmentContext(Font font
+                            , int fontSize
                             , int lineHeight
                             , Length alignmentAdjust
                             , int alignmentBaseline
                             , Length baselineShift
                             , int dominantBaseline
                             , AlignmentContext parentAlignmentContext) {
-        this.areaHeight = font.getAscender() - font.getDescender();
+        this.areaHeight = font.getAscender(fontSize) - font.getDescender(fontSize);
         this.lineHeight = lineHeight;
         this.parentAlignmentContext = parentAlignmentContext;
         this.scaledBaselineTable = parentAlignmentContext.getScaledBaselineTable();
-        this.xHeight = font.getXHeight();
+        this.xHeight = font.getXHeight(fontSize);
         setAlignmentBaselineIdentifier(alignmentBaseline
                                        , parentAlignmentContext.getDominantBaselineIdentifier());
         setBaselineShift(baselineShift);
@@ -153,11 +156,13 @@ public class AlignmentContext implements Constants {
                 dominantBaselineIdentifier = dominantBaseline;
                 break;
         }
-        actualBaselineTable = ScaledBaselineTableFactory.makeFontScaledBaselineTable(font, 
+        actualBaselineTable = ScaledBaselineTableFactory.makeFontScaledBaselineTable(font,
+                                                            fontSize, 
                                                             dominantBaselineIdentifier, 
                                                             scaledBaselineTable.getWritingMode());
         if (newScaledBaselineTableRequired) {
-            scaledBaselineTable = ScaledBaselineTableFactory.makeFontScaledBaselineTable(font, 
+            scaledBaselineTable = ScaledBaselineTableFactory.makeFontScaledBaselineTable(font,
+                                    fontSize,
                                     dominantBaselineIdentifier, 
                                     scaledBaselineTable.getWritingMode());
         }
@@ -168,19 +173,20 @@ public class AlignmentContext implements Constants {
      * Creates a new instance of AlignmentContext based simply
      * on the font and the writing mode.
      * @param font the font
+     * @param fontSize the font size in millipoints
      * @param lineHeight the computed value of the lineHeight property
      * @param writingMode the current writing mode
      */
-    public AlignmentContext(Font font, int lineHeight, int writingMode) {
-        this.areaHeight = font.getAscender() - font.getDescender();
+    public AlignmentContext(Font font, int fontSize, int lineHeight, int writingMode) {
+        this.areaHeight = font.getAscender(fontSize) - font.getDescender(fontSize);
         this.lineHeight = lineHeight;
-        this.xHeight = font.getXHeight();
+        this.xHeight = font.getXHeight(fontSize);
         this.parentAlignmentContext = null;
-        this.scaledBaselineTable 
-                    = ScaledBaselineTableFactory.makeFontScaledBaselineTable(font, writingMode);
+        this.scaledBaselineTable = ScaledBaselineTableFactory.
+                makeFontScaledBaselineTable(font, fontSize, writingMode);
         this.actualBaselineTable = scaledBaselineTable;
         this.alignmentBaselineIdentifier = getDominantBaselineIdentifier();
-        this.alignmentPoint = font.getAscender();
+        this.alignmentPoint = font.getAscender(fontSize);
         this.baselineShiftValue = 0;
     }
     

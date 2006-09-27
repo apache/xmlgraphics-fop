@@ -22,11 +22,6 @@ package org.apache.fop.render;
 // FOP
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Trait;
-import org.apache.fop.fonts.Font;
-import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.fonts.FontResolver;
-import org.apache.fop.fonts.FontSetup;
-import org.apache.fop.fonts.FontTriplet;
 import org.w3c.dom.Document;
 
 // Java
@@ -35,25 +30,26 @@ import java.awt.geom.Rectangle2D;
 import java.util.List;
 import java.util.Map;
 
+// aXSL
+import org.axsl.fontR.FontConsumer;
+
 /** Abstract base class of "Print" type renderers.  */
 public abstract class PrintRenderer extends AbstractRenderer {
 
-    /** Font configuration */
-    protected FontInfo fontInfo;
-
-    /** list of fonts */
-    protected List fontList = null;
+    /** Font consumer */
+    protected FontConsumer fontConsumer;
 
     /**
-     * Set up the font info
+     * Set up the font consumer
      *
-     * @param inFontInfo  font info to set up
+     * @param inFontConsumer  font consumer to set up
      */
-    public void setupFontInfo(FontInfo inFontInfo) {
-        this.fontInfo = inFontInfo;
-        FontResolver resolver = new DefaultFontResolver(userAgent);
-        FontSetup.setup(fontInfo, fontList, resolver, 
-                userAgent.getFactory().isBase14KerningEnabled());
+    public void setupFontConsumer(FontConsumer inFontConsumer) {
+        this.fontConsumer = inFontConsumer;
+        // TODO vh: adaptation needed
+//        FontResolver resolver = new DefaultFontResolver(userAgent);
+//        FontSetup.setup(fontInfo, fontList, resolver, 
+//                userAgent.getFactory().isBase14KerningEnabled());
     }
 
     /**
@@ -61,9 +57,11 @@ public abstract class PrintRenderer extends AbstractRenderer {
      * @param area the area from which to retrieve the font triplet information
      * @return the internal font key (F1, F2 etc.) or null if not found
      */
+    // TODO vh: re-enable
     protected String getInternalFontNameForArea(Area area) {
-        FontTriplet triplet = (FontTriplet)area.getTrait(Trait.FONT);
-        return fontInfo.getInternalFontKey(triplet);
+    	return null;
+//        FontTriplet triplet = (FontTriplet)area.getTrait(Trait.FONT);
+//        return fontInfo.getInternalFontKey(triplet);
     }
     
     /**
@@ -71,11 +69,12 @@ public abstract class PrintRenderer extends AbstractRenderer {
      * @param area the area from which to retrieve the font triplet information
      * @return the requested Font instance or null if not found
      */
-    protected Font getFontFromArea(Area area) {
-        FontTriplet triplet = (FontTriplet)area.getTrait(Trait.FONT);
-        int size = ((Integer)area.getTrait(Trait.FONT_SIZE)).intValue();
-        return fontInfo.getFontInstance(triplet, size);
-    }
+    // TODO vh: re-enable
+//    protected Font getFontFromArea(Area area) {
+//        FontTriplet triplet = (FontTriplet)area.getTrait(Trait.FONT);
+//        int size = ((Integer)area.getTrait(Trait.FONT_SIZE)).intValue();
+//        return fontInfo.getFontInstance(triplet, size);
+//    }
     
     /**
      * Lightens up a color for groove, ridge, inset and outset border effects.

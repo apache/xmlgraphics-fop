@@ -55,8 +55,6 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.ElementMappingRegistry;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
-import org.apache.fop.fonts.Font;
-import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
 import org.apache.fop.traits.BorderProps;

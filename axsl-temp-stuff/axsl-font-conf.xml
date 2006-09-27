@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE axsl-font-config
+SYSTEM "file:///tmp/foray-links/axsl/doc/web/dtds/0.1/en/axsl-font-config.dtd">
+
+<!--  This file is a sample aXSL font configuration file. -->
+
+<axsl-font-config embed="subset"
+  xml:base="file:///tmp/foray-links/config/">
+
+  <server setup-free-standing-fonts="true"
+          setup-system-fonts="true">
+    <parameter
+        key="base14-root"
+	value="file:///tmp/foray-links/foray-font/resource/base-14/"/>
+  </server>
+
+  <!-- The Base-14 fonts. -->
+  <font-family name="Helvetica" embed="none" xml:base="{base14-root}">
+    <family-member
+      style="normal"
+      weight="normal">
+      <font
+        id="Base14-Helvetica"
+        metrics-file="Helvetica.afm"/>
+    </family-member>
+    <family-member
+      style="italic"
+      weight="normal">
+      <font
+        id="Base14-Helvetica-Oblique"
+        metrics-file="Helvetica-Oblique.afm"/>
+    </family-member>
+    <family-member
+      style="normal"
+      weight="bold">
+      <font
+        id="Base14-Helvetica-Bold"
+        metrics-file="Helvetica-Bold.afm"/>
+    </family-member>
+    <family-member
+      style="italic"
+      weight="bold">
+      <font
+        id="Base14-Helvetica-BoldOblique"
+        metrics-file="Helvetica-BoldOblique.afm"/>
+    </family-member>
+  </font-family>
+  <font-family name="Times" embed="none" xml:base="{base14-root}">
+    <family-member
+      style="normal"
+      weight="normal">
+      <font
+        id="Base14-Times"
+        metrics-file="Times-Roman.afm"/>
+    </family-member>
+    <family-member
+      style="italic"
+      weight="normal">
+      <font
+        id="Base14-Times-Italic"
+        metrics-file="Times-Italic.afm"/>
+    </family-member>
+    <family-member
+      style="normal"
+      weight="bold">
+      <font
+        id="Base14-Times-Bold"
+        metrics-file="Times-Bold.afm"/>
+    </family-member>
+    <family-member
+      style="italic"
+      weight="bold">
+      <font
+        id="Base14-Times-BoldItalic"
+        metrics-file="Times-BoldItalic.afm"/>
+    </family-member>
+  </font-family>
+  <font-family name="Courier" embed="none" xml:base="{base14-root}">
+    <family-member
+      style="normal"
+      weight="normal">
+      <font
+        id="Base14-Courier"
+        metrics-file="Courier.afm"/>
+    </family-member>
+    <family-member
+      style="italic"
+      weight="normal">
+      <font
+        id="Base14-Courier-Oblique"
+        metrics-file="Courier-Oblique.afm"/>
+    </family-member>
+    <family-member
+      style="normal"
+      weight="bold">
+      <font
+        id="Base14-Courier-Bold"
+        metrics-file="Courier-Bold.afm"/>
+    </family-member>
+    <family-member
+      style="italic"
+      weight="bold">
+      <font
+        id="Base14-Courier-BoldOblique"
+        metrics-file="Courier-BoldOblique.afm"/>
+    </family-member>
+  </font-family>
+  <font-family name="Symbol" embed="none" xml:base="{base14-root}">
+    <family-member
+      style="normal"
+      weight="normal">
+      <font
+        id="Base14-Symbol"
+        metrics-file="Symbol.afm"/>
+    </family-member>
+  </font-family>
+  <font-family name="ZapfDingbats" embed="none" xml:base="{base14-root}">
+    <family-member
+      style="normal"
+      weight="normal">
+      <font
+        id="Base14-ZapfDingbats"
+        metrics-file="ZapfDingbats.afm"/>
+    </family-member>
+  </font-family>
+  <!-- End of Base-14 fonts. -->
+
+  <!-- Example of a TrueType font -->
+  <font-family name="Gladiator" embed="subset">
+    <family-member
+      style="normal"
+      weight="normal">
+      <font font-file="glb12.ttf"/>
+    </family-member>
+  </font-family>
+
+  <!-- Example of a Type1 font using AFM metrics and PFB outlines
+  <font-family name="BitstreamCharter" embed="subset">
+    <family-member
+      style="normal"
+      weight="normal">
+      <font
+	metrics-file="BitstreamCharterRoman.afm"
+	font-file="BitstreamCharterRoman.pfb"/>
+    </family-member>
+  </font-family>
+  -->
+
+
+  <!-- The following aliases are required by XSL-FO. -->
+  <font-family-alias alias="sans-serif"      family="Helvetica"/>
+  <font-family-alias alias="serif"           family="Times"/>
+  <font-family-alias alias="monospace"       family="Courier"/>
+
+  <!-- The following alias is a catch-all -->
+  <font-family-alias alias="any"             family="Times"/>
+
+</axsl-font-config>

@@ -23,10 +23,10 @@ import java.awt.Color;
 import java.io.Serializable;
 
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.util.ColorUtil;
+import org.axsl.fontR.FontUse;
 
 // properties should be serialized by the holder
 /**
@@ -53,12 +53,12 @@ public class Trait implements Serializable {
     public static final Integer EXTERNAL_LINK = new Integer(2);
 
     /**
-     * The font triplet for the current font.
+     * The font use from the font setup.
      */
     public static final Integer FONT = new Integer(3);
 
     /**
-     * Font size for the current font.
+     * Font size (in millipoints) for the current font.
      */
     public static final Integer FONT_SIZE = new Integer(4);
 
@@ -226,7 +226,7 @@ public class Trait implements Serializable {
         //put(ID_LINK, new TraitInfo("id-link", String.class));
         put(INTERNAL_LINK, new TraitInfo("internal-link", String.class));
         put(EXTERNAL_LINK, new TraitInfo("external-link", String.class));
-        put(FONT,         new TraitInfo("font", FontTriplet.class));
+        put(FONT,         new TraitInfo("font", FontUse.class));//TODO vh: used to be FontTriplet
         put(FONT_SIZE,    new TraitInfo("font-size", Integer.class));
         put(COLOR, new TraitInfo("color", Color.class));
         put(PROD_ID, new TraitInfo("prod-id", String.class));

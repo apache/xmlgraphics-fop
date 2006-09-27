@@ -48,6 +48,8 @@ import org.apache.fop.layoutmgr.PageSequenceLayoutManager;
 import org.apache.fop.layoutmgr.LayoutManagerMaker;
 import org.apache.fop.layoutmgr.LayoutManagerMapping;
 
+import org.axsl.fontR.FontConsumer;
+
 /**
  * Area tree handler for formatting objects.
  *
@@ -118,7 +120,7 @@ public class AreaTreeHandler extends FOEventHandler {
      */
     public AreaTreeHandler (FOUserAgent userAgent, String outputFormat, 
                 OutputStream stream) throws FOPException {
-        super(userAgent);
+        super(userAgent, outputFormat, log);
 
         setupModel(userAgent, outputFormat, stream);
             
@@ -143,7 +145,7 @@ public class AreaTreeHandler extends FOEventHandler {
      */
     protected void setupModel(FOUserAgent userAgent, String outputFormat, 
             OutputStream stream) throws FOPException {
-        model = new RenderPagesModel(userAgent, outputFormat, fontInfo,
+        model = new RenderPagesModel(userAgent, outputFormat, fontConsumer,
                 stream);
     }
     

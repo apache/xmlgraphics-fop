@@ -19,7 +19,6 @@
  
 package org.apache.fop.pdf;
 
-import org.apache.fop.fonts.FontType;
 
 /**
  * A common ancestor for Type1, TrueType, MMType1 and Type3 fonts
@@ -51,11 +50,11 @@ public abstract class PDFFontNonBase14 extends PDFFont {
      * Create the /Font object
      *
      * @param fontname the internal name for the font
-     * @param subtype the font's subtype
+     * @param subtype the font's subtype (one of PDFont.TYPE0, TYPE1, MMTYPE1, TRUETYPE)
      * @param basefont the base font name
      * @param encoding the character encoding schema used by the font
      */
-    public PDFFontNonBase14(String fontname, FontType subtype,
+    public PDFFontNonBase14(String fontname, byte subtype,
                             String basefont,
                             Object encoding) {
 

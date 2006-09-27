@@ -86,9 +86,9 @@ public class PDFGraphics2DAdapter extends AbstractGraphics2DAdapter {
             pdfInfo.pdfContext = pdfInfo.pdfPage;
         }
         PDFGraphics2D graphics = new PDFGraphics2D(textAsShapes, 
-                pdfInfo.fi, pdfInfo.pdfDoc,
+                renderer.getFontMap(), pdfInfo.pdfDoc,
                 pdfInfo.pdfContext, pdfInfo.pdfPage.referencePDF(),
-                renderer.currentFontName,
+                renderer.currentFontUse,
                 renderer.currentFontSize);
         graphics.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
         

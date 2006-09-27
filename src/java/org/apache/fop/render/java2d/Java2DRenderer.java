@@ -67,9 +67,6 @@ import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fonts.Font;
-import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.fonts.Typeface;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
 import org.apache.fop.image.XMLImage;
@@ -78,6 +75,11 @@ import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.pdf.CTMHelper;
+
+import org.axsl.fontR.Font;
+import org.axsl.fontR.FontConsumer;
+import org.axsl.fontR.FontUse;
+
 import org.apache.fop.util.CharUtilities;
 
 /**
@@ -141,6 +143,13 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     
     private Stack stateStack = new Stack();
 
+    /** Font consumer */
+    protected FontConsumer fontConsumer;
+
+    protected Map fontNames = new java.util.Hashtable();
+
+    protected Map fontStyles = new java.util.Hashtable();
+
     /** true if the renderer has finished rendering all the pages */
     private boolean renderingDone;
 
@@ -182,8 +191,12 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#setupFontInfo(org.apache.fop.fonts.FontInfo)
+     * @see org.apache.fop.render.Renderer#setupFontConsumer(org.axsl.font.FontConsumer)
      */
+<<<<<<< .mine
+    public void setupFontConsumer(FontConsumer fontConsumer) {
+        this.fontConsumer = fontConsumer;
+=======
     public void setupFontInfo(FontInfo inFontInfo) {
         //Don't call super.setupFontInfo() here! Java2D needs a special font setup
         // create a temp Image to test font metrics on
@@ -195,6 +208,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, 
                 RenderingHints.VALUE_FRACTIONALMETRICS_ON);
         FontSetup.setup(fontInfo, g);
+>>>>>>> .r448139
     }
 
     /** @see org.apache.fop.render.Renderer#getGraphics2DAdapter() */
@@ -347,7 +361,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
             graphics.drawLine(0, pageHeight + 2, pageWidth + 2, pageHeight + 2);
             graphics.drawLine(1, pageHeight + 3, pageWidth + 3, pageHeight + 3);
 
-            state = new Java2DGraphicsState(graphics, this.fontInfo, at);
+            state = new Java2DGraphicsState(graphics, this.fontConsumer, at);
             try {
                 // reset the current Positions
                 currentBPPosition = 0;
@@ -716,6 +730,11 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         int bl = currentBPPosition + text.getOffset() + text.getBaselineOffset();
         int saveIP = currentIPPosition;
 
+<<<<<<< .mine
+        FontUse fontUse = (FontUse) text.getTrait(Trait.FONT);
+        int size = ((Integer) text.getTrait(Trait.FONT_SIZE)).intValue();
+        state.updateFont(fontUse, size, null);
+=======
         Font font = getFontFromArea(text);
         state.updateFont(font.getFontName(), font.getFontSize());
         saveGraphicsState();
@@ -727,11 +746,18 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         
         currentIPPosition = saveIP + text.getAllocIPD();
         //super.renderText(text);
+>>>>>>> .r448139
 
         // rendering text decorations
+<<<<<<< .mine
+        renderTextDecoration(fontUse.getFont(), size, text, y, x);
+
+        super.renderText(text);
+=======
         Typeface tf = (Typeface) fontInfo.getFonts().get(font.getFontName());
         int fontsize = text.getTraitAsInteger(Trait.FONT_SIZE);
         renderTextDecoration(tf, fontsize, text, bl, rx);
+>>>>>>> .r448139
     }
 
     /**
@@ -746,7 +772,13 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         Color col = (Color) text.getTrait(Trait.COLOR);
         g2d.setColor(col);
 
+<<<<<<< .mine
+        FontUse fontUse = (FontUse) ch.getTrait(Trait.FONT);
+        int size = ((Integer) ch.getTrait(Trait.FONT_SIZE)).intValue();
+        state.updateFont(fontUse, size, null);
+=======
         float textCursor = 0;
+>>>>>>> .r448139
 
         Iterator iter = text.getChildAreas().iterator();
         while (iter.hasNext()) {
@@ -783,11 +815,24 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
                                 + 2 * text.getTextLetterSpaceAdjust()
                         : 0);
 
+<<<<<<< .mine
+        String s = ch.getChar();
+        state.getGraph().drawString(s, x / 1000f, y / 1000f);
+
+        // getLogger().debug( "renderCharacter(): \"" + s + "\", x: "
+        // + x + ", y: " + y + state);
+
+        // rendering text decorations
+        renderTextDecoration(fontUse.getFont(), size, ch, y, x);
+
+        super.renderCharacter(ch);
+=======
                 textCursor += (font.getCharWidth(sp) + tws) / 1000f;
             } else {
                 throw new IllegalStateException("Unsupported child element: " + child);
             }
         }
+>>>>>>> .r448139
     }
     
     private static int[] getGlyphOffsets(String s, Font font, TextArea text, 
@@ -799,15 +844,66 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
             final char mapped = font.mapChar(c);
             int wordSpace;
 
+<<<<<<< .mine
+    /**
+     * Paints the text decoration marks.
+     *
+     * @param fs Current font
+     * @param fontSize font size
+     * @param inline inline area to paint the marks for
+     * @param baseline position of the baseline
+     * @param startIPD start IPD
+     */
+    protected void renderTextDecoration(Font fs, int fontSize, InlineArea inline,
+            float baseline, float startIPD) {
+
+        boolean hasTextDeco = inline.hasUnderline() || inline.hasOverline()
+                || inline.hasLineThrough();
+
+        if (hasTextDeco) {
+            state.updateStroke((fs.getDescender(fontSize) / (-8 * 1000f)),
+                    Constants.EN_SOLID);
+            float endIPD = startIPD + inline.getIPD();
+            if (inline.hasUnderline()) {
+                ColorType ct = (ColorType) inline
+                        .getTrait(Trait.UNDERLINE_COLOR);
+                state.updateColor(ct, false, null);
+                float y = baseline - fs.getDescender(fontSize) / 2;
+                line.setLine(startIPD / 1000f, y / 1000f, endIPD / 1000f,
+                        y / 1000f);
+                state.getGraph().draw(line);
+=======
             if (CharUtilities.isAdjustableSpace(mapped)) {
                 wordSpace = text.getTextWordSpaceAdjust();
             } else {
                 wordSpace = 0;
+>>>>>>> .r448139
             }
+<<<<<<< .mine
+            if (inline.hasOverline()) {
+                ColorType ct = (ColorType) inline
+                        .getTrait(Trait.OVERLINE_COLOR);
+                state.updateColor(ct, false, null);
+                float y = (float) (baseline - (1.1 * fs.getCapHeight(fontSize)));
+                line.setLine(startIPD / 1000f, y / 1000f, endIPD / 1000f,
+                        y / 1000f);
+                state.getGraph().draw(line);
+            }
+            if (inline.hasLineThrough()) {
+                ColorType ct = (ColorType) inline
+                        .getTrait(Trait.LINETHROUGH_COLOR);
+                state.updateColor(ct, false, null);
+                float y = (float) (baseline - (0.45 * fs.getCapHeight(fontSize)));
+                line.setLine(startIPD / 1000f, y / 1000f, endIPD / 1000f,
+                        y / 1000f);
+                state.getGraph().draw(line);
+            }
+=======
             int cw = font.getWidth(mapped);
             int ladj = (letterAdjust != null && i < textLen - 1 ? letterAdjust[i + 1] : 0);
             int tls = (i < textLen - 1 ? text.getTextLetterSpaceAdjust() : 0); 
             offsets[i] = cw + ladj + tls + wordSpace;
+>>>>>>> .r448139
         }
         return offsets;
     }    
@@ -998,9 +1094,15 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         }
         Graphics2D graphics = (Graphics2D) g;
         try {
+<<<<<<< .mine
+          PageViewport viewport = getPageViewport(pageIndex);
+          AffineTransform at = graphics.getTransform();
+          state = new Java2DGraphicsState(graphics, this.fontConsumer, at);
+=======
             PageViewport viewport = getPageViewport(pageIndex);
             AffineTransform at = graphics.getTransform();
             state = new Java2DGraphicsState(graphics, this.fontInfo, at);
+>>>>>>> .r448139
 
             // reset the current Positions
             currentBPPosition = 0;

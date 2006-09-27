@@ -20,7 +20,7 @@
 package org.apache.fop.layoutmgr.inline;
 
 import org.apache.fop.fo.flow.Character;
-import org.apache.fop.fonts.Font;
+import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.layoutmgr.InlineKnuthSequence;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthGlue;
@@ -40,6 +40,10 @@ import java.util.LinkedList;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.layoutmgr.inline.AlignmentContext;
 
+import org.axsl.fontR.Font;
+import org.axsl.fontR.FontConsumer;
+import org.axsl.fontR.FontUse;
+
 /**
  * LayoutManager for the fo:character formatting object
  */
@@ -47,7 +51,10 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
     private Character fobj;
     private MinOptMax letterSpaceIPD;
     private int hyphIPD;
-    private Font font;
+    private FontUse fontUse;
+    private FontConsumer fontConsumer;
+    /** Font size in millipoints */
+    private int fontSize;
     private CommonBorderPaddingBackground borderProps = null;
 
     /**
@@ -63,14 +70,18 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
     
     /** @see org.apache.fop.layoutmgr.LayoutManager#initialize */
     public void initialize() {
-        font = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo(), this);
+        fontConsumer = fobj.getFOEventHandler().getFontConsumer();
+        CommonFont commonFont = fobj.getCommonFont();
+        fontUse = commonFont.getFontState(fontConsumer, this);
+        fontSize = commonFont.getFontSize(this);
         SpaceVal ls = SpaceVal.makeLetterSpacing(fobj.getLetterSpacing());
         letterSpaceIPD = ls.getSpace();
-        hyphIPD = font.getCharWidth(fobj.getCommonHyphenation().hyphenationCharacter);
+        hyphIPD = fontUse.getFont().width(fobj.getCommonHyphenation().hyphenationCharacter,
+                           fontSize);
         borderProps = fobj.getCommonBorderPaddingBackground();
         setCommonBorderPaddingBackground(borderProps);
         org.apache.fop.area.inline.TextArea chArea = getCharacterInlineArea(fobj);
-        chArea.setBaselineOffset(font.getAscender());
+        chArea.setBaselineOffset(fontUse.getFont().getAscender(fontSize));
         setCurrentArea(chArea);
     }
 
@@ -99,17 +110,21 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
             return null;
         }
 
-        ipd = new MinOptMax(font.getCharWidth(fobj.getCharacter()));
+        Font font = fontUse.getFont();
+        char curChar = fobj.getCharacter();
+        ipd = new MinOptMax(font.width(curChar, fontSize));
+        fontUse.registerCharUsed(curChar);
 
         curArea.setIPD(ipd.opt);
-        curArea.setBPD(font.getAscender() - font.getDescender());
+        curArea.setBPD(font.getAscender(fontSize) - font.getDescender(fontSize));
 
-        TraitSetter.addFontTraits(curArea, font);
+        TraitSetter.addFontTraits(curArea, fontUse, fontSize);
         curArea.addTrait(Trait.COLOR, fobj.getColor());
 
         // TODO: may need some special handling for fo:character
         alignmentContext = new AlignmentContext(font
-                                    , font.getFontSize()
+                                    , fontSize
+                                    , fontSize
                                     , fobj.getAlignmentAdjust()
                                     , fobj.getAlignmentBaseline()
                                     , fobj.getBaselineShift()

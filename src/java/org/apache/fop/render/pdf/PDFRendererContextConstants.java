@@ -42,10 +42,10 @@ public interface PDFRendererContextConstants extends RendererContextConstants {
     String PDF_STREAM = "pdfStream";
 
     /** The current font information for the pdf renderer. */
-    String PDF_FONT_INFO = "fontInfo";
+    String PDF_FONT_CONSUMER = "fontConsumer";
 
     /** The current pdf font name. */
-    String PDF_FONT_NAME = "fontName";
+    String PDF_FONT_USE = "fontUse";
 
     /** The current pdf font size. */
     String PDF_FONT_SIZE = "fontSize";

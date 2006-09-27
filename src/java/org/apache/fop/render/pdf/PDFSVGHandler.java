@@ -33,16 +33,18 @@ import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.RendererContextConstants;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFPage;
+import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.pdf.PDFState;
 import org.apache.fop.pdf.PDFStream;
-import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.svg.PDFAElementBridge;
 import org.apache.fop.svg.PDFBridgeContext;
 import org.apache.fop.svg.PDFGraphics2D;
 import org.apache.fop.svg.SVGUserAgent;
 import org.apache.fop.util.QName;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
-import org.apache.fop.fonts.FontInfo;
+
+import org.axsl.fontR.FontConsumer;
+import org.axsl.fontR.FontUse;
 
 // Commons-Logging
 import org.apache.commons.logging.Log;
@@ -84,8 +86,8 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
         pdfi.currentStream = (PDFStream)context.getProperty(PDF_STREAM);
         pdfi.width = ((Integer)context.getProperty(WIDTH)).intValue();
         pdfi.height = ((Integer)context.getProperty(HEIGHT)).intValue();
-        pdfi.fi = (FontInfo)context.getProperty(PDF_FONT_INFO);
-        pdfi.currentFontName = (String)context.getProperty(PDF_FONT_NAME);
+        pdfi.fc = (FontConsumer) context.getProperty(PDF_FONT_CONSUMER);
+        pdfi.currentFontUse = (FontUse)context.getProperty(PDF_FONT_USE);
         pdfi.currentFontSize = ((Integer)context.getProperty(PDF_FONT_SIZE)).intValue();
         pdfi.currentXPosition = ((Integer)context.getProperty(XPOS)).intValue();
         pdfi.currentYPosition = ((Integer)context.getProperty(YPOS)).intValue();
@@ -119,10 +121,10 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
         public int width;
         /** see PDF_HEIGHT */
         public int height;
-        /** see PDF_FONT_INFO */
-        public FontInfo fi;
-        /** see PDF_FONT_NAME */
-        public String currentFontName;
+        /** see PDF_FONT_CONSUMER */
+        public FontConsumer fc;
+        /** see PDF_FONT_USE */
+        public FontUse currentFontUse;
         /** see PDF_FONT_SIZE */
         public int currentFontSize;
         /** see PDF_XPOS */
@@ -176,10 +178,11 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
         if (cfg != null) {
             strokeText = cfg.getChild("stroke-text", true).getValueAsBoolean(strokeText);
         }
-        
-        BridgeContext ctx = new PDFBridgeContext(ua, 
-                (strokeText ? null : pdfInfo.fi),
-                new AffineTransform());
+
+        // TODO vh: re-enable
+        BridgeContext ctx = null/*new PDFBridgeContext(ua, 
+                (strokeText ? null : pdfInfo.fc),
+                new AffineTransform())*/;
         
         GraphicsNode root;
         try {
@@ -227,10 +230,11 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
         if (pdfInfo.pdfContext == null) {
             pdfInfo.pdfContext = pdfInfo.pdfPage;
         }
-        PDFGraphics2D graphics = new PDFGraphics2D(true, pdfInfo.fi, 
+        // TODO vh: re-enable
+        PDFGraphics2D graphics = null/*new PDFGraphics2D(true, pdfInfo.fc, 
                 pdfInfo.pdfDoc,
                 pdfInfo.pdfContext, pdfInfo.pdfPage.referencePDF(),
-                pdfInfo.currentFontName, pdfInfo.currentFontSize);
+                pdfInfo.currentFontUse, pdfInfo.currentFontSize)*/;
         graphics.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
 
         if (!resolutionScaling.isIdentity()) {

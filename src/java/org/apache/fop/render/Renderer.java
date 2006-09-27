@@ -20,16 +20,17 @@
 package org.apache.fop.render;
 
 // Java
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 // FOP
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.area.PageViewport;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.OffDocumentItem;
-import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.area.PageViewport;
+
+import org.axsl.fontR.FontConsumer;
 
 
 /**
@@ -89,11 +90,11 @@ public interface Renderer {
     void setUserAgent(FOUserAgent agent);
 
     /**
-     * Set up the given FontInfo.
+     * Set up the font consumer.
      *
-     * @param fontInfo  The font information
+     * @param fontConsumer The font consumer
      */
-    void setupFontInfo(FontInfo fontInfo);
+    void setupFontConsumer(FontConsumer fontConsumer);
 
     /**
      * Reports if out of order rendering is supported. <p>

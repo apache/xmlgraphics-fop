@@ -20,17 +20,21 @@
 package org.apache.fop.layoutmgr.inline;
 
 import org.apache.fop.fo.flow.PageNumberCitation;
+import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Resolvable;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.UnresolvedPageNumber;
 import org.apache.fop.area.inline.TextArea;
-import org.apache.fop.fonts.Font;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.TraitSetter;
+
+import org.axsl.fontR.Font;
+import org.axsl.fontR.FontConsumer;
+import org.axsl.fontR.FontUse;
 
 /**
  * LayoutManager for the fo:page-number-citation formatting object
@@ -38,8 +42,9 @@ import org.apache.fop.layoutmgr.TraitSetter;
 public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
 
     private PageNumberCitation fobj;
-    /** Font for the page-number-citation */
-    protected Font font;
+    FontConsumer fontConsumer;
+    FontUse fontUse;
+    int fontSize;
     
     /** Indicates whether the page referred to by the citation has been resolved yet */
     protected boolean resolved = false;
@@ -57,7 +62,10 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
     
     /** @see org.apache.fop.layoutmgr.LayoutManager#initialize */
     public void initialize() {
-        font = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo(), this);
+        fontConsumer = fobj.getFOEventHandler().getFontConsumer();
+        CommonFont commonFont = fobj.getCommonFont();
+        fontUse = commonFont.getFontState(fontConsumer, this);
+        fontSize = commonFont.getFontSize(this);
         setCommonBorderPaddingBackground(fobj.getCommonBorderPaddingBackground());
     }
 
@@ -66,7 +74,8 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
      */
     protected AlignmentContext makeAlignmentContext(LayoutContext context) {
         return new AlignmentContext(
-                font
+                fontUse.getFont()
+                , fontSize
                 , fobj.getLineHeight().getOptimum(this).getLength().getValue(this)
                 , fobj.getAlignmentAdjust()
                 , fobj.getAlignmentBaseline()
@@ -110,7 +119,7 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
             resolved = true;
         } else {
             resolved = false;
-            text = new UnresolvedPageNumber(fobj.getRefId(), font);
+            text = new UnresolvedPageNumber(fobj.getRefId(), fontConsumer, fontUse, fontSize);
             String str = "MMM"; // reserve three spaces for page number
             int width = getStringWidth(str);
             text.setIPD(width);
@@ -126,9 +135,10 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
      */
     protected void updateTextAreaTraits(TextArea text) {
         TraitSetter.setProducerID(text, fobj.getId());
-        text.setBPD(font.getAscender() - font.getDescender());
-        text.setBaselineOffset(font.getAscender());
-        TraitSetter.addFontTraits(text, font);
+        Font font = fontUse.getFont();
+        text.setBPD(font.getAscender(fontSize) - font.getDescender(fontSize));
+        text.setBaselineOffset(font.getAscender(fontSize));
+        TraitSetter.addFontTraits(text, fontUse, fontSize);
         text.addTrait(Trait.COLOR, fobj.getColor());
         TraitSetter.addTextDecoration(text, fobj.getTextDecoration());
     }
@@ -138,9 +148,10 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
      * @return width (in millipoints ??) of the string
      */
     protected int getStringWidth(String str) {
+        fontUse.registerCharsUsed(str);
         int width = 0;
         for (int count = 0; count < str.length(); count++) {
-            width += font.getCharWidth(str.charAt(count));
+            width += fontUse.getFont().width(str.charAt(count), fontSize);
         }
         return width;
     }

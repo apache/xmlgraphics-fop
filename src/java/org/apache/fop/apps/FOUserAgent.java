@@ -21,6 +21,7 @@ package org.apache.fop.apps;
 
 // Java
 import java.io.File;
+import java.net.URL;
 import java.util.Date;
 import java.util.Map;
 import javax.xml.transform.Source;
@@ -75,6 +76,8 @@ public class FOUserAgent {
     
     /** The base URL for all URL resolutions, especially for external-graphics */
     private String baseURL;
+    
+    private URL fontCfgURL;
     
     /** A user settable URI Resolver */
     private URIResolver uriResolver = null;
@@ -295,6 +298,30 @@ public class FOUserAgent {
         }
     }
     
+        // TODO adapt
+//        if (userConfig.getChild("font-config-file", false) != null) {
+//            try {
+//                String fontCfgFile = userConfig.getChild("font-config-file").getValue(null);
+//                if (fontCfgFile != null) {
+//                    File file = new File(fontCfgFile);
+//                    if (file.isAbsolute() || baseURL == null) {
+//                        fontCfgFile = "file://" + file.getCanonicalPath(); 
+//                        fontCfgFile = fontCfgFile.replace(
+//                                System.getProperty("file.separator").charAt(0), '/');
+//                    } else {
+//                        fontCfgFile = baseURL + fontCfgFile.replace(
+//                                System.getProperty("file.separator").charAt(0), '/');
+//                    }
+//                }
+//                setFontCfgURL(new URL(fontCfgFile));
+//            } catch (MalformedURLException mue) {
+//                log.error("Font config URL in user config is malformed!");
+//            } catch (IOException ioe) {
+//                log.error("Error converting relative font config file to absolute URL.");
+//            }
+//            log.info("Font config URL set to: " + fontCfgURL);
+//        }
+
     /**
      * Returns the configuration subtree for a specific renderer.
      * @param mimeType MIME type of the renderer
@@ -336,11 +363,27 @@ public class FOUserAgent {
     }
 
     /**
+     * Sets the font config URL.
+     * @param fontCfgURl font config URL
+     */
+    public void setFontCfgURL(URL fontCfgURL) {
+        this.fontCfgURL = fontCfgURL;
+    }
+
+    /**
      * Returns the base URL.
      * @return the base URL
      */
     public String getBaseURL() {
         return this.baseURL;
+    }
+
+    /**
+     * Returns the font config URL.
+     * @return the font config URL
+     */
+    public URL getFontCfgURL() {
+        return this.fontCfgURL;
     }
 
     /**

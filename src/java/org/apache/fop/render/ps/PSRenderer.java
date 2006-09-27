@@ -55,13 +55,11 @@ import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
-import org.apache.fop.fonts.Font;
-import org.apache.fop.fonts.FontSetup;
-import org.apache.fop.fonts.Typeface;
 import org.apache.fop.image.EPSImage;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
 import org.apache.fop.image.XMLImage;
+import org.apache.fop.pdf.FontMap;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.ImageAdapter;
@@ -69,6 +67,8 @@ import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.pdf.PDFRendererContextConstants;
 import org.apache.fop.render.ps.extensions.PSSetupCode;
 import org.apache.fop.util.CharUtilities;
+import org.axsl.font.FontConsumer;
+import org.axsl.font.FontUse;
 
 import org.apache.xmlgraphics.ps.DSCConstants;
 import org.apache.xmlgraphics.ps.PSGenerator;
@@ -114,6 +114,8 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
 
     private boolean inTextMode = false;
     private boolean firstPageSequenceReceived = false;
+    
+    private FontMap fontMap;
 
     /** Used to temporarily store PSSetupCode instance until they can be written. */
     private List setupCodeList;
@@ -121,20 +123,19 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
     /** This is a map of PSResource instances of all fonts defined (key: font key) */
     private Map fontResources;
     
+    /** Set up the font consumer.
+     * @param fontConsumer the font consumer.
+     */
+    public void setupFontConsumer(FontConsumer fontConsumer) {
+        super.setupFontConsumer(fontConsumer);
+        fontMap = new FontMap(fontConsumer, true);
+    }
     /**
      * @see org.apache.avalon.framework.configuration.Configurable#configure(Configuration)
      */
     public void configure(Configuration cfg) throws ConfigurationException {
         super.configure(cfg);
         this.autoRotateLandscape = cfg.getChild("auto-rotate-landscape").getValueAsBoolean(false);
-
-        //Font configuration
-        List cfgFonts = FontSetup.buildFontListFromConfiguration(cfg);
-        if (this.fontList == null) {
-            this.fontList = cfgFonts;
-        } else {
-            this.fontList.addAll(cfgFonts);
-        }
     }
 
     /**
@@ -408,12 +409,12 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
 
     /**
      * Changes the currently used font.
-     * @param name name of the font
+     * @param fontUse the new font use
      * @param size font size
      */
-    public void useFont(String name, int size) {
+    public void useFont(FontUse fontUse, int size) {
         try {
-            gen.useFont(name, size / 1000f);
+            gen.useFont(fontMap.getInternalName(fontUse), size / 1000f);
         } catch (IOException ioe) {
             handleIOTrouble(ioe);
         }
@@ -631,12 +632,10 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
      */
     public void stopRenderer() throws IOException {
         //Notify resource usage for font which are not supplied
-        Map fonts = fontInfo.getUsedFonts();
-        Iterator e = fonts.keySet().iterator();
-        while (e.hasNext()) {
-            String key = (String)e.next();
-            //Typeface font = (Typeface)fonts.get(key);
-            PSResource res = (PSResource)this.fontResources.get(key);
+        FontUse[] fontUses = fontConsumer.getFontServer().getUsedFontUses(fontConsumer);
+        for (int i = 0; i < fontUses.length; i++) {
+            PSResource res = (PSResource)this.fontResources.get(
+                    fontMap.getInternalName(fontUses[i]));
             boolean supplied = gen.isResourceSupplied(res);
             if (!supplied) {
                 gen.notifyResourceUsage(res, true);
@@ -682,7 +681,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
                 //Setup
                 gen.writeDSCComment(DSCConstants.BEGIN_SETUP);
                 writeSetupCodeList(setupCodeList, "SetupCode");
-                this.fontResources = PSFontUtils.writeFontDict(gen, fontInfo);
+                this.fontResources = PSFontUtils.writeFontDict(gen, fontMap);
                 gen.writeln("FOPFonts begin");
                 gen.writeDSCComment(DSCConstants.END_SETUP);
             } catch (IOException ioe) {
@@ -843,17 +842,21 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
      */
     public void renderText(TextArea area) {
         renderInlineAreaBackAndBorders(area);
+<<<<<<< .mine
+        FontUse fontUse = (FontUse)area.getTrait(Trait.FONT);
+=======
         String fontname = getInternalFontNameForArea(area);
+>>>>>>> .r448139
         int fontsize = area.getTraitAsInteger(Trait.FONT_SIZE);
 
         // This assumes that *all* CIDFonts use a /ToUnicode mapping
-        Typeface tf = (Typeface) fontInfo.getFonts().get(fontname);
+//        Typeface tf = (Typeface) fontInfo.getFonts().get(fontname);
 
         //Determine position
         int rx = currentIPPosition + area.getBorderAndPaddingWidthStart();
         int bl = currentBPPosition + area.getOffset() + area.getBaselineOffset();
 
-        useFont(fontname, fontsize);
+        useFont(fontUse, fontsize);
         Color ct = (Color)area.getTrait(Trait.COLOR);
         if (ct != null) {
             try {
@@ -912,7 +915,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
             sb.append("(");
             for (int i = 0; i < textLen; i++) {
                 final char c = text.charAt(i);
-                final char mapped = tf.mapChar(c);
+                final char mapped = fontUse.encodeCharacter(fontConsumer, c);
                 PSGenerator.escapeChar(mapped, sb);
             }
             sb.append(") t");
@@ -921,7 +924,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
             int[] offsets = new int[textLen];
             for (int i = 0; i < textLen; i++) {
                 final char c = text.charAt(i);
-                final char mapped = tf.mapChar(c);
+                final char mapped = fontUse.encodeCharacter(fontConsumer, c);
                 int wordSpace;
 
                 if (CharUtilities.isAdjustableSpace(mapped)) {
@@ -929,10 +932,15 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
                 } else {
                     wordSpace = 0;
                 }
+<<<<<<< .mine
+                int cw = fontUse.getFont().width(c, fontsize) / 1000;
+                offsets[i] = cw + area.getTextLetterSpaceAdjust() + wordSpace;
+=======
                 int cw = tf.getWidth(mapped, font.getFontSize()) / 1000;
                 int ladj = (letterAdjust != null && i < textLen - 1 ? letterAdjust[i + 1] : 0);
                 int tls = (i < textLen - 1 ? area.getTextLetterSpaceAdjust() : 0); 
                 offsets[i] = cw + ladj + tls + wordSpace;
+>>>>>>> .r448139
                 PSGenerator.escapeChar(mapped, sb);
             }
             sb.append(")" + PSGenerator.LF + "[");

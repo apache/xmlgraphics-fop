@@ -19,6 +19,7 @@
 
 package org.apache.fop.svg;
 
+import org.apache.fop.pdf.FontMap;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFFilterList;
 import org.apache.fop.pdf.PDFPage;
@@ -28,8 +29,6 @@ import org.apache.fop.pdf.PDFNumber;
 import org.apache.fop.pdf.PDFResources;
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.pdf.PDFAnnotList;
-import org.apache.fop.fonts.FontSetup;
-import org.apache.fop.fonts.FontInfo;
 import org.apache.avalon.framework.CascadingRuntimeException;
 import org.apache.avalon.framework.activity.Initializable;
 import org.apache.avalon.framework.configuration.Configurable;
@@ -102,9 +101,10 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
      *
      * @param textAsShapes set this to true so that text will be rendered
      * using curves and not the font.
+     * @param fontMap mappings of FontUses to their associated internal names.
      */
-    public PDFDocumentGraphics2D(boolean textAsShapes) {
-        super(textAsShapes);
+    public PDFDocumentGraphics2D(boolean textAsShapes, FontMap fontMap) {
+        super(textAsShapes, fontMap);
 
         this.pdfContext = new PDFContext();
         if (!textAsShapes) {
@@ -129,15 +129,16 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
      *
      * @param textAsShapes set this to true so that text will be rendered
      * using curves and not the font.
+     * @param fontMap mappings of FontUses to their associated internal names.
      * @param stream the stream that the final document should be written to.
      * @param width the width of the document
      * @param height the height of the document
      * @throws IOException an io exception if there is a problem
      *         writing to the output stream
      */
-    public PDFDocumentGraphics2D(boolean textAsShapes, OutputStream stream,
+    public PDFDocumentGraphics2D(boolean textAsShapes, FontMap fontMap, OutputStream stream,
                                  int width, int height) throws IOException {
-        this(textAsShapes);
+        this(textAsShapes, fontMap);
         setupDocument(stream, width, height);
     }
 
@@ -148,9 +149,10 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
      * for the bridge before the document size is known.
      * The resulting document is written to the stream after rendering.
      * This constructor is Avalon-style.
+     * @param fontMap mappings of FontUses to their associated internal names.
      */
-    public PDFDocumentGraphics2D() {
-        this(false);
+    public PDFDocumentGraphics2D(FontMap fontMap) {
+        this(false, fontMap);
     }
 
     /**
@@ -158,7 +160,6 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
      */
     public void configure(Configuration cfg) throws ConfigurationException {
         this.cfg = cfg;
-        this.pdfContext.setFontList(FontSetup.buildFontListFromConfiguration(cfg));
     }
 
     /**
@@ -210,14 +211,6 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
      */
     public float getDeviceDPI() {
         return deviceDPI;
-    }
-
-    /**
-     * Get the font info for this pdf document.
-     * @return the font information
-     */
-    public FontInfo getFontInfo() {
-        return fontInfo;
     }
 
     /**
@@ -322,7 +315,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
             setClip(this.initialClip);
         }
 
-        currentFontName = "";
+        currentFontUse = null;
         currentFontSize = 0;
 
         if (currentStream == null) {
@@ -373,8 +366,8 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
         // restorePDFState();
 
         closePage();
-        if (fontInfo != null) {
-            pdfDoc.getResources().addFonts(pdfDoc, fontInfo);
+        if (fontMap.getSize() != 0) {
+            pdfDoc.getResources().addFonts(pdfDoc, fontMap);
         }
         this.pdfDoc.output(outputStream);
         pdfDoc.outputTrailer(outputStream);

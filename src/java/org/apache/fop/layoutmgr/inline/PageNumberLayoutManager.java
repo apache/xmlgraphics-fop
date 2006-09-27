@@ -20,13 +20,17 @@
 package org.apache.fop.layoutmgr.inline;
 
 import org.apache.fop.fo.flow.PageNumber;
+import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.Trait;
-import org.apache.fop.fonts.Font;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.traits.MinOptMax;
+
+import org.axsl.fontR.Font;
+import org.axsl.fontR.FontConsumer;
+import org.axsl.fontR.FontUse;
 
 /**
  * LayoutManager for the fo:page-number formatting object
@@ -34,8 +38,10 @@ import org.apache.fop.traits.MinOptMax;
 public class PageNumberLayoutManager extends LeafNodeLayoutManager {
     
     private PageNumber fobj;
-    private Font font;
-    
+    private FontConsumer fontConsumer;
+    private FontUse fontUse;
+    private int fontSize;
+        
     /**
      * Constructor
      *
@@ -49,7 +55,10 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
     
     /** @see org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager#get(LayoutContext) */
     public void initialize() {
-        font = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo(), this);
+        fontConsumer = fobj.getFOEventHandler().getFontConsumer();
+        CommonFont commonFont = fobj.getCommonFont();
+        fontUse = commonFont.getFontState(fontConsumer, this);
+        fontSize = commonFont.getFontSize(this);
         setCommonBorderPaddingBackground(fobj.getCommonBorderPaddingBackground());
     }
 
@@ -59,7 +68,8 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
      */
     protected AlignmentContext makeAlignmentContext(LayoutContext context) {
         return new AlignmentContext(
-                font
+                fontUse.getFont()
+                , fontSize
                 , fobj.getLineHeight().getOptimum(this).getLength().getValue(this)
                 , fobj.getAlignmentAdjust()
                 , fobj.getAlignmentBaseline()
@@ -75,11 +85,13 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
         TextArea text = new TextArea();
         String str = getCurrentPV().getPageNumberString();
         int width = getStringWidth(str);
+        fontUse.registerCharsUsed(str);
         text.addWord(str, 0);
         text.setIPD(width);
-        text.setBPD(font.getAscender() - font.getDescender());
-        text.setBaselineOffset(font.getAscender());
-        TraitSetter.addFontTraits(text, font);
+        Font f = fontUse.getFont();
+        text.setBPD(f.getAscender(fontSize) - f.getDescender(fontSize));
+        text.setBaselineOffset(f.getAscender(fontSize));
+        TraitSetter.addFontTraits(text, fontUse, fontSize);
         text.addTrait(Trait.COLOR, fobj.getColor());        
 
         TraitSetter.addTextDecoration(text, fobj.getTextDecoration());
@@ -121,8 +133,9 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
      */
     private int getStringWidth(String str) {
         int width = 0;
+        Font f = fontUse.getFont();
         for (int count = 0; count < str.length(); count++) {
-            width += font.getCharWidth(str.charAt(count));
+            width += f.width(str.charAt(count), fontSize);
         }
         return width;
     }

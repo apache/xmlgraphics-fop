@@ -20,12 +20,17 @@
 package org.apache.fop.fo;
 
 // Java
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 import org.xml.sax.SAXException;
 
 // Apache
+import org.apache.commons.logging.Log;
+
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.BlockContainer;
@@ -46,7 +51,12 @@ import org.apache.fop.fo.flow.TableColumn;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
-import org.apache.fop.fonts.FontInfo;
+
+// FOrayFont
+import org.axsl.fontR.FontConsumer;
+import org.axsl.fontR.FontException;
+import org.axsl.fontR.FontServer;
+import org.foray.font.FOrayFontServer;
 
 
 /**
@@ -67,11 +77,6 @@ public abstract class FOEventHandler {
      */
     protected FOUserAgent foUserAgent;
 
-    /** 
-     * The Font information relevant for this document
-     */
-    protected FontInfo fontInfo;
-
     /**
      * The current set of id's in the FO tree.
      * This is used so we know if the FO tree contains duplicates.
@@ -82,6 +87,96 @@ public abstract class FOEventHandler {
      * The property list maker.
      */
     protected PropertyListMaker propertyListMaker;
+
+    /**
+     * Font server used to provide all needed font informations.
+     */
+    protected static FontServer fontServer;  // TODO vh static?
+
+//    private boolean useFreeStandingFonts;
+//    private boolean useSystemFonts;
+//    private boolean preferFreeStandingFonts;
+
+    /**
+     * @inheritDoc
+     */
+    public static FontServer getFontServer() {
+        return fontServer;
+    }
+
+    protected FontConsumer fontConsumer;
+
+//    /**
+//     * @inheritDoc
+//     */
+//    public boolean preferFreeStandingFonts() {
+//        return preferFreeStandingFonts;
+//    }
+//    
+//    /**
+//     * @inheritDoc
+//     */
+//    public PseudoLogger getPseudoLogger() {
+//        return pseudoLogger;
+//    }
+//    
+//    /**
+//     * @inheritDoc
+//     */
+//    public boolean isUsingFreeStandingFonts() {
+//        return useFreeStandingFonts;
+//    }
+//
+//    /**
+//     * @inheritDoc
+//     */
+//    public boolean isUsingSystemFonts() {
+//        return useSystemFonts;
+//    }
+
+    /**
+     * Retrieve the font consumer for this document
+     * @return the FontConsumer instance for this document
+     */
+    public FontConsumer getFontConsumer() {
+        return fontConsumer;
+    }
+
+
+    public FOEventHandler(FOUserAgent foUserAgent, String outputFormat, Log log) {
+        this(foUserAgent);
+//        pseudoLogger = new CommonsLogger(log); 
+//        if (outputFormat.equals(MimeConstants.MIME_PDF)
+//                || outputFormat.equals(MimeConstants.MIME_POSTSCRIPT)) {
+//            useFreeStandingFonts = true;
+//            useSystemFonts = false;
+//            preferFreeStandingFonts = true;
+//        } else {
+//            useFreeStandingFonts = false;
+//            useSystemFonts = true;
+//            preferFreeStandingFonts = false;            
+//        }
+        if (fontServer == null) {
+            try {
+                fontServer = new FOrayFontServer(log);
+                /* TODO vh: plug font config file */
+//                ((FOrayFontServer) fontServer).setBaseFontURL(new java.net.URL("file:///local/home/vhennebert/Fop/Tests/Config/axsl-font-conf.xml"));
+                final String AXSL_FONT_FILE = "/tmp/foray-links/axsl-temp-stuff/axsl-font-conf.xml";
+                if(!new java.io.File(AXSL_FONT_FILE).canRead()) {
+                    throw new Error("Missing aXSL config file:" + AXSL_FONT_FILE);
+                }
+                final URL url = new URL("file://" + AXSL_FONT_FILE);
+                ((FOrayFontServer) fontServer).setup(url/*foUserAgent.getFontCfgURL()*/, null);
+            } catch (MalformedURLException e) { // Should not happen
+                log.error("MalformedURLException",e);
+            } catch (FontException e) {
+                log.error("Unable to setup the font server",e);
+            }
+        }
+        fontConsumer = fontServer.makeFontConsumer();
+        /* TODO vh: will have to release */
+//        fontServer.registerFontConsumer(this);
+    }
 
     /**
      * The XMLWhitespaceHandler for this tree
@@ -99,7 +194,6 @@ public abstract class FOEventHandler {
      */
     public FOEventHandler(FOUserAgent foUserAgent) {
         this.foUserAgent = foUserAgent;
-        this.fontInfo = new FontInfo();
     }
 
     /**
@@ -116,14 +210,6 @@ public abstract class FOEventHandler {
      */
     public FOUserAgent getUserAgent() {
         return foUserAgent;
-    }
-
-    /**
-     * Retrieve the font information for this document
-     * @return the FontInfo instance for this document
-     */
-    public FontInfo getFontInfo() {
-        return this.fontInfo;
     }
 
     /**

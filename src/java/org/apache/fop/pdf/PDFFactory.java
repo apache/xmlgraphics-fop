@@ -36,25 +36,19 @@ import javax.xml.transform.stream.StreamSource;
 import org.w3c.dom.Document;
 
 // Apache libs
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 // FOP
-import org.apache.fop.fonts.CIDFont;
-import org.apache.fop.fonts.CustomFont;
-import org.apache.fop.fonts.Typeface;
-import org.apache.fop.fonts.FontDescriptor;
-import org.apache.fop.fonts.FontMetrics;
-import org.apache.fop.fonts.FontType;
-import org.apache.fop.fonts.LazyFont;
-import org.apache.fop.fonts.MultiByteFont;
-import org.apache.fop.fonts.truetype.FontFileReader;
-import org.apache.fop.fonts.truetype.TTFSubSetFile;
-import org.apache.fop.fonts.type1.PFBData;
-import org.apache.fop.fonts.type1.PFBParser;
+import org.apache.fop.fonts.CIDFontType;
 import org.apache.xmlgraphics.xmp.Metadata;
+
+// FOray
+import org.axsl.fontR.Font;
+import org.axsl.fontR.FontConsumer;
+import org.axsl.fontR.FontUse;
+import org.axsl.fontR.output.FontPDF;
 
 /**
  * This class provides method to create and register PDF objects.
@@ -988,292 +982,278 @@ public class PDFFactory {
     }
 
     /**
-     * make a Type1 /Font object
+     * make a Type1 /Font object.
      *
-     * @param fontname internal name to use for this font (eg "F1")
-     * @param basefont name of the base font (eg "Helvetica")
-     * @param encoding character encoding scheme used by the font
-     * @param metrics additional information about the font
-     * @param descriptor additional information about the font
+     * @param fontUse the font
+     * @param internalName internal name of the font
+     * @param fontConsumer associated font consumer
      * @return the created /Font object
      */
-    public PDFFont makeFont(String fontname, String basefont,
-                            String encoding, FontMetrics metrics,
-                            FontDescriptor descriptor) {
-        PDFFont preRegisteredfont = getDocument().findFont(fontname);
+    public PDFFont makeFont(FontUse fontUse, String internalName, FontConsumer fontConsumer) {
+        PDFFont preRegisteredfont = getDocument().findFont(internalName);
         if (preRegisteredfont != null) {
             return preRegisteredfont;
         }
 
-        if (descriptor == null) {
-            PDFFont font = new PDFFont(fontname, FontType.TYPE1, basefont, encoding);
-            getDocument().registerObject(font);
-            return font;
+        Font font = fontUse.getFont();
+        PDFFont pdfFont;
+        if (font.isPDFStandardFont()) {
+            pdfFont = new PDFFont(internalName, PDFFont.TYPE1,
+                    font.getPostscriptName(), fontUse.getEncoding().getName());
+            getDocument().registerObject(pdfFont);
         } else {
-            FontType fonttype = metrics.getFontType();
-
-            PDFFontDescriptor pdfdesc = makeFontDescriptor(descriptor);
-
-            PDFFontNonBase14 font = null;
-            if (fonttype == FontType.TYPE0) {
-                /*
-                 * Temporary commented out - customized CMaps
-                 * isn't needed until /ToUnicode support is added
-                 * PDFCMap cmap = new PDFCMap(++this.objectcount,
-                 * "fop-ucs-H",
-                 * new PDFCIDSystemInfo("Adobe",
-                 * "Identity",
-                 * 0));
-                 * cmap.addContents();
-                 * this.objects.add(cmap);
-                 */
-                font =
-                    (PDFFontNonBase14)PDFFont.createFont(fontname, fonttype,
-                                                         basefont,
-                                                         "Identity-H");
+            byte fontSubType;
+            if (font.getFontComplexity() == Font.FONT_COMPOSITE) {
+                fontSubType = PDFFont.TYPE0;
+            } else if (font.getFontFormat() == Font.FORMAT_TYPE1) {
+                    fontSubType = PDFFont.TYPE1;
+            } else if (font.getFontFormat() == Font.FORMAT_TRUETYPE) {
+                fontSubType = PDFFont.TRUETYPE;
             } else {
-
-                font =
-                    (PDFFontNonBase14)PDFFont.createFont(fontname, fonttype,
-                                                         basefont, encoding);
+                fontSubType = PDFFont.OTHER;
             }
-            getDocument().registerObject(font);
+            if (fontSubType == PDFFont.TYPE0) {
+                pdfFont = PDFFont.createFont(internalName, fontSubType,
+                        font.getPostscriptName(), "Identity-H"/*fontUse.getEncoding().getName() TODO vh*/);                
+            } else {
+                pdfFont = PDFFont.createFont(internalName, fontSubType,
+                        font.getPostscriptName(), fontUse.getEncoding().getName());
+            }
+            getDocument().registerObject(pdfFont);
+            
+            PDFFontDescriptor pdfdesc = makeFontDescriptor(fontUse, fontSubType, fontConsumer);
+            ((PDFFontNonBase14)pdfFont).setDescriptor(pdfdesc);
 
-            font.setDescriptor(pdfdesc);
-
-            if (fonttype == FontType.TYPE0) {
-                CIDFont cidMetrics;
-                if (metrics instanceof LazyFont) {
-                    cidMetrics = (CIDFont)((LazyFont) metrics).getRealFont();
-                } else {
-                    cidMetrics = (CIDFont)metrics;
-                }
-                PDFCIDSystemInfo sysInfo =
-                    new PDFCIDSystemInfo(cidMetrics.getRegistry(),
-                                         cidMetrics.getOrdering(),
-                                         cidMetrics.getSupplement());
-                PDFCIDFont cidFont =
-                    new PDFCIDFont(basefont,
-                                   cidMetrics.getCIDType(),
-                                   cidMetrics.getDefaultWidth(),
-                                   getSubsetWidths(cidMetrics), sysInfo,
-                                   (PDFCIDFontDescriptor)pdfdesc);
+            if (fontSubType == PDFFont.TYPE0) {
+                PDFCIDSystemInfo sysInfo = new PDFCIDSystemInfo("Adobe", "UCS", 0);
+                // TODO vh: does not work yet
+//                PDFCMap cmap = new PDFCMap("Identity-H", sysInfo);
+//                getDocument().registerObject(cmap);
+                PDFCIDFont cidFont = new PDFCIDFont(font.getPostscriptName(),
+                        CIDFontType.CIDTYPE2,
+                        font.getDefaultWidth(),
+                        getSubsetWidths((FontPDF)fontUse.getFontOutput("application/pdf")), sysInfo,
+                        (PDFCIDFontDescriptor) pdfdesc);
                 getDocument().registerObject(cidFont);
-
-                ((PDFFontType0)font).setDescendantFonts(cidFont);
+//                ((PDFFontType0) pdfFont).setCMAP(cmap);   
+                ((PDFFontType0) pdfFont).setDescendantFonts(cidFont);
             } else {
-                int firstChar = 0;
-                int lastChar = 255;
-                if (metrics instanceof CustomFont) {
-                    CustomFont cf = (CustomFont)metrics;
-                    firstChar = cf.getFirstChar();
-                    lastChar = cf.getLastChar();
-                }
-                font.setWidthMetrics(firstChar,
-                                     lastChar,
-                                     makeArray(metrics.getWidths()));
+            	FontPDF fontOutput = (FontPDF)fontUse.getFontOutput("application/pdf");/*TODO vh*/
+                int firstChar = fontOutput.getFirstIndex();
+                int lastChar = fontOutput.getLastIndex();
+                int[] widths = shortArrayToIntArray(fontOutput.getWidths());
+                ((PDFFontNonBase14)pdfFont).setWidthMetrics(firstChar, lastChar,
+                        makeArray(widths));
             }
-
-            return font;
         }
+        return pdfFont;
     }
 
-    public PDFWArray getSubsetWidths(CIDFont cidFont) {
+    public PDFWArray getSubsetWidths(FontPDF fontOutput) {
         // Create widths for reencoded chars
+        // TODO vh: for now fonts aren't subsetted (I think)
         PDFWArray warray = new PDFWArray();
-        int[] tmpWidth = new int[cidFont.usedGlyphsCount];
-
-        for (int i = 0; i < cidFont.usedGlyphsCount; i++) {
-            Integer nw = (Integer)cidFont.usedGlyphsIndex.get(new Integer(i));
-            int nwx = (nw == null) ? 0 : nw.intValue();
-            tmpWidth[i] = cidFont.width[nwx];
-        }
-        warray.addEntry(0, tmpWidth);
+        warray.addEntry(0, shortArrayToIntArray(fontOutput.getWidths()));
         return warray;
+//        // Create widths for reencoded chars
+//        PDFWArray warray = new PDFWArray();
+//        int[] tmpWidth = new int[cidFont.usedGlyphsCount];
+//
+//        for (int i = 0; i < cidFont.usedGlyphsCount; i++) {
+//            Integer nw = (Integer)cidFont.usedGlyphsIndex.get(new Integer(i));
+//            int nwx = (nw == null) ? 0 : nw.intValue();
+//            tmpWidth[i] = cidFont.width[nwx];
+//        }
+//        warray.addEntry(0, tmpWidth);
+//        return warray;
     }
 
     /**
-     * make a /FontDescriptor object
+     * make a /FontDescriptor object.
      *
-     * @param desc the font descriptor
+     * @param fontUse the corresponding font use
+     * @param subType the font subtype; one of PDFFont.TYPE0, TYPE1, MMTYPE1, TYPE3, TRUETYPE
+     * @param fontConsumer the associated font consumer
      * @return the new PDF font descriptor
      */
-    public PDFFontDescriptor makeFontDescriptor(FontDescriptor desc) {
-        PDFFontDescriptor descriptor = null;
-
-        if (desc.getFontType() == FontType.TYPE0) {
+    public PDFFontDescriptor makeFontDescriptor(FontUse fontUse, byte subType,
+            FontConsumer fontConsumer) {
+        PDFFontDescriptor descriptor;
+        FontPDF font = (FontPDF)fontUse.getFontOutput("application/pdf");
+        if (subType == PDFFont.TYPE0) {
             // CID Font
-            descriptor = new PDFCIDFontDescriptor(desc.getFontName(),
-                                            desc.getFontBBox(),
-                                            desc.getCapHeight(),
-                                            desc.getFlags(),
-                                            desc.getItalicAngle(),
-                                            desc.getStemV(), null);
+            descriptor = new PDFCIDFontDescriptor(fontUse.getPostscriptName(),
+                                            font.getFontBBox(),
+                                            fontUse.getFont().getCapHeight(1000),
+                                            font.getFlags(),
+                                            (int)fontUse.getFont().getItalicAngle()/*TODO vh*/,
+                                            fontUse.getFont().getStemV(), null);
         } else {
             // Create normal FontDescriptor
-            descriptor = new PDFFontDescriptor(desc.getFontName(),
-                                         desc.getAscender(),
-                                         desc.getDescender(),
-                                         desc.getCapHeight(),
-                                         desc.getFlags(),
-                                         new PDFRectangle(desc.getFontBBox()),
-                                         desc.getItalicAngle(),
-                                         desc.getStemV());
+            descriptor = new PDFFontDescriptor(fontUse.getPostscriptName(),
+                                         fontUse.getFont().getAscender(1000),
+                                         fontUse.getFont().getDescender(1000),
+                                         fontUse.getFont().getCapHeight(1000),
+                                         font.getFlags(),
+                                         new PDFRectangle(font.getFontBBox()),
+                                         fontUse.getFont().getStemV(),
+                                         (int)fontUse.getFont().getItalicAngle()/*TODO vh*/);
         }
         getDocument().registerObject(descriptor);
 
         // Check if the font is embeddable
-        if (desc.isEmbeddable()) {
-            AbstractPDFStream stream = makeFontFile(desc);
+        if (fontUse.getFont().isEmbeddable()) {
+            AbstractPDFStream stream = makeFontFile(fontUse, fontConsumer);
             if (stream != null) {
-                descriptor.setFontFile(desc.getFontType(), stream);
+                descriptor.setFontFile(subType, stream);
                 getDocument().registerObject(stream);
             }
-            CustomFont font = getCustomFont(desc);
-            if (font instanceof CIDFont) {
-                CIDFont cidFont = (CIDFont)font;
-                buildCIDSet(descriptor, cidFont);
-            }
+            // TODO vh: re-enable
+//            CustomFont font = getCustomFont(desc);
+//            if (font instanceof CIDFont) {
+//                CIDFont cidFont = (CIDFont)font;
+//                buildCIDSet(descriptor, cidFont);
+//            }
         }
         return descriptor;
     }
 
-    private void buildCIDSet(PDFFontDescriptor descriptor, CIDFont cidFont) {
-        BitSet cidSubset = new BitSet();
-        Iterator iter = cidFont.usedGlyphs.keySet().iterator();
-        while (iter.hasNext()) {
-            Integer cid = (Integer)iter.next();
-            cidSubset.set(cid.intValue());
-        }
-        PDFStream cidSet = makeStream(null, true);
-        ByteArrayOutputStream baout = new ByteArrayOutputStream(cidSubset.length() / 8 + 1);
-        int value = 0;
-        for (int i = 0, c = cidSubset.length(); i < c; i++) {
-            int shift = i % 8;
-            boolean b = cidSubset.get(i); 
-            if (b) {
-                value |= 1 << 7 - shift; 
-            }
-            if (shift == 7) {
-                baout.write(value);
-                value = 0;
-            }
-        }
-        baout.write(value);
-        try {
-            cidSet.setData(baout.toByteArray());
-            descriptor.setCIDSet(cidSet);
-        } catch (IOException ioe) {
-            log.error(
-                    "Failed to write CIDSet [" + cidFont + "] "
-                    + cidFont.getFontName(), ioe);
-        }
-    }
+    // TODO vh: re-enable
+//    private void buildCIDSet(PDFFontDescriptor descriptor, CIDFont cidFont) {
+//        BitSet cidSubset = new BitSet();
+//        Iterator iter = cidFont.usedGlyphs.keySet().iterator();
+//        while (iter.hasNext()) {
+//            Integer cid = (Integer)iter.next();
+//            cidSubset.set(cid.intValue());
+//        }
+//        PDFStream cidSet = makeStream(null, true);
+//        ByteArrayOutputStream baout = new ByteArrayOutputStream(cidSubset.length() / 8 + 1);
+//        int value = 0;
+//        for (int i = 0, c = cidSubset.length(); i < c; i++) {
+//            int shift = i % 8;
+//            boolean b = cidSubset.get(i); 
+//            if (b) {
+//                value |= 1 << 7 - shift; 
+//            }
+//            if (shift == 7) {
+//                baout.write(value);
+//                value = 0;
+//            }
+//        }
+//        baout.write(value);
+//        try {
+//            cidSet.setData(baout.toByteArray());
+//            descriptor.setCIDSet(cidSet);
+//        } catch (IOException ioe) {
+//            log.error(
+//                    "Failed to write CIDSet [" + cidFont + "] "
+//                    + cidFont.getFontName(), ioe);
+//        }
+//    }
 
     /**
      * Embeds a font.
-     * @param desc FontDescriptor of the font.
+     * @param fontUse the corresponding font use
+     * @param fontConsumer the associated font consumer
      * @return PDFStream The embedded font file
      */
-    public AbstractPDFStream makeFontFile(FontDescriptor desc) {
-        if (desc.getFontType() == FontType.OTHER) {
-            throw new IllegalArgumentException("Trying to embed unsupported font type: "
-                                                + desc.getFontType());
-        }
+    public AbstractPDFStream makeFontFile(FontUse fontUse, FontConsumer fontConsumer) {
+        
+        return new PDFFontFileStream(fontUse, fontConsumer);
 
-        CustomFont font = getCustomFont(desc);
-
-        InputStream in = null;
-        try {
-            Source source = font.getEmbedFileSource();
-            if (source == null && font.getEmbedResourceName() != null) {
-                source = new StreamSource(this.getClass()
-                        .getResourceAsStream(font.getEmbedResourceName()));
-            }
-            if (source == null) {
-                return null;
-            }
-            if (source instanceof StreamSource) {
-                in = ((StreamSource) source).getInputStream();
-            }
-            if (in == null && source.getSystemId() != null) {
-                try {
-                    in = new java.net.URL(source.getSystemId()).openStream();
-                } catch (MalformedURLException e) {
-                    new FileNotFoundException(
-                            "File not found. URL could not be resolved: "
-                                    + e.getMessage());
-                }
-            }
-            if (in == null) {
-                return null;
-            }
-            //Make sure the InputStream is decorated with a BufferedInputStream
-            if (!(in instanceof java.io.BufferedInputStream)) {
-                in = new java.io.BufferedInputStream(in);
-            }
-            if (in == null) {
-                return null;
-            } else {
-                try {
-                    AbstractPDFStream embeddedFont;
-                    if (desc.getFontType() == FontType.TYPE0) {
-                        MultiByteFont mbfont = (MultiByteFont)font;
-                        FontFileReader reader = new FontFileReader(in);
-
-                        TTFSubSetFile subset = new TTFSubSetFile();
-                        byte[] subsetFont = subset.readFont(reader,
-                                             mbfont.getTTCName(), mbfont.getUsedGlyphs());
-                        // Only TrueType CID fonts are supported now
-
-                        embeddedFont = new PDFTTFStream(subsetFont.length);
-                        ((PDFTTFStream)embeddedFont).setData(subsetFont, subsetFont.length);
-                    } else if (desc.getFontType() == FontType.TYPE1) {
-                        PFBParser parser = new PFBParser();
-                        PFBData pfb = parser.parsePFB(in);
-                        embeddedFont = new PDFT1Stream();
-                        ((PDFT1Stream)embeddedFont).setData(pfb);
-                    } else {
-                        byte[] file = IOUtils.toByteArray(in);
-                        embeddedFont = new PDFTTFStream(file.length);
-                        ((PDFTTFStream)embeddedFont).setData(file, file.length);
-                    }
-
-                    /*
-                    embeddedFont.getFilterList().addFilter("flate");
-                    if (getDocument().isEncryptionActive()) {
-                        getDocument().applyEncryption(embeddedFont);
-                    } else {
-                        embeddedFont.getFilterList().addFilter("ascii-85");
-                    }*/
-
-                    return embeddedFont;
-                } finally {
-                    in.close();
-                }
-            }
-        } catch (IOException ioe) {
-            log.error(
-                    "Failed to embed font [" + desc + "] "
-                    + desc.getFontName(), ioe);
-            return (PDFStream) null;
-        }
+//        CustomFont font = getCustomFont(desc);
+//
+//        InputStream in = null;
+//        try {
+//            Source source = font.getEmbedFileSource();
+//            if (source == null && font.getEmbedResourceName() != null) {
+//                source = new StreamSource(this.getClass()
+//                        .getResourceAsStream(font.getEmbedResourceName()));
+//            }
+//            if (source == null) {
+//                return null;
+//            }
+//            if (source instanceof StreamSource) {
+//                in = ((StreamSource) source).getInputStream();
+//            }
+//            if (in == null && source.getSystemId() != null) {
+//                try {
+//                    in = new java.net.URL(source.getSystemId()).openStream();
+//                } catch (MalformedURLException e) {
+//                    new FileNotFoundException(
+//                            "File not found. URL could not be resolved: "
+//                                    + e.getMessage());
+//                }
+//            }
+//            if (in == null) {
+//                return null;
+//            }
+//            //Make sure the InputStream is decorated with a BufferedInputStream
+//            if (!(in instanceof java.io.BufferedInputStream)) {
+//                in = new java.io.BufferedInputStream(in);
+//            }
+//            if (in == null) {
+//                return null;
+//            } else {
+//                try {
+//                    AbstractPDFStream embeddedFont;
+//                    if (desc.getFontType() == FontType.TYPE0) {
+//                        MultiByteFont mbfont = (MultiByteFont)font;
+//                        FontFileReader reader = new FontFileReader(in);
+//
+//                        TTFSubSetFile subset = new TTFSubSetFile();
+//                        byte[] subsetFont = subset.readFont(reader,
+//                                             mbfont.getTTCName(), mbfont.getUsedGlyphs());
+//                        // Only TrueType CID fonts are supported now
+//
+//                        embeddedFont = new PDFTTFStream(subsetFont.length);
+//                        ((PDFTTFStream)embeddedFont).setData(subsetFont, subsetFont.length);
+//                    } else if (desc.getFontType() == FontType.TYPE1) {
+//                        PFBParser parser = new PFBParser();
+//                        PFBData pfb = parser.parsePFB(in);
+//                        embeddedFont = new PDFT1Stream();
+//                        ((PDFT1Stream)embeddedFont).setData(pfb);
+//                    } else {
+//                        byte[] file = IOUtils.toByteArray(in);
+//                        embeddedFont = new PDFTTFStream(file.length);
+//                        ((PDFTTFStream)embeddedFont).setData(file, file.length);
+//                    }
+//
+//                    /*
+//                    embeddedFont.getFilterList().addFilter("flate");
+//                    if (getDocument().isEncryptionActive()) {
+//                        getDocument().applyEncryption(embeddedFont);
+//                    } else {
+//                        embeddedFont.getFilterList().addFilter("ascii-85");
+//                    }*/
+//
+//                    return embeddedFont;
+//                } finally {
+//                    in.close();
+//                }
+//            }
+//        } catch (IOException ioe) {
+//            log.error(
+//                    "Failed to embed font [" + desc + "] "
+//                    + desc.getFontName(), ioe);
+//            return (PDFStream) null;
+//        }
     }
 
-    private CustomFont getCustomFont(FontDescriptor desc) {
-        Typeface tempFont;
-        if (desc instanceof LazyFont) {
-            tempFont = ((LazyFont)desc).getRealFont();
-        } else {
-            tempFont = (Typeface)desc;
-        }
-        if (!(tempFont instanceof CustomFont)) {
-            throw new IllegalArgumentException(
-                      "FontDescriptor must be instance of CustomFont, but is a "
-                       + desc.getClass().getName());
-        }
-        return (CustomFont)tempFont;
-    }
+//    private CustomFont getCustomFont(FontDescriptor desc) {
+//        Typeface tempFont;
+//        if (desc instanceof LazyFont) {
+//            tempFont = ((LazyFont)desc).getRealFont();
+//        } else {
+//            tempFont = (Typeface)desc;
+//        }
+//        if (!(tempFont instanceof CustomFont)) {
+//            throw new IllegalArgumentException(
+//                      "FontDescriptor must be instance of CustomFont, but is a "
+//                       + desc.getClass().getName());
+//        }
+//        return (CustomFont)tempFont;
+//    }
 
 
     /* ========================= streams =================================== */
@@ -1323,6 +1303,21 @@ public class PDFFactory {
     /* ========================= misc. objects ============================= */
 
     /**
+     * Transform an array of short into an array of int. I wish there were a
+     * better mean to do that...
+     * 
+     * @param array of short
+     * @return array with the same values stored as integers
+     */
+    private static int[] shortArrayToIntArray(short[] shortArray) {
+        int[] intArray = new int[shortArray.length];
+        for (int i = 0; i < shortArray.length; i++) {
+            intArray[i] = shortArray[i];
+        }
+        return intArray;
+    }
+    
+    /**
      * Makes a new ICCBased color space and registers it in the resource context.
      * @param res the PDF resource context to add the shading, may be null
      * @param explicitName the explicit name for the color space, may be null
@@ -1345,6 +1340,7 @@ public class PDFFactory {
     }
 
     /**
+>>>>>>> .r448139
      * make an Array object (ex. Widths array for a font)
      *
      * @param values the int array values

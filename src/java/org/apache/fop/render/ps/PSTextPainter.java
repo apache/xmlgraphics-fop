@@ -50,8 +50,10 @@ import org.apache.batik.gvt.text.TextPaintInfo;
 import org.apache.batik.gvt.font.GVTFontFamily;
 import org.apache.batik.gvt.renderer.StrokingTextPainter;
 
-import org.apache.fop.fonts.Font;
-import org.apache.fop.fonts.FontInfo;
+import org.axsl.font.Font;
+import org.axsl.font.FontConsumer;
+import org.axsl.font.FontException;
+import org.axsl.font.FontUse;
 import org.apache.fop.fonts.FontTriplet;
 
 /**
@@ -127,7 +129,8 @@ public class PSTextPainter implements TextPainter {
         boolean hasunsupported = false;
         
         String text = getText(aci);
-        Font font = makeFont(aci);
+        Float size = (Float)aci.getAttribute(TextAttribute.SIZE);
+        FontUse font = makeFont(aci, (size == null) ? 10000 : size.intValue() * 1000);
         if (hasUnsupportedGlyphs(text, font)) {
             log.trace("-> Unsupported glyphs found");
             hasunsupported = true;
@@ -280,10 +283,12 @@ public class PSTextPainter implements TextPainter {
         Paint strokePaint = tpi.strokePaint;
         Stroke stroke = tpi.strokeStroke;
 
-        Float fontSize = (Float)aci.getAttribute(TextAttribute.SIZE);
-        if (fontSize == null) {
+        Float size = (Float)aci.getAttribute(TextAttribute.SIZE);
+        if (size == null) {
             return loc;
         }
+        int fontSize = (size == null) ? 10000 : size.intValue() * 1000;
+        
         Float posture = (Float)aci.getAttribute(TextAttribute.POSTURE);
         Float taWeight = (Float)aci.getAttribute(TextAttribute.WEIGHT);
 
@@ -294,13 +299,13 @@ public class PSTextPainter implements TextPainter {
         g2d.setPaint(foreground);
         g2d.setStroke(stroke);
 
-        Font font = makeFont(aci);
-        java.awt.Font awtFont = makeAWTFont(aci, font);
+        FontUse fontUse = makeFont(aci, fontSize);
+        java.awt.Font awtFont = makeAWTFont(aci, fontUse, fontSize / 1000);
 
         g2d.setFont(awtFont);
 
         String txt = getText(aci);
-        float advance = getStringWidth(txt, font);
+        float advance = fontUse.getFont().width(txt, fontSize, 0, 0) / 1000f;
         float tx = 0;
         if (anchor != null) {
             switch (anchor.getType()) {
@@ -357,27 +362,29 @@ public class PSTextPainter implements TextPainter {
         } 
     }
 
-    private String getStyle(AttributedCharacterIterator aci) {
+    private byte getStyle(AttributedCharacterIterator aci) {
         Float posture = (Float)aci.getAttribute(TextAttribute.POSTURE);
         return ((posture != null) && (posture.floatValue() > 0.0))
-                       ? "italic" 
-                       : "normal";
+                       ? Font.FONT_STYLE_ITALIC 
+                       : Font.FONT_STYLE_NORMAL;
     }
 
-    private int getWeight(AttributedCharacterIterator aci) {
+    private short getWeight(AttributedCharacterIterator aci) {
         Float taWeight = (Float)aci.getAttribute(TextAttribute.WEIGHT);
         return ((taWeight != null) &&  (taWeight.floatValue() > 1.0)) 
-                       ? Font.BOLD
-                       : Font.NORMAL;
+                       ? Font.FONT_WEIGHT_BOLD
+                       : Font.FONT_WEIGHT_NORMAL;
     }
 
-    private Font makeFont(AttributedCharacterIterator aci) {
-        Float fontSize = (Float)aci.getAttribute(TextAttribute.SIZE);
-        if (fontSize == null) {
-            fontSize = new Float(10.0f);
-        }
-        String style = getStyle(aci);
-        int weight = getWeight(aci);
+    /**
+     * Make a font suitable for the given aci.
+     * @param aci 
+     * @param fontSize font size in millipoints.
+     * @return a suitable font use.
+     */
+    private FontUse makeFont(AttributedCharacterIterator aci, int fontSize) {
+        byte style = getStyle(aci);
+        short weight = getWeight(aci);
 
         boolean found = false;
         FontInfo fontInfo = nativeTextHandler.getFontInfo();
@@ -386,6 +393,8 @@ public class PSTextPainter implements TextPainter {
                       GVTAttributedCharacterIterator.TextAttribute.GVT_FONT_FAMILIES);
         if (gvtFonts != null) {
             Iterator i = gvtFonts.iterator();
+            String[] fontFamilies = new String[gvtFonts.size()];
+            int index = 0;
             while (i.hasNext()) {
                 GVTFontFamily fam = (GVTFontFamily) i.next();
                 /* (todo) Enable SVG Font painting
@@ -393,6 +402,9 @@ public class PSTextPainter implements TextPainter {
                     PROXY_PAINTER.paint(node, g2d);
                     return;
                 }*/
+<<<<<<< .mine
+                fontFamilies[index++] = fam.getFamilyName();
+=======
                 fontFamily = fam.getFamilyName();
                 if (fontInfo.hasFont(fontFamily, style, weight)) {
                     FontTriplet triplet = fontInfo.fontLookup(
@@ -400,53 +412,83 @@ public class PSTextPainter implements TextPainter {
                     int fsize = (int)(fontSize.floatValue() * 1000);
                     return fontInfo.getFontInstance(triplet, fsize);
                 }
+>>>>>>> .r448139
             }
+            int currentPos = aci.getIndex();
+            try {
+                font = fontConsumer.getFontServer().
+                        selectFontXSL(fontConsumer, fontFamilies, style, weight,
+                        Font.FONT_VARIANT_NORMAL, Font.FONT_STRETCH_NORMAL,
+                        fontSize, aci.first());
+            } catch (FontException f) {
+                try {
+                    font = fontConsumer.getFontServer().
+                            selectFontXSL(fontConsumer, new String[] {"any"}, style,
+                                    Font.FONT_WEIGHT_ANY,
+                                    Font.FONT_VARIANT_ANY,
+                                    Font.FONT_STRETCH_ANY,
+                                    fontSize, aci.first());
+                } catch (FontException e) { /* Should never happen */ }
+            }
+            aci.setIndex(currentPos);
         }
+<<<<<<< .mine
+        return font;
+=======
         FontTriplet triplet = fontInfo.fontLookup("any", style, Font.NORMAL);
         int fsize = (int)(fontSize.floatValue() * 1000);
         return fontInfo.getFontInstance(triplet, fsize);
+>>>>>>> .r448139
     }
 
-    private java.awt.Font makeAWTFont(AttributedCharacterIterator aci, Font font) {
-        final String style = getStyle(aci);
-        final int weight = getWeight(aci);
+    /**
+     * Make an AWT font corresponding to the given font use.
+     * @param aci
+     * @param fontUse the font use.
+     * @param fontSize the font size in points.
+     * @return the corresponding AWT font.
+     */
+    private java.awt.Font makeAWTFont(AttributedCharacterIterator aci,
+                                      FontUse fontUse,
+                                      int fontSize) {
+        final byte style = getStyle(aci);
+        final short weight = getWeight(aci);
         int fStyle = java.awt.Font.PLAIN;
-        if (weight == Font.BOLD) {
+        if (weight == Font.FONT_WEIGHT_BOLD) {
             fStyle |= java.awt.Font.BOLD;
         }
-        if ("italic".equals(style)) {
+        if (style == Font.FONT_STYLE_ITALIC) {
             fStyle |= java.awt.Font.ITALIC;
         }
-        return new java.awt.Font(font.getFontName(), fStyle,
-                             (int)(font.getFontSize() / 1000));
+        return new java.awt.Font(fontUse.postscriptName(), fStyle, fontSize);
     }
 
-    private float getStringWidth(String str, Font font) {
-        float wordWidth = 0;
-        float whitespaceWidth = font.getWidth(font.mapChar(' '));
+//    private float getStringWidth(String str, Font font) {
+//        float wordWidth = 0;
+//        float whitespaceWidth = font.getWidth(font.mapChar(' '));
+//
+//        for (int i = 0; i < str.length(); i++) {
+//            float charWidth;
+//            char c = str.charAt(i);
+//            if (!((c == ' ') || (c == '\n') || (c == '\r') || (c == '\t'))) {
+//                charWidth = font.getWidth(font.mapChar(c));
+//                if (charWidth <= 0) {
+//                    charWidth = whitespaceWidth;
+//                }
+//            } else {
+//                charWidth = whitespaceWidth;
+//            }
+//            wordWidth += charWidth;
+//        }
+//        return wordWidth / 1000f;
+//    }
 
+    private boolean hasUnsupportedGlyphs(String str, FontUse font) {
         for (int i = 0; i < str.length(); i++) {
             float charWidth;
             char c = str.charAt(i);
             if (!((c == ' ') || (c == '\n') || (c == '\r') || (c == '\t'))) {
-                charWidth = font.getWidth(font.mapChar(c));
-                if (charWidth <= 0) {
-                    charWidth = whitespaceWidth;
-                }
-            } else {
-                charWidth = whitespaceWidth;
-            }
-            wordWidth += charWidth;
-        }
-        return wordWidth / 1000f;
-    }
-
-    private boolean hasUnsupportedGlyphs(String str, Font font) {
-        for (int i = 0; i < str.length(); i++) {
-            float charWidth;
-            char c = str.charAt(i);
-            if (!((c == ' ') || (c == '\n') || (c == '\r') || (c == '\t'))) {
-                if (!font.hasChar(c)) {
+                if (!font.glyphAvailable(c)) {
                     return true;
                 }
             }

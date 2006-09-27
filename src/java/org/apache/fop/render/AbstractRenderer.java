@@ -24,8 +24,8 @@ import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 // XML
@@ -33,23 +33,25 @@ import org.w3c.dom.Document;
 
 // FOP
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.BeforeFloat;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.BodyRegion;
 import org.apache.fop.area.CTM;
-import org.apache.fop.area.NormalFlow;
 import org.apache.fop.area.Footnote;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.MainReference;
-import org.apache.fop.area.Span;
+import org.apache.fop.area.NormalFlow;
+import org.apache.fop.area.OffDocumentItem;
 import org.apache.fop.area.Page;
 import org.apache.fop.area.PageViewport;
-import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.RegionReference;
+import org.apache.fop.area.RegionViewport;
+import org.apache.fop.area.Span;
 import org.apache.fop.area.Trait;
-import org.apache.fop.area.OffDocumentItem;
+import org.apache.fop.area.inline.Character;
 import org.apache.fop.area.inline.Character;
 import org.apache.fop.area.inline.Container;
 import org.apache.fop.area.inline.ForeignObject;
@@ -59,13 +61,12 @@ import org.apache.fop.area.inline.InlineBlockParent;
 import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.Space;
+import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.area.inline.SpaceArea;
-import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fonts.FontInfo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -73,6 +74,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.avalon.framework.configuration.Configurable;
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
+
+import org.axsl.fontR.FontConsumer;
 
 /**
  * Abstract base class for all renderers. The Abstract renderer does all the
@@ -124,9 +127,9 @@ public abstract class AbstractRenderer
     }
 
     /**
-     *  @see org.apache.fop.render.Renderer#setupFontInfo(FontInfo)
+     *  @see org.apache.fop.render.Renderer#setupFontConsumer(Consumer)
      */
-    public abstract void setupFontInfo(FontInfo fontInfo);
+    public abstract void setupFontConsumer(FontConsumer fontConsumer);
 
     /**
      *  @see org.apache.fop.render.Renderer#setUserAgent(FOUserAgent)

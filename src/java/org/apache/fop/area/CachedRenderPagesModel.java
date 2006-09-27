@@ -22,7 +22,6 @@ package org.apache.fop.area;
 import org.apache.commons.io.IOUtils;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.fonts.FontInfo;
 import org.xml.sax.SAXException;
 
 import java.util.Map;
@@ -37,6 +36,8 @@ import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedInputStream;
+
+import org.axsl.fontR.FontConsumer;
 
 /**
  * A simple cached render pages model.
@@ -59,8 +60,8 @@ public class CachedRenderPagesModel extends RenderPagesModel {
      * @throws FOPException if the renderer cannot be properly initialized
      */
     public CachedRenderPagesModel (FOUserAgent userAgent, String outputFormat, 
-            FontInfo fontInfo, OutputStream stream) throws FOPException {
-        super(userAgent, outputFormat, fontInfo, stream);
+            FontConsumer fontConsumer, OutputStream stream) throws FOPException {
+        super(userAgent, outputFormat, fontConsumer, stream);
         this.baseDir = new File(System.getProperty("java.io.tmpdir"));
     }
 

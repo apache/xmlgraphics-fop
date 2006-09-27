@@ -19,7 +19,6 @@
  
 package org.apache.fop.pdf;
 
-import org.apache.fop.fonts.FontType;
 
 /**
  * Class representing a Type0 font.
@@ -50,7 +49,7 @@ public class PDFFontType0 extends PDFFontNonBase14 {
                         Object encoding) {
 
         /* generic creation of PDF object */
-        super(fontname, FontType.TYPE0, basefont, encoding /* , mapping */);
+        super(fontname, PDFFont.TYPE0, basefont, encoding /* , mapping */);
 
         /* set fields using paramaters */
         this.descendantFonts = null;
@@ -71,7 +70,7 @@ public class PDFFontType0 extends PDFFontNonBase14 {
                         PDFCIDFont descendantFonts) {
 
         /* generic creation of PDF object */
-        super(fontname, FontType.TYPE0, basefont, encoding /* , mapping */);
+        super(fontname, PDFFont.TYPE0, basefont, encoding /* , mapping */);
 
         /* set fields using paramaters */
         this.descendantFonts = descendantFonts;

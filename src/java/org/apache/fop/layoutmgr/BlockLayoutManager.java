@@ -27,12 +27,14 @@ import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.datatypes.Length;
-import org.apache.fop.fonts.Font;
 import org.apache.fop.layoutmgr.inline.InlineLayoutManager;
 import org.apache.fop.layoutmgr.inline.InlineLevelLayoutManager;
 import org.apache.fop.layoutmgr.inline.LineLayoutManager;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
+
+import org.axsl.fontR.FontConsumer;
+import org.axsl.fontR.FontUse;
 
 /**
  * LayoutManager for a block FO.
@@ -71,12 +73,14 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
 
     public void initialize() {
         super.initialize();
-        Font fs = getBlockFO().getCommonFont().getFontState(
-                  getBlockFO().getFOEventHandler().getFontInfo(), this);
+        FontConsumer fontConsumer = getBlockFO().getFOEventHandler().getFontConsumer(); 
+        FontUse fontUse = getBlockFO().getCommonFont().getFontState(
+                  fontConsumer, this);
+        int fontSize = getBlockFO().getCommonFont().getFontSize(this);
         
-        lead = fs.getAscender();
-        follow = -fs.getDescender();
-        middleShift = -fs.getXHeight() / 2;
+        lead = fontUse.getFont().getAscender(fontSize);
+        follow = -fontUse.getFont().getDescender(fontSize);
+        middleShift = -fontUse.getFont().getXHeight(fontSize) / 2;
         lineHeight = getBlockFO().getLineHeight().getOptimum(this).getLength();
         startIndent = getBlockFO().getCommonMarginBlock().startIndent.getValue(this);
         endIndent = getBlockFO().getCommonMarginBlock().endIndent.getValue(this); 

@@ -27,6 +27,7 @@ import org.apache.fop.area.inline.UnresolvedPageNumber;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LayoutManager;
+import org.axsl.fontR.FontConsumer;
 
 /**
  * LayoutManager for the fo:page-number-citation-last formatting object
@@ -60,7 +61,8 @@ public class PageNumberCitationLastLayoutManager extends PageNumberCitationLayou
         TextArea text = null;
         resolved = false;
         if (!getPSLM().associateLayoutManagerID(fobj.getRefId())) {
-            text = new UnresolvedPageNumber(fobj.getRefId(), font, UnresolvedPageNumber.LAST);
+            text = new UnresolvedPageNumber(fobj.getRefId(), fontConsumer, fontUse, fontSize,
+            		UnresolvedPageNumber.LAST);
             getPSLM().addUnresolvedArea(fobj.getRefId(), (Resolvable)text);
             String str = "MMM"; // reserve three spaces for page number
             int width = getStringWidth(str);
