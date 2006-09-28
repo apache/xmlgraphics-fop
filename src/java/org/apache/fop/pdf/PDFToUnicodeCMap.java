@@ -53,7 +53,8 @@ public class PDFToUnicodeCMap extends PDFCMap {
         this.fsFont = fsFont;
     }
 
-    public void fillInPDF(final StringBuffer p) {
+    /** TODO remove this method, used for simulation only */
+    public void DISABLED_fillInPDF(final StringBuffer p) {
         // Just a fixed simulated cmap to test the basic mechanism,
         // won't work correctly for many chars, of course
         final String simulatedIdentityCmap = 
@@ -70,8 +71,10 @@ public class PDFToUnicodeCMap extends PDFCMap {
         +"\n1 begincodespacerange"
         +"\n<0000> <FFFF>"
         +"\nendcodespacerange"
-        +"\n1 beginbfrange"
-        +"\n<0000> <005E> <001F>"
+        +"\n2 beginbfrange"
+        +"\n<000a> <0040> <0029>"
+        +"\n<0043> <005f> <0062>"
+        //+"\n<0000> <005E> <001F>"
         +"\nendbfrange"
         +"\nendcmap"
         +"\nCMapName currentdict /CMapdefineresource pop"
@@ -81,7 +84,7 @@ public class PDFToUnicodeCMap extends PDFCMap {
         add(simulatedIdentityCmap);
     }
 
-    public void DISABLED_fillInPDF(final StringBuffer p) {
+    public void fillInPDF(final StringBuffer p) {
         writeCIDInit(p);
         writeCIDSystemInfo(p);
         writeVersionTypeName(p);
