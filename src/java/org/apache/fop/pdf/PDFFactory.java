@@ -1027,7 +1027,7 @@ public class PDFFactory {
             if (fontSubType == PDFFont.TYPE0) {
                 PDFCIDSystemInfo sysInfo = new PDFCIDSystemInfo("Adobe", "UCS", 0);
                 
-                PDFToUnicodeCMap cmap = new PDFToUnicodeCMap(getDocument(),font.getPostscriptName(),sysInfo,fontUse);
+                PDFToUnicodeCMap cmap = new PDFToUnicodeCMap(getDocument(),"Identity-H",sysInfo,fontUse);
                 getDocument().registerObject(cmap);
                 
                 PDFCIDFont cidFont = new PDFCIDFont(font.getPostscriptName(),
@@ -1049,7 +1049,7 @@ public class PDFFactory {
         }
         return pdfFont;
     }
-
+    
     public PDFWArray getSubsetWidths(FontPDF fontOutput) {
         // Create widths for reencoded chars
         // TODO vh: for now fonts aren't subsetted (I think)

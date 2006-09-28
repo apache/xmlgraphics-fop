@@ -54,6 +54,34 @@ public class PDFToUnicodeCMap extends PDFCMap {
     }
 
     public void fillInPDF(final StringBuffer p) {
+        // Just a fixed simulated cmap to test the basic mechanism,
+        // won't work correctly for many chars, of course
+        final String simulatedIdentityCmap = 
+        "/CIDInit /ProcSet findresource begin"
+        +"\n12 dict begin"
+        +"\nbegincmap"
+        +"\n/CIDSystemInfo"
+        +"\n<</Registry (Adobe)"
+        +"\n/Ordering(UCS)"
+        +"\n/Supplement 0"
+        +"\n>>def"
+        +"\n/CMapName /Adobe−Identity−UCS def"
+        +"\n/CMapType 2 def"
+        +"\n1 begincodespacerange"
+        +"\n<0000> <FFFF>"
+        +"\nendcodespacerange"
+        +"\n1 beginbfrange"
+        +"\n<0000> <005E> <001F>"
+        +"\nendbfrange"
+        +"\nendcmap"
+        +"\nCMapName currentdict /CMapdefineresource pop"
+        +"\nend"
+        +"\nend"
+        ;
+        add(simulatedIdentityCmap);
+    }
+
+    public void DISABLED_fillInPDF(final StringBuffer p) {
         writeCIDInit(p);
         writeCIDSystemInfo(p);
         writeVersionTypeName(p);
