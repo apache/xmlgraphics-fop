@@ -42,6 +42,9 @@ public abstract class PDFObject {
     /** logger for all PDFObjects (and descendants) */
     protected static Log log = LogFactory.getLog(PDFObject.class.getName());
 
+    /** The String that should be used to end a line in the PDF document. */
+    public static final String EOL = "\n";
+
     /**
      * the object's number
      */

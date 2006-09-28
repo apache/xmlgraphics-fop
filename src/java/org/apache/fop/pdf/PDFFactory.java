@@ -1026,16 +1026,17 @@ public class PDFFactory {
 
             if (fontSubType == PDFFont.TYPE0) {
                 PDFCIDSystemInfo sysInfo = new PDFCIDSystemInfo("Adobe", "UCS", 0);
-                // TODO vh: does not work yet
-//                PDFCMap cmap = new PDFCMap("Identity-H", sysInfo);
-//                getDocument().registerObject(cmap);
+                
+                PDFToUnicodeCMap cmap = new PDFToUnicodeCMap(getDocument(),font.getPostscriptName(),sysInfo,fontUse);
+                getDocument().registerObject(cmap);
+                
                 PDFCIDFont cidFont = new PDFCIDFont(font.getPostscriptName(),
                         CIDFontType.CIDTYPE2,
                         font.getDefaultWidth(),
                         getSubsetWidths((FontPDF)fontUse.getFontOutput("application/pdf")), sysInfo,
                         (PDFCIDFontDescriptor) pdfdesc);
                 getDocument().registerObject(cidFont);
-//                ((PDFFontType0) pdfFont).setCMAP(cmap);   
+                ((PDFFontType0) pdfFont).setCMAP(cmap);   
                 ((PDFFontType0) pdfFont).setDescendantFonts(cidFont);
             } else {
             	FontPDF fontOutput = (FontPDF)fontUse.getFontOutput("application/pdf");/*TODO vh*/
