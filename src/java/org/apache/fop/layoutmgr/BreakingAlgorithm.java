@@ -42,10 +42,7 @@ import org.apache.fop.fo.FONode;
 public abstract class BreakingAlgorithm {
 
     /** the logger for the class */
-    protected static Log classLog = LogFactory.getLog(BreakingAlgorithm.class);
-    
-    /** the logger for the instance */
-    protected Log log = classLog;
+    protected static Log log = LogFactory.getLog(BreakingAlgorithm.class);
     
     /** Maximum adjustment ration */
     protected static final int INFINITE_RATIO = 1000;

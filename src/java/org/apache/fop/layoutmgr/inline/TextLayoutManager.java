@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.fo.Constants;
@@ -100,6 +102,11 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             this.index = index;
         }
     }
+
+    /**
+     * logging instance
+     */
+    private static Log log = LogFactory.getLog(TextLayoutManager.class);
 
     // Hold all possible breaks for the text in this LM's FO.
     private ArrayList vecAreaInfo;

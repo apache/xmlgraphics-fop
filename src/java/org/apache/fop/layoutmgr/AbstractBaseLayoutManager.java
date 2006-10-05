@@ -44,7 +44,7 @@ public abstract class AbstractBaseLayoutManager
     /**
      * logging instance
      */
-    protected static Log log = LogFactory.getLog(LayoutManager.class);
+    private static Log log = LogFactory.getLog(AbstractBaseLayoutManager.class);
 
     /**
      * Abstract base layout manager.

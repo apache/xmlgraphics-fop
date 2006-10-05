@@ -19,6 +19,8 @@
 
 package org.apache.fop.layoutmgr.inline;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.Constants;
@@ -73,6 +75,11 @@ import org.apache.fop.traits.MinOptMax;
  */
 public class LineLayoutManager extends InlineStackingLayoutManager 
                                implements BlockLevelLayoutManager {
+
+    /**
+     * logging instance
+     */
+    private static Log log = LogFactory.getLog(LineLayoutManager.class);
 
     private Block fobj;
     private boolean isFirstInBlock;

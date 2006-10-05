@@ -19,6 +19,8 @@
 
 package org.apache.fop.layoutmgr.inline;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.pagination.Title;
@@ -52,6 +54,12 @@ import org.apache.fop.area.Block;
  */
 public class ContentLayoutManager extends AbstractBaseLayoutManager
         implements InlineLevelLayoutManager {
+
+    /**
+     * logging instance
+     */
+    private static Log log = LogFactory.getLog(ContentLayoutManager.class);
+
     private FOUserAgent userAgent;
     private Area holder;
     private int stackSize;
