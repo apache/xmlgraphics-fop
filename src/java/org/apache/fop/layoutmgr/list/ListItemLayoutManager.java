@@ -19,6 +19,8 @@
 
 package org.apache.fop.layoutmgr.list;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fo.flow.ListItem;
 import org.apache.fop.fo.flow.ListItemBody;
 import org.apache.fop.fo.flow.ListItemLabel;
@@ -56,6 +58,12 @@ import java.util.ListIterator;
  */
 public class ListItemLayoutManager extends BlockStackingLayoutManager 
                     implements ConditionalElementListener {
+
+    /**
+     * logging instance
+     */
+    private static Log log = LogFactory.getLog(ListItemLayoutManager.class);
+
     private ListItemContentLayoutManager label;
     private ListItemContentLayoutManager body;
 

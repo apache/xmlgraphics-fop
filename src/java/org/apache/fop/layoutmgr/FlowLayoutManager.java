@@ -19,6 +19,8 @@
 
 package org.apache.fop.layoutmgr;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.layoutmgr.inline.InlineLevelLayoutManager;
 import org.apache.fop.area.Area;
@@ -37,6 +39,11 @@ import java.util.ListIterator;
  */
 public class FlowLayoutManager extends BlockStackingLayoutManager
                                implements BlockLevelLayoutManager {
+
+    /**
+     * logging instance
+     */
+    private static Log log = LogFactory.getLog(FlowLayoutManager.class);
     
     /** Array of areas currently being filled stored by area class */
     private BlockParent[] currentAreas = new BlockParent[Area.CLASS_MAX];

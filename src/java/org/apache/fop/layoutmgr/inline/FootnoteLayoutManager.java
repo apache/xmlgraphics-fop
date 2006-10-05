@@ -23,6 +23,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fo.flow.Footnote;
 import org.apache.fop.layoutmgr.AbstractLayoutManager;
 import org.apache.fop.layoutmgr.FootnoteBodyLayoutManager;
@@ -37,6 +39,11 @@ import org.apache.fop.layoutmgr.Position;
  */
 public class FootnoteLayoutManager extends AbstractLayoutManager 
                                    implements InlineLevelLayoutManager {
+
+    /**
+     * logging instance
+     */
+    private static Log log = LogFactory.getLog(FootnoteLayoutManager.class);
 
     private Footnote footnote;
     private InlineStackingLayoutManager citationLM;

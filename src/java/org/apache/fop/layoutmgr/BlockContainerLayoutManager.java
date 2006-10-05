@@ -25,6 +25,8 @@ import java.util.ListIterator;
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.Block;
@@ -43,6 +45,11 @@ import org.apache.fop.traits.SpaceVal;
  */
 public class BlockContainerLayoutManager extends BlockStackingLayoutManager 
                 implements ConditionalElementListener {
+
+    /**
+     * logging instance
+     */
+    private static Log log = LogFactory.getLog(BlockContainerLayoutManager.class);
     
     private BlockViewport viewportBlockArea;
     private Block referenceArea;

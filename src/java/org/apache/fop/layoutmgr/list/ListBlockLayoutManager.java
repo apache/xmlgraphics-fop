@@ -19,6 +19,8 @@
  
 package org.apache.fop.layoutmgr.list;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fo.flow.ListBlock;
 import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
@@ -47,6 +49,11 @@ import java.util.List;
  */
 public class ListBlockLayoutManager extends BlockStackingLayoutManager 
                 implements ConditionalElementListener {
+
+    /**
+     * logging instance
+     */
+    private static Log log = LogFactory.getLog(ListBlockLayoutManager.class);
 
     private Block curBlockArea;
 

@@ -35,7 +35,7 @@ import org.apache.fop.traits.MinOptMax;
 class PageBreakingAlgorithm extends BreakingAlgorithm {
 
     /** the logger for the class */
-    protected static Log classLog = LogFactory.getLog(PageBreakingAlgorithm.class);
+    private static Log log = LogFactory.getLog(PageBreakingAlgorithm.class);
 
     private LayoutManager topLevelLM;
     private PageSequenceLayoutManager.PageProvider pageProvider;
@@ -101,7 +101,6 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                                  boolean partOverflowRecovery, boolean autoHeight,
                                  boolean favorSinglePart) {
         super(alignment, alignmentLast, true, partOverflowRecovery, 0);
-        this.log = classLog;
         this.topLevelLM = topLevelLM;
         this.pageProvider = pageProvider;
         this.layoutListener = layoutListener;

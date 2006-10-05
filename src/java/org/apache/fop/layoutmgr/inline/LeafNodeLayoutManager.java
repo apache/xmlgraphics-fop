@@ -22,6 +22,8 @@ package org.apache.fop.layoutmgr.inline;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.fo.FObj;
@@ -48,6 +50,12 @@ import org.apache.fop.traits.MinOptMax;
  */
 public abstract class LeafNodeLayoutManager extends AbstractLayoutManager 
                                    implements InlineLevelLayoutManager {
+
+    /**
+     * logging instance
+     */
+    private static Log log = LogFactory.getLog(LeafNodeLayoutManager.class);
+
     /**
      * The inline area that this leafnode will add.
      */

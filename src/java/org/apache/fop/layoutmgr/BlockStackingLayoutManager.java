@@ -24,6 +24,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.BlockParent;
 import org.apache.fop.area.Block;
@@ -40,6 +42,12 @@ import org.apache.fop.traits.MinOptMax;
  */
 public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                                                  implements BlockLevelLayoutManager {
+
+    /**
+     * logging instance
+     */
+    private static Log log = LogFactory.getLog(BlockStackingLayoutManager.class);
+
     /**
      * Reference to FO whose areas it's managing or to the traits
      * of the FO.

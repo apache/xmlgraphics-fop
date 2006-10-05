@@ -19,6 +19,8 @@
 
 package org.apache.fop.layoutmgr.table;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.flow.TableFObj;
@@ -56,6 +58,11 @@ import org.apache.fop.fo.FObj;
  */
 public class TableLayoutManager extends BlockStackingLayoutManager 
                 implements ConditionalElementListener {
+
+    /**
+     * logging instance
+     */
+    private static Log log = LogFactory.getLog(TableLayoutManager.class);
     
     private TableContentLayoutManager contentLM; 
     private ColumnSetup columns = null;

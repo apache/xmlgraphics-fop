@@ -21,6 +21,8 @@ package org.apache.fop.layoutmgr.table;
 
 import java.util.LinkedList;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.flow.TableCell;
@@ -48,6 +50,11 @@ import org.apache.fop.traits.MinOptMax;
  */
 public class TableCellLayoutManager extends BlockStackingLayoutManager 
             implements BlockLevelLayoutManager {
+
+    /**
+     * logging instance
+     */
+    private static Log log = LogFactory.getLog(TableCellLayoutManager.class);
     
     private PrimaryGridUnit gridUnit;
     

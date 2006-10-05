@@ -23,6 +23,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.LineArea;
@@ -39,6 +41,11 @@ import org.apache.fop.traits.SpaceVal;
  */
 public class BlockLayoutManager extends BlockStackingLayoutManager 
             implements ConditionalElementListener {
+
+    /**
+     * logging instance
+     */
+    private static Log log = LogFactory.getLog(BlockLayoutManager.class);
     
     private Block curBlockArea;
 

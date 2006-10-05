@@ -23,6 +23,8 @@ import java.util.ListIterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.InlineBlockParent;
@@ -56,6 +58,12 @@ import org.apache.fop.traits.SpaceVal;
  * such as Inline or Line
  */
 public class InlineLayoutManager extends InlineStackingLayoutManager {
+
+    /**
+     * logging instance
+     */
+    private static Log log = LogFactory.getLog(InlineLayoutManager.class);
+
     private InlineLevel fobj;
 
     private CommonMarginInline inlineProps = null;

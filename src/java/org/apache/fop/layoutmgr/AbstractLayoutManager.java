@@ -19,6 +19,8 @@
 
 package org.apache.fop.layoutmgr;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.area.Area;
@@ -37,6 +39,11 @@ import java.util.Map;
  */
 public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager 
     implements Constants {
+
+    /**
+     * logging instance
+     */
+    private static Log log = LogFactory.getLog(AbstractLayoutManager.class);
 
     /** Parent LayoutManager for this LayoutManager */
     protected LayoutManager parentLM = null;
