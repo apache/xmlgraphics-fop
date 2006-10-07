@@ -44,9 +44,7 @@
     <eval expected="112" xpath="//pageViewport[@nr=111]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/lineArea/text[2]"/>
     <eval expected="20016" xpath="//pageViewport[@nr=111]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/lineArea/text[2]/@ipd"/>
     <!-- Check the text and width of the inlineparent area -->
-    <!-- disabled until this feature is fixed
     <eval expected="112" xpath="//pageViewport[@nr=111]/page/regionViewport/regionBody/mainReference/span/flow/block[2]/lineArea/inlineparent"/>
     <eval expected="20016" xpath="//pageViewport[@nr=111]/page/regionViewport/regionBody/mainReference/span/flow/block[2]/lineArea/inlineparent/@ipd"/>
-    -->
   </checks>
 </testcase>
