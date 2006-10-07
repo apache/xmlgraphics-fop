@@ -27,6 +27,8 @@ import org.apache.fop.fo.ElementMapping;
 
 import org.apache.batik.util.XMLResourceDescriptor;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.DOMImplementation;
 
 /**
@@ -38,6 +40,9 @@ public class SVGElementMapping extends ElementMapping {
     
     /** the SVG namespace */
     public static final String URI = SVGDOMImplementation.SVG_NAMESPACE_URI;
+    
+    /** logging instance */
+    protected Log log = LogFactory.getLog(SVGElementMapping.class);
     
     private boolean batikAvailable = true;
 
@@ -79,6 +84,7 @@ public class SVGElementMapping extends ElementMapping {
                 foObjs.put("svg", new SE());
                 foObjs.put(DEFAULT, new SVGMaker());
             } catch (Throwable t) {
+                log.error("Error while initializing the Batik SVG extensions", t);
                 // if the classes are not available
                 // the DISPLAY is not checked
                 batikAvailable = false;
