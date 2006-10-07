@@ -263,7 +263,7 @@ public class Marker extends FObjMixed {
         }
 
         /**
-         * @see org.xml.sax.Attributes#getURI()
+         * @see org.xml.sax.Attributes#getURI(int)
          */
         public String getURI(int index) {
             if (attribs != null 
@@ -277,7 +277,7 @@ public class Marker extends FObjMixed {
         }
 
         /**
-         * @see org.xml.sax.Attributes#getLocalName()
+         * @see org.xml.sax.Attributes#getLocalName(int)
          */
         public String getLocalName(int index) {
             if (attribs != null 
@@ -291,7 +291,7 @@ public class Marker extends FObjMixed {
         }
 
         /**
-         * @see org.xml.sax.Attributes#getQName()
+         * @see org.xml.sax.Attributes#getQName(int)
          */
         public String getQName(int index) {
             if (attribs != null 
@@ -306,14 +306,14 @@ public class Marker extends FObjMixed {
 
         /**
          * Default implementation; not used
-         * @see org.xml.sax.Attributes#getType()
+         * @see org.xml.sax.Attributes#getType(int)
          */
         public String getType(int index) {
             return "CDATA";
         }
 
         /**
-         * @see org.xml.sax.Attributes#getValue()
+         * @see org.xml.sax.Attributes#getValue(int)
          */
         public String getValue(int index) {
             if (attribs != null 
@@ -327,7 +327,7 @@ public class Marker extends FObjMixed {
         }
 
         /**
-         * @see org.xml.sax.Attributes#getIndex()
+         * @see org.xml.sax.Attributes#getIndex(String, String)
          */
         public int getIndex(String name, String namespace) {
             int index = -1;
@@ -344,7 +344,7 @@ public class Marker extends FObjMixed {
         }
 
         /**
-         * @see org.xml.sax.Attributes#getIndex()
+         * @see org.xml.sax.Attributes#getIndex(String)
          */
         public int getIndex(String qname) {
             int index = -1;
@@ -361,7 +361,7 @@ public class Marker extends FObjMixed {
 
         /**
          * Default implementation; not used
-         * @see org.xml.sax.Attributes#getType()
+         * @see org.xml.sax.Attributes#getType(String, String)
          */
         public String getType(String name, String namespace) {
             return "CDATA";
@@ -369,14 +369,14 @@ public class Marker extends FObjMixed {
 
         /**
          * Default implementation; not used
-         * @see org.xml.sax.Attributes#getType()
+         * @see org.xml.sax.Attributes#getType(String)
          */
         public String getType(String qname) {
             return "CDATA";
         }
 
         /**
-         * @see org.xml.sax.Attributes#getValue()
+         * @see org.xml.sax.Attributes#getValue(String, String)
          */
         public String getValue(String name, String namespace) {
             int index = getIndex(name, namespace);
@@ -387,7 +387,7 @@ public class Marker extends FObjMixed {
         }
 
         /**
-         * @see org.xml.sax.Attributes#getValue()
+         * @see org.xml.sax.Attributes#getValue(String)
          */
         public String getValue(String qname) {
             int index = getIndex(qname);

@@ -94,7 +94,7 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
         
         
         /**
-         * @see org.apache.fop.fo.properties.PropertyMaker#getSubprop()
+         * @see org.apache.fop.fo.properties.PropertyMaker#getSubprop(Property, int, Property)
          */
         protected Property setSubprop(Property baseProperty, int subpropertyId,
                                         Property subproperty) {

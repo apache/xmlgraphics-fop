@@ -31,12 +31,12 @@ import org.apache.fop.fo.expr.PropertyException;
 public class BackgroundPositionShorthandParser extends GenericShorthandParser {
 
     /**
-     * @see org.apache.fop.fo.properties.ShorthandParser#getValueForProperty()
+     * @see org.apache.fop.fo.properties.ShorthandParser#getValueForProperty(int, Property, PropertyMaker, PropertyList)
      */
     public Property getValueForProperty(int propId,
-                                               Property property,
-                                               PropertyMaker maker,
-                                               PropertyList propertyList)
+                                        Property property,
+                                        PropertyMaker maker,
+                                        PropertyList propertyList)
                     throws PropertyException {
         
         int index = -1;

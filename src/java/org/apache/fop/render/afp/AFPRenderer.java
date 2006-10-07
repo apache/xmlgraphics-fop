@@ -511,7 +511,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#stopRenderer(java.io.OutputStream)
+     * @see org.apache.fop.render.Renderer#stopRenderer()
      */
     public void stopRenderer() throws IOException {
         _afpDataStream.endDocument();
@@ -797,7 +797,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Clip using the current path.
-     * @see org.apache.fop.render.AbstractRenderer#clip
+     * @see org.apache.fop.render.AbstractPathOrientedRenderer#clip
      */
     public void clip() {
         // TODO
@@ -805,7 +805,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Clip using a rectangular area.
-     * @see org.apache.fop.render.AbstractRenderer#clipRect(float, float, float, float)
+     * @see org.apache.fop.render.AbstractPathOrientedRenderer#clipRect(float, float, float, float)
      */
     public void clipRect(float x, float y, float width, float height) {
         // TODO
@@ -813,7 +813,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Moves the current point to (x, y), omitting any connecting line segment.
-     * @see org.apache.fop.render.AbstractRenderer#moveTo(float, float)
+     * @see org.apache.fop.render.AbstractPathOrientedRenderer#moveTo(float, float)
      */
     public void moveTo(float x, float y) {
         // TODO
@@ -822,7 +822,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     /**
      * Appends a straight line segment from the current point to (x, y). The
      * new current point is (x, y).
-     * @see org.apache.fop.render.AbstractRenderer#lineTo(float, float)
+     * @see org.apache.fop.render.AbstractPathOrientedRenderer#lineTo(float, float)
      */
     public void lineTo(float x, float y) {
         // TODO
@@ -831,7 +831,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     /**
      * Closes the current subpath by appending a straight line segment from
      * the current point to the starting point of the subpath.
-     * @see org.apache.fop.render.AbstractRenderer#closePath
+     * @see org.apache.fop.render.AbstractPathOrientedRenderer#closePath
      */
     public void closePath() {
         // TODO
@@ -839,7 +839,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Fill a rectangular area.
-     * @see org.apache.fop.render.AbstractRenderer#fillRect(float, float, float, float)
+     * @see org.apache.fop.render.AbstractPathOrientedRenderer#fillRect(float, float, float, float)
      */
     public void fillRect(float x, float y, float width, float height) {
         /*
@@ -863,7 +863,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Draw a border segment of an XSL-FO style border.
-     * @see org.apache.fop.render.AbstractRenderer#drawBorderLine(float, float, float, float,
+     * @see org.apache.fop.render.AbstractPathOrientedRenderer#drawBorderLine(float, float, float, float,
      *       boolean, boolean, int, Color)
      */
     public void drawBorderLine(float x1, float y1, float x2, float y2,
@@ -1069,7 +1069,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Draw an image at the indicated location.
-     * @see org.apache.fop.render.AbstractRenderer#drawImage(String, Rectangle2D, Map)
+     * @see org.apache.fop.render.AbstractPathOrientedRenderer#drawImage(String, Rectangle2D, Map)
      */
     public void drawImage(String url, Rectangle2D pos, Map foreignAttributes) {
         String name = null;
@@ -1256,7 +1256,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     
     /**
      * Establishes a new foreground or fill color.
-     * @see org.apache.fop.render.AbstractRenderer#updateColor(Color, boolean)
+     * @see org.apache.fop.render.AbstractPathOrientedRenderer#updateColor(Color, boolean)
      */
     public void updateColor(Color col, boolean fill) {
         if (fill) {
@@ -1448,13 +1448,6 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                 throw new UnsupportedOperationException("rule style not supported");
         }
         super.renderLeader(area);
-    }
-
-    /**
-     * @see org.apache.fop.render.Renderer#setProducer(String)
-     */
-    public void setProducer(String producer) {
-        _afpDataStream.setProducer(producer);
     }
 
     /**

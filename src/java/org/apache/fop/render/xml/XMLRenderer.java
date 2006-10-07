@@ -429,7 +429,7 @@ public class XMLRenderer extends PrintRenderer {
         }
     }
 
-    /** @see org.apache.fop.render.AbstractRenderer#processOffDocumentItem() */
+    /** @see org.apache.fop.render.AbstractRenderer#processOffDocumentItem(OffDocumentItem) */
     public void processOffDocumentItem(OffDocumentItem oDI) {
         if (oDI instanceof OffDocumentExtensionAttachment) {
             ExtensionAttachment attachment = ((OffDocumentExtensionAttachment)oDI).getAttachment();

@@ -31,7 +31,7 @@ import org.apache.fop.fo.expr.PropertyException;
 public class FontShorthandParser extends GenericShorthandParser {
 
     /**
-     * @see org.apache.fop.fo.properties.ShorthandParser#getValueForProperty()
+     * @see org.apache.fop.fo.properties.ShorthandParser#getValueForProperty(int, Property, PropertyMaker, PropertyList)
      */
     public Property getValueForProperty(int propId,
                                                Property property,

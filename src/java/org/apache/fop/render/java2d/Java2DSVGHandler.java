@@ -164,7 +164,7 @@ public class Java2DSVGHandler implements XMLHandler, Java2DRendererContextConsta
         info.state.getGraph().setTransform(origTransform);
     }
     
-    /** @see org.apache.fop.render.XMLHandler#supportsRenderer() */
+    /** @see org.apache.fop.render.XMLHandler#supportsRenderer(Renderer) */
     public boolean supportsRenderer(Renderer renderer) {
         return (renderer instanceof Java2DRenderer);
     }
