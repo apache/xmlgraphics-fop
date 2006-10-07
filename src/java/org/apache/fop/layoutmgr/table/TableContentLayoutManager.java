@@ -619,6 +619,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
         List positions = new java.util.ArrayList();
         List headerElements = null;
         List footerElements = null;
+        int nestedPenaltyArea = 0;
         Position firstPos = null;
         Position lastPos = null;
         Position lastCheckPos = null;
@@ -668,6 +669,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
             if (penaltyPos.footerElements != null) {
                 footerElements = penaltyPos.footerElements; 
             }
+            nestedPenaltyArea = penaltyPos.nestedPenaltyLength;
         }
 
         Map markers = getTableLM().getTable().getMarkers();
@@ -689,6 +691,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
         iterateAndPaintPositions(posIter, painter);
         painter.addAreasAndFlushRow(true);
 
+        painter.notifyNestedPenaltyArea(nestedPenaltyArea);
         if (footerElements != null) {
             //Positions for footers are simply added at the end
             PositionIterator nestedIter = new KnuthPossPosIter(footerElements);
@@ -790,6 +793,10 @@ public class TableContentLayoutManager implements PercentBaseContext {
         
         public void notifyEndOfSequence() {
             this.accumulatedBPD += lastRowHeight; //for last row
+        }
+        
+        public void notifyNestedPenaltyArea(int length) {
+            this.lastRowHeight += length;
         }
         
         public void handleTableContentPosition(TableContentPosition tcpos) {
@@ -1208,6 +1215,8 @@ public class TableContentLayoutManager implements PercentBaseContext {
         protected List headerElements;
         /** Element list for the footer */
         protected List footerElements;
+        /** Penalty length to be respected for nested content */
+        protected int nestedPenaltyLength;
         
         /**
          * Creates a new TableHFPenaltyPosition
@@ -1225,6 +1234,8 @@ public class TableContentLayoutManager implements PercentBaseContext {
             sb.append(headerElements);
             sb.append(", footer:");
             sb.append(footerElements);
+            sb.append(", inner penalty length:");
+            sb.append(nestedPenaltyLength);
             sb.append(")");
             return sb.toString();
         }

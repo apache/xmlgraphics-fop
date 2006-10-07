@@ -28,6 +28,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix">
+        Bugfix: Nested tables with headers and footers were not handled correctly and could
+        overlap with the region-after.
+      </action>
       <action context="Code" dev="JM" type="add" fixes-bug="40519" due-to="Oliver Hernàndez Valls">
         Added support for CCITT compression in the TIFFRenderer by switching to the ImageWriter
         abstraction from XML Graphics Commons.

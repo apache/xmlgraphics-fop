@@ -65,6 +65,7 @@ public class TableStepper {
     private boolean skippedStep;
     private boolean[] keepWithNextSignals;
     private boolean[] forcedBreaks;
+    private int lastMaxPenalty;
     
     /**
      * Main constructor
@@ -261,7 +262,7 @@ public class TableStepper {
             int penaltyLen = step + getMaxRemainingHeight() - totalHeight;
             int boxLen = step - addedBoxLen - penaltyLen;
             addedBoxLen += boxLen;
-            
+
             //Put all involved grid units into a list
             List gridUnitParts = new java.util.ArrayList(maxColumnCount);
             for (int i = 0; i < start.length; i++) {
@@ -328,6 +329,18 @@ public class TableStepper {
                     penaltyPos.footerElements = tclm.getFooterElements();
                 }
             }
+            
+            //Handle a penalty length coming from nested content
+            //Example: nested table with header/footer
+            if (this.lastMaxPenalty != 0) {
+                penaltyPos.nestedPenaltyLength = this.lastMaxPenalty;
+                if (log.isDebugEnabled()) {
+                    log.debug("Additional penalty length from table-cell break: " 
+                            + this.lastMaxPenalty);
+                }
+            }
+            effPenaltyLen += this.lastMaxPenalty;
+            
             int p = 0;
             boolean allCellsHaveContributed = true;
             signalKeepWithNext = false;
@@ -359,13 +372,14 @@ public class TableStepper {
                 p = -KnuthPenalty.INFINITE; //Overrides any keeps (see 4.8 in XSL 1.0)
                 clearBreakCondition();
             }
-            //returnList.add(new KnuthPenalty(effPenaltyLen, p, false, penaltyPos, false));
             returnList.add(new BreakElement(penaltyPos, effPenaltyLen, p, -1, context));
 
-            log.debug("step=" + step + " (+" + increase + ")"
-                    + " box=" + boxLen 
-                    + " penalty=" + penaltyLen
-                    + " effPenalty=" + effPenaltyLen);
+            if (log.isDebugEnabled()) {
+                log.debug("step=" + step + " (+" + increase + ")"
+                        + " box=" + boxLen 
+                        + " penalty=" + penaltyLen
+                        + " effPenalty=" + effPenaltyLen);
+            }
             
             laststep = step;
             if (rowBacktrackForLastStep) {
@@ -388,6 +402,7 @@ public class TableStepper {
     }
     
     private int getNextStep(int lastStep) {
+        this.lastMaxPenalty = 0;
         //Check for forced break conditions
         /*
         if (isBreakCondition()) {
@@ -452,6 +467,7 @@ public class TableStepper {
                 end[i]++;
                 KnuthElement el = (KnuthElement)elementLists[i].get(end[i]);
                 if (el.isPenalty()) {
+                    this.lastMaxPenalty = Math.max(this.lastMaxPenalty, el.getW());
                     if (el.getP() <= -KnuthElement.INFINITE) {
                         log.debug("FORCED break encountered!");
                         forcedBreaks[i] = true;
