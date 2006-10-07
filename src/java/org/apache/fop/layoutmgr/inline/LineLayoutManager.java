@@ -348,7 +348,10 @@ public class LineLayoutManager extends InlineStackingLayoutManager
 
         public void updateData1(int lineCount, double demerits) {
             lineLayouts.addPossibility(lineCount, demerits);
-            log.trace("Layout possibility in " + lineCount + " lines; break at position:");
+            if (super.log.isTraceEnabled()) {
+                super.log.trace(
+                        "Layout possibility in " + lineCount + " lines; break at position:");
+            }
         }
 
         public void updateData2(KnuthNode bestActiveNode,
@@ -381,8 +384,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             }
 
             if (difference + bestActiveNode.availableShrink < 0) {
-                if (log.isWarnEnabled()) {
-                    log.warn(FONode.decorateWithContextInfo(
+                if (super.log.isWarnEnabled()) {
+                    super.log.warn(FONode.decorateWithContextInfo(
                             "Line " + (addedPositions + 1) 
                             + " of a paragraph overflows the available area.", getFObj()));
                 }
