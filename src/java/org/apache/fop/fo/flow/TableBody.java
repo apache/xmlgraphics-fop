@@ -91,7 +91,7 @@ public class TableBody extends TableFObj {
     }
     
     /**
-     * @see org.apache.fop.fo.FONode#processNode()
+     * @see org.apache.fop.fo.FONode#processNode(String, Locator, Attributes, PropertyList)
      */
     public void processNode(String elementName, Locator locator, 
                             Attributes attlist, PropertyList pList) 
@@ -406,7 +406,6 @@ public class TableBody extends TableFObj {
     /**
      * Checks whether the previous cell had 'ends-row="true"'
      * 
-     * @param currentCell   the cell for which the question is asked
      * @return true if:
      *          a) there is a previous cell, which
      *             had ends-row="true"

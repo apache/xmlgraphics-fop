@@ -427,16 +427,6 @@ public class AFPDataStream {
     }
 
     /**
-     * Sets the application producing the AFP.
-     *
-     * @param producer
-     *            the application producing the AFP datastream
-     */
-    public void setProducer(String producer) {
-        _producer = producer;
-    }
-
-    /**
      * This method will create shading on the page using the specified
      * coordinates (the shading contrast is controlled via the red, green, blue
      * parameters, by converting this to grey scale).

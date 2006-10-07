@@ -31,7 +31,7 @@ public class ReferenceOrientationMaker extends Maker {
     /**
      * Constructor
      * @param propId the Constant Id for the property to be made
-     * @see org.apache.fop.fo.properties.PropertyMaker#PropertyMaker(propId)
+     * @see org.apache.fop.fo.properties.NumberProperty.Maker#PropertyMaker(propId)
      */
     public ReferenceOrientationMaker(int propId) {
         super(propId);

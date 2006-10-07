@@ -69,12 +69,9 @@ public class PDFMetadata extends PDFStream {
         super.setupFilterList();
     }
 
-    /** @see org.apache.fop.pdf.AbstractPDFStream#allowEncryption() */
-    protected boolean allowEncryption() {
-        return false; //XMP metadata packet must be scannable by non PDF-compatible readers
-    }
-
-    /** @return the XMP metadata */
+    /**
+     * @return the XMP metadata
+     */
     public Metadata getMetadata() {
         return this.xmpMetadata;
     }

@@ -474,8 +474,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     }
 
     /**
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer#updateColor(
-     *          org.apache.fop.datatypes.ColorType, boolean)
+     * @see org.apache.fop.render.AbstractPathOrientedRenderer#updateColor(Color, boolean)
      */
     protected void updateColor(Color col, boolean fill) {
         state.updateColor(col);
@@ -534,9 +533,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     }
     
     /**
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer#drawBorderLine(
-     *          float, float, float, float, boolean, boolean, int, 
-     *          org.apache.fop.datatypes.ColorType)
+     * @see org.apache.fop.render.AbstractPathOrientedRenderer#drawBorderLine(float, float, float, float, boolean, boolean, int, Color)
      */
     protected void drawBorderLine(float x1, float y1, float x2, float y2, 
             boolean horz, boolean startOrBefore, int style, Color col) {
