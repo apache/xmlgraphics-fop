@@ -53,9 +53,12 @@ public class InlineParent extends InlineArea {
             autoSize = (getIPD() == 0);
         }
         if (childArea instanceof InlineArea) {
+            InlineArea inlineChildArea = (InlineArea) childArea;
             inlines.add(childArea);
+            // set the parent area for the child area
+            inlineChildArea.setParentArea(this);
             if (autoSize) {
-                increaseIPD(((InlineArea) childArea).getAllocIPD());
+                increaseIPD(inlineChildArea.getAllocIPD());
             }
         }
     }

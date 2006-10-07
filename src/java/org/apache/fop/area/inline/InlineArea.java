@@ -113,11 +113,6 @@ public class InlineArea extends Area {
      */
     public void setParentArea(Area parentArea) {
         this.parentArea = parentArea;
-        // notify the parent area about ipd variations
-        if (storedIPDVariation > 0) {
-            notifyIPDVariation(storedIPDVariation);
-            storedIPDVariation = 0;
-        }
     }
 
     /**
@@ -162,16 +157,6 @@ public class InlineArea extends Area {
     }
     
     /**
-     * set the ipd and notify the parent area about the variation;
-     * this happens when a page-number or a page-number-citation
-     * is resolved to its actual value
-     * @param newIPD the new ipd of the area
-     */
-    public void updateIPD(int newIPD) {
-        // default behaviour: do nothing
-    }
-    
-    /**
      * recursively apply the variation factor to all descendant areas
      * @param variationFactor the variation factor that must be applied to adjustments
      * @param lineStretch     the total stretch of the line
@@ -184,14 +169,19 @@ public class InlineArea extends Area {
         return false;
     }
     
-    /**
+    public void handleIPDVariation(int ipdVariation) {
+        increaseIPD(ipdVariation);
+        notifyIPDVariation(ipdVariation);
+    }
+    
+        /**
      * notify the parent area about the ipd variation of this area
      * or of a descendant area
      * @param ipdVariation the difference between new and old ipd
      */
     protected void notifyIPDVariation(int ipdVariation) {
         if (getParentArea() instanceof InlineArea) {
-            ((InlineArea) getParentArea()).notifyIPDVariation(ipdVariation);
+            ((InlineArea) getParentArea()).handleIPDVariation(ipdVariation);
         } else if (getParentArea() instanceof LineArea) {
             ((LineArea) getParentArea()).handleIPDVariation(ipdVariation);
         } else if (getParentArea() == null) {
