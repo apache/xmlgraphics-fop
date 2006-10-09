@@ -48,6 +48,9 @@ public class PNGRenderer extends Java2DRenderer {
     /** The MIME type for png-Rendering */
     public static final String MIME_TYPE = MimeConstants.MIME_PNG;
 
+    /** The file extension expected for PNG files */
+    private static final String PNG_FILE_EXTENSION = "png";
+
     /** The file syntax prefix, eg. "page" will output "page1.png" etc */
     private String filePrefix;
 
@@ -71,10 +74,15 @@ public class PNGRenderer extends Java2DRenderer {
 
     /**
      * Sets the output directory, either from the outfile specified on the
-     * command line, or from the directory specified in configuration file. Also
-     * sets the file name syntax, eg. "page"
+     * command line, or from the directory specified in configuration file.
+     * Also sets the file name syntax, eg. "page".
+     * The file name must not have an extension, or must have extension "png",
+     * and its last period must not be at the start (empty file prefix).
+     * 
+     * @throws IOException if an invalid output file name was specified
+     *                     (e.g., with an extension other than '.png')
      */
-    private void setOutputDirectory() {
+    private void setOutputDirectory() throws IOException {
 
         // the file provided on the command line
         File f = getUserAgent().getOutputFile();
@@ -88,12 +96,24 @@ public class PNGRenderer extends Java2DRenderer {
             // extracting file name syntax
             String s = f.getName();
             int i = s.lastIndexOf(".");
+            if (i > 0) {
+                // Make sure that the file extension was "png"
+                String extension = s.substring(i + 1).toLowerCase();
+                if (!PNG_FILE_EXTENSION.equals(extension)) {
+                    throw new IOException("Invalid file extension ('"
+                                          + extension + "') specified");
+                }
+            } else if (i == -1) {
+                i = s.length();
+            } else { // i == 0
+                throw new IOException("Invalid file name ('"
+                                      + s + "') specified");
+            }
             if (s.charAt(i - 1) == '1') {
                 i--; // getting rid of the "1"
             }
             filePrefix = s.substring(0, i);
         }
-
     }
 
     /** @see org.apache.fop.render.Renderer#stopRenderer() */
@@ -147,7 +167,7 @@ public class PNGRenderer extends Java2DRenderer {
             return null;
         } else {
             File f = new File(outputDir,
-                    filePrefix + (pageNumber + 1) + ".png");
+                    filePrefix + (pageNumber + 1) + "." + PNG_FILE_EXTENSION);
             try {
                 OutputStream os = new BufferedOutputStream(new FileOutputStream(f));
                 return os;
