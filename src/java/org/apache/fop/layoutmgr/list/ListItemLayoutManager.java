@@ -499,7 +499,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
                 labelFirstIndex, labelLastIndex, previousBreak);
 
         //Determine previous break if any
-        previousBreak = ElementListUtils.determinePreviousBreak(labelList, labelFirstIndex);
+        previousBreak = ElementListUtils.determinePreviousBreak(bodyList, bodyFirstIndex);
         SpaceResolver.performConditionalsNotification(bodyList, 
                 bodyFirstIndex, bodyLastIndex, previousBreak);
         
