@@ -38,6 +38,11 @@ public abstract class CIDFont extends CustomFont {
     public Map usedGlyphsIndex = new java.util.HashMap();
     public int usedGlyphsCount = 0;
 
+    /**
+     * usedCharsIndex contains new glyph, original char
+     */
+    public Map usedCharsIndex = new java.util.HashMap();
+
     //private PDFWArray warray = new PDFWArray();
     public int width[] = null;
 
@@ -91,4 +96,8 @@ public abstract class CIDFont extends CustomFont {
         return true;
     }
 
+    /**
+     * Returns char[] array .
+     */
+    public abstract char[] getCharsUsed();
 }

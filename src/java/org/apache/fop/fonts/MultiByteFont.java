@@ -126,7 +126,7 @@ public class MultiByteFont extends CIDFont {
      * @see org.apache.fop.fonts.FontDescriptor#isEmbeddable()
      */
     public boolean isEmbeddable() {
-        return !(getEmbedFileName() == null && embedResourceName == null); 
+        return !(getEmbedFileName() == null && embedResourceName == null);
     }
 
     /**
@@ -199,8 +199,8 @@ public class MultiByteFont extends CIDFont {
         for (int i = 0; (i < bfentries.length) && retIdx == 0; i++) {
             if (bfentries[i].getUnicodeStart() <= idx
                     && bfentries[i].getUnicodeEnd() >= idx) {
-                        
-                retIdx = bfentries[i].getGlyphStartIndex() 
+
+                retIdx = bfentries[i].getGlyphStartIndex()
                     + idx
                     - bfentries[i].getUnicodeStart();
             }
@@ -223,6 +223,8 @@ public class MultiByteFont extends CIDFont {
                                new Integer(usedGlyphsCount));
                 usedGlyphsIndex.put(new Integer(usedGlyphsCount),
                                     new Integer(retIdx));
+                usedCharsIndex.put(new Integer(usedGlyphsCount),
+                                    new Integer((int) c));
                 retIdx = usedGlyphsCount;
                 usedGlyphsCount++;
             } else {
@@ -300,5 +302,26 @@ public class MultiByteFont extends CIDFont {
         return usedGlyphs;
     }
 
+    /** The invalid Unicode character, suitable as a return value in methods
+     * that need to return an invalid character. */
+    public static final char INVALID_UNICODE_CHAR = 0xFFFF;
+
+    public char[] getCharsUsed() {
+        if (! isEmbeddable()) {
+            return null;
+        }
+        char[] charArray = new char[usedGlyphsCount];
+        for (int i = 0; i < usedGlyphsCount; i++) {
+            Integer mapValue = (Integer)usedCharsIndex.get(new Integer(i));
+            if(mapValue != null) {
+                char arrayItem = (char) mapValue.intValue();
+                charArray[i] = arrayItem;
+            }
+            else {
+                charArray[i] = INVALID_UNICODE_CHAR;
+            }
+        }
+        return charArray;
+    }
 }
 
