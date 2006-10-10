@@ -19,6 +19,9 @@
  
 package org.apache.fop.pdf;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 /**
  * Class representing the CMap encodings.
  *
@@ -424,53 +427,91 @@ public class PDFCMap extends PDFStream {
      * @param p the string buffer to add the pdf data to
      */
     public void fillInPDF(StringBuffer p) {
+        writePreStream(p);
+        writeStreamComments(p);
+        writeCIDInit(p);
+        writeCIDSystemInfo(p);
+        writeVersionTypeName(p);
+        writeCodeSpaceRange(p);
+        writeCIDRange(p);
+        writeBFEntries(p);
+        writeWrapUp(p);
+        writeStreamAfterComments(p);
+        writeUseCMap(p);
+        add(p.toString());
+    }
+
+    protected void writePreStream(StringBuffer p) {
         // p.append("/Type /CMap\n");
         // p.append(sysInfo.toPDFString());
-        // p.append("/CMapName /" + name);
-        // p.append("\n");
+        // p.append("/CMapName /" + name + EOL);
+    }
+
+    protected void writeStreamComments(StringBuffer p) {
         p.append("%!PS-Adobe-3.0 Resource-CMap\n");
         p.append("%%DocumentNeededResources: ProcSet (CIDInit)\n");
         p.append("%%IncludeResource: ProcSet (CIDInit)\n");
         p.append("%%BeginResource: CMap (" + name + ")\n");
         p.append("%%EndComments\n");
+    }
 
+    protected void writeCIDInit(StringBuffer p) {
         p.append("/CIDInit /ProcSet findresource begin\n");
         p.append("12 dict begin\n");
         p.append("begincmap\n");
+    }
 
+    protected void writeCIDSystemInfo(StringBuffer p) {
         p.append("/CIDSystemInfo 3 dict dup begin\n");
         p.append("  /Registry (Adobe) def\n");
         p.append("  /Ordering (Identity) def\n");
         p.append("  /Supplement 0 def\n");
         p.append("end def\n");
+    }
 
+    protected void writeVersionTypeName(StringBuffer p) {
         p.append("/CMapVersion 1 def\n");
         p.append("/CMapType 1 def\n");
         p.append("/CMapName /" + name + " def\n");
+    }
 
+    protected void writeCodeSpaceRange(StringBuffer p) {
         p.append("1 begincodespacerange\n");
         p.append("<0000> <FFFF>\n");
         p.append("endcodespacerange\n");
+    }
+
+    protected void writeCIDRange(StringBuffer p) {
         p.append("1 begincidrange\n");
         p.append("<0000> <FFFF> 0\n");
         p.append("endcidrange\n");
+    }
 
+    protected void writeBFEntries(StringBuffer p) {
         // p.append("1 beginbfrange\n");
         // p.append("<0020> <0100> <0000>\n");
         // p.append("endbfrange\n");
+    }
 
+    protected void writeWrapUp(StringBuffer p) {
         p.append("endcmap\n");
         p.append("CMapName currentdict /CMap defineresource pop\n");
         p.append("end\n");
         p.append("end\n");
+    }
+
+    protected void writeStreamAfterComments(StringBuffer p) {
         p.append("%%EndResource\n");
         p.append("%%EOF\n");
+    }
+
+    protected void writeUseCMap(StringBuffer p) {
         /*
-         * p.append(" /Type /CMap\n/CMapName /" + name);
-         * p.append("\n");
-         * p.append("\n/WMode "); p.append(wMode);
+         * p.append(" /Type /CMap");
+         * p.append("/CMapName /" + name + EOL);
+         * p.append("/WMode " + wMode + EOL);
          * if (base != null) {
-         * p.append("\n/UseCMap ");
+         *     p.append("/UseCMap ");
          * if (base instanceof String) {
          * p.append("/"+base);
          * } else {// base instanceof PDFStream
@@ -480,4 +521,8 @@ public class PDFCMap extends PDFStream {
          */
     }
 
+    protected int output(OutputStream stream) throws IOException {
+        fillInPDF(new StringBuffer());
+        return super.output(stream);
+    }
 }

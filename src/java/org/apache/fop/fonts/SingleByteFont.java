@@ -95,7 +95,7 @@ public class SingleByteFont extends CustomFont {
             return '#';
         }
     }
-    
+
     /**
      * @see org.apache.fop.fonts.Typeface#hasChar(char)
      */
@@ -117,5 +117,8 @@ public class SingleByteFont extends CustomFont {
         this.width[index] = width;
     }
 
+    public char[] getCharsUsed() {
+        return null;
+    }
 }
 

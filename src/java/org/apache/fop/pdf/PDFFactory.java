@@ -32,9 +32,6 @@ import java.util.Map;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
-//W3C DOM
-import org.w3c.dom.Document;
-
 // Apache libs
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -957,7 +954,7 @@ public class PDFFactory {
      * @return the new PDF outline object
      */
     public PDFOutline makeOutline(PDFOutline parent, String label,
-                                  String destination, float yoffset, 
+                                  String destination, float yoffset,
                                   boolean showSubItems) {
 
         String goToRef = getGoToReference(destination, yoffset);
@@ -1060,6 +1057,12 @@ public class PDFFactory {
                                    (PDFCIDFontDescriptor)pdfdesc);
                 getDocument().registerObject(cidFont);
 
+                PDFCMap cmap = new PDFToUnicodeCMap(cidMetrics, "fop-ucs-H",
+                    new PDFCIDSystemInfo("Adobe",
+                        "Identity",
+                        0));
+                getDocument().registerObject(cmap);
+                ((PDFFontType0)font).setCMAP(cmap);
                 ((PDFFontType0)font).setDescendantFonts(cidFont);
             } else {
                 int firstChar = 0;
