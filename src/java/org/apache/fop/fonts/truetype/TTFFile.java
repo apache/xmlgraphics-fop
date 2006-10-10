@@ -697,6 +697,7 @@ public class TTFFile {
             pd[i] = new TTFDirTabEntry();
             dirTabs.put(pd[i].read(in), pd[i]);
         }
+        log.debug("dir tables: " + dirTabs.keySet());
     }
 
     /**
