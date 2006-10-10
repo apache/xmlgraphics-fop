@@ -116,15 +116,17 @@ public class TTFFile {
      * Position inputstream to position indicated
      * in the dirtab offset + offset
      */
-    void seekTab(FontFileReader in, String name,
+    boolean seekTab(FontFileReader in, String name,
                   long offset) throws IOException {
         TTFDirTabEntry dt = (TTFDirTabEntry)dirTabs.get(name);
         if (dt == null) {
             log.error("Dirtab " + name + " not found.");
+            return false;
         } else {
             in.seekSet(dt.getOffset() + offset);
             this.currentDirTab = dt;
         }
+        return true;
     }
 
     /**
@@ -930,7 +932,9 @@ public class TTFFile {
      */
     protected final void readIndexToLocation(FontFileReader in)
             throws IOException {
-        seekTab(in, "loca", 0);
+        if(!seekTab(in, "loca", 0)) {
+        	throw new IOException("'loca' table not found, happens when the font file doesn't contain TrueType outlines (trying to read an OpenType CFF font maybe?)");
+        }
         for (int i = 0; i < numberOfGlyphs; i++) {
             mtxTab[i].setOffset(locaFormat == 1 ? in.readTTFULong()
                                  : (in.readTTFUShort() << 1));
