@@ -293,6 +293,7 @@ list of possible build targets.
     <path id="graphics-configuration-adapter">
       <pathelement location="src/java-1.3"/>
     </path>
+    <property name="src.java.version.dir" value="${basedir}/src/java-1.3"/>
   </target>
 
   <target name="init-filters-jdk14" depends="init-avail" if="jdk14.present">
@@ -300,6 +301,7 @@ list of possible build targets.
     <path id="graphics-configuration-adapter">
       <pathelement location="src/java-1.4"/>
     </path>
+    <property name="src.java.version.dir" value="${basedir}/src/java-1.4"/>
   </target>
 
   <!-- =================================================================== -->
@@ -476,6 +478,10 @@ list of possible build targets.
     </jar>
   </target>
 
+  <!-- =================================================================== -->
+  <!-- main FOP JARs                                                       -->
+  <!-- =================================================================== -->
+
   <target name="uptodate-jar-main" depends="compile-java">
     <uptodate property="jar.main.uptodate" targetfile="${build.dir}/fop.jar">
       <srcfiles dir= "${build.classes.dir}"/>
@@ -525,6 +531,38 @@ list of possible build targets.
       <manifest>
         <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}])"/>
       </manifest>
+    </jar>
+  </target>
+
+  <target name="uptodate-jar-sources" depends="codegen">
+    <uptodate property="jar.sources.uptodate" targetfile="${build.dir}/fop-sources.jar">
+      <srcfiles dir="${build.gensrc.dir}"/>
+      <srcfiles dir="${src.java.dir}"/>
+      <srcfiles refid="graphics-configuration-adapter"/>
+    </uptodate>
+  </target>
+
+  <target name="jar-sources" depends="codegen" description="Generates a jar file with all the sources" unless="jar.sources.uptodate">
+    <tstamp>
+      <format property="ts" pattern="yyyyMMdd-HHmmss-z"/>
+    </tstamp>
+    <patternset id="java-only">
+      <include name="**/*.java"/>
+    </patternset>
+    <jar jarfile="${build.dir}/fop-sources.jar">
+      <fileset dir="${build.gensrc.dir}">
+        <patternset refid="java-only"/>
+      </fileset>
+      <fileset dir="${src.java.dir}">
+        <patternset refid="java-only"/>
+      </fileset>
+      <fileset dir="${src.java.version.dir}">
+        <patternset refid="java-only"/>
+      </fileset>
+      <fileset dir="${basedir}">
+        <include name="LICENSE"/>
+        <include name="NOTICE"/>
+      </fileset>
     </jar>
   </target>
 
