@@ -933,8 +933,9 @@ public class TTFFile {
      */
     protected final void readIndexToLocation(FontFileReader in)
             throws IOException {
-        if(!seekTab(in, "loca", 0)) {
-        	throw new IOException("'loca' table not found, happens when the font file doesn't contain TrueType outlines (trying to read an OpenType CFF font maybe?)");
+        if (!seekTab(in, "loca", 0)) {
+            throw new IOException("'loca' table not found, happens when the font file doesn't"
+                    + " contain TrueType outlines (trying to read an OpenType CFF font maybe?)");
         }
         for (int i = 0; i < numberOfGlyphs; i++) {
             mtxTab[i].setOffset(locaFormat == 1 ? in.readTTFULong()
@@ -951,7 +952,9 @@ public class TTFFile {
      */
     private final void readGlyf(FontFileReader in) throws IOException {
         TTFDirTabEntry dirTab = (TTFDirTabEntry)dirTabs.get("glyf");
-        if(dirTab==null) throw new IOException("glyf table not found, cannot continue");
+        if (dirTab == null) {
+            throw new IOException("glyf table not found, cannot continue");
+        }
         for (int i = 0; i < (numberOfGlyphs - 1); i++) {
             if (mtxTab[i].getOffset() != mtxTab[i + 1].getOffset()) {
                 in.seekSet(dirTab.getOffset() + mtxTab[i].getOffset());

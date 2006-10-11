@@ -306,14 +306,15 @@ public class MultiByteFont extends CIDFont {
      * that need to return an invalid character. */
     public static final char INVALID_UNICODE_CHAR = 0xFFFF;
 
+    /** @see org.apache.fop.fonts.CIDFont#getCharsUsed() */
     public char[] getCharsUsed() {
-        if (! isEmbeddable()) {
+        if (!isEmbeddable()) {
             return null;
         }
         char[] charArray = new char[usedGlyphsCount];
         for (int i = 0; i < usedGlyphsCount; i++) {
             Integer mapValue = (Integer)usedCharsIndex.get(new Integer(i));
-            if(mapValue != null) {
+            if (mapValue != null) {
                 char arrayItem = (char) mapValue.intValue();
                 charArray[i] = arrayItem;
             }
