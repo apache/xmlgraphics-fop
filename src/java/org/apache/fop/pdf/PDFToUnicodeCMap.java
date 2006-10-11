@@ -104,7 +104,6 @@ public class PDFToUnicodeCMap extends PDFCMap {
      * @param charArray all the characters to map
      */
     protected void writeBFCharEntries(StringBuffer p, char[] charArray) {
-        int completedEntries = 0;
         int totalEntries = 0;
         for (int i = 0; i < charArray.length; i++) {
             if (!partOfRange(charArray, i)) {
@@ -115,32 +114,23 @@ public class PDFToUnicodeCMap extends PDFCMap {
             return;
         }
         int remainingEntries = totalEntries;
-        /* Limited to 100 entries in each section */
-        int entriesThisSection = Math.min(remainingEntries, 100);
-        int remainingEntriesThisSection = entriesThisSection;
-        p.append(entriesThisSection + " beginbfchar\n");
-        for (int i = 0; i < charArray.length; i++) {
-            if (partOfRange(charArray, i)) {
-                continue;
+        int charIndex = 0;
+        do {
+            /* Limited to 100 entries in each section */
+            int entriesThisSection = Math.min(remainingEntries, 100);
+            p.append(entriesThisSection + " beginbfchar\n");
+            for (int i = 0; i < entriesThisSection; i++) {
+            	/* Go to the next char not in a range */
+            	while (partOfRange(charArray, charIndex)) {
+            		charIndex++;
+            	}
+                p.append("<" + padHexString(Integer.toHexString(charIndex), 4) + "> ");
+                p.append("<" + padHexString(Integer.toHexString(charArray[charIndex]), 4) + ">\n");
+                charIndex++;
             }
-            p.append("<" + padHexString(Integer.toHexString(i), 4)
-                    + "> ");
-            p.append("<" + padHexString(Integer.toHexString(charArray[i]), 4)
-                    + ">\n");
-            /* Compute the statistics. */
-            completedEntries++;
-            remainingEntries = totalEntries - completedEntries;
-            remainingEntriesThisSection--;
-            if (remainingEntriesThisSection < 1) {
-                if (remainingEntries > 0) {
-                    p.append("endbfchar\n");
-                    entriesThisSection = Math.min(remainingEntries, 100);
-                    remainingEntriesThisSection = entriesThisSection;
-                    p.append(entriesThisSection + " beginbfchar\n");
-                }
-            }
-        }
-        p.append("endbfchar\n");
+            remainingEntries -= entriesThisSection;
+            p.append("endbfchar\n");
+        } while (remainingEntries > 0);
     }
 
     /**
@@ -149,7 +139,6 @@ public class PDFToUnicodeCMap extends PDFCMap {
      * @param charArray all the characters to map
      */
     protected void writeBFRangeEntries(StringBuffer p, char[] charArray) {
-        int completedEntries = 0;
         int totalEntries = 0;
         for (int i = 0; i < charArray.length; i++) {
             if (startOfRange(charArray, i)) {
@@ -160,36 +149,26 @@ public class PDFToUnicodeCMap extends PDFCMap {
             return;
         }
         int remainingEntries = totalEntries;
-        int entriesThisSection = Math.min(remainingEntries, 100);
-        int remainingEntriesThisSection = entriesThisSection;
-        p.append(entriesThisSection + " beginbfrange\n");
-        for (int i = 0; i < charArray.length; i++) {
-            if (!startOfRange(charArray, i)) {
-                continue;
+        int charIndex = 0;
+        do {
+            /* Limited to 100 entries in each section */
+            int entriesThisSection = Math.min(remainingEntries, 100);
+            p.append(entriesThisSection + " beginbfrange\n");
+            for (int i = 0; i < entriesThisSection; i++) {
+            	/* Go to the next start of a range */
+            	while (!startOfRange(charArray, charIndex)) {
+            		charIndex++;
+            	}
+                p.append("<" + padHexString(Integer.toHexString(charIndex), 4) + "> ");
+                p.append("<"
+                		+ padHexString(Integer.toHexString(endOfRange(charArray, charIndex)), 4)
+                		+ "> ");
+                p.append("<" + padHexString(Integer.toHexString(charArray[charIndex]), 4) + ">\n");
+                charIndex++;
             }
-            p.append("<"
-                    + padHexString(Integer.toHexString(i), 4)
-                    + "> ");
-            p.append("<"
-                    + padHexString(Integer.toHexString
-                            (endOfRange(charArray, i)), 4)
-                    + "> ");
-            p.append("<"
-                    + padHexString(Integer.toHexString(charArray[i]), 4)
-                    + ">\n");
-            /* Compute the statistics. */
-            completedEntries++;
-            remainingEntries = totalEntries - completedEntries;
-            if (remainingEntriesThisSection < 1) {
-                if (remainingEntries > 0) {
-                    p.append("endbfrange\n");
-                    entriesThisSection = Math.min(remainingEntries, 100);
-                    remainingEntriesThisSection = entriesThisSection;
-                    p.append(entriesThisSection + " beginbfrange\n");
-                }
-            }
-        }
-        p.append("endbfrange\n");
+            remainingEntries -= entriesThisSection;
+            p.append("endbfrange\n");
+        } while (remainingEntries > 0);
     }
 
     /**
@@ -200,14 +179,11 @@ public class PDFToUnicodeCMap extends PDFCMap {
      * @return The index to the element that is the end of the range.
      */
     private int endOfRange(char[] charArray, int startOfRange) {
-        int endOfRange = -1;
-        for (int i = startOfRange; i < charArray.length - 1 && endOfRange < 0;
-                i++) {
-            if (!sameRangeEntryAsNext(charArray, i)) {
-                endOfRange = i;
-            }
+        int i = startOfRange;
+        while (i < charArray.length - 1 && sameRangeEntryAsNext(charArray, i)) {
+        	i++;
         }
-        return endOfRange;
+        return i;
     }
 
     /**
