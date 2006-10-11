@@ -51,7 +51,7 @@ public abstract class AbstractTextArea extends InlineParent {
 
     private int textWordSpaceAdjust = 0;
     private int textLetterSpaceAdjust = 0;
-    private TextAdjustingInfo adjustingInfo = null;
+    private TextAdjustingInfo textAdjustingInfo = null;
     private int baselineOffset = 0;
 
     /**
@@ -68,7 +68,7 @@ public abstract class AbstractTextArea extends InlineParent {
      * @param adj      the current adjustment of the area
      */
     public AbstractTextArea(int stretch, int shrink, int adj) {
-        adjustingInfo = new TextAdjustingInfo(stretch, shrink, adj);
+        textAdjustingInfo = new TextAdjustingInfo(stretch, shrink, adj);
     }
     
     /**
@@ -115,7 +115,7 @@ public abstract class AbstractTextArea extends InlineParent {
      * @param spaceDiff the space difference
      */
     public void setSpaceDifference(int spaceDiff) {
-        adjustingInfo.spaceDifference = spaceDiff;
+        textAdjustingInfo.spaceDifference = spaceDiff;
     }
 
     /**
@@ -127,7 +127,7 @@ public abstract class AbstractTextArea extends InlineParent {
      */
     public boolean applyVariationFactor(double variationFactor,
                                         int lineStretch, int lineShrink) {
-        if (adjustingInfo != null) {
+        if (textAdjustingInfo != null) {
             // compute the new adjustments:
             // if the variation factor is negative, it means that before 
             // the ipd variation the line had to stretch and now it has
@@ -140,23 +140,23 @@ public abstract class AbstractTextArea extends InlineParent {
                 if (textWordSpaceAdjust < 0) {
                     // from a negative adjustment to a positive one
                     balancingFactor 
-                        = ((double) adjustingInfo.availableStretch / adjustingInfo.availableShrink)
+                        = ((double) textAdjustingInfo.availableStretch / textAdjustingInfo.availableShrink)
                             * ((double) lineShrink / lineStretch);
                 } else {
                     // from a positive adjustment to a negative one
                     balancingFactor 
-                        = ((double) adjustingInfo.availableShrink / adjustingInfo.availableStretch)
+                        = ((double) textAdjustingInfo.availableShrink / textAdjustingInfo.availableStretch)
                             * ((double) lineStretch / lineShrink);
                 }
             }
-            textWordSpaceAdjust = (int) ((textWordSpaceAdjust - adjustingInfo.spaceDifference)
+            textWordSpaceAdjust = (int) ((textWordSpaceAdjust - textAdjustingInfo.spaceDifference)
                     * variationFactor * balancingFactor)
-                    + adjustingInfo.spaceDifference;
+                    + textAdjustingInfo.spaceDifference;
             textLetterSpaceAdjust *= variationFactor;
             // update the ipd of the area
-            int oldAdjustment = adjustingInfo.adjustment;
-            adjustingInfo.adjustment *= balancingFactor * variationFactor;
-            ipd += adjustingInfo.adjustment - oldAdjustment;
+            int oldAdjustment = textAdjustingInfo.adjustment;
+            textAdjustingInfo.adjustment *= balancingFactor * variationFactor;
+            ipd += textAdjustingInfo.adjustment - oldAdjustment;
         }
         return false;
     }

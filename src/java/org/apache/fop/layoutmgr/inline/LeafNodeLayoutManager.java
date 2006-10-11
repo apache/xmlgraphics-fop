@@ -255,6 +255,7 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
                                              - areaInfo.ipdArea.opt));
         }
         area.setIPD(width);
+        area.setAdjustment(width - areaInfo.ipdArea.opt);
     }
     
     /** @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(LayoutContext, int) */

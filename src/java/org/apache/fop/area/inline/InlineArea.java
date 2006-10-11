@@ -55,6 +55,18 @@ public class InlineArea extends Area {
             availableShrink = shrink;
             adjustment = adj;
         }
+        
+        /**
+         * Apply the variation factor
+         * 
+         * @param variationFactor the factor by which the adjustment is to be changed
+         * @return the IPD increase
+         */
+        protected int applyVariationFactor(double variationFactor) {
+            int oldAdjustment = adjustment;
+            adjustment *= variationFactor;
+            return adjustment - oldAdjustment;
+        }
     }
     
     /**
@@ -76,6 +88,38 @@ public class InlineArea extends Area {
      */
     private int storedIPDVariation = 0;
 
+    /**
+     * The adjustment information object
+     */
+    protected InlineAdjustingInfo adjustingInfo = null;
+    
+    /**
+     * @return the adjustment information object
+     */
+    public InlineAdjustingInfo getAdjustingInfo() {
+        return adjustingInfo;
+    }
+
+    /**
+     * Create a new adjustment information object
+     * @param stretch the available space for stretching
+     * @param shrink the available space for shrinking
+     * @param adj space adjustment type
+     */
+    public void setAdjustingInfo(int stretch, int shrink, int adjustment) {
+        adjustingInfo = new InlineAdjustingInfo(stretch, shrink, adjustment);
+    }
+    
+    /**
+     * Modify the adjustment value in the adjustment information object
+     * @param adjustment the new adjustment value
+     */
+    public void setAdjustment(int adjustment) {
+        if (adjustingInfo != null) {
+            adjustingInfo.adjustment = adjustment;
+        }
+    }
+    
     /**
      * Increase the inline progression dimensions of this area.
      * This is used for inline parent areas that contain mulitple child areas.
@@ -165,7 +209,10 @@ public class InlineArea extends Area {
      */
     public boolean applyVariationFactor(double variationFactor,
                                         int lineStretch, int lineShrink) {
-        // default behaviour: simply return false
+        // default behaviour: update the IPD and return false
+        if (adjustingInfo != null) {
+            setIPD(getIPD() + adjustingInfo.applyVariationFactor(variationFactor));
+        }
         return false;
     }
     
