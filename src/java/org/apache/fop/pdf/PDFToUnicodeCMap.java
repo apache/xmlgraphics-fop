@@ -1,54 +1,25 @@
 /*
- * $Id: PDFToUnicodeCMap.java,v 1.3.2.1 2005/12/01 12:00:00 ono Exp $
- * ============================================================================
- *                    The Apache Software License, Version 1.1
- * ============================================================================
- *
- * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modifica-
- * tion, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- *
- * 3. The end-user documentation included with the redistribution, if any, must
- *    include the following acknowledgment: "This product includes software
- *    developed by the Apache Software Foundation (http://www.apache.org/)."
- *    Alternately, this acknowledgment may appear in the software itself, if
- *    and wherever such third-party acknowledgments normally appear.
- *
- * 4. The names "FOP" and "Apache Software Foundation" must not be used to
- *    endorse or promote products derived from this software without prior
- *    written permission. For written permission, please contact
- *    apache@apache.org.
- *
- * 5. Products derived from this software may not be called "Apache", nor may
- *    "Apache" appear in their name, without prior written permission of the
- *    Apache Software Foundation.
- *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
- * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
- * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
- * APACHE SOFTWARE FOUNDATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLU-
- * DING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
- * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * ============================================================================
- *
- * This software consists of voluntary contributions made by many individuals
- * on behalf of the Apache Software Foundation and was originally created by
- * James Tauber <jtauber@jtauber.com>. For more information on the Apache
- * Software Foundation, please see <http://www.apache.org/>.
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
+/* $Id$ */
+ 
 package org.apache.fop.pdf;
+
+import org.apache.fop.fonts.CIDFont;
 
 /**
  * Class representing ToUnicode CMaps.
@@ -63,8 +34,6 @@ package org.apache.fop.pdf;
  * Adobe Technical Note #5411, "ToUnicode Mapping File Tutorial"</a>.
  * </ul>
  */
-import org.apache.fop.fonts.CIDFont;
-
 public class PDFToUnicodeCMap extends PDFCMap {
 
     /**
@@ -75,6 +44,7 @@ public class PDFToUnicodeCMap extends PDFCMap {
     /**
      * Constructor.
      *
+     * @param cidMetrics the CID font for which this Unicode CMap is built
      * @param name One of the registered names found in Table 5.14 in PDF
      * Reference, Second Edition.
      * @param sysInfo The attributes of the character collection of the CIDFont.
@@ -84,6 +54,7 @@ public class PDFToUnicodeCMap extends PDFCMap {
         cidFont = cidMetrics;
     }
 
+    /** @see org.apache.fop.pdf.PDFCMap#fillInPDF(java.lang.StringBuffer) */
     public void fillInPDF(StringBuffer p) {
         writeCIDInit(p);
         writeCIDSystemInfo(p);
@@ -94,6 +65,7 @@ public class PDFToUnicodeCMap extends PDFCMap {
         add(p.toString());
     }
 
+    /** @see org.apache.fop.pdf.PDFCMap#writeCIDSystemInfo(java.lang.StringBuffer) */
     protected void writeCIDSystemInfo(StringBuffer p) {
         p.append("/CIDSystemInfo\n");
         p.append("<< /Registry (Adobe)\n");
@@ -102,6 +74,7 @@ public class PDFToUnicodeCMap extends PDFCMap {
         p.append(">> def\n");
     }
 
+    /** @see org.apache.fop.pdf.PDFCMap#writeVersionTypeName(java.lang.StringBuffer) */
     protected void writeVersionTypeName(StringBuffer p) {
         p.append("/CMapName /Adobe-Identity-UCS def\n");
         p.append("/CMapType 2 def\n");
@@ -109,24 +82,33 @@ public class PDFToUnicodeCMap extends PDFCMap {
 
     /**
      * Writes the character mappings for this font.
+     * @param p StingBuffer to write to
      */
     protected void writeBFEntries(StringBuffer p) {
-        if(cidFont == null) return;
+        if (cidFont == null) {
+            return;
+        }
 
         char[] charArray = cidFont.getCharsUsed();
 
-        if(charArray != null) {
+        if (charArray != null) {
             writeBFCharEntries(p, charArray);
             writeBFRangeEntries(p, charArray);
         }
     }
 
+    /**
+     * Writes the entries for single characters of a base font (only characters which cannot be
+     * expressed as part of a character range).
+     * @param p StringBuffer to write to
+     * @param charArray all the characters to map
+     */
     protected void writeBFCharEntries(StringBuffer p, char[] charArray) {
         int completedEntries = 0;
         int totalEntries = 0;
         for (int i = 0; i < charArray.length; i++) {
-            if (! partOfRange(charArray, i)) {
-                totalEntries ++;
+            if (!partOfRange(charArray, i)) {
+                totalEntries++;
             }
         }
         if (totalEntries < 1) {
@@ -146,9 +128,9 @@ public class PDFToUnicodeCMap extends PDFCMap {
             p.append("<" + padHexString(Integer.toHexString(charArray[i]), 4)
                     + ">\n");
             /* Compute the statistics. */
-            completedEntries ++;
+            completedEntries++;
             remainingEntries = totalEntries - completedEntries;
-            remainingEntriesThisSection --;
+            remainingEntriesThisSection--;
             if (remainingEntriesThisSection < 1) {
                 if (remainingEntries > 0) {
                     p.append("endbfchar\n");
@@ -161,12 +143,17 @@ public class PDFToUnicodeCMap extends PDFCMap {
         p.append("endbfchar\n");
     }
 
+    /**
+     * Writes the entries for character ranges for a base font.
+     * @param p StringBuffer to write to
+     * @param charArray all the characters to map
+     */
     protected void writeBFRangeEntries(StringBuffer p, char[] charArray) {
         int completedEntries = 0;
         int totalEntries = 0;
         for (int i = 0; i < charArray.length; i++) {
             if (startOfRange(charArray, i)) {
-                totalEntries ++;
+                totalEntries++;
             }
         }
         if (totalEntries < 1) {
@@ -177,7 +164,7 @@ public class PDFToUnicodeCMap extends PDFCMap {
         int remainingEntriesThisSection = entriesThisSection;
         p.append(entriesThisSection + " beginbfrange\n");
         for (int i = 0; i < charArray.length; i++) {
-            if (! startOfRange(charArray, i)) {
+            if (!startOfRange(charArray, i)) {
                 continue;
             }
             p.append("<"
@@ -191,7 +178,7 @@ public class PDFToUnicodeCMap extends PDFCMap {
                     + padHexString(Integer.toHexString(charArray[i]), 4)
                     + ">\n");
             /* Compute the statistics. */
-            completedEntries ++;
+            completedEntries++;
             remainingEntries = totalEntries - completedEntries;
             if (remainingEntriesThisSection < 1) {
                 if (remainingEntries > 0) {
@@ -216,7 +203,7 @@ public class PDFToUnicodeCMap extends PDFCMap {
         int endOfRange = -1;
         for (int i = startOfRange; i < charArray.length - 1 && endOfRange < 0;
                 i++) {
-            if (! sameRangeEntryAsNext(charArray, i)) {
+            if (!sameRangeEntryAsNext(charArray, i)) {
                 endOfRange = i;
             }
         }
@@ -277,7 +264,7 @@ public class PDFToUnicodeCMap extends PDFCMap {
      */
     private boolean startOfRange(char[] charArray, int arrayIndex) {
         // Can't be the start of a range if not part of a range.
-        if (! partOfRange(charArray, arrayIndex)) {
+        if (!partOfRange(charArray, arrayIndex)) {
             return false;
         }
         // If first element in the array, must be start of a range
