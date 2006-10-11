@@ -120,10 +120,10 @@ public class PDFToUnicodeCMap extends PDFCMap {
             int entriesThisSection = Math.min(remainingEntries, 100);
             p.append(entriesThisSection + " beginbfchar\n");
             for (int i = 0; i < entriesThisSection; i++) {
-            	/* Go to the next char not in a range */
-            	while (partOfRange(charArray, charIndex)) {
-            		charIndex++;
-            	}
+                /* Go to the next char not in a range */
+                while (partOfRange(charArray, charIndex)) {
+                    charIndex++;
+                }
                 p.append("<" + padHexString(Integer.toHexString(charIndex), 4) + "> ");
                 p.append("<" + padHexString(Integer.toHexString(charArray[charIndex]), 4) + ">\n");
                 charIndex++;
@@ -155,14 +155,14 @@ public class PDFToUnicodeCMap extends PDFCMap {
             int entriesThisSection = Math.min(remainingEntries, 100);
             p.append(entriesThisSection + " beginbfrange\n");
             for (int i = 0; i < entriesThisSection; i++) {
-            	/* Go to the next start of a range */
-            	while (!startOfRange(charArray, charIndex)) {
-            		charIndex++;
-            	}
+                /* Go to the next start of a range */
+                while (!startOfRange(charArray, charIndex)) {
+                    charIndex++;
+                }
                 p.append("<" + padHexString(Integer.toHexString(charIndex), 4) + "> ");
                 p.append("<"
-                		+ padHexString(Integer.toHexString(endOfRange(charArray, charIndex)), 4)
-                		+ "> ");
+                        + padHexString(Integer.toHexString(endOfRange(charArray, charIndex)), 4)
+                        + "> ");
                 p.append("<" + padHexString(Integer.toHexString(charArray[charIndex]), 4) + ">\n");
                 charIndex++;
             }
@@ -181,7 +181,7 @@ public class PDFToUnicodeCMap extends PDFCMap {
     private int endOfRange(char[] charArray, int startOfRange) {
         int i = startOfRange;
         while (i < charArray.length - 1 && sameRangeEntryAsNext(charArray, i)) {
-        	i++;
+            i++;
         }
         return i;
     }
