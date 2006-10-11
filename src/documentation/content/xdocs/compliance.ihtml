@@ -431,11 +431,16 @@
       <td class="yes">
         yes
       </td>
-      <td class="yes">
-        yes
+      <td class="partial">
+        partial
       </td>
       <td align="center">
-        &nbsp;
+        <ul>
+          <li>
+            [0.92 beta] The page width may not change among pages of the same page-sequence
+            unless a forced break is inserted.
+          </li>
+        </ul>
       </td>
     </tr>
     <tr>
@@ -455,7 +460,6 @@
         yes
       </td>
       <td align="center">
-        &nbsp;
       </td>
     </tr>
     <tr>
