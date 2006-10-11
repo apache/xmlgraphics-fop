@@ -35,7 +35,7 @@ import java.util.Iterator;
  */
 public class FilledArea extends InlineParent {
     private int unitWidth;
-
+    
     /**
      * Create a new filled area.
      */
@@ -114,6 +114,19 @@ public class FilledArea extends InlineParent {
             newList.addAll(inlines);
         }
         return newList;
+    }
+    
+    /**
+     * recursively apply the variation factor to all descendant areas
+     * @param variationFactor the variation factor that must be applied to adjustments
+     * @param lineStretch     the total stretch of the line
+     * @param lineShrink      the total shrink of the line
+     * @return true if there is an UnresolvedArea descendant
+     */
+    public boolean applyVariationFactor(double variationFactor,
+                                        int lineStretch, int lineShrink) {
+        setIPD(getIPD() + adjustingInfo.applyVariationFactor(variationFactor));
+        return false;
     }
 }
 

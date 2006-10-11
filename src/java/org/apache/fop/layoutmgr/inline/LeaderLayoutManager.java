@@ -253,6 +253,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
 
         // create the AreaInfo object to store the computed values
         areaInfo = new AreaInfo((short) 0, ipd, false, context.getAlignmentContext());
+        curArea.setAdjustingInfo(ipd.max - ipd.opt, ipd.opt - ipd.min, 0);
 
         addKnuthElementsForBorderPaddingStart(seq);
         

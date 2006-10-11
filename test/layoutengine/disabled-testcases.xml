@@ -219,11 +219,6 @@
     placed correctly.</description>
   </testcase>
   <testcase>
-    <name>page-number-citation: Forward references not adjusted properly</name>
-    <file>page-number-citation_forward-ref.xml</file>
-    <description>Forward references are not properly adjusted when they are resolved.</description>
-  </testcase>
-  <testcase>
     <name>page-number-citation-last: FOs spanning multiple pages are not properly handled.</name>
     <file>page-number-citation-last_basic.xml</file>
     <description>Resolution of forward references does not wait until an FO is fully finished when an FO spans multiple pages.</description>
