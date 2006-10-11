@@ -20,7 +20,7 @@
 package org.apache.fop.fonts;
 
 /**
- * This is just a holder class for bfentries.
+ * This is just a holder class for bfentries, groups of characters of a base font (bf).
  */
 public class BFEntry {
     
