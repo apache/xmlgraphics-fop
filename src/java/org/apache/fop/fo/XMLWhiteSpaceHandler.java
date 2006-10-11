@@ -120,9 +120,9 @@ public class XMLWhiteSpaceHandler {
             currentBlock = (Block) fo;
         } else if (foId == Constants.FO_RETRIEVE_MARKER) {
             /* look for the nearest block ancestor, if any */
-            FONode ancestor;
+            FONode ancestor = fo;
             do {
-                ancestor = fo.getParent();
+                ancestor = ancestor.getParent();
             } while (ancestor.getNameId() != Constants.FO_BLOCK
                     && ancestor.getNameId() != Constants.FO_STATIC_CONTENT);
             
@@ -188,9 +188,8 @@ public class XMLWhiteSpaceHandler {
                     /* handle white-space for all pending inlines*/
                     PendingInline p;
                     for (int i = pendingInlines.size(); --i >= 0;) {
-                        p = (PendingInline) pendingInlines.get(i);
-                        charIter = 
-                            (RecursiveCharIterator) p.firstTrailingWhiteSpace;
+                        p = (PendingInline)pendingInlines.get(i);
+                        charIter = (RecursiveCharIterator)p.firstTrailingWhiteSpace;
                         handleWhiteSpace();
                         pendingInlines.remove(p);
                     }
