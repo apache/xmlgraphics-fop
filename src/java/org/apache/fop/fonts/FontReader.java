@@ -35,6 +35,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 //FOP
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.fonts.apps.TTFReader;
 import org.xml.sax.InputSource;
 
 /**
@@ -163,11 +164,13 @@ public class FontReader extends DefaultHandler {
                 multiFont = new MultiByteFont();
                 returnFont = multiFont;
                 isCID = true;
+                TTFReader.checkMetricsVersion(attributes);
             } else if ("TRUETYPE".equals(attributes.getValue("type"))) {
                 singleFont = new SingleByteFont();
                 singleFont.setFontType(FontType.TRUETYPE);
                 returnFont = singleFont;
                 isCID = false;
+                TTFReader.checkMetricsVersion(attributes);
             } else {
                 singleFont = new SingleByteFont();
                 singleFont.setFontType(FontType.TYPE1);
@@ -295,7 +298,6 @@ public class FontReader extends DefaultHandler {
     public void characters(char[] ch, int start, int length) {
         text.append(ch, start, length);
     }
-
 }
 
 
