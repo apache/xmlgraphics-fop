@@ -33,6 +33,8 @@ import org.apache.fop.fonts.truetype.TTFFile;
 import org.apache.fop.util.CommandLineLogger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 
 /**
  * A tool which reads TTF files and generates
@@ -40,6 +42,10 @@ import org.w3c.dom.Element;
  */
 public class TTFReader extends AbstractFontReader {
 
+    /** Used to detect incompatible versions of the generated XML files */
+    public static final String METRICS_VERSION_ATTR = "metrics-version";
+    public static final int METRICS_VERSION = 2;
+    
     /**
      * Main constructor.
      */
@@ -232,6 +238,7 @@ public class TTFReader extends AbstractFontReader {
         }
         Element root = doc.createElement("font-metrics");
         doc.appendChild(root);
+        root.setAttribute(METRICS_VERSION_ATTR,String.valueOf(METRICS_VERSION));
         if (isCid) {
             root.setAttribute("type", "TYPE0");
         } else {
@@ -451,6 +458,41 @@ public class TTFReader extends AbstractFontReader {
         }
 
         return stb.toString();
+    }
+    
+    /** Bugzilla 40739, check that attr has a metrics-version attribute 
+     *  compatible with ours.
+     * @param attr attributes read from the root element of a metrics XML file
+     * @throws SAXException if incompatible
+     */
+    public static void checkMetricsVersion(Attributes attr) throws SAXException {
+        String err = null;
+        final String str = attr.getValue(METRICS_VERSION_ATTR);
+        if(str==null) {
+            err = "Missing " + METRICS_VERSION_ATTR + " attribute";
+        } else {
+            int version = 0;
+            try {
+                version = Integer.parseInt(str);
+                if(version < METRICS_VERSION) {
+                    err = "Incompatible " + METRICS_VERSION_ATTR 
+                        + " value (" + version + ", should be " + METRICS_VERSION
+                        + ")"
+                     ; 
+                }
+            } catch(NumberFormatException e) {
+                err = "Invalid " + METRICS_VERSION_ATTR 
+                    + " attribute value (" + str + ")";
+            }
+        }
+        
+        if(err!=null) {
+            throw new SAXException(
+                err 
+                + " - please regenerate the font metrics file with "
+                + "a more recent version of FOP."
+            );
+        }
     }
 
 }
