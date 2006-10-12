@@ -20,6 +20,7 @@
 package org.apache.fop.fonts.truetype;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.List;
@@ -104,6 +105,11 @@ public class TTFFile {
 
     private int[] ansiWidth;
     private Map ansiIndex;
+    
+    // internal mapping of glyph indexes to unicode indexes
+    // used for quick mappings in this class
+    private Map glyphToUnicodeMap = new HashMap();
+    private Map unicodeToGlyphMap = new HashMap();
 
     private TTFDirTabEntry currentDirTab;
 
@@ -111,6 +117,38 @@ public class TTFFile {
      * logging instance
      */
     protected Log log = LogFactory.getLog(TTFFile.class);
+    
+    /**
+     * Key-value helper class
+     */
+    class UnicodeMapping {
+
+        private int unicodeIndex;
+        private int glyphIndex;
+
+        UnicodeMapping(int glyphIndex, int unicodeIndex) {
+            this.unicodeIndex = unicodeIndex;
+            this.glyphIndex = glyphIndex;
+            glyphToUnicodeMap.put(new Integer(glyphIndex),new Integer(unicodeIndex));
+            unicodeToGlyphMap.put(new Integer(unicodeIndex),new Integer(glyphIndex));
+        }
+
+        /**
+         * Returns the glyphIndex.
+         * @return the glyph index
+         */
+        public int getGlyphIndex() {
+            return glyphIndex;
+        }
+
+        /**
+         * Returns the unicodeIndex.
+         * @return the Unicode index
+         */
+        public int getUnicodeIndex() {
+            return unicodeIndex;
+        }
+    }
 
     /**
      * Position inputstream to position indicated
@@ -1229,31 +1267,32 @@ public class TTFFile {
                     int j = in.readTTFUShort();
                     int kpx = in.readTTFShort();
                     if (kpx != 0) {
-                        // CID table
-                        Integer iObj = new Integer(i);
+                        // CID kerning table entry, using unicode indexes
+                        final Integer iObj = glyphToUnicode(i);
                         Map adjTab = (Map)kerningTab.get(iObj);
                         if (adjTab == null) {
                             adjTab = new java.util.HashMap();
                         }
-                        adjTab.put(new Integer(j),
-                                   new Integer((int)convertTTFUnit2PDFUnit(kpx)));
+                        adjTab.put(glyphToUnicode(j),new Integer((int)convertTTFUnit2PDFUnit(kpx)));
                         kerningTab.put(iObj, adjTab);
                     }
                 }
             }
-            // getLogger().debug(kerningTab.toString());
 
-            // Create winAnsiEncoded kerning table
+            // Create winAnsiEncoded kerning table from kerningTab
+            // (could probably be simplified, for now we remap back to CID indexes and then to winAnsi)
             Iterator ae = kerningTab.keySet().iterator();
             while (ae.hasNext()) {
-                Integer cidKey = (Integer)ae.next();
+                Integer unicodeKey1 = (Integer)ae.next();
+                Integer cidKey1 = unicodeToGlyph(unicodeKey1.intValue());
                 Map akpx = new java.util.HashMap();
-                Map ckpx = (Map)kerningTab.get(cidKey);
+                Map ckpx = (Map)kerningTab.get(unicodeKey1);
 
                 Iterator aee = ckpx.keySet().iterator();
                 while (aee.hasNext()) {
-                    Integer cidKey2 = (Integer)aee.next();
-                    Integer kern = (Integer)ckpx.get(cidKey2);
+                    Integer unicodeKey2 = (Integer)aee.next();
+                    Integer cidKey2 = unicodeToGlyph(unicodeKey2.intValue());
+                    Integer kern = (Integer)ckpx.get(unicodeKey2);
 
                     Iterator uniMap = mtxTab[cidKey2.intValue()].getUnicodeIndex().listIterator();
                     while (uniMap.hasNext()) {
@@ -1266,7 +1305,7 @@ public class TTFFile {
                 }
 
                 if (akpx.size() > 0) {
-                    Iterator uniMap = mtxTab[cidKey.intValue()].getUnicodeIndex().listIterator();
+                    Iterator uniMap = mtxTab[cidKey1.intValue()].getUnicodeIndex().listIterator();
                     while (uniMap.hasNext()) {
                         Integer unicodeKey = (Integer)uniMap.next();
                         Integer[] ansiKeys = unicodeToWinAnsi(unicodeKey.intValue());
@@ -1396,6 +1435,40 @@ public class TTFFile {
     }
 
     /**
+     * Map a glyph index to the corresponding unicode code point
+     * 
+     * @param glyphIndex
+     * @return unicode code point
+     * @throws IOException if glyphIndex not found
+     */
+    private Integer glyphToUnicode(int glyphIndex) throws IOException {
+        final Integer result = 
+            (Integer) glyphToUnicodeMap.get(new Integer(glyphIndex));
+        if (result == null) {
+            throw new IOException(
+                    "Unicode index not found for glyph " + glyphIndex);
+        }
+        return result;
+    }
+    
+    /**
+     * Map a unicode code point to the corresponding glyph index 
+     * 
+     * @param unicodeIndex unicode code point
+     * @return glyph index
+     * @throws IOException if unicodeIndex not found
+     */
+    private Integer unicodeToGlyph(int unicodeIndex) throws IOException {
+        final Integer result = 
+            (Integer) unicodeToGlyphMap.get(new Integer(unicodeIndex));
+        if (result == null) {
+            throw new IOException(
+                    "Glyph index not found for unicode value " + unicodeIndex);
+        }
+        return result;
+    }
+    
+    /**
      * Static main method to get info about a TrueType font.
      * @param args The command line arguments
      */
@@ -1418,37 +1491,4 @@ public class TTFFile {
             ioe.printStackTrace(System.err);
         }
     }
-
-}
-
-
-/**
- * Key-value helper class
- */
-class UnicodeMapping {
-
-    private int unicodeIndex;
-    private int glyphIndex;
-
-    UnicodeMapping(int glyphIndex, int unicodeIndex) {
-        this.unicodeIndex = unicodeIndex;
-        this.glyphIndex = glyphIndex;
-    }
-
-    /**
-     * Returns the glyphIndex.
-     * @return the glyph index
-     */
-    public int getGlyphIndex() {
-        return glyphIndex;
-    }
-
-    /**
-     * Returns the unicodeIndex.
-     * @return the Unicode index
-     */
-    public int getUnicodeIndex() {
-        return unicodeIndex;
-    }
-
 }
