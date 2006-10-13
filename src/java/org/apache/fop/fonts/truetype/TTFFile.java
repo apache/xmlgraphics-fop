@@ -1269,12 +1269,21 @@ public class TTFFile {
                     if (kpx != 0) {
                         // CID kerning table entry, using unicode indexes
                         final Integer iObj = glyphToUnicode(i);
-                        Map adjTab = (Map)kerningTab.get(iObj);
-                        if (adjTab == null) {
-                            adjTab = new java.util.HashMap();
+                        final Integer u2 = glyphToUnicode(j);
+                        if(iObj==null) {
+                            // happens for many fonts (Ubuntu font set),
+                            // stray entries in the kerning table?? 
+                            log.warn("Unicode index (1) not found for glyph " + i);
+                        } else if(u2==null) {
+                            log.warn("Unicode index (2) not found for glyph " + i);
+                        } else {
+                            Map adjTab = (Map)kerningTab.get(iObj);
+                            if (adjTab == null) {
+                                adjTab = new java.util.HashMap();
+                            }
+                            adjTab.put(u2,new Integer((int)convertTTFUnit2PDFUnit(kpx)));
+                            kerningTab.put(iObj, adjTab);
                         }
-                        adjTab.put(glyphToUnicode(j),new Integer((int)convertTTFUnit2PDFUnit(kpx)));
-                        kerningTab.put(iObj, adjTab);
                     }
                 }
             }
@@ -1442,13 +1451,7 @@ public class TTFFile {
      * @throws IOException if glyphIndex not found
      */
     private Integer glyphToUnicode(int glyphIndex) throws IOException {
-        final Integer result = 
-            (Integer) glyphToUnicodeMap.get(new Integer(glyphIndex));
-        if (result == null) {
-            throw new IOException(
-                    "Unicode index not found for glyph " + glyphIndex);
-        }
-        return result;
+        return (Integer) glyphToUnicodeMap.get(new Integer(glyphIndex));
     }
     
     /**
