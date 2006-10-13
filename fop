@@ -115,21 +115,11 @@ if $cygwin ; then
     JAVA_HOME=`cygpath --unix "$JAVA_HOME"`
 fi
 
-
-########################
-# Experimental code 
-########################
-
 if [ "$OS" = "Windows_NT" ] ; then
     pathSepChar=";"
 else
     pathSepChar=":"
 fi
-echo Path Sep Char set to ${pathSepChar}
-
-########################
-########################
-
 
 if [ -z "$JAVACMD" ] ; then
   if [ -n "$JAVA_HOME"  ] ; then
@@ -200,7 +190,6 @@ if $cygwin; then
   fi
   CYGHOME=`cygpath --$format "$HOME"`
 fi
-echo local class path: $LOCALCLASSPATH
 
 # Show script help if requested
 if $show_help ; then
