@@ -70,6 +70,12 @@
             page</fork> for some of his private projects.</li>
         <li id="jp"><link href="mailto:pietsch@apache.org">J&#x00F6;rg Pietschmann</link> (JP)</li>
         <li id="ot"><link href="mailto:olegt@apache.org">Oleg Tkachenko</link> (OT)</li>
+        <li id="bd"> 
+          <link href="mailto:bdelacretaz@apache.org">Bertrand Delacretaz</link> (BD)
+          is an independent consultant based in Lausanne, Switzerland, specialized in web-related
+          and multimedia applications.
+          See <fork href="http://www.codeconsult.ch">www.codeconsult.ch</fork> for more info.
+        </li>
       </ul>
     </section>
     <section id="contribute-active">
@@ -98,7 +104,6 @@ single-sourcing solutions.</li>
       <ul>
         <li id="kc"><link href="mailto:kellyc@apache.org">Kelly Campbell</link></li>
         <li id="sc"><link href="mailto:gears@apache.org">Steven Coffman</link></li>
-        <li id="bd"><link href="mailto:bdelacretaz@apache.org">Bertrand Delacr&#x00E9;taz</link></li>
         <li id="te"><link href="mailto:tore@apache.org">Tore Engvig</link></li>
         <li id="sg"><link href="mailto:stanislav@apache.org">Stanislav Gorkhover</link></li>
         <li id="fj"><link href="mailto:fotis@apache.org">Fotis Jannidis</link></li>
