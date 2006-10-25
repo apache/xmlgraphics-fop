@@ -19,12 +19,14 @@
 
 Generated from glb12.ttf by Apache FOP's TTFReader
 
+$Id$
+
 -->
-<font-metrics type="TYPE0">
+<font-metrics metrics-version="2" type="TYPE0">
   <font-name>Gladiator,Bold</font-name>
   <embed/>
   <cap-height>691</cap-height>
-  <x-height>0</x-height>
+  <x-height>429</x-height>
   <ascender>765</ascender>
   <descender>-234</descender>
   <bbox>
