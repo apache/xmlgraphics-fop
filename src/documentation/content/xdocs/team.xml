@@ -39,6 +39,9 @@
         <li id="lf"><link href="mailto:lfurini AT cs.unibo.it">Luca Furini</link> (LF)
            is a student of Computer Studies at the University of Bologna (Italy)</li>
         <li id="cg"><link href="mailto:chrisg@apache.org">Christian Geisert</link> (CG)</li>
+        <li id="vh"><link href="mailto:vhennebert@apache.org">Vincent Hennebert</link>
+          (VH), a Java developer from France; with an interest in typography, and in using
+          Fop as a pdf renderer for book-like documents.</li>
         <li id="ph"><link href="mailto:pherweg@web.de">Peter Herweg</link> (PH) is helping to 
             integrate the jfor project's RTF support into the upcoming FOP 1.0 version.
             Born in 1978, he has been serving as an application developer for a small 
@@ -91,7 +94,6 @@ single-sourcing solutions.</li>
             is a Java Programmer interested in XML technologies. See his 
             <fork href="http://www.oslutions.com">home page</fork> for more information about him.</li>
     <li id="ls">Luke Shannon, Java Programmer, Toronto, Canada</li>
-    <li id="vh">Vincent Hennebert, a PhD student working on Java bytecode analysis; with an interest in typography, and in using Fop as a pdf renderer for book-like documents.</li>
       </ul>
     </section>
     <section id="founder">
