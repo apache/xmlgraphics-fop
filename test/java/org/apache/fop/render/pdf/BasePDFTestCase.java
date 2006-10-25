@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+/* $Id$ */
+
 package org.apache.fop.render.pdf;
 
 import java.io.File;
@@ -34,51 +36,60 @@ import org.apache.fop.apps.MimeConstants;
 
 import junit.framework.TestCase;
 
-/** Base class for automated tests that create PDF files
- *  $Id$ 
+/**
+ * Base class for automated tests that create PDF files
  */
-
 public class BasePDFTestCase extends TestCase {
-  protected final FopFactory fopFactory = FopFactory.newInstance();
-  protected final TransformerFactory tFactory = TransformerFactory.newInstance();
 
-  protected BasePDFTestCase(String name) {
-    super(name);
-    
-    final File uc = getUserConfigFile();
-    
-    try {
-      fopFactory.setUserConfig(uc);
-    } catch (Exception e) {
-      throw new RuntimeException("fopFactory.setUserConfig (" + uc.getAbsolutePath() + ") failed: " + e.getMessage());
+    /** the FopFactory */
+    protected final FopFactory fopFactory = FopFactory.newInstance();
+
+    /** the JAXP TransformerFactory */
+    protected final TransformerFactory tFactory = TransformerFactory.newInstance();
+
+    /**
+     * Main constructor
+     * @param name the name of the test case
+     */
+    protected BasePDFTestCase(String name) {
+        super(name);
+
+        final File uc = getUserConfigFile();
+
+        try {
+            fopFactory.setUserConfig(uc);
+        } catch (Exception e) {
+            throw new RuntimeException("fopFactory.setUserConfig ("
+                    + uc.getAbsolutePath() + ") failed: " + e.getMessage());
+        }
     }
-  }
-  
-  /**
-   * Convert a test FO file to PDF
-   * @param foFile the FO file
-   * @param ua the preconfigured user agent
-   * @param dumpPdfFile if true, dumps the generated PDF file to a file name (foFile).pdf
-   * @return the generated PDF data
-   * @throws Exception if the conversion fails
-   */
-  protected byte[] convertFO(File foFile, FOUserAgent ua, boolean dumpPdfFile) throws Exception {
-      ByteArrayOutputStream baout = new ByteArrayOutputStream();
-      Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, ua, baout);
-      Transformer transformer = tFactory.newTransformer();
-      Source src = new StreamSource(foFile);
-      SAXResult res = new SAXResult(fop.getDefaultHandler());
-      transformer.transform(src, res);
-      final byte[] result = baout.toByteArray();  
-      if (dumpPdfFile) {
-          final File outFile = new File(foFile.getParentFile(), foFile.getName() + ".pdf");
-          FileUtils.writeByteArrayToFile(outFile, result);
-      }
-      return result;
-  }
-  
-  /** get FOP config File */
-  protected File getUserConfigFile() {
-    return new File("test/test.xconf");
-  }
+
+    /**
+     * Convert a test FO file to PDF
+     * @param foFile the FO file
+     * @param ua the preconfigured user agent
+     * @param dumpPdfFile if true, dumps the generated PDF file to a file name (foFile).pdf
+     * @return the generated PDF data
+     * @throws Exception if the conversion fails
+     */
+    protected byte[] convertFO(File foFile, FOUserAgent ua, boolean dumpPdfFile)
+            throws Exception {
+        ByteArrayOutputStream baout = new ByteArrayOutputStream();
+        Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, ua, baout);
+        Transformer transformer = tFactory.newTransformer();
+        Source src = new StreamSource(foFile);
+        SAXResult res = new SAXResult(fop.getDefaultHandler());
+        transformer.transform(src, res);
+        final byte[] result = baout.toByteArray();
+        if (dumpPdfFile) {
+            final File outFile = new File(foFile.getParentFile(), foFile.getName() + ".pdf");
+            FileUtils.writeByteArrayToFile(outFile, result);
+        }
+        return result;
+    }
+
+    /** get FOP config File */
+    protected File getUserConfigFile() {
+        return new File("test/test.xconf");
+    }
 }
