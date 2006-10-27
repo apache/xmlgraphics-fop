@@ -304,7 +304,7 @@ public class PFMFile {
         case 128:
             return "Shift-JIS (Japanese)";
         default:
-            return "Unknown";
+            return "Unknown (" + dfCharSet + ", 0x" + Integer.toHexString(dfCharSet) + ")";
         }
     }
 
