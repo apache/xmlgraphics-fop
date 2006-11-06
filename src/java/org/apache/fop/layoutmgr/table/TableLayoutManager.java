@@ -21,12 +21,8 @@ package org.apache.fop.layoutmgr.table;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.flow.Table;
-import org.apache.fop.fo.flow.TableFObj;
 import org.apache.fop.fo.flow.TableColumn;
-import org.apache.fop.fo.properties.TableColLength;
-import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.ConditionalElementListener;
 import org.apache.fop.layoutmgr.KnuthElement;
@@ -176,6 +172,14 @@ public class TableLayoutManager extends BlockStackingLayoutManager
                         + "=> assuming width=\"100%\"");
             }
             updateContentAreaIPDwithOverconstrainedAdjust();
+        }
+
+        int sumOfColumns = columns.getSumOfColumnWidths(this);
+        if (!autoLayout && sumOfColumns > getContentAreaIPD()) {
+            log.debug(FONode.decorateWithContextInfo(
+                    "The sum of all column widths is larger than the specified table width.", 
+                    getTable()));
+            updateContentAreaIPDwithOverconstrainedAdjust(sumOfColumns);
         }
 
         int availableIPD = referenceIPD - getIPIndents();

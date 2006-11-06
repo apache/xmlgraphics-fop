@@ -228,4 +228,23 @@ public class ColumnSetup {
         return xoffset;
     }
 
+    /**
+     * Calculates the sum of all column widths.
+     * @param context the context for percentage based calculations
+     * @return the requested sum in millipoints
+     */
+    public int getSumOfColumnWidths(PercentBaseContext context) {
+        int sum = 0;
+        for (int i = 1, c = getColumnCount(); i <= c; i++) {
+            int effIndex = i;
+            if (i >= colWidths.size()) {
+                effIndex = colWidths.size() - 1;
+            }
+            if (colWidths.get(effIndex) != null) {
+                sum += ((Length) colWidths.get(effIndex)).getValue(context);
+            }
+        }
+        return sum;
+    }
+    
 }

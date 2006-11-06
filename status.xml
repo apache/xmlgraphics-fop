@@ -29,6 +29,10 @@
   <changes>
     <release version="FOP Trunk">
       <action context="Code" dev="JM" type="fix">
+        Bugfix: Fixed bug when the sum of column widths of a table is larger than the
+        specified widths. The table width was not adjusted.
+      </action>
+      <action context="Code" dev="JM" type="fix">
         Bugfix: Nested tables with headers and footers were not handled correctly and could
         overlap with the region-after.
       </action>
