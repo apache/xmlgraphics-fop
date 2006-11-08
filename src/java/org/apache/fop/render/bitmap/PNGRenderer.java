@@ -141,6 +141,11 @@ public class PNGRenderer extends Java2DRenderer {
                 
                 // Encode PNG image
                 ImageWriter writer = ImageWriterRegistry.getInstance().getWriterFor(getMimeType());
+                if (writer == null) {
+                    throw new IOException("Could not get an ImageWriter to produce " 
+                            + getMimeType() + ". The most likely explanation for this is a class"
+                            + " loading problem.");
+                }
                 log.debug("Writing image using " + writer.getClass().getName());
                 writer.writeImage(image, os, params);
             } finally {
