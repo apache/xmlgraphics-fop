@@ -65,6 +65,7 @@ public class InstreamForeignObject extends AbstractGraphics {
         if (childNodes == null || childNodes.size() != 1) {
             missingChildElementError("one (1) non-XSL namespace child");
         }
+        getFOEventHandler().foreignObject(this);
     }
 
     /**
