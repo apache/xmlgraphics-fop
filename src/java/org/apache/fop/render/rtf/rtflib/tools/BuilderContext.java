@@ -21,6 +21,7 @@ package org.apache.fop.render.rtf.rtflib.tools;
 
 import java.util.Stack;
 
+import org.apache.fop.render.rtf.rtflib.exceptions.RtfException;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfOptions;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfContainer;
 
@@ -86,14 +87,14 @@ public class BuilderContext {
      *  @param forWhichBuilder used in error message if container not found
      */
     public RtfContainer getContainer(Class containerClass, boolean required,
-                              Object /*IBuilder*/ forWhichBuilder) throws Exception {
+                              Object /*IBuilder*/ forWhichBuilder) throws RtfException {
         // TODO what to do if the desired container is not at the top of the stack?
         // close top-of-stack container?
         final RtfContainer result = (RtfContainer)getObjectFromStack(containers,
                 containerClass);
 
         if (result == null && required) {
-            throw new Exception(
+            throw new RtfException(
                 "No RtfContainer of class '" + containerClass.getName()
                 + "' available for '" + forWhichBuilder.getClass().getName() + "' builder"
                );

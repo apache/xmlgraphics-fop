@@ -20,23 +20,25 @@
 package org.apache.fop.render.rtf;
 
 // Java
+import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Iterator;
 
-// Libs
+import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.xml.sax.SAXException;
-
-// FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.datatypes.SimplePercentBaseContext;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOText;
+import org.apache.fop.fo.XMLObj;
+import org.apache.fop.fo.flow.AbstractGraphics;
 import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.BlockContainer;
@@ -53,9 +55,9 @@ import org.apache.fop.fo.flow.ListItemBody;
 import org.apache.fop.fo.flow.ListItemLabel;
 import org.apache.fop.fo.flow.PageNumber;
 import org.apache.fop.fo.flow.Table;
-import org.apache.fop.fo.flow.TableColumn;
 import org.apache.fop.fo.flow.TableBody;
 import org.apache.fop.fo.flow.TableCell;
+import org.apache.fop.fo.flow.TableColumn;
 import org.apache.fop.fo.flow.TableHeader;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.pagination.Flow;
@@ -65,14 +67,17 @@ import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
-import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.FOText;
+import org.apache.fop.fonts.FontSetup;
+import org.apache.fop.image.FopImage;
+import org.apache.fop.image.ImageFactory;
+import org.apache.fop.image.XMLImage;
 import org.apache.fop.render.DefaultFontResolver;
-import org.apache.fop.render.rtf.rtflib.rtfdoc.ITableAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfAfterContainer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfBeforeContainer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfListContainer;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfTableContainer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfTextrunContainer;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.ITableAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAfter;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfBefore;
@@ -84,19 +89,16 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfFootnote;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfHyperLink;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfList;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListItem;
-import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListItem.RtfListItemLabel;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfSection;
-import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTextrun;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTable;
-import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTableRow;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTableCell;
-import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfTableContainer;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTableRow;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTextrun;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListItem.RtfListItemLabel;
 import org.apache.fop.render.rtf.rtflib.tools.BuilderContext;
 import org.apache.fop.render.rtf.rtflib.tools.TableContext;
-import org.apache.fop.fonts.FontSetup;
-import org.apache.fop.image.FopImage;
-import org.apache.fop.image.ImageFactory;
-import org.apache.fop.image.XMLImage;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 /**
  * RTF Handler: generates RTF output using the structure events from
@@ -971,9 +973,6 @@ public class RTFHandler extends FOEventHandler {
         } catch (IOException ioe) {
             log.error("startList: " + ioe.getMessage());
             throw new RuntimeException(ioe.getMessage());
-        } catch (FOPException fe) {
-            log.error("startList: " + fe.getMessage());
-            throw new RuntimeException(fe.getMessage());
         } catch (Exception e) {
             log.error("startList: " + e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -1130,105 +1129,11 @@ public class RTFHandler extends FOEventHandler {
                 return;
             }
             fopimage.load(FopImage.ORIGINAL_DATA);
-
-            byte[] rawData;
-            if ("image/svg+xml".equals(fopimage.getMimeType())) {
-                rawData = SVGConverter.convertToJPEG((XMLImage)fopimage);
-            } else {
-                rawData = fopimage.getRessourceBytes();
-            }
-            if (rawData == null) {
-                log.warn(FONode.decorateWithContextInfo(
-                        "Image could not be embedded: " + url, eg));
-                return;
-            }
-
-            final IRtfTextrunContainer c
-                = (IRtfTextrunContainer)builderContext.getContainer(
-                    IRtfTextrunContainer.class, true, this);
-
-            final RtfExternalGraphic newGraphic = c.getTextrun().newImage();
-    
-            //set URL
-            newGraphic.setURL(url);
-            newGraphic.setImageData(rawData);
-
-            //set scaling
-            if (eg.getScaling() == Constants.EN_UNIFORM) {
-                newGraphic.setScaling ("uniform");
-            }
-
-            //get width
-            int width = 0;
-            if (eg.getWidth().getEnum() == Constants.EN_AUTO) {
-                width = fopimage.getIntrinsicWidth();
-            } else {
-                width = eg.getWidth().getValue();
-            }
-
-            //get height
-            int height = 0;
-            if (eg.getWidth().getEnum() == Constants.EN_AUTO) {
-                height = fopimage.getIntrinsicHeight();
-            } else {
-                height = eg.getHeight().getValue();
-            }
-
-            //get content-width
-            int contentwidth = 0;
-            if (eg.getContentWidth().getEnum()
-                    == Constants.EN_AUTO) {
-                contentwidth = fopimage.getIntrinsicWidth();
-            } else if (eg.getContentWidth().getEnum()
-                    == Constants.EN_SCALE_TO_FIT) {
-                contentwidth = width;
-            } else {
-                //TODO: check, if the value is a percent value
-                contentwidth = eg.getContentWidth().getValue();
-            }
-
-            //get content-width
-            int contentheight = 0;
-            if (eg.getContentHeight().getEnum()
-                    == Constants.EN_AUTO) {
-
-                contentheight = fopimage.getIntrinsicHeight();
-
-            } else if (eg.getContentHeight().getEnum()
-                    == Constants.EN_SCALE_TO_FIT) {
-
-                contentheight = height;
-            } else {
-                //TODO: check, if the value is a percent value
-                contentheight = eg.getContentHeight().getValue();
-            }
-
-            //set width in rtf
-            //newGraphic.setWidth((long) (contentwidth / 1000f) + "pt");
-            newGraphic.setWidth((long) (contentwidth / 50f) + "twips");
-
-            //set height in rtf
-            //newGraphic.setHeight((long) (contentheight / 1000f) + "pt");
-            newGraphic.setHeight((long) (contentheight / 50f) + "twips");
-
-            //TODO: make this configurable:
-            //      int compression = m_context.m_options.getRtfExternalGraphicCompressionRate ();
-            int compression = 0;
-            if (compression != 0) {
-                if (!newGraphic.setCompressionRate(compression)) {
-                    log.warn("The compression rate " + compression
-                        + " is invalid. The value has to be between 1 and 100 %.");
-                }
-            }
+            
+            putGraphic(eg, fopimage);
         } catch (Exception e) {
             log.error("Error while handling an external-graphic: " + e.getMessage(), e);
         }
-    }
-
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#pageRef()
-     */
-    public void pageRef() {
     }
 
     /**
@@ -1236,6 +1141,152 @@ public class RTFHandler extends FOEventHandler {
      * @param ifo InstreamForeignObject that is starting
      */
     public void foreignObject(InstreamForeignObject ifo) {
+        if (bDefer) {
+            return;
+        }
+        
+        try {
+            XMLObj child = (XMLObj) ifo.getChildXMLObj();
+            Document doc = child.getDOMDocument();
+            String ns = child.getNamespaceURI();
+            
+            if (SVGDOMImplementation.SVG_NAMESPACE_URI.equals(ns)) {
+                // Build the image info.
+                FopImage.ImageInfo info = new FopImage.ImageInfo();
+                info.mimeType = "image/svg+xml";
+                info.str = SVGDOMImplementation.SVG_NAMESPACE_URI;
+                info.originalURI = "";
+                info.data = doc;
+
+                // Set the resolution to that of the FOUserAgent
+                FOUserAgent ua = ifo.getUserAgent();
+                info.dpiHorizontal = 25.4f / ua.getSourcePixelUnitToMillimeter();
+                info.dpiVertical = info.dpiHorizontal;
+                
+                // Set the image size to the size of the svg.
+                Point2D csize = new Point2D.Float(-1, -1);
+                Point2D intrinsicDimensions = child.getDimension(csize);
+                info.width = (int) intrinsicDimensions.getX();
+                info.height = (int) intrinsicDimensions.getY();
+                
+                FopImage fopImage = new XMLImage(info);
+                fopImage.load(FopImage.ORIGINAL_DATA);
+
+                putGraphic(ifo, fopImage);
+            } else {
+                log.warn("The namespace " + ns
+                        + " for instream-foreign-objects is not supported.");
+            }
+            
+            
+        } catch (Exception e) {
+            log.error("Error while handling an instream-foreign-object: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Puts a graphic/image into the generated RTF file.
+     * @param abstractGraphic the graphic (external-graphic or instream-foreign-object)
+     * @param fopImage the image
+     * @throws IOException In case of an I/O error
+     */
+    private void putGraphic(AbstractGraphics abstractGraphic, FopImage fopImage) 
+            throws IOException {
+        byte[] rawData;
+        if ("image/svg+xml".equals(fopImage.getMimeType())) {
+            rawData = SVGConverter.convertToJPEG((XMLImage) fopImage);
+        } else {
+            rawData = fopImage.getRessourceBytes();
+        }
+        if (rawData == null) {
+            log.warn(FONode.decorateWithContextInfo("Image could not be embedded: "
+                    + fopImage.getOriginalURI(), abstractGraphic));
+            return;
+        }
+
+        final IRtfTextrunContainer c
+            = (IRtfTextrunContainer)builderContext.getContainer(
+                IRtfTextrunContainer.class, true, this);
+
+        final RtfExternalGraphic rtfGraphic = c.getTextrun().newImage();
+   
+        //set URL
+        rtfGraphic.setURL(fopImage.getOriginalURI());
+        rtfGraphic.setImageData(rawData);
+
+        //set scaling
+        if (abstractGraphic.getScaling() == Constants.EN_UNIFORM) {
+            rtfGraphic.setScaling ("uniform");
+        }
+
+        //get width
+        int width = 0;
+        if (abstractGraphic.getWidth().getEnum() == Constants.EN_AUTO) {
+            width = fopImage.getIntrinsicWidth();
+        } else {
+            width = abstractGraphic.getWidth().getValue();
+        }
+
+        //get height
+        int height = 0;
+        if (abstractGraphic.getWidth().getEnum() == Constants.EN_AUTO) {
+            height = fopImage.getIntrinsicHeight();
+        } else {
+            height = abstractGraphic.getHeight().getValue();
+        }
+
+        //get content-width
+        int contentwidth = 0;
+        if (abstractGraphic.getContentWidth().getEnum()
+                == Constants.EN_AUTO) {
+            contentwidth = fopImage.getIntrinsicWidth();
+        } else if (abstractGraphic.getContentWidth().getEnum()
+                == Constants.EN_SCALE_TO_FIT) {
+            contentwidth = width;
+        } else {
+            //TODO: check, if the value is a percent value
+            contentwidth = abstractGraphic.getContentWidth().getValue();
+        }
+
+        //get content-width
+        int contentheight = 0;
+        if (abstractGraphic.getContentHeight().getEnum()
+                == Constants.EN_AUTO) {
+
+            contentheight = fopImage.getIntrinsicHeight();
+
+        } else if (abstractGraphic.getContentHeight().getEnum()
+                == Constants.EN_SCALE_TO_FIT) {
+
+            contentheight = height;
+        } else {
+            //TODO: check, if the value is a percent value
+            contentheight = abstractGraphic.getContentHeight().getValue();
+        }
+
+        //set width in rtf
+        //newGraphic.setWidth((long) (contentwidth / 1000f) + "pt");
+        rtfGraphic.setWidth((long) (contentwidth / 50f) + "twips");
+
+        //set height in rtf
+        //newGraphic.setHeight((long) (contentheight / 1000f) + "pt");
+        rtfGraphic.setHeight((long) (contentheight / 50f) + "twips");
+
+        //TODO: make this configurable:
+        //      int compression = m_context.m_options.getRtfExternalGraphicCompressionRate ();
+        int compression = 0;
+        if (compression != 0) {
+            if (!rtfGraphic.setCompressionRate(compression)) {
+                log.warn("The compression rate " + compression
+                    + " is invalid. The value has to be between 1 and 100 %.");
+            }
+        }
+    }
+    
+    /**
+     * @see org.apache.fop.fo.FOEventHandler#pageRef()
+     */
+    public void pageRef() {
     }
 
     /**
@@ -1439,6 +1490,10 @@ public class RTFHandler extends FOEventHandler {
         } else if (foNode instanceof ExternalGraphic) {
             if (bStart) {
                 image( (ExternalGraphic) foNode );
+            }
+        } else if (foNode instanceof InstreamForeignObject) {
+            if (bStart) {
+                foreignObject( (InstreamForeignObject) foNode );
             }
         } else if (foNode instanceof Block) {
             if (bStart) {
