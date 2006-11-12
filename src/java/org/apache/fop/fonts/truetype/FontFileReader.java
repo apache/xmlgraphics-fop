@@ -306,7 +306,7 @@ public class FontFileReader {
         current += len;
         final String encoding;
         if ((tmp.length > 0) && (tmp[0] == 0)) {
-            encoding = "UnicodeBig";
+            encoding = "UTF-16BE";
         } else {
             encoding = "ISO-8859-1";
         }
