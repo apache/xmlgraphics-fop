@@ -41,17 +41,21 @@ import java.awt.print.PrinterJob;
 
 import java.text.DecimalFormat;
 
+import javax.swing.ActionMap;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
+import javax.swing.InputMap;
 import javax.swing.JComboBox;
-import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -155,12 +159,26 @@ public class PreviewDialog extends JFrame implements StatusListener {
 
         //Sets size to be 61%x90% of the screen size
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+        // Needed due to bug in Sun's JVM 1.5 (6429775)
+        pack();
         //Rather frivolous size - fits A4 page width in 1024x768 screen on my desktop
         setSize(screen.width * 61 / 100, screen.height * 9 / 10);
 
         //Page view stuff
         previewPanel = new PreviewPanel(foUserAgent, renderable, renderer);
         getContentPane().add(previewPanel, BorderLayout.CENTER);
+
+        // Keyboard shortcuts - pgup/pgdn
+        InputMap im = previewPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        ActionMap am = previewPanel.getActionMap();
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, 0), "nextPage");
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP, 0), "prevPage");
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_HOME, 0), "firstPage");
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_END, 0), "lastPage");
+        previewPanel.getActionMap().put("nextPage", nextPageAction);
+        previewPanel.getActionMap().put("prevPage", previousPageAction);
+        previewPanel.getActionMap().put("firstPage", firstPageAction);
+        previewPanel.getActionMap().put("lastPage", lastPageAction);
 
         //Scaling combobox
         scale = new JComboBox();
@@ -510,23 +528,7 @@ public class PreviewDialog extends JFrame implements StatusListener {
 
     /** Scales page image */
     public void setScale(double scaleFactor) {
-//         if (scaleFactor == 25.0) {
-//             scale.setSelectedIndex(0);
-//         } else if (scaleFactor == 50.0) {
-//             scale.setSelectedIndex(1);
-//         } else if (scaleFactor == 75.0) {
-//             scale.setSelectedIndex(2);
-//         } else if (scaleFactor == 100.0) {
-//             scale.setSelectedIndex(3);
-//         } else if (scaleFactor == 150.0) {
-//             scale.setSelectedIndex(4);
-//         } else if (scaleFactor == 200.0) {
-//             scale.setSelectedIndex(5);
-//         } else if (scaleFactor == 400.0) {
-//             scale.setSelectedIndex(6);
-//         } else {
         scale.setSelectedItem(percentFormat.format(scaleFactor) + "%");
-//              }
         previewPanel.setScaleFactor(scaleFactor / 100d);
     }
 
