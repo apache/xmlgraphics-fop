@@ -28,6 +28,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="update" fixes-bug="40813" due-to="Richard Wheeldon">
+        Minor fixes and improvements for the AWT Preview (keyboard shortcuts, scrolling, windows
+        setup).
+      </action>
       <action context="Code" dev="JM" type="add" fixes-bug="40849" due-to="Dominic Brügger">
         Added support for SVG in fo:instream-foreign objects for RTF output.
       </action>

@@ -61,10 +61,12 @@ import org.apache.fop.render.awt.AWTRenderer;
  * renderer and add it to your gui:
  * </p>
  * <pre>
+ * FopFactory fopFactory = FopFactory.newInstance();
  * AWTRenderer renderer = new AWTRenderer();
- * FOUserAgent agent = new FOUserAgent();
+ * FOUserAgent agent = fopFactory.newFOUserAgent();
  * agent.setRendererOverride(renderer);
  * renderer.setPreviewDialogDisplayed(false);
+ * renderer.setUserAgent(agent);
  * renderer.setUserAgent(agent);
  * previewPanel = new PreviewPanel(agent, null, renderer);
  * previewPanel = new PreviewPanel(ua);
@@ -183,8 +185,8 @@ public class PreviewPanel extends JPanel {
      */
     public void setPage(int number) {
         if (displayMode == CONTINUOUS || displayMode == CONT_FACING) {
-            // FIXME Should scroll so page is visible
             currentPage = number;
+            gridPanel.scrollRectToVisible(pagePanels[currentPage].getBounds());
         } else { // single page mode
             currentPage = number;
             firstPage = currentPage;
