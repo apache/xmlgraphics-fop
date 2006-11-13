@@ -20,7 +20,6 @@
 package org.apache.fop.fonts.type1;
 
 // Java
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -191,7 +190,9 @@ public class PFMFile {
         int i = inStream.readShort();
 
 
-        log.info(i + " kerning pairs");
+        if (log.isInfoEnabled()) {
+            log.info(i + " kerning pairs");
+        }
         while (i > 0) {
             int g1 = (int)inStream.readByte();
             i--;
@@ -202,9 +203,9 @@ public class PFMFile {
             if (adj > 0x8000) {
                 adj = -(0x10000 - adj);
             }
-            log.debug("Char no: (" + g1 + ", " + g2 + ") kern: " + adj);
 
             if (log.isDebugEnabled()) {
+                log.debug("Char no: (" + g1 + ", " + g2 + ") kern: " + adj);
                 final String glyph1 = Glyphs.TEX8R_GLYPH_NAMES[g1];
                 final String glyph2 = Glyphs.TEX8R_GLYPH_NAMES[g2];
                 log.debug("glyphs: " + glyph1 + ", " + glyph2);
