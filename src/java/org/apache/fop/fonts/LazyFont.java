@@ -65,52 +65,58 @@ public class LazyFont extends Typeface implements FontDescriptor {
     private void load(boolean fail) {
         if (!isMetricsLoaded) {
             try {
-                /**@todo Possible thread problem here */
-                FontReader reader = null;
-                if (resolver != null) {
-                    Source source = resolver.resolve(metricsFileName);
-                    if (source == null) {
-                        String err = "Cannot load font: failed to create Source from metrics file " 
-                            + metricsFileName; 
-                        if (fail) {
-                            throw new RuntimeException(err);
-                        } else {
-                            log.error(err);
+                if (metricsFileName != null) {
+                    /**@todo Possible thread problem here */
+                    FontReader reader = null;
+                    if (resolver != null) {
+                        Source source = resolver.resolve(metricsFileName);
+                        if (source == null) {
+                            String err = "Cannot load font: failed to create Source from metrics file " 
+                                + metricsFileName; 
+                            if (fail) {
+                                throw new RuntimeException(err);
+                            } else {
+                                log.error(err);
+                            }
+                            return;
                         }
-                        return;
-                    }
-                    InputStream in = null;
-                    if (source instanceof StreamSource) {
-                        in = ((StreamSource) source).getInputStream();
-                    }
-                    if (in == null && source.getSystemId() != null) {
-                        in = new java.net.URL(source.getSystemId()).openStream();
-                    }
-                    if (in == null) {
-                        String err = "Cannot load font: failed to create InputStream from"
-                            + " Source for metrics file " + metricsFileName; 
-                        if (fail) {
-                            throw new RuntimeException(err);
-                        } else {
-                            log.error(err);
+                        InputStream in = null;
+                        if (source instanceof StreamSource) {
+                            in = ((StreamSource) source).getInputStream();
                         }
-                        return;
+                        if (in == null && source.getSystemId() != null) {
+                            in = new java.net.URL(source.getSystemId()).openStream();
+                        }
+                        if (in == null) {
+                            String err = "Cannot load font: failed to create InputStream from"
+                                + " Source for metrics file " + metricsFileName; 
+                            if (fail) {
+                                throw new RuntimeException(err);
+                            } else {
+                                log.error(err);
+                            }
+                            return;
+                        }
+                        InputSource src = new InputSource(in);
+                        src.setSystemId(source.getSystemId()); 
+                        reader = new FontReader(src);
+                    } else {
+                        reader 
+                            = new FontReader(new InputSource(new URL(metricsFileName).openStream()));
                     }
-                    InputSource src = new InputSource(in);
-                    src.setSystemId(source.getSystemId()); 
-                    reader = new FontReader(src);
+                    reader.setKerningEnabled(useKerning);
+                    reader.setFontEmbedPath(fontEmbedPath);
+                    reader.setResolver(resolver);
+                    realFont = reader.getFont();
                 } else {
-                    reader 
-                        = new FontReader(new InputSource(new URL(metricsFileName).openStream()));
+                    if (fontEmbedPath == null) {
+                        throw new RuntimeException("Cannot load font. No font URIs available.");
+                    }
+                    realFont = FontLoader.loadFont(fontEmbedPath, resolver);
                 }
-                reader.setKerningEnabled(useKerning);
-                reader.setFontEmbedPath(fontEmbedPath);
-                reader.setResolver(resolver);
-                realFont = reader.getFont();
                 if (realFont instanceof FontDescriptor) {
                     realFontDescriptor = (FontDescriptor) realFont;
                 }
-                // log.debug("Metrics " + metricsFileName + " loaded.");
             } catch (FOPException fopex) {
                 log.error("Failed to read font metrics file " + metricsFileName, fopex);
                 if (fail) {

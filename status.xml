@@ -28,6 +28,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="add">
+        Added initial support for loading fonts without a pre-created XML font metric
+        file.
+      </action>
       <action context="Code" dev="JM" type="add" fixes-bug="40729" due-to="Peter Coppens">
         Support for the rgb-icc() function and for a proprietary cmyk() function (for device CMYK
         colors only through the PDF renderer so far). 

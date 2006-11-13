@@ -31,7 +31,7 @@ public abstract class CustomFont extends Typeface
 
     private String fontName = null;
     private String embedFileName = null;
-    private String embedResourceName = null;
+    protected String embedResourceName = null;
     private FontResolver resolver = null;
     
     private int capHeight = 0;
