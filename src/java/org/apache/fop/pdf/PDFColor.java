@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 
+import org.apache.fop.util.CMYKColorSpace;
 import org.apache.fop.util.ColorExt;
 
 /**
@@ -121,7 +122,7 @@ public class PDFColor extends PDFPathPaint {
             ce = (ColorExt)col;
             cs = ce.getOrigColorSpace();  
         }
-        if (cs != null && cs.getType() == ColorSpace.TYPE_CMYK) {
+        if (cs != null && cs instanceof CMYKColorSpace) {
             // CMYK case
             this.colorSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_CMYK);
             float[] cmyk = (ce == null 
