@@ -78,10 +78,6 @@ public class TableColumn extends TableFObj {
         visibility = pList.get(PR_VISIBILITY).getEnum();
         super.bind(pList);
         
-        if (getTable().isColumnNumberUsed(columnNumber.getValue())) {
-            throw new PropertyException("column-number \"" + columnNumber 
-                    + "\" has already been assigned to a previous column");
-        }
         if (numberColumnsRepeated.getValue() <= 0) {
             throw new PropertyException("number-columns-repeated must be 1 or bigger, "
                     + "but got " + numberColumnsRepeated.getValue());
@@ -104,10 +100,6 @@ public class TableColumn extends TableFObj {
      * @see org.apache.fop.fo.FONode#endOfNode
      */
     protected void endOfNode() throws FOPException {
-        //flag column indices used by this column
-        int startIndex = getColumnNumber() - 1;
-        int endIndex = startIndex + getNumberColumnsRepeated();
-        getTable().flagColumnIndices(startIndex, endIndex);
         getFOEventHandler().endColumn(this);
     }
 
@@ -211,6 +203,4 @@ public class TableColumn extends TableFObj {
     protected void releasePropertyList() {
         this.pList = null;
     }
-
 }
-

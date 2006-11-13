@@ -42,7 +42,7 @@ public abstract class FObjMixed extends FObj {
     protected FObjMixed(FONode parent) {
         super(parent);
     }
-
+    
     /** @see org.apache.fop.fo.FONode */
     protected void addCharacters(char[] data, int start, int end,
                                  PropertyList pList,
@@ -50,7 +50,9 @@ public abstract class FObjMixed extends FObj {
         if (ft == null) {
             ft = new FOText(this);
             ft.setLocator(locator);
-            ft.bind(pList);
+            if (!inMarker()) {
+                ft.bind(pList);
+            }
         }
         ft.addCharacters(data, start, end, null, null);
     }
@@ -58,11 +60,26 @@ public abstract class FObjMixed extends FObj {
     /** @see org.apache.fop.fo.FONode#endOfNode() */
     protected void endOfNode() throws FOPException {
         flushText();
-        getFOEventHandler().whiteSpaceHandler
-            .handleWhiteSpace(this, currentTextNode);
+        if (!inMarker()
+                || getNameId() == FO_MARKER) {
+            getFOEventHandler().whiteSpaceHandler
+                .handleWhiteSpace(this, currentTextNode);
+        }
         super.endOfNode();
     }
 
+    /**
+     * Handles white-space for the node that is passed in, 
+     * starting at its current text-node
+     * (used by RetrieveMarker to trigger 'end-of-node' white-space
+     *  handling)
+     * @param fobj  the node for which to handle white-space
+     */
+    protected static void handleWhiteSpaceFor(FObjMixed fobj) {
+        fobj.getFOEventHandler().getXMLWhiteSpaceHandler()
+            .handleWhiteSpace(fobj, fobj.currentTextNode);
+    }
+    
     /**
      * Adds accumulated text as one FOText instance.
      * Makes sure that nested calls to itself do nothing.
@@ -72,8 +89,29 @@ public abstract class FObjMixed extends FObj {
        if (ft != null) {
             FOText lft = ft;
             ft = null;
+            if (getNameId() == FO_BLOCK) {
+                lft.createBlockPointers((org.apache.fop.fo.flow.Block) this);
+            } else if (getNameId() != FO_MARKER
+                    && getNameId() != FO_TITLE
+                    && getNameId() != FO_BOOKMARK_TITLE) {
+                FONode fo = parent;
+                int foNameId = fo.getNameId();
+                while (foNameId != FO_BLOCK
+                        && foNameId != FO_MARKER
+                        && foNameId != FO_TITLE
+                        && foNameId != FO_BOOKMARK_TITLE
+                        && foNameId != FO_PAGE_SEQUENCE) {
+                    fo = fo.getParent();
+                    foNameId = fo.getNameId();
+                }
+                if (foNameId == FO_BLOCK) {
+                    lft.createBlockPointers((org.apache.fop.fo.flow.Block) fo);
+                } else if (foNameId == FO_PAGE_SEQUENCE) {
+                    log.error("Could not create block pointers."
+                            + " FOText w/o Block ancestor.");
+                }
+            }
             lft.endOfNode();
-            getFOEventHandler().characters(lft.ca, lft.startIndex, lft.endIndex);
             addChildNode(lft);
         }
     }
@@ -83,15 +121,18 @@ public abstract class FObjMixed extends FObj {
      */
     protected void addChildNode(FONode child) throws FOPException {
         flushText();
-        if (child instanceof FOText || child.getNameId() == FO_CHARACTER) {
-            if (currentTextNode == null) {
-                currentTextNode = child;
+        if (!inMarker() 
+                || getNameId() == FO_MARKER) {
+            if (child instanceof FOText || child.getNameId() == FO_CHARACTER) {
+                if (currentTextNode == null) {
+                    currentTextNode = child;
+                }
+            } else {
+                // handle white-space for all text up to here
+                getFOEventHandler().whiteSpaceHandler
+                    .handleWhiteSpace(this, currentTextNode, child);
+                currentTextNode = null;
             }
-        } else {
-            // handle white-space for all text up to here
-            getFOEventHandler().whiteSpaceHandler
-                .handleWhiteSpace(this, currentTextNode, child);
-            currentTextNode = null;
         }
         super.addChildNode(child);
     }

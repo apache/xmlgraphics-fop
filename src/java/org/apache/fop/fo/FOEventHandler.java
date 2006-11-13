@@ -40,9 +40,9 @@ import org.apache.fop.fo.flow.ListBlock;
 import org.apache.fop.fo.flow.ListItem;
 import org.apache.fop.fo.flow.PageNumber;
 import org.apache.fop.fo.flow.Table;
-import org.apache.fop.fo.flow.TableColumn;
 import org.apache.fop.fo.flow.TableBody;
 import org.apache.fop.fo.flow.TableCell;
+import org.apache.fop.fo.flow.TableColumn;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
@@ -78,7 +78,7 @@ public abstract class FOEventHandler {
      */
     private Set idReferences = new HashSet();
 
-    /*
+    /**
      * The property list maker.
      */
     protected PropertyListMaker propertyListMaker;
@@ -87,6 +87,11 @@ public abstract class FOEventHandler {
      * The XMLWhitespaceHandler for this tree
      */
     protected XMLWhiteSpaceHandler whiteSpaceHandler = new XMLWhiteSpaceHandler();
+    
+    /**
+     * Indicates whether processing descendants of a marker
+     */
+    private boolean inMarker = false;
     
     /**
      * Main constructor
@@ -144,6 +149,23 @@ public abstract class FOEventHandler {
     }
 
     /**
+     * Switch to or from marker context
+     * (used by FOTreeBuilder when processing
+     *  a marker)
+     *
+     */
+    protected void switchMarkerContext(boolean inMarker) {
+        this.inMarker = inMarker;
+    }
+    
+    /**
+     * Check whether in marker context
+     */
+    protected boolean inMarker() {
+        return this.inMarker;
+    }
+    
+    /**
      * This method is called to indicate the start of a new document run.
      * @throws SAXException In case of a problem
      */
@@ -185,9 +207,10 @@ public abstract class FOEventHandler {
     }
 
     /**
-     * This method is called to indicate the start of a new fo:flow or fo:static-content.
-     * This method also handles fo:static-content tags, because the StaticContent class
-     * is derived from the Flow class.
+     * This method is called to indicate the start of a new fo:flow 
+     * or fo:static-content.
+     * This method also handles fo:static-content tags, because the 
+     * StaticContent class is derived from the Flow class.
      *
      * @param fl Flow that is starting.
      */
@@ -219,15 +242,15 @@ public abstract class FOEventHandler {
     *
     * @param blc BlockContainer that is starting.
     */
-   public void startBlockContainer(BlockContainer blc) {
-   }
+    public void startBlockContainer(BlockContainer blc) {
+    }
 
-   /**
+    /**
     *
     * @param blc BlockContainer that is ending.
     */
-   public void endBlockContainer(BlockContainer blc) {
-   }
+    public void endBlockContainer(BlockContainer blc) {
+    }
 
     /**
      *

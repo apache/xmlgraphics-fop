@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks that a when an additional page must be created at the end
+      of a flow for remaining out-of-line objects, then both the remaining
+      before-floats and footnotes are placed on this page.
+    </p>
+    <p>
+      Currently disabled as this is a non-working feature (footnote is deferred
+      instead of being split).
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+	<fo:simple-page-master master-name="normal"
+	  page-width="12cm" page-height="5.25cm">
+	  <fo:region-body/>
+	</fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+	<fo:flow flow-name="xsl-region-body"
+		 space-after.minimum="2pt"
+		 space-after.optimum="6pt"
+		 space-after.maximum="14pt"
+		 widows="1" orphans="1">
+	    <fo:block space-after="inherit">
+	      This is a block without a float. This is a block without a float.
+	      This is a block without a float. This is a block without a float.
+	    </fo:block>
+	    <fo:block space-after="inherit">
+	      This is a block without a float. This is a block without a float.
+	      This is a block without a float. This is a block without a float.
+	    </fo:block>
+	    <fo:block space-after="inherit">
+	      This is a block with a float and a footnote.
+	      This is a block with a float and a footnote.
+	      This is a block with a float and a footnote.
+	      The footnote citation is here<fo:footnote>
+		<fo:inline color="blue">1</fo:inline>
+		<fo:footnote-body color="blue">
+		  <fo:block>
+		    Footnote body. Footnote body. Footnote body. Footnote body.
+		    Footnote body. Footnote body. Footnote body. Footnote body.
+		    Footnote body. Footnote body. Footnote body. Footnote body.
+		    Footnote body. Footnote body. Footnote body. Footnote body.
+		  </fo:block>
+		</fo:footnote-body>
+	      </fo:footnote>. The float anchor is <fo:inline color="red">here</fo:inline><fo:float float="before" color="red">
+		<fo:block>
+		  This is the float content. This is the float content.
+		  This is the float content. This is the float content.
+		  This is the float content. This is the float content.
+		  This is the float content. This is the float content.
+		</fo:block>
+	      </fo:float>.
+	    </fo:block>
+	</fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="2" xpath="count(//pageViewport)"/>
+    <!-- first page -->
+    <!-- no before-float -->
+    <eval expected="0"
+	  xpath="count(//pageViewport[1]/page/regionViewport/regionBody/beforeFloat/block)"/>
+    <!-- two lines of footnotes -->
+    <eval expected="1"
+	  xpath="count(//pageViewport[1]/page/regionViewport/regionBody/footnote/block)"/>
+    <eval expected="2"
+	  xpath="count(//pageViewport[1]/page/regionViewport/regionBody/footnote/block/lineArea)"/>
+
+    <!-- second page -->
+    <!-- before-float block -->
+    <eval expected="1"
+	  xpath="count(//pageViewport[2]/page/regionViewport/regionBody/beforeFloat/block)"/>
+    <eval expected="This is the float content. This is the float content. This is the"
+          xpath="//pageViewport[2]/page/regionViewport/regionBody/beforeFloat/block/lineArea/text[1]"/>
+    <eval expected="57600"
+          xpath="//pageViewport[2]/page/regionViewport/regionBody/beforeFloat/block/@bpd"/>
+    <!-- two remaining lines of footnotes -->
+    <eval expected="1"
+	  xpath="count(//pageViewport[2]/page/regionViewport/regionBody/footnote/block)"/>
+    <eval expected="2"
+	  xpath="count(//pageViewport[2]/page/regionViewport/regionBody/footnote/block/lineArea)"/>
+    <!-- nothing in the main area -->
+    <eval expected="0"
+	  xpath="count(//pageViewport[2]/page/regionViewport/regionBody/mainReference/span/flow/block)"/>
+  </checks>
+</testcase>

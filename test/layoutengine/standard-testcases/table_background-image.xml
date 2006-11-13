@@ -34,7 +34,11 @@
       </fo:layout-master-set>
       <fo:page-sequence master-reference="normal" white-space-collapse="true">
         <fo:flow flow-name="xsl-region-body">
-          <fo:table background-color="yellow" background-repeat="no-repeat" background-position-horizontal="center" background-position-vertical="center" background-image="##img">
+          <fo:table table-layout="fixed" background-color="yellow" 
+                    background-repeat="no-repeat" 
+                    background-position-horizontal="center" 
+                    background-position-vertical="center" 
+                    background-image="##img">
             <fo:table-column column-number="1" />
             <fo:table-column column-number="2" />
             <fo:table-column column-number="3" />

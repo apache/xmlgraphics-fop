@@ -151,6 +151,23 @@ public class FOText extends FONode {
      }
 
     /**
+     * @see org.apache.fop.fo.FONode#clone(FONode, boolean)
+     */
+    public FONode clone(FONode parent, boolean removeChildren)
+        throws FOPException {
+        FOText ft = (FOText) super.clone(parent, removeChildren);
+        if (removeChildren) {
+            //not really removing, but just make sure the char array 
+            //pointed to is really a different one
+            if (ca != null) {
+                ft.ca = new char[ca.length];
+                System.arraycopy(ca, 0, ft.ca, 0, ca.length);
+            }
+        }
+        return ft;
+    }
+
+    /**
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
@@ -171,8 +188,8 @@ public class FOText extends FONode {
 
     /** @see org.apache.fop.fo.FONode#endOfNode() */
     protected void endOfNode() throws FOPException {
-        createBlockPointers();
         textTransform();
+        getFOEventHandler().characters(ca, startIndex, endIndex);
     }
 
     /**
@@ -210,28 +227,11 @@ public class FOText extends FONode {
     }
 
      /**
-     * This method is run as part of the Constructor, to create xref pointers to
+     * This method is run as part of the ancestor Block's flushText(), to create xref pointers to
      * the previous FOText objects within the same Block
      */
-    private void createBlockPointers() {
-        // build pointers between the FOText objects withing the same Block
-        //
-        // find the ancestorBlock of the current node
-        FONode ancestorFONode = this;
-        while (this.ancestorBlock == null) {
-            ancestorFONode = ancestorFONode.parent;
-            if (ancestorFONode instanceof org.apache.fop.fo.pagination.Title) {
-                return;
-            } else if (ancestorFONode instanceof org.apache.fop.fo.flow.Marker) {
-                return;
-            } else if (ancestorFONode instanceof Root) {
-                getLogger().warn("Unexpected: fo:text with no fo:block ancestor. The text is: " 
-                        + new String(ca));
-                return;
-            } else if (ancestorFONode instanceof Block) {
-                this.ancestorBlock = (Block)ancestorFONode;
-            }
-        }
+    protected void createBlockPointers(Block ancestorBlock) {
+        this.ancestorBlock = ancestorBlock;
         // if the last FOText is a sibling, point to it, and have it point here
         if (lastFOTextProcessed != null) {
             if (lastFOTextProcessed.ancestorBlock == this.ancestorBlock) {
@@ -252,7 +252,8 @@ public class FOText extends FONode {
      * text-transform property.
      */
     private void textTransform() {
-        if (textTransform == Constants.EN_NONE) {
+        if (getFOEventHandler().inMarker() 
+                || textTransform == Constants.EN_NONE) {
             return;
         }
         for (int i = 0; i < endIndex; i++) {

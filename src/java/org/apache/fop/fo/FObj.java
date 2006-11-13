@@ -20,7 +20,6 @@
 package org.apache.fop.fo;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -119,11 +118,15 @@ public abstract class FObj extends FONode implements Constants {
      * @see org.apache.fop.fo.FONode#processNode
      */
     public void processNode(String elementName, Locator locator, 
-                            Attributes attlist, PropertyList pList) throws FOPException {
+                            Attributes attlist, PropertyList pList) 
+                    throws FOPException {
         setLocator(locator);
         pList.addAttributesToList(attlist);
-        pList.setWritingMode();
-        bind(pList);
+        if (!inMarker()
+                || "marker".equals(elementName)) {
+            pList.setWritingMode();
+            bind(pList);
+        }
     }
 
     /**
@@ -154,7 +157,7 @@ public abstract class FObj extends FONode implements Constants {
      * @throws ValidationException if the ID is already defined elsewhere
      */
     protected void checkId(String id) throws ValidationException {
-        if (!id.equals("")) {
+        if (!inMarker() && !id.equals("")) {
             Set idrefs = getFOEventHandler().getIDReferences();
             if (!idrefs.contains(id)) {
                 idrefs.add(id);
@@ -178,13 +181,15 @@ public abstract class FObj extends FONode implements Constants {
      * @see org.apache.fop.fo.FONode#addChildNode(FONode)
      */
     protected void addChildNode(FONode child) throws FOPException {
-        if (PropertySets.canHaveMarkers(getNameId()) && child.getNameId() == FO_MARKER) {
-            addMarker((Marker)child);
+        if (canHaveMarkers() && child.getNameId() == FO_MARKER) {
+            addMarker((Marker) child);
         } else {
             ExtensionAttachment attachment = child.getExtensionAttachment();
             if (attachment != null) {
-                //This removes the element from the normal children, so no layout manager
-                //is being created for them as they are only additional information.
+                /* This removes the element from the normal children, 
+                 * so no layout manager is being created for them 
+                 * as they are only additional information.
+                 */
                 addExtensionAttachment(attachment);
             } else {
                 if (childNodes == null) {
@@ -195,6 +200,10 @@ public abstract class FObj extends FONode implements Constants {
         }
     }
 
+    protected static void addChildTo(FONode child, FObj parent) throws FOPException {
+        parent.addChildNode(child);
+    }
+    
     /** @see org.apache.fop.fo.FONode#removeChild(org.apache.fop.fo.FONode) */
     public void removeChild(FONode child) {
         if (childNodes != null) {
@@ -245,6 +254,20 @@ public abstract class FObj extends FONode implements Constants {
             int i = childNodes.indexOf(childNode);
             if (i >= 0) {
                 return childNodes.listIterator(i);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Return a FONode based on the index in the list of childNodes.
+     * @param nodeIndex index of the node to return
+     * @return the node or null if the index is invalid
+     */
+    public FONode getChildNodeAt(int nodeIndex) {
+        if (childNodes != null) {
+            if (nodeIndex >= 0 && nodeIndex < childNodes.size()) {
+                return (FONode) childNodes.get(nodeIndex);
             }
         }
         return null;

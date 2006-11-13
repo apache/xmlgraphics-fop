@@ -20,9 +20,8 @@
 package org.apache.fop.fo.flow;
 
 import java.util.HashMap;
-import java.util.Iterator;
 
-
+import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
@@ -30,6 +29,7 @@ import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FObjMixed;
+import org.apache.fop.fo.FOPropertyMapping;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.PropertyListMaker;
 import org.apache.fop.fo.ValidationException;
@@ -44,7 +44,7 @@ public class Marker extends FObjMixed {
     // End of property values
 
     private PropertyListMaker savePropertyListMaker;
-    private HashMap descPLists = new HashMap();
+    private HashMap descendantPropertyLists = new HashMap();
 
     /**
      * Create a marker fo.
@@ -76,14 +76,11 @@ public class Marker extends FObjMixed {
      * @param foNode the FO node whose property list is requested
      * @return the MarkerPropertyList of foNode
      */
-    protected MarkerPropertyList getPList(FONode foNode) {
-        return (MarkerPropertyList) descPLists.get(foNode);
+    protected MarkerPropertyList getPropertyListFor(FONode foNode) {
+        return (MarkerPropertyList) 
+            descendantPropertyLists.get(foNode);
     }
-
-    protected PropertyList createPropertyList(PropertyList parent, FOEventHandler foEventHandler) throws FOPException {
-        return new MarkerPropertyList(this, parent);
-    }
-
+    
     /** @see org.apache.fop.fo.FONode#startOfNode() */
     protected void startOfNode() {
         FOEventHandler foEventHandler = getFOEventHandler(); 
@@ -92,30 +89,18 @@ public class Marker extends FObjMixed {
         foEventHandler.setPropertyListMaker(new PropertyListMaker() {
             public PropertyList make(FObj fobj, PropertyList parentPropertyList) {
                 PropertyList pList = new MarkerPropertyList(fobj, parentPropertyList);
-                descPLists.put(fobj, pList);
+                descendantPropertyLists.put(fobj, pList);
                 return pList;
             }
         });
     }
-
+    
     /** @see org.apache.fop.fo.FONode#endOfNode() */
     protected void endOfNode() throws FOPException {
         super.endOfNode();
         // Pop the MarkerPropertyList maker.
         getFOEventHandler().setPropertyListMaker(savePropertyListMaker);
         savePropertyListMaker = null;
-        // unparent the child property lists
-        Iterator iter = getChildNodes();
-        if (iter != null) {
-            while (iter.hasNext()) {
-                FONode child = (FONode) iter.next();
-                MarkerPropertyList pList
-                    = (MarkerPropertyList) descPLists.get(child);
-                if (pList != null) {
-                    pList.setParentPropertyList(null);
-                }
-            }
-        }
     }
 
     /**
@@ -132,7 +117,11 @@ public class Marker extends FObjMixed {
             invalidChildError(loc, nsURI, localName);
         }
     }
-
+    
+    protected boolean inMarker() {
+        return true;
+    }
+    
     /**
      * Return the "marker-class-name" property.
      */
@@ -160,30 +149,252 @@ public class Marker extends FObjMixed {
     }
     
     /**
-     * An implementation of PropertyList which only stores the explicit
-     * assigned properties. It is memory efficient but slow. 
+     * An implementation of PropertyList which only stores the explicitly
+     * specified properties/attributes as bundles of name-value-namespace
+     * strings
      */
-    public class MarkerPropertyList extends PropertyList {
-        HashMap explicit = new HashMap();
+    protected class MarkerPropertyList extends PropertyList 
+            implements Attributes {
+        
+        protected class MarkerAttribute {
+            
+            protected String namespace;
+            protected String qname;
+            protected String name;
+            protected String value;
+            
+            /**
+             * Main constructor
+             * @param namespace the namespace URI
+             * @param qname the qualified name
+             * @param name  the name
+             * @param value the value
+             */
+            public MarkerAttribute(String namespace, String qname, 
+                    String name, String value) {
+                this.namespace = namespace;
+                this.qname = qname;
+                this.name = (name == null ? qname : name);
+                this.value = value;
+            }
+            
+            /**
+             * Convenience constructor for FO attributes
+             * @param name  the attribute name
+             * @param value the attribute value
+             */
+            public MarkerAttribute(String name, String value) {
+                this.namespace = null;
+                this.qname = name;
+                this.name = name;
+                this.value = value;
+            }
+        }
+        
+        /** the array of attributes **/
+        private MarkerAttribute[] attribs;
+        
+        /**
+         * Overriding default constructor
+         * 
+         * @param fobj  the FObj to attach
+         * @param parentPropertyList    ignored
+         */
         public MarkerPropertyList(FObj fobj, PropertyList parentPropertyList) {
-            super(fobj, parentPropertyList);
+            /* ignore parentPropertyList
+             * won't be used because the attributes will be stored
+             * without resolving
+             */
+            super(fobj, null);
         }
         
         /**
-         * Set the parent property list. Used to assign a new parent 
-         * before re-binding all the child elements.   
+         * Override that doesn't convert the attributes to Property instances,
+         * but simply stores the attributes for later processing;
+         * 
+         * @see org.apache.fop.fo.PropertyList#addAttributesToList(Attributes)
          */
-        public void setParentPropertyList(PropertyList parentPropertyList) {
-            this.parentPropertyList = parentPropertyList;
-        }
+        public void addAttributesToList(Attributes attributes) 
+                    throws ValidationException {
+            
+            this.attribs = new MarkerAttribute[attributes.getLength()];
 
+            String name;
+            String value;
+            String namespace;
+            String qname;
+            
+            for (int i = attributes.getLength(); --i >= 0;) {
+                namespace = attributes.getURI(i);
+                qname = attributes.getQName(i);
+                name = attributes.getLocalName(i);
+                value = attributes.getValue(i);
+                
+                this.attribs[i] = 
+                    new MarkerAttribute(namespace, qname, name, value);
+            }
+        }
+        
+        /**
+         * Null implementation; not used by this type of PropertyList
+         * @see org.apache.fop.fo.PropertyList#putExplicit(int, Property)
+         */
         public void putExplicit(int propId, Property value) {
-            explicit.put(new Integer(propId), value);
+            //nop
         }
 
+        /**
+         * Null implementation; not used by this type of PropertyList
+         * @see org.apache.fop.fo.PropertyList#getExplicit(int)
+         */
         public Property getExplicit(int propId) {
-            return (Property) explicit.get(new Integer(propId));
+            return null;
+        }
+
+        /**
+         * @see org.xml.sax.Attributes#getLength()
+         */
+        public int getLength() {
+            if (attribs == null) {
+                return 0;
+            } else {
+                return attribs.length;
+            }
+        }
+
+        /**
+         * @see org.xml.sax.Attributes#getURI()
+         */
+        public String getURI(int index) {
+            if (attribs != null 
+                    && index < attribs.length
+                    && index >= 0
+                    && attribs[index] != null) {
+                return attribs[index].namespace;
+            } else {
+                return null;
+            }
+        }
+
+        /**
+         * @see org.xml.sax.Attributes#getLocalName()
+         */
+        public String getLocalName(int index) {
+            if (attribs != null 
+                    && index < attribs.length
+                    && index >= 0
+                    && attribs[index] != null) {
+                return attribs[index].name;
+            } else {
+                return null;
+            }
+        }
+
+        /**
+         * @see org.xml.sax.Attributes#getQName()
+         */
+        public String getQName(int index) {
+            if (attribs != null 
+                    && index < attribs.length
+                    && index >= 0
+                    && attribs[index] != null) {
+                return attribs[index].qname;
+            } else {
+                return null;
+            }
+        }
+
+        /**
+         * Default implementation; not used
+         * @see org.xml.sax.Attributes#getType()
+         */
+        public String getType(int index) {
+            return "CDATA";
+        }
+
+        /**
+         * @see org.xml.sax.Attributes#getValue()
+         */
+        public String getValue(int index) {
+            if (attribs != null 
+                    && index < attribs.length
+                    && index >= 0
+                    && attribs[index] != null) {
+                return attribs[index].value;
+            } else {
+                return null;
+            }
+        }
+
+        /**
+         * @see org.xml.sax.Attributes#getIndex()
+         */
+        public int getIndex(String name, String namespace) {
+            int index = -1;
+            if (attribs != null && name != null && namespace != null) {
+                for (int i = attribs.length; --i >= 0;) {
+                    if (attribs[i] != null
+                            && namespace.equals(attribs[i].namespace)
+                            && name.equals(attribs[i].name)) {
+                        break;
+                    }
+                }
+            }
+            return index;
+        }
+
+        /**
+         * @see org.xml.sax.Attributes#getIndex()
+         */
+        public int getIndex(String qname) {
+            int index = -1;
+            if (attribs != null && qname != null) {
+                for (int i = attribs.length; --i >= 0;) {
+                    if (attribs[i] != null 
+                            && qname.equals(attribs[i].qname)) {
+                        break;
+                    }
+                }
+            }
+            return index;
+        }
+
+        /**
+         * Default implementation; not used
+         * @see org.xml.sax.Attributes#getType()
+         */
+        public String getType(String name, String namespace) {
+            return "CDATA";
+        }
+
+        /**
+         * Default implementation; not used
+         * @see org.xml.sax.Attributes#getType()
+         */
+        public String getType(String qname) {
+            return "CDATA";
+        }
+
+        /**
+         * @see org.xml.sax.Attributes#getValue()
+         */
+        public String getValue(String name, String namespace) {
+            int index = getIndex(name, namespace);
+            if (index > 0) {
+                return getValue(index);
+            }
+            return null;
+        }
+
+        /**
+         * @see org.xml.sax.Attributes#getValue()
+         */
+        public String getValue(String qname) {
+            int index = getIndex(qname);
+            if (index > 0) {
+                return getValue(index);
+            }
+            return null;
         }
     }
-
 }

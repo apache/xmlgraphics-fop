@@ -72,10 +72,10 @@ public class TableStepper {
      */
     public TableStepper(TableContentLayoutManager tclm) {
         this.tclm = tclm;
-        this.activeRow = 0;
     }
     
     private void setup(int columnCount) {
+        this.activeRow = 0;
         elementLists = new List[columnCount];
         startRow = new int[columnCount];
         start = new int[columnCount];

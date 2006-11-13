@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
@@ -33,6 +34,7 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.StaticPropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.flow.TableFObj.PendingSpan;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
@@ -62,7 +64,7 @@ public class TableBody extends TableFObj {
      * used for initial values of column-number property
      */
     protected List pendingSpans;
-    protected BitSet usedColumnIndices = new BitSet();
+    protected BitSet usedColumnIndices;
     private int columnIndex = 1;
     protected boolean firstRow = true;
     
@@ -88,10 +90,29 @@ public class TableBody extends TableFObj {
     }
     
     /**
+     * @see org.apache.fop.fo.FONode#processNode()
+     */
+    public void processNode(String elementName, Locator locator, 
+                            Attributes attlist, PropertyList pList) 
+                    throws FOPException {
+        if (!inMarker()) {
+            if (getTable().columns != null) {
+                int cap = getTable().columns.size();
+                pendingSpans = new java.util.ArrayList(cap);
+                usedColumnIndices = new java.util.BitSet(cap);
+            } else {
+                pendingSpans = new java.util.ArrayList();
+                usedColumnIndices = new java.util.BitSet();
+            }
+            setNextColumnIndex();
+        }
+        super.processNode(elementName, locator, attlist, pList);
+    }
+
+    /**
      * @see org.apache.fop.fo.FONode#startOfNode
      */
     protected void startOfNode() throws FOPException {
-        initPendingSpans();
         getFOEventHandler().startBody(this);
     }
 
@@ -99,7 +120,16 @@ public class TableBody extends TableFObj {
      * @see org.apache.fop.fo.FONode#endOfNode
      */
     protected void endOfNode() throws FOPException {
+        
+        if (!inMarker()) {
+            // clean up
+            savedPropertyList = null;
+            pendingSpans = null;
+            usedColumnIndices = null;
+        }
+        
         getFOEventHandler().endBody(this);
+        
         if (!(tableRowsFound || tableCellsFound)) {
             if (getUserAgent().validateStrictly()) {
                 missingChildElementError("marker* (table-row+|table-cell+)");
@@ -110,18 +140,11 @@ public class TableBody extends TableFObj {
             }
         }
         
+        /*
         if (tableCellsFound) {
             convertCellsToRows();
         }
-        
-        //reset column index (so that it would be
-        //correct if the table is cloned during
-        //marker retrieval)
-        resetColumnIndex();
-        //release references
-        savedPropertyList = null;
-        pendingSpans = null;
-        usedColumnIndices = null;
+        */
     }
 
     /**
@@ -156,6 +179,18 @@ public class TableBody extends TableFObj {
         } else {
             invalidChildError(loc, nsURI, localName);
         }
+    }
+    
+    /**
+     * @see org.apache.fop.fo.FONode#addChildNode(FONode)
+     */
+    protected void addChildNode(FONode child) throws FOPException {
+        if (!inMarker()) {
+            if (firstRow && child.getNameId() == FO_TABLE_ROW) {
+                firstRow = false;
+            }
+        }
+        super.addChildNode(child);
     }
     
     /**
@@ -243,15 +278,17 @@ public class TableBody extends TableFObj {
      *  column-number of 2, since the first column is already 
      *  occupied...)
      */
-    protected void initPendingSpans() {
-        if (getTable().columns != null) {
-            List tableCols = getTable().columns;
-            pendingSpans = new java.util.ArrayList(tableCols.size());
-            for (int i = tableCols.size(); --i >= 0;) {
-                pendingSpans.add(null);
-            }
-        } else {
-            if (firstRow && pendingSpans == null) {
+    protected void initPendingSpans(FONode child) {
+        if (child.getNameId() == FO_TABLE_ROW) {
+            pendingSpans = ((TableRow) child).pendingSpans;
+        } else if (pendingSpans == null) {
+            if (getTable().columns != null) {
+                List tableCols = getTable().columns;
+                pendingSpans = new java.util.ArrayList(tableCols.size());
+                for (int i = tableCols.size(); --i >= 0;) {
+                    pendingSpans.add(null);
+                }
+            } else {
                 pendingSpans = new java.util.ArrayList();
             }
         }
@@ -262,7 +299,7 @@ public class TableBody extends TableFObj {
      * 
      * @return the next column number to use
      */
-    public int getCurrentColumnIndex() {
+    protected int getCurrentColumnIndex() {
         return columnIndex;
     }
 
@@ -273,7 +310,7 @@ public class TableBody extends TableFObj {
      * 
      * @param newIndex  the new column index
      */
-    public void setCurrentColumnIndex(int newIndex) {
+    protected void setCurrentColumnIndex(int newIndex) {
         columnIndex = newIndex;
     }
 
@@ -281,11 +318,12 @@ public class TableBody extends TableFObj {
      * Resets the current column index for the TableBody
      *
      */
-    public void resetColumnIndex() {
+    protected void resetColumnIndex() {
         columnIndex = 1;
-        for (int i = 0; i < usedColumnIndices.size(); i++) {
+        for (int i = usedColumnIndices.length(); --i >= 0;) {
             usedColumnIndices.clear(i);
         }
+        
         PendingSpan pSpan;
         for (int i = pendingSpans.size(); --i >= 0;) {
             pSpan = (PendingSpan) pendingSpans.get(i);
@@ -293,12 +331,9 @@ public class TableBody extends TableFObj {
                 pSpan.rowsLeft--;
                 if (pSpan.rowsLeft == 0) {
                     pendingSpans.set(i, null);
+                } else {
+                    usedColumnIndices.set(i);
                 }
-            }
-            if (pendingSpans.get(i) != null) {
-                usedColumnIndices.set(i);
-            } else {
-                usedColumnIndices.clear(i);
             }
         }
         if (!firstRow) {
@@ -310,19 +345,19 @@ public class TableBody extends TableFObj {
      * Increases columnIndex to the next available value
      *
      */
-    private void setNextColumnIndex() {
+    protected void setNextColumnIndex() {
         while (usedColumnIndices.get(columnIndex - 1)) {
             //increment columnIndex
             columnIndex++;
-            //if the table has explicit columns, and
-            //the updated index is not assigned to any
-            //column, increment further until the next
-            //index occupied by a column...
-            if (getTable().columns != null) {
-                while (columnIndex <= getTable().columns.size()
-                        && !getTable().isColumnNumberUsed(columnIndex) ) {
-                    columnIndex++;
-                }
+        }
+        //if the table has explicit columns, and
+        //the index is not assigned to any
+        //column, increment further until the next
+        //index occupied by a column...
+        if (getTable().columns != null) {
+            while (columnIndex <= getTable().columns.size()
+                    && !getTable().isColumnNumberUsed(columnIndex) ) {
+                columnIndex++;
             }
         }
     }
@@ -337,11 +372,10 @@ public class TableBody extends TableFObj {
      *          b) there is no previous cell (implicit 
      *             start of row)
      */
-    protected boolean lastCellEndedRow(TableCell currentCell) {
-        if (childNodes != null && childNodes.indexOf(currentCell) > 0) {
-            FONode prevNode = (FONode) childNodes.get(
-                    childNodes.indexOf(currentCell) - 1);
-            if (prevNode != null && prevNode.getNameId() == FO_TABLE_CELL) {
+    protected boolean previousCellEndedRow() {
+        if (childNodes != null) {
+            FONode prevNode = (FONode) childNodes.get(childNodes.size() - 1);
+            if (prevNode.getNameId() == FO_TABLE_CELL) {
                 return ((TableCell) prevNode).endsRow();
             }
         }
@@ -367,12 +401,5 @@ public class TableBody extends TableFObj {
             usedColumnIndices.set(i);
         }
         setNextColumnIndex();
-    }
-    
-    /**
-     * @see org.apache.fop.fo.flow.TableFObj#existsUsedColumnIndices()
-     */
-    protected boolean existsUsedColumnIndices() {
-        return (usedColumnIndices != null);
     }
 }

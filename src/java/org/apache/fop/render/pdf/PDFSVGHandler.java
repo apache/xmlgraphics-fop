@@ -26,6 +26,7 @@ import java.awt.Color;
 import java.awt.geom.AffineTransform;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.svg.SVGAElement;
 import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGSVGElement;
 
@@ -39,6 +40,7 @@ import org.apache.fop.pdf.PDFPage;
 import org.apache.fop.pdf.PDFState;
 import org.apache.fop.pdf.PDFStream;
 import org.apache.fop.pdf.PDFResourceContext;
+import org.apache.fop.svg.PDFAElementBridge;
 import org.apache.fop.svg.PDFBridgeContext;
 import org.apache.fop.svg.PDFGraphics2D;
 import org.apache.fop.svg.SVGUserAgent;
@@ -55,7 +57,9 @@ import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.ViewBox;
+import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.gvt.GraphicsNode;
+import org.apache.batik.util.SVGConstants;
 
 /**
  * PDF XML handler for SVG (uses Apache Batik).
@@ -142,6 +146,7 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
      */
     protected void renderSVGDocument(RendererContext context,
             Document doc) {
+        PDFRenderer renderer = (PDFRenderer)context.getRenderer();
         PDFInfo pdfInfo = getPDFInfo(context);
         if (pdfInfo.paintAsBitmap) {
             try {
@@ -163,12 +168,18 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
         final float uaResolution = context.getUserAgent().getSourceResolution();
         SVGUserAgent ua = new SVGUserAgent(25.4f / uaResolution, new AffineTransform());
 
+        //Scale for higher resolution on-the-fly images from Batik
+        double s = uaResolution / deviceResolution;
+        AffineTransform resolutionScaling = new AffineTransform();
+        resolutionScaling.scale(s, s);
+        
+        //Transformation matrix that establishes the local coordinate system for the SVG graphic
+        //in relation to PDF's initial coordinate system.
+        AffineTransform baseTransform = (AffineTransform)renderer.currentBasicTransform.clone();
+        baseTransform.concatenate(pdfInfo.pdfState.getTransform());
+
         GVTBuilder builder = new GVTBuilder();
         
-        //TODO This AffineTransform here has to be fixed!!! 
-        AffineTransform linkTransform = pdfInfo.pdfState.getTransform();
-        linkTransform.translate(xOffset / 1000f, yOffset / 1000f);
-
         //Controls whether text painted by Batik is generated using text or path operations
         boolean strokeText = false;
         Configuration cfg = pdfInfo.cfg;
@@ -178,11 +189,12 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
         
         BridgeContext ctx = new PDFBridgeContext(ua, 
                 (strokeText ? null : pdfInfo.fi),
-                linkTransform);
+                new AffineTransform());
         
         GraphicsNode root;
         try {
             root = builder.build(ctx, doc);
+            builder = null;
         } catch (Exception e) {
             log.error("svg graphic could not be built: "
                                    + e.getMessage(), e);
@@ -195,35 +207,36 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
         float sx = pdfInfo.width / (float)w;
         float sy = pdfInfo.height / (float)h;
 
-        ctx = null;
-        builder = null;
+        //Scaling and translation for the bounding box of the image
+        AffineTransform scaling = new AffineTransform(
+                sx, 0, 0, sy, xOffset / 1000f, yOffset / 1000f);
+
+        //Finish the baseTransform, now that we know everything
+        baseTransform.concatenate(scaling);
+        baseTransform.concatenate(resolutionScaling);
+        
+        //Now that we have the full baseTransform, we can update the transformation matrix for
+        //the AElementBridge.
+        PDFAElementBridge aBridge = (PDFAElementBridge)ctx.getBridge(
+                SVGDOMImplementation.SVG_NAMESPACE_URI, SVGConstants.SVG_A_TAG);
+        aBridge.getCurrentTransform().setTransform(baseTransform);
 
         /*
          * Clip to the svg area.
          * Note: To have the svg overlay (under) a text area then use
          * an fo:block-container
          */
-        PDFRenderer renderer = (PDFRenderer)context.getRenderer();
+        pdfInfo.currentStream.add("%SVG setup\n");
         renderer.saveGraphicsState();
         renderer.setColor(Color.black, false, null);
         renderer.setColor(Color.black, true, null);
-        // transform so that the coordinates (0,0) is from the top left
-        // and positive is down and to the right. (0,0) is where the
-        // viewBox puts it.
-        pdfInfo.currentStream.add(sx + " 0 0 " + sy + " " + xOffset / 1000f + " "
-                          + yOffset / 1000f + " cm\n");
+
+        if (!scaling.isIdentity()) {
+            pdfInfo.currentStream.add("%viewbox\n");
+            pdfInfo.currentStream.add(CTMHelper.toPDFString(scaling, false) + " cm\n");
+        }
 
         SVGSVGElement svg = ((SVGDocument)doc).getRootElement();
-        //AffineTransform at = ViewBox.getPreserveAspectRatioTransform(
-        //                          svg, w / 1000f, h / 1000f);
-        AffineTransform at = ViewBox.getPreserveAspectRatioTransform(svg,
-                pdfInfo.width / 1000f, pdfInfo.height / 1000f);
-        /*
-        if (!at.isIdentity()) {
-            double[] vals = new double[6];
-            at.getMatrix(vals);
-            pdfInfo.currentStream.add(CTMHelper.toPDFString(at, false) + " cm\n");
-        }*/
 
         if (pdfInfo.pdfContext == null) {
             pdfInfo.pdfContext = pdfInfo.pdfPage;
@@ -233,21 +246,18 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
                 pdfInfo.pdfContext, pdfInfo.pdfPage.referencePDF(),
                 pdfInfo.currentFontName, pdfInfo.currentFontSize);
         graphics.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
-        pdfInfo.pdfState.push();
-        AffineTransform transform = new AffineTransform();
-        // scale to viewbox
-        transform.translate(xOffset / 1000f, yOffset / 1000f);
 
-        if (deviceResolution != uaResolution) {
-            //Scale for higher resolution on-the-fly images from Batik
-            double s = uaResolution / deviceResolution;
-            at.scale(s, s);
-            pdfInfo.currentStream.add("" + PDFNumber.doubleOut(s) + " 0 0 "
-                                + PDFNumber.doubleOut(s) + " 0 0 cm\n");
+        if (!resolutionScaling.isIdentity()) {
+            pdfInfo.currentStream.add("%resolution scaling for " + uaResolution + " -> " + deviceResolution + "\n");
+            pdfInfo.currentStream.add(
+                    CTMHelper.toPDFString(resolutionScaling, false) + " cm\n");
             graphics.scale(1 / s, 1 / s);
         }
+        
+        pdfInfo.currentStream.add("%SVG start\n");
 
-        pdfInfo.pdfState.setTransform(transform);
+        pdfInfo.pdfState.push();
+        pdfInfo.pdfState.setTransform(baseTransform);
         graphics.setPDFState(pdfInfo.pdfState);
         graphics.setOutputStream(pdfInfo.outputStream);
         try {
@@ -257,9 +267,9 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
             log.error("svg graphic could not be rendered: "
                                    + e.getMessage(), e);
         }
-
-        renderer.restoreGraphicsState();
         pdfInfo.pdfState.pop();
+        renderer.restoreGraphicsState();
+        pdfInfo.currentStream.add("%SVG end\n");
     }
     
     /** @see org.apache.fop.render.XMLHandler#supportsRenderer(org.apache.fop.render.Renderer) */

@@ -28,6 +28,29 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="AD" type="update" fixes-bug="40270" due-to="Gary Reed">
+        Added relaxed validation for empty list-item-*, as suggested by Gary Reed.
+      </action>
+      <action context="Code" dev="AD" type="update">
+        Modified proportional-column-width() function to log an error if used 
+        with table-layout=auto
+      </action>
+      <action context="Code" dev="AD" type="fix">
+        Deferred property resolution for markers until they are actually retrieved,
+        which leads to percentages and relative font-sizes now getting the correct
+        values. Also deferred white-space-handling for markers.
+      </action>
+      <action context="Code" dev="JM" type="update">
+        Changed the way overflowing pages are handled. The overflow property on region-body
+        is now used to define the behaviour.
+      </action>
+      <action context="Code" dev="JM" type="fix">
+        Fixed a memory-leak: The FO tree part of a page-sequence was not released when a
+        page-sequence was finished.
+      </action>
+      <action context="Code" dev="JM" type="fix">
+        Bugfix: Table headers and footers were swallowed when a table was nested in a list-block.
+      </action>
       <action context="Code" dev="JM" type="fix">
         Fixed a bug with indent handling when margins are used on a surrounding block and 
         not start/end-indent.
@@ -168,6 +191,11 @@
       <action context="Code" dev="JM" type="add" fixes-bug="39118" due-to="Pierre-Henri Kraus">
         Initial support for page-number-citation-last (XSL 1.1). Works without problems 
         only for page-sequence so far.
+      </action>
+      <action context="Code" dev="VH" type="update" fixes-bug="39777">
+        Improved support of before-floats: allow float-only pages, take into
+        account floats' shrinkability/stretchability, handle the splitting of
+        big floats.
       </action>
     </release>
     <release version="0.92beta" date="18 Apr 2006">

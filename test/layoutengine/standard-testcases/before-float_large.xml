@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks that a before-float too large to fit on a page alone is
+      split on several pages.
+    </p>
+    <p>
+      Currently disabled as this feature still needs some debugging.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+	<fo:simple-page-master master-name="normal"
+	  page-width="12cm" page-height="5.25cm">
+	  <fo:region-body/>
+	</fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+	<fo:flow flow-name="xsl-region-body"
+		 space-after.minimum="2pt"
+		 space-after.optimum="6pt"
+		 space-after.maximum="14pt"
+		 widows="1" orphans="1">
+	    <fo:block space-after="inherit">
+	      This is a block without a float. This is a block without a float.
+	      This is a block without a float. This is a block without a float.
+	    </fo:block>
+	    <fo:block space-after="inherit">
+	      This is a block without a float. This is a block without a float.
+	      This is a block without a float. This is a block without a float.
+	    </fo:block>
+	    <fo:block space-after="inherit">
+	      This is a block with a float. This is a block with a float.
+	      This is a block with a float. This is a block with a float.
+	      This is a block with a float. This is a block with a float.
+	      The float anchor is <fo:inline color="red">here</fo:inline><fo:float
+		float="before" color="red"
+		space-after.minimum="3pt"
+		space-after.optimum="6pt"
+		space-after.maximum="9">
+		<fo:block space-after="inherit">
+		  This is the float content. This is the float content.
+		  This is the float content. This is the float content.
+		</fo:block>
+		<fo:block space-after="inherit">
+		  This is the float content. This is the float content.
+		  This is the float content. This is the float content.
+		</fo:block>
+		<fo:block space-after="inherit">
+		  This is the float content. This is the float content.
+		  This is the float content. This is the float content.
+		</fo:block>
+		<fo:block space-after="inherit">
+		  This is the float content. This is the float content.
+		  This is the float content. This is the float content.
+		</fo:block>
+		<fo:block space-after="inherit">
+		  This is the float content. This is the float content.
+		  This is the float content. This is the float content.
+		</fo:block>
+	      </fo:float>.
+	      This is a block with a float. This is a block with a float.
+	      This is a block with a float. This is a block with a float.
+	    </fo:block>
+	    <fo:block space-after="inherit">
+	      This is a block without a float. This is a block without a float.
+	      This is a block without a float. This is a block without a float.
+	    </fo:block>
+	    <fo:block space-after="inherit">
+	      This is a block without a float. This is a block without a float.
+	      This is a block without a float. This is a block without a float.
+	    </fo:block>
+	</fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!--
+      Well, the result is highly dependent on the implemented algorithm. Tests
+      will have to be added when it is implemented. Currently the float
+      overflows the page instead of being split.
+    -->
+  </checks>
+</testcase>

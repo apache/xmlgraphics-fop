@@ -19,7 +19,12 @@
 
 package org.apache.fop.layoutmgr;
 
+import java.text.NumberFormat;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Locale;
+import java.util.Stack;
+import java.util.Vector;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,35 +32,97 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.layoutmgr.AbstractBreaker.PageBreakPosition;
-import org.apache.fop.layoutmgr.breaking.OutOfLineRecord;
+import org.apache.fop.layoutmgr.breaking.BeforeFloatsRecord;
+import org.apache.fop.layoutmgr.breaking.ElasticLength;
+import org.apache.fop.layoutmgr.breaking.FootnotesRecord;
+import org.apache.fop.layoutmgr.breaking.BeforeFloatsRecord.BeforeFloatsProgress;
+import org.apache.fop.layoutmgr.breaking.FootnotesRecord.FootnotesProgress;
 
 import org.apache.fop.traits.MinOptMax;
 
 public class PageBreakingAlgorithm extends BreakingAlgorithm {
+
+    /* TODO vh: all of the following parameters should be available through a config
+     * option
+     */
+    /**
+     * Minimum allowed fill ratio for pages. Underfull pages which are filled at
+     * least this ratio are considered to be feasible breaks.
+     */
+    /* Set to 1.0 for now, otherwise this breaks testcases. */
+    public static final double MIN_NORMAL_PAGE_FILL_RATIO = 1.0;
+
+    /**
+     * Minimum allowed fill ratio for float-only pages. Underfull pages which are filled
+     * at least this ratio are considered to be feasible breaks.
+     */
+    public static final double MIN_FLOAT_PAGE_FILL_RATIO = 1.0;
+
+    /**
+     * Minimum acceptable ratio of normal content on pages containing both normal text and
+     * out-of-lines.
+     */
+    public static final double TEXT_FRACTION = 0.05;
+
+    /**
+     * Are float-only pages allowed?
+     */
+    public static final boolean FLOAT_PAGES_ALLOWED = true;
+
+    /**
+     * Are footnotes allowed on float-only pages?
+     */
+    public static final boolean FOOTNOTES_ALLOWED_ON_FLOAT_PAGES = true;
+
+    /**
+     * Are footnotes-only pages allowed?
+     */
+    public static final boolean FOOTNOTES_ONLY_PAGES_ALLOWED = true;
+
+    /**
+     * Additional demerits for an underfull page, which however has an acceptable fill ratio.
+     */
+    private static final double UNDERFULL_PAGE_DEMERITS = 20000;
+
+    /**
+     * This mode is chosen when out-of-lines must be typeset on a page containing normal
+     * content.
+     */
+    public static final int NORMAL_MODE = 0;
+
+    /**
+     * This mode is chosen when out-of-lines must be typeset on a float-only page.
+     */
+    public static final int FLOAT_PAGE_MODE = 1;
+
+    /**
+     * This mode is chosen when out-of-lines must be typeset on a float-only page at the
+     * end of a page-sequence.
+     */
+    public static final int FLUSH_MODE = 2;
 
     /** the logger for the class */
     protected static Log classLog = LogFactory.getLog(PageBreakingAlgorithm.class);
 
     private LayoutManager topLevelLM;
     private PageSequenceLayoutManager.PageProvider pageProvider;
+    private PageBreakingLayoutListener layoutListener;
     /** List of PageBreakPosition elements. */
     private LinkedList pageBreaks = null;
 
-    private OutOfLineRecord footnotes;
-    private OutOfLineRecord floats;
+    private NormalContentProgressInfo normalContentProgress = new NormalContentProgressInfo();
+    private FootnotesRecord footnotesRecord;
+    private BeforeFloatsRecord beforeFloatsRecord;
+    private FootnotesRecord.FootnotesProgress footnotesProgress;
+    private BeforeFloatsRecord.BeforeFloatsProgress beforeFloatsProgress;
 
+    private ActiveNodeRecorder activeNodeRecorder = new ActiveNodeRecorder();
+    
     // demerits for a page break that splits a footnote 
     private int splitFootnoteDemerits = 5000;
     // demerits for a page break that defers a whole footnote to the following page 
     private int deferredFootnoteDemerits = 10000;
-    private int deferredFloatDemerits = 10000;
-
-    // the method noBreakBetween(int, int) uses these variables 
-    // to store parameters and result of the last call, in order
-    // to reuse them and take less time
-    private int storedPrevBreakIndex = -1;
-    private int storedBreakIndex = -1;
-    private boolean storedValue = false;
+    private int deferredFloatDemerits = 2000;
 
     //Controls whether overflows should be warned about or not
     private boolean autoHeight = false;
@@ -65,6 +132,7 @@ public class PageBreakingAlgorithm extends BreakingAlgorithm {
     
     public PageBreakingAlgorithm(LayoutManager topLevelLM,
                                  PageSequenceLayoutManager.PageProvider pageProvider,
+                                 PageBreakingLayoutListener layoutListener,
                                  int alignment, int alignmentLast,
                                  MinOptMax footnoteSeparatorLength, MinOptMax floatSeparatorLength,
                                  boolean partOverflowRecovery, boolean autoHeight,
@@ -73,9 +141,12 @@ public class PageBreakingAlgorithm extends BreakingAlgorithm {
         this.log = classLog;
         this.topLevelLM = topLevelLM;
         this.pageProvider = pageProvider;
-        best = new BestPageRecords();
-        footnotes = new OutOfLineRecord((MinOptMax) footnoteSeparatorLength.clone());
-        floats = new OutOfLineRecord((MinOptMax) floatSeparatorLength.clone());
+        this.layoutListener = layoutListener;
+        best = new BestPageRecords(log);
+        footnotesRecord = new FootnotesRecord(footnoteSeparatorLength);
+        beforeFloatsRecord = new BeforeFloatsRecord(floatSeparatorLength);
+        footnotesProgress = footnotesRecord.new FootnotesProgress();
+        beforeFloatsProgress = beforeFloatsRecord.new BeforeFloatsProgress();
         // add some stretch, to avoid a restart for every page containing footnotes
         if (footnoteSeparatorLength.min == footnoteSeparatorLength.max) {
             footnoteSeparatorLength.max += 10000;
@@ -90,21 +161,21 @@ public class PageBreakingAlgorithm extends BreakingAlgorithm {
      */
     public class KnuthPageNode extends KnuthNode {
 
-        public OutOfLineRecord.ProgressInfo footnotesProgress;
-        public OutOfLineRecord.ProgressInfo floatsProgress;
+        public FootnotesRecord.FootnotesProgress footnotesProgress;
+        public BeforeFloatsRecord.BeforeFloatsProgress beforeFloatsProgress;
 
         public KnuthPageNode(int position, int line, int fitness,
                              int totalWidth, int totalStretch, int totalShrink,
-                             OutOfLineRecord.ProgressInfo footnotesProgress,
-                             OutOfLineRecord.ProgressInfo floatsProgress,
+                             FootnotesRecord.FootnotesProgress footnotesProgress,
+                             BeforeFloatsRecord.BeforeFloatsProgress floatsProgress,
                              double adjustRatio, int availableShrink, int availableStretch,
                              int difference, double totalDemerits, KnuthNode previous) {
             super(position, line, fitness,
                   totalWidth, totalStretch, totalShrink,
                   adjustRatio, availableShrink, availableStretch,
                   difference, totalDemerits, previous);
-            this.footnotesProgress = footnotesProgress.copy();
-            this.floatsProgress = floatsProgress.copy();
+            this.footnotesProgress = footnotesRecord.new FootnotesProgress(footnotesProgress);
+            this.beforeFloatsProgress = beforeFloatsRecord.new BeforeFloatsProgress(floatsProgress);
         }
 
     }
@@ -115,46 +186,469 @@ public class PageBreakingAlgorithm extends BreakingAlgorithm {
      */
     protected class BestPageRecords extends BestRecords {
 
-        private OutOfLineRecord.ProgressInfo[] bestFootnotesProgress
-                = new OutOfLineRecord.ProgressInfo[4];
-        private OutOfLineRecord.ProgressInfo[] bestFloatsProgress
-                = new OutOfLineRecord.ProgressInfo[4];
-        
+        private FootnotesRecord.FootnotesProgress[] bestFootnotesProgress
+                = new FootnotesRecord.FootnotesProgress[4];
+        private BeforeFloatsRecord.BeforeFloatsProgress[] bestFloatsProgress
+                = new BeforeFloatsRecord.BeforeFloatsProgress[4];
+
+        public BestPageRecords(Log log) {
+            super(log);
+        }
+
         public void addRecord(double demerits, KnuthNode node, double adjust,
                               int availableShrink, int availableStretch,
-                              int difference, int fitness) {
+                              int difference, int fitness,
+                              FootnotesRecord.FootnotesProgress footnotesProgress,
+                              BeforeFloatsRecord.BeforeFloatsProgress beforeFloatsProgress) {
             super.addRecord(demerits, node, adjust,
                             availableShrink, availableStretch,
                             difference, fitness);
-            bestFootnotesProgress[fitness] = footnotes.getProgress().copy();
-            bestFloatsProgress[fitness] = floats.getProgress().copy();
+            bestFootnotesProgress[fitness]
+                    = footnotesRecord.new FootnotesProgress(footnotesProgress);
+            bestFloatsProgress[fitness]
+                    = beforeFloatsRecord.new BeforeFloatsProgress(beforeFloatsProgress);
         }
 
-        public int getFootnotesLength(int fitness) {
-            return bestFootnotesProgress[fitness].getAlreadyInsertedLength();
-        }
-
-        public int getFootnoteListIndex(int fitness) {
-            return bestFootnotesProgress[fitness].getLastInsertedIndex();
-        }
-
-        public int getFootnoteElementIndex(int fitness) {
-            return bestFootnotesProgress[fitness].getLastElementOfLastInsertedIndex();
-        }
-
-        public OutOfLineRecord.ProgressInfo getFootnoteProgress(int fitness) {
+        public FootnotesRecord.FootnotesProgress getFootnoteProgress(int fitness) {
             return bestFootnotesProgress[fitness];
         }
 
-        public OutOfLineRecord.ProgressInfo getFloatProgress(int fitness) {
+        public BeforeFloatsRecord.BeforeFloatsProgress getFloatProgress(int fitness) {
             return bestFloatsProgress[fitness];
+        }
+    }
+
+    /**
+     * This class records information about the amount of normal content that has been
+     * handled so far.
+     */
+    public class NormalContentProgressInfo {
+
+        /**
+         * Position in the Knuth sequence.
+         */
+        int position;
+
+        /**
+         * Cumulative lengths of normal content inserted so far. This corresponds to the
+         * totalWidth, totalStretch, totalShrink described in Knuth's algorithm.
+         */
+        ElasticLength insertedDims = new ElasticLength();
+
+        /**
+         * Initializes this record to handle the given Knuth sequence, such that no
+         * content has been inserted yet.
+         *
+         * @param par the sequence of normal content that will have to be typeset
+         */
+        void initialize(KnuthSequence par) {
+            insertedDims.reset();
+        }
+
+        public String toString() {
+            return "Position: " + position + "; inserted: " + insertedDims;
+        }
+    }
+
+    /**
+     * Tests candidate nodes to determine whether they are feasible, and if so records
+     * them.
+     */
+    public class ActiveNodeRecorder {
+
+        /** Adjustment ratio for the currently tested page. */
+        private double adjustmentRatio;
+
+        /** Fill ratio of the currently tested page. */
+        private double fillRatio;
+
+        private int fitnessClass;
+
+        /**
+         * Difference between the physical page's BPD and the BPD of the page's content.
+         */
+        private int difference;
+
+        /** Used to record feasible breaks in flush mode. */
+        private LinkedList queue;
+
+        /**
+         * <code>true</code> if a layout must be found, even if there is no feasible
+         * break. This usually consists of selecting a too-short or too-long node.
+         */
+        private boolean force;
+
+        /**
+         * Sets the behavior of the algorithm when no feasible break is found.
+         *
+         * @param force if <code>true</code>, a too-short or too-long node must be chosen
+         * as a feasible break; otherwise no node is created.
+         */
+        void setForce(boolean force) {
+            this.force = force;
+        }
+
+        /**
+         * Computes the adjustment ratio for the current page.
+         *
+         * @param totalLength total amount of content on the page (including floats and
+         * footnotes)
+         * @param pageBPD available space on the page
+         * @param minFillRatio minimum acceptable fill ratio for the page. If the content
+         * must be too much stretched to fill the page, it is allowed to stretch less
+         * provided the resulting fill ratio is superior or equal to this ratio
+         */
+        void computeAdjustmentRatio(ElasticLength totalLength, int pageBPD, double minFillRatio) {
+            difference = pageBPD - totalLength.getLength();
+            fillRatio = 1.0;
+            if (difference > 0) {  // too short
+                double totalStretch = totalLength.getStretch();
+                if (totalStretch <= 0) {
+                    fillRatio = ((double) totalLength.getLength()) / pageBPD;
+                    if (fillRatio >= minFillRatio) {
+                        adjustmentRatio = 0;
+                    } else {
+                        adjustmentRatio = INFINITE_RATIO;
+                    }
+                } else {
+                    adjustmentRatio = difference / totalStretch;
+                    if (adjustmentRatio > threshold) {
+                        fillRatio = (totalLength.getLength() + totalStretch * threshold) / pageBPD;
+                        if (fillRatio >= minFillRatio) {
+                            adjustmentRatio = threshold;
+                        }
+                    }
+                }
+            } else if (difference < 0) {  // too long
+                double totalShrink = totalLength.getShrink();
+                if (totalShrink > 0) {
+                    adjustmentRatio = difference / totalShrink;
+                } else {
+                    adjustmentRatio = -INFINITE_RATIO;
+                }
+            } else {
+                adjustmentRatio = 0;
+            }
+        }
+
+        /**
+         * Computes the total demerits of the page layout up to the current page.
+         *
+         * @param footnotes information about footnotes put on the current page
+         * @param beforeFloats information about before-floats put on the current page
+         * @param lastNormalElementIdx index of the last Knuth element representing normal
+         * content put on the current page
+         * @param activeNode node representing the previous page break
+         * @param mode one of {@link PageBreakingAlgorithm#NORMAL_MODE}, {@link
+         * PageBreakingAlgorithm#FLOAT_PAGE_MODE} or {@link
+         * PageBreakingAlgorithm#FLUSH_MODE}
+         */
+        double computeDemerits(FootnotesRecord.FootnotesProgress footnotes,
+                               BeforeFloatsRecord.BeforeFloatsProgress beforeFloats,
+                               int lastNormalElementIdx,
+                               KnuthPageNode activeNode,
+                               int mode) {
+            // TODO penalty for footnotes of floats ending on penalty elements
+            KnuthElement lastNormalElement = (KnuthElement) par.get(lastNormalElementIdx);
+            double demerits = 0;
+            double f = Math.abs(adjustmentRatio);
+            /*
+             * If the adjustment ratio is too high, the demerits will be "almost
+             * infinite" (10^22). Adding demerits for a deferred float (10000) thus
+             * won't change the demerits value. We may end up with two breakpoints
+             * with the same demerits, whereas in one case there are deferred floats
+             * and not in the other case. The case with no deferred floats is still
+             * preferable, so we must have the possibility to distinguish it. By
+             * forcing f to threshold it becomes possible to make the difference
+             * when there are deferred floats.
+             */
+            if (f > threshold) {
+                f = threshold;
+            }
+            f = 1 + 100 * f * f * f;
+            double minPageFillRatio;
+            if (mode == NORMAL_MODE) {
+                minPageFillRatio = MIN_NORMAL_PAGE_FILL_RATIO;
+                if (!lastNormalElement.isPenalty()) {
+                    demerits = f * f;
+                } else {
+                    double penalty = lastNormalElement.getP();
+                    if (penalty >= 0) {
+                        f += penalty;
+                        demerits = f * f;
+                    } else if (!lastNormalElement.isForcedBreak()) {
+                        demerits = f * f - penalty * penalty;
+                    } else {
+                        demerits = f * f;
+                    }
+                    if (((KnuthPenalty) lastNormalElement).isFlagged()
+                            && getElement(activeNode.position).isPenalty()
+                            && ((KnuthPenalty) getElement(activeNode.position)).isFlagged()) {
+                        // add demerit for consecutive breaks at flagged penalties
+                        demerits += repeatedFlaggedDemerit;
+                    }
+                }
+            } else {
+                minPageFillRatio = MIN_FLOAT_PAGE_FILL_RATIO;
+                demerits = f * f;
+            }
+            fitnessClass = computeFitness(adjustmentRatio);
+            if (Math.abs(fitnessClass - activeNode.fitness) > 1) {
+                // add demerit for consecutive breaks
+                // with very different fitness classes
+                demerits += incompatibleFitnessDemerit;
+            }
+
+            demerits += footnotes.getNbOfDeferred() * deferredFootnoteDemerits; 
+            if (footnotes.isLastSplit()) {
+                demerits += footnotes.getNbSplit() * splitFootnoteDemerits;
+            }
+            demerits += beforeFloats.getNbOfDeferred() * deferredFloatDemerits; 
+            if (beforeFloats.isLastSplit()) {
+                demerits += beforeFloats.getNbSplit() * splitFootnoteDemerits;
+            }
+            if (fillRatio < minPageFillRatio) {
+                /* To select too-short nodes among the least too underfull pages. This formula
+                 * will give smaller results than below but, anyway, too-short nodes are
+                 * handled separately
+                 */
+                demerits += (2.0 - fillRatio) * UNDERFULL_PAGE_DEMERITS;
+            } else if (minPageFillRatio < 1.0) {
+                /* demerits += x * UNDERFULL_PAGE_DEMERITS
+                 * The idea is that x tends to 1.0 when fillRatio tends to
+                 * MIN_PAGE_FILL_RATIO, to give the preference to full pages. Of course the
+                 * following formula works only if MIN_PAGE_FILL_RATIO != 1.0, hence the test
+                 */
+                demerits += (1.0 - fillRatio) / (1.0 - minPageFillRatio) * UNDERFULL_PAGE_DEMERITS;
+            }
+            demerits += activeNode.totalDemerits;
+            return demerits;
+        }
+
+        /**
+         * Tests if the node corresponding to the given parameters represents a feasible
+         * break, and if so computes its demerits and records it. This methods returns
+         * <code>true</code> if there is potential room for putting additional content on
+         * the page. Otherwise, this indicates that it is not even worth trying.
+         *
+         * @param mode one of {@link PageBreakingAlgorithm#NORMAL_MODE}, {@link
+         * PageBreakingAlgorithm#FLOAT_PAGE_MODE} or {@link
+         * PageBreakingAlgorithm#FLUSH_MODE}
+         * @param normalProgress progress information for the normal content
+         * @param footnotesProgress progress information for footnotes
+         * @param beforeFloatsProgress progress information for before-floats
+         * @param previousNode node representing the previous page break
+         * @return <code>true</code> if some additional content may potentially be added
+         * on the page (adjustment ratio &gt; -1); otherwise <code>false</code>
+         * (adjustment ratio &lt;= -1)
+         */
+        public boolean handleNode(int mode,
+                           NormalContentProgressInfo normalProgress,
+                           FootnotesRecord.FootnotesProgress footnotesProgress,
+                           BeforeFloatsRecord.BeforeFloatsProgress beforeFloatsProgress,
+                           KnuthPageNode previousNode) {
+            int pageBPD = getLineWidth(previousNode.line);
+            ElasticLength totalLength = new ElasticLength(footnotesProgress.getInserted());
+            totalLength.add(beforeFloatsProgress.getInserted());
+            if (mode == NORMAL_MODE) {
+                totalLength.add(normalProgress.insertedDims);
+                computeAdjustmentRatio(totalLength, pageBPD, MIN_NORMAL_PAGE_FILL_RATIO);
+            } else {
+                computeAdjustmentRatio(totalLength, pageBPD, MIN_FLOAT_PAGE_FILL_RATIO);
+            }
+            switch (mode) {
+            case NORMAL_MODE: {
+                int beforeFloatActualBPD = beforeFloatsProgress.getInserted().getLength();
+                if (adjustmentRatio < 0) {
+                    beforeFloatActualBPD += beforeFloatsProgress.getInserted().getShrink()
+                            * adjustmentRatio; 
+                } else if (adjustmentRatio > 0) {
+                    beforeFloatActualBPD += beforeFloatsProgress.getInserted().getStretch()
+                            * adjustmentRatio;
+                }
+                if (((double) beforeFloatActualBPD) / pageBPD >= 1.0 - TEXT_FRACTION) {
+                    // Not acceptable page, but if some further footnotes are
+                    // added, may become feasible thanks to shrinking
+                    double minBeforeFloatFraction
+                            = ((double) (beforeFloatsProgress.getInserted().getLength()
+                            - beforeFloatsProgress.getInserted().getShrink())) / pageBPD; 
+                    return adjustmentRatio > -1 && minBeforeFloatFraction < 1.0 - TEXT_FRACTION;
+                } else {
+                    if (-1 <= adjustmentRatio && adjustmentRatio <= threshold) {
+                        double demerits = computeDemerits(footnotesProgress,
+                                beforeFloatsProgress,
+                                normalProgress.position,
+                                previousNode,
+                                NORMAL_MODE);
+                        if (demerits < best.getDemerits(fitnessClass)) {
+                            ((BestPageRecords) best).addRecord(demerits,
+                                    previousNode,
+                                    adjustmentRatio,
+                                    totalLength.getShrink(),
+                                    totalLength.getStretch(),
+                                    difference, fitnessClass,
+                                    footnotesProgress, beforeFloatsProgress);
+                            lastTooShort = null;
+                        }
+                        return true;
+                    } else if (force) {
+                        double demerits = computeDemerits(footnotesProgress,
+                                beforeFloatsProgress,
+                                normalProgress.position,
+                                previousNode,
+                                NORMAL_MODE);
+                        sumsAfter.compute(normalProgress.position,
+                                totalWidth, totalStretch, totalShrink);
+                        if (adjustmentRatio < -1) {
+                            if (lastTooLong == null || demerits < lastTooLong.totalDemerits) {
+                                lastTooLong = createNode(normalProgress.position,
+                                        previousNode.line + 1,
+                                        fitnessClass,
+                                        sumsAfter.getWidthAfter(),
+                                        sumsAfter.getStretchAfter(),
+                                        sumsAfter.getShrinkAfter(),
+                                        adjustmentRatio,
+                                        totalLength.getShrink(),
+                                        totalLength.getStretch(),
+                                        difference, demerits, previousNode);
+                            }
+                            return false;
+                        } else {
+                            if (lastTooShort == null || demerits <= lastTooShort.totalDemerits) {
+                                if (considerTooShort) {
+                                    ((BestPageRecords) best).addRecord(demerits,
+                                            previousNode,
+                                            adjustmentRatio, 
+                                            totalLength.getShrink(),
+                                            totalLength.getStretch(),
+                                            difference, fitnessClass,
+                                            footnotesProgress, beforeFloatsProgress);
+                                }
+                                if (log.isDebugEnabled()) {
+                                    NumberFormat nf = NumberFormat.getInstance(Locale.ENGLISH);
+                                    nf.setMaximumFractionDigits(2);
+                                    nf.setGroupingUsed(false);
+                                    log.debug("Registering too-short node [demerits="
+                                            + nf.format(demerits)
+                                            + ", adjRatio=" + nf.format(adjustmentRatio)
+                                            + ", page " + (previousNode.line + 1)
+                                            + "]");
+                                }
+                                lastTooShort = createNode(normalProgress.position,
+                                        previousNode.line + 1,
+                                        fitnessClass,
+                                        sumsAfter.getWidthAfter(),
+                                        sumsAfter.getStretchAfter(),
+                                        sumsAfter.getShrinkAfter(),
+                                        adjustmentRatio,
+                                        totalLength.getShrink(),
+                                        totalLength.getStretch(),
+                                        difference, demerits, previousNode);
+                            }
+                            return true;
+                        }
+                    }
+                    return adjustmentRatio >= -1;
+                }
+            }
+            case FLOAT_PAGE_MODE:
+                if (-1 <= adjustmentRatio && adjustmentRatio <= threshold) {
+                    double demerits = computeDemerits(footnotesProgress,
+                            beforeFloatsProgress,
+                            normalProgress.position,
+                            previousNode,
+                            NORMAL_MODE);
+                    KnuthNode node = createNode(normalProgress.position,
+                            previousNode.line + 1,
+                            fitnessClass,
+                            previousNode.totalWidth,
+                            previousNode.totalStretch,
+                            previousNode.totalShrink,
+                            adjustmentRatio,
+                            totalLength.getShrink(),
+                            totalLength.getStretch(),
+                            difference,
+                            demerits,
+                            previousNode);
+                    registerActiveNode(node);
+                    lastTooShort = null;
+                }
+                return adjustmentRatio >= -1;
+            default:  // case FLUSH_MODE:
+                if (-1 <= adjustmentRatio && adjustmentRatio <= threshold) {
+                    double demerits = computeDemerits(footnotesProgress,
+                            beforeFloatsProgress,
+                            par.size() - 1,
+                            previousNode,
+                            NORMAL_MODE);
+                    KnuthNode node = createNode(par.size() - 1,
+                            previousNode.line + 1,
+                            fitnessClass,
+                            0, 0, 0,
+                            adjustmentRatio,
+                            totalLength.getShrink(), totalLength.getStretch(),
+                            difference, demerits, previousNode);
+                    queue.addLast(node);
+                    lastTooShort = null;
+                    return true;
+                } else if (force) {
+                    double demerits = computeDemerits(footnotesProgress,
+                            beforeFloatsProgress,
+                            par.size() - 1,
+                            previousNode,
+                            NORMAL_MODE);
+                    if (adjustmentRatio < -1) {
+                        if (lastTooLong == null || demerits < lastTooLong.totalDemerits) {
+                            lastTooLong = createNode(par.size() - 1,
+                                    previousNode.line + 1,
+                                    fitnessClass,
+                                    0, 0, 0,
+                                    adjustmentRatio,
+                                    totalLength.getShrink(), totalLength.getStretch(),
+                                    difference, demerits, previousNode);
+                        }
+                        return false;
+                    } else {
+                        if (lastTooShort == null || demerits <= lastTooShort.totalDemerits) {
+                            lastTooShort = createNode(par.size() - 1,
+                                    previousNode.line + 1,
+                                    fitnessClass,
+                                    0, 0, 0,
+                                    adjustmentRatio,
+                                    totalLength.getShrink(), totalLength.getStretch(),
+                                    difference, demerits, previousNode);
+                            if (considerTooShort) {
+                                queue.addLast(lastTooShort);
+                            }
+                        }
+                        return true;
+                    }
+                }
+            return adjustmentRatio >= -1;
+            }
+        }
+
+        /**
+         * When in flush mode, uses the given queue for registering new active nodes. TODO
+         * vh: highly temporary! As in flush mode the handling is a bit different,
+         * activeLines cannot be re-used. Will have to unify the handling of active nodes
+         * eventually.
+         *
+         * @param queue FIFO structure for registering active nodes in flush mode
+         */
+        void setQueue(LinkedList queue) {
+            this.queue = queue;
         }
     }
 
     protected void initialize() {
         super.initialize();
-        footnotes.initialize();
-        floats.initialize();
+        normalContentProgress.initialize(par);
+        footnotesRecord.initialize();
+        beforeFloatsRecord.initialize();
+        footnotesProgress.initialize();
+        beforeFloatsProgress.initialize();
+        activeNodeRecorder.setForce(force);
     }
 
     public KnuthNode createNode(int position, int line, int fitness,
@@ -163,7 +657,7 @@ public class PageBreakingAlgorithm extends BreakingAlgorithm {
                                    int difference, double totalDemerits, KnuthNode previous) {
         return new KnuthPageNode(position, line, fitness,
                                  totalWidth, totalStretch, totalShrink,
-                                 footnotes.getProgress(), floats.getProgress(),
+                                 footnotesProgress, beforeFloatsProgress,
                                  adjustRatio, availableShrink, availableStretch,
                                  difference, totalDemerits, previous);
     }
@@ -187,31 +681,29 @@ public class PageBreakingAlgorithm extends BreakingAlgorithm {
     protected void handleBox(KnuthBox box) {
         if (box instanceof KnuthBlockBox
                 && ((KnuthBlockBox) box).hasFootnoteAnchors()) {
-            footnotes.add(((KnuthBlockBox) box).getFootnoteElementLists());
+            footnotesRecord.add(((KnuthBlockBox) box).getFootnoteElementLists());
         }
         if (box instanceof KnuthBlockBox
                 && ((KnuthBlockBox) box).hasFloatAnchors()) {
-            floats.add(((KnuthBlockBox) box).getFloatElementLists());
+            beforeFloatsRecord.add(((KnuthBlockBox) box).getFloatElementLists());
         }
     }
 
 
     protected int restartFrom(KnuthNode restartingNode, int currentIndex) {
         int returnValue = super.restartFrom(restartingNode, currentIndex);
-        footnotes.resetNewSinceLastBreakpoint();
-        floats.resetNewSinceLastBreakpoint();
-        if (footnotes.existing() || floats.existing()) {
+        if (footnotesRecord.existing() || beforeFloatsRecord.existing()) {
             // remove from footnotesList the note lists that will be met
             // after the restarting point
             for (int j = currentIndex; j >= restartingNode.position; j--) {
-                KnuthElement resettedElement = getElement(j);
-                if (resettedElement instanceof KnuthBlockBox
-                        && ((KnuthBlockBox) resettedElement).hasFootnoteAnchors()) {
-                    footnotes.reset(((KnuthBlockBox) resettedElement).getFootnoteElementLists());
+                KnuthElement resetElement = getElement(j);
+                if (resetElement instanceof KnuthBlockBox
+                        && ((KnuthBlockBox) resetElement).hasFootnoteAnchors()) {
+                    footnotesRecord.reset(((KnuthBlockBox) resetElement).getFootnoteElementLists());
                 }
-                if (resettedElement instanceof KnuthBlockBox
-                        && ((KnuthBlockBox) resettedElement).hasFloatAnchors()) {
-                    floats.reset(((KnuthBlockBox) resettedElement).getFloatElementLists());//TODO
+                if (resetElement instanceof KnuthBlockBox
+                        && ((KnuthBlockBox) resetElement).hasFloatAnchors()) {
+                    beforeFloatsRecord.reset(((KnuthBlockBox) resetElement).getFloatElementLists());
                 }
             }
         }
@@ -219,289 +711,175 @@ public class PageBreakingAlgorithm extends BreakingAlgorithm {
     }
 
     protected void considerLegalBreak(KnuthElement element, int elementIdx) {
-        super.considerLegalBreak(element, elementIdx);
-        footnotes.resetNewSinceLastBreakpoint();
-        floats.resetNewSinceLastBreakpoint();
+
+        if (log.isTraceEnabled()) {
+            log.trace("considerLegalBreak() at " + elementIdx 
+                    + " (" + totalWidth + "+" + totalStretch + "-" + totalShrink 
+                    + "), parts/lines: " + startLine + "-" + endLine);
+            log.trace("\tCurrent active node list: " + activeNodeCount + " " + this.toString("\t"));
+        }
+
+        lastDeactivated = null;
+        lastTooLong = null;
+        for (int line = startLine; line < endLine; line++) {
+            for (KnuthPageNode node = (KnuthPageNode) getNode(line);
+                    node != null;
+                    node = (KnuthPageNode) node.next) {
+                if (node.position == elementIdx) {
+                    continue;
+                }
+                footnotesProgress.setPrevious(node.footnotesProgress);
+                beforeFloatsProgress.setPrevious(node.beforeFloatsProgress);
+                footnotesProgress.handleSplit();
+                beforeFloatsProgress.handleSplit();
+                normalContentProgress.insertedDims.set(totalShrink - node.totalShrink,
+                        totalWidth - node.totalWidth, totalStretch - node.totalStretch);
+                normalContentProgress.position = elementIdx;
+                if (element.isPenalty()) {
+                    normalContentProgress.insertedDims.add(0, element.getW(), 0);
+                }
+                boolean recorded = activeNodeRecorder.handleNode(NORMAL_MODE,
+                        normalContentProgress, footnotesProgress, beforeFloatsProgress, node); 
+                if (!recorded || element.isForcedBreak()) {
+                    deactivateNode(node);
+                    lastDeactivated = compareNodes(lastDeactivated, node);
+                }
+                if (recorded) {
+                    footnotesProgress.consider(NORMAL_MODE, activeNodeRecorder,
+                            normalContentProgress, beforeFloatsProgress, node);
+                }
+
+            }
+            addBreaks(line, elementIdx);
+        }
     }
 
-    protected int computeDifference(KnuthNode activeNode, KnuthElement element,
-                                    int elementIndex) {
-        KnuthPageNode pageNode = (KnuthPageNode) activeNode;
-        int actualWidth = totalWidth - pageNode.totalWidth;
-        if (element.isPenalty()) {
-            actualWidth += element.getW();
+    // TODO vh: refactor
+    // It may happen that several successive float-only pages are created; in such cases
+    // the progress informations must be saved as they'll still be used after this method
+    // call
+    private Stack footnotesStack = new Stack();
+
+    private Stack beforeFloatsStack = new Stack();
+
+    public void registerActiveNode(KnuthNode node) {
+        super.registerActiveNode(node);
+        KnuthPageNode pageNode = (KnuthPageNode) node;
+        if (pageNode.position < par.size() - 1
+                && (pageNode.footnotesProgress.remaining() || pageNode.beforeFloatsProgress.remaining())
+                && FLOAT_PAGES_ALLOWED) {
+            footnotesStack.push(footnotesProgress);
+            footnotesProgress = footnotesRecord.new FootnotesProgress();
+            beforeFloatsStack.push(beforeFloatsProgress);
+            beforeFloatsProgress = beforeFloatsRecord.new BeforeFloatsProgress();
+            
+            footnotesProgress.setPrevious(pageNode.footnotesProgress);
+            beforeFloatsProgress.setPrevious(pageNode.beforeFloatsProgress);
+            footnotesProgress.handleSplit(FLOAT_PAGE_MODE, activeNodeRecorder,
+                    normalContentProgress, beforeFloatsProgress, pageNode);
+            beforeFloatsProgress.handleSplit(FLOAT_PAGE_MODE, activeNodeRecorder,
+                    normalContentProgress, footnotesProgress, pageNode);
+            footnotesProgress.consider(FLOAT_PAGE_MODE, activeNodeRecorder,
+                    normalContentProgress, beforeFloatsProgress, pageNode);
+            
+            footnotesProgress = (FootnotesProgress) footnotesStack.pop();
+            beforeFloatsProgress = (BeforeFloatsProgress) beforeFloatsStack.pop();
         }
-        if (footnotes.existing()) {
-            footnotes.setProgress(pageNode.footnotesProgress);
-            // compute the total length of the footnotes not yet inserted
-            int allFootnotes = footnotes.getTotalLength()
-                    - pageNode.footnotesProgress.getAlreadyInsertedLength();
-            if (allFootnotes > 0) {
-                // this page contains some footnote citations
-                // add the footnote separator width
-                actualWidth += footnotes.getSeparatorLength().opt;
-                if (actualWidth + allFootnotes <= getLineWidth()) {
-                    // there is enough space to insert all footnotes:
-                    // add the whole allFootnotes length
-                    actualWidth += allFootnotes;
-                    footnotes.insertAll();
-                } else {
-                    boolean canDeferOldFootnotes = checkCanDeferOldOutOfLines(footnotes,
-                            pageNode.position, elementIndex);
-                    int footnoteSplit;
-                    if ((canDeferOldFootnotes || footnotes.newSinceLastBreakpoint())
-                            && (footnoteSplit = footnotes.getFootnoteSplit(
-                                    pageNode.footnotesProgress,
-                                    getLineWidth() - actualWidth, canDeferOldFootnotes)) > 0) {
-                        // it is allowed to break or even defer footnotes if either:
-                        //  - there are new footnotes in the last piece of content, and
-                        //    there is space to add at least a piece of the first one
-                        //  - or the previous page break deferred some footnote lines, and
-                        //    this is the first feasible break; in this case it is allowed
-                        //    to break and defer, if necessary, old and new footnotes
-                        actualWidth += footnoteSplit;
+    }
+
+    // TODO vh: refactor
+    protected void finish() {
+        lastTooShort = null;
+        lastTooLong = null;
+        Vector bestNodes = new Vector();
+        int startIndex = startLine;
+        int endIndex = endLine;
+        bestNodes.setSize(endIndex - startIndex);
+        // Declared as a LinkedList as we need access to the queue-like methods defined
+        // in LinkedList
+        LinkedList queue = new LinkedList();
+        activeNodeRecorder.setQueue(queue);
+        Object n = null;
+        do {
+            for (int i = startIndex; i < endIndex; i++) {
+                for (KnuthPageNode node = (KnuthPageNode) getNode(i);
+                     node != null;
+                     node = (KnuthPageNode) node.next) {
+                    deactivateNode(node);
+                    if (node.footnotesProgress.remaining()
+                            || node.beforeFloatsProgress.remaining()) {
+                        queue.addFirst(node);
+                        flush(queue, bestNodes, startIndex);
                     } else {
-                        // there is no space to add the smallest piece of footnote,
-                        // or we are trying to add a piece of content with no footnotes and
-                        // it does not fit in the page, because of previous footnote bodies
-                        // that cannot be broken:
-                        // add the whole allFootnotes length, so this breakpoint will be discarded
-                        actualWidth += allFootnotes;
-                        footnotes.insertAll();
+                        if (bestNodes.get(i - startIndex) == null
+                                || node.totalDemerits < ((KnuthNode) bestNodes.get(i - startIndex)).totalDemerits) {
+                            bestNodes.set(i - startIndex, node);
+                        }
                     }
                 }
-            } // else: all footnotes have already been placed on previous pages
-        }
-        if (floats.existing()) {
-            floats.setProgress(pageNode.floatsProgress);
-            // compute the total length of the floats not yet inserted
-            int allFloats = floats.getTotalLength()
-                    - pageNode.floatsProgress.getAlreadyInsertedLength();
-            if (allFloats > 0
-                    && getLineWidth() - actualWidth - floats.getSeparatorLength().opt > 0) {
-                // this page contains some float citations
-                // add the float separator width
-                int split = floats.getFloatSplit(pageNode.floatsProgress,
-                        getLineWidth() - actualWidth - floats.getSeparatorLength().opt);
-                if (split > 0) {
-                    actualWidth += floats.getSeparatorLength().opt + split;
+            }
+            Iterator iter = bestNodes.iterator();
+            while (iter.hasNext() && (n = iter.next()) == null);
+            if (n == null) {
+                log.debug("Recovering");
+                KnuthNode recovered = null;
+                if (lastTooShort == null) {
+                    if (lastTooLong == null) {
+                        log.debug("Both lastTooShort and lastTooLong null!");
+                    } else {
+                        recovered = lastTooLong;
+                    }
+                } else {
+                    recovered = lastTooShort;
+                }
+                recovered.totalDemerits = 0;
+                registerActiveNode(recovered);
+                startIndex = recovered.line;
+                endIndex = startIndex + 1;
+                lastTooLong = null;
+                lastTooShort = null;
+            }
+        } while (n == null);
+        Iterator nodeIter = bestNodes.iterator();
+        while (nodeIter.hasNext()) {
+            KnuthNode node = (KnuthNode) nodeIter.next();
+            if (node != null) { // TODO
+                int tmp = endLine;
+                registerActiveNode(node);
+                if (startLine > node.line) {
+                    startLine = node.line;
+                }
+                if (endLine < tmp) {
+                    endLine = tmp;
                 }
             }
         }
-        /* Another algorithm exactly mimicing the handling of footnotes: it should force
-         * more floats to be on the same page as their citations, at the price of more
-         * underfull pages (thus a higher total number of pages). If the current method
-         * works well enough, we may keep it.
-         */
-//      if (floats.existing()) {
-//          floats.setProgress(pageNode.floatsProgress);
-//          // compute the total length of the floats not yet inserted
-//          int allFloats = floats.getTotalLength()
-//                  - pageNode.floatsProgress.getAlreadyInsertedLength();
-//          if (allFloats > 0) {
-//              // this page contains some float citations
-//              // add the float separator width
-//              actualWidth += floats.getSeparatorLength().opt;
-//              if (actualWidth + allFloats <= getLineWidth()) {
-//                  // there is enough space to insert all floats:
-//                  // add the whole allFloats length
-//                  actualWidth += allFloats;
-//                  floats.insertAll();
-//              } else {
-//                  boolean canDeferOldFloats = checkCanDeferOldOutOfLines(floats,
-//                          pageNode.position, elementIndex);
-//                  int floatSplit;
-//                  if ((canDeferOldFloats || floats.newSinceLastBreakpoint())
-//                          && (floatSplit = floats.getFloatSplit(
-//                                  pageNode.floatsProgress,
-//                                  getLineWidth() - actualWidth)) > 0) {
-//                      actualWidth += floatSplit;
-//                  } else {
-//                      actualWidth += allFloats;
-//                      floats.insertAll();
-//                  }
-//              }
-//          } // else: all floats have already been placed on previous pages
-//      }
-        return getLineWidth(activeNode.line) - actualWidth;
     }
 
-    /**
-     * Checks whether out-of-line objects from preceding pages may be deferred
-     * to the page after the given element.
-     * 
-     * @param outOfLine informations about the out-of-line objects
-     * @param activeNodePosition index in the Knuth sequence of the currently considered
-     * active node
-     * @param contentElementIndex index in the Knuth sequence of the currently considered
-     * legal breakpoint
-     * @return <code>true</code> if it is allowed to defer some out-of-line objects on
-     * following pages
-     */
-    private boolean checkCanDeferOldOutOfLines(OutOfLineRecord outOfLine,
-                                               int activeNodePosition,
-                                               int contentElementIndex) {
-        return (noBreakBetween(activeNodePosition, contentElementIndex)
-                && outOfLine.deferred());
-    }
-
-    /**
-     * Returns true if there is no legal breakpoint between the two given elements.
-     * @param prevBreakIndex index of the element from the currently considered active
-     * node
-     * @param breakIndex index of the currently considered breakpoint
-     * @return true if no element between the two is a legal breakpoint
-     */
-    private boolean noBreakBetween(int prevBreakIndex, int breakIndex) {
-        // this method stores the parameters and the return value from previous calls
-        // in order to avoid scanning the element list unnecessarily:
-        //  - if there is no break between element #i and element #j
-        //    there will not be a break between #(i+h) and #j too
-        //  - if there is a break between element #i and element #j
-        //    there will be a break between #(i-h) and #(j+k) too
-        if (storedPrevBreakIndex != -1
-            && ((prevBreakIndex >= storedPrevBreakIndex
-                 && breakIndex == storedBreakIndex
-                 && storedValue)
-                || (prevBreakIndex <= storedPrevBreakIndex
-                    && breakIndex >= storedBreakIndex
-                    && !storedValue))) {
-            // use the stored value, do nothing
-        } else {
-            // compute the new value
-            int index;
-            // ignore suppressed elements
-            for (index = prevBreakIndex + 1;
-                    !par.getElement(index).isBox();
-                    index++) {
-                //nop
-            }
-            // find the next break
-            for (;
-                 index < breakIndex;
-                 index++) {
-                if (par.getElement(index).isGlue() && par.getElement(index - 1).isBox()
-                    || par.getElement(index).isPenalty() 
-                       && ((KnuthElement) par.getElement(index)).getP() < KnuthElement.INFINITE) {
-                    // break found
-                    break;
-                }
-            }
-            // update stored parameters and value
-            storedPrevBreakIndex = prevBreakIndex;
-            storedBreakIndex = breakIndex;
-            storedValue = (index == breakIndex);
-        }
-        return storedValue;
-    }
-
-    protected double computeAdjustmentRatio(KnuthNode activeNode, int difference) {
-        // compute the adjustment ratio
-        if (difference > 0) {
-            int maxAdjustment = totalStretch - activeNode.totalStretch;
-            // add the footnote separator stretch if some footnote content will be added
-            if (((KnuthPageNode) activeNode).footnotesProgress.getAlreadyInsertedLength() < footnotes.getTotalLength()) {
-                maxAdjustment += footnotes.getSeparatorLength().max - footnotes.getSeparatorLength().opt;
-            }
-            // add the float separator stretch if some float content will be added
-            if (((KnuthPageNode) activeNode).floatsProgress.getAlreadyInsertedLength() < floats.getTotalLength()) {
-                maxAdjustment += floats.getSeparatorLength().max - floats.getSeparatorLength().opt;
-            }
-            if (maxAdjustment > 0) {
-                return (double) difference / maxAdjustment;
+    // TODO vh: refactor
+    private void flush(LinkedList queue, Vector bestNodes, int startIndex) {
+        do {
+            KnuthPageNode node = (KnuthPageNode) queue.removeFirst();
+            if (node.footnotesProgress.remaining() || node.beforeFloatsProgress.remaining()) {
+                footnotesProgress.setPrevious(node.footnotesProgress);
+                beforeFloatsProgress.setPrevious(node.beforeFloatsProgress);
+                footnotesProgress.handleSplit(FLUSH_MODE, activeNodeRecorder,
+                        null, beforeFloatsProgress, node);
+                beforeFloatsProgress.handleSplit(FLUSH_MODE, activeNodeRecorder,
+                        null, footnotesProgress, node);
+                footnotesProgress.consider(FLUSH_MODE, activeNodeRecorder,
+                        null, beforeFloatsProgress, node);
             } else {
-                return INFINITE_RATIO;
-            }
-        } else if (difference < 0) {
-            int maxAdjustment = totalShrink - activeNode.totalShrink;
-            // add the footnote separator shrink if some footnote content will be added
-            if (((KnuthPageNode) activeNode).footnotesProgress.getAlreadyInsertedLength() < footnotes.getTotalLength()) {
-                maxAdjustment += footnotes.getSeparatorLength().opt - footnotes.getSeparatorLength().min;
-            }
-            // add the float separator shrink if some float content will be added
-            if (((KnuthPageNode) activeNode).floatsProgress.getAlreadyInsertedLength() < floats.getTotalLength()) {
-                maxAdjustment += floats.getSeparatorLength().opt - floats.getSeparatorLength().min;
-            }
-            if (maxAdjustment > 0) {
-                return (double) difference / maxAdjustment;
-            } else {
-                return -INFINITE_RATIO;
-            }
-        } else {
-            return 0;
-        }
-    }
-
-    protected double computeDemerits(KnuthNode activeNode, KnuthElement element, 
-                                    int fitnessClass, double r) {
-        double demerits = 0;
-        // compute demerits
-        double f = Math.abs(r);
-        /* If the adjustment ratio is too high, the demerits will be "almost infinite"
-         * (10^22). Adding demerits for a deferred float (10000) thus won't change the
-         * demerits value. We may end up with two breakpoints with the same demerits,
-         * whereas in one case there are deferred floats and not in the other case. The
-         * case with no deferred floats is still preferable, so we must have the
-         * possibility to distinguish it. By forcing f to 1 it becomes possible to make
-         * the difference when there are deferred floats.
-         * TODO vh: use threshold instead of 1 (currently threshold == 1 but it might be
-         * configurable)
-         */
-        if (f > 1) {
-            f = 1;
-        }
-        f = 1 + 100 * f * f * f;
-        if (element.isPenalty() && element.getP() >= 0) {
-            f += element.getP();
-            demerits = f * f;
-        } else if (element.isPenalty() && !element.isForcedBreak()) {
-            double penalty = element.getP();
-            demerits = f * f - penalty * penalty;
-        } else {
-            demerits = f * f;
-        }
-
-        if (element.isPenalty() && ((KnuthPenalty) element).isFlagged()
-            && getElement(activeNode.position).isPenalty()
-            && ((KnuthPenalty) getElement(activeNode.position)).isFlagged()) {
-            // add demerit for consecutive breaks at flagged penalties
-            demerits += repeatedFlaggedDemerit;
-        }
-        if (Math.abs(fitnessClass - activeNode.fitness) > 1) {
-            // add demerit for consecutive breaks
-            // with very different fitness classes
-            demerits += incompatibleFitnessDemerit;
-        }
-
-        if (footnotes.existing()) {
-            demerits += footnotes.getNbOfDeferred() * deferredFootnoteDemerits; 
-            if (footnotes.isSplit()) {
-                demerits += splitFootnoteDemerits;
-            }
-        }
-        if (floats.existing()) {
-            demerits += floats.getNbOfDeferred() * deferredFloatDemerits; 
-        }
-        demerits += activeNode.totalDemerits;
-        return demerits;
-    }
-
-    protected void finish() {
-        for (int i = startLine; i < endLine; i++) {
-            for (KnuthPageNode node = (KnuthPageNode) getNode(i);
-                 node != null;
-                 node = (KnuthPageNode) node.next) {
-                if (node.footnotesProgress.getAlreadyInsertedLength()
-                        < footnotes.getTotalLength()) {
-                    // layout remaining footnote bodies
-                    footnotes.createFootnotePages(node, this, getLineWidth());
+                int index = node.line - startIndex;
+                if (index >= bestNodes.size()) {
+                    bestNodes.setSize(index + 1);
                 }
-                if (node.floatsProgress.getAlreadyInsertedLength() < floats.getTotalLength()) {
-                    // layout remaining float bodies
-                    floats.createFloatPages(node, this, getLineWidth());
-                }
+                if (bestNodes.get(index) == null
+                        || node.totalDemerits < ((KnuthNode) bestNodes.get(index)).totalDemerits) {
+                    bestNodes.set(index, node);
+                }                
             }
-        }
+        } while (!queue.isEmpty());
     }
 
     /**
@@ -536,11 +914,15 @@ public class PageBreakingAlgorithm extends BreakingAlgorithm {
         //      ? bestActiveNode.difference : bestActiveNode.difference + fillerMinWidth;
         int difference = bestActiveNode.difference;
         if (difference + bestActiveNode.availableShrink < 0) {
-            if (!autoHeight && log.isWarnEnabled()) {
-                log.warn(FONode.decorateWithContextInfo(
-                        "Part/page " + (getPartCount() + 1) 
-                        + " overflows the available area in block-progression dimension.", 
-                        getFObj()));
+            if (!autoHeight) {
+                if (layoutListener != null) {
+                    layoutListener.notifyOverflow(bestActiveNode.line - 1, getFObj());
+                } else if (log.isWarnEnabled()) {
+                    log.warn(FONode.decorateWithContextInfo(
+                            "Part/page " + (bestActiveNode.line - 1) 
+                            + " overflows the available area in block-progression dimension.", 
+                            getFObj()));
+                }
             }
         }
         boolean isNonLastPage = (bestActiveNode.line < total);
@@ -579,8 +961,8 @@ public class PageBreakingAlgorithm extends BreakingAlgorithm {
         if (firstFootnoteListIndex == -1) {
             firstFootnoteListIndex++;
             firstFootnoteElementIndex = 0;
-        } else if (footnotes.getSequence(firstFootnoteListIndex) != null
-                && firstFootnoteElementIndex == ((LinkedList) footnotes.
+        } else if (footnotesRecord.getSequence(firstFootnoteListIndex) != null
+                && firstFootnoteElementIndex == ((LinkedList) footnotesRecord.
                         getSequence(firstFootnoteListIndex)).size() - 1) {
             // advance to the next list
             firstFootnoteListIndex++;
@@ -590,7 +972,7 @@ public class PageBreakingAlgorithm extends BreakingAlgorithm {
         }
         // compute the indexes of the first float list
         int firstFloatListIndex = ((KnuthPageNode) bestActiveNode.previous).
-                floatsProgress.getLastInsertedIndex() + 1;
+                beforeFloatsProgress.getLastInsertedIndex() + 1;
 
         // add nodes at the beginning of the list, as they are found
         // backwards, from the last one to the first one
@@ -605,7 +987,7 @@ public class PageBreakingAlgorithm extends BreakingAlgorithm {
                 ((KnuthPageNode) bestActiveNode).footnotesProgress.
                         getLastElementOfLastInsertedIndex(),
                 firstFloatListIndex,
-                ((KnuthPageNode) bestActiveNode).floatsProgress.getLastInsertedIndex(),
+                ((KnuthPageNode) bestActiveNode).beforeFloatsProgress.getLastInsertedIndex(),
                 ratio, difference));
     }
 
@@ -624,7 +1006,7 @@ public class PageBreakingAlgorithm extends BreakingAlgorithm {
                     bestActiveNode = compareNodes(bestActiveNode, node);
                 }
                 if (node != bestActiveNode) {
-                    removeNode(i, node);
+                    deactivateNode(node);
                 }
             }
         }
@@ -632,11 +1014,11 @@ public class PageBreakingAlgorithm extends BreakingAlgorithm {
     }
 
     public LinkedList getFootnoteList(int index) {
-        return (LinkedList) footnotes.getSequence(index);
+        return (LinkedList) footnotesRecord.getSequence(index);
     }
 
     public LinkedList getFloatList(int index) {
-        return (LinkedList) floats.getSequence(index);
+        return (LinkedList) beforeFloatsRecord.getSequence(index);
     }
 
     /** @return the associated top-level formatting object. */
@@ -656,6 +1038,20 @@ public class PageBreakingAlgorithm extends BreakingAlgorithm {
             log.trace("getLineWidth(" + line + ") -> " + bpd);
         }
         return bpd;
+    }
+    
+    /**
+     * Interface to notify about layout events during page breaking.
+     */
+    public interface PageBreakingLayoutListener {
+
+        /**
+         * Issued when an overflow is detected
+         * @param part the number of the part (page) this happens on
+         * @param obj the root FO object where this happens
+         */
+        void notifyOverflow(int part, FObj obj);
+        
     }
     
 }

@@ -72,11 +72,34 @@ public class XMLWhiteSpaceHandler {
      * @param firstTextNode the node at which to start
      */
     public void handleWhiteSpace(FObjMixed fo, FONode firstTextNode) {
-        if (fo.getNameId() == Constants.FO_BLOCK) {
-            this.currentBlock = (Block) fo;
-            this.linefeedTreatment = currentBlock.getLinefeedTreatment();
-            this.whiteSpaceCollapse = currentBlock.getWhitespaceCollapse();
-            this.whiteSpaceTreatment = currentBlock.getWhitespaceTreatment();
+        if (fo.getNameId() == Constants.FO_BLOCK
+                || fo.getNameId() == Constants.FO_RETRIEVE_MARKER) {
+            if (fo.getNameId() == Constants.FO_BLOCK) {
+                this.currentBlock = (Block) fo;
+            } else {
+                FONode ancestor = fo.parent;
+                while (ancestor.getNameId() != Constants.FO_BLOCK
+                        && ancestor.getNameId() != Constants.FO_STATIC_CONTENT) {
+                    ancestor = ancestor.getParent();
+                }
+                if (ancestor.getNameId() == Constants.FO_BLOCK) {
+                    this.currentBlock = (Block) ancestor;
+                }
+            }
+            if (currentBlock != null) {
+                this.linefeedTreatment = currentBlock.getLinefeedTreatment();
+                this.whiteSpaceCollapse = currentBlock.getWhitespaceCollapse();
+                this.whiteSpaceTreatment = 
+                    currentBlock.getWhitespaceTreatment();
+            } else {
+                /* fo:retrieve-marker as direct child of static-content
+                 * set properties to their initial values
+                 */
+                this.linefeedTreatment = Constants.EN_TREAT_AS_SPACE;
+                this.whiteSpaceCollapse = Constants.EN_TRUE;
+                this.whiteSpaceTreatment = 
+                    Constants.EN_IGNORE_IF_SURROUNDING_LINEFEED;
+            }
         } else if (fo.getNameId() == Constants.FO_TITLE
                 || fo.getNameId() == Constants.FO_BOOKMARK_TITLE) {
             /* Two special types of FO that can contain #PCDATA
@@ -84,7 +107,8 @@ public class XMLWhiteSpaceHandler {
              */
             this.linefeedTreatment = Constants.EN_TREAT_AS_SPACE;
             this.whiteSpaceCollapse = Constants.EN_TRUE;
-            this.whiteSpaceTreatment = Constants.EN_IGNORE_IF_SURROUNDING_LINEFEED;
+            this.whiteSpaceTreatment = 
+                Constants.EN_IGNORE_IF_SURROUNDING_LINEFEED;
         }
         currentFO = fo;
         if (firstTextNode == null) {
@@ -94,7 +118,10 @@ public class XMLWhiteSpaceHandler {
         charIter = new RecursiveCharIterator(fo, firstTextNode);
         inWhiteSpace = false;
         int textNodeIndex = -1;
-        if (currentFO == currentBlock) {
+        if (currentFO == currentBlock
+                || currentBlock == null
+                || (currentFO.getNameId() == Constants.FO_RETRIEVE_MARKER
+                        && currentFO.getParent() == currentBlock)) {
             textNodeIndex = fo.childNodes.indexOf(firstTextNode);
             afterLinefeed = ((textNodeIndex == 0)
                     || (textNodeIndex > 0
@@ -104,7 +131,8 @@ public class XMLWhiteSpaceHandler {
         endOfBlock = (nextChild == null && currentFO == currentBlock);
         if (nextChild != null) {
             int nextChildId = nextChild.getNameId();
-            nextChildIsBlockLevel = (nextChildId == Constants.FO_BLOCK
+            nextChildIsBlockLevel = (
+                    nextChildId == Constants.FO_BLOCK
                     || nextChildId == Constants.FO_TABLE_AND_CAPTION
                     || nextChildId == Constants.FO_TABLE
                     || nextChildId == Constants.FO_LIST_BLOCK
@@ -148,6 +176,11 @@ public class XMLWhiteSpaceHandler {
                    inline FO that is about to end */
                 addPendingInline(fo);
             }
+        }
+        
+        if (currentFO == currentBlock && nextChild == null) {
+            /* end of block: clear the reference */
+            currentBlock = null;
         }
     }
     

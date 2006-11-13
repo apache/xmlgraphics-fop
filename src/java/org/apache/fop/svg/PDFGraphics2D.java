@@ -342,6 +342,16 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                 + PDFNumber.doubleOut(matrix[4], DEC) + " "
                 + PDFNumber.doubleOut(matrix[5], DEC) + " cm\n");
     }
+
+    /**
+     * This is mainly used for shading patterns which use the document-global coordinate system
+     * instead of the local one.
+     * @return the transformation matrix that established the basic user space for this document
+     */
+    protected AffineTransform getBaseTransform() {
+        AffineTransform at = new AffineTransform(graphicsState.getTransform());
+        return at;
+    }
     
     /**
      * This is a pdf specific method used to add a link to the
@@ -897,7 +907,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             // Build proper transform from gradient space to page space
             // ('Patterns' don't get userspace transform).
             AffineTransform transform;
-            transform = new AffineTransform(graphicsState.getTransform());
+            transform = new AffineTransform(getBaseTransform());
             transform.concatenate(getTransform());
             transform.concatenate(gp.getTransform());
 
@@ -973,7 +983,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             }
 
             AffineTransform transform;
-            transform = new AffineTransform(graphicsState.getTransform());
+            transform = new AffineTransform(getBaseTransform());
             transform.concatenate(getTransform());
             transform.concatenate(rgp.getTransform());
 
@@ -1103,7 +1113,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         bbox.add(new Double(rect.getY()));
 
         AffineTransform transform;
-        transform = new AffineTransform(graphicsState.getTransform());
+        transform = new AffineTransform(getBaseTransform());
         transform.concatenate(getTransform());
         transform.concatenate(pp.getPatternTransform());
 

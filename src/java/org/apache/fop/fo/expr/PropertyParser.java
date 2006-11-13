@@ -62,8 +62,6 @@ public final class PropertyParser extends PropertyTokenizer {
                           new PPColWidthFunction());
         FUNCTION_TABLE.put("label-end", new LabelEndFunction());
         FUNCTION_TABLE.put("body-start", new BodyStartFunction());
-        // NOTE: used from code generated for corresponding properties
-        FUNCTION_TABLE.put("_fop-property-value", new FopPropValFunction());
 
         /**
          * * NOT YET IMPLEMENTED!!!

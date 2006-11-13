@@ -77,6 +77,8 @@ public class TableContentLayoutManager implements PercentBaseContext {
     private int startXOffset;
     private int usedBPD;
     
+    private TableStepper stepper = new TableStepper(this);
+        
     /**
      * Main constructor
      * @param parent Parent layout manager
@@ -144,15 +146,18 @@ public class TableContentLayoutManager implements PercentBaseContext {
             this.headerList = getKnuthElementsForRowIterator(
                     headerIter, context, alignment, TableRowIterator.HEADER);
             ElementListUtils.removeLegalBreaks(this.headerList);
-            this.headerNetHeight = ElementListUtils.calcContentLength(this.headerList);
+            this.headerNetHeight = 
+                ElementListUtils.calcContentLength(this.headerList);
             if (log.isDebugEnabled()) {
-                log.debug("==> Header: " + headerNetHeight + " - " + this.headerList);
+                log.debug("==> Header: " 
+                        + headerNetHeight + " - " + this.headerList);
             }
             TableHeaderFooterPosition pos = new TableHeaderFooterPosition(
                     getTableLM(), true, this.headerList);
             KnuthBox box = new KnuthBox(headerNetHeight, pos, false);
             if (getTableLM().getTable().omitHeaderAtBreak()) {
-                //We can simply add the table header at the beginning of the whole list
+                //We can simply add the table header at the start 
+                //of the whole list
                 headerAsFirst = box;
             } else {
                 headerAsSecondToLast = box;
@@ -162,17 +167,17 @@ public class TableContentLayoutManager implements PercentBaseContext {
             this.footerList = getKnuthElementsForRowIterator(
                     footerIter, context, alignment, TableRowIterator.FOOTER);
             ElementListUtils.removeLegalBreaks(this.footerList);
-            this.footerNetHeight = ElementListUtils.calcContentLength(this.footerList);
+            this.footerNetHeight = 
+                    ElementListUtils.calcContentLength(this.footerList);
             if (log.isDebugEnabled()) {
-                log.debug("==> Footer: " + footerNetHeight + " - " + this.footerList);
+                log.debug("==> Footer: " 
+                        + footerNetHeight + " - " + this.footerList);
             }
-            if (true /*getTableLM().getTable().omitFooterAtBreak()*/) {
-                //We can simply add the table header at the end of the whole list
-                TableHeaderFooterPosition pos = new TableHeaderFooterPosition(
-                        getTableLM(), false, this.footerList);
-                KnuthBox box = new KnuthBox(footerNetHeight, pos, false);
-                footerAsLast = box;
-            }
+            //We can simply add the table footer at the end of the whole list
+            TableHeaderFooterPosition pos = new TableHeaderFooterPosition(
+                    getTableLM(), false, this.footerList);
+            KnuthBox box = new KnuthBox(footerNetHeight, pos, false);
+            footerAsLast = box;
         }
         LinkedList returnList = getKnuthElementsForRowIterator(
                 trIter, context, alignment, TableRowIterator.BODY);
@@ -192,7 +197,8 @@ public class TableContentLayoutManager implements PercentBaseContext {
      * @param iter TableRowIterator instance to fetch rows from
      * @param context Active LayoutContext
      * @param alignment alignment indicator
-     * @param bodyType Indicates what kind of body is being processed (BODY, HEADER or FOOTER)
+     * @param bodyType Indicates what kind of body is being processed 
+     *                  (BODY, HEADER or FOOTER)
      * @return An element list
      */
     private LinkedList getKnuthElementsForRowIterator(TableRowIterator iter, 
@@ -211,7 +217,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
                         pen.setP(-KnuthPenalty.INFINITE);
                         pen.setBreakClass(rowFO.getBreakBefore());
                     } else if (last instanceof BreakElement) {
-                        BreakElement breakPoss = (BreakElement)last;
+                        BreakElement breakPoss = (BreakElement) last;
                         breakPoss.setPenaltyValue(-KnuthPenalty.INFINITE);
                         breakPoss.setBreakClass(rowFO.getBreakBefore());
                     }
@@ -573,9 +579,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
                 log.debug("  height=" + rowHeights[i] + " explicit=" + explicitRowHeights[i]);
             }
         }
-        //TODO It may make sense to reuse the stepper since it allocates quite some space
-        TableStepper stepper = new TableStepper(this);
-        LinkedList returnedList = stepper.getCombinedKnuthElementsForRowGroup(
+        LinkedList returnedList = this.stepper.getCombinedKnuthElementsForRowGroup(
                 context, rowGroup, maxColumnCount, bodyType);
         if (returnedList != null) {
             returnList.addAll(returnedList);

@@ -91,7 +91,7 @@
     <eval expected="3"
 	  xpath="count(//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block/block)"/>
     <!-- only two lines in the last block -->
-    <eval expected="2"
+    <eval expected="3"
           xpath="count(//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block/block[3]/lineArea)"/>
     <!-- second page -->
     <eval expected="0"

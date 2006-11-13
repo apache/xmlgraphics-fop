@@ -30,7 +30,7 @@ import org.apache.fop.fo.properties.BorderWidthPropertyMaker;
 import org.apache.fop.fo.properties.BoxPropShorthandParser;
 import org.apache.fop.fo.properties.CharacterProperty;
 import org.apache.fop.fo.properties.ColorProperty;
-import org.apache.fop.fo.properties.ColumnNumberPropertyMaker;
+import org.apache.fop.fo.flow.TableFObj.ColumnNumberPropertyMaker;
 import org.apache.fop.fo.properties.CondLengthProperty;
 import org.apache.fop.fo.properties.CorrespondingPropertyMaker;
 import org.apache.fop.fo.properties.DimensionPropertyMaker;
@@ -326,11 +326,13 @@ public final class FOPropertyMapping implements Constants {
      * @return a propId that matches the property name.
      */
     public static int getPropertyId(String name) {
-        Integer i = (Integer) s_htPropNames.get(name);
-        if (i == null) {
-            return -1;
+        if (name != null) {
+            Integer i = (Integer) s_htPropNames.get(name);
+            if (i != null) {
+                return i.intValue();
+            }
         }
-        return i.intValue();
+        return -1;
     }
 
     /**
@@ -339,11 +341,13 @@ public final class FOPropertyMapping implements Constants {
      * @return a subpropId that matches the subproperty name.
      */
     public static int getSubPropertyId(String name) {
-        Integer i = (Integer) s_htSubPropNames.get(name);
-        if (i == null) {
-            return -1;
+        if (name != null) {
+            Integer i = (Integer) s_htSubPropNames.get(name);
+            if (i != null) {
+                return i.intValue();
+            }
         }
-        return i.intValue();
+        return -1;
     }
 
     // returns a property, compound, or property.compound name
@@ -2263,8 +2267,8 @@ public final class FOPropertyMapping implements Constants {
 
         sub = new LengthProperty.Maker(CP_INLINE_PROGRESSION_DIRECTION);
         sub.setDefault("0pt");
-        m.addSubpropMaker(sub);
         sub.setByShorthand(true);
+        m.addSubpropMaker(sub);
         addPropertyMaker("border-separation", m);
 
         // border-start-precedence

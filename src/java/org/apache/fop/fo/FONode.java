@@ -81,7 +81,6 @@ public abstract class FONode implements Cloneable {
                 throws FOPException {
         FONode foNode = (FONode) clone();
         foNode.parent = cloneparent;
-        cloneparent.addChildNode(foNode);
         return foNode;
     }
 
@@ -123,6 +122,10 @@ public abstract class FONode implements Cloneable {
      */
     public FOEventHandler getFOEventHandler() {
         return parent.getFOEventHandler();
+    }
+    
+    protected boolean inMarker() {
+        return getFOEventHandler().inMarker();
     }
 
     /**
@@ -258,7 +261,7 @@ public abstract class FONode implements Cloneable {
 
     /**
      * Return an iterator over the object's child nodes starting
-     * at the pased node.
+     * at the passed node.
      * @param childNode First node in the iterator
      * @return A ListIterator or null if child node isn't a child of
      * this FObj.
@@ -581,5 +584,35 @@ public abstract class FONode implements Cloneable {
         return null;
     }
     
+    /**
+     * @return true if markers are valid children
+     */
+    protected boolean canHaveMarkers() {
+        int foId = getNameId();
+        switch (foId) {
+        case Constants.FO_BASIC_LINK:
+        case Constants.FO_BIDI_OVERRIDE:
+        case Constants.FO_BLOCK:
+        case Constants.FO_BLOCK_CONTAINER:
+        case Constants.FO_FLOW:
+        case Constants.FO_INLINE:
+        case Constants.FO_INLINE_CONTAINER:
+        case Constants.FO_LIST_BLOCK:
+        case Constants.FO_LIST_ITEM:
+        case Constants.FO_LIST_ITEM_BODY:
+        case Constants.FO_LIST_ITEM_LABEL:
+        case Constants.FO_TABLE:
+        case Constants.FO_TABLE_BODY:
+        case Constants.FO_TABLE_HEADER:
+        case Constants.FO_TABLE_FOOTER:
+        case Constants.FO_TABLE_CELL:
+        case Constants.FO_TABLE_AND_CAPTION:
+        case Constants.FO_TABLE_CAPTION:
+        case Constants.FO_WRAPPER:
+            return true;
+        default:
+            return false;
+        }
+    }
 }
 

@@ -30,6 +30,7 @@ import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.layoutmgr.TraitSetter;
+import org.apache.fop.layoutmgr.SpaceResolver.SpaceHandlingBreakPosition;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 
@@ -145,6 +146,8 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
                 if (firstLM == null) {
                     firstLM = lastLM;
                 }
+            } else if (pos instanceof SpaceHandlingBreakPosition) {
+                positionList.add(pos);
             } else {
                 // pos was created by this ListBlockLM, so it must be ignored
             }

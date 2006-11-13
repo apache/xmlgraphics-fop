@@ -108,9 +108,10 @@ Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent);
         <li>
           Don't use CMYK images without an ICC color profile. PDF/X doesn't allow mixing
           color spaces and FOP currently only properly supports the sRGB color space. However,
-          you will need to specify an output device profile (usually a CMYK profile) in the
-          configuration. sRGB won't work here since it's a display device profile, not an
-          output device profile.
+          you will need to specify an 
+          <a href="configuration.html#pdf-renderer">output device profile</a>
+          (usually a CMYK profile) in the configuration. sRGB won't work here since it's a 
+          display device profile, not an output device profile.
         </li>
         <li>
           Don't use non-RGB colors in SVG images. Same issue as with CMYK images.

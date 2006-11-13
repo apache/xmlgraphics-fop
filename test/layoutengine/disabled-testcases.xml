@@ -195,20 +195,6 @@
     lists, yet.</description>
   </testcase>
   <testcase>
-    <name>Whitespace around markers is not handled correctly</name>
-    <file>marker_white-space-collapse.xml</file>
-    <description>Whitespace within markers is handled according to the value of
-    the white-space-collapse property in the context of the fo:marker and not according to
-    the value of the property in the fo:retrieve-marker context.</description>
-  </testcase>
-  <testcase>
-    <name>Relative font sizes within markers are not handled correctly</name>
-    <file>marker_font-size.xml</file>
-    <description>Relative font sizes within markers are evaluated according to the
-    font size in the fo:marker context and not the font size in the fo:retrieve-marker
-    context.</description>
-  </testcase>
-  <testcase>
     <name>Page breaking doesn't deal with IPD changes</name>
     <file>page-breaking_4.xml</file>
     <description>Page breaking currently doesn't support changing available IPD 
@@ -334,7 +320,8 @@
   <testcase>
     <name>table-cell empty area with marker.xml</name>
     <file>table-cell_empty_area_with_marker.xml</file>
-    <description>A table-cell producing an empty area does currently not add any markers to a page. See TODO entry in AreaAdditionUtil.</description>
+    <description>A table-cell producing an empty area does currently not add any markers to a page. 
+      See TODO entry in AreaAdditionUtil.</description>
   </testcase>
   <testcase>
     <name>Border conditionality on table</name>
@@ -369,5 +356,19 @@
     <description>Instead of deferring a before-float on the following page, an
     underfull page is created so that the citation be on the same page as the
     float.</description>
+  </testcase>
+  <testcase>
+    <name>Before-floats plus footnotes on last page</name>
+    <file>before-float_footnote_last-page.xml</file>
+    <description>When an additional page must be created at the end
+      of a flow for placing both a remaining before-float and a footnote, an
+      IndexOutOfBoundException occurs.</description>
+  </testcase>
+  <testcase>
+    <name>Before-float too large to fit on a page alone</name>
+    <file>before-float_large.xml</file>
+    <description>When a before-float is too large to even fit on a page alone,
+      it should be split on several pages. Currently, there is an OutOfMemory
+      error.</description>
   </testcase>
 </disabled-testcases>
