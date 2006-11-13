@@ -21,10 +21,12 @@ package org.apache.fop.fonts.type1;
 
 // Java
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -76,12 +78,11 @@ public class PFMFile {
      * @throws IOException In case of an I/O problem
      */
     public void load(InputStream inStream) throws IOException {
+        byte[] pfmBytes = IOUtils.toByteArray(inStream);
         InputStream bufin = inStream;
-        if (!bufin.markSupported()) {
-            bufin = new BufferedInputStream(bufin);
-        }
+        bufin = new ByteArrayInputStream(pfmBytes);
         PFMInputStream in = new PFMInputStream(bufin);
-        bufin.mark(16);
+        bufin.mark(512);
         short sh1 = in.readByte();
         short sh2 = in.readByte();
         if (sh1 == 128 && sh2 == 1) {
