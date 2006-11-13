@@ -65,7 +65,7 @@ public abstract class InlineLevel extends FObjMixed {
         commonMarginInline = pList.getMarginInlineProps();
         commonAural = pList.getAuralProps();
         commonFont = pList.getFontProps();
-        color = pList.get(PR_COLOR).getColor();
+        color = pList.get(PR_COLOR).getColor(getUserAgent());
         lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
         visibility = pList.get(PR_VISIBILITY).getEnum();
     }

@@ -51,7 +51,10 @@ public class CMYKColorSpace extends ColorSpace {
      * @see java.awt.color.ColorSpace#toRGB(float[])
      */
     public float[] toRGB(float[] colorvalue) {
-        throw new UnsupportedOperationException("NYI");
+        return new float [] {
+            (1 - colorvalue[0]) * (1 - colorvalue[3]),
+            (1 - colorvalue[1]) * (1 - colorvalue[3]),
+            (1 - colorvalue[2]) * (1 - colorvalue[3])};
     }
 
     /**

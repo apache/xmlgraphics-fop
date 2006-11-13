@@ -21,6 +21,7 @@ package org.apache.fop.fo.properties;
 
 import java.awt.Color;
 
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
@@ -74,7 +75,9 @@ public class ColorProperty extends Property  {
             if (p instanceof ColorProperty) {
                 return p;
             }
-            Color val = p.getColor();
+            FObj fobj = (fo == null ? propertyList.getFObj() : fo);
+            FOUserAgent ua = (fobj == null ? null : fobj.getUserAgent());
+            Color val = p.getColor(ua);
             if (val != null) {
                 return new ColorProperty(val);
             }
@@ -83,17 +86,17 @@ public class ColorProperty extends Property  {
 
     }
 
-
     /**
      * Set the color given a particular String. For a full List of supported
      * values please see ColorUtil.
      * 
+     * @param foUserAgent FOP user agent
      * @param value RGB value as String to be parsed
      * @throws PropertyException if the value can't be parsed
      * @see ColorUtil#parseColorString(String)
      */
-    public ColorProperty(String value) throws PropertyException {
-        this.color = ColorUtil.parseColorString(value);
+    public ColorProperty(FOUserAgent foUserAgent, String value) throws PropertyException {
+        this.color = ColorUtil.parseColorString(foUserAgent, value);
     }
 
     /**
@@ -107,9 +110,10 @@ public class ColorProperty extends Property  {
     
     /**
      * Returns an AWT instance of this color
+     * @param foUserAgent FOP user agent
      * @return float the AWT color represented by this ColorType instance
      */
-    public Color getColor() {
+    public Color getColor(FOUserAgent foUserAgent) {
         return color;
     }
 
@@ -117,7 +121,7 @@ public class ColorProperty extends Property  {
      * @see java.lang.Object#toString()
      */
     public String toString() {
-        return ColorUtil.colorTOsRGBString(color);
+        return ColorUtil.colorToString(color);
     }
 
     /**

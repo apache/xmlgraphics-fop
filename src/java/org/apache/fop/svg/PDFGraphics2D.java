@@ -42,6 +42,7 @@ import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.image.JpegImage;
 import org.apache.fop.fonts.CIDFont;
 import org.apache.fop.render.pdf.FopPDFImage;
+import org.apache.fop.util.ColorExt;
 
 import org.apache.xmlgraphics.java2d.AbstractGraphics2D;
 import org.apache.xmlgraphics.java2d.GraphicContext;
@@ -821,8 +822,12 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      */
     protected void applyColor(Color col, boolean fill) {
         preparePainting();
+
         Color c = col;
-        if (c.getColorSpace().getType()
+        if (col instanceof ColorExt) {
+            PDFColor currentColour = new PDFColor(this.pdfDoc, col);
+            currentStream.write(currentColour.getColorSpaceOut(fill));
+        } else if (c.getColorSpace().getType()
                 == ColorSpace.TYPE_RGB) {
             PDFColor currentColour = new PDFColor(c.getRed(), c.getGreen(),
                                          c.getBlue());

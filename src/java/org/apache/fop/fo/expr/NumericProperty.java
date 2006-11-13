@@ -20,6 +20,8 @@
 package org.apache.fop.fo.expr;
 
 import java.awt.Color;
+
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.datatypes.Numeric;
@@ -105,8 +107,8 @@ public class NumericProperty extends Property implements Numeric, Length {
         return null;
     }
 
-    /** @see org.apache.fop.fo.properties.Property#getColor() */
-    public Color getColor() {
+    /** @see org.apache.fop.fo.properties.Property#getColor(FOUserAgent) */
+    public Color getColor(FOUserAgent foUserAgent) {
         // TODO:  try converting to numeric number and then to color
         return null;
     }

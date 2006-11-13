@@ -19,6 +19,7 @@
 
 package org.apache.fop.fo.expr;
 
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.properties.ColorProperty;
@@ -30,6 +31,8 @@ import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.StringProperty;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Class to parse XSL-FO property expressions.
@@ -62,12 +65,12 @@ public final class PropertyParser extends PropertyTokenizer {
                           new PPColWidthFunction());
         FUNCTION_TABLE.put("label-end", new LabelEndFunction());
         FUNCTION_TABLE.put("body-start", new BodyStartFunction());
+        FUNCTION_TABLE.put("rgb-icc", new ICCColorFunction());
+        FUNCTION_TABLE.put("cmyk", new CMYKcolorFunction()); //non-standard!!!
 
         /**
          * * NOT YET IMPLEMENTED!!!
-         * FUNCTION_TABLE.put("icc-color", new ICCcolorFunction());
          * FUNCTION_TABLE.put("system-font", new SystemFontFunction());
-         *
          * FUNCTION_TABLE.put("merge-property-values", new MergePropsFunction());
          */
     }
@@ -295,7 +298,10 @@ public final class PropertyParser extends PropertyTokenizer {
             break;
 
         case TOK_COLORSPEC:
-            prop = new ColorProperty(currentTokenValue);
+            FOUserAgent ua = (propInfo == null) 
+                ? null
+                : (propInfo.getFO() == null ? null : propInfo.getFO().getUserAgent());
+            prop = new ColorProperty(ua, currentTokenValue);
             break;
 
         case TOK_FUNCTION_LPAR:
@@ -307,7 +313,12 @@ public final class PropertyParser extends PropertyTokenizer {
             next();
             // Push new function (for function context: getPercentBase())
             propInfo.pushFunction(function);
-            prop = function.eval(parseArgs(function), propInfo);
+            if (function.nbArgs() < 0) {
+                // Negative nbArgs --> function with variable number of arguments
+                prop = function.eval(parseVarArgs(function), propInfo);
+            } else {
+                prop = function.eval(parseArgs(function), propInfo);
+            }
             propInfo.popFunction();
             return prop;
         
@@ -361,6 +372,54 @@ public final class PropertyParser extends PropertyTokenizer {
                                         + ", but got " + i + " args for function");
         }
         return args;
+    }
+    
+    /**
+     * 
+     * Parse a comma separated list of function arguments. Each argument
+     * may itself be an expression. This method consumes the closing right
+     * parenthesis of the argument list.
+     * 
+     * The method differs from parseArgs in that it accepts a variable 
+     * number of arguments.
+     * 
+     * @param function The function object for which the arguments are 
+     * collected.
+     * @return An array of Property objects representing the arguments
+     * found.
+     * @throws PropertyException If the number of arguments found isn't equal
+     * to the number expected.
+     * 
+     * TODO Merge this with parseArgs? 
+     */
+    Property[] parseVarArgs(Function function) throws PropertyException {
+        // For variable argument functions the minimum number of arguments is returned as a 
+        // negative integer from the nbArgs method
+        int nbArgs = -function.nbArgs();
+        List args = new LinkedList();
+        Property prop;
+        if (currentToken == TOK_RPAR) {
+            // No args: func()
+            next();
+        } else {
+            while (true) {
+                prop = parseAdditiveExpr();
+                args.add(prop);
+                // ignore extra args
+                if (currentToken != TOK_COMMA) {
+                    break;
+                }
+                next();
+            }
+            expectRpar();
+        }
+        if (nbArgs > args.size()) {
+            throw new PropertyException("Expected at least " + nbArgs
+                                        + ", but got " + args.size() + " args for function");
+        }
+        Property[] propArray = new Property[args.size()];
+        args.toArray(propArray);
+        return propArray;
     }
 
 

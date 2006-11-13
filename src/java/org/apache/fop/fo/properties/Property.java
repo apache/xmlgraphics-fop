@@ -25,6 +25,7 @@ import java.awt.Color;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.Constants;
@@ -74,9 +75,10 @@ public class Property {
 
     /**
      * This method expects to be overridden by subclasses
+     * @param foUserAgent FOP user agent
      * @return ColorType property value
      */
-    public Color getColor() {
+    public Color getColor(FOUserAgent foUserAgent) {
         return null;
     }
 

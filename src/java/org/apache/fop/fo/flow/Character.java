@@ -117,7 +117,7 @@ public class Character extends FObj {
         alignmentBaseline = pList.get(PR_ALIGNMENT_BASELINE).getEnum();
         baselineShift = pList.get(PR_BASELINE_SHIFT).getLength();
         character = pList.get(PR_CHARACTER).getCharacter();
-        color = pList.get(PR_COLOR).getColor();
+        color = pList.get(PR_COLOR).getColor(getUserAgent());
         dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
         textDepth = pList.get(PR_TEXT_DEPTH).getLength();
         textAltitude = pList.get(PR_TEXT_ALTITUDE).getLength();

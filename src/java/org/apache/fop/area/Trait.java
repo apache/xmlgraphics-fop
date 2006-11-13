@@ -571,7 +571,7 @@ public class Trait implements Serializable {
         public String toString() {
             StringBuffer sb = new StringBuffer();
             if (color != null) {
-                sb.append("color=").append(ColorUtil.colorTOsRGBString(color));
+                sb.append("color=").append(ColorUtil.colorToString(color));
             }
             if (url != null) {
                 if (color != null) {

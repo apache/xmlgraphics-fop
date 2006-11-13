@@ -19,17 +19,22 @@
 
 package org.apache.fop.apps;
 
+import java.awt.color.ColorSpace;
+import java.awt.color.ICC_ColorSpace;
+import java.awt.color.ICC_Profile;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
+import javax.xml.transform.stream.StreamSource;
 
 import org.xml.sax.SAXException;
 
@@ -119,11 +124,16 @@ public class FopFactory {
 
     private Set ignoredNamespaces = new java.util.HashSet();
     
+    /** Map with cached ICC based ColorSpace objects. */
+    private Map colorSpaceMap = null;
+    
     /**
      * Main constructor.
      */
     protected FopFactory() {
         this.elementMappingRegistry = new ElementMappingRegistry(this);
+        // Use a synchronized Map - I am not really sure this is needed, but better safe than sorry.
+        this.colorSpaceMap = Collections.synchronizedMap(new java.util.HashMap());
     }
     
     /**
@@ -632,7 +642,63 @@ public class FopFactory {
         }
         return source;
     }
+        
+    /**
+     * Create (if needed) and return an ICC ColorSpace instance.
+     * 
+     * The ICC profile source is taken from the src attribute of the color-profile FO element.
+     * If the ICC ColorSpace is not yet in the cache a new one is created and stored in the cache.
+     * 
+     * The FOP URI resolver is used to try and locate the ICC file. 
+     * If that fails null is returned.
+     * 
+     * @param base a base URI to resolve relative URIs
+     * @param iccProfileSrc ICC Profile source to return a ColorSpace for
+     * @return ICC ColorSpace object or null if ColorSpace could not be created 
+     */
+    public ColorSpace getColorSpace(String base, String iccProfileSrc) {
+        ColorSpace colorSpace = null;
+        if (!this.colorSpaceMap.containsKey(base + iccProfileSrc)) {
+            try {
+                ICC_Profile iccProfile = null;
+                // First attempt to use the FOP URI resolver to locate the ICC
+                // profile
+                Source src = this.resolveURI(iccProfileSrc, base);
+                if (src != null && src instanceof StreamSource) {
+                    // FOP URI resolver found ICC profile - create ICC profile
+                    // from the Source
+                    iccProfile = ICC_Profile.getInstance(((StreamSource) src)
+                            .getInputStream());
+                } else {
+                    // TODO - Would it make sense to fall back on VM ICC
+                    // resolution
+                    // Problem is the cache might be more difficult to maintain
+                    // 
+                    // FOP URI resolver did not find ICC profile - perhaps the
+                    // Java VM can find it?
+                    // iccProfile = ICC_Profile.getInstance(iccProfileSrc);
+                }
+                if (iccProfile != null) {
+                    colorSpace = new ICC_ColorSpace(iccProfile);
+                }
+            } catch (IOException e) {
+                // Ignore exception - will be logged a bit further down
+                // (colorSpace == null case)
+            }
 
-    
+            if (colorSpace != null) {
+                // Put in cache (not when VM resolved it as we can't control
+                this.colorSpaceMap.put(base + iccProfileSrc, colorSpace);
+            } else {
+                // TODO To avoid an excessive amount of warnings perhaps
+                // register a null ColorMap in the colorSpaceMap
+                log.warn("Color profile '" + iccProfileSrc + "' not found.");
+            }
+        } else {
+            colorSpace = (ColorSpace) this.colorSpaceMap.get(base
+                    + iccProfileSrc);
+        }
+        return colorSpace;
+    }
     
 }

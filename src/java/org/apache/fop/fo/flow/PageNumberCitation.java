@@ -117,7 +117,7 @@ public class PageNumberCitation extends FObj {
         wrapOption = pList.get(PR_WRAP_OPTION).getEnum();
         
         // implicit properties
-        color = pList.get(Constants.PR_COLOR).getColor();
+        color = pList.get(Constants.PR_COLOR).getColor(getUserAgent());
     }
 
     /**

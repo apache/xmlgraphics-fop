@@ -20,10 +20,16 @@
 package org.apache.fop.util;
 
 import java.awt.Color;
+import java.awt.color.ColorSpace;
 import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.expr.PropertyException;
 
 /**
@@ -31,19 +37,21 @@ import org.apache.fop.fo.expr.PropertyException;
  * <p>
  * This class supports parsing string values into color values and creating
  * color values for strings. It provides a list of standard color names.
- * <p>
- * TODO: Add support for color Profiles.
  */
 public final class ColorUtil {
 
     /**
+     * 
      * keeps all the predefined and parsed colors.
      * <p>
      * This map is used to predefine given colors, as well as speeding up
      * parsing of already parsed colors.
      */
     private static Map colorMap = null;
-
+    
+    /** Logger instance */
+    protected static Log log = LogFactory.getLog(ColorUtil.class);
+    
     static {
         initializeColorMap();
     }
@@ -68,8 +76,11 @@ public final class ColorUtil {
      * <li>system-color(colorname)</li>
      * <li>transparent</li>
      * <li>colorname</li>
+     * <li>fop-rgb-icc</li>
+     * <li>cmyk</li>
      * </ul>
      * 
+     * @param foUserAgent FOUserAgent object  
      * @param value
      *            the string to parse.
      * @return a Color representing the string if possible
@@ -77,7 +88,8 @@ public final class ColorUtil {
      *             if the string is not parsable or does not follow any of the
      *             given formats.
      */
-    public static Color parseColorString(String value) throws PropertyException {
+    public static Color parseColorString(FOUserAgent foUserAgent, String value) 
+            throws PropertyException {
         if (value == null) {
             return null;
         }
@@ -96,18 +108,23 @@ public final class ColorUtil {
                 parsedColor = parseAsJavaAWTColor(value);
             } else if (value.startsWith("system-color(")) {
                 parsedColor = parseAsSystemColor(value);
+            } else if (value.startsWith("fop-rgb-icc")) {
+                parsedColor = parseAsFopRgbIcc(foUserAgent, value);
+            } else if (value.startsWith("cmyk")) {
+                parsedColor = parseAsCMYK(value);
             }
-
+            
             if (parsedColor == null) {
-                throw new PropertyException("Unkown Color: " + value);
+                throw new PropertyException("Unknown Color: " + value);
             }
             
             colorMap.put(value, parsedColor);
         }
 
-        // TODO: Check if this is really necessary
-        return new Color(parsedColor.getRed(), parsedColor.getGreen(),
-                parsedColor.getBlue(), parsedColor.getAlpha());
+        // TODO - Returned Color object can be one from the static colorMap cache.
+        //        That means it should be treated as read only for the rest of its lifetime.
+        //        Not sure that is the case though.
+        return parsedColor;
     }
 
     /**
@@ -282,6 +299,174 @@ public final class ColorUtil {
     }
 
     /**
+     * Parse a color specified using the fop-rgb-icc() function.
+     * 
+     * @param value the function call
+     * @return a color if possible
+     * @throws PropertyException if the format is wrong.
+     */
+    private static Color parseAsFopRgbIcc(FOUserAgent foUserAgent, String value) 
+            throws PropertyException {
+        Color parsedColor;
+        int poss = value.indexOf("(");
+        int pose = value.indexOf(")");
+        if (poss != -1 && pose != -1) {
+            value = value.substring(poss + 1, pose);
+            StringTokenizer st = new StringTokenizer(value, ",");
+            try {
+                float red = 0.0f, green = 0.0f, blue = 0.0f;
+                if (st.hasMoreTokens()) {
+                    String str = st.nextToken().trim();
+                    red = Float.parseFloat(str);
+                }
+                if (st.hasMoreTokens()) {
+                    String str = st.nextToken().trim();
+                    green = Float.parseFloat(str);
+                }
+                if (st.hasMoreTokens()) {
+                    String str = st.nextToken().trim();
+                    blue = Float.parseFloat(str);
+                }
+                /* Verify rgb replacement arguments */
+                if ((red < 0.0 || red > 1.0) 
+                        || (green < 0.0 || green > 1.0) 
+                        || (blue < 0.0 || blue > 1.0)) {
+                  throw new PropertyException("Color values out of range");
+                 }
+                /* Get and verify ICC profile name */
+                String iccProfileName = null;
+                if (st.hasMoreTokens()) {
+                    iccProfileName = st.nextToken().trim();
+                }
+                if (iccProfileName == null || iccProfileName.length() == 0) {
+                    throw new PropertyException("ICC profile name missing");
+                }
+                /* Get and verify ICC profile source */
+                String iccProfileSrc = null;
+                if (st.hasMoreTokens()) {
+                    iccProfileSrc = st.nextToken().trim();
+                    // Strip quotes
+                    iccProfileSrc = iccProfileSrc.substring(1, iccProfileSrc.length() - 1);
+                }
+                if (iccProfileSrc == null || iccProfileSrc.length() == 0) {
+                    throw new PropertyException("ICC profile source missing");
+                }
+                /* ICC profile arguments */
+                List iccArgList = new LinkedList();
+                while (st.hasMoreTokens()) {
+                    String str = st.nextToken().trim();
+                    iccArgList.add(new Float(str));
+                }
+                /* Copy ICC profile arguments from list to array */
+                float[] iccComponents = new float[iccArgList.size()];
+                for (int ix = 0; ix < iccArgList.size(); ix++) {
+                    iccComponents[ix] = ((Float)iccArgList.get(ix)).floatValue();
+                }
+                /* Ask FOP factory to get ColorSpace for the specified ICC profile source */
+                ColorSpace colorSpace = (foUserAgent != null
+                        ? foUserAgent.getFactory().getColorSpace(
+                                foUserAgent.getBaseURL(), iccProfileSrc) : null);
+                if (colorSpace != null) {
+                    // ColorSpace available - create ColorExt (keeps track of replacement rgb 
+                    // values for possible later colorTOsRGBString call
+                    parsedColor = ColorExt.createFromFoRgbIcc(red, green, blue, 
+                            iccProfileName, iccProfileSrc, colorSpace, iccComponents);
+                } else {
+                    // ICC profile could not be loaded - use rgb replacement values */
+                    log.warn("Color profile '" + iccProfileSrc 
+                            + "' not found. Using rgb replacement values.");
+                    parsedColor = new Color(red, green, blue);
+                }
+            } catch (Exception e) {
+                throw new PropertyException(
+                        "Arguments to rgb-icc() must be [0..255] or [0%..100%]");
+            }
+        } else {
+            throw new PropertyException("Unknown color format: " + value
+                    + ". Must be fop-rgb-icc(r,g,b,NCNAME,\"src\",....)");
+        }
+        return parsedColor;
+    }
+
+    /**
+     * Parse a color given with the cmyk() function.
+     * 
+     * @param value
+     *            the complete line
+     * @return a color if possible
+     * @throws PropertyException
+     *             if the format is wrong.
+     */
+    private static Color parseAsCMYK(String value) throws PropertyException {
+        Color parsedColor;
+        int poss = value.indexOf("(");
+        int pose = value.indexOf(")");
+        if (poss != -1 && pose != -1) {
+            value = value.substring(poss + 1, pose);
+            StringTokenizer st = new StringTokenizer(value, ",");
+            try {
+                float cyan = 0.0f, magenta = 0.0f, yellow = 0.0f, black = 0.0f;
+                if (st.hasMoreTokens()) {
+                    String str = st.nextToken().trim();
+                    if (str.endsWith("%")) {
+                      cyan  = Float.parseFloat(str.substring(0,
+                                str.length() - 1)) / 100.0f;
+                    } else {
+                      cyan  = Float.parseFloat(str);
+                    }
+                }
+                if (st.hasMoreTokens()) {
+                    String str = st.nextToken().trim();
+                    if (str.endsWith("%")) {
+                      magenta = Float.parseFloat(str.substring(0,
+                                str.length() - 1)) / 100.0f;
+                    } else {
+                      magenta = Float.parseFloat(str);
+                    }
+                }
+                if (st.hasMoreTokens()) {
+                    String str = st.nextToken().trim();
+                    if (str.endsWith("%")) {
+                      yellow = Float.parseFloat(str.substring(0,
+                                str.length() - 1)) / 100.0f;
+                    } else {
+                      yellow = Float.parseFloat(str);
+                    }
+                }
+                if (st.hasMoreTokens()) {
+                  String str = st.nextToken().trim();
+                  if (str.endsWith("%")) {
+                    black = Float.parseFloat(str.substring(0,
+                              str.length() - 1)) / 100.0f;
+                  } else {
+                    black = Float.parseFloat(str);
+                  }
+              }
+                if ((cyan < 0.0 || cyan > 1.0) 
+                        || (magenta < 0.0 || magenta > 1.0)
+                        || (yellow < 0.0 || yellow > 1.0)
+                        || (black < 0.0 || black > 1.0)) {
+                    throw new PropertyException("Color values out of range");
+                }
+                float[] cmyk = new float[] {cyan, magenta, yellow, black};
+                CMYKColorSpace cmykCs = CMYKColorSpace.getInstance();
+                float[] rgb = cmykCs.toRGB(cmyk);
+                parsedColor = ColorExt.createFromFoRgbIcc(rgb[0], rgb[1], rgb[2], 
+                        null, "#CMYK", cmykCs, cmyk);
+
+                
+            } catch (Exception e) {
+                throw new PropertyException(
+                        "Arguments to cmyk() must be in the range [0%-100%] or [0.0-1.0]");
+            }
+        } else {
+            throw new PropertyException("Unknown color format: " + value
+                    + ". Must be cmyk(c,m,y,k)");
+        }
+        return parsedColor;
+    }
+    
+    /**
      * Creates a re-parsable string representation of the given color.
      * <p>
      * First, the color will be converted into the sRGB colorspace. It will then
@@ -291,33 +476,42 @@ public final class ColorUtil {
      *            the color to represent.
      * @return a re-parsable string representadion.
      */
-    public static String colorTOsRGBString(Color color) {
-        StringBuffer sbuf = new StringBuffer(10);
-        sbuf.append('#');
-        String s = Integer.toHexString(color.getRed());
-        if (s.length() == 1) {
-            sbuf.append('0');
-        }
-        sbuf.append(s);
-        s = Integer.toHexString(color.getGreen());
-        if (s.length() == 1) {
-            sbuf.append('0');
-        }
-        sbuf.append(s);
-        s = Integer.toHexString(color.getBlue());
-        if (s.length() == 1) {
-            sbuf.append('0');
-        }
-        sbuf.append(s);
-        if (color.getAlpha() != 255) {
-            s = Integer.toHexString(color.getAlpha());
+    public static String colorToString(Color color) {
+        ColorSpace cs = color.getColorSpace();
+        if (cs != null && cs.getType() == ColorSpace.TYPE_CMYK) {
+            StringBuffer sbuf = new StringBuffer(24);
+            float[] cmyk = color.getColorComponents(null);
+            sbuf.append("cmyk(" + cmyk[0] + "," + cmyk[1] + "," + cmyk[2] + "," +  cmyk[3] + ")");
+            return sbuf.toString();
+        } else if (color instanceof ColorExt) {
+            return ((ColorExt)color).toFunctionCall();
+        } else {
+            StringBuffer sbuf = new StringBuffer();
+            sbuf.append('#');
+            String s = Integer.toHexString(color.getRed());
             if (s.length() == 1) {
                 sbuf.append('0');
             }
             sbuf.append(s);
+            s = Integer.toHexString(color.getGreen());
+            if (s.length() == 1) {
+                sbuf.append('0');
+            }
+            sbuf.append(s);
+            s = Integer.toHexString(color.getBlue());
+            if (s.length() == 1) {
+                sbuf.append('0');
+            }
+            sbuf.append(s);
+            if (color.getAlpha() != 255) {
+                s = Integer.toHexString(color.getAlpha());
+                if (s.length() == 1) {
+                    sbuf.append('0');
+                }
+                sbuf.append(s);
+            }
+            return sbuf.toString();
         }
-        return sbuf.toString();
-
     }
 
     /**

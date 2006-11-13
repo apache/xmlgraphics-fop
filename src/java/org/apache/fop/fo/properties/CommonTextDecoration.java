@@ -23,6 +23,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import java.awt.Color;
+
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
@@ -76,6 +78,9 @@ public class CommonTextDecoration {
             while (i.hasNext()) {
                 Property prop = (Property)i.next(); 
                 int propEnum = prop.getEnum();
+                FOUserAgent ua = (pList == null)
+                        ? null
+                        : (pList.getFObj() == null ? null : pList.getFObj().getUserAgent());
                 if (propEnum == Constants.EN_NONE) {
                     if (deco != null) {
                         deco.decoration = 0;
@@ -86,33 +91,33 @@ public class CommonTextDecoration {
                         deco = new CommonTextDecoration();
                     }
                     deco.decoration |= UNDERLINE;
-                    deco.underColor = pList.get(Constants.PR_COLOR).getColor();
+                    deco.underColor = pList.get(Constants.PR_COLOR).getColor(ua);
                 } else if (propEnum == Constants.EN_NO_UNDERLINE) {
                     if (deco != null) {
                         deco.decoration &= OVERLINE | LINE_THROUGH | BLINK;
-                        deco.underColor = pList.get(Constants.PR_COLOR).getColor();
+                        deco.underColor = pList.get(Constants.PR_COLOR).getColor(ua);
                     }
                 } else if (propEnum == Constants.EN_OVERLINE) {
                     if (deco == null) {
                         deco = new CommonTextDecoration();
                     }
                     deco.decoration |= OVERLINE;
-                    deco.overColor = pList.get(Constants.PR_COLOR).getColor();
+                    deco.overColor = pList.get(Constants.PR_COLOR).getColor(ua);
                 } else if (propEnum == Constants.EN_NO_OVERLINE) {
                     if (deco != null) {
                         deco.decoration &= UNDERLINE | LINE_THROUGH | BLINK;
-                        deco.overColor = pList.get(Constants.PR_COLOR).getColor();
+                        deco.overColor = pList.get(Constants.PR_COLOR).getColor(ua);
                     }
                 } else if (propEnum == Constants.EN_LINE_THROUGH) {
                     if (deco == null) {
                         deco = new CommonTextDecoration();
                     }
                     deco.decoration |= LINE_THROUGH;
-                    deco.throughColor = pList.get(Constants.PR_COLOR).getColor();
+                    deco.throughColor = pList.get(Constants.PR_COLOR).getColor(ua);
                 } else if (propEnum == Constants.EN_NO_LINE_THROUGH) {
                     if (deco != null) {
                         deco.decoration &= UNDERLINE | OVERLINE | BLINK;
-                        deco.throughColor = pList.get(Constants.PR_COLOR).getColor();
+                        deco.throughColor = pList.get(Constants.PR_COLOR).getColor(ua);
                     }
                 } else if (propEnum == Constants.EN_BLINK) {
                     if (deco == null) {

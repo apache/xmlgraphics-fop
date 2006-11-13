@@ -23,6 +23,7 @@ import java.awt.Color;
 import java.io.Serializable;
 import java.util.StringTokenizer;
 
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.util.ColorUtil;
@@ -154,10 +155,11 @@ public class BorderProps implements Serializable {
     /**
      * Returns a BorderProps represtation of a string of the format as written by 
      * BorderProps.toString().
+     * @param foUserAgent FOP user agent caching ICC profiles
      * @param s the string
      * @return a BorderProps instance
      */
-    public static BorderProps valueOf(String s) {
+    public static BorderProps valueOf(FOUserAgent foUserAgent, String s) {
         if (s.startsWith("(") && s.endsWith(")")) {
             s = s.substring(1, s.length() - 1);
             StringTokenizer st = new StringTokenizer(s, ",");
@@ -175,7 +177,7 @@ public class BorderProps implements Serializable {
             }
             Color c;
             try {
-                c = ColorUtil.parseColorString(color);
+                c = ColorUtil.parseColorString(foUserAgent, color);
             } catch (PropertyException e) {
                 throw new IllegalArgumentException(e.getMessage());
             } 
@@ -192,7 +194,7 @@ public class BorderProps implements Serializable {
         sbuf.append('(');
         sbuf.append(getStyleString());
         sbuf.append(',');
-        sbuf.append(ColorUtil.colorTOsRGBString(color));
+        sbuf.append(ColorUtil.colorToString(color));
         sbuf.append(',');
         sbuf.append(width);
         if (mode != SEPARATE) {

@@ -928,16 +928,15 @@ public class AreaTreeParser {
                         area.addTrait(trait, value);
                     } else if (cl == Color.class) {
                         try {
-                            area.addTrait(trait, ColorUtil.parseColorString(value));
+                            area.addTrait(trait, ColorUtil.parseColorString(this.userAgent, value));
                         } catch (PropertyException e) {
                             throw new IllegalArgumentException(e.getMessage());
                         }
                     } else if (cl == Background.class) {
                         Background bkg = new Background();
                         try {
-                            Color col = ColorUtil
-                                    .parseColorString(attributes
-                                            .getValue("bkg-color"));
+                            Color col = ColorUtil.parseColorString(
+                                        this.userAgent, attributes.getValue("bkg-color"));
                             bkg.setColor(col);
                         } catch (PropertyException e) {
                             throw new IllegalArgumentException(e.getMessage());
@@ -970,7 +969,7 @@ public class AreaTreeParser {
                         }
                         area.addTrait(trait, bkg);
                     } else if (cl == BorderProps.class) {
-                        area.addTrait(trait, BorderProps.valueOf(value));
+                        area.addTrait(trait, BorderProps.valueOf(this.userAgent, value));
                     }
                 } else {
                     if (trait == Trait.FONT) {

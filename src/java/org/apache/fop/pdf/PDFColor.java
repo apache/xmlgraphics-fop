@@ -19,9 +19,14 @@
  
 package org.apache.fop.pdf;
 
-// Java
+import java.awt.Color;
+import java.awt.color.ColorSpace;
+import java.awt.color.ICC_ColorSpace;
+import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
+
+import org.apache.fop.util.ColorExt;
 
 /**
  * PDF Color object.
@@ -38,6 +43,12 @@ public class PDFColor extends PDFPathPaint {
     private double magenta = -1.0;
     private double yellow = -1.0;
     private double black = -1.0;
+    
+    // TODO - It would probably be better to reorganize PDFPathPaint/PDFColor/PDFColorSpace
+    //        class hierarchy. However, at this early stages of my FOP understanding, I can 
+    //        not really oversee the consequences of such a switch (nor whether it would be 
+    //        appropriate). 
+    private ColorExt colorExt = null;
 
     /**
      * Create a PDF color with double values ranging from 0 to 1
@@ -54,20 +65,90 @@ public class PDFColor extends PDFPathPaint {
         this.green = theGreen;
         this.blue = theBlue;
     }
-
+    
+    /**
+     * Create PDFColor for the given document and based on the java.awt.Color object
+     * 
+     * In case the java.awt.Color is an instance of the ColorExt class a PDFICCStream is added to 
+     * the PDFDocument that is being created
+     * 
+     * @param pdfDoc PDFDocument that is being created
+     * @param col Color object from which to create this PDFColor
+     */
+    public PDFColor(PDFDocument pdfDoc, Color col) {
+        this(col);
+        // TODO - 1) There is a potential conflict when FOP and Batik elements use the same color
+        //           profile name for different profiles.  
+        //        2) In case the same color profile is used with different names it will be 
+        //           included multiple times in the PDF
+        //
+        if (colorExt != null 
+                && pdfDoc.getResources().getColorSpace(colorExt.getIccProfileName()) == null) {
+            PDFICCStream pdfIccStream = new PDFICCStream();
+            ColorSpace ceCs = colorExt.getOrigColorSpace();
+            try {
+                pdfIccStream.setColorSpace(((ICC_ColorSpace)ceCs).getProfile(), null);
+                pdfIccStream.setData(
+                        ((ICC_ColorSpace)colorExt.getColorSpace()).getProfile().getData());
+            } catch (IOException ioe) {
+                log.error("Failed to set profile data for " + colorExt.getIccProfileName());
+            }
+            pdfDoc.registerObject(pdfIccStream);
+            pdfDoc.getFactory().makeICCBasedColorSpace(
+                    null, colorExt.getIccProfileName(), pdfIccStream);
+            if (log.isInfoEnabled()) {
+                log.info("Adding PDFICCStream " + colorExt.getIccProfileName() 
+                        + " for " + colorExt.getIccProfileSrc());
+            }
+        }
+    }
+    
     /**
      * Create a PDF color from a java.awt.Color object.
+     * 
+     * Different Color objects are handled differently. Cases recognized are.
+     * 
+     * 1. CMYK color
+     * 2. ColorExt color
+     * 3. 'Normal' java.awt.Color (RGB case assumed)
      *
-     * @param col the sRGB color
+     * @param col the java.awt.Color object for which to create a PDFColor object
      */
     public PDFColor(java.awt.Color col) {
-        this.colorSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
-        float[] comps = new float[3];
-        comps = col.getColorComponents(comps);
-
-        this.red = comps[0];
-        this.green = comps[1];
-        this.blue = comps[2];
+        ColorSpace cs = col.getColorSpace();
+        ColorExt ce = null;
+        if (col instanceof ColorExt) {
+            ce = (ColorExt)col;
+            cs = ce.getOrigColorSpace();  
+        }
+        if (cs != null && cs.getType() == ColorSpace.TYPE_CMYK) {
+            // CMYK case
+            this.colorSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_CMYK);
+            float[] cmyk = (ce == null 
+                    ? col.getColorComponents(null)
+                    : ce.getOriginalColorComponents());
+            this.cyan = cmyk[0];
+            this.magenta = cmyk[1];
+            this.yellow = cmyk[2];
+            this.black = cmyk[3];
+        } else if (ce != null) {
+            // ColorExt (ICC) case
+            this.colorExt = ce;
+            float[] rgb = col.getRGBColorComponents(null);
+            this.red = rgb[0];
+            this.green = rgb[1];
+            this.blue = rgb[2];
+            // TODO - See earlier todo
+            this.colorSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
+        } else {
+            // Default (RGB) Color
+            this.colorSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
+            float[] comps = new float[3];
+            comps = col.getColorComponents(comps);
+            this.red = comps[0];
+            this.green = comps[1];
+            this.blue = comps[2];
+        }
     }
     
     /**
@@ -268,9 +349,26 @@ public class PDFColor extends PDFPathPaint {
     public String getColorSpaceOut(boolean fillNotStroke) {
         StringBuffer p = new StringBuffer("");
 
-        double tempDouble;
-
-        if (this.colorSpace.getColorSpace()
+        if (this.colorExt != null) {
+            if (fillNotStroke)  {
+                p.append("/" + this.colorExt.getIccProfileName() + " cs ");
+            } else {
+                p.append("/" + this.colorExt.getIccProfileName() + " CS ");
+            }
+            float[] colorArgs;
+            colorArgs = this.colorExt.getOriginalColorComponents();
+            if (colorArgs == null) {
+                colorArgs = this.colorExt.getColorComponents(null);
+            }
+            for (int ix = 0; ix < colorArgs.length; ix++) {
+                p.append(colorArgs[ix] + " ");
+            }
+            if (fillNotStroke)  {
+                p.append("sc\n");
+            } else {
+                p.append("SC\n");
+            }
+        } else if (this.colorSpace.getColorSpace()
                 == PDFDeviceColorSpace.DEVICE_RGB) {       // colorspace is RGB
             // according to pdfspec 12.1 p.399
             // if the colors are the same then just use the g or G operator
@@ -454,7 +552,8 @@ public class PDFColor extends PDFPathPaint {
         }
         PDFColor color = (PDFColor)obj;
 
-        if (color.red == this.red && color.green == this.green
+        if (color.red == this.red 
+                && color.green == this.green
                 && color.blue == this.blue) {
             return true;
         }

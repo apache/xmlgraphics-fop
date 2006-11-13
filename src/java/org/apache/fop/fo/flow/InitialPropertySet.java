@@ -73,7 +73,7 @@ public class InitialPropertySet extends FObj {
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         commonFont = pList.getFontProps();
         commonRelativePosition = pList.getRelativePositionProps();
-        color = pList.get(PR_COLOR).getColor();
+        color = pList.get(PR_COLOR).getColor(getUserAgent());
         id = pList.get(PR_ID).getString();
         // letterSpacing = pList.get(PR_LETTER_SPACING);
         lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();

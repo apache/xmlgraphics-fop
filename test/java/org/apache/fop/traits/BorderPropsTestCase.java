@@ -38,18 +38,18 @@ public class BorderPropsTestCase extends TestCase {
     public void testSerialization() throws Exception {
         Color col = new Color(1.0f, 1.0f, 0.5f, 1.0f);
         //Normalize: Avoid false alarms due to color conversion (rounding)
-        col = ColorUtil.parseColorString(ColorUtil.colorTOsRGBString(col));
+        col = ColorUtil.parseColorString(null, ColorUtil.colorToString(col));
         
         BorderProps b1 = new BorderProps(Constants.EN_DOUBLE, 1250, 
                 col, BorderProps.COLLAPSE_OUTER);
         String ser = b1.toString();
-        BorderProps b2 = BorderProps.valueOf(ser);
+        BorderProps b2 = BorderProps.valueOf(null, ser);
         assertEquals(b1, b2);
 
         b1 = new BorderProps(Constants.EN_INSET, 9999, 
                 col, BorderProps.SEPARATE);
         ser = b1.toString();
-        b2 = BorderProps.valueOf(ser);
+        b2 = BorderProps.valueOf(null, ser);
         assertEquals(b1, b2);
     }
     
