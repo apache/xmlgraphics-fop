@@ -37,14 +37,14 @@ public class TraitColorTestCase extends TestCase {
      */
     public void testSerialization() throws Exception {
         Color col = new Color(1.0f, 1.0f, 0.5f, 1.0f);
-        String s = ColorUtil.colorTOsRGBString(col);
+        String s = ColorUtil.colorToString(col);
         
         //This is what the old color spit out. Now it is 80 due to rounding 
         //assertEquals("#ffff7f", s);
         assertEquals("#ffff80", s);
         
         col = new Color(1.0f, 0.0f, 0.0f, 0.8f);
-        s = ColorUtil.colorTOsRGBString(col);
+        s = ColorUtil.colorToString(col);
         assertEquals("#ff0000cc", s);
     }
     
@@ -53,13 +53,13 @@ public class TraitColorTestCase extends TestCase {
      * @throws Exception if an error occurs
      */
     public void testDeserialization() throws Exception {
-        Color col = ColorUtil.parseColorString("#ffff7f");
+        Color col = ColorUtil.parseColorString(null, "#ffff7f");
         assertEquals(255, col.getRed());
         assertEquals(255, col.getGreen());
         assertEquals(127, col.getBlue());
         assertEquals(255, col.getAlpha());
 
-        col = ColorUtil.parseColorString("#ff0000cc");
+        col = ColorUtil.parseColorString(null, "#ff0000cc");
         assertEquals(255, col.getRed());
         assertEquals(0, col.getGreen());
         assertEquals(0, col.getBlue());
@@ -71,9 +71,8 @@ public class TraitColorTestCase extends TestCase {
      * @throws Exception if an error occurs
      */
     public void testEquals() throws Exception {
-        Color col1 = ColorUtil.parseColorString("#ff0000cc");
-        Color col2 = ColorUtil.parseColorString("#ff0000cc");
-        assertTrue(col1 != col2);
+        Color col1 = ColorUtil.parseColorString(null, "#ff0000cc");
+        Color col2 = ColorUtil.parseColorString(null, "#ff0000cc");
         assertEquals(col1, col2);
     }
     

@@ -145,7 +145,7 @@ public class FOText extends FONode {
      * @see org.apache.fop.fo.FONode#clone(FONode, boolean)
      */
     public FONode clone(FONode parent, boolean removeChildren)
-        throws FOPException {
+            throws FOPException {
         FOText ft = (FOText) super.clone(parent, removeChildren);
         if (removeChildren) {
             //not really removing, but just make sure the char array 
@@ -164,8 +164,7 @@ public class FOText extends FONode {
     public void bind(PropertyList pList) throws FOPException {
         commonFont = pList.getFontProps();
         commonHyphenation = pList.getHyphenationProps();
-        
-        color = pList.get(Constants.PR_COLOR).getColor();
+        color = pList.get(Constants.PR_COLOR).getColor(getUserAgent());
         lineHeight = pList.get(Constants.PR_LINE_HEIGHT).getSpace();
         letterSpacing = pList.get(Constants.PR_LETTER_SPACING);
         whiteSpaceCollapse = pList.get(Constants.PR_WHITE_SPACE_COLLAPSE).getEnum();

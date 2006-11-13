@@ -21,6 +21,7 @@ package org.apache.fop.fo.properties;
 
 import java.awt.Color;
 
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.PercentBaseContext;
@@ -176,9 +177,10 @@ public class NumberProperty extends Property implements Numeric {
 
     /**
      * Convert NumberProperty to a Color. Not sure why this is needed.
+     * @param foUserAgent FOUserAgent 
      * @return Color that corresponds to black
      */
-    public Color getColor() {
+    public Color getColor(FOUserAgent foUserAgent) {
         // TODO: Implement somehow
         // Convert numeric value to color ???
         // Convert to hexadecimal and then try to make it into a color?

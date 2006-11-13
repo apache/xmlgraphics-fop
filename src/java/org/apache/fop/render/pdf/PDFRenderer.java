@@ -1331,7 +1331,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      *     written to the current stream.
      */
     protected void setColor(Color col, boolean fill, StringBuffer pdf) {
-        PDFColor color = new PDFColor(col);
+        PDFColor color = new PDFColor(this.pdfDoc, col);
 
         closeText();
         

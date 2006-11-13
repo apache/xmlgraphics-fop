@@ -83,15 +83,7 @@ public class Declarations extends FObj {
                 if (node.getName().equals("fo:color-profile")) {
                     ColorProfile cp = (ColorProfile)node;
                     if (!"".equals(cp.getColorProfileName())) {
-                        if (colorProfiles == null) {
-                            colorProfiles = new java.util.HashMap();
-                        }
-                        if (colorProfiles.get(cp.getColorProfileName()) != null) {
-                            // duplicate names
-                            getLogger().warn("Duplicate fo:color-profile profile name : "
-                                    + cp.getColorProfileName());
-                        }
-                        colorProfiles.put(cp.getColorProfileName(), cp);
+                        addColorProfile(cp);
                     } else {
                         getLogger().warn("color-profile-name required for color profile");
                     }
@@ -102,6 +94,18 @@ public class Declarations extends FObj {
             }
         }
         childNodes = null;
+    }
+
+    private void addColorProfile(ColorProfile cp) {
+        if (colorProfiles == null) {
+            colorProfiles = new java.util.HashMap();
+        }
+        if (colorProfiles.get(cp.getColorProfileName()) != null) {
+            // duplicate names
+            getLogger().warn("Duplicate fo:color-profile profile name: "
+                    + cp.getColorProfileName());
+        }
+        colorProfiles.put(cp.getColorProfileName(), cp);
     }
 
     /**
@@ -117,4 +121,22 @@ public class Declarations extends FObj {
     public int getNameId() {
         return FO_DECLARATIONS;
     }
+    
+    /**
+     * Return ColorProfile with given name.
+     * 
+     * @param cpName Name of ColorProfile, i.e. the value of the color-profile-name attribute of 
+     *               the fo:color-profile element
+     * @return The org.apache.fop.fo.pagination.ColorProfile object associated with this 
+     *         color-profile-name or null
+     */
+    public ColorProfile getColorProfile(String cpName) {
+        ColorProfile profile = null;
+        if (this.colorProfiles != null) {
+            profile = (ColorProfile)this.colorProfiles.get(cpName);
+        }
+        return profile;
+    }
+    
+    
 }

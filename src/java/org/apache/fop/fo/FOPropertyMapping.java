@@ -22,6 +22,7 @@ package org.apache.fop.fo;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.properties.BackgroundPositionShorthandParser;
@@ -564,7 +565,9 @@ public final class FOPropertyMapping implements Constants {
                     Property p, PropertyList propertyList, FObj fo) throws PropertyException {
                 String nameval = p.getNCname();
                 if (nameval != null) {
-                    return new ColorProperty(nameval);
+                    FObj fobj = (fo == null ? propertyList.getFObj() : fo);
+                    FOUserAgent ua = (fobj == null ? null : fobj.getUserAgent());
+                    return new ColorProperty(ua, nameval);
                 }
                 return super.convertPropertyDatatype(p, propertyList, fo);
             }
@@ -1289,7 +1292,7 @@ public final class FOPropertyMapping implements Constants {
         m.addEnum("mathematical", getEnumProperty(EN_MATHEMATICAL, "MATHEMATICAL"));
         m.addEnum("central", getEnumProperty(EN_CENTRAL, "CENTRAL"));
         m.addEnum("middle", getEnumProperty(EN_MIDDLE, "MIDDLE"));
-        m.addEnum("text-after-edge", getEnumProperty(EN_TEXT_AFTER_EDGE, "TEXT_AFTER_EDGE"        ));
+        m.addEnum("text-after-edge", getEnumProperty(EN_TEXT_AFTER_EDGE, "TEXT_AFTER_EDGE"));
         m.addEnum("text-before-edge", getEnumProperty(EN_TEXT_BEFORE_EDGE, "TEXT_BEFORE_EDGE"));
         m.setDefault("auto");
         m.addShorthand(s_generics[PR_VERTICAL_ALIGN]);

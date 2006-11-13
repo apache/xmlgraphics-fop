@@ -384,7 +384,7 @@ public class XMLRenderer extends PrintRenderer {
                     }
                 } else if (clazz.equals(Color.class)) {
                     Color c = (Color)value;
-                    addAttribute(name, ColorUtil.colorTOsRGBString(c));
+                    addAttribute(name, ColorUtil.colorToString(c));
                 } else if (key == Trait.START_INDENT || key == Trait.END_INDENT) {
                     if (((Integer)value).intValue() != 0) {
                         addAttribute(name, value.toString());

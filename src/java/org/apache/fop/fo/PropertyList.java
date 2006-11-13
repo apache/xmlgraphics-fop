@@ -421,7 +421,7 @@ public abstract class PropertyList {
                 }
             } catch (PropertyException e) {
                 log.error("Ignoring property: " 
-                        + attributeName + "=\"" + attributeValue + "\"");
+                        + attributeName + "=\"" + attributeValue + "\" (" + e.getMessage() + ")");
             }
         }
     }

@@ -19,24 +19,16 @@
 
 package org.apache.fop.fo.pagination;
 
-// Java
-import java.awt.Color;
-import java.awt.color.ICC_ColorSpace;
-import java.awt.color.ICC_Profile;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+
 import org.xml.sax.Locator;
 
 /**
  * The fo:color-profile formatting object.
- * TODO: This needs to be implemented properly!
  * This loads the color profile when needed and resolves a requested color.
  */
 public class ColorProfile extends FObj {
@@ -45,8 +37,6 @@ public class ColorProfile extends FObj {
     private String colorProfileName;
     private int renderingIntent;
     // End of property values
-    
-    private ICC_ColorSpace colorSpace = null;
 
     /**
      * @see org.apache.fop.fo.FONode#FONode(FONode)
@@ -80,38 +70,6 @@ public class ColorProfile extends FObj {
         return colorProfileName;
     }
 
-    /**
-     * Get the color specified with the color values from the color profile.
-     * The default values are used if the profile could not be loaded
-     * or the value is not found.
-     * @param colorVals integer array containing the color profile?
-     * @param defR integer value for red channel (0-255)?
-     * @param defG integer value for green channel (0-255)?
-     * @param defB integer value for blue channel (0-255)?
-     * @return the ColorType object corresponding to the input
-     */
-    public Color getColor(int[] colorVals, int defR, int defG, int defB) {
-        // float[] rgbvals = colorSpace.toRGB(colorVals);
-        // return new ColorType(rgbvals);
-        return null;
-    }
-
-    /**
-     * Load the color profile.
-     */
-    private void load() {
-        try {
-            URL url = new URL(src);
-            InputStream is = url.openStream();
-            ICC_Profile iccProfile = ICC_Profile.getInstance(is);
-            colorSpace = new ICC_ColorSpace(iccProfile);
-        } catch (IOException ioe) {
-            getLogger().error("Could not read Color Profile src", ioe);
-        } catch (IllegalArgumentException iae) {
-            getLogger().error("Color Profile src not an ICC Profile", iae);
-        }
-    }
-
     /** @see org.apache.fop.fo.FONode#getLocalName() */
     public String getLocalName() {
         return "color-profile";
@@ -122,5 +80,30 @@ public class ColorProfile extends FObj {
      */
     public int getNameId() {
         return FO_COLOR_PROFILE;
+    }
+    
+    /** 
+     * Get src attribute
+     * 
+     * @return Value of color-profile src attribute
+     */
+    public String getSrc() {
+        return this.src;
+    }
+    
+    /**
+     * Get rendering-intent attribute
+     * 
+     * Returned value is one of
+     *   Constants.EN_AUTO
+     *   Constants.EN_PERCEPTUAL
+     *   Constants.EN_RELATIVE_COLOMETRIC
+     *   Constants.EN_SATURATION
+     *   Constants.EN_ABSOLUTE_COLORMETRIC
+     *    
+     * @return Rendering intent attribute
+     */
+    public int getRenderingIntent() {
+        return this.renderingIntent;
     }
 }

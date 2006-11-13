@@ -87,7 +87,7 @@ public class BidiOverride extends FObjMixed {
         commonAural = pList.getAuralProps();
         commonFont = pList.getFontProps();
         commonRelativePosition = pList.getRelativePositionProps();
-        prColor = pList.get(PR_COLOR).getColor();
+        prColor = pList.get(PR_COLOR).getColor(getUserAgent());
         // prDirection = pList.get(PR_DIRECTION);
         // prLetterSpacing = pList.get(PR_LETTER_SPACING);
         lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();

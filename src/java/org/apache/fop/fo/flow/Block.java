@@ -110,7 +110,7 @@ public class Block extends FObjMixed {
 
         breakAfter = pList.get(PR_BREAK_AFTER).getEnum();
         breakBefore = pList.get(PR_BREAK_BEFORE).getEnum();
-        color = pList.get(PR_COLOR).getColor();
+        color = pList.get(PR_COLOR).getColor(getUserAgent());
         textDepth = pList.get(PR_TEXT_DEPTH).getLength();
         textAltitude = pList.get(PR_TEXT_ALTITUDE).getLength();
         hyphenationKeep = pList.get(PR_HYPHENATION_KEEP).getEnum();

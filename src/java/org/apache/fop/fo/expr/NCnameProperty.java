@@ -21,6 +21,7 @@ package org.apache.fop.fo.expr;
 
 import java.awt.Color;
 
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.util.ColorUtil;
 
@@ -42,13 +43,17 @@ public class NCnameProperty extends Property {
     /**
      * If a system color, return the corresponding value.
      * 
+     * @param foUserAgent 
+     *     Reference to FOP user agent - keeps track of cached ColorMaps for ICC colors
      * @return Color object corresponding to the NCName
      */
-    public Color getColor()  {
+    public Color getColor(FOUserAgent foUserAgent)  {
         try { 
-            return ColorUtil.parseColorString(ncName);
+            return ColorUtil.parseColorString(foUserAgent, ncName);
         } catch (PropertyException e) {
-            //TODO: This should probably print an error message?
+            //Not logging this error since for properties like "border" you would get an awful
+            //lot of error messages for things like "solid" not being valid colors.
+            //log.error("Can't create color value: " + e.getMessage());
             return null;
         }
     }
