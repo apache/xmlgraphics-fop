@@ -209,30 +209,28 @@ public class FontSetup {
             EmbedFontInfo configFontInfo = (EmbedFontInfo) fontInfoList.get(i);
 
             String metricsFile = configFontInfo.getMetricsFile();
-            if (metricsFile != null) {
-                internalName = "F" + num;
-                num++;
-                /*
-                reader = new FontReader(metricsFile);
-                reader.useKerning(configFontInfo.getKerning());
-                reader.setFontEmbedPath(configFontInfo.getEmbedFile());
-                fontInfo.addMetrics(internalName, reader.getFont());
-                */
-                LazyFont font = new LazyFont(configFontInfo.getEmbedFile(),
-                                             metricsFile,
-                                             configFontInfo.getKerning(), 
-                                             resolver);
-                fontInfo.addMetrics(internalName, font);
+            internalName = "F" + num;
+            num++;
+            /*
+            reader = new FontReader(metricsFile);
+            reader.useKerning(configFontInfo.getKerning());
+            reader.setFontEmbedPath(configFontInfo.getEmbedFile());
+            fontInfo.addMetrics(internalName, reader.getFont());
+            */
+            LazyFont font = new LazyFont(configFontInfo.getEmbedFile(),
+                                         metricsFile,
+                                         configFontInfo.getKerning(), 
+                                         resolver);
+            fontInfo.addMetrics(internalName, font);
 
-                List triplets = configFontInfo.getFontTriplets();
-                for (int c = 0; c < triplets.size(); c++) {
-                    FontTriplet triplet = (FontTriplet) triplets.get(c);
+            List triplets = configFontInfo.getFontTriplets();
+            for (int c = 0; c < triplets.size(); c++) {
+                FontTriplet triplet = (FontTriplet) triplets.get(c);
 
-                    if (log.isDebugEnabled()) {
-                        log.debug("Registering: " + triplet + " under " + internalName);
-                    }
-                    fontInfo.addFontProperties(internalName, triplet);
+                if (log.isDebugEnabled()) {
+                    log.debug("Registering: " + triplet + " under " + internalName);
                 }
+                fontInfo.addFontProperties(internalName, triplet);
             }
         }
     }
@@ -270,7 +268,7 @@ public class FontSetup {
             }
 
             EmbedFontInfo efi;
-            efi = new EmbedFontInfo(font[i].getAttribute("metrics-url"),
+            efi = new EmbedFontInfo(font[i].getAttribute("metrics-url", null),
                                     font[i].getAttributeAsBoolean("kerning", false),
                                     tripleList, font[i].getAttribute("embed-url", null));
 

@@ -33,8 +33,6 @@ public class MultiByteFont extends CIDFont {
     private String ttcName = null;
     private String encoding = "Identity-H";
 
-    private String embedResourceName = null;
-
     private int defaultWidth = 0;
     private CIDFontType cidType = CIDFontType.CIDTYPE2;
 
