@@ -511,7 +511,6 @@ list of possible build targets.
           <attribute name="Implementation-Title" value="${Name}"/>
           <attribute name="Implementation-Version" value="${version}"/>
           <attribute name="Implementation-Vendor" value="The Apache Software Foundation (http://xmlgraphics.apache.org/fop/)"/>
-          <attribute name="Implementation-URL" value="http://xmlgraphics.apache.org/fop/"/>
         </section>
       </manifest>
       <metainf dir="${basedir}" includes="LICENSE,NOTICE"/>
