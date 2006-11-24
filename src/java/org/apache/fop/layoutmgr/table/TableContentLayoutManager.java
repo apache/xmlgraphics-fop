@@ -65,7 +65,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
     private static Log log = LogFactory.getLog(TableContentLayoutManager.class);
 
     private TableLayoutManager tableLM;
-    private TableRowIterator trIter;
+    private TableRowIterator bodyIter;
     private TableRowIterator headerIter;
     private TableRowIterator footerIter;
     private LinkedList headerList;
@@ -86,7 +86,8 @@ public class TableContentLayoutManager implements PercentBaseContext {
     public TableContentLayoutManager(TableLayoutManager parent) {
         this.tableLM = parent;
         Table table = getTableLM().getTable();
-        this.trIter = new TableRowIterator(table, getTableLM().getColumns(), TableRowIterator.BODY);
+        this.bodyIter = new TableRowIterator(table, getTableLM().getColumns(),
+                TableRowIterator.BODY);
         if (table.getTableHeader() != null) {
             headerIter = new TableRowIterator(table, 
                     getTableLM().getColumns(), TableRowIterator.HEADER);
@@ -146,8 +147,8 @@ public class TableContentLayoutManager implements PercentBaseContext {
             this.headerList = getKnuthElementsForRowIterator(
                     headerIter, context, alignment, TableRowIterator.HEADER);
             ElementListUtils.removeLegalBreaks(this.headerList);
-            this.headerNetHeight = 
-                ElementListUtils.calcContentLength(this.headerList);
+            this.headerNetHeight
+                    = ElementListUtils.calcContentLength(this.headerList);
             if (log.isDebugEnabled()) {
                 log.debug("==> Header: " 
                         + headerNetHeight + " - " + this.headerList);
@@ -167,8 +168,8 @@ public class TableContentLayoutManager implements PercentBaseContext {
             this.footerList = getKnuthElementsForRowIterator(
                     footerIter, context, alignment, TableRowIterator.FOOTER);
             ElementListUtils.removeLegalBreaks(this.footerList);
-            this.footerNetHeight = 
-                    ElementListUtils.calcContentLength(this.footerList);
+            this.footerNetHeight
+                    = ElementListUtils.calcContentLength(this.footerList);
             if (log.isDebugEnabled()) {
                 log.debug("==> Footer: " 
                         + footerNetHeight + " - " + this.footerList);
@@ -180,7 +181,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
             footerAsLast = box;
         }
         LinkedList returnList = getKnuthElementsForRowIterator(
-                trIter, context, alignment, TableRowIterator.BODY);
+                bodyIter, context, alignment, TableRowIterator.BODY);
         if (headerAsFirst != null) {
             returnList.add(0, headerAsFirst);
         } else if (headerAsSecondToLast != null) {
@@ -312,36 +313,31 @@ public class TableContentLayoutManager implements PercentBaseContext {
             TableRowIterator iter) {
         for (int rgi = 0; rgi < rowGroup.length; rgi++) {
             EffRow row = rowGroup[rgi];
-            EffRow prev = iter.getCachedRow(row.getIndex() - 1);
-            EffRow next = iter.getCachedRow(row.getIndex() + 1);
-            if (next == null) {
-                //It wasn't read, yet, or we are at the last row
-                next = iter.getNextRow();
-                iter.backToPreviousRow();
+            EffRow prevRow = iter.getPrecedingRow(row);
+            EffRow nextRow = iter.getFollowingRow(row);
+            if ((prevRow == null) && (iter == this.bodyIter) && (this.headerIter != null)) {
+                prevRow = this.headerIter.getLastRow();
             }
-            if ((prev == null) && (iter == this.trIter) && (this.headerIter != null)) {
-                prev = this.headerIter.getLastRow();
+            if ((nextRow == null) && (iter == this.headerIter)) {
+                nextRow = this.bodyIter.getFirstRow();
             }
-            if ((next == null) && (iter == this.headerIter)) {
-                next = this.trIter.getFirstRow();
+            if ((nextRow == null) && (iter == this.bodyIter) && (this.footerIter != null)) {
+                nextRow = this.footerIter.getFirstRow();
             }
-            if ((next == null) && (iter == this.trIter) && (this.footerIter != null)) {
-                next = this.footerIter.getFirstRow();
-            }
-            if ((prev == null) && (iter == this.footerIter)) {
+            if ((prevRow == null) && (iter == this.footerIter)) {
                 //TODO This could be bad for memory consumption because it already causes the
                 //whole body iterator to be prefetched!
-                prev = this.trIter.getLastRow();
+                prevRow = this.bodyIter.getLastRow();
             }
-            log.debug(prev + " - " + row + " - " + next);
+            log.debug(prevRow + " - " + row + " - " + nextRow);
             
             //Determine the grid units necessary for getting all the borders right
             int guCount = row.getGridUnits().size();
-            if (prev != null) {
-                guCount = Math.max(guCount, prev.getGridUnits().size());
+            if (prevRow != null) {
+                guCount = Math.max(guCount, prevRow.getGridUnits().size());
             }
-            if (next != null) {
-                guCount = Math.max(guCount, next.getGridUnits().size());
+            if (nextRow != null) {
+                guCount = Math.max(guCount, nextRow.getGridUnits().size());
             }
             GridUnit gu = row.getGridUnit(0);
             //Create empty grid units to hold resolved borders of neighbouring cells
@@ -362,8 +358,8 @@ public class TableContentLayoutManager implements PercentBaseContext {
                     gu = row.getGridUnit(i);
                     GridUnit other;
                     int flags = 0;
-                    if (prev != null && i < prev.getGridUnits().size()) {
-                        other = prev.getGridUnit(i);
+                    if (prevRow != null && i < prevRow.getGridUnits().size()) {
+                        other = prevRow.getGridUnit(i);
                     } else {
                         other = null;
                     }
@@ -371,7 +367,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
                             || other.isEmpty() 
                             || gu.isEmpty() 
                             || gu.getPrimary() != other.getPrimary()) {
-                        if ((iter == this.trIter)
+                        if ((iter == this.bodyIter)
                                 && gu.getFlag(GridUnit.FIRST_IN_TABLE)
                                 && (this.headerIter == null)) {
                             flags |= CollapsingBorderModel.VERTICAL_START_END_OF_TABLE;
@@ -385,8 +381,8 @@ public class TableContentLayoutManager implements PercentBaseContext {
                     }
                     
                     flags = 0;
-                    if (next != null && i < next.getGridUnits().size()) {
-                        other = next.getGridUnit(i);
+                    if (nextRow != null && i < nextRow.getGridUnits().size()) {
+                        other = nextRow.getGridUnit(i);
                     } else {
                         other = null;
                     }
@@ -394,7 +390,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
                             || other.isEmpty() 
                             || gu.isEmpty() 
                             || gu.getPrimary() != other.getPrimary()) {
-                        if ((iter == this.trIter)
+                        if ((iter == this.bodyIter)
                                 && gu.getFlag(GridUnit.LAST_IN_TABLE)
                                 && (this.footerIter == null)) {
                             flags |= CollapsingBorderModel.VERTICAL_START_END_OF_TABLE;
@@ -608,7 +604,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
     }
     
     /**
-     * Adds the areas generated my this layout manager to the area tree.
+     * Adds the areas generated by this layout manager to the area tree.
      * @param parentIter the position iterator
      * @param layoutContext the layout context for adding areas
      */
@@ -723,12 +719,12 @@ public class TableContentLayoutManager implements PercentBaseContext {
                     body = part.pgu.getBody();
                 }
                 if (tcpos.getFlag(TableContentPosition.FIRST_IN_ROWGROUP) 
-                        && tcpos.row.getFlag(EffRow.FIRST_IN_BODY)) {
+                        && tcpos.row.getFlag(EffRow.FIRST_IN_PART)) {
                     firstPos = true;
 
                 }
                 if (tcpos.getFlag(TableContentPosition.LAST_IN_ROWGROUP) 
-                        && tcpos.row.getFlag(EffRow.LAST_IN_BODY)) {
+                        && tcpos.row.getFlag(EffRow.LAST_IN_PART)) {
                     lastPos = true;
                     getTableLM().getCurrentPV().addMarkers(body.getMarkers(), 
                             true, firstPos, lastPos);

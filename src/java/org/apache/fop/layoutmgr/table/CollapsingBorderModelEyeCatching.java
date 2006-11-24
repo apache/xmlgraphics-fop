@@ -98,8 +98,8 @@ public class CollapsingBorderModelEyeCatching extends CollapsingBorderModel {
             other[1] = otherRow.getCommonBorderPaddingBackground().getBorderInfo(otherSide);
         }
         if (currentBody != null
-                && ((side == BEFORE && currentGridUnit.getFlag(GridUnit.FIRST_IN_BODY))
-                || (side == AFTER && currentGridUnit.getFlag(GridUnit.LAST_IN_BODY))
+                && ((side == BEFORE && currentGridUnit.getFlag(GridUnit.FIRST_IN_PART))
+                || (side == AFTER && currentGridUnit.getFlag(GridUnit.LAST_IN_PART))
                 || (currentGridUnit.getFlag(GridUnit.IN_FIRST_COLUMN) && side == START)
                 || (currentGridUnit.getFlag(GridUnit.IN_LAST_COLUMN) && side == END))) {
             //row group (=body, table-header or table-footer)
@@ -107,8 +107,8 @@ public class CollapsingBorderModelEyeCatching extends CollapsingBorderModel {
         }
         if (otherGridUnit != null
                 && otherBody != null
-                && ((otherSide == BEFORE && otherGridUnit.getFlag(GridUnit.FIRST_IN_BODY))
-                    || (otherSide == AFTER && otherGridUnit.getFlag(GridUnit.LAST_IN_BODY)))) {
+                && ((otherSide == BEFORE && otherGridUnit.getFlag(GridUnit.FIRST_IN_PART))
+                    || (otherSide == AFTER && otherGridUnit.getFlag(GridUnit.LAST_IN_PART)))) {
             //row group (=body, table-header or table-footer)
             other[2] = otherBody.getCommonBorderPaddingBackground().getBorderInfo(otherSide);
         }

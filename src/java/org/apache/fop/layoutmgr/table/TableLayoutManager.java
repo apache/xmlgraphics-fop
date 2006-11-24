@@ -46,10 +46,10 @@ import org.apache.fop.fo.FObj;
 
 /**
  * LayoutManager for a table FO.
- * A table consists of oldColumns, table header, table footer and multiple
+ * A table consists of columns, table header, table footer and multiple
  * table bodies.
  * The header, footer and body add the areas created from the table cells.
- * The table then creates areas for the oldColumns, bodies and rows
+ * The table then creates areas for the columns, bodies and rows
  * the render background.
  */
 public class TableLayoutManager extends BlockStackingLayoutManager 
@@ -210,7 +210,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         //Spaces, border and padding to be repeated at each break
         addPendingMarks(context);
 
-        LinkedList returnedList = null;
+        LinkedList contentKnuthElements = null;
         LinkedList contentList = new LinkedList();
         //Position returnPosition = new NonLeafPosition(this, null);
         //Body prevLM = null;
@@ -226,7 +226,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         if (contentLM == null) {
             contentLM = new TableContentLayoutManager(this);
         }
-        returnedList = contentLM.getNextKnuthElements(childLC, alignment);
+        contentKnuthElements = contentLM.getNextKnuthElements(childLC, alignment);
         if (childLC.isKeepWithNextPending()) {
             log.debug("TableContentLM signals pending keep-with-next");
             context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING);
@@ -237,15 +237,15 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         }
         
         //Set index values on elements coming from the content LM
-        Iterator iter = returnedList.iterator();
+        Iterator iter = contentKnuthElements.iterator();
         while (iter.hasNext()) {
             ListElement el = (ListElement)iter.next();
             notifyPos(el.getPosition());
         }
-        log.debug(returnedList);
+        log.debug(contentKnuthElements);
         
-        if (returnedList.size() == 1
-                && ((ListElement)returnedList.getFirst()).isForcedBreak()) {
+        if (contentKnuthElements.size() == 1
+                && ((ListElement)contentKnuthElements.getFirst()).isForcedBreak()) {
             // a descendant of this block has break-before
             if (returnList.size() == 0) {
                 // the first child (or its first child ...) has
@@ -256,11 +256,11 @@ public class TableLayoutManager extends BlockStackingLayoutManager
                 //FIX ME
                 //bSpaceBeforeServed = false;
             }
-            contentList.addAll(returnedList);
+            contentList.addAll(contentKnuthElements);
 
             // "wrap" the Position inside each element
             // moving the elements from contentList to returnList
-            returnedList = new LinkedList();
+            contentKnuthElements = new LinkedList();
             wrapPositionElements(contentList, returnList);
 
             return returnList;
@@ -287,9 +287,9 @@ public class TableLayoutManager extends BlockStackingLayoutManager
                     // a penalty
                 }
             }*/
-            contentList.addAll(returnedList);
-            if (returnedList.size() > 0) {
-                if (((ListElement)returnedList.getLast()).isForcedBreak()) {
+            contentList.addAll(contentKnuthElements);
+            if (contentKnuthElements.size() > 0) {
+                if (((ListElement)contentKnuthElements.getLast()).isForcedBreak()) {
                     // a descendant of this block has break-after
                     if (false /*curLM.isFinished()*/) {
                         // there is no other content in this block;
@@ -297,7 +297,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
                         setFinished(true);
                     }
 
-                    returnedList = new LinkedList();
+                    contentKnuthElements = new LinkedList();
                     wrapPositionElements(contentList, returnList);
 
                     return returnList;
@@ -317,7 +317,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
     
     /**
      * The table area is a reference area that contains areas for
-     * oldColumns, bodies, rows and the contents are in cells.
+     * columns, bodies, rows and the contents are in cells.
      *
      * @param parentIter the position iterator
      * @param layoutContext the layout context for adding areas
