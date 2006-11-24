@@ -249,18 +249,34 @@ public class CommonBorderPaddingBackground implements Cloneable {
         return this.fopimage;
     }
     
+    /**
+     * @param bDiscard indicates whether the .conditionality component should be
+     * considered (start of a reference-area)
+     */
     public int getBorderStartWidth(boolean bDiscard) {
         return getBorderWidth(START, bDiscard);
     }
 
+    /**
+     * @param bDiscard indicates whether the .conditionality component should be
+     * considered (end of a reference-area)
+     */
     public int getBorderEndWidth(boolean bDiscard) {
         return getBorderWidth(END, bDiscard);
     }
 
+    /**
+     * @param bDiscard indicates whether the .conditionality component should be
+     * considered (start of a reference-area)
+     */
     public int getBorderBeforeWidth(boolean bDiscard) {
         return getBorderWidth(BEFORE, bDiscard);
     }
 
+    /**
+     * @param bDiscard indicates whether the .conditionality component should be
+     * considered (end of a reference-area)
+     */
     public int getBorderAfterWidth(boolean bDiscard) {
         return getBorderWidth(AFTER, bDiscard);
     }

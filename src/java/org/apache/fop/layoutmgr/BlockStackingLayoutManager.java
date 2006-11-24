@@ -1444,7 +1444,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
      * SourceList to targetList
      * @param sourceList source list
      * @param targetList target list receiving the wrapped position elements
-     * @param force if true, every Position is wrapper regardless of its LM of origin
+     * @param force if true, every Position is wrapped regardless of its LM of origin
      */
     protected void wrapPositionElements(List sourceList, List targetList, boolean force) {
           

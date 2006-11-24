@@ -37,28 +37,28 @@ public class GridUnit {
     public static final int IN_FIRST_COLUMN = 0;
     /** Indicates that the grid unit is in the last column. */
     public static final int IN_LAST_COLUMN = 1;
-    /** Indicates that the grid unit is in the first row (context: table). */
+    /** Indicates that the grid unit is in the first row of the table. */
     public static final int FIRST_IN_TABLE = 2;
-    /** Indicates that the grid unit is in the first row (context: body). */
-    public static final int FIRST_IN_BODY = 3;
-    /** Indicates that the grid unit is in the last row (context: body). */
-    public static final int LAST_IN_BODY = 4;
-    /** Indicates that the grid unit is in the last row (context: table). */
+    /** Indicates that the grid unit is in the first row of the table part (header, footer, body). */
+    public static final int FIRST_IN_PART = 3;
+    /** Indicates that the grid unit is in the last row of the table part (header, footer, body). */
+    public static final int LAST_IN_PART = 4;
+    /** Indicates that the grid unit is in the last row of the table. */
     public static final int LAST_IN_TABLE = 5;
     /** Indicates that the primary grid unit has a pending keep-with-next. */
     public static final int KEEP_WITH_NEXT_PENDING = 6;
     /** Indicates that the primary grid unit has a pending keep-with-previous. */
     public static final int KEEP_WITH_PREVIOUS_PENDING = 7;
-    
+
     /** Primary grid unit */
     private PrimaryGridUnit primary;
     /** Table cell which occupies this grid unit */
     private TableCell cell;
-    /** Table row which occupied this grid unit (may be null) */
+    /** Table row which occupies this grid unit (may be null) */
     private TableRow row;
     /** Table column that this grid unit belongs to */
     private TableColumn column;
-    
+
     /** start index of grid unit within row in column direction */
     private int startCol;
     /** index of grid unit within cell in column direction */
@@ -69,16 +69,41 @@ public class GridUnit {
     private CommonBorderPaddingBackground effectiveBorders;
     /** flags for the grid unit */
     private byte flags = 0;
-    
-    
+
+
+    /**
+     * Creates a new grid unit.
+     *
+     * @param cell table cell which occupies this grid unit
+     * @param column table column this grid unit belongs to
+     * @param startCol index of the column this grid unit belongs to
+     * @param colSpanIndex index of this grid unit in the span, in column direction
+     */
     public GridUnit(TableCell cell, TableColumn column, int startCol, int colSpanIndex) {
         this(null, cell, column, startCol, colSpanIndex);
     }
-    
+
+    /**
+     * Creates a new grid unit.
+     *
+     * @param primary ??
+     * @param column table column this grid unit belongs to
+     * @param startCol index of the column this grid unit belongs to
+     * @param colSpanIndex index of this grid unit in the span, in column direction
+     */
     public GridUnit(PrimaryGridUnit primary, TableColumn column, int startCol, int colSpanIndex) {
         this(primary, primary.getCell(), column, startCol, colSpanIndex);
     }
-    
+
+    /**
+     * Creates a new grid unit.
+     *
+     * @param primary ??
+     * @param cell table cell which occupies this grid unit
+     * @param column table column this grid unit belongs to
+     * @param startCol index of the column this grid unit belongs to
+     * @param colSpanIndex index of this grid unit in the span, in column direction
+     */
     protected GridUnit(PrimaryGridUnit primary, TableCell cell, TableColumn column, int startCol, int colSpanIndex) {
         this.primary = primary;
         this.cell = cell;
@@ -86,15 +111,15 @@ public class GridUnit {
         this.startCol = startCol;
         this.colSpanIndex = colSpanIndex;
     }
-    
+
     public TableCell getCell() {
         return cell;
     }
-    
+
     public TableColumn getColumn() {
         return column;
     }
-    
+
     public TableRow getRow() {
         if (row != null) {
             return row;
@@ -104,7 +129,7 @@ public class GridUnit {
             return null;
         }
     }
-    
+
     /**
      * Sets the table-row FO, if applicable.
      * @param row the table-row FO
@@ -120,7 +145,7 @@ public class GridUnit {
         }
         return (TableBody)node;
     }
-    
+
     public Table getTable() {
         FONode node = getBody();
         while (node != null && !(node instanceof Table)) {
@@ -131,7 +156,7 @@ public class GridUnit {
         }
         return (Table)node;
     }
-    
+
     /**
      * @return the primary grid unit if this is a spanned grid unit
      */
@@ -142,15 +167,15 @@ public class GridUnit {
     public boolean isPrimary() {
         return false;
     }
-    
+
     public boolean isEmpty() {
         return cell == null;
     }
-    
+
     public int getStartCol() {
         return startCol;
     }
-    
+
     /** @return true if the grid unit is the last in column spanning direction */
     public boolean isLastGridUnitColSpan() {
         if (cell != null) {
@@ -159,8 +184,8 @@ public class GridUnit {
             return true;
         }
     }
-    
-    /** @return true if the grid unit is the last in column spanning direction */
+
+    /** @return true if the grid unit is the last in row spanning direction */
     public boolean isLastGridUnitRowSpan() {
         if (cell != null) {
             return (rowSpanIndex == cell.getNumberRowsSpanned() - 1);
@@ -168,14 +193,14 @@ public class GridUnit {
             return true;
         }
     }
-    
+
     /**
      * @return the index of the grid unit inside a cell in row direction
      */
     public int getRowSpanIndex() {
         return rowSpanIndex;
     }
-    
+
     /**
      * @return the index of the grid unit inside a cell in column direction
      */
@@ -186,7 +211,7 @@ public class GridUnit {
     /**
      * Returns a BorderInfo instance for a side of the currently applicable cell before border
      * resolution (i.e. the value from the FO). A return value of null indicates an empty cell.
-     * See CollapsingBorderModel(EyeCatching) where this method is used. 
+     * See CollapsingBorderModel(EyeCatching) where this method is used.
      * @param side for which side to return the BorderInfo
      * @return the requested BorderInfo instance or null if the grid unit is an empty cell
      */
@@ -197,21 +222,21 @@ public class GridUnit {
             return null;
         }
     }
-    
+
     /**
      * @return the resolved normal borders for this grid unit
      */
     public CommonBorderPaddingBackground getBorders() {
         return effectiveBorders;
     }
-    
+
     /**
      * @return true if the grid unit has any borders.
      */
     public boolean hasBorders() {
         return (getBorders() != null) && getBorders().hasBorder();
     }
-    
+
     /**
      * Assigns the borders from the given cell to this cell info. Used in
      * case of separate border model.
@@ -221,7 +246,7 @@ public class GridUnit {
             effectiveBorders = cell.getCommonBorderPaddingBackground();
         }
     }
-    
+
     /**
      * Resolve collapsing borders for the given cell. Used in case of the collapsing border model.
      * @param other neighbouring grid unit if any
@@ -230,7 +255,7 @@ public class GridUnit {
     public void resolveBorder(GridUnit other, int side) {
         resolveBorder(other, side, 0);
     }
-    
+
     /**
      * Resolve collapsing borders for the given cell. Used in case of the collapsing border model.
      * @param other neighbouring grid unit if any
@@ -243,13 +268,13 @@ public class GridUnit {
         if (effectiveBorders == null) {
             effectiveBorders = new CommonBorderPaddingBackground();
         }
-        effectiveBorders.setBorderInfo(borderModel.determineWinner(this, other, 
+        effectiveBorders.setBorderInfo(borderModel.determineWinner(this, other,
                         side, resFlags), side);
         if (cell != null) {
             effectiveBorders.setPadding(cell.getCommonBorderPaddingBackground());
         }
     }
-    
+
     /**
      * Returns a flag for this GridUnit.
      * @param which the requested flag
@@ -258,7 +283,7 @@ public class GridUnit {
     public boolean getFlag(int which) {
         return (flags & (1 << which)) != 0;
     }
-    
+
     /**
      * Sets a flag on a GridUnit.
      * @param which the flag to set
@@ -271,7 +296,7 @@ public class GridUnit {
             flags &= ~(1 << which); //clear flag
         }
     }
-    
+
     /**
      * @return the grid unit just below this grid unit if the cell is spanning.
      */

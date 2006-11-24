@@ -29,15 +29,16 @@ import org.apache.fop.traits.MinOptMax;
  * This class represents an effective row in a table and holds a list of grid units occupying
  * the row as well as some additional values.
  */
-public class EffRow {
+class EffRow {
     
     /** Indicates that the row is the first in a table-body */
-    public static final int FIRST_IN_BODY = GridUnit.FIRST_IN_BODY;
+    public static final int FIRST_IN_PART = GridUnit.FIRST_IN_PART;
     /** Indicates that the row is the last in a table-body */
-    public static final int LAST_IN_BODY = GridUnit.LAST_IN_BODY;
+    public static final int LAST_IN_PART = GridUnit.LAST_IN_PART;
     
     private List gridUnits = new java.util.ArrayList();
     private int index;
+    /** One of HEADER, FOOTER, BODY */
     private int bodyType;
     private MinOptMax height;
     private MinOptMax explicitHeight;
@@ -142,14 +143,15 @@ public class EffRow {
     /**
      * Returns a flag for this effective row. Only a subset of the flags on GridUnit is supported.
      * The flag is determined by inspecting flags on the EffRow's GridUnits.
-     * @param which the requested flag
+     * @param which the requested flag (one of {@link EffRow#FIRST_IN_PART} or {@link
+     * EffRow#LAST_IN_PART})
      * @return true if the flag is set
      */
     public boolean getFlag(int which) {
-        if (which == FIRST_IN_BODY) {
-            return getGridUnit(0).getFlag(GridUnit.FIRST_IN_BODY);
-        } else if (which == LAST_IN_BODY) {
-            return getGridUnit(0).getFlag(GridUnit.LAST_IN_BODY);
+        if (which == FIRST_IN_PART) {
+            return getGridUnit(0).getFlag(GridUnit.FIRST_IN_PART);
+        } else if (which == LAST_IN_PART) {
+            return getGridUnit(0).getFlag(GridUnit.LAST_IN_PART);
         } else {
             throw new IllegalArgumentException("Illegal flag queried: " +  which);
         }

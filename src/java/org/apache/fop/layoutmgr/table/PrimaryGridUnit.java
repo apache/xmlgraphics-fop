@@ -36,11 +36,19 @@ public class PrimaryGridUnit extends GridUnit {
     private LinkedList elements;
     /** Index of row where this cell starts */
     private int startRow;
-    /** Links to the spanned grid units. (List of GridUnit arrays, one array represents a row) */ 
+    /** Links to the spanned grid units. (List of GridUnit arrays, one array represents a row) */
     private List rows;
     /** The calculated size of the cell's content. (cached value) */
     private int contentLength = -1;
-    
+
+    /**
+     * Creates a new primary grid unit.
+     *
+     * @param cell table cell which occupies this grid unit
+     * @param column table column this grid unit belongs to
+     * @param startCol index of the column this grid unit belongs to, zero-based
+     * @param startRow index of the row this grid unit belongs to, zero-based
+     */
     public PrimaryGridUnit(TableCell cell, TableColumn column, int startCol, int startRow) {
         super(cell, column, startCol, 0);
         this.startRow = startRow;
@@ -48,25 +56,30 @@ public class PrimaryGridUnit extends GridUnit {
             cellLM = new TableCellLayoutManager(cell, this);
         }
     }
-    
+
     public TableCellLayoutManager getCellLM() {
         return cellLM;
     }
-    
+
     public boolean isPrimary() {
         return true;
     }
-    
+
+    /**
+     * Sets the Knuth elements for the table cell containing this grid unit.
+     *
+     * @param elements a list of ListElement (?)
+     */
     public void setElements(LinkedList elements) {
         this.elements = elements;
     }
-    
+
     public LinkedList getElements() {
         return this.elements;
     }
-    
-    /** 
-     * @return Returns the half the maximum before border width of this cell.
+
+    /**
+     * @return half the maximum before border width of this cell.
      */
     public int getHalfMaxBeforeBorderWidth() {
         int value = 0;
@@ -76,7 +89,7 @@ public class PrimaryGridUnit extends GridUnit {
             GridUnit[] row = (GridUnit[])getRows().get(0);
             for (int i = 0; i < row.length; i++) {
                 if (row[i].hasBorders()) {
-                    before = Math.max(before, 
+                    before = Math.max(before,
                             row[i].getBorders().getBorderBeforeWidth(false));
                 }
             }
@@ -88,9 +101,9 @@ public class PrimaryGridUnit extends GridUnit {
         }
         return value;
     }
-    
-    /** 
-     * @return Returns the half the maximum after border width of this cell.
+
+    /**
+     * @return half the maximum after border width of this cell.
      */
     public int getHalfMaxAfterBorderWidth() {
         int value = 0;
@@ -111,21 +124,21 @@ public class PrimaryGridUnit extends GridUnit {
         }
         return value;
     }
-    
-    /** 
-     * @return Returns the sum of half the maximum before and after border 
+
+    /**
+     * @return the sum of half the maximum before and after border
      * widths of this cell.
      */
     public int getHalfMaxBorderWidth() {
         return getHalfMaxBeforeBorderWidth() + getHalfMaxAfterBorderWidth();
     }
-    
+
     /** @param value The length of the cell content to remember. */
     public void setContentLength(int value) {
         this.contentLength = value;
     }
-    
-    /** @return Returns the length of the cell content. */
+
+    /** @return the length of the cell content. */
     public int getContentLength() {
         return contentLength;
     }
@@ -135,28 +148,45 @@ public class PrimaryGridUnit extends GridUnit {
         if (!getCell().getBlockProgressionDimension().getOptimum(null).isAuto()) {
             return true;
         }
-        if (getRow() != null 
+        if (getRow() != null
                 && !getRow().getBlockProgressionDimension().getOptimum(null).isAuto()) {
             return true;
         }
         return false;
     }
 
+    /**
+     * Returns the grid units belonging to the same span as this one.
+     *
+     * @return a list of GridUnit[], each array corresponds to a row
+     */
     public List getRows() {
         return this.rows;
     }
-    
+
     public void addRow(GridUnit[] row) {
         if (rows == null) {
             rows = new java.util.ArrayList();
         }
         rows.add(row);
     }
-    
+
+    /**
+     * Returns the index of the row this grid unit belongs to.
+     *
+     * @return the index of the row this grid unit belongs to.
+     */
     public int getStartRow() {
         return this.startRow;
     }
 
+    /**
+     * Returns the widths of the start- and end-borders of the span this grid unit belongs
+     * to.
+     *
+     * @return a two-element array containing the widths of the start-border then the
+     * end-border
+     */
     public int[] getStartEndBorderWidths() {
         int[] widths = new int[2];
         if (rows == null) {
@@ -165,17 +195,17 @@ public class PrimaryGridUnit extends GridUnit {
         } else {
             for (int i = 0; i < rows.size(); i++) {
                 GridUnit[] gridUnits = (GridUnit[])rows.get(i);
-                widths[0] = Math.max(widths[0], 
+                widths[0] = Math.max(widths[0],
                         (gridUnits[0]).
                             getBorders().getBorderStartWidth(false));
-                widths[1] = Math.max(widths[1], 
+                widths[1] = Math.max(widths[1],
                         (gridUnits[gridUnits.length - 1]).
                             getBorders().getBorderEndWidth(false));
             }
         }
         return widths;
     }
-    
+
     /** @see java.lang.Object#toString() */
     public String toString() {
         StringBuffer sb = new StringBuffer(super.toString());
@@ -185,8 +215,8 @@ public class PrimaryGridUnit extends GridUnit {
 
     /** @return true if this cell spans over more than one grid unit. */
     public boolean hasSpanning() {
-        return (getCell().getNumberColumnsSpanned() > 1) 
+        return (getCell().getNumberColumnsSpanned() > 1)
             || (getCell().getNumberRowsSpanned() > 1);
     }
-    
+
 }
