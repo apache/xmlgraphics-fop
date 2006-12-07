@@ -318,4 +318,11 @@
     block-level element because its layout manager is written to handle only 
     inline content.</description>
   </testcase>
+  <testcase>
+    <name>Bugzilla #40230: invalid extra page break</name>
+    <file>block_break-after_bug40230.xml</file>
+    <description>Currently an extra page is created even if there is nothing
+      after a block with break-after="page"</description>
+    <reference>http://issues.apache.org/bugzilla/show_bug.cgi?id=40230</reference>
+  </testcase>
 </disabled-testcases>
