@@ -19,7 +19,9 @@
 
 package org.apache.fop.fo.flow;
 
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
@@ -29,7 +31,6 @@ import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FObjMixed;
-import org.apache.fop.fo.FOPropertyMapping;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.PropertyListMaker;
 import org.apache.fop.fo.ValidationException;
@@ -44,7 +45,7 @@ public class Marker extends FObjMixed {
     // End of property values
 
     private PropertyListMaker savePropertyListMaker;
-    private HashMap descendantPropertyLists = new HashMap();
+    private Map descendantPropertyLists = new java.util.HashMap();
 
     /**
      * Create a marker fo.
@@ -60,8 +61,8 @@ public class Marker extends FObjMixed {
     public void bind(PropertyList pList) throws FOPException {
         if (findAncestor(FO_FLOW) < 0) {
             invalidChildError(locator, FO_URI, "marker", 
-                "An fo:marker is permitted only as the descendant " +
-                "of an fo:flow");
+                "An fo:marker is permitted only as the descendant " 
+                    + "of an fo:flow");
         }
         
         markerClassName = pList.get(PR_MARKER_CLASS_NAME).getString();
@@ -147,7 +148,7 @@ public class Marker extends FObjMixed {
         sb.append(" {").append(getMarkerClassName()).append("}");
         return sb.toString();
     }
-    
+
     /**
      * An implementation of PropertyList which only stores the explicitly
      * specified properties/attributes as bundles of name-value-namespace
@@ -155,42 +156,7 @@ public class Marker extends FObjMixed {
      */
     protected class MarkerPropertyList extends PropertyList 
             implements Attributes {
-        
-        protected class MarkerAttribute {
-            
-            protected String namespace;
-            protected String qname;
-            protected String name;
-            protected String value;
-            
-            /**
-             * Main constructor
-             * @param namespace the namespace URI
-             * @param qname the qualified name
-             * @param name  the name
-             * @param value the value
-             */
-            public MarkerAttribute(String namespace, String qname, 
-                    String name, String value) {
-                this.namespace = namespace;
-                this.qname = qname;
-                this.name = (name == null ? qname : name);
-                this.value = value;
-            }
-            
-            /**
-             * Convenience constructor for FO attributes
-             * @param name  the attribute name
-             * @param value the attribute value
-             */
-            public MarkerAttribute(String name, String value) {
-                this.namespace = null;
-                this.qname = name;
-                this.name = name;
-                this.value = value;
-            }
-        }
-        
+                
         /** the array of attributes **/
         private MarkerAttribute[] attribs;
         
@@ -230,8 +196,13 @@ public class Marker extends FObjMixed {
                 name = attributes.getLocalName(i);
                 value = attributes.getValue(i);
                 
-                this.attribs[i] = 
-                    new MarkerAttribute(namespace, qname, name, value);
+                if (namespace == null || "".equals(namespace)) {
+                    this.attribs[i] = 
+                        MarkerAttribute.getFOAttributeInstance(name, value);
+                } else {
+                    this.attribs[i] = 
+                        new MarkerAttribute(namespace, qname, name, value);
+                }
             }
         }
         
@@ -395,6 +366,66 @@ public class Marker extends FObjMixed {
                 return getValue(index);
             }
             return null;
+        }
+    }
+    
+    /**
+     * Convenience inner class
+     */
+    private static final class MarkerAttribute {
+        
+        private static Map foAttributeCache = 
+            Collections.synchronizedMap(new java.util.HashMap());
+
+        protected String namespace;
+        protected String qname;
+        protected String name;
+        protected String value;
+                    
+        /**
+         * Main constructor
+         * @param namespace the namespace URI
+         * @param qname the qualified name
+         * @param name  the name
+         * @param value the value
+         */
+        private MarkerAttribute(String namespace, String qname, 
+                                    String name, String value) {
+            this.namespace = namespace;
+            this.qname = qname;
+            this.name = (name == null ? qname : name);
+            this.value = value;
+        }
+        
+        /**
+         * Convenience method, reduces the number
+         * of distinct MarkerAttribute instances
+         * 
+         * @param name  the attribute name
+         * @param value the attribute value
+         * @return the single MarkerAttribute instance corresponding to 
+         *          the name/value-pair
+         */
+        private static MarkerAttribute getFOAttributeInstance(
+                                            String name, String value) {
+            MarkerAttribute newInstance = null;
+            Map valueCache;
+            if (!foAttributeCache.containsKey(name)) {
+                newInstance = new MarkerAttribute(null, name, name, value);
+                valueCache = Collections.synchronizedMap(
+                                new java.util.HashMap());
+                valueCache.put(value, newInstance);
+                foAttributeCache.put(name, valueCache);
+            } else {
+                valueCache = (Map) foAttributeCache.get(name);
+                if (valueCache.containsKey(value)) {
+                    newInstance = (MarkerAttribute) valueCache.get(value);
+                } else {
+                    newInstance = new MarkerAttribute(null, name, name, value);
+                    valueCache.put(value, newInstance);
+                }
+            }
+            return newInstance;
         }
     }
 }
