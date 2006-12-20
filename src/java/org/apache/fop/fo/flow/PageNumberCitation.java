@@ -48,32 +48,33 @@ import org.apache.fop.fo.properties.SpaceProperty;
  */
 public class PageNumberCitation extends FObj {
     // The value of properties relevant for fo:page-number-citation.
-    private CommonAccessibility commonAccessibility;
-    private CommonAural commonAural;
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     private CommonFont commonFont;
-    private CommonMarginInline commonMarginInline;
-    private CommonRelativePosition commonRelativePosition;
     private Length alignmentAdjust;
     private int alignmentBaseline;
     private Length baselineShift;
     private int dominantBaseline;
     private String id;
-    private KeepProperty keepWithNext;
-    private KeepProperty keepWithPrevious;
     // private ToBeImplementedProperty letterSpacing;
     private SpaceProperty lineHeight;
     private String refId;
-    private int scoreSpaces;
-    private Length textAltitude;
     /** Holds the text decoration values. May be null */
     private CommonTextDecoration textDecoration;
-    private Length textDepth;
     // private ToBeImplementedProperty textShadow;
-    private int textTransform;
-    private int visibility;
-    private SpaceProperty wordSpacing;
-    private int wrapOption;
+    // Unused but valid items, commented out for performance:
+    //     private CommonAccessibility commonAccessibility;
+    //     private CommonAural commonAural;
+    //     private CommonMarginInline commonMarginInline;
+    //     private CommonRelativePosition commonRelativePosition;
+    //     private KeepProperty keepWithNext;
+    //     private KeepProperty keepWithPrevious;
+    //     private int scoreSpaces;
+    //     private Length textAltitude;
+    //     private Length textDepth;
+    //     private int textTransform;
+    //     private int visibility;
+    //     private SpaceProperty wordSpacing;
+    //     private int wrapOption;
     // End of property values
 
     // Properties which are not explicitely listed but are still applicable 
@@ -90,31 +91,18 @@ public class PageNumberCitation extends FObj {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
-        commonAccessibility = pList.getAccessibilityProps();
-        commonAural = pList.getAuralProps();
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         commonFont = pList.getFontProps();
-        commonMarginInline = pList.getMarginInlineProps();
-        commonRelativePosition = pList.getRelativePositionProps();
         alignmentAdjust = pList.get(PR_ALIGNMENT_ADJUST).getLength();
         alignmentBaseline = pList.get(PR_ALIGNMENT_BASELINE).getEnum();
         baselineShift = pList.get(PR_BASELINE_SHIFT).getLength();
         dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
         id = pList.get(PR_ID).getString();
-        keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
-        keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
         // letterSpacing = pList.get(PR_LETTER_SPACING);
         lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
         refId = pList.get(PR_REF_ID).getString();
-        scoreSpaces = pList.get(PR_SCORE_SPACES).getEnum();
-        textAltitude = pList.get(PR_TEXT_ALTITUDE).getLength();
         textDecoration = pList.getTextDecorationProps();
-        textDepth = pList.get(PR_TEXT_DEPTH).getLength();
         // textShadow = pList.get(PR_TEXT_SHADOW);
-        textTransform = pList.get(PR_TEXT_TRANSFORM).getEnum();
-        visibility = pList.get(PR_VISIBILITY).getEnum();
-        wordSpacing = pList.get(PR_WORD_SPACING).getSpace();
-        wrapOption = pList.get(PR_WRAP_OPTION).getEnum();
         
         // implicit properties
         color = pList.get(Constants.PR_COLOR).getColor(getUserAgent());

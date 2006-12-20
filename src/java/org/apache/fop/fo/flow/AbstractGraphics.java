@@ -41,33 +41,36 @@ public abstract class AbstractGraphics extends FObj {
     
     // The value of properties relevant for fo:instream-foreign-object
     // and external-graphics.
-    private CommonAccessibility commonAccessibility;
-    private CommonAural commonAural;
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
-    private CommonMarginInline commonMarginInline;
-    private CommonRelativePosition commonRelativePosition;
     private Length alignmentAdjust;
     private int alignmentBaseline;
     private Length baselineShift;
     private LengthRangeProperty blockProgressionDimension;
     // private ToBeImplementedProperty clip;
     private Length contentHeight;
-    private String contentType;
     private Length contentWidth;
     private int displayAlign;
     private int dominantBaseline;
     private Length height;
     private String id;
     private LengthRangeProperty inlineProgressionDimension;
-    private KeepProperty keepWithNext;
-    private KeepProperty keepWithPrevious;
     private SpaceProperty lineHeight;
     private int overflow;
     private int scaling;
-    private int scalingMethod;
     private int textAlign;
     private Length width;
+    // Unused but valid items, commented out for performance:
+    //     private CommonAccessibility commonAccessibility;
+    //     private CommonAural commonAural;
+    //     private CommonMarginInline commonMarginInline;
+    //     private CommonRelativePosition commonRelativePosition;
+    //     private String contentType;
+    //     private KeepProperty keepWithNext;
+    //     private KeepProperty keepWithPrevious;
+    //     private int scalingMethod;
     // End of property values
+
+
 
     /**
      * constructs an instream-foreign-object object (called by Maker).
@@ -82,30 +85,22 @@ public abstract class AbstractGraphics extends FObj {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
-        commonAccessibility = pList.getAccessibilityProps();
-        commonAural = pList.getAuralProps();
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
-        commonMarginInline = pList.getMarginInlineProps();
-        commonRelativePosition = pList.getRelativePositionProps();
         alignmentAdjust = pList.get(PR_ALIGNMENT_ADJUST).getLength();
         alignmentBaseline = pList.get(PR_ALIGNMENT_BASELINE).getEnum();
         baselineShift = pList.get(PR_BASELINE_SHIFT).getLength();
         blockProgressionDimension = pList.get(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange();
         // clip = pList.get(PR_CLIP);
         contentHeight = pList.get(PR_CONTENT_HEIGHT).getLength();
-        contentType = pList.get(PR_CONTENT_TYPE).getString();
         contentWidth = pList.get(PR_CONTENT_WIDTH).getLength();
         displayAlign = pList.get(PR_DISPLAY_ALIGN).getEnum();
         dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
         height = pList.get(PR_HEIGHT).getLength();
         id = pList.get(PR_ID).getString();
         inlineProgressionDimension = pList.get(PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
-        keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
-        keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
         lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
         overflow = pList.get(PR_OVERFLOW).getEnum();
         scaling = pList.get(PR_SCALING).getEnum();
-        scalingMethod = pList.get(PR_SCALING_METHOD).getEnum();
         textAlign = pList.get(PR_TEXT_ALIGN).getEnum();
         width = pList.get(PR_WIDTH).getLength();
     }

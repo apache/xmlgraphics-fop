@@ -33,8 +33,8 @@ import org.apache.fop.fo.properties.CommonAccessibility;
  * Class modelling the fo:footnote-body object.
  */
 public class FootnoteBody extends FObj {
-    // The value of properties relevant for fo:footnote-body.
-    private CommonAccessibility commonAccessibility;
+    // The value of properties relevant for fo:footnote-body (commented out for perforance).
+    //     private CommonAccessibility commonAccessibility;
     // End of property values
 
     /**
@@ -48,7 +48,6 @@ public class FootnoteBody extends FObj {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
-        commonAccessibility = pList.getAccessibilityProps();
     }
 
     /**

@@ -32,8 +32,8 @@ import org.apache.fop.fo.properties.CommonAccessibility;
  * Class modelling the fo:footnote object.
  */
 public class Footnote extends FObj {
-    // The value of properties relevant for fo:footnote.
-    private CommonAccessibility commonAccessibility;
+    // The value of properties relevant for fo:footnote (commented out for performance).
+    //     private CommonAccessibility commonAccessibility;
     // End of property values
 
     private Inline footnoteCitation = null;
@@ -50,7 +50,7 @@ public class Footnote extends FObj {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
-        commonAccessibility = pList.getAccessibilityProps();
+        // No active properties -> do nothing.
     }
     
     /**

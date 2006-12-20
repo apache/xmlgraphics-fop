@@ -38,22 +38,22 @@ import org.apache.fop.fo.properties.LengthRangeProperty;
 public class Inline extends InlineLevel {
     // The value of properties relevant for fo:inline.
     // See also superclass InlineLevel
-    private CommonRelativePosition commonRelativePosition;
     private Length alignmentAdjust;
     private int alignmentBaseline;
     private Length baselineShift;
-    private LengthRangeProperty blockProgressionDimension;
     private int dominantBaseline;
-    private Length height;
     private String id;
-    private LengthRangeProperty inlineProgressionDimension;
-    private KeepProperty keepTogether;
-    private KeepProperty keepWithNext;
-    private KeepProperty keepWithPrevious;
-    private Length width;
-    private int wrapOption;
+    // Unused but valid items, commented out for performance:
+    //     private CommonRelativePosition commonRelativePosition;
+    //     private LengthRangeProperty blockProgressionDimension;
+    //     private Length height;
+    //     private LengthRangeProperty inlineProgressionDimension;
+    //     private KeepProperty keepTogether;
+    //     private KeepProperty keepWithNext;
+    //     private KeepProperty keepWithPrevious;
+    //     private Length width;
+    //     private int wrapOption;
     // End of property values
-
     // used for FO validation
     private boolean blockOrInlineItemFound = false;
     private boolean canHaveBlockLevelChildren = true;
@@ -70,20 +70,11 @@ public class Inline extends InlineLevel {
      */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
-        commonRelativePosition = pList.getRelativePositionProps();
         alignmentAdjust = pList.get(PR_ALIGNMENT_ADJUST).getLength();
         alignmentBaseline = pList.get(PR_ALIGNMENT_BASELINE).getEnum();
         baselineShift = pList.get(PR_BASELINE_SHIFT).getLength();
-        blockProgressionDimension = pList.get(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange();
         dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
-        height = pList.get(PR_HEIGHT).getLength();
         id = pList.get(PR_ID).getString();
-        inlineProgressionDimension = pList.get(PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
-        keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
-        keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
-        keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
-        width = pList.get(PR_WIDTH).getLength();
-        wrapOption = pList.get(PR_WRAP_OPTION).getEnum();
     }
 
     /**

@@ -57,36 +57,37 @@ import org.xml.sax.Locator;
  */
 public class Character extends FObj {
     // The value of properties relevant for fo:character.
-    private CommonAural commonAural;
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     private CommonFont commonFont;
     private CommonHyphenation commonHyphenation;
-    private CommonMarginInline commonMarginInline;
-    private CommonRelativePosition commonRelativePosition;
     private Length alignmentAdjust;
-    private int treatAsWordSpace;
     private int alignmentBaseline;
     private Length baselineShift;
     private char character;
     private Color color;
     private int dominantBaseline;
-    private Length textDepth;
-    private Length textAltitude;
     // private ToBeImplementedProperty glyphOrientationHorizontal;
     // private ToBeImplementedProperty glyphOrientationVertical;
     private String id;
-    private KeepProperty keepWithNext;
-    private KeepProperty keepWithPrevious;
     private Property letterSpacing;
     private SpaceProperty lineHeight;
-    private int scoreSpaces;
-    private int suppressAtLineBreak;
     /** Holds the text decoration values. May be null */
     private CommonTextDecoration textDecoration;
     // private ToBeImplementedProperty textShadow;
-    private int textTransform;
-    private int visibility;
     private Property wordSpacing;
+    // Unused but valid items, commented out for performance:
+    //     private CommonAural commonAural;
+    //     private CommonMarginInline commonMarginInline;
+    //     private CommonRelativePosition commonRelativePosition;
+    //     private int treatAsWordSpace;
+    //     private Length textDepth;
+    //     private Length textAltitude;
+    //     private KeepProperty keepWithNext;
+    //     private KeepProperty keepWithPrevious;
+    //     private int scoreSpaces;
+    //     private int suppressAtLineBreak;
+    //     private int textTransform;
+    //     private int visibility;
     // End of property values
 
     /** constant indicating that the character is OK */
@@ -105,35 +106,23 @@ public class Character extends FObj {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
-        commonAural = pList.getAuralProps();
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         commonFont = pList.getFontProps();
         commonHyphenation = pList.getHyphenationProps();
-        commonMarginInline = pList.getMarginInlineProps();
-        commonRelativePosition = pList.getRelativePositionProps();
 
         alignmentAdjust = pList.get(PR_ALIGNMENT_ADJUST).getLength();
-        treatAsWordSpace = pList.get(PR_TREAT_AS_WORD_SPACE).getEnum();
         alignmentBaseline = pList.get(PR_ALIGNMENT_BASELINE).getEnum();
         baselineShift = pList.get(PR_BASELINE_SHIFT).getLength();
         character = pList.get(PR_CHARACTER).getCharacter();
         color = pList.get(PR_COLOR).getColor(getUserAgent());
         dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
-        textDepth = pList.get(PR_TEXT_DEPTH).getLength();
-        textAltitude = pList.get(PR_TEXT_ALTITUDE).getLength();
         // glyphOrientationHorizontal = pList.get(PR_GLYPH_ORIENTATION_HORIZONTAL);
         // glyphOrientationVertical = pList.get(PR_GLYPH_ORIENTATION_VERTICAL);
         id = pList.get(PR_ID).getString();
-        keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
-        keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
         letterSpacing = pList.get(PR_LETTER_SPACING);
         lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
-        scoreSpaces = pList.get(PR_SCORE_SPACES).getEnum();
-        suppressAtLineBreak = pList.get(PR_SUPPRESS_AT_LINE_BREAK).getEnum();
         textDecoration = pList.getTextDecorationProps();
         // textShadow = pList.get(PR_TEXT_SHADOW);
-        textTransform = pList.get(PR_TEXT_TRANSFORM).getEnum();
-        visibility = pList.get(PR_VISIBILITY).getEnum();
         wordSpacing = pList.get(PR_WORD_SPACING);
     }
 

@@ -47,11 +47,8 @@ import org.apache.fop.fo.properties.LengthRangeProperty;
 public class Table extends TableFObj {
     
     /** properties */
-    private CommonAccessibility commonAccessibility;
-    private CommonAural commonAural;
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     private CommonMarginBlock commonMarginBlock;
-    private CommonRelativePosition commonRelativePosition;
     private LengthRangeProperty blockProgressionDimension;
     private int borderCollapse;
     private LengthPairProperty borderSeparation;
@@ -59,14 +56,18 @@ public class Table extends TableFObj {
     private int breakBefore;
     private String id;
     private LengthRangeProperty inlineProgressionDimension;
-    private int intrusionDisplace;
     private KeepProperty keepTogether;
     private KeepProperty keepWithNext;
     private KeepProperty keepWithPrevious;
     private int tableLayout;
     private int tableOmitFooterAtBreak;
     private int tableOmitHeaderAtBreak;
-    private int writingMode;
+    // Unused but valid items, commented out for performance:
+    //     private CommonAccessibility commonAccessibility;
+    //     private CommonAural commonAural;
+    //     private CommonRelativePosition commonRelativePosition;
+    //     private int intrusionDisplace;
+    //     private int writingMode;
     
     /** extension properties */
     private Length widowContentLimit;
@@ -109,11 +110,8 @@ public class Table extends TableFObj {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
-        commonAccessibility = pList.getAccessibilityProps();
-        commonAural = pList.getAuralProps();
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         commonMarginBlock = pList.getMarginBlockProps();
-        commonRelativePosition = pList.getRelativePositionProps();
         blockProgressionDimension = pList.get(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange();
         borderCollapse = pList.get(PR_BORDER_COLLAPSE).getEnum();
         borderSeparation = pList.get(PR_BORDER_SEPARATION).getLengthPair();
@@ -121,14 +119,12 @@ public class Table extends TableFObj {
         breakBefore = pList.get(PR_BREAK_BEFORE).getEnum();
         id = pList.get(PR_ID).getString();
         inlineProgressionDimension = pList.get(PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
-        intrusionDisplace = pList.get(PR_INTRUSION_DISPLACE).getEnum();
         keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
         keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
         keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
         tableLayout = pList.get(PR_TABLE_LAYOUT).getEnum();
         tableOmitFooterAtBreak = pList.get(PR_TABLE_OMIT_FOOTER_AT_BREAK).getEnum();
         tableOmitHeaderAtBreak = pList.get(PR_TABLE_OMIT_HEADER_AT_BREAK).getEnum();
-        writingMode = pList.get(PR_WRITING_MODE).getEnum();
         super.bind(pList);
 
         //Bind extension properties

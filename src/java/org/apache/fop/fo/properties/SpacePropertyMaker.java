@@ -43,7 +43,7 @@ public class SpacePropertyMaker extends CorrespondingPropertyMaker {
         Property prop = super.compute(propertyList);
         if (prop != null && prop instanceof SpaceProperty) {
             ((SpaceProperty)prop).setConditionality(
-                    new EnumProperty(Constants.EN_RETAIN, "RETAIN"), false);
+                    EnumProperty.getInstance(Constants.EN_RETAIN, "RETAIN"), false);
         }
         return prop;
     }

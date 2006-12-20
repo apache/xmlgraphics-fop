@@ -62,8 +62,6 @@ public class Block extends FObjMixed {
     private int breakAfter;
     private int breakBefore;
     private Color color;
-    private Length textDepth;
-    private Length textAltitude;
     private int hyphenationKeep;
     private Numeric hyphenationLadderCount;
     private String id;
@@ -82,10 +80,13 @@ public class Block extends FObjMixed {
     private int textAlign;
     private int textAlignLast;
     private Length textIndent;
-    private int visibility;
     private int whiteSpaceCollapse;
     private Numeric widows;
     private int wrapOption;
+    // Unused but valid items, commented out for performance:
+    //     private Length textDepth;
+    //     private Length textAltitude;
+    //     private int visibility;
     // End of property values
     
     /**
@@ -111,8 +112,6 @@ public class Block extends FObjMixed {
         breakAfter = pList.get(PR_BREAK_AFTER).getEnum();
         breakBefore = pList.get(PR_BREAK_BEFORE).getEnum();
         color = pList.get(PR_COLOR).getColor(getUserAgent());
-        textDepth = pList.get(PR_TEXT_DEPTH).getLength();
-        textAltitude = pList.get(PR_TEXT_ALTITUDE).getLength();
         hyphenationKeep = pList.get(PR_HYPHENATION_KEEP).getEnum();
         hyphenationLadderCount = pList.get(PR_HYPHENATION_LADDER_COUNT).getNumeric();
         id = pList.get(PR_ID).getString();
@@ -131,7 +130,6 @@ public class Block extends FObjMixed {
         textAlign = pList.get(PR_TEXT_ALIGN).getEnum();
         textAlignLast = pList.get(PR_TEXT_ALIGN_LAST).getEnum();
         textIndent = pList.get(PR_TEXT_INDENT).getLength();
-        visibility = pList.get(PR_VISIBILITY).getEnum();
         whiteSpaceCollapse = pList.get(PR_WHITE_SPACE_COLLAPSE).getEnum();
         widows = pList.get(PR_WIDOWS).getNumeric();
         wrapOption = pList.get(PR_WRAP_OPTION).getEnum();

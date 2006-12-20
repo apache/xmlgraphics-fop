@@ -40,28 +40,29 @@ import org.apache.fop.fo.properties.LengthRangeProperty;
  */
 public class TableCell extends TableFObj {
     // The value of properties relevant for fo:table-cell.
-    private CommonAccessibility commonAccessibility;
-    private CommonAural commonAural;
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
-    private CommonRelativePosition commonRelativePosition;
     private LengthRangeProperty blockProgressionDimension;
     private int columnNumber;
     private int displayAlign;
-    private int relativeAlign;
     private int emptyCells;
     private int endsRow;
-    private Length height;
     private String id;
-    private LengthRangeProperty inlineProgressionDimension;
     private int numberColumnsSpanned;
     private int numberRowsSpanned;
     private int startsRow;
     private Length width;
-    private KeepProperty keepTogether;
-    private KeepProperty keepWithNext;
-    private KeepProperty keepWithPrevious;
+    // Unused but valid items, commented out for performance:
+    //     private CommonAccessibility commonAccessibility;
+    //     private CommonAural commonAural;
+    //     private CommonRelativePosition commonRelativePosition;
+    //     private int relativeAlign;
+    //     private Length height;
+    //     private LengthRangeProperty inlineProgressionDimension;
+    //     private KeepProperty keepTogether;
+    //     private KeepProperty keepWithNext;
+    //     private KeepProperty keepWithPrevious;
     // End of property values
-
+  
     /** used for FO validation */
     private boolean blockItemFound = false;
 
@@ -106,26 +107,17 @@ public class TableCell extends TableFObj {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
-        commonAccessibility = pList.getAccessibilityProps();
-        commonAural = pList.getAuralProps();
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
-        commonRelativePosition = pList.getRelativePositionProps();
         blockProgressionDimension = pList.get(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange();
         displayAlign = pList.get(PR_DISPLAY_ALIGN).getEnum();
-        relativeAlign = pList.get(PR_RELATIVE_ALIGN).getEnum();
         emptyCells = pList.get(PR_EMPTY_CELLS).getEnum();
         endsRow = pList.get(PR_ENDS_ROW).getEnum();
-        height = pList.get(PR_HEIGHT).getLength();
         id = pList.get(PR_ID).getString();
-        inlineProgressionDimension = pList.get(PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
         columnNumber = pList.get(PR_COLUMN_NUMBER).getNumeric().getValue();
         numberColumnsSpanned = pList.get(PR_NUMBER_COLUMNS_SPANNED).getNumeric().getValue();
         numberRowsSpanned = pList.get(PR_NUMBER_ROWS_SPANNED).getNumeric().getValue();
         startsRow = pList.get(PR_STARTS_ROW).getEnum();
         width = pList.get(PR_WIDTH).getLength();
-        keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
-        keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
-        keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
         
         super.bind(pList);
     }

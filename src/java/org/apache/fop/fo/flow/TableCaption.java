@@ -43,16 +43,17 @@ import org.apache.fop.fo.properties.LengthRangeProperty;
 public class TableCaption extends FObj {
     // The value of properties relevant for fo:table-caption.
     private CommonAccessibility commonAccessibility;
-    private CommonAural commonAural;
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
-    private CommonRelativePosition commonRelativePosition;
-    private LengthRangeProperty blockProgressionDimension;
-    private Length height;
     private String id;
-    private LengthRangeProperty inlineProgressionDimension;
-    private int intrusionDisplace;
-    private KeepProperty keepTogether;
-    private Length width;
+    // Unused but valid items, commented out for performance:
+    //     private CommonAural commonAural;
+    //     private CommonRelativePosition commonRelativePosition;
+    //     private LengthRangeProperty blockProgressionDimension;
+    //     private Length height;
+    //     private LengthRangeProperty inlineProgressionDimension;
+    //     private int intrusionDisplace;
+    //     private KeepProperty keepTogether;
+    //     private Length width;
     // End of property values
 
     /** used for FO validation */
@@ -77,16 +78,8 @@ public class TableCaption extends FObj {
      */
     public void bind(PropertyList pList) throws FOPException {
         commonAccessibility = pList.getAccessibilityProps();
-        commonAural = pList.getAuralProps();
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
-        commonRelativePosition = pList.getRelativePositionProps();
-        blockProgressionDimension = pList.get(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange();
-        height = pList.get(PR_HEIGHT).getLength();
         id = pList.get(PR_ID).getString();
-        inlineProgressionDimension = pList.get(PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
-        intrusionDisplace = pList.get(PR_INTRUSION_DISPLACE).getEnum();
-        keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
-        width = pList.get(PR_WIDTH).getLength();
     }
 
     /**

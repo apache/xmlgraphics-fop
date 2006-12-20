@@ -19,15 +19,30 @@
  
 package org.apache.fop.fo.properties;
 
+import java.util.Map;
+import java.util.WeakHashMap;
+
 /**
  * A number quantity in XSL which is specified as an enum, such as "no-limit".
  */
 public class EnumNumber extends NumberProperty {
-    private Property enumProperty;
+
+    private static final Map cache = new WeakHashMap();
+
+    private final EnumProperty enumProperty;
     
-    public EnumNumber(Property enumProperty) {
+    private EnumNumber(EnumProperty enumProperty) {
         super(null);
         this.enumProperty = enumProperty;
+    }
+
+    public static EnumNumber getInstance(Property enumProperty) {
+        EnumNumber en = (EnumNumber)cache.get(enumProperty);
+        if (en == null) {
+            en = new EnumNumber((EnumProperty)enumProperty);
+            cache.put(enumProperty, en);
+        }
+        return en;
     }
 
     public int getEnum() {

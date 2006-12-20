@@ -265,7 +265,7 @@ public final class FOPropertyMapping implements Constants {
             enums = new Property[ENUM_COUNT + 1];
         }
         if (enums[enumValue] == null) {
-            enums[enumValue] = new EnumProperty(enumValue, text);
+            enums[enumValue] = EnumProperty.getInstance(enumValue, text);
         }
         return enums[enumValue];
     }

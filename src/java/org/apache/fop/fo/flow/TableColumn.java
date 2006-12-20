@@ -42,7 +42,8 @@ public class TableColumn extends TableFObj {
     private Length columnWidth;
     private int numberColumnsRepeated;
     private int numberColumnsSpanned;
-    private int visibility;
+    // Unused but valid items, commented out for performance:
+    //     private int visibility;
     // End of property values
     
     private boolean defaultColumn;
@@ -76,7 +77,6 @@ public class TableColumn extends TableFObj {
                                     .getNumeric().getValue();
         numberColumnsSpanned = pList.get(PR_NUMBER_COLUMNS_SPANNED)
                                     .getNumeric().getValue();
-        visibility = pList.get(PR_VISIBILITY).getEnum();
         super.bind(pList);
         
         if (numberColumnsRepeated <= 0) {

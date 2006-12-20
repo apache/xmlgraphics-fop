@@ -41,20 +41,21 @@ import org.apache.fop.fo.properties.SpaceProperty;
  */
 public class InitialPropertySet extends FObj {
     // The value of properties relevant for fo:initial-property-set.
-    private CommonAccessibility commonAccessibility;
-    private CommonAural commonAural;
-    private CommonBorderPaddingBackground commonBorderPaddingBackground;
-    private CommonFont commonFont;
-    private CommonRelativePosition commonRelativePosition;
-    private Color color;
     private String id;
     // private ToBeImplementedProperty letterSpacing;
     private SpaceProperty lineHeight;
-    private int scoreSpaces;
-    private int textDecoration;
     // private ToBeImplementedProperty textShadow;
-    private int textTransform;
-    private SpaceProperty wordSpacing;
+    // Unused but valid items, commented out for performance:
+    //     private CommonAccessibility commonAccessibility;
+    //     private CommonAural commonAural;
+    //     private CommonBorderPaddingBackground commonBorderPaddingBackground;
+    //     private CommonFont commonFont;
+    //     private CommonRelativePosition commonRelativePosition;
+    //     private Color color;
+    //     private int scoreSpaces;
+    //     private int textDecoration;
+    //     private int textTransform;
+    //     private SpaceProperty wordSpacing;
     // End of property values
 
     /**
@@ -68,20 +69,10 @@ public class InitialPropertySet extends FObj {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
-        commonAccessibility = pList.getAccessibilityProps();
-        commonAural = pList.getAuralProps();
-        commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
-        commonFont = pList.getFontProps();
-        commonRelativePosition = pList.getRelativePositionProps();
-        color = pList.get(PR_COLOR).getColor(getUserAgent());
         id = pList.get(PR_ID).getString();
         // letterSpacing = pList.get(PR_LETTER_SPACING);
         lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
-        scoreSpaces = pList.get(PR_SCORE_SPACES).getEnum();
-        textDecoration = pList.get(PR_TEXT_DECORATION).getEnum();
         // textShadow = pList.get(PR_TEXT_SHADOW);
-        textTransform = pList.get(PR_TEXT_TRANSFORM).getEnum();
-        wordSpacing = pList.get(PR_WORD_SPACING).getSpace();
     }
 
     /**

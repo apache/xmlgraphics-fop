@@ -40,20 +40,21 @@ import org.apache.fop.fo.properties.KeepProperty;
  */
 public class TableAndCaption extends FObj {
     // The value of properties relevant for fo:table-and-caption.
-    private CommonAccessibility commonAccessibility;
-    private CommonAural commonAural;
-    private CommonBorderPaddingBackground commonBorderPaddingBackground;
-    private CommonMarginBlock commonMarginBlock;
-    private CommonRelativePosition commonRelativePosition;
-    private int breakAfter;
-    private int breakBefore;
-    private int captionSide;
     private String id;
-    private int intrusionDisplace;
-    private KeepProperty keepTogether;
-    private KeepProperty keepWithNext;
-    private KeepProperty keepWithPrevious;
-    private int textAlign;
+    // Unused but valid items, commented out for performance:
+    //     private CommonAccessibility commonAccessibility;
+    //     private CommonAural commonAural;
+    //     private CommonBorderPaddingBackground commonBorderPaddingBackground;
+    //     private CommonMarginBlock commonMarginBlock;
+    //     private CommonRelativePosition commonRelativePosition;
+    //     private int breakAfter;
+    //     private int breakBefore;
+    //     private int captionSide;
+    //     private int intrusionDisplace;
+    //     private KeepProperty keepTogether;
+    //     private KeepProperty keepWithNext;
+    //     private KeepProperty keepWithPrevious;
+    //     private int textAlign;
     // End of property values
     
     static boolean notImplementedWarningGiven = false;
@@ -78,20 +79,7 @@ public class TableAndCaption extends FObj {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
-        commonAccessibility = pList.getAccessibilityProps();
-        commonAural = pList.getAuralProps();
-        commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
-        commonMarginBlock = pList.getMarginBlockProps();
-        commonRelativePosition = pList.getRelativePositionProps();
-        breakAfter = pList.get(PR_BREAK_AFTER).getEnum();
-        breakBefore = pList.get(PR_BREAK_BEFORE).getEnum();
-        captionSide = pList.get(PR_CAPTION_SIDE).getEnum();
         id = pList.get(PR_ID).getString();
-        intrusionDisplace = pList.get(PR_INTRUSION_DISPLACE).getEnum();
-        keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
-        keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
-        keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
-        textAlign = pList.get(PR_TEXT_ALIGN).getEnum();
     }
 
     /**
