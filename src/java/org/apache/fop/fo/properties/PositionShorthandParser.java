@@ -41,11 +41,11 @@ public class PositionShorthandParser implements ShorthandParser {
             switch (propVal) {
             case Constants.EN_STATIC:
             case Constants.EN_RELATIVE:
-                return new EnumProperty(Constants.EN_AUTO, "AUTO");
+                return EnumProperty.getInstance(Constants.EN_AUTO, "AUTO");
             case Constants.EN_ABSOLUTE:
-                return new EnumProperty(Constants.EN_ABSOLUTE, "ABSOLUTE");
+                return EnumProperty.getInstance(Constants.EN_ABSOLUTE, "ABSOLUTE");
             case Constants.EN_FIXED:
-                return new EnumProperty(Constants.EN_FIXED, "FIXED");
+                return EnumProperty.getInstance(Constants.EN_FIXED, "FIXED");
             default:
                 //nop
             }
@@ -53,13 +53,13 @@ public class PositionShorthandParser implements ShorthandParser {
         if (propId == Constants.PR_RELATIVE_POSITION) {
             switch (propVal) {
             case Constants.EN_STATIC:
-                return new EnumProperty(Constants.EN_STATIC, "STATIC");
+                return EnumProperty.getInstance(Constants.EN_STATIC, "STATIC");
             case Constants.EN_RELATIVE:
-                return new EnumProperty(Constants.EN_RELATIVE, "RELATIVE");
+                return EnumProperty.getInstance(Constants.EN_RELATIVE, "RELATIVE");
             case Constants.EN_ABSOLUTE:
-                return new EnumProperty(Constants.EN_STATIC, "STATIC");
+                return EnumProperty.getInstance(Constants.EN_STATIC, "STATIC");
             case Constants.EN_FIXED:
-                return new EnumProperty(Constants.EN_STATIC, "STATIC");
+                return EnumProperty.getInstance(Constants.EN_STATIC, "STATIC");
             default:
                 //nop
             }

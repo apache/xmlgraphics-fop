@@ -40,18 +40,19 @@ public class BidiOverride extends FObjMixed {
     // used for FO validation
     private boolean blockOrInlineItemFound = false;
     private boolean canHaveBlockLevelChildren = true;
-
     // The value of properties relevant for fo:bidi-override.
-    private CommonAural commonAural;
-    private CommonFont commonFont;
-    private CommonRelativePosition commonRelativePosition;
-    private Color prColor;
     // private ToBeImplementedProperty prDirection;
     // private ToBeImplementedProperty prLetterSpacing;
     private SpaceProperty lineHeight;
     // private ToBeImplementedProperty prScoreSpaces;
     // private ToBeImplementedProperty prUnicodeBidi;
-    private SpaceProperty prWordSpacing;
+
+    // Unused but valid items, commented out for performance:
+    //     private CommonAural commonAural;
+    //     private CommonFont commonFont;
+    //     private CommonRelativePosition commonRelativePosition;
+    //     private Color prColor;
+    //     private SpaceProperty prWordSpacing;
     // End of property values
 
     /**
@@ -84,16 +85,11 @@ public class BidiOverride extends FObjMixed {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
-        commonAural = pList.getAuralProps();
-        commonFont = pList.getFontProps();
-        commonRelativePosition = pList.getRelativePositionProps();
-        prColor = pList.get(PR_COLOR).getColor(getUserAgent());
         // prDirection = pList.get(PR_DIRECTION);
         // prLetterSpacing = pList.get(PR_LETTER_SPACING);
         lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
         // prScoreSpaces = pList.get(PR_SCORE_SPACES);
         // prUnicodeBidi = pList.get(PR_UNICODE_BIDI);
-        prWordSpacing = pList.get(PR_WORD_SPACING).getSpace();
     }
 
     /**

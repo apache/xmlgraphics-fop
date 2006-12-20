@@ -39,20 +39,21 @@ import org.apache.fop.fo.properties.KeepProperty;
  */
 public class ListBlock extends FObj {
     // The value of properties relevant for fo:list-block.
-    private CommonAccessibility commonAccessibility;
-    private CommonAural commonAural;
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     private CommonMarginBlock commonMarginBlock;
-    private CommonRelativePosition commonRelativePosition;
     private int breakAfter;
     private int breakBefore;
     private String id;
-    private int intrusionDisplace;
     private KeepProperty keepTogether;
     private KeepProperty keepWithNext;
     private KeepProperty keepWithPrevious;
-    private Length provisionalDistanceBetweenStarts;
-    private Length provisionalLabelSeparation;
+    // Unused but valid items, commented out for performance:
+    //     private CommonAccessibility commonAccessibility;
+    //     private CommonAural commonAural;
+    //     private CommonRelativePosition commonRelativePosition;
+    //     private int intrusionDisplace;
+    //     private Length provisionalDistanceBetweenStarts;
+    //     private Length provisionalLabelSeparation;
     // End of property values
 
     /** extension properties */
@@ -73,23 +74,14 @@ public class ListBlock extends FObj {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
-        commonAccessibility = pList.getAccessibilityProps();
-        commonAural = pList.getAuralProps();
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         commonMarginBlock = pList.getMarginBlockProps();
-        commonRelativePosition = pList.getRelativePositionProps();
         breakAfter = pList.get(PR_BREAK_AFTER).getEnum();
         breakBefore = pList.get(PR_BREAK_BEFORE).getEnum();
         id = pList.get(PR_ID).getString();
-        intrusionDisplace = pList.get(PR_INTRUSION_DISPLACE).getEnum();
         keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
         keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
         keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
-        provisionalDistanceBetweenStarts = pList.get(
-                PR_PROVISIONAL_DISTANCE_BETWEEN_STARTS).getLength();
-        provisionalLabelSeparation = pList.get(
-                PR_PROVISIONAL_LABEL_SEPARATION).getLength();
-
         //Bind extension properties
         widowContentLimit = pList.get(PR_X_WIDOW_CONTENT_LIMIT).getLength();
         orphanContentLimit = pList.get(PR_X_ORPHAN_CONTENT_LIMIT).getLength();

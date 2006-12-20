@@ -42,17 +42,17 @@ public class WhiteSpaceShorthandParser implements ShorthandParser {
             switch (propId) {
             case Constants.PR_LINEFEED_TREATMENT:
             case Constants.PR_WHITE_SPACE_TREATMENT:
-                return new EnumProperty(Constants.EN_PRESERVE, "PRESERVE");
+                return EnumProperty.getInstance(Constants.EN_PRESERVE, "PRESERVE");
             case Constants.PR_WHITE_SPACE_COLLAPSE:
-                return new EnumProperty(Constants.EN_FALSE, "FALSE");
+                return EnumProperty.getInstance(Constants.EN_FALSE, "FALSE");
             case Constants.PR_WRAP_OPTION:
-                return new EnumProperty(Constants.EN_NO_WRAP, "NO_WRAP");
+                return EnumProperty.getInstance(Constants.EN_NO_WRAP, "NO_WRAP");
             default:
                 //nop
             }
         case Constants.EN_NO_WRAP:
             if (propId == Constants.PR_WRAP_OPTION) {
-                return new EnumProperty(Constants.EN_NO_WRAP, "NO_WRAP");
+                return EnumProperty.getInstance(Constants.EN_NO_WRAP, "NO_WRAP");
             }
         case Constants.EN_NORMAL:
         default:

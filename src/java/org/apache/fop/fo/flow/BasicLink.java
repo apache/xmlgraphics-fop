@@ -36,7 +36,6 @@ import org.apache.fop.fo.ValidationException;
 public class BasicLink extends Inline {
     // The value of properties relevant for fo:basic-link.
     // private ToBeImplementedProperty destinationPlacementOffset;
-    private int dominantBaseline;
     private String externalDestination;
     // private ToBeImplementedProperty indicateDestination;
     private String internalDestination;
@@ -44,6 +43,8 @@ public class BasicLink extends Inline {
     // private ToBeImplementedProperty targetProcessingContext;
     // private ToBeImplementedProperty targetPresentationContext;
     // private ToBeImplementedProperty targetStylesheet;
+    // Unused but valid items, commented out for performance:
+    //     private int dominantBaseline;
     // End of property values
 
     // used only for FO validation
@@ -62,7 +63,6 @@ public class BasicLink extends Inline {
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
         // destinationPlacementOffset = pList.get(PR_DESTINATION_PLACEMENT_OFFSET);
-        dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
         externalDestination = pList.get(PR_EXTERNAL_DESTINATION).getString();
         // indicateDestination = pList.get(PR_INDICATE_DESTINATION);
         internalDestination = pList.get(PR_INTERNAL_DESTINATION).getString();

@@ -34,8 +34,9 @@ import org.apache.fop.fo.properties.CommonAccessibility;
  */
 public class MultiProperties extends FObj {
     // The value of properties relevant for fo:multi-properties.
-    private CommonAccessibility commonAccessibility;
     private String id;
+    // Unused but valid items, commented out for performance:
+    //     private CommonAccessibility commonAccessibility;
     // End of property values
 
     static boolean notImplementedWarningGiven = false;
@@ -60,7 +61,6 @@ public class MultiProperties extends FObj {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
-        commonAccessibility = pList.getAccessibilityProps();
         id = pList.get(PR_ID).getString();
     }
 

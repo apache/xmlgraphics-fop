@@ -34,9 +34,10 @@ import org.apache.fop.fo.properties.KeepProperty;
  */
 public abstract class AbstractListItemPart extends FObj {
     // The value of properties relevant for fo:list-item-label and fo:list-item-body.
-    private CommonAccessibility commonAccessibility;
     private String id;
     private KeepProperty keepTogether;
+    // Valid properties, commented out for performance:
+    //   private CommonAccessibility commonAccessibility;
     // End of property values
 
     /** used for FO validation */
@@ -53,7 +54,6 @@ public abstract class AbstractListItemPart extends FObj {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
-        commonAccessibility = pList.getAccessibilityProps();
         id = pList.get(PR_ID).getString();
         keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
     }

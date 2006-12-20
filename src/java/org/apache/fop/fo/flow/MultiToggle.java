@@ -34,8 +34,8 @@ import org.apache.fop.fo.properties.CommonAccessibility;
  * Class modelling the fo:multi-toggle property.
  */
 public class MultiToggle extends FObj {
-    // The value of properties relevant for fo:multi-toggle.
-    private CommonAccessibility commonAccessibility;
+    // The value of properties relevant for fo:multi-toggle (commented out for performance).
+    //     private CommonAccessibility commonAccessibility;
     // public ToBeImplementedProperty prSwitchTo;
     // End of property values
     
@@ -57,7 +57,6 @@ public class MultiToggle extends FObj {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
-        commonAccessibility = pList.getAccessibilityProps();
         // prSwitchTo = pList.get(PR_SWITCH_TO);
 
     }

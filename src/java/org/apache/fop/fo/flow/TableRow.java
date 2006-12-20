@@ -42,11 +42,8 @@ import org.apache.fop.fo.properties.LengthRangeProperty;
  */
 public class TableRow extends TableFObj {
     // The value of properties relevant for fo:table-row.
-    private CommonAccessibility commonAccessibility;
     private LengthRangeProperty blockProgressionDimension;
-    private CommonAural commonAural;
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
-    private CommonRelativePosition commonRelativePosition;
     private int breakAfter;
     private int breakBefore;
     private Length height;
@@ -54,7 +51,11 @@ public class TableRow extends TableFObj {
     private KeepProperty keepTogether;
     private KeepProperty keepWithNext;
     private KeepProperty keepWithPrevious;
-    private int visibility;
+    // Unused but valid items, commented out for performance:
+    //     private CommonAccessibility commonAccessibility;
+    //     private CommonAural commonAural;
+    //     private CommonRelativePosition commonRelativePosition;
+    //     private int visibility;
     // End of property values
 
     private boolean setup = false;
@@ -74,12 +75,9 @@ public class TableRow extends TableFObj {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
-        commonAccessibility = pList.getAccessibilityProps();
         blockProgressionDimension 
             = pList.get(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange();
-        commonAural = pList.getAuralProps();
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
-        commonRelativePosition = pList.getRelativePositionProps();
         breakAfter = pList.get(PR_BREAK_AFTER).getEnum();
         breakBefore = pList.get(PR_BREAK_BEFORE).getEnum();
         id = pList.get(PR_ID).getString();
@@ -87,7 +85,6 @@ public class TableRow extends TableFObj {
         keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
         keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
         keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
-        visibility = pList.get(PR_VISIBILITY).getEnum();
         super.bind(pList);
     }
 

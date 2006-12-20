@@ -38,19 +38,20 @@ import org.apache.fop.fo.properties.KeepProperty;
  */
 public class ListItem extends FObj {
     // The value of properties relevant for fo:list-item.
-    private CommonAccessibility commonAccessibility;
-    private CommonAural commonAural;
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     private CommonMarginBlock commonMarginBlock;
-    private CommonRelativePosition commonRelativePosition;
     private int breakAfter;
     private int breakBefore;
     private String id;
-    private int intrusionDisplace;
     private KeepProperty keepTogether;
     private KeepProperty keepWithNext;
     private KeepProperty keepWithPrevious;
-    private int relativeAlign;
+    // Unused but valid items, commented out for performance:
+    //     private CommonAccessibility commonAccessibility;
+    //     private CommonAural commonAural;
+    //     private CommonRelativePosition commonRelativePosition;
+    //     private int intrusionDisplace;
+    //     private int relativeAlign;
     // End of property values
 
     private ListItemLabel label = null;
@@ -67,19 +68,14 @@ public class ListItem extends FObj {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
-        commonAccessibility = pList.getAccessibilityProps();
-        commonAural = pList.getAuralProps();
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         commonMarginBlock = pList.getMarginBlockProps();
-        commonRelativePosition = pList.getRelativePositionProps();
         breakAfter = pList.get(PR_BREAK_AFTER).getEnum();
         breakBefore = pList.get(PR_BREAK_BEFORE).getEnum();
         id = pList.get(PR_ID).getString();
-        intrusionDisplace = pList.get(PR_INTRUSION_DISPLACE).getEnum();
         keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
         keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
         keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
-        relativeAlign = pList.get(PR_RELATIVE_ALIGN).getEnum();
     }
 
     /**

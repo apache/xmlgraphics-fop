@@ -54,9 +54,9 @@ public class LineHeightPropertyMaker extends SpaceProperty.Maker {
          */
         Property p = super.make(propertyList, value, fo);
         p.getSpace().setConditionality(
-                new EnumProperty(Constants.EN_RETAIN, "RETAIN"), true);
+                EnumProperty.getInstance(Constants.EN_RETAIN, "RETAIN"), true);
         p.getSpace().setPrecedence(
-                new EnumProperty(Constants.EN_FORCE, "FORCE"), true);
+                EnumProperty.getInstance(Constants.EN_FORCE, "FORCE"), true);
         return p;
     }
     

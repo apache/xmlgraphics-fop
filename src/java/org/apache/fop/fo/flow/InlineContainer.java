@@ -41,27 +41,28 @@ import org.apache.fop.fo.properties.SpaceProperty;
 public class InlineContainer extends FObj {
     
     // The value of properties relevant for fo:inline-container.
-    private CommonBorderPaddingBackground commonBorderPaddingBackground;
-    private CommonMarginInline commonMarginInline;
-    private CommonRelativePosition commonRelativePosition;
     private Length alignmentAdjust;
     private int alignmentBaseline;
     private Length baselineShift;
-    private LengthRangeProperty blockProgressionDimension;
     // private ToBeImplementedProperty clip;
-    private int displayAlign;
     private int dominantBaseline;
-    private Length height;
     private String id;
-    private LengthRangeProperty inlineProgressionDimension;
-    private KeepProperty keepTogether;
-    private KeepProperty keepWithNext;
-    private KeepProperty keepWithPrevious;
     private SpaceProperty lineHeight;
-    private int overflow;
-    private Numeric referenceOrientation;
-    private Length width;
-    private int writingMode;
+    // Unused but valid items, commented out for performance:
+    //     private CommonBorderPaddingBackground commonBorderPaddingBackground;
+    //     private CommonMarginInline commonMarginInline;
+    //     private CommonRelativePosition commonRelativePosition;
+    //     private LengthRangeProperty blockProgressionDimension;
+    //     private int displayAlign;
+    //     private Length height;
+    //     private LengthRangeProperty inlineProgressionDimension;
+    //     private KeepProperty keepTogether;
+    //     private KeepProperty keepWithNext;
+    //     private KeepProperty keepWithPrevious;
+    //     private int overflow;
+    //     private Numeric referenceOrientation;
+    //     private Length width;
+    //     private int writingMode;
     // End of property values
 
     /** used for FO validation */
@@ -78,27 +79,13 @@ public class InlineContainer extends FObj {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
-        commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
-        commonMarginInline = pList.getMarginInlineProps();
-        commonRelativePosition = pList.getRelativePositionProps();
         alignmentAdjust = pList.get(PR_ALIGNMENT_ADJUST).getLength();
         alignmentBaseline = pList.get(PR_ALIGNMENT_BASELINE).getEnum();
         baselineShift = pList.get(PR_BASELINE_SHIFT).getLength();
-        blockProgressionDimension = pList.get(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange();
         // clip = pList.get(PR_CLIP);
-        displayAlign = pList.get(PR_DISPLAY_ALIGN).getEnum();
         dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
-        height = pList.get(PR_HEIGHT).getLength();
         id = pList.get(PR_ID).getString();
-        inlineProgressionDimension = pList.get(PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
-        keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
-        keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
-        keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
         lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
-        overflow = pList.get(PR_OVERFLOW).getEnum();
-        referenceOrientation = pList.get(PR_REFERENCE_ORIENTATION).getNumeric();
-        width = pList.get(PR_WIDTH).getLength();
-        writingMode = pList.get(PR_WRITING_MODE).getEnum();
     }
 
     /**

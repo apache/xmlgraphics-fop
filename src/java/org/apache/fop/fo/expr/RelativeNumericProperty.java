@@ -102,7 +102,6 @@ public class RelativeNumericProperty extends Property implements Numeric, Length
      * @throws PropertyException when an exception occur during evaluation.
      */
     private Numeric getResolved(PercentBaseContext context) throws PropertyException {
-        Numeric n;
         switch (operation) {
         case ADDITION:
             return NumericOp.addition2(op1, op2, context);

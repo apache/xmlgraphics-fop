@@ -35,9 +35,10 @@ import org.apache.fop.fo.properties.CommonAccessibility;
  */
 public class MultiSwitch extends FObj {
     // The value of properties relevant for fo:multi-switch.
-    private CommonAccessibility commonAccessibility;
     // private ToBeImplementedProperty autoRestore;
     private String id;
+    // Unused but valid items, commented out for performance:
+    //     private CommonAccessibility commonAccessibility;
     // End of property values
 
     static boolean notImplementedWarningGiven = false;
@@ -58,7 +59,6 @@ public class MultiSwitch extends FObj {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
-        commonAccessibility = pList.getAccessibilityProps();
         // autoRestore = pList.get(PR_AUTO_RESTORE);
         id = pList.get(PR_ID).getString();
     }

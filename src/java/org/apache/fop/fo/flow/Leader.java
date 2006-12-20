@@ -37,16 +37,11 @@ import org.apache.fop.fo.properties.SpaceProperty;
 public class Leader extends InlineLevel {
     // The value of properties relevant for fo:leader.
     // See also superclass InlineLevel
-    private CommonRelativePosition commonRelativePosition;
     private Length alignmentAdjust;
     private int alignmentBaseline;
     private Length baselineShift;
     private int dominantBaseline;
-    private Length textDepth;
-    private Length textAltitude;
     private String id;
-    private KeepProperty keepWithNext;
-    private KeepProperty keepWithPrevious;
     private int leaderAlignment;
     private LengthRangeProperty leaderLength;
     private int leaderPattern;
@@ -55,7 +50,13 @@ public class Leader extends InlineLevel {
     private Length ruleThickness;
     // private ToBeImplementedProperty letterSpacing;
     // private ToBeImplementedProperty textShadow;
-    private SpaceProperty wordSpacing;
+    // Unused but valid items, commented out for performance:
+    //     private CommonRelativePosition commonRelativePosition;
+    //     private Length textDepth;
+    //     private Length textAltitude;
+    //     private KeepProperty keepWithNext;
+    //     private KeepProperty keepWithPrevious;
+    //     private SpaceProperty wordSpacing;
     // End of property values
 
     /**
@@ -70,16 +71,11 @@ public class Leader extends InlineLevel {
      */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
-        commonRelativePosition = pList.getRelativePositionProps();
         alignmentAdjust = pList.get(PR_ALIGNMENT_ADJUST).getLength();
         alignmentBaseline = pList.get(PR_ALIGNMENT_BASELINE).getEnum();
         baselineShift = pList.get(PR_BASELINE_SHIFT).getLength();
         dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
-        textDepth = pList.get(PR_TEXT_DEPTH).getLength();
-        textAltitude = pList.get(PR_TEXT_ALTITUDE).getLength();
         id = pList.get(PR_ID).getString();
-        keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
-        keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
         leaderAlignment = pList.get(PR_LEADER_ALIGNMENT).getEnum();
         leaderLength = pList.get(PR_LEADER_LENGTH).getLengthRange();
         leaderPattern = pList.get(PR_LEADER_PATTERN).getEnum();
@@ -105,7 +101,6 @@ public class Leader extends InlineLevel {
         }
         // letterSpacing = pList.get(PR_LETTER_SPACING);
         // textShadow = pList.get(PR_TEXT_SHADOW);
-        wordSpacing = pList.get(PR_WORD_SPACING).getSpace();
     }
 
     /**

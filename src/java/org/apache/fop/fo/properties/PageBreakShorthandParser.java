@@ -49,11 +49,11 @@ public class PageBreakShorthandParser implements ShorthandParser {
                 || propId == Constants.PR_BREAK_AFTER) {
             switch (property.getEnum()) {
             case Constants.EN_ALWAYS:
-                return new EnumProperty(Constants.EN_PAGE, "PAGE");
+                return EnumProperty.getInstance(Constants.EN_PAGE, "PAGE");
             case Constants.EN_LEFT:
-                return new EnumProperty(Constants.EN_EVEN_PAGE, "EVEN_PAGE");
+                return EnumProperty.getInstance(Constants.EN_EVEN_PAGE, "EVEN_PAGE");
             case Constants.EN_RIGHT:
-                return new EnumProperty(Constants.EN_ODD_PAGE, "ODD_PAGE");
+                return EnumProperty.getInstance(Constants.EN_ODD_PAGE, "ODD_PAGE");
             case Constants.EN_AVOID:
             default:
                 //nop;

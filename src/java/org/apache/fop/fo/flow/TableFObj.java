@@ -147,7 +147,6 @@ public abstract class TableFObj extends FObj {
         if (getNameId() == FO_TABLE_ROW) {
             
             TableRow row = (TableRow) this;
-            TableBody body = (TableBody) parent;
             
             for (i = colSpan; --i >= 0;) {
                 row.pendingSpans.add(null);

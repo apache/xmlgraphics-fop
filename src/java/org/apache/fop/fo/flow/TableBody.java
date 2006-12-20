@@ -46,11 +46,12 @@ import org.apache.fop.fo.properties.CommonRelativePosition;
  */
 public class TableBody extends TableFObj {
     // The value of properties relevant for fo:table-body.
-    private CommonAccessibility commonAccessibility;
-    private CommonAural commonAural;
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
-    private CommonRelativePosition commonRelativePosition;
-    private int visibility;
+    // Unused but valid items, commented out for performance:
+    //     private CommonAccessibility commonAccessibility;
+    //     private CommonAural commonAural;
+    //     private CommonRelativePosition commonRelativePosition;
+    //    private int visibility;
     // End of property values
     
     private PropertyList savedPropertyList;
@@ -80,11 +81,7 @@ public class TableBody extends TableFObj {
      * @see FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
-        commonAccessibility = pList.getAccessibilityProps();
-        commonAural = pList.getAuralProps();
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
-        commonRelativePosition = pList.getRelativePositionProps();
-        visibility = pList.get(PR_VISIBILITY).getEnum();
         super.bind(pList);
         //Used by convertCellsToRows()
         savedPropertyList = pList;
@@ -240,6 +237,7 @@ public class TableBody extends TableFObj {
      * @throws FOPException if there's a problem binding the TableRow's 
      *         properties.
      */
+    // TODO: This is currently unused. Why is it here?
     private void convertCellsToRows() throws FOPException {
         //getLogger().debug("Converting cells to rows...");
         List cells = new java.util.ArrayList(childNodes);

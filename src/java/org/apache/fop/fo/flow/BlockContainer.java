@@ -50,7 +50,6 @@ public class BlockContainer extends FObj {
     private Length height;
     private String id;
     private LengthRangeProperty inlineProgressionDimension;
-    private int intrusionDisplace;
     private KeepProperty keepTogether;
     private KeepProperty keepWithNext;
     private KeepProperty keepWithPrevious;
@@ -59,7 +58,9 @@ public class BlockContainer extends FObj {
     private int span;
     private Length width;
     private int writingMode;
-    private Numeric zIndex;
+    // Unused but valid items, commented out for performance:
+    //     private int intrusionDisplace;
+    //     private Numeric zIndex;
     // End of property values
 
     /** used for FO validation */
@@ -87,7 +88,6 @@ public class BlockContainer extends FObj {
         height = pList.get(PR_HEIGHT).getLength();
         id = pList.get(PR_ID).getString();
         inlineProgressionDimension = pList.get(PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
-        intrusionDisplace = pList.get(PR_INTRUSION_DISPLACE).getEnum();
         keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
         keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
         keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
@@ -96,7 +96,6 @@ public class BlockContainer extends FObj {
         span = pList.get(PR_SPAN).getEnum();
         width = pList.get(PR_WIDTH).getLength();
         writingMode = pList.get(PR_WRITING_MODE).getEnum();
-        zIndex = pList.get(PR_Z_INDEX).getNumeric();
     }
 
     /**
