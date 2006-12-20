@@ -67,36 +67,6 @@ public class TableCell extends TableFObj {
     private boolean blockItemFound = false;
 
     /**
-     * Offset of content rectangle in inline-progression-direction,
-     * relative to table.
-     */
-    protected int startOffset;
-
-    /**
-     * Offset of content rectangle, in block-progression-direction,
-     * relative to the row.
-     */
-    protected int beforeOffset = 0;
-
-    /**
-     * Offset of content rectangle, in inline-progression-direction,
-     * relative to the column start edge.
-     */
-    protected int startAdjust = 0;
-
-    /**
-     * Adjust to theoretical column width to obtain content width
-     * relative to the column start edge.
-     */
-    protected int widthAdjust = 0;
-
-    /** For collapsed border style */
-    protected int borderHeight = 0;
-
-    /** Ypos of cell ??? */
-    protected int top;
-
-    /**
      * @param parent FONode that is the parent of this object
      */
     public TableCell(FONode parent) {
@@ -172,15 +142,6 @@ public class TableCell extends TableFObj {
     /** @see org.apache.fop.fo.FObj#generatesReferenceAreas() */
     public boolean generatesReferenceAreas() {
         return true;
-    }
-
-    /**
-     * Set position relative to table (set by body?)
-     * 
-     * @param offset    new offset
-     */
-    public void setStartOffset(int offset) {
-        startOffset = offset;
     }
 
     /**
