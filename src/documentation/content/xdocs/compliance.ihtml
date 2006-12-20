@@ -207,10 +207,10 @@
     </tr>
     <tr>
       <th align="center">
-        0.20.5 (current stable)
+        0.20.5 (previous)
       </th>
       <th align="center">
-        0.92 beta
+        0.93 (stable)
       </th>
     </tr>
     <tr>
@@ -437,7 +437,7 @@
       <td align="center">
         <ul>
           <li>
-            [0.92 beta] The page width may not change among pages of the same page-sequence
+            [0.93] The page width may not change among pages of the same page-sequence
             unless a forced break is inserted.
           </li>
         </ul>
@@ -652,7 +652,7 @@
             [0.20.5] For absolute positioning, use 'position="absolute"' (as 'absolute-position="absolute"' is not implemented), and specify all four of "left", "top", "width" and "height"
           </li>
           <li>
-            [0.92 beta] No known restrictions.
+            [0.93] No known restrictions.
           </li>
         </ul>
       </td>
@@ -866,7 +866,7 @@
             [0.20.5] Only works for table of contents without any problems. The case where the page number doesn't fit on a line isn't handled, and any text on the same line and after the page-number might not appear exactly where you want it to.
           </li>
           <li>
-            [0.92 beta] After the page number is known, no relayout is performed. The appearance may be suboptimal depending on the use case.
+            [0.93] After the page number is known, no relayout is performed. The appearance may be suboptimal depending on the use case.
           </li>
         </ul>
       </td>
@@ -915,7 +915,7 @@
       <td align="left">
         <ul>
           <li>
-            [0.92 beta] Only border-collapse="separate" is supported and there's no support for automatic column widths.
+            [0.93] Only border-collapse="separate" is supported and there's no support for automatic column widths.
           </li>
         </ul>
       </td>
@@ -1396,7 +1396,7 @@
       </td>
       <td align="left">
         <ul>
-          <li>[0.92 beta] Restrictions with multi-column documents.</li>
+          <li>[0.93] Restrictions with multi-column documents.</li>
         </ul>
       </td>
     </tr>
@@ -1443,7 +1443,7 @@
       </td>
       <td align="left">
         <ul>
-          <li>[0.92 beta] Only works as expected with inline-level content.</li>
+          <li>[0.93] Only works as expected with inline-level content.</li>
         </ul>
       </td>
     </tr>
@@ -1512,10 +1512,10 @@
     </tr>
     <tr>
       <th align="center">
-        0.20.5 (current stable)
+        0.20.5 (previous)
       </th>
       <th align="center">
-        0.92 beta (unstable)
+        0.93 (stable)
       </th>
     </tr>
     <tr>
@@ -1590,7 +1590,7 @@
             [0.20.5] Use shorthand position="absolute" as a workaround.
           </li>
           <li>
-            [0.92 beta] No restrictions. The 0.20.5 work-around is not supported.
+            [0.93] No restrictions. The 0.20.5 work-around is not supported.
           </li>
         </ul>
       </td>
@@ -2084,7 +2084,7 @@
       <td align="left">
         <ul>
           <li>
-            [0.92 beta] not yet implemented for table-column, table-body, table-header and table-footer.
+            [0.93] not yet implemented for table-column, table-body, table-header and table-footer.
           </li>
         </ul>
       </td>
@@ -2108,7 +2108,7 @@
       <td align="partial">
         <ul>
           <li>
-            [0.92 beta] not yet implemented for table-column, table-body, table-header and table-footer.
+            [0.93] not yet implemented for table-column, table-body, table-header and table-footer.
           </li>
         </ul>
       </td>
@@ -2913,7 +2913,7 @@
             [0.20.5] font-family lists are not supported, use a single font-family name
           </li>
           <li>
-            [0.92 beta] font-family lists are allowed but glyph based font selection is not supported
+            [0.93] font-family lists are allowed but glyph based font selection is not supported
           </li>
         </ul>
       </td>
@@ -3068,7 +3068,7 @@
             [0.20.5] "normal", "bolder" and "lighter" are not supported
           </li>
           <li>
-            [0.92 beta] TODO &lt;relative&gt; font weights
+            [0.93] TODO &lt;relative&gt; font weights
           </li>
         </ul>
       </td>
@@ -3341,7 +3341,7 @@
             [0.20.5] space-before.optimum supported
           </li>
           <li>
-            [0.92 beta] Space adjustment may not fully work everywhere, yet.
+            [0.93] Space adjustment may not fully work everywhere, yet.
           </li>
         </ul>
       </td>
@@ -3368,7 +3368,7 @@
             [0.20.5] space-after.optimum supported
           </li>
           <li>
-            [0.92 beta] Space adjustment may not fully work everywhere, yet.
+            [0.93] Space adjustment may not fully work everywhere, yet.
           </li>
         </ul>
       </td>
@@ -3577,7 +3577,7 @@
             [0.20.5] For table-cell, the "height" attribute must be set for the parent table-row; setting the height of the table or the table-cell results in vertical centering having no effect. 
           </li>
           <li>
-            [0.92 beta] TODO Check e-g, i-f-o.
+            [0.93] TODO Check e-g, i-f-o.
           </li>
         </ul>
       </td>
@@ -3991,7 +3991,7 @@
       <td align="left">
         <ul>
           <li>
-            [0.92 beta] value "line-height" not supported
+            [0.93] value "line-height" not supported
           </li>
         </ul>
       </td>
@@ -4035,7 +4035,7 @@
       <td align="left">
         <ul>
           <li>
-            [0.92 beta] inline elements may interfere with correct handling of this property
+            [0.93] inline elements may interfere with correct handling of this property
             in some cases
           </li>
         </ul>
@@ -4148,7 +4148,7 @@
       <td align="left">
         <ul>
           <li>
-            [0.92 beta] Only supported on fo:block.
+            [0.93] Only supported on fo:block.
           </li>
         </ul>
       </td>
@@ -4515,10 +4515,10 @@
             [0.20.5] works only in table rows
           </li>
           <li>
-            [0.92 beta] works on all implemented block-level FOs, but not on inline-level FOs.
+            [0.93] works on all implemented block-level FOs, but not on inline-level FOs.
           </li>
           <li>
-            [0.92 beta] &lt;integer&gt; values are not supported.
+            [0.93] &lt;integer&gt; values are not supported.
           </li>
         </ul>
       </td>
@@ -4545,10 +4545,10 @@
             [0.20.5] works only in table rows
           </li>
           <li>
-            [0.92 beta] works on all implemented block-level FOs, but not on inline-level FOs.
+            [0.93] works on all implemented block-level FOs, but not on inline-level FOs.
           </li>
           <li>
-            [0.92 beta] &lt;integer&gt; values are not supported.
+            [0.93] &lt;integer&gt; values are not supported.
           </li>
         </ul>
       </td>
@@ -4575,10 +4575,10 @@
             [0.20.5] works only in table rows
           </li>
           <li>
-            [0.92 beta] works on all implemented FOs, except list- and table-related and inline-level FOs.
+            [0.93] works on all implemented FOs, except list- and table-related and inline-level FOs.
           </li>
           <li>
-            [0.92 beta] &lt;integer&gt; values are not supported.
+            [0.93] &lt;integer&gt; values are not supported.
           </li>
         </ul>
       </td>
@@ -4742,7 +4742,7 @@
             [0.20.5] not value "page"
           </li>
           <li>
-            [0.92 beta] Not supported
+            [0.93] Not supported
           </li>
         </ul>
       </td>
@@ -4769,7 +4769,7 @@
             [0.20.5] not value "use-content"
           </li>
           <li>
-            [0.92 beta] Value "use-content" does not work in all circumstances.
+            [0.93] Value "use-content" does not work in all circumstances.
           </li>
         </ul>
       </td>
@@ -6223,7 +6223,7 @@
       </td>
       <td align="left">
         <ul>
-          <li>[0.92 beta] IDs on table-header, table-footer, table-body, table-row, table-and-caption, table-caption, inline-container and bidi-override are not available, yet.</li>
+          <li>[0.93] IDs on table-header, table-footer, table-body, table-row, table-and-caption, table-caption, inline-container and bidi-override are not available, yet.</li>
         </ul>
       </td>
     </tr>
@@ -6639,7 +6639,7 @@
       <td align="center">
         <ul>
           <li>
-            [0.92 beta] Enum values other than "inherit" not yet supported.
+            [0.93] Enum values other than "inherit" not yet supported.
           </li>
         </ul>
       </td>
@@ -6847,7 +6847,7 @@
             [0.20.5] Only works as a shorthand for baseline-shift property.
           </li>
           <li>
-            [0.92 beta] Percentages are not supported, yet.
+            [0.93] Percentages are not supported, yet.
           </li>
         </ul>
       </td>
@@ -6917,10 +6917,10 @@
     </tr>
     <tr>
       <th align="center">
-        0.20.5 (current stable)
+        0.20.5 (previous)
       </th>
       <th align="center">
-        0.92 beta (unstable)
+        0.93 (stable)
       </th>
     </tr>
     <tr>

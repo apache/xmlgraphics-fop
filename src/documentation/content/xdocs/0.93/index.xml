@@ -19,7 +19,7 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <document>
   <header>
-    <title>Apache FOP 0.92 beta</title>
+    <title>Apache FOP Version 0.93</title>
     <version>$Revision: 201586 $</version>
   </header>
   <body>
@@ -27,15 +27,14 @@
       <title>Introduction</title>
       <p>
         The Apache FOP team is proud to present to you the largely rewritten codebase which is 
-        finally in a state where you can start to use it. It has taken over three years to get this
-        far and over two years without a new release from the FOP project. We would like to encourage 
-        you to download the code and to play with it. We're still in the process of adding new major
-        features and stabilizing the code. We welcome any feedback you might have and even more, any
+        finally in a state where you can use it. It has taken over three years to get this
+        far and over two years without a new release from the FOP project. We're still in the process of adding new
+        features. We welcome any feedback you might have and even more, any
         other form of help to get the project forward.
       </p>
       <p>
-        This third release contains many bug fix release and new features compared
-        to 0.91beta. To see what has changed since the last release, please visit the 
+        This fourth release contains many bug fix release and new features compared
+        to 0.92beta. To see what has changed since the last release, please visit the 
         <a href="../changes.html">Changes Page</a> and the <a href="../relnotes.html">Release Notes</a>.
       </p>
     </section>

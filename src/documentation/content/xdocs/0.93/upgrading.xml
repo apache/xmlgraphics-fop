@@ -31,22 +31,19 @@
       </p>
       <ul>
         <li>
-          More than half of the codebase has been rewritten over the last three years. The code is 
-          relatively new and possibly not as stable as version 0.20.5 in every regard. But the code
-          is <strong>quickly approaching production level</strong>, especially when you're happy 
-          with only PDF and PostScript output.
+          More than half of the codebase has been rewritten over the last three years. With version 0.93 the code has reached <strong>production level</strong>.
         </li>
         <li>
-          The API of FOP has changed considerably and is not backwards-compatible with version 0.20.5.
+          The API of FOP has changed considerably and is not backwards-compatible with versions 0.20.5 and 0.91beta.
         </li>
         <li>
-          If you are using a configuration file, you have to rebuild it in the new format. The format
+          If you are using a configuration file for version 0.20.5, you have to rebuild it in the new format. The format
           of the configuration files has changed since version 0.20.5. See conf/fop.xconf for
           an example configuration file. A XML Schema file can be found under
           src/foschema/fop-configuration.xsd.
         </li>
         <li>
-          There have been changes to the end-user API between 0.91 beta and 0.92 beta. With version 0.92, 
+          There have been changes to the end-user API since 0.91 beta. As of version 0.92, 
           <strong>the API is now considered stable</strong>. Some methods have been deprecated and will be removed with
           the next release. If you upgrade from 0.91 beta, you will need to adjust your Java code.
         </li>

@@ -25,6 +25,19 @@
 
     <body>
 <section>
+  <title>FOP 0.93</title>
+  <p>This is the first stable release after the big redesign effort. Its API is that first introduced in release 0.92 beta. The preceding API has been removed. This release again contains many bug fixes and new features. See the changes file for details.
+  </p>
+  <p>Caveats:</p>
+  <ul>
+    <li>
+      You may experience different behaviour compared to version 0.20.5.
+      Please consult the <a href="stable/upgrading.html">"Upgrading"</a> page for details.
+    </li>
+  </ul>
+</section>
+
+<section>
   <title>FOP 0.92 beta</title>
   <p>
     This is the third release after the big redesign effort. FOP 0.92 beta has now
@@ -44,11 +57,11 @@
     </li>
     <li>
       The API has changed between 0.91beta this release.
-      Please consult the <a href="0.92/upgrading.html">"Upgrading"</a> page for details.
+      Please consult the <a href="stable/upgrading.html">"Upgrading"</a> page for details.
     </li>
     <li>
       You may experience different behaviour compared to version 0.20.5.
-      Please consult the <a href="0.92/upgrading.html">"Upgrading"</a> page for details.
+      Please consult the <a href="stable/upgrading.html">"Upgrading"</a> page for details.
     </li>
   </ul>
   <p>Known Issues:</p>
@@ -177,7 +190,7 @@
     </li>
     <li>
       You may experience different behaviour compared to version 0.20.5.
-      Please consult the <a href="0.92/upgrading.html">"Upgrading"</a> page indicated above for details.
+      Please consult the <a href="stable/upgrading.html">"Upgrading"</a> page indicated above for details.
     </li>
   </ul>
   <p>Known Issues:</p>
@@ -318,7 +331,7 @@
     </li>
     <li>
       You may experience different behaviour compared to version 0.20.5.
-      Please consult the <a href="0.92/upgrading.html">"Upgrading"</a> page indicated above for details.
+      Please consult the <a href="stable/upgrading.html">"Upgrading"</a> page indicated above for details.
     </li>
   </ul>
   <p>Known Issues:</p>

@@ -36,12 +36,12 @@
     </p>
         <figure width="480" height="260" src="images/document.jpg" alt="Render Diagram" />
     <p>
-      The latest stable version of FOP (<link href="0.20.5/">0.20.5</link>) is a partial implementation of the
+      The previous version of FOP (<link href="0.20.5/">0.20.5</link>) is a partial implementation of the
       <link href="http://www.w3.org/TR/2001/REC-xsl-20011015/">XSL-FO Version 1.0
       W3C Recommendation</link>.
     </p>
     <p>
-      The latest version of FOP (<link href="0.92/">0.92 beta</link>) is the second preview release 
+      The latest stable version of FOP (<link href="0.93/">0.93</link>) is the first stable release 
       after a large redesign effort and implements a larger subset than 0.20.5 of the 
       <link href="http://www.w3.org/TR/2001/REC-xsl-20011015/">XSL-FO Version 1.0 W3C Recommendation</link>
       as well as some parts of the <link href="http://www.w3.org/TR/xsl11">XSL-FO Version 1.1 Working Draft</link>.

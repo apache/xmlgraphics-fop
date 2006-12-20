@@ -58,7 +58,7 @@
   <!--
   BEGIN Version 0.20.5 tab
   -->
-  <v0205 label="Version 0.20.5" href="0.20.5/" tab="stableversion">
+  <v0205 label="Version 0.20.5" href="0.20.5/" tab="maintenanceversion">
     <about label="About" href="index.html"/>
   
     <using label="Using FOP">
@@ -86,9 +86,9 @@
   -->
   
   <!--
-  BEGIN Version 0.92 documentation tab
+  BEGIN Version 0.93 documentation tab
   -->
-  <trunk label="FOP 0.92 beta" href="0.92/" tab="currentversion">
+  <trunk label="FOP 0.93" href="0.93/" tab="stableversion">
     <about label="About" href="index.html"/>
     <upgrading label="Upgrading" href="upgrading.html"/>
     
@@ -114,7 +114,7 @@
     
   </trunk>
   <!--
-  END Version 0.92 documentation tab
+  END Version 0.93 documentation tab
   -->
   
   <!--
@@ -243,6 +243,7 @@
     </xmlgraphics.apache.org>
     <svn-repo href="http://svn.apache.org/repos/asf/xmlgraphics/fop/">
       <trunk href="trunk/"/>
+      <stable href="branches/fop-0_93"/>
       <maintenance href="branches/fop-0_20_2-maintain/"/>
     </svn-repo>
     <xml.apache.org href="http://xml.apache.org/">

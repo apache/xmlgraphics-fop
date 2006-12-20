@@ -28,6 +28,8 @@
 
   <changes>
     <release version="FOP Trunk">
+    </release>    
+    <release version="0.93" date="2 January 2007">
       <action context="Code" dev="SP" type="update" fixes-bug="41044" due-to="Richard Wheeldon">
         Commented out unused properties, in order to minimize memory usage. 
       </action>
