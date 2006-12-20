@@ -28,6 +28,12 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="SP" type="update" fixes-bug="41044" due-to="Richard Wheeldon">
+        Commented out unused properties, in order to minimize memory usage. 
+      </action>
+      <action context="Code" dev="SP" type="update" fixes-bug="41009" due-to="Richard Wheeldon">
+        Removed unused attributes from TableCell. 
+      </action>
       <action context="Code" dev="JM" type="add">
         Added initial support for loading fonts without a pre-created XML font metric
         file.
