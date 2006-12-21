@@ -82,7 +82,7 @@ public class FontFileReader {
      * @throws IOException In case of an I/O problem
      */
     public void seekSet(long offset) throws IOException {
-        if (offset > fsize || offset < 0) {
+        if (offset >= fsize || offset < 0) {
             throw new java.io.EOFException("Reached EOF, file size=" + fsize
                                            + " offset=" + offset);
         }
@@ -134,7 +134,7 @@ public class FontFileReader {
      * @throws IOException If EOF is reached
      */
     public byte read() throws IOException {
-        if (current > fsize) {
+        if (current >= fsize) {
             throw new java.io.EOFException("Reached EOF, file size=" + fsize);
         }
 
