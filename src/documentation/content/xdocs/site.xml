@@ -106,6 +106,7 @@
       <if label="Intermediate Format" href="intermediate.html"/>
       <pdfencryption label="PDF Encryption" href="pdfencryption.html"/>
       <pdfa label="PDF/A" href="pdfa.html"/>
+      <pdfx label="PDF/X" href="pdfx.html"/>
       <graphics label="Graphics" href="graphics.html"/>
       <fonts label="Fonts" href="fonts.html"/>
       <hyphenation label="Hyphenation" href="hyphenation.html"/>    
