@@ -9,9 +9,9 @@ RedirectMatch Permanent ^/fop/graphics(.*) http://xmlgraphics.apache.org/fop/0.9
 RedirectMatch Permanent ^/fop/hyphenation(.*) http://xmlgraphics.apache.org/fop/0.93/hyphenation$1
 RedirectMatch Permanent ^/fop/intermediate(.*) http://xmlgraphics.apache.org/fop/0.93/intermediate$1
 RedirectMatch Permanent ^/fop/output(.*) http://xmlgraphics.apache.org/fop/0.93/output$1
-RedirectMatch Permanent ^/fop/pdfencryption(.*) http://xmlgraphics.apache.org/fop/0.93/pdfs$1
+RedirectMatch Permanent ^/fop/pdfa(.*) http://xmlgraphics.apache.org/fop/0.93/pdfa$1
 RedirectMatch Permanent ^/fop/pdfencryption(.*) http://xmlgraphics.apache.org/fop/0.93/pdfencryption$1
-RedirectMatch Permanent ^/fop/pdfencryption(.*) http://xmlgraphics.apache.org/fop/0.93/pdfx$1
+RedirectMatch Permanent ^/fop/pdfx(.*) http://xmlgraphics.apache.org/fop/0.93/pdfx$1
 RedirectMatch Permanent ^/fop/running(.*) http://xmlgraphics.apache.org/fop/0.93/running$1
 RedirectMatch Permanent ^/fop/servlets(.*) http://xmlgraphics.apache.org/fop/0.93/servlets$1
 
