@@ -104,9 +104,9 @@ public final class ImageFactory {
 
         imt = new ImageMimeType("image/png");
         imageMimeTypes.put(imt.getMimeType(), imt);
+        imt.addProvider(pngImage);
         //Image I/O is faster and more memory-efficient than own codec for PNG
         imt.addProvider(imageIoImage);
-        imt.addProvider(pngImage);
 
         imt = new ImageMimeType("image/tga");
         imageMimeTypes.put(imt.getMimeType(), imt);
