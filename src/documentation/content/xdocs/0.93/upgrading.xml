@@ -103,13 +103,13 @@
           or <code>instream-foreign-object</code>
           objects. If images or SVGs are sized differently in your outputs with the new FOP version
           check <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=37136">Bug 37136</a>
-          as it contains some hints on what to. The file 
+          as it contains some hints on what to do. The file 
           <a href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/trunk/examples/fo/basic/images.fo?view=markup">
           <code>"examples/fo/basic/images.fo"</code></a> has
-          a number of good examples that shows the new, more correct behaviour.
+          a number of good examples that show the new, more correct behaviour.
         </li>
         <li>
-          The <code>fox:outline</code> extension not implemented in this version anymore. 
+          The <code>fox:outline</code> extension is not implemented in this version anymore. 
           It has been superseded by the new bookmark elements from XSL-FO 1.1.
         </li>
         <li>
