@@ -17,7 +17,7 @@
 
 /* $Id$ */
 
-package org.apache.commons.text.linebreak;
+package org.apache.fop.text.linebreak;
 
 /* 
  * This is a generated file, DO NOT CHANGE!

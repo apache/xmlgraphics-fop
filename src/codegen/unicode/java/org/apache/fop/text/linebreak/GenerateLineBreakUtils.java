@@ -252,7 +252,7 @@ public class GenerateLineBreakUtils {
         out.println();
         out.println("/* $Id$ */");
         out.println();
-        out.println("package org.apache.commons.text.linebreak;");
+        out.println("package org.apache.fop.text.linebreak;");
         out.println();
         out.println("/* ");
         out.println(" * This is a generated file, DO NOT CHANGE!");

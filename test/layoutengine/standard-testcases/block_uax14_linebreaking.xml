@@ -62,7 +62,7 @@
             CL -- Closing Punctuation (XB)
           </fo:block>
           <fo:block background-color="yellow" margin="0pt 0pt 3pt 0pt">
-            Closing )brackets )even )if )preceeded )by )a )space )are )not )a )break )point
+            Closing ) brackets ) even ) if ) preceeded ) by ) a ) space ) are ) not ) a ) break ) point
           </fo:block>
           <fo:block background-color="silver" font-size="8pt" margin="3pt 0pt 0pt 0pt">
             EX -- Exclamation / interrogation (XB)
@@ -101,7 +101,7 @@
             OP -- Opening Punctuation (XA)
           </fo:block>
           <fo:block background-color="yellow" margin="0pt 0pt 3pt 0pt">
-            Opening( brackets( even( if( followed( by( a( space( are( not( a( break( point
+            Opening ( brackets ( even ( if ( followed ( by ( a ( space ( are ( not ( a ( break ( point
           </fo:block>
           <fo:block background-color="silver" font-size="8pt" margin="3pt 0pt 0pt 0pt">
             SY -- Symbols Allowing Break After (A)
@@ -139,9 +139,9 @@
       <eval expected="117250" xpath="//flow/block[9]/lineArea[2]/text/@ipd"/>
 
       <eval expected="3" xpath="count(//flow/block[11]/lineArea)"/>
-      <eval expected="122250" xpath="//flow/block[11]/lineArea[1]/text/@ipd"/>
-      <eval expected="166730" xpath="//flow/block[11]/lineArea[2]/text/@ipd"/>
-      <eval expected="52800" xpath="//flow/block[11]/lineArea[3]/text/@ipd"/>
+      <eval expected="130590" xpath="//flow/block[11]/lineArea[1]/text/@ipd"/>
+      <eval expected="168960" xpath="//flow/block[11]/lineArea[2]/text/@ipd"/>
+      <eval expected="70030" xpath="//flow/block[11]/lineArea[3]/text/@ipd"/>
 
       <eval expected="3" xpath="count(//flow/block[13]/lineArea)"/>
       <eval expected="162290" xpath="//flow/block[13]/lineArea[1]/text/@ipd"/>
@@ -172,9 +172,9 @@
       <eval expected="30570" xpath="//flow/block[22]/lineArea[3]/text/@ipd"/>
 
       <eval expected="3" xpath="count(//flow/block[24]/lineArea)"/>
-      <eval expected="163390" xpath="//flow/block[24]/lineArea[1]/text/@ipd"/>
-      <eval expected="144490" xpath="//flow/block[24]/lineArea[2]/text/@ipd"/>
-      <eval expected="27790" xpath="//flow/block[24]/lineArea[3]/text/@ipd"/>
+      <eval expected="128940" xpath="//flow/block[24]/lineArea[1]/text/@ipd"/>
+      <eval expected="158390" xpath="//flow/block[24]/lineArea[2]/text/@ipd"/>
+      <eval expected="76140" xpath="//flow/block[24]/lineArea[3]/text/@ipd"/>
 
       <eval expected="2" xpath="count(//flow/block[26]/lineArea)"/>
       <eval expected="156750" xpath="//flow/block[26]/lineArea[1]/text/@ipd"/>
