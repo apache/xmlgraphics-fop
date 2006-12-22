@@ -145,7 +145,7 @@ list of possible build targets.
   <property name="Name" value="Apache FOP"/>
   <property name="name" value="fop"/>
   <property name="NAME" value="FOP"/>
-  <property name="version" value="svn-trunk"/>
+  <property name="version" value="0.93"/>
   <property name="year" value="1999-2006"/>
 
   <property name="javac.debug" value="on"/>

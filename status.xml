@@ -30,6 +30,12 @@
     <release version="FOP Trunk">
     </release>    
     <release version="0.93" date="2 January 2007">
+      <action context="Code" dev="BD" type="add">
+        Added support for the use of Open Type fonts
+      </action>
+      <action context="Code" dev="JM" type="update">
+        Enabled Copy/Paste from PDF content in Acrobat Reader for text using embedded TrueType fonts.
+      </action>
       <action context="Code" dev="SP" type="update" fixes-bug="41044" due-to="Richard Wheeldon">
         Commented out unused properties, in order to minimize memory usage. 
       </action>
