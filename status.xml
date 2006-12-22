@@ -33,7 +33,7 @@
       <action context="Code" dev="BD" type="add">
         Added support for the use of Open Type fonts
       </action>
-      <action context="Code" dev="JM" type="update">
+      <action context="Code" dev="BD" type="update" fixes-bug="5535" due-to="Adam Strzelecki, Victor Mote">
         Enabled Copy/Paste from PDF content in Acrobat Reader for text using embedded TrueType fonts.
       </action>
       <action context="Code" dev="SP" type="update" fixes-bug="41044" due-to="Richard Wheeldon">
