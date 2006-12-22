@@ -162,6 +162,7 @@ list of possible build targets.
   
   <property name="src.dir" value="${basedir}/src"/>
   <property name="src.codegen.dir" value="${src.dir}/codegen"/>
+  <property name="src.codegen.fonts.dir" value="${src.codegen.dir}/fonts"/>
   <property name="src.java.dir" value="${src.dir}/java"/>
   <property name="src.sandbox.dir" value="${src.dir}/sandbox"/>
   <property name="src.viewer.resources.dir" value="${src.java.dir}/org/apache/fop/render/awt/viewer/resources"/>
@@ -178,6 +179,7 @@ list of possible build targets.
   <property name="build.gensrc.dir" value="${build.dir}/gensrc"/>
   <property name="build.classes.dir" value="${build.dir}/classes"/>
   <property name="build.sandbox-classes.dir" value="${build.dir}/sandbox-classes"/>
+  <property name="build.codegen-classes.dir" value="${build.dir}/codegen-classes"/>
   <property name="build.javadocs.dir" value="${build.dir}/javadocs"/>
   <property name="build.examples.dir" value="${build.dir}/examples"/>
 
@@ -319,69 +321,69 @@ list of possible build targets.
     <mkdir dir="${build.gensrc.dir}"/>
     <mkdir dir="${build.gensrc.dir}/org/apache/fop/fonts/base14"/>
 
-    <style in="${src.codegen.dir}/encodings.xml"
-           style="${src.codegen.dir}/code-point-mapping.xsl"
+    <style in="${src.codegen.fonts.dir}/encodings.xml"
+           style="${src.codegen.fonts.dir}/code-point-mapping.xsl"
         out="${build.gensrc.dir}/org/apache/fop/fonts/CodePointMapping.java"/>
     <!-- Task unrolled because of a bug in Xalan included in some
          JDK 1.4 releases
     <style basedir="src/codegen" includes="Helvetica*.xml,Times*.xml,Courier*.xml"
-        style="${src.codegen.dir}/font-file.xsl"
+        style="${src.codegen.fonts.dir}/font-file.xsl"
         destdir="${build.gensrc.dir}/org/apache/fop/fonts/base14" extension=".java">
         <param name="encoding" expression="WinAnsiEncoding"/>
     </style>
     -->
-    <style in="${src.codegen.dir}/Courier.xml" style="${src.codegen.dir}/font-file.xsl"
+    <style in="${src.codegen.fonts.dir}/Courier.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
         out="${build.gensrc.dir}/org/apache/fop/fonts/base14/Courier.java">
       <param name="encoding" expression="WinAnsiEncoding"/>
     </style>
-    <style in="${src.codegen.dir}/CourierOblique.xml" style="${src.codegen.dir}/font-file.xsl"
+    <style in="${src.codegen.fonts.dir}/CourierOblique.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
         out="${build.gensrc.dir}/org/apache/fop/fonts/base14/CourierOblique.java">
       <param name="encoding" expression="WinAnsiEncoding"/>
     </style>
-    <style in="${src.codegen.dir}/CourierBold.xml" style="${src.codegen.dir}/font-file.xsl"
+    <style in="${src.codegen.fonts.dir}/CourierBold.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
         out="${build.gensrc.dir}/org/apache/fop/fonts/base14/CourierBold.java">
       <param name="encoding" expression="WinAnsiEncoding"/>
     </style>
-    <style in="${src.codegen.dir}/CourierBoldOblique.xml" style="${src.codegen.dir}/font-file.xsl"
+    <style in="${src.codegen.fonts.dir}/CourierBoldOblique.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
         out="${build.gensrc.dir}/org/apache/fop/fonts/base14/CourierBoldOblique.java">
       <param name="encoding" expression="WinAnsiEncoding"/>
     </style>
-    <style in="${src.codegen.dir}/Helvetica.xml" style="${src.codegen.dir}/font-file.xsl"
+    <style in="${src.codegen.fonts.dir}/Helvetica.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
         destdir="${build.gensrc.dir}/org/apache/fop/fonts/base14"
         out="${build.gensrc.dir}/org/apache/fop/fonts/base14/Helvetica.java">
       <param name="encoding" expression="WinAnsiEncoding"/>
     </style>
-    <style in="${src.codegen.dir}/HelveticaBold.xml" style="${src.codegen.dir}/font-file.xsl"
+    <style in="${src.codegen.fonts.dir}/HelveticaBold.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
         out="${build.gensrc.dir}/org/apache/fop/fonts/base14/HelveticaBold.java">
       <param name="encoding" expression="WinAnsiEncoding"/>
     </style>
-    <style in="${src.codegen.dir}/HelveticaOblique.xml" style="${src.codegen.dir}/font-file.xsl"
+    <style in="${src.codegen.fonts.dir}/HelveticaOblique.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
         out="${build.gensrc.dir}/org/apache/fop/fonts/base14/HelveticaOblique.java">
       <param name="encoding" expression="WinAnsiEncoding"/>
     </style>
-    <style in="${src.codegen.dir}/HelveticaBoldOblique.xml" style="${src.codegen.dir}/font-file.xsl"
+    <style in="${src.codegen.fonts.dir}/HelveticaBoldOblique.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
         out="${build.gensrc.dir}/org/apache/fop/fonts/base14/HelveticaBoldOblique.java">
       <param name="encoding" expression="WinAnsiEncoding"/>
     </style>
-    <style in="${src.codegen.dir}/TimesRoman.xml" style="${src.codegen.dir}/font-file.xsl"
+    <style in="${src.codegen.fonts.dir}/TimesRoman.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
         out="${build.gensrc.dir}/org/apache/fop/fonts/base14/TimesRoman.java">
       <param name="encoding" expression="WinAnsiEncoding"/>
     </style>
-    <style in="${src.codegen.dir}/TimesItalic.xml" style="${src.codegen.dir}/font-file.xsl"
+    <style in="${src.codegen.fonts.dir}/TimesItalic.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
         out="${build.gensrc.dir}/org/apache/fop/fonts/base14/TimesItalic.java">
       <param name="encoding" expression="WinAnsiEncoding"/>
     </style>
-    <style in="${src.codegen.dir}/TimesBold.xml" style="${src.codegen.dir}/font-file.xsl"
+    <style in="${src.codegen.fonts.dir}/TimesBold.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
         out="${build.gensrc.dir}/org/apache/fop/fonts/base14/TimesBold.java">
       <param name="encoding" expression="WinAnsiEncoding"/>
     </style>
-    <style in="${src.codegen.dir}/TimesBoldItalic.xml" style="${src.codegen.dir}/font-file.xsl"
+    <style in="${src.codegen.fonts.dir}/TimesBoldItalic.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
         out="${build.gensrc.dir}/org/apache/fop/fonts/base14/TimesBoldItalic.java">
       <param name="encoding" expression="WinAnsiEncoding"/>
     </style>
-    <style in="${src.codegen.dir}/Symbol.xml" style="${src.codegen.dir}/font-file.xsl"
+    <style in="${src.codegen.fonts.dir}/Symbol.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
         out="${build.gensrc.dir}/org/apache/fop/fonts/base14/Symbol.java"/>
-    <style in="${src.codegen.dir}/ZapfDingbats.xml" style="${src.codegen.dir}/font-file.xsl"
+    <style in="${src.codegen.fonts.dir}/ZapfDingbats.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
         out="${build.gensrc.dir}/org/apache/fop/fonts/base14/ZapfDingbats.java"/>
 
   </target>
@@ -901,7 +903,26 @@ list of possible build targets.
     </junit>
   </target>
 
-  <target name="junit" depends="junit-basic, junit-transcoder, junit-layout, junit-fotree, junit-intermediate-format" description="Runs all of FOP's JUnit tests" if="junit.present">
+  <target name="junit-text-linebreak" depends="junit-compile" description="Runs FOP's JUnit unicode linebreak tests" if="junit.present">
+    <echo message="Running tests for Unicode UAX#14 support"/>
+    <junit dir="${basedir}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
+      <sysproperty key="basedir" value="${basedir}"/>
+      <sysproperty key="jawa.awt.headless" value="true"/>
+      <formatter type="brief" usefile="false"/>
+      <formatter type="plain" usefile="true"/>
+      <formatter type="xml" usefile="true"/>
+      <classpath>
+        <pathelement location="${build.dir}/test-classes"/>
+        <path refid="libs-build-classpath"/>
+        <fileset dir="build">
+          <include name="fop.jar"/>
+        </fileset>
+      </classpath>
+      <test name="org.apache.fop.text.linebreak.LineBreakStatusTest" todir="${junit.reports.dir}"/>
+    </junit>
+  </target>
+
+  <target name="junit" depends="junit-basic, junit-transcoder, junit-text-linebreak, junit-layout, junit-fotree, junit-intermediate-format" description="Runs all of FOP's JUnit tests" if="junit.present">
     <fail>
       <condition>
         <or>
@@ -1260,11 +1281,27 @@ NOTE:
   <!-- and may have updates that will *not* be generated by below.  This   -->
   <!-- target should never be part of the normal build process.            -->
   <!-- =================================================================== -->
-  <target name="xsltToJava" >
-    <style in="src\codegen\constants.xml" style="src\codegen\constants.xsl"
+  <target name="codegen-fo" >
+    <style in="${src.codegen.dir}/fo/constants.xml" style="${src.codegen.dir}/fo/constants.xsl"
         out="Constants.java"/>
-    <style in="src/codegen/foelements.xml" style="src/codegen/property-sets.xsl"
+    <style in="${src.codegen.dir}/fo/foelements.xml" style="${src.codegen.dir}/fo/property-sets.xsl"
         out="PropertySets.java"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Helper task to generate source files that have already been         -->
+  <!-- checked into CVS.  For these files, CVS version is the official one -->
+  <!-- and may have updates that will *not* be generated by below.  This   -->
+  <!-- target should never be part of the normal build process.            -->
+  <!-- =================================================================== -->
+  <target name="codegen-unicode" >
+    <mkdir dir="${build.codegen-classes.dir}"/>
+    <javac destdir="${build.codegen-classes.dir}" fork="${javac.fork}" debug="${javac.debug}"
+           deprecation="${javac.deprecation}" optimize="${javac.optimize}"
+           source="${javac.source}" target="${javac.target}">
+      <src path="${src.codegen.dir}/unicode/java"/>
+    </javac>
+    <java classname="org.apache.fop.text.linebreak.GenerateLineBreakUtils" classpath="${build.codegen-classes.dir}" />
   </target>
 
   <!-- =================================================================== -->
