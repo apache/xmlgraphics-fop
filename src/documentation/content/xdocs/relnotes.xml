@@ -46,7 +46,7 @@
   <ul>
     <li>
       You may experience different behaviour compared to version 0.20.5.
-      Please consult the <a href="stable/upgrading.html">"Upgrading"</a> page for details.
+      Please consult the <a href="0.93/upgrading.html">"Upgrading"</a> page for details.
     </li>
   </ul>
   <p>Known Issues:</p>
@@ -161,11 +161,11 @@
     </li>
     <li>
       The API has changed between 0.91beta this release.
-      Please consult the <a href="stable/upgrading.html">"Upgrading"</a> page for details.
+      Please consult the <a href="0.93/upgrading.html">"Upgrading"</a> page for details.
     </li>
     <li>
       You may experience different behaviour compared to version 0.20.5.
-      Please consult the <a href="stable/upgrading.html">"Upgrading"</a> page for details.
+      Please consult the <a href="0.93/upgrading.html">"Upgrading"</a> page for details.
     </li>
   </ul>
   <p>Known Issues:</p>
@@ -294,7 +294,7 @@
     </li>
     <li>
       You may experience different behaviour compared to version 0.20.5.
-      Please consult the <a href="stable/upgrading.html">"Upgrading"</a> page indicated above for details.
+      Please consult the <a href="0.93/upgrading.html">"Upgrading"</a> page indicated above for details.
     </li>
   </ul>
   <p>Known Issues:</p>
@@ -435,7 +435,7 @@
     </li>
     <li>
       You may experience different behaviour compared to version 0.20.5.
-      Please consult the <a href="stable/upgrading.html">"Upgrading"</a> page indicated above for details.
+      Please consult the <a href="0.93/upgrading.html">"Upgrading"</a> page indicated above for details.
     </li>
   </ul>
   <p>Known Issues:</p>
