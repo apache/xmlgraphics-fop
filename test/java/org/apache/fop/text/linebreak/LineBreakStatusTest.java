@@ -127,7 +127,7 @@ public class LineBreakStatusTest extends TestCase {
         // CL -- Closing Punctuation (XB)
         assertTrue(testBreak(
             "Right Parenthesis ) break", 
-            "^^^^^^%^^^^^^^^^^^^^_^^^^"
+            "^^^^^^%^^^^^^^^^^^^^%^^^^"
             ));
         
         // CM -- Attached Characters and Combining Marks (XB) -- normative
@@ -150,7 +150,7 @@ public class LineBreakStatusTest extends TestCase {
         // EX -- Exclamation / interrogation (XB)
         assertTrue(testBreak(
             "EX CL ! ) break", 
-            "^^^%^^^^^^_^^^^"
+            "^^^%^^^^^^%^^^^"
             ));
         
         assertTrue(testBreak(
@@ -244,7 +244,7 @@ public class LineBreakStatusTest extends TestCase {
         // OP -- Opening Punctuation (XA)
         assertTrue(testBreak(
             "[ Bracket ( Parenthesis", 
-            "^^^^^^^^^^_^^^^^^^^^^^^"
+            "^^^^^^^^^^%^^^^^^^^^^^^"
             ));
         
         // PO -- Postfix (Numeric) (XB)
