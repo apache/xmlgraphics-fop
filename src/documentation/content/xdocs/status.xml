@@ -82,7 +82,7 @@
           </tr>
           <tr>
             <td>API</td>
-            <td>beta, but finalized (feedback wanted)</td>
+            <td>stable</td>
           </tr>
           <tr>
             <td>FO Tree</td>
@@ -97,32 +97,44 @@
             <td>stable</td>
           </tr>
           <tr>
+            <td>Intermediate Format Support</td>
+            <td>stable (could use a speed upgrade)</td>
+          </tr>
+          <tr>
             <td>PDF (Library and Renderer)</td>
             <td>stable (SVG: stable)</td>
           </tr>
           <tr>
             <td>PostScript</td>
-            <td>stable (SVG: beta)</td>
+            <td>stable (SVG: stable with restrictions)</td>
           </tr>
           <tr>
             <td>Java2D, AWT, Bitmap Renderers</td>
-            <td>beta, needs some detail work</td>
+            <td>stable</td>
           </tr>
           <tr>
             <td>Text Renderer</td>
-            <td>beta (feedback wanted)</td>
+            <td>stable (not much feedback)</td>
           </tr>
           <tr>
             <td>RTF Handler</td>
             <td>beta, restricted functionality compared to PDF/PS</td>
           </tr>
           <tr>
-            <td>PCL Renderer, SVG Renderer</td>
+            <td>PCL Renderer</td>
+            <td>stable (not much feedback)</td>
+          </tr>
+          <tr>
+            <td>AFP Renderer</td>
+            <td>status unknown (not much feedback)</td>
+          </tr>
+          <tr>
+            <td>SVG Renderer</td>
             <td>non-functional in sandbox, help needed</td>
           </tr>
           <tr>
             <td>Font Support</td>
-            <td>stable, but in redesign</td>
+            <td>stable</td>
           </tr>
           <tr>
             <td>Image Support</td>
