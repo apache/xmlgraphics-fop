@@ -100,16 +100,20 @@ public class EnumProperty extends Property {
     /**
      * @return this.value cast as an Object
      */
-    public Object getObject() {
+    protected Object getObject() {
         return text;
     }
 
+    /**
+     * @see java.lang.Object#equals(Object)
+     */
     public boolean equals(Object obj) {
         if (obj instanceof EnumProperty) {
             EnumProperty ep = (EnumProperty)obj;
-            return ep.value == this.value &&
-                ((ep.text == null && this.text == null)
-                 || ep.text.equals(this.text));
+            return (ep.value == this.value) 
+                && ((ep.text == this.text)
+                    || (ep.text != null
+                        && ep.text.equals(this.text)));
         } else {
             return false;
         }
