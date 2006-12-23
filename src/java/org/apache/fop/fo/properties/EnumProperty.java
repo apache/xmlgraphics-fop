@@ -100,7 +100,7 @@ public class EnumProperty extends Property {
     /**
      * @return this.value cast as an Object
      */
-    protected Object getObject() {
+    public Object getObject() {
         return text;
     }
 
