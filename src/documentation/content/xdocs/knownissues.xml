@@ -26,16 +26,13 @@
 <section>
   <title>Known issues</title>
   <p>
-    This page lists currently known issues in the FOP codebase. Please note that this list is generated
-    from data in FOP's code repository (Trunk) and may not exactly represent the list of issues in
-    the latest release.
+    This page lists currently known issues in the FOP codebase.
   </p>
   <note>
     <p>
       For additional information on known issues in Apache FOP, please have a look at the following pages, too:
     </p>
     <ul>
-      <li><a href="relnotes.html">the release notes</a></li>
       <li><a href="bugs.html">the bug list in Bugzilla</a></li>
       <li><a href="http://wiki.apache.org/xmlgraphics-fop/FOPProjectTasks">the task list in the Wiki</a></li>
     </ul>
@@ -63,6 +60,11 @@
       <a href="http://svn.apache.org/repos/asf/xmlgraphics/fop/trunk/test/layoutengine/disabled-testcases.xml">test/layoutengine/disabled-testcases.xml</a>.
     </p>
     <xi:include href="cocoon://knownissues-raw-layoutengine.xml#xpointer(/document/body/*)"/>
+  </section>
+  <section>
+    <title>Other known issues</title>
+    <p>This section lists other known issues.</p>
+    <xi:include href="cocoon://knownissues-raw-static.xml#xpointer(/document/body/*)"/>
   </section>
 </section>
 </body>

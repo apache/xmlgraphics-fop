@@ -30,10 +30,39 @@
     <release version="FOP Trunk">
     </release>    
     <release version="0.93" date="2 January 2007">
-      <action context="Code" dev="BD" type="add">
+      <notes>
+        <p>This is the first stable release after the big redesign
+          effort.</p>
+        <ul>
+          <li>The API was first introduced in release 0.92 beta. The
+            preceding API has been removed.
+          </li>
+          <li>
+            See the <a href="../compliance.html">compliance page</a> for an
+            overview of the compliance of this release with the XSL 1.0 and
+            1.1 recommendations.
+          </li>
+          <li>
+            This release again contains many bug fixes and new features. See
+            below for details.
+          </li>
+          <li>
+            See the <a href="../knownissues.html">known issues page</a>
+            for an overview of the known issues with this release.
+          </li>
+        </ul>
+        <p>Caveats:</p>
+        <ul>
+          <li>
+            You may experience different behaviour compared to version 0.20.5.
+            Please consult the <a href="upgrading.html">"Upgrading"</a> page for details.
+          </li>
+        </ul>
+      </notes>
+      <action context="Code" dev="BD" type="add" importance="high">
         Added support for the use of Open Type fonts
       </action>
-      <action context="Code" dev="BD" type="update" fixes-bug="5535" due-to="Adam Strzelecki, Victor Mote">
+      <action context="Code" dev="BD" type="update" fixes-bug="5535" due-to="Adam Strzelecki, Victor Mote" importance="high">
         Enabled Copy/Paste from PDF content in Acrobat Reader for text using embedded TrueType fonts.
       </action>
       <action context="Code" dev="SP" type="update" fixes-bug="41044" due-to="Richard Wheeldon">
@@ -46,7 +75,7 @@
         Added initial support for loading fonts without a pre-created XML font metric
         file.
       </action>
-      <action context="Code" dev="JM" type="add" fixes-bug="40729" due-to="Peter Coppens">
+      <action context="Code" dev="JM" type="add" fixes-bug="40729" due-to="Peter Coppens" importance="high">
         Support for the rgb-icc() function and for a proprietary cmyk() function (for device CMYK
         colors only through the PDF renderer so far). 
       </action>

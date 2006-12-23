@@ -49,7 +49,8 @@
        <xsl:value-of select="@title"/>
      </xsl:when>
      <xsl:otherwise>
-       <xsl:text>History of Changes</xsl:text> <xsl:value-of select="$versionNumber"/>
+       <xsl:text>History of Changes </xsl:text>
+       <xsl:value-of select="$versionNumber"/>
      </xsl:otherwise>
     </xsl:choose>
    </title>

@@ -21,7 +21,6 @@
   -->
   <about label="About">
     <index label="Introduction" href="index.html"/>
-    <license label="Release Notes" href="relnotes.html"/>
     <download label="Download" href="download.html"/>
     <compliance label="Compliance" href="compliance.html" description="FOP Compliance"/>
     <help label="Getting Help" href="gethelp.html"/>
@@ -90,6 +89,8 @@
   -->
   <trunk label="FOP 0.93" href="0.93/" tab="stableversion">
     <about label="About" href="index.html"/>
+    <release label="Release Notes" href="releaseNotes_0.93.html"/>
+    <changes label="Changes" href="changes_0.93.html"/>
     <upgrading label="Upgrading" href="upgrading.html"/>
     
     <using label="Using FOP">

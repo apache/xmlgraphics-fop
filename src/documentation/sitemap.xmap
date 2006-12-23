@@ -45,6 +45,7 @@
         <map:generate type="file" src="{project:status}" />
         <map:transform src="resources/stylesheets/releaseNotes2document.xsl">
           <map:parameter name="versionNumber" value="{3}"/>
+          <map:parameter name="path" value="{1}{2}"/>
         </map:transform>
         <map:serialize type="xml-document"/>
       </map:match>
@@ -67,6 +68,12 @@
           <map:parameter name="bugtracking-url" value="{defaults:bugtracking-url}"/>
           <map:parameter name="path" value="{1}{2}"/>
         </map:transform>
+        <map:serialize type="xml-document"/>
+      </map:match>
+      <map:match type="regexp" pattern="^(.*?)([^/]*)knownissues-raw-static.xml$">
+        <!--<map:generate type="file" src="{project:knownissues}"/>-->
+        <map:generate type="file" src="../../known-issues.xml"/>
+        <map:transform src="resources/stylesheets/known-issues2document.xsl"/>
         <map:serialize type="xml-document"/>
       </map:match>
     
