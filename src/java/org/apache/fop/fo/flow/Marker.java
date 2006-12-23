@@ -196,13 +196,8 @@ public class Marker extends FObjMixed {
                 name = attributes.getLocalName(i);
                 value = attributes.getValue(i);
                 
-                if (namespace == null || "".equals(namespace)) {
-                    this.attribs[i] = 
-                        MarkerAttribute.getFOAttributeInstance(name, value);
-                } else {
-                    this.attribs[i] = 
-                        new MarkerAttribute(namespace, qname, name, value);
-                }
+                this.attribs[i] = 
+                    MarkerAttribute.getInstance(namespace, qname, name, value);
             }
         }
         
@@ -374,8 +369,8 @@ public class Marker extends FObjMixed {
      */
     private static final class MarkerAttribute {
         
-        private static Map foAttributeCache = 
-            Collections.synchronizedMap(new java.util.HashMap());
+        private static Map attributeCache = 
+            Collections.synchronizedMap(new java.util.WeakHashMap());
 
         protected String namespace;
         protected String qname;
@@ -406,26 +401,40 @@ public class Marker extends FObjMixed {
          * @return the single MarkerAttribute instance corresponding to 
          *          the name/value-pair
          */
-        private static MarkerAttribute getFOAttributeInstance(
+        private static MarkerAttribute getInstance(
+                                            String namespace, String qname,
                                             String name, String value) {
-            MarkerAttribute newInstance = null;
-            Map valueCache;
-            if (!foAttributeCache.containsKey(name)) {
-                newInstance = new MarkerAttribute(null, name, name, value);
-                valueCache = Collections.synchronizedMap(
-                                new java.util.HashMap());
-                valueCache.put(value, newInstance);
-                foAttributeCache.put(name, valueCache);
+            MarkerAttribute newInstance = 
+                new MarkerAttribute(namespace, qname, name, value);
+            if (attributeCache.containsKey(newInstance)) {
+                return (MarkerAttribute) attributeCache.get(newInstance);
             } else {
-                valueCache = (Map) foAttributeCache.get(name);
-                if (valueCache.containsKey(value)) {
-                    newInstance = (MarkerAttribute) valueCache.get(value);
-                } else {
-                    newInstance = new MarkerAttribute(null, name, name, value);
-                    valueCache.put(value, newInstance);
-                }
+                attributeCache.put(newInstance, newInstance);
+                return newInstance;
             }
-            return newInstance;
+        }
+        
+        /**
+         * @see java.lang.Object#equals(Object)
+         */
+        public boolean equals(Object o) {
+            if (o instanceof MarkerAttribute) {
+                MarkerAttribute attr = (MarkerAttribute) o;
+                return ((attr.namespace == this.namespace)
+                            || (attr.namespace != null
+                                    && attr.namespace.equals(this.namespace)))
+                    && ((attr.qname == this.qname)
+                            || (attr.qname != null
+                                    && attr.qname.equals(this.qname)))
+                    && ((attr.name == this.name)
+                            || (attr.name != null
+                                    && attr.name.equals(this.name)))
+                    && ((attr.value == this.value)
+                            || (attr.value != null
+                                    && attr.value.equals(this.value)));
+            } else {
+                return false;
+            }
         }
     }
 }
