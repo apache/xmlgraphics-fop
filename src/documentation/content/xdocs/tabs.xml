@@ -17,7 +17,7 @@
 -->
 <!-- $Id$ -->
 <!DOCTYPE tabs PUBLIC "-//APACHE//DTD Cocoon Documentation Tab V1.0//EN"
-    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/core/context/resources/schema/dtd/tab-cocoon-v10.dtd">
+    "http://svn.apache.org/viewvc/forrest/trunk/main/webapp/resources/schema/dtd/tab-cocoon-v10.dtd?view=co">
     
 <tabs software="FOP" title="FOP" copyright="@year@ The Apache Software Foundation" xmlns:xlink="http://www.w3.org/1999/xlink">
   <tab label="Home" dir=""/>

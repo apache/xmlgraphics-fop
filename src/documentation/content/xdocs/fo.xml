@@ -17,7 +17,7 @@
 -->
 <!-- $Id$ -->
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
-    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/core/context/resources/schema/dtd/document-v12.dtd">
+    "http://svn.apache.org/viewvc/forrest/trunk/main/webapp/resources/schema/dtd/document-v12.dtd?view=co">
 <document>
   <header>
     <title>XSL-FO Input</title>
@@ -463,7 +463,7 @@ This applies similarly to the extent of the after region and the bottom margin o
           <link href="http://www.renderx.com">RenderX</link> has provided an <link href="http://www.renderx.com/Tests/validator/fo.dtd.html">Unofficial DTD for FO Documents</link>, which may be helpful in validating general FO issues.
         </p>
         <p>
-          FOP also maintains an <link href="http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-fop/src/foschema/fop.xsd?rev=HEAD&amp;content-type=text/plain">Unofficial FOP Schema</link> in the FOP CVS Repository.
+          FOP also maintains an <link href="http://svn.apache.org/viewvc/xmlgraphics/fop/trunk/src/foschema/fop.xsd?view=co">Unofficial FOP Schema</link> in the FOP CVS Repository.
 This document can be used either to validate against the FO standard, or against the actual FOP implementation.
 See the notes near the beginning of the document for instructions on how to use it.
           </p>

@@ -27,40 +27,24 @@
   <body>
     <section>
       <title>Status</title>
-      <p>[last updated December 19, 2005]</p>
+      <p>[last updated 2 January 2007]</p>
       <figure width="585" height="175" src="images/track.png" alt="Planning and branches of FOP development"/>
       <p>
-        This is the development status of Apache FOP. Development on the maintenance branch where 
-        FOP 0.20.5 came from has been halted as the focus was transferred entirely to the redesign effort.
+        This is the development status of Apache FOP. Development on
+        the maintenance branch where FOP 0.20.5 came from has been
+        halted. The code base has been largely redesigned. The new
+        code base has reached release 0.93.
       </p>
     </section>
     <section>
       <title>Development Status</title>
-      <p>
-        Development for FOP Trunk (aka Redesign) is addressing the design issues for layout and
-        performance. The new design is focusing on making it possible to be conformant
-        to the spec and be able to handle large documents.
-      </p>
-      <p>
-        The first preview release (0.90alpha1) had similar functionality
-        to previous FOP releases (although not in every point), some new features 
-        (like keeps on all implemented FOs), a rough API and a suitable design for
-        developers to work on more functionality. It turned out that the new code
-        is more stable and useful than we thought. In the meantime many of the
-        problems reported since the initial release have already been resolved.
-      </p>
-      <p>
-        We now have a good overall design and have been able to add several new features
-        besides recreating most of the features from 0.20.5. We are doing ongoing work
-        to make it easier for newbies to jump in and help. Furthermore, an extensive
-        test suite helps us maintain and improve the quality of the package.
-      </p>
-      <p>
-        Of course, we also welcome any help on the layout managers. So if you 
-        want to push your brain to the limit, come and join us! But don't worry:
-        there are also various other locations where you can find an easier start
-        into the code. And we're glad to help you get jumpstarted. Just ask!
-      </p>
+	  <p>The FOP code base has been largely rewritten, to address
+        design issues for layout and performance. The new design makes
+        it better possible to be conformant to the spec and be able to
+        handle large documents.</p>
+      <p>The redesign of the code base has largely been completed. The
+	    new code reached production quality with release 0.93. In the
+	    course of 2007 we plan to release version 1.0.</p>
       <p>
         If you're looking for a long-term road-map we have to disappoint you. This is Open
         Source and we're mostly voluteers working in their free time. What we have
@@ -150,10 +134,11 @@
     <section>
       <title>Maintenance Status</title>
       <p>
-        The latest maintenance release is FOP 0.20.5, released on July 18th, 2003.
-        See <a href="relnotes.html">release notes</a> for more details.
-        The maintenance branch has been frozen in 2004 so the team can concentrate 
-        on the redesign efforts.
+        The latest release of the maintenance branch is FOP 0.20.5,
+        released on July 18th, 2003.  See <a
+        href="relnotes.html">release notes</a> for more details.  The
+        maintenance branch has been frozen in 2004 so the team can
+        concentrate on the new code base.
       </p>
     </section>
     <!--section id="stats">

@@ -91,7 +91,7 @@
     <repository>
       <SVNRepository>
         <location rdf:resource="http://svn.apache.org/repos/asf/xmlgraphics/fop/trunk/"/>
-        <browse rdf:resource="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/trunk/"/>
+        <browse rdf:resource="http://svn.apache.org/viewvc/xmlgraphics/fop/trunk/"/>
       </SVNRepository>
     </repository>
   </Project>

@@ -17,7 +17,7 @@
 -->
 <!-- $Id$ -->
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
-    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/core/context/resources/schema/dtd/document-v12.dtd">
+    "http://svn.apache.org/viewvc/forrest/trunk/main/webapp/resources/schema/dtd/document-v12.dtd?view=co">
 
 <document>
   <header>
@@ -25,6 +25,15 @@
     <version>$Revision$</version>
   </header>
   <body>
+	<section>
+	  <title>2 January 2007 - Apache FOP 0.93 released</title>
+      <p>
+        The Apache FOP team is proud to present to you the first
+        production grade release of the new FOP codebase. This release
+        has the new API first introduced in release 0.92 beta. It
+        contains again many bug fixes and new features.
+      </p>
+	</section>
     <section>
       <title>16 October 2006 - New Committer</title>
       <p>Welcome Vincent Hennebert!</p>

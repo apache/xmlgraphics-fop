@@ -212,7 +212,7 @@
   <resources label="Resources" href="dev/" tab="development">
     <faq label="FAQs" href="faq.html"/>
     <tools label="Tools" href="tools.html"/>
-    <viewcvs label="ViewCVS" href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop"/>
+    <viewcvs label="ViewVC" href="http://svn.apache.org/viewvc/xmlgraphics/fop"/>
   </resources>
 
   <subpackages label="SubPackages" href="dev/" tab="development">

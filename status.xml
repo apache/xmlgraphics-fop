@@ -31,11 +31,11 @@
     </release>    
     <release version="0.93" date="2 January 2007">
       <notes>
-        <p>This is the first stable release after the big redesign
-          effort.</p>
+        <p>This is the first production grade release of the new FOP
+        codebase.</p>
         <ul>
-          <li>The API was first introduced in release 0.92 beta. The
-            preceding API has been removed.
+          <li>It contains the new API first introduced in release 0.92
+            beta. The preceding API has been removed.
           </li>
           <li>
             See the <a href="../compliance.html">compliance page</a> for an
