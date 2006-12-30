@@ -29,7 +29,7 @@
   <changes>
     <release version="FOP Trunk">
     </release>    
-    <release version="0.93" date="2 January 2007">
+    <release version="0.93" date="9 January 2007">
       <notes>
         <p>This is the first production grade release of the new FOP
         codebase.</p>
@@ -182,7 +182,7 @@
         Bugfix: FOUserAgent specific configuration parameters specified in config file
         were not set when FOP was invoked from command line.
       </action>
-      <action context="Code" dev="JM" type="add">
+      <action context="Code" dev="JM" type="add" importance="high">
         Added support for PDF/A-1b and PDF/X-3:2003. (Note: this may still be a bit
         incomplete. Feedback is welcome!)
       </action>
@@ -190,7 +190,7 @@
         The CIDSet object is now generated for CID fonts which are embedded in PDFs.
         (Required by PDF/A).
       </action>
-      <action context="Code" dev="JM" type="update">
+      <action context="Code" dev="JM" type="update" importance="high">
         The Java2DRenderer (and therefore the print and bitmap renderers) is now
         offering the same quality as the PDF and PS renderers. Note: There can still
         be little differences between PDF and Print/PNG/TIFF because the latter uses
@@ -231,7 +231,7 @@
         Bugfix: NullPointerException in RTF library when there are no borders on 
         the parent table.
       </action>
-      <action context="Code" dev="JM" type="add">
+      <action context="Code" dev="JM" type="add" importance="high">
        Automatic support for all fonts available to the Java2D subsystem for all
        Java2D-descendant renderers (TIFF, PNG, print, AWT).
      </action>

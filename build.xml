@@ -101,8 +101,10 @@ list of possible build targets.
     <include name="NOTICE"/>
     <include name="README"/>
     <include name="KEYS"/>
+    <include name="known-issues.xml"/>
     <include name="status.xml"/>
     <include name="build.*"/>
+    <include name="forrest.properties"/>
     <include name="fop.bat"/>
     <include name="fop"/>
   </fileset>
