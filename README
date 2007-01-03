@@ -69,10 +69,11 @@ Please report bugs to bugzilla at http://issues.apache.org/bugzilla/
 How do I build FOP?
 ----------------------
 
-If you've downloaded a binary distribution, you don't need to build FOP.
+If you've downloaded a binary distribution, you don't need to build
+FOP.
 
 Otherwise, please follow the instructions found here:
-http://xmlgraphics.apache.org/fop/latest/compiling.html
+http://xmlgraphics.apache.org/fop/stable/compiling.html
 
 
 How do I run FOP?
@@ -82,84 +83,74 @@ Simply by typing "fop" on the command-line. Without any parameters you
 will receive a screen with instruction on how to call FOP from the
 command-line.
 
-For more details, see: http://xmlgraphics.apache.org/fop/latest/running.html
+For more details, see:
+http://xmlgraphics.apache.org/fop/stable/running.html
 
 ==============================================================================
   RELEASE NOTES
 ==============================================================================
 
-Version 0.92 beta
----------------------
+Version 0.93
+============
 
-We don't list all the changes since the 0.20.5 release, since the codebase
-was practically rewritten in large areas as part of a big redesign effort.
-This is basically a new software. But the changes since 0.90 alpha 1 can be
-looked up under http://xmlgraphics.apache.org/fop/changes.html.
+This is the first production grade release of the new FOP codebase.
 
-Upgrading from 0.20.5:
-Please read http://xmlgraphics.apache.org/fop/latest/upgrading.html
+* It contains the new API first introduced in release 0.92
+  beta. The preceding API has been removed.
+* This release again contains many bug fixes and new features. See
+  below for details.
 
-The Apache FOP team asks you for your continued feedback on the new software.
-We're also interested in success stories with the new release. So if the
-latest version works fine for you, please tell us! And if it doesn't, you
-may tell us as well, of course. ;-)
+Compliance
+----------
 
-Caveats:
+This release implements the XSL 1.0 and 1.1 recommendations to a high
+degree of compliance. See the compliance page
+http://xmlgraphics.apache.org/fop/compliance.html for a detailed
+overview.
 
-    - This release is a beta release. If you intend to use this software 
-      in a production environment, please perform careful testing.
-    - With the latest changes, the API is now considered stable. Please 
-      note that the API has changed in a backwards-incompatible way since 
-      the last release.
-    - You may experience different behaviour compared to version 0.20.5.
-      Please consult the "Upgrading" page indicated above for details.
+Known issues
+------------
 
-Known issues:
+The known issues of this release are listed at
+http://xmlgraphics.apache.org/fop/knownissues.html.
 
-    - PCL, MIF and SVG support have not been restored, yet.
-    - Java2D/AWT support contains some problems, for example with 
-      block-containers.
-    - Auto table layout is not implemented, yet.
-    - The collapsing border model on tables is not implemented, yet. Please 
-      use border-collapse="separate" for now.
-    - Footnotes may overlap with text of the region-body in multi-column 
-      documents.
-    - Space resolution does not work between footnote regions.
-    - There's a problem involving nested block-containers and 
-      reference-orientation 180/-180 (Bugzilla #36391)
-    - block-containers with no height currently don't create a fence for
-      spaces as they should (they behave like a normal block).
-    - Preserved linefeeds in fo:character are not handled correctly.
-    - An empty block currently produces a fence for stacking constraints
-      which it shouldn't.
-    - There are several small problems around white space handling.
-    - Images currently don't shrink so they fit on a page when they are 
-      too big and shrinking is allowed to happen.
-    - Block-level content in fo:inlines may produce unwelcome results.
-    - inline-container may not work as expected.
-    - leaders with leader-pattern="use-content" may not work as expected.
-    - keep-with-previous doesn't work inside tables and lists, yet.
-    - White space on direct inline-level children of a marker is not 
-      handled correctly.
-    - If two consecutive pages don't have the same available width, the 
-      content currently isn't properly fit into the available space on
-      the new page.
-    - background-images on page-number-citations are not placed correctly.
-    - Not all FO elements can be referenced by their "id", most notably:
-      table-body, table-header, table-footer and table-row.
-    - The backgrounds of table-body, table-header, table-footer and 
-      table-column are not painted, yet.
-    - Border and padding conditionality are not supported on table-cells, yet.
-    - Copy/Paste from PDF content in Acrobat Reader is not supported for
-      text using embedded TrueType fonts.
-    - Column balancing in multi-column documents may not work as expected
-      (Bugzilla #36356)
-    - Omitting fo:table-column or having fo:table-column without a column-width 
-      and attempting to create columns implicitly from the first
-      table row is not implemented, yet (Bugzilla #35656).
-    - Internal basic-links don't point to the exact location on a page, yet, 
-      as they did in 0.20.5. Currently you land in the upper left corner of 
-      the page.
+Upgrading
+---------
+
+You may experience different behaviour compared to version
+0.20.5. Please consult the "Upgrading" page
+(http://xmlgraphics.apache.org/fop/stable/upgrading.html) for
+details.
+
+Major Changes in Version 0.93
+-----------------------------
+
+* Added support for the use of Open Type fonts (BD)
+* Support for the rgb-icc() function and for a proprietary cmyk()
+  function (for device CMYK colors only through the PDF renderer so
+  far). (JM) Thanks to Peter Coppens. Fixes 40729.
+* Enabled Copy/Paste from PDF content in Acrobat Reader for
+  text using embedded TrueType fonts. (BD) Thanks to Adam Strzelecki,
+  Victor Mote. Fixes 5535.
+* Added support for PDF/A-1b and PDF/X-3:2003. (Note: this may still
+  be a bit incomplete. Feedback is welcome!)
+* The Java2DRenderer (and therefore the print and bitmap renderers) is
+  now offering the same quality as the PDF and PS renderers. Note:
+  There can still be little differences between PDF and Print/PNG/TIFF
+  because the latter uses a different font metrics source.
+* Automatic support for all fonts available to the Java2D subsystem
+  for all Java2D-descendant renderers (TIFF, PNG, print, AWT).
+
+The long list of changes in this release is available at
+http://xmlgraphics.apache.org/fop/0.93/changes_0.93.html.
+
+The long list of changes in this and earlier releases is available at
+http://xmlgraphics.apache.org/fop/changes.html.
+
+The Apache FOP team asks you for your continued feedback on the
+software.  We're also interested in success stories with the new
+release. So if the latest version works fine for you, please tell us!
+And if it doesn't, you may tell us as well, of course. ;-)
 
 Release notes for older FOP versions can be found on:
 http://xmlgraphics.apache.org/fop/relnotes.html

@@ -14,6 +14,7 @@ RedirectMatch Permanent ^/fop/pdfencryption(.*) http://xmlgraphics.apache.org/fo
 RedirectMatch Permanent ^/fop/pdfx(.*) http://xmlgraphics.apache.org/fop/0.93/pdfx$1
 RedirectMatch Permanent ^/fop/running(.*) http://xmlgraphics.apache.org/fop/0.93/running$1
 RedirectMatch Permanent ^/fop/servlets(.*) http://xmlgraphics.apache.org/fop/0.93/servlets$1
+RedirectMatch Permanent ^/fop/upgrading(.*) http://xmlgraphics.apache.org/fop/0.93/upgrading$1
 
 # redirect to versioned documentation
 Redirect Temp /fop/stable http://xmlgraphics.apache.org/fop/0.93

@@ -37,17 +37,19 @@
         One method of defining the task is as follows:
       </p>
       <source><![CDATA[
-<property name="fop.dir" value="....path to your FOP jar files..."/>
+<property name="fop.home" value="....path to your FOP HOME directory..."/>
 
 <taskdef name="fop" 
          classname="org.apache.fop.tools.anttasks.Fop">
-         <classpath>
-            <pathelement location="${fop.dir}\fop.jar"/>
-            <pathelement location="${fop.dir}\batik.jar"/>
-            <pathelement location="${fop.dir}\avalon-framework.jar"/>
-            <pathelement location="${fop.dir}\commons-logging.jar"/>
-            <pathelement location="${fop.dir}\commons-io.jar"/>
-         </classpath>
+  <classpath>
+    <fileset dir="${fop.home}/lib">
+      <include name="*.jar"/>
+    </fileset>
+    <fileset dir="${fop.home}/build">
+      <include name="fop.jar"/>
+      <include name="fop-hyph.jar" />
+    </fileset>
+  </classpath>
 </taskdef>
     ]]></source>
 <p>
@@ -74,13 +76,24 @@
       <tr> 
        <td>format</td> 
        <td>Possible output formats:<br/>
+         <code>application/X-fop-awt-preview</code><br/>
+         <code>application/X-fop-print</code><br/>
+         <code>application/X-fop-areatree</code><br/>
          <code>application/pdf</code><br/>
          <code>application/postscript</code><br/>
-         <code>application/vnd.mif</code><br/>
-         <code>application/rtf</code><br/>
+         <code>application/mif</code><br/>
+         <code>application/rtf</code>,
+         <code>text/richtext</code>,
+         <code>text/rtf</code><br/>
+         <code>application/x-pcl</code>,
          <code>application/vnd.hp-PCL</code><br/>
+         <code>application/x-afp</code>,
+         <code>application/vnd.ibm.modcap</code><br/>
          <code>text/plain</code><br/>
-         <code>text/xml</code><br/>
+         <code>image/svg+xml</code><br/>
+         <code>image/gif</code><br/>
+         <code>image/png</code><br/>
+         <code>image/tiff</code><br/>
        </td> 
        <td>No, defaults to <code>application/pdf</code></td> 
       </tr> 
