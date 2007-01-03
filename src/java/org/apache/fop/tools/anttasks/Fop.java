@@ -360,6 +360,9 @@ class FOPTaskStarter {
     };
 
     private String normalizeOutputFormat(String format) {
+        if (format == null) {
+            return MimeConstants.MIME_PDF;
+        }
         for (int i = 0; i < SHORT_NAMES.length; i++) {
             if (SHORT_NAMES[i][0].equals(format)) {
                 return SHORT_NAMES[i][1];
