@@ -28,6 +28,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="add" fixes-bug="40930">
+        Added support for display-align for table-cell in RTF output.
+      </action>
       <action context="Code" dev="MM" type="add">
         Added support for UAX#14 type line breaking. Support does not extend across nested fo:inline elements.
       </action>
