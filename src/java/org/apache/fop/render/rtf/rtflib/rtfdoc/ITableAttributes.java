@@ -115,6 +115,14 @@ public interface ITableAttributes {
     /** cell border, right */
     String CELL_BORDER_RIGHT = "clbrdrr";
 
+//  for vertical alignment in cells
+    /** cell alignment, top */
+    String ATTR_CELL_VERT_ALIGN_TOP = "clvertalt";
+    /** cell alignment, center */
+    String ATTR_CELL_VERT_ALIGN_CENTER = "clvertalc";
+    /** cell alignment, bottom */
+    String ATTR_CELL_VERT_ALIGN_BOTTOM = "clvertalb";
+
 //Table row border attributes
     /** row border, top */
     String ROW_BORDER_TOP = "trbrdrt";
@@ -191,4 +199,12 @@ public interface ITableAttributes {
     String[] CELL_COLOR = {
         CELL_SHADE,    CELL_COLOR_BACKGROUND,    CELL_COLOR_FOREGROUND
     };
+
+    /**
+     * List of ALL vertical alignment attributes, used to select them when writing
+     * attributes
+     */
+    String[] CELL_VERT_ALIGN = {
+        ATTR_CELL_VERT_ALIGN_TOP, ATTR_CELL_VERT_ALIGN_CENTER, ATTR_CELL_VERT_ALIGN_BOTTOM};
+    
 }

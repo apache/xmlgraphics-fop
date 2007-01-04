@@ -263,6 +263,7 @@ public class RtfTableCell
         } else {
             writeControlWord("ql");
         }
+        writeAttributes (attrib, ITableAttributes.CELL_VERT_ALIGN);
 
         writeControlWord("cellx" + xPos);
 

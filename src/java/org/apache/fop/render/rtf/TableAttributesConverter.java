@@ -204,6 +204,19 @@ public final class TableAttributesConverter {
         if (n > 1) {
             attrib.set(ITableAttributes.COLUMN_SPAN, n);
         }
+        
+        switch (fobj.getDisplayAlign()) {
+        case Constants.EN_BEFORE:
+            attrib.set(ITableAttributes.ATTR_CELL_VERT_ALIGN_TOP);
+            break;
+        case Constants.EN_CENTER:
+            attrib.set(ITableAttributes.ATTR_CELL_VERT_ALIGN_CENTER);
+            break;
+        case Constants.EN_AFTER:
+            attrib.set(ITableAttributes.ATTR_CELL_VERT_ALIGN_BOTTOM);
+            break;
+        default: //nop
+        }
 
         return attrib;
     }
