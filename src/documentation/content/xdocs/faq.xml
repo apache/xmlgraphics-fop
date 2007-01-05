@@ -575,6 +575,29 @@ Check the following:</p>
         </p>
       </answer>
     </faq>
+    <faq id="row-height-constraint">
+      <question>FOP tells me: "The contents of row 1 are taller than they should be". 
+        What does that mean?</question>
+      <answer>
+        <p>
+          This is usually caused by setting a "height" on a table-row or table-cell and when
+          the content is higher that the specified height. By setting "height" (a so-called 
+          corresponding property) you 
+          <link href="http://www.w3.org/TR/2001/REC-xsl-20011015/slice5.html#section-N6057-Height,-and-Width-Properties">implicitely set</link>
+          block-progression-dimension.minimum, block-progression-dimension.optimum and 
+          block-progression-dimension.maximum to the same value. You'll get some information 
+          about that in the warning message. Look for something like: 
+          "MinOptMax[min=opt=max=14000]".
+        </p>
+        <p>
+          Assuming you set the height on the table-row to 14pt and your content is 75pt high,
+          a constraint (maximum=14pt) is violated. Normally, you just want want to make sure
+          with the "height" property that the row has a minimum height. If that is so, the
+          right solution is to specify block-progression-dimension.minimum="14pt" instead of
+          heigth="14pt".
+        </p>
+      </answer>
+    </faq>
     <faq id="page-number-align">
       <question>Page numbers are not properly right aligned.</question>
       <answer>
