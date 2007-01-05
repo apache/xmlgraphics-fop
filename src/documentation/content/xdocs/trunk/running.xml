@@ -89,14 +89,12 @@
     </section>
     <section id="standalone-start">
       <title>Starting FOP as a Standalone Application</title>
+      <section id="fop-script">
+        <title>Using the fop script or batch file</title>
       <p>
         The usual and recommended practice for starting FOP from the command line is to run the 
         batch file fop.bat (Windows) or the shell script fop (Unix/Linux).
-        If you write your own scripts, be sure to review these standard scripts to make sure that 
-        you get your environment properly configured.
-      </p>
-      <p>
-        The standard scripts for starting FOP require that the environment variable JAVA_HOME be 
+        These scripts require that the environment variable JAVA_HOME be 
         set to a path pointing to the appropriate Java installation on your system. Macintosh OSX 
         includes a Java environment as part of its distribution. We are told by Mac OSX users that 
         the path to use in this case is <code>/Library/Java/Home</code>. <strong>Caveat:</strong>
@@ -104,11 +102,6 @@
         Java requirements, the two will inevitably not match on some systems. Please see 
         <a href="http://developer.apple.com/java/faq">Java on Mac OSX FAQ</a> for information as 
         it becomes available.
-      </p>
-      <p>
-        As an alternative to the start scripts you can run "java -jar build/fop.jar" in which case
-        FOP tries to build the classpath for running FOP dynamically. Please note, that this might
-        not always work as expected.
       </p>
       <source><![CDATA[
 USAGE
@@ -172,6 +165,24 @@ Fop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-rtf|-tiff|-png|-pcl
         <strong>and</strong> if compatible encryption support is availabe at run time. 
         Currently, only the JCE is supported. Check the <a href="pdfencryption.html">Details</a>.
       </p>
+      </section>
+      <section id="your-own-script">
+        <title>Writing your own script</title>
+        <p>FOP's entry point for your own scripts is the class
+<code>org.apache.fop.cli.Main</code>. The general pattern for the
+        command line is: <code>java -classpath &lt;CLASSPATH>
+        org.apache.fop.cli.Main  &lt;arguments></code>. The arguments
+        consist of the options and infile and outfile specifications
+        as shown above for the standard scripts. You may wish to review
+        the standard scripts to make sure that 
+        you get your environment properly configured. 
+        </p>
+      <p>
+        As an alternative to the start scripts you can run "java -jar build/fop.jar" in which case
+        FOP tries to build the classpath for running FOP dynamically. Please note, that this might
+        not always work as expected.
+      </p>
+      </section>
     </section>
     <section id="check-input">
       <title>Using Xalan to Check XSL-FO Input</title>
