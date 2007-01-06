@@ -42,7 +42,13 @@ public class Main {
      * instances to URLs.
      */
     public static URL[] getJARList() throws MalformedURLException {
-        File baseDir = new File(".").getAbsoluteFile().getParentFile();
+        String fopHome = System.getProperty("fop.home");
+        File baseDir;
+        if (fopHome != null) {
+            baseDir = new File(fopHome).getAbsoluteFile();
+        } else {
+            baseDir = new File(".").getAbsoluteFile().getParentFile();
+        }
         File buildDir;
         if ("build".equals(baseDir.getName())) {
             buildDir = baseDir;
