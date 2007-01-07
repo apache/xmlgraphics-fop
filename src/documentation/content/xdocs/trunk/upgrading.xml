@@ -70,7 +70,7 @@
             While FOP 0.20.5 allowed you to have empty <code>fo:table-cell</code> elements, the new code
             will complain about that (unless relaxed validation is enabled) because the specification
             demands at least one block-level element (<code>(%block;)+</code>, see 
-            <a href="http://www.w3.org/TR/xsl/slice6.html#fo_table-cell">XSL-FO 1.0, 6.7.10</a>)
+            <a href="http://www.w3.org/TR/2001/REC-xsl-20011015/slice6.html#fo_table-cell">XSL-FO 1.0, 6.7.10</a>)
             inside an <code>fo:table-cell</code> element.
           </note>
         </li>
