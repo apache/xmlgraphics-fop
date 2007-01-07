@@ -51,8 +51,11 @@
           <code>http://xml.apache.org/fop/extensions</code> to the root element:
         </p>
         <source><![CDATA[<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
-               xmlns:fox="http://xml.apache.org/fop/extensions">]]></source>
-        <note>Currently, no extensions are implemented in FOP Trunk which use the FOP extension namespace.</note>
+               xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">]]></source>
+        <note>
+          Currently, no extension elements are implemented in FOP Trunk which use the 
+          FOP extension namespace.
+        </note>
       </section>
       <section id="bookmarks">
         <title>PDF Bookmarks</title>
@@ -100,6 +103,21 @@ to following pages. Here is an example of FO code creating such a table-header:<
     </fo:table-cell>
   </fo:table-row>
 </fo:table-header>]]></source-->
+      </section>
+      <section id="widow-orphan-content-limit">
+        <title>fox:orphan-content-limit and fox:widow-content-limit</title>
+        <p>
+          The two proprietary extension properties, fox:orphan-content-limit and
+          fox:widow-content-limit, are used to improve the layout of list-blocks and tables.
+          If you have a table with many entries, you don't want a single row to be left over
+          on a page. You will want to make sure that at least two or three lines are kept
+          together. The properties take an absolute length which specifies the area at the
+          beginning (fox:widow-content-limit) or at the end (fox:orphan-content-limit) of a
+          table or list-block. The properties are inherited and only have an effect on fo:table
+          and fo:list-block. An example: fox:widow-content-limit="3 * 1.2em" would make sure
+          the you'll have at least three lines (assuming line-height="1.2") together on a table
+          or list-block.
+        </p>
       </section>
     </section>
   </body>

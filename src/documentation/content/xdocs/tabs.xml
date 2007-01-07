@@ -17,12 +17,12 @@
 -->
 <!-- $Id$ -->
 <!DOCTYPE tabs PUBLIC "-//APACHE//DTD Cocoon Documentation Tab V1.0//EN"
-    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/core/context/resources/schema/dtd/tab-cocoon-v10.dtd">
+    "http://svn.apache.org/viewvc/forrest/trunk/main/webapp/resources/schema/dtd/tab-cocoon-v10.dtd?view=co">
     
 <tabs software="FOP" title="FOP" copyright="@year@ The Apache Software Foundation" xmlns:xlink="http://www.w3.org/1999/xlink">
   <tab label="Home" dir=""/>
   <tab label="Version 0.20.5" dir="0.20.5/"/>
-  <tab label="Version 0.92 beta" dir="0.92/"/>
+  <tab label="Version 0.93" dir="0.93/"/>
   <tab label="FOP Trunk" dir="trunk/"/>
   <tab label="Development" dir="dev/"/>
   <!--

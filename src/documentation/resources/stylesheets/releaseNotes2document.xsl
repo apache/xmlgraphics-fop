@@ -75,11 +75,11 @@
    <note>This is not a complete list of changes, a 
    full list of changes in this release
    <a href="changes_{$versionNumber}.html">is available</a>.</note>
-     <xsl:if test="action[@context='code' and @importance='high']">
+     <xsl:if test="action[@context='Code' and @importance='high']">
        <section>
          <title>Important Changes Code Base</title>
          <ul>
-          <xsl:apply-templates select="action[@context='code' and @importance='high']">
+          <xsl:apply-templates select="action[@context='Code' and @importance='high']">
             <xsl:sort select="@type"/>
           </xsl:apply-templates>
          </ul>
