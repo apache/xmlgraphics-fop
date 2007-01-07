@@ -51,15 +51,9 @@
         the creation of the elements described in ISO 19005-1. 
       </p>
       <p>
-        There is a restriction with 
-        XMP metadata. If an XMP metadata packet is present in the fo:declarations
-        element of an FO file, the values from the XMP packet are not synchronized
-        with the Info PDF object as is mandated by chapter 6.7.3 of the ISO document.
-        However, if no XMP packet is supplied FOP automatically generates an XMP
-        packet from the values in the Info PDF object.
-      </p>
-      <p>
         Tests have been performed against jHove and Adobe Acrobat 7.0.7 (Preflight function).
+        FOP does not validate completely against Apago's PDF Appraiser. Reasons unknown due to
+        lack of a full license to get a detailed error protocol.
       </p>
       <p>
         <strong>PDF/A-1a</strong> is not implemented, yet. This is mostly because of the requirement
@@ -69,10 +63,9 @@
     <section id="command-line">
       <title>Usage (command line)</title>
       <p>
-        If you specify "-pdfa1b" instead of "-pdf" for the output format on the
-        command line, support for PDF/A-1b is activated. If there is a violation of
-        one of the validation rules for PDF/A, an error message is presented and the
-        processing stops.
+        To activate PDF/A-1b from the command-line, specify "-pdfprofile PDF/A-1b" 
+        as a parameter. If there is a violation of one of the validation rules for 
+        PDF/A, an error message is presented and the processing stops.
       </p>
     </section>
     <section id="embedded">
@@ -83,7 +76,6 @@
         Here's an example:
       </p>
       <source><![CDATA[
-FOUserAgent userAgent = fopFactory.newFOUserAgent();
 userAgent.getRendererOptions().put("pdf-a-mode", "PDF/A-1b");
 Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent);
 [..]]]></source>
@@ -111,7 +103,8 @@ Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent);
           Don't use CMYK images without an ICC color profile. PDF/A doesn't allow mixing
           color spaces and FOP currently only properly supports the sRGB color space. Please
           note that FOP embeds a standard sRGB ICC profile (sRGB IEC61966-2.1) as the 
-          primary output intent for the PDF.
+          primary output intent for the PDF if no other output intent has been specified
+          in the configuration.
         </li>
         <li>
           Don't use non-RGB colors in SVG images. Same issue as with CMYK images.
@@ -128,6 +121,13 @@ Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent);
           embedded in clear text so non-PDF-aware applications can extract the XMP metadata.
         </li>
       </ul>
+    </section>
+    <section id="profile-compatibility">
+      <title>PDF profile compatibility</title>
+      <p>
+        The PDF profiles "PDF/X-3:2003" and "PDF/A-1b" are compatible and can both be 
+        activated at the same time.
+      </p>
     </section>
   </body>
 </document>

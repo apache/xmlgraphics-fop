@@ -34,6 +34,43 @@
       <action context="Code" dev="MM" type="add">
         Added support for UAX#14 type line breaking. Support does not extend across nested fo:inline elements.
       </action>
+    </release>    
+    <release version="0.93" date="9 January 2007">
+      <notes>
+        <p>This is the first production grade release of the new FOP
+        codebase.</p>
+        <ul>
+          <li>It contains the new API first introduced in release 0.92
+            beta. The preceding API has been removed.
+          </li>
+          <li>
+            See the <a href="../compliance.html">compliance page</a> for an
+            overview of the compliance of this release with the XSL 1.0 and
+            1.1 recommendations.
+          </li>
+          <li>
+            This release again contains many bug fixes and new features. See
+            below for details.
+          </li>
+          <li>
+            See the <a href="../knownissues.html">known issues page</a>
+            for an overview of the known issues with this release.
+          </li>
+        </ul>
+        <p>Caveats:</p>
+        <ul>
+          <li>
+            You may experience different behaviour compared to version 0.20.5.
+            Please consult the <a href="upgrading.html">"Upgrading"</a> page for details.
+          </li>
+        </ul>
+      </notes>
+      <action context="Code" dev="BD" type="add" importance="high">
+        Added support for the use of Open Type fonts
+      </action>
+      <action context="Code" dev="BD" type="update" fixes-bug="5535" due-to="Adam Strzelecki, Victor Mote" importance="high">
+        Enabled Copy/Paste from PDF content in Acrobat Reader for text using embedded TrueType fonts.
+      </action>
       <action context="Code" dev="SP" type="update" fixes-bug="41044" due-to="Richard Wheeldon">
         Commented out unused properties, in order to minimize memory usage. 
       </action>
@@ -44,7 +81,7 @@
         Added initial support for loading fonts without a pre-created XML font metric
         file.
       </action>
-      <action context="Code" dev="JM" type="add" fixes-bug="40729" due-to="Peter Coppens">
+      <action context="Code" dev="JM" type="add" fixes-bug="40729" due-to="Peter Coppens" importance="high">
         Support for the rgb-icc() function and for a proprietary cmyk() function (for device CMYK
         colors only through the PDF renderer so far). 
       </action>
@@ -151,7 +188,7 @@
         Bugfix: FOUserAgent specific configuration parameters specified in config file
         were not set when FOP was invoked from command line.
       </action>
-      <action context="Code" dev="JM" type="add">
+      <action context="Code" dev="JM" type="add" importance="high">
         Added support for PDF/A-1b and PDF/X-3:2003. (Note: this may still be a bit
         incomplete. Feedback is welcome!)
       </action>
@@ -159,7 +196,7 @@
         The CIDSet object is now generated for CID fonts which are embedded in PDFs.
         (Required by PDF/A).
       </action>
-      <action context="Code" dev="JM" type="update">
+      <action context="Code" dev="JM" type="update" importance="high">
         The Java2DRenderer (and therefore the print and bitmap renderers) is now
         offering the same quality as the PDF and PS renderers. Note: There can still
         be little differences between PDF and Print/PNG/TIFF because the latter uses
@@ -200,7 +237,7 @@
         Bugfix: NullPointerException in RTF library when there are no borders on 
         the parent table.
       </action>
-      <action context="Code" dev="JM" type="add">
+      <action context="Code" dev="JM" type="add" importance="high">
        Automatic support for all fonts available to the Java2D subsystem for all
        Java2D-descendant renderers (TIFF, PNG, print, AWT).
      </action>

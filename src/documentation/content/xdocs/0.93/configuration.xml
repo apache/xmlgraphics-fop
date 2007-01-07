@@ -221,6 +221,20 @@
       
       <fonts....
     </renderer>]]></source>
+      <p>
+        Another (optional) setting specific to the PDF Renderer is an output color profile, an ICC 
+        color profile which indicates the target color space the PDF file is generated for. This 
+        setting is mainly used in conjunction with the <a href="pdfx.html">PDF/X</a> feature. 
+        An example:
+      </p>
+    <source><![CDATA[
+    <renderer mime="application/pdf">
+      <filterList...
+      
+      <output-profile>C:\FOP\Color\EuropeISOCoatedFOGRA27.icc</output-profile>
+      
+      <fonts....
+    </renderer>]]></source>
     </section>
     <section id="ps-renderer">
       <title>Special Settings for the PostScript Renderer</title>
@@ -245,6 +259,34 @@
         </font>
       </fonts>
     </renderer>]]></source>
+    </section>
+    <section id="pcl-renderer">
+      <title>Special Settings for the PCL Renderer</title>
+      <p>
+        Non-standard fonts for the PCL renderer are made available through the Java2D subsystem which means that
+        you don't have to do any custom font configuration in this case but you have to use the font names
+        offered by Java.
+      </p>
+      <p>
+        Additionally, there are certain settings that control who the renderer handles various elements.
+      </p>
+<source><![CDATA[<renderer mime="application/vnd.hp-PCL">
+  <rendering>quality</rendering>
+  <text-rendering>bitmap</text-rendering>
+</renderer>]]></source>
+      <p>
+        The default value for the "rendering" setting is "speed" which causes borders 
+        to be painted as plain rectangles. In this mode, no special borders (dotted, 
+        dashed etc.) are available. If you want support for all border modes, set the
+        value to "quality" as indicated above. This will cause the borders to be painted
+        as bitmaps.
+      </p>
+      <p>
+        The default value for the "text-rendering" setting is "auto" which paints the
+        base fonts using PCL fonts. Non-base fonts are painted as bitmaps through Java2D.
+        If the mix of painting methods results in unwelcome output, you can set this
+        to "bitmap" which causes all text to be rendered as bitmaps.
+      </p>
     </section>
   </section>
 

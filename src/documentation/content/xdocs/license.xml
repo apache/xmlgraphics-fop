@@ -17,7 +17,7 @@
 -->
 <!-- $Id$ -->
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
-    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/core/context/resources/schema/dtd/document-v12.dtd">
+    "http://svn.apache.org/viewvc/forrest/trunk/main/webapp/resources/schema/dtd/document-v12.dtd?view=co">
 
 <document>
   <header>

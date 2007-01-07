@@ -256,12 +256,6 @@ Smooth Line Art in the Acrobat preferences will fix this).
 If the text is inserted into the PDF using the inbuilt text commands
 for PDF it will use a single character.
         </p>
-        <p>
-For PDF output, there is a <a href="configuration.html#svg-strokeSVGText">configuration option to force SVG text to be rendered as text</a>.
-The drawback to this approach is that it is effective only for available fonts (including embedded fonts).
-Font sizes are rounded to the next integer point size.
-This will be improved in the future.
-        </p>
         <p>Note that because SVG text can be rendered as either text or a vector graphic, you may need to consider settings in your viewer for both.
 The Acrobat viewer has both "smooth line art" and "smooth text" settings that may need to be set for SVG images to be displayed nicely on your screen (see Edit / Preferences / Display).
 This setting will not affect the printing of your document, which should be OK in any case, but will only affect the quality of the screen display.</p>
