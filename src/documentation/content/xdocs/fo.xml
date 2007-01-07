@@ -351,7 +351,7 @@ Omit your normal headers and footers, and use (for example) an extended header t
         <title>Preformatting Content</title>
         <p>
           Sometimes it is desirable to retain linebreaks and hard spaces, and to get preformatted text to pass through without being changed.
-The XSL-FO specification provides some properties for this: <link href="http://www.w3.org/TR/xsl/slice7.html#white-space-collapse">white-space-collapse</link> and <link href="http://www.w3.org/TR/xsl/slice7.html#linefeed-treatment">linefeed-treatment</link>.
+The XSL-FO specification provides some properties for this: <link href="http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#white-space-collapse">white-space-collapse</link> and <link href="http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#linefeed-treatment">linefeed-treatment</link>.
 In FOP, use white-space-collapse="false" on an enclosing block.
         </p>
         <warning>
@@ -447,7 +447,7 @@ This applies similarly to the extent of the after region and the bottom margin o
         </p>
         <ul>
           <li>
-            Horizontal lines can be drawn using <link href="http://www.w3.org/TR/xsl/slice6.html#fo_leader">fo:leader</link>.
+            Horizontal lines can be drawn using <link href="http://www.w3.org/TR/2001/REC-xsl-20011015/slice6.html#fo_leader">fo:leader</link>.
           </li>
           <li>
             Use a solid border on a suitable fo:block. This will work for horizontal and vertical lines only.
