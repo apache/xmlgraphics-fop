@@ -38,7 +38,12 @@
         <!-- Luca prefers the mail address with "AT", to stop spam, etc. -->
         <li id="lf"><link href="mailto:lfurini AT cs.unibo.it">Luca Furini</link> (LF)
            is a student of Computer Studies at the University of Bologna (Italy)</li>
-        <li id="cg"><link href="mailto:chrisg@apache.org">Christian Geisert</link> (CG)</li>
+        <li id="cg"><link href="mailto:chrisg@apache.org">Christian Geisert</link> (CG)
+            is a software engineer from Stutensee, Germany. He is working at
+            <fork href="http://www.isu-gmbh.de">ISU GmbH</fork>, a provider of ERP solutions,
+            where amongst lots of other things he is using FOP to produce nice looking
+            business documents like order confirmations, quotes, invoices etc.
+            </li>
         <li id="vh"><link href="mailto:vhennebert@apache.org">Vincent Hennebert</link>
           (VH), a Java developer from France; with an interest in typography, and in using
           Fop as a pdf renderer for book-like documents.</li>
