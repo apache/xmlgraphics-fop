@@ -89,14 +89,12 @@
     </section>
     <section id="standalone-start">
       <title>Starting FOP as a Standalone Application</title>
+      <section id="fop-script">
+        <title>Using the fop script or batch file</title>
       <p>
         The usual and recommended practice for starting FOP from the command line is to run the 
         batch file fop.bat (Windows) or the shell script fop (Unix/Linux).
-        If you write your own scripts, be sure to review these standard scripts to make sure that 
-        you get your environment properly configured.
-      </p>
-      <p>
-        The standard scripts for starting FOP require that the environment variable JAVA_HOME be 
+        These scripts require that the environment variable JAVA_HOME be 
         set to a path pointing to the appropriate Java installation on your system. Macintosh OSX 
         includes a Java environment as part of its distribution. We are told by Mac OSX users that 
         the path to use in this case is <code>/Library/Java/Home</code>. <strong>Caveat:</strong>
@@ -105,73 +103,144 @@
         <a href="http://developer.apple.com/java/faq">Java on Mac OSX FAQ</a> for information as 
         it becomes available.
       </p>
-      <p>
-        As an alternative to the start scripts you can run "java -jar build/fop.jar" in which case
-        FOP tries to build the classpath for running FOP dynamically. Please note, that this might
-        not always work as expected.
-      </p>
       <source><![CDATA[
 USAGE
-Fop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-rtf|-tiff|-png|-pcl|-ps|-txt|-at|-print] <outfile>
- [OPTIONS]
-  -d          debug mode
-  -x          dump configuration settings
-  -q          quiet mode
-  -c cfg.xml  use additional configuration file cfg.xml
-  -l lang     the language to use for user information
-  -r          relaxed/less strict validation (where available)
-  -dpi xxx    target resolution in dots per inch (dpi) where xxx is a number
-  -s          for area tree XML, down to block areas only
-  -v          to show FOP version being used
+Fop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-rtf|-tiff|-png|-pcl|-ps|-txt|-at [mime]|-print] <outfile>
+ [OPTIONS]  
+  -d                debug mode   
+  -x                dump configuration settings  
+  -q                quiet mode  
+  -c cfg.xml        use additional configuration file cfg.xml
+  -l lang           the language to use for user information 
+  -r                relaxed/less strict validation (where available)
+  -dpi xxx          target resolution in dots per inch (dpi) where xxx is a number
+  -s                for area tree XML, down to block areas only
+  -v                to show FOP version being used
 
- [INPUT]
-  infile            xsl:fo input file (the same as the next)
-  -fo  infile       xsl:fo input file
-  -xml infile       xml input file, must be used together with -xsl
-  -xsl stylesheet   xslt stylesheet
-  -atin infile      area tree input file
+  -o [password]     PDF file will be encrypted with option owner password
+  -u [password]     PDF file will be encrypted with option user password
+  -noprint          PDF file will be encrypted without printing permission
+  -nocopy           PDF file will be encrypted without copy content permission
+  -noedit           PDF file will be encrypted without edit content permission
+  -noannotations    PDF file will be encrypted without edit annotation permission
+  -pdfprofile prof  PDF file will be generated with the specified profile
+                    (Examples for prof: PDF/A-1b or PDF/X-3:2003)
+
+ [INPUT]  
+  infile            xsl:fo input file (the same as the next) 
+  -fo  infile       xsl:fo input file  
+  -xml infile       xml input file, must be used together with -xsl 
+  -atin infile      area tree input file 
+  -xsl stylesheet   xslt stylesheet 
+ 
   -param name value <value> to use for parameter <name> in xslt stylesheet
                     (repeat '-param name value' for each parameter)
-
- [OUTPUT]
-  outfile           input will be rendered as pdf file into outfile
-  -pdf outfile      input will be rendered as pdf file (outfile req'd)
-  -awt              input will be displayed on screen
-  -mif outfile      input will be rendered as mif file (outfile req'd)
-  -rtf outfile      input will be rendered as rtf file (outfile req'd)
-  -tiff outfile     input will be rendered as tiff file (outfile req'd)
-  -png outfile      input will be rendered as png file (outfile req'd)
-  -pcl outfile      input will be rendered as pcl file (outfile req'd)
-  -ps outfile       input will be rendered as PostScript file (outfile req'd)
-  -txt outfile      input will be rendered as text file (outfile req'd)
-  -svg outfile      input will be rendered as an svg slides file (outfile req'd)
-  -at [mime] out    representation of area tree as XML (outfile req'd)
+ 
+ [OUTPUT] 
+  outfile           input will be rendered as PDF into outfile
+  -pdf outfile      input will be rendered as PDF (outfile req'd)
+  -pdfa1b outfile   input will be rendered as PDF/A-1b compliant PDF
+                    (outfile req'd, same as "-pdf outfile -pdfprofile PDF/A-1b")
+  -awt              input will be displayed on screen 
+  -rtf outfile      input will be rendered as RTF (outfile req'd)
+  -pcl outfile      input will be rendered as PCL (outfile req'd) 
+  -ps outfile       input will be rendered as PostScript (outfile req'd) 
+  -afp outfile      input will be rendered as AFP (outfile req'd)
+  -tiff outfile     input will be rendered as TIFF (outfile req'd)
+  -png outfile      input will be rendered as PNG (outfile req'd)
+  -txt outfile      input will be rendered as plain text (outfile req'd) 
+  -at [mime] out    representation of area tree as XML (outfile req'd) 
                     specify optional mime output to allow AT to be converted
                     to final format later
-  -print            input file will be rendered and sent to the printer
-                    see options with "-print help"
+  -print            input file will be rendered and sent to the printer 
+                    see options with "-print help" 
   -out mime outfile input will be rendered using the given MIME type
                     (outfile req'd) Example: "-out application/pdf D:\out.pdf"
                     (Tip: "-out list" prints the list of supported MIME types)
-                    
-  -foout outfile    input will only be XSL transformed. The intermediate
-                    XSL-FO file is saved and no rendering is performed.
+  -mif outfile      input will be rendered as MIF (FrameMaker) (outfile req'd)
+                    Experimental feature - requires additional fop-sandbox.jar.
+  -svg outfile      input will be rendered as an SVG slides file (outfile req'd) 
+                    Experimental feature - requires additional fop-sandbox.jar.
+
+  -foout outfile    input will only be XSL transformed. The intermediate 
+                    XSL-FO file is saved and no rendering is performed. 
                     (Only available if you use -xml and -xsl parameters)
 
+
  [Examples]
-  Fop foo.fo foo.pdf
+  Fop foo.fo foo.pdf 
   Fop -fo foo.fo -pdf foo.pdf (does the same as the previous line)
   Fop -xml foo.xml -xsl foo.xsl -pdf foo.pdf
   Fop -xml foo.xml -xsl foo.xsl -foout foo.fo
   Fop foo.fo -mif foo.mif
   Fop foo.fo -rtf foo.rtf
-  Fop foo.fo -print or Fop -print foo.fo
+  Fop foo.fo -print or Fop -print foo.fo 
   Fop foo.fo -awt]]></source>
       <p>
         PDF encryption is only available if FOP was compiled with encryption support 
         <strong>and</strong> if compatible encryption support is availabe at run time. 
         Currently, only the JCE is supported. Check the <a href="pdfencryption.html">Details</a>.
       </p>
+      </section>
+      <section id="your-own-script">
+        <title>Writing your own script</title>
+        <p>FOP's entry point for your own scripts is the class
+<code>org.apache.fop.cli.Main</code>. The general pattern for the
+        command line is: <code>java -classpath &lt;CLASSPATH>
+        org.apache.fop.cli.Main &lt;arguments></code>. The arguments
+        consist of the options and infile and outfile specifications
+        as shown above for the standard scripts. You may wish to review
+        the standard scripts to make sure that 
+        you get your environment properly configured. 
+        </p>
+      </section>
+      <section id="jar-option">
+        <title>Running with java's <code>-jar</code> option</title>
+      <p>
+        As an alternative to the start scripts you can run <code>java
+        -jar path/to/build/fop.jar &lt;arguments></code>, relying on
+        FOP to build the classpath for running FOP dynamically, see <a
+        href="#dynamical-classpath">below</a>. If you use hyphenation,
+        you must put <code>fop-hyph.jar</code> in the <code>lib</code>
+        directory.
+      </p>
+
+      <p>You can also run <code>java -jar path/to/fop.jar
+      &lt;arguments></code>, relying on the <code>Class-Path</code>
+      entry in the manifest file. This works if you put
+      <code>fop.jar</code> and all jar files from the <code>lib</code>
+      directory in a single directory. If you use hyphenation, you
+      must also put <code>fop-hyph.jar</code> in that directory.</p>
+
+		<p>In both cases the arguments consist of the options and
+        infile and outfile specifications as shown above for the
+        standard scripts.</p>
+      </section>
+      <section id="dynamical-classpath">
+		<title>FOP's dynamical classpath construction</title>
+
+		<p>If FOP is started without a proper classpath, it tries to
+		add its dependencies dynamically. FOP uses the current working
+		directory as the base directory for its search. If the base
+		directory is called <code>build</code>, then its parent
+		directory becomes the base directory.</p>
+
+        <p>FOP expects to find <code>fop.jar</code> in the
+		<code>build</code> subdirectory of the base directory, and
+		adds it to the classpath. Subsequently FOP adds all
+		<code>jar</code> files in the lib directory to the
+		classpath. The lib directory is either the <code>lib</code>
+		subdirectory of the base directory, or, if that does not
+		exist, the base directory itself.</p>
+
+        <p>If the system property <code>fop.optional.lib</code>
+		contains the name of a directory, then all <code>jar</code>
+		files in that directory are also added to the classpath. See
+		the methods <code>getJARList</code> and
+		<code>checkDependencies</code> in
+		<code>org.apache.fop.cli.Main</code>.</p>
+
+	  </section>
     </section>
     <section id="check-input">
       <title>Using Xalan to Check XSL-FO Input</title>

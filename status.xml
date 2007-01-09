@@ -28,6 +28,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="SP" type="add">
+        Added support for the system property fop.home to
+        cli.Main.getJARList().
+      </action>
       <action context="Code" dev="JM" type="add" fixes-bug="40930">
         Added support for display-align for table-cell in RTF output.
       </action>
