@@ -201,7 +201,7 @@ public class Table extends TableFObj {
                     tooManyNodesError(loc, "table-footer");
                 } else {
                     tableFooterFound = true;
-                    if (tableBodyFound) {
+                    if (tableBodyFound && getUserAgent().validateStrictly()) {
                         nodesOutOfOrderError(loc, "fo:table-footer", 
                             "(table-body+)");
                     }
