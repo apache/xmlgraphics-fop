@@ -142,14 +142,13 @@ Fop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-rtf|-tiff|-png|-pcl
   -pdfa1b outfile   input will be rendered as PDF/A-1b compliant PDF
                     (outfile req'd, same as "-pdf outfile -pdfprofile PDF/A-1b")
   -awt              input will be displayed on screen 
-  -mif outfile      input will be rendered as MIF (FrameMaker) (outfile req'd)
   -rtf outfile      input will be rendered as RTF (outfile req'd)
-  -tiff outfile     input will be rendered as TIFF (outfile req'd)
-  -png outfile      input will be rendered as PNG (outfile req'd)
   -pcl outfile      input will be rendered as PCL (outfile req'd) 
   -ps outfile       input will be rendered as PostScript (outfile req'd) 
+  -afp outfile      input will be rendered as AFP (outfile req'd)
+  -tiff outfile     input will be rendered as TIFF (outfile req'd)
+  -png outfile      input will be rendered as PNG (outfile req'd)
   -txt outfile      input will be rendered as plain text (outfile req'd) 
-  -svg outfile      input will be rendered as an SVG slides file (outfile req'd) 
   -at [mime] out    representation of area tree as XML (outfile req'd) 
                     specify optional mime output to allow AT to be converted
                     to final format later
@@ -158,6 +157,10 @@ Fop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-rtf|-tiff|-png|-pcl
   -out mime outfile input will be rendered using the given MIME type
                     (outfile req'd) Example: "-out application/pdf D:\out.pdf"
                     (Tip: "-out list" prints the list of supported MIME types)
+  -mif outfile      input will be rendered as MIF (FrameMaker) (outfile req'd)
+                    Experimental feature - requires additional fop-sandbox.jar.
+  -svg outfile      input will be rendered as an SVG slides file (outfile req'd) 
+                    Experimental feature - requires additional fop-sandbox.jar.
 
   -foout outfile    input will only be XSL transformed. The intermediate 
                     XSL-FO file is saved and no rendering is performed. 
