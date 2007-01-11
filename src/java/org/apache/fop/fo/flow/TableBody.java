@@ -132,7 +132,7 @@ public class TableBody extends TableFObj {
             if (getUserAgent().validateStrictly()) {
                 missingChildElementError("marker* (table-row+|table-cell+)");
             } else {
-                getLogger().error("fo:table-body must not be empty. "
+                log.error("fo:table-body must not be empty. "
                         + "Expected: marker* (table-row+|table-cell+)");
                 getParent().removeChild(this);
             }

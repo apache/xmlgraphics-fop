@@ -314,7 +314,7 @@ public abstract class FObj extends FONode implements Constants {
                 if (node instanceof FObj
                         || (node instanceof FOText
                                 && ((FOText) node).willCreateArea())) {
-                    getLogger().error(
+                    log.error(
                             "fo:marker must be an initial child: " + mcname);
                     return;
                 } else if (node instanceof FOText) {
@@ -329,7 +329,7 @@ public abstract class FObj extends FONode implements Constants {
         if (!markers.containsKey(mcname)) {
             markers.put(mcname, marker);
         } else {
-            getLogger().error("fo:marker 'marker-class-name' "
+            log.error("fo:marker 'marker-class-name' "
                     + "must be unique for same parent: " + mcname);
         }
     }
@@ -495,7 +495,7 @@ public abstract class FObj extends FONode implements Constants {
             extensionAttachments = new java.util.ArrayList();
         }
         if (log.isDebugEnabled()) {
-            getLogger().debug("ExtensionAttachment of category " 
+            log.debug("ExtensionAttachment of category " 
                     + attachment.getCategory() + " added to " 
                     + getName() + ": " + attachment);
         }

@@ -454,8 +454,8 @@ public class PageSequence extends FObj {
             return simplePageMaster;
         }
         boolean isOddPage = ((page % 2) == 1);
-        if (getLogger().isDebugEnabled()) {
-            getLogger().debug("getNextSimplePageMaster(page=" + page
+        if (log.isDebugEnabled()) {
+            log.debug("getNextSimplePageMaster(page=" + page
                     + " isOdd=" + isOddPage 
                     + " isFirst=" + isFirstPage 
                     + " isLast=" + isLastPage 

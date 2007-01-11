@@ -85,10 +85,10 @@ public class Declarations extends FObj {
                     if (!"".equals(cp.getColorProfileName())) {
                         addColorProfile(cp);
                     } else {
-                        getLogger().warn("color-profile-name required for color profile");
+                        log.warn("color-profile-name required for color profile");
                     }
                 } else {
-                    getLogger().debug("Ignoring element " + node.getName() 
+                    log.debug("Ignoring element " + node.getName() 
                             + " inside fo:declarations.");
                 }
             }
@@ -102,7 +102,7 @@ public class Declarations extends FObj {
         }
         if (colorProfiles.get(cp.getColorProfileName()) != null) {
             // duplicate names
-            getLogger().warn("Duplicate fo:color-profile profile name: "
+            log.warn("Duplicate fo:color-profile profile name: "
                     + cp.getColorProfileName());
         }
         colorProfiles.put(cp.getColorProfileName(), cp);

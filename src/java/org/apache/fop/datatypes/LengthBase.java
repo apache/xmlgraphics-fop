@@ -19,6 +19,8 @@
 
 package org.apache.fop.datatypes;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
@@ -26,6 +28,7 @@ import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.flow.Character;
 import org.apache.fop.fo.flow.ExternalGraphic;
 import org.apache.fop.fo.flow.InstreamForeignObject;
+import org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager;
 
 /**
  * Models a length which can be used as a factor in a percentage length
@@ -61,6 +64,11 @@ public class LengthBase implements PercentBase {
     public static final int ALIGNMENT_ADJUST = 12;
 
     /**
+     * logging instance
+     */
+    protected static Log log = LogFactory.getLog(LengthBase.class);
+
+    /**
      * The FO for which this property is to be calculated.
      */
     protected /* final */ FObj fobj;
@@ -80,7 +88,7 @@ public class LengthBase implements PercentBase {
      * @param baseType a constant defining the type of teh percent base
      * @throws PropertyException In case an problem occurs while evaluating values
      */
-    public LengthBase(FObj parentFO, PropertyList plist, int baseType) throws PropertyException {
+    public LengthBase(PropertyList plist, int baseType) throws PropertyException {
         this.fobj = plist.getFObj();
         this.baseType = baseType;
         switch (baseType) {
@@ -122,7 +130,7 @@ public class LengthBase implements PercentBase {
             }
             baseLen =  context.getBaseLength(baseType,  fobj);
         } else {
-            fobj.getLogger().error("getBaseLength called without context");
+            log.error("getBaseLength called without context");
         }
         return baseLen;
     }

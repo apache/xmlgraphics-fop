@@ -321,11 +321,11 @@ public class PropertyMaker implements Cloneable {
      * @return an object implementing the PercentBase interface.
      * @throws PropertyException if there is a problem while evaluating the base property
      */
-    public PercentBase getPercentBase(FObj fo, PropertyList pl) throws PropertyException {
+    public PercentBase getPercentBase(PropertyList pl) throws PropertyException {
         if (percentBase == -1) {
             return null;
         } else {
-            return new LengthBase(fo, pl, percentBase);
+            return new LengthBase(pl, percentBase);
         }
     }
 
@@ -436,7 +436,7 @@ public class PropertyMaker implements Cloneable {
                 // Override parsePropertyValue in each subclass of Property.Maker
                 newProp = PropertyParser.parse(pvalue,
                                                   new PropertyInfo(this,
-                                                  propertyList, fo));
+                                                  propertyList));
             } 
             if (newProp != null) {
                 newProp = convertProperty(newProp, propertyList, fo);
@@ -501,8 +501,7 @@ public class PropertyMaker implements Cloneable {
                         // Substituted a value: must parse it
                         Property p = PropertyParser.parse(pvalue,
                                                  new PropertyInfo(this,
-                                                                  propertyList,
-                                                                  fo));
+                                                                  propertyList));
                         pret = convertProperty(p, propertyList, fo);
                     }
                 }

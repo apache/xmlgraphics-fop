@@ -90,7 +90,7 @@ public class FOPRtfAttributes extends RtfAttributes {
             // noop
         }
         
-        public int getBaseLength(int lengthBase, FObj fobj) {
+        public int getBaseLength(int lengthBase, FObj fo) {
             return 0;
         }
     }

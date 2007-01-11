@@ -111,7 +111,7 @@ public class RepeatablePageMasterReference extends FObj
         } else {
             int mr = maximumRepeats.getNumeric().getValue();
             if (mr < 0) {
-                getLogger().debug("negative maximum-repeats: "
+                log.debug("negative maximum-repeats: "
                         + this.maximumRepeats);
                 mr = 0;
             }

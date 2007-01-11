@@ -389,7 +389,7 @@ public class FOText extends FONode {
                 return ca[i];
             }
         default:
-            getLogger().warn("Invalid text-tranform value: " + textTransform);
+            log.warn("Invalid text-tranform value: " + textTransform);
             return ca[i];
         }
     }
@@ -624,6 +624,5 @@ public class FOText extends FONode {
         } else {
             return new String(ca).trim();
         }
-    }
-    
+    }    
 }

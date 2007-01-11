@@ -71,7 +71,7 @@ public abstract class AbstractBaseLayoutManager
      * @see org.apache.fop.datatypes.PercentBaseContext#getBaseLength(int, FObj)
      */
     public int getBaseLength(int lengthBase, FObj fobj) {
-        if (fobj == getFObj()) {
+        if (fobj == this.fobj) {
             switch (lengthBase) {
             case LengthBase.CONTAINING_BLOCK_WIDTH:
                 return getAncestorBlockAreaIPD();

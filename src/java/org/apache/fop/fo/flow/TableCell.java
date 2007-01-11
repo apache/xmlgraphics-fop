@@ -110,13 +110,13 @@ public class TableCell extends TableFObj {
             if (getUserAgent().validateStrictly()) {
                 missingChildElementError("marker* (%block;)+");
             } else if (childNodes != null && childNodes.size() > 0) {
-                getLogger().warn("fo:table-cell content that is not "
+                log.warn("fo:table-cell content that is not "
                         + "enclosed by a fo:block will be dropped/ignored.");
             }
         }
         if ((startsRow() || endsRow()) 
                 && getParent().getNameId() == FO_TABLE_ROW ) {
-            getLogger().warn("starts-row/ends-row for fo:table-cells "
+            log.warn("starts-row/ends-row for fo:table-cells "
                     + "non-applicable for children of an fo:table-row.");
         }
         getFOEventHandler().endCell(this);
