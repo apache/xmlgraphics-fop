@@ -69,7 +69,7 @@
       <ul>
         <li>
           Download a released version from a 
-          <link href="http://www.apache.org/dyn/closer.cgi/xml/fop">FOP Distribution mirror</link>.
+          <link href="http://www.apache.org/dyn/closer.cgi/xmlgraphics/fop">FOP Distribution mirror</link>.
           Source distributions include "-src" in their names. Please note that official 
           releases currently are <em>only</em> made from the "maintenance" branch.
         </li>
@@ -161,8 +161,8 @@
       <p>
         FOP Archive distributions are linked from the upper portion of the Apache FOP 
         Download Mirror Page and can be downloaded from the FOP Archives 
-        <link href="http://archive.apache.org/dist/xml/fop/binaries/">binaries</link> &amp; 
-        <link href="http://archive.apache.org/dist/xml/fop/source/">source</link> links.
+        <link href="http://archive.apache.org/dist/xmlgraphics/fop/binaries/">binaries</link> &amp; 
+        <link href="http://archive.apache.org/dist/xmlgraphics/fop/source/">source</link> links.
       </p>
     </section>
   </body>
