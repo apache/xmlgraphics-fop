@@ -66,7 +66,7 @@ public class LabelEndFunction extends FunctionBase {
         }
         Length startIndent = pList.get(Constants.PR_START_INDENT).getLength();
 
-        LengthBase base = new LengthBase(pList.getFObj(), pInfo.getPropertyList(),
+        LengthBase base = new LengthBase(pInfo.getPropertyList(),
                                          LengthBase.CONTAINING_REFAREA_WIDTH);
         PercentLength refWidth = new PercentLength(1.0, base);
 

@@ -67,11 +67,11 @@ public class ExternalGraphic extends AbstractGraphics {
         ImageFactory fact = userAgent.getFactory().getImageFactory();
         FopImage fopimage = fact.getImage(url, userAgent);
         if (fopimage == null) {
-            getLogger().error("Image not available: " + getSrc());
+            log.error("Image not available: " + getSrc());
         } else {
             // load dimensions
             if (!fopimage.load(FopImage.DIMENSIONS)) {
-                getLogger().error("Cannot read image dimensions: " + getSrc());
+                log.error("Cannot read image dimensions: " + getSrc());
             }
             this.intrinsicWidth = fopimage.getIntrinsicWidth();
             this.intrinsicHeight = fopimage.getIntrinsicHeight();

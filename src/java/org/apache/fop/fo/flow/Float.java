@@ -46,7 +46,7 @@ public class Float extends FObj {
         super(parent);
         
         if (!notImplementedWarningGiven) {
-            getLogger().warn("fo:float is not yet implemented.");
+            log.warn("fo:float is not yet implemented.");
             notImplementedWarningGiven = true;
         }
     }

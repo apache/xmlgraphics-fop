@@ -87,7 +87,7 @@ public class LineHeightPropertyMaker extends SpaceProperty.Maker {
             FObj fo) throws PropertyException {
         Numeric numval = p.getNumeric();
         if (numval != null && numval.getDimension() == 0) {
-            p = new PercentLength(numval.getNumericValue(), getPercentBase(fo, propertyList));
+            p = new PercentLength(numval.getNumericValue(), getPercentBase(propertyList));
             Property spaceProp = super.convertProperty(p, propertyList, fo);
             spaceProp.setSpecifiedValue(String.valueOf(numval.getNumericValue()));
             return spaceProp;

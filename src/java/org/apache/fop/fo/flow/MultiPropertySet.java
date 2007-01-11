@@ -46,7 +46,7 @@ public class MultiPropertySet extends FObj {
         super(parent);
 
         if (!notImplementedWarningGiven) {
-            getLogger().warn("fo:multi-property-set is not yet implemented.");
+            log.warn("fo:multi-property-set is not yet implemented.");
             notImplementedWarningGiven = true;
         }
     }

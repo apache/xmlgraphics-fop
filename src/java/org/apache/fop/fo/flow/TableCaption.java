@@ -68,7 +68,7 @@ public class TableCaption extends FObj {
         super(parent);
 
         if (!notImplementedWarningGiven) {
-            getLogger().warn("fo:table-caption is not yet implemented.");
+            log.warn("fo:table-caption is not yet implemented.");
             notImplementedWarningGiven = true;
         }
     }

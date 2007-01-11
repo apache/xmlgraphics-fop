@@ -187,7 +187,7 @@ public abstract class XMLObj extends FONode implements ObjectBuiltListener {
             // in theory someone might want to embed some defined
             // xml (eg. fo) inside the foreign xml
             // they could use a different namespace
-            getLogger().debug("Invalid element: " + child.getName() + " inside foreign xml markup");
+            log.debug("Invalid element: " + child.getName() + " inside foreign xml markup");
         }
     }
 

@@ -47,10 +47,10 @@ public class PropertyInfo {
      * @param plist PropertyList object
      * @param fo FObj
      */
-    public PropertyInfo(PropertyMaker maker, PropertyList plist, FObj fo) {
+    public PropertyInfo(PropertyMaker maker, PropertyList plist) {
         this.maker = maker;
         this.plist = plist;
-        this.fo = fo;
+        this.fo = plist.getParentFObj();
     }
 
     /**
@@ -61,7 +61,7 @@ public class PropertyInfo {
      */
     public PercentBase getPercentBase() throws PropertyException {
         PercentBase pcbase = getFunctionPercentBase();
-        return (pcbase != null) ? pcbase : maker.getPercentBase(fo, plist);
+        return (pcbase != null) ? pcbase : maker.getPercentBase(plist);
     }
 
     /**

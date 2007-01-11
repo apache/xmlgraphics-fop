@@ -52,7 +52,7 @@ public class MultiProperties extends FObj {
         super(parent);
 
         if (!notImplementedWarningGiven) {
-            getLogger().warn("fo:multi-properties is not yet implemented.");
+            log.warn("fo:multi-properties is not yet implemented.");
             notImplementedWarningGiven = true;
         }
     }

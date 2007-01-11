@@ -201,7 +201,7 @@ public class PageSequenceMaster extends FObj {
                                            + masterName
                                            + "', cannot recover");
                 }
-                getLogger().warn("subsequences exhausted in page-sequence-master '"
+                log.warn("subsequences exhausted in page-sequence-master '"
                                  + masterName
                                  + "', using previous subsequence");
                 currentSubSequence.reset();

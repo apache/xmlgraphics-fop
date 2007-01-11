@@ -64,7 +64,7 @@ public class BatikExtensionElementMapping extends ElementMapping {
     }
 
     protected void initialize() {
-        if (foObjs == null && batikAvail == true) {
+        if (foObjs == null && batikAvail) {
             // this sets the parser that will be used
             // by default (SVGBrokenLinkProvider)
             // normally the user agent value is used

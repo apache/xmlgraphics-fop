@@ -371,7 +371,7 @@ public abstract class TableFObj extends FObj {
                 int columnIndex = p.getNumeric().getValue();
                 
                 if (columnIndex <= 0) {
-                    fo.getLogger().warn("Specified negative or zero value for "
+                    log.warn("Specified negative or zero value for "
                             + "column-number on " + fo.getName() + ": "
                             + columnIndex + " forced to " 
                             + parent.getCurrentColumnIndex());
@@ -381,7 +381,7 @@ public abstract class TableFObj extends FObj {
                 double tmpIndex = p.getNumeric().getNumericValue();
                 if (tmpIndex - columnIndex > 0.0) {
                     columnIndex = (int) Math.round(tmpIndex);
-                    fo.getLogger().warn("Rounding specified column-number of "
+                    log.warn("Rounding specified column-number of "
                             + tmpIndex + " to " + columnIndex);
                     return new NumberProperty(columnIndex);
                 }

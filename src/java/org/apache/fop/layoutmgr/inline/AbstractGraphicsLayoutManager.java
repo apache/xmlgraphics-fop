@@ -173,7 +173,7 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
             if (overflow == EN_HIDDEN) {
                 clip = true;
             } else if (overflow == EN_ERROR_IF_OVERFLOW) {
-                fobj.getLogger().error("Object overflows the viewport: clipping");
+                log.error("Object overflows the viewport: clipping");
                 clip = true;
             }
         }

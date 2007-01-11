@@ -102,7 +102,7 @@ public class InstreamForeignObject extends AbstractGraphics {
             Point2D csize = new Point2D.Float(-1, -1);
             intrinsicDimensions = child.getDimension(csize);
             if (intrinsicDimensions == null) {
-                getLogger().error("Intrinsic dimensions of "
+                log.error("Intrinsic dimensions of "
                         + " instream-foreign-object could not be determined");
             }
         }

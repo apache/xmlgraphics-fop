@@ -97,7 +97,7 @@ public abstract class AbstractListItemPart extends FObj {
                     .append(" is missing child elements. ")
                     .append("Required Content Model: ")
                     .append(contentModel);
-                getLogger().warn(message.toString());
+                log.warn(message.toString());
             }
         }
     }

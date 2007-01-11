@@ -35,7 +35,7 @@ import org.apache.fop.image.ImageFactory;
  * Stores all common border and padding properties.
  * See Sec. 7.7 of the XSL-FO Standard.
  */
-public class CommonBorderPaddingBackground implements Cloneable {
+public class CommonBorderPaddingBackground {
     /**
      * The "background-attachment" property.
      */
@@ -79,7 +79,7 @@ public class CommonBorderPaddingBackground implements Cloneable {
     /** the "end" edge */ 
     public static final int END = 3;
     
-    public static class BorderInfo implements Cloneable {
+    public static class BorderInfo {
         private int mStyle; // Enum for border style
         private Color mColor; // Border color
         private CondLengthProperty mWidth;
@@ -166,11 +166,11 @@ public class CommonBorderPaddingBackground implements Cloneable {
             ImageFactory fact = userAgent.getFactory().getImageFactory();
             fopimage = fact.getImage(url, userAgent);
             if (fopimage == null) {
-                fobj.getLogger().error("Background image not available: " + backgroundImage);
+                Property.log.error("Background image not available: " + backgroundImage);
             } else {
                 // load dimensions
                 if (!fopimage.load(FopImage.DIMENSIONS)) {
-                    fobj.getLogger().error("Cannot read background image dimensions: " 
+                    Property.log.error("Cannot read background image dimensions: " 
                             + backgroundImage);
                 }
             }

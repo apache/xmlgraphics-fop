@@ -70,7 +70,7 @@ public class TableAndCaption extends FObj {
         super(parent);
 
         if (!notImplementedWarningGiven) {
-            getLogger().warn("fo:table-and-caption is not yet implemented.");
+            log.warn("fo:table-and-caption is not yet implemented.");
             notImplementedWarningGiven = true;
         }
     }
