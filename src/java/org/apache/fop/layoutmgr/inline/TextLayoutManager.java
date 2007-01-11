@@ -69,8 +69,9 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         private MinOptMax ipdArea;
         private boolean bHyphenated;
         private boolean isSpace;
+        private boolean breakOppAfter;
         public AreaInfo(short iSIndex, short iBIndex, short iWS, short iLS,
-                        MinOptMax ipd, boolean bHyph, boolean isSpace) {
+                        MinOptMax ipd, boolean bHyph, boolean isSpace, boolean breakOppAfter) {
             iStartIndex = iSIndex;
             iBreakIndex = iBIndex;
             iWScount = iWS;
@@ -78,6 +79,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             ipdArea = ipd;
             bHyphenated = bHyph;
             this.isSpace = isSpace;
+            this.breakOppAfter = breakOppAfter;
         }
         
         public String toString() {
@@ -594,7 +596,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                         }
                     }
                     int iLetterSpaces = wordLength - 1;
-                    // if the last character is '-' or '/' and the next one
+                    // if there is a break opportunity and the next one
                     // is not a space, it could be used as a line end;
                     // add one more letter space, in case other text follows
                     if (breakOpportunity && !isSpace(ch)) {
@@ -605,13 +607,13 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                     // create the AreaInfo object
                     ai = new AreaInfo(iThisStart, iNextStart, (short) 0,
                             (short) iLetterSpaces,
-                            wordIPD, false, false);
+                            wordIPD, false, false, breakOpportunity);
                     vecAreaInfo.add(ai);
                     iTempStart = iNextStart;
 
                     // create the elements
                     sequence.addAll(createElementsForAWordFragment(alignment, ai,
-                            vecAreaInfo.size() - 1, letterSpaceIPD, breakOpportunity));
+                            vecAreaInfo.size() - 1, letterSpaceIPD));
                     ai = null;
 
                     iThisStart = iNextStart;
@@ -623,12 +625,12 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                     ai = new AreaInfo(iThisStart, (short) (iNextStart),
                             (short) (iNextStart - iThisStart), (short) 0,
                             MinOptMax.multiply(wordSpaceIPD, iNextStart - iThisStart),
-                            false, true); 
+                            false, true, breakOpportunity); 
                     vecAreaInfo.add(ai);
 
                     // create the elements
                     sequence.addAll
-                        (createElementsForASpace(alignment, ai, vecAreaInfo.size() - 1, breakOpportunity));
+                        (createElementsForASpace(alignment, ai, vecAreaInfo.size() - 1));
                     ai = null;
 
                     iThisStart = iNextStart;
@@ -636,8 +638,9 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             } else {
                 if (ai != null) {
                     vecAreaInfo.add(ai);
+                    ai.breakOppAfter = ch == CharUtilities.SPACE || breakOpportunity;
                     sequence.addAll
-                        (createElementsForASpace(alignment, ai, vecAreaInfo.size() - 1, ch == CharUtilities.SPACE || breakOpportunity));
+                        (createElementsForASpace(alignment, ai, vecAreaInfo.size() - 1));
                     ai = null;
                 }
                 if (breakAction == LineBreakStatus.EXPLICIT_BREAK) {
@@ -657,14 +660,14 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 // create the AreaInfo object
                 ai = new AreaInfo(iNextStart, (short) (iNextStart + 1),
                         (short) 1, (short) 0,
-                        wordSpaceIPD, false, true);
+                        wordSpaceIPD, false, true, breakOpportunity);
                 iThisStart = (short) (iNextStart + 1);
             } else if (CharUtilities.isFixedWidthSpace(ch)) {
                 // create the AreaInfo object
                 MinOptMax ipd = new MinOptMax(font.getCharWidth(ch));
                 ai = new AreaInfo(iNextStart, (short) (iNextStart + 1),
                         (short) 0, (short) 0,
-                        ipd, false, true); 
+                        ipd, false, true, breakOpportunity); 
                 iThisStart = (short) (iNextStart + 1);
             } else if (ch == NEWLINE) {
                 // linefeed; this can happen when linefeed-treatment="preserve"
@@ -705,29 +708,30 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             // create the AreaInfo object
             ai = new AreaInfo(iThisStart, iNextStart, (short) 0,
                     (short) iLetterSpaces,
-                    wordIPD, false, false);
+                    wordIPD, false, false, false);
             vecAreaInfo.add(ai);
             iTempStart = iNextStart;
 
             // create the elements
             sequence.addAll(createElementsForAWordFragment(alignment, ai,
-                    vecAreaInfo.size() - 1, letterSpaceIPD, false));
+                    vecAreaInfo.size() - 1, letterSpaceIPD));
             ai = null;
         } else if (inWhitespace) {
             ai = new AreaInfo(iThisStart, (short) (iNextStart),
                     (short) (iNextStart - iThisStart), (short) 0,
                     MinOptMax.multiply(wordSpaceIPD, iNextStart - iThisStart),
-                    false, true); 
+                    false, true, true); 
             vecAreaInfo.add(ai);
 
             // create the elements
             sequence.addAll
-                (createElementsForASpace(alignment, ai, vecAreaInfo.size() - 1, true));
+                (createElementsForASpace(alignment, ai, vecAreaInfo.size() - 1));
             ai = null;
         } else if (ai != null) {
             vecAreaInfo.add(ai);
+            ai.breakOppAfter = ch == CharUtilities.ZERO_WIDTH_SPACE;
             sequence.addAll
-                (createElementsForASpace(alignment, ai, vecAreaInfo.size() - 1, ch == CharUtilities.ZERO_WIDTH_SPACE));
+                (createElementsForASpace(alignment, ai, vecAreaInfo.size() - 1));
             ai = null;
         } else if (ch == NEWLINE) {
             if (lineEndBAP != 0) {
@@ -885,7 +889,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                                    (short) (bIsWordEnd
                                             ? (iStopIndex - iStartIndex - 1)
                                             : (iStopIndex - iStartIndex)),
-                                   newIPD, bHyphenFollows, false),
+                                   newIPD, bHyphenFollows, false, false),
                       ((LeafPosition) pos).getLeafPos()));
                 bNothingChanged = false;
             }
@@ -942,11 +946,11 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             if (ai.iWScount == 0) {
                 // ai refers either to a word or a word fragment
                 returnList.addAll
-                (createElementsForAWordFragment(alignment, ai, iReturnedIndex, letterSpaceIPD, false));
+                (createElementsForAWordFragment(alignment, ai, iReturnedIndex, letterSpaceIPD));
             } else {
                 // ai refers to a space
                 returnList.addAll
-                (createElementsForASpace(alignment, ai, iReturnedIndex, textArray[ai.iStartIndex] == CharUtilities.SPACE));
+                (createElementsForASpace(alignment, ai, iReturnedIndex));
             }
             iReturnedIndex++;
         } // end of while
@@ -966,11 +970,11 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
     }
 
     private LinkedList createElementsForASpace(int alignment,
-            AreaInfo ai, int leafValue, boolean breakOpportunity) {
+            AreaInfo ai, int leafValue) {
         LinkedList spaceElements = new LinkedList();
         LeafPosition mainPosition = new LeafPosition(this, leafValue);
         
-        if (!breakOpportunity) {
+        if (!ai.breakOppAfter) {
             // a non-breaking space
             if (alignment == EN_JUSTIFY) {
                 // the space can stretch and shrink, and must be preserved
@@ -1204,14 +1208,14 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
     }
 
     private LinkedList createElementsForAWordFragment(int alignment,
-            AreaInfo ai, int leafValue, MinOptMax letterSpaceWidth, boolean breakOpportunity) {
+            AreaInfo ai, int leafValue, MinOptMax letterSpaceWidth) {
         LinkedList wordElements = new LinkedList();
         LeafPosition mainPosition = new LeafPosition(this, leafValue);
 
         // if the last character of the word fragment is '-' or '/',
         // the fragment could end a line; in this case, it loses one
         // of its letter spaces;
-        boolean bSuppressibleLetterSpace = breakOpportunity;
+        boolean bSuppressibleLetterSpace = ai.breakOppAfter;
 
         if (letterSpaceWidth.min == letterSpaceWidth.max) {
             // constant letter spacing
