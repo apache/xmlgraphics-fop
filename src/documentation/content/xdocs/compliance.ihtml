@@ -3965,11 +3965,11 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="yes">
+        yes
       </td>
       <td align="center">
-        &nbsp;
+        [0.93] Supported in fop-trunk only
       </td>
     </tr>
     <tr>
