@@ -28,6 +28,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="MM" type="add">
+        Added support for line-height-shift-adjustment property.
+      </action>
       <action context="Code" dev="SP" type="add">
         Added support for the system property fop.home to
         cli.Main.getJARList().

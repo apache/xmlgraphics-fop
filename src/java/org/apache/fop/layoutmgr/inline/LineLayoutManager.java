@@ -447,12 +447,15 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                             if (!ac.usesInitialBaselineTable()
                                 || ac.getAlignmentBaselineIdentifier() != EN_BEFORE_EDGE
                                    && ac.getAlignmentBaselineIdentifier() != EN_AFTER_EDGE) {
-                                int alignmentOffset = ac.getTotalAlignmentBaselineOffset();
-                                if (alignmentOffset + ac.getAltitude() > lineLead) {
-                                    lineLead = alignmentOffset + ac.getAltitude();
-                                }
-                                if (ac.getDepth() - alignmentOffset > lineFollow)  {
-                                    lineFollow = ac.getDepth() - alignmentOffset;
+                                if (fobj.getLineHeightShiftAdjustment() == EN_CONSIDER_SHIFTS
+                                    || ac.getBaselineShiftValue() == 0) {
+                                    int alignmentOffset = ac.getTotalAlignmentBaselineOffset();
+                                    if (alignmentOffset + ac.getAltitude() > lineLead) {
+                                        lineLead = alignmentOffset + ac.getAltitude();
+                                    }
+                                    if (ac.getDepth() - alignmentOffset > lineFollow)  {
+                                        lineFollow = ac.getDepth() - alignmentOffset;
+                                    }
                                 }
                             } else {
                                 if (ac.getHeight() > maxIgnoredHeight) {
