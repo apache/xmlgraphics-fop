@@ -325,4 +325,10 @@
       after a block with break-after="page"</description>
     <reference>http://issues.apache.org/bugzilla/show_bug.cgi?id=40230</reference>
   </testcase>
+  <testcase>
+    <name>Soft hyphen with normal hyphenation enabled</name>
+    <file>block_shy_linebreaking_hyph.xml</file>
+    <description>A soft hyphen should be a preferred as break compared to a
+    normal hyphenation point but is not.</description>
+  </testcase>
 </disabled-testcases>
