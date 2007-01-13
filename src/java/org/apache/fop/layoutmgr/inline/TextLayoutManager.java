@@ -319,7 +319,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             return;
         }
         int textLength = ai.iBreakIndex - ai.iStartIndex;
-        if (ai.iLScount == textLength
+        if (ai.iLScount == textLength && !ai.bHyphenated
                    && context.isLastArea()) {
             // the line ends at a character like "/" or "-";
             // remove the letter space after the last character
@@ -453,6 +453,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         // set the text of the TextArea, split into words and spaces
         int wordStartIndex = -1;
         AreaInfo areaInfo;
+        int len = 0;
         for (int i = firstIndex; i <= lastIndex; i++) {
             areaInfo = (AreaInfo) vecAreaInfo.get(i);
             if (areaInfo.isSpace) {
@@ -467,32 +468,45 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 // areaInfo stores information about a word fragment
                 if (wordStartIndex == -1) {
                     // here starts a new word
-                    wordStartIndex = areaInfo.iStartIndex;
+                    wordStartIndex = i;
+                    len = 0;
                 }
+                len += areaInfo.iBreakIndex - areaInfo.iStartIndex;
                 if (i == lastIndex || ((AreaInfo) vecAreaInfo.get(i + 1)).isSpace) {
                     // here ends a new word
                     // add a word to the TextArea
-                    int len = areaInfo.iBreakIndex - wordStartIndex;
-                    String wordChars = new String(textArray, wordStartIndex, len);
+                    if (isLastArea
+                        && i == lastIndex 
+                        && areaInfo.bHyphenated) {
+                        len++;
+                    }
+                    StringBuffer wordChars = new StringBuffer(len);
+                    int[] letterAdjust = new int[len];
+                    int letter = 0;
+                    for (int j = wordStartIndex; j <= i; j++) {
+                        AreaInfo ai = (AreaInfo) vecAreaInfo.get(j);
+                        int lsCount = ai.iLScount;
+                        wordChars.append(textArray, ai.iStartIndex, ai.iBreakIndex - ai.iStartIndex);
+                        for (int k = 0; k < ai.iBreakIndex - ai.iStartIndex; k++) {
+                            MinOptMax adj = letterAdjustArray[ai.iStartIndex + k];
+                            if (letter > 0) {
+                                letterAdjust[letter] = (adj != null ? adj.opt : 0);
+                            }
+                            if (lsCount > 0) {
+                                letterAdjust[letter] += textArea.getTextLetterSpaceAdjust();
+                                lsCount--;
+                            }
+                            letter++;
+                        }
+                    }
+                    // String wordChars = new String(textArray, wordStartIndex, len);
                     if (isLastArea
                         && i == lastIndex 
                         && areaInfo.bHyphenated) {
                         // add the hyphenation character
-                        wordChars += foText.getCommonHyphenation().hyphenationCharacter;
+                        wordChars.append(foText.getCommonHyphenation().hyphenationCharacter);
                     }
-                    int[] letterAdjust = new int[wordChars.length()];
-                    int lsCount = areaInfo.iLScount;
-                    for (int letter = 0; letter < len; letter++) {
-                        MinOptMax adj = letterAdjustArray[letter + wordStartIndex];
-                        if (letter > 0) {
-                            letterAdjust[letter] = (adj != null ? adj.opt : 0);
-                        }
-                        if (lsCount > 0) {
-                            letterAdjust[letter] += textArea.getTextLetterSpaceAdjust();
-                            lsCount--;
-                        }
-                    }
-                    textArea.addWord(wordChars, 0, letterAdjust);
+                    textArea.addWord(wordChars.toString(), 0, letterAdjust);
                     wordStartIndex = -1;
                 }
             }
@@ -545,6 +559,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         LinkedList returnList = new LinkedList();
         KnuthSequence sequence = new InlineKnuthSequence();
         AreaInfo ai = null;
+        AreaInfo prevAi = null;
         returnList.add(sequence);
 
         LineBreakStatus lbs = new LineBreakStatus();
@@ -573,10 +588,14 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             if (inWord) {
                 if (breakOpportunity || isSpace(ch) || ch == NEWLINE) {
                     //Word boundary found, process widths and kerning
-                    int wordLength = iNextStart - iThisStart;
+                    int lastIndex = iNextStart;
+                    while (lastIndex > 0 && textArray[lastIndex - 1] == CharUtilities.SOFT_HYPHEN) {
+                        lastIndex--;
+                    }
+                    int wordLength = lastIndex - iThisStart;
                     boolean kerning = font.hasKerning();
                     MinOptMax wordIPD = new MinOptMax(0);
-                    for (int i = iThisStart; i < iNextStart; i++) {
+                    for (int i = iThisStart; i < lastIndex; i++) {
                         char c = textArray[i];
 
                         //character width
@@ -584,15 +603,26 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                         wordIPD.add(charWidth);
 
                         //kerning
-                        int kern = 0;
-                        if (kerning && (i > iThisStart)) {
-                            char previous = textArray[i - 1];
-                            kern = font.getKernValue(previous, c) * font.getFontSize() / 1000;
+                        if (kerning) {
+                            int kern = 0;
+                            if (i > iThisStart) {
+                                char previous = textArray[i - 1];
+                                kern = font.getKernValue(previous, c) * font.getFontSize() / 1000;
+                            } else if (prevAi != null && !prevAi.isSpace && prevAi.iBreakIndex > 0) {
+                                char previous = textArray[prevAi.iBreakIndex - 1];
+                                kern = font.getKernValue(previous, c) * font.getFontSize() / 1000;
+                            }
                             if (kern != 0) {
                                 //log.info("Kerning between " + previous + " and " + c + ": " + kern);
                                 addToLetterAdjust(i, kern);
+                                wordIPD.add(kern);
                             }
-                            wordIPD.add(kern);
+                        }
+                    }
+                    if (kerning && breakOpportunity && !isSpace(ch) && lastIndex > 0 && textArray[lastIndex] == CharUtilities.SOFT_HYPHEN) {
+                        int kern = font.getKernValue(textArray[lastIndex - 1], ch) * font.getFontSize() / 1000;
+                        if (kern != 0) {
+                            addToLetterAdjust(lastIndex, kern);
                         }
                     }
                     int iLetterSpaces = wordLength - 1;
@@ -605,10 +635,11 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                     wordIPD.add(MinOptMax.multiply(letterSpaceIPD, iLetterSpaces));
 
                     // create the AreaInfo object
-                    ai = new AreaInfo(iThisStart, iNextStart, (short) 0,
+                    ai = new AreaInfo(iThisStart, (short)lastIndex, (short) 0,
                             (short) iLetterSpaces,
-                            wordIPD, false, false, breakOpportunity);
+                            wordIPD, textArray[lastIndex] == CharUtilities.SOFT_HYPHEN, false, breakOpportunity);
                     vecAreaInfo.add(ai);
+                    prevAi = ai;
                     iTempStart = iNextStart;
 
                     // create the elements
@@ -627,6 +658,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                             MinOptMax.multiply(wordSpaceIPD, iNextStart - iThisStart),
                             false, true, breakOpportunity); 
                     vecAreaInfo.add(ai);
+                    prevAi = ai;
 
                     // create the elements
                     sequence.addAll
@@ -638,6 +670,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             } else {
                 if (ai != null) {
                     vecAreaInfo.add(ai);
+                    prevAi = ai;
                     ai.breakOppAfter = ch == CharUtilities.SPACE || breakOpportunity;
                     sequence.addAll
                         (createElementsForASpace(alignment, ai, vecAreaInfo.size() - 1));
@@ -680,10 +713,14 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         
         // Process any last elements
         if (inWord) {
-            int wordLength = iNextStart - iThisStart;
+            int lastIndex = iNextStart;
+            if (textArray[iNextStart - 1] == CharUtilities.SOFT_HYPHEN) {
+                lastIndex--;
+            }
+            int wordLength = lastIndex - iThisStart;
             boolean kerning = font.hasKerning();
             MinOptMax wordIPD = new MinOptMax(0);
-            for (int i = iThisStart; i < iNextStart; i++) {
+            for (int i = iThisStart; i < lastIndex; i++) {
                 char c = textArray[i];
 
                 //character width
@@ -691,22 +728,27 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 wordIPD.add(charWidth);
 
                 //kerning
-                int kern = 0;
-                if (kerning && (i > iThisStart)) {
-                    char previous = textArray[i - 1];
-                    kern = font.getKernValue(previous, c) * font.getFontSize() / 1000;
+                if (kerning) {
+                    int kern = 0;
+                    if (i > iThisStart) {
+                        char previous = textArray[i - 1];
+                        kern = font.getKernValue(previous, c) * font.getFontSize() / 1000;
+                    } else if (prevAi != null && !prevAi.isSpace) {
+                        char previous = textArray[prevAi.iBreakIndex - 1];
+                        kern = font.getKernValue(previous, c) * font.getFontSize() / 1000;
+                    }
                     if (kern != 0) {
                         //log.info("Kerning between " + previous + " and " + c + ": " + kern);
                         addToLetterAdjust(i, kern);
+                        wordIPD.add(kern);
                     }
-                    wordIPD.add(kern);
                 }
             }
             int iLetterSpaces = wordLength - 1;
             wordIPD.add(MinOptMax.multiply(letterSpaceIPD, iLetterSpaces));
 
             // create the AreaInfo object
-            ai = new AreaInfo(iThisStart, iNextStart, (short) 0,
+            ai = new AreaInfo(iThisStart, (short)lastIndex, (short) 0,
                     (short) iLetterSpaces,
                     wordIPD, false, false, false);
             vecAreaInfo.add(ai);
@@ -1215,7 +1257,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         // if the last character of the word fragment is '-' or '/',
         // the fragment could end a line; in this case, it loses one
         // of its letter spaces;
-        boolean bSuppressibleLetterSpace = ai.breakOppAfter;
+        boolean bSuppressibleLetterSpace = ai.breakOppAfter && !ai.bHyphenated;
 
         if (letterSpaceWidth.min == letterSpaceWidth.max) {
             // constant letter spacing
@@ -1261,18 +1303,20 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             // the word fragment ends at the end of a syllable:
             // if a break occurs the content width increases,
             // otherwise nothing happens
-            wordElements.addAll(createElementsForAHyphen(alignment, hyphIPD, widthIfNoBreakOccurs));
+            wordElements.addAll(createElementsForAHyphen(alignment, hyphIPD, widthIfNoBreakOccurs, ai.breakOppAfter && ai.bHyphenated));
         } else if (bSuppressibleLetterSpace) {
             // the word fragment ends with a character that acts as a hyphen
             // if a break occurs the width does not increase,
             // otherwise there is one more letter space
-            wordElements.addAll(createElementsForAHyphen(alignment, 0, letterSpaceWidth));
+            wordElements.addAll(createElementsForAHyphen(alignment, 0, letterSpaceWidth, false));
         }
         return wordElements;
     }
 
+    // static final int SOFT_HYPHEN_PENALTY = KnuthPenalty.FLAGGED_PENALTY / 10;
+    static final int SOFT_HYPHEN_PENALTY = 1;
     private LinkedList createElementsForAHyphen(int alignment,
-            int widthIfBreakOccurs, MinOptMax widthIfNoBreakOccurs) {
+            int widthIfBreakOccurs, MinOptMax widthIfNoBreakOccurs, boolean softHyphen) {
         if (widthIfNoBreakOccurs == null) {
             widthIfNoBreakOccurs = ZERO_MINOPTMAX;
         }
@@ -1308,7 +1352,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                                new LeafPosition(this, -1), true));
             hyphenElements.add
                 (new KnuthPenalty(hyphIPD,
-                        KnuthPenalty.FLAGGED_PENALTY, true,
+                        softHyphen ? SOFT_HYPHEN_PENALTY : KnuthPenalty.FLAGGED_PENALTY, true,
                         new LeafPosition(this, -1), false));
             hyphenElements.add
                 (new KnuthGlue(-(lineEndBAP + lineStartBAP),
@@ -1347,7 +1391,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                                    new LeafPosition(this, -1), false));
                 hyphenElements.add
                     (new KnuthPenalty(widthIfBreakOccurs,
-                            KnuthPenalty.FLAGGED_PENALTY, true,
+                            softHyphen ? SOFT_HYPHEN_PENALTY : KnuthPenalty.FLAGGED_PENALTY, true,
                             new LeafPosition(this, -1), false));
                 hyphenElements.add
                     (new KnuthGlue(widthIfNoBreakOccurs.opt - (lineStartBAP + lineEndBAP),
@@ -1368,7 +1412,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                             new LeafPosition(this, -1), false));
                 hyphenElements.add
                     (new KnuthPenalty(widthIfBreakOccurs,
-                            KnuthPenalty.FLAGGED_PENALTY, true,
+                            softHyphen ? SOFT_HYPHEN_PENALTY : KnuthPenalty.FLAGGED_PENALTY, true,
                             new LeafPosition(this, -1), false));
                 hyphenElements.add
                     (new KnuthGlue(widthIfNoBreakOccurs.opt,
@@ -1392,7 +1436,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                                    new LeafPosition(this, -1), false));
                 hyphenElements.add
                     (new KnuthPenalty(widthIfBreakOccurs,
-                            KnuthPenalty.FLAGGED_PENALTY, true,
+                            softHyphen ? SOFT_HYPHEN_PENALTY : KnuthPenalty.FLAGGED_PENALTY, true,
                             new LeafPosition(this, -1), false));
                 // extra elements representing a letter space that is suppressed
                 // if a break occurs
@@ -1420,7 +1464,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             } else {
                 hyphenElements.add
                     (new KnuthPenalty(widthIfBreakOccurs,
-                            KnuthPenalty.FLAGGED_PENALTY, true,
+                            softHyphen ? SOFT_HYPHEN_PENALTY : KnuthPenalty.FLAGGED_PENALTY, true,
                             new LeafPosition(this, -1), false));
                 // extra elements representing a letter space that is suppressed
                 // if a break occurs
