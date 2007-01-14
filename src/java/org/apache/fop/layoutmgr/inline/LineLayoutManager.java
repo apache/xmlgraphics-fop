@@ -708,7 +708,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                         throw new NullPointerException(
                         "Sequence was empty! lastElement is null");
                     }
-                    bPrevWasKnuthBox = lastElement.isBox() && ((KnuthElement) lastElement).getW() != 0;
+                    bPrevWasKnuthBox = lastElement.isBox() 
+                                        && !((KnuthElement) lastElement).isAuxiliary() 
+                                        && ((KnuthElement) lastElement).getW() != 0;
                     
                     // if last paragraph is open, add the new elements to the paragraph
                     // else this is the last paragraph
