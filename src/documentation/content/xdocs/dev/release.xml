@@ -40,7 +40,9 @@ The purpose of documenting it here is to facilitate consistency, ensure that the
 		<li>Create a branch called <code>branches/fop-v_vv</code></li>
         <li>Edit release notes (README and status.xml in the root).</li>
         <li>Update the index.xml and site.xml for the new version.</li>
-        <li>Update the version numbers on the compliance page.</li>
+        <li>Update the version numbers in the release column on the
+        compliance page; update the compliance in the release column
+        to the current state (development column).</li>
         <li>Update version number in build.xml (not to be merged back
         into trunk).</li>
         <li>Copy trunk documentation directory to a new directory with
