@@ -312,11 +312,10 @@
     case should be revisited.</description>
   </testcase>
   <testcase>
-    <name>fo:wrapper around block-level content</name>
-    <file>wrapper_block.xml</file>
-    <description>A ClassCastException occurs when fo:wrapper directly surrounds a 
-    block-level element because its layout manager is written to handle only 
-    inline content.</description>
+    <name>fo:wrapper around block-level content (with id)</name>
+    <file>wrapper_block_id.xml</file>
+    <description>"id" attributes on fo:wrapper around block-level content don't get
+    added to the area tree.</description>
   </testcase>
   <testcase>
     <name>Bugzilla #40230: invalid extra page break</name>
