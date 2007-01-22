@@ -91,7 +91,7 @@ which will be used to configure the chosen Forrest skin.
   <favicon-url></favicon-url>
 
   <!-- The following used to construct a copyright statement -->
-  <year>1999-2006</year>
+  <year>1999-2007</year>
   <vendor>The Apache Software Foundation.</vendor>
   <!-- The optional copyright-link URL will be used as a link in the
     copyright statement
@@ -367,13 +367,13 @@ which will be used to configure the chosen Forrest skin.
       <width>88</width>
       <height>31</height>
     </credit>
-    <!--credit box-location="alt2">
-      <name>ApacheCon US 2005</name>
-      <url>http://apachecon.com/2005/US/</url>
-      <image>http://apache.org/images/ac2005us_blue_125x125.jpg</image>
+    <credit box-location="alt2">
+      <name>ApacheCon EU 2007 (Amsterdam, NL)</name>
+      <url>http://apachecon.com/2007/EU/</url>
+      <image>http://www.apache.org/ads/ApacheCon/2007-europe-125x125.png</image>
       <width>125</width>
       <height>125</height>
-    </credit-->
+    </credit>
     <!--credit box-location="alt2">
       <name>ApacheCon US 2006 (9-13 October 2006)</name>
       <url>http://www.us.apachecon.com/</url>
