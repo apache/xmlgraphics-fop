@@ -28,6 +28,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix" fixes-bug="41426" due-to="Adrian Cumiskey">
+        Fix for ClassCastException when fo:wrapper was used as direct child of fo:flow.
+        Note: "id" attributes are still not handled properly on fo:wrapper!
+      </action>
       <action context="Code" dev="MM" type="add">
         Added support for the soft hyphen (SHY) character.
       </action>

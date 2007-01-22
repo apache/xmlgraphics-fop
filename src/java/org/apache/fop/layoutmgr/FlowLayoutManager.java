@@ -69,11 +69,11 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
         int flowBPD = (int) getCurrentPV().getBodyRegion().getBPD();
 
         // currently active LM
-        BlockLevelLayoutManager curLM;
+        LayoutManager curLM;
         LinkedList returnedList;
         LinkedList returnList = new LinkedList();
 
-        while ((curLM = ((BlockLevelLayoutManager) getChildLM())) != null) {
+        while ((curLM = getChildLM()) != null) {
             if (curLM instanceof InlineLevelLayoutManager) {
                 log.error("inline area not allowed under flow - ignoring");
                 curLM.setFinished(true);
