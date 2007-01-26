@@ -161,7 +161,7 @@ public class PDFText extends PDFObject {
     /**
      * Converts a String to UTF-16 (big endian).
      * @param text text to convert
-     * @return byte[] UTF-17 stream
+     * @return byte[] UTF-16 stream
      */
     public static final byte[] toUTF16(String text) {
         try {
