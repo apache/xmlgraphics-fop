@@ -110,11 +110,34 @@ public class MultiByteFont extends CIDFont {
     }
 
     /**
+     * Removes all white space from a string (used primarily for font names)
+     * @param s the string
+     * @return the processed result
+     */
+    public static String stripWhiteSpace(String s) {
+        StringBuffer sb = new StringBuffer(s.length());
+        for (int i = 0, c = s.length(); i < c; i++) {
+            final char ch = s.charAt(i);
+            if (ch != ' ' 
+                    && ch != '\r' 
+                    && ch != '\n'
+                    && ch != '\t') {
+                sb.append(ch);
+            }
+        }
+        return sb.toString();
+    }
+    
+    private String getPrefixedFontName() {
+        return namePrefix + stripWhiteSpace(super.getFontName());
+    }
+    
+    /**
      * @see org.apache.fop.fonts.CIDFont#getCidBaseFont()
      */
     public String getCidBaseFont() {
         if (isEmbeddable()) {
-            return namePrefix + super.getFontName();
+            return getPrefixedFontName();
         } else {
             return super.getFontName();
         }
@@ -139,7 +162,7 @@ public class MultiByteFont extends CIDFont {
      */
     public String getFontName() {
         if (isEmbeddable()) {
-            return namePrefix + super.getFontName();
+            return getPrefixedFontName();
         } else {
             return super.getFontName();
         }
