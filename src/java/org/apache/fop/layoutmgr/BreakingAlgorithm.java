@@ -491,6 +491,17 @@ public abstract class BreakingAlgorithm {
                     log.debug("Could not find a set of breaking points " + threshold);
                     return 0;
                 }
+                // lastDeactivated was a "good" break, while lastTooShort and lastTooLong 
+                // were "bad" breaks since the beginning;
+                // if it is not the node we just restarted from, lastDeactivated can 
+                // replace either lastTooShort or lastTooLong
+                if (lastDeactivated != null && lastDeactivated != lastForced) {
+                    if (lastDeactivated.adjustRatio > 0) {
+                        lastTooShort = lastDeactivated;
+                    } else {
+                        lastTooLong = lastDeactivated;
+                    }
+                }
                 if (lastTooShort == null || lastForced.position == lastTooShort.position) {
                     if (isPartOverflowRecoveryActivated()) {
                         if (this.lastRecovered == null) {

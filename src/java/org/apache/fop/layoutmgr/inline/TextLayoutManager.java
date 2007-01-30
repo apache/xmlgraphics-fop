@@ -1308,7 +1308,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             // the word fragment ends with a character that acts as a hyphen
             // if a break occurs the width does not increase,
             // otherwise there is one more letter space
-            wordElements.addAll(createElementsForAHyphen(alignment, 0, letterSpaceWidth, false));
+            wordElements.addAll(createElementsForAHyphen(alignment, 0, letterSpaceWidth, true));
         }
         return wordElements;
     }
@@ -1316,7 +1316,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
     // static final int SOFT_HYPHEN_PENALTY = KnuthPenalty.FLAGGED_PENALTY / 10;
     static final int SOFT_HYPHEN_PENALTY = 1;
     private LinkedList createElementsForAHyphen(int alignment,
-            int widthIfBreakOccurs, MinOptMax widthIfNoBreakOccurs, boolean softHyphen) {
+            int widthIfBreakOccurs, MinOptMax widthIfNoBreakOccurs, boolean unflagged) {
         if (widthIfNoBreakOccurs == null) {
             widthIfNoBreakOccurs = ZERO_MINOPTMAX;
         }
@@ -1348,11 +1348,14 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                         new LeafPosition(this, -1), false));
             */
             hyphenElements.add
+                (new KnuthPenalty(0, KnuthElement.INFINITE, false,
+                        new LeafPosition(this, -1), true));
+            hyphenElements.add
                 (new KnuthGlue(lineEndBAP, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
                                new LeafPosition(this, -1), true));
             hyphenElements.add
                 (new KnuthPenalty(hyphIPD,
-                        softHyphen ? SOFT_HYPHEN_PENALTY : KnuthPenalty.FLAGGED_PENALTY, true,
+                        unflagged ? SOFT_HYPHEN_PENALTY : KnuthPenalty.FLAGGED_PENALTY, !unflagged,
                         new LeafPosition(this, -1), false));
             hyphenElements.add
                 (new KnuthGlue(-(lineEndBAP + lineStartBAP),
@@ -1387,11 +1390,14 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             */
             if (lineStartBAP != 0 || lineEndBAP != 0) {
                 hyphenElements.add
+                    (new KnuthPenalty(0, KnuthElement.INFINITE, false,
+                            new LeafPosition(this, -1), true));
+                hyphenElements.add
                     (new KnuthGlue(lineEndBAP, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
                                    new LeafPosition(this, -1), false));
                 hyphenElements.add
                     (new KnuthPenalty(widthIfBreakOccurs,
-                            softHyphen ? SOFT_HYPHEN_PENALTY : KnuthPenalty.FLAGGED_PENALTY, true,
+                            unflagged ? SOFT_HYPHEN_PENALTY : KnuthPenalty.FLAGGED_PENALTY, !unflagged,
                             new LeafPosition(this, -1), false));
                 hyphenElements.add
                     (new KnuthGlue(widthIfNoBreakOccurs.opt - (lineStartBAP + lineEndBAP),
@@ -1408,11 +1414,14 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                                    new LeafPosition(this, -1), false));
             } else {
                 hyphenElements.add
+                    (new KnuthPenalty(0, KnuthElement.INFINITE, false,
+                            new LeafPosition(this, -1), true));
+                hyphenElements.add
                     (new KnuthGlue(0, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
                             new LeafPosition(this, -1), false));
                 hyphenElements.add
                     (new KnuthPenalty(widthIfBreakOccurs,
-                            softHyphen ? SOFT_HYPHEN_PENALTY : KnuthPenalty.FLAGGED_PENALTY, true,
+                            unflagged ? SOFT_HYPHEN_PENALTY : KnuthPenalty.FLAGGED_PENALTY, !unflagged,
                             new LeafPosition(this, -1), false));
                 hyphenElements.add
                     (new KnuthGlue(widthIfNoBreakOccurs.opt,
@@ -1432,11 +1441,15 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             */
             if (lineStartBAP != 0 || lineEndBAP != 0) {
                 hyphenElements.add
+                    (new KnuthPenalty(0, KnuthElement.INFINITE, false,
+                            new LeafPosition(this, -1), true));
+
+                hyphenElements.add
                     (new KnuthGlue(lineEndBAP, 0, 0,
                                    new LeafPosition(this, -1), false));
                 hyphenElements.add
                     (new KnuthPenalty(widthIfBreakOccurs,
-                            softHyphen ? SOFT_HYPHEN_PENALTY : KnuthPenalty.FLAGGED_PENALTY, true,
+                            unflagged ? SOFT_HYPHEN_PENALTY : KnuthPenalty.FLAGGED_PENALTY, !unflagged,
                             new LeafPosition(this, -1), false));
                 // extra elements representing a letter space that is suppressed
                 // if a break occurs
@@ -1464,7 +1477,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             } else {
                 hyphenElements.add
                     (new KnuthPenalty(widthIfBreakOccurs,
-                            softHyphen ? SOFT_HYPHEN_PENALTY : KnuthPenalty.FLAGGED_PENALTY, true,
+                            unflagged ? SOFT_HYPHEN_PENALTY : KnuthPenalty.FLAGGED_PENALTY, !unflagged,
                             new LeafPosition(this, -1), false));
                 // extra elements representing a letter space that is suppressed
                 // if a break occurs
@@ -1483,4 +1496,5 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
     }
     
 }
+
 
