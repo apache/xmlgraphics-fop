@@ -28,6 +28,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="LF" type="fix" fixes-bug="41019">
+        Fix incorrect behaviour of the BreakingAlgorithm when some inline content is wider than
+        the available ipd, causing a restart.
+      </action>
       <action context="Code" dev="JM" type="fix">
         Fix for PDF corruption when a TrueType font with spaces in its name is embedded and no 
         XML font metrics file for that font is used.
