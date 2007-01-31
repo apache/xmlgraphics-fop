@@ -148,7 +148,8 @@ public abstract class TableFObj extends FObj {
             
             TableRow row = (TableRow) this;
             
-            for (i = colSpan; --i >= 0;) {
+            for (i = colSpan; 
+                    --i >= 0 || row.pendingSpans.size() < cell.getColumnNumber();) {
                 row.pendingSpans.add(null);
             }
             
