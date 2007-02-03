@@ -207,6 +207,11 @@ public class TTFReader extends AbstractFontReader {
         if (!supported) {
             return null;
         }
+        log.info("Font Family: " + ttfFile.getFamilyName());
+        if (ttfFile.isCFF()) {
+            throw new UnsupportedOperationException(
+                    "OpenType fonts with CFF data are not supported, yet");
+        }
         return ttfFile;
     }
 
