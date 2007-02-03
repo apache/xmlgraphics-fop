@@ -88,9 +88,11 @@ public class TTFFile {
     private int fontBBox3 = 0;
     private int fontBBox4 = 0;
     private int capHeight = 0;
+    private int os2CapHeight = 0;
     private int underlinePosition = 0;
     private int underlineThickness = 0;
     private int xHeight = 0;
+    private int os2xHeight = 0;
     //Effective ascender/descender
     private int ascender = 0;
     private int descender = 0;
@@ -113,6 +115,8 @@ public class TTFFile {
 
     private TTFDirTabEntry currentDirTab;
 
+    private boolean isCFF;
+    
     /**
      * logging instance
      */
@@ -129,8 +133,8 @@ public class TTFFile {
         UnicodeMapping(int glyphIndex, int unicodeIndex) {
             this.unicodeIndex = unicodeIndex;
             this.glyphIndex = glyphIndex;
-            glyphToUnicodeMap.put(new Integer(glyphIndex),new Integer(unicodeIndex));
-            unicodeToGlyphMap.put(new Integer(unicodeIndex),new Integer(glyphIndex));
+            glyphToUnicodeMap.put(new Integer(glyphIndex), new Integer(unicodeIndex));
+            unicodeToGlyphMap.put(new Integer(unicodeIndex), new Integer(glyphIndex));
         }
 
         /**
@@ -205,7 +209,9 @@ public class TTFFile {
         int numCMap = in.readTTFUShort();    // Number of cmap subtables
         long cmapUniOffset = 0;
 
-        log.info(numCMap + " cmap tables");
+        if (log.isDebugEnabled()) {
+            log.debug(numCMap + " cmap tables");
+        }
 
         //Read offset for all tables. We are only interested in the unicode table
         for (int i = 0; i < numCMap; i++) {
@@ -231,7 +237,9 @@ public class TTFFile {
         int cmapFormat = in.readTTFUShort();
         /*int cmap_length =*/ in.readTTFUShort(); //skip cmap length
 
-        log.info("CMAP format: " + cmapFormat);
+        if (log.isDebugEnabled()) {
+            log.debug("CMAP format: " + cmapFormat);
+        }
 
         if (cmapFormat == 4) {
             in.skip(2);    // Skip version number
@@ -472,15 +480,19 @@ public class TTFFile {
         readDirTabs(in);
         readFontHeader(in);
         getNumGlyphs(in);
-        log.info("Number of glyphs in font: " + numberOfGlyphs);
+        if (log.isDebugEnabled()) {
+            log.debug("Number of glyphs in font: " + numberOfGlyphs);
+        }
         readHorizontalHeader(in);
         readHorizontalMetrics(in);
         initAnsiWidths();
         readPostScript(in);
         readOS2(in);
         determineAscDesc();
-        readIndexToLocation(in);
-        readGlyf(in);
+        if (!isCFF) {
+            readIndexToLocation(in);
+            readGlyf(in);
+        }
         readName(in);
         boolean pcltFound = readPCLT(in);
         // Read cmap table and fill in ansiwidths
@@ -714,7 +726,15 @@ public class TTFFile {
         return isEmbeddable;
     }
 
-
+    /**
+     * Indicates whether or not the font is an OpenType
+     * CFF font (rather than a TrueType font).
+     * @return true if the font is in OpenType CFF format.
+     */
+    public boolean isCFF() {
+       return this.isCFF;
+    }
+    
     /**
      * Read Table Directory from the current position in the
      * FontFileReader and fill the global HashMap dirTabs
@@ -724,7 +744,25 @@ public class TTFFile {
      * @throws IOException in case of an I/O problem
      */
     protected void readDirTabs(FontFileReader in) throws IOException {
-        in.skip(4);    // TTF_FIXED_SIZE
+        int sfntVersion = in.readTTFLong(); // TTF_FIXED_SIZE (4 bytes)
+        switch (sfntVersion) {
+        case 0x10000:
+            log.debug("sfnt version: OpenType 1.0");
+            break;
+        case 0x4F54544F: //"OTTO"
+            this.isCFF = true;
+            log.debug("sfnt version: OpenType with CFF data");
+            break;
+        case 0x74727565: //"true"
+            log.debug("sfnt version: Apple TrueType");
+            break;
+        case 0x74797031: //"typ1"
+            log.debug("sfnt version: Apple Type 1 housed in sfnt wrapper");
+            break;
+        default:
+            log.debug("Unknown sfnt version: " + Integer.toHexString(sfntVersion));
+            break;
+        }
         int ntabs = in.readTTFUShort();
         in.skip(6);    // 3xTTF_USHORT_SIZE
 
@@ -954,10 +992,10 @@ public class TTFFile {
             v = in.readTTFUShort(); //usWinDescent
             log.debug("usWinDescent: " + v + " " + convertTTFUnit2PDFUnit(v));
             in.skip(2 * 4);
-            v = in.readTTFShort(); //sxHeight
-            log.debug("sxHeight: " + v);
-            v = in.readTTFShort(); //sCapHeight
-            log.debug("sCapHeight: " + v);
+            this.os2xHeight = in.readTTFShort(); //sxHeight
+            log.debug("sxHeight: " + this.os2xHeight);
+            this.os2CapHeight = in.readTTFShort(); //sCapHeight
+            log.debug("sCapHeight: " + this.os2CapHeight);
             
         } else {
             isEmbeddable = true;
@@ -1223,13 +1261,19 @@ public class TTFFile {
                 + " " + convertTTFUnit2PDFUnit(localCapHeight));
         if (capHeight == 0) {
             capHeight = localCapHeight;
-            if (localCapHeight == 0) {
+            if (capHeight == 0) {
+                capHeight = os2CapHeight;
+            }
+            if (capHeight == 0) {
                 log.warn("capHeight value could not be determined."
                         + " The font may not work as expected.");
             }
         }
         if (xHeight == 0) {
             xHeight = localXHeight;
+            if (xHeight == 0) {
+                xHeight = os2xHeight;
+            }
             if (xHeight == 0) {
                 log.warn("xHeight value could not be determined."
                         + " The font may not work as expected.");
@@ -1270,18 +1314,18 @@ public class TTFFile {
                         // CID kerning table entry, using unicode indexes
                         final Integer iObj = glyphToUnicode(i);
                         final Integer u2 = glyphToUnicode(j);
-                        if(iObj==null) {
+                        if (iObj == null) {
                             // happens for many fonts (Ubuntu font set),
                             // stray entries in the kerning table?? 
                             log.warn("Unicode index (1) not found for glyph " + i);
-                        } else if(u2==null) {
+                        } else if (u2 == null) {
                             log.warn("Unicode index (2) not found for glyph " + i);
                         } else {
                             Map adjTab = (Map)kerningTab.get(iObj);
                             if (adjTab == null) {
                                 adjTab = new java.util.HashMap();
                             }
-                            adjTab.put(u2,new Integer((int)convertTTFUnit2PDFUnit(kpx)));
+                            adjTab.put(u2, new Integer((int)convertTTFUnit2PDFUnit(kpx)));
                             kerningTab.put(iObj, adjTab);
                         }
                     }
@@ -1289,7 +1333,8 @@ public class TTFFile {
             }
 
             // Create winAnsiEncoded kerning table from kerningTab
-            // (could probably be simplified, for now we remap back to CID indexes and then to winAnsi)
+            // (could probably be simplified, for now we remap back to CID indexes and 
+            // then to winAnsi)
             Iterator ae = kerningTab.keySet().iterator();
             while (ae.hasNext()) {
                 Integer unicodeKey1 = (Integer)ae.next();

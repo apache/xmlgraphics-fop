@@ -54,6 +54,10 @@ public class TTFFontLoader extends FontLoader {
         if (!supported) {
             throw new IOException("Could not load TrueType font: " + fontFileURI);
         }
+        if (ttf.isCFF()) {
+            throw new UnsupportedOperationException(
+                    "OpenType fonts with CFF data are not supported, yet");
+        }
         multiFont = new MultiByteFont();
         multiFont.setResolver(this.resolver);
         returnFont = multiFont;
