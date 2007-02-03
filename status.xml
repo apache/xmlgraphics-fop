@@ -28,6 +28,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="add">
+        Support for soft masks (transparency) with ImageIO image adapter.
+      </action>
       <action context="Code" dev="LF" type="fix" fixes-bug="41019">
         Fix incorrect behaviour of the BreakingAlgorithm when some inline content is wider than
         the available ipd, causing a restart.

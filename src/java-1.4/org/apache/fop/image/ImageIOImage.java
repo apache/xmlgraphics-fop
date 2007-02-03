@@ -46,6 +46,8 @@ import org.w3c.dom.NodeList;
  */
 public class ImageIOImage extends AbstractFopImage {
 
+    private byte[] softMask = null;
+
     /**
      * Creates a new ImageIOImage.
      * @param info the image info from the ImageReader
@@ -163,22 +165,14 @@ public class ImageIOImage extends AbstractFopImage {
                             }
                         }
                     } else {
-                        // TRANSLUCENT
-                        /*
-                         * this.isTransparent = false;
-                         * for (int i = 0; i < this.width * this.height; i++) {
-                         * if (cm.getAlpha(tmpMap[i]) == 0) {
-                         * this.isTransparent = true;
-                         * this.transparentColor = new PDFColor(cm.getRed(tmpMap[i]), 
-                         * cm.getGreen(tmpMap[i]), cm.getBlue(tmpMap[i]));
-                         * break;
-                         * }
-                         * }
-                         * // or use special API...
-                         */
+                        //TODO Is there another case?
                         this.isTransparent = false;
                     }
                 } else {
+                    // TRANSLUCENT
+                    this.softMask = new byte[width * height];
+                    imageData.getAlphaRaster().getDataElements(
+                            0, 0, width, height, this.softMask);
                     this.isTransparent = false;
                 }
             } else {
@@ -217,5 +211,23 @@ public class ImageIOImage extends AbstractFopImage {
         return loadDefaultOriginalData();
     }
     
+    /** @see org.apache.fop.image.FopImage#hasSoftMask() */
+    public boolean hasSoftMask() {
+        if (this.bitmaps == null && this.raw == null) {
+            loadBitmap();
+        }
+
+        return (this.softMask != null);
+    }
+
+    /** @see org.apache.fop.image.FopImage#getSoftMask() */
+    public byte[] getSoftMask() {
+        if (this.bitmaps == null) {
+            loadBitmap();
+        }
+
+        return this.softMask;
+    }
+
 }
 
