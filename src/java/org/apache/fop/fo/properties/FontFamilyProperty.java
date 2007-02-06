@@ -21,6 +21,7 @@ package org.apache.fop.fo.properties;
 
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.expr.PropertyException;
 
 /**
  * Property class for the font-family property.
@@ -37,6 +38,55 @@ public class FontFamilyProperty extends ListProperty {
          */
         public Maker(int propId) {
             super(propId);
+        }
+
+        /**
+         * @see org.apache.fop.fo.properties.PropertyMaker#make(
+         *         org.apache.fop.fo.PropertyList, 
+         *         java.lang.String, 
+         *         org.apache.fop.fo.FObj)
+         */
+        public Property make(PropertyList propertyList, String value, FObj fo) throws PropertyException {
+            ListProperty prop = new ListProperty();
+            String tmpVal;
+            int startIndex = 0;
+            int commaIndex = value.indexOf(',');
+            int quoteIndex;
+            int aposIndex;
+            char qChar;
+            boolean parsed = false;
+            while (!parsed) {
+                if (commaIndex == -1) {
+                    tmpVal = value.substring(startIndex).trim();
+                    parsed = true;
+                } else {
+                    tmpVal = value.substring(startIndex, commaIndex).trim();
+                    startIndex = commaIndex + 1;
+                    commaIndex = value.indexOf(',', startIndex);
+                }
+                aposIndex = tmpVal.indexOf('\'');
+                quoteIndex = tmpVal.indexOf('\"');
+                if (aposIndex != -1 || quoteIndex != -1) {
+                    qChar = (aposIndex == -1) ? '\"' : '\'';
+                    if (tmpVal.lastIndexOf(qChar) != tmpVal.length() - 1) {
+                        Property.log.warn("Skipping malformed value for font-family: "
+                                + tmpVal + " in \"" + value + "\".");
+                        tmpVal = "";
+                    } else {
+                        tmpVal = tmpVal.substring(1, tmpVal.length() - 1);
+                    }
+                }
+                if (!"".equals(tmpVal)) {
+                    int dblSpaceIndex = tmpVal.indexOf("  ");
+                    while (dblSpaceIndex != -1) {
+                        tmpVal = tmpVal.substring(0, dblSpaceIndex)
+                                    + tmpVal.substring(dblSpaceIndex + 1);
+                        dblSpaceIndex = tmpVal.indexOf("  ");
+                    }
+                    prop.addProperty(new StringProperty(tmpVal));
+                }
+            }
+            return prop;
         }
 
         /**
