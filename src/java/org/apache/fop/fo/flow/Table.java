@@ -130,7 +130,12 @@ public class Table extends TableFObj {
         //Bind extension properties
         widowContentLimit = pList.get(PR_X_WIDOW_CONTENT_LIMIT).getLength();
         orphanContentLimit = pList.get(PR_X_ORPHAN_CONTENT_LIMIT).getLength();
-        
+
+        if (!blockProgressionDimension.getOptimum(null).isAuto()) {
+            attributeWarning("only a value of \"auto\" for block-progression-dimension has a well-specified"
+                    + " behavior on fo:table. Falling back to \"auto\"");
+            // Anyway, the bpd of a table is not used by the layout code
+        }
         if (borderCollapse != EN_SEPARATE) {
             //TODO Remove once the collapsing border is at least marginally working.
             borderCollapse = EN_SEPARATE;
