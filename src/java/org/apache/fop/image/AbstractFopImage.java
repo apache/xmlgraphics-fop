@@ -219,6 +219,9 @@ public abstract class AbstractFopImage implements FopImage {
      * @return true if the loading was successful
      */
     protected boolean loadDefaultOriginalData() {
+        if (inputStream == null) {
+            throw new IllegalStateException("inputStream is already null or was never set");
+        }
         try {
             this.raw = IOUtils.toByteArray(inputStream);
         } catch (java.io.IOException ex) {
