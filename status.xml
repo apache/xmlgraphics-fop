@@ -28,11 +28,14 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="add">
+        Support for GIF images in RTF output (RTF handler, only. Does not affect the RTF library.)
+      </action>
+      <action context="Code" dev="JM" type="fix">
+        Fix for NPE with PNG images for RTF output.
+      </action>
       <action context="Code" dev="AD" type="fix">
         Fix for properly parsing font-family names containing spaces.
-      </action>
-      <action context="Code" dev="JM" type="fix" fixes-bug="41488" due-to="Dominic Brügger">
-        Fix for NPE with PNG images for RTF output.
       </action>
       <action context="Code" dev="JM" type="add">
         Support for soft masks (transparency) with ImageIO image adapter.

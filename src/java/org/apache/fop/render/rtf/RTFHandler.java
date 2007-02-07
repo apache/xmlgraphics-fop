@@ -20,13 +20,24 @@
 package org.apache.fop.render.rtf;
 
 // Java
+import java.awt.color.ColorSpace;
 import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.ComponentColorModel;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
+import java.awt.image.PixelInterleavedSampleModel;
+import java.awt.image.Raster;
+import java.awt.image.SampleModel;
+import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Iterator;
 
 import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.apps.FOPException;
@@ -97,6 +108,8 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTextrun;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListItem.RtfListItemLabel;
 import org.apache.fop.render.rtf.rtflib.tools.BuilderContext;
 import org.apache.fop.render.rtf.rtflib.tools.TableContext;
+import org.apache.xmlgraphics.image.writer.ImageWriter;
+import org.apache.xmlgraphics.image.writer.ImageWriterRegistry;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -1128,7 +1141,12 @@ public class RTFHandler extends FOEventHandler {
                 log.error("Image could not be found: " + url);
                 return;
             }
-            fopimage.load(FopImage.ORIGINAL_DATA);
+            if ("image/gif".equals(fopimage.getMimeType())) {
+                //GIF is not directly supported by RTF, so it must be converted to PNG
+                fopimage.load(FopImage.BITMAP);
+            } else {
+                fopimage.load(FopImage.ORIGINAL_DATA);
+            }
             
             putGraphic(eg, fopimage);
         } catch (Exception e) {
@@ -1184,6 +1202,26 @@ public class RTFHandler extends FOEventHandler {
         }
     }
 
+    private BufferedImage createBufferedImageFromBitmaps(FopImage image) {
+        // TODO Hardcoded color and sample models, FIX ME!
+        ColorModel cm = new ComponentColorModel(
+                ColorSpace.getInstance(ColorSpace.CS_sRGB), 
+                new int[] {8, 8, 8},
+                false, false,
+                ColorModel.OPAQUE, DataBuffer.TYPE_BYTE);
+        SampleModel sampleModel = new PixelInterleavedSampleModel(
+                DataBuffer.TYPE_BYTE, image.getWidth(), image.getHeight(), 3, image.getWidth() * 3, 
+                new int[] {0, 1, 2});
+        DataBuffer dbuf = new DataBufferByte(image.getBitmaps(), 
+                image.getWidth() * image.getHeight() * 3);
+
+        WritableRaster raster = Raster.createWritableRaster(sampleModel,
+                dbuf, null);
+
+        // Combine the color model and raster into a buffered image
+        return new BufferedImage(cm, raster, false, null);
+    }
+    
     /**
      * Puts a graphic/image into the generated RTF file.
      * @param abstractGraphic the graphic (external-graphic or instream-foreign-object)
@@ -1195,8 +1233,16 @@ public class RTFHandler extends FOEventHandler {
         byte[] rawData;
         if ("image/svg+xml".equals(fopImage.getMimeType())) {
             rawData = SVGConverter.convertToJPEG((XMLImage) fopImage);
-        } else {
+        } else if (fopImage.getRessourceBytes() != null) {
             rawData = fopImage.getRessourceBytes();
+        } else {
+            //TODO Revisit after the image library redesign!!!
+            //Convert the decoded bitmaps to a BufferedImage
+            BufferedImage bufImage = createBufferedImageFromBitmaps(fopImage);
+            ImageWriter writer = ImageWriterRegistry.getInstance().getWriterFor("image/png");
+            ByteArrayOutputStream baout = new ByteArrayOutputStream();
+            writer.writeImage(bufImage, baout);
+            rawData = baout.toByteArray();
         }
         if (rawData == null) {
             log.warn(FONode.decorateWithContextInfo("Image could not be embedded: "

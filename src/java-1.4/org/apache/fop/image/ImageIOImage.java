@@ -64,10 +64,7 @@ public class ImageIOImage extends AbstractFopImage {
      * @see org.apache.fop.image.AbstractFopImage#loadDimensions()
      */
     protected boolean loadDimensions() {
-        if ((this.width > 0) && (this.height > 0)) {
-            return true;
-        }
-        else if (this.bitmaps == null) {
+        if (this.bitmaps == null) {
             return loadBitmap();
         }
         return true;
@@ -211,7 +208,11 @@ public class ImageIOImage extends AbstractFopImage {
 
     /** @see org.apache.fop.image.AbstractFopImage#loadOriginalData() */
     protected boolean loadOriginalData() {
-        return loadDefaultOriginalData();
+        if (inputStream == null && getBitmaps() != null) {
+            return false;
+        } else {
+            return loadDefaultOriginalData();
+        }
     }
     
     /** @see org.apache.fop.image.FopImage#hasSoftMask() */
