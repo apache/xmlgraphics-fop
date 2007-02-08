@@ -77,7 +77,7 @@ public class TableRowIterator {
 
     //TODO rows should later be a Jakarta Commons LinkedList so concurrent modifications while
     //using a ListIterator are possible
-    /** List of cached rows. This a list of EffRow elements. */
+    /** List of cached rows. This is a list of EffRow elements. */
     private List fetchedRows = new java.util.ArrayList();
 
     /**
