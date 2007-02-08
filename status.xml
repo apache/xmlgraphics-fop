@@ -28,6 +28,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="AD" type="fix" fixes-bug="41572" due-to="Erwin Tratar">
+        Fix parsing 'url(...)' when the URL itself contains a bracketed part.
+      </action>
       <action context="Code" dev="JM" type="add">
         Support for GIF images in RTF output (RTF handler, only. Does not affect the RTF library.)
       </action>
