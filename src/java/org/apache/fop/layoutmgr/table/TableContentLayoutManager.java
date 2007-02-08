@@ -217,7 +217,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
                         KnuthPenalty pen = (KnuthPenalty)last;
                         pen.setP(-KnuthPenalty.INFINITE);
                         pen.setBreakClass(rowFO.getBreakBefore());
-                    } else if (last instanceof BreakElement) {
+                    } else {//if (last instanceof BreakElement) { // TODO vh: seems the only possibility
                         BreakElement breakPoss = (BreakElement) last;
                         breakPoss.setPenaltyValue(-KnuthPenalty.INFINITE);
                         breakPoss.setBreakClass(rowFO.getBreakBefore());
@@ -432,10 +432,11 @@ public class TableContentLayoutManager implements PercentBaseContext {
             
             pgus.clear();
             TableRow tableRow = null;
-            int minContentHeight = 0;
+            int minContentHeight = 0;  // Minimum content height for the row
             int maxCellHeight = 0;
             int effRowContentHeight = 0;
             for (int j = 0; j < row.getGridUnits().size(); j++) {
+//                assert maxColumnCount == 0 || maxColumnCount == row.getGridUnits().size(); // TODO vh
                 maxColumnCount = Math.max(maxColumnCount, row.getGridUnits().size());
                 GridUnit gu = row.getGridUnit(j);
                 if ((gu.isPrimary() || (gu.getColSpanIndex() == 0 && gu.isLastGridUnitRowSpan())) 

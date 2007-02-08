@@ -51,10 +51,25 @@ public class TableStepper {
     private EffRow[] rowGroup;
     private int totalHeight;
     private int activeRow;
+    /**
+     * Knuth elements for active cells, per column. Active cells are cells spanning over
+     * the currently active row.
+     */
     private List[] elementLists;
     private int[] startRow;
+    /**
+     * For each column, index, in the cell's list of Knuth elements, of the element
+     * starting the current row.
+     */
     private int[] start;
+    /**
+     * For each column, index, in the cell's list of Knuth elements, of the element
+     * ending the current row.
+     */
     private int[] end;
+    /**
+     * For each column, widths of the Knuth elements which will be on the current row. 
+     */
     private int[] widths;
     private int[] baseWidth;
     private int[] borderBefore;
@@ -105,10 +120,22 @@ public class TableStepper {
         return false;
     }
     
+    /**
+     * Returns the row currently being processed.
+     *
+     * @return the row currently being processed
+     */
     private EffRow getActiveRow() {
         return rowGroup[activeRow];
     }
     
+    /**
+     * Returns the grid unit at the given column number on the active row.
+     *
+     * @param column column number of the grid unit to get
+     * @return the corresponding grid unit (may be null)
+     * @see TableStepper#getActiveRow
+     */
     private GridUnit getActiveGridUnit(int column) {
         return getActiveRow().safelyGetGridUnit(column);
     }
@@ -200,7 +227,7 @@ public class TableStepper {
                 if (height == 0) {
                     height = row.getHeight().opt;
                 }
-                list.add(new KnuthBoxCellWithBPD(height, pgu));
+                list.add(new KnuthBoxCellWithBPD(height));
                 elementLists[column] = list;
             } else {
                 //Copy elements (LinkedList) to array lists to improve 
@@ -234,7 +261,7 @@ public class TableStepper {
      * @param context Active LayoutContext
      * @param rowGroup the row group
      * @param maxColumnCount the maximum number of columns to expect
-     * @param bodyType Indicates what type of body is processed (boder, header or footer)
+     * @param bodyType Indicates what type of body is processed (body, header or footer)
      * @return the combined element list
      */
     public LinkedList getCombinedKnuthElementsForRowGroup(
@@ -599,13 +626,13 @@ public class TableStepper {
         return this.tclm.getTableLM();
     }
 
+    /**
+     * Marker class denoting table cells fitting in just one box (no legal break inside).
+     */
     private class KnuthBoxCellWithBPD extends KnuthBox {
         
-        private PrimaryGridUnit pgu;
-        
-        public KnuthBoxCellWithBPD(int w, PrimaryGridUnit pgu) {
+        public KnuthBoxCellWithBPD(int w) {
             super(w, null, true);
-            this.pgu = pgu;
         }
     }
     

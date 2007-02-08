@@ -144,7 +144,14 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         return halfBorderSeparationIPD;
     }
     
-    /** @see org.apache.fop.layoutmgr.LayoutManager */
+    /**
+     * Handles the Knuth elements at the table level: mainly breaks, spaces and borders
+     * before and after the table. The Knuth elements for the table cells are handled by
+     * TableContentLayoutManager.
+     *
+     * @see org.apache.fop.layoutmgr.LayoutManager
+     * @see TableContentLayoutManager#getNextKnuthElements(LayoutContext, int)
+     */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         
         LinkedList returnList = new LinkedList();
@@ -159,8 +166,10 @@ public class TableLayoutManager extends BlockStackingLayoutManager
             }
         }
 
+        /*
+         * Compute the IPD and adjust it if necessary (overconstrained)
+         */
         referenceIPD = context.getRefIPD();
-
         if (getTable().getInlineProgressionDimension().getOptimum(this).getEnum() != EN_AUTO) {
             int contentIPD = getTable().getInlineProgressionDimension().getOptimum(this)
                     .getLength().getValue(this);
@@ -173,7 +182,6 @@ public class TableLayoutManager extends BlockStackingLayoutManager
             }
             updateContentAreaIPDwithOverconstrainedAdjust();
         }
-
         int sumOfColumns = columns.getSumOfColumnWidths(this);
         if (!autoLayout && sumOfColumns > getContentAreaIPD()) {
             log.debug(FONode.decorateWithContextInfo(
@@ -181,7 +189,6 @@ public class TableLayoutManager extends BlockStackingLayoutManager
                     getTable()));
             updateContentAreaIPDwithOverconstrainedAdjust(sumOfColumns);
         }
-
         int availableIPD = referenceIPD - getIPIndents();
         if (getContentAreaIPD() > availableIPD) {
             log.warn(FONode.decorateWithContextInfo(
@@ -210,6 +217,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         //Spaces, border and padding to be repeated at each break
         addPendingMarks(context);
 
+        // Elements for the table-header/footer/body
         LinkedList contentKnuthElements = null;
         LinkedList contentList = new LinkedList();
         //Position returnPosition = new NonLeafPosition(this, null);
