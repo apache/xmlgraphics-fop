@@ -177,6 +177,71 @@ public void init() throws ServletException {
           apply here, too.
         </p>
       </section>
+      <section id="uriresolver">
+        <title>Accessing resources in your web application</title>
+        <p>
+          Often, you will want to use resources (stylesheets, images etc.) which are bundled with
+          your web application. FOP provides a URIResolver implementation that lets you access
+          files via the Servlet's ServletContext. The class is called 
+          <code>org.apache.fop.servlet.ServletContextURIResolver</code>.
+        </p>
+        <p>
+          Here's how to set it up in your servlet. Instantiate a new instance in the servlet's 
+          init() method:
+        </p>
+        <source><![CDATA[
+    /** URIResolver for use by this servlet */
+    protected URIResolver uriResolver; 
+
+    public void init() throws ServletException {
+        this.uriResolver = new ServletContextURIResolver(getServletContext());
+        [..]
+    }]]></source>
+        <p>
+          The ServletContextURIResolver reacts on URIs beginning with "servlet-context:". If you
+          want to access an image in a subdirectory of your web application, you could, for
+          example, use: "servlet-context:/images/myimage.png". Don't forget the leading slash
+          after the colon!
+        </p>
+        <p>
+          Further down, you can use the URIResolver for various things:
+        </p>
+        <ul>
+          <li>
+            With the Transformer (JAXP/XSLT) so things like document() functions can resolver 
+            "servlet-context:" URIs.
+          </li>
+          <li>
+            With the FopFactory so every resource FOP loads can be loaded using a "servlet-context:"
+            URI.
+          </li>
+          <li>
+            You can the ServletContextURIResolver yourself in your servlet code to access
+            stylesheets or XML files bundled with your web application.
+          </li>
+        </ul>
+        <p>
+          Here are some example snippets:
+        </p>
+        <source><![CDATA[
+//Setting up the JAXP TransformerFactory
+this.transFactory = TransformerFactory.newInstance();
+this.transFactory.setURIResolver(this.uriResolver);
+
+[..]
+
+//Setting up the FOP factory
+this.fopFactory = FopFactory.newInstance();
+this.fopFactory.setURIResolver(this.uriResolver);
+
+[..]
+
+//The stylesheet for the JAXP Transfomer
+Source xsltSrc = this.uriResolver.resolve(
+    "servlet-context:/xslt/mystylesheet.xsl", null);
+Transformer transformer = this.transFactory.newTransformer(xsltSrc);
+transformer.setURIResolver(this.uriResolver);]]></source>
+      </section>
     </section>
     <section id="ie">
       <title>Notes on Microsoft Internet Explorer</title>
