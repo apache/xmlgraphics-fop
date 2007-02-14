@@ -34,6 +34,7 @@ import org.apache.fop.fonts.base14.CourierOblique;
 import org.apache.fop.fonts.base14.CourierBoldOblique;
 import org.apache.fop.fonts.base14.Symbol;
 import org.apache.fop.fonts.base14.ZapfDingbats;
+import org.apache.fop.render.PrintRenderer;
 
 // commons logging
 import org.apache.commons.logging.Log;
@@ -247,46 +248,130 @@ public class FontSetup {
             
         };
     }
+   
     /**
      * Builds a list of EmbedFontInfo objects for use with the setup() method.
+     * 
+     * @param cfg Configuration object
+     * @param renderer calling Renderer object
+     * @return List the newly created list of fonts
+     * @throws ConfigurationException if something's wrong with the config data
+     */
+    public static List buildFontListFromConfiguration(Configuration cfg, PrintRenderer renderer)
+            throws ConfigurationException {
+        List fontList = new java.util.ArrayList();
+               
+        FontResolver fontResolver = renderer.getFontResolver();
+        if (fontResolver == null) {
+            //Ensure that we have minimal font resolution capabilities
+            fontResolver = FontSetup.createMinimalFontResolver();
+        }
+       
+        boolean strict
+            = renderer.getUserAgent().getFactory().validateUserConfigStrictly();
+        
+        Configuration[] fonts = cfg.getChildren("fonts");
+        for (int f = 0; f < fonts.length; f++) {
+                
+            Configuration[] font = fonts[f].getChildren("font");
+            for (int i = 0; i < font.length; i++) {
+    
+                String metricsUrl = font[i].getAttribute("metrics-url", null);
+                String embedUrl = font[i].getAttribute("embed-url", null);
+    
+                if (metricsUrl == null && embedUrl == null) {
+                    if (strict) {
+                        throw new ConfigurationException(
+                                "Font configuration without metric-url or embed-url");
+                    }
+                    log.error("Font configuration without metric-url or embed-url");
+                    continue;
+                }
+                
+                if (metricsUrl != null && fontResolver.resolve(metricsUrl) == null) {
+                    if (strict) {
+                        throw new ConfigurationException("Failed to resolve font metric-url '"
+                            + metricsUrl + "'");                    
+                    }
+                    log.error("Failed to resolve font metric-url '" + metricsUrl + "'");
+                    continue;
+                }
+                
+                if (embedUrl != null && fontResolver.resolve(embedUrl) == null) {
+                    if (strict) {
+                        throw new ConfigurationException("Failed to resolve font with embed-url '"
+                                + embedUrl + "'");
+                    }
+                    log.error("Failed to resolve font with embed-url '" + embedUrl + "'");
+                    continue;
+                }
+            
+                boolean useKerning = font[i].getAttributeAsBoolean("kerning", false);
+    
+                Configuration[] triple = font[i].getChildren("font-triplet");
+                List tripleList = new java.util.ArrayList();
+                for (int j = 0; j < triple.length; j++) {
+                    String name = triple[j].getAttribute("name");
+                    if (name == null) {
+                        if (strict) {
+                            throw new ConfigurationException("font-triplet without name");
+                        }
+                        log.error("font-triplet without name");
+                        continue;
+                    }
+                    
+                    String weightStr = triple[j].getAttribute("weight");
+                    if (weightStr == null) {
+                        if (strict) {
+                            throw new ConfigurationException("font-triplet without weight");
+                        }
+                        log.error("font-triplet without weight");
+                        continue;
+                    }
+                    int weight = FontUtil.parseCSS2FontWeight(weightStr);
+    
+                    String style = triple[j].getAttribute("style");
+                    if (style == null) {
+                        if (strict) {
+                            throw new ConfigurationException("font-triplet without style");
+                        }
+                        log.error("font-triplet without style");
+                        continue;
+                    }
+                    
+                    tripleList.add(FontInfo.createFontKey(name,
+                            style, weight));
+                }
+    
+                EmbedFontInfo configFontInfo = new EmbedFontInfo(metricsUrl, 
+                        useKerning, tripleList, embedUrl);
+                
+                if (log.isDebugEnabled()) {
+                    log.debug("Adding font " + configFontInfo.getEmbedFile()
+                            + ", metric file " + configFontInfo.getMetricsFile());
+                    for (int j = 0; j < tripleList.size(); ++j) {
+                        FontTriplet triplet = (FontTriplet) tripleList.get(j);
+                        log.debug("Font triplet "
+                                    + triplet.getName() + ", "
+                                    + triplet.getStyle() + ", "
+                                    + triplet.getWeight());
+                    }
+                }
+                fontList.add(configFontInfo);
+            }
+        }
+        return fontList;
+    }    
+
+    /**
+     * Builds a list of EmbedFontInfo objects for use with the setup() method.
+     * 
      * @param cfg Configuration object
      * @return List the newly created list of fonts
      * @throws ConfigurationException if something's wrong with the config data
      */
     public static List buildFontListFromConfiguration(Configuration cfg)
-            throws ConfigurationException {
-        List fontList = new java.util.ArrayList();
-        Configuration[] font = cfg.getChild("fonts").getChildren("font");
-        for (int i = 0; i < font.length; i++) {
-            Configuration[] triple = font[i].getChildren("font-triplet");
-            List tripleList = new java.util.ArrayList();
-            for (int j = 0; j < triple.length; j++) {
-                int weight = FontUtil.parseCSS2FontWeight(triple[j].getAttribute("weight"));
-                tripleList.add(FontInfo.createFontKey(triple[j].getAttribute("name"),
-                                               triple[j].getAttribute("style"),
-                                               weight));
-            }
-
-            EmbedFontInfo efi;
-            efi = new EmbedFontInfo(font[i].getAttribute("metrics-url", null),
-                                    font[i].getAttributeAsBoolean("kerning", false),
-                                    tripleList, font[i].getAttribute("embed-url", null));
-
-            if (log.isDebugEnabled()) {
-                log.debug("Adding font " + efi.getEmbedFile()
-                          + ", metric file " + efi.getMetricsFile());
-                for (int j = 0; j < tripleList.size(); ++j) {
-                    FontTriplet triplet = (FontTriplet) tripleList.get(j);
-                    log.debug("Font triplet "
-                              + triplet.getName() + ", "
-                              + triplet.getStyle() + ", "
-                              + triplet.getWeight());
-                }
-            }
-
-            fontList.add(efi);
-        }
-        return fontList;
+    throws ConfigurationException {
+        return buildFontListFromConfiguration(cfg, null);
     }
 }
-

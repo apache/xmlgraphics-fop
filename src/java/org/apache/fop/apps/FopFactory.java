@@ -55,18 +55,33 @@ import org.apache.fop.render.XMLHandlerRegistry;
 import org.apache.fop.util.ContentHandlerFactoryRegistry;
 
 /**
- * Factory class which instantiates new Fop and FOUserAgent instances. This class also holds
- * environmental information and configuration used by FOP. Information that may potentially be
- * different for each rendering run can be found and managed in the FOUserAgent.
+ * Factory class which instantiates new Fop and FOUserAgent instances. This
+ * class also holds environmental information and configuration used by FOP.
+ * Information that may potentially be different for each rendering run can be
+ * found and managed in the FOUserAgent.
  */
 public class FopFactory {
+    
+    /** Defines the default target resolution (72dpi) for FOP */
+    public static final float DEFAULT_TARGET_RESOLUTION = 72.0f; //dpi
 
     /** Defines the default source resolution (72dpi) for FOP */
     private static final float DEFAULT_SOURCE_RESOLUTION = 72.0f; //dpi
+
     /** Defines the default page-height */
     private static final String DEFAULT_PAGE_HEIGHT = "11in";
+    
     /** Defines the default page-width */
     private static final String DEFAULT_PAGE_WIDTH = "8.26in";
+    
+    /** Defines if FOP should use strict validation for FO and user config */
+    private static final boolean DEFAULT_STRICT_FO_VALIDATION = true;
+
+    /** Defines if FOP should validate the user config strictly */
+    private static final boolean DEFAULT_STRICT_USERCONFIG_VALIDATION = true;
+    
+    /** Defines if FOP should use an alternative rule to determine text indents */
+    private static final boolean DEFAULT_BREAK_INDENT_INHERITANCE = false;
 
     /** logger instance */
     private static Log log = LogFactory.getLog(FopFactory.class);
@@ -86,6 +101,7 @@ public class FopFactory {
     
     /** Our default resolver if none is set */
     private URIResolver foURIResolver = new FOURIResolver();
+    
     /** A user settable URI Resolver */
     private URIResolver uriResolver = null;
 
@@ -97,27 +113,50 @@ public class FopFactory {
     /** user configuration */
     private Configuration userConfig = null;
 
-    /** The base URL for all font URL resolutions */
+    /**
+     *  The base URL for all URL resolutions, especially for
+     *  external-graphics.
+     */
+    private String baseURL;
+
+    /** The base URL for all font URL resolutions. */
     private String fontBaseURL;
-    
+
+    /** The base URL for all hyphen URL resolutions. */
+    private String hyphenBaseURL;
+
     /**
      * FOP has the ability, for some FO's, to continue processing even if the
      * input XSL violates that FO's content model.  This is the default  
      * behavior for FOP.  However, this flag, if set, provides the user the
-     * ability for FOP to halt on all content model violations if desired.   
+     * ability for FOP to halt on all content model violations if desired.
      */ 
-    private boolean strictValidation = true;
+    private boolean strictFOValidation = DEFAULT_STRICT_FO_VALIDATION;
 
+    /**
+     * FOP will validate the contents of the user configuration strictly
+     * (e.g. base-urls and font urls/paths).
+     */
+    private boolean strictUserConfigValidation = DEFAULT_STRICT_USERCONFIG_VALIDATION;
+    
     /** Allows enabling kerning on the base 14 fonts, default is false */
     private boolean enableBase14Kerning = false;
     
     /** Source resolution in dpi */
     private float sourceResolution = DEFAULT_SOURCE_RESOLUTION;
+
+    /** Target resolution in dpi */
+    private float targetResolution = DEFAULT_TARGET_RESOLUTION;
+
+    /** Page height */
     private String pageHeight = DEFAULT_PAGE_HEIGHT;
+    
+    /** Page width */
     private String pageWidth = DEFAULT_PAGE_WIDTH;
 
     /** @see #setBreakIndentInheritanceOnReferenceAreaBoundary(boolean) */
-    private boolean breakIndentInheritanceOnReferenceAreaBoundary = false;
+    private boolean breakIndentInheritanceOnReferenceAreaBoundary
+        = DEFAULT_BREAK_INDENT_INHERITANCE;
 
     /** Optional overriding LayoutManagerMaker */
     private LayoutManagerMaker lmMakerOverride = null;
@@ -149,6 +188,7 @@ public class FopFactory {
      * are particular to a rendering run. Don't reuse instances over multiple rendering runs but
      * instead create a new one each time and reuse the FopFactory.
      * @return the newly created FOUserAgent instance initialized with default values
+     * @throws FOPException 
      */
     public FOUserAgent newFOUserAgent() {
         FOUserAgent userAgent = new FOUserAgent(this);
@@ -296,6 +336,22 @@ public class FopFactory {
     }
 
     /**
+     * Sets the base URL.
+     * @param baseURL base URL
+     */
+    void setBaseURL(String baseURL) {
+        this.baseURL = baseURL;
+    }
+
+    /**
+     * Returns the base URL.
+     * @return the base URL
+     */
+    public String getBaseURL() {
+        return this.baseURL;
+    }
+
+    /**
      * Sets the font base URL.
      * @param fontBaseURL font base URL
      */
@@ -306,6 +362,26 @@ public class FopFactory {
     /** @return the font base URL */
     public String getFontBaseURL() {
         return this.fontBaseURL;
+    }
+
+    /** @return the hyphen base URL */
+    public String getHyphenBaseURL() {
+        return hyphenBaseURL;
+    }
+
+    /**
+     * Sets the hyphen base URL.
+     * @param hyphenBaseURL hythen base URL
+     */
+    public void setHyphenBaseURL(final String hyphenBaseURL) {
+        if (hyphenBaseURL != null) {
+            this.hyphResolver = new HyphenationTreeResolver() {
+                public Source resolve(String href) {
+                    return resolveURI(href, hyphenBaseURL);
+                }
+            };
+        }
+        this.hyphenBaseURL = hyphenBaseURL;
     }
 
     /**
@@ -336,7 +412,7 @@ public class FopFactory {
      * @param validateStrictly true to turn on strict validation
      */
     public void setStrictValidation(boolean validateStrictly) {
-        this.strictValidation = validateStrictly;
+        this.strictFOValidation = validateStrictly;
     }
 
     /**
@@ -344,7 +420,7 @@ public class FopFactory {
      * @return true of strict validation turned on, false otherwise
      */
     public boolean validateStrictly() {
-        return strictValidation;
+        return strictFOValidation;
     }
 
     /**
@@ -399,14 +475,49 @@ public class FopFactory {
     public float getSourcePixelUnitToMillimeter() {
         return 25.4f / getSourceResolution(); 
     }
-    
+
+    /**
+     * Sets the source resolution in dpi. This value is used to interpret the pixel size
+     * of source documents like SVG images and bitmap images without resolution information.
+     * @param dpi resolution in dpi
+     */
+    public void setSourceResolution(float dpi) {
+        this.sourceResolution = dpi;
+        log.info("source-resolution set to: " + sourceResolution 
+                + "dpi (px2mm=" + getSourcePixelUnitToMillimeter() + ")");
+    }
+
+    /** @return the resolution for resolution-dependant output */
+    public float getTargetResolution() {
+        return this.targetResolution;
+    }
+
+    /**
+     * Returns the conversion factor from pixel units to millimeters. This
+     * depends on the desired target resolution.
+     * @return float conversion factor
+     * @see #getTargetResolution()
+     */
+    public float getTargetPixelUnitToMillimeter() {
+        return 25.4f / this.targetResolution; 
+    }
+
+    /**
+     * Sets the source resolution in dpi. This value is used to interpret the pixel size
+     * of source documents like SVG images and bitmap images without resolution information.
+     * @param dpi resolution in dpi
+     */
+    public void setTargetResolution(float dpi) {
+        this.targetResolution = dpi;
+    }
+
     /**
      * Sets the source resolution in dpi. This value is used to interpret the pixel size
      * of source documents like SVG images and bitmap images without resolution information.
      * @param dpi resolution in dpi
      */
     public void setSourceResolution(int dpi) {
-        this.sourceResolution = dpi;
+        setSourceResolution((float)dpi);
     }
     
     /**
@@ -427,6 +538,7 @@ public class FopFactory {
      */
     public void setPageHeight(String pageHeight) {
         this.pageHeight = pageHeight;
+        log.info("Default page-height set to: " + pageHeight);
     }
     
     /**
@@ -447,6 +559,7 @@ public class FopFactory {
      */
     public void setPageWidth(String pageWidth) {
         this.pageWidth = pageWidth;
+        log.info("Default page-width set to: " + pageWidth);
     }
     
     /**
@@ -491,14 +604,12 @@ public class FopFactory {
      * @throws IOException if an I/O error occurs
      * @throws SAXException if a parsing error occurs
      */
-    public void setUserConfig(File userConfigFile)
-                throws SAXException, IOException {
+    public void setUserConfig(File userConfigFile) throws SAXException, IOException {
         try {
             DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
             setUserConfig(cfgBuilder.buildFromFile(userConfigFile));
-        } catch (ConfigurationException cfge) {
-            log.error("Error loading configuration: "
-                    + cfge.getMessage());
+        } catch (ConfigurationException e) {
+            throw new FOPException(e);
         }
     }
     
@@ -508,28 +619,26 @@ public class FopFactory {
      * @throws IOException if an I/O error occurs
      * @throws SAXException if a parsing error occurs
      */
-    public void setUserConfig(String uri)
-                throws SAXException, IOException {
+    public void setUserConfig(String uri) throws SAXException, IOException {
         try {
             DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
             setUserConfig(cfgBuilder.build(uri));
-        } catch (ConfigurationException cfge) {
-            log.error("Error loading configuration: "
-                    + cfge.getMessage());
+        } catch (ConfigurationException e) {
+            throw new FOPException(e);
         }
     }
     
     /**
      * Set the user configuration.
      * @param userConfig configuration
+     * @throws FOPException if a configuration problem occurs 
      */
-    public void setUserConfig(Configuration userConfig) {
+    public void setUserConfig(Configuration userConfig) throws FOPException {
         this.userConfig = userConfig;
         try {
-            initUserConfig();
-        } catch (ConfigurationException cfge) {
-            log.error("Error initializing factory configuration: "
-                    + cfge.getMessage());
+            configure(userConfig);
+        } catch (ConfigurationException e) {            
+            throw new FOPException(e);
         }
     }
 
@@ -540,47 +649,105 @@ public class FopFactory {
     public Configuration getUserConfig() {
         return userConfig;
     }
-    
+
+    /**
+     * Returns the configuration subtree for a specific renderer.
+     * @param mimeType MIME type of the renderer
+     * @return the requested configuration subtree, null if there's no configuration
+     */
+    public Configuration getUserRendererConfig(String mimeType) {
+        if (userConfig == null || mimeType == null) {
+            return null;
+        }
+        
+        Configuration userRendererConfig = null;
+
+        Configuration[] cfgs
+            = userConfig.getChild("renderers").getChildren("renderer");
+        for (int i = 0; i < cfgs.length; ++i) {
+            Configuration child = cfgs[i];
+            try {
+                if (child.getAttribute("mime").equals(mimeType)) {
+                    userRendererConfig = child;
+                    break;
+                }
+            } catch (ConfigurationException e) {
+                // silently pass over configurations without mime type
+            }
+        }
+        log.debug((userRendererConfig == null ? "No u" : "U")
+                  + "ser configuration found for MIME type " + mimeType);
+        return userRendererConfig;
+    }
+
     /**
      * Initializes user agent settings from the user configuration
      * file, if present: baseURL, resolution, default page size,...
      * 
      * @throws ConfigurationException when there is an entry that 
      *          misses the required attribute
+     * Configures the FopFactory.
+     * @param cfg Avalon Configuration Object
+     * @see org.apache.avalon.framework.configuration.Configurable
      */
-    public void initUserConfig() throws ConfigurationException {
-        log.debug("Initializing User Agent Configuration");
-        setFontBaseURL(getBaseURLfromConfig(userConfig, "font-base"));
-        final String hyphBase = getBaseURLfromConfig(userConfig, "hyphenation-base");
-        if (hyphBase != null) {
-            this.hyphResolver = new HyphenationTreeResolver() {
-                public Source resolve(String href) {
-                    return resolveURI(href, hyphBase);
+    public void configure(Configuration cfg) throws ConfigurationException {        
+        log.info("Initializing FopFactory Configuration");        
+        
+        if (cfg.getChild("strict-configuration", false) != null) {
+            this.strictUserConfigValidation
+                    = cfg.getChild("strict-configuration").getValueAsBoolean();
+        }
+        if (cfg.getChild("strict-validation", false) != null) {
+            this.strictFOValidation = cfg.getChild("strict-validation").getValueAsBoolean();
+        }
+        if (cfg.getChild("base", false) != null) {
+            try {
+                setBaseURL(getBaseURLfromConfig(cfg, "base"));
+            } catch (ConfigurationException e) {
+                if (strictUserConfigValidation) {
+                    throw e;
                 }
-            };
+                log.error(e.getMessage());
+            }
         }
-        if (userConfig.getChild("source-resolution", false) != null) {
-            this.sourceResolution 
-                = userConfig.getChild("source-resolution").getValueAsFloat(
-                        DEFAULT_SOURCE_RESOLUTION);
-            log.info("Source resolution set to: " + sourceResolution 
-                    + "dpi (px2mm=" + getSourcePixelUnitToMillimeter() + ")");
+        if (cfg.getChild("font-base", false) != null) {
+            try {
+                setFontBaseURL(getBaseURLfromConfig(cfg, "font-base"));
+            } catch (ConfigurationException e) {
+                if (strictUserConfigValidation) {
+                    throw e;
+                }
+                log.error(e.getMessage());
+            }
         }
-        if (userConfig.getChild("strict-validation", false) != null) {
-            this.strictValidation = userConfig.getChild("strict-validation").getValueAsBoolean();
+        if (cfg.getChild("hyphenation-base", false) != null) {
+            try {
+                setHyphenBaseURL(getBaseURLfromConfig(cfg, "hyphenation-base"));
+            } catch (ConfigurationException e) {
+                if (strictUserConfigValidation) {
+                    throw e;
+                }
+                log.error(e.getMessage());
+            }
         }
-        if (userConfig.getChild("break-indent-inheritance", false) != null) {
-            this.breakIndentInheritanceOnReferenceAreaBoundary 
-                = userConfig.getChild("break-indent-inheritance").getValueAsBoolean();
+        if (cfg.getChild("source-resolution", false) != null) {
+            setSourceResolution(
+                    cfg.getChild("source-resolution").getValueAsFloat(DEFAULT_SOURCE_RESOLUTION));
         }
-        Configuration pageConfig = userConfig.getChild("default-page-settings");
+        if (cfg.getChild("target-resolution", false) != null) {
+            setTargetResolution(
+                    cfg.getChild("target-resolution").getValueAsFloat(DEFAULT_TARGET_RESOLUTION));
+        }
+        if (cfg.getChild("break-indent-inheritance", false) != null) {
+            setBreakIndentInheritanceOnReferenceAreaBoundary(
+                    cfg.getChild("break-indent-inheritance").getValueAsBoolean());
+        }        
+        Configuration pageConfig = cfg.getChild("default-page-settings");
         if (pageConfig.getAttribute("height", null) != null) {
-            setPageHeight(pageConfig.getAttribute("height"));
-            log.info("Default page-height set to: " + pageHeight);
+            setPageHeight(pageConfig.getAttribute("height", DEFAULT_PAGE_HEIGHT));
         }
         if (pageConfig.getAttribute("width", null) != null) {
-            setPageWidth(pageConfig.getAttribute("width"));
-            log.info("Default page-width set to: " + pageWidth);
+            setPageWidth(pageConfig.getAttribute("width", DEFAULT_PAGE_WIDTH));
         }
     }
 
@@ -589,24 +756,51 @@ public class FopFactory {
      * @param cfg The Configuration object to retrieve the base URL from
      * @param name the element name for the base URL
      * @return the requested base URL or null if not available
-     */
-    public static String getBaseURLfromConfig(Configuration cfg, String name) {
+     * @throws ConfigurationException 
+     */    
+    public static String getBaseURLfromConfig(Configuration cfg, String name)
+    throws ConfigurationException {
         if (cfg.getChild(name, false) != null) {
             try {
-                String cfgBaseDir = cfg.getChild(name).getValue(null);
-                if (cfgBaseDir != null) {
-                    File dir = new File(cfgBaseDir);
+                String cfgBasePath = cfg.getChild(name).getValue(null);
+                if (cfgBasePath != null) {
+                    // Is the path a dirname?
+                    File dir = new File(cfgBasePath);
+//                    if (!dir.exists()) {
+//                        throw new ConfigurationException("Base URL '" + name
+//                                + "' references non-existent resource '"
+//                                + cfgBasePath + "'");
+//                    } else if (dir.isDirectory()) {
                     if (dir.isDirectory()) {
-                        cfgBaseDir = dir.toURL().toExternalForm(); 
+                        // Yes, convert it into a URL
+                        cfgBasePath = dir.toURL().toExternalForm(); 
                     }
+                    // Otherwise, this is already a URL
                 }
-                log.info(name + " set to: " + cfgBaseDir);
-                return cfgBaseDir;
+                log.info(name + " set to: " + cfgBasePath);
+                return cfgBasePath;
             } catch (MalformedURLException mue) {
-                log.error("Base URL in user config is malformed!");
+                throw new ConfigurationException("Base URL '" + name
+                        + "' in user config is malformed!");
             }
         }
         return null;
+    }
+
+    /**
+     * Is the user configuration to be validated?
+     * @param strictUserConfigValidation strict user config validation
+     */
+    public void setStrictUserConfigValidation(boolean strictUserConfigValidation) {
+        this.strictUserConfigValidation = strictUserConfigValidation;
+    }
+
+    /**
+     * Is the user configuration to be validated?
+     * @return if the user configuration should be validated
+     */
+    public boolean validateUserConfigStrictly() {
+        return this.strictUserConfigValidation;
     }
 
     //------------------------------------------- URI resolution
@@ -700,5 +894,4 @@ public class FopFactory {
         }
         return colorSpace;
     }
-    
 }

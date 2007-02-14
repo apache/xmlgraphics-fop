@@ -28,6 +28,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="VH" type="fix" fixes-bug="40120" due-to="Adrian Cumiskey">
+        Stricter FOP user configuration checking
+      </action>
       <action context="Code" dev="AD" type="fix" fixes-bug="41572" due-to="Erwin Tratar">
         Fix parsing 'url(...)' when the URL itself contains a bracketed part.
       </action>

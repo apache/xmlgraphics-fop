@@ -145,7 +145,7 @@ public class XMLRenderer extends PrintRenderer {
     public void configure(Configuration cfg) throws ConfigurationException {
         super.configure(cfg);
         //Font configuration
-        List cfgFonts = FontSetup.buildFontListFromConfiguration(cfg);
+        List cfgFonts = FontSetup.buildFontListFromConfiguration(cfg, this);
         if (this.fontList == null) {
             this.fontList = cfgFonts;
         } else {

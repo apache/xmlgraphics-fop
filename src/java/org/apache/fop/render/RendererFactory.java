@@ -189,7 +189,7 @@ public class RendererFactory {
             Configuration userRendererConfig = null;
             if (mimeType != null) {
                 userRendererConfig
-                    = userAgent.getUserRendererConfig(mimeType);
+                    = userAgent.getFactory().getUserRendererConfig(mimeType);
             }
             if (userRendererConfig != null) {
                 try {

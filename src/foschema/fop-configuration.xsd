@@ -38,6 +38,7 @@
           type="xsd:positiveInteger" minOccurs="0">
         </xsd:element>
         <xsd:element name="strict-validation" type="xsd:boolean" minOccurs="0"></xsd:element>
+        <xsd:element name="strict-configuration" type="xsd:boolean" minOccurs="0"></xsd:element>
         <xsd:element name="break-indent-inheritance"
           type="xsd:boolean" minOccurs="0">
         </xsd:element>
