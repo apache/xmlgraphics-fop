@@ -129,7 +129,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         this.autoRotateLandscape = cfg.getChild("auto-rotate-landscape").getValueAsBoolean(false);
 
         //Font configuration
-        List cfgFonts = FontSetup.buildFontListFromConfiguration(cfg);
+        List cfgFonts = FontSetup.buildFontListFromConfiguration(cfg, this);
         if (this.fontList == null) {
             this.fontList = cfgFonts;
         } else {

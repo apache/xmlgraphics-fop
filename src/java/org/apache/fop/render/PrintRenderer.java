@@ -41,9 +41,12 @@ public abstract class PrintRenderer extends AbstractRenderer {
     /** Font configuration */
     protected FontInfo fontInfo;
 
+    /** Font resolver */
+    protected FontResolver fontResolver = null;
+
     /** list of fonts */
     protected List fontList = null;
-
+    
     /**
      * Set up the font info
      *
@@ -51,8 +54,7 @@ public abstract class PrintRenderer extends AbstractRenderer {
      */
     public void setupFontInfo(FontInfo inFontInfo) {
         this.fontInfo = inFontInfo;
-        FontResolver resolver = new DefaultFontResolver(userAgent);
-        FontSetup.setup(fontInfo, fontList, resolver, 
+        FontSetup.setup(fontInfo, fontList, fontResolver, 
                 userAgent.getFactory().isBase14KerningEnabled());
     }
 
@@ -147,5 +149,16 @@ public abstract class PrintRenderer extends AbstractRenderer {
         
         renderXML(context, doc, ns);
     }
-    
+
+    /**
+     * Get FontResolver
+     *
+     * @return FontResolver
+     */
+    public FontResolver getFontResolver() {
+        if (this.fontResolver == null) {
+            this.fontResolver = new DefaultFontResolver(super.userAgent);
+        }
+        return this.fontResolver;
+    }
 }

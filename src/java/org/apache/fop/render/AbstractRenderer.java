@@ -88,7 +88,7 @@ public abstract class AbstractRenderer
     /**
      * user agent
      */
-    protected FOUserAgent userAgent;
+    protected FOUserAgent userAgent = null;
 
     /**
      * block progression position
@@ -133,6 +133,13 @@ public abstract class AbstractRenderer
      */
     public void setUserAgent(FOUserAgent agent) {
         userAgent = agent;
+    }
+
+    /**
+     *  @see org.apache.fop.render.Renderer#getUserAgent()
+     */
+    public FOUserAgent getUserAgent() {
+        return userAgent;
     }
 
     /** @see org.apache.fop.render.Renderer#startRenderer(OutputStream) */
@@ -845,7 +852,7 @@ public abstract class AbstractRenderer
         if (handler != null) {
             try {
                 //Optional XML handler configuration
-                Configuration cfg = userAgent.getUserRendererConfig(getMimeType());
+                Configuration cfg = userAgent.getFactory().getUserRendererConfig(getMimeType());
                 if (cfg != null) {
                     cfg = getHandlerConfig(cfg, namespace);
                     if (cfg != null) {

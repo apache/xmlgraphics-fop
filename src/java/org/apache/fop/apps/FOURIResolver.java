@@ -84,7 +84,7 @@ public class FOURIResolver
             try {
                 absoluteURL = f.toURL();
             } catch (MalformedURLException mfue) {
-                log.error("Could not convert filename to URL: " + mfue.getMessage(), mfue); 
+                log.error("Could not convert filename to URL: " + mfue.getMessage()); 
             }
         } else {
             URL baseURL = toBaseURL(base);
@@ -98,7 +98,7 @@ public class FOURIResolver
                         // the href contains only a path then file: is assumed
                         absoluteURL = new URL("file:" + href);
                     } catch (MalformedURLException mfue) {
-                        log.error("Error with URL '" + href + "': " + mue.getMessage(), mue);
+                        log.error("Error with URL '" + href + "': " + mue.getMessage());
                         return null;
                     }
                 }
@@ -137,7 +137,7 @@ public class FOURIResolver
                     }
                     absoluteURL = new URL(baseURL, href);
                 } catch (MalformedURLException mfue) {
-                    log.error("Error with URL '" + href + "': " + mfue.getMessage(), mfue);
+                    log.error("Error with URL '" + href + "': " + mfue.getMessage());
                     return null;
                 }
             }
@@ -155,7 +155,7 @@ public class FOURIResolver
             //Note: This is on "debug" level since the caller is supposed to handle this
             log.debug("File not found: " + effURL);
         } catch (java.io.IOException ioe) {
-            log.error("Error with opening URL '" + href + "': " + ioe.getMessage(), ioe);
+            log.error("Error with opening URL '" + href + "': " + ioe.getMessage());
         }
         return null;
     }

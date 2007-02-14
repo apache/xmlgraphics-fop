@@ -243,7 +243,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         this.filterMap = PDFFilterList.buildFilterMapFromConfiguration(cfg);
 
         //Font configuration
-        List cfgFonts = FontSetup.buildFontListFromConfiguration(cfg);
+        List cfgFonts = FontSetup.buildFontListFromConfiguration(cfg, this);
         if (this.fontList == null) {
             this.fontList = cfgFonts;
         } else {
