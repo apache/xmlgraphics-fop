@@ -137,8 +137,8 @@ public class TableRowIteratorTestCase extends TestCase {
         checkTablePartRowGroups(tri, expectedBodyRowLengths);
     }
 
-    public void testSimple() throws Exception {
-        setUp("TableRowIterator_simple.fo");
+    public void checkSimple(String filename) throws Exception {
+        setUp(filename);
 
         // Table 1: no header, no footer, one body (1 row)
         checkNextTableRowGroups(null, null, new int[] {1});
@@ -168,8 +168,8 @@ public class TableRowIteratorTestCase extends TestCase {
         checkNextTableRowGroups(new int[] {1, 1, 1}, new int[] {1, 1}, new int[] {1, 1, 1, 1, 1, 1});
     }
 
-    public void testSpans() throws Exception {
-        setUp("TableRowIterator_spans.fo");
+    public void checkSpans(String filename) throws Exception {
+        setUp(filename);
 
         // Table 1: no header, no footer, one body (1 row with column-span)
         checkNextTableRowGroups(null, null, new int[] {1});
@@ -189,5 +189,21 @@ public class TableRowIteratorTestCase extends TestCase {
         // Table 6: one header (1 row-group of 2 rows), one footer (1 row, 1 row-group of 3 rows),
         // one body (1 row-group of 2 rows, 1 row, 1 row-group of 3 rows) 
         checkNextTableRowGroups(new int[] {2}, new int[] {1, 3}, new int[] {2, 1, 3});
+    }
+
+    public void testWithRowsSimple() throws Exception {
+        checkSimple("TableRowIterator_simple.fo");
+    }
+
+    public void testWithRowsSpans() throws Exception {
+        checkSpans("TableRowIterator_spans.fo");
+    }
+
+    public void testNoRowSimple() throws Exception {
+        checkSimple("TableRowIterator_no-row_simple.fo");
+    }
+
+    public void testNoRowSpans() throws Exception {
+        checkSpans("TableRowIterator_no-row_spans.fo");
     }
 }
