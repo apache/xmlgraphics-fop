@@ -246,7 +246,7 @@
     </xmlgraphics.apache.org>
     <svn-repo href="http://svn.apache.org/repos/asf/xmlgraphics/fop/">
       <trunk href="trunk/"/>
-      <stable href="branches/fop-0_93"/>
+      <stable href="tags/fop-0_93"/>
       <maintenance href="branches/fop-0_20_2-maintain/"/>
     </svn-repo>
     <xml.apache.org href="http://xml.apache.org/">
