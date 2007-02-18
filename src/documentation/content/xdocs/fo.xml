@@ -355,7 +355,7 @@ The XSL-FO specification provides some properties for this: <link href="http://w
 In FOP, use white-space-collapse="false" on an enclosing block.
         </p>
         <warning>
-          Due to a bug in current versions of FOP, setting white-space-collapse="false" will also preserve line breaks in the text. Do not rely on this behavior, as it is non-conformant and will be changed.
+          Due to a bug in FOP 0.20.5, setting white-space-collapse="false" will also preserve line breaks in the text. Do not rely on this behavior, as it is non-conformant and has changed in FOP 0.93.
         </warning>
       </section>
       <section id="fo-total-pages">
