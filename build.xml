@@ -323,69 +323,69 @@ list of possible build targets.
     <mkdir dir="${build.gensrc.dir}"/>
     <mkdir dir="${build.gensrc.dir}/org/apache/fop/fonts/base14"/>
 
-    <style in="${src.codegen.fonts.dir}/encodings.xml"
+    <xslt in="${src.codegen.fonts.dir}/encodings.xml"
            style="${src.codegen.fonts.dir}/code-point-mapping.xsl"
         out="${build.gensrc.dir}/org/apache/fop/fonts/CodePointMapping.java"/>
     <!-- Task unrolled because of a bug in Xalan included in some
          JDK 1.4 releases
-    <style basedir="src/codegen" includes="Helvetica*.xml,Times*.xml,Courier*.xml"
+    <xslt basedir="src/codegen" includes="Helvetica*.xml,Times*.xml,Courier*.xml"
         style="${src.codegen.fonts.dir}/font-file.xsl"
         destdir="${build.gensrc.dir}/org/apache/fop/fonts/base14" extension=".java">
         <param name="encoding" expression="WinAnsiEncoding"/>
-    </style>
+    </xslt>
     -->
-    <style in="${src.codegen.fonts.dir}/Courier.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
+    <xslt in="${src.codegen.fonts.dir}/Courier.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
         out="${build.gensrc.dir}/org/apache/fop/fonts/base14/Courier.java">
       <param name="encoding" expression="WinAnsiEncoding"/>
-    </style>
-    <style in="${src.codegen.fonts.dir}/CourierOblique.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
+    </xslt>
+    <xslt in="${src.codegen.fonts.dir}/CourierOblique.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
         out="${build.gensrc.dir}/org/apache/fop/fonts/base14/CourierOblique.java">
       <param name="encoding" expression="WinAnsiEncoding"/>
-    </style>
-    <style in="${src.codegen.fonts.dir}/CourierBold.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
+    </xslt>
+    <xslt in="${src.codegen.fonts.dir}/CourierBold.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
         out="${build.gensrc.dir}/org/apache/fop/fonts/base14/CourierBold.java">
       <param name="encoding" expression="WinAnsiEncoding"/>
-    </style>
-    <style in="${src.codegen.fonts.dir}/CourierBoldOblique.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
+    </xslt>
+    <xslt in="${src.codegen.fonts.dir}/CourierBoldOblique.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
         out="${build.gensrc.dir}/org/apache/fop/fonts/base14/CourierBoldOblique.java">
       <param name="encoding" expression="WinAnsiEncoding"/>
-    </style>
-    <style in="${src.codegen.fonts.dir}/Helvetica.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
+    </xslt>
+    <xslt in="${src.codegen.fonts.dir}/Helvetica.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
         destdir="${build.gensrc.dir}/org/apache/fop/fonts/base14"
         out="${build.gensrc.dir}/org/apache/fop/fonts/base14/Helvetica.java">
       <param name="encoding" expression="WinAnsiEncoding"/>
-    </style>
-    <style in="${src.codegen.fonts.dir}/HelveticaBold.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
+    </xslt>
+    <xslt in="${src.codegen.fonts.dir}/HelveticaBold.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
         out="${build.gensrc.dir}/org/apache/fop/fonts/base14/HelveticaBold.java">
       <param name="encoding" expression="WinAnsiEncoding"/>
-    </style>
-    <style in="${src.codegen.fonts.dir}/HelveticaOblique.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
+    </xslt>
+    <xslt in="${src.codegen.fonts.dir}/HelveticaOblique.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
         out="${build.gensrc.dir}/org/apache/fop/fonts/base14/HelveticaOblique.java">
       <param name="encoding" expression="WinAnsiEncoding"/>
-    </style>
-    <style in="${src.codegen.fonts.dir}/HelveticaBoldOblique.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
+    </xslt>
+    <xslt in="${src.codegen.fonts.dir}/HelveticaBoldOblique.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
         out="${build.gensrc.dir}/org/apache/fop/fonts/base14/HelveticaBoldOblique.java">
       <param name="encoding" expression="WinAnsiEncoding"/>
-    </style>
-    <style in="${src.codegen.fonts.dir}/TimesRoman.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
+    </xslt>
+    <xslt in="${src.codegen.fonts.dir}/TimesRoman.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
         out="${build.gensrc.dir}/org/apache/fop/fonts/base14/TimesRoman.java">
       <param name="encoding" expression="WinAnsiEncoding"/>
-    </style>
-    <style in="${src.codegen.fonts.dir}/TimesItalic.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
+    </xslt>
+    <xslt in="${src.codegen.fonts.dir}/TimesItalic.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
         out="${build.gensrc.dir}/org/apache/fop/fonts/base14/TimesItalic.java">
       <param name="encoding" expression="WinAnsiEncoding"/>
-    </style>
-    <style in="${src.codegen.fonts.dir}/TimesBold.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
+    </xslt>
+    <xslt in="${src.codegen.fonts.dir}/TimesBold.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
         out="${build.gensrc.dir}/org/apache/fop/fonts/base14/TimesBold.java">
       <param name="encoding" expression="WinAnsiEncoding"/>
-    </style>
-    <style in="${src.codegen.fonts.dir}/TimesBoldItalic.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
+    </xslt>
+    <xslt in="${src.codegen.fonts.dir}/TimesBoldItalic.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
         out="${build.gensrc.dir}/org/apache/fop/fonts/base14/TimesBoldItalic.java">
       <param name="encoding" expression="WinAnsiEncoding"/>
-    </style>
-    <style in="${src.codegen.fonts.dir}/Symbol.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
+    </xslt>
+    <xslt in="${src.codegen.fonts.dir}/Symbol.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
         out="${build.gensrc.dir}/org/apache/fop/fonts/base14/Symbol.java"/>
-    <style in="${src.codegen.fonts.dir}/ZapfDingbats.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
+    <xslt in="${src.codegen.fonts.dir}/ZapfDingbats.xml" style="${src.codegen.fonts.dir}/font-file.xsl"
         out="${build.gensrc.dir}/org/apache/fop/fonts/base14/ZapfDingbats.java"/>
 
   </target>
