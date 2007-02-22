@@ -20,7 +20,11 @@
 package org.apache.fop.render.pcl;
 
 //Java
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
@@ -68,7 +72,6 @@ import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
-import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.image.EPSImage;
