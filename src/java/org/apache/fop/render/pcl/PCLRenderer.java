@@ -20,6 +20,7 @@
 package org.apache.fop.render.pcl;
 
 //Java
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -28,6 +29,7 @@ import java.awt.RenderingHints;
 import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -74,6 +76,7 @@ import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.image.EPSImage;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
@@ -572,7 +575,7 @@ public class PCLRenderer extends PrintRenderer {
         renderInlineAreaBackAndBorders(text);
         
         String fontname = getInternalFontNameForArea(text);
-        int fontsize = text.getTraitAsInteger(Trait.FONT_SIZE);
+        final int fontsize = text.getTraitAsInteger(Trait.FONT_SIZE);
 
         //Determine position
         int saveIP = currentIPPosition;
@@ -636,7 +639,7 @@ public class PCLRenderer extends PrintRenderer {
                         g2d.scale(1000, 1000);
                         g2d.setColor(col);
                         Java2DRenderer.renderText(text, g2d, font);
-                        // TODO: enable underlining
+                        renderTextDecoration(g2d, mapper, fontsize, text, 0, 0);
                     }
                     
                     public Dimension getImageSize() {
@@ -649,12 +652,58 @@ public class PCLRenderer extends PrintRenderer {
                 currentIPPosition = saveIP + text.getAllocIPD();
             }
         
-            //renderTextDecoration(tf, fontsize, area, bl, rx);
         } catch (IOException ioe) {
             handleIOTrouble(ioe);
         }
     }
 
+    /**
+     * Paints the text decoration marks.
+     * @param g2d Graphics2D instance to paint to
+     * @param fm Current typeface
+     * @param fontsize Current font size
+     * @param inline inline area to paint the marks for
+     * @param baseline position of the baseline
+     * @param startx start IPD
+     */
+    private static void renderTextDecoration(Graphics2D g2d, 
+                    FontMetrics fm, int fontsize, InlineArea inline, 
+                    int baseline, int startx) {
+        boolean hasTextDeco = inline.hasUnderline() 
+                || inline.hasOverline() 
+                || inline.hasLineThrough();
+        if (hasTextDeco) {
+            float descender = fm.getDescender(fontsize) / 1000f;
+            float capHeight = fm.getCapHeight(fontsize) / 1000f;
+            float lineWidth = (descender / -4f) / 1000f;
+            float endx = (startx + inline.getIPD()) / 1000f;
+            if (inline.hasUnderline()) {
+                Color ct = (Color) inline.getTrait(Trait.UNDERLINE_COLOR);
+                g2d.setColor(ct);
+                float y = baseline - descender / 2f;
+                g2d.setStroke(new BasicStroke(lineWidth));
+                g2d.draw(new Line2D.Float(startx / 1000f, y / 1000f, 
+                        endx, y / 1000f));
+            }
+            if (inline.hasOverline()) {
+                Color ct = (Color) inline.getTrait(Trait.OVERLINE_COLOR);
+                g2d.setColor(ct);
+                float y = (float)(baseline - (1.1 * capHeight));
+                g2d.setStroke(new BasicStroke(lineWidth));
+                g2d.draw(new Line2D.Float(startx / 1000f, y / 1000f, 
+                        endx, y / 1000f));
+            }
+            if (inline.hasLineThrough()) {
+                Color ct = (Color) inline.getTrait(Trait.LINETHROUGH_COLOR);
+                g2d.setColor(ct);
+                float y = (float)(baseline - (0.45 * capHeight));
+                g2d.setStroke(new BasicStroke(lineWidth));
+                g2d.draw(new Line2D.Float(startx / 1000f, y / 1000f, 
+                        endx, y / 1000f));
+            }
+        }
+    }
+    
     /**
      * Sets the current cursor position. The coordinates are transformed to the absolute position
      * on the logical PCL page and then passed on to the PCLGenerator.
