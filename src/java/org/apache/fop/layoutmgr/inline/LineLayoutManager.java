@@ -702,8 +702,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 // the sequence contains inline Knuth elements
                 if (sequence.isInlineSequence()) {
                     // look at the last element 
-                    ListElement lastElement;
-                    lastElement = sequence.getLast();
+                    ListElement lastElement = sequence.getLast();
                     if (lastElement == null) {
                         throw new NullPointerException(
                         "Sequence was empty! lastElement is null");
@@ -743,8 +742,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                         lastPar.removeLast();
                         if (!lastPar.containsBox()) {
                             //only a forced linefeed on this line 
-                            //-> compensate with a zero width box
-                            lastPar.add(new KnuthInlineBox(0, null, null, false));
+                            //-> compensate with an auxiliary glue
+                            lastPar.add(new KnuthGlue(iLineWidth, 0, iLineWidth, null, true));
                         }
                         lastPar.endParagraph();
                         ElementListObserver.observe(lastPar, "line", null);
