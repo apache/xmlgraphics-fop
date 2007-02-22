@@ -28,6 +28,11 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="AD" type="fix" fixes-bug="41652">
+        If a line contained nothing but a linefeed, this didn't produce empty lines.
+        Replaced the auxiliary zero-width box with a glue the width of a line,
+        and shrinkable to zero-width.
+      </action>
       <action context="Code" dev="VH" type="fix" fixes-bug="40120" due-to="Adrian Cumiskey">
         Stricter FOP user configuration checking
       </action>
