@@ -20,11 +20,7 @@
 package org.apache.fop.render.pcl;
 
 //Java
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
+import java.awt.*;
 import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
@@ -72,6 +68,7 @@ import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.image.EPSImage;
@@ -576,10 +573,11 @@ public class PCLRenderer extends PrintRenderer {
 
         //Determine position
         int saveIP = currentIPPosition;
-        int rx = currentIPPosition + text.getBorderAndPaddingWidthStart();
+        final int rx = currentIPPosition + text.getBorderAndPaddingWidthStart();
         int bl = currentBPPosition + text.getOffset() + text.getBaselineOffset();
 
         try {
+
             final Color col = (Color)text.getTrait(Trait.COLOR);
             boolean pclFont = allTextAsBitmaps 
                     ? false
@@ -596,8 +594,13 @@ public class PCLRenderer extends PrintRenderer {
                 graphicContext.translate(rx, bl);
                 setCursorPos(0, 0);
                 gen.setTransparencyMode(true, true);
-                
+                if (text.hasUnderline()) {
+                    gen.writeCommand("&d0D");
+                }
                 super.renderText(text); //Updates IPD and renders words and spaces
+                if (text.hasUnderline()) {
+                    gen.writeCommand("&d@");
+                }
                 restoreGraphicsState();
             } else {
                 //Use Java2D to paint different fonts via bitmap
@@ -630,6 +633,7 @@ public class PCLRenderer extends PrintRenderer {
                         g2d.scale(1000, 1000);
                         g2d.setColor(col);
                         Java2DRenderer.renderText(text, g2d, font);
+                        // TODO: enable underlining
                     }
                     
                     public Dimension getImageSize() {
