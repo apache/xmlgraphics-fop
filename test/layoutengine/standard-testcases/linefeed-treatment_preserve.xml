@@ -41,25 +41,26 @@
 Third line red background</fo:inline>
 <fo:inline background-color="pink"> 
 Fifth line pink background; the above line has one preserved space character.</fo:inline>
-Sixth line yellow background</fo:block>
+
+Seventh line yellow background; the above line is empty.</fo:block>
           <fo:block linefeed-treatment="preserve" background-color="blue"
-                    text-align="start" font="8pt Courier" color="yellow">1
-            2<fo:inline background-color="orange">
-            3
-            4
-            5
-            6 One line, surrounded by some linefeeds; orange line in blue block
-            7
-            8
-            9
-           10</fo:inline>
+                    text-align="start" font="8pt Courier" color="yellow">
+            <fo:inline background-color="orange">
+            
+            
+            
+             One line, surrounded by some linefeeds; orange line in blue block
+            
+            
+            
+            </fo:inline>
           </fo:block>
     		</fo:flow>
       </fo:page-sequence>
     </fo:root>
   </fo>
   <checks>
-    <eval expected="6" xpath="count(//block[1]/lineArea)" />
+    <eval expected="7" xpath="count(//block[1]/lineArea)" />
     <eval expected="10" xpath="count(//block[2]/lineArea)" />
   </checks>
 </testcase>
