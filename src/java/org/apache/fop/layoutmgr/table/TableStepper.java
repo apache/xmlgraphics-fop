@@ -192,7 +192,7 @@ public class TableStepper {
         for (int i = activeRow + 1; i < rowGroup.length; i++) {
             maxW += rowGroup[i].getHeight().opt;
         }
-        //log.debug("maxRemainingHeight=" + maxW);
+        log.debug("maxRemainingHeight=" + maxW);
         return maxW;
     }
 
@@ -238,6 +238,7 @@ public class TableStepper {
                 borderBefore[column] = pgu.getBorders().getBorderBeforeWidth(false);
             } else {
                 borderBefore[column] = pgu.getBorders().getBorderBeforeWidth(false) / 2;
+                log.trace("border before for column " + column + ": " + borderBefore[column]);
             }
             paddingBefore[column] = pgu.getBorders().getPaddingBefore(false, pgu.getCellLM());
             paddingAfter[column] = pgu.getBorders().getPaddingAfter(false, pgu.getCellLM());
@@ -247,6 +248,8 @@ public class TableStepper {
             startRow[column] = activeRow;
             keepWithNextSignals[column] = false;
             forcedBreaks[column] = false;
+        } else {
+            log.trace("TableStepper.setupElementList: not empty nor primary grid unit");
         }
     }
     
@@ -541,8 +544,8 @@ public class TableStepper {
                 }
             }
             if (log.isTraceEnabled()) {
-                log.trace("borders before=" + borderBefore[i] + " after=" + borderAfter[i]);
-                log.trace("padding before=" + paddingBefore[i] + " after=" + paddingAfter[i]);
+                log.trace("column " + i + ": borders before=" + borderBefore[i] + " after=" + borderAfter[i]);
+                log.trace("column " + i + ": padding before=" + paddingBefore[i] + " after=" + paddingAfter[i]);
             }
         }
         if (seqCount == 0) {
@@ -601,7 +604,7 @@ public class TableStepper {
             }
         }
         if (log.isDebugEnabled()) {
-            /*StringBuffer*/ sb = new StringBuffer();
+            /*StringBuffer*/ sb = new StringBuffer("[col nb: start-end(width)] ");
             for (int i = 0; i < widths.length; i++) {
                 if (end[i] >= start[i]) {
                     sb.append(i + ": " + start[i] + "-" + end[i] + "(" + widths[i] + "), ");
