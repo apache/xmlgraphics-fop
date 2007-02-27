@@ -87,7 +87,12 @@ public class FOURIResolver
                 log.error("Could not convert filename to URL: " + mfue.getMessage()); 
             }
         } else {
-            URL baseURL = toBaseURL(base);
+            URL baseURL = null;
+            try {
+                baseURL = toBaseURL(base);
+            } catch (MalformedURLException mfue) {
+                log.error("Error with base URL \"" + base + "\"): " + mfue.getMessage());
+            }
             if (baseURL == null) {
                 // We don't have a valid baseURL just use the URL as given
                 try {
@@ -155,7 +160,7 @@ public class FOURIResolver
             //Note: This is on "debug" level since the caller is supposed to handle this
             log.debug("File not found: " + effURL);
         } catch (java.io.IOException ioe) {
-            log.error("Error with opening URL '" + href + "': " + ioe.getMessage());
+            log.error("Error with opening URL '" + effURL + "': " + ioe.getMessage());
         }
         return null;
     }
@@ -201,15 +206,20 @@ public class FOURIResolver
      * @param baseURL the base URL
      * @returns the base URL as java.net.URL
      */
-    private URL toBaseURL(String baseURL) {
-        try {
-            return new URL(baseURL == null 
-                            ? new java.io.File("").toURL().toExternalForm() 
-                            : baseURL);
-        } catch (MalformedURLException mfue) {
-            log.error("Error with base URL \"" + baseURL + "\"): " + mfue.getMessage());
+    private URL toBaseURL(String base) throws MalformedURLException {
+        if (base == null) {
+            return new java.io.File("").toURL();
         }
-        return null;
+        if (!base.endsWith("/")) {
+            // The behavior described by RFC 3986 regarding resolution of relative
+            // references may be misleading for normal users:
+            // file://path/to/resources + myResource.res -> file://path/to/myResource.res
+            // file://path/to/resources/ + myResource.res -> file://path/to/resources/myResource.res
+            // We assume that even when the ending slash is missing, users have the second
+            // example in mind
+            base += "/";
+        }
+        return new URL(base);
     }
 
     /**
