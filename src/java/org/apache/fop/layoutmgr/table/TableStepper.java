@@ -443,7 +443,7 @@ public class TableStepper {
         System.arraycopy(widths, 0, backupWidths, 0, backupWidths.length);
 
         //set starting points
-        int rowPendingIndicator = 0;
+        boolean rowSpanPending = true;
         for (int i = 0; i < start.length; i++) {
             if (elementLists[i] == null) {
                 continue;
@@ -452,7 +452,7 @@ public class TableStepper {
                 start[i] = end[i] + 1;
                 if (end[i] + 1 < elementLists[i].size() 
                         && getActiveGridUnit(i).isLastGridUnitRowSpan()) {
-                    rowPendingIndicator++;
+                    rowSpanPending = false;
                 }
             } else {
                 start[i] = -1; //end of list reached
@@ -460,7 +460,7 @@ public class TableStepper {
             }
         }
 
-        if (rowPendingIndicator == 0) {
+        if (rowSpanPending) {
             if (activeRow < rowGroup.length - 1) {
                 TableRow rowFO = getActiveRow().getTableRow();
                 if (rowFO != null && rowFO.getBreakAfter() != Constants.EN_AUTO) {
