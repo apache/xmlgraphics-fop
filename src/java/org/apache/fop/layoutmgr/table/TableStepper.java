@@ -154,7 +154,9 @@ public class TableStepper {
         for (int i = 0; i < rowGroup.length; i++) {
             totalHeight += rowGroup[i].getHeight().opt;
         }
-        log.debug("totalHeight=" + totalHeight);
+        if (log.isDebugEnabled()) {
+            log.debug("totalHeight=" + totalHeight);
+        }
     }
     
     private int getMaxRemainingHeight() {
@@ -238,7 +240,9 @@ public class TableStepper {
                 borderBefore[column] = pgu.getBorders().getBorderBeforeWidth(false);
             } else {
                 borderBefore[column] = pgu.getBorders().getBorderBeforeWidth(false) / 2;
-                log.trace("border before for column " + column + ": " + borderBefore[column]);
+                if (log.isTraceEnabled()) {
+                    log.trace("border before for column " + column + ": " + borderBefore[column]);
+                }
             }
             paddingBefore[column] = pgu.getBorders().getPaddingBefore(false, pgu.getCellLM());
             paddingAfter[column] = pgu.getBorders().getPaddingAfter(false, pgu.getCellLM());
