@@ -20,6 +20,7 @@
 package org.apache.fop.visual;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -35,9 +36,6 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
 import org.apache.avalon.framework.container.ContainerUtil;
 
-import org.apache.batik.ext.awt.image.codec.PNGEncodeParam;
-import org.apache.batik.ext.awt.image.codec.PNGImageEncoder;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
@@ -47,6 +45,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.layoutengine.LayoutEngineTestSuite;
+import org.apache.xmlgraphics.image.writer.ImageWriter;
+import org.apache.xmlgraphics.image.writer.ImageWriterRegistry;
 
 import org.xml.sax.SAXException;
 
@@ -119,13 +119,11 @@ public class BatchDiffer {
      * @param outputFile the target file
      * @throws IOException in case of an I/O problem
      */
-    public static void saveAsPNG(BufferedImage bitmap, File outputFile) throws IOException {
+    public static void saveAsPNG(RenderedImage bitmap, File outputFile) throws IOException {
         OutputStream out = new FileOutputStream(outputFile);
         try {
-            PNGImageEncoder encoder = new PNGImageEncoder(
-                    out,
-                    PNGEncodeParam.getDefaultEncodeParam(bitmap));
-            encoder.encode(bitmap);
+            ImageWriter writer = ImageWriterRegistry.getInstance().getWriterFor("image/png");
+            writer.writeImage(bitmap, out);
         } finally {
             IOUtils.closeQuietly(out);
         }
@@ -197,9 +195,20 @@ public class BatchDiffer {
                 try {
                     File f = (File)i.next();
                     log.info("---=== " + f + " ===---");
+                    long[] times = new long[producers.length];
                     for (int j = 0; j < producers.length; j++) {
+                        times[j] = System.currentTimeMillis();
                         bitmaps[j] = producers[j].produce(f, context);
+                        times[j] = System.currentTimeMillis() - times[j];
                     }
+                    StringBuffer sb = new StringBuffer("Bitmap production times: ");
+                    for (int j = 0; j < producers.length; j++) {
+                        if (j > 0) {
+                            sb.append(", ");
+                        }
+                        sb.append(times[j]).append("ms");
+                    }
+                    log.info(sb.toString());
                     //Create combined image
                     if (bitmaps[0] == null) {
                         throw new RuntimeException("First producer didn't return a bitmap."
