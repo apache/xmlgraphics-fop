@@ -315,7 +315,12 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
         rowHeight = h;
     }
 
-    private int getContentHeight(int rowHeight, GridUnit gu) {
+    /**
+     * Returns the bpd of the given grid unit.
+     * @param gu a grid unit belonging to this cell
+     * @return the content height of the grid unit
+     */
+    private int getContentHeight(GridUnit gu) {
         int bpd = rowHeight;
         if (isSeparateBorderModel()) {
             bpd -= gu.getPrimary().getBorders().getBorderBeforeWidth(false);
@@ -377,7 +382,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
                         block.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
                         block.setPositioning(Block.ABSOLUTE);
 
-                        int bpd = getContentHeight(rowHeight, gu);
+                        int bpd = getContentHeight(gu);
                         if (isSeparateBorderModel()) {
                             bpd += (gu.getBorders().getBorderBeforeWidth(false));
                             bpd += (gu.getBorders().getBorderAfterWidth(false));
@@ -412,7 +417,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
         }
 
         //Handle display-align
-        int contentBPD = getContentHeight(rowHeight, gridUnit);
+        int contentBPD = getContentHeight(gridUnit);
         if (usedBPD < contentBPD) {
             if (getTableCell().getDisplayAlign() == EN_CENTER) {
                 Block space = new Block();
