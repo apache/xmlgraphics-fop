@@ -678,20 +678,17 @@ public class TableContentLayoutManager implements PercentBaseContext {
             //be handled first before all other TableContentPositions
             PositionIterator nestedIter = new KnuthPossPosIter(headerElements);
             iterateAndPaintPositions(nestedIter, painter);
-            painter.addAreasAndFlushRow(true);
         }
         
         //Iterate over all steps
         Iterator posIter = positions.iterator();
         iterateAndPaintPositions(posIter, painter);
-        painter.addAreasAndFlushRow(true);
 
         painter.notifyNestedPenaltyArea(nestedPenaltyArea);
         if (footerElements != null) {
             //Positions for footers are simply added at the end
             PositionIterator nestedIter = new KnuthPossPosIter(footerElements);
             iterateAndPaintPositions(nestedIter, painter);
-            painter.addAreasAndFlushRow(true);
         }
         
         painter.notifyEndOfSequence();
@@ -755,6 +752,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
             getTableLM().getCurrentPV().addMarkers(body.getMarkers(), 
                     false, firstPos, lastPos);
         }
+        painter.addAreasAndFlushRow(true);
     }
    
     /**
