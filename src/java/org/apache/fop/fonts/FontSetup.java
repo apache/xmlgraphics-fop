@@ -261,14 +261,16 @@ public class FontSetup {
             throws ConfigurationException {
         List fontList = new java.util.ArrayList();
                
-        FontResolver fontResolver = renderer.getFontResolver();
+        FontResolver fontResolver = (renderer != null ? renderer.getFontResolver() : null);
         if (fontResolver == null) {
             //Ensure that we have minimal font resolution capabilities
             fontResolver = FontSetup.createMinimalFontResolver();
         }
        
-        boolean strict
-            = renderer.getUserAgent().getFactory().validateUserConfigStrictly();
+        boolean strict = false;
+        if (renderer != null) {
+            strict = renderer.getUserAgent().getFactory().validateUserConfigStrictly();
+        }
         
         Configuration[] fonts = cfg.getChildren("fonts");
         for (int f = 0; f < fonts.length; f++) {
