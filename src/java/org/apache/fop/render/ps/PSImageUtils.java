@@ -29,6 +29,7 @@ import org.apache.fop.image.EPSImage;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.JpegImage;
 import org.apache.xmlgraphics.ps.PSGenerator;
+import org.apache.xmlgraphics.ps.PSResource;
 
 /**
  * Utility code for rendering images in PostScript. 
@@ -51,15 +52,69 @@ public class PSImageUtils extends org.apache.xmlgraphics.ps.PSImageUtils {
     public static void renderBitmapImage(FopImage img, 
                 float x, float y, float w, float h, PSGenerator gen)
                     throws IOException {
-        if (img instanceof JpegImage) {
+        boolean isJPEG = (img instanceof JpegImage && (gen.getPSLevel() >= 3));
+        byte[] imgmap = convertImageToRawBitmapArray(img, isJPEG);
+        if (imgmap == null) {
+            gen.commentln("%Image data is not available: " + img);
+            return; //Image cannot be converted 
+        }
+        
+        String imgDescription = img.getMimeType() + " " + img.getOriginalURI();
+        Dimension imgDim = new Dimension(img.getWidth(), img.getHeight());
+        Rectangle2D targetRect = new Rectangle2D.Double(x, y, w, h);
+        writeImage(imgmap, imgDim, imgDescription, targetRect, isJPEG, 
+                img.getColorSpace(), gen);
+    }
+
+    /**
+     * Renders a bitmap image (as form) to PostScript.
+     * @param img image to render
+     * @param form the form resource
+     * @param x x position
+     * @param y y position
+     * @param w width
+     * @param h height
+     * @param gen PS generator
+     * @throws IOException In case of an I/O problem while rendering the image
+     */
+    public static void renderForm(FopImage img, PSResource form, 
+                float x, float y, float w, float h, PSGenerator gen)
+                    throws IOException {
+        Rectangle2D targetRect = new Rectangle2D.Double(x, y, w, h);
+        paintForm(form, targetRect, gen);
+    }
+    
+    /**
+     * Generates a form resource for a FopImage in PostScript.
+     * @param img image to render
+     * @param form the form resource
+     * @param gen PS generator
+     * @throws IOException In case of an I/O problem while rendering the image
+     */
+    public static void generateFormResourceForImage(FopImage img, PSResource form,
+                PSGenerator gen) throws IOException {
+        boolean isJPEG = (img instanceof JpegImage && (gen.getPSLevel() >= 3));
+        byte[] imgmap = convertImageToRawBitmapArray(img, isJPEG);
+        if (imgmap == null) {
+            gen.commentln("%Image data is not available: " + img);
+            return; //Image cannot be converted 
+        }
+        
+        String imgDescription = img.getMimeType() + " " + img.getOriginalURI();
+        Dimension imgDim = new Dimension(img.getWidth(), img.getHeight());
+        writeReusableImage(imgmap, imgDim, form.getName(), imgDescription, isJPEG, 
+                img.getColorSpace(), gen);
+    }
+
+    private static byte[] convertImageToRawBitmapArray(FopImage img, boolean allowUndecodedJPEG)
+                throws IOException {
+        if (img instanceof JpegImage && allowUndecodedJPEG) {
             if (!img.load(FopImage.ORIGINAL_DATA)) {
-                gen.commentln("%JPEG image could not be processed: " + img);
-                return;
+                return null;
             }
         } else {
             if (!img.load(FopImage.BITMAP)) {
-                gen.commentln("%Bitmap image could not be processed: " + img);
-                return;
+                return null;
             }
         }
         byte[] imgmap;
@@ -68,15 +123,18 @@ public class PSImageUtils extends org.apache.xmlgraphics.ps.PSImageUtils {
         } else {
             imgmap = img.getRessourceBytes();
         }
-        
-        String imgName = img.getMimeType() + " " + img.getOriginalURI();
-        Dimension imgDim = new Dimension(img.getWidth(), img.getHeight());
-        Rectangle2D targetRect = new Rectangle2D.Double(x, y, w, h);
-        boolean isJPEG = (img instanceof JpegImage);
-        writeImage(imgmap, imgDim, imgName, targetRect, isJPEG, 
-                img.getColorSpace(), gen);
+        return imgmap;
     }
 
+    /**
+     * Renders an EPS image to PostScript.
+     * @param img EPS image to render
+     * @param x x position
+     * @param y y position
+     * @param w width
+     * @param h height
+     * @param gen PS generator
+     */
     public static void renderEPS(EPSImage img, 
             float x, float y, float w, float h,
             PSGenerator gen) {

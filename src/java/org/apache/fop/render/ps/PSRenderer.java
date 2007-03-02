@@ -23,7 +23,9 @@ package org.apache.fop.render.ps;
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.RenderedImage;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.LineNumberReader;
 import java.io.OutputStream;
 import java.util.Iterator;
@@ -35,6 +37,9 @@ import javax.xml.transform.Source;
 // FOP
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.BlockViewport;
@@ -57,6 +62,7 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontSetup;
+import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.image.EPSImage;
 import org.apache.fop.image.FopImage;
@@ -66,7 +72,6 @@ import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.ImageAdapter;
 import org.apache.fop.render.RendererContext;
-import org.apache.fop.render.pdf.PDFRendererContextConstants;
 import org.apache.fop.render.ps.extensions.PSSetupCode;
 import org.apache.fop.util.CharUtilities;
 
@@ -75,6 +80,8 @@ import org.apache.xmlgraphics.ps.PSGenerator;
 import org.apache.xmlgraphics.ps.PSProcSets;
 import org.apache.xmlgraphics.ps.PSResource;
 import org.apache.xmlgraphics.ps.PSState;
+import org.apache.xmlgraphics.ps.dsc.DSCException;
+import org.apache.xmlgraphics.ps.dsc.ResourceTracker;
 
 import org.w3c.dom.Document;
 
@@ -99,17 +106,32 @@ import org.w3c.dom.Document;
  */
 public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAdapter {
 
+    /** logging instance */
+    private static Log log = LogFactory.getLog(PSRenderer.class);
+
     /** The MIME type for PostScript */
     public static final String MIME_TYPE = "application/postscript";
+
+    private static final String AUTO_ROTATE_LANDSCAPE = "auto-rotate-landscape";
+    private static final String OPTIMIZE_RESOURCES = "optimize-resources";
+    private static final String LANGUAGE_LEVEL = "language-level";
 
     /** The application producing the PostScript */
     private int currentPageNumber = 0;
 
     private boolean enableComments = true;
     private boolean autoRotateLandscape = false;
+    private int languageLevel = PSGenerator.DEFAULT_LANGUAGE_LEVEL;
 
+    /** the OutputStream the PS file is written to */
+    private OutputStream outputStream;
+    /** the temporary file in case of two-pass processing */
+    private File tempFile;
+    
     /** The PostScript generator used to output the PostScript */
     protected PSGenerator gen;
+    /** Determines whether the PS file is generated in two passes to minimize file size */
+    private boolean twoPassGeneration = false;
     private boolean ioTrouble = false;
 
     private boolean inTextMode = false;
@@ -120,13 +142,17 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
 
     /** This is a map of PSResource instances of all fonts defined (key: font key) */
     private Map fontResources;
+    /** This is a map of PSResource instances of all forms (key: uri) */
+    private Map formResources;
     
     /**
      * @see org.apache.avalon.framework.configuration.Configurable#configure(Configuration)
      */
     public void configure(Configuration cfg) throws ConfigurationException {
         super.configure(cfg);
-        this.autoRotateLandscape = cfg.getChild("auto-rotate-landscape").getValueAsBoolean(false);
+        this.autoRotateLandscape = cfg.getChild(AUTO_ROTATE_LANDSCAPE).getValueAsBoolean(false);
+        this.languageLevel = cfg.getChild(LANGUAGE_LEVEL).getValueAsInteger(this.languageLevel);
+        this.twoPassGeneration = cfg.getChild(OPTIMIZE_RESOURCES).getValueAsBoolean(false);
 
         //Font configuration
         List cfgFonts = FontSetup.buildFontListFromConfiguration(cfg, this);
@@ -137,6 +163,46 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         }
     }
 
+    /**
+     * @see org.apache.fop.render.Renderer#setUserAgent(FOUserAgent)
+     */
+    public void setUserAgent(FOUserAgent agent) {
+        super.setUserAgent(agent);
+        Object obj;
+        obj = agent.getRendererOptions().get(AUTO_ROTATE_LANDSCAPE);
+        if (obj != null) {
+            this.autoRotateLandscape = booleanValueOf(obj);
+        }
+        obj = agent.getRendererOptions().get(LANGUAGE_LEVEL);
+        if (obj != null) {
+            this.languageLevel = intValueOf(obj);
+        }
+        obj = agent.getRendererOptions().get(OPTIMIZE_RESOURCES);
+        if (obj != null) {
+            this.twoPassGeneration = booleanValueOf(obj);
+        }
+    }
+
+    private boolean booleanValueOf(Object obj) {
+        if (obj instanceof Boolean) {
+            return ((Boolean)obj).booleanValue();
+        } else if (obj instanceof String) {
+            return Boolean.valueOf((String)obj).booleanValue();
+        } else {
+            throw new IllegalArgumentException("Boolean or \"true\" or \"false\" expected.");
+        }
+    }
+    
+    private int intValueOf(Object obj) {
+        if (obj instanceof Integer) {
+            return ((Integer)obj).intValue();
+        } else if (obj instanceof String) {
+            return Integer.parseInt((String)obj);
+        } else {
+            throw new IllegalArgumentException("Integer or String with a number expected.");
+        }
+    }
+    
     /**
      * Sets the landscape mode for this renderer.
      * @param value false will normally generate a "pseudo-portrait" page, true will rotate
@@ -149,13 +215,6 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
     /** @return true if the renderer is configured to rotate landscape pages */
     public boolean isAutoRotateLandscape() {
         return this.autoRotateLandscape;
-    }
-
-    /**
-     * @see org.apache.fop.render.Renderer#setUserAgent(FOUserAgent)
-     */
-    public void setUserAgent(FOUserAgent agent) {
-        super.setUserAgent(agent);
     }
 
     /** @see org.apache.fop.render.Renderer#getGraphics2DAdapter() */
@@ -282,11 +341,11 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
     }
 
     /** @see org.apache.fop.render.AbstractPathOrientedRenderer */
-    protected void drawImage(String url, Rectangle2D pos, Map foreignAttributes) {
+    protected void drawImage(String uri, Rectangle2D pos, Map foreignAttributes) {
         endTextObject();
-        url = ImageFactory.getURL(url);
+        uri = ImageFactory.getURL(uri);
         ImageFactory fact = userAgent.getFactory().getImageFactory();
-        FopImage fopimage = fact.getImage(url, userAgent);
+        FopImage fopimage = fact.getImage(uri, userAgent);
         if (fopimage == null) {
             return;
         }
@@ -320,13 +379,34 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
             } else if (fopimage instanceof EPSImage) {
                 PSImageUtils.renderEPS((EPSImage)fopimage, x, y, w, h, gen);
             } else {
-                PSImageUtils.renderBitmapImage(fopimage, x, y, w, h, gen);
+                if (isImageInlined(uri, fopimage)) {
+                    PSImageUtils.renderBitmapImage(fopimage, x, y, w, h, gen);
+                } else {
+                    PSResource form = getFormForImage(uri, fopimage);
+                    PSImageUtils.renderForm(fopimage, form, x, y, w, h, gen);
+                }
             }
         } catch (IOException ioe) {
             handleIOTrouble(ioe);
         }
     }
 
+    protected PSResource getFormForImage(String uri, FopImage fopimage) {
+        if (this.formResources == null) {
+            this.formResources = new java.util.HashMap();
+        }
+        PSResource form = (PSResource)this.formResources.get(uri);
+        if (form == null) {
+            form = new PSImageFormResource(this.formResources.size() + 1, uri);
+            this.formResources.put(uri, form);
+        }
+        return form;
+    }
+    
+    protected boolean isImageInlined(String uri, FopImage image) {
+        return !this.twoPassGeneration;
+    }
+    
     /** @see org.apache.fop.render.ImageAdapter */
     public void paintImage(RenderedImage image, RendererContext context, 
             int x, int y, int width, int height) throws IOException {
@@ -406,14 +486,48 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         }
     }
 
+    private String getPostScriptNameForFontKey(String key) {
+        Map fonts = fontInfo.getFonts();
+        Typeface tf = (Typeface)fonts.get(key);
+        if (tf instanceof LazyFont) {
+            tf = ((LazyFont)tf).getRealFont();
+        }
+        if (tf == null) {
+            throw new IllegalStateException("Font not available: " + key);
+        }
+        return tf.getFontName();
+    }
+    
+    /**
+     * Returns the PSResource for the given font key.
+     * @param key the font key ("F*")
+     * @return the matching PSResource
+     */
+    protected PSResource getPSResourceForFontKey(String key) {
+        PSResource res = null;
+        if (this.fontResources != null) {
+            res = (PSResource)this.fontResources.get(key);
+        } else {
+            this.fontResources = new java.util.HashMap(); 
+        }
+        if (res == null) {
+            res = new PSResource(PSResource.TYPE_FONT, getPostScriptNameForFontKey(key));
+            this.fontResources.put(key, res);
+        }
+        return res;
+    }
+    
     /**
      * Changes the currently used font.
-     * @param name name of the font
+     * @param key key of the font ("F*")
      * @param size font size
      */
-    public void useFont(String name, int size) {
+    protected void useFont(String key, int size) {
         try {
-            gen.useFont(name, size / 1000f);
+            PSResource res = getPSResourceForFontKey(key);
+            //gen.useFont(key, size / 1000f);
+            gen.useFont("/" + res.getName(), size / 1000f);
+            gen.getResourceTracker().notifyResourceUsageOnPage(res);
         } catch (IOException ioe) {
             handleIOTrouble(ioe);
         }
@@ -598,15 +712,26 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
      */
     public void startRenderer(OutputStream outputStream)
                 throws IOException {
-        log.debug("rendering areas to PostScript");
+        log.debug("Rendering areas to PostScript...");
 
+        this.outputStream = outputStream;
+        OutputStream out; 
+        if (twoPassGeneration) {
+            this.tempFile = File.createTempFile("fop", null);
+            out = new java.io.FileOutputStream(this.tempFile);
+            out = new java.io.BufferedOutputStream(out);
+        } else {
+            out = this.outputStream;
+        }
+        
         //Setup for PostScript generation
-        this.gen = new PSGenerator(outputStream) {
+        this.gen = new PSGenerator(out) {
             /** Need to subclass PSGenerator to have better URI resolution */
             public Source resolveURI(String uri) {
                 return userAgent.resolveURI(uri);
             }
         };
+        this.gen.setPSLevel(this.languageLevel);
         this.currentPageNumber = 0;
 
         //PostScript Header
@@ -614,9 +739,9 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         gen.writeDSCComment(DSCConstants.CREATOR, new String[] {userAgent.getProducer()});
         gen.writeDSCComment(DSCConstants.CREATION_DATE, new Object[] {new java.util.Date()});
         gen.writeDSCComment(DSCConstants.LANGUAGE_LEVEL, new Integer(gen.getPSLevel()));
-        gen.writeDSCComment(DSCConstants.PAGES, new Object[] {PSGenerator.ATEND});
+        gen.writeDSCComment(DSCConstants.PAGES, new Object[] {DSCConstants.ATEND});
         gen.writeDSCComment(DSCConstants.DOCUMENT_SUPPLIED_RESOURCES, 
-                new Object[] {PSGenerator.ATEND});
+                new Object[] {DSCConstants.ATEND});
         gen.writeDSCComment(DSCConstants.END_COMMENTS);
 
         //Defaults
@@ -631,29 +756,65 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
      */
     public void stopRenderer() throws IOException {
         //Notify resource usage for font which are not supplied
+        /* done in useFont now
         Map fonts = fontInfo.getUsedFonts();
         Iterator e = fonts.keySet().iterator();
         while (e.hasNext()) {
             String key = (String)e.next();
-            //Typeface font = (Typeface)fonts.get(key);
             PSResource res = (PSResource)this.fontResources.get(key);
-            boolean supplied = gen.isResourceSupplied(res);
-            if (!supplied) {
-                gen.notifyResourceUsage(res, true);
-            }
-        }
+            gen.notifyResourceUsage(res);
+        }*/
         
         //Write trailer
         gen.writeDSCComment(DSCConstants.TRAILER);
         gen.writeDSCComment(DSCConstants.PAGES, new Integer(this.currentPageNumber));
-        gen.writeResources(false);
+        gen.getResourceTracker().writeResources(false, gen);
         gen.writeDSCComment(DSCConstants.EOF);
         gen.flush();
+        log.debug("Rendering to PostScript complete.");
+        if (twoPassGeneration) {
+            IOUtils.closeQuietly(gen.getOutputStream());
+            rewritePostScriptFile();
+        }
+    }
+    
+    /**
+     * Used for two-pass production. This will rewrite the PostScript file from the temporary
+     * file while adding all needed resources.
+     * @throws IOException In case of an I/O error.
+     */
+    private void rewritePostScriptFile() throws IOException {
+        log.debug("Processing PostScript resources...");
+        long startTime = System.currentTimeMillis();
+        ResourceTracker resTracker = gen.getResourceTracker();
+        InputStream in = new java.io.FileInputStream(this.tempFile);
+        in = new java.io.BufferedInputStream(in);
+        try {
+            try {
+                ResourceHandler.process(this.userAgent, in, this.outputStream, 
+                        this.fontInfo, resTracker, this.formResources, this.currentPageNumber);
+                this.outputStream.flush();
+            } catch (DSCException e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        } finally {
+            IOUtils.closeQuietly(in);
+            if (!this.tempFile.delete()) {
+                this.tempFile.deleteOnExit();
+                log.warn("Could not delete temporary file: " + this.tempFile);
+            }
+        }
+        if (log.isDebugEnabled()) {
+            long duration = System.currentTimeMillis() - startTime;
+            log.debug("Resource Processing complete in " + duration + " ms.");
+        }
     }
 
     /** @see org.apache.fop.render.Renderer */
     public void processOffDocumentItem(OffDocumentItem oDI) {
-        log.debug("Handling OffDocumentItem: " + oDI.getName());
+        if (log.isDebugEnabled()) {
+            log.debug("Handling OffDocumentItem: " + oDI.getName());
+        }
         if (oDI instanceof OffDocumentExtensionAttachment) {
             ExtensionAttachment attachment = ((OffDocumentExtensionAttachment)oDI).getAttachment();
             if (PSSetupCode.CATEGORY.equals(attachment.getCategory())) {
@@ -675,15 +836,18 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
             try {
                 //Prolog
                 gen.writeDSCComment(DSCConstants.BEGIN_PROLOG);
-                PSProcSets.writeFOPStdProcSet(gen);
-                PSProcSets.writeFOPEPSProcSet(gen);
+                PSProcSets.writeStdProcSet(gen);
+                PSProcSets.writeEPSProcSet(gen);
                 gen.writeDSCComment(DSCConstants.END_PROLOG);
 
                 //Setup
                 gen.writeDSCComment(DSCConstants.BEGIN_SETUP);
                 writeSetupCodeList(setupCodeList, "SetupCode");
-                this.fontResources = PSFontUtils.writeFontDict(gen, fontInfo);
-                gen.writeln("FOPFonts begin");
+                if (!twoPassGeneration) {
+                    this.fontResources = PSFontUtils.writeFontDict(gen, fontInfo);
+                } else {
+                    gen.commentln("%FOPFontSetup");
+                }
                 gen.writeDSCComment(DSCConstants.END_SETUP);
             } catch (IOException ioe) {
                 handleIOTrouble(ioe);
@@ -729,8 +893,8 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         log.debug("renderPage(): " + page);
 
         this.currentPageNumber++;
-        gen.notifyStartNewPage();
-        gen.notifyResourceUsage(PSProcSets.STD_PROCSET, false);
+        gen.getResourceTracker().notifyStartNewPage();
+        gen.getResourceTracker().notifyResourceUsageOnPage(PSProcSets.STD_PROCSET);
         gen.writeDSCComment(DSCConstants.PAGE, new Object[]
                 {page.getPageNumberString(),
                  new Integer(this.currentPageNumber)});
@@ -769,7 +933,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
             }
         }
         gen.writeDSCComment(DSCConstants.PAGE_RESOURCES, 
-                new Object[] {PSGenerator.ATEND});
+                new Object[] {DSCConstants.ATEND});
         gen.commentln("%FOPSimplePageMaster: " + page.getSimplePageMasterName());
         gen.writeDSCComment(DSCConstants.BEGIN_PAGE_SETUP);
         
@@ -807,8 +971,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
 
         writeln("showpage");
         gen.writeDSCComment(DSCConstants.PAGE_TRAILER);
-        gen.writeResources(true);
-        gen.writeDSCComment(DSCConstants.END_PAGE);
+        gen.getResourceTracker().writeResources(true, gen);
     }
 
     /** @see org.apache.fop.render.AbstractRenderer */
