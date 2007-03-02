@@ -116,17 +116,32 @@
             <xsd:documentation>Configuration elements used by the PostScript renderer,
           MIME type application/postscript</xsd:documentation>
           </xsd:annotation>
-          <xsd:element name="auto-rotate-landscape">
+          <xsd:element name="auto-rotate-landscape" type="xsd:boolean" default="false" minOccurs="0">
             <xsd:annotation>
-              <xsd:documentation>auto-rotate-landscape is used by the PostScript renderer,
-            MIME type application/postscript.</xsd:documentation>
+              <xsd:documentation>When set to "true" a landscape page is automatically 
+                rotated and specified as a landscape page in PostScript.</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element name="language-level" default="3" minOccurs="0">
+            <xsd:annotation>
+              <xsd:documentation>Specifies the PostScript language level to use when 
+                generating PostScript code.
+                language-level is used by the PostScript renderer,
+                MIME type application/postscript.</xsd:documentation>
             </xsd:annotation>
             <xsd:simpleType>
-              <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="false"/>
-                <xsd:enumeration value="true"/>
+              <xsd:restriction base="xsd:positiveInteger">
+                <xsd:enumeration value="2"/>
+                <xsd:enumeration value="3"/>
               </xsd:restriction>
             </xsd:simpleType>
+          </xsd:element>
+          <xsd:element name="optimize-resources" type="xsd:boolean" default="false" minOccurs="0">
+            <xsd:annotation>
+              <xsd:documentation>When set to "true" PostScript resources are optimized by making a 
+                second pass over the PostScript file (rewriting it). Optimized means that no duplicate 
+                images are written to the stream and only used fonts are added to the PostScript file.</xsd:documentation>
+            </xsd:annotation>
           </xsd:element>
         </xsd:sequence>
         <xsd:sequence>
@@ -193,7 +208,7 @@
     <xsd:sequence>
       <xsd:element name="font-triplet" type="fontTripletType" maxOccurs="unbounded"/>
     </xsd:sequence>
-    <xsd:attribute name="metrics-url" type="xsd:anyURI" use="required"/>
+    <xsd:attribute name="metrics-url" type="xsd:anyURI" use="optional"/>
     <xsd:attribute name="embed-url" type="xsd:anyURI" use="optional"/>
     <xsd:attribute name="kerning" use="optional" default="no">
       <xsd:simpleType>
