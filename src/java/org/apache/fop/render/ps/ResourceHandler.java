@@ -179,6 +179,9 @@ public class ResourceHandler implements DSCParserConstants {
 
     private static void registerSuppliedForms(ResourceTracker resTracker, Map formResources)
             throws IOException {
+        if (formResources == null) {
+            return;
+        }
         Iterator iter = formResources.values().iterator();
         while (iter.hasNext()) {
             PSImageFormResource form = (PSImageFormResource)iter.next();
@@ -188,6 +191,9 @@ public class ResourceHandler implements DSCParserConstants {
 
     private static void generateForms(ResourceTracker resTracker, FOUserAgent userAgent, 
             Map formResources, PSGenerator gen) throws IOException {
+        if (formResources == null) {
+            return;
+        }
         Iterator iter = formResources.values().iterator();
         while (iter.hasNext()) {
             PSImageFormResource form = (PSImageFormResource)iter.next();
