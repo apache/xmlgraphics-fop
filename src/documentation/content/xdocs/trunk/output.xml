@@ -199,8 +199,38 @@ out = proc.getOutputStream();]]></source>
     support for most text and layout.
     Images and SVG are not fully supported, yet. Currently, the PostScript
     renderer generates PostScript Level 3 with most DSC comments. Actually,
-    the only Level 3 feature used is FlateDecode, everything else is Level 2.
+    the only Level 3 features used are the FlateDecode and DCTDecode 
+    filter (the latter is used for 1:1 embedding of JPEG images), everything 
+    else is Level 2.
   </p>
+    <section id="ps-configuration">
+      <title>Configuration</title>
+      <p>
+        The PostScript renderer configuration currently allows the following settings:
+      </p>
+<source><![CDATA[<renderer mime="application/postscript">
+  <auto-rotate-landscape>false</auto-rotate-landscape>
+  <language-level>3</language-level>
+  <optimize-resources>false</optimize-resources>
+</renderer>]]></source>
+      <p>
+        The default value for the "auto-rotate-landscape" setting is "false". Setting it
+        to "true" will automatically rotate landscape pages and will mark them as landscape.
+      </p>
+      <p>
+        The default value for the "language-level" setting is "3". This setting specifies
+        the PostScript language level which should be used by FOP. Set this to "2"
+        only if you don't have a Level 3 capable interpreter.
+      </p>
+      <p>
+        The default value for the "optimize-resources" setting is "false". Setting it
+        to "true" will produce the PostScript file in two steps. A temporary file will be
+        written first which will then be processed to add only the fonts which were really
+        used and images are added to the stream only once as PostScript forms. This will
+        reduce file size but can potentially increase the memory needed in the interpreter
+        to process.
+      </p>
+    </section>
   <section id="ps-limitations">
     <title>Limitations</title>
     <ul>
