@@ -94,7 +94,8 @@ public abstract class AbstractBaseLayoutManager
                 return lm.getBaseLength(lengthBase, fobj);
             }
         }
-        log.error("Cannot find LM to handle given FO for LengthBase.");
+        log.error("Cannot find LM to handle given FO for LengthBase.\n"
+                + fobj.getContextInfo());
         return 0;
     }
 
