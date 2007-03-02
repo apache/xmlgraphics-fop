@@ -144,7 +144,16 @@ public class FopServlet extends HttpServlet {
      * @return Source the generated Source object
      */
     protected Source convertString2Source(String param) {
-        return new StreamSource(new File(param));
+        Source src;
+        try {
+            src = uriResolver.resolve(param, null);
+        } catch (TransformerException e) {
+            src = null;
+        }
+        if (src == null) {
+            src = new StreamSource(new File(param));
+        }
+        return src;
     }
 
     private void sendPDF(byte[] content, HttpServletResponse response) throws IOException {
