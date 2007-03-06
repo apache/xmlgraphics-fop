@@ -34,9 +34,6 @@ import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.LayoutContext;
-import org.apache.fop.layoutmgr.table.TableContentLayoutManager.GridUnitPart;
-import org.apache.fop.layoutmgr.table.TableContentLayoutManager.TableContentPosition;
-import org.apache.fop.layoutmgr.table.TableContentLayoutManager.TableHFPenaltyPosition;
 
 /**
  * This class processes row groups to create combined element lists for tables.
