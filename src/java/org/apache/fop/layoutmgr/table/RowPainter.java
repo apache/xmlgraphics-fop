@@ -31,8 +31,6 @@ import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.KnuthPossPosIter;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.SpaceResolver;
-import org.apache.fop.layoutmgr.table.TableContentLayoutManager.GridUnitPart;
-import org.apache.fop.layoutmgr.table.TableContentLayoutManager.TableContentPosition;
 
 class RowPainter {
     private static Log log = LogFactory.getLog(RowPainter.class);
