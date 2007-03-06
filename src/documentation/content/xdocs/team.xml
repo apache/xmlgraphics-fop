@@ -34,6 +34,8 @@
         <li id="fb"><link href="mailto:bckfnn@worldonline.dk">Finn Bock</link> (FB)</li>
         <li id="cb"><link href="mailto:bowditch_chris@hotmail.com">Chris Bowditch</link> (CB)
             is a Java/VB Programmer from England.</li>
+        <li id="jb"><link href="mailto:jay@bryantcs.com">Jay Bryant</link> (JB) is a
+            freelance information architect in Austin, TX.</li>
         <li id="ad"><link href="mailto:adelmelle@apache.org">Andreas Delmelle</link> (AD)</li>
         <!-- Luca prefers the mail address with "AT", to stop spam, etc. -->
         <li id="lf"><link href="mailto:lfurini AT cs.unibo.it">Luca Furini</link> (LF)
@@ -88,10 +90,6 @@
     <section id="contribute-active">
       <title>Active Contributors</title>
       <ul>
-    <li id="jb"><link href="mailto:jay@bryantcs.com">Jay Bryant</link>, of <fork 
-href="http://www.bryantcs.com/">Bryant Communication Services</fork>, is a 
-consulting technical writer who uses FOP to produce PDF files for 
-single-sourcing solutions.</li>
     <li id="lm">Louis Masters</li>
     <li id="mn">Manoj Nair, Currently consulting for Sony Pictures Entertainment in Los Angeles, CA USA. Previously he worked with Java &amp; related technologies specializing in developing n-tier Web applications.</li>
         <li id="rr"><link href="mailto:renaud.richardet AT gmail DOT com">Renaud Richardet</link> (RR)
