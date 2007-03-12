@@ -431,6 +431,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                     }
                 }
             } else {
+                int maxbpd = context.getStackLimit().opt;
+                allocBPD = maxbpd;
                 autoHeight = true;
             }
         } else {
@@ -503,7 +505,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
 
         MinOptMax range = new MinOptMax(relDims.ipd);
         BlockContainerBreaker breaker = new BlockContainerBreaker(this, range);
-        breaker.doLayout(relDims.bpd, autoHeight);
+        breaker.doLayout((autoHeight ? 0 : relDims.bpd), autoHeight);
         boolean contentOverflows = breaker.isOverflow();
         LinkedList returnList = new LinkedList();
         if (!breaker.isEmpty()) {
