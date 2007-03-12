@@ -466,7 +466,7 @@ public abstract class AbstractRenderer
 
             Rectangle2D clippingRect = null;
             if (bv.getClip()) {
-                clippingRect = new Rectangle(saveIP, saveBP, bv.getIPD(), bv.getIPD());
+                clippingRect = new Rectangle(saveIP, saveBP, bv.getIPD(), bv.getBPD());
             }
             
             CTM ctm = bv.getCTM();
