@@ -47,12 +47,15 @@ public class TableStepper {
     
     private EffRow[] rowGroup;
     private int totalHeight;
-    private int activeRow;
+    private int activeRowIndex;
     /**
      * Knuth elements for active cells, per column. Active cells are cells spanning over
      * the currently active row.
      */
     private List[] elementLists;
+    /**
+     * Number of the row where the row-span begins, per column. Zero-based.
+     */
     private int[] startRow;
     /**
      * For each column, index, in the cell's list of Knuth elements, of the element
@@ -77,7 +80,7 @@ public class TableStepper {
     private boolean skippedStep;
     private boolean[] keepWithNextSignals;
     private boolean[] forcedBreaks;
-    private int lastMaxPenalty;
+    private int lastMaxPenaltyLength;
     
     /**
      * Main constructor
@@ -86,9 +89,14 @@ public class TableStepper {
     public TableStepper(TableContentLayoutManager tclm) {
         this.tclm = tclm;
     }
-    
+
+    /**
+     * Initializes the fields of this instance to handle a new row group.
+     * 
+     * @param columnCount number of columns the row group has 
+     */
     private void setup(int columnCount) {
-        this.activeRow = 0;
+        this.activeRowIndex = 0;
         elementLists = new List[columnCount];
         startRow = new int[columnCount];
         start = new int[columnCount];
@@ -123,7 +131,7 @@ public class TableStepper {
      * @return the row currently being processed
      */
     private EffRow getActiveRow() {
-        return rowGroup[activeRow];
+        return rowGroup[activeRowIndex];
     }
     
     /**
@@ -176,9 +184,9 @@ public class TableStepper {
                     len += borderBefore[i] + borderAfter[i]; 
                     len += paddingBefore[i] + paddingAfter[i]; 
                 }
-                int nominalHeight = rowGroup[activeRow].getHeight().opt;
+                int nominalHeight = rowGroup[activeRowIndex].getHeight().opt;
                 for (int r = 0; r < gu.getRowSpanIndex(); r++) {
-                    nominalHeight += rowGroup[activeRow - r - 1].getHeight().opt;
+                    nominalHeight += rowGroup[activeRowIndex - r - 1].getHeight().opt;
                 }
                 if (len == nominalHeight) {
                     //row is filled
@@ -188,7 +196,7 @@ public class TableStepper {
                 maxW = Math.max(maxW, nominalHeight - len);
             }
         }
-        for (int i = activeRow + 1; i < rowGroup.length; i++) {
+        for (int i = activeRowIndex + 1; i < rowGroup.length; i++) {
             maxW += rowGroup[i].getHeight().opt;
         }
         log.debug("maxRemainingHeight=" + maxW);
@@ -203,7 +211,7 @@ public class TableStepper {
             start[column] = 0;
             end[column] = -1;
             widths[column] = 0;
-            startRow[column] = activeRow;
+            startRow[column] = activeRowIndex;
             keepWithNextSignals[column] = false;
             forcedBreaks[column] = false;
         } else if (gu.isPrimary()) {
@@ -246,14 +254,18 @@ public class TableStepper {
             start[column] = 0;
             end[column] = -1;
             widths[column] = 0;
-            startRow[column] = activeRow;
+            startRow[column] = activeRowIndex;
             keepWithNextSignals[column] = false;
             forcedBreaks[column] = false;
         } else {
             log.trace("TableStepper.setupElementList: not empty nor primary grid unit");
         }
     }
-    
+
+    /**
+     * Initializes the informations relative to the Knuth elements, to handle a new row in
+     * the current row group.
+     */
     private void initializeElementLists() {
         for (int i = 0; i < start.length; i++) {
             setupElementList(i);
@@ -283,11 +295,11 @@ public class TableStepper {
         TableContentPosition lastTCPos = null;
         LinkedList returnList = new LinkedList();
         while ((step = getNextStep(laststep)) >= 0) {
-            int normalRow = activeRow;
+            int normalRow = activeRowIndex;
             if (rowBacktrackForLastStep) {
                 //Even though we've already switched to the next row, we have to 
                 //calculate as if we were still on the previous row
-                activeRow--;
+                activeRowIndex--;
             }
             int increase = step - laststep;
             int penaltyLen = step + getMaxRemainingHeight() - totalHeight;
@@ -346,7 +358,7 @@ public class TableStepper {
             lastTCPos = tcpos;
             if (log.isDebugEnabled()) {
                 log.debug(" - backtrack=" + rowBacktrackForLastStep 
-                        + " - row=" + activeRow + " - " + tcpos);
+                        + " - row=" + activeRowIndex + " - " + tcpos);
             }
             returnList.add(new KnuthBox(boxLen, tcpos, false));
             TableHFPenaltyPosition penaltyPos = new TableHFPenaltyPosition(getTableLM());
@@ -363,14 +375,14 @@ public class TableStepper {
             
             //Handle a penalty length coming from nested content
             //Example: nested table with header/footer
-            if (this.lastMaxPenalty != 0) {
-                penaltyPos.nestedPenaltyLength = this.lastMaxPenalty;
+            if (this.lastMaxPenaltyLength != 0) {
+                penaltyPos.nestedPenaltyLength = this.lastMaxPenaltyLength;
                 if (log.isDebugEnabled()) {
                     log.debug("Additional penalty length from table-cell break: " 
-                            + this.lastMaxPenalty);
+                            + this.lastMaxPenaltyLength);
                 }
             }
-            effPenaltyLen += this.lastMaxPenalty;
+            effPenaltyLen += this.lastMaxPenaltyLength;
             
             int p = 0;
             boolean allCellsHaveContributed = true;
@@ -415,7 +427,7 @@ public class TableStepper {
             laststep = step;
             if (rowBacktrackForLastStep) {
                 //If row was set to previous, restore now
-                activeRow++;
+                activeRowIndex++;
             }
         }
         if (signalKeepWithNext) {
@@ -433,7 +445,7 @@ public class TableStepper {
     }
     
     private int getNextStep(int lastStep) {
-        this.lastMaxPenalty = 0;
+        this.lastMaxPenaltyLength = 0;
         //Check for forced break conditions
         /*
         if (isBreakCondition()) {
@@ -444,7 +456,9 @@ public class TableStepper {
         System.arraycopy(widths, 0, backupWidths, 0, backupWidths.length);
 
         //set starting points
-        boolean rowSpanPending = true;
+        // We assume that the current grid row is finished. If this is not the case this
+        // boolean will be reset (see below)
+        boolean currentGridRowFinished = true;
         for (int i = 0; i < start.length; i++) {
             if (elementLists[i] == null) {
                 continue;
@@ -453,7 +467,11 @@ public class TableStepper {
                 start[i] = end[i] + 1;
                 if (end[i] + 1 < elementLists[i].size() 
                         && getActiveGridUnit(i).isLastGridUnitRowSpan()) {
-                    rowSpanPending = false;
+                    // Ok, so this grid unit is the last in the row-spanning direction and
+                    // there are still unhandled Knuth elements. They /will/ have to be
+                    // put on the current grid row, which means that this row isn't
+                    // finished yet
+                    currentGridRowFinished = false;
                 }
             } else {
                 start[i] = -1; //end of list reached
@@ -461,17 +479,17 @@ public class TableStepper {
             }
         }
 
-        if (rowSpanPending) {
-            if (activeRow < rowGroup.length - 1) {
+        if (currentGridRowFinished) {
+            if (activeRowIndex < rowGroup.length - 1) {
                 TableRow rowFO = getActiveRow().getTableRow();
                 if (rowFO != null && rowFO.getBreakAfter() != Constants.EN_AUTO) {
                     log.warn(FONode.decorateWithContextInfo(
                             "break-after ignored on table-row because of row spanning "
                             + "in progress (See XSL 1.0, 7.19.1)", rowFO));
                 }
-                activeRow++;
+                activeRowIndex++;
                 if (log.isDebugEnabled()) {
-                    log.debug("===> new row: " + activeRow);
+                    log.debug("===> new row: " + activeRowIndex);
                 }
                 initializeElementLists();
                 for (int i = 0; i < backupWidths.length; i++) {
@@ -498,7 +516,7 @@ public class TableStepper {
                 end[i]++;
                 KnuthElement el = (KnuthElement)elementLists[i].get(end[i]);
                 if (el.isPenalty()) {
-                    this.lastMaxPenalty = Math.max(this.lastMaxPenalty, el.getW());
+                    this.lastMaxPenaltyLength = Math.max(this.lastMaxPenaltyLength, el.getW());
                     if (el.getP() <= -KnuthElement.INFINITE) {
                         log.debug("FORCED break encountered!");
                         forcedBreaks[i] = true;
@@ -591,7 +609,7 @@ public class TableStepper {
                 end[i] = start[i] - 1;
                 if (baseWidth[i] + widths[i] > minStep) {
                     log.debug("minStep vs. border/padding increase conflict:");
-                    if (activeRow == 0) {
+                    if (activeRowIndex == 0) {
                         log.debug("  First row. Skip this step.");
                         skippedStep = true;
                     } else {
