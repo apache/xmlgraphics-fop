@@ -298,10 +298,18 @@ public class LayoutContext {
         return stackLimit;
     }
 
+    /**
+     * Sets the inline-progression-dimension of the nearest ancestor reference area.
+     */
     public void setRefIPD(int ipd) {
         refIPD = ipd;
     }
 
+    /**
+     * Returns the inline-progression-dimension of the nearest ancestor reference area.
+     * 
+     * @return the inline-progression-dimension of the nearest ancestor reference area
+     */
     public int getRefIPD() {
         return refIPD;
     }

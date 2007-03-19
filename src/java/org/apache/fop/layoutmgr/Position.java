@@ -43,11 +43,21 @@ public class Position {
     public boolean generatesAreas() {
         return false;
     }
-    
+
+    /**
+     * Sets the index of this position in the sequence of Position elements.
+     * 
+     * @param value this position's index
+     */
     public void setIndex(int value) {
         this.index = value;
     }
-    
+
+    /**
+     * Returns the index of this position in the sequence of Position elements.
+     * 
+     * @return the index of this position in the sequence of Position elements
+     */
     public int getIndex() {
         return this.index;
     }

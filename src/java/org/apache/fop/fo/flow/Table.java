@@ -349,7 +349,11 @@ public class Table extends TableFObj {
         return (tableLayout == EN_AUTO);
     }
 
-    /** @return the list of table-column elements. */
+    /**
+     *  Returns the list of table-column elements.
+     *
+     * @return a list of {@link TableColumn} elements, may contain null elements
+     */
     public List getColumns() {
         return columns;
     }

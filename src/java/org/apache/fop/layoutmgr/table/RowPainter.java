@@ -34,21 +34,40 @@ import org.apache.fop.layoutmgr.SpaceResolver;
 
 class RowPainter {
     private static Log log = LogFactory.getLog(RowPainter.class);
+    /** The fo:table-row containing the currently handled grid rows. */
     private TableRow rowFO = null;
     private int colCount;
     private int yoffset = 0;
     private int accumulatedBPD = 0;
+    /** Currently handled row (= last encountered row). */
     private EffRow lastRow = null;
     private LayoutContext layoutContext;
     private int lastRowHeight = 0;
+    /**
+     * For each part of the table (header, footer, body), index of the first row of that
+     * part present on the current page.
+     */
     private int[] firstRow = new int[3];
     private Map[] rowOffsets = new Map[] {new java.util.HashMap(),
             new java.util.HashMap(), new java.util.HashMap()};
 
     //These three variables are our buffer to recombine the individual steps into cells
-    private PrimaryGridUnit[] gridUnits;
+    /** Primary grid units corresponding to the currently handled grid units, per row. */
+    private PrimaryGridUnit[] primaryGridUnits;
+    /**
+     * Index, in the corresponding table cell's list of Knuth elements, of the first
+     * element present on the current page, per column.
+     */
     private int[] start;
+    /**
+     * Index, in the corresponding table cell's list of Knuth elements, of the last
+     * element present on the current page, per column.
+     */
     private int[] end;
+    /**
+     * Length, for each column, of the elements from the current cell put on the
+     * current page.
+     */
     private int[] partLength;
     private TableContentLayoutManager tclm;
 
@@ -56,7 +75,7 @@ class RowPainter {
         this.tclm = tclm;
         this.layoutContext = layoutContext;
         this.colCount = tclm.getColumns().getColumnCount();
-        this.gridUnits = new PrimaryGridUnit[colCount];
+        this.primaryGridUnits = new PrimaryGridUnit[colCount];
         this.start = new int[colCount];
         this.end = new int[colCount];
         this.partLength = new int[colCount];
@@ -76,6 +95,12 @@ class RowPainter {
         this.lastRowHeight += length;
     }
 
+    /**
+     * Records the fragment of row represented by the given position. If it belongs to
+     * another (grid) row than the current one, that latter is painted and flushed first.
+     * 
+     * @param tcpos a position representing the row fragment
+     */
     public void handleTableContentPosition(TableContentPosition tcpos) {
         if (lastRow != tcpos.row && lastRow != null) {
             addAreasAndFlushRow(false);
@@ -95,12 +120,12 @@ class RowPainter {
                 log.debug(">" + gup);
             }
             int colIndex = gup.pgu.getStartCol();
-            if (gridUnits[colIndex] != gup.pgu) {
-                if (gridUnits[colIndex] != null) {
+            if (primaryGridUnits[colIndex] != gup.pgu) {
+                if (primaryGridUnits[colIndex] != null) {
                     log.warn("Replacing GU in slot " + colIndex
                             + ". Some content may not be painted.");
                 }
-                gridUnits[colIndex] = gup.pgu;
+                primaryGridUnits[colIndex] = gup.pgu;
                 start[colIndex] = gup.start;
                 end[colIndex] = gup.end;
             } else {
@@ -112,6 +137,16 @@ class RowPainter {
         }
     }
 
+    /**
+     * Create the areas corresponding to the last row. This method is called either
+     * because the row is finished (all of the elements present on this row have been
+     * added), or because this is the last row on the current page, and the part of it
+     * lying on the current page must be drawn.
+     * 
+     * @param forcedFlush true if the elements must be drawn even if the row isn't
+     * finished yet (last row on the page)
+     * @return the height of the (grid) row
+     */
     public int addAreasAndFlushRow(boolean forcedFlush) {
         int actualRowHeight = 0;
         int readyCount = 0;
@@ -122,30 +157,29 @@ class RowPainter {
         }
         rowOffsets[bt].put(new Integer(lastRow.getIndex()), new Integer(yoffset));
 
-        for (int i = 0; i < gridUnits.length; i++) {
-            if ((gridUnits[i] != null)
-                    && (forcedFlush || (end[i] == gridUnits[i].getElements().size() - 1))) {
+        for (int i = 0; i < primaryGridUnits.length; i++) {
+            if ((primaryGridUnits[i] != null)
+                    && (forcedFlush || (end[i] == primaryGridUnits[i].getElements().size() - 1))) {
                 if (log.isTraceEnabled()) {
                     log.trace("getting len for " + i + " "
                             + start[i] + "-" + end[i]);
                 }
                 readyCount++;
                 int len = ElementListUtils.calcContentLength(
-                        gridUnits[i].getElements(), start[i], end[i]);
+                        primaryGridUnits[i].getElements(), start[i], end[i]);
                 partLength[i] = len;
                 if (log.isTraceEnabled()) {
                     log.trace("len of part: " + len);
                 }
 
                 if (start[i] == 0) {
-                    LengthRangeProperty bpd = gridUnits[i].getCell()
+                    LengthRangeProperty bpd = primaryGridUnits[i].getCell()
                             .getBlockProgressionDimension();
                     if (!bpd.getMinimum(tclm.getTableLM()).isAuto()) {
                         int min = bpd.getMinimum(tclm.getTableLM())
                                     .getLength().getValue(tclm.getTableLM());
                         if (min > 0) {
-                            len = Math.max(len, bpd.getMinimum(tclm.getTableLM())
-                                    .getLength().getValue(tclm.getTableLM()));
+                            len = Math.max(len, min);
                         }
                     }
                     if (!bpd.getOptimum(tclm.getTableLM()).isAuto()) {
@@ -155,8 +189,8 @@ class RowPainter {
                             len = Math.max(len, opt);
                         }
                     }
-                    if (gridUnits[i].getRow() != null) {
-                        bpd = gridUnits[i].getRow().getBlockProgressionDimension();
+                    if (primaryGridUnits[i].getRow() != null) {
+                        bpd = primaryGridUnits[i].getRow().getBlockProgressionDimension();
                         if (!bpd.getMinimum(tclm.getTableLM()).isAuto()) {
                             int min = bpd.getMinimum(tclm.getTableLM()).getLength()
                                         .getValue(tclm.getTableLM());
@@ -168,17 +202,20 @@ class RowPainter {
                 }
 
                 // Add the padding if any
-                len += gridUnits[i].getBorders()
-                                .getPaddingBefore(false, gridUnits[i].getCellLM());
-                len += gridUnits[i].getBorders()
-                                .getPaddingAfter(false, gridUnits[i].getCellLM());
+                len += primaryGridUnits[i].getBorders()
+                                .getPaddingBefore(false, primaryGridUnits[i].getCellLM());
+                len += primaryGridUnits[i].getBorders()
+                                .getPaddingAfter(false, primaryGridUnits[i].getCellLM());
 
                 //Now add the borders to the contentLength
                 if (tclm.isSeparateBorderModel()) {
-                    len += gridUnits[i].getBorders().getBorderBeforeWidth(false);
-                    len += gridUnits[i].getBorders().getBorderAfterWidth(false);
+                    len += primaryGridUnits[i].getBorders().getBorderBeforeWidth(false);
+                    len += primaryGridUnits[i].getBorders().getBorderAfterWidth(false);
+                } else {
+                    len += primaryGridUnits[i].getHalfMaxBeforeBorderWidth();
+                    len += primaryGridUnits[i].getHalfMaxAfterBorderWidth();
                 }
-                int startRow = Math.max(gridUnits[i].getStartRow(), firstRow[bt]);
+                int startRow = Math.max(primaryGridUnits[i].getStartRow(), firstRow[bt]);
                 Integer storedOffset = (Integer)rowOffsets[bt].get(new Integer(startRow));
                 int effYOffset;
                 if (storedOffset != null) {
@@ -198,12 +235,12 @@ class RowPainter {
 
         //Add areas for row
         tclm.addRowBackgroundArea(rowFO, actualRowHeight, layoutContext.getRefIPD(), yoffset);
-        for (int i = 0; i < gridUnits.length; i++) {
+        for (int i = 0; i < primaryGridUnits.length; i++) {
             GridUnit currentGU = lastRow.safelyGetGridUnit(i);
-            if ((gridUnits[i] != null)
-                    && (forcedFlush || ((end[i] == gridUnits[i].getElements().size() - 1))
+            if ((primaryGridUnits[i] != null)
+                    && (forcedFlush || (end[i] == primaryGridUnits[i].getElements().size() - 1)
                             && (currentGU == null || currentGU.isLastGridUnitRowSpan()))
-                || (gridUnits[i] == null && currentGU != null)) {
+                || (primaryGridUnits[i] == null && currentGU != null)) {
                 //the last line in the "if" above is to avoid a premature end of an
                 //row-spanned cell because no GridUnitParts are generated after a cell is
                 //finished with its content. currentGU can be null if there's no grid unit
@@ -212,7 +249,7 @@ class RowPainter {
                     log.debug((forcedFlush ? "FORCED " : "") + "flushing..." + i + " "
                             + start[i] + "-" + end[i]);
                 }
-                PrimaryGridUnit gu = gridUnits[i];
+                PrimaryGridUnit gu = primaryGridUnits[i];
                 if (gu == null
                         && !currentGU.isEmpty()
                         && currentGU.getColSpanIndex() == 0
@@ -224,7 +261,7 @@ class RowPainter {
                     addAreasForCell(gu, start[i], end[i],
                             lastRow,
                             partLength[i], actualRowHeight);
-                    gridUnits[i] = null;
+                    primaryGridUnits[i] = null;
                     start[i] = 0;
                     end[i] = -1;
                     partLength[i] = 0;

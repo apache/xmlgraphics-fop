@@ -22,13 +22,18 @@ package org.apache.fop.layoutmgr.table;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableColumn;
 
 /**
- * This class represents a primary grid unit of a spanned cell.
+ * This class represents a primary grid unit of a spanned cell. This is the "before-start"
+ * (top-left, usually) grid unit of the span.
  */
 public class PrimaryGridUnit extends GridUnit {
+
+    private static Log log = LogFactory.getLog(PrimaryGridUnit.class);
 
     /** Cell layout manager. */
     private TableCellLayoutManager cellLM;
@@ -52,6 +57,7 @@ public class PrimaryGridUnit extends GridUnit {
     public PrimaryGridUnit(TableCell cell, TableColumn column, int startCol, int startRow) {
         super(cell, column, startCol, 0);
         this.startRow = startRow;
+        log.trace("PrimaryGridUnit created, row " + startRow + " col " + startCol);
         if (cell != null) {
             cellLM = new TableCellLayoutManager(cell, this);
         }
