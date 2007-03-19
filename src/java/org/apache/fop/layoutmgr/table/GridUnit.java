@@ -19,6 +19,8 @@
 
 package org.apache.fop.layoutmgr.table;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.flow.TableBody;
@@ -32,6 +34,8 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground.BorderInfo;
  * This class represents one grid unit inside a table.
  */
 public class GridUnit {
+
+    private static Log log = LogFactory.getLog(GridUnit.class);
 
     /** Indicates that the grid unit is in the first column. */
     public static final int IN_FIRST_COLUMN = 0;
@@ -86,7 +90,7 @@ public class GridUnit {
     /**
      * Creates a new grid unit.
      *
-     * @param primary ??
+     * @param primary the before-start grid unit of the cell containing this grid unit
      * @param column table column this grid unit belongs to
      * @param startCol index of the column this grid unit belongs to
      * @param colSpanIndex index of this grid unit in the span, in column direction
@@ -98,7 +102,7 @@ public class GridUnit {
     /**
      * Creates a new grid unit.
      *
-     * @param primary ??
+     * @param primary the before-start grid unit of the cell containing this grid unit
      * @param cell table cell which occupies this grid unit
      * @param column table column this grid unit belongs to
      * @param startCol index of the column this grid unit belongs to
@@ -158,16 +162,28 @@ public class GridUnit {
     }
 
     /**
-     * @return the primary grid unit if this is a spanned grid unit
+     * Returns the before-start grid unit of the cell containing this grid unit.
+     * 
+     * @return the before-start grid unit of the cell containing this grid unit.
      */
     public PrimaryGridUnit getPrimary() {
         return (isPrimary() ? (PrimaryGridUnit)this : primary);
     }
 
+    /**
+     * Is this grid unit the before-start grid unit of the cell?
+     * 
+     * @return true if this grid unit is the before-start grid unit of the cell
+     */
     public boolean isPrimary() {
         return false;
     }
 
+    /**
+     * Does this grid unit belong to an empty cell?
+     * 
+     * @return true if this grid unit belongs to an empty cell
+     */
     public boolean isEmpty() {
         return cell == null;
     }
@@ -272,6 +288,13 @@ public class GridUnit {
                         side, resFlags), side);
         if (cell != null) {
             effectiveBorders.setPadding(cell.getCommonBorderPaddingBackground());
+        }
+        if (log.isDebugEnabled()) {
+            log.debug(this + " resolved borders: "
+                    + "before=" + effectiveBorders.getBorderBeforeWidth(false) + ", "
+                    + "after=" + effectiveBorders.getBorderAfterWidth(false) + ", "
+                    + "start=" + effectiveBorders.getBorderStartWidth(false) + ", "
+                    + "end=" + effectiveBorders.getBorderEndWidth(false));
         }
     }
 
