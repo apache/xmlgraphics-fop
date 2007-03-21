@@ -249,6 +249,11 @@ It will display all of the font names and exit with an Exception.</p>
           </li>
           <li>The "kerning" and "embed-url" attributes are optional. Kerning is currently not used at all. If embedding is off, the output will position the text correctly (from the metrics file), but it will not be displayed or printed correctly unless the viewer has the applicable font available to their local system.</li>
           <li>When setting the embed-url attribute for Type 1 fonts, be sure to specify the PFB (actual font data), not PFM (font metrics) file that you used to generate the XML font metrics file.</li>
+          <li>
+            If relative URLs are specified, they are evaluated relative to the value of the 
+            "font-base" setting. If there is no "font-base" setting, the fonts are evaluated 
+            relative to the base directory.
+          </li>
         </ul>
         <!--note>Cocoon users will need to setup the config, see FOPSerializer for more information.</note-->
       </section>
