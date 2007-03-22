@@ -57,7 +57,7 @@ public class SpaceResolver {
      * @param isFirst Resolution at the beginning of a (full) element list
      * @param isLast Resolution at the end of a (full) element list
      */
-    public SpaceResolver(List first, BreakElement breakPoss, List second, 
+    private SpaceResolver(List first, BreakElement breakPoss, List second, 
             boolean isFirst, boolean isLast) {
         this.isFirst = isFirst;
         this.isLast = isLast;
@@ -494,7 +494,7 @@ public class SpaceResolver {
      * Position class for break possibilities. It is used to notify layout manager about the
      * effective spaces and conditional lengths.
      */
-    public class SpaceHandlingBreakPosition extends Position {
+    public static class SpaceHandlingBreakPosition extends Position {
 
         private SpaceResolver resolver;
         private Position originalPosition;
@@ -566,7 +566,7 @@ public class SpaceResolver {
      * Position class for no-break situations. It is used to notify layout manager about the
      * effective spaces and conditional lengths.
      */
-    public class SpaceHandlingPosition extends Position {
+    public static class SpaceHandlingPosition extends Position {
 
         private SpaceResolver resolver;
         
