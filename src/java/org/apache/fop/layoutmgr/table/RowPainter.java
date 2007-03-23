@@ -266,11 +266,15 @@ class RowPainter {
                 PrimaryGridUnit gu = primaryGridUnits[i];
                 if (gu == null
                         && !currentGU.isEmpty()
-                        && currentGU.getColSpanIndex() == 0
+                        && currentGU.getColSpanIndex() == 0 
                         && currentGU.isLastGridUnitColSpan()
                         && (forcedFlush || currentGU.isLastGridUnitRowSpan())) {
+                    //Grid unit to be painted is not the primary
+                    //the checks above make sure no cell is painted more than once
                     gu = currentGU.getPrimary();
                 }
+                
+                //gu can still be null if we're talking about an EmptyGridUnit, for example
                 if (gu != null) {
                     addAreasForCell(gu, start[i], end[i],
                             lastRow,
