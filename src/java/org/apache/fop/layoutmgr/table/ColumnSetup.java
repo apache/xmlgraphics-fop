@@ -221,8 +221,14 @@ public class ColumnSetup {
     public int getXOffset(int col, PercentBaseContext context) {
         int xoffset = 0;
         for (int i = col; --i >= 0;) {
-            if (colWidths.get(i) != null) {
-                xoffset += ((Length) colWidths.get(i)).getValue(context);
+            int effCol;
+            if (i < colWidths.size()) {
+                effCol = i;
+            } else {
+                effCol = colWidths.size() - 1;
+            }
+            if (colWidths.get(effCol) != null) {
+                xoffset += ((Length) colWidths.get(effCol)).getValue(context);
             }
         }
         return xoffset;
