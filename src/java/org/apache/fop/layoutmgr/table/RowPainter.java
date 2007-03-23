@@ -48,6 +48,11 @@ class RowPainter {
      * part present on the current page.
      */
     private int[] firstRow = new int[3];
+    /**
+     * Keeps track of the y-offsets of each row on a page (for body, header and footer separately).
+     * This is particularly needed for spanned cells where you need to know the y-offset
+     * of the starting row when the area is generated at the time the cell is closed.
+     */
     private Map[] rowOffsets = new Map[] {new java.util.HashMap(),
             new java.util.HashMap(), new java.util.HashMap()};
 
@@ -237,17 +242,26 @@ class RowPainter {
         tclm.addRowBackgroundArea(rowFO, actualRowHeight, layoutContext.getRefIPD(), yoffset);
         for (int i = 0; i < primaryGridUnits.length; i++) {
             GridUnit currentGU = lastRow.safelyGetGridUnit(i);
+            //currentGU can be null if there's no grid unit
+            //at this place in the current row (empty cell and no borders to process)
+            
             if ((primaryGridUnits[i] != null)
                     && (forcedFlush || (end[i] == primaryGridUnits[i].getElements().size() - 1)
-                            && (currentGU == null || currentGU.isLastGridUnitRowSpan()))
-                || (primaryGridUnits[i] == null && currentGU != null)) {
-                //the last line in the "if" above is to avoid a premature end of an
+                            && /*[1]*/ (currentGU == null || currentGU.isLastGridUnitRowSpan()))
+                || /*[2]*/ (primaryGridUnits[i] == null && currentGU != null)) {
+                
+                //[1] the last line in the "if" above is to avoid a premature end of a
                 //row-spanned cell because no GridUnitParts are generated after a cell is
-                //finished with its content. currentGU can be null if there's no grid unit
-                //at this place in the current row (empty cell and no borders to process)
+                //finished with its content.
+                //See table-cell_number-rows-spanned_bug38397.xml
+                
+                //[2] A row-spanned cell has finished contributing content on the previous page
+                //and now still has to cause grid units to be painted.
+                //See table-cell_page-break_span.xml
+                
                 if (log.isDebugEnabled()) {
-                    log.debug((forcedFlush ? "FORCED " : "") + "flushing..." + i + " "
-                            + start[i] + "-" + end[i]);
+                    log.debug((forcedFlush ? "FORCED " : "") + "flushing... col=" + i 
+                            + " elem-list:" + start[i] + "-" + end[i]);
                 }
                 PrimaryGridUnit gu = primaryGridUnits[i];
                 if (gu == null
@@ -282,6 +296,8 @@ class RowPainter {
         //Determine y offset for the cell
         Integer offset = (Integer)rowOffsets[bt].get(new Integer(startRow));
         while (offset == null) {
+            //TODO Figure out what this does and when it's triggered
+            //This block is probably never used, at least it's not triggered by any of our tests
             startRow--;
             offset = (Integer)rowOffsets[bt].get(new Integer(startRow));
         }
