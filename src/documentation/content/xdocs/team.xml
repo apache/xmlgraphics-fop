@@ -139,10 +139,12 @@
           <th>JP</th>
           <th>SP</th>
           <th>LF</th>
+          <th>JB</th>
         </tr>
         <tr>
           <td>Release manager</td>
           <td>X</td>
+          <td/>
           <td/>
           <td/>
           <td/>
@@ -163,6 +165,7 @@
           <td/>
           <td>X</td>
           <td/>
+          <td/>
         </tr>
         <tr>
           <td>Properties</td>
@@ -174,6 +177,7 @@
           <td/>
           <td/>
           <td>X</td>
+          <td/>
           <td/>
         </tr>
         <tr>
@@ -187,6 +191,7 @@
           <td>X</td>
           <td>X</td>
           <td>X</td>
+          <td/>
         </tr>
         <tr>
           <td>Fonts</td>
@@ -194,6 +199,7 @@
           <td/>
           <td/>
           <td>X</td>
+          <td/>
           <td/>
           <td/>
           <td/>
@@ -211,6 +217,7 @@
           <td/>
           <td/>
           <td/>
+          <td/>
         </tr>
         <tr>
           <td>Java2D (AWT)</td>
@@ -218,6 +225,7 @@
           <td/>
           <td/>
           <td>X</td>
+          <td/>
           <td/>
           <td/>
           <td/>
@@ -235,6 +243,7 @@
           <td/>
           <td/>
           <td/>
+          <td>X</td>
         </tr>
         <tr>
           <td>PostScript</td>
@@ -247,9 +256,11 @@
           <td/>
           <td/>
           <td/>
+          <td/>
         </tr>
         <tr>
           <td>PCL</td>
+          <td/>
           <td/>
           <td/>
           <td/>
@@ -271,9 +282,11 @@
           <td/>
           <td/>
           <td/>
+          <td/>
         </tr>
         <tr>
           <td>MIF</td>
+          <td/>
           <td/>
           <td/>
           <td/>
@@ -290,6 +303,7 @@
           <td/>
           <td>X</td>
           <td>X</td>
+          <td/>
           <td/>
           <td/>
           <td/>
