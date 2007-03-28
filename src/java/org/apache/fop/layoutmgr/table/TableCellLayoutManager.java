@@ -352,8 +352,10 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
 
         if (isSeparateBorderModel()) {
             if (!emptyCell || getTableCell().showEmptyCells()) {
-                TraitSetter.addBorders(curBlockArea, 
-                        getTableCell().getCommonBorderPaddingBackground(), this);
+                TraitSetter.addBorders(curBlockArea, getTableCell().getCommonBorderPaddingBackground(),
+                        false, false, false, false, this);
+                TraitSetter.addPadding(curBlockArea, getTableCell().getCommonBorderPaddingBackground(),
+                        false, false, false, false, this);
             }
         } else {
             boolean[] outer = new boolean[] {
