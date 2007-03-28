@@ -691,7 +691,6 @@ public class TableContentLayoutManager implements PercentBaseContext {
             iterateAndPaintPositions(nestedIter, painter);
         }
         
-        painter.notifyEndOfSequence();
         this.usedBPD += painter.getAccumulatedBPD();
 
         if (markers != null) {
