@@ -477,7 +477,7 @@ public class TableRowIterator {
                     safelySetListItem(gridUnits, colnum - 1, guSpan);
                     if (hasRowSpanningLeft) {
                         pendingRowSpans++;
-                        safelySetListItem(previousRowsSpanningCells, colnum - 1, gu);
+                        safelySetListItem(previousRowsSpanningCells, colnum - 1, guSpan);
                     }
                     horzSpan[j] = guSpan;
                 }
