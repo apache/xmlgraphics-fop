@@ -662,8 +662,8 @@ out = proc.getOutputStream();]]></source>
   <fonts><!-- described elsewhere --></fonts>
 </renderer>]]></source>
       <p>
-        The default value for the "compression" setting is "PackBits" which 
-        which is a widely supported RLE compression scheme for TIFF. The set of compression
+        The default value for the "compression" setting is "PackBits" which is a 
+        widely supported RLE compression scheme for TIFF. The set of compression
         names to be used here matches the set that the Image I/O API uses. Note that
         not all compression schemes may be available during runtime. This depends on the
         actual codecs being available. Here is a list of possible values:
