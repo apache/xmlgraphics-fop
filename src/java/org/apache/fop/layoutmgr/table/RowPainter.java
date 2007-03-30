@@ -179,7 +179,8 @@ class RowPainter {
                     //row-spanned cell because no GridUnitParts are generated after a cell is
                     //finished with its content.
                     //See table-cell_number-rows-spanned_bug38397.xml
-                    addAreasForCell(primaryGridUnits[i], start[i], end[i], lastRow, partBPD[i], actualRowHeight);
+                    addAreasForCell(primaryGridUnits[i], start[i], end[i], lastRow, partBPD[i],
+                            actualRowHeight);
                     primaryGridUnits[i] = null;
                     start[i] = 0;
                     end[i] = -1;
@@ -191,7 +192,8 @@ class RowPainter {
                 //A row-spanned cell has finished contributing content on the previous page
                 //and now still has to cause grid units to be painted.
                 //See table-cell_page-break_span.xml
-                addAreasForCell(currentGU.getPrimary(), start[i], end[i], lastRow, partBPD[i], actualRowHeight);
+                addAreasForCell(currentGU.getPrimary(), start[i], end[i], lastRow, partBPD[i],
+                        actualRowHeight);
                 start[i] = 0;
                 end[i] = -1;
                 partBPD[i] = 0;
@@ -221,11 +223,12 @@ class RowPainter {
      * @param start index of the first element of the cell occuring on the current page
      * @param end index of the last element of the cell occuring on the current page
      * @param columnIndex column index of the cell
-     * @param bodyType {@link TableRowIterator#HEADER}, {@link TableRowIterator#FOOTER},
+     * @param bodyType {@link TableRowIterator#HEADER}, {@link TableRowIterator#FOOTER}, or
      * {@link TableRowIterator#BODY}
      * @return the cell's height
      */
-    private int computeSpanHeight(PrimaryGridUnit pgu, int start, int end, int columnIndex, int bodyType) {
+    private int computeSpanHeight(PrimaryGridUnit pgu, int start, int end, int columnIndex,
+            int bodyType) {
         if (log.isTraceEnabled()) {
             log.trace("getting len for " + columnIndex + " "
                     + start + "-" + end);
@@ -299,14 +302,33 @@ class RowPainter {
             firstRow[bt] = row.getIndex();
         }
         //Determine the first row in this sequence
-        int startRow = Math.max(pgu.getStartRow(), firstRow[bt]);
+        int startRowIndex = Math.max(pgu.getStartRow(), firstRow[bt]);
+        int lastRowIndex = lastRow.getIndex();
+
+        // In collapsing-border model, if the cell spans over several columns/rows then
+        // dedicated areas will be created for each grid unit to hold the corresponding
+        // borders. For that we need to know the height of each grid unit, that is of each
+        // grid row spanned over by the cell
+        int[] spannedGridRowHeights = null;
+        if (!tclm.getTableLM().getTable().isSeparateBorderModel() && pgu.hasSpanning()) {
+            spannedGridRowHeights = new int[lastRowIndex - startRowIndex + 1];
+            int prevOffset = ((Integer)rowOffsets[bt].get(new Integer(startRowIndex))).intValue();
+            for (int i = 0; i < lastRowIndex - startRowIndex; i++) {
+                int newOffset = ((Integer) rowOffsets[bt].get(new Integer(startRowIndex + i + 1)))
+                        .intValue();
+                spannedGridRowHeights[i] = newOffset - prevOffset;
+                prevOffset = newOffset;
+            }
+            spannedGridRowHeights[lastRowIndex - startRowIndex] = rowHeight;
+        }
+
         //Determine y offset for the cell
-        Integer offset = (Integer)rowOffsets[bt].get(new Integer(startRow));
+        Integer offset = (Integer)rowOffsets[bt].get(new Integer(startRowIndex));
         while (offset == null) {
             //TODO Figure out what this does and when it's triggered
             //This block is probably never used, at least it's not triggered by any of our tests
-            startRow--;
-            offset = (Integer)rowOffsets[bt].get(new Integer(startRow));
+            startRowIndex--;
+            offset = (Integer)rowOffsets[bt].get(new Integer(startRowIndex));
         }
         int effYOffset = offset.intValue();
         int effCellHeight = rowHeight;
@@ -329,7 +351,8 @@ class RowPainter {
             SpaceResolver.performConditionalsNotification(pgu.getElements(),
                     startPos, endPos, prevBreak);
         }
-        cellLM.addAreas(new KnuthPossPosIter(pgu.getElements(),
-                startPos, endPos + 1), layoutContext);
+        cellLM.addAreas(new KnuthPossPosIter(pgu.getElements(), startPos, endPos + 1),
+                layoutContext, spannedGridRowHeights, startRowIndex - pgu.getStartRow(),
+                lastRowIndex - pgu.getStartRow() + 1);
     }
 }
