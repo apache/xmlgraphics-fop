@@ -296,8 +296,11 @@ public class Block extends FObjMixed {
      *  fo:inline-container."
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
-        if (FO_URI.equals(nsURI) && localName.equals("marker")) {
+        throws ValidationException
+    {
+        if (FOX_URI.equals(nsURI) && localName.equals("destination")) {
+            // Found a fox:destination element - ignore it
+        } else if (FO_URI.equals(nsURI) && localName.equals("marker")) {
             if (blockOrInlineItemFound || initialPropertySetFound) {
                nodesOutOfOrderError(loc, "fo:marker", 
                     "initial-property-set? (#PCDATA|%inline;|%block;)");
