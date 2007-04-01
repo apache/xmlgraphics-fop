@@ -45,6 +45,7 @@ public abstract class FONode implements Cloneable {
 
     /** the XSL-FO namespace URI */
     protected static final String FO_URI = FOElementMapping.URI;
+    protected static final String FOX_URI = ExtensionElementMapping.URI;
 
     /** Parent FO node */
     protected FONode parent;
