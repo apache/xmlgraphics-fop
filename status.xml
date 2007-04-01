@@ -29,6 +29,10 @@
   <changes>
     <release version="FOP Trunk">
       <action context="Code" dev="JM" type="fix">
+        Fixed a problem with keep-with-next on table-rows. Once a keep-with-next was set
+        inside a table, the FO following the table would always be glued to the previous table.
+      </action>
+      <action context="Code" dev="JM" type="fix">
         Fixed a problem with the auto-rotate-landscape setting in the PostScript renderer.
         It didn't generate the right setpagedevice command.
       </action>

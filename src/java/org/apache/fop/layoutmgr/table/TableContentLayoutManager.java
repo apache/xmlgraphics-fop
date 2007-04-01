@@ -235,6 +235,12 @@ public class TableContentLayoutManager implements PercentBaseContext {
             if (!isSeparateBorderModel()) {
                 resolveNormalBeforeAfterBordersForRowGroup(rowGroup, iter);
             }
+
+            //Reset keep-with-next when remaining inside the table.
+            //The context flag is only used to propagate keep-with-next to the outside.
+            //The clearing is ok here because createElementsForRowGroup already handles
+            //the keep when inside a table.
+            context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, false);
             
             //Element list creation
             createElementsForRowGroup(context, alignment, bodyType, 
