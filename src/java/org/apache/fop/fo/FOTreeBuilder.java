@@ -23,6 +23,7 @@ import java.io.OutputStream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FormattingResults;
@@ -296,9 +297,8 @@ public class FOTreeBuilder extends DefaultHandler {
                         + " Please make sure you're producing a valid XSL-FO document.");
                 }
             } else { // check that incoming node is valid for currentFObj
-                if (namespaceURI.equals(FOElementMapping.URI)) {
-                    // currently no fox: elements to validate
-                    // || namespaceURI.equals(ExtensionElementMapping.URI) */) {
+                if (namespaceURI.equals(FOElementMapping.URI)
+                    || namespaceURI.equals(ExtensionElementMapping.URI)) {
                     try {
                         currentFObj.validateChildNode(locator, namespaceURI, localName);
                     } catch (ValidationException e) {
@@ -368,7 +368,8 @@ public class FOTreeBuilder extends DefaultHandler {
                 throw new IllegalStateException(
                         "endElement() called for " + rawName 
                             + " where there is no current element.");
-            } else if (!currentFObj.getLocalName().equals(localName) 
+            } else
+            if (!currentFObj.getLocalName().equals(localName) 
                     || !currentFObj.getNamespaceURI().equals(uri)) {
                 log.warn("Mismatch: " + currentFObj.getLocalName() 
                         + " (" + currentFObj.getNamespaceURI() 
