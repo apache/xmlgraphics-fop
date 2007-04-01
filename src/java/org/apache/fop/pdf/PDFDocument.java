@@ -32,6 +32,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Iterator;
+import java.util.ArrayList;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -85,7 +86,7 @@ public class PDFDocument {
     /**
      * the character position of each object
      */
-    protected List location = new java.util.ArrayList();
+    protected List location = new ArrayList();
 
     /** List of objects to write in the trailer */
     private List trailerObjects = new java.util.ArrayList();
@@ -202,6 +203,11 @@ public class PDFDocument {
     protected List links = new java.util.ArrayList();
 
     /**
+     * List of Destinations.
+     */
+    protected List destinations = new java.util.ArrayList();
+
+    /**
      * List of FileSpecs.
      */
     protected List filespecs = new java.util.ArrayList();
@@ -215,6 +221,25 @@ public class PDFDocument {
      * List of GoTos.
      */
     protected List gotos = new java.util.ArrayList();
+
+    /**
+     * The PDFDests object for the name dictionary.
+     * Note: This object is not a list.
+     */
+    private PDFDests dests;
+
+    /**
+     * The PDFLimits object for the name dictionary.
+     * Note: This object is not a list.
+     */
+    private PDFLimits limits;
+
+    /**
+     * Whether this PDFDocument has named destinations
+     * (and thus needs PDFDestinations, PDFLimits, and
+     * PDFDests)
+     */
+    private boolean hasDestinations = false;
 
     private PDFFactory factory;
 
@@ -460,6 +485,9 @@ public class PDFDocument {
         if (obj instanceof PDFLink) {
             this.links.add(obj);
         }
+        if (obj instanceof PDFDestination) {
+            this.destinations.add(obj);
+        }
         if (obj instanceof PDFFileSpec) {
             this.filespecs.add(obj);
         }
@@ -575,6 +603,15 @@ public class PDFDocument {
      */
     protected PDFFont findFont(String fontname) {
         return (PDFFont)fontMap.get(fontname);
+    }
+
+    /**
+     * Finds a named destination.
+     * @param compare reference object to use as search template
+     * @return the link if found, null otherwise
+     */
+    protected PDFDestination findDestination(PDFDestination compare) {
+        return (PDFDestination)findPDFObject(destinations, compare);
     }
 
     /**
@@ -699,6 +736,51 @@ public class PDFDocument {
     public PDFXObject getImage(String key) {
         PDFXObject xObject = (PDFXObject)xObjectsMap.get(key);
         return xObject;
+    }
+
+    /**
+     * Gets the PDFDests object (which represents the /Dests entry).
+     *
+     * @return the PDFDests object (which represents the /Dests entry).
+     */
+    public PDFDests getDests() {
+        return dests;
+    }
+
+    /**
+     * Gets the list of named destinations.
+     *
+     * @return the list of named destinations.
+     */
+    public ArrayList getDestinationList() {
+        return (ArrayList)destinations;
+    }
+
+    /**
+     * Sets whether the document has named destinations.
+     *
+     * @param whether the document has named destinations.
+     */
+    public void setHasDestinations(boolean hasDestinations) {
+        this.hasDestinations = hasDestinations;
+    }
+
+    /**
+     * Gets whether the document has named destinations.
+     *
+     * @return whether the document has named destinations.
+     */
+    public boolean getHasDestinations() {
+        return this.hasDestinations;
+    }
+
+    /**
+     * Gets the PDFLimits object (part of the name dictionary).
+     *
+     * @return the PDFLimits object (part of the name dictionary).
+     */
+    public PDFLimits getLimits() {
+        return limits;
     }
 
     /**
@@ -893,6 +975,11 @@ public class PDFDocument {
      * @throws IOException if there is an exception writing to the output stream
      */
     public void outputTrailer(OutputStream stream) throws IOException {
+        if (hasDestinations) {
+            limits = getFactory().makeLimits((ArrayList)destinations);
+            dests = getFactory().makeDests(limits.referencePDF());
+            this.root.setNames(dests.referencePDF());
+        }
         output(stream);
         for (int count = 0; count < trailerObjects.size(); count++) {
             PDFObject o = (PDFObject)trailerObjects.get(count);
