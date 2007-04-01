@@ -85,6 +85,8 @@ import org.apache.fop.layoutmgr.list.ListItemLayoutManager;
 import org.apache.fop.layoutmgr.table.TableLayoutManager;
 import org.apache.fop.util.CharUtilities;
 
+import org.apache.fop.fo.extensions.destination.Destination;
+
 /**
  * The default LayoutManager maker class
  */
@@ -138,6 +140,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
         makers.put(TableHeader.class, new Maker());
         makers.put(Wrapper.class, new WrapperLayoutManagerMaker());
         makers.put(Title.class, new InlineLayoutManagerMaker());
+        makers.put(Destination.class, new Maker());
     }
 
     /**
