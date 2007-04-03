@@ -79,7 +79,7 @@ public class PDFDestination extends PDFObject {
     /**
      * Sets the GoToReference in the associated DestinationData object.
      *
-     * @param the GoToReference to set in the associated DestinationData object.
+     * @param goToReference the reference to set in the associated DestinationData object.
      */
     public void setGoToReference(String goToReference) {
         this.goToReference = goToReference;
@@ -90,8 +90,7 @@ public class PDFDestination extends PDFObject {
      *
      * @return the GoToReference from the associated DestinationData object.
      */
-    public String getGoToReference()
-    {
+    public String getGoToReference() {
         return this.goToReference;
     }
 
@@ -109,8 +108,7 @@ public class PDFDestination extends PDFObject {
      *
      * @return the RefID from the associated DestinationData object.
      */
-    public String getIDRef()
-    {
+    public String getIDRef() {
         return this.idRef;
     }
 

@@ -28,6 +28,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JB" type="add" importance="high">
+        Add support for named destinations in PDF.
+      </action>
       <action context="Code" dev="JM" type="fix">
         Fixed a problem with keep-with-next on table-rows. Once a keep-with-next was set
         inside a table, the FO following the table would always be glued to the previous table.
