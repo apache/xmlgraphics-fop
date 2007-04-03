@@ -34,6 +34,7 @@ import org.apache.fop.area.Trait;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.BlockContainer;
 import org.apache.fop.fo.properties.CommonAbsolutePosition;
+import org.apache.fop.layoutmgr.inline.InlineLayoutManager;
 import org.apache.fop.area.CTM;
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.datatypes.Length;
@@ -989,9 +990,12 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
      */
     public boolean mustKeepTogether() {
         //TODO Keeps will have to be more sophisticated sooner or later
-        return ((BlockLevelLayoutManager)getParent()).mustKeepTogether() 
-                || !getBlockContainerFO().getKeepTogether().getWithinPage().isAuto()
-                || !getBlockContainerFO().getKeepTogether().getWithinColumn().isAuto();
+        return (!getBlockContainerFO().getKeepTogether().getWithinPage().isAuto()
+                || !getBlockContainerFO().getKeepTogether().getWithinColumn().isAuto()
+                || (getParent() instanceof BlockLevelLayoutManager
+                    && ((BlockLevelLayoutManager) getParent()).mustKeepTogether())
+                || (getParent() instanceof InlineLayoutManager
+                    && ((InlineLayoutManager) getParent()).mustKeepTogether()));
     }
 
     /**
