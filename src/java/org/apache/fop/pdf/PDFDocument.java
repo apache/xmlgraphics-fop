@@ -759,7 +759,7 @@ public class PDFDocument {
     /**
      * Sets whether the document has named destinations.
      *
-     * @param whether the document has named destinations.
+     * @param hasDestinations whether the document has named destinations.
      */
     public void setHasDestinations(boolean hasDestinations) {
         this.hasDestinations = hasDestinations;

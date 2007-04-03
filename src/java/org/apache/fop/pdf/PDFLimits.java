@@ -45,7 +45,7 @@ public class PDFLimits extends PDFObject {
     public String toPDFString() {
         String[] idRefs = new String[destinationList.size()];
         String kidsString = "";
-        for(int i = 0; i < destinationList.size(); i++) {
+        for (int i = 0; i < destinationList.size(); i++) {
             PDFDestination dest = (PDFDestination)destinationList.get(i);
             idRefs[i] = dest.getIDRef();
             kidsString += dest.referencePDF();
