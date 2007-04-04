@@ -22,9 +22,7 @@ package org.apache.fop.fo.extensions.destination;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.PropertyList;
-import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.pagination.Root;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 
@@ -34,10 +32,10 @@ import org.xml.sax.Locator;
 /**
  * Class for named destinations in PDF.
  */
-public class Destination extends FObj {
+public class Destination extends FONode {
 
-    String internalDestination;
-    Root root;
+    private String internalDestination;
+    private Root root;
 
     /**
      * Constructs a Destination object (called by Maker).
@@ -50,15 +48,17 @@ public class Destination extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * @see org.apache.fop.fo.FONode#processNode(java.lang.String, org.xml.sax.Locator, 
+     *          org.xml.sax.Attributes, org.apache.fop.fo.PropertyList)
      */
-    public void bind(PropertyList pList) throws FOPException {
-        internalDestination = pList.get(PR_INTERNAL_DESTINATION).getString();
-        if (internalDestination.length() == 0) {
+    public void processNode(String elementName, Locator locator, 
+            Attributes attlist, PropertyList pList) throws FOPException {
+        internalDestination = attlist.getValue("internal-destination");
+        if (internalDestination == null || internalDestination.length() == 0) {
             attributeError("Missing attribute:  internal-destination must be specified.");
         }
     }
-
+    
     /**
      * @see org.apache.fop.fo.FONode#endOfNode
      */
@@ -75,6 +75,10 @@ public class Destination extends FObj {
             invalidChildError(loc, nsURI, localName);
     }
 
+    /**
+     * Returns the internal destination (an reference of the id property of any FO).
+     * @return the internal destination
+     */
     public String getInternalDestination() {
         return internalDestination;
     }

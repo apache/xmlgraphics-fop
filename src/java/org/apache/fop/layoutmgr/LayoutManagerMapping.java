@@ -28,6 +28,7 @@ import java.util.Iterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.FObjMixed;
@@ -140,7 +141,6 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
         makers.put(TableHeader.class, new Maker());
         makers.put(Wrapper.class, new WrapperLayoutManagerMaker());
         makers.put(Title.class, new InlineLayoutManagerMaker());
-        makers.put(Destination.class, new Maker());
     }
 
     /**
@@ -149,7 +149,13 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     public void makeLayoutManagers(FONode node, List lms) {
         Maker maker = (Maker) makers.get(node.getClass());
         if (maker == null) {
-            log.error("No LayoutManager maker for class " + node.getClass());
+            if (FOElementMapping.URI.equals(node.getNamespaceURI())) {
+                log.error("No LayoutManager maker for class " + node.getClass());
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("Skipping the creation of a layout manager for " + node.getClass());
+                }
+            }
         } else {
             maker.make(node, lms);
         }
