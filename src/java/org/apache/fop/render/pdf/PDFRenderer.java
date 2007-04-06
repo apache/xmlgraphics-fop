@@ -517,7 +517,11 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
             PDFDestination destination = pdfDoc.getFactory().makeDestination((DestinationData) odi);
             PageViewport pv = destination.getPageViewport();
             String dest = (String)pageReferences.get(pv.getKey());
-            destination.setGoToReference(dest);
+            Rectangle2D bounds = pv.getViewArea();
+            double h = bounds.getHeight();
+            float yoffset = (float)h / 1000f;
+            String gtRef = pdfDoc.getFactory().getGoToReference(dest, yoffset);
+            destination.setGoToReference(gtRef);
         }
         // render Bookmark-Tree
         else if (odi instanceof BookmarkData) {
