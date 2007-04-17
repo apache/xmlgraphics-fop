@@ -46,6 +46,8 @@ public class TableStepper {
     private TableContentLayoutManager tclm;
     
     private EffRow[] rowGroup;
+    /** Number of columns in the row group. */
+    private int columnCount;
     private int totalHeight;
     private int activeRowIndex;
     /**
@@ -100,6 +102,7 @@ public class TableStepper {
      * @param columnCount number of columns the row group has 
      */
     private void setup(int columnCount) {
+        this.columnCount = columnCount;
         this.activeRowIndex = 0;
         elementLists = new List[columnCount];
         startRow = new int[columnCount];
@@ -121,7 +124,7 @@ public class TableStepper {
     }
     
     private boolean isBreakCondition() {
-        for (int i = 0; i < forcedBreaks.length; i++) {
+        for (int i = 0; i < columnCount; i++) {
             if (forcedBreaks[i]) {
                 return true;
             }
@@ -171,7 +174,7 @@ public class TableStepper {
     private int getMaxRemainingHeight() {
         int maxW = 0;
         if (!rowBacktrackForLastStep) {
-            for (int i = 0; i < widths.length; i++) {
+            for (int i = 0; i < columnCount; i++) {
                 if (elementLists[i] == null) {
                     continue;
                 }
@@ -264,8 +267,6 @@ public class TableStepper {
             startRow[column] = activeRowIndex;
             keepWithNextSignals[column] = false;
             forcedBreaks[column] = false;
-        } else {
-            log.trace("TableStepper.setupElementList: not empty nor primary grid unit");
         }
     }
 
@@ -302,7 +303,7 @@ public class TableStepper {
         int addedBoxLen = 0;
         TableContentPosition lastTCPos = null;
         LinkedList returnList = new LinkedList();
-        while ((step = getNextStep(laststep)) >= 0) {
+        while ((step = getNextStep()) >= 0) {
             int normalRow = activeRowIndex;
             if (rowBacktrackForLastStep) {
                 //Even though we've already switched to the next row, we have to 
@@ -316,7 +317,7 @@ public class TableStepper {
 
             //Put all involved grid units into a list
             List gridUnitParts = new java.util.ArrayList(maxColumnCount);
-            for (int i = 0; i < start.length; i++) {
+            for (int i = 0; i < columnCount; i++) {
                 if (end[i] >= start[i]) {
                     PrimaryGridUnit pgu = rowGroup[startRow[i]].getGridUnit(i).getPrimary();
                     if (start[i] == 0 && end[i] == 0 
@@ -395,7 +396,7 @@ public class TableStepper {
             int p = 0;
             boolean allCellsHaveContributed = true;
             signalKeepWithNext = false;
-            for (int i = 0; i < start.length; i++) {
+            for (int i = 0; i < columnCount; i++) {
                 if (start[i] == 0 && end[i] < 0 && elementLists[i] != null) {
                     allCellsHaveContributed = false;
                 }
@@ -455,10 +456,9 @@ public class TableStepper {
     /**
      * Finds the smallest increment leading to the next legal break inside the row-group.
      * 
-     * @param lastStep used for log only
      * @return the size of the increment, -1 if no next step is available (end of row-group reached)
      */
-    private int getNextStep(int lastStep) {
+    private int getNextStep() {
         log.trace("Entering getNextStep");
         this.lastMaxPenaltyLength = 0;
         //Check for forced break conditions
@@ -467,14 +467,14 @@ public class TableStepper {
             return -1;
         }*/
         
-        int[] backupWidths = new int[start.length];
-        System.arraycopy(widths, 0, backupWidths, 0, backupWidths.length);
+        int[] backupWidths = new int[columnCount];
+        System.arraycopy(widths, 0, backupWidths, 0, columnCount);
 
         //set starting points
         // We assume that the current grid row is finished. If this is not the case this
         // boolean will be reset (see below)
         boolean currentGridRowFinished = true;
-        for (int i = 0; i < start.length; i++) {
+        for (int i = 0; i < columnCount; i++) {
             // null element lists probably correspond to empty cells
             if (elementLists[i] == null) {
                 continue;
@@ -509,7 +509,7 @@ public class TableStepper {
                     log.debug("===> new row: " + activeRowIndex);
                 }
                 initializeElementLists();
-                for (int i = 0; i < backupWidths.length; i++) {
+                for (int i = 0; i < columnCount; i++) {
                     if (end[i] < 0) {
                         backupWidths[i] = 0;
                     }
@@ -525,7 +525,7 @@ public class TableStepper {
 
         //Get next possible sequence for each cell
         int seqCount = 0;
-        for (int i = 0; i < start.length; i++) {
+        for (int i = 0; i < columnCount; i++) {
             if (elementLists[i] == null) {
                 continue;
             }
@@ -595,7 +595,7 @@ public class TableStepper {
         //Determine smallest possible step
         int minStep = Integer.MAX_VALUE;
         StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < widths.length; i++) {
+        for (int i = 0; i < columnCount; i++) {
             baseWidth[i] = 0;
             for (int prevRow = 0; prevRow < startRow[i]; prevRow++) {
                 baseWidth[i] += rowGroup[prevRow].getHeight().opt;
@@ -610,12 +610,12 @@ public class TableStepper {
             }
         }
         if (log.isDebugEnabled()) {
-            log.debug("candidate steps: " + sb + " lastStep=" + lastStep);
+            log.debug("candidate steps: " + sb);
         }
 
         //Check for constellations that would result in overlapping borders
         /*
-        for (int i = 0; i < widths.length; i++) {
+        for (int i = 0; i < columnCount; i++) {
             
         }*/
         
@@ -623,7 +623,7 @@ public class TableStepper {
         //See http://people.apache.org/~jeremias/fop/NextStepAlgoNotes.pdf
         rowBacktrackForLastStep = false;
         skippedStep = false;
-        for (int i = 0; i < widths.length; i++) {
+        for (int i = 0; i < columnCount; i++) {
             int len = baseWidth[i] + widths[i];
             if (len > minStep) {
                 widths[i] = backupWidths[i];
@@ -651,7 +651,7 @@ public class TableStepper {
         }
         if (log.isDebugEnabled()) {
             /*StringBuffer*/ sb = new StringBuffer("[col nb: start-end(width)] ");
-            for (int i = 0; i < widths.length; i++) {
+            for (int i = 0; i < columnCount; i++) {
                 if (end[i] >= start[i]) {
                     sb.append(i + ": " + start[i] + "-" + end[i] + "(" + widths[i] + "), ");
                 } else {
