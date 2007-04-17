@@ -32,9 +32,9 @@ public class DestinationComparator implements java.util.Comparator {
 
     public int compare (Object obj1, Object obj2) {
         if (obj1 instanceof PDFDestination && obj2 instanceof PDFDestination) {
-        PDFDestination dest1 = (PDFDestination)obj1;
-        PDFDestination dest2 = (PDFDestination)obj2;
-        return dest1.getIDRef().compareTo(dest2.getIDRef());
+            PDFDestination dest1 = (PDFDestination)obj1;
+            PDFDestination dest2 = (PDFDestination)obj2;
+            return dest1.getIDRef().compareTo(dest2.getIDRef());
         }
         return 0;
     }
