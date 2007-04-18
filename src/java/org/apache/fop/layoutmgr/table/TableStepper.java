@@ -516,7 +516,7 @@ public class TableStepper {
         }
 
         //Get next possible sequence for each cell
-        int seqCount = 0;
+        boolean stepFound = false;
         for (int i = 0; i < columnCount; i++) {
             if (elementLists[i] == null) {
                 continue;
@@ -554,7 +554,7 @@ public class TableStepper {
                 }
                 widths[i] = backupWidths[i];
             } else {
-                seqCount++;
+                stepFound = true;
             }
             //log.debug("part " + start[i] + "-" + end[i] + " " + widths[i]);
             if (end[i] + 1 >= elementLists[i].size()) {
@@ -580,7 +580,7 @@ public class TableStepper {
                 log.trace("column " + (i+1) + ": padding before=" + paddingBefore[i] + " after=" + paddingAfter[i]);
             }
         }
-        if (seqCount == 0) {
+        if (stepFound) {
             return -1;
         }
 
