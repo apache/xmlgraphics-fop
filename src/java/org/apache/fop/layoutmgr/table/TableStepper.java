@@ -85,7 +85,7 @@ public class TableStepper {
     private boolean rowBacktrackForLastStep;
     private boolean skippedStep;
     private boolean[] keepWithNextSignals;
-    private boolean[] forcedBreaks;
+    private boolean forcedBreak;
     private int lastMaxPenaltyLength;
     
     /**
@@ -115,21 +115,15 @@ public class TableStepper {
         borderAfter = new int[columnCount];
         paddingAfter = new int[columnCount];
         keepWithNextSignals = new boolean[columnCount];
-        forcedBreaks = new boolean[columnCount];
         Arrays.fill(end, -1);
     }
     
     private void clearBreakCondition() {
-        Arrays.fill(forcedBreaks, false);
+        forcedBreak = false;
     }
     
     private boolean isBreakCondition() {
-        for (int i = 0; i < columnCount; i++) {
-            if (forcedBreaks[i]) {
-                return true;
-            }
-        }
-        return false;
+        return forcedBreak;
     }
     
     /**
@@ -220,7 +214,6 @@ public class TableStepper {
             widths[column] = 0;
             startRow[column] = activeRowIndex;
             keepWithNextSignals[column] = false;
-            forcedBreaks[column] = false;
         } else if (gu.isPrimary()) {
             PrimaryGridUnit pgu = (PrimaryGridUnit)gu;
             boolean makeBoxForWholeRow = false;
@@ -266,7 +259,6 @@ public class TableStepper {
             widths[column] = 0;
             startRow[column] = activeRowIndex;
             keepWithNextSignals[column] = false;
-            forcedBreaks[column] = false;
         }
     }
 
@@ -536,7 +528,7 @@ public class TableStepper {
                     this.lastMaxPenaltyLength = Math.max(this.lastMaxPenaltyLength, el.getW());
                     if (el.getP() <= -KnuthElement.INFINITE) {
                         log.debug("FORCED break encountered!");
-                        forcedBreaks[i] = true;
+                        forcedBreak = true;
                         break;
                     } else if (el.getP() < KnuthElement.INFINITE) {
                         //First legal break point
