@@ -463,57 +463,7 @@ public class TableStepper {
         System.arraycopy(widths, 0, backupWidths, 0, columnCount);
 
         //set starting points
-        // We assume that the current grid row is finished. If this is not the case this
-        // boolean will be reset (see below)
-        boolean currentGridRowFinished = true;
-        for (int i = 0; i < columnCount; i++) {
-            // null element lists probably correspond to empty cells
-            if (elementLists[i] == null) {
-                continue;
-            }
-            if (end[i] < elementLists[i].size()) {
-                start[i] = end[i] + 1;
-                if (end[i] + 1 < elementLists[i].size() 
-                        && getActiveGridUnit(i).isLastGridUnitRowSpan()) {
-                    // Ok, so this grid unit is the last in the row-spanning direction and
-                    // there are still unhandled Knuth elements. They /will/ have to be
-                    // put on the current grid row, which means that this row isn't
-                    // finished yet
-                    currentGridRowFinished = false;
-                }
-            } else {
-                throw new IllegalStateException("end[i] overflows elementList[i].size()");
-//                start[i] = -1; //end of list reached
-//                end[i] = -1;
-            }
-        }
-
-        if (currentGridRowFinished) {
-            if (activeRowIndex < rowGroup.length - 1) {
-                TableRow rowFO = getActiveRow().getTableRow();
-                if (rowFO != null && rowFO.getBreakAfter() != Constants.EN_AUTO) {
-                    log.warn(FONode.decorateWithContextInfo(
-                            "break-after ignored on table-row because of row spanning "
-                            + "in progress (See XSL 1.0, 7.19.1)", rowFO));
-                }
-                activeRowIndex++;
-                if (log.isDebugEnabled()) {
-                    log.debug("===> new row: " + activeRowIndex);
-                }
-                initializeElementLists();
-                for (int i = 0; i < columnCount; i++) {
-                    if (end[i] < 0) {
-                        backupWidths[i] = 0;
-                    }
-                }
-                rowFO = getActiveRow().getTableRow();
-                if (rowFO != null && rowFO.getBreakBefore() != Constants.EN_AUTO) {
-                    log.warn(FONode.decorateWithContextInfo(
-                            "break-before ignored on table-row because of row spanning "
-                            + "in progress (See XSL 1.0, 7.19.2)", rowFO));
-                }
-            }
-        }
+        goToNextRowIfCurrentFinished(backupWidths);
 
         //Get next possible sequence for each cell
         boolean stepFound = false;
@@ -655,8 +605,61 @@ public class TableStepper {
 
         return minStep;
     }
-    
-    
+
+    private void goToNextRowIfCurrentFinished(int[] backupWidths) {
+        // We assume that the current grid row is finished. If this is not the case this
+        // boolean will be reset (see below)
+        boolean currentGridRowFinished = true;
+        for (int i = 0; i < columnCount; i++) {
+            // null element lists probably correspond to empty cells
+            if (elementLists[i] == null) {
+                continue;
+            }
+            if (end[i] < elementLists[i].size()) {
+                start[i] = end[i] + 1;
+                if (end[i] + 1 < elementLists[i].size() 
+                        && getActiveGridUnit(i).isLastGridUnitRowSpan()) {
+                    // Ok, so this grid unit is the last in the row-spanning direction and
+                    // there are still unhandled Knuth elements. They /will/ have to be
+                    // put on the current grid row, which means that this row isn't
+                    // finished yet
+                    currentGridRowFinished = false;
+                }
+            } else {
+                throw new IllegalStateException("end[i] overflows elementList[i].size()");
+//                start[i] = -1; //end of list reached
+//                end[i] = -1;
+            }
+        }
+
+        if (currentGridRowFinished) {
+            if (activeRowIndex < rowGroup.length - 1) {
+                TableRow rowFO = getActiveRow().getTableRow();
+                if (rowFO != null && rowFO.getBreakAfter() != Constants.EN_AUTO) {
+                    log.warn(FONode.decorateWithContextInfo(
+                            "break-after ignored on table-row because of row spanning "
+                            + "in progress (See XSL 1.0, 7.19.1)", rowFO));
+                }
+                activeRowIndex++;
+                if (log.isDebugEnabled()) {
+                    log.debug("===> new row: " + activeRowIndex);
+                }
+                initializeElementLists();
+                for (int i = 0; i < columnCount; i++) {
+                    if (end[i] < 0) {
+                        backupWidths[i] = 0;
+                    }
+                }
+                rowFO = getActiveRow().getTableRow();
+                if (rowFO != null && rowFO.getBreakBefore() != Constants.EN_AUTO) {
+                    log.warn(FONode.decorateWithContextInfo(
+                            "break-before ignored on table-row because of row spanning "
+                            + "in progress (See XSL 1.0, 7.19.2)", rowFO));
+                }
+            }
+        }
+    }
+
     /** @return true if the table uses the separate border model. */
     private boolean isSeparateBorderModel() {
         return getTableLM().getTable().isSeparateBorderModel();
