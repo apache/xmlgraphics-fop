@@ -85,7 +85,6 @@ public class TableStepper {
     private boolean rowBacktrackForLastStep;
     private boolean skippedStep;
     private boolean[] keepWithNextSignals;
-    private boolean forcedBreak;
     private int lastMaxPenaltyLength;
     
     /**
@@ -117,15 +116,7 @@ public class TableStepper {
         keepWithNextSignals = new boolean[columnCount];
         Arrays.fill(end, -1);
     }
-    
-    private void clearBreakCondition() {
-        forcedBreak = false;
-    }
-    
-    private boolean isBreakCondition() {
-        return forcedBreak;
-    }
-    
+
     /**
      * Returns the row currently being processed.
      *
@@ -307,6 +298,7 @@ public class TableStepper {
             int boxLen = step - addedBoxLen - penaltyLen;
             addedBoxLen += boxLen;
 
+            boolean forcedBreak = false;
             //Put all involved grid units into a list
             List gridUnitParts = new java.util.ArrayList(maxColumnCount);
             for (int i = 0; i < columnCount; i++) {
@@ -320,6 +312,9 @@ public class TableStepper {
                                 0, pgu.getElements().size() - 1));
                     } else {
                         gridUnitParts.add(new GridUnitPart(pgu, start[i], end[i]));
+                        if (((KnuthElement)elementLists[i].get(end[i])).isForcedBreak()) {
+                            forcedBreak = true;
+                        }
                     }
                     if (end[i] + 1 == elementLists[i].size()) {
                         if (pgu.getFlag(GridUnit.KEEP_WITH_NEXT_PENDING)) {
@@ -408,13 +403,12 @@ public class TableStepper {
                 //Need to avoid breaking because borders and/or paddding from other columns would
                 //not fit in the available space (see getNextStep())
             }
-            if (isBreakCondition()) {
+            if (forcedBreak) {
                 if (skippedStep) {
                     log.error("This is a conflict situation. The output may be wrong." 
                             + " Please send your FO file to fop-dev@xmlgraphics.apache.org!");
                 }
                 p = -KnuthPenalty.INFINITE; //Overrides any keeps (see 4.8 in XSL 1.0)
-                clearBreakCondition();
             }
             returnList.add(new BreakElement(penaltyPos, effPenaltyLen, p, -1, context));
 
@@ -435,9 +429,6 @@ public class TableStepper {
             //Last step signalled a keep-with-next. Since the last penalty will be removed,
             //we have to signal the still pending last keep-with-next using the LayoutContext.
             context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING);
-        }
-        if (isBreakCondition()) {
-            ((BreakElement)returnList.getLast()).setPenaltyValue(-KnuthPenalty.INFINITE);
         }
         if (lastTCPos != null) {
             lastTCPos.setFlag(TableContentPosition.LAST_IN_ROWGROUP, true);
@@ -478,7 +469,6 @@ public class TableStepper {
                     this.lastMaxPenaltyLength = Math.max(this.lastMaxPenaltyLength, el.getW());
                     if (el.getP() <= -KnuthElement.INFINITE) {
                         log.debug("FORCED break encountered!");
-                        forcedBreak = true;
                         break;
                     } else if (el.getP() < KnuthElement.INFINITE) {
                         //First legal break point
