@@ -580,7 +580,7 @@ public class TableStepper {
                 log.trace("column " + (i+1) + ": padding before=" + paddingBefore[i] + " after=" + paddingAfter[i]);
             }
         }
-        if (stepFound) {
+        if (!stepFound) {
             return -1;
         }
 
