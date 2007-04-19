@@ -380,6 +380,8 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
                         primaryGridUnit.getFlag(GridUnit.IN_LAST_COLUMN)};
                 TraitSetter.addCollapsingBorders(curBlockArea,
                         primaryGridUnit.getBorders(), outer, this);
+                TraitSetter.addPadding(curBlockArea, primaryGridUnit.getBorders(),
+                        false, false, false, false, this);
             } else {
                 boolean[] outer = new boolean[4];
                 int dy = yoffset;
