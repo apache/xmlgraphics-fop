@@ -390,38 +390,36 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
                     int dx = xoffset;
                     for (int x = 0; x < gridUnits.length; x++) {
                         GridUnit gu = gridUnits[x];
-                        if (!gu.hasBorders()) {
-                            continue;
+                        if (gu.hasBorders()) {
+                            //Blocks for painting grid unit borders
+                            Block block = new Block();
+                            block.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
+                            block.setPositioning(Block.ABSOLUTE);
+    
+                            int bpd = spannedGridRowHeights[y - startRow];
+                            bpd -= gu.getBorders().getBorderBeforeWidth(false) / 2;
+                            bpd -= gu.getBorders().getBorderAfterWidth(false) / 2;
+                            block.setBPD(bpd);
+                            if (log.isTraceEnabled()) {
+                                log.trace("pgu: " + primaryGridUnit + "; gu: " + gu + "; yoffset: "
+                                        + (dy - gu.getBorders().getBorderBeforeWidth(false) / 2)
+                                        + "; bpd: " + bpd);
+                            }
+                            int ipd = gu.getColumn().getColumnWidth().getValue(
+                                    (PercentBaseContext) getParent());
+                            int borderStartWidth = gu.getBorders().getBorderStartWidth(false) / 2;
+                            ipd -= borderStartWidth;
+                            ipd -= gu.getBorders().getBorderEndWidth(false) / 2;
+                            block.setIPD(ipd);
+                            block.setXOffset(dx + borderStartWidth);
+                            block.setYOffset(dy - gu.getBorders().getBorderBeforeWidth(false) / 2);
+                            outer[0] = gu.getFlag(GridUnit.FIRST_IN_TABLE);
+                            outer[1] = gu.getFlag(GridUnit.LAST_IN_TABLE);
+                            outer[2] = gu.getFlag(GridUnit.IN_FIRST_COLUMN);
+                            outer[3] = gu.getFlag(GridUnit.IN_LAST_COLUMN);
+                            TraitSetter.addCollapsingBorders(block, gu.getBorders(), outer, this);
+                            parentLM.addChildArea(block);
                         }
-
-                        //Blocks for painting grid unit borders
-                        Block block = new Block();
-                        block.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
-                        block.setPositioning(Block.ABSOLUTE);
-
-                        int bpd = spannedGridRowHeights[y - startRow];
-                        bpd -= gu.getBorders().getBorderBeforeWidth(false) / 2;
-                        bpd -= gu.getBorders().getBorderAfterWidth(false) / 2;
-                        block.setBPD(bpd);
-                        if (log.isTraceEnabled()) {
-                            log.trace("pgu: " + primaryGridUnit + "; gu: " + gu + "; yoffset: "
-                                    + (dy - gu.getBorders().getBorderBeforeWidth(false) / 2)
-                                    + "; bpd: " + bpd);
-                        }
-                        int ipd = gu.getColumn().getColumnWidth().getValue(
-                                (PercentBaseContext) getParent());
-                        int borderStartWidth = gu.getBorders().getBorderStartWidth(false) / 2;
-                        ipd -= borderStartWidth;
-                        ipd -= gu.getBorders().getBorderEndWidth(false) / 2;
-                        block.setIPD(ipd);
-                        block.setXOffset(dx + borderStartWidth);
-                        block.setYOffset(dy - gu.getBorders().getBorderBeforeWidth(false) / 2);
-                        outer[0] = gu.getFlag(GridUnit.FIRST_IN_TABLE);
-                        outer[1] = gu.getFlag(GridUnit.LAST_IN_TABLE);
-                        outer[2] = gu.getFlag(GridUnit.IN_FIRST_COLUMN);
-                        outer[3] = gu.getFlag(GridUnit.IN_LAST_COLUMN);
-                        TraitSetter.addCollapsingBorders(block, gu.getBorders(), outer, this);
-                        parentLM.addChildArea(block);
                         dx += gu.getColumn().getColumnWidth().getValue(
                                 (PercentBaseContext) getParent());
                     }
