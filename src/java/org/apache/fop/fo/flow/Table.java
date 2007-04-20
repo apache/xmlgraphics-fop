@@ -136,13 +136,6 @@ public class Table extends TableFObj {
                     + " behavior on fo:table. Falling back to \"auto\"");
             // Anyway, the bpd of a table is not used by the layout code
         }
-        if (borderCollapse != EN_SEPARATE) {
-            //TODO Remove once the collapsing border is at least marginally working.
-            borderCollapse = EN_SEPARATE;
-            log.debug("A table has been forced to use the separate border model"
-                    + " (border-collapse=\"separate\") as the collapsing border model"
-                    + " is not implemented, yet.");
-        }
         if (tableLayout == EN_AUTO) {
             attributeWarning("table-layout=\"auto\" is currently not supported by FOP");
         }

@@ -28,6 +28,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="VH" type="add" importance="high" fixes-bug="36934">
+        Add support for the collapsing-border model in tables.
+      </action>
       <action context="Code" dev="JB" type="add" importance="high">
         Add support for named destinations in PDF.
       </action>
