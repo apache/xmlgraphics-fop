@@ -101,6 +101,8 @@ public class AreaAdditionUtil {
 
         StackingIter childPosIter = new StackingIter(positionList.listIterator());
         while ((childLM = childPosIter.getNextChildLM()) != null) {
+            // TODO vh: the test above might be problematic in some cases. See comment in
+            // the TableCellLM.getNextKnuthElements method
             // Add the block areas to Area
             lc.setFlags(LayoutContext.FIRST_AREA, childLM == firstLM);
             lc.setFlags(LayoutContext.LAST_AREA, childLM == lastLM);
