@@ -34,6 +34,7 @@ import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthGlue;
+import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.PositionIterator;
@@ -175,77 +176,54 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
                 childLC.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING, false);
             }
 
-            if (returnedList.size() == 1
-                    && ((ListElement)returnedList.getFirst()).isForcedBreak()) {
-                // a descendant of this block has break-before
-                if (returnList.size() == 0) {
-                    // the first child (or its first child ...) has
-                    // break-before;
-                    // all this block, including space before, will be put in
-                    // the
-                    // following page
+            if (prevLM != null) {
+                // there is a block handled by prevLM
+                // before the one handled by curLM
+                if (mustKeepTogether()
+                        || context.isKeepWithNextPending()
+                        || childLC.isKeepWithPreviousPending()) {
+                    //Clear keep pending flag
+                    context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, false);
+                    childLC.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING, false);
+                    // add an infinite penalty to forbid a break between
+                    // blocks
+                    contentList.add(new BreakElement(
+                            new Position(this), KnuthElement.INFINITE, context));
+                    //contentList.add(new KnuthPenalty(0,
+                    //        KnuthElement.INFINITE, false,
+                    //        new Position(this), false));
+                } else if (!(((ListElement) contentList.getLast()).isGlue()
+                        || (((ListElement)contentList.getLast()).isPenalty()
+                                && ((KnuthPenalty)contentList.getLast()).getP() < KnuthElement.INFINITE)
+                                || (contentList.getLast() instanceof BreakElement
+                                        && ((BreakElement)contentList.getLast()).getPenaltyValue() < KnuthElement.INFINITE))) {
+                    // TODO vh: this is hacky
+                    // The getNextKnuthElements method of TableCellLM must not be called
+                    // twice, otherwise some settings like indents or borders will be
+                    // counted several times and lead to a wrong output. Anyway the
+                    // getNextKnuthElements methods should be called only once eventually
+                    // (i.e., when multi-threading the code), even when there are forced
+                    // breaks.
+                    // If we add a break possibility after a forced break the
+                    // AreaAdditionUtil.addAreas method will act on a sequence starting
+                    // with a SpaceResolver.SpaceHandlingBreakPosition element, having no
+                    // LM associated to it. Thus it will stop early instead of adding
+                    // areas for following Positions. The above test aims at preventing
+                    // such a situation from occuring. add a null penalty to allow a break
+                    // between blocks
+                    contentList.add(new BreakElement(
+                            new Position(this), 0, context));
+                    //contentList.add(new KnuthPenalty(0, 0, false,
+                    //        new Position(this), false));
+                } else {
+                    // the last element in contentList is a feasible breakpoint, there is
+                    // no need to add a penalty
                 }
-                contentList.addAll(returnedList);
-
-                // "wrap" the Position inside each element
-                // moving the elements from contentList to returnList
-                returnedList = new LinkedList();
-                wrapPositionElements(contentList, returnList);
-
-                //Space resolution
-                SpaceResolver.resolveElementList(returnList);
-
-                return returnList;
-            } else {
-                if (prevLM != null) {
-                    // there is a block handled by prevLM
-                    // before the one handled by curLM
-                    if (mustKeepTogether()
-                            || context.isKeepWithNextPending()
-                            || childLC.isKeepWithPreviousPending()) {
-                        //Clear keep pending flag
-                        context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, false);
-                        childLC.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING, false);
-                        // add an infinite penalty to forbid a break between
-                        // blocks
-                        contentList.add(new BreakElement(
-                                new Position(this), KnuthElement.INFINITE, context));
-                        //contentList.add(new KnuthPenalty(0,
-                        //        KnuthElement.INFINITE, false,
-                        //        new Position(this), false));
-                    } else if (!((ListElement) contentList.getLast()).isGlue()) {
-                        // add a null penalty to allow a break between blocks
-                        contentList.add(new BreakElement(
-                                new Position(this), 0, context));
-                        //contentList.add(new KnuthPenalty(0, 0, false,
-                        //        new Position(this), false));
-                    } else {
-                        // the last element in contentList is a glue;
-                        // it is a feasible breakpoint, there is no need to add
-                        // a penalty
-                    }
-                }
-                contentList.addAll(returnedList);
-                if (returnedList.size() == 0) {
-                    //Avoid NoSuchElementException below (happens with empty blocks)
-                    continue;
-                }
-                if (((ListElement)returnedList.getLast()).isForcedBreak()) {
-                    // a descendant of this block has break-after
-                    if (curLM.isFinished()) {
-                        // there is no other content in this block;
-                        // it's useless to add space after before a page break
-                        setFinished(true);
-                    }
-
-                    returnedList = new LinkedList();
-                    wrapPositionElements(contentList, returnList);
-
-                    //Space resolution
-                    SpaceResolver.resolveElementList(returnList);
-
-                    return returnList;
-                }
+            }
+            contentList.addAll(returnedList);
+            if (returnedList.size() == 0) {
+                //Avoid NoSuchElementException below (happens with empty blocks)
+                continue;
             }
             if (childLC.isKeepWithNextPending()) {
                 //Clear and propagate
@@ -625,4 +603,3 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
     }
 
 }
-
