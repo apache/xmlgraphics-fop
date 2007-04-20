@@ -28,7 +28,7 @@
     <asfext:pmc rdf:resource="http://xmlgraphics.apache.org" />
     <shortdesc>The Apache Foundation's XSL Formatting Objects (XSL-FO) implementation.</shortdesc>
     <description>FOP (Formatting Objects Processor) is the world's first print formatter driven by XSL formatting objects (XSL-FO) and the world's first output independent formatter. It is a Java application that reads a formatting object (FO) tree and renders the resulting pages to a specified output. Output formats  currently supported include PDF, PCL, PS, SVG, XML (area tree representation), Print, AWT, MIF and TXT. The primary output target is PDF.</description>
-    <bug-database rdf:resource="http://issues.apache.org/bugzilla/buglist.cgi?product=Fop&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&order=bugs.bug_id" />
+    <bug-database rdf:resource="http://issues.apache.org/bugzilla/buglist.cgi?product=Fop&amp;bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;order=bugs.bug_id" />
     <mailing-list rdf:resource="http://xmlgraphics.apache.org/fop/maillist.html" />
     <download-page rdf:resource="http://xmlgraphics.apache.org/fop/download.html" />
     <programming-language>Java</programming-language>
