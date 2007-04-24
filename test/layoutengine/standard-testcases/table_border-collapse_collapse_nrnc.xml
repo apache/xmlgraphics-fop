@@ -260,6 +260,8 @@
     <eval expected="(solid,#ffa500,10000,collapse-outer)" xpath="//flow/block[2]/block[4]/@border-end"/>
 
     <!-- table 2 -->
+    <eval expected="400000" xpath="//flow/block[4]/@ipd"/>
+    <eval expected="400000" xpath="//flow/block[4]/@ipda"/>
     <eval expected="198100" xpath="//flow/block[4]/@bpd"/>
     <eval expected="198100" xpath="//flow/block[4]/@bpda"/>
     <!-- row 1 cell 1 -->
