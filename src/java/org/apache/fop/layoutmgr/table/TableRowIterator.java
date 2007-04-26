@@ -212,13 +212,6 @@ public class TableRowIterator {
     }
 
     /**
-     * Sets the iterator to the previous row.
-     */
-    public void backToPreviousRow() {
-        iteratorIndex--;
-    }
-
-    /**
      * Returns the first effective row.
      * @return the requested effective row.
      */
