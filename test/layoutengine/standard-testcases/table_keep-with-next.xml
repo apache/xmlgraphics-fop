@@ -65,6 +65,8 @@
     </fo:root>
   </fo>
   <checks>
+    <!-- Two pages -->
+    <eval expected="2" xpath="count(//pageViewport)"/>
     <!-- Only one line on the first page -->
     <eval expected="1" xpath="count(//pageViewport[@nr=1]//flow/block)"/>
     <eval expected="First line" xpath="//pageViewport[@nr=1]//flow/block[1]/lineArea/text[1]"/>
