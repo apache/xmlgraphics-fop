@@ -323,6 +323,12 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         }
         addKnuthElementsForSpaceAfter(returnList, alignment);
         addKnuthElementsForBreakAfter(returnList, context);
+        if (mustKeepWithNext()) {
+            context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING);
+        }
+        if (mustKeepWithPrevious()) {
+            context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
+        }
         setFinished(true);
         resetSpaces();
         return returnList;
