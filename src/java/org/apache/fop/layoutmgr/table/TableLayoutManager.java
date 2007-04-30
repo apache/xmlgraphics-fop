@@ -29,6 +29,7 @@ import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.ListElement;
+import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.RelSide;
@@ -248,7 +249,34 @@ public class TableLayoutManager extends BlockStackingLayoutManager
             log.debug("TableContentLM signals pending keep-with-previous");
             context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
         }
-        
+
+        // Check if the table's content starts/ends with a forced break
+        // TODO this is hacky and will need to be handled better eventually
+        if (contentKnuthElements.size() > 0) {
+            ListElement element = (ListElement)contentKnuthElements.getFirst();
+            if (element.isForcedBreak()) {
+                // The first row of the table(-body), or (the content of) one of its cells
+                // has a forced break-before
+                int breakBeforeTable = ((Table) fobj).getBreakBefore();
+                if (breakBeforeTable == EN_PAGE
+                        || breakBeforeTable == EN_COLUMN 
+                        || breakBeforeTable == EN_EVEN_PAGE 
+                        || breakBeforeTable == EN_ODD_PAGE) {
+                    // There is already a forced break before the table; remove this one
+                    // to prevent a double break
+                    contentKnuthElements.removeFirst();
+                } else {
+                    element.setPosition(new NonLeafPosition(this, null));
+                }
+            }
+            element = (ListElement)contentKnuthElements.getLast();
+            if (element.isForcedBreak()) {
+                // The last row of the table(-body), or (the content of) one of its cells
+                // has a forced break-after
+                element.setPosition(new NonLeafPosition(this, null));
+            }
+        }
+
         //Set index values on elements coming from the content LM
         Iterator iter = contentKnuthElements.iterator();
         while (iter.hasNext()) {
@@ -256,67 +284,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
             notifyPos(el.getPosition());
         }
         log.debug(contentKnuthElements);
-        
-        if (contentKnuthElements.size() == 1
-                && ((ListElement)contentKnuthElements.getFirst()).isForcedBreak()) {
-            // a descendant of this block has break-before
-            if (returnList.size() == 0) {
-                // the first child (or its first child ...) has
-                // break-before;
-                // all this block, including space before, will be put in
-                // the
-                // following page
-                //FIX ME
-                //bSpaceBeforeServed = false;
-            }
-            contentList.addAll(contentKnuthElements);
-
-            // "wrap" the Position inside each element
-            // moving the elements from contentList to returnList
-            contentKnuthElements = new LinkedList();
-            wrapPositionElements(contentList, returnList);
-
-            return returnList;
-        } else {
-            /*
-            if (prevLM != null) {
-                // there is a block handled by prevLM
-                // before the one handled by curLM
-                if (mustKeepTogether() 
-                        || prevLM.mustKeepWithNext()
-                        || curLM.mustKeepWithPrevious()) {
-                    // add an infinite penalty to forbid a break between
-                    // blocks
-                    contentList.add(new KnuthPenalty(0,
-                            KnuthElement.INFINITE, false,
-                            new Position(this), false));
-                } else if (!((KnuthElement) contentList.getLast()).isGlue()) {
-                    // add a null penalty to allow a break between blocks
-                    contentList.add(new KnuthPenalty(0, 0, false,
-                            new Position(this), false));
-                } else {
-                    // the last element in contentList is a glue;
-                    // it is a feasible breakpoint, there is no need to add
-                    // a penalty
-                }
-            }*/
-            contentList.addAll(contentKnuthElements);
-            if (contentKnuthElements.size() > 0) {
-                if (((ListElement)contentKnuthElements.getLast()).isForcedBreak()) {
-                    // a descendant of this block has break-after
-                    if (false /*curLM.isFinished()*/) {
-                        // there is no other content in this block;
-                        // it's useless to add space after before a page break
-                        setFinished(true);
-                    }
-
-                    contentKnuthElements = new LinkedList();
-                    wrapPositionElements(contentList, returnList);
-
-                    return returnList;
-                }
-            }
-        }
+        contentList.addAll(contentKnuthElements);
         wrapPositionElements(contentList, returnList);
         if (getTable().isSeparateBorderModel()) {
             addKnuthElementsForBorderPaddingAfter(returnList, true);

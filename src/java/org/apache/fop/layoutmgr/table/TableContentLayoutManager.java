@@ -179,12 +179,24 @@ public class TableContentLayoutManager implements PercentBaseContext {
         LinkedList returnList = getKnuthElementsForRowIterator(
                 bodyIter, context, alignment, TableRowIterator.BODY);
         if (headerAsFirst != null) {
-            returnList.add(0, headerAsFirst);
+            int insertionPoint = 0;
+            if (returnList.size() > 0 && ((ListElement)returnList.getFirst()).isForcedBreak()) {
+                insertionPoint++;
+            }
+            returnList.add(insertionPoint, headerAsFirst);
         } else if (headerAsSecondToLast != null) {
-            returnList.add(headerAsSecondToLast);
+            int insertionPoint = returnList.size();
+            if (returnList.size() > 0 && ((ListElement)returnList.getLast()).isForcedBreak()) {
+                insertionPoint--;
+            }
+            returnList.add(insertionPoint, headerAsSecondToLast);
         }
         if (footerAsLast != null) {
-            returnList.add(footerAsLast);
+            int insertionPoint = returnList.size();
+            if (returnList.size() > 0 && ((ListElement)returnList.getLast()).isForcedBreak()) {
+                insertionPoint--;
+            }
+            returnList.add(insertionPoint, footerAsLast);
         }
         return returnList;
     }
