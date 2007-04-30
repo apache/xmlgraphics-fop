@@ -299,6 +299,7 @@ public class TableStepper {
             addedBoxLen += boxLen;
 
             boolean forcedBreak = false;
+            int breakClass = -1;
             //Put all involved grid units into a list
             List gridUnitParts = new java.util.ArrayList(maxColumnCount);
             for (int i = 0; i < columnCount; i++) {
@@ -314,6 +315,7 @@ public class TableStepper {
                         gridUnitParts.add(new GridUnitPart(pgu, start[i], end[i]));
                         if (((KnuthElement)elementLists[i].get(end[i])).isForcedBreak()) {
                             forcedBreak = true;
+                            breakClass = ((KnuthPenalty)elementLists[i].get(end[i])).getBreakClass();
                         }
                     }
                     if (end[i] + 1 == elementLists[i].size()) {
@@ -410,7 +412,7 @@ public class TableStepper {
                 }
                 p = -KnuthPenalty.INFINITE; //Overrides any keeps (see 4.8 in XSL 1.0)
             }
-            returnList.add(new BreakElement(penaltyPos, effPenaltyLen, p, -1, context));
+            returnList.add(new BreakElement(penaltyPos, effPenaltyLen, p, breakClass, context));
 
             if (log.isDebugEnabled()) {
                 log.debug("step=" + step + " (+" + increase + ")"
