@@ -79,7 +79,7 @@ public class PDFRectangle {
      * @return the PDF
      */
     public byte[] toPDF() {
-        return toPDFString().getBytes();
+        return PDFDocument.encode(toPDFString());
     }
 
     /**
