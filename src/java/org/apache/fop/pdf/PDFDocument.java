@@ -934,7 +934,7 @@ public class PDFDocument {
 
         getProfile().verifyPDFVersion();
 
-        byte[] pdf = ("%PDF-" + getPDFVersionString() + "\n").getBytes();
+        byte[] pdf = encode("%PDF-" + getPDFVersionString() + "\n");
         stream.write(pdf);
         this.position += pdf.length;
 
@@ -955,9 +955,9 @@ public class PDFDocument {
         try {
             MessageDigest digest = MessageDigest.getInstance("MD5");
             DateFormat df = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSS");
-            digest.update(df.format(new Date()).getBytes());
+            digest.update(encode(df.format(new Date())));
             //Ignoring the filename here for simplicity even though it's recommended by the PDF spec
-            digest.update(String.valueOf(this.position).getBytes());
+            digest.update(encode(String.valueOf(this.position)));
             digest.update(getInfo().toPDF());
             byte[] res = digest.digest();
             String s = PDFText.toHex(res);
