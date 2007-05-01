@@ -50,7 +50,9 @@
       <p>The following software is optional, depending on your needs:</p>
       <ul>
         <li>
-          Graphics libraries. Support for some graphics formats requires additional packages. See 
+          Graphics libraries. Generally, FOP contains direct support for the most important
+          bitmap image formats (including PNG, TIFF, JPEG and GIF). If you're using JDK 1.3, 
+          you may need additional packages to get GIF images to work. See 
           <a href="graphics.html">FOP: Graphics Formats</a> for details.
         </li>
         <li>
