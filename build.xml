@@ -552,7 +552,7 @@ list of possible build targets.
     <patternset id="java-only">
       <include name="**/*.java"/>
     </patternset>
-    <jar jarfile="${build.dir}/fop-sources.jar">
+    <jar jarfile="${build.dir}/${name}-${version}-sources.jar">
       <fileset dir="${build.gensrc.dir}">
         <patternset refid="java-only"/>
       </fileset>
@@ -1044,6 +1044,16 @@ NOTE:
     </javadoc>
   </target>
 
+  <target name="jar-javadocs" depends="javadocs" description="Generates a jar file containing the Javadocs">
+    <jar jarfile="${build.dir}/${name}-${version}-javadoc.jar">
+      <manifest>
+        <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}])"/>
+      </manifest>
+      <fileset dir="${build.javadocs.dir}"/>
+      <metainf dir="${basedir}" includes="LICENSE,NOTICE"/>
+    </jar>
+  </target>
+  
   <!-- =================================================================== -->
   <!-- Checkstyle                                                          -->
   <!-- =================================================================== -->
@@ -1240,6 +1250,27 @@ NOTE:
     <delete file="${name}-${version}-src.tar"/>
   </target>
 
+  <!-- =================================================================== -->
+  <!-- Maven artifacts                                                     -->
+  <!-- =================================================================== -->
+  <target name="maven-artifacts" depends="jar-main, jar-sources, jar-javadocs" description="Builds a Maven artifact that can be uploaded to a Maven repository">
+    <filter  token="version" value="${version}"/>
+    <mkdir dir="${build.dir}/maven"/>
+    <copy file="${basedir}/xmlgraphics-fop-pom-template.pom" tofile="${build.dir}/maven/pom.xml" filtering="true"/>
+    <copy file="${build.dir}/${name}.jar" tofile="${build.dir}/maven/${name}-${version}.jar"/>
+    <jar jarfile="${build.dir}/${name}-${version}-bundle.jar">
+      <manifest>
+        <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}])"/>
+      </manifest>
+      <fileset dir="${build.dir}">
+        <include name="${name}-${version}-sources.jar"/>
+        <include name="${name}-${version}-javadoc.jar"/>
+      </fileset>
+      <fileset dir="${build.dir}/maven"/>
+      <metainf dir="${basedir}" includes="LICENSE,NOTICE"/>
+    </jar>
+  </target>
+  
   <!-- =================================================================== -->
   <!-- Generate example PDFs                                               -->
   <!-- =================================================================== -->
