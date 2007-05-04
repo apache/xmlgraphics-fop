@@ -96,6 +96,12 @@ http://maven.apache.org/maven-v4_0_0.xsd">
       <groupId>batik</groupId>
       <artifactId>batik-transcoder</artifactId>
       <version>1.6-1</version>
+      <exclusions>
+        <exclusion>
+          <groupId>fop</groupId>
+          <artifactId>fop</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>batik</groupId>
@@ -126,7 +132,7 @@ http://maven.apache.org/maven-v4_0_0.xsd">
     <dependency>
       <groupId>org.apache.avalon.framework</groupId>
       <artifactId>avalon-framework-impl</artifactId>
-      <version>4.3</version>
+      <version>4.3.1</version>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
