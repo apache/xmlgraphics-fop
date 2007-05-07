@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.awt.geom.Point2D;
 import java.awt.Color;
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_Profile;
@@ -48,6 +49,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.area.Area;
+import org.apache.fop.area.Block;
 import org.apache.fop.area.CTM;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.OffDocumentExtensionAttachment;
@@ -60,6 +63,7 @@ import org.apache.fop.area.inline.AbstractTextArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.Leader;
+import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.area.inline.SpaceArea;
@@ -69,17 +73,19 @@ import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
 import org.apache.fop.image.XMLImage;
+import org.apache.fop.pdf.PDFAction;
 import org.apache.fop.pdf.PDFAMode;
 import org.apache.fop.pdf.PDFAnnotList;
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.pdf.PDFConformanceException;
-import org.apache.fop.pdf.PDFDestination;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFEncryptionManager;
 import org.apache.fop.pdf.PDFEncryptionParams;
+import org.apache.fop.pdf.PDFFactory;
 import org.apache.fop.pdf.PDFFilterList;
 import org.apache.fop.pdf.PDFICCBasedColorSpace;
 import org.apache.fop.pdf.PDFICCStream;
+import org.apache.fop.pdf.PDFGoTo;
 import org.apache.fop.pdf.PDFInfo;
 import org.apache.fop.pdf.PDFLink;
 import org.apache.fop.pdf.PDFMetadata;
@@ -164,14 +170,33 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     protected Map pages = null;
 
     /**
-     * Page references are stored using the PageViewport as the key
-     * when a reference is made the PageViewport is used
-     * for pdf this means we need the pdf page reference
+     * Maps unique PageViewport key to PDF page reference
      */
     protected Map pageReferences = new java.util.HashMap();
 
-    /** Page viewport references */
+    /**
+     *  Maps unique PageViewport key back to PageViewport itself
+     */
     protected Map pvReferences = new java.util.HashMap();
+
+    /**
+     * Maps XSL-FO element IDs to their on-page XY-positions
+     * Must be used in conjunction with the page reference to fully specify the PDFGoTo details
+     */
+    protected Map idPositions = new java.util.HashMap();
+
+    /**
+     * Maps XSL-FO element IDs to PDFGoTo objects targeting the corresponding areas
+     * These objects may not all be fully filled in yet
+     */
+    protected Map idGoTos = new java.util.HashMap();
+
+    /**
+     * The PDFGoTos in idGoTos that are not complete yet
+     */
+    protected List unfinishedGoTos = new java.util.ArrayList();
+    // can't use a Set because PDFGoTo.equals returns true if the target is the same,
+    // even if the object number differs
 
     /**
      * The output stream to write the document to
@@ -197,7 +222,12 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * the current page to add annotations to
      */
     protected PDFPage currentPage;
-    
+
+    /**
+     * the current page's PDF reference string (to avoid numerous function calls)
+     */
+    protected String currentPageRef;
+
     /** the (optional) encryption parameters */
     protected PDFEncryptionParams encryptionParams;
 
@@ -479,9 +509,34 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
+     * Checks if there are any unfinished PDFGoTos left in the list and resolves them
+     * to a default position on the page. Logs a warning, as this should not happen.
+     */
+    protected void finishOpenGoTos() {
+        int count = unfinishedGoTos.size();
+        if (count > 0) {
+            // TODO : page height may not be the same for all targeted pages
+            Point2D.Float defaultPos = new Point2D.Float(0f, pageHeight / 1000f);  // top-o-page
+            while (!unfinishedGoTos.isEmpty()) {
+                PDFGoTo gt = (PDFGoTo) unfinishedGoTos.get(0);
+                finishIDGoTo(gt, defaultPos);
+            }
+            boolean one = count == 1;
+            String pl = one ? ""    : "s";
+            String ww = one ? "was" : "were";
+            String ia = one ? "is"  : "are";
+            log.warn("" + count + " link target" + pl + " could not be fully resolved and "
+                        + ww + " now point to the top of the page or "
+                        + ia + " dysfunctional.");  // dysfunctional if pageref is null
+        }
+    }
+
+    /**
      * @see org.apache.fop.render.Renderer#stopRenderer()
      */
     public void stopRenderer() throws IOException {
+        finishOpenGoTos();
+
         pdfDoc.getResources().addFonts(pdfDoc, fontInfo);
         pdfDoc.outputTrailer(ostream);
 
@@ -498,6 +553,9 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         currentPage = null;
         currentState = null;
         currentFontName = "";
+
+        idPositions.clear();
+        idGoTos.clear();
     }
 
     /**
@@ -514,23 +572,33 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     public void processOffDocumentItem(OffDocumentItem odi) {
         // render Destinations
         if (odi instanceof DestinationData) {
-            PDFDestination destination = pdfDoc.getFactory().makeDestination((DestinationData) odi);
-            PageViewport pv = destination.getPageViewport();
-            String dest = (String)pageReferences.get(pv.getKey());
-            Rectangle2D bounds = pv.getViewArea();
-            double h = bounds.getHeight();
-            float yoffset = (float)h / 1000f;
-            String gtRef = pdfDoc.getFactory().getGoToReference(dest, yoffset);
-            destination.setGoToReference(gtRef);
-        }
+            renderDestination((DestinationData) odi);
         // render Bookmark-Tree
-        else if (odi instanceof BookmarkData) {
+        } else if (odi instanceof BookmarkData) {
             renderBookmarkTree((BookmarkData) odi);
         } else if (odi instanceof OffDocumentExtensionAttachment) {
             ExtensionAttachment attachment = ((OffDocumentExtensionAttachment)odi).getAttachment();
             if (XMPMetadata.CATEGORY.equals(attachment.getCategory())) {
                 renderXMPMetadata((XMPMetadata)attachment);
             }
+        }
+    }
+
+    private void renderDestination(DestinationData dd) {
+        String targetID = dd.getIDRef();
+        if (targetID != null && targetID.length() > 0) {
+            PageViewport pv = dd.getPageViewport();
+            if (pv != null) {
+                String pvKey = pv.getKey();
+                PDFGoTo gt = getPDFGoToForID(targetID, pvKey);
+                // create/find and register PDFDestination object:
+                pdfDoc.getFactory().makeDestination(targetID, gt.referencePDF(), pv);
+            } else {
+                log.warn("DestinationData item with IDRef \"" 
+                         + targetID + "\" has a null PageViewport.");
+            }
+        } else {
+            log.warn("DestinationData item with null or empty IDRef received.");
         }
     }
 
@@ -545,36 +613,34 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         }
     }
 
-    private void renderBookmarkItem(BookmarkData bookmarkItem, 
-            PDFOutline parentBookmarkItem) {
+    private void renderBookmarkItem(BookmarkData bookmarkItem,
+                                    PDFOutline parentBookmarkItem) {
         PDFOutline pdfOutline = null;
-        PageViewport pv = bookmarkItem.getPageViewport();
-        if (pv != null) {
-            Rectangle2D bounds = pv.getViewArea();
-            double h = bounds.getHeight();
-            float yoffset = (float)h / 1000f;
-            String intDest = (String)pageReferences.get(pv.getKey());
-            if (parentBookmarkItem == null) {
-                PDFOutline outlineRoot = pdfDoc.getOutlineRoot();
-                pdfOutline = pdfDoc.getFactory().makeOutline(outlineRoot,
-                                        bookmarkItem.getBookmarkTitle(), 
-                                        intDest, yoffset,
-                                        bookmarkItem.showChildItems());
+
+        String targetID = bookmarkItem.getIDRef();
+        if (targetID != null && targetID.length() > 0) {
+            PageViewport pv = bookmarkItem.getPageViewport();
+            if (pv != null) {
+                String pvKey = pv.getKey();
+                PDFGoTo gt = getPDFGoToForID(targetID, pvKey);
+                // create outline object:
+                PDFOutline parent = parentBookmarkItem != null
+                    ? parentBookmarkItem
+                    : pdfDoc.getOutlineRoot();
+                pdfOutline = pdfDoc.getFactory().makeOutline(parent,
+                        bookmarkItem.getBookmarkTitle(), gt, bookmarkItem.showChildItems());
             } else {
-                pdfOutline = pdfDoc.getFactory().makeOutline(parentBookmarkItem,
-                                        bookmarkItem.getBookmarkTitle(), 
-                                        intDest, yoffset, 
-                                        bookmarkItem.showChildItems());
+                log.warn("Bookmark with IDRef \"" + targetID + "\" has a null PageViewport.");
             }
         } else {
-            log.warn("Unresolved bookmark item received: " + bookmarkItem.getIDRef());
+            log.warn("Bookmark item with null or empty IDRef received.");
         }
 
         for (int i = 0; i < bookmarkItem.getCount(); i++) {
             renderBookmarkItem(bookmarkItem.getSubData(i), pdfOutline);
         }
     }
-    
+
     private void renderXMPMetadata(XMPMetadata metadata) {
         Metadata docXMP = metadata.getMetadata();
         Metadata fopXMP = PDFMetadata.createXMPFromUserAgent(pdfDoc);
@@ -707,6 +773,8 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         } else {
             setupPage(page);
         }
+        currentPageRef = currentPage.referencePDF();
+
         Rectangle2D bounds = page.getViewArea();
         double h = bounds.getHeight();
         pageHeight = (int) h;
@@ -1089,11 +1157,201 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
+     * Returns area's id if it is the first area in the document with that id 
+     * (i.e. if the area qualifies as a link target).
+     * Otherwise, or if the area has no id, null is returned.
+     *
+     * NOTE : area must be on currentPageViewport, otherwise result may be wrong!
+     *
+     * @param area the area for which to return the id
+     */
+    protected String getTargetableID(Area area) {
+        String id = (String) area.getTrait(Trait.PROD_ID);
+        if (id == null || id.length() == 0
+            || !currentPageViewport.isFirstWithID(id)
+            || idPositions.containsKey(id)) {
+            return null;
+        } else {
+            return id;
+        }
+    }
+
+    /**
+     * Set XY position in the PDFGoTo and add it to the PDF trailer.
+     *
+     * @param gt the PDFGoTo object
+     * @param position the X,Y position to set
+     */
+    protected void finishIDGoTo(PDFGoTo gt, Point2D.Float position) {
+        gt.setPosition(position);
+        pdfDoc.addTrailerObject(gt);
+        unfinishedGoTos.remove(gt);
+    }
+
+    /**
+     * Set page reference and XY position in the PDFGoTo and add it to the PDF trailer.
+     *
+     * @param gt the PDFGoTo object
+     * @param pdfPageRef the PDF reference string of the target page object
+     * @param position the X,Y position to set
+     */
+    protected void finishIDGoTo(PDFGoTo gt, String pdfPageRef, Point2D.Float position) {
+        gt.setPageReference(pdfPageRef);
+        finishIDGoTo(gt, position);
+    }
+
+    /**
+     * Get a PDFGoTo pointing to the given id. Create one if necessary.
+     * It is possible that the PDFGoTo is not fully resolved yet. In that case
+     * it must be completed (and added to the PDF trailer) later.
+     *
+     * @param targetID the target id of the PDFGoTo
+     * @param pvKey the unique key of the target PageViewport
+     *
+     * @return the PDFGoTo that was found or created
+     */
+    protected PDFGoTo getPDFGoToForID(String targetID, String pvKey) {
+        // Already a PDFGoTo present for this target? If not, create.
+        PDFGoTo gt = (PDFGoTo) idGoTos.get(targetID);
+        if (gt == null) {
+            String pdfPageRef = (String) pageReferences.get(pvKey);
+            Point2D.Float position = (Point2D.Float) idPositions.get(targetID);
+            // can the GoTo already be fully filled in?
+            if (pdfPageRef != null && position != null) {
+                // getPDFGoTo shares PDFGoTo objects as much as possible.
+                // It also takes care of assignObjectNumber and addTrailerObject.
+                gt = pdfDoc.getFactory().getPDFGoTo(pdfPageRef, position);
+            } else {
+                // Not complete yet, can't use getPDFGoTo:
+                gt = new PDFGoTo(pdfPageRef);
+                pdfDoc.assignObjectNumber(gt);
+                // pdfDoc.addTrailerObject() will be called later, from finishIDGoTo()
+                unfinishedGoTos.add(gt);
+            }
+            idGoTos.put(targetID, gt);
+        }
+        return gt;
+    }
+
+    /**
+     * Saves id's absolute position on page for later retrieval by PDFGoTos
+     *
+     * @param id the id of the area whose position must be saved
+     * @param pdfPageRef the PDF page reference string
+     * @param relativeIPP the *relative* IP position in millipoints
+     * @param relativeBPP the *relative* BP position in millipoints
+     * @param tf the transformation to apply once the relative positions have been 
+     *           converted to points
+     */
+    protected void saveAbsolutePosition(String id, String pdfPageRef,
+                                        int relativeIPP, int relativeBPP, AffineTransform tf) {
+        Point2D.Float position = new Point2D.Float(relativeIPP / 1000f, relativeBPP / 1000f);
+        tf.transform(position, position);
+        idPositions.put(id, position);
+        // is there already a PDFGoTo waiting to be completed?
+        PDFGoTo gt = (PDFGoTo) idGoTos.get(id);
+        if (gt != null) {
+            finishIDGoTo(gt, pdfPageRef, position);
+        }
+/*
+        // The code below auto-creates a named destination for every id in the document.
+        // This should probably be controlled by a user-configurable setting, as it may
+        // make the PDF file grow noticeably.
+        // *** NOT YET WELL-TESTED ! ***
+        if (true) {
+            PDFFactory factory = pdfDoc.getFactory();
+            if (gt == null) {
+                gt = factory.getPDFGoTo(pdfPageRef, position);
+                idGoTos.put(id, gt);  // so others can pick it up too
+            }
+            factory.makeDestination(id, gt.referencePDF(), currentPageViewport);
+            // Note: using currentPageViewport is only correct if the id is indeed on
+            // the current PageViewport. But even if incorrect, it won't interfere with
+            // what gets created in the PDF.
+            // For speedup, we should also create a lookup map id -> PDFDestination
+        }
+*/
+    }
+
+    /**
+     * Saves id's absolute position on page for later retrieval by PDFGoTos,
+     * using the currently valid transformation and the currently valid PDF page reference
+     *
+     * @param id the id of the area whose position must be saved
+     * @param relativeIPP the *relative* IP position in millipoints
+     * @param relativeBPP the *relative* BP position in millipoints
+     */
+    protected void saveAbsolutePosition(String id, int relativeIPP, int relativeBPP) {
+        saveAbsolutePosition(id, currentPageRef, 
+                             relativeIPP, relativeBPP, currentState.getTransform());
+    }
+
+    /**
+     * If the given block area is a possible link target, its id + absolute position will 
+     * be saved. The saved position is only correct if this function is called at the very 
+     * start of renderBlock!
+     *
+     * @param block the block area in question
+     */
+    protected void saveBlockPosIfTargetable(Block block) {
+        String id = getTargetableID(block);
+        if (id != null) {
+            // FIXME: Like elsewhere in the renderer code, absolute and relative
+            //        directions are happily mixed here. This makes sure that the
+            //        links point to the right location, but it is not correct.
+            int ipp = block.getXOffset();
+            int bpp = block.getYOffset() + block.getSpaceBefore();
+            int positioning = block.getPositioning();
+            if (!(positioning == Block.FIXED || positioning == Block.ABSOLUTE)) {
+                ipp += currentIPPosition;
+                bpp += currentBPPosition;
+            }
+            AffineTransform tf = positioning == Block.FIXED
+                ? currentState.getBaseTransform()
+                : currentState.getTransform();
+            saveAbsolutePosition(id, currentPageRef, ipp, bpp, tf);
+        }
+    }
+
+    /**
+     * If the given inline area is a possible link target, its id + absolute position will
+     * be saved. The saved position is only correct if this function is called at the very
+     * start of renderInlineArea!
+     *
+     * @param inlineArea the inline area in question
+     */
+    protected void saveInlinePosIfTargetable(InlineArea inlineArea) {
+        String id = getTargetableID(inlineArea);
+        if (id != null) {
+            int extraMarginBefore = 5000; // millipoints
+            int ipp = currentIPPosition;
+            int bpp = currentBPPosition + inlineArea.getOffset() - extraMarginBefore;
+            saveAbsolutePosition(id, ipp, bpp);
+        }
+    }
+
+    /**
+     * @see org.apache.fop.render.AbstractRenderer#renderBlock(Block)
+     */
+    protected void renderBlock(Block block) {
+        saveBlockPosIfTargetable(block);
+        super.renderBlock(block);
+    }
+
+    /**
      * @see org.apache.fop.render.AbstractRenderer#renderLineArea(LineArea)
      */
     protected void renderLineArea(LineArea line) {
         super.renderLineArea(line);
         closeText();
+    }
+
+    /**
+     * @see org.apache.fop.render.AbstractRenderer#renderInlineArea(InlineArea)
+     */
+    protected void renderInlineArea(InlineArea inlineArea) {
+        saveInlinePosIfTargetable(inlineArea);
+        super.renderInlineArea(inlineArea);
     }
 
     /**
@@ -1103,47 +1361,74 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * @param ip the inline parent area
      */
     public void renderInlineParent(InlineParent ip) {
-        float start = currentIPPosition / 1000f;
-        float top = (ip.getOffset() + currentBPPosition) / 1000f;
 
-        float width = ip.getIPD() / 1000f;
-        float height = ip.getBPD() / 1000f;
+        boolean annotsAllowed = pdfDoc.getProfile().isAnnotationAllowed();
+
+        // stuff we only need if a link must be created:
+        Rectangle2D ipRect = null;
+        PDFFactory factory = null;
+        PDFAction action   = null;
+        if (annotsAllowed) {
+            // make sure the rect is determined *before* calling super!
+            int ipp = currentIPPosition;
+            int bpp = currentBPPosition + ip.getOffset();
+            ipRect = new Rectangle2D.Float(ipp / 1000f, bpp / 1000f,
+                                           ip.getIPD() / 1000f, ip.getBPD() / 1000f);
+            AffineTransform transform = currentState.getTransform();
+            ipRect = transform.createTransformedShape(ipRect).getBounds2D();
+
+            factory = pdfDoc.getFactory();
+        }
+
         // render contents
         super.renderInlineParent(ip);
 
-        if (pdfDoc.getProfile().isAnnotationAllowed()) {
-            // place the link over the top
-            Object tr = ip.getTrait(Trait.INTERNAL_LINK);
-            boolean internal = false;
-            String dest = null;
-            float yoffset = 0;
-            if (tr == null) {
-                dest = (String)ip.getTrait(Trait.EXTERNAL_LINK);
+        boolean linkTraitFound = false;
+
+        // try INTERNAL_LINK first
+        Trait.InternalLink intLink = (Trait.InternalLink) ip.getTrait(Trait.INTERNAL_LINK);
+        if (intLink != null) {
+            linkTraitFound = true;
+            String pvKey = intLink.getPVKey();
+            String idRef = intLink.getIDRef();
+            boolean pvKeyOK = pvKey != null && pvKey.length() > 0;
+            boolean idRefOK = idRef != null && idRef.length() > 0;
+            if (pvKeyOK && idRefOK) {
+                if (annotsAllowed) {
+                    action = getPDFGoToForID(idRef, pvKey);
+                }
+            } else if (pvKeyOK) {
+                log.warn("Internal link trait with PageViewport key " + pvKey 
+                         + " contains no ID reference.");
+            } else if (idRefOK) {
+                log.warn("Internal link trait with ID reference " + idRef 
+                         + " contains no PageViewport key.");
             } else {
-                String pvKey = (String)tr;
-                dest = (String)pageReferences.get(pvKey);
-                if (dest != null) {
-                    PageViewport pv = (PageViewport)pvReferences.get(pvKey);
-                    Rectangle2D bounds = pv.getViewArea();
-                    double h = bounds.getHeight();
-                    yoffset = (float)h / 1000f;
-                    internal = true;
+                log.warn("Internal link trait received with neither PageViewport key"
+                         + " nor ID reference.");
+            }
+        }
+
+        // no INTERNAL_LINK, look for EXTERNAL_LINK
+        if (!linkTraitFound) {
+            String extDest = (String) ip.getTrait(Trait.EXTERNAL_LINK);
+            if (extDest != null && extDest.length() > 0) {
+                linkTraitFound = true;
+                if (annotsAllowed) {
+                    action = factory.getExternalAction(extDest);
                 }
             }
-            if (dest != null) {
-                // add link to pdf document
-                Rectangle2D rect = new Rectangle2D.Float(start, top, width, height);
-                // transform rect to absolute coords
-                AffineTransform transform = currentState.getTransform();
-                rect = transform.createTransformedShape(rect).getBounds2D();
+        }
 
-                int type = internal ? PDFLink.INTERNAL : PDFLink.EXTERNAL;
-                PDFLink pdflink = pdfDoc.getFactory().makeLink(
-                            rect, dest, type, yoffset);
-                currentPage.addAnnotation(pdflink);
+        // warn if link trait found but not allowed, else create link
+        if (linkTraitFound) {
+            if (!annotsAllowed) {
+                log.warn("Skipping annotation for a link due to PDF profile: " 
+                         + pdfDoc.getProfile());
+            } else if (action != null) {
+                PDFLink pdfLink = factory.makeLink(ipRect, action);
+                currentPage.addAnnotation(pdfLink);
             }
-        } else {
-            log.warn("Skipping annotation for a link due to PDF profile: " + pdfDoc.getProfile());
         }
     }
 
@@ -1199,12 +1484,12 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         String s = word.getWord();
         escapeText(s, word.getLetterAdjustArray(), 
                 font, (AbstractTextArea)word.getParentArea(), useMultiByte, pdf);
-        
+
         currentStream.add(pdf.toString());
 
         super.renderWord(word);
     }
-    
+
     /**
      * @see org.apache.fop.render.AbstractRenderer#renderSpace(SpaceArea)
      */
@@ -1223,18 +1508,18 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         if (space.isAdjustable()) {
             int tws = -((TextArea) space.getParentArea()).getTextWordSpaceAdjust()
                          - 2 * textArea.getTextLetterSpaceAdjust();
-                    
+
             if (tws != 0) {
                 pdf.append(format(tws / (font.getFontSize() / 1000f)));
                 pdf.append(" ");
             }
         }
-        
+
         currentStream.add(pdf.toString());
 
         super.renderSpace(space);
     }
-    
+
     /**
      * Escapes text according to PDF rules.
      * @param s Text to escape
@@ -1282,9 +1567,9 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                 }
             }
             if (letterAdjust != null && i < l - 1) {
-                glyphAdjust -= letterAdjust[i + 1]; 
+                glyphAdjust -= letterAdjust[i + 1];
             }
-            
+
             if (startPending) {
                 pdf.append(startText);
                 startPending = false;
@@ -1309,12 +1594,12 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
             }
 
             float adjust = glyphAdjust / fontSize;
-            
+
             if (adjust != 0) {
                 pdf.append(endText).append(format(adjust)).append(' ');
                 startPending = true;
             }
-            
+
         }
         if (!startPending) {
             pdf.append(endText);

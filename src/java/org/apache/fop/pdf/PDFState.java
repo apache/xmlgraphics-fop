@@ -301,7 +301,22 @@ public class PDFState {
     }
 
     /**
-     * Get the grapics state.
+     * Get a copy of the base transform for the page. Used to translate
+     * IPP/BPP values into X,Y positions when positioning is "fixed".
+     *
+     * @return the base transform, or null if the state stack is empty
+     */
+    public AffineTransform getBaseTransform() {
+       if (stateStack.size() == 0) {
+           return null;
+       } else {
+           Data baseData = (Data) stateStack.get(0);
+           return (AffineTransform) baseData.transform.clone();
+       }
+    }
+
+    /**
+     * Get the graphics state.
      * This gets the combination of all graphic states for
      * the current context.
      * This is the graphic state set with the gs operator not

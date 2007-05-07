@@ -65,15 +65,25 @@ public class LinkResolver implements Resolvable, Serializable {
     }
 
     /**
-     * Resolve by adding an internal link.
+     * Resolve by adding an internal link to the first PageViewport in the list.
      *
      * @see org.apache.fop.area.Resolvable#resolveIDRef(String, List)
      */
     public void resolveIDRef(String id, List pages) {
-        if (idRef.equals(id) && pages != null) {
+        resolveIDRef(id, (PageViewport)pages.get(0));
+    }
+
+    /**
+     * Resolve by adding an InternalLink trait to the area
+     *
+     * @param id the target id (should be equal to the object's idRef)
+     * @param pv the PageViewport containing the first area with the given id
+     */
+    public void resolveIDRef(String id, PageViewport pv) {
+        if (idRef.equals(id) && pv != null) {
             resolved = true;
-            PageViewport page = (PageViewport)pages.get(0);
-            area.addTrait(Trait.INTERNAL_LINK, page.getKey());
+            Trait.InternalLink iLink = new Trait.InternalLink(pv.getKey(), idRef);
+            area.addTrait(Trait.INTERNAL_LINK, iLink);
         }
     }
 }

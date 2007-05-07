@@ -30,7 +30,7 @@ public class PDFDestination extends PDFObject {
     /**
      * PDFReference (object reference) for this destination
      */
-     private String goToReference;
+    private String goToReference;
 
     /**
      * ID Reference for this destination
@@ -54,11 +54,25 @@ public class PDFDestination extends PDFObject {
     }
 
     /**
+     * create a named destination
+     *
+     * @param idRef The ID reference for this destination - will be used as the name
+     * @param goToRef A PDF reference to a /GoTo pointing to the target area
+     * @param pv The PageViewport of the target area (merely informational)
+     */
+    public PDFDestination(String idRef, String goToRef, PageViewport pv) {
+        super();
+        this.idRef = idRef;
+        this.goToReference = goToRef;
+        this.pageViewport = pv;
+    }
+
+    /**
      * @see org.apache.fop.pdf.PDFObject#toPDFString()
      */
     public String toPDFString() {
         String s = getObjectID()
-                   + "<<"
+                   + "<<\n"
                    + "/Limits [(" + idRef + ") (" + idRef + ")]\n"
                    + "/Names [(" + idRef + ") " + goToReference + "]"
                    + "\n>>\nendobj\n";
@@ -128,11 +142,11 @@ public class PDFDestination extends PDFObject {
         }
 
         PDFDestination dest = (PDFDestination)obj;
-        if (dest.getIDRef() == this.getIDRef()) {
+        if (dest.getIDRef().equals(this.getIDRef())) {
             return true;
         }
         
-        return true;
+        return false;
     }
 }
 

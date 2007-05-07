@@ -22,6 +22,8 @@ package org.apache.fop.layoutmgr.inline;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.fo.flow.Wrapper;
 import org.apache.fop.layoutmgr.LayoutContext;
+import org.apache.fop.layoutmgr.PositionIterator;
+import org.apache.fop.layoutmgr.TraitSetter;
 
 /**
  * This is the layout manager for the fo:wrapper formatting object.
@@ -41,16 +43,41 @@ public class WrapperLayoutManager extends LeafNodeLayoutManager {
 
     /** @see org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager */
     public InlineArea get(LayoutContext context) {
-        //Create a zero-width, zero-height dummy area so this node can 
-        //participate in the ID handling. Otherwise, addId() wouldn't 
-        //be called.
+        // Create a zero-width, zero-height dummy area so this node can
+        // participate in the ID handling. Otherwise, addId() wouldn't
+        // be called. The area must also be added to the tree, because
+        // determination of the X,Y position is done in the renderer.
         InlineArea area = new InlineArea();
+        String id = fobj.getId();
+        if (id != null && id.length() > 0) {
+            TraitSetter.setProducerID(area, fobj.getId());
+        }
         return area;
     }
-    
+
+    /**
+     * Add the area for this layout manager.
+     * This adds the dummy area to the parent, *if* it has an id
+     * - otherwise it serves no purpose.
+     *
+     * @param posIter the position iterator
+     * @param context the layout context for adding the area
+     */
+    public void addAreas(PositionIterator posIter, LayoutContext context) {
+        String id = fobj.getId();
+        if (id != null && id.length() > 0) {
+            addId();
+            InlineArea area = getEffectiveArea();
+            parentLM.addChildArea(area);
+        }
+        while (posIter.hasNext()) {
+            posIter.next();
+        }
+    }
+
     /** @see org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager#addId() */
     protected void addId() {
         getPSLM().addIDToPage(fobj.getId());
     }
-    
+
 }

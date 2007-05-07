@@ -43,9 +43,9 @@ public class Trait implements Serializable {
 
     /**
      * Internal link trait.
-     * This is resolved and provides a link to an internal area.
+     * Contains the PageViewport key and the PROD_ID of the target area
      */
-    public static final Integer INTERNAL_LINK = new Integer(1); //resolved
+    public static final Integer INTERNAL_LINK = new Integer(1);
 
     /**
      * External link. A URL link to an external resource.
@@ -224,7 +224,7 @@ public class Trait implements Serializable {
     static {
         // Create a hashmap mapping trait code to name for external representation
         //put(ID_LINK, new TraitInfo("id-link", String.class));
-        put(INTERNAL_LINK, new TraitInfo("internal-link", String.class));
+        put(INTERNAL_LINK, new TraitInfo("internal-link", InternalLink.class));
         put(EXTERNAL_LINK, new TraitInfo("external-link", String.class));
         put(FONT,         new TraitInfo("font", FontTriplet.class));
         put(FONT_SIZE,    new TraitInfo("font-size", Integer.class));
@@ -411,7 +411,143 @@ public class Trait implements Serializable {
         return null;
     }*/
 
-    
+    /**
+     * Class for internal link traits.
+     * Stores PageViewport key and producer ID
+     */
+    public static class InternalLink implements Serializable {
+
+        /** The unique key of the PageViewport. */
+        private String pvKey;
+
+        /** The PROD_ID of the link target */
+        private String idRef;
+
+        /**
+         * Create an InternalLink to the given PageViewport and target ID
+         *
+         * @param pvKey the PageViewport key
+         * @param idRef the target ID
+         */
+        public InternalLink(String pvKey, String idRef) {
+            setPVKey(pvKey);
+            setIDRef(idRef);
+        }
+
+        /**
+         * Create an InternalLink based on the given XML attribute value.
+         * This is typically called when data are read from an XML area tree.
+         *
+         * @param attrValue attribute value to be parsed by InternalLink.parseXMLAttribute
+         */
+        public InternalLink(String attrValue) {
+            String[] values = parseXMLAttribute(attrValue);
+            setPVKey(values[0]);
+            setIDRef(values[1]);
+        }
+
+        /**
+         * Sets the key of the targeted PageViewport.
+         *
+         * @param pvKey the PageViewport key
+         */
+        public void setPVKey(String pvKey) {
+            this.pvKey = pvKey;
+        }
+
+        /**
+         * Returns the key of the targeted PageViewport.
+         *
+         * @return the PageViewport key
+         */
+        public String getPVKey() {
+            return pvKey;
+        }
+
+        /**
+         * Sets the target ID.
+         *
+         * @param idRef the target ID
+         */
+        public void setIDRef(String idRef) {
+            this.idRef = idRef;
+        }
+
+        /**
+         * Returns the target ID.
+         *
+         * @return the target ID
+         */
+        public String getIDRef() {
+            return idRef;
+        }
+
+       /**
+        * Returns the attribute value for this object as
+        * used in the area tree XML.
+        *
+        * @return a string of the type "(thisPVKey,thisIDRef)"
+        */
+       public String xmlAttribute() {
+           return makeXMLAttribute(pvKey, idRef);
+       }
+
+       /**
+        * Returns the XML attribute value for the given PV key and ID ref.
+        * This value is used in the area tree XML.
+        *
+        * @param pvKey the PageViewport key of the link target
+        * @param idRef the ID of the link target
+        * @return a string of the type "(thisPVKey,thisIDRef)"
+        */
+       public static String makeXMLAttribute(String pvKey, String idRef) {
+           return "(" + (pvKey == null ? "" : pvKey) + ","
+                      + (idRef == null ? "" : idRef) + ")";
+       }
+
+       /**
+        * Parses XML attribute value from the area tree into
+        * PageViewport key + IDRef strings. If the attribute value is
+        * formatted like "(s1,s2)", then s1 and s2 are considered to be
+        * the PV key and the IDRef, respectively.
+        * Otherwise, the entire string is the PV key and the IDRef is null.
+        *
+        * @param attrValue the atribute value (PV key and possibly IDRef)
+        * @return a 2-String array containing the PV key and the IDRef.
+        * Both may be null.
+        */
+       public static String[] parseXMLAttribute(String attrValue) {
+           String[] result = {null, null};
+           if (attrValue != null) {
+              int len = attrValue.length();
+              if (len >= 2 && attrValue.charAt(0) == '(' && attrValue.charAt(len - 1) == ')') {
+                  String[] values = attrValue.substring(1, len - 1).split(",", 2);
+                  if (values.length > 0) {
+                      result[0] = values[0].trim();
+                      if (values.length > 1) {
+                          result[1] = values[1].trim();
+                      }
+                  }
+              } else {
+                  // PV key only, e.g. from old area tree XML:
+                  result[0] = attrValue;
+              }
+           }
+           return result;
+       }
+
+        /**
+         * Return the human-friendly string for debugging.
+         * @see java.lang.Object#toString()
+         */
+        public String toString() {
+            StringBuffer sb = new StringBuffer();
+            sb.append("pvKey=").append(pvKey);
+            sb.append(",idRef=").append(idRef);
+            return sb.toString();
+        }
+    }
+
     /**
      * Background trait structure.
      * Used for storing back trait information which are related.
