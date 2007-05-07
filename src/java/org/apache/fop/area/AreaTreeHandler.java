@@ -415,7 +415,7 @@ public class AreaTreeHandler extends FOEventHandler {
 
         finishPrevPageSequence(null);
         // process fox:destination elements
-        ArrayList destinationList = rootFObj.getDestinationList();
+        List destinationList = rootFObj.getDestinationList();
         if (destinationList != null) {
             while (destinationList.size() > 0) {
                 Destination destination = (Destination) destinationList.remove(0);
