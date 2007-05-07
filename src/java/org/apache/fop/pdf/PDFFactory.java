@@ -54,8 +54,6 @@ import org.apache.fop.fonts.truetype.TTFSubSetFile;
 import org.apache.fop.fonts.type1.PFBData;
 import org.apache.fop.fonts.type1.PFBParser;
 import org.apache.xmlgraphics.xmp.Metadata;
-import org.apache.fop.area.PageViewport;
-import org.apache.fop.area.DestinationData;
 
 /**
  * This class provides method to create and register PDF objects.
@@ -747,13 +745,11 @@ public class PDFFactory {
 
         for (currentPosition = 0; currentPosition < lastPosition;
                 currentPosition++) {    // for every consecutive color pair
-            PDFColor currentColor =
-                (PDFColor)theColors.get(currentPosition);
+            PDFColor currentColor = (PDFColor)theColors.get(currentPosition);
             PDFColor nextColor = (PDFColor)theColors.get(currentPosition
                                  + 1);
             // colorspace must be consistant
-            if (getDocument().getColorSpace()
-                    != currentColor.getColorSpace()) {
+            if (getDocument().getColorSpace() != currentColor.getColorSpace()) {
                 currentColor.setColorSpace(
                     getDocument().getColorSpace());
             }
@@ -827,8 +823,7 @@ public class PDFFactory {
         if (existing != null) {
             return existing;
         } else {
-            getDocument().registerObject(newdest);
-            getDocument().setHasDestinations(true);
+            getDocument().addDestination(newdest);
             return newdest;
         }
     }
@@ -836,58 +831,72 @@ public class PDFFactory {
     /**
      * Make a named destination.
      *
-     * @param destinationData the DestinationData object that holds the info about this named destination
-     * @return the new PDF named destination object
+     * @param idRef ID Reference for this destination (the name of the destination)
+     * @param goToRef Object reference to the GoTo Action
+     * @return the newly created destrination
      */
-    public PDFDestination makeDestination(DestinationData destinationData) {
-        PageViewport pv = destinationData.getPageViewport();
-        if (pv == null) {
-            log.warn("Unresolved destination item received: " + destinationData.getIDRef());
-        }
-        PDFDestination destination = new PDFDestination(destinationData);
+    public PDFDestination makeDestination(String idRef, Object goToRef) {
+        PDFDestination destination = new PDFDestination(idRef, goToRef);
         return getUniqueDestination(destination);
     }
 
     /**
-     * Create/find a named destination object.
-     *
-     * @param idRef The ID of this destination. This will be used for the name.
-     * @param goToRef A PDF reference to the associated /GoTo
-     * @param pv The PageViewport of the destination area. Only for informational purposes.
-     *
-     * @return The new or existing named destination
+     * Make a names dictionary (the /Names object).
+     * @return the new PDFNames object
      */
-    public PDFDestination makeDestination(String idRef, String goToRef, PageViewport pv) {
-        PDFDestination destination = new PDFDestination(idRef, goToRef, pv);
-        return getUniqueDestination(destination);
+    public PDFNames makeNames() {
+        PDFNames names = new PDFNames();
+        getDocument().registerObject(names);
+        return names;
     }
 
     /**
      * Make a the head object of the name dictionary (the /Dests object).
      *
+     * @param destinationList a list of PDFDestination instances
      * @return the new PDFDests object
      */
-    public PDFDests makeDests(String limitsRef) {
-        PDFDests dests = new PDFDests(limitsRef);
+    public PDFDests makeDests(List destinationList) {
+        PDFDests dests;
+        
+        final boolean deep = true;
+        //true for a "deep" structure (one node per entry), true for a "flat" structure
+        if (deep) {
+            dests = new PDFDests();
+            PDFArray kids = new PDFArray();
+            Iterator iter = destinationList.iterator();
+            while (iter.hasNext()) {
+                PDFDestination dest = (PDFDestination)iter.next();
+                PDFNameTreeNode node = new PDFNameTreeNode();
+                getDocument().registerObject(node);
+                node.setLowerLimit(dest.getIDRef());
+                node.setUpperLimit(dest.getIDRef());
+                node.setNames(new PDFArray());
+                node.getNames().add(dest);
+                kids.add(node);
+            }
+            dests.setLowerLimit(((PDFNameTreeNode)kids.get(0)).getLowerLimit());
+            dests.setUpperLimit(((PDFNameTreeNode)kids.get(kids.length() - 1)).getUpperLimit());
+            dests.setKids(kids);
+        } else {
+            dests = new PDFDests(destinationList);
+        }
         getDocument().registerObject(dests);
-
         return dests;
     }
 
     /**
-     * Make a the limits object of the name dictionary (the /Limits object).
+     * Make a name tree node.
      *
-     * @return the new PDFLimits object
+     * @return the new name tree node
      */
-    public PDFLimits makeLimits(ArrayList destinationList) {
-        PDFLimits limits = new PDFLimits(destinationList);
-        getDocument().registerObject(limits);
-
-        return limits;
-    }
-
+    public PDFNameTreeNode makeNameTreeNode() {
+        PDFNameTreeNode node = new PDFNameTreeNode();
+        getDocument().registerObject(node);
+        return node;
+    }    
+    
     /* ========================= links ===================================== */
-
     // Some of the "yoffset-only" functions in this part are obsolete and can
     // possibly be removed or deprecated. Some are still called by PDFGraphics2D
     // (although that could be changed, they don't need the yOffset param anyway).
@@ -1182,15 +1191,12 @@ public class PDFFactory {
                  * cmap.addContents();
                  * this.objects.add(cmap);
                  */
-                font =
-                    (PDFFontNonBase14)PDFFont.createFont(fontname, fonttype,
-                                                         basefont,
-                                                         "Identity-H");
+                font = (PDFFontNonBase14)PDFFont.createFont(fontname, fonttype,
+                                                            basefont, "Identity-H");
             } else {
 
-                font =
-                    (PDFFontNonBase14)PDFFont.createFont(fontname, fonttype,
-                                                         basefont, encoding);
+                font = (PDFFontNonBase14)PDFFont.createFont(fontname, fonttype,
+                                                            basefont, encoding);
             }
             getDocument().registerObject(font);
 
@@ -1203,12 +1209,12 @@ public class PDFFactory {
                 } else {
                     cidMetrics = (CIDFont)metrics;
                 }
-                PDFCIDSystemInfo sysInfo =
-                    new PDFCIDSystemInfo(cidMetrics.getRegistry(),
+                PDFCIDSystemInfo sysInfo
+                    = new PDFCIDSystemInfo(cidMetrics.getRegistry(),
                                          cidMetrics.getOrdering(),
                                          cidMetrics.getSupplement());
-                PDFCIDFont cidFont =
-                    new PDFCIDFont(basefont,
+                PDFCIDFont cidFont
+                    = new PDFCIDFont(basefont,
                                    cidMetrics.getCIDType(),
                                    cidMetrics.getDefaultWidth(),
                                    getSubsetWidths(cidMetrics), sysInfo,

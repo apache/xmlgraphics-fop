@@ -37,7 +37,7 @@ import org.apache.commons.logging.LogFactory;
  * Object has a number and a generation (although the generation will always
  * be 0 in new documents).
  */
-public abstract class PDFObject {
+public abstract class PDFObject implements PDFWritable {
 
     /** logger for all PDFObjects (and descendants) */
     protected static Log log = LogFactory.getLog(PDFObject.class.getName());
@@ -138,10 +138,22 @@ public abstract class PDFObject {
      * @return the reference string
      */
     public String referencePDF() {
+        if (!hasObjectNumber()) {
+            throw new IllegalArgumentException(
+                    "Cannot reference this object. It doesn't have an object number");
+        }
         String ref = getObjectNumber() + " " + getGeneration() + " R";
         return ref;
     }
 
+    /**
+     * Creates and returns a reference to this object.
+     * @return the object reference
+     */
+    public PDFReference makeReference() {
+        return new PDFReference(this);
+    }
+    
     /**
      * Write the PDF represention of this object
      *
@@ -178,6 +190,19 @@ public abstract class PDFObject {
                     + "Use output(OutputStream) instead.");
     }
     
+    /**
+     * Returns a representation of this object for in-object placement, i.e. if the object
+     * has an object number its reference is returned. Otherwise, its PDF representation is
+     * returned.
+     * @return the String representation
+     */
+    public String toInlinePDFString() {
+        if (hasObjectNumber()) {
+            return referencePDF();
+        } else {
+            return toPDFString();
+        }
+    }
     
     /**
      * Converts text to a byte array for writing to a PDF file.
