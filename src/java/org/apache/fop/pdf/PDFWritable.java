@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,32 +16,21 @@
  */
 
 /* $Id$ */
-
+ 
 package org.apache.fop.pdf;
 
-import java.util.List;
-
 /**
- * class representing an /Dests dictionary object
+ * This interface is implemented by classes that can be serialized to a PDF file either by
+ * serializing the object or by writing a indirect reference to the actual object.
  */
-public class PDFDests extends PDFNameTreeNode {
-
+public interface PDFWritable {
+    
     /**
-     * Create a named destination
+     * Returns a representation of this object for in-object placement, i.e. if the object
+     * has an object number its reference is returned. Otherwise, its PDF representation is
+     * returned.
+     * @return the String representation
      */
-    public PDFDests() {
-        /* generic creation of PDF object */
-        super();
-    }
-
-    /**
-     * Create a named destination
-     * @param destinationList a list of destinations
-     */
-    public PDFDests(List destinationList) {
-        this();
-        setNames(new PDFArray(destinationList));
-    }
-
+    String toInlinePDFString();
+    
 }
-

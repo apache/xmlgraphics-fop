@@ -19,7 +19,6 @@
  
 package org.apache.fop.area;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 
@@ -32,7 +31,7 @@ import org.apache.fop.fo.pagination.bookmarks.Bookmark;
  * child bookmark-items under it.
  */
 public class BookmarkData extends AbstractOffDocumentItem implements Resolvable {
-    private ArrayList subData = new ArrayList();
+    private List subData = new java.util.ArrayList();
 
     // bookmark-title for this fo:bookmark
     private String bookmarkTitle = null;

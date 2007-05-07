@@ -165,7 +165,7 @@ public abstract class AbstractRenderer
     /**
      * @see     org.apache.fop.render.Renderer#processOffDocumentItem(OffDocumentItem)
      */
-    public void processOffDocumentItem(OffDocumentItem oDI) { }
+    public void processOffDocumentItem(OffDocumentItem odi) { }
 
     /** @see org.apache.fop.render.Renderer#getGraphics2DAdapter() */
     public Graphics2DAdapter getGraphics2DAdapter() {

@@ -21,7 +21,6 @@ package org.apache.fop.fo.pagination;
 
 // java
 import java.util.List;
-import java.util.ArrayList;
 
 import org.xml.sax.Locator;
 
@@ -45,7 +44,7 @@ public class Root extends FObj {
     private LayoutMasterSet layoutMasterSet;
     private Declarations declarations;
     private BookmarkTree bookmarkTree = null;
-    private ArrayList destinationList;
+    private List destinationList;
     private List pageSequences;
 
     // temporary until above list populated
@@ -67,7 +66,7 @@ public class Root extends FObj {
      */
     public Root(FONode parent) {
         super(parent);
-        pageSequences = new ArrayList();
+        pageSequences = new java.util.ArrayList();
         if (parent != null) {
             //throw new FOPException("root must be root element");
         }
@@ -260,7 +259,7 @@ public class Root extends FObj {
      */
     public void addDestination(Destination destination) {
         if (destinationList == null) {
-          destinationList = new ArrayList();
+          destinationList = new java.util.ArrayList();
         }
         destinationList.add(destination);
     }
@@ -269,7 +268,7 @@ public class Root extends FObj {
      * Public accessor for the list of Destination objects for this FO
      * @return the Destination object
      */
-    public ArrayList getDestinationList() {
+    public List getDestinationList() {
         return destinationList;
     }
 

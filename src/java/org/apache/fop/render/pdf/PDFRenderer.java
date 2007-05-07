@@ -83,6 +83,7 @@ import org.apache.fop.pdf.PDFEncryptionManager;
 import org.apache.fop.pdf.PDFEncryptionParams;
 import org.apache.fop.pdf.PDFFactory;
 import org.apache.fop.pdf.PDFFilterList;
+import org.apache.fop.pdf.PDFGoTo;
 import org.apache.fop.pdf.PDFICCBasedColorSpace;
 import org.apache.fop.pdf.PDFICCStream;
 import org.apache.fop.pdf.PDFGoTo;
@@ -570,11 +571,11 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * @see org.apache.fop.render.Renderer#processOffDocumentItem(OffDocumentItem)
      */
     public void processOffDocumentItem(OffDocumentItem odi) {
-        // render Destinations
         if (odi instanceof DestinationData) {
+            // render Destinations
             renderDestination((DestinationData) odi);
-        // render Bookmark-Tree
         } else if (odi instanceof BookmarkData) {
+            // render Bookmark-Tree
             renderBookmarkTree((BookmarkData) odi);
         } else if (odi instanceof OffDocumentExtensionAttachment) {
             ExtensionAttachment attachment = ((OffDocumentExtensionAttachment)odi).getAttachment();
@@ -588,15 +589,12 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         String targetID = dd.getIDRef();
         if (targetID != null && targetID.length() > 0) {
             PageViewport pv = dd.getPageViewport();
-            if (pv != null) {
-                String pvKey = pv.getKey();
-                PDFGoTo gt = getPDFGoToForID(targetID, pvKey);
-                // create/find and register PDFDestination object:
-                pdfDoc.getFactory().makeDestination(targetID, gt.referencePDF(), pv);
-            } else {
-                log.warn("DestinationData item with IDRef \"" 
-                         + targetID + "\" has a null PageViewport.");
+            if (pv == null) {
+                log.warn("Unresolved destination item received: " + dd.getIDRef());
             }
+            PDFGoTo gt = getPDFGoToForID(targetID, pv.getKey());
+            pdfDoc.getFactory().makeDestination(
+                    dd.getIDRef(), gt.makeReference());
         } else {
             log.warn("DestinationData item with null or empty IDRef received.");
         }
