@@ -20,6 +20,7 @@
 package org.apache.fop.pdf;
 
 // Java
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -144,7 +145,7 @@ public class PDFFactory {
 
     /**
      * Make a Metadata object.
-     * @param doc the DOM Document containing the XMP metadata.
+     * @param meta the DOM Document containing the XMP metadata.
      * @param readOnly true if the metadata packet should be marked read-only
      * @return the newly created Metadata object
      */
@@ -815,6 +816,24 @@ public class PDFFactory {
     /* ============= named destinations and the name dictionary ============ */
 
     /**
+     * Registers and returns newdest if it is unique. Otherwise, returns
+     * the equal destination already present in the document.
+     *
+     * @param newdest a new, as yet unregistered destination
+     * @return newdest if unique, else the already registered instance
+     */
+    protected PDFDestination getUniqueDestination(PDFDestination newdest) {
+        PDFDestination existing = getDocument().findDestination(newdest);
+        if (existing != null) {
+            return existing;
+        } else {
+            getDocument().registerObject(newdest);
+            getDocument().setHasDestinations(true);
+            return newdest;
+        }
+    }
+
+    /**
      * Make a named destination.
      *
      * @param destinationData the DestinationData object that holds the info about this named destination
@@ -826,16 +845,21 @@ public class PDFFactory {
             log.warn("Unresolved destination item received: " + destinationData.getIDRef());
         }
         PDFDestination destination = new PDFDestination(destinationData);
+        return getUniqueDestination(destination);
+    }
 
-        PDFDestination oldDestination = getDocument().findDestination(destination);
-        if (destination == oldDestination) {
-            destination = oldDestination;
-        } else {
-            getDocument().registerObject(destination);
-            getDocument().setHasDestinations(true);
-        }
-
-        return destination;
+    /**
+     * Create/find a named destination object.
+     *
+     * @param idRef The ID of this destination. This will be used for the name.
+     * @param goToRef A PDF reference to the associated /GoTo
+     * @param pv The PageViewport of the destination area. Only for informational purposes.
+     *
+     * @return The new or existing named destination
+     */
+    public PDFDestination makeDestination(String idRef, String goToRef, PageViewport pv) {
+        PDFDestination destination = new PDFDestination(idRef, goToRef, pv);
+        return getUniqueDestination(destination);
     }
 
     /**
@@ -863,6 +887,31 @@ public class PDFFactory {
     }
 
     /* ========================= links ===================================== */
+
+    // Some of the "yoffset-only" functions in this part are obsolete and can
+    // possibly be removed or deprecated. Some are still called by PDFGraphics2D
+    // (although that could be changed, they don't need the yOffset param anyway).
+
+    /**
+     * Create a PDF link to an existing PDFAction object
+     *
+     * @param rect the hotspot position in absolute coordinates
+     * @param pdfAction the PDFAction that this link refers to
+     * @return the new PDFLink object, or null if either rect or pdfAction is null
+     */
+    public PDFLink makeLink(Rectangle2D rect, PDFAction pdfAction) {
+        if (rect == null || pdfAction == null) {
+            return null;
+        } else {
+            PDFLink link = new PDFLink(rect);
+            link.setAction(pdfAction);
+            getDocument().registerObject(link);
+            return link;
+            // does findLink make sense? I mean, how often will it happen that several
+            // links have the same target *and* the same hot rect? And findLink has to
+            // walk and compare the entire link list everytime you call it...
+        }
+    }
 
     /**
      * Make an internal link.
@@ -898,32 +947,10 @@ public class PDFFactory {
                             int linkType, float yoffset) {
 
         //PDFLink linkObject;
-        int index;
-
         PDFLink link = new PDFLink(rect);
 
         if (linkType == PDFLink.EXTERNAL) {
-            // check destination
-            if (destination.startsWith("http://")) {
-                PDFUri uri = new PDFUri(destination);
-                link.setAction(uri);
-            } else if (destination.endsWith(".pdf")) {    // FileSpec
-                PDFGoToRemote remote = getGoToPDFAction(destination, null, -1);
-                link.setAction(remote);
-            } else if ((index = destination.indexOf(".pdf#page=")) > 0) {
-                //String file = destination.substring(0, index + 4);
-                int page = Integer.parseInt(destination.substring(index + 10));
-                PDFGoToRemote remote = getGoToPDFAction(destination, null, page);
-                link.setAction(remote);
-            } else if ((index = destination.indexOf(".pdf#dest=")) > 0) {
-                //String file = destination.substring(0, index + 4);
-                String dest = destination.substring(index + 10);
-                PDFGoToRemote remote = getGoToPDFAction(destination, dest, -1);
-                link.setAction(remote);
-            } else {                               // URI
-                PDFUri uri = new PDFUri(destination);
-                link.setAction(uri);
-            }
+            link.setAction(getExternalAction(destination));
         } else {
             // linkType is internal
             String goToReference = getGoToReference(destination, yoffset);
@@ -941,11 +968,62 @@ public class PDFFactory {
         return link;
     }
 
-    public String getGoToReference(String destination, float yoffset) {
+    /**
+     * Create/find and return the appropriate external PDFAction according to the target
+     *
+     * @param target The external target. This may be a PDF file name
+     * (optionally with internal page number or destination) or any type of URI.
+     * @return the PDFAction thus created or found
+     */
+    public PDFAction getExternalAction(String target) {
+        int index;
+        String targetLo = target.toLowerCase();
+        // HTTP URL?
+        if (targetLo.startsWith("http://")) {
+            return new PDFUri(target);
+        // Bare PDF file name?
+        } else if (targetLo.endsWith(".pdf")) {
+            return getGoToPDFAction(target, null, -1);
+        // PDF file + page?
+        } else if ((index = targetLo.indexOf(".pdf#page=")) > 0) {
+            String filename = target.substring(0, index + 4);
+            int page = Integer.parseInt(target.substring(index + 10));
+            return getGoToPDFAction(filename, null, page);
+        // PDF file + destination?
+        } else if ((index = targetLo.indexOf(".pdf#dest=")) > 0) {
+            String filename = target.substring(0, index + 4);
+            String dest = target.substring(index + 10);
+            return getGoToPDFAction(filename, dest, -1);
+        // None of the above? Default to URI:
+        } else {
+            return new PDFUri(target);
+        }
+    }
+
+    /**
+     * Create or find a PDF GoTo with the given page reference string and Y offset,
+     * and return its PDF object reference
+     *
+     * @param pdfPageRef the PDF page reference, e.g. "23 0 R"
+     * @param yoffset the distance from the bottom of the page in points
+     * @return the GoTo's object reference
+     */
+    public String getGoToReference(String pdfPageRef, float yoffset) {
+        return getPDFGoTo(pdfPageRef, new Point2D.Float(0.0f, yoffset)).referencePDF();
+    }
+
+    /**
+     * Finds and returns a PDFGoTo to the given page and position.
+     * Creates the PDFGoTo if not found.
+     *
+     * @param pdfPageRef the PDF page reference
+     * @param position the (X,Y) position in points
+     *
+     * @return the new or existing PDFGoTo object
+     */
+    public PDFGoTo getPDFGoTo(String pdfPageRef, Point2D position) {
         getDocument().getProfile().verifyActionAllowed();
-        String goToReference = null;
-        PDFGoTo gt = new PDFGoTo(destination);
-        gt.setYPosition(yoffset);
+        PDFGoTo gt = new PDFGoTo(pdfPageRef, position);
         PDFGoTo oldgt = getDocument().findGoTo(gt);
         if (oldgt == null) {
             getDocument().assignObjectNumber(gt);
@@ -953,9 +1031,7 @@ public class PDFFactory {
         } else {
             gt = oldgt;
         }
-
-        goToReference = gt.referencePDF();
-        return goToReference;
+        return gt;
     }
 
     /**
@@ -997,6 +1073,42 @@ public class PDFFactory {
     }
 
     /**
+     * Make an outline object and add it to the given parent
+     *
+     * @param parent the parent PDFOutline object (may be null)
+     * @param label the title for the new outline object
+     * @param actionRef the action reference string to be placed after the /A
+     * @param showSubItems whether to initially display child outline items
+     * @return the new PDF outline object
+     */
+    public PDFOutline makeOutline(PDFOutline parent, String label,
+                                  String actionRef, boolean showSubItems) {
+        PDFOutline pdfOutline = new PDFOutline(label, actionRef, showSubItems);
+        if (parent != null) {
+            parent.addOutline(pdfOutline);
+        }
+        getDocument().registerObject(pdfOutline);
+        return pdfOutline;
+    }
+
+    /**
+     * Make an outline object and add it to the given parent
+     *
+     * @param parent the parent PDFOutline object (may be null)
+     * @param label the title for the new outline object
+     * @param pdfAction the action that this outline item points to - must not be null!
+     * @param showSubItems whether to initially display child outline items
+     * @return the new PDFOutline object, or null if pdfAction is null
+     */
+    public PDFOutline makeOutline(PDFOutline parent, String label,
+                                  PDFAction pdfAction, boolean showSubItems) {
+        return pdfAction == null
+                 ? null
+                 : makeOutline(parent, label, pdfAction.getAction(), showSubItems);
+    }
+
+    // This one is obsolete now, at least it isn't called from anywhere inside FOP
+    /**
      * Make an outline object and add it to the given outline
      *
      * @param parent parent PDFOutline object which may be null
@@ -1011,15 +1123,8 @@ public class PDFFactory {
                                   boolean showSubItems) {
 
         String goToRef = getGoToReference(destination, yoffset);
-        PDFOutline obj = new PDFOutline(label, goToRef, showSubItems);
-
-        if (parent != null) {
-            parent.addOutline(obj);
-        }
-        getDocument().registerObject(obj);
-        return obj;
+        return makeOutline(parent, label, goToRef, showSubItems);
     }
-
 
 
     /* ========================= fonts ===================================== */

@@ -175,7 +175,8 @@ public class AreaTreeHandler extends FOEventHandler {
             pvList = new ArrayList();
             idLocations.put(id, pvList);
             pvList.add(pv);
-
+            // signal the PageViewport that it is the first PV to contain this id:
+            pv.setFirstWithID(id);
             /*
              * See if this ID is in the unresolved idref list, if so resolve
              * Resolvable objects tied to it.

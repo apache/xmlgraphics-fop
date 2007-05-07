@@ -28,6 +28,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="add" fixes-bug="42067" due-to="Paul Vinkenoog">
+        Add support for exact positioning of internal PDF links.
+      </action>
       <action context="Code" dev="JM" type="fix" fixes-bug="41434" due-to="Martin Kögler">
         Fix PDF Genaration for non-ASCII compatible locales.
       </action>

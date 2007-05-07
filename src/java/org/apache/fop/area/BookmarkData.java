@@ -61,7 +61,7 @@ public class BookmarkData extends AbstractOffDocumentItem implements Resolvable 
         whenToProcess = END_OF_DOC;
         // top level defined in Rec to show all child bookmarks
         bShow = true;
-        
+
         for (int count = 0; count < bookmarkTree.getBookmarks().size(); count++) {
             Bookmark bkmk = (Bookmark)(bookmarkTree.getBookmarks()).get(count);
             addSubData(createBookmarkData(bkmk));
@@ -84,6 +84,34 @@ public class BookmarkData extends AbstractOffDocumentItem implements Resolvable 
     }
 
     /**
+     * Create a new bookmark data root object.
+     * This constructor is called by the AreaTreeParser when the
+     * <bookmarkTree> element is read from the XML file
+     */
+    public BookmarkData() {
+        idRef = null;
+        whenToProcess = END_OF_DOC;
+        bShow = true;
+    }
+
+    /**
+     * Create a new bookmark data object.
+     * This constructor is called by the AreaTreeParser when a
+     * <bookmark> element is read from the XML file.
+     *
+     * @param title the bookmark's title
+     * @param showChildren whether to initially display the bookmark's children
+     * @param pv the target PageViewport
+     * @param idRef the target ID
+     */
+    public BookmarkData(String title, boolean showChildren, PageViewport pv, String idRef) {
+        bookmarkTitle = title;
+        bShow = showChildren;
+        pageRef = pv;
+        this.idRef = idRef;
+    }
+
+    /**
      * Get the idref for this bookmark-item
      *
      * @return the idref for the bookmark-item
@@ -93,17 +121,19 @@ public class BookmarkData extends AbstractOffDocumentItem implements Resolvable 
     }
 
     /**
-     * Add the child bookmark data object.
+     * Add a child bookmark data object.
      * This adds a child bookmark in the bookmark hierarchy.
      *
      * @param sub the child bookmark data
      */
     public void addSubData(BookmarkData sub) {
         subData.add(sub);
-        unresolvedIDRefs.put(sub.getIDRef(), sub);
-        String[] ids = sub.getIDRefs();
-        for (int count = 0; count < ids.length; count++) {
-            unresolvedIDRefs.put(ids[count], sub);
+        if (sub.pageRef == null || sub.pageRef.equals("")) {
+            unresolvedIDRefs.put(sub.getIDRef(), sub);
+            String[] ids = sub.getIDRefs();
+            for (int count = 0; count < ids.length; count++) {
+                unresolvedIDRefs.put(ids[count], sub);
+            }
         }
     }
 
@@ -221,4 +251,3 @@ public class BookmarkData extends AbstractOffDocumentItem implements Resolvable 
     }
 
 }
-
