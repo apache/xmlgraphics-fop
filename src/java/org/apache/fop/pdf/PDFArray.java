@@ -127,11 +127,7 @@ public class PDFArray extends PDFObject {
                 p.append(" ");
             }
             Object obj = this.values.get(i);
-            if (obj instanceof PDFWritable) {
-                p.append(((PDFWritable)obj).toInlinePDFString());
-            } else {
-                p.append("(").append(obj).append(")");
-            }
+            formatObject(obj, p);
         }
         p.append("]");
         if (hasObjectNumber()) {
