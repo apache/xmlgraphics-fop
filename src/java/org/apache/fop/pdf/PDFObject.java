@@ -245,6 +245,21 @@ public abstract class PDFObject implements PDFWritable {
         }*/
     }
     
+    /**
+     * Formats an object for serialization to PDF.
+     * @param obj the object
+     * @param sb the StringBuffer to write to
+     */
+    protected void formatObject(Object obj, StringBuffer sb) {
+        if (obj instanceof PDFWritable) {
+            sb.append(((PDFWritable)obj).toInlinePDFString());
+        } else if (obj instanceof Number) {
+            sb.append(obj);
+        } else {
+            sb.append("(").append(obj).append(")");
+        }
+    }
+    
     /** Formatting pattern for PDF date */
     protected static final SimpleDateFormat DATE_FORMAT 
             = new SimpleDateFormat("'D:'yyyyMMddHHmmss");

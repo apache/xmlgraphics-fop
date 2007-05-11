@@ -84,11 +84,7 @@ public class PDFDictionary extends PDFObject {
             p.append(key);
             p.append(" ");
             Object obj = this.entries.get(key);
-            if (obj instanceof PDFWritable) {
-                p.append(((PDFWritable)obj).toInlinePDFString());
-            } else {
-                p.append("(").append(obj).append(")");
-            }
+            formatObject(obj, p);
         }
         p.append("\n>>\n");
         if (hasObjectNumber()) {
