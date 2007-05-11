@@ -189,10 +189,11 @@ public class FOURIResolver
         try {
             ByteArrayOutputStream baout = new ByteArrayOutputStream(combined.length() * 2);
             Base64EncodeStream base64 = new Base64EncodeStream(baout);
-            base64.write(combined.getBytes());
+            //TODO Not sure what charset/encoding can be used with basic authentication
+            base64.write(combined.getBytes("UTF-8"));
             base64.close();
             connection.setRequestProperty("Authorization", 
-                    "Basic " + new String(baout.toByteArray()));
+                    "Basic " + new String(baout.toByteArray(), "UTF-8"));
         } catch (IOException e) {
             //won't happen. We're operating in-memory.
             throw new RuntimeException("Error during base64 encodation of username/password");
