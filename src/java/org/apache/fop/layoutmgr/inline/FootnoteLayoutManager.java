@@ -26,19 +26,20 @@ import java.util.ListIterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fo.flow.Footnote;
-import org.apache.fop.layoutmgr.AbstractLayoutManager;
 import org.apache.fop.layoutmgr.FootnoteBodyLayoutManager;
 import org.apache.fop.layoutmgr.InlineKnuthSequence;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthSequence;
 import org.apache.fop.layoutmgr.LayoutContext;
-import org.apache.fop.layoutmgr.Position;
+import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.ListElement;
+import org.apache.fop.layoutmgr.NonLeafPosition;
+import org.apache.fop.layoutmgr.PositionIterator;
 
 /**
  * Layout manager for fo:footnote.
  */
-public class FootnoteLayoutManager extends AbstractLayoutManager 
-                                   implements InlineLevelLayoutManager {
+public class FootnoteLayoutManager extends InlineStackingLayoutManager {
 
     /**
      * logging instance
@@ -72,13 +73,10 @@ public class FootnoteLayoutManager extends AbstractLayoutManager
     /** @see org.apache.fop.layoutmgr.LayoutManager */
     public LinkedList getNextKnuthElements(LayoutContext context,
                                            int alignment) {
-        // this is the only method that must be implemented:
-        // all other methods will never be called, as the returned elements
-        // contain Positions created by the citationLM, so its methods will
-        // be called instead
-
-        // set the citationLM parent to be this LM's parent
-        citationLM.setParent(getParent());
+        // for the moment, this LM is set as the citationLM's parent
+        // later on, when this LM will have nothing more to do, the citationLM's parent
+        // will be set to the fotnoteLM's parent
+        citationLM.setParent(this);
         citationLM.initialize();
         bodyLM.setParent(this);
         bodyLM.initialize();
@@ -104,22 +102,82 @@ public class FootnoteLayoutManager extends AbstractLayoutManager
 
         addAnchor(returnedList);
 
+        // "wrap" the Position stored in each list inside returnedList
+        ListIterator listIterator = returnedList.listIterator();
+        ListIterator elementIterator = null;
+        KnuthSequence list = null;
+        ListElement element = null;
+        while (listIterator.hasNext()) {
+            list = (KnuthSequence) listIterator.next();
+            elementIterator = list.listIterator();
+            while (elementIterator.hasNext()) {
+                element = (KnuthElement) elementIterator.next();
+                element.setPosition(notifyPos(new NonLeafPosition(this, element.getPosition())));
+            }
+        }
+
         return returnedList;
     }
 
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#getChangedKnuthElements(java.util.List, int)
+     */
+    public LinkedList getChangedKnuthElements(List oldList,
+                                              int alignment) {
+        LinkedList returnedList = super.getChangedKnuthElements(oldList, alignment);
+        addAnchor(returnedList);
+        return returnedList;
+    }
+
+
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#addAreas(PositionIterator posIter, LayoutContext context);
+     */
+    public void addAreas(PositionIterator posIter, LayoutContext context) {
+        // "Unwrap" the NonLeafPositions stored in posIter and put
+        // them in a new list, that will be given to the citationLM
+        LinkedList positionList = new LinkedList();
+        NonLeafPosition pos = null;
+        while (posIter.hasNext()) {
+            pos = (NonLeafPosition) posIter.next();
+            if (pos != null && pos.getPosition() != null) {
+                positionList.add(pos.getPosition());
+            }
+        }
+        
+        // FootnoteLM does not create any area, 
+        // so the citationLM child will add directly to the FootnoteLM parent area
+        citationLM.setParent(getParent());
+        
+        // make the citationLM add its areas
+        LayoutContext childContext = new LayoutContext(context);
+        StackingIter childPosIter = new StackingIter(positionList.listIterator());
+        LayoutManager childLM;
+        while ((childLM = childPosIter.getNextChildLM()) != null) {
+            childLM.addAreas(childPosIter, childContext);
+            childContext.setLeadingSpace(childContext.getTrailingSpace());
+            childContext.setFlags(LayoutContext.RESOLVE_LEADING_SPACE, true);
+        }
+    }
+
+    /**
+     * Find the last box in the sequence, and add a reference to the FootnoteBodyLM
+     * @param citationList the list of elements representing the footnote citation
+     */
     private void addAnchor(LinkedList citationList) {
-        // find the last box in the sequence, and add a reference
-        // to the FootnoteBodyLM
         KnuthInlineBox lastBox = null;
+        // the list of elements is searched backwards, until we find a box
         ListIterator citationIterator = citationList.listIterator(citationList.size());
         while (citationIterator.hasPrevious() && lastBox == null) {
             Object obj = citationIterator.previous();
             if (obj instanceof KnuthElement) {
+                // obj is an element
                 KnuthElement element = (KnuthElement)obj;
                 if (element instanceof KnuthInlineBox) {
                     lastBox = (KnuthInlineBox) element;
                 }
             } else {
+                // obj is a sequence of elements
                 KnuthSequence seq = (KnuthSequence)obj;
                 ListIterator nestedIterator = seq.listIterator(seq.size());
                 while (nestedIterator.hasPrevious() && lastBox == null) {
@@ -136,46 +194,5 @@ public class FootnoteLayoutManager extends AbstractLayoutManager
         } else {
             //throw new IllegalStateException("No anchor box was found for a footnote.");
         }
-    }
-
-    /** @see org.apache.fop.layoutmgr.inline.InlineLevelLayoutManager */
-    public List addALetterSpaceTo(List oldList) {
-        log.warn("null implementation of addALetterSpaceTo() called!");
-        return oldList;
-    }
-
-    /**
-     * Remove the word space represented by the given elements
-     *
-     * @param oldList the elements representing the word space
-     */
-    public void removeWordSpace(List oldList) {
-        // do nothing
-        log.warn(this.getClass().getName() + " should not receive a call to removeWordSpace(list)");
-    }
-
-    /** @see org.apache.fop.layoutmgr.inline.InlineLevelLayoutManager */
-    public void getWordChars(StringBuffer sbChars, Position pos) {
-        log.warn("null implementation of getWordChars() called!");
-    }
-
-    /** @see org.apache.fop.layoutmgr.inline.InlineLevelLayoutManager */
-    public void hyphenate(Position pos, HyphContext hc) {
-        log.warn("null implementation of hyphenate called!");
-    }
-
-    /** @see org.apache.fop.layoutmgr.inline.InlineLevelLayoutManager */
-    public boolean applyChanges(List oldList) {
-        log.warn("null implementation of applyChanges() called!");
-        return false;
-    }
-
-    /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#getChangedKnuthElements(java.util.List, int)
-     */
-    public LinkedList getChangedKnuthElements(List oldList,
-                                              int alignment) {
-        log.warn("null implementation of getChangeKnuthElement() called!");
-        return null;
     }
 }
