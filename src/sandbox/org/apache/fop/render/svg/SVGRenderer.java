@@ -165,7 +165,7 @@ public class SVGRenderer extends Java2DRenderer {
 
     /**
      * Returns the OutputStream corresponding to this page
-     * @param 0-based pageNumber
+     * @param pageNumber 0-based page number
      * @return the corresponding OutputStream
      * @throws IOException In case of an I/O error
      */
