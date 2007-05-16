@@ -293,6 +293,13 @@ try {
         </li>
         <li>
           <p>
+            The <strong>hyphenation base URL</strong> to use when resolving relative URLs for 
+            hyphenation patterns. Example:
+          </p>
+          <source>fopFactory.setHyphenBaseURL("file:///C:/Temp/hyph");</source>
+        </li>
+        <li>
+          <p>
             Disable <strong>strict validation</strong>. When disabled FOP is less strict about the rules 
             established by the XSL-FO specification. Example:
           </p>
