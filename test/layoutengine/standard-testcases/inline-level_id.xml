@@ -65,7 +65,7 @@
   </fo>
   <checks>
     <eval expected="inline1" xpath="//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/lineArea/inlineparent/@prod-id"/>
-    <!-- wrapper skipped -->
+    <eval expected="wrapper1" xpath="//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span/flow/block[2]/lineArea/inline/@prod-id"/>
     <!--eval expected="inline-container1" xpath="//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span/flow/block[3]/lineArea/???/@prod-id"/-->
     <eval expected="page-number1" xpath="//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span/flow/block[4]/lineArea/text[2]/@prod-id"/>
     <eval expected="page-number-citation1" xpath="//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span/flow/block[5]/lineArea/text[2]/@prod-id"/>
