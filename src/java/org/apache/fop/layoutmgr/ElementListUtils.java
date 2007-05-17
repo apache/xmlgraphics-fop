@@ -143,10 +143,15 @@ public class ElementListUtils {
                     i.add(new KnuthPenalty(0, KnuthPenalty.INFINITE, false, 
                             null, false));
                 }
-            } else if (el instanceof BreakElement) {
-                BreakElement breakEl = (BreakElement)el;
-                if (breakEl.getPenaltyValue() < KnuthPenalty.INFINITE) {
-                    breakEl.setPenaltyValue(KnuthPenalty.INFINITE);
+            } else if (el.isUnresolvedElement()) {
+                if (el instanceof BreakElement) {
+                    BreakElement breakEl = (BreakElement)el;
+                    if (breakEl.getPenaltyValue() < KnuthPenalty.INFINITE) {
+                        breakEl.setPenaltyValue(KnuthPenalty.INFINITE);
+                    }
+                } else if (el instanceof UnresolvedListElementWithLength) {
+                    UnresolvedListElementWithLength uel = (UnresolvedListElementWithLength)el;
+                    len += uel.getLength().opt;
                 }
             } else {
                 KnuthElement kel = (KnuthElement)el;
