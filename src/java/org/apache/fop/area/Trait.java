@@ -521,13 +521,10 @@ public class Trait implements Serializable {
            if (attrValue != null) {
               int len = attrValue.length();
               if (len >= 2 && attrValue.charAt(0) == '(' && attrValue.charAt(len - 1) == ')') {
-                  String[] values = attrValue.substring(1, len - 1).split(",", 2);
-                  if (values.length > 0) {
-                      result[0] = values[0].trim();
-                      if (values.length > 1) {
-                          result[1] = values[1].trim();
-                      }
-                  }
+                  String value = attrValue.substring(1, len - 1); // remove brackets
+                  int delimIndex = value.indexOf(',');
+                  result[0] = value.substring(0, delimIndex).trim(); // PV key
+                  result[1] = value.substring(delimIndex + 1, value.length()).trim(); // IDRef
               } else {
                   // PV key only, e.g. from old area tree XML:
                   result[0] = attrValue;
