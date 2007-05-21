@@ -48,7 +48,11 @@ public class GIFReader implements ImageReader {
                 && (header[4] == '7' || header[4] == '9')
                 && (header[5] == 'a'));
         if (supported) {
-            FopImage.ImageInfo info = getDimension(header);
+            FopImage.ImageInfo info = new FopImage.ImageInfo();
+            info.dpiHorizontal = ua.getFactory().getSourceResolution();
+            info.dpiVertical = info.dpiHorizontal;
+
+            getDimension(header, info);
             info.originalURI = uri;
             info.mimeType = getMimeType();
             info.inputStream = bis;
@@ -67,8 +71,7 @@ public class GIFReader implements ImageReader {
         return "image/gif";
     }
 
-    private FopImage.ImageInfo getDimension(byte[] header) {
-        FopImage.ImageInfo info = new FopImage.ImageInfo();
+    private void getDimension(byte[] header, FopImage.ImageInfo info) {
         // little endian notation
         int byte1 = header[6] & 0xff;
         int byte2 = header[7] & 0xff;
@@ -77,7 +80,6 @@ public class GIFReader implements ImageReader {
         byte1 = header[8] & 0xff;
         byte2 = header[9] & 0xff;
         info.height = ((byte2 << 8) | byte1) & 0xffff;
-        return info;
     }
 
     private byte[] getDefaultHeader(InputStream imageStream)

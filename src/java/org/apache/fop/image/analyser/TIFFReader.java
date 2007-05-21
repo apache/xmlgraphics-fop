@@ -62,7 +62,11 @@ public class TIFFReader implements ImageReader {
         }
 
         if (supported) {
-            FopImage.ImageInfo info = getDimension(header);
+            FopImage.ImageInfo info = new FopImage.ImageInfo();
+            info.dpiHorizontal = ua.getFactory().getSourceResolution();
+            info.dpiVertical = info.dpiHorizontal;
+
+            getDimension(header, info);
             info.originalURI = uri;
             info.mimeType = getMimeType();
             info.inputStream = bis;
@@ -81,33 +85,14 @@ public class TIFFReader implements ImageReader {
         return "image/tiff";
     }
 
-    private FopImage.ImageInfo getDimension(byte[] header) {
+    private void getDimension(byte[] header, FopImage.ImageInfo info) {
         // currently not setting the width and height
         // these are set again by the Jimi image reader.
         // I suppose I'll do it one day to be complete.  Or
         // someone else will.
         // Note: bytes 4,5,6,7 contain the byte offset in the stream of the first IFD block
-        /*
-         * //png is always big endian
-         * int byte1 = header[ 16 ] & 0xff;
-         * int byte2 = header[ 17 ] & 0xff;
-         * int byte3 = header[ 18 ] & 0xff;
-         * int byte4 = header[ 19 ] & 0xff;
-         * long l = ( long ) ( ( byte1 << 24 ) | ( byte2 << 16 ) |
-         * ( byte3 << 8 ) | byte4 );
-         * this.width = ( int ) ( l );
-         * byte1 = header[ 20 ] & 0xff;
-         * byte2 = header[ 21 ] & 0xff;
-         * byte3 = header[ 22 ] & 0xff;
-         * byte4 = header[ 23 ] & 0xff;
-         * l = ( long ) ( ( byte1 << 24 ) | ( byte2 << 16 ) | ( byte3 << 8 ) |
-         * byte4 );
-         * this.height = ( int ) ( l );
-         */
-        FopImage.ImageInfo info = new FopImage.ImageInfo();
         info.width = -1;
         info.height = -1;
-        return info;
     }
 
     private byte[] getDefaultHeader(InputStream imageStream)

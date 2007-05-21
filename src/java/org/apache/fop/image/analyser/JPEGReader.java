@@ -61,7 +61,11 @@ public class JPEGReader implements ImageReader {
         boolean supported = ((header[0] == (byte) 0xff)
                     && (header[1] == (byte) 0xd8));
         if (supported) {
-            FopImage.ImageInfo info = getDimension(fis);
+            FopImage.ImageInfo info = new FopImage.ImageInfo();
+            info.dpiHorizontal = ua.getFactory().getSourceResolution();
+            info.dpiVertical = info.dpiHorizontal;
+
+            getDimension(fis, info);
             info.originalURI = uri;
             info.mimeType = getMimeType();
             info.inputStream = fis;
@@ -97,8 +101,9 @@ public class JPEGReader implements ImageReader {
         return header;
     }
 
-    private FopImage.ImageInfo getDimension(InputStream imageStream) throws IOException {
-        FopImage.ImageInfo info = new FopImage.ImageInfo();
+    private void getDimension(InputStream imageStream,
+                              FopImage.ImageInfo info)
+        throws IOException {
         try {
             int pos=0, avail = imageStream.available();
             imageStream.mark(avail);
@@ -163,7 +168,8 @@ outer:
                             info.dpiHorizontal = xdensity;
                             info.dpiVertical = ydensity;
                         } else {
-                            //nop, nyi --> 72dpi
+                            // Use resolution specified in
+                            // FOUserAgent.getFactory() (default 72dpi).
                         }
                         
                         int restlen = reclen - 12;
@@ -237,7 +243,6 @@ outer:
             }
             throw ioe;
         }
-        return info;
     }
 
     private int read2bytes(InputStream imageStream) throws IOException {
