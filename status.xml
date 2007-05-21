@@ -28,6 +28,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix" fixes-bug="42109" due-to="Paul Vinkenoog">
+        Fixed the rendering of zero-width spaces for certain fonts by not generating them into
+        the area tree.
+      </action>
       <action context="Code" dev="LF" type="fix">
         Fixed a problem with disappearing footnotes inside hyphenated inlines (and footnotes with hyphenated inline child).
       </action>

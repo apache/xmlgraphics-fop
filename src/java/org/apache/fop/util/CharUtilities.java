@@ -64,8 +64,8 @@ public class CharUtilities {
     public static final char ZERO_WIDTH_NOBREAK_SPACE = '\uFEFF';
     /** soft hyphen */
     public static final char SOFT_HYPHEN = '\u00AD';
-    
-    
+
+
     /**
      * Utility class: Constructor prevents instantiating when subclassed.
      */
@@ -98,7 +98,17 @@ public class CharUtilities {
     public static boolean isBreakableSpace(char c) {
         return (c == SPACE || isFixedWidthSpace(c));
     }
-    
+
+    /**
+     * Method to determine if the character is a zero-width space.
+     * @param c the character to check
+     * @return true if the character is a zero-width space
+     */
+    public static boolean isZeroWidthSpace(char c) {
+        return c == ZERO_WIDTH_SPACE           // 200Bh
+            || c == ZERO_WIDTH_NOBREAK_SPACE;  // FEFFh (also used as BOM)
+    }
+
     /**
      * Method to determine if the character is a (breakable) fixed-width space.
      * @param c the character to check
@@ -111,7 +121,7 @@ public class CharUtilities {
 //      c == '\u2002'                   // en space
 //      c == '\u2003'                   // em space
 //      c == '\u2004'                   // three-per-em space
-//      c == '\u2005'                   // four--per-em space
+//      c == '\u2005'                   // four-per-em space
 //      c == '\u2006'                   // six-per-em space
 //      c == '\u2007'                   // figure space
 //      c == '\u2008'                   // punctuation space
@@ -120,7 +130,7 @@ public class CharUtilities {
 //      c == '\u200B'                   // zero width space
 //      c == '\u3000'                   // ideographic space
     }
-    
+
     /**
      * Method to determine if the character is a nonbreaking
      * space.

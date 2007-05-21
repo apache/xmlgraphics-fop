@@ -164,8 +164,8 @@
     <true xpath="//block[@prod-id='l-hair-space']/lineArea/text/*[6]/@adj = 'false'"/>
 
     <eval expected="55368" xpath="//block[@prod-id='l-zwsp']/lineArea/text/@ipd"/>
-    <true xpath="//block[@prod-id='l-zwsp']/lineArea/text/*[2]/@adj = 'false'"/>
-    <true xpath="//block[@prod-id='l-zwsp']/lineArea/text/*[6]/@adj = 'false'"/>
+    <!-- zwsp is not rendered to the area tree -->
+    <eval expected="1" xpath="count(//block[@prod-id='l-zwsp']/lineArea/text/space)"/>
 
     <eval expected="55368" xpath="//block[@prod-id='l-nosp']/lineArea/text/@ipd"/>
 
@@ -232,9 +232,9 @@
     <true xpath="//block[@prod-id='c-hair-space']/lineArea/text/*[6]/@adj = 'false'"/>
 
     <eval expected="55368" xpath="//block[@prod-id='c-zwsp']/lineArea/text/@ipd"/>
-    <true xpath="//block[@prod-id='c-zwsp']/lineArea/text/*[2]/@adj = 'false'"/>
-    <true xpath="//block[@prod-id='c-zwsp']/lineArea/text/*[6]/@adj = 'false'"/>
-
+    <!-- zwsp is not rendered to the area tree -->
+    <eval expected="1" xpath="count(//block[@prod-id='c-zwsp']/lineArea/text/space)"/>
+    
     <eval expected="55368" xpath="//block[@prod-id='c-nosp']/lineArea/text/@ipd"/>
 
     <eval expected="190804" xpath="//block[@prod-id='j-sp']/lineArea/text/@ipd"/>
@@ -313,9 +313,9 @@
 
     <eval expected="84280" xpath="//block[@prod-id='j-zwsp']/lineArea/text/@ipd"/>
     <eval expected="28912" xpath="//block[@prod-id='j-zwsp']/lineArea/text/@twsadjust"/>
-    <true xpath="//block[@prod-id='j-zwsp']/lineArea/text/*[2]/@adj = 'false'"/>
-    <true xpath="//block[@prod-id='j-zwsp']/lineArea/text/*[6]/@adj = 'false'"/>
-
+    <!-- zwsp is not rendered to the area tree -->
+    <eval expected="1" xpath="count(//block[@prod-id='j-zwsp']/lineArea/text/space)"/>
+    
     <eval expected="134904" xpath="//block[@prod-id='j-nosp']/lineArea/text/@ipd"/>
     <eval expected="79536" xpath="//block[@prod-id='j-nosp']/lineArea/text/@twsadjust"/>
 
@@ -408,9 +408,9 @@
     <eval expected="85480" xpath="//block[@prod-id='lsj-zwsp']/lineArea/text/@ipd"/>
     <eval expected="14112" xpath="//block[@prod-id='lsj-zwsp']/lineArea/text/@twsadjust"/>
     <eval expected="2000" xpath="//block[@prod-id='lsj-zwsp']/lineArea/text/@tlsadjust"/>
-    <true xpath="//block[@prod-id='lsj-zwsp']/lineArea/text/*[2]/@adj = 'false'"/>
-    <true xpath="//block[@prod-id='lsj-zwsp']/lineArea/text/*[6]/@adj = 'false'"/>
-
+    <!-- zwsp is not rendered to the area tree -->
+    <eval expected="1" xpath="count(//block[@prod-id='lsj-zwsp']/lineArea/text/space)"/>
+    
     <eval expected="140237" xpath="//block[@prod-id='lsj-nosp']/lineArea/text/@ipd"/>
     <eval expected="64869" xpath="//block[@prod-id='lsj-nosp']/lineArea/text/@twsadjust"/>
     <eval expected="2000" xpath="//block[@prod-id='lsj-nosp']/lineArea/text/@tlsadjust"/>
