@@ -28,6 +28,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="update" fixes-bug="42406" due-to="Hussein Shafie">
+        Use source resolution setting for bitmap images which don't provide their own
+        resolution.
+      </action>
       <action context="Code" dev="JM" type="fix" fixes-bug="42109" due-to="Paul Vinkenoog">
         Fixed the rendering of zero-width spaces for certain fonts by not generating them into
         the area tree.

@@ -54,7 +54,11 @@ public class BMPReader implements ImageReader {
         boolean supported = ((header[0] == (byte) 0x42)
                 && (header[1] == (byte) 0x4d));
         if (supported) {
-            FopImage.ImageInfo info = getDimension(header);
+            FopImage.ImageInfo info = new FopImage.ImageInfo();
+            info.dpiHorizontal = ua.getFactory().getSourceResolution();
+            info.dpiVertical = info.dpiHorizontal;
+
+            getDimension(header, info);
             info.originalURI = uri;
             info.mimeType = getMimeType();
             info.inputStream = bis;
@@ -73,9 +77,7 @@ public class BMPReader implements ImageReader {
         return "image/bmp";
     }
 
-    private FopImage.ImageInfo getDimension(byte[] header) {
-        FopImage.ImageInfo info = new FopImage.ImageInfo();
-
+    private void getDimension(byte[] header, FopImage.ImageInfo info) {
         // little endian notation
         int byte1 = header[WIDTH_OFFSET] & 0xff;
         int byte2 = header[WIDTH_OFFSET + 1] & 0xff;
@@ -109,8 +111,6 @@ public class BMPReader implements ImageReader {
         if (l > 0) {
             info.dpiVertical = l / 39.37d;
         }
-        
-        return info;
     }
 
     private byte[] getDefaultHeader(InputStream imageStream)
