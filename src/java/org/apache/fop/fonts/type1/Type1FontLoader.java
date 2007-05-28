@@ -22,7 +22,6 @@ package org.apache.fop.fonts.type1;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.FontLoader;
 import org.apache.fop.fonts.FontResolver;
 import org.apache.fop.fonts.FontType;
@@ -33,11 +32,8 @@ import org.apache.fop.fonts.SingleByteFont;
  */
 public class Type1FontLoader extends FontLoader {
 
-    private String fontFileURI;
     private PFMFile pfm;
     private SingleByteFont singleFont;
-    private CustomFont returnFont;
-    private FontResolver resolver;
     
     /**
      * Constructs a new Type 1 font loader.
@@ -48,19 +44,19 @@ public class Type1FontLoader extends FontLoader {
      */
     public Type1FontLoader(String fontFileURI, InputStream in, FontResolver resolver) 
                 throws IOException {
-        this.fontFileURI = fontFileURI;
-        this.resolver = resolver;
+        super(fontFileURI, in, resolver);
+    }
 
+    /**
+     * @see FontLoader#read()
+     */
+    protected void read() throws IOException {
         pfm = new PFMFile();
         pfm.load(in);
         singleFont = new SingleByteFont();
         singleFont.setFontType(FontType.TYPE1);
         singleFont.setResolver(this.resolver);
         returnFont = singleFont;
-        read();        
-    }
-    
-    private void read() throws IOException {
         returnFont.setFontName(pfm.getPostscriptName());
         returnFont.setCapHeight(pfm.getCapHeight());
         returnFont.setXHeight(pfm.getXHeight());
@@ -77,12 +73,5 @@ public class Type1FontLoader extends FontLoader {
             singleFont.setWidth(i, pfm.getCharWidth(i));
         }
         singleFont.setEmbedFileName(this.fontFileURI);
-        
     }
-    
-    /** @see org.apache.fop.fonts.FontLoader#getFont() */
-    public CustomFont getFont() {
-        return this.returnFont;
-    }
-    
 }

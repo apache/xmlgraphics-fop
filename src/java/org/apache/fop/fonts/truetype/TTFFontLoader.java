@@ -27,7 +27,6 @@ import java.util.Map;
 
 import org.apache.fop.fonts.BFEntry;
 import org.apache.fop.fonts.CIDFontType;
-import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.FontLoader;
 import org.apache.fop.fonts.FontResolver;
 import org.apache.fop.fonts.MultiByteFont;
@@ -37,18 +36,23 @@ import org.apache.fop.fonts.MultiByteFont;
  */
 public class TTFFontLoader extends FontLoader {
 
-    private String fontFileURI;
-    private TTFFile ttf;
     private MultiByteFont multiFont;
-    private CustomFont returnFont;
-    private FontResolver resolver;
     
-    public TTFFontLoader(String fontFileURI, InputStream in, FontResolver resolver) 
-                throws IOException {
-        this.fontFileURI = fontFileURI;
-        this.resolver = resolver;
-
-        this.ttf = new TTFFile();
+    /**
+     * Default constructor
+     * @param fontFileURI the URI representing the font file
+     * @param in the InputStream to load the font from
+     * @param resolver the FontResolver for font URI resolution
+     */
+    public TTFFontLoader(String fontFileURI, InputStream in, FontResolver resolver) {
+        super(fontFileURI, in, resolver);
+    }
+    
+    /**
+     * @see FontLoader#read()
+     */
+    protected void read() throws IOException {
+        TTFFile ttf = new TTFFile();
         FontFileReader reader = new FontFileReader(in);
         boolean supported = ttf.readFont(reader, null);
         if (!supported) {
@@ -61,11 +65,9 @@ public class TTFFontLoader extends FontLoader {
         multiFont = new MultiByteFont();
         multiFont.setResolver(this.resolver);
         returnFont = multiFont;
-        read();        
-    }
-    
-    private void read() throws IOException {
+
         returnFont.setFontName(ttf.getFamilyName());
+        returnFont.setFontSubFamilyName(ttf.getSubFamilyName());
         //multiFont.setTTCName(ttcName)
         returnFont.setCapHeight(ttf.getCapHeight());
         returnFont.setXHeight(ttf.getXHeight());
@@ -77,6 +79,7 @@ public class TTFFontLoader extends FontLoader {
         returnFont.setStemV(Integer.parseInt(ttf.getStemV())); //not used for TTF
         returnFont.setItalicAngle(Integer.parseInt(ttf.getItalicAngle()));
         returnFont.setMissingWidth(0);
+        
         multiFont.setCIDType(CIDFontType.CIDTYPE2);
         int[] wx = ttf.getWidths();
         multiFont.setWidthArray(wx);
@@ -93,9 +96,12 @@ public class TTFFontLoader extends FontLoader {
         multiFont.setBFEntries(bfentries);
         copyKerning(ttf, true);
         multiFont.setEmbedFileName(this.fontFileURI);
-        
+        loaded = true;
     }
     
+    /**
+     * Copy kerning information.
+     */
     private void copyKerning(TTFFile ttf, boolean isCid) {
         
         // Get kerning
@@ -115,15 +121,7 @@ public class TTFFontLoader extends FontLoader {
             } else {
                 h2 = (Map)ttf.getAnsiKerning().get(kpx1);
             }
-
             returnFont.putKerningEntry(kpx1, h2);
         }
-    }
-    
-    
-    /** @see org.apache.fop.fonts.FontLoader#getFont() */
-    public CustomFont getFont() {
-        return this.returnFont;
-    }
-    
+    }    
 }

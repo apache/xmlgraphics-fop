@@ -19,20 +19,19 @@
 
 package org.apache.fop.config;
 
-import java.io.File;
-
-// this font has an embed-url that does not exist on filesystem
-public class FontTripletAttributeMissingTestCase extends BaseUserConfigTestCase {
+/*
+ * this font has a missing font triplet attribute
+ */ 
+public class FontTripletAttributeMissingTestCase extends BaseDestructiveUserConfigTestCase {
 
     public FontTripletAttributeMissingTestCase(String name) {
         super(name);
     }
 
-    protected File getUserConfigFile() {
-        return new File( getBaseConfigDir() + "/test_fonttripletattribute_missing.xconf");
-    }
-    
-    public String getName() {
-        return "test_fonttripletattribute_missing.xconf";
+    /**
+     * @see org.apache.fop.config.BaseUserConfigTestCase#getUserConfigFilename()
+     */
+    public String getUserConfigFilename() {
+        return "test_font_tripletattribute_missing.xconf";
     }
 }

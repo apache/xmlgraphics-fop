@@ -38,6 +38,7 @@ import java.io.IOException;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.FopFactoryConfigurator;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.PageViewport;
@@ -149,10 +150,10 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
         pageWidth = (int) Math.round(bounds.getWidth() / 1000f);
         pageHeight = (int) Math.round(bounds.getHeight() / 1000f);
         double scaleX = scaleFactor 
-                * (25.4 / FOUserAgent.DEFAULT_TARGET_RESOLUTION)
+                * (25.4 / FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION)
                 / userAgent.getTargetPixelUnitToMillimeter();
         double scaleY = scaleFactor 
-                * (25.4 / FOUserAgent.DEFAULT_TARGET_RESOLUTION)
+                * (25.4 / FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION)
                 / userAgent.getTargetPixelUnitToMillimeter();
         int bitmapWidth = (int) ((pageWidth * scaleX) + 0.5);
         int bitmapHeight = (int) ((pageHeight * scaleY) + 0.5);

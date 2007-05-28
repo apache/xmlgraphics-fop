@@ -23,7 +23,6 @@ package org.apache.fop.render;
 import java.util.Map;
 
 //FOP
-import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.fop.apps.FOUserAgent;
 
 /**
@@ -156,17 +155,10 @@ public class RendererContext {
             return ((Integer)context.getProperty(RendererContextConstants.HEIGHT)).intValue();
         }
 
-        /** @return the handler configuration */
-        public Configuration getHandlerConfiguration() {
-            return (Configuration)context.getProperty(
-                    RendererContextConstants.HANDLER_CONFIGURATION);
-        }
-
         /** @return the foreign attributes */
         public Map getForeignAttributes() {
             return (Map)context.getProperty(RendererContextConstants.FOREIGN_ATTRIBUTES);
-        }
-        
+        }        
     }    
 }
 

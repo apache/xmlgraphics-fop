@@ -26,8 +26,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
 
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGeneratorContext;
 import org.apache.batik.svggen.SVGGraphics2D;
@@ -76,13 +74,6 @@ public class SVGRenderer extends Java2DRenderer {
 
     /** Creates TIFF renderer. */
     public SVGRenderer() {
-    }
-
-    /**
-     * @see org.apache.fop.render.AbstractRenderer#configure(
-     *          org.apache.avalon.framework.configuration.Configuration)
-     */
-    public void configure(Configuration cfg) throws ConfigurationException {
     }
 
     /** @see org.apache.fop.render.Renderer#startRenderer(java.io.OutputStream) */

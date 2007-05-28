@@ -41,8 +41,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.AttributesImpl;
 
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.fop.util.QName;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
@@ -83,7 +81,6 @@ import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.render.PrintRenderer;
 import org.apache.fop.render.Renderer;
@@ -137,22 +134,6 @@ public class XMLRenderer extends PrintRenderer {
      */
     public XMLRenderer() {
         context = new RendererContext(this, XML_MIME_TYPE);
-    }
-
-    /**
-     * Configure the XML renderer.
-     * Get the configuration to be used for fonts etc.
-     * @see org.apache.avalon.framework.configuration.Configurable#configure(Configuration)
-     */
-    public void configure(Configuration cfg) throws ConfigurationException {
-        super.configure(cfg);
-        //Font configuration
-        List cfgFonts = FontSetup.buildFontListFromConfiguration(cfg, this);
-        if (this.fontList == null) {
-            this.fontList = cfgFonts;
-        } else {
-            this.fontList.addAll(cfgFonts);
-        }
     }
 
     /**

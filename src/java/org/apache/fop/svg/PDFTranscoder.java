@@ -25,7 +25,6 @@ import java.io.IOException;
 import org.apache.avalon.framework.configuration.Configurable;
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
-import org.apache.avalon.framework.container.ContainerUtil;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.UnitProcessor;
 import org.apache.batik.bridge.UserAgent;
@@ -35,6 +34,9 @@ import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.TranscodingHints;
 import org.apache.batik.transcoder.image.ImageTranscoder;
 import org.apache.batik.transcoder.keys.FloatKey;
+import org.apache.fop.Version;
+import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontSetup;
 import org.w3c.dom.Document;
 import org.w3c.dom.svg.SVGLength;
 
@@ -120,12 +122,16 @@ public class PDFTranscoder extends AbstractFOPTranscoder
         throws TranscoderException {
 
         graphics = new PDFDocumentGraphics2D();
+        graphics.getPDFDocument().getInfo().setProducer("Apache FOP Version " 
+                + Version.getVersion() 
+                + ": PDF Transcoder for Batik");
         
         try {
             if (this.cfg != null) {
-                ContainerUtil.configure(graphics, this.cfg);
+                PDFDocumentGraphics2DConfigurator configurator
+                        = new PDFDocumentGraphics2DConfigurator();
+                configurator.configure(graphics, this.cfg);
             }
-            ContainerUtil.initialize(graphics);
         } catch (Exception e) {
             throw new TranscoderException(
                 "Error while setting up PDFDocumentGraphics2D", e);
@@ -133,7 +139,9 @@ public class PDFTranscoder extends AbstractFOPTranscoder
 
         super.transcode(document, uri, output);
 
-        getLogger().trace("document size: " + width + " x " + height);
+        if (getLogger().isTraceEnabled()) {
+            getLogger().trace("document size: " + width + " x " + height);
+        }
         
         // prepare the image to be painted
         UnitProcessor.Context uctx = UnitProcessor.createContext(ctx, 
@@ -144,7 +152,9 @@ public class PDFTranscoder extends AbstractFOPTranscoder
         float heightInPt = UnitProcessor.userSpaceToSVG(height, SVGLength.SVG_LENGTHTYPE_PT, 
                 UnitProcessor.HORIZONTAL_LENGTH, uctx);
         int h = (int)(heightInPt + 0.5);
-        getLogger().trace("document size: " + w + "pt x " + h + "pt");
+        if (getLogger().isTraceEnabled()) {
+            getLogger().trace("document size: " + w + "pt x " + h + "pt");
+        }
 
         // prepare the image to be painted
         //int w = (int)(width + 0.5);

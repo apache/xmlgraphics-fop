@@ -23,6 +23,9 @@
 -->
 
 <fop version="1.0">
+  <!-- Switch off font caching for the purposes of unit testing -->
+  <cache-fonts>false</cache-fonts>
+
   <renderers>
     <renderer mime="application/pdf">
       <!-- disable PDF text compression -->

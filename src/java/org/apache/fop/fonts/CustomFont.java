@@ -30,8 +30,9 @@ public abstract class CustomFont extends Typeface
             implements FontDescriptor, MutableFont {
 
     private String fontName = null;
+    private String fontSubName = null;
     private String embedFileName = null;
-    protected String embedResourceName = null;
+    private String embedResourceName = null;
     private FontResolver resolver = null;
     
     private int capHeight = 0;
@@ -51,12 +52,26 @@ public abstract class CustomFont extends Typeface
 
     private boolean useKerning = true;
 
-
     /**
      * @see org.apache.fop.fonts.FontMetrics#getFontName()
      */
     public String getFontName() {
         return fontName;
+    }
+
+    /**
+     * @see org.apache.fop.fonts.FontMetrics#getStrippedFontName()
+     */
+    public String getStrippedFontName() {
+        return FontUtil.stripWhiteSpace(fontName);
+    }
+
+    /**
+     * Returns font's subfamily name.
+     * @return the font's subfamily name
+     */
+    public String getFontSubName() {
+        return fontSubName;
     }
 
     /**
@@ -238,6 +253,14 @@ public abstract class CustomFont extends Typeface
         this.fontName = name;
     }
 
+    /**
+     * Sets the font's subfamily name.
+     * @param subFamilyName the subfamily name of the font
+     */
+    public void setFontSubFamilyName(String subFamilyName) {
+        this.fontSubName = subFamilyName;        
+    }
+    
     /**
      * @see org.apache.fop.fonts.MutableFont#setEmbedFileName(String)
      */

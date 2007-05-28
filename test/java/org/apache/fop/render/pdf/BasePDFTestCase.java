@@ -93,7 +93,10 @@ public class BasePDFTestCase extends AbstractFOPTestCase {
         return result;
     }
 
-    /** get FOP config File */
+    /** 
+     * get FOP config File 
+     * @return user config file to be used for testing 
+     */
     protected File getUserConfigFile() {
         return new File("test/test.xconf");
     }

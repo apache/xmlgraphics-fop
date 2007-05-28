@@ -58,6 +58,8 @@ set LIBDIR=%LOCAL_FOP_HOME%lib
 set LOCALCLASSPATH=%FOP_HYPHENATION_PATH%
 for %%l in (%LOCAL_FOP_HOME%build\*.jar %LIBDIR%\*.jar) do set LOCALCLASSPATH=!LOCALCLASSPATH!;%%l
 
+set JAVAOPTS=-Denv.windir=%WINDIR%
+
 if "%JAVA_HOME%" == "" goto noJavaHome
 if not exist "%JAVA_HOME%\bin\java.exe" goto noJavaHome
 if "%JAVACMD%" == "" set JAVACMD=%JAVA_HOME%\bin\java
@@ -68,6 +70,6 @@ if "%JAVACMD%" == "" set JAVACMD=java
 
 :runFop
 rem echo "%JAVACMD%" %LOGCHOICE% %LOGLEVEL% -cp "%LOCALCLASSPATH%" org.apache.fop.cli.Main %FOP_CMD_LINE_ARGS%
-"%JAVACMD%" %LOGCHOICE% %LOGLEVEL% -cp "%LOCALCLASSPATH%" org.apache.fop.cli.Main %FOP_CMD_LINE_ARGS%
+"%JAVACMD%" %JAVAOPTS% %LOGCHOICE% %LOGLEVEL% -cp "%LOCALCLASSPATH%" org.apache.fop.cli.Main %FOP_CMD_LINE_ARGS%
 
 ENDLOCAL

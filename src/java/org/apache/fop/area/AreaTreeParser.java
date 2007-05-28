@@ -1060,7 +1060,7 @@ public class AreaTreeParser {
                         if (fontName != null) {
                             String fontStyle = attributes.getValue("font-style");
                             int fontWeight = getAttributeAsInteger(
-                                    attributes, "font-weight", Font.NORMAL);
+                                    attributes, "font-weight", Font.WEIGHT_NORMAL);
                             area.addTrait(trait,
                                     FontInfo.createFontKey(fontName, fontStyle, fontWeight));
                         }

@@ -15,24 +15,25 @@
  * limitations under the License.
  */
 
-/* $Id$ */
+/* $Id: $ */
 
-package org.apache.fop.config;
+package org.apache.fop.fonts.autodetect;
 
-import java.io.File;
+/**
+ * Unix font directory finder
+ */
+public class UnixFontDirFinder extends NativeFontDirFinder {
 
-// this font has a malformed metrics-url
-public class MetricsUrlMalformedTestCase extends BaseUserConfigTestCase {
-
-    public MetricsUrlMalformedTestCase(String name) {
-        super(name);
-    }
-
-    protected File getUserConfigFile() {
-        return new File( getBaseConfigDir() + "/test_metricsurl_malformed.xconf");
-    }
-    
-    public String getName() {
-        return "test_metricsurl_malformed.xconf";
-    }
+    /**
+     * Some guesses at possible unix font directory locations
+     * @return a list of possible font locations
+     */
+    protected String[] getSearchableDirectories() {
+        return new String[] {
+            System.getProperty("user.home") + "/.fonts", // user
+            "/usr/local/fonts", // local
+            "/usr/share/fonts", // system
+            "/usr/X11R6/lib/X11/fonts" // X
+        };
+    }    
 }

@@ -19,8 +19,6 @@
 
 package org.apache.fop.svg;
 
-import java.util.List;
-
 import org.apache.fop.pdf.PDFPage;
 
 /**
@@ -30,24 +28,10 @@ import org.apache.fop.pdf.PDFPage;
 public class PDFContext {
 
     private PDFPage currentPage;
-    private List fontList;
 
     /** number of pages generated */
     private int pagecount;
     
-    /**
-     * Sets the font list as creates by the FontSetup class.
-     * @param list the font list
-     */
-    public void setFontList(List list) {
-        this.fontList = list;
-    }
-
-    /** @return the font list */
-    public List getFontList() {
-        return this.fontList;
-    }
-
     /** @return true if a page is set up for painting. */
     public boolean isPagePending() {
         return this.currentPage != null;

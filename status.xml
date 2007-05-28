@@ -28,6 +28,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="add" fixes-bug="41831" due-to="Adrian Cumiskey">
+        Add support for font auto-detection (easier font configuration).
+      </action>
       <action context="Code" dev="JM" type="update" fixes-bug="42406" due-to="Hussein Shafie">
         Use source resolution setting for bitmap images which don't provide their own
         resolution.

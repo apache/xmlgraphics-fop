@@ -159,7 +159,7 @@ public class NativeTextHandler implements TextHandler {
         }
         int fontSize = 1000 * f.getSize();
         String style = f.isItalic() ? "italic" : "normal";
-        int weight = f.isBold() ? Font.BOLD : Font.NORMAL;
+        int weight = f.isBold() ? Font.WEIGHT_BOLD : Font.WEIGHT_NORMAL;
                 
         FontTriplet triplet = fontInfo.findAdjustWeight(fontFamily, style, weight);
         if (triplet == null) {

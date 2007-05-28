@@ -46,7 +46,26 @@ public abstract class PrintRenderer extends AbstractRenderer {
 
     /** list of fonts */
     protected List fontList = null;
+   
+    /**
+     * adds a font list to current list of fonts
+     * @param fontInfoList font list
+     */
+    public void addFontList(List fontInfoList) {
+        if (this.fontList == null) {
+            setFontList(fontInfoList);
+        } else {
+            this.fontList.addAll(fontInfoList);
+        }
+    }
     
+    /**
+     * @param fontList list of available fonts
+     */
+    public void setFontList(List fontList) {
+        this.fontList = fontList;
+    }
+
     /**
      * Set up the font info
      *

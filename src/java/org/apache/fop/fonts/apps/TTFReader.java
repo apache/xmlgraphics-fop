@@ -27,6 +27,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.Version;
+import org.apache.fop.fonts.FontUtil;
 import org.apache.fop.fonts.truetype.FontFileReader;
 import org.apache.fop.fonts.truetype.TTFCmapEntry;
 import org.apache.fop.fonts.truetype.TTFFile;
@@ -258,10 +259,10 @@ public class TTFReader extends AbstractFontReader {
         // "Perpetua-Bold", but the TrueType spec says that in the ttf file
         // it should be "Perpetua,Bold".
 
-        String s = stripWhiteSpace(ttf.getPostScriptName());
+        String s = FontUtil.stripWhiteSpace(ttf.getPostScriptName());
 
         if (fontName != null) {
-            el.appendChild(doc.createTextNode(stripWhiteSpace(fontName)));
+            el.appendChild(doc.createTextNode(FontUtil.stripWhiteSpace(fontName)));
         } else {
             el.appendChild(doc.createTextNode(s));
         }
@@ -450,22 +451,6 @@ public class TTFReader extends AbstractFontReader {
     }
 
 
-    private String stripWhiteSpace(String s) {
-        char[] ch = new char[s.length()];
-        s.getChars(0, s.length(), ch, 0);
-        StringBuffer stb = new StringBuffer();
-        for (int i = 0; i < ch.length; i++) {
-            if (ch[i] != ' ' 
-                    && ch[i] != '\r' 
-                    && ch[i] != '\n'
-                    && ch[i] != '\t') {
-                stb.append(ch[i]);
-            }
-        }
-
-        return stb.toString();
-    }
-    
     /** 
      * Bugzilla 40739, check that attr has a metrics-version attribute 
      * compatible with ours.

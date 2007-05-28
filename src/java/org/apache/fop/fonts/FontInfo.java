@@ -130,6 +130,9 @@ public class FontInfo {
      */
     private FontTriplet fontLookup(String family, String style,
                              int weight, boolean substFont) {
+        if (log.isTraceEnabled()) {
+            log.trace("Font lookup: " + family + " " + style + " " + weight);
+        }
         FontTriplet startKey = createFontKey(family, style, weight); 
         FontTriplet key = startKey;
         // first try given parameters
@@ -146,13 +149,13 @@ public class FontInfo {
             // only if the font may be substituted
             // fallback 1: try the same font-family and weight with default style
             if (f == null) {
-                key = createFontKey(family, "normal", weight);
+                key = createFontKey(family, Font.STYLE_NORMAL, weight);
                 f = getInternalFontKey(key);
             }
             
             // fallback 2: try the same font-family with default style and weight
             if (f == null) {
-                key = createFontKey(family, "normal", 400);
+                key = createFontKey(family, Font.STYLE_NORMAL, Font.WEIGHT_NORMAL);
                 f = getInternalFontKey(key);
             }
             
@@ -426,8 +429,4 @@ public class FontInfo {
             return 0;
         }
     }
-    
 }
-
-
-
