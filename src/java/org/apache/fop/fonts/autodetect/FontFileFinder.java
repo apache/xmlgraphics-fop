@@ -28,6 +28,7 @@ import java.util.List;
 import org.apache.commons.io.DirectoryWalker;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
+import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -74,11 +75,9 @@ public class FontFileFinder extends DirectoryWalker implements FontFinder {
      */
     protected static IOFileFilter getFileFilter() {
         return FileFilterUtils.andFileFilter(
-                FileFilterUtils.fileFileFilter(), 
-                FileFilterUtils.orFileFilter(
-                        FileFilterUtils.suffixFileFilter(".ttf"),
-                        FileFilterUtils.suffixFileFilter(".pfb")
-                )
+                FileFilterUtils.fileFileFilter(),
+                new SuffixFileFilter(new String[] {".ttf", ".otf", ".pfb"})
+                //TODO Add *.ttc when support for it has been added to the auto-detection mech.
         );
     }
     
