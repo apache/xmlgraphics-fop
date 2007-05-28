@@ -19,17 +19,26 @@
  
 package org.apache.fop.fonts;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * FontInfo contains meta information on fonts (where is the metrics file etc.)
  */
-public class EmbedFontInfo {
+public class EmbedFontInfo implements Serializable {
     
-    private String metricsFile, embedFile;
-    private boolean kerning;
-    private List fontTriplets;
-
+    /** Serialization Version UID */
+    private static final long serialVersionUID = -9075848379822693399L;
+    
+    /** filename of the metrics file */
+    protected String metricsFile;
+    /** filename of the main font file */
+    protected String embedFile;
+    /** false, to disable kerning */
+    protected boolean kerning;
+    /** the list of associated font triplets */
+    protected List fontTriplets;
+      
     /**
      * Main constructor
      * @param metricsFile Path to the xml file containing font metrics
@@ -44,7 +53,7 @@ public class EmbedFontInfo {
         this.kerning = kerning;
         this.fontTriplets = fontTriplets;
     }
-
+        
     /**
      * Returns the path to the metrics file
      * @return the metrics file path
@@ -76,6 +85,10 @@ public class EmbedFontInfo {
     public List getFontTriplets() {
         return fontTriplets;
     }
-
+    
+    /** @see java.lang.Object#toString() */
+    public String toString() {
+        return "metrics-url=" + metricsFile + ",embed-url=" + embedFile
+            + ", kerning=" + kerning + ", font-triplet=" + fontTriplets; 
+    }
 }
-

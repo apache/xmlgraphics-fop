@@ -24,14 +24,6 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
-// commons logging
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-// Avalon
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.ConfigurationException;
-
 /**
  * This class represents a list of PDF filters to be applied when serializing 
  * the output of a PDF object.
@@ -56,12 +48,7 @@ public class PDFFilterList {
     private List filters = new java.util.ArrayList();
 
     private boolean ignoreASCIIFilters = false;
-    
-    /**
-     * logging instance
-     */
-    protected static Log logger = LogFactory.getLog("org.apache.fop.render");
-    
+        
     /**
      * Default constructor.
      * <p>
@@ -290,53 +277,4 @@ public class PDFFilterList {
         }
         return out;
     }
-
-    /**
-     * Builds a filter map from an Avalon Configuration object.
-     * @param cfg the Configuration object
-     * @return Map the newly built filter map
-     * @throws ConfigurationException if a filter list is defined twice
-     */
-    public static Map buildFilterMapFromConfiguration(Configuration cfg) 
-                throws ConfigurationException {
-        Map filterMap = new java.util.HashMap();
-        Configuration[] filterLists = cfg.getChildren("filterList");
-        for (int i = 0; i < filterLists.length; i++) {
-            Configuration filters = filterLists[i];
-            String type = filters.getAttribute("type", null);
-            Configuration[] filt = filters.getChildren("value");
-            List filterList = new java.util.ArrayList();
-            for (int j = 0; j < filt.length; j++) {
-                String name = filt[j].getValue();
-                filterList.add(name);
-            }
-            
-            if (type == null) {
-                type = PDFFilterList.DEFAULT_FILTER;
-            }
-
-            if (!filterList.isEmpty() && logger.isDebugEnabled()) {
-                StringBuffer debug = new StringBuffer("Adding PDF filter");
-                if (filterList.size() != 1) {
-                    debug.append("s");
-                }
-                debug.append(" for type ").append(type).append(": ");
-                for (int j = 0; j < filterList.size(); j++) {
-                    if (j != 0) {
-                        debug.append(", ");
-                    }
-                    debug.append(filterList.get(j));
-                }
-                logger.debug(debug.toString());
-            }
-            
-            if (filterMap.get(type) != null) {
-                throw new ConfigurationException("A filterList of type '" 
-                    + type + "' has already been defined");
-            }
-            filterMap.put(type, filterList);
-        }
-        return filterMap;                
-    }
-
 }

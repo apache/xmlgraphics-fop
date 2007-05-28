@@ -53,8 +53,6 @@ import org.w3c.dom.Document;
 import org.apache.xmlgraphics.java2d.GraphicContext;
 
 // FOP
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.apps.FOPException;
@@ -143,31 +141,8 @@ public class PCLRenderer extends PrintRenderer {
     public PCLRenderer() {
     }
 
-    /**
-     * @see org.apache.avalon.framework.configuration.Configurable#configure(Configuration)
-     */
-    public void configure(Configuration cfg) throws ConfigurationException {
-        super.configure(cfg);
-        String rendering = cfg.getChild("rendering").getValue(null);
-        if ("quality".equalsIgnoreCase(rendering)) {
-            this.qualityBeforeSpeed = true;
-        } else if ("speed".equalsIgnoreCase(rendering)) {
-            this.qualityBeforeSpeed = false;
-        } else if (rendering != null) {
-            throw new ConfigurationException(
-                    "Valid values for 'rendering' are 'quality' and 'speed'. Value found: " 
-                        + rendering);
-        }
-        String textRendering = cfg.getChild("text-rendering").getValue(null);
-        if ("bitmap".equalsIgnoreCase(textRendering)) {
-            this.allTextAsBitmaps = true;
-        } else if ("auto".equalsIgnoreCase(textRendering)) {
-            this.allTextAsBitmaps = false;
-        } else if (textRendering != null) {
-            throw new ConfigurationException(
-                    "Valid values for 'text-rendering' are 'auto' and 'bitmap'. Value found: " 
-                        + textRendering);
-        }
+    public void setQualityBeforeSpeed(boolean qualityBeforeSpeed) {
+        this.qualityBeforeSpeed = qualityBeforeSpeed;
     }
 
     /**
@@ -1498,6 +1473,10 @@ public class PCLRenderer extends PrintRenderer {
         } catch (IOException ioe) {
             handleIOTrouble(ioe);
         }
+    }
+
+    public void setAllTextAsBitmaps(boolean allTextAsBitmaps) {
+        this.allTextAsBitmaps = allTextAsBitmaps;
     }
     
     

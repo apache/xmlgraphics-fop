@@ -3,6 +3,9 @@
   <!-- Strict configuration On -->
   <strict-configuration>true</strict-configuration>
 
+  <!-- Switch off font caching for the purposes of the unit test -->
+  <use-cache>false</use-cache>  
+  
   <!-- Base URL for resolving relative URLs -->
   <base>./</base>
 
@@ -12,9 +15,9 @@
   <renderers>
     <renderer mime="application/pdf">
       <fonts>
-		<!-- this font has a malformed metrics-url -->
-        <font metrics-url="badprotocol:test/resources/fonts/glb12.ttf.xml">
-          <font-triplet name="Gladiator" style="normal" weight="normal"/>
+		<!-- this font has a metrics-url that does not exist on filesystem -->
+        <font metrics-url="test/resources/fonts/doesnotexist.ttf.ansi.xml">
+          <font-triplet name="Gladiator-Ansi" style="normal" weight="normal"/>
         </font>
       </fonts>
     </renderer>

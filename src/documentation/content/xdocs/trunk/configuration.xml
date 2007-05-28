@@ -152,6 +152,24 @@
         <td>"height" 11 inches, "width" 8.26 inches</td>
       </tr>
       <tr>
+        <td>use-cache</td>
+        <td>boolean (true, false)</td>
+        <td>All fonts information that has been gathered as a result of "directory"
+        or "auto-detect" font configurations will be cached for future rendering runs.
+        This setting should improve performance on systems where
+        fonts have been configured using the "directory" or "auto-detect" tag mechanisms.
+        By default this option is switched on.</td>
+        <td>true</td>
+      </tr>
+      <tr>
+        <td>cache-file</td>
+        <td>String</td>
+        <td>This options specifies the file/directory path of the fop cache file.
+        This option can also be specified on the command-line using the -cache option.
+        This file is currently only used to cache font triplet information for future reference.</td>
+        <td>${base}/conf/fop.cache</td>
+      </tr>
+      <tr>
         <td>renderers</td>
         <td>(see text below)</td>
         <td>Contains the configuration for each renderer. See below.</td>

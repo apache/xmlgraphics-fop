@@ -27,8 +27,6 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.CTM;
@@ -114,12 +112,6 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
     /** @see org.apache.fop.render.AbstractRenderer#getMimeType() */
     public String getMimeType() {
         return "text/plain";
-    }
-
-    /** @see org.apache.fop.render.AbstractRenderer */
-    public void configure(Configuration conf) throws ConfigurationException {
-        super.configure(conf);
-        this.encoding = conf.getChild("encoding", true).getValue(null);
     }
     
     /**

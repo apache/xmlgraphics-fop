@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -39,14 +40,13 @@ import javax.xml.transform.stream.StreamSource;
 import org.xml.sax.SAXException;
 
 import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.ConfigurationException;
-import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.ElementMappingRegistry;
+import org.apache.fop.fonts.FontCache;
 import org.apache.fop.hyphenation.HyphenationTreeResolver;
 import org.apache.fop.image.ImageFactory;
 import org.apache.fop.layoutmgr.LayoutManagerMaker;
@@ -62,27 +62,6 @@ import org.apache.fop.util.ContentHandlerFactoryRegistry;
  */
 public class FopFactory {
     
-    /** Defines the default target resolution (72dpi) for FOP */
-    public static final float DEFAULT_TARGET_RESOLUTION = 72.0f; //dpi
-
-    /** Defines the default source resolution (72dpi) for FOP */
-    private static final float DEFAULT_SOURCE_RESOLUTION = 72.0f; //dpi
-
-    /** Defines the default page-height */
-    private static final String DEFAULT_PAGE_HEIGHT = "11in";
-    
-    /** Defines the default page-width */
-    private static final String DEFAULT_PAGE_WIDTH = "8.26in";
-    
-    /** Defines if FOP should use strict validation for FO and user config */
-    private static final boolean DEFAULT_STRICT_FO_VALIDATION = true;
-
-    /** Defines if FOP should validate the user config strictly */
-    private static final boolean DEFAULT_STRICT_USERCONFIG_VALIDATION = true;
-    
-    /** Defines if FOP should use an alternative rule to determine text indents */
-    private static final boolean DEFAULT_BREAK_INDENT_INHERITANCE = false;
-
     /** logger instance */
     private static Log log = LogFactory.getLog(FopFactory.class);
     
@@ -100,7 +79,7 @@ public class FopFactory {
                 = new ContentHandlerFactoryRegistry();
     
     /** Our default resolver if none is set */
-    private URIResolver foURIResolver = new FOURIResolver();
+    private URIResolver foURIResolver = null;
     
     /** A user settable URI Resolver */
     private URIResolver uriResolver = null;
@@ -108,22 +87,23 @@ public class FopFactory {
     /** The resolver for user-supplied hyphenation patterns */
     private HyphenationTreeResolver hyphResolver;
     
+    /** Image factory for creating fop image objects */
     private ImageFactory imageFactory = new ImageFactory();
 
-    /** user configuration */
-    private Configuration userConfig = null;
-
+    /** Configuration layer used to configure fop */
+    private FopFactoryConfigurator config = null;
+        
     /**
      *  The base URL for all URL resolutions, especially for
      *  external-graphics.
      */
-    private String baseURL;
+    private String base = null;
 
     /** The base URL for all font URL resolutions. */
-    private String fontBaseURL;
+    private String fontBase = null;
 
     /** The base URL for all hyphen URL resolutions. */
-    private String hyphenBaseURL;
+    private String hyphenBase = null;
 
     /**
      * FOP has the ability, for some FO's, to continue processing even if the
@@ -131,32 +111,36 @@ public class FopFactory {
      * behavior for FOP.  However, this flag, if set, provides the user the
      * ability for FOP to halt on all content model violations if desired.
      */ 
-    private boolean strictFOValidation = DEFAULT_STRICT_FO_VALIDATION;
+    private boolean strictFOValidation = FopFactoryConfigurator.DEFAULT_STRICT_FO_VALIDATION;
 
     /**
      * FOP will validate the contents of the user configuration strictly
      * (e.g. base-urls and font urls/paths).
      */
-    private boolean strictUserConfigValidation = DEFAULT_STRICT_USERCONFIG_VALIDATION;
-    
+    private boolean strictUserConfigValidation
+        = FopFactoryConfigurator.DEFAULT_STRICT_USERCONFIG_VALIDATION;
+
+    /** Font cache to speed up auto-font configuration (null if disabled) */
+    private FontCache fontCache = null;
+
     /** Allows enabling kerning on the base 14 fonts, default is false */
     private boolean enableBase14Kerning = false;
     
     /** Source resolution in dpi */
-    private float sourceResolution = DEFAULT_SOURCE_RESOLUTION;
+    private float sourceResolution = FopFactoryConfigurator.DEFAULT_SOURCE_RESOLUTION;
 
     /** Target resolution in dpi */
-    private float targetResolution = DEFAULT_TARGET_RESOLUTION;
+    private float targetResolution = FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION;
 
     /** Page height */
-    private String pageHeight = DEFAULT_PAGE_HEIGHT;
+    private String pageHeight = FopFactoryConfigurator.DEFAULT_PAGE_HEIGHT;
     
     /** Page width */
-    private String pageWidth = DEFAULT_PAGE_WIDTH;
+    private String pageWidth = FopFactoryConfigurator.DEFAULT_PAGE_WIDTH;
 
     /** @see #setBreakIndentInheritanceOnReferenceAreaBoundary(boolean) */
     private boolean breakIndentInheritanceOnReferenceAreaBoundary
-        = DEFAULT_BREAK_INDENT_INHERITANCE;
+        = FopFactoryConfigurator.DEFAULT_BREAK_INDENT_INHERITANCE;
 
     /** Optional overriding LayoutManagerMaker */
     private LayoutManagerMaker lmMakerOverride = null;
@@ -165,14 +149,17 @@ public class FopFactory {
     
     /** Map with cached ICC based ColorSpace objects. */
     private Map colorSpaceMap = null;
-    
+        
     /**
      * Main constructor.
      */
     protected FopFactory() {
+        this.config = new FopFactoryConfigurator(this);
         this.elementMappingRegistry = new ElementMappingRegistry(this);
+        this.foURIResolver = new FOURIResolver(validateUserConfigStrictly());
         // Use a synchronized Map - I am not really sure this is needed, but better safe than sorry.
         this.colorSpaceMap = Collections.synchronizedMap(new java.util.HashMap());
+        setUseCache(FopFactoryConfigurator.DEFAULT_USE_CACHE);
     }
     
     /**
@@ -336,11 +323,42 @@ public class FopFactory {
     }
 
     /**
-     * Sets the base URL.
-     * @param baseURL base URL
+     * cleans the base url
+     * @param base
+     * @return
+     * @throws MalformedURLException
+     * @throws URISyntaxException 
      */
-    void setBaseURL(String baseURL) {
-        this.baseURL = baseURL;
+    private String checkBaseURL(String base) throws MalformedURLException {
+        if (!base.endsWith("/")) {
+            // The behavior described by RFC 3986 regarding resolution of relative
+            // references may be misleading for normal users:
+            // file://path/to/resources + myResource.res -> file://path/to/myResource.res
+            // file://path/to/resources/ + myResource.res -> file://path/to/resources/myResource.res
+            // We assume that even when the ending slash is missing, users have the second
+            // example in mind
+            base += "/";
+        }
+        File dir = new File(base);
+        try {
+            base = (dir.isDirectory() ? dir.toURL() : new URL(base)).toExternalForm(); 
+        } catch (MalformedURLException mfue) {
+            if (strictUserConfigValidation) {
+                throw mfue;
+            }
+            log.error(mfue.getMessage());
+        }
+        return base;
+    }
+    
+    /**
+     * Sets the base URL.
+     * @param base base URL
+     * @throws MalformedURLException 
+     * @throws URISyntaxException 
+     */
+    public void setBaseURL(String base) throws MalformedURLException {
+        this.base = checkBaseURL(base);
     }
 
     /**
@@ -348,42 +366,46 @@ public class FopFactory {
      * @return the base URL
      */
     public String getBaseURL() {
-        return this.baseURL;
+        return this.base;
     }
-
+    
     /**
      * Sets the font base URL.
-     * @param fontBaseURL font base URL
+     * @param fontBase font base URL
+     * @throws MalformedURLException 
+     * @throws URISyntaxException 
      */
-    public void setFontBaseURL(String fontBaseURL) {
-        this.fontBaseURL = fontBaseURL;
+    public void setFontBaseURL(String fontBase) throws MalformedURLException {
+        this.fontBase = checkBaseURL(fontBase);
     }
 
     /** @return the font base URL */
     public String getFontBaseURL() {
-        return this.fontBaseURL;
+        return this.fontBase;
     }
 
     /** @return the hyphen base URL */
     public String getHyphenBaseURL() {
-        return hyphenBaseURL;
+        return this.hyphenBase;
     }
 
     /**
      * Sets the hyphen base URL.
-     * @param hyphenBaseURL hythen base URL
-     */
-    public void setHyphenBaseURL(final String hyphenBaseURL) {
-        if (hyphenBaseURL != null) {
+     * @param hyphenBase hythen base URL
+     * @throws MalformedURLException 
+     * @throws URISyntaxException 
+     * */
+    public void setHyphenBaseURL(final String hyphenBase) throws MalformedURLException {
+        if (hyphenBase != null) {
             this.hyphResolver = new HyphenationTreeResolver() {
                 public Source resolve(String href) {
-                    return resolveURI(href, hyphenBaseURL);
+                    return resolveURI(href, hyphenBase);
                 }
             };
         }
-        this.hyphenBaseURL = hyphenBaseURL;
+        this.hyphenBase = checkBaseURL(hyphenBase);
     }
-
+    
     /**
      * Sets the URI Resolver. It is used for resolving factory-level URIs like hyphenation
      * patterns and as backup for URI resolution performed during a rendering run. 
@@ -483,8 +505,10 @@ public class FopFactory {
      */
     public void setSourceResolution(float dpi) {
         this.sourceResolution = dpi;
-        log.info("source-resolution set to: " + sourceResolution 
-                + "dpi (px2mm=" + getSourcePixelUnitToMillimeter() + ")");
+        if (log.isDebugEnabled()) {
+            log.debug("source-resolution set to: " + sourceResolution 
+                    + "dpi (px2mm=" + getSourcePixelUnitToMillimeter() + ")");
+        }
     }
 
     /** @return the resolution for resolution-dependant output */
@@ -538,7 +562,9 @@ public class FopFactory {
      */
     public void setPageHeight(String pageHeight) {
         this.pageHeight = pageHeight;
-        log.info("Default page-height set to: " + pageHeight);
+        if (log.isDebugEnabled()) {
+            log.debug("Default page-height set to: " + pageHeight);
+        }
     }
     
     /**
@@ -559,7 +585,9 @@ public class FopFactory {
      */
     public void setPageWidth(String pageWidth) {
         this.pageWidth = pageWidth;
-        log.info("Default page-width set to: " + pageWidth);
+        if (log.isDebugEnabled()) {
+            log.debug("Default page-width set to: " + pageWidth);
+        }
     }
     
     /**
@@ -595,7 +623,7 @@ public class FopFactory {
     public Set getIgnoredNamespace() {
         return Collections.unmodifiableSet(this.ignoredNamespaces);
     }
-    
+
     //------------------------------------------- Configuration stuff
     
     /**
@@ -605,14 +633,9 @@ public class FopFactory {
      * @throws SAXException if a parsing error occurs
      */
     public void setUserConfig(File userConfigFile) throws SAXException, IOException {
-        try {
-            DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
-            setUserConfig(cfgBuilder.buildFromFile(userConfigFile));
-        } catch (ConfigurationException e) {
-            throw new FOPException(e);
-        }
+        config.setUserConfig(userConfigFile);
     }
-    
+
     /**
      * Set the user configuration from an URI.
      * @param uri the URI to the configuration file
@@ -620,12 +643,7 @@ public class FopFactory {
      * @throws SAXException if a parsing error occurs
      */
     public void setUserConfig(String uri) throws SAXException, IOException {
-        try {
-            DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
-            setUserConfig(cfgBuilder.build(uri));
-        } catch (ConfigurationException e) {
-            throw new FOPException(e);
-        }
+        config.setUserConfig(uri);
     }
     
     /**
@@ -634,12 +652,7 @@ public class FopFactory {
      * @throws FOPException if a configuration problem occurs 
      */
     public void setUserConfig(Configuration userConfig) throws FOPException {
-        this.userConfig = userConfig;
-        try {
-            configure(userConfig);
-        } catch (ConfigurationException e) {            
-            throw new FOPException(e);
-        }
+        config.setUserConfig(userConfig);
     }
 
     /**
@@ -647,144 +660,7 @@ public class FopFactory {
      * @return the user configuration
      */
     public Configuration getUserConfig() {
-        return userConfig;
-    }
-
-    /**
-     * Returns the configuration subtree for a specific renderer.
-     * @param mimeType MIME type of the renderer
-     * @return the requested configuration subtree, null if there's no configuration
-     */
-    public Configuration getUserRendererConfig(String mimeType) {
-        if (userConfig == null || mimeType == null) {
-            return null;
-        }
-        
-        Configuration userRendererConfig = null;
-
-        Configuration[] cfgs
-            = userConfig.getChild("renderers").getChildren("renderer");
-        for (int i = 0; i < cfgs.length; ++i) {
-            Configuration child = cfgs[i];
-            try {
-                if (child.getAttribute("mime").equals(mimeType)) {
-                    userRendererConfig = child;
-                    break;
-                }
-            } catch (ConfigurationException e) {
-                // silently pass over configurations without mime type
-            }
-        }
-        log.debug((userRendererConfig == null ? "No u" : "U")
-                  + "ser configuration found for MIME type " + mimeType);
-        return userRendererConfig;
-    }
-
-    /**
-     * Initializes user agent settings from the user configuration
-     * file, if present: baseURL, resolution, default page size,...
-     * 
-     * @throws ConfigurationException when there is an entry that 
-     *          misses the required attribute
-     * Configures the FopFactory.
-     * @param cfg Avalon Configuration Object
-     * @see org.apache.avalon.framework.configuration.Configurable
-     */
-    public void configure(Configuration cfg) throws ConfigurationException {        
-        log.info("Initializing FopFactory Configuration");        
-        
-        if (cfg.getChild("strict-configuration", false) != null) {
-            this.strictUserConfigValidation
-                    = cfg.getChild("strict-configuration").getValueAsBoolean();
-        }
-        if (cfg.getChild("strict-validation", false) != null) {
-            this.strictFOValidation = cfg.getChild("strict-validation").getValueAsBoolean();
-        }
-        if (cfg.getChild("base", false) != null) {
-            try {
-                setBaseURL(getBaseURLfromConfig(cfg, "base"));
-            } catch (ConfigurationException e) {
-                if (strictUserConfigValidation) {
-                    throw e;
-                }
-                log.error(e.getMessage());
-            }
-        }
-        if (cfg.getChild("font-base", false) != null) {
-            try {
-                setFontBaseURL(getBaseURLfromConfig(cfg, "font-base"));
-            } catch (ConfigurationException e) {
-                if (strictUserConfigValidation) {
-                    throw e;
-                }
-                log.error(e.getMessage());
-            }
-        }
-        if (cfg.getChild("hyphenation-base", false) != null) {
-            try {
-                setHyphenBaseURL(getBaseURLfromConfig(cfg, "hyphenation-base"));
-            } catch (ConfigurationException e) {
-                if (strictUserConfigValidation) {
-                    throw e;
-                }
-                log.error(e.getMessage());
-            }
-        }
-        if (cfg.getChild("source-resolution", false) != null) {
-            setSourceResolution(
-                    cfg.getChild("source-resolution").getValueAsFloat(DEFAULT_SOURCE_RESOLUTION));
-        }
-        if (cfg.getChild("target-resolution", false) != null) {
-            setTargetResolution(
-                    cfg.getChild("target-resolution").getValueAsFloat(DEFAULT_TARGET_RESOLUTION));
-        }
-        if (cfg.getChild("break-indent-inheritance", false) != null) {
-            setBreakIndentInheritanceOnReferenceAreaBoundary(
-                    cfg.getChild("break-indent-inheritance").getValueAsBoolean());
-        }        
-        Configuration pageConfig = cfg.getChild("default-page-settings");
-        if (pageConfig.getAttribute("height", null) != null) {
-            setPageHeight(pageConfig.getAttribute("height", DEFAULT_PAGE_HEIGHT));
-        }
-        if (pageConfig.getAttribute("width", null) != null) {
-            setPageWidth(pageConfig.getAttribute("width", DEFAULT_PAGE_WIDTH));
-        }
-    }
-
-    /**
-     * Retrieves and verifies a base URL.
-     * @param cfg The Configuration object to retrieve the base URL from
-     * @param name the element name for the base URL
-     * @return the requested base URL or null if not available
-     * @throws ConfigurationException 
-     */    
-    public static String getBaseURLfromConfig(Configuration cfg, String name)
-    throws ConfigurationException {
-        if (cfg.getChild(name, false) != null) {
-            try {
-                String cfgBasePath = cfg.getChild(name).getValue(null);
-                if (cfgBasePath != null) {
-                    // Is the path a dirname?
-                    File dir = new File(cfgBasePath);
-//                    if (!dir.exists()) {
-//                        throw new ConfigurationException("Base URL '" + name
-//                                + "' references non-existent resource '"
-//                                + cfgBasePath + "'");
-//                    } else if (dir.isDirectory()) {
-                    if (dir.isDirectory()) {
-                        // Yes, convert it into a URL
-                        cfgBasePath = dir.toURL().toExternalForm(); 
-                    }
-                    // Otherwise, this is already a URL
-                }
-                log.info(name + " set to: " + cfgBasePath);
-                return cfgBasePath;
-            } catch (MalformedURLException mue) {
-                throw new ConfigurationException("Base URL '" + name
-                        + "' in user config is malformed!");
-            }
-        }
-        return null;
+        return config.getUserConfig();
     }
 
     /**
@@ -803,6 +679,35 @@ public class FopFactory {
         return this.strictUserConfigValidation;
     }
 
+    //------------------------------------------- Cache related stuff
+
+    /**
+     * Whether or not to cache results of font triplet detection/auto-config
+     * @param useCache use cache or not
+     */
+    public void setUseCache(boolean useCache) {
+        if (useCache) {
+            this.fontCache = FontCache.load();
+            if (this.fontCache == null) {
+                this.fontCache = new FontCache();
+            }
+        } else {
+            this.fontCache = null;
+        }
+    }
+
+    /**
+     * Cache results of font triplet detection/auto-config?
+     * @return whether this factory is uses the cache
+     */
+    public boolean useCache() {
+        return (this.fontCache != null);
+    }
+
+    public FontCache getFontCache() {
+        return this.fontCache;
+    }
+    
     //------------------------------------------- URI resolution
 
     /**
@@ -810,26 +715,29 @@ public class FopFactory {
      * Will use the configured resolver and if not successful fall back
      * to the default resolver.
      * @param uri URI to access
-     * @param base the base URI to resolve against
+     * @param baseUri the base URI to resolve against
      * @return A {@link javax.xml.transform.Source} object, or null if the URI
      * cannot be resolved. 
      * @see org.apache.fop.apps.FOURIResolver
      */
-    public Source resolveURI(String uri, String base) {
+    public Source resolveURI(String uri, String baseUri) {
         Source source = null;
         //RFC 2397 data URLs don't need to be resolved, just decode them.
         boolean bypassURIResolution = uri.startsWith("data:");
         if (!bypassURIResolution && uriResolver != null) {
             try {
-                source = uriResolver.resolve(uri, base);
+                source = uriResolver.resolve(uri, baseUri);
             } catch (TransformerException te) {
                 log.error("Attempt to resolve URI '" + uri + "' failed: ", te);
+                if (validateUserConfigStrictly()) {
+                    return null;
+                }
             }
         }
         if (source == null) {
             // URI Resolver not configured or returned null, use default resolver
             try {
-                source = foURIResolver.resolve(uri, base);
+                source = foURIResolver.resolve(uri, baseUri);
             } catch (TransformerException te) {
                 log.error("Attempt to resolve URI '" + uri + "' failed: ", te);
             }
@@ -846,18 +754,18 @@ public class FopFactory {
      * The FOP URI resolver is used to try and locate the ICC file. 
      * If that fails null is returned.
      * 
-     * @param base a base URI to resolve relative URIs
+     * @param baseUri a base URI to resolve relative URIs
      * @param iccProfileSrc ICC Profile source to return a ColorSpace for
      * @return ICC ColorSpace object or null if ColorSpace could not be created 
      */
-    public ColorSpace getColorSpace(String base, String iccProfileSrc) {
+    public ColorSpace getColorSpace(String baseUri, String iccProfileSrc) {
         ColorSpace colorSpace = null;
-        if (!this.colorSpaceMap.containsKey(base + iccProfileSrc)) {
+        if (!this.colorSpaceMap.containsKey(baseUri + iccProfileSrc)) {
             try {
                 ICC_Profile iccProfile = null;
                 // First attempt to use the FOP URI resolver to locate the ICC
                 // profile
-                Source src = this.resolveURI(iccProfileSrc, base);
+                Source src = this.resolveURI(iccProfileSrc, baseUri);
                 if (src != null && src instanceof StreamSource) {
                     // FOP URI resolver found ICC profile - create ICC profile
                     // from the Source
@@ -882,16 +790,16 @@ public class FopFactory {
 
             if (colorSpace != null) {
                 // Put in cache (not when VM resolved it as we can't control
-                this.colorSpaceMap.put(base + iccProfileSrc, colorSpace);
+                this.colorSpaceMap.put(baseUri + iccProfileSrc, colorSpace);
             } else {
                 // TODO To avoid an excessive amount of warnings perhaps
                 // register a null ColorMap in the colorSpaceMap
                 log.warn("Color profile '" + iccProfileSrc + "' not found.");
             }
         } else {
-            colorSpace = (ColorSpace) this.colorSpaceMap.get(base
+            colorSpace = (ColorSpace) this.colorSpaceMap.get(baseUri
                     + iccProfileSrc);
         }
         return colorSpace;
-    }
+    }    
 }

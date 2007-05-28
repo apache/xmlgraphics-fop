@@ -23,6 +23,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.AbstractRendererMaker;
 import org.apache.fop.render.Renderer;
+import org.apache.fop.render.RendererConfigurator;
 
 /**
  * RendererMaker for the PCL Renderer.
@@ -31,12 +32,17 @@ public class PCLRendererMaker extends AbstractRendererMaker {
 
     private static final String[] MIMES = new String[] {
         MimeConstants.MIME_PCL,
-        MimeConstants.MIME_PCL_ALT};
+        MimeConstants.MIME_PCL_ALT
+    };
     
-    
-    /**@see org.apache.fop.render.AbstractRendererMaker */
-    public Renderer makeRenderer(FOUserAgent ua) {
+    /**@see org.apache.fop.render.AbstractRendererMaker#makeRenderer(FOUserAgent) */
+    public Renderer makeRenderer(FOUserAgent userAgent) {
         return new PCLRenderer();
+    }
+
+    /** @see org.apache.fop.render.AbstractRendererMaker#getConfigurator(FOUserAgent) */
+    public RendererConfigurator getConfigurator(FOUserAgent userAgent) {
+        return new PCLRendererConfigurator(userAgent);
     }
 
     /** @see org.apache.fop.render.AbstractRendererMaker#needsOutputStream() */
@@ -48,5 +54,4 @@ public class PCLRendererMaker extends AbstractRendererMaker {
     public String[] getSupportedMimeTypes() {
         return MIMES;
     }
-
 }

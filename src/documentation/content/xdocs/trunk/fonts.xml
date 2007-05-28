@@ -24,6 +24,7 @@
     <authors>
       <person name="Jeremias Märki" email=""/>
       <person name="Tore Engvig" email=""/>
+      <person name="Adrian Cumiskey" email=""/>
     </authors>
   </header>
   <body>
@@ -129,8 +130,7 @@
 More information about fonts can be found at:</p>
       <ul>
         <li><a href="http://partners.adobe.com/asn/developer/type/ftypes.html">Adobe font types</a></li>
-        <li><a href="http://partners.adobe.com/asn/developer/technotes/fonts.html">Adobe Font Technote</a>
-</li>
+        <li><a href="http://partners.adobe.com/asn/developer/technotes/fonts.html">Adobe Font Technote</a></li>
       </ul>
       <section id="type1-metrics">
         <title>Type 1 Font Metrics</title>
@@ -236,10 +236,24 @@ It will display all of the font names and exit with an Exception.</p>
       <section id="register">
         <title>Register Fonts with FOP</title>
         <p>You must tell FOP how to find and use the font metrics files by registering them in the <a href="configuration.html">FOP Configuration</a>. Add entries for your custom fonts, regardless of font type, to the configuration file in a manner similar to the following:</p>
-        <source><![CDATA[<font metrics-url="file:///C:/myfonts/FTL_____.xml" kerning="yes"
+        <source><![CDATA[
+<fonts>
+  <!-- register a particular font -->
+  <font metrics-url="file:///C:/myfonts/FTL_____.xml" kerning="yes"
       embed-url="file:///C:/myfonts/FTL_____.pfb">
-  <font-triplet name="FrutigerLight" style="normal" weight="normal"/>
-</font>]]></source>
+     <font-triplet name="FrutigerLight" style="normal" weight="normal"/>
+  </font>
+  
+  <!-- register all the fonts found in a directory -->
+  <directory>C:\MyFonts1</directory>
+  
+  <!-- register all the fonts found in a directory
+       and all of its sub directories (use with care) -->
+  <directory recursive="true">C:\MyFonts2</directory>
+
+  <!-- automatically detect operating system installed fonts -->
+  <auto-detect/>  
+</fonts>]]></source>
         <note>Review the documentation for <a href="configuration.html">FOP Configuration</a> for instructions on making the FOP configuration available to FOP when it runs. Otherwise, FOP has no way of finding your custom font information.</note>
         <ul>
           <li>
@@ -247,8 +261,14 @@ It will display all of the font names and exit with an Exception.</p>
             Relative URLs are resolved relative to the font-base property (or base) if available.
             See <a href="configuration.html">FOP: Configuration</a> for more information.
           </li>
-          <li>The "kerning" and "embed-url" attributes are optional. Kerning is currently not used at all. If embedding is off, the output will position the text correctly (from the metrics file), but it will not be displayed or printed correctly unless the viewer has the applicable font available to their local system.</li>
-          <li>When setting the embed-url attribute for Type 1 fonts, be sure to specify the PFB (actual font data), not PFM (font metrics) file that you used to generate the XML font metrics file.</li>
+          <li>Either an "embed-url" or a "metrics-url" must be specified for font tag configurations.</li>
+          <li>The font "kerning" attribute is optional. Kerning is currently not used at all.</li>
+	      <li>If embedding is off, the output will position the text correctly (from the metrics file), but it will not be displayed or printed correctly unless the viewer has the applicable font available to their local system.</li>
+          <li>When setting the "embed-url" attribute for Type 1 fonts, be sure to specify the PFB (actual font data), not PFM (font metrics) file that you used to generate the XML font metrics file.</li>
+          <li>The fonts "directory" tag can be used to register fonts contained within a single or list of directory paths.  The "recursive" attribute can be specified to recursively add fonts from all sub directories.</li>
+          <li>The fonts "auto-detect" tag can be used to automatically register fonts that are found to be installed on the native operating system.</li>
+          <li>Fonts registered with "font" tag configurations override fonts found by means of "directory" tag definitions.</li>
+          <li>Fonts found as a result of a "directory" tag configuration override fonts found as a result of the "auto-detect" tag being specified.</li>
           <li>
             If relative URLs are specified, they are evaluated relative to the value of the 
             "font-base" setting. If there is no "font-base" setting, the fonts are evaluated 
@@ -281,7 +301,7 @@ Characters will be WinAnsi encoded (as specified in the PDF spec), so you lose t
 See <a href="#ttf-encoding">Table of TTF Encoding Options</a> for more details.</p>
       </section>
       <section id="embedding-base14">
-        <title>Explicitely embedding the base 14 fonts</title>
+        <title>Explicitly embedding the base 14 fonts</title>
         <p>
           There are cases where you might want to force the embedding of one or more of the base 14 fonts that
           can normally be considered available on the target platform (viewer, printer). One of these cases is

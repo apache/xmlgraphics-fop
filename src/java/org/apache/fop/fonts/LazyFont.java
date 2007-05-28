@@ -54,14 +54,21 @@ public class LazyFont extends Typeface implements FontDescriptor {
      * @param useKerning True, if kerning should be enabled
      * @param resolver the font resolver to handle font URIs
      */
-    public LazyFont(String fontEmbedPath, String metricsFileName
-                    , boolean useKerning, FontResolver resolver) {
-        this.metricsFileName = metricsFileName;
-        this.fontEmbedPath = fontEmbedPath;
-        this.useKerning = useKerning;
+    public LazyFont(EmbedFontInfo fontInfo, FontResolver resolver) {
+        
+        this.metricsFileName = fontInfo.getMetricsFile();
+        this.fontEmbedPath = fontInfo.getEmbedFile();
+        this.useKerning = fontInfo.getKerning();
         this.resolver = resolver;
     }
 
+    /**
+     * String representation of LazyFont
+     */
+    public String toString() {
+        return ( "metrics-url=" + metricsFileName + ", embed-url=" + fontEmbedPath + ", kerning=" + useKerning );
+    }
+        
     private void load(boolean fail) {
         if (!isMetricsLoaded) {
             try {
@@ -327,6 +334,5 @@ public class LazyFont extends Typeface implements FontDescriptor {
         load(true);
         return realFontDescriptor.isEmbeddable();
     }
-
 }
 

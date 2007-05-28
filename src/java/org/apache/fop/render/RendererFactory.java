@@ -25,9 +25,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.ConfigurationException;
-import org.apache.avalon.framework.container.ContainerUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -185,18 +182,9 @@ public class RendererFactory {
             }
             Renderer rend = maker.makeRenderer(userAgent);
             rend.setUserAgent(userAgent);
-            String mimeType = rend.getMimeType(); //Always use main MIME type for this
-            Configuration userRendererConfig = null;
-            if (mimeType != null) {
-                userRendererConfig
-                    = userAgent.getFactory().getUserRendererConfig(mimeType);
-            }
-            if (userRendererConfig != null) {
-                try {
-                    ContainerUtil.configure(rend, userRendererConfig);
-                } catch (ConfigurationException e) {
-                    throw new FOPException(e);
-                }
+            RendererConfigurator configurator = maker.getConfigurator(userAgent);
+            if (configurator != null) {
+                configurator.configure(rend);
             }
             return rend;
         }

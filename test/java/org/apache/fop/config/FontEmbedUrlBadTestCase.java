@@ -19,20 +19,19 @@
 
 package org.apache.fop.config;
 
-import java.io.File;
+/**
+ * this font has an embed-url that does not exist on filesystem.
+ */
+public class FontEmbedUrlBadTestCase extends BaseDestructiveUserConfigTestCase {
 
-// this font has a malformed embed-url
-public class EmbedUrlMalformedTestCase extends BaseUserConfigTestCase {
-
-    public EmbedUrlMalformedTestCase(String name) {
+    public FontEmbedUrlBadTestCase(String name) {
         super(name);
     }
 
-    protected File getUserConfigFile() {
-        return new File( getBaseConfigDir() + "/test_embedurl_malformed.xconf");
-    }
-    
-    public String getName() {
-        return "test_embedurl_malformed.xconf";
+    /**
+     * @see org.apache.fop.config.BaseUserConfigTestCase#getUserConfigFilename()
+     */
+    public String getUserConfigFilename() {
+        return "test_font_embedurl_bad.xconf";
     }
 }

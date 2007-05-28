@@ -27,12 +27,22 @@ import java.util.Map;
  */
 public class Font {
 
-    /** Default fallback key */
-    public static final FontTriplet DEFAULT_FONT = new FontTriplet("any", "normal", 400);
-    /** Normal font weight */
-    public static final int NORMAL = 400;
     /** Bold font weight */
-    public static final int BOLD = 700;
+    public static final int WEIGHT_BOLD = 700;
+
+    /** Normal font weight */
+    public static final int WEIGHT_NORMAL = 400;
+
+    /** Normal font style */
+    public static final String STYLE_NORMAL = "normal";
+
+    /** Italic font style */
+    public static final String STYLE_ITALIC = "italic";
+
+    /** Default fallback key */
+    public static final FontTriplet DEFAULT_FONT = new FontTriplet(
+                    "any", STYLE_NORMAL, WEIGHT_NORMAL);
+
 
     private String fontName;
     private FontTriplet triplet;

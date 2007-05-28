@@ -32,9 +32,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
 
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.ConfigurationException;
-
 import org.apache.commons.logging.Log;
 
 import org.apache.xmlgraphics.image.GraphicsUtil;
@@ -77,12 +74,12 @@ public class TIFFRenderer extends Java2DRenderer {
 
     //private static final String COMPRESSION_NONE = "NONE";
     //private static final String COMPRESSION_JPEG = "JPEG";
-    private static final String COMPRESSION_PACKBITS = "PackBits";
+    public static final String COMPRESSION_PACKBITS = "PackBits";
     //private static final String COMPRESSION_DEFLATE = "Deflate";
     //private static final String COMPRESSION_LZW = "LZW";
     //private static final String COMPRESSION_ZLIB = "ZLib";
-    private static final String COMPRESSION_CCITT_T6 = "CCITT T.6"; //CCITT Group 4
-    private static final String COMPRESSION_CCITT_T4 = "CCITT T.4"; //CCITT Group 3
+    public static final String COMPRESSION_CCITT_T6 = "CCITT T.6"; //CCITT Group 4
+    public static final String COMPRESSION_CCITT_T4 = "CCITT T.4"; //CCITT Group 3
     
     /** ImageWriter parameters */
     private ImageWriterParams writerParams;
@@ -113,30 +110,6 @@ public class TIFFRenderer extends Java2DRenderer {
         //Set target resolution
         int dpi = Math.round(userAgent.getTargetResolution());
         writerParams.setResolution(dpi);
-    }
-
-    /**
-     * Configure the TIFF renderer. Get the configuration to be used for
-     * compression
-     * @see org.apache.avalon.framework.configuration.Configurable#configure(Configuration)
-     */
-    public void configure(Configuration cfg) throws ConfigurationException {
-        super.configure(cfg);
-
-        //set compression
-        String name = cfg.getChild("compression").getValue(COMPRESSION_PACKBITS);
-        //Some compression formats need a special image format:
-        if (name.equalsIgnoreCase(COMPRESSION_CCITT_T6)) {
-            bufferedImageType = BufferedImage.TYPE_BYTE_BINARY;
-        } else if (name.equalsIgnoreCase(COMPRESSION_CCITT_T4)) {
-            bufferedImageType = BufferedImage.TYPE_BYTE_BINARY;
-        } else {
-            bufferedImageType = BufferedImage.TYPE_INT_ARGB;
-        }
-        if (!"NONE".equalsIgnoreCase(name)) {
-            writerParams.setCompressionMethod(name);
-        }
-        log.info("TIFF compression set to " + name);
     }
 
     /** @see org.apache.fop.render.Renderer#startRenderer(java.io.OutputStream) */
@@ -252,5 +225,13 @@ public class TIFFRenderer extends Java2DRenderer {
             throw new UnsupportedOperationException(
                     "Method 'remove' is not supported.");
         }
+    }
+
+    public void setBufferedImageType(int bufferedImageType) {
+        this.bufferedImageType = bufferedImageType;
+    }
+
+    public ImageWriterParams getWriterParams() {
+        return writerParams;
     }
 }

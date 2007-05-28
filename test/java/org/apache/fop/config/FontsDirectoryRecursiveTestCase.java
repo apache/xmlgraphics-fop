@@ -19,26 +19,19 @@
 
 package org.apache.fop.config;
 
-import java.io.File;
+/**
+ * tests font directory on system 
+ */
+public class FontsDirectoryRecursiveTestCase extends BaseConstructiveUserConfigTestCase {
 
-// this font has a metrics-url that does not exist on filesystem
-public class MetricsUrlBadTestCase extends BaseUserConfigTestCase {
-
-    /**
-     * @see junit.framework.TestCase#TestCase(String)
-     */
-    public MetricsUrlBadTestCase(String name) {
+    public FontsDirectoryRecursiveTestCase(String name) {
         super(name);
     }
 
     /**
-     * @see org.apache.fop.config.BaseUserConfigTestCase#getUserConfigFile()
+     * @see org.apache.fop.config.BaseUserConfigTestCase#getUserConfigFilename()
      */
-    protected File getUserConfigFile() {
-        return new File( getBaseConfigDir() + "/test_metricsurl_bad.xconf");
-    }
-    
-    public String getName() {
-        return "test_metricsurl_bad.xconf";
-    }
+    protected String getUserConfigFilename() {
+        return "test_fonts_directory_recursive.xconf";
+    }    
 }
