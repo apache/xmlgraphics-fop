@@ -33,11 +33,10 @@
         this version.
       </p>
       <p>
-        The Apache FOP team is proud to present to you the largely rewritten codebase which is 
-        finally in a state where you can start to use it. It has taken over three years to get this
-        far and over two years without a new release from the FOP project. We're still in the process of adding new
-        features. We welcome any feedback you might have and even more, any
-        other form of help to get the project forward.
+        The Apache FOP team is proud to present to you this production quality codebase. It has taken
+        over three years to get this far and over two years without a new release from the FOP
+        project. We're still in the process of adding new features. We welcome any feedback you
+        might have and even more, any other form of help to get the project forward.
       </p>
     </section>
     <section id="upgrading">
