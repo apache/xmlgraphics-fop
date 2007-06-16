@@ -1188,7 +1188,7 @@ NOTE:
   </target>
 
   <target name="checkstyle-html" depends="checkstyle-avail, checkstyle-check" if="checkstyle.noframes.xslt.available">
-    <style in="${build.dir}/checkstyle_report.xml" out="${build.dir}/checkstyle_report.html" style="${checkstyle.noframes.xslt}"/>
+    <xslt in="${build.dir}/checkstyle_report.xml" out="${build.dir}/checkstyle_report.html" style="${checkstyle.noframes.xslt}"/>
   </target>
 
   <target name="checkstyle" depends="checkstyle-avail, checkstyle-check, checkstyle-html" description="Runs Checkstyle for a code quality report"/>
