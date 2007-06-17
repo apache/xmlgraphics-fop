@@ -226,7 +226,7 @@
            url: http://www.w3.org/TR/xsl/ -->
       <fo:block text-align="center"
                 space-before.optimum="0.5cm">
-        <fo:external-graphic src="file:../graphics/listgeometry.gif"/>
+        <fo:external-graphic src="../graphics/listgeometry.gif"/>
       </fo:block>
       <fo:block font-size="10pt"
             font-family="sans-serif"
