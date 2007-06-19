@@ -72,8 +72,6 @@
           See his <fork href="http://www.jeremias-maerki.ch">home page</fork> for more information
           about him.
         </li>
-        <li id="gm"><link href="mailto:gmazza@apache.org">Glen Mazza</link> (GM) is an information
-            systems analyst from Arlington, Virginia, USA.</li>
         <li id="sp"><link href="mailto:spepping@apache.org">Simon Pepping</link> (SP) came to FOP
             from the TeX/LaTeX world. See his <fork href="http://www.leverkruid.eu">home
             page</fork> for some of his private projects.</li>
@@ -119,6 +117,7 @@
         <li id="fj"><link href="mailto:fotis@apache.org">Fotis Jannidis</link></li>
         <li id="kl"><link href="mailto:klease@apache.org">Karen Lease</link></li>
         <li id="kll"><link href="mailto:keiron@apache.org">Keiron Liddle</link></li>
+        <li id="gm"><link href="mailto:gmazza@apache.org">Glen Mazza</link></li>
         <li id="wvm"><link href="mailto:vmote@apache.org">Victor Mote</link></li>
         <li id="jn"><link href="mailto:jordan@apache.org">Jordan Naftolin</link></li>
         <li id="as"><link href="mailto:arved@apache.org">Arved Sandstrom</link></li>
@@ -136,7 +135,7 @@
           <th>FB</th>
           <th>CL</th>
           <th>JM</th>
-          <th>GM</th>
+          <th>VH</th>
           <th>PH</th>
           <th>JP</th>
           <th>SP</th>
@@ -162,7 +161,7 @@
           <td>X</td>
           <td/>
           <td>X</td>
-          <td>X</td>
+          <td></td>
           <td/>
           <td/>
           <td>X</td>
@@ -188,7 +187,7 @@
           <td/>
           <td/>
           <td>X</td>
-          <td/>
+          <td>X</td>
           <td/>
           <td>X</td>
           <td>X</td>
