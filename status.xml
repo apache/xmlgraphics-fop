@@ -28,6 +28,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="update">
+        Updated PDF/A-1b support according to ISO-19005-1:2005/Cor.1:2007.
+      </action>
       <action context="Code" dev="JM" type="add" fixes-bug="41831" due-to="Adrian Cumiskey">
         Add support for font auto-detection (easier font configuration).
       </action>
