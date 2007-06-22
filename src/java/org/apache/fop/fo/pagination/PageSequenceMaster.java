@@ -43,7 +43,7 @@ public class PageSequenceMaster extends FObj {
     private LayoutMasterSet layoutMasterSet;
     private List subSequenceSpecifiers;
     private SubSequenceSpecifier currentSubSequence;
-    private int currentSubSequenceNumber;
+    private int currentSubSequenceNumber = -1;
 
     // The terminology may be confusing. A 'page-sequence-master' consists
     // of a sequence of what the XSL spec refers to as
@@ -135,8 +135,10 @@ public class PageSequenceMaster extends FObj {
     public void reset() {
         currentSubSequenceNumber = -1;
         currentSubSequence = null;
-        for (int i = 0; i < subSequenceSpecifiers.size(); i++) {
-            ((SubSequenceSpecifier)subSequenceSpecifiers.get(i)).reset();
+        if (subSequenceSpecifiers != null) {
+            for (int i = 0; i < subSequenceSpecifiers.size(); i++) {
+                ((SubSequenceSpecifier)subSequenceSpecifiers.get(i)).reset();
+            }
         }
     }
 
