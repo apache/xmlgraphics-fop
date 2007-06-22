@@ -129,5 +129,31 @@ Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent);
         activated at the same time.
       </p>
     </section>
+    <section id="interoperability">
+      <title>Interoperability</title>
+      <p>
+        There has been some confusion about the namespace for the PDF/A indicator in the XMP
+        metadata. At least three variants have been seen in the wild:
+      </p>
+      <table>
+        <tr>
+          <td>http://www.aiim.org/pdfa/ns/id.html</td>
+          <td><strong>obsolete</strong>, from an early draft of ISO-19005-1, used by Adobe Acrobat 7.x</td>
+        </tr>
+        <tr>
+          <td>http://www.aiim.org/pdfa/ns/id</td>
+          <td><strong>obsolete</strong>, found in the original ISO 19005-1:2005 document</td>
+        </tr>
+        <tr>
+          <td>http://www.aiim.org/pdfa/ns/id/</td>
+          <td><strong>correct</strong>, found in the technical corrigendum 1 of ISO 19005-1:2005</td>
+        </tr>
+      </table>
+      <p>
+        If you get an error validating a PDF/A file in Adobe Acrobat 7.x it doesn't mean that
+        FOP did something wrong. It's Acrobat that is at fault. This is fixed in Adobe Acrobat 8.x
+        which uses the correct namespace as described in the technical corrigendum 1.
+      </p>
+    </section>
   </body>
 </document>
