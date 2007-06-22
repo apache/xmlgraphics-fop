@@ -34,7 +34,6 @@ import org.apache.xmlgraphics.xmp.schemas.XMPBasicSchema;
 import org.apache.xmlgraphics.xmp.schemas.pdf.AdobePDFAdapter;
 import org.apache.xmlgraphics.xmp.schemas.pdf.AdobePDFSchema;
 import org.apache.xmlgraphics.xmp.schemas.pdf.PDFAAdapter;
-import org.apache.xmlgraphics.xmp.schemas.pdf.PDFAOldXMPSchema;
 import org.apache.xmlgraphics.xmp.schemas.pdf.PDFAXMPSchema;
 
 import org.xml.sax.SAXException;
@@ -136,7 +135,7 @@ public class PDFMetadata extends PDFStream {
             info.setCreationDate(d);
         }
         
-        //Important: Acrobat's preflight check for PDF/A-1b wants the creation date in the Info
+        //Important: Acrobat 7's preflight check for PDF/A-1b wants the creation date in the Info
         //object and in the XMP metadata to have the same timezone or else it shows a validation
         //error even if the times are essentially equal.
 
@@ -149,7 +148,8 @@ public class PDFMetadata extends PDFStream {
             dc.setTitle(info.getTitle());
         }
         if (info.getSubject() != null) {
-            dc.addSubject(info.getSubject());
+            //Subject maps to dc:description["x-default"] as per ISO-19005-1:2005/Cor.1:2007
+            dc.setDescription(null, info.getSubject());
         }
         dc.addDate(info.getCreationDate());
 
@@ -157,25 +157,22 @@ public class PDFMetadata extends PDFStream {
         PDFAMode pdfaMode = pdfDoc.getProfile().getPDFAMode(); 
         if (pdfaMode.isPDFA1LevelB()) {
             PDFAAdapter pdfa = PDFAXMPSchema.getAdapter(meta);
-            //Create the identification a second time with the old namespace to keep 
-            //Adobe Acrobat happy
-            PDFAAdapter pdfaOld = PDFAOldXMPSchema.getAdapter(meta);
             pdfa.setPart(1);
-            pdfaOld.setPart(1);
             if (pdfaMode == PDFAMode.PDFA_1A) {
                 pdfa.setConformance("A"); //PDF/A-1a
-                pdfaOld.setConformance("A"); //PDF/A-1a
             } else {
                 pdfa.setConformance("B"); //PDF/A-1b
-                pdfaOld.setConformance("B"); //PDF/A-1b
             }
         }
         
         //XMP Basic Schema
         XMPBasicAdapter xmpBasic = XMPBasicSchema.getAdapter(meta);
         xmpBasic.setCreateDate(info.getCreationDate());
-        PDFProfile profile = pdfDoc.getProfile(); 
-        if (profile.isModDateRequired()) {
+        PDFProfile profile = pdfDoc.getProfile();
+        if (info.getModDate() != null) {
+            xmpBasic.setModifyDate(info.getModDate());
+        } else if (profile.isModDateRequired()) {
+            //if modify date is needed but none is in the Info object, use creation date
             xmpBasic.setModifyDate(info.getCreationDate());
         }
         if (info.getCreator() != null) {
@@ -210,14 +207,9 @@ public class PDFMetadata extends PDFStream {
         } else {
             info.setAuthor(null);
         }
-        String[] subjects = dc.getSubjects();
-        //PDF/A-1 defines dc:subject as "Text" but XMP defines it as "bag Text".
-        //We're simply doing the inverse from createXMPFromUserAgent() above.
-        if (subjects != null && subjects.length > 0) {
-            info.setSubject(subjects[0]);
-        } else {
-            info.setSubject(null);
-        }
+        
+        //dc:description["x-default"] maps to Subject as per ISO-19005-1:2005/Cor.1:2007
+        info.setSubject(dc.getDescription());
         
         AdobePDFAdapter pdf = AdobePDFSchema.getAdapter(meta);
         info.setKeywords(pdf.getKeywords());
