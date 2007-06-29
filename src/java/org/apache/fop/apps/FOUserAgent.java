@@ -361,26 +361,27 @@ public class FOUserAgent {
      * Attempts to resolve the given URI.
      * Will use the configured resolver and if not successful fall back
      * to the default resolver.
-     * @param uri URI to access
+     * @param href URI to access
      * @param base the base URI to resolve against
      * @return A {@link javax.xml.transform.Source} object, or null if the URI
      * cannot be resolved. 
      * @see org.apache.fop.apps.FOURIResolver
      */
-    public Source resolveURI(String uri, String base) {
+    public Source resolveURI(String href, String base) {
         Source source = null;
-        //RFC 2397 data URLs don't need to be resolved, just decode them.
-        boolean bypassURIResolution = uri.startsWith("data:");
+        //RFC 2397 data URLs don't need to be resolved, just decode them through FOP's default
+        //URIResolver.
+        boolean bypassURIResolution = href.startsWith("data:");
         if (!bypassURIResolution && uriResolver != null) {
             try {
-                source = uriResolver.resolve(uri, base);
+                source = uriResolver.resolve(href, base);
             } catch (TransformerException te) {
-                log.error("Attempt to resolve URI '" + uri + "' failed: ", te);
+                log.error("Attempt to resolve URI '" + href + "' failed: ", te);
             }
         }
         if (source == null) {
             // URI Resolver not configured or returned null, use default resolver from the factory
-            source = getFactory().resolveURI(uri, base);
+            source = getFactory().resolveURI(href, base);
         }
         return source;
     }
