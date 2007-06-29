@@ -15,13 +15,11 @@
  * limitations under the License.
  */
 
-/* $Id$ */
+/* $Id: $ */
 
 package org.apache.fop.apps;
 
 import java.awt.color.ColorSpace;
-import java.awt.color.ICC_ColorSpace;
-import java.awt.color.ICC_Profile;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -29,13 +27,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
 import java.util.Set;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
-import javax.xml.transform.stream.StreamSource;
 
 import org.xml.sax.SAXException;
 
@@ -52,6 +48,7 @@ import org.apache.fop.image.ImageFactory;
 import org.apache.fop.layoutmgr.LayoutManagerMaker;
 import org.apache.fop.render.RendererFactory;
 import org.apache.fop.render.XMLHandlerRegistry;
+import org.apache.fop.util.ColorSpaceCache;
 import org.apache.fop.util.ContentHandlerFactoryRegistry;
 
 /**
@@ -66,10 +63,10 @@ public class FopFactory {
     private static Log log = LogFactory.getLog(FopFactory.class);
     
     /** Factory for Renderers and FOEventHandlers */
-    private RendererFactory rendererFactory = new RendererFactory();
+    private RendererFactory rendererFactory;
     
     /** Registry for XML handlers */
-    private XMLHandlerRegistry xmlHandlers = new XMLHandlerRegistry();
+    private XMLHandlerRegistry xmlHandlers;
     
     /** The registry for ElementMapping instances */
     private ElementMappingRegistry elementMappingRegistry;
@@ -78,17 +75,13 @@ public class FopFactory {
     private ContentHandlerFactoryRegistry contentHandlerFactoryRegistry 
                 = new ContentHandlerFactoryRegistry();
     
-    /** Our default resolver if none is set */
-    private URIResolver foURIResolver = null;
-    
-    /** A user settable URI Resolver */
-    private URIResolver uriResolver = null;
-
     /** The resolver for user-supplied hyphenation patterns */
-    private HyphenationTreeResolver hyphResolver;
+    private HyphenationTreeResolver hyphResolver = null;
+
+    private ColorSpaceCache colorSpaceCache = null;
     
     /** Image factory for creating fop image objects */
-    private ImageFactory imageFactory = new ImageFactory();
+    private ImageFactory imageFactory;
 
     /** Configuration layer used to configure fop */
     private FopFactoryConfigurator config = null;
@@ -145,11 +138,10 @@ public class FopFactory {
     /** Optional overriding LayoutManagerMaker */
     private LayoutManagerMaker lmMakerOverride = null;
 
-    private Set ignoredNamespaces = new java.util.HashSet();
+    private Set ignoredNamespaces;
+
+    private FOURIResolver foURIResolver;
     
-    /** Map with cached ICC based ColorSpace objects. */
-    private Map colorSpaceMap = null;
-        
     /**
      * Main constructor.
      */
@@ -157,8 +149,11 @@ public class FopFactory {
         this.config = new FopFactoryConfigurator(this);
         this.elementMappingRegistry = new ElementMappingRegistry(this);
         this.foURIResolver = new FOURIResolver(validateUserConfigStrictly());
-        // Use a synchronized Map - I am not really sure this is needed, but better safe than sorry.
-        this.colorSpaceMap = Collections.synchronizedMap(new java.util.HashMap());
+        this.colorSpaceCache = new ColorSpaceCache(foURIResolver);
+        this.imageFactory = new ImageFactory();        
+        this.rendererFactory = new RendererFactory();
+        this.xmlHandlers = new XMLHandlerRegistry();
+        this.ignoredNamespaces = new java.util.HashSet();
         setUseCache(FopFactoryConfigurator.DEFAULT_USE_CACHE);
     }
     
@@ -397,11 +392,12 @@ public class FopFactory {
      * */
     public void setHyphenBaseURL(final String hyphenBase) throws MalformedURLException {
         if (hyphenBase != null) {
-            this.hyphResolver = new HyphenationTreeResolver() {
+            setHyphenationTreeResolver(
+            new HyphenationTreeResolver() {
                 public Source resolve(String href) {
                     return resolveURI(href, hyphenBase);
                 }
-            };
+            });
         }
         this.hyphenBase = checkBaseURL(hyphenBase);
     }
@@ -411,8 +407,8 @@ public class FopFactory {
      * patterns and as backup for URI resolution performed during a rendering run. 
      * @param resolver the new URI resolver
      */
-    public void setURIResolver(URIResolver resolver) {
-        this.uriResolver = resolver;
+    public void setURIResolver(URIResolver uriResolver) {
+        foURIResolver.setCustomURIResolver(uriResolver);
     }
 
     /**
@@ -420,7 +416,7 @@ public class FopFactory {
      * @return the URI Resolver
      */
     public URIResolver getURIResolver() {
-        return this.uriResolver;
+        return foURIResolver;
     }
 
     /** @return the HyphenationTreeResolver for resolving user-supplied hyphenation patterns. */
@@ -428,6 +424,14 @@ public class FopFactory {
         return this.hyphResolver;
     }
     
+    /**
+     * sets the HyphenationTreeResolver
+     * @param hyphResolver
+     */
+    public void setHyphenationTreeResolver(HyphenationTreeResolver hyphResolver) {
+        this.hyphResolver = hyphResolver;
+    }
+
     /**
      * Activates strict XSL content model validation for FOP
      * Default is false (FOP will continue processing where it can)
@@ -669,6 +673,7 @@ public class FopFactory {
      */
     public void setStrictUserConfigValidation(boolean strictUserConfigValidation) {
         this.strictUserConfigValidation = strictUserConfigValidation;
+        this.foURIResolver.setThrowExceptions(strictUserConfigValidation);
     }
 
     /**
@@ -708,39 +713,22 @@ public class FopFactory {
         return this.fontCache;
     }
     
-    //------------------------------------------- URI resolution
-
     /**
      * Attempts to resolve the given URI.
      * Will use the configured resolver and if not successful fall back
      * to the default resolver.
-     * @param uri URI to access
+     * @param href URI to access
      * @param baseUri the base URI to resolve against
      * @return A {@link javax.xml.transform.Source} object, or null if the URI
      * cannot be resolved. 
      * @see org.apache.fop.apps.FOURIResolver
      */
-    public Source resolveURI(String uri, String baseUri) {
+    public Source resolveURI(String href, String baseUri) {
         Source source = null;
-        //RFC 2397 data URLs don't need to be resolved, just decode them.
-        boolean bypassURIResolution = uri.startsWith("data:");
-        if (!bypassURIResolution && uriResolver != null) {
-            try {
-                source = uriResolver.resolve(uri, baseUri);
-            } catch (TransformerException te) {
-                log.error("Attempt to resolve URI '" + uri + "' failed: ", te);
-                if (validateUserConfigStrictly()) {
-                    return null;
-                }
-            }
-        }
-        if (source == null) {
-            // URI Resolver not configured or returned null, use default resolver
-            try {
-                source = foURIResolver.resolve(uri, baseUri);
-            } catch (TransformerException te) {
-                log.error("Attempt to resolve URI '" + uri + "' failed: ", te);
-            }
+        try {
+            source = foURIResolver.resolve(href, baseUri);
+        } catch (TransformerException e) {
+            log.error("Attempt to resolve URI '" + href + "' failed: ", e);
         }
         return source;
     }
@@ -759,47 +747,6 @@ public class FopFactory {
      * @return ICC ColorSpace object or null if ColorSpace could not be created 
      */
     public ColorSpace getColorSpace(String baseUri, String iccProfileSrc) {
-        ColorSpace colorSpace = null;
-        if (!this.colorSpaceMap.containsKey(baseUri + iccProfileSrc)) {
-            try {
-                ICC_Profile iccProfile = null;
-                // First attempt to use the FOP URI resolver to locate the ICC
-                // profile
-                Source src = this.resolveURI(iccProfileSrc, baseUri);
-                if (src != null && src instanceof StreamSource) {
-                    // FOP URI resolver found ICC profile - create ICC profile
-                    // from the Source
-                    iccProfile = ICC_Profile.getInstance(((StreamSource) src)
-                            .getInputStream());
-                } else {
-                    // TODO - Would it make sense to fall back on VM ICC
-                    // resolution
-                    // Problem is the cache might be more difficult to maintain
-                    // 
-                    // FOP URI resolver did not find ICC profile - perhaps the
-                    // Java VM can find it?
-                    // iccProfile = ICC_Profile.getInstance(iccProfileSrc);
-                }
-                if (iccProfile != null) {
-                    colorSpace = new ICC_ColorSpace(iccProfile);
-                }
-            } catch (IOException e) {
-                // Ignore exception - will be logged a bit further down
-                // (colorSpace == null case)
-            }
-
-            if (colorSpace != null) {
-                // Put in cache (not when VM resolved it as we can't control
-                this.colorSpaceMap.put(baseUri + iccProfileSrc, colorSpace);
-            } else {
-                // TODO To avoid an excessive amount of warnings perhaps
-                // register a null ColorMap in the colorSpaceMap
-                log.warn("Color profile '" + iccProfileSrc + "' not found.");
-            }
-        } else {
-            colorSpace = (ColorSpace) this.colorSpaceMap.get(baseUri
-                    + iccProfileSrc);
-        }
-        return colorSpace;
+        return colorSpaceCache.get(baseUri, iccProfileSrc);
     }    
 }
