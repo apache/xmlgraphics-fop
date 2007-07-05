@@ -1054,39 +1054,39 @@ public interface Constants {
     /** Enumeration constant */
     int EN_LIGHTER = 168;
     /** Enumeration constant */
-    int EN_100 = 168;
+    int EN_100 = 169;
     /** Enumeration constant */
-    int EN_200 = 169;
+    int EN_200 = 170;
     /** Enumeration constant */
-    int EN_300 = 170;
+    int EN_300 = 171;
     /** Enumeration constant */
-    int EN_400 = 171;
+    int EN_400 = 172;
     /** Enumeration constant */
-    int EN_500 = 172;
+    int EN_500 = 173;
     /** Enumeration constant */
-    int EN_600 = 173;
+    int EN_600 = 174;
     /** Enumeration constant */
-    int EN_700 = 174;
+    int EN_700 = 175;
     /** Enumeration constant */
-    int EN_800 = 175;
+    int EN_800 = 176;
     /** Enumeration constant */
-    int EN_900 = 176;
+    int EN_900 = 177;
     /** Enumeration constant -- page-break-shorthand */
-    int EN_AVOID = 177;
+    int EN_AVOID = 178;
     /** Enumeration constant -- white-space shorthand */
-    int EN_PRE = 178;
+    int EN_PRE = 179;
     /** Enumeration constant -- font shorthand */
-    int EN_CAPTION = 179;
+    int EN_CAPTION = 180;
     /** Enumeration constant -- font shorthand */
-    int EN_ICON = 180;
+    int EN_ICON = 181;
     /** Enumeration constant -- font shorthand */
-    int EN_MENU = 181;
+    int EN_MENU = 182;
     /** Enumeration constant -- font shorthand */
-    int EN_MESSAGE_BOX = 182;
+    int EN_MESSAGE_BOX = 183;
     /** Enumeration constant -- font shorthand */
-    int EN_SMALL_CAPTION = 183;
+    int EN_SMALL_CAPTION = 184;
     /** Enumeration constant -- font shorthand */
-    int EN_STATUS_BAR = 184;
+    int EN_STATUS_BAR = 185;
     /** Number of enumeration constants defined */
-    int ENUM_COUNT = 184;
+    int ENUM_COUNT = 185;
 }
