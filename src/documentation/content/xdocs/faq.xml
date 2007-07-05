@@ -913,7 +913,7 @@ Can I control this?</question>
       <answer>
         <p>
           FOP does not currently support this feature. Possible workarounds
-          include those mentioned in the <link href="#PDF-postprocess">PDF
+          include those mentioned in the <link href="0.93/output.html#pdf-postprocess">PDF
             Post-Processing FAQ</link>.
         </p>
       </answer>
