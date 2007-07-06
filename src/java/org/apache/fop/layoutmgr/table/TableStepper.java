@@ -184,6 +184,19 @@ public class TableStepper {
             }
         }
 
+        boolean signalMinStep(int minStep) {
+            int len = baseWidth + width + borderBefore + borderAfter + paddingBefore + paddingAfter
+                    + 2 * tableLM.getHalfBorderSeparationBPD();
+            if (len > minStep) {
+                width = backupWidth;
+                end = start - 1;
+                return baseWidth + borderBefore + borderAfter + paddingBefore
+                        + paddingAfter + 2 * tableLM.getHalfBorderSeparationBPD() + width > minStep;
+            } else {
+                return false;
+            }
+        }
+
         int getLastPenaltyLength() {
             return lastPenaltyLength;
         }
@@ -499,23 +512,16 @@ public class TableStepper {
         skippedStep = false;
         for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
             ActiveCell activeCell = (ActiveCell) iter.next();
-            int len = activeCell.baseWidth + activeCell.width + activeCell.borderBefore + activeCell.borderAfter + activeCell.paddingBefore
-            + activeCell.paddingAfter + 2 * getTableLM().getHalfBorderSeparationBPD();
-            if (len > minStep) {
-                activeCell.width = activeCell.backupWidth;
-                activeCell.end = activeCell.start - 1;
-                if (activeCell.baseWidth + activeCell.borderBefore + activeCell.borderAfter + activeCell.paddingBefore
-                        + activeCell.paddingAfter + 2 * getTableLM().getHalfBorderSeparationBPD() + activeCell.width > minStep) {
-                    if (activeRowIndex == 0) {
-                        log.debug("  First row. Skip this step.");
-                        skippedStep = true;
-                    } else {
-                        log.debug("  row-span situation: backtracking to last row");
-                        //Stay on the previous row for another step because borders and padding on 
-                        //columns may make their contribution to the step bigger than the addition
-                        //of the next element for this step would make the step to grow.
-                        rowBacktrackForLastStep = true;
-                    }
+            if (activeCell.signalMinStep(minStep)) {
+                if (activeRowIndex == 0) {
+                    log.debug("  First row. Skip this step.");
+                    skippedStep = true;
+                } else {
+                    log.debug("  row-span situation: backtracking to last row");
+                    //Stay on the previous row for another step because borders and padding on 
+                    //columns may make their contribution to the step bigger than the addition
+                    //of the next element for this step would make the step to grow.
+                    rowBacktrackForLastStep = true;
                 }
             }
         }
@@ -532,7 +538,7 @@ public class TableStepper {
         }
     }
 
-        private void goToNextRowIfCurrentFinished() {
+    private void goToNextRowIfCurrentFinished() {
         // We assume that the current grid row is finished. If this is not the case this
         // boolean will be reset (see below)
         boolean currentGridRowFinished = true;
