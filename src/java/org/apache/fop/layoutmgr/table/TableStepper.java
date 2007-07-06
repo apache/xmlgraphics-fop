@@ -62,8 +62,11 @@ public class TableStepper {
         private int paddingBefore;
         private int paddingAfter;
         private boolean keepWithNextSignal;
+        private int lastPenaltyLength;
+        private TableLayoutManager tableLM;
 
-        ActiveCell(PrimaryGridUnit pgu, EffRow row, int rowIndex) {
+        ActiveCell(PrimaryGridUnit pgu, EffRow row, int rowIndex, EffRow[] rowGroup, TableLayoutManager tableLM) {
+            this.tableLM = tableLM;
             this.pgu = pgu;
             boolean makeBoxForWholeRow = false;
             if (row.getExplicitHeight().min > 0) {
@@ -106,6 +109,14 @@ public class TableStepper {
             width = 0;
             startRow = rowIndex;
             keepWithNextSignal = false;
+            computeBaseWidth(rowGroup);
+        }
+
+        private void computeBaseWidth(EffRow[] rowGroup) {
+            baseWidth = 0;
+            for (int prevRow = 0; prevRow < startRow; prevRow++) {
+                baseWidth += rowGroup[prevRow].getHeight().opt;
+            }
         }
 
         private boolean endsOnRow(int rowIndex) {
@@ -134,6 +145,47 @@ public class TableStepper {
 
         void backupWidth() {
             backupWidth = width;
+        }
+
+        int getNextStep() {
+            lastPenaltyLength = 0;
+            while (end + 1 < elementList.size()) {
+                end++;
+                KnuthElement el = (KnuthElement)elementList.get(end);
+                if (el.isPenalty()) {
+                    if (el.getP() < KnuthElement.INFINITE) {
+                        //First legal break point
+                        lastPenaltyLength = el.getW();
+                        break;
+                    }
+                } else if (el.isGlue()) {
+                    if (end > 0) {
+                        KnuthElement prev = (KnuthElement)elementList.get(end - 1);
+                        if (prev.isBox()) {
+                            //Second legal break point
+                            break;
+                        }
+                    }
+                    width += el.getW();
+                } else {
+                    width += el.getW();
+                }
+            }
+            if (end < start) {
+//              if (log.isTraceEnabled()) {
+//              log.trace("column " + (i + 1) + ": (end=" + end + ") < (start=" + start
+//              + ") => resetting width to backupWidth");
+//              }
+                width = backupWidth;
+                return 0;
+            } else {
+                return baseWidth + width + borderBefore + borderAfter + paddingBefore
+                        + paddingAfter + 2 * tableLM.getHalfBorderSeparationBPD();
+            }
+        }
+
+        int getLastPenaltyLength() {
+            return lastPenaltyLength;
         }
     }
     /** Logger **/
@@ -219,7 +271,7 @@ public class TableStepper {
         GridUnit gu = getActiveGridUnit(column);
         EffRow row = getActiveRow();
         if (gu != null && !gu.isEmpty() && gu.isPrimary()) {
-            activeCells.add(new ActiveCell((PrimaryGridUnit) gu, row, activeRowIndex));
+            activeCells.add(new ActiveCell((PrimaryGridUnit) gu, row, activeRowIndex, rowGroup, getTableLM()));
         }
     }
 
@@ -423,80 +475,23 @@ public class TableStepper {
         goToNextRowIfCurrentFinished();
 
         //Get next possible sequence for each cell
+        //Determine smallest possible step
+        int minStep = Integer.MAX_VALUE;
         boolean stepFound = false;
         for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
             ActiveCell activeCell = (ActiveCell) iter.next();
-            while (activeCell.end + 1 < activeCell.elementList.size()) {
-                activeCell.end++;
-                KnuthElement el = (KnuthElement)activeCell.elementList.get(activeCell.end);
-                if (el.isPenalty()) {
-                    this.lastMaxPenaltyLength = Math.max(this.lastMaxPenaltyLength, el.getW());
-                    if (el.getP() <= -KnuthElement.INFINITE) {
-                        log.debug("FORCED break encountered!");
-                        break;
-                    } else if (el.getP() < KnuthElement.INFINITE) {
-                        //First legal break point
-                        break;
-                    }
-                } else if (el.isGlue()) {
-                    if (activeCell.end > 0) {
-                        KnuthElement prev = (KnuthElement)activeCell.elementList.get(activeCell.end - 1);
-                        if (prev.isBox()) {
-                            //Second legal break point
-                            break;
-                        }
-                    }
-                    activeCell.width += el.getW();
-                } else {
-                    activeCell.width += el.getW();
-                }
-            }
-            if (activeCell.end < activeCell.start) {
-//                if (log.isTraceEnabled()) {
-//                    log.trace("column " + (i + 1) + ": (end=" + activeCell.end + ") < (start=" + activeCell.start
-//                            + ") => resetting width to backupWidth");
-//                }
-                activeCell.width = activeCell.backupWidth;
-            } else {
+            int nextStep = activeCell.getNextStep();
+            if (nextStep > 0) {
                 stepFound = true;
+                minStep = Math.min(minStep, nextStep);
+                lastMaxPenaltyLength = Math.max(lastMaxPenaltyLength, activeCell
+                        .getLastPenaltyLength());
             }
-            //log.debug("part " + activeCell.start + "-" + activeCell.end + " " + activeCell.width);
-//            if (log.isTraceEnabled()) {
-//                log.trace("column " + (i+1) + ": borders before=" + activeCell.borderBefore + " after=" + activeCell.borderAfter);
-//                log.trace("column " + (i+1) + ": padding before=" + activeCell.paddingBefore + " after=" + activeCell.paddingAfter);
-//            }
         }
         if (!stepFound) {
             return -1;
         }
 
-        //Determine smallest possible step
-        int minStep = Integer.MAX_VALUE;
-        StringBuffer sb = new StringBuffer();
-        for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
-            ActiveCell activeCell = (ActiveCell) iter.next();
-            activeCell.baseWidth = 0;
-            for (int prevRow = 0; prevRow < activeCell.startRow; prevRow++) {
-                activeCell.baseWidth += rowGroup[prevRow].getHeight().opt;
-            }
-            activeCell.baseWidth += 2 * getTableLM().getHalfBorderSeparationBPD();
-            activeCell.baseWidth += activeCell.borderBefore + activeCell.borderAfter;
-            activeCell.baseWidth += activeCell.paddingBefore + activeCell.paddingAfter;
-            if (activeCell.end >= activeCell.start) {
-                int len = activeCell.baseWidth + activeCell.width;
-                sb.append(len + " ");
-                minStep = Math.min(len, minStep);
-            }
-        }
-        if (log.isDebugEnabled()) {
-            log.debug("candidate steps: " + sb);
-        }
-
-        //Check for constellations that would result in overlapping borders
-        /*
-        for (int i = 0; i < columnCount; i++) {
-
-        }*/
 
         //Reset bigger-than-minimum sequences
         //See http://people.apache.org/~jeremias/fop/NextStepAlgoNotes.pdf
@@ -504,18 +499,13 @@ public class TableStepper {
         skippedStep = false;
         for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
             ActiveCell activeCell = (ActiveCell) iter.next();
-            int len = activeCell.baseWidth + activeCell.width;
+            int len = activeCell.baseWidth + activeCell.width + activeCell.borderBefore + activeCell.borderAfter + activeCell.paddingBefore
+            + activeCell.paddingAfter + 2 * getTableLM().getHalfBorderSeparationBPD();
             if (len > minStep) {
                 activeCell.width = activeCell.backupWidth;
                 activeCell.end = activeCell.start - 1;
-                if (activeCell.baseWidth + activeCell.width > minStep) {
-//                    if (log.isDebugEnabled()) {
-//                        log.debug("column "
-//                                + (i + 1)
-//                                + ": minStep vs. border/padding increase conflict: basewidth + width = "
-//                                + activeCell.baseWidth + " + " + activeCell.width + " = "
-//                                + (activeCell.baseWidth + activeCell.width));
-//                    }
+                if (activeCell.baseWidth + activeCell.borderBefore + activeCell.borderAfter + activeCell.paddingBefore
+                        + activeCell.paddingAfter + 2 * getTableLM().getHalfBorderSeparationBPD() + activeCell.width > minStep) {
                     if (activeRowIndex == 0) {
                         log.debug("  First row. Skip this step.");
                         skippedStep = true;
@@ -529,17 +519,6 @@ public class TableStepper {
                 }
             }
         }
-//        if (log.isDebugEnabled()) {
-//            /*StringBuffer*/ sb = new StringBuffer("[col nb: start-end(width)] ");
-//            for (int i = 0; i < columnCount; i++) {
-//                if (end[i] >= start[i]) {
-//                    sb.append(i + ": " + start[i] + "-" + end[i] + "(" + widths[i] + "), ");
-//                } else {
-//                    sb.append(i + ": skip, ");
-//                }
-//            }
-//            log.debug(sb.toString());
-//        }
 
         return minStep;
     }
