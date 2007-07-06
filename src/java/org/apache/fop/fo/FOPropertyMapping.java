@@ -41,6 +41,7 @@ import org.apache.fop.fo.properties.FontShorthandParser;
 import org.apache.fop.fo.properties.FontShorthandProperty;
 import org.apache.fop.fo.properties.FontSizePropertyMaker;
 import org.apache.fop.fo.properties.FontStretchPropertyMaker;
+import org.apache.fop.fo.properties.FontWeightPropertyMaker;
 import org.apache.fop.fo.properties.GenericShorthandParser;
 import org.apache.fop.fo.properties.IndentPropertyMaker;
 import org.apache.fop.fo.properties.KeepProperty;
@@ -1032,7 +1033,7 @@ public final class FOPropertyMapping implements Constants {
         addPropertyMaker("font-variant", m);
 
         // font-weight
-        m  = new EnumProperty.Maker(PR_FONT_WEIGHT);
+        m  = new FontWeightPropertyMaker(PR_FONT_WEIGHT);
         m.setInherited(true);
         m.addKeyword("normal", "400");
         m.addKeyword("bold", "700");
