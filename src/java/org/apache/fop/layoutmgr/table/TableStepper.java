@@ -20,6 +20,7 @@
 package org.apache.fop.layoutmgr.table;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -40,53 +41,118 @@ import org.apache.fop.layoutmgr.LayoutContext;
  */
 public class TableStepper {
 
+    private static class ActiveCell {
+        private PrimaryGridUnit pgu;
+        /** Knuth elements for this active cell. */
+        private List elementList;
+        /** Number of the row where the row-span begins, zero-based. */
+        private int startRow;
+        /** Index, in the list of Knuth elements, of the element starting the current step. */
+        private int start;
+        /** Index, in the list of Knuth elements, of the element ending the current step. */
+        private int end;
+        /**
+         * Total length of the Knuth elements already included in the steps, up to the
+         * current one.
+         */
+        private int width;
+        private int backupWidth;
+        private int baseWidth;
+        private int borderBefore;
+        private int borderAfter;
+        private int paddingBefore;
+        private int paddingAfter;
+        private boolean keepWithNextSignal;
+
+        ActiveCell(PrimaryGridUnit pgu, EffRow row, int rowIndex) {
+            this.pgu = pgu;
+            boolean makeBoxForWholeRow = false;
+            if (row.getExplicitHeight().min > 0) {
+                boolean contentsSmaller = ElementListUtils.removeLegalBreaks(
+                        pgu.getElements(), row.getExplicitHeight());
+                if (contentsSmaller) {
+                    makeBoxForWholeRow = true;
+                }
+            }
+            if (pgu.isLastGridUnitRowSpan() && pgu.getRow() != null) {
+                makeBoxForWholeRow |= pgu.getRow().mustKeepTogether();
+                makeBoxForWholeRow |= pgu.getTable().mustKeepTogether();
+            }
+            if (makeBoxForWholeRow) {
+                elementList = new java.util.ArrayList(1);
+                int height = row.getExplicitHeight().opt;
+                if (height == 0) {
+                    height = row.getHeight().opt;
+                }
+                elementList.add(new KnuthBoxCellWithBPD(height));
+            } else {
+                //Copy elements (LinkedList) to array lists to improve 
+                //element access performance
+                elementList = new java.util.ArrayList(pgu.getElements());
+//                if (log.isTraceEnabled()) {
+//                    log.trace("column " + (column+1) + ": recording " + elementLists.size() + " element(s)");
+//                }
+            }
+            if (pgu.getTable().isSeparateBorderModel()) {
+                borderBefore = pgu.getBorders().getBorderBeforeWidth(false);
+                borderAfter = pgu.getBorders().getBorderAfterWidth(false);
+            } else {
+                borderBefore = pgu.getHalfMaxBeforeBorderWidth();
+                borderAfter = pgu.getHalfMaxAfterBorderWidth();
+            }
+            paddingBefore = pgu.getBorders().getPaddingBefore(false, pgu.getCellLM());
+            paddingAfter = pgu.getBorders().getPaddingAfter(false, pgu.getCellLM());
+            start = 0;
+            end = -1;
+            width = 0;
+            startRow = rowIndex;
+            keepWithNextSignal = false;
+        }
+
+        private boolean endsOnRow(int rowIndex) {
+            return rowIndex == startRow + pgu.getCell().getNumberRowsSpanned() - 1;
+        }
+
+        int getRemainingHeight(int activeRowIndex, int halfBorderSeparationBPD, EffRow[] rowGroup) {
+            if (end == elementList.size() - 1) {
+                return 0;
+            }
+            if (!endsOnRow(activeRowIndex)) {
+                return 0;
+            }
+            int len = width;
+            if (len > 0) {
+                len += 2 * halfBorderSeparationBPD;
+                len += borderBefore + borderAfter;
+                len += paddingBefore + paddingAfter;
+            }
+            int nominalHeight = 0;
+            for (int r = startRow; r < startRow + pgu.getCell().getNumberRowsSpanned(); r++) {
+                nominalHeight += rowGroup[r].getHeight().opt;
+            }
+            return nominalHeight - len;
+        }
+
+        void backupWidth() {
+            backupWidth = width;
+        }
+    }
     /** Logger **/
     private static Log log = LogFactory.getLog(TableStepper.class);
 
     private TableContentLayoutManager tclm;
-    
+
     private EffRow[] rowGroup;
     /** Number of columns in the row group. */
     private int columnCount;
     private int totalHeight;
     private int activeRowIndex;
-    /**
-     * Knuth elements for active cells, per column. Active cells are cells spanning over
-     * the currently active row.
-     */
-    private List[] elementLists;
-    /**
-     * Number of the row where the row-span begins, per column. Zero-based.
-     */
-    private int[] startRow;
-    /**
-     * For each column, index, in the cell's list of Knuth elements, of the element
-     * starting the current step.
-     */
-    private int[] start;
-    /**
-     * For each column, index, in the cell's list of Knuth elements, of the element
-     * ending the current step.
-     */
-    private int[] end;
-    /**
-     * For each column, widths of the Knuth elements already included in the steps, up to
-     * the current one.
-     */
-    private int[] widths;
-    /**
-     * ?? Width from the start of the row-group up to the current row.
-     */
-    private int[] baseWidth;
-    private int[] borderBefore;
-    private int[] paddingBefore;
-    private int[] borderAfter;
-    private int[] paddingAfter;
     private boolean rowBacktrackForLastStep;
     private boolean skippedStep;
-    private boolean[] keepWithNextSignals;
     private int lastMaxPenaltyLength;
-    
+
+    private List activeCells = new LinkedList();
+
     /**
      * Main constructor
      * @param tclm The parent TableContentLayoutManager
@@ -103,18 +169,6 @@ public class TableStepper {
     private void setup(int columnCount) {
         this.columnCount = columnCount;
         this.activeRowIndex = 0;
-        elementLists = new List[columnCount];
-        startRow = new int[columnCount];
-        start = new int[columnCount];
-        end = new int[columnCount];
-        widths = new int[columnCount];
-        baseWidth = new int[columnCount];
-        borderBefore = new int[columnCount];
-        paddingBefore = new int[columnCount];
-        borderAfter = new int[columnCount];
-        paddingAfter = new int[columnCount];
-        keepWithNextSignals = new boolean[columnCount];
-        Arrays.fill(end, -1);
     }
 
     /**
@@ -125,7 +179,7 @@ public class TableStepper {
     private EffRow getActiveRow() {
         return rowGroup[activeRowIndex];
     }
-    
+
     /**
      * Returns the grid unit at the given column number on the active row.
      *
@@ -136,7 +190,7 @@ public class TableStepper {
     private GridUnit getActiveGridUnit(int column) {
         return getActiveRow().safelyGetGridUnit(column);
     }
-    
+
     private PrimaryGridUnit getActivePrimaryGridUnit(int column) {
         GridUnit gu = getActiveGridUnit(column);
         if (gu == null) {
@@ -145,7 +199,7 @@ public class TableStepper {
             return gu.getPrimary();
         }
     }
-    
+
     private void calcTotalHeight() {
         totalHeight = 0;
         for (int i = 0; i < rowGroup.length; i++) {
@@ -155,37 +209,13 @@ public class TableStepper {
             log.debug("totalHeight=" + totalHeight);
         }
     }
-    
+
     private int getMaxRemainingHeight() {
         int maxW = 0;
         if (!rowBacktrackForLastStep) {
-            for (int i = 0; i < columnCount; i++) {
-                if (elementLists[i] == null) {
-                    continue;
-                }
-                if (end[i] == elementLists[i].size() - 1) {
-                    continue;
-                }
-                GridUnit gu = getActiveGridUnit(i); 
-                if (!gu.isLastGridUnitRowSpan()) {
-                    continue;
-                }
-                int len = widths[i]; 
-                if (len > 0) {
-                    len += 2 * getTableLM().getHalfBorderSeparationBPD();
-                    len += borderBefore[i] + borderAfter[i]; 
-                    len += paddingBefore[i] + paddingAfter[i]; 
-                }
-                int nominalHeight = rowGroup[activeRowIndex].getHeight().opt;
-                for (int r = 0; r < gu.getRowSpanIndex(); r++) {
-                    nominalHeight += rowGroup[activeRowIndex - r - 1].getHeight().opt;
-                }
-                if (len == nominalHeight) {
-                    //row is filled
-                    maxW = 0;
-                    break;
-                }
-                maxW = Math.max(maxW, nominalHeight - len);
+            for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
+                maxW = Math.max(maxW, ((ActiveCell) iter.next()).getRemainingHeight(activeRowIndex,
+                        getTableLM().getHalfBorderSeparationBPD(), rowGroup));
             }
         }
         for (int i = activeRowIndex + 1; i < rowGroup.length; i++) {
@@ -198,58 +228,8 @@ public class TableStepper {
     private void setupElementList(int column) {
         GridUnit gu = getActiveGridUnit(column);
         EffRow row = getActiveRow();
-        if (gu == null || gu.isEmpty()) {
-            elementLists[column] = null;
-            start[column] = 0;
-            end[column] = -1;
-            widths[column] = 0;
-            startRow[column] = activeRowIndex;
-            keepWithNextSignals[column] = false;
-        } else if (gu.isPrimary()) {
-            PrimaryGridUnit pgu = (PrimaryGridUnit)gu;
-            boolean makeBoxForWholeRow = false;
-            if (row.getExplicitHeight().min > 0) {
-                boolean contentsSmaller = ElementListUtils.removeLegalBreaks(
-                        pgu.getElements(), row.getExplicitHeight());
-                if (contentsSmaller) {
-                    makeBoxForWholeRow = true;
-                }
-            }
-            if (pgu.isLastGridUnitRowSpan() && pgu.getRow() != null) {
-                makeBoxForWholeRow |= pgu.getRow().mustKeepTogether();
-                makeBoxForWholeRow |= pgu.getTable().mustKeepTogether();
-            }
-            if (makeBoxForWholeRow) {
-                List list = new java.util.ArrayList(1);
-                int height = row.getExplicitHeight().opt;
-                if (height == 0) {
-                    height = row.getHeight().opt;
-                }
-                list.add(new KnuthBoxCellWithBPD(height));
-                elementLists[column] = list;
-            } else {
-                //Copy elements (LinkedList) to array lists to improve 
-                //element access performance
-                elementLists[column] = new java.util.ArrayList(pgu.getElements());
-                if (log.isTraceEnabled()) {
-                    log.trace("column " + (column+1) + ": recording " + elementLists[column].size() + " element(s)");
-                }
-            }
-            if (isSeparateBorderModel()) {
-                borderBefore[column] = pgu.getBorders().getBorderBeforeWidth(false);
-            } else {
-                borderBefore[column] = pgu.getBorders().getBorderBeforeWidth(false) / 2;
-                if (log.isTraceEnabled()) {
-                    log.trace("border before for column " + column + ": " + borderBefore[column]);
-                }
-            }
-            paddingBefore[column] = pgu.getBorders().getPaddingBefore(false, pgu.getCellLM());
-            paddingAfter[column] = pgu.getBorders().getPaddingAfter(false, pgu.getCellLM());
-            start[column] = 0;
-            end[column] = -1;
-            widths[column] = 0;
-            startRow[column] = activeRowIndex;
-            keepWithNextSignals[column] = false;
+        if (gu != null && !gu.isEmpty() && gu.isPrimary()) {
+            activeCells.add(new ActiveCell((PrimaryGridUnit) gu, row, activeRowIndex));
         }
     }
 
@@ -259,7 +239,7 @@ public class TableStepper {
      */
     private void initializeElementLists() {
         log.trace("Entering initializeElementLists()");
-        for (int i = 0; i < start.length; i++) {
+        for (int i = 0; i < columnCount; i++) {
             setupElementList(i);
         }
     }
@@ -279,7 +259,7 @@ public class TableStepper {
         setup(maxColumnCount);
         initializeElementLists();
         calcTotalHeight();
-        
+
         boolean signalKeepWithNext = false;
         int laststep = 0;
         int step;
@@ -302,33 +282,34 @@ public class TableStepper {
             int breakClass = -1;
             //Put all involved grid units into a list
             List gridUnitParts = new java.util.ArrayList(maxColumnCount);
-            for (int i = 0; i < columnCount; i++) {
-                if (end[i] >= start[i]) {
-                    PrimaryGridUnit pgu = rowGroup[startRow[i]].getGridUnit(i).getPrimary();
-                    if (start[i] == 0 && end[i] == 0 
-                            && elementLists[i].size() == 1
-                            && elementLists[i].get(0) instanceof KnuthBoxCellWithBPD) {
+            for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
+                ActiveCell activeCell = (ActiveCell) iter.next();
+                if (activeCell.end >= activeCell.start) {
+                    PrimaryGridUnit pgu = activeCell.pgu;
+                    if (activeCell.start == 0 && activeCell.end == 0
+                            && activeCell.elementList.size() == 1
+                            && activeCell.elementList.get(0) instanceof KnuthBoxCellWithBPD) {
                         //Special case: Cell with fixed BPD
-                        gridUnitParts.add(new GridUnitPart(pgu, 
+                        gridUnitParts.add(new GridUnitPart(pgu,
                                 0, pgu.getElements().size() - 1));
                     } else {
-                        gridUnitParts.add(new GridUnitPart(pgu, start[i], end[i]));
-                        if (((KnuthElement)elementLists[i].get(end[i])).isForcedBreak()) {
+                        gridUnitParts.add(new GridUnitPart(pgu, activeCell.start, activeCell.end));
+                        if (((KnuthElement)activeCell.elementList.get(activeCell.end)).isForcedBreak()) {
                             forcedBreak = true;
-                            breakClass = ((KnuthPenalty)elementLists[i].get(end[i])).getBreakClass();
+                            breakClass = ((KnuthPenalty)activeCell.elementList.get(activeCell.end)).getBreakClass();
                         }
                     }
-                    if (end[i] + 1 == elementLists[i].size()) {
+                    if (activeCell.end + 1 == activeCell.elementList.size()) {
                         if (pgu.getFlag(GridUnit.KEEP_WITH_NEXT_PENDING)) {
                             log.debug("PGU has pending keep-with-next");
-                            keepWithNextSignals[i] = true;
+                            activeCell.keepWithNextSignal = true;
                         }
                         if (pgu.getRow() != null && pgu.getRow().mustKeepWithNext()) {
                             log.debug("table-row causes keep-with-next");
-                            keepWithNextSignals[i] = true;
+                            activeCell.keepWithNextSignal = true;
                         }
                     }
-                    if (start[i] == 0 && end[i] >= 0) {
+                    if (activeCell.start == 0 && activeCell.end >= 0) {
                         if (pgu.getFlag(GridUnit.KEEP_WITH_PREVIOUS_PENDING)) {
                             log.debug("PGU has pending keep-with-previous");
                             if (returnList.size() == 0) {
@@ -345,17 +326,17 @@ public class TableStepper {
                 }
             }
             //log.debug(">>> guPARTS: " + gridUnitParts);
-            
+
             //Create elements for step
             int effPenaltyLen = penaltyLen;
-            TableContentPosition tcpos = new TableContentPosition(getTableLM(), 
+            TableContentPosition tcpos = new TableContentPosition(getTableLM(),
                     gridUnitParts, rowGroup[normalRow]);
             if (returnList.size() == 0) {
                 tcpos.setFlag(TableContentPosition.FIRST_IN_ROWGROUP, true);
             }
             lastTCPos = tcpos;
             if (log.isDebugEnabled()) {
-                log.debug(" - backtrack=" + rowBacktrackForLastStep 
+                log.debug(" - backtrack=" + rowBacktrackForLastStep
                         + " - row=" + activeRowIndex + " - " + tcpos);
             }
             returnList.add(new KnuthBox(boxLen, tcpos, false));
@@ -370,26 +351,27 @@ public class TableStepper {
                     penaltyPos.footerElements = tclm.getFooterElements();
                 }
             }
-            
+
             //Handle a penalty length coming from nested content
             //Example: nested table with header/footer
             if (this.lastMaxPenaltyLength != 0) {
                 penaltyPos.nestedPenaltyLength = this.lastMaxPenaltyLength;
                 if (log.isDebugEnabled()) {
-                    log.debug("Additional penalty length from table-cell break: " 
+                    log.debug("Additional penalty length from table-cell break: "
                             + this.lastMaxPenaltyLength);
                 }
             }
             effPenaltyLen += this.lastMaxPenaltyLength;
-            
+
             int p = 0;
             boolean allCellsHaveContributed = true;
             signalKeepWithNext = false;
-            for (int i = 0; i < columnCount; i++) {
-                if (start[i] == 0 && end[i] < 0 && elementLists[i] != null) {
+            for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
+                ActiveCell activeCell = (ActiveCell) iter.next();
+                if (activeCell.start == 0 && activeCell.end < 0 && activeCell.elementList != null) {
                     allCellsHaveContributed = false;
                 }
-                signalKeepWithNext |= keepWithNextSignals[i];
+                signalKeepWithNext |= activeCell.keepWithNextSignal;
             }
             if (!allCellsHaveContributed) {
                 //Not all cells have contributed to a newly started row. The penalty here is
@@ -407,7 +389,7 @@ public class TableStepper {
             }
             if (forcedBreak) {
                 if (skippedStep) {
-                    log.error("This is a conflict situation. The output may be wrong." 
+                    log.error("This is a conflict situation. The output may be wrong."
                             + " Please send your FO file to fop-dev@xmlgraphics.apache.org!");
                 }
                 p = -KnuthPenalty.INFINITE; //Overrides any keeps (see 4.8 in XSL 1.0)
@@ -416,11 +398,11 @@ public class TableStepper {
 
             if (log.isDebugEnabled()) {
                 log.debug("step=" + step + " (+" + increase + ")"
-                        + " box=" + boxLen 
+                        + " box=" + boxLen
                         + " penalty=" + penaltyLen
                         + " effPenalty=" + effPenaltyLen);
             }
-            
+
             laststep = step;
             if (rowBacktrackForLastStep) {
                 //If row was set to previous, restore now
@@ -451,22 +433,21 @@ public class TableStepper {
         if (isBreakCondition()) {
             return -1;
         }*/
-        
-        int[] backupWidths = new int[columnCount];
-        System.arraycopy(widths, 0, backupWidths, 0, columnCount);
+
+        for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
+            ((ActiveCell) iter.next()).backupWidth();
+        }
 
         //set starting points
-        goToNextRowIfCurrentFinished(backupWidths);
+        goToNextRowIfCurrentFinished();
 
         //Get next possible sequence for each cell
         boolean stepFound = false;
-        for (int i = 0; i < columnCount; i++) {
-            if (elementLists[i] == null) {
-                continue;
-            }
-            while (end[i] + 1 < elementLists[i].size()) {
-                end[i]++;
-                KnuthElement el = (KnuthElement)elementLists[i].get(end[i]);
+        for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
+            ActiveCell activeCell = (ActiveCell) iter.next();
+            while (activeCell.end + 1 < activeCell.elementList.size()) {
+                activeCell.end++;
+                KnuthElement el = (KnuthElement)activeCell.elementList.get(activeCell.end);
                 if (el.isPenalty()) {
                     this.lastMaxPenaltyLength = Math.max(this.lastMaxPenaltyLength, el.getW());
                     if (el.getP() <= -KnuthElement.INFINITE) {
@@ -477,50 +458,32 @@ public class TableStepper {
                         break;
                     }
                 } else if (el.isGlue()) {
-                    if (end[i] > 0) {
-                        KnuthElement prev = (KnuthElement)elementLists[i].get(end[i] - 1);
+                    if (activeCell.end > 0) {
+                        KnuthElement prev = (KnuthElement)activeCell.elementList.get(activeCell.end - 1);
                         if (prev.isBox()) {
                             //Second legal break point
                             break;
                         }
                     }
-                    widths[i] += el.getW();
+                    activeCell.width += el.getW();
                 } else {
-                    widths[i] += el.getW();
+                    activeCell.width += el.getW();
                 }
             }
-            if (end[i] < start[i]) {
-                if (log.isTraceEnabled()) {
-                    log.trace("column " + (i + 1) + ": (end=" + end[i] + ") < (start=" + start[i]
-                            + ") => resetting width to backupWidth");
-                }
-                widths[i] = backupWidths[i];
+            if (activeCell.end < activeCell.start) {
+//                if (log.isTraceEnabled()) {
+//                    log.trace("column " + (i + 1) + ": (end=" + activeCell.end + ") < (start=" + activeCell.start
+//                            + ") => resetting width to backupWidth");
+//                }
+                activeCell.width = activeCell.backupWidth;
             } else {
                 stepFound = true;
             }
-            //log.debug("part " + start[i] + "-" + end[i] + " " + widths[i]);
-            if (end[i] + 1 >= elementLists[i].size()) {
-                //element list for this cell is finished
-                if (isSeparateBorderModel()) {
-                    borderAfter[i] = getActivePrimaryGridUnit(i)
-                            .getBorders().getBorderAfterWidth(false);
-                } else {
-                    borderAfter[i] = getActivePrimaryGridUnit(i).getHalfMaxAfterBorderWidth();
-                }
-            } else {
-                //element list for this cell is not finished
-                if (isSeparateBorderModel()) {
-                    borderAfter[i] = getActivePrimaryGridUnit(i)
-                            .getBorders().getBorderAfterWidth(false);
-                } else {
-                    //TODO fix me!
-                    borderAfter[i] = getActivePrimaryGridUnit(i).getHalfMaxAfterBorderWidth();
-                }
-            }
-            if (log.isTraceEnabled()) {
-                log.trace("column " + (i+1) + ": borders before=" + borderBefore[i] + " after=" + borderAfter[i]);
-                log.trace("column " + (i+1) + ": padding before=" + paddingBefore[i] + " after=" + paddingAfter[i]);
-            }
+            //log.debug("part " + activeCell.start + "-" + activeCell.end + " " + activeCell.width);
+//            if (log.isTraceEnabled()) {
+//                log.trace("column " + (i+1) + ": borders before=" + activeCell.borderBefore + " after=" + activeCell.borderAfter);
+//                log.trace("column " + (i+1) + ": padding before=" + activeCell.paddingBefore + " after=" + activeCell.paddingAfter);
+//            }
         }
         if (!stepFound) {
             return -1;
@@ -529,16 +492,17 @@ public class TableStepper {
         //Determine smallest possible step
         int minStep = Integer.MAX_VALUE;
         StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < columnCount; i++) {
-            baseWidth[i] = 0;
-            for (int prevRow = 0; prevRow < startRow[i]; prevRow++) {
-                baseWidth[i] += rowGroup[prevRow].getHeight().opt;
+        for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
+            ActiveCell activeCell = (ActiveCell) iter.next();
+            activeCell.baseWidth = 0;
+            for (int prevRow = 0; prevRow < activeCell.startRow; prevRow++) {
+                activeCell.baseWidth += rowGroup[prevRow].getHeight().opt;
             }
-            baseWidth[i] += 2 * getTableLM().getHalfBorderSeparationBPD();
-            baseWidth[i] += borderBefore[i] + borderAfter[i];
-            baseWidth[i] += paddingBefore[i] + paddingAfter[i];
-            if (end[i] >= start[i]) {
-                int len = baseWidth[i] + widths[i];
+            activeCell.baseWidth += 2 * getTableLM().getHalfBorderSeparationBPD();
+            activeCell.baseWidth += activeCell.borderBefore + activeCell.borderAfter;
+            activeCell.baseWidth += activeCell.paddingBefore + activeCell.paddingAfter;
+            if (activeCell.end >= activeCell.start) {
+                int len = activeCell.baseWidth + activeCell.width;
                 sb.append(len + " ");
                 minStep = Math.min(len, minStep);
             }
@@ -550,26 +514,27 @@ public class TableStepper {
         //Check for constellations that would result in overlapping borders
         /*
         for (int i = 0; i < columnCount; i++) {
-            
+
         }*/
-        
+
         //Reset bigger-than-minimum sequences
         //See http://people.apache.org/~jeremias/fop/NextStepAlgoNotes.pdf
         rowBacktrackForLastStep = false;
         skippedStep = false;
-        for (int i = 0; i < columnCount; i++) {
-            int len = baseWidth[i] + widths[i];
+        for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
+            ActiveCell activeCell = (ActiveCell) iter.next();
+            int len = activeCell.baseWidth + activeCell.width;
             if (len > minStep) {
-                widths[i] = backupWidths[i];
-                end[i] = start[i] - 1;
-                if (baseWidth[i] + widths[i] > minStep) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("column "
-                                + (i + 1)
-                                + ": minStep vs. border/padding increase conflict: basewidth + width = "
-                                + baseWidth[i] + " + " + widths[i] + " = "
-                                + (baseWidth[i] + widths[i]));                        
-                    }
+                activeCell.width = activeCell.backupWidth;
+                activeCell.end = activeCell.start - 1;
+                if (activeCell.baseWidth + activeCell.width > minStep) {
+//                    if (log.isDebugEnabled()) {
+//                        log.debug("column "
+//                                + (i + 1)
+//                                + ": minStep vs. border/padding increase conflict: basewidth + width = "
+//                                + activeCell.baseWidth + " + " + activeCell.width + " = "
+//                                + (activeCell.baseWidth + activeCell.width));
+//                    }
                     if (activeRowIndex == 0) {
                         log.debug("  First row. Skip this step.");
                         skippedStep = true;
@@ -583,48 +548,51 @@ public class TableStepper {
                 }
             }
         }
-        if (log.isDebugEnabled()) {
-            /*StringBuffer*/ sb = new StringBuffer("[col nb: start-end(width)] ");
-            for (int i = 0; i < columnCount; i++) {
-                if (end[i] >= start[i]) {
-                    sb.append(i + ": " + start[i] + "-" + end[i] + "(" + widths[i] + "), ");
-                } else {
-                    sb.append(i + ": skip, ");
-                }
-            }
-            log.debug(sb.toString());
-        }
+//        if (log.isDebugEnabled()) {
+//            /*StringBuffer*/ sb = new StringBuffer("[col nb: start-end(width)] ");
+//            for (int i = 0; i < columnCount; i++) {
+//                if (end[i] >= start[i]) {
+//                    sb.append(i + ": " + start[i] + "-" + end[i] + "(" + widths[i] + "), ");
+//                } else {
+//                    sb.append(i + ": skip, ");
+//                }
+//            }
+//            log.debug(sb.toString());
+//        }
 
         return minStep;
     }
 
-    private void goToNextRowIfCurrentFinished(int[] backupWidths) {
+    private void removeCellsEndingOnCurrentRow() {
+        for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
+            ActiveCell activeCell = (ActiveCell) iter.next();
+            if (activeCell.endsOnRow(activeRowIndex)) {
+                iter.remove();
+            }
+        }
+    }
+
+        private void goToNextRowIfCurrentFinished() {
         // We assume that the current grid row is finished. If this is not the case this
         // boolean will be reset (see below)
         boolean currentGridRowFinished = true;
-        for (int i = 0; i < columnCount; i++) {
-            // null element lists probably correspond to empty cells
-            if (elementLists[i] == null) {
-                continue;
-            }
-            if (end[i] < elementLists[i].size()) {
-                start[i] = end[i] + 1;
-                if (end[i] + 1 < elementLists[i].size() 
-                        && getActiveGridUnit(i).isLastGridUnitRowSpan()) {
+        for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
+            ActiveCell activeCell = (ActiveCell) iter.next();
+            if (activeCell.end < activeCell.elementList.size()) {
+                activeCell.start = activeCell.end + 1;
+                if (activeCell.end + 1 < activeCell.elementList.size()
+                        && activeCell.endsOnRow(activeRowIndex)) {
                     // Ok, so this grid unit is the last in the row-spanning direction and
                     // there are still unhandled Knuth elements. They /will/ have to be
                     // put on the current grid row, which means that this row isn't
                     // finished yet
                     currentGridRowFinished = false;
                 }
-            } else {
-                throw new IllegalStateException("end[i] overflows elementList[i].size()");
-//                start[i] = -1; //end of list reached
-//                end[i] = -1;
             }
         }
 
         if (currentGridRowFinished) {
+            removeCellsEndingOnCurrentRow();
             if (activeRowIndex < rowGroup.length - 1) {
                 TableRow rowFO = getActiveRow().getTableRow();
                 if (rowFO != null && rowFO.getBreakAfter() != Constants.EN_AUTO) {
@@ -637,11 +605,6 @@ public class TableStepper {
                     log.debug("===> new row: " + activeRowIndex);
                 }
                 initializeElementLists();
-                for (int i = 0; i < columnCount; i++) {
-                    if (end[i] < 0) {
-                        backupWidths[i] = 0;
-                    }
-                }
                 rowFO = getActiveRow().getTableRow();
                 if (rowFO != null && rowFO.getBreakBefore() != Constants.EN_AUTO) {
                     log.warn(FONode.decorateWithContextInfo(
@@ -665,11 +628,11 @@ public class TableStepper {
     /**
      * Marker class denoting table cells fitting in just one box (no legal break inside).
      */
-    private class KnuthBoxCellWithBPD extends KnuthBox {
-        
+    private static class KnuthBoxCellWithBPD extends KnuthBox {
+
         public KnuthBoxCellWithBPD(int w) {
             super(w, null, true);
         }
     }
-    
+
 }
