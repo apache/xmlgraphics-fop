@@ -19,7 +19,6 @@
 
 package org.apache.fop.layoutmgr.table;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -189,15 +188,6 @@ public class TableStepper {
      */
     private GridUnit getActiveGridUnit(int column) {
         return getActiveRow().safelyGetGridUnit(column);
-    }
-
-    private PrimaryGridUnit getActivePrimaryGridUnit(int column) {
-        GridUnit gu = getActiveGridUnit(column);
-        if (gu == null) {
-            return null;
-        } else {
-            return gu.getPrimary();
-        }
     }
 
     private void calcTotalHeight() {
@@ -613,11 +603,6 @@ public class TableStepper {
                 }
             }
         }
-    }
-
-    /** @return true if the table uses the separate border model. */
-    private boolean isSeparateBorderModel() {
-        return getTableLM().getTable().isSeparateBorderModel();
     }
 
     /** @return the table layout manager */
