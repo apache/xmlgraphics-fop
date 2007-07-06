@@ -63,10 +63,8 @@ public class TableStepper {
         private int paddingAfter;
         private boolean keepWithNextSignal;
         private int lastPenaltyLength;
-        private TableLayoutManager tableLM;
 
         ActiveCell(PrimaryGridUnit pgu, EffRow row, int rowIndex, EffRow[] rowGroup, TableLayoutManager tableLM) {
-            this.tableLM = tableLM;
             this.pgu = pgu;
             boolean makeBoxForWholeRow = false;
             if (row.getExplicitHeight().min > 0) {
@@ -96,8 +94,8 @@ public class TableStepper {
 //                }
             }
             if (pgu.getTable().isSeparateBorderModel()) {
-                borderBefore = pgu.getBorders().getBorderBeforeWidth(false);
-                borderAfter = pgu.getBorders().getBorderAfterWidth(false);
+                borderBefore = pgu.getBorders().getBorderBeforeWidth(false) + tableLM.getHalfBorderSeparationBPD();
+                borderAfter = pgu.getBorders().getBorderAfterWidth(false) + tableLM.getHalfBorderSeparationBPD();
             } else {
                 borderBefore = pgu.getHalfMaxBeforeBorderWidth();
                 borderAfter = pgu.getHalfMaxAfterBorderWidth();
@@ -123,7 +121,7 @@ public class TableStepper {
             return rowIndex == startRow + pgu.getCell().getNumberRowsSpanned() - 1;
         }
 
-        int getRemainingHeight(int activeRowIndex, int halfBorderSeparationBPD, EffRow[] rowGroup) {
+        int getRemainingHeight(int activeRowIndex, EffRow[] rowGroup) {
             if (end == elementList.size() - 1) {
                 return 0;
             }
@@ -132,7 +130,6 @@ public class TableStepper {
             }
             int len = width;
             if (len > 0) {
-                len += 2 * halfBorderSeparationBPD;
                 len += borderBefore + borderAfter;
                 len += paddingBefore + paddingAfter;
             }
@@ -180,18 +177,17 @@ public class TableStepper {
                 return 0;
             } else {
                 return baseWidth + width + borderBefore + borderAfter + paddingBefore
-                        + paddingAfter + 2 * tableLM.getHalfBorderSeparationBPD();
+                        + paddingAfter;
             }
         }
 
         boolean signalMinStep(int minStep) {
-            int len = baseWidth + width + borderBefore + borderAfter + paddingBefore + paddingAfter
-                    + 2 * tableLM.getHalfBorderSeparationBPD();
+            int len = baseWidth + width + borderBefore + borderAfter + paddingBefore + paddingAfter;
             if (len > minStep) {
                 width = backupWidth;
                 end = start - 1;
                 return baseWidth + borderBefore + borderAfter + paddingBefore
-                        + paddingAfter + 2 * tableLM.getHalfBorderSeparationBPD() + width > minStep;
+                        + paddingAfter + width > minStep;
             } else {
                 return false;
             }
@@ -270,7 +266,7 @@ public class TableStepper {
         if (!rowBacktrackForLastStep) {
             for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
                 maxW = Math.max(maxW, ((ActiveCell) iter.next()).getRemainingHeight(activeRowIndex,
-                        getTableLM().getHalfBorderSeparationBPD(), rowGroup));
+                        rowGroup));
             }
         }
         for (int i = activeRowIndex + (rowBacktrackForLastStep ? 0 : 1); i < rowGroup.length; i++) {
