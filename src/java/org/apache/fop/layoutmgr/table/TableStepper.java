@@ -208,7 +208,7 @@ public class TableStepper {
                         getTableLM().getHalfBorderSeparationBPD(), rowGroup));
             }
         }
-        for (int i = activeRowIndex + 1; i < rowGroup.length; i++) {
+        for (int i = activeRowIndex + (rowBacktrackForLastStep ? 0 : 1); i < rowGroup.length; i++) {
             maxW += rowGroup[i].getHeight().opt;
         }
         log.debug("maxRemainingHeight=" + maxW);
@@ -258,11 +258,6 @@ public class TableStepper {
         LinkedList returnList = new LinkedList();
         while ((step = getNextStep()) >= 0) {
             int normalRow = activeRowIndex;
-            if (rowBacktrackForLastStep) {
-                //Even though we've already switched to the next row, we have to 
-                //calculate as if we were still on the previous row
-                activeRowIndex--;
-            }
             int increase = step - laststep;
             int penaltyLen = step + getMaxRemainingHeight() - totalHeight;
             int boxLen = step - addedBoxLen - penaltyLen;
@@ -394,10 +389,6 @@ public class TableStepper {
             }
 
             laststep = step;
-            if (rowBacktrackForLastStep) {
-                //If row was set to previous, restore now
-                activeRowIndex++;
-            }
         }
         if (signalKeepWithNext) {
             //Last step signalled a keep-with-next. Since the last penalty will be removed,
