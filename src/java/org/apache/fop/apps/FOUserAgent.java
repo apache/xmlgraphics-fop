@@ -86,6 +86,7 @@ public class FOUserAgent {
     private File outputFile = null;
     private Renderer rendererOverride = null;
     private FOEventHandler foEventHandlerOverride = null;
+    private boolean locatorEnabled = true; // true by default (for error messages).
     
     /** Producer:  Metadata element for the system/software that produces
      * the document. (Some renderers can store this in the document.)
@@ -517,5 +518,25 @@ public class FOUserAgent {
     public XMLHandlerRegistry getXMLHandlerRegistry() {
         return getFactory().getXMLHandlerRegistry();
     }
+    
+    /**
+     * Controls the use of SAXLocators to provide location information in error
+     * messages.
+     * 
+     * @param enableLocator <code>false</code> if SAX Locators should be disabled
+     * @return true if context information should be stored on each node in the FO tree.
+     */
+    public void setLocatorEnabled(boolean enableLocator) {
+        locatorEnabled = enableLocator;
+    }
+
+    /**
+     * Checks if the use of Locators is enabled
+     * @return true if context information should be stored on each node in the FO tree.
+     */
+    public boolean isLocatorEnabled() {
+        return locatorEnabled;
+    }
+
 }
 
