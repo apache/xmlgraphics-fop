@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks that TableStepper computes steps correctly in the following condition:
+      collapsing borders, a cell spanning over two columns, the border-before on the grid unit of
+      the second column bigger than on the first column.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="page" page-height="7cm" page-width="15cm" margin="1cm"
+          margin-bottom="0">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="page" font-family="serif" font-size="14pt">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block space-after="80pt">Before the table</fo:block>
+          <fo:table width="100%" table-layout="fixed" border="4pt solid black">
+            <fo:table-column number-columns-repeated="2"
+              column-width="proportional-column-width(1)"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell border="2pt solid blue">
+                  <fo:block>Cell 1.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="2pt solid blue">
+                  <fo:block>Cell 1.2</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="2pt solid teal" border-bottom-width="40pt">
+                  <!-- This big border-bottom prevents the second row of the table from fitting on
+                  the first page -->
+                  <fo:block>Cell 1.3</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell border="2pt solid blue">
+                  <fo:block>Cell 2.1</fo:block>
+                  <fo:block>Cell 2.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="2pt solid blue" number-columns-spanned="2">
+                  <fo:block>Cell 2.2</fo:block>
+                  <fo:block>Cell 2.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+          <fo:block space-before="0pt">After the table</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- 2 pages -->
+    <eval expected="2" xpath="count(//pageViewport)"/>
+    <!-- 2 blocks on the first page: "Before the table" plus the table itself -->
+    <eval expected="2" xpath="count(//pageViewport[1]//flow/block)"/>
+    <!-- 3 blocks in the table, corresponding to the first row -->
+    <eval expected="3" xpath="count(//pageViewport[1]//flow/block[2]/block)"/>
+    <eval expected="2" xpath="count(//pageViewport[2]//flow/block)"/>
+    <!-- the rest of the table on the second page -->
+    <eval expected="4" xpath="count(//pageViewport[2]//flow/block[1]/block)"/>
+  </checks>
+</testcase>
