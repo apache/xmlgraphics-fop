@@ -77,16 +77,30 @@ public class StringProperty extends Property {
 
     }    // end String.Maker
 
-    private String str;
+    /** cache containing all canonical StringProperty instances */
+    private static final PropertyCache cache = new PropertyCache();
+    
+    private final String str;
 
     /**
+     * Constructor
      * @param str String value to place in this object
      */
-    public StringProperty(String str) {
+    private StringProperty(String str) {
         this.str = str;
-        // log.debug("Set StringProperty: " + str);
     }
 
+    /**
+     * Return the canonical StringProperty instance 
+     * corresponding to the given string value
+     * @param str   the base String
+     * @return  the canonical instance
+     */
+    public static StringProperty getInstance(String str) {
+        return (StringProperty)cache.fetch(
+                   new StringProperty(str));
+    }
+    
     /**
      * @return the Object equivalent of this property
      */
@@ -101,4 +115,23 @@ public class StringProperty extends Property {
         return this.str;
     }
 
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    public boolean equals(Object obj) {
+        if (obj instanceof StringProperty) {
+            StringProperty sp = (StringProperty)obj;
+            return (sp.str == this.str
+                    || sp.str.equals(this.str));
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    public int hashCode() {
+        return str.hashCode();
+    }
 }

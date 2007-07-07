@@ -86,7 +86,7 @@ public class FontFamilyProperty extends ListProperty {
                                         + tmpVal.substring(dblSpaceIndex + 1);
                             dblSpaceIndex = tmpVal.indexOf("  ");
                         }
-                        prop.addProperty(new StringProperty(tmpVal));
+                        prop.addProperty(StringProperty.getInstance(tmpVal));
                     }
                 }
                 return prop;

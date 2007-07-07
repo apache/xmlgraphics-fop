@@ -25,13 +25,13 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
 
 public class TableBorderPrecedence extends NumberProperty.Maker{
-    private static Property num0 = new NumberProperty(0);
-    private static Property num1 = new NumberProperty(1);
-    private static Property num2 = new NumberProperty(2);
-    private static Property num3 = new NumberProperty(3);
-    private static Property num4 = new NumberProperty(4);
-    private static Property num5 = new NumberProperty(5);
-    private static Property num6 = new NumberProperty(6);
+    private static Property num0 = NumberProperty.getInstance(0);
+    private static Property num1 = NumberProperty.getInstance(1);
+    private static Property num2 = NumberProperty.getInstance(2);
+    private static Property num3 = NumberProperty.getInstance(3);
+    private static Property num4 = NumberProperty.getInstance(4);
+    private static Property num5 = NumberProperty.getInstance(5);
+    private static Property num6 = NumberProperty.getInstance(6);
 
     public TableBorderPrecedence(int propId) {
         super(propId);
