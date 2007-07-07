@@ -50,6 +50,9 @@ public abstract class FONode implements Cloneable {
     /** Parent FO node */
     protected FONode parent;
 
+    /** pointer to the sibling nodes */
+    protected FONode[] siblings;
+
     /** 
      * Marks location of this object from the input FO
      *   Call locator.getSystemId(), getLineNumber(),
@@ -60,7 +63,6 @@ public abstract class FONode implements Cloneable {
 
     /** Logger for fo-tree related messages **/
     protected static Log log = LogFactory.getLog(FONode.class);
-    //TODO Remove getLogger() method!
     
     /**
      * Main constructor.
@@ -82,6 +84,7 @@ public abstract class FONode implements Cloneable {
                 throws FOPException {
         FONode foNode = (FONode) clone();
         foNode.parent = cloneparent;
+        foNode.siblings = null;
         return foNode;
     }
 
@@ -255,7 +258,7 @@ public abstract class FONode implements Cloneable {
      * Return an iterator over all the child nodes of this FObj.
      * @return A ListIterator.
      */
-    public ListIterator getChildNodes() {
+    public FONodeIterator getChildNodes() {
         return null;
     }
 
@@ -266,7 +269,7 @@ public abstract class FONode implements Cloneable {
      * @return A ListIterator or null if child node isn't a child of
      * this FObj.
      */
-    public ListIterator getChildNodes(FONode childNode) {
+    public FONodeIterator getChildNodes(FONode childNode) {
         return null;
     }
 
@@ -614,5 +617,64 @@ public abstract class FONode implements Cloneable {
             return false;
         }
     }
-}
+    
+    protected static void attachSiblings(FONode precedingSibling, 
+                                         FONode followingSibling) {
+        if (precedingSibling.siblings == null) {
+            precedingSibling.siblings = new FONode[2];
+        }
+        if (followingSibling.siblings == null) {
+            followingSibling.siblings = new FONode[2];
+        }
+        precedingSibling.siblings[1] = followingSibling;
+        followingSibling.siblings[0] = precedingSibling;
+    }
+    
+    /**
+     * Base iterator interface over a FO's children
+     *
+     */
+    public interface FONodeIterator extends ListIterator {
+        
+        /**
+         * Returns the parent node for this iterator's list 
+         * of child nodes
+         * @return  the parent node
+         */
+        public FObj parentNode();
+        
+        /**
+         * Convenience method with return type of FONode
+         * (should be semantically equivalent to
+         * <code>(FONode) next();</code>)
+         * @return the next node (if any), as a type FONode
+         */
+        public FONode nextNode();
+        
+        /**
+         * Convenience method with return type of FONode
+         * (should be semantically equivalent to
+         * <code>(FONode) previous();</code>)
+         * @return the previous node (if any), as a type FONode
+         */
+        public FONode previousNode();
+        
+        /**
+         * Returns the first node in the list, and decreases the index,
+         * so that a subsequent call to hasPrevious() will return false
+         * @return the first node in the list
+         * @throws NoSuchElementException if the list is empty
+         */
+        public FONode firstNode();
+        
+        /**
+         * Returns the last node in the list, and advances the
+         * current position, so that a subsequent call to hasNext()
+         * will return false
+         * @return the last node in the list
+         * @throws NoSuchElementException if the list is empty
+         */
+        public FONode lastNode();        
 
+    }
+}

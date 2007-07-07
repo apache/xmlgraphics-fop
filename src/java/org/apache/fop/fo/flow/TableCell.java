@@ -106,7 +106,7 @@ public class TableCell extends TableFObj {
         if (!blockItemFound) {
             if (getUserAgent().validateStrictly()) {
                 missingChildElementError("marker* (%block;)+");
-            } else if (childNodes != null && childNodes.size() > 0) {
+            } else if (firstChild != null) {
                 log.warn("fo:table-cell content that is not "
                         + "enclosed by a fo:block will be dropped/ignored.");
             }

@@ -87,20 +87,6 @@ public class TableRow extends TableFObj {
     }
 
     /**
-     * Adds a cell to this row (skips marker handling done by 
-     * FObj.addChildNode().
-     * Used by TableBody during the row building process when only cells are
-     * used as direct children of a table-body/header/footer.
-     * @param cell cell to add.
-     */
-    protected void addReplacedCell(TableCell cell) {
-        if (childNodes == null) {
-            childNodes = new java.util.ArrayList();
-        }
-        childNodes.add(cell);
-    }
-    
-    /**
      * @see org.apache.fop.fo.FONode#processNode(String, Locator, 
      *                                  Attributes, PropertyList)
      */
@@ -168,7 +154,7 @@ public class TableRow extends TableFObj {
      * @see org.apache.fop.fo.FONode#endOfNode
      */
     protected void endOfNode() throws FOPException {
-        if (childNodes == null) {
+        if (firstChild == null) {
             missingChildElementError("(table-cell+)");
         }
         if (!inMarker()) {

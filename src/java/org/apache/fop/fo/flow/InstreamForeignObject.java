@@ -55,7 +55,7 @@ public class InstreamForeignObject extends AbstractGraphics {
      * @see org.apache.fop.fo.FONode#endOfNode
      */
     protected void endOfNode() throws FOPException {
-        if (childNodes == null || childNodes.size() != 1) {
+        if (firstChild == null) {
             missingChildElementError("one (1) non-XSL namespace child");
         }
         getFOEventHandler().foreignObject(this);
@@ -69,7 +69,7 @@ public class InstreamForeignObject extends AbstractGraphics {
         throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             invalidChildError(loc, nsURI, localName);
-        } else if (childNodes != null) {
+        } else if (firstChild != null) {
             tooManyNodesError(loc, "child element");
         }
     }
@@ -91,7 +91,7 @@ public class InstreamForeignObject extends AbstractGraphics {
      */
     private void prepareIntrinsicSize() {
         if (intrinsicDimensions == null) {
-            XMLObj child = (XMLObj)childNodes.get(0);
+            XMLObj child = (XMLObj) firstChild;
             Point2D csize = new Point2D.Float(-1, -1);
             intrinsicDimensions = child.getDimension(csize);
             if (intrinsicDimensions == null) {
@@ -132,7 +132,7 @@ public class InstreamForeignObject extends AbstractGraphics {
 
     /** @return the XMLObj child node of the instream-foreign-object. */
     public XMLObj getChildXMLObj() {
-        return (XMLObj) childNodes.get(0);
+        return (XMLObj) firstChild;
     }
     
 }

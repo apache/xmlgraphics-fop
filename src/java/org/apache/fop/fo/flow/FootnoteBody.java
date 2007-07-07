@@ -63,7 +63,7 @@ public class FootnoteBody extends FObj {
      * @see org.apache.fop.fo.FONode#endOfNode
      */
     protected void endOfNode() throws FOPException {
-        if (childNodes == null) {
+        if (firstChild == null) {
             missingChildElementError("(%block;)+");
         }
         getFOEventHandler().endFootnoteBody(this);

@@ -349,14 +349,6 @@ public class Table extends TableFObj {
         return columns;
     }
     
-    /**
-     * @param index index of the table-body element.
-     * @return the requested table-body element
-     */
-    public TableBody getBody(int index) {
-        return (TableBody) childNodes.get(index);
-    }
-
     /** @return the body for the table-header. */
     public TableBody getTableHeader() {
         return tableHeader;
