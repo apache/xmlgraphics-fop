@@ -36,7 +36,6 @@ import org.apache.fop.fo.properties.CommonAccessibility;
 public class MultiSwitch extends FObj {
     // The value of properties relevant for fo:multi-switch.
     // private ToBeImplementedProperty autoRestore;
-    private String id;
     // Unused but valid items, commented out for performance:
     //     private CommonAccessibility commonAccessibility;
     // End of property values
@@ -59,16 +58,10 @@ public class MultiSwitch extends FObj {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
+        super.bind(pList);
         // autoRestore = pList.get(PR_AUTO_RESTORE);
-        id = pList.get(PR_ID).getString();
     }
 
-    /**
-     * @see org.apache.fop.fo.FONode#startOfNode
-     */
-    protected void startOfNode() throws FOPException {
-        checkId(id);
-    }
 
     /**
      * Make sure content model satisfied.
@@ -89,11 +82,6 @@ public class MultiSwitch extends FObj {
         if (!(FO_URI.equals(nsURI) && localName.equals("multi-case"))) {
             invalidChildError(loc, nsURI, localName);
         }
-    }
-
-    /** @return the "id" property. */
-    public String getId() {
-        return id;
     }
 
     /** @see org.apache.fop.fo.FONode#getLocalName() */

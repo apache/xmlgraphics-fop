@@ -21,7 +21,6 @@ package org.apache.fop.layoutmgr;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.layoutmgr.PageBreakingAlgorithm.PageBreakingLayoutListener;
 import org.apache.fop.traits.MinOptMax;
 
 /**
@@ -37,7 +36,7 @@ public class BalancingColumnBreakingAlgorithm extends PageBreakingAlgorithm {
     private int idealPartLen;
     
     public BalancingColumnBreakingAlgorithm(LayoutManager topLevelLM,
-            PageSequenceLayoutManager.PageProvider pageProvider,
+            PageProvider pageProvider,
             PageBreakingLayoutListener layoutListener,
             int alignment, int alignmentLast,
             MinOptMax footnoteSeparatorLength,

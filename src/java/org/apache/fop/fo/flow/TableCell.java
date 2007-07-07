@@ -46,7 +46,6 @@ public class TableCell extends TableFObj {
     private int displayAlign;
     private int emptyCells;
     private int endsRow;
-    private String id;
     private int numberColumnsSpanned;
     private int numberRowsSpanned;
     private int startsRow;
@@ -77,26 +76,24 @@ public class TableCell extends TableFObj {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
+        super.bind(pList);
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         blockProgressionDimension = pList.get(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange();
         displayAlign = pList.get(PR_DISPLAY_ALIGN).getEnum();
         emptyCells = pList.get(PR_EMPTY_CELLS).getEnum();
         endsRow = pList.get(PR_ENDS_ROW).getEnum();
-        id = pList.get(PR_ID).getString();
         columnNumber = pList.get(PR_COLUMN_NUMBER).getNumeric().getValue();
         numberColumnsSpanned = pList.get(PR_NUMBER_COLUMNS_SPANNED).getNumeric().getValue();
         numberRowsSpanned = pList.get(PR_NUMBER_ROWS_SPANNED).getNumeric().getValue();
         startsRow = pList.get(PR_STARTS_ROW).getEnum();
-        width = pList.get(PR_WIDTH).getLength();
-        
-        super.bind(pList);
+        width = pList.get(PR_WIDTH).getLength();        
     }
 
     /**
      * @see org.apache.fop.fo.FONode#startOfNode
      */
     protected void startOfNode() throws FOPException {
-        checkId(id);
+        super.startOfNode();
         getFOEventHandler().startCell(this);
     }
 
@@ -163,13 +160,6 @@ public class TableCell extends TableFObj {
         return (this.emptyCells == EN_SHOW);
     }
     
-    /**
-     * @return the "id" property.
-     */
-    public String getId() {
-        return id;
-    }
-
     /**
      * @return the "number-columns-spanned" property.
      */

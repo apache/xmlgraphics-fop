@@ -42,7 +42,6 @@ public class Inline extends InlineLevel {
     private int alignmentBaseline;
     private Length baselineShift;
     private int dominantBaseline;
-    private String id;
     // Unused but valid items, commented out for performance:
     //     private CommonRelativePosition commonRelativePosition;
     //     private LengthRangeProperty blockProgressionDimension;
@@ -74,13 +73,14 @@ public class Inline extends InlineLevel {
         alignmentBaseline = pList.get(PR_ALIGNMENT_BASELINE).getEnum();
         baselineShift = pList.get(PR_BASELINE_SHIFT).getLength();
         dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
-        id = pList.get(PR_ID).getString();
     }
 
     /**
      * @see org.apache.fop.fo.FONode#startOfNode
      */
     protected void startOfNode() throws FOPException {
+       super.startOfNode();
+       
        /* Check to see if this node can have block-level children.
         * See validateChildNode() below.
         */
@@ -99,9 +99,7 @@ public class Inline extends InlineLevel {
            }
        }
 
-        checkId(id);
-        
-        getFOEventHandler().startInline(this);
+       getFOEventHandler().startInline(this);
     }
 
     /**
@@ -138,13 +136,6 @@ public class Inline extends InlineLevel {
         } else {
             blockOrInlineItemFound = true;
         }
-    }
-
-    /**
-     * Return the "id" property.
-     */
-    public String getId() {
-        return id;
     }
 
     /**

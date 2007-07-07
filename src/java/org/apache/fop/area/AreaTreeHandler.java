@@ -21,12 +21,7 @@ package org.apache.fop.area;
 
 // Java
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.HashSet;
 import java.util.Iterator;
 
 // XML
@@ -65,34 +60,24 @@ import org.apache.fop.fo.extensions.destination.Destination;
  * type of renderer.
  */
 public class AreaTreeHandler extends FOEventHandler {
-
-    /** debug statistics */
-    private Statistics statistics = null;
-
+    
     private static Log log = LogFactory.getLog(AreaTreeHandler.class);
 
-    // the LayoutManager maker
+    // Recorder of debug statistics
+    private Statistics statistics = null;
+
+    // The LayoutManager maker
     private LayoutManagerMaker lmMaker;
 
-    /** AreaTreeModel in use */
+    /** The AreaTreeModel in use */
     protected AreaTreeModel model;
+
+    // Keeps track of all meaningful id references
+    private IDTracker idTracker;
 
     // The fo:root node of the document
     private Root rootFObj;
-
-    // HashMap of ID's whose area is located on one or more consecutive
-    // PageViewports. Each ID has an arraylist of PageViewports that
-    // form the defined area of this ID
-    private Map idLocations = new HashMap();
-
-    // idref's whose target PageViewports have yet to be identified
-    // Each idref has a HashSet of Resolvable objects containing that idref
-    private Map unresolvedIDRefs = new HashMap();
-
-    private Set unfinishedIDs = new HashSet();
-
-    private Set alreadyResolvedIDs = new HashSet();
-
+    
     // The formatting results to be handed back to the caller.
     private FormattingResults results = new FormattingResults();
 
@@ -120,6 +105,8 @@ public class AreaTreeHandler extends FOEventHandler {
             lmMaker = new LayoutManagerMapping();
         }
 
+        idTracker = new IDTracker();
+        
         if (log.isDebugEnabled()) {
             statistics = new Statistics();
         }
@@ -159,137 +146,12 @@ public class AreaTreeHandler extends FOEventHandler {
     }
 
     /**
-     * Tie a PageViewport with an ID found on a child area of the PV. Note that
-     * an area with a given ID may be on more than one PV, hence an ID may have
-     * more than one PV associated with it.
+     * Get the IDTracker for this area tree.
      * 
-     * @param id the property ID of the area
-     * @param pv a page viewport that contains the area with this ID
+     * @return IDTracker used to track reference ids for items in this area tree
      */
-    public void associateIDWithPageViewport(String id, PageViewport pv) {
-        if (log.isDebugEnabled()) {
-            log.debug("associateIDWithPageViewport(" + id + ", " + pv + ")");
-        }
-        List pvList = (List) idLocations.get(id);
-        if (pvList == null) { // first time ID located
-            pvList = new ArrayList();
-            idLocations.put(id, pvList);
-            pvList.add(pv);
-            // signal the PageViewport that it is the first PV to contain this id:
-            pv.setFirstWithID(id);
-            /*
-             * See if this ID is in the unresolved idref list, if so resolve
-             * Resolvable objects tied to it.
-             */
-            if (!unfinishedIDs.contains(id)) {
-                tryIDResolution(id, pv, pvList);
-            }
-        } else {
-            pvList.add(pv);
-        }
-    }
-
-    /**
-     * This method tie an ID to the areaTreeHandler until this one is ready to
-     * be processed. This is used in page-number-citation-last processing so we
-     * know when an id can be resolved.
-     * 
-     * @param id the id of the object being processed
-     */
-    public void signalPendingID(String id) {
-        if (log.isDebugEnabled()) {
-            log.debug("signalPendingID(" + id + ")");
-        }
-        unfinishedIDs.add(id);
-    }
-
-    /**
-     * Signals that all areas for the formatting object with the given ID have
-     * been generated. This is used to determine when page-number-citation-last
-     * ref-ids can be resolved.
-     * 
-     * @param id the id of the formatting object which was just finished
-     */
-    public void signalIDProcessed(String id) {
-        if (log.isDebugEnabled()) {
-            log.debug("signalIDProcessed(" + id + ")");
-        }
-
-        alreadyResolvedIDs.add(id);
-        if (!unfinishedIDs.contains(id)) {
-            return;
-        }
-        unfinishedIDs.remove(id);
-
-        List pvList = (List) idLocations.get(id);
-        Set todo = (Set) unresolvedIDRefs.get(id);
-        if (todo != null) {
-            for (Iterator iter = todo.iterator(); iter.hasNext();) {
-                Resolvable res = (Resolvable) iter.next();
-                res.resolveIDRef(id, pvList);
-            }
-            unresolvedIDRefs.remove(id);
-        }
-    }
-
-    /**
-     * Check if an ID has already been resolved
-     * 
-     * @param id the id to check
-     * @return true if the ID has been resolved
-     */
-    public boolean alreadyResolvedID(String id) {
-        return (alreadyResolvedIDs.contains(id));
-    }
-
-    /**
-     * Tries to resolve all unresolved ID references on the given page.
-     * 
-     * @param id ID to resolve
-     * @param pv page viewport whose ID refs to resolve
-     * @param List of PageViewports
-     */
-    private void tryIDResolution(String id, PageViewport pv, List pvList) {
-        Set todo = (Set) unresolvedIDRefs.get(id);
-        if (todo != null) {
-            for (Iterator iter = todo.iterator(); iter.hasNext();) {
-                Resolvable res = (Resolvable) iter.next();
-                if (!unfinishedIDs.contains(id)) {
-                    res.resolveIDRef(id, pvList);
-                } else {
-                    return;
-                }
-            }
-            alreadyResolvedIDs.add(id);
-            unresolvedIDRefs.remove(id);
-        }
-    }
-
-    /**
-     * Tries to resolve all unresolved ID references on the given page.
-     * 
-     * @param pv page viewport whose ID refs to resolve
-     */
-    public void tryIDResolution(PageViewport pv) {
-        String[] ids = pv.getIDRefs();
-        if (ids != null) {
-            for (int i = 0; i < ids.length; i++) {
-                List pvList = (List) idLocations.get(ids[i]);
-                if (pvList != null) {
-                    tryIDResolution(ids[i], pv, pvList);
-                }
-            }
-        }
-    }
-
-    /**
-     * Get the list of page viewports that have an area with a given id.
-     * 
-     * @param id the id to lookup
-     * @return the list of PageViewports
-     */
-    public List getPageViewportsContainingID(String id) {
-        return (List) idLocations.get(id);
+    public IDTracker getIDTracker() {
+        return idTracker;
     }
 
     /**
@@ -299,22 +161,6 @@ public class AreaTreeHandler extends FOEventHandler {
      */
     public FormattingResults getResults() {
         return this.results;
-    }
-
-    /**
-     * Add an Resolvable object with an unresolved idref
-     * 
-     * @param idref the idref whose target id has not yet been located
-     * @param res the Resolvable object needing the idref to be resolved
-     */
-    public void addUnresolvedIDRef(String idref, Resolvable res) {
-        Set todo = (Set) unresolvedIDRefs.get(idref);
-        if (todo == null) {
-            todo = new HashSet();
-            unresolvedIDRefs.put(idref, todo);
-        }
-        // add Resolvable object to this HashSet
-        todo.add(res);
     }
 
     /**
@@ -453,12 +299,13 @@ public class AreaTreeHandler extends FOEventHandler {
             Resolvable res = (Resolvable) odi;
             String[] ids = res.getIDRefs();
             for (int count = 0; count < ids.length; count++) {
-                if (idLocations.containsKey(ids[count])) {
-                    res.resolveIDRef(ids[count], (List) idLocations.get(ids[count]));
+                List pageVPList = idTracker.getPageViewportsContainingID(ids[count]);
+                if (pageVPList != null) {
+                    res.resolveIDRef(ids[count], pageVPList);
                 } else {
                     log.warn(odi.getName() + ": Unresolved id reference \""
                             + ids[count] + "\" found.");
-                    addUnresolvedIDRef(ids[count], res);
+                    idTracker.addUnresolvedIDRef(ids[count], res);
                 }
             }
             // check to see if ODI is now fully resolved, if so process it
@@ -481,9 +328,86 @@ public class AreaTreeHandler extends FOEventHandler {
     }
 
     /**
-     * Gather statistics when log is debug
+     * Tie a PageViewport with an ID found on a child area of the PV. Note that
+     * an area with a given ID may be on more than one PV, hence an ID may have
+     * more than one PV associated with it.
+     * 
+     * @param id the property ID of the area
+     * @param pv a page viewport that contains the area with this ID
+     * @deprecated use getIdTracker().associateIDWithPageViewport(id, pv) instead
      */
-    private final class Statistics {
+    public void associateIDWithPageViewport(String id, PageViewport pv) {
+        idTracker.associateIDWithPageViewport(id, pv);
+    }
+
+    /**
+     * This method tie an ID to the areaTreeHandler until this one is ready to
+     * be processed. This is used in page-number-citation-last processing so we
+     * know when an id can be resolved.
+     * 
+     * @param id the id of the object being processed
+     * @deprecated use getIdTracker().signalPendingID(id) instead
+     */
+    public void signalPendingID(String id) {
+        idTracker.signalPendingID(id);
+    }
+
+    /**
+     * Signals that all areas for the formatting object with the given ID have
+     * been generated. This is used to determine when page-number-citation-last
+     * ref-ids can be resolved.
+     * 
+     * @param id the id of the formatting object which was just finished
+     * @deprecated use getIdTracker().signalIDProcessed(id) instead
+     */
+    public void signalIDProcessed(String id) {
+        idTracker.signalIDProcessed(id);
+    }
+
+    /**
+     * Check if an ID has already been resolved
+     * 
+     * @param id the id to check
+     * @return true if the ID has been resolved
+     * @deprecated use getIdTracker().alreadyResolvedID(id) instead
+     */
+    public boolean alreadyResolvedID(String id) {
+        return idTracker.alreadyResolvedID(id);
+    }
+
+    /**
+     * Tries to resolve all unresolved ID references on the given page.
+     * 
+     * @param pv page viewport whose ID refs to resolve
+     * @deprecated use getIdTracker().tryIDResolution(pv) instead
+     */
+    public void tryIDResolution(PageViewport pv) {
+        idTracker.tryIDResolution(pv);
+    }
+
+    /**
+     * Get the list of page viewports that have an area with a given id.
+     * 
+     * @param id the id to lookup
+     * @return the list of PageViewports
+     * @deprecated use getIdTracker().getPageViewportsContainingID(id) instead
+     */
+    public List getPageViewportsContainingID(String id) {
+        return idTracker.getPageViewportsContainingID(id);
+    }
+
+    /**
+     * Add an Resolvable object with an unresolved idref
+     * 
+     * @param idref the idref whose target id has not yet been located
+     * @param res the Resolvable object needing the idref to be resolved
+     * @deprecated use getIdTracker().addUnresolvedIDRef(idref, res) instead
+     */
+    public void addUnresolvedIDRef(String idref, Resolvable res) {
+        idTracker.addUnresolvedIDRef(idref, res);
+    }
+    
+    private class Statistics {
         // for statistics gathering
         private Runtime runtime;
 
@@ -493,21 +417,34 @@ public class AreaTreeHandler extends FOEventHandler {
         // time used in rendering (for statistics)
         private long startTime;
 
-        private Statistics() {
-            runtime = Runtime.getRuntime();
+        /**
+         * Default constructor
+         * @param areaTreeHandler area tree handler
+         */
+        protected Statistics() {
+            this.runtime = Runtime.getRuntime();
         }
 
-        public void start() {
-            initialMemory = runtime.totalMemory() - runtime.freeMemory();
-            startTime = System.currentTimeMillis();
+        /**
+         * starts the area tree handler statistics gathering
+         */
+        protected void start() {
+            this.initialMemory = runtime.totalMemory() - runtime.freeMemory();
+            this.startTime = System.currentTimeMillis();
         }
 
-        public void end() {
+        /**
+         * ends the area tree handler statistics gathering
+         */
+        protected void end() {
             long memoryNow = runtime.totalMemory() - runtime.freeMemory();
             log.debug("Current heap size: " + (memoryNow / 1024L) + "KB");
         }
 
-        public void logResults() {
+        /**
+         * logs the results of the area tree handler statistics gathering
+         */
+        protected void logResults() {
             long memoryNow = runtime.totalMemory() - runtime.freeMemory();
             long memoryUsed = (memoryNow - initialMemory) / 1024L;
             long timeUsed = System.currentTimeMillis() - startTime;

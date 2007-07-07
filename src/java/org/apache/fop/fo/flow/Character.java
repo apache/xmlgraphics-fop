@@ -68,7 +68,6 @@ public class Character extends FObj {
     private int dominantBaseline;
     // private ToBeImplementedProperty glyphOrientationHorizontal;
     // private ToBeImplementedProperty glyphOrientationVertical;
-    private String id;
     private Property letterSpacing;
     private SpaceProperty lineHeight;
     /** Holds the text decoration values. May be null */
@@ -106,6 +105,7 @@ public class Character extends FObj {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
+        super.bind(pList);
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         commonFont = pList.getFontProps();
         commonHyphenation = pList.getHyphenationProps();
@@ -118,7 +118,6 @@ public class Character extends FObj {
         dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
         // glyphOrientationHorizontal = pList.get(PR_GLYPH_ORIENTATION_HORIZONTAL);
         // glyphOrientationVertical = pList.get(PR_GLYPH_ORIENTATION_VERTICAL);
-        id = pList.get(PR_ID).getString();
         letterSpacing = pList.get(PR_LETTER_SPACING);
         lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
         textDecoration = pList.getTextDecorationProps();
@@ -130,7 +129,7 @@ public class Character extends FObj {
      * @see org.apache.fop.fo.FONode#startOfNode
      */
     protected void startOfNode() throws FOPException {
-        checkId(id);
+        super.startOfNode();
         getFOEventHandler().character(this);
     }
 
@@ -213,13 +212,6 @@ public class Character extends FObj {
         return dominantBaseline;
     }
     
-    /**
-     * @return the "id" property.
-     */
-    public String getId() {
-        return id;
-    }
-
     /**
      * @return the "letter-spacing" property.
      */
