@@ -50,13 +50,6 @@ public class InstreamForeignObject extends AbstractGraphics {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#startOfNode
-     */
-    protected void startOfNode() throws FOPException {
-        checkId(getId());
-    }
-
-    /**
      * Make sure content model satisfied, if so then tell the
      * FOEventHandler that we are at the end of the flow.
      * @see org.apache.fop.fo.FONode#endOfNode

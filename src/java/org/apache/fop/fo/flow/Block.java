@@ -32,8 +32,6 @@ import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.NullCharIterator;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.fo.properties.CommonAccessibility;
-import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonHyphenation;
@@ -52,8 +50,6 @@ public class Block extends FObjMixed {
     private boolean initialPropertySetFound = false;
 
     // The value of properties relevant for fo:block.
-    private CommonAccessibility commonAccessibility;
-    private CommonAural commonAural;
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     private CommonFont commonFont;
     private CommonHyphenation commonHyphenation;
@@ -64,7 +60,6 @@ public class Block extends FObjMixed {
     private Color color;
     private int hyphenationKeep;
     private Numeric hyphenationLadderCount;
-    private String id;
     private int intrusionDisplace;
     private KeepProperty keepTogether;
     private KeepProperty keepWithNext;
@@ -84,6 +79,8 @@ public class Block extends FObjMixed {
     private Numeric widows;
     private int wrapOption;
     // Unused but valid items, commented out for performance:
+    //     private CommonAccessibility commonAccessibility;
+    //     private CommonAural commonAural;
     //     private Length textDepth;
     //     private Length textAltitude;
     //     private int visibility;
@@ -101,8 +98,7 @@ public class Block extends FObjMixed {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
-        commonAccessibility = pList.getAccessibilityProps();
-        commonAural = pList.getAuralProps();
+        super.bind(pList);
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         commonFont = pList.getFontProps();
         commonHyphenation = pList.getHyphenationProps();
@@ -114,7 +110,6 @@ public class Block extends FObjMixed {
         color = pList.get(PR_COLOR).getColor(getUserAgent());
         hyphenationKeep = pList.get(PR_HYPHENATION_KEEP).getEnum();
         hyphenationLadderCount = pList.get(PR_HYPHENATION_LADDER_COUNT).getNumeric();
-        id = pList.get(PR_ID).getString();
         intrusionDisplace = pList.get(PR_INTRUSION_DISPLACE).getEnum();
         keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
         keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
@@ -139,7 +134,7 @@ public class Block extends FObjMixed {
      * @see org.apache.fop.fo.FONode#startOfNode
      */
     protected void startOfNode() throws FOPException {
-        checkId(id);
+        super.startOfNode();
         getFOEventHandler().startBlock(this);
     }
 
@@ -229,13 +224,6 @@ public class Block extends FObjMixed {
      */
     public Color getColor() {
         return color;
-    }
-
-    /**
-     * @return the "id" property.
-     */
-    public String getId() {
-        return id;
     }
 
     /**
@@ -347,20 +335,6 @@ public class Block extends FObjMixed {
         return whiteSpaceCollapse;
     }
     
-    /**
-     * @return Returns the commonAccessibility.
-     */
-    public CommonAccessibility getCommonAccessibility() {
-        return this.commonAccessibility;
-    }
-
-    /**
-     * @return Returns the commonAural.
-     */
-    public CommonAural getCommonAural() {
-        return this.commonAural;
-    }
-
     /**
      * @return Returns the commonRelativePosition.
      */

@@ -25,7 +25,6 @@ import org.xml.sax.Locator;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonAccessibility;
 
@@ -34,7 +33,6 @@ import org.apache.fop.fo.properties.CommonAccessibility;
  */
 public class MultiProperties extends FObj {
     // The value of properties relevant for fo:multi-properties.
-    private String id;
     // Unused but valid items, commented out for performance:
     //     private CommonAccessibility commonAccessibility;
     // End of property values
@@ -55,20 +53,6 @@ public class MultiProperties extends FObj {
             log.warn("fo:multi-properties is not yet implemented.");
             notImplementedWarningGiven = true;
         }
-    }
-
-    /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
-     */
-    public void bind(PropertyList pList) throws FOPException {
-        id = pList.get(PR_ID).getString();
-    }
-
-    /**
-     * @see org.apache.fop.fo.FONode#startOfNode
-     */
-    protected void startOfNode() throws FOPException {
-        checkId(id);
     }
 
     /**
@@ -103,13 +87,6 @@ public class MultiProperties extends FObj {
             } else {
                 invalidChildError(loc, nsURI, localName);
             }
-    }
-
-    /**
-     * Return the "id" property.
-     */
-    public String getId() {
-        return id;
     }
     
     /** @see org.apache.fop.fo.FONode#getLocalName() */

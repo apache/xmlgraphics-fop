@@ -41,7 +41,6 @@ public class Leader extends InlineLevel {
     private int alignmentBaseline;
     private Length baselineShift;
     private int dominantBaseline;
-    private String id;
     private int leaderAlignment;
     private LengthRangeProperty leaderLength;
     private int leaderPattern;
@@ -75,7 +74,6 @@ public class Leader extends InlineLevel {
         alignmentBaseline = pList.get(PR_ALIGNMENT_BASELINE).getEnum();
         baselineShift = pList.get(PR_BASELINE_SHIFT).getLength();
         dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
-        id = pList.get(PR_ID).getString();
         leaderAlignment = pList.get(PR_LEADER_ALIGNMENT).getEnum();
         leaderLength = pList.get(PR_LEADER_LENGTH).getLengthRange();
         leaderPattern = pList.get(PR_LEADER_PATTERN).getEnum();
@@ -101,21 +99,6 @@ public class Leader extends InlineLevel {
         }
         // letterSpacing = pList.get(PR_LETTER_SPACING);
         // textShadow = pList.get(PR_TEXT_SHADOW);
-    }
-
-    /**
-     * @see org.apache.fop.fo.FONode#startOfNode
-     */
-    protected void startOfNode() throws FOPException {
-        checkId(id);
-    }
-
-
-    /**
-     * @return the "id" property.
-     */
-    public String getId() {
-        return id;
     }
 
     /**

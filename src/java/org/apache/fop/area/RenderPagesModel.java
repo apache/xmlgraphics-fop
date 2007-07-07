@@ -145,27 +145,28 @@ public class RenderPagesModel extends AreaTreeModel {
     /**
      * Check prepared pages
      *
-     * @param newpage the new page being added
+     * @param newPageViewport the new page being added
      * @param renderUnresolved render pages with unresolved idref's
      *          (done at end-of-document processing)
      * @return true if the current page should be rendered
      *         false if the renderer doesn't support out of order
      *         rendering and there are pending pages
      */
-    protected boolean checkPreparedPages(PageViewport newpage, boolean
+    protected boolean checkPreparedPages(PageViewport newPageViewport, boolean
         renderUnresolved) {
         for (Iterator iter = prepared.iterator(); iter.hasNext();) {
-            PageViewport p = (PageViewport)iter.next();
-            if (p.isResolved() || renderUnresolved) {
-                if (!renderer.supportsOutOfOrder() && p.getPageSequence().isFirstPage(p)) {
+            PageViewport pageViewport = (PageViewport)iter.next();
+            if (pageViewport.isResolved() || renderUnresolved) {
+                if (!renderer.supportsOutOfOrder()
+                        && pageViewport.getPageSequence().isFirstPage(pageViewport)) {
                     renderer.startPageSequence(this.currentPageSequence.getTitle());
                 }
                 try {
-                    renderer.renderPage(p);
-                    if (!p.isResolved()) {
-                        String[] idrefs = p.getIDRefs();
+                    renderer.renderPage(pageViewport);
+                    if (!pageViewport.isResolved()) {
+                        String[] idrefs = pageViewport.getIDRefs();
                         for (int count = 0; count < idrefs.length; count++) {
-                            log.warn("Page " + p.getPageNumberString()
+                            log.warn("Page " + pageViewport.getPageNumberString()
                                 + ": Unresolved id reference \"" + idrefs[count] 
                                 + "\" found.");
                         }
@@ -174,7 +175,7 @@ public class RenderPagesModel extends AreaTreeModel {
                     // use error handler to handle this FOP or IO Exception
                     log.error(e);
                 }
-                p.clear();
+                pageViewport.clear();
                 iter.remove();
             } else {
                 // if keeping order then stop at first page not resolved

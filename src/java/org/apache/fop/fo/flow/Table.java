@@ -54,7 +54,6 @@ public class Table extends TableFObj {
     private LengthPairProperty borderSeparation;
     private int breakAfter;
     private int breakBefore;
-    private String id;
     private LengthRangeProperty inlineProgressionDimension;
     private KeepProperty keepTogether;
     private KeepProperty keepWithNext;
@@ -110,6 +109,7 @@ public class Table extends TableFObj {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
+        super.bind(pList);
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         commonMarginBlock = pList.getMarginBlockProps();
         blockProgressionDimension = pList.get(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange();
@@ -117,7 +117,6 @@ public class Table extends TableFObj {
         borderSeparation = pList.get(PR_BORDER_SEPARATION).getLengthPair();
         breakAfter = pList.get(PR_BREAK_AFTER).getEnum();
         breakBefore = pList.get(PR_BREAK_BEFORE).getEnum();
-        id = pList.get(PR_ID).getString();
         inlineProgressionDimension = pList.get(PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
         keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
         keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
@@ -125,7 +124,6 @@ public class Table extends TableFObj {
         tableLayout = pList.get(PR_TABLE_LAYOUT).getEnum();
         tableOmitFooterAtBreak = pList.get(PR_TABLE_OMIT_FOOTER_AT_BREAK).getEnum();
         tableOmitHeaderAtBreak = pList.get(PR_TABLE_OMIT_HEADER_AT_BREAK).getEnum();
-        super.bind(pList);
 
         //Bind extension properties
         widowContentLimit = pList.get(PR_X_WIDOW_CONTENT_LIMIT).getLength();
@@ -161,7 +159,7 @@ public class Table extends TableFObj {
      * @see org.apache.fop.fo.FONode#startOfNode
      */
     protected void startOfNode() throws FOPException {
-        checkId(id);
+        super.startOfNode();
         getFOEventHandler().startTable(this);
     }
    
@@ -464,11 +462,6 @@ public class Table extends TableFObj {
     /** @return the "fox:orphan-content-limit" extension property */
     public Length getOrphanContentLimit() {
         return orphanContentLimit;
-    }
-
-    /** @return the "id" property. */
-    public String getId() {
-        return id;
     }
 
     /** @see org.apache.fop.fo.FONode#getLocalName() */

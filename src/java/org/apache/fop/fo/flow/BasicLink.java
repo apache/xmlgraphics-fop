@@ -128,6 +128,20 @@ public class BasicLink extends Inline {
         return externalDestination;
     }
 
+    /**
+     * @return whether or not this basic link has an internal destination or not
+     */
+    public boolean hasInternalDestination() {
+        return internalDestination != null && internalDestination.length() > 0;
+    }
+
+    /**
+     * @return whether or not this basic link has an external destination or not
+     */
+    public boolean hasExternalDestination() {
+        return externalDestination != null && externalDestination.length() > 0;
+    }
+
     /** @see org.apache.fop.fo.FObj#getLocalName() */
     public String getLocalName() {
         return "basic-link";

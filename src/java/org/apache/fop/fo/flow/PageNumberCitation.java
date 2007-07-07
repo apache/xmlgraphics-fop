@@ -54,7 +54,6 @@ public class PageNumberCitation extends FObj {
     private int alignmentBaseline;
     private Length baselineShift;
     private int dominantBaseline;
-    private String id;
     // private ToBeImplementedProperty letterSpacing;
     private SpaceProperty lineHeight;
     private String refId;
@@ -91,13 +90,13 @@ public class PageNumberCitation extends FObj {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
+        super.bind(pList);
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         commonFont = pList.getFontProps();
         alignmentAdjust = pList.get(PR_ALIGNMENT_ADJUST).getLength();
         alignmentBaseline = pList.get(PR_ALIGNMENT_BASELINE).getEnum();
         baselineShift = pList.get(PR_BASELINE_SHIFT).getLength();
         dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
-        id = pList.get(PR_ID).getString();
         // letterSpacing = pList.get(PR_LETTER_SPACING);
         lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
         refId = pList.get(PR_REF_ID).getString();
@@ -112,7 +111,7 @@ public class PageNumberCitation extends FObj {
      * @see org.apache.fop.fo.FONode#startOfNode
      */
     protected void startOfNode() throws FOPException {
-        checkId(id);
+        super.startOfNode();
         if (refId.equals("")) {
             missingPropertyError("ref-id");
         }
@@ -182,11 +181,6 @@ public class PageNumberCitation extends FObj {
         return lineHeight;
     }
     
-    /** @return the "id" property. */
-    public String getId() {
-        return id;
-    }
-
     /** @return the "ref-id" property. */
     public String getRefId() {
         return refId;

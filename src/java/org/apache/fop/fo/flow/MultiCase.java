@@ -57,17 +57,10 @@ public class MultiCase extends FObj {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
-        id = pList.get(PR_ID).getString();
+        super.bind(pList);
         startingState = pList.get(PR_STARTING_STATE).getEnum();
         // caseName = pList.get(PR_CASE_NAME);
         // caseTitle = pList.get(PR_CASE_TITLE);
-    }
-
-    /**
-     * @see org.apache.fop.fo.FONode#startOfNode
-     */
-    protected void startOfNode() throws FOPException {
-        checkId(id);
     }
 
     /**
