@@ -232,43 +232,6 @@ public class TableBody extends TableFObj {
     }
     
     /**
-     * If table-cells are used as direct children of a table-body|header|footer
-     * they are replaced in this method by proper table-rows.
-     * @throws FOPException if there's a problem binding the TableRow's 
-     *         properties.
-     */
-    // TODO: This is currently unused. Why is it here?
-    private void convertCellsToRows() throws FOPException {
-        //getLogger().debug("Converting cells to rows...");
-        List cells = new java.util.ArrayList(childNodes);
-        childNodes.clear();
-        Iterator i = cells.iterator();
-        TableRow row = null;
-        while (i.hasNext()) {
-            TableCell cell = (TableCell) i.next();
-            if (cell.startsRow() && (row != null)) {
-                childNodes.add(row);
-                row = null;
-            }
-            if (row == null) {
-                row = new TableRow(this);
-                PropertyList pList = new StaticPropertyList(row, 
-                        savedPropertyList);
-                pList.setWritingMode();
-                row.bind(pList);
-            }
-            row.addReplacedCell(cell);
-            if (cell.endsRow()) {
-                childNodes.add(row);
-                row = null;
-            }
-        }
-        if (row != null) {
-            childNodes.add(row);
-        }
-    }
-    
-    /**
      * @return the Common Border, Padding, and Background Properties.
      */
     public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
@@ -292,21 +255,10 @@ public class TableBody extends TableFObj {
      * @return true if the given table row is the first row of this body.
      */
     public boolean isFirst(TableRow obj) {
-        return (childNodes == null 
-                || (!childNodes.isEmpty()
-                    && childNodes.get(0) == obj));
+        return (firstChild == null 
+                || firstChild == obj);
     }
 
-    /**
-     * @param obj table row in question
-     * @return true if the given table row is the first row of this body.
-     */
-    public boolean isLast(TableRow obj) {
-        return (childNodes == null
-                || (childNodes.size() > 0 
-                    && childNodes.get(childNodes.size() - 1) == obj));
-    }
-    
     /**
      * Initializes list of pending row-spans; used for correctly
      * assigning initial value for column-number for the
@@ -411,8 +363,8 @@ public class TableBody extends TableFObj {
      *             start of row)
      */
     protected boolean previousCellEndedRow() {
-        if (childNodes != null) {
-            FONode prevNode = (FONode) childNodes.get(childNodes.size() - 1);
+        if (firstChild != null) {
+            FONode prevNode = getChildNodes().lastNode();
             if (prevNode.getNameId() == FO_TABLE_CELL) {
                 return ((TableCell) prevNode).endsRow();
             }

@@ -174,9 +174,9 @@ public class RetrieveMarker extends FObjMixed {
     private void cloneFromMarker(Marker marker)
         throws FOPException {
         // clean up remnants from a possible earlier layout
-        if (childNodes != null) {
+        if (firstChild != null) {
             currentTextNode = null;
-            childNodes.removeAll(childNodes);
+            firstChild = null;
         }
         cloneSubtree(marker.getChildNodes(), this, 
                         marker, propertyList);

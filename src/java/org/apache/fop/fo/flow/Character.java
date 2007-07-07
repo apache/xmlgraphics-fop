@@ -273,9 +273,7 @@ public class Character extends FObj {
         }
 
         public void remove() {
-            foChar.character = CharUtilities.CODE_EOT;
-            getFOEventHandler().getXMLWhiteSpaceHandler()
-                .addDiscardableFOChar(foChar);
+            foChar.parent.removeChild(foChar);
         }
 
         public void replaceChar(char c) {

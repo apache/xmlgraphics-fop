@@ -20,13 +20,13 @@
 package org.apache.fop.fo.pagination;
 
 // Java
-import java.util.Iterator;
 import java.util.Map;
 
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FONode.FONodeIterator;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
@@ -77,9 +77,9 @@ public class Declarations extends FObj {
      * @see org.apache.fop.fo.FONode#endOfNode()
      */
     protected void endOfNode() throws FOPException {
-        if (childNodes != null) {
-            for (Iterator iter = childNodes.iterator(); iter.hasNext();) {
-                FONode node = (FONode)iter.next();
+        if (firstChild != null) {
+            for (FONodeIterator iter = getChildNodes(); iter.hasNext();) {
+                FONode node = iter.nextNode();
                 if (node.getName().equals("fo:color-profile")) {
                     ColorProfile cp = (ColorProfile)node;
                     if (!"".equals(cp.getColorProfileName())) {
@@ -93,7 +93,7 @@ public class Declarations extends FObj {
                 }
             }
         }
-        childNodes = null;
+        firstChild = null;
     }
 
     private void addColorProfile(ColorProfile cp) {

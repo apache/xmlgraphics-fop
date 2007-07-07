@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.apache.fop.apps.FOPException;
@@ -43,9 +44,11 @@ public abstract class FObj extends FONode implements Constants {
     private static PropertyMaker[] propertyListTable
                             = FOPropertyMapping.getGenericMappings();
     
-    /** The immediate child nodes of this node. */
-    protected List childNodes = null;
-
+    /** 
+     * pointer to the descendant subtree
+     */
+    protected FONode firstChild;
+    
     /** The list of extension attachments, null if none */
     private List extensionAttachments = null;
     
@@ -94,7 +97,7 @@ public abstract class FObj extends FONode implements Constants {
         throws FOPException {
         FObj fobj = (FObj) super.clone(parent, removeChildren);
         if (removeChildren) {
-            fobj.childNodes = null;
+            fobj.firstChild = null;
         }
         return fobj;
     }
@@ -214,10 +217,16 @@ public abstract class FObj extends FONode implements Constants {
                  */
                 addExtensionAttachment(attachment);
             } else {
-                if (childNodes == null) {
-                    childNodes = new java.util.ArrayList();
+                if (firstChild == null) {
+                    firstChild = child;
+                } else {
+                    FONode prevChild = firstChild;
+                    while (prevChild.siblings != null
+                            && prevChild.siblings[1] != null) {
+                        prevChild = prevChild.siblings[1];
+                    }
+                    FONode.attachSiblings(prevChild, child);
                 }
-                childNodes.add(child);
             }
         }
     }
@@ -235,8 +244,21 @@ public abstract class FObj extends FONode implements Constants {
     
     /** @see org.apache.fop.fo.FONode#removeChild(org.apache.fop.fo.FONode) */
     public void removeChild(FONode child) {
-        if (childNodes != null) {
-            childNodes.remove(child);
+        FONode nextChild = null;
+        if (child.siblings != null) {
+            nextChild = child.siblings[1];
+        }
+        if (child == firstChild) {
+            firstChild = nextChild;
+            if (firstChild != null) {
+                firstChild.siblings[0] = null;
+            }
+        } else {
+            FONode prevChild = child.siblings[0];
+            prevChild.siblings[1] = nextChild;
+            if (nextChild != null) {
+                nextChild.siblings[0] = prevChild;
+            }
         }
     }
     
@@ -264,39 +286,36 @@ public abstract class FObj extends FONode implements Constants {
     /**
      * @see org.apache.fop.fo.FONode#getChildNodes()
      */
-    public ListIterator getChildNodes() {
-        if (childNodes != null) {
-            return childNodes.listIterator();
+    public FONodeIterator getChildNodes() {
+        if (firstChild != null) {
+            return new FObjIterator(this);
         }
         return null;
     }
 
     /**
      * Return an iterator over the object's childNodes starting
-     * at the passed-in node.
+     * at the passed-in node (= first call to iterator.next() will
+     * return childNode)
      * @param childNode First node in the iterator
      * @return A ListIterator or null if childNode isn't a child of
      * this FObj.
      */
-    public ListIterator getChildNodes(FONode childNode) {
-        if (childNodes != null) {
-            int i = childNodes.indexOf(childNode);
-            if (i >= 0) {
-                return childNodes.listIterator(i);
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Return a FONode based on the index in the list of childNodes.
-     * @param nodeIndex index of the node to return
-     * @return the node or null if the index is invalid
-     */
-    public FONode getChildNodeAt(int nodeIndex) {
-        if (childNodes != null) {
-            if (nodeIndex >= 0 && nodeIndex < childNodes.size()) {
-                return (FONode) childNodes.get(nodeIndex);
+    public FONodeIterator getChildNodes(FONode childNode) {
+        FONodeIterator it = getChildNodes();
+        if (it != null) {
+            if (firstChild == childNode) {
+                return it;
+            } else {
+                while (it.hasNext()
+                        && it.nextNode().siblings[1] != childNode) {
+                    //nop
+                }
+                if (it.hasNext()) {
+                    return it;
+                } else {
+                    return null;
+                }
             }
         }
         return null;
@@ -322,9 +341,9 @@ public abstract class FObj extends FONode implements Constants {
      */
     protected void addMarker(Marker marker) {
         String mcname = marker.getMarkerClassName();
-        if (childNodes != null) {
+        if (firstChild != null) {
             // check for empty childNodes
-            for (Iterator iter = childNodes.iterator(); iter.hasNext();) {
+            for (Iterator iter = getChildNodes(); iter.hasNext();) {
                 FONode node = (FONode) iter.next();
                 if (node instanceof FObj
                         || (node instanceof FOText
@@ -561,4 +580,188 @@ public abstract class FObj extends FONode implements Constants {
             return foreignAttributes;
         }
     }
+    
+    public class FObjIterator implements FONodeIterator {
+        
+        private static final int F_NONE_ALLOWED = 0;
+        private static final int F_SET_ALLOWED = 1;
+        private static final int F_REMOVE_ALLOWED = 2;
+        
+        private FONode currentNode;
+        private FObj parentNode;
+        private int currentIndex;
+        private int flags = F_NONE_ALLOWED;
+        
+        protected FObjIterator(FObj parent) {
+            this.parentNode = parent;
+            this.currentNode = parent.firstChild;
+            this.currentIndex = 0;
+            this.flags = F_NONE_ALLOWED;
+        }
+        
+        /**
+         * @see FONodeIterator#parentNode()
+         */
+        public FObj parentNode() {
+            return parentNode;
+        }
+        
+        /**
+         * @see java.util.ListIterator#next()
+         */
+        public Object next() {
+            if (currentNode != null) {
+                if (currentIndex != 0) {
+                    if (currentNode.siblings != null
+                        && currentNode.siblings[1] != null) {
+                        currentNode = currentNode.siblings[1];
+                    } else {
+                        throw new NoSuchElementException();
+                    }
+                }
+                currentIndex++;
+                flags |= (F_SET_ALLOWED | F_REMOVE_ALLOWED);
+                return currentNode;
+            } else {
+                throw new NoSuchElementException();
+            }
+        }
+
+        /**
+         * @see java.util.ListIterator#previous()
+         */
+        public Object previous() {
+            if (currentNode.siblings != null
+                    && currentNode.siblings[0] != null) {
+                currentIndex--;
+                currentNode = currentNode.siblings[0];
+                flags |= (F_SET_ALLOWED | F_REMOVE_ALLOWED);
+                return currentNode;
+            } else {
+                throw new NoSuchElementException();
+            }
+        }
+        
+        /**
+         * @see java.util.ListIterator#set(Object)
+         */
+        public void set(Object o) {
+            if ((flags & F_SET_ALLOWED) == F_SET_ALLOWED) {
+                FONode newNode = (FONode) o;
+                if (currentNode == parentNode.firstChild) {
+                    parentNode.firstChild = newNode;
+                } else {
+                    FONode.attachSiblings(currentNode.siblings[0], newNode);
+                }
+                if (currentNode.siblings != null
+                        && currentNode.siblings[1] != null) {
+                    FONode.attachSiblings(newNode, currentNode.siblings[1]);
+                }
+            } else {
+                throw new IllegalStateException();
+            }
+        }
+        
+        /**
+         * @see java.util.ListIterator#add(Object)
+         */
+        public void add(Object o) {
+            FONode newNode = (FONode) o;
+            if (currentIndex == -1) {
+                if (currentNode != null) {
+                    FONode.attachSiblings(newNode, currentNode);
+                }
+                parentNode.firstChild = newNode;
+                currentIndex = 0;
+                currentNode = newNode;
+            } else {
+                if (currentNode.siblings != null
+                        && currentNode.siblings[1] != null) {
+                    FONode.attachSiblings((FONode) o, currentNode.siblings[1]);
+                }
+                FONode.attachSiblings(currentNode, (FONode) o);
+            }
+            flags &= F_NONE_ALLOWED;
+        }
+
+        /**
+         * @see java.util.ListIterator#hasNext()
+         */
+        public boolean hasNext() {
+            return (currentNode != null)
+                && ((currentIndex == 0)
+                        || (currentNode.siblings != null
+                            && currentNode.siblings[1] != null));
+        }
+
+        /**
+         * @see java.util.ListIterator#hasPrevious()
+         */
+        public boolean hasPrevious() {
+            return (currentIndex != 0)
+                || (currentNode.siblings != null
+                    && currentNode.siblings[0] != null);
+        }
+        
+        /**
+         * @see java.util.ListIterator#nextIndex()
+         */
+        public int nextIndex() {
+            return currentIndex + 1;
+        }
+
+        /**
+         * @see java.util.ListIterator#previousIndex()
+         */
+        public int previousIndex() {
+            return currentIndex - 1;
+        }
+
+        /**
+         * @see java.util.ListIterator#remove()
+         */
+        public void remove() {
+            if ((flags & F_REMOVE_ALLOWED) == F_REMOVE_ALLOWED) {
+                parentNode.removeChild(currentNode);
+                if (currentIndex == 0) {
+                    //first node removed
+                    currentNode = parentNode.firstChild;
+                } else if (currentNode.siblings != null
+                        && currentNode.siblings[0] != null) {
+                    currentNode = currentNode.siblings[0];
+                    currentIndex--;
+                } else {
+                    currentNode = null;
+                }
+                flags &= F_NONE_ALLOWED;
+            } else {
+                throw new IllegalStateException();
+            }
+        }
+
+        public FONode lastNode() {
+            while (currentNode != null
+                    && currentNode.siblings != null
+                    && currentNode.siblings[1] != null) {
+                currentNode = currentNode.siblings[1];
+                currentIndex++;
+            }
+            return currentNode;
+        }
+        
+        public FONode firstNode() {
+            currentNode = parentNode.firstChild;
+            currentIndex = 0;
+            return currentNode;
+        }
+        
+        public FONode nextNode() {
+            return (FONode) next();
+        }
+        
+        public FONode previousNode() {
+            return (FONode) previous();
+        }
+    }
+
 }

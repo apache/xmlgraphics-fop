@@ -72,7 +72,7 @@ public class LayoutMasterSet extends FObj {
      * @see org.apache.fop.fo.FONode#endOfNode
      */
     protected void endOfNode() throws FOPException {
-        if (childNodes == null) {
+        if (firstChild == null) {
             missingChildElementError("(simple-page-master|page-sequence-master)+");
         }
         checkRegionNames();

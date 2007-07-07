@@ -82,23 +82,9 @@ public class XMLWhiteSpaceHandler {
     private boolean nextChildIsBlockLevel;
     private RecursiveCharIterator charIter;
     
-    private List discardableFOCharacters;
     private List pendingInlines;
     private Stack nestedBlockStack = new java.util.Stack();
     private CharIterator firstWhiteSpaceInSeq;
-    
-    /**
-     * Marks a Character object as discardable, so that it is effectively
-     * removed from the FOTree at the end of handleWhitespace()
-     * @param foChar the Character object to be removed from the list of
-     *               childNodes
-     */
-    public void addDiscardableFOChar(Character foChar) {
-        if (discardableFOCharacters == null) {
-            discardableFOCharacters = new java.util.ArrayList();
-        }
-        discardableFOCharacters.add(foChar);
-    }
     
     /**
      * Handle white-space for the fo that is passed in, starting at
@@ -155,12 +141,10 @@ public class XMLWhiteSpaceHandler {
                 || currentBlock == null
                 || (foId == Constants.FO_RETRIEVE_MARKER
                         && currentFO.getParent() == currentBlock)) {
-            int textNodeIndex = fo.childNodes.indexOf(firstTextNode);
             afterLinefeed = (
-                    (textNodeIndex == 0)
-                        || (textNodeIndex > 0
-                            && ((FONode) fo.childNodes.get(textNodeIndex - 1))
-                                    .getNameId() == Constants.FO_BLOCK));
+                    (firstTextNode == fo.firstChild)
+                        || (firstTextNode.siblings[0].getNameId()
+                                == Constants.FO_BLOCK));
         }
         
         endOfBlock = (nextChild == null && currentFO == currentBlock);
@@ -343,11 +327,6 @@ public class XMLWhiteSpaceHandler {
                     lfCheck.reset();
                     break;
             }
-        }
-        if (discardableFOCharacters != null
-                && !discardableFOCharacters.isEmpty()) {
-            currentFO.childNodes.removeAll(discardableFOCharacters);
-            discardableFOCharacters.clear();
         }
     }
     
