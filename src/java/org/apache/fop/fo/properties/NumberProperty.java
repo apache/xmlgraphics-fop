@@ -69,13 +69,16 @@ public class NumberProperty extends Property implements Numeric {
 
     }
 
-    private Number number;
+    /** cache holding all canonical NumberProperty instances */
+    private static final PropertyCache cache = new PropertyCache();
+    
+    private final Number number;
 
     /**
      * Constructor for Number input
      * @param num Number object value for property
      */
-    public NumberProperty(Number num) {
+    protected NumberProperty(Number num) {
         this.number = num;
     }
 
@@ -83,7 +86,7 @@ public class NumberProperty extends Property implements Numeric {
      * Constructor for double input
      * @param num double numeric value for property
      */
-    public NumberProperty(double num) {
+    protected NumberProperty(double num) {
         this.number = new Double(num);
     }
 
@@ -91,8 +94,41 @@ public class NumberProperty extends Property implements Numeric {
      * Constructor for integer input
      * @param num integer numeric value for property
      */
-    public NumberProperty(int num) {
+    protected NumberProperty(int num) {
         this.number = new Integer(num);
+    }
+    
+    /**
+     * Returns the canonical NumberProperty instance
+     * corresponding to the given Number
+     * @param num   the base Number
+     * @return  the canonical NumberProperty
+     */
+    public static NumberProperty getInstance(Number num) {
+        return (NumberProperty)cache.fetch(
+                    new NumberProperty(num));
+    }
+    
+    /**
+     * Returns the canonical NumberProperty instance
+     * corresponding to the given double
+     * @param num   the base double value
+     * @return  the canonical NumberProperty
+     */
+    public static NumberProperty getInstance(double num) {
+        return (NumberProperty)cache.fetch(
+                    new NumberProperty(num));
+    }
+
+    /**
+     * Returns the canonical NumberProperty instance
+     * corresponding to the given int
+     * @param num   the base int value
+     * @return  the canonical NumberProperty
+     */
+    public static NumberProperty getInstance(int num) {
+        return (NumberProperty)cache.fetch(
+                    new NumberProperty(num));
     }
     
     /**
@@ -172,7 +208,7 @@ public class NumberProperty extends Property implements Numeric {
     /** @see org.apache.fop.fo.properties.Property#getLength() */
     public Length getLength() {
         //Assume pixels (like in HTML) when there's no unit
-        return new FixedLength(getNumericValue(), "px");
+        return FixedLength.getInstance(getNumericValue(), "px");
     }
 
     /**

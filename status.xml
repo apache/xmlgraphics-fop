@@ -28,6 +28,13 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="code" dev="AD" type="add" fixes-bug="41044" due-to="Richard Wheeldon">
+        Partial application of the patch in Bugzilla 41044:
+          * addition of a generic PropertyCache to be used by all Property
+            types that can be safely canonicalized
+          * modified EnumProperty, StringProperty, NumberProperty, EnumNumber
+            and FixedLength to make use of the cache infrastructure
+      </action>
       <action context="code" dev="AD" type="update" fixes-bug="41656">
         Refactoring in the fo package:
         -> removal of the childNodes instance member in fop.fo.FObj

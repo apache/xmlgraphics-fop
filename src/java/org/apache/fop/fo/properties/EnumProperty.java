@@ -23,13 +23,13 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
 
-import java.util.Map;
-import java.util.WeakHashMap;
-
 /**
  * Superclass for properties that wrap an enumeration value
  */
 public class EnumProperty extends Property {
+    
+    /** cache holding all canonical EnumProperty instances */
+    private static final PropertyCache cache = new PropertyCache();
 
     /**
      * Inner class for creating EnumProperty instances
@@ -65,8 +65,6 @@ public class EnumProperty extends Property {
         }
     }
 
-    private static final Map propertyCache = new WeakHashMap();
-
     private final int value;
     private final String text;
 
@@ -80,14 +78,8 @@ public class EnumProperty extends Property {
     }
 
     public static EnumProperty getInstance(int explicitValue, String text) {
-        EnumProperty ep = new EnumProperty(explicitValue, text);
-        EnumProperty cacheEntry = (EnumProperty)propertyCache.get(ep);
-        if (cacheEntry == null) {
-            propertyCache.put(ep, ep);
-            return ep;
-        } else {
-            return cacheEntry;
-        }
+        return (EnumProperty) cache.fetch(
+                        new EnumProperty(explicitValue, text));
     }
 
     /**
@@ -119,6 +111,9 @@ public class EnumProperty extends Property {
         }
     }
 
+    /**
+     * @see java.lang.Object#hashCode()
+     */
     public int hashCode() {
         return value + text.hashCode();
     }

@@ -25,26 +25,34 @@ import org.apache.fop.datatypes.PercentBaseContext;
  * An absolute length quantity in XSL
  */
 public class FixedLength extends LengthProperty {
+    
+    /** cache holding all canonical FixedLength instances */
+    private static final PropertyCache cache = new PropertyCache();
+    
     private int millipoints;
-
-    /**
-     * Set the length given
-     * @param numRelUnits the number of relative units
-     * @param iCurFontSize the current font size in base units.
-     */
-    public FixedLength(double numRelUnits, int iCurFontSize) {
-        millipoints = (int) (numRelUnits * (double)iCurFontSize);
-    }
 
     /**
      * Set the length given a number of units and a unit name.
      * @param numUnits quantity of input units
      * @param units input unit specifier (in, cm, etc.)
      */
-    public FixedLength(double numUnits, String units) {
+    private FixedLength(double numUnits, String units) {
         convert(numUnits, units);
     }
-
+    
+    /**
+     * Return the canonical FixedLength instance corresponding
+     * to the computed value
+     * @param numUnits  input units
+     * @param units     unit specifier
+     * @return
+     */
+    public static FixedLength getInstance(double numUnits, String units) {
+        return (FixedLength) cache.fetch(
+                    new FixedLength(numUnits, units));
+        
+    }
+    
     /**
      * @param baseUnits the length as a number of base units (millipoints)
      */
@@ -139,5 +147,22 @@ public class FixedLength extends LengthProperty {
         return millipoints + "mpt";
     }
 
+    /**
+     * @see java.lang.Object#equals(Object)
+     */
+    public boolean equals(Object obj) {
+        if (obj instanceof EnumProperty) {
+            return (((FixedLength)obj).millipoints == this.millipoints);
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    public int hashCode() {
+        return millipoints;
+    }
 }
 

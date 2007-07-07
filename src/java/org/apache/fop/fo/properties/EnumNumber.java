@@ -19,30 +19,34 @@
  
 package org.apache.fop.fo.properties;
 
-import java.util.Map;
-import java.util.WeakHashMap;
-
 /**
  * A number quantity in XSL which is specified as an enum, such as "no-limit".
  */
 public class EnumNumber extends NumberProperty {
 
-    private static final Map cache = new WeakHashMap();
+    /** cache holding all canonical EnumNumber instances */
+    private static final PropertyCache cache = new PropertyCache();
 
     private final EnumProperty enumProperty;
     
-    private EnumNumber(EnumProperty enumProperty) {
+    /**
+     * Constructor
+     * @param enumProperty  the base EnumProperty
+     */
+    private EnumNumber(Property enumProperty) {
         super(null);
-        this.enumProperty = enumProperty;
+        this.enumProperty = (EnumProperty) enumProperty;
     }
 
+    /**
+     * Returns the canonical EnumNumber instance corresponding
+     * to the given Property
+     * @param enumProperty  the base EnumProperty
+     * @return  the canonical instance
+     */
     public static EnumNumber getInstance(Property enumProperty) {
-        EnumNumber en = (EnumNumber)cache.get(enumProperty);
-        if (en == null) {
-            en = new EnumNumber((EnumProperty)enumProperty);
-            cache.put(enumProperty, en);
-        }
-        return en;
+        return (EnumNumber)cache.fetch(
+                new EnumNumber((EnumProperty) enumProperty));
     }
 
     public int getEnum() {
@@ -81,5 +85,22 @@ public class EnumNumber extends NumberProperty {
         return enumProperty.getObject();
     }
 
+    /**
+     * @see java.lang.Object#equals(Object)
+     */
+    public boolean equals(Object obj) {
+        if (obj instanceof EnumNumber) {
+            return (((EnumNumber)obj).enumProperty == this.enumProperty);
+        } else {
+            return false;
+        }
+    }
 
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    public int hashCode() {
+        return enumProperty.hashCode();
+    }
+    
 }

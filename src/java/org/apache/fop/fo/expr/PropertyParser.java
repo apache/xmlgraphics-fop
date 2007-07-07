@@ -117,7 +117,7 @@ public final class PropertyParser extends PropertyTokenizer {
         next();
         if (currentToken == TOK_EOF) {
             // if prop value is empty string, force to StringProperty
-            return new StringProperty("");
+            return StringProperty.getInstance("");
         }
         ListProperty propList = null;
         while (true) {
@@ -245,7 +245,7 @@ public final class PropertyParser extends PropertyTokenizer {
             return prop;
 
         case TOK_LITERAL:
-            prop = new StringProperty(currentTokenValue);
+            prop = StringProperty.getInstance(currentTokenValue);
             break;
 
         case TOK_NCNAME:
@@ -254,11 +254,11 @@ public final class PropertyParser extends PropertyTokenizer {
             break;
 
         case TOK_FLOAT:
-            prop = new NumberProperty(new Double(currentTokenValue));
+            prop = NumberProperty.getInstance(new Double(currentTokenValue));
             break;
 
         case TOK_INTEGER:
-            prop = new NumberProperty(new Integer(currentTokenValue));
+            prop = NumberProperty.getInstance(new Integer(currentTokenValue));
             break;
 
         case TOK_PERCENT:
@@ -271,7 +271,7 @@ public final class PropertyParser extends PropertyTokenizer {
             PercentBase pcBase = this.propInfo.getPercentBase();
             if (pcBase != null) {
                 if (pcBase.getDimension() == 0) {
-                    prop = new NumberProperty(pcval * pcBase.getBaseValue());
+                    prop = NumberProperty.getInstance(pcval * pcBase.getBaseValue());
                 } else if (pcBase.getDimension() == 1) {
                     prop = new PercentLength(pcval, pcBase);
                 } else {
@@ -279,7 +279,7 @@ public final class PropertyParser extends PropertyTokenizer {
                 }
             } else {
                 // WARNING? Interpret as a decimal fraction, eg. 50% = .5
-                prop = new NumberProperty(pcval);
+                prop = NumberProperty.getInstance(pcval);
             }
             break;
 
@@ -290,10 +290,11 @@ public final class PropertyParser extends PropertyTokenizer {
             Double numPart = new Double(currentTokenValue.substring(0,
                     numLen));
             if (unitPart.equals(RELUNIT)) {
-                prop = (Property) NumericOp.multiply(new NumberProperty(numPart.doubleValue()),
+                prop = (Property) NumericOp.multiply(
+                                    NumberProperty.getInstance(numPart.doubleValue()),
                                     propInfo.currentFontSize());
             } else {
-                prop = new FixedLength(numPart.doubleValue(), unitPart);
+                prop = FixedLength.getInstance(numPart.doubleValue(), unitPart);
             }
             break;
 
@@ -365,7 +366,8 @@ public final class PropertyParser extends PropertyTokenizer {
             expectRpar();
         }
         if (i == nbArgs - 1 && function.padArgsWithPropertyName()) {
-            args[i++] = new StringProperty(propInfo.getPropertyMaker().getName());
+            args[i++] = StringProperty.getInstance(
+                            propInfo.getPropertyMaker().getName());
         }
         if (nbArgs != i) {
             throw new PropertyException("Expected " + nbArgs
@@ -521,7 +523,7 @@ public final class PropertyParser extends PropertyTokenizer {
         if (op1 == null || op2 == null) {
             throw new PropertyException("Non number operand to modulo");
         }
-        return new NumberProperty(op1.doubleValue() % op2.doubleValue());
+        return NumberProperty.getInstance(op1.doubleValue() % op2.doubleValue());
     }
 
 }
