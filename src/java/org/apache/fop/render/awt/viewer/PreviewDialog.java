@@ -40,6 +40,8 @@ import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 
 import javax.swing.ActionMap;
 import javax.swing.BorderFactory;
@@ -57,7 +59,6 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FOPException;
@@ -94,7 +95,8 @@ public class PreviewDialog extends JFrame implements StatusListener {
     private PreviewPanel previewPanel;
 
     /** Formats the text in the scale combobox. */
-    private DecimalFormat percentFormat = new DecimalFormat("###0.0#");
+    private DecimalFormat percentFormat = new DecimalFormat("###0.0#",
+                                            new DecimalFormatSymbols(Locale.ENGLISH));
 
     /**
      * Creates a new PreviewDialog that uses the given renderer.
