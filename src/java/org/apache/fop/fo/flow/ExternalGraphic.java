@@ -21,6 +21,7 @@ package org.apache.fop.fo.flow;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
@@ -44,6 +45,7 @@ public class ExternalGraphic extends AbstractGraphics {
     private String url;
     private int intrinsicWidth;
     private int intrinsicHeight;
+    private Length intrinsicAlignmentAdjust;
     
     /**
      * Create a new External graphic node.
@@ -75,6 +77,7 @@ public class ExternalGraphic extends AbstractGraphics {
             }
             this.intrinsicWidth = fopimage.getIntrinsicWidth();
             this.intrinsicHeight = fopimage.getIntrinsicHeight();
+            this.intrinsicAlignmentAdjust = fopimage.getIntrinsicAlignmentAdjust();
         }
         //TODO Report to caller so he can decide to throw an exception
     }
@@ -135,5 +138,12 @@ public class ExternalGraphic extends AbstractGraphics {
     public int getIntrinsicHeight() {
         return this.intrinsicHeight;
     }
-    
+
+    /**
+     * @see org.apache.fop.fo.flow.AbstractGraphics#getIntrinsicAlignmentAdjust()
+     */
+    public Length getIntrinsicAlignmentAdjust() {
+        return this.intrinsicAlignmentAdjust;
+    }
+
 }

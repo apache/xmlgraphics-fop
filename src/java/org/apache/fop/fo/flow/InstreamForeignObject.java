@@ -21,6 +21,7 @@ package org.apache.fop.fo.flow;
 
 import java.awt.geom.Point2D;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.XMLObj;
@@ -39,6 +40,8 @@ public class InstreamForeignObject extends AbstractGraphics {
 
     //Additional value
     private Point2D intrinsicDimensions;
+    
+    private Length intrinsicAlignmentAdjust;
     
     /**
      * constructs an instream-foreign-object object (called by Maker).
@@ -98,6 +101,7 @@ public class InstreamForeignObject extends AbstractGraphics {
                 log.error("Intrinsic dimensions of "
                         + " instream-foreign-object could not be determined");
             }
+            intrinsicAlignmentAdjust = child.getIntrinsicAlignmentAdjust();
         }
     }
 
@@ -123,6 +127,15 @@ public class InstreamForeignObject extends AbstractGraphics {
         } else {
             return 0;
         }
+    }
+
+    /**
+     * @see org.apache.fop.fo.flow.AbstractGraphics#getIntrinsicAlignmentAdjust()
+     */
+    public  Length getIntrinsicAlignmentAdjust()
+    {
+        prepareIntrinsicSize();
+        return intrinsicAlignmentAdjust;
     }
     
     /** @see org.apache.fop.fo.FONode#addChildNode(org.apache.fop.fo.FONode) */
