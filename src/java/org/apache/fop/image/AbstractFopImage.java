@@ -29,6 +29,7 @@ import java.awt.Color;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.datatypes.Length;
 
 /**
  * Base class to implement the FopImage interface.
@@ -256,6 +257,11 @@ public abstract class AbstractFopImage implements FopImage {
     /** @see org.apache.fop.image.FopImage#getIntrinsicHeight() */
     public int getIntrinsicHeight() {
         return (int)(getHeight() * 72000 / getVerticalResolution());
+    }
+    
+    /** @see org.apache.fop.image.FopImage#getIntrinsicAlignmentAdjust() */
+    public Length getIntrinsicAlignmentAdjust() {
+        return this.imageInfo.alignmentAdjust;
     }
 
     /** @see org.apache.fop.image.FopImage#getHorizontalResolution() */

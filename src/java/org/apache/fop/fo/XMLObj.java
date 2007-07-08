@@ -27,6 +27,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.batik.dom.util.XMLSupport;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.datatypes.Length;
 import org.apache.fop.util.ContentHandlerFactory.ObjectBuiltListener;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -93,6 +94,14 @@ public abstract class XMLObj extends FONode implements ObjectBuiltListener {
      */
     public Point2D getDimension(Point2D view) {
          return null;
+    }
+    
+    /**
+     * Retrieve the intrinsic alignment-adjust of the child element.
+     * @return the intrinsic alignment-adjust.
+     */
+    public Length getIntrinsicAlignmentAdjust() {
+        return null;
     }
 
     /** @see org.apache.fop.fo.FONode#getLocalName() */

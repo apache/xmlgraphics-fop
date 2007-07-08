@@ -28,6 +28,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="code" dev="AD" type="add" fixes-bug="42785" due-to="Max Berger">
+        Support alignment-adjust for images.
+      </action>
       <action context="code" dev="AD" type="add" fixes-bug="41044" due-to="Richard Wheeldon">
         Partial application of the patch in Bugzilla 41044:
           * addition of a generic PropertyCache to be used by all Property

@@ -236,6 +236,12 @@ public abstract class AbstractGraphics extends FObj {
      * @return the "alignment-adjust" property
      */
     public Length getAlignmentAdjust() {
+        if (alignmentAdjust.getEnum() == EN_AUTO) {
+            final Length intrinsicAlignmentAdjust = this.getIntrinsicAlignmentAdjust();
+            if (intrinsicAlignmentAdjust != null) {
+                return intrinsicAlignmentAdjust;
+            }
+        }
         return alignmentAdjust;
     }
     
@@ -261,12 +267,17 @@ public abstract class AbstractGraphics extends FObj {
     }
     
     /**
-     * @return the graphics intrinsic width
+     * @return the graphics intrinsic width in millipoints
      */
     public abstract int getIntrinsicWidth();
 
     /**
-     * @return the graphics intrinsic height
+     * @return the graphics intrinsic height in millipoints
      */
     public abstract int getIntrinsicHeight();
+
+    /**
+     * @return the graphics intrinsic alignment-adjust
+     */
+    public abstract Length getIntrinsicAlignmentAdjust();
 }
