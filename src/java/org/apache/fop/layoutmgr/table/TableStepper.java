@@ -44,6 +44,7 @@ public class TableStepper {
         private PrimaryGridUnit pgu;
         /** Knuth elements for this active cell. */
         private List elementList;
+        private boolean prevIsBox = false;
         /** Number of the row where the row-span begins, zero-based. */
         private int startRow;
         /** Index, in the list of Knuth elements, of the element starting the current step. */
@@ -89,7 +90,7 @@ public class TableStepper {
             } else {
                 //Copy elements (LinkedList) to array lists to improve 
                 //element access performance
-                elementList = new java.util.ArrayList(pgu.getElements());
+                elementList = pgu.getElements();
 //                if (log.isTraceEnabled()) {
 //                    log.trace("column " + (column+1) + ": recording " + elementLists.size() + " element(s)");
 //                }
@@ -140,25 +141,27 @@ public class TableStepper {
 
         private void goToNextLegalBreak() {
             lastPenaltyLength = 0;
-            while (end + 1 < elementList.size()) {
+            boolean breakFound = false;
+            while (!breakFound && end + 1 < elementList.size()) {
                 end++;
                 KnuthElement el = (KnuthElement)elementList.get(end);
                 if (el.isPenalty()) {
+                    prevIsBox = false;
                     if (el.getP() < KnuthElement.INFINITE) {
                         //First legal break point
                         lastPenaltyLength = el.getW();
-                        break;
+                        breakFound = true;
                     }
                 } else if (el.isGlue()) {
-                    if (end > 0) {
-                        KnuthElement prev = (KnuthElement)elementList.get(end - 1);
-                        if (prev.isBox()) {
-                            //Second legal break point
-                            break;
-                        }
+                    if (prevIsBox) {
+                        //Second legal break point
+                        breakFound = true;
+                    } else {
+                        width += el.getW();
                     }
-                    width += el.getW();
+                    prevIsBox = false;
                 } else {
+                    prevIsBox = true;
                     width += el.getW();
                 }
             }
