@@ -174,6 +174,9 @@ public class RenderPagesModel extends AreaTreeModel {
                 } catch (Exception e) {
                     // use error handler to handle this FOP or IO Exception
                     log.error(e);
+                    if (e instanceof RuntimeException) {
+                        throw (RuntimeException)e;
+                    }
                 }
                 pageViewport.clear();
                 iter.remove();
