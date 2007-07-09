@@ -143,6 +143,8 @@ public class BreakElement extends UnresolvedListElement {
             }
             sb.append(")");
         }
+        sb.append("; w:");
+        sb.append(penaltyWidth);
         sb.append("]");
         return sb.toString();
     }
