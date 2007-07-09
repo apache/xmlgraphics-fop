@@ -19,8 +19,6 @@
 
 package org.apache.fop.fo.flow;
 
-import java.util.BitSet;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.fop.apps.FOPException;
@@ -30,7 +28,6 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
-import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.NumberProperty;
@@ -327,7 +324,7 @@ public abstract class TableFObj extends FObj {
                     }
                 }
             }
-            return new NumberProperty(
+            return NumberProperty.getInstance(
                     ((TableFObj) fo.getParent()).getCurrentColumnIndex());
         }
         
@@ -354,14 +351,14 @@ public abstract class TableFObj extends FObj {
                         + "column-number on " + fo.getName() + ": "
                         + columnIndex + " forced to " 
                         + parent.getCurrentColumnIndex());
-                return new NumberProperty(parent.getCurrentColumnIndex());
+                return NumberProperty.getInstance(parent.getCurrentColumnIndex());
             } else {
                 double tmpIndex = p.getNumeric().getNumericValue();
                 if (tmpIndex - columnIndex > 0.0) {
                     columnIndex = (int) Math.round(tmpIndex);
                     log.warn("Rounding specified column-number of "
                             + tmpIndex + " to " + columnIndex);
-                    p = new NumberProperty(columnIndex);
+                    p = NumberProperty.getInstance(columnIndex);
                 }
             }
             
