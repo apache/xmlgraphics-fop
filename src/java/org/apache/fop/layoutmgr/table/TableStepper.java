@@ -290,22 +290,18 @@ public class TableStepper {
         return maxW;
     }
 
-    private void setupElementList(int column) {
-        GridUnit gu = getActiveGridUnit(column);
-        EffRow row = getActiveRow();
-        if (gu != null && !gu.isEmpty() && gu.isPrimary()) {
-            activeCells.add(new ActiveCell((PrimaryGridUnit) gu, row, activeRowIndex, rowGroup, getTableLM()));
-        }
-    }
-
     /**
      * Initializes the informations relative to the Knuth elements, to handle a new row in
      * the current row group.
      */
     private void initializeElementLists() {
         log.trace("Entering initializeElementLists()");
+        EffRow row = getActiveRow();
         for (int i = 0; i < columnCount; i++) {
-            setupElementList(i);
+            GridUnit gu = getActiveGridUnit(i);
+            if (gu != null && !gu.isEmpty() && gu.isPrimary()) {
+                activeCells.add(new ActiveCell((PrimaryGridUnit) gu, row, activeRowIndex, rowGroup, getTableLM()));
+            }
         }
     }
 
