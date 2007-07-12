@@ -625,7 +625,6 @@ public class TableContentLayoutManager implements PercentBaseContext {
         List positions = new java.util.ArrayList();
         List headerElements = null;
         List footerElements = null;
-        int nestedPenaltyArea = 0;
         Position firstPos = null;
         Position lastPos = null;
         Position lastCheckPos = null;
@@ -675,7 +674,6 @@ public class TableContentLayoutManager implements PercentBaseContext {
             if (penaltyPos.footerElements != null) {
                 footerElements = penaltyPos.footerElements; 
             }
-            nestedPenaltyArea = penaltyPos.nestedPenaltyLength;
         }
 
         Map markers = getTableLM().getTable().getMarkers();
@@ -695,7 +693,6 @@ public class TableContentLayoutManager implements PercentBaseContext {
         Iterator posIter = positions.iterator();
         iterateAndPaintPositions(posIter, painter);
 
-        painter.notifyNestedPenaltyArea(nestedPenaltyArea);
         if (footerElements != null) {
             //Positions for footers are simply added at the end
             PositionIterator nestedIter = new KnuthPossPosIter(footerElements);
