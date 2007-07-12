@@ -84,7 +84,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     private Block fobj;
     private boolean isFirstInBlock;
     
-   /** @see org.apache.fop.layoutmgr.LayoutManager#initialize() */
+    /** @see org.apache.fop.layoutmgr.LayoutManager#initialize() */
     public void initialize() {
         textAlignment = fobj.getTextAlign();
         textAlignmentLast = fobj.getTextAlignLast();
@@ -638,7 +638,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     /**
      * Phase 1 of Knuth algorithm: Collect all inline Knuth elements before determining line breaks.
      * @param context the LayoutContext
-     * @param availIPD available IPD for line (should be removed!) 
      */
     private void collectInlineKnuthElements(LayoutContext context) {
         LayoutContext inlineLC = new LayoutContext(context);
