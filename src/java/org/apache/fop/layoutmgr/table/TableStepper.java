@@ -32,8 +32,10 @@ import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
+import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.LayoutContext;
+import org.apache.fop.layoutmgr.Position;
 
 /**
  * This class processes row groups to create combined element lists for tables.
@@ -56,6 +58,7 @@ public class TableStepper {
          * current one.
          */
         private int width;
+        private int remainingLength;
         private int baseWidth;
         private int totalLength;
         private int includedLength;
@@ -88,8 +91,6 @@ public class TableStepper {
                 }
                 elementList.add(new KnuthBoxCellWithBPD(height));
             } else {
-                //Copy elements (LinkedList) to array lists to improve 
-                //element access performance
                 elementList = pgu.getElements();
 //                if (log.isTraceEnabled()) {
 //                    log.trace("column " + (column+1) + ": recording " + elementLists.size() + " element(s)");
@@ -112,6 +113,7 @@ public class TableStepper {
             startRow = rowIndex;
             keepWithNextSignal = false;
             computeBaseWidth(rowGroup);
+            remainingLength = totalLength;
             goToNextLegalBreak();
         }
 
@@ -134,8 +136,7 @@ public class TableStepper {
             } else if (includedLength == totalLength) {
                 return 0;
             } else {
-                return totalLength - Math.max(0, includedLength)
-                        + borderBefore + borderAfter + paddingBefore + paddingAfter;
+                return remainingLength + borderBefore + borderAfter + paddingBefore + paddingAfter;
             }
         }
 
@@ -169,13 +170,13 @@ public class TableStepper {
 
         int getNextStep() {
             if (!includedInLastStep()) {
-                return width + borderBefore + borderAfter + paddingBefore + paddingAfter;
+                return width + lastPenaltyLength + borderBefore + borderAfter + paddingBefore + paddingAfter;
             } else {
                 start = end + 1;
                 if (end < elementList.size() - 1) {
 
                     goToNextLegalBreak();
-                    return width + borderBefore + borderAfter + paddingBefore + paddingAfter; 
+                    return width + lastPenaltyLength + borderBefore + borderAfter + paddingBefore + paddingAfter; 
                 } else {
                     return 0;
                 }
@@ -187,11 +188,26 @@ public class TableStepper {
         }
 
         boolean signalMinStep(int minStep) {
-            if (width + borderBefore + borderAfter + paddingBefore + paddingAfter <= minStep) {
+            if (width + lastPenaltyLength + borderBefore + borderAfter + paddingBefore + paddingAfter <= minStep) {
                 includedLength = width;
+                computeRemainingLength();
                 return false;
             } else {
                 return baseWidth + borderBefore + borderAfter + paddingBefore + paddingAfter > minStep;
+            }
+        }
+
+        private void computeRemainingLength() {
+            remainingLength = totalLength - width;
+            int index = end + 1;
+            while (index < elementList.size()) {
+                KnuthElement el = (KnuthElement)elementList.get(index);
+                if (el.isBox()) {
+                    break;
+                } else if (el.isGlue()) {
+                    remainingLength -= el.getW();
+                }
+                index++;
             }
         }
 
@@ -201,10 +217,6 @@ public class TableStepper {
 
         boolean hasStarted() {
             return includedLength > 0;
-        }
-
-        int getLastPenaltyLength() {
-            return lastPenaltyLength;
         }
 
         boolean isFinished() {
@@ -223,7 +235,6 @@ public class TableStepper {
     private int activeRowIndex;
     private boolean rowBacktrackForLastStep;
     private boolean skippedStep;
-    private int lastMaxPenaltyLength;
 
     private List activeCells = new LinkedList();
 
@@ -330,8 +341,8 @@ public class TableStepper {
         while ((step = getNextStep()) >= 0) {
             int normalRow = activeRowIndex;
             int increase = step - laststep;
-            int penaltyLen = step + getMaxRemainingHeight() - totalHeight;
-            int boxLen = step - addedBoxLen - penaltyLen;
+            int penaltyOrGlueLen = step + getMaxRemainingHeight() - totalHeight;
+            int boxLen = step - addedBoxLen - Math.max(0, penaltyOrGlueLen);
             addedBoxLen += boxLen;
 
             boolean forcedBreak = false;
@@ -384,7 +395,6 @@ public class TableStepper {
             //log.debug(">>> guPARTS: " + gridUnitParts);
 
             //Create elements for step
-            int effPenaltyLen = penaltyLen;
             TableContentPosition tcpos = new TableContentPosition(getTableLM(),
                     gridUnitParts, rowGroup[normalRow]);
             if (returnList.size() == 0) {
@@ -396,6 +406,8 @@ public class TableStepper {
                         + " - row=" + activeRowIndex + " - " + tcpos);
             }
             returnList.add(new KnuthBox(boxLen, tcpos, false));
+
+            int effPenaltyLen = Math.max(0, penaltyOrGlueLen);
             TableHFPenaltyPosition penaltyPos = new TableHFPenaltyPosition(getTableLM());
             if (bodyType == TableRowIterator.BODY) {
                 if (!getTableLM().getTable().omitHeaderAtBreak()) {
@@ -407,17 +419,6 @@ public class TableStepper {
                     penaltyPos.footerElements = tclm.getFooterElements();
                 }
             }
-
-            //Handle a penalty length coming from nested content
-            //Example: nested table with header/footer
-            if (this.lastMaxPenaltyLength != 0) {
-                penaltyPos.nestedPenaltyLength = this.lastMaxPenaltyLength;
-                if (log.isDebugEnabled()) {
-                    log.debug("Additional penalty length from table-cell break: "
-                            + this.lastMaxPenaltyLength);
-                }
-            }
-            effPenaltyLen += this.lastMaxPenaltyLength;
 
             int p = 0;
             boolean allCellsHaveContributed = true;
@@ -449,11 +450,14 @@ public class TableStepper {
                 p = -KnuthPenalty.INFINITE; //Overrides any keeps (see 4.8 in XSL 1.0)
             }
             returnList.add(new BreakElement(penaltyPos, effPenaltyLen, p, breakClass, context));
+            if (penaltyOrGlueLen < 0) {
+                returnList.add(new KnuthGlue(-penaltyOrGlueLen, 0, 0, new Position(null), true));
+            }
 
             if (log.isDebugEnabled()) {
                 log.debug("step=" + step + " (+" + increase + ")"
                         + " box=" + boxLen
-                        + " penalty=" + penaltyLen
+                        + " penalty=" + penaltyOrGlueLen
                         + " effPenalty=" + effPenaltyLen);
             }
 
@@ -477,7 +481,6 @@ public class TableStepper {
      */
     private int getNextStep() {
         log.trace("Entering getNextStep");
-        this.lastMaxPenaltyLength = 0;
         //Check for forced break conditions
         /*
         if (isBreakCondition()) {
@@ -497,8 +500,6 @@ public class TableStepper {
             if (nextStep > 0) {
                 stepFound = true;
                 minStep = Math.min(minStep, nextStep);
-                lastMaxPenaltyLength = Math.max(lastMaxPenaltyLength, activeCell
-                        .getLastPenaltyLength());
             }
         }
         if (!stepFound) {
@@ -587,5 +588,4 @@ public class TableStepper {
             super(w, null, true);
         }
     }
-
 }

@@ -34,8 +34,6 @@ class TableHFPenaltyPosition extends Position {
     protected List headerElements;
     /** Element list for the footer */
     protected List footerElements;
-    /** Penalty length to be respected for nested content */
-    protected int nestedPenaltyLength;
 
     /**
      * Creates a new TableHFPenaltyPosition
@@ -52,8 +50,6 @@ class TableHFPenaltyPosition extends Position {
         sb.append(headerElements);
         sb.append(", footer:");
         sb.append(footerElements);
-        sb.append(", inner penalty length:");
-        sb.append(nestedPenaltyLength);
         sb.append(")");
         return sb.toString();
     }
