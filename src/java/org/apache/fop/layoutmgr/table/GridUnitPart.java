@@ -62,4 +62,9 @@ class GridUnitPart {
         return sb.toString();
     }
 
+    boolean mustKeepWithPrevious() {
+        return pgu.getFlag(GridUnit.KEEP_WITH_PREVIOUS_PENDING)
+                || (pgu.getRow() != null && pgu.getRow().mustKeepWithPrevious());
+    }
+
 }
