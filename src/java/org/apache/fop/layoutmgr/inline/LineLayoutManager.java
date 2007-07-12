@@ -84,7 +84,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     private Block fobj;
     private boolean isFirstInBlock;
     
-    /** @see org.apache.fop.layoutmgr.LayoutManager#initialize() */
+   /** @see org.apache.fop.layoutmgr.LayoutManager#initialize() */
     public void initialize() {
         textAlignment = fobj.getTextAlign();
         textAlignmentLast = fobj.getTextAlignLast();
@@ -214,7 +214,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         private int textAlignmentLast;
         private int textIndent;
         private int lastLineEndIndent;
-        private int lineWidth;
         // the LM which created the paragraph
         private LineLayoutManager layoutManager;
 
@@ -228,8 +227,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             lastLineEndIndent = endIndent;
         }
 
-        public void startParagraph(int lw) {
-            lineWidth = lw;
+        public void startParagraph() {
             startSequence();
         }
 
@@ -239,7 +237,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             if (textAlignment == EN_CENTER) {
                 lineFiller = new MinOptMax(lastLineEndIndent); 
             } else {
-                lineFiller = new MinOptMax(lastLineEndIndent, lastLineEndIndent, lineWidth); 
+                lineFiller = new MinOptMax(lastLineEndIndent, 
+                                            lastLineEndIndent, 
+                                            layoutManager.iLineWidth); 
             }
 
             // add auxiliary elements at the beginning of the paragraph
@@ -593,7 +593,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             // here starts Knuth's algorithm
             //TODO availIPD should not really be used here, so we can later support custom line
             //widths for for each line (side-floats, differing available IPD after page break)
-            collectInlineKnuthElements(context, availIPD);
+            collectInlineKnuthElements(context);
         } else {
             // this method has been called before
             // all line breaks are already calculated
@@ -642,13 +642,13 @@ public class LineLayoutManager extends InlineStackingLayoutManager
      * @param context the LayoutContext
      * @param availIPD available IPD for line (should be removed!) 
      */
-    private void collectInlineKnuthElements(LayoutContext context, MinOptMax availIPD) {
+    private void collectInlineKnuthElements(LayoutContext context) {
         LayoutContext inlineLC = new LayoutContext(context);
         
         InlineLevelLayoutManager curLM;
         LinkedList returnedList = null;
         iLineWidth = context.getStackLimit().opt;
-        
+            
         // convert all the text in a sequence of paragraphs made
         // of KnuthBox, KnuthGlue and KnuthPenalty objects
         boolean bPrevWasKnuthBox = false;
@@ -718,7 +718,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                                                 textAlignment, textAlignmentLast, 
                                                 textIndent.getValue(this),
                                                 lastLineEndIndent.getValue(this));
-                        lastPar.startParagraph(availIPD.opt);
+                        lastPar.startParagraph();
                         if (log.isTraceEnabled()) {
                             trace.append(" [");
                         }
