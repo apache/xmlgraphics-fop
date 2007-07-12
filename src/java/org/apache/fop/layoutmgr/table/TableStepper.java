@@ -117,7 +117,7 @@ public class TableStepper {
 
         private void computeBaseWidth(EffRow[] rowGroup) {
             width = 0;
-            includedLength = 0;
+            includedLength = -1;  // Avoid troubles with cells having content of zero length
             for (int prevRow = 0; prevRow < startRow; prevRow++) {
                 width += rowGroup[prevRow].getHeight().opt;
             }
@@ -134,7 +134,7 @@ public class TableStepper {
             } else if (includedLength == totalLength) {
                 return 0;
             } else {
-                return totalLength - includedLength
+                return totalLength - Math.max(0, includedLength)
                         + borderBefore + borderAfter + paddingBefore + paddingAfter;
             }
         }
