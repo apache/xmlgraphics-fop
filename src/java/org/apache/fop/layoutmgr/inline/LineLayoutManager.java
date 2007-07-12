@@ -591,8 +591,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             knuthParagraphs = new ArrayList();
 
             // here starts Knuth's algorithm
-            //TODO availIPD should not really be used here, so we can later support custom line
-            //widths for for each line (side-floats, differing available IPD after page break)
             collectInlineKnuthElements(context);
         } else {
             // this method has been called before
