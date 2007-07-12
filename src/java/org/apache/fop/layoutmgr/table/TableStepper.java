@@ -222,7 +222,37 @@ public class TableStepper {
         boolean isFinished() {
             return includedInLastStep() && (end == elementList.size() - 1);
         }
-    }
+
+        GridUnitPart createGridUnitPart() {
+            if (end + 1 == elementList.size()) {
+                if (pgu.getFlag(GridUnit.KEEP_WITH_NEXT_PENDING)) {
+                    log.debug("PGU has pending keep-with-next");
+                    keepWithNextSignal = true;
+                }
+                if (pgu.getRow() != null && pgu.getRow().mustKeepWithNext()) {
+                    log.debug("table-row causes keep-with-next");
+                    keepWithNextSignal = true;
+                }
+            }
+            if (start == 0 && end == 0
+                    && elementList.size() == 1
+                    && elementList.get(0) instanceof KnuthBoxCellWithBPD) {
+                //Special case: Cell with fixed BPD
+                return new GridUnitPart(pgu, 0, pgu.getElements().size() - 1);
+            } else {
+                return new GridUnitPart(pgu, start, end);
+            }
+        }
+
+        boolean isLastForcedBreak() {
+            return ((KnuthElement)elementList.get(end)).isForcedBreak();
+        }
+
+        int getLastBreakClass() {
+            return ((KnuthPenalty)elementList.get(end)).getBreakClass();
+        }
+}
+
     /** Logger **/
     private static Log log = LogFactory.getLog(TableStepper.class);
 
@@ -352,43 +382,14 @@ public class TableStepper {
             for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
                 ActiveCell activeCell = (ActiveCell) iter.next();
                 if (activeCell.contributesContent()) {
-                    PrimaryGridUnit pgu = activeCell.pgu;
-                    if (activeCell.start == 0 && activeCell.end == 0
-                            && activeCell.elementList.size() == 1
-                            && activeCell.elementList.get(0) instanceof KnuthBoxCellWithBPD) {
-                        //Special case: Cell with fixed BPD
-                        gridUnitParts.add(new GridUnitPart(pgu,
-                                0, pgu.getElements().size() - 1));
-                    } else {
-                        gridUnitParts.add(new GridUnitPart(pgu, activeCell.start, activeCell.end));
-                        if (((KnuthElement)activeCell.elementList.get(activeCell.end)).isForcedBreak()) {
-                            forcedBreak = true;
-                            breakClass = ((KnuthPenalty)activeCell.elementList.get(activeCell.end)).getBreakClass();
-                        }
+                    GridUnitPart gup = activeCell.createGridUnitPart();
+                    gridUnitParts.add(gup);
+                    forcedBreak = activeCell.isLastForcedBreak();
+                    if (forcedBreak) {
+                        breakClass = activeCell.getLastBreakClass();
                     }
-                    if (activeCell.end + 1 == activeCell.elementList.size()) {
-                        if (pgu.getFlag(GridUnit.KEEP_WITH_NEXT_PENDING)) {
-                            log.debug("PGU has pending keep-with-next");
-                            activeCell.keepWithNextSignal = true;
-                        }
-                        if (pgu.getRow() != null && pgu.getRow().mustKeepWithNext()) {
-                            log.debug("table-row causes keep-with-next");
-                            activeCell.keepWithNextSignal = true;
-                        }
-                    }
-                    if (activeCell.start == 0 && activeCell.end >= 0) {
-                        if (pgu.getFlag(GridUnit.KEEP_WITH_PREVIOUS_PENDING)) {
-                            log.debug("PGU has pending keep-with-previous");
-                            if (returnList.size() == 0) {
-                                context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
-                            }
-                        }
-                        if (pgu.getRow() != null && pgu.getRow().mustKeepWithPrevious()) {
-                            log.debug("table-row causes keep-with-previous");
-                            if (returnList.size() == 0) {
-                                context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
-                            }
-                        }
+                    if (returnList.size() == 0 && gup.isFirstPart() && gup.mustKeepWithPrevious()) {
+                        context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
                     }
                 }
             }
