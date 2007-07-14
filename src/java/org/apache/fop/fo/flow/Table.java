@@ -139,8 +139,7 @@ public class Table extends TableFObj {
         }
         if (!isSeparateBorderModel() 
                 && getCommonBorderPaddingBackground().hasPadding(
-                        ValidationPercentBaseContext
-                            .getPseudoContextForValidationPurposes())) {
+                        ValidationPercentBaseContext.getPseudoContext())) {
             //See "17.6.2 The collapsing border model" in CSS2
             attributeWarning("In collapsing border model a table does not have padding"
                     + " (see http://www.w3.org/TR/REC-CSS2/tables.html#collapsing-borders)"

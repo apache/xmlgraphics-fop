@@ -97,8 +97,7 @@ public abstract class TableFObj extends FObj {
         if (getNameId() != FO_TABLE //Separate check for fo:table in Table.java
                 && getNameId() != FO_TABLE_CELL
                 && getCommonBorderPaddingBackground().hasPadding(
-                        ValidationPercentBaseContext
-                            .getPseudoContextForValidationPurposes())) {
+                        ValidationPercentBaseContext.getPseudoContext())) {
             attributeWarning(
                     "padding-* properties are not applicable to " + getName()
                     + ", but a non-zero value for padding was found.");
