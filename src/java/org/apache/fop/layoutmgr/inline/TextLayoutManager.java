@@ -30,7 +30,6 @@ import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FOText;
-import org.apache.fop.fo.flow.Inline;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.layoutmgr.InlineKnuthSequence;
 import org.apache.fop.layoutmgr.KnuthBox;
@@ -215,10 +214,6 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         letterSpaceIPD = ls.getSpace();
         wordSpaceIPD = MinOptMax.add(new MinOptMax(spaceCharIPD), ws.getSpace());
 
-        // if the text node is son of an inline, set vertical align
-        if (foText.getParent() instanceof Inline) {
-            Inline fobj = (Inline)foText.getParent();
-        }
     }
 
     /**
@@ -547,10 +542,6 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             || CharUtilities.isFixedWidthSpace(ch);
     }
     
-    private static boolean isBreakChar(final char ch) {
-        return (BREAK_CHARS.indexOf(ch) >= 0);
-    }
-    
     /** @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(LayoutContext, int) */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         lineStartBAP = context.getLineStartBorderAndPaddingWidth();
@@ -689,7 +680,9 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 }
             }
             
-            if (ch == CharUtilities.SPACE && foText.getWhitespaceTreatment() == Constants.EN_PRESERVE || ch == CharUtilities.NBSPACE) {
+            if ((ch == CharUtilities.SPACE 
+                    && foText.getWhitespaceTreatment() == Constants.EN_PRESERVE) 
+                    || ch == CharUtilities.NBSPACE) {
                 // preserved space or non-breaking space:
                 // create the AreaInfo object
                 ai = new AreaInfo(iNextStart, (short) (iNextStart + 1),
