@@ -5716,14 +5716,16 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="partial">
+        partial
       </td>
-      <td class="no">
-        no
+      <td class="partial">
+        partial
       </td>
-      <td align="center">
-        &nbsp;
+      <td align="left">
+        <ul>
+          <li>[0.93 and later] support for starting-state on <a href="#fo-bookmark">fo:bookmark</a></li>
+        </ul>
       </td>
     </tr>
     <tr>
