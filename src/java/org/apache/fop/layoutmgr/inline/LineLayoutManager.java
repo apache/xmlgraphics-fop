@@ -217,7 +217,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         // the LM which created the paragraph
         private LineLayoutManager layoutManager;
 
-        public Paragraph(LineLayoutManager llm, int alignment, int alignmentLast,
+        Paragraph(LineLayoutManager llm, int alignment, int alignmentLast,
                          int indent, int endIndent) {
             super();
             layoutManager = llm;
@@ -225,10 +225,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             textAlignmentLast = alignmentLast;
             textIndent = indent;
             lastLineEndIndent = endIndent;
-        }
-
-        public void startParagraph() {
-            startSequence();
         }
 
         public void startSequence() {
@@ -715,7 +711,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                                                 textAlignment, textAlignmentLast, 
                                                 textIndent.getValue(this),
                                                 lastLineEndIndent.getValue(this));
-                        lastPar.startParagraph();
+                        lastPar.startSequence();
                         if (log.isTraceEnabled()) {
                             trace.append(" [");
                         }
