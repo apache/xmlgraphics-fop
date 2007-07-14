@@ -50,7 +50,7 @@ public final class ValidationPercentBaseContext implements PercentBaseContext {
     private static PercentBaseContext pseudoContextForValidation = null;
     
     /** @return a base context for validation purposes. See class description. */
-    public static PercentBaseContext getPseudoContextForValidationPurposes() {
+    public static PercentBaseContext getPseudoContext() {
         if (pseudoContextForValidation == null) {
             pseudoContextForValidation = new ValidationPercentBaseContext();
         }
