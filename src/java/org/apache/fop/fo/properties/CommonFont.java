@@ -114,15 +114,6 @@ public class CommonFont {
     }
     
     /**
-     * Overrides the font-family.
-     * @param value the new font-family
-     */
-    public void overrideFontFamily(String value) {
-        this.fontFamily = new String[] {value};
-        
-    }
-    
-    /**
      * Create and return a Font object based on the properties. 
      * 
      * @param fontInfo
