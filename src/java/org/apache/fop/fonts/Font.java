@@ -19,7 +19,11 @@
 
 package org.apache.fop.fonts;
 
+import java.util.BitSet;
 import java.util.Map;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * This class holds font state information and provides access to the font
@@ -43,6 +47,8 @@ public class Font {
     public static final FontTriplet DEFAULT_FONT = new FontTriplet(
                     "any", STYLE_NORMAL, WEIGHT_NORMAL);
 
+    /** logger */
+    private  static Log log = LogFactory.getLog(Font.class);
 
     private String fontName;
     private FontTriplet triplet;
@@ -183,6 +189,7 @@ public class Font {
         if (d != 0) {
             c = d;
         } else {
+            log.warn("Glyph " + (int) c + " not available in font " + fontName);
             c = '#';
         }
 
