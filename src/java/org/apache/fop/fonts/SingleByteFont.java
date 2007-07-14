@@ -19,10 +19,16 @@
 
 package org.apache.fop.fonts;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * Generic SingleByte font
  */
 public class SingleByteFont extends CustomFont {
+
+    /** logger */
+    private  static Log log = LogFactory.getLog(SingleByteFont.class);
 
     private CodePointMapping mapping;
 
@@ -92,6 +98,8 @@ public class SingleByteFont extends CustomFont {
         if (d != 0) {
             return d;
         } else {
+            log.warn("Glyph " + (int) c + " not available in font "
+                    + getFontName());
             return '#';
         }
     }
