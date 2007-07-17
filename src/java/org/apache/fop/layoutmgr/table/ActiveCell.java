@@ -43,7 +43,7 @@ class ActiveCell {
          */
         private int width;
         private int remainingLength;
-        private int baseWidth;
+        private int previousRowsLength;
         private int totalLength;
         private int includedLength;
         private int borderBefore;
@@ -53,7 +53,7 @@ class ActiveCell {
         private boolean keepWithNextSignal;
         private int lastPenaltyLength;
 
-        ActiveCell(PrimaryGridUnit pgu, EffRow row, int rowIndex, EffRow[] rowGroup, TableLayoutManager tableLM) {
+        ActiveCell(PrimaryGridUnit pgu, EffRow row, int rowIndex, int previousRowsLength, TableLayoutManager tableLM) {
             this.pgu = pgu;
             boolean makeBoxForWholeRow = false;
             if (row.getExplicitHeight().min > 0) {
@@ -80,6 +80,9 @@ class ActiveCell {
 //                    log.trace("column " + (column+1) + ": recording " + elementLists.size() + " element(s)");
 //                }
             }
+            includedLength = -1;  // Avoid troubles with cells having content of zero length
+            this.previousRowsLength = previousRowsLength;
+            width = previousRowsLength;
             totalLength = ElementListUtils.calcContentLength(elementList);
             if (pgu.getTable().isSeparateBorderModel()) {
                 borderBefore = pgu.getBorders().getBorderBeforeWidth(false)
@@ -96,18 +99,8 @@ class ActiveCell {
             end = -1;
             startRow = rowIndex;
             keepWithNextSignal = false;
-            computeBaseWidth(rowGroup);
             remainingLength = totalLength;
             goToNextLegalBreak();
-        }
-
-        private void computeBaseWidth(EffRow[] rowGroup) {
-            width = 0;
-            includedLength = -1;  // Avoid troubles with cells having content of zero length
-            for (int prevRow = 0; prevRow < startRow; prevRow++) {
-                width += rowGroup[prevRow].getHeight().opt;
-            }
-            baseWidth = width;
         }
 
         boolean endsOnRow(int rowIndex) {
@@ -177,7 +170,7 @@ class ActiveCell {
                 computeRemainingLength();
                 return false;
             } else {
-                return baseWidth + borderBefore + borderAfter + paddingBefore + paddingAfter > minStep;
+                return previousRowsLength + borderBefore + borderAfter + paddingBefore + paddingAfter > minStep;
             }
         }
 

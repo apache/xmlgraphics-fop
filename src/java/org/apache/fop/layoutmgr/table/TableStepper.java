@@ -49,6 +49,7 @@ public class TableStepper {
     /** Number of columns in the row group. */
     private int columnCount;
     private int totalHeight;
+    private int previousRowsLength = 0;
     private int activeRowIndex;
     private boolean rowBacktrackForLastStep;
     private boolean skippedStep;
@@ -128,7 +129,7 @@ public class TableStepper {
         for (int i = 0; i < columnCount; i++) {
             GridUnit gu = getActiveGridUnit(i);
             if (gu != null && !gu.isEmpty() && gu.isPrimary()) {
-                activeCells.add(new ActiveCell((PrimaryGridUnit) gu, row, activeRowIndex, rowGroup, getTableLM()));
+                activeCells.add(new ActiveCell((PrimaryGridUnit) gu, row, activeRowIndex, previousRowsLength, getTableLM()));
             }
         }
     }
@@ -347,6 +348,7 @@ public class TableStepper {
                             "break-after ignored on table-row because of row spanning "
                             + "in progress (See XSL 1.0, 7.19.1)", rowFO));
                 }
+                previousRowsLength += rowGroup[activeRowIndex].getHeight().opt;
                 activeRowIndex++;
                 if (log.isDebugEnabled()) {
                     log.debug("===> new row: " + activeRowIndex);
