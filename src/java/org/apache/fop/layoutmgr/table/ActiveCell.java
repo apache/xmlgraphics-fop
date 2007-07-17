@@ -31,8 +31,8 @@ class ActiveCell {
         /** Knuth elements for this active cell. */
         private List elementList;
         private boolean prevIsBox = false;
-        /** Number of the row where the row-span begins, zero-based. */
-        private int startRow;
+        /** Number of the row where the row-span ends, zero-based. */
+        private int endRow;
         /** Index, in the list of Knuth elements, of the element starting the current step. */
         private int start;
         /** Index, in the list of Knuth elements, of the element ending the current step. */
@@ -97,14 +97,14 @@ class ActiveCell {
             paddingAfter = pgu.getBorders().getPaddingAfter(false, pgu.getCellLM());
             start = 0;
             end = -1;
-            startRow = rowIndex;
+            endRow = rowIndex + pgu.getCell().getNumberRowsSpanned() - 1;
             keepWithNextSignal = false;
             remainingLength = totalLength;
             goToNextLegalBreak();
         }
 
         boolean endsOnRow(int rowIndex) {
-            return rowIndex == startRow + pgu.getCell().getNumberRowsSpanned() - 1;
+            return rowIndex == endRow;
         }
 
         int getRemainingHeight(int activeRowIndex, EffRow[] rowGroup) {
