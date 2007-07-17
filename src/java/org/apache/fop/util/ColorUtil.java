@@ -157,7 +157,7 @@ public final class ColorUtil {
      * @return a color if possible
      * @throws PropertyException
      *             if the format is wrong.
-     * @see java.awt.Color#toString()
+     * @inheritDoc java.awt.Color#toString()
      */
     private static Color parseAsJavaAWTColor(String value)
             throws PropertyException {

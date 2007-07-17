@@ -74,49 +74,49 @@ public class CommandLineLogger implements Log {
     }
     
     /**
-     * @see org.apache.commons.logging.Log#isTraceEnabled()
+     * @inheritDoc org.apache.commons.logging.Log#isTraceEnabled()
      */
     public final boolean isTraceEnabled() {
         return logLevel <= LOG_LEVEL_TRACE;
     }
 
     /**
-     * @see org.apache.commons.logging.Log#isDebugEnabled()
+     * @inheritDoc org.apache.commons.logging.Log#isDebugEnabled()
      */
     public final boolean isDebugEnabled() {
         return logLevel <= LOG_LEVEL_DEBUG;
     }
 
     /**
-     * @see org.apache.commons.logging.Log#isInfoEnabled()
+     * @inheritDoc org.apache.commons.logging.Log#isInfoEnabled()
      */
     public final boolean isInfoEnabled() {
         return logLevel <= LOG_LEVEL_INFO;
     }
     
     /**
-     * @see org.apache.commons.logging.Log#isWarnEnabled()
+     * @inheritDoc org.apache.commons.logging.Log#isWarnEnabled()
      */
     public final boolean isWarnEnabled() {
         return logLevel <= LOG_LEVEL_WARN;
     }
 
     /**
-     * @see org.apache.commons.logging.Log#isErrorEnabled()
+     * @inheritDoc org.apache.commons.logging.Log#isErrorEnabled()
      */
     public final boolean isErrorEnabled() {
         return logLevel <= LOG_LEVEL_ERROR;
     }
 
     /**
-     * @see org.apache.commons.logging.Log#isFatalEnabled()
+     * @inheritDoc org.apache.commons.logging.Log#isFatalEnabled()
      */
     public final boolean isFatalEnabled() {
         return logLevel <= LOG_LEVEL_FATAL;
     }
     
     /**
-     * @see org.apache.commons.logging.Log#trace(java.lang.Object)
+     * @inheritDoc org.apache.commons.logging.Log#trace(java.lang.Object)
      */
     public final void trace(Object message) {
         if (isTraceEnabled()) {
@@ -125,7 +125,7 @@ public class CommandLineLogger implements Log {
     }
 
     /**
-     * @see org.apache.commons.logging.Log#trace(java.lang.Object, java.lang.Throwable)
+     * @inheritDoc org.apache.commons.logging.Log#trace(java.lang.Object, java.lang.Throwable)
      */
     public final void trace(Object message, Throwable t) {
         if (isTraceEnabled()) {
@@ -134,7 +134,7 @@ public class CommandLineLogger implements Log {
     }
 
     /**
-     * @see org.apache.commons.logging.Log#debug(java.lang.Object)
+     * @inheritDoc org.apache.commons.logging.Log#debug(java.lang.Object)
      */
     public final void debug(Object message) {
         if (isDebugEnabled()) {
@@ -143,7 +143,7 @@ public class CommandLineLogger implements Log {
     }
 
     /**
-     * @see org.apache.commons.logging.Log#debug(java.lang.Object, java.lang.Throwable)
+     * @inheritDoc org.apache.commons.logging.Log#debug(java.lang.Object, java.lang.Throwable)
      */
     public final void debug(Object message, Throwable t) {
         if (isDebugEnabled()) {
@@ -152,7 +152,7 @@ public class CommandLineLogger implements Log {
     }
 
     /**
-     * @see org.apache.commons.logging.Log#info(java.lang.Object)
+     * @inheritDoc org.apache.commons.logging.Log#info(java.lang.Object)
      */
     public final void info(Object message) {
         if (isInfoEnabled()) {
@@ -161,7 +161,7 @@ public class CommandLineLogger implements Log {
     }
 
     /**
-     * @see org.apache.commons.logging.Log#info(java.lang.Object, java.lang.Throwable)
+     * @inheritDoc org.apache.commons.logging.Log#info(java.lang.Object, java.lang.Throwable)
      */
     public final void info(Object message, Throwable t) {
         if (isInfoEnabled()) {
@@ -170,7 +170,7 @@ public class CommandLineLogger implements Log {
     }
 
     /**
-     * @see org.apache.commons.logging.Log#warn(java.lang.Object)
+     * @inheritDoc org.apache.commons.logging.Log#warn(java.lang.Object)
      */
     public final void warn(Object message) {
         if (isWarnEnabled()) {
@@ -179,7 +179,7 @@ public class CommandLineLogger implements Log {
     }
 
     /**
-     * @see org.apache.commons.logging.Log#warn(java.lang.Object, java.lang.Throwable)
+     * @inheritDoc org.apache.commons.logging.Log#warn(java.lang.Object, java.lang.Throwable)
      */
     public final void warn(Object message, Throwable t) {
         if (isWarnEnabled()) {
@@ -188,7 +188,7 @@ public class CommandLineLogger implements Log {
     }
 
     /**
-     * @see org.apache.commons.logging.Log#error(java.lang.Object)
+     * @inheritDoc org.apache.commons.logging.Log#error(java.lang.Object)
      */
     public final void error(Object message) {
         if (isErrorEnabled()) {
@@ -197,7 +197,7 @@ public class CommandLineLogger implements Log {
     }
 
     /**
-     * @see org.apache.commons.logging.Log#error(java.lang.Object, java.lang.Throwable)
+     * @inheritDoc org.apache.commons.logging.Log#error(java.lang.Object, java.lang.Throwable)
      */
     public final void error(Object message, Throwable t) {
         if (isErrorEnabled()) {
@@ -206,7 +206,7 @@ public class CommandLineLogger implements Log {
     }
 
     /**
-     * @see org.apache.commons.logging.Log#fatal(java.lang.Object)
+     * @inheritDoc org.apache.commons.logging.Log#fatal(java.lang.Object)
      */
     public final void fatal(Object message) {
         if (isFatalEnabled()) {
@@ -215,7 +215,7 @@ public class CommandLineLogger implements Log {
     }
 
     /**
-     * @see org.apache.commons.logging.Log#fatal(java.lang.Object, java.lang.Throwable)
+     * @inheritDoc org.apache.commons.logging.Log#fatal(java.lang.Object, java.lang.Throwable)
      */
     public final void fatal(Object message, Throwable t) {
         if (isFatalEnabled()) {

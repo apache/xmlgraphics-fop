@@ -48,7 +48,7 @@ public class CMYKColorSpace extends ColorSpace {
     }
 
     /**
-     * @see java.awt.color.ColorSpace#toRGB(float[])
+     * @inheritDoc java.awt.color.ColorSpace#toRGB(float[])
      */
     public float[] toRGB(float[] colorvalue) {
         return new float [] {
@@ -58,21 +58,21 @@ public class CMYKColorSpace extends ColorSpace {
     }
 
     /**
-     * @see java.awt.color.ColorSpace#fromRGB(float[])
+     * @inheritDoc java.awt.color.ColorSpace#fromRGB(float[])
      */
     public float[] fromRGB(float[] rgbvalue) {
         throw new UnsupportedOperationException("NYI");
     }
 
     /**
-     * @see java.awt.color.ColorSpace#toCIEXYZ(float[])
+     * @inheritDoc java.awt.color.ColorSpace#toCIEXYZ(float[])
      */
     public float[] toCIEXYZ(float[] colorvalue) {
         throw new UnsupportedOperationException("NYI");
     }
 
     /**
-     * @see java.awt.color.ColorSpace#fromCIEXYZ(float[])
+     * @inheritDoc java.awt.color.ColorSpace#fromCIEXYZ(float[])
      */
     public float[] fromCIEXYZ(float[] colorvalue) {
         throw new UnsupportedOperationException("NYI");

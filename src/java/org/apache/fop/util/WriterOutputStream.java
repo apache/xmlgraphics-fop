@@ -50,21 +50,21 @@ public class WriterOutputStream extends OutputStream {
     }
 
     /**
-     * @see java.io.OutputStream#close()
+     * @inheritDoc java.io.OutputStream#close()
      */
     public void close() throws IOException {
         writer.close();
     }
 
     /**
-     * @see java.io.OutputStream#flush()
+     * @inheritDoc java.io.OutputStream#flush()
      */
     public void flush() throws IOException {
         writer.flush();
     }
 
     /**
-     * @see java.io.OutputStream#write(byte[], int, int)
+     * @inheritDoc java.io.OutputStream#write(byte[], int, int)
      */
     public void write(byte[] buf, int offset, int length) throws IOException {
         if (encoding != null) {
@@ -75,14 +75,14 @@ public class WriterOutputStream extends OutputStream {
     }
 
     /**
-     * @see java.io.OutputStream#write(byte[])
+     * @inheritDoc java.io.OutputStream#write(byte[])
      */
     public void write(byte[] buf) throws IOException {
         write(buf, 0, buf.length);
     }
 
     /**
-     * @see java.io.OutputStream#write(int)
+     * @inheritDoc java.io.OutputStream#write(int)
      */
     public void write(int b) throws IOException {
         write(new byte[] {(byte)b});
