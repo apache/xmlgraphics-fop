@@ -52,12 +52,12 @@ public class DOMBuilderContentHandlerFactory implements ContentHandlerFactory {
         this.domImplementation = domImplementation;
     }
     
-    /** @see org.apache.fop.util.ContentHandlerFactory#getSupportedNamespaces() */
+    /** @inheritDoc org.apache.fop.util.ContentHandlerFactory#getSupportedNamespaces() */
     public String[] getSupportedNamespaces() {
         return new String[] {namespaceURI};
     }
 
-    /** @see org.apache.fop.util.ContentHandlerFactory#createContentHandler() */
+    /** @inheritDoc org.apache.fop.util.ContentHandlerFactory#createContentHandler() */
     public ContentHandler createContentHandler() throws SAXException {
         return new Handler();
     }
@@ -77,21 +77,21 @@ public class DOMBuilderContentHandlerFactory implements ContentHandlerFactory {
         }
         
         /**
-         * @see org.apache.fop.util.ContentHandlerFactory.ObjectSource#getObject()
+         * @inheritDoc org.apache.fop.util.ContentHandlerFactory.ObjectSource#getObject()
          */
         public Object getObject() {
             return getDocument();
         }
 
         /**
-         * @see org.apache.fop.util.ContentHandlerFactory.ObjectSource
+         * @inheritDoc org.apache.fop.util.ContentHandlerFactory.ObjectSource
          */
         public void setObjectBuiltListener(ObjectBuiltListener listener) {
             this.obListener = listener;
         }
         
         /**
-         * @see org.apache.fop.util.DelegatingContentHandler#startDocument()
+         * @inheritDoc org.apache.fop.util.DelegatingContentHandler#startDocument()
          */
         public void startDocument() throws SAXException {
             //Suppress startDocument() call if doc has not been set, yet. It will be done later.
@@ -101,7 +101,7 @@ public class DOMBuilderContentHandlerFactory implements ContentHandlerFactory {
         }
 
         /**
-         * @see org.apache.fop.util.DelegatingContentHandler
+         * @inheritDoc org.apache.fop.util.DelegatingContentHandler
          */
         public void startElement(String uri, String localName, String qName, Attributes atts) 
                     throws SAXException {
@@ -125,7 +125,7 @@ public class DOMBuilderContentHandlerFactory implements ContentHandlerFactory {
         }
 
         /**
-         * @see org.apache.fop.util.DelegatingContentHandler#endDocument()
+         * @inheritDoc org.apache.fop.util.DelegatingContentHandler#endDocument()
          */
         public void endDocument() throws SAXException {
             super.endDocument();
