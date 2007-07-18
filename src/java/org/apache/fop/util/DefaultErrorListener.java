@@ -41,21 +41,21 @@ public class DefaultErrorListener implements ErrorListener {
     }
     
     /**
-     * @inheritDoc javax.xml.transform.ErrorListener#warning(javax.xml.transform.TransformerException)
+     * {@inheritDoc}
      */
     public void warning(TransformerException exc) {
         log.warn(exc.toString());
     }
 
     /**
-     * @inheritDoc javax.xml.transform.ErrorListener#error(javax.xml.transform.TransformerException)
+     * {@inheritDoc}
      */
     public void error(TransformerException exc) throws TransformerException {
         throw exc;
     }
 
     /**
-     * @inheritDoc javax.xml.transform.ErrorListener#fatalError(javax.xml.transform.TransformerException)
+     * {@inheritDoc}
      */
     public void fatalError(TransformerException exc)
             throws TransformerException {
