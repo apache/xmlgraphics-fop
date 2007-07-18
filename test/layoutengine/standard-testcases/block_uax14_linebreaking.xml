@@ -112,6 +112,12 @@
           <fo:block background-color="yellow" margin="0pt 0pt 3pt 0pt">
             No-break-point-in-normal-dates-12/12/2006-or-fractions-12345678/67890112
           </fo:block>
+          <fo:block background-color="silver" font-size="8pt" margin="3pt 0pt 0pt 0pt">
+            WJ -- Word Joiner (XB/XA)
+          </fo:block>
+          <fo:block background-color="yellow" margin="0pt 0pt 3pt 0pt">
+            Here we/&#x2060;prevent/&#x2060;any/&#x2060;breaks/&#x2060;after the/&#x2060;solidus
+          </fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
@@ -184,5 +190,10 @@
       <eval expected="114460" xpath="//flow/block[27]/lineArea[1]/text/@ipd"/>
       <eval expected="93380" xpath="//flow/block[27]/lineArea[2]/text/@ipd"/>
       <eval expected="132860" xpath="//flow/block[27]/lineArea[3]/text/@ipd"/>
+
+      <eval expected="3" xpath="count(//flow/block[29]/lineArea)"/>
+      <eval expected="21670" xpath="//flow/block[29]/lineArea[1]/text/@ipd"/>
+      <eval expected="145630" xpath="//flow/block[29]/lineArea[2]/text/@ipd"/>
+      <eval expected="53360" xpath="//flow/block[29]/lineArea[3]/text/@ipd"/>
   </checks>
 </testcase>

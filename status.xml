@@ -28,6 +28,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="MM" type="fix">
+        Fixed incomplete support for Unicode Word Joiner characters (U+2060 and U+FEFF).
+      </action>
       <action context="code" dev="AD" type="add" fixes-bug="42785" due-to="Max Berger">
         Support alignment-adjust for images.
       </action>
