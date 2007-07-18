@@ -67,7 +67,7 @@ public class LinkResolver implements Resolvable, Serializable {
     /**
      * Resolve by adding an internal link to the first PageViewport in the list.
      *
-     * @see org.apache.fop.area.Resolvable#resolveIDRef(String, List)
+     * {@inheritDoc} 
      */
     public void resolveIDRef(String id, List pages) {
         resolveIDRef(id, (PageViewport)pages.get(0));

@@ -62,7 +62,7 @@ public class SVGElement extends SVGObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#getContentHandlerFactory()
+     * {@inheritDoc}
      */
     public ContentHandlerFactory getContentHandlerFactory() {
         return new DOMBuilderContentHandlerFactory(getNamespaceURI(), 
@@ -70,7 +70,7 @@ public class SVGElement extends SVGObj {
     }
     
     /**
-     * @see org.apache.fop.fo.FONode#processNode
+     * {@inheritDoc}
      */
     public void processNode(String elementName, Locator locator, 
                             Attributes attlist, PropertyList propertyList) throws FOPException {

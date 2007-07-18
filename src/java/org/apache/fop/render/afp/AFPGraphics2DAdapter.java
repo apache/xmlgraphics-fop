@@ -37,7 +37,7 @@ public class AFPGraphics2DAdapter extends AbstractGraphics2DAdapter {
     public AFPGraphics2DAdapter() {
     }
     
-    /** @see org.apache.fop.render.Graphics2DAdapter */
+    /** {@inheritDoc} */
     public void paintImage(Graphics2DImagePainter painter, 
             RendererContext context,
             int x, int y, int width, int height) throws IOException {

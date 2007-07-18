@@ -101,7 +101,7 @@ public class ImageContent extends AbstractAFPObject {
 
     /**
      * Sets the image IDE color model.
-     * @param size The IDE color model.
+     * @param colorModel    the IDE color model.
      */
     public void setImageIDEColorModel(byte colorModel) {
         _colorModel = colorModel;

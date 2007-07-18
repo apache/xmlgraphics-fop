@@ -149,7 +149,7 @@ public class PFBData {
 
 
     /**
-     * @see java.lang.Object#toString()
+     * {@inheritDoc}
      */
     public String toString() {
         return "PFB: format=" + getPFBFormat()

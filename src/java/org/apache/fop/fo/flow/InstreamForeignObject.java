@@ -28,9 +28,8 @@ import org.apache.fop.fo.XMLObj;
 import org.xml.sax.Locator;
 
 /**
- * The instream-foreign-object flow formatting object.
- * This is an atomic inline object that contains
- * xml data.
+ * Class modelling the fo:instream-foreign-object object.
+ * This is an atomic inline object that contains XML data.
  */
 public class InstreamForeignObject extends AbstractGraphics {
     
@@ -55,7 +54,7 @@ public class InstreamForeignObject extends AbstractGraphics {
     /**
      * Make sure content model satisfied, if so then tell the
      * FOEventHandler that we are at the end of the flow.
-     * @see org.apache.fop.fo.FONode#endOfNode
+     * {@inheritDoc}
      */
     protected void endOfNode() throws FOPException {
         if (firstChild == null) {
@@ -65,7 +64,7 @@ public class InstreamForeignObject extends AbstractGraphics {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc}
      * XSL Content Model: one (1) non-XSL namespace child
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
@@ -77,13 +76,13 @@ public class InstreamForeignObject extends AbstractGraphics {
         }
     }
 
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "instream-foreign-object";
     }
     
     /**
-     * @see org.apache.fop.fo.FObj#getNameId()
+     * {@inheritDoc}
      */
     public int getNameId() {
         return FO_INSTREAM_FOREIGN_OBJECT;
@@ -106,7 +105,7 @@ public class InstreamForeignObject extends AbstractGraphics {
     }
 
     /**
-     * @see org.apache.fop.fo.flow.AbstractGraphics#getIntrinsicWidth()
+     * {@inheritDoc}
      */
     public int getIntrinsicWidth() {
         prepareIntrinsicSize();
@@ -118,7 +117,7 @@ public class InstreamForeignObject extends AbstractGraphics {
     }
 
     /**
-     * @see org.apache.fop.fo.flow.AbstractGraphics#getIntrinsicHeight()
+     * {@inheritDoc}
      */
     public int getIntrinsicHeight() {
         prepareIntrinsicSize();
@@ -130,7 +129,7 @@ public class InstreamForeignObject extends AbstractGraphics {
     }
 
     /**
-     * @see org.apache.fop.fo.flow.AbstractGraphics#getIntrinsicAlignmentAdjust()
+     * {@inheritDoc}
      */
     public  Length getIntrinsicAlignmentAdjust()
     {
@@ -138,7 +137,7 @@ public class InstreamForeignObject extends AbstractGraphics {
         return intrinsicAlignmentAdjust;
     }
     
-    /** @see org.apache.fop.fo.FONode#addChildNode(org.apache.fop.fo.FONode) */
+    /** {@inheritDoc} */
     protected void addChildNode(FONode child) throws FOPException {
         super.addChildNode(child);
     }

@@ -86,7 +86,7 @@ public class EmbedFontInfo implements Serializable {
         return fontTriplets;
     }
     
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         return "metrics-url=" + metricsFile + ",embed-url=" + embedFile
             + ", kerning=" + kerning + ", font-triplet=" + fontTriplets; 

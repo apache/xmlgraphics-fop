@@ -87,7 +87,7 @@ public class CommonMarginBlock {
         endIndent = pList.get(Constants.PR_END_INDENT).getLength();
     }
     
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         return "CommonMarginBlock:\n" 
             + "Margins (top, bottom, left, right): (" 

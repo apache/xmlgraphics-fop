@@ -275,7 +275,7 @@ public class DelegatingContentHandler
     }
 
     /**
-     * {@inheritDoc} int, int)
+     * {@inheritDoc} 
      */
     public void comment(char[] ch, int start, int length) throws SAXException {
         if (lexicalHandler != null) {

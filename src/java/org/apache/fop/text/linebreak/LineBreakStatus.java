@@ -21,7 +21,7 @@ package org.apache.fop.text.linebreak;
 
 /**
  * This class is meant for supporting the Unicode line breaking algorithm.
- * See <a href="http://unicode.org/reports/tr14/">UTR 14</a>.
+ * See: <a href="http://unicode.org/reports/tr14/">UTR 14</a>
  *
  */
 public class LineBreakStatus {

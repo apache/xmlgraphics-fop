@@ -78,12 +78,12 @@ public class AFPPageSetup implements ExtensionAttachment, Serializable {
         this.value = source;
     }
 
-    /** @see org.apache.fop.fo.extensions.ExtensionAttachment#getCategory() */
+    /** {@inheritDoc} */
     public String getCategory() {
         return CATEGORY;
     }
 
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         return "AFPPageSetup(element-name=" + getElementName() + " name=" + getName() + ")";
     }

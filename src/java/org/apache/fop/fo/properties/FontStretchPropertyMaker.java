@@ -43,7 +43,7 @@ public class FontStretchPropertyMaker
     }
     
     /**
-     * @see PropertyMaker#convertProperty
+     * {@inheritDoc}
      * Implements the parts of 7.8.5 relevant to relative font stretches
      */
     public Property convertProperty(Property p,

@@ -63,24 +63,24 @@ public class PageBreaker extends AbstractBreaker {
                 pslm, pslm.getPageSequence().getMainFlow());
     }
     
-    /** @see org.apache.fop.layoutmgr.AbstractBreaker */
+    /** {@inheritDoc} */
     protected void updateLayoutContext(LayoutContext context) {
         int flowIPD = pslm.getCurrentPV().getCurrentSpan().getColumnWidth();
         context.setRefIPD(flowIPD);
     }
     
-    /** @see org.apache.fop.layoutmgr.AbstractBreaker#getTopLevelLM() */
+    /** {@inheritDoc} */
     protected LayoutManager getTopLevelLM() {
         return pslm;
     }
     
-    /** @see org.apache.fop.layoutmgr.AbstractBreaker#getPageProvider() */
+    /** {@inheritDoc} */
     protected PageProvider getPageProvider() {
         return pslm.getPageProvider();
     }
     
     /**
-     * @see org.apache.fop.layoutmgr.AbstractBreaker#getLayoutListener()
+     * {@inheritDoc}
      */
     protected PageBreakingLayoutListener getLayoutListener() {
         return new PageBreakingLayoutListener() {
@@ -105,7 +105,7 @@ public class PageBreaker extends AbstractBreaker {
         };
     }
 
-    /** @see org.apache.fop.layoutmgr.AbstractBreaker */
+    /** {@inheritDoc} */
     protected int handleSpanChange(LayoutContext childLC, int nextSequenceStartsOn) {
         needColumnBalancing = false;
         if (childLC.getNextSpan() != Constants.NOT_SET) {
@@ -120,7 +120,7 @@ public class PageBreaker extends AbstractBreaker {
         return nextSequenceStartsOn;
     }
 
-    /** @see org.apache.fop.layoutmgr.AbstractBreaker */
+    /** {@inheritDoc} */
     protected int getNextBlockList(LayoutContext childLC, 
             int nextSequenceStartsOn) {
         if (!firstPart) {
@@ -137,7 +137,7 @@ public class PageBreaker extends AbstractBreaker {
         return super.getNextBlockList(childLC, nextSequenceStartsOn);
     }
     
-    /** @see org.apache.fop.layoutmgr.AbstractBreaker */
+    /** {@inheritDoc} */
     protected LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         LinkedList contentList = null;
         
@@ -406,7 +406,7 @@ public class PageBreaker extends AbstractBreaker {
         firstPart = false;
     }
     
-    /** @see org.apache.fop.layoutmgr.AbstractBreaker#handleEmptyContent() */
+    /** {@inheritDoc} */
     protected void handleEmptyContent() {
         pslm.getCurrentPV().getPage().fakeNonEmpty();
     }
@@ -449,7 +449,7 @@ public class PageBreaker extends AbstractBreaker {
         return childFLM;
     }
     
-    /** @see org.apache.fop.layoutmgr.AbstractBreaker#observeElementList(java.util.List) */
+    /** {@inheritDoc} */
     protected void observeElementList(List elementList) {
         ElementListObserver.observe(elementList, "breaker", 
                 ((PageSequence)pslm.getFObj()).getId());

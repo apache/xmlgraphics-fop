@@ -29,7 +29,7 @@ import org.apache.commons.io.IOUtils;
 
 /**
  * FopImage object using PNG
- * @author Eric SCHAEFFER
+ * 
  * @see AbstractFopImage
  * @see FopImage
  */
@@ -45,8 +45,7 @@ public class PNGImage extends XmlGraphicsCommonsImage {
     }
 
     /**
-     * @see org.apache.fop.image.XmlGraphicsCommonsImage#decodeImage(
-     *          org.apache.xmlgraphics.image.codec.util.SeekableStream)
+     * {@inheritDoc}
      */
     protected CachableRed decodeImage(SeekableStream stream) throws IOException {
         PNGDecodeParam param = new PNGDecodeParam();

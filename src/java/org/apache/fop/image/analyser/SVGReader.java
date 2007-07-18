@@ -58,7 +58,7 @@ public class SVGReader implements ImageReader {
 
     private boolean batik = true;
 
-    /** @see org.apache.fop.image.analyser.ImageReader */
+    /** {@inheritDoc} */
     public FopImage.ImageInfo verifySignature(String uri, InputStream fis,
             FOUserAgent ua) throws IOException {
         FopImage.ImageInfo info = loadImage(uri, fis, ua);

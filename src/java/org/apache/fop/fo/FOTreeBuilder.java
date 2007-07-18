@@ -117,8 +117,7 @@ public class FOTreeBuilder extends DefaultHandler {
     }
     
     /**
-     * SAX Handler for locator
-     * @see org.xml.sax.ContentHandler#setDocumentLocator(Locator)
+     * {@inheritDoc}
      */
     public void setDocumentLocator(Locator locator) {
         this.locator = locator;
@@ -130,8 +129,7 @@ public class FOTreeBuilder extends DefaultHandler {
     }
     
     /**
-     * SAX Handler for characters
-     * @see org.xml.sax.ContentHandler#characters(char[], int, int)
+     * {@inheritDoc} 
      */
     public void characters(char[] data, int start, int length) 
                 throws SAXException {
@@ -139,8 +137,7 @@ public class FOTreeBuilder extends DefaultHandler {
     }
 
     /**
-     * SAX Handler for the start of the document
-     * @see org.xml.sax.ContentHandler#startDocument()
+     * {@inheritDoc}
      */
     public void startDocument() throws SAXException {
         if (used) {
@@ -159,8 +156,7 @@ public class FOTreeBuilder extends DefaultHandler {
     }
 
     /**
-     * SAX Handler for the end of the document
-     * @see org.xml.sax.ContentHandler#endDocument()
+     * {@inheritDoc}
      */
     public void endDocument() throws SAXException {
         this.delegate.endDocument();
@@ -176,8 +172,7 @@ public class FOTreeBuilder extends DefaultHandler {
     }
 
     /**
-     * SAX Handler for the start of an element
-     * @see org.xml.sax.ContentHandler#startElement(String, String, String, Attributes)
+     * {@inheritDoc} 
      */
     public void startElement(String namespaceURI, String localName, String rawName,
                              Attributes attlist) throws SAXException {
@@ -186,8 +181,7 @@ public class FOTreeBuilder extends DefaultHandler {
     }
 
     /**
-     * SAX Handler for the end of an element
-     * @see org.xml.sax.ContentHandler#endElement(String, String, String)
+     * {@inheritDoc} 
      */
     public void endElement(String uri, String localName, String rawName)
                 throws SAXException {
@@ -214,17 +208,17 @@ public class FOTreeBuilder extends DefaultHandler {
         return elementMappingRegistry.findFOMaker(namespaceURI, localName, locator);
     }
 
-    /** @see org.xml.sax.ErrorHandler#warning(org.xml.sax.SAXParseException) */
+    /** {@inheritDoc} */
     public void warning(SAXParseException e) {
         log.warn(e.toString());
     }
 
-    /** @see org.xml.sax.ErrorHandler#error(org.xml.sax.SAXParseException) */
+    /** {@inheritDoc} */
     public void error(SAXParseException e) {
         log.error(e.toString());
     }
 
-    /** @see org.xml.sax.ErrorHandler#fatalError(org.xml.sax.SAXParseException) */
+    /** {@inheritDoc} */
     public void fatalError(SAXParseException e) throws SAXException {
         log.error(e.toString());
         throw e;
@@ -275,8 +269,7 @@ public class FOTreeBuilder extends DefaultHandler {
         private int nestedMarkerDepth = 0;
 
         /**
-         * SAX Handler for the start of an element
-         * @see org.xml.sax.ContentHandler#startElement(String, String, String, Attributes)
+         * {@inheritDoc} 
          */
         public void startElement(String namespaceURI, String localName, String rawName,
                                  Attributes attlist) throws SAXException {
@@ -358,8 +351,7 @@ public class FOTreeBuilder extends DefaultHandler {
         }
 
         /**
-         * SAX Handler for the end of an element
-         * @see org.xml.sax.ContentHandler#endElement(String, String, String)
+         * {@inheritDoc} 
          */
         public void endElement(String uri, String localName, String rawName)
                     throws SAXException {
@@ -399,8 +391,7 @@ public class FOTreeBuilder extends DefaultHandler {
         }
 
         /**
-         * SAX Handler for characters
-         * @see org.xml.sax.ContentHandler#characters(char[], int, int)
+         * {@inheritDoc} 
          */
         public void characters(char[] data, int start, int length) 
             throws FOPException {

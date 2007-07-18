@@ -59,7 +59,7 @@ public class PDFReference implements PDFWritable {
         }
     }
     
-    /** @see org.apache.fop.pdf.PDFWritable#toInlinePDFString() */
+    /** {@inheritDoc} */
     public String toInlinePDFString() {
         return this.indirectReference;
     }

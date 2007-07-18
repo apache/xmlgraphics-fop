@@ -153,7 +153,7 @@ public class PDFPage extends PDFResourceContext {
     }
     
     /**
-     * @see org.apache.fop.pdf.PDFObject#toPDFString()
+     * {@inheritDoc}
      */
     public String toPDFString() {
         StringBuffer sb = new StringBuffer();

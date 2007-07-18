@@ -35,7 +35,7 @@ import com.sun.media.jai.codec.FileCacheSeekableStream;
 
 /**
  * FopImage object using JAI.
- * @author Eric SCHAEFFER
+ * 
  * @see AbstractFopImage
  * @see FopImage
  */
@@ -51,7 +51,7 @@ public class JAIImage extends AbstractFopImage {
     }
 
     /**
-     * @see org.apache.fop.image.AbstractFopImage#loadDimensions()
+     * {@inheritDoc}
      */
     protected boolean loadDimensions() {
         if (this.bitmaps == null) {
@@ -61,7 +61,7 @@ public class JAIImage extends AbstractFopImage {
     }
     
     /**
-     * @see org.apache.fop.image.AbstractFopImage#loadBitmap()
+     * {@inheritDoc}
      */
     protected boolean loadBitmap() {
         if (this.bitmaps == null) {
@@ -185,7 +185,7 @@ public class JAIImage extends AbstractFopImage {
         }
     }
 
-    /** @see org.apache.fop.image.AbstractFopImage#loadOriginalData() */
+    /** {@inheritDoc} */
     protected boolean loadOriginalData() {
         return loadDefaultOriginalData();
     }

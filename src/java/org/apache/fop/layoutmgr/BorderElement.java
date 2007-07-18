@@ -43,7 +43,7 @@ public class BorderElement extends BorderOrPaddingElement {
         super(position, condLength, side, isFirst, isLast, context);
     }
     
-    /** @see org.apache.fop.layoutmgr.UnresolvedListElementWithLength */
+    /** {@inheritDoc} */
     public void notifyLayoutManager(MinOptMax effectiveLength) {
         LayoutManager lm = getOriginatingLayoutManager();
         if (lm instanceof ConditionalElementListener) {
@@ -55,7 +55,7 @@ public class BorderElement extends BorderOrPaddingElement {
         }
     }
     
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer("Border[");
         sb.append(super.toString());

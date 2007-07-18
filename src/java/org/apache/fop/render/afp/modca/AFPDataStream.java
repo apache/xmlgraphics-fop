@@ -574,9 +574,6 @@ public class AFPDataStream {
      * Start a new page group. When processing has finished on the current page
      * group the {@link #endPageGroup()}method must be invoked to mark the page
      * group ending.
-     *
-     * @param name
-     *            the name of the page group
      */
     public void startPageGroup() {
 

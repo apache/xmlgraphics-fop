@@ -61,7 +61,7 @@ public class FootnoteLayoutManager extends InlineStackingLayoutManager {
         footnote = node;
     }
     
-    /** @see org.apache.fop.layoutmgr.LayoutManager#initialize() */
+    /** {@inheritDoc} */
     public void initialize() {
         // create an InlineStackingLM handling the fo:inline child of fo:footnote
         citationLM = new InlineLayoutManager(footnote.getFootnoteCitation());
@@ -70,7 +70,7 @@ public class FootnoteLayoutManager extends InlineStackingLayoutManager {
         bodyLM = new FootnoteBodyLayoutManager(footnote.getFootnoteBody());
     }
 
-    /** @see org.apache.fop.layoutmgr.LayoutManager */
+    /** {@inheritDoc} */
     public LinkedList getNextKnuthElements(LayoutContext context,
                                            int alignment) {
         // for the moment, this LM is set as the citationLM's parent
@@ -120,7 +120,7 @@ public class FootnoteLayoutManager extends InlineStackingLayoutManager {
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#getChangedKnuthElements(java.util.List, int)
+     * {@inheritDoc} 
      */
     public LinkedList getChangedKnuthElements(List oldList,
                                               int alignment) {
@@ -131,7 +131,7 @@ public class FootnoteLayoutManager extends InlineStackingLayoutManager {
 
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#addAreas(PositionIterator posIter, LayoutContext context);
+     * {@inheritDoc} 
      */
     public void addAreas(PositionIterator posIter, LayoutContext context) {
         // "Unwrap" the NonLeafPositions stored in posIter and put

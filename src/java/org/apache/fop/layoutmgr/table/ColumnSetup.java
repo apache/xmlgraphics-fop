@@ -120,7 +120,7 @@ public class ColumnSetup {
         }
     }
  
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         return columns.toString();
     }

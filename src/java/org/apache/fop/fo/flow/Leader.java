@@ -23,10 +23,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
-import org.apache.fop.fo.properties.CommonRelativePosition;
-import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
-import org.apache.fop.fo.properties.SpaceProperty;
 
 /**
  * Class modelling fo:leader object.
@@ -53,9 +50,6 @@ public class Leader extends InlineLevel {
     //     private CommonRelativePosition commonRelativePosition;
     //     private Length textDepth;
     //     private Length textAltitude;
-    //     private KeepProperty keepWithNext;
-    //     private KeepProperty keepWithPrevious;
-    //     private SpaceProperty wordSpacing;
     // End of property values
 
     /**
@@ -66,7 +60,7 @@ public class Leader extends InlineLevel {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
@@ -171,13 +165,13 @@ public class Leader extends InlineLevel {
         return dominantBaseline;
     }
     
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "leader";
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#getNameId()
+     * {@inheritDoc}
      */
     public int getNameId() {
         return FO_LEADER;

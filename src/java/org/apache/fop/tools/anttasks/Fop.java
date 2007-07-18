@@ -277,7 +277,7 @@ public class Fop extends Task {
     }
     
     /**
-     * @see org.apache.tools.ant.Task#execute()
+     * {@inheritDoc}
      */
     public void execute() throws BuildException {
         int logLevel = SimpleLog.LOG_LEVEL_INFO;
@@ -419,7 +419,7 @@ class FOPTaskStarter {
     }
 
     /**
-     * @see org.apache.fop.apps.Starter#run()
+     * {@inheritDoc}
      */
     public void run() throws FOPException {
         //Set base directory

@@ -116,7 +116,7 @@ public class StringProperty extends Property {
     }
 
     /**
-     * @see java.lang.Object#hashCode()
+     * {@inheritDoc}
      */
     public boolean equals(Object obj) {
         if (obj instanceof StringProperty) {
@@ -129,7 +129,7 @@ public class StringProperty extends Property {
     }
     
     /**
-     * @see java.lang.Object#hashCode()
+     * {@inheritDoc}
      */
     public int hashCode() {
         return str.hashCode();

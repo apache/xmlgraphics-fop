@@ -83,7 +83,7 @@ public class RunTest extends Task {
     /**
      * This creates the reference output, if required, then tests
      * the current build.
-     * @see org.apache.tools.ant.Task#execute()
+     * {@inheritDoc}
      */
     public void execute() throws BuildException {
         runReference();

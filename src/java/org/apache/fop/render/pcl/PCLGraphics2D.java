@@ -76,14 +76,14 @@ public class PCLGraphics2D extends AbstractGraphics2D {
         this.gen = g.gen;
     }
 
-    /** @see java.awt.Graphics#create() */
+    /** {@inheritDoc} */
     public Graphics create() {
         PCLGraphics2D copy = new PCLGraphics2D(this);
         copy.setGraphicContext((GraphicContext)getGraphicContext().clone());
         return copy;
     }
 
-    /** @see java.awt.Graphics#dispose() */
+    /** {@inheritDoc} */
     public void dispose() {
         this.gen = null;
     }
@@ -125,7 +125,7 @@ public class PCLGraphics2D extends AbstractGraphics2D {
         }
     }
     
-    /** @see java.awt.Graphics2D#getDeviceConfiguration() */
+    /** {@inheritDoc} */
     public GraphicsConfiguration getDeviceConfiguration() {
         return GraphicsEnvironment.getLocalGraphicsEnvironment().
                 getDefaultScreenDevice().getDefaultConfiguration();
@@ -262,7 +262,7 @@ public class PCLGraphics2D extends AbstractGraphics2D {
         }
     }
 
-    /** @see java.awt.Graphics2D#draw(java.awt.Shape) */
+    /** {@inheritDoc} */
     public void draw(Shape s) {
         try {
             AffineTransform trans = getTransform();
@@ -284,7 +284,7 @@ public class PCLGraphics2D extends AbstractGraphics2D {
         }
     }
 
-    /** @see java.awt.Graphics2D#fill(java.awt.Shape) */
+    /** {@inheritDoc} */
     public void fill(Shape s) {
         try {
             AffineTransform trans = getTransform();
@@ -482,7 +482,7 @@ public class PCLGraphics2D extends AbstractGraphics2D {
         sb.append("PU;");
     }
 
-    /** @see java.awt.Graphics2D#drawString(java.lang.String, float, float) */
+    /** {@inheritDoc} */
     public void drawString(String s, float x, float y) {
         java.awt.Font awtFont = getFont();
         FontRenderContext frc = getFontRenderContext();
@@ -491,42 +491,31 @@ public class PCLGraphics2D extends AbstractGraphics2D {
         fill(glyphOutline);
     }
 
-    /** @see java.awt.Graphics2D#drawString(java.text.AttributedCharacterIterator, float, float) */
+    /** {@inheritDoc} */
     public void drawString(AttributedCharacterIterator iterator, float x,
             float y) {
         // TODO Auto-generated method stub
         handleUnsupportedFeature("drawString NYI");
     }
 
-    /**
-     * @see java.awt.Graphics2D#drawRenderedImage(java.awt.image.RenderedImage, 
-     *          java.awt.geom.AffineTransform)
-     */
+    /** {@inheritDoc} */
     public void drawRenderedImage(RenderedImage img, AffineTransform xform) {
         handleUnsupportedFeature("Bitmap images are not supported");
     }
 
-    /**
-     * @see java.awt.Graphics2D#drawRenderableImage(java.awt.image.renderable.RenderableImage, 
-     *          java.awt.geom.AffineTransform)
-     */
+    /** {@inheritDoc} */
     public void drawRenderableImage(RenderableImage img, AffineTransform xform) {
         handleUnsupportedFeature("Bitmap images are not supported");
     }
 
-    /**
-     * @see java.awt.Graphics#drawImage(java.awt.Image, int, int, int, int, 
-     *          java.awt.image.ImageObserver)
-     */
+    /** {@inheritDoc} */
     public boolean drawImage(Image img, int x, int y, int width, int height,
             ImageObserver observer) {
         handleUnsupportedFeature("Bitmap images are not supported");
         return false;
     }
 
-    /**
-     * @see java.awt.Graphics#drawImage(java.awt.Image, int, int, java.awt.image.ImageObserver)
-     */
+    /** {@inheritDoc} */
     public boolean drawImage(Image img, int x, int y, ImageObserver observer) {
         handleUnsupportedFeature("Bitmap images are not supported");
         return false;
@@ -574,13 +563,13 @@ public class PCLGraphics2D extends AbstractGraphics2D {
         return true;*/
     }
 
-    /** @see java.awt.Graphics#copyArea(int, int, int, int, int, int) */
+    /** {@inheritDoc} */
     public void copyArea(int x, int y, int width, int height, int dx, int dy) {
         // TODO Auto-generated method stub
         handleUnsupportedFeature("copyArea NYI");
     }
 
-    /** @see java.awt.Graphics#setXORMode(java.awt.Color) */
+    /** {@inheritDoc} */
     public void setXORMode(Color c1) {
         // TODO Auto-generated method stub
         handleUnsupportedFeature("setXORMode NYI");
@@ -608,7 +597,7 @@ public class PCLGraphics2D extends AbstractGraphics2D {
                                  BufferedImage.TYPE_BYTE_GRAY);
     }
     
-    /** @see java.awt.Graphics#getFontMetrics(java.awt.Font) */
+    /** {@inheritDoc} */
     public java.awt.FontMetrics getFontMetrics(java.awt.Font f) {
         return fmg.getFontMetrics(f);
     }

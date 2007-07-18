@@ -27,7 +27,6 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.fo.properties.CommonAccessibility;
 
 /**
  * Class modelling the fo:footnote-body object.
@@ -45,13 +44,13 @@ public class FootnoteBody extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#startOfNode
+     * {@inheritDoc}
      */
     protected void startOfNode() throws FOPException {
         getFOEventHandler().startFootnoteBody(this);
@@ -60,7 +59,7 @@ public class FootnoteBody extends FObj {
     /**
      * Make sure content model satisfied, if so then tell the
      * FOEventHandler that we are at the end of the flow.
-     * @see org.apache.fop.fo.FONode#endOfNode
+     * {@inheritDoc}
      */
     protected void endOfNode() throws FOPException {
         if (firstChild == null) {
@@ -70,7 +69,7 @@ public class FootnoteBody extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc}
      * XSL Content Model: (%block;)+
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
@@ -80,13 +79,13 @@ public class FootnoteBody extends FObj {
             }
     }
 
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "footnote-body";
     }
     
     /**
-     * @see org.apache.fop.fo.FObj#getNameId()
+     * {@inheritDoc}
      */
     public int getNameId() {
         return FO_FOOTNOTE_BODY;

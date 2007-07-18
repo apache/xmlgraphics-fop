@@ -30,10 +30,7 @@ import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.fo.properties.CommonAccessibility;
-import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
-import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 
@@ -56,8 +53,6 @@ public class TableRow extends TableFObj {
     //     private CommonRelativePosition commonRelativePosition;
     //     private int visibility;
     // End of property values
-
-    private boolean setup = false;
     
     protected List pendingSpans;
     protected BitSet usedColumnIndices;
@@ -70,9 +65,7 @@ public class TableRow extends TableFObj {
         super(parent);
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         blockProgressionDimension 
             = pList.get(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange();
@@ -86,10 +79,7 @@ public class TableRow extends TableFObj {
         super.bind(pList);
     }
 
-    /**
-     * @see org.apache.fop.fo.FONode#processNode(String, Locator, 
-     *                                  Attributes, PropertyList)
-     */
+    /** {@inheritDoc} */
     public void processNode(String elementName, Locator locator, 
             Attributes attlist, PropertyList pList) throws FOPException {
         if (!inMarker()) {
@@ -105,7 +95,7 @@ public class TableRow extends TableFObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#addChildNode(FONode)
+     * {@inheritDoc}
      */
     protected void addChildNode(FONode child) throws FOPException {
         if (!inMarker()) {
@@ -143,7 +133,7 @@ public class TableRow extends TableFObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#startOfNode
+     * {@inheritDoc}
      */
     protected void startOfNode() throws FOPException {
         super.startOfNode();
@@ -151,7 +141,7 @@ public class TableRow extends TableFObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#endOfNode
+     * {@inheritDoc}
      */
     protected void endOfNode() throws FOPException {
         if (firstChild == null) {
@@ -165,7 +155,7 @@ public class TableRow extends TableFObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc} String, String)
      * XSL Content Model: (table-cell+)
      */
     protected void validateChildNode(Locator loc, String nsURI, 
@@ -252,12 +242,12 @@ public class TableRow extends TableFObj {
         return commonBorderPaddingBackground;
     }
     
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "table-row";
     }
 
-    /** @see org.apache.fop.fo.FObj#getNameId() */
+    /** {@inheritDoc} */
     public int getNameId() {
         return FO_TABLE_ROW;
     }
@@ -294,7 +284,7 @@ public class TableRow extends TableFObj {
     }
     
     /**
-     * @see org.apache.fop.fo.flow.TableFObj#flagColumnIndices(int, int)
+     * {@inheritDoc} 
      */
     protected void flagColumnIndices(int start, int end) {
         for (int i = start; i < end; i++) {

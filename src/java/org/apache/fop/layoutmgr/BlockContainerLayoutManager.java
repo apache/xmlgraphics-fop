@@ -94,7 +94,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         super(node);
     }
     
-    /** @see org.apache.fop.layoutmgr.LayoutManager#initialize() */
+    /** {@inheritDoc} */
     public void initialize() {
         abProps = getBlockContainerFO().getCommonAbsolutePosition();
         foBlockSpaceBefore = new SpaceVal(getBlockContainerFO().getCommonMarginBlock()
@@ -179,7 +179,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         return (abProps.absolutePosition == EN_FIXED);
     }
     
-    /** @see org.apache.fop.layoutmgr.LayoutManager#getContentAreaBPD() */
+    /** {@inheritDoc} */
     public int getContentAreaBPD() {
         if (autoHeight) {
             return -1;
@@ -188,7 +188,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         }
     }
     
-    /** @see org.apache.fop.layoutmgr.LayoutManager */
+    /** {@inheritDoc} */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         resetSpaces();
         if (isAbsoluteOrFixed()) {
@@ -556,19 +556,19 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             this.ipd = ipd;
         }
 
-        /** @see org.apache.fop.layoutmgr.AbstractBreaker#observeElementList(java.util.List) */
+        /** {@inheritDoc} */
         protected void observeElementList(List elementList) {
             ElementListObserver.observe(elementList, "block-container", 
                     bclm.getBlockContainerFO().getId());
         }
         
-        /** @see org.apache.fop.layoutmgr.AbstractBreaker#isPartOverflowRecoveryActivated() */
+        /** {@inheritDoc} */
         protected boolean isPartOverflowRecoveryActivated() {
             //For block-containers, this must be disabled because of wanted overflow.
             return false;
         }
 
-        /** @see org.apache.fop.layoutmgr.AbstractBreaker#isSinglePartFavored() */
+        /** {@inheritDoc} */
         protected boolean isSinglePartFavored() {
             return true;
         }
@@ -674,7 +674,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         return new Point(x, y);
     }
     
-    /** @see org.apache.fop.layoutmgr.LayoutManager */
+    /** {@inheritDoc} */
     public void addAreas(PositionIterator parentIter,
             LayoutContext layoutContext) {
         getParentArea(null);
@@ -862,7 +862,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
      * This returns the current block container area
      * and creates it if required.
      *
-     * @see org.apache.fop.layoutmgr.LayoutManager#getParentArea(Area)
+     * {@inheritDoc}
      */
     public Area getParentArea(Area childArea) {
         if (referenceArea == null) {
@@ -933,7 +933,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
     /**
      * Add the child to the block container.
      *
-     * @see org.apache.fop.layoutmgr.LayoutManager#addChildArea(Area)
+     * {@inheritDoc}
      */
     public void addChildArea(Area childArea) {
         if (referenceArea != null) {
@@ -942,7 +942,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#resetPosition(org.apache.fop.layoutmgr.Position)
+     * {@inheritDoc}
      */
     public void resetPosition(Position resetPos) {
         if (resetPos == null) {
@@ -952,7 +952,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
 
     /** 
      * Force current area to be added to parent area.
-     * @see org.apache.fop.layoutmgr.BlockStackingLayoutManager#flush()
+     * {@inheritDoc}
      */
     protected void flush() {
         viewportBlockArea.addBlock(referenceArea, autoHeight);
@@ -973,20 +973,20 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         }
     }
 
-    /** @see org.apache.fop.layoutmgr.BlockLevelLayoutManager */
+    /** {@inheritDoc} */
     public int negotiateBPDAdjustment(int adj, KnuthElement lastElement) {
         // TODO Auto-generated method stub
         return 0;
     }
 
-    /** @see org.apache.fop.layoutmgr.BlockLevelLayoutManager */
+    /** {@inheritDoc} */
     public void discardSpace(KnuthGlue spaceGlue) {
         // TODO Auto-generated method stub
         
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepTogether()
+     * {@inheritDoc}
      */
     public boolean mustKeepTogether() {
         //TODO Keeps will have to be more sophisticated sooner or later
@@ -999,7 +999,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepWithPrevious()
+     * {@inheritDoc}
      */
     public boolean mustKeepWithPrevious() {
         return !getBlockContainerFO().getKeepWithPrevious().getWithinPage().isAuto()
@@ -1007,7 +1007,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepWithNext()
+     * {@inheritDoc}
      */
     public boolean mustKeepWithNext() {
         return !getBlockContainerFO().getKeepWithNext().getWithinPage().isAuto()
@@ -1024,20 +1024,20 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
     // --------- Property Resolution related functions --------- //
     
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#getGeneratesReferenceArea
+     * {@inheritDoc}
      */
     public boolean getGeneratesReferenceArea() {
         return true;
     }
    
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#getGeneratesBlockArea
+     * {@inheritDoc}
      */
     public boolean getGeneratesBlockArea() {
         return true;
     }
 
-    /** @see org.apache.fop.layoutmgr.ConditionalElementListener */
+    /** {@inheritDoc} */
     public void notifySpace(RelSide side, MinOptMax effectiveLength) {
         if (RelSide.BEFORE == side) {
             if (log.isDebugEnabled()) {
@@ -1054,7 +1054,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         }
     }
 
-    /** @see org.apache.fop.layoutmgr.ConditionalElementListener */
+    /** {@inheritDoc} */
     public void notifyBorder(RelSide side, MinOptMax effectiveLength) {
         if (effectiveLength == null) {
             if (RelSide.BEFORE == side) {
@@ -1068,7 +1068,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         }
     }
 
-    /** @see org.apache.fop.layoutmgr.ConditionalElementListener */
+    /** {@inheritDoc} */
     public void notifyPadding(RelSide side, MinOptMax effectiveLength) {
         if (effectiveLength == null) {
             if (RelSide.BEFORE == side) {

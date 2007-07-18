@@ -157,7 +157,7 @@ class EffRow {
         }
     }
     
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer("EffRow {");
         sb.append(index);

@@ -89,7 +89,7 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
         }
         
         /**
-         * @see org.apache.fop.pdf.PDFFilter#encode(InputStream, OutputStream, int)
+         * {@inheritDoc} 
          */
         public void encode(InputStream in, OutputStream out, int length) 
                                                         throws IOException {
@@ -100,7 +100,7 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
         }
         
         /**
-         * @see org.apache.fop.pdf.PDFFilter#applyFilter(OutputStream)
+         * {@inheritDoc}
          */
         public OutputStream applyFilter(OutputStream out) throws IOException {
             return new CipherOutputStream(out, 
@@ -365,7 +365,7 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFEncryption#encrypt(byte[], PDFObject)
+     * {@inheritDoc} 
      */
     public byte[] encrypt(byte[] data, PDFObject refObj) {
         return encryptData(data, refObj.getObjectNumber(), refObj.getGeneration());
@@ -420,7 +420,7 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFEncryption#getTrailerEntry()
+     * {@inheritDoc}
      */
     public String getTrailerEntry() {
         return "/Encrypt " + getObjectNumber() + " " 

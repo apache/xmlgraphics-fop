@@ -83,7 +83,6 @@ public class LengthBase implements PercentBase {
     
     /**
      * Constructor
-     * @param parentFO parent FO for this
      * @param plist property list for this
      * @param baseType a constant defining the type of teh percent base
      * @throws PropertyException In case an problem occurs while evaluating values
@@ -120,7 +119,7 @@ public class LengthBase implements PercentBase {
     }
 
     /**
-     * @see org.apache.fop.datatypes.PercentBase#getBaseLength(PercentBaseContext)
+     * {@inheritDoc}
      */
     public int getBaseLength(PercentBaseContext context) throws PropertyException {
         int baseLen = 0;

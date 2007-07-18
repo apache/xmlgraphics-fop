@@ -145,7 +145,7 @@ public class PDFGState extends PDFObject {
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFObject#toPDFString()
+     * {@inheritDoc}
      */
     public String toPDFString() {
         StringBuffer sb = new StringBuffer(64);
@@ -176,7 +176,7 @@ public class PDFGState extends PDFObject {
      */
 
     /**
-     * @see java.lang.Object#equals(Object)
+     * {@inheritDoc}
      */
     public boolean equals(Object obj) {
         if (obj == this) {

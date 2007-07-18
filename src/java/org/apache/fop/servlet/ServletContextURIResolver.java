@@ -48,7 +48,7 @@ public class ServletContextURIResolver implements URIResolver {
         this.servletContext = servletContext;
     }
     
-    /** @see javax.xml.transform.URIResolver#resolve(java.lang.String, java.lang.String) */
+    /** {@inheritDoc} */
     public Source resolve(String href, String base) throws TransformerException {
         if (href.startsWith(SERVLET_CONTEXT_PROTOCOL)) {
             return resolveServletContextURI(href.substring(SERVLET_CONTEXT_PROTOCOL.length()));

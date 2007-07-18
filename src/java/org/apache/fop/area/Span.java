@@ -180,7 +180,7 @@ public class Span extends Area {
         return (areaCount == 0);
     }
     
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer(super.toString());
         if (colCount > 1) {

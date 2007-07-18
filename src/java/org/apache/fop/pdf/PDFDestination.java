@@ -59,7 +59,7 @@ public class PDFDestination extends PDFObject {
         return sb.toString();
     }
     
-    /** @see org.apache.fop.pdf.PDFObject#toPDFString() */
+    /** {@inheritDoc} */
     protected String toPDFString() {
         return toKeyValuePair();
     }
@@ -125,7 +125,7 @@ public class PDFDestination extends PDFObject {
     }
 
     /**
-     * @see java.lang.Object#hashCode()
+     * {@inheritDoc}
      */
     public int hashCode() {
         return getIDRef().hashCode();

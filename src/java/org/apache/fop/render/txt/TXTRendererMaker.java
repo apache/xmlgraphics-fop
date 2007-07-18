@@ -32,22 +32,22 @@ public class TXTRendererMaker extends AbstractRendererMaker {
 
     private static final String[] MIMES = new String[] {MimeConstants.MIME_PLAIN_TEXT};
     
-    /**@see org.apache.fop.render.AbstractRendererMaker#makeRenderer(FOUserAgent) */
+    /**{@inheritDoc} */
     public Renderer makeRenderer(FOUserAgent userAgent) {
         return new TXTRenderer();
     }
 
-    /**@see org.apache.fop.render.AbstractRendererMaker#getConfigurator(FOUserAgent) */
+    /**{@inheritDoc} */
     public RendererConfigurator getConfigurator(FOUserAgent userAgent) {
         return new TXTRendererConfigurator(userAgent);
     }
 
-    /** @see org.apache.fop.render.AbstractRendererMaker#needsOutputStream() */
+    /** {@inheritDoc} */
     public boolean needsOutputStream() {
         return true;
     }
 
-    /** @see org.apache.fop.render.AbstractRendererMaker#getSupportedMimeTypes() */
+    /** {@inheritDoc} */
     public String[] getSupportedMimeTypes() {
         return MIMES;
     }

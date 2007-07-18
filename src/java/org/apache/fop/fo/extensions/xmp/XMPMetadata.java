@@ -80,12 +80,12 @@ public class XMPMetadata implements ExtensionAttachment, Serializable, XMLizable
         this.readOnly = readOnly;
     }
 
-    /** @see org.apache.fop.fo.extensions.ExtensionAttachment#getCategory() */
+    /** {@inheritDoc} */
     public String getCategory() {
         return CATEGORY;
     }
     
-    /** @see org.apache.fop.util.XMLizable#toSAX(org.xml.sax.ContentHandler) */
+    /** {@inheritDoc} */
     public void toSAX(ContentHandler handler) throws SAXException {
         getMetadata().toSAX(handler);
     }

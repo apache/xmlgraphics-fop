@@ -47,7 +47,7 @@ public abstract class FObjMixed extends FObj {
         super(parent);
     }
     
-    /** @see org.apache.fop.fo.FONode */
+    /** {@inheritDoc} */
     protected void addCharacters(char[] data, int start, int end,
                                  PropertyList pList,
                                  Locator locator) throws FOPException {
@@ -61,7 +61,7 @@ public abstract class FObjMixed extends FObj {
         ft.addCharacters(data, start, end, null, null);
     }
 
-    /** @see org.apache.fop.fo.FONode#endOfNode() */
+    /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         flushText();
         if (!inMarker()
@@ -146,7 +146,7 @@ public abstract class FObjMixed extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#addChildNode(FONode)
+     * {@inheritDoc}
      */
     protected void addChildNode(FONode child) throws FOPException {
         flushText();

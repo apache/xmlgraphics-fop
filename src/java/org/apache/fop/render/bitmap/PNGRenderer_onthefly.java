@@ -58,17 +58,17 @@ public class PNGRenderer_onthefly extends Java2DRenderer {
     /** The OutputStream for the first Image */
     private OutputStream firstOutputStream;
 
-    /** @see org.apache.fop.render.AbstractRenderer */
+    /** {@inheritDoc} */
     public String getMimeType() {
         return MIME_TYPE;
     }
 
-    /** @see org.apache.fop.render.Renderer#supportsOutOfOrder() */
+    /** {@inheritDoc} */
     public boolean supportsOutOfOrder() {
         return true;
     }
 
-    /** @see org.apache.fop.render.Renderer#startRenderer(java.io.OutputStream) */
+    /** {@inheritDoc} */
     public void startRenderer(OutputStream outputStream) throws IOException {
         log.info("rendering areas to PNG");
         setOutputDirectory();
@@ -97,7 +97,7 @@ public class PNGRenderer_onthefly extends Java2DRenderer {
     }
 
     /** 
-     * @see org.apache.fop.render.Renderer#renderPage(org.apache.fop.area.PageViewport)
+     * {@inheritDoc}
      */
     public void renderPage(PageViewport pageViewport) throws IOException {
 

@@ -37,14 +37,14 @@ public class TableFooter extends TableBody {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#startOfNode
+     * {@inheritDoc}
      */
     protected void startOfNode() throws FOPException {
         //getFOEventHandler().startBody(this);
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#endOfNode
+     * {@inheritDoc}
      */
     protected void endOfNode() throws FOPException {
 //      getFOEventHandler().endFooter(this);
@@ -54,12 +54,12 @@ public class TableFooter extends TableBody {
 //      convertCellsToRows();
     }
 
-    /** @see org.apache.fop.fo.FObj#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "table-footer";
     }
 
-    /** @see org.apache.fop.fo.FObj#getNameId() */
+    /** {@inheritDoc} */
     public int getNameId() {
         return FO_TABLE_FOOTER;
     }

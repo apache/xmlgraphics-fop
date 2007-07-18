@@ -32,17 +32,17 @@ public class AWTRendererMaker extends AbstractRendererMaker {
     private static final String[] MIMES = new String[] {MimeConstants.MIME_FOP_AWT_PREVIEW};
     
     
-    /** @see org.apache.fop.render.AbstractRendererMaker */
+    /** {@inheritDoc} */
     public Renderer makeRenderer(FOUserAgent ua) {
         return new AWTRenderer();
     }
 
-    /** @see org.apache.fop.render.AbstractRendererMaker#needsOutputStream() */
+    /** {@inheritDoc} */
     public boolean needsOutputStream() {
         return false;
     }
 
-    /** @see org.apache.fop.render.AbstractRendererMaker#getSupportedMimeTypes() */
+    /** {@inheritDoc} */
     public String[] getSupportedMimeTypes() {
         return MIMES;
     }

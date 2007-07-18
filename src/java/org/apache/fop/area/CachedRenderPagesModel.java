@@ -65,7 +65,7 @@ public class CachedRenderPagesModel extends RenderPagesModel {
     }
 
     /**
-     * @see org.apache.fop.area.RenderPagesModel#checkPreparedPages(PageViewport, boolean)
+     * {@inheritDoc} 
      */
     protected boolean checkPreparedPages(PageViewport newpage, boolean renderUnresolved) {
         for (Iterator iter = prepared.iterator(); iter.hasNext();) {
@@ -152,7 +152,7 @@ public class CachedRenderPagesModel extends RenderPagesModel {
         }
     }
 
-    /** @see org.apache.fop.area.RenderPagesModel#endDocument() */
+    /** {@inheritDoc} */
     public void endDocument() throws SAXException {
         super.endDocument();
     }

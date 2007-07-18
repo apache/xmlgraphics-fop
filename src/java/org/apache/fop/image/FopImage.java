@@ -28,8 +28,6 @@ import org.apache.fop.datatypes.Length;
 
 /**
  * Fop image interface for loading images.
- *
- * @author Eric SCHAEFFER
  */
 public interface FopImage {
     /**

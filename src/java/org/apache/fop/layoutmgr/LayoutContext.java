@@ -471,7 +471,7 @@ public class LayoutContext {
         this.spaceAfter = spaceAfter;
     }
     
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         return "Layout Context:" +
         "\nStack Limit: \t" + (getStackLimit() == null ? "null" : getStackLimit().toString()) +

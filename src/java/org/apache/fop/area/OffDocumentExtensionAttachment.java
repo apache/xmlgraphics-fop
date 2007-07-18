@@ -43,12 +43,12 @@ public class OffDocumentExtensionAttachment implements OffDocumentItem {
         return this.attachment;
     }
 
-    /** @see org.apache.fop.area.OffDocumentItem#getWhenToProcess() */
+    /** {@inheritDoc} */
     public int getWhenToProcess() {
         return OffDocumentItem.IMMEDIATELY;
     }
 
-    /** @see org.apache.fop.area.OffDocumentItem#getName() */
+    /** {@inheritDoc} */
     public String getName() {
         return attachment.getCategory();
     }

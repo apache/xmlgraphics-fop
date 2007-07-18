@@ -224,7 +224,7 @@ public class AreaTreeParser {
             return (Viewport)findAreaType(Viewport.class);
         }
 
-        /** @see org.xml.sax.helpers.DefaultHandler */
+        /** {@inheritDoc} */
         public void startElement(String uri, String localName, String qName, Attributes attributes)
                     throws SAXException {
             if (delegate != null) {
@@ -288,7 +288,7 @@ public class AreaTreeParser {
             }
         }
 
-        /** @see org.xml.sax.helpers.DefaultHandler */
+        /** {@inheritDoc} */
         public void endElement(String uri, String localName, String qName) throws SAXException {
             if (delegate != null) {
                 delegate.endElement(uri, localName, qName);
@@ -1131,7 +1131,7 @@ public class AreaTreeParser {
             }
         }
         
-        /** @see org.xml.sax.ContentHandler#characters(char[], int, int) */
+        /** {@inheritDoc} */
         public void characters(char[] ch, int start, int length) throws SAXException {
             if (delegate != null) {
                 delegate.characters(ch, start, length);

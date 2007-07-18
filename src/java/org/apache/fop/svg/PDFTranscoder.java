@@ -90,7 +90,7 @@ public class PDFTranscoder extends AbstractFOPTranscoder
     }
 
     /**
-     * @see org.apache.fop.svg.AbstractFOPTranscoder#createUserAgent()
+     * {@inheritDoc}
      */
     protected UserAgent createUserAgent() {
         return new AbstractFOPTranscoder.FOPTranscoderUserAgent() {
@@ -103,7 +103,7 @@ public class PDFTranscoder extends AbstractFOPTranscoder
     }
     
     /**
-     * @see org.apache.avalon.framework.configuration.Configurable#configure(Configuration)
+     * {@inheritDoc}
      */
     public void configure(Configuration cfg) throws ConfigurationException {
         this.cfg = cfg;
@@ -188,7 +188,7 @@ public class PDFTranscoder extends AbstractFOPTranscoder
         }
     }
 
-    /** @see org.apache.batik.transcoder.SVGAbstractTranscoder#createBridgeContext() */
+    /** {@inheritDoc} */
     protected BridgeContext createBridgeContext() {
         BridgeContext ctx = new PDFBridgeContext(userAgent, graphics.getFontInfo());
         return ctx;

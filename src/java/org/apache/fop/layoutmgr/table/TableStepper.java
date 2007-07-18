@@ -88,7 +88,7 @@ public class TableStepper {
      *
      * @param column column number of the grid unit to get
      * @return the corresponding grid unit (may be null)
-     * @see TableStepper#getActiveRow
+     * {@inheritDoc}
      */
     private GridUnit getActiveGridUnit(int column) {
         return getActiveRow().safelyGetGridUnit(column);

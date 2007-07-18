@@ -44,17 +44,17 @@ public class EmptyGridUnit extends GridUnit {
         this.body = body;
     }
     
-    /** @see org.apache.fop.layoutmgr.table.GridUnit#isPrimary() */
+    /** {@inheritDoc} */
     public boolean isPrimary() {
         return true;
     }
     
-    /** @see org.apache.fop.layoutmgr.table.GridUnit#getBody() */
+    /** {@inheritDoc} */
     public TableBody getBody() {
         return this.body;
     }
 
-    /** @see org.apache.fop.layoutmgr.table.GridUnit#getRow() */
+    /** {@inheritDoc} */
     public TableRow getRow() {
         return this.row;
     }

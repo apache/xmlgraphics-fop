@@ -27,11 +27,8 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.fo.properties.CommonAccessibility;
-import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonMarginBlock;
-import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.KeepProperty;
 
 /**
@@ -70,7 +67,7 @@ public class ListBlock extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
@@ -87,7 +84,7 @@ public class ListBlock extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#startOfNode
+     * {@inheritDoc}
      */
     protected void startOfNode() throws FOPException {
         super.startOfNode();
@@ -97,7 +94,7 @@ public class ListBlock extends FObj {
     /**
      * Make sure content model satisfied, if so then tell the
      * FOEventHandler that we are at the end of the flow.
-     * @see org.apache.fop.fo.FONode#endOfNode
+     * {@inheritDoc}
      */
     protected void endOfNode() throws FOPException {
         if (!hasListItem) {
@@ -107,7 +104,7 @@ public class ListBlock extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc}
      * XSL Content Model: marker* (list-item)+
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
@@ -176,12 +173,12 @@ public class ListBlock extends FObj {
         return orphanContentLimit;
     }
 
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "list-block";
     }
     
-    /** @see org.apache.fop.fo.FObj#getNameId() */
+    /** {@inheritDoc} */
     public int getNameId() {
         return FO_LIST_BLOCK;
     }

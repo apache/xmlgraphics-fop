@@ -54,7 +54,7 @@ public class SpaceProperty extends LengthRangeProperty {
         }
 
         /**
-         * @see CompoundPropertyMaker#convertProperty
+         * {@inheritDoc}
          */
         public Property convertProperty(Property p,
                                         PropertyList propertyList,
@@ -69,7 +69,7 @@ public class SpaceProperty extends LengthRangeProperty {
 
 
     /**
-     * @see org.apache.fop.datatypes.CompoundDatatype#setComponent(int, Property, boolean)
+     * {@inheritDoc} 
      */
     public void setComponent(int cmpId, Property cmpnValue,
                              boolean bIsDefault) {
@@ -83,7 +83,7 @@ public class SpaceProperty extends LengthRangeProperty {
     }
 
     /**
-     * @see org.apache.fop.datatypes.CompoundDatatype#getComponent(int)
+     * {@inheritDoc}
      */
     public Property getComponent(int cmpId) {
         if (cmpId == CP_PRECEDENCE) {

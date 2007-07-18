@@ -73,56 +73,56 @@ public class FontMetricsMapper extends Typeface implements FontMetrics {
     }
 
     /**
-     * @see org.apache.fop.fonts.FontMetrics#getFontName()
+     * {@inheritDoc}
      */
     public String getFontName() {
         return family;
     }
 
     /**
-     * @see org.apache.fop.fonts.FontMetrics#getFontType()
+     * {@inheritDoc}
      */
     public FontType getFontType() {
         return FontType.OTHER;
     }
     
     /**
-     * @see org.apache.fop.fonts.FontMetrics#getMaxAscent(int)
+     * {@inheritDoc}
      */
     public int getMaxAscent(int size) {
         return metric.getMaxAscent(family, style, size);
     }
 
     /**
-     * @see org.apache.fop.fonts.FontMetrics#getAscender(int)
+     * {@inheritDoc}
      */
     public int getAscender(int size) {
         return metric.getAscender(family, style, size);
     }
 
     /**
-     * @see org.apache.fop.fonts.FontMetrics#getCapHeight(int)
+     * {@inheritDoc}
      */
     public int getCapHeight(int size) {
         return metric.getCapHeight(family, style, size);
     }
 
     /**
-     * @see org.apache.fop.fonts.FontMetrics#getDescender(int)
+     * {@inheritDoc}
      */
     public int getDescender(int size) {
         return metric.getDescender(family, style, size);
     }
 
     /**
-     * @see org.apache.fop.fonts.FontMetrics#getXHeight(int)
+     * {@inheritDoc}
      */
     public int getXHeight(int size) {
         return metric.getXHeight(family, style, size);
     }
 
     /**
-     * @see org.apache.fop.fonts.FontMetrics#getWidth(int, int)
+     * {@inheritDoc} 
      */
     public int getWidth(int i, int size) {
         return metric.width(i, family, style, size);
@@ -130,7 +130,7 @@ public class FontMetricsMapper extends Typeface implements FontMetrics {
 
 
     /**
-     * @see org.apache.fop.fonts.FontMetrics#getWidths()
+     * {@inheritDoc}
      */
     public int[] getWidths() {
         return metric.getWidths(family, style, Java2DFontMetrics.FONT_SIZE);
@@ -147,30 +147,30 @@ public class FontMetricsMapper extends Typeface implements FontMetrics {
     }
 
     /**
-     * @see org.apache.fop.fonts.FontMetrics#getKerningInfo()
+     * {@inheritDoc}
      */
     public Map getKerningInfo() {
         return java.util.Collections.EMPTY_MAP;
     }
 
     /**
-     * @see org.apache.fop.fonts.FontMetrics#hasKerningInfo()
+     * {@inheritDoc}
      */
     public boolean hasKerningInfo() {
         return false;
     }
 
-    /** @see org.apache.fop.fonts.Typeface#getEncoding() */
+    /** {@inheritDoc} */
     public String getEncoding() {
         return null; //Not applicable to Java2D rendering
     }
 
-    /** @see org.apache.fop.fonts.Typeface#mapChar(char) */
+    /** {@inheritDoc} */
     public char mapChar(char c) {
         return c;
     }
 
-    /** @see org.apache.fop.fonts.Typeface#hasChar(char) */
+    /** {@inheritDoc} */
     public boolean hasChar(char c) {
         return metric.hasChar(family, style, Java2DFontMetrics.FONT_SIZE, c);
     }

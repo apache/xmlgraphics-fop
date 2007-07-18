@@ -115,7 +115,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
             return iBodyLastIndex;
         }
         
-        /** @see java.lang.Object#toString() */
+        /** {@inheritDoc} */
         public String toString() {
             StringBuffer sb = new StringBuffer("ListItemPosition:");
             sb.append(getIndex()).append("(");
@@ -162,7 +162,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         body.setParent(this);
     }
 
-    /** @see org.apache.fop.layoutmgr.LayoutManager#initialize() */
+    /** {@inheritDoc} */
     public void initialize() {
         foSpaceBefore = new SpaceVal(
                 getListItemFO().getCommonMarginBlock().spaceBefore, this).getSpace();
@@ -181,7 +181,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         this.effSpaceAfter = null;
     }
     
-    /** @see org.apache.fop.layoutmgr.LayoutManager */
+    /** {@inheritDoc} */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         referenceIPD = context.getRefIPD();
         LayoutContext childLC;
@@ -402,7 +402,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#getChangedKnuthElements(java.util.List, int)
+     * {@inheritDoc} 
      */
     public LinkedList getChangedKnuthElements(List oldList, int alignment) {
         //log.debug(" LILM.getChanged> label");
@@ -638,7 +638,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         }
     }
     
-    /** @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepTogether() */
+    /** {@inheritDoc} */
     public boolean mustKeepTogether() {
         //TODO Keeps will have to be more sophisticated sooner or later
         return ((BlockLevelLayoutManager)getParent()).mustKeepTogether() 
@@ -646,19 +646,19 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
                 || !getListItemFO().getKeepTogether().getWithinColumn().isAuto();
     }
 
-    /** @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepWithPrevious() */
+    /** {@inheritDoc} */
     public boolean mustKeepWithPrevious() {
         return !getListItemFO().getKeepWithPrevious().getWithinPage().isAuto()
             || !getListItemFO().getKeepWithPrevious().getWithinColumn().isAuto();
     }
 
-    /** @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepWithNext() */
+    /** {@inheritDoc} */
     public boolean mustKeepWithNext() {
         return !getListItemFO().getKeepWithNext().getWithinPage().isAuto()
                 || !getListItemFO().getKeepWithNext().getWithinColumn().isAuto();
     }
 
-    /** @see org.apache.fop.layoutmgr.ConditionalElementListener */
+    /** {@inheritDoc} */
     public void notifySpace(RelSide side, MinOptMax effectiveLength) {
         if (RelSide.BEFORE == side) {
             if (log.isDebugEnabled()) {
@@ -675,7 +675,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         }
     }
 
-    /** @see org.apache.fop.layoutmgr.ConditionalElementListener */
+    /** {@inheritDoc} */
     public void notifyBorder(RelSide side, MinOptMax effectiveLength) {
         if (effectiveLength == null) {
             if (RelSide.BEFORE == side) {
@@ -689,7 +689,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         }
     }
 
-    /** @see org.apache.fop.layoutmgr.ConditionalElementListener */
+    /** {@inheritDoc} */
     public void notifyPadding(RelSide side, MinOptMax effectiveLength) {
         if (effectiveLength == null) {
             if (RelSide.BEFORE == side) {

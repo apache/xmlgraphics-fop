@@ -298,14 +298,14 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#setUserAgent(FOUserAgent)
+     * {@inheritDoc}
      */
     public void setUserAgent(FOUserAgent agent) {
         super.setUserAgent(agent);
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#startRenderer(java.io.OutputStream)
+     * {@inheritDoc}
      */
     public void startRenderer(OutputStream outputStream) throws IOException {
         _currentPageFonts = new HashMap();
@@ -317,14 +317,14 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#stopRenderer()
+     * {@inheritDoc}
      */
     public void stopRenderer() throws IOException {
         _afpDataStream.endDocument();
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#supportsOutOfOrder()
+     * {@inheritDoc}
      */
     public boolean supportsOutOfOrder() {
         //return false;
@@ -338,7 +338,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      * page should not be rendered. The page will be rendered at a later time
      * by the call to render page.
      *
-     * @see org.apache.fop.render.Renderer#preparePage(PageViewport)
+     * {@inheritDoc}
      */
     public void preparePage(PageViewport page) {
         // initializeRootExtensions(page);
@@ -368,26 +368,26 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#processOffDocumentItem(OffDocumentItem)
+     * {@inheritDoc}
      */
     public void processOffDocumentItem(OffDocumentItem odi) {
         // TODO
     }
 
-    /** @see org.apache.fop.render.Renderer#getGraphics2DAdapter() */
+    /** {@inheritDoc} */
     public Graphics2DAdapter getGraphics2DAdapter() {
         return new AFPGraphics2DAdapter();
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#startVParea(CTM, Rectangle2D)
+     * {@inheritDoc} 
      */
     public void startVParea(CTM ctm, Rectangle2D clippingRect) {
         // dummy not used
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#endVParea()
+     * {@inheritDoc}
      */
     public void endVParea() {
         // dummy not used
@@ -436,7 +436,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderBlockViewport(BlockViewport, List)
+     * {@inheritDoc} 
      */
     protected void renderBlockViewport(BlockViewport bv, List children) {
         // clip and position viewport if necessary
@@ -546,7 +546,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#renderPage(PageViewport)
+     * {@inheritDoc}
      */
     public void renderPage(PageViewport page) {
 
@@ -602,50 +602,42 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * Clip using the current path.
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer#clip
+     * {@inheritDoc}
      */
     public void clip() {
         // TODO
     }
 
     /**
-     * Clip using a rectangular area.
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer#clipRect(float, float, float, float)
+     * {@inheritDoc} 
      */
     public void clipRect(float x, float y, float width, float height) {
         // TODO
     }
 
     /**
-     * Moves the current point to (x, y), omitting any connecting line segment.
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer#moveTo(float, float)
+     * {@inheritDoc} 
      */
     public void moveTo(float x, float y) {
         // TODO
     }
 
     /**
-     * Appends a straight line segment from the current point to (x, y). The
-     * new current point is (x, y).
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer#lineTo(float, float)
+     * {@inheritDoc} 
      */
     public void lineTo(float x, float y) {
         // TODO
     }
 
     /**
-     * Closes the current subpath by appending a straight line segment from
-     * the current point to the starting point of the subpath.
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer#closePath
+     * {@inheritDoc}
      */
     public void closePath() {
         // TODO
     }
 
     /**
-     * Fill a rectangular area.
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer#fillRect(float, float, float, float)
+     * {@inheritDoc} 
      */
     public void fillRect(float x, float y, float width, float height) {
         /*
@@ -668,9 +660,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * Draw a border segment of an XSL-FO style border.
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer#drawBorderLine(float, float, float, float,
-     *       boolean, boolean, int, Color)
+     * {@inheritDoc}
      */
     public void drawBorderLine(float x1, float y1, float x2, float y2,
             boolean horz, boolean startOrBefore, int style, Color col) {
@@ -862,8 +852,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.PrintRenderer#createRendererContext(
-     *          int, int, int, int, java.util.Map)
+     * {@inheritDoc}
      */
     protected RendererContext createRendererContext(int x, int y, int width, int height, Map foreignAttributes) {
         RendererContext context;
@@ -874,8 +863,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * Draw an image at the indicated location.
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer#drawImage(String, Rectangle2D, Map)
+     * {@inheritDoc} 
      */
     public void drawImage(String url, Rectangle2D pos, Map foreignAttributes) {
         String name = null;
@@ -1062,7 +1050,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     
     /**
      * Establishes a new foreground or fill color.
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer#updateColor(Color, boolean)
+     * {@inheritDoc} 
      */
     public void updateColor(Color col, boolean fill) {
         if (fill) {
@@ -1107,7 +1095,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderImage(Image, Rectangle2D)
+     * {@inheritDoc} 
      */
     public void renderImage(Image image, Rectangle2D pos) {
         String url = image.getURL();
@@ -1115,7 +1103,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderText(TextArea)
+     * {@inheritDoc}
      */
     public void renderText(TextArea text) {
         renderInlineAreaBackAndBorders(text);
@@ -1195,7 +1183,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderWord(WordArea)
+     * {@inheritDoc}
      */
     public void renderWord(WordArea word) {
         String name = getInternalFontNameForArea(word.getParentArea());
@@ -1210,7 +1198,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderSpace(SpaceArea)
+     * {@inheritDoc}
      */
     public void renderSpace(SpaceArea space) {
         String name = getInternalFontNameForArea(space.getParentArea());
@@ -1257,7 +1245,8 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#setOptions(Map)
+     * Sets the AFPRenderer options
+     * @param options   the <code>Map</code> containing the options
      */
     public void setOptions(Map options) {
 

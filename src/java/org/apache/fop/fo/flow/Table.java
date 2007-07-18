@@ -32,11 +32,8 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.StaticPropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.fo.properties.CommonAccessibility;
-import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonMarginBlock;
-import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthPairProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
@@ -72,8 +69,6 @@ public class Table extends TableFObj {
     private Length widowContentLimit;
     private Length orphanContentLimit;
 
-    private static final int MINCOLWIDTH = 10000; // 10pt
-
     /** collection of columns in this table */
     protected List columns = null;
     
@@ -106,7 +101,7 @@ public class Table extends TableFObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
@@ -155,7 +150,7 @@ public class Table extends TableFObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#startOfNode
+     * {@inheritDoc}
      */
     protected void startOfNode() throws FOPException {
         super.startOfNode();
@@ -163,7 +158,7 @@ public class Table extends TableFObj {
     }
    
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc}
      * XSL Content Model: (marker*,table-column*,table-header?,table-footer?,table-body+)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
@@ -212,7 +207,7 @@ public class Table extends TableFObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#endOfNode
+     * {@inheritDoc}
      */
     protected void endOfNode() throws FOPException {
         
@@ -236,7 +231,7 @@ public class Table extends TableFObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#addChildNode(FONode)
+     * {@inheritDoc}
      */
     protected void addChildNode(FONode child) throws FOPException {
         
@@ -455,12 +450,12 @@ public class Table extends TableFObj {
         return orphanContentLimit;
     }
 
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "table";
     }
 
-    /** @see org.apache.fop.fo.FObj#getNameId() */
+    /** {@inheritDoc} */
     public int getNameId() {
         return FO_TABLE;
     }
@@ -496,7 +491,7 @@ public class Table extends TableFObj {
     }
     
     /**
-     * @see org.apache.fop.fo.flow.TableFObj#flagColumnIndices(int, int)
+     * {@inheritDoc} 
      */
     protected void flagColumnIndices(int start, int end) {
         for (int i = start; i < end; i++) {
@@ -509,7 +504,7 @@ public class Table extends TableFObj {
     }
     
     /**
-     * @see org.apache.fop.fo.FONode#clone(FONode, boolean)
+     * {@inheritDoc} 
      */
     public FONode clone(FONode parent, boolean removeChildren)
         throws FOPException {

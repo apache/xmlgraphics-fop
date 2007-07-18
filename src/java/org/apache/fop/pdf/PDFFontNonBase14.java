@@ -94,7 +94,7 @@ public abstract class PDFFontNonBase14 extends PDFFont {
         return this.descriptor;
     }
     
-    /** @see org.apache.fop.pdf.PDFFont#validate() */
+    /** {@inheritDoc} */
     protected void validate() {
         if (getDocumentSafely().getProfile().isFontEmbeddingRequired()) {
             if (this.getDescriptor().getFontFile() == null) {
@@ -105,7 +105,7 @@ public abstract class PDFFontNonBase14 extends PDFFont {
     }
     
     /**
-     * @see org.apache.fop.pdf.PDFFont#fillInPDF(StringBuffer)
+     * {@inheritDoc}
      */
     protected void fillInPDF(StringBuffer target) {
         target.append("\n/FirstChar ");

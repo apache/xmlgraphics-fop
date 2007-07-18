@@ -46,7 +46,7 @@ public class ColorProfile extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         src = pList.get(PR_SRC).getString();
@@ -55,7 +55,7 @@ public class ColorProfile extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc}
         XSL 1.0/FOP: EMPTY (no child nodes permitted)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
@@ -70,13 +70,13 @@ public class ColorProfile extends FObj {
         return colorProfileName;
     }
 
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "color-profile";
     }
     
     /**
-     * @see org.apache.fop.fo.FObj#getNameId()
+     * {@inheritDoc}
      */
     public int getNameId() {
         return FO_COLOR_PROFILE;

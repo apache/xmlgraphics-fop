@@ -42,7 +42,7 @@ public class PSExtensionHandler extends DefaultHandler
     private PSSetupCode returnedObject;
     private ObjectBuiltListener listener;
     
-    /** @see org.xml.sax.helpers.DefaultHandler */
+    /** {@inheritDoc} */
     public void startElement(String uri, String localName, String qName, Attributes attributes) 
                 throws SAXException {
         boolean handled = false;
@@ -66,7 +66,7 @@ public class PSExtensionHandler extends DefaultHandler
         }
     }
 
-    /** @see org.xml.sax.helpers.DefaultHandler */
+    /** {@inheritDoc} */
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (PSSetupCode.CATEGORY.equals(uri)) {
             if ("ps-setup-code".equals(localName)) {
@@ -77,13 +77,13 @@ public class PSExtensionHandler extends DefaultHandler
         content.setLength(0); //Reset text buffer (see characters())
     }
 
-    /** @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int) */
+    /** {@inheritDoc} */
     public void characters(char[] ch, int start, int length) throws SAXException {
         content.append(ch, start, length);
     }
 
     /**
-     * @see org.xml.sax.helpers.DefaultHandler#endDocument()
+     * {@inheritDoc}
      */
     public void endDocument() throws SAXException {
         if (listener != null) {
@@ -92,14 +92,14 @@ public class PSExtensionHandler extends DefaultHandler
     }
 
     /**
-     * @see org.apache.fop.util.ContentHandlerFactory.ObjectSource#getObject()
+     * {@inheritDoc}
      */
     public Object getObject() {
         return returnedObject;
     }
 
     /**
-     * @see org.apache.fop.util.ContentHandlerFactory.ObjectSource
+     * {@inheritDoc}
      */
     public void setObjectBuiltListener(ObjectBuiltListener listener) {
         this.listener = listener;

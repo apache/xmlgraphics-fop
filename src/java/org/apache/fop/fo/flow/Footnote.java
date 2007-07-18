@@ -26,7 +26,6 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.fo.properties.CommonAccessibility;
 
 /**
  * Class modelling the fo:footnote object.
@@ -47,14 +46,14 @@ public class Footnote extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         // No active properties -> do nothing.
     }
     
     /**
-     * @see org.apache.fop.fo.FONode#startOfNode
+     * {@inheritDoc}
      */
     protected void startOfNode() throws FOPException {
         getFOEventHandler().startFootnote(this);
@@ -63,7 +62,7 @@ public class Footnote extends FObj {
     /**
      * Make sure content model satisfied, if so then tell the
      * FOEventHandler that we are at the end of the flow.
-     * @see org.apache.fop.fo.FONode#endOfNode
+     * {@inheritDoc}
      */
     protected void endOfNode() throws FOPException {
         super.endOfNode();
@@ -74,7 +73,7 @@ public class Footnote extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc}
      * XSL Content Model: (inline,footnote-body)
      * @todo implement additional constraint: A fo:footnote is not permitted
      *      to have a fo:float, fo:footnote, or fo:marker as a descendant.
@@ -100,7 +99,7 @@ public class Footnote extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#addChildNode(FONode)
+     * {@inheritDoc}
      */
     public void addChildNode(FONode child) {
         if (((FObj)child).getNameId() == FO_INLINE) {
@@ -126,13 +125,13 @@ public class Footnote extends FObj {
         return footnoteBody;
     }
 
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "footnote";
     }
     
     /**
-     * @see org.apache.fop.fo.FObj#getNameId()
+     * {@inheritDoc}
      */
     public int getNameId() {
         return FO_FOOTNOTE;

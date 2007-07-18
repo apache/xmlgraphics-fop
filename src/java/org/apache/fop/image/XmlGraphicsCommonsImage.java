@@ -38,6 +38,7 @@ import org.apache.commons.io.IOUtils;
 
 /**
  * Abstract FopImage implementation which uses the internal codecs from XML Graphics Commons.
+ * 
  * @see AbstractFopImage
  * @see FopImage
  */
@@ -64,7 +65,7 @@ public abstract class XmlGraphicsCommonsImage extends AbstractFopImage {
     }
 
     /**
-     * @see org.apache.fop.image.AbstractFopImage#loadDimensions()
+     * {@inheritDoc}
      */
     protected boolean loadDimensions() {
         if (seekableInput == null && inputStream != null) {
@@ -128,7 +129,7 @@ public abstract class XmlGraphicsCommonsImage extends AbstractFopImage {
     }
 
     /**
-     * @see org.apache.fop.image.AbstractFopImage#loadBitmap()
+     * {@inheritDoc}
      */
     protected boolean loadBitmap() {
         if (this.bitmaps == null) {
@@ -139,7 +140,7 @@ public abstract class XmlGraphicsCommonsImage extends AbstractFopImage {
     }
 
     /**
-     * @see org.apache.fop.image.FopImage#hasSoftMask()
+     * {@inheritDoc}
      */
     public boolean hasSoftMask() {
         if (this.bitmaps == null && this.raw == null) {
@@ -150,7 +151,7 @@ public abstract class XmlGraphicsCommonsImage extends AbstractFopImage {
     }
 
     /**
-     * @see org.apache.fop.image.FopImage#getSoftMask()
+     * {@inheritDoc}
      */
     public byte[] getSoftMask() {
         if (this.bitmaps == null) {

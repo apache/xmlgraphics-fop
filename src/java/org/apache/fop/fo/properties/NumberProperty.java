@@ -48,8 +48,7 @@ public class NumberProperty extends Property implements Numeric {
         }
 
         /**
-         * @throws PropertyException 
-         * @see PropertyMaker#convertProperty
+         * {@inheritDoc}
          */
         public Property convertProperty(Property p,
                                         PropertyList propertyList, FObj fo) 
@@ -134,7 +133,6 @@ public class NumberProperty extends Property implements Numeric {
     /**
      * Plain number always has a dimension of 0.
      * @return a dimension of 0.
-     * @see Numeric#getDimension()
      */
     public int getDimension() {
         return 0;
@@ -143,7 +141,6 @@ public class NumberProperty extends Property implements Numeric {
     /**
      * Return the value of this Numeric.
      * @return The value as a double.
-     * @see Numeric#getNumericValue()
      */
     public double getNumericValue() {
         return number.doubleValue();
@@ -153,13 +150,12 @@ public class NumberProperty extends Property implements Numeric {
      * Return the value of this Numeric.
      * @param context Evaluation context
      * @return The value as a double.
-     * @see Numeric#getNumericValue(PercentBaseContext)
      */
     public double getNumericValue(PercentBaseContext context) {
         return getNumericValue();
     }
 
-    /** @see org.apache.fop.datatypes.Numeric#getValue() */
+    /** {@inheritDoc} */
     public int getValue() {
         return number.intValue();
     }
@@ -168,7 +164,6 @@ public class NumberProperty extends Property implements Numeric {
      * Return the value
      * @param context Evaluation context
      * @return The value as an int.
-     * @see Numeric#getValue(PercentBaseContext)
      */
     public int getValue(PercentBaseContext context) {
         return getValue();
@@ -177,7 +172,6 @@ public class NumberProperty extends Property implements Numeric {
     /**
      * Return true because all numbers are absolute.
      * @return true.
-     * @see Numeric#isAbsolute()
      */
     public boolean isAbsolute() {
         return true;
@@ -205,7 +199,7 @@ public class NumberProperty extends Property implements Numeric {
         return this;
     }
 
-    /** @see org.apache.fop.fo.properties.Property#getLength() */
+    /** {@inheritDoc} */
     public Length getLength() {
         //Assume pixels (like in HTML) when there's no unit
         return FixedLength.getInstance(getNumericValue(), "px");

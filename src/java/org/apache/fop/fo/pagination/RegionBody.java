@@ -50,7 +50,7 @@ public class RegionBody extends Region {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
@@ -94,7 +94,7 @@ public class RegionBody extends Region {
     }
 
     /**
-     * @see org.apache.fop.fo.pagination.Region#getViewportRectangle(FODimension, SimplePageMaster)
+     * {@inheritDoc} 
      */
     public Rectangle getViewportRectangle (FODimension reldims, SimplePageMaster spm) {
         /* Special rules apply to resolving margins in the page context.
@@ -144,19 +144,19 @@ public class RegionBody extends Region {
     }
 
     /**
-     * @see org.apache.fop.fo.pagination.Region#getDefaultRegionName()
+     * {@inheritDoc}
      */
     protected String getDefaultRegionName() {
         return "xsl-region-body";
     }
 
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "region-body";
     }
     
     /**
-     * @see org.apache.fop.fo.FObj#getNameId()
+     * {@inheritDoc}
      */
     public int getNameId() {
         return FO_REGION_BODY;

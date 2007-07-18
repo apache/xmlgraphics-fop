@@ -19,18 +19,15 @@
 
 package org.apache.fop.fo.flow;
 
-// Java
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
-import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.xml.sax.Locator;
 
 /**
- * Implementation for fo:wrapper formatting object.
- * The wrapper object serves as
- * a property holder for its child node objects.
+ * Class modelling the fo:wrapper object.
+ * The wrapper object serves as a property holder for 
+ * its child node objects.
  */
 public class Wrapper extends FObjMixed {
     // The value of properties relevant for fo:wrapper.
@@ -47,7 +44,7 @@ public class Wrapper extends FObjMixed {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc}
      * XSL Content Model: marker* (#PCDATA|%inline;|%block;)*
      * Additionally (unimplemented): "An fo:wrapper that is a child of an 
      * fo:multi-properties is only permitted to have children that would 
@@ -67,14 +64,12 @@ public class Wrapper extends FObjMixed {
         }
     }
 
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "wrapper";
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#getNameId()
-     */
+    /** {@inheritDoc} */
     public int getNameId() {
         return FO_WRAPPER;
     }

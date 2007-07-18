@@ -55,7 +55,7 @@ public final class PDFXMode {
         }
     }
     
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         return name;
     }

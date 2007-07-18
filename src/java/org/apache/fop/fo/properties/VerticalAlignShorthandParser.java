@@ -29,7 +29,7 @@ import org.apache.fop.fo.PropertyList;
 public class VerticalAlignShorthandParser implements ShorthandParser, Constants {
 
     /**
-     * @see ShorthandParser#getValueForProperty(int, Property, PropertyMaker, PropertyList)
+     * {@inheritDoc} 
      */
     public Property getValueForProperty(int propId,
                                         Property property,

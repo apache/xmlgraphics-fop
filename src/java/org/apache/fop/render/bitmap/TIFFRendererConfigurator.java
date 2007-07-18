@@ -45,7 +45,7 @@ public class TIFFRendererConfigurator extends PrintRendererConfigurator {
      * compression
      * @param renderer tiff renderer
      * @throws FOPException fop exception
-     * @see org.apache.fop.render.PrintRendererConfigurator#configure(Renderer)
+     * {@inheritDoc}
      */
     public void configure(Renderer renderer) throws FOPException {        
         Configuration cfg = super.getRendererConfig(renderer);

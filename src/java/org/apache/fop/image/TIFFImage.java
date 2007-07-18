@@ -65,7 +65,7 @@ public class TIFFImage extends XmlGraphicsCommonsImage {
     }
 
     /**
-     * @see org.apache.fop.image.XmlGraphicsCommonsImage#decodeImage(
+     * {@inheritDoc}
      *          org.apache.xmlgraphics.image.codec.util.SeekableStream)
      */
     protected CachableRed decodeImage(SeekableStream stream) throws IOException {
@@ -128,7 +128,7 @@ public class TIFFImage extends XmlGraphicsCommonsImage {
      * This loads only strip 1 of the original TIFF data.
      *
      * @return true if loaded false for any error
-     * @see org.apache.fop.image.AbstractFopImage#loadOriginalData()
+     * {@inheritDoc}
      */
     protected boolean loadOriginalData() {
         if (loadDimensions()) {

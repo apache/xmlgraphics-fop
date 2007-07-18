@@ -69,7 +69,7 @@ public class PDFLink extends PDFObject {
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFObject#toPDFString()
+     * {@inheritDoc}
      */
     public String toPDFString() {
         getDocumentSafely().getProfile().verifyAnnotAllowed();

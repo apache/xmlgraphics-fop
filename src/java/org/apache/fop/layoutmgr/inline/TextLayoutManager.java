@@ -182,7 +182,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         vecAreaInfo = new java.util.ArrayList();
     }
     
-    /** @see org.apache.fop.layoutmgr.LayoutManager#initialize */
+    /** {@inheritDoc} */
     public void initialize() {
         font = foText.getCommonFont().getFontState(foText.getFOEventHandler().getFontInfo(), this);
         
@@ -542,7 +542,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             || CharUtilities.isFixedWidthSpace(ch);
     }
     
-    /** @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(LayoutContext, int) */
+    /** {@inheritDoc} */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         lineStartBAP = context.getLineStartBorderAndPaddingWidth();
         lineEndBAP = context.getLineEndBorderAndPaddingWidth();
@@ -792,7 +792,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         }
     }
 
-    /** @see InlineLevelLayoutManager#addALetterSpaceTo(List) */
+    /** {@inheritDoc} */
     public List addALetterSpaceTo(List oldList) {
         // old list contains only a box, or the sequence: box penalty glue box;
         // look at the Position stored in the first element in oldList
@@ -858,7 +858,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         }
     }
 
-    /** @see InlineLevelLayoutManager#hyphenate(Position, HyphContext) */
+    /** {@inheritDoc} */
     public void hyphenate(Position pos, HyphContext hc) {
         AreaInfo ai
             = (AreaInfo) vecAreaInfo.get(((LeafPosition) pos).getLeafPos());
@@ -936,7 +936,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         }
     }
 
-    /** @see InlineLevelLayoutManager#applyChanges(List) */
+    /** {@inheritDoc} */
     public boolean applyChanges(List oldList) {
         setFinished(false);
 
@@ -968,7 +968,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         return bChanged;
     }
 
-    /** @see org.apache.fop.layoutmgr.LayoutManager#getChangedKnuthElements(List, int) */
+    /** {@inheritDoc} */
     public LinkedList getChangedKnuthElements(List oldList,
                                               int alignment) {
         if (isFinished()) {
@@ -995,7 +995,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         return returnList;
     }
 
-    /** @see InlineLevelLayoutManager#getWordChars(StringBuffer, Position) */
+    /** {@inheritDoc} */
     public void getWordChars(StringBuffer sbChars, Position pos) {
         int iLeafValue = ((LeafPosition) pos).getLeafPos();
         if (iLeafValue != -1) {

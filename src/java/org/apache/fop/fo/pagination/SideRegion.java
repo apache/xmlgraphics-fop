@@ -36,7 +36,7 @@ public abstract class SideRegion extends Region {
         super(parent);
     }
 
-    /** @see org.apache.fop.fo.FObj#bind(PropertyList) */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
         extent = pList.get(PR_EXTENT).getLength();

@@ -125,7 +125,7 @@ public class DashedBorderElement extends AbstractBorderElement {
     }
 
     /** 
-     * @see org.apache.fop.render.txt.border.AbstractBorderElement#convert2Char()
+     * {@inheritDoc}
      */
     public char convert2Char() {
         int key = 0;

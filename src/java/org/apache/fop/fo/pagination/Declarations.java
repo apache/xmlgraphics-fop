@@ -26,7 +26,6 @@ import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FONode.FONodeIterator;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
@@ -51,14 +50,14 @@ public class Declarations extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         // No properties defined for fo:declarations
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc}
      * XSL 1.0: (color-profile)+ (and non-XSL NS nodes)
      * FOP/XSL 1.1: (color-profile)* (and non-XSL NS nodes)
      */
@@ -74,7 +73,6 @@ public class Declarations extends FObj {
     /**
      * At the end of this element sort out the children into
      * a hashmap of color profiles and a list of extension attachments.
-     * @see org.apache.fop.fo.FONode#endOfNode()
      */
     protected void endOfNode() throws FOPException {
         if (firstChild != null) {
@@ -109,14 +107,14 @@ public class Declarations extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#getName()
+     * {@inheritDoc}
      */
     public String getLocalName() {
         return "declarations";
     }
     
     /**
-     * @see org.apache.fop.fo.FObj#getNameId()
+     * {@inheritDoc}
      */
     public int getNameId() {
         return FO_DECLARATIONS;

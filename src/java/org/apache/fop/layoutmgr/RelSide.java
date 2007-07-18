@@ -46,7 +46,7 @@ public final class RelSide {
         return this.name;
     }
     
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         return "RelSide:" + name;
     }

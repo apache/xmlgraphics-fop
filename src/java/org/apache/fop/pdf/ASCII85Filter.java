@@ -41,7 +41,7 @@ public class ASCII85Filter extends PDFFilter {
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFFilter#isASCIIFilter()
+     * {@inheritDoc}
      */
     public boolean isASCIIFilter() {
         return true;
@@ -57,7 +57,7 @@ public class ASCII85Filter extends PDFFilter {
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFFilter#applyFilter(OutputStream)
+     * {@inheritDoc}
      */
     public OutputStream applyFilter(OutputStream out) throws IOException {
         return new ASCII85OutputStream(out);

@@ -46,14 +46,14 @@ public class Flow extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         flowName = pList.get(PR_FLOW_NAME).getString();
     }
     
     /**
-     * @see org.apache.fop.fo.FONode#startOfNode
+     * {@inheritDoc}
      */
     protected void startOfNode() throws FOPException {
         if (flowName == null || flowName.equals("")) {
@@ -83,7 +83,6 @@ public class Flow extends FObj {
     /**
      * Make sure content model satisfied, if so then tell the
      * FOEventHandler that we are at the end of the flow.
-     * @see org.apache.fop.fo.FONode#endOfNode
      */
     protected void endOfNode() throws FOPException {
         if (!blockItemFound) {
@@ -93,7 +92,7 @@ public class Flow extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc}
      * XSL Content Model: marker* (%block;)+
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
@@ -121,13 +120,13 @@ public class Flow extends FObj {
         return flowName;
     }
 
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "flow";
     }
     
     /**
-     * @see org.apache.fop.fo.FObj#getNameId()
+     * {@inheritDoc}
      */
     public int getNameId() {
         return FO_FLOW;

@@ -457,7 +457,7 @@ public class Area extends AreaTreeObject implements Serializable {
     }
     
     /**
-     * @see java.lang.Object#toString()
+     * {@inheritDoc}
      * @return ipd and bpd of area 
      * */
     public String toString() {

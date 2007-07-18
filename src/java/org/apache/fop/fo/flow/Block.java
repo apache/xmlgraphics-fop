@@ -95,7 +95,7 @@ public class Block extends FObjMixed {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
@@ -131,7 +131,7 @@ public class Block extends FObjMixed {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#startOfNode
+     * {@inheritDoc}
      */
     protected void startOfNode() throws FOPException {
         super.startOfNode();
@@ -139,7 +139,7 @@ public class Block extends FObjMixed {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#endOfNode
+     * {@inheritDoc}
      */
     protected void endOfNode() throws FOPException {
         super.endOfNode();
@@ -276,7 +276,7 @@ public class Block extends FObjMixed {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc}
      * XSL Content Model: marker* initial-property-set? (#PCDATA|%inline;|%block;)*
      * Additionally: "An fo:bidi-override that is a descendant of an fo:leader
      *  or of the fo:inline child of an fo:footnote may not have block-level
@@ -363,18 +363,18 @@ public class Block extends FObjMixed {
         return this.lineHeightShiftAdjustment;
     }
 
-    /** @see org.apache.fop.fo.FONode#charIterator() */
+    /** {@inheritDoc} */
     public CharIterator charIterator() {
         return NullCharIterator.getInstance();
     }
 
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "block";
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#getNameId()
+     * {@inheritDoc}
      */
     public int getNameId() {
         return FO_BLOCK;

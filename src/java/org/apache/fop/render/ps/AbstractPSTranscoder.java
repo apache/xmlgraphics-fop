@@ -146,7 +146,7 @@ public abstract class AbstractPSTranscoder extends AbstractFOPTranscoder {
         return stroke;
     }
 
-    /** @see org.apache.batik.transcoder.SVGAbstractTranscoder#createBridgeContext() */
+    /** {@inheritDoc} */
     protected BridgeContext createBridgeContext() {
 
         BridgeContext ctx = new BridgeContext(userAgent);

@@ -53,7 +53,7 @@ public class BlockParent extends Area {
     // orientation if reference area
     private int orientation = ORIENT_0;
 
-    /** @see org.apache.fop.area.Area#addChildArea(org.apache.fop.area.Area) */
+    /** {@inheritDoc} */
     public void addChildArea(Area childArea) {
         if (children == null) {
             children = new ArrayList();

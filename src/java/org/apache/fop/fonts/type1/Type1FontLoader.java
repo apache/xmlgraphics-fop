@@ -48,7 +48,7 @@ public class Type1FontLoader extends FontLoader {
     }
 
     /**
-     * @see FontLoader#read()
+     * {@inheritDoc}
      */
     protected void read() throws IOException {
         pfm = new PFMFile();

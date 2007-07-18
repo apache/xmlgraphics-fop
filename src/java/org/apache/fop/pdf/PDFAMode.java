@@ -65,7 +65,7 @@ public final class PDFAMode {
         }
     }
     
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         return name;
     }

@@ -35,7 +35,7 @@ public class PSExtensionElementMapping extends ElementMapping {
         this.namespaceURI = NAMESPACE;
     }
 
-    /** @see org.apache.fop.fo.ElementMapping#initialize() */
+    /** {@inheritDoc} */
     protected void initialize() {
         if (foObjs == null) {
             foObjs = new java.util.HashMap();

@@ -100,7 +100,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         return this.columns;
     }
     
-    /** @see org.apache.fop.layoutmgr.LayoutManager#initialize() */
+    /** {@inheritDoc} */
     public void initialize() {
         foSpaceBefore = new SpaceVal(
                 getTable().getCommonMarginBlock().spaceBefore, this).getSpace();
@@ -415,20 +415,20 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         }
     }
 
-    /** @see org.apache.fop.layoutmgr.BlockLevelLayoutManager */
+    /** {@inheritDoc} */
     public int negotiateBPDAdjustment(int adj, KnuthElement lastElement) {
         // TODO Auto-generated method stub
         return 0;
     }
 
-    /** @see org.apache.fop.layoutmgr.BlockLevelLayoutManager */
+    /** {@inheritDoc} */
     public void discardSpace(KnuthGlue spaceGlue) {
         // TODO Auto-generated method stub
         
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepTogether()
+     * {@inheritDoc}
      */
     public boolean mustKeepTogether() {
         //TODO Keeps will have to be more sophisticated sooner or later
@@ -438,7 +438,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepWithPrevious()
+     * {@inheritDoc}
      */
     public boolean mustKeepWithPrevious() {
         return !getTable().getKeepWithPrevious().getWithinPage().isAuto()
@@ -446,7 +446,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepWithNext()
+     * {@inheritDoc}
      */
     public boolean mustKeepWithNext() {
         return !getTable().getKeepWithNext().getWithinPage().isAuto()
@@ -456,7 +456,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
     // --------- Property Resolution related functions --------- //
 
     /**
-     * @see org.apache.fop.datatypes.PercentBaseContext#getBaseLength(int, FObj)
+     * {@inheritDoc} 
      */
     public int getBaseLength(int lengthBase, FObj fobj) {
         // Special handler for TableColumn width specifications
@@ -480,7 +480,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         }
     }
     
-    /** @see org.apache.fop.layoutmgr.ConditionalElementListener */
+    /** {@inheritDoc} */
     public void notifySpace(RelSide side, MinOptMax effectiveLength) {
         if (RelSide.BEFORE == side) {
             if (log.isDebugEnabled()) {
@@ -497,7 +497,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         }
     }
 
-    /** @see org.apache.fop.layoutmgr.ConditionalElementListener */
+    /** {@inheritDoc} */
     public void notifyBorder(RelSide side, MinOptMax effectiveLength) {
         if (effectiveLength == null) {
             if (RelSide.BEFORE == side) {
@@ -511,7 +511,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         }
     }
 
-    /** @see org.apache.fop.layoutmgr.ConditionalElementListener */
+    /** {@inheritDoc} */
     public void notifyPadding(RelSide side, MinOptMax effectiveLength) {
         if (effectiveLength == null) {
             if (RelSide.BEFORE == side) {

@@ -73,7 +73,7 @@ public class BlockContainer extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
@@ -98,7 +98,7 @@ public class BlockContainer extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#startOfNode
+     * {@inheritDoc}
      */
     protected void startOfNode() throws FOPException {
         super.startOfNode();
@@ -106,7 +106,7 @@ public class BlockContainer extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc}
      * XSL Content Model: marker* (%block;)+
      * But: "In addition an fo:block-container that does not generate an 
      * absolutely positioned area may have a sequence of zero or more 
@@ -127,7 +127,7 @@ public class BlockContainer extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#endOfNode
+     * {@inheritDoc}
      */
     protected void endOfNode() throws FOPException {
         if (!blockItemFound) {
@@ -251,13 +251,13 @@ public class BlockContainer extends FObj {
         return height;
     }
 
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "block-container";
     }
     
     /**
-     * @see org.apache.fop.fo.FObj#getNameId()
+     * {@inheritDoc}
      */
     public int getNameId() {
         return FO_BLOCK_CONTAINER;

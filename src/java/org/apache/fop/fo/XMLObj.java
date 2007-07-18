@@ -60,7 +60,7 @@ public abstract class XMLObj extends FONode implements ObjectBuiltListener {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc}
      * here, blocks XSL FO's from having non-FO parents.
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
@@ -71,7 +71,7 @@ public abstract class XMLObj extends FONode implements ObjectBuiltListener {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#processNode
+     * {@inheritDoc}
      */
     public void processNode(String elementName, Locator locator, 
         Attributes attlist, PropertyList propertyList) throws FOPException {
@@ -104,7 +104,7 @@ public abstract class XMLObj extends FONode implements ObjectBuiltListener {
         return null;
     }
 
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return name;
     }
@@ -187,7 +187,7 @@ public abstract class XMLObj extends FONode implements ObjectBuiltListener {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#addChildNode(FONode)
+     * {@inheritDoc}
      */
     protected void addChildNode(FONode child) {
         if (child instanceof XMLObj) {
@@ -215,7 +215,7 @@ public abstract class XMLObj extends FONode implements ObjectBuiltListener {
         element.appendChild(text);
     }
 
-    /** @see org.apache.fop.util.ContentHandlerFactory.ObjectBuiltListener */
+    /** {@inheritDoc} */
     public void notifyObjectBuilt(Object obj) {
         this.doc = (Document)obj;
     }

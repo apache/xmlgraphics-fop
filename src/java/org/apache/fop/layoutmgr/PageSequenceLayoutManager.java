@@ -91,8 +91,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager
-     * @return the LayoutManagerMaker object
+     * @return the LayoutManagerMaker object associated to the areaTreeHandler
      */
     public LayoutManagerMaker getLayoutManagerMaker() {
         return areaTreeHandler.getLayoutManagerMaker();

@@ -83,7 +83,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         targetBlock = block; 
     }
 
-    /** @see org.apache.fop.layoutmgr.LayoutManager */
+    /** {@inheritDoc} */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         if (true) {
             throw new UnsupportedOperationException(
@@ -176,7 +176,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
     }
     
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#addAreas(PositionIterator, LayoutContext)
+     * {@inheritDoc} 
      */
     public void addAreas(PositionIterator parentIter, LayoutContext layoutContext) {
         AreaAdditionUtil.addAreas(this, parentIter, layoutContext);
@@ -190,7 +190,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
      * Add child area to a the correct container, depending on its
      * area class. A Flow can fill at most one area container of any class
      * at any one time. The actual work is done by BlockStackingLM.
-     * @see org.apache.fop.layoutmgr.LayoutManager#addChildArea(Area)
+     * {@inheritDoc}
      */
     public void addChildArea(Area childArea) {
         if (getStaticContentFO().getFlowName().equals("xsl-footnote-separator")) {
@@ -201,7 +201,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#getParentArea(Area)
+     * {@inheritDoc}
      */
     public Area getParentArea(Area childArea) {
         if (getStaticContentFO().getFlowName().equals("xsl-footnote-separator")) {
@@ -270,7 +270,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
             this.displayAlign = displayAlign;
         }
 
-        /** @see org.apache.fop.layoutmgr.AbstractBreaker#observeElementList(java.util.List) */
+        /** {@inheritDoc} */
         protected void observeElementList(List elementList) {
             String elementListID = getStaticContentFO().getFlowName();
             String pageSequenceID = ((PageSequence)lm.getParent().getFObj()).getId();
@@ -280,7 +280,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
             ElementListObserver.observe(elementList, "static-content", elementListID);
         }
         
-        /** @see org.apache.fop.layoutmgr.AbstractBreaker#isPartOverflowRecoveryActivated() */
+        /** {@inheritDoc} */
         protected boolean isPartOverflowRecoveryActivated() {
             //For side regions, this must be disabled because of wanted overflow.
             return false;
@@ -363,7 +363,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         return contentAreaIPD;
     }
    
-    /** @see org.apache.fop.layoutmgr.BlockStackingLayoutManager#setContentAreaIPD(int) */
+    /** {@inheritDoc} */
     protected void setContentAreaIPD(int contentAreaIPD) {
         this.contentAreaIPD = contentAreaIPD;
     }

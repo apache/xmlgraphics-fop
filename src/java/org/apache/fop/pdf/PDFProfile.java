@@ -119,7 +119,7 @@ public class PDFProfile {
         validateProfileCombination();
     }
 
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer();
         if (isPDFAActive() && isPDFXActive()) {

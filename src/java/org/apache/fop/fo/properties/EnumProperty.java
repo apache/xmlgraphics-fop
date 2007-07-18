@@ -97,7 +97,7 @@ public class EnumProperty extends Property {
     }
 
     /**
-     * @see java.lang.Object#equals(Object)
+     * {@inheritDoc}
      */
     public boolean equals(Object obj) {
         if (obj instanceof EnumProperty) {
@@ -112,7 +112,7 @@ public class EnumProperty extends Property {
     }
 
     /**
-     * @see java.lang.Object#hashCode()
+     * {@inheritDoc}
      */
     public int hashCode() {
         return value + text.hashCode();

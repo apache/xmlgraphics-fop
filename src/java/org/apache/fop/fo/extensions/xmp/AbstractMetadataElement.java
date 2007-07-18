@@ -42,13 +42,13 @@ public abstract class AbstractMetadataElement extends FONode implements ObjectBu
     }
     
     /**
-     * @see org.apache.fop.fo.FONode#getContentHandlerFactory()
+     * {@inheritDoc}
      */
     public ContentHandlerFactory getContentHandlerFactory() {
         return new XMPContentHandlerFactory();
     }
     
-    /** @see org.apache.fop.fo.FONode#getExtensionAttachment() */
+    /** {@inheritDoc} */
     public ExtensionAttachment getExtensionAttachment() {
         if (parent instanceof FObj) {
             if (attachment == null) {
@@ -60,7 +60,7 @@ public abstract class AbstractMetadataElement extends FONode implements ObjectBu
         }
     }
 
-    /** @see org.apache.fop.fo.XMLObj#notifyObjectBuilt(java.lang.Object) */
+    /** {@inheritDoc} */
     public void notifyObjectBuilt(Object obj) {
         attachment.setMetadata((Metadata)obj);
     }

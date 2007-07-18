@@ -49,7 +49,7 @@ public abstract class AbstractAFPExtensionObject extends FONode {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc} String, String)
      * here, blocks XSL FO's from having non-FO parents.
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName)
@@ -59,22 +59,22 @@ public abstract class AbstractAFPExtensionObject extends FONode {
         }
     }
 
-    /** @see org.apache.fop.fo.FONode */
+    /** {@inheritDoc} */
     protected void addCharacters(char[] data, int start, int length,
                                  PropertyList pList, Locator locator) {
     }
 
-    /** @see org.apache.fop.fo.FONode#getNamespaceURI() */
+    /** {@inheritDoc} */
     public String getNamespaceURI() {
         return AFPElementMapping.NAMESPACE;
     }
 
-    /**@see org.apache.fop.fo.FONode#getNormalNamespacePrefix() */
+    /**{@inheritDoc} */
     public String getNormalNamespacePrefix() {
         return AFPElementMapping.NAMESPACE_PREFIX;
     }
 
-    /** @see org.apache.fop.fo.FONode#processNode */
+    /** {@inheritDoc} */
     public void processNode(String elementName, Locator locator,
                             Attributes attlist, PropertyList propertyList)
                                 throws FOPException {
@@ -102,17 +102,17 @@ public abstract class AbstractAFPExtensionObject extends FONode {
         }
     }
 
-    /** @see org.apache.fop.fo.FONode#endOfNode() */
+    /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         super.endOfNode();
     }
 
-    /** @see org.apache.fop.fo.FONode#getExtensionAttachment() */
+    /** {@inheritDoc} */
     public ExtensionAttachment getExtensionAttachment() {
         return this.setupCode;
     }
 
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return _name;
     }

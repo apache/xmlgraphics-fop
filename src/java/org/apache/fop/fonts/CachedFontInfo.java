@@ -109,7 +109,7 @@ public class CachedFontInfo extends EmbedFontInfo {
     
     /**
      * @return string representation of this object 
-     * @see java.lang.Object#toString()
+     * {@inheritDoc}
      */
     public String toString() {
         return super.toString() + ", lastModified=" + lastModified;

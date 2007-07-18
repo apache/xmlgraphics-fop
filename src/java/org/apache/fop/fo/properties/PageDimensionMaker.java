@@ -45,7 +45,7 @@ public class PageDimensionMaker extends LengthProperty.Maker {
      * Return the default or user-defined fallback in case the value
      * was specified as "auto"
      * 
-     * @see org.apache.fop.fo.properties.PropertyMaker#get(int, PropertyList, boolean, boolean)
+     * @see PropertyMaker#get(int, PropertyList, boolean, boolean)
      */
     public Property get(int subpropId, PropertyList propertyList,
                         boolean tryInherit, boolean tryDefault) 

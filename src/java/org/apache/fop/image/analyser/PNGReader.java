@@ -37,7 +37,7 @@ public class PNGReader implements ImageReader {
 
     private static final int PNG_SIG_LENGTH = 24;
 
-    /** @see org.apache.fop.image.analyser.ImageReader */
+    /** {@inheritDoc} */
     public FopImage.ImageInfo verifySignature(String uri, InputStream bis,
                 FOUserAgent ua) throws IOException {
         byte[] header = getDefaultHeader(bis);

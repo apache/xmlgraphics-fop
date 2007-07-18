@@ -110,7 +110,7 @@ public final class Helper {
      * @param y integer, fraction denominator
      * @return the largest integer that is less than or equal to 
      *            the argument and is equal to <code>x/y</code> fraction
-     * @see java.lang.Math#ceil(double)
+     * @see java.lang.Math#floor(double)
      */
     public static int floorPosition(int x, int y) {
         return floor(x, y) / y;

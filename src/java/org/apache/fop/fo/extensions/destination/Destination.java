@@ -48,8 +48,7 @@ public class Destination extends FONode {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#processNode(java.lang.String, org.xml.sax.Locator, 
-     *          org.xml.sax.Attributes, org.apache.fop.fo.PropertyList)
+     * {@inheritDoc}
      */
     public void processNode(String elementName, Locator locator, 
             Attributes attlist, PropertyList pList) throws FOPException {
@@ -60,14 +59,14 @@ public class Destination extends FONode {
     }
     
     /**
-     * @see org.apache.fop.fo.FONode#endOfNode
+     * {@inheritDoc}
      */
     protected void endOfNode() throws FOPException {
         root.addDestination(this);
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc}
         XSL/FOP: empty
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName)
@@ -83,17 +82,17 @@ public class Destination extends FONode {
         return internalDestination;
     }
 
-    /** @see org.apache.fop.fo.FONode#getNamespaceURI() */
+    /** {@inheritDoc} */
     public String getNamespaceURI() {
         return ExtensionElementMapping.URI;
     }
 
-    /** @see org.apache.fop.fo.FONode#getNormalNamespacePrefix() */
+    /** {@inheritDoc} */
     public String getNormalNamespacePrefix() {
         return "fox";
     }
 
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "destination";
     }

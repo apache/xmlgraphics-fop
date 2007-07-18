@@ -174,60 +174,60 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
         return stackSize;
     }
 
-    /** @see org.apache.fop.layoutmgr.LayoutManager */
+    /** {@inheritDoc} */
     public Area getParentArea(Area childArea) {
         return holder;
     }
 
     /** 
-     * @see org.apache.fop.layoutmgr.LayoutManager#addChildArea(Area)
+     * {@inheritDoc}
      **/
     public void addChildArea(Area childArea) {
         holder.addChildArea(childArea);
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#setParent(LayoutManager)
+     * {@inheritDoc}
      */
     public void setParent(LayoutManager lm) {
         parentLM = lm;
     }
 
-    /** @see org.apache.fop.layoutmgr.LayoutManager#getParent() */
+    /** {@inheritDoc} */
     public LayoutManager getParent() {
         return this.parentLM;
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#isFinished()
+     * {@inheritDoc}
      */
     public boolean isFinished() {
         return false;
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#setFinished(boolean)
+     * {@inheritDoc}
      */
     public void setFinished(boolean isFinished) {
         //to be done
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#resetPosition(Position)
+     * {@inheritDoc}
      */
     public void resetPosition(Position position) {
         //to be done
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#createNextChildLMs(int)
+     * {@inheritDoc}
      */
     public boolean createNextChildLMs(int pos) {
         return false;
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#getChildLMs()
+     * {@inheritDoc}
      */
     public List getChildLMs() {
         List childLMs = new ArrayList(1);
@@ -236,7 +236,7 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#addChildLM
+     * {@inheritDoc}
      */
     public void addChildLM(LayoutManager lm) {
         if (lm == null) {
@@ -249,7 +249,7 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#addChildLMs
+     * {@inheritDoc}
      */
     public void addChildLMs(List newLMs) {
         if (newLMs == null || newLMs.size() == 0) {
@@ -349,28 +349,28 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
     }
     
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#getGeneratesReferenceArea
+     * {@inheritDoc}
      */
     public boolean getGeneratesReferenceArea() {
         return false;
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#getGeneratesBlockArea
+     * {@inheritDoc}
      */
     public boolean getGeneratesBlockArea() {
         return getGeneratesLineArea() || holder instanceof Block;
     }
    
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#getGeneratesLineArea
+     * {@inheritDoc}
      */
     public boolean getGeneratesLineArea() {
         return holder instanceof LineArea;
     }
 
     /* (non-Javadoc)
-     * @see org.apache.fop.layoutmgr.LayoutManager#notifyPos(org.apache.fop.layoutmgr.Position)
+     * {@inheritDoc}
      */
     public Position notifyPos(Position pos) {
         return pos;

@@ -91,7 +91,7 @@ public abstract class FObj extends FONode implements Constants {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#clone(FONode, boolean)
+     * {@inheritDoc} 
      */
     public FONode clone(FONode parent, boolean removeChildren)
         throws FOPException {
@@ -112,7 +112,7 @@ public abstract class FObj extends FONode implements Constants {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#processNode
+     * {@inheritDoc}
      */
     public void processNode(String elementName, Locator locator, 
                             Attributes attlist, PropertyList pList) 
@@ -128,7 +128,7 @@ public abstract class FObj extends FONode implements Constants {
 
     /**
      * Create a default property list for this element. 
-     * @see org.apache.fop.fo.FONode
+     * {@inheritDoc}
      */
     protected PropertyList createPropertyList(PropertyList parent, 
                     FOEventHandler foEventHandler) throws FOPException {
@@ -147,7 +147,7 @@ public abstract class FObj extends FONode implements Constants {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#startOfNode
+     * {@inheritDoc}
      * @throws FOPException FOP Exception
      */
     protected void startOfNode() throws FOPException {
@@ -203,7 +203,7 @@ public abstract class FObj extends FONode implements Constants {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#addChildNode(FONode)
+     * {@inheritDoc}
      */
     protected void addChildNode(FONode child) throws FOPException {
         if (canHaveMarkers() && child.getNameId() == FO_MARKER) {
@@ -242,7 +242,7 @@ public abstract class FObj extends FONode implements Constants {
         parent.addChildNode(child);
     }
     
-    /** @see org.apache.fop.fo.FONode#removeChild(org.apache.fop.fo.FONode) */
+    /** {@inheritDoc} */
     public void removeChild(FONode child) {
         FONode nextChild = null;
         if (child.siblings != null) {
@@ -284,7 +284,7 @@ public abstract class FObj extends FONode implements Constants {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#getChildNodes()
+     * {@inheritDoc}
      */
     public FONodeIterator getChildNodes() {
         if (firstChild != null) {
@@ -382,7 +382,7 @@ public abstract class FObj extends FONode implements Constants {
         return markers;
     }
 
-    /** @see org.apache.fop.fo.FONode#gatherContextInfo() */
+    /** {@inheritDoc} */
     protected String gatherContextInfo() {
         if (getLocator() != null) {
             return super.gatherContextInfo();
@@ -513,12 +513,12 @@ public abstract class FObj extends FONode implements Constants {
         return id != null && id.length() > 0;
     }
 
-    /** @see org.apache.fop.fo.FONode#getNamespaceURI() */
+    /** {@inheritDoc} */
     public String getNamespaceURI() {
         return FOElementMapping.URI;
     }
 
-    /** @see org.apache.fop.fo.FONode#getNormalNamespacePrefix() */
+    /** {@inheritDoc} */
     public String getNormalNamespacePrefix() {
         return "fo";
     }
@@ -600,14 +600,14 @@ public abstract class FObj extends FONode implements Constants {
         }
         
         /**
-         * @see FONodeIterator#parentNode()
+         * {@inheritDoc}
          */
         public FObj parentNode() {
             return parentNode;
         }
         
         /**
-         * @see java.util.ListIterator#next()
+         * {@inheritDoc}
          */
         public Object next() {
             if (currentNode != null) {
@@ -628,7 +628,7 @@ public abstract class FObj extends FONode implements Constants {
         }
 
         /**
-         * @see java.util.ListIterator#previous()
+         * {@inheritDoc}
          */
         public Object previous() {
             if (currentNode.siblings != null
@@ -643,7 +643,7 @@ public abstract class FObj extends FONode implements Constants {
         }
         
         /**
-         * @see java.util.ListIterator#set(Object)
+         * {@inheritDoc}
          */
         public void set(Object o) {
             if ((flags & F_SET_ALLOWED) == F_SET_ALLOWED) {
@@ -663,7 +663,7 @@ public abstract class FObj extends FONode implements Constants {
         }
         
         /**
-         * @see java.util.ListIterator#add(Object)
+         * {@inheritDoc}
          */
         public void add(Object o) {
             FONode newNode = (FONode) o;
@@ -685,7 +685,7 @@ public abstract class FObj extends FONode implements Constants {
         }
 
         /**
-         * @see java.util.ListIterator#hasNext()
+         * {@inheritDoc}
          */
         public boolean hasNext() {
             return (currentNode != null)
@@ -695,7 +695,7 @@ public abstract class FObj extends FONode implements Constants {
         }
 
         /**
-         * @see java.util.ListIterator#hasPrevious()
+         * {@inheritDoc}
          */
         public boolean hasPrevious() {
             return (currentIndex != 0)
@@ -704,21 +704,21 @@ public abstract class FObj extends FONode implements Constants {
         }
         
         /**
-         * @see java.util.ListIterator#nextIndex()
+         * {@inheritDoc}
          */
         public int nextIndex() {
             return currentIndex + 1;
         }
 
         /**
-         * @see java.util.ListIterator#previousIndex()
+         * {@inheritDoc}
          */
         public int previousIndex() {
             return currentIndex - 1;
         }
 
         /**
-         * @see java.util.ListIterator#remove()
+         * {@inheritDoc}
          */
         public void remove() {
             if ((flags & F_REMOVE_ALLOWED) == F_REMOVE_ALLOWED) {
@@ -739,6 +739,9 @@ public abstract class FObj extends FONode implements Constants {
             }
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public FONode lastNode() {
             while (currentNode != null
                     && currentNode.siblings != null
@@ -749,16 +752,25 @@ public abstract class FObj extends FONode implements Constants {
             return currentNode;
         }
         
+        /**
+         * {@inheritDoc}
+         */
         public FONode firstNode() {
             currentNode = parentNode.firstChild;
             currentIndex = 0;
             return currentNode;
         }
         
+        /**
+         * {@inheritDoc}
+         */
         public FONode nextNode() {
             return (FONode) next();
         }
         
+        /**
+         * {@inheritDoc}
+         */
         public FONode previousNode() {
             return (FONode) previous();
         }

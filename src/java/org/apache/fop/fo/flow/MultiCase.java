@@ -23,7 +23,6 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
-import org.apache.fop.fo.properties.CommonAccessibility;
 
 /**
  * Class modelling the fo:multi-case object.
@@ -31,7 +30,6 @@ import org.apache.fop.fo.properties.CommonAccessibility;
  */
 public class MultiCase extends FObj {
     // The value of properties relevant for fo:multi-case.
-    private String id;
     private int startingState;
     // private ToBeImplementedProperty caseName;
     // private ToBeImplementedProperty caseTitle;
@@ -54,7 +52,7 @@ public class MultiCase extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
@@ -70,13 +68,13 @@ public class MultiCase extends FObj {
         return startingState;
     }
 
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "multi-case";
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#getNameId()
+     * {@inheritDoc}
      */
     public int getNameId() {
         return FO_MULTI_CASE;

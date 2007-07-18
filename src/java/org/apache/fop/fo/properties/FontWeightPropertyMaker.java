@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-/* $Id:$ */
+/* $Id$ */
 
 package org.apache.fop.fo.properties;
 
@@ -36,7 +36,7 @@ public class FontWeightPropertyMaker extends EnumProperty.Maker {
     }
     
     /**
-     * @see org.apache.fop.fo.properties.PropertyMaker#make(PropertyList, String, FObj)
+     * {@inheritDoc} 
      */
     public Property make(PropertyList pList, String value, FObj fo) 
                         throws PropertyException {

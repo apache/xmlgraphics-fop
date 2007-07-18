@@ -34,7 +34,7 @@ import com.sun.jimi.core.Jimi;
 /**
  * FopImage object for several images types, using Jimi.
  * See Jimi documentation for supported image types.
- * @author Eric SCHAEFFER
+ * 
  * @see AbstractFopImage
  * @see FopImage
  */
@@ -50,7 +50,7 @@ public class JimiImage extends AbstractFopImage {
     }
 
     /**
-     * @see org.apache.fop.image.AbstractFopImage#loadDimensions()
+     * {@inheritDoc}
      */
     protected boolean loadDimensions() {
         if (this.bitmaps == null) {
@@ -61,7 +61,7 @@ public class JimiImage extends AbstractFopImage {
     }
 
     /**
-     * @see org.apache.fop.image.AbstractFopImage#loadBitmap()
+     * {@inheritDoc}
      */
     protected boolean loadBitmap() {
         if (this.bitmaps == null) {
@@ -177,7 +177,7 @@ public class JimiImage extends AbstractFopImage {
         }
     }
 
-    /** @see org.apache.fop.image.AbstractFopImage#loadOriginalData() */
+    /** {@inheritDoc} */
     protected boolean loadOriginalData() {
         return loadDefaultOriginalData();
     }

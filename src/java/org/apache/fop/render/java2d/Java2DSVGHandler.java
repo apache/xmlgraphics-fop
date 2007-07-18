@@ -54,7 +54,7 @@ public class Java2DSVGHandler implements XMLHandler, Java2DRendererContextConsta
         //nop
     }
 
-    /** @see org.apache.fop.render.XMLHandler */
+    /** {@inheritDoc} */
     public void handleXML(RendererContext context, 
                 Document doc, String ns) throws Exception {
         Java2DInfo pdfi = getJava2DInfo(context);
@@ -95,7 +95,7 @@ public class Java2DSVGHandler implements XMLHandler, Java2DRendererContextConsta
         /** see Java2D_YPOS */
         public int currentYPosition;
 
-        /** @see java.lang.Object#toString() */
+        /** {@inheritDoc} */
         public String toString() {
             return "Java2DInfo {"
                 + "state = " + state + ", "
@@ -164,13 +164,13 @@ public class Java2DSVGHandler implements XMLHandler, Java2DRendererContextConsta
         info.state.getGraph().setTransform(origTransform);
     }
     
-    /** @see org.apache.fop.render.XMLHandler#supportsRenderer(Renderer) */
+    /** {@inheritDoc} */
     public boolean supportsRenderer(Renderer renderer) {
         return (renderer instanceof Java2DRenderer);
     }
 
 
-    /** @see org.apache.fop.render.XMLHandler#getNamespace() */
+    /** {@inheritDoc} */
     public String getNamespace() {
         return SVGDOMImplementation.SVG_NAMESPACE_URI;
     }

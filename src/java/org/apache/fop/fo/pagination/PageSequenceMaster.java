@@ -60,7 +60,7 @@ public class PageSequenceMaster extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         masterName = pList.get(PR_MASTER_NAME).getString();
@@ -71,7 +71,7 @@ public class PageSequenceMaster extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#startOfNode()
+     * {@inheritDoc}
      */
     protected void startOfNode() throws FOPException {
         subSequenceSpecifiers = new java.util.ArrayList();
@@ -80,7 +80,7 @@ public class PageSequenceMaster extends FObj {
     }
     
     /**
-     * @see org.apache.fop.fo.FONode#endOfNode()
+     * {@inheritDoc}
      */
     protected void endOfNode() throws FOPException {
         if (firstChild == null) {
@@ -90,7 +90,7 @@ public class PageSequenceMaster extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc}
      * XSL/FOP: (single-page-master-reference|repeatable-page-master-reference|
      *     repeatable-page-master-alternatives)+
      */
@@ -224,13 +224,13 @@ public class PageSequenceMaster extends FObj {
         return pageMaster;
     }
 
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "page-sequence-master";
     }
     
     /**
-     * @see org.apache.fop.fo.FObj#getNameId()
+     * {@inheritDoc}
      */
     public int getNameId() {
         return FO_PAGE_SEQUENCE_MASTER;

@@ -37,12 +37,12 @@ public class SVGObj extends XMLObj {
         super(parent);
     }
 
-    /** @see org.apache.fop.fo.FONode#getNamespaceURI() */
+    /** {@inheritDoc} */
     public String getNamespaceURI() {
         return SVGElementMapping.URI;
     }
 
-    /** @see org.apache.fop.fo.FONode#getNormalNamespacePrefix() */
+    /** {@inheritDoc} */
     public String getNormalNamespacePrefix() {
         return "svg";
     }

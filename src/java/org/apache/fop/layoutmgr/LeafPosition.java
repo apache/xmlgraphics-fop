@@ -36,7 +36,7 @@ public class LeafPosition extends Position {
         return getLM() != null;
     }
     
-    /** @see java.lang.Object#toString()*/
+    /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append("LeafPos:").append(getIndex()).append("(");

@@ -231,7 +231,7 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
     }
     
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(LayoutContext, int)
+     * {@inheritDoc} 
      */
     public LinkedList getNextKnuthElements(LayoutContext context,
                                            int alignment) {
@@ -241,7 +241,7 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
     }
     
     /**
-     * @see LeafNodeLayoutManager#makeAlignmentContext(LayoutContext)
+     * {@inheritDoc}
      */
     protected AlignmentContext makeAlignmentContext(LayoutContext context) {
         return new AlignmentContext(
@@ -255,7 +255,7 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager#addId()
+     * {@inheritDoc}
      */
     protected void addId() {
         getPSLM().addIDToPage(fobj.getId());
@@ -271,7 +271,7 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
     // --------- Property Resolution related functions --------- //
     
     /**
-     * @see org.apache.fop.datatypes.PercentBaseContext#getBaseLength(int, FObj)
+     * {@inheritDoc} 
      */
     public int getBaseLength(int lengthBase, FObj fobj) {
         switch (lengthBase) {

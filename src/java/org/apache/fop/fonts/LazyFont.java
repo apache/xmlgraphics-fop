@@ -49,9 +49,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
     
     /**
      * Main constructor
-     * @param fontEmbedPath path to embeddable file (may be null)
-     * @param metricsFileName path to the metrics XML file
-     * @param useKerning True, if kerning should be enabled
+     * @param fontInfo  the font info to embed
      * @param resolver the font resolver to handle font URIs
      */
     public LazyFont(EmbedFontInfo fontInfo, FontResolver resolver) {
@@ -150,7 +148,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
 
     // ---- Font ----
     /**
-     * @see org.apache.fop.fonts.Typeface#getEncoding()
+     * {@inheritDoc}
      */
     public String getEncoding() {
         load(true);
@@ -158,7 +156,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
     }
 
     /**
-     * @see org.apache.fop.fonts.Typeface#mapChar(char)
+     * {@inheritDoc}
      */
     public char mapChar(char c) {
         load(true);
@@ -166,7 +164,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
     }
 
     /**
-     * @see org.apache.fop.fonts.Typeface#hasChar(char)
+     * {@inheritDoc}
      */
     public boolean hasChar(char c) {
         load(true);
@@ -174,7 +172,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
     }
 
     /**
-     * @see org.apache.fop.fonts.Typeface#isMultiByte()
+     * {@inheritDoc}
      */
     public boolean isMultiByte() {
         load(true);
@@ -183,7 +181,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
 
     // ---- FontMetrics interface ----
     /**
-     * @see org.apache.fop.fonts.FontMetrics#getFontName()
+     * {@inheritDoc}
      */
     public String getFontName() {
         load(true);
@@ -191,7 +189,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
     }
 
     /**
-     * @see org.apache.fop.fonts.FontMetrics#getMaxAscent(int)
+     * {@inheritDoc}
      */
     public int getMaxAscent(int size) {
         load(true);
@@ -199,7 +197,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
     }
 
     /**
-     * @see org.apache.fop.fonts.FontMetrics#getAscender(int)
+     * {@inheritDoc}
      */
     public int getAscender(int size) {
         load(true);
@@ -207,7 +205,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
     }
 
     /**
-     * @see org.apache.fop.fonts.FontMetrics#getCapHeight(int)
+     * {@inheritDoc}
      */
     public int getCapHeight(int size) {
         load(true);
@@ -215,7 +213,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
     }
 
     /**
-     * @see org.apache.fop.fonts.FontMetrics#getDescender(int)
+     * {@inheritDoc}
      */
     public int getDescender(int size) {
         load(true);
@@ -223,7 +221,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
     }
 
     /**
-     * @see org.apache.fop.fonts.FontMetrics#getXHeight(int)
+     * {@inheritDoc}
      */
     public int getXHeight(int size) {
         load(true);
@@ -231,7 +229,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
     }
 
     /**
-     * @see org.apache.fop.fonts.FontMetrics#getWidth(int, int)
+     * {@inheritDoc} 
      */
     public int getWidth(int i, int size) {
         load(true);
@@ -239,7 +237,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
     }
 
     /**
-     * @see org.apache.fop.fonts.FontMetrics#getWidths()
+     * {@inheritDoc}
      */
     public int[] getWidths() {
         load(true);
@@ -247,7 +245,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
     }
 
     /**
-     * @see org.apache.fop.fonts.FontMetrics#hasKerningInfo()
+     * {@inheritDoc}
      */
     public boolean hasKerningInfo() {
         load(true);
@@ -255,7 +253,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
     }
 
     /**
-     * @see org.apache.fop.fonts.FontMetrics#getKerningInfo()
+     * {@inheritDoc}
      */
     public Map getKerningInfo() {
         load(true);
@@ -264,7 +262,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
 
     // ---- FontDescriptor interface ----
     /**
-     * @see org.apache.fop.fonts.FontDescriptor#getCapHeight()
+     * {@inheritDoc}
      */
     public int getCapHeight() {
         load(true);
@@ -272,7 +270,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
     }
 
     /**
-     * @see org.apache.fop.fonts.FontDescriptor#getDescender()
+     * {@inheritDoc}
      */
     public int getDescender() {
         load(true);
@@ -280,7 +278,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
     }
 
     /**
-     * @see org.apache.fop.fonts.FontDescriptor#getAscender()
+     * {@inheritDoc}
      */
     public int getAscender() {
         load(true);
@@ -288,7 +286,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
     }
 
     /**
-     * @see org.apache.fop.fonts.FontDescriptor#getFlags()
+     * {@inheritDoc}
      */
     public int getFlags() {
         load(true);
@@ -296,7 +294,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
     }
 
     /**
-     * @see org.apache.fop.fonts.FontDescriptor#getFontBBox()
+     * {@inheritDoc}
      */
     public int[] getFontBBox() {
         load(true);
@@ -304,7 +302,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
     }
 
     /**
-     * @see org.apache.fop.fonts.FontDescriptor#getItalicAngle()
+     * {@inheritDoc}
      */
     public int getItalicAngle() {
         load(true);
@@ -312,7 +310,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
     }
 
     /**
-     * @see org.apache.fop.fonts.FontDescriptor#getStemV()
+     * {@inheritDoc}
      */
     public int getStemV() {
         load(true);
@@ -320,7 +318,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
     }
 
     /**
-     * @see org.apache.fop.fonts.FontDescriptor#getFontType()
+     * {@inheritDoc}
      */
     public FontType getFontType() {
         load(true);
@@ -328,7 +326,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
     }
 
     /**
-     * @see org.apache.fop.fonts.FontDescriptor#isEmbeddable()
+     * {@inheritDoc}
      */
     public boolean isEmbeddable() {
         load(true);

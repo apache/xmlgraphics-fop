@@ -39,11 +39,10 @@ public class PCLRendererConfigurator extends PrintRendererConfigurator {
     }
 
     /**
-     * Configure the TIFF renderer. Get the configuration to be used for
-     * compression
+     * Configure the PCL renderer.
+     * 
      * @param renderer PCL renderer
      * @throws FOPException fop exception
-     * @see org.apache.fop.render.PrintRendererConfigurator#configure(Renderer)
      */
     public void configure(Renderer renderer) throws FOPException {
         Configuration cfg = super.getRendererConfig(renderer);

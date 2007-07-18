@@ -35,17 +35,17 @@ public class XMPMetaElement extends AbstractMetadataElement {
         super(parent);
     }
     
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "xmpmeta";
     }
 
-    /** @see org.apache.fop.fo.FONode#getNormalNamespacePrefix() */
+    /** {@inheritDoc} */
     public String getNormalNamespacePrefix() {
         return "x";
     }
 
-    /** @see org.apache.fop.fo.FONode#getNamespaceURI() */
+    /** {@inheritDoc} */
     public String getNamespaceURI() {
         return XMPConstants.XMP_NAMESPACE;
     }

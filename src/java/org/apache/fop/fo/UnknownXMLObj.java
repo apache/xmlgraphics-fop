@@ -62,18 +62,18 @@ public class UnknownXMLObj extends XMLObj {
         this.namespace = space;
     }
 
-    /** @see org.apache.fop.fo.FONode#getNamespaceURI() */
+    /** {@inheritDoc} */
     public String getNamespaceURI() {
         return this.namespace;
     }
 
-    /** @see org.apache.fop.fo.FONode#getNormalNamespacePrefix() */
+    /** {@inheritDoc} */
     public String getNormalNamespacePrefix() {
         return null; //We don't know that in this case.
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#addChildNode(FONode)
+     * {@inheritDoc}
      */
     protected void addChildNode(FONode child) {
         if (doc == null) {
@@ -83,7 +83,7 @@ public class UnknownXMLObj extends XMLObj {
     }
 
     /**
-     *  @see XMLObj#addCharacters
+     *  {@inheritDoc}
      */
     protected void addCharacters(char data[], int start, int length,
                                  PropertyList pList, Locator locator) {

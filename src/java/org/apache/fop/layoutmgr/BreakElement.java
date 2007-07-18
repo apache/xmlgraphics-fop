@@ -62,12 +62,12 @@ public class BreakElement extends UnresolvedListElement {
         this.pendingAfterMarks = context.getPendingAfterMarks();
     }
     
-    /** @see org.apache.fop.layoutmgr.UnresolvedListElement#isConditional() */
+    /** {@inheritDoc} */
     public boolean isConditional() {
         return false; //Does not really apply here
     }
 
-    /** @see org.apache.fop.layoutmgr.ListElement#isPenalty() */
+    /** {@inheritDoc} */
     /*
     public boolean isPenalty() {
         return true; //not entirely true but a BreakElement will generate a penalty later
@@ -91,7 +91,7 @@ public class BreakElement extends UnresolvedListElement {
         this.penaltyValue = p;
     }
     
-    /** @see org.apache.fop.layoutmgr.ListElement#isForcedBreak() */
+    /** {@inheritDoc} */
     public boolean isForcedBreak() {
         return penaltyValue == -KnuthElement.INFINITE;
     }
@@ -119,7 +119,7 @@ public class BreakElement extends UnresolvedListElement {
         return this.pendingAfterMarks;
     }
     
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append("BreakPossibility[p:");
