@@ -538,7 +538,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
      */
     private static boolean isSpace(final char ch) {
         return ch == CharUtilities.SPACE
-            || ch == CharUtilities.NBSPACE
+            || CharUtilities.isNonBreakableSpace(ch)
             || CharUtilities.isFixedWidthSpace(ch);
     }
     
@@ -689,7 +689,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                         (short) 1, (short) 0,
                         wordSpaceIPD, false, true, breakOpportunity);
                 iThisStart = (short) (iNextStart + 1);
-            } else if (CharUtilities.isFixedWidthSpace(ch)) {
+            } else if (CharUtilities.isFixedWidthSpace(ch) || CharUtilities.isZeroWidthSpace(ch)) {
                 // create the AreaInfo object
                 MinOptMax ipd = new MinOptMax(font.getCharWidth(ch));
                 ai = new AreaInfo(iNextStart, (short) (iNextStart + 1),
