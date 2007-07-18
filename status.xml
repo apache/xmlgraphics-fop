@@ -28,6 +28,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="code" dev="MM" type="add">
+        Support for keep-together.within-line="always".
+      </action>
       <action context="Code" dev="MM" type="fix">
         Fixed incomplete support for Unicode Word Joiner characters (U+2060 and U+FEFF).
       </action>
