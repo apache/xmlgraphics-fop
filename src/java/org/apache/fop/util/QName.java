@@ -99,12 +99,12 @@ public class QName implements Serializable {
         return getPrefix() != null ? getPrefix() + ':' + getLocalName() : getLocalName();
     }
 
-    /** @inheritDoc java.lang.Object#hashCode() */
+    /** {@inheritDoc} */
     public int hashCode() {
         return this.hashCode;
     }
 
-    /** @inheritDoc java.lang.Object#equals(java.lang.Object) */
+    /** {@inheritDoc} */
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -122,7 +122,7 @@ public class QName implements Serializable {
         return false;
     }
 
-    /** @inheritDoc java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         return prefix != null
                 ? (prefix + ":" + localName)

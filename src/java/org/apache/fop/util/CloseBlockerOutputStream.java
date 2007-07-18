@@ -36,7 +36,7 @@ public class CloseBlockerOutputStream extends FilterOutputStream {
     }
 
     /**
-     * @inheritDoc java.io.OutputStream#close()
+     * {@inheritDoc}
      */
     public void close() throws IOException {
         try {

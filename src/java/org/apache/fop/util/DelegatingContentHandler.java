@@ -106,7 +106,7 @@ public class DelegatingContentHandler
     // ==== EntityResolver
     
     /**
-     * @inheritDoc org.xml.sax.EntityResolver#resolveEntity(java.lang.String, java.lang.String)
+     * {@inheritDoc}
      */
     public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
         if (entityResolver != null) {
@@ -119,7 +119,7 @@ public class DelegatingContentHandler
     // ==== DTDHandler
 
     /**
-     * @inheritDoc org.xml.sax.DTDHandler#notationDecl(java.lang.String, java.lang.String, java.lang.String)
+     * {@inheritDoc}
      */
     public void notationDecl(String name, String publicId, String systemId) throws SAXException {
         if (dtdHandler != null) {
@@ -128,7 +128,7 @@ public class DelegatingContentHandler
     }
 
     /**
-     * @inheritDoc org.xml.sax.DTDHandler#unparsedEntityDecl(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+     * {@inheritDoc}
      */
     public void unparsedEntityDecl(String name, String publicId, String systemId, 
             String notationName) throws SAXException {
@@ -140,42 +140,42 @@ public class DelegatingContentHandler
     // ==== ContentHandler
     
     /**
-     * @inheritDoc org.xml.sax.ContentHandler#setDocumentLocator(org.xml.sax.Locator)
+     * {@inheritDoc}
      */
     public void setDocumentLocator(Locator locator) {
         delegate.setDocumentLocator(locator);
     }
 
     /**
-     * @inheritDoc org.xml.sax.ContentHandler#startDocument()
+     * {@inheritDoc}
      */
     public void startDocument() throws SAXException {
         delegate.startDocument();
     }
 
     /**
-     * @inheritDoc org.xml.sax.ContentHandler#endDocument()
+     * {@inheritDoc}
      */
     public void endDocument() throws SAXException {
         delegate.endDocument();
     }
 
     /**
-     * @inheritDoc org.xml.sax.ContentHandler#startPrefixMapping(java.lang.String, java.lang.String)
+     * {@inheritDoc}
      */
     public void startPrefixMapping(String prefix, String uri) throws SAXException {
         delegate.startPrefixMapping(prefix, uri);
     }
 
     /**
-     * @inheritDoc org.xml.sax.ContentHandler#endPrefixMapping(java.lang.String)
+     * {@inheritDoc}
      */
     public void endPrefixMapping(String prefix) throws SAXException {
         delegate.endPrefixMapping(prefix);
     }
 
     /**
-     * @inheritDoc org.xml.sax.ContentHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
+     * {@inheritDoc}
      */
     public void startElement(String uri, String localName, String qName, 
                 Attributes atts) throws SAXException {
@@ -183,35 +183,35 @@ public class DelegatingContentHandler
     }
 
     /**
-     * @inheritDoc org.xml.sax.ContentHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
+     * {@inheritDoc}
      */
     public void endElement(String uri, String localName, String qName) throws SAXException {
         delegate.endElement(uri, localName, qName);
     }
 
     /**
-     * @inheritDoc org.xml.sax.ContentHandler#characters(char[], int, int)
+     * {@inheritDoc}
      */
     public void characters(char[] ch, int start, int length) throws SAXException {
         delegate.characters(ch, start, length);
     }
 
     /**
-     * @inheritDoc org.xml.sax.ContentHandler#ignorableWhitespace(char[], int, int)
+     * {@inheritDoc}
      */
     public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {
         delegate.ignorableWhitespace(ch, start, length);
     }
 
     /**
-     * @inheritDoc org.xml.sax.ContentHandler#processingInstruction(java.lang.String, java.lang.String)
+     * {@inheritDoc}
      */
     public void processingInstruction(String target, String data) throws SAXException {
         delegate.processingInstruction(target, data);
     }
 
     /**
-     * @inheritDoc org.xml.sax.ContentHandler#skippedEntity(java.lang.String)
+     * {@inheritDoc}
      */
     public void skippedEntity(String name) throws SAXException {
         delegate.skippedEntity(name);
@@ -220,7 +220,7 @@ public class DelegatingContentHandler
     // ==== LexicalHandler
     
     /**
-     * @inheritDoc org.xml.sax.ext.LexicalHandler#startDTD(java.lang.String, java.lang.String, java.lang.String)
+     * {@inheritDoc}
      */
     public void startDTD(String name, String publicId, String systemId) throws SAXException {
         if (lexicalHandler != null) {
@@ -230,7 +230,7 @@ public class DelegatingContentHandler
     }
 
     /**
-     * @inheritDoc org.xml.sax.ext.LexicalHandler#endDTD()
+     * {@inheritDoc}
      */
     public void endDTD() throws SAXException {
         if (lexicalHandler != null) {
@@ -239,7 +239,7 @@ public class DelegatingContentHandler
     }
 
     /**
-     * @inheritDoc org.xml.sax.ext.LexicalHandler#startEntity(java.lang.String)
+     * {@inheritDoc}
      */
     public void startEntity(String name) throws SAXException {
         if (lexicalHandler != null) {
@@ -248,7 +248,7 @@ public class DelegatingContentHandler
     }
 
     /**
-     * @inheritDoc org.xml.sax.ext.LexicalHandler#endEntity(java.lang.String)
+     * {@inheritDoc}
      */
     public void endEntity(String name) throws SAXException {
         if (lexicalHandler != null) {
@@ -257,7 +257,7 @@ public class DelegatingContentHandler
     }
 
     /**
-     * @inheritDoc org.xml.sax.ext.LexicalHandler#startCDATA()
+     * {@inheritDoc}
      */
     public void startCDATA() throws SAXException {
         if (lexicalHandler != null) {
@@ -266,7 +266,7 @@ public class DelegatingContentHandler
     }
 
     /**
-     * @inheritDoc org.xml.sax.ext.LexicalHandler#endCDATA()
+     * {@inheritDoc}
      */
     public void endCDATA() throws SAXException {
         if (lexicalHandler != null) {
@@ -275,7 +275,7 @@ public class DelegatingContentHandler
     }
 
     /**
-     * @inheritDoc org.xml.sax.ext.LexicalHandler#comment(char[], int, int)
+     * {@inheritDoc} int, int)
      */
     public void comment(char[] ch, int start, int length) throws SAXException {
         if (lexicalHandler != null) {
@@ -286,7 +286,7 @@ public class DelegatingContentHandler
     // ==== ErrorHandler
 
     /**
-     * @inheritDoc org.xml.sax.ErrorHandler#warning(org.xml.sax.SAXParseException)
+     * {@inheritDoc}
      */
     public void warning(SAXParseException exception) throws SAXException {
         if (errorHandler != null) {
@@ -295,7 +295,7 @@ public class DelegatingContentHandler
     }
 
     /**
-     * @inheritDoc org.xml.sax.ErrorHandler#error(org.xml.sax.SAXParseException)
+     * {@inheritDoc}
      */
     public void error(SAXParseException exception) throws SAXException {
         if (errorHandler != null) {
@@ -304,7 +304,7 @@ public class DelegatingContentHandler
     }
 
     /**
-     * @inheritDoc org.xml.sax.ErrorHandler#fatalError(org.xml.sax.SAXParseException)
+     * {@inheritDoc}
      */
     public void fatalError(SAXParseException exception) throws SAXException {
         if (errorHandler != null) {
