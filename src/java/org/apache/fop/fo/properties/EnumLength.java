@@ -32,7 +32,7 @@ public class EnumLength extends LengthProperty {
     }
 
     /**
-     * @see org.apache.fop.datatypes.Numeric#getEnum()
+     * {@inheritDoc}
      */
     public int getEnum() {
         return enumProperty.getEnum();
@@ -43,7 +43,7 @@ public class EnumLength extends LengthProperty {
     }
 
     /**
-     * @see org.apache.fop.datatypes.Numeric#getValue()
+     * {@inheritDoc}
      */
     public int getValue() {
         log.error("getValue() called on " + enumProperty + " length");
@@ -51,7 +51,7 @@ public class EnumLength extends LengthProperty {
     }
 
     /**
-     * @see org.apache.fop.datatypes.Numeric#getValue(PercentBaseContext)
+     * {@inheritDoc}
      */
     public int getValue(PercentBaseContext context) {
         log.error("getValue() called on " + enumProperty + " length");
@@ -59,7 +59,7 @@ public class EnumLength extends LengthProperty {
     }
 
     /**
-     * @see org.apache.fop.datatypes.Numeric#getNumericValue()
+     * {@inheritDoc}
      */
     public double getNumericValue() {
         log.error("getNumericValue() called on " + enumProperty + " number");
@@ -67,7 +67,7 @@ public class EnumLength extends LengthProperty {
     }
 
     /**
-     * @see org.apache.fop.datatypes.Numeric#getNumericValue()
+     * {@inheritDoc}
      */
     public double getNumericValue(PercentBaseContext context) {
         log.error("getNumericValue() called on " + enumProperty + " number");
@@ -75,14 +75,14 @@ public class EnumLength extends LengthProperty {
     }
 
     /**
-     * @see org.apache.fop.fo.properties.Property#getString()
+     * {@inheritDoc}
      */
     public String getString() {
         return enumProperty.toString();
     }
 
     /**
-     * @see org.apache.fop.fo.properties.Property#getString()
+     * {@inheritDoc}
      */
     public Object getObject() {
         return enumProperty.getObject();

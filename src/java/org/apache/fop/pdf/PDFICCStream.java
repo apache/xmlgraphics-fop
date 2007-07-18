@@ -57,7 +57,7 @@ public class PDFICCStream extends PDFStream {
     /**
      * overload the base object method so we don't have to copy
      * byte arrays around so much
-     * @see org.apache.fop.pdf.PDFObject#output(OutputStream)
+     * {@inheritDoc}
      */
     protected int output(java.io.OutputStream stream)
                 throws java.io.IOException {
@@ -67,14 +67,14 @@ public class PDFICCStream extends PDFStream {
     }
     
     /**
-     * @see org.apache.fop.pdf.PDFStream#outputRawStreamData(OutputStream)
+     * {@inheritDoc}
      */
     protected void outputRawStreamData(OutputStream out) throws IOException {
         cp.write(out);
     }
     
     /**
-     * @see org.apache.fop.pdf.AbstractPDFStream#buildStreamDict(String)
+     * {@inheritDoc}
      */
     protected String buildStreamDict(String lengthEntry) {
         final String filterEntry = getFilterList().buildFilterDictEntries();

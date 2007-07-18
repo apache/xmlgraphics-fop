@@ -52,7 +52,7 @@ public class PDFText extends PDFObject {
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFObject#toPDFString()
+     * {@inheritDoc}
      */
     protected String toPDFString() {
         if (getText() == null) {

@@ -82,7 +82,7 @@ public class PDFXObject extends AbstractPDFStream {
     }
 
     /**
-     * @see org.apache.fop.pdf.AbstractPDFStream#buildStreamDict(String)
+     * {@inheritDoc}
      */
     protected String buildStreamDict(String lengthEntry) {
         String dictEntries = getFilterList().buildFilterDictEntries();
@@ -164,21 +164,21 @@ public class PDFXObject extends AbstractPDFStream {
     }
     
     /**
-     * @see org.apache.fop.pdf.PDFStream#outputRawStreamData(OutputStream)
+     * {@inheritDoc}
      */
     protected void outputRawStreamData(OutputStream out) throws IOException {
         pdfimage.outputContents(out);
     }
 
     /**
-     * @see org.apache.fop.pdf.AbstractPDFStream#getSizeHint()
+     * {@inheritDoc}
      */
     protected int getSizeHint() throws IOException {
         return 0;
     }
 
     /**
-     * @see org.apache.fop.pdf.AbstractPDFStream#prepareImplicitFilters()
+     * {@inheritDoc}
      */
     protected void prepareImplicitFilters() {
         PDFFilter pdfFilter = pdfimage.getPDFFilter();
@@ -190,7 +190,7 @@ public class PDFXObject extends AbstractPDFStream {
     /**
      * This sets up the default filters for XObjects. It uses the PDFImage
      * instance to determine what default filters to apply.
-     * @see org.apache.fop.pdf.AbstractPDFStream#setupFilterList()
+     * {@inheritDoc}
      */
     protected void setupFilterList() {
         if (!getFilterList().isInitialized()) {

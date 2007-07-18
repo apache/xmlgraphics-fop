@@ -36,7 +36,7 @@ public class NonLeafPosition extends Position {
         return (subPos != null ? subPos.generatesAreas() : false);
     }
     
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append("NonLeafPos:").append(getIndex()).append("(");

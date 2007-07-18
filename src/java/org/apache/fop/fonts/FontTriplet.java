@@ -71,17 +71,17 @@ public class FontTriplet implements Comparable, Serializable {
         return this.key;
     }
     
-    /** @see java.lang.Comparable#compareTo(java.lang.Object) */
+    /** {@inheritDoc} */
     public int compareTo(Object o) {
         return getKey().compareTo(((FontTriplet)o).getKey());
     }
 
-    /** @see java.lang.Object#hashCode() */
+    /** {@inheritDoc} */
     public int hashCode() {
         return toString().hashCode();
     }
 
-    /** @see java.lang.Object#equals(java.lang.Object) */
+    /** {@inheritDoc} */
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -98,7 +98,7 @@ public class FontTriplet implements Comparable, Serializable {
         return false;
     }
 
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         return getKey();
     }

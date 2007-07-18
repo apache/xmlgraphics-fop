@@ -89,7 +89,7 @@ public class TIFFRenderer extends Java2DRenderer {
     
     private OutputStream outputStream;
 
-    /** @see org.apache.fop.render.AbstractRenderer */
+    /** {@inheritDoc} */
     public String getMimeType() {
         return MIME_TYPE;
     }
@@ -101,7 +101,7 @@ public class TIFFRenderer extends Java2DRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.java2d.Java2DRenderer#setUserAgent(
+     * {@inheritDoc}
      *          org.apache.fop.apps.FOUserAgent)
      */
     public void setUserAgent(FOUserAgent foUserAgent) {
@@ -112,13 +112,13 @@ public class TIFFRenderer extends Java2DRenderer {
         writerParams.setResolution(dpi);
     }
 
-    /** @see org.apache.fop.render.Renderer#startRenderer(java.io.OutputStream) */
+    /** {@inheritDoc} */
     public void startRenderer(OutputStream outputStream) throws IOException {
         this.outputStream = outputStream;
         super.startRenderer(outputStream);
     }
 
-    /** @see org.apache.fop.render.Renderer#stopRenderer() */
+    /** {@inheritDoc} */
     public void stopRenderer() throws IOException {
         super.stopRenderer();
         log.debug("Starting TIFF encoding ...");
@@ -156,7 +156,7 @@ public class TIFFRenderer extends Java2DRenderer {
         log.debug("TIFF encoding done.");
     }
     
-    /** @see org.apache.fop.render.java2d.Java2DRenderer#getBufferedImage(int, int) */
+    /** {@inheritDoc} */
     protected BufferedImage getBufferedImage(int bitmapWidth, int bitmapHeight) {
         return new BufferedImage(bitmapWidth, bitmapHeight, bufferedImageType);
     }

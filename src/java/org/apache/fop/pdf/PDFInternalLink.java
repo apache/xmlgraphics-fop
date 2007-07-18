@@ -46,7 +46,7 @@ public class PDFInternalLink extends PDFAction {
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFObject#toPDFString()
+     * {@inheritDoc}
      */
     protected String toPDFString() {
         throw new UnsupportedOperationException("This method should not be called");

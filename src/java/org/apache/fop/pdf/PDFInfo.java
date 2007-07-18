@@ -159,7 +159,7 @@ public class PDFInfo extends PDFObject {
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFObject#toPDF()
+     * {@inheritDoc}
      */
     public byte[] toPDF() {
         PDFProfile profile = getDocumentSafely().getProfile(); 

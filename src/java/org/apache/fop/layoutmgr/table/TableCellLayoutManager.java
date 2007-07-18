@@ -94,7 +94,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
         return getTable().isSeparateBorderModel();
     }
 
-    /** @see org.apache.fop.layoutmgr.LayoutManager#initialize() */
+    /** {@inheritDoc} */
     public void initialize() {
         borderAndPaddingBPD = 0;
         borderAndPaddingBPD += getTableCell()
@@ -122,7 +122,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
     }
 
 
-    /** @see org.apache.fop.layoutmgr.BlockStackingLayoutManager#getIPIndents() */
+    /** {@inheritDoc} */
     protected int getIPIndents() {
         int iIndents = 0;
         int[] startEndBorderWidths = primaryGridUnit.getStartEndBorderWidths();
@@ -139,7 +139,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager
+     * {@inheritDoc}
      */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         MinOptMax stackLimit = new MinOptMax(context.getStackLimit());
@@ -517,7 +517,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager
+     * {@inheritDoc}
      */
     public int negotiateBPDAdjustment(int adj, KnuthElement lastElement) {
         // TODO Auto-generated method stub
@@ -525,14 +525,14 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager
+     * {@inheritDoc}
      */
     public void discardSpace(KnuthGlue spaceGlue) {
         // TODO Auto-generated method stub
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepTogether()
+     * {@inheritDoc}
      */
     public boolean mustKeepTogether() {
         //TODO Keeps will have to be more sophisticated sooner or later
@@ -544,7 +544,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepWithPrevious()
+     * {@inheritDoc}
      */
     public boolean mustKeepWithPrevious() {
         return false; //TODO FIX ME
@@ -555,7 +555,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepWithNext()
+     * {@inheritDoc}
      */
     public boolean mustKeepWithNext() {
         return false; //TODO FIX ME
@@ -589,14 +589,14 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#getGeneratesReferenceArea
+     * {@inheritDoc}
      */
     public boolean getGeneratesReferenceArea() {
         return true;
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#getGeneratesBlockArea
+     * {@inheritDoc}
      */
     public boolean getGeneratesBlockArea() {
         return true;

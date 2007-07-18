@@ -68,7 +68,7 @@ public abstract class AbstractBaseLayoutManager
     // --------- Property Resolution related functions --------- //
     
     /**
-     * @see org.apache.fop.datatypes.PercentBaseContext#getBaseLength(int, FObj)
+     * {@inheritDoc} 
      */
     public int getBaseLength(int lengthBase, FObj fobj) {
         if (fobj == this.fobj) {
@@ -202,9 +202,7 @@ public abstract class AbstractBaseLayoutManager
     }
 
     /**
-     * Returns the IPD of the content area
-     * @return the IPD of the content area
-     * @see LayoutManager#getContentAreaIPD
+     * {@inheritDoc}
      */
     public int getContentAreaIPD() {
         log.error("getContentAreaIPD called when it should have been overwritten");
@@ -212,9 +210,7 @@ public abstract class AbstractBaseLayoutManager
     }
    
     /**
-     * Returns the BPD of the content area
-     * @return the BPD of the content area
-     * @see LayoutManager#getContentAreaBPD
+     * {@inheritDoc}
      */
     public int getContentAreaBPD() {
         log.error("getContentAreaBPD called when it should have been overwritten");
@@ -222,7 +218,7 @@ public abstract class AbstractBaseLayoutManager
     }
     
     /**
-     * @see LayoutManager#getGeneratesReferenceArea
+     * {@inheritDoc}
      */
     public boolean getGeneratesReferenceArea() {
         return generatesReferenceArea;
@@ -239,7 +235,7 @@ public abstract class AbstractBaseLayoutManager
     }
    
     /**
-     * @see LayoutManager#getGeneratesBlockArea
+     * {@inheritDoc}
      */
     public boolean getGeneratesBlockArea() {
         return generatesBlockArea;
@@ -255,14 +251,14 @@ public abstract class AbstractBaseLayoutManager
     }
    
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#getGeneratesLineArea
+     * {@inheritDoc}
      */
     public boolean getGeneratesLineArea() {
         return false;
     }
     
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#getFObj
+     * {@inheritDoc}
      */
     public FObj getFObj() {
         return fobj;

@@ -29,21 +29,21 @@ import java.io.OutputStream;
 public class NullFilter extends PDFFilter {
 
     /**
-     * @see org.apache.fop.pdf.PDFFilter#getName()
+     * {@inheritDoc}
      */
     public String getName() {
         return "";
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFFilter#getDecodeParms()
+     * {@inheritDoc}
      */
     public String getDecodeParms() {
         return null;
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFFilter#applyFilter(OutputStream)
+     * {@inheritDoc}
      */
     public OutputStream applyFilter(OutputStream out) throws IOException {
         return out;

@@ -26,11 +26,10 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.KeepProperty;
 
 /**
- * Class modelling the fo:list-item-body object.
+ * Common superclass for list-item-label and list-item-body.
  */
 public abstract class AbstractListItemPart extends FObj {
     // The value of properties relevant for fo:list-item-label and fo:list-item-body.
@@ -50,7 +49,7 @@ public abstract class AbstractListItemPart extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
@@ -58,7 +57,7 @@ public abstract class AbstractListItemPart extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc}
      * XSL Content Model: marker* (%block;)+
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
@@ -75,7 +74,7 @@ public abstract class AbstractListItemPart extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#endOfNode
+     * {@inheritDoc}
      */
     protected void endOfNode() throws FOPException {
         if (!this.blockItemFound) {

@@ -53,7 +53,7 @@ class GridUnitPart {
         return (end >= 0 && end == pgu.getElements().size() - 1);
     }
 
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer("Part: ");
         sb.append(start).append("-").append(end);

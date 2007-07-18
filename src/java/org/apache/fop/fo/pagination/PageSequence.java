@@ -92,7 +92,7 @@ public class PageSequence extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
@@ -112,7 +112,7 @@ public class PageSequence extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#startOfNode()
+     * {@inheritDoc}
      */
     protected void startOfNode() throws FOPException {
         super.startOfNode();
@@ -136,7 +136,7 @@ public class PageSequence extends FObj {
         getFOEventHandler().startPageSequence(this);
     }
 
-    /** @see org.apache.fop.fo.FONode#endOfNode() */
+    /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         if (mainFlow == null) {
            missingChildElementError("(title?,static-content*,flow)");
@@ -146,7 +146,7 @@ public class PageSequence extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc}
         XSL Content Model: (title?,static-content*,flow)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
@@ -177,7 +177,7 @@ public class PageSequence extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#addChildNode(FONode)
+     * {@inheritDoc}
      * @todo see if addChildNode() should also be called for fo's other than
      *  fo:flow.
      */
@@ -501,12 +501,12 @@ public class PageSequence extends FObj {
         return masterReference;
     }
 
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "page-sequence";
     }
 
-    /** @see org.apache.fop.fo.FObj#getNameId() */
+    /** {@inheritDoc} */
     public int getNameId() {
         return FO_PAGE_SEQUENCE;
     }

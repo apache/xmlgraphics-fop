@@ -146,7 +146,7 @@ public class PCLRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#setupFontInfo(org.apache.fop.fonts.FontInfo)
+     * {@inheritDoc}
      */
     public void setupFontInfo(FontInfo inFontInfo) {
         //Don't call super.setupFontInfo() here!
@@ -173,7 +173,7 @@ public class PCLRenderer extends PrintRenderer {
         }
     }
 
-    /** @see org.apache.fop.render.Renderer#getGraphics2DAdapter() */
+    /** {@inheritDoc} */
     public Graphics2DAdapter getGraphics2DAdapter() {
         return new PCLGraphics2DAdapter();
     }
@@ -312,7 +312,7 @@ public class PCLRenderer extends PrintRenderer {
         return true;
     }
 
-    /** @see org.apache.fop.render.Renderer#startRenderer(java.io.OutputStream) */
+    /** {@inheritDoc} */
     public void startRenderer(OutputStream outputStream) throws IOException {
         log.debug("Rendering areas to PCL...");
         this.out = outputStream;
@@ -330,20 +330,20 @@ public class PCLRenderer extends PrintRenderer {
         gen.setRasterGraphicsResolution(getResolution());
     }
 
-    /** @see org.apache.fop.render.Renderer#stopRenderer() */
+    /** {@inheritDoc} */
     public void stopRenderer() throws IOException {
         gen.separateJobs();
         gen.resetPrinter();
         gen.universalEndOfLanguage();
     }
 
-    /** @see org.apache.fop.render.AbstractRenderer */
+    /** {@inheritDoc} */
     public String getMimeType() {
         return MIME_TYPE;
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderPage(org.apache.fop.area.PageViewport)
+     * {@inheritDoc}
      */
     public void renderPage(PageViewport page) throws IOException, FOPException {
         saveGraphicsState();
@@ -492,7 +492,7 @@ public class PCLRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#startVParea(CTM, Rectangle2D)
+     * {@inheritDoc}
      */
     protected void startVParea(CTM ctm, Rectangle2D clippingRect) {
         saveGraphicsState();
@@ -505,7 +505,7 @@ public class PCLRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#endVParea()
+     * {@inheritDoc}
      */
     protected void endVParea() {
         restoreGraphicsState();
@@ -544,7 +544,7 @@ public class PCLRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderText(TextArea)
+     * {@inheritDoc}
      */
     protected void renderText(final TextArea text) {
         renderInlineAreaBackAndBorders(text);
@@ -694,9 +694,7 @@ public class PCLRenderer extends PrintRenderer {
         }
     }
 
-    /**
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer#clip()
-     */
+    /** Clip using the current path. */
     protected void clip() {
         if (currentPath == null) {
             throw new IllegalStateException("No current path available!");
@@ -706,14 +704,18 @@ public class PCLRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer#closePath()
+     * Closes the current subpath by appending a straight line segment from 
+     * the current point to the starting point of the subpath.
      */
     protected void closePath() {
         currentPath.closePath();
     }
 
     /**
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer#lineTo(float, float)
+     * Appends a straight line segment from the current point to (x, y). The 
+     * new current point is (x, y). 
+     * @param x x coordinate
+     * @param y y coordinate
      */
     protected void lineTo(float x, float y) {
         if (currentPath == null) {
@@ -723,7 +725,9 @@ public class PCLRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer#moveTo(float, float)
+     * Moves the current point to (x, y), omitting any connecting line segment. 
+     * @param x x coordinate
+     * @param y y coordinate
      */
     protected void moveTo(float x, float y) {
         if (currentPath == null) {
@@ -758,7 +762,7 @@ public class PCLRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderWord(org.apache.fop.area.inline.WordArea)
+     * {@inheritDoc}
      */
     protected void renderWord(WordArea word) {
         //Font font = getFontFromArea(word.getParentArea());
@@ -775,7 +779,7 @@ public class PCLRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderSpace(org.apache.fop.area.inline.SpaceArea)
+     * {@inheritDoc}
      */
     protected void renderSpace(SpaceArea space) {
         AbstractTextArea textArea = (AbstractTextArea)space.getParentArea();
@@ -832,7 +836,7 @@ public class PCLRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderBlockViewport(BlockViewport, List)
+     * {@inheritDoc}
      */
     protected void renderBlockViewport(BlockViewport bv, List children) {
         // clip and position viewport if necessary
@@ -959,7 +963,7 @@ public class PCLRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderImage(Image, Rectangle2D)
+     * {@inheritDoc}
      */
     public void renderImage(Image image, Rectangle2D pos) {
         drawImage(image.getURL(), pos, image.getForeignAttributes());
@@ -1037,7 +1041,7 @@ public class PCLRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderForeignObject(ForeignObject, Rectangle2D)
+     * {@inheritDoc}
      */
     public void renderForeignObject(ForeignObject fo, Rectangle2D pos) {
         Document doc = fo.getDocument();

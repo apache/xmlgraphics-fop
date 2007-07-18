@@ -74,21 +74,21 @@ public class PercentLength extends LengthProperty {
 
     /**
      * Return false because percent-length are always relative.
-     * @see org.apache.fop.datatypes.Numeric#isAbsolute()
+     * {@inheritDoc}
      */
     public boolean isAbsolute() {
         return false;
     }
 
     /**
-     * @see org.apache.fop.datatypes.Numeric#getNumericValue()
+     * {@inheritDoc}
      */
     public double getNumericValue() {
         return getNumericValue(null);
     }
 
     /**
-     * @see org.apache.fop.datatypes.Numeric#getNumericValue(PercentBaseContext)
+     * {@inheritDoc}
      */
     public double getNumericValue(PercentBaseContext context) {
         try {
@@ -102,14 +102,14 @@ public class PercentLength extends LengthProperty {
 
     /**
      * Return the length of this PercentLength.
-     * @see org.apache.fop.datatypes.Length#getValue() 
+     * {@inheritDoc} 
      */
     public int getValue() {
         return (int) getNumericValue();
     }
 
     /**
-     * @see org.apache.fop.datatypes.Numeric#getValue(PercentBaseContext)
+     * {@inheritDoc}
      */
     public int getValue(PercentBaseContext context) {
         return (int) getNumericValue(context);

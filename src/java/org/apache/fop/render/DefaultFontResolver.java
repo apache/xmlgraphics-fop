@@ -39,7 +39,7 @@ public class DefaultFontResolver implements FontResolver {
         this.userAgent = userAgent;
     }
     
-    /** @see org.apache.fop.fonts.FontResolver#resolve(java.lang.String) */
+    /** {@inheritDoc} */
     public Source resolve(String href) {
         return userAgent.resolveURI(href, userAgent.getFontBaseURL());
     }

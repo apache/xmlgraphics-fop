@@ -67,7 +67,7 @@ public class InMemoryStreamCache implements StreamCache {
     }
 
     /**
-     * @see org.apache.fop.pdf.StreamCache#write(byte[])
+     * {@inheritDoc}
      */
     public void write(byte[] data) throws IOException {
         getOutputStream().write(data);

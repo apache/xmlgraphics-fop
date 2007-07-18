@@ -49,7 +49,7 @@ public class PDFGraphics2DAdapter extends AbstractGraphics2DAdapter {
         this.renderer = renderer;
     }
     
-    /** @see org.apache.fop.render.Graphics2DAdapter */
+    /** {@inheritDoc} */
     public void paintImage(Graphics2DImagePainter painter,
             RendererContext context,
             int x, int y, int width, int height) throws IOException {
@@ -117,10 +117,7 @@ public class PDFGraphics2DAdapter extends AbstractGraphics2DAdapter {
         pdfInfo.pdfState.pop();
     }
 
-    /**
-     * @see org.apache.fop.render.AbstractGraphics2DAdapter#setRenderingHintsForBufferedImage(
-     *              java.awt.Graphics2D)
-     */
+    /** {@inheritDoc} */
     protected void setRenderingHintsForBufferedImage(Graphics2D g2d) {
         super.setRenderingHintsForBufferedImage(g2d);
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 

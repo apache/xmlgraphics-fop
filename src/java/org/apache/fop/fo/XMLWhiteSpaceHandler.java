@@ -22,7 +22,6 @@ package org.apache.fop.fo;
 import java.util.List;
 import java.util.Stack;
 import org.apache.fop.fo.flow.Block;
-import org.apache.fop.fo.flow.Character;
 import org.apache.fop.util.CharUtilities;
 
 /**
@@ -50,12 +49,9 @@ import org.apache.fop.util.CharUtilities;
  * <br>
  * The iteration always starts at <code>firstTextNode</code>, 
  * goes on until the last text-node is reached, and deals only 
- * with FOText nodes (characters are immediately removed) or 
- * Character nodes (characters are kept track of and removed 
- * from the list of child nodes later, when the iterator goes 
- * out of scope)
- * 
- * Note: if the method is called from an inline's endOfNode(),
+ * with <code>FOText</code> or <code>Character</code> nodes.
+ * <br>
+ * <em>Note</em>: if the method is called from an inline's endOfNode(),
  *   there is too little context to decide whether trailing
  *   white-space may be removed, so the pending inline is stored
  *   in a List, together with an iterator for which the next()

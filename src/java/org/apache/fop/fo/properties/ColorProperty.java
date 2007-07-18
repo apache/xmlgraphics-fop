@@ -65,9 +65,6 @@ public class ColorProperty extends Property  {
          *         can't be converted to the correct type.
          * @throws PropertyException
          *             for invalid or inconsistent FO input
-         * @see org.apache.fop.fo.properties.PropertyMaker#convertProperty(
-         *          org.apache.fop.fo.properties.Property,
-         *      org.apache.fop.fo.PropertyList, org.apache.fop.fo.FObj)
          */
         public Property convertProperty(Property p,
                                         PropertyList propertyList, FObj fo) 
@@ -93,7 +90,7 @@ public class ColorProperty extends Property  {
      * @param foUserAgent FOP user agent
      * @param value RGB value as String to be parsed
      * @throws PropertyException if the value can't be parsed
-     * @see ColorUtil#parseColorString(String)
+     * @see ColorUtil#parseColorString(FOUserAgent, String)
      */
     public ColorProperty(FOUserAgent foUserAgent, String value) throws PropertyException {
         this.color = ColorUtil.parseColorString(foUserAgent, value);
@@ -118,7 +115,7 @@ public class ColorProperty extends Property  {
     }
 
     /**
-     * @see java.lang.Object#toString()
+     * {@inheritDoc}
      */
     public String toString() {
         return ColorUtil.colorToString(color);

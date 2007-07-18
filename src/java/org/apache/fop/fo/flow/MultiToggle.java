@@ -27,7 +27,6 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.fo.properties.CommonAccessibility;
 
 
 /**
@@ -54,7 +53,7 @@ public class MultiToggle extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         // prSwitchTo = pList.get(PR_SWITCH_TO);
@@ -62,7 +61,7 @@ public class MultiToggle extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc}
      * XSL Content Model: (#PCDATA|%inline;|%block;)*
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
@@ -72,13 +71,13 @@ public class MultiToggle extends FObj {
         }
     }
 
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "multi-toggle";
     }
     
     /**
-     * @see org.apache.fop.fo.FObj#getNameId()
+     * {@inheritDoc}
      */
     public int getNameId() {
         return FO_MULTI_TOGGLE;

@@ -48,8 +48,6 @@ import java.io.StringWriter;
  * is used to create a full document around the pdf rendering from
  * <tt>PDFGraphics2D</tt>.
  *
- * @author <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
- * @version $Id$
  * @see org.apache.fop.svg.PDFGraphics2D
  */
 public class PDFDocumentGraphics2D extends PDFGraphics2D {

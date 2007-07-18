@@ -59,7 +59,7 @@ public abstract class AbstractGenericSVGHandler implements XMLHandler, RendererC
     /** logging instance */
     private static Log log = LogFactory.getLog(AbstractGenericSVGHandler.class);
 
-    /** @see org.apache.fop.render.XMLHandler */
+    /** {@inheritDoc} */
     public void handleXML(RendererContext context, 
                 Document doc, String ns) throws Exception {
 
@@ -123,7 +123,7 @@ public abstract class AbstractGenericSVGHandler implements XMLHandler, RendererC
                 x, y, wrappedContext.getWidth(), wrappedContext.getHeight()); 
     }
 
-    /** @see org.apache.fop.render.XMLHandler#getNamespace() */
+    /** {@inheritDoc} */
     public String getNamespace() {
         return SVGDOMImplementation.SVG_NAMESPACE_URI;
     }

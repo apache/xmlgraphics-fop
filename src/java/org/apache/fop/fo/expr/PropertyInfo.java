@@ -45,7 +45,6 @@ public class PropertyInfo {
      * Constructor
      * @param maker Property.Maker object
      * @param plist PropertyList object
-     * @param fo FObj
      */
     public PropertyInfo(PropertyMaker maker, PropertyList plist) {
         this.maker = maker;

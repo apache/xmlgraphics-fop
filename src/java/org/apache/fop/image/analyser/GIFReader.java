@@ -37,7 +37,7 @@ public class GIFReader implements ImageReader {
 
     private static final int GIF_SIG_LENGTH = 10;
 
-    /** @see org.apache.fop.image.analyser.ImageReader */
+    /** {@inheritDoc} */
     public FopImage.ImageInfo verifySignature(String uri, InputStream bis,
                 FOUserAgent ua) throws IOException {
         byte[] header = getDefaultHeader(bis);

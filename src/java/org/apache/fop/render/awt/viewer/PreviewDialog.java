@@ -445,7 +445,7 @@ public class PreviewDialog extends JFrame implements StatusListener {
         return menuBar;
     }
 
-    /** @see org.apache.fop.render.awt.viewer.StatusListener#notifyRendererStopped() */
+    /** {@inheritDoc} */
     public void notifyRendererStopped() {
         reload();
     }

@@ -34,7 +34,7 @@ public class NormalFlow extends BlockParent {
         setIPD(ipd);
     }
     
-    /** @see org.apache.fop.area.BlockParent#addBlock(org.apache.fop.area.Block) */
+    /** {@inheritDoc} */
     public void addBlock(Block block) {
         super.addBlock(block);
         bpd += block.getAllocBPD();

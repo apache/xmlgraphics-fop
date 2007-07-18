@@ -50,7 +50,7 @@ public abstract class AbstractAFPObject {
 
     /**
      * Help method to write a set of AFPObjects to the AFP datastream.
-     * @afpObjects a list of AFPObjects
+     * @param afpObjects a list of AFPObjects
      * @param os The stream to write to
      * @throws java.io.IOException
      */

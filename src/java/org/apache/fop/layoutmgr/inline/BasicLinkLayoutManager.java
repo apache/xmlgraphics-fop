@@ -43,7 +43,7 @@ public class BasicLinkLayoutManager extends InlineLayoutManager {
         fobj = node;
     }
 
-    /** @see org.apache.fop.layoutmgr.inline.InlineLayoutManager#createArea(boolean) */
+    /** {@inheritDoc} */
     protected InlineArea createArea(boolean bInlineParent) {
         InlineArea area = super.createArea(bInlineParent);
         setupBasicLinkArea(parentLM, area);

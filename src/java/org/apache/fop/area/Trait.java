@@ -365,7 +365,7 @@ public class Trait implements Serializable {
 
     /**
      * Return the string for debugging.
-     * @see java.lang.Object#toString()
+     * {@inheritDoc}
      */
     public String toString() {
         return data.toString();
@@ -536,7 +536,7 @@ public class Trait implements Serializable {
 
         /**
          * Return the human-friendly string for debugging.
-         * @see java.lang.Object#toString()
+         * {@inheritDoc}
          */
         public String toString() {
             StringBuffer sb = new StringBuffer();
@@ -700,7 +700,7 @@ public class Trait implements Serializable {
         
         /**
          * Return the string for debugging.
-         * @see java.lang.Object#toString()
+         * {@inheritDoc}
          */
         public String toString() {
             StringBuffer sb = new StringBuffer();

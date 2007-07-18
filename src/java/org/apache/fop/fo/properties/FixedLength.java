@@ -45,7 +45,8 @@ public class FixedLength extends LengthProperty {
      * to the computed value
      * @param numUnits  input units
      * @param units     unit specifier
-     * @return
+     * @return  the canonical FixedLength instance corresponding
+     *          to the given number of units and unit specifier
      */
     public static FixedLength getInstance(double numUnits, String units) {
         return (FixedLength) cache.fetch(
@@ -105,28 +106,28 @@ public class FixedLength extends LengthProperty {
     }
 
     /**
-     * @see org.apache.fop.datatypes.Numeric#getValue()
+     * {@inheritDoc}
      */
     public int getValue() {
         return millipoints;
     }
 
     /**
-     * @see org.apache.fop.datatypes.Numeric#getValue(PercentBaseContext)
+     * {@inheritDoc}
      */
     public int getValue(PercentBaseContext context) {
         return millipoints;
     }
 
     /**
-     * @see org.apache.fop.datatypes.Numeric#getNumericValue()
+     * {@inheritDoc}
      */
     public double getNumericValue() {
         return millipoints;
     }
 
     /**
-     * @see org.apache.fop.datatypes.Numeric#getNumericValue(PercentBaseContext)
+     * {@inheritDoc}
      */
     public double getNumericValue(PercentBaseContext context) {
         return millipoints;
@@ -134,21 +135,21 @@ public class FixedLength extends LengthProperty {
 
     /**
      * Return true since FixedLength are always absolute.
-     * @see org.apache.fop.datatypes.Numeric#isAbsolute()
+     * {@inheritDoc}
      */
     public boolean isAbsolute() {
         return true;
     }
 
     /**
-     * @see java.lang.Object#toString()
+     * {@inheritDoc}
      */
     public String toString() {
         return millipoints + "mpt";
     }
 
     /**
-     * @see java.lang.Object#equals(Object)
+     * {@inheritDoc}
      */
     public boolean equals(Object obj) {
         if (obj instanceof EnumProperty) {
@@ -159,7 +160,7 @@ public class FixedLength extends LengthProperty {
     }
 
     /**
-     * @see java.lang.Object#hashCode()
+     * {@inheritDoc}
      */
     public int hashCode() {
         return millipoints;

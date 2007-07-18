@@ -91,7 +91,7 @@ public abstract class FONode implements Cloneable {
     /**
      * Perform a shallow cloning operation
      * 
-     * @see java.lang.Object#clone()
+     * {@inheritDoc}
      * @return the cloned object
      */
     protected Object clone() {
@@ -102,6 +102,20 @@ public abstract class FONode implements Cloneable {
         }
     }
 
+    /**
+     * Bind the given <code>PropertyList</code> to this node
+     * Does nothing by default. Subclasses should override this method 
+     * in case they want to use the properties available on the 
+     * <code>PropertyList</code>.
+     * 
+     * @param   propertyList    the <code>PropertyList</code>
+     * @throws  <code>FOPException</code> if there was an error when
+     *          processing the <code>PropertyList</code>
+     */
+    public void bind(PropertyList propertyList) throws FOPException {
+        //nop
+    }
+    
     /**
      * Set the location information for this element
      * @param locator the org.xml.sax.Locator object

@@ -33,8 +33,7 @@ import org.apache.fop.datatypes.Length;
 
 /**
  * Base class to implement the FopImage interface.
- * @author Eric SCHAEFFER
- * @author Modified by Eric Dalquist - 9/14/2001 - ebdalqui@mtu.edu
+ * 
  * @see FopImage
  */
 public abstract class AbstractFopImage implements FopImage {
@@ -141,7 +140,7 @@ public abstract class AbstractFopImage implements FopImage {
         return imageInfo.mimeType;
     }
 
-    /** @see org.apache.fop.image.FopImage#getOriginalURI() */
+    /** {@inheritDoc} */
     public String getOriginalURI() {
         return this.imageInfo.originalURI;
     }
@@ -249,27 +248,27 @@ public abstract class AbstractFopImage implements FopImage {
         return this.height;
     }
 
-    /** @see org.apache.fop.image.FopImage#getIntrinsicWidth() */
+    /** {@inheritDoc} */
     public int getIntrinsicWidth() {
         return (int)(getWidth() * 72000 / getHorizontalResolution());
     }
 
-    /** @see org.apache.fop.image.FopImage#getIntrinsicHeight() */
+    /** {@inheritDoc} */
     public int getIntrinsicHeight() {
         return (int)(getHeight() * 72000 / getVerticalResolution());
     }
     
-    /** @see org.apache.fop.image.FopImage#getIntrinsicAlignmentAdjust() */
+    /** {@inheritDoc} */
     public Length getIntrinsicAlignmentAdjust() {
         return this.imageInfo.alignmentAdjust;
     }
 
-    /** @see org.apache.fop.image.FopImage#getHorizontalResolution() */
+    /** {@inheritDoc} */
     public double getHorizontalResolution() {
         return this.dpiHorizontal;
     }
     
-    /** @see org.apache.fop.image.FopImage#getVerticalResolution() */
+    /** {@inheritDoc} */
     public double getVerticalResolution() {
         return this.dpiVertical;
     }

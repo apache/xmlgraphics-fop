@@ -405,7 +405,7 @@ public class FopFactory {
     /**
      * Sets the URI Resolver. It is used for resolving factory-level URIs like hyphenation
      * patterns and as backup for URI resolution performed during a rendering run. 
-     * @param resolver the new URI resolver
+     * @param uriResolver the new URI resolver
      */
     public void setURIResolver(URIResolver uriResolver) {
         foURIResolver.setCustomURIResolver(uriResolver);

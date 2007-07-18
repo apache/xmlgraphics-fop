@@ -129,12 +129,12 @@ public class BorderProps implements Serializable {
         }
     }
     
-    /** @see java.lang.Object#hashCode() */
+    /** {@inheritDoc} */
     public int hashCode() {
         return toString().hashCode();
     }
 
-    /** @see java.lang.Object#equals(java.lang.Object) */
+    /** {@inheritDoc} */
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -188,7 +188,7 @@ public class BorderProps implements Serializable {
         }
     }
 
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         StringBuffer sbuf = new StringBuffer();
         sbuf.append('(');

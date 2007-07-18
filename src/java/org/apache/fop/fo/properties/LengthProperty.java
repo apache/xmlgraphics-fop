@@ -37,6 +37,8 @@ public abstract class LengthProperty extends Property
     public static class Maker extends PropertyMaker {
 
         /**
+         * Constructor
+         * 
          * @param propId the id of the property for which a Maker should be created
          */
         public Maker(int propId) {
@@ -44,9 +46,7 @@ public abstract class LengthProperty extends Property
         }
 
         /**
-         * @see org.apache.fop.fo.properties.PropertyMaker#convertProperty(
-         *          org.apache.fop.fo.properties.Property, org.apache.fop.fo.PropertyList, 
-         *          org.apache.fop.fo.FObj)
+         * {@inheritDoc}
          */
         public Property convertProperty(Property p,
                                         PropertyList propertyList,

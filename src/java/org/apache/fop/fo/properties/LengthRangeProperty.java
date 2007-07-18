@@ -66,7 +66,7 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
         }
         
         /**
-         * @see CompoundPropertyMaker#convertProperty
+         * {@inheritDoc}
          */        
         public Property convertProperty(Property p, 
                                 PropertyList propertyList, FObj fo)
@@ -94,7 +94,7 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
         
         
         /**
-         * @see org.apache.fop.fo.properties.PropertyMaker#getSubprop(Property, int, Property)
+         * {@inheritDoc} 
          */
         protected Property setSubprop(Property baseProperty, int subpropertyId,
                                         Property subproperty) {
@@ -121,7 +121,7 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
 
 
     /**
-     * @see org.apache.fop.datatypes.CompoundDatatype#setComponent(int, Property, boolean)
+     * {@inheritDoc} 
      */
     public void setComponent(int cmpId, Property cmpnValue,
                              boolean bIsDefault) {
@@ -135,7 +135,7 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
     }
 
     /**
-     * @see org.apache.fop.datatypes.CompoundDatatype#getComponent(int)
+     * {@inheritDoc}
      */
     public Property getComponent(int cmpId) {
         if (cmpId == CP_MINIMUM) {
@@ -277,7 +277,7 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
         return this.optimum;
     }
 
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         return "LengthRange["
             + "min:" + getMinimum(null).getObject() 

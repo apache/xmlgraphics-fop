@@ -86,17 +86,17 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
         childLMiter = new LMiter(this);
     }
 
-    /** @see LayoutManager#setParent(LayoutManager) */
+    /** {@inheritDoc} */
     public void setParent(LayoutManager lm) {
         this.parentLM = lm;
     }
 
-    /** @see LayoutManager#getParent */
+    /** {@inheritDoc} */
     public LayoutManager getParent() {
         return this.parentLM;
     }
 
-    /** @see LayoutManager#initialize */
+    /** {@inheritDoc} */
     public void initialize() {
         // Empty
     }
@@ -160,7 +160,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
         }
     }
 
-    /** @see LayoutManager#resetPosition(Position) */
+    /** {@inheritDoc} */
     public void resetPosition(Position resetPos) {
         //  if (resetPos == null) {
         //      reset(null);
@@ -185,15 +185,13 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#addAreas(
-     *                                              org.apache.fop.layoutmgr.PositionIterator
-     *                                              , org.apache.fop.layoutmgr.LayoutContext)
+     * {@inheritDoc}
      */
     public void addAreas(PositionIterator posIter, LayoutContext context) {
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(LayoutContext, int)
+     * {@inheritDoc} 
      */
     public LinkedList getNextKnuthElements(LayoutContext context,
                                            int alignment) {
@@ -203,7 +201,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#getChangedKnuthElements(List, int)
+     * {@inheritDoc} 
      */
     public LinkedList getChangedKnuthElements(List oldList,
                                               int alignment) {
@@ -265,14 +263,14 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.PageSequenceLayoutManager#getPSLM
+     * {@inheritDoc}
      */
     public PageSequenceLayoutManager getPSLM() {
         return parentLM.getPSLM();
     }
     
     /**
-     * @see org.apache.fop.layoutmgr.PageSequenceLayoutManager#getCurrentPage
+     * @see PageSequenceLayoutManager#getCurrentPage()
      */
     public Page getCurrentPage() {
         return getPSLM().getCurrentPage();
@@ -284,7 +282,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
     }  
     
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#createNextChildLMs
+     * {@inheritDoc}
      */
     public boolean createNextChildLMs(int pos) {
         List newLMs = createChildLMs(pos + 1 - childLMs.size());
@@ -293,7 +291,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#getChildLMs
+     * {@inheritDoc}
      */
     public List getChildLMs() {
         if (childLMs == null) {
@@ -303,7 +301,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#addChildLM
+     * {@inheritDoc}
      */
     public void addChildLM(LayoutManager lm) {
         if (lm == null) {
@@ -319,7 +317,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#addChildLMs
+     * {@inheritDoc}
      */
     public void addChildLMs(List newLMs) {
         if (newLMs == null || newLMs.size() == 0) {

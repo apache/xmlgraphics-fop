@@ -97,7 +97,7 @@ public class PDFFormXObject extends PDFXObject {
     }
     
     /**
-     * @see org.apache.fop.pdf.PDFStream#outputRawStreamData(OutputStream)
+     * {@inheritDoc}
      */
     protected void outputRawStreamData(OutputStream out) throws IOException {
         contents.outputRawStreamData(out);

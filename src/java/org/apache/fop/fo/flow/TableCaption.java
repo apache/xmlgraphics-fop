@@ -23,27 +23,17 @@ package org.apache.fop.fo.flow;
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.fo.properties.CommonAccessibility;
-import org.apache.fop.fo.properties.CommonAural;
-import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
-import org.apache.fop.fo.properties.CommonRelativePosition;
-import org.apache.fop.fo.properties.KeepProperty;
-import org.apache.fop.fo.properties.LengthRangeProperty;
 
 
 /**
  * Class modelling the fo:table-caption object.
- * @todo needs implementation
  */
 public class TableCaption extends FObj {
     // The value of properties relevant for fo:table-caption.
-    private CommonAccessibility commonAccessibility;
-    private CommonBorderPaddingBackground commonBorderPaddingBackground;
     // Unused but valid items, commented out for performance:
     //     private CommonAural commonAural;
     //     private CommonRelativePosition commonRelativePosition;
@@ -73,25 +63,14 @@ public class TableCaption extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
-        commonAccessibility = pList.getAccessibilityProps();
-        commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
     }
 
     /**
-     * @return the Common Border, Padding, and Background Properties.
-     */
-    public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
-        return commonBorderPaddingBackground;
-    }
-
-    /**
-     * Make sure content model satisfied, if so then tell the
-     * FOEventHandler that we are at the end of the flow.
-     * @see org.apache.fop.fo.FONode#endOfNode
+     * {@inheritDoc}
      */
     protected void endOfNode() throws FOPException {
         if (firstChild == null) {
@@ -100,7 +79,7 @@ public class TableCaption extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc}
      * XSL Content Model: marker* (%block;)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
@@ -116,13 +95,13 @@ public class TableCaption extends FObj {
         }
     }
 
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "table-caption";
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#getNameId()
+     * {@inheritDoc}
      */
     public int getNameId() {
         return FO_TABLE_CAPTION;

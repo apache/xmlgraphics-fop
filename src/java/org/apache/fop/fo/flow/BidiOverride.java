@@ -19,21 +19,16 @@
 
 package org.apache.fop.fo.flow;
 
-import java.awt.Color;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.fo.properties.CommonAural;
-import org.apache.fop.fo.properties.CommonFont;
-import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.SpaceProperty;
 import org.xml.sax.Locator;
 
 /**
- * fo:bidi-override element.
+ * Class modelling the fo:bidi-override object.
  */
 public class BidiOverride extends FObjMixed {
 
@@ -82,7 +77,7 @@ public class BidiOverride extends FObjMixed {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         // prDirection = pList.get(PR_DIRECTION);
@@ -93,7 +88,7 @@ public class BidiOverride extends FObjMixed {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc}
      * XSL Content Model: marker* (#PCDATA|%inline;|%block;)*
      * Additionally: "An fo:bidi-override that is a descendant of an fo:leader
      *  or of the fo:inline child of an fo:footnote may not have block-level
@@ -127,13 +122,13 @@ public class BidiOverride extends FObjMixed {
         return lineHeight;
     }
 
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "bidi-override";
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#getNameId()
+     * {@inheritDoc}
      */
     public int getNameId() {
         return FO_BIDI_OVERRIDE;

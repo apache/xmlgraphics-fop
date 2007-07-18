@@ -46,7 +46,7 @@ public class PageNumberCitationLastLayoutManager extends PageNumberCitationLayou
         fobj = node;
     }
     
-    /** @see org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager#get(LayoutContext) */
+    /** {@inheritDoc} */
     public InlineArea get(LayoutContext context) {
         curArea = getPageNumberCitationLastInlineArea(parentLM);
         return curArea;

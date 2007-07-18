@@ -47,7 +47,7 @@ public class KnuthPossPosIter extends PositionIterator {
     // Check position < endPos
     
     /**
-     * @see org.apache.fop.layoutmgr.PositionIterator#checkNext()
+     * {@inheritDoc}
      */
     protected boolean checkNext() {
         if (iterCount > 0) {
@@ -59,7 +59,7 @@ public class KnuthPossPosIter extends PositionIterator {
     }
 
     /**
-     * @see java.util.Iterator#next()
+     * {@inheritDoc}
      */
     public Object next() {
         --iterCount;

@@ -48,7 +48,7 @@ public class PCLGraphics2DAdapter extends AbstractGraphics2DAdapter {
     public PCLGraphics2DAdapter() {
     }
     
-    /** @see org.apache.fop.render.Graphics2DAdapter */
+    /** {@inheritDoc} */
     public void paintImage(Graphics2DImagePainter painter, 
             RendererContext context,
             int x, int y, int width, int height) throws IOException {

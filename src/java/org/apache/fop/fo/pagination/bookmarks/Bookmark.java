@@ -26,7 +26,6 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.fo.properties.CommonAccessibility;
 
 
 /**
@@ -39,10 +38,13 @@ public class Bookmark extends FObj {
     private ArrayList childBookmarks = new ArrayList();
 
     // The value of properties relevant for this FO
-    private CommonAccessibility commonAccessibility;
     private String internalDestination;
     private String externalDestination;
     private boolean bShow = true; // from starting-state property
+    
+    // Valid, but unused properties. Commented out for performance
+    // private CommonAccessibility commonAccessibility;
+
 
     /**
      * Create a new bookmark object.
@@ -54,10 +56,9 @@ public class Bookmark extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
-        commonAccessibility = pList.getAccessibilityProps();
         externalDestination = pList.get(PR_EXTERNAL_DESTINATION).getString();
         internalDestination = pList.get(PR_INTERNAL_DESTINATION).getString();
         bShow = (pList.get(PR_STARTING_STATE).getEnum() == EN_SHOW);
@@ -75,7 +76,7 @@ public class Bookmark extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc}
         XSL/FOP: (bookmark-title, bookmark*)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
@@ -94,7 +95,7 @@ public class Bookmark extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#endOfNode
+     * {@inheritDoc}
      */
     protected void endOfNode() throws FOPException {
         if (bookmarkTitle == null) {
@@ -103,7 +104,7 @@ public class Bookmark extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#addChildNode(FONode)
+     * {@inheritDoc}
      */
     protected void addChildNode(FONode obj) {
         if (obj instanceof BookmarkTitle) {
@@ -144,13 +145,13 @@ public class Bookmark extends FObj {
         return childBookmarks;
     }
 
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "bookmark";
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#getNameId()
+     * {@inheritDoc}
      */
     public int getNameId() {
         return FO_BOOKMARK;

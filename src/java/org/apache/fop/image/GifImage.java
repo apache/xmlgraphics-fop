@@ -33,8 +33,7 @@ import org.apache.commons.io.IOUtils;
 
 /**
  * FopImage object for GIF images, using Java native classes.
- * @author Eric SCHAEFFER
- * @author Modified by Eric Dalquist - 9/14/2001 - ebdalqui@mtu.edu
+ * 
  * @see AbstractFopImage
  * @see FopImage
  */
@@ -166,7 +165,7 @@ public class GifImage extends AbstractFopImage {
         return true;
     }
 
-    /** @see org.apache.fop.image.AbstractFopImage#loadOriginalData() */
+    /** {@inheritDoc} */
     protected boolean loadOriginalData() {
         return loadDefaultOriginalData();
     }
@@ -183,28 +182,28 @@ public class GifImage extends AbstractFopImage {
         }
 
         /**
-         * @see java.net.URLConnection#getInputStream()
+         * {@inheritDoc}
          */
         public InputStream getInputStream() throws IOException {
             return inputStream;
         }
 
         /**
-         * @see java.net.URLConnection#connect()
+         * {@inheritDoc}
          */
         public void connect() throws IOException {
             // do nothing
         }
 
         /**
-         * @see java.net.URLConnection#getContentType()
+         * {@inheritDoc}
          */
         public String getContentType() {
             return "image/gif";
         }
 
         /**
-         * @see java.net.URLConnection#getContentLength()
+         * {@inheritDoc}
          */
         public int getContentLength() {
             try {

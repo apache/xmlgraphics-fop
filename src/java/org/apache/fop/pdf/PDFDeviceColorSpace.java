@@ -117,22 +117,22 @@ public class PDFDeviceColorSpace implements PDFColorSpace {
         }
     }
 
-    /** @see org.apache.fop.pdf.PDFColorSpace#isDeviceColorSpace() */
+    /** {@inheritDoc} */
     public boolean isDeviceColorSpace() {
         return true;
     }
 
-    /** @see org.apache.fop.pdf.PDFColorSpace#isRGBColorSpace() */
+    /** {@inheritDoc} */
     public boolean isRGBColorSpace() {
         return getColorSpace() == DEVICE_RGB;
     }
 
-    /** @see org.apache.fop.pdf.PDFColorSpace#isCMYKColorSpace() */
+    /** {@inheritDoc} */
     public boolean isCMYKColorSpace() {
         return getColorSpace() == DEVICE_CMYK;
     }
 
-    /** @see org.apache.fop.pdf.PDFColorSpace#isGrayColorSpace() */
+    /** {@inheritDoc} */
     public boolean isGrayColorSpace() {
         return getColorSpace() == DEVICE_GRAY;
     }

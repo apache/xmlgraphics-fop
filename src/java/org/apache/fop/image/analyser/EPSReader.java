@@ -42,7 +42,7 @@ public class EPSReader implements ImageReader {
     //private static final byte[] HIRESBOUNDINGBOX = "%%HiResBoundingBox: ".getBytes();
     //TODO Implement HiResBoundingBox, ImageInfo probably needs some changes for that
 
-    /** @see org.apache.fop.image.analyser.ImageReader */
+    /** {@inheritDoc} */
     public FopImage.ImageInfo verifySignature(String uri, InputStream bis,
                 FOUserAgent ua) throws IOException {
 

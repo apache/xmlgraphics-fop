@@ -43,7 +43,7 @@ public class BatikExtensionElementMapping extends ElementMapping {
         namespaceURI = URI;
     }
 
-    /** @see org.apache.fop.fo.ElementMapping#getDOMImplementation() */
+    /** {@inheritDoc} */
     public DOMImplementation getDOMImplementation() {
         return null; //no DOMImplementation necessary here
     }

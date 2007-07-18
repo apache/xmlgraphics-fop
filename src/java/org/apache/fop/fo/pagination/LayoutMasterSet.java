@@ -53,14 +53,14 @@ public class LayoutMasterSet extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         // No properties in layout-master-set.
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#startOfNode
+     * {@inheritDoc}
      */
     protected void startOfNode() throws FOPException {
         getRoot().setLayoutMasterSet(this);
@@ -69,7 +69,7 @@ public class LayoutMasterSet extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#endOfNode
+     * {@inheritDoc}
      */
     protected void endOfNode() throws FOPException {
         if (firstChild == null) {
@@ -79,7 +79,7 @@ public class LayoutMasterSet extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc}
         XSL/FOP: (simple-page-master|page-sequence-master)+
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
@@ -215,13 +215,13 @@ public class LayoutMasterSet extends FObj {
         return false;
     }
 
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "layout-master-set";
     }
     
     /**
-     * @see org.apache.fop.fo.FObj#getNameId()
+     * {@inheritDoc}
      */
     public int getNameId() {
         return FO_LAYOUT_MASTER_SET;

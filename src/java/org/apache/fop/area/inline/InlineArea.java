@@ -104,7 +104,7 @@ public class InlineArea extends Area {
      * Create a new adjustment information object
      * @param stretch the available space for stretching
      * @param shrink the available space for shrinking
-     * @param adj space adjustment type
+     * @param adjustment space adjustment type
      */
     public void setAdjustingInfo(int stretch, int shrink, int adjustment) {
         adjustingInfo = new InlineAdjustingInfo(stretch, shrink, adjustment);
@@ -169,7 +169,7 @@ public class InlineArea extends Area {
     /**
      * Set the parent for the child area.
      *
-     * @see org.apache.fop.area.Area#addChildArea(Area)
+     * {@inheritDoc}
      */
     public void addChildArea(Area childArea) {
         super.addChildArea(childArea);

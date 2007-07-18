@@ -103,7 +103,7 @@ public class PDFNumber extends PDFObject {
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFObject#toPDFString()
+     * {@inheritDoc}
      */
     protected String toPDFString() {
         if (getNumber() == null) {

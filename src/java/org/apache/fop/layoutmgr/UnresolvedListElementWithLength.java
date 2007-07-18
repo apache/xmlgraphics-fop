@@ -58,7 +58,7 @@ public abstract class UnresolvedListElementWithLength extends UnresolvedListElem
         this.isLast = isLast;
     }
     
-    /** @see org.apache.fop.layoutmgr.UnresolvedListElement#isConditional() */
+    /** {@inheritDoc} */
     public boolean isConditional() {
         return this.conditional;
     }
@@ -91,7 +91,7 @@ public abstract class UnresolvedListElementWithLength extends UnresolvedListElem
      */
     public abstract void notifyLayoutManager(MinOptMax effectiveLength);
     
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append(getSide().getName()).append(", ");

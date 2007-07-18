@@ -54,7 +54,7 @@ public class RepeatablePageMasterReference extends FObj
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         masterReference = pList.get(PR_MASTER_REFERENCE).getString();
@@ -66,7 +66,7 @@ public class RepeatablePageMasterReference extends FObj
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#startOfNode
+     * {@inheritDoc}
      */
     protected void startOfNode() throws FOPException {
         PageSequenceMaster pageSequenceMaster = (PageSequenceMaster) parent;
@@ -79,7 +79,7 @@ public class RepeatablePageMasterReference extends FObj
     }
  
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc}
      * XSL Content Model: empty
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
@@ -88,7 +88,7 @@ public class RepeatablePageMasterReference extends FObj
     }
 
     /**
-     * @see org.apache.fop.fo.pagination.SubSequenceSpecifier
+     * {@inheritDoc}
      */
     public String getNextPageMasterName(boolean isOddPage,
                                         boolean isFirstPage,
@@ -119,13 +119,13 @@ public class RepeatablePageMasterReference extends FObj
         }
     }
 
-    /** @see org.apache.fop.fo.pagination.SubSequenceSpecifier#reset() */
+    /** {@inheritDoc} */
     public void reset() {
         this.numberConsumed = 0;
     }
 
     
-    /** @see org.apache.fop.fo.pagination.SubSequenceSpecifier#goToPrevious() */
+    /** {@inheritDoc} */
     public boolean goToPrevious() {
         if (numberConsumed == 0) {
             return false;
@@ -135,17 +135,17 @@ public class RepeatablePageMasterReference extends FObj
         }
     }
     
-    /** @see org.apache.fop.fo.pagination.SubSequenceSpecifier#hasPagePositionLast() */
+    /** {@inheritDoc} */
     public boolean hasPagePositionLast() {
         return false;
     }
 
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "repeatable-page-master-reference";
     }
 
-    /** @see org.apache.fop.fo.FObj#getNameId() */
+    /** {@inheritDoc} */
     public int getNameId() {
         return FO_REPEATABLE_PAGE_MASTER_REFERENCE;
     }

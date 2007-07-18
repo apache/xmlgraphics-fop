@@ -29,7 +29,6 @@ import org.apache.commons.io.IOUtils;
  * Bitmap image.
  * This supports loading a bitmap image into bitmap data.
  *
- * @author Art WELCH
  * @see AbstractFopImage
  * @see FopImage
  */

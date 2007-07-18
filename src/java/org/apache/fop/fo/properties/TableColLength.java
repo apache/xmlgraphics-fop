@@ -65,7 +65,7 @@ public class TableColLength extends LengthProperty {
 
     /**
      * Return false because table-col-units are a relative numeric.
-     * @see org.apache.fop.datatypes.Numeric#isAbsolute()
+     * {@inheritDoc}
      */
     public boolean isAbsolute() {
         return false;
@@ -73,7 +73,7 @@ public class TableColLength extends LengthProperty {
 
     /**
      * Return the value as a numeric value.
-     * @see org.apache.fop.datatypes.Numeric#getNumericValue()
+     * {@inheritDoc}
      */
     public double getNumericValue() {
         throw new UnsupportedOperationException(
@@ -81,7 +81,7 @@ public class TableColLength extends LengthProperty {
     }
 
     /**
-     * @see org.apache.fop.datatypes.Numeric#getNumericValue(PercentBaseContext)
+     * {@inheritDoc}
      */
     public double getNumericValue(PercentBaseContext context) {
         return tcolUnits * context.getBaseLength(LengthBase.TABLE_UNITS, column);
@@ -89,7 +89,7 @@ public class TableColLength extends LengthProperty {
 
     /**
      * Return the value as a length.
-     * @see org.apache.fop.datatypes.Length#getValue()
+     * {@inheritDoc}
      */
     public int getValue() {
         throw new UnsupportedOperationException(
@@ -97,7 +97,7 @@ public class TableColLength extends LengthProperty {
     }
 
     /**
-     * @see org.apache.fop.datatypes.Numeric#getValue(PercentBaseContext)
+     * {@inheritDoc}
      */
     public int getValue(PercentBaseContext context) {
         return (int) (tcolUnits * context.getBaseLength(LengthBase.TABLE_UNITS, column));

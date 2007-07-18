@@ -79,7 +79,7 @@ public class PDFBridgeContext extends BridgeContext {
         this(userAgent, fontInfo, null);
     }
 
-    /** @see org.apache.batik.bridge.BridgeContext#registerSVGBridges() */
+    /** {@inheritDoc} */
     public void registerSVGBridges() {
         super.registerSVGBridges();
 

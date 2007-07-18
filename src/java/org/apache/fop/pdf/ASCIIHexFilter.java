@@ -40,7 +40,7 @@ public class ASCIIHexFilter extends PDFFilter {
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFFilter#isASCIIFilter()
+     * {@inheritDoc}
      */
     public boolean isASCIIFilter() {
         return true;
@@ -56,7 +56,7 @@ public class ASCIIHexFilter extends PDFFilter {
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFFilter#applyFilter(OutputStream)
+     * {@inheritDoc}
      */
     public OutputStream applyFilter(OutputStream out) throws IOException {
         return new ASCIIHexOutputStream(out);

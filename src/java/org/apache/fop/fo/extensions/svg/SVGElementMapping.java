@@ -51,7 +51,7 @@ public class SVGElementMapping extends ElementMapping {
         namespaceURI = URI;
     }
 
-    /** @see org.apache.fop.fo.ElementMapping#getDOMImplementation() */
+    /** {@inheritDoc} */
     public DOMImplementation getDOMImplementation() {
         return SVGDOMImplementation.getDOMImplementation();
     }
@@ -70,7 +70,7 @@ public class SVGElementMapping extends ElementMapping {
         }
     }
 
-    /** @see org.apache.fop.fo.ElementMapping#initialize() */
+    /** {@inheritDoc} */
     protected void initialize() {
         if (foObjs == null && batikAvailable) {
             // this sets the parser that will be used
@@ -92,7 +92,7 @@ public class SVGElementMapping extends ElementMapping {
         }
     }
 
-    /** @see org.apache.fop.fo.ElementMapping#getStandardPrefix() */
+    /** {@inheritDoc} */
     public String getStandardPrefix() {
         return "svg";
     }

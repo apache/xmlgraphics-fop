@@ -91,7 +91,7 @@ public class PCLPageDefinition {
             && (Math.abs(this.physicalPageSize.height - height) < errorMargin);
     }
     
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         return getName();
     }

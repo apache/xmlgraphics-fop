@@ -88,7 +88,7 @@ public class FopServlet extends HttpServlet {
     protected URIResolver uriResolver; 
 
     /**
-     * @see javax.servlet.GenericServlet#init()
+     * {@inheritDoc}
      */
     public void init() throws ServletException {
         this.log = new SimpleLog("FOP/Servlet");
@@ -111,7 +111,7 @@ public class FopServlet extends HttpServlet {
     }
 
     /**
-     * @see javax.servlet.http.HttpServlet#doGet(HttpServletRequest, HttpServletResponse)
+     * {@inheritDoc} 
      */
     public void doGet(HttpServletRequest request,
                       HttpServletResponse response) throws ServletException {

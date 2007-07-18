@@ -194,7 +194,7 @@ public class BookmarkData extends AbstractOffDocumentItem implements Resolvable 
     }
 
     /**
-     * @see org.apache.fop.area.Resolvable#getIDRefs()
+     * {@inheritDoc}
      */
     public String[] getIDRefs() {
         return (String[])unresolvedIDRefs.keySet().toArray(new String[] {});
@@ -206,7 +206,7 @@ public class BookmarkData extends AbstractOffDocumentItem implements Resolvable 
      * resolves id references of child elements that have the same
      * id reference.
      *
-     * @see org.apache.fop.area.Resolvable#resolveIDRef(String, List)
+     * {@inheritDoc} List)
      * @todo check to make sure it works if multiple bookmark-items
      * have the same idref
      */
@@ -225,7 +225,7 @@ public class BookmarkData extends AbstractOffDocumentItem implements Resolvable 
     }
 
     /**
-     * @see org.apache.fop.area.OffDocumentItem#getName()
+     * {@inheritDoc}
      */
     public String getName() {
         return "Bookmarks";

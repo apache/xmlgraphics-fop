@@ -46,7 +46,7 @@ public class SpaceSpecifier implements Cloneable {
     }
 
     /**
-     * @see java.lang.Object#clone()
+     * {@inheritDoc}
      */
     public Object clone() {
         try {

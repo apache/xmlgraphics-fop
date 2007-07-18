@@ -124,7 +124,7 @@ public class PDFFontType3 extends PDFFontNonBase14 {
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFFont#fillInPDF(StringBuffer)
+     * {@inheritDoc}
      */
     protected void fillInPDF(StringBuffer target) {
         if (fontBBox != null) {

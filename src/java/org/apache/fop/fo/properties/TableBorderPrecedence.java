@@ -40,7 +40,7 @@ public class TableBorderPrecedence extends NumberProperty.Maker{
     /**
      * Set default precedence according to the parent FObj
      * 
-     * @see PropertyMaker#compute(PropertyList)
+     * {@inheritDoc}
      */
     public Property make(PropertyList propertyList) throws PropertyException {
         FObj fo = propertyList.getFObj();

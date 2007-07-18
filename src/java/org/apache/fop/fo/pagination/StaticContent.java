@@ -39,7 +39,7 @@ public class StaticContent extends Flow {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#startOfNode()
+     * {@inheritDoc}
      */
     protected void startOfNode() throws FOPException {
         if (getFlowName() == null || getFlowName().equals("")) {
@@ -52,7 +52,7 @@ public class StaticContent extends Flow {
     /**
      * Make sure content model satisfied, if so then tell the
      * FOEventHandler that we are at the end of the flow.
-     * @see org.apache.fop.fo.FONode#endOfNode
+     * {@inheritDoc}
      */
     protected void endOfNode() throws FOPException {
         if (firstChild == null && getUserAgent().validateStrictly()) {
@@ -62,7 +62,7 @@ public class StaticContent extends Flow {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc}
      * XSL Content Model: (%block;)+
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
@@ -72,12 +72,12 @@ public class StaticContent extends Flow {
         }
     }
 
-    /** @see org.apache.fop.fo.FObj#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "static-content";
     }
 
-    /** @see org.apache.fop.fo.FObj#getNameId() */
+    /** {@inheritDoc} */
     public int getNameId() {
         return FO_STATIC_CONTENT;
     }

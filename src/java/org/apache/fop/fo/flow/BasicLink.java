@@ -27,7 +27,7 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 
 /**
- * The fo:basic-link formatting object.
+ * Class modelling the fo:basic-link object.
  *
  * This class contains the logic to determine the link represented by this FO,
  * and whether that link is external (uses a URI) or internal (an id 
@@ -58,7 +58,7 @@ public class BasicLink extends Inline {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
@@ -82,7 +82,7 @@ public class BasicLink extends Inline {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#startOfNode
+     * {@inheritDoc}
      */
     protected void startOfNode() throws FOPException {
         super.startOfNode();
@@ -90,7 +90,7 @@ public class BasicLink extends Inline {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#endOfNode
+     * {@inheritDoc}
      */
     protected void endOfNode() throws FOPException {
         super.endOfNode();
@@ -98,7 +98,7 @@ public class BasicLink extends Inline {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc} String, String)
      * XSL Content Model: marker* (#PCDATA|%inline;|%block;)*
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
@@ -142,12 +142,12 @@ public class BasicLink extends Inline {
         return externalDestination != null && externalDestination.length() > 0;
     }
 
-    /** @see org.apache.fop.fo.FObj#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "basic-link";
     }
     
-    /** @see org.apache.fop.fo.FObj#getNameId() */
+    /** {@inheritDoc} */
     public int getNameId() {
         return FO_BASIC_LINK;
     }

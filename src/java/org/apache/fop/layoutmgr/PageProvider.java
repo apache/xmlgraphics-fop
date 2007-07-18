@@ -195,9 +195,9 @@ public class PageProvider implements Constants {
     
     /**
      * 
-     * @param isBlank
-     * @param index
-     * @return
+     * @param isBlank   true if the Page should be a blank one
+     * @param index the Page's index
+     * @return  a Page instance
      */
     protected Page getPage(boolean isBlank, int index) {
         boolean isLastPage = (lastPageIndex >= 0) && (index == lastPageIndex);

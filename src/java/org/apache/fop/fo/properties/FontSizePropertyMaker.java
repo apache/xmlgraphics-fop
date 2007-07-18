@@ -44,7 +44,7 @@ public class FontSizePropertyMaker
     }
     
     /**
-     * @see PropertyMaker#convertProperty
+     * {@inheritDoc}
      * Implements the parts of 7.8.4 relevant to relative font sizes
      */
     public Property convertProperty(Property p,

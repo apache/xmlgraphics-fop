@@ -30,7 +30,6 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.fonts.FontTriplet;
 
 /**

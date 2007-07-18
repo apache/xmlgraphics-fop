@@ -184,7 +184,7 @@ public class PDFResources extends PDFObject {
      * resource context.
      *
      * @return the PDF
-     * @see org.apache.fop.pdf.PDFObject#toPDFString()
+     * {@inheritDoc}
      */
     public String toPDFString() {
         StringBuffer p = new StringBuffer(128);

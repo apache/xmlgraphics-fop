@@ -20,8 +20,6 @@
 package org.apache.fop.fo.properties;
 
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.FOPropertyMapping;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
 
@@ -31,7 +29,7 @@ import org.apache.fop.fo.expr.PropertyException;
 public class FontShorthandParser extends GenericShorthandParser {
 
     /**
-     * @see org.apache.fop.fo.properties.ShorthandParser#getValueForProperty(int, Property, PropertyMaker, PropertyList)
+     * {@inheritDoc} 
      */
     public Property getValueForProperty(int propId,
                                                Property property,

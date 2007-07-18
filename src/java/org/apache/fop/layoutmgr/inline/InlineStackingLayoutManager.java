@@ -281,7 +281,7 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager
         }
     }
 
-    /** @see InlineLevelLayoutManager#addALetterSpaceTo(List) */
+    /** {@inheritDoc} */
     public List addALetterSpaceTo(List oldList) {
         // old list contains only a box, or the sequence: box penalty glue box
 
@@ -331,21 +331,21 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager
 
     }
 
-    /** @see InlineLevelLayoutManager#getWordChars(StringBuffer, Position) */
+    /** {@inheritDoc} */
     public void getWordChars(StringBuffer sbChars, Position pos) {
         Position newPos = ((NonLeafPosition) pos).getPosition();
         ((InlineLevelLayoutManager)
          newPos.getLM()).getWordChars(sbChars, newPos);
     }
 
-    /** @see InlineLevelLayoutManager#hyphenate(Position, HyphContext) */
+    /** {@inheritDoc} */
     public void hyphenate(Position pos, HyphContext hc) {
         Position newPos = ((NonLeafPosition) pos).getPosition();
         ((InlineLevelLayoutManager)
          newPos.getLM()).hyphenate(newPos, hc);
     }
 
-    /** @see InlineLevelLayoutManager#applyChanges(List) */
+    /** {@inheritDoc} */
     public boolean applyChanges(List oldList) {
         // "unwrap" the Positions stored in the elements
         ListIterator oldListIterator = oldList.listIterator();
@@ -411,7 +411,7 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#getChangedKnuthElements(List, int)
+     * {@inheritDoc} 
      */
     public LinkedList getChangedKnuthElements(List oldList, int alignment) {
         // "unwrap" the Positions stored in the elements

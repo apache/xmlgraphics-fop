@@ -211,7 +211,7 @@ public class FlateFilter extends PDFFilter {
 
 
     /**
-     * @see org.apache.fop.pdf.PDFFilter#applyFilter(OutputStream)
+     * {@inheritDoc}
      */
     public OutputStream applyFilter(OutputStream out) throws IOException {
         return new FlateEncodeOutputStream(out);

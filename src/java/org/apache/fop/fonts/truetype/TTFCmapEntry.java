@@ -42,7 +42,7 @@ public class TTFCmapEntry {
     }
 
     /**
-     * @see java.lang.Object#equals(Object)
+     * {@inheritDoc}
      */
     public boolean equals(Object o) {
         if (o instanceof TTFCmapEntry) {

@@ -28,7 +28,6 @@ import java.awt.image.PixelGrabber;
 
 /**
  * ImageConsumer implementation for FopImage classes.
- * @author Eric SCHAEFFER
  */
 public class FopImageConsumer implements ImageConsumer {
     
@@ -56,7 +55,7 @@ public class FopImageConsumer implements ImageConsumer {
     }
 
     /**
-     * @see java.awt.image.ImageConsumer#imageComplete(int)
+     * {@inheritDoc}
      */
     public void imageComplete(int status) {
         /*
@@ -91,7 +90,7 @@ public class FopImageConsumer implements ImageConsumer {
     }
 
     /**
-     * @see java.awt.image.ImageConsumer#setColorModel(ColorModel)
+     * {@inheritDoc}
      */
     public void setColorModel(ColorModel model) {
         // log.error("setColorModel: " + model);
@@ -99,7 +98,7 @@ public class FopImageConsumer implements ImageConsumer {
     }
 
     /**
-     * @see java.awt.image.ImageConsumer#setDimensions(int, int)
+     * {@inheritDoc} 
      */
     public void setDimensions(int width, int height) {
         // log.error("setDimension: w=" + width + " h=" + height);
@@ -108,7 +107,7 @@ public class FopImageConsumer implements ImageConsumer {
     }
 
     /**
-     * @see java.awt.image.ImageConsumer#setHints(int)
+     * {@inheritDoc}
      */
     public void setHints(int hintflags) {
         // log.error("setHints: " + hintflags);
@@ -116,7 +115,7 @@ public class FopImageConsumer implements ImageConsumer {
     }
 
     /**
-     * @see java.awt.image.ImageConsumer#setProperties(Hashtable)
+     * {@inheritDoc}
      */
     public void setProperties(Hashtable props) {
         // log.error("setProperties: " + props);
@@ -124,14 +123,14 @@ public class FopImageConsumer implements ImageConsumer {
     }
 
     /**
-     * @see java.awt.image.ImageConsumer#setPixels(int, int, int, int, ColorModel, byte[], int, int)
+     * {@inheritDoc} 
      */
     public void setPixels(int x, int y, int w, int h, ColorModel model,
                           byte[] pixels, int off, int scansize) {
     }
 
     /**
-     * @see java.awt.image.ImageConsumer#setPixels(int, int, int, int, ColorModel, int[], int, int)
+     * {@inheritDoc} 
      */
     public void setPixels(int x, int y, int w, int h, ColorModel model,
                           int[] pixels, int off, int scansize) {

@@ -39,7 +39,7 @@ public class PropertyCache {
      *  Checks if the given property is present in the cache - if so, returns
      *  a reference to the cached value. Otherwise the given object is added
      *  to the cache and returned.
-     *  @param obj
+     *  @param prop the Property instance to check for
      *  @return the cached instance
      */
     public Property fetch(Property prop) {

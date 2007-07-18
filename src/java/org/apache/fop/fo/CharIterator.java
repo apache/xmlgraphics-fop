@@ -30,7 +30,7 @@ import java.util.NoSuchElementException;
 public abstract class CharIterator implements Iterator, Cloneable {
 
     /**
-     * @see java.util.Iterator#hasNext()
+     * {@inheritDoc}
      */
     public abstract boolean hasNext();
 
@@ -42,14 +42,14 @@ public abstract class CharIterator implements Iterator, Cloneable {
     public abstract char nextChar() throws NoSuchElementException;
 
     /**
-     * @see java.util.Iterator#next()
+     * {@inheritDoc}
      */
     public Object next() throws NoSuchElementException {
         return new Character(nextChar());
     }
 
     /**
-     * @see java.util.Iterator#remove()
+     * {@inheritDoc}
      */
     public void remove() {
         throw new UnsupportedOperationException();
@@ -65,7 +65,7 @@ public abstract class CharIterator implements Iterator, Cloneable {
     }
 
     /**
-     * @see java.lang.Object#clone()
+     * {@inheritDoc}
      */
     public Object clone() {
         try {

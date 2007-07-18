@@ -137,7 +137,7 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder
     protected class FOPErrorHandler implements ErrorHandler {
         
         /**
-         * @see org.apache.batik.transcoder.ErrorHandler#error(TranscoderException)
+         * {@inheritDoc}
          */
         public void error(TranscoderException te)
                 throws TranscoderException {
@@ -145,7 +145,7 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder
         }
 
         /**
-         * @see org.apache.batik.transcoder.ErrorHandler#fatalError(TranscoderException)
+         * {@inheritDoc}
          */
         public void fatalError(TranscoderException te)
                 throws TranscoderException {
@@ -153,7 +153,7 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder
         }
 
         /**
-         * @see org.apache.batik.transcoder.ErrorHandler#warning(TranscoderException)
+         * {@inheritDoc}
          */
         public void warning(TranscoderException te)
                 throws TranscoderException {

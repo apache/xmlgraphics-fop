@@ -29,30 +29,26 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonHyphenation;
-import org.apache.fop.fo.properties.CommonMarginInline;
-import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.CommonTextDecoration;
-import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.SpaceProperty;
-import org.apache.fop.util.CharUtilities;
 import org.xml.sax.Locator;
 
 /**
- * This class represents the flow object 'fo:character'. Its use is defined by
- * the spec: "The fo:character flow object represents a character that is mapped to
- * a glyph for presentation. It is an atomic unit to the formatter.
- * When the result tree is interpreted as a tree of formatting objects,
- * a character in the result tree is treated as if it were an empty
- * element of type fo:character with a character attribute
- * equal to the Unicode representation of the character.
- * The semantics of an "auto" value for character properties, which is
- * typically their initial value,  are based on the Unicode codepoint.
- * Overrides may be specified in an implementation-specific manner." (6.6.3)
+ * Class modelling the fo:character object. 
+ * Its use is defined by the spec: 
+ * "The fo:character flow object represents a character that is mapped to
+ *  a glyph for presentation. It is an atomic unit to the formatter.
+ *  When the result tree is interpreted as a tree of formatting objects,
+ *  a character in the result tree is treated as if it were an empty
+ *  element of type fo:character with a character attribute
+ *  equal to the Unicode representation of the character.
+ *  The semantics of an "auto" value for character properties, which is
+ *  typically their initial value,  are based on the Unicode codepoint.
+ *  Overrides may be specified in an implementation-specific manner." (6.6.3)
  *
  */
 public class Character extends FObj {
@@ -102,7 +98,7 @@ public class Character extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
@@ -126,7 +122,7 @@ public class Character extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#startOfNode
+     * {@inheritDoc}
      */
     protected void startOfNode() throws FOPException {
         super.startOfNode();
@@ -134,7 +130,7 @@ public class Character extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc}
      * XSL Content Model: empty
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
@@ -143,7 +139,7 @@ public class Character extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#charIterator
+     * {@inheritDoc}
      */
     public CharIterator charIterator() {
         return new FOCharIterator(this);
@@ -238,13 +234,13 @@ public class Character extends FObj {
         return wordSpacing; 
     }
 
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "character";
     }
     
     /**
-     * @see org.apache.fop.fo.FObj#getNameId()
+     * {@inheritDoc}
      */
     public int getNameId() {
         return FO_CHARACTER;

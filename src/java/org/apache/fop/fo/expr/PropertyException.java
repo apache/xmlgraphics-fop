@@ -52,7 +52,7 @@ public class PropertyException extends FOPException {
         this.propertyName = propertyName;
     }
 
-    /** @see java.lang.Throwable#getMessage()*/
+    /** {@inheritDoc} */
     public String getMessage() {
         if (propertyName != null) {
             return super.getMessage() + "; property:'" + propertyName + "'";

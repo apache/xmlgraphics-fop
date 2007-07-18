@@ -46,7 +46,7 @@ public class BookmarkTree extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#addChildNode(FONode)
+     * {@inheritDoc}
      */
     protected void addChildNode(FONode obj) {
         if (obj instanceof Bookmark) {
@@ -55,7 +55,7 @@ public class BookmarkTree extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#endOfNode
+     * {@inheritDoc}
      */
     protected void endOfNode() throws FOPException {
         if (bookmarks == null) {
@@ -65,7 +65,7 @@ public class BookmarkTree extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc}
         XSL/FOP: (bookmark+)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
@@ -80,13 +80,13 @@ public class BookmarkTree extends FObj {
         return bookmarks;
     }
 
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "bookmark-tree";
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#getNameId()
+     * {@inheritDoc}
      */
     public int getNameId() {
         return FO_BOOKMARK_TREE;

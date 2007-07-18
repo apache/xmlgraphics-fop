@@ -72,21 +72,21 @@ public class EnumNumber extends NumberProperty {
     }
 
     /**
-     * @see org.apache.fop.fo.properties.Property#getString()
+     * {@inheritDoc}
      */
     public String getString() {
         return enumProperty.toString();
     }
 
     /**
-     * @see org.apache.fop.fo.properties.Property#getString()
+     * {@inheritDoc}
      */
     public Object getObject() {
         return enumProperty.getObject();
     }
 
     /**
-     * @see java.lang.Object#equals(Object)
+     * {@inheritDoc}
      */
     public boolean equals(Object obj) {
         if (obj instanceof EnumNumber) {
@@ -97,7 +97,7 @@ public class EnumNumber extends NumberProperty {
     }
 
     /**
-     * @see java.lang.Object#hashCode()
+     * {@inheritDoc}
      */
     public int hashCode() {
         return enumProperty.hashCode();

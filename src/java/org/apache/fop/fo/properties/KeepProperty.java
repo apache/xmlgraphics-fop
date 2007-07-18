@@ -53,7 +53,7 @@ public class KeepProperty extends Property implements CompoundDatatype {
         }
 
         /**
-         * @see CompoundPropertyMaker#convertProperty
+         * {@inheritDoc}
          */        
         public Property convertProperty(Property p, PropertyList propertyList, FObj fo)
             throws PropertyException
@@ -66,7 +66,7 @@ public class KeepProperty extends Property implements CompoundDatatype {
     }
 
     /**
-     * @see org.apache.fop.datatypes.CompoundDatatype#setComponent(int, Property, boolean)
+     * {@inheritDoc} 
      */
     public void setComponent(int cmpId, Property cmpnValue,
                              boolean bIsDefault) {
@@ -80,7 +80,7 @@ public class KeepProperty extends Property implements CompoundDatatype {
     }
 
     /**
-     * @see org.apache.fop.datatypes.CompoundDatatype#getComponent(int)
+     * {@inheritDoc}
      */
     public Property getComponent(int cmpId) {
         if (cmpId == CP_WITHIN_LINE) {

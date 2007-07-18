@@ -511,7 +511,7 @@ public class AlignmentContext implements Constants {
         return (getWritingMode() == EN_LR_TB || getWritingMode() == EN_RL_TB);
     }
     
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer(64);
         sb.append("ah=" + areaHeight);

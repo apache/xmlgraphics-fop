@@ -174,7 +174,7 @@ public class PDFRoot extends PDFObject {
     }
     
     /**
-     * @see org.apache.fop.pdf.PDFObject#toPDFString()
+     * {@inheritDoc}
      */
     public String toPDFString() {
         StringBuffer p = new StringBuffer(128);

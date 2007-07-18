@@ -50,12 +50,12 @@ public class PDFICCBasedColorSpace extends PDFObject implements PDFColorSpace {
         return this.iccStream;
     }
     
-    /** @see org.apache.fop.pdf.PDFColorSpace#getNumComponents() */
+    /** {@inheritDoc} */
     public int getNumComponents() {
         return iccStream.getICCProfile().getNumComponents();
     }
 
-    /** @see org.apache.fop.pdf.PDFColorSpace#getName() */
+    /** {@inheritDoc} */
     public String getName() {
         if (explicitName != null) {
             return explicitName;
@@ -64,27 +64,27 @@ public class PDFICCBasedColorSpace extends PDFObject implements PDFColorSpace {
         }
     }
 
-    /** @see org.apache.fop.pdf.PDFColorSpace#isDeviceColorSpace() */
+    /** {@inheritDoc} */
     public boolean isDeviceColorSpace() {
         return false;
     }
 
-    /** @see org.apache.fop.pdf.PDFColorSpace#isRGBColorSpace() */
+    /** {@inheritDoc} */
     public boolean isRGBColorSpace() {
         return getNumComponents() == 3;
     }
 
-    /** @see org.apache.fop.pdf.PDFColorSpace#isCMYKColorSpace() */
+    /** {@inheritDoc} */
     public boolean isCMYKColorSpace() {
         return getNumComponents() == 4;
     }
 
-    /** @see org.apache.fop.pdf.PDFColorSpace#isGrayColorSpace() */
+    /** {@inheritDoc} */
     public boolean isGrayColorSpace() {
         return getNumComponents() == 1;
     }
 
-    /** @see org.apache.fop.pdf.PDFObject#toPDFString() */
+    /** {@inheritDoc} */
     protected String toPDFString() {
         StringBuffer sb = new StringBuffer(64);
         sb.append(getObjectID());

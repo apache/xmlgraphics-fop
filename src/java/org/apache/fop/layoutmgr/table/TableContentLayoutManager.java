@@ -133,7 +133,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
         return this.footerList;
     }
 
-    /** @see org.apache.fop.layoutmgr.LayoutManager */
+    /** @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(LayoutContext, int) */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         log.debug("==> Columns: " + getTableLM().getColumns());
         KnuthBox headerAsFirst = null;
@@ -825,7 +825,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
     // --------- Property Resolution related functions --------- //
 
     /**
-     * @see org.apache.fop.datatypes.PercentBaseContext#getBaseLength(int, FObj)
+     * {@inheritDoc} 
      */
     public int getBaseLength(int lengthBase, FObj fobj) {
         return tableLM.getBaseLength(lengthBase, fobj);

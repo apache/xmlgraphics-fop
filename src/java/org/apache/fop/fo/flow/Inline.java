@@ -23,14 +23,9 @@ import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
-import org.apache.fop.fo.CharIterator;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.OneCharIterator;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.fo.properties.CommonRelativePosition;
-import org.apache.fop.fo.properties.KeepProperty;
-import org.apache.fop.fo.properties.LengthRangeProperty;
 
 /**
  * Class modelling the fo:inline formatting object.
@@ -47,9 +42,6 @@ public class Inline extends InlineLevel {
     //     private LengthRangeProperty blockProgressionDimension;
     //     private Length height;
     //     private LengthRangeProperty inlineProgressionDimension;
-    //     private KeepProperty keepTogether;
-    //     private KeepProperty keepWithNext;
-    //     private KeepProperty keepWithPrevious;
     //     private Length width;
     //     private int wrapOption;
     // End of property values
@@ -65,7 +57,7 @@ public class Inline extends InlineLevel {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
@@ -76,7 +68,7 @@ public class Inline extends InlineLevel {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#startOfNode
+     * {@inheritDoc}
      */
     protected void startOfNode() throws FOPException {
        super.startOfNode();
@@ -103,7 +95,7 @@ public class Inline extends InlineLevel {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#endOfNode
+     * {@inheritDoc}
      */
     protected void endOfNode() throws FOPException {
         super.endOfNode();
@@ -111,7 +103,7 @@ public class Inline extends InlineLevel {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc}
      * XSL Content Model: marker* (#PCDATA|%inline;|%block;)*
      * Additionally: " An fo:inline that is a descendant of an fo:leader
      *  or fo:footnote may not have block-level children, unless it has a
@@ -166,14 +158,12 @@ public class Inline extends InlineLevel {
         return dominantBaseline;
     }
     
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "inline";
     }
     
-    /**
-     * @see org.apache.fop.fo.FObj#getNameId()
-     */
+    /** {@inheritDoc} */
     public int getNameId() {
         return FO_INLINE;
     }

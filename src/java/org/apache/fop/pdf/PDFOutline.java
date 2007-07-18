@@ -127,7 +127,7 @@ public class PDFOutline extends PDFObject {
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFObject#toPDF()
+     * {@inheritDoc}
      */
     protected byte[] toPDF() {
         ByteArrayOutputStream bout = new ByteArrayOutputStream(128);

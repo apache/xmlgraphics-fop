@@ -273,7 +273,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     }
     
     /**
-     * @see org.apache.fop.render.Renderer#setUserAgent(FOUserAgent)
+     * {@inheritDoc}
      */
     public void setUserAgent(FOUserAgent agent) {
         super.setUserAgent(agent);
@@ -341,7 +341,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#startRenderer(OutputStream)
+     * {@inheritDoc}
      */
     public void startRenderer(OutputStream stream) throws IOException {
         if (userAgent == null) {
@@ -497,7 +497,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#stopRenderer()
+     * {@inheritDoc}
      */
     public void stopRenderer() throws IOException {
         finishOpenGoTos();
@@ -524,7 +524,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#supportsOutOfOrder()
+     * {@inheritDoc}
      */
     public boolean supportsOutOfOrder() {
         //return false;
@@ -532,7 +532,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#processOffDocumentItem(OffDocumentItem)
+     * {@inheritDoc}
      */
     public void processOffDocumentItem(OffDocumentItem odi) {
         if (odi instanceof DestinationData) {
@@ -618,7 +618,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         pdfDoc.getRoot().setMetadata(pdfMetadata);
     }
 
-    /** @see org.apache.fop.render.Renderer#getGraphics2DAdapter() */
+    /** {@inheritDoc} */
     public Graphics2DAdapter getGraphics2DAdapter() {
         return new PDFGraphics2DAdapter(this);
     }
@@ -724,7 +724,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * This method creates a pdf stream for the current page
      * uses it as the contents of a new page. The page is written
      * immediately to the output stream.
-     * @see org.apache.fop.render.Renderer#renderPage(PageViewport)
+     * {@inheritDoc}
      */
     public void renderPage(PageViewport page)
                 throws IOException, FOPException {
@@ -767,7 +767,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#startVParea(CTM, Rectangle2D)
+     * {@inheritDoc} 
      */
     protected void startVParea(CTM ctm, Rectangle2D clippingRect) {
         // Set the given CTM in the graphics state
@@ -787,7 +787,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#endVParea()
+     * {@inheritDoc}
      */
     protected void endVParea() {
         restoreGraphicsState();
@@ -814,7 +814,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         return PDFNumber.doubleOut(value);
     }
     
-    /** @see org.apache.fop.render.AbstractPathOrientedRenderer */
+    /** {@inheritDoc} */
     protected void drawBorderLine(float x1, float y1, float x2, float y2, 
             boolean horz, boolean startOrBefore, int style, Color col) {
         float w = x2 - x1;
@@ -1046,7 +1046,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /** 
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer#fillRect(float, float, float, float)
+     * {@inheritDoc} 
      */
     protected void fillRect(float x, float y, float w, float h) {
         if (w != 0 && h != 0) {
@@ -1293,7 +1293,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderBlock(Block)
+     * {@inheritDoc}
      */
     protected void renderBlock(Block block) {
         saveBlockPosIfTargetable(block);
@@ -1301,7 +1301,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderLineArea(LineArea)
+     * {@inheritDoc}
      */
     protected void renderLineArea(LineArea line) {
         super.renderLineArea(line);
@@ -1309,7 +1309,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderInlineArea(InlineArea)
+     * {@inheritDoc}
      */
     protected void renderInlineArea(InlineArea inlineArea) {
         saveInlinePosIfTargetable(inlineArea);
@@ -1395,7 +1395,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderText(TextArea)
+     * {@inheritDoc}
      */
     public void renderText(TextArea text) {
         renderInlineAreaBackAndBorders(text);
@@ -1434,7 +1434,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     }
     
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderWord(WordArea)
+     * {@inheritDoc}
      */
     public void renderWord(WordArea word) {
         Font font = getFontFromArea(word.getParentArea());
@@ -1453,7 +1453,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderSpace(SpaceArea)
+     * {@inheritDoc}
      */
     public void renderSpace(SpaceArea space) {
         Font font = getFontFromArea(space.getParentArea());
@@ -1626,7 +1626,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         }
     }
 
-    /** @see org.apache.fop.render.AbstractPathOrientedRenderer */
+    /** {@inheritDoc} */
     protected  void updateColor(Color col, boolean fill) {
         updateColor(col, fill, null);
     }
@@ -1644,7 +1644,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderImage(Image, Rectangle2D)
+     * {@inheritDoc} 
      */
     public void renderImage(Image image, Rectangle2D pos) {
         endTextObject();
@@ -1652,7 +1652,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         putImage(url, pos);
     }
 
-    /** @see org.apache.fop.render.AbstractPathOrientedRenderer */
+    /** {@inheritDoc} */
     protected void drawImage(String url, Rectangle2D pos, Map foreignAttributes) {
         endTextObject();
         putImage(url, pos);
@@ -1758,7 +1758,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.PrintRenderer#createRendererContext(
+     * {@inheritDoc}
      *          int, int, int, int, java.util.Map)
      */
     protected RendererContext createRendererContext(int x, int y, int width, int height, 
@@ -1851,7 +1851,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         super.renderLeader(area);
     }
 
-    /** @see org.apache.fop.render.AbstractRenderer */
+    /** {@inheritDoc} */
     public String getMimeType() {
         return MIME_TYPE;
     }

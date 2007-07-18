@@ -67,7 +67,7 @@ public class TableColumn extends TableFObj {
     
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
@@ -111,21 +111,21 @@ public class TableColumn extends TableFObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#startOfNode()
+     * {@inheritDoc}
      */
     protected void startOfNode() throws FOPException {
         getFOEventHandler().startColumn(this);
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#endOfNode
+     * {@inheritDoc}
      */
     protected void endOfNode() throws FOPException {
         getFOEventHandler().endColumn(this);
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc}
      * XSL Content Model: empty
      */
     protected void validateChildNode(Locator loc, 
@@ -181,12 +181,12 @@ public class TableColumn extends TableFObj {
         return numberColumnsSpanned;
     }
     
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "table-column";
     }
 
-    /** @see org.apache.fop.fo.FObj#getNameId() */
+    /** {@inheritDoc} */
     public int getNameId() {
         return FO_TABLE_COLUMN;
     }
@@ -203,7 +203,7 @@ public class TableColumn extends TableFObj {
         return defaultColumn;
     }
     
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer("fo:table-column");
         sb.append(" column-number=").append(getColumnNumber());

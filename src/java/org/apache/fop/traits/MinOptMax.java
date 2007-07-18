@@ -75,7 +75,7 @@ public class MinOptMax implements java.io.Serializable, Cloneable {
 
     // TODO: remove this.
     /**
-     * @see java.lang.Object#clone()
+     * {@inheritDoc}
      */
     public Object clone() {
         try {
@@ -174,7 +174,7 @@ public class MinOptMax implements java.io.Serializable, Cloneable {
         return (min != opt || opt != max);
     }
     
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append("MinOptMax[min=");

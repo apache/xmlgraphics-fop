@@ -90,21 +90,21 @@ public class PDFStream extends AbstractPDFStream {
     }
 
     /**
-     * @see org.apache.fop.pdf.AbstractPDFStream#getSizeHint()
+     * {@inheritDoc}
      */
     protected int getSizeHint() throws IOException {
         return data.getSize();
     }
 
     /**
-     * @see org.apache.fop.pdf.AbstractPDFStream#outputRawStreamData(OutputStream)
+     * {@inheritDoc}
      */
     protected void outputRawStreamData(OutputStream out) throws IOException {
         data.outputContents(out);
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFObject#output(OutputStream)
+     * {@inheritDoc}
      */
     protected int output(OutputStream stream) throws IOException {
         final int len = super.output(stream);

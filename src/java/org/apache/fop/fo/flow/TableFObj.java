@@ -32,10 +32,9 @@ import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.NumberProperty;
 import org.apache.fop.fo.properties.Property;
-import org.apache.fop.fo.properties.PropertyMaker;
 
 /**
- * Superclass for table-related FOs
+ * Common base class for table-related FOs
  */
 public abstract class TableFObj extends FObj {
 
@@ -77,7 +76,7 @@ public abstract class TableFObj extends FObj {
     }
 
     /**
-     * @see FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
@@ -105,7 +104,7 @@ public abstract class TableFObj extends FObj {
     }
     
     /**
-     * @see org.apache.fop.fo.FONode#addChildNode(FONode)
+     * {@inheritDoc}
      */
     protected void addChildNode(FONode child) throws FOPException {
         if (!inMarker() 
@@ -305,7 +304,7 @@ public abstract class TableFObj extends FObj {
         }
 
         /**
-         * @see PropertyMaker#make(PropertyList)
+         * {@inheritDoc}
          */
         public Property make(PropertyList propertyList) 
                 throws PropertyException {
@@ -333,10 +332,7 @@ public abstract class TableFObj extends FObj {
          * Return the parent's column index (initial value) in case 
          * of a negative or zero value
          * 
-         * @see org.apache.fop.fo.properties.PropertyMaker#make(
-         *              org.apache.fop.fo.PropertyList, 
-         *              java.lang.String, 
-         *              org.apache.fop.fo.FObj)
+         * @see org.apache.fop.fo.properties.PropertyMaker#make(PropertyList, String, FObj)
          */
         public Property make(PropertyList propertyList, String value, FObj fo) 
                     throws PropertyException {
