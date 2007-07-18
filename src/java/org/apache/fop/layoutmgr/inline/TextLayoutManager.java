@@ -164,6 +164,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
     private int lineStartBAP = 0;
     private int lineEndBAP = 0;
+    
+    private boolean keepTogether;
 
     /**
      * Create a Text layout manager.
@@ -213,6 +215,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         // in the SpaceVal.makeWordSpacing() method
         letterSpaceIPD = ls.getSpace();
         wordSpaceIPD = MinOptMax.add(new MinOptMax(spaceCharIPD), ws.getSpace());
+        
+        keepTogether = foText.getKeepTogether().getWithinLine().getEnum() == Constants.EN_ALWAYS;
 
     }
 
@@ -562,7 +566,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         while (iNextStart < textArray.length) {
             ch = textArray[iNextStart]; 
             boolean breakOpportunity = false;
-            byte breakAction = lbs.nextChar(ch);
+            byte breakAction = keepTogether? LineBreakStatus.PROHIBITED_BREAK : lbs.nextChar(ch);
             switch (breakAction) {
                 case LineBreakStatus.COMBINING_PROHIBITED_BREAK:
                 case LineBreakStatus.PROHIBITED_BREAK:

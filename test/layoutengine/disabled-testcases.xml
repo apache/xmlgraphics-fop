@@ -123,11 +123,6 @@
     <reference>http://issues.apache.org/bugzilla/show_bug.cgi?id=37579</reference>
   </testcase>
   <testcase>
-    <name>keeps on inlines NYI</name>
-    <file>inline_keep-together.xml</file>
-    <description>Keeps are not implemented in inline-level elements, yet.</description>
-  </testcase>
-  <testcase>
     <name>NPE for table inside an inline</name>
     <file>inline_block_nested_3.xml</file>
     <description>Placing a table as a child of an fo:inline produces a 
