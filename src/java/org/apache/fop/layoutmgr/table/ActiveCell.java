@@ -20,6 +20,7 @@
 package org.apache.fop.layoutmgr.table;
 
 import java.util.List;
+import java.util.ListIterator;
 
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.KnuthBox;
@@ -30,6 +31,8 @@ class ActiveCell {
         private PrimaryGridUnit pgu;
         /** Knuth elements for this active cell. */
         private List elementList;
+        /** Iterator over the Knuth element list. */
+        private ListIterator knuthIter;
         private boolean prevIsBox = false;
         /** Number of the row where the row-span ends, zero-based. */
         private int endRow;
@@ -80,6 +83,7 @@ class ActiveCell {
 //                    log.trace("column " + (column+1) + ": recording " + elementLists.size() + " element(s)");
 //                }
             }
+            knuthIter = elementList.listIterator();
             includedLength = -1;  // Avoid troubles with cells having content of zero length
             this.previousRowsLength = previousRowsLength;
             width = previousRowsLength;
@@ -120,9 +124,8 @@ class ActiveCell {
         private void goToNextLegalBreak() {
             lastPenaltyLength = 0;
             boolean breakFound = false;
-            while (!breakFound && end + 1 < elementList.size()) {
-                end++;
-                KnuthElement el = (KnuthElement)elementList.get(end);
+            while (!breakFound && knuthIter.hasNext()) {
+                KnuthElement el = (KnuthElement) knuthIter.next();
                 if (el.isPenalty()) {
                     prevIsBox = false;
                     if (el.getP() < KnuthElement.INFINITE) {
@@ -143,6 +146,7 @@ class ActiveCell {
                     width += el.getW();
                 }
             }
+            end = knuthIter.nextIndex() - 1;
         }
 
         int getNextStep() {
@@ -150,8 +154,7 @@ class ActiveCell {
                 return width + lastPenaltyLength + borderBefore + borderAfter + paddingBefore + paddingAfter;
             } else {
                 start = end + 1;
-                if (end < elementList.size() - 1) {
-
+                if (knuthIter.hasNext()) {
                     goToNextLegalBreak();
                     return width + lastPenaltyLength + borderBefore + borderAfter + paddingBefore + paddingAfter; 
                 } else {
@@ -176,15 +179,18 @@ class ActiveCell {
 
         private void computeRemainingLength() {
             remainingLength = totalLength - width;
-            int index = end + 1;
-            while (index < elementList.size()) {
-                KnuthElement el = (KnuthElement)elementList.get(index);
-                if (el.isBox()) {
-                    break;
-                } else if (el.isGlue()) {
+            // Save the current location in the element list
+            int oldIndex = knuthIter.nextIndex();
+            KnuthElement el;
+            while (knuthIter.hasNext()
+                    && !(el = (KnuthElement) knuthIter.next()).isBox()) {
+                if (el.isGlue()) {
                     remainingLength -= el.getW();
                 }
-                index++;
+            }
+            // Reset the iterator to the current location
+            while (knuthIter.nextIndex() > oldIndex) {
+                knuthIter.previous();
             }
         }
 
