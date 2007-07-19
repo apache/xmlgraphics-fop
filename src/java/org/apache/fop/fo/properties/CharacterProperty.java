@@ -25,8 +25,8 @@ import org.apache.fop.fo.PropertyList;
 /**
  * Superclass for properties that wrap a character value
  */
-public class CharacterProperty extends Property {
-
+public final class CharacterProperty extends Property {
+    
     /**
      * Inner class for creating instances of CharacterProperty
      */
@@ -42,18 +42,26 @@ public class CharacterProperty extends Property {
         public Property make(PropertyList propertyList, String value,
                              FObj fo) {
             char c = value.charAt(0);
-            return new CharacterProperty(c);
+            return CharacterProperty.getInstance(c);
         }
 
-    }    // end Character.Maker
+    }
 
-    private char character;
+    /** cache containing all canonical CharacterProperty instances */
+    private static final PropertyCache cache = new PropertyCache();
+
+    private final char character;
 
     /**
      * @param character character value to be wrapped in this property
      */
-    public CharacterProperty(char character) {
+    private CharacterProperty(char character) {
         this.character = character;
+    }
+    
+    public static CharacterProperty getInstance(char character) {
+        return (CharacterProperty) cache.fetch(
+                        new CharacterProperty(character));
     }
 
     /**
@@ -75,6 +83,24 @@ public class CharacterProperty extends Property {
      */
     public String getString() {
         return new Character(character).toString();
+    }
+
+    /** 
+     * {@inheritDoc}
+     */
+    public boolean equals(Object obj) {
+        if (obj instanceof CharacterProperty) {
+            return (((CharacterProperty)obj).character == this.character);
+        } else {
+            return false;
+        }
+    }
+
+    /** 
+     * {@inheritDoc}
+     */
+    public int hashCode() {
+        return (int) character;
     }
 
 }
