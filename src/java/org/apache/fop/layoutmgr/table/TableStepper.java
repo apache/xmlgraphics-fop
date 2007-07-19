@@ -108,8 +108,8 @@ public class TableStepper {
         int maxW = 0;
         if (!rowBacktrackForLastStep) {
             for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
-                maxW = Math.max(maxW, ((ActiveCell) iter.next()).getRemainingHeight(activeRowIndex,
-                        rowGroup));
+                maxW = Math.max(maxW,
+                        ((ActiveCell) iter.next()).getRemainingHeight(activeRowIndex));
             }
         }
         for (int i = activeRowIndex + (rowBacktrackForLastStep ? 0 : 1); i < rowGroup.length; i++) {
