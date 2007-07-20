@@ -1076,9 +1076,8 @@ public final class FOPropertyMapping implements Constants {
 
         // hyphenate
         m  = new EnumProperty.Maker(PR_HYPHENATE);
+        m.useGeneric(genericBoolean);
         m.setInherited(true);
-        m.addEnum("true", getEnumProperty(EN_TRUE, "TRUE"));
-        m.addEnum("false", getEnumProperty(EN_FALSE, "FALSE"));
         m.setDefault("false");
         addPropertyMaker("hyphenate", m);
 
@@ -1695,9 +1694,8 @@ public final class FOPropertyMapping implements Constants {
 
         // treat-as-word-space
         m  = new EnumProperty.Maker(PR_TREAT_AS_WORD_SPACE);
+        m.useGeneric(genericBoolean);
         m.addEnum("auto", getEnumProperty(EN_AUTO, "AUTO"));
-        m.addEnum("true", getEnumProperty(EN_TRUE, "TRUE"));
-        m.addEnum("false", getEnumProperty(EN_FALSE, "FALSE"));
         m.setInherited(false);
         m.setDefault("auto");
         addPropertyMaker("treat-as-word-space", m);
@@ -2238,9 +2236,8 @@ public final class FOPropertyMapping implements Constants {
 
         // precedence
         m  = new EnumProperty.Maker(PR_PRECEDENCE);
+        m.useGeneric(genericBoolean);
         m.setInherited(false);
-        m.addEnum("true", getEnumProperty(EN_TRUE, "TRUE"));
-        m.addEnum("false", getEnumProperty(EN_FALSE, "FALSE"));
         m.setDefault("false");
         addPropertyMaker("precedence", m);
 
