@@ -19,6 +19,7 @@
 
 package org.apache.fop.fo.properties;
 
+import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -35,6 +36,10 @@ public class PropertyCache {
     private Map propCache = Collections.synchronizedMap(new WeakHashMap());
     
     
+    public int size() {
+        return propCache.size();
+    }
+    
     /**
      *  Checks if the given property is present in the cache - if so, returns
      *  a reference to the cached value. Otherwise the given object is added
@@ -44,12 +49,14 @@ public class PropertyCache {
      */
     public Property fetch(Property prop) {
         
-        Property cacheEntry = (Property) propCache.get(prop);
-        if (cacheEntry != null) {
-            return cacheEntry;
-        } else {
-            propCache.put(prop, prop);
-            return prop;
+        WeakReference ref = (WeakReference) propCache.get(prop);
+        if (ref != null) {
+            Property cacheEntry = (Property)ref.get();
+            if (cacheEntry != null) {
+                return cacheEntry;                
+            }
         }
+        propCache.put(prop, new WeakReference(prop));
+        return prop;
     }
 }
