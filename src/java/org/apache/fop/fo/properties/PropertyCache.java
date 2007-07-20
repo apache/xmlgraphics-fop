@@ -36,10 +36,6 @@ public class PropertyCache {
     private Map propCache = Collections.synchronizedMap(new WeakHashMap());
     
     
-    public int size() {
-        return propCache.size();
-    }
-    
     /**
      *  Checks if the given property is present in the cache - if so, returns
      *  a reference to the cached value. Otherwise the given object is added
