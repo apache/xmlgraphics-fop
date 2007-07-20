@@ -26,7 +26,7 @@ import org.apache.fop.fo.PropertyList;
  * Exists primarily as a container for its Maker inner class, which is
  * extended by many string-based FO property classes.
  */
-public class StringProperty extends Property {
+public final class StringProperty extends Property {
 
     /**
      * Inner class for making instances of StringProperty

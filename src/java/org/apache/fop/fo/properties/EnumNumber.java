@@ -19,10 +19,14 @@
  
 package org.apache.fop.fo.properties;
 
+import org.apache.fop.datatypes.Numeric;
+import org.apache.fop.datatypes.PercentBaseContext;
+import org.apache.fop.fo.expr.PropertyException;
+
 /**
  * A number quantity in XSL which is specified as an enum, such as "no-limit".
  */
-public class EnumNumber extends NumberProperty {
+public final class EnumNumber extends Property implements Numeric {
 
     /** cache holding all canonical EnumNumber instances */
     private static final PropertyCache cache = new PropertyCache();
@@ -34,13 +38,13 @@ public class EnumNumber extends NumberProperty {
      * @param enumProperty  the base EnumProperty
      */
     private EnumNumber(Property enumProperty) {
-        super(null);
         this.enumProperty = (EnumProperty) enumProperty;
     }
 
     /**
      * Returns the canonical EnumNumber instance corresponding
      * to the given Property
+     * 
      * @param enumProperty  the base EnumProperty
      * @return  the canonical instance
      */
@@ -49,45 +53,22 @@ public class EnumNumber extends NumberProperty {
                 new EnumNumber((EnumProperty) enumProperty));
     }
 
+    /** {@inheritDoc} */
     public int getEnum() {
         return enumProperty.getEnum();
     }
 
-    /**
-     * Returns the length in 1/1000ths of a point (millipoints)
-     * @return the length in millipoints
-     */
-    public int getValue() {
-        log.error("getValue() called on " + enumProperty + " number");
-        return 0;
-    }
-
-    /**
-     * Returns the value as numeric.
-     * @return the length in millipoints
-     */
-    public double getNumericValue() {
-        log.error("getNumericValue() called on " + enumProperty + " number");
-        return 0;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String getString() {
         return enumProperty.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public Object getObject() {
         return enumProperty.getObject();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean equals(Object obj) {
         if (obj instanceof EnumNumber) {
             return (((EnumNumber)obj).enumProperty == this.enumProperty);
@@ -96,11 +77,65 @@ public class EnumNumber extends NumberProperty {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int hashCode() {
         return enumProperty.hashCode();
     }
+
+    /** {@inheritDoc} */
+    public int getDimension() {
+        return 0;
+    }
+
+    /** 
+     * {@inheritDoc}
+     * Always <code>true</code> for instances of this type
+     */
+    public boolean isAbsolute() {
+        return true;
+    }
     
+    /** 
+     * {@inheritDoc} 
+     * logs an error, because it's not supposed to be called
+     */
+    public double getNumericValue(PercentBaseContext context) throws PropertyException {
+        log.error("getNumericValue() called on " + enumProperty + " number");
+        return 0;
+    }
+
+    /** 
+     * {@inheritDoc} 
+     * logs an error, because it's not supposed to be called
+     */
+    public int getValue(PercentBaseContext context) {
+        log.error("getValue() called on " + enumProperty + " number");
+        return 0;
+    }
+
+    /** 
+     * {@inheritDoc} 
+     * logs an error, because it's not supposed to be called
+     */
+    public int getValue() {
+        log.error("getValue() called on " + enumProperty + " number");
+        return 0;
+    }
+
+    /** 
+     * {@inheritDoc} 
+     * logs an error, because it's not supposed to be called
+     */
+    public double getNumericValue() {
+        log.error("getNumericValue() called on " + enumProperty + " number");
+        return 0;
+    }
+
+    /** 
+     * {@inheritDoc}
+     */
+    public Numeric getNumeric() {
+        return this;
+    }
+
 }

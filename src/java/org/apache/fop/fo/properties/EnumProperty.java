@@ -26,7 +26,7 @@ import org.apache.fop.fo.expr.PropertyException;
 /**
  * Superclass for properties that wrap an enumeration value
  */
-public class EnumProperty extends Property {
+public final class EnumProperty extends Property {
     
     /** cache holding all canonical EnumProperty instances */
     private static final PropertyCache cache = new PropertyCache();

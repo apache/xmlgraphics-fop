@@ -32,7 +32,7 @@ import org.apache.fop.fo.expr.PropertyException;
 /**
  * Class for handling numeric properties
  */
-public class NumberProperty extends Property implements Numeric {
+public final class NumberProperty extends Property implements Numeric {
 
     /**
      * Inner class for making NumberProperty objects
@@ -77,7 +77,7 @@ public class NumberProperty extends Property implements Numeric {
      * Constructor for Number input
      * @param num Number object value for property
      */
-    protected NumberProperty(Number num) {
+    private NumberProperty(Number num) {
         this.number = num;
     }
 
@@ -224,13 +224,15 @@ public class NumberProperty extends Property implements Numeric {
     
     /** {@inheritDoc} */
     public boolean equals(Object o) {
-        if (o != null && o instanceof NumberProperty) {
+        if (o == this) {
+            return true;
+        }
+        if (o instanceof NumberProperty) {
             NumberProperty np = (NumberProperty) o;
             return (np.number == this.number
                     || (this.number != null
                         && this.number.equals(np.number)));
-        } else {
-            return false;
         }
+        return false;
     }
 }
