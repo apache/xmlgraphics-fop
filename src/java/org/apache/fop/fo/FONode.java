@@ -109,7 +109,7 @@ public abstract class FONode implements Cloneable {
      * <code>PropertyList</code>.
      * 
      * @param   propertyList    the <code>PropertyList</code>
-     * @throws  <code>FOPException</code> if there was an error when
+     * @throws  FOPException if there was an error when
      *          processing the <code>PropertyList</code>
      */
     public void bind(PropertyList propertyList) throws FOPException {
