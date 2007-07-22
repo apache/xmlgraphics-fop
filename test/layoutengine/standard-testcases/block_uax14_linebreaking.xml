@@ -191,9 +191,8 @@
       <eval expected="93380" xpath="//flow/block[27]/lineArea[2]/text/@ipd"/>
       <eval expected="132860" xpath="//flow/block[27]/lineArea[3]/text/@ipd"/>
 
-      <eval expected="3" xpath="count(//flow/block[29]/lineArea)"/>
-      <eval expected="21670" xpath="//flow/block[29]/lineArea[1]/text/@ipd"/>
-      <eval expected="145630" xpath="//flow/block[29]/lineArea[2]/text/@ipd"/>
-      <eval expected="53360" xpath="//flow/block[29]/lineArea[3]/text/@ipd"/>
+      <eval expected="2" xpath="count(//flow/block[29]/lineArea)"/>
+      <eval expected="147840" xpath="//flow/block[29]/lineArea[1]/text/@ipd"/>
+      <eval expected="47800" xpath="//flow/block[29]/lineArea[2]/text/@ipd"/>
   </checks>
 </testcase>
