@@ -695,7 +695,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 iThisStart = (short) (iNextStart + 1);
             } else if (CharUtilities.isFixedWidthSpace(ch) || CharUtilities.isZeroWidthSpace(ch)) {
                 // create the AreaInfo object
-                MinOptMax ipd = new MinOptMax(font.getCharWidth(ch));
+                MinOptMax ipd = new MinOptMax(CharUtilities.isZeroWidthSpace(ch) ? 0 : font.getCharWidth(ch));
                 ai = new AreaInfo(iNextStart, (short) (iNextStart + 1),
                         (short) 0, (short) 0,
                         ipd, false, true, breakOpportunity); 
