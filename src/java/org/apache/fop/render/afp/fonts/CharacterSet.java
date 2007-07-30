@@ -250,7 +250,8 @@ public class CharacterSet {
 
         if (!_isMetricsLoaded) {
 
-            AFPFontReader.loadCharacterSetMetric(this);
+            AFPFontReader afpFontReader = new AFPFontReader();
+            afpFontReader.loadCharacterSetMetric(this);
             _isMetricsLoaded = true;
 
         }
