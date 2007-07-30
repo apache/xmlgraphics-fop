@@ -18,11 +18,11 @@
 /* $Id$ */
 
 package org.apache.fop.render.afp.extensions;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.fo.XMLObj;
 
 /**
  * This class extends the org.apache.fop.extensions.ExtensionObj class. The
@@ -40,16 +40,6 @@ public class AFPElement extends AbstractAFPExtensionObject {
      */
     public AFPElement(FONode parent, String name) {
         super(parent, name);
-    }
-
-    /** {@inheritDoc} */
-    public String getNamespaceURI() {
-        return AFPElementMapping.NAMESPACE;
-    }
-
-    /** {@inheritDoc} */
-    public String getNormalNamespacePrefix() {
-        return "afp";
     }
 
     /** {@inheritDoc} */

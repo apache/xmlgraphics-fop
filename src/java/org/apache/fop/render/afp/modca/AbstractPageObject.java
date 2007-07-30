@@ -357,6 +357,18 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
     }
 
     /**
+     * Creates a NoOperation on the page.
+     *
+     * @param content the byte data
+     */
+    public void createNoOperation(String content) {
+
+        NoOperation noOp = new NoOperation(content);
+        _objects.add(noOp);
+
+    }
+
+    /**
      * Creates an IncludePageSegment on the current page.
      *
      * @param name
