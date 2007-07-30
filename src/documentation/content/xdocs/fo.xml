@@ -92,7 +92,7 @@ It is not necessary everywhere, but it is wise to do so anyway, just to be sure.
       <section id="xml-encoding">
         <title>Encoding Issues</title>
         <p>
-          If the parser complains about illegal bytes or characters in the input, or there are unexpected characters in the output, this is usually is the result of a character encoding problem.
+          If the parser complains about illegal bytes or characters in the input, or there are unexpected characters in the output, this is usually the result of a character encoding problem.
 See the <link href="http://www.dpawson.co.uk/xsl">XSL FAQ</link> for additional information.
 Many software packages that produce XML, including XSLT processors, use UTF-8 encoding as a default.
 If you view their output with something not aware of the encoding, like Notepad for Win95/98/ME/NT, funny characters are displayed. A &#197; is a giveaway.
@@ -350,13 +350,14 @@ Omit your normal headers and footers, and use (for example) an extended header t
       <section id="fo-preformat">
         <title>Preformatting Content</title>
         <p>
-          Sometimes it is desirable to retain linebreaks and hard spaces, and to get preformatted text to pass through without being changed.
-The XSL-FO specification provides some properties for this: <link href="http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#white-space-collapse">white-space-collapse</link> and <link href="http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#linefeed-treatment">linefeed-treatment</link>.
-In FOP, use white-space-collapse="false" on an enclosing block.
+          Sometimes it is desirable to retain linebreaks and hard spaces, and to get
+          preformatted text to pass through without being changed. The XSL-FO
+          specification provides some properties for this: <link
+            href="http://www.w3.org/TR/xsl11/#white-space-collapse">white-space-collapse</link>
+          and <link
+            href="http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#white-space-collapse">linefeed-treatment</link>.
+          In FOP, use white-space-collapse="false" on an enclosing block.
         </p>
-        <warning>
-          Due to a bug in FOP 0.20.5, setting white-space-collapse="false" will also preserve line breaks in the text. Do not rely on this behavior, as it is non-conformant and has changed in FOP 0.93.
-        </warning>
       </section>
       <section id="fo-total-pages">
         <title>Total Document Pages</title>
@@ -447,7 +448,7 @@ This applies similarly to the extent of the after region and the bottom margin o
         </p>
         <ul>
           <li>
-            Horizontal lines can be drawn using <link href="http://www.w3.org/TR/2001/REC-xsl-20011015/slice6.html#fo_leader">fo:leader</link>.
+            Horizontal lines can be drawn using <link href="http://www.w3.org/TR/xsl11/#fo_leader">fo:leader</link>.
           </li>
           <li>
             Use a solid border on a suitable fo:block. This will work for horizontal and vertical lines only.
@@ -463,9 +464,12 @@ This applies similarly to the extent of the after region and the bottom margin o
           <link href="http://www.renderx.com">RenderX</link> has provided an <link href="http://www.renderx.com/Tests/validator/fo.dtd.html">Unofficial DTD for FO Documents</link>, which may be helpful in validating general FO issues.
         </p>
         <p>
-          FOP also maintains an <link href="http://svn.apache.org/viewvc/xmlgraphics/fop/trunk/src/foschema/fop.xsd?view=co">Unofficial FOP Schema</link> in the FOP CVS Repository.
-This document can be used either to validate against the FO standard, or against the actual FOP implementation.
-See the notes near the beginning of the document for instructions on how to use it.
+          FOP also maintains an <link
+            href="http://svn.apache.org/viewvc/xmlgraphics/fop/trunk/src/foschema/fop.xsd?view=co">Unofficial
+            FOP Schema</link> in the FOP Subversion Repository. This document can be used
+          either to validate against the FO standard, or against the actual FOP
+          implementation. See the notes near the beginning of the document for
+          instructions on how to use it.
           </p>
       </section>
       <section id="landscape">
@@ -484,8 +488,8 @@ See the notes near the beginning of the document for instructions on how to use 
       </section>
       <section id="external-resources">
         <title>External Resources</title>
-        <p>Resources needed by an XSL-FO file that are external to it (graphics, for example), are defined in the XSL-FO standard as being of type "uri-specification". This is defined in the standard at <jump href="http://www.w3.org/TR/2001/REC-xsl-20011015/slice5.html#section-N8794-Property-Datatypes">Section 5.11 Property Datatypes</jump>, which includes a link to the URI standard itself. Refer to the XSL-FO and URI standards themselves for more detailed instructions.</p>
-        <p>URIs may be either absolute or relative to a base URI. (See <link href="0.20.5/configuration.html">FOP: Configuration</link> for information on setting the base URI for a FOP session). Here is an example referencing an external-graphic that is relative to the base URI:</p>
+        <p>Resources needed by an XSL-FO file that are external to it (graphics, for example), are defined in the XSL-FO standard as being of type "uri-specification". This is defined in the standard at <jump href="http://www.w3.org/TR/xsl11/#datatype">Section 5.11 Property Datatypes</jump>, which includes a link to the URI standard itself. Refer to the XSL-FO and URI standards themselves for more detailed instructions.</p>
+        <p>URIs may be either absolute or relative to a base URI. (See <link href="0.94/configuration.html">FOP: Configuration</link> for information on setting the base URI for a FOP session). Here is an example referencing an external-graphic that is relative to the base URI:</p>
         <source><![CDATA[<fo:external-graphic src="url('images/logo.jpg')"/>]]></source>
         <p>Here is an example referencing an external-graphic that is an absolute URI on a local filesystem:</p>
         <source><![CDATA[fo:external-graphic src="url('file:d:///images/logo.jpg')"/>]]></source>
