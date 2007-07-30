@@ -26,25 +26,19 @@
   <body>
     <section id="intro">
       <title>Introduction</title>
-    <p>Apache FOP (Formatting Objects Processor) is the world's first print formatter driven by XSL formatting
-       objects (XSL-FO) and the world's first output independent formatter. It is a
-       Java application that reads a formatting object (FO) tree and
-       renders the resulting pages to a specified output. <link href="0.20.5/output.html">Output formats</link>
-       currently supported include PDF, PCL, PS, SVG, XML (area tree representation),
-       Print, AWT, MIF and TXT.
-       The primary output target is PDF.
-    </p>
+      <p>Apache FOP (Formatting Objects Processor) is a print formatter driven by XSL
+        formatting objects (XSL-FO) and an output independent formatter. It is a Java
+        application that reads a formatting object (FO) tree and renders the resulting
+        pages to a specified output. <link href="0.94/output.html">Output formats</link>
+        currently supported include PDF, PS, PCL, AFP, XML (area tree representation),
+        Print, AWT, PNG and TXT. The primary output target is PDF.
+      </p>
         <figure width="480" height="260" src="images/document.jpg" alt="Render Diagram" />
     <p>
-      The previous version of FOP (<link href="0.20.5/">0.20.5</link>) is a partial implementation of the
-      <link href="http://www.w3.org/TR/2001/REC-xsl-20011015/">XSL-FO Version 1.0
-      W3C Recommendation</link>.
-    </p>
-    <p>
-      The latest stable version of FOP (<link href="0.93/">0.93</link>) is the first stable release 
-      after a large redesign effort and implements a larger subset than 0.20.5 of the 
-      <link href="http://www.w3.org/TR/2001/REC-xsl-20011015/">XSL-FO Version 1.0 W3C Recommendation</link>
-      as well as some parts of the <link href="http://www.w3.org/TR/xsl11">XSL-FO Version 1.1 Working Draft</link>.
+      The latest stable version of FOP (<link href="0.94/">0.94</link>) is the second
+      stable release after a large redesign effort and implements a large subset of the
+      <link href="http://www.w3.org/TR/xsl11/">XSL-FO Version 1.1 W3C
+        Recommendation</link>.
     </p>
     <p>
       Support for each of the standard's objects and properties is detailed in <link href="compliance.html">FOP Compliance</link>.
@@ -63,22 +57,21 @@ is formatted into the two pages on the right. The document contains static areas
 </p>
 <p>
 FOP uses the standard XSL-FO file format as input, lays the content out into pages, then renders it to the requested output.
-One great advantage to using XSL-FO as input is that XSL-FO is itself an XML file, which means that it can be conveniently created from a variety of sources.
+One great advantage of using XSL-FO as input is that XSL-FO is itself an XML file, which means that it can be conveniently created from a variety of sources.
 The most common method is to convert semantic XML to XSL-FO, using an XSLT transformation.</p>
   </section>
   <section id="objectives">
     <title>FOP Objectives</title>
-    <p>The goals of the Apache FOP project are to deliver an XSL-FO to PDF formatter that is compliant to at least the Basic
-       conformance level described in the W3C Recommendation from 15 October 2001, and that complies with the 11 March 1999 Portable Document
-       Format Specification (Version 1.3) from Adobe Systems.
+    <p>The goals of the Apache FOP project are to deliver an XSL-FO to PDF formatter that
+      is compliant to at least the Basic conformance level described in the W3C
+      Recommendation from 05 December 2006, and that complies with the November 2001
+      Portable Document Format Specification (Version 1.4) from Adobe Systems.
     </p>
 
     <p>Conformance to the XML 1.0 Recommendation, XSLT 1.0 Recommendation and the XML Namespaces Recommendation is
        understood. Other relevant documents, such as the XPath and XLink Working Drafts, are referenced as necessary. The FOP
        Project will attempt to use the latest version of evolving specifications.
     </p>
-
-   <p>The FOP layout system is currently being rewritten to better support the XSL-FO standard.</p>
   </section>
   <note>
     The PDF files on this site are created using Apache FOP.

@@ -26,6 +26,12 @@
   </header>
   <body>
     <section>
+      <title>XX August 2007 - Apache FOP 0.94 Released</title>
+      <p>The Apache FOP team is pleased to present you the second production
+        grade release of the new FOP codebase. This release contains many bug
+        fixes and features.</p>
+    </section>
+    <section>
       <title>26 January 2007 - New Committer</title>
       <p>Welcome Jay Bryant!</p>
     </section>
