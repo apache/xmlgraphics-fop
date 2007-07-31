@@ -45,8 +45,8 @@ import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.RegionReference;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
-import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.Image;
+import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.WordArea;
@@ -67,8 +67,8 @@ import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.afp.extensions.AFPElementMapping;
 import org.apache.fop.render.afp.extensions.AFPPageSetup;
-import org.apache.fop.render.afp.fonts.AFPFontInfo;
 import org.apache.fop.render.afp.fonts.AFPFont;
+import org.apache.fop.render.afp.fonts.AFPFontInfo;
 import org.apache.fop.render.afp.fonts.CharacterSet;
 import org.apache.fop.render.afp.fonts.FopCharacterSet;
 import org.apache.fop.render.afp.fonts.OutlineFont;
@@ -954,13 +954,15 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                         if (!fopimage.load(FopImage.BITMAP)) {
                             return;
                         }
-                        convertToGrayScaleImage(io, fopimage.getBitmaps());
+                        convertToGrayScaleImage(io, fopimage.getBitmaps(), 
+                                fopimage.getWidth(), fopimage.getHeight());
                     }
                 } else {
                     if (!fopimage.load(FopImage.BITMAP)) {
                         return;
                     }
-                    convertToGrayScaleImage(io, fopimage.getBitmaps());
+                    convertToGrayScaleImage(io, fopimage.getBitmaps(),
+                            fopimage.getWidth(), fopimage.getHeight());
                 }
             } else {
                 if (!fopimage.load(FopImage.BITMAP)) {
@@ -983,7 +985,8 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                     io.setImageIDESize((byte)24);
                     io.setImageData(fopimage.getBitmaps());
                 } else {
-                    convertToGrayScaleImage(io, fopimage.getBitmaps());
+                    convertToGrayScaleImage(io, fopimage.getBitmaps(),
+                            fopimage.getWidth(), fopimage.getHeight());
                 }
             }
         }
@@ -1045,7 +1048,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
             } else {
                 //TODO Teach it how to handle grayscale BufferedImages directly
                 //because this is pretty inefficient
-                convertToGrayScaleImage(io, buf);
+                convertToGrayScaleImage(io, buf, bi.getWidth(), bi.getHeight());
             }
         } catch (IOException ioe) {
             log.error("Error while serializing bitmap: " + ioe.getMessage(), ioe);
@@ -1433,35 +1436,53 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         return (int)Math.round(mpt / DPI_CONVERSION_FACTOR_240);
     }
 
-    private void convertToGrayScaleImage(ImageObject io, byte[] raw) {
+    /**
+     * Converts a byte array containing 24 bit RGB image data to a grayscale image.
+     * @param io the target image object
+     * @param raw the buffer containing the RGB image data
+     * @param width the width of the image in pixels
+     * @param height the height of the image in pixels
+     */
+    private void convertToGrayScaleImage(ImageObject io, byte[] raw, int width, int height) {
         int pixelsPerByte = 8 / bitsPerPixel;
-        byte[] bw = new byte[raw.length / (3 * pixelsPerByte)];
-        int k = 0;
-        for (int i = 0, j = 0; i < raw.length; i += 3, j++) {
-            if (j == pixelsPerByte) {
-                j = 0;
-                k++;
-                if (k == bw.length) {
-                    break;
-                }
-            }
-            // see http://www.jguru.com/faq/view.jsp?EID=221919
-            double greyVal = 0.212671d * ((int) raw[i] & 0xff)
-                + 0.715160d * ((int) raw[i + 1] & 0xff)
-                + 0.072169d * ((int) raw[i + 2] & 0xff);
-            switch (bitsPerPixel) {
+        int bytewidth = (width / pixelsPerByte);
+        if ((width % pixelsPerByte) != 0) {
+            bytewidth++;
+        }
+        byte[] bw = new byte[height * bytewidth];
+        byte ib;
+        for (int y = 0; y < height; y++) {
+            ib = 0;
+            int i = 3 * y * width;
+            for (int x = 0; x < width; x++, i += 3) {
+                
+                // see http://www.jguru.com/faq/view.jsp?EID=221919
+                double greyVal = 0.212671d * ((int) raw[i] & 0xff)
+                    + 0.715160d * ((int) raw[i + 1] & 0xff)
+                    + 0.072169d * ((int) raw[i + 2] & 0xff);
+
+                switch (bitsPerPixel) {
                 case 1:
-                    if (greyVal > 128) {
-                        bw[k] |= (byte)(1 << j);
+                    if (greyVal < 128) {
+                        ib |= (byte)(1 << (7 - (x % 8)));
                     }
                     break;
                 case 4:
                     greyVal /= 16;
-                    bw[k] |= (byte)((byte)greyVal << (j * 4));
+                    ib |= (byte)((byte)greyVal << ((1 - (x % 2)) * 4));
                     break;
                 case 8:
-                    bw[k] = (byte)greyVal;
+                    ib = (byte)greyVal;
                     break;
+                default:
+                    throw new UnsupportedOperationException(
+                            "Unsupported bits per pixel: " + bitsPerPixel);
+                }
+                
+                if ((x % pixelsPerByte) == (pixelsPerByte - 1) || ((x + 1) == width)) {
+                    bw[(y * bytewidth) + (x / pixelsPerByte)] = ib;
+                    ib = 0;
+                }
             }
         }
         io.setImageIDESize((byte)bitsPerPixel);
