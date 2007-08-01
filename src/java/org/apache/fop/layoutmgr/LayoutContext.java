@@ -71,7 +71,7 @@ public class LayoutContext {
     public static final int KEEP_WITH_PREVIOUS_PENDING = 0x400;
 
 
-    public int flags; // Contains some set of flags defined above
+    private int flags; // Contains some set of flags defined above
     /**
      * Total available stacking dimension for a "galley-level" layout
      * manager (Line or Flow). It is passed by the parent LM. For LineLM,
@@ -79,22 +79,22 @@ public class LayoutContext {
      * These LM <b>may</b> wish to pass this information down to lower
      * level LM to allow them to optimize returned break possibilities.
      */
-    MinOptMax stackLimit;
+    private MinOptMax stackLimit;
 
     /** True if current element list is spanning in multi-column layout. */
     private int nextSpan = Constants.NOT_SET;
 
     /** inline-progression-dimension of nearest ancestor reference area */
-    int refIPD;
+    private int refIPD;
 
     /** the writing mode established by the nearest ancestor reference area */
     private int writingMode = Constants.EN_LR_TB;
 
     /** Current pending space-after or space-end from preceding area */
-    SpaceSpecifier trailingSpace;
+    private SpaceSpecifier trailingSpace;
 
     /** Current pending space-before or space-start from ancestor areas */
-    SpaceSpecifier leadingSpace;
+    private SpaceSpecifier leadingSpace;
     
     /**
      * A list of pending marks (border and padding) on the after edge when a page break occurs. 
