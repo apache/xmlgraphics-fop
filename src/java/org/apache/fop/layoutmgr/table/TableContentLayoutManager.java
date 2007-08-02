@@ -214,12 +214,39 @@ public class TableContentLayoutManager implements PercentBaseContext {
             LayoutContext context, int alignment, int bodyType) {
         LinkedList returnList = new LinkedList();
         EffRow[] rowGroup = null;
+        int breakBetween = Constants.EN_AUTO;
         while ((rowGroup = iter.getNextRowGroup()) != null) {
-            returnList.addAll(new RowGroupLayoutManager(getTableLM(), rowGroup, bodyIter,
-                    headerIter, footerIter, iter, stepper).getNextKnuthElements(context, alignment,
-                    bodyType));
+            RowGroupLayoutManager rowGroupLM = new RowGroupLayoutManager(getTableLM(), rowGroup,
+                    bodyIter, headerIter, footerIter, iter, stepper);
+            if (breakBetween == Constants.EN_AUTO) {
+                // TODO improve
+                breakBetween = rowGroupLM.getBreakBefore();
+            }
+            if (breakBetween != Constants.EN_AUTO) {
+                if (returnList.size() > 0) {
+                    BreakElement breakPoss = (BreakElement) returnList.getLast();
+                    breakPoss.setPenaltyValue(-KnuthPenalty.INFINITE);
+                    breakPoss.setBreakClass(breakBetween);
+                } else {
+                    returnList.add(new BreakElement(new Position(tableLM),
+                            0, -KnuthPenalty.INFINITE, breakBetween, context));
+                }
+            }
+            returnList.addAll(rowGroupLM.getNextKnuthElements(context, alignment, bodyType));
+            breakBetween = rowGroupLM.getBreakAfter();
         }
-        
+        // Break after the table's last row
+        // TODO should eventually be handled at the table level
+        if (breakBetween != Constants.EN_AUTO) {
+            if (returnList.size() > 0) {
+                BreakElement breakPoss = (BreakElement) returnList.getLast();
+                breakPoss.setPenaltyValue(-KnuthPenalty.INFINITE);
+                breakPoss.setBreakClass(breakBetween);
+            } else {
+                returnList.add(new BreakElement(new Position(tableLM),
+                        0, -KnuthPenalty.INFINITE, breakBetween, context));
+            }
+        }
         if (returnList.size() > 0) {
             //Remove the last penalty produced by the combining algorithm (see TableStepper), for the last step
             ListElement last = (ListElement)returnList.getLast();
