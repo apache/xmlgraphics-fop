@@ -44,11 +44,11 @@
     </li>
     <li>
       The API has changed between 0.91beta this release.
-      Please consult the <a href="0.93/upgrading.html">"Upgrading"</a> page for details.
+      Please consult the <a href="0.94/upgrading.html">"Upgrading"</a> page for details.
     </li>
     <li>
       You may experience different behaviour compared to version 0.20.5.
-      Please consult the <a href="0.93/upgrading.html">"Upgrading"</a> page for details.
+      Please consult the <a href="0.94/upgrading.html">"Upgrading"</a> page for details.
     </li>
   </ul>
   <p>Known Issues:</p>
@@ -177,7 +177,7 @@
     </li>
     <li>
       You may experience different behaviour compared to version 0.20.5.
-      Please consult the <a href="0.93/upgrading.html">"Upgrading"</a> page indicated above for details.
+      Please consult the <a href="0.94/upgrading.html">"Upgrading"</a> page indicated above for details.
     </li>
   </ul>
   <p>Known Issues:</p>
@@ -318,7 +318,7 @@
     </li>
     <li>
       You may experience different behaviour compared to version 0.20.5.
-      Please consult the <a href="0.93/upgrading.html">"Upgrading"</a> page indicated above for details.
+      Please consult the <a href="0.94/upgrading.html">"Upgrading"</a> page indicated above for details.
     </li>
   </ul>
   <p>Known Issues:</p>
@@ -430,7 +430,7 @@
 </section>
 <section>
   <title>FOP 0.20.5</title>
-  <p>This is the last planned release in the 0.20.x series (aka maintenance branch).</p>
+  <p>This was the last release in the 0.20.x series (aka maintenance branch).</p>
   <p>Important changes since the last release (0.20.4):</p>
   <ul>
     <li>Some hyphenation patterns (cs, da, de, de_DR, el, en, en_US, fr, nl,
@@ -461,7 +461,8 @@
     <li>Links in PDF won't generate multiple link rectangles anymore. If this causes
         a problem you can set the system property "links.merge" to "no".
     </li>
-    <li>FOP has been compiled with cryptography support. See <a href="0.20.5/pdfencryption.html">
+    <li>FOP has been compiled with cryptography support. See 
+      <a href="0.94/pdfencryption.html">
       PDF encryption</a> for details about installation and usage.
     </li>
     <li>The behaviour of leader has changed. See
@@ -496,7 +497,7 @@
         support for additional truetype fonts in AWT Viewer.
       </li>
       <li>Logging has been changed from LogKit to Avalon's Logger Interface.
-        (see <a href="0.20.5/embedding.html">Embedding</a> for details).
+        (see <a href="0.94/embedding.html">Embedding</a> for details).
       </li>
       <li>Building under JDK 1.4:
          You need to add a method in

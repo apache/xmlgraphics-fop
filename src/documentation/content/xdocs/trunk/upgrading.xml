@@ -31,7 +31,9 @@
       </p>
       <ul>
         <li>
-          More than half of the codebase has been rewritten over the last three years. With version 0.93 the code has reached <strong>production level</strong>.
+          More than half of the codebase has been rewritten over the
+          last three years. With version 0.93 the code has reached
+          <strong>production level</strong>, and continues to improve..
         </li>
         <li>
           The API of FOP has changed considerably and is not
