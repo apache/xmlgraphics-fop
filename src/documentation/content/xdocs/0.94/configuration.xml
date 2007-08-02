@@ -335,8 +335,8 @@
 	<section id="fonts">
 		<title>Apache FOP Font Config</title>
 		<p>
-			Apache FOP has special Font considerations, which are explained in detail
-			on the <a href="fonts.html">Fonts</a> page.
+			Apache FOP has special Font configuration considerations, which are explained
+			in detail on the <a href="fonts.html">Fonts</a> page.
 		</p>
 	</section>
 
