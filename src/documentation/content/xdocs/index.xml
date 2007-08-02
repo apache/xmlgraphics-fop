@@ -31,7 +31,7 @@
         application that reads a formatting object (FO) tree and renders the resulting
         pages to a specified output. <link href="0.94/output.html">Output formats</link>
         currently supported include PDF, PS, PCL, AFP, XML (area tree representation),
-        Print, AWT, PNG and TXT. The primary output target is PDF.
+        Print, AWT and PNG, and to a lesser extent, RTF and TXT. The primary output target is PDF.
       </p>
         <figure width="480" height="260" src="images/document.jpg" alt="Render Diagram" />
     <p>

@@ -234,7 +234,7 @@ It will display all of the font names and exit with an Exception.</p>
              msmincho.ttc msminch.xml</source>
       </section>
       <section id="register">
-        <title>Register Fonts with FOP</title>
+        <title>Register Fonts with FOP - Auto-Detect Fonts</title>
         <p>You must tell FOP how to find and use the font metrics files by registering them in the <a href="configuration.html">FOP Configuration</a>. Add entries for your custom fonts, regardless of font type, to the configuration file in a manner similar to the following:</p>
         <source><![CDATA[
 <fonts>
@@ -254,7 +254,18 @@ It will display all of the font names and exit with an Exception.</p>
   <!-- automatically detect operating system installed fonts -->
   <auto-detect/>  
 </fonts>]]></source>
-        <note>Review the documentation for <a href="configuration.html">FOP Configuration</a> for instructions on making the FOP configuration available to FOP when it runs. Otherwise, FOP has no way of finding your custom font information.</note>
+        <note>
+        	Review the documentation for <a href="configuration.html">FOP Configuration</a> for
+        	instructions on making the FOP configuration available to FOP when it runs. Otherwise,
+        	FOP has no way of finding your custom font information.
+        </note>
+        The Unix autodetect feature looks in the following locations for fonts it can use:
+        <ul>
+					<li><code>java user.home + "/.fonts"</code></li>
+					<li><code>"/usr/local/fonts"</code></li>
+					<li><code>"/usr/share/fonts"</code></li>
+					<li><code>"/usr/X11R6/lib/X11/fonts"</code></li>
+        </ul>
         <ul>
           <li>
             URLs are used to access the font metric and font files.
