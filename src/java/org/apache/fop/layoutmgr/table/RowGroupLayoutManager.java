@@ -66,79 +66,60 @@ class RowGroupLayoutManager {
         this.tableStepper = tableStepper;
     }
 
+    int getBreakBefore() {
+        TableRow rowFO = rowGroup[0].getTableRow();
+        if (rowFO == null) {
+            return Constants.EN_AUTO;
+        } else {
+            return rowFO.getBreakBefore(); 
+        }
+    }
+
+    int getBreakAfter() {
+        TableRow rowFO = rowGroup[rowGroup.length - 1].getTableRow();
+        if (rowFO == null) {
+            return Constants.EN_AUTO;
+        } else {
+            return rowFO.getBreakAfter(); 
+        }
+    }
+
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment, int bodyType) {
         LinkedList returnList = new LinkedList();
-            //Check for break-before on the table-row at the start of the row group
-            TableRow rowFO = rowGroup[0].getTableRow(); 
-            if (rowFO != null && rowFO.getBreakBefore() != Constants.EN_AUTO) {
-                log.info("break-before found");
-                if (returnList.size() > 0) {
-                    ListElement last = (ListElement)returnList.getLast();
-                    if (last.isPenalty()) {
-                        KnuthPenalty pen = (KnuthPenalty)last;
-                        pen.setP(-KnuthPenalty.INFINITE);
-                        pen.setBreakClass(rowFO.getBreakBefore());
-                    } else {//if (last instanceof BreakElement) { // TODO vh: seems the only possibility
-                        BreakElement breakPoss = (BreakElement) last;
-                        breakPoss.setPenaltyValue(-KnuthPenalty.INFINITE);
-                        breakPoss.setBreakClass(rowFO.getBreakBefore());
-                    }
-                } else {
-                    returnList.add(new BreakElement(new Position(tableLM),
-                            0, -KnuthPenalty.INFINITE, rowFO.getBreakBefore(), context));
-                }
-            }
-            
-            //Border resolution
-            if (!tableLM.getTable().isSeparateBorderModel()) {
-                resolveNormalBeforeAfterBordersForRowGroup();
-            }
+        //Border resolution
+        if (!tableLM.getTable().isSeparateBorderModel()) {
+            resolveNormalBeforeAfterBordersForRowGroup();
+        }
 
-            //Reset keep-with-next when remaining inside the table.
-            //The context flag is only used to propagate keep-with-next to the outside.
-            //The clearing is ok here because createElementsForRowGroup already handles
-            //the keep when inside a table.
-            context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, false);
-            
-            //Element list creation
-            createElementsForRowGroup(context, alignment, bodyType, 
-                        returnList, rowGroup);
-            
-            //Handle keeps
-            if (context.isKeepWithNextPending()) {
-                log.debug("child LM (row group) signals pending keep-with-next");
-            }
-            if (context.isKeepWithPreviousPending()) {
-                log.debug("child LM (row group) signals pending keep-with-previous");
-                if (returnList.size() > 0) {
-                    //Modify last penalty
-                    ListElement last = (ListElement)returnList.getLast();
-                    if (last.isPenalty()) {
-                        BreakElement breakPoss = (BreakElement)last;
-                        //Only honor keep if there's no forced break
-                        if (!breakPoss.isForcedBreak()) {
-                            breakPoss.setPenaltyValue(KnuthPenalty.INFINITE);
-                        }
+        //Reset keep-with-next when remaining inside the table.
+        //The context flag is only used to propagate keep-with-next to the outside.
+        //The clearing is ok here because createElementsForRowGroup already handles
+        //the keep when inside a table.
+        context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, false);
+
+        //Element list creation
+        createElementsForRowGroup(context, alignment, bodyType, 
+                returnList, rowGroup);
+
+        //Handle keeps
+        if (context.isKeepWithNextPending()) {
+            log.debug("child LM (row group) signals pending keep-with-next");
+        }
+        if (context.isKeepWithPreviousPending()) {
+            log.debug("child LM (row group) signals pending keep-with-previous");
+            if (returnList.size() > 0) {
+                //Modify last penalty
+                ListElement last = (ListElement)returnList.getLast();
+                if (last.isPenalty()) {
+                    BreakElement breakPoss = (BreakElement)last;
+                    //Only honor keep if there's no forced break
+                    if (!breakPoss.isForcedBreak()) {
+                        breakPoss.setPenaltyValue(KnuthPenalty.INFINITE);
                     }
                 }
             }
-            
-            //Check for break-after on the table-row at the end of the row group
-            rowFO = rowGroup[rowGroup.length - 1].getTableRow(); 
-            if (rowFO != null && rowFO.getBreakAfter() != Constants.EN_AUTO) {
-                if (returnList.size() > 0) {
-                    ListElement last = (ListElement)returnList.getLast();
-                    if (last instanceof KnuthPenalty) {
-                        KnuthPenalty pen = (KnuthPenalty)last;
-                        pen.setP(-KnuthPenalty.INFINITE);
-                        pen.setBreakClass(rowFO.getBreakAfter());
-                    } else if (last instanceof BreakElement) {
-                        BreakElement breakPoss = (BreakElement)last;
-                        breakPoss.setPenaltyValue(-KnuthPenalty.INFINITE);
-                        breakPoss.setBreakClass(rowFO.getBreakAfter());
-                    }
-                }
-            }
+        }
+
         return returnList;
     }
 
