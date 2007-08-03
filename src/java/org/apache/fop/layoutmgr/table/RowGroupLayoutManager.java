@@ -37,7 +37,6 @@ import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.MinOptMaxUtil;
-import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.traits.MinOptMax;
 
 class RowGroupLayoutManager {
@@ -66,6 +65,12 @@ class RowGroupLayoutManager {
         this.tableStepper = tableStepper;
     }
 
+    /**
+     * 
+     * @return one of {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN},
+     * {@link Constants#EN_PAGE}, {@link Constants#EN_EVEN_PAGE}, or
+     * {@link Constants#EN_ODD_PAGE}
+     */
     int getBreakBefore() {
         TableRow rowFO = rowGroup[0].getTableRow();
         if (rowFO == null) {
@@ -75,6 +80,12 @@ class RowGroupLayoutManager {
         }
     }
 
+    /**
+     * 
+     * @return one of {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN},
+     * {@link Constants#EN_PAGE}, {@link Constants#EN_EVEN_PAGE}, or
+     * {@link Constants#EN_ODD_PAGE}
+     */
     int getBreakAfter() {
         TableRow rowFO = rowGroup[rowGroup.length - 1].getTableRow();
         if (rowFO == null) {
@@ -98,8 +109,7 @@ class RowGroupLayoutManager {
         context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, false);
 
         //Element list creation
-        createElementsForRowGroup(context, alignment, bodyType, 
-                returnList, rowGroup);
+        createElementsForRowGroup(context, alignment, bodyType, returnList);
 
         //Handle keeps
         if (context.isKeepWithNextPending()) {
@@ -233,8 +243,7 @@ class RowGroupLayoutManager {
      * @param rowGroup row group to process
      */
     private void createElementsForRowGroup(LayoutContext context, int alignment, 
-            int bodyType, LinkedList returnList, 
-            EffRow[] rowGroup) {
+            int bodyType, LinkedList returnList) {
         log.debug("Handling row group with " + rowGroup.length + " rows...");
         MinOptMax[] rowHeights = new MinOptMax[rowGroup.length];
         MinOptMax[] explicitRowHeights = new MinOptMax[rowGroup.length];
@@ -298,13 +307,6 @@ class RowGroupLayoutManager {
                         //Get the element list for the cell contents
                         LinkedList elems = primary.getCellLM().getNextKnuthElements(
                                                 childLC, alignment);
-                        //Temporary? Multiple calls in case of break conditions.
-                        //TODO Revisit when table layout is restartable
-                        while (!primary.getCellLM().isFinished()) {
-                            LinkedList additionalElems = primary.getCellLM().getNextKnuthElements(
-                                    childLC, alignment);
-                            elems.addAll(additionalElems);
-                        }
                         ElementListObserver.observe(elems, "table-cell", primary.getCell().getId());
 
                         if ((elems.size() > 0) 
