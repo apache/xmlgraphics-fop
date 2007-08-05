@@ -28,10 +28,6 @@
         Auto table layout is not implemented, yet.
       </known-issue>
       <known-issue>
-        The collapsing border model on tables is not implemented, yet. Please 
-        use border-collapse="separate" for now.
-      </known-issue>
-      <known-issue>
         Footnotes may overlap with text of the region-body in multi-column 
         documents.
       </known-issue>
@@ -94,9 +90,5 @@
       <known-issue>
         Column balancing in multi-column documents may not work as expected
         (<a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=36356">Bugzilla #36356</a>)
-      </known-issue>
-      <known-issue>
-        Internal basic-links don't point to the exact location on a page, yet, as they
-        did in 0.20.5. Currently you land in the upper left corner of the page.
       </known-issue>
 </known-issues>
