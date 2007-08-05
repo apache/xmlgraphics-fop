@@ -311,7 +311,7 @@
         offered by Java.
       </p>
       <p>
-        Additionally, there are certain settings that control who the renderer handles various elements.
+        Additionally, there are certain settings that control how the renderer handles various elements.
       </p>
 <source><![CDATA[<renderer mime="application/vnd.hp-PCL">
   <rendering>quality</rendering>
