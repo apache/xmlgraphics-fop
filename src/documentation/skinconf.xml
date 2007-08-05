@@ -55,7 +55,7 @@ which will be used to configure the chosen Forrest skin.
     Use e.g. align="center" to move the compliance links logos to 
     an alternate location default is left.
     (if the skin supports it) -->
-  <disable-compliance-links>false</disable-compliance-links>
+  <disable-compliance-links>true</disable-compliance-links>
 
   <!-- Render mailto: links unrecognisable by spam harvesters? -->
   <obfuscate-mail-links>true</obfuscate-mail-links>
