@@ -180,7 +180,7 @@ Fop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-rtf|-tiff|-png|-pcl
   Fop foo.fo -awt]]></source>
       <p>
         PDF encryption is only available if FOP was compiled with encryption support 
-        <strong>and</strong> if compatible encryption support is availabe at run time. 
+        <strong>and</strong> if compatible encryption support is available at run time. 
         Currently, only the JCE is supported. Check the <a href="pdfencryption.html">Details</a>.
       </p>
       </section>
@@ -339,11 +339,6 @@ Fop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-rtf|-tiff|-png|-pcl
           This can be substantial if the page sequence contains lots of FO elements.
         </li>
       </ul>
-      <p>
-        One of FOP's stated design goals is to be able to process input of arbitrary size.
-        Addressing this goal is one of the prime motivations behind the 
-        <a href="../dev/index.html">FOP Redesign</a>.
-      </p>
     </section>
     <section id="problems">
       <title>Problems</title>

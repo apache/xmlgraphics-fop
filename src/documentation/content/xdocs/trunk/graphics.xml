@@ -155,7 +155,6 @@ Then, copy the file "JimiProClasses.zip" from the archive to {fop-install-dir}/l
       </section>
       <section id="jai">
         <title>JAI (Java Advanced Imaging API)</title>
-        <warning>JAI support is available for Release 0.20.5 and later. The comments in this section do not apply to releases earlier than 0.20.5.</warning>
         <p>
           FOP has been compiled with JAI support, but JAI is not included in the FOP distribution.
 To use it, install <a href="http://java.sun.com/products/java-media/jai">JAI</a>, then copy the jai_core.jar and the jai_codec.jar files to {fop-install-dir}/lib.

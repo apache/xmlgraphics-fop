@@ -79,17 +79,12 @@
         </li>
         <li>
           Extensions and Renderers written for version 0.20.5 will not work with the new code! The new FOP 
-          extension for <a href="http://barcode4j.krysalis.org">Barcode4J</a> will be available in 
+          extension for <a href="http://barcode4j.krysalis.org">Barcode4J</a> is available since 
           January 2007.
         </li>
         <li>
-          The PCL Renderer and the MIF Handler have not been resurrected, yet! They are currently non-functional
+          The SVG Renderer and the MIF Handler have not been resurrected, yet! They are currently non-functional
           and hope for someone to step up and reimplement them.
-        </li>
-        <li>
-          By looking at the <a href="../compliance.html">Compliance page</a> you might get the impression
-          that the new code is much more advanced than version 0.20.5. That's true but there may still
-          be a few things that may not be handled as gracefully by the new code as by version 0.20.5.
         </li>
       </ul>
     </section>

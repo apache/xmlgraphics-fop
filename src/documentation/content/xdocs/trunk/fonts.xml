@@ -262,7 +262,7 @@ It will display all of the font names and exit with an Exception.</p>
             See <a href="configuration.html">FOP: Configuration</a> for more information.
           </li>
           <li>Either an "embed-url" or a "metrics-url" must be specified for font tag configurations.</li>
-          <li>The font "kerning" attribute is optional. Kerning is currently not used at all.</li>
+          <li>The font "kerning" attribute is optional.</li>
 	      <li>If embedding is off, the output will position the text correctly (from the metrics file), but it will not be displayed or printed correctly unless the viewer has the applicable font available to their local system.</li>
           <li>When setting the "embed-url" attribute for Type 1 fonts, be sure to specify the PFB (actual font data), not PFM (font metrics) file that you used to generate the XML font metrics file.</li>
           <li>The fonts "directory" tag can be used to register fonts contained within a single or list of directory paths.  The "recursive" attribute can be specified to recursively add fonts from all sub directories.</li>
@@ -291,14 +291,8 @@ If you don't specify the embed-url attribute the font will not be embedded, but 
         <p>When FOP embeds a font, it adds a prefix to the fontname to ensure that the name will not match the fontname of an installed font.
 This is helpful with older versions of Acrobat Reader that preferred installed fonts over embedded fonts.</p>
         <p>When embedding PostScript fonts, the entire font is always embedded.</p>
-        <p>When embedding TrueType fonts (ttf) or TrueType Collections (ttc), a subset of the original font, containing only the glyphs used, is embedded in the output document.
-Currently, this embedded font contains only the minimum data needed to be embedded in a pdf document, and does not contain any codepage information.
-The PDF document contains indexes to the glyphs in the font instead of to encoded characters.
-While the document will be displayed correctly, the net effect of this is that searching, indexing, and cut-and-paste will not work properly.</p>
-        <p>One workaround for this behavior is to use the "-enc ansi" option when generating metrics with TTFReader.
-This will cause the whole font to be embedded in the pdf document.
-Characters will be WinAnsi encoded (as specified in the PDF spec), so you lose the ability to use characters from other character sets.
-See <a href="#ttf-encoding">Table of TTF Encoding Options</a> for more details.</p>
+        <p>When embedding TrueType fonts (ttf) or TrueType Collections (ttc), a subset of the
+          original font, containing only the glyphs used, is embedded in the output document.</p>
       </section>
       <section id="embedding-base14">
         <title>Explicitly embedding the base 14 fonts</title>
