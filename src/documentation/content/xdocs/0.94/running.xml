@@ -214,37 +214,37 @@ Fop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-rtf|-tiff|-png|-pcl
       directory in a single directory. If you use hyphenation, you
       must also put <code>fop-hyph.jar</code> in that directory.</p>
 
-		<p>In both cases the arguments consist of the options and
+      <p>In both cases the arguments consist of the options and
         infile and outfile specifications as shown above for the
         standard scripts.</p>
       </section>
       <section id="dynamical-classpath">
-		<title>FOP's dynamical classpath construction</title>
+        <title>FOP's dynamical classpath construction</title>
 
-		<p>If FOP is started without a proper classpath, it tries to
-		add its dependencies dynamically. If the system property
-		<code>fop.home</code> contains the name of a directory, then
-		FOP uses that directory as the base directory for its
-		search. Otherwise the current working directory is the base
-		directory. If the base directory is called <code>build</code>,
-		then its parent directory becomes the base directory.</p>
+        <p>If FOP is started without a proper classpath, it tries to
+        add its dependencies dynamically. If the system property
+        <code>fop.home</code> contains the name of a directory, then
+        FOP uses that directory as the base directory for its
+        search. Otherwise the current working directory is the base
+        directory. If the base directory is called <code>build</code>,
+        then its parent directory becomes the base directory.</p>
 
         <p>FOP expects to find <code>fop.jar</code> in the
-		<code>build</code> subdirectory of the base directory, and
-		adds it to the classpath. Subsequently FOP adds all
-		<code>jar</code> files in the lib directory to the
-		classpath. The lib directory is either the <code>lib</code>
-		subdirectory of the base directory, or, if that does not
-		exist, the base directory itself.</p>
+        <code>build</code> subdirectory of the base directory, and
+        adds it to the classpath. Subsequently FOP adds all
+        <code>jar</code> files in the lib directory to the
+        classpath. The lib directory is either the <code>lib</code>
+        subdirectory of the base directory, or, if that does not
+        exist, the base directory itself.</p>
 
         <p>If the system property <code>fop.optional.lib</code>
-		contains the name of a directory, then all <code>jar</code>
-		files in that directory are also added to the classpath. See
-		the methods <code>getJARList</code> and
-		<code>checkDependencies</code> in
-		<code>org.apache.fop.cli.Main</code>.</p>
+        contains the name of a directory, then all <code>jar</code>
+        files in that directory are also added to the classpath. See
+        the methods <code>getJARList</code> and
+        <code>checkDependencies</code> in
+        <code>org.apache.fop.cli.Main</code>.</p>
 
-	  </section>
+      </section>
     </section>
     <section id="check-input">
       <title>Using Xalan to Check XSL-FO Input</title>
