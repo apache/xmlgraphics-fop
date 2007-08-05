@@ -37,6 +37,9 @@
       <action context="Code" dev="MM" type="fix">
         Fixed incomplete support for Unicode Word Joiner characters (U+2060 and U+FEFF).
       </action>
+      <action context="Code" dev="VH" type="add">
+        Add support for conditional spaces in table-cells.
+      </action>
       <action context="Code" dev="AD" type="add" fixes-bug="42785" due-to="Max Berger">
         Support alignment-adjust for images.
       </action>
@@ -66,7 +69,7 @@
       <action context="Code" dev="JM" type="update">
         Updated PDF/A-1b support according to ISO-19005-1:2005/Cor.1:2007.
       </action>
-      <action context="Code" dev="JM" type="add" fixes-bug="41831" due-to="Adrian Cumiskey">
+      <action context="Code" dev="JM" type="add" importance="high" fixes-bug="41831" due-to="Adrian Cumiskey">
         Add support for font auto-detection (easier font configuration).
       </action>
       <action context="Code" dev="JM" type="update" fixes-bug="42406" due-to="Hussein Shafie">
@@ -85,6 +88,15 @@
       </action>
       <action context="Code" dev="JM" type="fix" fixes-bug="41434" due-to="Martin Kögler">
         Fix PDF Genaration for non-ASCII compatible locales.
+      </action>
+      <action context="Code" dev="VH" type="fix">
+        Fix several exceptions when break-before/after is set on the first/last row of a table.
+      </action>
+      <action context="Code" dev="VH" type="fix">
+        Fix extra page break when break-before is set on both a table and its first row.
+      </action>
+      <action context="Code" dev="VH" type="fix">
+        Make keep-with-next and keep-with-previous work on fo:table.
       </action>
       <action context="Code" dev="VH, JM" type="add" importance="high" fixes-bug="36934">
         Add support for the collapsing-border model in tables.
