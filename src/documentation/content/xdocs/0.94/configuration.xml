@@ -78,7 +78,7 @@
         <td>URL or directory</td>
         <td>Specifies the base URL based on which relative font URLs will be resolved.
         </td>
-	<td>base URL/directory (above)</td>
+        <td>base URL/directory (above)</td>
       </tr>
       <tr>
         <td>hyphenation-base</td>
@@ -112,10 +112,10 @@
         <td>strict-configuration</td>
         <td>Boolean (true, false)</td>
         <td>
-	  Setting this option to 'true' will cause FOP to strictly verify the contents of the
-	  FOP configuration file to ensure that defined resources (such as fonts and base
-	  URLs/directories) are valid and available to FOP.  Any errors found will cause FOP to
-	  immediately raise an exception.</td>
+          Setting this option to 'true' will cause FOP to strictly verify the contents of the
+          FOP configuration file to ensure that defined resources (such as fonts and base
+          URLs/directories) are valid and available to FOP.  Any errors found will cause FOP to
+          immediately raise an exception.</td>
         <td>false</td>
       </tr>
       <tr>
@@ -125,7 +125,7 @@
           Setting this option to 'false' causes FOP to be more forgiving about XSL-FO validity, 
           for example, you're allowed to specify a border on a region-body which is supported 
           by some FO implementations but is non-standard. Note that such a border would 
-	  currently have no effect in Apache FOP.</td>
+          currently have no effect in Apache FOP.</td>
         <td>true</td>
       </tr>
       <tr>
@@ -173,7 +173,7 @@
         <td>renderers</td>
         <td>(see text below)</td>
         <td>Contains the configuration for each renderer. See below.</td>
-	<td>N/A</td>
+        <td>N/A</td>
       </tr>
     </table>
     <p>
@@ -332,18 +332,18 @@
       </p>
     </section>
   </section>
-	<section id="fonts">
-		<title>Apache FOP Font Config</title>
-		<p>
-			Apache FOP has special Font configuration considerations, which are explained
-			in detail on the <a href="fonts.html">Fonts</a> page.
-		</p>
-	</section>
+  <section id="fonts">
+    <title>Apache FOP Font Config</title>
+    <p>
+      Apache FOP has special Font configuration considerations, which are explained
+      in detail on the <a href="fonts.html">Fonts</a> page.
+    </p>
+  </section>
 
-	<section>
-	  <title>When it does not work</title>
+  <section>
+    <title>When it does not work</title>
 
-	  <p>FOP searches the configuration file for the information it
+    <p>FOP searches the configuration file for the information it
 expects, at the position it expects. When that information is not
 present, FOP will not complain, it will just continue. When there is
 other information in the file, FOP will not complain, it will just
@@ -351,14 +351,14 @@ ignore it. That means that when your configuration information is in
 the file but in a different XML element, or in a different XML path,
 than FOP expects, it will be silently ignored.</p>
 
-	  <p>Check the following possibilities:</p>
+      <p>Check the following possibilities:</p>
 
-	  <ul>
-		<li>The format of the configuration file has changed
+      <ul>
+        <li>The format of the configuration file has changed
 considerably between FOP 0.20.5 and FOP 1.0 and its beta versions. Did
 you convert your file to the new format?</li>
 
-		<li>The FOP distribution contains a schema for configuration
+        <li>The FOP distribution contains a schema for configuration
 files, at src/foschema/fop-configuration.xsd. Did you validate your
 configuration file against it? Add the following schema location to
 the <code>schema</code> element:
@@ -373,13 +373,13 @@ and run the configuration file through a validating schema
 parser. Note that the schema cannot detect all errors, and that it is
 stricter about the order of some elements than FOP itself is.</li>
 
-		<li>Run FOP in debug mode (command line option
+        <li>Run FOP in debug mode (command line option
 <code>-d</code>). This makes FOP report which configuration
 information it finds. Check if FOP finds what you expect.</li>
 
-	  </ul>
+      </ul>
 
-	</section>
+    </section>
   </body>
 </document>
 

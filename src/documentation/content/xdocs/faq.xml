@@ -140,8 +140,8 @@
           the time-consuming process of creating a release. We
           released version 0.94 on XX August 2007, and intend to
           release version 1.0 later in late 2007 or early 2008. If you
-        	want to speed up the process, consider
-        	<link href="dev/index.html#involved">contributing</link> to FOP.</p>
+          want to speed up the process, consider
+          <link href="dev/index.html#involved">contributing</link> to FOP.</p>
       </answer>
     </faq>
     <faq id="redesign">
@@ -1109,21 +1109,21 @@ Can I control this?</question>
       <question>Can I use FOP to convert XHTML or HTML files to PDF?</question>
       <answer>
         <p>
-        	You will get better results if you transform your source
-			XML directly into XSLFO. It is tempting to use the
-			XML-&gt;XHTML-&gt;XSLFO approach, because this apparently means
-			there's only one transformation to maintain, but XHTML
-			and publishing grade PDF are dissimilar enough that an
-			"generic" XHTML-&gt;XSLFO(PDF) usually wont cut it, because
-			the XHTML already lacks information from the original XML.
-			It may be worthwhile to go from the source XML to an
-			intermediate custom XML which on one hand is close enough
-			to representation to allow simple transformation to either
-			XHTML or XSLFO for most of the structure, but on the other
-			hand retains enough semantic from the original XML that
-			elements which must be handled differently in the two
-			representations can be handled differently. Setting this
-			up requires experience and most likely extensive prototyping.
+          You will get better results if you transform your source
+          XML directly into XSLFO. It is tempting to use the
+          XML-&gt;XHTML-&gt;XSLFO approach, because this apparently means
+          there's only one transformation to maintain, but XHTML
+          and publishing grade PDF are dissimilar enough that an
+          "generic" XHTML-&gt;XSLFO(PDF) usually wont cut it, because
+          the XHTML already lacks information from the original XML.
+          It may be worthwhile to go from the source XML to an
+          intermediate custom XML which on one hand is close enough
+          to representation to allow simple transformation to either
+          XHTML or XSLFO for most of the structure, but on the other
+          hand retains enough semantic from the original XML that
+          elements which must be handled differently in the two
+          representations can be handled differently. Setting this
+          up requires experience and most likely extensive prototyping.
         </p>
       </answer>
     </faq>
@@ -1131,11 +1131,11 @@ Can I control this?</question>
       <question>I know it may be a bad idea to use FOP to convert XHTML or HTML files to PDF, but I want to do it anyway. Are there any tools available to help me?</question>
       <answer>
         <p>
-        	The <link href="resources.html">FOP Resources page</link> has links
-        	to a tool called <link href="http://html2fo.sourceforge.net/">html2fo</link>
-        	which can be used to make such a transformation. In addition, there
-        	are tools on the Antenna House <link href="http://www.antennahouse.com/XSLsample/XSLsample.htm">XSL-FO Tutorial and Sample</link>
-			page.
+          The <link href="resources.html">FOP Resources page</link> has links
+          to a tool called <link href="http://html2fo.sourceforge.net/">html2fo</link>
+          which can be used to make such a transformation. In addition, there
+          are tools on the Antenna House <link href="http://www.antennahouse.com/XSLsample/XSLsample.htm">XSL-FO Tutorial and Sample</link>
+          page.
         </p>
       </answer>
     </faq>
@@ -1145,9 +1145,9 @@ Can I control this?</question>
     <faq id="doc-mgt">
       <question>Where can I learn how the FOP docs and web site are built?</question>
       <answer>
-      	<p>
-      		See FOP <link href="dev/doc.html">Doc Management</link>. ;-)
-      	</p>
+        <p>
+          See FOP <link href="dev/doc.html">Doc Management</link>. ;-)
+        </p>
       </answer>
     </faq>
   </part>

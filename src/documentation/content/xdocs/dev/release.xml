@@ -37,7 +37,7 @@ The purpose of documenting it here is to facilitate consistency, ensure that the
         <li>Determine whether this is a Release Candidate or a Release.</li>
         <li>Determine whether further testing is required.</li>
         <li>Commit any outstanding changes</li>
-		<li>Create a branch called <code>branches/fop-v_vv</code></li>
+        <li>Create a branch called <code>branches/fop-v_vv</code></li>
         <li>Edit release notes (<code>README</code> and <code>status.xml</code> in the root).</li>
         <li>Update the <code>index.xml</code> and <code>site.xml</code> for the new version.</li>
         <li>Update the version numbers in the release column on the
@@ -48,7 +48,7 @@ The purpose of documenting it here is to facilitate consistency, ensure that the
         <li>Copy trunk documentation directory to a new directory with
         the version number, and update any links and the .htaccess
         file for redirections.</li>
-		<li>Copy <code>test/fotree/disabled-testcases.xml</code> and
+        <li>Copy <code>test/fotree/disabled-testcases.xml</code> and
         <code>test/layoutengine/disabled-testcases.xml</code> to the
         new version directory
         <code>&lt;version>/fotree/disabled-testcases.xml</code> and
@@ -56,11 +56,11 @@ The purpose of documenting it here is to facilitate consistency, ensure that the
         Copy <code>known-issues.xml</code> to the new version
         directory. Copy <code>knownissues-overview.xml</code> from the
         previous to the new version directory.</li>
-		<li>Delete the previous version directory.</li>
-		<li>Build the dist files (<code>build[.sh] dist</code>)
+        <li>Delete the previous version directory.</li>
+        <li>Build the dist files (<code>build[.sh] dist</code>)
         and upload them to your web directory on
         <code>people.apache.org</code></li>
-		<li>Ask on fop-dev to check the branch and the generated dist
+        <li>Ask on fop-dev to check the branch and the generated dist
         files for errors.</li>
         <li>Tag the source tree with the release ID. For example, if the release is 0.94:
           <code>svn copy https://svn.apache.org/repos/asf/xmlgraphics/fop/branches/fop-0_94 https://svn.apache.org/repos/asf/xmlgraphics/fop/tags/fop-0_94</code></li>
@@ -69,7 +69,7 @@ The purpose of documenting it here is to facilitate consistency, ensure that the
         <li>Copy jimi and jai to lib/ (jimi-1.0.jar, jai_core.jar, jai_codec.jar)</li>
         <li>Copy jce-jdk13-119.jar from <link href="http://www.bouncycastle.org/latest_releases.html">
           from http://www.bouncycastle.org/latest_releases.html</link> to lib/</li>
-		<li>Copy the hyphenation patterns jar file
+        <li>Copy the hyphenation patterns jar file
         <code>fop-hyph.jar</code> to lib/ (e.g. from
         <code>http://sourceforge.net/projects/offo</code></li>
         <li>Alternatively, create a build-local.properties file that points to the above libs.</li>
@@ -85,11 +85,11 @@ The purpose of documenting it here is to facilitate consistency, ensure that the
         <li>Add MD5 sums: <code>md5 fop-0.94-src.tar.gz &gt;
           fop-0.94-src.tar.gz.md5</code> etc.</li>
         <li>Make a test download.</li>
-		<li>Start a vote for the release on
+        <li>Start a vote for the release on
         <code>general@xmlgraphics.a.o</code>. The message should point
         to the release files and list the MD5 sums (<code>cat
         *.md5</code>). The vote is open for 72hrs.</li>
-		<li>When the release is accepted, copy the release files,
+        <li>When the release is accepted, copy the release files,
         their md5 sum files and the signature files to
         /www/www.apache.org/dist/xmlgraphics/fop/ in the
         subdirectories <code>source</code> and
@@ -98,10 +98,10 @@ The purpose of documenting it here is to facilitate consistency, ensure that the
         the previous version.</li>
         <li>Update HEADER.html and README.html in people.apache.org:/www/www.apache.org/dist/xmlgraphics/fop/</li>
         <li>Wait 24 hours (for the mirrors to catch up).</li>
-		<li>Merge the changes of the subversion release branch back
+        <li>Merge the changes of the subversion release branch back
         into trunk (not the version number in the build file) and
         delete the branch.</li>
-		<li>Deploy the updated documentation to the FOP website.</li>
+        <li>Deploy the updated documentation to the FOP website.</li>
         <li>Post announcements on fop-dev and fop-user and other related mailing lists.</li>
         <li>Ask a Bugzilla admin (Christian Geisert) to add a bugzilla
         entry for the new release id, or create an issue at
@@ -131,7 +131,7 @@ The purpose of documenting it here is to facilitate consistency, ensure that the
         <li>general@xmlgraphics.apache.org</li>
         <li>general@xml.apache.org</li>
         <li>announce@apache.org (from your apache.org address)</li>
-		<li>xsl-list@lists.mulberrytech.com (subscriber-only)</li>
+        <li>xsl-list@lists.mulberrytech.com (subscriber-only)</li>
         <li>XSL-FO@yahoogroups.com (subscriber-only)</li>
         <li>www-xsl-fo@w3.org</li>
         <li>docbook-apps@lists.oasis-open.org (subscriber-only)</li>
