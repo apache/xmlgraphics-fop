@@ -145,6 +145,10 @@ which will be used to configure the chosen Forrest skin.
         in the class attribute of a <p> node. 
         e.g. <p class="quote"/>
     -->
+
+    <!-- The normal content should be at natural size -->
+    #content { font-size: 100%; }
+
     p.quote {
       margin-left: 2em;
       padding: .5em;
