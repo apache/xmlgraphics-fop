@@ -77,8 +77,8 @@
       </p>
       <p>
         Please see also the 
-        <link href="http://mail-archives.apache.org/mod_mbox/xmlgraphics-fop-users/200511.mbox/%3c20051123002157.0EB0.JEREMIAS@apache.org%3e">announcement</link>
-        and the <link href="relnotes.html#FOP+0.90+alpha+1">release notes</link>.
+        <link href="http://mail-archives.apache.org/mod_mbox/xmlgraphics-fop-users/200511.mbox/%3c20051123002157.0EB0.JEREMIAS@apache.org%3e">announcement</link>.
+        <!-- TODO re-enable and the <link href="relnotes.html#FOP+0.90+alpha+1">release notes</link>.-->
       </p>
     </section>
     <section>
@@ -143,7 +143,8 @@
       <p>
       See also the full text of the
       <link href="http://mail-archives.apache.org/eyebrowse/ReadMsg?listName=fop-dev@xml.apache.org&amp;msgNo=6067">
-      announcement</link> and the <link href="relnotes.html#FOP+0.20.5">release notes</link>.
+        announcement</link>.
+      <!-- TODO re-enable  and the <link href="relnotes.html#FOP+0.20.5">release notes</link>.-->
       </p>
     </section>
     <section>

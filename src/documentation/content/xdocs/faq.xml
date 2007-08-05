@@ -1191,7 +1191,7 @@ Can I control this?</question>
           <li>
             In the case where something works properly with another formatter,
             (AntennaHouse, PassiveTex, etc.) but doesn't work with FOP, please
-            check the <link href="relnotes.html">Release Notes</link>, the
+            check the <!--link href="relnotes.html"-->Release Notes<!--/link-->, the
             <link href="compliance.html">FOP Standards Compliance</link> document,
             and the remaining FAQ in this document. If not found there, look at the
             list of <link href="bugs.html#issues_existing">Bugs Already Reported</link>.

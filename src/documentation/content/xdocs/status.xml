@@ -134,11 +134,9 @@
     <section>
       <title>Maintenance Status</title>
       <p>
-        The latest release of the maintenance branch is FOP 0.20.5,
-        released on July 18th, 2003.  See <a
-        href="relnotes.html">release notes</a> for more details.  The
-        maintenance branch has been frozen in 2004 so the team can
-        concentrate on the new code base.
+        The latest release of the maintenance branch is FOP 0.20.5, released on July 18th, 2003.
+        The maintenance branch has been frozen in 2004 so the team can concentrate on the new code
+        base.
       </p>
     </section>
     <!--section id="stats">
