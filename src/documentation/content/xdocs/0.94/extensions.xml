@@ -34,7 +34,7 @@
       to you. If you wish to add an extension of your own to FOP, please see the 
       <a href="../dev/extensions.html">Developers' Extension Page</a>.
     </p>
-    <note>All extensions required the correct use of an appropriate namespace in your input document.</note>
+    <note>All extensions require the correct use of an appropriate namespace in your input document.</note>
     <section id="svg">
       <title>SVG</title>
       <p>
@@ -52,10 +52,6 @@
         </p>
         <source><![CDATA[<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
                xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">]]></source>
-        <note>
-          Currently, no extension elements are implemented in FOP Trunk which use the 
-          FOP extension namespace.
-        </note>
       </section>
       <section id="bookmarks">
         <title>PDF Bookmarks</title>
