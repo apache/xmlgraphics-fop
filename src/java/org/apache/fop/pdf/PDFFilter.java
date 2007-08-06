@@ -92,7 +92,7 @@ public abstract class PDFFilter {
      *
      * @return the decode params for the filter
      */
-    public abstract String getDecodeParms();
+    public abstract PDFObject getDecodeParms();
 
     /**
      * Applies a filter to an OutputStream.

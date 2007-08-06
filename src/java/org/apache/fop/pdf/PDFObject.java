@@ -251,9 +251,13 @@ public abstract class PDFObject implements PDFWritable {
      * @param sb the StringBuffer to write to
      */
     protected void formatObject(Object obj, StringBuffer sb) {
-        if (obj instanceof PDFWritable) {
+        if (obj == null) {
+            sb.append("null");
+        } else if (obj instanceof PDFWritable) {
             sb.append(((PDFWritable)obj).toInlinePDFString());
         } else if (obj instanceof Number) {
+            sb.append(obj);
+        } else if (obj instanceof Boolean) {
             sb.append(obj);
         } else {
             sb.append("(").append(obj).append(")");

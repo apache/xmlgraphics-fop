@@ -111,9 +111,13 @@ public class PDFNumber extends PDFObject {
                 "The number of this PDFNumber must not be empty");
         }
         StringBuffer sb = new StringBuffer(64);
-        sb.append(getObjectID());
+        if (hasObjectNumber()) {
+            sb.append(getObjectID());
+        }
         sb.append(getNumber().toString());
-        sb.append("\nendobj\n");
+        if (hasObjectNumber()) {
+            sb.append("\nendobj\n");
+        }
         return sb.toString();
     }
 

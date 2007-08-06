@@ -61,18 +61,12 @@ public class PDFT1Stream extends AbstractPDFStream {
         return length;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected String buildStreamDict(String lengthEntry) {
-        final String filterEntry = getFilterList().buildFilterDictEntries();
-        return (getObjectID() 
-                + "<< /Length " + lengthEntry 
-                + " /Length1 " + pfb.getLength1()
-                + " /Length2 " + pfb.getLength2()
-                + " /Length3 " + pfb.getLength3() 
-                + "\n" + filterEntry  
-                + "\n>>\n");
+    /** {@inheritDoc} */
+    protected void populateStreamDict(Object lengthEntry) {
+        super.populateStreamDict(lengthEntry);
+        put("Length1", new Integer(pfb.getLength1()));
+        put("Length2", new Integer(pfb.getLength2()));
+        put("Length3", new Integer(pfb.getLength3()));
     }
 
     /**

@@ -64,7 +64,17 @@ public class PDFStream extends AbstractPDFStream {
         }
 
     }
-
+    
+    /**
+     * Returns an OutputStream that can be used to write to the buffer which is used
+     * to build up the PDF stream.
+     * @return the OutputStream
+     * @throws IOException In case of an I/O problem
+     */
+    public OutputStream getBufferOutputStream() throws IOException {
+        return this.data.getOutputStream();
+    }
+    
     /**
      * Used to set the contents of the PDF stream.
      * @param data the contents as a byte array

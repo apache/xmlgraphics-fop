@@ -1471,7 +1471,7 @@ public class PDFFactory {
 
     /**
      * Create a PDFICCStream
-     * @see PDFXObject
+     * @see PDFImageXObject
      * @see org.apache.fop.image.JpegImage
      * @see org.apache.fop.pdf.PDFDeviceColorSpace     
      * @return the new PDF ICC stream object
