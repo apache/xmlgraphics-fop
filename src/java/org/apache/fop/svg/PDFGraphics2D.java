@@ -19,80 +19,77 @@
 
 package org.apache.fop.svg;
 
-import org.apache.fop.pdf.PDFConformanceException;
-import org.apache.fop.pdf.PDFResourceContext;
-import org.apache.fop.pdf.PDFResources;
-import org.apache.fop.pdf.PDFGState;
-import org.apache.fop.pdf.PDFDeviceColorSpace;
-import org.apache.fop.pdf.PDFColor;
-import org.apache.fop.pdf.PDFState;
-import org.apache.fop.pdf.PDFNumber;
-import org.apache.fop.pdf.PDFText;
-import org.apache.fop.pdf.PDFXObject;
-import org.apache.fop.pdf.PDFPattern;
-import org.apache.fop.pdf.PDFDocument;
-import org.apache.fop.pdf.PDFLink;
-import org.apache.fop.pdf.PDFAnnotList;
-import org.apache.fop.pdf.BitmapImage;
-import org.apache.fop.fonts.FontInfo;
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.Image;
+import java.awt.Paint;
+import java.awt.PaintContext;
+import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.Stroke;
+import java.awt.color.ColorSpace;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.PathIterator;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferInt;
+import java.awt.image.DirectColorModel;
+import java.awt.image.ImageObserver;
+import java.awt.image.Raster;
+import java.awt.image.RenderedImage;
+import java.awt.image.WritableRaster;
+import java.awt.image.renderable.RenderableImage;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.StringWriter;
+import java.text.AttributedCharacterIterator;
+import java.text.CharacterIterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.batik.ext.awt.LinearGradientPaint;
+import org.apache.batik.ext.awt.MultipleGradientPaint;
+import org.apache.batik.ext.awt.RadialGradientPaint;
+import org.apache.batik.ext.awt.RenderingHintsKeyExt;
+import org.apache.batik.gvt.GraphicsNode;
+import org.apache.batik.gvt.PatternPaint;
+import org.apache.fop.fonts.CIDFont;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.image.JpegImage;
-import org.apache.fop.fonts.CIDFont;
+import org.apache.fop.pdf.BitmapImage;
+import org.apache.fop.pdf.PDFAnnotList;
+import org.apache.fop.pdf.PDFColor;
+import org.apache.fop.pdf.PDFConformanceException;
+import org.apache.fop.pdf.PDFDeviceColorSpace;
+import org.apache.fop.pdf.PDFDocument;
+import org.apache.fop.pdf.PDFGState;
+import org.apache.fop.pdf.PDFImageXObject;
+import org.apache.fop.pdf.PDFLink;
+import org.apache.fop.pdf.PDFName;
+import org.apache.fop.pdf.PDFNumber;
+import org.apache.fop.pdf.PDFPattern;
+import org.apache.fop.pdf.PDFResourceContext;
+import org.apache.fop.pdf.PDFResources;
+import org.apache.fop.pdf.PDFState;
+import org.apache.fop.pdf.PDFText;
+import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.render.pdf.FopPDFImage;
 import org.apache.fop.util.ColorExt;
-
 import org.apache.xmlgraphics.java2d.AbstractGraphics2D;
 import org.apache.xmlgraphics.java2d.GraphicContext;
-
-import org.apache.batik.ext.awt.RadialGradientPaint;
-import org.apache.batik.ext.awt.LinearGradientPaint;
-import org.apache.batik.ext.awt.MultipleGradientPaint;
-import org.apache.batik.ext.awt.RenderingHintsKeyExt;
-import org.apache.batik.gvt.PatternPaint;
-import org.apache.batik.gvt.GraphicsNode;
-
-import java.text.AttributedCharacterIterator;
-import java.text.CharacterIterator;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Color;
-import java.awt.GraphicsConfiguration;
-/*  java.awt.Font is not imported to avoid confusion with
-    org.apache.fop.fonts.Font */
-import java.awt.GradientPaint;
-import java.awt.Image;
-import java.awt.Shape;
-import java.awt.Stroke;
-import java.awt.Paint;
-import java.awt.PaintContext;
-import java.awt.Rectangle;
-import java.awt.Dimension;
-import java.awt.BasicStroke;
-import java.awt.AlphaComposite;
-import java.awt.geom.AffineTransform;
-import java.awt.color.ColorSpace;
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.DirectColorModel;
-import java.awt.image.DataBuffer;
-import java.awt.image.DataBufferInt;
-import java.awt.image.ImageObserver;
-import java.awt.image.RenderedImage;
-import java.awt.image.Raster;
-import java.awt.image.WritableRaster;
-import java.awt.image.renderable.RenderableImage;
-import java.awt.geom.PathIterator;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.io.StringWriter;
-import java.io.IOException;
-import java.io.OutputStream;
-
-import java.util.Map;
-import java.util.List;
 
 /**
  * PDF Graphics 2D.
@@ -406,8 +403,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         String key = "__AddJPEG_" + hashCode() + "_" + jpegCount[0];
         jpegCount[0]++;
         FopPDFImage fopimage = new FopPDFImage(jpeg, key);
-        int xObjectNum = this.pdfDoc.addImage(resourceContext, 
-                                              fopimage).getXNumber();
+        PDFName imageName = this.pdfDoc.addImage(resourceContext, 
+                                              fopimage).getName();
         AffineTransform at = getTransform();
         double[] matrix = new double[6];
         at.getMatrix(matrix);
@@ -421,8 +418,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         currentStream.write("" + width + " 0 0 "
                           + (-height) + " "
                           + x + " "
-                          + (y + height) + " cm\n" + "/Im"
-                          + xObjectNum + " Do\nQ\n");
+                          + (y + height) + " cm\n"
+                          + imageName + " Do\nQ\n");
 
         if (outputStream != null) {
             try {
@@ -518,7 +515,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         // the pdf document. If so, we just reuse the reference;
         // otherwise we have to build a FopImage and add it to the pdf
         // document
-        PDFXObject imageInfo = pdfDoc.getImage("TempImage:" + img.toString());
+        PDFXObject imageInfo = pdfDoc.getXObject("TempImage:" + img.toString());
         if (imageInfo == null) {
             // OK, have to build and add a PDF image
 
@@ -579,7 +576,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                                              + img.toString(), buf.getWidth(),
                                              buf.getHeight(), mask, null);
                 fopimg.setColorSpace(new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_GRAY));
-                PDFXObject xobj = pdfDoc.addImage(resourceContext, fopimg);
+                PDFImageXObject xobj = pdfDoc.addImage(resourceContext, fopimg);
                 ref = xobj.referencePDF();
 
                 if (outputStream != null) {
@@ -623,7 +620,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         writeClip(imclip);
         currentStream.write("" + width + " 0 0 " + (-height) + " " + x
                             + " " + (y + height) + " cm\n" + "/Im"
-                            + imageInfo.getXNumber() + " Do\nQ\n");
+                            + imageInfo.getName() + " Do\nQ\n");
         return true;
     }
 
@@ -1193,7 +1190,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
         PaintContext pctx = paint.createContext(rgbCM, devBounds, usrBounds, 
                                                 at, getRenderingHints());
-        PDFXObject imageInfo = pdfDoc.getImage
+        PDFXObject imageInfo = pdfDoc.getXObject
             ("TempImage:" + pctx.toString());
         if (imageInfo != null) {
             resourceContext.getPDFResources().addXObject(imageInfo);
@@ -1241,7 +1238,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                 BitmapImage fopimg = new BitmapImage
                     ("TempImageMask:" + pctx.toString(), devW, devH, mask, null);
                 fopimg.setColorSpace(new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_GRAY));
-                PDFXObject xobj = pdfDoc.addImage(resourceContext, fopimg);
+                PDFImageXObject xobj = pdfDoc.addImage(resourceContext, fopimg);
                 maskRef = xobj.referencePDF();
 
                 if (outputStream != null) {
@@ -1269,8 +1266,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         currentStream.write("q\n");
         writeClip(shape);
         currentStream.write("" + usrW + " 0 0 " + (-usrH) + " " + usrX
-                            + " " + (usrY + usrH) + " cm\n" + "/Im"
-                            + imageInfo.getXNumber() + " Do\nQ\n");
+                            + " " + (usrY + usrH) + " cm\n"
+                            + imageInfo.getName() + " Do\nQ\n");
         return true;
     }
 

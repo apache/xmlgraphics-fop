@@ -240,7 +240,7 @@ public class PDFResources extends PDFObject {
             p = p.append("/XObject <<\n");
             for (Iterator iter = xObjects.iterator(); iter.hasNext();) {
                 PDFXObject xobj = (PDFXObject)iter.next();
-                p = p.append("  /Im" + xobj.getXNumber() + " "
+                p = p.append("  " + xobj.getName() + " "
                              + xobj.referencePDF()
                              + "\n");
             }

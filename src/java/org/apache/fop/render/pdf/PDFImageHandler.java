@@ -16,41 +16,35 @@
  */
 
 /* $Id$ */
- 
-package org.apache.fop.pdf;
+
+package org.apache.fop.render.pdf;
+
+import java.io.IOException;
+
+import org.apache.fop.image.FopImage;
+import org.apache.fop.pdf.PDFDocument;
+import org.apache.fop.pdf.PDFXObject;
 
 /**
- * CCF Filter class. Right now it is just used as a dummy filter flag so
- * we can write TIFF images to the PDF. The encode method just returns the
- * data passed to it. In the future an actual CCITT Group 4 compression should be
- * added to the encode method so other images can be compressed.
- *
+ * This interface is used for handling all sorts of image type for PDF output.
  */
-public class CCFFilter extends NullFilter {
-
-    private PDFObject decodeParms;
+public interface PDFImageHandler {
 
     /**
-     * {@inheritDoc}
+     * Returns the MIME type supported by this instance.
+     * @return the MIME type
      */
-    public String getName() {
-        return "/CCITTFaxDecode";
-    }
-
+    String getSupportedMimeType();
+    
     /**
-     * {@inheritDoc}
+     * Generates the PDF objects for the given FopImage instance and returns
+     * the resulting XObject.
+     * @param image the image to be handled
+     * @param uri the URI of the image
+     * @param pdfDoc the target PDF document
+     * @return the generated XObject
+     * @throws IOException if an I/O error occurs
      */
-    public PDFObject getDecodeParms() {
-        return this.decodeParms;
-    }
-
-    /**
-     * Sets the CCF decoding parameters
-     * @param decodeParms The decoding parameters
-     */
-    public void setDecodeParms(PDFObject decodeParms) {
-        this.decodeParms = decodeParms;
-    }
-
+    PDFXObject generateImage(FopImage image, String uri, PDFDocument pdfDoc) throws IOException;
+    
 }
-
