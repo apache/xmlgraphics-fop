@@ -41,10 +41,10 @@
       </fo:layout-master-set>
       <fo:page-sequence master-reference="master">
         <fo:flow flow-name="xsl-region-body">
-          <fo:block background-color="orange" keep-together="always">Apache FOP is a great tool to create PDF documents with.</fo:block>
-          <fo:block background-color="orange" keep-together="always">Apache FOP is a great tool to create PDF documents with.</fo:block>
-          <fo:block background-color="orange" keep-together="always">Apache FOP is a great tool to create PDF documents with.</fo:block>
-          <fo:block background-color="orange" keep-together="always">Apache FOP is a great tool to create PDF documents with.</fo:block>
+          <fo:block background-color="orange" keep-together.within-page="always">Apache FOP is a great tool to create PDF documents with.</fo:block>
+          <fo:block background-color="orange" keep-together.within-page="always">Apache FOP is a great tool to create PDF documents with.</fo:block>
+          <fo:block background-color="orange" keep-together.within-page="always">Apache FOP is a great tool to create PDF documents with.</fo:block>
+          <fo:block background-color="orange" keep-together.within-page="always">Apache FOP is a great tool to create PDF documents with.</fo:block>
           <fo:block background-color="yellow">last line in new block</fo:block>
         </fo:flow>
       </fo:page-sequence>

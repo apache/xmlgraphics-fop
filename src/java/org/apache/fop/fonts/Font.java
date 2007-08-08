@@ -284,8 +284,12 @@ public class Font {
                     width = 0;
                 } else if (c == '\u202F') {
                     width = getCharWidth(' ') / 2;
+                } else if (c == '\u2060') {
+                    width = 0;
                 } else if (c == '\u3000') {
                     width = getCharWidth(' ') * 2;
+                } else if (c == '\ufeff') {
+                    width = 0;
                 } else {
                     //Will be internally replaced by "#" if not found
                     width = getWidth(mapChar(c));

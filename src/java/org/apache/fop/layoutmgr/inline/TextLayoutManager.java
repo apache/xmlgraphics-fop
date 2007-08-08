@@ -164,6 +164,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
     private int lineStartBAP = 0;
     private int lineEndBAP = 0;
+    
+    private boolean keepTogether;
 
     /**
      * Create a Text layout manager.
@@ -213,6 +215,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         // in the SpaceVal.makeWordSpacing() method
         letterSpaceIPD = ls.getSpace();
         wordSpaceIPD = MinOptMax.add(new MinOptMax(spaceCharIPD), ws.getSpace());
+        
+        keepTogether = foText.getKeepTogether().getWithinLine().getEnum() == Constants.EN_ALWAYS;
 
     }
 
@@ -538,7 +542,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
      */
     private static boolean isSpace(final char ch) {
         return ch == CharUtilities.SPACE
-            || ch == CharUtilities.NBSPACE
+            || CharUtilities.isNonBreakableSpace(ch)
             || CharUtilities.isFixedWidthSpace(ch);
     }
     
@@ -562,7 +566,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         while (iNextStart < textArray.length) {
             ch = textArray[iNextStart]; 
             boolean breakOpportunity = false;
-            byte breakAction = lbs.nextChar(ch);
+            byte breakAction = keepTogether? LineBreakStatus.PROHIBITED_BREAK : lbs.nextChar(ch);
             switch (breakAction) {
                 case LineBreakStatus.COMBINING_PROHIBITED_BREAK:
                 case LineBreakStatus.PROHIBITED_BREAK:
@@ -689,7 +693,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                         (short) 1, (short) 0,
                         wordSpaceIPD, false, true, breakOpportunity);
                 iThisStart = (short) (iNextStart + 1);
-            } else if (CharUtilities.isFixedWidthSpace(ch)) {
+            } else if (CharUtilities.isFixedWidthSpace(ch) || CharUtilities.isZeroWidthSpace(ch)) {
                 // create the AreaInfo object
                 MinOptMax ipd = new MinOptMax(font.getCharWidth(ch));
                 ai = new AreaInfo(iNextStart, (short) (iNextStart + 1),

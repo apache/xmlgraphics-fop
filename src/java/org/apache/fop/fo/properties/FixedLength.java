@@ -151,7 +151,7 @@ public class FixedLength extends LengthProperty {
      * @see java.lang.Object#equals(Object)
      */
     public boolean equals(Object obj) {
-        if (obj instanceof EnumProperty) {
+        if (obj instanceof FixedLength) {
             return (((FixedLength)obj).millipoints == this.millipoints);
         } else {
             return false;

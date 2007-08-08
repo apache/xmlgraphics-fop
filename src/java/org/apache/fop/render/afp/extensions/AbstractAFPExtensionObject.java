@@ -33,10 +33,13 @@ import org.xml.sax.Locator;
  */
 public abstract class AbstractAFPExtensionObject extends FONode {
 
-    private AFPPageSetup setupCode = null;
-
-    private String _name = null;
+    /**
+     * AFP setup code
+     */
+    private AFPPageSetup setupCode;
     
+    private String name;
+            
     /**
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      * @param parent the parent formatting object
@@ -44,14 +47,11 @@ public abstract class AbstractAFPExtensionObject extends FONode {
      */
     public AbstractAFPExtensionObject(FONode parent, String name) {
         super(parent);
-        _name = name;
-        setupCode = new AFPPageSetup(name);
+        this.name = name;
+        this.setupCode = new AFPPageSetup(name);
     }
 
-    /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
-     * here, blocks XSL FO's from having non-FO parents.
-     */
+    /** {@inheritDoc} */
     protected void validateChildNode(Locator loc, String nsURI, String localName)
                 throws ValidationException {
         if (FO_URI.equals(nsURI)) {
@@ -60,8 +60,9 @@ public abstract class AbstractAFPExtensionObject extends FONode {
     }
 
     /** @see org.apache.fop.fo.FONode */
-    protected void addCharacters(char[] data, int start, int length,
+    protected void addCharacters(char[] data, int start, int end,
                                  PropertyList pList, Locator locator) {
+        setupCode.setContent(new String(data, start, end - start));       
     }
 
     /** @see org.apache.fop.fo.FONode#getNamespaceURI() */
@@ -69,7 +70,7 @@ public abstract class AbstractAFPExtensionObject extends FONode {
         return AFPElementMapping.NAMESPACE;
     }
 
-    /**@see org.apache.fop.fo.FONode#getNormalNamespacePrefix() */
+    /** {@inheritDoc} */
     public String getNormalNamespacePrefix() {
         return AFPElementMapping.NAMESPACE_PREFIX;
     }
@@ -91,8 +92,7 @@ public abstract class AbstractAFPExtensionObject extends FONode {
             } else {
                 throw new FOPException(elementName + " must have a src attribute.");
             }
-        }
-        if (AFPElementMapping.TAG_LOGICAL_ELEMENT.equals(elementName)) {
+        } else if (AFPElementMapping.TAG_LOGICAL_ELEMENT.equals(elementName)) {
             name = attlist.getValue("value");
             if (name != null && name.length() > 0) {
                 setupCode.setValue(name);
@@ -114,8 +114,6 @@ public abstract class AbstractAFPExtensionObject extends FONode {
 
     /** @see org.apache.fop.fo.FONode#getLocalName() */
     public String getLocalName() {
-        return _name;
+        return name;
     }
-
 }
-
