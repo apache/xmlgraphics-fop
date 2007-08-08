@@ -20,7 +20,6 @@
 package org.apache.fop.fonts.truetype;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.List;
@@ -28,7 +27,6 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fonts.Glyphs;
-import org.apache.fop.util.IntMap;
 
 /**
  * Reads a TrueType file or a TrueType Collection.
@@ -111,8 +109,8 @@ public class TTFFile {
     
     // internal mapping of glyph indexes to unicode indexes
     // used for quick mappings in this class
-    private IntMap glyphToUnicodeMap = new IntMap();
-    private IntMap unicodeToGlyphMap = new IntMap();
+    private Map glyphToUnicodeMap = new java.util.HashMap();
+    private Map unicodeToGlyphMap = new java.util.HashMap();
 
     private TTFDirTabEntry currentDirTab;
 
@@ -134,8 +132,8 @@ public class TTFFile {
         UnicodeMapping(int glyphIndex, int unicodeIndex) {
             this.unicodeIndex = unicodeIndex;
             this.glyphIndex = glyphIndex;
-            glyphToUnicodeMap.put(glyphIndex, unicodeIndex);
-            unicodeToGlyphMap.put(unicodeIndex, glyphIndex);
+            glyphToUnicodeMap.put(new Integer(glyphIndex), new Integer(unicodeIndex));
+            unicodeToGlyphMap.put(new Integer(unicodeIndex), new Integer(glyphIndex));
         }
 
         /**
@@ -1505,7 +1503,7 @@ public class TTFFile {
      * @throws IOException if glyphIndex not found
      */
     private Integer glyphToUnicode(int glyphIndex) throws IOException {
-        return new Integer(glyphToUnicodeMap.get(glyphIndex));
+        return (Integer) glyphToUnicodeMap.get(new Integer(glyphIndex));
     }
     
     /**
@@ -1517,7 +1515,7 @@ public class TTFFile {
      */
     private Integer unicodeToGlyph(int unicodeIndex) throws IOException {
         final Integer result = 
-            new Integer(unicodeToGlyphMap.get(unicodeIndex));
+            (Integer) unicodeToGlyphMap.get(new Integer(unicodeIndex));
         if (result == null) {
             throw new IOException(
                     "Glyph index not found for unicode value " + unicodeIndex);

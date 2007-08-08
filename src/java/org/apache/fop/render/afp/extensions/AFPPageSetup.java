@@ -22,11 +22,17 @@ package org.apache.fop.render.afp.extensions;
 import java.io.Serializable;
 
 import org.apache.fop.fo.extensions.ExtensionAttachment;
+import org.apache.fop.util.XMLizable;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * This is the pass-through value object for the PostScript extension.
  */
-public class AFPPageSetup implements ExtensionAttachment, Serializable {
+public class AFPPageSetup implements ExtensionAttachment, Serializable, XMLizable  {
+
+    private static final long serialVersionUID = 7190606822558332901L;
 
     /** The category URI for this extension attachment. */
     public static final String CATEGORY = "apache:fop:extensions:afp";
@@ -37,12 +43,15 @@ public class AFPPageSetup implements ExtensionAttachment, Serializable {
 
     private String value;
 
+    private String content;
+
     /**
      * Default constructor.
-     * @param name the name of the setup code object, may be null
+     * 
+     * @param elementName the name of the setup code object, may be null
      */
-    public AFPPageSetup(String name) {
-        this.elementName = name;
+    public AFPPageSetup(String elementName) {
+        this.elementName = elementName;
     }
 
     /** @return the name */
@@ -77,15 +86,49 @@ public class AFPPageSetup implements ExtensionAttachment, Serializable {
     public void setValue(String source) {
         this.value = source;
     }
-
+    
     /** @see org.apache.fop.fo.extensions.ExtensionAttachment#getCategory() */
     public String getCategory() {
         return CATEGORY;
     }
 
-    /** @see java.lang.Object#toString() */
+    /**
+     * @return the data
+     */
+    public String getContent() {
+        return content;
+    }
+
+    /**
+     * Sets the data
+     * @param content The byte data to set.
+     */
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    /** {@inheritDoc} */
     public String toString() {
         return "AFPPageSetup(element-name=" + getElementName() + " name=" + getName() + ")";
     }
 
+    private static final String ATT_NAME = "name";
+    private static final String ATT_VALUE = "value";
+
+    /** {@inheritDoc} */
+    public void toSAX(ContentHandler handler) throws SAXException {
+        AttributesImpl atts = new AttributesImpl();
+        if (name != null && name.length() > 0) {
+            atts.addAttribute(null, ATT_NAME, ATT_NAME, "CDATA", name);
+        }
+        if (value != null && value.length() > 0) {
+            atts.addAttribute(null, ATT_VALUE, ATT_VALUE, "CDATA", value);
+        }
+        handler.startElement(CATEGORY, elementName, elementName, atts);
+        if (content != null && content.length() > 0) {
+            char[] chars = content.toCharArray();
+            handler.characters(chars, 0, chars.length);
+        }
+        handler.endElement(CATEGORY, elementName, elementName);
+    }
 }

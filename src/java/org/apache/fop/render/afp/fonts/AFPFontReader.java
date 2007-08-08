@@ -111,7 +111,7 @@ public final class AFPFontReader {
     /**
      * The collection of code pages
      */
-    private static HashMap _codePages = new HashMap();
+    private HashMap _codePages = new HashMap();
 
     /**
      * Load the font details and metrics into the CharacterSetMetric object,
@@ -120,7 +120,7 @@ public final class AFPFontReader {
      *
      * @param characterSet the CharacterSetMetric object to populate
      */
-    public static void loadCharacterSetMetric(CharacterSet characterSet) {
+    public void loadCharacterSetMetric(CharacterSet characterSet) {
 
         InputStream inputStream = null;
 
@@ -275,6 +275,11 @@ public final class AFPFontReader {
         }
 
         File directory = new File(url.getPath());
+        if (!directory.canRead()) {
+            String msg = "Failed to read directory " + url.getPath();
+            log.error(msg);
+            throw new FileNotFoundException(msg);
+        }
 
         final String filterpattern = codePage.trim();
         FilenameFilter filter = new FilenameFilter() {

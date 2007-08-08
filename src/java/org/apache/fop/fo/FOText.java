@@ -30,6 +30,7 @@ import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonHyphenation;
 import org.apache.fop.fo.properties.CommonTextDecoration;
+import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.SpaceProperty;
 
@@ -80,6 +81,7 @@ public class FOText extends FONode {
     private CommonFont commonFont;
     private CommonHyphenation commonHyphenation;
     private Color color;
+    private KeepProperty keepTogether;
     private Property letterSpacing;
     private SpaceProperty lineHeight;
     private int whiteSpaceTreatment;
@@ -165,6 +167,7 @@ public class FOText extends FONode {
         commonFont = pList.getFontProps();
         commonHyphenation = pList.getHyphenationProps();
         color = pList.get(Constants.PR_COLOR).getColor(getUserAgent());
+        keepTogether = pList.get(Constants.PR_KEEP_TOGETHER).getKeep();
         lineHeight = pList.get(Constants.PR_LINE_HEIGHT).getSpace();
         letterSpacing = pList.get(Constants.PR_LETTER_SPACING);
         whiteSpaceCollapse = pList.get(Constants.PR_WHITE_SPACE_COLLAPSE).getEnum();
@@ -553,6 +556,13 @@ public class FOText extends FONode {
      */
     public Color getColor() {
         return color;
+    }
+
+    /** 
+     * @return the "keep-together" property.
+     */
+    public KeepProperty getKeepTogether() {
+        return keepTogether;
     }
 
     /**

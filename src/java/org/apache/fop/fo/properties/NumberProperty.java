@@ -223,4 +223,20 @@ public class NumberProperty extends Property implements Numeric {
         return Color.black;
     }
 
+    /** {@inheritDoc} */
+    public int hashCode() {
+        return number.hashCode();
+    }
+    
+    /** {@inheritDoc} */
+    public boolean equals(Object o) {
+        if (o != null && o instanceof NumberProperty) {
+            NumberProperty np = (NumberProperty) o;
+            return (np.number == this.number
+                    || (this.number != null
+                        && this.number.equals(np.number)));
+        } else {
+            return false;
+        }
+    }
 }

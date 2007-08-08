@@ -571,6 +571,15 @@ public class AFPDataStream {
     }
 
     /**
+     * Creates a NoOperation item
+     * 
+     * @param content byte data
+     */
+    public void createNoOperation(String content) {
+        _currentPage.createNoOperation(content);
+    }
+
+    /**
      * Start a new page group. When processing has finished on the current page
      * group the {@link #endPageGroup()}method must be invoked to mark the page
      * group ending.

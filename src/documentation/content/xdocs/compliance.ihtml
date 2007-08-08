@@ -3692,8 +3692,13 @@
           <li>
             [0.93] works on all implemented block-level FOs, but not on inline-level FOs.          </li>
           <li>
-            [0.93] &lt;integer&gt; values are not supported.          </li>
-        </ul>      </td>
+            [0.93] &lt;integer&gt; values are not supported.
+          </li>
+          <li>
+            [Dev] &lt;integer&gt; values are not supported.
+          </li>
+        </ul>
+      </td>
     </tr>
     <tr>
       <td>
