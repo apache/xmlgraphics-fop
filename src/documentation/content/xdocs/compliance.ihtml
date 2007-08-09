@@ -390,7 +390,7 @@
       <td align="center">
         <ul>
           <li>
-            [0.93] The page width may not change among pages of the same page-sequence
+            [0.93 and later] The page width may not change among pages of the same page-sequence
             unless a forced break is inserted.          </li>
         </ul>      </td>
     </tr>
@@ -563,7 +563,7 @@
           <li>
             [0.20.5] For absolute positioning, use 'position="absolute"' (as 'absolute-position="absolute"' is not implemented), and specify all four of "left", "top", "width" and "height"          </li>
           <li>
-            [0.93] No known restrictions.          </li>
+            [0.93 and later] No known restrictions.          </li>
         </ul>      </td>
     </tr>
     <tr>
@@ -736,7 +736,7 @@
           <li>
             [0.20.5] Only works for table of contents without any problems. The case where the page number doesn't fit on a line isn't handled, and any text on the same line and after the page-number might not appear exactly where you want it to.          </li>
           <li>
-            [0.93] After the page number is known, no relayout is performed. The appearance may be suboptimal depending on the use case.          </li>
+            [0.93 and later] After the page number is known, no relayout is performed. The appearance may be suboptimal depending on the use case.          </li>
         </ul>      </td>
     </tr>
     <tr>
@@ -775,9 +775,10 @@
         partial      </td>
       <td align="left">
         <ul>
-          <li>
-            [0.93] Only border-collapse="separate" is supported and there's no support for automatic column widths.          </li>
-        </ul>      </td>
+          <li>[0.20.5&ndash;0.93] Only border-collapse="separate"</li>
+          <li>[All] No support for auto layout yet</li>
+        </ul>
+      </td>
     </tr>
     <tr>
       <td>
@@ -1126,7 +1127,7 @@
       <td align="left">
         <ul>
           <li>[0.20.5] Uses the proprietary fox:outline extension.</li>
-          <li>[0.93] color, font-style and font-weight are not supported, yet.</li>
+          <li>[0.93 and later] color, font-style and font-weight are not supported, yet.</li>
         </ul>      </td>
     </tr>
     <tr>
@@ -1165,7 +1166,8 @@
         partial      </td>
       <td align="left">
         <ul>
-          <li>[0.93] Restrictions with multi-column documents.</li>
+          <li>[0.20.5] Footnotes sometimes overlap with the main content</li>
+          <li>[0.93 and later] Restrictions with multi-column documents.</li>
         </ul>      </td>
     </tr>
     <tr>
@@ -1204,7 +1206,7 @@
         partial      </td>
       <td align="left">
         <ul>
-          <li>[0.93] Only works as expected with inline-level content.</li>
+          <li>[0.93 and later] Only works as expected with inline-level content.</li>
         </ul>      </td>
     </tr>
     <tr>
@@ -1325,7 +1327,7 @@
           <li>
             [0.20.5] Use shorthand position="absolute" as a workaround.          </li>
           <li>
-            [0.93] No restrictions. The 0.20.5 work-around is not supported.          </li>
+            [0.93 and later] No restrictions. The 0.20.5 work-around is not supported.          </li>
         </ul>      </td>
     </tr>
     <tr>
@@ -1721,7 +1723,7 @@
       <td align="left">
         <ul>
           <li>
-            [0.93] not yet implemented for table-column, table-body, table-header and table-footer.          </li>
+            [0.93 and later] not yet implemented for table-column, table-body, table-header and table-footer.          </li>
         </ul>      </td>
     </tr>
     <tr>
@@ -1741,7 +1743,7 @@
       <td align="left">
         <ul>
           <li>
-            [0.93] not yet implemented for table-column, table-body, table-header and table-footer.          </li>
+            [0.93 and later] not yet implemented for table-column, table-body, table-header and table-footer.          </li>
         </ul>      </td>
     </tr>
     <tr>
@@ -2397,7 +2399,7 @@
           <li>
             [0.20.5] font-family lists are not supported, use a single font-family name          </li>
           <li>
-            [0.93] font-family lists are allowed but glyph based font selection is not supported          </li>
+            [0.93 and later] font-family lists are allowed but glyph based font selection is not supported          </li>
         </ul>      </td>
     </tr>
     <tr>
@@ -2523,7 +2525,7 @@
           <li>
             [0.20.5] "normal", "bolder" and "lighter" are not supported          </li>
           <li>
-            [0.93] TODO &lt;relative&gt; font weights          </li>
+            [0.93 and later] TODO &lt;relative&gt; font weights          </li>
         </ul>      </td>
     </tr>
     <tr>
@@ -2745,7 +2747,7 @@
           <li>
             [0.20.5] space-before.optimum supported          </li>
           <li>
-            [0.93] Space adjustment may not fully work everywhere, yet.          </li>
+            [0.93 and later] Space adjustment may not fully work everywhere, yet.          </li>
         </ul>      </td>
     </tr>
     <tr>
@@ -2767,7 +2769,7 @@
           <li>
             [0.20.5] space-after.optimum supported          </li>
           <li>
-            [0.93] Space adjustment may not fully work everywhere, yet.          </li>
+            [0.93 and later] Space adjustment may not fully work everywhere, yet.          </li>
         </ul>      </td>
     </tr>
     <tr>
@@ -2935,7 +2937,7 @@
           <li>
             [0.20.5] For table-cell, the "height" attribute must be set for the parent table-row; setting the height of the table or the table-cell results in vertical centering having no effect.          </li>
           <li>
-            [0.93] TODO Check e-g, i-f-o.          </li>
+            [0.93 and later] TODO Check e-g, i-f-o.          </li>
         </ul>      </td>
     </tr>
     <tr>
@@ -3267,7 +3269,7 @@
       <td align="left">
         <ul>
           <li>
-            [0.93] value "line-height" not supported          </li>
+            [0.93 and later] value "line-height" not supported          </li>
         </ul>      </td>
     </tr>
     <tr>
@@ -3303,7 +3305,7 @@
       <td align="left">
         <ul>
           <li>
-            [0.93] inline elements may interfere with correct handling of this property
+            [0.93 and later] inline elements may interfere with correct handling of this property
             in some cases          </li>
         </ul>      </td>
     </tr>
@@ -3396,7 +3398,7 @@
       <td align="left">
         <ul>
           <li>
-            [0.93] Only supported on fo:block.          </li>
+            [0.93 and later] Only supported on fo:block.          </li>
         </ul>      </td>
     </tr>
     <tr>
@@ -3692,10 +3694,7 @@
           <li>
             [0.93] works on all implemented block-level FOs, but not on inline-level FOs.          </li>
           <li>
-            [0.93] &lt;integer&gt; values are not supported.
-          </li>
-          <li>
-            [Dev] &lt;integer&gt; values are not supported.
+            [0.93 and later] &lt;integer&gt; values are not supported.
           </li>
         </ul>
       </td>
@@ -3719,9 +3718,9 @@
           <li>
             [0.20.5] works only in table rows          </li>
           <li>
-            [0.93] works on all implemented block-level FOs, but not on inline-level FOs.          </li>
+            [0.93 and later] works on all implemented block-level FOs, but not on inline-level FOs.          </li>
           <li>
-            [0.93] &lt;integer&gt; values are not supported.          </li>
+            [0.93 and later] &lt;integer&gt; values are not supported.          </li>
         </ul>      </td>
     </tr>
     <tr>
@@ -3740,12 +3739,10 @@
         partial      </td>
       <td align="left">
         <ul>
-          <li>
-            [0.20.5] works only in table rows          </li>
-          <li>
-            [0.93] works on all implemented FOs, except list- and table-related and inline-level FOs.          </li>
-          <li>
-            [0.93] &lt;integer&gt; values are not supported.          </li>
+          <li>[0.20.5] works only in table rows</li>
+          <li>[0.93 and later] works on all implemented FOs, except list- and
+            table-related and inline-level FOs.</li>
+          <li>[0.93 and later] &lt;integer&gt; values are not supported.</li>
         </ul>      </td>
     </tr>
     <tr>
@@ -3877,7 +3874,7 @@
           <li>
             [0.20.5] not value "page"          </li>
           <li>
-            [0.93] Not supported          </li>
+            [0.93 and later] Not supported          </li>
         </ul>      </td>
     </tr>
     <tr>
@@ -3899,7 +3896,7 @@
           <li>
             [0.20.5] not value "use-content"          </li>
           <li>
-            [0.93] Value "use-content" does not work in all circumstances.          </li>
+            [0.93 and later] Value "use-content" does not work in all circumstances.          </li>
         </ul>      </td>
     </tr>
     <tr>
@@ -4660,18 +4657,15 @@
         Extended      </td>
       <td align="center">
         <a href="http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#border-collapse">&sect;7.26.3</a>      </td>
-      <td class="partial">
-        partial      </td>
-      <td class="partial"> partial </td>
-      <td class="partial">
-        partial      </td>
-      <td class="partial">
-        partial      </td>
+      <td class="partial">partial</td>
+      <td class="no">no</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
       <td align="left">
         <ul>
-          <li>
-            Implementation of collapsed table model not complete.          </li>
-        </ul>      </td>
+          <li>[0.94 and later] Some small limitations</li>
+        </ul>
+      </td>
     </tr>
     <tr>
       <td>
@@ -5069,7 +5063,7 @@
         partial      </td>
       <td align="left">
         <ul>
-          <li>[0.93] IDs on table-header, table-footer, table-body, table-row, table-and-caption, table-caption, inline-container and bidi-override are not available, yet.</li>
+          <li>[0.93 and later] IDs on table-header, table-footer, table-body, table-row, table-and-caption, table-caption, inline-container and bidi-override are not available, yet.</li>
         </ul>      </td>
     </tr>
     <tr>
@@ -5405,7 +5399,7 @@
       <td align="center">
         <ul>
           <li>
-            [0.93] Enum values other than "inherit" not yet supported.          </li>
+            [0.93 and later] Enum values other than "inherit" not yet supported.          </li>
         </ul>      </td>
     </tr>
     <tr>
@@ -5573,7 +5567,7 @@
           <li>
             [0.20.5] Only works as a shorthand for baseline-shift property.          </li>
           <li>
-            [0.93] Percentages are not supported, yet.          </li>
+            [0.93 and later] Percentages are not supported, yet.          </li>
         </ul>      </td>
     </tr>
     <tr>
