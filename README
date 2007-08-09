@@ -20,7 +20,7 @@ What is FOP?
 
 Apache FOP is the world's first print formatter driven by XSL formatting 
 objects. It is a Java application that reads a formatting object tree 
-conforming to the XSL 1.0 Recommendation (15 October 2001) and then turns it 
+conforming to the XSL 1.1 Recommendation (05 December 2006) and then turns it 
 into a PDF document, certain other output formats or allows you to preview it 
 directly on screen. Some parts of the XSL 1.1 specification (work in progress!)
 have also been implemented.
@@ -89,6 +89,41 @@ http://xmlgraphics.apache.org/fop/stable/running.html
 ==============================================================================
   RELEASE NOTES
 ==============================================================================
+
+Version 0.94
+============
+
+This is the second production grade release of the new FOP codebase.
+It contains many bug fixes and new features. See below for details.
+
+Compliance
+----------
+
+This release implements the XSL 1.0 and 1.1 recommendations to a high
+degree of compliance. See the compliance page
+http://xmlgraphics.apache.org/fop/compliance.html for a detailed
+overview.
+
+Known issues
+------------
+
+The known issues of this release are listed at
+http://xmlgraphics.apache.org/fop/0.94/knownissues_overview.html.
+
+Major Changes in Version 0.94
+-----------------------------
+
+* Add support for font auto-detection (JM) Thanks to Adrian Cumiskey
+* Add support for the border-collapsing model in tables (VH, JM)
+* Add support for named destinations in PDF (JB)
+* Add support for UAX#14 type line breaking (MM)
+
+The long list of changes in this release is available at
+http://xmlgraphics.apache.org/fop/0.94/changes_0.94.html.
+
+The long list of changes in this and earlier releases is available at
+http://xmlgraphics.apache.org/fop/changes.html.
+
 
 Version 0.93
 ============
