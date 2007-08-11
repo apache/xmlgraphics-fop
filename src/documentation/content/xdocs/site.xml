@@ -57,7 +57,7 @@
   <!--
   BEGIN Version 0.93 documentation tab
   -->
-  <trunk label="FOP 0.93" href="0.93/" tab="stableversion">
+  <trunk label="FOP 0.93" href="0.93/" tab="oldstableversion">
     <about label="About" href="index.html"/>
     <release label="Release Notes" href="releaseNotes_0.93.html"/>
     <changes label="Changes" href="changes_0.93.html"/>
@@ -93,7 +93,7 @@
   <!--
   BEGIN Version 0.94 documentation tab
   -->
-  <trunk label="FOP 0.94" href="0.94/" tab="develversion">
+  <trunk label="FOP 0.94" href="0.94/" tab="stableversion">
     <about label="About" href="index.html"/>
     <release label="Release Notes" href="releaseNotes_0.94.html"/>
     <changes label="Changes" href="changes_0.94.html"/>
