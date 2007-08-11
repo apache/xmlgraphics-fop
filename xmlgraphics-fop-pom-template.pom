@@ -70,7 +70,7 @@ http://maven.apache.org/maven-v4_0_0.xsd">
     <dependency>
       <groupId>org.apache.xmlgraphics</groupId>
       <artifactId>xmlgraphics-commons</artifactId>
-      <version>1.1</version>
+      <version>1.2</version>
     </dependency>
     <dependency>
       <groupId>batik</groupId>
