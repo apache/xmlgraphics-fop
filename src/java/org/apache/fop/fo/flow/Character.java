@@ -20,7 +20,6 @@
 package org.apache.fop.fo.flow;
 
 import java.awt.Color;
-import java.util.NoSuchElementException;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
@@ -29,17 +28,12 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonHyphenation;
-import org.apache.fop.fo.properties.CommonMarginInline;
-import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.CommonTextDecoration;
-import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.SpaceProperty;
-import org.apache.fop.util.CharUtilities;
 import org.xml.sax.Locator;
 
 /**
@@ -63,7 +57,8 @@ public class Character extends FObj {
     private Length alignmentAdjust;
     private int alignmentBaseline;
     private Length baselineShift;
-    private char character;
+    /** Holds the character value */
+    protected char character;
     private Color color;
     private int dominantBaseline;
     // private ToBeImplementedProperty glyphOrientationHorizontal;
@@ -102,7 +97,7 @@ public class Character extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
@@ -126,7 +121,7 @@ public class Character extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#startOfNode
+     * {@inheritDoc}
      */
     protected void startOfNode() throws FOPException {
         super.startOfNode();
@@ -134,8 +129,7 @@ public class Character extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
-     * XSL Content Model: empty
+     * {@inheritDoc}
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
@@ -143,7 +137,7 @@ public class Character extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#charIterator
+     * {@inheritDoc}
      */
     public CharIterator charIterator() {
         return new FOCharIterator(this);
@@ -238,48 +232,18 @@ public class Character extends FObj {
         return wordSpacing; 
     }
 
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /**
+     * {@inheritDoc}
+     */
     public String getLocalName() {
         return "character";
     }
     
     /**
-     * @see org.apache.fop.fo.FObj#getNameId()
+     * {@inheritDoc}
      */
     public int getNameId() {
         return FO_CHARACTER;
-    }
-    
-    private class FOCharIterator extends CharIterator {
-
-        private boolean bFirst = true;
-        private Character foChar;
-        
-        FOCharIterator(Character foChar) {
-            this.foChar = foChar;
-        }
-        
-        public boolean hasNext() {
-            return bFirst;
-        }
-
-        public char nextChar() {
-            if (bFirst) {
-                bFirst = false;
-                return foChar.character;
-            } else {
-                throw new NoSuchElementException();
-            }
-        }
-
-        public void remove() {
-            foChar.parent.removeChild(foChar);
-        }
-
-        public void replaceChar(char c) {
-            foChar.character = c;
-        }
-
     }
 
 }

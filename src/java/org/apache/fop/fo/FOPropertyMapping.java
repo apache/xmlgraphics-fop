@@ -31,7 +31,7 @@ import org.apache.fop.fo.properties.BorderWidthPropertyMaker;
 import org.apache.fop.fo.properties.BoxPropShorthandParser;
 import org.apache.fop.fo.properties.CharacterProperty;
 import org.apache.fop.fo.properties.ColorProperty;
-import org.apache.fop.fo.flow.TableFObj.ColumnNumberPropertyMaker;
+import org.apache.fop.fo.properties.ColumnNumberPropertyMaker;
 import org.apache.fop.fo.properties.CondLengthProperty;
 import org.apache.fop.fo.properties.CorrespondingPropertyMaker;
 import org.apache.fop.fo.properties.DimensionPropertyMaker;

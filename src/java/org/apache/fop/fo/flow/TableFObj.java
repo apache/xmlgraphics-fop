@@ -227,7 +227,7 @@ public abstract class TableFObj extends FObj {
      * 
      * @return the next column number to use
      */
-    protected int getCurrentColumnIndex() {
+    public int getCurrentColumnIndex() {
         return 0;
     }
     
@@ -239,7 +239,7 @@ public abstract class TableFObj extends FObj {
      * 
      * @param   newIndex    new value for column index
      */
-    protected void setCurrentColumnIndex(int newIndex) {
+    public void setCurrentColumnIndex(int newIndex) {
         //do nothing by default
     }
         
@@ -287,104 +287,5 @@ public abstract class TableFObj extends FObj {
      */
     protected void flagColumnIndices(int start, int end) {
         //nop
-    }
-    
-    /**
-     * PropertyMaker subclass for the column-number property
-     *
-     */
-    public static class ColumnNumberPropertyMaker extends NumberProperty.Maker {
-
-        /**
-         * Constructor
-         * @param propId    the id of the property for which the maker should 
-         *                  be created
-         */
-        public ColumnNumberPropertyMaker(int propId) {
-            super(propId);
-        }
-
-        /**
-         * @see PropertyMaker#make(PropertyList)
-         */
-        public Property make(PropertyList propertyList) 
-                throws PropertyException {
-            FObj fo = propertyList.getFObj();
-
-            if (fo.getNameId() == Constants.FO_TABLE_CELL
-                    || fo.getNameId() == Constants.FO_TABLE_COLUMN) {
-                if (fo.getNameId() == Constants.FO_TABLE_CELL
-                        && fo.getParent().getNameId() != Constants.FO_TABLE_ROW
-                        && (propertyList.get(Constants.PR_STARTS_ROW).getEnum() 
-                                == Constants.EN_TRUE)) {
-                    TableBody parent = (TableBody) fo.getParent();
-                    if (!parent.previousCellEndedRow()) {
-                        parent.resetColumnIndex();
-                    }
-                }
-            }
-            return NumberProperty.getInstance(
-                    ((TableFObj) fo.getParent()).getCurrentColumnIndex());
-        }
-        
-        
-        /**
-         * Check the value of the column-number property. 
-         * Return the parent's column index (initial value) in case 
-         * of a negative or zero value
-         * 
-         * @see org.apache.fop.fo.properties.PropertyMaker#make(
-         *              org.apache.fop.fo.PropertyList, 
-         *              java.lang.String, 
-         *              org.apache.fop.fo.FObj)
-         */
-        public Property make(PropertyList propertyList, String value, FObj fo) 
-                    throws PropertyException {
-            Property p = super.make(propertyList, value, fo);
-            
-            TableFObj parent = (TableFObj) propertyList.getParentFObj();
-            
-            int columnIndex = p.getNumeric().getValue();
-            if (columnIndex <= 0) {
-                log.warn("Specified negative or zero value for "
-                        + "column-number on " + fo.getName() + ": "
-                        + columnIndex + " forced to " 
-                        + parent.getCurrentColumnIndex());
-                return NumberProperty.getInstance(parent.getCurrentColumnIndex());
-            } else {
-                double tmpIndex = p.getNumeric().getNumericValue();
-                if (tmpIndex - columnIndex > 0.0) {
-                    columnIndex = (int) Math.round(tmpIndex);
-                    log.warn("Rounding specified column-number of "
-                            + tmpIndex + " to " + columnIndex);
-                    p = NumberProperty.getInstance(columnIndex);
-                }
-            }
-            
-            parent.setCurrentColumnIndex(columnIndex);
-            
-            int colSpan = propertyList.get(Constants.PR_NUMBER_COLUMNS_SPANNED)
-                                .getNumeric().getValue();
-            int i = -1;
-            while (++i < colSpan) {
-                if (parent.isColumnNumberUsed(columnIndex + i)) {
-                    /* if column-number is already in use by another 
-                     * cell/column => error!
-                     */
-                    StringBuffer errorMessage = new StringBuffer();
-                    errorMessage.append(fo.getName() + " overlaps in column ")
-                           .append(columnIndex + i);
-                    org.xml.sax.Locator loc = fo.getLocator();
-                    if (loc != null && loc.getLineNumber() != -1) {
-                        errorMessage.append(" (line #")
-                            .append(loc.getLineNumber()).append(", column #")
-                            .append(loc.getColumnNumber()).append(")");
-                    }
-                    throw new PropertyException(errorMessage.toString());
-                }
-            }
-            
-            return p;
-        }
-    }
+    }    
 }

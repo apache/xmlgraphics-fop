@@ -113,7 +113,7 @@ public class RecursiveCharIterator extends CharIterator {
      */
     public boolean hasNext() {
         while (curCharIter != null) {
-            if (curCharIter.hasNext() == false) {
+            if (!curCharIter.hasNext()) {
                 getNextCharIter();
             } else {
                 return true;
@@ -123,7 +123,7 @@ public class RecursiveCharIterator extends CharIterator {
     }
 
     /**
-     * @see org.apache.fop.fo.CharIterator#nextChar()
+     * {@inheritDoc}
      */
     public char nextChar() throws NoSuchElementException {
         if (curCharIter != null) {
