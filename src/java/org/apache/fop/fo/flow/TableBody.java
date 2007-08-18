@@ -21,9 +21,7 @@ package org.apache.fop.fo.flow;
 
 // Java
 import java.util.BitSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
@@ -33,13 +31,8 @@ import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
-import org.apache.fop.fo.StaticPropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.fo.flow.TableFObj.PendingSpan;
-import org.apache.fop.fo.properties.CommonAccessibility;
-import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
-import org.apache.fop.fo.properties.CommonRelativePosition;
 
 /**
  * Class modelling the fo:table-body object.
@@ -290,7 +283,7 @@ public class TableBody extends TableFObj {
      * 
      * @return the next column number to use
      */
-    protected int getCurrentColumnIndex() {
+    public int getCurrentColumnIndex() {
         return columnIndex;
     }
 
@@ -301,7 +294,7 @@ public class TableBody extends TableFObj {
      * 
      * @param newIndex  the new column index
      */
-    protected void setCurrentColumnIndex(int newIndex) {
+    public void setCurrentColumnIndex(int newIndex) {
         columnIndex = newIndex;
     }
 
@@ -309,7 +302,7 @@ public class TableBody extends TableFObj {
      * Resets the current column index for the TableBody
      *
      */
-    protected void resetColumnIndex() {
+    public void resetColumnIndex() {
         columnIndex = 1;
         for (int i = usedColumnIndices.length(); --i >= 0;) {
             usedColumnIndices.clear(i);
@@ -362,7 +355,7 @@ public class TableBody extends TableFObj {
      *          b) there is no previous cell (implicit 
      *             start of row)
      */
-    protected boolean previousCellEndedRow() {
+    public boolean previousCellEndedRow() {
         if (firstChild != null) {
             FONode prevNode = getChildNodes().lastNode();
             if (prevNode.getNameId() == FO_TABLE_CELL) {
