@@ -28,6 +28,8 @@
 
   <changes>
     <release version="FOP Trunk">
+    </release>    
+    <release version="0.94" date="XX August 2007">
       <action context="Code" dev="JM" type="fix">
         AFP Renderer: Bugfix for 1 bit images where the width is not a multiple of 8.
       </action>

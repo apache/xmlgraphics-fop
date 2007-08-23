@@ -48,7 +48,7 @@
        <xsl:value-of select="@title"/>
      </xsl:when>
      <xsl:otherwise>
-       <xsl:text>Release Notes for Apache Forrest </xsl:text><xsl:value-of select="$versionNumber"/>
+       <xsl:text>Release Notes for Apache FOP </xsl:text><xsl:value-of select="$versionNumber"/>
      </xsl:otherwise>
     </xsl:choose>
    </title>

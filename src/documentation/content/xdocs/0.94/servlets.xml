@@ -16,30 +16,29 @@
   limitations under the License.
 -->
 <!-- $Id$ -->
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
-    "http://svn.apache.org/viewvc/forrest/trunk/main/webapp/resources/schema/dtd/document-v12.dtd?view=co">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <document>
   <header>
     <title>Servlets</title>
-    <subtitle>How to use FOP in a Servlet</subtitle>
+    <subtitle>How to use Apache FOP in a Servlet</subtitle>
     <version>$Revision$</version>
   </header>
   <body>
     <section id="overview">
       <title>Overview</title>
       <p>
-        This page discusses topic all around using FOP in a servlet environment.
+        This page discusses topic all around using Apache FOP in a servlet environment.
       </p>
     </section>
     <section id="example-servlets">
       <title>Example Servlets in the FOP distribution</title>
       <p>
-        In the directory {fop-dir}/examples/servlet, you'll find a working example
+        In the directory {fop-dir}/src/java/org/apache/fop/servlet, you'll find a working example
         of a FOP-enabled servlet.
       </p>
       <p>
-        You can build the servlet easily by using the supplied Ant script. After building 
-        the servlet, drop fop.war into the webapps directory of Tomcat. Then, you can use 
+        The servlet is automatically built when you build Apache FOP using the supplied Ant script. After building 
+        the servlet, drop fop.war into the webapps directory of Apache Tomcat (or any other web container). Then, you can use 
         URLs like the following to generate PDF files:
       </p>
       <ul>
@@ -47,26 +46,35 @@
         <li>http://localhost:8080/fop/fop?xml=/home/path/to/xmlfile.xml&amp;xsl=/home/path/to/xslfile.xsl</li>
       </ul>
       <p/>
-      <p>The source code for the servlet can be found under {fop-dir}/examples/servlet/src/FopServlet.java.</p>
+      <p>The source code for the servlet can be found under {fop-dir}/src/java/org/apache/fop/servlet/FopServlet.java.</p>
+      <note>
+        This example servlet should not be used on a public web server connected to the Internet as it does not contain
+        any measures to prevent Denial-of-Service-Attacks. It is provided as an example and as a starting point for
+        your own servlet.
+      </note>
     </section>
     <section id="servlet">
       <title>Create your own Servlet</title>
       <note>
-        This section assumes you are familiar with <link href="embedding.html">embedding FOP</link>.
+        This section assumes you are familiar with <a href="embedding.html">embedding FOP</a>.
       </note>
       <section id="minimal-servlet">
         <title>A minimal Servlet</title>
         <p>
           Here is a minimal code snippet to demonstrate the basics:
         </p>
-        <source>public void doGet(HttpServletRequest request,
+        <source>private FopFactory fopFactory = FopFactory.newInstance();
+private TransformerFactory tFactory = TransformerFactory.newInstance();
+        
+public void doGet(HttpServletRequest request,
                    HttpServletResponse response) throws ServletException {
     try {
         response.setContentType("application/pdf");
-        Driver driver = new Driver(new InputSource("foo.fo"),
-                                   response.getOutputStream());
-        driver.setRenderer(Driver.RENDER_PDF);
-        driver.run();
+        Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, response.getOutputStream());
+        Transformer transformer = tFactory.newTransformer();
+        Source src = new StreamSource("foo.fo");
+        Result res = new SAXResult(fop.getDefaultHandler());
+        transformer.transform(src, res);
     } catch (Exception ex) {
         throw new ServletException(ex);
     }
@@ -80,37 +88,32 @@
       <section id="xslt">
         <title>Adding XSL tranformation (XSLT)</title>
         <p>
-          A common requirement is the to transform an XML source to
-          XSLFO using an XSL transformation. It is recommended to use
+          A common requirement is to transform an XML source to
+          XSL-FO using an XSL transformation. It is recommended to use
           JAXP for this task. The following snippet shows the basic
           code:
         </p>
-        <source>
-protected Logger log;
-protected TransformerFactory transformerFactory;
+        <source>private FopFactory fopFactory = FopFactory.newInstance();
+private TransformerFactory tFactory = TransformerFactory.newInstance();
 
 public void init() throws ServletException {
-    this.log = new SimpleLog(SimpleLog.LOG_LEVEL_WARN);
-    this.transformerFactory = TransformerFactory.newInstance();
+    //Optionally customize the FopFactory and TransformerFactory here
 }
 
 [..]
 
-    //Setup FOP
-    Driver driver = new Driver();
-    driver.setLogger(this.log);
-    driver.setRenderer(Driver.RENDER_PDF);
-
     //Setup a buffer to obtain the content length
     ByteArrayOutputStream out = new ByteArrayOutputStream();
-    driver.setOutputStream(out);
+
+    //Setup FOP
+    Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, out);
 
     //Setup Transformer
     Source xsltSrc = new StreamSource(new File("foo-xml2fo.xsl"));
-    Transformer transformer = this.transformerFactory.newTransformer(xsltSrc);
+    Transformer transformer = tFactory.newTransformer(xsltSrc);
 
     //Make sure the XSL transformation's result is piped through to FOP
-    Result res = new SAXResult(driver.getContentHandler());
+    Result res = new SAXResult(fop.getDefaultHandler());
 
     //Setup input
     Source src = new StreamSource(new File("foo.xml"));
@@ -127,7 +130,7 @@ public void init() throws ServletException {
     response.getOutputStream().flush();</source>
         <note>
           Buffering the generated PDF in a ByteArrayOutputStream is done to avoid potential 
-          problems with the Acrobat Reader Plug-in in IEx.
+          problems with the Acrobat Reader Plug-in in Microsoft Internet Explorer.
         </note>
         <p>
           The <code>Source</code> instance used above is simply an
@@ -141,21 +144,14 @@ public void init() throws ServletException {
         </p>
         <p>
           Because you have an explicit <code>Transformer</code> object, you can also use it to 
-          explicitly set parameters for the transformation run.
+          explicitely set parameters for the transformation run.
         </p>
       </section>
       <section id="cfg">
         <title>Custom configuration</title>
         <p>
-          If you need to supply a special configuration do this in the <code>init()</code> 
-          method so it will only be done once and to avoid multithreading problems.
+          You can easily set up your own FOUserAgent as demonstrated on the <a href="embedding.html">Embedding page</a>.
         </p>
-        <source>public void init() throws ServletException {
-    [..]
-    new Options(new File("userconfig.xml"));
-    //or
-    Configuration.put("baseDir", "/my/base/dir");
-}</source>
       </section>
       <section id="performance">
         <title>Improving performance</title>
@@ -165,7 +161,8 @@ public void init() throws ServletException {
         <ul>
           <li>
             Instead of java.io.ByteArrayOutputStream consider using the ByteArrayOutputStream
-            implementation from the Jakarta Commons IO project which allocates less memory.
+            implementation from the <a href="ext:jakarta/commons/io">Jakarta Commons IO project</a> which allocates less memory.
+            The full class name is: <code>org.apache.commons.io.output.ByteArrayOutputStream</code>
           </li>
           <li>
             In certain cases it can help to write the generated PDF to a temporary file so
@@ -176,9 +173,74 @@ public void init() throws ServletException {
         </ul>
         <p>
           Of course, the 
-          <link href="embedding.html#performance">performance hints from the Embedding page</link>
+          <a href="embedding.html#performance">performance hints from the Embedding page</a>
           apply here, too.
         </p>
+      </section>
+      <section id="uriresolver">
+        <title>Accessing resources in your web application</title>
+        <p>
+          Often, you will want to use resources (stylesheets, images etc.) which are bundled with
+          your web application. FOP provides a URIResolver implementation that lets you access
+          files via the Servlet's ServletContext. The class is called 
+          <code>org.apache.fop.servlet.ServletContextURIResolver</code>.
+        </p>
+        <p>
+          Here's how to set it up in your servlet. Instantiate a new instance in the servlet's 
+          init() method:
+        </p>
+        <source><![CDATA[
+    /** URIResolver for use by this servlet */
+    protected URIResolver uriResolver; 
+
+    public void init() throws ServletException {
+        this.uriResolver = new ServletContextURIResolver(getServletContext());
+        [..]
+    }]]></source>
+        <p>
+          The ServletContextURIResolver reacts on URIs beginning with "servlet-context:". If you
+          want to access an image in a subdirectory of your web application, you could, for
+          example, use: "servlet-context:/images/myimage.png". Don't forget the leading slash
+          after the colon!
+        </p>
+        <p>
+          Further down, you can use the URIResolver for various things:
+        </p>
+        <ul>
+          <li>
+            With the Transformer (JAXP/XSLT) so things like document() functions can resolver 
+            "servlet-context:" URIs.
+          </li>
+          <li>
+            With the FopFactory so every resource FOP loads can be loaded using a "servlet-context:"
+            URI.
+          </li>
+          <li>
+            You can the ServletContextURIResolver yourself in your servlet code to access
+            stylesheets or XML files bundled with your web application.
+          </li>
+        </ul>
+        <p>
+          Here are some example snippets:
+        </p>
+        <source><![CDATA[
+//Setting up the JAXP TransformerFactory
+this.transFactory = TransformerFactory.newInstance();
+this.transFactory.setURIResolver(this.uriResolver);
+
+[..]
+
+//Setting up the FOP factory
+this.fopFactory = FopFactory.newInstance();
+this.fopFactory.setURIResolver(this.uriResolver);
+
+[..]
+
+//The stylesheet for the JAXP Transfomer
+Source xsltSrc = this.uriResolver.resolve(
+    "servlet-context:/xslt/mystylesheet.xsl", null);
+Transformer transformer = this.transFactory.newTransformer(xsltSrc);
+transformer.setURIResolver(this.uriResolver);]]></source>
       </section>
     </section>
     <section id="ie">
@@ -255,10 +317,9 @@ public void init() throws ServletException {
       <p>
         Sometimes the requirements for a servlet get quite sophisticated: SQL data sources, 
         multiple XSL transformations, merging of several datasources etc. In such a case 
-        consider using <fork href="http://cocoon.apache.org">Apache Cocoon</fork> instead 
+        consider using <a class="fork" href="ext:cocoon">Apache Cocoon</a> instead 
         of a custom servlet to accomplish your goal.
       </p>
     </section>
   </body>
 </document>
-<!-- Last Line of $RCSfile$ -->

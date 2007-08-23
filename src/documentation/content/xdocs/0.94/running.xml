@@ -50,7 +50,9 @@
       <p>The following software is optional, depending on your needs:</p>
       <ul>
         <li>
-          Graphics libraries. Support for some graphics formats requires additional packages. See 
+          Graphics libraries. Generally, FOP contains direct support for the most important
+          bitmap image formats (including PNG, TIFF, JPEG and GIF). If you're using JDK 1.3, 
+          you may need additional packages to get GIF images to work. See 
           <a href="graphics.html">FOP: Graphics Formats</a> for details.
         </li>
         <li>
@@ -178,7 +180,7 @@ Fop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-rtf|-tiff|-png|-pcl
   Fop foo.fo -awt]]></source>
       <p>
         PDF encryption is only available if FOP was compiled with encryption support 
-        <strong>and</strong> if compatible encryption support is availabe at run time. 
+        <strong>and</strong> if compatible encryption support is available at run time. 
         Currently, only the JCE is supported. Check the <a href="pdfencryption.html">Details</a>.
       </p>
       </section>
@@ -212,7 +214,7 @@ Fop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-rtf|-tiff|-png|-pcl
       directory in a single directory. If you use hyphenation, you
       must also put <code>fop-hyph.jar</code> in that directory.</p>
 
-    <p>In both cases the arguments consist of the options and
+      <p>In both cases the arguments consist of the options and
         infile and outfile specifications as shown above for the
         standard scripts.</p>
       </section>
@@ -220,10 +222,12 @@ Fop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-rtf|-tiff|-png|-pcl
         <title>FOP's dynamical classpath construction</title>
 
         <p>If FOP is started without a proper classpath, it tries to
-        add its dependencies dynamically. FOP uses the current working
-        directory as the base directory for its search. If the base
-        directory is called <code>build</code>, then its parent
-        directory becomes the base directory.</p>
+        add its dependencies dynamically. If the system property
+        <code>fop.home</code> contains the name of a directory, then
+        FOP uses that directory as the base directory for its
+        search. Otherwise the current working directory is the base
+        directory. If the base directory is called <code>build</code>,
+        then its parent directory becomes the base directory.</p>
 
         <p>FOP expects to find <code>fop.jar</code> in the
         <code>build</code> subdirectory of the base directory, and
@@ -335,11 +339,6 @@ Fop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-rtf|-tiff|-png|-pcl
           This can be substantial if the page sequence contains lots of FO elements.
         </li>
       </ul>
-      <p>
-        One of FOP's stated design goals is to be able to process input of arbitrary size.
-        Addressing this goal is one of the prime motivations behind the 
-        <a href="../dev/index.html">FOP Redesign</a>.
-      </p>
     </section>
     <section id="problems">
       <title>Problems</title>

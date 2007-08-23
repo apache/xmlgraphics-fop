@@ -590,7 +590,8 @@ out = proc.getOutputStream();]]></source>
       </section>
       <section id="afp-tag-logical-element">
         <title>Tag Logical Element Extension</title>
-        <p>The tag-logical-element extension element allows to injects TLEs into the AFP output stream. Example:</p>
+        <p>The tag-logical-element extension element allows to injects TLEs into the AFP output stream. Example: 
+          Example:</p>
       <source><![CDATA[
     <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
      xmlns:afp="http://xmlgraphics.apache.org/fop/extensions/afp">
@@ -604,24 +605,6 @@ out = proc.getOutputStream();]]></source>
         <p>The tag-logical-element extension element can only occur within a simple-page-master.
         Multiple tag-logical-element extension elements within a simple-page-master are allowed.
         The name and value attributes are mandatory.
-        </p>
-      </section>
-      <section id="afp-no-operation">
-        <title>No Operation Extension</title>
-        <p>The no-operation extension provides the ability to carry up to 32K of comments or any other type
-        of unarchitected data into the AFP output stream. Example:</p>
-      <source><![CDATA[
-    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
-     xmlns:afp="http://xmlgraphics.apache.org/fop/extensions/afp">
-      <fo:layout-master-set>
-        <fo:simple-page-master master-name="simple">
-          <afp:no-operation name="My NOP">insert up to 32k of character data here!</afp:no-operation>
-        </fo:simple-page-master>
-      </fo:layout-master-set>
-]]></source>
-        <p>The no-operation extension element can only occur within a simple-page-master.
-        Multiple no-operation extension elements within a simple-page-master are allowed.
-        The name attribute is mandatory.
         </p>
       </section>
     </section>

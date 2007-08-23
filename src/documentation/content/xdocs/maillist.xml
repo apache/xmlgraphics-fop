@@ -78,7 +78,11 @@ href="dev/index.html#mail-fop-dev">Development pages</link>.</note>
           <li>Have you read <link href="#general">Mailing List General Information</link>? If not please do so before proceeding.</li>
           <li>Have you stated the version of FOP you are using? Please do so. Usually, it's a good idea to state the JDK/JRE version and the operating system you're using, too.</li>
           <li>Have you included any detailed error messages? Please do so.</li>
-          <li>Does a proper understanding of your question require inclusion of XSLT code, DocBook source, or other semantic XML? If so, the question is <em>almost certainly not appropriate to this list</em>. In general, the only input documents that are appropriate on this list are XSL-FO snippets. See <link href="0.20.5/running.html#running_xalan">Running Xalan</link> for instructions about capturing the XSL-FO document that is actually submitted to FOP. If you haven't examined the XSL-FO document yourself, then you are not yet prepared to formulate a FOP-specific question.</li>
+          <li>Does a proper understanding of your question require inclusion of XSLT code, DocBook
+            source, or other semantic XML? If so, the question is <em>almost certainly not
+              appropriate to this list</em>. In general, the only input documents that are
+            appropriate on this list are XSL-FO snippets. See <link
+              href="0.94/running.html#check-input">Running Xalan</link> for instructions about capturing the XSL-FO document that is actually submitted to FOP. If you haven't examined the XSL-FO document yourself, then you are not yet prepared to formulate a FOP-specific question.</li>
           <li>If you are providing one or more XSL-FO snippets:
             <ul>
               <li>Have you reduced them to the shortest possible complete, <strong>self-contained</strong> document that demonstrates the problem? Please do so.</li>
