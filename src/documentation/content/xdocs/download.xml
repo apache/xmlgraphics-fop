@@ -56,13 +56,6 @@
     <section id="source">
       <title>Source Download</title>
       <p>
-        You must first determine which of the two main development branches you wish 
-        to download, "maintenance" or "redesign". See 
-        <link href="dev/index.html">Development Introduction</link> for more details 
-        on the choices, and for the CVS tags to use when downloading the "maintenance" 
-        branch.
-      </p>
-      <p>
         There are several ways to obtain a source distribution. Please note that they 
         are listed from least current to most current:
       </p>
@@ -70,8 +63,7 @@
         <li>
           Download a released version from a 
           <link href="http://www.apache.org/dyn/closer.cgi/xmlgraphics/fop">FOP Distribution mirror</link>.
-          Source distributions include "-src" in their names. Please note that official 
-          releases currently are <em>only</em> made from the "maintenance" branch.
+          Source distributions include "-src" in their names.
         </li>
         <!--li>
           Download a CVS snapshot from the cvs files 
@@ -92,40 +84,21 @@
       <p/>
       <table>
         <tr>
-          <th colspan="2">Old Maintenance Branch (for 0.20.5)</th>
-        </tr>
-        <tr>
-          <td>Repository URL</td>
-          <td>
-            <link href="http://svn.apache.org/repos/asf/xmlgraphics/fop/branches/fop-0_20_2-maintain/">
-              <code>http://svn.apache.org/repos/asf/xmlgraphics/fop/branches/fop-0_20_2-maintain/</code>
-            </link>
-          </td>
-        </tr>
-        <tr>
-          <td>Web view</td>
-          <td>
-            <link href="http://svn.apache.org/viewvc/xmlgraphics/fop/branches/fop-0_20_2-maintain/">
-              <code>http://svn.apache.org/viewvc/xmlgraphics/fop/branches/fop-0_20_2-maintain/</code>
-            </link>
-          </td>
-        </tr>
-        <tr>
           <th colspan="2">Latest Release</th>
         </tr>
         <tr>
           <td>Repository URL</td>
           <td>
-            <link href="http://svn.apache.org/repos/asf/xmlgraphics/fop/tags/fop-0_93/">
-              <code>http://svn.apache.org/repos/asf/xmlgraphics/fop/tags/fop-0_93/</code>
+            <link href="http://svn.apache.org/repos/asf/xmlgraphics/fop/tags/fop-0_94/">
+              <code>http://svn.apache.org/repos/asf/xmlgraphics/fop/tags/fop-0_94/</code>
             </link>
           </td>
         </tr>
         <tr>
           <td>Web view</td>
           <td>
-            <link href="http://svn.apache.org/viewvc/xmlgraphics/fop/tags/fop-0_93/">
-              <code>http://svn.apache.org/viewvc/xmlgraphics/fop/tags/fop-0_93/</code>
+            <link href="http://svn.apache.org/viewvc/xmlgraphics/fop/tags/fop-0_94/">
+              <code>http://svn.apache.org/viewvc/xmlgraphics/fop/tags/fop-0_94/</code>
             </link>
           </td>
         </tr>
