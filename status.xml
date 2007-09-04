@@ -28,6 +28,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="AD" type="fix" fixes-bug="43274" due-to="ckohrn.at.tng.de">
+        Fixed erroneous usage of inherited color-values in SVG.
+      </action>
     </release>    
     <release version="0.94" date="24th August 2007">
       <action context="Code" dev="JM" type="fix">

@@ -719,13 +719,9 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         }
 
         c = getColor();
-        if (graphicsState.setColor(c)) {
-            applyColor(c, false);
-        }
+        applyColor(c, false);
         c = getBackground();
-        if (graphicsState.setBackColor(c)) {
-            applyColor(c, true);
-        }
+        applyColor(c, true);
 
         Paint paint = getPaint();
         if (graphicsState.setPaint(paint)) {
@@ -1718,13 +1714,9 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         }
 
         c = getColor();
-        if (graphicsState.setColor(c)) {
-            applyColor(c, true);
-        }
+        applyColor(c, true);
         c = getBackground();
-        if (graphicsState.setBackColor(c)) {
-            applyColor(c, false);
-        }
+        applyColor(c, false);
 
         Paint paint = getPaint();
         if (graphicsState.setPaint(paint)) {
