@@ -234,7 +234,7 @@ It will display all of the font names and exit with an Exception.</p>
              msmincho.ttc msminch.xml</source>
       </section>
       <section id="register">
-        <title>Register Fonts with FOP - Auto-Detect Fonts</title>
+        <title>Register Fonts with FOP</title>
         <p>You must tell FOP how to find and use the font metrics files by registering them in the <a href="configuration.html">FOP Configuration</a>. Add entries for your custom fonts, regardless of font type, to the configuration file in a manner similar to the following:</p>
         <source><![CDATA[
 <fonts>
@@ -259,31 +259,30 @@ It will display all of the font names and exit with an Exception.</p>
           instructions on making the FOP configuration available to FOP when it runs. Otherwise,
           FOP has no way of finding your custom font information.
         </note>
-        The Unix autodetect feature looks in the following locations for fonts it can use:
-        <ul>
-          <li><code>java user.home + "/.fonts"</code></li>
-          <li><code>"/usr/local/fonts"</code></li>
-          <li><code>"/usr/share/fonts"</code></li>
-          <li><code>"/usr/X11R6/lib/X11/fonts"</code></li>
-        </ul>
         <ul>
           <li>
             URLs are used to access the font metric and font files.
             Relative URLs are resolved relative to the font-base property (or base) if available.
             See <a href="configuration.html">FOP: Configuration</a> for more information.
           </li>
+          <li>
+            If relative URLs are specified, they are evaluated relative to the value of the 
+            "font-base" setting. If there is no "font-base" setting, the fonts are evaluated 
+            relative to the base directory.
+          </li>
           <li>Either an "embed-url" or a "metrics-url" must be specified for font tag configurations.</li>
           <li>The font "kerning" attribute is optional.</li>
           <li>If embedding is off, the output will position the text correctly (from the metrics file), but it will not be displayed or printed correctly unless the viewer has the applicable font available to their local system.</li>
           <li>When setting the "embed-url" attribute for Type 1 fonts, be sure to specify the PFB (actual font data), not PFM (font metrics) file that you used to generate the XML font metrics file.</li>
           <li>The fonts "directory" tag can be used to register fonts contained within a single or list of directory paths.  The "recursive" attribute can be specified to recursively add fonts from all sub directories.</li>
-          <li>The fonts "auto-detect" tag can be used to automatically register fonts that are found to be installed on the native operating system.</li>
           <li>Fonts registered with "font" tag configurations override fonts found by means of "directory" tag definitions.</li>
           <li>Fonts found as a result of a "directory" tag configuration override fonts found as a result of the "auto-detect" tag being specified.</li>
-          <li>
-            If relative URLs are specified, they are evaluated relative to the value of the 
-            "font-base" setting. If there is no "font-base" setting, the fonts are evaluated 
-            relative to the base directory.
+          <li>The fonts "auto-detect" tag can be used to automatically register fonts that are found to be installed on the native operating system.
+             <ul>
+                <li>On Unix platforms the autodetect feature looks in java user.home + "/.fonts", "/usr/local/fonts", "/usr/share/fonts" and "/usr/X11R6/lib/X11/fonts" for fonts it is able to use.</li>
+                <li>On Mac platforms the autodetect feature looks in java user.home + "/Library/Fonts/, "/Library/Fonts/", "/System/Library/Fonts/" and "/Network/Library/Fonts/" for fonts it is able to use.</li>
+                <li>On Windows platforms the autodetect feature attempts to determine the Windows fonts directory (usually C:\WINDOWS\FONTS) and also the existence of a PSFONTS directory for fonts it is able to use.</li>
+             </ul>
           </li>
         </ul>
         <!--note>Cocoon users will need to setup the config, see FOPSerializer for more information.</note-->
