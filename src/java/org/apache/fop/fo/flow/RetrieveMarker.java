@@ -181,6 +181,7 @@ public class RetrieveMarker extends FObjMixed {
         }
         cloneSubtree(marker.getChildNodes(), this, 
                         marker, propertyList);
+        handleWhiteSpaceFor(this);
     }
 
     /**

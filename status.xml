@@ -28,6 +28,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="AD" type="fix" fixes-bug="42705">
+        Fixed swallowing PCDATA in text-node children of
+        retrieved markers.
+      </action>
       <action context="Code" dev="AD" type="fix" fixes-bug="42703">
         Fixed erroneous white-space removal in retrieved markers.
       </action>
