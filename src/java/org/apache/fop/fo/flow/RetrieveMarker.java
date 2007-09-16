@@ -125,6 +125,7 @@ public class RetrieveMarker extends FObjMixed {
                         getLocator(),
                         pList,
                         newPropertyList);
+                addChildTo(newChild, (FObj) newParent);
                 if (newChild.getNameId() == FO_TABLE) {
                     Table t = (Table) child;
                     cloneSubtree(t.getColumns().listIterator(),
@@ -139,8 +140,8 @@ public class RetrieveMarker extends FObjMixed {
             } else if (child instanceof FOText) {
                 FOText ft = (FOText) newChild;
                 ft.bind(parentPropertyList);
+                addChildTo(newChild, (FObj) newParent);
             }
-            addChildTo(newChild, (FObj) newParent);
             if (newChild instanceof FObjMixed) {
                 handleWhiteSpaceFor((FObjMixed) newChild);
             }
