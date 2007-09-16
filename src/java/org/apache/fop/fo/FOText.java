@@ -158,6 +158,9 @@ public class FOText extends FONode {
                 System.arraycopy(ca, 0, ft.ca, 0, ca.length);
             }
         }
+        prevFOTextThisBlock = null;
+        nextFOTextThisBlock = null;
+        ancestorBlock = null;
         return ft;
     }
 
