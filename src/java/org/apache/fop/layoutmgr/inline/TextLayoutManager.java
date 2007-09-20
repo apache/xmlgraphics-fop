@@ -804,30 +804,34 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         ListIterator oldListIterator = oldList.listIterator();
         KnuthElement el = (KnuthElement)oldListIterator.next();
         LeafPosition pos = (LeafPosition) ((KnuthBox) el).getPosition();
-        AreaInfo ai = (AreaInfo) vecAreaInfo.get(pos.getLeafPos());
-        ai.iLScount++;
-        ai.ipdArea.add(letterSpaceIPD);
-        if (BREAK_CHARS.indexOf(textArray[iTempStart - 1]) >= 0) {
-            // the last character could be used as a line break
-            // append new elements to oldList
-            oldListIterator = oldList.listIterator(oldList.size());
-            oldListIterator.add(new KnuthPenalty(0, KnuthPenalty.FLAGGED_PENALTY, true,
-                                                 new LeafPosition(this, -1), false));
-            oldListIterator.add(new KnuthGlue(letterSpaceIPD.opt,
-                                       letterSpaceIPD.max - letterSpaceIPD.opt,
-                                       letterSpaceIPD.opt - letterSpaceIPD.min,
-                                       new LeafPosition(this, -1), false));
-        } else if (letterSpaceIPD.min == letterSpaceIPD.max) {
-            // constant letter space: replace the box
-            oldListIterator.set(new KnuthInlineBox(ai.ipdArea.opt, alignmentContext, pos, false));
-        } else {
-            // adjustable letter space: replace the glue
-            oldListIterator.next(); // this would return the penalty element
-            oldListIterator.next(); // this would return the glue element
-            oldListIterator.set(new KnuthGlue(ai.iLScount * letterSpaceIPD.opt,
-                                              ai.iLScount * (letterSpaceIPD.max - letterSpaceIPD.opt),
-                                              ai.iLScount * (letterSpaceIPD.opt - letterSpaceIPD.min),
-                                              new LeafPosition(this, -1), true));
+        int idx = pos.getLeafPos();
+        //element could refer to '-1' position, for non-collapsed spaces (?)
+        if (idx >= -1) {
+            AreaInfo ai = (AreaInfo) vecAreaInfo.get(idx);
+            ai.iLScount++;
+            ai.ipdArea.add(letterSpaceIPD);
+            if (BREAK_CHARS.indexOf(textArray[iTempStart - 1]) >= 0) {
+                // the last character could be used as a line break
+                // append new elements to oldList
+                oldListIterator = oldList.listIterator(oldList.size());
+                oldListIterator.add(new KnuthPenalty(0, KnuthPenalty.FLAGGED_PENALTY, true,
+                                                     new LeafPosition(this, -1), false));
+                oldListIterator.add(new KnuthGlue(letterSpaceIPD.opt,
+                                           letterSpaceIPD.max - letterSpaceIPD.opt,
+                                           letterSpaceIPD.opt - letterSpaceIPD.min,
+                                           new LeafPosition(this, -1), false));
+            } else if (letterSpaceIPD.min == letterSpaceIPD.max) {
+                // constant letter space: replace the box
+                oldListIterator.set(new KnuthInlineBox(ai.ipdArea.opt, alignmentContext, pos, false));
+            } else {
+                // adjustable letter space: replace the glue
+                oldListIterator.next(); // this would return the penalty element
+                oldListIterator.next(); // this would return the glue element
+                oldListIterator.set(new KnuthGlue(ai.iLScount * letterSpaceIPD.opt,
+                                                  ai.iLScount * (letterSpaceIPD.max - letterSpaceIPD.opt),
+                                                  ai.iLScount * (letterSpaceIPD.opt - letterSpaceIPD.min),
+                                                  new LeafPosition(this, -1), true));
+            }
         }
         return oldList;
     }
