@@ -806,7 +806,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         LeafPosition pos = (LeafPosition) ((KnuthBox) el).getPosition();
         int idx = pos.getLeafPos();
         //element could refer to '-1' position, for non-collapsed spaces (?)
-        if (idx >= -1) {
+        if (idx > -1) {
             AreaInfo ai = (AreaInfo) vecAreaInfo.get(idx);
             ai.iLScount++;
             ai.ipdArea.add(letterSpaceIPD);
