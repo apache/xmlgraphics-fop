@@ -183,21 +183,24 @@ public abstract class PropertyList {
      * @param propId The ID of the property whose value is desired.
      * @return The computed value if the property is explicitly set on some
      * ancestor of the current FO, else the initial value.
-     * @throws PropertyException ...
+     * @throws PropertyException if there an error occurred when getting the property
      */
     public Property getNearestSpecified(int propId) throws PropertyException {
         Property p = null;
-
-        for (PropertyList plist = this; p == null && plist != null;
-                plist = plist.parentPropertyList) {
-            p = plist.getExplicit(propId);
+        PropertyList pList = parentPropertyList;
+        
+        while (pList != null) {
+            p = pList.getExplicit(propId);
+            if (p != null) {
+                return p;
+            } else {
+                pList = pList.parentPropertyList;
+            }
         }
-
-        if (p == null) {
-            // If no explicit setting found, return initial (default) value.
-            p = makeProperty(propId);
-        }
-        return p;
+        
+        // If no explicit value found on any of the ancestor-nodes, 
+        // return initial (default) value.
+        return makeProperty(propId);
     }
 
     /**
@@ -574,7 +577,7 @@ public abstract class PropertyList {
      */
     public CommonBorderPaddingBackground getBorderPaddingBackgroundProps() 
                 throws PropertyException {
-        return new CommonBorderPaddingBackground(this, getFObj());
+        return new CommonBorderPaddingBackground(this);
     }
     
     /**
@@ -583,7 +586,7 @@ public abstract class PropertyList {
      * @throws PropertyException if there's a problem while processing the properties
      */
     public CommonHyphenation getHyphenationProps() throws PropertyException {
-        return new CommonHyphenation(this);
+        return CommonHyphenation.getInstance(this);
     }
     
     /**
@@ -643,12 +646,13 @@ public abstract class PropertyList {
     
 
     /**
-     * Constructs a CommonFont object. 
+     * Constructs a CommonFont object.
+     *  
      * @return A CommonFont object
      * @throws PropertyException if there's a problem while processing the properties
      */
     public CommonFont getFontProps() throws PropertyException {
-        return new CommonFont(this);
+        return CommonFont.getInstance(this);
     }
     
     /**
