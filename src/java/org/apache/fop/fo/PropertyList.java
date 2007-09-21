@@ -577,7 +577,7 @@ public abstract class PropertyList {
      */
     public CommonBorderPaddingBackground getBorderPaddingBackgroundProps() 
                 throws PropertyException {
-        return new CommonBorderPaddingBackground(this, fobj);
+        return new CommonBorderPaddingBackground(this);
     }
     
     /**
@@ -586,7 +586,7 @@ public abstract class PropertyList {
      * @throws PropertyException if there's a problem while processing the properties
      */
     public CommonHyphenation getHyphenationProps() throws PropertyException {
-        return new CommonHyphenation(this);
+        return CommonHyphenation.getInstance(this);
     }
     
     /**
@@ -652,7 +652,7 @@ public abstract class PropertyList {
      * @throws PropertyException if there's a problem while processing the properties
      */
     public CommonFont getFontProps() throws PropertyException {
-        return CommonFont(this);
+        return CommonFont.getInstance(this);
     }
     
     /**

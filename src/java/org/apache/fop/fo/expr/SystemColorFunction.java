@@ -39,7 +39,7 @@ class SystemColorFunction extends FunctionBase {
         FOUserAgent ua = (pInfo == null) 
                 ? null 
                 : (pInfo.getFO() == null ? null : pInfo.getFO().getUserAgent());
-        return new ColorProperty(ua, "system-color(" + args[0] + ")");
+        return ColorProperty.getInstance(ua, "system-color(" + args[0] + ")");
 
     }
 

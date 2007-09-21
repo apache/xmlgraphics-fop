@@ -70,7 +70,7 @@ class ICCColorFunction extends FunctionBase {
         FOUserAgent ua = (pInfo == null
                 ? null
                 : (pInfo.getFO() == null ? null : pInfo.getFO().getUserAgent()));
-        return new ColorProperty(ua, sb.toString());
+        return ColorProperty.getInstance(ua, sb.toString());
     }
 
 

@@ -24,7 +24,7 @@ import org.apache.fop.datatypes.PercentBaseContext;
 /**
  * An absolute length quantity in XSL
  */
-public class FixedLength extends LengthProperty {
+public final class FixedLength extends LengthProperty {
     
     /** cache holding all canonical FixedLength instances */
     private static final PropertyCache cache = new PropertyCache();
@@ -33,6 +33,7 @@ public class FixedLength extends LengthProperty {
 
     /**
      * Set the length given a number of units and a unit name.
+     * 
      * @param numUnits quantity of input units
      * @param units input unit specifier (in, cm, etc.)
      */
@@ -41,16 +42,17 @@ public class FixedLength extends LengthProperty {
     }
     
     /**
-     * Return the canonical FixedLength instance corresponding
+     * Return the cached FixedLength instance corresponding
      * to the computed value
+     * 
      * @param numUnits  input units
      * @param units     unit specifier
      * @return  the canonical FixedLength instance corresponding
      *          to the given number of units and unit specifier
      */
-    public static FixedLength getInstance(double numUnits, String units) {
-        return (FixedLength) cache.fetch(
-                    new FixedLength(numUnits, units));
+    public static FixedLength getInstance(double numUnits, 
+                                          String units) {
+        return (FixedLength) cache.fetch(new FixedLength(numUnits, units));
         
     }
     

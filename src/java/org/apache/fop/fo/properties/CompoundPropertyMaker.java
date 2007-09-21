@@ -26,12 +26,6 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
 
 /**
- * @author me
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
-/**
  * This class extends Property.Maker with support for sub-properties.  
  */
 public class CompoundPropertyMaker extends PropertyMaker {

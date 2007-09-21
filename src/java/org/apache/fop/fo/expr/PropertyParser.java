@@ -302,7 +302,7 @@ public final class PropertyParser extends PropertyTokenizer {
             FOUserAgent ua = (propInfo == null) 
                 ? null
                 : (propInfo.getFO() == null ? null : propInfo.getFO().getUserAgent());
-            prop = new ColorProperty(ua, currentTokenValue);
+            prop = ColorProperty.getInstance(ua, currentTokenValue);
             break;
 
         case TOK_FUNCTION_LPAR:

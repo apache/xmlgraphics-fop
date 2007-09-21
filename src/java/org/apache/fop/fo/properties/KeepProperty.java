@@ -25,9 +25,14 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
 
 /**
- * Superclass for properties that wrap Keep values
+ * Class for properties that wrap Keep values
  */
-public class KeepProperty extends Property implements CompoundDatatype {
+public final class KeepProperty extends Property implements CompoundDatatype {
+    
+    /** class holding all canonical KeepProperty instances*/
+    private static final PropertyCache cache = new PropertyCache();
+    
+    private boolean isCachedValue = false;
     private Property withinLine;
     private Property withinColumn;
     private Property withinPage;
@@ -70,6 +75,10 @@ public class KeepProperty extends Property implements CompoundDatatype {
      */
     public void setComponent(int cmpId, Property cmpnValue,
                              boolean bIsDefault) {
+        if (isCachedValue) {
+            log.warn("KeepProperty.setComponent() called on cached value. Ignoring...");
+            return;
+        }
         if (cmpId == CP_WITHIN_LINE) {
             setWithinLine(cmpnValue, bIsDefault);
         } else if (cmpId == CP_WITHIN_COLUMN) {
@@ -152,10 +161,14 @@ public class KeepProperty extends Property implements CompoundDatatype {
     }
 
     /**
-     * @return this.keep
+     * @return the canonical KeepProperty instance corresponding to
+     *          this property
      */
     public KeepProperty getKeep() {
-        return this;
+        KeepProperty keep = (KeepProperty) cache.fetch(this);
+        /* make sure setComponent() can never alter cached values */
+        keep.isCachedValue = true;
+        return keep;
     }
 
     /**
@@ -165,4 +178,27 @@ public class KeepProperty extends Property implements CompoundDatatype {
         return this;
     }
 
+    /** {@inheritDoc} */
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        
+        if (o instanceof KeepProperty) {
+            KeepProperty keep = (KeepProperty) o;
+            return (keep.withinColumn == this.withinColumn)
+                && (keep.withinLine == this.withinLine)
+                && (keep.withinPage == this.withinPage);
+        }
+        return false;
+    }
+    
+    /** {@inheritDoc} */
+    public int hashCode() {
+        int hash = 17;
+        hash = 37 * hash + (withinColumn == null ? 0 : withinColumn.hashCode());
+        hash = 37 * hash + (withinLine == null ? 0 : withinLine.hashCode());
+        hash = 37 * hash + (withinPage == null ? 0 : withinPage.hashCode());
+        return hash;
+    }
 }

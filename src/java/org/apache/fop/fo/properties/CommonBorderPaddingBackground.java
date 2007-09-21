@@ -137,15 +137,16 @@ public class CommonBorderPaddingBackground {
     
     /**
      * Construct a CommonBorderPaddingBackground object.
+     * 
      * @param pList The PropertyList to get properties from.
      * @param fobj The FO to create this instance for.
      * @throws PropertyException if there's an error while binding the properties
      */
-    public CommonBorderPaddingBackground(PropertyList pList, FObj fobj) throws PropertyException {
+    public CommonBorderPaddingBackground(PropertyList pList) throws PropertyException {
         
         backgroundAttachment = pList.get(Constants.PR_BACKGROUND_ATTACHMENT).getEnum();
         backgroundColor = pList.get(Constants.PR_BACKGROUND_COLOR).getColor(
-                fobj == null ? null : fobj.getUserAgent());
+                                        pList.getFObj().getUserAgent());
         if (backgroundColor.getAlpha() == 0) {
             backgroundColor = null;
         }
@@ -162,7 +163,7 @@ public class CommonBorderPaddingBackground {
             
             //Additional processing: preload image
             String url = ImageFactory.getURL(backgroundImage);
-            FOUserAgent userAgent = fobj.getUserAgent();
+            FOUserAgent userAgent = pList.getFObj().getUserAgent();
             ImageFactory fact = userAgent.getFactory().getImageFactory();
             fopimage = fact.getImage(url, userAgent);
             if (fopimage == null) {
@@ -207,9 +208,7 @@ public class CommonBorderPaddingBackground {
         // If style = none, force width to 0, don't get Color (spec 7.7.20)
         int style = pList.get(styleProp).getEnum();
         if (style != Constants.EN_NONE) {
-            FOUserAgent ua = (pList == null) 
-                    ? null 
-                    : (pList.getFObj() == null ? null : pList.getFObj().getUserAgent());
+            FOUserAgent ua = pList.getFObj().getUserAgent();
             setBorderInfo(new BorderInfo(style,
                 pList.get(widthProp).getCondLength(),
                 pList.get(colorProp).getColor(ua)), side);
