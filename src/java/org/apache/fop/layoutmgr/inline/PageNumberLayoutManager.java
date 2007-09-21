@@ -24,6 +24,8 @@ import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.Trait;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.traits.MinOptMax;
@@ -49,7 +51,9 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
     
     /** {@inheritDoc} */
     public void initialize() {
-        font = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo(), this);
+        FontInfo fi = fobj.getFOEventHandler().getFontInfo();
+        FontTriplet[] fontkeys = fobj.getCommonFont().getFontState(fi);
+        font = fi.getFontInstance(fontkeys[0], fobj.getCommonFont().fontSize.getValue(this));
         setCommonBorderPaddingBackground(fobj.getCommonBorderPaddingBackground());
     }
 

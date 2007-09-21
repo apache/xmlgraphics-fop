@@ -59,6 +59,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import org.apache.fop.area.Trait;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontTriplet;
 
 import org.apache.fop.traits.MinOptMax;
 
@@ -569,7 +571,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
 
     /** {@inheritDoc} */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
-        Font fs = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo(), this);
+        FontInfo fi = fobj.getFOEventHandler().getFontInfo();
+        FontTriplet[] fontkeys = fobj.getCommonFont().getFontState(fi);
+        Font fs = fi.getFontInstance(fontkeys[0], fobj.getCommonFont().fontSize.getValue(this));
         alignmentContext
           = new AlignmentContext(fs, lineHeight.getValue(this), context.getWritingMode());
         context.setAlignmentContext(alignmentContext);
@@ -941,7 +945,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                                         ? 0 : hyphenationLadderCount.getValue(),
                                         this);
    
-        if (hyphenationProperties.hyphenate == EN_TRUE 
+        if (hyphenationProperties.hyphenate.getEnum() == EN_TRUE 
                 && fobj.getWrapOption() != EN_NO_WRAP) {
             findHyphenationPoints(currPar);
         }
@@ -967,8 +971,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             }
    
             // now try something different
-            log.debug("Hyphenation possible? " + (hyphenationProperties.hyphenate == EN_TRUE));
-            if (hyphenationProperties.hyphenate == EN_TRUE
+            log.debug("Hyphenation possible? " + (hyphenationProperties.hyphenate.getEnum() == EN_TRUE));
+            if (hyphenationProperties.hyphenate.getEnum() == EN_TRUE
                 && !(allowedBreaks == BreakingAlgorithm.ONLY_FORCED_BREAKS)) {
                 // consider every hyphenation point as a legal break
                 allowedBreaks = BreakingAlgorithm.ALL_BREAKS;
@@ -983,10 +987,12 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 // the second try failed too, try with a huge threshold
                 // and force the algorithm to find
                 // a set of breaking points
-                log.debug("No set of breaking points found with maxAdjustment = "
-                          + maxAdjustment
-                          + (hyphenationProperties.hyphenate == EN_TRUE
-                                  ? " and hyphenation" : ""));
+                if (log.isDebugEnabled()) {
+                    log.debug("No set of breaking points found with maxAdjustment = "
+                              + maxAdjustment
+                              + (hyphenationProperties.hyphenate.getEnum() == EN_TRUE
+                                      ? " and hyphenation" : ""));
+                }
                 maxAdjustment = 20;
                 iBPcount
                     = alg.findBreakingPoints(currPar,
@@ -1526,12 +1532,12 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         // since these properties inherit and could be specified
         // on an inline or wrapper below the block level.
         Hyphenation hyph
-            = Hyphenator.hyphenate(hyphenationProperties.language,
-                               hyphenationProperties.country,
+            = Hyphenator.hyphenate(hyphenationProperties.language.getString(),
+                               hyphenationProperties.country.getString(),
                                getFObj().getUserAgent().getFactory().getHyphenationTreeResolver(),
                                sbChars.toString(),
-                               hyphenationProperties.hyphenationRemainCharacterCount,
-                               hyphenationProperties.hyphenationPushCharacterCount);
+                               hyphenationProperties.hyphenationRemainCharacterCount.getValue(),
+                               hyphenationProperties.hyphenationPushCharacterCount.getValue());
         // They hyph structure contains the information we need
         // Now start from prev: reset to that position, ask that LM to get
         // a Position for the first hyphenation offset. If the offset isn't in

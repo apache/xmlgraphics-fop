@@ -21,6 +21,8 @@ package org.apache.fop.layoutmgr.inline;
 
 import org.apache.fop.fo.flow.Character;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.layoutmgr.InlineKnuthSequence;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthGlue;
@@ -63,10 +65,12 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
     
     /** {@inheritDoc} */
     public void initialize() {
-        font = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo(), this);
+        FontInfo fi = fobj.getFOEventHandler().getFontInfo();
+        FontTriplet[] fontkeys = fobj.getCommonFont().getFontState(fi);
+        font = fi.getFontInstance(fontkeys[0], fobj.getCommonFont().fontSize.getValue(this));
         SpaceVal ls = SpaceVal.makeLetterSpacing(fobj.getLetterSpacing());
         letterSpaceIPD = ls.getSpace();
-        hyphIPD = font.getCharWidth(fobj.getCommonHyphenation().hyphenationCharacter);
+        hyphIPD = font.getCharWidth(fobj.getCommonHyphenation().hyphenationCharacter.getCharacter());
         borderProps = fobj.getCommonBorderPaddingBackground();
         setCommonBorderPaddingBackground(borderProps);
         org.apache.fop.area.inline.TextArea chArea = getCharacterInlineArea(fobj);

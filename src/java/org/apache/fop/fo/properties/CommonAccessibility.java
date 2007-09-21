@@ -40,7 +40,7 @@ public class CommonAccessibility {
     public String role = null;
 
     /**
-     * Create a CommonAbsolutePosition object.
+     * Create a <code>CommonAccessibility</code> object.
      * @param pList The PropertyList with propery values.
      */
     public CommonAccessibility(PropertyList pList) throws PropertyException {

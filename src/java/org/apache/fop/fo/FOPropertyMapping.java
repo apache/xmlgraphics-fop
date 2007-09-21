@@ -568,7 +568,7 @@ public final class FOPropertyMapping implements Constants {
                 if (nameval != null) {
                     FObj fobj = (fo == null ? propertyList.getFObj() : fo);
                     FOUserAgent ua = (fobj == null ? null : fobj.getUserAgent());
-                    return new ColorProperty(ua, nameval);
+                    return ColorProperty.getInstance(ua, nameval);
                 }
                 return super.convertPropertyDatatype(p, propertyList, fo);
             }

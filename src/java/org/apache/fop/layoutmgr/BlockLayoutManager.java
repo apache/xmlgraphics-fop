@@ -30,6 +30,8 @@ import org.apache.fop.area.Block;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.layoutmgr.inline.InlineLayoutManager;
 import org.apache.fop.layoutmgr.inline.InlineLevelLayoutManager;
 import org.apache.fop.layoutmgr.inline.LineLayoutManager;
@@ -78,11 +80,11 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
 
     public void initialize() {
         super.initialize();
-        Font fs = getBlockFO().getCommonFont().getFontState(
-                  getBlockFO().getFOEventHandler().getFontInfo(), this);
-        
-        lead = fs.getAscender();
-        follow = -fs.getDescender();
+        FontInfo fi = getBlockFO().getFOEventHandler().getFontInfo();
+        FontTriplet[] fontkeys = getBlockFO().getCommonFont().getFontState(fi);
+        Font initFont = fi.getFontInstance(fontkeys[0], getBlockFO().getCommonFont().fontSize.getValue(this));
+        lead = initFont.getAscender();
+        follow = -initFont.getDescender();
         //middleShift = -fs.getXHeight() / 2;
         lineHeight = getBlockFO().getLineHeight().getOptimum(this).getLength();
         startIndent = getBlockFO().getCommonMarginBlock().startIndent.getValue(this);

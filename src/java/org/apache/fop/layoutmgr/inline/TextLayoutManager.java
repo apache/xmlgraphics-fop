@@ -31,6 +31,8 @@ import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FOText;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.layoutmgr.InlineKnuthSequence;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
@@ -186,12 +188,14 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
     
     /** {@inheritDoc} */
     public void initialize() {
-        font = foText.getCommonFont().getFontState(foText.getFOEventHandler().getFontInfo(), this);
+        FontInfo fi = foText.getFOEventHandler().getFontInfo();
+        FontTriplet[] fontkeys = foText.getCommonFont().getFontState(fi);
+        font = fi.getFontInstance(fontkeys[0], foText.getCommonFont().fontSize.getValue(this));
         
         // With CID fonts, space isn't neccesary currentFontState.width(32)
         spaceCharIPD = font.getCharWidth(' ');
         // Use hyphenationChar property
-        hyphIPD = font.getCharWidth(foText.getCommonHyphenation().hyphenationCharacter);
+        hyphIPD = font.getCharWidth(foText.getCommonHyphenation().hyphenationCharacter.getCharacter());
         
         SpaceVal ls = SpaceVal.makeLetterSpacing(foText.getLetterSpacing());
         halfLS = new SpaceVal(MinOptMax.multiply(ls.getSpace(), 0.5),
@@ -504,7 +508,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                         && i == lastIndex 
                         && areaInfo.bHyphenated) {
                         // add the hyphenation character
-                        wordChars.append(foText.getCommonHyphenation().hyphenationCharacter);
+                        wordChars.append(foText.getCommonHyphenation().hyphenationCharacter.getCharacter());
                     }
                     textArea.addWord(wordChars.toString(), 0, letterAdjust);
                     wordStartIndex = -1;
