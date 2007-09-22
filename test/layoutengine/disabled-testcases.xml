@@ -48,8 +48,8 @@
   <testcase>
     <name>Hyphenation with preserved linefeeds</name>
     <file>block_hyphenation_linefeed_preserve.xml</file>
-    <description>When hyphenation is enabled and linefeeds are preserved linefeeds 
-    are painted as '#' and the text is output multiple times.</description>
+    <description>When hyphenation is enabled and linefeeds are preserved,
+    the text is output multiple times.</description>
   </testcase>
   <testcase>
     <name>linefeed-treatment</name>
