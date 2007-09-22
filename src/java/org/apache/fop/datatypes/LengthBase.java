@@ -25,10 +25,6 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.fo.flow.Character;
-import org.apache.fop.fo.flow.ExternalGraphic;
-import org.apache.fop.fo.flow.InstreamForeignObject;
-import org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager;
 
 /**
  * Models a length which can be used as a factor in a percentage length
