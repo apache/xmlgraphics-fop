@@ -520,7 +520,8 @@ public class Trait implements Serializable {
            String[] result = {null, null};
            if (attrValue != null) {
               int len = attrValue.length();
-              if (len >= 2 && attrValue.charAt(0) == '(' && attrValue.charAt(len - 1) == ')') {
+              if (len >= 2 && attrValue.charAt(0) == '(' && attrValue.charAt(len - 1) == ')'
+                      && attrValue.indexOf(',') != -1) {
                   String value = attrValue.substring(1, len - 1); // remove brackets
                   int delimIndex = value.indexOf(',');
                   result[0] = value.substring(0, delimIndex).trim(); // PV key

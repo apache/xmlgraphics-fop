@@ -22,7 +22,6 @@ package org.apache.fop.svg;
 import org.apache.batik.gvt.TextNode;
 import org.apache.batik.bridge.SVGTextElementBridge;
 import org.apache.batik.bridge.BridgeContext;
-import org.apache.batik.bridge.TextUtilities;
 import org.apache.batik.gvt.GraphicsNode;
 
 import org.apache.fop.fonts.FontInfo;
@@ -82,12 +81,16 @@ public class PDFTextElementBridge extends SVGTextElementBridge {
      *         easily rendered using normal drawString on the PDFGraphics2D
      */
     private boolean isSimple(BridgeContext ctx, Element element, GraphicsNode node) {
+        /* I cannot find any reference that 36pt is the maximum font size in PDF. Tests show
+         * no such restriction (jeremias, 28.5.2007)
+         * 
         // Font size, in user space units.
         float fs = TextUtilities.convertFontSize(element).floatValue();
         // PDF cannot display fonts over 36pt
         if (fs > 36) {
             return false;
         }
+        */
 
         Element nodeElement;
         for (Node n = element.getFirstChild();

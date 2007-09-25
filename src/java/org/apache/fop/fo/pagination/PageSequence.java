@@ -127,8 +127,6 @@ public class PageSequence extends FObj {
                 throw new ValidationException("master-reference '" + masterReference
                    + "' for fo:page-sequence matches no"
                    + " simple-page-master or page-sequence-master", locator);
-            } else {
-                pageSequenceMaster.reset();
             }
         }
 

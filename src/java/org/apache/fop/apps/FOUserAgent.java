@@ -63,19 +63,25 @@ import org.apache.fop.render.pdf.PDFRenderer;
 public class FOUserAgent {
 
     /** Defines the default target resolution (72dpi) for FOP */
-    public static final float DEFAULT_TARGET_RESOLUTION = FopFactory.DEFAULT_TARGET_RESOLUTION;
+    public static final float DEFAULT_TARGET_RESOLUTION = FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION;
 
     private static Log log = LogFactory.getLog("FOP");
 
     private FopFactory factory;
     
-    /** The base URL for all URL resolutions, especially for external-graphics */
-    private String baseURL;
-    
+    /**
+     *  The base URL for all URL resolutions, especially for
+     *  external-graphics.
+     */
+    private String base = null;
+
+    /** The base URL for all font URL resolutions. */
+    private String fontBase = null;
+
     /** A user settable URI Resolver */
     private URIResolver uriResolver = null;
     
-    private float targetResolution = DEFAULT_TARGET_RESOLUTION;
+    private float targetResolution = FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION;
     private Map rendererOptions = new java.util.HashMap();
     private File outputFile = null;
     private Renderer rendererOverride = null;
@@ -105,7 +111,6 @@ public class FOUserAgent {
     
     /**
      * Default constructor
-     * @throws FOPException 
      * @see org.apache.fop.apps.FopFactory
      * @deprecated Provided for compatibility only. Please use the methods from 
      *             FopFactory to construct FOUserAgent instances!
@@ -126,6 +131,7 @@ public class FOUserAgent {
         }
         this.factory = factory;
         setBaseURL(factory.getBaseURL());
+        setFontBaseURL(factory.getFontBaseURL());
         setTargetResolution(factory.getTargetResolution());
     }
     
@@ -277,10 +283,18 @@ public class FOUserAgent {
     
     /**
      * Sets the base URL.
-     * @param baseURL base URL
+     * @param baseUrl base URL
      */
-    public void setBaseURL(String baseURL) {
-        this.baseURL = baseURL;
+    public void setBaseURL(String baseUrl) {
+        this.base = baseUrl;
+    }
+
+    /**
+     * sets font base URL
+     * @param fontBaseUrl font base URL
+     */
+    public void setFontBaseURL(String fontBaseUrl) {
+        this.fontBase = fontBaseUrl;
     }
 
     /**
@@ -288,7 +302,7 @@ public class FOUserAgent {
      * @return the base URL
      */
     public String getBaseURL() {
-        return this.baseURL;
+        return this.base;
     }
 
     /**
@@ -410,8 +424,10 @@ public class FOUserAgent {
      */
     public void setTargetResolution(float dpi) {
         this.targetResolution = dpi;
-        log.info("target-resolution set to: " + targetResolution 
-                + "dpi (px2mm=" + getTargetPixelUnitToMillimeter() + ")");
+        if (log.isDebugEnabled()) {
+            log.debug("target-resolution set to: " + targetResolution 
+                    + "dpi (px2mm=" + getTargetPixelUnitToMillimeter() + ")");
+        }
     }
 
     /**
@@ -429,8 +445,7 @@ public class FOUserAgent {
 
     /** @return the font base URL */
     public String getFontBaseURL() {
-        String fontBaseURL = getFactory().getFontBaseURL(); 
-        return fontBaseURL != null ? fontBaseURL : getBaseURL();
+        return fontBase != null ? fontBase : getBaseURL();
     }
 
     /**

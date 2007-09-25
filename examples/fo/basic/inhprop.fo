@@ -141,7 +141,7 @@ block. This uses the <fo:inline
 font-style='oblique'>inherited-property-value</fo:inline>
 function. Here's an <fo:inline color='black' background-color='white'>inline
 object</fo:inline> with fixed colors (black on white). That doesn't
-work either. Guess it's not my problem... So let's try it with font
+work either. Guess it's not my problem ... So let's try it with font
 sizes. In this block, we'll put an
 <fo:inline font-size='inherited-property-value(font-size)+2pt'>inline
 object whose font-size is 2 pt bigger than its parent's font-size.</fo:inline></fo:block>

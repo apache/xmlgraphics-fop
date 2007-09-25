@@ -41,8 +41,6 @@ import javax.xml.transform.stream.StreamSource;
 import org.w3c.dom.Document;
 
 // Avalon
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.commons.io.IOUtils;
 
 // FOP
@@ -69,7 +67,6 @@ import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.fonts.Font;
-import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
 import org.apache.fop.image.XMLImage;
@@ -86,7 +83,6 @@ import org.apache.fop.pdf.PDFFilterList;
 import org.apache.fop.pdf.PDFGoTo;
 import org.apache.fop.pdf.PDFICCBasedColorSpace;
 import org.apache.fop.pdf.PDFICCStream;
-import org.apache.fop.pdf.PDFGoTo;
 import org.apache.fop.pdf.PDFInfo;
 import org.apache.fop.pdf.PDFLink;
 import org.apache.fop.pdf.PDFMetadata;
@@ -264,38 +260,6 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * create the PDF renderer
      */
     public PDFRenderer() {
-    }
-
-    /**
-     * Configure the PDF renderer.
-     * Get the configuration to be used for pdf stream filters,
-     * fonts etc.
-     * @see org.apache.avalon.framework.configuration.Configurable#configure(Configuration)
-     */
-    public void configure(Configuration cfg) throws ConfigurationException {
-        //PDF filters
-        this.filterMap = PDFFilterList.buildFilterMapFromConfiguration(cfg);
-
-        //Font configuration
-        List cfgFonts = FontSetup.buildFontListFromConfiguration(cfg, this);
-        if (this.fontList == null) {
-            this.fontList = cfgFonts;
-        } else {
-            this.fontList.addAll(cfgFonts);
-        }
-        
-        String s = cfg.getChild(PDF_A_MODE, true).getValue(null);
-        if (s != null) {
-            this.pdfAMode = PDFAMode.valueOf(s);
-        }
-        s = cfg.getChild(PDF_X_MODE, true).getValue(null);
-        if (s != null) {
-            this.pdfXMode = PDFXMode.valueOf(s);
-        }
-        s = cfg.getChild(KEY_OUTPUT_PROFILE, true).getValue(null);
-        if (s != null) {
-            this.outputProfileURI = s;
-        }
     }
 
     private boolean booleanValueOf(Object obj) {
@@ -1890,6 +1854,22 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     /** @see org.apache.fop.render.AbstractRenderer */
     public String getMimeType() {
         return MIME_TYPE;
+    }
+    
+    public void setAMode(PDFAMode mode) {
+        this.pdfAMode = mode;
+    }
+
+    public void setXMode(PDFXMode mode) {
+        this.pdfXMode = mode;        
+    }
+
+    public void setOutputProfileURI(String outputProfileURI) {
+        this.outputProfileURI = outputProfileURI;
+    }
+
+    public void setFilterMap(Map filterMap) {
+        this.filterMap = filterMap;
     }
 }
 

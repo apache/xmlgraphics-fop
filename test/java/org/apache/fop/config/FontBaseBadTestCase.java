@@ -19,10 +19,10 @@
 
 package org.apache.fop.config;
 
-import java.io.File;
-
-// this font base does not exist and a relative font path is used
-public class FontBaseBadTestCase extends BaseUserConfigTestCase {
+/*
+ * this font base does not exist and a relative font path is used
+ */ 
+public class FontBaseBadTestCase extends BaseDestructiveUserConfigTestCase {
 
     public FontBaseBadTestCase(String name) {
         super(name);
@@ -34,16 +34,9 @@ public class FontBaseBadTestCase extends BaseUserConfigTestCase {
     }
 
     /**
-     * @see org.apache.fop.config.BaseUserConfigTestCase#getUserConfigFile()
+     * @see org.apache.fop.config.BaseUserConfigTestCase#getUserConfigFilename()
      */
-    protected File getUserConfigFile() {
-        return new File( getBaseConfigDir() + "/test_fontbase_bad.xconf");
-    }
-    
-    /**
-     * @return configuration filename
-     */
-    public String getName() {
+    public String getUserConfigFilename() {
         return "test_fontbase_bad.xconf";
     }
 }

@@ -190,8 +190,8 @@ public class PFMFile {
         int i = inStream.readShort();
 
 
-        if (log.isInfoEnabled()) {
-            log.info(i + " kerning pairs");
+        if (log.isDebugEnabled()) {
+            log.debug(i + " kerning pairs");
         }
         while (i > 0) {
             int g1 = (int)inStream.readByte();

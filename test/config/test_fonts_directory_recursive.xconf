@@ -3,6 +3,9 @@
   <!-- Strict configuration On -->
   <strict-configuration>true</strict-configuration>
 
+  <!-- Switch off font caching for the purposes of the unit test -->
+  <use-cache>false</use-cache>  
+
   <!-- Base URL for resolving relative URLs -->
   <base>./</base>
 
@@ -12,10 +15,7 @@
   <renderers>
     <renderer mime="application/pdf">
       <fonts>
-		<!-- this font is without a metrics-url -->
-		<font>
-          <font-triplet name="Gladiator" style="normal" weight="normal"/>
-        </font>
+      	<directory recursive="true">test/resources/fonts</directory>
       </fonts>
     </renderer>
   </renderers>

@@ -69,18 +69,13 @@ import org.apache.fop.fonts.FontInfo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-// Avalon
-import org.apache.avalon.framework.configuration.Configurable;
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.ConfigurationException;
-
 /**
  * Abstract base class for all renderers. The Abstract renderer does all the
  * top level processing of the area tree and adds some abstract methods to
  * handle viewports. This keeps track of the current block and inline position.
  */
 public abstract class AbstractRenderer 
-         implements Renderer, Configurable, Constants {
+         implements Renderer, Constants {
 
     /** logging instance */
     protected static Log log = LogFactory.getLog("org.apache.fop.render");
@@ -117,12 +112,6 @@ public abstract class AbstractRenderer
     
     private Set warnedXMLHandlers;
     
-    /**
-     * @see org.apache.avalon.framework.configuration.Configurable#configure(Configuration)
-     */
-    public void configure(Configuration conf) throws ConfigurationException {
-    }
-
     /**
      *  @see org.apache.fop.render.Renderer#setupFontInfo(FontInfo)
      */
@@ -805,39 +794,6 @@ public abstract class AbstractRenderer
     }
 
     /**
-     * Returns the configuration subtree for a specific renderer.
-     * @param cfg the renderer configuration
-     * @param namespace the namespace (i.e. the XMLHandler) for which the configuration should
-     *                  be returned
-     * @return the requested configuration subtree, null if there's no configuration
-     */
-    public static Configuration getHandlerConfig(Configuration cfg, String namespace) {
-
-        if (cfg == null || namespace == null) {
-            return null;
-        }
-
-        Configuration handlerConfig = null;
-
-        Configuration[] children = cfg.getChildren("xml-handler");
-        for (int i = 0; i < children.length; ++i) {
-            try {
-                if (children[i].getAttribute("namespace").equals(namespace)) {
-                    handlerConfig = children[i];
-                    break;
-                }
-            } catch (ConfigurationException e) {
-                // silently pass over configurations without namespace
-            }
-        }
-        if (log.isDebugEnabled()) {
-            log.debug((handlerConfig == null ? "No" : "")
-                    + "XML handler configuration found for namespace " + namespace);
-        }
-        return handlerConfig;
-    }
-
-    /**
      * Render the xml document with the given xml namespace.
      * The Render Context is by the handle to render into the current
      * rendering target.
@@ -851,15 +807,9 @@ public abstract class AbstractRenderer
                 this, namespace);
         if (handler != null) {
             try {
-                //Optional XML handler configuration
-                Configuration cfg = userAgent.getFactory().getUserRendererConfig(getMimeType());
-                if (cfg != null) {
-                    cfg = getHandlerConfig(cfg, namespace);
-                    if (cfg != null) {
-                        ctx.setProperty(RendererContextConstants.HANDLER_CONFIGURATION, cfg);
-                    }
-                }
-                
+                XMLHandlerConfigurator configurator
+                    = new XMLHandlerConfigurator(userAgent);
+                configurator.configure(ctx, namespace);
                 handler.handleXML(ctx, doc, namespace);
             } catch (Throwable t) {
                 // could not handle document
@@ -887,6 +837,4 @@ public abstract class AbstractRenderer
     public String getMimeType() {
         return null;
     }
-
 }
-

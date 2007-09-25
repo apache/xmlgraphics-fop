@@ -27,6 +27,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.Version;
+import org.apache.fop.fonts.FontUtil;
 import org.apache.fop.fonts.truetype.FontFileReader;
 import org.apache.fop.fonts.truetype.TTFCmapEntry;
 import org.apache.fop.fonts.truetype.TTFFile;
@@ -44,6 +45,7 @@ public class TTFReader extends AbstractFontReader {
 
     /** Used to detect incompatible versions of the generated XML files */
     public static final String METRICS_VERSION_ATTR = "metrics-version";
+    /** Current version number for the metrics file */
     public static final int METRICS_VERSION = 2;
     
     /**
@@ -243,7 +245,7 @@ public class TTFReader extends AbstractFontReader {
         }
         Element root = doc.createElement("font-metrics");
         doc.appendChild(root);
-        root.setAttribute(METRICS_VERSION_ATTR,String.valueOf(METRICS_VERSION));
+        root.setAttribute(METRICS_VERSION_ATTR, String.valueOf(METRICS_VERSION));
         if (isCid) {
             root.setAttribute("type", "TYPE0");
         } else {
@@ -257,10 +259,10 @@ public class TTFReader extends AbstractFontReader {
         // "Perpetua-Bold", but the TrueType spec says that in the ttf file
         // it should be "Perpetua,Bold".
 
-        String s = stripWhiteSpace(ttf.getPostScriptName());
+        String s = FontUtil.stripWhiteSpace(ttf.getPostScriptName());
 
         if (fontName != null) {
-            el.appendChild(doc.createTextNode(stripWhiteSpace(fontName)));
+            el.appendChild(doc.createTextNode(FontUtil.stripWhiteSpace(fontName)));
         } else {
             el.appendChild(doc.createTextNode(s));
         }
@@ -449,49 +451,34 @@ public class TTFReader extends AbstractFontReader {
     }
 
 
-    private String stripWhiteSpace(String s) {
-        char[] ch = new char[s.length()];
-        s.getChars(0, s.length(), ch, 0);
-        StringBuffer stb = new StringBuffer();
-        for (int i = 0; i < ch.length; i++) {
-            if (ch[i] != ' ' 
-                    && ch[i] != '\r' 
-                    && ch[i] != '\n'
-                    && ch[i] != '\t') {
-                stb.append(ch[i]);
-            }
-        }
-
-        return stb.toString();
-    }
-    
-    /** Bugzilla 40739, check that attr has a metrics-version attribute 
-     *  compatible with ours.
+    /** 
+     * Bugzilla 40739, check that attr has a metrics-version attribute 
+     * compatible with ours.
      * @param attr attributes read from the root element of a metrics XML file
      * @throws SAXException if incompatible
      */
     public static void checkMetricsVersion(Attributes attr) throws SAXException {
         String err = null;
         final String str = attr.getValue(METRICS_VERSION_ATTR);
-        if(str==null) {
+        if (str == null) {
             err = "Missing " + METRICS_VERSION_ATTR + " attribute";
         } else {
             int version = 0;
             try {
                 version = Integer.parseInt(str);
-                if(version < METRICS_VERSION) {
+                if (version < METRICS_VERSION) {
                     err = "Incompatible " + METRICS_VERSION_ATTR 
                         + " value (" + version + ", should be " + METRICS_VERSION
                         + ")"
                      ; 
                 }
-            } catch(NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 err = "Invalid " + METRICS_VERSION_ATTR 
                     + " attribute value (" + str + ")";
             }
         }
         
-        if(err!=null) {
+        if (err != null) {
             throw new SAXException(
                 err 
                 + " - please regenerate the font metrics file with "

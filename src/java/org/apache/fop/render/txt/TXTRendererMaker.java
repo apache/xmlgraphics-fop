@@ -23,6 +23,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.AbstractRendererMaker;
 import org.apache.fop.render.Renderer;
+import org.apache.fop.render.RendererConfigurator;
 
 /**
  * RendererMaker for the Plain Text Renderer.
@@ -31,10 +32,14 @@ public class TXTRendererMaker extends AbstractRendererMaker {
 
     private static final String[] MIMES = new String[] {MimeConstants.MIME_PLAIN_TEXT};
     
-    
-    /**@see org.apache.fop.render.AbstractRendererMaker */
-    public Renderer makeRenderer(FOUserAgent ua) {
+    /**@see org.apache.fop.render.AbstractRendererMaker#makeRenderer(FOUserAgent) */
+    public Renderer makeRenderer(FOUserAgent userAgent) {
         return new TXTRenderer();
+    }
+
+    /**@see org.apache.fop.render.AbstractRendererMaker#getConfigurator(FOUserAgent) */
+    public RendererConfigurator getConfigurator(FOUserAgent userAgent) {
+        return new TXTRendererConfigurator(userAgent);
     }
 
     /** @see org.apache.fop.render.AbstractRendererMaker#needsOutputStream() */
@@ -46,5 +51,4 @@ public class TXTRendererMaker extends AbstractRendererMaker {
     public String[] getSupportedMimeTypes() {
         return MIMES;
     }
-
 }

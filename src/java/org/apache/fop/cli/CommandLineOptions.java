@@ -143,7 +143,7 @@ public class CommandLineOptions {
                     dumpConfiguration();
                 }
                 checkSettings();
-                createUserConfig();
+                setUserConfig();
                 
                 //Factory config is set up, now we can create the user agent
                 foUserAgent = factory.newFOUserAgent();
@@ -772,11 +772,11 @@ public class CommandLineOptions {
     }    // end checkSettings
 
     /**
-     * Create the user configuration.
+     * Sets the user configuration.
      * @throws FOPException if creating the user configuration fails
      * @throws IOException
      */
-    private void createUserConfig() throws FOPException, IOException {
+    private void setUserConfig() throws FOPException, IOException {
         if (userConfigFile == null) {
             return;
         }

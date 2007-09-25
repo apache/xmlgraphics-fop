@@ -15,30 +15,25 @@
  * limitations under the License.
  */
 
-/* $Id$ */
+/* $Id: $ */
 
-package org.apache.fop.config;
+package org.apache.fop.fonts.autodetect;
 
-import java.io.File;
-
-// this font has a metrics-url that does not exist on filesystem
-public class MetricsUrlBadTestCase extends BaseUserConfigTestCase {
-
-    /**
-     * @see junit.framework.TestCase#TestCase(String)
-     */
-    public MetricsUrlBadTestCase(String name) {
-        super(name);
-    }
+/**
+ * Unix font directory finder
+ */
+public class UnixFontDirFinder extends NativeFontDirFinder {
 
     /**
-     * @see org.apache.fop.config.BaseUserConfigTestCase#getUserConfigFile()
+     * Some guesses at possible unix font directory locations
+     * @return a list of possible font locations
      */
-    protected File getUserConfigFile() {
-        return new File( getBaseConfigDir() + "/test_metricsurl_bad.xconf");
-    }
-    
-    public String getName() {
-        return "test_metricsurl_bad.xconf";
-    }
+    protected String[] getSearchableDirectories() {
+        return new String[] {
+            System.getProperty("user.home") + "/.fonts", // user
+            "/usr/local/fonts", // local
+            "/usr/share/fonts", // system
+            "/usr/X11R6/lib/X11/fonts" // X
+        };
+    }    
 }

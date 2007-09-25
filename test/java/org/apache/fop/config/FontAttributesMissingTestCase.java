@@ -19,20 +19,19 @@
 
 package org.apache.fop.config;
 
-import java.io.File;
-
-// this font is without a metrics-url or an embed-url
-public class FontAttributesMissingTestCase extends BaseUserConfigTestCase {
+/*
+ * this font is without a metrics-url or an embed-url
+ */
+public class FontAttributesMissingTestCase extends BaseDestructiveUserConfigTestCase {
 
     public FontAttributesMissingTestCase(String name) {
         super(name);
     }
 
-    protected File getUserConfigFile() {
-        return new File( getBaseConfigDir() + "/test_fontattributes_missing.xconf");
-    }
-    
-    public String getName() {
-        return "test_fontattributes_missing.xconf";
+    /**
+     * @see org.apache.fop.config.BaseUserConfigTestCase#getUserConfigFilename()
+     */
+    public String getUserConfigFilename() {
+        return "test_font_attributes_missing.xconf";
     }
 }

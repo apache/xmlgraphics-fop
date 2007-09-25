@@ -567,6 +567,14 @@ public class TTFFile {
     }
 
     /**
+     * Returns the font sub family name of the font.
+     * @return String The sub family name
+     */
+    public String getSubFamilyName() {
+        return subFamilyName;
+    }
+
+    /**
      * Returns the name of the character set used.
      * @return String The caracter set
      */

@@ -19,23 +19,22 @@
 
 package org.apache.fop.config;
 
-import java.io.File;
+/*
+ * this font has a metrics-url that does not exist on filesystem
+ */ 
+public class FontMetricsUrlBadTestCase extends BaseDestructiveUserConfigTestCase {
 
-// 
-/**
- * this font has an embed-url that does not exist on filesystem.
- */
-public class EmbedUrlBadTestCase extends BaseUserConfigTestCase {
-
-    public EmbedUrlBadTestCase(String name) {
+    /**
+     * @see junit.framework.TestCase#TestCase(String)
+     */
+    public FontMetricsUrlBadTestCase(String name) {
         super(name);
     }
 
-    protected File getUserConfigFile() {
-        return new File( getBaseConfigDir() + "/test_embedurl_bad.xconf");
-    }
-    
-    public String getName() {
-        return "test_embedurl_bad.xconf";
+    /**
+     * @see org.apache.fop.config.BaseUserConfigTestCase#getUserConfigFilename()
+     */
+    public String getUserConfigFilename() {
+        return "test_font_metricsurl_bad.xconf";
     }
 }

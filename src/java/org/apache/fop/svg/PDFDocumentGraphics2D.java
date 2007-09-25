@@ -19,6 +19,7 @@
 
 package org.apache.fop.svg;
 
+import org.apache.fop.Version;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFFilterList;
 import org.apache.fop.pdf.PDFPage;
@@ -28,13 +29,8 @@ import org.apache.fop.pdf.PDFNumber;
 import org.apache.fop.pdf.PDFResources;
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.pdf.PDFAnnotList;
-import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.fonts.FontInfo;
-import org.apache.avalon.framework.CascadingRuntimeException;
-import org.apache.avalon.framework.activity.Initializable;
-import org.apache.avalon.framework.configuration.Configurable;
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.ConfigurationException;
+import org.apache.fop.fonts.FontSetup;
 
 import java.awt.Graphics;
 import java.awt.Font;
@@ -56,8 +52,7 @@ import java.io.StringWriter;
  * @version $Id$
  * @see org.apache.fop.svg.PDFGraphics2D
  */
-public class PDFDocumentGraphics2D extends PDFGraphics2D
-            implements Configurable, Initializable {
+public class PDFDocumentGraphics2D extends PDFGraphics2D {
 
     private PDFContext pdfContext;
 
@@ -89,9 +84,6 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
      */
     protected AffineTransform initialTransform;
 
-    //Avalon component
-    private Configuration cfg;
-
     /**
      * Create a new PDFDocumentGraphics2D.
      * This is used to create a new pdf document, the height,
@@ -106,19 +98,9 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
     public PDFDocumentGraphics2D(boolean textAsShapes) {
         super(textAsShapes);
 
+        this.pdfDoc = new PDFDocument("Apache FOP Version " + Version.getVersion() 
+                + ": PDFDocumentGraphics2D");
         this.pdfContext = new PDFContext();
-        if (!textAsShapes) {
-            fontInfo = new FontInfo();
-            FontSetup.setup(fontInfo, null, null);
-            //FontState fontState = new FontState("Helvetica", "normal",
-            //                          FontInfo.NORMAL, 12, 0);
-        }
-        try {
-            initialize();
-        } catch (Exception e) {
-            //Should never happen
-            throw new CascadingRuntimeException("Internal error", e);
-        }
     }
 
     /**
@@ -154,33 +136,6 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
     }
 
     /**
-     * @see org.apache.avalon.framework.configuration.Configurable#configure(Configuration)
-     */
-    public void configure(Configuration cfg) throws ConfigurationException {
-        this.cfg = cfg;
-        this.pdfContext.setFontList(FontSetup.buildFontListFromConfiguration(cfg));
-    }
-
-    /**
-     * @see org.apache.avalon.framework.activity.Initializable#initialize()
-     */
-    public void initialize() throws Exception {
-        if (this.fontInfo == null || this.cfg != null) {
-            fontInfo = new FontInfo();
-            FontSetup.setup(fontInfo, this.pdfContext.getFontList(), null);
-            //FontState fontState = new FontState("Helvetica", "normal",
-            //                          FontInfo.NORMAL, 12, 0);
-        }
-
-        this.pdfDoc = new PDFDocument("Apache FOP: SVG to PDF Transcoder");
-
-        if (this.cfg != null) {
-            this.pdfDoc.setFilterMap(
-                PDFFilterList.buildFilterMapFromConfiguration(cfg));
-        }
-    }
-
-    /**
      * Setup the document.
      * @param stream the output stream to write the document
      * @param width the width of the page
@@ -196,6 +151,18 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
         setOutputStream(stream);
     }
 
+    /**
+     * Setup a default FontInfo instance if none has been setup before. 
+     */
+    public void setupDefaultFontInfo() {
+        if (fontInfo == null) {
+            //Default minimal fonts
+            FontInfo fontInfo = new FontInfo();
+            FontSetup.setup(fontInfo, null, null);
+            setFontInfo(fontInfo);
+        }
+    }
+    
     /**
      * Set the device resolution for rendering.  Will take effect at the
      * start of the next page.
@@ -213,6 +180,14 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
     }
 
     /**
+     * Sets the font info for this PDF document.
+     * @param fontInfo the font info object with all the fonts
+     */
+    public void setFontInfo(FontInfo fontInfo) {
+        this.fontInfo = fontInfo;
+    }
+    
+    /**
      * Get the font info for this pdf document.
      * @return the font information
      */
@@ -228,6 +203,14 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
         return this.pdfDoc;
     }
 
+    /**
+     * Return the PDFContext for this instance.
+     * @return the PDFContext
+     */
+    public PDFContext getPDFContext() {
+        return this.pdfContext;
+    }
+    
     /**
      * Set the dimensions of the svg document that will be drawn.
      * This is useful if the dimensions of the svg document are different
@@ -294,6 +277,10 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
     protected void preparePainting() {
         if (pdfContext.isPagePending()) {
             return;
+        }
+        //Setup default font info if no more font configuration has been done by the user.
+        if (!this.textAsShapes && getFontInfo() == null) {
+            setupDefaultFontInfo();
         }
         try {
             startPage();
@@ -389,7 +376,6 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
     public PDFDocumentGraphics2D(PDFDocumentGraphics2D g) {
         super(g);
         this.pdfContext = g.pdfContext;
-        this.cfg = g.cfg;
         this.width = g.width;
         this.height = g.height;
         this.svgWidth = g.svgWidth;

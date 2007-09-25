@@ -43,6 +43,7 @@ import org.apache.fop.image.XMLImage;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.svg.SVGUserAgent;
+import org.apache.fop.util.UnclosableInputStream;
 
 /** 
  * ImageReader object for SVG document image type.
@@ -112,58 +113,7 @@ public class SVGReader implements ImageReader {
             // parse document and get the size attributes of the svg element
 
             try {
-                int length = 5;
-                fis.mark(length);
-                byte[] b = new byte[length];
-                fis.read(b);
-                String start = new String(b);
-                fis.reset();
-
-                //TODO "true ||" here is a hack to improve SVG detection rate. Please improve.
-                if (true || start.equals("<?xml")) {
-                    // we have xml, might be another doc
-                    // so stop batik from closing the stream
-                    final InputStream input = fis;
-                    fis =
-                        new InputStream() {
-                            public int read() throws IOException {
-                                return input.read();
-                            }
-
-                            public int read(byte[] b) throws IOException {
-                                return input.read(b);
-                            }
-
-                            public int read(byte[] b, int off, int len)
-                                    throws IOException {
-                                return input.read(b, off, len);
-                            }
-
-                            public long skip(long n) throws IOException {
-                                return input.skip(n);
-                            }
-
-                            public int available() throws IOException {
-                                return input.available();
-                            }
-
-                            public void mark(int rl) {
-                                input.mark(rl);
-                            }
-
-                            public boolean markSupported() {
-                                return input.markSupported();
-                            }
-
-                            public void reset() throws IOException {
-                                input.reset();
-                            }
-
-                            public void close() throws IOException {
-                                //ignore
-                            }
-                        };
-                }
+                fis = new UnclosableInputStream(fis);
 
                 FopImage.ImageInfo info = new FopImage.ImageInfo();
 
@@ -175,7 +125,7 @@ public class SVGReader implements ImageReader {
                 info.mimeType = getMimeType();
                 info.str = SVGDOMImplementation.SVG_NAMESPACE_URI;
 
-                length = fis.available();
+                int length = fis.available();
                 fis.mark(length + 1);
                 SAXSVGDocumentFactory factory = new SAXSVGDocumentFactory(
                         XMLImage.getParserName());
@@ -217,7 +167,7 @@ public class SVGReader implements ImageReader {
                 batik = false;
                 log.warn("Batik not in class path", ncdfe);
                 return null;
-            } catch (Exception e) {
+            } catch (IOException e) {
                 // If the svg is invalid then it throws an IOException
                 // so there is no way of knowing if it is an svg document
 

@@ -57,4 +57,24 @@ public class FontUtil {
         return weight;
     }
 
+    /**
+     * Removes all white space from a string (used primarily for font names)
+     * @param s the string
+     * @return the processed result
+     */
+    public static String stripWhiteSpace(String s) {
+        StringBuffer sb = new StringBuffer(s.length());
+        for (int i = 0, c = s.length(); i < c; i++) {
+            final char ch = s.charAt(i);
+            if (ch != ' ' 
+                    && ch != '\r' 
+                    && ch != '\n'
+                    && ch != '\t') {
+                sb.append(ch);
+            }
+        }
+        return sb.toString();
+    }
+
+    
 }

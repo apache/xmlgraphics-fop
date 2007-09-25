@@ -75,11 +75,14 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
     }
 
     private org.apache.fop.area.inline.TextArea getCharacterInlineArea(Character node) {
-        org.apache.fop.area.inline.TextArea text 
+        org.apache.fop.area.inline.TextArea text
             = new org.apache.fop.area.inline.TextArea();
         char ch = node.getCharacter();
         if (CharUtilities.isAnySpace(ch)) {
-            text.addSpace(ch, 0, CharUtilities.isAdjustableSpace(ch));
+            // add space unless it's zero-width:
+            if (!CharUtilities.isZeroWidthSpace(ch)) {
+                text.addSpace(ch, 0, CharUtilities.isAdjustableSpace(ch));
+            }
         } else {
             text.addWord(String.valueOf(ch), 0);
         }
