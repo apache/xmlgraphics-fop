@@ -59,7 +59,7 @@ public class XMLReader implements ImageReader {
         converters.put(ns, conv);
     }
 
-    /** @see org.apache.fop.image.analyser.ImageReader */
+    /** {@inheritDoc} */
     public FopImage.ImageInfo verifySignature(String uri, InputStream fis,
             FOUserAgent ua)
         throws IOException {

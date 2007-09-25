@@ -87,14 +87,14 @@ public class NativeTextHandler implements TextHandler {
         return this.g2d.getPSGenerator();
     }
     
-    /** @see org.apache.xmlgraphics.java2d.ps.TextHandler#writeSetup() */
+    /** {@inheritDoc} */
     public void writeSetup() throws IOException {
         if (fontInfo != null) {
             PSFontUtils.writeFontDict(getPSGenerator(), fontInfo);
         }
     }
 
-    /** @see org.apache.xmlgraphics.java2d.ps.TextHandler#writePageSetup() */
+    /** {@inheritDoc} */
     public void writePageSetup() throws IOException {
         if (fontInfo != null) {         
             getPSGenerator().writeln("FOPFonts begin");
@@ -104,7 +104,7 @@ public class NativeTextHandler implements TextHandler {
     /**
      * Draw a string to the PostScript document. The text is painted using 
      * text operations.
-     * @see org.apache.xmlgraphics.java2d.ps.TextHandler#drawString(java.lang.String, float, float)
+     * {@inheritDoc} 
      */
     public void drawString(String s, float x, float y) throws IOException {
         g2d.preparePainting();

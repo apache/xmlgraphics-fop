@@ -20,7 +20,6 @@
 package org.apache.fop.fo.flow;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import org.xml.sax.Attributes;
@@ -37,7 +36,7 @@ import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.Property;
 
 /**
- * Marker formatting object.
+ * Class modelling the fo:marker object.
  */
 public class Marker extends FObjMixed {
     // The value of properties relevant for fo:marker.
@@ -56,7 +55,7 @@ public class Marker extends FObjMixed {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         if (findAncestor(FO_FLOW) < 0) {
@@ -82,7 +81,7 @@ public class Marker extends FObjMixed {
             descendantPropertyLists.get(foNode);
     }
     
-    /** @see org.apache.fop.fo.FONode#startOfNode() */
+    /** {@inheritDoc} */
     protected void startOfNode() {
         FOEventHandler foEventHandler = getFOEventHandler(); 
         // Push a new property list maker which will make MarkerPropertyLists.
@@ -96,7 +95,7 @@ public class Marker extends FObjMixed {
         });
     }
     
-    /** @see org.apache.fop.fo.FONode#endOfNode() */
+    /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         super.endOfNode();
         // Pop the MarkerPropertyList maker.
@@ -105,7 +104,7 @@ public class Marker extends FObjMixed {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc}
      * XSL Content Model: (#PCDATA|%inline;|%block;)*
      * Additionally: "An fo:marker may contain any formatting objects that 
      * are permitted as a replacement of any fo:retrieve-marker that retrieves
@@ -130,19 +129,19 @@ public class Marker extends FObjMixed {
         return markerClassName;
     }
 
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "marker";
     }
     
     /**
-     * @see org.apache.fop.fo.FObj#getNameId()
+     * {@inheritDoc}
      */
     public int getNameId() {
         return FO_MARKER;
     }
 
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer(super.toString());
         sb.append(" {").append(getMarkerClassName()).append("}");
@@ -203,7 +202,6 @@ public class Marker extends FObjMixed {
         
         /**
          * Null implementation; not used by this type of PropertyList
-         * @see org.apache.fop.fo.PropertyList#putExplicit(int, Property)
          */
         public void putExplicit(int propId, Property value) {
             //nop
@@ -211,14 +209,13 @@ public class Marker extends FObjMixed {
 
         /**
          * Null implementation; not used by this type of PropertyList
-         * @see org.apache.fop.fo.PropertyList#getExplicit(int)
          */
         public Property getExplicit(int propId) {
             return null;
         }
 
         /**
-         * @see org.xml.sax.Attributes#getLength()
+         * {@inheritDoc}
          */
         public int getLength() {
             if (attribs == null) {
@@ -229,7 +226,7 @@ public class Marker extends FObjMixed {
         }
 
         /**
-         * @see org.xml.sax.Attributes#getURI(int)
+         * {@inheritDoc}
          */
         public String getURI(int index) {
             if (attribs != null 
@@ -243,7 +240,7 @@ public class Marker extends FObjMixed {
         }
 
         /**
-         * @see org.xml.sax.Attributes#getLocalName(int)
+         * {@inheritDoc}
          */
         public String getLocalName(int index) {
             if (attribs != null 
@@ -257,7 +254,7 @@ public class Marker extends FObjMixed {
         }
 
         /**
-         * @see org.xml.sax.Attributes#getQName(int)
+         * {@inheritDoc}
          */
         public String getQName(int index) {
             if (attribs != null 
@@ -272,14 +269,13 @@ public class Marker extends FObjMixed {
 
         /**
          * Default implementation; not used
-         * @see org.xml.sax.Attributes#getType(int)
          */
         public String getType(int index) {
             return "CDATA";
         }
 
         /**
-         * @see org.xml.sax.Attributes#getValue(int)
+         * {@inheritDoc}
          */
         public String getValue(int index) {
             if (attribs != null 
@@ -293,7 +289,7 @@ public class Marker extends FObjMixed {
         }
 
         /**
-         * @see org.xml.sax.Attributes#getIndex(String, String)
+         * {@inheritDoc} 
          */
         public int getIndex(String name, String namespace) {
             int index = -1;
@@ -310,7 +306,7 @@ public class Marker extends FObjMixed {
         }
 
         /**
-         * @see org.xml.sax.Attributes#getIndex(String)
+         * {@inheritDoc}
          */
         public int getIndex(String qname) {
             int index = -1;
@@ -327,7 +323,6 @@ public class Marker extends FObjMixed {
 
         /**
          * Default implementation; not used
-         * @see org.xml.sax.Attributes#getType(String, String)
          */
         public String getType(String name, String namespace) {
             return "CDATA";
@@ -335,14 +330,13 @@ public class Marker extends FObjMixed {
 
         /**
          * Default implementation; not used
-         * @see org.xml.sax.Attributes#getType(String)
          */
         public String getType(String qname) {
             return "CDATA";
         }
 
         /**
-         * @see org.xml.sax.Attributes#getValue(String, String)
+         * {@inheritDoc} 
          */
         public String getValue(String name, String namespace) {
             int index = getIndex(name, namespace);
@@ -353,7 +347,7 @@ public class Marker extends FObjMixed {
         }
 
         /**
-         * @see org.xml.sax.Attributes#getValue(String)
+         * {@inheritDoc}
          */
         public String getValue(String qname) {
             int index = getIndex(qname);
@@ -415,7 +409,7 @@ public class Marker extends FObjMixed {
         }
         
         /**
-         * @see java.lang.Object#equals(Object)
+         * {@inheritDoc}
          */
         public boolean equals(Object o) {
             if (o instanceof MarkerAttribute) {

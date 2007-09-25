@@ -38,7 +38,7 @@ public class RTFFOEventHandlerMaker extends AbstractFOEventHandlerMaker {
     
     
     /**
-     * @see org.apache.fop.render.AbstractFOEventHandlerMaker
+     * {@inheritDoc}
      * @param ua FOUserAgent
      * @param out OutputStream
      * @return created RTFHandler
@@ -48,7 +48,7 @@ public class RTFFOEventHandlerMaker extends AbstractFOEventHandlerMaker {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractFOEventHandlerMaker#needsOutputStream()
+     * {@inheritDoc}
      * @return true, if an outputstream is needed
      */
     public boolean needsOutputStream() {
@@ -56,7 +56,7 @@ public class RTFFOEventHandlerMaker extends AbstractFOEventHandlerMaker {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractFOEventHandlerMaker#getSupportedMimeTypes()
+     * {@inheritDoc}
      * @return array of MIME types
      */
     public String[] getSupportedMimeTypes() {

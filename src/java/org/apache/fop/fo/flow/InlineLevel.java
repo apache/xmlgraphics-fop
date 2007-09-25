@@ -30,6 +30,7 @@ import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonMarginInline;
+import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.SpaceProperty;
 
 /**
@@ -57,7 +58,7 @@ public abstract class InlineLevel extends FObjMixed {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
@@ -107,4 +108,3 @@ public abstract class InlineLevel extends FObjMixed {
     }
     
 }
-

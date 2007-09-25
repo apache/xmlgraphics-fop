@@ -73,7 +73,7 @@ public class Root extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         mediaUsage = pList.get(PR_MEDIA_USAGE).getEnum();
@@ -90,7 +90,7 @@ public class Root extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc}
         XSL 1.0 Spec: (layout-master-set,declarations?,page-sequence+)
         FOP: (layout-master-set, declarations?, fox:bookmarks?, page-sequence+)
      */
@@ -281,19 +281,19 @@ public class Root extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#getRoot()
+     * {@inheritDoc}
      */
     public Root getRoot() {
         return this;
     }
 
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "root";
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#getNameId()
+     * {@inheritDoc}
      */
     public int getNameId() {
         return FO_ROOT;

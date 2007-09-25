@@ -52,7 +52,7 @@ public class ConditionalPageMasterReference extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         masterReference = pList.get(PR_MASTER_REFERENCE).getString();
@@ -66,7 +66,7 @@ public class ConditionalPageMasterReference extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#startOfNode
+     * {@inheritDoc}
      */
     protected void startOfNode() throws FOPException {
         getConcreteParent().addConditionalPageMasterReference(this);
@@ -77,7 +77,7 @@ public class ConditionalPageMasterReference extends FObj {
     }
     
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc}
      * XSL Content Model: empty
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
@@ -154,12 +154,12 @@ public class ConditionalPageMasterReference extends FObj {
         return this.pagePosition;
     }
     
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "conditional-page-master-reference";
     }
     
-    /** @see org.apache.fop.fo.FObj#getNameId() */
+    /** {@inheritDoc} */
     public int getNameId() {
         return FO_CONDITIONAL_PAGE_MASTER_REFERENCE;
     }

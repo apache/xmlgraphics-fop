@@ -19,8 +19,6 @@
 
 package org.apache.fop.fo.flow;
 
-import java.util.BitSet;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.fop.apps.FOPException;
@@ -30,15 +28,13 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
-import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.NumberProperty;
 import org.apache.fop.fo.properties.Property;
-import org.apache.fop.fo.properties.PropertyMaker;
 
 /**
- * Superclass for table-related FOs
+ * Common base class for table-related FOs
  */
 public abstract class TableFObj extends FObj {
 
@@ -80,7 +76,7 @@ public abstract class TableFObj extends FObj {
     }
 
     /**
-     * @see FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
@@ -100,8 +96,7 @@ public abstract class TableFObj extends FObj {
         if (getNameId() != FO_TABLE //Separate check for fo:table in Table.java
                 && getNameId() != FO_TABLE_CELL
                 && getCommonBorderPaddingBackground().hasPadding(
-                        ValidationPercentBaseContext
-                            .getPseudoContextForValidationPurposes())) {
+                        ValidationPercentBaseContext.getPseudoContext())) {
             attributeWarning(
                     "padding-* properties are not applicable to " + getName()
                     + ", but a non-zero value for padding was found.");
@@ -109,7 +104,7 @@ public abstract class TableFObj extends FObj {
     }
     
     /**
-     * @see org.apache.fop.fo.FONode#addChildNode(FONode)
+     * {@inheritDoc}
      */
     protected void addChildNode(FONode child) throws FOPException {
         if (!inMarker() 
@@ -120,31 +115,13 @@ public abstract class TableFObj extends FObj {
         super.addChildNode(child);
     }
     
-    private void updateColumnIndex(TableCell cell)
-            throws ValidationException {
+    private void updateColumnIndex(TableCell cell) {
         
         int rowSpan = cell.getNumberRowsSpanned();
         int colSpan = cell.getNumberColumnsSpanned();
         int columnIndex = getCurrentColumnIndex();
+        int i;
         
-        int i = -1;
-        while (++i < colSpan) {
-            if (isColumnNumberUsed(columnIndex + i)) {
-                /* if column-number is already in use by another cell
-                 * in the current row => error!
-                 */
-                StringBuffer errorMessage = new StringBuffer();
-                errorMessage.append("fo:table-cell overlaps in column ")
-                       .append(columnIndex + i);
-                if (locator.getLineNumber() != -1) {
-                    errorMessage.append(" (line #")
-                        .append(locator.getLineNumber()).append(", column #")
-                        .append(locator.getColumnNumber()).append(")");
-                }
-                throw new ValidationException(errorMessage.toString());
-            }
-        }
-
         if (getNameId() == FO_TABLE_ROW) {
             
             TableRow row = (TableRow) this;
@@ -182,7 +159,8 @@ public abstract class TableFObj extends FObj {
             /* pendingSpans not initialized for the first row...
              */
             if (body.firstRow) {
-                for (i = colSpan; --i >= 0;) {
+                for (i = colSpan; 
+                        --i >= 0|| body.pendingSpans.size() < cell.getColumnNumber();) {
                     body.pendingSpans.add(null);
                 }
             }
@@ -326,7 +304,7 @@ public abstract class TableFObj extends FObj {
         }
 
         /**
-         * @see PropertyMaker#make(PropertyList)
+         * {@inheritDoc}
          */
         public Property make(PropertyList propertyList) 
                 throws PropertyException {
@@ -343,60 +321,65 @@ public abstract class TableFObj extends FObj {
                         parent.resetColumnIndex();
                     }
                 }
-                return new NumberProperty(((TableFObj) fo.getParent())
-                                            .getCurrentColumnIndex());
-            } else {
-                throw new PropertyException(
-                        "column-number property is only allowed"
-                        + " on fo:table-cell or fo:table-column, not on "
-                        + fo.getName());
             }
+            return NumberProperty.getInstance(
+                    ((TableFObj) fo.getParent()).getCurrentColumnIndex());
         }
+        
         
         /**
          * Check the value of the column-number property. 
          * Return the parent's column index (initial value) in case 
          * of a negative or zero value
          * 
-         * @see org.apache.fop.fo.properties.PropertyMaker#get(
-         *                      int, PropertyList, boolean, boolean)
+         * @see org.apache.fop.fo.properties.PropertyMaker#make(PropertyList, String, FObj)
          */
-        public Property get(int subpropId, PropertyList propertyList,
-                            boolean tryInherit, boolean tryDefault) 
-                throws PropertyException {
+        public Property make(PropertyList propertyList, String value, FObj fo) 
+                    throws PropertyException {
+            Property p = super.make(propertyList, value, fo);
             
-            Property p = super.get(0, propertyList, tryInherit, tryDefault);
-            TableFObj fo = (TableFObj) propertyList.getFObj();
             TableFObj parent = (TableFObj) propertyList.getParentFObj();
             
-            if (p != null) {
-                int columnIndex = p.getNumeric().getValue();
-                
-                if (columnIndex <= 0) {
-                    log.warn("Specified negative or zero value for "
-                            + "column-number on " + fo.getName() + ": "
-                            + columnIndex + " forced to " 
-                            + parent.getCurrentColumnIndex());
-                    return new NumberProperty(parent.getCurrentColumnIndex());
-                }
-                
+            int columnIndex = p.getNumeric().getValue();
+            if (columnIndex <= 0) {
+                log.warn("Specified negative or zero value for "
+                        + "column-number on " + fo.getName() + ": "
+                        + columnIndex + " forced to " 
+                        + parent.getCurrentColumnIndex());
+                return NumberProperty.getInstance(parent.getCurrentColumnIndex());
+            } else {
                 double tmpIndex = p.getNumeric().getNumericValue();
                 if (tmpIndex - columnIndex > 0.0) {
                     columnIndex = (int) Math.round(tmpIndex);
                     log.warn("Rounding specified column-number of "
                             + tmpIndex + " to " + columnIndex);
-                    return new NumberProperty(columnIndex);
-                }
-                        
-                /* if column-number was explicitly specified, force the 
-                 * parent's current column index to the specified value, 
-                 * so that the updated index will be the correct initial 
-                 * value for the next cell/column (see Rec 7.26.8)
-                 */
-                if (propertyList.getExplicit(Constants.PR_COLUMN_NUMBER) != null) {
-                    parent.setCurrentColumnIndex(p.getNumeric().getValue());
+                    p = NumberProperty.getInstance(columnIndex);
                 }
             }
+            
+            parent.setCurrentColumnIndex(columnIndex);
+            
+            int colSpan = propertyList.get(Constants.PR_NUMBER_COLUMNS_SPANNED)
+                                .getNumeric().getValue();
+            int i = -1;
+            while (++i < colSpan) {
+                if (parent.isColumnNumberUsed(columnIndex + i)) {
+                    /* if column-number is already in use by another 
+                     * cell/column => error!
+                     */
+                    StringBuffer errorMessage = new StringBuffer();
+                    errorMessage.append(fo.getName() + " overlaps in column ")
+                           .append(columnIndex + i);
+                    org.xml.sax.Locator loc = fo.getLocator();
+                    if (loc != null && loc.getLineNumber() != -1) {
+                        errorMessage.append(" (line #")
+                            .append(loc.getLineNumber()).append(", column #")
+                            .append(loc.getColumnNumber()).append(")");
+                    }
+                    throw new PropertyException(errorMessage.toString());
+                }
+            }
+            
             return p;
         }
     }

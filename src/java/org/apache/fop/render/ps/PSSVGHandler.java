@@ -68,7 +68,7 @@ public class PSSVGHandler implements XMLHandler, PSRendererContextConstants {
     public PSSVGHandler() {
     }
 
-    /** @see org.apache.fop.render.XMLHandler */
+    /** {@inheritDoc} */
     public void handleXML(RendererContext context, 
                 Document doc, String ns) throws Exception {
         PSInfo psi = getPSInfo(context);
@@ -334,12 +334,12 @@ public class PSSVGHandler implements XMLHandler, PSRendererContextConstants {
         }
     }
 
-    /** @see org.apache.fop.render.XMLHandler#supportsRenderer(org.apache.fop.render.Renderer) */
+    /** {@inheritDoc} */
     public boolean supportsRenderer(Renderer renderer) {
         return (renderer instanceof PSRenderer);
     }
     
-    /** @see org.apache.fop.render.XMLHandler#getNamespace() */
+    /** {@inheritDoc} */
     public String getNamespace() {
         return SVGDOMImplementation.SVG_NAMESPACE_URI;
     }

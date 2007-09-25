@@ -21,15 +21,15 @@ package org.apache.fop.fo.flow;
 
 import java.awt.geom.Point2D;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.XMLObj;
 import org.xml.sax.Locator;
 
 /**
- * The instream-foreign-object flow formatting object.
- * This is an atomic inline object that contains
- * xml data.
+ * Class modelling the fo:instream-foreign-object object.
+ * This is an atomic inline object that contains XML data.
  */
 public class InstreamForeignObject extends AbstractGraphics {
     
@@ -39,6 +39,8 @@ public class InstreamForeignObject extends AbstractGraphics {
 
     //Additional value
     private Point2D intrinsicDimensions;
+    
+    private Length intrinsicAlignmentAdjust;
     
     /**
      * constructs an instream-foreign-object object (called by Maker).
@@ -52,35 +54,35 @@ public class InstreamForeignObject extends AbstractGraphics {
     /**
      * Make sure content model satisfied, if so then tell the
      * FOEventHandler that we are at the end of the flow.
-     * @see org.apache.fop.fo.FONode#endOfNode
+     * {@inheritDoc}
      */
     protected void endOfNode() throws FOPException {
-        if (childNodes == null || childNodes.size() != 1) {
+        if (firstChild == null) {
             missingChildElementError("one (1) non-XSL namespace child");
         }
         getFOEventHandler().foreignObject(this);
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc}
      * XSL Content Model: one (1) non-XSL namespace child
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             invalidChildError(loc, nsURI, localName);
-        } else if (childNodes != null) {
+        } else if (firstChild != null) {
             tooManyNodesError(loc, "child element");
         }
     }
 
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "instream-foreign-object";
     }
     
     /**
-     * @see org.apache.fop.fo.FObj#getNameId()
+     * {@inheritDoc}
      */
     public int getNameId() {
         return FO_INSTREAM_FOREIGN_OBJECT;
@@ -91,18 +93,19 @@ public class InstreamForeignObject extends AbstractGraphics {
      */
     private void prepareIntrinsicSize() {
         if (intrinsicDimensions == null) {
-            XMLObj child = (XMLObj)childNodes.get(0);
+            XMLObj child = (XMLObj) firstChild;
             Point2D csize = new Point2D.Float(-1, -1);
             intrinsicDimensions = child.getDimension(csize);
             if (intrinsicDimensions == null) {
                 log.error("Intrinsic dimensions of "
                         + " instream-foreign-object could not be determined");
             }
+            intrinsicAlignmentAdjust = child.getIntrinsicAlignmentAdjust();
         }
     }
 
     /**
-     * @see org.apache.fop.fo.flow.AbstractGraphics#getIntrinsicWidth()
+     * {@inheritDoc}
      */
     public int getIntrinsicWidth() {
         prepareIntrinsicSize();
@@ -114,7 +117,7 @@ public class InstreamForeignObject extends AbstractGraphics {
     }
 
     /**
-     * @see org.apache.fop.fo.flow.AbstractGraphics#getIntrinsicHeight()
+     * {@inheritDoc}
      */
     public int getIntrinsicHeight() {
         prepareIntrinsicSize();
@@ -124,15 +127,24 @@ public class InstreamForeignObject extends AbstractGraphics {
             return 0;
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public  Length getIntrinsicAlignmentAdjust()
+    {
+        prepareIntrinsicSize();
+        return intrinsicAlignmentAdjust;
+    }
     
-    /** @see org.apache.fop.fo.FONode#addChildNode(org.apache.fop.fo.FONode) */
+    /** {@inheritDoc} */
     protected void addChildNode(FONode child) throws FOPException {
         super.addChildNode(child);
     }
 
     /** @return the XMLObj child node of the instream-foreign-object. */
     public XMLObj getChildXMLObj() {
-        return (XMLObj) childNodes.get(0);
+        return (XMLObj) firstChild;
     }
     
 }

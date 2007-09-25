@@ -115,7 +115,7 @@ public class InputHandler implements ErrorListener, Renderable {
         transformTo(res);
     }
     
-    /** @see org.apache.fop.render.awt.viewer.Renderable */
+    /** {@inheritDoc} */
     public void renderTo(FOUserAgent userAgent, String outputFormat) throws FOPException {
         renderTo(userAgent, outputFormat, null);
     }
@@ -172,21 +172,21 @@ public class InputHandler implements ErrorListener, Renderable {
     // --- Implementation of the ErrorListener interface ---
 
     /**
-     * @see javax.xml.transform.ErrorListener#warning(javax.xml.transform.TransformerException)
+     * {@inheritDoc}
      */
     public void warning(TransformerException exc) {
         log.warn(exc.toString());
     }
 
     /**
-     * @see javax.xml.transform.ErrorListener#error(javax.xml.transform.TransformerException)
+     * {@inheritDoc}
      */
     public void error(TransformerException exc) {
         log.error(exc.toString());
     }
 
     /**
-     * @see javax.xml.transform.ErrorListener#fatalError(javax.xml.transform.TransformerException)
+     * {@inheritDoc}
      */
     public void fatalError(TransformerException exc)
             throws TransformerException {

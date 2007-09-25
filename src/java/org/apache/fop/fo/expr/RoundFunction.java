@@ -39,7 +39,7 @@ class RoundFunction extends FunctionBase {
         if (r == 0.0 && n < 0.0) {
             r = -r;    // round(-0.2) returns -0 not 0
         }
-        return new NumberProperty(r);
+        return NumberProperty.getInstance(r);
     }
 
 }

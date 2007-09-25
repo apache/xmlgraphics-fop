@@ -19,67 +19,123 @@
  
 package org.apache.fop.fo.properties;
 
-import java.util.Map;
-import java.util.WeakHashMap;
+import org.apache.fop.datatypes.Numeric;
+import org.apache.fop.datatypes.PercentBaseContext;
+import org.apache.fop.fo.expr.PropertyException;
 
 /**
  * A number quantity in XSL which is specified as an enum, such as "no-limit".
  */
-public class EnumNumber extends NumberProperty {
+public final class EnumNumber extends Property implements Numeric {
 
-    private static final Map cache = new WeakHashMap();
+    /** cache holding all canonical EnumNumber instances */
+    private static final PropertyCache cache = new PropertyCache();
 
     private final EnumProperty enumProperty;
     
-    private EnumNumber(EnumProperty enumProperty) {
-        super(null);
-        this.enumProperty = enumProperty;
+    /**
+     * Constructor
+     * @param enumProperty  the base EnumProperty
+     */
+    private EnumNumber(Property enumProperty) {
+        this.enumProperty = (EnumProperty) enumProperty;
     }
 
+    /**
+     * Returns the canonical EnumNumber instance corresponding
+     * to the given Property
+     * 
+     * @param enumProperty  the base EnumProperty
+     * @return  the canonical instance
+     */
     public static EnumNumber getInstance(Property enumProperty) {
-        EnumNumber en = (EnumNumber)cache.get(enumProperty);
-        if (en == null) {
-            en = new EnumNumber((EnumProperty)enumProperty);
-            cache.put(enumProperty, en);
-        }
-        return en;
+        return (EnumNumber)cache.fetch(
+                new EnumNumber((EnumProperty) enumProperty));
     }
 
+    /** {@inheritDoc} */
     public int getEnum() {
         return enumProperty.getEnum();
     }
 
-    /**
-     * Returns the length in 1/1000ths of a point (millipoints)
-     * @return the length in millipoints
+    /** {@inheritDoc} */
+    public String getString() {
+        return enumProperty.toString();
+    }
+
+    /** {@inheritDoc} */
+    public Object getObject() {
+        return enumProperty.getObject();
+    }
+
+    /** {@inheritDoc} */
+    public boolean equals(Object obj) {
+        if (obj instanceof EnumNumber) {
+            return (((EnumNumber)obj).enumProperty == this.enumProperty);
+        } else {
+            return false;
+        }
+    }
+
+    /** {@inheritDoc} */
+    public int hashCode() {
+        return enumProperty.hashCode();
+    }
+
+    /** {@inheritDoc} */
+    public int getDimension() {
+        return 0;
+    }
+
+    /** 
+     * {@inheritDoc}
+     * Always <code>true</code> for instances of this type
+     */
+    public boolean isAbsolute() {
+        return true;
+    }
+    
+    /** 
+     * {@inheritDoc} 
+     * logs an error, because it's not supposed to be called
+     */
+    public double getNumericValue(PercentBaseContext context) throws PropertyException {
+        log.error("getNumericValue() called on " + enumProperty + " number");
+        return 0;
+    }
+
+    /** 
+     * {@inheritDoc} 
+     * logs an error, because it's not supposed to be called
+     */
+    public int getValue(PercentBaseContext context) {
+        log.error("getValue() called on " + enumProperty + " number");
+        return 0;
+    }
+
+    /** 
+     * {@inheritDoc} 
+     * logs an error, because it's not supposed to be called
      */
     public int getValue() {
         log.error("getValue() called on " + enumProperty + " number");
         return 0;
     }
 
-    /**
-     * Returns the value as numeric.
-     * @return the length in millipoints
+    /** 
+     * {@inheritDoc} 
+     * logs an error, because it's not supposed to be called
      */
     public double getNumericValue() {
         log.error("getNumericValue() called on " + enumProperty + " number");
         return 0;
     }
 
-    /**
-     * @see org.apache.fop.fo.properties.Property#getString()
+    /** 
+     * {@inheritDoc}
      */
-    public String getString() {
-        return enumProperty.toString();
+    public Numeric getNumeric() {
+        return this;
     }
-
-    /**
-     * @see org.apache.fop.fo.properties.Property#getString()
-     */
-    public Object getObject() {
-        return enumProperty.getObject();
-    }
-
 
 }

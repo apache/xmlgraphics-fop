@@ -194,7 +194,7 @@ public final class AFPFontReader {
                 log.warn(msg);
             }
 
-            inputStream = inputStream = csfont[0].toURL().openStream();
+            inputStream = csfont[0].toURL().openStream();
             if (inputStream == null) {
                 String msg = "Failed to open character set resource "
                     + characterset;

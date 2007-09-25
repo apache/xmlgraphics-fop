@@ -34,7 +34,7 @@ public class XMLXMLHandler implements XMLHandler {
     /** Key for getting the TransformerHandler from the RendererContext */
     public static final String HANDLER = "handler";
 
-    /** @see org.apache.fop.render.XMLHandler */
+    /** {@inheritDoc} */
     public void handleXML(RendererContext context,
                 org.w3c.dom.Document doc, String ns) throws Exception {
         ContentHandler handler = (ContentHandler) context.getProperty(HANDLER);
@@ -42,12 +42,12 @@ public class XMLXMLHandler implements XMLHandler {
         new DOM2SAX(handler).writeDocument(doc, true);
     }
 
-    /** @see org.apache.fop.render.XMLHandler#supportsRenderer(org.apache.fop.render.Renderer) */
+    /** {@inheritDoc} */
     public boolean supportsRenderer(Renderer renderer) {
         return (renderer instanceof XMLRenderer);
     }
 
-    /** @see org.apache.fop.render.XMLHandler#getNamespace() */
+    /** {@inheritDoc} */
     public String getNamespace() {
         return null; //Handle all XML content
     }

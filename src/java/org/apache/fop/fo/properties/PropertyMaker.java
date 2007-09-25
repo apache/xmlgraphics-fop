@@ -283,7 +283,7 @@ public class PropertyMaker implements Cloneable {
      * inheritable, to return the inherited value. If all else fails, it returns
      * the default value.
      * @param subpropertyId  The subproperty id of the property being retrieved.
-     *        Is 0 when retriving a base property.
+     *        Is 0 when retrieving a base property.
      * @param propertyList The PropertyList object being built for this FO.
      * @param tryInherit true if inherited properties should be examined.
      * @param tryDefault true if the default value should be returned.
@@ -315,7 +315,6 @@ public class PropertyMaker implements Cloneable {
      * box.
      * Overridden by subclasses which allow percent specifications. See
      * the documentation on properties.xsl for details.
-     * @param fo the FObj containing the PercentBase
      * @param pl the PropertyList containing the property. (TODO: explain
      * what this is used for, or remove it from the signature.)
      * @return an object implementing the PercentBase interface.
@@ -525,7 +524,8 @@ public class PropertyMaker implements Cloneable {
      */
     protected Property checkEnumValues(String value) {
         if (enums != null) {
-            return (Property) enums.get(value);
+            Property p = (Property) enums.get(value);
+            return p;
         }
         return null;
     }
@@ -651,7 +651,7 @@ public class PropertyMaker implements Cloneable {
     /**
      * Return a clone of the makers. Used by useGeneric() to clone the
      * subproperty makers of the generic compound makers. 
-     * @see java.lang.Object#clone()
+     * {@inheritDoc}
      */
     public Object clone() {
         try {

@@ -86,7 +86,7 @@ public class FontFileFinder extends DirectoryWalker implements FontFinder {
      * @param depth recursion depth
      * @param results collection
      * @return whether directory should be handled
-     * @see org.apache.commons.io.DirectoryWalker#handleDirectory(File, int, Collection)
+     * {@inheritDoc} 
      */
     protected boolean handleDirectory(File directory, int depth, Collection results) {
         return true;
@@ -96,7 +96,7 @@ public class FontFileFinder extends DirectoryWalker implements FontFinder {
      * @param file file to handle
      * @param depth recursion depth
      * @param results collection
-     * @see org.apache.commons.io.DirectoryWalker#handleFile(File, int, Collection)
+     * {@inheritDoc} 
      */
     protected void handleFile(File file, int depth, Collection results) {
         results.add(file);
@@ -106,7 +106,7 @@ public class FontFileFinder extends DirectoryWalker implements FontFinder {
      * @param directory the directory being processed
      * @param depth the current directory level
      * @param results the colleciton of results objects
-     * @see org.apache.commons.io.DirectoryWalker.handleDirectoryEnd
+     * {@inheritDoc}
      */
     protected void handleDirectoryEnd(File directory, int depth, Collection results) {
         if (log.isDebugEnabled()) {
@@ -120,7 +120,7 @@ public class FontFileFinder extends DirectoryWalker implements FontFinder {
      * 
      * @return list of font files
      * @throws IOException io exception
-     * @see org.apache.fop.fonts.autodetect.FontFinder#find()
+     * {@inheritDoc}
      */
     public List find() throws IOException {
         final FontFinder fontDirFinder;

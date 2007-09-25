@@ -48,7 +48,7 @@ public class WindowsFontDirFinder implements FontFinder {
     }
 
     /**
-     * @see FontFinder#find()
+     * {@inheritDoc}
      * @return a list of detected font files
      */
     public List find() {

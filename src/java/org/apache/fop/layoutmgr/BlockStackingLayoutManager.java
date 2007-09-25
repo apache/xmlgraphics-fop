@@ -192,6 +192,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
      * Determines and sets the content area IPD based on available reference area IPD, start- and
      * end-indent properties.
      * end-indent is adjusted based on overconstrained geometry rules, if necessary.
+     * 
      * @return the resulting content area IPD
      */
     protected int updateContentAreaIPDwithOverconstrainedAdjust() {
@@ -210,6 +211,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     /**
      * Sets the content area IPD by directly supplying the value. 
      * end-indent is adjusted based on overconstrained geometry rules, if necessary.
+     * 
      * @return the resulting content area IPD
      */
     protected int updateContentAreaIPDwithOverconstrainedAdjust(int contentIPD) {
@@ -224,7 +226,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     }
     
     /**
-     * @see LayoutManager#getNextKnuthElements(LayoutContext, int)
+     * {@inheritDoc} 
      */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         //log.debug("BLM.getNextKnuthElements> keep-together = "
@@ -400,7 +402,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#negotiateBPDAdjustment(int, org.apache.fop.layoutmgr.KnuthElement)
+     * {@inheritDoc} 
      */
     public int negotiateBPDAdjustment(int adj, KnuthElement lastElement) {
 /*LF*/  //log.debug("  BLM.negotiateBPDAdjustment> " + adj);
@@ -483,7 +485,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     }
 
     /**
-     * @see BlockLevelLayoutManager#discardSpace(KnuthGlue)
+     * {@inheritDoc}
      */
     public void discardSpace(KnuthGlue spaceGlue) {
         //log.debug("  BLM.discardSpace> " + spaceGlue.getPosition().getClass().getName());
@@ -513,7 +515,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     }
 
     /**
-     * @see LayoutManager#getChangedKnuthElements(List, int)
+     * {@inheritDoc} 
      */
     public LinkedList getChangedKnuthElements(List oldList, int alignment) {
 /*LF*/  //log.debug("");
@@ -726,7 +728,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepTogether()
+     * {@inheritDoc}
      */
     // default action: ask parentLM
     public boolean mustKeepTogether() {
@@ -737,14 +739,14 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepWithPrevious()
+     * {@inheritDoc}
      */
     public boolean mustKeepWithPrevious() {
         return false;
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepWithNext()
+     * {@inheritDoc}
      */
     public boolean mustKeepWithNext() {
         return false;

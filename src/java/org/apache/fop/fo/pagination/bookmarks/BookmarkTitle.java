@@ -60,7 +60,7 @@ public class BookmarkTitle extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc}
         XSL/FOP: empty
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
@@ -77,13 +77,13 @@ public class BookmarkTitle extends FObj {
         return title;
     }
     
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "bookmark-title";
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#getNameId()
+     * {@inheritDoc}
      */
     public int getNameId() {
         return FO_BOOKMARK_TITLE;

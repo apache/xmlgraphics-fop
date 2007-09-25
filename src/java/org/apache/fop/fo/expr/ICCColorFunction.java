@@ -32,13 +32,13 @@ class ICCColorFunction extends FunctionBase {
     /**
      * rgb-icc takes a variable number of arguments. 
      * At least 4 should be passed - returns -4 
-     * @see org.apache.fop.fo.expr.Function#nbArgs() 
+     * {@inheritDoc} 
      */
     public int nbArgs() {
         return -4;
     }
     
-    /** @see org.apache.fop.fo.expr.Function */
+    /** {@inheritDoc} */
     public Property eval(Property[] args,
                          PropertyInfo pInfo) throws PropertyException {
         StringBuffer sb = new StringBuffer();

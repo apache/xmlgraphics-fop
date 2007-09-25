@@ -41,7 +41,7 @@ public class RegionAfter extends RegionBA {
     }
 
     /**
-     * @see org.apache.fop.fo.pagination.Region#getViewportRectangle(FODimension, SimplePageMaster)
+     * {@inheritDoc} 
      */
     public Rectangle getViewportRectangle (FODimension reldims, SimplePageMaster spm) {
         /* Special rules apply to resolving extent as values are resolved relative 
@@ -83,19 +83,19 @@ public class RegionAfter extends RegionBA {
     }
 
     /**
-     * @see org.apache.fop.fo.pagination.Region#getDefaultRegionName()
+     * {@inheritDoc}
      */
     protected String getDefaultRegionName() {
         return "xsl-region-after";
     }
 
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "region-after";
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#getNameId()
+     * {@inheritDoc}
      */
     public int getNameId() {
         return FO_REGION_AFTER;

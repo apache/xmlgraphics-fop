@@ -37,12 +37,12 @@ public class XMPElementMapping extends ElementMapping {
         namespaceURI = XMPConstants.XMP_NAMESPACE;
     }
 
-    /** @see org.apache.fop.fo.ElementMapping#getDOMImplementation() */
+    /** {@inheritDoc} */
     public DOMImplementation getDOMImplementation() {
         return getDefaultDOMImplementation();
     }
 
-    /** @see org.apache.fop.fo.ElementMapping#initialize() */
+    /** {@inheritDoc} */
     protected void initialize() {
         if (foObjs == null) {
             foObjs = new HashMap();

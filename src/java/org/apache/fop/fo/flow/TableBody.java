@@ -21,9 +21,7 @@ package org.apache.fop.fo.flow;
 
 // Java
 import java.util.BitSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
@@ -31,15 +29,9 @@ import org.xml.sax.Locator;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
-import org.apache.fop.fo.StaticPropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.fo.flow.TableFObj.PendingSpan;
-import org.apache.fop.fo.properties.CommonAccessibility;
-import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
-import org.apache.fop.fo.properties.CommonRelativePosition;
 
 /**
  * Class modelling the fo:table-body object.
@@ -54,8 +46,6 @@ public class TableBody extends TableFObj {
     //    private int visibility;
     // End of property values
     
-    private PropertyList savedPropertyList;
-
     /**
      * used for validation
      */
@@ -78,17 +68,15 @@ public class TableBody extends TableFObj {
     }
 
     /**
-     * @see FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         super.bind(pList);
-        //Used by convertCellsToRows()
-        savedPropertyList = pList;
     }
     
     /**
-     * @see org.apache.fop.fo.FONode#processNode(String, Locator, Attributes, PropertyList)
+     * {@inheritDoc} 
      */
     public void processNode(String elementName, Locator locator, 
                             Attributes attlist, PropertyList pList) 
@@ -108,20 +96,18 @@ public class TableBody extends TableFObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#startOfNode
+     * {@inheritDoc}
      */
     protected void startOfNode() throws FOPException {
         getFOEventHandler().startBody(this);
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#endOfNode
+     * {@inheritDoc}
      */
     protected void endOfNode() throws FOPException {
         
         if (!inMarker()) {
-            // clean up
-            savedPropertyList = null;
             pendingSpans = null;
             usedColumnIndices = null;
         }
@@ -136,17 +122,11 @@ public class TableBody extends TableFObj {
                         + "Expected: marker* (table-row+|table-cell+)");
                 getParent().removeChild(this);
             }
-        }
-        
-        /*
-        if (tableCellsFound) {
-            convertCellsToRows();
-        }
-        */
+        }        
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc} String, String)
      * XSL Content Model: marker* (table-row+|table-cell+)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
@@ -180,7 +160,7 @@ public class TableBody extends TableFObj {
     }
     
     /**
-     * @see org.apache.fop.fo.FONode#addChildNode(FONode)
+     * {@inheritDoc}
      */
     protected void addChildNode(FONode child) throws FOPException {
         if (!inMarker()) {
@@ -232,56 +212,19 @@ public class TableBody extends TableFObj {
     }
     
     /**
-     * If table-cells are used as direct children of a table-body|header|footer
-     * they are replaced in this method by proper table-rows.
-     * @throws FOPException if there's a problem binding the TableRow's 
-     *         properties.
-     */
-    // TODO: This is currently unused. Why is it here?
-    private void convertCellsToRows() throws FOPException {
-        //getLogger().debug("Converting cells to rows...");
-        List cells = new java.util.ArrayList(childNodes);
-        childNodes.clear();
-        Iterator i = cells.iterator();
-        TableRow row = null;
-        while (i.hasNext()) {
-            TableCell cell = (TableCell) i.next();
-            if (cell.startsRow() && (row != null)) {
-                childNodes.add(row);
-                row = null;
-            }
-            if (row == null) {
-                row = new TableRow(this);
-                PropertyList pList = new StaticPropertyList(row, 
-                        savedPropertyList);
-                pList.setWritingMode();
-                row.bind(pList);
-            }
-            row.addReplacedCell(cell);
-            if (cell.endsRow()) {
-                childNodes.add(row);
-                row = null;
-            }
-        }
-        if (row != null) {
-            childNodes.add(row);
-        }
-    }
-    
-    /**
      * @return the Common Border, Padding, and Background Properties.
      */
     public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
         return commonBorderPaddingBackground;
     }
 
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "table-body";
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#getNameId()
+     * {@inheritDoc}
      */
     public int getNameId() {
         return FO_TABLE_BODY;
@@ -292,21 +235,10 @@ public class TableBody extends TableFObj {
      * @return true if the given table row is the first row of this body.
      */
     public boolean isFirst(TableRow obj) {
-        return (childNodes == null 
-                || (!childNodes.isEmpty()
-                    && childNodes.get(0) == obj));
+        return (firstChild == null 
+                || firstChild == obj);
     }
 
-    /**
-     * @param obj table row in question
-     * @return true if the given table row is the first row of this body.
-     */
-    public boolean isLast(TableRow obj) {
-        return (childNodes == null
-                || (childNodes.size() > 0 
-                    && childNodes.get(childNodes.size() - 1) == obj));
-    }
-    
     /**
      * Initializes list of pending row-spans; used for correctly
      * assigning initial value for column-number for the
@@ -411,8 +343,8 @@ public class TableBody extends TableFObj {
      *             start of row)
      */
     protected boolean previousCellEndedRow() {
-        if (childNodes != null) {
-            FONode prevNode = (FONode) childNodes.get(childNodes.size() - 1);
+        if (firstChild != null) {
+            FONode prevNode = getChildNodes().lastNode();
             if (prevNode.getNameId() == FO_TABLE_CELL) {
                 return ((TableCell) prevNode).endsRow();
             }
@@ -432,7 +364,7 @@ public class TableBody extends TableFObj {
     }
     
     /**
-     * @see org.apache.fop.fo.flow.TableFObj#flagColumnIndices(int, int)
+     * {@inheritDoc} 
      */
     protected void flagColumnIndices(int start, int end) {
         for (int i = start; i < end; i++) {

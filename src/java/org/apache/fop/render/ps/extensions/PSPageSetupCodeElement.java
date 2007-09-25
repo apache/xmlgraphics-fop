@@ -37,7 +37,7 @@ public class PSPageSetupCodeElement extends AbstractPSExtensionObject {
         super(parent);
     }
 
-    /** @see org.apache.fop.fo.FONode#startOfNode() */
+    /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         super.startOfNode();
         if (parent.getNameId() != Constants.FO_SIMPLE_PAGE_MASTER) {
@@ -45,7 +45,7 @@ public class PSPageSetupCodeElement extends AbstractPSExtensionObject {
         }
     }
     
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "ps-page-setup-code";
     }

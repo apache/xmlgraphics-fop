@@ -28,6 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.layoutmgr.ElementListUtils;
+import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthPossPosIter;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.SpaceResolver;
@@ -89,11 +90,6 @@ class RowPainter {
 
     public int getAccumulatedBPD() {
         return this.accumulatedBPD;
-    }
-
-    public void notifyNestedPenaltyArea(int length) {
-        yoffset += length;
-        accumulatedBPD += length;
     }
 
     /**
@@ -233,8 +229,18 @@ class RowPainter {
             log.trace("getting len for " + columnIndex + " "
                     + start + "-" + end);
         }
+        int actualStart = start;
+        // Skip from the content length calculation glues and penalties occuring at the
+        // beginning of the page
+        while (actualStart <= end && !((KnuthElement)pgu.getElements().get(actualStart)).isBox()) {
+            actualStart++;
+        }
         int len = ElementListUtils.calcContentLength(
-                pgu.getElements(), start, end);
+                pgu.getElements(), actualStart, end);
+        KnuthElement el = (KnuthElement)pgu.getElements().get(end);
+        if (el.isPenalty()) {
+            len += el.getW();
+        }
         partBPD[columnIndex] = len;
         if (log.isTraceEnabled()) {
             log.trace("len of part: " + len);

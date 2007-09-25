@@ -138,12 +138,12 @@ public class FOElementMapping extends ElementMapping {
         }
     }
 
-    /** @see org.apache.fop.fo.ElementMapping#getStandardPrefix() */
+    /** {@inheritDoc} */
     public String getStandardPrefix() {
         return "fo";
     }
     
-    /** @see org.apache.fop.fo.ElementMapping#isAttributeProperty(org.apache.fop.util.QName) */
+    /** {@inheritDoc} */
     public boolean isAttributeProperty(QName attributeName) {
         return true; //All XSL-FO attributes are to be converted to properties.
     }
@@ -513,4 +513,5 @@ public class FOElementMapping extends ElementMapping {
             return new org.apache.fop.fo.flow.RetrieveMarker(parent);
         }
     }
+
 }

@@ -45,7 +45,7 @@ public abstract class BorderOrPaddingElement extends UnresolvedListElementWithLe
                         condLength.isDiscard(), isFirst, isLast);
     }
     
-    /** @see org.apache.fop.layoutmgr.UnresolvedListElementWithLength */
+    /** {@inheritDoc} */
     public abstract void notifyLayoutManager(MinOptMax effectiveLength);
         
 }

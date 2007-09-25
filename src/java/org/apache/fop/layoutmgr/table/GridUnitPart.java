@@ -53,13 +53,18 @@ class GridUnitPart {
         return (end >= 0 && end == pgu.getElements().size() - 1);
     }
 
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer("Part: ");
         sb.append(start).append("-").append(end);
         sb.append(" [").append(isFirstPart() ? "F" : "-").append(isLastPart() ? "L" : "-");
         sb.append("] ").append(pgu);
         return sb.toString();
+    }
+
+    boolean mustKeepWithPrevious() {
+        return pgu.getFlag(GridUnit.KEEP_WITH_PREVIOUS_PENDING)
+                || (pgu.getRow() != null && pgu.getRow().mustKeepWithPrevious());
     }
 
 }

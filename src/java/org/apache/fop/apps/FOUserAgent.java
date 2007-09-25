@@ -524,7 +524,6 @@ public class FOUserAgent {
      * messages.
      * 
      * @param enableLocator <code>false</code> if SAX Locators should be disabled
-     * @return true if context information should be stored on each node in the FO tree.
      */
     public void setLocatorEnabled(boolean enableLocator) {
         locatorEnabled = enableLocator;

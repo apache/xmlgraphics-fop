@@ -30,7 +30,6 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.fonts.FontTriplet;
 
 /**
@@ -111,15 +110,6 @@ public class CommonFont {
     /** @return the font-family names */
     public String[] getFontFamily() {
         return this.fontFamily;
-    }
-    
-    /**
-     * Overrides the font-family.
-     * @param value the new font-family
-     */
-    public void overrideFontFamily(String value) {
-        this.fontFamily = new String[] {value};
-        
     }
     
     /**

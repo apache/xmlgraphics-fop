@@ -94,7 +94,7 @@ public class PreviewDialogAboutBox extends Dialog implements ActionListener {
     }
 
     /**
-     * @see java.awt.Window#processWindowEvent(WindowEvent)
+     * {@inheritDoc}
      */
     protected void processWindowEvent(WindowEvent e) {
         if (e.getID() == WindowEvent.WINDOW_CLOSING) {
@@ -108,7 +108,7 @@ public class PreviewDialogAboutBox extends Dialog implements ActionListener {
     }
 
     /**
-     * @see java.awt.event.ActionListener#actionPerformed(ActionEvent)
+     * {@inheritDoc}
      */
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == okButton) {

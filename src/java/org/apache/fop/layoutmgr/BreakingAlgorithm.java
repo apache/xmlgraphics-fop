@@ -151,7 +151,7 @@ public abstract class BreakingAlgorithm {
 
     protected BestRecords best;
 
-    /** @see #isPartOverflowRecoveryActivated() */
+    /** {@inheritDoc} */
     private boolean partOverflowRecoveryActivated = true;
     private KnuthNode lastRecovered;
 
@@ -396,9 +396,10 @@ public abstract class BreakingAlgorithm {
     }
 
     /** @see #findBreakingPoints(KnuthSequence, int, double, boolean, int) */
-    public int findBreakingPoints(KnuthSequence par, /*int lineWidth,*/
-            double threshold, boolean force,
-            int allowedBreaks) {
+    public int findBreakingPoints(KnuthSequence par, 
+                                  double threshold, 
+                                  boolean force,
+                                  int allowedBreaks) {
         return findBreakingPoints(par, 0, threshold, force, allowedBreaks);
     }
     
@@ -412,7 +413,6 @@ public abstract class BreakingAlgorithm {
      * @param allowedBreaks one of ONLY_FORCED_BREAKS, NO_FLAGGED_PENALTIES, ALL_BREAKS
      */
     public int findBreakingPoints(KnuthSequence par, int startIndex,
-                                  /*int lineWidth,*/
                                   double threshold, boolean force,
                                   int allowedBreaks) {
         this.par = par;
@@ -652,7 +652,7 @@ public abstract class BreakingAlgorithm {
 
     /** Creates a new active node for a break from the best active node of the given
      * fitness class to the element at the given position.
-     * @see #createNode(int, int, int, int, int, int, double, int, int, int, double, KnuthNode)
+     * @see #createNode(int, int, int, int, int, int, double, int, int, int, double, org.apache.fop.layoutmgr.BreakingAlgorithm.KnuthNode)
      * @see BreakingAlgorithm.BestRecords
      */
     protected KnuthNode createNode(int position, int line, int fitness,

@@ -24,10 +24,10 @@ import java.awt.color.ColorSpace;
 import java.awt.color.ICC_Profile;
 import java.awt.Color;
 
+import org.apache.fop.datatypes.Length;
+
 /**
  * Fop image interface for loading images.
- *
- * @author Eric SCHAEFFER
  */
 public interface FopImage {
     /**
@@ -89,6 +89,12 @@ public interface FopImage {
      */
     int getIntrinsicHeight();
 
+    /**
+     * @return the intrinsic alignment-adjust value or NULL if the image does
+     *         not have one.
+     */
+    Length getIntrinsicAlignmentAdjust();
+    
     /**
      * @return the horizontal bitmap resolution (in dpi)
      */
@@ -193,6 +199,8 @@ public interface FopImage {
         public String mimeType;
         /** implementation-specific String (ex. the namespace for XML-based images) */
         public String str;
+        /** intrinsic alignment-adjust or null if there is none */
+        public Length alignmentAdjust;
     }
 
 }

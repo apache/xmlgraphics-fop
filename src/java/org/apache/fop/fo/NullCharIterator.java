@@ -42,12 +42,12 @@ public class NullCharIterator extends CharIterator {
         //nop
     }
 
-    /** @see java.util.Iterator#hasNext() */
+    /** {@inheritDoc} */
     public boolean hasNext() {
         return false;
     }
 
-    /** @see org.apache.fop.fo.CharIterator#nextChar() */
+    /** {@inheritDoc} */
     public char nextChar() throws NoSuchElementException {
         throw new NoSuchElementException();
     }

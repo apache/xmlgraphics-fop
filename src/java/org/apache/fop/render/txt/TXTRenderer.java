@@ -109,7 +109,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
     public TXTRenderer() {
     }
 
-    /** @see org.apache.fop.render.AbstractRenderer#getMimeType() */
+    /** {@inheritDoc} */
     public String getMimeType() {
         return "text/plain";
     }
@@ -195,7 +195,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#renderPage(PageViewport)
+     * {@inheritDoc}
      */
     public void renderPage(PageViewport page) throws IOException, FOPException {
         if (firstPage) {
@@ -282,7 +282,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#startRenderer(java.io.OutputStream)
+     * {@inheritDoc}
      */
     public void startRenderer(OutputStream os) throws IOException {
         log.info("Rendering areas to TEXT.");
@@ -293,7 +293,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#stopRenderer()
+     * {@inheritDoc}
      */
     public void stopRenderer() throws IOException {
         log.info("writing out TEXT");
@@ -303,7 +303,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Does nothing.
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer
+     * {@inheritDoc}
      */
     protected void restoreStateStackAfterBreakOut(List breakOutList) {
     }
@@ -311,7 +311,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
     /**
      * Does nothing.
      * @return null
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer
+     * {@inheritDoc}
      */
     protected List breakOutOfStateStack() {
         return null;
@@ -319,63 +319,63 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Does nothing.
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer
+     * {@inheritDoc}
      */
     protected void saveGraphicsState() {
     }
 
     /**
      * Does nothing.
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer
+     * {@inheritDoc}
      */
     protected void restoreGraphicsState() {
     }
 
     /**
      * Does nothing.
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer
+     * {@inheritDoc}
      */
     protected void beginTextObject() {
     }
 
     /**
      * Does nothing.
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer
+     * {@inheritDoc}
      */
     protected void endTextObject() {
     }
 
     /**
      * Does nothing.
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer
+     * {@inheritDoc}
      */
     protected void clip() {
     }
 
     /**
      * Does nothing.
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer
+     * {@inheritDoc}
      */
     protected void clipRect(float x, float y, float width, float height) {
     }
 
     /**
      * Does nothing. 
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer
+     * {@inheritDoc}
      */
     protected void moveTo(float x, float y) {
     }
 
     /**
      * Does nothing. 
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer
+     * {@inheritDoc}
      */
     protected void lineTo(float x, float y) {
     }
 
     /**
      * Does nothing.
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer
+     * {@inheritDoc}
      */
     protected void closePath() {
     }
@@ -401,7 +401,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
     
     /**
      * Fills a rectangular area with the current filling char.
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer
+     * {@inheritDoc}
      */
     protected void fillRect(float x, float y, float width, float height) {
         fillRect(bm.getStartX(), bm.getStartY(), bm.getWidth(), bm.getHeight(),
@@ -410,7 +410,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
     
     /**
      * Changes current filling char.
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer
+     * {@inheritDoc}
      */
     protected void updateColor(Color col, boolean fill) {
         if (col == null) {
@@ -438,17 +438,16 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
         }
     }
 
-    /**
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer#drawImage(
-     *          java.lang.String, java.awt.geom.Rectangle2D, java.util.Map)
-     */
+    /** {@inheritDoc} */
     protected void drawImage(String url, Rectangle2D pos, Map foreignAttributes) {
         //No images are painted here
     }
     
     /**
      * Fills image rectangle with a <code>IMAGE_CHAR</code>.
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer
+     * 
+     * @param   image   the base image
+     * @param   pos     the position of the image
      */
     public void renderImage(Image image, Rectangle2D pos) {
         int x1 = Helper.ceilPosition(currentIPPosition, CHAR_WIDTH);
@@ -488,7 +487,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer
+     * {@inheritDoc}
      */
     protected void drawBorderLine(float x1, float y1, float x2, float y2,
             boolean horz, boolean startOrBefore, int style, Color col) {
@@ -540,7 +539,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer 
+     * {@inheritDoc} 
      */
     protected void drawBackAndBorders(Area area, float startx, float starty,
             float width, float height) {
@@ -553,14 +552,14 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#startVParea(CTM, Rectangle2D)
+     * {@inheritDoc}
      */
     protected void startVParea(CTM ctm, Rectangle2D clippingRect) {
         currentState.push(ctm);
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#endVParea()
+     * {@inheritDoc}
      */
     protected void endVParea() {
         currentState.pop();

@@ -53,14 +53,14 @@ public abstract class CustomFont extends Typeface
     private boolean useKerning = true;
 
     /**
-     * @see org.apache.fop.fonts.FontMetrics#getFontName()
+     * {@inheritDoc}
      */
     public String getFontName() {
         return fontName;
     }
 
     /**
-     * @see org.apache.fop.fonts.FontMetrics#getStrippedFontName()
+     * @see FontUtil#stripWhiteSpace(String)
      */
     public String getStrippedFontName() {
         return FontUtil.stripWhiteSpace(fontName);
@@ -108,77 +108,77 @@ public abstract class CustomFont extends Typeface
     }
 
     /**
-     * @see org.apache.fop.fonts.FontDescriptor#getAscender()
+     * {@inheritDoc}
      */
     public int getAscender() {
         return ascender;
     }
 
     /**
-     * @see org.apache.fop.fonts.FontDescriptor#getDescender()
+     * {@inheritDoc}
      */
     public int getDescender() {
         return descender;
     }
 
     /**
-     * @see org.apache.fop.fonts.FontDescriptor#getCapHeight()
+     * {@inheritDoc}
      */
     public int getCapHeight() {
         return capHeight;
     }
 
     /**
-     * @see org.apache.fop.fonts.FontMetrics#getAscender(int)
+     * {@inheritDoc}
      */
     public int getAscender(int size) {
         return size * ascender;
     }
 
     /**
-     * @see org.apache.fop.fonts.FontMetrics#getDescender(int)
+     * {@inheritDoc}
      */
     public int getDescender(int size) {
         return size * descender;
     }
 
     /**
-     * @see org.apache.fop.fonts.FontMetrics#getCapHeight(int)
+     * {@inheritDoc}
      */
     public int getCapHeight(int size) {
         return size * capHeight;
     }
 
     /**
-     * @see org.apache.fop.fonts.FontMetrics#getXHeight(int)
+     * {@inheritDoc}
      */
     public int getXHeight(int size) {
         return size * xHeight;
     }
 
     /**
-     * @see org.apache.fop.fonts.FontDescriptor#getFontBBox()
+     * {@inheritDoc}
      */
     public int[] getFontBBox() {
         return fontBBox;
     }
 
     /**
-     * @see org.apache.fop.fonts.FontDescriptor#getFlags()
+     * {@inheritDoc}
      */
     public int getFlags() {
         return flags;
     }
 
     /**
-     * @see org.apache.fop.fonts.FontDescriptor#getStemV()
+     * {@inheritDoc}
      */
     public int getStemV() {
         return stemV;
     }
 
     /**
-     * @see org.apache.fop.fonts.FontDescriptor#getItalicAngle()
+     * {@inheritDoc}
      */
     public int getItalicAngle() {
         return italicAngle;
@@ -193,7 +193,7 @@ public abstract class CustomFont extends Typeface
     }
 
     /**
-     * @see org.apache.fop.fonts.FontDescriptor#getFontType()
+     * {@inheritDoc}
      */
     public FontType getFontType() {
         return fontType;
@@ -226,14 +226,14 @@ public abstract class CustomFont extends Typeface
     }
 
     /**
-     * @see org.apache.fop.fonts.FontMetrics#hasKerningInfo()
+     * {@inheritDoc}
      */
     public final boolean hasKerningInfo() {
         return (isKerningEnabled() && (kerning != null) && !kerning.isEmpty());
     }
 
     /**
-     * @see org.apache.fop.fonts.FontMetrics#getKerningInfo()
+     * {@inheritDoc}
      */
     public final Map getKerningInfo() {
         if (hasKerningInfo()) {
@@ -247,7 +247,7 @@ public abstract class CustomFont extends Typeface
     /* ---- MutableFont interface ---- */
 
     /**
-     * @see org.apache.fop.fonts.MutableFont#setFontName(String)
+     * {@inheritDoc}
      */
     public void setFontName(String name) {
         this.fontName = name;
@@ -262,21 +262,21 @@ public abstract class CustomFont extends Typeface
     }
     
     /**
-     * @see org.apache.fop.fonts.MutableFont#setEmbedFileName(String)
+     * {@inheritDoc}
      */
     public void setEmbedFileName(String path) {
         this.embedFileName = path;
     }
 
     /**
-     * @see org.apache.fop.fonts.MutableFont#setEmbedResourceName(String)
+     * {@inheritDoc}
      */
     public void setEmbedResourceName(String name) {
         this.embedResourceName = name;
     }
 
     /**
-     * @see org.apache.fop.fonts.MutableFont#setCapHeight(int)
+     * {@inheritDoc}
      */
     public void setCapHeight(int capHeight) {
         this.capHeight = capHeight;
@@ -291,77 +291,77 @@ public abstract class CustomFont extends Typeface
     }
 
     /**
-     * @see org.apache.fop.fonts.MutableFont#setAscender(int)
+     * {@inheritDoc}
      */
     public void setAscender(int ascender) {
         this.ascender = ascender;
     }
 
     /**
-     * @see org.apache.fop.fonts.MutableFont#setDescender(int)
+     * {@inheritDoc}
      */
     public void setDescender(int descender) {
         this.descender = descender;
     }
 
     /**
-     * @see org.apache.fop.fonts.MutableFont#setFontBBox(int[])
+     * {@inheritDoc}
      */
     public void setFontBBox(int[] bbox) {
         this.fontBBox = bbox;
     }
 
     /**
-     * @see org.apache.fop.fonts.MutableFont#setFlags(int)
+     * {@inheritDoc}
      */
     public void setFlags(int flags) {
         this.flags = flags;
     }
 
     /**
-     * @see org.apache.fop.fonts.MutableFont#setStemV(int)
+     * {@inheritDoc}
      */
     public void setStemV(int stemV) {
         this.stemV = stemV;
     }
 
     /**
-     * @see org.apache.fop.fonts.MutableFont#setItalicAngle(int)
+     * {@inheritDoc}
      */
     public void setItalicAngle(int italicAngle) {
         this.italicAngle = italicAngle;
     }
 
     /**
-     * @see org.apache.fop.fonts.MutableFont#setMissingWidth(int)
+     * {@inheritDoc}
      */
     public void setMissingWidth(int width) {
         this.missingWidth = width;
     }
 
     /**
-     * @see org.apache.fop.fonts.MutableFont#setFontType(FontType)
+     * {@inheritDoc}
      */
     public void setFontType(FontType fontType) {
         this.fontType = fontType;
     }
 
     /**
-     * @see org.apache.fop.fonts.MutableFont#setFirstChar(int)
+     * {@inheritDoc}
      */
     public void setFirstChar(int index) {
         this.firstChar = index;
     }
 
     /**
-     * @see org.apache.fop.fonts.MutableFont#setLastChar(int)
+     * {@inheritDoc}
      */
     public void setLastChar(int index) {
         this.lastChar = index;
     }
 
     /**
-     * @see org.apache.fop.fonts.MutableFont#setKerningEnabled(boolean)
+     * {@inheritDoc}
      */
     public void setKerningEnabled(boolean enabled) {
         this.useKerning = enabled;
@@ -376,7 +376,7 @@ public abstract class CustomFont extends Typeface
     }
 
     /**
-     * @see org.apache.fop.fonts.MutableFont#putKerningEntry(Integer, Map)
+     * {@inheritDoc} 
      */
     public void putKerningEntry(Integer key, Map value) {
         if (kerning == null) {

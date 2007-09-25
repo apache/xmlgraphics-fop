@@ -254,7 +254,7 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
     //
 
     /**
-     * @see org.xml.sax.ContentHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
+     * {@inheritDoc} 
      */
     public void startElement(String uri, String local, String raw,
                              Attributes attrs) {
@@ -283,7 +283,7 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
     }
 
     /**
-     * @see org.xml.sax.ContentHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
+     * {@inheritDoc} 
      */
     public void endElement(String uri, String local, String raw) {
 
@@ -320,7 +320,7 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
     }
 
     /**
-     * @see org.xml.sax.ContentHandler#characters(char[], int, int)
+     * {@inheritDoc} 
      */
     public void characters(char ch[], int start, int length) {
         StringBuffer chars = new StringBuffer(length);
@@ -354,7 +354,7 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
     //
 
     /**
-     * @see org.xml.sax.ErrorHandler#warning(org.xml.sax.SAXParseException)
+     * {@inheritDoc}
      */
     public void warning(SAXParseException ex) {
         errMsg = "[Warning] " + getLocationString(ex) + ": "
@@ -362,14 +362,14 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
     }
 
     /**
-     * @see org.xml.sax.ErrorHandler#error(org.xml.sax.SAXParseException)
+     * {@inheritDoc}
      */
     public void error(SAXParseException ex) {
         errMsg = "[Error] " + getLocationString(ex) + ": " + ex.getMessage();
     }
 
     /**
-     * @see org.xml.sax.ErrorHandler#fatalError(org.xml.sax.SAXParseException)
+     * {@inheritDoc}
      */
     public void fatalError(SAXParseException ex) throws SAXException {
         errMsg = "[Fatal Error] " + getLocationString(ex) + ": "

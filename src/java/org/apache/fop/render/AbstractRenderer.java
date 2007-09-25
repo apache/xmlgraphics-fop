@@ -113,29 +113,29 @@ public abstract class AbstractRenderer
     private Set warnedXMLHandlers;
     
     /**
-     *  @see org.apache.fop.render.Renderer#setupFontInfo(FontInfo)
+     *  {@inheritDoc}
      */
     public abstract void setupFontInfo(FontInfo fontInfo);
 
     /**
-     *  @see org.apache.fop.render.Renderer#setUserAgent(FOUserAgent)
+     *  {@inheritDoc}
      */
     public void setUserAgent(FOUserAgent agent) {
         userAgent = agent;
     }
 
     /**
-     *  @see org.apache.fop.render.Renderer#getUserAgent()
+     *  @return the associated <code>FOUserAgent</code>
      */
     public FOUserAgent getUserAgent() {
         return userAgent;
     }
 
-    /** @see org.apache.fop.render.Renderer#startRenderer(OutputStream) */
+    /** {@inheritDoc} */
     public void startRenderer(OutputStream outputStream)
         throws IOException { }
 
-    /** @see org.apache.fop.render.Renderer#stopRenderer() */
+    /** {@inheritDoc} */
     public void stopRenderer()
         throws IOException { }
 
@@ -145,23 +145,22 @@ public abstract class AbstractRenderer
      * not ready will be prepared and a future page will be rendered.
      *
      * @return   True if the renderer supports out of order rendering
-     * @see      org.apache.fop.render.Renderer
      */
     public boolean supportsOutOfOrder() {
         return false;
     }
 
     /**
-     * @see     org.apache.fop.render.Renderer#processOffDocumentItem(OffDocumentItem)
+     * {@inheritDoc} 
      */
     public void processOffDocumentItem(OffDocumentItem odi) { }
 
-    /** @see org.apache.fop.render.Renderer#getGraphics2DAdapter() */
+    /** {@inheritDoc} */
     public Graphics2DAdapter getGraphics2DAdapter() {
         return null;
     }
     
-    /** @see org.apache.fop.render.Renderer#getImageAdapter() */
+    /** {@inheritDoc} */
     public ImageAdapter getImageAdapter() {
         return null;
     }
@@ -178,7 +177,7 @@ public abstract class AbstractRenderer
      * page should not be rendered. The page will be rendered at a later time
      * by the call to render page.
      *
-     * @see org.apache.fop.render.Renderer#preparePage(PageViewport)
+     * {@inheritDoc}
      */
     public void preparePage(PageViewport page) { }
 
@@ -215,14 +214,14 @@ public abstract class AbstractRenderer
         return sb.toString();
     }
 
-    /** @see org.apache.fop.render.Renderer#startPageSequence(LineArea) */
+    /** {@inheritDoc} */
     public void startPageSequence(LineArea seqTitle) {
         //do nothing
     }
 
     // normally this would be overriden to create a page in the
     // output
-    /** @see org.apache.fop.render.Renderer#renderPage(PageViewport) */
+    /** {@inheritDoc} */
     public void renderPage(PageViewport page)
         throws IOException, FOPException {
 

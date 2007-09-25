@@ -20,8 +20,6 @@
 package org.apache.fop.fo.flow;
 
 // XML
-import java.awt.Color;
-
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
@@ -29,11 +27,6 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.fo.properties.CommonAccessibility;
-import org.apache.fop.fo.properties.CommonAural;
-import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
-import org.apache.fop.fo.properties.CommonFont;
-import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.SpaceProperty;
 
 /**
@@ -41,7 +34,6 @@ import org.apache.fop.fo.properties.SpaceProperty;
  */
 public class InitialPropertySet extends FObj {
     // The value of properties relevant for fo:initial-property-set.
-    private String id;
     // private ToBeImplementedProperty letterSpacing;
     private SpaceProperty lineHeight;
     // private ToBeImplementedProperty textShadow;
@@ -66,7 +58,7 @@ public class InitialPropertySet extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
@@ -76,7 +68,7 @@ public class InitialPropertySet extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc}
      * XSL Content Model: empty
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
@@ -91,13 +83,13 @@ public class InitialPropertySet extends FObj {
         return lineHeight;
     }
 
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "initial-property-set";
     }
     
     /**
-     * @see org.apache.fop.fo.FObj#getNameId()
+     * {@inheritDoc}
      */
     public int getNameId() {
         return FO_INITIAL_PROPERTY_SET;

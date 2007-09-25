@@ -304,7 +304,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
     }
 
     /**
-     * @see org.apache.fop.area.Resolvable#resolveIDRef(String, List)
+     * {@inheritDoc} 
      */
     public void resolveIDRef(String id, List pages) {
         if (page == null) {
@@ -565,7 +565,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
     }
 
     /**
-     * @see java.lang.Object#toString()
+     * {@inheritDoc}
      */
     public String toString() {
         StringBuffer sb = new StringBuffer(64);

@@ -563,7 +563,7 @@ public class RtfExternalGraphic extends RtfElement {
     /**
      * Sets the binary imagedata of the image.
      *
-     * @param imagedata Binary imagedata as read from file.
+     * @param data  binary imagedata as read from file.
      * @throws IOException On error
      */
     public void setImageData(byte[] data) throws IOException {

@@ -37,7 +37,7 @@ public class TIFFReader implements ImageReader {
 
     private static final int TIFF_SIG_LENGTH = 8;
 
-    /** @see org.apache.fop.image.analyser.ImageReader */
+    /** {@inheritDoc} */
     public FopImage.ImageInfo verifySignature(String uri, InputStream bis,
                 FOUserAgent ua) throws IOException {
         byte[] header = getDefaultHeader(bis);

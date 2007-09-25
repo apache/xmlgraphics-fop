@@ -19,13 +19,10 @@
 
 package org.apache.fop.image;
 
-import org.apache.commons.io.IOUtils;
-
 /**
  * Enhanced metafile image.
  * This supports loading a EMF image.
  *
- * @author Peter Herweg
  * @see AbstractFopImage
  * @see FopImage
  */

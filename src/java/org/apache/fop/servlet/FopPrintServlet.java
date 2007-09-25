@@ -62,8 +62,7 @@ import org.apache.fop.apps.MimeConstants;
 public class FopPrintServlet extends FopServlet {
 
     /**
-     * @see org.apache.fop.servlet.FopServlet#render(javax.xml.transform.Source, 
-     *      javax.xml.transform.Transformer, javax.servlet.http.HttpServletResponse)
+     * {@inheritDoc} 
      */
     protected void render(Source src, Transformer transformer, HttpServletResponse response)
             throws FOPException, TransformerException, IOException {

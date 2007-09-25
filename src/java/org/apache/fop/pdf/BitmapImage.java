@@ -173,13 +173,13 @@ public class BitmapImage implements PDFImage {
         return maskRef;
     }
 
-    /** @see org.apache.fop.pdf.PDFImage#isInverted() */
+    /** {@inheritDoc} */
     public boolean isInverted() {
         return false;
     }
     
     /**
-     * @see org.apache.fop.pdf.PDFImage#outputContents(OutputStream)
+     * {@inheritDoc}
      */
     public void outputContents(OutputStream out) throws IOException {
         out.write(bitmaps);
@@ -202,14 +202,14 @@ public class BitmapImage implements PDFImage {
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFImage#getFilterHint()
+     * {@inheritDoc}
      */
     public String getFilterHint() {
         return PDFFilterList.IMAGE_FILTER;
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFImage#getPDFFilter()
+     * {@inheritDoc}
      */
     public PDFFilter getPDFFilter() {
         return null;

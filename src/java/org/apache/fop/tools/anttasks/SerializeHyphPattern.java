@@ -45,7 +45,7 @@ public class SerializeHyphPattern extends Task {
     private boolean errorDump = false;
 
     /**
-     * @see org.apache.tools.ant.Task#execute()
+     * {@inheritDoc}
      */
     public void execute() throws org.apache.tools.ant.BuildException {
         // deal with the filesets

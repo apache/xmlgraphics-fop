@@ -185,7 +185,7 @@ public class PrintRenderer extends Java2DRenderer implements Pageable {
         return vec;
     }
 
-    /** @see java.awt.print.Pageable#getPageFormat(int) */
+    /** {@inheritDoc} */
     public PageFormat getPageFormat(int pageIndex)
             throws IndexOutOfBoundsException {
         try {

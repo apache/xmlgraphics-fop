@@ -60,7 +60,7 @@ public class DestinationData extends AbstractOffDocumentItem implements Resolvab
     }
 
     /**
-     * @see org.apache.fop.area.Resolvable#getIDRefs()
+     * {@inheritDoc}
      */
     public String[] getIDRefs() {
         return idRefs;
@@ -90,7 +90,7 @@ public class DestinationData extends AbstractOffDocumentItem implements Resolvab
      * Resolves the idref of this object by getting the PageViewport
      * object that corresponds to the IDRef
      *
-     * @see org.apache.fop.area.Resolvable#resolveIDRef(String, List)
+     * {@inheritDoc} List)
      * @todo check to make sure it works if multiple bookmark-items
      * have the same idref
      */
@@ -100,7 +100,7 @@ public class DestinationData extends AbstractOffDocumentItem implements Resolvab
     }
 
     /**
-     * @see org.apache.fop.area.OffDocumentItem#getName()
+     * {@inheritDoc}
      */
     public String getName() {
         return "Destination";

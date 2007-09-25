@@ -38,7 +38,7 @@ import org.apache.xmlgraphics.util.io.Base64DecodeStream;
 public class DataURIResolver implements URIResolver {
 
     /**
-     * @see javax.xml.transform.URIResolver#resolve(java.lang.String, java.lang.String)
+     * {@inheritDoc}
      */
     public Source resolve(String href, String base) throws TransformerException {
         if (href.startsWith("data:")) {

@@ -42,7 +42,7 @@ public class ListProperty extends Property {
         }
 
         /**
-         * @see PropertyMaker#convertProperty
+         * {@inheritDoc}
          */
         public Property convertProperty(Property p,
                                         PropertyList propertyList, FObj fo) {

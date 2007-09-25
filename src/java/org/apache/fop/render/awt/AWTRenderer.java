@@ -94,7 +94,7 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
         this.previewAsMainWindow = previewAsMainWindow;
     }
 
-    /** @see org.apache.fop.render.Renderer#setUserAgent(org.apache.fop.apps.FOUserAgent) */
+    /** {@inheritDoc} */
     public void setUserAgent(FOUserAgent foUserAgent) {
         super.setUserAgent(foUserAgent);
         if (dialogDisplay) {
@@ -122,7 +122,7 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
     }
 
     /** 
-     * @see org.apache.fop.render.Renderer#renderPage(org.apache.fop.area.PageViewport)
+     * {@inheritDoc}
      */
     public void renderPage(PageViewport pageViewport) throws IOException {
 
@@ -132,7 +132,7 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
         }
     }
 
-    /** @see org.apache.fop.render.Renderer#stopRenderer() */
+    /** {@inheritDoc} */
     public void stopRenderer() throws IOException {
         super.stopRenderer();
         if (statusListener != null) {
@@ -160,7 +160,7 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
         return new Dimension(bitmapWidth, bitmapHeight);
     }
 
-    /** @see java.awt.print.Pageable#getPageFormat(int) */
+    /** {@inheritDoc} */
     public PageFormat getPageFormat(int pageIndex)
             throws IndexOutOfBoundsException {
         try {
@@ -194,18 +194,18 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
         }
     }
 
-    /** @see java.awt.print.Pageable#getPrintable(int) */
+    /** {@inheritDoc} */
     public Printable getPrintable(int pageIndex)
             throws IndexOutOfBoundsException {
         return this;
     }
 
-    /** @see org.apache.fop.render.Renderer */
+    /** {@inheritDoc} */
     public boolean supportsOutOfOrder() {
         return true; // TODO true?
     }
 
-    /** @see org.apache.fop.render.AbstractRenderer */
+    /** {@inheritDoc} */
     public String getMimeType() {
         return MIME_TYPE;
     }
@@ -214,7 +214,7 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
      * Draws the background and borders and adds a basic debug view // TODO
      * implement visual-debugging as standalone
      *
-     * @see org.apache.fop.render.java2d.Java2DRenderer#drawBackAndBorders(org.apache.fop.area.Area,
+     * {@inheritDoc}
      * float, float, float, float)
      *
      * @param area the area to get the traits from

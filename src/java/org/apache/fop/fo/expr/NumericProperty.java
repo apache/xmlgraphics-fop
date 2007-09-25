@@ -49,7 +49,7 @@ public class NumericProperty extends Property implements Numeric, Length {
 
     /**
      * Return the dimension.
-     * @see Numeric#getDimension()
+     * {@inheritDoc}
      */
     public int getDimension() {
         return dim;
@@ -57,14 +57,14 @@ public class NumericProperty extends Property implements Numeric, Length {
 
     /**
      * Return the value.
-     * @see Numeric#getNumericValue()
+     * {@inheritDoc}
      */
     public double getNumericValue() {
         return value;
     }
 
     /**
-     * @see Numeric#getNumericValue(PercentBaseContext)
+     * {@inheritDoc}
      */
     public double getNumericValue(PercentBaseContext context) {
         return value;
@@ -72,33 +72,33 @@ public class NumericProperty extends Property implements Numeric, Length {
 
     /**
      * Return true of the numeric is absolute.
-     * @see Numeric#isAbsolute()
+     * {@inheritDoc}
      */
     public boolean isAbsolute() {
         return true;
     }
 
-    /** @see org.apache.fop.fo.properties.Property#getNumeric() */
+    /** {@inheritDoc} */
     public Numeric getNumeric() {
         return this;
     }
 
-    /** @see org.apache.fop.fo.properties.Property#getNumber() */
+    /** {@inheritDoc} */
     public Number getNumber() {
         return new Double(value);
     }
 
-    /** @see org.apache.fop.datatypes.Numeric#getValue() */
+    /** {@inheritDoc} */
     public int getValue() {
         return (int) value;
     }
 
-    /** @see org.apache.fop.datatypes.Numeric#getValue(PercentBaseContext) */
+    /** {@inheritDoc} */
     public int getValue(PercentBaseContext context) {
         return (int) value;
     }
 
-    /** @see org.apache.fop.fo.properties.Property#getLength() */
+    /** {@inheritDoc} */
     public Length getLength() {
         if (dim == 1) {
             return this;
@@ -107,18 +107,18 @@ public class NumericProperty extends Property implements Numeric, Length {
         return null;
     }
 
-    /** @see org.apache.fop.fo.properties.Property#getColor(FOUserAgent) */
+    /** {@inheritDoc} */
     public Color getColor(FOUserAgent foUserAgent) {
         // TODO:  try converting to numeric number and then to color
         return null;
     }
 
-    /** @see org.apache.fop.fo.properties.Property#getObject() */
+    /** {@inheritDoc} */
     public Object getObject() {
         return this;
     }
 
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         if (dim == 1) {
             return (int) value + "mpt";

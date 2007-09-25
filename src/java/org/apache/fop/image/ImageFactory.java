@@ -339,7 +339,7 @@ class BasicImageCache implements ImageCache {
         // do nothing
     }
 
-    /** @see org.apache.fop.image.ImageCache#clearAll() */
+    /** {@inheritDoc} */
     public void clearAll() {
         invalid.clear();
     }
@@ -549,7 +549,7 @@ class ContextImageCache implements ImageCache {
 
     }
 
-    /** @see org.apache.fop.image.ImageCache#clearAll() */
+    /** {@inheritDoc} */
     public void clearAll() {
         this.refStore.clear();
         this.invalid.clear();

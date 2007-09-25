@@ -81,12 +81,12 @@ public class PSSetupCode implements ExtensionAttachment, Serializable, XMLizable
         this.name = name;
     }
 
-    /** @see org.apache.fop.fo.extensions.ExtensionAttachment#getCategory() */
+    /** {@inheritDoc} */
     public String getCategory() {
         return CATEGORY;
     }
     
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         return "PSSetupCode(name=" + getName() + ")";
     }
@@ -94,7 +94,7 @@ public class PSSetupCode implements ExtensionAttachment, Serializable, XMLizable
     private static final String ATT_NAME = "name";
     private static final String ELEMENT = "ps-setup-code";
     
-    /** @see org.apache.fop.util.XMLizable#toSAX(org.xml.sax.ContentHandler) */
+    /** {@inheritDoc} */
     public void toSAX(ContentHandler handler) throws SAXException {
         AttributesImpl atts = new AttributesImpl();
         if (name != null && name.length() > 0) {

@@ -74,7 +74,7 @@ public class KnuthGlue extends KnuthElement {
         adjustmentClass = iAdjClass;
     }
 
-    /** @see org.apache.fop.layoutmgr.KnuthElement#isGlue() */
+    /** {@inheritDoc} */
     public boolean isGlue() {
         return true;
     }
@@ -94,7 +94,7 @@ public class KnuthGlue extends KnuthElement {
         return adjustmentClass;
     }
     
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer(64);
         if (isAuxiliary()) {

@@ -212,7 +212,7 @@ public class PrimaryGridUnit extends GridUnit {
         return widths;
     }
 
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer(super.toString());
         sb.append(" startRow=").append(startRow);

@@ -30,7 +30,6 @@ import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FOText;
-import org.apache.fop.fo.flow.Inline;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.layoutmgr.InlineKnuthSequence;
 import org.apache.fop.layoutmgr.KnuthBox;
@@ -165,6 +164,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
     private int lineStartBAP = 0;
     private int lineEndBAP = 0;
+    
+    private boolean keepTogether;
 
     /**
      * Create a Text layout manager.
@@ -183,7 +184,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         vecAreaInfo = new java.util.ArrayList();
     }
     
-    /** @see org.apache.fop.layoutmgr.LayoutManager#initialize */
+    /** {@inheritDoc} */
     public void initialize() {
         font = foText.getCommonFont().getFontState(foText.getFOEventHandler().getFontInfo(), this);
         
@@ -214,11 +215,9 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         // in the SpaceVal.makeWordSpacing() method
         letterSpaceIPD = ls.getSpace();
         wordSpaceIPD = MinOptMax.add(new MinOptMax(spaceCharIPD), ws.getSpace());
+        
+        keepTogether = foText.getKeepTogether().getWithinLine().getEnum() == Constants.EN_ALWAYS;
 
-        // if the text node is son of an inline, set vertical align
-        if (foText.getParent() instanceof Inline) {
-            Inline fobj = (Inline)foText.getParent();
-        }
     }
 
     /**
@@ -543,15 +542,11 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
      */
     private static boolean isSpace(final char ch) {
         return ch == CharUtilities.SPACE
-            || ch == CharUtilities.NBSPACE
+            || CharUtilities.isNonBreakableSpace(ch)
             || CharUtilities.isFixedWidthSpace(ch);
     }
     
-    private static boolean isBreakChar(final char ch) {
-        return (BREAK_CHARS.indexOf(ch) >= 0);
-    }
-    
-    /** @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(LayoutContext, int) */
+    /** {@inheritDoc} */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         lineStartBAP = context.getLineStartBorderAndPaddingWidth();
         lineEndBAP = context.getLineEndBorderAndPaddingWidth();
@@ -571,7 +566,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         while (iNextStart < textArray.length) {
             ch = textArray[iNextStart]; 
             boolean breakOpportunity = false;
-            byte breakAction = lbs.nextChar(ch);
+            byte breakAction = keepTogether? LineBreakStatus.PROHIBITED_BREAK : lbs.nextChar(ch);
             switch (breakAction) {
                 case LineBreakStatus.COMBINING_PROHIBITED_BREAK:
                 case LineBreakStatus.PROHIBITED_BREAK:
@@ -689,14 +684,16 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 }
             }
             
-            if (ch == CharUtilities.SPACE && foText.getWhitespaceTreatment() == Constants.EN_PRESERVE || ch == CharUtilities.NBSPACE) {
+            if ((ch == CharUtilities.SPACE 
+                    && foText.getWhitespaceTreatment() == Constants.EN_PRESERVE) 
+                    || ch == CharUtilities.NBSPACE) {
                 // preserved space or non-breaking space:
                 // create the AreaInfo object
                 ai = new AreaInfo(iNextStart, (short) (iNextStart + 1),
                         (short) 1, (short) 0,
                         wordSpaceIPD, false, true, breakOpportunity);
                 iThisStart = (short) (iNextStart + 1);
-            } else if (CharUtilities.isFixedWidthSpace(ch)) {
+            } else if (CharUtilities.isFixedWidthSpace(ch) || CharUtilities.isZeroWidthSpace(ch)) {
                 // create the AreaInfo object
                 MinOptMax ipd = new MinOptMax(font.getCharWidth(ch));
                 ai = new AreaInfo(iNextStart, (short) (iNextStart + 1),
@@ -799,7 +796,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         }
     }
 
-    /** @see InlineLevelLayoutManager#addALetterSpaceTo(List) */
+    /** {@inheritDoc} */
     public List addALetterSpaceTo(List oldList) {
         // old list contains only a box, or the sequence: box penalty glue box;
         // look at the Position stored in the first element in oldList
@@ -865,7 +862,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         }
     }
 
-    /** @see InlineLevelLayoutManager#hyphenate(Position, HyphContext) */
+    /** {@inheritDoc} */
     public void hyphenate(Position pos, HyphContext hc) {
         AreaInfo ai
             = (AreaInfo) vecAreaInfo.get(((LeafPosition) pos).getLeafPos());
@@ -943,7 +940,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         }
     }
 
-    /** @see InlineLevelLayoutManager#applyChanges(List) */
+    /** {@inheritDoc} */
     public boolean applyChanges(List oldList) {
         setFinished(false);
 
@@ -975,7 +972,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         return bChanged;
     }
 
-    /** @see org.apache.fop.layoutmgr.LayoutManager#getChangedKnuthElements(List, int) */
+    /** {@inheritDoc} */
     public LinkedList getChangedKnuthElements(List oldList,
                                               int alignment) {
         if (isFinished()) {
@@ -1002,7 +999,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         return returnList;
     }
 
-    /** @see InlineLevelLayoutManager#getWordChars(StringBuffer, Position) */
+    /** {@inheritDoc} */
     public void getWordChars(StringBuffer sbChars, Position pos) {
         int iLeafValue = ((LeafPosition) pos).getLeafPos();
         if (iLeafValue != -1) {

@@ -62,7 +62,7 @@ public class BeforeFloat extends BlockParent {
         return h;
     }
 
-    /** @see org.apache.fop.area.BlockParent#isEmpty() */
+    /** {@inheritDoc} */
     public boolean isEmpty() {
         return true; // before floats are not yet implemented
     }

@@ -76,7 +76,7 @@ public class Position {
         }
     }
     
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append("Position:").append(getIndex()).append("(");

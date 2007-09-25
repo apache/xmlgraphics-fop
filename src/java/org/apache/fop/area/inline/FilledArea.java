@@ -86,7 +86,7 @@ public class FilledArea extends InlineParent {
     }
 
     /**
-     * @see org.apache.fop.area.Area#getBPD
+     * {@inheritDoc}
      */
     public int getBPD() {
         int bpd = 0;

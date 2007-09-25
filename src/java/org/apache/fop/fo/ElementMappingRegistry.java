@@ -131,10 +131,10 @@ public class ElementMappingRegistry {
         Map table = (Map)fobjTable.get(namespaceURI);
         Maker fobjMaker = null;
         if (table != null) {
-            fobjMaker = (ElementMapping.Maker)table.get(localName);
+            fobjMaker = (Maker)table.get(localName);
             // try default
             if (fobjMaker == null) {
-                fobjMaker = (ElementMapping.Maker)table.get(ElementMapping.DEFAULT);
+                fobjMaker = (Maker)table.get(ElementMapping.DEFAULT);
             }
         }
 

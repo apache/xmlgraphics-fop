@@ -34,7 +34,7 @@ class CeilingFunction extends FunctionBase {
         if (dbl == null) {
             throw new PropertyException("Non number operand to ceiling function");
         }
-        return new NumberProperty(Math.ceil(dbl.doubleValue()));
+        return NumberProperty.getInstance(Math.ceil(dbl.doubleValue()));
     }
 
 }

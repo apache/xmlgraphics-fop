@@ -189,7 +189,7 @@ public class AreaTreeHandler extends FOEventHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler
+     * {@inheritDoc}
      * @param pageSequence
      *            is the pageSequence being started
      */

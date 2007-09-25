@@ -42,17 +42,17 @@ public class AFPElement extends AbstractAFPExtensionObject {
         super(parent, name);
     }
 
-    /** @see org.apache.fop.fo.FONode#getNamespaceURI() */
+    /** {@inheritDoc} */
     public String getNamespaceURI() {
         return AFPElementMapping.NAMESPACE;
     }
 
-    /** @see org.apache.fop.fo.FONode#getNormalNamespacePrefix() */
+    /** {@inheritDoc} */
     public String getNormalNamespacePrefix() {
         return "afp";
     }
 
-    /** @see org.apache.fop.fo.FONode#startOfNode() */
+    /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         super.startOfNode();
         //if (!AFPElementMapping.NAMESPACE.equals(parent.getNamespaceURI())

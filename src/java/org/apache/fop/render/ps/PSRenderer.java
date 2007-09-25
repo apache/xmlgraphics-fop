@@ -143,7 +143,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
     private Map formResources;
     
     /**
-     * @see org.apache.fop.render.Renderer#setUserAgent(FOUserAgent)
+     * {@inheritDoc}
      */
     public void setUserAgent(FOUserAgent agent) {
         super.setUserAgent(agent);
@@ -196,12 +196,12 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         return this.autoRotateLandscape;
     }
 
-    /** @see org.apache.fop.render.Renderer#getGraphics2DAdapter() */
+    /** {@inheritDoc} */
     public Graphics2DAdapter getGraphics2DAdapter() {
         return new PSGraphics2DAdapter(this);
     }
 
-    /** @see org.apache.fop.render.Renderer#getImageAdapter() */
+    /** {@inheritDoc} */
     public ImageAdapter getImageAdapter() {
         return this;
     }
@@ -250,7 +250,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         moveTo(this.currentIPPosition, this.currentBPPosition);
     }
 
-    /** @see org.apache.fop.render.AbstractPathOrientedRenderer#clip() */
+    /** {@inheritDoc} */
     protected void clip() {
         writeln("clip newpath");
     }
@@ -273,7 +273,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         }
     }
 
-    /** @see org.apache.fop.render.AbstractPathOrientedRenderer#moveTo(float, float) */
+    /** {@inheritDoc} */
     protected void moveTo(float x, float y) {
         writeln(gen.formatDouble(x) + " " + gen.formatDouble(y) + " M");
     }
@@ -288,17 +288,17 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         writeln(gen.formatDouble(x) + " " + gen.formatDouble(y) + " RM");
     }
     
-    /** @see org.apache.fop.render.AbstractPathOrientedRenderer#lineTo(float, float) */
+    /** {@inheritDoc} */
     protected void lineTo(float x, float y) {
         writeln(gen.formatDouble(x) + " " + gen.formatDouble(y) + " lineto");
     }
     
-    /** @see org.apache.fop.render.AbstractPathOrientedRenderer#closePath() */
+    /** {@inheritDoc} */
     protected void closePath() {
         writeln("cp");
     }
     
-    /** @see org.apache.fop.render.AbstractPathOrientedRenderer */
+    /** {@inheritDoc} */
     protected void fillRect(float x, float y, float width, float height) {
         if (width != 0 && height != 0) {
             try {
@@ -310,7 +310,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         }
     }
 
-    /** @see org.apache.fop.render.AbstractPathOrientedRenderer */
+    /** {@inheritDoc} */
     protected void updateColor(Color col, boolean fill) {
         try {
             useColor(col);
@@ -319,7 +319,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         }
     }
 
-    /** @see org.apache.fop.render.AbstractPathOrientedRenderer */
+    /** {@inheritDoc} */
     protected void drawImage(String uri, Rectangle2D pos, Map foreignAttributes) {
         endTextObject();
         uri = ImageFactory.getURL(uri);
@@ -386,7 +386,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         return !this.twoPassGeneration;
     }
     
-    /** @see org.apache.fop.render.ImageAdapter */
+    /** {@inheritDoc} */
     public void paintImage(RenderedImage image, RendererContext context, 
             int x, int y, int width, int height) throws IOException {
         float fx = (float)x / 1000f;
@@ -516,7 +516,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         gen.useRGBColor(col);
     }
 
-    /** @see org.apache.fop.render.AbstractPathOrientedRenderer#drawBackAndBorders(
+    /** {@inheritDoc}
      * Area, float, float, float, float) */
     protected void drawBackAndBorders(Area area, float startx, float starty,
             float width, float height) {
@@ -532,7 +532,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         }
     }
     
-    /** @see org.apache.fop.render.AbstractPathOrientedRenderer */
+    /** {@inheritDoc} */
     protected void drawBorderLine(float x1, float y1, float x2, float y2, 
             boolean horz, boolean startOrBefore, int style, Color col) {
         try {
@@ -687,7 +687,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
     }
     
     /**
-     * @see org.apache.fop.render.Renderer#startRenderer(OutputStream)
+     * {@inheritDoc}
      */
     public void startRenderer(OutputStream outputStream)
                 throws IOException {
@@ -731,7 +731,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#stopRenderer()
+     * {@inheritDoc}
      */
     public void stopRenderer() throws IOException {
         //Notify resource usage for font which are not supplied
@@ -789,7 +789,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         }
     }
 
-    /** @see org.apache.fop.render.Renderer */
+    /** {@inheritDoc} */
     public void processOffDocumentItem(OffDocumentItem oDI) {
         if (log.isDebugEnabled()) {
             log.debug("Handling OffDocumentItem: " + oDI.getName());
@@ -807,7 +807,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         super.processOffDocumentItem(oDI);
     }
     
-    /** @see org.apache.fop.render.Renderer#startPageSequence(org.apache.fop.area.LineArea) */
+    /** {@inheritDoc} */
     public void startPageSequence(LineArea seqTitle) {
         super.startPageSequence(seqTitle);
         if (!firstPageSequenceReceived) {
@@ -865,7 +865,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#renderPage(PageViewport)
+     * {@inheritDoc}
      */
     public void renderPage(PageViewport page)
             throws IOException, FOPException {
@@ -960,7 +960,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         gen.getResourceTracker().writeResources(true, gen);
     }
 
-    /** @see org.apache.fop.render.AbstractRenderer */
+    /** {@inheritDoc} */
     protected void renderRegionViewport(RegionViewport port) {
         if (port != null) {
             comment("%FOPBeginRegionViewport: " + port.getRegionReference().getRegionName());
@@ -988,7 +988,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderText(TextArea)
+     * {@inheritDoc}
      */
     public void renderText(TextArea area) {
         renderInlineAreaBackAndBorders(area);
@@ -1022,7 +1022,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
     }
     
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderWord(org.apache.fop.area.inline.WordArea)
+     * {@inheritDoc}
      */
     protected void renderWord(WordArea word) {
         renderText((TextArea)word.getParentArea(), word.getWord(), word.getLetterAdjustArray());
@@ -1030,7 +1030,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderSpace(org.apache.fop.area.inline.SpaceArea)
+     * {@inheritDoc}
      */
     protected void renderSpace(SpaceArea space) {
         AbstractTextArea textArea = (AbstractTextArea)space.getParentArea();
@@ -1101,7 +1101,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
 
     }
 
-    /** @see org.apache.fop.render.AbstractPathOrientedRenderer#breakOutOfStateStack() */
+    /** {@inheritDoc} */
     protected List breakOutOfStateStack() {
         try {
             List breakOutList = new java.util.ArrayList();
@@ -1124,7 +1124,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         }
     }
     
-    /** @see org.apache.fop.render.AbstractPathOrientedRenderer */
+    /** {@inheritDoc} */
     protected void restoreStateStackAfterBreakOut(List breakOutList) {
         try {
             comment("------ restoring context after break-out...");
@@ -1142,7 +1142,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
     }
     
     /**
-     * @see org.apache.fop.render.AbstractRenderer#startVParea(CTM, Rectangle2D)
+     * {@inheritDoc} 
      */
     protected void startVParea(CTM ctm, Rectangle2D clippingRect) {
         saveGraphicsState();
@@ -1160,27 +1160,27 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#endVParea()
+     * {@inheritDoc}
      */
     protected void endVParea() {
         endTextObject();
         restoreGraphicsState();
     }
 
-    /** @see org.apache.fop.render.AbstractRenderer */
+    /** {@inheritDoc} */
     protected void renderBlockViewport(BlockViewport bv, List children) {
         comment("%FOPBeginBlockViewport: " + bv.toString());
         super.renderBlockViewport(bv, children);
         comment("%FOPEndBlockViewport");
     }
     
-    /** @see org.apache.fop.render.AbstractRenderer */
+    /** {@inheritDoc} */
     protected void renderInlineParent(InlineParent ip) {
         super.renderInlineParent(ip);
     }
     
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderLeader(org.apache.fop.area.inline.Leader)
+     * {@inheritDoc}
      */
     public void renderLeader(Leader area) {
         renderInlineAreaBackAndBorders(area);
@@ -1251,14 +1251,14 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderImage(Image, Rectangle2D)
+     * {@inheritDoc} 
      */
     public void renderImage(Image image, Rectangle2D pos) {
         drawImage(image.getURL(), pos);
     }
 
     /**
-     * @see org.apache.fop.render.PrintRenderer#createRendererContext(
+     * {@inheritDoc}
      *          int, int, int, int, java.util.Map)
      */
     protected RendererContext createRendererContext(int x, int y, int width, int height, 
@@ -1270,7 +1270,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         return context;
     }
 
-    /** @see org.apache.fop.render.AbstractRenderer */
+    /** {@inheritDoc} */
     public String getMimeType() {
         return MIME_TYPE;
     }

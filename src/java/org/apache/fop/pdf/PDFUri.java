@@ -45,7 +45,7 @@ public class PDFUri extends PDFAction {
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFObject#toPDFString()
+     * {@inheritDoc}
      */
     public String toPDFString() {
         throw new UnsupportedOperationException("This method should not be called");

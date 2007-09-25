@@ -204,7 +204,7 @@ public class PDFFont extends PDFObject {
     }
     
     /**
-     * @see org.apache.fop.pdf.PDFObject#toPDFString()
+     * {@inheritDoc}
      */
     public String toPDFString() {
         validate();

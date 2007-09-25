@@ -93,8 +93,8 @@ import org.apache.fop.util.XMLizable;
  * Renderer that renders areas to XML for debugging purposes.
  * This creates an xml that contains the information of the area
  * tree. It does not output any state or derived information.
- * The output can be used to build a new area tree (@see AreaTreeBuilder)
- * which can be rendered to any renderer.
+ * The output can be used to build a new area tree which can be 
+ * rendered to any renderer.
  */
 public class XMLRenderer extends PrintRenderer {
 
@@ -137,7 +137,7 @@ public class XMLRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#setUserAgent(FOUserAgent)
+     * {@inheritDoc}
      */
     public void setUserAgent(FOUserAgent agent) {
         super.setUserAgent(agent);
@@ -159,7 +159,7 @@ public class XMLRenderer extends PrintRenderer {
         this.mimic = renderer;
     }
 
-    /** @see org.apache.fop.render.PrintRenderer#setupFontInfo(org.apache.fop.fonts.FontInfo) */
+    /** {@inheritDoc} */
     public void setupFontInfo(FontInfo inFontInfo) {
         if (mimic != null) {
             mimic.setupFontInfo(inFontInfo);
@@ -415,7 +415,7 @@ public class XMLRenderer extends PrintRenderer {
         }
     }
 
-    /** @see org.apache.fop.render.AbstractRenderer#processOffDocumentItem(OffDocumentItem) */
+    /** {@inheritDoc} */
     public void processOffDocumentItem(OffDocumentItem oDI) {
         if (oDI instanceof BookmarkData) {
             renderBookmarkTree((BookmarkData) oDI);
@@ -466,7 +466,7 @@ public class XMLRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#startRenderer(OutputStream)
+     * {@inheritDoc}
      */
     public void startRenderer(OutputStream outputStream)
                 throws IOException {
@@ -499,7 +499,7 @@ public class XMLRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#stopRenderer()
+     * {@inheritDoc}
      */
     public void stopRenderer() throws IOException {
         endPageSequence();
@@ -516,7 +516,7 @@ public class XMLRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#renderPage(PageViewport)
+     * {@inheritDoc}
      */
     public void renderPage(PageViewport page) throws IOException, FOPException {
         atts.clear();
@@ -565,7 +565,7 @@ public class XMLRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#startPageSequence(LineArea)
+     * {@inheritDoc}
      */
     public void startPageSequence(LineArea seqTitle) {
         handleDocumentExtensionAttachments();
@@ -596,7 +596,7 @@ public class XMLRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderRegionViewport(RegionViewport)
+     * {@inheritDoc}
      */
     protected void renderRegionViewport(RegionViewport port) {
         if (port != null) {
@@ -644,18 +644,18 @@ public class XMLRenderer extends PrintRenderer {
         }
     }
 
-    /** @see org.apache.fop.render.AbstractRenderer */
+    /** {@inheritDoc} */
     protected void startVParea(CTM ctm, Rectangle2D clippingRect) {
         //only necessary for graphical output
     }
 
-    /** @see org.apache.fop.render.AbstractRenderer#endVParea() */
+    /** {@inheritDoc} */
     protected void endVParea() {
         //only necessary for graphical output
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderInlineAreaBackAndBorders(
+     * {@inheritDoc}
      *          org.apache.fop.area.inline.InlineArea)
      */
     protected void renderInlineAreaBackAndBorders(InlineArea area) {
@@ -663,7 +663,7 @@ public class XMLRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderBeforeFloat(BeforeFloat)
+     * {@inheritDoc}
      */
     protected void renderBeforeFloat(BeforeFloat bf) {
         startElement("beforeFloat");
@@ -672,7 +672,7 @@ public class XMLRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderFootnote(Footnote)
+     * {@inheritDoc}
      */
     protected void renderFootnote(Footnote footnote) {
         startElement("footnote");
@@ -681,7 +681,7 @@ public class XMLRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderMainReference(MainReference)
+     * {@inheritDoc}
      */
     protected void renderMainReference(MainReference mr) {
         atts.clear();
@@ -714,7 +714,7 @@ public class XMLRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderFlow(NormalFlow)
+     * {@inheritDoc}
      */
     protected void renderFlow(NormalFlow flow) {
         // the normal flow reference area contains stacked blocks
@@ -727,7 +727,7 @@ public class XMLRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderBlock(Block)
+     * {@inheritDoc}
      */
     protected void renderBlock(Block block) {
         atts.clear();
@@ -775,7 +775,7 @@ public class XMLRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderLineArea(LineArea)
+     * {@inheritDoc}
      */
     protected void renderLineArea(LineArea line) {
         atts.clear();
@@ -787,7 +787,7 @@ public class XMLRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderInlineArea(InlineArea)
+     * {@inheritDoc}
      */
     protected void renderInlineArea(InlineArea inlineArea) {
         atts.clear();
@@ -805,7 +805,7 @@ public class XMLRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderViewport(Viewport)
+     * {@inheritDoc}
      */
     protected void renderViewport(Viewport viewport) {
         atts.clear();
@@ -822,7 +822,7 @@ public class XMLRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer
+     * {@inheritDoc}
      */
     public void renderImage(Image image, Rectangle2D pos) {
         atts.clear();
@@ -835,7 +835,7 @@ public class XMLRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderContainer(Container)
+     * {@inheritDoc}
      */
     public void renderContainer(Container cont) {
         startElement("container");
@@ -863,7 +863,7 @@ public class XMLRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderInlineSpace(Space)
+     * {@inheritDoc}
      */
     protected void renderInlineSpace(Space space) {
         atts.clear();
@@ -875,7 +875,7 @@ public class XMLRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderText(TextArea)
+     * {@inheritDoc}
      */
     protected void renderText(TextArea text) {
         atts.clear();
@@ -895,7 +895,7 @@ public class XMLRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderWord(WordArea)
+     * {@inheritDoc}
      */
     protected void renderWord(WordArea word) {
         atts.clear();
@@ -922,7 +922,7 @@ public class XMLRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderSpace(SpaceArea)
+     * {@inheritDoc}
      */
     protected void renderSpace(SpaceArea space) {
         atts.clear();
@@ -937,7 +937,7 @@ public class XMLRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderInlineParent(InlineParent)
+     * {@inheritDoc}
      */
     protected void renderInlineParent(InlineParent ip) {
         atts.clear();
@@ -950,7 +950,7 @@ public class XMLRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderInlineBlockParent(InlineBlockParent)
+     * {@inheritDoc}
      */
     protected void renderInlineBlockParent(InlineBlockParent ibp) {
         atts.clear();
@@ -963,7 +963,7 @@ public class XMLRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderLeader(Leader)
+     * {@inheritDoc}
      */
     protected void renderLeader(Leader area) {
         atts.clear();
@@ -977,7 +977,7 @@ public class XMLRenderer extends PrintRenderer {
         super.renderLeader(area);
     }
 
-    /** @see org.apache.fop.render.AbstractRenderer#getMimeType() */
+    /** {@inheritDoc} */
     public String getMimeType() {
         return XML_MIME_TYPE;
     }

@@ -29,12 +29,12 @@ public class PSExtensionHandlerFactory implements ContentHandlerFactory {
 
     private static final String[] NAMESPACES = new String[] {PSSetupCode.CATEGORY};
     
-    /** @see org.apache.fop.util.ContentHandlerFactory#getSupportedNamespaces() */
+    /** {@inheritDoc} */
     public String[] getSupportedNamespaces() {
         return NAMESPACES;
     }
 
-    /** @see org.apache.fop.util.ContentHandlerFactory#createContentHandler() */
+    /** {@inheritDoc} */
     public ContentHandler createContentHandler() {
         return new PSExtensionHandler();
     }

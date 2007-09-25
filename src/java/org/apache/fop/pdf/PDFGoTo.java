@@ -118,7 +118,7 @@ public class PDFGoTo extends PDFAction {
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFObject#toPDFString()
+     * {@inheritDoc}
      */
     public String toPDFString() {
         String dest;

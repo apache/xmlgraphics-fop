@@ -58,7 +58,7 @@ public class AreaTreeInputHandler extends InputHandler {
         super(atfile);
     }
 
-    /** @see org.apache.fop.cli.InputHandler */
+    /** {@inheritDoc} */
     public void renderTo(FOUserAgent userAgent, String outputFormat, OutputStream out) 
                 throws FOPException {
         FontInfo fontInfo = new FontInfo();

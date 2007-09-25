@@ -48,7 +48,7 @@ public class FontShorthandProperty extends ListProperty {
         }
         
         /**
-         * @see PropertyMaker#make(PropertyList, String, FObj)
+         * {@inheritDoc} 
          */
         public Property make(PropertyList propertyList, 
                 String value, FObj fo) throws PropertyException {

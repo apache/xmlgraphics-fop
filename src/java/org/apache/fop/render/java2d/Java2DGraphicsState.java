@@ -250,7 +250,7 @@ public class Java2DGraphicsState {
     /**
      * Composes an AffineTransform object with the Transform in this Graphics2D
      * according to the rule last-specified-first-applied.
-     * @see java.awt.Graphics2D#transform(AffineTransform tf).
+     * @see java.awt.Graphics2D#transform(AffineTransform)
      *
      * @param tf the transform to concatonate to the current level transform
      */
@@ -268,7 +268,7 @@ public class Java2DGraphicsState {
         return getGraph().getTransform();
     }
 
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         String s = "AWTGraphicsState " + currentGraphics.toString()
                 + ", Stroke (width: " + currentStrokeWidth + " style: "

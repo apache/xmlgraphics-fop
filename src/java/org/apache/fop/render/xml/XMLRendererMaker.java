@@ -33,22 +33,22 @@ public class XMLRendererMaker extends AbstractRendererMaker {
 
     private static final String[] MIMES = new String[] {MimeConstants.MIME_FOP_AREA_TREE};
     
-    /**@see org.apache.fop.render.AbstractRendererMaker#makeRenderer(FOUserAgent) */
+    /**{@inheritDoc} */
     public Renderer makeRenderer(FOUserAgent userAgent) {
         return new XMLRenderer();
     }
 
-    /**@see org.apache.fop.render.AbstractRendererMaker#getConfigurator(FOUserAgent) */
+    /**{@inheritDoc} */
     public RendererConfigurator getConfigurator(FOUserAgent userAgent) {
         return new PrintRendererConfigurator(userAgent);
     }
 
-    /** @see org.apache.fop.render.AbstractRendererMaker#needsOutputStream() */
+    /** {@inheritDoc} */
     public boolean needsOutputStream() {
         return true;
     }
 
-    /** @see org.apache.fop.render.AbstractRendererMaker#getSupportedMimeTypes() */
+    /** {@inheritDoc} */
     public String[] getSupportedMimeTypes() {
         return MIMES;
     }

@@ -71,12 +71,12 @@ public class ExtensionElementMapping extends ElementMapping {
         }
     }
 
-    /** @see org.apache.fop.fo.ElementMapping#getStandardPrefix() */
+    /** {@inheritDoc} */
     public String getStandardPrefix() {
         return "fox";
     }
     
-    /** @see org.apache.fop.fo.ElementMapping#isAttributeProperty(org.apache.fop.util.QName) */
+    /** {@inheritDoc} */
     public boolean isAttributeProperty(QName attributeName) {
         if (!URI.equals(attributeName.getNamespaceURI())) {
             throw new IllegalArgumentException("The namespace URIs don't match");

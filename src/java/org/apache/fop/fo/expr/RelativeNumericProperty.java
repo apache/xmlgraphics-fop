@@ -128,14 +128,14 @@ public class RelativeNumericProperty extends Property implements Numeric, Length
 
     /**
      * Return the resolved (calculated) value of the expression. 
-     * @see org.apache.fop.datatypes.Numeric#getNumericValue()
+     * {@inheritDoc}
      */
     public double getNumericValue() throws PropertyException {
         return getResolved(null).getNumericValue(null);
     }
 
     /**
-     * @see org.apache.fop.datatypes.Numeric#getNumericValue(PercentBaseContext)
+     * {@inheritDoc}
      */
     public double getNumericValue(PercentBaseContext context) throws PropertyException {
         return getResolved(context).getNumericValue(context);
@@ -172,7 +172,7 @@ public class RelativeNumericProperty extends Property implements Numeric, Length
     }
 
     /**
-     * @see org.apache.fop.datatypes.Numeric#getValue()
+     * {@inheritDoc}
      */
     public int getValue() {
         try {
@@ -184,7 +184,7 @@ public class RelativeNumericProperty extends Property implements Numeric, Length
     }
 
     /**
-     * @see org.apache.fop.datatypes.Numeric#getValue(PercentBaseContext)
+     * {@inheritDoc}
      */
     public int getValue(PercentBaseContext context) {
         try {

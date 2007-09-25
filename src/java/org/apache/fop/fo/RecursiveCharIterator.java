@@ -123,7 +123,7 @@ public class RecursiveCharIterator extends CharIterator {
     }
 
     /**
-     * @see org.apache.fop.fo.CharIterator#nextChar()
+     * {@inheritDoc}
      */
     public char nextChar() throws NoSuchElementException {
         if (curCharIter != null) {
@@ -134,7 +134,7 @@ public class RecursiveCharIterator extends CharIterator {
     }
 
     /**
-     * @see java.util.Iterator#remove
+     * {@inheritDoc}
      */
     public void remove() {
         if (curCharIter != null) {

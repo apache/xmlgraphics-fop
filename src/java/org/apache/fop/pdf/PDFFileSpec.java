@@ -44,7 +44,7 @@ public class PDFFileSpec extends PDFObject {
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFObject#toPDFString()
+     * {@inheritDoc}
      */
     public String toPDFString() {
         return getObjectID() 

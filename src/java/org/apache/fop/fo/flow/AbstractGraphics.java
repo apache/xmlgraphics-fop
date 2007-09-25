@@ -24,12 +24,7 @@ import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
-import org.apache.fop.fo.properties.CommonAccessibility;
-import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
-import org.apache.fop.fo.properties.CommonMarginInline;
-import org.apache.fop.fo.properties.CommonRelativePosition;
-import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.fo.properties.SpaceProperty;
 
@@ -82,7 +77,7 @@ public abstract class AbstractGraphics extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
@@ -236,6 +231,12 @@ public abstract class AbstractGraphics extends FObj {
      * @return the "alignment-adjust" property
      */
     public Length getAlignmentAdjust() {
+        if (alignmentAdjust.getEnum() == EN_AUTO) {
+            final Length intrinsicAlignmentAdjust = this.getIntrinsicAlignmentAdjust();
+            if (intrinsicAlignmentAdjust != null) {
+                return intrinsicAlignmentAdjust;
+            }
+        }
         return alignmentAdjust;
     }
     
@@ -261,12 +262,17 @@ public abstract class AbstractGraphics extends FObj {
     }
     
     /**
-     * @return the graphics intrinsic width
+     * @return the graphics intrinsic width in millipoints
      */
     public abstract int getIntrinsicWidth();
 
     /**
-     * @return the graphics intrinsic height
+     * @return the graphics intrinsic height in millipoints
      */
     public abstract int getIntrinsicHeight();
+
+    /**
+     * @return the graphics intrinsic alignment-adjust
+     */
+    public abstract Length getIntrinsicAlignmentAdjust();
 }

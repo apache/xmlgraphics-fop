@@ -149,7 +149,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#setUserAgent(org.apache.fop.apps.FOUserAgent)
+     * {@inheritDoc}
      */
     public void setUserAgent(FOUserAgent foUserAgent) {
         super.setUserAgent(foUserAgent);
@@ -167,7 +167,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#setupFontInfo(org.apache.fop.fonts.FontInfo)
+     * {@inheritDoc}
      */
     public void setupFontInfo(FontInfo inFontInfo) {
         //Don't call super.setupFontInfo() here! Java2D needs a special font setup
@@ -182,7 +182,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         FontSetup.setup(fontInfo, g);
     }
 
-    /** @see org.apache.fop.render.Renderer#getGraphics2DAdapter() */
+    /** {@inheritDoc} */
     public Graphics2DAdapter getGraphics2DAdapter() {
         return new Java2DGraphics2DAdapter(state);
     }
@@ -200,12 +200,12 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         return scaleFactor;
     }
 
-    /** @see org.apache.fop.render.Renderer#startRenderer(java.io.OutputStream) */
+    /** {@inheritDoc} */
     public void startRenderer(OutputStream out) throws IOException {
         // do nothing by default
     }
 
-    /** @see org.apache.fop.render.Renderer#stopRenderer() */
+    /** {@inheritDoc} */
     public void stopRenderer() throws IOException {
         log.debug("Java2DRenderer stopped");
         renderingDone = true;
@@ -403,7 +403,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     }
     
     /**
-     * @see org.apache.fop.render.AbstractRenderer#startVParea(CTM, Rectangle2D)
+     * {@inheritDoc} 
      */
     protected void startVParea(CTM ctm, Rectangle2D clippingRect) {
 
@@ -422,14 +422,14 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#endVParea()
+     * {@inheritDoc}
      */
     protected void endVParea() {
         restoreGraphicsState();
     }
 
     /**
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer#breakOutOfStateStack()
+     * {@inheritDoc}
      */
     protected List breakOutOfStateStack() {
         log.debug("Block.FIXED --> break out");
@@ -444,7 +444,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     }
 
     /**
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer#restoreStateStackAfterBreakOut(
+     * {@inheritDoc}
      *          java.util.List)
      */
     protected void restoreStateStackAfterBreakOut(List breakOutList) {
@@ -459,14 +459,14 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     }
 
     /**
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer#updateColor(Color, boolean)
+     * {@inheritDoc} 
      */
     protected void updateColor(Color col, boolean fill) {
         state.updateColor(col);
     }
 
     /**
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer#clip()
+     * {@inheritDoc}
      */
     protected void clip() {
         if (currentPath == null) {
@@ -477,14 +477,14 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     }
 
     /**
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer#closePath()
+     * {@inheritDoc}
      */
     protected void closePath() {
         currentPath.closePath();
     }
 
     /**
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer#lineTo(float, float)
+     * {@inheritDoc} 
      */
     protected void lineTo(float x, float y) {
         if (currentPath == null) {
@@ -494,7 +494,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     }
 
     /**
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer#moveTo(float, float)
+     * {@inheritDoc} 
      */
     protected void moveTo(float x, float y) {
         if (currentPath == null) {
@@ -504,21 +504,21 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     }
 
     /**
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer#clipRect(float, float, float, float)
+     * {@inheritDoc} 
      */
     protected void clipRect(float x, float y, float width, float height) {
         state.updateClip(new Rectangle2D.Float(x, y, width, height));
     }
 
     /**
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer#fillRect(float, float, float, float)
+     * {@inheritDoc} 
      */
     protected void fillRect(float x, float y, float width, float height) {
         state.getGraph().fill(new Rectangle2D.Float(x, y, width, height));
     }
     
     /**
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer#drawBorderLine(float, float, float, float, boolean, boolean, int, Color)
+     * {@inheritDoc} 
      */
     protected void drawBorderLine(float x1, float y1, float x2, float y2, 
             boolean horz, boolean startOrBefore, int style, Color col) {
@@ -689,7 +689,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderText(TextArea)
+     * {@inheritDoc}
      */
     public void renderText(TextArea text) {
         renderInlineAreaBackAndBorders(text);
@@ -873,8 +873,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderImage(Image,
-     * Rectangle2D)
+     * {@inheritDoc}
      */
     public void renderImage(Image image, Rectangle2D pos) {
         // endTextObject();
@@ -883,8 +882,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     }
 
     /**
-     * @see org.apache.fop.render.AbstractPathOrientedRenderer#drawImage(
-     *          java.lang.String, java.awt.geom.Rectangle2D, java.util.Map)
+     * {@inheritDoc}
      */
     protected void drawImage(String url, Rectangle2D pos, Map foreignAttributes) {
 
@@ -954,8 +952,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     }
 
     /**
-     * @see org.apache.fop.render.PrintRenderer#createRendererContext(
-     *          int, int, int, int, java.util.Map)
+     * {@inheritDoc}
      */
     protected RendererContext createRendererContext(int x, int y, int width, int height, 
             Map foreignAttributes) {
@@ -966,8 +963,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     }
 
     /**
-     * @see java.awt.print.Printable#print(java.awt.Graphics,
-     * java.awt.print.PageFormat, int)
+     * {@inheritDoc}
      */
     public int print(Graphics g, PageFormat pageFormat, int pageIndex)
             throws PrinterException {
@@ -998,12 +994,12 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         }
     }
 
-    /** @see org.apache.fop.render.AbstractPathOrientedRenderer#beginTextObject() */
+    /** {@inheritDoc} */
     protected void beginTextObject() {
         //not necessary in Java2D
     }
 
-    /** @see org.apache.fop.render.AbstractPathOrientedRenderer#endTextObject() */
+    /** {@inheritDoc} */
     protected void endTextObject() {
         //not necessary in Java2D
     }

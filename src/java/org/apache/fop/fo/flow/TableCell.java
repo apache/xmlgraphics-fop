@@ -23,20 +23,14 @@ import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
-import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.fo.properties.CommonAccessibility;
-import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
-import org.apache.fop.fo.properties.CommonRelativePosition;
-import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 
 /**
  * Class modelling the fo:table-cell object.
- * @todo check need for all instance variables stored here
  */
 public class TableCell extends TableFObj {
     // The value of properties relevant for fo:table-cell.
@@ -73,7 +67,7 @@ public class TableCell extends TableFObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
@@ -90,7 +84,7 @@ public class TableCell extends TableFObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#startOfNode
+     * {@inheritDoc}
      */
     protected void startOfNode() throws FOPException {
         super.startOfNode();
@@ -100,13 +94,13 @@ public class TableCell extends TableFObj {
     /**
      * Make sure content model satisfied, if so then tell the
      * FOEventHandler that we are at the end of the flow.
-     * @see org.apache.fop.fo.FONode#endOfNode
+     * {@inheritDoc}
      */
     protected void endOfNode() throws FOPException {
         if (!blockItemFound) {
             if (getUserAgent().validateStrictly()) {
                 missingChildElementError("marker* (%block;)+");
-            } else if (childNodes != null && childNodes.size() > 0) {
+            } else if (firstChild != null) {
                 log.warn("fo:table-cell content that is not "
                         + "enclosed by a fo:block will be dropped/ignored.");
             }
@@ -120,7 +114,7 @@ public class TableCell extends TableFObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc}
      * XSL Content Model: marker* (%block;)+
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
@@ -136,7 +130,7 @@ public class TableCell extends TableFObj {
         }
     }
 
-    /** @see org.apache.fop.fo.FObj#generatesReferenceAreas() */
+    /** {@inheritDoc} */
     public boolean generatesReferenceAreas() {
         return true;
     }
@@ -203,13 +197,13 @@ public class TableCell extends TableFObj {
         return (endsRow == EN_TRUE);
     }
     
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "table-cell";
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#getNameId()
+     * {@inheritDoc}
      */
     public final int getNameId() {
         return FO_TABLE_CELL;

@@ -403,9 +403,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
         
     }
     
-    /**
-     * @see org.apache.fop.render.AbstractRenderer#renderBlockViewport(BlockViewport, List)
-     */
+    /** {@inheritDoc} */
     protected void renderBlockViewport(BlockViewport bv, List children) {
         // clip and position viewport if necessary
 
@@ -693,9 +691,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
     protected abstract void drawBorderLine(float x1, float y1, float x2, float y2, 
             boolean horz, boolean startOrBefore, int style, Color col);
 
-    /**
-     * @see org.apache.fop.render.AbstractRenderer#renderForeignObject(ForeignObject, Rectangle2D)
-     */
+    /** {@inheritDoc} */
     public void renderForeignObject(ForeignObject fo, Rectangle2D pos) {
         endTextObject();
         Document doc = fo.getDocument();

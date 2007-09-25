@@ -176,7 +176,7 @@ public abstract class FontLoader {
      */
     protected abstract void read() throws IOException;
 
-    /** @see org.apache.fop.fonts.FontLoader#getFont() */
+    /** @see FontLoader#getFont() */
     public CustomFont getFont() throws IOException {
         if (!loaded) {
             read();

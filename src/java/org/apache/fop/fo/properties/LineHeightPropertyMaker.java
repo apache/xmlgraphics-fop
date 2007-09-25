@@ -44,8 +44,7 @@ public class LineHeightPropertyMaker extends SpaceProperty.Maker {
     }
 
     /**
-     * @see PropertyMaker#make(PropertyList, String, FObj)
-     * @throws PropertyException 
+     * {@inheritDoc}
      */
     public Property make(PropertyList propertyList, String value, FObj fo) 
             throws PropertyException {
@@ -63,7 +62,6 @@ public class LineHeightPropertyMaker extends SpaceProperty.Maker {
     /**
      * Recalculate the line-height value based on the nearest specified
      * value.
-     * @see PropertyMaker#compute(PropertyList)
      */
     protected Property compute(PropertyList propertyList) throws PropertyException {
         // recalculate based on last specified value
@@ -80,7 +78,7 @@ public class LineHeightPropertyMaker extends SpaceProperty.Maker {
     }
 
     /**
-     * @see SpaceProperty.Maker#convertProperty(Property, PropertyList, FObj)
+     * {@inheritDoc} 
      */
     public Property convertProperty(Property p,
             PropertyList propertyList,

@@ -544,7 +544,7 @@ public class SpaceResolver {
             }
         }
         
-        /** @see java.lang.Object#toString() */
+        /** {@inheritDoc} */
         public String toString() {
             StringBuffer sb = new StringBuffer();
             sb.append("SpaceHandlingBreakPosition(");
@@ -597,7 +597,7 @@ public class SpaceResolver {
             }
         }
         
-        /** @see java.lang.Object#toString() */
+        /** {@inheritDoc} */
         public String toString() {
             StringBuffer sb = new StringBuffer();
             sb.append("SpaceHandlingPosition");

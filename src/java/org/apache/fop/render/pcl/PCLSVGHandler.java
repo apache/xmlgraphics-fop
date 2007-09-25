@@ -31,7 +31,7 @@ import org.apache.fop.render.Renderer;
  */
 public class PCLSVGHandler extends AbstractGenericSVGHandler {
 
-    /** @see org.apache.fop.render.XMLHandler#supportsRenderer(org.apache.fop.render.Renderer) */
+    /** {@inheritDoc} */
     public boolean supportsRenderer(Renderer renderer) {
         return (renderer instanceof PCLRenderer);
     }

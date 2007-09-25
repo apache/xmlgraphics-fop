@@ -90,7 +90,7 @@ public abstract class CIDFont extends CustomFont {
     }
 
     /**
-     * @see org.apache.fop.fonts.Typeface#isMultiByte()
+     * {@inheritDoc}
      */
     public boolean isMultiByte() {
         return true;

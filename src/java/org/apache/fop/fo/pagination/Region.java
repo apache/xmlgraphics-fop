@@ -58,7 +58,7 @@ public abstract class Region extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
@@ -92,7 +92,7 @@ public abstract class Region extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc} String, String)
      * XSL Content Model: empty
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
@@ -131,7 +131,7 @@ public abstract class Region extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#generatesReferenceAreas()
+     * {@inheritDoc}
      */
     public boolean generatesReferenceAreas() {
         return true;

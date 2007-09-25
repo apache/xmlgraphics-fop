@@ -81,7 +81,7 @@ public class KnuthPenalty extends KnuthElement {
         breakClass = iBreakClass;
     }
 
-    /** @see org.apache.fop.layoutmgr.KnuthElement#isPenalty() */
+    /** {@inheritDoc} */
     public boolean isPenalty() {
         return true;
     }
@@ -106,7 +106,7 @@ public class KnuthPenalty extends KnuthElement {
         return bFlagged;
     }
 
-    /** @see org.apache.fop.layoutmgr.KnuthElement#isForcedBreak() */
+    /** {@inheritDoc} */
     public boolean isForcedBreak() {
         return penalty == -KnuthElement.INFINITE;
     }
@@ -127,7 +127,7 @@ public class KnuthPenalty extends KnuthElement {
         this.breakClass = cl;
     }
     
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer(64);
         if (isAuxiliary()) {

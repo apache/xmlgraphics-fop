@@ -32,7 +32,7 @@ import org.apache.fop.fo.expr.PropertyException;
  */
 public class CondLengthProperty extends Property implements CompoundDatatype {
     private Property length;
-    private Property conditionality;
+    private EnumProperty conditionality;
 
     /**
      * Inner class for creating instances of CondLengthProperty
@@ -55,7 +55,7 @@ public class CondLengthProperty extends Property implements CompoundDatatype {
         }
 
         /**
-         * @see CompoundPropertyMaker#convertProperty
+         * {@inheritDoc}
          */        
         public Property convertProperty(Property p, PropertyList propertyList, FObj fo)
                     throws PropertyException {
@@ -67,19 +67,19 @@ public class CondLengthProperty extends Property implements CompoundDatatype {
     }
 
     /**
-     * @see org.apache.fop.datatypes.CompoundDatatype#setComponent(int, Property, boolean)
+     * {@inheritDoc} 
      */
     public void setComponent(int cmpId, Property cmpnValue,
                              boolean bIsDefault) {
         if (cmpId == CP_LENGTH) {
             length = cmpnValue;
         } else if (cmpId == CP_CONDITIONALITY) {
-            conditionality = cmpnValue;
+            conditionality = (EnumProperty)cmpnValue;
         }
     }
 
     /**
-     * @see org.apache.fop.datatypes.CompoundDatatype#getComponent(int)
+     * {@inheritDoc}
      */
     public Property getComponent(int cmpId) {
         if (cmpId == CP_LENGTH) {
@@ -132,7 +132,7 @@ public class CondLengthProperty extends Property implements CompoundDatatype {
         return this.length.getLength().getValue(context);
     }
 
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         return "CondLength[" + length.getObject().toString() 
                 + ", " + (isDiscard() 

@@ -33,22 +33,22 @@ public class PrintRendererMaker extends AbstractRendererMaker {
 
     private static final String[] MIMES = new String[] {MimeConstants.MIME_FOP_PRINT};
     
-    /**@see org.apache.fop.render.AbstractRendererMaker#makeRenderer(FOUserAgent) */
+    /**{@inheritDoc} */
     public Renderer makeRenderer(FOUserAgent userAgent) {
         return new PrintRenderer();
     }
 
-    /** @see org.apache.fop.render.AbstractRendererMaker#getConfigurator(FOUserAgent) */
+    /** {@inheritDoc} */
     public RendererConfigurator getConfigurator(FOUserAgent userAgent) {
         return new PrintRendererConfigurator(userAgent);
     }
 
-    /** @see org.apache.fop.render.AbstractRendererMaker#needsOutputStream() */
+    /** {@inheritDoc} */
     public boolean needsOutputStream() {
         return false;
     }
 
-    /** @see org.apache.fop.render.AbstractRendererMaker#getSupportedMimeTypes() */
+    /** {@inheritDoc} */
     public String[] getSupportedMimeTypes() {
         return MIMES;
     }

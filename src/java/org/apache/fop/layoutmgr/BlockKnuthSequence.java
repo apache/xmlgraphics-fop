@@ -44,31 +44,23 @@ public class BlockKnuthSequence extends KnuthSequence {
         super(list);
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.fop.layoutmgr.KnuthList#isInlineSequence()
-     */
+    /** {@inheritDoc} */
     public boolean isInlineSequence() {
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.fop.layoutmgr.KnuthList#canAppendSequence(org.apache.fop.layoutmgr.KnuthSequence)
-     */
+    /** {@inheritDoc} */
     public boolean canAppendSequence(KnuthSequence sequence) {
         return !sequence.isInlineSequence() && !isClosed;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.fop.layoutmgr.KnuthList#appendSequence(org.apache.fop.layoutmgr.KnuthSequence,)
-     */
+    /** {@inheritDoc} */
     public boolean appendSequence(KnuthSequence sequence) {
         // log.debug("Cannot append a sequence without a BreakElement");
         return false;
     }
     
-    /* (non-Javadoc)
-     * @see KnuthList#appendSequence(KnuthSequence, boolean, BreakElement)
-     */
+    /** {@inheritDoc} */
     public boolean appendSequence(KnuthSequence sequence, boolean keepTogether,
                                   BreakElement breakElement) {
         if (!canAppendSequence(sequence)) {
@@ -85,9 +77,7 @@ public class BlockKnuthSequence extends KnuthSequence {
         return true;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.fop.layoutmgr.KnuthSequence#endSequence()
-     */
+    /** {@inheritDoc} */
     public KnuthSequence endSequence() {
         isClosed = true;
         return this;

@@ -136,8 +136,7 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
     }
 
     /**
-     * @see org.apache.fop.render.AbstractGenericSVGHandler#renderSVGDocument(
-     *          org.apache.fop.render.RendererContext, org.w3c.dom.Document)
+     * {@inheritDoc}
      */
     protected void renderSVGDocument(RendererContext context,
             Document doc) {
@@ -267,7 +266,7 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
         pdfInfo.currentStream.add("%SVG end\n");
     }
     
-    /** @see org.apache.fop.render.XMLHandler#supportsRenderer(org.apache.fop.render.Renderer) */
+    /** {@inheritDoc} */
     public boolean supportsRenderer(Renderer renderer) {
         return (renderer instanceof PDFRenderer);
     }

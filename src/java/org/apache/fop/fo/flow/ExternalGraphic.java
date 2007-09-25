@@ -21,6 +21,7 @@ package org.apache.fop.fo.flow;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
@@ -29,7 +30,7 @@ import org.apache.fop.image.ImageFactory;
 import org.xml.sax.Locator;
 
 /**
- * External graphic formatting object.
+ * Class modelling the fo:external-graphic object.
  * This FO node handles the external graphic. It creates an image
  * inline area that can be added to the area tree.
  */
@@ -44,6 +45,7 @@ public class ExternalGraphic extends AbstractGraphics {
     private String url;
     private int intrinsicWidth;
     private int intrinsicHeight;
+    private Length intrinsicAlignmentAdjust;
     
     /**
      * Create a new External graphic node.
@@ -55,7 +57,7 @@ public class ExternalGraphic extends AbstractGraphics {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
@@ -75,12 +77,13 @@ public class ExternalGraphic extends AbstractGraphics {
             }
             this.intrinsicWidth = fopimage.getIntrinsicWidth();
             this.intrinsicHeight = fopimage.getIntrinsicHeight();
+            this.intrinsicAlignmentAdjust = fopimage.getIntrinsicAlignmentAdjust();
         }
         //TODO Report to caller so he can decide to throw an exception
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#startOfNode
+     * {@inheritDoc}
      */
     protected void startOfNode() throws FOPException {
         super.startOfNode();
@@ -88,7 +91,7 @@ public class ExternalGraphic extends AbstractGraphics {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc}
      * XSL Content Model: empty
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
@@ -110,30 +113,37 @@ public class ExternalGraphic extends AbstractGraphics {
         return url;
     }
 
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "external-graphic";
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#getNameId()
+     * {@inheritDoc}
      */
     public int getNameId() {
         return FO_EXTERNAL_GRAPHIC;
     }
 
     /**
-     * @see org.apache.fop.fo.flow.AbstractGraphics#getIntrinsicWidth()
+     * {@inheritDoc}
      */
     public int getIntrinsicWidth() {
         return this.intrinsicWidth;
     }
 
     /**
-     * @see org.apache.fop.fo.flow.AbstractGraphics#getIntrinsicHeight()
+     * {@inheritDoc}
      */
     public int getIntrinsicHeight() {
         return this.intrinsicHeight;
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
+    public Length getIntrinsicAlignmentAdjust() {
+        return this.intrinsicAlignmentAdjust;
+    }
+
 }
