@@ -43,7 +43,7 @@ import org.apache.fop.traits.MinOptMax;
  * which stack children in the inline direction, such as Inline or
  * Line. It should not be instantiated directly.
  */
-public class InlineStackingLayoutManager extends AbstractLayoutManager 
+public abstract class InlineStackingLayoutManager extends AbstractLayoutManager 
                                          implements InlineLevelLayoutManager {
 
 

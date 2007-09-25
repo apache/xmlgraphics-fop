@@ -41,6 +41,8 @@ import org.apache.commons.logging.LogFactory;
  */
 public class FontInfo {
     
+    private static final FontTriplet[] TRIPLETS_TYPE = new FontTriplet[1];
+    
     /** logging instance */
     protected static Log log = LogFactory.getLog(FontInfo.class);
 
@@ -232,26 +234,35 @@ public class FontInfo {
     }
     
     /**
-     * Lookup a font.
+     * Looks up a set of fonts.
      * <br>
-     * Locate the font name for a given family, style and weight.
-     * The font name can then be used as a key as it is unique for
+     * Locate the font name(s) for the given families, style and weight.
+     * The font name(s) can then be used as a key as they are unique for
      * the associated document.
-     * This also adds the font to the list of used fonts.
-     * @param family font family (priority list)
-     * @param style font style
-     * @param weight font weight
-     * @return font triplet of the font chosen
+     * This also adds the fonts to the list of used fonts.
+     * @param families  font families (priority list)
+     * @param style     font style
+     * @param weight    font weight
+     * @return the set of font triplets of all supported and chosen font-families
+     *          in the specified style and weight.
      */
-    public FontTriplet fontLookup(String[] family, String style,
+    public FontTriplet[] fontLookup(String[] families, String style,
                              int weight) {
-        for (int i = 0; i < family.length; i++) {
-            FontTriplet triplet = fontLookup(family[i], style, weight, (i >= family.length - 1));
+        FontTriplet triplet;
+        List tmpTriplets = new ArrayList();
+        for (int i = 0; i < families.length; i++) {
+            triplet = fontLookup(families[i], style, weight, (i >= families.length - 1));
             if (triplet != null) {
-                return triplet;
+                tmpTriplets.add(triplet);
             }
         }
-        throw new IllegalStateException("fontLookup must return a key on the last call");
+        if (tmpTriplets.size() != 0) {
+            FontTriplet[] triplets = (FontTriplet[]) tmpTriplets.toArray(TRIPLETS_TYPE);
+            return (FontTriplet[]) triplets;
+        }
+        throw new IllegalStateException(
+                    "fontLookup must return an array with at least one "
+                    + "FontTriplet on the last call.");
     }
     
     private void notifyFontReplacement(FontTriplet replacedKey, FontTriplet newKey) {

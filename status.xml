@@ -28,6 +28,33 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="code" dev="AD" type="update">
+        Facilitate the implementation for font-selection-strategy:
+        * Changed FontInfo.fontLookup to always return an array of FontTriplet
+        * Changed CommonFont.getFontState to return an array of FontTriplet
+        * Initial modifications to the related LMs: initialized with
+          the font corresponding to the first of the triplets
+      </action>
+      <action context="code" dev="AD" type="update">
+        PropertyCache phase 2:
+        * improvement of the PropertyCache itself should now guarantee acceptable
+          performance of the static caches in multi-session environments, which is 
+          a possible problem with synchronizedMap
+        * changed CommonFont to use the cache: 
+          added CachedCommonFont to contain the properties that are always cacheable
+          CommonFont itself is only cached if the remaining properties are absolutes
+        * changed CommonHyphenation, KeepProperty, ColorProperty and FontFamilyProperty to use the cache
+      </action>
+      <action context="Code" dev="AD" type="fix" fixes-bug="42705">
+        Fixed swallowing PCDATA in text-node children of
+        retrieved markers.
+      </action>
+      <action context="Code" dev="AD" type="fix" fixes-bug="42703">
+        Fixed erroneous white-space removal in retrieved markers.
+      </action>
+      <action context="Code" dev="AD" type="fix" fixes-bug="43274" due-to="ckohrn.at.tng.de">
+        Fixed erroneous usage of inherited color-values in SVG.
+      </action>
     </release>    
     <release version="0.94" date="24th August 2007">
       <action context="Code" dev="JM" type="fix">

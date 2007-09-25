@@ -35,6 +35,8 @@ import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.properties.CommonHyphenation;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.hyphenation.Hyphenation;
 import org.apache.fop.hyphenation.Hyphenator;
 import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
@@ -455,7 +457,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     /** {@inheritDoc} */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         this.context = context;
-        Font fs = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo(), this);
+        FontInfo fi = fobj.getFOEventHandler().getFontInfo();
+        FontTriplet[] fontkeys = fobj.getCommonFont().getFontState(fi);
+        Font fs = fi.getFontInstance(fontkeys[0], fobj.getCommonFont().fontSize.getValue(this));
         alignmentContext
           = new AlignmentContext(fs, lineHeight.getValue(this), context.getWritingMode());
         context.setAlignmentContext(alignmentContext);
@@ -1318,12 +1322,12 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         // since these properties inherit and could be specified
         // on an inline or wrapper below the block level.
         Hyphenation hyph
-            = Hyphenator.hyphenate(hyphenationProperties.language,
-                               hyphenationProperties.country,
+            = Hyphenator.hyphenate(hyphenationProperties.language.getString(),
+                               hyphenationProperties.country.getString(),
                                getFObj().getUserAgent().getFactory().getHyphenationTreeResolver(),
                                sbChars.toString(),
-                               hyphenationProperties.hyphenationRemainCharacterCount,
-                               hyphenationProperties.hyphenationPushCharacterCount);
+                               hyphenationProperties.hyphenationRemainCharacterCount.getValue(),
+                               hyphenationProperties.hyphenationPushCharacterCount.getValue());
         // They hyph structure contains the information we need
         // Now start from prev: reset to that position, ask that LM to get
         // a Position for the first hyphenation offset. If the offset isn't in

@@ -50,7 +50,7 @@ class RGBColorFunction extends FunctionBase {
       FOUserAgent ua = (pInfo == null) 
               ? null 
               : (pInfo.getFO() == null ? null : pInfo.getFO().getUserAgent());
-      return new ColorProperty(ua, "rgb(" + args[0] + "," + args[1] + "," + args[2] + ")");
+      return ColorProperty.getInstance(ua, "rgb(" + args[0] + "," + args[1] + "," + args[2] + ")");
 
     }
 

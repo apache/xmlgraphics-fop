@@ -39,6 +39,8 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.SpaceProperty;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.layoutmgr.BlockKnuthSequence;
 import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BreakElement;
@@ -87,6 +89,8 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     protected int dominantBaseline;
     /** The line height property */
     protected SpaceProperty lineHeight;
+    /** The keep-together property */
+    //private KeepProperty keepTogether;
     
     private AlignmentContext alignmentContext = null;
 
@@ -110,7 +114,9 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     /** {@inheritDoc} */
     public void initialize() {
         int padding = 0;
-        font = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo(), this);
+        FontInfo fi = fobj.getFOEventHandler().getFontInfo();
+        FontTriplet[] fontkeys = fobj.getCommonFont().getFontState(fi);
+        font = fi.getFontInstance(fontkeys[0], fobj.getCommonFont().fontSize.getValue(this));
         lineHeight = fobj.getLineHeight();
         borderProps = fobj.getCommonBorderPaddingBackground();
         inlineProps = fobj.getCommonMarginInline();

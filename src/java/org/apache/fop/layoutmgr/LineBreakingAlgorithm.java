@@ -177,7 +177,7 @@ public class LineBreakingAlgorithm extends BreakingAlgorithm {
         lineLayouts = new LineLayoutPossibilities();
         double maxAdjustment = 1;
         int iBPcount = 0;
-        if (thisLLM.hyphenationProperties.hyphenate == Constants.EN_TRUE 
+        if (thisLLM.hyphenationProperties.hyphenate.getEnum() == Constants.EN_TRUE 
                 && ((Block) thisLLM.getFObj()).getWrapOption() != Constants.EN_NO_WRAP) {
             thisLLM.findHyphenationPoints(par);
         }
@@ -202,8 +202,9 @@ public class LineBreakingAlgorithm extends BreakingAlgorithm {
             }
    
             // now try something different
-            log.debug("Hyphenation possible? " + (thisLLM.hyphenationProperties.hyphenate == Constants.EN_TRUE));
-            if (thisLLM.hyphenationProperties.hyphenate == Constants.EN_TRUE
+            log.debug("Hyphenation possible? "
+                      + (thisLLM.hyphenationProperties.hyphenate.getEnum() == Constants.EN_TRUE));
+            if (thisLLM.hyphenationProperties.hyphenate.getEnum() == Constants.EN_TRUE
                 && !(allowedBreaks == BreakingAlgorithm.ONLY_FORCED_BREAKS)) {
                 // consider every hyphenation point as a legal break
                 allowedBreaks = BreakingAlgorithm.ALL_BREAKS;
@@ -219,7 +220,7 @@ public class LineBreakingAlgorithm extends BreakingAlgorithm {
                 // a set of breaking points
                 log.debug("No set of breaking points found with maxAdjustment = "
                           + maxAdjustment
-                          + (thisLLM.hyphenationProperties.hyphenate == Constants.EN_TRUE
+                          + (thisLLM.hyphenationProperties.hyphenate.getEnum() == Constants.EN_TRUE
                                   ? " and hyphenation" : ""));
                 maxAdjustment = 20;
                 iBPcount

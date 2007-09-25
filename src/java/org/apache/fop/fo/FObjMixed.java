@@ -150,8 +150,7 @@ public abstract class FObjMixed extends FObj {
      */
     protected void addChildNode(FONode child) throws FOPException {
         flushText();
-        if (!inMarker() 
-                || getNameId() == FO_MARKER) {
+        if (!inMarker()) {
             if (child instanceof FOText || child.getNameId() == FO_CHARACTER) {
                 if (currentTextNode == null) {
                     currentTextNode = child;

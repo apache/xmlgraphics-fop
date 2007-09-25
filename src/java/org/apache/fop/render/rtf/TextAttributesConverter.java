@@ -142,16 +142,16 @@ final class TextAttributesConverter {
                 RtfFontManager.getInstance().getFontNumber(font.getFirstFontFamily()));
         rtfAttr.setHalfPoints(RtfText.ATTR_FONT_SIZE, font.fontSize);
 
-        if (font.fontWeight == Constants.EN_700
-                || font.fontWeight == Constants.EN_800
-                || font.fontWeight == Constants.EN_900) {
+        if (font.getFontWeight() == Constants.EN_700
+                || font.getFontWeight() == Constants.EN_800
+                || font.getFontWeight() == Constants.EN_900) {
             //Everything from 700 and above is declared as bold
             rtfAttr.set("b", 1);
         } else {
             rtfAttr.set("b", 0);
         }
         
-        if (font.fontStyle == Constants.EN_ITALIC) {
+        if (font.getFontStyle() == Constants.EN_ITALIC) {
             rtfAttr.set(RtfText.ATTR_ITALIC, 1);
         } else {
             rtfAttr.set(RtfText.ATTR_ITALIC, 0);

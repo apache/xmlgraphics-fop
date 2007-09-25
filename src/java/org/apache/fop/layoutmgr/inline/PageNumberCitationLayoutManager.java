@@ -27,6 +27,8 @@ import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.UnresolvedPageNumber;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.PositionIterator;
@@ -57,7 +59,9 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
     
     /** {@inheritDoc} */
     public void initialize() {
-        font = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo(), this);
+        FontInfo fi = fobj.getFOEventHandler().getFontInfo();
+        FontTriplet[] fontkeys = fobj.getCommonFont().getFontState(fi);
+        font = fi.getFontInstance(fontkeys[0], fobj.getCommonFont().fontSize.getValue(this));
         setCommonBorderPaddingBackground(fobj.getCommonBorderPaddingBackground());
     }
 
