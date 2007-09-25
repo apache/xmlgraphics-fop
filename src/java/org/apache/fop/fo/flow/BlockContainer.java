@@ -48,7 +48,6 @@ public class BlockContainer extends FObj {
     // private ToBeImplementedProperty clip;
     private int displayAlign;
     private Length height;
-    private String id;
     private LengthRangeProperty inlineProgressionDimension;
     private KeepProperty keepTogether;
     private KeepProperty keepWithNext;
@@ -77,6 +76,7 @@ public class BlockContainer extends FObj {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
+        super.bind(pList);
         commonAbsolutePosition = pList.getAbsolutePositionProps();
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         commonMarginBlock = pList.getMarginBlockProps();
@@ -86,7 +86,6 @@ public class BlockContainer extends FObj {
         // clip = pList.get(PR_CLIP);
         displayAlign = pList.get(PR_DISPLAY_ALIGN).getEnum();
         height = pList.get(PR_HEIGHT).getLength();
-        id = pList.get(PR_ID).getString();
         inlineProgressionDimension = pList.get(PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
         keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
         keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
@@ -102,7 +101,7 @@ public class BlockContainer extends FObj {
      * @see org.apache.fop.fo.FONode#startOfNode
      */
     protected void startOfNode() throws FOPException {
-        checkId(id);
+        super.startOfNode();
         getFOEventHandler().startBlockContainer(this);
     }
 
@@ -201,13 +200,6 @@ public class BlockContainer extends FObj {
     /** @return the "keep-together" property.  */
     public KeepProperty getKeepTogether() {
         return keepTogether;
-    }
-
-    /**
-     * @return the "id" property.
-     */
-    public String getId() {
-        return id;
     }
 
     /**

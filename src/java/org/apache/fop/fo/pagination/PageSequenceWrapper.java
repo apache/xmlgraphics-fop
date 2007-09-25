@@ -34,7 +34,6 @@ import org.apache.fop.fo.ValidationException;
  */
 public class PageSequenceWrapper extends FObj {
     // The value of properties relevant for this FO
-    private String id;
     private String indexClass;
     private String indexKey;
     // End of property values
@@ -50,16 +49,9 @@ public class PageSequenceWrapper extends FObj {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
-        id = pList.get(PR_ID).getString();
+        super.bind(pList);
         indexClass = pList.get(PR_INDEX_CLASS).getString();
         indexKey = pList.get(PR_INDEX_KEY).getString();
-    }
-
-    /**
-     * @see org.apache.fop.fo.FONode#startOfNode
-     */
-    protected void startOfNode() throws FOPException {
-        checkId(id);
     }
 
     /**
@@ -72,11 +64,6 @@ public class PageSequenceWrapper extends FObj {
             localName.equals("page-sequence-wrapper")))) {
                 invalidChildError(loc, nsURI, localName);
         }
-    }
-
-    /** @return the "id" property. */
-    public String getId() {
-        return id;
     }
 
     /** @return the "index-class" property. */

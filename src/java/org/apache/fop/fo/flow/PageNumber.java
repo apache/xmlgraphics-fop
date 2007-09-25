@@ -51,7 +51,6 @@ public class PageNumber extends FObj {
     private int alignmentBaseline;
     private Length baselineShift;
     private int dominantBaseline;
-    private String id;
     // private ToBeImplementedProperty letterSpacing;
     private SpaceProperty lineHeight;
     /** Holds the text decoration values. May be null */
@@ -87,13 +86,13 @@ public class PageNumber extends FObj {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
+        super.bind(pList);
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         commonFont = pList.getFontProps();
         alignmentAdjust = pList.get(PR_ALIGNMENT_ADJUST).getLength();
         alignmentBaseline = pList.get(PR_ALIGNMENT_BASELINE).getEnum();
         baselineShift = pList.get(PR_BASELINE_SHIFT).getLength();
         dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
-        id = pList.get(PR_ID).getString();
         // letterSpacing = pList.get(PR_LETTER_SPACING);
         lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
         textDecoration = pList.getTextDecorationProps();
@@ -107,7 +106,7 @@ public class PageNumber extends FObj {
      * @see org.apache.fop.fo.FONode#startOfNode
      */
     protected void startOfNode() throws FOPException {
-        checkId(id);
+        super.startOfNode();
         getFOEventHandler().startPageNumber(this);
     }
 
@@ -140,11 +139,6 @@ public class PageNumber extends FObj {
     /** @return the Common Border, Padding, and Background Properties. */
     public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
         return commonBorderPaddingBackground;
-    }
-
-    /** @return the "id" property. */
-    public String getId() {
-        return id;
     }
 
     /** @return the "text-decoration" property. */

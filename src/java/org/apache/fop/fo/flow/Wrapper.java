@@ -34,7 +34,6 @@ import org.xml.sax.Locator;
  */
 public class Wrapper extends FObjMixed {
     // The value of properties relevant for fo:wrapper.
-    private String id;
     // End of property values
     
     // used for FO validation
@@ -45,20 +44,6 @@ public class Wrapper extends FObjMixed {
      */
     public Wrapper(FONode parent) {
         super(parent);
-    }
-
-    /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
-     */
-    public void bind(PropertyList pList) throws FOPException {
-        id = pList.get(PR_ID).getString();
-    }
-
-    /**
-     * @see org.apache.fop.fo.FONode#startOfNode
-     */
-    protected void startOfNode() throws FOPException {
-        checkId(id);
     }
 
     /**
@@ -80,11 +65,6 @@ public class Wrapper extends FObjMixed {
         } else {
             invalidChildError(loc, nsURI, localName);
         }
-    }
-
-    /** @return the "id" property. */
-    public String getId() {
-        return id;
     }
 
     /** @see org.apache.fop.fo.FONode#getLocalName() */

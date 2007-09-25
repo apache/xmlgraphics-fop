@@ -273,7 +273,7 @@ public abstract class AbstractBreaker {
      * algorithm.
      * @return the applicable PageProvider, or null if not applicable
      */
-    protected PageSequenceLayoutManager.PageProvider getPageProvider() {
+    protected PageProvider getPageProvider() {
         return null;
     }
     
@@ -295,7 +295,7 @@ public abstract class AbstractBreaker {
 
     /** @return true if there's no content that could be handled. */
     public boolean isEmpty() {
-        return (blockLists.size() == 0);
+        return (this.blockLists.size() == 0);
     }
     
     protected void startPart(BlockSequence list, int breakClass) {
@@ -370,7 +370,7 @@ public abstract class AbstractBreaker {
         childLC.setBPAlignment(alignment);
 
         BlockSequence blockList;
-        blockLists = new java.util.ArrayList();
+        this.blockLists = new java.util.ArrayList();
 
         log.debug("PLM> flow BPD =" + flowBPD);
         
@@ -379,7 +379,7 @@ public abstract class AbstractBreaker {
         while (hasMoreContent()) {
             blockLists.clear();
 
-            nextSequenceStartsOn = getNextBlockList(childLC, nextSequenceStartsOn, blockLists);
+            nextSequenceStartsOn = getNextBlockList(childLC, nextSequenceStartsOn);
 
             //*** Phase 2: Alignment and breaking ***
             log.debug("PLM> blockLists.size() = " + blockLists.size());
@@ -627,19 +627,17 @@ public abstract class AbstractBreaker {
      * Gets the next block list (sequence) and adds it to a list of block lists if it's not empty.
      * @param childLC LayoutContext to use
      * @param nextSequenceStartsOn indicates on what page the next sequence should start
-     * @param blockLists list of block lists (sequences)
      * @return the page on which the next content should appear after a hard break
      */
     protected int getNextBlockList(LayoutContext childLC, 
-            int nextSequenceStartsOn, 
-            List blockLists) {
+            int nextSequenceStartsOn) {
         updateLayoutContext(childLC);
         //Make sure the span change signal is reset
         childLC.signalSpanChange(Constants.NOT_SET);
         
-        LinkedList returnedList;
         BlockSequence blockList;
-        if ((returnedList = getNextKnuthElements(childLC, alignment)) != null) {
+        LinkedList returnedList = getNextKnuthElements(childLC, alignment);
+        if (returnedList != null) {
             if (returnedList.size() == 0) {
                 nextSequenceStartsOn = handleSpanChange(childLC, nextSequenceStartsOn);
                 return nextSequenceStartsOn;
@@ -666,7 +664,7 @@ public abstract class AbstractBreaker {
             */
             BlockSequence seq = blockList;
             if (seq != null) {
-                blockLists.add(seq);
+                this.blockLists.add(seq);
             }
         }
         return nextSequenceStartsOn;

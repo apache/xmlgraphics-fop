@@ -47,7 +47,6 @@ public class TableRow extends TableFObj {
     private int breakAfter;
     private int breakBefore;
     private Length height;
-    private String id;
     private KeepProperty keepTogether;
     private KeepProperty keepWithNext;
     private KeepProperty keepWithPrevious;
@@ -80,7 +79,6 @@ public class TableRow extends TableFObj {
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         breakAfter = pList.get(PR_BREAK_AFTER).getEnum();
         breakBefore = pList.get(PR_BREAK_BEFORE).getEnum();
-        id = pList.get(PR_ID).getString();
         height = pList.get(PR_HEIGHT).getLength();
         keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
         keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
@@ -162,7 +160,7 @@ public class TableRow extends TableFObj {
      * @see org.apache.fop.fo.FONode#startOfNode
      */
     protected void startOfNode() throws FOPException {
-        checkId(id);
+        super.startOfNode();
         getFOEventHandler().startRow(this);
     }
 
@@ -192,13 +190,6 @@ public class TableRow extends TableFObj {
         }
     }    
     
-    /**
-     * @return the "id" property.
-     */
-    public String getId() {
-        return id;
-    }
-
     /** @return the "break-after" property. */
     public int getBreakAfter() {
         return breakAfter;

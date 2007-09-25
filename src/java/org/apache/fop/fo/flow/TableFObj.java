@@ -83,6 +83,7 @@ public abstract class TableFObj extends FObj {
      * @see FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
+        super.bind(pList);
         borderAfterPrecedence = pList.get(PR_BORDER_AFTER_PRECEDENCE).getNumeric();
         borderBeforePrecedence = pList.get(PR_BORDER_BEFORE_PRECEDENCE).getNumeric();
         borderEndPrecedence = pList.get(PR_BORDER_END_PRECEDENCE).getNumeric();

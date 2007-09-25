@@ -43,7 +43,6 @@ public class PageSequence extends FObj {
     private int letterValue;
     private char groupingSeparator;
     private int groupingSize;
-    private String id;
     private Numeric initialPageNumber;
     private int forcePageCount;
     private String masterReference;
@@ -96,13 +95,13 @@ public class PageSequence extends FObj {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
+        super.bind(pList);
         country = pList.get(PR_COUNTRY).getString();
         format = pList.get(PR_FORMAT).getString();
         language = pList.get(PR_LANGUAGE).getString();
         letterValue = pList.get(PR_LETTER_VALUE).getEnum();
         groupingSeparator = pList.get(PR_GROUPING_SEPARATOR).getCharacter();
         groupingSize = pList.get(PR_GROUPING_SIZE).getNumber().intValue();
-        id = pList.get(PR_ID).getString();
         initialPageNumber = pList.get(PR_INITIAL_PAGE_NUMBER).getNumeric();
         forcePageCount = pList.get(PR_FORCE_PAGE_COUNT).getEnum();
         masterReference = pList.get(PR_MASTER_REFERENCE).getString();
@@ -116,6 +115,7 @@ public class PageSequence extends FObj {
      * @see org.apache.fop.fo.FONode#startOfNode()
      */
     protected void startOfNode() throws FOPException {
+        super.startOfNode();
         this.root = (Root) parent;
         flowMap = new java.util.HashMap();
 
@@ -133,7 +133,6 @@ public class PageSequence extends FObj {
         this.pageNumberGenerator = new PageNumberGenerator(
                 format, groupingSeparator, groupingSize, letterValue);
 
-        checkId(id);
         getFOEventHandler().startPageSequence(this);
     }
 
@@ -392,11 +391,6 @@ public class PageSequence extends FObj {
      */
     public StaticContent getStaticContent(String name) {
         return (StaticContent) flowMap.get(name);
-    }
-
-    /** @return the "id" property. */
-    public String getId() {
-        return id;
     }
 
     /**

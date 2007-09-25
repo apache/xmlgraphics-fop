@@ -46,7 +46,6 @@ public class InlineContainer extends FObj {
     private Length baselineShift;
     // private ToBeImplementedProperty clip;
     private int dominantBaseline;
-    private String id;
     private SpaceProperty lineHeight;
     // Unused but valid items, commented out for performance:
     //     private CommonBorderPaddingBackground commonBorderPaddingBackground;
@@ -79,20 +78,13 @@ public class InlineContainer extends FObj {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
+        super.bind(pList);
         alignmentAdjust = pList.get(PR_ALIGNMENT_ADJUST).getLength();
         alignmentBaseline = pList.get(PR_ALIGNMENT_BASELINE).getEnum();
         baselineShift = pList.get(PR_BASELINE_SHIFT).getLength();
         // clip = pList.get(PR_CLIP);
         dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
-        id = pList.get(PR_ID).getString();
         lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
-    }
-
-    /**
-     * @see org.apache.fop.fo.FONode#startOfNode
-     */
-    protected void startOfNode() throws FOPException {
-        checkId(id);
     }
 
     /**
@@ -154,13 +146,6 @@ public class InlineContainer extends FObj {
      */
     public SpaceProperty getLineHeight() {
         return lineHeight;
-    }
-
-    /**
-     * @return the "id" property.
-     */
-    public String getId() {
-        return id;
     }
 
     /** @see org.apache.fop.fo.FONode#getLocalName() */

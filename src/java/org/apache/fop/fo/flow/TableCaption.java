@@ -44,7 +44,6 @@ public class TableCaption extends FObj {
     // The value of properties relevant for fo:table-caption.
     private CommonAccessibility commonAccessibility;
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
-    private String id;
     // Unused but valid items, commented out for performance:
     //     private CommonAural commonAural;
     //     private CommonRelativePosition commonRelativePosition;
@@ -77,16 +76,9 @@ public class TableCaption extends FObj {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
+        super.bind(pList);
         commonAccessibility = pList.getAccessibilityProps();
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
-        id = pList.get(PR_ID).getString();
-    }
-
-    /**
-     * @see org.apache.fop.fo.FONode#startOfNode
-     */
-    protected void startOfNode() throws FOPException {
-        checkId(id);
     }
 
     /**
@@ -122,11 +114,6 @@ public class TableCaption extends FObj {
         } else {
             blockItemFound = true;
         }
-    }
-
-    /** @return the "id" property. */
-    public String getId() {
-        return id;
     }
 
     /** @see org.apache.fop.fo.FONode#getLocalName() */

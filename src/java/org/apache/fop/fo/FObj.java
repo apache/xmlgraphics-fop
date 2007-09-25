@@ -60,6 +60,10 @@ public abstract class FObj extends FONode implements Constants {
     /** Markers added to this element. */
     private Map markers = null;
     
+    // The value of properties relevant for all fo objects
+    private String id = null;
+    // End of property values
+
     /**
      * Create a new formatting object.
      * All formatting object classes extend this class.
@@ -136,6 +140,17 @@ public abstract class FObj extends FONode implements Constants {
      * @throws FOPException if there is a problem binding the values
      */
     public void bind(PropertyList pList) throws FOPException {
+        id = pList.get(PR_ID).getString();
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#startOfNode
+     * @throws FOPException FOP Exception
+     */
+    protected void startOfNode() throws FOPException {
+        if (id != null) {
+            checkId(id);
+        }
     }
 
     /**
@@ -147,7 +162,7 @@ public abstract class FObj extends FONode implements Constants {
      * @throws ValidationException if the ID is already defined elsewhere
      *                              (strict validation only)
      */
-    protected void checkId(String id) throws ValidationException {
+    private void checkId(String id) throws ValidationException {
         if (!inMarker() && !id.equals("")) {
             Set idrefs = getFOEventHandler().getIDReferences();
             if (!idrefs.contains(id)) {
@@ -190,7 +205,7 @@ public abstract class FObj extends FONode implements Constants {
     protected void addChildNode(FONode child) throws FOPException {
         if (canHaveMarkers() && child.getNameId() == FO_MARKER) {
             addMarker((Marker) child);
-        } else {
+        } else { 
             ExtensionAttachment attachment = child.getExtensionAttachment();
             if (attachment != null) {
                 /* This removes the element from the normal children, 
@@ -469,7 +484,16 @@ public abstract class FObj extends FONode implements Constants {
         return -1;
     }
     
+    /** @return the "id" property. */
+    public String getId() {
+        return id;
+    }
     
+    /** @return whether this object has an id set */
+    public boolean hasId() {
+        return id != null && id.length() > 0;
+    }
+
     /** @see org.apache.fop.fo.FONode#getNamespaceURI() */
     public String getNamespaceURI() {
         return FOElementMapping.URI;
