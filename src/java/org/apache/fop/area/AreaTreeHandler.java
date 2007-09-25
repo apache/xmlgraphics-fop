@@ -48,6 +48,9 @@ import org.apache.fop.layoutmgr.PageSequenceLayoutManager;
 import org.apache.fop.layoutmgr.LayoutManagerMaker;
 import org.apache.fop.layoutmgr.LayoutManagerMapping;
 
+import org.apache.fop.area.DestinationData;
+import org.apache.fop.fo.extensions.destination.Destination;
+
 /**
  * Area tree handler for formatting objects.
  *
@@ -412,6 +415,15 @@ public class AreaTreeHandler extends FOEventHandler {
     public void endDocument() throws SAXException {
 
         finishPrevPageSequence(null);
+        // process fox:destination elements
+        ArrayList destinationList = rootFObj.getDestinationList();
+        if (destinationList != null) {
+            while(destinationList.size() > 0) {
+                Destination destination = (Destination)destinationList.remove(0);
+                DestinationData destinationData = new DestinationData(destination);
+                addOffDocumentItem(destinationData);
+            }
+        }
         // process fo:bookmark-tree
         BookmarkTree bookmarkTree = rootFObj.getBookmarkTree();
         if (bookmarkTree != null) {

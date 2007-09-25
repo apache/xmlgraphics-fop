@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
+import java.util.ArrayList;
 
 // Apache libs
 import org.apache.commons.io.IOUtils;
@@ -52,6 +53,8 @@ import org.apache.fop.fonts.truetype.TTFSubSetFile;
 import org.apache.fop.fonts.type1.PFBData;
 import org.apache.fop.fonts.type1.PFBParser;
 import org.apache.xmlgraphics.xmp.Metadata;
+import org.apache.fop.area.PageViewport;
+import org.apache.fop.area.DestinationData;
 
 /**
  * This class provides method to create and register PDF objects.
@@ -731,7 +734,7 @@ public class PDFFactory {
         PDFPattern myPattern;
         //PDFColorSpace theColorSpace;
         double interpolation = (double)1.000;
-        List theFunctions = new java.util.ArrayList();
+        List theFunctions = new ArrayList();
 
         int currentPosition;
         int lastPosition = theColors.size() - 1;
@@ -782,7 +785,7 @@ public class PDFFactory {
             } else {    // if the center x, center y, and radius specifiy
                 // the gradient, then assume the same center x, center y,
                 // and radius of zero for the other necessary component
-                List newCoords = new java.util.ArrayList();
+                List newCoords = new ArrayList();
                 newCoords.add(theCoords.get(0));
                 newCoords.add(theCoords.get(1));
                 newCoords.add(theCoords.get(2));
@@ -807,6 +810,56 @@ public class PDFFactory {
         myPattern = makePattern(res, 2, myShad, null, null, theMatrix);
 
         return (myPattern);
+    }
+
+    /* ============= named destinations and the name dictionary ============ */
+
+    /**
+     * Make a named destination.
+     *
+     * @param destinationData the DestinationData object that holds the info about this named destination
+     * @return the new PDF named destination object
+     */
+    public PDFDestination makeDestination(DestinationData destinationData) {
+        PageViewport pv = destinationData.getPageViewport();
+        if (pv == null) {
+            log.warn("Unresolved destination item received: " + destinationData.getIDRef());
+        }
+        PDFDestination destination = new PDFDestination(destinationData);
+
+        PDFDestination oldDestination = getDocument().findDestination(destination);
+        if (destination == oldDestination) {
+            destination = oldDestination;
+        } else {
+            getDocument().registerObject(destination);
+            getDocument().setHasDestinations(true);
+        }
+
+        return destination;
+    }
+
+    /**
+     * Make a the head object of the name dictionary (the /Dests object).
+     *
+     * @return the new PDFDests object
+     */
+    public PDFDests makeDests(String limitsRef) {
+        PDFDests dests = new PDFDests(limitsRef);
+        getDocument().registerObject(dests);
+
+        return dests;
+    }
+
+    /**
+     * Make a the limits object of the name dictionary (the /Limits object).
+     *
+     * @return the new PDFLimits object
+     */
+    public PDFLimits makeLimits(ArrayList destinationList) {
+        PDFLimits limits = new PDFLimits(destinationList);
+        getDocument().registerObject(limits);
+
+        return limits;
     }
 
     /* ========================= links ===================================== */
@@ -888,7 +941,7 @@ public class PDFFactory {
         return link;
     }
 
-    private String getGoToReference(String destination, float yoffset) {
+    public String getGoToReference(String destination, float yoffset) {
         getDocument().getProfile().verifyActionAllowed();
         String goToReference = null;
         PDFGoTo gt = new PDFGoTo(destination);
@@ -1153,9 +1206,9 @@ public class PDFFactory {
         int value = 0;
         for (int i = 0, c = cidSubset.length(); i < c; i++) {
             int shift = i % 8;
-            boolean b = cidSubset.get(i); 
+            boolean b = cidSubset.get(i);
             if (b) {
-                value |= 1 << 7 - shift; 
+                value |= 1 << 7 - shift;
             }
             if (shift == 7) {
                 baout.write(value);
@@ -1335,7 +1388,7 @@ public class PDFFactory {
     public PDFICCBasedColorSpace makeICCBasedColorSpace(PDFResourceContext res,
             String explicitName, PDFICCStream iccStream) {
         PDFICCBasedColorSpace cs = new PDFICCBasedColorSpace(explicitName, iccStream);
-        
+
         getDocument().registerObject(cs);
 
         if (res != null) {
@@ -1343,7 +1396,7 @@ public class PDFFactory {
         } else {
             getDocument().getResources().addColorSpace(cs);
         }
-        
+
         return cs;
     }
 

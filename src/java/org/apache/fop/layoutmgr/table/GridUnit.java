@@ -345,11 +345,24 @@ public class GridUnit {
         buffer.append("GridUnit:");
         if (colSpanIndex > 0) {
             buffer.append(" colSpan=").append(colSpanIndex);
+            if (isLastGridUnitColSpan()) {
+                buffer.append("(last)");
+            }
         }
         if (rowSpanIndex > 0) {
             buffer.append(" rowSpan=").append(rowSpanIndex);
+            if (isLastGridUnitRowSpan()) {
+                buffer.append("(last)");
+            }
         }
         buffer.append(" startCol=").append(startCol);
+        if (!isPrimary() && getPrimary() != null) {
+            buffer.append(" primary=").append(getPrimary().getStartRow());
+            buffer.append("/").append(getPrimary().getStartCol());
+            if (getPrimary().getCell() != null) {
+                buffer.append(" id=" + getPrimary().getCell().getId());
+            }
+        }
         buffer.append(" flags=").append(Integer.toBinaryString(flags));
         return buffer.toString();
     }

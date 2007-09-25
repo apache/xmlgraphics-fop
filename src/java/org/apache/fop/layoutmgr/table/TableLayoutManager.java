@@ -215,10 +215,12 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         if (getTable().isSeparateBorderModel()) {
             addKnuthElementsForBorderPaddingBefore(returnList, !firstVisibleMarkServed);
             firstVisibleMarkServed = true;
+            // Border and padding to be repeated at each break
+            // This must be done only in the separate-border model, as in collapsing
+            // tables have no padding and borders are determined at the cell level
+            addPendingMarks(context);
         }
 
-        //Spaces, border and padding to be repeated at each break
-        addPendingMarks(context);
 
         // Elements for the table-header/footer/body
         LinkedList contentKnuthElements = null;

@@ -1184,11 +1184,7 @@
         yes
       </td>
       <td align="left">
-        <ul>
-          <li>
-            [0.20.5] must contain block-level FOs (cannot contain straight character data)
-          </li>
-        </ul>
+        &nbsp;
       </td>
     </tr>
     <tr>

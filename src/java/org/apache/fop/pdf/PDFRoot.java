@@ -20,6 +20,7 @@
 package org.apache.fop.pdf;
 
 import java.util.List;
+import java.util.ArrayList;
 
 /**
  * class representing a Root (/Catalog) object
@@ -62,6 +63,12 @@ public class PDFRoot extends PDFObject {
     /** The array of OutputIntents */
     private List outputIntents;
     
+    /**
+     * The referencePDF value of the /Dests object,
+     * if this PDF has a Name Dictionary
+     */
+    private String namesReferencePDF = null;
+
     private int pageMode = PAGEMODE_USENONE;
 
     /**
@@ -130,6 +137,15 @@ public class PDFRoot extends PDFObject {
      * @param meta the Metadata object
      * @since PDF 1.4
      */
+    public void setNames(String referencePDF) {
+        this.namesReferencePDF = referencePDF;
+    }
+    
+    /**
+     * Set the optional Metadata object.
+     * @param meta the Metadata object
+     * @since PDF 1.4
+     */
     public void setMetadata(PDFMetadata meta) {
         this.metadata = meta;
     }
@@ -180,6 +196,9 @@ public class PDFRoot extends PDFObject {
                 default:
                 break;
             }
+        }
+        if (getDocumentSafely().getHasDestinations() && namesReferencePDF != null) {
+            p.append(" /Names " + namesReferencePDF + "\n");
         }
         if (getMetadata() != null 
                 && getDocumentSafely().getPDFVersion() >= PDFDocument.PDF_VERSION_1_4) {

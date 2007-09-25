@@ -296,25 +296,27 @@ public class Block extends FObjMixed {
      *  fo:inline-container."
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
-        if (FO_URI.equals(nsURI) && localName.equals("marker")) {
-            if (blockOrInlineItemFound || initialPropertySetFound) {
-               nodesOutOfOrderError(loc, "fo:marker", 
-                    "initial-property-set? (#PCDATA|%inline;|%block;)");
-            }
-        } else if (FO_URI.equals(nsURI) && localName.equals("initial-property-set")) {
-            if (initialPropertySetFound) {
-                tooManyNodesError(loc, "fo:initial-property-set");
-            } else if (blockOrInlineItemFound) {
-                nodesOutOfOrderError(loc, "fo:initial-property-set", 
-                    "(#PCDATA|%inline;|%block;)");
+            throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
+            if (localName.equals("marker")) {
+                if (blockOrInlineItemFound || initialPropertySetFound) {
+                   nodesOutOfOrderError(loc, "fo:marker", 
+                        "initial-property-set? (#PCDATA|%inline;|%block;)");
+                }
+            } else if (localName.equals("initial-property-set")) {
+                if (initialPropertySetFound) {
+                    tooManyNodesError(loc, "fo:initial-property-set");
+                } else if (blockOrInlineItemFound) {
+                    nodesOutOfOrderError(loc, "fo:initial-property-set", 
+                        "(#PCDATA|%inline;|%block;)");
+                } else {
+                    initialPropertySetFound = true;
+                }
+            } else if (isBlockOrInlineItem(nsURI, localName)) {
+                blockOrInlineItemFound = true;
             } else {
-                initialPropertySetFound = true;
+                invalidChildError(loc, nsURI, localName);
             }
-        } else if (isBlockOrInlineItem(nsURI, localName)) {
-            blockOrInlineItemFound = true;
-        } else {
-            invalidChildError(loc, nsURI, localName);
         }
     }
 

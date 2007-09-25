@@ -28,7 +28,7 @@
       <p>All raw documentation content is managed in the FOP SVN repository.
 Updates should be committed to the repository, then the repository files are used to generate usable output.
 The remaining discussions on this page assume that the SVN repository is the starting place for processing.
-The path to the documentation is xml-fop/src/documentation/content/xdocs.</p>
+The path to the documentation is src/documentation/content/xdocs.</p>
       <note>All documentation is maintained on the trunk.
 Although we are currently maintaining two sets of code (trunk and maintenance), there is only one set of documentation.
 Most of the user and developer doc is common to the two environments, and differences are highlighted where necessary.
@@ -56,7 +56,7 @@ Maintenance branch releases either copy the trunk content to the maintenance bra
       <title>Website</title>
       <section id="web-background">
         <title>Background</title>
-        <p>The FOP web site and documentation are generated using <link href="http://xml.apache.org/forrest">Apache Forrest</link>.</p>
+        <p>The FOP web site and documentation are generated using <link href="http://forrest.apache.org">Apache Forrest</link>.</p>
         <p>The following table summarizes the flow of data to the FOP website in chronological order:</p>
         <table>
           <tr>
@@ -69,11 +69,11 @@ Maintenance branch releases either copy the trunk content to the maintenance bra
             <td>Developer commits code to FOP repository.</td>
             <td>FOP repository (SVN)</td>
             <td>Raw XML and other content</td>
-            <td><link href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/trunk/src/documentation/content/xdocs/">ViewCVS</link></td>
+            <td><link href="http://svn.apache.org/viewvc/xmlgraphics/fop/trunk/src/documentation/content/xdocs/">in SVN</link></td>
           </tr>
           <tr>
             <td>Developer builds and uploads documentation using ForrestBot.</td>
-            <td>/www/xmlgraphics.apache.org/fop on cvs.apache.org</td>
+            <td>/www/xmlgraphics.apache.org/fop on people.apache.org</td>
             <td>sync-ready</td>
             <td>n/a</td>
           </tr>
@@ -93,18 +93,34 @@ Maintenance branch releases either copy the trunk content to the maintenance bra
           The root directory of your FOP checkout contains the file "publish.xml" which is an Ant build file
           that manages the build and the deployment of the FOP website. Please look into this file for
           further instructions to set up ForrestBot on your machine. Basically, we're simply running ForrestBot 
-          manually by typing "ant -f publish.xml" once we're happy with our changes to the site. Be sure to set
-          up the "deploy.settings" file as described in the "publish.xml" file. Step-by-step instructions for 
-          the deployment process again:
+          manually by typing "ant -f publish.xml" once we're happy with our changes to the site.
+          Step-by-step instructions for the deployment process again:
         </p>
+        <note>
+          Please make sure you use Forrest from the 0.7 branch for the time being. You will need
+          to download it directly from SVN:
+          <link href="http://svn.apache.org/repos/asf/forrest/branches/forrest_07_branch">http://svn.apache.org/repos/asf/forrest/branches/forrest_07_branch</link>
+        </note>
         <ul>
-          <li>Modify the sources of the website and check locally with Forrest 0.7 (run "forrest run" or just "forrest").</li>
+          <li>Modify the sources of the website and check locally with Forrest (run "forrest run" or just "forrest").</li>
           <li>
             Once you're satisfied, run "ant -f publish.xml" to do a clean build of the website. If the build 
-            runs without problems, the website will be uploaded as a whole using SCP to cvs.apache.org.
+            runs without problems, the website will be uploaded as a whole using SVN to the 
+            <link href="https://svn.apache.org/repos/asf/xmlgraphics/site/deploy/fop/">website staging directory in SVN</link>.
           </li>
-          <li>Wait for the next rsync cycle and check your changes in the live site. (Sorry, no manual rsync available ATM)</li>
+          <li>
+            Then log into people.apache.org using SSH, go to the /www/xmlgraphics.apache.org 
+            directory and run "svn up".
+          </li>
+          <li>
+            Wait for the next rsync cycle and check your changes in the live site. 
+            (Sorry, no manual rsync available ATM)
+          </li>
         </ul>
+        <p>
+          The reason for putting the generated website in the SVN repository: The infrastructure
+          people want to be able to restore the websites themselves in case of a crash.
+        </p>
       </section>
       <section id="web-local-forrest">
         <title>Using a Local Forrest</title>

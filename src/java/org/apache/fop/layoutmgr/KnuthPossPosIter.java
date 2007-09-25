@@ -28,8 +28,8 @@ public class KnuthPossPosIter extends PositionIterator {
     /**
      * Main constructor
      * @param elementList List of Knuth elements
-     * @param startPos starting position
-     * @param endPos ending position
+     * @param startPos starting position, inclusive
+     * @param endPos ending position, exclusive
      */
     public KnuthPossPosIter(List elementList, int startPos, int endPos) {
         super(elementList.listIterator(startPos));

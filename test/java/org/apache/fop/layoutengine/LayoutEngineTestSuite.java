@@ -140,6 +140,7 @@ public class LayoutEngineTestSuite {
         } else if (startsWith != null) {
             filter = new PrefixFileFilter(startsWith);
             filter = new AndFileFilter(filter, new SuffixFileFilter(".xml"));
+            filter = decorateWithDisabledList(filter);
         } else {
             filter = new SuffixFileFilter(".xml");
             filter = decorateWithDisabledList(filter);
