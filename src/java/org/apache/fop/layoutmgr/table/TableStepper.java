@@ -59,18 +59,22 @@ public class TableStepper {
     private int[] startRow;
     /**
      * For each column, index, in the cell's list of Knuth elements, of the element
-     * starting the current row.
+     * starting the current step.
      */
     private int[] start;
     /**
      * For each column, index, in the cell's list of Knuth elements, of the element
-     * ending the current row.
+     * ending the current step.
      */
     private int[] end;
     /**
-     * For each column, widths of the Knuth elements which will be on the current row. 
+     * For each column, widths of the Knuth elements already included in the steps, up to
+     * the current one.
      */
     private int[] widths;
+    /**
+     * ?? Width from the start of the row-group up to the current row.
+     */
     private int[] baseWidth;
     private int[] borderBefore;
     private int[] paddingBefore;
@@ -240,6 +244,9 @@ public class TableStepper {
                 //Copy elements (LinkedList) to array lists to improve 
                 //element access performance
                 elementLists[column] = new java.util.ArrayList(pgu.getElements());
+                if (log.isTraceEnabled()) {
+                    log.trace("column " + (column+1) + ": recording " + elementLists[column].size() + " element(s)");
+                }
             }
             if (isSeparateBorderModel()) {
                 borderBefore[column] = pgu.getBorders().getBorderBeforeWidth(false);
@@ -267,6 +274,7 @@ public class TableStepper {
      * the current row group.
      */
     private void initializeElementLists() {
+        log.trace("Entering initializeElementLists()");
         for (int i = 0; i < start.length; i++) {
             setupElementList(i);
         }
@@ -443,8 +451,15 @@ public class TableStepper {
         }
         return returnList;
     }
-    
+
+    /**
+     * Finds the smallest increment leading to the next legal break inside the row-group.
+     * 
+     * @param lastStep used for log only
+     * @return the size of the increment, -1 if no next step is available (end of row-group reached)
+     */
     private int getNextStep(int lastStep) {
+        log.trace("Entering getNextStep");
         this.lastMaxPenaltyLength = 0;
         //Check for forced break conditions
         /*
@@ -460,6 +475,7 @@ public class TableStepper {
         // boolean will be reset (see below)
         boolean currentGridRowFinished = true;
         for (int i = 0; i < start.length; i++) {
+            // null element lists probably correspond to empty cells
             if (elementLists[i] == null) {
                 continue;
             }
@@ -474,8 +490,9 @@ public class TableStepper {
                     currentGridRowFinished = false;
                 }
             } else {
-                start[i] = -1; //end of list reached
-                end[i] = -1;
+                throw new IllegalStateException("end[i] overflows elementList[i].size()");
+//                start[i] = -1; //end of list reached
+//                end[i] = -1;
             }
         }
 
@@ -539,6 +556,10 @@ public class TableStepper {
                 }
             }
             if (end[i] < start[i]) {
+                if (log.isTraceEnabled()) {
+                    log.trace("column " + (i + 1) + ": (end=" + end[i] + ") < (start=" + start[i]
+                            + ") => resetting width to backupWidth");
+                }
                 widths[i] = backupWidths[i];
             } else {
                 seqCount++;
@@ -563,8 +584,8 @@ public class TableStepper {
                 }
             }
             if (log.isTraceEnabled()) {
-                log.trace("column " + i + ": borders before=" + borderBefore[i] + " after=" + borderAfter[i]);
-                log.trace("column " + i + ": padding before=" + paddingBefore[i] + " after=" + paddingAfter[i]);
+                log.trace("column " + (i+1) + ": borders before=" + borderBefore[i] + " after=" + borderAfter[i]);
+                log.trace("column " + (i+1) + ": padding before=" + paddingBefore[i] + " after=" + paddingAfter[i]);
             }
         }
         if (seqCount == 0) {
@@ -608,7 +629,13 @@ public class TableStepper {
                 widths[i] = backupWidths[i];
                 end[i] = start[i] - 1;
                 if (baseWidth[i] + widths[i] > minStep) {
-                    log.debug("minStep vs. border/padding increase conflict:");
+                    if (log.isDebugEnabled()) {
+                        log.debug("column "
+                                + (i + 1)
+                                + ": minStep vs. border/padding increase conflict: basewidth + width = "
+                                + baseWidth[i] + " + " + widths[i] + " = "
+                                + (baseWidth[i] + widths[i]));                        
+                    }
                     if (activeRowIndex == 0) {
                         log.debug("  First row. Skip this step.");
                         skippedStep = true;

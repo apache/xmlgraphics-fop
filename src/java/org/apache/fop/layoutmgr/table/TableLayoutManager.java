@@ -134,12 +134,18 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         this.effSpaceAfter = null;
     }
     
-    /** @return half the value of border-separation.block-progression-dimension. */
+    /**
+     * @return half the value of border-separation.block-progression-dimension, or 0 if
+     * border-collapse="collapse".
+     */
     public int getHalfBorderSeparationBPD() {
         return halfBorderSeparationBPD;
     }
 
-    /** @return half the value of border-separation.inline-progression-dimension. */
+    /**
+     * @return half the value of border-separation.inline-progression-dimension, or 0 if
+     * border-collapse="collapse".
+     */
     public int getHalfBorderSeparationIPD() {
         return halfBorderSeparationIPD;
     }
@@ -157,12 +163,9 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         LinkedList returnList = new LinkedList();
         
         if (!breakBeforeServed) {
-            try {
-                if (addKnuthElementsForBreakBefore(returnList, context)) {
-                    return returnList;
-                }
-            } finally {
-                breakBeforeServed = true;
+            breakBeforeServed = true;
+            if (addKnuthElementsForBreakBefore(returnList, context)) {
+                return returnList;
             }
         }
 
@@ -344,6 +347,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         
         // add column, body then row areas
 
+        // BPD of the table, i.e., height of its content; table's borders and paddings not counted
         int tableHeight = 0;
         //Body childLM;
         LayoutContext lc = new LayoutContext(0);
