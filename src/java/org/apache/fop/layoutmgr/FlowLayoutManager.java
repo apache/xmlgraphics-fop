@@ -64,10 +64,6 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
     /** @see org.apache.fop.layoutmgr.LayoutManager */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
 
-        // set layout dimensions
-        int flowIPD = getCurrentPV().getCurrentSpan().getColumnWidth();
-        int flowBPD = (int) getCurrentPV().getBodyRegion().getBPD();
-
         // currently active LM
         LayoutManager curLM;
         LinkedList returnedList;
@@ -90,7 +86,9 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
                 log.debug("span change from " + currentSpan + " to " + span);
                 context.signalSpanChange(span);
                 currentSpan = span;
+                /* postpone space resolution
                 SpaceResolver.resolveElementList(returnList);
+                */
                 return returnList;
             }
             
@@ -119,7 +117,9 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
                 && ElementListUtils.endsWithForcedBreak(returnedList)) {
                 // a descendant of this flow has break-before
                 returnList.addAll(returnedList);
+                /* postpone space resolution
                 SpaceResolver.resolveElementList(returnList);
+                */
                 return returnList;
             } else {
                 if (returnList.size() > 0) {
@@ -142,7 +142,9 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
                     returnList.addAll(returnedList);
                     if (ElementListUtils.endsWithForcedBreak(returnList)) {
                         // a descendant of this flow has break-after
+                        /* postpone space resolution
                         SpaceResolver.resolveElementList(returnList);
+                        */
                         return returnList;
                     }
                 }
@@ -154,7 +156,9 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
             }
         }
 
+        /* postpone space resolution
         SpaceResolver.resolveElementList(returnList);
+        */
         setFinished(true);
 
         if (returnList.size() > 0) {

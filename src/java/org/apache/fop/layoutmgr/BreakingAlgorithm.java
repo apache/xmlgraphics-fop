@@ -21,7 +21,6 @@ package org.apache.fop.layoutmgr;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.fo.FONode;
 
 /**
@@ -38,6 +37,9 @@ import org.apache.fop.fo.FONode;
  *     }
  * }
  * </pre> 
+ */
+/**
+ * 
  */
 public abstract class BreakingAlgorithm {
 
@@ -109,8 +111,6 @@ public abstract class BreakingAlgorithm {
     protected int alignment;
     /** Alignment of the paragraph's last line. */
     protected int alignmentLast;
-    /** Used to handle the text-indent property (indent the first line of a paragraph). */
-    protected boolean bFirst;
 
     /**
      * The set of active nodes in ascending line order. For each line l, activeLines[2l] contains a
@@ -167,11 +167,10 @@ public abstract class BreakingAlgorithm {
      * item
      */
     public BreakingAlgorithm(int align, int alignLast,
-                             boolean first, boolean partOverflowRecovery,
+                             boolean partOverflowRecovery,
                              int maxFlagCount) {
         alignment = align;
         alignmentLast = alignLast;
-        bFirst = first;
         this.partOverflowRecoveryActivated = partOverflowRecovery;
         this.best = new BestRecords();
         maxFlaggedPenaltiesCount = maxFlagCount;
@@ -403,6 +402,7 @@ public abstract class BreakingAlgorithm {
         return findBreakingPoints(par, 0, threshold, force, allowedBreaks);
     }
     
+
     /** Finds an optimal set of breakpoints for the given paragraph.
      * @param par the paragraph to break
      * @param startIndex index of the Knuth element at which the breaking must start
@@ -433,19 +433,24 @@ public abstract class BreakingAlgorithm {
         // previous element in the paragraph is a KnuthBox?
         boolean previousIsBox = false;
 
-        // index of the first KnuthBox in the sequence
-        int firstBoxIndex = startIndex;
-        if (alignment != org.apache.fop.fo.Constants.EN_CENTER) {
-            while (par.size() > firstBoxIndex
-                    && !((KnuthElement) par.get(firstBoxIndex)).isBox()) {
-                firstBoxIndex++;
+        {
+            // index of the first KnuthBox in the sequence
+            int firstBoxIndex = startIndex;
+            if (alignment != org.apache.fop.fo.Constants.EN_CENTER) {
+                while (par.size() > firstBoxIndex) {
+                    // scan for unresolved elements and paragraphs
+                    resolveElements(par, firstBoxIndex);
+                    thisElement = (KnuthElement) par.get(firstBoxIndex);
+                    if (thisElement.isBox()) {
+                        break;
+                    }
+                    firstBoxIndex++;
+                }
             }
+            // create an active node representing the starting point
+            addNode(0, createNode(firstBoxIndex, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, null));
         }
-
-        // create an active node representing the starting point
-        activeLines = new KnuthNode[20];
-        addNode(0, createNode(firstBoxIndex, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, null));
-
+        
         if (log.isTraceEnabled()) {
             log.trace("Looping over " + (par.size() - startIndex) + " elements");
         }
@@ -454,7 +459,11 @@ public abstract class BreakingAlgorithm {
 
         // main loop
         for (int i = startIndex; i < par.size(); i++) {
-            thisElement = getElement(i);
+            resolveElements(par, i);
+            if (i == par.size() - 1) {
+                par.endBlockSequence();
+            }
+            thisElement = (KnuthElement) par.get(i);
             if (thisElement.isBox()) {
                 // a KnuthBox object is not a legal line break
                 totalWidth += thisElement.getW();
@@ -569,6 +578,15 @@ public abstract class BreakingAlgorithm {
 
         activeLines = null;
         return line;
+    }
+
+    /**
+     * This method is only implemented in a non-trivial way in PageBreakingAlgorithm
+     * @param seq the Knuth Sequence
+     * @param startIndex the start index
+     */
+    void resolveElements(KnuthSequence seq, int startIndex) {
+        ;
     }
 
     /**

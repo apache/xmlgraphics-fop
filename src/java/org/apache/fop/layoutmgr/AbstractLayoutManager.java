@@ -389,4 +389,30 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
         Map atts = getFObj().getForeignAttributes();
         targetArea.setForeignAttributes(atts);
     }
+
+
+    /* (non-Javadoc)
+     * @see org.apache.fop.layoutmgr.LayoutManager#rewrapPosition(org.apache.fop.layoutmgr.Position)
+     */
+    public Position rewrapPosition(Position pos, Position basePos) {
+        if (pos.getLM() != this) {
+            throw new IllegalStateException("rewrap Position: LM" + this + "is not owner of Position" + pos);
+        }
+        if (basePos.getLM() == this) {
+            return basePos;
+        }
+        Position subPos = pos.getPosition();
+        if (subPos == null) {
+            throw new IllegalStateException("rewrap Position: expected subposition in " + pos + "; got null");
+        }
+        subPos = subPos.getLM().rewrapPosition(subPos, basePos);
+        Position newPos = new NonLeafPosition(this, subPos);
+        newPos.setIndex(pos.getIndex());
+        if (isLast(pos)) {
+            pos.setIndex(-1);
+            notifyPos(pos);
+        }
+        return newPos;
+    }
+    
 }

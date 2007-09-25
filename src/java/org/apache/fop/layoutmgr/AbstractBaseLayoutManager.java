@@ -19,6 +19,8 @@
 
 package org.apache.fop.layoutmgr;
 
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.datatypes.LengthBase;
@@ -266,6 +268,14 @@ public abstract class AbstractBaseLayoutManager
      */
     public FObj getFObj() {
         return fobj;
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.fop.layoutmgr.LayoutManager#rewrapPositionElements(java.util.List, org.apache.fop.layoutmgr.ParagraphListElement)
+     */
+    public void wrapPositionElements(List elementList) {
+        // TODO Auto-generated method stub
+        
     }
    
 }

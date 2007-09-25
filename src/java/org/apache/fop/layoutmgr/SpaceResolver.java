@@ -607,6 +607,8 @@ public class SpaceResolver {
     
     /**
      * Resolves unresolved elements applying the space resolution rules defined in 4.3.1.
+     * This is the original method, which resolves the whole list at once.
+     * Eventually all invocations must be replaced with the following version.
      * @param elems the element list
      */
     public static void resolveElementList(LinkedList elems) {
@@ -683,6 +685,165 @@ public class SpaceResolver {
             }
             first = false;
         }
+    }
+    
+    /**
+     * Resolves unresolved elements applying the space resolution rules defined in 4.3.1.
+     * Takes the elements from startIndex until the first resolved element into consideration.
+     * The first resolved element should not be a ParagraphListElement.
+     * @param elems the element list
+     */
+    public static void resolveElementList(KnuthSequence elems, int startIndex) {
+        if (log.isTraceEnabled()) {
+            log.trace(elems);
+        }
+        boolean first = true;
+        boolean last = false;
+        boolean skipNextElement = false;
+        List unresolvedFirst = new java.util.ArrayList();
+        List unresolvedSecond = new java.util.ArrayList();
+        List currentGroup;
+        ListIterator iter = elems.listIterator(startIndex);
+        while (iter.hasNext()) {
+            ListElement el = (ListElement)iter.next();
+            if (!el.isUnresolvedElement()) {
+                break;
+            }
+            if (log.isTraceEnabled()) {
+                log.trace("unresolved found: " + el + " " + first + "/" + last);
+            }
+            BreakElement breakPoss = null;
+            //Clear temp lists
+            unresolvedFirst.clear();
+            unresolvedSecond.clear();
+            //Collect groups
+            if (el instanceof BreakElement) {
+                breakPoss = (BreakElement)el;
+                currentGroup = unresolvedSecond;
+            } else {
+                currentGroup = unresolvedFirst;
+                currentGroup.add(el);
+            }
+            iter.remove();
+            last = true;
+            skipNextElement = true;
+            while (iter.hasNext()) {
+                el = (ListElement)iter.next();
+                if (el instanceof BreakElement && breakPoss != null) {
+                    skipNextElement = false;
+                    last = false;
+                    break;
+                } else if (currentGroup == unresolvedFirst && (el instanceof BreakElement)) {
+                    breakPoss = (BreakElement)el;
+                    iter.remove();
+                    currentGroup = unresolvedSecond;
+                } else if (el.isUnresolvedElement()) {
+                    currentGroup.add(el);
+                    iter.remove();
+                } else {// !el.isUnresolvedElement()
+                    last = false;
+                    // the next (resolved) element will cause the loop to break
+                    skipNextElement = false;
+                    break;
+                }
+            }
+            //last = !iter.hasNext();
+            if (breakPoss == null && unresolvedSecond.size() == 0 && !last) {
+                log.trace("Swap first and second parts in no-break condition,"
+                          + " second part is empty.");
+                //The first list is reversed, so swap if this shouldn't happen
+                List swapList = unresolvedSecond;
+                unresolvedSecond = unresolvedFirst;
+                unresolvedFirst = swapList;
+            }
+
+            log.debug("----start space resolution (first=" + first + ", last=" + last + ")...");
+            SpaceResolver resolver = 
+                new SpaceResolver(unresolvedFirst, breakPoss, unresolvedSecond, first, last);
+            if (!last) {
+                iter.previous();
+            }
+            resolver.generate(iter);
+            if (!last && skipNextElement) {
+                iter.next();
+            }
+            log.debug("----end space resolution.");
+            first = false;
+        }
+    }
+    
+    public static void resolveElementListOld(KnuthSequence elems, int startIndex) {
+        if (log.isTraceEnabled()) {
+            log.trace(elems);
+        }
+        ListIterator iter = elems.listIterator(startIndex);
+        // startIndex is at end of list
+        if (!iter.hasNext()) {
+            return;
+        }
+        ListElement el = (ListElement)iter.next();
+        // startIndex is not at an unresolved element
+        if (!el.isUnresolvedElement()) {
+            return;
+        }
+
+        boolean first = true;
+        boolean last = false;
+        List unresolvedFirst = new java.util.ArrayList();
+        List unresolvedSecond = new java.util.ArrayList();
+        List currentGroup;
+        if (log.isTraceEnabled()) {
+            log.trace("unresolved found: " + el + " " + first + "/" + last);
+        }
+        BreakElement breakPoss = null;
+        //Clear temp lists
+        unresolvedFirst.clear();
+        unresolvedSecond.clear();
+        //Collect groups
+        if (el instanceof BreakElement) {
+            breakPoss = (BreakElement)el;
+            currentGroup = unresolvedSecond;
+        } else {
+            currentGroup = unresolvedFirst;
+            currentGroup.add(el);
+        }
+        iter.remove();
+        last = true;
+        while (iter.hasNext()) {
+            el = (ListElement)iter.next();
+            if (el instanceof BreakElement && breakPoss != null) {
+                last = false;
+                break;
+            } else if (currentGroup == unresolvedFirst && (el instanceof BreakElement)) {
+                breakPoss = (BreakElement)el;
+                iter.remove();
+                currentGroup = unresolvedSecond;
+            } else if (el.isUnresolvedElement()) {
+                currentGroup.add(el);
+                iter.remove();
+            } else {
+                last = false;
+                break;
+            }
+        }
+        if (breakPoss == null && unresolvedSecond.size() == 0 && !last) {
+            log.trace("Swap first and second parts in no-break condition,"
+                      + " second part is empty.");
+            //The first list is reversed, so swap if this shouldn't happen
+            List swapList = unresolvedSecond;
+            unresolvedSecond = unresolvedFirst;
+            unresolvedFirst = swapList;
+        }
+
+        log.debug("----start space resolution (first=" + first + ", last=" + last + ")...");
+        SpaceResolver resolver = 
+            new SpaceResolver(unresolvedFirst, breakPoss, unresolvedSecond,
+                              first, last);
+        if (!last) {
+            iter.previous();
+        }
+        resolver.generate(iter);
+        log.debug("----end space resolution.");
     }
     
     /**

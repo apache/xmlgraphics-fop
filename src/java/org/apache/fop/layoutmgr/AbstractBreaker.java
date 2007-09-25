@@ -75,6 +75,10 @@ public abstract class AbstractBreaker {
 
         private int displayAlign;
         
+        private int breakClass = Constants.NOT_SET;
+        
+        private boolean finished = false;
+        
         /**
          * Creates a new BlockSequence.
          * @param iStartOn the kind of page the sequence should start on. One of EN_ANY, EN_COLUMN, 
@@ -113,10 +117,17 @@ public abstract class AbstractBreaker {
          * @return a finalized sequence.
          */
         public KnuthSequence endSequence(Position breakPosition) {
+            if (finished) {
+                return this;
+            }
             // remove glue and penalty item at the end of the paragraph
-            while (this.size() > ignoreAtStart
-                   && !((KnuthElement)this.get(this.size() - 1)).isBox()) {
-                this.remove(this.size() - 1);
+            while (this.size() > ignoreAtStart) {
+                ListElement elt = (ListElement) this.get(this.size() - 1);
+                if (elt instanceof KnuthElement && !((KnuthElement) elt).isBox()) {
+                    this.remove(this.size() - 1);
+                } else {
+                    break;
+                }
             }
             if (this.size() > ignoreAtStart) {
                 // add the elements representing the space at the end of the last line
@@ -140,8 +151,19 @@ public abstract class AbstractBreaker {
             }
         }
 
-        public BlockSequence endBlockSequence(Position breakPosition) {
+        public KnuthSequence endBlockSequence() {
+            if (finished) {
+                return this;
+            }
+            KnuthPenalty breakPenalty = getBreakPenalty();
+            Position breakPosition = null;
+            if (breakPenalty != null) {
+                setBreakClass(readBreakClass(breakPenalty));
+                removeLast();
+                breakPosition = breakPenalty.getPosition();
+            }
             KnuthSequence temp = endSequence(breakPosition);
+            finished = true;
             if (temp != null) {
                 BlockSequence returnSequence = new BlockSequence(startOn, displayAlign);
                 returnSequence.addAll(temp);
@@ -151,7 +173,66 @@ public abstract class AbstractBreaker {
                 return null;
             }
         }
+        
+        private KnuthPenalty getBreakPenalty() {
+            KnuthPenalty breakPenalty = null;
+            ListElement elt = (ListElement) getLast();
+            if (elt instanceof KnuthElement && ((KnuthElement) elt).isPenalty()
+                    && ((KnuthPenalty) elt).getP() == -KnuthElement.INFINITE) {
+                breakPenalty = (KnuthPenalty) elt;
+            }
+            return breakPenalty;
+        }
+        
+        /**
+         * Read the breakclass of an explicitly set penalty.
+         * This method must only be called on an explicitly set penalty,
+         * because it flags Constants.NOT_SET as an illegal break class. 
+         * That is, it must be called before the block sequence
+         * is completed with the finishing penalty/glue/penalty.
+         * @param breakPenalty the break penalty whose break class is read
+         * @return the break class
+         */
+        public int readBreakClass(KnuthPenalty breakPenalty) {
+            int breakClass = Constants.NOT_SET;
+            if (breakPenalty != null) {
+                switch (breakPenalty.getBreakClass()) {
+                    case Constants.EN_PAGE:
+                        log.debug("PLM> break - PAGE");
+                        breakClass = Constants.EN_ANY;
+                        break;
+                    case Constants.EN_COLUMN:
+                        log.debug("PLM> break - COLUMN");
+                        //TODO Fix this when implementing multi-column layout
+                        breakClass = Constants.EN_COLUMN;
+                        break;
+                    case Constants.EN_ODD_PAGE:
+                        log.debug("PLM> break - ODD PAGE");
+                        breakClass = Constants.EN_ODD_PAGE;
+                        break;
+                    case Constants.EN_EVEN_PAGE:
+                        log.debug("PLM> break - EVEN PAGE");
+                        breakClass = Constants.EN_EVEN_PAGE;
+                        break;
+                    default:
+                        throw new IllegalStateException("Invalid break class: " 
+                                                        + breakPenalty.getBreakClass());
+                }
+            }
+            return breakClass;
+        }
 
+        /**
+         * @param breakClass the breakClass to set
+         */
+        public void setBreakClass(int breakClass) {
+            this.breakClass = breakClass;
+        }
+
+        public int getBreakClass() {
+            return breakClass;
+        }
+        
     }
 
     /** blockListIndex of the current BlockSequence in blockLists */
@@ -337,6 +418,13 @@ public abstract class AbstractBreaker {
                 alg.setConstantLineWidth(flowBPD);
                 iOptPageCount = alg.findBreakingPoints(effectiveList, /*flowBPD,*/
                             1, true, BreakingAlgorithm.ALL_BREAKS);
+                /* now determine the breakclass of the final penalty,
+                 * and set nextSequenceStartsOn accordingly.
+                 */
+                int temp = effectiveList.getBreakClass();
+                if (temp != Constants.NOT_SET) {
+                    nextSequenceStartsOn = temp;
+                }
                 log.debug("PLM> iOptPageCount= " + iOptPageCount
                         + " pageBreaks.size()= " + alg.getPageBreaks().size());
 
@@ -561,38 +649,22 @@ public abstract class AbstractBreaker {
             //Only implemented by the PSLM
             nextSequenceStartsOn = handleSpanChange(childLC, nextSequenceStartsOn);
             
+/*          postpone determination of the breakpenalty and the breakclass
             Position breakPosition = null;
-            if (((KnuthElement) returnedList.getLast()).isPenalty()
-                    && ((KnuthPenalty) returnedList.getLast()).getP() == -KnuthElement.INFINITE) {
-                KnuthPenalty breakPenalty = (KnuthPenalty) returnedList
-                        .removeLast();
+            KnuthPenalty breakPenalty = getBreakPenalty(returnedList);
+            if (breakPenalty != null) {
                 breakPosition = breakPenalty.getPosition();
-                switch (breakPenalty.getBreakClass()) {
-                case Constants.EN_PAGE:
-                    log.debug("PLM> break - PAGE");
-                    nextSequenceStartsOn = Constants.EN_ANY;
-                    break;
-                case Constants.EN_COLUMN:
-                    log.debug("PLM> break - COLUMN");
-                    //TODO Fix this when implementing multi-column layout
-                    nextSequenceStartsOn = Constants.EN_COLUMN;
-                    break;
-                case Constants.EN_ODD_PAGE:
-                    log.debug("PLM> break - ODD PAGE");
-                    nextSequenceStartsOn = Constants.EN_ODD_PAGE;
-                    break;
-                case Constants.EN_EVEN_PAGE:
-                    log.debug("PLM> break - EVEN PAGE");
-                    nextSequenceStartsOn = Constants.EN_EVEN_PAGE;
-                    break;
-                default:
-                    throw new IllegalStateException("Invalid break class: " 
-                            + breakPenalty.getBreakClass());
-                }
+                nextSequenceStartsOn = considerBreakClass(breakPenalty);
             }
+*/
             blockList.addAll(returnedList);
+            /* postpone ending the block sequence;
+             * for now set seq equal to blockList;
+             * when can endBlockSequence return null?
             BlockSequence seq = null;
             seq = blockList.endBlockSequence(breakPosition);
+            */
+            BlockSequence seq = blockList;
             if (seq != null) {
                 blockLists.add(seq);
             }
