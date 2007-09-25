@@ -83,7 +83,7 @@ public class ExternalGraphic extends AbstractGraphics {
      * @see org.apache.fop.fo.FONode#startOfNode
      */
     protected void startOfNode() throws FOPException {
-        checkId(getId());
+        super.startOfNode();
         getFOEventHandler().image(this);
     }
 

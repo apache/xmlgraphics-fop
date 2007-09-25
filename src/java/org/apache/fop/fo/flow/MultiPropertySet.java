@@ -33,7 +33,6 @@ import org.apache.fop.fo.ValidationException;
  */
 public class MultiPropertySet extends FObj {
     // The value of properties relevant for fo:multi-property-set.
-    private String id;
     // private ToBeImplementedProperty activeState;
     // End of property values
 
@@ -55,15 +54,8 @@ public class MultiPropertySet extends FObj {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
-        id = pList.get(PR_ID).getString();
+        super.bind(pList);
         // activeState = pList.get(PR_ACTIVE_STATE);
-    }
-
-    /**
-     * @see org.apache.fop.fo.FONode#startOfNode
-     */
-    protected void startOfNode() throws FOPException {
-        checkId(id);
     }
 
     /**
@@ -73,11 +65,6 @@ public class MultiPropertySet extends FObj {
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
             invalidChildError(loc, nsURI, localName);
-    }
-
-    /** @return the "id" property. */
-    public String getId() {
-        return id;
     }
 
     /** @see org.apache.fop.fo.FONode#getLocalName() */

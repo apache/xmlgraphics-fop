@@ -37,7 +37,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     private static Log log = LogFactory.getLog(PageBreakingAlgorithm.class);
 
     private LayoutManager topLevelLM;
-    private PageSequenceLayoutManager.PageProvider pageProvider;
+    private PageProvider pageProvider;
     private PageBreakingLayoutListener layoutListener;
     /** List of PageBreakPosition elements. */
     private LinkedList pageBreaks = null;
@@ -93,7 +93,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     private boolean favorSinglePart = false;
     
     public PageBreakingAlgorithm(LayoutManager topLevelLM,
-                                 PageSequenceLayoutManager.PageProvider pageProvider,
+                                 PageProvider pageProvider,
                                  PageBreakingLayoutListener layoutListener,
                                  int alignment, int alignmentLast,
                                  MinOptMax footnoteSeparatorLength,

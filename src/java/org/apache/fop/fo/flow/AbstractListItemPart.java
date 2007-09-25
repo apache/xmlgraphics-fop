@@ -34,7 +34,6 @@ import org.apache.fop.fo.properties.KeepProperty;
  */
 public abstract class AbstractListItemPart extends FObj {
     // The value of properties relevant for fo:list-item-label and fo:list-item-body.
-    private String id;
     private KeepProperty keepTogether;
     // Valid properties, commented out for performance:
     //   private CommonAccessibility commonAccessibility;
@@ -54,15 +53,8 @@ public abstract class AbstractListItemPart extends FObj {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
-        id = pList.get(PR_ID).getString();
+        super.bind(pList);
         keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
-    }
-
-    /**
-     * @see org.apache.fop.fo.FONode#startOfNode
-     */
-    protected void startOfNode() throws FOPException {
-        checkId(id);
     }
 
     /**
@@ -106,11 +98,5 @@ public abstract class AbstractListItemPart extends FObj {
     public KeepProperty getKeepTogether() {
         return keepTogether;
     }
-
-    /** @return the "id" property. */
-    public String getId() {
-        return id;
-    }
-    
 }
 

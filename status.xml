@@ -28,6 +28,13 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="code" dev="AD" type="update" fixes-bug="42089" due-to="Adrian Cumiskey">
+        Code cleanup and restructuring.
+      </action>
+      <action context="Code" dev="AD" type="add">
+        Slight improvement of relative font-weight handling in the properties
+        package.
+      </action>
       <action context="Code" dev="JM" type="update">
         Updated PDF/A-1b support according to ISO-19005-1:2005/Cor.1:2007.
       </action>

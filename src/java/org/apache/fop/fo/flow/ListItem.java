@@ -42,7 +42,6 @@ public class ListItem extends FObj {
     private CommonMarginBlock commonMarginBlock;
     private int breakAfter;
     private int breakBefore;
-    private String id;
     private KeepProperty keepTogether;
     private KeepProperty keepWithNext;
     private KeepProperty keepWithPrevious;
@@ -68,11 +67,11 @@ public class ListItem extends FObj {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
+        super.bind(pList);
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         commonMarginBlock = pList.getMarginBlockProps();
         breakAfter = pList.get(PR_BREAK_AFTER).getEnum();
         breakBefore = pList.get(PR_BREAK_BEFORE).getEnum();
-        id = pList.get(PR_ID).getString();
         keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
         keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
         keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
@@ -82,7 +81,7 @@ public class ListItem extends FObj {
      * @see org.apache.fop.fo.FONode#startOfNode
      */
     protected void startOfNode() throws FOPException {
-        checkId(id);
+        super.startOfNode();
         getFOEventHandler().startListItem(this);
     }
 
@@ -181,13 +180,6 @@ public class ListItem extends FObj {
     /** @return the "keep-together" property.  */
     public KeepProperty getKeepTogether() {
         return keepTogether;
-    }
-
-    /**
-     * @return the "id" property.
-     */
-    public String getId() {
-        return id;
     }
 
     /**

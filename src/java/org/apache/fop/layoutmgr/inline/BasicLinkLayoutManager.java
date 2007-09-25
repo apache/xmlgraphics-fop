@@ -58,8 +58,8 @@ public class BasicLinkLayoutManager extends InlineLayoutManager {
      */
     private void setupBasicLinkArea(LayoutManager parentLM, InlineArea area) {
         // internal destinations take precedence:
-        String idref = fobj.getInternalDestination();
-        if (idref != null && idref.length() > 0) {
+        if (fobj.hasInternalDestination()) {
+            String idref = fobj.getInternalDestination();
             PageSequenceLayoutManager pslm = getPSLM();
             // the INTERNAL_LINK trait is added by the LinkResolver
             // if and when the link is resolved:
@@ -68,13 +68,10 @@ public class BasicLinkLayoutManager extends InlineLayoutManager {
             if (!res.isResolved()) {
                 pslm.addUnresolvedArea(idref, res);
             }
-        } else {
-            String extdest = fobj.getExternalDestination();
-            if (extdest != null) {
-                String url = URISpecification.getURL(extdest);
-                if (url.length() > 0) {
-                    area.addTrait(Trait.EXTERNAL_LINK, url);
-                }
+        } else if (fobj.hasExternalDestination()) {
+            String url = URISpecification.getURL(fobj.getExternalDestination());
+            if (url.length() > 0) {
+                area.addTrait(Trait.EXTERNAL_LINK, url);
             }
         }
     }

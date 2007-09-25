@@ -40,7 +40,6 @@ import org.apache.fop.fo.properties.KeepProperty;
  */
 public class TableAndCaption extends FObj {
     // The value of properties relevant for fo:table-and-caption.
-    private String id;
     // Unused but valid items, commented out for performance:
     //     private CommonAccessibility commonAccessibility;
     //     private CommonAural commonAural;
@@ -73,20 +72,6 @@ public class TableAndCaption extends FObj {
             log.warn("fo:table-and-caption is not yet implemented.");
             notImplementedWarningGiven = true;
         }
-    }
-
-    /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
-     */
-    public void bind(PropertyList pList) throws FOPException {
-        id = pList.get(PR_ID).getString();
-    }
-
-    /**
-     * @see org.apache.fop.fo.FONode#startOfNode
-     */
-    protected void startOfNode() throws FOPException {
-        checkId(id);
     }
 
     /**
@@ -130,11 +115,6 @@ public class TableAndCaption extends FObj {
         } else {
             invalidChildError(loc, nsURI, localName);
         }
-    }
-
-    /** @return the "id" property. */
-    public String getId() {
-        return id;
     }
 
     /** @see org.apache.fop.fo.FONode#getLocalName() */

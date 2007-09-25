@@ -60,6 +60,7 @@ public abstract class InlineLevel extends FObjMixed {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
+        super.bind(pList);
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         commonAccessibility = pList.getAccessibilityProps();
         commonMarginInline = pList.getMarginInlineProps();

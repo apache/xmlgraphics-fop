@@ -1093,7 +1093,7 @@ public class RTFHandler extends FOEventHandler {
 
             RtfHyperLink link = textrun.addHyperlink(new RtfAttributes());
 
-            if (basicLink.getExternalDestination() != null) {
+            if (basicLink.hasExternalDestination()) {
                 link.setExternalURL(basicLink.getExternalDestination());
             } else {
                 link.setInternalURL(basicLink.getInternalDestination());
