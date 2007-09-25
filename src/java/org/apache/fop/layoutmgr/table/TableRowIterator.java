@@ -35,7 +35,7 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 
 
 /**
- * Iterator that lets the table layout manager step over all of the rows of a part of the
+ * Iterator that lets the table layout manager step over all the rows of a part of the
  * table (table-header, table-footer or table-body).
  * <p>Note: This class is not thread-safe.</p>
  */
@@ -72,7 +72,9 @@ public class TableRowIterator {
     /** Index of the row currently being fetched. */
     private int fetchIndex = -1;
 
-    /** Spans found on the current row which will also span over the next row. */
+    /**
+     * Number of spans found on the current row which will also span over the next row.
+     */
     private int pendingRowSpans;
 
     //TODO rows should later be a Jakarta Commons LinkedList so concurrent modifications while
@@ -122,16 +124,6 @@ public class TableRowIterator {
             default: {
                 this.tablePartIterator = table.getChildNodes();
             }
-        }
-    }
-
-    /**
-     * Preloads the whole table.
-     * <p>Note:This is inefficient for large tables.</p>
-     */
-    public void prefetchAll() {
-        while (prefetchNext()) {
-            log.trace("found row...");
         }
     }
 
@@ -259,7 +251,7 @@ public class TableRowIterator {
      * @return the requested effective row or null if (index &lt; 0 || index &gt;= the
      * number of already fetched rows)
      */
-    public EffRow getCachedRow(int index) {
+    private EffRow getCachedRow(int index) {
         if (index < 0 || index >= fetchedRows.size()) {
             return null;
         } else {
@@ -387,7 +379,7 @@ public class TableRowIterator {
     /**
      * Builds the list of grid units corresponding to the given table row.
      *
-     * @param cells list of cells belonging to the row
+     * @param cells list of cells starting at the current row
      * @param rowFO the fo:table-row object containing the row, possibly null
      * @return the list of grid units
      */

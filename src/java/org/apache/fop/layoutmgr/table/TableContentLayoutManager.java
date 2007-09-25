@@ -278,7 +278,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
         }
         
         if (returnList.size() > 0) {
-            //Remove last penalty
+            //Remove the last penalty produced by the combining algorithm (see TableStepper), for the last step
             ListElement last = (ListElement)returnList.getLast();
             if (last.isPenalty() || last instanceof BreakElement) {
                 if (!last.isForcedBreak()) {
@@ -326,7 +326,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
                 //whole body iterator to be prefetched!
                 prevRow = this.bodyIter.getLastRow();
             }
-            log.debug(prevRow + " - " + row + " - " + nextRow);
+            log.debug("prevRow-row-nextRow: " + prevRow + " - " + row + " - " + nextRow);
             
             //Determine the grid units necessary for getting all the borders right
             int guCount = row.getGridUnits().size();
@@ -400,7 +400,6 @@ public class TableContentLayoutManager implements PercentBaseContext {
                                 CommonBorderPaddingBackground.AFTER, flags);
                     }
                 }
-
             }
         }
     }
@@ -429,7 +428,9 @@ public class TableContentLayoutManager implements PercentBaseContext {
             
             pgus.clear();
             TableRow tableRow = null;
-            int minContentHeight = 0;  // Minimum content height for the row
+            // The row's minimum content height; 0 if the row's height is auto, otherwise
+            // the .minimum component of the explicitely specified value
+            int minContentHeight = 0;
             int maxCellHeight = 0;
             int effRowContentHeight = 0;
             for (int j = 0; j < row.getGridUnits().size(); j++) {
@@ -698,7 +699,13 @@ public class TableContentLayoutManager implements PercentBaseContext {
                     false, getTableLM().isFirst(firstPos), getTableLM().isLast(lastCheckPos));
         }
     }
-    
+
+    /**
+     * Iterates over a part of the table and paints the related elements.
+     * 
+     * @param iterator iterator over the table's header, body or footer elements
+     * @param painter
+     */
     private void iterateAndPaintPositions(Iterator iterator, RowPainter painter) {
         List lst = new java.util.ArrayList();
         boolean firstPos = false;
@@ -713,13 +720,14 @@ public class TableContentLayoutManager implements PercentBaseContext {
                 if (body == null) {
                     body = part.pgu.getBody();
                 }
-                if (tcpos.getFlag(TableContentPosition.FIRST_IN_ROWGROUP) 
+                if (tcpos.getFlag(TableContentPosition.FIRST_IN_ROWGROUP)
                         && tcpos.row.getFlag(EffRow.FIRST_IN_PART)) {
                     firstPos = true;
 
                 }
                 if (tcpos.getFlag(TableContentPosition.LAST_IN_ROWGROUP) 
                         && tcpos.row.getFlag(EffRow.LAST_IN_PART)) {
+                    log.trace("LAST_IN_ROWGROUP + LAST_IN_PART");
                     lastPos = true;
                     getTableLM().getCurrentPV().addMarkers(body.getMarkers(), 
                             true, firstPos, lastPos);
