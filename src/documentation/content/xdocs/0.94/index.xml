@@ -19,22 +19,34 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <document>
   <header>
-    <title>Apache FOP Version 0.20.5</title>
+    <title>Apache FOP Version 0.94</title>
     <version>$Revision: 201586 $</version>
   </header>
   <body>
     <section id="intro">
       <title>Introduction</title>
       <p>
-        Version 0.20.5 represents Apache FOP's previous stable release.  It is now
-        recommended that you use <a href="../0.93/index.html">0.93</a> instead.
+        The Apache FOP team is proud to present to you this production quality release.
+        We're still in the process of adding new features. We welcome any feedback you
+        might have and even more, any other form of help to get the project forward.
       </p>
       <p>
-        Please notice that, although we still provide support for 0.20.5, we won't fix any bugs or add any 
-        new features to this branch of development anymore.
-        Instead, please help us with <a href="../trunk/index.html">FOP Trunk</a> by trying it out and 
-        sending us your feedback. Of course, we especially appreciate any contributions in the form of 
-        documentation updates and code patches.
+        This fifth release contains many bug fix release and new features compared
+        to 0.92beta. To see what has changed since the last release, please visit the 
+        <a href="changes_0.94.html">Changes Page</a> and the <a href="releaseNotes_0.94.html">Release Notes</a>.
+      </p>
+    </section>
+    <section id="upgrading">
+      <title>Upgrading from an earlier version</title>
+      <p>
+        If you're upgrading to this version from an earlier version of FOP, please read the 
+        information contained on the <a href="upgrading.html">Upgrading page</a>!
+      </p>
+    </section>
+    <section id="download">
+      <title>Download</title>
+      <p>
+        To download this version, please visit the <a href="../download.html">download page</a>.
       </p>
     </section>
   </body>

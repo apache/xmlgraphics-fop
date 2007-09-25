@@ -69,8 +69,6 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
     private int cellIPD;
     private int rowHeight;
     private int usedBPD;
-    private int startBorderWidth;
-    private int endBorderWidth;
     private int borderAndPaddingBPD;
     private boolean emptyCell = true;
 
@@ -124,18 +122,21 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
 
     /** {@inheritDoc} */
     protected int getIPIndents() {
-        int iIndents = 0;
         int[] startEndBorderWidths = primaryGridUnit.getStartEndBorderWidths();
-        startBorderWidth += startEndBorderWidths[0];
-        endBorderWidth += startEndBorderWidths[1];
-        iIndents += startBorderWidth;
-        iIndents += endBorderWidth;
-        if (!isSeparateBorderModel()) {
-            iIndents /= 2;
+        startIndent = startEndBorderWidths[0];
+        endIndent = startEndBorderWidths[1];
+        if (isSeparateBorderModel()) {
+            int borderSep = getTable().getBorderSeparation().getLengthPair().getIPD().getLength()
+                    .getValue(this);
+            startIndent += borderSep / 2;
+            endIndent += borderSep / 2;
+        } else {
+            startIndent /= 2;
+            endIndent /= 2;
         }
-        iIndents += getTableCell().getCommonBorderPaddingBackground().getPaddingStart(false, this);
-        iIndents += getTableCell().getCommonBorderPaddingBackground().getPaddingEnd(false, this);
-        return iIndents;
+        startIndent += getTableCell().getCommonBorderPaddingBackground().getPaddingStart(false, this);
+        endIndent += getTableCell().getCommonBorderPaddingBackground().getPaddingEnd(false, this);
+        return startIndent + endIndent;
     }
 
     /**
@@ -147,11 +148,6 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
         referenceIPD = context.getRefIPD();
         cellIPD = referenceIPD;
         cellIPD -= getIPIndents();
-        if (isSeparateBorderModel()) {
-            int borderSep = getTable().getBorderSeparation().getLengthPair()
-                    .getIPD().getLength().getValue(this);
-            cellIPD -= borderSep;
-        }
 
         LinkedList returnedList = null;
         LinkedList contentList = new LinkedList();
@@ -461,12 +457,6 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
             curBlockArea.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
             TraitSetter.setProducerID(curBlockArea, getTableCell().getId());
             curBlockArea.setPositioning(Block.ABSOLUTE);
-            int indent = startBorderWidth;
-            if (!isSeparateBorderModel()) {
-                indent /= 2;
-            }
-            indent += getTableCell()
-                    .getCommonBorderPaddingBackground().getPaddingStart(false, this);
             // set position
             int borderAdjust = 0;
             if (!isSeparateBorderModel()) {
@@ -479,8 +469,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
                 //borderAdjust += primaryGridUnit.getBorders().getBorderBeforeWidth(false);
             }
             TableLayoutManager tableLM = (TableLayoutManager)getParent();
-            curBlockArea.setXOffset(xoffset + inRowIPDOffset
-                    + tableLM.getHalfBorderSeparationIPD() + indent);
+            curBlockArea.setXOffset(xoffset + inRowIPDOffset + startIndent);
             curBlockArea.setYOffset(yoffset - borderAdjust
                     + tableLM.getHalfBorderSeparationBPD());
             curBlockArea.setIPD(cellIPD);

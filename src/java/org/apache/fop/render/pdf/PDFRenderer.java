@@ -820,7 +820,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         float w = x2 - x1;
         float h = y2 - y1;
         if ((w < 0) || (h < 0)) {
-            log.error("Negative extent received. Border won't be painted.");
+            log.error("Negative extent received (w=" + w + ", h=" + h + "). Border won't be painted.");
             return;
         }
         switch (style) {

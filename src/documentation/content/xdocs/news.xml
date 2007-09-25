@@ -26,18 +26,26 @@
   </header>
   <body>
     <section>
+      <title>24th August 2007 - Apache FOP 0.94 Released</title>
+      <p>The Apache FOP team is pleased to present you the second production
+        grade release of the new FOP codebase. This release contains many bug
+        fixes and new features. See the <a
+          href="0.94/releaseNotes_0.94.html">Release Notes</a> for a list of
+        the most important changes.</p>
+    </section>
+    <section>
       <title>26 January 2007 - New Committer</title>
       <p>Welcome Jay Bryant!</p>
     </section>
-	<section>
-	  <title>9 January 2007 - Apache FOP 0.93 released</title>
+    <section>
+      <title>9 January 2007 - Apache FOP 0.93 released</title>
       <p>
         The Apache FOP team is proud to present to you the first
         production grade release of the new FOP codebase. This release
         has the new API first introduced in release 0.92 beta. It
         contains again many bug fixes and new features.
       </p>
-	</section>
+    </section>
     <section>
       <title>16 October 2006 - New Committer</title>
       <p>Welcome Vincent Hennebert!</p>
@@ -71,8 +79,8 @@
       </p>
       <p>
         Please see also the 
-        <link href="http://mail-archives.apache.org/mod_mbox/xmlgraphics-fop-users/200511.mbox/%3c20051123002157.0EB0.JEREMIAS@apache.org%3e">announcement</link>
-        and the <link href="relnotes.html#FOP+0.90+alpha+1">release notes</link>.
+        <link href="http://mail-archives.apache.org/mod_mbox/xmlgraphics-fop-users/200511.mbox/%3c20051123002157.0EB0.JEREMIAS@apache.org%3e">announcement</link>.
+        <!-- TODO re-enable and the <link href="relnotes.html#FOP+0.90+alpha+1">release notes</link>.-->
       </p>
     </section>
     <section>
@@ -83,7 +91,7 @@
       <title>20 October 2004 - Creation of the Apache XML Graphics project</title>
       <p>
         The Apache Board of Directors agreed to the creation of the 
-        <link href="http://xmlgrapics.apache.org">Apache XML Graphics</link>
+        <link href="http://xmlgraphics.apache.org">Apache XML Graphics</link>
         project which will be comprised of Batik and FOP. Both former 
         Apache XML subprojects are in this way complying with the Board's desire
         to improve project oversight. Both project teams also see additional
@@ -137,7 +145,8 @@
       <p>
       See also the full text of the
       <link href="http://mail-archives.apache.org/eyebrowse/ReadMsg?listName=fop-dev@xml.apache.org&amp;msgNo=6067">
-      announcement</link> and the <link href="relnotes.html#FOP+0.20.5">release notes</link>.
+        announcement</link>.
+      <!-- TODO re-enable  and the <link href="relnotes.html#FOP+0.20.5">release notes</link>.-->
       </p>
     </section>
     <section>

@@ -70,9 +70,9 @@
           for XSL (FO) documents.
         </p>
         <p>
-          <link href="http://xml.apache.org/batik">Batik</link> can be used with
+          <link href="http://xmlgraphics.apache.org/batik">Batik</link> can be used with
           FOP to <link
-          href="http://xml.apache.org/batik/svgrasterizer.html">transcode an SVG
+          href="http://xmlgraphics.apache.org/batik/svgrasterizer.html">transcode an SVG
           image</link> into a PDF document.
         </p>
       </answer>
@@ -83,7 +83,7 @@
         <p>
           XSL is a W3C standard concerned with publishing XML documents. It
           consists of two parts: <link href="#XSLT">XSLT</link> and <link
-          href="#XSLFO">XSLFO</link>. The acronym expands to
+          href="#XSLFO">XSL-FO</link>. The acronym expands to
           e<strong>X</strong>tensible <strong>S</strong>tylesheet
           <strong>L</strong>anguage.
         </p>
@@ -138,10 +138,10 @@
         <p>
           When it's ready and the committers have enough time to go through 
           the time-consuming process of creating a release. We
-          released version 0.93 on 9 January 2007, and intend to
-          release version 1.0 later in 2007. If you
-        	want to speed up the process, consider to
-        	<link href="dev/index.html#involved">contribute</link> to FOP.</p>
+          released version 0.94 on 24th August 2007, and intend to
+          release version 1.0 later in late 2007 or early 2008. If you
+          want to speed up the process, consider
+          <link href="dev/index.html#involved">contributing</link> to FOP.</p>
       </answer>
     </faq>
     <faq id="redesign">
@@ -170,13 +170,13 @@
     <title>Problems running FOP</title>
     <faq id="no-page-master">
       <question>I get the error: [ERROR]: 'master-reference' for
-      'fo:page-sequence'matches no 'simple-page-master' or
+      'fo:page-sequence' matches no 'simple-page-master' or
       'page-sequence-master'</question>
       <answer>
         <p>
           FOP was changed to be in accordance with the latest standard (see
-          <link href="resources.html#w3-xsl">XSL standard</link>).The page
-          master for a fo:page-sequence is now refereced by the
+          <link href="resources.html#specs-xslfo">XSL standard</link>).The page
+          master for a fo:page-sequence is now referenced by the
           master-reference attribute. Replace the master-name attributes of
           your fo:page-sequence elements by master-reference attributes. You
           have to do this also for fo:single-page-master-reference,
@@ -211,7 +211,7 @@
           If you run FOP embedded in your servlet, web application or
           other Java application, check the classpath of the
           application. Check the also the information pertaining to <link
-          href="0.93/servlets.html#servlet-engine">servlet engines</link>
+          href="0.94/servlets.html#servlet-engine">servlet engines</link>
           for further hints.
         </p>
         <p>
@@ -241,7 +241,7 @@
       <question>I get an OutOfMemoryException.</question>
       <answer>
         <p>
-          See <link href="0.93/running.html#memory">FOP Memory</link>.
+          See <link href="0.94/running.html#memory">FOP Memory</link>.
         </p>
       </answer>
     </faq>
@@ -295,14 +295,14 @@
           whether you got them right.
         </p>
         <p>
-          You may find it helpful to use the <link href="#FO-validate">validation tools</link> to validate your
+          You may find it helpful to use the <link href="#fo-validate">validation tools</link> to validate your
           FO document. This will catch most problems, but should not be
           relied upon to catch all.
         </p>
         <p>
           If you use XSLT, problems in your style sheet and in your
           source XML also can produce a NullPointerException. <link
-          href="0.93/running.html#check-input">Run the transformation
+          href="0.94/running.html#check-input">Run the transformation
           separately</link> to check for this, usually you'll get a
           detailed error message from the XSLT processor.
         </p>
@@ -336,7 +336,7 @@
         </p>
         <p>
           If you called the FOP command line application from some other
-          programm, for example from Java using Runtime.exec(), it may hang
+          program, for example from Java using Runtime.exec(), it may hang
           while trying to write log entries to the output pipe. You have to read
           the FOP output regularly to empty the pipe buffer. It is best to avoid
           exec'ing FOP, use the library interface instead.
@@ -368,8 +368,8 @@
       <question>FOP does not find my fonts.</question>
       <answer>
         <p>
-          Did you get: &#171;Failed to read font metrics file C:\foo\arial.xml
-          : File "C:\foo\arial.xml" not found&#187;? The value for the
+          Did you get: &#8220;Failed to read font metrics file C:\foo\arial.xml
+          : File "C:\foo\arial.xml" not found&#8221;? The value for the
           metrics-file attribute in the user config file is actually an URL, not
           a file name. Use "file:///C:/foo/arial.xml" instead.
         </p>
@@ -380,7 +380,7 @@
         </p>
         <p>
           Try also setting the <link
-          href="0.93/configuration.html#general-elements">font-base
+          href="0.94/configuration.html#general-elements">font-base
           configuration</link>.
         </p>
       </answer>
@@ -389,7 +389,7 @@
   <part id="part-output">
     <title>Problems with FOP output</title>
     <faq id="leader-expansion">
-      <question>Leaders don't work anymore in 0.93. Instead of
+      <question>Leaders don't work anymore in 0.94. Instead of
       filling the line, only three dots or a short ruler is
       output.</question>
       <answer>
@@ -410,7 +410,7 @@
           The new implementation uses leader-length.optimum to
           determine where to break the line, and expands the leader
           only further if the line should be filled, as indicated by
-          the text-aling and text-align-last properties.
+          the text-align and text-align-last properties.
         </p>
         <p>
           Actually due to the fuzzyness of the specification both the
@@ -432,7 +432,7 @@
         </p>
         <p>
           The <link
-          href="http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#force-page-count">force-page-count
+          href="http://www.w3.org/TR/xsl11/#force-page-count">force-page-count
           property</link> controls how a FO processor pads page sequences in
           order to get certain page counts or last page numbers. The default is
           "<code>auto</code>". With this setting, if the next page sequence
@@ -470,7 +470,7 @@ Check the following:</p>
         <p>Other possibilities:</p>
         <ul>
           <li>The image format is not supported or not supported completely.
-          See <link href="0.93/graphics.html">FOP Graphics Formats</link> for a
+          See <link href="0.94/graphics.html">FOP Graphics Formats</link> for a
           list of supported formats and related issues.</li>
           <li>The graphic may be too large to fit into the intended space.</li>
           <li>There may be something (static content) that is obscuring the
@@ -482,14 +482,14 @@ Check the following:</p>
     <faq id="png-fails">
       <question>My graphical images do not work properly.</question>
       <answer>
-        <p>See <link href="0.93/graphics.html">FOP Graphics Formats</link> for a
+        <p>See <link href="0.94/graphics.html">FOP Graphics Formats</link> for a
         list of supported graphics formats and related issues.</p>
       </answer>
     </faq>
     <faq id="graphic-resolution">
       <question>Why is my graphic rendered at a different resolution than it was created?</question>
       <answer>
-        <p>See <link href="0.93/graphics.html#resolution">Graphics Resolution</link>.</p>
+        <p>See <link href="0.94/graphics.html#resolution">Graphics Resolution</link>.</p>
       </answer>
     </faq>
     <faq id="keep-with">
@@ -582,9 +582,9 @@ Check the following:</p>
       <answer>
         <p>
           This is usually caused by setting a "height" on a table-row or table-cell and when
-          the content is higher that the specified height. By setting "height" (a so-called 
+          the content is higher than the specified height. By setting "height" (a so-called 
           corresponding property) you 
-          <link href="http://www.w3.org/TR/2001/REC-xsl-20011015/slice5.html#section-N6057-Height,-and-Width-Properties">implicitely set</link>
+          <link href="http://www.w3.org/TR/xsl11/#d0e4413">implicitely set</link>
           block-progression-dimension.minimum, block-progression-dimension.optimum and 
           block-progression-dimension.maximum to the same value. You'll get some information 
           about that in the warning message. Look for something like: 
@@ -592,10 +592,10 @@ Check the following:</p>
         </p>
         <p>
           Assuming you set the height on the table-row to 14pt and your content is 75pt high,
-          a constraint (maximum=14pt) is violated. Normally, you just want want to make sure
+          a constraint (maximum=14pt) is violated. Normally, you just want to make sure
           with the "height" property that the row has a minimum height. If that is so, the
           right solution is to specify block-progression-dimension.minimum="14pt" instead of
-          heigth="14pt".
+          height="14pt".
         </p>
       </answer>
     </faq>
@@ -621,7 +621,7 @@ Check the following:</p>
       <answer>
         <p>Make sure you have set the language and optionally the country attributes for an appropriate XSL-FO element (fo:page-sequence, fo:block or fo:character):</p>
         <source><![CDATA[<fo:page-sequence language="fi">]]></source>
-        <p>See <link href="0.93/hyphenation.html#support">Hyphenation Support</link> for details and instructions on using hyphenation with FOP.</p>
+        <p>See <link href="0.94/hyphenation.html#support">Hyphenation Support</link> for details and instructions on using hyphenation with FOP.</p>
         <p>Explicitly enable hyphenation for an appropriate XSL-FO element (fo:block, fo:character):</p>
         <source><![CDATA[<fo:block hyphenate="true">]]></source>
       </answer>
@@ -652,7 +652,7 @@ Check the following:</p>
       <question>How do I use FOP in a servlet?</question>
       <answer>
         <p>
-          See <link href="0.93/servlets.html">Using FOP in a Servlet</link>.
+          See <link href="0.94/servlets.html">Using FOP in a Servlet</link>.
         </p>
       </answer>
     </faq>
@@ -661,7 +661,7 @@ Check the following:</p>
       transformation?</question>
       <answer>
         <p>
-          See <link href="0.93/servlets.html#xslt">Using FOP in a Servlet with XSLT Transformation</link>.
+          See <link href="0.94/servlets.html#xslt">Using FOP in a Servlet with XSLT Transformation</link>.
         </p>
       </answer>
     </faq>
@@ -669,7 +669,7 @@ Check the following:</p>
       <question>How do I pass parameters to the XSLT transformation?</question>
       <answer>
         <p>
-          See <link href="0.93/servlets.html#xslt">Using FOP in a Servlet with XSLT Transformation</link>.
+          See <link href="0.94/servlets.html#xslt">Using FOP in a Servlet with XSLT Transformation</link>.
         </p>
       </answer>
     </faq>
@@ -687,7 +687,7 @@ Check the following:</p>
       <question>How do I set the baseDir property in a servlet environment?</question>
       <answer>
         <p>
-          See <link href="0.93/embedding.html#config-internal">Setting the Configuration Programmatically</link>.
+          See <link href="0.94/embedding.html#config-internal">Setting the Configuration Programmatically</link>.
         </p>
       </answer>
     </faq>
@@ -695,7 +695,7 @@ Check the following:</p>
       <question>How do I use a user configuration file from a servlet?</question>
       <answer>
         <p>
-          See <link href="0.93/embedding.html#config-external">Using a Configuration File in an Embedded App</link>.
+          See <link href="0.94/embedding.html#config-external">Using a Configuration File in an Embedded App</link>.
         </p>
       </answer>
     </faq>
@@ -704,7 +704,7 @@ Check the following:</p>
         get FOP working for various servlet engines?</question>
       <answer>
         <p>
-          See <link href="0.93/servlets.html#servlet-engine">Servlet Engines</link>.
+          See <link href="0.94/servlets.html#servlet-engine">Servlet Engines</link>.
         </p>
       </answer>
     </faq>
@@ -712,7 +712,7 @@ Check the following:</p>
       <question>Can FOP be used in multithreaded environments?</question>
       <answer>
         <p>
-          See <link href="0.93/embedding.html#multithreading">Multithreading FOP</link>.
+          See <link href="0.94/embedding.html#multithreading">Multithreading FOP</link>.
         </p>
       </answer>
     </faq>
@@ -723,13 +723,13 @@ Check the following:</p>
       <question>The rendering of SVG text in my PDF is of poor quality.
 Can I control this?</question>
       <answer>
-        <p>See <link href="0.93/graphics.html#svg-pdf-text">Placing SVG Text into PDF</link>.</p>
+        <p>See <link href="0.94/graphics.html#svg-pdf-text">Placing SVG Text into PDF</link>.</p>
       </answer>
     </faq>
     <faq id="svg-headless">
       <question>How do I use FOP with SVG on headless servers?</question>
       <answer>
-        <p>See <link href="0.93/graphics.html#batik">FOP: Graphics (Batik)</link>.</p>
+        <p>See <link href="0.94/graphics.html#batik">FOP: Graphics (Batik)</link>.</p>
       </answer>
     </faq>
     <faq id="svghangs">
@@ -792,7 +792,7 @@ Can I control this?</question>
     <faq id="svg-scaling">
       <question>Why is my SVG rendered at a size different from that specified in my fo:external-graphic element?</question>
       <answer>
-        <p>See <link href="0.93/graphics.html#svg-scaling">SVG Scaling</link>.</p>
+        <p>See <link href="0.94/graphics.html#svg-scaling">SVG Scaling</link>.</p>
       </answer>
     </faq>
     <faq id="svg-attribute-required">
@@ -825,7 +825,7 @@ Can I control this?</question>
       <question>How do I embed fonts in PDF?</question>
       <answer>
         <p>
-          See the <link href="0.93/fonts.html">Fonts</link> page for information
+          See the <link href="0.94/fonts.html">Fonts</link> page for information
           about embedding fonts.
         </p>
       </answer>
@@ -844,7 +844,7 @@ Can I control this?</question>
           set. For a variety of reasons, even those are not completely
           guaranteed to work, for example you can't use the fi
           ligature from the standard serif font. Check the <link
-          href="0.93/output.html#pdf-fonts">overview</link> for the default
+          href="0.94/output.html#pdf-fonts">overview</link> for the default
           PDF fonts.
         </p>
         <p>
@@ -852,7 +852,7 @@ Can I control this?</question>
           the desired character. Furthermore the font must be
           available on the machine where the PDF is viewed or it must
           have been embedded in the PDF file. See <link
-          href="0.93/fonts.html">embedding fonts</link>.
+          href="0.94/fonts.html">embedding fonts</link>.
         </p>
         <p>
           For most symbols, it is better to select the symbol font
@@ -870,7 +870,7 @@ Can I control this?</question>
     <faq id="pdf-postprocess">
       <question>What tools are available for post-processing my PDF document?</question>
       <answer>
-        <p>See <link href="0.93/output.html#pdf-postprocess">PDF Post-processing</link>.</p>
+        <p>See <link href="0.94/output.html#pdf-postprocess">PDF Post-processing</link>.</p>
       </answer>
     </faq>
     <faq id="pdf-security">
@@ -878,8 +878,8 @@ Can I control this?</question>
       to my PDF document?</question>
       <answer>
         <p>
-          See <link href="0.93/pdfencryption.html">PDF Encryption</link>.
-          See also <link href="0.93/output.html#pdf-postprocess">PDF Post-processing</link>.
+          See <link href="0.94/pdfencryption.html">PDF Encryption</link>.
+          See also <link href="0.94/output.html#pdf-postprocess">PDF Post-processing</link>.
         </p>
       </answer>
     </faq>
@@ -887,13 +887,13 @@ Can I control this?</question>
       <question>How do I add document properties (title, author, etc.) to my
       PDF document?</question>
       <answer>
-        <p>See <link href="0.93/output.html#pdf-postprocess">PDF Post-processing</link>.</p>
+        <p>See <link href="0.94/output.html#pdf-postprocess">PDF Post-processing</link>.</p>
       </answer>
     </faq>
     <faq id="pdf-watermark">
       <question>How do I add watermarks to my PDF document?</question>
       <answer>
-        <p>See <link href="0.93/output.html#pdf-watermark">PDF Watermarks</link>.</p>
+        <p>See <link href="0.94/output.html#pdf-watermark">PDF Watermarks</link>.</p>
       </answer>
     </faq>
     <faq id="pdf-print-contortion">
@@ -912,11 +912,6 @@ Can I control this?</question>
       <question>How do I control the Acrobat bookmark display?</question>
       <answer>
         <p>
-          FOP 0.20.5 does not support this feature. Possible workarounds
-          include those mentioned in the <link href="0.93/output.html#pdf-postprocess">PDF
-            Post-Processing FAQ</link>.
-        </p>
-        <p>
           FOP versions 0.93 and later support the starting-state property of the XSL 1.1
           <link href="http://www.w3.org/TR/xsl11/#fo_bookmark">fo:bookmark</link>
           element which can be used for this. The color, font-style and 
@@ -934,7 +929,7 @@ Can I control this?</question>
       <answer>
         <p>
           This is a problem of Internet Explorer requesting the content several
-          times. Please see the <link href="0.93/servlets.html#ie">notes on Internet Explorer</link>
+          times. Please see the <link href="0.94/servlets.html#ie">notes on Internet Explorer</link>
           for more information.
         </p>
       </answer>
@@ -955,7 +950,7 @@ Can I control this?</question>
           For the second task, you can use some client side script to start
           Acrobat Reader in print mode, or use a Java applet based on the FOP
           print servlet. This depends heavily on the client installation and
-          should not relied on except in tightly controlled environments.
+          should not be relied on except in tightly controlled environments.
         </p>
         <p>
           See also <link href="http://marc.theaimsgroup.com/?l=fop-dev&amp;m=101065988325115&amp;w=2">http://marc.theaimsgroup.com/?l=fop-dev&amp;m=101065988325115&amp;w=2</link>
@@ -1114,21 +1109,21 @@ Can I control this?</question>
       <question>Can I use FOP to convert XHTML or HTML files to PDF?</question>
       <answer>
         <p>
-        	You will get better results if you transform your source
-			XML directly into XSLFO. It is tempting to use the
-			XML-&gt;XHTML-&gt;XSLFO approach, because this apparently means
-			there's only one transformation to maintain, but XHTML
-			and publishing grade PDF are dissimilar enough that an
-			"generic" XHTML-&gt;XSLFO(PDF) usually wont cut it, because
-			the XHTML already lacks information from the original XML.
-			It may be worthwhile to go from the source XML to an
-			intermediate custom XML which on one hand is close enough
-			to representation to allow simple transformation to either
-			XHTML or XSLFO for most of the structure, but on the other
-			hand retains enough semantic from the original XML that
-			elements which must be handled differently in the two
-			representations can be handled differently. Setting this
-			up requires experience and most likely extensive prototyping.
+          You will get better results if you transform your source
+          XML directly into XSLFO. It is tempting to use the
+          XML-&gt;XHTML-&gt;XSLFO approach, because this apparently means
+          there's only one transformation to maintain, but XHTML
+          and publishing grade PDF are dissimilar enough that an
+          "generic" XHTML-&gt;XSLFO(PDF) usually wont cut it, because
+          the XHTML already lacks information from the original XML.
+          It may be worthwhile to go from the source XML to an
+          intermediate custom XML which on one hand is close enough
+          to representation to allow simple transformation to either
+          XHTML or XSLFO for most of the structure, but on the other
+          hand retains enough semantic from the original XML that
+          elements which must be handled differently in the two
+          representations can be handled differently. Setting this
+          up requires experience and most likely extensive prototyping.
         </p>
       </answer>
     </faq>
@@ -1136,11 +1131,11 @@ Can I control this?</question>
       <question>I know it may be a bad idea to use FOP to convert XHTML or HTML files to PDF, but I want to do it anyway. Are there any tools available to help me?</question>
       <answer>
         <p>
-        	The <link href="resources.html">FOP Resources page</link> has links
-        	to a tool called <link href="http://html2fo.sourceforge.net/">html2fo</link>
-        	which can be used to make such a transformation. In addition, there
-        	are tools on the Antenna House <link href="http://www.antennahouse.com/XSLsample/XSLsample.htm">XSL-FO Tutorial and Sample</link>
-			page.
+          The <link href="resources.html">FOP Resources page</link> has links
+          to a tool called <link href="http://html2fo.sourceforge.net/">html2fo</link>
+          which can be used to make such a transformation. In addition, there
+          are tools on the Antenna House <link href="http://www.antennahouse.com/XSLsample/XSLsample.htm">XSL-FO Tutorial and Sample</link>
+          page.
         </p>
       </answer>
     </faq>
@@ -1150,9 +1145,9 @@ Can I control this?</question>
     <faq id="doc-mgt">
       <question>Where can I learn how the FOP docs and web site are built?</question>
       <answer>
-      	<p>
-      		See FOP <link href="dev/doc.html">Doc Management</link>. ;-)
-      	</p>
+        <p>
+          See FOP <link href="dev/doc.html">Doc Management</link>. ;-)
+        </p>
       </answer>
     </faq>
   </part>
@@ -1196,7 +1191,7 @@ Can I control this?</question>
           <li>
             In the case where something works properly with another formatter,
             (AntennaHouse, PassiveTex, etc.) but doesn't work with FOP, please
-            check the <link href="relnotes.html">Release Notes</link>, the
+            check the <!--link href="relnotes.html"-->Release Notes<!--/link-->, the
             <link href="compliance.html">FOP Standards Compliance</link> document,
             and the remaining FAQ in this document. If not found there, look at the
             list of <link href="bugs.html#issues_existing">Bugs Already Reported</link>.

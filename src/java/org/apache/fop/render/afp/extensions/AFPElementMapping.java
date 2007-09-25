@@ -45,6 +45,9 @@ public class AFPElementMapping extends ElementMapping {
 
     public static final String INCLUDE_PAGE_SEGMENT = "include-page-segment";
 
+    /** NOP */
+    public static final String NO_OPERATION = "no-operation";
+
     /**
      * The namespace used for AFP extensions
      */
@@ -79,6 +82,9 @@ public class AFPElementMapping extends ElementMapping {
             foObjs.put(
                 INCLUDE_PAGE_OVERLAY,
                 new AFPIncludePageOverlayMaker());
+            foObjs.put(
+                NO_OPERATION,
+                new AFPNoOperationMaker());
         }
 
     }
@@ -107,4 +113,9 @@ public class AFPElementMapping extends ElementMapping {
         }
     }
 
+    static class AFPNoOperationMaker extends ElementMapping.Maker {
+        public FONode make(FONode parent) {
+            return new AFPElement(parent, NO_OPERATION);
+        }
+    }
 }

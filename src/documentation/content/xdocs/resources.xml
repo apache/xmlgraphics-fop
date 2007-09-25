@@ -30,7 +30,7 @@
       <section id="specs-xslfo">
         <title>XSL-FO</title>
         <ul>
-          <li><jump href="http://www.w3.org/TR/2001/REC-xsl-20011015/">XSL-FO Recommendation (15 October 2001)</jump></li>
+          <li><jump href="http://www.w3.org/TR/xsl11/">XSL-FO Recommendation (05 December 2006)</jump></li>
           <li><jump href="http://www.renderx.com/Tests/validator/fo.dtd.html">Unofficial DTD for the XSL-FO Recommendation</jump> provided by N. Grigoriev from RenderX.</li>
         </ul>
       </section>
@@ -87,7 +87,6 @@
           <li>[online article] <jump href="http://www.xml.com/pub/a/2001/01/17/xsl-fo/index.html">Using XSL Formatting Objects</jump>, by J. David Eisenberg.</li>
           <li>[online reference] <jump href="http://zvon.org/xxl/xslfoReference/Output/index.html">XSL FO reference</jump>, by Miloslav Nic.</li>
           <li>[online reference] <jump href="http://www.dpawson.co.uk/xsl/sect3/index.html">Dave Pawson's XSL-FO FAQ</jump>.</li>
-          <li>[online book] <jump href="http://www.dpawson.co.uk/xsl/sect3/bk/index.html">An introduction to XSL Formatting Objects</jump>, by Dave Pawson. See hardcopy version below.</li>
           <li>[book] <jump href="http://www.oreilly.com/catalog/xslfo">XSL-FO</jump>, by Dave Pawson, O'Reilly &amp; Associates, 2002, ISBN 0-596-00355-2. See online version above.</li>
           <li>[book] <jump href="http://www.phptr.com/browse/product.asp?product_id={CEA527AF-412D-49DA-8C1F-46E0A519B8D8}">Definitive XSL-FO</jump>, by G. Ken Holman, Prentice Hall PTR, 2003, ISBN 0-131-40374-5.</li>
           <li>[book] <jump href="http://www.sams.com/catalog/product.asp?product_id={F7ADFA46-6AF1-497C-9163-0D6337F727B3}">XSL Formatting Objects Developer's Handbook</jump>, by Doug Lovell, Sams, 2002, ISBN 0-672-32281-1.</li>
@@ -101,7 +100,7 @@
           <li>[book] <jump href="http://wrox.com/books/1861005067.htm">XSLT Programmer's Reference</jump>, by Michael H. Kay, Wrox Press, ISBN 1-861-00506-7.</li>
           <li>[book] <jump href="http://www.oreilly.com/catalog/xslt">XSLT</jump>, by Doug Tidwell, O'Reilly &amp; Associates, 2001, ISBN 0-596-00053-7.</li>
           <li>[book] <jump href="http://www.oreilly.com/catalog/xsltckbk">XSLT Cookbook</jump>, by Sal Mangano, O'Reilly &amp; Associates, 2002, ISBN 0-596-00372-2.</li>
-          <li>[article] <jump href="http://www.dpawson.co.uk/xsl/xslfaq.html">Dave Pawson's XSL FAQ</jump>.</li>
+          <li>[article] <jump href="http://www.dpawson.co.uk/xsl/index.html">Dave Pawson's XSL FAQ</jump>.</li>
          <li>[book] <jump href="http://www.oreilly.com/catalog/xpathpointer">XPath and XPointer: Locating Content in XML Documents</jump>, by John E. Simpson, O'Reilly &amp; Associates, 2002, ISBN 0-596-00291-2.</li>
           <li>[book] <jump href="http://www.wiley.com/cda/product/0,,0471416207,00.html">XSL Essentials</jump>, by Michael Fitzgerald, John Wiley &amp; Sons, 2001, ISBN 0-471-41620-7.</li>
           <li>[book] <jump href="http://www.oreilly.com/catalog/javaxslt">Java and XSLT</jump>, by Eric M. Burke, O'Reilly &amp; Associates, 2001, ISBN 0-596-00143-6.</li>
@@ -221,7 +220,6 @@
           <li>[software] <jump href="http://www.scriptura-xsl.com">Scriptura</jump> by Inventive Designers (commercial)</li>
           <li>[software] <jump href="http://www.xslfast.com">XSLfast</jump> by jCatalog Software AG (commercial)</li>
           <li>[software] <jump href="http://www.metafocus.no/en/xultation_designer.php">Xultation Designer</jump> by Metafocus (commercial)</li>
-          <li>[software] <jump href="http://www.cambridgedocs.com/products/downloads/WordFODesigner.htm">Word FO Designer</jump> by CambridgeDocs (commercial)</li>
           <li>[software] <jump href="http://web.assentis.com/products/products.php?navi=Products&amp;product_id=7">Assentis:DocDesign</jump> by Assentis Technologies (commercial)</li>
         </ul>
       </section>
