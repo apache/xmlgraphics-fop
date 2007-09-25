@@ -208,8 +208,6 @@ public class TraitSetter {
         if (bps != null) {
             area.addTrait(Trait.BORDER_END, bps);
         }
-
-        addPadding(area, bordProps, context);
     }
 
     private static void addPadding(Area area, CommonBorderPaddingBackground bordProps, 

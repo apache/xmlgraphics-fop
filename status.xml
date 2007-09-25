@@ -28,6 +28,18 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="LF" type="fix">
+        Fixed a problem with disappearing footnotes inside hyphenated inlines (and footnotes with hyphenated inline child).
+      </action>
+      <action context="Code" dev="JM" type="add" fixes-bug="42067" due-to="Paul Vinkenoog">
+        Add support for exact positioning of internal PDF links.
+      </action>
+      <action context="Code" dev="JM" type="fix" fixes-bug="41434" due-to="Martin Kögler">
+        Fix PDF Genaration for non-ASCII compatible locales.
+      </action>
+      <action context="Code" dev="VH, JM" type="add" importance="high" fixes-bug="36934">
+        Add support for the collapsing-border model in tables.
+      </action>
       <action context="Code" dev="JB" type="add" importance="high">
         Add support for named destinations in PDF.
       </action>

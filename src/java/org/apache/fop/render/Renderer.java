@@ -113,9 +113,9 @@ public interface Renderer {
      * document (e.g., PDF bookmarks).  Note - not all renderers will process
      * all off-document items.
      *
-     * @param ext  The extension element to be rendered
+     * @param odi  The off-document item to be rendered
      */
-    void processOffDocumentItem(OffDocumentItem ext);
+    void processOffDocumentItem(OffDocumentItem odi);
 
     /**
      * @return the adapter for painting Java2D images (or null if not supported)

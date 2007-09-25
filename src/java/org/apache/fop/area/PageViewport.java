@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -66,6 +67,9 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
 
     // list of id references and the rectangle on the page
     //private Map idReferences = null;
+
+    // set of IDs that appear first (or exclusively) on this page:
+    private Set idFirsts = new java.util.HashSet();
 
     // this keeps a list of currently unresolved areas or extensions
     // once an idref is resolved it is removed
@@ -234,6 +238,29 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
             throw new IllegalStateException("No page key set on the PageViewport: " + toString());
         }
         return this.pageKey;
+    }
+
+    /**
+     * Add an "ID-first" to this page.
+     * This is typically called by the AreaTreeHandler when associating
+     * an ID with a PageViewport.
+     *
+     * @param id the id to be registered as first appearing on this page
+     */
+    public void setFirstWithID(String id) {
+        if (id != null) {
+            idFirsts.add(id);
+        }
+    }
+
+    /**
+     * Check whether a certain id first appears on this page
+     *
+     * @param id the id to be checked
+     * @return true if this page is the first where the id appears
+     */
+    public boolean isFirstWithID(String id) {
+        return idFirsts.contains(id);
     }
 
     /**

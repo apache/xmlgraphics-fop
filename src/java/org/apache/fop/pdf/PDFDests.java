@@ -19,61 +19,29 @@
 
 package org.apache.fop.pdf;
 
-import org.apache.fop.area.DestinationData;
+import java.util.List;
 
 /**
- * class representing an /Dests object (part of a name dictionary)
+ * class representing an /Dests dictionary object
  */
-public class PDFDests extends PDFObject {
-
-    private String limitsRef;
+public class PDFDests extends PDFNameTreeNode {
 
     /**
-     * create a named destination
+     * Create a named destination
      */
-    public PDFDests(String limitsRef) {
+    public PDFDests() {
         /* generic creation of PDF object */
         super();
-        this.limitsRef = limitsRef;
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFObject#toPDFString()
+     * Create a named destination
+     * @param destinationList a list of destinations
      */
-    public String toPDFString() {
-        String s = getObjectID()
-                   + "<<\n"
-                   + "/Dests " + limitsRef
-                   + "\n>>\nendobj\n";
-        return s;
+    public PDFDests(List destinationList) {
+        this();
+        setNames(new PDFArray(destinationList));
     }
 
-    /*
-     * example:
-     *
-     * 262 0 obj
-     * <<
-     * /Dests 260 0 R
-     * >>
-     * endobj
-     */
-
-    /**
-     * Check if this equals another object.
-     *
-     * @param obj the object to compare
-     * @return true if this equals other object
-     */
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-
-        if (obj == null || !(obj instanceof PDFDests)) {
-            return false;
-        }
-
-        return true;
-    }
 }
 

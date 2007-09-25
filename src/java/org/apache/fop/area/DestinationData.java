@@ -28,9 +28,6 @@ import org.apache.fop.area.PageViewport;
  */
 public class DestinationData extends AbstractOffDocumentItem implements Resolvable {
 
-    // PDFReference (object reference) for this destination
-    private String goToReference;
-
     // ID Reference for this bookmark
     private String idRef;
 
@@ -76,24 +73,6 @@ public class DestinationData extends AbstractOffDocumentItem implements Resolvab
      */
     public PageViewport getPageViewport() {
         return pageRef;
-    }
-
-    /**
-     * Set the GoToReference for this destination
-     *
-     * @param goToReference the GoToReference to associate with this destination
-     */
-    public void setGoToReference(String goToReference) {
-        this.goToReference = goToReference;
-    }
-
-    /**
-     * Get the GoToReference for this destination
-     *
-     * @return the GoToReference associated with this destination
-     */
-    public String getGoToReference() {
-        return goToReference;
     }
 
     /**

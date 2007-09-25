@@ -19,6 +19,8 @@
  
 package org.apache.fop.pdf;
 
+import java.awt.geom.Point2D;
+
 /**
  * class representing a /GoTo object.
  * This can either have a Goto to a page reference and location
@@ -47,12 +49,45 @@ public class PDFGoTo extends PDFAction {
     }
 
     /**
+     * create a /GoTo object.
+     *
+     * @param pageReference the PDF reference to the target page
+     * @param position the target area's on-page coordinates in points
+     */
+    public PDFGoTo(String pageReference, Point2D position) {
+        /* generic creation of object */
+        super();
+
+        this.pageReference = pageReference;
+        setPosition(position);
+    }
+
+    /**
      * Sets page reference after object has been created
      *
      * @param pageReference the new page reference to use
      */
     public void setPageReference(String pageReference) {
         this.pageReference = pageReference;
+    }
+
+    /**
+     * Sets the target (X,Y) position
+     *
+     * @param position the target's on-page coordinates in points
+     */
+    public void setPosition(Point2D position) {
+        this.xPosition = (float) position.getX();
+        this.yPosition = (float) position.getY();
+    }
+
+    /**
+     * Sets the x Position to jump to
+     *
+     * @param xPosition x position
+     */
+    public void setXPosition(float xPosition) {
+        this.xPosition = xPosition;
     }
 
     /**
@@ -71,15 +106,6 @@ public class PDFGoTo extends PDFAction {
      */
     public void setDestination(String dest) {
         destination = dest;
-    }
-
-    /**
-     * Sets the x Position to jump to
-     *
-     * @param xPosition x position
-     */
-    public void setXPosition(int xPosition) {
-        this.xPosition = (xPosition / 1000f);
     }
 
     /**

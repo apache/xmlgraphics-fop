@@ -19,18 +19,10 @@
 
 package org.apache.fop.pdf;
 
-import org.apache.fop.area.DestinationData;
-import org.apache.fop.area.PageViewport;
-
 /**
  * class representing a named destination
  */
 public class PDFDestination extends PDFObject {
-
-    /**
-     * PDFReference (object reference) for this destination
-     */
-     private String goToReference;
 
     /**
      * ID Reference for this destination
@@ -38,50 +30,56 @@ public class PDFDestination extends PDFObject {
     private String idRef;
 
     /**
-     * PageViewport to which the idRef item refers
+     * PDFReference (object reference) for this destination
      */
-    private PageViewport pageViewport = null;
+     private Object goToReference;
 
     /**
-     * create a named destination
+     * Create a named destination
+     * @param idRef ID Reference for this destination (the name of the destination)
+     * @param goToRef Object reference to the GoTo Action
      */
-    public PDFDestination(DestinationData destinationData) {
-        /* generic creation of PDF object */
-        super();
-        this.goToReference = destinationData.getGoToReference();
-        this.idRef = destinationData.getIDRef();
-        this.pageViewport = destinationData.getPageViewport();
+    public PDFDestination(String idRef, Object goToRef) {
+        this.goToReference = goToRef;
+        this.idRef = idRef;
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFObject#toPDFString()
+     * Creates the key/value pair for this destination entry for the name tree.
+     * @return the formatted key/value pair
      */
-    public String toPDFString() {
-        String s = getObjectID()
-                   + "<<"
-                   + "/Limits [(" + idRef + ") (" + idRef + ")]\n"
-                   + "/Names [(" + idRef + ") " + goToReference + "]"
-                   + "\n>>\nendobj\n";
-        return s;
+    public String toKeyValuePair() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("(").append(getIDRef()).append(") ");
+        if (goToReference instanceof PDFWritable) {
+            sb.append(((PDFWritable)goToReference).toInlinePDFString());
+        } else {
+            sb.append(goToReference);
+        }
+        return sb.toString();
+    }
+    
+    /** @see org.apache.fop.pdf.PDFObject#toPDFString() */
+    protected String toPDFString() {
+        return toKeyValuePair();
     }
 
-    /*
-     * example:
+    /**
+     * Sets the GoToReference in the associated DestinationData object.
      *
-     * 249 0 obj
-     * <<
-     * /Limits [(drivervariables) (drivervariables)]
-     * /Names [(drivervariables) 73 0 R]
-     * >>
-     * endobj
+     * @param goToReference the reference to set in the associated DestinationData object.
+     * @deprecated use setGoToReference(Object) instead
      */
+    public void setGoToReference(String goToReference) {
+        this.goToReference = goToReference;
+    }
 
     /**
      * Sets the GoToReference in the associated DestinationData object.
      *
      * @param goToReference the reference to set in the associated DestinationData object.
      */
-    public void setGoToReference(String goToReference) {
+    public void setGoToReference(Object goToReference) {
         this.goToReference = goToReference;
     }
 
@@ -90,17 +88,8 @@ public class PDFDestination extends PDFObject {
      *
      * @return the GoToReference from the associated DestinationData object.
      */
-    public String getGoToReference() {
+    public Object getGoToReference() {
         return this.goToReference;
-    }
-
-    /**
-     * Get the PageViewport object that this destination refers to
-     *
-     * @return the PageViewport that this destination points to
-     */
-    public PageViewport getPageViewport() {
-        return this.pageViewport;
     }
 
     /**
@@ -128,11 +117,19 @@ public class PDFDestination extends PDFObject {
         }
 
         PDFDestination dest = (PDFDestination)obj;
-        if (dest.getIDRef() == this.getIDRef()) {
+        if (dest.getIDRef().equals(this.getIDRef())) {
             return true;
         }
         
-        return true;
+        return false;
     }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    public int hashCode() {
+        return getIDRef().hashCode();
+    }
+
 }
 
