@@ -26,6 +26,8 @@ import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.fo.flow.Leader;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.layoutmgr.InlineKnuthSequence;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthGlue;
@@ -67,7 +69,9 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
     
     /** {@inheritDoc} */
     public void initialize() {
-        font = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo(), this);
+        FontInfo fi = fobj.getFOEventHandler().getFontInfo();
+        FontTriplet[] fontkeys = fobj.getCommonFont().getFontState(fi);
+        font = fi.getFontInstance(fontkeys[0], fobj.getCommonFont().fontSize.getValue(this));
         // the property leader-alignment does not affect vertical positioning
         // (see section 7.21.1 in the XSL Recommendation)
         // setAlignment(node.getLeaderAlignment());

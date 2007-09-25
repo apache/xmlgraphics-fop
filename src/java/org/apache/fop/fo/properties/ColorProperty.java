@@ -28,9 +28,12 @@ import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.util.ColorUtil;
 
 /**
- * Superclass for properties that wrap Color values
+ * Class for properties that wrap Color values
  */
-public class ColorProperty extends Property  {
+public final class ColorProperty extends Property  {
+    
+    /** cache holding canonical ColorProperty instances */
+    private static final PropertyCache cache = new PropertyCache();
     
     /**
      * The color represented by this property.
@@ -92,16 +95,28 @@ public class ColorProperty extends Property  {
      * @throws PropertyException if the value can't be parsed
      * @see ColorUtil#parseColorString(FOUserAgent, String)
      */
-    public ColorProperty(FOUserAgent foUserAgent, String value) throws PropertyException {
-        this.color = ColorUtil.parseColorString(foUserAgent, value);
+    public static ColorProperty getInstance(FOUserAgent foUserAgent, String value) throws PropertyException {
+        ColorProperty instance = new ColorProperty(
+                                       ColorUtil.parseColorString(
+                                               foUserAgent, value));
+        return (ColorProperty) cache.fetch(instance);
     }
 
+    /**
+     * 
+     * @param value
+     * @return
+     */
+    public static ColorProperty getInstance(Color value) {
+        return (ColorProperty) cache.fetch(new ColorProperty(value));
+    }
+    
     /**
      * Create a new ColorProperty with a given color.
      * 
      * @param value the color to use.
      */
-    public ColorProperty(Color value) {
+    private ColorProperty(Color value) {
         this.color = value;
     }
     
@@ -114,9 +129,7 @@ public class ColorProperty extends Property  {
         return color;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String toString() {
         return ColorUtil.colorToString(color);
     }
@@ -134,6 +147,23 @@ public class ColorProperty extends Property  {
      */
     public Object getObject() {
         return this;
+    }
+    
+    /** {@inheritDoc} */
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        
+        if (o instanceof ColorProperty) {
+            return ((ColorProperty) o).color.equals(this.color);
+        }
+        return false;
+    }
+    
+    /** {@inheritDoc} */
+    public int hashCode() {
+        return this.color.hashCode();
     }
 }
 

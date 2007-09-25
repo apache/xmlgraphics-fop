@@ -28,57 +28,123 @@ import org.apache.fop.fo.expr.PropertyException;
  * See Sec. 7.9 of the XSL-FO Standard.
  * Public "structure" allows direct member access.
  */
-public class CommonHyphenation {
-    /**
-     * The "language" property.
-     */
-    public String language;
+public final class CommonHyphenation {
+    
+    private static final PropertyCache cache = new PropertyCache();
+    
+    private int hash = 0;
+    
+    /** The "language" property */
+    public final StringProperty language;
+
+    /** The "country" property */
+    public final StringProperty country;
+
+    /** The "script" property */
+    public final StringProperty script;
+
+    /** The "hyphenate" property */
+    public final EnumProperty hyphenate;
+
+    /** The "hyphenation-character" property */
+    public final CharacterProperty hyphenationCharacter;
+
+    /** The "hyphenation-push-character-count" property */
+    public final NumberProperty hyphenationPushCharacterCount;
+
+    /** The "hyphenation-remain-character-count" property*/
+    public final NumberProperty hyphenationRemainCharacterCount;
 
     /**
-     * The "country" property.
+     * Construct a CommonHyphenation object holding the given properties
+     * 
      */
-    public String country;
-
-    /**
-     * The "script" property.
-     */
-    public String script;
-
-    /**
-     * The "hyphenate" property.
-     */
-    public int hyphenate;
-
-    /**
-     * The "hyphenation-character" property.
-     */
-    public char hyphenationCharacter;
-
-    /**
-     * The "hyphenation-push-character" property.
-     */
-    public int hyphenationPushCharacterCount;
-
-    /**
-     * The "hyphenation-remain-character-count" property.
-     */
-    public int hyphenationRemainCharacterCount;
-
-    /**
-     * Create a CommonHyphenation object.
-     * @param pList The PropertyList with propery values.
-     */
-    public CommonHyphenation(PropertyList pList) throws PropertyException {
-        language = pList.get(Constants.PR_LANGUAGE).getString();
-        country = pList.get(Constants.PR_COUNTRY).getString();
-        script = pList.get(Constants.PR_SCRIPT).getString();
-        hyphenate = pList.get(Constants.PR_HYPHENATE).getEnum();
-        hyphenationCharacter = pList.get(Constants.PR_HYPHENATION_CHARACTER).getCharacter();
-        hyphenationPushCharacterCount = 
-            pList.get(Constants.PR_HYPHENATION_PUSH_CHARACTER_COUNT).getNumber().intValue();
-        hyphenationRemainCharacterCount = 
-            pList.get(Constants.PR_HYPHENATION_REMAIN_CHARACTER_COUNT).getNumber().intValue();
-
+    private CommonHyphenation(StringProperty language,
+                              StringProperty country,
+                              StringProperty script,
+                              EnumProperty hyphenate,
+                              CharacterProperty hyphenationCharacter,
+                              NumberProperty hyphenationPushCharacterCount,
+                              NumberProperty hyphenationRemainCharacterCount) {
+        this.language = language;
+        this.country = country;
+        this.script = script;
+        this.hyphenate = hyphenate;
+        this.hyphenationCharacter = hyphenationCharacter;
+        this.hyphenationPushCharacterCount = hyphenationPushCharacterCount;
+        this.hyphenationRemainCharacterCount = hyphenationRemainCharacterCount;
     }
-
+    
+    /**
+     * Gets the canonical <code>CommonHyphenation</code> instance corresponding
+     * to the values of the related properties present on the given 
+     * <code>PropertyList</code>
+     * 
+     * @param propertyList  the <code>PropertyList</code>
+     */
+    public static CommonHyphenation getInstance(PropertyList propertyList) throws PropertyException {
+        StringProperty language = 
+            (StringProperty) propertyList.get(Constants.PR_LANGUAGE);
+        StringProperty country = 
+            (StringProperty) propertyList.get(Constants.PR_COUNTRY);
+        StringProperty script = 
+            (StringProperty) propertyList.get(Constants.PR_SCRIPT);
+        EnumProperty hyphenate = 
+            (EnumProperty) propertyList.get(Constants.PR_HYPHENATE);
+        CharacterProperty hyphenationCharacter = 
+            (CharacterProperty) propertyList.get(Constants.PR_HYPHENATION_CHARACTER);
+        NumberProperty hyphenationPushCharacterCount = 
+            (NumberProperty) propertyList.get(Constants.PR_HYPHENATION_PUSH_CHARACTER_COUNT);
+        NumberProperty hyphenationRemainCharacterCount = 
+            (NumberProperty) propertyList.get(Constants.PR_HYPHENATION_REMAIN_CHARACTER_COUNT);
+        
+        CommonHyphenation instance = new CommonHyphenation(
+                                language, 
+                                country, 
+                                script, 
+                                hyphenate, 
+                                hyphenationCharacter, 
+                                hyphenationPushCharacterCount, 
+                                hyphenationRemainCharacterCount);
+        
+        return cache.fetch(instance);
+        
+    }
+    
+    /** {@inheritDoc */
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof CommonHyphenation) {
+            CommonHyphenation ch = (CommonHyphenation) obj;
+            return (ch.language == this.language
+                    && ch.country == this.country
+                    && ch.script == this.script
+                    && ch.hyphenate == this.hyphenate
+                    && ch.hyphenationCharacter == this.hyphenationCharacter
+                    && ch.hyphenationPushCharacterCount == this.hyphenationPushCharacterCount
+                    && ch.hyphenationRemainCharacterCount == this.hyphenationRemainCharacterCount);
+        }
+        return false;
+    }
+    
+    /** {@inheritDoc} */
+    public int hashCode() {
+        if (hash == 0) {
+            int hash = 17;
+            hash = 37 * hash + (language == null ? 0 : language.hashCode());
+            hash = 37 * hash + (script == null ? 0 : script.hashCode());
+            hash = 37 * hash + (country == null ? 0 : country.hashCode());
+            hash = 37 * hash + (hyphenate == null ? 0 : hyphenate.hashCode());
+            hash = 37 * hash + 
+                (hyphenationCharacter == null ? 0 : hyphenationCharacter.hashCode());
+            hash = 37 * hash + 
+                (hyphenationPushCharacterCount == null ? 0 : hyphenationPushCharacterCount.hashCode());
+            hash = 37 * hash + 
+                (hyphenationRemainCharacterCount == null ? 0 : hyphenationRemainCharacterCount.hashCode());
+        }
+        return hash;
+    }
+    
 }

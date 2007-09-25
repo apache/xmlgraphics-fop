@@ -19,6 +19,8 @@
 
 package org.apache.fop.fo.properties;
 
+import java.util.Iterator;
+
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
@@ -26,8 +28,13 @@ import org.apache.fop.fo.expr.PropertyException;
 /**
  * Property class for the font-family property.
  */
-public class FontFamilyProperty extends ListProperty {
+public final class FontFamilyProperty extends ListProperty {
 
+    /** cache holding all canonical FontFamilyProperty instances */
+    private static final PropertyCache cache = new PropertyCache();
+    
+    private int hash = 0;
+    
     /**
      * Inner class for creating instances of ListProperty
      */
@@ -42,15 +49,12 @@ public class FontFamilyProperty extends ListProperty {
 
         /**
          * {@inheritDoc}
-         *         org.apache.fop.fo.PropertyList, 
-         *         java.lang.String, 
-         *         org.apache.fop.fo.FObj)
          */
         public Property make(PropertyList propertyList, String value, FObj fo) throws PropertyException {
             if ("inherit".equals(value)) {
                 return super.make(propertyList, value, fo);
             } else {
-                ListProperty prop = new ListProperty();
+                FontFamilyProperty prop = new FontFamilyProperty();
                 String tmpVal;
                 int startIndex = 0;
                 int commaIndex = value.indexOf(',');
@@ -89,7 +93,7 @@ public class FontFamilyProperty extends ListProperty {
                         prop.addProperty(StringProperty.getInstance(tmpVal));
                     }
                 }
-                return prop;
+                return cache.fetch(prop);
             }
         }
 
@@ -110,11 +114,19 @@ public class FontFamilyProperty extends ListProperty {
     /**
      * @param prop the first Property to be added to the list
      */
-    public FontFamilyProperty(Property prop) {
+    private FontFamilyProperty(Property prop) {
         super();
         addProperty(prop);
     }
 
+    /**
+     * Default constructor.
+     *
+     */
+    private FontFamilyProperty() {
+        super();
+    }
+    
     /**
      * Add a new property to the list
      * @param prop Property to be added to the list
@@ -137,4 +149,30 @@ public class FontFamilyProperty extends ListProperty {
         }
     }
 
+    /** {@inheritDoc} */
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        
+        if (o instanceof FontFamilyProperty) {
+            FontFamilyProperty ffp = (FontFamilyProperty) o;
+            return (this.list != null
+                    && this.list.equals(ffp.list));
+        }
+        return false;
+    }
+    
+    /** {@inheritDoc} */
+    public int hashCode() {
+        if (this.hash == 0) {
+            int hash = 17;
+            for (Iterator i = list.iterator(); i.hasNext();) {
+                Property p = (Property) i.next();
+                hash = 37 * hash + (p == null ? 0 : p.hashCode());
+            }
+            this.hash = hash;
+        }
+        return this.hash;
+    }
 }
