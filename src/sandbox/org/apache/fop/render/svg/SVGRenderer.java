@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,425 +19,163 @@
 
 package org.apache.fop.render.svg;
 
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.area.CTM;
-import org.apache.fop.area.PageViewport;
-import org.apache.fop.area.LineArea;
-import org.apache.fop.area.inline.ForeignObject;
-import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.area.inline.Leader;
-import org.apache.fop.area.inline.TextArea;
-import org.apache.fop.svg.SVGUtilities;
-import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.apps.FOUserAgent;
+import java.awt.Dimension;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
 
-/* org.w3c.dom.Document is not imported to avoid conflict with
-   org.apache.fop.control.Document */
+import org.apache.avalon.framework.configuration.Configuration;
+import org.apache.avalon.framework.configuration.ConfigurationException;
+import org.apache.batik.dom.GenericDOMImplementation;
+import org.apache.batik.svggen.SVGGeneratorContext;
+import org.apache.batik.svggen.SVGGraphics2D;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.area.PageViewport;
+import org.apache.fop.render.bitmap.MultiFileRenderingUtil;
+import org.apache.fop.render.java2d.Java2DGraphicsState;
+import org.apache.fop.render.java2d.Java2DRenderer;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Text;
-import org.apache.batik.dom.svg.SVGDOMImplementation;
-import org.apache.batik.transcoder.svg2svg.SVGTranscoder;
-import org.apache.batik.transcoder.TranscoderInput;
-import org.apache.batik.transcoder.TranscoderOutput;
-import org.apache.batik.transcoder.TranscoderException;
-
-import java.awt.Color;
-import java.awt.image.BufferedImage;
-import java.awt.geom.Rectangle2D;
-import java.util.HashMap;
-import java.io.OutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-
-import org.apache.fop.render.AbstractRenderer;
-import org.apache.fop.render.XMLHandler;
-import org.apache.fop.render.RendererContext;
 
 /**
- * This is the SVG renderer.
+ * <p>
+ * This renderer generates SVG (Scalable Vector Graphics) format.
+ * <p>
+ * This class actually does not render itself, instead it extends
+ * <code>org.apache.fop.render.java2D.Java2DRenderer</code> and uses
+ * Apache Batik's SVGGraphics2D for SVG generation.
  */
-public class SVGRenderer extends AbstractRenderer {
+public class SVGRenderer extends Java2DRenderer {
 
-    /** SVG MIME type */
-    public static final String SVG_MIME_TYPE = "image/svg+xml";
+    /** logging instance */
+    private static Log log = LogFactory.getLog(SVGRenderer.class);
 
-    /** SVG namespace */
-    public static final String SVG_NAMESPACE = SVGDOMImplementation.SVG_NAMESPACE_URI;
+    /** The MIME type for the SVG format */
+    public static final String MIME_TYPE = MimeConstants.MIME_SVG;
 
-    private org.w3c.dom.Document svgDocument;
-    private Element svgRoot;
-    private Element currentPageG = null;
-    private Element lastLink = null;
-    private String lastViewbox = null;
+    private static final String SVG_FILE_EXTENSION = "svg";
 
-    private Element docDefs = null;
-    private Element pageDefs = null;
-    private Element pagesGroup = null;
+    private OutputStream firstOutputStream;
+    
+    private Document document;
+    
+    private SVGGraphics2D svgGenerator;
 
-    // first sequence title
-    private LineArea docTitle = null;
+    /** Helper class for generating multiple files */
+    private MultiFileRenderingUtil multiFileUtil;
+    
+    /** @see org.apache.fop.render.AbstractRenderer */
+    public String getMimeType() {
+        return MIME_TYPE;
+    }
 
-    private OutputStream ostream;
-
-    private float totalWidth = 0;
-    private float totalHeight = 0;
-    private float sequenceWidth = 0;
-    private float sequenceHeight = 0;
-
-    private float pageWidth = 0;
-    private float pageHeight = 0;
-    private int pageNumber = 0;
-
-    private HashMap fontNames = new HashMap();
-    private HashMap fontStyles = new HashMap();
-    private Color saveColor = null;
-
-    /**
-     * The current (internal) font name
-     */
-    private String currentFontName;
-
-    /**
-     * The current font size in millipoints
-     */
-    private int currentFontSize;
-
-    /**
-     * The current colour's red, green and blue component
-     */
-    private float currentRed = 0;
-    private float currentGreen = 0;
-    private float currentBlue = 0;
-
-    /**
-     * Creates a new SVG renderer.
-     */
+    /** Creates TIFF renderer. */
     public SVGRenderer() {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#setUserAgent(FOUserAgent)
+     * @see org.apache.fop.render.AbstractRenderer#configure(
+     *          org.apache.avalon.framework.configuration.Configuration)
      */
-    public void setUserAgent(FOUserAgent agent) {
-        super.setUserAgent(agent);
+    public void configure(Configuration cfg) throws ConfigurationException {
+    }
+
+    /** @see org.apache.fop.render.Renderer#startRenderer(java.io.OutputStream) */
+    public void startRenderer(OutputStream outputStream) throws IOException {
+        this.firstOutputStream = outputStream;
+        this.multiFileUtil = new MultiFileRenderingUtil(SVG_FILE_EXTENSION, 
+                getUserAgent().getOutputFile());
+        super.startRenderer(this.firstOutputStream);
+    }
+
+    /**
+     * @see org.apache.fop.render.java2d.Java2DRenderer#renderPage(org.apache.fop.area.PageViewport)
+     */
+    public void renderPage(PageViewport pageViewport) throws IOException {
+        log.debug("Rendering page: " + pageViewport.getPageNumberString());
+        // Get a DOMImplementation
+        DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
+
+        // Create an instance of org.w3c.dom.Document
+        this.document = domImpl.createDocument(null, "svg", null);
+
+        // Create an SVGGeneratorContext to customize SVG generation 
+        SVGGeneratorContext ctx = SVGGeneratorContext.createDefault(this.document);
+        ctx.setComment("Generated by " + userAgent.getProducer() + " with Batik SVG Generator");
+        ctx.setEmbeddedFontsOn(true);
         
-        //Note: This is done here as having two service lookup files in the same IDE project
-        //will end up with one overwriting the other when all sources are compiled in to the
-        //same target directory. Remove this code and add an entry in the XMLHandler resource
-        //file when this renderer exits the sandbox.
-        XMLHandler handler = agent.getXMLHandlerRegistry().getXMLHandler(this, SVG_NAMESPACE);
-        if (handler == null) {
-            agent.getXMLHandlerRegistry().addXMLHandler("org.apache.fop.render.svg.SVGSVGHandler");
-        }
-    }
+        // Create an instance of the SVG Generator
+        this.svgGenerator = new SVGGraphics2D(ctx, true);
+        Rectangle2D viewArea = pageViewport.getViewArea();
+        Dimension dim = new Dimension();
+        dim.setSize(viewArea.getWidth() / 1000, viewArea.getHeight() / 1000);
+        this.svgGenerator.setSVGCanvasSize(dim);
 
-    /**
-     * @see org.apache.fop.render.Renderer#setupFontInfo(FontInfo)
-     */
-    public void setupFontInfo(FontInfo fontInfo) {
-        // create a temp Image to test font metrics on
-        BufferedImage fontImage =
-          new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
-        org.apache.fop.render.java2d.FontSetup.setup(fontInfo,
-                fontImage.createGraphics());
-    }
-
-    /**
-     * @see org.apache.fop.render.Renderer#startRenderer(OutputStream)
-     */
-    public void startRenderer(OutputStream outputStream)
-                throws IOException {
-        ostream = outputStream;
-        DOMImplementation impl = SVGDOMImplementation.getDOMImplementation();
-        svgDocument = impl.createDocument(SVG_NAMESPACE, "svg", null);
-        svgRoot = svgDocument.getDocumentElement();
-        /*
-        ProcessingInstruction pi =
-            svgDocument.createProcessingInstruction("xml",
-                        " version=\"1.0\" encoding=\"ISO-8859-1\"");
-        svgDocument.insertBefore(pi, svgRoot);
-        */
-
-        docDefs = svgDocument.createElementNS(SVG_NAMESPACE, "defs");
-        svgRoot.appendChild(docDefs);
-
-        pagesGroup = svgDocument.createElementNS(SVG_NAMESPACE, "g");
-        pageDefs = svgDocument.createElementNS(SVG_NAMESPACE, "defs");
-        pagesGroup.appendChild(pageDefs);
-        svgRoot.appendChild(pagesGroup);
-
-    }
-
-    /**
-     * @see org.apache.fop.render.Renderer#stopRenderer()
-     */
-    public void stopRenderer() throws IOException {
-        totalWidth += sequenceWidth;
-        if (sequenceHeight > totalHeight) {
-            totalHeight = sequenceHeight;
-        }
-
-        svgRoot.setAttributeNS(null, "width", "" + (totalWidth + 1));
-        svgRoot.setAttributeNS(null, "height", "" + (totalHeight + 1));
-        //svgRoot.setAttributeNS(null, "viewBox", "0 0 " + pageWidth + " " + pageHeight);
-        SVGTranscoder svgT = new SVGTranscoder();
-        TranscoderInput input = new TranscoderInput(svgDocument);
-        TranscoderOutput output =
-          new TranscoderOutput(new OutputStreamWriter(ostream));
+        AffineTransform at = this.svgGenerator.getTransform();
+        this.state = new Java2DGraphicsState(this.svgGenerator, this.fontInfo, at);
         try {
-            svgT.transcode(input, output);
-        } catch (TranscoderException e) {
-            log.error("could not write svg file :" + e.getMessage(), e);
+            //super.renderPage(pageViewport);
+            renderPageAreas(pageViewport.getPage());            
+        } finally {
+            this.state = null;
         }
-        ostream.flush();
-        ostream = null;
-
-        svgDocument = null;
-        svgRoot = null;
-        currentPageG = null;
-        lastLink = null;
-
-        totalWidth = 0;
-        totalHeight = 0;
-
-        pageNumber = 0;
-    }
-
-    /**
-     * @see org.apache.fop.render.Renderer#startPageSequence(LineArea)
-     */
-    public void startPageSequence(LineArea seqTitle) {
-        totalWidth += sequenceWidth;
-        if (sequenceHeight > totalHeight) {
-            totalHeight = sequenceHeight;
-        }
-        sequenceWidth = 0;
-        sequenceHeight = 0;
-        if (seqTitle != null && docTitle == null) {
-            // convert first title to a string and set for svg document title
-            docTitle = seqTitle;
-            String str = convertTitleToString(seqTitle);
-            Element svgTitle = svgDocument.createElementNS(SVG_NAMESPACE, "title");
-            Text strNode = svgDocument.createTextNode(str);
-            svgTitle.appendChild(strNode);
-            svgRoot.insertBefore(svgTitle, svgRoot.getFirstChild());
-        }
-    }
-
-    /**
-     * @see org.apache.fop.render.Renderer#renderPage(PageViewport)
-     */
-    public void renderPage(PageViewport page) throws IOException, FOPException {
-        float lastWidth = pageWidth;
-        float lastHeight = pageHeight;
-
-        Rectangle2D area = page.getViewArea();
-        pageWidth = (float) area.getWidth() / 1000f;
-        pageHeight = (float) area.getHeight() / 1000f;
-
-        // if there is a link from the last page
-        if (lastLink != null) {
-            lastLink.setAttributeNS(null, "xlink:href", "#svgView(viewBox("
-                                    + totalWidth + ", "
-                                    + sequenceHeight + ", "
-                                    + pageWidth + ", "
-                                    + pageHeight + "))");
-            pagesGroup.appendChild(lastLink);
-        }
-
-        currentPageG = svgDocument.createElementNS(SVG_NAMESPACE, "svg");
-        currentPageG.setAttributeNS(null, "viewbox",
-                                    "0 0 " + (int) pageWidth + " " + (int) pageHeight);
-        currentPageG.setAttributeNS(null, "width",
-                                    "" + ((int) pageWidth + 1));
-        currentPageG.setAttributeNS(null, "height",
-                                    "" + ((int) pageHeight + 1));
-        currentPageG.setAttributeNS(null, "id", "Page-" + pageNumber);
-        currentPageG.setAttributeNS(null, "style", "font-family:sanserif;font-size:12");
-        pageDefs.appendChild(currentPageG);
-
-        if (pageWidth > sequenceWidth) {
-            sequenceWidth = pageWidth;
-        }
-        sequenceHeight += pageHeight;
-
-        Element border =
-          SVGUtilities.createRect(svgDocument, 0, 0, pageWidth,
-                                  pageHeight);
-        border.setAttributeNS(null, "style", "fill:none;stroke:black");
-        currentPageG.appendChild(border);
-
-        // render the page contents
-        super.renderPage(page);
-
-        Element use = svgDocument.createElementNS(SVG_NAMESPACE, "use");
-        use.setAttributeNS(null, "xlink:href", "#Page-" + pageNumber);
-        use.setAttributeNS(null, "x", "" + totalWidth);
-        use.setAttributeNS(null, "y", "" + (sequenceHeight - pageHeight));
-        pagesGroup.appendChild(use);
-
-        Element lastPageLink = svgDocument.createElementNS(SVG_NAMESPACE, "a");
-        if (lastLink != null) {
-            lastPageLink.setAttributeNS(null, "xlink:href", lastViewbox);
-        } else {
-            lastPageLink.setAttributeNS(null, "xlink:href",
-                    "#svgView(viewBox("
-                        + totalWidth + ", "
-                        + (sequenceHeight - pageHeight) + ", "
-                        + pageWidth + ", "
-                        + pageHeight + "))");
-        }
-        pagesGroup.appendChild(lastPageLink);
-
-        // setup a link to the next page, only added when the
-        // next page is rendered
-        Element rect = SVGUtilities.createRect(svgDocument, totalWidth,
-                    (sequenceHeight - pageHeight), pageWidth / 2, pageHeight);
-        rect.setAttributeNS(null, "style", "fill:blue;visibility:hidden");
-        lastPageLink.appendChild(rect);
-
-        lastLink = svgDocument.createElementNS(SVG_NAMESPACE, "a");
-        rect = SVGUtilities.createRect(svgDocument,
-                                       totalWidth + pageWidth / 2,
-                                       (sequenceHeight - pageHeight), pageWidth / 2, pageHeight);
-        rect.setAttributeNS(null, "style", "fill:blue;visibility:hidden");
-        lastLink.appendChild(rect);
-
-        lastViewbox = "#svgView(viewBox("
-                    + totalWidth + ", "
-                    + (sequenceHeight - pageHeight) + ", "
-                    + pageWidth + ", "
-                    + pageHeight + "))";
-
-        pageNumber++;
-
-    }
-
-    /**
-     * Method renderForeignObject.
-     * @param fo the foreign object
-     */
-    public void renderForeignObject(ForeignObject fo, Rectangle2D pos) {
-        org.w3c.dom.Document doc = fo.getDocument();
-        String ns = fo.getNameSpace();
-        renderDocument(doc, ns, pos);
-    }
-
-    /**
-     * Renders an XML document (SVG for example).
-     *
-     * @param doc DOM document representing the XML document
-     * @param ns Namespace for the document
-     * @param pos Position on the page
-     */
-    public void renderDocument(Document doc, String ns, Rectangle2D pos) {
-        RendererContext context;
-        context = new RendererContext(this, getMimeType());
-        context.setUserAgent(userAgent);
-
-        context.setProperty(SVGRendererContextConstants.SVG_DOCUMENT, svgDocument);
-        context.setProperty(SVGRendererContextConstants.SVG_PAGE_G, currentPageG);
-        context.setProperty(SVGRendererContextConstants.XPOS,
-                            new Integer(currentIPPosition + (int)pos.getX()));
-        context.setProperty(SVGRendererContextConstants.YPOS,
-                            new Integer(currentBPPosition + (int)pos.getY()));
-        context.setProperty(SVGRendererContextConstants.WIDTH,
-                            new Integer((int)pos.getWidth()));
-        context.setProperty(SVGRendererContextConstants.HEIGHT,
-                            new Integer((int) pos.getHeight()));
+        writeSVGFile(pageViewport.getPageIndex());
         
-        renderXML(context, doc, ns);
+        this.svgGenerator = null;
+        this.document = null;
+        
     }
 
-    /**
-     * @see org.apache.fop.render.AbstractRenderer#renderLeader(Leader)
-     */
-    public void renderLeader(Leader area) {
-        String style = "stroke:black;stroke-width:"
-                       + (area.getRuleThickness() / 1000) + ";";
-        switch (area.getRuleStyle()) {
-            case EN_DOTTED:
-                style += "stroke-dasharray:1,1";
-                break;
-            case EN_DASHED:
-                style += "stroke-dasharray:5,1";
-                break;
-            case EN_SOLID:
-                break;
-            case EN_DOUBLE:
-                break;
-            case EN_GROOVE:
-                break;
-            case EN_RIDGE:
-                break;
+    /** @see org.apache.fop.render.Renderer#stopRenderer() */
+    public void stopRenderer() throws IOException {
+        super.stopRenderer();
+
+        // Cleaning
+        clearViewportList();
+        log.debug("SVG generation complete.");
+    }
+
+    private void writeSVGFile(int pageNumber) throws IOException {
+        log.debug("Writing out SVG file...");
+        // Finally, stream out SVG to the standard output using UTF-8
+        // character to byte encoding
+        boolean useCSS = true; // we want to use CSS style attribute
+        OutputStream out = getCurrentOutputStream(pageNumber);
+        if (out == null) {
+            log.warn("No filename information available."
+                    + " Stopping early after the first page.");
+            return;
         }
-        Element line = SVGUtilities.createLine(svgDocument,
-                        currentIPPosition / 1000,
-                        (currentBPPosition + area.getOffset()
-                            - area.getRuleThickness() / 2) / 1000,
-                        (currentIPPosition + area.getIPD()) / 1000,
-                        (currentBPPosition + area.getOffset()
-                            - area.getRuleThickness() / 2) / 1000);
-        line.setAttributeNS(null, "style", style);
-        currentPageG.appendChild(line);
-
-        super.renderLeader(area);
+        try {
+            Writer writer = new java.io.OutputStreamWriter(out, "UTF-8");
+            this.svgGenerator.stream(writer, useCSS);
+        } finally {
+            if (out != this.firstOutputStream) {
+                IOUtils.closeQuietly(out);
+            } else {
+                out.flush();
+            }
+        }
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderText(TextArea)
+     * Returns the OutputStream corresponding to this page
+     * @param pageNumber 0-based page number
+     * @return the corresponding OutputStream
+     * @throws IOException In case of an I/O error
      */
-    public void renderText(TextArea text) {
-        Element textElement = SVGUtilities.createText(svgDocument,
-                                               currentIPPosition / 1000,
-                                               (currentBPPosition + text.getOffset() 
-                                                + text.getBaselineOffset()) / 1000,
-                                               text.getText());
-        currentPageG.appendChild(textElement);
+    protected OutputStream getCurrentOutputStream(int pageNumber) throws IOException {
+        if (pageNumber == 0) {
+            return firstOutputStream;
+        } else {
+            return multiFileUtil.createOutputStream(pageNumber);
+        }
 
-        super.renderText(text);
     }
-
-    /**
-     * @see org.apache.fop.render.AbstractRenderer#renderCharacter(Character)
-     */
-/* deprecated
-    public void renderCharacter(org.apache.fop.area.inline.Character ch) {
-        Element text = SVGUtilities.createText(svgDocument,
-                                               currentIPPosition / 1000,
-                                               (currentBPPosition + ch.getOffset()
-                                                + ch.getBaselineOffset()) / 1000,
-                                               "" + ch.getChar());
-        currentPageG.appendChild(text);
-
-        super.renderCharacter(ch);
-    }
-*/
-
-    /** @see org.apache.fop.render.AbstractRenderer */
-    public String getMimeType() {
-        return SVG_MIME_TYPE;
-    }
-
-    /**
-     * @see org.apache.fop.render.AbstractRenderer#startVParea(CTM, Rectangle2D)
-     */
-    protected void startVParea(CTM ctm, Rectangle2D clippingRect) {
-        // TODO Auto-generated method stub
-    }
-
-    /**
-     * @see org.apache.fop.render.AbstractRenderer#endVParea()
-     */
-    protected void endVParea() {
-        // TODO Auto-generated method stub
-    }
-
-    protected void renderInlineAreaBackAndBorders(InlineArea area) {
-        // TODO Auto-generated method stub
-    }
-
+    
 }
-

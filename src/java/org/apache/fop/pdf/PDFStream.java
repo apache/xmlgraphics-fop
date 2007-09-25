@@ -57,7 +57,7 @@ public class PDFStream extends AbstractPDFStream {
      */
     public void add(String s) {
         try {
-            data.getOutputStream().write(s.getBytes());
+            data.getOutputStream().write(PDFDocument.encode(s));
         } catch (IOException ex) {
             //TODO throw the exception and catch it elsewhere
             ex.printStackTrace();

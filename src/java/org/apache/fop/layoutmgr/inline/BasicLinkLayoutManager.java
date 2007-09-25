@@ -22,17 +22,17 @@ package org.apache.fop.layoutmgr.inline;
 import org.apache.fop.datatypes.URISpecification;
 import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.PageSequenceLayoutManager;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.LinkResolver;
-import org.apache.fop.area.PageViewport;
 
 /**
  * LayoutManager for the fo:basic-link formatting object
  */
 public class BasicLinkLayoutManager extends InlineLayoutManager {
     private BasicLink fobj;
-    
+
     /**
      * Create an fo:basic-link layout manager.
      *
@@ -49,22 +49,33 @@ public class BasicLinkLayoutManager extends InlineLayoutManager {
         setupBasicLinkArea(parentLM, area);
         return area;
     }
-    
-    private void setupBasicLinkArea(LayoutManager parentLM,
-                                      InlineArea area) {
-         if (fobj.getExternalDestination() != null) {
-             area.addTrait(Trait.EXTERNAL_LINK, 
-                     URISpecification.getURL(fobj.getExternalDestination()));
-         } else {
-             String idref = fobj.getInternalDestination();
-             PageViewport page = getPSLM().getFirstPVWithID(idref);
-             if (page != null) {
-                 area.addTrait(Trait.INTERNAL_LINK, page.getKey());
-             } else {
-                 LinkResolver res = new LinkResolver(idref, area);
-                 getPSLM().addUnresolvedArea(idref, res);
-             }
-         }
-     }
-}
 
+    /*
+     * Detect internal or external link and add it as an area trait
+     *
+     * @param parentLM the parent LayoutManager
+     * @param area the basic-link's area
+     */
+    private void setupBasicLinkArea(LayoutManager parentLM, InlineArea area) {
+        // internal destinations take precedence:
+        String idref = fobj.getInternalDestination();
+        if (idref != null && idref.length() > 0) {
+            PageSequenceLayoutManager pslm = getPSLM();
+            // the INTERNAL_LINK trait is added by the LinkResolver
+            // if and when the link is resolved:
+            LinkResolver res = new LinkResolver(idref, area);
+            res.resolveIDRef(idref, pslm.getFirstPVWithID(idref));
+            if (!res.isResolved()) {
+                pslm.addUnresolvedArea(idref, res);
+            }
+        } else {
+            String extdest = fobj.getExternalDestination();
+            if (extdest != null) {
+                String url = URISpecification.getURL(extdest);
+                if (url.length() > 0) {
+                    area.addTrait(Trait.EXTERNAL_LINK, url);
+                }
+            }
+        }
+    }
+}

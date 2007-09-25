@@ -20,7 +20,6 @@
 package org.apache.fop.pdf;
 
 import java.util.List;
-import java.util.ArrayList;
 
 /**
  * class representing a Root (/Catalog) object
@@ -63,11 +62,8 @@ public class PDFRoot extends PDFObject {
     /** The array of OutputIntents */
     private List outputIntents;
     
-    /**
-     * The referencePDF value of the /Dests object,
-     * if this PDF has a Name Dictionary
-     */
-    private String namesReferencePDF = null;
+    /** the /Dests object, if this PDF has a Names Dictionary */
+    private PDFNames names;
 
     private int pageMode = PAGEMODE_USENONE;
 
@@ -133,12 +129,20 @@ public class PDFRoot extends PDFObject {
     }
     
     /**
-     * Set the optional Metadata object.
-     * @param meta the Metadata object
-     * @since PDF 1.4
+     * Set the Names object.
+     * @param names the Names object
+     * @since PDF 1.2
      */
-    public void setNames(String referencePDF) {
-        this.namesReferencePDF = referencePDF;
+    public void setNames(PDFNames names) {
+        this.names = names;
+    }
+    
+    /**
+     * @return the Names object if set, null otherwise.
+     * @since PDF 1.2
+     */
+    public PDFNames getNames() {
+        return this.names;
     }
     
     /**
@@ -175,7 +179,7 @@ public class PDFRoot extends PDFObject {
     public String toPDFString() {
         StringBuffer p = new StringBuffer(128);
         p.append(getObjectID());
-        p.append("<< /Type /Catalog\n/Pages "
+        p.append("<< /Type /Catalog\n /Pages "
                 + this.rootPages.referencePDF()
                 + "\n");
         if (outline != null) {
@@ -197,17 +201,17 @@ public class PDFRoot extends PDFObject {
                 break;
             }
         }
-        if (getDocumentSafely().getHasDestinations() && namesReferencePDF != null) {
-            p.append(" /Names " + namesReferencePDF + "\n");
+        if (getDocumentSafely().hasDestinations() && getNames() != null) {
+            p.append(" /Names " + getNames().referencePDF() + "\n");
         }
         if (getMetadata() != null 
                 && getDocumentSafely().getPDFVersion() >= PDFDocument.PDF_VERSION_1_4) {
-            p.append("/Metadata " + getMetadata().referencePDF() + "\n");
+            p.append(" /Metadata " + getMetadata().referencePDF() + "\n");
         }
         if (this.outputIntents != null 
                 && this.outputIntents.size() > 0
                 && getDocumentSafely().getPDFVersion() >= PDFDocument.PDF_VERSION_1_4) {
-            p.append("/OutputIntents [");
+            p.append(" /OutputIntents [");
             for (int i = 0, c = this.outputIntents.size(); i < c; i++) {
                 PDFOutputIntent outputIntent = (PDFOutputIntent)this.outputIntents.get(i);
                 if (i > 0) {

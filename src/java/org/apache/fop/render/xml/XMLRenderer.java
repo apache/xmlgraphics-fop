@@ -60,11 +60,13 @@ import org.apache.fop.area.MainReference;
 import org.apache.fop.area.NormalFlow;
 import org.apache.fop.area.OffDocumentExtensionAttachment;
 import org.apache.fop.area.OffDocumentItem;
+import org.apache.fop.area.BookmarkData;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.RegionReference;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Span;
 import org.apache.fop.area.Trait;
+import org.apache.fop.area.Trait.InternalLink;
 import org.apache.fop.area.Trait.Background;
 import org.apache.fop.area.inline.Container;
 import org.apache.fop.area.inline.ForeignObject;
@@ -350,6 +352,9 @@ public class XMLRenderer extends PrintRenderer {
                     addAttribute("font-name", triplet.getName());
                     addAttribute("font-style", triplet.getStyle());
                     addAttribute("font-weight", triplet.getWeight());
+                } else if (clazz.equals(InternalLink.class)) {
+                    InternalLink iLink = (InternalLink)value;
+                    addAttribute(name, iLink.xmlAttribute());
                 } else if (clazz.equals(Background.class)) {
                     Background bkg = (Background)value;
                     //TODO Remove the following line (makes changes in the test checks necessary)
@@ -431,7 +436,9 @@ public class XMLRenderer extends PrintRenderer {
 
     /** @see org.apache.fop.render.AbstractRenderer#processOffDocumentItem(OffDocumentItem) */
     public void processOffDocumentItem(OffDocumentItem oDI) {
-        if (oDI instanceof OffDocumentExtensionAttachment) {
+        if (oDI instanceof BookmarkData) {
+            renderBookmarkTree((BookmarkData) oDI);
+        } else if (oDI instanceof OffDocumentExtensionAttachment) {
             ExtensionAttachment attachment = ((OffDocumentExtensionAttachment)oDI).getAttachment();
             if (extensionAttachments == null) {
                 extensionAttachments = new java.util.ArrayList();
@@ -441,6 +448,40 @@ public class XMLRenderer extends PrintRenderer {
             String warn = "Ignoring OffDocumentItem: " + oDI;
             log.warn(warn);
         }
+    }
+
+    /**
+     * Renders a BookmarkTree object
+     * @param bookmarkRoot the BookmarkData object representing the top of the tree
+     */
+    protected void renderBookmarkTree(BookmarkData bookmarkRoot) {
+        if (bookmarkRoot.getWhenToProcess() == OffDocumentItem.END_OF_DOC) {
+            endPageSequence();
+        }
+        /* If this kind of handling is also necessary for other renderers, then
+           better add endPageSequence to the Renderer interface and call it
+           explicitly from model.endDocument() */
+
+        startElement("bookmarkTree");
+        for (int i = 0; i < bookmarkRoot.getCount(); i++) {
+            renderBookmarkItem(bookmarkRoot.getSubData(i));
+        }
+        endElement("bookmarkTree");
+    }
+
+    private void renderBookmarkItem(BookmarkData bm) {
+        atts.clear();
+        addAttribute("title", bm.getBookmarkTitle());
+        addAttribute("show-children", String.valueOf(bm.showChildItems()));
+        PageViewport pv = bm.getPageViewport();
+        String pvKey = pv == null ? null : pv.getKey();
+        addAttribute("internal-link",
+                     InternalLink.makeXMLAttribute(pvKey, bm.getIDRef()));
+        startElement("bookmark", atts);
+        for (int i = 0; i < bm.getCount(); i++) {
+            renderBookmarkItem(bm.getSubData(i));
+        }
+        endElement("bookmark");
     }
 
     /**
@@ -480,9 +521,7 @@ public class XMLRenderer extends PrintRenderer {
      * @see org.apache.fop.render.Renderer#stopRenderer()
      */
     public void stopRenderer() throws IOException {
-        if (startedSequence) {
-            endElement("pageSequence");
-        }
+        endPageSequence();
         endElement("areaTree");
         try {
             handler.endDocument();
@@ -549,9 +588,7 @@ public class XMLRenderer extends PrintRenderer {
      */
     public void startPageSequence(LineArea seqTitle) {
         handleDocumentExtensionAttachments();
-        if (startedSequence) {
-            endElement("pageSequence");
-        }
+        endPageSequence();  // move this before handleDocumentExtensionAttachments() ?
         startedSequence = true;
         startElement("pageSequence");
         if (seqTitle != null) {
@@ -565,6 +602,16 @@ public class XMLRenderer extends PrintRenderer {
 
             endElement("title");
         }
+    }
+
+    /**
+     * Tells the renderer to finish the current PageSequence
+     */
+    public void endPageSequence() {
+        if (startedSequence) {
+            endElement("pageSequence");
+        }
+        startedSequence = false;
     }
 
     /**
@@ -756,6 +803,24 @@ public class XMLRenderer extends PrintRenderer {
         startElement("lineArea", atts);
         super.renderLineArea(line);
         endElement("lineArea");
+    }
+
+    /**
+     * @see org.apache.fop.render.AbstractRenderer#renderInlineArea(InlineArea)
+     */
+    protected void renderInlineArea(InlineArea inlineArea) {
+        atts.clear();
+        if (inlineArea.getClass() == InlineArea.class) {
+            // Generic inline area. This is implemented to allow the 0x0 "dummy"
+            // area generated by fo:wrapper to pass its id.
+            addAreaAttributes(inlineArea);
+            addTraitAttributes(inlineArea);
+            startElement("inline", atts);
+            endElement("inline");
+        } else {
+            super.renderInlineArea(inlineArea);
+            // calls specific renderers for Text, Space, Viewport, etc. etc.
+        }
     }
 
     /**

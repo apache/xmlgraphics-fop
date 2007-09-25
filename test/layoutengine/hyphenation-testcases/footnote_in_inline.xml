@@ -33,6 +33,7 @@
         <fo:flow flow-name="xsl-region-body" language="en">
           <fo:block>This is a block with a <fo:inline font-style="italic">footnote<fo:footnote><fo:inline font-size="50%" vertical-align="top">1</fo:inline><fo:footnote-body><fo:block><fo:inline font-size="50%" vertical-align="top">1</fo:inline>I'm a footnote!</fo:block></fo:footnote-body></fo:footnote></fo:inline> in it.</fo:block>
           <fo:block hyphenate="true">This is a hyphenated block with a <fo:inline font-style="italic">footnote<fo:footnote><fo:inline font-size="50%" vertical-align="top">2</fo:inline><fo:footnote-body><fo:block><fo:inline font-size="50%" vertical-align="top">2</fo:inline>I'm a footnote!</fo:block></fo:footnote-body></fo:footnote></fo:inline> in it.</fo:block>
+          <fo:block hyphenate="true">This is a hyphenated block with a footnote<fo:footnote><fo:inline font-size="50%" vertical-align="top">hyphenation</fo:inline><fo:footnote-body><fo:block><fo:inline font-size="50%" vertical-align="top">hyphenation</fo:inline>I'm yet another footnote!</fo:block></fo:footnote-body></fo:footnote> in it.</fo:block>
           <fo:block>This is another block without a footnote.</fo:block>
         </fo:flow>
       </fo:page-sequence>
@@ -42,6 +43,6 @@
     <eval expected="1" xpath="count(//pageViewport)"/>
     
     <!-- the footnotes -->
-    <eval expected="2" xpath="count(//pageViewport[1]/page/regionViewport/regionBody/footnote/block)"/>
+    <eval expected="3" xpath="count(//pageViewport[1]/page/regionViewport/regionBody/footnote/block)"/>
   </checks>
 </testcase>

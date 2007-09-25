@@ -105,12 +105,6 @@
     regions.</description>
   </testcase>
   <testcase>
-    <name>Footnotes swallowed in hyphenated fo:inlines</name>
-    <file>footnote_in_inline.xml</file>
-    <description>getChangedKnuthElements probably loses the footnote 
-    layout manager somewhere along the way.</description>
-  </testcase>
-  <testcase>
     <name>Footnotes swallowed in lists</name>
     <file>footnote_in_list.xml</file>
     <description>Element lists for lists are created by combining the 

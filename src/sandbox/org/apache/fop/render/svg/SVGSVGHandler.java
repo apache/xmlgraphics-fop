@@ -74,7 +74,7 @@ public class SVGSVGHandler implements XMLHandler, SVGRendererContextConstants {
 
     /** @see org.apache.fop.render.XMLHandler#getNamespace() */
     public String getNamespace() {
-        return SVGRenderer.SVG_NAMESPACE;
+        return SVGRenderer.MIME_TYPE;
     }
 
 

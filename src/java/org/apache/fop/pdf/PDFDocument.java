@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,7 +19,7 @@
 
 package org.apache.fop.pdf;
 
-/// Java
+// Java
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -28,17 +28,14 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Iterator;
-import java.util.ArrayList;
-import java.util.Collections;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import org.apache.fop.pdf.DestinationComparator;
 
 /* image support modified from work of BoBoGi */
 /* font support based on work by Takayuki Takeuchi */
@@ -67,13 +64,13 @@ import org.apache.fop.pdf.DestinationComparator;
 public class PDFDocument {
 
     private static final Integer LOCATION_PLACEHOLDER = new Integer(0);
-
+    
     /** Integer constant to represent PDF 1.3 */
     public static final int PDF_VERSION_1_3 = 3;
 
     /** Integer constant to represent PDF 1.4 */
     public static final int PDF_VERSION_1_4 = 4;
-
+    
     /**
      * the encoding to use when converting strings to PDF commandos.
      */
@@ -89,7 +86,7 @@ public class PDFDocument {
     /**
      * the character position of each object
      */
-    protected List location = new ArrayList();
+    protected List location = new java.util.ArrayList();
 
     /** List of objects to write in the trailer */
     private List trailerObjects = new java.util.ArrayList();
@@ -111,12 +108,12 @@ public class PDFDocument {
 
     /** Indicates what PDF version is active */
     protected int pdfVersion = PDF_VERSION_1_4;
-
+    
     /**
      * Indicates which PDF profiles are active (PDF/A, PDF/X etc.)
      */
     protected PDFProfile pdfProfile = new PDFProfile(this);
-
+    
     /**
      * the /Root object
      */
@@ -208,7 +205,7 @@ public class PDFDocument {
     /**
      * List of Destinations.
      */
-    protected List destinations = new java.util.ArrayList();
+    protected List destinations;
 
     /**
      * List of FileSpecs.
@@ -230,19 +227,6 @@ public class PDFDocument {
      * Note: This object is not a list.
      */
     private PDFDests dests;
-
-    /**
-     * The PDFLimits object for the name dictionary.
-     * Note: This object is not a list.
-     */
-    private PDFLimits limits;
-
-    /**
-     * Whether this PDFDocument has named destinations
-     * (and thus needs PDFDestinations, PDFLimits, and
-     * PDFDests)
-     */
-    private boolean hasDestinations = false;
 
     private PDFFactory factory;
 
@@ -283,7 +267,7 @@ public class PDFDocument {
     public int getPDFVersion() {
         return this.pdfVersion;
     }
-
+    
     /** @return the String representing the active PDF version */
     public String getPDFVersionString() {
         switch (getPDFVersion()) {
@@ -300,7 +284,7 @@ public class PDFDocument {
     public PDFProfile getProfile() {
         return this.pdfProfile;
     }
-
+    
     /**
      * Returns the factory for PDF objects.
      * @return PDFFactory the factory
@@ -343,7 +327,7 @@ public class PDFDocument {
 
     /**
       * Set the creation date of the document.
-      *
+      * 
       * @param date Date to be stored as creation date in the PDF.
       */
     public void setCreationDate(Date date) {
@@ -488,9 +472,6 @@ public class PDFDocument {
         if (obj instanceof PDFLink) {
             this.links.add(obj);
         }
-        if (obj instanceof PDFDestination) {
-            this.destinations.add(obj);
-        }
         if (obj instanceof PDFFileSpec) {
             this.filespecs.add(obj);
         }
@@ -614,7 +595,12 @@ public class PDFDocument {
      * @return the link if found, null otherwise
      */
     protected PDFDestination findDestination(PDFDestination compare) {
-        return (PDFDestination)findPDFObject(destinations, compare);
+        int index = getDestinationList().indexOf(compare);
+        if (index >= 0) {
+            return (PDFDestination)getDestinationList().get(index);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -751,21 +737,27 @@ public class PDFDocument {
     }
 
     /**
+     * Adds a destination to the document.
+     * @param destination the destination object
+     */
+    public void addDestination(PDFDestination destination) {
+        if (this.destinations == null) {
+            this.destinations = new java.util.ArrayList();
+        }
+        this.destinations.add(destination);
+    }
+    
+    /**
      * Gets the list of named destinations.
      *
      * @return the list of named destinations.
      */
-    public ArrayList getDestinationList() {
-        return (ArrayList)destinations;
-    }
-
-    /**
-     * Sets whether the document has named destinations.
-     *
-     * @param hasDestinations whether the document has named destinations.
-     */
-    public void setHasDestinations(boolean hasDestinations) {
-        this.hasDestinations = hasDestinations;
+    public List getDestinationList() {
+        if (hasDestinations()) {
+            return destinations;
+        } else {
+            return Collections.EMPTY_LIST;
+        }
     }
 
     /**
@@ -773,17 +765,8 @@ public class PDFDocument {
      *
      * @return whether the document has named destinations.
      */
-    public boolean getHasDestinations() {
-        return this.hasDestinations;
-    }
-
-    /**
-     * Gets the PDFLimits object (part of the name dictionary).
-     *
-     * @return the PDFLimits object (part of the name dictionary).
-     */
-    public PDFLimits getLimits() {
-        return limits;
+    public boolean hasDestinations() {
+        return this.destinations != null && !this.destinations.isEmpty();
     }
 
     /**
@@ -933,8 +916,8 @@ public class PDFDocument {
         this.position = 0;
 
         getProfile().verifyPDFVersion();
-
-        byte[] pdf = ("%PDF-" + getPDFVersionString() + "\n").getBytes();
+        
+        byte[] pdf = encode("%PDF-" + getPDFVersionString() + "\n");
         stream.write(pdf);
         this.position += pdf.length;
 
@@ -955,9 +938,9 @@ public class PDFDocument {
         try {
             MessageDigest digest = MessageDigest.getInstance("MD5");
             DateFormat df = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSS");
-            digest.update(df.format(new Date()).getBytes());
+            digest.update(encode(df.format(new Date())));
             //Ignoring the filename here for simplicity even though it's recommended by the PDF spec
-            digest.update(String.valueOf(this.position).getBytes());
+            digest.update(encode(String.valueOf(this.position)));
             digest.update(getInfo().toPDF());
             byte[] res = digest.digest();
             String s = PDFText.toHex(res);
@@ -970,7 +953,7 @@ public class PDFDocument {
             }
         }
     }
-
+    
     /**
      * write the trailer
      *
@@ -978,11 +961,13 @@ public class PDFDocument {
      * @throws IOException if there is an exception writing to the output stream
      */
     public void outputTrailer(OutputStream stream) throws IOException {
-        if (hasDestinations) {
-            Collections.sort((ArrayList)destinations, new DestinationComparator());
-            limits = getFactory().makeLimits((ArrayList)destinations);
-            dests = getFactory().makeDests(limits.referencePDF());
-            this.root.setNames(dests.referencePDF());
+        if (hasDestinations()) {
+            Collections.sort(destinations, new DestinationComparator());
+            dests = getFactory().makeDests(destinations);
+            if (this.root.getNames() == null) {
+                this.root.setNames(getFactory().makeNames());
+            }
+            this.root.getNames().setDests(dests);
         }
         output(stream);
         for (int count = 0; count < trailerObjects.size(); count++) {
