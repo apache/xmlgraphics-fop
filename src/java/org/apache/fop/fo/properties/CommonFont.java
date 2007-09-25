@@ -132,23 +132,18 @@ public class CommonFont {
         if (fontState == null) {
             /**@todo this is ugly. need to improve. */
 
-            int font_weight = 400;
-            if (fontWeight == Constants.EN_BOLDER) {
-                // +100 from inherited
-            } else if (fontWeight == Constants.EN_LIGHTER) {
-                // -100 from inherited
-            } else {
-                switch (fontWeight) {
-                case Constants.EN_100: font_weight = 100; break;
-                case Constants.EN_200: font_weight = 200; break;
-                case Constants.EN_300: font_weight = 300; break;
-                case Constants.EN_400: font_weight = 400; break;
-                case Constants.EN_500: font_weight = 500; break;
-                case Constants.EN_600: font_weight = 600; break;
-                case Constants.EN_700: font_weight = 700; break;
-                case Constants.EN_800: font_weight = 800; break;
-                case Constants.EN_900: font_weight = 900; break;
-                }
+            int font_weight;
+            switch (fontWeight) {
+            case Constants.EN_100: font_weight = 100; break;
+            case Constants.EN_200: font_weight = 200; break;
+            case Constants.EN_300: font_weight = 300; break;
+            case Constants.EN_400: font_weight = 400; break;
+            case Constants.EN_500: font_weight = 500; break;
+            case Constants.EN_600: font_weight = 600; break;
+            case Constants.EN_700: font_weight = 700; break;
+            case Constants.EN_800: font_weight = 800; break;
+            case Constants.EN_900: font_weight = 900; break;
+            default: font_weight = 400;
             }
 
             String style;

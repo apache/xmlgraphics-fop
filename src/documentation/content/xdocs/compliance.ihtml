@@ -1499,15 +1499,16 @@
       <td class="no">
         no
       </td>
-      <td class="yes">
-        yes
+      <td class="partial">
+        partial
       </td>
-      <td class="yes">
-        yes
+      <td class="partial">
+        partial
       </td>
       <td align="left">
         <ul>
           <li>[0.20.5] Uses the proprietary fox:outline extension.</li>
+          <li>[0.93] color, font-style and font-weight are not supported, yet.</li>
         </ul>
       </td>
     </tr>

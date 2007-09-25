@@ -111,14 +111,17 @@ public class KnuthPenalty extends KnuthElement {
         return penalty == -KnuthElement.INFINITE;
     }
     
-    /** @return the break class of this penalty (one of the break-* constants) */
+    /**
+     * @return the break class of this penalty (EN_AUTO, EN_COLUMN, EN_PAGE, EN_EVEN_PAGE,
+     * EN_ODD_PAGE)
+     */
     public int getBreakClass() {
         return breakClass;
     }
     
     /**
      * Sets the break class for this penalty.
-     * @param cl the break class (one of the break-* constants)
+     * @param cl the break class (EN_AUTO, EN_COLUMN, EN_PAGE, EN_EVEN_PAGE, EN_ODD_PAGE)
      */
     public void setBreakClass(int cl) {
         this.breakClass = cl;

@@ -110,11 +110,10 @@ public class FOTreeBuilder extends DefaultHandler {
      * true no Locator is passed to the FO tree nodes which would copy the information into
      * a SAX LocatorImpl instance.
      * @return true if no context information should be stored on each node in the FO tree.
+     * @deprecated Use FOUserAgent.isLocatorEnabled() instead.
      */
     protected boolean isLocatorDisabled() {
-        //TODO make this configurable through the FOUserAgent so people can optimize memory
-        //consumption.
-        return false;
+        return !userAgent.isLocatorEnabled();
     }
     
     /**
@@ -127,7 +126,7 @@ public class FOTreeBuilder extends DefaultHandler {
     
     /** @return a Locator instance if it is available and not disabled */
     protected Locator getEffectiveLocator() {
-        return (isLocatorDisabled() ? null : this.locator);
+        return (userAgent.isLocatorEnabled() ? this.locator : null);
     }
     
     /**

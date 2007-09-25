@@ -19,25 +19,16 @@
 
 package org.apache.fop.fo.flow;
 
-import java.util.HashMap;
 import java.util.Iterator;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FOPropertyMapping;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.PropertyList;
-import org.apache.fop.fo.StaticPropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.fo.properties.Property;
-import org.apache.fop.fo.properties.PropertyMaker;
-import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
-
-
 
 /**
  * The retrieve-marker formatting object.
@@ -145,14 +136,14 @@ public class RetrieveMarker extends FObjMixed {
                 }
                 cloneSubtree(child.getChildNodes(), newChild,
                         marker, newPropertyList);
-                if (newChild instanceof FObjMixed) {
-                    handleWhiteSpaceFor((FObjMixed) newChild);
-                }
             } else if (child instanceof FOText) {
                 FOText ft = (FOText) newChild;
                 ft.bind(parentPropertyList);
             }
             addChildTo(newChild, (FObj) newParent);
+            if (newChild instanceof FObjMixed) {
+                handleWhiteSpaceFor((FObjMixed) newChild);
+            }
         }
     }
     
