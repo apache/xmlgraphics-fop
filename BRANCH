@@ -1,0 +1,16 @@
+This is branch Temp_Interleaved_Page_Line_Breaking. It holds the
+development of interleaved page and line breaking. That is, line
+breaking is postponed until the page breaker requires the lines of the
+paragraph. This allows the following features:
+
+The page breaker can implement both the total fit strategy for a page
+sequence and the best fit strategy for one page (or a range of
+pages). The latter strategy allows one to have different widths for
+different pages.
+
+A single total fit strategy for page and line breaking.  Such a
+strategy allows one to integrate the placement of side floats in the
+page breaking calculations. The setup of such a strategy has not yet
+been fully understood.
+
+$Id$

@@ -58,6 +58,17 @@ public abstract class KnuthSequence extends ArrayList {
     public abstract KnuthSequence endSequence();
 
     /**
+     * Only BlockSequence has a non-trivial implementation of this method;
+     * that is where the weird name derives from.
+     * Any KnuthSequence must implement this method because it is used
+     * in BreakingAlgorithm.findBreakingPoints.
+     * @return
+     */
+    public KnuthSequence endBlockSequence() {
+        return null;
+    }
+    
+    /**
      * Can sequence be appended to this sequence?
      * @param sequence The sequence that may be appended.
      * @return whether the sequence can be appended to this sequence.

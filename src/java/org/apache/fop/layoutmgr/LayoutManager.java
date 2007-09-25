@@ -29,6 +29,9 @@ import org.apache.fop.fo.FObj;
 /**
  * The interface for all LayoutManagers.
  */
+/**
+ * 
+ */
 public interface LayoutManager extends PercentBaseContext {
 
     /**
@@ -227,4 +230,27 @@ public interface LayoutManager extends PercentBaseContext {
      * @return the same Position but with a position index
      */
     Position notifyPos(Position pos);
+    
+    /**
+     * Wrap the position of each element in the list in a NonLeafPosition for this LM
+     * Currently BlockStackingLM has wrapPositionElements, LineLM wraps positions in
+     * postProcessSequences, and KnuthSequence has wrapPositions(lm). BlockStackingLM
+     * copies all elements from sourceList to targetList; the other ones modify the
+     * position in place.
+     * @param elementList the list of elements whose positions need to be wrapped
+     */
+    void wrapPositionElements(List elementList);
+    
+    /**
+     * Create a new position stack which is a copy of the stack in pos.
+     * If pos is from the same LM as the base position, return the base position.
+     * Otherwise, return a new position, whose index is the index of pos.
+     * If pos is last, increment its index.
+     * Call the LM of the subposition to do the same,
+     * and wrap the new subposition in the new position.
+     * @param pos the position to be copied
+     * @param basePos the base position to be wrapped in the new position stack
+     */
+    Position rewrapPosition(Position pos, Position basePos);
+
 }

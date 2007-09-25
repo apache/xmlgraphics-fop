@@ -271,7 +271,14 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             while (!childFLM.isFinished() && contentList == null) {
                 contentList = childFLM.getNextKnuthElements(context, alignment);
             }
-
+            /* postpone getting footnote elements
+            getFootnoteKnuthElements(contentList, context, alignment);
+            */
+            return contentList;
+        } 
+           
+        private void getFootnoteKnuthElements(LinkedList contentList,
+                                              LayoutContext context, int alignment) {
             // scan contentList, searching for footnotes
             boolean bFootnotesPresent = false;
             if (contentList != null) {
@@ -326,7 +333,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
 
                 footnoteSeparatorLength = new MinOptMax(separatorArea.getBPD());
             }
-            return contentList;
         }
         
         protected int getCurrentDisplayAlign() {

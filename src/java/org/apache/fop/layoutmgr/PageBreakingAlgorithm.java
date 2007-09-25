@@ -29,7 +29,6 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.layoutmgr.AbstractBreaker.PageBreakPosition;
-
 import org.apache.fop.traits.MinOptMax;
 
 class PageBreakingAlgorithm extends BreakingAlgorithm {
@@ -100,7 +99,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                                  MinOptMax footnoteSeparatorLength,
                                  boolean partOverflowRecovery, boolean autoHeight,
                                  boolean favorSinglePart) {
-        super(alignment, alignmentLast, true, partOverflowRecovery, 0);
+        super(alignment, alignmentLast, partOverflowRecovery, 0);
         this.topLevelLM = topLevelLM;
         this.pageProvider = pageProvider;
         this.layoutListener = layoutListener;
@@ -730,14 +729,6 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         pageBreaks.addFirst(pageBreak);
     }
     
-    private int getPartCount() {
-        if (pageBreaks == null) {
-            return 0;
-        } else {
-            return pageBreaks.size();
-        }
-    }
-    
     public void updateData1(int total, double demerits) {
     }
 
@@ -811,6 +802,35 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                 ((KnuthPageNode) bestActiveNode).footnoteListIndex,
                 ((KnuthPageNode) bestActiveNode).footnoteElementIndex,
                 ratio, difference));
+    }
+
+    /**
+     * This method iterates over seq starting at startIndex.
+     * If it finds a ParagraphListElement, the paragraph is broken into lines,
+     * and the ParagraphListElement is replaced by the resulting elements.
+     * The iteration stops at the first resolved element (after line breaking).
+     * Then space resolution is done on seq starting at startIndex.
+     * It is now guaranteed that seq does not to contain ParagraphListElements
+     * until the first resolved element.
+     * @param seq the Knuth Sequence
+     * @param startIndex the start index
+     */
+    void resolveElements(KnuthSequence seq, int startIndex) {
+        for (int i = startIndex; i < seq.size(); ++i) {
+            ListElement elt = (ListElement) seq.get(i);
+            if (!elt.isUnresolvedElement() && !(elt instanceof ParagraphListElement)) {
+                break;
+            }
+            if (elt instanceof ParagraphListElement) {
+                LinkedList lineElts = ((ParagraphListElement) elt).doLineBreaking();
+                seq.remove(i);
+                seq.addAll(i, lineElts);
+                // consider the new element at i
+                --i;
+                continue;
+            }
+        }        
+        SpaceResolver.resolveElementList(seq, startIndex);
     }
 
     protected int filterActiveNodes() {

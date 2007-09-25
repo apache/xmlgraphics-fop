@@ -68,7 +68,7 @@ public class KnuthAlgorithmTestCase extends TestCase {
      * @throws Exception if an error occurs
      */
     public void test1() throws Exception {
-        MyBreakingAlgorithm algo = new MyBreakingAlgorithm(0, 0, true, true, 0);
+        MyBreakingAlgorithm algo = new MyBreakingAlgorithm(0, 0, true, 0);
         algo.setConstantLineWidth(30000);
         KnuthSequence seq = getKnuthSequence1();
         algo.findBreakingPoints(seq, 1, true, BreakingAlgorithm.ALL_BREAKS);
@@ -88,9 +88,9 @@ public class KnuthAlgorithmTestCase extends TestCase {
 
         private List parts = new java.util.ArrayList();
         
-        public MyBreakingAlgorithm(int align, int alignLast, boolean first, 
+        public MyBreakingAlgorithm(int align, int alignLast, 
                     boolean partOverflowRecovery, int maxFlagCount) {
-            super(align, alignLast, first, partOverflowRecovery, maxFlagCount);
+            super(align, alignLast, partOverflowRecovery, maxFlagCount);
         }
 
         public Part[] getParts() {
