@@ -22,6 +22,8 @@ fop_exec_args=
 no_config=false
 fop_exec_debug=false
 show_help=false
+export IFS="
+"
 for arg in "$@" ; do
   if [ "$arg" = "--noconfig" ] ; then
     no_config=true

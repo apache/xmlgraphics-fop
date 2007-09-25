@@ -912,9 +912,17 @@ Can I control this?</question>
       <question>How do I control the Acrobat bookmark display?</question>
       <answer>
         <p>
-          FOP does not currently support this feature. Possible workarounds
-          include those mentioned in the <link href="#PDF-postprocess">PDF
+          FOP 0.20.5 does not support this feature. Possible workarounds
+          include those mentioned in the <link href="0.93/output.html#pdf-postprocess">PDF
             Post-Processing FAQ</link>.
+        </p>
+        <p>
+          FOP versions 0.93 and later support the starting-state property of the XSL 1.1
+          <link href="http://www.w3.org/TR/xsl11/#fo_bookmark">fo:bookmark</link>
+          element which can be used for this. The color, font-style and 
+          font-weight properties on 
+          <link href="http://www.w3.org/TR/xsl11/#fo_bookmark-title">fo:bookmark-title</link>
+          are not yet supported, though.
         </p>
       </answer>
     </faq>

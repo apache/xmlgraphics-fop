@@ -86,7 +86,7 @@
       </fo:page-sequence>
     </fo:root>
   </fo>
-  <checks><!-- feature not properly implemented, checks are against current implementation -->
+  <checks>
     <eval expected="400" xpath="//flow/block[1]/lineArea/text/@font-weight"/>
     <eval expected="400" xpath="//flow/block[2]/lineArea/text/@font-weight"/>
     <eval expected="700" xpath="//flow/block[3]/lineArea/text/@font-weight"/>
@@ -99,24 +99,24 @@
     <eval expected="700" xpath="//flow/block[10]/lineArea/text/@font-weight"/>
     <eval expected="700" xpath="//flow/block[11]/lineArea/text/@font-weight"/>
     <eval expected="700" xpath="//flow/block[12]/lineArea/text/@font-weight"/>
-    <eval expected="400" xpath="//flow/block[13]/block/lineArea/text/@font-weight"/>
-    <eval expected="400" xpath="//flow/block[13]/block/block/lineArea/text/@font-weight"/>
-    <eval expected="400" xpath="//flow/block[13]/block/block/block/lineArea/text/@font-weight"/>
-    <eval expected="400" xpath="//flow/block[13]/block/block/block/block/lineArea/text/@font-weight"/>
-    <eval expected="400" xpath="//flow/block[13]/block/block/block/block/block/lineArea/text/@font-weight"/>
-    <eval expected="400" xpath="//flow/block[13]/block/block/block/block/block/block/lineArea/text/@font-weight"/>
-    <eval expected="400" xpath="//flow/block[13]/block/block/block/block/block/block/block/lineArea/text/@font-weight"/>
-    <eval expected="400" xpath="//flow/block[13]/block/block/block/block/block/block/block/block/lineArea/text/@font-weight"/>
-    <eval expected="400" xpath="//flow/block[13]/block/block/block/block/block/block/block/block/block/lineArea/text/@font-weight"/>
+    <eval expected="700" xpath="//flow/block[12]/block/lineArea/text/@font-weight"/>
+    <eval expected="700" xpath="//flow/block[12]/block/block/lineArea/text/@font-weight"/>
+    <eval expected="700" xpath="//flow/block[12]/block/block/block/lineArea/text/@font-weight"/>
+    <eval expected="400" xpath="//flow/block[12]/block/block/block/block/lineArea/text/@font-weight"/>
+    <eval expected="400" xpath="//flow/block[12]/block/block/block/block/block/lineArea/text/@font-weight"/>
+    <eval expected="400" xpath="//flow/block[12]/block/block/block/block/block/block/lineArea/text/@font-weight"/>
+    <eval expected="400" xpath="//flow/block[12]/block/block/block/block/block/block/block/lineArea/text/@font-weight"/>
+    <eval expected="400" xpath="//flow/block[12]/block/block/block/block/block/block/block/block/lineArea/text/@font-weight"/>
+    <eval expected="400" xpath="//flow/block[12]/block/block/block/block/block/block/block/block/block/lineArea/text/@font-weight"/>
     <eval expected="400" xpath="//flow/block[13]/lineArea/text/@font-weight"/>
     <eval expected="400" xpath="//flow/block[13]/block/lineArea/text/@font-weight"/>
     <eval expected="400" xpath="//flow/block[13]/block/block/lineArea/text/@font-weight"/>
     <eval expected="400" xpath="//flow/block[13]/block/block/block/lineArea/text/@font-weight"/>
     <eval expected="400" xpath="//flow/block[13]/block/block/block/block/lineArea/text/@font-weight"/>
-    <eval expected="400" xpath="//flow/block[13]/block/block/block/block/block/lineArea/text/@font-weight"/>
-    <eval expected="400" xpath="//flow/block[13]/block/block/block/block/block/block/lineArea/text/@font-weight"/>
-    <eval expected="400" xpath="//flow/block[13]/block/block/block/block/block/block/block/lineArea/text/@font-weight"/>
-    <eval expected="400" xpath="//flow/block[13]/block/block/block/block/block/block/block/block/lineArea/text/@font-weight"/>
-    <eval expected="400" xpath="//flow/block[13]/block/block/block/block/block/block/block/block/block/lineArea/text/@font-weight"/>
+    <eval expected="700" xpath="//flow/block[13]/block/block/block/block/block/lineArea/text/@font-weight"/>
+    <eval expected="700" xpath="//flow/block[13]/block/block/block/block/block/block/lineArea/text/@font-weight"/>
+    <eval expected="700" xpath="//flow/block[13]/block/block/block/block/block/block/block/lineArea/text/@font-weight"/>
+    <eval expected="700" xpath="//flow/block[13]/block/block/block/block/block/block/block/block/lineArea/text/@font-weight"/>
+    <eval expected="700" xpath="//flow/block[13]/block/block/block/block/block/block/block/block/block/lineArea/text/@font-weight"/>
   </checks>
 </testcase>
