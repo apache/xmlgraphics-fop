@@ -235,6 +235,12 @@ public class TableContentLayoutManager implements PercentBaseContext {
             if (!isSeparateBorderModel()) {
                 resolveNormalBeforeAfterBordersForRowGroup(rowGroup, iter);
             }
+
+            //Reset keep-with-next when remaining inside the table.
+            //The context flag is only used to propagate keep-with-next to the outside.
+            //The clearing is ok here because createElementsForRowGroup already handles
+            //the keep when inside a table.
+            context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, false);
             
             //Element list creation
             createElementsForRowGroup(context, alignment, bodyType, 
@@ -691,7 +697,6 @@ public class TableContentLayoutManager implements PercentBaseContext {
             iterateAndPaintPositions(nestedIter, painter);
         }
         
-        painter.notifyEndOfSequence();
         this.usedBPD += painter.getAccumulatedBPD();
 
         if (markers != null) {
@@ -701,15 +706,16 @@ public class TableContentLayoutManager implements PercentBaseContext {
     }
 
     /**
-     * Iterates over a part of the table and paints the related elements.
+     * Iterates over a part of the table (header, footer, body) and paints the related
+     * elements.
      * 
-     * @param iterator iterator over the table's header, body or footer elements
+     * @param iterator iterator over Position elements. Those positions correspond to the
+     * elements of the table present on the current page
      * @param painter
      */
     private void iterateAndPaintPositions(Iterator iterator, RowPainter painter) {
         List lst = new java.util.ArrayList();
         boolean firstPos = false;
-        boolean lastPos = false;
         TableBody body = null;
         while (iterator.hasNext()) {
             Position pos = (Position)iterator.next();
@@ -728,18 +734,9 @@ public class TableContentLayoutManager implements PercentBaseContext {
                 if (tcpos.getFlag(TableContentPosition.LAST_IN_ROWGROUP) 
                         && tcpos.row.getFlag(EffRow.LAST_IN_PART)) {
                     log.trace("LAST_IN_ROWGROUP + LAST_IN_PART");
-                    lastPos = true;
-                    getTableLM().getCurrentPV().addMarkers(body.getMarkers(), 
-                            true, firstPos, lastPos);
-                    int size = lst.size();
-                    for (int i = 0; i < size; i++) {
-                        painter.handleTableContentPosition((TableContentPosition)lst.get(i));
-                    }
-                    getTableLM().getCurrentPV().addMarkers(body.getMarkers(), 
-                            false, firstPos, lastPos);
+                    handleMarkersAndPositions(lst, body, firstPos, true, painter);
                     //reset
                     firstPos = false;
-                    lastPos = false;
                     body = null;
                     lst.clear();
                 }
@@ -750,18 +747,26 @@ public class TableContentLayoutManager implements PercentBaseContext {
             }
         }
         if (body != null) {
-            getTableLM().getCurrentPV().addMarkers(body.getMarkers(), 
-                    true, firstPos, lastPos);
-            int size = lst.size();
-            for (int i = 0; i < size; i++) {
-                painter.handleTableContentPosition((TableContentPosition)lst.get(i));
-            }
-            getTableLM().getCurrentPV().addMarkers(body.getMarkers(), 
-                    false, firstPos, lastPos);
+            // Entering this block means that the end of the current table-part hasn't
+            // been reached (otherwise it would have been caught by the test above). So
+            // lastPos is necessarily false
+            handleMarkersAndPositions(lst, body, firstPos, false, painter);
         }
         painter.addAreasAndFlushRow(true);
     }
-   
+
+    private void handleMarkersAndPositions(List positions, TableBody body, boolean firstPos,
+            boolean lastPos, RowPainter painter) {
+        getTableLM().getCurrentPV().addMarkers(body.getMarkers(), 
+                true, firstPos, lastPos);
+        int size = positions.size();
+        for (int i = 0; i < size; i++) {
+            painter.handleTableContentPosition((TableContentPosition)positions.get(i));
+        }
+        getTableLM().getCurrentPV().addMarkers(body.getMarkers(), 
+                false, firstPos, lastPos);
+    }
+
     /**
      * Get the area for a row for background.
      * @param row the table-row object or null

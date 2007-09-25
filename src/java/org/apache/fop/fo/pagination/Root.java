@@ -21,6 +21,7 @@ package org.apache.fop.fo.pagination;
 
 // java
 import java.util.List;
+import java.util.ArrayList;
 
 import org.xml.sax.Locator;
 
@@ -31,6 +32,7 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.pagination.bookmarks.BookmarkTree;
+import org.apache.fop.fo.extensions.destination.Destination;
 
 /**
  * The fo:root formatting object. Contains page masters, page-sequences.
@@ -43,6 +45,7 @@ public class Root extends FObj {
     private LayoutMasterSet layoutMasterSet;
     private Declarations declarations;
     private BookmarkTree bookmarkTree = null;
+    private ArrayList destinationList;
     private List pageSequences;
 
     // temporary until above list populated
@@ -64,7 +67,7 @@ public class Root extends FObj {
      */
     public Root(FONode parent) {
         super(parent);
-        pageSequences = new java.util.ArrayList();
+        pageSequences = new ArrayList();
         if (parent != null) {
             //throw new FOPException("root must be root element");
         }
@@ -249,6 +252,25 @@ public class Root extends FObj {
      */
     public void setBookmarkTree(BookmarkTree bookmarkTree) {
         this.bookmarkTree = bookmarkTree;
+    }
+
+    /**
+     * Add a Destination object to this FO
+     * @param destination the Destination object to add
+     */
+    public void addDestination(Destination destination) {
+        if (destinationList == null) {
+          destinationList = new ArrayList();
+        }
+        destinationList.add(destination);
+    }
+
+    /**
+     * Public accessor for the list of Destination objects for this FO
+     * @return the Destination object
+     */
+    public ArrayList getDestinationList() {
+        return destinationList;
     }
 
     /**

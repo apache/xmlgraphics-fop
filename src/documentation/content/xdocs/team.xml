@@ -79,12 +79,6 @@
             page</fork> for some of his private projects.</li>
         <li id="jp"><link href="mailto:pietsch@apache.org">J&#x00F6;rg Pietschmann</link> (JP)</li>
         <li id="ot"><link href="mailto:olegt@apache.org">Oleg Tkachenko</link> (OT)</li>
-        <li id="bd"> 
-          <link href="mailto:bdelacretaz@apache.org">Bertrand Delacretaz</link> (BD)
-          is an independent consultant based in Lausanne, Switzerland, specialized in web-related
-          and multimedia applications.
-          See <fork href="http://www.codeconsult.ch">www.codeconsult.ch</fork> for more info.
-        </li>
       </ul>
     </section>
     <section id="contribute-active">
@@ -112,6 +106,7 @@
       <ul>
         <li id="kc"><link href="mailto:kellyc@apache.org">Kelly Campbell</link></li>
         <li id="sc"><link href="mailto:gears@apache.org">Steven Coffman</link></li>
+        <li id="bd"><link href="mailto:bdelacretaz@apache.org">Bertrand Delacretaz</link></li>
         <li id="te"><link href="mailto:tore@apache.org">Tore Engvig</link></li>
         <li id="sg"><link href="mailto:stanislav@apache.org">Stanislav Gorkhover</link></li>
         <li id="fj"><link href="mailto:fotis@apache.org">Fotis Jannidis</link></li>
@@ -139,10 +134,12 @@
           <th>JP</th>
           <th>SP</th>
           <th>LF</th>
+          <th>JB</th>
         </tr>
         <tr>
           <td>Release manager</td>
           <td>X</td>
+          <td/>
           <td/>
           <td/>
           <td/>
@@ -163,6 +160,7 @@
           <td/>
           <td>X</td>
           <td/>
+          <td/>
         </tr>
         <tr>
           <td>Properties</td>
@@ -174,6 +172,7 @@
           <td/>
           <td/>
           <td>X</td>
+          <td/>
           <td/>
         </tr>
         <tr>
@@ -187,6 +186,7 @@
           <td>X</td>
           <td>X</td>
           <td>X</td>
+          <td/>
         </tr>
         <tr>
           <td>Fonts</td>
@@ -194,6 +194,7 @@
           <td/>
           <td/>
           <td>X</td>
+          <td/>
           <td/>
           <td/>
           <td/>
@@ -211,6 +212,7 @@
           <td/>
           <td/>
           <td/>
+          <td/>
         </tr>
         <tr>
           <td>Java2D (AWT)</td>
@@ -218,6 +220,7 @@
           <td/>
           <td/>
           <td>X</td>
+          <td/>
           <td/>
           <td/>
           <td/>
@@ -235,6 +238,7 @@
           <td/>
           <td/>
           <td/>
+          <td>X</td>
         </tr>
         <tr>
           <td>PostScript</td>
@@ -247,9 +251,11 @@
           <td/>
           <td/>
           <td/>
+          <td/>
         </tr>
         <tr>
           <td>PCL</td>
+          <td/>
           <td/>
           <td/>
           <td/>
@@ -271,9 +277,11 @@
           <td/>
           <td/>
           <td/>
+          <td/>
         </tr>
         <tr>
           <td>MIF</td>
+          <td/>
           <td/>
           <td/>
           <td/>
@@ -290,6 +298,7 @@
           <td/>
           <td>X</td>
           <td>X</td>
+          <td/>
           <td/>
           <td/>
           <td/>

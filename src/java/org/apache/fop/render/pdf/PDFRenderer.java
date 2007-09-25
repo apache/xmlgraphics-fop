@@ -73,6 +73,7 @@ import org.apache.fop.pdf.PDFAMode;
 import org.apache.fop.pdf.PDFAnnotList;
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.pdf.PDFConformanceException;
+import org.apache.fop.pdf.PDFDestination;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFEncryptionManager;
 import org.apache.fop.pdf.PDFEncryptionParams;
@@ -104,6 +105,8 @@ import org.apache.fop.fo.extensions.xmp.XMPMetadata;
 import org.apache.xmlgraphics.xmp.Metadata;
 import org.apache.xmlgraphics.xmp.schemas.XMPBasicAdapter;
 import org.apache.xmlgraphics.xmp.schemas.XMPBasicSchema;
+
+import org.apache.fop.area.DestinationData;
 
 /**
  * Renderer that renders areas to PDF.
@@ -509,8 +512,19 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * @see org.apache.fop.render.Renderer#processOffDocumentItem(OffDocumentItem)
      */
     public void processOffDocumentItem(OffDocumentItem odi) {
+        // render Destinations
+        if (odi instanceof DestinationData) {
+            PDFDestination destination = pdfDoc.getFactory().makeDestination((DestinationData) odi);
+            PageViewport pv = destination.getPageViewport();
+            String dest = (String)pageReferences.get(pv.getKey());
+            Rectangle2D bounds = pv.getViewArea();
+            double h = bounds.getHeight();
+            float yoffset = (float)h / 1000f;
+            String gtRef = pdfDoc.getFactory().getGoToReference(dest, yoffset);
+            destination.setGoToReference(gtRef);
+        }
         // render Bookmark-Tree
-        if (odi instanceof BookmarkData) {
+        else if (odi instanceof BookmarkData) {
             renderBookmarkTree((BookmarkData) odi);
         } else if (odi instanceof OffDocumentExtensionAttachment) {
             ExtensionAttachment attachment = ((OffDocumentExtensionAttachment)odi).getAttachment();

@@ -20,7 +20,9 @@
 package org.apache.fop.fo.extensions;
 
 import org.apache.fop.fo.ElementMapping;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.UnknownXMLObj;
+import org.apache.fop.fo.extensions.destination.Destination;
 import org.apache.fop.util.QName;
 
 import java.util.HashMap;
@@ -41,6 +43,7 @@ public class ExtensionElementMapping extends ElementMapping {
         propertyAttributes.add("block-progression-unit");
         propertyAttributes.add("widow-content-limit");
         propertyAttributes.add("orphan-content-limit");
+        propertyAttributes.add("internal-destination");
     }
     
     /**
@@ -58,9 +61,16 @@ public class ExtensionElementMapping extends ElementMapping {
             foObjs = new HashMap();
             foObjs.put("outline", new UnknownXMLObj.Maker(URI));
             foObjs.put("label", new UnknownXMLObj.Maker(URI));
+            foObjs.put("destination", new DestinationMaker());
         }
     }
     
+    static class DestinationMaker extends ElementMapping.Maker {
+        public FONode make(FONode parent) {
+            return new Destination(parent);
+        }
+    }
+
     /** @see org.apache.fop.fo.ElementMapping#getStandardPrefix() */
     public String getStandardPrefix() {
         return "fox";

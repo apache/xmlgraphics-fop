@@ -953,15 +953,22 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         }
         
         if (rotate) {
+            gen.writeln("<<");
+            gen.writeln("/PageSize [" 
+                    + Math.round(pspageheight) + " " 
+                    + Math.round(pspagewidth) + "]");
+            gen.writeln("/ImagingBBox null");
+            gen.writeln(">> setpagedevice");
             gen.writeln(Math.round(pspageheight) + " 0 translate");
             gen.writeln("90 rotate");
+        } else {
+            gen.writeln("<<");
+            gen.writeln("/PageSize [" 
+                    + Math.round(pspagewidth) + " " 
+                    + Math.round(pspageheight) + "]");
+            gen.writeln("/ImagingBBox null");
+            gen.writeln(">> setpagedevice");
         }
-        gen.writeln("<<");
-        gen.writeln("/PageSize [" 
-                + Math.round(pspagewidth) + " " 
-                + Math.round(pspageheight) + "]");
-        gen.writeln("/ImagingBBox null");
-        gen.writeln(">> setpagedevice");
         concatMatrix(1, 0, 0, -1, 0, pageheight / 1000f);
 
         gen.writeDSCComment(DSCConstants.END_PAGE_SETUP);

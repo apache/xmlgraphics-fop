@@ -90,7 +90,6 @@ public class ElementMappingRegistry {
      */
     public void addElementMapping(String mappingClassName)
                 throws IllegalArgumentException {
-
         try {
             ElementMapping mapping
                 = (ElementMapping)Class.forName(mappingClassName).newInstance();
