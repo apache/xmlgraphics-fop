@@ -22,7 +22,6 @@ package org.apache.fop.fo;
 import java.util.List;
 import java.util.Stack;
 import org.apache.fop.fo.flow.Block;
-import org.apache.fop.fo.flow.Character;
 import org.apache.fop.util.CharUtilities;
 
 /**
@@ -50,12 +49,9 @@ import org.apache.fop.util.CharUtilities;
  * <br>
  * The iteration always starts at <code>firstTextNode</code>, 
  * goes on until the last text-node is reached, and deals only 
- * with FOText nodes (characters are immediately removed) or 
- * Character nodes (characters are kept track of and removed 
- * from the list of child nodes later, when the iterator goes 
- * out of scope)
- * 
- * Note: if the method is called from an inline's endOfNode(),
+ * with <code>FOText</code> or <code>Character</code> nodes.
+ * <br>
+ * <em>Note</em>: if the method is called from an inline's endOfNode(),
  *   there is too little context to decide whether trailing
  *   white-space may be removed, so the pending inline is stored
  *   in a List, together with an iterator for which the next()
@@ -82,23 +78,9 @@ public class XMLWhiteSpaceHandler {
     private boolean nextChildIsBlockLevel;
     private RecursiveCharIterator charIter;
     
-    private List discardableFOCharacters;
     private List pendingInlines;
     private Stack nestedBlockStack = new java.util.Stack();
     private CharIterator firstWhiteSpaceInSeq;
-    
-    /**
-     * Marks a Character object as discardable, so that it is effectively
-     * removed from the FOTree at the end of handleWhitespace()
-     * @param foChar the Character object to be removed from the list of
-     *               childNodes
-     */
-    public void addDiscardableFOChar(Character foChar) {
-        if (discardableFOCharacters == null) {
-            discardableFOCharacters = new java.util.ArrayList();
-        }
-        discardableFOCharacters.add(foChar);
-    }
     
     /**
      * Handle white-space for the fo that is passed in, starting at
@@ -155,12 +137,10 @@ public class XMLWhiteSpaceHandler {
                 || currentBlock == null
                 || (foId == Constants.FO_RETRIEVE_MARKER
                         && currentFO.getParent() == currentBlock)) {
-            int textNodeIndex = fo.childNodes.indexOf(firstTextNode);
             afterLinefeed = (
-                    (textNodeIndex == 0)
-                        || (textNodeIndex > 0
-                            && ((FONode) fo.childNodes.get(textNodeIndex - 1))
-                                    .getNameId() == Constants.FO_BLOCK));
+                    (firstTextNode == fo.firstChild)
+                        || (firstTextNode.siblings[0].getNameId()
+                                == Constants.FO_BLOCK));
         }
         
         endOfBlock = (nextChild == null && currentFO == currentBlock);
@@ -343,11 +323,6 @@ public class XMLWhiteSpaceHandler {
                     lfCheck.reset();
                     break;
             }
-        }
-        if (discardableFOCharacters != null
-                && !discardableFOCharacters.isEmpty()) {
-            currentFO.childNodes.removeAll(discardableFOCharacters);
-            discardableFOCharacters.clear();
         }
     }
     

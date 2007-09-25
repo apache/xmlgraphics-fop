@@ -864,7 +864,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         return topLevelLM.getFObj();
     }
     
-    /** @see org.apache.fop.layoutmgr.BreakingAlgorithm#getLineWidth(int) */
+    /** {@inheritDoc} */
     protected int getLineWidth(int line) {
         int bpd;
         if (pageProvider != null) {

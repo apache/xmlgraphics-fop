@@ -142,20 +142,20 @@ public class FontReader extends DefaultHandler {
     }
 
     /**
-     * @see org.xml.sax.ContentHandler#startDocument()
+     * {@inheritDoc}
      */
     public void startDocument() {
     }
 
     /**
-     * @see org.xml.sax.ContentHandler#setDocumentLocator(Locator)
+     * {@inheritDoc}
      */
     public void setDocumentLocator(Locator locator) {
         this.locator = locator;
     }
 
     /**
-     * @see org.xml.sax.ContentHandler#startElement(String, String, String, Attributes)
+     * {@inheritDoc} 
      */
     public void startElement(String uri, String localName, String qName,
                              Attributes attributes) throws SAXException {
@@ -223,7 +223,7 @@ public class FontReader extends DefaultHandler {
     }
 
     /**
-     * @see org.xml.sax.ContentHandler#endElement(String, String, String)
+     * {@inheritDoc} 
      */
     public void endElement(String uri, String localName, String qName) throws SAXException {
         String content = text.toString().trim();
@@ -293,7 +293,7 @@ public class FontReader extends DefaultHandler {
     }
 
     /**
-     * @see org.xml.sax.ContentHandler#characters(char[], int, int)
+     * {@inheritDoc} 
      */
     public void characters(char[] ch, int start, int length) {
         text.append(ch, start, length);

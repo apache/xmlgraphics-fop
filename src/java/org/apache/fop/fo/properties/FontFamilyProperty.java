@@ -41,7 +41,7 @@ public class FontFamilyProperty extends ListProperty {
         }
 
         /**
-         * @see org.apache.fop.fo.properties.PropertyMaker#make(
+         * {@inheritDoc}
          *         org.apache.fop.fo.PropertyList, 
          *         java.lang.String, 
          *         org.apache.fop.fo.FObj)
@@ -86,7 +86,7 @@ public class FontFamilyProperty extends ListProperty {
                                         + tmpVal.substring(dblSpaceIndex + 1);
                             dblSpaceIndex = tmpVal.indexOf("  ");
                         }
-                        prop.addProperty(new StringProperty(tmpVal));
+                        prop.addProperty(StringProperty.getInstance(tmpVal));
                     }
                 }
                 return prop;
@@ -94,7 +94,7 @@ public class FontFamilyProperty extends ListProperty {
         }
 
         /**
-         * @see PropertyMaker#convertProperty
+         * {@inheritDoc}
          */
         public Property convertProperty(Property p,
                                         PropertyList propertyList, FObj fo) {
@@ -127,7 +127,7 @@ public class FontFamilyProperty extends ListProperty {
         }
     }
 
-    /** @see org.apache.fop.fo.properties.Property#getString() */
+    /** {@inheritDoc} */
     public String getString() {
         if (list.size() > 0) {
             Property first = (Property)list.get(0);

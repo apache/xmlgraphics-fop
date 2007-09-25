@@ -334,7 +334,7 @@ public class GridUnit {
         }
     }
 
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         StringBuffer buffer = new StringBuffer();
         if (isEmpty()) {

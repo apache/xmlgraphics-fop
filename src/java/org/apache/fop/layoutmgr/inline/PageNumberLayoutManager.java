@@ -47,14 +47,14 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
         fobj = node;
     }
     
-    /** @see org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager#get(LayoutContext) */
+    /** {@inheritDoc} */
     public void initialize() {
         font = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo(), this);
         setCommonBorderPaddingBackground(fobj.getCommonBorderPaddingBackground());
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager
+     * {@inheritDoc}
      *                                                      #makeAlignmentContext(LayoutContext)
      */
     protected AlignmentContext makeAlignmentContext(LayoutContext context) {
@@ -69,7 +69,7 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
             );
     }
 
-    /** @see org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager#get(LayoutContext) */
+    /** {@inheritDoc} */
     public InlineArea get(LayoutContext context) {
         // get page string from parent, build area
         TextArea text = new TextArea();
@@ -87,7 +87,7 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
         return text;
     }
     
-    /** @see org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager#getEffectiveArea() */
+    /** {@inheritDoc} */
     protected InlineArea getEffectiveArea() {
         TextArea baseArea = (TextArea)curArea;
         //TODO Maybe replace that with a clone() call or better, a copy constructor
@@ -127,7 +127,7 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
         return width;
     }
     
-    /** @see org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager#addId() */
+    /** {@inheritDoc} */
     protected void addId() {
         getPSLM().addIDToPage(fobj.getId());
     }

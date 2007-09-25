@@ -33,12 +33,12 @@ public class XMPContentHandlerFactory implements ContentHandlerFactory {
     private static final String[] NAMESPACES = new String[] 
                                          {XMPConstants.XMP_NAMESPACE, XMPConstants.RDF_NAMESPACE};
 
-    /** @see org.apache.fop.util.ContentHandlerFactory#getSupportedNamespaces() */
+    /** {@inheritDoc} */
     public String[] getSupportedNamespaces() {
         return NAMESPACES;
     }
 
-    /** @see org.apache.fop.util.ContentHandlerFactory#createContentHandler() */
+    /** {@inheritDoc} */
     public ContentHandler createContentHandler() throws SAXException {
         return new FOPXMPHandler();
     }
@@ -54,12 +54,12 @@ public class XMPContentHandlerFactory implements ContentHandlerFactory {
             return getMetadata();
         }
 
-        /** @see org.apache.fop.util.ContentHandlerFactory.ObjectSource */
+        /** {@inheritDoc} */
         public void setObjectBuiltListener(ObjectBuiltListener listener) {
             this.obListener = listener;
         }
         
-        /** @see org.xml.sax.helpers.DefaultHandler#endDocument() */
+        /** {@inheritDoc} */
         public void endDocument() throws SAXException {
             if (obListener != null) {
                 obListener.notifyObjectBuilt(getObject());

@@ -49,7 +49,7 @@ public class BalancingColumnBreakingAlgorithm extends PageBreakingAlgorithm {
         this.considerTooShort = true; //This is important!
     }
     
-    /** @see org.apache.fop.layoutmgr.BreakingAlgorithm */
+    /** {@inheritDoc} */
     protected double computeDemerits(KnuthNode activeNode,
             KnuthElement element, int fitnessClass, double r) {
         double dem = super.computeDemerits(activeNode, element, fitnessClass, r);

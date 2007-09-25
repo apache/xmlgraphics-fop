@@ -61,7 +61,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
         setParent(pslm);
     }
 
-    /** @see org.apache.fop.layoutmgr.LayoutManager */
+    /** {@inheritDoc} */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
 
         // currently active LM
@@ -169,7 +169,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager
+     * {@inheritDoc}
      */
     public int negotiateBPDAdjustment(int adj, KnuthElement lastElement) {
         log.debug(" FLM.negotiateBPDAdjustment> " + adj);
@@ -189,7 +189,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager
+     * {@inheritDoc}
      */
     public void discardSpace(KnuthGlue spaceGlue) {
         log.debug(" FLM.discardSpace> ");
@@ -203,23 +203,23 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
         }
     }
 
-    /** @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepTogether() */
+    /** {@inheritDoc} */
     public boolean mustKeepTogether() {
         return false;
     }
 
-    /** @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepWithPrevious() */
+    /** {@inheritDoc} */
     public boolean mustKeepWithPrevious() {
         return false;
     }
 
-    /** @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepWithNext() */
+    /** {@inheritDoc} */
     public boolean mustKeepWithNext() {
         return false;
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#getChangedKnuthElements(java.util.List, int)
+     * {@inheritDoc} 
      */
     public LinkedList getChangedKnuthElements(List oldList, /*int flaggedPenalty,*/ int alignment) {
         ListIterator oldListIterator = oldList.listIterator();
@@ -295,7 +295,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#addAreas(PositionIterator, LayoutContext)
+     * {@inheritDoc} 
      */
     public void addAreas(PositionIterator parentIter, LayoutContext layoutContext) {
         AreaAdditionUtil.addAreas(this, parentIter, layoutContext);
@@ -306,7 +306,8 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
      * Add child area to a the correct container, depending on its
      * area class. A Flow can fill at most one area container of any class
      * at any one time. The actual work is done by BlockStackingLM.
-     * @see org.apache.fop.layoutmgr.LayoutManager#addChildArea(Area)
+     * 
+     * @param childArea the area to add
      */
     public void addChildArea(Area childArea) {
         getParentArea(childArea);
@@ -315,7 +316,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#getParentArea(Area)
+     * {@inheritDoc}
      */
     public Area getParentArea(Area childArea) {
         BlockParent parentArea = null;
@@ -338,7 +339,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#resetPosition(Position)
+     * {@inheritDoc}
      */
     public void resetPosition(Position resetPos) {
         if (resetPos == null) {

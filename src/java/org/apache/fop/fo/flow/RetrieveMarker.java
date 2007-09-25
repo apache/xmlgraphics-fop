@@ -31,7 +31,7 @@ import org.apache.fop.fo.ValidationException;
 import org.xml.sax.Locator;
 
 /**
- * The retrieve-marker formatting object.
+ * Class modelling the fo:retrieve-marker object.
  * This will create a layout manager that will retrieve
  * a marker based on the information.
  */
@@ -54,7 +54,7 @@ public class RetrieveMarker extends FObjMixed {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         if (findAncestor(FO_STATIC_CONTENT) < 0) {
@@ -75,7 +75,7 @@ public class RetrieveMarker extends FObjMixed {
     }
     
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc}
      * XSL Content Model: empty
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
@@ -174,9 +174,9 @@ public class RetrieveMarker extends FObjMixed {
     private void cloneFromMarker(Marker marker)
         throws FOPException {
         // clean up remnants from a possible earlier layout
-        if (childNodes != null) {
+        if (firstChild != null) {
             currentTextNode = null;
-            childNodes.removeAll(childNodes);
+            firstChild = null;
         }
         cloneSubtree(marker.getChildNodes(), this, 
                         marker, propertyList);
@@ -203,13 +203,13 @@ public class RetrieveMarker extends FObjMixed {
         return;
     }
 
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "retrieve-marker";
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#getNameId()
+     * {@inheritDoc}
      */
     public int getNameId() {
         return FO_RETRIEVE_MARKER;

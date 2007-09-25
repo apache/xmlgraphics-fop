@@ -47,7 +47,7 @@ public class BMPReader implements ImageReader {
     /** offset to vertical res */
     private static final int VRES_OFFSET = 42;
 
-    /** @see org.apache.fop.image.analyser.ImageReader */
+    /** {@inheritDoc} */
     public FopImage.ImageInfo verifySignature(String uri, InputStream bis,
                 FOUserAgent ua) throws IOException {
         byte[] header = getDefaultHeader(bis);

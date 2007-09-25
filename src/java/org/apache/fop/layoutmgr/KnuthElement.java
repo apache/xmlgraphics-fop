@@ -74,7 +74,7 @@ public abstract class KnuthElement extends ListElement {
         throw new RuntimeException("Element is not a glue");
     }
     
-    /** @see org.apache.fop.layoutmgr.ListElement#isUnresolvedElement() */
+    /** {@inheritDoc} */
     public boolean isUnresolvedElement() {
         return false;
     }

@@ -32,7 +32,7 @@ import org.apache.fop.fo.expr.PropertyException;
 /**
  * Class for handling numeric properties
  */
-public class NumberProperty extends Property implements Numeric {
+public final class NumberProperty extends Property implements Numeric {
 
     /**
      * Inner class for making NumberProperty objects
@@ -48,8 +48,7 @@ public class NumberProperty extends Property implements Numeric {
         }
 
         /**
-         * @throws PropertyException 
-         * @see PropertyMaker#convertProperty
+         * {@inheritDoc}
          */
         public Property convertProperty(Property p,
                                         PropertyList propertyList, FObj fo) 
@@ -69,13 +68,16 @@ public class NumberProperty extends Property implements Numeric {
 
     }
 
-    private Number number;
+    /** cache holding all canonical NumberProperty instances */
+    private static final PropertyCache cache = new PropertyCache();
+    
+    private final Number number;
 
     /**
      * Constructor for Number input
      * @param num Number object value for property
      */
-    public NumberProperty(Number num) {
+    private NumberProperty(Number num) {
         this.number = num;
     }
 
@@ -83,7 +85,7 @@ public class NumberProperty extends Property implements Numeric {
      * Constructor for double input
      * @param num double numeric value for property
      */
-    public NumberProperty(double num) {
+    protected NumberProperty(double num) {
         this.number = new Double(num);
     }
 
@@ -91,14 +93,46 @@ public class NumberProperty extends Property implements Numeric {
      * Constructor for integer input
      * @param num integer numeric value for property
      */
-    public NumberProperty(int num) {
+    protected NumberProperty(int num) {
         this.number = new Integer(num);
+    }
+    
+    /**
+     * Returns the canonical NumberProperty instance
+     * corresponding to the given Number
+     * @param num   the base Number
+     * @return  the canonical NumberProperty
+     */
+    public static NumberProperty getInstance(Number num) {
+        return (NumberProperty)cache.fetch(
+                    new NumberProperty(num));
+    }
+    
+    /**
+     * Returns the canonical NumberProperty instance
+     * corresponding to the given double
+     * @param num   the base double value
+     * @return  the canonical NumberProperty
+     */
+    public static NumberProperty getInstance(double num) {
+        return (NumberProperty)cache.fetch(
+                    new NumberProperty(num));
+    }
+
+    /**
+     * Returns the canonical NumberProperty instance
+     * corresponding to the given int
+     * @param num   the base int value
+     * @return  the canonical NumberProperty
+     */
+    public static NumberProperty getInstance(int num) {
+        return (NumberProperty)cache.fetch(
+                    new NumberProperty(num));
     }
     
     /**
      * Plain number always has a dimension of 0.
      * @return a dimension of 0.
-     * @see Numeric#getDimension()
      */
     public int getDimension() {
         return 0;
@@ -107,7 +141,6 @@ public class NumberProperty extends Property implements Numeric {
     /**
      * Return the value of this Numeric.
      * @return The value as a double.
-     * @see Numeric#getNumericValue()
      */
     public double getNumericValue() {
         return number.doubleValue();
@@ -117,13 +150,12 @@ public class NumberProperty extends Property implements Numeric {
      * Return the value of this Numeric.
      * @param context Evaluation context
      * @return The value as a double.
-     * @see Numeric#getNumericValue(PercentBaseContext)
      */
     public double getNumericValue(PercentBaseContext context) {
         return getNumericValue();
     }
 
-    /** @see org.apache.fop.datatypes.Numeric#getValue() */
+    /** {@inheritDoc} */
     public int getValue() {
         return number.intValue();
     }
@@ -132,7 +164,6 @@ public class NumberProperty extends Property implements Numeric {
      * Return the value
      * @param context Evaluation context
      * @return The value as an int.
-     * @see Numeric#getValue(PercentBaseContext)
      */
     public int getValue(PercentBaseContext context) {
         return getValue();
@@ -141,7 +172,6 @@ public class NumberProperty extends Property implements Numeric {
     /**
      * Return true because all numbers are absolute.
      * @return true.
-     * @see Numeric#isAbsolute()
      */
     public boolean isAbsolute() {
         return true;
@@ -169,10 +199,10 @@ public class NumberProperty extends Property implements Numeric {
         return this;
     }
 
-    /** @see org.apache.fop.fo.properties.Property#getLength() */
+    /** {@inheritDoc} */
     public Length getLength() {
         //Assume pixels (like in HTML) when there's no unit
-        return new FixedLength(getNumericValue(), "px");
+        return FixedLength.getInstance(getNumericValue(), "px");
     }
 
     /**
@@ -187,4 +217,22 @@ public class NumberProperty extends Property implements Numeric {
         return Color.black;
     }
 
+    /** {@inheritDoc} */
+    public int hashCode() {
+        return number.hashCode();
+    }
+    
+    /** {@inheritDoc} */
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (o instanceof NumberProperty) {
+            NumberProperty np = (NumberProperty) o;
+            return (np.number == this.number
+                    || (this.number != null
+                        && this.number.equals(np.number)));
+        }
+        return false;
+    }
 }

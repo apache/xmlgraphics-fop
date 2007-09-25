@@ -174,6 +174,9 @@ public class RenderPagesModel extends AreaTreeModel {
                 } catch (Exception e) {
                     // use error handler to handle this FOP or IO Exception
                     log.error(e);
+                    if (e instanceof RuntimeException) {
+                        throw (RuntimeException)e;
+                    }
                 }
                 pageViewport.clear();
                 iter.remove();
@@ -201,7 +204,7 @@ public class RenderPagesModel extends AreaTreeModel {
     }
 
     /**
-     * @see org.apache.fop.area.AreaTreeModel#handleOffDocumentItem(OffDocumentItem)
+     * {@inheritDoc}
      */
     public void handleOffDocumentItem(OffDocumentItem oDI) {
         switch(oDI.getWhenToProcess()) {
@@ -228,7 +231,7 @@ public class RenderPagesModel extends AreaTreeModel {
 
     /**
      * End the document. Render any end document OffDocumentItems
-     * @see org.apache.fop.area.AreaTreeModel#endDocument()
+     * {@inheritDoc}
      */
     public void endDocument() throws SAXException {
         // render any pages that had unresolved ids

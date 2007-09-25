@@ -126,7 +126,7 @@ public class PDFOutputIntent extends PDFObject {
         this.destOutputProfile = destOutputProfile;
     }
 
-    /** @see org.apache.fop.pdf.PDFObject#toPDF() */
+    /** {@inheritDoc} */
     public byte[] toPDF() {
         ByteArrayOutputStream bout = new ByteArrayOutputStream(128);
         try {

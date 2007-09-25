@@ -30,7 +30,7 @@ import org.apache.fop.fo.properties.Property;
  */
 class RGBColorFunction extends FunctionBase {
     
-    /** @see org.apache.fop.fo.expr.Function#nbArgs() */
+    /** {@inheritDoc} */
     public int nbArgs() {
         return 3;
     }
@@ -44,7 +44,7 @@ class RGBColorFunction extends FunctionBase {
         return new RGBPercentBase();
     }
 
-    /** @see org.apache.fop.fo.expr.Function */
+    /** {@inheritDoc} */
     public Property eval(Property[] args,
                          PropertyInfo pInfo) throws PropertyException {
       FOUserAgent ua = (pInfo == null) 

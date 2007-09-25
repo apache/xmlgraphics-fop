@@ -32,12 +32,12 @@ import java.awt.image.RenderedImage;
 public class DefaultMonochromeBitmapConverter implements
         MonochromeBitmapConverter {
 
-    /** @see MonochromeBitmapConverter#setHint(java.lang.String, java.lang.String) */
+    /** {@inheritDoc} */
     public void setHint(String name, String value) {
         //ignore, not supported
     }
     
-    /** @see MonochromeBitmapConverter#convertToMonochrome(java.awt.image.BufferedImage) */
+    /** {@inheritDoc} */
     public RenderedImage convertToMonochrome(BufferedImage img) {
         BufferedImage buf = new BufferedImage(img.getWidth(), img.getHeight(), 
                 BufferedImage.TYPE_BYTE_BINARY);

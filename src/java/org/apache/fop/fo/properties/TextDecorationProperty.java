@@ -43,7 +43,7 @@ public class TextDecorationProperty extends ListProperty {
         }
 
         /**
-         * @see PropertyMaker#convertProperty
+         * {@inheritDoc}
          */
         public Property convertProperty(Property p,
                                         PropertyList propertyList, FObj fo)

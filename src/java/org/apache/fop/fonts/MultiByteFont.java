@@ -67,35 +67,35 @@ public class MultiByteFont extends CIDFont {
     }
 
     /**
-     * @see org.apache.fop.fonts.CIDFont#getDefaultWidth()
+     * {@inheritDoc}
      */
     public int getDefaultWidth() {
         return defaultWidth;
     }
 
     /**
-     * @see org.apache.fop.fonts.CIDFont#getRegistry()
+     * {@inheritDoc}
      */
     public String getRegistry() {
         return "Adobe";
     }
 
     /**
-     * @see org.apache.fop.fonts.CIDFont#getOrdering()
+     * {@inheritDoc}
      */
     public String getOrdering() {
         return "UCS";
     }
 
     /**
-     * @see org.apache.fop.fonts.CIDFont#getSupplement()
+     * {@inheritDoc}
      */
     public int getSupplement() {
         return 0;
     }
 
     /**
-     * @see org.apache.fop.fonts.CIDFont#getCIDType()
+     * {@inheritDoc}
      */
     public CIDFontType getCIDType() {
         return cidType;
@@ -114,7 +114,7 @@ public class MultiByteFont extends CIDFont {
     }
     
     /**
-     * @see org.apache.fop.fonts.CIDFont#getCidBaseFont()
+     * {@inheritDoc}
      */
     public String getCidBaseFont() {
         if (isEmbeddable()) {
@@ -125,21 +125,21 @@ public class MultiByteFont extends CIDFont {
     }
 
     /**
-     * @see org.apache.fop.fonts.FontDescriptor#isEmbeddable()
+     * {@inheritDoc}
      */
     public boolean isEmbeddable() {
         return !(getEmbedFileName() == null && getEmbedResourceName() == null);
     }
 
     /**
-     * @see org.apache.fop.fonts.Typeface#getEncoding()
+     * {@inheritDoc}
      */
     public String getEncoding() {
         return encoding;
     }
 
     /**
-     * @see org.apache.fop.fonts.FontMetrics#getFontName()
+     * {@inheritDoc}
      */
     public String getFontName() {
         if (isEmbeddable()) {
@@ -150,7 +150,7 @@ public class MultiByteFont extends CIDFont {
     }
 
     /**
-     * @see org.apache.fop.fonts.FontMetrics#getWidth(int, int)
+     * {@inheritDoc} 
      */
     public int getWidth(int i, int size) {
         if (isEmbeddable()) {
@@ -162,7 +162,7 @@ public class MultiByteFont extends CIDFont {
     }
 
     /**
-     * @see org.apache.fop.fonts.FontMetrics#getWidths()
+     * {@inheritDoc}
      */
     public int[] getWidths() {
         int[] arr = new int[width.length];
@@ -211,7 +211,7 @@ public class MultiByteFont extends CIDFont {
     }
 
     /**
-     * @see org.apache.fop.fonts.Typeface#mapChar(char)
+     * {@inheritDoc}
      */
     public char mapChar(char c) {
         int retIdx = findGlyphIndex(c);
@@ -238,7 +238,7 @@ public class MultiByteFont extends CIDFont {
     }
 
     /**
-     * @see org.apache.fop.fonts.Typeface#hasChar(char)
+     * {@inheritDoc}
      */
     public boolean hasChar(char c) {
         return (findGlyphIndex(c) > 0);
@@ -308,7 +308,7 @@ public class MultiByteFont extends CIDFont {
      * that need to return an invalid character. */
     public static final char INVALID_UNICODE_CHAR = 0xFFFF;
 
-    /** @see org.apache.fop.fonts.CIDFont#getCharsUsed() */
+    /** {@inheritDoc} */
     public char[] getCharsUsed() {
         if (!isEmbeddable()) {
             return null;

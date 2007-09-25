@@ -43,7 +43,7 @@ public abstract class ExtensionObj extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#processNode
+     * {@inheritDoc}
      */
     public void processNode(String elementName, Locator locator, 
                             Attributes attlist, PropertyList pList)

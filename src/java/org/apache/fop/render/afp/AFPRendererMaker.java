@@ -35,22 +35,22 @@ public class AFPRendererMaker extends AbstractRendererMaker {
         MimeConstants.MIME_AFP_ALT};
 
 
-    /**@see org.apache.fop.render.AbstractRendererMaker */
+    /**{@inheritDoc} */
     public Renderer makeRenderer(FOUserAgent userAgent) {
         return new AFPRenderer();
     }
 
-    /** @see org.apache.fop.render.AbstractRendererMaker#getConfigurator(FOUserAgent) */
+    /** {@inheritDoc} */
     public RendererConfigurator getConfigurator(FOUserAgent userAgent) {
         return new AFPRendererConfigurator(userAgent);
     }
 
-    /** @see org.apache.fop.render.AbstractRendererMaker#needsOutputStream() */
+    /** {@inheritDoc} */
     public boolean needsOutputStream() {
         return true;
     }
 
-    /** @see org.apache.fop.render.AbstractRendererMaker#getSupportedMimeTypes() */
+    /** {@inheritDoc} */
     public String[] getSupportedMimeTypes() {
         return MIMES;
     }

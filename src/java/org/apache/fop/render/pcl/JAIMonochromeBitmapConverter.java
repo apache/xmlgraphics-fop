@@ -47,14 +47,14 @@ public class JAIMonochromeBitmapConverter implements
 
     private boolean isErrorDiffusion = false;
     
-    /** @see MonochromeBitmapConverter#setHint(java.lang.String, java.lang.String) */
+    /** {@inheritDoc} */
     public void setHint(String name, String value) {
         if ("quality".equalsIgnoreCase(name)) {
             isErrorDiffusion = "true".equalsIgnoreCase(value);
         }
     }
     
-    /** @see MonochromeBitmapConverter#convertToMonochrome(java.awt.image.BufferedImage) */
+    /** {@inheritDoc} */
     public RenderedImage convertToMonochrome(BufferedImage img) {
         if (img.getColorModel().getColorSpace().getNumComponents() != 1) {
             throw new IllegalArgumentException("Source image must be a grayscale image!");

@@ -29,13 +29,13 @@ class CMYKcolorFunction extends FunctionBase {
     
     /**
      * cmyk takes four arguments. 
-     * @see org.apache.fop.fo.expr.Function#nbArgs() 
+     * {@inheritDoc} 
      */
     public int nbArgs() {
         return 4;
     }
     
-    /** @see org.apache.fop.fo.expr.Function */
+    /** {@inheritDoc} */
     public Property eval(Property[] args,
                          PropertyInfo pInfo) throws PropertyException {
         StringBuffer sb = new StringBuffer();

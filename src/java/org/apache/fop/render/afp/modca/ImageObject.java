@@ -125,7 +125,7 @@ public class ImageObject extends AbstractNamedAFPObject {
 
     /**
      * Sets the image IDE color model.
-     * @param size The IDE color model.
+     * @param colorModel    the IDE color model.
      */
     public void setImageIDEColorModel(byte colorModel) {
         if (_imageSegment == null) {

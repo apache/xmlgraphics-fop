@@ -232,7 +232,7 @@ public class FontSetup {
     public static FontResolver createMinimalFontResolver() {
         return new FontResolver() {
 
-            /** @see org.apache.fop.fonts.FontResolver#resolve(java.lang.String) */
+            /** {@inheritDoc} */
             public Source resolve(String href) {
                 //Minimal functionality here
                 return new StreamSource(href);

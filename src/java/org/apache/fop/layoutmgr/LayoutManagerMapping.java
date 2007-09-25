@@ -86,8 +86,6 @@ import org.apache.fop.layoutmgr.list.ListItemLayoutManager;
 import org.apache.fop.layoutmgr.table.TableLayoutManager;
 import org.apache.fop.util.CharUtilities;
 
-import org.apache.fop.fo.extensions.destination.Destination;
-
 /**
  * The default LayoutManager maker class
  */
@@ -144,7 +142,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManagerMaker#makeLayoutManagers(FONode, List)
+     * {@inheritDoc} 
      */
     public void makeLayoutManagers(FONode node, List lms) {
         Maker maker = (Maker) makers.get(node.getClass());
@@ -162,7 +160,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManagerMaker#makeLayoutManager(FONode)
+     * {@inheritDoc}
      */
     public LayoutManager makeLayoutManager(FONode node) {
         List lms = new ArrayList();
@@ -185,7 +183,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     }
 
     /*
-     * @see org.apache.fop.layoutmgr.LayoutManagerMaker#makeFlowLayoutManager(PageSequenceLayoutManager, Flow)
+     * {@inheritDoc} 
      */
     public FlowLayoutManager makeFlowLayoutManager(
             PageSequenceLayoutManager pslm, Flow flow) {
@@ -193,7 +191,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     }
 
     /*
-     * @see org.apache.fop.layoutmgr.LayoutManagerMaker#makeContentLayoutManager(PageSequenceLayoutManager, Title)
+     * {@inheritDoc} 
      */
     public ContentLayoutManager makeContentLayoutManager(PageSequenceLayoutManager pslm,
                                                          Title title) {
@@ -201,7 +199,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     }
     
     /*
-     * @see org.apache.fop.layoutmgr.LayoutManagerMaker#makeStaticContentLayoutManager(PageSequenceLayoutManager, StaticContent, Region)
+     * {@inheritDoc} 
      */
     public StaticContentLayoutManager makeStaticContentLayoutManager(
             PageSequenceLayoutManager pslm, StaticContent sc, SideRegion reg) {
@@ -209,7 +207,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     }
     
     /*
-     * @see org.apache.fop.layoutmgr.LayoutManagerMaker#makeStaticContentLayoutManager(PageSequenceLayoutManager, StaticContent, Block)
+     * {@inheritDoc} 
      */
     public StaticContentLayoutManager makeStaticContentLayoutManager(
         PageSequenceLayoutManager pslm, StaticContent sc, org.apache.fop.area.Block block) {

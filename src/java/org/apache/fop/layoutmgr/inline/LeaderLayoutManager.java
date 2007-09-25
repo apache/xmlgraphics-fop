@@ -65,7 +65,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
         fobj = node;
     }
     
-    /** @see org.apache.fop.layoutmgr.LayoutManager#initialize */
+    /** {@inheritDoc} */
     public void initialize() {
         font = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo(), this);
         // the property leader-alignment does not affect vertical positioning
@@ -193,7 +193,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
         return leaderArea;
      }
 
-    /** @see LeafNodeLayoutManager#addAreas(PositionIterator, LayoutContext) */
+    /** {@inheritDoc} */
     public void addAreas(PositionIterator posIter, LayoutContext context) {
         if (fobj.getLeaderPattern() != EN_USECONTENT) {
             // use LeafNodeLayoutManager.addAreas()
@@ -223,7 +223,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
         }
     }
 
-    /** @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(LayoutContext, int) */
+    /** {@inheritDoc} */
     public LinkedList getNextKnuthElements(LayoutContext context,
                                            int alignment) {
         MinOptMax ipd;
@@ -286,19 +286,19 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
         return returnList;
     }
 
-    /** @see InlineLevelLayoutManager#hyphenate(Position, HyphContext) */
+    /** {@inheritDoc} */
     public void hyphenate(Position pos, HyphContext hc) {
         // use the AbstractLayoutManager.hyphenate() null implementation
         super.hyphenate(pos, hc);
     }
 
-    /** @see InlineLevelLayoutManager#applyChanges(List) */
+    /** {@inheritDoc} */
     public boolean applyChanges(List oldList) {
         setFinished(false);
         return false;
     }
 
-    /** @see org.apache.fop.layoutmgr.LayoutManager#getChangedKnuthElements(List, int) */
+    /** {@inheritDoc} */
     public LinkedList getChangedKnuthElements(List oldList,
                                               int alignment) {
         if (isFinished()) {
@@ -335,13 +335,13 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
         return returnList;
     }
 
-    /** @see LeafNodeLayoutManager#addId */
+    /** {@inheritDoc} */
     protected void addId() {
         getPSLM().addIDToPage(fobj.getId());
     }
 
     /**
-     * @see org.apache.fop.datatypes.PercentBaseContext#getBaseLength(int, FObj)
+     * {@inheritDoc} 
      */
     public int getBaseLength(int lengthBase, FObj fobj) {
         return getParent().getBaseLength(lengthBase, getParent().getFObj());

@@ -30,6 +30,7 @@ import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonHyphenation;
 import org.apache.fop.fo.properties.CommonTextDecoration;
+import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.SpaceProperty;
 
@@ -80,6 +81,7 @@ public class FOText extends FONode {
     private CommonFont commonFont;
     private CommonHyphenation commonHyphenation;
     private Color color;
+    private KeepProperty keepTogether;
     private Property letterSpacing;
     private SpaceProperty lineHeight;
     private int whiteSpaceTreatment;
@@ -122,7 +124,7 @@ public class FOText extends FONode {
         super(parent);
     }
 
-    /** @see org.apache.fop.fo.FONode */
+    /** {@inheritDoc} */
     protected void addCharacters(char[] data, int start, int end,
             PropertyList list, Locator locator) throws FOPException {
 
@@ -142,14 +144,15 @@ public class FOText extends FONode {
      }
 
     /**
-     * @see org.apache.fop.fo.FONode#clone(FONode, boolean)
+     * {@inheritDoc} 
      */
     public FONode clone(FONode parent, boolean removeChildren)
             throws FOPException {
         FOText ft = (FOText) super.clone(parent, removeChildren);
         if (removeChildren) {
             //not really removing, but just make sure the char array 
-            //pointed to is really a different one
+            //pointed to is really a different one, and reset any
+            //possible whitespace-handling effects
             if (ca != null) {
                 ft.ca = new char[ca.length];
                 System.arraycopy(ca, 0, ft.ca, 0, ca.length);
@@ -159,12 +162,13 @@ public class FOText extends FONode {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         commonFont = pList.getFontProps();
         commonHyphenation = pList.getHyphenationProps();
         color = pList.get(Constants.PR_COLOR).getColor(getUserAgent());
+        keepTogether = pList.get(Constants.PR_KEEP_TOGETHER).getKeep();
         lineHeight = pList.get(Constants.PR_LINE_HEIGHT).getSpace();
         letterSpacing = pList.get(Constants.PR_LETTER_SPACING);
         whiteSpaceCollapse = pList.get(Constants.PR_WHITE_SPACE_COLLAPSE).getEnum();
@@ -176,7 +180,7 @@ public class FOText extends FONode {
         baselineShift = pList.get(Constants.PR_BASELINE_SHIFT).getLength();
     }
 
-    /** @see org.apache.fop.fo.FONode#endOfNode() */
+    /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         textTransform();
         getFOEventHandler().characters(ca, startIndex, endIndex);
@@ -555,6 +559,13 @@ public class FOText extends FONode {
         return color;
     }
 
+    /** 
+     * @return the "keep-together" property.
+     */
+    public KeepProperty getKeepTogether() {
+        return keepTogether;
+    }
+
     /**
      * @return the "letter-spacing" property.
      */
@@ -600,24 +611,24 @@ public class FOText extends FONode {
         return baselineShift;
     }
 
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer(super.toString());
         sb.append(" (").append(ca).append(")");
         return sb.toString();
     }
  
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return null;
     }
 
-    /** @see org.apache.fop.fo.FONode#getNormalNamespacePrefix() */
+    /** {@inheritDoc} */
     public String getNormalNamespacePrefix() {
         return null;
     }
 
-    /** @see org.apache.fop.fo.FONode#gatherContextInfo() */
+    /** {@inheritDoc} */
     protected String gatherContextInfo() {
         if (getLocator() != null) {
             return super.gatherContextInfo();

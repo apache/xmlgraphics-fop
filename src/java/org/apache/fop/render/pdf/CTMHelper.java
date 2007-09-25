@@ -31,8 +31,6 @@ import org.apache.fop.pdf.PDFNumber;
  * as it's default user space and PDF uses points.
  *
  * @see org.apache.fop.area.CTM
- *
- * @author <a href="kevin@rocketred.com>Kevin O'Neill</a>
  */
 public final class CTMHelper {
     /**

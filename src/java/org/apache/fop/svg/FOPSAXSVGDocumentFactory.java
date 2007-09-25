@@ -52,7 +52,7 @@ public class FOPSAXSVGDocumentFactory extends SAXSVGDocumentFactory {
     }
     
     /**
-     * @see org.xml.sax.EntityResolver#resolveEntity(String, String)
+     * {@inheritDoc} 
      */
     public InputSource resolveEntity(String publicId, String systemId)
                 throws SAXException {

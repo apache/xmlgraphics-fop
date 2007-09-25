@@ -71,7 +71,7 @@ public class KnuthInlineBox extends KnuthBox {
     }
     
     
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer(super.toString());
         return sb.toString();

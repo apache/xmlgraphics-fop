@@ -27,11 +27,9 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.fo.properties.CommonAccessibility;
 
 /**
  * Class modelling the fo:multi-switch object.
- * @todo needs implementation
  */
 public class MultiSwitch extends FObj {
     // The value of properties relevant for fo:multi-switch.
@@ -55,7 +53,7 @@ public class MultiSwitch extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
@@ -64,17 +62,16 @@ public class MultiSwitch extends FObj {
 
 
     /**
-     * Make sure content model satisfied.
-     * @see org.apache.fop.fo.FONode#endOfNode
+     * {@inheritDoc}
      */
     protected void endOfNode() throws FOPException {
-        if (childNodes == null) {
+        if (firstChild == null) {
             missingChildElementError("(multi-case+)");
         }
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc}
      * XSL Content Model: (multi-case+)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
@@ -84,13 +81,13 @@ public class MultiSwitch extends FObj {
         }
     }
 
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "multi-switch";
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#getNameId()
+     * {@inheritDoc}
      */
     public int getNameId() {
         return FO_MULTI_SWITCH;

@@ -37,7 +37,7 @@ public class FootnoteBodyLayoutManager extends BlockStackingLayoutManager {
         super(body);
     }
 
-    /** @see org.apache.fop.layoutmgr.LayoutManager */
+    /** {@inheritDoc} */
     public void addAreas(PositionIterator parentIter, LayoutContext layoutContext) {
         LayoutManager childLM = null;
         LayoutManager lastLM = null;
@@ -80,7 +80,7 @@ public class FootnoteBodyLayoutManager extends BlockStackingLayoutManager {
         }
     }
 
-    /** @see org.apache.fop.layoutmgr.LayoutManager#addChildArea(org.apache.fop.area.Area) */
+    /** {@inheritDoc} */
     public void addChildArea(Area childArea) {
         childArea.setAreaClass(Area.CLASS_FOOTNOTE);
         parentLM.addChildArea(childArea);

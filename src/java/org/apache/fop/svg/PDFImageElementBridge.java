@@ -101,7 +101,7 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
     }
 
     /**
-     * @see org.apache.batik.bridge.SVGImageElementBridge
+     * @see org.apache.batik.bridge.SVGImageElementBridge#createGraphicsNode(BridgeContext, Element)
      */
     protected GraphicsNode superCreateGraphicsNode
         (BridgeContext ctx, Element imageElement, ParsedURL purl) {

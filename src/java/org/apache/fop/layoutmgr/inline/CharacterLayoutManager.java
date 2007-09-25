@@ -61,7 +61,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
         fobj = node;
     }
     
-    /** @see org.apache.fop.layoutmgr.LayoutManager#initialize */
+    /** {@inheritDoc} */
     public void initialize() {
         font = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo(), this);
         SpaceVal ls = SpaceVal.makeLetterSpacing(fobj.getLetterSpacing());
@@ -91,7 +91,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
         return text;
     }
 
-    /** @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(LayoutContext, int) */
+    /** {@inheritDoc} */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         MinOptMax ipd;
         curArea = get(context);
@@ -152,13 +152,13 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
         return returnList;
     }
 
-    /** @see InlineLevelLayoutManager#getWordChars(StringBuffer, Position) */
+    /** {@inheritDoc} */
     public void getWordChars(StringBuffer sbChars, Position bp) {
         sbChars.append
             (((org.apache.fop.area.inline.TextArea) curArea).getText());
     }
 
-    /** @see InlineLevelLayoutManager#hyphenate(Position, HyphContext) */
+    /** {@inheritDoc} */
     public void hyphenate(Position pos, HyphContext hc) {
         if (hc.getNextHyphPoint() == 1) {
             // the character ends a syllable
@@ -172,7 +172,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
         hc.updateOffset(1);
     }
 
-    /** @see InlineLevelLayoutManager#applyChanges(List) */
+    /** {@inheritDoc} */
     public boolean applyChanges(List oldList) {
         setFinished(false);
         if (isSomethingChanged) {
@@ -185,7 +185,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
         }
     }
 
-    /** @see org.apache.fop.layoutmgr.LayoutManager#getChangedKnuthElements(List, int) */
+    /** {@inheritDoc} */
     public LinkedList getChangedKnuthElements(List oldList, int alignment) {
         if (isFinished()) {
             return null;
@@ -235,7 +235,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
         return returnList;
     }
 
-    /** @see LeafNodeLayoutManager#addId */
+    /** {@inheritDoc} */
     protected void addId() {
         getPSLM().addIDToPage(fobj.getId());
     }

@@ -44,7 +44,7 @@ public class Java2DGraphics2DAdapter implements Graphics2DAdapter {
         this.state = state;
     }
     
-    /** @see org.apache.fop.render.Graphics2DAdapter */
+    /** {@inheritDoc} */
     public void paintImage(Graphics2DImagePainter painter,
             RendererContext context,
             int x, int y, int width, int height) throws IOException {

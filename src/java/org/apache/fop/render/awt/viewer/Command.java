@@ -71,7 +71,7 @@ public class Command extends AbstractAction {
     }
 
     /**
-     * @see java.awt.event.ActionListener#actionPerformed(ActionEvent)
+     * {@inheritDoc}
      */
     public void actionPerformed(ActionEvent e) {
         doit();

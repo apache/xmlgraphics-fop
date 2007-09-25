@@ -70,7 +70,7 @@ public class SimplePageMaster extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind
+     * {@inheritDoc}
      */
     public void bind(PropertyList pList) throws FOPException {
         commonMarginBlock = pList.getMarginBlockProps();
@@ -86,7 +86,7 @@ public class SimplePageMaster extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#startOfNode
+     * {@inheritDoc}
      */
     protected void startOfNode() throws FOPException {
         LayoutMasterSet layoutMasterSet = (LayoutMasterSet) parent;
@@ -103,7 +103,6 @@ public class SimplePageMaster extends FObj {
 
     /**
      * Make sure content model satisfied.
-     * @see org.apache.fop.fo.FONode#endOfNode
      */
     protected void endOfNode() throws FOPException {
         if (!hasRegionBody) {
@@ -113,7 +112,7 @@ public class SimplePageMaster extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc}
      * XSL Content Model: (region-body,region-before?,region-after?,region-start?,region-end?)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
@@ -174,14 +173,14 @@ public class SimplePageMaster extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#generatesReferenceAreas()
+     * {@inheritDoc}
      */
     public boolean generatesReferenceAreas() {
         return true;
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#addChildNode(FONode)
+     * {@inheritDoc}
      */
     protected void addChildNode(FONode child) throws FOPException {
         if (child instanceof Region) {
@@ -264,13 +263,13 @@ public class SimplePageMaster extends FObj {
         return referenceOrientation.getValue();
     }
 
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "simple-page-master";
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#getNameId()
+     * {@inheritDoc}
      */
     public int getNameId() {
         return FO_SIMPLE_PAGE_MASTER;

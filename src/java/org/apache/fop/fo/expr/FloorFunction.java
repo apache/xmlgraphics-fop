@@ -35,7 +35,7 @@ class FloorFunction extends FunctionBase {
         if (dbl == null) {
             throw new PropertyException("Non number operand to floor function");
         }
-        return new NumberProperty(Math.floor(dbl.doubleValue()));
+        return NumberProperty.getInstance(Math.floor(dbl.doubleValue()));
     }
 
 }

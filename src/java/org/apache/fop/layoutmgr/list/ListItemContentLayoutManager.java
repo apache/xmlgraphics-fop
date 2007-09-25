@@ -97,7 +97,7 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
         xoffset = off;
     }
 
-    /** @see org.apache.fop.layoutmgr.LayoutManager#getChangedKnuthElements(java.util.List, int) */
+    /** {@inheritDoc} */
     public LinkedList getChangedKnuthElements(List oldList, int alignment) {
         //log.debug("  ListItemContentLayoutManager.getChanged>");
         return super.getChangedKnuthElements(oldList, alignment);
@@ -238,7 +238,7 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
         }
     }
     
-    /** @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepTogether() */
+    /** {@inheritDoc} */
     public boolean mustKeepTogether() {
         //TODO Keeps will have to be more sophisticated sooner or later
         return ((BlockLevelLayoutManager)getParent()).mustKeepTogether() 

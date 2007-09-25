@@ -54,7 +54,7 @@ public class PDFToUnicodeCMap extends PDFCMap {
         cidFont = cidMetrics;
     }
 
-    /** @see org.apache.fop.pdf.PDFCMap#fillInPDF(java.lang.StringBuffer) */
+    /** {@inheritDoc} */
     public void fillInPDF(StringBuffer p) {
         writeCIDInit(p);
         writeCIDSystemInfo(p);
@@ -65,7 +65,7 @@ public class PDFToUnicodeCMap extends PDFCMap {
         add(p.toString());
     }
 
-    /** @see org.apache.fop.pdf.PDFCMap#writeCIDSystemInfo(java.lang.StringBuffer) */
+    /** {@inheritDoc} */
     protected void writeCIDSystemInfo(StringBuffer p) {
         p.append("/CIDSystemInfo\n");
         p.append("<< /Registry (Adobe)\n");
@@ -74,7 +74,7 @@ public class PDFToUnicodeCMap extends PDFCMap {
         p.append(">> def\n");
     }
 
-    /** @see org.apache.fop.pdf.PDFCMap#writeVersionTypeName(java.lang.StringBuffer) */
+    /** {@inheritDoc} */
     protected void writeVersionTypeName(StringBuffer p) {
         p.append("/CMapName /Adobe-Identity-UCS def\n");
         p.append("/CMapType 2 def\n");

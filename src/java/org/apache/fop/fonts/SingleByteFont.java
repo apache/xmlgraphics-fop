@@ -19,10 +19,16 @@
 
 package org.apache.fop.fonts;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * Generic SingleByte font
  */
 public class SingleByteFont extends CustomFont {
+
+    /** logger */
+    private  static Log log = LogFactory.getLog(SingleByteFont.class);
 
     private CodePointMapping mapping;
 
@@ -45,7 +51,7 @@ public class SingleByteFont extends CustomFont {
     }
     
     /**
-     * @see org.apache.fop.fonts.FontDescriptor#isEmbeddable()
+     * {@inheritDoc}
      */
     public boolean isEmbeddable() {
         return (getEmbedFileName() == null && getEmbedResourceName() == null) ? false
@@ -53,7 +59,7 @@ public class SingleByteFont extends CustomFont {
     }
 
     /**
-     * @see org.apache.fop.fonts.Typeface#getEncoding()
+     * {@inheritDoc}
      */
     public String getEncoding() {
         return encoding;
@@ -69,14 +75,14 @@ public class SingleByteFont extends CustomFont {
     }
 
     /**
-     * @see org.apache.fop.fonts.FontMetrics#getWidth(int, int)
+     * {@inheritDoc} 
      */
     public int getWidth(int i, int size) {
         return size * width[i];
     }
 
     /**
-     * @see org.apache.fop.fonts.FontMetrics#getWidths()
+     * {@inheritDoc}
      */
     public int[] getWidths() {
         int[] arr = new int[width.length];
@@ -85,19 +91,21 @@ public class SingleByteFont extends CustomFont {
     }
 
     /**
-     * @see org.apache.fop.fonts.Typeface#mapChar(char)
+     * {@inheritDoc}
      */
     public char mapChar(char c) {
         char d = mapping.mapChar(c);
         if (d != 0) {
             return d;
         } else {
+            log.warn("Glyph " + (int) c + " not available in font "
+                    + getFontName());
             return '#';
         }
     }
 
     /**
-     * @see org.apache.fop.fonts.Typeface#hasChar(char)
+     * {@inheritDoc}
      */
     public boolean hasChar(char c) {
         return (mapping.mapChar(c) > 0);

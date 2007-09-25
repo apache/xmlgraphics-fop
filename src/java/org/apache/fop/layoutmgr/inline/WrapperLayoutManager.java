@@ -41,7 +41,7 @@ public class WrapperLayoutManager extends LeafNodeLayoutManager {
         fobj = node;
     }
 
-    /** @see org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager */
+    /** {@inheritDoc} */
     public InlineArea get(LayoutContext context) {
         // Create a zero-width, zero-height dummy area so this node can
         // participate in the ID handling. Otherwise, addId() wouldn't
@@ -75,7 +75,7 @@ public class WrapperLayoutManager extends LeafNodeLayoutManager {
         }
     }
 
-    /** @see org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager#addId() */
+    /** {@inheritDoc} */
     protected void addId() {
         getPSLM().addIDToPage(fobj.getId());
     }

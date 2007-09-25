@@ -58,7 +58,7 @@ public class PDFMetadata extends PDFStream {
         this.readOnly = readOnly;
     }
 
-    /** @see org.apache.fop.pdf.AbstractPDFStream#setupFilterList() */
+    /** {@inheritDoc} */
     protected void setupFilterList() {
         if (!getFilterList().isInitialized()) {
             getFilterList().addDefaultFilters(
@@ -78,7 +78,7 @@ public class PDFMetadata extends PDFStream {
     /**
      * overload the base object method so we don't have to copy
      * byte arrays around so much
-     * @see org.apache.fop.pdf.PDFObject#output(OutputStream)
+     * {@inheritDoc}
      */
     protected int output(java.io.OutputStream stream)
                 throws java.io.IOException {
@@ -87,7 +87,7 @@ public class PDFMetadata extends PDFStream {
         return length;
     }
     
-    /** @see org.apache.fop.pdf.AbstractPDFStream#outputRawStreamData(java.io.OutputStream) */
+    /** {@inheritDoc} */
     protected void outputRawStreamData(OutputStream out) throws IOException {
         try {
             XMPSerializer.writeXMPPacket(xmpMetadata, out, this.readOnly);
@@ -100,7 +100,7 @@ public class PDFMetadata extends PDFStream {
         }
     }
     
-    /** @see org.apache.fop.pdf.AbstractPDFStream#buildStreamDict(String) */
+    /** {@inheritDoc} */
     protected String buildStreamDict(String lengthEntry) {
         final String filterEntry = getFilterList().buildFilterDictEntries();
         if (getDocumentSafely().getProfile().getPDFAMode().isPDFA1LevelB() 

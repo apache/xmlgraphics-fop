@@ -52,12 +52,12 @@ public class PNGRenderer extends Java2DRenderer {
     /** Helper class for generating multiple files */
     private MultiFileRenderingUtil multiFileUtil;
 
-    /** @see org.apache.fop.render.AbstractRenderer */
+    /** {@inheritDoc} */
     public String getMimeType() {
         return MIME_TYPE;
     }
 
-    /** @see org.apache.fop.render.Renderer#startRenderer(java.io.OutputStream) */
+    /** {@inheritDoc} */
     public void startRenderer(OutputStream outputStream) throws IOException {
         log.info("rendering areas to PNG");
         multiFileUtil = new MultiFileRenderingUtil(PNG_FILE_EXTENSION, 
@@ -65,7 +65,7 @@ public class PNGRenderer extends Java2DRenderer {
         this.firstOutputStream = outputStream;
     }
 
-    /** @see org.apache.fop.render.Renderer#stopRenderer() */
+    /** {@inheritDoc} */
     public void stopRenderer() throws IOException {
 
         super.stopRenderer();

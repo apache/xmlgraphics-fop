@@ -42,7 +42,7 @@ public class Title extends InlineLevel {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * {@inheritDoc} String, String)
         XSL/FOP: (#PCDATA|%inline;)*
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
@@ -53,14 +53,14 @@ public class Title extends InlineLevel {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#getName()
+     * {@inheritDoc}
      */
     public String getLocalName() {
         return "title";
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#getNameId()
+     * {@inheritDoc}
      */
     public int getNameId() {
         return FO_TITLE;

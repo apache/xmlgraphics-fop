@@ -54,7 +54,7 @@ public class JPEGReader implements ImageReader {
     private static final int SOI = 0xd8; // start of Image
     private static final int JPG_SIG_LENGTH = 2;
 
-    /** @see org.apache.fop.image.analyser.ImageReader */
+    /** {@inheritDoc} */
     public FopImage.ImageInfo verifySignature(String uri, InputStream fis,
                                    FOUserAgent ua) throws IOException {
         byte[] header = getDefaultHeader(fis);

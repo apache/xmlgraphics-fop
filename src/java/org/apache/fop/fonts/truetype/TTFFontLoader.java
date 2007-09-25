@@ -49,7 +49,7 @@ public class TTFFontLoader extends FontLoader {
     }
     
     /**
-     * @see FontLoader#read()
+     * {@inheritDoc}
      */
     protected void read() throws IOException {
         TTFFile ttf = new TTFFile();

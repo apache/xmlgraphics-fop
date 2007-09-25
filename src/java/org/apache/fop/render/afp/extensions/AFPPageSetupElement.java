@@ -37,7 +37,7 @@ public class AFPPageSetupElement extends AbstractAFPExtensionObject {
         super(parent, "page");
     }
 
-    /** @see org.apache.fop.fo.FONode#startOfNode() */
+    /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         super.startOfNode();
         if (parent.getNameId() != Constants.FO_SIMPLE_PAGE_MASTER) {

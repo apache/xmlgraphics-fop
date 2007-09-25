@@ -164,7 +164,7 @@ public abstract class AbstractPDFStream extends PDFObject {
     /**
      * Overload the base object method so we don't have to copy
      * byte arrays around so much
-     * @see org.apache.fop.pdf.PDFObject#output(OutputStream)
+     * {@inheritDoc}
      */
     protected int output(OutputStream stream) throws IOException {
         int length = 0;

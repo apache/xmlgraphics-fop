@@ -111,7 +111,7 @@ public class CommonBorderPaddingBackground {
             }
         }
         
-        /** @see java.lang.Object#toString() */
+        /** {@inheritDoc} */
         public String toString() {
             StringBuffer sb = new StringBuffer("BorderInfo");
             sb.append(" {");
@@ -367,7 +367,7 @@ public class CommonBorderPaddingBackground {
                + getBorderBeforeWidth(bDiscard) + getBorderAfterWidth(bDiscard);        
     }
 
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         return "CommonBordersAndPadding (Before, After, Start, End):\n"
             + "Borders: (" + getBorderBeforeWidth(false) + ", " + getBorderAfterWidth(false) + ", "

@@ -24,8 +24,8 @@ import org.apache.fop.fo.properties.Property;
  * the explicit set properties and another array to store cached values.
  */
 public class StaticPropertyList extends PropertyList {
-    private Property[] explicit;
-    private Property[] values;
+    private final Property[] explicit;
+    private final Property[] values;
     
     /**
      * Construct a StaticPropertyList. 

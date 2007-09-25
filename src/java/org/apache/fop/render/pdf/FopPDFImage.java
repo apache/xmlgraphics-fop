@@ -74,7 +74,7 @@ public class FopPDFImage implements PDFImage {
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFImage#getKey()
+     * {@inheritDoc}
      */
     public String getKey() {
         // key to look up XObject
@@ -82,7 +82,7 @@ public class FopPDFImage implements PDFImage {
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFImage#setup(PDFDocument)
+     * {@inheritDoc}
      */
     public void setup(PDFDocument doc) {
         if ("image/jpeg".equals(fopImage.getMimeType())) {
@@ -175,21 +175,21 @@ public class FopPDFImage implements PDFImage {
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFImage#getWidth()
+     * {@inheritDoc}
      */
     public int getWidth() {
         return fopImage.getWidth();
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFImage#getHeight()
+     * {@inheritDoc}
      */
     public int getHeight() {
         return fopImage.getHeight();
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFImage#getColorSpace()
+     * {@inheritDoc}
      */
     public PDFDeviceColorSpace getColorSpace() {
         // DeviceGray, DeviceRGB, or DeviceCMYK
@@ -201,7 +201,7 @@ public class FopPDFImage implements PDFImage {
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFImage#getBitsPerPixel()
+     * {@inheritDoc}
      */
     public int getBitsPerPixel() {
         if (isCCF) {
@@ -214,14 +214,14 @@ public class FopPDFImage implements PDFImage {
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFImage#isTransparent()
+     * {@inheritDoc}
      */
     public boolean isTransparent() {
         return fopImage.isTransparent();
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFImage#getTransparentColor()
+     * {@inheritDoc}
      */
     public PDFColor getTransparentColor() {
         return new PDFColor(fopImage.getTransparentColor().getRed(),
@@ -230,14 +230,14 @@ public class FopPDFImage implements PDFImage {
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFImage#getMask()
+     * {@inheritDoc}
      */
     public String getMask() {
         return maskRef;
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFImage#getSoftMask()
+     * {@inheritDoc}
      */
     public String getSoftMask() {
         return softMaskRef;
@@ -249,21 +249,21 @@ public class FopPDFImage implements PDFImage {
     }
     
     /**
-     * @see org.apache.fop.pdf.PDFImage#isPS()
+     * {@inheritDoc}
      */
     public boolean isPS() {
         return isPS;
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFImage#getPDFFilter()
+     * {@inheritDoc}
      */
     public PDFFilter getPDFFilter() {
         return pdfFilter;
     }
     
     /**
-     * @see org.apache.fop.pdf.PDFImage#outputContents(OutputStream)
+     * {@inheritDoc}
      */
     public void outputContents(OutputStream out) throws IOException {
         if (isPS) {
@@ -324,7 +324,7 @@ public class FopPDFImage implements PDFImage {
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFImage#getICCStream()
+     * {@inheritDoc}
      */
     public PDFICCStream getICCStream() {
         return pdfICCStream;
@@ -356,7 +356,7 @@ public class FopPDFImage implements PDFImage {
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFImage#getFilterHint()
+     * {@inheritDoc}
      */
     public String getFilterHint() {
         if (isPS) {

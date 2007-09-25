@@ -33,7 +33,7 @@ public class RtfGenerator extends RtfElement {
     }
     
     /**
-     * @see org.apache.fop.render.rtf.rtflib.rtfdoc.RtfElement#writeRtfContent()
+     * {@inheritDoc}
      */
     protected void writeRtfContent() throws IOException {
         newLine();
@@ -45,7 +45,7 @@ public class RtfGenerator extends RtfElement {
     }
 
     /**
-     * @see org.apache.fop.render.rtf.rtflib.rtfdoc.RtfElement#isEmpty()
+     * {@inheritDoc}
      */
     public boolean isEmpty() {
         return false;

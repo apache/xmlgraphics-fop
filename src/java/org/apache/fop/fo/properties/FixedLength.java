@@ -25,26 +25,35 @@ import org.apache.fop.datatypes.PercentBaseContext;
  * An absolute length quantity in XSL
  */
 public class FixedLength extends LengthProperty {
+    
+    /** cache holding all canonical FixedLength instances */
+    private static final PropertyCache cache = new PropertyCache();
+    
     private int millipoints;
-
-    /**
-     * Set the length given
-     * @param numRelUnits the number of relative units
-     * @param iCurFontSize the current font size in base units.
-     */
-    public FixedLength(double numRelUnits, int iCurFontSize) {
-        millipoints = (int) (numRelUnits * (double)iCurFontSize);
-    }
 
     /**
      * Set the length given a number of units and a unit name.
      * @param numUnits quantity of input units
      * @param units input unit specifier (in, cm, etc.)
      */
-    public FixedLength(double numUnits, String units) {
+    private FixedLength(double numUnits, String units) {
         convert(numUnits, units);
     }
-
+    
+    /**
+     * Return the canonical FixedLength instance corresponding
+     * to the computed value
+     * @param numUnits  input units
+     * @param units     unit specifier
+     * @return  the canonical FixedLength instance corresponding
+     *          to the given number of units and unit specifier
+     */
+    public static FixedLength getInstance(double numUnits, String units) {
+        return (FixedLength) cache.fetch(
+                    new FixedLength(numUnits, units));
+        
+    }
+    
     /**
      * @param baseUnits the length as a number of base units (millipoints)
      */
@@ -97,28 +106,28 @@ public class FixedLength extends LengthProperty {
     }
 
     /**
-     * @see org.apache.fop.datatypes.Numeric#getValue()
+     * {@inheritDoc}
      */
     public int getValue() {
         return millipoints;
     }
 
     /**
-     * @see org.apache.fop.datatypes.Numeric#getValue(PercentBaseContext)
+     * {@inheritDoc}
      */
     public int getValue(PercentBaseContext context) {
         return millipoints;
     }
 
     /**
-     * @see org.apache.fop.datatypes.Numeric#getNumericValue()
+     * {@inheritDoc}
      */
     public double getNumericValue() {
         return millipoints;
     }
 
     /**
-     * @see org.apache.fop.datatypes.Numeric#getNumericValue(PercentBaseContext)
+     * {@inheritDoc}
      */
     public double getNumericValue(PercentBaseContext context) {
         return millipoints;
@@ -126,18 +135,35 @@ public class FixedLength extends LengthProperty {
 
     /**
      * Return true since FixedLength are always absolute.
-     * @see org.apache.fop.datatypes.Numeric#isAbsolute()
+     * {@inheritDoc}
      */
     public boolean isAbsolute() {
         return true;
     }
 
     /**
-     * @see java.lang.Object#toString()
+     * {@inheritDoc}
      */
     public String toString() {
         return millipoints + "mpt";
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public boolean equals(Object obj) {
+        if (obj instanceof FixedLength) {
+            return (((FixedLength)obj).millipoints == this.millipoints);
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int hashCode() {
+        return millipoints;
+    }
 }
 

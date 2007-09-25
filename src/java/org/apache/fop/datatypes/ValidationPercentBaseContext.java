@@ -39,7 +39,7 @@ public final class ValidationPercentBaseContext implements PercentBaseContext {
 
     /**
      * Returns the value for the given lengthBase.
-     * @see org.apache.fop.datatypes.PercentBaseContext#getBaseLength(int, FObj)
+     * {@inheritDoc} 
      */
     public int getBaseLength(int lengthBase, FObj fobj) {
         //Simply return a dummy value which produces a non-zero value when a non-zero percentage
@@ -50,7 +50,7 @@ public final class ValidationPercentBaseContext implements PercentBaseContext {
     private static PercentBaseContext pseudoContextForValidation = null;
     
     /** @return a base context for validation purposes. See class description. */
-    public static PercentBaseContext getPseudoContextForValidationPurposes() {
+    public static PercentBaseContext getPseudoContext() {
         if (pseudoContextForValidation == null) {
             pseudoContextForValidation = new ValidationPercentBaseContext();
         }

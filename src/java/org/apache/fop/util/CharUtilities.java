@@ -60,6 +60,8 @@ public class CharUtilities {
     public static final char NBSPACE = '\u00A0';
     /** zero-width space */
     public static final char ZERO_WIDTH_SPACE = '\u200B';
+    /** word joiner */
+    public static final char WORD_JOINER = '\u2060';
     /** zero-width no-break space (= byte order mark) */
     public static final char ZERO_WIDTH_NOBREAK_SPACE = '\uFEFF';
     /** soft hyphen */
@@ -106,6 +108,7 @@ public class CharUtilities {
      */
     public static boolean isZeroWidthSpace(char c) {
         return c == ZERO_WIDTH_SPACE           // 200Bh
+            || c == WORD_JOINER                // 2060h
             || c == ZERO_WIDTH_NOBREAK_SPACE;  // FEFFh (also used as BOM)
     }
 
@@ -115,7 +118,8 @@ public class CharUtilities {
      * @return true if the character has a fixed-width
      */
     public static boolean isFixedWidthSpace(char c) {
-        return (c >= '\u2000' && c <= '\u200B') || c == '\u3000';
+        return (c >= '\u2000' && c <= '\u200B') 
+                || c == '\u3000';
 //      c == '\u2000'                   // en quad
 //      c == '\u2001'                   // em quad
 //      c == '\u2002'                   // en space
@@ -142,6 +146,7 @@ public class CharUtilities {
             (c == NBSPACE       // no-break space
             || c == '\u202F'    // narrow no-break space
             || c == '\u3000'    // ideographic space
+            || c == WORD_JOINER // word joiner
             || c == ZERO_WIDTH_NOBREAK_SPACE);  // zero width no-break space
     }
 

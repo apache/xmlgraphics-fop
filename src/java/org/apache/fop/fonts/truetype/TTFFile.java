@@ -20,7 +20,6 @@
 package org.apache.fop.fonts.truetype;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.List;
@@ -110,8 +109,8 @@ public class TTFFile {
     
     // internal mapping of glyph indexes to unicode indexes
     // used for quick mappings in this class
-    private Map glyphToUnicodeMap = new HashMap();
-    private Map unicodeToGlyphMap = new HashMap();
+    private Map glyphToUnicodeMap = new java.util.HashMap();
+    private Map unicodeToGlyphMap = new java.util.HashMap();
 
     private TTFDirTabEntry currentDirTab;
 

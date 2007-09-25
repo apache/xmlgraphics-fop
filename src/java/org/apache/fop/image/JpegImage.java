@@ -30,7 +30,7 @@ import org.apache.fop.util.CMYKColorSpace;
 
 /**
  * FopImage object for JPEG images, Using Java native classes.
- * @author Eric Dalquist
+ * 
  * @see AbstractFopImage
  * @see FopImage
  */

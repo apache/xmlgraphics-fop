@@ -33,12 +33,11 @@
         </fo:simple-page-master>
       </fo:layout-master-set>
       <fo:page-sequence master-reference="simple">
-        <fo:flow flow-name="xsl-region-body" hyphenate="true">
+        <fo:flow flow-name="xsl-region-body">
           <fo:block-container width="100pt" background-color="yellow">
-            <fo:block>This is <fo:inline keep-together.within-line="always">BLah-blah-blah-blah!</fo:inline></fo:block>
-            <fo:block>This is <fo:inline keep-together.within-line="always">Blah-blah-blah-blah!</fo:inline></fo:block>
-            <fo:block>This is <fo:inline>Blah blah blah blah!</fo:inline></fo:block>
+            <fo:block keep-together.within-line="always">This is Blah blah blah blah!</fo:block>
             <fo:block>This is <fo:inline keep-together.within-line="always">Blah blah blah blah!</fo:inline></fo:block>
+            <fo:block>This is <fo:wrapper keep-together.within-line="always">Blah blah blah blah!</fo:wrapper></fo:block>
           </fo:block-container>
         </fo:flow>
       </fo:page-sequence>
@@ -46,18 +45,15 @@
   </fo>
   <checks>
     <!-- The layout engine should warn the user about the overflow in this case. -->
-    <eval expected="This is " xpath="//flow/block[1]/block[1]/block[1]/lineArea[1]"/>
-    <eval expected="BLah-blah-blah-blah!" xpath="//flow/block[1]/block[1]/block[1]/lineArea[2]"/>
+    <eval expected="This is Blah blah blah blah!" xpath="//flow/block[1]/block[1]/block[1]/lineArea[1]"/>
 
     <!-- The layout engine should warn the user about the overflow in this case. -->
-    <eval expected="This is " xpath="//flow/block[1]/block[1]/block[2]/lineArea[1]"/>
-    <eval expected="Blah-blah-blah-blah!" xpath="//flow/block[1]/block[1]/block[2]/lineArea[2]"/>
-
-    <eval expected="This is Blah blah " xpath="//flow/block[1]/block[1]/block[3]/lineArea[1]"/>
-    <eval expected="blah blah!" xpath="//flow/block[1]/block[1]/block[3]/lineArea[2]"/>
+    <eval expected="This is" xpath="//flow/block[1]/block[1]/block[2]/lineArea[1]"/>
+    <eval expected="Blah blah blah blah!" xpath="//flow/block[1]/block[1]/block[2]/lineArea[2]"/>
 
     <!-- The layout engine should warn the user about the overflow in this case. -->
-    <eval expected="This is " xpath="//flow/block[1]/block[1]/block[4]/lineArea[1]"/>
-    <eval expected="Blah blah blah blah!" xpath="//flow/block[1]/block[1]/block[4]/lineArea[2]"/>
+    <eval expected="This is" xpath="//flow/block[1]/block[1]/block[3]/lineArea[1]"/>
+    <eval expected="Blah blah blah blah!" xpath="//flow/block[1]/block[1]/block[3]/lineArea[2]"/>
+
   </checks>
 </testcase>

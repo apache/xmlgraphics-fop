@@ -45,12 +45,12 @@ public class KnuthBox extends KnuthElement {
         super(w, pos, bAux);
     }
 
-    /** @see org.apache.fop.layoutmgr.KnuthElement#isBox() */
+    /** {@inheritDoc} */
     public boolean isBox() {
         return true;
     }
 
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer(64);
         if (isAuxiliary()) {

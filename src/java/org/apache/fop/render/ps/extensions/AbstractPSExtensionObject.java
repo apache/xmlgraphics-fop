@@ -43,8 +43,7 @@ public abstract class AbstractPSExtensionObject extends FONode {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
-     * here, blocks XSL FO's from having non-FO parents.
+     * {@inheritDoc}
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
                 throws ValidationException {
@@ -53,7 +52,7 @@ public abstract class AbstractPSExtensionObject extends FONode {
         }
     }
 
-    /** @see org.apache.fop.fo.FONode */
+    /** {@inheritDoc} */
     protected void addCharacters(char[] data, int start, int length,
                                  PropertyList pList, Locator locator) {
         if (setupCode.getContent() != null) {
@@ -65,17 +64,17 @@ public abstract class AbstractPSExtensionObject extends FONode {
         }
     }
 
-    /** @see org.apache.fop.fo.FONode#getNamespaceURI() */
+    /** {@inheritDoc} */
     public String getNamespaceURI() {
         return PSExtensionElementMapping.NAMESPACE;
     }
     
-    /**@see org.apache.fop.fo.FONode#getNormalNamespacePrefix() */
+    /**{@inheritDoc} */
     public String getNormalNamespacePrefix() {
         return "fox";
     }
 
-    /** @see org.apache.fop.fo.FONode#processNode */
+    /** {@inheritDoc} */
     public void processNode(String elementName, Locator locator, 
                             Attributes attlist, PropertyList propertyList)
                                 throws FOPException {
@@ -85,7 +84,7 @@ public abstract class AbstractPSExtensionObject extends FONode {
         }
     }
 
-    /** @see org.apache.fop.fo.FONode#endOfNode() */
+    /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         super.endOfNode();
         String s = setupCode.getContent(); 
@@ -94,7 +93,7 @@ public abstract class AbstractPSExtensionObject extends FONode {
         }
     }
     
-    /** @see org.apache.fop.fo.FONode#getExtensionAttachment() */
+    /** {@inheritDoc} */
     public ExtensionAttachment getExtensionAttachment() {
         return this.setupCode;
     }

@@ -19,7 +19,11 @@
 
 package org.apache.fop.fonts;
 
+import java.util.BitSet;
 import java.util.Map;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * This class holds font state information and provides access to the font
@@ -43,6 +47,8 @@ public class Font {
     public static final FontTriplet DEFAULT_FONT = new FontTriplet(
                     "any", STYLE_NORMAL, WEIGHT_NORMAL);
 
+    /** logger */
+    private  static Log log = LogFactory.getLog(Font.class);
 
     private String fontName;
     private FontTriplet triplet;
@@ -183,6 +189,7 @@ public class Font {
         if (d != 0) {
             c = d;
         } else {
+            log.warn("Glyph " + (int) c + " not available in font " + fontName);
             c = '#';
         }
 
@@ -204,7 +211,7 @@ public class Font {
     }
 
     /**
-     * @see java.lang.Object#toString()
+     * {@inheritDoc}
      */
     public String toString() {
         StringBuffer sbuf = new StringBuffer();
@@ -277,8 +284,12 @@ public class Font {
                     width = 0;
                 } else if (c == '\u202F') {
                     width = getCharWidth(' ') / 2;
+                } else if (c == '\u2060') {
+                    width = 0;
                 } else if (c == '\u3000') {
                     width = getCharWidth(' ') * 2;
+                } else if (c == '\ufeff') {
+                    width = 0;
                 } else {
                     //Will be internally replaced by "#" if not found
                     width = getWidth(mapChar(c));

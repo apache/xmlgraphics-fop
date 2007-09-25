@@ -31,14 +31,14 @@ public class CCFFilter extends NullFilter {
     private String decodeParms;
 
     /**
-     * @see org.apache.fop.pdf.PDFFilter#getName()
+     * {@inheritDoc}
      */
     public String getName() {
         return "/CCITTFaxDecode";
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFFilter#getDecodeParms()
+     * {@inheritDoc}
      */
     public String getDecodeParms() {
         return this.decodeParms;

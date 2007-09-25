@@ -29,7 +29,7 @@ import org.apache.fop.fo.PropertyList;
 public class PositionShorthandParser implements ShorthandParser {
     
     /**
-     * @see org.apache.fop.fo.properties.ShorthandParser#getValueForProperty(int, Property, PropertyMaker, PropertyList)
+     * {@inheritDoc} 
      */
     public Property getValueForProperty(int propId,
             Property property,

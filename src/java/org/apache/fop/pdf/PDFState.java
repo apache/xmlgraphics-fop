@@ -364,7 +364,7 @@ public class PDFState {
         public PDFGState gstate = null;
 
         
-        /** @see java.lang.Object#clone() */
+        /** {@inheritDoc} */
         public Object clone() throws CloneNotSupportedException {
             Data obj = new Data();
             obj.color = this.color;
@@ -408,7 +408,7 @@ public class PDFState {
             transform.concatenate(at);
         }
         
-        /** @see java.lang.Object#toString() */
+        /** {@inheritDoc} */
         public String toString() {
             return super.toString() + ", " + this.transform;
         }

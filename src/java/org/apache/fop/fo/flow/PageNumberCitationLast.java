@@ -38,12 +38,12 @@ public class PageNumberCitationLast extends PageNumberCitation {
         super(parent);
     }
     
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "page-number-citation-last";
     }
     
-    /** @see org.apache.fop.fo.FObj#getNameId() */
+    /** {@inheritDoc} */
     public int getNameId() {
         return FO_PAGE_NUMBER_CITATION_LAST;
     }

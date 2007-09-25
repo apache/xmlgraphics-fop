@@ -68,7 +68,7 @@ public class RegionReference extends Area implements Cloneable {
         regionViewport = parent;
     }
 
-    /** @see org.apache.fop.area.Area#addChildArea(org.apache.fop.area.Area) */
+    /** {@inheritDoc} */
     public void addChildArea(Area child) {
         blocks.add(child);
     }

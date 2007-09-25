@@ -65,7 +65,7 @@ public class SpaceElement extends UnresolvedListElementWithLength {
         return this.precedence;
     }
     
-    /** @see org.apache.fop.layoutmgr.UnresolvedListElementWithLength */
+    /** {@inheritDoc} */
     public void notifyLayoutManager(MinOptMax effectiveLength) {
         LayoutManager lm = getOriginatingLayoutManager();
         if (lm instanceof ConditionalElementListener) {
@@ -77,7 +77,7 @@ public class SpaceElement extends UnresolvedListElementWithLength {
         }
     }
     
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer("Space[");
         sb.append(super.toString());

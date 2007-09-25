@@ -30,7 +30,7 @@ public abstract class NativeFontDirFinder implements FontFinder {
     /**
      * Generic method used by Mac and Unix font finders.
      * @return list of natively existing font directories
-     * @see FontFinder#find()
+     * {@inheritDoc}
      */
     public List find() {
         List fontDirList = new java.util.ArrayList();

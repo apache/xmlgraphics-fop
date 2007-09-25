@@ -173,7 +173,7 @@ public class BasicScaledBaselineTable implements ScaledBaselineTable, Constants 
     }
     
     /**
-     * @see ScaledBaselineTable#setBeforeAndAfterBaselines(int, int)
+     * {@inheritDoc} 
      */
     public void setBeforeAndAfterBaselines(int beforeBaseline, int afterBaseline) {
         beforeEdgeOffset = beforeBaseline;
@@ -181,7 +181,7 @@ public class BasicScaledBaselineTable implements ScaledBaselineTable, Constants 
     }
 
     /**
-     * @see ScaledBaselineTable#deriveScaledBaselineTable(int)
+     * {@inheritDoc}
      */
     public ScaledBaselineTable deriveScaledBaselineTable(int baselineIdentifier) {
         BasicScaledBaselineTable bac 

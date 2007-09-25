@@ -52,7 +52,7 @@ public class EMFReader implements ImageReader {
     /** offset to vertical resolution in mm */
     private static final int VRES_MM_OFFSET = 84;
 
-    /** @see org.apache.fop.image.analyser.ImageReader */
+    /** {@inheritDoc} */
     public FopImage.ImageInfo verifySignature(String uri, InputStream bis,
                 FOUserAgent ua) throws IOException {
         byte[] header = getDefaultHeader(bis);

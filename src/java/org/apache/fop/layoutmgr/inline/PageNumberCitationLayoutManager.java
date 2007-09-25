@@ -55,14 +55,14 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
         fobj = node;
     }
     
-    /** @see org.apache.fop.layoutmgr.LayoutManager#initialize */
+    /** {@inheritDoc} */
     public void initialize() {
         font = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo(), this);
         setCommonBorderPaddingBackground(fobj.getCommonBorderPaddingBackground());
     }
 
     /**
-     * @see LeafNodeLayoutManager#makeAlignmentContext(LayoutContext)
+     * {@inheritDoc}
      */
     protected AlignmentContext makeAlignmentContext(LayoutContext context) {
         return new AlignmentContext(
@@ -76,14 +76,14 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
             );
     }
 
-    /** @see org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager#get(LayoutContext) */
+    /** {@inheritDoc} */
     public InlineArea get(LayoutContext context) {
         curArea = getPageNumberCitationInlineArea(parentLM);
         return curArea;
     }
     
     /**
-     * @see org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager#addAreas(PositionIterator
+     * {@inheritDoc}
      *                                                                      , LayoutContext) 
      */
     public void addAreas(PositionIterator posIter, LayoutContext context) {
@@ -145,7 +145,7 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
         return width;
     }
 
-    /** @see org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager#addId() */
+    /** {@inheritDoc} */
     protected void addId() {
         getPSLM().addIDToPage(fobj.getId());
     }

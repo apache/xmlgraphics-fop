@@ -191,7 +191,7 @@ public class Property {
         return null;
     }
 
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         Object obj = getObject();
         if (obj != this) {

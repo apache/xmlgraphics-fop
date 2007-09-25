@@ -58,14 +58,14 @@ public class InlineKnuthSequence extends KnuthSequence  {
     }
 
     /* (non-Javadoc)
-     * @see org.apache.fop.layoutmgr.KnuthSequence#canAppendSequence(org.apache.fop.layoutmgr.KnuthSequence)
+     * {@inheritDoc}
      */
     public boolean canAppendSequence(KnuthSequence sequence) {
         return sequence.isInlineSequence() && !isClosed;
     }
 
     /* (non-Javadoc)
-     * @see org.apache.fop.layoutmgr.KnuthSequence#appendSequence(org.apache.fop.layoutmgr.KnuthSequence)
+     * {@inheritDoc}
      */
     public boolean appendSequence(KnuthSequence sequence) {
         if (!canAppendSequence(sequence)) {
@@ -84,7 +84,7 @@ public class InlineKnuthSequence extends KnuthSequence  {
     }
 
     /* (non-Javadoc)
-     * @see KnuthSequence#appendSequence(KnuthSequence, boolean, BreakElement)
+     * {@inheritDoc} 
      */
     public boolean appendSequence(KnuthSequence sequence, boolean keepTogether,
                                   BreakElement breakElement) {
@@ -93,7 +93,7 @@ public class InlineKnuthSequence extends KnuthSequence  {
 
         
     /* (non-Javadoc)
-     * @see org.apache.fop.layoutmgr.KnuthSequence#endSequence()
+     * {@inheritDoc}
      */
     public KnuthSequence endSequence() {
         if (!isClosed) {

@@ -84,7 +84,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     private Block fobj;
     private boolean isFirstInBlock;
     
-    /** @see org.apache.fop.layoutmgr.LayoutManager#initialize() */
+    /** {@inheritDoc} */
     public void initialize() {
         textAlignment = fobj.getTextAlign();
         textAlignmentLast = fobj.getTextAlignLast();
@@ -452,7 +452,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         follow = f;
     }
 
-    /** @see org.apache.fop.layoutmgr.LayoutManager */
+    /** {@inheritDoc} */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         this.context = context;
         Font fs = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo(), this);
@@ -473,8 +473,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             knuthParagraphs = new ArrayList();
 
             // here starts Knuth's algorithm
-            //TODO availIPD should not really be used here, so we can later support custom line
-            //widths for for each line (side-floats, differing available IPD after page break)
             collectInlineKnuthElements();
         } else {
             // this method has been called before
@@ -562,7 +560,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     /**
      * Phase 1 of Knuth algorithm: Collect all inline Knuth elements before determining line breaks.
      * @param context the LayoutContext
-     * @param availIPD available IPD for line (should be removed!) 
      */
     private void collectInlineKnuthElements() {
         LayoutContext inlineLC = new LayoutContext(context);
@@ -571,7 +568,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         LinkedList returnedList = null;
         // TODO this is the same as availIPD.opt
         iLineWidth = context.getStackLimit().opt;
-        
+            
         // convert all the text in a sequence of paragraphs made
         // of KnuthBox, KnuthGlue and KnuthPenalty objects
         boolean bPrevWasKnuthBox = false;
@@ -582,14 +579,11 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         
         while ((curLM = (InlineLevelLayoutManager) getChildLM()) != null) {
             returnedList = curLM.getNextKnuthElements(inlineLC, effectiveAlignment);
-            if (returnedList == null) {
-                // curLM returned null; this can happen
-                // if it has nothing more to layout,
-                // so just iterate once more to see
-                // if there are other children
-                continue;
-            }
-            if (returnedList.size() == 0) {
+            if (returnedList == null
+                    || returnedList.size() == 0) {
+                /* curLM.getNextKnuthElements() returned null or an empty list;
+                 * this can happen if there is nothing more to layout,
+                 * so just iterate once more to see if there are other children */
                 continue;
             }
             
@@ -1064,28 +1058,28 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepTogether
+     * {@inheritDoc}
      */
     public boolean mustKeepTogether() {
         return ((BlockLevelLayoutManager) getParent()).mustKeepTogether();
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepWithPrevious
+     * {@inheritDoc}
      */
     public boolean mustKeepWithPrevious() {
         return false;
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepWithNext
+     * {@inheritDoc}
      */
     public boolean mustKeepWithNext() {
         return false;
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#negotiateBPDAdjustment(int, org.apache.fop.layoutmgr.KnuthElement)
+     * {@inheritDoc} 
      */
     public int negotiateBPDAdjustment(int adj, KnuthElement lastElement) {
         LeafPosition pos = (LeafPosition)lastElement.getPosition();
@@ -1104,13 +1098,13 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#discardSpace(KnuthGlue)
+     * {@inheritDoc}
      */
     public void discardSpace(KnuthGlue spaceGlue) {
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#getChangedKnuthElements(List, int)
+     * {@inheritDoc} 
      */
     public LinkedList getChangedKnuthElements(List oldList, int alignment) {
         LinkedList returnList = new LinkedList();
@@ -1600,7 +1594,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#addChildArea(Area)
+     * {@inheritDoc}
      */
     public void addChildArea(Area childArea) {
         // Make sure childArea is inline area
@@ -1618,14 +1612,14 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     // --------- Property Resolution related functions --------- //
     
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#getGeneratesBlockArea
+     * {@inheritDoc}
      */
     public boolean getGeneratesBlockArea() {
         return true;
     }
    
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#getGeneratesLineArea
+     * {@inheritDoc}
      */
     public boolean getGeneratesLineArea() {
         return true;

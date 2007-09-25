@@ -258,7 +258,7 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
         area.setAdjustment(width - areaInfo.ipdArea.opt);
     }
     
-    /** @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(LayoutContext, int) */
+    /** {@inheritDoc} */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         curArea = get(context);
         
@@ -292,7 +292,7 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
         return returnList;
     }
 
-    /** @see InlineLevelLayoutManager#addALetterSpaceTo(List) */
+    /** {@inheritDoc} */
     public List addALetterSpaceTo(List oldList) {
         // return the unchanged elements
         return oldList;
@@ -308,21 +308,21 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
         log.warn(this.getClass().getName() + " should not receive a call to removeWordSpace(list)");
     }
 
-    /** @see InlineLevelLayoutManager#getWordChars(StringBuffer, Position) */
+    /** {@inheritDoc} */
     public void getWordChars(StringBuffer sbChars, Position pos) {
     }
 
-    /** @see InlineLevelLayoutManager#hyphenate(Position, HyphContext) */
+    /** {@inheritDoc} */
     public void hyphenate(Position pos, HyphContext hc) {
     }
 
-    /** @see InlineLevelLayoutManager#applyChanges(List) */
+    /** {@inheritDoc} */
     public boolean applyChanges(List oldList) {
         setFinished(false);
         return false;
     }
 
-    /** @see org.apache.fop.layoutmgr.LayoutManager#getChangedKnuthElements(List, int) */
+    /** {@inheritDoc} */
     public LinkedList getChangedKnuthElements(List oldList,
                                               int alignment) {
         if (isFinished()) {

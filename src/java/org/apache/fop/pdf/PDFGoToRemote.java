@@ -81,7 +81,7 @@ public class PDFGoToRemote extends PDFAction {
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFObject#toPDFString()
+     * {@inheritDoc}
      */
     public String toPDFString() {
         StringBuffer sb = new StringBuffer(64);

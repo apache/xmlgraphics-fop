@@ -158,8 +158,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#startDocument()
-     * @throws SAXException In case of a IO-problem
+     * {@inheritDoc}
      */
     public void startDocument() throws SAXException {
         // TODO sections should be created
@@ -173,8 +172,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#endDocument()
-     * @throws SAXException In case of a IO-problem
+     * {@inheritDoc}
      */
     public void endDocument() throws SAXException {
         try {
@@ -186,8 +184,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler
-     * @param pageSeq PageSequence that is starting
+     * {@inheritDoc}
      */
     public void startPageSequence(PageSequence pageSeq)  {
         try {
@@ -237,8 +234,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#endPageSequence(PageSequence)
-     * @param pageSeq PageSequence that is ending
+     * {@inheritDoc}
      */
     public void endPageSequence(PageSequence pageSeq) {
         if (bDefer) {
@@ -258,8 +254,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#startFlow(Flow)
-     * @param fl Flow that is starting
+     * {@inheritDoc}
      */
     public void startFlow(Flow fl) {
         if (bDefer) {
@@ -350,8 +345,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#endFlow(Flow)
-     * @param fl Flow that is ending
+     * {@inheritDoc}
      */
     public void endFlow(Flow fl) {
         if (bDefer) {
@@ -378,8 +372,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#startBlock(Block)
-     * @param bl Block that is starting
+     * {@inheritDoc}
      */
     public void startBlock(Block bl) {
         if (bDefer) {
@@ -412,8 +405,7 @@ public class RTFHandler extends FOEventHandler {
 
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#endBlock(Block)
-     * @param bl Block that is ending
+     * {@inheritDoc}
      */
     public void endBlock(Block bl) {
 
@@ -442,8 +434,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#startBlockContainer(BlockContainer)
-     * @param blc BlockContainer that is starting
+     * {@inheritDoc}
      */
     public void startBlockContainer(BlockContainer blc) {
         if (bDefer) {
@@ -474,8 +465,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#endBlockContainer(BlockContainer)
-     * @param bl BlockContainer that is ending
+     * {@inheritDoc}
      */
     public void endBlockContainer(BlockContainer bl) {
         if (bDefer) {
@@ -503,8 +493,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#startTable(Table)
-     * @param tbl Table that is starting
+     * {@inheritDoc}
      */
     public void startTable(Table tbl) {
         if (bDefer) {
@@ -548,8 +537,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#endTable(Table)
-     * @param tbl Table that is ending
+     * {@inheritDoc}
      */
     public void endTable(Table tbl) {
         if (bDefer) {
@@ -615,29 +603,25 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#startHeader(TableBody)
-     * @param th TableBody that is starting
+     * {@inheritDoc}
      */
     public void startHeader(TableBody th) {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#endHeader(TableBody)
-     * @param th TableBody that is ending
+     * {@inheritDoc}
      */
     public void endHeader(TableBody th) {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#startFooter(TableBody)
-     * @param tf TableFooter that is starting
+     * {@inheritDoc}
      */
     public void startFooter(TableBody tf) {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#endFooter(TableBody)
-     * @param tf TableFooter that is ending
+     * {@inheritDoc}
      */
     public void endFooter(TableBody tf) {
     }
@@ -700,8 +684,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
      /**
-     * @see org.apache.fop.fo.FOEventHandler#startBody(TableBody)
-     * @param tb TableBody that is starting
+     * {@inheritDoc}
      */
     public void startBody(TableBody tb) {
         if (bDefer) {
@@ -720,8 +703,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#endBody(TableBody)
-     * @param tb TableBody that is ending
+     * {@inheritDoc}
      */
     public void endBody(TableBody tb) {
         if (bDefer) {
@@ -738,8 +720,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#startRow(TableRow)
-     * @param tr TableRow that is starting
+     * {@inheritDoc}
      */
     public void startRow(TableRow tr) {
         if (bDefer) {
@@ -769,8 +750,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#endRow(TableRow)
-     * @param tr TableRow that is ending
+     * {@inheritDoc}
      */
     public void endRow(TableRow tr) {
         if (bDefer) {
@@ -807,8 +787,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#startCell(TableCell)
-     * @param tc TableCell that is starting
+     * {@inheritDoc}
      */
     public void startCell(TableCell tc) {
         if (bDefer) {
@@ -896,8 +875,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#endCell(TableCell)
-     * @param tc TableCell that is ending
+     * {@inheritDoc}
      */
     public void endCell(TableCell tc) {
         if (bDefer) {
@@ -910,8 +888,7 @@ public class RTFHandler extends FOEventHandler {
 
     // Lists
     /**
-     * @see org.apache.fop.fo.FOEventHandler#startList(ListBlock)
-     * @param lb ListBlock that is starting
+     * {@inheritDoc}
      */
     public void startList(ListBlock lb) {
         if (bDefer) {
@@ -939,8 +916,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#endList(ListBlock)
-     * @param lb ListBlock that is ending
+     * {@inheritDoc}
      */
     public void endList(ListBlock lb) {
         if (bDefer) {
@@ -951,8 +927,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#startListItem(ListItem)
-     * @param li ListItem that is starting
+     * {@inheritDoc}
      */
     public void startListItem(ListItem li) {
         if (bDefer) {
@@ -993,8 +968,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#endListItem(ListItem)
-     * @param li ListItem that is ending
+     * {@inheritDoc}
      */
     public void endListItem(ListItem li) {
         if (bDefer) {
@@ -1005,7 +979,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#startListLabel()
+     * {@inheritDoc}
      */
     public void startListLabel() {
         if (bDefer) {
@@ -1028,7 +1002,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#endListLabel()
+     * {@inheritDoc}
      */
     public void endListLabel() {
         if (bDefer) {
@@ -1039,45 +1013,44 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#startListBody()
+     * {@inheritDoc}
      */
     public void startListBody() {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#endListBody()
+     * {@inheritDoc}
      */
     public void endListBody() {
     }
 
     // Static Regions
     /**
-     * @see org.apache.fop.fo.FOEventHandler#startStatic()
+     * {@inheritDoc}
      */
     public void startStatic() {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#endStatic()
+     * {@inheritDoc}
      */
     public void endStatic() {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#startMarkup()
+     * {@inheritDoc}
      */
     public void startMarkup() {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#endMarkup()
+     * {@inheritDoc}
      */
     public void endMarkup() {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#startLink(BasicLink basicLink)
-     * @param basicLink BasicLink that is starting
+     * {@inheritDoc}
      */
     public void startLink(BasicLink basicLink) {
         if (bDefer) {
@@ -1111,7 +1084,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#endLink()
+     * {@inheritDoc}
      */
     public void endLink() {
         if (bDefer) {
@@ -1122,8 +1095,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#image(ExternalGraphic)
-     * @param eg ExternalGraphic that is starting
+     * {@inheritDoc}
      */
     public void image(ExternalGraphic eg) {
         if (bDefer) {
@@ -1155,8 +1127,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#foreignObject(InstreamForeignObject)
-     * @param ifo InstreamForeignObject that is starting
+     * {@inheritDoc}
      */
     public void foreignObject(InstreamForeignObject ifo) {
         if (bDefer) {
@@ -1330,14 +1301,13 @@ public class RTFHandler extends FOEventHandler {
     }
     
     /**
-     * @see org.apache.fop.fo.FOEventHandler#pageRef()
+     * {@inheritDoc}
      */
     public void pageRef() {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#startFootnote(Footnote)
-     * @param footnote Footnote that is starting
+     * {@inheritDoc}
      */
     public void startFootnote(Footnote footnote) {
         if (bDefer) {
@@ -1366,8 +1336,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#endFootnote(Footnote)
-     * @param footnote Footnote that is ending
+     * {@inheritDoc}
      */
     public void endFootnote(Footnote footnote) {
         if (bDefer) {
@@ -1378,8 +1347,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#startFootnoteBody(FootnoteBody)
-     * @param body FootnoteBody that is starting
+     * {@inheritDoc}
      */
     public void startFootnoteBody(FootnoteBody body) {
         if (bDefer) {
@@ -1404,8 +1372,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#endFootnoteBody(FootnoteBody)
-     * @param body FootnoteBody that is ending
+     * {@inheritDoc}
      */
     public void endFootnoteBody(FootnoteBody body) {
         if (bDefer) {
@@ -1430,8 +1397,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#leader(Leader)
-     * @param l Leader that is starting
+     * {@inheritDoc}
      */
     public void leader(Leader l) {
     }
