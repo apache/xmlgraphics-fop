@@ -35,8 +35,6 @@ import java.util.Map;
 import javax.xml.transform.Source;
 
 // FOP
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -61,7 +59,6 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fonts.Font;
-import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.image.EPSImage;
@@ -145,24 +142,6 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
     /** This is a map of PSResource instances of all forms (key: uri) */
     private Map formResources;
     
-    /**
-     * @see org.apache.avalon.framework.configuration.Configurable#configure(Configuration)
-     */
-    public void configure(Configuration cfg) throws ConfigurationException {
-        super.configure(cfg);
-        this.autoRotateLandscape = cfg.getChild(AUTO_ROTATE_LANDSCAPE).getValueAsBoolean(false);
-        this.languageLevel = cfg.getChild(LANGUAGE_LEVEL).getValueAsInteger(this.languageLevel);
-        this.twoPassGeneration = cfg.getChild(OPTIMIZE_RESOURCES).getValueAsBoolean(false);
-
-        //Font configuration
-        List cfgFonts = FontSetup.buildFontListFromConfiguration(cfg, this);
-        if (this.fontList == null) {
-            this.fontList = cfgFonts;
-        } else {
-            this.fontList.addAll(cfgFonts);
-        }
-    }
-
     /**
      * @see org.apache.fop.render.Renderer#setUserAgent(FOUserAgent)
      */

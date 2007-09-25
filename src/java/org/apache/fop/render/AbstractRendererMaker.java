@@ -29,10 +29,10 @@ public abstract class AbstractRendererMaker {
     
     /**
      * Instantiates a new renderer.
-     * @param ua the user agent
+     * @param userAgent the user agent
      * @return the newly instantiated renderer
      */
-    public abstract Renderer makeRenderer(FOUserAgent ua);
+    public abstract Renderer makeRenderer(FOUserAgent userAgent);
 
     /**
      * @return Indicates whether this renderer requires an OutputStream to work with.
@@ -43,6 +43,16 @@ public abstract class AbstractRendererMaker {
      * @return an array of MIME types the renderer supports.
      */
     public abstract String[] getSupportedMimeTypes();
+
+    /**
+     * Returns a renderer config object that can be used to
+     * configure the renderer.
+     * @param userAgent user agent
+     * @return a config object that can be used to configure the renderer
+     */
+    public RendererConfigurator getConfigurator(FOUserAgent userAgent) {
+        return null;
+    }
 
     /**
      * Indicates whether a specific MIME type is supported by this renderer.
@@ -58,5 +68,4 @@ public abstract class AbstractRendererMaker {
         }
         return false;
     }
-    
 }

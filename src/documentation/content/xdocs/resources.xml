@@ -197,7 +197,8 @@
           <li>[software] TIFFRenderer is a renderer for outputting multi-page TIFF: <jump href="http://www.tkachenko.com/fop/tiffrenderer.html">http://www.tkachenko.com/fop/tiffrenderer.html</jump> (MPL)</li>
           <li>[software] AFP Renderer / Batch Assembler for FOP: <jump href="http://mypage.bluewin.ch/huanderegg/">http://mypage.bluewin.ch/huanderegg/</jump> (open source, license unclear)</li>
           <li>[software] The <jump href="http://mogwai.sourceforge.net">Mogwai Project</jump> includes a renderer for FOP that generates output for Okidata dot matrix printers (GPL).</li>
-          <li>[software] <jump href="http://barcode4j.krysalis.org">Barcode4J</jump> (formerly Krysalis Barcode) is a barcode generator which can be used with FOP (Apache license v2.0).</li>
+          <li>[software] <jump href="http://barcode4j.sourceforge.net">Barcode4J</jump> (formerly Krysalis Barcode) is a barcode generator which can be used with FOP (Apache license v2.0).</li>
+          <li>[software] <jump href="http://jeuclid.sourceforge.net">JEuclid</jump> is a MathML implementation which can be used with FOP (Apache license v2.0).</li>
           <li>[software] <jump href="http://afp-renderer.sourceforge.net/">AFP Renderer</jump> renders formatted objects to AFP or (MO:DCA).</li>
           <li>[software &amp; tools] <jump href="http://offo.sourceforge.net/">Objects For Formatting Objects</jump> hosts hyphenation patterns and (eventually) files other accessory data files &amp; scripts.</li>
         </ul>        
@@ -222,6 +223,7 @@
           <li>[software] <jump href="http://www.rubico.com/styler">XML Report Styler</jump> by Rubico (commercial)</li>
           <li>[software] <jump href="http://www.metafocus.no/en/xultation_designer.php">Xultation Designer</jump> by Metafocus (commercial)</li>
           <li>[software] <jump href="http://www.cambridgedocs.com/products/downloads/WordFODesigner.htm">Word FO Designer</jump> by CambridgeDocs (commercial)</li>
+          <li>[software] <jump href="http://web.assentis.com/products/products.php?navi=Products&amp;product_id=7">Assentis:DocDesign</jump> by Assentis Technologies (commercial)</li>
         </ul>
       </section>
       <section id="products-other">

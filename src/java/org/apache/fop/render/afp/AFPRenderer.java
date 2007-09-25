@@ -33,8 +33,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
@@ -57,8 +55,6 @@ import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.fonts.FontTriplet;
-import org.apache.fop.fonts.FontUtil;
-import org.apache.fop.fonts.Typeface;
 import org.apache.fop.fonts.base14.Courier;
 import org.apache.fop.fonts.base14.Helvetica;
 import org.apache.fop.fonts.base14.TimesRoman;
@@ -76,7 +72,6 @@ import org.apache.fop.render.afp.fonts.AFPFont;
 import org.apache.fop.render.afp.fonts.CharacterSet;
 import org.apache.fop.render.afp.fonts.FopCharacterSet;
 import org.apache.fop.render.afp.fonts.OutlineFont;
-import org.apache.fop.render.afp.fonts.RasterFont;
 import org.apache.fop.render.afp.modca.AFPConstants;
 import org.apache.fop.render.afp.modca.AFPDataStream;
 import org.apache.fop.render.afp.modca.ImageObject;
@@ -300,195 +295,6 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
             FontTriplet ft = this.fontInfo.fontLookup("sans-serif", "normal", 400);
             this.fontInfo.addFontProperties(this.fontInfo.getInternalFontKey(ft), "any", "normal", 400);
         }
-    }
-
-    /**
-     */
-    private AFPFontInfo buildFont(Configuration fontCfg, String _path)
-        throws ConfigurationException {
-
-        Configuration[] triple = fontCfg.getChildren("font-triplet");
-        List tripleList = new java.util.ArrayList();
-        if (triple.length == 0) {
-            log.error("Mandatory font configuration element '<font-triplet...' is missing");
-            return null;
-        }
-        for (int j = 0; j < triple.length; j++) {
-            int weight = FontUtil.parseCSS2FontWeight(triple[j].getAttribute("weight"));
-            tripleList.add(new FontTriplet(triple[j].getAttribute("name"),
-                                           triple[j].getAttribute("style"),
-                                           weight));
-        }
-
-        //build the fonts
-        Configuration afpFontCfg = fontCfg.getChild("afp-font");
-        if (afpFontCfg == null) {
-            log.error("Mandatory font configuration element '<afp-font...' is missing");
-            return null;
-        }
-        String path = afpFontCfg.getAttribute("path", _path);
-        String type = afpFontCfg.getAttribute("type");
-        if (type == null) {
-            log.error("Mandatory afp-font configuration attribute 'type=' is missing");
-            return null;
-        }
-        String codepage = afpFontCfg.getAttribute("codepage");
-        if (codepage == null) {
-            log.error("Mandatory afp-font configuration attribute 'code=' is missing");
-            return null;
-        }
-        String encoding = afpFontCfg.getAttribute("encoding");
-        if (encoding == null) {
-            log.error("Mandatory afp-font configuration attribute 'encoding=' is missing");
-            return null;
-        }
-
-        if ("raster".equalsIgnoreCase(type)) {
-
-            String name = afpFontCfg.getAttribute("name", "Unknown");
-
-            // Create a new font object
-            RasterFont font = new RasterFont(name);
-
-            Configuration[] rasters = afpFontCfg.getChildren("afp-raster-font");
-            if (rasters.length == 0) {
-                log.error("Mandatory font configuration elements '<afp-raster-font...' are missing");
-                return null;
-            }
-            for (int j = 0; j < rasters.length; j++) {
-                Configuration rasterCfg = rasters[j];
-
-                String characterset = rasterCfg.getAttribute("characterset");
-                if (characterset == null) {
-                    log.error("Mandatory afp-raster-font configuration attribute 'characterset=' is missing");
-                    return null;
-                }
-                int size = rasterCfg.getAttributeAsInteger("size");
-                String base14 = rasterCfg.getAttribute("base14-font", null);
-
-                if (base14 != null) {
-                    try {
-                        Class clazz = Class.forName("org.apache.fop.fonts.base14."
-                            + base14);
-                        try {
-                            Typeface tf = (Typeface)clazz.newInstance();
-                            font.addCharacterSet(size, new FopCharacterSet(
-                                codepage, encoding, characterset, size, tf));
-                        } catch (Exception ie) {
-                            String msg = "The base 14 font class " + clazz.getName()
-                                + " could not be instantiated";
-                            log.error(msg);
-                        }
-                    } catch (ClassNotFoundException cnfe) {
-                        String msg = "The base 14 font class for " + characterset
-                            + " could not be found";
-                        log.error(msg);
-                    }
-                } else {
-                    font.addCharacterSet(size, new CharacterSet(
-                        codepage, encoding, characterset, path));
-                }
-            }
-            return new AFPFontInfo(font, tripleList);
-
-        } else if ("outline".equalsIgnoreCase(type)) {
-
-            String characterset = afpFontCfg.getAttribute("characterset");
-            if (characterset == null) {
-                log.error("Mandatory afp-font configuration attribute 'characterset=' is missing");
-                return null;
-            }
-            String name = afpFontCfg.getAttribute("name", characterset);
-
-            CharacterSet characterSet = null;
-
-            String base14 = afpFontCfg.getAttribute("base14-font", null);
-
-            if (base14 != null) {
-                try {
-                    Class clazz = Class.forName("org.apache.fop.fonts.base14."
-                        + base14);
-                    try {
-                        Typeface tf = (Typeface)clazz.newInstance();
-                        characterSet = new FopCharacterSet(
-                                codepage, encoding, characterset, 1, tf);
-                    } catch (Exception ie) {
-                        String msg = "The base 14 font class " + clazz.getName()
-                            + " could not be instantiated";
-                        log.error(msg);
-                    }
-                } catch (ClassNotFoundException cnfe) {
-                    String msg = "The base 14 font class for " + characterset
-                        + " could not be found";
-                    log.error(msg);
-                }
-            } else {
-                characterSet = new CharacterSet(codepage, encoding, characterset, path);
-            }
-            // Create a new font object
-            OutlineFont font = new OutlineFont(name, characterSet);
-            return new AFPFontInfo(font, tripleList);
-        } else {
-            log.error("No or incorrect type attribute");
-        }
-        return null;
-    }
-
-    /**
-     * Builds a list of AFPFontInfo objects for use with the setup() method.
-     * @param cfg Configuration object
-     * @return List the newly created list of fonts
-     * @throws ConfigurationException if something's wrong with the config data
-     */
-    public List buildFontListFromConfiguration(Configuration cfg)
-            throws ConfigurationException {
-        List fontList = new java.util.ArrayList();
-        Configuration[] font = cfg.getChild("fonts").getChildren("font");
-        for (int i = 0; i < font.length; i++) {
-            AFPFontInfo afi = buildFont(font[i], null);
-            if (afi != null) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Adding font " + afi.getAFPFont().getFontName());
-                    for (int j = 0; j < afi.getFontTriplets().size(); ++j) {
-                        FontTriplet triplet = (FontTriplet) afi.getFontTriplets().get(j);
-                        log.debug("Font triplet "
-                                  + triplet.getName() + ", "
-                                  + triplet.getStyle() + ", "
-                                  + triplet.getWeight());
-                    }
-                }
-
-                fontList.add(afi);
-            }
-        }
-        return fontList;
-    }
-
-    /**
-     * Configure the AFP renderer.
-     * Get the configuration to be used for fonts etc.
-     * @see org.apache.avalon.framework.configuration.Configurable#configure(Configuration)
-     */
-    public void configure(Configuration cfg) throws ConfigurationException {
-        //Font configuration
-        this.fontList = buildFontListFromConfiguration(cfg);
-        Configuration images = cfg.getChild("images");
-        if (!"color".equalsIgnoreCase(images.getAttribute("mode", "b+w"))) {
-            bitsPerPixel = images.getAttributeAsInteger("bits-per-pixel", 8);
-            switch (bitsPerPixel) {
-                case 1:
-                case 4:
-                case 8:
-                    break;
-                default:
-                    log.warn("Invalid bits_per_pixel value, must be 1, 4 or 8.");
-                    bitsPerPixel = 8;
-                    break;
-            }
-        } else {
-            colorImages = true;
-        }
-
     }
 
     /**
@@ -1765,5 +1571,22 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         }
     }
 
+    public void setBitsPerPixel(int bitsPerPixel) {
+        this.bitsPerPixel = bitsPerPixel;
+        switch (bitsPerPixel) {
+            case 1:
+            case 4:
+            case 8:
+            break;
+        default:
+            log.warn("Invalid bits_per_pixel value, must be 1, 4 or 8.");
+            bitsPerPixel = 8;
+            break;
+        }
+    }
+
+    public void setColorImages(boolean colorImages) {
+        this.colorImages = colorImages;
+    }
 }
 

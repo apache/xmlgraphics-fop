@@ -26,11 +26,8 @@
     <section id="intro">
       <title>Introduction</title>
       <p>
-        Version 0.20.5 represents Apache FOP's current stable release. Even though it's over two years old
-        this release will stay the first choice for those who want a stable product for use in production
-        environments, at least for another few months until the code from out redesign effort has stabilized
-        enough. This shouldn't keep you off trying out the <a href="../trunk/index.html">redesigned code</a>, 
-        though.
+        Version 0.20.5 represents Apache FOP's previous stable release.  It is now
+        recommended that you use <a href="../0.93/index.html">0.93</a> instead.
       </p>
       <p>
         Please notice that, although we still provide support for 0.20.5, we won't fix any bugs or add any 

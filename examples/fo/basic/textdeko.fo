@@ -218,7 +218,7 @@
 
 
       <fo:block space-after.optimum="13pt">
-        And now <fo:inline text-decoration="underline">more than a word...</fo:inline>
+        And now <fo:inline text-decoration="underline">more than a word ...</fo:inline>
       </fo:block>
 
       <fo:block space-after.optimum="13pt" font-size="14pt" text-decoration="underline">

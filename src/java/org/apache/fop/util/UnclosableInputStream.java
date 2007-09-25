@@ -17,22 +17,30 @@
 
 /* $Id$ */
 
-package org.apache.fop.config;
+package org.apache.fop.util;
 
-import java.io.File;
+import java.io.FilterInputStream;
+import java.io.InputStream;
 
-// this font has a malformed metrics-url
-public class MetricsUrlMalformedTestCase extends BaseUserConfigTestCase {
+/**
+ * Provides an InputStreamFilter which avoids closing the original stream.
+ */
+public class UnclosableInputStream extends FilterInputStream {
 
-    public MetricsUrlMalformedTestCase(String name) {
-        super(name);
+    /**
+     * Default constructor.
+     * 
+     * @param in the Stream to filter.
+     */
+    public UnclosableInputStream(InputStream in) {
+        super(in);
     }
 
-    protected File getUserConfigFile() {
-        return new File( getBaseConfigDir() + "/test_metricsurl_malformed.xconf");
+    /**
+     * Does <strong>not</strong> close the original stream.
+     */
+    public void close() {
+        // ignore
     }
-    
-    public String getName() {
-        return "test_metricsurl_malformed.xconf";
-    }
+
 }

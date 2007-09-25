@@ -61,7 +61,7 @@ import org.w3c.dom.Document;
 public class AreaTreeParserTestCase extends XMLTestCase {
 
     // configure fopFactory as desired
-    private FopFactory fopFactory = FopFactory.newInstance();
+    private static FopFactory fopFactory = FopFactory.newInstance();
     
     private static SAXTransformerFactory tFactory 
             = (SAXTransformerFactory)SAXTransformerFactory.newInstance();

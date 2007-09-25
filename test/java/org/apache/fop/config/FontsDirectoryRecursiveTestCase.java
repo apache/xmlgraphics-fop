@@ -19,20 +19,19 @@
 
 package org.apache.fop.config;
 
-import java.io.File;
+/**
+ * tests font directory on system 
+ */
+public class FontsDirectoryRecursiveTestCase extends BaseConstructiveUserConfigTestCase {
 
-// this font has a malformed embed-url
-public class EmbedUrlMalformedTestCase extends BaseUserConfigTestCase {
-
-    public EmbedUrlMalformedTestCase(String name) {
+    public FontsDirectoryRecursiveTestCase(String name) {
         super(name);
     }
 
-    protected File getUserConfigFile() {
-        return new File( getBaseConfigDir() + "/test_embedurl_malformed.xconf");
-    }
-    
-    public String getName() {
-        return "test_embedurl_malformed.xconf";
-    }
+    /**
+     * @see org.apache.fop.config.BaseUserConfigTestCase#getUserConfigFilename()
+     */
+    protected String getUserConfigFilename() {
+        return "test_fonts_directory_recursive.xconf";
+    }    
 }

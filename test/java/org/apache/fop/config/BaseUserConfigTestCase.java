@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id$ */
+/* $Id: $ */
 
 package org.apache.fop.config;
 
@@ -28,7 +28,6 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.render.pdf.BasePDFTestCase;
 import org.xml.sax.SAXException;
@@ -39,7 +38,7 @@ import org.xml.sax.SAXException;
  */
 public abstract class BaseUserConfigTestCase extends BasePDFTestCase {
 
-    protected static DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
+    protected DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
 
     /** logging instance */
     protected Log log = LogFactory.getLog(BaseUserConfigTestCase.class);
@@ -59,28 +58,19 @@ public abstract class BaseUserConfigTestCase extends BasePDFTestCase {
         // do nothing
     }
 
-    /**
-     * Test using a standard FOP font
-     * @throws Exception checkstyle wants a comment here, even a silly one
-     */
-    public void testUserConfig() throws Exception {
-        try {
-            fopFactory.setUserConfig(getUserConfig());        
-            final File baseDir = getBaseDir();
-            final String fontFOFilePath = getFontFOFilePath();
-            File foFile = new File(baseDir, fontFOFilePath);
-            final boolean dumpOutput = false;
-            FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
-            convertFO(foFile, foUserAgent, dumpOutput);
-            fail( getName() + ": Expected Configuration Exception" );
-        } catch (FOPException e) {
-            // this *should* happen!
-        } catch (Exception e) {
-            fail( getName() + ": Expected FOPException but got: " + e.getMessage() );
-        }
+    protected void initConfig() throws Exception {
+        fopFactory.setUserConfig(getUserConfig());                
     }
 
-
+    protected void convertFO() throws Exception {
+        final File baseDir = getBaseDir();
+        final String fontFOFilePath = getFontFOFilePath();
+        File foFile = new File(baseDir, fontFOFilePath);
+        final boolean dumpOutput = false;
+        FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
+        convertFO(foFile, foUserAgent, dumpOutput);
+    }
+    
     /**
      * get test FOP config File
      * @return fo test filepath
@@ -96,9 +86,29 @@ public abstract class BaseUserConfigTestCase extends BasePDFTestCase {
      * @throws SAXException 
      * @throws ConfigurationException 
      */
-    protected Configuration getUserConfig(String configString)
-            throws ConfigurationException, SAXException, IOException {
+    protected Configuration getUserConfig(String configString) throws ConfigurationException, SAXException, IOException {
         return cfgBuilder.build(new ByteArrayInputStream(configString.getBytes()));
+    }
+
+    /** get base config directory */
+    protected String getBaseConfigDir() {
+        return "test/config";
+    }
+
+    /**
+     * @return user config File
+     */
+    abstract protected String getUserConfigFilename();
+
+    /*
+     * @see junit.framework.TestCase#getName()
+     */
+    public String getName() {
+        return getUserConfigFilename();
+    }
+
+    protected File getUserConfigFile() {
+        return new File(getBaseConfigDir() + File.separator + getUserConfigFilename());
     }
 
     /**
@@ -108,18 +118,7 @@ public abstract class BaseUserConfigTestCase extends BasePDFTestCase {
      * @throws SAXException 
      * @throws ConfigurationException 
      */
-    protected Configuration getUserConfig()
-            throws ConfigurationException, SAXException, IOException {
+    protected Configuration getUserConfig() throws ConfigurationException, SAXException, IOException {
         return cfgBuilder.buildFromFile(getUserConfigFile());
-    }
-    
-    /** get base config directory */
-    protected String getBaseConfigDir() {
-        return "test/config";
-    }
-    
-    /**
-     * @return user config File
-     */
-    protected abstract File getUserConfigFile();
+    }        
 }

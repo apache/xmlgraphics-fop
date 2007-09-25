@@ -87,6 +87,8 @@ public class ImageReaderFactory {
                     return info;
                 }
             }
+            log.warn("No ImageReader found for " + uri);
+            in.close();
         } catch (IOException ex) {
             log.error("Error while recovering Image Informations ("
                 + uri + ")", ex);

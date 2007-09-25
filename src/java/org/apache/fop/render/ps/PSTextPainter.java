@@ -367,8 +367,8 @@ public class PSTextPainter implements TextPainter {
     private int getWeight(AttributedCharacterIterator aci) {
         Float taWeight = (Float)aci.getAttribute(TextAttribute.WEIGHT);
         return ((taWeight != null) &&  (taWeight.floatValue() > 1.0)) 
-                       ? Font.BOLD
-                       : Font.NORMAL;
+                       ? Font.WEIGHT_BOLD
+                       : Font.WEIGHT_NORMAL;
     }
 
     private Font makeFont(AttributedCharacterIterator aci) {
@@ -402,7 +402,7 @@ public class PSTextPainter implements TextPainter {
                 }
             }
         }
-        FontTriplet triplet = fontInfo.fontLookup("any", style, Font.NORMAL);
+        FontTriplet triplet = fontInfo.fontLookup("any", style, Font.WEIGHT_NORMAL);
         int fsize = (int)(fontSize.floatValue() * 1000);
         return fontInfo.getFontInstance(triplet, fsize);
     }
@@ -411,7 +411,7 @@ public class PSTextPainter implements TextPainter {
         final String style = getStyle(aci);
         final int weight = getWeight(aci);
         int fStyle = java.awt.Font.PLAIN;
-        if (weight == Font.BOLD) {
+        if (weight == Font.WEIGHT_BOLD) {
             fStyle |= java.awt.Font.BOLD;
         }
         if ("italic".equals(style)) {

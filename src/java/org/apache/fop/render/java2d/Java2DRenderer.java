@@ -53,10 +53,9 @@ import java.util.Stack;
 
 import org.w3c.dom.Document;
 
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.FopFactoryConfigurator;
 import org.apache.fop.area.CTM;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Trait;
@@ -73,7 +72,6 @@ import org.apache.fop.fonts.Typeface;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
 import org.apache.fop.image.XMLImage;
-import org.apache.fop.pdf.PDFAMode;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
@@ -148,19 +146,6 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     
     /** Default constructor */
     public Java2DRenderer() {
-    }
-
-    /**
-     * @see org.apache.fop.render.AbstractRenderer#configure(
-     *          org.apache.avalon.framework.configuration.Configuration)
-     */
-    public void configure(Configuration cfg) throws ConfigurationException {
-        super.configure(cfg);
-
-        String s = cfg.getChild(JAVA2D_TRANSPARENT_PAGE_BACKGROUND, true).getValue(null);
-        if (s != null) {
-            this.transparentPageBackground = "true".equalsIgnoreCase(s);
-        }
     }
 
     /**
@@ -305,10 +290,10 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
                             + pageHeight + ")");
 
             double scaleX = scaleFactor 
-                * (25.4 / FOUserAgent.DEFAULT_TARGET_RESOLUTION) 
+                * (25.4 / FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION) 
                 / userAgent.getTargetPixelUnitToMillimeter();
             double scaleY = scaleFactor
-                * (25.4 / FOUserAgent.DEFAULT_TARGET_RESOLUTION)
+                * (25.4 / FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION)
                 / userAgent.getTargetPixelUnitToMillimeter();
             int bitmapWidth = (int) ((pageWidth * scaleX) + 0.5);
             int bitmapHeight = (int) ((pageHeight * scaleY) + 0.5);
@@ -1021,6 +1006,10 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     /** @see org.apache.fop.render.AbstractPathOrientedRenderer#endTextObject() */
     protected void endTextObject() {
         //not necessary in Java2D
+    }
+
+    public void setTransparentPageBackground(boolean transparentPageBackground) {
+        this.transparentPageBackground = transparentPageBackground;
     }
 
 }

@@ -38,10 +38,12 @@ public class UserConfigTestSuite {
         suite.addTest(new TestSuite(FontBaseBadTestCase.class));
         suite.addTest(new TestSuite(FontAttributesMissingTestCase.class));
         suite.addTest(new TestSuite(FontTripletAttributeMissingTestCase.class));
-        suite.addTest(new TestSuite(MetricsUrlBadTestCase.class));
-        suite.addTest(new TestSuite(EmbedUrlBadTestCase.class));
-        suite.addTest(new TestSuite(MetricsUrlMalformedTestCase.class));
-        suite.addTest(new TestSuite(EmbedUrlMalformedTestCase.class));
+        suite.addTest(new TestSuite(FontMetricsUrlBadTestCase.class));
+        suite.addTest(new TestSuite(FontEmbedUrlBadTestCase.class));
+        suite.addTest(new TestSuite(FontMetricsUrlMalformedTestCase.class));
+        suite.addTest(new TestSuite(FontEmbedUrlMalformedTestCase.class));
+        suite.addTest(new TestSuite(FontsDirectoryRecursiveTestCase.class));
+        suite.addTest(new TestSuite(FontsAutoDetectTestCase.class));
         //$JUnit-END$
         return suite;
     }

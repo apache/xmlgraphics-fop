@@ -3,6 +3,9 @@
   <!-- Strict configuration On -->
   <strict-configuration>true</strict-configuration>
 
+  <!-- Switch off font caching for the purposes of the unit test -->
+  <use-cache>false</use-cache>  
+
   <!-- Base URL for resolving relative URLs -->
   <base>./</base>
 
@@ -12,10 +15,7 @@
   <renderers>
     <renderer mime="application/pdf">
       <fonts>
-        <font metrics-url="test/resources/fonts/glb12.ttf.xml">
-		  <!-- this font-triplet has a missing style attribute -->           
-          <font-triplet name="Gladiator" weight="normal"/>
-        </font>
+      	<auto-detect/>
       </fonts>
     </renderer>
   </renderers>

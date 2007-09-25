@@ -31,6 +31,7 @@ import org.w3c.dom.Element;
 
 // FOP
 import org.apache.fop.image.FopImage;
+import org.apache.fop.util.UnclosableInputStream;
 import org.apache.fop.apps.FOUserAgent;
 
 // Commons-Logging
@@ -63,8 +64,8 @@ public class XMLReader implements ImageReader {
             FOUserAgent ua)
         throws IOException {
         FopImage.ImageInfo info = loadImage(uri, fis, ua);
-        info.originalURI = uri;
         if (info != null) {
+            info.originalURI = uri;
             IOUtils.closeQuietly(fis);
         }
         return info;
@@ -98,16 +99,17 @@ public class XMLReader implements ImageReader {
     /**
      * Creates an ImageInfo object from an XML image read from a stream.
      *
-     * @param is  The InputStream
+     * @param input  The InputStream
      * @param ua  The user agent
      * @return    An ImageInfo object describing the image
      */
-    public FopImage.ImageInfo createDocument(InputStream is, FOUserAgent ua) {
+    public FopImage.ImageInfo createDocument(final InputStream input, final FOUserAgent ua) {
         Document doc = null;
         FopImage.ImageInfo info = new FopImage.ImageInfo();
         info.mimeType = getMimeType();
 
         try {
+            final InputStream is = new UnclosableInputStream(input);
             int length = is.available();
             is.mark(length);
 
@@ -128,13 +130,20 @@ public class XMLReader implements ImageReader {
                 }
             }
         } catch (Exception e) {
-            log.warn("Error while constructing image from XML", e);
+            log.debug("Error while constructing image from XML", e);
             try {
-                is.reset();
+                input.reset();
             } catch (IOException ioe) {
                 // throw the original exception, not this one
             }
             return null;
+        }
+        if (info != null) {
+            try {
+                input.close();
+            } catch (IOException io) {
+                // ignore
+            }
         }
         return info;
     }

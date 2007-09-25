@@ -23,6 +23,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.AbstractRendererMaker;
 import org.apache.fop.render.Renderer;
+import org.apache.fop.render.RendererConfigurator;
 
 /**
  * RendererMaker for the PDF Renderer.
@@ -31,12 +32,16 @@ public class PDFRendererMaker extends AbstractRendererMaker {
 
     private static final String[] MIMES = new String[] {MimeConstants.MIME_PDF};
     
-    
-    /**@see org.apache.fop.render.AbstractRendererMaker */
-    public Renderer makeRenderer(FOUserAgent ua) {
+    /** @see org.apache.fop.render.AbstractRendererMaker#makeRenderer(FOUserAgent) */
+    public Renderer makeRenderer(FOUserAgent userAgent) {
         return new PDFRenderer();
     }
 
+    /** @see org.apache.fop.render.AbstractRendererMaker#getConfigurator(FOUserAgent) */
+    public RendererConfigurator getConfigurator(FOUserAgent userAgent) {
+        return new PDFRendererConfigurator(userAgent);
+    }
+    
     /** @see org.apache.fop.render.AbstractRendererMaker#needsOutputStream() */
     public boolean needsOutputStream() {
         return true;

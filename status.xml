@@ -28,6 +28,20 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="update">
+        Updated PDF/A-1b support according to ISO-19005-1:2005/Cor.1:2007.
+      </action>
+      <action context="Code" dev="JM" type="add" fixes-bug="41831" due-to="Adrian Cumiskey">
+        Add support for font auto-detection (easier font configuration).
+      </action>
+      <action context="Code" dev="JM" type="update" fixes-bug="42406" due-to="Hussein Shafie">
+        Use source resolution setting for bitmap images which don't provide their own
+        resolution.
+      </action>
+      <action context="Code" dev="JM" type="fix" fixes-bug="42109" due-to="Paul Vinkenoog">
+        Fixed the rendering of zero-width spaces for certain fonts by not generating them into
+        the area tree.
+      </action>
       <action context="Code" dev="LF" type="fix">
         Fixed a problem with disappearing footnotes inside hyphenated inlines (and footnotes with hyphenated inline child).
       </action>

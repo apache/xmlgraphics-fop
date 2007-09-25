@@ -1198,9 +1198,9 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 
   <fo:block  id="sec11" font-size="18pt" font-family="serif" line-height="20pt" space-before.optimum="20pt" space-after.optimum="14pt" >K)
       Licence</fo:block>
-  <fo:block space-after.optimum="3pt" font-family="serif"> ============================================================================</fo:block>
+  <fo:block space-after.optimum="3pt" font-family="serif"> ===================================================================</fo:block>
   <fo:block space-after.optimum="3pt" font-family="serif">                   The Apache Software License, Version 1.1</fo:block>
-  <fo:block space-after.optimum="3pt" font-family="serif"> ============================================================================</fo:block>
+  <fo:block space-after.optimum="3pt" font-family="serif"> ===================================================================</fo:block>
   <fo:block space-after.optimum="3pt" font-family="serif">    Copyright (C) 1999 The Apache Software Foundation. All rights reserved.</fo:block>
   <fo:block space-after.optimum="3pt" font-family="serif"> Redistribution and use in source and binary forms, with or without modification,
       are permitted provided that the following conditions are met:</fo:block>

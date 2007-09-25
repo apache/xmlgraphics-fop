@@ -1429,7 +1429,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             }
             float siz = gFont.getSize2D();
             String style = gFont.isItalic() ? "italic" : "normal";
-            int weight = gFont.isBold() ? Font.BOLD : Font.NORMAL;
+            int weight = gFont.isBold() ? Font.WEIGHT_BOLD : Font.WEIGHT_NORMAL;
             FontTriplet triplet = fontInfo.fontLookup(n, style, weight);
             fontState = fontInfo.getFontInstance(triplet, (int)(siz * 1000 + 0.5));
         } else {

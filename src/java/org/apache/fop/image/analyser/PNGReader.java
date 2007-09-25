@@ -51,7 +51,11 @@ public class PNGReader implements ImageReader {
                 && (header[7] == (byte) 0x0a));
 
         if (supported) {
-            FopImage.ImageInfo info = getDimension(header);
+            FopImage.ImageInfo info = new FopImage.ImageInfo();
+            info.dpiHorizontal = ua.getFactory().getSourceResolution();
+            info.dpiVertical = info.dpiHorizontal;
+
+            getDimension(header, info);
             info.originalURI = uri;
             info.mimeType = getMimeType();
             info.inputStream = bis;
@@ -70,9 +74,7 @@ public class PNGReader implements ImageReader {
         return "image/png";
     }
 
-    private FopImage.ImageInfo getDimension(byte[] header) {
-        FopImage.ImageInfo info = new FopImage.ImageInfo();
-
+    private void getDimension(byte[] header, FopImage.ImageInfo info) {
         // png is always big endian
         int byte1 = header[16] & 0xff;
         int byte2 = header[17] & 0xff;
@@ -90,7 +92,6 @@ public class PNGReader implements ImageReader {
         byte4 = header[23] & 0xff;
         l = (long) ((byte1 << 24) | (byte2 << 16) | (byte3 << 8) | byte4);
         info.height = (int) l;
-        return info;
     }
 
     private byte[] getDefaultHeader(InputStream imageStream)

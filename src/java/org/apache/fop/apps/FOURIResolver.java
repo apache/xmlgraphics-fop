@@ -29,6 +29,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import javax.xml.transform.Source;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;
 
 // commons logging
@@ -47,8 +48,41 @@ import org.apache.xmlgraphics.util.io.Base64EncodeStream;
 public class FOURIResolver
     implements javax.xml.transform.URIResolver {
     
+    // log
     private Log log = LogFactory.getLog("FOP");
+
+    // true if exceptions are to be thrown if the URIs cannot be resolved.
+    private boolean throwExceptions = false;
+
+    /**
+     * Default constructor
+     */
+    public FOURIResolver() {
+        this(false);
+    }
     
+    /**
+     * Additional constructor
+     * @param throwExceptions true if exceptions are to be thrown if the URIs cannot be
+     *              resolved.
+     */
+    public FOURIResolver(boolean throwExceptions) {
+        this.throwExceptions = throwExceptions;
+    }
+    
+    /**
+     * Handles resolve exceptions appropriately.
+     * @param errorStr error string
+     * @param strict strict user config
+     */
+    private void handleException(Exception e, String errorStr, boolean strict)
+    throws TransformerException {
+        if (strict) {
+            throw new TransformerException(errorStr, e);
+        }
+        log.error(e.getMessage());
+    }
+
     /**
      * Called by the processor through {@link FOUserAgent} when it encounters an 
      * uri in an external-graphic element.
@@ -70,31 +104,25 @@ public class FOURIResolver
      * @throws javax.xml.transform.TransformerException Never thrown by this implementation.
      * @see javax.xml.transform.URIResolver#resolve(String, String)
      */
-    public Source resolve(String href, String base)
-        throws javax.xml.transform.TransformerException {
-        
-        //data URLs can be quite long so don't try to build a File (can lead to problems)
+    public Source resolve(String href, String base) throws TransformerException {        
+        // data URLs can be quite long so don't try to build a File (can lead to problems)
         if (href.startsWith("data:")) {
             return parseDataURI(href);
         }
-        
+
         URL absoluteURL = null;
-        File f = new File(href);
-        if (f.exists()) {
+        File file = new File(href);
+        if (file.canRead() && file.isFile()) {
             try {
-                absoluteURL = f.toURL();
+                absoluteURL = file.toURL();
             } catch (MalformedURLException mfue) {
-                log.error("Could not convert filename to URL: " + mfue.getMessage()); 
+                handleException(mfue,
+                        "Could not convert filename '" + href + "' to URL", throwExceptions);
             }
         } else {
-            URL baseURL = null;
-            try {
-                baseURL = toBaseURL(base);
-            } catch (MalformedURLException mfue) {
-                log.error("Error with base URL \"" + base + "\"): " + mfue.getMessage());
-            }
-            if (baseURL == null) {
-                // We don't have a valid baseURL just use the URL as given
+            // no base provided
+            if (base == null) {
+                // We don't have a valid file protocol based URL
                 try {
                     absoluteURL = new URL(href);
                 } catch (MalformedURLException mue) {
@@ -103,64 +131,78 @@ public class FOURIResolver
                         // the href contains only a path then file: is assumed
                         absoluteURL = new URL("file:" + href);
                     } catch (MalformedURLException mfue) {
-                        log.error("Error with URL '" + href + "': " + mue.getMessage());
-                        return null;
+                        handleException(mfue,
+                                "Error with URL '" + href + "'", throwExceptions);
                     }
                 }
+
+            // try and resolve from context of base
             } else {
+                URL baseURL = null;
                 try {
-                    /*
-                        This piece of code is based on the following statement in 
-                        RFC2396 section 5.2:
+                    baseURL = new URL(base);
+                } catch (MalformedURLException mfue) {
+                    handleException(mfue, "Error with base URL '" + base + "'", throwExceptions);
+                }
 
-                        3) If the scheme component is defined, indicating that the reference
-                           starts with a scheme name, then the reference is interpreted as an
-                           absolute URI and we are done.  Otherwise, the reference URI's
-                           scheme is inherited from the base URI's scheme component.
-
-                           Due to a loophole in prior specifications [RFC1630], some parsers
-                           allow the scheme name to be present in a relative URI if it is the
-                           same as the base URI scheme.  Unfortunately, this can conflict
-                           with the correct parsing of non-hierarchical URI.  For backwards
-                           compatibility, an implementation may work around such references
-                           by removing the scheme if it matches that of the base URI and the
-                           scheme is known to always use the <hier_part> syntax.
-
-                        The URL class does not implement this work around, so we do.
-                    */
-
-                    String scheme = baseURL.getProtocol() + ":";
-                    if (href.startsWith(scheme)) {
-                        href = href.substring(scheme.length());
-                        if ("file:".equals(scheme)) {
-                            int colonPos = href.indexOf(':');
-                            int slashPos = href.indexOf('/');
-                            if (slashPos >= 0 && colonPos >= 0 && colonPos < slashPos) {
-                                href = "/" + href; //Absolute file URL doesn't have a leading slash
-                            }
+                /*
+                 * This piece of code is based on the following statement in
+                 * RFC2396 section 5.2:
+                 * 
+                 * 3) If the scheme component is defined, indicating that the
+                 * reference starts with a scheme name, then the reference is
+                 * interpreted as an absolute URI and we are done. Otherwise,
+                 * the reference URI's scheme is inherited from the base URI's
+                 * scheme component.
+                 * 
+                 * Due to a loophole in prior specifications [RFC1630], some
+                 * parsers allow the scheme name to be present in a relative URI
+                 * if it is the same as the base URI scheme. Unfortunately, this
+                 * can conflict with the correct parsing of non-hierarchical
+                 * URI. For backwards compatibility, an implementation may work
+                 * around such references by removing the scheme if it matches
+                 * that of the base URI and the scheme is known to always use
+                 * the <hier_part> syntax.
+                 * 
+                 * The URL class does not implement this work around, so we do.
+                 */
+                String scheme = baseURL.getProtocol() + ":";
+                if (href.startsWith(scheme)) {
+                    href = href.substring(scheme.length());
+                    if ("file:".equals(scheme)) {
+                        int colonPos = href.indexOf(':');
+                        int slashPos = href.indexOf('/');
+                        if (slashPos >= 0 && colonPos >= 0 && colonPos < slashPos) {
+                            href = "/" + href; // Absolute file URL doesn't
+                                                // have a leading slash
                         }
                     }
+                }
+                try {
                     absoluteURL = new URL(baseURL, href);
                 } catch (MalformedURLException mfue) {
-                    log.error("Error with URL '" + href + "': " + mfue.getMessage());
-                    return null;
+                    handleException(mfue,
+                            "Error with URL; base '" + base + "' " + "href '" + href + "'",
+                            throwExceptions);                        
                 }
             }
         }
         
-        String effURL = absoluteURL.toExternalForm();
-        try {
-            URLConnection connection = absoluteURL.openConnection();
-            connection.setAllowUserInteraction(false);
-            connection.setDoInput(true);
-            updateURLConnection(connection, href);
-            connection.connect();
-            return new StreamSource(connection.getInputStream(), effURL);
-        } catch (FileNotFoundException fnfe) {
-            //Note: This is on "debug" level since the caller is supposed to handle this
-            log.debug("File not found: " + effURL);
-        } catch (java.io.IOException ioe) {
-            log.error("Error with opening URL '" + effURL + "': " + ioe.getMessage());
+        if (absoluteURL != null) {
+            String effURL = absoluteURL.toExternalForm();
+            try {
+                URLConnection connection = absoluteURL.openConnection();
+                connection.setAllowUserInteraction(false);
+                connection.setDoInput(true);
+                updateURLConnection(connection, href);
+                connection.connect();
+                return new StreamSource(connection.getInputStream(), effURL);
+            } catch (FileNotFoundException fnfe) {
+                //Note: This is on "debug" level since the caller is supposed to handle this
+                log.debug("File not found: " + effURL);
+            } catch (java.io.IOException ioe) {
+                log.error("Error with opening URL '" + effURL + "': " + ioe.getMessage());
+            }
         }
         return null;
     }
@@ -200,29 +242,6 @@ public class FOURIResolver
         }
     }
     
-    /**
-     * Returns the base URL as a java.net.URL.
-     * If the base URL is not set a default URL pointing to the
-     * current directory is returned.
-     * @param baseURL the base URL
-     * @returns the base URL as java.net.URL
-     */
-    private URL toBaseURL(String base) throws MalformedURLException {
-        if (base == null) {
-            return new java.io.File("").toURL();
-        }
-        if (!base.endsWith("/")) {
-            // The behavior described by RFC 3986 regarding resolution of relative
-            // references may be misleading for normal users:
-            // file://path/to/resources + myResource.res -> file://path/to/myResource.res
-            // file://path/to/resources/ + myResource.res -> file://path/to/resources/myResource.res
-            // We assume that even when the ending slash is missing, users have the second
-            // example in mind
-            base += "/";
-        }
-        return new URL(base);
-    }
-
     /**
      * Parses inline data URIs as generated by MS Word's XML export and FO stylesheet.
      * @see <a href="http://www.ietf.org/rfc/rfc2397">RFC 2397</a>

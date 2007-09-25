@@ -40,6 +40,7 @@ import org.apache.fop.fo.flow.RetrieveMarker;
 
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.fo.pagination.PageSequenceMaster;
 import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.pagination.RegionBody;
 import org.apache.fop.fo.pagination.SideRegion;
@@ -143,10 +144,11 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         }
 
         areaTreeHandler.getAreaTreeModel().startPageSequence(title);
-        log.debug("Starting layout");
+        if (log.isDebugEnabled()) {
+            log.debug("Starting layout");
+        }
 
         curPage = makeNewPage(false, false);
-
         
         Flow mainFlow = pageSeq.getMainFlow();
         childFLM = getLayoutManagerMaker().
@@ -172,7 +174,19 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         areaTreeHandler.notifyPageSequenceFinished(pageSeq,
                 (currentPageNum - startPageNum) + 1);
         pageSeq.releasePageSequence();
-        log.debug("Ending layout");
+        
+        // If this sequence has a page sequence master so we must reset
+        // it in preparation for the next sequence
+        String masterReference = pageSeq.getMasterReference();
+        PageSequenceMaster pageSeqMaster
+            = pageSeq.getRoot().getLayoutMasterSet().getPageSequenceMaster(masterReference);
+        if (pageSeqMaster != null) {
+            pageSeqMaster.reset();
+        }
+
+        if (log.isDebugEnabled()) {
+            log.debug("Ending layout");
+        }
     }
 
 
@@ -778,7 +792,9 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     }
 
     private void finishPage() {
-        curPage.getPageViewport().dumpMarkers();
+        if (log.isTraceEnabled()) {
+            curPage.getPageViewport().dumpMarkers();
+        }
         // Layout side regions
         layoutSideRegion(FO_REGION_BEFORE); 
         layoutSideRegion(FO_REGION_AFTER);
@@ -1129,7 +1145,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         // If there is no next page-sequence 
         // or if the value of its initial-page-number is "auto" do not force any page.
             
-
         // if force-page-count is auto then set the value of forcePageCount 
         // depending on the initial-page-number of the next page-sequence
         if (nextPageSeqInitialPageNumber != null && forcePageCount == Constants.EN_AUTO) {
@@ -1156,19 +1171,19 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         }
 
         if (forcePageCount == Constants.EN_EVEN) {
-            if ((currentPageNum - startPageNum + 1) % 2 != 0) { // we have a odd number of pages
+            if ((currentPageNum - startPageNum + 1) % 2 != 0) { // we have an odd number of pages
                 curPage = makeNewPage(true, false);
             }
         } else if (forcePageCount == Constants.EN_ODD) {
-            if ((currentPageNum - startPageNum + 1) % 2 == 0) { // we have a even number of pages
+            if ((currentPageNum - startPageNum + 1) % 2 == 0) { // we have an even number of pages
                 curPage = makeNewPage(true, false);
             }
         } else if (forcePageCount == Constants.EN_END_ON_EVEN) {
-            if (currentPageNum % 2 != 0) { // we are now on a odd page
+            if (currentPageNum % 2 != 0) { // we are now on an odd page
                 curPage = makeNewPage(true, false);
             }
         } else if (forcePageCount == Constants.EN_END_ON_ODD) {
-            if (currentPageNum % 2 == 0) { // we are now on a even page
+            if (currentPageNum % 2 == 0) { // we are now on an even page
                 curPage = makeNewPage(true, false);
             }
         } else if (forcePageCount == Constants.EN_NO_FORCE) {

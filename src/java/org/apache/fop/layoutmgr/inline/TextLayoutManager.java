@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.ListIterator;
-import java.util.NoSuchElementException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -378,7 +377,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         iTotalAdjust += (iWordSpaceDim - wordSpaceIPD.opt) * iWScount;
         if (iTotalAdjust != iDifference) {
             // the applied adjustment is greater or smaller than the needed one
-            log.trace("TextLM.addAreas: error in word / letter space adjustment = " 
+            log.trace("TextLM.addAreas: error in word / letter space adjustment = "
                     + (iTotalAdjust - iDifference));
             // set iTotalAdjust = iDifference, so that the width of the TextArea
             // will counterbalance the error and the other inline areas will be
@@ -458,11 +457,13 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             areaInfo = (AreaInfo) vecAreaInfo.get(i);
             if (areaInfo.isSpace) {
                 // areaInfo stores information about spaces
-                // add the spaces to the TextArea
+                // add the spaces - except zero-width spaces - to the TextArea
                 for (int j = areaInfo.iStartIndex; j < areaInfo.iBreakIndex; j++) {
                     char spaceChar = textArray[j];
-                    textArea.addSpace(spaceChar, 0, 
-                            CharUtilities.isAdjustableSpace(spaceChar));
+                    if (!CharUtilities.isZeroWidthSpace(spaceChar)) {
+                        textArea.addSpace(spaceChar, 0,
+                                CharUtilities.isAdjustableSpace(spaceChar));
+                    }
                 }
             } else {
                 // areaInfo stores information about a word fragment
