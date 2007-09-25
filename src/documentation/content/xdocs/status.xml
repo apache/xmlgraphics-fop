@@ -33,21 +33,21 @@
         This is the development status of Apache FOP. Development on
         the maintenance branch where FOP 0.20.5 came from has been
         halted. The code base has been largely redesigned. The new
-        code base has reached release 0.93.
+        code base has reached release 0.94.
       </p>
     </section>
     <section>
       <title>Development Status</title>
-	  <p>The FOP code base has been largely rewritten, to address
+      <p>The FOP code base has been largely rewritten, to address
         design issues for layout and performance. The new design makes
         it better possible to be conformant to the spec and be able to
         handle large documents.</p>
       <p>The redesign of the code base has largely been completed. The
-	    new code reached production quality with release 0.93. In the
-	    course of 2007 we plan to release version 1.0.</p>
+        new code reached production quality with release 0.93. In the
+        course of 2007 we plan to release version 1.0.</p>
       <p>
         If you're looking for a long-term road-map we have to disappoint you. This is Open
-        Source and we're mostly voluteers working in their free time. What we have
+        Source and we're mostly volunteers working in their free time. What we have
         is an idea where we want to go. How fast we get there depends on the 
         available time, on how well our ideas work out while developing and on you!
         There's a <a href="http://wiki.apache.org/xmlgraphics-fop/RoadMap">document in the Wiki</a>
@@ -134,11 +134,9 @@
     <section>
       <title>Maintenance Status</title>
       <p>
-        The latest release of the maintenance branch is FOP 0.20.5,
-        released on July 18th, 2003.  See <a
-        href="relnotes.html">release notes</a> for more details.  The
-        maintenance branch has been frozen in 2004 so the team can
-        concentrate on the new code base.
+        The latest release of the maintenance branch is FOP 0.20.5, released on July 18th, 2003.
+        The maintenance branch has been frozen in 2004 so the team can concentrate on the new code
+        base.
       </p>
     </section>
     <!--section id="stats">

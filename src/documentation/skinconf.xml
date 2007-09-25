@@ -42,14 +42,14 @@ which will be used to configure the chosen Forrest skin.
   <disable-txt-link>true</disable-txt-link>
   <!-- Disable the xml source link? -->
   <!-- The xml source link makes it possible to access the xml rendition
-    of the source frim the html page, and to have it generated statically.
+    of the source from the html page, and to have it generated statically.
     This can be used to enable other sites and services to reuse the
     xml format for their uses. Keep this disabled if you don't want other
     sites to easily reuse your pages.-->
-  <disable-xml-link>true</disable-xml-link>
+  <disable-xml-link>false</disable-xml-link>
 
   <!-- Disable navigation icons on all external links? -->
-  <disable-external-link-image>true</disable-external-link-image>
+  <disable-external-link-image>false</disable-external-link-image>
 
   <!-- Disable w3c compliance links? 
     Use e.g. align="center" to move the compliance links logos to 
@@ -62,7 +62,7 @@ which will be used to configure the chosen Forrest skin.
   <obfuscate-mail-value>.at.</obfuscate-mail-value>
 
   <!-- Disable the javascript facility to change the font size -->
-  <disable-font-script>true</disable-font-script>
+  <disable-font-script>false</disable-font-script>
 
   <!-- mandatory project logo
        default skin: renders it at the top -->
@@ -145,6 +145,10 @@ which will be used to configure the chosen Forrest skin.
         in the class attribute of a <p> node. 
         e.g. <p class="quote"/>
     -->
+
+    <!-- The normal content should be at natural size -->
+    #content { font-size: 100%; }
+
     p.quote {
       margin-left: 2em;
       padding: .5em;

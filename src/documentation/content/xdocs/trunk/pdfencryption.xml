@@ -29,10 +29,6 @@
   <body>
     <section>
       <title>Overview</title>
-      <warning>
-        PDF Encryption is available in Release 0.20.5 and later. The comments on this page do 
-        not apply to releases earlier than 0.20.5.
-      </warning>
       <p>
         FOP supports encryption of PDF output, thanks to Patrick
         C. Lankswert. This feature is commonly used to prevent

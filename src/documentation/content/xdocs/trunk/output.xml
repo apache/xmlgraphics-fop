@@ -590,8 +590,7 @@ out = proc.getOutputStream();]]></source>
       </section>
       <section id="afp-tag-logical-element">
         <title>Tag Logical Element Extension</title>
-        <p>The tag-logical-element extension element allows to injects TLEs into the AFP output stream. Example: 
-          Example:</p>
+        <p>The tag-logical-element extension element allows to injects TLEs into the AFP output stream. Example:</p>
       <source><![CDATA[
     <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
      xmlns:afp="http://xmlgraphics.apache.org/fop/extensions/afp">
@@ -607,6 +606,24 @@ out = proc.getOutputStream();]]></source>
         The name and value attributes are mandatory.
         </p>
       </section>
+      <section id="afp-no-operation">
+        <title>No Operation Extension</title>
+        <p>The no-operation extension provides the ability to carry up to 32K of comments or any other type
+        of unarchitected data into the AFP output stream. Example:</p>
+      <source><![CDATA[
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
+     xmlns:afp="http://xmlgraphics.apache.org/fop/extensions/afp">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="simple">
+          <afp:no-operation name="My NOP">insert up to 32k of character data here!</afp:no-operation>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+]]></source>
+        <p>The no-operation extension element can only occur within a simple-page-master.
+        Multiple no-operation extension elements within a simple-page-master are allowed.
+        The name attribute is mandatory.
+        </p>
+      </section>
     </section>
   </section>
 <section id="rtf">
@@ -618,6 +635,9 @@ out = proc.getOutputStream();]]></source>
     possible. The RTF output follows Microsoft's RTF specifications
     and produces best results on Microsoft Word.
   </p>
+  <note>RTF output is currently unmaintained and lacks many features compared to other output
+    formats. Using other editable formats like Open Document Format, instead of producing XSL-FO
+    then RTF through FOP, might give better results.</note>
 </section>
 <section id="xml">
   <title>XML (Area Tree XML)</title>

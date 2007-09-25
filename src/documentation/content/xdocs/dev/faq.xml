@@ -48,9 +48,9 @@
     <faq id="doc-mgt">
       <question>Where can I learn how the FOP docs and web site are built?</question>
       <answer>
-      	<p>
-      		See FOP <link href="doc.html">Doc Management</link>. ;-)
-      	</p>
+        <p>
+            See FOP <link href="doc.html">Doc Management</link>. ;-)
+        </p>
       </answer>
     </faq>
   </part>

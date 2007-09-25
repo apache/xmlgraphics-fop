@@ -16,9 +16,7 @@
   limitations under the License.
 -->
 <!-- $Id$ -->
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
-    "http://svn.apache.org/viewvc/forrest/trunk/main/webapp/resources/schema/dtd/document-v12.dtd?view=co">
-
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <document>
   <header>
     <title>PDF encryption.</title>
@@ -31,7 +29,6 @@
   <body>
     <section>
       <title>Overview</title>
-      <warning>PDF Encryption is available in Release 0.20.5 and later. The comments on this page do not apply to releases earlier than 0.20.5.</warning>
       <p>
         FOP supports encryption of PDF output, thanks to Patrick
         C. Lankswert. This feature is commonly used to prevent
@@ -135,22 +132,45 @@
         An example to enable PDF encryption in Java code:
       </p>
       <source><![CDATA[
-Driver driver = new Driver();
-driver.setRenderer(Driver.RENDER_PDF);
-Map rendererOptions = new java.util.HashMap();
-rendererOptions.put("ownerPassword", "mypassword");
-rendererOptions.put("allowCopyContent", "FALSE");
-rendererOptions.put("allowEditContent", "FALSE");
-rendererOptions.put("allowPrint", "FALSE");
-driver.getRenderer().setOptions(rendererOptions);
-driver.setOutputStream(...]]></source>
+import org.apache.fop.pdf.PDFEncryptionParams;
+
+[..]
+
+FOUserAgent userAgent = fopFactory.newFOUserAgent();
+useragent.getRendererOptions().put("encryption-params", new PDFEncryptionParams(
+    null, "password", false, false, true, true));
+Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent);
+[..]]]></source>
+      <p>
+        The parameters for the constructor of PDFEncryptionParams are:
+      </p>
+      <ol>
+        <li>userPassword: String, may be null</li>
+        <li>ownerPassword: String, may be null</li>
+        <li>allowPrint: true if printing is allowed</li>
+        <li>allowCopyContent: true if copying content is allowed</li>
+        <li>allowEditContent: true if editing content is allowed</li>
+        <li>allowEditAnnotations: true if editing annotations is allowed</li>
+      </ol>
+      <p>
+        Alternatively, you can set each value separately in the Map provided by 
+        FOUserAgent.getRendererOptions() by using the following keys:
+      </p>
+      <ol>
+        <li>user-password: String</li>
+        <li>owner-password: String</li>
+        <li>noprint: Boolean or "true"/"false"</li>
+        <li>nocopy: Boolean or "true"/"false"</li>
+        <li>noedit: Boolean or "true"/"false"</li>
+        <li>noannotations: Boolean or "true"/"false"</li>
+      </ol>
     </section>
     <section>
       <title>Environment</title>
       <p>
         In order to use PDF encryption, FOP has to be compiled with
-        cryptography support. Currently, only <link
-        href="http://java.sun.com/j2se/1.4/docs/guide/security/jce/JCERefGuide.html">JCE</link>
+        cryptography support. Currently, only <a
+        href="http://java.sun.com/j2se/1.4/docs/guide/security/jce/JCERefGuide.html">JCE</a>
         is supported. JCE is part of JDK 1.4. For earlier JDKs, it can
         be installed separately. The build process automatically
         detects JCE presence and installs PDF encryption support if
@@ -168,18 +188,18 @@ driver.setOutputStream(...]]></source>
       </p>
       <p>
         There are several commercial and a few Open Source packages which
-        provide RC4. A pure Java implementation is produced by <link
+        provide RC4. A pure Java implementation is produced by <a
         href="http://www.bouncycastle.org/">The Legion of the Bouncy
-        Castle</link>. <link
+        Castle</a>. <a
         href="http://www.mozilla.org/projects/security/pki/jss/">Mozilla
-        JSS</link> is an interface to a native implementation.
+        JSS</a> is an interface to a native implementation.
       </p>
     </section>
     <section id="install_crypto">
       <title>Installing a crypto provider</title>
       <p>
-        The pure Java implementation from <link
-        href="http://www.bouncycastle.org/">Bouncy Castle</link> is easy to
+        The pure Java implementation from <a
+        href="http://www.bouncycastle.org/">Bouncy Castle</a> is easy to
         install.
       </p>
       <ol>
@@ -198,7 +218,7 @@ driver.setOutputStream(...]]></source>
           Open the <code>java.security</code> file and add<br/>
           <code>security.provider.6=org.bouncycastle.jce.provider.BouncyCastleProvider</code>,<br/>
           preferably at the end of the block defining the other crypto
-          providers. For JDK 1.4 this is detailed on <link href="http://java.sun.com/j2se/1.4/docs/guide/security/jce/JCERefGuide.html#InstallProvider">Sun's web site</link>.
+          providers. For JDK 1.4 this is detailed on <a href="http://java.sun.com/j2se/1.4/docs/guide/security/jce/JCERefGuide.html#InstallProvider">Sun's web site</a>.
         </li>
       </ol>
       <p>

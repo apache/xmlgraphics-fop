@@ -236,7 +236,7 @@ public class PFMFile {
         etmCapHeight = inStream.readShort();
         etmXHeight = inStream.readShort();
         etmLowerCaseAscent = inStream.readShort();
-        etmLowerCaseDescent = inStream.readShort();
+        etmLowerCaseDescent = -(inStream.readShort());
         //Ignore the rest of the values
     }
 
@@ -391,7 +391,7 @@ public class PFMFile {
         } else {
             bbox[0] = -100;
         }
-        bbox[1] = -(getLowerCaseDescent() + 5);
+        bbox[1] = getLowerCaseDescent() - 5;
         bbox[2] = dfMaxWidth + 10;
         bbox[3] = getLowerCaseAscent() + 5;
         return bbox;

@@ -44,9 +44,9 @@
       </tr>
     </table>
     <p>Other basic examples on the use of XSL-FO can be found in the FOP distribution in
-       the subdirectory xml-fop/examples/fo. You can start transformation of all fo files into pdf
-       files by starting xml-fop/examples/fo/runtests (only source distribution). The resulting test
-       files can be found in xml-fop/examples/fo/tests
+       the subdirectory examples/fo. You can start transformation of all fo files into pdf
+       files by running ant in this directory (only source distribution). The resulting test
+       files can be found in examples/fo/tests
     </p>
     <p>At the moment the following files are part of the distribution:</p>
     <ul>
@@ -85,7 +85,7 @@
 Developers will find the first steps to a test suite for all implemented
 formatting objects and properties in xml-fop/test/xml/.
       </p>
-	</section>
+    </section>
           <section>
             <title>Images Examples</title>
             <p>
