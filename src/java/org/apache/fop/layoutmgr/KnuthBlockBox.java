@@ -22,6 +22,7 @@ package org.apache.fop.layoutmgr;
 import org.apache.fop.traits.MinOptMax;
 
 import java.util.LinkedList;
+import java.util.ListIterator;
 
 /**
  * Knuth box used to represent a line in block-progression-dimension (i.e. the width is its height).
@@ -36,7 +37,7 @@ public class KnuthBlockBox extends KnuthBox {
     private int bpd;
     private LinkedList footnoteList;
     /** List of Knuth elements. This is a list of LinkedList elements. */
-    private LinkedList elementLists = null;
+    private LinkedList footnoteElementLists = null;
 
     /**
      * Creates a new box.
@@ -66,6 +67,7 @@ public class KnuthBlockBox extends KnuthBox {
         ipdRange = new MinOptMax(0);
         bpd = 0;
         footnoteList = new LinkedList(list);
+        addFootnoteElementLists();
     }
 
     /**
@@ -83,14 +85,19 @@ public class KnuthBlockBox extends KnuthBox {
     }
 
     /**
-     * Adds the given list of Knuth elements to this box' list of elements.
-     * @param list elements corresponding to a footnote body
+     * Stores the lists of elements representing the footnote bodies
+     * in this box
      */
-    public void addElementList(LinkedList list) {
-        if (elementLists == null) {
-            elementLists = new LinkedList();
+    private void addFootnoteElementLists() {
+        if (hasAnchors()) {
+            footnoteElementLists = new LinkedList();
         }
-        elementLists.add(list);
+        ListIterator footnoteBodyIterator = footnoteList.listIterator();
+        while (footnoteBodyIterator.hasNext()) {
+            FootnoteBodyLayoutManager fblm 
+                = (FootnoteBodyLayoutManager) footnoteBodyIterator.next();
+            footnoteElementLists.add(fblm.getElementList());
+        }
     }
 
     /**
@@ -98,8 +105,8 @@ public class KnuthBlockBox extends KnuthBox {
      * @return a list of KnuthElement sequences corresponding to footnotes cited in this
      * box
      */
-    public LinkedList getElementLists() {
-        return elementLists;
+    public LinkedList getFootnoteElementLists() {
+        return footnoteElementLists;
     }
 
     /**

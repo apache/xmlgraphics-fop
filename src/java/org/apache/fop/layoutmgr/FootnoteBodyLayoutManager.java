@@ -28,6 +28,9 @@ import java.util.LinkedList;
  * Layout manager for footnote bodies.
  */
 public class FootnoteBodyLayoutManager extends BlockStackingLayoutManager {
+    
+    /* Holds the Knuth elements of the footnote */
+    private LinkedList elementList = null;
 
     /**
      * Creates a new FootnoteBodyLayoutManager.
@@ -90,5 +93,19 @@ public class FootnoteBodyLayoutManager extends BlockStackingLayoutManager {
     protected FootnoteBody getFootnodeBodyFO() {
         return (FootnoteBody) fobj;
     }
+    
+    /**
+     * @return the elementList
+     */
+    public LinkedList getElementList() {
+        return elementList;
+    }
 
+    /**
+     * @param context
+     * @param alignment
+     */
+    public void getKnuthElements(LayoutContext context, int alignment) {
+        this.elementList = getNextKnuthElements(context, alignment);
+    }
 }

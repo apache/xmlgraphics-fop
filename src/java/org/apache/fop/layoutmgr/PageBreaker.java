@@ -144,68 +144,57 @@ public class PageBreaker extends AbstractBreaker {
         while (!childFLM.isFinished() && contentList == null) {
             contentList = childFLM.getNextKnuthElements(context, alignment);
         }
-            /* postpone getting footnote elements
-            getFootnoteKnuthElements(contentList, context, alignment);
-            */
-            return contentList;
-        } 
+        boolean bFootNotesPresent = getFootnoteKnuthElements(contentList, context, alignment);
+        if (bFootNotesPresent) {
+                getFootnoteSeparator();
+        }
+        return contentList;
+    } 
            
-        private void getFootnoteKnuthElements(LinkedList contentList,
-                                              LayoutContext context, int alignment) {
-        // scan contentList, searching for footnotes
+    private boolean getFootnoteKnuthElements(LinkedList contentList,
+                                             LayoutContext context, int alignment) {
         boolean bFootnotesPresent = false;
+        // scan contentList, searching for footnotes
         if (contentList != null) {
             ListIterator contentListIterator = contentList.listIterator();
             while (contentListIterator.hasNext()) {
                 ListElement element = (ListElement) contentListIterator.next();
-                if (element instanceof KnuthBlockBox
-                    && ((KnuthBlockBox) element).hasAnchors()) {
-                    // element represents a line with footnote citations
-                    bFootnotesPresent = true;
+                if (element instanceof ParagraphListElement) {
+                    ParagraphListElement elt = (ParagraphListElement) element;
                     LayoutContext footnoteContext = new LayoutContext(context);
                     footnoteContext.setStackLimit(context.getStackLimit());
                     footnoteContext.setRefIPD(pslm.getCurrentPV()
                             .getRegionReference(Constants.FO_REGION_BODY).getIPD());
-                    LinkedList footnoteBodyLMs = ((KnuthBlockBox) element).getFootnoteBodyLMs();
-                    ListIterator footnoteBodyIterator = footnoteBodyLMs.listIterator();
-                    // store the lists of elements representing the footnote bodies
-                    // in the box representing the line containing their references
-                    while (footnoteBodyIterator.hasNext()) {
-                        FootnoteBodyLayoutManager fblm 
-                            = (FootnoteBodyLayoutManager) footnoteBodyIterator.next();
-                        fblm.setParent(childFLM);
-                        fblm.initialize();
-                        ((KnuthBlockBox) element).addElementList(
-                                fblm.getNextKnuthElements(footnoteContext, alignment));
-                    }
+                    bFootnotesPresent |= elt.getFootnoteKnuthElements(childFLM, footnoteContext, alignment);
                 }
             }
         }
+        return bFootnotesPresent;
+    }
+        
+    private void getFootnoteSeparator() {
+        // handle the footnote separator
+        StaticContent footnoteSeparator;
+        footnoteSeparator = pslm.getPageSequence().getStaticContent("xsl-footnote-separator");
+        if (footnoteSeparator != null) {
+            // the footnote separator can contain page-dependent content such as
+            // page numbers or retrieve markers, so its areas cannot simply be 
+            // obtained now and repeated in each page;
+            // we need to know in advance the separator bpd: the actual separator
+            // could be different from page to page, but its bpd would likely be
+            // always the same
 
-        if (bFootnotesPresent) {
-            // handle the footnote separator
-            StaticContent footnoteSeparator;
-            footnoteSeparator = pslm.getPageSequence().getStaticContent("xsl-footnote-separator");
-            if (footnoteSeparator != null) {
-                // the footnote separator can contain page-dependent content such as
-                // page numbers or retrieve markers, so its areas cannot simply be 
-                // obtained now and repeated in each page;
-                // we need to know in advance the separator bpd: the actual separator
-                // could be different from page to page, but its bpd would likely be
-                // always the same
+            // create a Block area that will contain the separator areas
+            separatorArea = new Block();
+            separatorArea.setIPD(pslm.getCurrentPV()
+                                 .getRegionReference(Constants.FO_REGION_BODY).getIPD());
+            // create a StaticContentLM for the footnote separator
+            footnoteSeparatorLM = (StaticContentLayoutManager)
+            pslm.getLayoutManagerMaker().makeStaticContentLayoutManager(
+                                                                        pslm, footnoteSeparator, separatorArea);
+            footnoteSeparatorLM.doLayout();
 
-                // create a Block area that will contain the separator areas
-                separatorArea = new Block();
-                separatorArea.setIPD(pslm.getCurrentPV()
-                            .getRegionReference(Constants.FO_REGION_BODY).getIPD());
-                // create a StaticContentLM for the footnote separator
-                footnoteSeparatorLM = (StaticContentLayoutManager)
-                    pslm.getLayoutManagerMaker().makeStaticContentLayoutManager(
-                    pslm, footnoteSeparator, separatorArea);
-                footnoteSeparatorLM.doLayout();
-
-                footnoteSeparatorLength = new MinOptMax(separatorArea.getBPD());
-            }
+            footnoteSeparatorLength = new MinOptMax(separatorArea.getBPD());
         }
     }
     

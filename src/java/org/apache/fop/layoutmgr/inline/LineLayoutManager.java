@@ -526,8 +526,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
 
     /**
      * Creates the element list in BP direction.
-     * @param alignment the currently applicable vertical alignment
-     * @param context the layout context
      * @return the newly built element list
      */
     private LinkedList postProcessSequences() {
@@ -553,7 +551,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 returnList.addAll(seq); 
             } else if (seq.isInlineSequence()) {
                 Position returnPosition = new LeafPosition(this, p);
-                ListElement elt = new ParagraphListElement((KnuthParagraph) seq, returnPosition); 
+                ListElement elt = new ParagraphListElement((KnuthParagraph) seq, returnPosition);
                 returnList.add(elt);
             }
         }
