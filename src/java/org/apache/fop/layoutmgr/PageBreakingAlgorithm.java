@@ -216,7 +216,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     protected void handleBox(KnuthBox box) {
         if (box instanceof KnuthBlockBox
             && ((KnuthBlockBox) box).hasAnchors()) {
-            handleFootnotes(((KnuthBlockBox) box).getElementLists());
+            handleFootnotes(((KnuthBlockBox) box).getFootnoteElementLists());
             if (!newFootnotes) {
                 newFootnotes = true;
                 firstNewFootnoteIndex = footnotesList.size() - 1;
@@ -279,7 +279,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                 KnuthElement resettedElement = getElement(j);
                 if (resettedElement instanceof KnuthBlockBox
                     && ((KnuthBlockBox) resettedElement).hasAnchors()) {
-                    resetFootnotes(((KnuthBlockBox) resettedElement).getElementLists());
+                    resetFootnotes(((KnuthBlockBox) resettedElement).getFootnoteElementLists());
                 }
             }
         }

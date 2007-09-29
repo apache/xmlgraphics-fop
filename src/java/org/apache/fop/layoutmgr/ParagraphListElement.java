@@ -20,7 +20,9 @@ package org.apache.fop.layoutmgr;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.ListIterator;
 
+import org.apache.fop.layoutmgr.inline.KnuthInlineBox;
 import org.apache.fop.layoutmgr.inline.KnuthParagraph;
 
 /**
@@ -58,7 +60,7 @@ public class ParagraphListElement extends ListElement {
         wrapPositions(returnList);
         return returnList;
     }
-    
+
     /**
      * Wrap the position in each element in list in a position stack
      * which is a copy of the position stack of this paragraph list element.
@@ -74,4 +76,23 @@ public class ParagraphListElement extends ListElement {
         }
     }
 
+    public boolean getFootnoteKnuthElements(LayoutManager lm, LayoutContext context, int alignment) {
+        boolean bFootnotesPresent = false;
+        if (para != null) {
+            ListIterator paraListIterator = para.listIterator();
+            while (paraListIterator.hasNext()) {
+                ListElement element = (ListElement) paraListIterator.next();
+                if (element instanceof KnuthInlineBox
+                        && ((KnuthInlineBox) element).getFootnoteBodyLM() != null) {
+                    bFootnotesPresent = true;
+                    FootnoteBodyLayoutManager fblm = ((KnuthInlineBox) element).getFootnoteBodyLM();
+                    fblm.initialize();
+                    fblm.setParent(lm);
+                    fblm.getKnuthElements(context, alignment);
+                }
+            }
+        }
+        return bFootnotesPresent;
+    }
+    
 }
