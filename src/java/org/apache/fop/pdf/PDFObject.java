@@ -256,7 +256,11 @@ public abstract class PDFObject implements PDFWritable {
         } else if (obj instanceof PDFWritable) {
             sb.append(((PDFWritable)obj).toInlinePDFString());
         } else if (obj instanceof Number) {
-            sb.append(obj);
+            if (obj instanceof Double || obj instanceof Float) {
+                sb.append(PDFNumber.doubleOut(((Number)obj).doubleValue()));
+            } else {
+                sb.append(obj);
+            }
         } else if (obj instanceof Boolean) {
             sb.append(obj);
         } else {
