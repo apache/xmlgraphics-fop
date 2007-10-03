@@ -97,7 +97,7 @@ public class PDFImageXObject extends PDFXObject {
             put("ColorSpace", new PDFArray(new Object[] {new PDFName("ICCBased"), pdfICCStream}));
         } else {
             PDFDeviceColorSpace cs = pdfimage.getColorSpace();
-            put("ColorSpace", new PDFArray(new Object[] {new PDFName("ICCBased"), cs.getName()}));
+            put("ColorSpace", new PDFName(cs.getName()));
         }
 
         if (pdfimage.isInverted()) {
