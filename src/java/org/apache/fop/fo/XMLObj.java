@@ -25,7 +25,6 @@ import java.util.HashMap;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.apache.batik.dom.util.XMLSupport;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.util.ContentHandlerFactory.ObjectBuiltListener;
@@ -40,6 +39,8 @@ import org.xml.sax.Locator;
  */
 public abstract class XMLObj extends FONode implements ObjectBuiltListener {
 
+    private static final String XMLNS_NAMESPACE_URI = "http://www.w3.org/2000/xmlns/";
+    
     // temp reference for attributes
     private Attributes attr = null;
 
@@ -174,8 +175,8 @@ public abstract class XMLObj extends FONode implements ObjectBuiltListener {
 
             element = doc.getDocumentElement();
             buildTopLevel(doc, element);
-            if (!element.hasAttributeNS(XMLSupport.XMLNS_NAMESPACE_URI, "xmlns")) {
-                element.setAttributeNS(XMLSupport.XMLNS_NAMESPACE_URI, "xmlns",
+            if (!element.hasAttributeNS(XMLNS_NAMESPACE_URI, "xmlns")) {
+                element.setAttributeNS(XMLNS_NAMESPACE_URI, "xmlns",
                                 getNamespaceURI());
             }
             
