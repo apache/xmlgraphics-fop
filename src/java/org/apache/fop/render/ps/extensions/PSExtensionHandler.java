@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id$ */
+/* $Id: $ */
 
 package org.apache.fop.render.ps.extensions;
 
@@ -39,24 +39,24 @@ public class PSExtensionHandler extends DefaultHandler
     private StringBuffer content = new StringBuffer();
     private Attributes lastAttributes;
     
-    private PSSetupCode returnedObject;
+    private PSExtensionAttachment returnedObject;
     private ObjectBuiltListener listener;
     
     /** {@inheritDoc} */
     public void startElement(String uri, String localName, String qName, Attributes attributes) 
                 throws SAXException {
         boolean handled = false;
-        if (PSSetupCode.CATEGORY.equals(uri)) {
+        if (PSExtensionAttachment.CATEGORY.equals(uri)) {
             lastAttributes = attributes;
-            handled = true; 
-            if ("ps-setup-code".equals(localName)) {
+            handled = false;
+            if (localName.equals(PSSetupCode.ELEMENT)
+                    || localName.equals(PSSetPageDevice.ELEMENT)) {
                 //handled in endElement
-            } else {
-                handled = false;
+                handled = true;
             }
         }
         if (!handled) {
-            if (PSSetupCode.CATEGORY.equals(uri)) {
+            if (PSExtensionAttachment.CATEGORY.equals(uri)) {
                 throw new SAXException("Unhandled element " + localName 
                         + " in namespace: " + uri);
             } else {
@@ -68,10 +68,13 @@ public class PSExtensionHandler extends DefaultHandler
 
     /** {@inheritDoc} */
     public void endElement(String uri, String localName, String qName) throws SAXException {
-        if (PSSetupCode.CATEGORY.equals(uri)) {
-            if ("ps-setup-code".equals(localName)) {
+        if (PSExtensionAttachment.CATEGORY.equals(uri)) {
+            if (PSSetupCode.ELEMENT.equals(localName)) {
                 String name = lastAttributes.getValue("name");
                 this.returnedObject = new PSSetupCode(name, content.toString());
+            } else if (PSSetPageDevice.ELEMENT.equals(localName)) {
+                String name = lastAttributes.getValue("name");
+                this.returnedObject = new PSSetPageDevice(name, content.toString());                
             }
         }    
         content.setLength(0); //Reset text buffer (see characters())
@@ -104,5 +107,4 @@ public class PSExtensionHandler extends DefaultHandler
     public void setObjectBuiltListener(ObjectBuiltListener listener) {
         this.listener = listener;
     }
-
 }

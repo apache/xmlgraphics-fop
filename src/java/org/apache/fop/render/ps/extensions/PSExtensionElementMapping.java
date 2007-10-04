@@ -41,6 +41,7 @@ public class PSExtensionElementMapping extends ElementMapping {
             foObjs = new java.util.HashMap();
             foObjs.put("ps-setup-code", new PSSetupCodeMaker());
             foObjs.put("ps-page-setup-code", new PSPageSetupCodeMaker());
+            foObjs.put("ps-setpagedevice", new PSSetPageDeviceMaker());
         }
     }
 
@@ -56,4 +57,9 @@ public class PSExtensionElementMapping extends ElementMapping {
         }
     }
 
+    static class PSSetPageDeviceMaker extends ElementMapping.Maker {
+        public FONode make(FONode parent) {
+            return new PSSetPageDeviceElement(parent);
+        }
+    }
 }
