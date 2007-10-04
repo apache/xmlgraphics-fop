@@ -49,8 +49,13 @@ public class PSRendererConfigurator extends PrintRendererConfigurator {
             super.configure(renderer);
 
             PSRenderer psRenderer = (PSRenderer)renderer;
+            
             psRenderer.setAutoRotateLandscape(
                 cfg.getChild("auto-rotate-landscape").getValueAsBoolean(false));
+            psRenderer.setSafeSetPageDevice(
+                cfg.getChild("safe-set-page-device").getValueAsBoolean(false));
+            psRenderer.setDSCCompliant(
+                cfg.getChild("dsc-compliant").getValueAsBoolean(true));
         }
     }
 }

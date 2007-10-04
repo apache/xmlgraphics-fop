@@ -19,10 +19,6 @@
 
 package org.apache.fop.render.ps.extensions;
 
-import java.io.Serializable;
-
-import org.apache.fop.fo.extensions.ExtensionAttachment;
-import org.apache.fop.util.XMLizable;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
@@ -30,19 +26,23 @@ import org.xml.sax.helpers.AttributesImpl;
 /**
  * This is the pass-through value object for the PostScript extension.
  */
-public class PSSetupCode implements ExtensionAttachment, Serializable, XMLizable {
-
-    /** The category URI for this extension attachment. */
-    public static final String CATEGORY = "apache:fop:extensions:postscript";
+public class PSSetupCode extends PSExtensionAttachment {
+    /**
+     * element name
+     */
+    protected static final String ELEMENT = "ps-setup-code";
     
-    private String name;
-    private String content;
+    private static final String ATT_NAME = "name";
+
+    /**
+     * name attribute
+     */
+    protected String name = null;
 
     /**
      * No-argument contructor.
      */
     public PSSetupCode() {
-        //nop
     }
     
     /**
@@ -51,23 +51,10 @@ public class PSSetupCode implements ExtensionAttachment, Serializable, XMLizable
      * @param content the content of the setup code object
      */
     public PSSetupCode(String name, String content) {
+        super(content);
         this.name = name;
-        this.content = content;
     }
-    
-    /** @return the content */
-    public String getContent() {
-        return content;
-    }
-    
-    /**
-     * Sets the content for the setup code object.
-     * @param content The content to set.
-     */
-    public void setContent(String content) {
-        this.content = content;
-    }
-    
+            
     /** @return the name */
     public String getName() {
         return name;
@@ -88,11 +75,16 @@ public class PSSetupCode implements ExtensionAttachment, Serializable, XMLizable
     
     /** {@inheritDoc} */
     public String toString() {
-        return "PSSetupCode(name=" + getName() + ")";
+        return "PSSetupCode(name=" + getName() + ", content='" + getContent() + "')";
     }
 
-    private static final String ATT_NAME = "name";
-    private static final String ELEMENT = "ps-setup-code";
+    /**
+     * @return the element name
+     * @see org.apache.fop.render.ps.extensions.PSExtensionAttachment#getElement()
+     */
+    protected String getElement() {
+        return ELEMENT;
+    }
     
     /** {@inheritDoc} */
     public void toSAX(ContentHandler handler) throws SAXException {
@@ -100,12 +92,12 @@ public class PSSetupCode implements ExtensionAttachment, Serializable, XMLizable
         if (name != null && name.length() > 0) {
             atts.addAttribute(null, ATT_NAME, ATT_NAME, "CDATA", name);
         }
-        handler.startElement(CATEGORY, ELEMENT, ELEMENT, atts);
+        String element = getElement();
+        handler.startElement(CATEGORY, element, element, atts);
         if (content != null && content.length() > 0) {
             char[] chars = content.toCharArray();
             handler.characters(chars, 0, chars.length);
         }
-        handler.endElement(CATEGORY, ELEMENT, ELEMENT);
+        handler.endElement(CATEGORY, element, element);
     }
-    
 }

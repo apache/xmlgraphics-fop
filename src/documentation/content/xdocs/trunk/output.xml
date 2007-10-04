@@ -212,6 +212,8 @@ out = proc.getOutputStream();]]></source>
   <auto-rotate-landscape>false</auto-rotate-landscape>
   <language-level>3</language-level>
   <optimize-resources>false</optimize-resources>
+  <safe-set-page-device>false</safe-set-page-device>
+  <dsc-compliant>true</dsc-compliant>
 </renderer>]]></source>
       <p>
         The default value for the "auto-rotate-landscape" setting is "false". Setting it
@@ -229,6 +231,20 @@ out = proc.getOutputStream();]]></source>
         used and images are added to the stream only once as PostScript forms. This will
         reduce file size but can potentially increase the memory needed in the interpreter
         to process.
+      </p>
+      <p>
+        The default value for the "safe-set-page-device" setting is "false". Setting it
+        to "true" will cause the renderer to invoke a postscript macro which guards against
+        the possibility of invalid/unsupported postscript key/values being issued to the
+        implementing postscript page device. 
+      </p>
+      <p>
+        The default value for the "dsc-compliant" setting is "true". Setting it
+        to "false" will break DSC compliance by minimizing the number of setpagedevice
+        calls in the postscript document output.  This feature may be useful when unwanted
+        blank pages are experienced in your postscript output.  This problem is caused by
+        the particular postscript implementation issuing unwanted postscript subsystem
+        initgraphics/erasepage calls on each setpagedevice call.
       </p>
     </section>
   <section id="ps-limitations">
@@ -819,4 +835,5 @@ out = proc.getOutputStream();]]></source>
 
   </body>
 </document>
+
 
