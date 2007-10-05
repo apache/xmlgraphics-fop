@@ -563,7 +563,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
     }
 
     private void useColor(Color col) throws IOException {
-        gen.useRGBColor(col);
+        gen.useColor(col);
     }
 
     /** {@inheritDoc}
@@ -677,11 +677,11 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
                         float h3 = h / 3;
                         gen.useLineWidth(h3);
                         float ym1 = y1 + (h3 / 2);
-                        gen.useRGBColor(uppercol);
+                        gen.useColor(uppercol);
                         drawLine(x1, ym1, x2, ym1);
-                        gen.useRGBColor(col);
+                        gen.useColor(col);
                         drawLine(x1, ym1 + h3, x2, ym1 + h3);
-                        gen.useRGBColor(lowercol);
+                        gen.useColor(lowercol);
                         drawLine(x1, ym1 + h3 + h3, x2, ym1 + h3 + h3);
                     } else {
                         Color leftcol = lightenColor(col, -colFactor);
@@ -689,11 +689,11 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
                         float w3 = w / 3;
                         gen.useLineWidth(w3);
                         float xm1 = x1 + (w3 / 2);
-                        gen.useRGBColor(leftcol);
+                        gen.useColor(leftcol);
                         drawLine(xm1, y1, xm1, y2);
-                        gen.useRGBColor(col);
+                        gen.useColor(col);
                         drawLine(xm1 + w3, y1, xm1 + w3, y2);
-                        gen.useRGBColor(rightcol);
+                        gen.useColor(rightcol);
                         drawLine(xm1 + w3 + w3, y1, xm1 + w3 + w3, y2);
                     }
                     break;
@@ -705,13 +705,13 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
                         Color c = lightenColor(col, (startOrBefore ? 1 : -1) * colFactor);
                         gen.useLineWidth(h);
                         float ym1 = y1 + (h / 2);
-                        gen.useRGBColor(c);
+                        gen.useColor(c);
                         drawLine(x1, ym1, x2, ym1);
                     } else {
                         Color c = lightenColor(col, (startOrBefore ? 1 : -1) * colFactor);
                         gen.useLineWidth(w);
                         float xm1 = x1 + (w / 2);
-                        gen.useRGBColor(c);
+                        gen.useColor(c);
                         drawLine(xm1, y1, xm1, y2);
                     }
                     break;
@@ -1356,14 +1356,14 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
                 case EN_RIDGE:
                     float half = area.getRuleThickness() / 2000f;
     
-                    gen.useRGBColor(lightenColor(col, 0.6f));
+                    gen.useColor(lightenColor(col, 0.6f));
                     moveTo(startx, starty);
                     lineTo(endx, starty);
                     lineTo(endx, starty + 2 * half);
                     lineTo(startx, starty + 2 * half);
                     closePath();
                     gen.writeln(" fill newpath");
-                    gen.useRGBColor(col);
+                    gen.useColor(col);
                     if (style == EN_GROOVE) {
                         moveTo(startx, starty);
                         lineTo(endx, starty);
