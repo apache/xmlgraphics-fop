@@ -22,7 +22,6 @@ package org.apache.fop.render.afp.modca;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 /**
@@ -64,6 +63,7 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
     /**
      * Construct a new PresentationTextObject for the specified name argument,
      * the name should be an 8 character identifier.
+     * @param name the name of this presentation object
      */
     public PresentationTextObject(String name) {
 
@@ -89,7 +89,8 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
      * @param data
      *            The text data to be created.
      */
-    public void createTextData(int fontNumber, int x, int y, Color col, int vsci, int ica, byte[] data) {
+    public void createTextData(int fontNumber, int x, int y, Color col,
+            int vsci, int ica, byte[] data) {
 
         // Use a default orientation of zero
         createTextData(fontNumber, x, y, 0, col, vsci, ica, data);
@@ -225,7 +226,7 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
     /**
      * Accessor method to write the AFP datastream for the PresentationTextObject.
      * @param os The stream to write to
-     * @throws java.io.IOException
+     * @throws java.io.IOException thrown if an I/O exception of some sort has occurred
      */
     public void writeDataStream(OutputStream os)
         throws IOException {
@@ -238,9 +239,13 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
 
     }
 
+    /**
+     * Returns the name of this presentation text object
+     * @return the name of this presentation text object
+     */
     public String getName() {
 
-        return _name;
+        return name;
 
     }
 
@@ -263,9 +268,9 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
         data[7] = 0x00; // Reserved
         data[8] = 0x00; // Reserved
 
-        for (int i = 0; i < _nameBytes.length; i++) {
+        for (int i = 0; i < nameBytes.length; i++) {
 
-            data[9 + i] = _nameBytes[i];
+            data[9 + i] = nameBytes[i];
 
         }
 
@@ -293,9 +298,9 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
         data[7] = 0x00; // Reserved
         data[8] = 0x00; // Reserved
 
-        for (int i = 0; i < _nameBytes.length; i++) {
+        for (int i = 0; i < nameBytes.length; i++) {
 
-            data[9 + i] = _nameBytes[i];
+            data[9 + i] = nameBytes[i];
 
         }
 

@@ -20,7 +20,6 @@
 package org.apache.fop.render.afp.modca;
 
 import java.awt.Color;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,47 +51,47 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
     /**
      * The active environment group for the page
      */
-    protected ActiveEnvironmentGroup _activeEnvironmentGroup = null;
+    protected ActiveEnvironmentGroup activeEnvironmentGroup = null;
 
     /**
      * The presentation text object, we only have one per page
      */
-    private PresentationTextObject _presentationTextObject = null;
+    private PresentationTextObject presentationTextObject = null;
 
     /**
      * The list of objects within the page
      */
-    protected List _objects = new ArrayList();
+    protected List objects = new ArrayList();
 
     /**
      * The list of tag logical elements
      */
-    protected ArrayList _tagLogicalElements = new ArrayList();
+    protected ArrayList tagLogicalElements = new ArrayList();
 
     /**
      * The list of the include page segments
      */
-    protected ArrayList _segments = new ArrayList();
+    protected ArrayList segments = new ArrayList();
 
     /**
      * The page width
      */
-    private int _width;
+    private int width;
 
     /**
      * The page height
      */
-    private int _height;
+    private int height;
 
     /**
      * The page rotation
      */
-    private int _rotation = 0;
+    private int rotation = 0;
 
     /**
      * The page state
      */
-    private boolean _complete = false;
+    private boolean complete = false;
 
     /**
      * Construct a new page object for the specified name argument, the page
@@ -106,41 +105,45 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
      *            the height of the page.
      * @param rotation
      *            the rotation of the page.
+     * @param widthResolution
+     *            the width resolution of the page.
+     * @param heightResolution
+     *            the height resolution of the page.
      */
-    public AbstractPageObject(String name, int width, int height, int rotation) {
+    public AbstractPageObject(String name, int width, int height, int rotation,
+            int widthResolution, int heightResolution) {
 
         super(name);
-
-        _name = name;
-
-        _rotation = rotation;
-        _width = width;
-        _height = height;
+        this.width = width;
+        this.height = height;
+        this.rotation = rotation;
 
         /**
          * Every page object must have an ActiveEnvironmentGroup
          */
-        _activeEnvironmentGroup = new ActiveEnvironmentGroup(_width, _height);
+        activeEnvironmentGroup = new ActiveEnvironmentGroup(width, height,
+                widthResolution, heightResolution);
 
-        if (_rotation != 0) {
-            switch (_rotation) {
+        if (rotation != 0) {
+            switch (rotation) {
                 case 90:
-                    _activeEnvironmentGroup.setPosition(_width, 0, _rotation);
+                    activeEnvironmentGroup.setPosition(width, 0, rotation);
                     break;
                 case 180:
-                    _activeEnvironmentGroup.setPosition(_width, _height, _rotation);
+                    activeEnvironmentGroup.setPosition(width, height, rotation);
                     break;
                 case 270:
-                    _activeEnvironmentGroup.setPosition(0, _height, _rotation);
+                    activeEnvironmentGroup.setPosition(0, height, rotation);
                     break;
+                default:
             }
         }
 
         /**
          * We have a presentation text object per page
          */
-        _presentationTextObject = new PresentationTextObject();
-        _objects.add(_presentationTextObject);
+        presentationTextObject = new PresentationTextObject();
+        objects.add(presentationTextObject);
 
     }
 
@@ -158,7 +161,7 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
      */
     public void createFont(byte fontReference, AFPFont font, int size) {
 
-        _activeEnvironmentGroup.createFont(fontReference, font, size, 0);
+        activeEnvironmentGroup.createFont(fontReference, font, size, 0);
 
     }
 
@@ -176,18 +179,19 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
      *            the second y coordinate of the line
      * @param thickness
      *            the thickness of the line
-     * @param rotation
+     * @param lineRotation
      *            the rotation of the line
      * @param col
      *            The text color.
      */
-    public void createLine(int x1, int y1, int x2, int y2, int thickness, int rotation, Color col) {
+    public void createLine(int x1, int y1, int x2, int y2, int thickness,
+            int lineRotation, Color col) {
 
-        if (_presentationTextObject == null) {
-            _presentationTextObject = new PresentationTextObject();
-            _objects.add(_presentationTextObject);
+        if (presentationTextObject == null) {
+            presentationTextObject = new PresentationTextObject();
+            objects.add(presentationTextObject);
         }
-        _presentationTextObject.createLineData(x1, y1, x2, y2, thickness, rotation, col);
+        presentationTextObject.createLineData(x1, y1, x2, y2, thickness, lineRotation, col);
 
     }
 
@@ -201,7 +205,7 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
      *            the x coordinate of the text data
      * @param y
      *            the y coordinate of the text data
-     * @param rotation
+     * @param textRotation
      *            the rotation of the text data
      * @param col
      *            the text color
@@ -212,13 +216,14 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
      * @param data
      *            the text data to create
      */
-    public void createText(int fontNumber, int x, int y, int rotation, Color col, int vsci, int ica, byte[] data) {
+    public void createText(int fontNumber, int x, int y, int textRotation, Color col,
+            int vsci, int ica, byte[] data) {
 
-        if (_presentationTextObject == null) {
-            _presentationTextObject = new PresentationTextObject();
-            _objects.add(_presentationTextObject);
+        if (presentationTextObject == null) {
+            presentationTextObject = new PresentationTextObject();
+            objects.add(presentationTextObject);
         }
-        _presentationTextObject.createTextData(fontNumber, x, y, rotation, col, vsci, ica, data);
+        presentationTextObject.createTextData(fontNumber, x, y, textRotation, col, vsci, ica, data);
 
     }
 
@@ -228,11 +233,11 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
      */
     public void endPage() {
 
-        if (_presentationTextObject != null) {
-            _presentationTextObject.endControlSequence();
+        if (presentationTextObject != null) {
+            presentationTextObject.endControlSequence();
         }
 
-        _complete = true;
+        complete = true;
 
     }
 
@@ -261,33 +266,33 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
 
         int xCoord = 0;
         int yCoord = 0;
-        int width = 0;
-        int height = 0;
+        int areaWidth = 0;
+        int areaHeight = 0;
 
-        switch (_rotation) {
+        switch (rotation) {
             case 90:
-                xCoord = _width - y - h;
+                xCoord = areaWidth - y - h;
                 yCoord = x;
-                width = h;
-                height = w;
+                areaWidth = h;
+                areaHeight = w;
                 break;
             case 180:
-                xCoord = _width - x - w;
-                yCoord = _height - y - h;
-                width = w;
-                height = h;
+                xCoord = areaWidth - x - w;
+                yCoord = areaHeight - y - h;
+                areaWidth = w;
+                areaHeight = h;
                 break;
             case 270:
                 xCoord = y;
-                yCoord = _height - x - w;
-                width = h;
-                height = w;
+                yCoord = areaHeight - x - w;
+                areaWidth = h;
+                areaHeight = w;
                 break;
             default:
                 xCoord = x;
                 yCoord = y;
-                width = w;
-                height = h;
+                areaWidth = w;
+                areaHeight = h;
                 break;
         }
 
@@ -297,19 +302,19 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
         int greyscale = Math.round((shade / 255) * 16);
 
         String imageName = "IMG"
-            + StringUtils.lpad(String.valueOf(_objects.size() + 1),
+            + StringUtils.lpad(String.valueOf(objects.size() + 1),
             '0', 5);
 
         IMImageObject io = new IMImageObject(imageName);
         ImageOutputControl ioc = new ImageOutputControl(0, 0);
         ImageInputDescriptor iid = new ImageInputDescriptor();
         ImageCellPosition icp = new ImageCellPosition(xCoord, yCoord);
-        icp.setXFillSize(width);
-        icp.setYFillSize(height);
+        icp.setXFillSize(areaWidth);
+        icp.setYFillSize(areaHeight);
         icp.setXSize(64);
         icp.setYSize(8);
 
-        //defing this as a resource
+        //defining this as a resource
         ImageRasterData ird = new ImageRasterData(ImageRasterPattern
             .getRasterData(greyscale));
 
@@ -317,27 +322,28 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
         io.setImageInputDescriptor(iid);
         io.setImageCellPosition(icp);
         io.setImageRasterData(ird);
-        _objects.add(io);
+        objects.add(io);
 
     }
 
     /**
      * Helper method to create an image on the current page and to return
      * the object.
+     * @return the image object
      */
     public ImageObject getImageObject() {
 
-        if (_presentationTextObject != null) {
-            _presentationTextObject.endControlSequence();
+        if (presentationTextObject != null) {
+            presentationTextObject.endControlSequence();
         }
-        _presentationTextObject = null;
+        presentationTextObject = null;
 
         String imageName = "IMG"
-            + StringUtils.lpad(String.valueOf(_objects.size() + 1),
+            + StringUtils.lpad(String.valueOf(objects.size() + 1),
             '0', 5);
 
         ImageObject io = new ImageObject(imageName);
-        _objects.add(io);
+        objects.add(io);
         return io;
     }
 
@@ -352,7 +358,7 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
     public void createTagLogicalElement(String name, String value) {
 
         TagLogicalElement tle = new TagLogicalElement(name, value);
-        _tagLogicalElements.add(tle);
+        tagLogicalElements.add(tle);
 
     }
 
@@ -364,7 +370,7 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
     public void createNoOperation(String content) {
 
         NoOperation noOp = new NoOperation(content);
-        _objects.add(noOp);
+        objects.add(noOp);
 
     }
 
@@ -381,7 +387,7 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
     public void createIncludePageSegment(String name, int xCoor, int yCoor) {
 
         IncludePageSegment ips = new IncludePageSegment(name, xCoor, yCoor);
-        _segments.add(ips);
+        segments.add(ips);
 
     }
 
@@ -391,35 +397,39 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
      * @return the ActiveEnvironmentGroup object
      */
     public ActiveEnvironmentGroup getActiveEnvironmentGroup() {
-        return _activeEnvironmentGroup;
+        return activeEnvironmentGroup;
     }
 
     /**
      * Returns an indication if the page is complete
+     * @return whether this page is complete
      */
     public boolean isComplete() {
-        return _complete;
+        return complete;
     }
 
     /**
      * Returns the height of the page
+     * @return the height of the page
      */
     public int getHeight() {
-        return _height;
+        return height;
     }
 
     /**
      * Returns the width of the page
+     * @return the width of the page
      */
     public int getWidth() {
-        return _width;
+        return width;
     }
 
     /**
      * Returns the rotation of the page
+     * @return the rotation of the page
      */
     public int getRotation() {
-        return _rotation;
+        return rotation;
     }
 
 }

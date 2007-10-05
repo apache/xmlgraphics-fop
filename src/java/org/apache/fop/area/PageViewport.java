@@ -666,4 +666,9 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
     public RegionReference getRegionReference(int id) {
         return getPage().getRegionViewport(id).getRegionReference();
     }
+    
+    /** @return whether this page viewport has any extension attachments */
+    public boolean hasExtensionAttachments() {
+        return this.extensionAttachments != null && !this.extensionAttachments.isEmpty();
+    }
 }

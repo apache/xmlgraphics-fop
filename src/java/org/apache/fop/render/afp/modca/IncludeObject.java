@@ -21,7 +21,6 @@ package org.apache.fop.render.afp.modca;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
@@ -43,12 +42,12 @@ public class IncludeObject extends AbstractNamedAFPObject {
     /**
      * The object type
      */
-    private byte _objectType = (byte) 0x92;
+    private byte objectType = (byte) 0x92;
 
     /**
      * The orientation on the include object
      */
-    private int _orientation = 0;
+    private int orientation = 0;
 
     /**
      * Constructor for the include object with the specified name, the name must
@@ -61,12 +60,12 @@ public class IncludeObject extends AbstractNamedAFPObject {
     public IncludeObject(String name) {
 
         super(name);
-        _objectType = (byte) 0xFB;
+        objectType = (byte) 0xFB;
 
     }
 
     /**
-     * Sets the orienation to use for the Include Object.
+     * Sets the orientation to use for the Include Object.
      *
      * @param orientation
      *            The orientation (0,90, 180, 270)
@@ -75,7 +74,7 @@ public class IncludeObject extends AbstractNamedAFPObject {
 
         if (orientation == 0 || orientation == 90 || orientation == 180
             || orientation == 270) {
-            _orientation = orientation;
+            this.orientation = orientation;
         } else {
             throw new IllegalArgumentException(
                 "The orientation must be one of the values 0, 90, 180, 270");
@@ -86,7 +85,7 @@ public class IncludeObject extends AbstractNamedAFPObject {
     /**
      * Accessor method to write the AFP datastream for the Include Object
      * @param os The stream to write to
-     * @throws java.io.IOException
+     * @throws java.io.IOException thrown if an I/O exception of some sort has occurred
      */
     public void writeDataStream(OutputStream os)
         throws IOException {
@@ -109,12 +108,12 @@ public class IncludeObject extends AbstractNamedAFPObject {
         data[7] = 0x00; // Reserved
         data[8] = 0x00; // Reserved
 
-        for (int i = 0; i < _nameBytes.length; i++) {
-            data[9 + i] = _nameBytes[i];
+        for (int i = 0; i < nameBytes.length; i++) {
+            data[9 + i] = nameBytes[i];
         }
 
         data[17] = 0x00;
-        data[18] = _objectType;
+        data[18] = objectType;
 
         // XoaOset
         data[20] = (byte) 0xFF;
@@ -126,7 +125,7 @@ public class IncludeObject extends AbstractNamedAFPObject {
         data[24] = (byte) 0xFF;
         data[25] = (byte) 0xFF;
 
-        switch (_orientation) {
+        switch (orientation) {
             case 90:
                 data[26] = 0x2D;
                 data[27] = 0x00;

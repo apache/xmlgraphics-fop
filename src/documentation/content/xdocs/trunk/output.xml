@@ -212,6 +212,8 @@ out = proc.getOutputStream();]]></source>
   <auto-rotate-landscape>false</auto-rotate-landscape>
   <language-level>3</language-level>
   <optimize-resources>false</optimize-resources>
+  <safe-set-page-device>false</safe-set-page-device>
+  <dsc-compliant>true</dsc-compliant>
 </renderer>]]></source>
       <p>
         The default value for the "auto-rotate-landscape" setting is "false". Setting it
@@ -229,6 +231,20 @@ out = proc.getOutputStream();]]></source>
         used and images are added to the stream only once as PostScript forms. This will
         reduce file size but can potentially increase the memory needed in the interpreter
         to process.
+      </p>
+      <p>
+        The default value for the "safe-set-page-device" setting is "false". Setting it
+        to "true" will cause the renderer to invoke a postscript macro which guards against
+        the possibility of invalid/unsupported postscript key/values being issued to the
+        implementing postscript page device. 
+      </p>
+      <p>
+        The default value for the "dsc-compliant" setting is "true". Setting it
+        to "false" will break DSC compliance by minimizing the number of setpagedevice
+        calls in the postscript document output.  This feature may be useful when unwanted
+        blank pages are experienced in your postscript output.  This problem is caused by
+        the particular postscript implementation issuing unwanted postscript subsystem
+        initgraphics/erasepage calls on each setpagedevice call.
       </p>
     </section>
   <section id="ps-limitations">
@@ -313,6 +329,7 @@ out = proc.getOutputStream();]]></source>
 <source><![CDATA[<renderer mime="application/vnd.hp-PCL">
   <rendering>quality</rendering>
   <text-rendering>bitmap</text-rendering>
+  <disable-pjl>false</disable-pjl>
 </renderer>]]></source>
       <p>
         The default value for the "rendering" setting is "speed" which causes borders 
@@ -326,6 +343,12 @@ out = proc.getOutputStream();]]></source>
         base fonts using PCL fonts. Non-base fonts are painted as bitmaps through Java2D.
         If the mix of painting methods results in unwelcome output, you can set this
         to "bitmap" which causes all text to be rendered as bitmaps.
+      </p>
+      <p>
+        The default value for the "disable-pjl" setting is "false". This means that
+        the PCL renderer usually generates PJL commands before and after the document
+        in order to switch a printer into PCL language. PJL commands can be disabled
+        if you set this value to "true".
       </p>
       <p>
         You can control the output resolution for the PCL using the "target resolution" 
@@ -527,6 +550,13 @@ out = proc.getOutputStream();]]></source>
         <font-triplet name="monospace" style="normal" weight="bold"/>
         <font-triplet name="Courier" style="normal" weight="bold"/>
       </font>]]></source>
+      </section>
+      <section id="afp-renderer-resolution-config">
+        <title>Output Resolution</title>
+        <p>By default the AFP Renderer creates output with a resolution of 240 dpi.
+          This can be overridden by the &lt;renderer-resolution/&gt; configuration element. Example:</p>
+      <source><![CDATA[
+      <renderer-resolution>240</renderer-resolution>]]></source>
       </section>
       <section id="afp-image-config">
         <title>Images</title>
@@ -819,4 +849,5 @@ out = proc.getOutputStream();]]></source>
 
   </body>
 </document>
+
 

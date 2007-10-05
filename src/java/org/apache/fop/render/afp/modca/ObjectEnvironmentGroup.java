@@ -20,7 +20,6 @@
 package org.apache.fop.render.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 
 
 /**
@@ -44,17 +43,17 @@ public final class ObjectEnvironmentGroup extends AbstractNamedAFPObject {
     /**
      * The ObjectAreaDescriptor for the object environment group
      */
-    private ObjectAreaDescriptor _objectAreaDescriptor = null;
+    private ObjectAreaDescriptor objectAreaDescriptor = null;
 
     /**
      * The ObjectAreaPosition for the object environment group
      */
-    private ObjectAreaPosition _objectAreaPosition = null;
+    private ObjectAreaPosition objectAreaPosition = null;
 
     /**
      * The ImageDataDescriptor for the object environment group
      */
-    private ImageDataDescriptor _imageDataDescriptor = null;
+    private ImageDataDescriptor imageDataDescriptor = null;
 
     /**
      * Default constructor for the ObjectEnvironmentGroup.
@@ -83,11 +82,15 @@ public final class ObjectEnvironmentGroup extends AbstractNamedAFPObject {
      * @param width the object width
      * @param height the object height
      * @param rotation the object orientation
+     * @param widthResolution the object resolution width
+     * @param heightResolution the object resolution height
      */
-    public void setObjectArea(int x, int y, int width, int height, int rotation) {
+    public void setObjectArea(int x, int y, int width, int height, int rotation,
+            int widthResolution, int heightResolution) {
 
-        _objectAreaDescriptor = new ObjectAreaDescriptor(width, height);
-        _objectAreaPosition = new ObjectAreaPosition(x, y, rotation);
+        objectAreaDescriptor = new ObjectAreaDescriptor(width, height,
+                widthResolution, heightResolution);
+        objectAreaPosition = new ObjectAreaPosition(x, y, rotation);
 
     }
 
@@ -99,14 +102,14 @@ public final class ObjectEnvironmentGroup extends AbstractNamedAFPObject {
      * @param height the image height
      */
     public void setImageData(int xresol, int yresol, int width, int height) {
-        _imageDataDescriptor = new ImageDataDescriptor(xresol, yresol,  width, height);
+        imageDataDescriptor = new ImageDataDescriptor(xresol, yresol,  width, height);
     }
 
     /**
      * Accessor method to obtain write the AFP datastream for
      * the object environment group.
      * @param os The stream to write to
-     * @throws java.io.IOException
+     * @throws java.io.IOException throw if an I/O exception of some sort has occurred
      */
     public void writeDataStream(OutputStream os)
         throws IOException {
@@ -114,12 +117,12 @@ public final class ObjectEnvironmentGroup extends AbstractNamedAFPObject {
 
         writeStart(os);
 
-        _objectAreaDescriptor.writeDataStream(os);
+        objectAreaDescriptor.writeDataStream(os);
 
-        _objectAreaPosition.writeDataStream(os);
+        objectAreaPosition.writeDataStream(os);
 
-        if (_imageDataDescriptor != null) {
-            _imageDataDescriptor.writeDataStream(os);
+        if (imageDataDescriptor != null) {
+            imageDataDescriptor.writeDataStream(os);
         }
 
         writeEnd(os);
@@ -153,9 +156,9 @@ public final class ObjectEnvironmentGroup extends AbstractNamedAFPObject {
             0x00, //
         };
 
-        for (int i = 0; i < _nameBytes.length; i++) {
+        for (int i = 0; i < nameBytes.length; i++) {
 
-            data[9 + i] = _nameBytes[i];
+            data[9 + i] = nameBytes[i];
 
         }
 
@@ -182,9 +185,9 @@ public final class ObjectEnvironmentGroup extends AbstractNamedAFPObject {
         data[7] = 0x00; // Reserved
         data[8] = 0x00; // Reserved
 
-        for (int i = 0; i < _nameBytes.length; i++) {
+        for (int i = 0; i < nameBytes.length; i++) {
 
-            data[9 + i] = _nameBytes[i];
+            data[9 + i] = nameBytes[i];
 
         }
 

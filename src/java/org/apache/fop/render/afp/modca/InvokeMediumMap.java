@@ -21,7 +21,6 @@ package org.apache.fop.render.afp.modca;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
@@ -46,7 +45,7 @@ public class InvokeMediumMap extends AbstractNamedAFPObject {
     /**
      * Accessor method to write the AFP datastream for the Invoke Medium Map
      * @param os The stream to write to
-     * @throws java.io.IOException
+     * @throws java.io.IOException if an I/O exception of some sort has occurred
      */
     public void writeDataStream(OutputStream os)
         throws IOException {
@@ -69,9 +68,9 @@ public class InvokeMediumMap extends AbstractNamedAFPObject {
         data[7] = 0x00; // Reserved
         data[8] = 0x00; // Reserved
 
-        for (int i = 0; i < _nameBytes.length; i++) {
+        for (int i = 0; i < nameBytes.length; i++) {
 
-            data[9 + i] = _nameBytes[i];
+            data[9 + i] = nameBytes[i];
 
         }
 
