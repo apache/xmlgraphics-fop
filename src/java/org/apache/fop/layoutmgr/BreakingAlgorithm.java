@@ -19,6 +19,8 @@
 
 package org.apache.fop.layoutmgr;
 
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fo.FONode;
@@ -585,7 +587,7 @@ public abstract class BreakingAlgorithm {
      * @param seq the Knuth Sequence
      * @param startIndex the start index
      */
-    void resolveElements(KnuthSequence seq, int startIndex) {
+    void resolveElements(List seq, int startIndex) {
         ;
     }
 
