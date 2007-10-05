@@ -21,6 +21,7 @@ package org.apache.fop.layoutmgr;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
@@ -248,9 +249,11 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         while (elementListsIterator.hasNext()) {
             LinkedList noteList = (LinkedList) elementListsIterator.next();
             
-            //Space resolution (Note: this does not respect possible stacking constraints 
-            //between footnotes!)
-            SpaceResolver.resolveElementList(noteList);
+            /* Line breaking and space resolution
+             * (Note: this does not respect possible stacking constraints 
+             * between footnotes!)
+             */
+            resolveElements(noteList);
             
             int noteLength = 0;
             footnotesList.add(noteList);
@@ -803,22 +806,20 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                 ((KnuthPageNode) bestActiveNode).footnoteElementIndex,
                 ratio, difference));
     }
-
+    
     /**
      * This method iterates over seq starting at startIndex.
      * If it finds a ParagraphListElement, the paragraph is broken into lines,
      * and the ParagraphListElement is replaced by the resulting elements.
-     * The iteration stops at the first resolved element (after line breaking).
      * Then space resolution is done on seq starting at startIndex.
-     * It is now guaranteed that seq does not to contain ParagraphListElements
-     * until the first resolved element.
      * @param seq the Knuth Sequence
      * @param startIndex the start index
+     * @param doall resolve all elements or not
      */
-    void resolveElements(KnuthSequence seq, int startIndex) {
+    void resolveElements(List seq, int startIndex, boolean doall) {
         for (int i = startIndex; i < seq.size(); ++i) {
             ListElement elt = (ListElement) seq.get(i);
-            if (!elt.isUnresolvedElement() && !(elt instanceof ParagraphListElement)) {
+            if (!doall && !elt.isUnresolvedElement() && !(elt instanceof ParagraphListElement)) {
                 break;
             }
             if (elt instanceof ParagraphListElement) {
@@ -827,10 +828,28 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                 seq.addAll(i, lineElts);
                 // consider the new element at i
                 --i;
-                continue;
             }
-        }        
-        SpaceResolver.resolveElementList(seq, startIndex);
+        }
+        SpaceResolver.resolveElementList(seq, startIndex, doall);
+    }
+
+    /**
+     * The iteration stops at the first resolved element (after line breaking).
+     * After space resolution it is guaranteed that seq does not to contain
+     * ParagraphListElements until the first resolved element.
+     * @param seq the Knuth Sequence
+     * @param startIndex the start index
+     */
+    void resolveElements(List seq, int startIndex) {
+        resolveElements(seq, startIndex, false);
+    }
+    
+    /**
+     * Resolve all elements in seq
+     * @param seq the Knuth Sequence
+     */
+    void resolveElements(List seq) {
+        resolveElements(seq, 0, true);
     }
 
     protected int filterActiveNodes() {
