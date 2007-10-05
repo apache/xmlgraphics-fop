@@ -28,6 +28,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix" fixes-bug="43439" due-to="Adrian Cumiskey">
+        Fixed the restoration of the TLE values from the intermediate format 
+        for the AFP extension elements.
+      </action>
       <action context="Code" dev="JM" type="add" fixes-bug="43041" due-to="Adrian Cumiskey">
         Added a configuration setting for the renderer/device resolution to the AFP renderer.
       </action>

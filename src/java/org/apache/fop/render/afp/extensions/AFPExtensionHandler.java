@@ -74,9 +74,15 @@ public class AFPExtensionHandler extends DefaultHandler
     /** {@inheritDoc} */
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (AFPPageSetup.CATEGORY.equals(uri)) {
-            String name = lastAttributes.getValue("name");
             this.returnedObject = new AFPPageSetup(localName);
-            returnedObject.setName(name);
+            String name = lastAttributes.getValue("name");
+            if (name != null) {
+                returnedObject.setName(name);
+            }
+            String value = lastAttributes.getValue("value");
+            if (value != null) {
+                returnedObject.setValue(value);
+            }
             if (content.length() > 0) {
                 returnedObject.setContent(content.toString());
                 content.setLength(0); //Reset text buffer (see characters())
