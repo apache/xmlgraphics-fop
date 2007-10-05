@@ -28,10 +28,14 @@
       <fo:layout-master-set>
         <fo:simple-page-master master-name="A4" page-height="29.7cm" page-width="21cm" margin-top="1cm" margin-bottom="2cm" margin-left="2.5cm" margin-right="2.5cm">
           <ps:ps-setpagedevice name="lower tray"><![CDATA[ << /MediaPosition /4 >> ]]></ps:ps-setpagedevice>
+          <ps:ps-comment-before>A4 before page</ps:ps-comment-before>
+          <ps:ps-comment-after>A4 after page</ps:ps-comment-after>
           <fo:region-body/>
         </fo:simple-page-master>
         <fo:simple-page-master master-name="A4a" page-height="29.7cm" page-width="21cm" margin-top="1cm" margin-bottom="2cm" margin-left="2.5cm" margin-right="2.5cm">
           <ps:ps-setpagedevice name="upper tray"><![CDATA[ << /MediaPosition /1 >> ]]></ps:ps-setpagedevice>
+          <ps:ps-comment-before>A4a before page</ps:ps-comment-before>
+          <ps:ps-comment-after>A4a after page</ps:ps-comment-after>
           <fo:region-body background-color="orange"/>
         </fo:simple-page-master>
         <fo:page-sequence-master master-name="complex">
@@ -42,6 +46,8 @@
       </fo:layout-master-set>
       <fo:declarations>
         <ps:ps-setpagedevice name="autofeed"><![CDATA[ << /ManualFeed false >> ]]></ps:ps-setpagedevice>
+        <ps:ps-comment-before>header comment</ps:ps-comment-before>
+        <ps:ps-comment-after>footer comment</ps:ps-comment-after>
       </fo:declarations>
       <fo:page-sequence master-reference="complex">
         <fo:flow flow-name="xsl-region-body">
@@ -55,16 +61,27 @@
   </fo:root>
   </fo>
   <checks>
-    <eval expected="1" xpath="count(/areaTree/child::extension-attachments/child::*)"/>
+    <eval expected="2" xpath="count(/areaTree/child::*)"/>
+    <eval expected="1" xpath="count(/areaTree/child::pageSequence)"/>
+    <eval expected="1" xpath="count(/areaTree/child::extension-attachments)"/>
+    <eval expected="3" xpath="count(/areaTree/child::extension-attachments/child::*)"/>
     <eval expected="autofeed"       xpath="/areaTree/extension-attachments/child::*[1]/@name"/>
+    <eval expected="header comment" xpath="/areaTree/extension-attachments/child::*[2]/text()"/>
+    <eval expected="footer comment" xpath="/areaTree/extension-attachments/child::*[3]/text()"/>
 
-    <eval expected="1" xpath="count(/areaTree/pageSequence/pageViewport[@simple-page-master-name='A4' and @nr=1]/page/extension-attachments/child::*)"/>
+    <eval expected="3" xpath="count(/areaTree/pageSequence/pageViewport[@simple-page-master-name='A4' and @nr=1]/page/extension-attachments/child::*)"/>
     <eval expected="lower tray" xpath="/areaTree/pageSequence/pageViewport[@simple-page-master-name='A4' and @nr=1]/page/extension-attachments/child::*[1]/@name"/>
+    <eval expected="A4 before page" xpath="/areaTree/pageSequence/pageViewport[@simple-page-master-name='A4' and @nr=1]/page/extension-attachments/child::*[2]"/>
+    <eval expected="A4 after page" xpath="/areaTree/pageSequence/pageViewport[@simple-page-master-name='A4' and @nr=1]/page/extension-attachments/child::*[3]"/>
 
-    <eval expected="1" xpath="count(/areaTree/pageSequence/pageViewport[@simple-page-master-name='A4a' and @nr=2]/page/extension-attachments/child::*)"/>
+    <eval expected="3" xpath="count(/areaTree/pageSequence/pageViewport[@simple-page-master-name='A4a' and @nr=2]/page/extension-attachments/child::*)"/>
     <eval expected="upper tray" xpath="/areaTree/pageSequence/pageViewport[@simple-page-master-name='A4a' and @nr=2]/page/extension-attachments/child::*[1]/@name"/>
+    <eval expected="A4a before page" xpath="/areaTree/pageSequence/pageViewport[@simple-page-master-name='A4a' and @nr=2]/page/extension-attachments/child::*[2]"/>
+    <eval expected="A4a after page" xpath="/areaTree/pageSequence/pageViewport[@simple-page-master-name='A4a' and @nr=2]/page/extension-attachments/child::*[3]"/>
 
-    <eval expected="1" xpath="count(/areaTree/pageSequence/pageViewport[@simple-page-master-name='A4' and @nr=3]/page/extension-attachments/child::*)"/>
+    <eval expected="3" xpath="count(/areaTree/pageSequence/pageViewport[@simple-page-master-name='A4' and @nr=3]/page/extension-attachments/child::*)"/>
     <eval expected="lower tray" xpath="/areaTree/pageSequence/pageViewport[@simple-page-master-name='A4' and @nr=3]/page/extension-attachments/child::*[1]/@name"/>
+    <eval expected="A4 before page" xpath="/areaTree/pageSequence/pageViewport[@simple-page-master-name='A4' and @nr=3]/page/extension-attachments/child::*[2]"/>
+    <eval expected="A4 after page" xpath="/areaTree/pageSequence/pageViewport[@simple-page-master-name='A4' and @nr=3]/page/extension-attachments/child::*[3]"/>
   </checks>
 </testcase>
