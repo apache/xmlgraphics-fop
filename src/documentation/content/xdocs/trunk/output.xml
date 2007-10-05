@@ -329,6 +329,7 @@ out = proc.getOutputStream();]]></source>
 <source><![CDATA[<renderer mime="application/vnd.hp-PCL">
   <rendering>quality</rendering>
   <text-rendering>bitmap</text-rendering>
+  <disable-pjl>false</disable-pjl>
 </renderer>]]></source>
       <p>
         The default value for the "rendering" setting is "speed" which causes borders 
@@ -342,6 +343,12 @@ out = proc.getOutputStream();]]></source>
         base fonts using PCL fonts. Non-base fonts are painted as bitmaps through Java2D.
         If the mix of painting methods results in unwelcome output, you can set this
         to "bitmap" which causes all text to be rendered as bitmaps.
+      </p>
+      <p>
+        The default value for the "disable-pjl" setting is "false". This means that
+        the PCL renderer usually generates PJL commands before and after the document
+        in order to switch a printer into PCL language. PJL commands can be disabled
+        if you set this value to "true".
       </p>
       <p>
         You can control the output resolution for the PCL using the "target resolution" 

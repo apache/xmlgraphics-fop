@@ -48,6 +48,7 @@ public class PCLRendererConfigurator extends PrintRendererConfigurator {
         Configuration cfg = super.getRendererConfig(renderer);
         if (cfg != null) {
             PCLRenderer pclRenderer = (PCLRenderer)renderer;
+            
             String rendering = cfg.getChild("rendering").getValue(null);
             if ("quality".equalsIgnoreCase(rendering)) {
                 pclRenderer.setQualityBeforeSpeed(true);
@@ -58,6 +59,7 @@ public class PCLRendererConfigurator extends PrintRendererConfigurator {
                         "Valid values for 'rendering' are 'quality' and 'speed'. Value found: " 
                             + rendering);
             }
+            
             String textRendering = cfg.getChild("text-rendering").getValue(null);
             if ("bitmap".equalsIgnoreCase(textRendering)) {
                 pclRenderer.setAllTextAsBitmaps(true);
@@ -68,6 +70,8 @@ public class PCLRendererConfigurator extends PrintRendererConfigurator {
                         "Valid values for 'text-rendering' are 'auto' and 'bitmap'. Value found: " 
                             + textRendering);
             }
+            
+            pclRenderer.setPJLDisabled(cfg.getChild("disable-pjl").getValueAsBoolean(false));
         }
     }
 }

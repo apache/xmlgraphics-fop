@@ -28,6 +28,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="add">
+        Added a configuration setting to the PCL renderer to disable PJL commands.
+      </action>
       <action context="Code" dev="JM" type="fix" fixes-bug="43464" due-to="Bruno Feurer">
         Fix to avoid a ClassCastException in renderer configuration.
       </action>
