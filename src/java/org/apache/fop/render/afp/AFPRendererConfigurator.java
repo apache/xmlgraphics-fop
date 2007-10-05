@@ -41,7 +41,7 @@ import org.apache.fop.util.LogUtil;
  * AFP Renderer configurator 
  */
 public class AFPRendererConfigurator extends PrintRendererConfigurator {
-
+    
     /**
      * Default constructor
      * @param userAgent user agent
@@ -229,12 +229,17 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
                 LogUtil.handleException(log, e,
                         userAgent.getFactory().validateUserConfigStrictly());
             }
-            
-            Configuration images = cfg.getChild("images");
-            if (!"color".equalsIgnoreCase(images.getAttribute("mode", "b+w"))) {
-                afpRenderer.setBitsPerPixel(images.getAttributeAsInteger("bits-per-pixel", 8));
+                        
+            Configuration imagesCfg = cfg.getChild("images");
+            if (!"color".equalsIgnoreCase(imagesCfg.getAttribute("mode", "b+w"))) {
+                afpRenderer.setBitsPerPixel(imagesCfg.getAttributeAsInteger("bits-per-pixel", 8));
             } else {
                 afpRenderer.setColorImages(true);
+            }
+            
+            Configuration rendererResolutionCfg = cfg.getChild("renderer-resolution", false);
+            if (rendererResolutionCfg != null) {
+                afpRenderer.setResolution(rendererResolutionCfg.getValueAsInteger(240));
             }
         }
     }

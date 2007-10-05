@@ -109,7 +109,8 @@ public class AFPPageSetup implements ExtensionAttachment, Serializable, XMLizabl
 
     /** {@inheritDoc} */
     public String toString() {
-        return "AFPPageSetup(element-name=" + getElementName() + " name=" + getName() + ")";
+        return "AFPPageSetup(element-name=" + getElementName() 
+            + " name=" + getName() + " value=" + getValue() + ")";
     }
 
     private static final String ATT_NAME = "name";

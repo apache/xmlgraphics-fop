@@ -20,10 +20,11 @@
 package org.apache.fop.fonts;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
-import org.apache.xml.utils.URI;
-import org.apache.xml.utils.URI.MalformedURIException;
+import org.apache.commons.io.FileUtils;
 
 /**
  * Font info stored in the cache 
@@ -45,16 +46,18 @@ public class CachedFontInfo extends EmbedFontInfo {
         for (int i = 0; i < urls.length; i++) {
             String urlStr = urls[i]; 
             if (urlStr != null) {
+                File fontFile = null;
                 if (urlStr.startsWith("file:")) {
-                    URI uri;
                     try {
-                        uri = new URI(urlStr);
-                        urlStr = uri.getPath();
-                    } catch (MalformedURIException e) {
+                        URL url = new URL(urlStr);
+                        fontFile = FileUtils.toFile(url);
+                    } catch (MalformedURLException mfue) {
                         // do nothing
                     }
                 }
-                File fontFile = new File(urlStr);
+                if (fontFile == null) {
+                    fontFile = new File(urlStr);
+                }
                 if (fontFile.exists() && fontFile.canRead()) {
                     return fontFile;
                 }

@@ -48,7 +48,7 @@ public class PageObject extends AbstractPageObject {
     /**
      * The resource group object
      */
-    private ResourceGroup _resourceGroup = null;
+    private ResourceGroup resourceGroup = null;
 
     /**
      * Construct a new page object for the specified name argument, the page
@@ -62,10 +62,15 @@ public class PageObject extends AbstractPageObject {
      *            the height of the page.
      * @param rotation
      *            the rotation of the page.
+     * @param widthResolution
+     *            the width resolution of the page.
+     * @param heightResolution
+     *            the height resolution of the page.
      */
-    public PageObject(String name, int width, int height, int rotation) {
+    public PageObject(String name, int width, int height, int rotation,
+            int widthResolution, int heightResolution) {
 
-        super(name, width, height, rotation);
+        super(name, width, height, rotation, widthResolution, heightResolution);
 
     }
 
@@ -74,10 +79,10 @@ public class PageObject extends AbstractPageObject {
      * @param overlay the overlay to add
      */
     public void addOverlay(Overlay overlay) {
-        if (_resourceGroup == null) {
-            _resourceGroup = new ResourceGroup();
+        if (resourceGroup == null) {
+            resourceGroup = new ResourceGroup();
         }
-        _resourceGroup.addOverlay(overlay);
+        resourceGroup.addOverlay(overlay);
     }
 
     /**
@@ -95,31 +100,31 @@ public class PageObject extends AbstractPageObject {
     public void createIncludePageOverlay(String name, int x, int y, int orientation) {
 
         IncludePageOverlay ipo = new IncludePageOverlay(name, x, y, orientation);
-        _objects.add(ipo);
+        objects.add(ipo);
 
     }
 
     /**
      * Accessor method to write the AFP datastream for the page.
      * @param os The stream to write to
-     * @throws java.io.IOException
+     * @throws java.io.IOException thrown if an I/O exception of some sort has occurred
      */
     public void writeDataStream(OutputStream os)
         throws IOException {
 
         writeStart(os);
 
-        if (_resourceGroup != null) {
-            _resourceGroup.writeDataStream(os);
+        if (resourceGroup != null) {
+            resourceGroup.writeDataStream(os);
         }
 
-        _activeEnvironmentGroup.writeDataStream(os);
+        activeEnvironmentGroup.writeDataStream(os);
 
-        writeObjectList(_segments, os);
+        writeObjectList(segments, os);
 
-        writeObjectList(_tagLogicalElements, os);
+        writeObjectList(tagLogicalElements, os);
 
-        writeObjectList(_objects, os);
+        writeObjectList(objects, os);
 
         writeEnd(os);
 
@@ -144,9 +149,9 @@ public class PageObject extends AbstractPageObject {
         data[7] = 0x00; // Reserved
         data[8] = 0x00; // Reserved
 
-        for (int i = 0; i < _nameBytes.length; i++) {
+        for (int i = 0; i < nameBytes.length; i++) {
 
-            data[9 + i] = _nameBytes[i];
+            data[9 + i] = nameBytes[i];
 
         }
 
@@ -173,9 +178,9 @@ public class PageObject extends AbstractPageObject {
         data[7] = 0x00; // Reserved
         data[8] = 0x00; // Reserved
 
-        for (int i = 0; i < _nameBytes.length; i++) {
+        for (int i = 0; i < nameBytes.length; i++) {
 
-            data[9 + i] = _nameBytes[i];
+            data[9 + i] = nameBytes[i];
 
         }
 

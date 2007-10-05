@@ -19,14 +19,17 @@
 
 package org.apache.fop.render.afp.modca;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Iterator;
 
 /**
+ * An overlay is a MO:DCA-P resource object.
+ * 
+ * It may be stored in an external resource library or it may be
+ * carried in a resource group. An overlay is similar to a page in
+ * that it defines its own environment and carries the same data objects.
  */
-public class Overlay extends AbstractPageObject{
+public class Overlay extends AbstractPageObject {
 
     /**
      * Construct a new overlay object for the specified name argument, the overlay
@@ -40,10 +43,15 @@ public class Overlay extends AbstractPageObject{
      *            the height of the page.
      * @param rotation
      *            the rotation of the page.
+     * @param widthResolution
+     *            the width resolution of the page.
+     * @param heightResolution
+     *            the height resolution of the page.
      */
-    public Overlay(String name, int width, int height, int rotation) {
+    public Overlay(String name, int width, int height, int rotation,
+            int widthResolution, int heightResolution) {
 
-        super(name, width, height, rotation);
+        super(name, width, height, rotation, widthResolution, heightResolution);
 
     }
 
@@ -51,20 +59,20 @@ public class Overlay extends AbstractPageObject{
      * Accessor method to write the AFP datastream for the overlay.
      *
      * @param os The stream to write to
-     * @throws java.io.IOException
+     * @throws java.io.IOException thrown if an I/O exception of some sort has occurred
      */
     public void writeDataStream(OutputStream os)
         throws IOException {
 
         writeStart(os);
 
-        _activeEnvironmentGroup.writeDataStream(os);
+        activeEnvironmentGroup.writeDataStream(os);
 
-        writeObjectList(_segments, os);
+        writeObjectList(segments, os);
 
-        writeObjectList(_tagLogicalElements, os);
+        writeObjectList(tagLogicalElements, os);
 
-        writeObjectList(_objects, os);
+        writeObjectList(objects, os);
 
         writeEnd(os);
 
@@ -89,9 +97,9 @@ public class Overlay extends AbstractPageObject{
         data[7] = 0x00; // Reserved
         data[8] = 0x00; // Reserved
 
-        for (int i = 0; i < _nameBytes.length; i++) {
+        for (int i = 0; i < nameBytes.length; i++) {
 
-            data[9 + i] = _nameBytes[i];
+            data[9 + i] = nameBytes[i];
 
         }
 
@@ -118,9 +126,9 @@ public class Overlay extends AbstractPageObject{
         data[7] = 0x00; // Reserved
         data[8] = 0x00; // Reserved
 
-        for (int i = 0; i < _nameBytes.length; i++) {
+        for (int i = 0; i < nameBytes.length; i++) {
 
-            data[9 + i] = _nameBytes[i];
+            data[9 + i] = nameBytes[i];
 
         }
 

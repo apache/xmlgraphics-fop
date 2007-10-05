@@ -28,74 +28,69 @@ import org.apache.fop.render.afp.tools.BinaryUtils;
  * of an object area presentation space.
  *
  */
-public class ObjectAreaDescriptor extends AbstractAFPObject {
-
-    private int _width = 0;
-    private int _height = 0;
+public class ObjectAreaDescriptor extends AbstractDescriptor {
 
     /**
      * Construct an object area descriptor for the specified object width
      * and object height.
      * @param width The page width.
      * @param height The page height.
+     * @param widthResolution The page width resolution.
+     * @param heightResolution The page height resolution.
      */
-    public ObjectAreaDescriptor(int width, int height) {
-
-        _width = width;
-        _height = height;
-
+    public ObjectAreaDescriptor(int width, int height, int widthResolution, int heightResolution) {
+        super(width, height, widthResolution, heightResolution);
     }
 
     /**
      * Accessor method to write the AFP datastream for the Object Area Descriptor
      * @param os The stream to write to
-     * @throws java.io.IOException
+     * @throws java.io.IOException thrown if an I/O exception of some sort has occurred
      */
     public void writeDataStream(OutputStream os)
         throws IOException {
 
-        byte[] data = new byte[] {
-            0x5A,
-            0x00, // Length
-            0x1C, // Length
-            (byte) 0xD3,
-            (byte) 0xA6,
-            (byte) 0x6B,
-            0x00, // Flags
-            0x00, // Reserved
-            0x00, // Reserved
-            0x03, // Triplet length
-            0x43, // tid = Descriptor Position Triplet
-            0x01, // DesPosId = 1
-            0x08, // Triplet length
-            0x4B, // tid = Measurement Units Triplet
-            0x00, // XaoBase = 10 inches
-            0x00, // YaoBase = 10 inches
-            0x09, // XaoUnits = 2400
-            0x60, // XaoUnits =
-            0x09, // YaoUnits = 2400
-            0x60, // YaoUnits =
-            0x09, // Triplet length
-            0x4C, // tid = Object Area Size
-            0x02, // Size Type
-            0x00, // XoaSize
-            0x00,
-            0x00,
-            0x00, // YoaSize
-            0x00,
-            0x00,
-        };
+        byte[] data = new byte[29];
+        data[0] = 0x5A; 
 
-        byte[] l = BinaryUtils.convert(data.length - 1, 2);
-        data[1] = l[0];
-        data[2] = l[1];
+        byte[] len = BinaryUtils.convert(data.length - 1, 2);
+        data[1] = len[0]; // Length
+        data[2] = len[1];
 
-        byte[] x = BinaryUtils.convert(_width, 3);
+        data[3] = (byte) 0xD3;
+        data[4] = (byte) 0xA6;
+        data[5] = (byte) 0x6B;
+        data[6] = 0x00; // Flags
+        data[7] = 0x00; // Reserved
+        data[8] = 0x00; // Reserved
+        data[9] = 0x03; // Triplet length
+        data[10] = 0x43; // tid = Descriptor Position Triplet
+        data[11] = 0x01; // DesPosId = 1
+        data[12] = 0x08; // Triplet length
+        data[13] = 0x4B; // tid = Measurement Units Triplet
+        data[14] = 0x00; // XaoBase = 10 inches
+        data[15] = 0x00; // YaoBase = 10 inches
+        
+        // XaoUnits
+        byte[] xdpi = BinaryUtils.convert(widthResolution * 10, 2);
+        data[16] = xdpi[0];
+        data[17] = xdpi[1];
+
+        // YaoUnits
+        byte[] ydpi = BinaryUtils.convert(heightResolution * 10, 2);
+        data[18] = ydpi[0];
+        data[19] = ydpi[1];
+        
+        data[20] = 0x09; // Triplet length
+        data[21] = 0x4C; // tid = Object Area Size
+        data[22] = 0x02; // Size Type
+
+        byte[] x = BinaryUtils.convert(width, 3);
         data[23] = x[0];
         data[24] = x[1];
         data[25] = x[2];
 
-        byte[] y = BinaryUtils.convert(_height, 3);
+        byte[] y = BinaryUtils.convert(height, 3);
         data[26] = y[0];
         data[27] = y[1];
         data[28] = y[2];

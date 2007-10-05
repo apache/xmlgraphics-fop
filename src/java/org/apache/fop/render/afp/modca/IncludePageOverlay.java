@@ -21,7 +21,6 @@ package org.apache.fop.render.afp.modca;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
@@ -43,17 +42,17 @@ public class IncludePageOverlay extends AbstractNamedAFPObject {
     /**
      * The x coordinate
      */
-    private int _xCoor = 0;
+    private int xCoor = 0;
 
     /**
      * The y coordinate
      */
-    private int _yCoor = 0;
+    private int yCoor = 0;
 
     /**
      * The orientation
      */
-    private int _orientation = 0;
+    private int orientation = 0;
 
     /**
      * Constructor for the Include Page Overlay
@@ -66,8 +65,8 @@ public class IncludePageOverlay extends AbstractNamedAFPObject {
 
         super(overlayName);
 
-        _xCoor = x;
-        _yCoor = y;
+        xCoor = x;
+        yCoor = y;
         setOrientation(orientation);
     }
 
@@ -81,7 +80,7 @@ public class IncludePageOverlay extends AbstractNamedAFPObject {
 
         if (orientation == 0 || orientation == 90 || orientation == 180
             || orientation == 270) {
-            _orientation = orientation;
+            this.orientation = orientation;
         } else {
             throw new IllegalArgumentException(
                 "The orientation must be one of the values 0, 90, 180, 270");
@@ -92,7 +91,7 @@ public class IncludePageOverlay extends AbstractNamedAFPObject {
     /**
      * Accessor method to write the AFP datastream for the Include Page Overlay
      * @param os The stream to write to
-     * @throws java.io.IOException
+     * @throws java.io.IOException thrown if an I/O exception of some sort has occurred
      */
     public void writeDataStream(OutputStream os)
         throws IOException {
@@ -115,23 +114,23 @@ public class IncludePageOverlay extends AbstractNamedAFPObject {
         data[7] = 0x00; // Reserved
         data[8] = 0x00; // Reserved
 
-        for (int i = 0; i < _nameBytes.length; i++) {
+        for (int i = 0; i < nameBytes.length; i++) {
 
-            data[9 + i] = _nameBytes[i];
+            data[9 + i] = nameBytes[i];
 
         }
 
-        byte[] r2 = BinaryUtils.convert(_xCoor, 3);
+        byte[] r2 = BinaryUtils.convert(xCoor, 3);
         data[17] = r2[0]; // x coordinate
         data[18] = r2[1];
         data[19] = r2[2];
 
-        byte[] r3 = BinaryUtils.convert(_yCoor, 3);
+        byte[] r3 = BinaryUtils.convert(yCoor, 3);
         data[20] = r3[0]; // y coordinate
         data[21] = r3[1];
         data[22] = r3[2];
 
-        switch (_orientation) {
+        switch (orientation) {
             case 90:
                 data[23] = 0x2D;
                 data[24] = 0x00;

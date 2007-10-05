@@ -25,7 +25,7 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.xml.transform.stream.StreamSource;
+import javax.xml.transform.Source;
 
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
@@ -247,7 +247,7 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
             return null;
         }
         if (embedUrl != null) {
-            StreamSource source = (StreamSource)fontResolver.resolve(embedUrl);
+            Source source = fontResolver.resolve(embedUrl);
             if (source == null) {
                 LogUtil.handleError(log,
                         "Failed to resolve font with embed-url '" + embedUrl + "'", strict);
@@ -256,7 +256,7 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
             embedUrl = source.getSystemId(); // absolute path/url
         }
         if (metricsUrl != null) {
-            StreamSource source = (StreamSource)fontResolver.resolve(metricsUrl);
+            Source source = fontResolver.resolve(metricsUrl);
             if (source == null) {
                 LogUtil.handleError(log,
                         "Failed to resolve font with metric-url '" + metricsUrl + "'", strict);

@@ -18,9 +18,9 @@
 /* $Id$ */
 
 package org.apache.fop.render.afp.modca;
+
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 
 /**
  * An IM image data object specifies the contents of a raster image and
@@ -40,22 +40,22 @@ public class IMImageObject extends AbstractNamedAFPObject {
     /**
      * The image output control
      */
-    private ImageOutputControl _imageOutputControl = null;
+    private ImageOutputControl imageOutputControl = null;
 
     /**
      * The image input descriptor
      */
-    private ImageInputDescriptor _imageInputDescriptor = null;
+    private ImageInputDescriptor imageInputDescriptor = null;
 
     /**
      * The image cell position
      */
-    private ImageCellPosition _imageCellPosition = null;
+    private ImageCellPosition imageCellPosition = null;
 
     /**
      * The image rastor data
      */
-    private ImageRasterData _imageRastorData = null;
+    private ImageRasterData imageRasterData = null;
 
     /**
      * Constructor for the image object with the specified name,
@@ -73,7 +73,7 @@ public class IMImageObject extends AbstractNamedAFPObject {
      * @param imageOutputControl The imageOutputControl to set
      */
     public void setImageOutputControl(ImageOutputControl imageOutputControl) {
-        _imageOutputControl = imageOutputControl;
+        this.imageOutputControl = imageOutputControl;
     }
 
     /**
@@ -81,7 +81,7 @@ public class IMImageObject extends AbstractNamedAFPObject {
      * @param imageCellPosition The imageCellPosition to set
      */
     public void setImageCellPosition(ImageCellPosition imageCellPosition) {
-        _imageCellPosition = imageCellPosition;
+        this.imageCellPosition = imageCellPosition;
     }
 
     /**
@@ -89,41 +89,41 @@ public class IMImageObject extends AbstractNamedAFPObject {
      * @param imageInputDescriptor The imageInputDescriptor to set
      */
     public void setImageInputDescriptor(ImageInputDescriptor imageInputDescriptor) {
-        _imageInputDescriptor = imageInputDescriptor;
+        this.imageInputDescriptor = imageInputDescriptor;
     }
 
     /**
      * Sets the ImageRastorData.
-     * @param imageRastorData The imageRastorData to set
+     * @param imageRasterData The imageRasterData to set
      */
-    public void setImageRasterData(ImageRasterData imageRastorData) {
-        _imageRastorData = imageRastorData;
+    public void setImageRasterData(ImageRasterData imageRasterData) {
+        this.imageRasterData = imageRasterData;
     }
 
     /**
      * Accessor method to write the AFP datastream for the IM Image Objetc
      * @param os The stream to write to
-     * @throws java.io.IOException
+     * @throws java.io.IOException thrown if an I/O exception of some sort has occurred
      */
     public void writeDataStream(OutputStream os)
         throws IOException {
 
         writeStart(os);
 
-        if (_imageOutputControl != null) {
-            _imageOutputControl.writeDataStream(os);
+        if (imageOutputControl != null) {
+            imageOutputControl.writeDataStream(os);
         }
 
-        if (_imageInputDescriptor != null) {
-            _imageInputDescriptor.writeDataStream(os);
+        if (imageInputDescriptor != null) {
+            imageInputDescriptor.writeDataStream(os);
         }
 
-        if (_imageCellPosition != null) {
-            _imageCellPosition.writeDataStream(os);
+        if (imageCellPosition != null) {
+            imageCellPosition.writeDataStream(os);
         }
 
-        if (_imageRastorData != null) {
-            _imageRastorData.writeDataStream(os);
+        if (imageRasterData != null) {
+            imageRasterData.writeDataStream(os);
         }
 
         writeEnd(os);
@@ -149,9 +149,9 @@ public class IMImageObject extends AbstractNamedAFPObject {
         data[7] = 0x00; // Reserved
         data[8] = 0x00; // Reserved
 
-        for (int i = 0; i < _nameBytes.length; i++) {
+        for (int i = 0; i < nameBytes.length; i++) {
 
-            data[9 + i] = _nameBytes[i];
+            data[9 + i] = nameBytes[i];
 
         }
 
@@ -178,9 +178,9 @@ public class IMImageObject extends AbstractNamedAFPObject {
         data[7] = 0x00; // Reserved
         data[8] = 0x00; // Reserved
 
-        for (int i = 0; i < _nameBytes.length; i++) {
+        for (int i = 0; i < nameBytes.length; i++) {
 
-            data[9 + i] = _nameBytes[i];
+            data[9 + i] = nameBytes[i];
 
         }
 

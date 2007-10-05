@@ -28,17 +28,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.LineNumberReader;
 import java.io.OutputStream;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.xml.transform.Source;
 
-// FOP
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.CTM;
@@ -55,7 +56,6 @@ import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.WordArea;
-import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fonts.Font;
@@ -65,13 +65,16 @@ import org.apache.fop.image.EPSImage;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
 import org.apache.fop.image.XMLImage;
-import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
+import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.ImageAdapter;
 import org.apache.fop.render.RendererContext;
+import org.apache.fop.render.ps.extensions.PSCommentAfter;
+import org.apache.fop.render.ps.extensions.PSCommentBefore;
+import org.apache.fop.render.ps.extensions.PSExtensionAttachment;
+import org.apache.fop.render.ps.extensions.PSSetPageDevice;
 import org.apache.fop.render.ps.extensions.PSSetupCode;
 import org.apache.fop.util.CharUtilities;
-
 import org.apache.xmlgraphics.ps.DSCConstants;
 import org.apache.xmlgraphics.ps.PSGenerator;
 import org.apache.xmlgraphics.ps.PSProcSets;
@@ -79,7 +82,6 @@ import org.apache.xmlgraphics.ps.PSResource;
 import org.apache.xmlgraphics.ps.PSState;
 import org.apache.xmlgraphics.ps.dsc.DSCException;
 import org.apache.xmlgraphics.ps.dsc.ResourceTracker;
-
 import org.w3c.dom.Document;
 
 /**
@@ -132,7 +134,6 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
     private boolean ioTrouble = false;
 
     private boolean inTextMode = false;
-    private boolean firstPageSequenceReceived = false;
 
     /** Used to temporarily store PSSetupCode instance until they can be written. */
     private List setupCodeList;
@@ -141,7 +142,21 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
     private Map fontResources;
     /** This is a map of PSResource instances of all forms (key: uri) */
     private Map formResources;
-    
+
+    /** encapsulation of dictionary used in setpagedevice instruction **/
+    private PSPageDeviceDictionary pageDeviceDictionary;
+
+    /** Whether or not the safe set page device macro will be used or not */
+    private boolean safeSetPageDevice = false;
+
+    /** Whether or not Dublin Core Standard (dsc) compliant output is enforced */
+    private boolean dscCompliant = true;
+
+    /** This is a collection holding all document header comments */
+    private Collection headerComments;
+
+    /** This is a collection holding all document footer comments */
+    private Collection footerComments;
     /**
      * {@inheritDoc}
      */
@@ -150,15 +165,15 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         Object obj;
         obj = agent.getRendererOptions().get(AUTO_ROTATE_LANDSCAPE);
         if (obj != null) {
-            this.autoRotateLandscape = booleanValueOf(obj);
+            setAutoRotateLandscape(booleanValueOf(obj));
         }
         obj = agent.getRendererOptions().get(LANGUAGE_LEVEL);
         if (obj != null) {
-            this.languageLevel = intValueOf(obj);
+            setLanguageLevel(intValueOf(obj));
         }
         obj = agent.getRendererOptions().get(OPTIMIZE_RESOURCES);
         if (obj != null) {
-            this.twoPassGeneration = booleanValueOf(obj);
+            setOptimizeResources(booleanValueOf(obj));
         }
     }
 
@@ -194,6 +209,41 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
     /** @return true if the renderer is configured to rotate landscape pages */
     public boolean isAutoRotateLandscape() {
         return this.autoRotateLandscape;
+    }
+
+    /**
+     * Sets the PostScript language level that the renderer should produce.
+     * @param level the language level (currently allowed: 2 or 3)
+     */
+    public void setLanguageLevel(int level) {
+        if (level == 2 || level == 3) {
+            this.languageLevel = level;
+        } else {
+            throw new IllegalArgumentException("Only language levels 2 or 3 are allowed/supported");
+        }
+    }
+    
+    /**
+     * Return the PostScript language level that the renderer produces.
+     * @return the language level
+     */
+    public int getLanguageLevel() {
+        return this.languageLevel;
+    }
+    
+    /**
+     * Sets the resource optimization mode. If set to true, the renderer does two passes to
+     * only embed the necessary resources in the PostScript file. This is slower, but produces
+     * smaller files.
+     * @param value true to enable the resource optimization 
+     */
+    public void setOptimizeResources(boolean value) {
+        this.twoPassGeneration = value;
+    }
+
+    /** @return true if the renderer does two passes to optimize PostScript resources */
+    public boolean isOptimizeResources() {
+        return this.twoPassGeneration;
     }
 
     /** {@inheritDoc} */
@@ -383,7 +433,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
     }
     
     protected boolean isImageInlined(String uri, FopImage image) {
-        return !this.twoPassGeneration;
+        return !isOptimizeResources();
     }
     
     /** {@inheritDoc} */
@@ -513,7 +563,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
     }
 
     private void useColor(Color col) throws IOException {
-        gen.useRGBColor(col);
+        gen.useColor(col);
     }
 
     /** {@inheritDoc}
@@ -627,11 +677,11 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
                         float h3 = h / 3;
                         gen.useLineWidth(h3);
                         float ym1 = y1 + (h3 / 2);
-                        gen.useRGBColor(uppercol);
+                        gen.useColor(uppercol);
                         drawLine(x1, ym1, x2, ym1);
-                        gen.useRGBColor(col);
+                        gen.useColor(col);
                         drawLine(x1, ym1 + h3, x2, ym1 + h3);
-                        gen.useRGBColor(lowercol);
+                        gen.useColor(lowercol);
                         drawLine(x1, ym1 + h3 + h3, x2, ym1 + h3 + h3);
                     } else {
                         Color leftcol = lightenColor(col, -colFactor);
@@ -639,11 +689,11 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
                         float w3 = w / 3;
                         gen.useLineWidth(w3);
                         float xm1 = x1 + (w3 / 2);
-                        gen.useRGBColor(leftcol);
+                        gen.useColor(leftcol);
                         drawLine(xm1, y1, xm1, y2);
-                        gen.useRGBColor(col);
+                        gen.useColor(col);
                         drawLine(xm1 + w3, y1, xm1 + w3, y2);
-                        gen.useRGBColor(rightcol);
+                        gen.useColor(rightcol);
                         drawLine(xm1 + w3 + w3, y1, xm1 + w3 + w3, y2);
                     }
                     break;
@@ -655,13 +705,13 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
                         Color c = lightenColor(col, (startOrBefore ? 1 : -1) * colFactor);
                         gen.useLineWidth(h);
                         float ym1 = y1 + (h / 2);
-                        gen.useRGBColor(c);
+                        gen.useColor(c);
                         drawLine(x1, ym1, x2, ym1);
                     } else {
                         Color c = lightenColor(col, (startOrBefore ? 1 : -1) * colFactor);
                         gen.useLineWidth(w);
                         float xm1 = x1 + (w / 2);
-                        gen.useRGBColor(c);
+                        gen.useColor(c);
                         drawLine(xm1, y1, xm1, y2);
                     }
                     break;
@@ -695,7 +745,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
 
         this.outputStream = outputStream;
         OutputStream out; 
-        if (twoPassGeneration) {
+        if (isOptimizeResources()) {
             this.tempFile = File.createTempFile("fop", null);
             out = new java.io.FileOutputStream(this.tempFile);
             out = new java.io.BufferedOutputStream(out);
@@ -710,9 +760,16 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
                 return userAgent.resolveURI(uri);
             }
         };
-        this.gen.setPSLevel(this.languageLevel);
+        this.gen.setPSLevel(getLanguageLevel());
         this.currentPageNumber = 0;
 
+        //Initial default page device dictionary settings
+        this.pageDeviceDictionary = new PSPageDeviceDictionary();
+        pageDeviceDictionary.setFlushOnRetrieval(!this.dscCompliant);
+        pageDeviceDictionary.put("/ImagingBBox", "null");
+    }
+
+    private void writeHeader() throws IOException {
         //PostScript Header
         writeln(DSCConstants.PS_ADOBE_30);
         gen.writeDSCComment(DSCConstants.CREATOR, new String[] {userAgent.getProducer()});
@@ -721,6 +778,12 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         gen.writeDSCComment(DSCConstants.PAGES, new Object[] {DSCConstants.ATEND});
         gen.writeDSCComment(DSCConstants.DOCUMENT_SUPPLIED_RESOURCES, 
                 new Object[] {DSCConstants.ATEND});
+        if (headerComments != null) {
+            for (Iterator iter = headerComments.iterator(); iter.hasNext();) {
+                PSExtensionAttachment comment = (PSExtensionAttachment)iter.next();
+                gen.writeln("%" + comment.getContent());
+            }
+        }
         gen.writeDSCComment(DSCConstants.END_COMMENTS);
 
         //Defaults
@@ -728,6 +791,22 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         gen.writeDSCComment(DSCConstants.END_DEFAULTS);
 
         //Prolog and Setup written right before the first page-sequence, see startPageSequence()
+        //Do this only once, as soon as we have all the content for the Setup section!
+        //Prolog
+        gen.writeDSCComment(DSCConstants.BEGIN_PROLOG);
+        PSProcSets.writeStdProcSet(gen);
+        PSProcSets.writeEPSProcSet(gen);
+        gen.writeDSCComment(DSCConstants.END_PROLOG);
+
+        //Setup
+        gen.writeDSCComment(DSCConstants.BEGIN_SETUP);
+        writeSetupCodeList(setupCodeList, "SetupCode");
+        if (!isOptimizeResources()) {
+            this.fontResources = PSFontUtils.writeFontDict(gen, fontInfo);
+        } else {
+            gen.commentln("%FOPFontSetup");
+        }
+        gen.writeDSCComment(DSCConstants.END_SETUP);
     }
 
     /**
@@ -746,15 +825,22 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         
         //Write trailer
         gen.writeDSCComment(DSCConstants.TRAILER);
+        if (footerComments != null) {
+            for (Iterator iter = footerComments.iterator(); iter.hasNext();) {
+                PSExtensionAttachment comment = (PSExtensionAttachment)iter.next();
+                gen.commentln("%" + comment.getContent());
+            }
+        }
         gen.writeDSCComment(DSCConstants.PAGES, new Integer(this.currentPageNumber));
         gen.getResourceTracker().writeResources(false, gen);
         gen.writeDSCComment(DSCConstants.EOF);
         gen.flush();
         log.debug("Rendering to PostScript complete.");
-        if (twoPassGeneration) {
+        if (isOptimizeResources()) {
             IOUtils.closeQuietly(gen.getOutputStream());
             rewritePostScriptFile();
         }
+        this.pageDeviceDictionary.clear();
     }
     
     /**
@@ -796,12 +882,44 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         }
         if (oDI instanceof OffDocumentExtensionAttachment) {
             ExtensionAttachment attachment = ((OffDocumentExtensionAttachment)oDI).getAttachment();
-            if (PSSetupCode.CATEGORY.equals(attachment.getCategory())) {
-                PSSetupCode setupCode = (PSSetupCode)attachment;
-                if (setupCodeList == null) {
-                    setupCodeList = new java.util.ArrayList();
+            if (attachment != null) {
+                if (PSExtensionAttachment.CATEGORY.equals(attachment.getCategory())) {
+                    if (attachment instanceof PSSetupCode) {
+                        if (setupCodeList == null) {
+                            setupCodeList = new java.util.ArrayList();
+                        }
+                        if (!setupCodeList.contains(attachment)) {
+                            setupCodeList.add(attachment);
+                        }
+                    } else if (attachment instanceof PSSetPageDevice) {
+                        /**
+                         * Extract all PSSetPageDevice instances from the
+                         * attachment list on the s-p-m and add all dictionary
+                         * entries to our internal representation of the the
+                         * page device dictionary.
+                         */
+                        PSSetPageDevice setPageDevice = (PSSetPageDevice)attachment;
+                        String content = setPageDevice.getContent();
+                        if (content != null) {
+                            try {
+                                this.pageDeviceDictionary.putAll(PSDictionary.valueOf(content));
+                            } catch (PSDictionaryFormatException e) {
+                                log.error("Failed to parse dictionary string: "
+                                        + e.getMessage() + ", content = '" + content + "'");
+                            }
+                        }
+                    } else if (attachment instanceof PSCommentBefore) {
+                        if (headerComments == null) {
+                            headerComments = new java.util.TreeSet();
+                        }
+                        headerComments.add(attachment);
+                    } else if (attachment instanceof PSCommentAfter) {
+                        if (footerComments == null) {
+                            footerComments = new java.util.TreeSet();
+                        }
+                        footerComments.add(attachment);
+                    }
                 }
-                setupCodeList.add(setupCode);
             }
         }
         super.processOffDocumentItem(oDI);
@@ -810,30 +928,6 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
     /** {@inheritDoc} */
     public void startPageSequence(LineArea seqTitle) {
         super.startPageSequence(seqTitle);
-        if (!firstPageSequenceReceived) {
-            //Do this only once, as soon as we have all the content for the Setup section!
-            try {
-                //Prolog
-                gen.writeDSCComment(DSCConstants.BEGIN_PROLOG);
-                PSProcSets.writeStdProcSet(gen);
-                PSProcSets.writeEPSProcSet(gen);
-                gen.writeDSCComment(DSCConstants.END_PROLOG);
-
-                //Setup
-                gen.writeDSCComment(DSCConstants.BEGIN_SETUP);
-                writeSetupCodeList(setupCodeList, "SetupCode");
-                if (!twoPassGeneration) {
-                    this.fontResources = PSFontUtils.writeFontDict(gen, fontInfo);
-                } else {
-                    gen.commentln("%FOPFontSetup");
-                }
-                gen.writeDSCComment(DSCConstants.END_SETUP);
-            } catch (IOException ioe) {
-                handleIOTrouble(ioe);
-            }
-            
-            firstPageSequenceReceived = true;
-        }
     }
     
     /**
@@ -871,92 +965,139 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
             throws IOException, FOPException {
         log.debug("renderPage(): " + page);
 
+        if (this.currentPageNumber == 0) {
+            writeHeader();
+        }
+        
         this.currentPageNumber++;
+        
         gen.getResourceTracker().notifyStartNewPage();
         gen.getResourceTracker().notifyResourceUsageOnPage(PSProcSets.STD_PROCSET);
         gen.writeDSCComment(DSCConstants.PAGE, new Object[]
                 {page.getPageNumberString(),
                  new Integer(this.currentPageNumber)});
-        final Integer zero = new Integer(0);
-        final long pagewidth = Math.round(page.getViewArea().getWidth());
-        final long pageheight = Math.round(page.getViewArea().getHeight());
-        final double pspagewidth = pagewidth / 1000f;
-        final double pspageheight = pageheight / 1000f;
+
+        double pageWidth = Math.round(page.getViewArea().getWidth()) / 1000f;
+        double pageHeight = Math.round(page.getViewArea().getHeight()) / 1000f;
         boolean rotate = false;
-        if (this.autoRotateLandscape && (pageheight < pagewidth)) {
+        List pageSizes = new java.util.ArrayList();
+        if (this.autoRotateLandscape && (pageHeight < pageWidth)) {
             rotate = true;
-            gen.writeDSCComment(DSCConstants.PAGE_BBOX, new Object[]
-                    {zero,
-                     zero,
-                     new Long(Math.round(pspageheight)),
-                     new Long(Math.round(pspagewidth))});
-            gen.writeDSCComment(DSCConstants.PAGE_HIRES_BBOX, new Object[]
-                    {zero,
-                     zero,
-                     new Double(pspageheight),
-                     new Double(pspagewidth)});
-            gen.writeDSCComment(DSCConstants.PAGE_ORIENTATION, "Landscape");
+            pageSizes.add(new Long(Math.round(pageHeight)));
+            pageSizes.add(new Long(Math.round(pageWidth)));
         } else {
-            gen.writeDSCComment(DSCConstants.PAGE_BBOX, new Object[]
-                    {zero,
-                     zero,
-                     new Long(Math.round(pspagewidth)),
-                     new Long(Math.round(pspageheight))});
-            gen.writeDSCComment(DSCConstants.PAGE_HIRES_BBOX, new Object[]
-                    {zero,
-                     zero,
-                     new Double(pspagewidth),
-                     new Double(pspageheight)});
-            if (this.autoRotateLandscape) {
-                gen.writeDSCComment(DSCConstants.PAGE_ORIENTATION, "Portrait");
-            }
+            pageSizes.add(new Long(Math.round(pageWidth)));
+            pageSizes.add(new Long(Math.round(pageHeight)));
         }
-        gen.writeDSCComment(DSCConstants.PAGE_RESOURCES, 
-                new Object[] {DSCConstants.ATEND});
-        gen.commentln("%FOPSimplePageMaster: " + page.getSimplePageMasterName());
-        gen.writeDSCComment(DSCConstants.BEGIN_PAGE_SETUP);
+        pageDeviceDictionary.put("/PageSize", pageSizes);
         
-        //Handle PSSetupCode instances on simple-page-master
-        if (page.getExtensionAttachments() != null 
-                && page.getExtensionAttachments().size() > 0) {
-            List list = new java.util.ArrayList();
-            //Extract all PSSetupCode instances from the attachment list on the s-p-m
-            Iterator i = page.getExtensionAttachments().iterator();
-            while (i.hasNext()) {
-                ExtensionAttachment attachment = (ExtensionAttachment)i.next();
-                if (PSSetupCode.CATEGORY.equals(attachment.getCategory())) {
-                    list.add(attachment);
+        if (page.hasExtensionAttachments()) {
+            for (Iterator iter = page.getExtensionAttachments().iterator();
+                iter.hasNext();) {
+                ExtensionAttachment attachment = (ExtensionAttachment) iter.next();
+                if (attachment instanceof PSSetPageDevice) {
+                    /**
+                     * Extract all PSSetPageDevice instances from the
+                     * attachment list on the s-p-m and add all
+                     * dictionary entries to our internal representation
+                     * of the the page device dictionary.
+                     */
+                    PSSetPageDevice setPageDevice = (PSSetPageDevice)attachment;
+                    String content = setPageDevice.getContent();
+                    if (content != null) {
+                        try {
+                            pageDeviceDictionary.putAll(PSDictionary.valueOf(content));
+                        } catch (PSDictionaryFormatException e) {
+                            log.error("failed to parse dictionary string: "
+                                    + e.getMessage() + ", [" + content + "]");
+                        }
+                    }
                 }
             }
-            writeSetupCodeList(list, "PageSetupCode");
         }
-        
+
+        try {
+            if (setupCodeList != null) {
+                writeEnclosedExtensionAttachments(setupCodeList);
+                setupCodeList.clear();
+            }
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+        final Integer zero = new Integer(0);
         if (rotate) {
-            gen.writeln("<<");
-            gen.writeln("/PageSize [" 
-                    + Math.round(pspageheight) + " " 
-                    + Math.round(pspagewidth) + "]");
-            gen.writeln("/ImagingBBox null");
-            gen.writeln(">> setpagedevice");
-            gen.writeln(Math.round(pspageheight) + " 0 translate");
-            gen.writeln("90 rotate");
+            gen.writeDSCComment(DSCConstants.PAGE_BBOX, new Object[] {
+                    zero, zero, new Long(Math.round(pageHeight)),
+                    new Long(Math.round(pageWidth)) });
+            gen.writeDSCComment(DSCConstants.PAGE_HIRES_BBOX, new Object[] {
+                    zero, zero, new Double(pageHeight),
+                    new Double(pageWidth) });
+            gen.writeDSCComment(DSCConstants.PAGE_ORIENTATION, "Landscape");
         } else {
-            gen.writeln("<<");
-            gen.writeln("/PageSize [" 
-                    + Math.round(pspagewidth) + " " 
-                    + Math.round(pspageheight) + "]");
-            gen.writeln("/ImagingBBox null");
-            gen.writeln(">> setpagedevice");
+            gen.writeDSCComment(DSCConstants.PAGE_BBOX, new Object[] {
+                    zero, zero, new Long(Math.round(pageWidth)),
+                    new Long(Math.round(pageHeight)) });
+            gen.writeDSCComment(DSCConstants.PAGE_HIRES_BBOX, new Object[] {
+                    zero, zero, new Double(pageWidth),
+                    new Double(pageHeight) });
+            if (autoRotateLandscape) {
+                gen.writeDSCComment(DSCConstants.PAGE_ORIENTATION,
+                        "Portrait");
+            }
         }
-        concatMatrix(1, 0, 0, -1, 0, pageheight / 1000f);
+        gen.writeDSCComment(DSCConstants.PAGE_RESOURCES,
+                new Object[] {DSCConstants.ATEND});
 
-        gen.writeDSCComment(DSCConstants.END_PAGE_SETUP);
+        gen.commentln("%FOPSimplePageMaster: " + page.getSimplePageMasterName());
 
+        gen.writeDSCComment(DSCConstants.BEGIN_PAGE_SETUP);
+
+        if (page.hasExtensionAttachments()) {
+            List extensionAttachments = page.getExtensionAttachments();
+            for (int i = 0; i < extensionAttachments.size(); i++) {
+                PSExtensionAttachment attachment
+                    = (PSExtensionAttachment)extensionAttachments.get(i);
+                if (attachment instanceof PSCommentBefore) {
+                    gen.commentln("%" + attachment.getContent());
+                }
+            }
+        }
+
+        // Write any unwritten changes to page device dictionary
+        if (!pageDeviceDictionary.isEmpty()) {
+            String content = pageDeviceDictionary.getContent();
+            if (safeSetPageDevice) {
+                content += " SSPD";
+            } else {
+                content += " setpagedevice"; 
+            }
+            writeEnclosedExtensionAttachment(new PSSetPageDevice(content));
+        }
+
+        if (rotate) {
+            gen.writeln(Math.round(pageHeight) + " 0 translate");
+            gen.writeln("90 rotate");
+        }
+        concatMatrix(1, 0, 0, -1, 0, pageHeight);
+
+        gen.writeDSCComment(DSCConstants.END_PAGE_SETUP);            
+    
         //Process page
         super.renderPage(page);
 
+        //Show page
         writeln("showpage");
         gen.writeDSCComment(DSCConstants.PAGE_TRAILER);
+        if (page.hasExtensionAttachments()) {
+            List extensionAttachments = page.getExtensionAttachments();
+            for (int i = 0; i < extensionAttachments.size(); i++) {
+                PSExtensionAttachment attachment;
+                attachment = (PSExtensionAttachment)extensionAttachments.get(i);
+                if (attachment instanceof PSCommentAfter) {
+                    gen.commentln("%" + attachment.getContent());
+                }
+            }
+        }
         gen.getResourceTracker().writeResources(true, gen);
     }
 
@@ -1215,14 +1356,14 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
                 case EN_RIDGE:
                     float half = area.getRuleThickness() / 2000f;
     
-                    gen.useRGBColor(lightenColor(col, 0.6f));
+                    gen.useColor(lightenColor(col, 0.6f));
                     moveTo(startx, starty);
                     lineTo(endx, starty);
                     lineTo(endx, starty + 2 * half);
                     lineTo(startx, starty + 2 * half);
                     closePath();
                     gen.writeln(" fill newpath");
-                    gen.useRGBColor(col);
+                    gen.useColor(col);
                     if (style == EN_GROOVE) {
                         moveTo(startx, starty);
                         lineTo(endx, starty);
@@ -1259,7 +1400,6 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
 
     /**
      * {@inheritDoc}
-     *          int, int, int, int, java.util.Map)
      */
     protected RendererContext createRendererContext(int x, int y, int width, int height, 
             Map foreignAttributes) {
@@ -1275,5 +1415,85 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         return MIME_TYPE;
     }
 
+    /**
+     * Formats and writes a PSExtensionAttachment to the output stream.
+     * 
+     * @param attachment an PSExtensionAttachment instance
+     */
+    private void writeEnclosedExtensionAttachment(PSExtensionAttachment attachment)
+            throws IOException {
+        String info = "";
+        if (attachment instanceof PSSetupCode) {
+            PSSetupCode setupCodeAttach = (PSSetupCode)attachment;
+            String name = setupCodeAttach.getName();
+            if (name != null) {
+                info += ": (" + name + ")";
+            }
+        }
+        String type = attachment.getType();
+        gen.commentln("%FOPBegin" + type + info);
+        LineNumberReader reader = new LineNumberReader(
+                new java.io.StringReader(attachment.getContent()));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            line = line.trim();
+            if (line.length() > 0) {
+                gen.writeln(line);
+            }
+        }
+        gen.commentln("%FOPEnd" + type);
+    }
+
+    /**
+     * Formats and writes a Collection of PSExtensionAttachment instances to
+     * the output stream.
+     * 
+     * @param attachmentCollection
+     *            a Collection of PSExtensionAttachment instances
+     */
+    private void writeEnclosedExtensionAttachments(Collection attachmentCollection)
+            throws IOException {
+        Iterator iter = attachmentCollection.iterator();
+        while (iter.hasNext()) {
+            PSExtensionAttachment attachment = (PSExtensionAttachment)iter
+                    .next();
+            if (attachment != null) {
+                writeEnclosedExtensionAttachment(attachment);
+            }
+            iter.remove();
+        }
+    }
+    
+    /**
+     * Sets whether or not the safe set page device macro should be used
+     * (as opposed to directly invoking setpagedevice) when setting the
+     * postscript page device.
+     * 
+     * This option is a useful option when you want to guard against the possibility
+     * of invalid/unsupported postscript key/values being placed in the page device. 
+     * 
+     * @param safeSetPageDevice setting to false and the renderer will make a
+     * standard "setpagedevice" call, setting to true will make a safe set page
+     * device macro call (default is false).
+     */
+    public void setSafeSetPageDevice(boolean safeSetPageDevice) {
+        this.safeSetPageDevice = safeSetPageDevice;
+    }
+
+    /**
+     * Sets whether or not Dublin Core Standard (dsc) compliance is enforced.
+     * 
+     * It can cause problems (unwanted postscript subsystem initgraphics/erasepage calls)
+     * on some printers when the pagedevice is set.  If this causes problems on a
+     * particular implementation then use this setting with a 'false' value to try and
+     * minimize the number of setpagedevice calls in the postscript document output. 
+     * 
+     * Set this value to false if you experience unwanted blank pages in your
+     * postscript output.
+     * @param dscCompliant boolean value (default is true)
+     */
+    public void setDSCCompliant(boolean dscCompliant) {
+        this.dscCompliant = dscCompliant;        
+    }
 
 }
