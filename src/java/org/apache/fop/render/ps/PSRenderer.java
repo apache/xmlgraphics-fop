@@ -35,11 +35,11 @@ import java.util.Map;
 
 import javax.xml.transform.Source;
 
-// FOP
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.CTM;
@@ -56,7 +56,6 @@ import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.WordArea;
-import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fonts.Font;
@@ -66,17 +65,16 @@ import org.apache.fop.image.EPSImage;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
 import org.apache.fop.image.XMLImage;
-import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
+import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.ImageAdapter;
 import org.apache.fop.render.RendererContext;
+import org.apache.fop.render.ps.extensions.PSCommentAfter;
+import org.apache.fop.render.ps.extensions.PSCommentBefore;
 import org.apache.fop.render.ps.extensions.PSExtensionAttachment;
 import org.apache.fop.render.ps.extensions.PSSetPageDevice;
 import org.apache.fop.render.ps.extensions.PSSetupCode;
-import org.apache.fop.render.ps.extensions.PSCommentAfter;
-import org.apache.fop.render.ps.extensions.PSCommentBefore;
 import org.apache.fop.util.CharUtilities;
-
 import org.apache.xmlgraphics.ps.DSCConstants;
 import org.apache.xmlgraphics.ps.PSGenerator;
 import org.apache.xmlgraphics.ps.PSProcSets;
@@ -84,7 +82,6 @@ import org.apache.xmlgraphics.ps.PSResource;
 import org.apache.xmlgraphics.ps.PSState;
 import org.apache.xmlgraphics.ps.dsc.DSCException;
 import org.apache.xmlgraphics.ps.dsc.ResourceTracker;
-
 import org.w3c.dom.Document;
 
 /**
@@ -168,15 +165,15 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         Object obj;
         obj = agent.getRendererOptions().get(AUTO_ROTATE_LANDSCAPE);
         if (obj != null) {
-            this.autoRotateLandscape = booleanValueOf(obj);
+            setAutoRotateLandscape(booleanValueOf(obj));
         }
         obj = agent.getRendererOptions().get(LANGUAGE_LEVEL);
         if (obj != null) {
-            this.languageLevel = intValueOf(obj);
+            setLanguageLevel(intValueOf(obj));
         }
         obj = agent.getRendererOptions().get(OPTIMIZE_RESOURCES);
         if (obj != null) {
-            this.twoPassGeneration = booleanValueOf(obj);
+            setOptimizeResources(booleanValueOf(obj));
         }
     }
 
@@ -212,6 +209,41 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
     /** @return true if the renderer is configured to rotate landscape pages */
     public boolean isAutoRotateLandscape() {
         return this.autoRotateLandscape;
+    }
+
+    /**
+     * Sets the PostScript language level that the renderer should produce.
+     * @param level the language level (currently allowed: 2 or 3)
+     */
+    public void setLanguageLevel(int level) {
+        if (level == 2 || level == 3) {
+            this.languageLevel = level;
+        } else {
+            throw new IllegalArgumentException("Only language levels 2 or 3 are allowed/supported");
+        }
+    }
+    
+    /**
+     * Return the PostScript language level that the renderer produces.
+     * @return the language level
+     */
+    public int getLanguageLevel() {
+        return this.languageLevel;
+    }
+    
+    /**
+     * Sets the resource optimization mode. If set to true, the renderer does two passes to
+     * only embed the necessary resources in the PostScript file. This is slower, but produces
+     * smaller files.
+     * @param value true to enable the resource optimization 
+     */
+    public void setOptimizeResources(boolean value) {
+        this.twoPassGeneration = value;
+    }
+
+    /** @return true if the renderer does two passes to optimize PostScript resources */
+    public boolean isOptimizeResources() {
+        return this.twoPassGeneration;
     }
 
     /** {@inheritDoc} */
@@ -401,7 +433,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
     }
     
     protected boolean isImageInlined(String uri, FopImage image) {
-        return !this.twoPassGeneration;
+        return !isOptimizeResources();
     }
     
     /** {@inheritDoc} */
@@ -713,7 +745,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
 
         this.outputStream = outputStream;
         OutputStream out; 
-        if (twoPassGeneration) {
+        if (isOptimizeResources()) {
             this.tempFile = File.createTempFile("fop", null);
             out = new java.io.FileOutputStream(this.tempFile);
             out = new java.io.BufferedOutputStream(out);
@@ -728,7 +760,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
                 return userAgent.resolveURI(uri);
             }
         };
-        this.gen.setPSLevel(this.languageLevel);
+        this.gen.setPSLevel(getLanguageLevel());
         this.currentPageNumber = 0;
 
         //Initial default page device dictionary settings
@@ -769,7 +801,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         //Setup
         gen.writeDSCComment(DSCConstants.BEGIN_SETUP);
         writeSetupCodeList(setupCodeList, "SetupCode");
-        if (!twoPassGeneration) {
+        if (!isOptimizeResources()) {
             this.fontResources = PSFontUtils.writeFontDict(gen, fontInfo);
         } else {
             gen.commentln("%FOPFontSetup");
@@ -804,7 +836,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         gen.writeDSCComment(DSCConstants.EOF);
         gen.flush();
         log.debug("Rendering to PostScript complete.");
-        if (twoPassGeneration) {
+        if (isOptimizeResources()) {
             IOUtils.closeQuietly(gen.getOutputStream());
             rewritePostScriptFile();
         }
@@ -1462,5 +1494,6 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
      */
     public void setDSCCompliant(boolean dscCompliant) {
         this.dscCompliant = dscCompliant;        
-    }    
+    }
+
 }
