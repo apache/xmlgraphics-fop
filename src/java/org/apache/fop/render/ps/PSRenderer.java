@@ -73,6 +73,8 @@ import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.ps.extensions.PSExtensionAttachment;
 import org.apache.fop.render.ps.extensions.PSSetPageDevice;
 import org.apache.fop.render.ps.extensions.PSSetupCode;
+import org.apache.fop.render.ps.extensions.PSCommentAfter;
+import org.apache.fop.render.ps.extensions.PSCommentBefore;
 import org.apache.fop.util.CharUtilities;
 
 import org.apache.xmlgraphics.ps.DSCConstants;
@@ -135,7 +137,6 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
     private boolean ioTrouble = false;
 
     private boolean inTextMode = false;
-    private boolean firstPageSequenceReceived = false;
 
     /** Used to temporarily store PSSetupCode instance until they can be written. */
     private List setupCodeList;
@@ -154,6 +155,11 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
     /** Whether or not Dublin Core Standard (dsc) compliant output is enforced */
     private boolean dscCompliant = true;
 
+    /** This is a collection holding all document header comments */
+    private Collection headerComments;
+
+    /** This is a collection holding all document footer comments */
+    private Collection footerComments;
     /**
      * {@inheritDoc}
      */
@@ -729,7 +735,9 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         this.pageDeviceDictionary = new PSPageDeviceDictionary();
         pageDeviceDictionary.setFlushOnRetrieval(!this.dscCompliant);
         pageDeviceDictionary.put("/ImagingBBox", "null");
+    }
 
+    private void writeHeader() throws IOException {
         //PostScript Header
         writeln(DSCConstants.PS_ADOBE_30);
         gen.writeDSCComment(DSCConstants.CREATOR, new String[] {userAgent.getProducer()});
@@ -738,6 +746,12 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         gen.writeDSCComment(DSCConstants.PAGES, new Object[] {DSCConstants.ATEND});
         gen.writeDSCComment(DSCConstants.DOCUMENT_SUPPLIED_RESOURCES, 
                 new Object[] {DSCConstants.ATEND});
+        if (headerComments != null) {
+            for (Iterator iter = headerComments.iterator(); iter.hasNext();) {
+                PSExtensionAttachment comment = (PSExtensionAttachment)iter.next();
+                gen.writeln("%" + comment.getContent());
+            }
+        }
         gen.writeDSCComment(DSCConstants.END_COMMENTS);
 
         //Defaults
@@ -745,6 +759,22 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         gen.writeDSCComment(DSCConstants.END_DEFAULTS);
 
         //Prolog and Setup written right before the first page-sequence, see startPageSequence()
+        //Do this only once, as soon as we have all the content for the Setup section!
+        //Prolog
+        gen.writeDSCComment(DSCConstants.BEGIN_PROLOG);
+        PSProcSets.writeStdProcSet(gen);
+        PSProcSets.writeEPSProcSet(gen);
+        gen.writeDSCComment(DSCConstants.END_PROLOG);
+
+        //Setup
+        gen.writeDSCComment(DSCConstants.BEGIN_SETUP);
+        writeSetupCodeList(setupCodeList, "SetupCode");
+        if (!twoPassGeneration) {
+            this.fontResources = PSFontUtils.writeFontDict(gen, fontInfo);
+        } else {
+            gen.commentln("%FOPFontSetup");
+        }
+        gen.writeDSCComment(DSCConstants.END_SETUP);
     }
 
     /**
@@ -763,6 +793,12 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         
         //Write trailer
         gen.writeDSCComment(DSCConstants.TRAILER);
+        if (footerComments != null) {
+            for (Iterator iter = footerComments.iterator(); iter.hasNext();) {
+                PSExtensionAttachment comment = (PSExtensionAttachment)iter.next();
+                gen.commentln("%" + comment.getContent());
+            }
+        }
         gen.writeDSCComment(DSCConstants.PAGES, new Integer(this.currentPageNumber));
         gen.getResourceTracker().writeResources(false, gen);
         gen.writeDSCComment(DSCConstants.EOF);
@@ -840,7 +876,17 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
                                         + e.getMessage() + ", content = '" + content + "'");
                             }
                         }
-                    }        
+                    } else if (attachment instanceof PSCommentBefore) {
+                        if (headerComments == null) {
+                            headerComments = new java.util.TreeSet();
+                        }
+                        headerComments.add(attachment);
+                    } else if (attachment instanceof PSCommentAfter) {
+                        if (footerComments == null) {
+                            footerComments = new java.util.TreeSet();
+                        }
+                        footerComments.add(attachment);
+                    }
                 }
             }
         }
@@ -850,30 +896,6 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
     /** {@inheritDoc} */
     public void startPageSequence(LineArea seqTitle) {
         super.startPageSequence(seqTitle);
-        if (!firstPageSequenceReceived) {
-            //Do this only once, as soon as we have all the content for the Setup section!
-            try {
-                //Prolog
-                gen.writeDSCComment(DSCConstants.BEGIN_PROLOG);
-                PSProcSets.writeStdProcSet(gen);
-                PSProcSets.writeEPSProcSet(gen);
-                gen.writeDSCComment(DSCConstants.END_PROLOG);
-
-                //Setup
-                gen.writeDSCComment(DSCConstants.BEGIN_SETUP);
-                writeSetupCodeList(setupCodeList, "SetupCode");
-                if (!twoPassGeneration) {
-                    this.fontResources = PSFontUtils.writeFontDict(gen, fontInfo);
-                } else {
-                    gen.commentln("%FOPFontSetup");
-                }
-                gen.writeDSCComment(DSCConstants.END_SETUP);
-            } catch (IOException ioe) {
-                handleIOTrouble(ioe);
-            }
-            
-            firstPageSequenceReceived = true;
-        }
     }
     
     /**
@@ -911,6 +933,10 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
             throws IOException, FOPException {
         log.debug("renderPage(): " + page);
 
+        if (this.currentPageNumber == 0) {
+            writeHeader();
+        }
+        
         this.currentPageNumber++;
         
         gen.getResourceTracker().notifyStartNewPage();
@@ -994,6 +1020,17 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
 
         gen.writeDSCComment(DSCConstants.BEGIN_PAGE_SETUP);
 
+        if (page.hasExtensionAttachments()) {
+            List extensionAttachments = page.getExtensionAttachments();
+            for (int i = 0; i < extensionAttachments.size(); i++) {
+                PSExtensionAttachment attachment
+                    = (PSExtensionAttachment)extensionAttachments.get(i);
+                if (attachment instanceof PSCommentBefore) {
+                    gen.commentln("%" + attachment.getContent());
+                }
+            }
+        }
+
         // Write any unwritten changes to page device dictionary
         if (!pageDeviceDictionary.isEmpty()) {
             String content = pageDeviceDictionary.getContent();
@@ -1019,7 +1056,16 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         //Show page
         writeln("showpage");
         gen.writeDSCComment(DSCConstants.PAGE_TRAILER);
-                
+        if (page.hasExtensionAttachments()) {
+            List extensionAttachments = page.getExtensionAttachments();
+            for (int i = 0; i < extensionAttachments.size(); i++) {
+                PSExtensionAttachment attachment;
+                attachment = (PSExtensionAttachment)extensionAttachments.get(i);
+                if (attachment instanceof PSCommentAfter) {
+                    gen.commentln("%" + attachment.getContent());
+                }
+            }
+        }
         gen.getResourceTracker().writeResources(true, gen);
     }
 
@@ -1385,7 +1431,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
             iter.remove();
         }
     }
-
+    
     /**
      * Sets whether or not the safe set page device macro should be used
      * (as opposed to directly invoking setpagedevice) when setting the
@@ -1416,5 +1462,5 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
      */
     public void setDSCCompliant(boolean dscCompliant) {
         this.dscCompliant = dscCompliant;        
-    }
+    }    
 }
