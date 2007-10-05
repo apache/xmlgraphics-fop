@@ -28,71 +28,72 @@ import org.apache.fop.render.afp.tools.BinaryUtils;
  * a page or overlay presentation space.
  *
  */
-public class PageDescriptor extends AbstractAFPObject {
-
-    private int _width = 0;
-    private int _height = 0;
+public class PageDescriptor extends AbstractDescriptor {
 
     /**
      * Construct a page descriptor for the specified page width
      * and page height.
      * @param width The page width.
      * @param height The page height.
+     * @param widthResolution The page width resolution
+     * @param heightResolution The page height resolution
      */
-    public PageDescriptor(int width, int height) {
-
-        _width = width;
-        _height = height;
-
+    public PageDescriptor(int width, int height, int widthResolution, int heightResolution) {
+        super(width, height, widthResolution, heightResolution);
     }
 
     /**
      * Accessor method to write the AFP datastream for the Page Descriptor
      * @param os The stream to write to
-     * @throws java.io.IOException
+     * @throws java.io.IOException in the event that an I/O Exception occurred
      */
     public void writeDataStream(OutputStream os)
         throws IOException {
 
-        byte[] data = new byte[] {
-            0x5A,
-            0x00,
-            0x17,
-            (byte) 0xD3,
-            (byte) 0xA6,
-            (byte) 0xAF,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x09,
-            0x60,
-            0x09,
-            0x60,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-        };
+        log.debug("width=" + width);
+        log.debug("height=" + height);
+        byte[] data = new byte[24];
+        data[0] = 0x5A;
+        data[1] = 0x00;
+        data[2] = 0x17;
+        data[3] = (byte) 0xD3;
+        data[4] = (byte) 0xA6;
+        data[5] = (byte) 0xAF;
+        
+        data[6] = 0x00; // Flags 
+        data[7] = 0x00; // Reserved 
+        data[8] = 0x00;  // Reserved
+        
+        data[9] = 0x00; // XpgBase = 10 inches 
+        data[10] = 0x00; // YpgBase = 10 inches 
+        
+        // XpgUnits
+        byte[] xdpi = BinaryUtils.convert(widthResolution * 10, 2);
+        data[11] = xdpi[0];
+        data[12] = xdpi[1];
 
-        byte[] x = BinaryUtils.convert(_width, 3);
+        // YpgUnits
+        byte[] ydpi = BinaryUtils.convert(heightResolution * 10, 2);
+        data[13] = ydpi[0];
+        data[14] = ydpi[1];
+            
+        // XpgSize
+        byte[] x = BinaryUtils.convert(width, 3);
         data[15] = x[0];
         data[16] = x[1];
         data[17] = x[2];
 
-        byte[] y = BinaryUtils.convert(_height, 3);
+        // YpgSize
+        byte[] y = BinaryUtils.convert(height, 3);
         data[18] = y[0];
         data[19] = y[1];
         data[20] = y[2];
 
-        os.write(data);
+        data[21] = 0x00; // Reserved
+        data[22] = 0x00; // Reserved
+        data[23] = 0x00; // Reserved
 
+        os.write(data);
     }
 
 }

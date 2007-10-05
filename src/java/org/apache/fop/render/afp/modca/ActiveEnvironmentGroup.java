@@ -20,8 +20,8 @@
 package org.apache.fop.render.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+
 import org.apache.fop.render.afp.fonts.AFPFont;
 
 /**
@@ -47,41 +47,44 @@ public final class ActiveEnvironmentGroup extends AbstractNamedAFPObject {
     /**
      * The collection of MapCodedFont objects
      */
-    private ArrayList _mapCodedFonts = new ArrayList();
+    private ArrayList mapCodedFonts = new ArrayList();
 
     /**
      * The Object Area Descriptor for the active environment group
      */
-    private ObjectAreaDescriptor _objectAreaDescriptor = null;
+    private ObjectAreaDescriptor objectAreaDescriptor = null;
 
     /**
      * The Object Area Position for the active environment group
      */
-    private ObjectAreaPosition _objectAreaPosition = null;
+    private ObjectAreaPosition objectAreaPosition = null;
 
     /**
      * The PresentationTextDescriptor for the active environment group
      */
-    private PresentationTextDescriptor _presentationTextDataDescriptor = null;
+    private PresentationTextDescriptor presentationTextDataDescriptor = null;
 
     /**
      * The PageDescriptor for the active environment group
      */
-    private PageDescriptor _pageDescriptor = null;
+    private PageDescriptor pageDescriptor = null;
 
     /**
      * The collection of MapPageOverlay objects
      */
-    private ArrayList _mapPageOverlays = new ArrayList();
+    private ArrayList mapPageOverlays = new ArrayList();
 
     /**
      * Default constructor for the ActiveEnvironmentGroup.
      * @param width the page width
      * @param height the page height
+     * @param widthResolution the page width resolution
+     * @param heightResolution the page height resolution
      */
-    public ActiveEnvironmentGroup(int width, int height) {
+    public ActiveEnvironmentGroup(int width, int height,
+            int widthResolution, int heightResolution) {
 
-        this(DEFAULT_NAME, width, height);
+        this(DEFAULT_NAME, width, height, widthResolution, heightResolution);
 
     }
 
@@ -91,20 +94,24 @@ public final class ActiveEnvironmentGroup extends AbstractNamedAFPObject {
      * @param name the active environment group name
      * @param width the page width
      * @param height the page height
+     * @param widthResolution the page width resolution
+     * @param heightResolution the page height resolution
      */
-    public ActiveEnvironmentGroup(String name, int width, int height) {
+    public ActiveEnvironmentGroup(String name, int width, int height,
+            int widthResolution, int heightResolution) {
 
         super(name);
 
         // Create PageDescriptor
-        _pageDescriptor = new PageDescriptor(width, height);
+        pageDescriptor = new PageDescriptor(width, height, widthResolution, heightResolution);
 
         // Create ObjectAreaDescriptor
-        _objectAreaDescriptor = new ObjectAreaDescriptor(width, height);
+        objectAreaDescriptor = new ObjectAreaDescriptor(width, height,
+                widthResolution, heightResolution);
 
         // Create PresentationTextDataDescriptor
-        _presentationTextDataDescriptor =
-            new PresentationTextDescriptor(width, height);
+        presentationTextDataDescriptor = new PresentationTextDescriptor(width, height,
+                    widthResolution, heightResolution);
 
     }
 
@@ -117,7 +124,7 @@ public final class ActiveEnvironmentGroup extends AbstractNamedAFPObject {
     public void setPosition(int x, int y, int rotation) {
 
         // Create ObjectAreaPosition
-        _objectAreaPosition = new ObjectAreaPosition(x, y, rotation);
+        objectAreaPosition = new ObjectAreaPosition(x, y, rotation);
 
     }
 
@@ -128,7 +135,7 @@ public final class ActiveEnvironmentGroup extends AbstractNamedAFPObject {
      */
     public PageDescriptor getPageDescriptor() {
 
-        return _pageDescriptor;
+        return pageDescriptor;
 
     }
 
@@ -139,32 +146,32 @@ public final class ActiveEnvironmentGroup extends AbstractNamedAFPObject {
      */
     public PresentationTextDescriptor getPresentationTextDataDescriptor() {
 
-        return _presentationTextDataDescriptor;
+        return presentationTextDataDescriptor;
 
     }
 
     /**
      * Accessor method to write the AFP datastream for the active environment group.
      * @param os The stream to write to
-     * @throws java.io.IOException
+     * @throws java.io.IOException throws if an I/O exception of some sort has occurred
      */
     public void writeDataStream(OutputStream os)
         throws IOException {
 
         writeStart(os);
 
-        writeObjectList(_mapCodedFonts, os);
+        writeObjectList(mapCodedFonts, os);
 
-        writeObjectList(_mapPageOverlays, os);
+        writeObjectList(mapPageOverlays, os);
 
-        _pageDescriptor.writeDataStream(os);
+        pageDescriptor.writeDataStream(os);
 
-        if (_objectAreaDescriptor != null && _objectAreaPosition != null) {
-            _objectAreaDescriptor.writeDataStream(os);
-            _objectAreaPosition.writeDataStream(os);
+        if (objectAreaDescriptor != null && objectAreaPosition != null) {
+            objectAreaDescriptor.writeDataStream(os);
+            objectAreaPosition.writeDataStream(os);
         }
 
-        _presentationTextDataDescriptor.writeDataStream(os);
+        presentationTextDataDescriptor.writeDataStream(os);
 
         writeEnd(os);
 
@@ -189,9 +196,9 @@ public final class ActiveEnvironmentGroup extends AbstractNamedAFPObject {
         data[7] = 0x00; // Reserved
         data[8] = 0x00; // Reserved
 
-        for (int i = 0; i < _nameBytes.length; i++) {
+        for (int i = 0; i < nameBytes.length; i++) {
 
-            data[9 + i] = _nameBytes[i];
+            data[9 + i] = nameBytes[i];
 
         }
 
@@ -218,9 +225,9 @@ public final class ActiveEnvironmentGroup extends AbstractNamedAFPObject {
         data[7] = 0x00; // Reserved
         data[8] = 0x00; // Reserved
 
-        for (int i = 0; i < _nameBytes.length; i++) {
+        for (int i = 0; i < nameBytes.length; i++) {
 
-            data[9 + i] = _nameBytes[i];
+            data[9 + i] = nameBytes[i];
 
         }
 
@@ -245,7 +252,7 @@ public final class ActiveEnvironmentGroup extends AbstractNamedAFPObject {
 
         if (mcf == null) {
             mcf = new MapCodedFont();
-            _mapCodedFonts.add(mcf);
+            mapCodedFonts.add(mcf);
         }
 
         try {
@@ -259,7 +266,7 @@ public final class ActiveEnvironmentGroup extends AbstractNamedAFPObject {
         } catch (MaximumSizeExceededException msee) {
 
             mcf = new MapCodedFont();
-            _mapCodedFonts.add(mcf);
+            mapCodedFonts.add(mcf);
 
             try {
 
@@ -291,7 +298,7 @@ public final class ActiveEnvironmentGroup extends AbstractNamedAFPObject {
 
         if (mpo == null) {
             mpo = new MapPageOverlay();
-            _mapPageOverlays.add(mpo);
+            mapPageOverlays.add(mpo);
         }
 
         try {
@@ -300,7 +307,7 @@ public final class ActiveEnvironmentGroup extends AbstractNamedAFPObject {
 
         } catch (MaximumSizeExceededException msee) {
             mpo = new MapPageOverlay();
-            _mapPageOverlays.add(mpo);
+            mapPageOverlays.add(mpo);
             try {
                 mpo.addOverlay(name);
             } catch (MaximumSizeExceededException ex) {
@@ -317,9 +324,9 @@ public final class ActiveEnvironmentGroup extends AbstractNamedAFPObject {
      */
     private MapCodedFont getCurrentMapCodedFont() {
 
-        int size = _mapCodedFonts.size();
+        int size = mapCodedFonts.size();
         if (size > 0) {
-            return (MapCodedFont) _mapCodedFonts.get(_mapCodedFonts.size() - 1);
+            return (MapCodedFont) mapCodedFonts.get(mapCodedFonts.size() - 1);
         } else {
             return null;
         }
@@ -333,10 +340,10 @@ public final class ActiveEnvironmentGroup extends AbstractNamedAFPObject {
      */
     private MapPageOverlay getCurrentMapPageOverlay() {
 
-        int size = _mapPageOverlays.size();
+        int size = mapPageOverlays.size();
         if (size > 0) {
-            return (MapPageOverlay) _mapPageOverlays.get(
-                _mapPageOverlays.size() - 1);
+            return (MapPageOverlay) mapPageOverlays.get(
+                mapPageOverlays.size() - 1);
         } else {
             return null;
         }

@@ -21,7 +21,6 @@ package org.apache.fop.render.afp.modca;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,8 +38,11 @@ public final class ResourceGroup extends AbstractNamedAFPObject {
     /**
      * The overlays contained in this resource group
      */
-    private List _overlays = new ArrayList();
+    private List overlays = new ArrayList();
 
+    /**
+     * Default constructor
+     */
     public ResourceGroup() {
 
         this(DEFAULT_NAME);
@@ -63,7 +65,7 @@ public final class ResourceGroup extends AbstractNamedAFPObject {
      * @param overlay the overlay to add
      */
     public void addOverlay(Overlay overlay) {
-        _overlays.add(overlay);
+        overlays.add(overlay);
     }
 
     /**
@@ -71,21 +73,21 @@ public final class ResourceGroup extends AbstractNamedAFPObject {
      * @return the list of overlays
      */
     public List getOverlays() {
-        return _overlays;
+        return overlays;
     }
 
     /**
      * Accessor method to obtain write the AFP datastream for
      * the resource group.
      * @param os The stream to write to
-     * @throws java.io.IOException
+     * @throws java.io.IOException if an I/O exception of some sort has occurred
      */
     public void writeDataStream(OutputStream os)
         throws IOException {
 
         writeStart(os);
 
-        writeObjectList(_overlays, os);
+        writeObjectList(overlays, os);
 
         writeEnd(os);
 
@@ -110,9 +112,9 @@ public final class ResourceGroup extends AbstractNamedAFPObject {
         data[7] = 0x00; // Reserved
         data[8] = 0x00; // Reserved
 
-        for (int i = 0; i < _nameBytes.length; i++) {
+        for (int i = 0; i < nameBytes.length; i++) {
 
-            data[9 + i] = _nameBytes[i];
+            data[9 + i] = nameBytes[i];
 
         }
 
@@ -139,9 +141,9 @@ public final class ResourceGroup extends AbstractNamedAFPObject {
         data[7] = 0x00; // Reserved
         data[8] = 0x00; // Reserved
 
-        for (int i = 0; i < _nameBytes.length; i++) {
+        for (int i = 0; i < nameBytes.length; i++) {
 
-            data[9 + i] = _nameBytes[i];
+            data[9 + i] = nameBytes[i];
 
         }
 

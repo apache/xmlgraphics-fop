@@ -544,6 +544,13 @@ out = proc.getOutputStream();]]></source>
         <font-triplet name="Courier" style="normal" weight="bold"/>
       </font>]]></source>
       </section>
+      <section id="afp-renderer-resolution-config">
+        <title>Output Resolution</title>
+        <p>By default the AFP Renderer creates output with a resolution of 240 dpi.
+          This can be overridden by the &lt;renderer-resolution/&gt; configuration element. Example:</p>
+      <source><![CDATA[
+      <renderer-resolution>240</renderer-resolution>]]></source>
+      </section>
       <section id="afp-image-config">
         <title>Images</title>
         <p>By default the AFP Renderer converts all images to 8 bit grey level.

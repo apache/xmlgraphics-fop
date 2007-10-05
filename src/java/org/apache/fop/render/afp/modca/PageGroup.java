@@ -20,7 +20,6 @@
 package org.apache.fop.render.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,17 +39,17 @@ public class PageGroup extends AbstractNamedAFPObject {
     /**
      * The pages contained within this group
      */
-    private List _objects = new ArrayList();
+    private List objects = new ArrayList();
 
     /**
      * The tag logical elements contained within this group
      */
-    private List _tagLogicalElements = new ArrayList();
+    private List tagLogicalElements = new ArrayList();
 
     /**
      * The page state
      */
-    private boolean _complete = false;
+    private boolean complete = false;
 
     /**
      * Constructor for the PageGroup.
@@ -72,8 +71,8 @@ public class PageGroup extends AbstractNamedAFPObject {
      */
     public void addPage(PageObject page) {
 
-        if (!_objects.contains(page)) {
-            _objects.add(page);
+        if (!objects.contains(page)) {
+            objects.add(page);
         }
 
     }
@@ -82,7 +81,7 @@ public class PageGroup extends AbstractNamedAFPObject {
      * @return the name of the page group
      */
     public String getName() {
-        return _name;
+        return name;
     }
 
     /**
@@ -96,7 +95,7 @@ public class PageGroup extends AbstractNamedAFPObject {
     public void createTagLogicalElement(String name, String value) {
 
         TagLogicalElement tle = new TagLogicalElement(name, value);
-        _tagLogicalElements.add(tle);
+        tagLogicalElements.add(tle);
 
     }
 
@@ -109,7 +108,7 @@ public class PageGroup extends AbstractNamedAFPObject {
     public void createInvokeMediumMap(String name) {
 
         InvokeMediumMap imm = new InvokeMediumMap(name);
-        _objects.add(imm);
+        objects.add(imm);
 
     }
 
@@ -118,30 +117,31 @@ public class PageGroup extends AbstractNamedAFPObject {
      */
     public void endPageGroup() {
 
-        _complete = true;
+        complete = true;
 
     }
 
     /**
      * Returns an indication if the page group is complete
+     * @return whether or not this page group is complete or not
      */
     public boolean isComplete() {
-        return _complete;
+        return complete;
     }
 
    /**
      * Accessor method to write the AFP datastream for the page group.
      * @param os The stream to write to
-     * @throws java.io.IOException
+     * @throws java.io.IOException thrown if an I/O exception of some sort has occurred
      */
     public void writeDataStream(OutputStream os)
         throws IOException {
 
         writeStart(os);
 
-        writeObjectList(_tagLogicalElements, os);
+        writeObjectList(tagLogicalElements, os);
 
-        writeObjectList(_objects, os);
+        writeObjectList(objects, os);
 
         writeEnd(os);
 
@@ -166,9 +166,9 @@ public class PageGroup extends AbstractNamedAFPObject {
         data[7] = 0x00; // Reserved
         data[8] = 0x00; // Reserved
 
-        for (int i = 0; i < _nameBytes.length; i++) {
+        for (int i = 0; i < nameBytes.length; i++) {
 
-            data[9 + i] = _nameBytes[i];
+            data[9 + i] = nameBytes[i];
 
         }
 
@@ -195,9 +195,9 @@ public class PageGroup extends AbstractNamedAFPObject {
         data[7] = 0x00; // Reserved
         data[8] = 0x00; // Reserved
 
-        for (int i = 0; i < _nameBytes.length; i++) {
+        for (int i = 0; i < nameBytes.length; i++) {
 
-            data[9 + i] = _nameBytes[i];
+            data[9 + i] = nameBytes[i];
 
         }
 

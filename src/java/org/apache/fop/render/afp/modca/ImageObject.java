@@ -22,7 +22,6 @@ package org.apache.fop.render.afp.modca;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
 /**
@@ -33,12 +32,12 @@ public class ImageObject extends AbstractNamedAFPObject {
     /**
      * The object environment group
      */
-    private ObjectEnvironmentGroup _objectEnvironmentGroup = null;
+    private ObjectEnvironmentGroup objectEnvironmentGroup = null;
 
     /**
      * The image segment
      */
-    private ImageSegment _imageSegment = null;
+    private ImageSegment imageSegment = null;
 
     /**
      * Constructor for the image object with the specified name,
@@ -64,12 +63,16 @@ public class ImageObject extends AbstractNamedAFPObject {
      *            the height of the image
      * @param r
      *            the rotation of the image
+     * @param wr
+     *            the width resolution of the image
+     * @param hr
+     *            the height resolution of the image
      */
-    public void setImageViewport(int x, int y, int w, int h, int r) {
-        if (_objectEnvironmentGroup == null) {
-            _objectEnvironmentGroup = new ObjectEnvironmentGroup();
+    public void setImageViewport(int x, int y, int w, int h, int r, int wr, int hr) {
+        if (objectEnvironmentGroup == null) {
+            objectEnvironmentGroup = new ObjectEnvironmentGroup();
         }
-        _objectEnvironmentGroup.setObjectArea(x, y, w, h, r);
+        objectEnvironmentGroup.setObjectArea(x, y, w, h, r, wr, hr);
     }
 
     /**
@@ -80,14 +83,14 @@ public class ImageObject extends AbstractNamedAFPObject {
      * @param height the image height
      */
     public void setImageParameters(int xresol, int yresol, int width, int height) {
-        if (_objectEnvironmentGroup == null) {
-            _objectEnvironmentGroup = new ObjectEnvironmentGroup();
+        if (objectEnvironmentGroup == null) {
+            objectEnvironmentGroup = new ObjectEnvironmentGroup();
         }
-        _objectEnvironmentGroup.setImageData(xresol, yresol, width, height);
-        if (_imageSegment == null) {
-            _imageSegment = new ImageSegment();
+        objectEnvironmentGroup.setImageData(xresol, yresol, width, height);
+        if (imageSegment == null) {
+            imageSegment = new ImageSegment();
         }
-        _imageSegment.setImageSize(xresol, yresol, width, height);
+        imageSegment.setImageSize(xresol, yresol, width, height);
     }
 
     /**
@@ -95,10 +98,10 @@ public class ImageObject extends AbstractNamedAFPObject {
      * @param encoding The image encoding.
      */
     public void setImageEncoding(byte encoding) {
-        if (_imageSegment == null) {
-            _imageSegment = new ImageSegment();
+        if (imageSegment == null) {
+            imageSegment = new ImageSegment();
         }
-        _imageSegment.setImageEncoding(encoding);
+        imageSegment.setImageEncoding(encoding);
     }
 
     /**
@@ -106,10 +109,10 @@ public class ImageObject extends AbstractNamedAFPObject {
      * @param compression The image compression.
      */
     public void setImageCompression(byte compression) {
-        if (_imageSegment == null) {
-            _imageSegment = new ImageSegment();
+        if (imageSegment == null) {
+            imageSegment = new ImageSegment();
         }
-        _imageSegment.setImageCompression(compression);
+        imageSegment.setImageCompression(compression);
     }
 
     /**
@@ -117,10 +120,10 @@ public class ImageObject extends AbstractNamedAFPObject {
      * @param size The IDE size.
      */
     public void setImageIDESize(byte size) {
-        if (_imageSegment == null) {
-            _imageSegment = new ImageSegment();
+        if (imageSegment == null) {
+            imageSegment = new ImageSegment();
         }
-        _imageSegment.setImageIDESize(size);
+        imageSegment.setImageIDESize(size);
     }
 
     /**
@@ -128,21 +131,21 @@ public class ImageObject extends AbstractNamedAFPObject {
      * @param colorModel    the IDE color model.
      */
     public void setImageIDEColorModel(byte colorModel) {
-        if (_imageSegment == null) {
-            _imageSegment = new ImageSegment();
+        if (imageSegment == null) {
+            imageSegment = new ImageSegment();
         }
-        _imageSegment.setImageIDEColorModel(colorModel);
+        imageSegment.setImageIDEColorModel(colorModel);
     }
 
     /**
      * Set the data of the image.
      * @param data The image data
      */
-    public void setImageData(byte data[]) {
-        if (_imageSegment == null) {
-            _imageSegment = new ImageSegment();
+    public void setImageData(byte[] data) {
+        if (imageSegment == null) {
+            imageSegment = new ImageSegment();
         }
-        _imageSegment.setImageData(data);
+        imageSegment.setImageData(data);
     }
 
     /**
@@ -150,7 +153,7 @@ public class ImageObject extends AbstractNamedAFPObject {
      * @param objectEnvironmentGroup The objectEnvironmentGroup to set
      */
     public void setObjectEnvironmentGroup(ObjectEnvironmentGroup objectEnvironmentGroup) {
-        _objectEnvironmentGroup = objectEnvironmentGroup;
+        this.objectEnvironmentGroup = objectEnvironmentGroup;
     }
 
     /**
@@ -183,21 +186,21 @@ public class ImageObject extends AbstractNamedAFPObject {
     /**
      * Accessor method to write the AFP datastream for the Image Object
      * @param os The stream to write to
-     * @throws java.io.IOException
+     * @throws java.io.IOException thrown if an I/O exception of some sort has occurred
      */
     public void writeDataStream(OutputStream os)
         throws IOException {
 
         writeStart(os);
 
-        if (_objectEnvironmentGroup != null) {
-            _objectEnvironmentGroup.writeDataStream(os);
+        if (objectEnvironmentGroup != null) {
+            objectEnvironmentGroup.writeDataStream(os);
         }
 
-        if (_imageSegment != null) {
+        if (imageSegment != null) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            _imageSegment.writeDataStream(baos);
-            byte b[] = baos.toByteArray();
+            imageSegment.writeDataStream(baos);
+            byte[] b = baos.toByteArray();
             int off = 0;
             while (off < b.length) {
                 int len = Math.min(30000, b.length - off);
@@ -230,9 +233,9 @@ public class ImageObject extends AbstractNamedAFPObject {
         data[7] = 0x00; // Reserved
         data[8] = 0x00; // Reserved
 
-        for (int i = 0; i < _nameBytes.length; i++) {
+        for (int i = 0; i < nameBytes.length; i++) {
 
-            data[9 + i] = _nameBytes[i];
+            data[9 + i] = nameBytes[i];
 
         }
 
@@ -259,9 +262,9 @@ public class ImageObject extends AbstractNamedAFPObject {
         data[7] = 0x00; // Reserved
         data[8] = 0x00; // Reserved
 
-        for (int i = 0; i < _nameBytes.length; i++) {
+        for (int i = 0; i < nameBytes.length; i++) {
 
-            data[9 + i] = _nameBytes[i];
+            data[9 + i] = nameBytes[i];
 
         }
 

@@ -21,7 +21,6 @@ package org.apache.fop.render.afp.modca;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
@@ -41,17 +40,17 @@ import org.apache.fop.render.afp.tools.BinaryUtils;
  * that may have to be placed at different positions on a document.
  *
  */
-public class IncludePageSegment extends AbstractNamedAFPObject{
+public class IncludePageSegment extends AbstractNamedAFPObject {
 
     /**
      * The x position where we need to put this object on the page
      */
-    private byte [] _xCoor;
+    private byte[] xCoor;
 
     /**
      * The y position where we need to put this object on the page
      */
-    private byte [] _yCoor;
+    private byte[] yCoor;
 
     /**
      * Constructor for the Include Page Segment
@@ -59,18 +58,18 @@ public class IncludePageSegment extends AbstractNamedAFPObject{
      * @param xVal The x position
      * @param yVal The y position
      */
-    public IncludePageSegment(String name, int xVal, int yVal){
+    public IncludePageSegment(String name, int xVal, int yVal) {
 
         super(name);
-        _xCoor = BinaryUtils.convert(xVal, 3);
-        _yCoor = BinaryUtils.convert(yVal, 3);
+        this.xCoor = BinaryUtils.convert(xVal, 3);
+        this.yCoor = BinaryUtils.convert(yVal, 3);
 
     }
 
     /**
      * Accessor method to write the AFP datastream for the Include Page Segment
      * @param os The stream to write to
-     * @throws java.io.IOException
+     * @throws java.io.IOException thrown if an I/O exception of some sort has occurred
      */
     public void writeDataStream(OutputStream os)
         throws IOException {
@@ -93,19 +92,19 @@ public class IncludePageSegment extends AbstractNamedAFPObject{
         data[7] = 0x00; // Reserved
         data[8] = 0x00; // Reserved
 
-        for (int i = 0; i < _nameBytes.length; i++) {
+        for (int i = 0; i < nameBytes.length; i++) {
 
-            data[9 + i] = _nameBytes[i];
+            data[9 + i] = nameBytes[i];
 
         }
 
-        data[17] = _xCoor[0]; // x coordinate
-        data[18] = _xCoor[1];
-        data[19] = _xCoor[2];
+        data[17] = xCoor[0]; // x coordinate
+        data[18] = xCoor[1];
+        data[19] = xCoor[2];
 
-        data[20] = _yCoor[0]; // y coordinate
-        data[21] = _yCoor[1];
-        data[22] = _yCoor[2];
+        data[20] = yCoor[0]; // y coordinate
+        data[21] = yCoor[1];
+        data[22] = yCoor[2];
 
         os.write(data);
 

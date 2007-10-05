@@ -20,10 +20,8 @@
 package org.apache.fop.render.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.Iterator;
-
+import java.util.List;
 
 /**
  * The document is the highest level of the MO:DCA data-stream document
@@ -55,22 +53,22 @@ public final class Document extends AbstractNamedAFPObject {
     /**
      * Ststic default name reference
      */
-    private final static String DEFAULT_NAME = "DOC00001";
+    private static final String DEFAULT_NAME = "DOC00001";
 
     /**
      * A list of the objects in the document
      */
-    private ArrayList _objects = new ArrayList();
+    private List objects = new java.util.ArrayList();
 
     /**
      * The document started state
      */
-    private boolean _started = false;
+    private boolean started = false;
 
     /**
      * The document completion state
      */
-    private boolean _complete = false;
+    private boolean complete = false;
 
     /**
      * Default constructor for the document object.
@@ -94,8 +92,8 @@ public final class Document extends AbstractNamedAFPObject {
      * @param page - the Page object
      */
     public void addPage(PageObject page) {
-        if (!_objects.contains(page)) {
-            _objects.add(page);
+        if (!objects.contains(page)) {
+            objects.add(page);
         }
     }
 
@@ -104,7 +102,7 @@ public final class Document extends AbstractNamedAFPObject {
      * @param pageGroup the PageGroup object
      */
     public void addPageGroup(PageGroup pageGroup) {
-        _objects.add(pageGroup);
+        objects.add(pageGroup);
     }
 
     /**
@@ -112,31 +110,32 @@ public final class Document extends AbstractNamedAFPObject {
      */
     public void endDocument() {
 
-        _complete = true;
+        complete = true;
 
     }
 
     /**
      * Returns an indication if the page group is complete
+     * @return whether or not this page group is complete
      */
     public boolean isComplete() {
-        return _complete;
+        return complete;
     }
 
     /**
      * Accessor method to write the AFP datastream for document.
      * @param os The stream to write to
-     * @throws java.io.IOException
+     * @throws java.io.IOException thrown if an I/O exception of some sort has occurred
      */
     public void writeDataStream(OutputStream os)
         throws IOException {
 
-        if (!_started) {
+        if (!started) {
             writeStart(os);
-            _started = true;
+            started = true;
         }
 
-        for (Iterator it = _objects.iterator(); it.hasNext(); ) {
+        for (Iterator it = objects.iterator(); it.hasNext();) {
             AbstractAFPObject ao = (AbstractAFPObject)it.next();
             if (ao instanceof PageObject && ((PageObject)ao).isComplete()
                 || ao instanceof PageGroup && ((PageGroup)ao).isComplete()) {
@@ -147,7 +146,7 @@ public final class Document extends AbstractNamedAFPObject {
             }
         }
 
-        if (_complete) {
+        if (complete) {
             writeEnd(os);
         }
 
@@ -172,9 +171,9 @@ public final class Document extends AbstractNamedAFPObject {
         data[7] = 0x00; // Reserved
         data[8] = 0x00; // Reserved
 
-        for (int i = 0; i < _nameBytes.length; i++) {
+        for (int i = 0; i < nameBytes.length; i++) {
 
-            data[9 + i] = _nameBytes[i];
+            data[9 + i] = nameBytes[i];
 
         }
 
@@ -201,9 +200,9 @@ public final class Document extends AbstractNamedAFPObject {
         data[7] = 0x00; // Reserved
         data[8] = 0x00; // Reserved
 
-        for (int i = 0; i < _nameBytes.length; i++) {
+        for (int i = 0; i < nameBytes.length; i++) {
 
-            data[9 + i] = _nameBytes[i];
+            data[9 + i] = nameBytes[i];
 
         }
 
