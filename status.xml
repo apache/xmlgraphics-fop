@@ -28,6 +28,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix" fixes-bug="43464" due-to="Bruno Feurer">
+        Fix to avoid a ClassCastException in renderer configuration.
+      </action>
       <action context="Code" dev="JM" type="fix" fixes-bug="43439" due-to="Adrian Cumiskey">
         Fixed the restoration of the TLE values from the intermediate format 
         for the AFP extension elements.
