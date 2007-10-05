@@ -45,67 +45,62 @@ import org.apache.fop.render.afp.tools.BinaryUtils;
  * in their semantic descriptions.
  *
  */
-public class PresentationTextDescriptor extends AbstractAFPObject {
-
-    private int _width = 0;
-    private int _height = 0;
+public class PresentationTextDescriptor extends AbstractDescriptor {
 
     /**
      * Constructor a PresentationTextDescriptor for the specified
      * width and height.
      * @param width The width of the page.
      * @param height The height of the page.
+     * @param widthResolution The width resolution of the page.
+     * @param heightResolution The height resolution of the page.
      */
-    public PresentationTextDescriptor(int width, int height) {
-
-        _width = width;
-        _height = height;
-
+    public PresentationTextDescriptor(int width, int height,
+            int widthResolution, int heightResolution) {
+        super(width, height, widthResolution, heightResolution);
     }
 
     /**
      * Accessor method to write the AFP datastream for the Presentation Text Descriptor
      * @param os The stream to write to
-     * @throws java.io.IOException
+     * @throws java.io.IOException thrown if an I/O exception of some sort has occurred
      */
     public void writeDataStream(OutputStream os)
         throws IOException {
 
-        byte[] data = new byte[] {
-            0x5A,
-            0x00,
-            0x16,
-            (byte) 0xD3,
-            (byte) 0xB1,
-            (byte) 0x9B,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x09,
-            0x60,
-            0x09,
-            0x60,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-        };
+        byte[] data = new byte[23];
+        data[0] = 0x5A;
+        data[1] = 0x00;
+        data[2] = 0x16;
+        data[3] = (byte) 0xD3;
+        data[4] = (byte) 0xB1;
+        data[5] = (byte) 0x9B;
+        data[6] = 0x00;
+        data[7] = 0x00;
+        data[8] = 0x00;
+        data[9] = 0x00;
+        data[10] = 0x00;
 
-        byte[] x = BinaryUtils.convert(_width, 3);
+        byte[] xdpi = BinaryUtils.convert(widthResolution * 10, 2);
+        data[11] = xdpi[0]; // xdpi
+        data[12] = xdpi[1];
+
+        byte[] ydpi = BinaryUtils.convert(heightResolution * 10, 2);
+        data[13] = ydpi[0]; // ydpi
+        data[14] = ydpi[1];
+
+        byte[] x = BinaryUtils.convert(width, 3);
         data[15] = x[0];
         data[16] = x[1];
         data[17] = x[2];
 
-        byte[] y = BinaryUtils.convert(_height, 3);
+        byte[] y = BinaryUtils.convert(height, 3);
         data[18] = y[0];
         data[19] = y[1];
         data[20] = y[2];
+
+        data[21] = 0x00;
+        data[22] = 0x00;
 
         os.write(data);
 

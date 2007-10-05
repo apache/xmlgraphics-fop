@@ -28,6 +28,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="add" fixes-bug="43041" due-to="Adrian Cumiskey">
+        Added a configuration setting for the renderer/device resolution to the AFP renderer.
+      </action>
       <action context="code" dev="AD" type="update">
         Facilitate the implementation for font-selection-strategy:
         * Changed FontInfo.fontLookup to always return an array of FontTriplet

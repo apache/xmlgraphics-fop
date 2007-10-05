@@ -21,7 +21,6 @@ package org.apache.fop.render.afp.modca;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 
 /**
  * The End Named Page Group (ENG) structured field terminates a page group that was
@@ -36,18 +35,23 @@ import java.io.UnsupportedEncodingException;
  */
 public class EndPageGroup extends AbstractNamedAFPObject {
 
+    /**
+     * Main constructor
+     * @param groupId the group id
+     */
     public EndPageGroup(String groupId) {
 
         super(groupId);
 
-        log.debug("A ENG is being created for group: " + groupId);
-
+        if (log.isDebugEnabled()) {
+            log.debug("A ENG is being created for group: " + groupId);
+        }
     }
 
     /**
      * Accessor method to write the AFP datastream for the End Page Group.
      * @param os The stream to write to
-     * @throws java.io.IOException
+     * @throws java.io.IOException thrown if an I/O exception of some sort has occurred
      */
     public void writeDataStream(OutputStream os)
         throws IOException {
@@ -63,9 +67,9 @@ public class EndPageGroup extends AbstractNamedAFPObject {
         data[7] = 0x00; // Reserved
         data[8] = 0x00; // Reserved
 
-        for (int i = 0; i < _nameBytes.length; i++) {
+        for (int i = 0; i < nameBytes.length; i++) {
 
-            data[9 + i] = _nameBytes[i];
+            data[9 + i] = nameBytes[i];
 
         }
 

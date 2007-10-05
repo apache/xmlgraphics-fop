@@ -40,6 +40,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.java2d.ps.PSGraphics2D;
+import org.apache.xmlgraphics.java2d.ps.TextHandler;
 
 import org.apache.batik.dom.svg.SVGOMTextElement;
 import org.apache.batik.gvt.text.Mark;
@@ -74,7 +75,7 @@ public class PSTextPainter implements TextPainter {
     protected Log log = LogFactory.getLog(PSTextPainter.class);
     
     private NativeTextHandler nativeTextHandler;
-    //private FontInfo fontInfo;
+    private FontInfo fontInfo;
 
     /**
      * Use the stroking text painter to get the bounds and shape.
@@ -89,6 +90,7 @@ public class PSTextPainter implements TextPainter {
      */
     public PSTextPainter(NativeTextHandler nativeTextHandler) {
         this.nativeTextHandler = nativeTextHandler;
+        this.fontInfo = nativeTextHandler.getFontInfo();
     }
 
     /**
@@ -314,6 +316,12 @@ public class PSTextPainter implements TextPainter {
             }
         }
         
+        drawPrimitiveString(g2d, loc, font, txt, tx);
+        loc.setLocation(loc.getX() + (double)advance, loc.getY());
+        return loc;
+    }
+
+    protected void drawPrimitiveString(Graphics2D g2d, Point2D loc, Font font, String txt, float tx) {
         //Finally draw text
         nativeTextHandler.setOverrideFont(font);
         try {
@@ -327,8 +335,6 @@ public class PSTextPainter implements TextPainter {
         } finally {
             nativeTextHandler.setOverrideFont(null);
         }
-        loc.setLocation(loc.getX() + (double)advance, loc.getY());
-        return loc;
     }
 
     private void updateLocationFromACI(
@@ -380,7 +386,6 @@ public class PSTextPainter implements TextPainter {
         int weight = getWeight(aci);
 
         boolean found = false;
-        FontInfo fontInfo = nativeTextHandler.getFontInfo();
         String fontFamily = null;
         List gvtFonts = (List) aci.getAttribute(
                       GVTAttributedCharacterIterator.TextAttribute.GVT_FONT_FAMILIES);
