@@ -27,13 +27,13 @@
     <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:ps="http://xmlgraphics.apache.org/fop/postscript">
       <fo:layout-master-set>
         <fo:simple-page-master master-name="A4" page-height="29.7cm" page-width="21cm" margin-top="1cm" margin-bottom="2cm" margin-left="2.5cm" margin-right="2.5cm">
-          <ps:ps-setpagedevice name="lower tray"><![CDATA[ << /MediaPosition /4 >> ]]></ps:ps-setpagedevice>
+          <ps:ps-setpagedevice name="lower tray"><![CDATA[ << /MediaPosition 4 >> ]]></ps:ps-setpagedevice>
           <ps:ps-comment-before>A4 before page</ps:ps-comment-before>
           <ps:ps-comment-after>A4 after page</ps:ps-comment-after>
           <fo:region-body/>
         </fo:simple-page-master>
         <fo:simple-page-master master-name="A4a" page-height="29.7cm" page-width="21cm" margin-top="1cm" margin-bottom="2cm" margin-left="2.5cm" margin-right="2.5cm">
-          <ps:ps-setpagedevice name="upper tray"><![CDATA[ << /MediaPosition /1 >> ]]></ps:ps-setpagedevice>
+          <ps:ps-setpagedevice name="upper tray"><![CDATA[ << /MediaPosition 1 >> ]]></ps:ps-setpagedevice>
           <ps:ps-comment-before>A4a before page</ps:ps-comment-before>
           <ps:ps-comment-after>A4a after page</ps:ps-comment-after>
           <fo:region-body background-color="orange"/>
