@@ -286,7 +286,7 @@ public class TableStepper {
         for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
             ActiveCell activeCell = (ActiveCell) iter.next();
             int nextStep = activeCell.getNextStep();
-            if (nextStep > 0) {
+            if (nextStep >= 0) {
                 stepFound = true;
                 minStep = Math.min(minStep, nextStep);
             }

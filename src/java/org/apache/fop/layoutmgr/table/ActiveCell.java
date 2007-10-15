@@ -61,7 +61,8 @@ class ActiveCell {
     /** Length of the penalty ending the last step, if any. */
     private int lastPenaltyLength;
 
-    ActiveCell(PrimaryGridUnit pgu, EffRow row, int rowIndex, int previousRowsLength, TableLayoutManager tableLM) {
+    ActiveCell(PrimaryGridUnit pgu, EffRow row, int rowIndex, int previousRowsLength,
+            TableLayoutManager tableLM) {
         this.pgu = pgu;
         boolean makeBoxForWholeRow = false;
         if (row.getExplicitHeight().min > 0) {
@@ -170,18 +171,20 @@ class ActiveCell {
     /**
      * Returns the total length up to the next legal break, not yet included in the steps.
      * 
-     * @return the total length up to the next legal break
+     * @return the total length up to the next legal break (-1 signals no further step)
      */
     int getNextStep() {
         if (!includedInLastStep()) {
-            return nextStepLength + lastPenaltyLength + borderBefore + borderAfter + paddingBefore + paddingAfter;
+            return nextStepLength + lastPenaltyLength 
+                    + borderBefore + borderAfter + paddingBefore + paddingAfter;
         } else {
             start = end + 1;
             if (knuthIter.hasNext()) {
                 goToNextLegalBreak();
-                return nextStepLength + lastPenaltyLength + borderBefore + borderAfter + paddingBefore + paddingAfter; 
+                return nextStepLength + lastPenaltyLength 
+                        + borderBefore + borderAfter + paddingBefore + paddingAfter; 
             } else {
-                return 0;
+                return -1;
             }
         }
     }
@@ -198,12 +201,14 @@ class ActiveCell {
      * @return
      */
     boolean signalMinStep(int minStep) {
-        if (nextStepLength + lastPenaltyLength + borderBefore + borderAfter + paddingBefore + paddingAfter <= minStep) {
+        if (nextStepLength + lastPenaltyLength 
+                + borderBefore + borderAfter + paddingBefore + paddingAfter <= minStep) {
             includedLength = nextStepLength;
             computeRemainingLength();
             return false;
         } else {
-            return previousRowsLength + borderBefore + borderAfter + paddingBefore + paddingAfter > minStep;
+            return previousRowsLength + borderBefore 
+                    + borderAfter + paddingBefore + paddingAfter > minStep;
         }
     }
 
