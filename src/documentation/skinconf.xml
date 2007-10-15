@@ -378,6 +378,14 @@ which will be used to configure the chosen Forrest skin.
       <width>125</width>
       <height>125</height>
     </credit>
+    <credit box-location="alt2">
+      <name>OS Summit Asia 2007</name>
+      <url>http://www.ossummit.com/</url>
+      <image>http://www.ossummit.com/ads/ossummit_button_3.jpg</image>
+      <width>125</width>
+      <height>125</height>
+    </credit>
+    
     <!--credit box-location="alt2">
       <name>ApacheCon US 2006 (9-13 October 2006)</name>
       <url>http://www.us.apachecon.com/</url>
