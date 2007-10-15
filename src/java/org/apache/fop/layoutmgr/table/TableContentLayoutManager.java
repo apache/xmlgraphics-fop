@@ -30,28 +30,21 @@ import org.apache.fop.area.Block;
 import org.apache.fop.area.Trait;
 import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.flow.TableBody;
 import org.apache.fop.fo.flow.TableRow;
-import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
-import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.layoutmgr.BreakElement;
-import org.apache.fop.layoutmgr.ElementListObserver;
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.KnuthBox;
-import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.KnuthPossPosIter;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.ListElement;
-import org.apache.fop.layoutmgr.MinOptMaxUtil;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.layoutmgr.SpaceResolver.SpaceHandlingBreakPosition;
-import org.apache.fop.traits.MinOptMax;
 
 /**
  * Layout manager for table contents, particularly managing the creation of combined element lists.
@@ -135,7 +128,9 @@ public class TableContentLayoutManager implements PercentBaseContext {
 
     /** @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(LayoutContext, int) */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
-        log.debug("==> Columns: " + getTableLM().getColumns());
+        if (log.isDebugEnabled()) {
+            log.debug("==> Columns: " + getTableLM().getColumns());
+        }
         KnuthBox headerAsFirst = null;
         KnuthBox headerAsSecondToLast = null;
         KnuthBox footerAsLast = null;
@@ -248,7 +243,8 @@ public class TableContentLayoutManager implements PercentBaseContext {
             }
         }
         if (returnList.size() > 0) {
-            //Remove the last penalty produced by the combining algorithm (see TableStepper), for the last step
+            //Remove the last penalty produced by the combining algorithm (see TableStepper), 
+            //for the last step
             ListElement last = (ListElement)returnList.getLast();
             if (last.isPenalty() || last instanceof BreakElement) {
                 if (!last.isForcedBreak()) {
