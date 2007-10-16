@@ -53,9 +53,6 @@ import org.apache.fop.util.LogUtil;
 public class PrintRendererConfigurator extends AbstractRendererConfigurator 
             implements RendererConfigurator {
 
-    /** have we already autodetected system fonts? */
-    private static boolean autodetectedFonts = false;
-
     /** logger instance */
     protected static Log log = LogFactory.getLog(PrintRendererConfigurator.class);
 
@@ -126,7 +123,7 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
             
             // native o/s search (autodetect) configuration
             boolean autodetectFonts = (fonts.getChild("auto-detect", false) != null);
-            if (!autodetectedFonts && autodetectFonts) {
+            if (autodetectFonts) {
                 // search in font base if it is defined and
                 // is a directory but don't recurse
                 FontFileFinder fontFileFinder = new FontFileFinder();
@@ -158,7 +155,6 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
                 } catch (IOException e) {
                     LogUtil.handleException(log, e, strict);
                 }
-                autodetectedFonts = true;
             }
 
             // directory (multiple font) configuration
