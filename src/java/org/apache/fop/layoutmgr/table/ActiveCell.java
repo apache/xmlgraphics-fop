@@ -49,7 +49,7 @@ class ActiveCell {
     private int remainingLength;
     /** Heights of the rows (in the row-group) preceding the one where this cell starts. */
     private int previousRowsLength;
-    /** Total length of this cell's content. */
+    /** Total length of this cell's content plus the lengths of the previous rows. */
     private int totalLength;
     /** Length of the Knuth elements already included in the steps. */
     private int includedLength;
@@ -93,7 +93,7 @@ class ActiveCell {
         includedLength = -1;  // Avoid troubles with cells having content of zero length
         this.previousRowsLength = previousRowsLength;
         nextStepLength = previousRowsLength;
-        totalLength = ElementListUtils.calcContentLength(elementList);
+        totalLength = previousRowsLength + ElementListUtils.calcContentLength(elementList);
         if (pgu.getTable().isSeparateBorderModel()) {
             borderBefore = pgu.getBorders().getBorderBeforeWidth(false)
                     + tableLM.getHalfBorderSeparationBPD();
@@ -109,7 +109,7 @@ class ActiveCell {
         end = -1;
         endRowIndex = rowIndex + pgu.getCell().getNumberRowsSpanned() - 1;
         keepWithNextSignal = false;
-        remainingLength = totalLength;
+        remainingLength = totalLength - previousRowsLength;
         goToNextLegalBreak();
     }
 
