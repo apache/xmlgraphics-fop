@@ -258,7 +258,7 @@ class RowGroupLayoutManager {
             pgus.clear();
             TableRow tableRow = null;
             // The row's minimum content height; 0 if the row's height is auto, otherwise
-            // the .minimum component of the explicitely specified value
+            // the .minimum component of the explicitly specified value
             int minContentHeight = 0;
             int maxCellHeight = 0;
             int effRowContentHeight = 0;
