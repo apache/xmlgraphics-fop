@@ -20,16 +20,14 @@
 package org.apache.fop.image.analyser;
 
 // Java
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
-
-// FOP
-import org.apache.fop.image.FopImage;
-import org.apache.fop.apps.FOUserAgent;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.image.FopImage;
 
 
 /**
@@ -55,6 +53,7 @@ public class ImageReaderFactory {
         // the xml parser through batik closes the stream when finished
         // so there is a workaround in the SVGReader
         registerFormat(new SVGReader());
+        registerFormat(new SVGZReader());
         registerFormat(new XMLReader());
     }
 
