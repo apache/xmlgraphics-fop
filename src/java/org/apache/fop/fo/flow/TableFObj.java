@@ -84,15 +84,6 @@ public abstract class TableFObj extends FObj {
         borderBeforePrecedence = pList.get(PR_BORDER_BEFORE_PRECEDENCE).getNumeric();
         borderEndPrecedence = pList.get(PR_BORDER_END_PRECEDENCE).getNumeric();
         borderStartPrecedence = pList.get(PR_BORDER_START_PRECEDENCE).getNumeric();
-        //Complain if table has separate border-model and fo is not a table or cell
-        //see: Rec 6.7.4, 6.7.6 - 6.7.9
-        if (getNameId() != FO_TABLE && getNameId() != FO_TABLE_CELL
-                && getTable().isSeparateBorderModel()
-                && getCommonBorderPaddingBackground().hasBorderInfo()) {
-            attributeWarning("In the separate border model (border-collapse=\"separate\")"
-                    + ", borders are not applicable to " + getName() 
-                    + ", but a non-zero value for border was found.");
-        }
         if (getNameId() != FO_TABLE //Separate check for fo:table in Table.java
                 && getNameId() != FO_TABLE_CELL
                 && getCommonBorderPaddingBackground().hasPadding(
