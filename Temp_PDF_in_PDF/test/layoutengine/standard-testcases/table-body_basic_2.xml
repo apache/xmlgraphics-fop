@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks element-lists on tables, particularly a constellation where a single line
+      from one column might be printed alone while the rest of the content is broken over to
+      the next part.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="4in" page-height="1.4in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" widows="3" orphans="3">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block-container height="9*8400mpt">
+            <fo:block/>
+          </fo:block-container>
+          <fo:table font-size="8pt">
+            <fo:table-column column-width="10%"/>
+            <fo:table-column column-width="90%"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>A</fo:block>
+                  <fo:block>B</fo:block>
+                  <!-- Note: The second "B" block is there to trigger a problem that was revealed in a earlier attempt at handling this special case. -->
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Cras et felis faucibus justo fringilla tincidunt. Vivamus vitae wisi ut orci egestas bibendum. Nullam nunc orci, euismod non, pulvinar sit amet, aliquet a, leo. Aliquam dapibus, justo pulvinar euismod fringilla, neque ipsum pretium lorem, eget pharetra eros massa vel nulla. Ut lobortis enim id magna. Pellentesque sagittis. Etiam tristique arcu. Cras eu dolor. Praesent aliquam wisi sit amet enim. Nullam id diam.</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- Both 'A' and 'B' must be on the second page -->
+    <eval expected="2" xpath="//text[.='A']/ancestor::pageViewport/@nr"/>
+    <eval expected="2" xpath="//text[.='B']/ancestor::pageViewport/@nr"/>
+    <element-list category="breaker">
+      <box w="75600"/> <!-- block-container as spacer -->
+      <penalty w="0" p="0"/>
+      <box w="0"/>
+      <penalty w="9600" p="&gt;0"/>
+      <box w="0"/>
+      <penalty w="19200" p="&gt;0"/>
+      <box w="28800"/>
+      <penalty w="0" p="0"/>
+      <box w="28800"/>
+      <skip>3</skip>
+    </element-list>
+  </checks>
+</testcase>

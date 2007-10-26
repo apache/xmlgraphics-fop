@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks painting of borders and border-style.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:table table-layout="fixed" width="100%" border-collapse="separate">
+            <fo:table-column column-width="1in" number-columns-repeated="5"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell border="solid 5pt black" background-color="lightgray">
+                  <fo:block>solid</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="dashed 5pt red">
+                  <fo:block>dashed</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="dotted 5pt green" background-color="lightgray">
+                  <fo:block>dotted</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="double 5pt blue">
+                  <fo:block>double</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="groove 5pt orange" background-color="orange">
+                  <fo:block>groove</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell border="solid 2pt black" background-color="lightgray">
+                  <fo:block>solid</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="dashed 2pt red">
+                  <fo:block>dashed</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="dotted 2pt green" background-color="lightgray">
+                  <fo:block>dotted</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="double 2pt blue">
+                  <fo:block>double</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="groove 2pt orange" background-color="orange">
+                  <fo:block>groove</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell border="groove 5pt gray" background-color="gray">
+                  <fo:block color="white">groove</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="ridge 5pt red">
+                  <fo:block>ridge</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="inset 5pt green">
+                  <fo:block>inset</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="outset 5pt blue" background-color="lightgray">
+                  <fo:block>outset</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell border="groove 2pt gray" background-color="gray">
+                  <fo:block color="white">groove</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="ridge 2pt red">
+                  <fo:block>ridge</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="inset 2pt green">
+                  <fo:block>inset</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="outset 2pt blue" background-color="lightgray">
+                  <fo:block>outset</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell border="none 5pt yellow" background-color="brown">
+                  <fo:block>none</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="hidden 5pt yellow" background-color="brown">
+                  <fo:block>hidden</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell border="none 2pt yellow" background-color="brown">
+                  <fo:block>none</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="hidden 2pt yellow" background-color="brown">
+                  <fo:block>hidden</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="solid" xpath="//flow/block[1]/block[1]/block[1]/lineArea"/>
+    <eval expected="72000" xpath="//flow/block[1]/block[1]/@ipda"/>
+    <eval expected="62000" xpath="//flow/block[1]/block[1]/@ipd"/>
+
+    <!-- border-style="none" -->
+    <eval expected="none" xpath="//flow/block[1]/block[19]/block[1]/lineArea"/>
+    <eval expected="72000" xpath="//flow/block[1]/block[19]/@ipda"/>
+    <eval expected="72000" xpath="//flow/block[1]/block[19]/@ipd"/>
+    <eval expected="0 0 0 0" xpath="//flow/block[1]/block[19]/@bap"/>
+
+    <!-- border-style="hidden" -->
+    <eval expected="hidden" xpath="//flow/block[1]/block[20]/block[1]/lineArea"/>
+    <eval expected="72000" xpath="//flow/block[1]/block[20]/@ipda"/>
+    <eval expected="72000" xpath="//flow/block[1]/block[20]/@ipd"/>
+    <eval expected="0 0 0 0" xpath="//flow/block[1]/block[20]/@bap"/>
+  </checks>
+</testcase>

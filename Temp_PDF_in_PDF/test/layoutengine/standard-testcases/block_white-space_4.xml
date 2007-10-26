@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks element generation for various spaces.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal">
+        <fo:flow flow-name="xsl-region-body">
+          <!-- for nbsp see block_white-space_2 and block_white-space_3 -->
+          <fo:block>
+            <fo:block background-color="yellow" id="l-sp">« text text »<fo:inline font-style="italic"> (normal space)</fo:inline></fo:block>
+            <fo:block background-color="orange" id="l-en-quad">«&#x2000;text text&#x2000;»<fo:inline font-style="italic"> (en quad, &amp;#x2000;)</fo:inline></fo:block>
+            <fo:block background-color="yellow" id="l-em-quad">«&#x2001;text text&#x2001;»<fo:inline font-style="italic"> (em quad, &amp;#x2001;)</fo:inline></fo:block>
+            <fo:block background-color="orange" id="l-en-space">«&#x2002;text text&#x2002;»<fo:inline font-style="italic"> (en space, &amp;#x2002;)</fo:inline></fo:block>
+            <fo:block background-color="yellow" id="l-em-space">«&#x2003;text text&#x2003;»<fo:inline font-style="italic"> (em space, &amp;#x2003;)</fo:inline></fo:block>
+            <fo:block background-color="orange" id="l-three-per-em-space">«&#x2004;text text&#x2004;»<fo:inline font-style="italic"> (three per em space, &amp;#x2004;)</fo:inline></fo:block>
+            <fo:block background-color="yellow" id="l-four-per-em-space">«&#x2005;text text&#x2005;»<fo:inline font-style="italic"> (four per em space, &amp;#x2005;)</fo:inline></fo:block>
+            <fo:block background-color="orange" id="l-six-per-em-space">«&#x2006;text text&#x2006;»<fo:inline font-style="italic"> (six per em space, &amp;#x2006;)</fo:inline></fo:block>
+            <fo:block background-color="yellow" id="l-figure-space">«&#x2007;text text&#x2007;»<fo:inline font-style="italic"> (figure space, &amp;#x2007;)</fo:inline></fo:block>
+            <fo:block background-color="orange" id="l-punctuation-space">«&#x2008;text text&#x2008;»<fo:inline font-style="italic"> (punctuation space, &amp;#x2008;)</fo:inline></fo:block>
+            <fo:block background-color="yellow" id="l-thin-space">«&#x2009;text text&#x2009;»<fo:inline font-style="italic"> (thin space, &amp;#x2009;)</fo:inline></fo:block>
+            <fo:block background-color="orange" id="l-hair-space">«&#x200A;text text&#x200A;»<fo:inline font-style="italic"> (hair space, &amp;#x200A;)</fo:inline></fo:block>
+            <fo:block background-color="yellow" id="l-zwsp">«&#x200B;text text&#x200B;»<fo:inline font-style="italic"> (zero width space, &amp;#x200B;)</fo:inline></fo:block>
+            <fo:block background-color="orange" id="l-nosp">«text text»<fo:inline font-style="italic"> (no spaces)</fo:inline></fo:block>
+          </fo:block>
+          <fo:block break-before="page" text-align="center">
+            <fo:block background-color="yellow" id="c-sp">« text text »<fo:inline font-style="italic"> (normal space)</fo:inline></fo:block>
+            <fo:block background-color="orange" id="c-en-quad">«&#x2000;text text&#x2000;»<fo:inline font-style="italic"> (en quad, &amp;#x2000;)</fo:inline></fo:block>
+            <fo:block background-color="yellow" id="c-em-quad">«&#x2001;text text&#x2001;»<fo:inline font-style="italic"> (em quad, &amp;#x2001;)</fo:inline></fo:block>
+            <fo:block background-color="orange" id="c-en-space">«&#x2002;text text&#x2002;»<fo:inline font-style="italic"> (en space, &amp;#x2002;)</fo:inline></fo:block>
+            <fo:block background-color="yellow" id="c-em-space">«&#x2003;text text&#x2003;»<fo:inline font-style="italic"> (em space, &amp;#x2003;)</fo:inline></fo:block>
+            <fo:block background-color="orange" id="c-three-per-em-space">«&#x2004;text text&#x2004;»<fo:inline font-style="italic"> (three per em space, &amp;#x2004;)</fo:inline></fo:block>
+            <fo:block background-color="yellow" id="c-four-per-em-space">«&#x2005;text text&#x2005;»<fo:inline font-style="italic"> (four per em space, &amp;#x2005;)</fo:inline></fo:block>
+            <fo:block background-color="orange" id="c-six-per-em-space">«&#x2006;text text&#x2006;»<fo:inline font-style="italic"> (six per em space, &amp;#x2006;)</fo:inline></fo:block>
+            <fo:block background-color="yellow" id="c-figure-space">«&#x2007;text text&#x2007;»<fo:inline font-style="italic"> (figure space, &amp;#x2007;)</fo:inline></fo:block>
+            <fo:block background-color="orange" id="c-punctuation-space">«&#x2008;text text&#x2008;»<fo:inline font-style="italic"> (punctuation space, &amp;#x2008;)</fo:inline></fo:block>
+            <fo:block background-color="yellow" id="c-thin-space">«&#x2009;text text&#x2009;»<fo:inline font-style="italic"> (thin space, &amp;#x2009;)</fo:inline></fo:block>
+            <fo:block background-color="orange" id="c-hair-space">«&#x200A;text text&#x200A;»<fo:inline font-style="italic"> (hair space, &amp;#x200A;)</fo:inline></fo:block>
+            <fo:block background-color="yellow" id="c-zwsp">«&#x200B;text text&#x200B;»<fo:inline font-style="italic"> (zero width space, &amp;#x200B;)</fo:inline></fo:block>
+            <fo:block background-color="orange" id="c-nosp">«text text»<fo:inline font-style="italic"> (no spaces)</fo:inline></fo:block>
+          </fo:block>
+          <fo:block break-before="page" text-align="justify" text-align-last="justify">
+            <fo:block background-color="yellow" id="j-sp">« text text »<fo:inline font-style="italic"> (normal space)</fo:inline></fo:block>
+            <fo:block background-color="orange" id="j-en-quad">«&#x2000;text text&#x2000;»<fo:inline font-style="italic"> (en quad, &amp;#x2000;)</fo:inline></fo:block>
+            <fo:block background-color="yellow" id="j-em-quad">«&#x2001;text text&#x2001;»<fo:inline font-style="italic"> (em quad, &amp;#x2001;)</fo:inline></fo:block>
+            <fo:block background-color="orange" id="j-en-space">«&#x2002;text text&#x2002;»<fo:inline font-style="italic"> (en space, &amp;#x2002;)</fo:inline></fo:block>
+            <fo:block background-color="yellow" id="j-em-space">«&#x2003;text text&#x2003;»<fo:inline font-style="italic"> (em space, &amp;#x2003;)</fo:inline></fo:block>
+            <fo:block background-color="orange" id="j-three-per-em-space">«&#x2004;text text&#x2004;»<fo:inline font-style="italic"> (three per em space, &amp;#x2004;)</fo:inline></fo:block>
+            <fo:block background-color="yellow" id="j-four-per-em-space">«&#x2005;text text&#x2005;»<fo:inline font-style="italic"> (four per em space, &amp;#x2005;)</fo:inline></fo:block>
+            <fo:block background-color="orange" id="j-six-per-em-space">«&#x2006;text text&#x2006;»<fo:inline font-style="italic"> (six per em space, &amp;#x2006;)</fo:inline></fo:block>
+            <fo:block background-color="yellow" id="j-figure-space">«&#x2007;text text&#x2007;»<fo:inline font-style="italic"> (figure space, &amp;#x2007;)</fo:inline></fo:block>
+            <fo:block background-color="orange" id="j-punctuation-space">«&#x2008;text text&#x2008;»<fo:inline font-style="italic"> (punctuation space, &amp;#x2008;)</fo:inline></fo:block>
+            <fo:block background-color="yellow" id="j-thin-space">«&#x2009;text text&#x2009;»<fo:inline font-style="italic"> (thin space, &amp;#x2009;)</fo:inline></fo:block>
+            <fo:block background-color="orange" id="j-hair-space">«&#x200A;text text&#x200A;»<fo:inline font-style="italic"> (hair space, &amp;#x200A;)</fo:inline></fo:block>
+            <fo:block background-color="yellow" id="j-zwsp">«&#x200B;text text&#x200B;»<fo:inline font-style="italic"> (zero width space, &amp;#x200B;)</fo:inline></fo:block>
+            <fo:block background-color="orange" id="j-nosp">«text text»<fo:inline font-style="italic"> (no spaces)</fo:inline></fo:block>
+          </fo:block>
+          <fo:block break-before="page" text-align="justify" text-align-last="justify" letter-spacing="2pt">
+            <fo:block background-color="yellow" id="lsj-sp">« text text »<fo:inline font-style="italic"> (normal space)</fo:inline></fo:block>
+            <fo:block background-color="orange" id="lsj-en-quad">«&#x2000;text text&#x2000;»<fo:inline font-style="italic"> (en quad, &amp;#x2000;)</fo:inline></fo:block>
+            <fo:block background-color="yellow" id="lsj-em-quad">«&#x2001;text text&#x2001;»<fo:inline font-style="italic"> (em quad, &amp;#x2001;)</fo:inline></fo:block>
+            <fo:block background-color="orange" id="lsj-en-space">«&#x2002;text text&#x2002;»<fo:inline font-style="italic"> (en space, &amp;#x2002;)</fo:inline></fo:block>
+            <fo:block background-color="yellow" id="lsj-em-space">«&#x2003;text text&#x2003;»<fo:inline font-style="italic"> (em space, &amp;#x2003;)</fo:inline></fo:block>
+            <fo:block background-color="orange" id="lsj-three-per-em-space">«&#x2004;text text&#x2004;»<fo:inline font-style="italic"> (three per em space, &amp;#x2004;)</fo:inline></fo:block>
+            <fo:block background-color="yellow" id="lsj-four-per-em-space">«&#x2005;text text&#x2005;»<fo:inline font-style="italic"> (four per em space, &amp;#x2005;)</fo:inline></fo:block>
+            <fo:block background-color="orange" id="lsj-six-per-em-space">«&#x2006;text text&#x2006;»<fo:inline font-style="italic"> (six per em space, &amp;#x2006;)</fo:inline></fo:block>
+            <fo:block background-color="yellow" id="lsj-figure-space">«&#x2007;text text&#x2007;»<fo:inline font-style="italic"> (figure space, &amp;#x2007;)</fo:inline></fo:block>
+            <fo:block background-color="orange" id="lsj-punctuation-space">«&#x2008;text text&#x2008;»<fo:inline font-style="italic"> (punctuation space, &amp;#x2008;)</fo:inline></fo:block>
+            <fo:block background-color="yellow" id="lsj-thin-space">«&#x2009;text text&#x2009;»<fo:inline font-style="italic"> (thin space, &amp;#x2009;)</fo:inline></fo:block>
+            <fo:block background-color="orange" id="lsj-hair-space">«&#x200A;text text&#x200A;»<fo:inline font-style="italic"> (hair space, &amp;#x200A;)</fo:inline></fo:block>
+            <fo:block background-color="yellow" id="lsj-zwsp">«&#x200B;text text&#x200B;»<fo:inline font-style="italic"> (zero width space, &amp;#x200B;)</fo:inline></fo:block>
+            <fo:block background-color="orange" id="lsj-nosp">«text text»<fo:inline font-style="italic"> (no spaces)</fo:inline></fo:block>
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="62040" xpath="//block[@prod-id='l-sp']/lineArea/text/@ipd"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='l-sp']/lineArea/text/*[1])"/>
+    <eval expected="space" xpath="local-name(//block[@prod-id='l-sp']/lineArea/text/*[2])"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='l-sp']/lineArea/text/*[3])"/>
+    <eval expected="space" xpath="local-name(//block[@prod-id='l-sp']/lineArea/text/*[4])"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='l-sp']/lineArea/text/*[5])"/>
+    <eval expected="space" xpath="local-name(//block[@prod-id='l-sp']/lineArea/text/*[6])"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='l-sp']/lineArea/text/*[7])"/>
+    <true xpath="not(//block[@prod-id='l-sp']/lineArea/text/*[2]/@adj = 'false')"/>
+    <true xpath="not(//block[@prod-id='l-sp']/lineArea/text/*[6]/@adj = 'false')"/>
+
+    <eval expected="67368" xpath="//block[@prod-id='l-en-quad']/lineArea/text/@ipd"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='l-en-quad']/lineArea/text/*[1])"/>
+    <eval expected="space" xpath="local-name(//block[@prod-id='l-en-quad']/lineArea/text/*[2])"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='l-en-quad']/lineArea/text/*[3])"/>
+    <eval expected="space" xpath="local-name(//block[@prod-id='l-en-quad']/lineArea/text/*[4])"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='l-en-quad']/lineArea/text/*[5])"/>
+    <eval expected="space" xpath="local-name(//block[@prod-id='l-en-quad']/lineArea/text/*[6])"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='l-en-quad']/lineArea/text/*[7])"/>
+    <true xpath="//block[@prod-id='l-en-quad']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='l-en-quad']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="79368" xpath="//block[@prod-id='l-em-quad']/lineArea/text/@ipd"/>
+    <true xpath="//block[@prod-id='l-em-quad']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='l-em-quad']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="67368" xpath="//block[@prod-id='l-en-space']/lineArea/text/@ipd"/>
+    <true xpath="//block[@prod-id='l-en-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='l-en-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="79368" xpath="//block[@prod-id='l-em-space']/lineArea/text/@ipd"/>
+    <true xpath="//block[@prod-id='l-em-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='l-em-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="63368" xpath="//block[@prod-id='l-three-per-em-space']/lineArea/text/@ipd"/>
+    <true xpath="//block[@prod-id='l-three-per-em-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='l-three-per-em-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="61368" xpath="//block[@prod-id='l-four-per-em-space']/lineArea/text/@ipd"/>
+    <true xpath="//block[@prod-id='l-four-per-em-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='l-four-per-em-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="59368" xpath="//block[@prod-id='l-six-per-em-space']/lineArea/text/@ipd"/>
+    <true xpath="//block[@prod-id='l-six-per-em-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='l-six-per-em-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="68712" xpath="//block[@prod-id='l-figure-space']/lineArea/text/@ipd"/>
+    <true xpath="//block[@prod-id='l-figure-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='l-figure-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="62040" xpath="//block[@prod-id='l-punctuation-space']/lineArea/text/@ipd"/>
+    <true xpath="//block[@prod-id='l-punctuation-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='l-punctuation-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="60168" xpath="//block[@prod-id='l-thin-space']/lineArea/text/@ipd"/>
+    <true xpath="//block[@prod-id='l-thin-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='l-thin-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="57768" xpath="//block[@prod-id='l-hair-space']/lineArea/text/@ipd"/>
+    <true xpath="//block[@prod-id='l-hair-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='l-hair-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="55368" xpath="//block[@prod-id='l-zwsp']/lineArea/text/@ipd"/>
+    <!-- zwsp is not rendered to the area tree -->
+    <eval expected="1" xpath="count(//block[@prod-id='l-zwsp']/lineArea/text/space)"/>
+
+    <eval expected="55368" xpath="//block[@prod-id='l-nosp']/lineArea/text/@ipd"/>
+
+    <eval expected="62040" xpath="//block[@prod-id='c-sp']/lineArea/text/@ipd"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='c-sp']/lineArea/text/*[1])"/>
+    <eval expected="space" xpath="local-name(//block[@prod-id='c-sp']/lineArea/text/*[2])"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='c-sp']/lineArea/text/*[3])"/>
+    <eval expected="space" xpath="local-name(//block[@prod-id='c-sp']/lineArea/text/*[4])"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='c-sp']/lineArea/text/*[5])"/>
+    <eval expected="space" xpath="local-name(//block[@prod-id='c-sp']/lineArea/text/*[6])"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='c-sp']/lineArea/text/*[7])"/>
+    <true xpath="not(//block[@prod-id='c-sp']/lineArea/text/*[2]/@adj = 'false')"/>
+    <true xpath="not(//block[@prod-id='c-sp']/lineArea/text/*[6]/@adj = 'false')"/>
+
+    <eval expected="67368" xpath="//block[@prod-id='c-en-quad']/lineArea/text/@ipd"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='c-en-quad']/lineArea/text/*[1])"/>
+    <eval expected="space" xpath="local-name(//block[@prod-id='c-en-quad']/lineArea/text/*[2])"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='c-en-quad']/lineArea/text/*[3])"/>
+    <eval expected="space" xpath="local-name(//block[@prod-id='c-en-quad']/lineArea/text/*[4])"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='c-en-quad']/lineArea/text/*[5])"/>
+    <eval expected="space" xpath="local-name(//block[@prod-id='c-en-quad']/lineArea/text/*[6])"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='c-en-quad']/lineArea/text/*[7])"/>
+    <true xpath="//block[@prod-id='c-en-quad']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='c-en-quad']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="79368" xpath="//block[@prod-id='c-em-quad']/lineArea/text/@ipd"/>
+    <true xpath="//block[@prod-id='c-em-quad']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='c-em-quad']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="67368" xpath="//block[@prod-id='c-en-space']/lineArea/text/@ipd"/>
+    <true xpath="//block[@prod-id='c-en-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='c-en-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="79368" xpath="//block[@prod-id='c-em-space']/lineArea/text/@ipd"/>
+    <true xpath="//block[@prod-id='c-em-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='c-em-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="63368" xpath="//block[@prod-id='c-three-per-em-space']/lineArea/text/@ipd"/>
+    <true xpath="//block[@prod-id='c-three-per-em-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='c-three-per-em-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="61368" xpath="//block[@prod-id='c-four-per-em-space']/lineArea/text/@ipd"/>
+    <true xpath="//block[@prod-id='c-four-per-em-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='c-four-per-em-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="59368" xpath="//block[@prod-id='c-six-per-em-space']/lineArea/text/@ipd"/>
+    <true xpath="//block[@prod-id='c-six-per-em-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='c-six-per-em-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="68712" xpath="//block[@prod-id='c-figure-space']/lineArea/text/@ipd"/>
+    <true xpath="//block[@prod-id='c-figure-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='c-figure-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="62040" xpath="//block[@prod-id='c-punctuation-space']/lineArea/text/@ipd"/>
+    <true xpath="//block[@prod-id='c-punctuation-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='c-punctuation-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="60168" xpath="//block[@prod-id='c-thin-space']/lineArea/text/@ipd"/>
+    <true xpath="//block[@prod-id='c-thin-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='c-thin-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="57768" xpath="//block[@prod-id='c-hair-space']/lineArea/text/@ipd"/>
+    <true xpath="//block[@prod-id='c-hair-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='c-hair-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="55368" xpath="//block[@prod-id='c-zwsp']/lineArea/text/@ipd"/>
+    <!-- zwsp is not rendered to the area tree -->
+    <eval expected="1" xpath="count(//block[@prod-id='c-zwsp']/lineArea/text/space)"/>
+    
+    <eval expected="55368" xpath="//block[@prod-id='c-nosp']/lineArea/text/@ipd"/>
+
+    <eval expected="190804" xpath="//block[@prod-id='j-sp']/lineArea/text/@ipd"/>
+    <eval expected="42921" xpath="//block[@prod-id='j-sp']/lineArea/text/@twsadjust"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='j-sp']/lineArea/text/*[1])"/>
+    <eval expected="space" xpath="local-name(//block[@prod-id='j-sp']/lineArea/text/*[2])"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='j-sp']/lineArea/text/*[3])"/>
+    <eval expected="space" xpath="local-name(//block[@prod-id='j-sp']/lineArea/text/*[4])"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='j-sp']/lineArea/text/*[5])"/>
+    <eval expected="space" xpath="local-name(//block[@prod-id='j-sp']/lineArea/text/*[6])"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='j-sp']/lineArea/text/*[7])"/>
+    <true xpath="not(//block[@prod-id='j-sp']/lineArea/text/*[2]/@adj = 'false')"/>
+    <true xpath="not(//block[@prod-id='j-sp']/lineArea/text/*[6]/@adj = 'false')"/>
+
+    <eval expected="112509" xpath="//block[@prod-id='j-en-quad']/lineArea/text/@ipd"/>
+    <eval expected="45141" xpath="//block[@prod-id='j-en-quad']/lineArea/text/@twsadjust"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='j-en-quad']/lineArea/text/*[1])"/>
+    <eval expected="space" xpath="local-name(//block[@prod-id='j-en-quad']/lineArea/text/*[2])"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='j-en-quad']/lineArea/text/*[3])"/>
+    <eval expected="space" xpath="local-name(//block[@prod-id='j-en-quad']/lineArea/text/*[4])"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='j-en-quad']/lineArea/text/*[5])"/>
+    <eval expected="space" xpath="local-name(//block[@prod-id='j-en-quad']/lineArea/text/*[6])"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='j-en-quad']/lineArea/text/*[7])"/>
+    <true xpath="//block[@prod-id='j-en-quad']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='j-en-quad']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="120678" xpath="//block[@prod-id='j-em-quad']/lineArea/text/@ipd"/>
+    <eval expected="41310" xpath="//block[@prod-id='j-em-quad']/lineArea/text/@twsadjust"/>
+    <true xpath="//block[@prod-id='j-em-quad']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='j-em-quad']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="111177" xpath="//block[@prod-id='j-en-space']/lineArea/text/@ipd"/>
+    <eval expected="43809" xpath="//block[@prod-id='j-en-space']/lineArea/text/@twsadjust"/>
+    <true xpath="//block[@prod-id='j-en-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='j-en-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="119346" xpath="//block[@prod-id='j-em-space']/lineArea/text/@ipd"/>
+    <eval expected="39978" xpath="//block[@prod-id='j-em-space']/lineArea/text/@twsadjust"/>
+    <true xpath="//block[@prod-id='j-em-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='j-em-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="84126" xpath="//block[@prod-id='j-three-per-em-space']/lineArea/text/@ipd"/>
+    <eval expected="20758" xpath="//block[@prod-id='j-three-per-em-space']/lineArea/text/@twsadjust"/>
+    <true xpath="//block[@prod-id='j-three-per-em-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='j-three-per-em-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="83572" xpath="//block[@prod-id='j-four-per-em-space']/lineArea/text/@ipd"/>
+    <eval expected="22204" xpath="//block[@prod-id='j-four-per-em-space']/lineArea/text/@twsadjust"/>
+    <true xpath="//block[@prod-id='j-four-per-em-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='j-four-per-em-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="82907" xpath="//block[@prod-id='j-six-per-em-space']/lineArea/text/@ipd"/>
+    <eval expected="23539" xpath="//block[@prod-id='j-six-per-em-space']/lineArea/text/@twsadjust"/>
+    <true xpath="//block[@prod-id='j-six-per-em-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='j-six-per-em-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="108018" xpath="//block[@prod-id='j-figure-space']/lineArea/text/@ipd"/>
+    <eval expected="39306" xpath="//block[@prod-id='j-figure-space']/lineArea/text/@twsadjust"/>
+    <true xpath="//block[@prod-id='j-figure-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='j-figure-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="95007" xpath="//block[@prod-id='j-punctuation-space']/lineArea/text/@ipd"/>
+    <eval expected="32967" xpath="//block[@prod-id='j-punctuation-space']/lineArea/text/@twsadjust"/>
+    <true xpath="//block[@prod-id='j-punctuation-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='j-punctuation-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="104277" xpath="//block[@prod-id='j-thin-space']/lineArea/text/@ipd"/>
+    <eval expected="44109" xpath="//block[@prod-id='j-thin-space']/lineArea/text/@twsadjust"/>
+    <true xpath="//block[@prod-id='j-thin-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='j-thin-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="101979" xpath="//block[@prod-id='j-hair-space']/lineArea/text/@ipd"/>
+    <eval expected="44211" xpath="//block[@prod-id='j-hair-space']/lineArea/text/@twsadjust"/>
+    <true xpath="//block[@prod-id='j-hair-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='j-hair-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="84280" xpath="//block[@prod-id='j-zwsp']/lineArea/text/@ipd"/>
+    <eval expected="28912" xpath="//block[@prod-id='j-zwsp']/lineArea/text/@twsadjust"/>
+    <!-- zwsp is not rendered to the area tree -->
+    <eval expected="1" xpath="count(//block[@prod-id='j-zwsp']/lineArea/text/space)"/>
+    
+    <eval expected="134904" xpath="//block[@prod-id='j-nosp']/lineArea/text/@ipd"/>
+    <eval expected="79536" xpath="//block[@prod-id='j-nosp']/lineArea/text/@twsadjust"/>
+
+    <eval expected="182404" xpath="//block[@prod-id='lsj-sp']/lineArea/text/@ipd"/>
+    <eval expected="32121" xpath="//block[@prod-id='lsj-sp']/lineArea/text/@twsadjust"/>
+    <eval expected="2000" xpath="//block[@prod-id='lsj-sp']/lineArea/text/@tlsadjust"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='lsj-sp']/lineArea/text/*[1])"/>
+    <eval expected="space" xpath="local-name(//block[@prod-id='lsj-sp']/lineArea/text/*[2])"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='lsj-sp']/lineArea/text/*[3])"/>
+    <eval expected="space" xpath="local-name(//block[@prod-id='lsj-sp']/lineArea/text/*[4])"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='lsj-sp']/lineArea/text/*[5])"/>
+    <eval expected="space" xpath="local-name(//block[@prod-id='lsj-sp']/lineArea/text/*[6])"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='lsj-sp']/lineArea/text/*[7])"/>
+    <true xpath="not(//block[@prod-id='lsj-sp']/lineArea/text/*[2]/@adj = 'false')"/>
+    <true xpath="not(//block[@prod-id='lsj-sp']/lineArea/text/*[6]/@adj = 'false')"/>
+
+    <eval expected="114508" xpath="//block[@prod-id='lsj-en-quad']/lineArea/text/@ipd"/>
+    <eval expected="31140" xpath="//block[@prod-id='lsj-en-quad']/lineArea/text/@twsadjust"/>
+    <eval expected="2000" xpath="//block[@prod-id='lsj-en-quad']/lineArea/text/@tlsadjust"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='lsj-en-quad']/lineArea/text/*[1])"/>
+    <eval expected="space" xpath="local-name(//block[@prod-id='lsj-en-quad']/lineArea/text/*[2])"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='lsj-en-quad']/lineArea/text/*[3])"/>
+    <eval expected="space" xpath="local-name(//block[@prod-id='lsj-en-quad']/lineArea/text/*[4])"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='lsj-en-quad']/lineArea/text/*[5])"/>
+    <eval expected="space" xpath="local-name(//block[@prod-id='lsj-en-quad']/lineArea/text/*[6])"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='lsj-en-quad']/lineArea/text/*[7])"/>
+    <true xpath="//block[@prod-id='lsj-en-quad']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='lsj-en-quad']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="122678" xpath="//block[@prod-id='lsj-em-quad']/lineArea/text/@ipd"/>
+    <eval expected="27310" xpath="//block[@prod-id='lsj-em-quad']/lineArea/text/@twsadjust"/>
+    <eval expected="2000" xpath="//block[@prod-id='lsj-em-quad']/lineArea/text/@tlsadjust"/>
+    <true xpath="//block[@prod-id='lsj-em-quad']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='lsj-em-quad']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="112677" xpath="//block[@prod-id='lsj-en-space']/lineArea/text/@ipd"/>
+    <eval expected="29309" xpath="//block[@prod-id='lsj-en-space']/lineArea/text/@twsadjust"/>
+    <eval expected="2000" xpath="//block[@prod-id='lsj-en-space']/lineArea/text/@tlsadjust"/>
+    <true xpath="//block[@prod-id='lsj-en-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='lsj-en-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="120846" xpath="//block[@prod-id='lsj-em-space']/lineArea/text/@ipd"/>
+    <eval expected="25478" xpath="//block[@prod-id='lsj-em-space']/lineArea/text/@twsadjust"/>
+    <eval expected="2000" xpath="//block[@prod-id='lsj-em-space']/lineArea/text/@tlsadjust"/>
+    <true xpath="//block[@prod-id='lsj-em-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='lsj-em-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="87126" xpath="//block[@prod-id='lsj-three-per-em-space']/lineArea/text/@ipd"/>
+    <eval expected="7758" xpath="//block[@prod-id='lsj-three-per-em-space']/lineArea/text/@twsadjust"/>
+    <eval expected="2000" xpath="//block[@prod-id='lsj-three-per-em-space']/lineArea/text/@tlsadjust"/>
+    <true xpath="//block[@prod-id='lsj-three-per-em-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='lsj-three-per-em-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="86905" xpath="//block[@prod-id='lsj-four-per-em-space']/lineArea/text/@ipd"/>
+    <eval expected="9537" xpath="//block[@prod-id='lsj-four-per-em-space']/lineArea/text/@twsadjust"/>
+    <eval expected="2000" xpath="//block[@prod-id='lsj-four-per-em-space']/lineArea/text/@tlsadjust"/>
+    <true xpath="//block[@prod-id='lsj-four-per-em-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='lsj-four-per-em-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="86574" xpath="//block[@prod-id='lsj-six-per-em-space']/lineArea/text/@ipd"/>
+    <eval expected="11206" xpath="//block[@prod-id='lsj-six-per-em-space']/lineArea/text/@twsadjust"/>
+    <eval expected="2000" xpath="//block[@prod-id='lsj-six-per-em-space']/lineArea/text/@tlsadjust"/>
+    <true xpath="//block[@prod-id='lsj-six-per-em-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='lsj-six-per-em-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="107518" xpath="//block[@prod-id='lsj-figure-space']/lineArea/text/@ipd"/>
+    <eval expected="22806" xpath="//block[@prod-id='lsj-figure-space']/lineArea/text/@twsadjust"/>
+    <eval expected="2000" xpath="//block[@prod-id='lsj-figure-space']/lineArea/text/@tlsadjust"/>
+    <true xpath="//block[@prod-id='lsj-figure-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='lsj-figure-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="92007" xpath="//block[@prod-id='lsj-punctuation-space']/lineArea/text/@ipd"/>
+    <eval expected="13967" xpath="//block[@prod-id='lsj-punctuation-space']/lineArea/text/@twsadjust"/>
+    <eval expected="2000" xpath="//block[@prod-id='lsj-punctuation-space']/lineArea/text/@tlsadjust"/>
+    <true xpath="//block[@prod-id='lsj-punctuation-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='lsj-punctuation-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="104777" xpath="//block[@prod-id='lsj-thin-space']/lineArea/text/@ipd"/>
+    <eval expected="28609" xpath="//block[@prod-id='lsj-thin-space']/lineArea/text/@twsadjust"/>
+    <eval expected="2000" xpath="//block[@prod-id='lsj-thin-space']/lineArea/text/@tlsadjust"/>
+    <true xpath="//block[@prod-id='lsj-thin-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='lsj-thin-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="102479" xpath="//block[@prod-id='lsj-hair-space']/lineArea/text/@ipd"/>
+    <eval expected="28711" xpath="//block[@prod-id='lsj-hair-space']/lineArea/text/@twsadjust"/>
+    <eval expected="2000" xpath="//block[@prod-id='lsj-hair-space']/lineArea/text/@tlsadjust"/>
+    <true xpath="//block[@prod-id='lsj-hair-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='lsj-hair-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <eval expected="85480" xpath="//block[@prod-id='lsj-zwsp']/lineArea/text/@ipd"/>
+    <eval expected="14112" xpath="//block[@prod-id='lsj-zwsp']/lineArea/text/@twsadjust"/>
+    <eval expected="2000" xpath="//block[@prod-id='lsj-zwsp']/lineArea/text/@tlsadjust"/>
+    <!-- zwsp is not rendered to the area tree -->
+    <eval expected="1" xpath="count(//block[@prod-id='lsj-zwsp']/lineArea/text/space)"/>
+    
+    <eval expected="140237" xpath="//block[@prod-id='lsj-nosp']/lineArea/text/@ipd"/>
+    <eval expected="64869" xpath="//block[@prod-id='lsj-nosp']/lineArea/text/@twsadjust"/>
+    <eval expected="2000" xpath="//block[@prod-id='lsj-nosp']/lineArea/text/@tlsadjust"/>
+
+  </checks>
+</testcase>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks block level letter-spacing on justified blocks.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>Next block has no letter-spacing property:</fo:block>
+          <fo:block text-align="justify">Default space between characters is defined to be 0pt, i.e., 
+          glyph-areas stacked with no extra space between the allocation-rectangles
+          of the glyph-areas.</fo:block>
+          <fo:block>Next block has letter-spacing="normal":</fo:block>
+          <fo:block text-align="justify" letter-spacing="normal">Default space between characters is defined to be 0pt, i.e., 
+          glyph-areas stacked with no extra space between the allocation-rectangles
+          of the glyph-areas.</fo:block>
+          <fo:block>Next block has letter-spacing="0pt":</fo:block>
+          <fo:block text-align="justify" letter-spacing="0pt">Default space between characters is defined to be 0pt, i.e., 
+          glyph-areas stacked with no extra space between the allocation-rectangles
+          of the glyph-areas.</fo:block>
+          <fo:block>Next block has letter-spacing="2pt":</fo:block>
+          <fo:block text-align="justify" letter-spacing="2pt">Default space between characters is defined to be 0pt, i.e., 
+          glyph-areas stacked with no extra space between the allocation-rectangles
+          of the glyph-areas.</fo:block>
+          <fo:block>Next block has letter-spacing.optimum="2pt" letter-spacing.minimum="0pt" letter-spacing.maximum="4pt":</fo:block>
+          <fo:block text-align="justify" letter-spacing.optimum="2pt" letter-spacing.minimum="0pt" letter-spacing.maximum="4pt">Default space between characters is defined to be 0pt, i.e., 
+          glyph-areas stacked with no extra space between the allocation-rectangles
+          of the glyph-areas.</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <true xpath="not(//flow/block[1]/lineArea/text/@tlsadjust)"/>
+    <true xpath="//flow/block[2]/lineArea/text/@twsadjust"/>
+    <eval expected="2000" xpath="//flow/block[8]/lineArea[1]/text/@tlsadjust"/>
+    <true xpath="//flow/block[8]/lineArea[1]/text/@twsadjust"/>
+    <eval expected="2000" xpath="//flow/block[8]/lineArea[2]/text/@tlsadjust"/>
+    <true xpath="//flow/block[8]/lineArea[2]/text/@twsadjust"/>
+    <eval expected="2000" xpath="//flow/block[8]/lineArea[3]/text/@tlsadjust"/>
+    <true xpath="//flow/block[8]/lineArea[3]/text/@twsadjust"/>
+    <eval expected="2000" xpath="//flow/block[8]/lineArea[4]/text/@tlsadjust"/>
+    <!-- text-align doesnt apply to last line Area -->
+    <true xpath="not(//flow/block[8]/lineArea[4]/text/@twsadjust)"/>
+  </checks>
+</testcase>

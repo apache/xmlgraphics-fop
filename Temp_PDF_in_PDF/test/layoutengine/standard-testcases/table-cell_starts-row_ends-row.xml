@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks tables, especially table-body. This test: conversion of cell lists into rows.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:table table-layout="fixed">
+            <fo:table-column column-width="2in"/>
+            <fo:table-column column-width="1in"/>
+            <fo:table-column column-width="1in"/>
+            <fo:table-column column-width="1in"/>
+            <fo:table-body>
+              <fo:table-cell>
+                <fo:block>cell1</fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>cell2</fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>cell3</fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>cell4</fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>cell5</fo:block>
+              </fo:table-cell>
+              <fo:table-cell starts-row="true">
+                <fo:block>cell6</fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>cell7</fo:block>
+              </fo:table-cell>
+              <fo:table-cell ends-row="true">
+                <fo:block>cell8</fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>cell9</fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>cell10</fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>cell11</fo:block>
+              </fo:table-cell>
+              <fo:table-cell ends-row="true">
+                <fo:block>cell12</fo:block>
+              </fo:table-cell>
+              <fo:table-cell starts-row="true" ends-row="true">
+                <fo:block>cell13</fo:block>
+              </fo:table-cell>
+              <fo:table-cell ends-row="true">
+                <fo:block>cell14</fo:block>
+              </fo:table-cell>
+            </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- row 1 -->
+    <eval expected="cell1" xpath="//flow/block[1]/block[1]/block[1]/lineArea"/>
+    <true xpath="not(boolean(//flow/block[1]/block[1]/@top-offset)) or (//flow/block[1]/block[1]/@top-offset = '0')"/>
+    <eval expected="cell2" xpath="//flow/block[1]/block[2]/block[1]/lineArea"/>
+    <true xpath="not(boolean(//flow/block[1]/block[2]/@top-offset)) or (//flow/block[1]/block[2]/@top-offset = '0')"/>
+    <eval expected="cell3" xpath="//flow/block[1]/block[3]/block[1]/lineArea"/>
+    <true xpath="not(boolean(//flow/block[1]/block[3]/@top-offset)) or (//flow/block[1]/block[3]/@top-offset = '0')"/>
+    <eval expected="cell4" xpath="//flow/block[1]/block[4]/block[1]/lineArea"/>
+    <true xpath="not(boolean(//flow/block[1]/block[4]/@top-offset)) or (//flow/block[1]/block[4]/@top-offset = '0')"/>
+    <eval expected="cell5" xpath="//flow/block[1]/block[5]/block[1]/lineArea"/>
+    <true xpath="not(boolean(//flow/block[1]/block[5]/@top-offset)) or (//flow/block[1]/block[5]/@top-offset = '0')"/>
+    
+    <!-- row 2 -->
+    <eval expected="cell6" xpath="//flow/block[1]/block[6]/block[1]/lineArea"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[6]/@top-offset"/>
+    <eval expected="cell7" xpath="//flow/block[1]/block[7]/block[1]/lineArea"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[7]/@top-offset"/>
+    <eval expected="cell8" xpath="//flow/block[1]/block[8]/block[1]/lineArea"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[8]/@top-offset"/>
+
+    <!-- row 3 -->
+    <eval expected="cell9" xpath="//flow/block[1]/block[9]/block[1]/lineArea"/>
+    <eval expected="28800" xpath="//flow/block[1]/block[9]/@top-offset"/>
+    <eval expected="cell10" xpath="//flow/block[1]/block[10]/block[1]/lineArea"/>
+    <eval expected="28800" xpath="//flow/block[1]/block[10]/@top-offset"/>
+    <eval expected="cell11" xpath="//flow/block[1]/block[11]/block[1]/lineArea"/>
+    <eval expected="28800" xpath="//flow/block[1]/block[11]/@top-offset"/>
+    <eval expected="cell12" xpath="//flow/block[1]/block[12]/block[1]/lineArea"/>
+    <eval expected="28800" xpath="//flow/block[1]/block[12]/@top-offset"/>
+
+    <!-- row 4 -->
+    <eval expected="cell13" xpath="//flow/block[1]/block[13]/block[1]/lineArea"/>
+    <eval expected="43200" xpath="//flow/block[1]/block[13]/@top-offset"/>
+
+    <!-- row 5 -->
+    <eval expected="cell14" xpath="//flow/block[1]/block[14]/block[1]/lineArea"/>
+    <eval expected="57600" xpath="//flow/block[1]/block[14]/@top-offset"/>
+  </checks>
+</testcase>

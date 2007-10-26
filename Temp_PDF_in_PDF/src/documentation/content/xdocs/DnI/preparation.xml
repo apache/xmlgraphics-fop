@@ -1,0 +1,471 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  * Licensed to the Apache Software Foundation (ASF) under one or more
+  * contributor license agreements.  See the NOTICE file distributed with
+  * this work for additional information regarding copyright ownership.
+  * The ASF licenses this file to You under the Apache License, Version 2.0
+  * (the "License"); you may not use this file except in compliance with
+  * the License.  You may obtain a copy of the License at
+  * 
+  *      http://www.apache.org/licenses/LICENSE-2.0
+  * 
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  -->
+
+<!-- $Id$ -->
+
+<!--
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                         "docbookx.dtd">
+  -->
+
+  <chapter>
+	<title>Phase 0: Preparation</title>
+
+  <para>This chapter describes the structure of FOP as it was in the
+first quarter of 2004. In the second quarter of that year the top
+level structure was strongly refactored. The new situation is not
+described here.</para>
+
+	<section>
+	  <title>The preparation process</title>
+
+	  <para>FOP's processing model is the SAX parsing model:<itemizedlist>
+		  <listitem>
+			<simpara>Construct a suitable content handler object of type
+<literal>org.xml.sax.ContentHandler</literal>,</simpara>
+		  </listitem>
+		  <listitem>
+			<simpara>create a parser of type
+<literal>org.xml.sax.XMLReader</literal>,</simpara>
+		  </listitem>
+		  <listitem>
+			<simpara>register the content handler with the parser,</simpara>
+		  </listitem>
+		  <listitem>
+			<simpara>call the parser's parse method on the input
+source.</simpara>
+		  </listitem>
+		</itemizedlist></para>
+
+	  <para>From there on the parser takes control. For every XML
+event it passes control to the appropriate content handler methods.
+When these methods return, parsing continues until the next XML event
+is encountered. Once the parser has taken control, its content handler
+is the only entry point into FOP's data structures and methods.</para>
+
+	  <para>The preparatory phase of FOP concerns itself with the
+construction of a suitable content handler object, whose methods allow
+FOP's process to handle the FO elements reported by the parser and
+build the required output document.</para>
+
+	  <para>An application may choose to deal with the whole
+preparatory phase itself, and then call the parser's
+<literal>parse</literal> method.</para>
+
+	  <para>The input source may be an FO file, which may be fed to
+the <literal>parse</literal> method as a string or as an
+<literal>org.xml.sax.InputSource</literal> object. Alternatively, a
+DOM document object may be used as input, e.g. the output of an XSLT
+processor. In that case:<itemizedlist>
+		  <listitem>
+			<simpara> the parser should be of type
+<literal>org.apache.fop.tools.DocumentReader</literal>,</simpara>
+		  </listitem>
+		  <listitem>
+			<simpara>the input source should be of type
+<literal>org.apache.fop.tools.DocumentInputSource</literal>, created
+with the DOM document as the argument of the constructor.</simpara>
+		  </listitem>
+		</itemizedlist></para>
+
+	  <para>The classes <literal>Fop</literal> and
+<literal>Driver</literal> contain methods which applications may use
+as more convenient entry points into FOP.</para>
+
+	  <para>The method <literal>Fop.main</literal> may be called with
+the input and output file names as arguments. This is mainly useful
+for starting Fop from the command line.</para>
+
+	  <para>The class <literal>Driver</literal> contains a method
+<literal>getContentHandler</literal>, which can be used to create a
+suitable content handler.  It also contains three
+<literal>render</literal> methods which are convenient entry points
+for applications.</para>
+
+	  <para>These 4 methods may be invoked on a driver object which
+already has the following members: <literal>userAgent</literal>,
+<literal>renderer</literal>, <literal>log</literal>,
+<literal>stream</literal>. In addition, the driver object may have the
+following members: a <literal>TreeBuilder</literal> object having a
+member <literal>userAgent</literal>, and a <literal>Document</literal>
+object, which may have a member <literal>layoutStrategy</literal>.
+Using one's own <literal>TreeBuilder</literal> and
+<literal>Document</literal> objects allows one to customize FOP's
+behaviour in a major way.</para>
+
+	  <para>The <literal>render</literal> methods invoke
+<literal>getContentHandler</literal> to create a suitable content
+handler. They register it as the content handler of the parser. They
+register the member <literal>currentDocument</literal> as a tree
+listener to the member <literal>foInputHandler</literal>.</para>
+
+	  <para>A suitable <literal>org.xml.sax.ContentHandler</literal>
+object for FOP processing is an object of type
+<literal>org.apache.fop.fo.FOTreeBuilder</literal> and has the
+following structure:
+<screen>
+                  treeBuilder                                          
+                      |                                                
+       +--------------+------------------+                            
+       |              |                  |                             
+foInputHandler     userAgent       foTreeControl                       
+       |                                 |                             
+foTreeControl                         driver                           
+foTreeListeners:                     usedFonts                        
+   [foTreeControl]                    triplets
+                                       fonts
+                                   layoutStrategy -- foTreeControl
+                                     areaTree -- atModel, foTreeControl
+                                      atModel -- renderer
+                                   foInputHandler
+</screen>
+</para>
+
+	  <para>The <literal>driver</literal> and
+<literal>renderer</literal> objects are complex objects: 
+<screen>
+        driver             renderer      
+          |                   |          
+      treeBuilder       foTreeControl    
+        renderer          userAgent      
+     foInputHandler        fontList      
+        ostream            ostream       
+       userAgent                         
+     foTreeControl                       
+</screen>
+</para>
+
+	</section>
+
+	<section>
+	  <title>A detailed overview of the objects</title>
+
+	  <screen>
+ treeBuilder = {
+    fobjTable: instance of java.util.HashMap(id=589)
+    namespaces: instance of java.util.HashSet(id=590)
+    currentFObj: null
+    rootFObj: null
+    foInputHandler: instance of org.apache.fop.fo.FOTreeHandler(id=591)
+    userAgent: instance of org.apache.fop.apps.FOUserAgent(id=592)
+    foTreeControl: instance of org.apache.fop.apps.Document(id=593)
+    class$org$apache$fop$fo$ElementMapping: instance of java.lang.Class(reflected class=org.apache.fop.fo.ElementMapping, id=450)
+}
+</screen>
+
+	  <screen>
+ treeBuilder.foInputHandler = {
+    collectStatistics: true
+    MEM_PROFILE_WITH_GC: false
+    runtime: instance of java.lang.Runtime(id=595)
+    pageCount: 0
+    initialMemory: 0
+    startTime: 0
+    foTreeListeners: instance of java.util.HashSet(id=596)
+    org.apache.fop.fo.FOInputHandler.foTreeControl: instance of org.apache.fop.apps.Document(id=593)
+    org.apache.avalon.framework.logger.AbstractLogEnabled.m_logger: instance of org.apache.avalon.framework.logger.ConsoleLogger(id=597)
+}
+</screen>
+
+	  <screen>
+ treeBuilder.foTreeControl = "org.apache.fop.apps.Document@125844f"
+ treeBuilder.foInputHandler.foTreeListeners = "[org.apache.fop.apps.Document@125844f]"
+</screen>
+
+	  <screen>
+ treeBuilder.userAgent = {
+    log: instance of org.apache.avalon.framework.logger.ConsoleLogger(id=597)
+    defaults: instance of java.util.HashMap(id=601)
+    handlers: instance of java.util.HashMap(id=602)
+    baseURL: ""
+    pdfEncryptionParams: null
+    px2mm: 0.35277778
+}
+</screen>
+
+	  <screen>
+ treeBuilder.foTreeControl = {
+    driver: instance of org.apache.fop.apps.Driver(id=587)
+    usedFonts: instance of java.util.HashMap(id=604)
+    triplets: instance of java.util.HashMap(id=605)
+    fonts: instance of java.util.HashMap(id=606)
+    layoutStrategy: instance of org.apache.fop.layoutmgr.LayoutManagerLS(id=607)
+    areaTree: instance of org.apache.fop.area.AreaTree(id=608)
+    atModel: instance of org.apache.fop.area.RenderPagesModel(id=609)
+    bookmarks: null
+    idReferences: instance of java.util.HashSet(id=610)
+    foInputHandler: instance of org.apache.fop.fo.FOTreeHandler(id=591)
+}
+</screen>
+
+	  <screen>
+ treeBuilder.foTreeControl.driver = {
+    NOT_SET: 0
+    RENDER_PDF: 1
+    RENDER_AWT: 2
+    RENDER_MIF: 3
+    RENDER_XML: 4
+    RENDER_PRINT: 5
+    RENDER_PCL: 6
+    RENDER_PS: 7
+    RENDER_TXT: 8
+    RENDER_SVG: 9
+    RENDER_RTF: 10
+    treeBuilder: instance of org.apache.fop.fo.FOTreeBuilder(id=588)
+    rendererType: 1
+    renderer: instance of org.apache.fop.render.pdf.PDFRenderer(id=599)
+    foInputHandler: instance of org.apache.fop.fo.FOTreeHandler(id=591)
+    source: null
+    stream: instance of java.io.BufferedOutputStream(id=600)
+    reader: null
+    log: instance of org.apache.avalon.framework.logger.ConsoleLogger(id=597)
+    userAgent: instance of org.apache.fop.apps.FOUserAgent(id=592)
+    currentDocument: instance of org.apache.fop.apps.Document(id=593)
+}
+</screen>
+
+	  <screen>
+ treeBuilder.foTreeControl.areaTree = {
+    model: instance of org.apache.fop.area.RenderPagesModel(id=609)
+    atControl: instance of org.apache.fop.apps.Document(id=593)
+    idLocations: instance of java.util.HashMap(id=615)
+    resolve: instance of java.util.HashMap(id=616)
+    treeExtensions: instance of java.util.ArrayList(id=617)
+}
+</screen>
+
+	  <screen>
+ treeBuilder.foTreeControl.atModel = {
+    renderer: instance of org.apache.fop.render.pdf.PDFRenderer(id=599)
+    prepared: instance of java.util.ArrayList(id=618)
+    pendingExt: instance of java.util.ArrayList(id=619)
+    endDocExt: instance of java.util.ArrayList(id=620)
+    org.apache.fop.area.StorePagesModel.pageSequence: null
+    org.apache.fop.area.StorePagesModel.titles: instance of java.util.ArrayList(id=621)
+    org.apache.fop.area.StorePagesModel.currSequence: null
+    org.apache.fop.area.StorePagesModel.extensions: instance of java.util.ArrayList(id=622)
+}
+</screen>
+
+	  <screen>
+ treeBuilder.foTreeControl.atModel.renderer = {
+    MIME_TYPE: "application/pdf"
+    pdfDoc: instance of org.apache.fop.pdf.PDFDocument(id=624)
+    pages: null
+    pageReferences: instance of java.util.HashMap(id=625)
+    pvReferences: instance of java.util.HashMap(id=626)
+    ostream: instance of java.io.BufferedOutputStream(id=600)
+    pdfResources: null
+    currentStream: null
+    currentContext: null
+    currentPage: null
+    currentState: null
+    currentFontName: ""
+    currentFontSize: 0
+    pageHeight: 0
+    filterMap: null
+    textOpen: false
+    prevWordY: 0
+    prevWordX: 0
+    prevWordWidth: 0
+    wordAreaPDF: instance of java.lang.StringBuffer(id=627)
+    BPMarginOffset: 0
+    IPMarginOffset: 0
+    org.apache.fop.render.PrintRenderer.fontInfo: instance of org.apache.fop.apps.Document(id=593)
+    org.apache.fop.render.PrintRenderer.fontList: null
+    org.apache.fop.render.AbstractRenderer.userAgent: instance of org.apache.fop.apps.FOUserAgent(id=592)
+    org.apache.fop.render.AbstractRenderer.producer: "FOP 1.0dev"
+    org.apache.fop.render.AbstractRenderer.creator: null
+    org.apache.fop.render.AbstractRenderer.creationDate: null
+    org.apache.fop.render.AbstractRenderer.options: instance of java.util.HashMap(id=629)
+    org.apache.fop.render.AbstractRenderer.currentBPPosition: 0
+    org.apache.fop.render.AbstractRenderer.currentIPPosition: 0
+    org.apache.fop.render.AbstractRenderer.currentBlockIPPosition: 0
+    org.apache.fop.render.AbstractRenderer.containingBPPosition: 0
+    org.apache.fop.render.AbstractRenderer.containingIPPosition: 0
+    org.apache.avalon.framework.logger.AbstractLogEnabled.m_logger: instance of org.apache.avalon.framework.logger.ConsoleLogger(id=597)
+}
+</screen>
+
+	  <screen>
+ treeBuilder.foTreeControl.layoutStrategy = {
+    name: "layoutmgr"
+    addLMVisitor: null
+    org.apache.fop.layout.LayoutStrategy.name: "undefined"
+    org.apache.fop.layout.LayoutStrategy.document: instance of org.apache.fop.apps.Document(id=593)
+}
+</screen>
+
+	  <screen>
+ treeBuilder.foTreeControl.atModel.renderer.ostream = {
+    buf: instance of byte[512] (id=632)
+    count: 15
+    java.io.FilterOutputStream.out: instance of java.io.FileOutputStream(id=633)
+}
+</screen>
+
+	  <para>For the members <literal>fontList<literal></literal>,
+fonts</literal>, <literal>usedFonts<literal></literal> and
+triplets<literal></literal> of treeBuilder.foTreeControl</literal>,
+see under Fonts.</para>
+	</section>
+
+	<section>
+	  <title>A detailed overview of the entry methods</title>
+
+	  <para>Already created (e.g. in <literal>Fop.main</literal>): an
+object of type <literal>Driver</literal> with the members
+<literal>userAgent</literal>, <literal>renderer</literal>,
+<literal>log</literal>, <literal>stream</literal>.</para>
+
+	  <para>To create <literal>userAgent</literal> one may use
+<literal>Driver.getUserAgent</literal>: if <literal>driver</literal>
+does not have <literal>userAgent</literal>, create a new
+<literal>UserAgent</literal>.</para>
+
+	  <para>To create <literal>renderer</literal> one may use one of
+three methods:<itemizedlist>
+		  <listitem>
+			<simpara><literal>setRenderer(int
+renderer)</literal></simpara>
+		  </listitem>
+		  <listitem>
+			<simpara><literal>setRenderer(String
+rendererClassName)</literal></simpara>
+		  </listitem>
+		  <listitem>
+			<simpara><literal>setRenderer(Renderer
+renderer)</literal></simpara>
+		  </listitem>
+		</itemizedlist> All three methods set the FOP version on the
+<literal>renderer</literal>, and register <literal>userAgent</literal>
+with it, which is obtained using
+<literal>Driver.getUserAgent</literal>.</para>
+
+	  <para><literal>render(InputHandler inputHandler)</literal>:<itemizedlist>
+		  <listitem>
+			<simpara>creates <literal>XMLReader parser</literal>,
+<literal>InputSource source</literal>;</simpara>
+		  </listitem>
+		  <listitem>
+			<simpara>calls <literal>render(XMLReader parser,
+InputSource source)</literal>.</simpara>
+		  </listitem>
+		</itemizedlist></para>
+
+	  <para><literal>render(org.w3c.dom.Document
+document)</literal>:<itemizedlist>
+		  <listitem>
+			<simpara>creates <literal>DocumentReader reader</literal>,
+<literal>DocumentInputSource source</literal>;</simpara>
+		  </listitem>
+		  <listitem>
+			<simpara>calls <literal>render(XMLReader parser,
+InputSource source)</literal>.</simpara>
+		  </listitem>
+		</itemizedlist></para>
+
+	  <para><literal>render(XMLReader parser, InputSource
+source)</literal>:<itemizedlist>
+		  <listitem>
+			<simpara>creates content handler by calling
+<literal>getContentHandler()</literal>.</simpara>
+		  </listitem>
+		  <listitem>
+			<simpara>registers the content handler with the parser.</simpara>
+		  </listitem>
+		  <listitem>
+			<simpara>Adds <literal>currentDocument</literal> as a tree
+listener to <literal>foInputHandler</literal>.</simpara>
+		  </listitem>
+		  <listitem>
+			<simpara>calls <literal>parser.parse(source)</literal>.</simpara>
+		  </listitem>
+		</itemizedlist></para>
+
+	  <para><literal>getContentHandler()</literal>:<itemizedlist>
+		  <listitem>
+			<simpara>if driver does not have a
+<literal>treeBuilder</literal>, call <literal>initialize()</literal>:
+create a new <literal>TreeBuilder</literal>, set the
+<literal>UserAgent</literal> on it.</simpara>
+		  </listitem>
+		  <listitem>
+			<simpara>if driver does not have a
+<literal>currentDocument</literal>, create a new
+<literal>Document</literal>.</simpara>
+		  </listitem>
+		  <listitem>
+			<simpara>create a new <literal>FOTreeHandler
+foInputHandler</literal> using <literal>currentDocument</literal> as
+an argument (<literal>currentDocument</literal> is member
+<literal>foTreeControl</literal> in
+<literal>foInputHandler</literal>).</simpara>
+		  </listitem>
+		  <listitem>
+			<simpara>create a new <literal>AreaTree</literal> using <literal>currentDocument</literal> as an argument, and
+register it with <literal>currentDocument</literal>.</simpara>
+		  </listitem>
+		  <listitem>
+			<simpara>create a new <literal>RenderPagesModel</literal>
+using <literal>renderer</literal> as an argument, and register it with
+<literal>currentDocument</literal> and with
+<literal>currentDocument.areaTree</literal>.</simpara>
+		  </listitem>
+		  <listitem>
+			<simpara>register <literal>currentDocument</literal> with
+the <literal>renderer</literal> (<literal>currentDocument</literal> is
+member <literal>fontInfo</literal> in <literal>renderer</literal>);
+setup <literal>fontList</literal> in
+<literal>currentDocument</literal>.</simpara>
+		  </listitem>
+		  <listitem>
+			<simpara>start the <literal>renderer</literal> with the
+<literal>outputstream</literal>.</simpara>
+		  </listitem>
+		  <listitem>
+			<simpara>register <literal>foInputHandler</literal> with
+<literal>currentDocument</literal>.</simpara>
+		  </listitem>
+		  <listitem>
+			<simpara>if <literal>currentDocument</literal> does not
+have a <literal>layoutStrategy</literal>, create a new
+<literal>LayoutStrategyLS</literal> for it with
+<literal>currentDocument</literal> as an argument.</simpara>
+		  </listitem>
+		  <listitem>
+			<simpara>register <literal>userAgent</literal>,
+<literal>foInputHandler</literal> and
+<literal>currentDocument</literal> with <literal>treeBuilder</literal>
+(<literal>currentDocument</literal> is member
+<literal>foTreeControl</literal> in
+<literal>treeBuilder</literal>).</simpara>
+		  </listitem>
+		  <listitem>
+			<simpara>return <literal>treeBuilder</literal>.</simpara>
+		  </listitem>
+		</itemizedlist></para>
+	</section>
+  </chapter>
+
+<!-- Local Variables: --> 
+<!-- current-language-environment: UTF-8 -->
+<!-- coding: utf-8 --> 
+<!-- default-input-method: TeX --> 
+<!-- End: -->
