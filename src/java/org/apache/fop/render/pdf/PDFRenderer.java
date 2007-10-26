@@ -20,58 +20,56 @@
 package org.apache.fop.render.pdf;
 
 // Java
+import java.awt.Color;
+import java.awt.color.ColorSpace;
+import java.awt.color.ICC_Profile;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
-import java.awt.geom.Point2D;
-import java.awt.Color;
-import java.awt.color.ColorSpace;
-import java.awt.color.ICC_Profile;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.AffineTransform;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
-// XML
-import org.w3c.dom.Document;
-
-// Avalon
 import org.apache.commons.io.IOUtils;
-
-// FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
+import org.apache.fop.area.BookmarkData;
 import org.apache.fop.area.CTM;
+import org.apache.fop.area.DestinationData;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.OffDocumentExtensionAttachment;
+import org.apache.fop.area.OffDocumentItem;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
-import org.apache.fop.area.OffDocumentItem;
-import org.apache.fop.area.BookmarkData;
 import org.apache.fop.area.inline.AbstractTextArea;
-import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.Image;
-import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.InlineParent;
-import org.apache.fop.area.inline.WordArea;
+import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.SpaceArea;
-import org.apache.fop.fonts.Typeface;
+import org.apache.fop.area.inline.TextArea;
+import org.apache.fop.area.inline.WordArea;
+import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.extensions.ExtensionAttachment;
+import org.apache.fop.fo.extensions.xmp.XMPMetadata;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.Typeface;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
 import org.apache.fop.image.XMLImage;
-import org.apache.fop.pdf.PDFAction;
 import org.apache.fop.pdf.PDFAMode;
+import org.apache.fop.pdf.PDFAction;
 import org.apache.fop.pdf.PDFAnnotList;
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.pdf.PDFConformanceException;
@@ -102,14 +100,10 @@ import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.util.CharUtilities;
 import org.apache.fop.util.ColorProfileUtil;
-import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.extensions.ExtensionAttachment;
-import org.apache.fop.fo.extensions.xmp.XMPMetadata;
 import org.apache.xmlgraphics.xmp.Metadata;
 import org.apache.xmlgraphics.xmp.schemas.XMPBasicAdapter;
 import org.apache.xmlgraphics.xmp.schemas.XMPBasicSchema;
-
-import org.apache.fop.area.DestinationData;
+import org.w3c.dom.Document;
 
 /**
  * Renderer that renders areas to PDF.
@@ -256,6 +250,9 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      */
     protected boolean inTextMode = false;
 
+    /** Image handler registry */
+    private PDFImageHandlerRegistry imageHandlerRegistry = new PDFImageHandlerRegistry();
+    
     /**
      * create the PDF renderer
      */
@@ -1659,21 +1656,21 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     }
     
     /**
-     * Adds a PDF XObject (a bitmap) to the PDF that will later be referenced.
+     * Adds a PDF XObject (a bitmap or form) to the PDF that will later be referenced.
      * @param url URL of the bitmap
      * @param pos Position of the bitmap
      */
     protected void putImage(String url, Rectangle2D pos) {
-        PDFXObject xobject = pdfDoc.getImage(url);
+        url = ImageFactory.getURL(url);
+        PDFXObject xobject = pdfDoc.getXObject(url);
         if (xobject != null) {
             float w = (float) pos.getWidth() / 1000f;
             float h = (float) pos.getHeight() / 1000f;
             placeImage((float)pos.getX() / 1000f,
-                       (float)pos.getY() / 1000f, w, h, xobject.getXNumber());
+                       (float)pos.getY() / 1000f, w, h, xobject);
             return;
         }
 
-        url = ImageFactory.getURL(url);
         ImageFactory fact = userAgent.getFactory().getImageFactory();
         FopImage fopimage = fact.getImage(url, userAgent);
         if (fopimage == null) {
@@ -1683,7 +1680,24 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
             return;
         }
         String mime = fopimage.getMimeType();
-        if ("text/xml".equals(mime)) {
+        
+        //First check for a dynamically registered handler
+        PDFImageHandler handler = imageHandlerRegistry.getHandler(mime);
+        if (handler != null) {
+            PDFXObject xobj;
+            try {
+                xobj = handler.generateImage(fopimage, url, pdfDoc);
+            } catch (IOException ioe) {
+                log.error("I/O error while handling " + mime + " image", ioe);
+                return;
+            }
+            fact.releaseImage(url, userAgent);
+            
+            float w = (float)pos.getWidth() / 1000f;
+            float h = (float)pos.getHeight() / 1000f;
+            placeImage((float) pos.getX() / 1000,
+                       (float) pos.getY() / 1000, w, h, xobj);
+        } else if ("text/xml".equals(mime)) {
             if (!fopimage.load(FopImage.ORIGINAL_DATA)) {
                 return;
             }
@@ -1701,7 +1715,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
             renderDocument(doc, ns, pos, null);
         } else if ("image/eps".equals(mime)) {
             FopPDFImage pdfimage = new FopPDFImage(fopimage, url);
-            int xobj = pdfDoc.addImage(currentContext, pdfimage).getXNumber();
+            PDFXObject xobj = pdfDoc.addImage(currentContext, pdfimage);
             fact.releaseImage(url, userAgent);
             
             float w = (float)pos.getWidth() / 1000f;
@@ -1710,7 +1724,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                        (float) pos.getY() / 1000, w, h, xobj);
         } else if ("image/jpeg".equals(mime) || "image/tiff".equals(mime)) {
             FopPDFImage pdfimage = new FopPDFImage(fopimage, url);
-            int xobj = pdfDoc.addImage(currentContext, pdfimage).getXNumber();
+            PDFXObject xobj = pdfDoc.addImage(currentContext, pdfimage);
             fact.releaseImage(url, userAgent);
 
             float w = (float)pos.getWidth() / 1000f;
@@ -1722,7 +1736,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                 return;
             }
             FopPDFImage pdfimage = new FopPDFImage(fopimage, url);
-            int xobj = pdfDoc.addImage(currentContext, pdfimage).getXNumber();
+            PDFXObject xobj = pdfDoc.addImage(currentContext, pdfimage);
             fact.releaseImage(url, userAgent);
 
             float w = (float) pos.getWidth() / 1000f;
@@ -1745,15 +1759,15 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * @param y Y coordinate
      * @param w width for image
      * @param h height for image
-     * @param xobj object number of the referenced image
+     * @param xobj the image XObject
      */
-    protected void placeImage(float x, float y, float w, float h, int xobj) {
+    protected void placeImage(float x, float y, float w, float h, PDFXObject xobj) {
         saveGraphicsState();
         currentStream.add(format(w) + " 0 0 "
                           + format(-h) + " "
                           + format(currentIPPosition / 1000f + x) + " "
                           + format(currentBPPosition / 1000f + h + y) 
-                          + " cm\n" + "/Im" + xobj + " Do\n");
+                          + " cm\n" + xobj.getName() + " Do\n");
         restoreGraphicsState();
     }
 

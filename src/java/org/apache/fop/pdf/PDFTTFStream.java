@@ -51,18 +51,12 @@ public class PDFTTFStream extends PDFStream {
         return length;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected String buildStreamDict(String lengthEntry) {
-        final String filterEntry = getFilterList().buildFilterDictEntries();
-        return (getObjectID()
-                + "<< /Length " + lengthEntry
-                + " /Length1 " + origLength
-                + "\n" + filterEntry
-                + "\n>>\n");
+    /** {@inheritDoc} */
+    protected void populateStreamDict(Object lengthEntry) {
+        put("Length1", origLength);
+        super.populateStreamDict(lengthEntry);
     }
-
+    
     /**
      * Sets the TrueType font data.
      * @param data the font payload

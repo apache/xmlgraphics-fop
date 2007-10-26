@@ -21,7 +21,6 @@ package org.apache.fop.pdf;
 
 import java.io.IOException;
 import java.io.OutputStream;
-//import java.util.Map;
 
 /**
  * Bitmap image.
@@ -34,7 +33,7 @@ public class BitmapImage implements PDFImage {
     private int bitsPerPixel;
     private PDFDeviceColorSpace colorSpace;
     private byte[] bitmaps;
-    private String maskRef;
+    private PDFReference maskRef;
     private PDFColor transparent = null;
     private String key;
     private PDFDocument pdfDoc;
@@ -47,7 +46,7 @@ public class BitmapImage implements PDFImage {
      * @param width the width of the image
      * @param height the height of the image
      * @param data the bitmap data
-     * @param mask the transparancy mask reference if any
+     * @param mask the transparency mask reference if any
      */
     public BitmapImage(String k, int width, int height, byte[] data,
                   String mask) {
@@ -57,7 +56,7 @@ public class BitmapImage implements PDFImage {
         this.bitsPerPixel = 8;
         this.colorSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
         this.bitmaps = data;
-        maskRef = mask;
+        maskRef = new PDFReference(mask);
     }
 
     /**
@@ -170,6 +169,11 @@ public class BitmapImage implements PDFImage {
      * @return the soft mask reference if any
      */
     public String getSoftMask() {
+        return maskRef.toInlinePDFString();
+    }
+    
+    /** {@inheritDoc} */
+    public PDFReference getSoftMaskReference() {
         return maskRef;
     }
 

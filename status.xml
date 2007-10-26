@@ -28,6 +28,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="add">
+        Added generic structures to the PDF library in order to support PDF
+        file in fo:external-graphic later.
+      </action>
       <action context="Code" dev="JM" type="add" fixes-bug="43597" due-to="Max Berger">
         Added support for SVGZ.
       </action>

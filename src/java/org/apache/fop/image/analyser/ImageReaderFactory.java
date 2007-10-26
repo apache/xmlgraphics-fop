@@ -22,13 +22,14 @@ package org.apache.fop.image.analyser;
 // Java
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.image.FopImage;
-
+import org.apache.xmlgraphics.util.Service;
 
 /**
  * Factory for ImageReader objects.
@@ -38,8 +39,9 @@ import org.apache.fop.image.FopImage;
  */
 public class ImageReaderFactory {
 
-    private static ArrayList formats = new ArrayList();
+    private static List formats = new java.util.ArrayList();
 
+    /** logger */
     protected static Log log = LogFactory.getLog(ImageReaderFactory.class);
 
     static {
@@ -50,6 +52,13 @@ public class ImageReaderFactory {
         registerFormat(new TIFFReader());
         registerFormat(new EPSReader());
         registerFormat(new EMFReader());
+
+        //Dynamic registration of ImageReaders
+        Iterator iter = Service.providers(ImageReader.class, true);
+        while (iter.hasNext()) {
+            registerFormat((ImageReader)iter.next());
+        }
+        
         // the xml parser through batik closes the stream when finished
         // so there is a workaround in the SVGReader
         registerFormat(new SVGReader());

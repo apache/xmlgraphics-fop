@@ -38,7 +38,7 @@ public class NullFilter extends PDFFilter {
     /**
      * {@inheritDoc}
      */
-    public String getDecodeParms() {
+    public PDFObject getDecodeParms() {
         return null;
     }
 
