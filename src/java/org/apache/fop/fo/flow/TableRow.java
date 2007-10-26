@@ -37,7 +37,7 @@ import org.apache.fop.fo.properties.LengthRangeProperty;
 /**
  * Class modelling the fo:table-row object.
  */
-public class TableRow extends TableFObj {
+public class TableRow extends TableCellContainer {
     // The value of properties relevant for fo:table-row.
     private LengthRangeProperty blockProgressionDimension;
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
@@ -99,34 +99,10 @@ public class TableRow extends TableFObj {
      */
     protected void addChildNode(FONode child) throws FOPException {
         if (!inMarker()) {
-            Table t = getTable();
             TableBody body = (TableBody) getParent();
             if (body.isFirst(this)) {
                 TableCell cell = (TableCell) child;
-                int colNr = cell.getColumnNumber();
-                int colSpan = cell.getNumberColumnsSpanned();
-                Length colWidth = null;
-
-                if (cell.getWidth().getEnum() != EN_AUTO
-                        && colSpan == 1) {
-                    colWidth = cell.getWidth();
-                }
-                
-                for (int i = colNr; i < colNr + colSpan; ++i) {
-                    if (t.columns.size() < i
-                            || t.columns.get(i - 1) == null) {
-                        t.addDefaultColumn(colWidth, 
-                                i == colNr 
-                                    ? cell.getColumnNumber()
-                                    : 0);
-                    } else {
-                        TableColumn col = (TableColumn) t.columns.get(i - 1);
-                        if (!col.isDefaultColumn()
-                                && colWidth != null) {
-                            col.setColumnWidth(colWidth);
-                        }
-                    }
-                }
+                addTableCellChild(cell);
             }
         }
         super.addChildNode(child);

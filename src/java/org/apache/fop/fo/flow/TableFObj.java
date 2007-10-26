@@ -19,8 +19,6 @@
 
 package org.apache.fop.fo.flow;
 
-import java.util.List;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.ValidationPercentBaseContext;
@@ -98,98 +96,9 @@ public abstract class TableFObj extends FObj {
      * {@inheritDoc}
      */
     protected void addChildNode(FONode child) throws FOPException {
-        if (!inMarker() 
-                && child.getNameId() == FO_TABLE_CELL) {
-            /* update current column index for the table-body/table-row */
-            updateColumnIndex((TableCell) child);
-        }
         super.addChildNode(child);
     }
     
-    private void updateColumnIndex(TableCell cell) {
-        
-        int rowSpan = cell.getNumberRowsSpanned();
-        int colSpan = cell.getNumberColumnsSpanned();
-        int columnIndex = getCurrentColumnIndex();
-        int i;
-        
-        if (getNameId() == FO_TABLE_ROW) {
-            
-            TableRow row = (TableRow) this;
-            
-            for (i = colSpan; 
-                    --i >= 0 || row.pendingSpans.size() < cell.getColumnNumber();) {
-                row.pendingSpans.add(null);
-            }
-            
-            /* if the current cell spans more than one row,
-             * update pending span list for the next row
-             */
-            if (rowSpan > 1) {
-                for (i = colSpan; --i >= 0;) {
-                    row.pendingSpans.set(columnIndex - 1 + i, 
-                            new PendingSpan(rowSpan));
-                }
-            }
-        } else {
-            
-            TableBody body = (TableBody) this;
-            
-            /* if body.firstRow is still true, and :
-             * a) the cell starts a row,
-             * b) there was a previous cell 
-             * c) that previous cell didn't explicitly end the previous row
-             *  => set firstRow flag to false
-             */
-            if (body.firstRow && cell.startsRow()) {
-                if (!body.previousCellEndedRow()) {
-                    body.firstRow = false;
-                }
-            }
-            
-            /* pendingSpans not initialized for the first row...
-             */
-            if (body.firstRow) {
-                for (i = colSpan; 
-                        --i >= 0|| body.pendingSpans.size() < cell.getColumnNumber();) {
-                    body.pendingSpans.add(null);
-                }
-            }
-            
-            /* if the current cell spans more than one row,
-             * update pending span list for the next row
-             */
-            if (rowSpan > 1) {
-                for (i = colSpan; --i >= 0;) {
-                    body.pendingSpans.set(columnIndex - 1 + i, 
-                            new PendingSpan(rowSpan));
-                }
-            }
-        }
-
-        /* flag column indices used by this cell,
-         * take into account that possibly not all column-numbers
-         * are used by columns in the parent table (if any),
-         * so a cell spanning three columns, might actually
-         * take up more than three columnIndices...
-         */
-        int startIndex = columnIndex - 1;
-        int endIndex = startIndex + colSpan;
-        if (getTable().columns != null) {
-            List cols = getTable().columns;
-            int tmpIndex = endIndex;
-            for (i = startIndex; i <= tmpIndex; ++i) {
-                if (i < cols.size() && cols.get(i) == null) {
-                    endIndex++;
-                }
-            }
-        }
-        flagColumnIndices(startIndex, endIndex);
-        if (getNameId() != FO_TABLE_ROW && cell.endsRow()) {
-            ((TableBody) this).firstRow = false;
-            ((TableBody) this).resetColumnIndex();
-        }
-    }
     
     /**
      * 
