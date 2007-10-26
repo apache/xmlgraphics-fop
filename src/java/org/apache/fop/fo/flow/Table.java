@@ -71,7 +71,7 @@ public class Table extends TableFObj {
     private Length orphanContentLimit;
 
     /** collection of columns in this table */
-    protected List columns = new ArrayList();
+    private List columns = new ArrayList();
     
     /** helper variables for implicit column-numbering */
     private int columnIndex = 1;
@@ -341,6 +341,24 @@ public class Table extends TableFObj {
         return columns;
     }
 
+    /**
+     * Returns the column at the given index, if any.
+     * 
+     * @param index index of the column to be retrieved, 0-based
+     * @return the corresponding column, or null if their is no column at the given index 
+     */
+    TableColumn getColumn(int index) {
+        if (index >= columns.size()) {
+            return null;
+        } else {
+            return (TableColumn) columns.get(index);
+        }
+    }
+
+    int getNumberOfColumns() {
+        return columns.size();
+    }
+
     /** @return the body for the table-header. */
     public TableBody getTableHeader() {
         return tableHeader;
@@ -509,7 +527,7 @@ public class Table extends TableFObj {
         FObj fobj = (FObj) super.clone(parent, removeChildren);
         if (removeChildren) {
             Table t = (Table) fobj;
-            t.columns = null;
+            t.columns = new ArrayList();
             t.tableHeader = null;
             t.tableFooter = null;
         }

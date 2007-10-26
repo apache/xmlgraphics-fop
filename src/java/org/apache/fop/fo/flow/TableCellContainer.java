@@ -46,15 +46,13 @@ public abstract class TableCellContainer extends TableFObj {
         }
         
         for (int i = colNr; i < colNr + colSpan; ++i) {
-            if (t.columns.size() < i
-                    || t.columns.get(i - 1) == null) {
+            TableColumn col = t.getColumn(i - 1);
+            if (col == null) {
                 t.addDefaultColumn(colWidth, 
                         i == colNr 
                             ? cell.getColumnNumber()
                             : 0);
             } else {
-                TableColumn col = 
-                    (TableColumn) t.columns.get(i - 1);
                 if (!col.isDefaultColumn()
                         && colWidth != null) {
                     col.setColumnWidth(colWidth);
@@ -142,13 +140,11 @@ public abstract class TableCellContainer extends TableFObj {
          */
         int startIndex = columnIndex - 1;
         int endIndex = startIndex + colSpan;
-        if (getTable().columns != null) {
-            List cols = getTable().columns;
-            int tmpIndex = endIndex;
-            for (i = startIndex; i <= tmpIndex; ++i) {
-                if (i < cols.size() && cols.get(i) == null) {
-                    endIndex++;
-                }
+        List cols = getTable().getColumns();
+        int tmpIndex = endIndex;
+        for (i = startIndex; i <= tmpIndex; ++i) {
+            if (i < cols.size() && cols.get(i) == null) {
+                endIndex++;
             }
         }
         flagColumnIndices(startIndex, endIndex);

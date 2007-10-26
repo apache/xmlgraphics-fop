@@ -82,14 +82,12 @@ public class TableBody extends TableCellContainer {
                             Attributes attlist, PropertyList pList) 
                     throws FOPException {
         if (!inMarker()) {
-            if (getTable().columns != null) {
-                int cap = getTable().columns.size();
-                pendingSpans = new java.util.ArrayList(cap);
-                usedColumnIndices = new java.util.BitSet(cap);
-            } else {
-                pendingSpans = new java.util.ArrayList();
-                usedColumnIndices = new java.util.BitSet();
+            int cap = getTable().getNumberOfColumns();
+            if (cap == 0) {
+                cap = 10; // Default value for ArrayList
             }
+            pendingSpans = new java.util.ArrayList(cap);
+            usedColumnIndices = new java.util.BitSet(cap);
             setNextColumnIndex();
         }
         super.processNode(elementName, locator, attlist, pList);
@@ -223,14 +221,14 @@ public class TableBody extends TableCellContainer {
         if (child.getNameId() == FO_TABLE_ROW) {
             pendingSpans = ((TableRow) child).pendingSpans;
         } else if (pendingSpans == null) {
-            if (getTable().columns != null) {
-                List tableCols = getTable().columns;
-                pendingSpans = new java.util.ArrayList(tableCols.size());
-                for (int i = tableCols.size(); --i >= 0;) {
+            int colNumber = getTable().getNumberOfColumns();
+            if (colNumber == 0) {
+                pendingSpans = new java.util.ArrayList();
+            } else {
+                pendingSpans = new java.util.ArrayList(colNumber);
+                for (int i = colNumber; --i >= 0;) {
                     pendingSpans.add(null);
                 }
-            } else {
-                pendingSpans = new java.util.ArrayList();
             }
         }
     }
@@ -295,11 +293,9 @@ public class TableBody extends TableCellContainer {
         //the index is not assigned to any
         //column, increment further until the next
         //index occupied by a column...
-        if (getTable().columns != null) {
-            while (columnIndex <= getTable().columns.size()
-                    && !getTable().isColumnNumberUsed(columnIndex) ) {
-                columnIndex++;
-            }
+        while (columnIndex <= getTable().getNumberOfColumns()
+                && !getTable().isColumnNumberUsed(columnIndex) ) {
+            columnIndex++;
         }
     }
 
