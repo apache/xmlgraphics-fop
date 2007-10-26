@@ -94,22 +94,20 @@ public class FlateFilter extends PDFFilter {
      *
      * @return a string containing the decode params for this filter
      */
-    public String getDecodeParms() {
+    public PDFObject getDecodeParms() {
         if (predictor > PREDICTION_NONE) {
-            StringBuffer sb = new StringBuffer();
-            sb.append("<< /Predictor ");
-            sb.append(predictor);
+            PDFDictionary dict = new PDFDictionary();
+            dict.put("Predictor", predictor);
             if (colors > 0) {
-                sb.append(" /Colors " + colors);
+                dict.put("Colors", colors);
             }
             if (bitsPerComponent > 0) {
-                sb.append(" /BitsPerComponent " + bitsPerComponent);
+                dict.put("BitsPerComponent", bitsPerComponent);
             }
             if (columns > 0) {
-                sb.append(" /Columns " + columns);
+                dict.put("Columns", columns);
             }
-            sb.append(" >> ");
-            return sb.toString();
+            return dict;
         }
         return null;
     }
@@ -210,11 +208,13 @@ public class FlateFilter extends PDFFilter {
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public OutputStream applyFilter(OutputStream out) throws IOException {
-        return new FlateEncodeOutputStream(out);
+        if (isApplied()) {
+            return out;
+        } else {
+            return new FlateEncodeOutputStream(out);
+        }
     }
 
 }

@@ -75,7 +75,7 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
          * Return a parameter dictionary for this filter, or null
          * @return The parameter dictionary. In this case, null.
          */
-        public String getDecodeParms() {
+        public PDFObject getDecodeParms() {
             return null;
         }
 

@@ -42,6 +42,14 @@ public class PDFReference implements PDFWritable {
         this.indirectReference = obj.referencePDF();
         this.objReference = new SoftReference(obj);
     }
+    
+    /**
+     * Creates a new PDF reference, but without a reference to the original object.
+     * @param ref an object reference
+     */
+    public PDFReference(String ref) {
+        this.indirectReference = ref;
+    }
 
     /**
      * Returns the PDF object
@@ -62,6 +70,11 @@ public class PDFReference implements PDFWritable {
     /** {@inheritDoc} */
     public String toInlinePDFString() {
         return this.indirectReference;
+    }
+    
+    /** {@inheritDoc} */
+    public String toString() {
+        return toInlinePDFString();
     }
     
 }

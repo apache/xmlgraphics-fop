@@ -17,40 +17,33 @@
 
 /* $Id$ */
  
-package org.apache.fop.pdf;
+package org.apache.fop.image;
 
 /**
- * CCF Filter class. Right now it is just used as a dummy filter flag so
- * we can write TIFF images to the PDF. The encode method just returns the
- * data passed to it. In the future an actual CCITT Group 4 compression should be
- * added to the encode method so other images can be compressed.
- *
+ * This interface is used to dynamically register FopImage implementations.
+ * <p>
+ * NOTE: Please don't rely on this interface too much. It is a temporary measure
+ * until the whole image package can be redesigned. The redesign will likely
+ * provide a different mechanism to dynamically register new implementations. 
  */
-public class CCFFilter extends NullFilter {
-
-    private PDFObject decodeParms;
+public interface RegisterableImageProvider {
 
     /**
-     * {@inheritDoc}
+     * Returns the MIME type the implementation supports.
+     * @return the MIME type
      */
-    public String getName() {
-        return "/CCITTFaxDecode";
-    }
-
+    String getSupportedMimeType();
+    
     /**
-     * {@inheritDoc}
+     * Returns the name of the implementation.
+     * @return the name
      */
-    public PDFObject getDecodeParms() {
-        return this.decodeParms;
-    }
-
+    String getName();
+    
     /**
-     * Sets the CCF decoding parameters
-     * @param decodeParms The decoding parameters
+     * Returns the fully qualified class name for the implementing class.
+     * @return the class name
      */
-    public void setDecodeParms(PDFObject decodeParms) {
-        this.decodeParms = decodeParms;
-    }
+    String getClassName();
 
 }
-

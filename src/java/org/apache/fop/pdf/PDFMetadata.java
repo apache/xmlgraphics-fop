@@ -101,24 +101,18 @@ public class PDFMetadata extends PDFStream {
     }
     
     /** {@inheritDoc} */
-    protected String buildStreamDict(String lengthEntry) {
+    protected void populateStreamDict(Object lengthEntry) {
         final String filterEntry = getFilterList().buildFilterDictEntries();
         if (getDocumentSafely().getProfile().getPDFAMode().isPDFA1LevelB() 
                 && filterEntry != null && filterEntry.length() > 0) {
             throw new PDFConformanceException(
                     "The Filter key is prohibited when PDF/A-1 is active");
         }
-        final StringBuffer sb = new StringBuffer(128);
-        sb.append(getObjectID());
-        sb.append("<< ");
-        sb.append("/Type /Metadata");
-        sb.append("\n/Subtype /XML");
-        sb.append("\n/Length " + lengthEntry);
-        sb.append("\n" + filterEntry);
-        sb.append("\n>>\n");
-        return sb.toString();
+        put("Type", new PDFName("Metadata"));
+        put("Subtype", new PDFName("XML"));
+        super.populateStreamDict(lengthEntry);
     }
-
+    
     /**
      * Creates an XMP document based on the settings on the PDF Document.
      * @param pdfDoc the PDF Document

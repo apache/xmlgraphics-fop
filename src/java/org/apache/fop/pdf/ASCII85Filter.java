@@ -52,7 +52,7 @@ public class ASCII85Filter extends PDFFilter {
      *
      * @return always null
      */
-    public String getDecodeParms() {
+    public PDFObject getDecodeParms() {
         return null;
     }
 
@@ -60,7 +60,11 @@ public class ASCII85Filter extends PDFFilter {
      * {@inheritDoc}
      */
     public OutputStream applyFilter(OutputStream out) throws IOException {
-        return new ASCII85OutputStream(out);
+        if (isApplied()) {
+            return out;
+        } else {
+            return new ASCII85OutputStream(out);
+        }
     }
 
 }
