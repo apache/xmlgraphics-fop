@@ -1647,4 +1647,8 @@
     <glyph codepoint='FD' name='a190'/>
     <glyph codepoint='FE' name='a191'/>
   </encoding>
+  <!-- 
+    TODO: Provide data for ExpertEncoding and ExpertSubsetEncoding
+    see http://www.adobe.com/devnet/font/pdfs/5176.CFF.pdf for details.
+  -->
 </encoding-set>

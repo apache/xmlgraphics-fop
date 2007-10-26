@@ -302,7 +302,11 @@ public class PFMFile {
     public String getCharSetName() {
         switch (dfCharSet) {
         case 0:
-            return "WinAnsi";
+            return "WinAnsi"; // AKA ISOAdobe
+        case 1:
+            return "Expert";
+        case 2:
+            return "ExpertSubset";
         case 128:
             return "Shift-JIS (Japanese)";
         default:

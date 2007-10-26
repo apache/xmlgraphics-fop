@@ -47,7 +47,11 @@ public class SingleByteFont extends CustomFont {
      * Updates the mapping variable based on the encoding.
      */
     protected void updateMapping() {
-        mapping = CodePointMapping.getMapping(getEncoding()); 
+        try {
+            mapping = CodePointMapping.getMapping(getEncoding());
+        } catch (UnsupportedOperationException e) {
+            log.error("Font '" + super.getFontName() + "': " + e.getMessage());
+        }
     }
     
     /**
