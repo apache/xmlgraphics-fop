@@ -33,6 +33,8 @@ import org.xml.sax.Locator;
  */
 public class PSSetPageDeviceElement extends AbstractPSExtensionElement {
 
+    protected static final String ELEMENT = "ps-setpagedevice";
+
     /**
      * Main constructor
      * @param parent parent FO node
@@ -79,7 +81,7 @@ public class PSSetPageDeviceElement extends AbstractPSExtensionElement {
      * @return local name 
      * @see org.apache.fop.fo.FONode#getLocalName() */
     public String getLocalName() {
-        return "ps-setpagedevice";
+        return ELEMENT;
     }
 
     /**
