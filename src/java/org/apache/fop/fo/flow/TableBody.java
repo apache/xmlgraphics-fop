@@ -36,7 +36,7 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 /**
  * Class modelling the fo:table-body object.
  */
-public class TableBody extends TableFObj {
+public class TableBody extends TableCellContainer {
     // The value of properties relevant for fo:table-body.
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     // Unused but valid items, commented out for performance:
@@ -177,31 +177,7 @@ public class TableBody extends TableFObj {
                     break;
                 case FO_TABLE_CELL:
                     TableCell cell = (TableCell) child;
-                    int colNr = cell.getColumnNumber();
-                    int colSpan = cell.getNumberColumnsSpanned();
-                    Length colWidth = null;
-
-                    if (cell.getWidth().getEnum() != EN_AUTO
-                            && colSpan == 1) {
-                        colWidth = cell.getWidth();
-                    }
-                    
-                    for (int i = colNr; i < colNr + colSpan; ++i) {
-                        if (t.columns.size() < i
-                                || t.columns.get(i - 1) == null) {
-                            t.addDefaultColumn(colWidth, 
-                                    i == colNr 
-                                        ? cell.getColumnNumber()
-                                        : 0);
-                        } else {
-                            TableColumn col = 
-                                (TableColumn) t.columns.get(i - 1);
-                            if (!col.isDefaultColumn()
-                                    && colWidth != null) {
-                                col.setColumnWidth(colWidth);
-                            }
-                        }
-                    }
+                    addTableCellChild(cell);
                     break;
                 default:
                     //nop
