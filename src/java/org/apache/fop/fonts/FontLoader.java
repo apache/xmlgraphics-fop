@@ -94,11 +94,10 @@ public abstract class FontLoader {
     public static CustomFont loadFont(String fontFileURI, FontResolver resolver)
                 throws IOException {
         fontFileURI = fontFileURI.trim();
-        String name = fontFileURI.toLowerCase();
         String effURI;
         boolean type1 = isType1(fontFileURI);
         if (type1) {
-            effURI = name.substring(0, fontFileURI.length() - 4) + ".pfm";
+            effURI = fontFileURI.substring(0, fontFileURI.length() - 4) + ".pfm";
         } else {
             effURI = fontFileURI;
         }
