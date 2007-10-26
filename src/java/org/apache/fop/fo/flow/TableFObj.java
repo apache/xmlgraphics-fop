@@ -91,15 +91,7 @@ public abstract class TableFObj extends FObj {
                     + ", but a non-zero value for padding was found.");
         }
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    protected void addChildNode(FONode child) throws FOPException {
-        super.addChildNode(child);
-    }
-    
-    
+
     /**
      * 
      * @param side  the side for which to return the border precedence
