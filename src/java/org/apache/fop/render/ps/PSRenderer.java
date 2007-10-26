@@ -1055,10 +1055,12 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         if (page.hasExtensionAttachments()) {
             List extensionAttachments = page.getExtensionAttachments();
             for (int i = 0; i < extensionAttachments.size(); i++) {
-                PSExtensionAttachment attachment
-                    = (PSExtensionAttachment)extensionAttachments.get(i);
-                if (attachment instanceof PSCommentBefore) {
-                    gen.commentln("%" + attachment.getContent());
+                Object attObj = extensionAttachments.get(i);
+                if (attObj instanceof PSExtensionAttachment) {
+                    PSExtensionAttachment attachment = (PSExtensionAttachment)attObj;
+                    if (attachment instanceof PSCommentBefore) {
+                        gen.commentln("%" + attachment.getContent());
+                    }
                 }
             }
         }
@@ -1091,10 +1093,12 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         if (page.hasExtensionAttachments()) {
             List extensionAttachments = page.getExtensionAttachments();
             for (int i = 0; i < extensionAttachments.size(); i++) {
-                PSExtensionAttachment attachment;
-                attachment = (PSExtensionAttachment)extensionAttachments.get(i);
-                if (attachment instanceof PSCommentAfter) {
-                    gen.commentln("%" + attachment.getContent());
+                Object attObj = extensionAttachments.get(i);
+                if (attObj instanceof PSExtensionAttachment) {
+                    PSExtensionAttachment attachment = (PSExtensionAttachment)attObj;
+                    if (attachment instanceof PSCommentAfter) {
+                        gen.commentln("%" + attachment.getContent());
+                    }
                 }
             }
         }
