@@ -19,6 +19,7 @@
 
 package org.apache.fop.fo.flow;
 
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 
@@ -70,7 +71,7 @@ public class Table extends TableFObj {
     private Length orphanContentLimit;
 
     /** collection of columns in this table */
-    protected List columns = null;
+    protected List columns = new ArrayList();
     
     /** helper variables for implicit column-numbering */
     private int columnIndex = 1;
@@ -239,9 +240,6 @@ public class Table extends TableFObj {
         
         switch (childId) {
         case FO_TABLE_COLUMN:
-            if (columns == null) {
-                columns = new java.util.ArrayList();
-            }
             if (!inMarker()) {
                 addColumnNode((TableColumn) child);
             } else {
@@ -342,7 +340,7 @@ public class Table extends TableFObj {
     public List getColumns() {
         return columns;
     }
-    
+
     /** @return the body for the table-header. */
     public TableBody getTableHeader() {
         return tableHeader;
