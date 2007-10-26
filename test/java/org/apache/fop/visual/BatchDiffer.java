@@ -35,19 +35,15 @@ import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
 import org.apache.avalon.framework.container.ContainerUtil;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.layoutengine.LayoutEngineTestSuite;
 import org.apache.xmlgraphics.image.writer.ImageWriter;
 import org.apache.xmlgraphics.image.writer.ImageWriterRegistry;
-
 import org.xml.sax.SAXException;
 
 /**
@@ -192,8 +188,8 @@ public class BatchDiffer {
             Collection files = FileUtils.listFiles(srcDir, filter, null);
             Iterator i = files.iterator();
             while (i.hasNext()) {
+                File f = (File)i.next();
                 try {
-                    File f = (File)i.next();
                     log.info("---=== " + f + " ===---");
                     long[] times = new long[producers.length];
                     for (int j = 0; j < producers.length; j++) {
@@ -201,18 +197,20 @@ public class BatchDiffer {
                         bitmaps[j] = producers[j].produce(f, context);
                         times[j] = System.currentTimeMillis() - times[j];
                     }
-                    StringBuffer sb = new StringBuffer("Bitmap production times: ");
-                    for (int j = 0; j < producers.length; j++) {
-                        if (j > 0) {
-                            sb.append(", ");
+                    if (log.isDebugEnabled()) {
+                        StringBuffer sb = new StringBuffer("Bitmap production times: ");
+                        for (int j = 0; j < producers.length; j++) {
+                            if (j > 0) {
+                                sb.append(", ");
+                            }
+                            sb.append(times[j]).append("ms");
                         }
-                        sb.append(times[j]).append("ms");
+                        log.debug(sb.toString());
                     }
-                    log.info(sb.toString());
                     //Create combined image
                     if (bitmaps[0] == null) {
-                        throw new RuntimeException("First producer didn't return a bitmap."
-                                + " Cannot continue.");
+                        throw new RuntimeException("First producer didn't return a bitmap for " 
+                                + f + ". Cannot continue.");
                     }
                     BufferedImage combined = BitmapComparator.buildCompareImage(bitmaps);
                     
@@ -233,9 +231,9 @@ public class BatchDiffer {
                         bitmaps[k] = null;
                     }
                 } catch (RuntimeException e) {
-                    System.out.println("Catching RE: " + e.getMessage());
+                    log.error("Catching RE on file " + f + ": " + e.getMessage());
                     if (stopOnException) {
-                        System.out.println("rethrowing...");
+                        log.error("rethrowing...");
                         throw e;
                     }
                 }
