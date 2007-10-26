@@ -165,12 +165,6 @@ public class TableBody extends TableCellContainer {
     protected void addChildNode(FONode child) throws FOPException {
         if (!inMarker()) {
             if (firstRow) {
-                Table t = getTable();
-                
-                if (t.columns == null) {
-                    t.columns = new java.util.ArrayList();
-                }
-                
                 switch (child.getNameId()) {
                 case FO_TABLE_ROW:
                     firstRow = false;
