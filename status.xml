@@ -28,6 +28,21 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="AC" type="add" fixes-bug="42982" due-to="Max Berger">
+        Add Font support in jar files.
+      </action>
+      <action context="Code" dev="AC" type="fix" fixes-bug="43042" due-to="Andrejus Chaliapinas">
+        Postscript extension cleanup.
+      </action>
+      <action context="Code" dev="AC" type="fix" fixes-bug="43587">
+        Fix to avoid ClassCastException where multiple ps:ps-comments are declared within fo:declarations.
+      </action>
+      <action context="Code" dev="AC" type="fix" fixes-bug="43143">
+	Fix to avoid NullPointerException when parsing ExpertEncoded and ExpertSubsetEncoded Type 1 fonts.
+      </action>
+      <action context="Code" dev="AC" type="fix" fixes-bug="43439">
+        Fixes missing TLE value attribute when using AreaTree input with the AFP renderer.
+      </action>
       <action context="Code" dev="JM" type="add">
         Added generic structures to the PDF library in order to support PDF
         file in fo:external-graphic later.
