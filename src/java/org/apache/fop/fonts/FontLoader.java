@@ -83,7 +83,20 @@ public abstract class FontLoader {
                 throws IOException {
         return loadFont(fontFile.getAbsolutePath(), resolver);
     }
-        
+
+    /**
+     * Loads a custom font from an URL. In the case of Type 1 fonts, the PFB file must be specified.
+     * @param fontUrl the URL representation of the font
+     * @param resolver the font resolver to use when resolving URIs
+     * @return the newly loaded font
+     * @throws IOException In case of an I/O error
+     */
+    public static CustomFont loadFont(URL fontUrl, FontResolver resolver)
+                throws IOException {
+        return loadFont(fontUrl.toExternalForm(), resolver);
+    }
+    
+    
     /**
      * Loads a custom font from a URI. In the case of Type 1 fonts, the PFB file must be specified.
      * @param fontFileURI the URI to the font

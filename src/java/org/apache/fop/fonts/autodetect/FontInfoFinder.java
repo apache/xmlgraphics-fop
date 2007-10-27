@@ -20,7 +20,9 @@
 package org.apache.fop.fonts.autodetect;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -90,22 +92,18 @@ public class FontInfoFinder {
     
     /**
      * Attempts to determine FontInfo from a given custom font
-     * @param fontFile the font file
+     * @param fontUrl the font URL
      * @param customFont the custom font
      * @param fontCache font cache (may be null)
      * @return
      */
     private EmbedFontInfo fontInfoFromCustomFont(
-            File fontFile, CustomFont customFont, FontCache fontCache) {
+            URL fontUrl, CustomFont customFont, FontCache fontCache) {
         FontTriplet fontTriplet = tripletFromFont(customFont);
         List fontTripletList = new java.util.ArrayList();
         fontTripletList.add(fontTriplet);
         String embedUrl;
-        try {
-            embedUrl = fontFile.toURL().toExternalForm();
-        } catch (MalformedURLException e) {
-            embedUrl = fontFile.getAbsolutePath();
-        }
+        embedUrl = fontUrl.toExternalForm();
         EmbedFontInfo fontInfo = new EmbedFontInfo(null, customFont.isKerningEnabled(),
                 fontTripletList, embedUrl);
         if (fontCache != null) {
@@ -117,23 +115,24 @@ public class FontInfoFinder {
     /**
      * Attempts to determine EmbedFontInfo from a given font file.
      * 
-     * @param fontFile font file
+     * @param fontUrl font URL. Assumed to be local.
      * @param resolver font resolver used to resolve font
      * @param fontCache font cache (may be null)
      * @return newly created embed font info
      */
-    public EmbedFontInfo find(File fontFile, FontResolver resolver, FontCache fontCache) {
+    public EmbedFontInfo find(URL fontUrl, FontResolver resolver, FontCache fontCache) {
         String embedUrl = null;
-        try {
-            embedUrl = fontFile.toURL().toExternalForm();
-        } catch (MalformedURLException mfue) {
-            // should never happen
-            log.error("Failed to convert '" + fontFile + "' to URL: " + mfue.getMessage() );
-        }
+        embedUrl = fontUrl.toExternalForm();
         
         long fileLastModified = -1;
         if (fontCache != null) {
-            fileLastModified = fontFile.lastModified();
+            try {
+                fileLastModified = fontUrl.openConnection().getLastModified();
+            } catch (IOException e) {
+                // Should never happen, because URL must be local
+                log.debug("IOError: " + e.getMessage());
+                fileLastModified = 0;
+            }
             // firstly try and fetch it from cache before loading/parsing the font file
             if (fontCache.containsFont(embedUrl)) {
                 CachedFontInfo fontInfo = fontCache.getFont(embedUrl);
@@ -155,7 +154,7 @@ public class FontInfoFinder {
         // try to determine triplet information from font file
         CustomFont customFont = null;
         try {
-            customFont = FontLoader.loadFont(fontFile, resolver);
+            customFont = FontLoader.loadFont(fontUrl, resolver);
         } catch (Exception e) {
             //TODO Too verbose (it's an error but we don't care if some fonts can't be loaded)
             if (log.isErrorEnabled()) {
@@ -166,6 +165,6 @@ public class FontInfoFinder {
             }
             return null;
         }
-        return fontInfoFromCustomFont(fontFile, customFont, fontCache);     
+        return fontInfoFromCustomFont(fontUrl, customFont, fontCache);     
     }
 }

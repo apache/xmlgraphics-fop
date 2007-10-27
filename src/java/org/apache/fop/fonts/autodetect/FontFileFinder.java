@@ -21,6 +21,8 @@ package org.apache.fop.fonts.autodetect;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -99,13 +101,18 @@ public class FontFileFinder extends DirectoryWalker implements FontFinder {
      * {@inheritDoc} 
      */
     protected void handleFile(File file, int depth, Collection results) {
-        results.add(file);
+        try {
+            // Looks Strange, but is actually recommended over just .URL()
+            results.add(file.toURI().toURL());
+        } catch (MalformedURLException e) {
+            log.debug("MalformedURLException" + e.getMessage());
+        }
     }
       
     /**
      * @param directory the directory being processed
      * @param depth the current directory level
-     * @param results the colleciton of results objects
+     * @param results the collection of results objects
      * {@inheritDoc}
      */
     protected void handleDirectoryEnd(File directory, int depth, Collection results) {
@@ -118,7 +125,7 @@ public class FontFileFinder extends DirectoryWalker implements FontFinder {
     /**
      * Automagically finds a list of font files on local system
      * 
-     * @return list of font files
+     * @return List&lt;URL&gt; of font files
      * @throws IOException io exception
      * {@inheritDoc}
      */
@@ -137,7 +144,8 @@ public class FontFileFinder extends DirectoryWalker implements FontFinder {
         List fontDirs = fontDirFinder.find();
         List results = new java.util.ArrayList();
         for (Iterator iter = fontDirs.iterator(); iter.hasNext();) {
-            super.walk((File)iter.next(), results);
+            final File dir = (File)iter.next();
+            super.walk(dir, results);
         }
         return results;
     }
