@@ -165,8 +165,6 @@ public abstract class TableFObj extends FObj {
                 }
             }
 
-            columnIndexManager.setCurrentColumnIndex(columnIndex);
-
             int colSpan = propertyList.get(Constants.PR_NUMBER_COLUMNS_SPANNED)
                                 .getNumeric().getValue();
             int i = -1;
