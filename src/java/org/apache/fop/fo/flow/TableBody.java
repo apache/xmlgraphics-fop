@@ -20,18 +20,13 @@
 package org.apache.fop.fo.flow;
 
 // Java
-import java.util.BitSet;
-import java.util.List;
-
-import org.xml.sax.Attributes;
-import org.xml.sax.Locator;
-
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
 
 /**
  * Class modelling the fo:table-body object.
@@ -45,21 +40,20 @@ public class TableBody extends TableCellContainer {
     //     private CommonRelativePosition commonRelativePosition;
     //    private int visibility;
     // End of property values
-    
+
     /**
      * used for validation
      */
     protected boolean tableRowsFound = false;
     protected boolean tableCellsFound = false;
-    
+
     /**
      * used for initial values of column-number property
      */
-    protected List pendingSpans;
-    protected BitSet usedColumnIndices;
-    private int columnIndex = 1;
-    protected boolean firstRow = true;
-    
+    private boolean firstRow = true;
+
+    private boolean rowsStarted = false;
+
     /**
      * @param parent FONode that is the parent of the object
      */
@@ -74,12 +68,12 @@ public class TableBody extends TableCellContainer {
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         super.bind(pList);
     }
-    
+
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
-    public void processNode(String elementName, Locator locator, 
-                            Attributes attlist, PropertyList pList) 
+    public void processNode(String elementName, Locator locator,
+                            Attributes attlist, PropertyList pList)
                     throws FOPException {
         if (!inMarker()) {
             int cap = getTable().getNumberOfColumns();
@@ -87,8 +81,7 @@ public class TableBody extends TableCellContainer {
                 cap = 10; // Default value for ArrayList
             }
             pendingSpans = new java.util.ArrayList(cap);
-            usedColumnIndices = new java.util.BitSet(cap);
-            setNextColumnIndex();
+            columnNumberManager = new ColumnNumberManager();
         }
         super.processNode(elementName, locator, attlist, pList);
     }
@@ -104,14 +97,14 @@ public class TableBody extends TableCellContainer {
      * {@inheritDoc}
      */
     protected void endOfNode() throws FOPException {
-        
+
         if (!inMarker()) {
             pendingSpans = null;
-            usedColumnIndices = null;
+            columnNumberManager = null;
         }
-        
+
         getFOEventHandler().endBody(this);
-        
+
         if (!(tableRowsFound || tableCellsFound)) {
             if (getUserAgent().validateStrictly()) {
                 missingChildElementError("marker* (table-row+|table-cell+)");
@@ -120,14 +113,14 @@ public class TableBody extends TableCellContainer {
                         + "Expected: marker* (table-row+|table-cell+)");
                 getParent().removeChild(this);
             }
-        }        
+        }
     }
 
     /**
      * {@inheritDoc} String, String)
      * XSL Content Model: marker* (table-row+|table-cell+)
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+    protected void validateChildNode(Locator loc, String nsURI, String localName)
         throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             if (localName.equals("marker")) {
@@ -144,11 +137,11 @@ public class TableBody extends TableCellContainer {
             } else if (localName.equals("table-cell")) {
                 tableCellsFound = true;
                 if (tableRowsFound) {
-                    invalidChildError(loc, nsURI, localName, 
+                    invalidChildError(loc, nsURI, localName,
                             "Either fo:table-rows or fo:table-cells "
-                            + "may be children of an " 
+                            + "may be children of an "
                             + getName() + " but not both");
-                }  
+                }
             } else {
                 invalidChildError(loc, nsURI, localName);
             }
@@ -156,29 +149,35 @@ public class TableBody extends TableCellContainer {
             invalidChildError(loc, nsURI, localName);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
     protected void addChildNode(FONode child) throws FOPException {
         if (!inMarker()) {
-            if (firstRow) {
-                switch (child.getNameId()) {
-                case FO_TABLE_ROW:
-                    firstRow = false;
-                    break;
-                case FO_TABLE_CELL:
-                    TableCell cell = (TableCell) child;
-                    addTableCellChild(cell);
-                    break;
-                default:
-                    //nop
+            switch (child.getNameId()) {
+            case FO_TABLE_ROW:
+                if (rowsStarted) {
+                    columnNumberManager.prepareForNextRow(pendingSpans);
                 }
+                rowsStarted = true;
+                break;
+            case FO_TABLE_CELL:
+                rowsStarted = true;
+                TableCell cell = (TableCell) child;
+                addTableCellChild(cell, firstRow);
+                if (cell.endsRow()) {
+                    firstRow = false;
+                    columnNumberManager.prepareForNextRow(pendingSpans);
+                }
+                break;
+            default:
+                //nop
             }
         }
         super.addChildNode(child);
     }
-    
+
     /**
      * @return the Common Border, Padding, and Background Properties.
      */
@@ -203,139 +202,19 @@ public class TableBody extends TableCellContainer {
      * @return true if the given table row is the first row of this body.
      */
     public boolean isFirst(TableRow obj) {
-        return (firstChild == null 
+        return (firstChild == null
                 || firstChild == obj);
     }
 
-    /**
-     * Initializes list of pending row-spans; used for correctly
-     * assigning initial value for column-number for the
-     * cells of following rows
-     * (note: not literally mentioned in the Rec, but it is assumed
-     *  that, if the first cell in a given row spans two rows, then
-     *  the first cell of the following row will have an initial
-     *  column-number of 2, since the first column is already 
-     *  occupied...)
-     */
-    protected void initPendingSpans(FONode child) {
-        if (child.getNameId() == FO_TABLE_ROW) {
-            pendingSpans = ((TableRow) child).pendingSpans;
-        } else if (pendingSpans == null) {
-            int colNumber = getTable().getNumberOfColumns();
-            if (colNumber == 0) {
-                pendingSpans = new java.util.ArrayList();
-            } else {
-                pendingSpans = new java.util.ArrayList(colNumber);
-                for (int i = colNumber; --i >= 0;) {
-                    pendingSpans.add(null);
-                }
+    void signalNewRow() {
+        if (rowsStarted) {
+            firstRow = false;
+            TableCell previousCell = (TableCell) getChildNodes().lastNode();
+            if (!previousCell.endsRow()) {
+                columnNumberManager.prepareForNextRow(pendingSpans);
             }
         }
-    }
-        
-    /**
-     * Returns the current column index of the TableBody
-     * 
-     * @return the next column number to use
-     */
-    protected int getCurrentColumnIndex() {
-        return columnIndex;
+        rowsStarted = true;
     }
 
-    /**
-     * Sets the current column index to a specific value
-     * (used by ColumnNumberPropertyMaker.make() in case the 
-     *  column-number was explicitly specified on the cell)
-     * 
-     * @param newIndex  the new column index
-     */
-    protected void setCurrentColumnIndex(int newIndex) {
-        columnIndex = newIndex;
-    }
-
-    /**
-     * Resets the current column index for the TableBody
-     *
-     */
-    protected void resetColumnIndex() {
-        columnIndex = 1;
-        for (int i = usedColumnIndices.length(); --i >= 0;) {
-            usedColumnIndices.clear(i);
-        }
-        
-        PendingSpan pSpan;
-        for (int i = pendingSpans.size(); --i >= 0;) {
-            pSpan = (PendingSpan) pendingSpans.get(i);
-            if (pSpan != null) {
-                pSpan.rowsLeft--;
-                if (pSpan.rowsLeft == 0) {
-                    pendingSpans.set(i, null);
-                } else {
-                    usedColumnIndices.set(i);
-                }
-            }
-        }
-        if (!firstRow) {
-            setNextColumnIndex();
-        }
-    }
-
-    /**
-     * Increases columnIndex to the next available value
-     *
-     */
-    protected void setNextColumnIndex() {
-        while (usedColumnIndices.get(columnIndex - 1)) {
-            //increment columnIndex
-            columnIndex++;
-        }
-        //if the table has explicit columns, and
-        //the index is not assigned to any
-        //column, increment further until the next
-        //index occupied by a column...
-        while (columnIndex <= getTable().getNumberOfColumns()
-                && !getTable().isColumnNumberUsed(columnIndex) ) {
-            columnIndex++;
-        }
-    }
-
-    /**
-     * Checks whether the previous cell had 'ends-row="true"'
-     * 
-     * @return true if:
-     *          a) there is a previous cell, which
-     *             had ends-row="true"
-     *          b) there is no previous cell (implicit 
-     *             start of row)
-     */
-    protected boolean previousCellEndedRow() {
-        if (firstChild != null) {
-            FONode prevNode = getChildNodes().lastNode();
-            if (prevNode.getNameId() == FO_TABLE_CELL) {
-                return ((TableCell) prevNode).endsRow();
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Checks whether a given column-number is already in use
-     * for the current row;
-     * 
-     * @param   colNr   the column-number to check
-     * @return true if column-number is already occupied
-     */
-    public boolean isColumnNumberUsed(int colNr) {
-        return usedColumnIndices.get(colNr - 1);
-    }
-    
-    /**
-     * {@inheritDoc} 
-     */
-    protected void flagColumnIndices(int start, int end) {
-        for (int i = start; i < end; i++) {
-            usedColumnIndices.set(i);
-        }
-        setNextColumnIndex();
-    }
 }
