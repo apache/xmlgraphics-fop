@@ -19,12 +19,6 @@
 
 package org.apache.fop.fo.flow;
 
-import java.util.BitSet;
-import java.util.List;
-
-import org.xml.sax.Attributes;
-import org.xml.sax.Locator;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
@@ -33,6 +27,8 @@ import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
 
 /**
  * Class modelling the fo:table-row object.
@@ -53,10 +49,6 @@ public class TableRow extends TableCellContainer {
     //     private CommonRelativePosition commonRelativePosition;
     //     private int visibility;
     // End of property values
-    
-    protected List pendingSpans;
-    protected BitSet usedColumnIndices;
-    private int columnIndex = 1;
 
     /**
      * @param parent FONode that is the parent of this object
@@ -67,7 +59,7 @@ public class TableRow extends TableCellContainer {
 
     /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
-        blockProgressionDimension 
+        blockProgressionDimension
             = pList.get(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange();
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         breakAfter = pList.get(PR_BREAK_AFTER).getEnum();
@@ -80,16 +72,12 @@ public class TableRow extends TableCellContainer {
     }
 
     /** {@inheritDoc} */
-    public void processNode(String elementName, Locator locator, 
+    public void processNode(String elementName, Locator locator,
             Attributes attlist, PropertyList pList) throws FOPException {
         if (!inMarker()) {
             TableBody body = (TableBody) parent;
-            body.resetColumnIndex();
             pendingSpans = body.pendingSpans;
-            usedColumnIndices = body.usedColumnIndices;
-            while (usedColumnIndices.get(columnIndex - 1)) {
-                columnIndex++;
-            }
+            columnNumberManager = body.columnNumberManager;
         }
         super.processNode(elementName, locator, attlist, pList);
     }
@@ -99,11 +87,9 @@ public class TableRow extends TableCellContainer {
      */
     protected void addChildNode(FONode child) throws FOPException {
         if (!inMarker()) {
+            TableCell cell = (TableCell) child;
             TableBody body = (TableBody) getParent();
-            if (body.isFirst(this)) {
-                TableCell cell = (TableCell) child;
-                addTableCellChild(cell);
-            }
+            addTableCellChild(cell, body.isFirst(this));
         }
         super.addChildNode(child);
     }
@@ -125,7 +111,7 @@ public class TableRow extends TableCellContainer {
         }
         if (!inMarker()) {
             pendingSpans = null;
-            usedColumnIndices = null;
+            columnNumberManager = null;
         }
         getFOEventHandler().endRow(this);
     }
@@ -134,14 +120,14 @@ public class TableRow extends TableCellContainer {
      * {@inheritDoc} String, String)
      * XSL Content Model: (table-cell+)
      */
-    protected void validateChildNode(Locator loc, String nsURI, 
-                                     String localName) 
+    protected void validateChildNode(Locator loc, String nsURI,
+                                     String localName)
         throws ValidationException {
         if (!(FO_URI.equals(nsURI) && localName.equals("table-cell"))) {
             invalidChildError(loc, nsURI, localName);
         }
-    }    
-    
+    }
+
     /** @return the "break-after" property. */
     public int getBreakAfter() {
         return breakAfter;
@@ -168,7 +154,7 @@ public class TableRow extends TableCellContainer {
     }
 
     /**
-     * Convenience method to check if a keep-together 
+     * Convenience method to check if a keep-together
      * constraint is specified.
      * @return true if keep-together is active.
      */
@@ -176,9 +162,9 @@ public class TableRow extends TableCellContainer {
         return !getKeepTogether().getWithinPage().isAuto()
                 || !getKeepTogether().getWithinColumn().isAuto();
     }
-    
+
     /**
-     * Convenience method to check if a keep-with-next 
+     * Convenience method to check if a keep-with-next
      * constraint is specified.
      * @return true if keep-with-next is active.
      */
@@ -186,9 +172,9 @@ public class TableRow extends TableCellContainer {
         return !getKeepWithNext().getWithinPage().isAuto()
                 || !getKeepWithNext().getWithinColumn().isAuto();
     }
-    
+
     /**
-     * Convenience method to check if a keep-with-previous 
+     * Convenience method to check if a keep-with-previous
      * constraint is specified.
      * @return true if keep-with-previous is active.
      */
@@ -196,7 +182,7 @@ public class TableRow extends TableCellContainer {
         return !getKeepWithPrevious().getWithinPage().isAuto()
                 || !getKeepWithPrevious().getWithinColumn().isAuto();
     }
-    
+
     /**
      * @return the "block-progression-dimension" property.
      */
@@ -217,7 +203,7 @@ public class TableRow extends TableCellContainer {
     public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
         return commonBorderPaddingBackground;
     }
-    
+
     /** {@inheritDoc} */
     public String getLocalName() {
         return "table-row";
@@ -227,48 +213,4 @@ public class TableRow extends TableCellContainer {
     public int getNameId() {
         return FO_TABLE_ROW;
     }
-    
-    /**
-     * Returns the current column index of the TableRow
-     *                                 
-     * @return the next column number to use
-     */
-    public int getCurrentColumnIndex() {
-        return columnIndex;
-    }
-
-    /**
-     * Sets the current column index to a specific value
-     * in case a column-number was explicitly specified
-     * (used by ColumnNumberPropertyMaker.make())
-     * 
-     * @param newIndex  new value for column index
-     */
-    public void setCurrentColumnIndex(int newIndex) {
-        columnIndex = newIndex;
-    }
-
-    /**
-     * Checks whether a given column-number is already in use
-     * for the current row (used by TableCell.bind());
-     * 
-     * @param colNr the column-number to check
-     * @return true if column-number is already occupied
-     */
-    public boolean isColumnNumberUsed(int colNr) {
-        return usedColumnIndices.get(colNr - 1);
-    }
-    
-    /**
-     * {@inheritDoc} 
-     */
-    protected void flagColumnIndices(int start, int end) {
-        for (int i = start; i < end; i++) {
-            usedColumnIndices.set(i);
-        }
-        // update columnIndex for the next cell
-        while (usedColumnIndices.get(columnIndex - 1)) {
-            columnIndex++;
-        }
-    }    
 }

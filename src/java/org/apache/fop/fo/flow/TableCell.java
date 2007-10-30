@@ -55,7 +55,7 @@ public class TableCell extends TableFObj {
     //     private KeepProperty keepWithNext;
     //     private KeepProperty keepWithPrevious;
     // End of property values
-  
+
     /** used for FO validation */
     private boolean blockItemFound = false;
 
@@ -75,12 +75,16 @@ public class TableCell extends TableFObj {
         blockProgressionDimension = pList.get(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange();
         displayAlign = pList.get(PR_DISPLAY_ALIGN).getEnum();
         emptyCells = pList.get(PR_EMPTY_CELLS).getEnum();
+        startsRow = pList.get(PR_STARTS_ROW).getEnum();
+        // For properly computing columnNumber
+        if (startsRow() && getParent().getNameId() != FO_TABLE_ROW) {
+            ((TableBody) getParent()).signalNewRow();
+        }
         endsRow = pList.get(PR_ENDS_ROW).getEnum();
         columnNumber = pList.get(PR_COLUMN_NUMBER).getNumeric().getValue();
         numberColumnsSpanned = pList.get(PR_NUMBER_COLUMNS_SPANNED).getNumeric().getValue();
         numberRowsSpanned = pList.get(PR_NUMBER_ROWS_SPANNED).getNumeric().getValue();
-        startsRow = pList.get(PR_STARTS_ROW).getEnum();
-        width = pList.get(PR_WIDTH).getLength();        
+        width = pList.get(PR_WIDTH).getLength();
     }
 
     /**
@@ -105,7 +109,7 @@ public class TableCell extends TableFObj {
                         + "enclosed by a fo:block will be dropped/ignored.");
             }
         }
-        if ((startsRow() || endsRow()) 
+        if ((startsRow() || endsRow())
                 && getParent().getNameId() == FO_TABLE_ROW ) {
             log.warn("starts-row/ends-row for fo:table-cells "
                     + "non-applicable for children of an fo:table-row.");
@@ -117,7 +121,7 @@ public class TableCell extends TableFObj {
      * {@inheritDoc}
      * XSL Content Model: marker* (%block;)+
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+    protected void validateChildNode(Locator loc, String nsURI, String localName)
         throws ValidationException {
         if (FO_URI.equals(nsURI) && localName.equals("marker")) {
             if (blockItemFound) {
@@ -148,12 +152,12 @@ public class TableCell extends TableFObj {
     public int getColumnNumber() {
         return columnNumber;
     }
-    
+
     /** @return true if "empty-cells" is "show" */
     public boolean showEmptyCells() {
         return (this.emptyCells == EN_SHOW);
     }
-    
+
     /**
      * @return the "number-columns-spanned" property.
      */
@@ -167,7 +171,7 @@ public class TableCell extends TableFObj {
     public int getNumberRowsSpanned() {
         return Math.max(numberRowsSpanned, 1);
     }
-    
+
     /**
      * @return the "block-progression-dimension" property.
      */
@@ -179,24 +183,24 @@ public class TableCell extends TableFObj {
     public int getDisplayAlign() {
         return displayAlign;
     }
-    
+
     /**
      * @return the "width" property.
      */
     public Length getWidth() {
         return width;
     }
-    
+
     /** @return true if the cell starts a row. */
     public boolean startsRow() {
         return (startsRow == EN_TRUE);
     }
-    
+
     /** @return true if the cell ends a row. */
     public boolean endsRow() {
         return (endsRow == EN_TRUE);
     }
-    
+
     /** {@inheritDoc} */
     public String getLocalName() {
         return "table-cell";
@@ -208,4 +212,5 @@ public class TableCell extends TableFObj {
     public final int getNameId() {
         return FO_TABLE_CELL;
     }
+
 }

@@ -28,28 +28,75 @@ import org.apache.fop.fo.FONode;
 /**
  * A common class for fo:table-body and fo:table-row which both can contain fo:table-cell.
  */
-public abstract class TableCellContainer extends TableFObj {
+public abstract class TableCellContainer extends TableFObj implements ColumnNumberManagerHolder {
+
+    /**
+     * Used for determining initial values for column-numbers
+     * in case of row-spanning cells
+     * (for clarity)
+     *
+     */
+    static class PendingSpan {
+
+        /**
+         * member variable holding the number of rows left
+         */
+        protected int rowsLeft;
+
+        /**
+         * Constructor
+         * 
+         * @param rows  number of rows spanned
+         */
+        public PendingSpan(int rows) {
+            rowsLeft = rows;
+        }
+    }
+
+    protected List pendingSpans;
+
+    protected ColumnNumberManager columnNumberManager;
 
     public TableCellContainer(FONode parent) {
         super(parent);
     }
 
-    protected void addTableCellChild(TableCell cell) throws FOPException {
-        Table t = getTable();
-        int colNr = cell.getColumnNumber();
+    protected void addTableCellChild(TableCell cell, boolean firstRow) throws FOPException {
+        int colNumber = cell.getColumnNumber();
         int colSpan = cell.getNumberColumnsSpanned();
+        int rowSpan = cell.getNumberRowsSpanned();
+
+        if (firstRow) {
+            handleCellWidth(cell, colNumber, colSpan);
+            updatePendingSpansSize(cell, colNumber, colSpan);
+        }
+
+        /* if the current cell spans more than one row,
+         * update pending span list for the next row
+         */
+        if (rowSpan > 1) {
+            for (int i = 0; i < colSpan; i++) {
+                pendingSpans.set(colNumber - 1 + i, new PendingSpan(rowSpan));
+            }
+        }
+
+        columnNumberManager.signalUsedColumnNumbers(colNumber, colNumber + colSpan - 1);
+    }
+
+    private void handleCellWidth(TableCell cell, int colNumber, int colSpan) throws FOPException {
+        Table t = getTable();
         Length colWidth = null;
 
         if (cell.getWidth().getEnum() != EN_AUTO
                 && colSpan == 1) {
             colWidth = cell.getWidth();
         }
-        
-        for (int i = colNr; i < colNr + colSpan; ++i) {
+
+        for (int i = colNumber; i < colNumber + colSpan; ++i) {
             TableColumn col = t.getColumn(i - 1);
             if (col == null) {
-                t.addDefaultColumn(colWidth, 
-                        i == colNr 
+                t.addDefaultColumn(colWidth,
+                        i == colNumber
                             ? cell.getColumnNumber()
                             : 0);
             } else {
@@ -61,97 +108,15 @@ public abstract class TableCellContainer extends TableFObj {
         }
     }
 
-    protected void addChildNode(FONode child) throws FOPException {
-        if (!inMarker() 
-                && child.getNameId() == FO_TABLE_CELL) {
-            /* update current column index for the table-body/table-row */
-            updateColumnIndex((TableCell) child);
+    private void updatePendingSpansSize(TableCell cell, int colNumber, int colSpan) {
+        while (pendingSpans.size() < colNumber + colSpan - 1) {
+            pendingSpans.add(null);
         }
-        super.addChildNode(child);
     }
 
-
-    private void updateColumnIndex(TableCell cell) {
-        
-        int rowSpan = cell.getNumberRowsSpanned();
-        int colSpan = cell.getNumberColumnsSpanned();
-        int columnIndex = getCurrentColumnIndex();
-        int i;
-        
-        if (getNameId() == FO_TABLE_ROW) {
-            
-            TableRow row = (TableRow) this;
-            
-            for (i = colSpan; 
-                    --i >= 0 || row.pendingSpans.size() < cell.getColumnNumber();) {
-                row.pendingSpans.add(null);
-            }
-            
-            /* if the current cell spans more than one row,
-             * update pending span list for the next row
-             */
-            if (rowSpan > 1) {
-                for (i = colSpan; --i >= 0;) {
-                    row.pendingSpans.set(columnIndex - 1 + i, 
-                            new PendingSpan(rowSpan));
-                }
-            }
-        } else {
-            
-            TableBody body = (TableBody) this;
-            
-            /* if body.firstRow is still true, and :
-             * a) the cell starts a row,
-             * b) there was a previous cell 
-             * c) that previous cell didn't explicitly end the previous row
-             *  => set firstRow flag to false
-             */
-            if (body.firstRow && cell.startsRow()) {
-                if (!body.previousCellEndedRow()) {
-                    body.firstRow = false;
-                }
-            }
-            
-            /* pendingSpans not initialized for the first row...
-             */
-            if (body.firstRow) {
-                for (i = colSpan; 
-                        --i >= 0|| body.pendingSpans.size() < cell.getColumnNumber();) {
-                    body.pendingSpans.add(null);
-                }
-            }
-            
-            /* if the current cell spans more than one row,
-             * update pending span list for the next row
-             */
-            if (rowSpan > 1) {
-                for (i = colSpan; --i >= 0;) {
-                    body.pendingSpans.set(columnIndex - 1 + i, 
-                            new PendingSpan(rowSpan));
-                }
-            }
-        }
-
-        /* flag column indices used by this cell,
-         * take into account that possibly not all column-numbers
-         * are used by columns in the parent table (if any),
-         * so a cell spanning three columns, might actually
-         * take up more than three columnIndices...
-         */
-        int startIndex = columnIndex - 1;
-        int endIndex = startIndex + colSpan;
-        List cols = getTable().getColumns();
-        int tmpIndex = endIndex;
-        for (i = startIndex; i <= tmpIndex; ++i) {
-            if (i < cols.size() && cols.get(i) == null) {
-                endIndex++;
-            }
-        }
-        flagColumnIndices(startIndex, endIndex);
-        if (getNameId() != FO_TABLE_ROW && cell.endsRow()) {
-            ((TableBody) this).firstRow = false;
-            ((TableBody) this).resetColumnIndex();
-        }
+    /** {@inheritDoc} */
+    public ColumnNumberManager getColumnNumberManager() {
+        return columnNumberManager;
     }
 
 }

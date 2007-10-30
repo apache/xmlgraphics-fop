@@ -40,30 +40,7 @@ public abstract class TableFObj extends FObj {
     private Numeric borderBeforePrecedence;
     private Numeric borderEndPrecedence;
     private Numeric borderStartPrecedence;
-    
-    /**
-     * Used for determining initial values for column-numbers
-     * in case of row-spanning cells
-     * (for clarity)
-     *
-     */
-    protected static class PendingSpan {
-        
-        /**
-         * member variable holding the number of rows left
-         */
-        protected int rowsLeft;
-        
-        /**
-         * Constructor
-         * 
-         * @param rows  number of rows spanned
-         */
-        public PendingSpan(int rows) {
-            rowsLeft = rows;
-        }        
-    }
-    
+
     /**
      * Main constructor
      * 
@@ -113,73 +90,23 @@ public abstract class TableFObj extends FObj {
     }
 
     /**
-     * Returns the current column index of the given TableFObj
-     * (overridden for Table, TableBody, TableRow)
-     * 
-     * @return the next column number to use
-     */
-    protected int getCurrentColumnIndex() {
-        return 0;
-    }
-    
-    /**
-     * Sets the current column index of the given TableFObj
-     * used when a value for column-number is explicitly
-     * specified on the child FO (TableCell or TableColumn)
-     * (overridden for Table, TableBody, TableRow)
-     * 
-     * @param   newIndex    new value for column index
-     */
-    protected void setCurrentColumnIndex(int newIndex) {
-        //do nothing by default
-    }
-        
-    /**
-     * Checks if a certain column-number is already occupied
-     * (overridden for Table, TableBody, TableRow)
-     * 
-     * @param colNr the column-number to check
-     * @return true if column-number is already in use
-     */
-    public boolean isColumnNumberUsed(int colNr) {
-        return false;
-    }
-    
-    /**
-     * Convenience method to returns a reference 
+     * Convenience method to returns a reference
      * to the base Table instance
      * 
      * @return  the base table instance
      * 
      */
     public Table getTable() {
-        if (this.getNameId() == FO_TABLE) {
-            //node is a Table
-            //=> return itself
-            return (Table) this;
-        } else {
-            //any other Table-node
-            //=> recursive call to parent.getTable()
-            return ((TableFObj) parent).getTable();
-        }
+        // Will be overridden in Table; for any other Table-node, recursive call to
+        // parent.getTable()
+        return ((TableFObj) parent).getTable();
     }
-    
+
     /**
      * @return the Common Border, Padding, and Background Properties.
      */
     public abstract CommonBorderPaddingBackground getCommonBorderPaddingBackground();
-    
-    /**
-     * Flags column indices from <code>start</code> to <code>end</code>,
-     * and updates the current column index.
-     * Overridden for Table, TableBody, TableRow
-     * @param start start index
-     * @param end   end index
-     */
-    protected void flagColumnIndices(int start, int end) {
-        //nop
-    }
-    
+
     /**
      * PropertyMaker subclass for the column-number property
      *
@@ -188,7 +115,7 @@ public abstract class TableFObj extends FObj {
 
         /**
          * Constructor
-         * @param propId    the id of the property for which the maker should 
+         * @param propId    the id of the property for which the maker should
          *                  be created
          */
         public ColumnNumberPropertyMaker(int propId) {
@@ -198,47 +125,36 @@ public abstract class TableFObj extends FObj {
         /**
          * {@inheritDoc}
          */
-        public Property make(PropertyList propertyList) 
+        public Property make(PropertyList propertyList)
                 throws PropertyException {
             FObj fo = propertyList.getFObj();
 
-            if (fo.getNameId() == Constants.FO_TABLE_CELL
-                    || fo.getNameId() == Constants.FO_TABLE_COLUMN) {
-                if (fo.getNameId() == Constants.FO_TABLE_CELL
-                        && fo.getParent().getNameId() != Constants.FO_TABLE_ROW
-                        && (propertyList.get(Constants.PR_STARTS_ROW).getEnum() 
-                                == Constants.EN_TRUE)) {
-                    TableBody parent = (TableBody) fo.getParent();
-                    if (!parent.previousCellEndedRow()) {
-                        parent.resetColumnIndex();
-                    }
-                }
-            }
-            return NumberProperty.getInstance(
-                    ((TableFObj) fo.getParent()).getCurrentColumnIndex());
+            return NumberProperty.getInstance(((ColumnNumberManagerHolder) fo.getParent())
+                    .getColumnNumberManager().getCurrentColumnNumber());
         }
-        
-        
+
+
         /**
-         * Check the value of the column-number property. 
-         * Return the parent's column index (initial value) in case 
+         * Check the value of the column-number property.
+         * Return the parent's column index (initial value) in case
          * of a negative or zero value
          * 
          * @see org.apache.fop.fo.properties.PropertyMaker#make(PropertyList, String, FObj)
          */
-        public Property make(PropertyList propertyList, String value, FObj fo) 
+        public Property make(PropertyList propertyList, String value, FObj fo)
                     throws PropertyException {
             Property p = super.make(propertyList, value, fo);
-            
-            TableFObj parent = (TableFObj) propertyList.getParentFObj();
-            
+
+            ColumnNumberManagerHolder parent
+                    = (ColumnNumberManagerHolder) propertyList.getParentFObj();
+            ColumnNumberManager columnIndexManager =  parent.getColumnNumberManager();
             int columnIndex = p.getNumeric().getValue();
             if (columnIndex <= 0) {
                 log.warn("Specified negative or zero value for "
                         + "column-number on " + fo.getName() + ": "
-                        + columnIndex + " forced to " 
-                        + parent.getCurrentColumnIndex());
-                return NumberProperty.getInstance(parent.getCurrentColumnIndex());
+                        + columnIndex + " forced to "
+                        + columnIndexManager.getCurrentColumnNumber());
+                return NumberProperty.getInstance(columnIndexManager.getCurrentColumnNumber());
             } else {
                 double tmpIndex = p.getNumeric().getNumericValue();
                 if (tmpIndex - columnIndex > 0.0) {
@@ -248,15 +164,15 @@ public abstract class TableFObj extends FObj {
                     p = NumberProperty.getInstance(columnIndex);
                 }
             }
-            
-            parent.setCurrentColumnIndex(columnIndex);
-            
+
+            columnIndexManager.setCurrentColumnIndex(columnIndex);
+
             int colSpan = propertyList.get(Constants.PR_NUMBER_COLUMNS_SPANNED)
                                 .getNumeric().getValue();
             int i = -1;
             while (++i < colSpan) {
-                if (parent.isColumnNumberUsed(columnIndex + i)) {
-                    /* if column-number is already in use by another 
+                if (columnIndexManager.isColumnNumberUsed(columnIndex + i)) {
+                    /* if column-number is already in use by another
                      * cell/column => error!
                      */
                     StringBuffer errorMessage = new StringBuffer();
@@ -271,7 +187,7 @@ public abstract class TableFObj extends FObj {
                     throw new PropertyException(errorMessage.toString());
                 }
             }
-            
+
             return p;
         }
     }

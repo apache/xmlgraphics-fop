@@ -45,17 +45,17 @@ public class TableColumn extends TableFObj {
     // Unused but valid items, commented out for performance:
     //     private int visibility;
     // End of property values
-    
+
     private boolean defaultColumn;
     private PropertyList pList = null;
-    
+
     /**
      * @param parent FONode that is the parent of this object
      */
     public TableColumn(FONode parent) {
         this(parent, false);
     }
-    
+
     /**
      * @param parent FONode that is the parent of this object
      * @param defaultColumn true if this table-column has been manually created as a default column
@@ -64,7 +64,7 @@ public class TableColumn extends TableFObj {
         super(parent);
         this.defaultColumn = defaultColumn;
     }
-    
+
 
     /**
      * {@inheritDoc}
@@ -78,7 +78,7 @@ public class TableColumn extends TableFObj {
         numberColumnsSpanned = pList.get(PR_NUMBER_COLUMNS_SPANNED)
                                     .getNumeric().getValue();
         super.bind(pList);
-        
+
         if (numberColumnsRepeated <= 0) {
             throw new PropertyException("number-columns-repeated must be 1 or bigger, "
                     + "but got " + numberColumnsRepeated);
@@ -87,10 +87,10 @@ public class TableColumn extends TableFObj {
             throw new PropertyException("number-columns-spanned must be 1 or bigger, "
                     + "but got " + numberColumnsSpanned);
         }
-        
-        /* check for unspecified width and replace with default of 
+
+        /* check for unspecified width and replace with default of
          * proportional-column-width(1), in case of fixed table-layout
-         * warn only for explicit columns 
+         * warn only for explicit columns
          */
         if (columnWidth.getEnum() == EN_AUTO) {
             if (!this.defaultColumn && !getTable().isAutoLayout()) {
@@ -99,7 +99,7 @@ public class TableColumn extends TableFObj {
             }
             columnWidth = new TableColLength(1.0, this);
         }
-        
+
         /* in case of explicit columns, from-table-column()
          * can be used on descendants of the table-cells, so
          * we need a reference to the column's property list
@@ -128,8 +128,8 @@ public class TableColumn extends TableFObj {
      * {@inheritDoc}
      * XSL Content Model: empty
      */
-    protected void validateChildNode(Locator loc, 
-                        String nsURI, String localName) 
+    protected void validateChildNode(Locator loc,
+                        String nsURI, String localName)
         throws ValidationException {
             invalidChildError(loc, nsURI, localName);
     }
@@ -162,7 +162,7 @@ public class TableColumn extends TableFObj {
     public int getColumnNumber() {
         return columnNumber;
     }
-    
+
     /**
      * Used for setting the column-number for an implicit column
      * @param columnNumber
@@ -175,12 +175,12 @@ public class TableColumn extends TableFObj {
     public int getNumberColumnsRepeated() {
         return numberColumnsRepeated;
     }
-    
+
     /** @return value for number-columns-spanned. */
     public int getNumberColumnsSpanned() {
         return numberColumnsSpanned;
     }
-    
+
     /** {@inheritDoc} */
     public String getLocalName() {
         return "table-column";
@@ -190,11 +190,11 @@ public class TableColumn extends TableFObj {
     public int getNameId() {
         return FO_TABLE_COLUMN;
     }
-    
+
     /**
-     * Indicates whether this table-column has been created as 
-     * default column for this table in case no table-columns 
-     * have been defined. 
+     * Indicates whether this table-column has been created as
+     * default column for this table in case no table-columns
+     * have been defined.
      * Note that this only used to provide better
      * user feedback (see ColumnSetup).
      * @return true if this table-column has been created as default column
@@ -202,7 +202,7 @@ public class TableColumn extends TableFObj {
     public boolean isDefaultColumn() {
         return defaultColumn;
     }
-    
+
     /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer("fo:table-column");
@@ -218,9 +218,9 @@ public class TableColumn extends TableFObj {
         sb.append(" column-width=").append(getColumnWidth());
         return sb.toString();
     }
-    
+
     /**
-     * Retrieve a property value through its Id; used by 
+     * Retrieve a property value through its Id; used by
      * from-table-column() function
      * 
      * @param propId    the id for the property to retrieve
@@ -230,12 +230,13 @@ public class TableColumn extends TableFObj {
     public Property getProperty(int propId) throws PropertyException {
         return this.pList.get(propId);
     }
-    
+
     /**
-     * Clear the reference to the PropertyList (retained for 
+     * Clear the reference to the PropertyList (retained for
      * from-table-column())
      */
     protected void releasePropertyList() {
         this.pList = null;
-    }    
+    }
+
 }
