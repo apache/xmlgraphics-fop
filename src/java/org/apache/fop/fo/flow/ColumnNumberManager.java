@@ -59,6 +59,7 @@ public class ColumnNumberManager {
             usedColumnIndices.set(i);
         }
 
+        columnNumber = end + 1;
         while (usedColumnIndices.get(columnNumber - 1)) {
             columnNumber++;
         }
@@ -100,17 +101,6 @@ public class ColumnNumberManager {
      */
     public boolean isColumnNumberUsed(int colNr) {
         return usedColumnIndices.get(colNr - 1);
-    }
-
-    /**
-     * Sets the current column index to a specific value
-     * (used by ColumnNumberPropertyMaker.make() in case the 
-     *  column-number was explicitly specified on the cell)
-     * 
-     * @param newIndex  the new column index
-     */
-    void setCurrentColumnIndex(int newIndex) {
-        columnNumber = newIndex;
     }
 
 }
