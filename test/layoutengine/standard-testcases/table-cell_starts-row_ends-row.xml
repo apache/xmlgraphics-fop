@@ -36,6 +36,7 @@
             <fo:table-column column-width="1in"/>
             <fo:table-column column-width="1in"/>
             <fo:table-column column-width="1in"/>
+            <fo:table-column column-width="1in"/>
             <fo:table-body>
               <fo:table-cell>
                 <fo:block>cell1</fo:block>

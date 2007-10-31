@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.ValidationException;
 
 /**
  * A common class for fo:table-body and fo:table-row which both can contain fo:table-cell.
@@ -66,6 +67,12 @@ public abstract class TableCellContainer extends TableFObj implements ColumnNumb
         int colSpan = cell.getNumberColumnsSpanned();
         int rowSpan = cell.getNumberRowsSpanned();
 
+        Table t = getTable();
+        if (t.hasExplicitColumns() && colNumber + colSpan - 1 > t.getNumberOfColumns()) {
+            throw new ValidationException(FONode.errorText(locator) + "column-number or number "
+                    + "of cells in the row overflows the number of fo:table-column specified "
+                    + "for the table.");
+        }
         if (firstRow) {
             handleCellWidth(cell, colNumber, colSpan);
             updatePendingSpansSize(cell, colNumber, colSpan);
