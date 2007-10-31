@@ -22,6 +22,7 @@ package org.apache.fop.fonts.autodetect;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Collection;
 import java.net.URL;
 import java.util.List;
 
@@ -51,17 +52,17 @@ public class FontInfoFinder {
     private static final String[] BOLD_WORDS = {"bold", "black", "heavy", "ultra", "super"};
 
     /**
-     * Attempts to determine FontTriplet from a given CustomFont.
+     * Attempts to determine FontTriplets from a given CustomFont.
      * It seems to be fairly accurate but will probably require some tweaking over time
      * 
      * @param customFont CustomFont
-     * @return newly created font triplet
+     * @param triplet Collection that will take the generated triplets
      */
-    private FontTriplet tripletFromFont(CustomFont customFont) {
+    private void generateTripletsFromFont(CustomFont customFont, Collection triplets) {
         // default style and weight triplet vales (fallback)
-        String name = customFont.getStrippedFontName();
+        String strippedName = customFont.getStrippedFontName();
         String subName = customFont.getFontSubName();
-        String searchName = name.toLowerCase();
+        String searchName = strippedName.toLowerCase();
         if (subName != null) {
             searchName += subName.toLowerCase();
         }
@@ -87,7 +88,11 @@ public class FontInfoFinder {
                 break;
             }            
         }
-        return new FontTriplet(name, style, weight);
+        triplets.add(new FontTriplet(strippedName, style, weight));
+        String familyName = customFont.getFontFamily();
+        if (!strippedName.equals(familyName)) {
+            triplets.add(new FontTriplet(familyName, style, weight));
+        }
     }
     
     /**
@@ -99,9 +104,8 @@ public class FontInfoFinder {
      */
     private EmbedFontInfo fontInfoFromCustomFont(
             URL fontUrl, CustomFont customFont, FontCache fontCache) {
-        FontTriplet fontTriplet = tripletFromFont(customFont);
         List fontTripletList = new java.util.ArrayList();
-        fontTripletList.add(fontTriplet);
+        generateTripletsFromFont(customFont, fontTripletList);
         String embedUrl;
         embedUrl = fontUrl.toExternalForm();
         EmbedFontInfo fontInfo = new EmbedFontInfo(null, customFont.isKerningEnabled(),
