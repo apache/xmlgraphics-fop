@@ -21,6 +21,7 @@ package org.apache.fop.fonts;
 
 import java.io.IOException;
 import java.util.Map;
+
 import javax.xml.transform.Source;
 
 /**
@@ -60,6 +61,16 @@ public abstract class CustomFont extends Typeface
     }
 
     /**
+     * Return the font family.
+     * @return the font family
+     */
+    public String getFontFamily() {
+        return fontName;
+    }
+
+    /**
+     * Returns the font family name stripped of whitespace.
+     * @return the stripped font family
      * @see FontUtil#stripWhiteSpace(String)
      */
     public String getStrippedFontName() {
@@ -242,7 +253,6 @@ public abstract class CustomFont extends Typeface
             return java.util.Collections.EMPTY_MAP;
         }
     }
-
 
     /* ---- MutableFont interface ---- */
 
