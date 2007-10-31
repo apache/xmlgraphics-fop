@@ -83,6 +83,8 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
     private boolean tableFooterFound = false;
     private boolean tableBodyFound = false;
 
+    private boolean hasExplicitColumns = false;
+
     /**
      * The table's property list. Used in case the table has
      * no explicit columns, as a parent property list to
@@ -236,6 +238,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
 
         switch (childId) {
         case FO_TABLE_COLUMN:
+            hasExplicitColumns = true;
             if (!inMarker()) {
                 addColumnNode((TableColumn) child);
             } else {
@@ -311,6 +314,10 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
         }
 
         columnNumberManager.signalUsedColumnNumbers(colNumber, colNumber + colRepeat - 1);
+    }
+
+    boolean hasExplicitColumns() {
+        return hasExplicitColumns;
     }
 
     /** @return true of table-layout="auto" */

@@ -32,6 +32,7 @@ import org.apache.commons.io.filefilter.PrefixFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.fop.DebugHelper;
+import org.apache.fop.fo.flow.TooManyColumnsTestCase;
 import org.apache.fop.layoutengine.LayoutEngineTestSuite;
 
 import junit.framework.Test;
@@ -57,7 +58,12 @@ public final class FOTreeTestSuite {
      */
     public static Test suite() throws IOException {
         TestSuite suite = new TestSuite();
+        addXMLTestCases(suite);
+        addUnitTestCases(suite);
+        return suite;
+    }
 
+    private static void addXMLTestCases(TestSuite suite) throws IOException {
         File mainDir = new File("test/fotree");
 
         final FOTreeTester tester = new FOTreeTester();
@@ -88,8 +94,6 @@ public final class FOTreeTestSuite {
             File f = (File)i.next();
             addTestCase(suite, tester, f);
         }
-        
-        return suite;
     }
     
     private static void addTestCase(TestSuite suite, 
@@ -102,7 +106,11 @@ public final class FOTreeTestSuite {
             }
         });
     }
-    
+
+    private static void addUnitTestCases(TestSuite suite) {
+        suite.addTestSuite(TooManyColumnsTestCase.class);
+    }
+
     private static class FOTreeTestCase extends TestCase {
         
         private FOTreeTester tester;
