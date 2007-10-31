@@ -57,4 +57,12 @@ public class TooManyColumnsTestCase extends FOTreeUnitTester {
     public void testBody3() throws Exception {
         launchTest("table/too-many-columns_body_3.fo");
     }
+
+    public void testHeader() throws Exception {
+        launchTest("table/too-many-columns_header.fo");
+    }
+
+    public void testFooter() throws Exception {
+        launchTest("table/too-many-columns_footer.fo");
+    }
 }
