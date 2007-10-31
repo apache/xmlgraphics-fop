@@ -117,7 +117,7 @@ public abstract class FontLoader {
         if (log.isDebugEnabled()) {
             log.debug("opening " + effURI);
         }
-        InputStream in = openFontUrl(resolver, effURI);
+        InputStream in = openFontUri(resolver, effURI);
         return loadFontFromInputStream(fontFileURI, resolver, type1, in);
     }
 
@@ -148,14 +148,14 @@ public abstract class FontLoader {
     }
 
     /**
-     * Opens a font file and returns an input stream.
+     * Opens a font uri and returns an input stream.
      * @param resolver the FontResolver to use for font URI resolution
      * @param uri the URI representing the font
      * @return the InputStream to read the font from.
      * @throws IOException In case of an I/O error
      * @throws MalformedURLException If an invalid URL is built
      */
-    private static InputStream openFontUrl(FontResolver resolver, String uri) 
+    private static InputStream openFontUri(FontResolver resolver, String uri) 
                     throws IOException, MalformedURLException {
         InputStream in = null;
         if (resolver != null) {
