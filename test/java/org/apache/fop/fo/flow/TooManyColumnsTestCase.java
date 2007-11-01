@@ -19,27 +19,17 @@
 
 package org.apache.fop.fo.flow;
 
-import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.fotreetest.FOTreeUnitTester;
 
-public class TooManyColumnsTestCase extends FOTreeUnitTester {
-
-    private FOTreeUnitTester.FOEventHandlerFactory tableHandlerFactory;
+public class TooManyColumnsTestCase extends AbstractTableTestCase {
 
     public TooManyColumnsTestCase() throws Exception {
         super();
-        tableHandlerFactory = new FOTreeUnitTester.FOEventHandlerFactory() {
-            public FOEventHandler createFOEventHandler(FOUserAgent ua) {
-                return new TableHandler(ua);
-            }
-        };
     }
 
     private void launchTest(String filename) throws Exception {
         try {
-            setUp(filename, tableHandlerFactory);
+            setUp(filename);
             fail();
         } catch (ValidationException e) {
             // TODO check location
