@@ -100,7 +100,7 @@ public class ColumnSetup {
         if (index > size) {
             if (index > maxColIndexReferenced) {
                 maxColIndexReferenced = index;
-                if (!(size == 1 && getColumn(1).isDefaultColumn())) {
+                if (!(size == 1 && getColumn(1).isImplicitColumn())) {
                     log.warn(FONode.decorateWithContextInfo(
                             "There are fewer table-columns than are needed. "
                             + "Column " + index + " was accessed, but only "

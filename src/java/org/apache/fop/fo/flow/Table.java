@@ -35,6 +35,7 @@ import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthPairProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
+import org.apache.fop.fo.properties.TableColLength;
 import org.xml.sax.Locator;
 
 /**
@@ -84,6 +85,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
     private boolean tableBodyFound = false;
 
     private boolean hasExplicitColumns = false;
+    private boolean columnsFinalized = false;
 
     /**
      * The table's property list. Used in case the table has
@@ -244,15 +246,35 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
             } else {
                 columns.add((TableColumn) child);
             }
-            return;
-        case FO_TABLE_FOOTER:
-            tableFooter = (TableBody) child;
             break;
         case FO_TABLE_HEADER:
-            tableHeader = (TableBody) child;
+        case FO_TABLE_FOOTER:
+        case FO_TABLE_BODY:
+            if (hasExplicitColumns && !columnsFinalized) {
+                columnsFinalized = true;
+                finalizeColumns();
+            }
+            switch (childId) {
+            case FO_TABLE_FOOTER:
+                tableFooter = (TableBody) child;
+                break;
+            case FO_TABLE_HEADER:
+                tableHeader = (TableBody) child;
+                break;
+            default:
+                super.addChildNode(child);
+            }
             break;
         default:
             super.addChildNode(child);
+        }
+    }
+
+    private void finalizeColumns() throws FOPException {
+        for (int i = 0; i < columns.size(); i++) {
+            if (columns.get(i) == null) {
+                columns.set(i, createImplicitColumn(i + 1));
+            }
         }
     }
 
@@ -262,28 +284,30 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
     }
 
     /**
-     * Adds a default column to the columns list (called from
-     * TableBody.addChildNode() when the table has no explicit
-     * columns, and if processing the first row)
+     * Creates the appropriate number of additional implicit columns to match the given
+     * column number. Used when the table has no explicit column: the number of columns is
+     * then determined by the row that has the most columns.
      * 
-     * @param colWidth  the column's width (null if the default should be used)
-     * @param colNr     the column-number from the cell
-     * @throws FOPException  if there was an error creating the property list
+     * @param columnNumber the table must at least have this number of column
+     * @throws FOPException if there was an error creating the property list for implicit
+     * columns
      */
-    void addDefaultColumn(Length colWidth, int colNr)
+    void ensureColumnNumber(int columnNumber) throws FOPException {
+        for (int i = columns.size() + 1; i <= columnNumber; i++) {
+            columns.add(createImplicitColumn(i));
+        }
+    }
+
+    private TableColumn createImplicitColumn(int colNumber)
                     throws FOPException {
-        TableColumn defaultColumn = new TableColumn(this, true);
+        TableColumn implicitColumn = new TableColumn(this, true);
         PropertyList pList = new StaticPropertyList(
-                                defaultColumn, this.propList);
+                                implicitColumn, this.propList);
         pList.setWritingMode();
-        defaultColumn.bind(pList);
-        if (colWidth != null) {
-            defaultColumn.setColumnWidth(colWidth);
-        }
-        if (colNr != 0) {
-            defaultColumn.setColumnNumber(colNr);
-        }
-        addColumnNode(defaultColumn);
+        implicitColumn.bind(pList);
+        implicitColumn.setColumnWidth(new TableColLength(1.0, implicitColumn));
+        implicitColumn.setColumnNumber(colNumber);
+        return implicitColumn;
     }
 
     /**
@@ -335,17 +359,13 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
     }
 
     /**
-     * Returns the column at the given index, if any.
+     * Returns the column at the given index.
      * 
      * @param index index of the column to be retrieved, 0-based
-     * @return the corresponding column, or null if their is no column at the given index
+     * @return the corresponding column (may be an implicitly created column)
      */
     TableColumn getColumn(int index) {
-        if (index >= columns.size()) {
-            return null;
-        } else {
-            return (TableColumn) columns.get(index);
-        }
+        return (TableColumn) columns.get(index);
     }
 
     /**
