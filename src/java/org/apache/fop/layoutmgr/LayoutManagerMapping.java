@@ -270,9 +270,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
 
     public static class InlineLayoutManagerMaker extends Maker {
          public void make(FONode node, List lms) {
-             if (node.getChildNodes() != null) {
-                 lms.add(new InlineLayoutManager((InlineLevel) node));
-             }
+             lms.add(new InlineLayoutManager((InlineLevel) node));
          }
     }
 

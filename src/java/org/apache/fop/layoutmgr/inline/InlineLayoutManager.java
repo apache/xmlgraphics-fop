@@ -30,7 +30,6 @@ import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.InlineBlockParent;
 import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.datatypes.Length;
-import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.Inline;
 import org.apache.fop.fo.flow.InlineLevel;
 import org.apache.fop.fo.flow.Leader;
@@ -44,6 +43,7 @@ import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.layoutmgr.BlockKnuthSequence;
 import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BreakElement;
+import org.apache.fop.layoutmgr.InlineKnuthSequence;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthSequence;
 import org.apache.fop.layoutmgr.LayoutContext;
@@ -108,7 +108,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     }
     
     private Inline getInlineFO() {
-        return (Inline)fobj;
+        return (Inline) fobj;
     }
     
     /** {@inheritDoc} */
@@ -379,6 +379,24 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
 
         setFinished(true);
         log.trace(trace);
+        
+        if (returnList.size() == 0) {
+            /*
+             * if the FO itself is empty, but has an id specified 
+             * or associated fo:markers, then we still need a dummy
+             * sequence to register its position in the area tree
+             */
+            if (fobj.hasId() || fobj.hasMarkers()) {
+                InlineKnuthSequence emptySeq = new InlineKnuthSequence();
+                emptySeq.add(new KnuthInlineBox(
+                                0, 
+                                alignmentContext, 
+                                notifyPos(getAuxiliaryPosition()), 
+                                true));
+                returnList.add(emptySeq);
+            }
+        }
+        
         return returnList.size() == 0 ? null : returnList;
     }
 
@@ -393,8 +411,6 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
      */
     public void addAreas(PositionIterator parentIter,
                          LayoutContext context) {
-        
-        Position lastPos = null;
         
         addId();
 
@@ -420,7 +436,8 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         // layout context given to the other LMs.
         LinkedList positionList = new LinkedList();
         NonLeafPosition pos = null;
-        LayoutManager lastLM = null; // last child LM in this iterator
+        LayoutManager lastLM = null;// last child LM in this iterator
+        Position lastPos = null;
         while (parentIter.hasNext()) {
             pos = (NonLeafPosition) parentIter.next();
             if (pos != null && pos.getPosition() != null) {
@@ -556,10 +573,10 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     
     /** {@inheritDoc} */
     protected void addId() {
-        if (fobj instanceof Inline) {
-            getPSLM().addIDToPage(getInlineFO().getId());
-        }
+        getPSLM().addIDToPage(fobj.getId());
     }
     
+    public String toString() {
+        return (this.getClass().getName() + "[fobj=" + fobj.toString() + "]");
+    }
 }
-
