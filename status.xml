@@ -28,6 +28,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="AD" type="add" fixes-bug="42748">
+        Added support for ids on empty fo:inlines.
+      </action>
       <action context="Code" dev="AC" type="add" fixes-bug="42982" due-to="Max Berger">
         Add Font support in jar files.
       </action>
