@@ -51,11 +51,11 @@ public class TableColumnColumnNumberTestCase extends AbstractTableTestCase {
         super();
     }
 
-    private void checkColumn(Table t, int number, boolean isDefault, int spans, int repeated, int width) {
+    private void checkColumn(Table t, int number, boolean isImplicit, int spans, int repeated, int width) {
         TableColumn c = t.getColumn(number - 1);
         // TODO a repeated column has a correct number only for its first occurrence 
 //        assertEquals(number, c.getColumnNumber());
-        assertEquals(isDefault, c.isDefaultColumn());
+        assertEquals(isImplicit, c.isImplicitColumn());
         assertEquals(spans, c.getNumberColumnsSpanned());
         assertEquals(repeated, c.getNumberColumnsRepeated());
         assertEquals(width, c.getColumnWidth().getValue(percentBaseContext));
@@ -87,5 +87,27 @@ public class TableColumnColumnNumberTestCase extends AbstractTableTestCase {
         checkColumn(t, 2, true, 1, 1, 125000);
         checkColumn(t, 3, false, 1, 1, 150000);
         checkColumn(t, 4, false, 1, 1, 175000);
+    }
+
+    private void checkImplicitColumns(Iterator tableIter, int columnNumber) {
+        Table t = (Table) tableIter.next();
+        assertEquals(columnNumber, t.getNumberOfColumns());
+        for (int i = 1; i <= columnNumber; i++) {
+            checkColumn(t, i, true, 1, 1, 100000);
+        }
+    }
+
+    public void testImplicitColumns() throws Exception {
+        setUp("table/implicit_columns_column-number.fo");
+        percentBaseContext.setUnitaryWidth(100000);
+        Iterator tableIter = getTableHandler().getTables().iterator();
+
+        checkImplicitColumns(tableIter, 2);
+        checkImplicitColumns(tableIter, 2);
+        checkImplicitColumns(tableIter, 2);
+        checkImplicitColumns(tableIter, 2);
+        checkImplicitColumns(tableIter, 3);
+        checkImplicitColumns(tableIter, 4);
+        checkImplicitColumns(tableIter, 3);
     }
 }

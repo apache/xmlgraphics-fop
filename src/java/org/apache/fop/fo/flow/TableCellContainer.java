@@ -68,14 +68,21 @@ public abstract class TableCellContainer extends TableFObj implements ColumnNumb
         int rowSpan = cell.getNumberRowsSpanned();
 
         Table t = getTable();
-        if (t.hasExplicitColumns() && colNumber + colSpan - 1 > t.getNumberOfColumns()) {
-            throw new ValidationException(FONode.errorText(locator) + "column-number or number "
-                    + "of cells in the row overflows the number of fo:table-column specified "
-                    + "for the table.");
+        if (t.hasExplicitColumns()) {
+            if (colNumber + colSpan - 1 > t.getNumberOfColumns()) {
+                throw new ValidationException(FONode.errorText(locator) + "column-number or "
+                        + "number of cells in the row overflows the number of fo:table-column "
+                        + "specified for the table.");
+            }
+        } else {
+            t.ensureColumnNumber(colNumber + colSpan - 1);
+            // re-cap the size of pendingSpans
+            while (pendingSpans.size() < colNumber + colSpan - 1) {
+                pendingSpans.add(null);
+            }
         }
         if (firstRow) {
             handleCellWidth(cell, colNumber, colSpan);
-            updatePendingSpansSize(cell, colNumber, colSpan);
         }
 
         /* if the current cell spans more than one row,
@@ -101,23 +108,9 @@ public abstract class TableCellContainer extends TableFObj implements ColumnNumb
 
         for (int i = colNumber; i < colNumber + colSpan; ++i) {
             TableColumn col = t.getColumn(i - 1);
-            if (col == null) {
-                t.addDefaultColumn(colWidth,
-                        i == colNumber
-                            ? cell.getColumnNumber()
-                            : 0);
-            } else {
-                if (!col.isDefaultColumn()
-                        && colWidth != null) {
-                    col.setColumnWidth(colWidth);
-                }
+            if (colWidth != null) {
+                col.setColumnWidth(colWidth);
             }
-        }
-    }
-
-    private void updatePendingSpansSize(TableCell cell, int colNumber, int colSpan) {
-        while (pendingSpans.size() < colNumber + colSpan - 1) {
-            pendingSpans.add(null);
         }
     }
 

@@ -46,7 +46,7 @@ public class TableColumn extends TableFObj {
     //     private int visibility;
     // End of property values
 
-    private boolean defaultColumn;
+    private boolean implicitColumn;
     private PropertyList pList = null;
 
     /**
@@ -58,11 +58,12 @@ public class TableColumn extends TableFObj {
 
     /**
      * @param parent FONode that is the parent of this object
-     * @param defaultColumn true if this table-column has been manually created as a default column
+     * @param implicit true if this table-column has automatically been created (does not
+     * correspond to an explicit fo:table-column in the input document)
      */
-    public TableColumn(FONode parent, boolean defaultColumn) {
+    public TableColumn(FONode parent, boolean implicit) {
         super(parent);
-        this.defaultColumn = defaultColumn;
+        this.implicitColumn = implicit;
     }
 
 
@@ -93,7 +94,7 @@ public class TableColumn extends TableFObj {
          * warn only for explicit columns
          */
         if (columnWidth.getEnum() == EN_AUTO) {
-            if (!this.defaultColumn && !getTable().isAutoLayout()) {
+            if (!this.implicitColumn && !getTable().isAutoLayout()) {
                 log.warn("table-layout=\"fixed\" and column-width unspecified "
                         + "=> falling back to proportional-column-width(1)");
             }
@@ -105,7 +106,7 @@ public class TableColumn extends TableFObj {
          * we need a reference to the column's property list
          * (cleared in Table.endOfNode())
          */
-        if (!this.defaultColumn) {
+        if (!this.implicitColumn) {
             this.pList = pList;
         }
     }
@@ -199,8 +200,8 @@ public class TableColumn extends TableFObj {
      * user feedback (see ColumnSetup).
      * @return true if this table-column has been created as default column
      */
-    public boolean isDefaultColumn() {
-        return defaultColumn;
+    public boolean isImplicitColumn() {
+        return implicitColumn;
     }
 
     /** {@inheritDoc} */

@@ -19,7 +19,8 @@
 
 package org.apache.fop.fo.flow;
 
-// Java
+import java.util.ArrayList;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
@@ -76,11 +77,16 @@ public class TableBody extends TableCellContainer {
                             Attributes attlist, PropertyList pList)
                     throws FOPException {
         if (!inMarker()) {
-            int cap = getTable().getNumberOfColumns();
-            if (cap == 0) {
-                cap = 10; // Default value for ArrayList
+            Table t = getTable();
+            if (t.hasExplicitColumns()) {
+                int size = t.getNumberOfColumns();
+                pendingSpans = new ArrayList(size);
+                for (int i = 0; i < size; i++) {
+                    pendingSpans.add(null);
+                }
+            } else {
+                pendingSpans = new ArrayList();
             }
-            pendingSpans = new java.util.ArrayList(cap);
             columnNumberManager = new ColumnNumberManager();
         }
         super.processNode(elementName, locator, attlist, pList);
