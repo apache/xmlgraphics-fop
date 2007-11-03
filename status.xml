@@ -28,6 +28,11 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="update">
+        PDF Transcoder (SVG) text painting has been completely rewritten.
+        Except for some special cases (with filters for example), all text
+        (including flow text) is now painted using PDF text operators.
+      </action>
       <action context="Code" dev="AD" type="add" fixes-bug="42748">
         Added support for ids on empty fo:inlines.
       </action>
