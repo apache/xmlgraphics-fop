@@ -121,6 +121,12 @@ public class FontSetup {
         fontInfo.addFontProperties("F3", "sans-serif", "normal", Font.WEIGHT_BOLD);
         fontInfo.addFontProperties("F4", "sans-serif", "oblique", Font.WEIGHT_BOLD);
         fontInfo.addFontProperties("F4", "sans-serif", "italic", Font.WEIGHT_BOLD);
+        fontInfo.addFontProperties("F1", "SansSerif", "normal", Font.WEIGHT_NORMAL);
+        fontInfo.addFontProperties("F2", "SansSerif", "oblique", Font.WEIGHT_NORMAL);
+        fontInfo.addFontProperties("F2", "SansSerif", "italic", Font.WEIGHT_NORMAL);
+        fontInfo.addFontProperties("F3", "SansSerif", "normal", Font.WEIGHT_BOLD);
+        fontInfo.addFontProperties("F4", "SansSerif", "oblique", Font.WEIGHT_BOLD);
+        fontInfo.addFontProperties("F4", "SansSerif", "italic", Font.WEIGHT_BOLD);
         fontInfo.addFontProperties("F5", "serif", "normal", Font.WEIGHT_NORMAL);
         fontInfo.addFontProperties("F6", "serif", "oblique", Font.WEIGHT_NORMAL);
         fontInfo.addFontProperties("F6", "serif", "italic", Font.WEIGHT_NORMAL);
@@ -133,6 +139,12 @@ public class FontSetup {
         fontInfo.addFontProperties("F11", "monospace", "normal", Font.WEIGHT_BOLD);
         fontInfo.addFontProperties("F12", "monospace", "oblique", Font.WEIGHT_BOLD);
         fontInfo.addFontProperties("F12", "monospace", "italic", Font.WEIGHT_BOLD);
+        fontInfo.addFontProperties("F9", "Monospaced", "normal", Font.WEIGHT_NORMAL);
+        fontInfo.addFontProperties("F10", "Monospaced", "oblique", Font.WEIGHT_NORMAL);
+        fontInfo.addFontProperties("F10", "Monospaced", "italic", Font.WEIGHT_NORMAL);
+        fontInfo.addFontProperties("F11", "Monospaced", "normal", Font.WEIGHT_BOLD);
+        fontInfo.addFontProperties("F12", "Monospaced", "oblique", Font.WEIGHT_BOLD);
+        fontInfo.addFontProperties("F12", "Monospaced", "italic", Font.WEIGHT_BOLD);
 
         fontInfo.addFontProperties("F1", "Helvetica", "normal", Font.WEIGHT_NORMAL);
         fontInfo.addFontProperties("F2", "Helvetica", "oblique", Font.WEIGHT_NORMAL);
