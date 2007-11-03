@@ -21,7 +21,6 @@ package org.apache.fop.render.ps;
 
 
 import java.awt.Color;
-
 import java.io.IOException;
 
 import org.apache.avalon.framework.configuration.Configuration;
@@ -29,15 +28,12 @@ import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.UnitProcessor;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderOutput;
-
 import org.apache.batik.transcoder.image.ImageTranscoder;
-
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.svg.AbstractFOPTranscoder;
 import org.apache.xmlgraphics.java2d.ps.AbstractPSDocumentGraphics2D;
 import org.apache.xmlgraphics.java2d.ps.TextHandler;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.svg.SVGLength;
 
@@ -137,15 +133,6 @@ public abstract class AbstractPSTranscoder extends AbstractFOPTranscoder {
         }
     }
     
-    /** @return true if text should be stroked rather than painted using text operators */
-    protected boolean isTextStroked() {
-        boolean stroke = false;
-        if (hints.containsKey(KEY_STROKE_TEXT)) {
-            stroke = ((Boolean)hints.get(KEY_STROKE_TEXT)).booleanValue();
-        }
-        return stroke;
-    }
-
     /** {@inheritDoc} */
     protected BridgeContext createBridgeContext() {
 
