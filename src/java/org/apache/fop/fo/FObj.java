@@ -583,7 +583,7 @@ public abstract class FObj extends FONode implements Constants {
     
     /** {@inheritDoc} */
     public String toString() {
-        return (this.getClass().getName() + "[@id=" + this.id + "]");
+        return (super.toString() + "[@id=" + this.id + "]");
     }
 
 
