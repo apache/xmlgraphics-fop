@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Map;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
@@ -163,6 +164,14 @@ public class LazyFont extends Typeface implements FontDescriptor {
         return realFont.mapChar(c);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public boolean hadMappingOperations() {
+        load(true);
+        return realFont.hadMappingOperations();
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -332,5 +341,6 @@ public class LazyFont extends Typeface implements FontDescriptor {
         load(true);
         return realFontDescriptor.isEmbeddable();
     }
+
 }
 

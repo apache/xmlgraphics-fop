@@ -214,6 +214,7 @@ public class MultiByteFont extends CIDFont {
      * {@inheritDoc}
      */
     public char mapChar(char c) {
+        notifyMapOperation();
         int retIdx = findGlyphIndex(c);
 
         if (isEmbeddable()) {

@@ -27,6 +27,8 @@ package org.apache.fop.fonts;
  */
 public abstract class Typeface implements FontMetrics {
 
+    private long charMapOps = 0;
+    
     /**
      * Get the encoding of the font.
      * @return the encoding
@@ -39,6 +41,23 @@ public abstract class Typeface implements FontMetrics {
      * @return the mapped character
      */
     public abstract char mapChar(char c);
+
+    /**
+     * Used for keeping track of character mapping operations in order to determine if a font
+     * was used at all or not.
+     */
+    protected void notifyMapOperation() {
+        this.charMapOps++;
+    }
+    
+    /**
+     * Indicates whether this font had to do any character mapping operations. If that was 
+     * not the case, it's an indication that the font has never actually been used.
+     * @return true if the font had to do any character mapping operations
+     */
+    public boolean hadMappingOperations() {
+        return (this.charMapOps > 0);
+    }
 
     /**
      * Determines whether this font contains a particular character/glyph.
