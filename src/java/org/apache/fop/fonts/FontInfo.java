@@ -440,4 +440,22 @@ public class FontInfo {
             return 0;
         }
     }
+    
+    /**
+     * Diagnostic method for logging all registered fonts to System.out. 
+     */
+    public void dumpAllTripletsToSystemOut() {
+        Collection entries = new java.util.TreeSet();
+        Iterator iter = this.triplets.keySet().iterator();
+        while (iter.hasNext()) {
+            FontTriplet triplet = (FontTriplet)iter.next();
+            String key = getInternalFontKey(triplet);
+            FontMetrics metrics = getMetricsFor(key); 
+            entries.add(triplet.toString() + " -> " + key + " -> " + metrics.getFontName());
+        }
+        iter = entries.iterator();
+        while (iter.hasNext()) {
+            System.out.println(iter.next());
+        }
+    }
 }
