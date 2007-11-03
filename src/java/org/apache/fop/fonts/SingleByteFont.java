@@ -98,6 +98,7 @@ public class SingleByteFont extends CustomFont {
      * {@inheritDoc}
      */
     public char mapChar(char c) {
+        notifyMapOperation();
         char d = mapping.mapChar(c);
         if (d != 0) {
             return d;
@@ -129,8 +130,5 @@ public class SingleByteFont extends CustomFont {
         this.width[index] = width;
     }
 
-    public char[] getCharsUsed() {
-        return null;
-    }
 }
 

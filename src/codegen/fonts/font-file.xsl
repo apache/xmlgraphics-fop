@@ -148,8 +148,9 @@ public class <xsl:value-of select="class-name"/> extends Typeface {
 </xsl:choose>
 
     public char mapChar(char c) {
+        notifyMapOperation();
         char d = mapping.mapChar(c);
-        if(d != 0) {
+        if (d != 0) {
             return d;
         } else {
             return '#';

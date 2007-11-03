@@ -19,17 +19,16 @@
  
 package org.apache.fop.pdf;
 
-import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.fonts.Typeface;
-import org.apache.fop.fonts.FontDescriptor;
-import org.apache.fop.util.ColorProfileUtil;
-
-// Java
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashMap;
-import java.util.HashSet;
+
+import org.apache.fop.fonts.FontDescriptor;
+import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.Typeface;
+import org.apache.fop.util.ColorProfileUtil;
 
 /**
  * class representing a /Resources object.
@@ -97,17 +96,22 @@ public class PDFResources extends PDFObject {
      * @param fontInfo font info object to get font information from
      */
    public void addFonts(PDFDocument doc, FontInfo fontInfo) {
-        Map fonts = fontInfo.getUsedFonts();
-        Iterator e = fonts.keySet().iterator();
+        Map usedFonts = fontInfo.getUsedFonts();
+        Iterator e = usedFonts.keySet().iterator();
         while (e.hasNext()) {
             String f = (String)e.next();
-            Typeface font = (Typeface)fonts.get(f);
-            FontDescriptor desc = null;
-            if (font instanceof FontDescriptor) {
-                desc = (FontDescriptor)font;
+            Typeface font = (Typeface)usedFonts.get(f);
+            
+            //Check if the font actually had any mapping operations. If not, it is an indication
+            //that it has never actually been used and therefore doesn't have to be embedded.
+            if (font.hadMappingOperations()) {
+                FontDescriptor desc = null;
+                if (font instanceof FontDescriptor) {
+                    desc = (FontDescriptor)font;
+                }
+                addFont(doc.getFactory().makeFont(
+                    f, font.getFontName(), font.getEncoding(), font, desc));
             }
-            addFont(doc.getFactory().makeFont(
-                f, font.getFontName(), font.getEncoding(), font, desc));
         }
     }
 
