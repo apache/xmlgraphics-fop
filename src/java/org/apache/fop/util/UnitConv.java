@@ -88,6 +88,15 @@ public final class UnitConv {
     }
     
     /**
+     * Converts inches (in) to points (pt)
+     * @param in the value in inches
+     * @return the value in pt
+     */
+    public static double in2pt(double in) {
+        return in * IN2PT;
+    }
+    
+    /**
      * Converts millipoints (mpt) to inches (in) 
      * @param mpt the value in mpt
      * @return the value in inches
