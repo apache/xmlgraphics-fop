@@ -381,7 +381,8 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         if (contentList.size() > 0) {
             wrapPositionElements(contentList, returnList);
         } else {
-            //Empty fo:block, zero-length box makes sure the IDs are registered.
+            // Empty fo:block, zero-length box makes sure the IDs and/or markers 
+            // are registered.
             returnList.add(new KnuthBox(0, notifyPos(new Position(this)), true));
         }
 
