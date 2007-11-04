@@ -450,6 +450,11 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
             lastLM = pos.getPosition().getLM();
         }*/
 
+        addMarkersToPage(
+                true, 
+                !areaCreated, 
+                lastPos == null || isLast(lastPos));
+        
         InlineArea parent = createArea(lastLM == null 
                                         || lastLM instanceof InlineLevelLayoutManager);
         parent.setBPD(alignmentContext.getHeight());
@@ -479,6 +484,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
             prevLM = childLM;
         }
 
+        
         /* If this LM has a trailing fence, resolve trailing space
          * specs from descendants.  Otherwise, propagate any trailing
          * space specs to the parent LM via the layout context.  If
@@ -487,6 +493,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
          * must be the last area for the current LM too.
          */
         boolean isLast = (getContext().isLastArea() && prevLM == lastChildLM);
+        
         if (hasTrailingFence(isLast)) {
             addSpace(getCurrentArea(),
                      getContext().getTrailingSpace().resolve(false),
@@ -506,6 +513,11 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         setTraits(areaCreated, lastPos == null || !isLast(lastPos));
         parentLM.addChildArea(getCurrentArea());
 
+        addMarkersToPage(
+                false, 
+                !areaCreated, 
+                lastPos == null || isLast(lastPos));
+        
         context.setFlags(LayoutContext.LAST_AREA, isLast);
         areaCreated = true;
     }
@@ -576,7 +588,4 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         getPSLM().addIDToPage(fobj.getId());
     }
     
-    public String toString() {
-        return (this.getClass().getName() + "[fobj=" + fobj.toString() + "]");
-    }
 }

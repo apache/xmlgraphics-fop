@@ -57,7 +57,7 @@ public class AreaAdditionUtil {
         LayoutManager lastLM = null;
         Position firstPos = null;
         Position lastPos = null;
-
+        
         // "unwrap" the NonLeafPositions stored in parentIter
         // and put them in a new list; 
         LinkedList positionList = new LinkedList();
@@ -94,12 +94,15 @@ public class AreaAdditionUtil {
             //doesn't give us that info.
         }
         
-        if (bslm != null && bslm.markers != null) {
-            bslm.getCurrentPV().addMarkers(bslm.markers, true, 
-                    bslm.isFirst(firstPos), bslm.isLast(lastPos));
+        if (bslm != null) {
+            bslm.addMarkersToPage(
+                    true, 
+                    bslm.isFirst(firstPos), 
+                    bslm.isLast(lastPos));
         }
 
         StackingIter childPosIter = new StackingIter(positionList.listIterator());
+
         while ((childLM = childPosIter.getNextChildLM()) != null) {
             // TODO vh: the test above might be problematic in some cases. See comment in
             // the TableCellLM.getNextKnuthElements method
@@ -117,10 +120,14 @@ public class AreaAdditionUtil {
             lc.setStackLimit(layoutContext.getStackLimit());
             childLM.addAreas(childPosIter, lc);
         }
-        if (bslm != null && bslm.markers != null) {
-            bslm.getCurrentPV().addMarkers(bslm.markers, false, 
-                    bslm.isFirst(firstPos), bslm.isLast(lastPos));
+        
+        if (bslm != null) {
+            bslm.addMarkersToPage(
+                    false, 
+                    bslm.isFirst(firstPos), 
+                    bslm.isLast(lastPos));
         }
+
         
     }
     

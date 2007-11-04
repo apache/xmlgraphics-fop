@@ -48,8 +48,7 @@ public class WrapperLayoutManager extends LeafNodeLayoutManager {
         // be called. The area must also be added to the tree, because
         // determination of the X,Y position is done in the renderer.
         InlineArea area = new InlineArea();
-        String id = fobj.getId();
-        if (id != null && id.length() > 0) {
+        if (fobj.hasId()) {
             TraitSetter.setProducerID(area, fobj.getId());
         }
         return area;
@@ -64,8 +63,7 @@ public class WrapperLayoutManager extends LeafNodeLayoutManager {
      * @param context the layout context for adding the area
      */
     public void addAreas(PositionIterator posIter, LayoutContext context) {
-        String id = fobj.getId();
-        if (id != null && id.length() > 0) {
+        if (fobj.hasId()) {
             addId();
             InlineArea area = getEffectiveArea();
             parentLM.addChildArea(area);

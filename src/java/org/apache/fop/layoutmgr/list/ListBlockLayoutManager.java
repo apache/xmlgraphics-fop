@@ -191,9 +191,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
             }
         }
 
-        if (markers != null) {
-            getCurrentPV().addMarkers(markers, true, isFirst(firstPos), isLast(lastPos));
-        }
+        addMarkersToPage(true, isFirst(firstPos), isLast(lastPos));
 
         StackingIter childPosIter = new StackingIter(positionList.listIterator());
         while ((childLM = childPosIter.getNextChildLM()) != null) {
@@ -206,9 +204,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
             childLM.addAreas(childPosIter, lc);
         }
 
-        if (markers != null) {
-            getCurrentPV().addMarkers(markers, false, isFirst(firstPos), isLast(lastPos));
-        }
+        addMarkersToPage(false, isFirst(firstPos), isLast(lastPos));
 
         // We are done with this area add the background
         TraitSetter.addBackground(curBlockArea, 

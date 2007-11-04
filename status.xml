@@ -28,6 +28,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="AD" type="add">
+        Added support for fo:markers in fo:inline and fo:basic-link.
+      </action>
       <action context="Code" dev="JM" type="update">
         PDF Transcoder (SVG) text painting has been completely rewritten.
         Except for some special cases (with filters for example), all text

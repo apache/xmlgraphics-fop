@@ -153,9 +153,7 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
             }
         }
 
-        if (markers != null) {
-            getCurrentPV().addMarkers(markers, true, isFirst(firstPos), isLast(lastPos));
-        }
+        addMarkersToPage(true, isFirst(firstPos), isLast(lastPos));
         
         StackingIter childPosIter = new StackingIter(positionList.listIterator());
         while ((childLM = childPosIter.getNextChildLM()) != null) {
@@ -168,10 +166,8 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
             childLM.addAreas(childPosIter, lc);
         }
 
-        if (markers != null) {
-            getCurrentPV().addMarkers(markers, false, isFirst(firstPos), isLast(lastPos));
-        }
-
+        addMarkersToPage(false, isFirst(firstPos), isLast(lastPos));
+        
         flush();
 
         curBlockArea = null;
