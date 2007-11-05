@@ -171,7 +171,7 @@ public class TableBody extends TableCellContainer {
             case FO_TABLE_ROW:
                 if (rowsStarted) {
                     columnNumberManager.prepareForNextRow(pendingSpans);
-                    getTable().getRowGroupBuilder().signalNewRow(this);
+                    getTable().getRowGroupBuilder().signalRowEnd(this);
                 }
                 rowsStarted = true;
                 break;
@@ -182,7 +182,7 @@ public class TableBody extends TableCellContainer {
                 if (cell.endsRow()) {
                     firstRow = false;
                     columnNumberManager.prepareForNextRow(pendingSpans);
-                    getTable().getRowGroupBuilder().signalNewRow(this);
+                    getTable().getRowGroupBuilder().signalRowEnd(this);
                 }
                 break;
             default:
@@ -234,7 +234,7 @@ public class TableBody extends TableCellContainer {
             TableCell previousCell = (TableCell) getChildNodes().lastNode();
             if (!previousCell.endsRow()) {
                 columnNumberManager.prepareForNextRow(pendingSpans);
-                getTable().getRowGroupBuilder().signalNewRow(this);
+                getTable().getRowGroupBuilder().signalRowEnd(this);
             }
         }
         rowsStarted = true;
