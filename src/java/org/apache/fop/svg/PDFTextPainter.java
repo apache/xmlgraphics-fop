@@ -60,7 +60,7 @@ import org.apache.fop.util.CharUtilities;
  */
 public class PDFTextPainter extends StrokingTextPainter {
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     
     private boolean strokeText = false;
     private FontInfo fontInfo;
