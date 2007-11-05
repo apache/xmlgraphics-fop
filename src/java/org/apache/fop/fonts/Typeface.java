@@ -27,6 +27,10 @@ package org.apache.fop.fonts;
  */
 public abstract class Typeface implements FontMetrics {
 
+    /**
+     * Used to identify whether a font has been used (a character map operation is used as
+     * the trigger). This could just as well be a boolean but is a long out of statistical interest.
+     */
     private long charMapOps = 0;
     
     /**
