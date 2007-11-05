@@ -24,7 +24,7 @@ import java.util.List;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.FOEventHandler;
-import org.apache.fop.fo.flow.Table;
+import org.apache.fop.fo.flow.table.Table;
 
 public class TableHandler extends FOEventHandler {
 

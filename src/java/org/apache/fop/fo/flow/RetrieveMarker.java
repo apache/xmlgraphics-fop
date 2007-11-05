@@ -28,6 +28,7 @@ import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.flow.table.Table;
 import org.xml.sax.Locator;
 
 /**

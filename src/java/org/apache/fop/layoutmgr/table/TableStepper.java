@@ -27,7 +27,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.flow.TableRow;
+import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthGlue;

@@ -20,7 +20,7 @@
 package org.apache.fop.fo.expr;
 
 import org.apache.fop.fo.PropertyList;
-import org.apache.fop.fo.flow.Table;
+import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.TableColLength;
 

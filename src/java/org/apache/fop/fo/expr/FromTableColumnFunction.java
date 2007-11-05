@@ -23,11 +23,11 @@ import java.util.List;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOPropertyMapping;
-import org.apache.fop.fo.flow.ColumnNumberManager;
-import org.apache.fop.fo.flow.Table;
-import org.apache.fop.fo.flow.TableCell;
-import org.apache.fop.fo.flow.TableColumn;
-import org.apache.fop.fo.flow.TableFObj;
+import org.apache.fop.fo.flow.table.ColumnNumberManager;
+import org.apache.fop.fo.flow.table.Table;
+import org.apache.fop.fo.flow.table.TableCell;
+import org.apache.fop.fo.flow.table.TableColumn;
+import org.apache.fop.fo.flow.table.TableFObj;
 import org.apache.fop.fo.properties.Property;
 
 /**

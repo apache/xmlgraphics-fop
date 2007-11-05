@@ -21,8 +21,8 @@ package org.apache.fop.layoutmgr.table;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.fo.flow.Table;
-import org.apache.fop.fo.flow.TableColumn;
+import org.apache.fop.fo.flow.table.Table;
+import org.apache.fop.fo.flow.table.TableColumn;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.ConditionalElementListener;
 import org.apache.fop.layoutmgr.KnuthElement;

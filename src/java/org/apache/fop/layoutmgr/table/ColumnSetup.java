@@ -29,8 +29,8 @@ import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.datatypes.Length;
 
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.flow.Table;
-import org.apache.fop.fo.flow.TableColumn;
+import org.apache.fop.fo.flow.table.Table;
+import org.apache.fop.fo.flow.table.TableColumn;
 import org.apache.fop.fo.properties.TableColLength;
 
 /**

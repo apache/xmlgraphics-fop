@@ -32,7 +32,7 @@ import org.apache.commons.io.filefilter.PrefixFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.fop.DebugHelper;
-import org.apache.fop.fo.flow.TooManyColumnsTestCase;
+import org.apache.fop.fo.flow.table.TooManyColumnsTestCase;
 import org.apache.fop.layoutengine.LayoutEngineTestSuite;
 
 import junit.framework.Test;

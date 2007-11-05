@@ -17,7 +17,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.fo.flow;
+package org.apache.fop.fo.flow.table;
 
 // FOP
 import org.apache.fop.apps.FOPException;
@@ -25,14 +25,14 @@ import org.apache.fop.fo.FONode;
 
 
 /**
- * Class modelling the fo:table-header object.
+ * Class modelling the fo:table-footer object.
  */
-public class TableHeader extends TableBody {
+public class TableFooter extends TableBody {
 
     /**
      * @param parent FONode that is the parent of this object
      */
-    public TableHeader(FONode parent) {
+    public TableFooter(FONode parent) {
         super(parent);
     }
 
@@ -40,14 +40,14 @@ public class TableHeader extends TableBody {
      * {@inheritDoc}
      */
     protected void startOfNode() throws FOPException {
-        //getFOEventHandler().startHeader(this);
+        //getFOEventHandler().startBody(this);
     }
 
     /**
      * {@inheritDoc}
      */
     protected void endOfNode() throws FOPException {
-//      getFOEventHandler().endHeader(this);
+//      getFOEventHandler().endFooter(this);
         if (!(tableRowsFound || tableCellsFound)) {
             missingChildElementError("marker* (table-row+|table-cell+)");
         } else {
@@ -58,11 +58,11 @@ public class TableHeader extends TableBody {
 
     /** {@inheritDoc} */
     public String getLocalName() {
-        return "table-header";
+        return "table-footer";
     }
 
     /** {@inheritDoc} */
     public int getNameId() {
-        return FO_TABLE_HEADER;
+        return FO_TABLE_FOOTER;
     }
 }
