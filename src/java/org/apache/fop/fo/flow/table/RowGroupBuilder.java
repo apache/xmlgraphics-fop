@@ -102,7 +102,7 @@ abstract class RowGroupBuilder {
      * {@link TableBody#addRowGroup(List)} method will be called if the current row group
      * is finished.
      */
-    void signalNewRow(TableBody body) {
+    void signalRowEnd(TableBody body) {
         if (currentRowIndex == rows.size() - 1) {
             // Means that the current row has no cell spanning over following rows
             body.addRowGroup(rows);
