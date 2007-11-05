@@ -17,9 +17,10 @@
 -->
 <!-- $Id$ -->
 <!--
-  WARNING: this file was semi-automatically generated from TableRowIterator_spans.fo and
-  contains the very same tables using starts-row/ends-row instead of fo:table-row objects.
-  Please modify TableRowIterator_spans.fo instead.
+  WARNING: this file was semi-automatically generated from RowGroupBuilder_spans.fo and
+  contains the very same tables using starts-row/ends-row instead of fo:table-row, and without
+  fo:table-column objects.
+  Please modify RowGroupBuilder_spans.fo instead.
 -->
 <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
   <fo:layout-master-set>

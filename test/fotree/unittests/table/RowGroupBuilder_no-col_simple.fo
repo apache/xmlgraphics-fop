@@ -16,6 +16,11 @@
   limitations under the License.
 -->
 <!-- $Id$ -->
+<!--
+  WARNING: this file was semi-automatically generated from RowGroupBuilder_simple.fo and
+  contains the very same tables without fo:table-column children.
+  Please modify RowGroupBuilder_simple.fo instead.
+-->
 <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
   <fo:layout-master-set>
     <fo:simple-page-master master-name="page" page-height="20cm" page-width="15cm"
