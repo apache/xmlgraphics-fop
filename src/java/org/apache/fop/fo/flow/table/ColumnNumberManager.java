@@ -17,12 +17,13 @@
 
 /* $Id$ */
 
-package org.apache.fop.fo.flow;
+package org.apache.fop.fo.flow.table;
 
 import java.util.BitSet;
 import java.util.List;
 
-import org.apache.fop.fo.flow.TableCellContainer.PendingSpan;
+import org.apache.fop.fo.flow.table.TableCellContainer.PendingSpan;
+
 
 /**
  * Helper class maintaining a record of occupied columns and an index to the next

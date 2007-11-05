@@ -17,7 +17,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.fo.flow;
+package org.apache.fop.fo.flow.table;
 
 import java.util.Iterator;
 
