@@ -26,9 +26,9 @@ import java.util.List;
  * Tests that TableRowIterator returns, for each part of a table, the expected number of
  * row-groups with the expected number or rows in each.
  */
-public class TableRowIteratorTestCase extends AbstractTableTestCase {
+public class RowGroupBuilderTestCase extends AbstractTableTestCase {
 
-    public TableRowIteratorTestCase() throws Exception {
+    public RowGroupBuilderTestCase() throws Exception {
         super();
     }
 
