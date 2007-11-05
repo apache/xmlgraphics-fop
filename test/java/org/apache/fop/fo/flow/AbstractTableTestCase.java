@@ -19,6 +19,8 @@
 
 package org.apache.fop.fo.flow;
 
+import java.util.Iterator;
+
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fotreetest.FOTreeUnitTester;
@@ -48,5 +50,9 @@ abstract class AbstractTableTestCase extends FOTreeUnitTester {
 
     protected TableHandler getTableHandler() {
         return tableHandler;
+    }
+
+    protected Iterator getTableIterator() {
+        return tableHandler.getTables().iterator();
     }
 }

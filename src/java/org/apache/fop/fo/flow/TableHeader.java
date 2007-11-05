@@ -50,6 +50,8 @@ public class TableHeader extends TableBody {
 //      getFOEventHandler().endHeader(this);
         if (!(tableRowsFound || tableCellsFound)) {
             missingChildElementError("marker* (table-row+|table-cell+)");
+        } else {
+            getTable().getRowGroupBuilder().finishLastRowGroup(this);
         }
 //      convertCellsToRows();
     }

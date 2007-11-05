@@ -95,6 +95,8 @@ public abstract class TableCellContainer extends TableFObj implements ColumnNumb
         }
 
         columnNumberManager.signalUsedColumnNumbers(colNumber, colNumber + colSpan - 1);
+
+        t.getRowGroupBuilder().addTableCell(cell);
     }
 
     private void handleCellWidth(TableCell cell, int colNumber, int colSpan) throws FOPException {

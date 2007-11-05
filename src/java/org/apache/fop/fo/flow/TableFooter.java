@@ -50,6 +50,8 @@ public class TableFooter extends TableBody {
 //      getFOEventHandler().endFooter(this);
         if (!(tableRowsFound || tableCellsFound)) {
             missingChildElementError("marker* (table-row+|table-cell+)");
+        } else {
+            getTable().getRowGroupBuilder().finishLastRowGroup(this);
         }
 //      convertCellsToRows();
     }

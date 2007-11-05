@@ -63,7 +63,7 @@ public class TableColumnColumnNumberTestCase extends AbstractTableTestCase {
 
     public void testColumnNumber() throws Exception {
         setUp("table/table-column_column-number.fo");
-        Iterator tableIter = getTableHandler().getTables().iterator();
+        Iterator tableIter = getTableIterator();
         Table t = (Table) tableIter.next();
         assertEquals(2, t.getNumberOfColumns());
         checkColumn(t, 1, false, 1, 2, 100000);
@@ -100,7 +100,7 @@ public class TableColumnColumnNumberTestCase extends AbstractTableTestCase {
     public void testImplicitColumns() throws Exception {
         setUp("table/implicit_columns_column-number.fo");
         percentBaseContext.setUnitaryWidth(100000);
-        Iterator tableIter = getTableHandler().getTables().iterator();
+        Iterator tableIter = getTableIterator();
 
         checkImplicitColumns(tableIter, 2);
         checkImplicitColumns(tableIter, 2);
