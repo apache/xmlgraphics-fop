@@ -20,6 +20,8 @@
 package org.apache.fop.fo.flow;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
@@ -54,6 +56,8 @@ public class TableBody extends TableCellContainer {
     private boolean firstRow = true;
 
     private boolean rowsStarted = false;
+
+    private List rowGroups = new LinkedList();
 
     /**
      * @param parent FONode that is the parent of the object
@@ -119,6 +123,8 @@ public class TableBody extends TableCellContainer {
                         + "Expected: marker* (table-row+|table-cell+)");
                 getParent().removeChild(this);
             }
+        } else {
+            getTable().getRowGroupBuilder().finishLastRowGroup(this);
         }
     }
 
@@ -165,6 +171,7 @@ public class TableBody extends TableCellContainer {
             case FO_TABLE_ROW:
                 if (rowsStarted) {
                     columnNumberManager.prepareForNextRow(pendingSpans);
+                    getTable().getRowGroupBuilder().signalNewRow(this);
                 }
                 rowsStarted = true;
                 break;
@@ -175,6 +182,7 @@ public class TableBody extends TableCellContainer {
                 if (cell.endsRow()) {
                     firstRow = false;
                     columnNumberManager.prepareForNextRow(pendingSpans);
+                    getTable().getRowGroupBuilder().signalNewRow(this);
                 }
                 break;
             default:
@@ -182,6 +190,14 @@ public class TableBody extends TableCellContainer {
             }
         }
         super.addChildNode(child);
+    }
+
+    void addRowGroup(List rowGroup) {
+        rowGroups.add(rowGroup);
+    }
+
+    List getRowGroups() {
+        return rowGroups;
     }
 
     /**
@@ -218,6 +234,7 @@ public class TableBody extends TableCellContainer {
             TableCell previousCell = (TableCell) getChildNodes().lastNode();
             if (!previousCell.endsRow()) {
                 columnNumberManager.prepareForNextRow(pendingSpans);
+                getTable().getRowGroupBuilder().signalNewRow(this);
             }
         }
         rowsStarted = true;

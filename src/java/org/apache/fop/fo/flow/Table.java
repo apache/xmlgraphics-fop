@@ -20,13 +20,13 @@
 package org.apache.fop.fo.flow;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.ValidationPercentBaseContext;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.StaticPropertyList;
 import org.apache.fop.fo.ValidationException;
@@ -86,6 +86,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
 
     private boolean hasExplicitColumns = false;
     private boolean columnsFinalized = false;
+    private RowGroupBuilder rowGroupBuilder;
 
     /**
      * The table's property list. Used in case the table has
@@ -226,6 +227,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
                 }
             }
             this.propList = null;
+            rowGroupBuilder = null;
         }
         getFOEventHandler().endTable(this);
 
@@ -250,9 +252,15 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
         case FO_TABLE_HEADER:
         case FO_TABLE_FOOTER:
         case FO_TABLE_BODY:
-            if (hasExplicitColumns && !columnsFinalized) {
+            if (!columnsFinalized) {
                 columnsFinalized = true;
-                finalizeColumns();
+                if (hasExplicitColumns) {
+                    finalizeColumns();
+                    rowGroupBuilder = new FixedColRowGroupBuilder(this);
+                } else {
+                    rowGroupBuilder = new VariableColRowGroupBuilder(this);
+                }
+                
             }
             switch (childId) {
             case FO_TABLE_FOOTER:
@@ -293,8 +301,35 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
      * columns
      */
     void ensureColumnNumber(int columnNumber) throws FOPException {
+        assert !hasExplicitColumns;
         for (int i = columns.size() + 1; i <= columnNumber; i++) {
             columns.add(createImplicitColumn(i));
+        }
+        ((VariableColRowGroupBuilder) rowGroupBuilder).ensureNumberOfColumns(columnNumber);
+        if (tableHeader != null) {
+            for (Iterator iter = tableHeader.getRowGroups().iterator(); iter.hasNext();) {
+                VariableColRowGroupBuilder.fillWithEmptyGridUnits((List) iter.next(),
+                        columnNumber); 
+            }
+        }
+        if (tableFooter != null) {
+            for (Iterator iter = tableFooter.getRowGroups().iterator(); iter.hasNext();) {
+                VariableColRowGroupBuilder.fillWithEmptyGridUnits((List) iter.next(),
+                        columnNumber); 
+            }
+        }
+        FONodeIterator bodyIter = getChildNodes();
+        if (bodyIter != null) {
+            while (bodyIter.hasNext()) {
+                FONode node = bodyIter.nextNode();
+                if (node instanceof TableBody) { // AFAIK, may be a marker
+                    for (Iterator iter = ((TableBody) node).getRowGroups().iterator();
+                            iter.hasNext();) {
+                        VariableColRowGroupBuilder.fillWithEmptyGridUnits((List) iter.next(),
+                                columnNumber); 
+                    }
+                }
+            }
         }
     }
 
@@ -499,18 +534,22 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
      */
     public FONode clone(FONode parent, boolean removeChildren)
         throws FOPException {
-        FObj fobj = (FObj) super.clone(parent, removeChildren);
+        Table clone = (Table) super.clone(parent, removeChildren);
+        clone.columnsFinalized = false;
         if (removeChildren) {
-            Table t = (Table) fobj;
-            t.columns = new ArrayList();
-            t.tableHeader = null;
-            t.tableFooter = null;
+            clone.columns = new ArrayList();
+            clone.tableHeader = null;
+            clone.tableFooter = null;
         }
-        return fobj;
+        return clone;
     }
 
     /** {@inheritDoc} */
     public ColumnNumberManager getColumnNumberManager() {
         return columnNumberManager;
+    }
+
+    RowGroupBuilder getRowGroupBuilder() {
+        return rowGroupBuilder;
     }
 }
