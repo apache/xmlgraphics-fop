@@ -23,7 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Tests that TableRowIterator returns, for each part of a table, the expected number of
+ * Tests that RowGroupBuilder returns, for each part of a table, the expected number of
  * row-groups with the expected number or rows in each.
  */
 public class RowGroupBuilderTestCase extends AbstractTableTestCase {
@@ -33,29 +33,12 @@ public class RowGroupBuilderTestCase extends AbstractTableTestCase {
     }
 
     /**
-     * Prepares the iterators over the tables contained in the given FO file.
+     * Checks that the given table-body(header,footer) will return row groups as expected.
+     * More precisely, checks that the number of row groups corresponds to the size of the
+     * given array, and that the number of rows inside each row group is equal to the
+     * corresponding integer in the array.
      * 
-     * @param filename basename of a test FO file
-     * @throws Exception
-     */
-//    private void setUp(String filename) throws Exception {
-//        foReader.parse(new File("test/layoutmgr/table/" + filename).toURL().toExternalForm());
-//        List tables = tableHandler.getTables();
-//        List columnSetups = new LinkedList();
-//        tableIterator = tables.iterator();
-//        for (Iterator i = tables.iterator(); i.hasNext();) {
-//            columnSetups.add(new ColumnSetup((Table) i.next()));
-//        }
-//        columnSetupIterator = columnSetups.iterator();
-//    }
-
-    /**
-     * Checks that the given iterator will return row groups as expected. More precisely,
-     * checks that the number of row groups corresponds to the size of the given array,
-     * and that the number of rows inside each row group is equal to the corresponding
-     * integer in the array.
-     * 
-     * @param tri an iterator over a given part of a table (HEADER, FOOTER, BODY)
+     * @param body a body whose row groups are to be checked
      * @param expectedRowLengths expected lengths of all the row groups of this part of
      * the table
      */
@@ -71,7 +54,7 @@ public class RowGroupBuilderTestCase extends AbstractTableTestCase {
 
     /**
      * Gets the next table and checks its row-groups.
-     * @param tableIter TODO
+     * @param tableIter an iterator over the tables to check
      * @param expectedHeaderRowLengths expected row-group sizes for the header. If null
      * the table is not expected to have a header
      * @param expectedFooterRowLengths expected row-group sizes for the footer. If null
@@ -96,19 +79,6 @@ public class RowGroupBuilderTestCase extends AbstractTableTestCase {
             assertTrue(bodyIter.hasNext());
             checkTablePartRowGroups((TableBody) bodyIter.next(), expectedBodyRowLengths[i]);
         }
-
-//        ColumnSetup columnSetup = (ColumnSetup) columnSetupIterator.next();
-//        TableRowIterator tri;
-//        if (expectedHeaderRowLengths != null) {
-//            tri = new TableRowIterator(table, columnSetup, TableRowIterator.HEADER);
-//            checkTablePartRowGroups(tri, expectedHeaderRowLengths);
-//        }
-//        if (expectedFooterRowLengths != null) {
-//            tri = new TableRowIterator(table, columnSetup, TableRowIterator.FOOTER);
-//            checkTablePartRowGroups(tri, expectedFooterRowLengths);
-//        }
-//        tri = new TableRowIterator(table, columnSetup, TableRowIterator.BODY);
-//        checkTablePartRowGroups(tri, expectedBodyRowLengths);
     }
 
     public void checkSimple(String filename) throws Exception {
@@ -168,34 +138,34 @@ public class RowGroupBuilderTestCase extends AbstractTableTestCase {
     }
 
     public void testWithRowsSimple() throws Exception {
-        checkSimple("table/TableRowIterator_simple.fo");
+        checkSimple("table/RowGroupBuilder_simple.fo");
     }
 
     public void testWithRowsSpans() throws Exception {
-        checkSpans("table/TableRowIterator_spans.fo");
+        checkSpans("table/RowGroupBuilder_spans.fo");
     }
 
     public void testNoRowSimple() throws Exception {
-        checkSimple("table/TableRowIterator_no-row_simple.fo");
+        checkSimple("table/RowGroupBuilder_no-row_simple.fo");
     }
 
     public void testNoRowSpans() throws Exception {
-        checkSpans("table/TableRowIterator_no-row_spans.fo");
+        checkSpans("table/RowGroupBuilder_no-row_spans.fo");
     }
 
     public void testNoColWithRowsSimple() throws Exception {
-        checkSimple("table/TableRowIterator_no-col_simple.fo");
+        checkSimple("table/RowGroupBuilder_no-col_simple.fo");
     }
 
     public void testNoColWithRowsSpans() throws Exception {
-        checkSpans("table/TableRowIterator_no-col_spans.fo");
+        checkSpans("table/RowGroupBuilder_no-col_spans.fo");
     }
 
     public void testNoColNoRowSimple() throws Exception {
-        checkSimple("table/TableRowIterator_no-col_no-row_simple.fo");
+        checkSimple("table/RowGroupBuilder_no-col_no-row_simple.fo");
     }
 
     public void testNoColNoRowSpans() throws Exception {
-        checkSpans("table/TableRowIterator_no-col_no-row_spans.fo");
+        checkSpans("table/RowGroupBuilder_no-col_no-row_spans.fo");
     }
 }
