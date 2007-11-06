@@ -28,6 +28,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix">
+        Fixed regression: transparent-page-background was not recognized for PNG output.
+      </action>
       <action context="Code" dev="VH" type="add">
         Added check for table-cells which span more rows than available in their parent element
         (table-header/footer/body).
