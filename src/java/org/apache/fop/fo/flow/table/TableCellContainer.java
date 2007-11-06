@@ -31,29 +31,6 @@ import org.apache.fop.fo.ValidationException;
  */
 public abstract class TableCellContainer extends TableFObj implements ColumnNumberManagerHolder {
 
-    /**
-     * Used for determining initial values for column-numbers
-     * in case of row-spanning cells
-     * (for clarity)
-     *
-     */
-    static class PendingSpan {
-
-        /**
-         * member variable holding the number of rows left
-         */
-        protected int rowsLeft;
-
-        /**
-         * Constructor
-         * 
-         * @param rows  number of rows spanned
-         */
-        public PendingSpan(int rows) {
-            rowsLeft = rows;
-        }
-    }
-
     protected List pendingSpans;
 
     protected ColumnNumberManager columnNumberManager;
