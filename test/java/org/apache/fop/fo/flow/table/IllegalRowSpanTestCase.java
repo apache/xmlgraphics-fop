@@ -19,34 +19,30 @@
 
 package org.apache.fop.fo.flow.table;
 
+/**
+ * Testcase checking that cells spanning further than their parent element aren't
+ * accepted.
+ */
+public class IllegalRowSpanTestCase extends ErrorCheckTestCase {
 
-public class TooManyColumnsTestCase extends ErrorCheckTestCase {
-
-    public TooManyColumnsTestCase() throws Exception {
+    public IllegalRowSpanTestCase() throws Exception {
         super();
     }
 
     public void testBody1() throws Exception {
-        launchTest("table/too-many-columns_body_1.fo");
+        launchTest("table/illegal-row-span_body_1.fo");
     }
 
     public void testBody2() throws Exception {
-        launchTest("table/too-many-columns_body_2.fo");
-    }
-
-    public void testBody3() throws Exception {
-        launchTest("table/too-many-columns_body_3.fo");
-    }
-
-    public void testBody4() throws Exception {
-        launchTest("table/too-many-columns_body_4.fo");
+        launchTest("table/illegal-row-span_body_2.fo");
     }
 
     public void testHeader() throws Exception {
-        launchTest("table/too-many-columns_header.fo");
+        launchTest("table/illegal-row-span_header.fo");
     }
 
     public void testFooter() throws Exception {
-        launchTest("table/too-many-columns_footer.fo");
+        launchTest("table/illegal-row-span_footer.fo");
     }
+
 }

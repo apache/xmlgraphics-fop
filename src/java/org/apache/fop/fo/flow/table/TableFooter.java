@@ -51,7 +51,7 @@ public class TableFooter extends TableBody {
         if (!(tableRowsFound || tableCellsFound)) {
             missingChildElementError("marker* (table-row+|table-cell+)");
         } else {
-            getTable().getRowGroupBuilder().finishLastRowGroup(this);
+            finishLastRowGroup();
         }
 //      convertCellsToRows();
     }

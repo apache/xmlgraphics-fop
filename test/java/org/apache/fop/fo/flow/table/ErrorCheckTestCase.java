@@ -19,34 +19,24 @@
 
 package org.apache.fop.fo.flow.table;
 
+import org.apache.fop.fo.ValidationException;
 
-public class TooManyColumnsTestCase extends ErrorCheckTestCase {
+/**
+ * Abstract class for testing erroneous files, checking that a ValidationException is thrown.
+ */
+abstract class ErrorCheckTestCase extends AbstractTableTestCase {
 
-    public TooManyColumnsTestCase() throws Exception {
+    public ErrorCheckTestCase() throws Exception {
         super();
     }
 
-    public void testBody1() throws Exception {
-        launchTest("table/too-many-columns_body_1.fo");
+    protected void launchTest(String filename) throws Exception {
+        try {
+            setUp(filename);
+            fail();
+        } catch (ValidationException e) {
+            // TODO check location
+        }
     }
 
-    public void testBody2() throws Exception {
-        launchTest("table/too-many-columns_body_2.fo");
-    }
-
-    public void testBody3() throws Exception {
-        launchTest("table/too-many-columns_body_3.fo");
-    }
-
-    public void testBody4() throws Exception {
-        launchTest("table/too-many-columns_body_4.fo");
-    }
-
-    public void testHeader() throws Exception {
-        launchTest("table/too-many-columns_header.fo");
-    }
-
-    public void testFooter() throws Exception {
-        launchTest("table/too-many-columns_footer.fo");
-    }
 }
