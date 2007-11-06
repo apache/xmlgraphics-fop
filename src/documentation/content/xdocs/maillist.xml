@@ -50,11 +50,13 @@ If you are using Microsoft Outlook, this setting can be found at the "Mail Forma
           <li><jump href="http://www.mail-archive.com/fop-users%40xmlgraphics.apache.org/">The Mail Archive</jump>.</li>
           <li>The <jump href="http://dir.gmane.org/gmane.text.xml.fop.user">GMANE archive</jump>.</li>
           <li>The <jump href="http://www.nabble.com/FOP---Users-f353.html">Nabble archive</jump> (only posts after May 2005).</li>
+          <li>The <jump href="http://fop-users.markmail.org/">MarkMail archive</jump>.</li>
         </ul>
         <note>
           If you don't like mailing lists and prefer a forum-like system, have a look at 
-          <jump href="http://dir.gmane.org/gmane.text.xml.fop.user">GMANE</jump>. GMANE
-          allows you to post to the mailing list without having to subscribe.
+          <jump href="http://dir.gmane.org/gmane.text.xml.fop.user">GMANE</jump> or
+          <jump href="http://www.nabble.com/FOP---Users-f353.html">Nabble</jump>. They
+          allow you to post to the mailing list without having to subscribe.
         </note>
       </section>
       <section id="fop-user-subscribe">
