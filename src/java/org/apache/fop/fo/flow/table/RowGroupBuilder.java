@@ -22,6 +22,7 @@ package org.apache.fop.fo.flow.table;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.fop.fo.ValidationException;
 import org.apache.fop.layoutmgr.table.GridUnit;
 import org.apache.fop.layoutmgr.table.PrimaryGridUnit;
 
@@ -113,19 +114,18 @@ abstract class RowGroupBuilder {
     }
 
     /**
-     * Finishes and records the last row-group of the given table-body, if any. If there
-     * is no fo:table-row and the last cell of the table-body didn't have ends-row="true",
-     * then the {@link signalNewRow} method has not been called and the last row group has
-     * yet to be recorded.
+     * Signals that the end of a table-header/footer/body has been reached. The current
+     * row-group is checked for emptiness. This row group builder is reset for handling
+     * further possible table parts.
      * 
-     * @param tableBody
+     * @param tableBody the table part being finished
+     * @throws ValidationException if a cell is spanning further than the given table part
      */
-    void finishLastRowGroup(TableBody tableBody) {
+    void signalEndOfPart(TableBody tableBody) throws ValidationException {
         if (rows.size() > 0) {
-            tableBody.addRowGroup(rows);
+            throw new ValidationException(
+                    "A table-cell is spanning more rows than available in its parent element.");
         }
-        // Reset, in case this rowGroupBuilder is re-used for other
-        // table-header/footer/body
         initialize();
     }
 

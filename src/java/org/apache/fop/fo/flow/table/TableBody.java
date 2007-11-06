@@ -57,6 +57,8 @@ public class TableBody extends TableCellContainer {
 
     private boolean rowsStarted = false;
 
+    private boolean lastCellEndsRow = true;
+
     private List rowGroups = new LinkedList();
 
     /**
@@ -124,7 +126,20 @@ public class TableBody extends TableCellContainer {
                 getParent().removeChild(this);
             }
         } else {
-            getTable().getRowGroupBuilder().finishLastRowGroup(this);
+            finishLastRowGroup();
+        }
+    }
+
+    protected void finishLastRowGroup() throws ValidationException {
+        RowGroupBuilder rowGroupBuilder = getTable().getRowGroupBuilder(); 
+        if (tableRowsFound || !lastCellEndsRow) {
+            rowGroupBuilder.signalRowEnd(this);
+        }
+        try {
+            rowGroupBuilder.signalEndOfPart(this);
+        } catch (ValidationException e) {
+            e.setLocator(locator);
+            throw e;
         }
     }
 
@@ -179,7 +194,8 @@ public class TableBody extends TableCellContainer {
                 rowsStarted = true;
                 TableCell cell = (TableCell) child;
                 addTableCellChild(cell, firstRow);
-                if (cell.endsRow()) {
+                lastCellEndsRow = cell.endsRow(); 
+                if (lastCellEndsRow) {
                     firstRow = false;
                     columnNumberManager.prepareForNextRow(pendingSpans);
                     getTable().getRowGroupBuilder().signalRowEnd(this);
@@ -231,8 +247,7 @@ public class TableBody extends TableCellContainer {
     void signalNewRow() {
         if (rowsStarted) {
             firstRow = false;
-            TableCell previousCell = (TableCell) getChildNodes().lastNode();
-            if (!previousCell.endsRow()) {
+            if (!lastCellEndsRow) {
                 columnNumberManager.prepareForNextRow(pendingSpans);
                 getTable().getRowGroupBuilder().signalRowEnd(this);
             }
