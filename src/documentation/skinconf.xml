@@ -93,11 +93,8 @@ which will be used to configure the chosen Forrest skin.
   <!-- The following used to construct a copyright statement -->
   <year>1999-2007</year>
   <vendor>The Apache Software Foundation.</vendor>
-  <!-- The optional copyright-link URL will be used as a link in the
-    copyright statement
   <copyright-link>http://www.apache.org/licenses/</copyright-link>
-  -->
-
+  
   <!-- Some skins use this to form a 'breadcrumb trail' of links.
     Use location="alt" to move the trail to an alternate location
     (if the skin supports it).
@@ -385,28 +382,14 @@ which will be used to configure the chosen Forrest skin.
       <width>125</width>
       <height>125</height>
     </credit>
-    
-    <!--credit box-location="alt2">
-      <name>ApacheCon US 2006 (9-13 October 2006)</name>
-      <url>http://www.us.apachecon.com/</url>
-      <image>http://www.apache.org/ads/ApacheCon/234x60-2006-us.gif</image>
-      <width>150</width>
-      <height>39</height>
-    </credit-->
-    <!--<credit>
-      <name>Built with Cocoon</name>
-      <url>http://xml.apache.org/cocoon/</url>
-      <image>skin/images/built-with-cocoon.gif</image>
-      <width>88</width>
-      <height>31</height>
+    <credit box-location="alt2">
+      <name>ApacheCon Europe 2008</name>
+      <url>http://eu.apachecon.com/</url>
+      <image>http://apache.org/ads/ApacheCon/2008-europe-125x125.png</image>
+      <width>125</width>
+      <height>125</height>
     </credit>
-    <credit>
-      <name>Krysalis Centipede</name>
-      <url>http://www.krysalis.org/centipede/</url>
-      <image>skin/images/centipede-logo-small.gif</image>
-      <width>138</width>
-      <height>31</height>
-    </credit>-->
+    
     <credit role="pdf">
       <name>PDF created by Apache FOP</name>
       <url>http://xmlgraphics.apache.org/fop/</url>
