@@ -112,6 +112,7 @@ public final class FOTreeTestSuite {
     private static void addUnitTestCases(TestSuite suite) {
         suite.addTestSuite(TooManyColumnsTestCase.class);
         suite.addTestSuite(RowGroupBuilderTestCase.class);
+        suite.addTestSuite(TableColumnColumnNumberTestCase.class);
     }
 
     private static class FOTreeTestCase extends TestCase {
