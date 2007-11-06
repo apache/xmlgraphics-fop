@@ -22,7 +22,6 @@ package org.apache.fop.fo.flow.table;
 import java.util.BitSet;
 import java.util.List;
 
-import org.apache.fop.fo.flow.table.TableCellContainer.PendingSpan;
 
 
 /**
