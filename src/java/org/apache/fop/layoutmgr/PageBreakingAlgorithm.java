@@ -30,6 +30,7 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.layoutmgr.AbstractBreaker.PageBreakPosition;
+import org.apache.fop.layoutmgr.list.LineBreakingListElement;
 import org.apache.fop.layoutmgr.list.ListItemListElement;
 import org.apache.fop.traits.MinOptMax;
 
@@ -825,19 +826,12 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         for (int i = startIndex; i < seq.size(); ++i) {
             ListElement elt = (ListElement) seq.get(i);
             if (!doall && !elt.isUnresolvedElement()
-                    && !(elt instanceof ParagraphListElement)
-                    && !(elt instanceof ListItemListElement)) {
+                    && !(elt instanceof LineBreakingListElement)) {
                 break;
             }
-            if (elt instanceof ParagraphListElement) {
-                LinkedList lineElts = ((ParagraphListElement) elt).doLineBreaking();
-                seq.remove(i);
-                seq.addAll(i, lineElts);
-                // consider the new element at i
-                --i;
-            } else if (elt instanceof ListItemListElement) {
-                LinkedList lineElts = ((ListItemListElement) elt).doLineBreaking();
-                if (((ListItemListElement) elt).lineBreakingIsFinished()) {
+            if (elt instanceof LineBreakingListElement) {
+                LinkedList lineElts = ((LineBreakingListElement) elt).doLineBreaking();
+                if (((LineBreakingListElement) elt).lineBreakingIsFinished()) {
                     seq.remove(i);
                 }
                 seq.addAll(i, lineElts);
