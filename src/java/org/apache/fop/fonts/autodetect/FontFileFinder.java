@@ -22,15 +22,15 @@ package org.apache.fop.fonts.autodetect;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.DirectoryWalker;
+import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
-import org.apache.commons.io.filefilter.SuffixFileFilter;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -78,7 +78,7 @@ public class FontFileFinder extends DirectoryWalker implements FontFinder {
     protected static IOFileFilter getFileFilter() {
         return FileFilterUtils.andFileFilter(
                 FileFilterUtils.fileFileFilter(),
-                new SuffixFileFilter(new String[] {".ttf", ".otf", ".pfb"})
+                new WildcardFileFilter(new String[] {"*.ttf", "*.otf", "*.pfb"}, IOCase.INSENSITIVE)
                 //TODO Add *.ttc when support for it has been added to the auto-detection mech.
         );
     }

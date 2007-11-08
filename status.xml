@@ -29,6 +29,20 @@
   <changes>
     <release version="FOP Trunk">
       <action context="Code" dev="JM" type="fix">
+        Made the way TrueType fonts are embedded in PDF compliant to the
+        specification so viewers correctly identify subset fonts.
+      </action>
+      <action context="Code" dev="JM" type="fix">
+        Fixed font-autodetection so fonts with uppercase extensions are
+        detected, too.
+      </action>
+      <action context="Code" dev="JM" type="update">
+        Improved font auto-detection and handling of AWT-supplied fonts in order
+        to achieve better results when using multiple output formats. Whenever
+        possible, the font names appearing in the operating system can also
+        be used in XSL-FO.
+      </action>
+      <action context="Code" dev="JM" type="fix">
         Fixed regression: transparent-page-background was not recognized for PNG output.
       </action>
       <action context="Code" dev="VH" type="add">

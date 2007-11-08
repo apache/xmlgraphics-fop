@@ -20,23 +20,20 @@
 package org.apache.fop.fonts;
 
 //Java
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.io.IOException;
 
 import javax.xml.parsers.SAXParserFactory;
 
-//SAX
-import org.xml.sax.XMLReader;
-import org.xml.sax.SAXException;
-import org.xml.sax.Locator;
-import org.xml.sax.Attributes;
-import org.xml.sax.helpers.DefaultHandler;
-
-//FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fonts.apps.TTFReader;
+import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
+import org.xml.sax.Locator;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Class for reading a metric.xml file and creating a font object.
@@ -229,6 +226,10 @@ public class FontReader extends DefaultHandler {
         String content = text.toString().trim();
         if ("font-name".equals(localName)) {
             returnFont.setFontName(content);
+        } else if ("full-name".equals(localName)) {
+            multiFont.setFullName(content);
+        } else if ("family-name".equals(localName)) {
+            multiFont.setFamilyName(content);
         } else if ("ttc-name".equals(localName) && isCID) {
             multiFont.setTTCName(content);
         } else if ("encoding".equals(localName)) {

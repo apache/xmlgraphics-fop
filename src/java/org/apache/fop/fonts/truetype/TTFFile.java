@@ -21,8 +21,8 @@ package org.apache.fop.fonts.truetype;
 
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -74,7 +74,7 @@ public class TTFFile {
     protected TTFMtxEntry[] mtxTab;                  // Contains glyph data
     private int[] mtxEncoded = null;
 
-    private String fontName = "";
+    private String postScriptName = "";
     private String fullName = "";
     private String notice = "";
     private String familyName = "";
@@ -550,11 +550,14 @@ public class TTFFile {
      * @return String The PostScript name
      */
     public String getPostScriptName() {
+        return postScriptName;
+        /*
         if ("Regular".equals(subFamilyName) || "Roman".equals(subFamilyName)) {
             return familyName;
         } else {
             return familyName + "," + subFamilyName;
         }
+        */
     }
 
     /**
@@ -571,6 +574,14 @@ public class TTFFile {
      */
     public String getSubFamilyName() {
         return subFamilyName;
+    }
+
+    /**
+     * Returns the full name of the font.
+     * @return String The full name
+     */
+    public String getFullName() {
+        return fullName;
     }
 
     /**
@@ -1111,10 +1122,12 @@ public class TTFFile {
                 in.seekSet(j + in.readTTFUShort());
                 String txt = in.readTTFString(l);
                 
-                log.debug(platformID + " " 
-                    + encodingID + " "
-                    + languageID + " "
-                    + k + " " + txt);
+                if (log.isDebugEnabled()) {
+                    log.debug(platformID + " " 
+                            + encodingID + " "
+                            + languageID + " "
+                            + k + " " + txt);
+                }
                 switch (k) {
                 case 0:
                     notice = txt;
@@ -1129,12 +1142,12 @@ public class TTFFile {
                     fullName = txt;
                     break;
                 case 6:
-                    fontName = txt;
+                    postScriptName = txt;
                     break;
                 }
                 if (!notice.equals("")
                         && !fullName.equals("")
-                        && !fontName.equals("")
+                        && !postScriptName.equals("")
                         && !familyName.equals("")
                         && !subFamilyName.equals("")) {
                     break;
@@ -1440,7 +1453,7 @@ public class TTFFile {
                 notice = "";
                 fullName = "";
                 familyName = "";
-                fontName = "";
+                postScriptName = "";
                 subFamilyName = "";
             }
 
@@ -1470,7 +1483,7 @@ public class TTFFile {
      * Dumps a few informational values to System.out.
      */
     public void printStuff() {
-        System.out.println("Font name:   " + fontName);
+        System.out.println("Font name:   " + postScriptName);
         System.out.println("Full name:   " + fullName);
         System.out.println("Family name: " + familyName);
         System.out.println("Subfamily name: " + subFamilyName);

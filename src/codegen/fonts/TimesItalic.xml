@@ -18,6 +18,8 @@
 <!-- JKT: these metrics in XML were kindly produced by Fotis Jannidis -->
 <font-metrics>
    <font-name>Times-Italic</font-name>
+   <full-name>Times Italic</full-name>
+   <family-name>Times</family-name>
    <class-name>TimesItalic</class-name>
    <encoding>StandardEncoding</encoding>
    <cap-height>653</cap-height>

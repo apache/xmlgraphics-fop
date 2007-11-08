@@ -76,5 +76,59 @@ public class FontUtil {
         return sb.toString();
     }
 
+    /** font constituent names which identify a font as being of "italic" style */
+    private static final String[] ITALIC_WORDS = {"italic", "oblique"};
+
+    /** font constituent names which identify a font as being of "light" weight */
+    private static final String[] LIGHT_WORDS = {"light"};
+    /** font constituent names which identify a font as being of "bold" weight */
+    private static final String[] BOLD_WORDS = {"bold"};
+    /** font constituent names which identify a font as being of "bold" weight */
+    private static final String[] EXTRA_BOLD_WORDS = {"extrabold", "black", 
+        "heavy", "ultra", "super"};
+
+    /**
+     * Guesses the font style of a font using its name.
+     * @param fontName the font name
+     * @return "normal" or "italic"
+     */
+    public static String guessStyle(String fontName) {
+        for (int i = 0; i < ITALIC_WORDS.length; i++) {
+            if (fontName.indexOf(ITALIC_WORDS[i]) != -1) {
+                return Font.STYLE_ITALIC;          
+            }
+        }
+        return Font.STYLE_NORMAL;
+    }
+
+    /**
+     * Guesses the font weight of a font using its name.
+     * @param fontName the font name
+     * @return an integer between 100 and 900
+     */
+    public static int guessWeight(String fontName) {
+        // weight
+        int weight = Font.WEIGHT_NORMAL;
+        for (int i = 0; i < BOLD_WORDS.length; i++) {
+            if (fontName.indexOf(BOLD_WORDS[i]) != -1) {
+                weight = Font.WEIGHT_BOLD;
+                break;
+            }            
+        }
+        for (int i = 0; i < EXTRA_BOLD_WORDS.length; i++) {
+            if (fontName.indexOf(EXTRA_BOLD_WORDS[i]) != -1) {
+                weight = Font.WEIGHT_EXTRA_BOLD;
+                break;
+            }            
+        }
+        for (int i = 0; i < LIGHT_WORDS.length; i++) {
+            if (fontName.indexOf(LIGHT_WORDS[i]) != -1) {
+                weight = Font.WEIGHT_LIGHT;
+                break;
+            }            
+        }
+        return weight;
+    }
+    
     
 }

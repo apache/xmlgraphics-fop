@@ -266,6 +266,16 @@ public class TTFReader extends AbstractFontReader {
         } else {
             el.appendChild(doc.createTextNode(s));
         }
+        if (ttf.getFullName() != null) {
+            el = doc.createElement("full-name");
+            root.appendChild(el);
+            el.appendChild(doc.createTextNode(ttf.getFullName()));
+        }
+        if (ttf.getFamilyName() != null) {
+            el = doc.createElement("family-name");
+            root.appendChild(el);
+            el.appendChild(doc.createTextNode(ttf.getFamilyName()));
+        }
 
         el = doc.createElement("embed");
         root.appendChild(el);

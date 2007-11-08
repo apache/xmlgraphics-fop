@@ -19,11 +19,9 @@
 
 package org.apache.fop.fonts.autodetect;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.Collection;
 import java.net.URL;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -36,6 +34,7 @@ import org.apache.fop.fonts.FontCache;
 import org.apache.fop.fonts.FontLoader;
 import org.apache.fop.fonts.FontResolver;
 import org.apache.fop.fonts.FontTriplet;
+import org.apache.fop.fonts.FontUtil;
 
 /**
  * Attempts to determine correct FontInfo
@@ -44,12 +43,6 @@ public class FontInfoFinder {
     
     /** logging instance */
     private Log log = LogFactory.getLog(FontInfoFinder.class);
-
-    /** font constituent names which identify a font as being of "italic" style */
-    private static final String[] ITALIC_WORDS = {"italic", "oblique"};
-
-    /** font constituent names which identify a font as being of "bold" weight */
-    private static final String[] BOLD_WORDS = {"bold", "black", "heavy", "ultra", "super"};
 
     /**
      * Attempts to determine FontTriplets from a given CustomFont.
@@ -67,32 +60,31 @@ public class FontInfoFinder {
             searchName += subName.toLowerCase();
         }
         
+        String style = guessStyle(customFont, searchName);
+        int weight = FontUtil.guessWeight(searchName);
+
+        //Full Name usually includes style/weight info so don't use these traits
+        //If we still want to use these traits, we have to make FontInfo.fontLookup() smarter
+        String fullName = customFont.getFullName();
+        triplets.add(new FontTriplet(fullName, Font.STYLE_NORMAL, Font.WEIGHT_NORMAL));
+        if (!fullName.equals(strippedName)) {
+            triplets.add(new FontTriplet(strippedName, Font.STYLE_NORMAL, Font.WEIGHT_NORMAL));
+        }
+        String familyName = customFont.getFamilyName();
+        if (!fullName.equals(familyName)) {
+            triplets.add(new FontTriplet(familyName, style, weight));
+        }
+    }
+
+    private String guessStyle(CustomFont customFont, String fontName) {
         // style
         String style = Font.STYLE_NORMAL;
         if (customFont.getItalicAngle() > 0) {
             style = Font.STYLE_ITALIC;  
         } else {
-            for (int i = 0; i < ITALIC_WORDS.length; i++) {
-                if (searchName.indexOf(ITALIC_WORDS[i]) != -1) {
-                    style = Font.STYLE_ITALIC;          
-                    break;
-                }
-            }
+            style = FontUtil.guessStyle(fontName);
         }
-        
-        // weight
-        int weight = Font.WEIGHT_NORMAL;
-        for (int i = 0; i < BOLD_WORDS.length; i++) {
-            if (searchName.indexOf(BOLD_WORDS[i]) != -1) {
-                weight = Font.WEIGHT_BOLD;
-                break;
-            }            
-        }
-        triplets.add(new FontTriplet(strippedName, style, weight));
-        String familyName = customFont.getFontFamily();
-        if (!strippedName.equals(familyName)) {
-            triplets.add(new FontTriplet(familyName, style, weight));
-        }
+        return style;
     }
     
     /**

@@ -20,30 +20,27 @@
 package org.apache.fop.fonts;
 
 // FOP (base 14 fonts)
-import org.apache.fop.fonts.base14.Helvetica;
-import org.apache.fop.fonts.base14.HelveticaBold;
-import org.apache.fop.fonts.base14.HelveticaOblique;
-import org.apache.fop.fonts.base14.HelveticaBoldOblique;
-import org.apache.fop.fonts.base14.TimesRoman;
-import org.apache.fop.fonts.base14.TimesBold;
-import org.apache.fop.fonts.base14.TimesItalic;
-import org.apache.fop.fonts.base14.TimesBoldItalic;
-import org.apache.fop.fonts.base14.Courier;
-import org.apache.fop.fonts.base14.CourierBold;
-import org.apache.fop.fonts.base14.CourierOblique;
-import org.apache.fop.fonts.base14.CourierBoldOblique;
-import org.apache.fop.fonts.base14.Symbol;
-import org.apache.fop.fonts.base14.ZapfDingbats;
-
-// commons logging
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-// Java
 import java.util.List;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.fop.fonts.base14.Courier;
+import org.apache.fop.fonts.base14.CourierBold;
+import org.apache.fop.fonts.base14.CourierBoldOblique;
+import org.apache.fop.fonts.base14.CourierOblique;
+import org.apache.fop.fonts.base14.Helvetica;
+import org.apache.fop.fonts.base14.HelveticaBold;
+import org.apache.fop.fonts.base14.HelveticaBoldOblique;
+import org.apache.fop.fonts.base14.HelveticaOblique;
+import org.apache.fop.fonts.base14.Symbol;
+import org.apache.fop.fonts.base14.TimesBold;
+import org.apache.fop.fonts.base14.TimesBoldItalic;
+import org.apache.fop.fonts.base14.TimesItalic;
+import org.apache.fop.fonts.base14.TimesRoman;
+import org.apache.fop.fonts.base14.ZapfDingbats;
 
 /**
  * Default fonts for FOP application; currently this uses PDF's fonts
@@ -232,9 +229,6 @@ public class FontSetup {
             for (int c = 0; c < triplets.size(); c++) {
                 FontTriplet triplet = (FontTriplet) triplets.get(c);
 
-                if (log.isDebugEnabled()) {
-                    log.debug("Registering: " + triplet + " under " + internalName);
-                }
                 fontInfo.addFontProperties(internalName, triplet);
             }
         }
