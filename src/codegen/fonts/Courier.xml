@@ -18,6 +18,8 @@
 <!-- JKT: these metrics in XML were kindly produced by Fotis Jannidis -->
 <font-metrics>
    <font-name>Courier</font-name>
+   <full-name>Courier</full-name>
+   <family-name>Courier</family-name>
    <class-name>Courier</class-name>
    <encoding>StandardEncoding</encoding>
    <cap-height>562</cap-height>

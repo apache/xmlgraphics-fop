@@ -45,6 +45,8 @@ import org.apache.fop.fonts.CodePointMapping;
 
 public class <xsl:value-of select="class-name"/> extends Typeface {
     private final static String fontName = "<xsl:value-of select="font-name"/>";
+    private final static String fullName = "<xsl:value-of select="full-name"/>";
+    private final static String familyName = "<xsl:value-of select="family-name"/>";
     private final static String encoding = <xsl:choose><xsl:when test="$encoding != $native-encoding">"<xsl:value-of select="$encoding"/>"</xsl:when><xsl:otherwise>null</xsl:otherwise></xsl:choose>;
     private final static int capHeight = <xsl:value-of select="cap-height"/>;
     private final static int xHeight = <xsl:value-of select="x-height"/>;
@@ -86,6 +88,18 @@ public class <xsl:value-of select="class-name"/> extends Typeface {
 
     public String getFontName() {
         return fontName;
+    }
+
+    public String getEmbedFontName() {
+        return getFontName();
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public String getFamilyName() {
+        return familyName;
     }
 
     public FontType getFontType() {

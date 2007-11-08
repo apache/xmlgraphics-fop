@@ -102,6 +102,9 @@ public class FontInfo {
          * add the given family, style and weight as a lookup for the font
          * with the given name
          */
+        if (log.isDebugEnabled()) {
+            log.debug("Registering: " + triplet + " under " + name);
+        }
         this.triplets.put(triplet, name);
     }
 
@@ -135,46 +138,15 @@ public class FontInfo {
         if (log.isTraceEnabled()) {
             log.trace("Font lookup: " + family + " " + style + " " + weight);
         }
-        FontTriplet startKey = createFontKey(family, style, weight); 
+        FontTriplet startKey = createFontKey(family, style, weight);
         FontTriplet key = startKey;
         // first try given parameters
         String f = getInternalFontKey(key);
         if (f == null) {
-            // then adjust weight, favouring normal or bold
-            key = findAdjustWeight(family, style, weight);
-            f = getInternalFontKey(key);
-
-            if (!substFont && f == null) {
-                return null;
-            }
-            
-            // only if the font may be substituted
-            // fallback 1: try the same font-family and weight with default style
-            if (f == null) {
-                key = createFontKey(family, Font.STYLE_NORMAL, weight);
-                f = getInternalFontKey(key);
-            }
-            
-            // fallback 2: try the same font-family with default style and weight
-            if (f == null) {
-                key = createFontKey(family, Font.STYLE_NORMAL, Font.WEIGHT_NORMAL);
-                f = getInternalFontKey(key);
-            }
-            
-            // fallback 3: try any family with orig style/weight
-            if (f == null) {
-                key = createFontKey("any", style, weight);
-                f = getInternalFontKey(key);
-            }
-
-            // last resort: use default
-            if (f == null) {
-                key = Font.DEFAULT_FONT;
-                f = getInternalFontKey(key);
-            }
+            key = doAdjustedLookup(family, style, weight, startKey, substFont);
         }
 
-        if (f != null) {
+        if (key != null) {
             if (key != startKey) {
                 notifyFontReplacement(startKey, key);
             }
@@ -184,6 +156,76 @@ public class FontInfo {
         }
     }
 
+    private FontTriplet doAdjustedLookup(String family, String style,
+            int weight, FontTriplet startKey, boolean substFont) {
+        FontTriplet key;
+        String f;
+        if (!family.equals(startKey.getName())) {
+            key = createFontKey(family, style, weight);
+            f = getInternalFontKey(key);
+            if (f != null) {
+                return key;
+            }
+        }
+        
+        // adjust weight, favouring normal or bold
+        key = findAdjustWeight(family, style, weight);
+        f = getInternalFontKey(key);
+
+        if (!substFont && f == null) {
+            return null;
+        }
+        
+        // only if the font may be substituted
+        // fallback 1: try the same font-family and weight with default style
+        if (f == null && style != Font.STYLE_NORMAL) {
+            key = createFontKey(family, Font.STYLE_NORMAL, weight);
+            f = getInternalFontKey(key);
+        }
+
+        if (f == null && weight != Font.WEIGHT_NORMAL) {
+            int diffWeight = (Font.WEIGHT_NORMAL - weight) / 100;
+            int direction = diffWeight > 0 ? 1 : -1;
+            int tryWeight = weight;
+            while (tryWeight != Font.WEIGHT_NORMAL) {
+                tryWeight += 100 * direction;
+                key = createFontKey(family, style, weight);
+                f = getInternalFontKey(key);
+                if (f == null) {
+                    key = createFontKey(family, Font.STYLE_NORMAL, weight);
+                    f = getInternalFontKey(key);
+                }
+                if (f != null) {
+                    break;
+                }
+            }
+        }
+        
+        // fallback 2: try the same font-family with default style and weight
+        /* obsolete: replaced by the loop above
+        if (f == null) {
+            key = createFontKey(family, Font.STYLE_NORMAL, Font.WEIGHT_NORMAL);
+            f = getInternalFontKey(key);
+        }*/
+        
+        // fallback 3: try any family with orig style/weight
+        if (f == null) {
+            return doAdjustedLookup("any", style, weight, startKey, false);
+        }
+
+        // last resort: use default
+        if (f == null) {
+            key = Font.DEFAULT_FONT;
+            f = getInternalFontKey(key);
+        }
+
+        if (f != null) {
+            return key;
+        } else {
+            return null;
+        }
+    }
+    
     /**
      * Tells this class that the font with the given internal name has been used.
      * @param internalName the internal font name (F1, F2 etc.)

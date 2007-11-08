@@ -23,7 +23,6 @@ package org.apache.fop.render.java2d;
 import java.awt.Graphics2D;
 import java.util.Map;
 
-// FOP
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.fonts.FontType;
 import org.apache.fop.fonts.Typeface;
@@ -72,11 +71,24 @@ public class FontMetricsMapper extends Typeface implements FontMetrics {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String getFontName() {
         return family;
+    }
+
+    /** {@inheritDoc} */
+    public String getEmbedFontName() {
+        return getFontName();
+    }
+
+    /** {@inheritDoc} */
+    public String getFullName() {
+        return getFontName();
+    }
+
+    /** {@inheritDoc} */
+    public String getFamilyName() {
+        return getFontName();
     }
 
     /**

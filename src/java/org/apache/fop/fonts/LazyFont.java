@@ -189,12 +189,28 @@ public class LazyFont extends Typeface implements FontDescriptor {
     }
 
     // ---- FontMetrics interface ----
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String getFontName() {
         load(true);
         return realFont.getFontName();
+    }
+
+    /** {@inheritDoc} */
+    public String getEmbedFontName() {
+        load(true);
+        return realFont.getEmbedFontName();
+    }
+
+    /** {@inheritDoc} */
+    public String getFullName() {
+        load(true);
+        return realFont.getFullName();
+    }
+
+    /** {@inheritDoc} */
+    public String getFamilyName() {
+        load(true);
+        return realFont.getFamilyName();
     }
 
     /**

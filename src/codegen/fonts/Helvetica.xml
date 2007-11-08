@@ -18,6 +18,8 @@
 <!-- JKT: these metrics in XML were kindly produced by Fotis Jannidis -->
 <font-metrics>
    <font-name>Helvetica</font-name>
+   <full-name>Helvetica</full-name>
+   <family-name>Helvetica</family-name>
    <class-name>Helvetica</class-name>
    <encoding>StandardEncoding</encoding>
    <cap-height>718</cap-height>

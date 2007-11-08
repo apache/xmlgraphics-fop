@@ -31,6 +31,8 @@ public abstract class CustomFont extends Typeface
             implements FontDescriptor, MutableFont {
 
     private String fontName = null;
+    private String fullName = null;
+    private String familyName = null;
     private String fontSubName = null;
     private String embedFileName = null;
     private String embedResourceName = null;
@@ -53,19 +55,27 @@ public abstract class CustomFont extends Typeface
 
     private boolean useKerning = true;
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String getFontName() {
         return fontName;
     }
 
+    /** {@inheritDoc} */
+    public String getEmbedFontName() {
+        return getFontName();
+    }
+
+    /** {@inheritDoc} */
+    public String getFullName() {
+        return fullName;
+    }
+    
     /**
      * Return the font family.
      * @return the font family
      */
-    public String getFontFamily() {
-        return fontName;
+    public String getFamilyName() {
+        return familyName;
     }
 
     /**
@@ -74,7 +84,7 @@ public abstract class CustomFont extends Typeface
      * @see FontUtil#stripWhiteSpace(String)
      */
     public String getStrippedFontName() {
-        return FontUtil.stripWhiteSpace(fontName);
+        return FontUtil.stripWhiteSpace(getFontName());
     }
 
     /**
@@ -103,7 +113,10 @@ public abstract class CustomFont extends Typeface
         Source result = null;
         if (resolver != null && embedFileName != null) {
             result = resolver.resolve(embedFileName);
-            if(result == null) throw new IOException("Unable to resolve Source '" + embedFileName + "' for embedded font");
+            if (result == null) {
+                throw new IOException("Unable to resolve Source '" 
+                        + embedFileName + "' for embedded font");
+            }
         }
         return result;
     }
@@ -256,13 +269,21 @@ public abstract class CustomFont extends Typeface
 
     /* ---- MutableFont interface ---- */
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void setFontName(String name) {
         this.fontName = name;
     }
 
+    /** {@inheritDoc} */
+    public void setFullName(String name) {
+        this.fullName = name;
+    }
+    
+    /** {@inheritDoc} */
+    public void setFamilyName(String name) {
+        this.familyName = name;
+    }
+    
     /**
      * Sets the font's subfamily name.
      * @param subFamilyName the subfamily name of the font
