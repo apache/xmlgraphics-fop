@@ -24,13 +24,15 @@ import java.util.ListIterator;
 
 import org.apache.fop.layoutmgr.inline.KnuthInlineBox;
 import org.apache.fop.layoutmgr.inline.KnuthParagraph;
+import org.apache.fop.layoutmgr.list.LineBreakingListElement;
 
 /**
  * This class represents a List Element for a Knuth Paragraph
  */
-public class ParagraphListElement extends ListElement {
+public class ParagraphListElement extends LineBreakingListElement {
 
     private KnuthParagraph para;
+    private boolean lineBreakingFinished = false;
     
     /**
      * @param para The Knuth Paragraph
@@ -58,7 +60,15 @@ public class ParagraphListElement extends ListElement {
     public LinkedList doLineBreaking() {
         LinkedList returnList = para.getLineLayoutManager().createLineBreaks(para);
         wrapPositions(returnList);
+        lineBreakingFinished = true;
         return returnList;
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.fop.layoutmgr.list.LineBreakingListElement#lineBreakingIsFinished()
+     */
+    public boolean lineBreakingIsFinished() {
+        return lineBreakingFinished;
     }
 
     /**

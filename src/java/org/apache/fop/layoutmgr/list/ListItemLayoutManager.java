@@ -278,9 +278,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
 
     private LinkedList getCombinedKnuthElementsForListItem(LayoutContext context) {
         // At the first invocation of this method the elements in labelList and bodyList
-        // are copied to array lists to improve element access performance;
-        // at the last invocation the resolved elements are copied back
-        // to labelList and bodyList for use in addAreas
+        // are copied to array lists to improve element access performance
         if (elementLists == null) {
             elementLists = 
                 new List[] {new ArrayList(labelList), new ArrayList(bodyList)};
@@ -289,26 +287,23 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         int step;
         LinkedList returnList = new LinkedList();
         
-        if ((step = getNextStep()) == 0) {
-            lineBreakingFinished = true;
-            labelList = new LinkedList(elementLists[0]);
-            bodyList = new LinkedList(elementLists[1]);
-            ElementListObserver.observe(labelList, "list-item-label", label.getPartFO().getId());
-            ElementListObserver.observe(bodyList, "list-item-body", body.getPartFO().getId());
-            return returnList;
-        }
+        step = getNextStep();
 
+        lineBreakingFinished = true;
         boolean keepWithNextActive = false;
-
         if (end[0] + 1 == elementLists[0].size()) {
             if (keepWithNextPendingOnLabel) {
                 keepWithNextActive = true;
             }
+        } else {
+            lineBreakingFinished = false;
         }
         if (end[1] + 1 == elementLists[1].size()) {
             if (keepWithNextPendingOnBody) {
                 keepWithNextActive = true;
             }
+        } else {
+            lineBreakingFinished = false;
         }
 
         // compute penalty height and box height
@@ -339,12 +334,15 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
             p = KnuthPenalty.INFINITE;
         }
         // add BreakElement if there are more elements in the lists
-        // could this be determined in getNextStep and is it equivalent to lineBreakingFinished?
-        for (int i = 0; i < start.length; i++) {
-            if (end[i] + 1 < elementLists[i].size()) {
-                returnList.add(new BreakElement(stepPosition, penaltyHeight, p, -1, context));
-                break;
-            }
+        if (!lineBreakingFinished) {
+            returnList.add(new BreakElement(stepPosition, penaltyHeight, p, -1, context));
+        } else {
+            // At the last invocation of this method the resolved elements are copied back
+            // to labelList and bodyList for use in addAreas
+            labelList = new LinkedList(elementLists[0]);
+            bodyList = new LinkedList(elementLists[1]);
+            ElementListObserver.observe(labelList, "list-item-label", label.getPartFO().getId());
+            ElementListObserver.observe(bodyList, "list-item-body", body.getPartFO().getId());
         }
 
         return returnList;
