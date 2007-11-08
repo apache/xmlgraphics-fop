@@ -19,8 +19,15 @@
 
 package org.apache.fop.layoutmgr.list;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.area.Area;
+import org.apache.fop.area.Block;
 import org.apache.fop.fo.flow.ListItem;
 import org.apache.fop.fo.flow.ListItemBody;
 import org.apache.fop.fo.flow.ListItemLabel;
@@ -30,27 +37,23 @@ import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.ConditionalElementListener;
 import org.apache.fop.layoutmgr.ElementListObserver;
 import org.apache.fop.layoutmgr.ElementListUtils;
-import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.KnuthBox;
+import org.apache.fop.layoutmgr.KnuthElement;
+import org.apache.fop.layoutmgr.KnuthPenalty;
+import org.apache.fop.layoutmgr.KnuthPossPosIter;
 import org.apache.fop.layoutmgr.LayoutContext;
-import org.apache.fop.layoutmgr.PositionIterator;
-import org.apache.fop.layoutmgr.Position;
+import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.LeafPosition;
+import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.NonLeafPosition;
+import org.apache.fop.layoutmgr.ParagraphListElement;
+import org.apache.fop.layoutmgr.Position;
+import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.RelSide;
 import org.apache.fop.layoutmgr.SpaceResolver;
 import org.apache.fop.layoutmgr.TraitSetter;
-import org.apache.fop.layoutmgr.KnuthElement;
-import org.apache.fop.layoutmgr.KnuthBox;
-import org.apache.fop.layoutmgr.KnuthPenalty;
-import org.apache.fop.layoutmgr.KnuthPossPosIter;
-import org.apache.fop.area.Area;
-import org.apache.fop.area.Block;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.LinkedList;
-import java.util.ListIterator;
 
 /**
  * LayoutManager for a list-item FO.
@@ -71,6 +74,15 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
 
     private LinkedList labelList = null;
     private LinkedList bodyList = null;
+
+    // these data are used during getCombinedKnuthElementsForListItem;
+    private List[] elementLists = null;
+    private int[] partialHeights = {0, 0};
+    private int[] start = {-1, -1};
+    private int[] end = {-1, -1};
+    int addedBoxHeight = 0;
+    
+    private boolean lineBreakingFinished = false; 
 
     private int listItemHeight;
     
@@ -214,8 +226,8 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         
         //Space resolution as if the contents were placed in a new reference area
         //(see 6.8.3, XSL 1.0, section on Constraints, last paragraph)
-        SpaceResolver.resolveElementList(labelList);
-        ElementListObserver.observe(labelList, "list-item-label", label.getPartFO().getId());
+        // SpaceResolver.resolveElementList(labelList);
+        // ElementListObserver.observe(labelList, "list-item-label", label.getPartFO().getId());
         
         if (childLC.isKeepWithPreviousPending()) {
             context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
@@ -230,8 +242,8 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
 
         //Space resolution as if the contents were placed in a new reference area
         //(see 6.8.3, XSL 1.0, section on Constraints, last paragraph)
-        SpaceResolver.resolveElementList(bodyList);
-        ElementListObserver.observe(bodyList, "list-item-body", body.getPartFO().getId());
+        // SpaceResolver.resolveElementList(bodyList);
+        // ElementListObserver.observe(bodyList, "list-item-body", body.getPartFO().getId());
         
         if (childLC.isKeepWithPreviousPending()) {
             context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
@@ -239,10 +251,14 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         this.keepWithNextPendingOnBody = childLC.isKeepWithNextPending();
 
         // create a combined list
-        LinkedList returnedList = getCombinedKnuthElementsForListItem(labelList, bodyList, context);
+        // LinkedList returnedList = getCombinedKnuthElementsForListItem(labelList, bodyList, context);
 
         // "wrap" the Position inside each element
-        wrapPositionElements(returnedList, returnList, true);
+        // wrapPositionElements(returnedList, returnList, true);
+        
+        Position returnPosition = new LeafPosition(this, 0);
+        ListElement elt = new ListItemListElement(this, returnPosition, context);
+        returnList.add(elt);
         
         addKnuthElementsForBorderPaddingAfter(returnList, true);
         addKnuthElementsForSpaceAfter(returnList, alignment);
@@ -260,76 +276,110 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         return returnList;
     }
 
-    private LinkedList getCombinedKnuthElementsForListItem(LinkedList labelElements,
-                                                           LinkedList bodyElements,
-                                                           LayoutContext context) {
-        //Copy elements to array lists to improve element access performance
-        List[] elementLists = {new ArrayList(labelElements),
-                               new ArrayList(bodyElements)};
-        int[] fullHeights = {ElementListUtils.calcContentLength(elementLists[0]),
-                ElementListUtils.calcContentLength(elementLists[1])};
-        int[] partialHeights = {0, 0};
-        int[] start = {-1, -1};
-        int[] end = {-1, -1};
+    public LinkedList doLineBreaking(LayoutContext context) {
+        LinkedList returnList = new LinkedList();
+        // TODO
 
-        int totalHeight = Math.max(fullHeights[0], fullHeights[1]);
+        // for label
+        //Space resolution as if the contents were placed in a new reference area
+        //(see 6.8.3, XSL 1.0, section on Constraints, last paragraph)
+        // SpaceResolver.resolveElementList(labelList);
+        // ElementListObserver.observe(labelList, "list-item-label", label.getPartFO().getId());
+        
+        // for body
+        //Space resolution as if the contents were placed in a new reference area
+        //(see 6.8.3, XSL 1.0, section on Constraints, last paragraph)
+        // SpaceResolver.resolveElementList(bodyList);
+        // ElementListObserver.observe(bodyList, "list-item-body", body.getPartFO().getId());
+
+        // create a combined list
+        LinkedList returnedList = getCombinedKnuthElementsForListItem(context);
+
+        // "wrap" the Position inside each element
+        wrapPositionElements(returnedList, returnList, true);
+
+        return returnList;
+    }
+    
+    public boolean lineBreakingIsFinished() {
+        return lineBreakingFinished;
+    }
+
+    private LinkedList getCombinedKnuthElementsForListItem(LayoutContext context) {
+        // At the first invocation of this method the elements in labelList and bodyList
+        // are copied to array lists to improve element access performance;
+        // at the last invocation the resolved elements are copied back
+        // to labelList and bodyList for use in addAreas
+        if (elementLists == null) {
+            elementLists = 
+                new List[] {new ArrayList(labelList), new ArrayList(bodyList)};
+        }
+                 
         int step;
-        int addedBoxHeight = 0;
+        LinkedList returnList = new LinkedList();
+        
+        if ((step = getNextStep()) == 0) {
+            lineBreakingFinished = true;
+            labelList = new LinkedList(elementLists[0]);
+            bodyList = new LinkedList(elementLists[1]);
+            ElementListObserver.observe(labelList, "list-item-label", label.getPartFO().getId());
+            ElementListObserver.observe(bodyList, "list-item-body", body.getPartFO().getId());
+            return returnList;
+        }
+
         boolean keepWithNextActive = false;
 
-        LinkedList returnList = new LinkedList();
-        while ((step = getNextStep(elementLists, start, end, partialHeights))
-               > 0) {
-            
-            if (end[0] + 1 == elementLists[0].size()) {
-                if (keepWithNextPendingOnLabel) {
-                    keepWithNextActive = true;
-                }
+        if (end[0] + 1 == elementLists[0].size()) {
+            if (keepWithNextPendingOnLabel) {
+                keepWithNextActive = true;
             }
-            if (end[1] + 1 == elementLists[1].size()) {
-                if (keepWithNextPendingOnBody) {
-                    keepWithNextActive = true;
-                }
+        }
+        if (end[1] + 1 == elementLists[1].size()) {
+            if (keepWithNextPendingOnBody) {
+                keepWithNextActive = true;
             }
-            
-            // compute penalty height and box height
-            int penaltyHeight = step 
-                + getMaxRemainingHeight(fullHeights, partialHeights) 
-                - totalHeight;
-            
-            //Additional penalty height from penalties in the source lists
-            int additionalPenaltyHeight = 0;
-            KnuthElement endEl = (KnuthElement)elementLists[0].get(end[0]);
-            if (endEl instanceof KnuthPenalty) {
-                additionalPenaltyHeight = ((KnuthPenalty)endEl).getW();
-            }
-            endEl = (KnuthElement)elementLists[1].get(end[1]);
-            if (endEl instanceof KnuthPenalty) {
-                additionalPenaltyHeight = Math.max(
-                        additionalPenaltyHeight, ((KnuthPenalty)endEl).getW());
-            }
-            
-            int boxHeight = step - addedBoxHeight - penaltyHeight;
-            penaltyHeight += additionalPenaltyHeight; //Add AFTER calculating boxHeight!
+        }
 
-            // add the new elements
-            addedBoxHeight += boxHeight;
-            ListItemPosition stepPosition = new ListItemPosition(this, 
-                    start[0], end[0], start[1], end[1]);
-            returnList.add(new KnuthBox(boxHeight, stepPosition, false));
-            if (addedBoxHeight < totalHeight) {
-                int p = 0;
-                if (keepWithNextActive || mustKeepTogether()) {
-                    p = KnuthPenalty.INFINITE;
-                }
+        // compute penalty height and box height
+        int penaltyHeight = 0;
+
+        //Additional penalty height from penalties in the source lists
+        int additionalPenaltyHeight = 0;
+        KnuthElement endEl = (KnuthElement)elementLists[0].get(end[0]);
+        if (endEl instanceof KnuthPenalty) {
+            additionalPenaltyHeight = ((KnuthPenalty)endEl).getW();
+        }
+        endEl = (KnuthElement)elementLists[1].get(end[1]);
+        if (endEl instanceof KnuthPenalty) {
+            additionalPenaltyHeight = 
+                Math.max(additionalPenaltyHeight, ((KnuthPenalty)endEl).getW());
+        }
+
+        int boxHeight = step - addedBoxHeight - penaltyHeight;
+        penaltyHeight += additionalPenaltyHeight; //Add AFTER calculating boxHeight!
+
+        // add the new elements
+        addedBoxHeight += boxHeight;
+        ListItemPosition stepPosition = 
+            new ListItemPosition(this, start[0], end[0], start[1], end[1]);
+        returnList.add(new KnuthBox(boxHeight, stepPosition, false));
+        int p = 0;
+        if (keepWithNextActive || mustKeepTogether()) {
+            p = KnuthPenalty.INFINITE;
+        }
+        // add BreakElement if there are more elements in the lists
+        // could this be determined in getNextStep and is it equivalent to lineBreakingFinished?
+        for (int i = 0; i < start.length; i++) {
+            if (end[i] + 1 < elementLists[i].size()) {
                 returnList.add(new BreakElement(stepPosition, penaltyHeight, p, -1, context));
+                break;
             }
         }
 
         return returnList;
     }
 
-    private int getNextStep(List[] elementLists, int[] start, int[] end, int[] partialHeights) {
+    private int getNextStep() {
         // backup of partial heights
         int[] backupHeights = {partialHeights[0], partialHeights[1]};
 
@@ -342,7 +392,9 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         for (int i = 0; i < start.length; i++) {
             while (end[i] + 1 < elementLists[i].size()) {
                 end[i]++;
-                KnuthElement el = (KnuthElement)elementLists[i].get(end[i]);
+                // scan for unresolved elements and paragraphs
+                resolveElements(elementLists[i], end[i]);
+                KnuthElement el = (KnuthElement) elementLists[i].get(end[i]);
                 if (el.isPenalty()) {
                     if (el.getP() < KnuthElement.INFINITE) {
                         //First legal break point
@@ -350,7 +402,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
                     }
                 } else if (el.isGlue()) {
                     if (end[i] > 0) {
-                        KnuthElement prev = (KnuthElement)elementLists[i].get(end[i] - 1);
+                        KnuthElement prev = (KnuthElement) elementLists[i].get(end[i] - 1);
                         if (prev.isBox()) {
                             //Second legal break point
                             break;
@@ -396,9 +448,28 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         return step;
     }
 
-    private int getMaxRemainingHeight(int[] fullHeights, int[] partialHeights) {
-        return Math.max(fullHeights[0] - partialHeights[0],
-                        fullHeights[1] - partialHeights[1]);
+    /**
+     * The iteration stops at the first resolved element (after line breaking).
+     * After space resolution it is guaranteed that seq does not to contain
+     * ParagraphListElements until the first resolved element.
+     * @param seq the Knuth Sequence
+     * @param startIndex the start index
+     */
+    private void resolveElements(List seq, int startIndex) {
+        for (int i = startIndex; i < seq.size(); ++i) {
+            ListElement elt = (ListElement) seq.get(i);
+            if (!elt.isUnresolvedElement() && !(elt instanceof ParagraphListElement)) {
+                break;
+            }
+            if (elt instanceof ParagraphListElement) {
+                LinkedList lineElts = ((ParagraphListElement) elt).doLineBreaking();
+                seq.remove(i);
+                seq.addAll(i, lineElts);
+                // consider the new element at i
+                --i;
+            }
+        }
+        SpaceResolver.resolveElementList(seq, startIndex);
     }
 
     /**
