@@ -39,6 +39,7 @@ package org.apache.fop.fonts.base14;
 <xsl:if test="count(kerning) &gt; 0">
 import java.util.Map;
 </xsl:if>
+import java.util.Set;
 import org.apache.fop.fonts.FontType;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.fonts.CodePointMapping;
@@ -46,7 +47,7 @@ import org.apache.fop.fonts.CodePointMapping;
 public class <xsl:value-of select="class-name"/> extends Typeface {
     private final static String fontName = "<xsl:value-of select="font-name"/>";
     private final static String fullName = "<xsl:value-of select="full-name"/>";
-    private final static String familyName = "<xsl:value-of select="family-name"/>";
+    private final static Set familyNames;
     private final static String encoding = <xsl:choose><xsl:when test="$encoding != $native-encoding">"<xsl:value-of select="$encoding"/>"</xsl:when><xsl:otherwise>null</xsl:otherwise></xsl:choose>;
     private final static int capHeight = <xsl:value-of select="cap-height"/>;
     private final static int xHeight = <xsl:value-of select="x-height"/>;
@@ -72,6 +73,8 @@ public class <xsl:value-of select="class-name"/> extends Typeface {
         Map pairs;
         <xsl:apply-templates select="kerning"/>
 </xsl:if>
+        familyNames = new java.util.HashSet();
+        familyNames.add("<xsl:value-of select="family-name"/>");
     }
 
     public <xsl:value-of select="class-name"/>() {
@@ -98,8 +101,8 @@ public class <xsl:value-of select="class-name"/> extends Typeface {
         return fullName;
     }
 
-    public String getFamilyName() {
-        return familyName;
+    public Set getFamilyNames() {
+        return familyNames;
     }
 
     public FontType getFontType() {

@@ -20,6 +20,7 @@
 package org.apache.fop.fonts;
 
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -41,10 +42,10 @@ public interface MutableFont {
     void setFullName(String name);
 
     /**
-     * Sets the font's family name (Example: "Helvetica").
-     * @param name the font's family name
+     * Sets the font's family names (Example: "Helvetica").
+     * @param name the font's family names (a Set of Strings)
      */
-    void setFamilyName(String name);
+    void setFamilyNames(Set names);
     
     /**
      * Sets the path to the embeddable font file.

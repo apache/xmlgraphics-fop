@@ -20,6 +20,7 @@
 package org.apache.fop.fonts;
 
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -40,10 +41,10 @@ public interface FontMetrics {
     String getFullName();
     
     /**
-     * Returns the font's family name (Example: "Helvetica").
-     * @return the font's family name
+     * Returns the font's family names as a Set of Strings (Example: "Helvetica").
+     * @return the font's family names (a Set of Strings)
      */
-    String getFamilyName();
+    Set getFamilyNames();
     
     /**
      * Returns the font name for font embedding (may include a prefix, Example: "1E28bcArialMT").

@@ -222,6 +222,15 @@ public class FontSetup {
                 continue; //skip
             }
             
+            if (log.isTraceEnabled()) {
+                log.trace("AWT Font: " + f.getFontName() 
+                        + ", family: " + f.getFamily() 
+                        + ", PS: " + f.getPSName() 
+                        + ", Name: " + f.getName()
+                        + ", Angle: " + f.getItalicAngle()
+                        + ", Style: " + f.getStyle());
+            }
+            
             String searchName = FontUtil.stripWhiteSpace(f.getFontName()).toLowerCase();
             String guessedStyle = FontUtil.guessStyle(searchName);
             int guessedWeight = FontUtil.guessWeight(searchName);

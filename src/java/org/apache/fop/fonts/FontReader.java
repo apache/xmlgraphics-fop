@@ -23,6 +23,7 @@ package org.apache.fop.fonts;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.parsers.SAXParserFactory;
 
@@ -229,7 +230,9 @@ public class FontReader extends DefaultHandler {
         } else if ("full-name".equals(localName)) {
             multiFont.setFullName(content);
         } else if ("family-name".equals(localName)) {
-            multiFont.setFamilyName(content);
+            Set s = new java.util.HashSet();
+            s.add(content);
+            multiFont.setFamilyNames(s);
         } else if ("ttc-name".equals(localName) && isCID) {
             multiFont.setTTCName(content);
         } else if ("encoding".equals(localName)) {

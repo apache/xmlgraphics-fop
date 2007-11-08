@@ -68,7 +68,7 @@ public class TTFFontLoader extends FontLoader {
 
         returnFont.setFontName(ttf.getPostScriptName());
         returnFont.setFullName(ttf.getFullName());
-        returnFont.setFamilyName(ttf.getFamilyName());
+        returnFont.setFamilyNames(ttf.getFamilyNames());
         returnFont.setFontSubFamilyName(ttf.getSubFamilyName());
         //multiFont.setTTCName(ttcName)
         returnFont.setCapHeight(ttf.getCapHeight());

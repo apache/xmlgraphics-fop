@@ -22,7 +22,9 @@ package org.apache.fop.fonts.autodetect;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -52,6 +54,13 @@ public class FontInfoFinder {
      * @param triplet Collection that will take the generated triplets
      */
     private void generateTripletsFromFont(CustomFont customFont, Collection triplets) {
+        if (log.isTraceEnabled()) {
+            log.trace("Font: " + customFont.getFullName() 
+                    + ", family: " + customFont.getFamilyNames() 
+                    + ", PS: " + customFont.getFontName() 
+                    + ", EmbedName: " + customFont.getEmbedFontName());
+        }
+
         // default style and weight triplet vales (fallback)
         String strippedName = customFont.getStrippedFontName();
         String subName = customFont.getFontSubName();
@@ -70,9 +79,13 @@ public class FontInfoFinder {
         if (!fullName.equals(strippedName)) {
             triplets.add(new FontTriplet(strippedName, Font.STYLE_NORMAL, Font.WEIGHT_NORMAL));
         }
-        String familyName = customFont.getFamilyName();
-        if (!fullName.equals(familyName)) {
-            triplets.add(new FontTriplet(familyName, style, weight));
+        Set familyNames = customFont.getFamilyNames();
+        Iterator iter = familyNames.iterator();
+        while (iter.hasNext()) {
+            String familyName = (String)iter.next();
+            if (!fullName.equals(familyName)) {
+                triplets.add(new FontTriplet(familyName, style, weight));
+            }
         }
     }
 

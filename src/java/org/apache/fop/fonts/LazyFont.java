@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
@@ -208,9 +209,9 @@ public class LazyFont extends Typeface implements FontDescriptor {
     }
 
     /** {@inheritDoc} */
-    public String getFamilyName() {
+    public Set getFamilyNames() {
         load(true);
-        return realFont.getFamilyName();
+        return realFont.getFamilyNames();
     }
 
     /**
