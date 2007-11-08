@@ -19,27 +19,25 @@
  
 package org.apache.fop.svg;
 
-import org.xml.sax.EntityResolver;
-
-import org.apache.commons.logging.impl.SimpleLog;
-import org.apache.commons.logging.Log;
 import org.apache.batik.bridge.UserAgent;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.dom.util.DocumentFactory;
 import org.apache.batik.transcoder.ErrorHandler;
+import org.apache.batik.transcoder.SVGAbstractTranscoder;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscodingHints;
-import org.apache.batik.transcoder.SVGAbstractTranscoder;
 import org.apache.batik.transcoder.image.ImageTranscoder;
 import org.apache.batik.transcoder.keys.BooleanKey;
 import org.apache.batik.util.SVGConstants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.impl.SimpleLog;
 import org.w3c.dom.DOMImplementation;
+import org.xml.sax.EntityResolver;
 
 /**
  * This is the common base class of all of FOP's transcoders.
  */
-public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder
-            {
+public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder {
 
     /**
      * The key to specify whether to stroke text instead of using text 
@@ -81,6 +79,9 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder
         return new FOPTranscoderUserAgent();
     }
     
+    /**
+     * @param logger
+     */
     public void setLogger(Log logger) {
         this.logger = logger;
     }
@@ -125,6 +126,22 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder
         return factory;
     }
 
+    /**
+     * Indicates whether text should be stroked rather than painted using text operators. Stroking
+     * text (also referred to as "painting as shapes") can used in situations where the quality of
+     * text output is not satisfying. The downside of the work-around: The generated file will
+     * likely become bigger and you will lose copy/paste functionality for certain output formats
+     * such as PDF.
+     * @return true if text should be stroked rather than painted using text operators
+     */
+    protected boolean isTextStroked() {
+        boolean stroke = false;
+        if (hints.containsKey(KEY_STROKE_TEXT)) {
+            stroke = ((Boolean)hints.get(KEY_STROKE_TEXT)).booleanValue();
+        }
+        return stroke;
+    }
+    
     // --------------------------------------------------------------------
     // FOP's default error handler (for transcoders)
     // --------------------------------------------------------------------

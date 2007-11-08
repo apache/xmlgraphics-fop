@@ -29,6 +29,8 @@ import org.apache.fop.fo.ValidationException;
  */
 public class PSSetupCodeElement extends AbstractPSExtensionObject {
 
+    protected static final String ELEMENT = "ps-setup-code";
+    
     /**
      * Main constructor
      * @param parent parent FO node
@@ -47,7 +49,7 @@ public class PSSetupCodeElement extends AbstractPSExtensionObject {
     
     /** {@inheritDoc} */
     public String getLocalName() {
-        return "ps-setup-code";
+        return ELEMENT;
     }
     
 }

@@ -26,29 +26,27 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
-import java.util.ArrayList;
 
-// Apache libs
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-// FOP
 import org.apache.fop.fonts.CIDFont;
 import org.apache.fop.fonts.CustomFont;
-import org.apache.fop.fonts.Typeface;
 import org.apache.fop.fonts.FontDescriptor;
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.fonts.FontType;
 import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.fonts.MultiByteFont;
+import org.apache.fop.fonts.Typeface;
 import org.apache.fop.fonts.truetype.FontFileReader;
 import org.apache.fop.fonts.truetype.TTFSubSetFile;
 import org.apache.fop.fonts.type1.PFBData;
@@ -1270,7 +1268,7 @@ public class PDFFactory {
 
         if (desc.getFontType() == FontType.TYPE0) {
             // CID Font
-            descriptor = new PDFCIDFontDescriptor(desc.getFontName(),
+            descriptor = new PDFCIDFontDescriptor(desc.getEmbedFontName(),
                                             desc.getFontBBox(),
                                             desc.getCapHeight(),
                                             desc.getFlags(),
@@ -1278,7 +1276,7 @@ public class PDFFactory {
                                             desc.getStemV(), null);
         } else {
             // Create normal FontDescriptor
-            descriptor = new PDFFontDescriptor(desc.getFontName(),
+            descriptor = new PDFFontDescriptor(desc.getEmbedFontName(),
                                          desc.getAscender(),
                                          desc.getDescender(),
                                          desc.getCapHeight(),
@@ -1333,7 +1331,7 @@ public class PDFFactory {
         } catch (IOException ioe) {
             log.error(
                     "Failed to write CIDSet [" + cidFont + "] "
-                    + cidFont.getFontName(), ioe);
+                    + cidFont.getEmbedFontName(), ioe);
         }
     }
 
@@ -1422,7 +1420,7 @@ public class PDFFactory {
         } catch (IOException ioe) {
             log.error(
                     "Failed to embed font [" + desc + "] "
-                    + desc.getFontName(), ioe);
+                    + desc.getEmbedFontName(), ioe);
             return (PDFStream) null;
         }
     }
@@ -1471,7 +1469,7 @@ public class PDFFactory {
 
     /**
      * Create a PDFICCStream
-     * @see PDFXObject
+     * @see PDFImageXObject
      * @see org.apache.fop.image.JpegImage
      * @see org.apache.fop.pdf.PDFDeviceColorSpace     
      * @return the new PDF ICC stream object

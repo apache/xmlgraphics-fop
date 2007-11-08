@@ -19,32 +19,34 @@
 
 package org.apache.fop.svg;
 
-import java.awt.Graphics2D;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-/* java.awt.Font is not imported to avoid confusion with
-   org.apache.fop.fonts.Font */
-import java.text.AttributedCharacterIterator;
-import java.awt.font.TextAttribute;
-import java.awt.Shape;
-import java.awt.Paint;
-import java.awt.Stroke;
+import java.awt.BasicStroke;
 import java.awt.Color;
-import java.util.List;
+import java.awt.Graphics2D;
+import java.awt.Paint;
+import java.awt.Shape;
+import java.awt.Stroke;
+import java.awt.font.TextAttribute;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Point2D;
+import java.lang.reflect.Method;
+import java.text.AttributedCharacterIterator;
 import java.util.Iterator;
+import java.util.List;
 
-import org.apache.batik.gvt.text.Mark;
-import org.apache.batik.gvt.TextPainter;
-import org.apache.batik.gvt.TextNode;
+import org.apache.batik.bridge.SVGFontFamily;
+import org.apache.batik.gvt.font.GVTFont;
+import org.apache.batik.gvt.font.GVTFontFamily;
+import org.apache.batik.gvt.font.GVTGlyphVector;
+import org.apache.batik.gvt.renderer.StrokingTextPainter;
 import org.apache.batik.gvt.text.GVTAttributedCharacterIterator;
 import org.apache.batik.gvt.text.TextPaintInfo;
-import org.apache.batik.gvt.font.GVTFontFamily;
-import org.apache.batik.bridge.SVGFontFamily;
-import org.apache.batik.gvt.renderer.StrokingTextPainter;
-
+import org.apache.batik.gvt.text.TextSpanLayout;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
+import org.apache.fop.util.CharUtilities;
 
 /**
  * Renders the attributed character iterator of a <tt>TextNode</tt>.
@@ -54,108 +56,221 @@ import org.apache.fop.fonts.FontTriplet;
  * drawString. If the text is complex or the cannot be translated
  * into a simple drawString the StrokingTextPainter is used instead.
  *
- * (todo) handle underline, overline and strikethrough
- * (todo) use drawString(AttributedCharacterIterator iterator...) for some
- *
- * @author <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
  * @version $Id$
  */
-public class PDFTextPainter implements TextPainter {
+public class PDFTextPainter extends StrokingTextPainter {
+
+    private static final boolean DEBUG = false;
+    
+    private boolean strokeText = false;
     private FontInfo fontInfo;
 
     /**
-     * Use the stroking text painter to get the bounds and shape.
-     * Also used as a fallback to draw the string with strokes.
-     */
-    protected static final TextPainter PROXY_PAINTER =
-        StrokingTextPainter.getInstance();
-
-    /**
      * Create a new PDF text painter with the given font information.
-     * @param fi the fint info
+     * @param fi the font info
      */
     public PDFTextPainter(FontInfo fi) {
         fontInfo = fi;
     }
 
-    /**
-     * Paints the specified attributed character iterator using the
-     * specified Graphics2D and context and font context.
-     * @param node the TextNode to paint
-     * @param g2d the Graphics2D to use
-     */
-    public void paint(TextNode node, Graphics2D g2d) {
-        String txt = node.getText();
-        Point2D loc = node.getLocation();
-        
-        AttributedCharacterIterator aci =
-          node.getAttributedCharacterIterator();
-        // reset position to start of char iterator
-        if (aci.getBeginIndex() == aci.getEndIndex()) {
+    /** {@inheritDoc} */
+    protected void paintTextRuns(List textRuns, Graphics2D g2d) {
+        if (DEBUG) {
+            System.out.println("paintTextRuns: count = " + textRuns.size());
+            //fontInfo.dumpAllTripletsToSystemOut();
+        }
+        if (!(g2d instanceof PDFGraphics2D) || strokeText) {
+            super.paintTextRuns(textRuns, g2d);
             return;
         }
-        char ch = aci.first();
-        if (ch == AttributedCharacterIterator.DONE) {
-            return;
+        PDFGraphics2D pdf = (PDFGraphics2D)g2d;
+        PDFTextUtil textUtil = new PDFTextUtil(pdf);
+        for (int i = 0; i < textRuns.size(); i++) {
+            TextRun textRun = (TextRun)textRuns.get(i);
+            AttributedCharacterIterator runaci = textRun.getACI();
+            runaci.first();
+
+            TextPaintInfo tpi = (TextPaintInfo)runaci.getAttribute(PAINT_INFO);
+            if (tpi == null || !tpi.visible) {
+                continue;
+            }
+            if ((tpi != null) && (tpi.composite != null)) {
+                g2d.setComposite(tpi.composite);
+            }
+            
+            //------------------------------------
+            TextSpanLayout layout = textRun.getLayout();
+            if (DEBUG) {
+                int charCount = runaci.getEndIndex() - runaci.getBeginIndex();
+                System.out.println("================================================");
+                System.out.println("New text run:");
+                System.out.println("char count: " + charCount);
+                System.out.println("range: " 
+                        + runaci.getBeginIndex() + " - " + runaci.getEndIndex());
+                System.out.println("glyph count: " + layout.getGlyphCount()); //=getNumGlyphs()
+            }
+            //Gather all characters of the run
+            StringBuffer chars = new StringBuffer();
+            for (runaci.first(); runaci.getIndex() < runaci.getEndIndex();) {
+                chars.append(runaci.current());
+                runaci.next();
+            }
+            runaci.first();
+            if (DEBUG) {
+                System.out.println("Text: " + chars);
+                pdf.currentStream.write("%Text: " + chars + "\n");
+            }
+            
+            GeneralPath debugShapes = null;
+            if (DEBUG) {
+                debugShapes = new GeneralPath();
+            }
+            
+            Font[] fonts = findFonts(runaci);
+            if (fonts == null || fonts.length == 0) {
+                //Draw using Java2D
+                textRun.getLayout().draw(g2d);
+                continue;
+            }
+            
+            textUtil.saveGraphicsState();
+            textUtil.concatMatrixCurrentTransform();
+            Shape imclip = g2d.getClip();
+            pdf.writeClip(imclip);
+            
+            applyColorAndPaint(tpi, pdf);
+            
+            textUtil.beginTextObject();
+            textUtil.setFonts(fonts);
+            textUtil.setTextRenderingMode(tpi.fillPaint != null, tpi.strokePaint != null, false);
+
+            AffineTransform localTransform = new AffineTransform();
+            Point2D prevPos = null;
+            double prevVisibleCharWidth = 0.0;
+            GVTGlyphVector gv = layout.getGlyphVector();
+            for (int index = 0, c = gv.getNumGlyphs(); index < c; index++) {
+                char ch = chars.charAt(index);
+                boolean visibleChar = gv.isGlyphVisible(index)
+                    || (CharUtilities.isAnySpace(ch) && !CharUtilities.isZeroWidthSpace(ch));
+                if (DEBUG) {
+                    System.out.println("glyph " + index 
+                            + " -> " + layout.getGlyphIndex(index) + " => " + ch);
+                    if (CharUtilities.isAnySpace(ch) && ch != 32) {
+                        System.out.println("Space found: " + Integer.toHexString(ch));
+                    }
+                    if (ch == CharUtilities.ZERO_WIDTH_JOINER) {
+                        System.out.println("ZWJ found: " + Integer.toHexString(ch));
+                    }
+                    if (ch == CharUtilities.SOFT_HYPHEN) {
+                        System.out.println("Soft hyphen found: " + Integer.toHexString(ch));
+                    }
+                    if (!visibleChar) {
+                        System.out.println("Invisible glyph found: " + Integer.toHexString(ch));
+                    }
+                }
+                if (!visibleChar) {
+                    continue;
+                }
+                Point2D p = gv.getGlyphPosition(index);
+
+                AffineTransform glyphTransform = gv.getGlyphTransform(index);
+                //TODO Glyph transforms could be refined so not every char has to be painted
+                //with its own TJ command (stretch/squeeze case could be optimized)
+                if (DEBUG) {
+                    System.out.println("pos " + p + ", transform " + glyphTransform);
+                    Shape sh;
+                    sh = gv.getGlyphLogicalBounds(index);
+                    if (sh == null) {
+                        sh = new Ellipse2D.Double(p.getX(), p.getY(), 2, 2);
+                    }
+                    debugShapes.append(sh, false);
+                }
+
+                //Exact position of the glyph
+                localTransform.setToIdentity();
+                localTransform.translate(p.getX(), p.getY());
+                if (glyphTransform != null) {
+                    localTransform.concatenate(glyphTransform);
+                }
+                localTransform.scale(1, -1);
+                
+                boolean yPosChanged = (prevPos == null 
+                        || prevPos.getY() != p.getY() 
+                        || glyphTransform != null);
+                if (yPosChanged) {
+                    if (index > 0) {
+                        textUtil.writeTJ();
+                        textUtil.writeTextMatrix(localTransform);
+                    }
+                } else {
+                    double xdiff = p.getX() - prevPos.getX();
+                    //Width of previous character
+                    Font font = textUtil.getCurrentFont();
+                    double cw = prevVisibleCharWidth;
+                    double effxdiff = (1000 * xdiff) - cw;
+                    if (effxdiff != 0) {
+                        double adjust = (-effxdiff / font.getFontSize());
+                        textUtil.adjustGlyphTJ(adjust * 1000);
+                    }
+                    if (DEBUG) {
+                        System.out.println("==> x diff: " + xdiff + ", " + effxdiff 
+                                + ", charWidth: " + cw);
+                    }
+                }
+                Font f = textUtil.selectFontForChar(ch);
+                if (f != textUtil.getCurrentFont()) {
+                    textUtil.writeTJ();
+                    textUtil.setCurrentFont(f);
+                    textUtil.writeTf(f);
+                    textUtil.writeTextMatrix(localTransform);
+                }
+                char paintChar = (CharUtilities.isAnySpace(ch) ? ' ' : ch);
+                textUtil.writeTJChar(paintChar);
+                
+                //Update last position
+                prevPos = p;
+                prevVisibleCharWidth = textUtil.getCurrentFont().getCharWidth(chars.charAt(index));
+            }
+            textUtil.writeTJ();
+            textUtil.endTextObject();
+            textUtil.restoreGraphicsState();
+            if (DEBUG) {
+                g2d.setStroke(new BasicStroke(0));
+                g2d.setColor(Color.LIGHT_GRAY);
+                g2d.draw(debugShapes);
+            }
         }
-        TextNode.Anchor anchor;
-        anchor = (TextNode.Anchor) aci.getAttribute(
-                      GVTAttributedCharacterIterator.TextAttribute.ANCHOR_TYPE);
+    }
 
-        List gvtFonts;
-        gvtFonts = (List) aci.getAttribute(
-            GVTAttributedCharacterIterator.TextAttribute.GVT_FONT_FAMILIES);
-
-        TextPaintInfo tpi = (TextPaintInfo) aci.getAttribute(
-            GVTAttributedCharacterIterator.TextAttribute.PAINT_INFO);
-        
-        if (tpi == null) {
-            return;
-        }        
-        
-        Paint forg = tpi.fillPaint;
+    private void applyColorAndPaint(TextPaintInfo tpi, PDFGraphics2D pdf) {
+        Paint fillPaint = tpi.fillPaint;
         Paint strokePaint = tpi.strokePaint;
-        Float size = (Float) aci.getAttribute(TextAttribute.SIZE);
-        if (size == null) {
-            return;
-        }
         Stroke stroke = tpi.strokeStroke;
-        /*
-        Float xpos = (Float) aci.getAttribute(
-                       GVTAttributedCharacterIterator.TextAttribute.X);
-        Float ypos = (Float) aci.getAttribute(
-                       GVTAttributedCharacterIterator.TextAttribute.Y);
-        */
-
+        int fillAlpha = PDFGraphics2D.OPAQUE;
+        if (fillPaint instanceof Color) {
+            Color col = (Color)fillPaint;
+            pdf.applyColor(col, true);
+            fillAlpha = col.getAlpha();
+        }
+        if (strokePaint instanceof Color) {
+            Color col = (Color)strokePaint;
+            pdf.applyColor(col, false);
+        }
+        pdf.applyPaint(fillPaint, true);
+        pdf.applyStroke(stroke);
+        if (strokePaint != null) {
+            pdf.applyPaint(strokePaint, false);
+        }
+        pdf.applyAlpha(fillAlpha, PDFGraphics2D.OPAQUE);
+    }
+    
+    private Font[] findFonts(AttributedCharacterIterator aci) {
+        List fonts = new java.util.ArrayList();
+        List gvtFonts = (List) aci.getAttribute(
+                GVTAttributedCharacterIterator.TextAttribute.GVT_FONT_FAMILIES);
         Float posture = (Float) aci.getAttribute(TextAttribute.POSTURE);
         Float taWeight = (Float) aci.getAttribute(TextAttribute.WEIGHT);
-
-        boolean useStrokePainter = false;
-
-        if (forg instanceof Color) {
-            Color col = (Color) forg;
-            if (col.getAlpha() != 255) {
-                useStrokePainter = true;
-            }
-            g2d.setColor(col);
-        }
-        g2d.setPaint(forg);
-        g2d.setStroke(stroke);
-
-        if (strokePaint != null) {
-            // need to draw using AttributedCharacterIterator
-            useStrokePainter = true;
-        }
-
-        if (hasUnsupportedAttributes(aci)) {
-            useStrokePainter = true;
-        }
-
-        // text contains unsupported information
-        if (useStrokePainter) {
-            PROXY_PAINTER.paint(node, g2d);
-            return;
-        }
+        Float fontSize = (Float) aci.getAttribute(TextAttribute.SIZE);
 
         String style = ((posture != null) && (posture.floatValue() > 0.0))
                        ? "italic" : "normal";
@@ -163,236 +278,65 @@ public class PDFTextPainter implements TextPainter {
                        &&  (taWeight.floatValue() > 1.0)) ? Font.WEIGHT_BOLD
                        : Font.WEIGHT_NORMAL;
 
-        Font fontState = null;
-        FontInfo fi = fontInfo;
-        boolean found = false;
         String fontFamily = null;
+
+        //GVT_FONT can sometimes be different from the fonts in GVT_FONT_FAMILIES
+        //or GVT_FONT_FAMILIES can even be empty and only GVT_FONT is set
+        /* The following code section is not available until Batik 1.7 is released. */
+        GVTFont gvtFont = (GVTFont)aci.getAttribute(
+                GVTAttributedCharacterIterator.TextAttribute.GVT_FONT);
+        if (gvtFont != null) {
+            try {
+                Method method = gvtFont.getClass().getMethod("getFamilyName", null);
+                String gvtFontFamily = (String)method.invoke(gvtFont, null);
+                //TODO Uncomment the following line when Batik 1.7 is shipped with FOP
+                //String gvtFontFamily = gvtFont.getFamilyName(); //Not available in Batik 1.6
+                if (DEBUG) {
+                    System.out.print(gvtFontFamily + ", ");
+                }
+                if (fontInfo.hasFont(gvtFontFamily, style, weight)) {
+                    FontTriplet triplet = fontInfo.fontLookup(gvtFontFamily, style,
+                                                       weight);
+                    int fsize = (int)(fontSize.floatValue() * 1000);
+                    fonts.add(fontInfo.getFontInstance(triplet, fsize));
+                }
+            } catch (Exception e) {
+                //Most likely NoSuchMethodError here when using Batik 1.6
+                //Just skip this section in this case
+            }
+        }
+
         if (gvtFonts != null) {
             Iterator i = gvtFonts.iterator();
             while (i.hasNext()) {
                 GVTFontFamily fam = (GVTFontFamily) i.next();
                 if (fam instanceof SVGFontFamily) {
-                    PROXY_PAINTER.paint(node, g2d);
-                    return;
+                    return null; //Let Batik paint this text!
                 }
                 fontFamily = fam.getFamilyName();
-                if (fi.hasFont(fontFamily, style, weight)) {
+                if (DEBUG) {
+                    System.out.print(fontFamily + ", ");
+                }
+                if (fontInfo.hasFont(fontFamily, style, weight)) {
                     FontTriplet triplet = fontInfo.fontLookup(fontFamily, style,
                                                        weight);
-                    int fsize = (int)(size.floatValue() * 1000);
-                    fontState = fontInfo.getFontInstance(triplet, fsize);
-                    found = true;
-                    break;
+                    int fsize = (int)(fontSize.floatValue() * 1000);
+                    fonts.add(fontInfo.getFontInstance(triplet, fsize));
                 }
             }
         }
-        if (!found) {
+        if (fonts.size() == 0) {
             FontTriplet triplet = fontInfo.fontLookup("any", style, Font.WEIGHT_NORMAL);
-            int fsize = (int)(size.floatValue() * 1000);
-            fontState = fontInfo.getFontInstance(triplet, fsize);
-        } else {
-            if (g2d instanceof PDFGraphics2D) {
-                ((PDFGraphics2D) g2d).setOverrideFontState(fontState);
+            int fsize = (int)(fontSize.floatValue() * 1000);
+            fonts.add(fontInfo.getFontInstance(triplet, fsize));
+            if (DEBUG) {
+                System.out.print("fallback to 'any' font");
             }
         }
-        int fStyle = java.awt.Font.PLAIN;
-        if (weight == Font.WEIGHT_BOLD) {
-            if (style.equals("italic")) {
-                fStyle = java.awt.Font.BOLD | java.awt.Font.ITALIC;
-            } else {
-                fStyle = java.awt.Font.BOLD;
-            }
-        } else {
-            if (style.equals("italic")) {
-                fStyle = java.awt.Font.ITALIC;
-            } else {
-                fStyle = java.awt.Font.PLAIN;
-            }
+        if (DEBUG) {
+            System.out.println();
         }
-        java.awt.Font font = new java.awt.Font(fontFamily, fStyle,
-                             (int)(fontState.getFontSize() / 1000));
-
-        g2d.setFont(font);
-
-        float advance = getStringWidth(txt, fontState);
-        float tx = 0;
-        if (anchor != null) {
-            switch (anchor.getType()) {
-                case TextNode.Anchor.ANCHOR_MIDDLE:
-                    tx = -advance / 2;
-                    break;
-                case TextNode.Anchor.ANCHOR_END:
-                    tx = -advance;
-            }
-        }
-        g2d.drawString(txt, (float)(loc.getX() + tx), (float)(loc.getY()));
+        return (Font[])fonts.toArray(new Font[fonts.size()]);
     }
-
-    private boolean hasUnsupportedAttributes(AttributedCharacterIterator aci) {
-        boolean hasunsupported = false;
-        Object letSpace = aci.getAttribute(
-                            GVTAttributedCharacterIterator.TextAttribute.LETTER_SPACING);
-        if (letSpace != null) {
-            hasunsupported = true;
-        }
-
-        Object wordSpace = aci.getAttribute(
-                             GVTAttributedCharacterIterator.TextAttribute.WORD_SPACING);
-        if (wordSpace != null) {
-            hasunsupported = true;
-        }
-
-        AttributedCharacterIterator.Attribute key;
-        key = GVTAttributedCharacterIterator.TextAttribute.WRITING_MODE;
-        Object writeMod = aci.getAttribute(key);
-        if (!GVTAttributedCharacterIterator.TextAttribute.WRITING_MODE_LTR.equals(
-                  writeMod)) {
-            hasunsupported = true;
-        }
-
-        Object vertOr = aci.getAttribute(
-                          GVTAttributedCharacterIterator.TextAttribute.VERTICAL_ORIENTATION);
-        if (GVTAttributedCharacterIterator.TextAttribute.ORIENTATION_ANGLE.equals(
-                  vertOr)) {
-            hasunsupported = true;
-        }
-        return hasunsupported;
-    }
-
-    private float getStringWidth(String str, Font fontState) {
-        float wordWidth = 0;
-        float whitespaceWidth = fontState.getWidth(fontState.mapChar(' '));
-
-        for (int i = 0; i < str.length(); i++) {
-            float charWidth;
-            char c = str.charAt(i);
-            if (!((c == ' ') || (c == '\n') || (c == '\r') || (c == '\t'))) {
-                charWidth = fontState.getWidth(fontState.mapChar(c));
-                if (charWidth <= 0) {
-                    charWidth = whitespaceWidth;
-                }
-            } else {
-                charWidth = whitespaceWidth;
-            }
-            wordWidth += charWidth;
-        }
-        return wordWidth / 1000f;
-    }
-
-    /**
-     * Get the outline shape of the text characters.
-     * This uses the StrokingTextPainter to get the outline
-     * shape since in theory it should be the same.
-     *
-     * @param node the text node
-     * @return the outline shape of the text characters
-     */
-    public Shape getOutline(TextNode node) {
-        return PROXY_PAINTER.getOutline(node);
-    }
-
-    /**
-     * Get the bounds.
-     * This uses the StrokingTextPainter to get the bounds
-     * since in theory it should be the same.
-     *
-     * @param node the text node
-     * @return the bounds of the text
-     */
-    public Rectangle2D getBounds2D(TextNode node) {
-        return PROXY_PAINTER.getBounds2D(node);
-    }
-
-    /**
-     * Get the geometry bounds.
-     * This uses the StrokingTextPainter to get the bounds
-     * since in theory it should be the same.
-     * @param node the text node
-     * @return the bounds of the text
-     */
-    public Rectangle2D getGeometryBounds(TextNode node) {
-        return PROXY_PAINTER.getGeometryBounds(node);
-    }
-
-    // Methods that have no purpose for PDF
-
-    /**
-     * Get the mark.
-     * This does nothing since the output is pdf and not interactive.
-     * @param node the text node
-     * @param pos the position
-     * @param all select all
-     * @return null
-     */
-    public Mark getMark(TextNode node, int pos, boolean all) {
-        return null;
-    }
-
-    /**
-     * Select at.
-     * This does nothing since the output is pdf and not interactive.
-     * @param x the x position
-     * @param y the y position
-     * @param node the text node
-     * @return null
-     */
-    public Mark selectAt(double x, double y, TextNode node) {
-        return null;
-    }
-
-    /**
-     * Select to.
-     * This does nothing since the output is pdf and not interactive.
-     * @param x the x position
-     * @param y the y position
-     * @param beginMark the start mark
-     * @return null
-     */
-    public Mark selectTo(double x, double y, Mark beginMark) {
-        return null;
-    }
-
-    /**
-     * Selec first.
-     * This does nothing since the output is pdf and not interactive.
-     * @param node the text node
-     * @return null
-     */
-    public Mark selectFirst(TextNode node) {
-        return null;
-    }
-
-    /**
-     * Select last.
-     * This does nothing since the output is pdf and not interactive.
-     * @param node the text node
-     * @return null
-     */
-    public Mark selectLast(TextNode node) {
-        return null;
-    }
-
-    /**
-     * Get selected.
-     * This does nothing since the output is pdf and not interactive.
-     * @param start the start mark
-     * @param finish the finish mark
-     * @return null
-     */
-    public int[] getSelected(Mark start, Mark finish) {
-        return null;
-    }
-
-    /**
-     * Get the highlighted shape.
-     * This does nothing since the output is pdf and not interactive.
-     * @param beginMark the start mark
-     * @param endMark the end mark
-     * @return null
-     */
-    public Shape getHighlightShape(Mark beginMark, Mark endMark) {
-        return null;
-    }
-
+    
 }
-

@@ -20,6 +20,7 @@
 package org.apache.fop.fonts;
 
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -28,10 +29,23 @@ import java.util.Map;
 public interface MutableFont {
 
     /**
-     * Sets the font name.
+     * Sets the "PostScript" font name (Example: "Helvetica-BoldOblique").
      * @param name font name
      */
     void setFontName(String name);
+    
+    /**
+     * Sets the font's full name (usually the one that the operating system displays). Example:
+     * "Helvetica Bold Oblique".
+     * @param name font' full name
+     */
+    void setFullName(String name);
+
+    /**
+     * Sets the font's family names (Example: "Helvetica").
+     * @param name the font's family names (a Set of Strings)
+     */
+    void setFamilyNames(Set names);
     
     /**
      * Sets the path to the embeddable font file.

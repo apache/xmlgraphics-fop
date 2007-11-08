@@ -52,7 +52,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
     /** Iterator for child LayoutManagers */
     protected ListIterator fobjIter = null;
     /** Marker map for markers related to this LayoutManager */
-    protected Map markers = null;
+    private Map markers = null;
 
     /** True if this LayoutManager has handled all of its content. */
     private boolean bFinished = false;
@@ -352,8 +352,8 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
      */
     public boolean isFirst(Position pos) {
         //log.trace("isFirst() smallestPosNumberChecked=" + smallestPosNumberChecked + " " + pos);
-        if (pos.getIndex() < 0) {
-            throw new IllegalArgumentException("Only Positions with an index can be checked");
+        if (pos == null || pos.getIndex() < 0) {
+            throw new IllegalArgumentException("Only non-null Positions with an index can be checked");
         }
         if (pos.getIndex() == this.smallestPosNumberChecked) {
             return true;
@@ -372,8 +372,8 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
      */
     public boolean isLast(Position pos) {
         //log.trace("isLast() lastGenPos=" + lastGeneratedPosition + " " + pos);
-        if (pos.getIndex() < 0) {
-            throw new IllegalArgumentException("Only Positions with an index can be checked");
+        if (pos == null || pos.getIndex() < 0) {
+            throw new IllegalArgumentException("Only non-null Positions with an index can be checked");
         }
         return (pos.getIndex() == this.lastGeneratedPosition
                 && isFinished());
@@ -387,7 +387,6 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
         Map atts = getFObj().getForeignAttributes();
         targetArea.setForeignAttributes(atts);
     }
-
 
     /* (non-Javadoc)
      * @see org.apache.fop.layoutmgr.LayoutManager#rewrapPosition(org.apache.fop.layoutmgr.Position)
@@ -411,6 +410,24 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
             notifyPos(pos);
         }
         return newPos;
+    }
+    
+    /**
+     * Registers the FO's markers on the current PageViewport
+     */
+    protected void addMarkersToPage(boolean isStarting, boolean isFirst, boolean isLast) {
+        if (this.markers != null) {
+            getCurrentPV().addMarkers(
+                    this.markers, 
+                    isStarting, 
+                    isFirst, 
+                    isLast);
+        }
+    }
+
+    /** {@inheritDoc} */
+    public String toString() {
+        return (super.toString() + "[fobj=" + fobj.toString() + "]");
     }
     
 }

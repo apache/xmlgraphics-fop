@@ -27,7 +27,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.flow.TableRow;
+import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthGlue;
@@ -286,7 +286,7 @@ public class TableStepper {
         for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
             ActiveCell activeCell = (ActiveCell) iter.next();
             int nextStep = activeCell.getNextStep();
-            if (nextStep > 0) {
+            if (nextStep >= 0) {
                 stepFound = true;
                 minStep = Math.min(minStep, nextStep);
             }

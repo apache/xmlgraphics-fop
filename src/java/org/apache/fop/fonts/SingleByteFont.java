@@ -47,7 +47,11 @@ public class SingleByteFont extends CustomFont {
      * Updates the mapping variable based on the encoding.
      */
     protected void updateMapping() {
-        mapping = CodePointMapping.getMapping(getEncoding()); 
+        try {
+            mapping = CodePointMapping.getMapping(getEncoding());
+        } catch (UnsupportedOperationException e) {
+            log.error("Font '" + super.getFontName() + "': " + e.getMessage());
+        }
     }
     
     /**
@@ -94,6 +98,7 @@ public class SingleByteFont extends CustomFont {
      * {@inheritDoc}
      */
     public char mapChar(char c) {
+        notifyMapOperation();
         char d = mapping.mapChar(c);
         if (d != 0) {
             return d;
@@ -125,8 +130,5 @@ public class SingleByteFont extends CustomFont {
         this.width[index] = width;
     }
 
-    public char[] getCharsUsed() {
-        return null;
-    }
 }
 

@@ -26,11 +26,11 @@ import java.util.ListIterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fo.flow.Marker;
-import org.apache.fop.fo.flow.Table;
-import org.apache.fop.fo.flow.TableBody;
-import org.apache.fop.fo.flow.TableCell;
-import org.apache.fop.fo.flow.TableColumn;
-import org.apache.fop.fo.flow.TableRow;
+import org.apache.fop.fo.flow.table.Table;
+import org.apache.fop.fo.flow.table.TableBody;
+import org.apache.fop.fo.flow.table.TableCell;
+import org.apache.fop.fo.flow.table.TableColumn;
+import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 
 

@@ -20,16 +20,16 @@
 package org.apache.fop.render.java2d;
 
 // FOP
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.fonts.Font;
-import org.apache.fop.fonts.FontTriplet;
-
-// Java
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.util.Set;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontTriplet;
+import org.apache.fop.fonts.FontUtil;
 
 /**
  * Sets up the Java2D/AWT fonts. It is similar to
@@ -214,54 +214,66 @@ public class FontSetup {
             int startNumber) {
         int num = startNumber;
         GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        String[] allFontFamilies = env.getAvailableFontFamilyNames();
-        for (int i = 0; i < allFontFamilies.length; i++) {
-            String family = allFontFamilies[i];
-            if (HARDCODED_FONT_NAMES.contains(family)) {
+        
+        java.awt.Font[] fonts = env.getAllFonts();
+        for (int i = 0; i < fonts.length; i++) {
+            java.awt.Font f = fonts[i];
+            if (HARDCODED_FONT_NAMES.contains(f.getFontName())) {
                 continue; //skip
             }
-
-            if (log.isDebugEnabled()) {
-                log.debug("Registering: " + family);
+            
+            if (log.isTraceEnabled()) {
+                log.trace("AWT Font: " + f.getFontName() 
+                        + ", family: " + f.getFamily() 
+                        + ", PS: " + f.getPSName() 
+                        + ", Name: " + f.getName()
+                        + ", Angle: " + f.getItalicAngle()
+                        + ", Style: " + f.getStyle());
             }
             
-            //Java does not give info about what variants of a font is actually supported, so
-            //we simply register all the basic variants. If we use GraphicsEnvironment.getAllFonts()
-            //we don't get reliable info whether a font is italic or bold or both.
-            int fontStyle;
-            fontStyle = java.awt.Font.PLAIN;
-            registerFontTriplet(fontInfo, family, fontStyle, "F" + num, graphics);
-            num++;
+            String searchName = FontUtil.stripWhiteSpace(f.getFontName()).toLowerCase();
+            String guessedStyle = FontUtil.guessStyle(searchName);
+            int guessedWeight = FontUtil.guessWeight(searchName);
 
-            fontStyle = java.awt.Font.ITALIC;
-            registerFontTriplet(fontInfo, family, fontStyle, "F" + num, graphics);
             num++;
-
-            fontStyle = java.awt.Font.BOLD;
-            registerFontTriplet(fontInfo, family, fontStyle, "F" + num, graphics);
-            num++;
-
-            fontStyle = java.awt.Font.BOLD | java.awt.Font.ITALIC;
-            registerFontTriplet(fontInfo, family, fontStyle, "F" + num, graphics);
-            num++;
+            String fontKey = "F" + num;
+            int style = convertToAWTFontStyle(guessedStyle, guessedWeight);
+            addFontMetricsMapper(fontInfo, f.getFontName(), fontKey, graphics, style);
+            
+            //Register appropriate font triplets matching the font. Two different strategies:
+            //Example: "Arial Bold", normal, normal
+            addFontTriplet(fontInfo, f.getFontName(),
+                    Font.STYLE_NORMAL, Font.WEIGHT_NORMAL, fontKey);
+            if (!f.getFontName().equals(f.getFamily())) {
+                //Example: "Arial", bold, normal
+                addFontTriplet(fontInfo, f.getFamily(),
+                        guessedStyle, guessedWeight, fontKey);
+            }
         }
+
     }
 
-    private static void registerFontTriplet(FontInfo fontInfo, String family, int fontStyle, 
-            String fontKey, Graphics2D graphics) {
-        FontMetricsMapper metric = new FontMetricsMapper(family, fontStyle, graphics);
-        fontInfo.addMetrics(fontKey, metric);
-        
-        int weight = Font.WEIGHT_NORMAL;
-        if ((fontStyle & java.awt.Font.BOLD) != 0) {
-            weight = Font.WEIGHT_BOLD;
-        }
-        String style = "normal";
-        if ((fontStyle & java.awt.Font.ITALIC) != 0) {
-            style = "italic";
-        }
-        FontTriplet triplet = FontInfo.createFontKey(family, style, weight);
+    private static void addFontTriplet(FontInfo fontInfo, String fontName, String fontStyle,
+            int fontWeight, String fontKey) {
+        FontTriplet triplet = FontInfo.createFontKey(fontName, fontStyle, fontWeight);
         fontInfo.addFontProperties(fontKey, triplet);
+    }
+
+    private static void addFontMetricsMapper(FontInfo fontInfo, String family, String fontKey,
+            Graphics2D graphics, int style) {
+        FontMetricsMapper metric = new FontMetricsMapper(family, style, graphics);
+        fontInfo.addMetrics(fontKey, metric);
+    }
+
+    private static int convertToAWTFontStyle(String fontStyle, int fontWeight) {
+        int style = java.awt.Font.PLAIN;
+        if (fontWeight >= Font.WEIGHT_BOLD) {
+            style |= java.awt.Font.BOLD;
+        }
+        if (!"normal".equals(fontStyle)) {
+            style |= java.awt.Font.ITALIC;
+        }
+        return style;
     }
     
 }

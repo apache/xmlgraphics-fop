@@ -20,7 +20,10 @@
 package org.apache.fop.fonts;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
+
 import javax.xml.transform.Source;
 
 /**
@@ -30,6 +33,8 @@ public abstract class CustomFont extends Typeface
             implements FontDescriptor, MutableFont {
 
     private String fontName = null;
+    private String fullName = null;
+    private Set familyNames = null; //Set<String>
     private String fontSubName = null;
     private String embedFileName = null;
     private String embedResourceName = null;
@@ -52,18 +57,36 @@ public abstract class CustomFont extends Typeface
 
     private boolean useKerning = true;
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String getFontName() {
         return fontName;
     }
 
+    /** {@inheritDoc} */
+    public String getEmbedFontName() {
+        return getFontName();
+    }
+
+    /** {@inheritDoc} */
+    public String getFullName() {
+        return fullName;
+    }
+    
     /**
+     * Returns the font family names.
+     * @return the font family names (a Set of Strings)
+     */
+    public Set getFamilyNames() {
+        return Collections.unmodifiableSet(this.familyNames);
+    }
+
+    /**
+     * Returns the font family name stripped of whitespace.
+     * @return the stripped font family
      * @see FontUtil#stripWhiteSpace(String)
      */
     public String getStrippedFontName() {
-        return FontUtil.stripWhiteSpace(fontName);
+        return FontUtil.stripWhiteSpace(getFontName());
     }
 
     /**
@@ -92,7 +115,10 @@ public abstract class CustomFont extends Typeface
         Source result = null;
         if (resolver != null && embedFileName != null) {
             result = resolver.resolve(embedFileName);
-            if(result == null) throw new IOException("Unable to resolve Source '" + embedFileName + "' for embedded font");
+            if (result == null) {
+                throw new IOException("Unable to resolve Source '" 
+                        + embedFileName + "' for embedded font");
+            }
         }
         return result;
     }
@@ -243,16 +269,23 @@ public abstract class CustomFont extends Typeface
         }
     }
 
-
     /* ---- MutableFont interface ---- */
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void setFontName(String name) {
         this.fontName = name;
     }
 
+    /** {@inheritDoc} */
+    public void setFullName(String name) {
+        this.fullName = name;
+    }
+    
+    /** {@inheritDoc} */
+    public void setFamilyNames(Set names) {
+        this.familyNames = new java.util.HashSet(names);
+    }
+    
     /**
      * Sets the font's subfamily name.
      * @param subFamilyName the subfamily name of the font

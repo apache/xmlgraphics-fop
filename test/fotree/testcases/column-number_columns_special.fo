@@ -49,11 +49,11 @@
           <fo:table-row>
             <fo:table-cell number-columns-spanned="5">
               <test:assert property="column-number" expected="1" />
-              <fo:block>This cell should span columns 1, 2, 3, 5, 6</fo:block>
+              <fo:block>This cell should span columns 1, 2, 3, 4, 5</fo:block>
             </fo:table-cell>
             <fo:table-cell>
-              <test:assert property="column-number" expected="7" />
-              <fo:block>cell for column 7</fo:block>
+              <test:assert property="column-number" expected="6" />
+              <fo:block>cell for column 6</fo:block>
             </fo:table-cell>
           </fo:table-row>
           <fo:table-row>
@@ -70,16 +70,16 @@
               <fo:block>cell for column 3</fo:block>
             </fo:table-cell>
             <fo:table-cell>
+              <test:assert property="column-number" expected="4" />
+              <fo:block>cell for column 4</fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
               <test:assert property="column-number" expected="5" />
               <fo:block>cell for column 5</fo:block>
             </fo:table-cell>
             <fo:table-cell>
               <test:assert property="column-number" expected="6" />
               <fo:block>cell for column 6</fo:block>
-            </fo:table-cell>
-            <fo:table-cell>
-              <test:assert property="column-number" expected="7" />
-              <fo:block>cell for column 7</fo:block>
             </fo:table-cell>          
           </fo:table-row>
         </fo:table-body>

@@ -721,8 +721,20 @@ public class PDFDocument {
      *
      * @param key the image key to look for
      * @return the image or PDFXObject for the key if found
+     * @deprecated Use getXObject instead (so forms are treated in the same way)
      */
-    public PDFXObject getImage(String key) {
+    public PDFImageXObject getImage(String key) {
+        PDFImageXObject xObject = (PDFImageXObject)xObjectsMap.get(key);
+        return xObject;
+    }
+
+    /**
+     * Get an XObject from the image map.
+     *
+     * @param key the XObject key to look for
+     * @return the PDFXObject for the key if found
+     */
+    public PDFXObject getXObject(String key) {
         PDFXObject xObject = (PDFXObject)xObjectsMap.get(key);
         return xObject;
     }
@@ -779,10 +791,10 @@ public class PDFDocument {
      * @param img the PDF image to add
      * @return the PDF XObject that references the PDF image data
      */
-    public PDFXObject addImage(PDFResourceContext res, PDFImage img) {
+    public PDFImageXObject addImage(PDFResourceContext res, PDFImage img) {
         // check if already created
         String key = img.getKey();
-        PDFXObject xObject = (PDFXObject)xObjectsMap.get(key);
+        PDFImageXObject xObject = (PDFImageXObject)xObjectsMap.get(key);
         if (xObject != null) {
             if (res != null) {
                 res.getPDFResources().addXObject(xObject);
@@ -793,7 +805,7 @@ public class PDFDocument {
         // setup image
         img.setup(this);
         // create a new XObject
-        xObject = new PDFXObject(++this.xObjectCount, img);
+        xObject = new PDFImageXObject(++this.xObjectCount, img);
         registerObject(xObject);
         this.resources.addXObject(xObject);
         if (res != null) {
@@ -811,26 +823,35 @@ public class PDFDocument {
      *
      * @param res the PDF resource context to add to, may be null
      * @param cont the PDF Stream contents of the Form XObject
-     * @param formres the PDF Resources for the Form XObject data
+     * @param formres a reference to the PDF Resources for the Form XObject data
      * @param key the key for the object
      * @return the PDF Form XObject that references the PDF data
      */
     public PDFFormXObject addFormXObject(
         PDFResourceContext res,
         PDFStream cont,
-        PDFResources formres,
+        PDFReference formres,
         String key) {
-        PDFFormXObject xObject;
-        xObject =
-            new PDFFormXObject(
+        
+        // check if already created
+        PDFFormXObject xObject = (PDFFormXObject)xObjectsMap.get(key);
+        if (xObject != null) {
+            if (res != null) {
+                res.getPDFResources().addXObject(xObject);
+            }
+            return xObject;
+        }
+        
+        xObject = new PDFFormXObject(
                 ++this.xObjectCount,
                 cont,
-                formres.referencePDF());
+                formres);
         registerObject(xObject);
         this.resources.addXObject(xObject);
         if (res != null) {
             res.getPDFResources().addXObject(xObject);
         }
+        this.xObjectsMap.put(key, xObject);
         return xObject;
     }
 

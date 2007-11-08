@@ -29,8 +29,8 @@ import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.datatypes.Length;
 
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.flow.Table;
-import org.apache.fop.fo.flow.TableColumn;
+import org.apache.fop.fo.flow.table.Table;
+import org.apache.fop.fo.flow.table.TableColumn;
 import org.apache.fop.fo.properties.TableColLength;
 
 /**
@@ -100,7 +100,7 @@ public class ColumnSetup {
         if (index > size) {
             if (index > maxColIndexReferenced) {
                 maxColIndexReferenced = index;
-                if (!(size == 1 && getColumn(1).isDefaultColumn())) {
+                if (!(size == 1 && getColumn(1).isImplicitColumn())) {
                     log.warn(FONode.decorateWithContextInfo(
                             "There are fewer table-columns than are needed. "
                             + "Column " + index + " was accessed, but only "

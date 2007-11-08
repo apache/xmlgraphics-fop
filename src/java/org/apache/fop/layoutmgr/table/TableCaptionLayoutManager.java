@@ -19,7 +19,7 @@
  
 package org.apache.fop.layoutmgr.table;
 
-import org.apache.fop.fo.flow.TableCaption;
+import org.apache.fop.fo.flow.table.TableCaption;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.PositionIterator;

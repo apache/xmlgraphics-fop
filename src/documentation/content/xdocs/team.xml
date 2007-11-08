@@ -36,6 +36,8 @@
             is a Java/VB Programmer from England.</li>
         <li id="jb"><link href="mailto:jay@bryantcs.com">Jay Bryant</link> (JB) is a
             freelance information architect in Austin, TX.</li>
+        <li id="ac"><link href="mailto:acumiskey@apache.org">Adrian Cumiskey</link> (AC),
+          is a Java and Perl Programmer from St Albans, United Kingdom.</li>
         <li id="ad"><link href="mailto:adelmelle@apache.org">Andreas Delmelle</link> (AD)</li>
         <!-- Luca prefers the mail address with "AT", to stop spam, etc. -->
         <li id="lf"><link href="mailto:lfurini AT cs.unibo.it">Luca Furini</link> (LF)
@@ -87,8 +89,6 @@
           improve the DocBook to PDF tool-chain to produce high quality output, while still
           conforming to given style-guides. See his <link href="http://max.berger.name">home
             page</link> for more information.</li>
-        <li id="ac"><link href="mailto:adrian.cumiskey.at.gmail.com">Adrian Cumiskey</link> (AC),
-          is a Java and Perl Programmer from St Albans, United Kingdom.</li>
     <li id="lm">Louis Masters</li>
     <li id="mn">Manoj Nair, Currently consulting for Sony Pictures Entertainment in Los Angeles, CA USA. Previously he worked with Java &amp; related technologies specializing in developing n-tier Web applications.</li>
         <li id="rr"><link href="mailto:renaud.richardet AT gmail DOT com">Renaud Richardet</link> (RR)

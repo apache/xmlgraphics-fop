@@ -39,11 +39,11 @@ public class PSExtensionElementMapping extends ElementMapping {
     protected void initialize() {
         if (foObjs == null) {
             foObjs = new java.util.HashMap();
-            foObjs.put("ps-setup-code", new PSSetupCodeMaker());
-            foObjs.put("ps-page-setup-code", new PSPageSetupCodeMaker());
-            foObjs.put("ps-setpagedevice", new PSSetPageDeviceMaker());
-            foObjs.put("ps-comment-before", new PSCommentBeforeMaker());
-            foObjs.put("ps-comment-after", new PSCommentAfterMaker());
+            foObjs.put(PSSetupCodeElement.ELEMENT, new PSSetupCodeMaker());
+            foObjs.put(PSPageSetupCodeElement.ELEMENT, new PSPageSetupCodeMaker());
+            foObjs.put(PSSetPageDeviceElement.ELEMENT, new PSSetPageDeviceMaker());
+            foObjs.put(PSCommentBeforeElement.ELEMENT, new PSCommentBeforeMaker());
+            foObjs.put(PSCommentAfterElement.ELEMENT, new PSCommentAfterMaker());
         }
     }
 

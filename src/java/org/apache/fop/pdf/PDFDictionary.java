@@ -60,6 +60,18 @@ public class PDFDictionary extends PDFObject {
     }
     
     /**
+     * Puts a new name/value pair.
+     * @param name the name
+     * @param value the value
+     */
+    public void put(String name, int value) {
+        if (!entries.containsKey(name)) {
+            this.order.add(name);
+        }
+        this.entries.put(name, new Integer(value));
+    }
+    
+    /**
      * Returns the value given a name.
      * @param name the name of the value
      * @return the value or null, if there's no value with the given name.
@@ -76,21 +88,29 @@ public class PDFDictionary extends PDFObject {
         if (hasObjectNumber()) {
             p.append(getObjectID());
         }
-        p.append("<<");
-        Iterator iter = this.order.iterator();
-        while (iter.hasNext()) {
-            String key = (String)iter.next();
-            p.append("\n  /");
-            p.append(key);
-            p.append(" ");
-            Object obj = this.entries.get(key);
-            formatObject(obj, p);
-        }
-        p.append("\n>>\n");
+        writeDictionary(p);
         if (hasObjectNumber()) {
             p.append("endobj\n");
         }
         return p.toString();
+    }
+
+    /**
+     * Writes the contents of the dictionary to a StringBuffer.
+     * @param sb the target StringBuffer
+     */
+    protected void writeDictionary(StringBuffer sb) {
+        sb.append("<<");
+        Iterator iter = this.order.iterator();
+        while (iter.hasNext()) {
+            String key = (String)iter.next();
+            sb.append("\n  /");
+            sb.append(key);
+            sb.append(" ");
+            Object obj = this.entries.get(key);
+            formatObject(obj, sb);
+        }
+        sb.append("\n>>\n");
     }
 
 }

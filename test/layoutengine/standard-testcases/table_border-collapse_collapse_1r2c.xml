@@ -35,7 +35,8 @@
 
           <!-- table 1 -->
           <fo:table table-layout="fixed" width="200pt" border-collapse="collapse">
-            <fo:table-column column-width="proportional-column-width(1)"/>
+            <fo:table-column column-width="proportional-column-width(1)"
+              number-columns-repeated="2"/>
             <fo:table-body>
               <fo:table-row>
                 <fo:table-cell border="6pt solid black">
@@ -51,7 +52,8 @@
 
           <!-- table 2 -->
           <fo:table table-layout="fixed" width="200pt" border-collapse="collapse">
-            <fo:table-column column-width="proportional-column-width(1)"/>
+            <fo:table-column column-width="proportional-column-width(1)"
+              number-columns-repeated="2"/>
             <fo:table-body>
               <fo:table-row>
                 <fo:table-cell border="10pt solid black">
@@ -67,7 +69,8 @@
 
           <!-- table 3 -->
           <fo:table table-layout="fixed" width="200pt" border-collapse="collapse">
-            <fo:table-column column-width="proportional-column-width(1)"/>
+            <fo:table-column column-width="proportional-column-width(1)"
+              number-columns-repeated="2"/>
             <fo:table-body>
               <fo:table-row>
                 <fo:table-cell
@@ -91,7 +94,8 @@
 
           <!-- table 4 -->
           <fo:table table-layout="fixed" width="200pt" border-collapse="collapse">
-            <fo:table-column column-width="proportional-column-width(1)"/>
+            <fo:table-column column-width="proportional-column-width(1)"
+              number-columns-repeated="2"/>
             <fo:table-body>
               <fo:table-row>
                 <fo:table-cell

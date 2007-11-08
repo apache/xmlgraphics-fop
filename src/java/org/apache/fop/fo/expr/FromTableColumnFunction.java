@@ -23,10 +23,11 @@ import java.util.List;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOPropertyMapping;
-import org.apache.fop.fo.flow.Table;
-import org.apache.fop.fo.flow.TableCell;
-import org.apache.fop.fo.flow.TableColumn;
-import org.apache.fop.fo.flow.TableFObj;
+import org.apache.fop.fo.flow.table.ColumnNumberManager;
+import org.apache.fop.fo.flow.table.Table;
+import org.apache.fop.fo.flow.table.TableCell;
+import org.apache.fop.fo.flow.table.TableColumn;
+import org.apache.fop.fo.flow.table.TableFObj;
 import org.apache.fop.fo.properties.Property;
 
 /**
@@ -61,9 +62,9 @@ public class FromTableColumnFunction extends FunctionBase {
      */
     public Property eval(Property[] args,
                          PropertyInfo pInfo) throws PropertyException {
-        
+
         FObj fo = pInfo.getPropertyList().getFObj();
-        
+
         /* obtain property Id for the property for which the function is being
          * evaluated */
         int propId = 0;
@@ -73,7 +74,7 @@ public class FromTableColumnFunction extends FunctionBase {
             String propName = args[0].getString();
             propId = FOPropertyMapping.getPropertyId(propName);
         }
-        
+
         /* make sure we have a correct property id ... */
         if (propId != -1) {
             /* obtain column number for which the function is being evaluated: */
@@ -81,7 +82,7 @@ public class FromTableColumnFunction extends FunctionBase {
             int span = 0;
             if (fo.getNameId() != Constants.FO_TABLE_CELL) {
                 // climb up to the nearest cell
-                do { 
+                do {
                     fo = (FObj) fo.getParent();
                 } while (fo.getNameId() != Constants.FO_TABLE_CELL
                           && fo.getNameId() != Constants.FO_PAGE_SEQUENCE);
@@ -105,19 +106,20 @@ public class FromTableColumnFunction extends FunctionBase {
             /* return the property from the column */
             Table t = ((TableFObj) fo).getTable();
             List cols = t.getColumns();
+            ColumnNumberManager columnIndexManager = t.getColumnNumberManager();
             if (cols == null) {
                 //no columns defined => no match: return default value
                 return pInfo.getPropertyList().get(propId, false, true);
             } else {
-                if (t.isColumnNumberUsed(columnNumber)) {
+                if (columnIndexManager.isColumnNumberUsed(columnNumber)) {
                     //easiest case: exact match
                     return ((TableColumn) cols.get(columnNumber - 1)).getProperty(propId);
                 } else {
                     //no exact match: try all spans...
-                    while (--span > 0 && !t.isColumnNumberUsed(++columnNumber)) {
+                    while (--span > 0 && !columnIndexManager.isColumnNumberUsed(++columnNumber)) {
                         //nop: just increment/decrement
                     }
-                    if (t.isColumnNumberUsed(columnNumber)) {
+                    if (columnIndexManager.isColumnNumberUsed(columnNumber)) {
                         return ((TableColumn) cols.get(columnNumber - 1)).getProperty(propId);
                     } else {
                         //no match: return default value

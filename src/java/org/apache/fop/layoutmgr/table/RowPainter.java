@@ -25,7 +25,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.fo.flow.TableRow;
+import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.KnuthElement;

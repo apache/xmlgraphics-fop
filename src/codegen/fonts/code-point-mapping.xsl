@@ -21,7 +21,23 @@
   <xsl:variable name='glyphlists'
                 select="document('glyphlist.xml')/glyphlist-set"/>
 
-  <xsl:template match="encoding-set">
+  <xsl:template match="encoding-set"> /*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.apache.fop.fonts;
 
 import java.util.Map;
@@ -31,26 +47,28 @@ public class CodePointMapping {
     private char[] latin1Map;
     private char[] characters;
     private char[] codepoints;
+
     private CodePointMapping(int [] table) {
         int nonLatin1 = 0;
         latin1Map = new char[256];
-        for(int i = 0; i &lt; table.length; i += 2) {
-           if(table[i+1] &lt; 256)
-               latin1Map[table[i+1]] = (char) table[i];
-           else
+        for (int i = 0; i &lt; table.length; i += 2) {
+           if (table[i + 1] &lt; 256) {
+               latin1Map[table[i + 1]] = (char) table[i];
+           } else {
                ++nonLatin1;
+           }
         }
         characters = new char[nonLatin1];
         codepoints = new char[nonLatin1];
         int top = 0;
-        for(int i = 0; i &lt; table.length; i += 2) {
-            char c = (char) table[i+1];
-            if(c >= 256) {
+        for (int i = 0; i &lt; table.length; i += 2) {
+            char c = (char) table[i + 1];
+            if (c >= 256) {
                ++top;
-               for(int j = top - 1; j >= 0; --j) {
-                   if(j > 0 &amp;&amp; characters[j-1] >= c) {
-                       characters[j] = characters[j-1];
-                       codepoints[j] = codepoints[j-1];
+               for (int j = top - 1; j >= 0; --j) {
+                   if (j > 0 &amp;&amp; characters[j - 1] >= c) {
+                       characters[j] = characters[j - 1];
+                       codepoints[j] = codepoints[j - 1];
                    } else {
                        characters[j] = c;
                        codepoints[j] = (char) table[i];
@@ -60,21 +78,23 @@ public class CodePointMapping {
             }
         }
     }
+
     public final char mapChar(char c) {
-        if(c &lt; 256) {
+        if (c &lt; 256) {
             return latin1Map[c];
         } else {
             int bot = 0, top = characters.length - 1;
-            while(top >= bot) {
+            while (top >= bot) {
                 int mid = (bot + top) / 2;
                 char mc = characters[mid];
 
-                if(c == mc)
+                if (c == mc) {
                     return codepoints[mid];
-                else if(c &lt; mc)
+                } else if (c &lt; mc) {
                     top = mid - 1;
-                else
+                } else {
                     bot = mid + 1;
+                }
             }
             return 0;
         }
@@ -86,19 +106,21 @@ public class CodePointMapping {
     }
     public static CodePointMapping getMapping(String encoding) {
         CodePointMapping mapping = (CodePointMapping) mappings.get(encoding);
-        if(mapping != null) {
+        if (mapping != null) {
             return mapping;
         } <xsl:apply-templates mode="get"/>
-        else {
-            return null;
+        //TODO: Implement support for Expert and ExpertSubset encoding
+        else if (encoding.startsWith("Expert")) {
+            throw new UnsupportedOperationException(encoding + " not implemented yet");
         }
+        throw new UnsupportedOperationException("Unknown encoding: " + encoding);
     }
 <xsl:apply-templates mode="table"/>
 }
   </xsl:template>
 
   <xsl:template match="encoding" mode="get">
-        else if(encoding.equals("<xsl:value-of select="@id"/>")) {
+        else if (encoding.equals("<xsl:value-of select="@id"/>")) {
             mapping = new CodePointMapping(enc<xsl:value-of select="@id"/>);
             mappings.put("<xsl:value-of select="@id"/>", mapping);
             return mapping;

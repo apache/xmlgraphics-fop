@@ -153,8 +153,8 @@ list of possible build targets.
   <property name="javac.debug" value="on"/>
   <property name="javac.optimize" value="off"/>
   <property name="javac.deprecation" value="on"/>
-  <property name="javac.source" value="1.3"/>
-  <property name="javac.target" value="1.3"/>
+  <property name="javac.source" value="1.4"/>
+  <property name="javac.target" value="1.4"/>
   <property name="javac.fork" value="no"/>
 
   <property name="junit.fork" value="on"/>
@@ -614,12 +614,14 @@ list of possible build targets.
       <include name="org/apache/fop/util/*OutputStream.class"/>
       <include name="org/apache/fop/util/SubInputStream.class"/>
       <include name="org/apache/fop/util/Finalizable.class"/>
+      <include name="org/apache/fop/util/CharUtilities.class"/>
     </patternset>
     <!-- PDF transcoder -->
     <patternset>
       <include name="org/apache/fop/render/pdf/**"/>
       <exclude name="org/apache/fop/render/pdf/PDFRenderer.class"/>
       <exclude name="org/apache/fop/render/pdf/PDFXMLHandler*"/>
+      <include name="org/apache/fop/render/*RendererConfigurator**"/>
       <include name="org/apache/fop/pdf/**"/>
     </patternset>
     <!-- PS transcoder -->
@@ -679,11 +681,9 @@ list of possible build targets.
         <include name="org/apache/avalon/framework/configuration/*"/>
         <include name="org/apache/avalon/framework/container/*"/>
         <include name="org/apache/commons/logging/**"/>
-        <include name="org/apache/commons/io/CopyUtils.class"/>
-        <include name="org/apache/commons/io/IOUtils.class"/>
-        <include name="org/apache/commons/io/output/ProxyOutputStream.class"/>
-        <include name="org/apache/commons/io/output/ByteArrayOutputStream.class"/>
-        <include name="org/apache/commons/io/output/CountingOutputStream.class"/>
+        <include name="org/apache/commons/io/*.class"/>
+        <include name="org/apache/commons/io/filefilter/*.class"/>
+        <include name="org/apache/commons/io/output/*.class"/>
         <!-- TODO Remove the following lines once Batik switches over to using XML Graphics Commons -->
         <include name="org/apache/xmlgraphics/java2d/**"/>
         <include name="org/apache/xmlgraphics/ps/**"/>

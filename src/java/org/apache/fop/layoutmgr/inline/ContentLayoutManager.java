@@ -368,7 +368,7 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
         return holder instanceof LineArea;
     }
 
-    /* (non-Javadoc)
+    /**
      * {@inheritDoc}
      */
     public Position notifyPos(Position pos) {

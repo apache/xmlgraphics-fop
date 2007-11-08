@@ -20,6 +20,7 @@
 package org.apache.fop.fonts;
 
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -28,11 +29,28 @@ import java.util.Map;
 public interface FontMetrics {
 
     /**
-     * Returns the font name.
+     * Returns the "PostScript" font name (Example: "Helvetica-BoldOblique").
      * @return the font name
      */
     String getFontName();
     
+    /**
+     * Returns the font's full name (Example: "Helvetica Bold Oblique").
+     * @return the font's full name
+     */
+    String getFullName();
+    
+    /**
+     * Returns the font's family names as a Set of Strings (Example: "Helvetica").
+     * @return the font's family names (a Set of Strings)
+     */
+    Set getFamilyNames();
+    
+    /**
+     * Returns the font name for font embedding (may include a prefix, Example: "1E28bcArialMT").
+     * @return the name for font embedding
+     */
+    String getEmbedFontName();
     
     /**
      * Returns the type of the font.

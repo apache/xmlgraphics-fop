@@ -19,80 +19,77 @@
 
 package org.apache.fop.svg;
 
-import org.apache.fop.pdf.PDFConformanceException;
-import org.apache.fop.pdf.PDFResourceContext;
-import org.apache.fop.pdf.PDFResources;
-import org.apache.fop.pdf.PDFGState;
-import org.apache.fop.pdf.PDFDeviceColorSpace;
-import org.apache.fop.pdf.PDFColor;
-import org.apache.fop.pdf.PDFState;
-import org.apache.fop.pdf.PDFNumber;
-import org.apache.fop.pdf.PDFText;
-import org.apache.fop.pdf.PDFXObject;
-import org.apache.fop.pdf.PDFPattern;
-import org.apache.fop.pdf.PDFDocument;
-import org.apache.fop.pdf.PDFLink;
-import org.apache.fop.pdf.PDFAnnotList;
-import org.apache.fop.pdf.BitmapImage;
-import org.apache.fop.fonts.FontInfo;
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.Image;
+import java.awt.Paint;
+import java.awt.PaintContext;
+import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.Stroke;
+import java.awt.color.ColorSpace;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.PathIterator;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferInt;
+import java.awt.image.DirectColorModel;
+import java.awt.image.ImageObserver;
+import java.awt.image.Raster;
+import java.awt.image.RenderedImage;
+import java.awt.image.WritableRaster;
+import java.awt.image.renderable.RenderableImage;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.StringWriter;
+import java.text.AttributedCharacterIterator;
+import java.text.CharacterIterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.batik.ext.awt.LinearGradientPaint;
+import org.apache.batik.ext.awt.MultipleGradientPaint;
+import org.apache.batik.ext.awt.RadialGradientPaint;
+import org.apache.batik.ext.awt.RenderingHintsKeyExt;
+import org.apache.batik.gvt.GraphicsNode;
+import org.apache.batik.gvt.PatternPaint;
+import org.apache.fop.fonts.CIDFont;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.image.JpegImage;
-import org.apache.fop.fonts.CIDFont;
+import org.apache.fop.pdf.BitmapImage;
+import org.apache.fop.pdf.PDFAnnotList;
+import org.apache.fop.pdf.PDFColor;
+import org.apache.fop.pdf.PDFConformanceException;
+import org.apache.fop.pdf.PDFDeviceColorSpace;
+import org.apache.fop.pdf.PDFDocument;
+import org.apache.fop.pdf.PDFGState;
+import org.apache.fop.pdf.PDFImageXObject;
+import org.apache.fop.pdf.PDFLink;
+import org.apache.fop.pdf.PDFName;
+import org.apache.fop.pdf.PDFNumber;
+import org.apache.fop.pdf.PDFPattern;
+import org.apache.fop.pdf.PDFResourceContext;
+import org.apache.fop.pdf.PDFResources;
+import org.apache.fop.pdf.PDFState;
+import org.apache.fop.pdf.PDFText;
+import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.render.pdf.FopPDFImage;
 import org.apache.fop.util.ColorExt;
-
 import org.apache.xmlgraphics.java2d.AbstractGraphics2D;
 import org.apache.xmlgraphics.java2d.GraphicContext;
-
-import org.apache.batik.ext.awt.RadialGradientPaint;
-import org.apache.batik.ext.awt.LinearGradientPaint;
-import org.apache.batik.ext.awt.MultipleGradientPaint;
-import org.apache.batik.ext.awt.RenderingHintsKeyExt;
-import org.apache.batik.gvt.PatternPaint;
-import org.apache.batik.gvt.GraphicsNode;
-
-import java.text.AttributedCharacterIterator;
-import java.text.CharacterIterator;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Color;
-import java.awt.GraphicsConfiguration;
-/*  java.awt.Font is not imported to avoid confusion with
-    org.apache.fop.fonts.Font */
-import java.awt.GradientPaint;
-import java.awt.Image;
-import java.awt.Shape;
-import java.awt.Stroke;
-import java.awt.Paint;
-import java.awt.PaintContext;
-import java.awt.Rectangle;
-import java.awt.Dimension;
-import java.awt.BasicStroke;
-import java.awt.AlphaComposite;
-import java.awt.geom.AffineTransform;
-import java.awt.color.ColorSpace;
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.DirectColorModel;
-import java.awt.image.DataBuffer;
-import java.awt.image.DataBufferInt;
-import java.awt.image.ImageObserver;
-import java.awt.image.RenderedImage;
-import java.awt.image.Raster;
-import java.awt.image.WritableRaster;
-import java.awt.image.renderable.RenderableImage;
-import java.awt.geom.PathIterator;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.io.StringWriter;
-import java.io.IOException;
-import java.io.OutputStream;
-
-import java.util.Map;
-import java.util.List;
 
 /**
  * PDF Graphics 2D.
@@ -109,6 +106,9 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     
     /** The number of decimal places. */ 
     private static final int DEC = 8;
+
+    /** Convenience constant for full opacity */
+    static final int OPAQUE = 255;
     
     /**
      * the PDF Document being created
@@ -406,8 +406,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         String key = "__AddJPEG_" + hashCode() + "_" + jpegCount[0];
         jpegCount[0]++;
         FopPDFImage fopimage = new FopPDFImage(jpeg, key);
-        int xObjectNum = this.pdfDoc.addImage(resourceContext, 
-                                              fopimage).getXNumber();
+        PDFName imageName = this.pdfDoc.addImage(resourceContext, 
+                                              fopimage).getName();
         AffineTransform at = getTransform();
         double[] matrix = new double[6];
         at.getMatrix(matrix);
@@ -421,8 +421,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         currentStream.write("" + width + " 0 0 "
                           + (-height) + " "
                           + x + " "
-                          + (y + height) + " cm\n" + "/Im"
-                          + xObjectNum + " Do\nQ\n");
+                          + (y + height) + " cm\n"
+                          + imageName + " Do\nQ\n");
 
         if (outputStream != null) {
             try {
@@ -518,7 +518,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         // the pdf document. If so, we just reuse the reference;
         // otherwise we have to build a FopImage and add it to the pdf
         // document
-        PDFXObject imageInfo = pdfDoc.getImage("TempImage:" + img.toString());
+        PDFXObject imageInfo = pdfDoc.getXObject("TempImage:" + img.toString());
         if (imageInfo == null) {
             // OK, have to build and add a PDF image
 
@@ -579,7 +579,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                                              + img.toString(), buf.getWidth(),
                                              buf.getHeight(), mask, null);
                 fopimg.setColorSpace(new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_GRAY));
-                PDFXObject xobj = pdfDoc.addImage(resourceContext, fopimg);
+                PDFImageXObject xobj = pdfDoc.addImage(resourceContext, fopimg);
                 ref = xobj.referencePDF();
 
                 if (outputStream != null) {
@@ -622,8 +622,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         Shape imclip = getClip();
         writeClip(imclip);
         currentStream.write("" + width + " 0 0 " + (-height) + " " + x
-                            + " " + (y + height) + " cm\n" + "/Im"
-                            + imageInfo.getXNumber() + " Do\nQ\n");
+                            + " " + (y + height) + " cm\n"
+                            + imageInfo.getName() + " Do\nQ\n");
         return true;
     }
 
@@ -707,16 +707,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             }
         }
 
-        if (c.getAlpha() != 255) {
-            checkTransparencyAllowed();
-            Map vals = new java.util.HashMap();
-            vals.put(PDFGState.GSTATE_ALPHA_STROKE, 
-                    new Float(c.getAlpha() / 255f));
-            PDFGState gstate = pdfDoc.getFactory().makeGState(
-                    vals, graphicsState.getGState());
-            resourceContext.addGState(gstate);
-            currentStream.write("/" + gstate.getName() + " gs\n");
-        }
+        applyAlpha(OPAQUE, c.getAlpha());
 
         c = getColor();
         applyColor(c, false);
@@ -1057,12 +1048,12 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     private boolean createPattern(PatternPaint pp, boolean fill) {
         preparePainting();
 
-        FontInfo fontInfo = new FontInfo();
-        FontSetup.setup(fontInfo, null, null);
+        FontInfo specialFontInfo = new FontInfo();
+        FontSetup.setup(specialFontInfo, null, null);
 
         PDFResources res = pdfDoc.getFactory().makeResources();
         PDFResourceContext context = new PDFResourceContext(res);
-        PDFGraphics2D pattGraphic = new PDFGraphics2D(textAsShapes, fontInfo,
+        PDFGraphics2D pattGraphic = new PDFGraphics2D(textAsShapes, specialFontInfo,
                                         pdfDoc, context, pageRef,
                                         "", 0);
         pattGraphic.setGraphicContext(new GraphicContext());
@@ -1128,7 +1119,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         /** @todo see if pdfDoc and res can be linked here,
         (currently res <> PDFDocument's resources) so addFonts() 
         can be moved to PDFDocument class */
-        res.addFonts(pdfDoc, fontInfo);
+        res.addFonts(pdfDoc, specialFontInfo);
 
         PDFPattern myPat = pdfDoc.getFactory().makePattern(
                                 resourceContext, 1, res, 1, 1, bbox,
@@ -1159,11 +1150,13 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         Shape clip = getClip();
         Rectangle2D usrClipBounds, usrBounds;
         usrBounds = shape.getBounds2D();
-        usrClipBounds  = clip.getBounds2D();
-        if (!usrClipBounds.intersects(usrBounds)) {
-            return true;
+        if (clip != null) {
+            usrClipBounds  = clip.getBounds2D();
+            if (!usrClipBounds.intersects(usrBounds)) {
+                return true;
+            }
+            Rectangle2D.intersect(usrBounds, usrClipBounds, usrBounds);
         }
-        Rectangle2D.intersect(usrBounds, usrClipBounds, usrBounds);
         double usrX = usrBounds.getX();
         double usrY = usrBounds.getY();
         double usrW = usrBounds.getWidth();
@@ -1172,11 +1165,15 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         Rectangle devShapeBounds, devClipBounds, devBounds;
         AffineTransform at = getTransform();
         devShapeBounds = at.createTransformedShape(shape).getBounds();
-        devClipBounds  = at.createTransformedShape(clip).getBounds();
-        if (!devClipBounds.intersects(devShapeBounds)) {
-            return true;
+        if (clip != null) {
+            devClipBounds  = at.createTransformedShape(clip).getBounds();
+            if (!devClipBounds.intersects(devShapeBounds)) {
+                return true;
+            }
+            devBounds = devShapeBounds.intersection(devClipBounds);
+        } else {
+            devBounds = devShapeBounds;
         }
-        devBounds = devShapeBounds.intersection(devClipBounds);
         int devX = devBounds.x;
         int devY = devBounds.y;
         int devW = devBounds.width;
@@ -1189,7 +1186,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
         PaintContext pctx = paint.createContext(rgbCM, devBounds, usrBounds, 
                                                 at, getRenderingHints());
-        PDFXObject imageInfo = pdfDoc.getImage
+        PDFXObject imageInfo = pdfDoc.getXObject
             ("TempImage:" + pctx.toString());
         if (imageInfo != null) {
             resourceContext.getPDFResources().addXObject(imageInfo);
@@ -1237,7 +1234,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                 BitmapImage fopimg = new BitmapImage
                     ("TempImageMask:" + pctx.toString(), devW, devH, mask, null);
                 fopimg.setColorSpace(new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_GRAY));
-                PDFXObject xobj = pdfDoc.addImage(resourceContext, fopimg);
+                PDFImageXObject xobj = pdfDoc.addImage(resourceContext, fopimg);
                 maskRef = xobj.referencePDF();
 
                 if (outputStream != null) {
@@ -1265,8 +1262,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         currentStream.write("q\n");
         writeClip(shape);
         currentStream.write("" + usrW + " 0 0 " + (-usrH) + " " + usrX
-                            + " " + (usrY + usrH) + " cm\n" + "/Im"
-                            + imageInfo.getXNumber() + " Do\nQ\n");
+                            + " " + (usrY + usrH) + " cm\n"
+                            + imageInfo.getName() + " Do\nQ\n");
         return true;
     }
 
@@ -1419,69 +1416,25 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         if (ovFontState == null) {
             java.awt.Font gFont = getFont();
             fontTransform = gFont.getTransform();
-            String n = gFont.getFamily();
-            if (n.equals("sanserif")) {
-                n = "sans-serif";
-            }
-            float siz = gFont.getSize2D();
-            String style = gFont.isItalic() ? "italic" : "normal";
-            int weight = gFont.isBold() ? Font.WEIGHT_BOLD : Font.WEIGHT_NORMAL;
-            FontTriplet triplet = fontInfo.fontLookup(n, style, weight);
-            fontState = fontInfo.getFontInstance(triplet, (int)(siz * 1000 + 0.5));
+            fontState = getInternalFontForAWTFont(gFont);
         } else {
             fontState = fontInfo.getFontInstance(
                     ovFontState.getFontTriplet(), ovFontState.getFontSize());
             ovFontState = null;
         }
-        String name;
-        float size;
-        name = fontState.getFontName();
-        size = (float)fontState.getFontSize() / 1000f;
-
-        if ((!name.equals(this.currentFontName))
-                || (size != this.currentFontSize)) {
-            this.currentFontName = name;
-            this.currentFontSize = size;
-            currentStream.write("/" + name + " " + size + " Tf\n");
-
-        }
+        updateCurrentFont(fontState);
 
         currentStream.write("q\n");
 
         Color c = getColor();
         applyColor(c, true);
         applyPaint(getPaint(), true);
-        int salpha = c.getAlpha();
+        applyAlpha(c.getAlpha(), OPAQUE);
 
-        if (salpha != 255) {
-            checkTransparencyAllowed();
-            Map vals = new java.util.HashMap();
-            vals.put(PDFGState.GSTATE_ALPHA_NONSTROKE, new Float(salpha / 255f));
-            PDFGState gstate = pdfDoc.getFactory().makeGState(
-                    vals, graphicsState.getGState());
-            resourceContext.addGState(gstate);
-            currentStream.write("/" + gstate.getName() + " gs\n");
-        }
+        Map kerning = fontState.getKerning();
+        boolean kerningAvailable = (kerning != null && !kerning.isEmpty());
 
-        Map kerning = null;
-        boolean kerningAvailable = false;
-
-        kerning = fontState.getKerning();
-        if (kerning != null && !kerning.isEmpty()) {
-            kerningAvailable = true;
-        }
-
-        // This assumes that *all* CIDFonts use a /ToUnicode mapping
-        boolean useMultiByte = false;
-        org.apache.fop.fonts.Typeface f =
-            (org.apache.fop.fonts.Typeface)fontInfo.getFonts().get(name);
-        if (f instanceof LazyFont) {
-            if (((LazyFont) f).getRealFont() instanceof CIDFont) {
-                useMultiByte = true;
-            }
-        } else if (f instanceof CIDFont) {
-            useMultiByte = true;
-        }
+        boolean useMultiByte = isMultiByteFont(currentFontName);
 
         // String startText = useMultiByte ? "<FEFF" : "(";
         String startText = useMultiByte ? "<" : "(";
@@ -1527,6 +1480,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                     case '\\':
                         currentStream.write("\\");
                         break;
+                    default:
                     }
                     currentStream.write(ch);
                 }
@@ -1543,11 +1497,86 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         }
         currentStream.write(endText);
 
-
         currentStream.write("] TJ\n");
-
         currentStream.write("ET\n");
         currentStream.write("Q\n");
+    }
+
+    /**
+     * Applies the given alpha values for filling and stroking.
+     * @param fillAlpha A value between 0 and 255 (=OPAQUE) for filling
+     * @param strokeAlpha A value between 0 and 255 (=OPAQUE) for stroking
+     */
+    protected void applyAlpha(int fillAlpha, int strokeAlpha) {
+        if (fillAlpha != OPAQUE || strokeAlpha != OPAQUE) {
+            checkTransparencyAllowed();
+            Map vals = new java.util.HashMap();
+            if (fillAlpha != OPAQUE) {
+                vals.put(PDFGState.GSTATE_ALPHA_NONSTROKE, new Float(fillAlpha / 255f));
+            }
+            if (strokeAlpha != OPAQUE) {
+                vals.put(PDFGState.GSTATE_ALPHA_STROKE, new Float(strokeAlpha / 255f));
+            }
+            PDFGState gstate = pdfDoc.getFactory().makeGState(
+                    vals, graphicsState.getGState());
+            resourceContext.addGState(gstate);
+            currentStream.write("/" + gstate.getName() + " gs\n");
+        }
+    }
+
+    /**
+     * Updates the currently selected font.
+     * @param font the new font to use
+     */
+    protected void updateCurrentFont(Font font) {
+        String name = font.getFontName();
+        float size = (float)font.getFontSize() / 1000f;
+
+        //Only update if necessary
+        if ((!name.equals(this.currentFontName))
+                || (size != this.currentFontSize)) {
+            this.currentFontName = name;
+            this.currentFontSize = size;
+            currentStream.write("/" + name + " " + size + " Tf\n");
+        }
+    }
+
+    /**
+     * Returns a suitable internal font given an AWT Font instance.
+     * @param awtFont the AWT font
+     * @return the internal Font
+     */
+    protected Font getInternalFontForAWTFont(java.awt.Font awtFont) {
+        Font fontState;
+        String n = awtFont.getFamily();
+        if (n.equals("sanserif")) {
+            n = "sans-serif";
+        }
+        float siz = awtFont.getSize2D();
+        String style = awtFont.isItalic() ? "italic" : "normal";
+        int weight = awtFont.isBold() ? Font.WEIGHT_BOLD : Font.WEIGHT_NORMAL;
+        FontTriplet triplet = fontInfo.fontLookup(n, style, weight);
+        fontState = fontInfo.getFontInstance(triplet, (int)(siz * 1000 + 0.5));
+        return fontState;
+    }
+
+    /**
+     * Determines whether the font with the given name is a multi-byte font.
+     * @param name the name of the font
+     * @return true if it's a multi-byte font
+     */
+    protected boolean isMultiByteFont(String name) {
+        // This assumes that *all* CIDFonts use a /ToUnicode mapping
+        org.apache.fop.fonts.Typeface f
+            = (org.apache.fop.fonts.Typeface)fontInfo.getFonts().get(name);
+        if (f instanceof LazyFont) {
+            if (((LazyFont) f).getRealFont() instanceof CIDFont) {
+                return true;
+            }
+        } else if (f instanceof CIDFont) {
+            return true;
+        }
+        return false;
     }
 
     private void addKerning(StringWriter buf, Integer ch1, Integer ch2,
@@ -1702,16 +1731,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             }
         }
 
-        if (c.getAlpha() != 255) {
-            checkTransparencyAllowed();
-            Map vals = new java.util.HashMap();
-            vals.put(PDFGState.GSTATE_ALPHA_NONSTROKE, 
-                    new Float(c.getAlpha() / 255f));
-            PDFGState gstate = pdfDoc.getFactory().makeGState(
-                    vals, graphicsState.getGState());
-            resourceContext.addGState(gstate);
-            currentStream.write("/" + gstate.getName() + " gs\n");
-        }
+        applyAlpha(c.getAlpha(), OPAQUE);
 
         c = getColor();
         applyColor(c, true);

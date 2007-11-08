@@ -19,7 +19,6 @@
 
 package org.apache.fop.fonts;
 
-import java.util.BitSet;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -31,11 +30,17 @@ import org.apache.commons.logging.LogFactory;
  */
 public class Font {
 
+    /** Extra Bold font weight */
+    public static final int WEIGHT_EXTRA_BOLD = 800;
+    
     /** Bold font weight */
     public static final int WEIGHT_BOLD = 700;
-
+    
     /** Normal font weight */
     public static final int WEIGHT_NORMAL = 400;
+
+    /** Light font weight */
+    public static final int WEIGHT_LIGHT = 200;
 
     /** Normal font style */
     public static final String STYLE_NORMAL = "normal";

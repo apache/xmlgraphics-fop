@@ -28,9 +28,6 @@ import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-
-// FOP
 import org.apache.fop.fonts.Glyphs;
 
 /**
@@ -190,8 +187,8 @@ public class PFMFile {
         int i = inStream.readShort();
 
 
-        if (log.isDebugEnabled()) {
-            log.debug(i + " kerning pairs");
+        if (log.isTraceEnabled()) {
+            log.trace(i + " kerning pairs");
         }
         while (i > 0) {
             int g1 = (int)inStream.readByte();
@@ -204,11 +201,11 @@ public class PFMFile {
                 adj = -(0x10000 - adj);
             }
 
-            if (log.isDebugEnabled()) {
-                log.debug("Char no: (" + g1 + ", " + g2 + ") kern: " + adj);
+            if (log.isTraceEnabled()) {
+                log.trace("Char no: (" + g1 + ", " + g2 + ") kern: " + adj);
                 final String glyph1 = Glyphs.TEX8R_GLYPH_NAMES[g1];
                 final String glyph2 = Glyphs.TEX8R_GLYPH_NAMES[g2];
-                log.debug("glyphs: " + glyph1 + ", " + glyph2);
+                log.trace("glyphs: " + glyph1 + ", " + glyph2);
             }
 
             Map adjTab = (Map)kerningTab.get(new Integer(g1));
@@ -302,7 +299,15 @@ public class PFMFile {
     public String getCharSetName() {
         switch (dfCharSet) {
         case 0:
-            return "WinAnsi";
+            return "WinAnsi"; // AKA ISOAdobe
+        case 1:
+            return "Expert";
+        case 2:
+            if ("Symbol".equals(getPostscriptName())) {
+                return "Symbol";
+            } else {
+                return "ExpertSubset";
+            }
         case 128:
             return "Shift-JIS (Japanese)";
         default:

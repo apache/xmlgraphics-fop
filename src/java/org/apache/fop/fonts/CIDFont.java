@@ -48,12 +48,6 @@ public abstract class CIDFont extends CustomFont {
 
     // ---- Required ----
     /**
-     * Returns the name of the base font.
-     * @return the name of the base font
-     */
-    public abstract String getCidBaseFont();
-
-    /**
      * Returns the type of the CID font.
      * @return the type of the CID font
      */

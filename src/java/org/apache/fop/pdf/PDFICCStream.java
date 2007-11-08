@@ -73,24 +73,13 @@ public class PDFICCStream extends PDFStream {
         cp.write(out);
     }
     
-    /**
-     * {@inheritDoc}
-     */
-    protected String buildStreamDict(String lengthEntry) {
-        final String filterEntry = getFilterList().buildFilterDictEntries();
-        final StringBuffer sb = new StringBuffer(128);
-        sb.append(getObjectID());
-        sb.append("<< ");
-        sb.append("/N " + cp.getNumComponents());
-
+    /** {@inheritDoc} */
+    protected void populateStreamDict(Object lengthEntry) {
+        put("N", cp.getNumComponents());
         if (pdfColorSpace != null) {
-            sb.append("\n/Alternate /" + pdfColorSpace.getName() + " ");
+            put("Alternate", new PDFName(pdfColorSpace.getName()));
         }
-
-        sb.append("\n/Length " + lengthEntry);
-        sb.append("\n" + filterEntry);
-        sb.append("\n>>\n");
-        return sb.toString();
+        super.populateStreamDict(lengthEntry);
     }
 
 }

@@ -37,7 +37,8 @@
 
           <!-- table 1 -->
           <fo:table table-layout="fixed" width="200pt" border-collapse="collapse">
-            <fo:table-column column-width="proportional-column-width(1)"/>
+            <fo:table-column column-width="proportional-column-width(1)"
+              number-columns-repeated="2"/>
             <fo:table-body>
               <fo:table-row>
                 <fo:table-cell

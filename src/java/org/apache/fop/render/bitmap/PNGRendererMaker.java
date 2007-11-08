@@ -23,6 +23,8 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.AbstractRendererMaker;
 import org.apache.fop.render.Renderer;
+import org.apache.fop.render.RendererConfigurator;
+import org.apache.fop.render.java2d.Java2DRendererConfigurator;
 
 /**
  * RendererMaker for the PNG Renderer.
@@ -35,6 +37,11 @@ public class PNGRendererMaker extends AbstractRendererMaker {
     /** {@inheritDoc} */
     public Renderer makeRenderer(FOUserAgent ua) {
         return new PNGRenderer();
+    }
+
+    /** {@inheritDoc} */
+    public RendererConfigurator getConfigurator(FOUserAgent userAgent) {
+        return new Java2DRendererConfigurator(userAgent);
     }
 
     /** {@inheritDoc} */

@@ -97,6 +97,15 @@ public class PDFArray extends PDFObject {
     }
     
     /**
+     * Sets an entry at a given location.
+     * @param index the index of the value to set
+     * @param value the new value
+     */
+    public void set(int index, double value) {
+        this.values.set(index, new Double(value));
+    }
+    
+    /**
      * Gets an entry at a given location.
      * @param index the index of the value to set
      * @return the requested value
@@ -111,6 +120,14 @@ public class PDFArray extends PDFObject {
      */
     public void add(Object obj) {
         this.values.add(obj);
+    }
+    
+    /**
+     * Adds a new value to the array.
+     * @param value the value
+     */
+    public void add(double value) {
+        this.values.add(new Double(value));
     }
     
     /**

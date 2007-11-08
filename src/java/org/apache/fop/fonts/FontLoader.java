@@ -83,7 +83,20 @@ public abstract class FontLoader {
                 throws IOException {
         return loadFont(fontFile.getAbsolutePath(), resolver);
     }
-        
+
+    /**
+     * Loads a custom font from an URL. In the case of Type 1 fonts, the PFB file must be specified.
+     * @param fontUrl the URL representation of the font
+     * @param resolver the font resolver to use when resolving URIs
+     * @return the newly loaded font
+     * @throws IOException In case of an I/O error
+     */
+    public static CustomFont loadFont(URL fontUrl, FontResolver resolver)
+                throws IOException {
+        return loadFont(fontUrl.toExternalForm(), resolver);
+    }
+    
+    
     /**
      * Loads a custom font from a URI. In the case of Type 1 fonts, the PFB file must be specified.
      * @param fontFileURI the URI to the font
@@ -94,18 +107,17 @@ public abstract class FontLoader {
     public static CustomFont loadFont(String fontFileURI, FontResolver resolver)
                 throws IOException {
         fontFileURI = fontFileURI.trim();
-        String name = fontFileURI.toLowerCase();
         String effURI;
         boolean type1 = isType1(fontFileURI);
         if (type1) {
-            effURI = name.substring(0, fontFileURI.length() - 4) + ".pfm";
+            effURI = fontFileURI.substring(0, fontFileURI.length() - 4) + ".pfm";
         } else {
             effURI = fontFileURI;
         }
         if (log.isDebugEnabled()) {
             log.debug("opening " + effURI);
         }
-        InputStream in = openFontFile(resolver, effURI);
+        InputStream in = openFontUri(resolver, effURI);
         return loadFontFromInputStream(fontFileURI, resolver, type1, in);
     }
 
@@ -136,14 +148,14 @@ public abstract class FontLoader {
     }
 
     /**
-     * Opens a font file and returns an input stream.
+     * Opens a font uri and returns an input stream.
      * @param resolver the FontResolver to use for font URI resolution
      * @param uri the URI representing the font
      * @return the InputStream to read the font from.
      * @throws IOException In case of an I/O error
      * @throws MalformedURLException If an invalid URL is built
      */
-    private static InputStream openFontFile(FontResolver resolver, String uri) 
+    private static InputStream openFontUri(FontResolver resolver, String uri) 
                     throws IOException, MalformedURLException {
         InputStream in = null;
         if (resolver != null) {

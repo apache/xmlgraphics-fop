@@ -24,6 +24,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.render.PrintRendererConfigurator;
 import org.apache.fop.render.Renderer;
+import org.apache.xmlgraphics.ps.PSGenerator;
 
 /**
  * Postscript renderer config 
@@ -55,7 +56,8 @@ public class PSRendererConfigurator extends PrintRendererConfigurator {
             Configuration child;
             child = cfg.getChild("language-level");
             if (child != null) {
-                psRenderer.setLanguageLevel(child.getValueAsInteger(-1));
+                psRenderer.setLanguageLevel(child.getValueAsInteger(
+                        PSGenerator.DEFAULT_LANGUAGE_LEVEL));
             }
             child = cfg.getChild("optimize-resources");
             if (child != null) {
