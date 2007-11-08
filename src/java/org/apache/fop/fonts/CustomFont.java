@@ -20,7 +20,9 @@
 package org.apache.fop.fonts;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.transform.Source;
 
@@ -32,7 +34,7 @@ public abstract class CustomFont extends Typeface
 
     private String fontName = null;
     private String fullName = null;
-    private String familyName = null;
+    private Set familyNames = null; //Set<String>
     private String fontSubName = null;
     private String embedFileName = null;
     private String embedResourceName = null;
@@ -71,11 +73,11 @@ public abstract class CustomFont extends Typeface
     }
     
     /**
-     * Return the font family.
-     * @return the font family
+     * Returns the font family names.
+     * @return the font family names (a Set of Strings)
      */
-    public String getFamilyName() {
-        return familyName;
+    public Set getFamilyNames() {
+        return Collections.unmodifiableSet(this.familyNames);
     }
 
     /**
@@ -280,8 +282,8 @@ public abstract class CustomFont extends Typeface
     }
     
     /** {@inheritDoc} */
-    public void setFamilyName(String name) {
-        this.familyName = name;
+    public void setFamilyNames(Set names) {
+        this.familyNames = new java.util.HashSet(names);
     }
     
     /**

@@ -22,6 +22,7 @@ package org.apache.fop.fonts.apps;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -209,7 +210,7 @@ public class TTFReader extends AbstractFontReader {
         if (!supported) {
             return null;
         }
-        log.info("Font Family: " + ttfFile.getFamilyName());
+        log.info("Font Family: " + ttfFile.getFamilyNames());
         if (ttfFile.isCFF()) {
             throw new UnsupportedOperationException(
                     "OpenType fonts with CFF data are not supported, yet");
@@ -271,10 +272,12 @@ public class TTFReader extends AbstractFontReader {
             root.appendChild(el);
             el.appendChild(doc.createTextNode(ttf.getFullName()));
         }
-        if (ttf.getFamilyName() != null) {
+        Set familyNames = ttf.getFamilyNames();
+        if (familyNames.size() > 0) {
+            String familyName = (String)familyNames.iterator().next(); 
             el = doc.createElement("family-name");
             root.appendChild(el);
-            el.appendChild(doc.createTextNode(ttf.getFamilyName()));
+            el.appendChild(doc.createTextNode(familyName));
         }
 
         el = doc.createElement("embed");
