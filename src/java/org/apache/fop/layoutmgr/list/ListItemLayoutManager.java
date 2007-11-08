@@ -224,11 +224,6 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         label.initialize();
         labelList = label.getNextKnuthElements(childLC, alignment);
         
-        //Space resolution as if the contents were placed in a new reference area
-        //(see 6.8.3, XSL 1.0, section on Constraints, last paragraph)
-        // SpaceResolver.resolveElementList(labelList);
-        // ElementListObserver.observe(labelList, "list-item-label", label.getPartFO().getId());
-        
         if (childLC.isKeepWithPreviousPending()) {
             context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
         }
@@ -240,22 +235,11 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         body.initialize();
         bodyList = body.getNextKnuthElements(childLC, alignment);
 
-        //Space resolution as if the contents were placed in a new reference area
-        //(see 6.8.3, XSL 1.0, section on Constraints, last paragraph)
-        // SpaceResolver.resolveElementList(bodyList);
-        // ElementListObserver.observe(bodyList, "list-item-body", body.getPartFO().getId());
-        
         if (childLC.isKeepWithPreviousPending()) {
             context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
         }
         this.keepWithNextPendingOnBody = childLC.isKeepWithNextPending();
 
-        // create a combined list
-        // LinkedList returnedList = getCombinedKnuthElementsForListItem(labelList, bodyList, context);
-
-        // "wrap" the Position inside each element
-        // wrapPositionElements(returnedList, returnList, true);
-        
         Position returnPosition = new LeafPosition(this, 0);
         ListElement elt = new ListItemListElement(this, returnPosition, context);
         returnList.add(elt);
@@ -278,19 +262,6 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
 
     public LinkedList doLineBreaking(LayoutContext context) {
         LinkedList returnList = new LinkedList();
-        // TODO
-
-        // for label
-        //Space resolution as if the contents were placed in a new reference area
-        //(see 6.8.3, XSL 1.0, section on Constraints, last paragraph)
-        // SpaceResolver.resolveElementList(labelList);
-        // ElementListObserver.observe(labelList, "list-item-label", label.getPartFO().getId());
-        
-        // for body
-        //Space resolution as if the contents were placed in a new reference area
-        //(see 6.8.3, XSL 1.0, section on Constraints, last paragraph)
-        // SpaceResolver.resolveElementList(bodyList);
-        // ElementListObserver.observe(bodyList, "list-item-body", body.getPartFO().getId());
 
         // create a combined list
         LinkedList returnedList = getCombinedKnuthElementsForListItem(context);
@@ -469,6 +440,8 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
                 --i;
             }
         }
+
+        //Space resolution as if the contents were placed in a new reference area
         SpaceResolver.resolveElementList(seq, startIndex);
     }
 
