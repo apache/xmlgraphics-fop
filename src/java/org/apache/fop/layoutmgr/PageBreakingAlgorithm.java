@@ -30,6 +30,7 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.layoutmgr.AbstractBreaker.PageBreakPosition;
+import org.apache.fop.layoutmgr.list.ListItemListElement;
 import org.apache.fop.traits.MinOptMax;
 
 class PageBreakingAlgorithm extends BreakingAlgorithm {
@@ -811,6 +812,10 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
      * This method iterates over seq starting at startIndex.
      * If it finds a ParagraphListElement, the paragraph is broken into lines,
      * and the ParagraphListElement is replaced by the resulting elements.
+     * If it finds a ListItemListElement, the paragraphs in the next step
+     * of the list item are broken into lines,
+     * the elements of the next step are added to the sequence before the ListItemListElement,
+     * and the ListItemListElement is removed from the sequence if all steps have been returned.  
      * Then space resolution is done on seq starting at startIndex.
      * @param seq the Knuth Sequence
      * @param startIndex the start index
@@ -819,12 +824,22 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     void resolveElements(List seq, int startIndex, boolean doall) {
         for (int i = startIndex; i < seq.size(); ++i) {
             ListElement elt = (ListElement) seq.get(i);
-            if (!doall && !elt.isUnresolvedElement() && !(elt instanceof ParagraphListElement)) {
+            if (!doall && !elt.isUnresolvedElement()
+                    && !(elt instanceof ParagraphListElement)
+                    && !(elt instanceof ListItemListElement)) {
                 break;
             }
             if (elt instanceof ParagraphListElement) {
                 LinkedList lineElts = ((ParagraphListElement) elt).doLineBreaking();
                 seq.remove(i);
+                seq.addAll(i, lineElts);
+                // consider the new element at i
+                --i;
+            } else if (elt instanceof ListItemListElement) {
+                LinkedList lineElts = ((ListItemListElement) elt).doLineBreaking();
+                if (((ListItemListElement) elt).lineBreakingIsFinished()) {
+                    seq.remove(i);
+                }
                 seq.addAll(i, lineElts);
                 // consider the new element at i
                 --i;
@@ -836,7 +851,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     /**
      * The iteration stops at the first resolved element (after line breaking).
      * After space resolution it is guaranteed that seq does not to contain
-     * ParagraphListElements until the first resolved element.
+     * Paragraph or ListItemListElements until the first resolved element.
      * @param seq the Knuth Sequence
      * @param startIndex the start index
      */

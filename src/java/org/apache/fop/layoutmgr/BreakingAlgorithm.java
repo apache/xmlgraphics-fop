@@ -462,8 +462,13 @@ public abstract class BreakingAlgorithm {
         // main loop
         for (int i = startIndex; i < par.size(); i++) {
             resolveElements(par, i);
-            if (i == par.size() - 1) {
+            // resolveElements may have removed element i
+            // without adding any element, so that i == par.size()
+            if (i >= par.size() - 1) {
                 par.endBlockSequence();
+                if (i == par.size()) {
+                    break;
+                }
             }
             thisElement = (KnuthElement) par.get(i);
             if (thisElement.isBox()) {
