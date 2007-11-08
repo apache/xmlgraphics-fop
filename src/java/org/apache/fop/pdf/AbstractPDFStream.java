@@ -225,7 +225,9 @@ public abstract class AbstractPDFStream extends PDFDictionary {
      */
     protected void populateStreamDict(Object lengthEntry) {
         put("Length", lengthEntry);
-        getFilterList().putFilterDictEntries(this);
+        if (!getFilterList().isDisableAllFilters()) {
+            getFilterList().putFilterDictEntries(this);
+        }
     }
 
     /**
