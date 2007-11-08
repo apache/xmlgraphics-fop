@@ -17,6 +17,8 @@
 <!-- $Id$ -->
 <font-metrics>
   <font-name>ZapfDingbats</font-name>
+  <full-name>ITC Zapf Dingbats</full-name>
+  <family-name>ZapfDingbats</family-name>
   <class-name>ZapfDingbats</class-name>
   <encoding>ZapfDingbatsEncoding</encoding>
   <cap-height>820</cap-height>

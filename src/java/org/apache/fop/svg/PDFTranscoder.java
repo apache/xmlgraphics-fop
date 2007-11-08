@@ -25,6 +25,7 @@ import java.io.IOException;
 import org.apache.avalon.framework.configuration.Configurable;
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
+import org.apache.avalon.framework.configuration.DefaultConfiguration;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.UnitProcessor;
 import org.apache.batik.bridge.UserAgent;
@@ -33,10 +34,10 @@ import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.TranscodingHints;
 import org.apache.batik.transcoder.image.ImageTranscoder;
+import org.apache.batik.transcoder.keys.BooleanKey;
 import org.apache.batik.transcoder.keys.FloatKey;
 import org.apache.fop.Version;
 import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.fonts.FontSetup;
 import org.w3c.dom.Document;
 import org.w3c.dom.svg.SVGLength;
 
@@ -63,6 +64,12 @@ import org.w3c.dom.svg.SVGLength;
  * <tt>KEY_USER_STYLESHEET_URI</tt> to fix the URI of a user
  * stylesheet, and <tt>KEY_PIXEL_TO_MM</tt> to specify the pixel to
  * millimeter conversion factor.
+ * 
+ * <p><tt>KEY_AUTO_FONTS</tt> to disable the auto-detection of fonts installed in the system.
+ * The PDF Transcoder cannot use AWT's font subsystem and that's why the fonts have to be
+ * configured differently. By default, font auto-detection is enabled to match the behaviour
+ * of the other transcoders, but this may be associated with a price in the form of a small
+ * performance penalty. If font auto-detection is not desired, it can be disable using this key.
  *
  * @author <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
  * @version $Id$
@@ -76,13 +83,20 @@ public class PDFTranscoder extends AbstractFOPTranscoder
      */
     public static final TranscodingHints.Key KEY_DEVICE_RESOLUTION = new FloatKey();
 
+    /**
+     * The key is used to specify whether the available fonts should be automatically
+     * detected. The alternative is to configure the transcoder manually using a configuration
+     * file. 
+     */
+    public static final TranscodingHints.Key KEY_AUTO_FONTS = new BooleanKey();
+
     private Configuration cfg = null;
     
     /** Graphics2D instance that is used to paint to */
     protected PDFDocumentGraphics2D graphics = null;
 
     /**
-     * Constructs a new <tt>ImageTranscoder</tt>.
+     * Constructs a new <tt>PDFTranscoder</tt>.
      */
     public PDFTranscoder() {
         super();
@@ -102,9 +116,7 @@ public class PDFTranscoder extends AbstractFOPTranscoder
         };
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void configure(Configuration cfg) throws ConfigurationException {
         this.cfg = cfg;
     }
@@ -121,16 +133,35 @@ public class PDFTranscoder extends AbstractFOPTranscoder
                              TranscoderOutput output) 
         throws TranscoderException {
 
-        graphics = new PDFDocumentGraphics2D();
+        graphics = new PDFDocumentGraphics2D(isTextStroked());
         graphics.getPDFDocument().getInfo().setProducer("Apache FOP Version " 
                 + Version.getVersion() 
                 + ": PDF Transcoder for Batik");
         
         try {
-            if (this.cfg != null) {
+            Configuration effCfg = this.cfg; 
+            if (effCfg == null) {
+                //By default, enable font auto-detection if no cfg is given
+                boolean autoFonts = true;
+                if (hints.containsKey(KEY_AUTO_FONTS)) {
+                    autoFonts = ((Boolean)hints.get(KEY_AUTO_FONTS)).booleanValue();
+                }
+                if (autoFonts) {
+                    DefaultConfiguration c = new DefaultConfiguration("pdf-transcoder");
+                    DefaultConfiguration fonts = new DefaultConfiguration("fonts");
+                    c.addChild(fonts);
+                    DefaultConfiguration autodetect = new DefaultConfiguration("auto-detect");
+                    fonts.addChild(autodetect);
+                    effCfg = c;
+                }
+            }
+            
+            if (effCfg != null) {
                 PDFDocumentGraphics2DConfigurator configurator
                         = new PDFDocumentGraphics2DConfigurator();
-                configurator.configure(graphics, this.cfg);
+                configurator.configure(graphics, effCfg);
+            } else {
+                graphics.setupDefaultFontInfo();
             }
         } catch (Exception e) {
             throw new TranscoderException(
@@ -190,8 +221,18 @@ public class PDFTranscoder extends AbstractFOPTranscoder
 
     /** {@inheritDoc} */
     protected BridgeContext createBridgeContext() {
-        BridgeContext ctx = new PDFBridgeContext(userAgent, graphics.getFontInfo());
-        return ctx;
+        //For compatibility with Batik 1.6
+        return createBridgeContext("1.x");
     }
 
+    /** {@inheritDoc} */
+    public BridgeContext createBridgeContext(String version) {
+        FontInfo fontInfo = graphics.getFontInfo();
+        if (isTextStroked()) {
+            fontInfo = null;
+        }
+        BridgeContext ctx = new PDFBridgeContext(userAgent, fontInfo);
+        return ctx;
+    }
+    
 }

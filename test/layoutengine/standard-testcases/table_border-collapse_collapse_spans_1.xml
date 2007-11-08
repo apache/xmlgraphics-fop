@@ -35,7 +35,8 @@
           <fo:block>Before the tables</fo:block>
           <!-- table 1 -->
           <fo:table table-layout="fixed" width="200pt" border-collapse="collapse">
-            <fo:table-column column-width="proportional-column-width(1)"/>
+            <fo:table-column column-width="proportional-column-width(1)"
+              number-columns-repeated="2"/>
             <fo:table-body>
               <fo:table-row>
                 <fo:table-cell number-rows-spanned="2"
@@ -69,7 +70,8 @@
           <fo:block>Between tables</fo:block>
           <!-- table 2 -->
           <fo:table table-layout="fixed" width="200pt" border-collapse="collapse">
-            <fo:table-column column-width="proportional-column-width(1)"/>
+            <fo:table-column column-width="proportional-column-width(1)"
+              number-columns-repeated="2"/>
             <fo:table-body>
               <fo:table-row>
                 <fo:table-cell
@@ -104,7 +106,8 @@
           <fo:block>Between tables</fo:block>
           <!-- table 3 -->
           <fo:table table-layout="fixed" width="200pt" border-collapse="collapse">
-            <fo:table-column column-width="proportional-column-width(1)"/>
+            <fo:table-column column-width="proportional-column-width(1)"
+              number-columns-repeated="2"/>
             <fo:table-body>
               <fo:table-row>
                 <fo:table-cell number-columns-spanned="2"
@@ -142,7 +145,8 @@
           <fo:block>Between tables</fo:block>
           <!-- table 4 -->
           <fo:table table-layout="fixed" width="200pt" border-collapse="collapse">
-            <fo:table-column column-width="proportional-column-width(1)"/>
+            <fo:table-column column-width="proportional-column-width(1)"
+              number-columns-repeated="2"/>
             <fo:table-body>
               <fo:table-row>
                 <fo:table-cell
@@ -221,7 +225,7 @@
     <eval expected="45200" xpath="//flow/block[2]/block[4]/@bpda"/>
     <eval expected="6000" xpath="//flow/block[2]/block[4]/@left-offset"/>
     <eval expected="8000" xpath="//flow/block[2]/block[4]/@top-offset"/>
-    <!-- cell 1.2 -->
+    <!-- cell 2.2 -->
     <eval expected="93000" xpath="//flow/block[2]/block[5]/@ipd"/>
     <eval expected="107000" xpath="//flow/block[2]/block[5]/@ipda"/>
     <eval expected="28800" xpath="//flow/block[2]/block[5]/@bpd"/>

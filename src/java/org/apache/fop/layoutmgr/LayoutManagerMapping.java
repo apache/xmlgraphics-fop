@@ -50,14 +50,14 @@ import org.apache.fop.fo.flow.PageNumber;
 import org.apache.fop.fo.flow.PageNumberCitation;
 import org.apache.fop.fo.flow.PageNumberCitationLast;
 import org.apache.fop.fo.flow.RetrieveMarker;
-import org.apache.fop.fo.flow.Table;
-import org.apache.fop.fo.flow.TableBody;
-import org.apache.fop.fo.flow.TableCell;
-import org.apache.fop.fo.flow.TableColumn;
-import org.apache.fop.fo.flow.TableFooter;
-import org.apache.fop.fo.flow.TableHeader;
-import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.flow.Wrapper;
+import org.apache.fop.fo.flow.table.Table;
+import org.apache.fop.fo.flow.table.TableBody;
+import org.apache.fop.fo.flow.table.TableCell;
+import org.apache.fop.fo.flow.table.TableColumn;
+import org.apache.fop.fo.flow.table.TableFooter;
+import org.apache.fop.fo.flow.table.TableHeader;
+import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.SideRegion;
@@ -270,9 +270,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
 
     public static class InlineLayoutManagerMaker extends Maker {
          public void make(FONode node, List lms) {
-             if (node.getChildNodes() != null) {
-                 lms.add(new InlineLayoutManager((InlineLevel) node));
-             }
+             lms.add(new InlineLayoutManager((InlineLevel) node));
          }
     }
 

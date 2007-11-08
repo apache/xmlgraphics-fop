@@ -19,9 +19,12 @@
 
 package org.apache.fop.fonts.autodetect;
 
-import java.io.File;
-import java.net.MalformedURLException;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,6 +36,7 @@ import org.apache.fop.fonts.FontCache;
 import org.apache.fop.fonts.FontLoader;
 import org.apache.fop.fonts.FontResolver;
 import org.apache.fop.fonts.FontTriplet;
+import org.apache.fop.fonts.FontUtil;
 
 /**
  * Attempts to determine correct FontInfo
@@ -42,70 +46,73 @@ public class FontInfoFinder {
     /** logging instance */
     private Log log = LogFactory.getLog(FontInfoFinder.class);
 
-    /** font constituent names which identify a font as being of "italic" style */
-    private static final String[] ITALIC_WORDS = {"italic", "oblique"};
-
-    /** font constituent names which identify a font as being of "bold" weight */
-    private static final String[] BOLD_WORDS = {"bold", "black", "heavy", "ultra", "super"};
-
     /**
-     * Attempts to determine FontTriplet from a given CustomFont.
+     * Attempts to determine FontTriplets from a given CustomFont.
      * It seems to be fairly accurate but will probably require some tweaking over time
      * 
      * @param customFont CustomFont
-     * @return newly created font triplet
+     * @param triplet Collection that will take the generated triplets
      */
-    private FontTriplet tripletFromFont(CustomFont customFont) {
+    private void generateTripletsFromFont(CustomFont customFont, Collection triplets) {
+        if (log.isTraceEnabled()) {
+            log.trace("Font: " + customFont.getFullName() 
+                    + ", family: " + customFont.getFamilyNames() 
+                    + ", PS: " + customFont.getFontName() 
+                    + ", EmbedName: " + customFont.getEmbedFontName());
+        }
+
         // default style and weight triplet vales (fallback)
-        String name = customFont.getStrippedFontName();
+        String strippedName = customFont.getStrippedFontName();
         String subName = customFont.getFontSubName();
-        String searchName = name.toLowerCase();
+        String searchName = strippedName.toLowerCase();
         if (subName != null) {
             searchName += subName.toLowerCase();
         }
         
+        String style = guessStyle(customFont, searchName);
+        int weight = FontUtil.guessWeight(searchName);
+
+        //Full Name usually includes style/weight info so don't use these traits
+        //If we still want to use these traits, we have to make FontInfo.fontLookup() smarter
+        String fullName = customFont.getFullName();
+        triplets.add(new FontTriplet(fullName, Font.STYLE_NORMAL, Font.WEIGHT_NORMAL));
+        if (!fullName.equals(strippedName)) {
+            triplets.add(new FontTriplet(strippedName, Font.STYLE_NORMAL, Font.WEIGHT_NORMAL));
+        }
+        Set familyNames = customFont.getFamilyNames();
+        Iterator iter = familyNames.iterator();
+        while (iter.hasNext()) {
+            String familyName = (String)iter.next();
+            if (!fullName.equals(familyName)) {
+                triplets.add(new FontTriplet(familyName, style, weight));
+            }
+        }
+    }
+
+    private String guessStyle(CustomFont customFont, String fontName) {
         // style
         String style = Font.STYLE_NORMAL;
         if (customFont.getItalicAngle() > 0) {
             style = Font.STYLE_ITALIC;  
         } else {
-            for (int i = 0; i < ITALIC_WORDS.length; i++) {
-                if (searchName.indexOf(ITALIC_WORDS[i]) != -1) {
-                    style = Font.STYLE_ITALIC;          
-                    break;
-                }
-            }
+            style = FontUtil.guessStyle(fontName);
         }
-        
-        // weight
-        int weight = Font.WEIGHT_NORMAL;
-        for (int i = 0; i < BOLD_WORDS.length; i++) {
-            if (searchName.indexOf(BOLD_WORDS[i]) != -1) {
-                weight = Font.WEIGHT_BOLD;
-                break;
-            }            
-        }
-        return new FontTriplet(name, style, weight);
+        return style;
     }
     
     /**
      * Attempts to determine FontInfo from a given custom font
-     * @param fontFile the font file
+     * @param fontUrl the font URL
      * @param customFont the custom font
      * @param fontCache font cache (may be null)
      * @return
      */
     private EmbedFontInfo fontInfoFromCustomFont(
-            File fontFile, CustomFont customFont, FontCache fontCache) {
-        FontTriplet fontTriplet = tripletFromFont(customFont);
+            URL fontUrl, CustomFont customFont, FontCache fontCache) {
         List fontTripletList = new java.util.ArrayList();
-        fontTripletList.add(fontTriplet);
+        generateTripletsFromFont(customFont, fontTripletList);
         String embedUrl;
-        try {
-            embedUrl = fontFile.toURL().toExternalForm();
-        } catch (MalformedURLException e) {
-            embedUrl = fontFile.getAbsolutePath();
-        }
+        embedUrl = fontUrl.toExternalForm();
         EmbedFontInfo fontInfo = new EmbedFontInfo(null, customFont.isKerningEnabled(),
                 fontTripletList, embedUrl);
         if (fontCache != null) {
@@ -117,23 +124,24 @@ public class FontInfoFinder {
     /**
      * Attempts to determine EmbedFontInfo from a given font file.
      * 
-     * @param fontFile font file
+     * @param fontUrl font URL. Assumed to be local.
      * @param resolver font resolver used to resolve font
      * @param fontCache font cache (may be null)
      * @return newly created embed font info
      */
-    public EmbedFontInfo find(File fontFile, FontResolver resolver, FontCache fontCache) {
+    public EmbedFontInfo find(URL fontUrl, FontResolver resolver, FontCache fontCache) {
         String embedUrl = null;
-        try {
-            embedUrl = fontFile.toURL().toExternalForm();
-        } catch (MalformedURLException mfue) {
-            // should never happen
-            log.error("Failed to convert '" + fontFile + "' to URL: " + mfue.getMessage() );
-        }
+        embedUrl = fontUrl.toExternalForm();
         
         long fileLastModified = -1;
         if (fontCache != null) {
-            fileLastModified = fontFile.lastModified();
+            try {
+                fileLastModified = fontUrl.openConnection().getLastModified();
+            } catch (IOException e) {
+                // Should never happen, because URL must be local
+                log.debug("IOError: " + e.getMessage());
+                fileLastModified = 0;
+            }
             // firstly try and fetch it from cache before loading/parsing the font file
             if (fontCache.containsFont(embedUrl)) {
                 CachedFontInfo fontInfo = fontCache.getFont(embedUrl);
@@ -155,7 +163,7 @@ public class FontInfoFinder {
         // try to determine triplet information from font file
         CustomFont customFont = null;
         try {
-            customFont = FontLoader.loadFont(fontFile, resolver);
+            customFont = FontLoader.loadFont(fontUrl, resolver);
         } catch (Exception e) {
             //TODO Too verbose (it's an error but we don't care if some fonts can't be loaded)
             if (log.isErrorEnabled()) {
@@ -166,6 +174,6 @@ public class FontInfoFinder {
             }
             return null;
         }
-        return fontInfoFromCustomFont(fontFile, customFont, fontCache);     
+        return fontInfoFromCustomFont(fontUrl, customFont, fontCache);     
     }
 }

@@ -28,7 +28,7 @@ package org.apache.fop.pdf;
  */
 public class CCFFilter extends NullFilter {
 
-    private String decodeParms;
+    private PDFObject decodeParms;
 
     /**
      * {@inheritDoc}
@@ -40,7 +40,7 @@ public class CCFFilter extends NullFilter {
     /**
      * {@inheritDoc}
      */
-    public String getDecodeParms() {
+    public PDFObject getDecodeParms() {
         return this.decodeParms;
     }
 
@@ -48,7 +48,7 @@ public class CCFFilter extends NullFilter {
      * Sets the CCF decoding parameters
      * @param decodeParms The decoding parameters
      */
-    public void setDecodeParms(String decodeParms) {
+    public void setDecodeParms(PDFObject decodeParms) {
         this.decodeParms = decodeParms;
     }
 

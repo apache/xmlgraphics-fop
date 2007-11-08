@@ -309,9 +309,8 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
         }
 
         getPSLM().addIDToPage(getBlockFO().getId());
-        if (markers != null) {
-            getCurrentPV().addMarkers(markers, true, isFirst(firstPos), isLast(lastPos));
-        }
+        
+        addMarkersToPage(true, isFirst(firstPos), isLast(lastPos));
 
         if (bpUnit == 0) {
             // the Positions in positionList were inside the elements
@@ -395,9 +394,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
             childLM.addAreas(childPosIter, lc);
         }
 
-        if (markers != null) {
-            getCurrentPV().addMarkers(markers, false, isFirst(firstPos), isLast(lastPos));
-        }
+        addMarkersToPage(false, isFirst(firstPos), isLast(lastPos));
 
         TraitSetter.addSpaceBeforeAfter(curBlockArea, layoutContext.getSpaceAdjust(), 
                 effSpaceBefore, effSpaceAfter);

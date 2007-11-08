@@ -26,12 +26,12 @@ import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.Set;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import javax.xml.transform.Source;
@@ -39,11 +39,10 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-// FOP
-import org.apache.fop.image.analyser.ImageReaderFactory;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.datatypes.URISpecification;
+import org.apache.fop.image.analyser.ImageReaderFactory;
+import org.apache.xmlgraphics.util.Service;
 
 /**
  * Create FopImage objects (with a configuration file - not yet implemented).
@@ -131,6 +130,14 @@ public final class ImageFactory {
         imt = new ImageMimeType("image/emf");
         imageMimeTypes.put(imt.getMimeType(), imt);
         imt.addProvider(emfImage);
+
+        Iterator iter = Service.providers(RegisterableImageProvider.class, true);
+        while (iter.hasNext()) {
+            RegisterableImageProvider impl = (RegisterableImageProvider)iter.next();
+            imt = new ImageMimeType(impl.getSupportedMimeType());
+            imageMimeTypes.put(imt.getMimeType(), imt);
+            imt.addProvider(new ImageProvider(impl.getName(), impl.getClassName()));
+        }
     }
 
     /**
@@ -699,4 +706,3 @@ class ImageMimeType {
         }
     }
 }
-

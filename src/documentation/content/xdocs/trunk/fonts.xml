@@ -118,7 +118,32 @@
     </section>
     <section>
       <title>Base-14 Fonts</title>
-      <p>The Adobe PDF Specification specifies a set of 14 fonts that must be available to every PDF reader: Helvetica (normal, bold, italic, bold italic), Times (normal, bold, italic, bold italic), Courier (normal, bold, italic, bold italic), Symbol and ZapfDingbats.</p>
+      <p>
+        The Adobe PDF Specification specifies a set of 14 fonts that must be
+        available to every PDF reader:
+        Helvetica (normal, bold, italic, bold italic),
+        Times (normal, bold, italic, bold italic),
+        Courier (normal, bold, italic, bold italic),
+        Symbol and ZapfDingbats.
+      </p>
+      <p>
+        Please note that recent versions of Adobe Acrobat Reader replace
+        "Helvetica" with "Arial" and "Times" with "Times New Roman" internally.
+        GhostScript replaces "Helvetica" with "Nimbus Sans L" and "Times" with 
+        "Nimbus Roman No9 L". Other document viewers may do similar font
+        substitutions. If you need to make sure that there are no such
+        substitutions, you need to specify an explicit font and embed it in
+        the target document.
+      </p>
+    </section>
+    <section>
+      <title>Missing Fonts</title>
+      <p>
+        When FOP does not have a specific font at its disposal (because it's 
+        not installed in the operating system or set up in FOP's configuration),
+        the font is replaced with "any". "any" is internally mapped to the
+        Base-14 font "Times" (see above).
+      </p>
     </section>
     <section id="awt">
       <title>AWT/Operating System Fonts</title>

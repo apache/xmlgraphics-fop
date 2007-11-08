@@ -524,9 +524,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
             }
         }
 
-        if (markers != null) {
-            getCurrentPV().addMarkers(markers, true, isFirst(firstPos), isLast(lastPos));
-        }
+        addMarkersToPage(true, isFirst(firstPos), isLast(lastPos));
 
         // use the first and the last ListItemPosition to determine the 
         // corresponding indexes in the original labelList and bodyList
@@ -584,9 +582,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
             curBlockArea.setBPD(savedBPD);
         }
 
-        if (markers != null) {
-            getCurrentPV().addMarkers(markers, false, isFirst(firstPos), isLast(lastPos));
-        }
+        addMarkersToPage(false, isFirst(firstPos), isLast(lastPos));
 
         // We are done with this area add the background
         TraitSetter.addBackground(curBlockArea, 

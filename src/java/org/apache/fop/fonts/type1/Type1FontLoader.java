@@ -21,6 +21,7 @@ package org.apache.fop.fonts.type1;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Set;
 
 import org.apache.fop.fonts.FontLoader;
 import org.apache.fop.fonts.FontResolver;
@@ -55,9 +56,17 @@ public class Type1FontLoader extends FontLoader {
         pfm.load(in);
         singleFont = new SingleByteFont();
         singleFont.setFontType(FontType.TYPE1);
+        singleFont.setEncoding(pfm.getCharSetName() + "Encoding");
         singleFont.setResolver(this.resolver);
         returnFont = singleFont;
         returnFont.setFontName(pfm.getPostscriptName());
+        String fullName = pfm.getPostscriptName();
+        fullName = fullName.replace('-', ' '); //Hack! Try to emulate full name
+        returnFont.setFullName(fullName); //should be afm.getFullName()!!
+        //TODO not accurate: we need FullName from the AFM file but we don't have an AFM parser
+        Set names = new java.util.HashSet();
+        names.add(pfm.getWindowsName()); //should be afm.getFamilyName()!!
+        returnFont.setFamilyNames(names);
         returnFont.setCapHeight(pfm.getCapHeight());
         returnFont.setXHeight(pfm.getXHeight());
         returnFont.setAscender(pfm.getLowerCaseAscent());

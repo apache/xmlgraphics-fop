@@ -28,7 +28,7 @@ import org.apache.fop.util.CloseBlockerOutputStream;
 /**
  * This is an abstract base class for PDF streams.
  */
-public abstract class AbstractPDFStream extends PDFObject {
+public abstract class AbstractPDFStream extends PDFDictionary {
 
     /** The filters that should be applied */
     private PDFFilterList filters;
@@ -64,7 +64,10 @@ public abstract class AbstractPDFStream extends PDFObject {
                 this.filters = new PDFFilterList();
             } else {
                 this.filters = new PDFFilterList(getDocument().isEncryptionActive());
-                //this.filters = new PDFFilterList(false);
+            }
+            boolean hasFilterEntries = (get("Filter") != null);
+            if (hasFilterEntries) {
+                this.filters.setDisableAllFilters(true);
             }
         }
         return this.filters;
@@ -118,8 +121,8 @@ public abstract class AbstractPDFStream extends PDFObject {
         //Allocate a temporary buffer to find out the size of the encoded stream
         final StreamCache encodedStream = StreamCacheFactory.getInstance().
                 createStreamCache(getSizeHint());
-        OutputStream filteredOutput = 
-                getFilterList().applyFilters(encodedStream.getOutputStream());
+        OutputStream filteredOutput
+                = getFilterList().applyFilters(encodedStream.getOutputStream());
         outputRawStreamData(filteredOutput);
         filteredOutput.flush();
         filteredOutput.close();
@@ -146,8 +149,7 @@ public abstract class AbstractPDFStream extends PDFObject {
         //Stream contents
         CloseBlockerOutputStream cbout = new CloseBlockerOutputStream(out);
         CountingOutputStream cout = new CountingOutputStream(cbout);
-        OutputStream filteredOutput = 
-                getFilterList().applyFilters(cout);
+        OutputStream filteredOutput = getFilterList().applyFilters(cout);
         outputRawStreamData(filteredOutput);
         filteredOutput.close();
         refLength.setNumber(new Integer(cout.getCount()));
@@ -172,19 +174,17 @@ public abstract class AbstractPDFStream extends PDFObject {
         
         StreamCache encodedStream = null;
         PDFNumber refLength = null;
-        final String lengthEntry;
+        final Object lengthEntry;
         if (getDocument().isEncodingOnTheFly()) {
             refLength = new PDFNumber();
             getDocumentSafely().registerObject(refLength);
-            lengthEntry = refLength.referencePDF();
+            lengthEntry = refLength;
         } else {
             encodedStream = encodeStream();
-            lengthEntry = Integer.toString(encodedStream.getSize() + 1);
+            lengthEntry = new Integer(encodedStream.getSize() + 1);
         }
         
-        String filterEntry = getFilterList().buildFilterDictEntries();
         byte[] p = encode(buildStreamDict(lengthEntry));
-
         stream.write(p);
         length += p.length;
         
@@ -209,12 +209,25 @@ public abstract class AbstractPDFStream extends PDFObject {
      * @param lengthEntry value for the /Length entry
      * @return the newly constructed dictionary
      */
-    protected String buildStreamDict(String lengthEntry) {
-        final String filterEntry = getFilterList().buildFilterDictEntries();
-        return (getObjectID()
-            + "<< /Length " + lengthEntry + "\n"
-            + filterEntry
-            + "\n>>\n");
+    protected String buildStreamDict(Object lengthEntry) {
+        StringBuffer sb = new StringBuffer();
+        sb.append(getObjectID());
+        populateStreamDict(lengthEntry);
+        
+        writeDictionary(sb);
+        return sb.toString();
+    }
+
+    /**
+     * Populates the dictionary with all necessary entries for the stream.
+     * Override this method if you need additional entries.
+     * @param lengthEntry value for the /Length entry
+     */
+    protected void populateStreamDict(Object lengthEntry) {
+        put("Length", lengthEntry);
+        if (!getFilterList().isDisableAllFilters()) {
+            getFilterList().putFilterDictEntries(this);
+        }
     }
 
     /**

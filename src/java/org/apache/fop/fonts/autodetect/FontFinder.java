@@ -30,8 +30,12 @@ public interface FontFinder {
     
     /**
      * Finds a list of font files.
-     * @return list of font files
-     * @throws IOException In case of an I/O problem
+     * 
+     * @return list of font files. List&lt;URL&gt; in the case of the
+     *         FontFinder, and List&lt;File&gt; in the case of the
+     *         FonrDirFinders.
+     * @throws IOException
+     *             In case of an I/O problem
      */
     List find() throws IOException;
     

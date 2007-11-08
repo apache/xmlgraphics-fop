@@ -41,63 +41,55 @@
         <fo:table-body>
           <fo:table-cell>
             <test:assert property="column-number" expected="1" />
-            <fo:block>cell1</fo:block>
+            <fo:block>cell 1.1</fo:block>
           </fo:table-cell>
           <fo:table-cell>
             <test:assert property="column-number" expected="2" />
-            <fo:block>cell2</fo:block>
+            <fo:block>cell 1.2</fo:block>
           </fo:table-cell>
           <fo:table-cell>
             <test:assert property="column-number" expected="3" />
-            <fo:block>cell3</fo:block>
+            <fo:block>cell 1.3</fo:block>
           </fo:table-cell>
           <fo:table-cell>
             <test:assert property="column-number" expected="4" />
-            <fo:block>cell4</fo:block>
-          </fo:table-cell>
-          <fo:table-cell>
-            <test:assert property="column-number" expected="5" />
-            <fo:block>cell5</fo:block>
-          </fo:table-cell>
-          <fo:table-cell>
-            <test:assert property="column-number" expected="6" />
-            <fo:block>cell5b</fo:block>
+            <fo:block>cell 1.4</fo:block>
           </fo:table-cell>
           <fo:table-cell starts-row="true">
             <test:assert property="column-number" expected="1" />
-            <fo:block>cell6</fo:block>
+            <fo:block>cell 2.1</fo:block>
           </fo:table-cell>
           <fo:table-cell>
             <test:assert property="column-number" expected="2" />
-            <fo:block>cell7</fo:block>
+            <fo:block>cell 2.2</fo:block>
           </fo:table-cell>
           <fo:table-cell ends-row="true">
             <test:assert property="column-number" expected="3" />
-            <fo:block>cell8</fo:block>
+            <fo:block>cell 2.3</fo:block>
           </fo:table-cell>
           <fo:table-cell>
             <test:assert property="column-number" expected="1" />
-            <fo:block>cell9</fo:block>
+            <fo:block>cell 3.1</fo:block>
           </fo:table-cell>
           <fo:table-cell>
             <test:assert property="column-number" expected="2" />
-            <fo:block>cell10</fo:block>
+            <fo:block>cell 3.2</fo:block>
           </fo:table-cell>
           <fo:table-cell>
             <test:assert property="column-number" expected="3" />
-            <fo:block>cell11</fo:block>
+            <fo:block>cell 3.3</fo:block>
           </fo:table-cell>
           <fo:table-cell ends-row="true">
             <test:assert property="column-number" expected="4" />
-            <fo:block>cell12</fo:block>
+            <fo:block>cell 3.4</fo:block>
           </fo:table-cell>
           <fo:table-cell starts-row="true" ends-row="true">
             <test:assert property="column-number" expected="1" />
-            <fo:block>cell13</fo:block>
+            <fo:block>cell 4.1</fo:block>
           </fo:table-cell>
           <fo:table-cell ends-row="true">
             <test:assert property="column-number" expected="1" />
-            <fo:block>cell14</fo:block>
+            <fo:block>cell 5.1</fo:block>
           </fo:table-cell>
         </fo:table-body>
       </fo:table>

@@ -36,7 +36,7 @@
         <fo:flow flow-name="xsl-region-body">
           <fo:block space-after="80pt">Before the table</fo:block>
           <fo:table width="100%" table-layout="fixed" border="4pt solid black">
-            <fo:table-column number-columns-repeated="2"
+            <fo:table-column number-columns-repeated="3"
               column-width="proportional-column-width(1)"/>
             <fo:table-body>
               <fo:table-row>

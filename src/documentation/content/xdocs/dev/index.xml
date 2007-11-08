@@ -31,31 +31,13 @@ This certainly includes programmers, but may also include those contributing to 
     </section>
     <section id="lines">
       <title>Development</title>
-      <p>There are currently two branches of FOP :</p>
-      <ul>
-        <li>
-          The "maintenance branch" is the one that the last release was generated 
-          from. Because of limitations in its design, the FOP committers decided 
-          to freeze new development on this branch, and are providing only bug fixes. 
-          Please note that patches for enhancements to the maintenance branch will 
-          generally not be considered. Bug fixes are welcome there, but new developers 
-          are strongly encouraged to apply their efforts to the trunk development line.
-          <note>
-            The SVN repository URL for the maintenance branch is:<br/>
-            <code>http://svn.apache.org/repos/asf/xmlgraphics/fop/branches/fop-0_20_2-maintain/</code>
-          </note>
-        </li>
-        <li>
-          The main development line is the future of FOP. It is currently not as 
-          mature as the "maintenance branch", but has far greater long-term prospects. 
-          It is also known as the "root" or "trunk" or "redesign".
-          <note>
-            The SVN repository URL for the trunk is:<br/>
-            <code>http://svn.apache.org/repos/asf/xmlgraphics/fop/trunk/</code>
-          </note>
-        </li>
-      </ul>
-      <p>Because there is a fair amount of common information between the maintenance and trunk development lines, we attempt to document them together, highlighting differences only where needed.</p>
+      <p>
+        The main development happens on "FOP Trunk".
+      </p>
+      <note>
+        The SVN repository URL for the trunk is:<br/>
+        <code>http://svn.apache.org/repos/asf/xmlgraphics/fop/trunk/</code>
+      </note>
     </section>
     <section id="involved">
       <title>Getting Involved</title>
@@ -64,7 +46,7 @@ This certainly includes programmers, but may also include those contributing to 
         <p>Review the <link href="http://xml.apache.org/roles.html">Apache Project Roles and Responsibilities</link> document for an understanding of the various roles of contributors within the community.</p>
       </section>
       <section id="fop-tasks">
-        <title>Understand FOP Development Tasks</title>
+        <title>How you can help</title>
         <p>There are many different ways that you can help with FOP development. The following is a non-exhaustive list of ways that <em>non-programmers</em> can help. Remember that an hour spent on the tasks below is an hour that a programmer can devote to fixing bugs or adding features instead:</p>
         <ul>
           <li>Answer questions on the fop-user mailing list.</li>
@@ -93,7 +75,13 @@ This certainly includes programmers, but may also include those contributing to 
         <title>Understand FOP's Design</title>
         <p>The design for FOP is specified under the <link href="design/index.html">Design</link> section. This is where the information on how FOP is developed and designed
 internally will be kept.
-    </p>
+        </p>
+        <p>
+          Another place where we write design documentation is the <link href="http://wiki.apache.org/xmlgraphics-fop/DeveloperPages">FOP Wiki</link>.
+        </p>
+        <note>
+          Our design documentation may not always be up to date!
+        </note>
       </section>
       <section id="mail-fop-dev">
         <title>Subscribe to the fop-dev Mailing List</title>
@@ -104,18 +92,13 @@ Appropriate mailing lists for these topics can be found on the <link href="../ma
           <li>
 To review the archives, you have several options:
             <ul>
-              <li>
-                The <link href="http://mail-archives.eu.apache.org/mod_mbox/xmlgraphics-fop-dev/">Apache Mailing List archive (mod_mbox)</link>.
-              </li>
-              <li>
-                The <link href="http://xmlgraphics.apache.org/mail/fop-dev/">Apache Mailing List archive (gzipped mbox files)</link>.
-              </li>
-              <li>
-                The <link href="http://marc.theaimsgroup.com/?l=fop-dev&amp;r=1&amp;w=2">Mailing list ARChives</link> (MARC) at the AIMS group (search).
-              </li>
-              <li>
-                The <link href="http://mail-archives.apache.org/eyebrowse/SummarizeList?listName=fop-dev@xml.apache.org">Apache Eyebrowse</link> archive (search, list by date, author, subject, or thread).
-              </li>
+              <li>The <link href="http://mail-archives.apache.org/mod_mbox/xmlgraphics-fop-dev/">Apache Mailing List archive (mod_mbox)</link>.</li>
+              <li>The <link href="http://xmlgraphics.apache.org/mail/fop-dev/">Apache Mailing List archive (gzipped mbox files)</link>.</li>
+              <li>The <link href="http://marc.theaimsgroup.com/?l=fop-dev&amp;r=1&amp;w=2">Mailing list ARChives</link> (MARC) at the AIMS group (search).</li>
+              <li><link href="http://www.mail-archive.com/fop-dev%40xmlgraphics.apache.org/">The Mail Archive</link>.</li>
+              <li>The <link href="http://dir.gmane.org/gmane.text.xml.fop.devel">GMANE</link> archive.</li>
+              <li>The <link href="http://www.nabble.com/FOP---Dev-f352.html">Nabble</link> archive.</li>
+              <li>The <link href="http://fop-dev.markmail.org">MarkMail</link> archive.</li>
             </ul>
           </li>
           <li>Before posting questions to any list, see "<link href="../maillist.html#general">General Information</link>".</li>
@@ -136,15 +119,23 @@ For standard help: Send email to <link href="mailto:fop-dev-help@xmlgraphics.apa
 To unsubscribe: Send email to <link href="mailto:fop-dev-unsubscribe@xmlgraphics.apache.org">fop-dev-unsubscribe@xmlgraphics.apache.org</link>.
           </li>
         </ul>
-        <note>The Eyebrowse archives are currently broken!</note>
       </section>
       <section id="mail-fop-cvs">
         <title>Subscribe to the fop-commits Mailing List</title>
         <p>When changes are committed to the code repository, a record of the diffs is emailed to the fop-cvs mailing list. FOP developers are encouraged to subscribe to this list because it helps in following the progress of the project.
         </p>
         <ul>
-          <li>Review the archives at <link href="http://mail-archives.apache.org/mod_mbox/xmlgraphics-fop-commits/">http://mail-archives.apache.org/mod_mbox/xmlgraphics-fop-commits/</link> (mod_mbox).</li>
-          <li>Review the archives at <link href="http://marc.theaimsgroup.com/?l=fop-cvs&amp;r=1&amp;w=2">Mailing list ARChives</link> (MARC) at the AIMS group (search).</li>
+          <li>
+            To review the archives, you have several options:
+            <ul>
+              <li>The <link href="http://mail-archives.apache.org/mod_mbox/xmlgraphics-fop-commits/">Apache Mailing List archive (mod_mbox)</link>.</li>
+              <li>The <link href="http://xmlgraphics.apache.org/mail/fop-commits/">Apache Mailing List archive (gzipped mbox files)</link>.</li>
+              <li>The <link href="http://marc.theaimsgroup.com/?l=fop-cvs&amp;r=1&amp;w=2">Mailing list ARChives</link> (MARC) at the AIMS group (search).</li>
+              <li><link href="http://www.mail-archive.com/fop-commits%40xmlgraphics.apache.org/">The Mail Archive</link>.</li>
+              <li>The <link href="http://dir.gmane.org/gmane.text.xml.fop.cvs">GMANE</link> archive.</li>
+              <li>The <link href="http://fop-commits.markmail.org">MarkMail</link> archive.</li>
+            </ul>
+          </li>
           <li>Subscribe by sending an email to <link href="mailto:fop-commits-subscribe@xmlgraphics.apache.org">fop-commits-subscribe@xmlgraphics.apache.org</link>.</li>
         </ul>
       </section>

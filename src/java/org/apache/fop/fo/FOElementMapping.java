@@ -366,55 +366,55 @@ public class FOElementMapping extends ElementMapping {
     
     static class TableAndCaptionMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new org.apache.fop.fo.flow.TableAndCaption(parent);
+            return new org.apache.fop.fo.flow.table.TableAndCaption(parent);
         }
     }
 
     static class TableMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new org.apache.fop.fo.flow.Table(parent);
+            return new org.apache.fop.fo.flow.table.Table(parent);
         }
     }
 
     static class TableColumnMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new org.apache.fop.fo.flow.TableColumn(parent);
+            return new org.apache.fop.fo.flow.table.TableColumn(parent);
         }
     }
 
     static class TableCaptionMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new org.apache.fop.fo.flow.TableCaption(parent);
+            return new org.apache.fop.fo.flow.table.TableCaption(parent);
         }
     }
 
     static class TableBodyMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new org.apache.fop.fo.flow.TableBody(parent);
+            return new org.apache.fop.fo.flow.table.TableBody(parent);
         }
     }
 
     static class TableHeaderMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new org.apache.fop.fo.flow.TableHeader(parent);
+            return new org.apache.fop.fo.flow.table.TableHeader(parent);
         }
     }
 
     static class TableFooterMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new org.apache.fop.fo.flow.TableFooter(parent);
+            return new org.apache.fop.fo.flow.table.TableFooter(parent);
         }
     }
 
     static class TableRowMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new org.apache.fop.fo.flow.TableRow(parent);
+            return new org.apache.fop.fo.flow.table.TableRow(parent);
         }
     }
 
     static class TableCellMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new org.apache.fop.fo.flow.TableCell(parent);
+            return new org.apache.fop.fo.flow.table.TableCell(parent);
         }
     }
 

@@ -19,9 +19,9 @@
 
 package org.apache.fop.layoutmgr.table;
 
-import org.apache.fop.fo.flow.TableBody;
-import org.apache.fop.fo.flow.TableColumn;
-import org.apache.fop.fo.flow.TableRow;
+import org.apache.fop.fo.flow.table.TableBody;
+import org.apache.fop.fo.flow.table.TableColumn;
+import org.apache.fop.fo.flow.table.TableRow;
 
 /**
  * GridUnit subclass for empty grid units.

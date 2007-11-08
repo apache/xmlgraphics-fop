@@ -21,6 +21,7 @@ package org.apache.fop.render;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
@@ -52,9 +53,6 @@ import org.apache.fop.util.LogUtil;
  */
 public class PrintRendererConfigurator extends AbstractRendererConfigurator 
             implements RendererConfigurator {
-
-    /** have we already autodetected system fonts? */
-    private static boolean autodetectedFonts = false;
 
     /** logger instance */
     protected static Log log = LogFactory.getLog(PrintRendererConfigurator.class);
@@ -126,7 +124,7 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
             
             // native o/s search (autodetect) configuration
             boolean autodetectFonts = (fonts.getChild("auto-detect", false) != null);
-            if (!autodetectedFonts && autodetectFonts) {
+            if (autodetectFonts) {
                 // search in font base if it is defined and
                 // is a directory but don't recurse
                 FontFileFinder fontFileFinder = new FontFileFinder();
@@ -158,7 +156,6 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
                 } catch (IOException e) {
                     LogUtil.handleException(log, e, strict);
                 }
-                autodetectedFonts = true;
             }
 
             // directory (multiple font) configuration
@@ -216,10 +213,10 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
     private static void addFontInfoListFromFileList(
             List fontFileList, List fontInfoList, FontResolver resolver, FontCache fontCache) {
         for (Iterator iter = fontFileList.iterator(); iter.hasNext();) {
-            File fontFile = (File)iter.next();
+            URL fontUrl = (URL)iter.next();
             // parse font to ascertain font info
             FontInfoFinder finder = new FontInfoFinder();
-            EmbedFontInfo fontInfo = finder.find(fontFile, resolver, fontCache);
+            EmbedFontInfo fontInfo = finder.find(fontUrl, resolver, fontCache);
             if (fontInfo != null) {
                 fontInfoList.add(fontInfo);                
             }
@@ -274,9 +271,17 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
 
             // if not strict try to determine font info from the embed/metrics url
             File fontFile = CachedFontInfo.getFileFromUrls(new String[] {embedUrl, metricsUrl});
+            URL fontUrl;
+            try {
+                fontUrl = fontFile.toURI().toURL();
+            } catch (MalformedURLException e) {
+                // Should never happen
+                log.debug("Malformed Url: " + e.getMessage());
+                return null;
+            }
             if (fontFile != null) {
                 FontInfoFinder finder = new FontInfoFinder();
-                return finder.find(fontFile, fontResolver, fontCache);
+                return finder.find(fontUrl, fontResolver, fontCache);
             } else {
                 return null;
             }

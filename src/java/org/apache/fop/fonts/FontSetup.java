@@ -20,30 +20,27 @@
 package org.apache.fop.fonts;
 
 // FOP (base 14 fonts)
-import org.apache.fop.fonts.base14.Helvetica;
-import org.apache.fop.fonts.base14.HelveticaBold;
-import org.apache.fop.fonts.base14.HelveticaOblique;
-import org.apache.fop.fonts.base14.HelveticaBoldOblique;
-import org.apache.fop.fonts.base14.TimesRoman;
-import org.apache.fop.fonts.base14.TimesBold;
-import org.apache.fop.fonts.base14.TimesItalic;
-import org.apache.fop.fonts.base14.TimesBoldItalic;
-import org.apache.fop.fonts.base14.Courier;
-import org.apache.fop.fonts.base14.CourierBold;
-import org.apache.fop.fonts.base14.CourierOblique;
-import org.apache.fop.fonts.base14.CourierBoldOblique;
-import org.apache.fop.fonts.base14.Symbol;
-import org.apache.fop.fonts.base14.ZapfDingbats;
-
-// commons logging
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-// Java
 import java.util.List;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.fop.fonts.base14.Courier;
+import org.apache.fop.fonts.base14.CourierBold;
+import org.apache.fop.fonts.base14.CourierBoldOblique;
+import org.apache.fop.fonts.base14.CourierOblique;
+import org.apache.fop.fonts.base14.Helvetica;
+import org.apache.fop.fonts.base14.HelveticaBold;
+import org.apache.fop.fonts.base14.HelveticaBoldOblique;
+import org.apache.fop.fonts.base14.HelveticaOblique;
+import org.apache.fop.fonts.base14.Symbol;
+import org.apache.fop.fonts.base14.TimesBold;
+import org.apache.fop.fonts.base14.TimesBoldItalic;
+import org.apache.fop.fonts.base14.TimesItalic;
+import org.apache.fop.fonts.base14.TimesRoman;
+import org.apache.fop.fonts.base14.ZapfDingbats;
 
 /**
  * Default fonts for FOP application; currently this uses PDF's fonts
@@ -121,6 +118,12 @@ public class FontSetup {
         fontInfo.addFontProperties("F3", "sans-serif", "normal", Font.WEIGHT_BOLD);
         fontInfo.addFontProperties("F4", "sans-serif", "oblique", Font.WEIGHT_BOLD);
         fontInfo.addFontProperties("F4", "sans-serif", "italic", Font.WEIGHT_BOLD);
+        fontInfo.addFontProperties("F1", "SansSerif", "normal", Font.WEIGHT_NORMAL);
+        fontInfo.addFontProperties("F2", "SansSerif", "oblique", Font.WEIGHT_NORMAL);
+        fontInfo.addFontProperties("F2", "SansSerif", "italic", Font.WEIGHT_NORMAL);
+        fontInfo.addFontProperties("F3", "SansSerif", "normal", Font.WEIGHT_BOLD);
+        fontInfo.addFontProperties("F4", "SansSerif", "oblique", Font.WEIGHT_BOLD);
+        fontInfo.addFontProperties("F4", "SansSerif", "italic", Font.WEIGHT_BOLD);
         fontInfo.addFontProperties("F5", "serif", "normal", Font.WEIGHT_NORMAL);
         fontInfo.addFontProperties("F6", "serif", "oblique", Font.WEIGHT_NORMAL);
         fontInfo.addFontProperties("F6", "serif", "italic", Font.WEIGHT_NORMAL);
@@ -133,6 +136,12 @@ public class FontSetup {
         fontInfo.addFontProperties("F11", "monospace", "normal", Font.WEIGHT_BOLD);
         fontInfo.addFontProperties("F12", "monospace", "oblique", Font.WEIGHT_BOLD);
         fontInfo.addFontProperties("F12", "monospace", "italic", Font.WEIGHT_BOLD);
+        fontInfo.addFontProperties("F9", "Monospaced", "normal", Font.WEIGHT_NORMAL);
+        fontInfo.addFontProperties("F10", "Monospaced", "oblique", Font.WEIGHT_NORMAL);
+        fontInfo.addFontProperties("F10", "Monospaced", "italic", Font.WEIGHT_NORMAL);
+        fontInfo.addFontProperties("F11", "Monospaced", "normal", Font.WEIGHT_BOLD);
+        fontInfo.addFontProperties("F12", "Monospaced", "oblique", Font.WEIGHT_BOLD);
+        fontInfo.addFontProperties("F12", "Monospaced", "italic", Font.WEIGHT_BOLD);
 
         fontInfo.addFontProperties("F1", "Helvetica", "normal", Font.WEIGHT_NORMAL);
         fontInfo.addFontProperties("F2", "Helvetica", "oblique", Font.WEIGHT_NORMAL);
@@ -220,9 +229,6 @@ public class FontSetup {
             for (int c = 0; c < triplets.size(); c++) {
                 FontTriplet triplet = (FontTriplet) triplets.get(c);
 
-                if (log.isDebugEnabled()) {
-                    log.debug("Registering: " + triplet + " under " + internalName);
-                }
                 fontInfo.addFontProperties(internalName, triplet);
             }
         }

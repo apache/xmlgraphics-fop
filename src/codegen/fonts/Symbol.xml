@@ -17,6 +17,8 @@
 <!-- $Id$ -->
 <font-metrics>
   <font-name>Symbol</font-name>
+  <full-name>Symbol</full-name>
+  <family-name>Symbol</family-name>
   <class-name>Symbol</class-name>
   <encoding>SymbolEncoding</encoding>
   <cap-height>1010</cap-height>

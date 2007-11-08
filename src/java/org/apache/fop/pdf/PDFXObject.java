@@ -21,13 +21,9 @@ package org.apache.fop.pdf;
 
 // Java
 import java.io.IOException;
-import java.io.OutputStream;
-
-/* modified by JKT to integrate with 0.12.0 */
-/* modified by Eric SCHAEFFER to integrate with 0.13.0 */
 
 /**
- * PDF XObject
+ * Abstract base class of PDF XObjects.
  *
  * A derivative of the PDF Object, is a PDF Stream that has not only a
  * dictionary but a stream of image data.
@@ -36,170 +32,32 @@ import java.io.OutputStream;
  * This is used as a reference for inserting the same image in the
  * document in another place.
  */
-public class PDFXObject extends AbstractPDFStream {
+public abstract class PDFXObject extends AbstractPDFStream {
     
-    private PDFImage pdfimage;
-    private int xnum;
-
     /**
-     * create an XObject with the given number and name and load the
-     * image in the object
-     *
-     * @param xnumber the pdf object X number
-     * @param img the pdf image that contains the image data
+     * Create an XObject with the given number.
      */
-    public PDFXObject(int xnumber, PDFImage img) {
+    public PDFXObject() {
         super();
-        this.xnum = xnumber;
-        pdfimage = img;
     }
 
     /**
-     * Get the xnumber for this pdf object.
-     *
-     * @return the PDF XObject number
+     * Returns the XObject's name.
+     * @return the name of the XObject
      */
-    public int getXNumber() {
-        return this.xnum;
-    }
-
-    /**
-     * Output the image as PDF.
-     * This sets up the image dictionary and adds the image data stream.
-     *
-     * @param stream the output stream to write the data
-     * @throws IOException if there is an error writing the data
-     * @return the length of the data written
-     */
-    protected int output(OutputStream stream) throws IOException {
-        int length = super.output(stream);
-        
-        // let it gc
-        // this object is retained as a reference to inserting
-        // the same image but the image data is no longer needed
-        pdfimage = null;
-        return length;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected String buildStreamDict(String lengthEntry) {
-        String dictEntries = getFilterList().buildFilterDictEntries();
-        if (pdfimage.isPS()) {
-            return buildDictionaryFromPS(lengthEntry, dictEntries);
-        } else {
-            return buildDictionaryFromImage(lengthEntry, dictEntries);
-        }
+    public PDFName getName() {
+        return (PDFName)get("Name");
     }
     
-    private String buildDictionaryFromPS(String lengthEntry, 
-                                         String dictEntries) {
-        getDocumentSafely().getProfile().verifyPSXObjectsAllowed();
-        StringBuffer sb = new StringBuffer(128);
-        sb.append(getObjectID());
-        sb.append("<</Type /XObject\n");
-        sb.append("/Subtype /PS\n");
-        sb.append("/Length " + lengthEntry);
-
-        sb.append(dictEntries);
-        sb.append("\n>>\n");
-        return sb.toString();
-    }
-
-    private String buildDictionaryFromImage(String lengthEntry,
-                                            String dictEntries) {
-        StringBuffer sb = new StringBuffer(128);
-        sb.append(getObjectID());
-        sb.append("<</Type /XObject\n");
-        sb.append("/Subtype /Image\n");
-        sb.append("/Name /Im" + xnum + "\n");
-        sb.append("/Length " + lengthEntry + "\n");
-        sb.append("/Width " + pdfimage.getWidth() + "\n");
-        sb.append("/Height " + pdfimage.getHeight() + "\n");
-        sb.append("/BitsPerComponent " + pdfimage.getBitsPerPixel() + "\n");
-
-        PDFICCStream pdfICCStream = pdfimage.getICCStream();
-        if (pdfICCStream != null) {
-            sb.append("/ColorSpace [/ICCBased "
-                + pdfICCStream.referencePDF() + "]\n");
-        } else {
-            PDFDeviceColorSpace cs = pdfimage.getColorSpace();
-            sb.append("/ColorSpace /" + cs.getName()
-                  + "\n");
-        }
-
-        if (pdfimage.isInverted()) {
-            /* PhotoShop generates CMYK values that's inverse,
-             * this will invert the values - too bad if it's not
-             * a PhotoShop image...
-             */
-            if (pdfimage.getColorSpace().getColorSpace() == PDFDeviceColorSpace.DEVICE_CMYK) {
-                sb.append("/Decode [ 1.0 0.0 1.0 0.0 1.0 0.0 1.0 0.0 ]\n");
-            } else if (pdfimage.getColorSpace().getColorSpace() == PDFDeviceColorSpace.DEVICE_RGB) {
-                sb.append("/Decode [ 1.0 0.0 1.0 0.0 1.0 0.0 ]\n");
-            } else if (pdfimage.getColorSpace().getColorSpace() == PDFDeviceColorSpace.DEVICE_GRAY) {
-                sb.append("/Decode [ 1.0 0.0 ]\n");
-            }
-        }
-
-        if (pdfimage.isTransparent()) {
-            PDFColor transp = pdfimage.getTransparentColor();
-            sb.append("/Mask [" 
-                + transp.red255() + " "
-                + transp.red255() + " " 
-                + transp.green255() + " " 
-                + transp.green255() + " "
-                + transp.blue255() + " " 
-                + transp.blue255() + "]\n");
-        }
-        String ref = pdfimage.getSoftMask();
-        if (ref != null) {
-            sb.append("/SMask " + ref + "\n");
-        }
-
-        sb.append(dictEntries);
-        sb.append("\n>>\n");
-        return sb.toString();
+    /** {@inheritDoc} */
+    protected void populateStreamDict(Object lengthEntry) {
+        put("Type", new PDFName("XObject"));
+        super.populateStreamDict(lengthEntry);
     }
     
-    /**
-     * {@inheritDoc}
-     */
-    protected void outputRawStreamData(OutputStream out) throws IOException {
-        pdfimage.outputContents(out);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected int getSizeHint() throws IOException {
         return 0;
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected void prepareImplicitFilters() {
-        PDFFilter pdfFilter = pdfimage.getPDFFilter();
-        if (pdfFilter != null) {
-            getFilterList().ensureFilterInPlace(pdfFilter);
-        }
-    }
-    
-    /**
-     * This sets up the default filters for XObjects. It uses the PDFImage
-     * instance to determine what default filters to apply.
-     * {@inheritDoc}
-     */
-    protected void setupFilterList() {
-        if (!getFilterList().isInitialized()) {
-            getFilterList().addDefaultFilters(
-                getDocumentSafely().getFilterMap(), 
-                pdfimage.getFilterHint());
-        }
-        super.setupFilterList();
-    }
-    
 
 }

@@ -62,6 +62,8 @@ public class CharUtilities {
     public static final char ZERO_WIDTH_SPACE = '\u200B';
     /** word joiner */
     public static final char WORD_JOINER = '\u2060';
+    /** zero-width joiner */
+    public static final char ZERO_WIDTH_JOINER = '\u200D';
     /** zero-width no-break space (= byte order mark) */
     public static final char ZERO_WIDTH_NOBREAK_SPACE = '\uFEFF';
     /** soft hyphen */

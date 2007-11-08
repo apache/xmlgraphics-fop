@@ -24,6 +24,10 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.AndFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
@@ -32,11 +36,11 @@ import org.apache.commons.io.filefilter.PrefixFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.fop.DebugHelper;
+import org.apache.fop.fo.flow.table.IllegalRowSpanTestCase;
+import org.apache.fop.fo.flow.table.RowGroupBuilderTestCase;
+import org.apache.fop.fo.flow.table.TableColumnColumnNumberTestCase;
+import org.apache.fop.fo.flow.table.TooManyColumnsTestCase;
 import org.apache.fop.layoutengine.LayoutEngineTestSuite;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
  * JUnit test suit for running layout engine test under JUnit control.
@@ -57,7 +61,12 @@ public final class FOTreeTestSuite {
      */
     public static Test suite() throws IOException {
         TestSuite suite = new TestSuite();
+        addXMLTestCases(suite);
+        addUnitTestCases(suite);
+        return suite;
+    }
 
+    private static void addXMLTestCases(TestSuite suite) throws IOException {
         File mainDir = new File("test/fotree");
 
         final FOTreeTester tester = new FOTreeTester();
@@ -88,8 +97,6 @@ public final class FOTreeTestSuite {
             File f = (File)i.next();
             addTestCase(suite, tester, f);
         }
-        
-        return suite;
     }
     
     private static void addTestCase(TestSuite suite, 
@@ -102,7 +109,14 @@ public final class FOTreeTestSuite {
             }
         });
     }
-    
+
+    private static void addUnitTestCases(TestSuite suite) {
+        suite.addTestSuite(TooManyColumnsTestCase.class);
+        suite.addTestSuite(IllegalRowSpanTestCase.class);
+        suite.addTestSuite(RowGroupBuilderTestCase.class);
+        suite.addTestSuite(TableColumnColumnNumberTestCase.class);
+    }
+
     private static class FOTreeTestCase extends TestCase {
         
         private FOTreeTester tester;

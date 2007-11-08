@@ -41,7 +41,7 @@ public class DCTFilter extends NullFilter {
      * Get the decode params for this filter.
      * @return the DCT filter has no decode params
      */
-    public String getDecodeParms() {
+    public PDFObject getDecodeParms() {
         return null;
     }
 

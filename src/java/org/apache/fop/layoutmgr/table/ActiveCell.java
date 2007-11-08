@@ -49,7 +49,7 @@ class ActiveCell {
     private int remainingLength;
     /** Heights of the rows (in the row-group) preceding the one where this cell starts. */
     private int previousRowsLength;
-    /** Total length of this cell's content. */
+    /** Total length of this cell's content plus the lengths of the previous rows. */
     private int totalLength;
     /** Length of the Knuth elements already included in the steps. */
     private int includedLength;
@@ -61,7 +61,8 @@ class ActiveCell {
     /** Length of the penalty ending the last step, if any. */
     private int lastPenaltyLength;
 
-    ActiveCell(PrimaryGridUnit pgu, EffRow row, int rowIndex, int previousRowsLength, TableLayoutManager tableLM) {
+    ActiveCell(PrimaryGridUnit pgu, EffRow row, int rowIndex, int previousRowsLength,
+            TableLayoutManager tableLM) {
         this.pgu = pgu;
         boolean makeBoxForWholeRow = false;
         if (row.getExplicitHeight().min > 0) {
@@ -92,7 +93,7 @@ class ActiveCell {
         includedLength = -1;  // Avoid troubles with cells having content of zero length
         this.previousRowsLength = previousRowsLength;
         nextStepLength = previousRowsLength;
-        totalLength = ElementListUtils.calcContentLength(elementList);
+        totalLength = previousRowsLength + ElementListUtils.calcContentLength(elementList);
         if (pgu.getTable().isSeparateBorderModel()) {
             borderBefore = pgu.getBorders().getBorderBeforeWidth(false)
                     + tableLM.getHalfBorderSeparationBPD();
@@ -108,7 +109,7 @@ class ActiveCell {
         end = -1;
         endRowIndex = rowIndex + pgu.getCell().getNumberRowsSpanned() - 1;
         keepWithNextSignal = false;
-        remainingLength = totalLength;
+        remainingLength = totalLength - previousRowsLength;
         goToNextLegalBreak();
     }
 
@@ -170,18 +171,20 @@ class ActiveCell {
     /**
      * Returns the total length up to the next legal break, not yet included in the steps.
      * 
-     * @return the total length up to the next legal break
+     * @return the total length up to the next legal break (-1 signals no further step)
      */
     int getNextStep() {
         if (!includedInLastStep()) {
-            return nextStepLength + lastPenaltyLength + borderBefore + borderAfter + paddingBefore + paddingAfter;
+            return nextStepLength + lastPenaltyLength 
+                    + borderBefore + borderAfter + paddingBefore + paddingAfter;
         } else {
             start = end + 1;
             if (knuthIter.hasNext()) {
                 goToNextLegalBreak();
-                return nextStepLength + lastPenaltyLength + borderBefore + borderAfter + paddingBefore + paddingAfter; 
+                return nextStepLength + lastPenaltyLength 
+                        + borderBefore + borderAfter + paddingBefore + paddingAfter; 
             } else {
-                return 0;
+                return -1;
             }
         }
     }
@@ -198,12 +201,14 @@ class ActiveCell {
      * @return
      */
     boolean signalMinStep(int minStep) {
-        if (nextStepLength + lastPenaltyLength + borderBefore + borderAfter + paddingBefore + paddingAfter <= minStep) {
+        if (nextStepLength + lastPenaltyLength 
+                + borderBefore + borderAfter + paddingBefore + paddingAfter <= minStep) {
             includedLength = nextStepLength;
             computeRemainingLength();
             return false;
         } else {
-            return previousRowsLength + borderBefore + borderAfter + paddingBefore + paddingAfter > minStep;
+            return previousRowsLength + borderBefore 
+                    + borderAfter + paddingBefore + paddingAfter > minStep;
         }
     }
 

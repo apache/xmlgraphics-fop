@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Map;
+import java.util.Set;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
@@ -166,6 +168,14 @@ public class LazyFont extends Typeface implements FontDescriptor {
     /**
      * {@inheritDoc}
      */
+    public boolean hadMappingOperations() {
+        load(true);
+        return realFont.hadMappingOperations();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
     public boolean hasChar(char c) {
         load(true);
         return realFont.hasChar(c);
@@ -180,12 +190,28 @@ public class LazyFont extends Typeface implements FontDescriptor {
     }
 
     // ---- FontMetrics interface ----
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String getFontName() {
         load(true);
         return realFont.getFontName();
+    }
+
+    /** {@inheritDoc} */
+    public String getEmbedFontName() {
+        load(true);
+        return realFont.getEmbedFontName();
+    }
+
+    /** {@inheritDoc} */
+    public String getFullName() {
+        load(true);
+        return realFont.getFullName();
+    }
+
+    /** {@inheritDoc} */
+    public Set getFamilyNames() {
+        load(true);
+        return realFont.getFamilyNames();
     }
 
     /**
@@ -332,5 +358,6 @@ public class LazyFont extends Typeface implements FontDescriptor {
         load(true);
         return realFontDescriptor.isEmbeddable();
     }
+
 }
 

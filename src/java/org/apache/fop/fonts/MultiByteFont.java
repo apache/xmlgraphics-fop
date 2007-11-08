@@ -20,6 +20,7 @@
 package org.apache.fop.fonts;
 
 //Java
+import java.text.DecimalFormat;
 import java.util.Map;
 
 /**
@@ -27,8 +28,8 @@ import java.util.Map;
  */
 public class MultiByteFont extends CIDFont {
 
-    private static int uniqueCounter = 1;
-
+    private static int uniqueCounter = -1;
+    private static final DecimalFormat COUNTER_FORMAT = new DecimalFormat("00000");
 
     private String ttcName = null;
     private String encoding = "Identity-H";
@@ -54,14 +55,24 @@ public class MultiByteFont extends CIDFont {
         usedGlyphs.put(new Integer(2), new Integer(2));
         usedGlyphsIndex.put(new Integer(2), new Integer(2));
         usedGlyphsCount++;
-
+        
         // Create a quasiunique prefix for fontname
-        int cnt = 0;
         synchronized (this.getClass()) {
-            cnt = uniqueCounter++;
+            uniqueCounter++;
+            if (uniqueCounter > 99999 || uniqueCounter < 0) {
+                uniqueCounter = 0; //We need maximum 5 character then we start again
+            }
         }
-        int ctm = (int)(System.currentTimeMillis() & 0xffff);
-        namePrefix = new String(cnt + "E" + Integer.toHexString(ctm));
+        String cntString = COUNTER_FORMAT.format(uniqueCounter);
+        
+        //Subset prefix as described in chapter 5.5.3 of PDF 1.4
+        StringBuffer sb = new StringBuffer("E");
+        for (int i = 0, c = cntString.length(); i < c; i++) {
+            //translate numbers to uppercase characters
+            sb.append((char)(cntString.charAt(i) + (65 - 48)));
+        }
+        sb.append("+");
+        namePrefix = sb.toString();
 
         setFontType(FontType.TYPE0);
     }
@@ -113,10 +124,8 @@ public class MultiByteFont extends CIDFont {
         return namePrefix + FontUtil.stripWhiteSpace(super.getFontName());
     }
     
-    /**
-     * {@inheritDoc}
-     */
-    public String getCidBaseFont() {
+    /** {@inheritDoc} */
+    public String getEmbedFontName() {
         if (isEmbeddable()) {
             return getPrefixedFontName();
         } else {
@@ -136,17 +145,6 @@ public class MultiByteFont extends CIDFont {
      */
     public String getEncoding() {
         return encoding;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String getFontName() {
-        if (isEmbeddable()) {
-            return getPrefixedFontName();
-        } else {
-            return super.getFontName();
-        }
     }
 
     /**
@@ -214,6 +212,7 @@ public class MultiByteFont extends CIDFont {
      * {@inheritDoc}
      */
     public char mapChar(char c) {
+        notifyMapOperation();
         int retIdx = findGlyphIndex(c);
 
         if (isEmbeddable()) {

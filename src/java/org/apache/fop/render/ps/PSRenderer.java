@@ -830,6 +830,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
                 PSExtensionAttachment comment = (PSExtensionAttachment)iter.next();
                 gen.commentln("%" + comment.getContent());
             }
+            footerComments.clear();
         }
         gen.writeDSCComment(DSCConstants.PAGES, new Integer(this.currentPageNumber));
         gen.getResourceTracker().writeResources(false, gen);
@@ -840,7 +841,12 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
             IOUtils.closeQuietly(gen.getOutputStream());
             rewritePostScriptFile();
         }
-        this.pageDeviceDictionary.clear();
+        if (footerComments != null) {
+            headerComments.clear();
+        }
+        if (pageDeviceDictionary != null) {
+            pageDeviceDictionary.clear();
+        }
     }
     
     /**
@@ -910,12 +916,12 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
                         }
                     } else if (attachment instanceof PSCommentBefore) {
                         if (headerComments == null) {
-                            headerComments = new java.util.TreeSet();
+                            headerComments = new java.util.ArrayList();
                         }
                         headerComments.add(attachment);
                     } else if (attachment instanceof PSCommentAfter) {
                         if (footerComments == null) {
-                            footerComments = new java.util.TreeSet();
+                            footerComments = new java.util.ArrayList();
                         }
                         footerComments.add(attachment);
                     }
@@ -1055,10 +1061,12 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         if (page.hasExtensionAttachments()) {
             List extensionAttachments = page.getExtensionAttachments();
             for (int i = 0; i < extensionAttachments.size(); i++) {
-                PSExtensionAttachment attachment
-                    = (PSExtensionAttachment)extensionAttachments.get(i);
-                if (attachment instanceof PSCommentBefore) {
-                    gen.commentln("%" + attachment.getContent());
+                Object attObj = extensionAttachments.get(i);
+                if (attObj instanceof PSExtensionAttachment) {
+                    PSExtensionAttachment attachment = (PSExtensionAttachment)attObj;
+                    if (attachment instanceof PSCommentBefore) {
+                        gen.commentln("%" + attachment.getContent());
+                    }
                 }
             }
         }
@@ -1091,10 +1099,12 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         if (page.hasExtensionAttachments()) {
             List extensionAttachments = page.getExtensionAttachments();
             for (int i = 0; i < extensionAttachments.size(); i++) {
-                PSExtensionAttachment attachment;
-                attachment = (PSExtensionAttachment)extensionAttachments.get(i);
-                if (attachment instanceof PSCommentAfter) {
-                    gen.commentln("%" + attachment.getContent());
+                Object attObj = extensionAttachments.get(i);
+                if (attObj instanceof PSExtensionAttachment) {
+                    PSExtensionAttachment attachment = (PSExtensionAttachment)attObj;
+                    if (attachment instanceof PSCommentAfter) {
+                        gen.commentln("%" + attachment.getContent());
+                    }
                 }
             }
         }

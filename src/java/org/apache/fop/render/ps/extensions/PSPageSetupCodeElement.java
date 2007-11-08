@@ -29,6 +29,8 @@ import org.apache.fop.fo.ValidationException;
  */
 public class PSPageSetupCodeElement extends AbstractPSExtensionObject {
 
+    protected static final String ELEMENT = "ps-page-setup-code";
+    
     /**
      * Main constructor
      * @param parent parent FO node
@@ -47,7 +49,7 @@ public class PSPageSetupCodeElement extends AbstractPSExtensionObject {
     
     /** {@inheritDoc} */
     public String getLocalName() {
-        return "ps-page-setup-code";
+        return ELEMENT;
     }
 
 }

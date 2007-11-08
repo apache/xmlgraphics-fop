@@ -66,7 +66,9 @@ public class TTFFontLoader extends FontLoader {
         multiFont.setResolver(this.resolver);
         returnFont = multiFont;
 
-        returnFont.setFontName(ttf.getFamilyName());
+        returnFont.setFontName(ttf.getPostScriptName());
+        returnFont.setFullName(ttf.getFullName());
+        returnFont.setFamilyNames(ttf.getFamilyNames());
         returnFont.setFontSubFamilyName(ttf.getSubFamilyName());
         //multiFont.setTTCName(ttcName)
         returnFont.setCapHeight(ttf.getCapHeight());

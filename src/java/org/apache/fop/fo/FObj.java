@@ -581,6 +581,12 @@ public abstract class FObj extends FONode implements Constants {
         }
     }
     
+    /** {@inheritDoc} */
+    public String toString() {
+        return (super.toString() + "[@id=" + this.id + "]");
+    }
+
+
     public class FObjIterator implements FONodeIterator {
         
         private static final int F_NONE_ALLOWED = 0;

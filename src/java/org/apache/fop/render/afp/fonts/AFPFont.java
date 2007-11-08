@@ -19,35 +19,51 @@
 
 package org.apache.fop.render.afp.fonts;
 import java.util.Map;
+import java.util.Set;
+
 import org.apache.fop.fonts.FontType;
 import org.apache.fop.fonts.Typeface;
 
 
 /**
- * All implemenations of AFP fonts should extend this base class,
+ * All implementations of AFP fonts should extend this base class,
  * the object implements the FontMetrics information.
  * <p/>
  */
 public abstract class AFPFont extends Typeface {
 
     /** The font name */
-    protected String _name;
+    protected String name;
 
     /**
      * Constructor for the base font requires the name.
      * @param name the name of the font
      */
     public AFPFont(String name) {
-
-        _name = name;
+        this.name = name;
 
     }
 
-    /**
-     * @return the name of the font.
-     */
+    /** {@inheritDoc} */
     public String getFontName() {
-        return _name;
+        return this.name;
+    }
+
+    /** {@inheritDoc} */
+    public String getEmbedFontName() {
+        return this.name;
+    }
+
+    /** {@inheritDoc} */
+    public String getFullName() {
+        return getFontName();
+    }
+
+    /** {@inheritDoc} */
+    public Set getFamilyNames() {
+        Set s = new java.util.HashSet();
+        s.add(this.name);
+        return s;
     }
 
     /**
@@ -59,7 +75,7 @@ public abstract class AFPFont extends Typeface {
     }
 
     /**
-     * Indicates if the font has kering information.
+     * Indicates if the font has kerning information.
      * @return True, if kerning is available.
      */
     public boolean hasKerningInfo() {
@@ -84,7 +100,7 @@ public abstract class AFPFont extends Typeface {
      /**
      * Determines whether this font contains a particular character/glyph.
      * @param c character to check
-     * @return True if the character is supported, Falso otherwise
+     * @return True if the character is supported, False otherwise
      */
     public boolean hasChar(char c) {
         return true;
