@@ -129,8 +129,8 @@
       <p>
         Please note that recent versions of Adobe Acrobat Reader replace
         "Helvetica" with "Arial" and "Times" with "Times New Roman" internally.
-        GhostScript replaces "Arial" with "Nimbus Sans" and "Times" with 
-        "Nimbus Roman". Other document viewers may do similar font
+        GhostScript replaces "Helvetica" with "Nimbus Sans L" and "Times" with 
+        "Nimbus Roman No9 L". Other document viewers may do similar font
         substitutions. If you need to make sure that there are no such
         substitutions, you need to specify an explicit font and embed it in
         the target document.
