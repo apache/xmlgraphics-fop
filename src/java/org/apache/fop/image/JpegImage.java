@@ -19,11 +19,9 @@
  
 package org.apache.fop.image;
 
-// Java
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_Profile;
 
-// FOP
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.fop.util.CMYKColorSpace;
@@ -100,13 +98,14 @@ public class JpegImage extends AbstractFopImage {
                         this.width = calcBytes(this.raw[index + 7],
                                                  this.raw[index + 8]);
 
-                        if (this.raw[index + 9] == 1) {
+                        int numComponents = this.raw[index + 9];
+                        if (numComponents == 1) {
                             this.colorSpace = ColorSpace.getInstance(
                               ColorSpace.CS_GRAY);
-                        } else if (this.raw[index + 9] == 3) {
+                        } else if (numComponents == 3) {
                             this.colorSpace = ColorSpace.getInstance(
                               ColorSpace.CS_LINEAR_RGB);
-                        } else if (this.raw[index + 9] == 4) {
+                        } else if (numComponents == 4) {
                             // howto create CMYK color space
                             /*
                             this.colorSpace = ColorSpace.getInstance(
@@ -192,6 +191,14 @@ public class JpegImage extends AbstractFopImage {
             } catch (Exception e) {
                 log.error("Invalid ICC profile: " + e, e);
                 return false;
+            }
+            if (iccProfile.getNumComponents() != this.colorSpace.getNumComponents()) {
+                log.warn("The number of components of the ICC profile ("
+                        + iccProfile.getNumComponents() 
+                        + ") doesn't match the image ("
+                        + this.colorSpace.getNumComponents()
+                        + "). Ignoring the ICC color profile.");
+                this.iccProfile = null;
             }
         } else if (this.colorSpace == null) {
             log.error("ColorSpace not specified for JPEG image");
