@@ -46,6 +46,11 @@ public class CorrespondingPropertyMaker {
         this.tb_rl = tb_rl;
     }
     
+    /**
+     * Controls whether the PropertyMaker accesses the parent property list or the current
+     * property list for determining the writing mode.
+     * @param useParent true if the parent property list should be used.
+     */
     public void setUseParent(boolean useParent) {
         this.useParent = useParent;
     }
