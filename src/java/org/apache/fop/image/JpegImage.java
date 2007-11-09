@@ -188,9 +188,10 @@ public class JpegImage extends AbstractFopImage {
             }
             try {
                 iccProfile = ICC_Profile.getInstance(iccStream.toByteArray());
-            } catch (Exception e) {
-                log.error("Invalid ICC profile: " + e, e);
-                return false;
+            } catch (IllegalArgumentException iae) {
+                log.warn("An ICC profile is present but it is invalid (" 
+                        + iae.getMessage() + "). The color profile will be ignored. (" 
+                        + this.getOriginalURI() + ")");
             }
             if (iccProfile.getNumComponents() != this.colorSpace.getNumComponents()) {
                 log.warn("The number of components of the ICC profile ("
@@ -205,6 +206,10 @@ public class JpegImage extends AbstractFopImage {
             return false;
         }
         if (hasAPPEMarker && this.colorSpace.getType() == ColorSpace.TYPE_CMYK) {
+            if (log.isDebugEnabled()) {
+                log.debug("JPEG has an Adobe APPE marker. Note: CMYK Image will be inverted. ("
+                        + this.getOriginalURI() + ")");
+            }
             this.invertImage = true;
         }
         return true;
