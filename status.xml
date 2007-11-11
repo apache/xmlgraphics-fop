@@ -28,6 +28,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix" fixes-bug="43835" due-to="David Churavy">
+        Bugfix: Use Font.getName() (logical font name) instead of Font.getFontName()
+        (localized) when registering fonts from AWT.
+      </action>
       <action context="Code" dev="JM" type="fix">
         Made the way TrueType fonts are embedded in PDF compliant to the
         specification so viewers correctly identify subset fonts.
