@@ -81,6 +81,14 @@ public class Font {
     }
 
     /**
+     * Returns the associated font metrics object.
+     * @return the font metrics
+     */
+    public FontMetrics getFontMetrics() {
+        return this.metric;
+    }
+    
+    /**
      * Returns the font's ascender.
      * @return the ascender
      */
