@@ -20,8 +20,8 @@
 package org.apache.fop.layoutmgr.inline;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
@@ -195,7 +195,13 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         // With CID fonts, space isn't neccesary currentFontState.width(32)
         spaceCharIPD = font.getCharWidth(' ');
         // Use hyphenationChar property
-        hyphIPD = font.getCharWidth(foText.getCommonHyphenation().hyphenationCharacter.getCharacter());
+        char hyphChar = foText.getCommonHyphenation().hyphenationCharacter.getCharacter();
+        if (font.hasChar(hyphChar)) {
+            hyphIPD = font.getCharWidth(hyphChar);
+        } else {
+            log.warn("Hyphenation character 0x" + Integer.toHexString(hyphChar)
+                    + " is not available for font: " + font.getFontTriplet());
+        }
         
         SpaceVal ls = SpaceVal.makeLetterSpacing(foText.getLetterSpacing());
         halfLS = new SpaceVal(MinOptMax.multiply(ls.getSpace(), 0.5),
