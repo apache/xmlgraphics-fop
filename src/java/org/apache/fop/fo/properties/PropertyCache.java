@@ -273,11 +273,13 @@ public final class PropertyCache {
                     for (int i = table.length; --i >= 0;) {
                         for (CacheEntry c = table[i]; c != null; c = c.next) {
                             ref = c.ref;
-                            if ((o = ref.get()) != null) {
-                                hash = hash(o);
-                                idx = hash & newLength;
-                                newTable[idx] = new CacheEntry(c, newTable[idx]);
-                                segments[hash & SEGMENT_MASK].count++;
+                            if (ref != null) {
+                                if ((o = ref.get()) != null) {
+                                    hash = hash(o);
+                                    idx = hash & newLength;
+                                    newTable[idx] = new CacheEntry(c, newTable[idx]);
+                                    segments[hash & SEGMENT_MASK].count++;
+                                }
                             }
                         }
                     }
