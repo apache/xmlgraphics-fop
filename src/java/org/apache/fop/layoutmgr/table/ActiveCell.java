@@ -74,7 +74,7 @@ class ActiveCell {
         }
         if (pgu.isLastGridUnitRowSpan() && pgu.getRow() != null) {
             makeBoxForWholeRow |= pgu.getRow().mustKeepTogether();
-            makeBoxForWholeRow |= pgu.getTable().mustKeepTogether();
+            makeBoxForWholeRow |= tableLM.getTable().mustKeepTogether();
         }
         if (makeBoxForWholeRow) {
             elementList = new java.util.ArrayList(1);
@@ -94,7 +94,7 @@ class ActiveCell {
         this.previousRowsLength = previousRowsLength;
         nextStepLength = previousRowsLength;
         totalLength = previousRowsLength + ElementListUtils.calcContentLength(elementList);
-        if (pgu.getTable().isSeparateBorderModel()) {
+        if (tableLM.getTable().isSeparateBorderModel()) {
             borderBefore = pgu.getBorders().getBorderBeforeWidth(false)
                     + tableLM.getHalfBorderSeparationBPD();
             borderAfter = pgu.getBorders().getBorderAfterWidth(false)
