@@ -103,8 +103,8 @@ public class SingleByteFont extends CustomFont {
         if (d != 0) {
             return d;
         } else {
-            log.warn("Glyph " + (int) c + " not available in font "
-                    + getFontName());
+            log.warn("Glyph " + (int)c + " (0x" + Integer.toHexString(c) 
+                    + ") not available in font " + getFontName());
             return '#';
         }
     }

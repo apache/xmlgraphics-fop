@@ -24,6 +24,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fonts.FontMetrics;
+import org.apache.fop.fonts.Typeface;
 
 /**
  * Store all common hyphenation properties.
@@ -127,17 +129,40 @@ public final class CommonHyphenation {
      */
     public char getHyphChar(org.apache.fop.fonts.Font font) {
         char hyphChar = hyphenationCharacter.getCharacter();
+        if (font.hasChar(hyphChar)) {
+            return hyphChar; //short-cut
+        }
         char effHyphChar = hyphChar;
-        if (font.hasChar(effHyphChar)) {
-            //nop
-        } else if (font.hasChar(HYPHEN_MINUS)) {
+        boolean warn = false;
+        if (font.hasChar(HYPHEN_MINUS)) {
             effHyphChar = HYPHEN_MINUS;
+            warn = true;
         } else if (font.hasChar(MINUS_SIGN)) {
             effHyphChar = MINUS_SIGN;
+            FontMetrics metrics = font.getFontMetrics();
+            if (metrics instanceof Typeface) {
+                Typeface typeface = (Typeface)metrics;
+                if ("SymbolEncoding".equals(typeface.getEncoding())) {
+                    //SymbolEncoding doesn't have HYPHEN_MINUS, so replace by MINUS_SIGN
+                } else {
+                    //only warn if the encoding is not SymbolEncoding
+                    warn = true;
+                }
+            }
         } else {
             effHyphChar = ' ';
+            FontMetrics metrics = font.getFontMetrics();
+            if (metrics instanceof Typeface) {
+                Typeface typeface = (Typeface)metrics;
+                if ("ZapfDingbatsEncoding".equals(typeface.getEncoding())) {
+                    //ZapfDingbatsEncoding doesn't have HYPHEN_MINUS, so replace by ' '
+                } else {
+                    //only warn if the encoding is not ZapfDingbatsEncoding
+                    warn = true;
+                }
+            }
         }
-        if (hyphChar != effHyphChar) {
+        if (warn) {
             log.warn("Substituted specified hyphenation character (0x"
                     + Integer.toHexString(hyphChar)
                     + ") with 0x" + Integer.toHexString(effHyphChar) 
