@@ -195,13 +195,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         // With CID fonts, space isn't neccesary currentFontState.width(32)
         spaceCharIPD = font.getCharWidth(' ');
         // Use hyphenationChar property
-        char hyphChar = foText.getCommonHyphenation().hyphenationCharacter.getCharacter();
-        if (font.hasChar(hyphChar)) {
-            hyphIPD = font.getCharWidth(hyphChar);
-        } else {
-            log.warn("Hyphenation character 0x" + Integer.toHexString(hyphChar)
-                    + " is not available for font: " + font.getFontTriplet());
-        }
+        hyphIPD = foText.getCommonHyphenation().getHyphIPD(font);
         
         SpaceVal ls = SpaceVal.makeLetterSpacing(foText.getLetterSpacing());
         halfLS = new SpaceVal(MinOptMax.multiply(ls.getSpace(), 0.5),
@@ -514,7 +508,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                         && i == lastIndex 
                         && areaInfo.bHyphenated) {
                         // add the hyphenation character
-                        wordChars.append(foText.getCommonHyphenation().hyphenationCharacter.getCharacter());
+                        wordChars.append(foText.getCommonHyphenation().getHyphChar(font));
                     }
                     textArea.addWord(wordChars.toString(), 0, letterAdjust);
                     wordStartIndex = -1;

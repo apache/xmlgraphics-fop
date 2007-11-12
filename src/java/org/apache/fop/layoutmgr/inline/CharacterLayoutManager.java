@@ -19,7 +19,12 @@
 
 package org.apache.fop.layoutmgr.inline;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import org.apache.fop.area.Trait;
 import org.apache.fop.fo.flow.Character;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
@@ -32,15 +37,9 @@ import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LeafPosition;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.TraitSetter;
-import org.apache.fop.area.Trait;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
 import org.apache.fop.util.CharUtilities;
-
-import java.util.List;
-import java.util.LinkedList;
-import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
-import org.apache.fop.layoutmgr.inline.AlignmentContext;
 
 /**
  * LayoutManager for the fo:character formatting object
@@ -70,7 +69,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
         font = fi.getFontInstance(fontkeys[0], fobj.getCommonFont().fontSize.getValue(this));
         SpaceVal ls = SpaceVal.makeLetterSpacing(fobj.getLetterSpacing());
         letterSpaceIPD = ls.getSpace();
-        hyphIPD = font.getCharWidth(fobj.getCommonHyphenation().hyphenationCharacter.getCharacter());
+        hyphIPD = fobj.getCommonHyphenation().getHyphIPD(font);
         borderProps = fobj.getCommonBorderPaddingBackground();
         setCommonBorderPaddingBackground(borderProps);
         org.apache.fop.area.inline.TextArea chArea = getCharacterInlineArea(fobj);

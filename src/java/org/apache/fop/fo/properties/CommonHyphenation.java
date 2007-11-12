@@ -19,6 +19,8 @@
 
 package org.apache.fop.fo.properties;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
@@ -29,6 +31,9 @@ import org.apache.fop.fo.expr.PropertyException;
  * Public "structure" allows direct member access.
  */
 public final class CommonHyphenation {
+
+    /** Logger */
+    protected static Log log = LogFactory.getLog(CommonHyphenation.class);
     
     private static final PropertyCache cache = new PropertyCache();
     
@@ -109,6 +114,47 @@ public final class CommonHyphenation {
         
         return cache.fetch(instance);
         
+    }
+    
+    private static final char HYPHEN_MINUS = '-';
+    private static final char MINUS_SIGN = '\u2212';
+    
+    /**
+     * Returns the effective hyphenation character for a font. The hyphenation character specified
+     * in XSL-FO may be substituted if it's not available in the font.
+     * @param font the font
+     * @return the effective hyphenation character.
+     */
+    public char getHyphChar(org.apache.fop.fonts.Font font) {
+        char hyphChar = hyphenationCharacter.getCharacter();
+        char effHyphChar = hyphChar;
+        if (font.hasChar(effHyphChar)) {
+            //nop
+        } else if (font.hasChar(HYPHEN_MINUS)) {
+            effHyphChar = HYPHEN_MINUS;
+        } else if (font.hasChar(MINUS_SIGN)) {
+            effHyphChar = MINUS_SIGN;
+        } else {
+            effHyphChar = ' ';
+        }
+        if (hyphChar != effHyphChar) {
+            log.warn("Substituted specified hyphenation character (0x"
+                    + Integer.toHexString(hyphChar)
+                    + ") with 0x" + Integer.toHexString(effHyphChar) 
+                    + " because the font doesn't have the specified hyphenation character: " 
+                    + font.getFontTriplet());
+        }
+        return effHyphChar;
+    }
+    
+    /**
+     * Returns the IPD for the hyphenation character for a font.
+     * @param font the font
+     * @return the IPD in millipoints for the hyphenation character.
+     */
+    public int getHyphIPD(org.apache.fop.fonts.Font font) {
+        char hyphChar = getHyphChar(font);
+        return font.getCharWidth(hyphChar);
     }
     
     /** {@inheritDoc */
