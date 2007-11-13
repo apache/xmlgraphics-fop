@@ -24,6 +24,7 @@ import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.ElementListObserver.Observer;
 
@@ -44,7 +45,8 @@ public class LoggingElementListObserver implements Observer {
             return;
         }
         log.debug(" ");
-        log.debug("ElementList: category=" + category + ", id=" + id);
+        int len = (elementList != null ? ElementListUtils.calcContentLength(elementList) : 0);
+        log.debug("ElementList: category=" + category + ", id=" + id + ", len=" + len + "mpt");
         if (elementList == null) {
             log.debug("<<empty list>>");
             return;
