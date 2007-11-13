@@ -83,7 +83,7 @@ public class CommonBorderPaddingBackground {
         private Color mColor; // Border color
         private CondLengthProperty mWidth;
 
-        BorderInfo(int style, CondLengthProperty width, Color color) {
+        public BorderInfo(int style, CondLengthProperty width, Color color) {
             mStyle = style;
             mWidth = width;
             mColor = color;
@@ -227,7 +227,11 @@ public class CommonBorderPaddingBackground {
      * @return the border info for a side
      */
     public BorderInfo getBorderInfo(int side) {
-        return this.borderInfo[side];
+        if (this.borderInfo[side] == null) {
+            return new BorderInfo(Constants.EN_NONE, null, null); // TODO
+        } else {
+            return this.borderInfo[side];
+        }
     }
     
     /**

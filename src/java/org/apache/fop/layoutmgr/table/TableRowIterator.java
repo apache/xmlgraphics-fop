@@ -20,11 +20,14 @@
 package org.apache.fop.layoutmgr.table;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FONode.FONodeIterator;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableBody;
@@ -98,6 +101,8 @@ public class TableRowIterator {
     /** Iterator over a part's child elements (either table-rows or table-cells). */
     private ListIterator tablePartChildIterator = null;
 
+    private Iterator rowGroupsIter;
+
     /**
      * Creates a new TableRowIterator.
      * @param table the table to iterate over
@@ -110,19 +115,23 @@ public class TableRowIterator {
         this.tablePart = tablePart;
         switch(tablePart) {
             case HEADER: {
-                List bodyList = new java.util.ArrayList();
-                bodyList.add(table.getTableHeader());
-                this.tablePartIterator = bodyList.listIterator();
+                rowGroupsIter = table.getTableHeader().getRowGroups().iterator();
                 break;
             }
             case FOOTER: {
-                List bodyList = new java.util.ArrayList();
-                bodyList.add(table.getTableFooter());
-                this.tablePartIterator = bodyList.listIterator();
+                rowGroupsIter = table.getTableFooter().getRowGroups().iterator();
                 break;
             }
             default: {
-                this.tablePartIterator = table.getChildNodes();
+                List rowGroupsList = new LinkedList();
+                // TODO this is ugly
+                for (FONodeIterator iter = table.getChildNodes(); iter.hasNext();) {
+                    FONode node = iter.nextNode();
+                    if (node instanceof TableBody) {
+                        rowGroupsList.addAll(((TableBody) node).getRowGroups());
+                    }
+                }
+                rowGroupsIter = rowGroupsList.iterator();
             }
         }
     }
@@ -132,38 +141,19 @@ public class TableRowIterator {
      * consecutive rows which contains all spanned grid units of its cells.
      * @return the next row group, or null
      */
-    public EffRow[] getNextRowGroup() {
-        EffRow firstRowInGroup = getNextRow();
-        if (firstRowInGroup == null) {
+    EffRow[] getNextRowGroup() {
+        if (!rowGroupsIter.hasNext()) {
             return null;
         }
-        EffRow lastRowInGroup = firstRowInGroup;
-        int lastIndex = lastRowInGroup.getIndex();
-        boolean allFinished;
-        do {
-            allFinished = true;
-            Iterator iter = lastRowInGroup.getGridUnits().iterator();
-            while (iter.hasNext()) {
-                GridUnit gu = (GridUnit)iter.next();
-                if (!gu.isLastGridUnitRowSpan()) {
-                    allFinished = false;
-                    break;
-                }
-            }
-            lastIndex = lastRowInGroup.getIndex();
-            if (!allFinished) {
-                lastRowInGroup = getNextRow();
-                if (lastRowInGroup == null) {
-                    allFinished = true;
-                }
-            }
-        } while (!allFinished);
-        int rowCount = lastIndex - firstRowInGroup.getIndex() + 1;
-        EffRow[] rowGroup = new EffRow[rowCount];
-        for (int i = 0; i < rowCount; i++) {
-            rowGroup[i] = getCachedRow(i + firstRowInGroup.getIndex());
+        List rowGroup = (List) rowGroupsIter.next();
+        EffRow[] effRowGroup = new EffRow[rowGroup.size()];
+        int i = 0;
+        for (Iterator rowIter = rowGroup.iterator(); rowIter.hasNext();) {
+            List gridUnits = (List) rowIter.next();
+            effRowGroup[i] = new EffRow(i, tablePart, gridUnits);
+            i++;
         }
-        return rowGroup;
+        return effRowGroup;
     }
 
     /**
@@ -197,7 +187,7 @@ public class TableRowIterator {
      * @return the preceding row, or null if there is no such row (the given row is the
      * first one in the table part)
      */
-    public EffRow getPrecedingRow(EffRow row) {
+    EffRow getPrecedingRow(EffRow row) {
         return getRow(row.getIndex() - 1);
     }
 
@@ -207,7 +197,7 @@ public class TableRowIterator {
      * @param row a row in the iterated table part
      * @return the following row, or null if there is no more row
      */
-    public EffRow getFollowingRow(EffRow row) {
+    EffRow getFollowingRow(EffRow row) {
         return getRow(row.getIndex() + 1);
     }
 
@@ -215,7 +205,7 @@ public class TableRowIterator {
      * Returns the first effective row.
      * @return the requested effective row.
      */
-    public EffRow getFirstRow() {
+    EffRow getFirstRow() {
         if (fetchedRows.size() == 0) {
             prefetchNext();
         }
@@ -228,7 +218,7 @@ public class TableRowIterator {
      * if preloaded.</p>
      * @return the requested effective row.
      */
-    public EffRow getLastRow() {
+    EffRow getLastRow() {
         while (prefetchNext()) {
             //nop
         }
@@ -377,7 +367,7 @@ public class TableRowIterator {
      * @return the list of grid units
      */
     private EffRow buildGridRow(List cells, TableRow rowFO) {
-        EffRow row = new EffRow(this.fetchIndex, tablePart);
+        EffRow row = new EffRow(this.fetchIndex, tablePart, null);
         List gridUnits = row.getGridUnits();
 
         TableBody bodyFO = null;
@@ -393,7 +383,8 @@ public class TableRowIterator {
                     if (gu.getColSpanIndex() == 0) {
                         horzSpan = new GridUnit[gu.getCell().getNumberColumnsSpanned()];
                     }
-                    GridUnit newGU = gu.createNextRowSpanningGridUnit();
+//                    GridUnit newGU = gu.createNextRowSpanningGridUnit();
+                    GridUnit newGU = null;
                     newGU.setRow(rowFO);
                     safelySetListItem(gridUnits, colnum - 1, newGU);
                     horzSpan[newGU.getColSpanIndex()] = newGU;
@@ -455,7 +446,7 @@ public class TableRowIterator {
                 horzSpan[0] = gu;
                 for (int j = 1; j < cell.getNumberColumnsSpanned(); j++) {
                     colnum++;
-                    GridUnit guSpan = new GridUnit(gu, columns.getColumn(colnum), colnum - 1, j);
+                    GridUnit guSpan = new GridUnit(gu, columns.getColumn(colnum), colnum - 1, j, 0);
                     //TODO: remove the check below???
                     other = (GridUnit)safelyGetListItem(gridUnits, colnum - 1);
                     if (other != null) {
@@ -486,29 +477,29 @@ public class TableRowIterator {
         }
 
         //Post-processing the list (looking for gaps and resolve start and end borders)
-        fillEmptyGridUnits(gridUnits, rowFO, bodyFO);
+//        fillEmptyGridUnits(gridUnits, rowFO, bodyFO);
         resolveStartEndBorders(gridUnits);
 
         return row;
     }
 
-    private void fillEmptyGridUnits(List gridUnits, TableRow row, TableBody body) {
-        for (int pos = 1; pos <= gridUnits.size(); pos++) {
-            GridUnit gu = (GridUnit)gridUnits.get(pos - 1);
-
-            //Empty grid units
-            if (gu == null) {
-                //Add grid unit
-                gu = new EmptyGridUnit(row, columns.getColumn(pos), body,
-                        pos - 1);
-                gridUnits.set(pos - 1, gu);
-            }
-
-            //Set flags
-            gu.setFlag(GridUnit.IN_FIRST_COLUMN, (pos == 1));
-            gu.setFlag(GridUnit.IN_LAST_COLUMN, (pos == gridUnits.size()));
-        }
-    }
+//    private void fillEmptyGridUnits(List gridUnits, TableRow row, TableBody body) {
+//        for (int pos = 1; pos <= gridUnits.size(); pos++) {
+//            GridUnit gu = (GridUnit)gridUnits.get(pos - 1);
+//
+//            //Empty grid units
+//            if (gu == null) {
+//                //Add grid unit
+//                gu = new EmptyGridUnit(row, columns.getColumn(pos), body,
+//                        pos - 1);
+//                gridUnits.set(pos - 1, gu);
+//            }
+//
+//            //Set flags
+//            gu.setFlag(GridUnit.IN_FIRST_COLUMN, (pos == 1));
+//            gu.setFlag(GridUnit.IN_LAST_COLUMN, (pos == gridUnits.size()));
+//        }
+//    }
 
     private void resolveStartEndBorders(List gridUnits) {
         for (int pos = 1; pos <= gridUnits.size(); pos++) {

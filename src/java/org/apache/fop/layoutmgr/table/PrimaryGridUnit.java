@@ -55,18 +55,22 @@ public class PrimaryGridUnit extends GridUnit {
      * @param startRow index of the row this grid unit belongs to, zero-based
      */
     public PrimaryGridUnit(TableCell cell, TableColumn column, int startCol, int startRow) {
-        super(cell, column, startCol, 0);
+        super(cell, column, startCol, 0, 0);
         this.startRow = startRow;
         log.trace("PrimaryGridUnit created, row " + startRow + " col " + startCol);
-        if (cell != null) {
-            cellLM = new TableCellLayoutManager(cell, this);
-        }
     }
 
     public TableCellLayoutManager getCellLM() {
+        assert cellLM != null;
         return cellLM;
     }
 
+    /** {@inheritDoc} */
+    public PrimaryGridUnit getPrimary() {
+        return this;
+    }
+
+    /** {@inheritDoc} */
     public boolean isPrimary() {
         return true;
     }
@@ -223,6 +227,14 @@ public class PrimaryGridUnit extends GridUnit {
     public boolean hasSpanning() {
         return (getCell().getNumberColumnsSpanned() > 1)
             || (getCell().getNumberRowsSpanned() > 1);
+    }
+
+    /**
+     * Creates a cellLM for the corresponding table-cell. A new one must be created
+     * for each new static-content (TODO).
+     */
+    public void createCellLM() {
+        cellLM = new TableCellLayoutManager(cell, this);
     }
 
 }

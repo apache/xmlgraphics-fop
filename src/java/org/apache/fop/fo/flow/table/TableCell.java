@@ -90,7 +90,7 @@ public class TableCell extends TableFObj {
     /**
      * {@inheritDoc}
      */
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
         super.startOfNode();
         getFOEventHandler().startCell(this);
     }
@@ -100,7 +100,7 @@ public class TableCell extends TableFObj {
      * FOEventHandler that we are at the end of the flow.
      * {@inheritDoc}
      */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
         if (!blockItemFound) {
             if (getUserAgent().validateStrictly()) {
                 missingChildElementError("marker* (%block;)+");
@@ -131,6 +131,21 @@ public class TableCell extends TableFObj {
             invalidChildError(loc, nsURI, localName);
         } else {
             blockItemFound = true;
+        }
+    }
+
+    /** {@inheritDoc} */
+    protected void setCollapsedBorders() {
+        createBorder(CommonBorderPaddingBackground.BEFORE);
+        createBorder(CommonBorderPaddingBackground.AFTER);
+        Table table = getTable();
+        if (table.hasExplicitColumns()) {
+            TableColumn col = table.getColumn(getColumnNumber() - 1);
+            createBorder(CommonBorderPaddingBackground.START, col);
+            createBorder(CommonBorderPaddingBackground.END, col);
+        } else {
+            createBorder(CommonBorderPaddingBackground.START);
+            createBorder(CommonBorderPaddingBackground.END);
         }
     }
 

@@ -39,14 +39,15 @@ public class TableFooter extends TableBody {
     /**
      * {@inheritDoc}
      */
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
+        super.startOfNode();
         //getFOEventHandler().startBody(this);
     }
 
     /**
      * {@inheritDoc}
      */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
 //      getFOEventHandler().endFooter(this);
         if (!(tableRowsFound || tableCellsFound)) {
             missingChildElementError("marker* (table-row+|table-cell+)");
@@ -64,5 +65,10 @@ public class TableFooter extends TableBody {
     /** {@inheritDoc} */
     public int getNameId() {
         return FO_TABLE_FOOTER;
+    }
+
+    /** {@inheritDoc} */
+    protected boolean isTableFooter() {
+        return true;
     }
 }
