@@ -17,13 +17,9 @@
 
 /* $Id$ */
 
-package org.apache.fop.layoutmgr.table;
+package org.apache.fop.fo.flow.table;
 
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.flow.table.BorderSpecification;
-import org.apache.fop.fo.flow.table.Table;
-import org.apache.fop.fo.flow.table.TableBody;
-import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 
 /**

@@ -22,6 +22,8 @@ package org.apache.fop.layoutmgr.table;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.apache.fop.fo.flow.table.GridUnit;
+import org.apache.fop.fo.flow.table.PrimaryGridUnit;
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;

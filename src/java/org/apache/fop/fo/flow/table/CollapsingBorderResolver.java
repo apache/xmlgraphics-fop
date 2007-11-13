@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
-import org.apache.fop.layoutmgr.table.GridUnit;
 
 /**
  * A class that implements the border-collapsing model.
