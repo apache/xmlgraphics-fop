@@ -19,14 +19,26 @@
 
 package org.apache.fop.layoutmgr.inline;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.area.Area;
+import org.apache.fop.area.LineArea;
+import org.apache.fop.area.Trait;
+import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.properties.CommonHyphenation;
+import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.hyphenation.Hyphenation;
 import org.apache.fop.hyphenation.Hyphenator;
 import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
@@ -49,19 +61,6 @@ import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.SpaceSpecifier;
-import org.apache.fop.area.Area;
-import org.apache.fop.area.LineArea;
-import org.apache.fop.area.inline.InlineArea;
-
-import java.util.ListIterator;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import org.apache.fop.area.Trait;
-import org.apache.fop.fonts.Font;
-import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.fonts.FontTriplet;
-
 import org.apache.fop.traits.MinOptMax;
 
 /**
@@ -381,11 +380,14 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 addedPositions = 0;
             }
 
-            if (difference + bestActiveNode.availableShrink < 0) {
-                if (super.log.isWarnEnabled()) {
-                    super.log.warn(FONode.decorateWithContextInfo(
+            if (log.isWarnEnabled()) {
+                int lack = difference + bestActiveNode.availableShrink; 
+                if (lack < 0) {
+                    String textDiff = (lack < -50000 ? "more than 50 points" : (-lack) + "mpt");
+                    log.warn(FONode.decorateWithContextInfo(
                             "Line " + (addedPositions + 1) 
-                            + " of a paragraph overflows the available area.", getFObj()));
+                            + " of a paragraph overflows the available area by "
+                            + textDiff + ".", getFObj()));
                 }
             }
             
