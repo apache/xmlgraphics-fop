@@ -29,6 +29,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FONode.FONodeIterator;
 import org.apache.fop.fo.flow.Marker;
+import org.apache.fop.fo.flow.table.GridUnit;
+import org.apache.fop.fo.flow.table.PrimaryGridUnit;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableBody;
 import org.apache.fop.fo.flow.table.TableCell;

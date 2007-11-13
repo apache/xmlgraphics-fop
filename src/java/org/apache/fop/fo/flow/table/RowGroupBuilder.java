@@ -20,7 +20,6 @@
 package org.apache.fop.fo.flow.table;
 
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.layoutmgr.table.GridUnit;
 
 /**
  * A class that creates groups of rows belonging to a same set of spans. The first row of

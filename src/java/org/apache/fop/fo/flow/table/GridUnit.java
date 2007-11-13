@@ -17,20 +17,14 @@
 
 /* $Id$ */
 
-package org.apache.fop.layoutmgr.table;
+package org.apache.fop.fo.flow.table;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.flow.table.BorderSpecification;
-import org.apache.fop.fo.flow.table.Table;
-import org.apache.fop.fo.flow.table.TableBody;
-import org.apache.fop.fo.flow.table.TableCell;
-import org.apache.fop.fo.flow.table.TableColumn;
-import org.apache.fop.fo.flow.table.TableFObj;
-import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground.BorderInfo;
+import org.apache.fop.layoutmgr.table.CollapsingBorderModel;
 
 /**
  * This class represents one grid unit inside a table.

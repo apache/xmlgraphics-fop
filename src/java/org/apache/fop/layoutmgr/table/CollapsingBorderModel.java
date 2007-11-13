@@ -76,7 +76,7 @@ public abstract class CollapsingBorderModel {
      * @param side the side on the current cell
      * @return the adjacent side on the neighbouring cell
      */
-    static int getOtherSide(int side) {
+    public/*TODO*/ static int getOtherSide(int side) {
         switch (side) {
             case CommonBorderPaddingBackground.BEFORE:
                 return CommonBorderPaddingBackground.AFTER;

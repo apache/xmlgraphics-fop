@@ -24,9 +24,6 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.layoutmgr.table.EmptyGridUnit;
-import org.apache.fop.layoutmgr.table.GridUnit;
-import org.apache.fop.layoutmgr.table.PrimaryGridUnit;
 
 
 /**

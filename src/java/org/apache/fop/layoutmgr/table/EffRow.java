@@ -22,6 +22,7 @@ package org.apache.fop.layoutmgr.table;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.fop.fo.flow.table.GridUnit;
 import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.traits.MinOptMax;
 
