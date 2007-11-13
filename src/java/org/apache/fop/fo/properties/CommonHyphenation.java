@@ -182,7 +182,7 @@ public final class CommonHyphenation {
         return font.getCharWidth(hyphChar);
     }
     
-    /** {@inheritDoc */
+    /** {@inheritDoc} */
     public boolean equals(Object obj) {
         if (obj == this) {
             return true;
