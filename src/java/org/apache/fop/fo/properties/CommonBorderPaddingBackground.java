@@ -25,7 +25,6 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.image.FopImage;
@@ -139,7 +138,6 @@ public class CommonBorderPaddingBackground {
      * Construct a CommonBorderPaddingBackground object.
      * 
      * @param pList The PropertyList to get properties from.
-     * @param fobj The FO to create this instance for.
      * @throws PropertyException if there's an error while binding the properties
      */
     public CommonBorderPaddingBackground(PropertyList pList) throws PropertyException {
