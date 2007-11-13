@@ -19,9 +19,12 @@
 
 package org.apache.fop.fo.flow.table;
 
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.fop.layoutmgr.table.EmptyGridUnit;
+import org.apache.fop.fo.ValidationException;
+
 
 /**
  * A row group builder accommodating a variable number of columns. More flexible, but less
@@ -31,34 +34,69 @@ class VariableColRowGroupBuilder extends RowGroupBuilder {
 
     VariableColRowGroupBuilder(Table t) {
         super(t);
-        numberOfColumns = 1;
     }
 
     /**
-     * Fills the given row group with empty grid units if necessary, so that it matches
-     * the given number of columns.
-     * 
-     * @param rowGroup a List of List of GridUnit
-     * @param numberOfColumns the number of columns that the row group must have
+     * Each event is recorded and will be played once the table is finished, and the final
+     * number of columns known.
      */
-    static void fillWithEmptyGridUnits(List rowGroup, int numberOfColumns) {
-        for (int i = 0; i < rowGroup.size(); i++) {
-            List effRow = (List) rowGroup.get(i);
-            for (int j = effRow.size(); j < numberOfColumns; j++) {
-                effRow.add(new EmptyGridUnit(null, null, null, j));
+    private static interface Event {
+        /**
+         * Plays this event
+         * 
+         * @param rowGroupBuilder the delegate builder which will actually create the row
+         * groups
+         * @throws ValidationException if a row-spanning cell overflows its parent body
+         */
+        void play(RowGroupBuilder rowGroupBuilder) throws ValidationException;
+    }
+
+    /** The queue of events sent to this builder. */
+    private List events = new LinkedList();
+
+    /** {@inheritDoc} */
+    void addTableCell(final TableCell cell) {
+        events.add(new Event() {
+            public void play(RowGroupBuilder rowGroupBuilder) {
+                rowGroupBuilder.addTableCell(cell);
             }
+        });
+    }
+
+    /** {@inheritDoc} */
+    void endRow(final TableCellContainer container) {
+        events.add(new Event() {
+            public void play(RowGroupBuilder rowGroupBuilder) {
+                rowGroupBuilder.endRow(container);
+            }
+        });
+    }
+
+    /** {@inheritDoc} */
+    void startTablePart(final TableBody part) {
+        events.add(new Event() {
+            public void play(RowGroupBuilder rowGroupBuilder) {
+                rowGroupBuilder.startTablePart(part);
+            }
+        });
+    }
+
+    /** {@inheritDoc} */
+    void endTablePart(final TableBody tableBody) throws ValidationException {
+        // TODO catch the ValidationException sooner?
+        events.add(new Event() {
+            public void play(RowGroupBuilder rowGroupBuilder) throws ValidationException {
+                rowGroupBuilder.endTablePart(tableBody);
+            }
+        });
+    }
+
+    /** {@inheritDoc} */
+    void endTable(final TableBody lastTablePart) throws ValidationException {
+        RowGroupBuilder delegate = new FixedColRowGroupBuilder(table);
+        for (Iterator eventIter = events.iterator(); eventIter.hasNext();) {
+            ((Event) eventIter.next()).play(delegate);
         }
+        delegate.endTable(lastTablePart);
     }
-
-    /**
-     * Updates the current row group to match the given number of columns, by adding empty
-     * grid units if necessary.
-     * 
-     * @param numberOfColumns new number of columns
-     */
-    void ensureNumberOfColumns(int numberOfColumns) {
-        this.numberOfColumns = numberOfColumns;
-        fillWithEmptyGridUnits(rows, numberOfColumns);
-    }
-
 }

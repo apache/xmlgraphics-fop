@@ -28,6 +28,21 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="VH" type="add">
+        Step towards performance: the collapsing-border resolution algorithm no longer triggers the
+        retrieving of the whole table, when possible.
+      </action>
+      <action context="Code" dev="VH" type="fix">
+        In case of missing cells the border-end of the table was applied to an inner cell, instead
+        of the (empty) cell in the last column.
+      </action>
+      <action context="Code" dev="VH" type="fix">
+        Fixed the resolution of borders with table-columns (border-before/after was wrongly applied
+        to every cell of the column).
+      </action>
+      <action context="Code" dev="VH" type="fix">
+        Fixed the resolution of border-end on cells spanning several rows.
+      </action>
       <action context="Code" dev="JM" type="fix" fixes-bug="43835" due-to="David Churavy">
         Bugfix: Use Font.getName() (logical font name) instead of Font.getFontName()
         (localized) when registering fonts from AWT.

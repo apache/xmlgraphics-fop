@@ -50,14 +50,14 @@ public class TableBody extends TableCellContainer {
     protected boolean tableRowsFound = false;
     protected boolean tableCellsFound = false;
 
-    /**
-     * used for initial values of column-number property
-     */
     private boolean firstRow = true;
 
     private boolean rowsStarted = false;
 
     private boolean lastCellEndsRow = true;
+
+    /** The last encountered table-row. */
+    private TableRow lastRow;
 
     private List rowGroups = new LinkedList();
 
@@ -101,14 +101,15 @@ public class TableBody extends TableCellContainer {
     /**
      * {@inheritDoc}
      */
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
+        super.startOfNode();
         getFOEventHandler().startBody(this);
     }
 
     /**
      * {@inheritDoc}
      */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
 
         if (!inMarker()) {
             pendingSpans = null;
@@ -130,16 +131,25 @@ public class TableBody extends TableCellContainer {
         }
     }
 
+    /** {@inheritDoc} */
+    TableBody getTablePart() {
+        return this;
+    }
+
     protected void finishLastRowGroup() throws ValidationException {
-        RowGroupBuilder rowGroupBuilder = getTable().getRowGroupBuilder(); 
-        if (tableRowsFound || !lastCellEndsRow) {
-            rowGroupBuilder.signalRowEnd(this);
-        }
-        try {
-            rowGroupBuilder.signalEndOfPart(this);
-        } catch (ValidationException e) {
-            e.setLocator(locator);
-            throw e;
+        if (!inMarker()) {
+            RowGroupBuilder rowGroupBuilder = getTable().getRowGroupBuilder(); 
+            if (tableRowsFound) {
+                rowGroupBuilder.endRow(lastRow);
+            } else if (!lastCellEndsRow) {
+                rowGroupBuilder.endRow(this);
+            }
+            try {
+                rowGroupBuilder.endTablePart(this);
+            } catch (ValidationException e) {
+                e.setLocator(locator);
+                throw e;
+            }
         }
     }
 
@@ -184,13 +194,19 @@ public class TableBody extends TableCellContainer {
         if (!inMarker()) {
             switch (child.getNameId()) {
             case FO_TABLE_ROW:
-                if (rowsStarted) {
+                if (!rowsStarted) {
+                    getTable().getRowGroupBuilder().startTablePart(this);
+                } else {
                     columnNumberManager.prepareForNextRow(pendingSpans);
-                    getTable().getRowGroupBuilder().signalRowEnd(this);
+                    getTable().getRowGroupBuilder().endRow(lastRow);
                 }
                 rowsStarted = true;
+                lastRow = (TableRow) child;
                 break;
             case FO_TABLE_CELL:
+                if (!rowsStarted) {
+                    getTable().getRowGroupBuilder().startTablePart(this);
+                }
                 rowsStarted = true;
                 TableCell cell = (TableCell) child;
                 addTableCellChild(cell, firstRow);
@@ -198,7 +214,7 @@ public class TableBody extends TableCellContainer {
                 if (lastCellEndsRow) {
                     firstRow = false;
                     columnNumberManager.prepareForNextRow(pendingSpans);
-                    getTable().getRowGroupBuilder().signalRowEnd(this);
+                    getTable().getRowGroupBuilder().endRow(this);
                 }
                 break;
             default:
@@ -208,11 +224,20 @@ public class TableBody extends TableCellContainer {
         super.addChildNode(child);
     }
 
+    /** {inheritDoc} */
+    protected void setCollapsedBorders() {
+        Table table = (Table) parent;
+        createBorder(CommonBorderPaddingBackground.START, table);
+        createBorder(CommonBorderPaddingBackground.END, table);
+        createBorder(CommonBorderPaddingBackground.BEFORE);
+        createBorder(CommonBorderPaddingBackground.AFTER);
+    }
+
     void addRowGroup(List rowGroup) {
         rowGroups.add(rowGroup);
     }
 
-    List getRowGroups() {
+    public List getRowGroups() {
         return rowGroups;
     }
 
@@ -235,6 +260,10 @@ public class TableBody extends TableCellContainer {
         return FO_TABLE_BODY;
     }
 
+    protected boolean isTableFooter() {
+        return false;
+    }
+
     /**
      * @param obj table row in question
      * @return true if the given table row is the first row of this body.
@@ -249,7 +278,7 @@ public class TableBody extends TableCellContainer {
             firstRow = false;
             if (!lastCellEndsRow) {
                 columnNumberManager.prepareForNextRow(pendingSpans);
-                getTable().getRowGroupBuilder().signalRowEnd(this);
+                getTable().getRowGroupBuilder().endRow(this);
             }
         }
         rowsStarted = true;

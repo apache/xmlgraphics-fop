@@ -20,8 +20,8 @@
 package org.apache.fop.layoutmgr.table;
 
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.flow.table.BorderSpecification;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
-import org.apache.fop.fo.properties.CommonBorderPaddingBackground.BorderInfo;
 
 /**
  * This class is a superclass for the two collapsing border models defined
@@ -37,10 +37,7 @@ public abstract class CollapsingBorderModel {
     protected static final int START = CommonBorderPaddingBackground.START;
     /** end side */
     protected static final int END = CommonBorderPaddingBackground.END;
-    
-    /** Flag: current grid unit is either start or end of the table. */
-    public static final int VERTICAL_START_END_OF_TABLE = 1;
-    
+
     /** Indicates that the cell is/starts in the first row being painted on a particular page */
     //public static final int FIRST_ROW_IN_TABLE_PART = 1;
     /** Indicates that the cell is/ends in the last row being painted on a particular page */
@@ -53,7 +50,7 @@ public abstract class CollapsingBorderModel {
     //These statics are used singleton-style. No MT issues here.
     private static CollapsingBorderModel collapse = null;
     private static CollapsingBorderModel collapseWithPrecedence = null;
-    
+
     /**
      * @param borderCollapse border collapse control
      * @return the border model for the cell
@@ -74,12 +71,12 @@ public abstract class CollapsingBorderModel {
                 throw new IllegalArgumentException("Illegal border-collapse mode.");
         }
     }
-    
+
     /**
      * @param side the side on the current cell
      * @return the adjacent side on the neighbouring cell
      */
-    public static int getOtherSide(int side) {
+    static int getOtherSide(int side) {
         switch (side) {
             case CommonBorderPaddingBackground.BEFORE:
                 return CommonBorderPaddingBackground.AFTER;
@@ -93,23 +90,32 @@ public abstract class CollapsingBorderModel {
                 throw new IllegalArgumentException("Illegal parameter: side");
         }
     }
-    
+
     /**
      * @param side the side to investigate
      * @return true if the adjacent cell is before or after
      */
     protected boolean isVerticalRelation(int side) {
-        return (side == CommonBorderPaddingBackground.BEFORE 
+        return (side == CommonBorderPaddingBackground.BEFORE
                 || side == CommonBorderPaddingBackground.AFTER);
     }
 
-    
+    private static int compareInt(int value1, int value2) {
+        if (value1 < value2) {
+            return -1;
+        } else if (value1 == value2) {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
+
     /**
      * See rule 4 in 6.7.10 for the collapsing border model.
      * @param style the border style to get the preference value for
      * @return the preference value of the style
      */
-    public int getPreferenceValue(int style) {
+    private static int getStylePreferenceValue(int style) {
         switch (style) {
             case Constants.EN_DOUBLE: return 0;
             case Constants.EN_SOLID: return -1;
@@ -122,14 +128,62 @@ public abstract class CollapsingBorderModel {
             default: throw new IllegalStateException("Illegal border style: " + style);
         }
     }
-    
+
     /**
-     * Determines the winning BorderInfo.
-     * @param current grid unit of the current element
-     * @param neighbour grid unit of the neighbouring element
-     * @return the winning BorderInfo
+     * Compares the two given styles (see {@link Constants}).
+     * 
+     * @param style1 a style constant
+     * @param style2 another style constant
+     * @return a value &lt; 0 if style1 has less priority than style2, 0 if both are
+     * equal, a value &gt; 0 if style1 has more priority than style2
      */
-    public abstract BorderInfo determineWinner(
-            GridUnit current, GridUnit neighbour, int side, int flags);
-    
+    static int compareStyles(int style1, int style2) {
+        int value1 = getStylePreferenceValue(style1);
+        int value2 = getStylePreferenceValue(style2);
+        return compareInt(value1, value2);
+    }
+
+    private static int getHolderPreferenceValue(int id) {
+        switch (id) {
+        case Constants.FO_TABLE_CELL: return 0;
+        case Constants.FO_TABLE_ROW: return -1;
+        case Constants.FO_TABLE_HEADER:
+        case Constants.FO_TABLE_FOOTER:
+        case Constants.FO_TABLE_BODY:
+            return -2;
+        case Constants.FO_TABLE_COLUMN: return -3;
+        // TODO colgroup
+        case Constants.FO_TABLE: return -4;
+        default: throw new IllegalStateException();
+        }
+    }
+
+    /**
+     * Compares the two given FO ids ({@link Constants}.FO*) in terms of border
+     * declaration.
+     * 
+     * @param id1 a FO id ({@link Constants#FO_TABLE}, {@link Constants#FO_TABLE_BODY},
+     * etc.)
+     * @param id2 another FO id
+     * @return a value &lt; 0 if id1 has less priority than id2, 0 if both are equal, a
+     * value &gt; 0 if id1 has more priority than id2
+     */
+    static int compareFOs(int id1, int id2) {
+        int p1 = getHolderPreferenceValue(id1);
+        int p2 = getHolderPreferenceValue(id2);
+        return compareInt(p1, p2);
+    }
+
+    /**
+     * Returns the border which wins the border conflict resolution. In case the two
+     * borders are equivalent (identical, or only the color is different), null is
+     * returned.
+     * 
+     * @param border1 a border specification
+     * @param border2 another border specification
+     * @return the winning border, null if the two borders are equivalent
+     */
+    public abstract BorderSpecification determineWinner(BorderSpecification border1,
+            BorderSpecification border2);
+
 }

@@ -30,6 +30,7 @@ import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.NumberProperty;
 import org.apache.fop.fo.properties.Property;
+import org.apache.fop.layoutmgr.table.CollapsingBorderModel;
 
 /**
  * Common base class for table-related FOs
@@ -41,6 +42,10 @@ public abstract class TableFObj extends FObj {
     private Numeric borderEndPrecedence;
     private Numeric borderStartPrecedence;
 
+    public/*TODO*/ BorderSpecification[] resolvedBorders = new BorderSpecification[4]; // TODO
+
+    CollapsingBorderModel collapsingBorderModel;
+    
     /**
      * Main constructor
      * 
@@ -122,9 +127,7 @@ public abstract class TableFObj extends FObj {
             super(propId);
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public Property make(PropertyList propertyList)
                 throws PropertyException {
             FObj fo = propertyList.getFObj();
@@ -188,5 +191,56 @@ public abstract class TableFObj extends FObj {
 
             return p;
         }
+    }
+
+    /** {@inheritDoc} */
+    public void startOfNode() throws FOPException {
+        super.startOfNode();
+        Table table = getTable();
+        if (!inMarker() && !table.isSeparateBorderModel()) {
+            collapsingBorderModel = CollapsingBorderModel.getBorderModelFor(table
+                    .getBorderCollapse());
+            resolvedBorders = new BorderSpecification[4];
+            setCollapsedBorders();
+        }
+    }
+
+    /*
+     * TODO made public so that RetrieveMarker can access it.  
+     */
+    /** {@inheritDoc} */
+    public void endOfNode() throws FOPException {
+        super.endOfNode();
+    }
+
+    /**
+     * Prepares the borders of this element if the collapsing-border model is in use.
+     * Conflict resolution with parent elements is done where applicable.
+     */
+    protected abstract void setCollapsedBorders();
+
+    /**
+     * Creates a BorderSpecification from the border set on the given side. If no border
+     * is set, a BorderSpecification with border-style none is created.
+     * 
+     * @param side one of CommonBorderPaddingBackground.BEFORE|AFTER|START|END
+     */
+    protected void createBorder(int side) {
+        resolvedBorders[side] = new BorderSpecification(getCommonBorderPaddingBackground()
+                .getBorderInfo(side), getNameId()); 
+    }
+
+    /**
+     * Creates a BorderSpecification from the border set on the given side, performing
+     * conflict resolution with the same border on the given object.
+     * 
+     * @param side one of CommonBorderPaddingBackground.BEFORE|AFTER|START|END
+     * @param competitor a parent table element whose side coincides with the given side
+     * on this element
+     */
+    protected void createBorder(int side, TableFObj competitor) {
+        createBorder(side);
+        resolvedBorders[side] = collapsingBorderModel.determineWinner(resolvedBorders[side],
+                competitor.resolvedBorders[side]);
     }
 }

@@ -97,10 +97,6 @@ class RowGroupLayoutManager {
 
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment, int bodyType) {
         LinkedList returnList = new LinkedList();
-        //Border resolution
-        if (!tableLM.getTable().isSeparateBorderModel()) {
-            resolveNormalBeforeAfterBordersForRowGroup();
-        }
 
         //Reset keep-with-next when remaining inside the table.
         //The context flag is only used to propagate keep-with-next to the outside.
@@ -131,107 +127,6 @@ class RowGroupLayoutManager {
         }
 
         return returnList;
-    }
-
-    /**
-     * Resolves normal borders for a row group.
-     * @param iter Table row iterator to operate on
-     */
-    private void resolveNormalBeforeAfterBordersForRowGroup() {
-        for (int rgi = 0; rgi < rowGroup.length; rgi++) {
-            EffRow row = rowGroup[rgi];
-            EffRow prevRow = thisIter.getPrecedingRow(row);
-            EffRow nextRow = thisIter.getFollowingRow(row);
-            if ((prevRow == null) && (thisIter == bodyIter) && (headerIter != null)) {
-                prevRow = headerIter.getLastRow();
-            }
-            if ((nextRow == null) && (thisIter == headerIter)) {
-                nextRow = bodyIter.getFirstRow();
-            }
-            if ((nextRow == null) && (thisIter == bodyIter) && (footerIter != null)) {
-                nextRow = footerIter.getFirstRow();
-            }
-            if ((prevRow == null) && (thisIter == footerIter)) {
-                //TODO This could be bad for memory consumption because it already causes the
-                //whole body iterator to be prefetched!
-                prevRow = bodyIter.getLastRow();
-            }
-            log.debug("prevRow-row-nextRow: " + prevRow + " - " + row + " - " + nextRow);
-            
-            //Determine the grid units necessary for getting all the borders right
-            int guCount = row.getGridUnits().size();
-            if (prevRow != null) {
-                guCount = Math.max(guCount, prevRow.getGridUnits().size());
-            }
-            if (nextRow != null) {
-                guCount = Math.max(guCount, nextRow.getGridUnits().size());
-            }
-            GridUnit gu = row.getGridUnit(0);
-            //Create empty grid units to hold resolved borders of neighbouring cells
-            //TODO maybe this needs to be done differently (and sooner)
-            for (int i = 0; i < guCount - row.getGridUnits().size(); i++) {
-                //TODO This block is untested!
-                int pos = row.getGridUnits().size() + i;
-                row.getGridUnits().add(new EmptyGridUnit(gu.getRow(), 
-                        tableLM.getColumns().getColumn(pos + 1), gu.getBody(), 
-                        pos));
-            }
-            
-            //Now resolve normal borders
-            if (tableLM.getTable().isSeparateBorderModel()) {
-                //nop, borders are already assigned at this point
-            } else {
-                for (int i = 0; i < row.getGridUnits().size(); i++) {
-                    gu = row.getGridUnit(i);
-                    GridUnit other;
-                    int flags = 0;
-                    if (prevRow != null && i < prevRow.getGridUnits().size()) {
-                        other = prevRow.getGridUnit(i);
-                    } else {
-                        other = null;
-                    }
-                    if (other == null 
-                            || other.isEmpty() 
-                            || gu.isEmpty() 
-                            || gu.getPrimary() != other.getPrimary()) {
-                        if ((thisIter == bodyIter)
-                                && gu.getFlag(GridUnit.FIRST_IN_TABLE)
-                                && (headerIter == null)) {
-                            flags |= CollapsingBorderModel.VERTICAL_START_END_OF_TABLE;
-                        }
-                        if ((thisIter == headerIter)
-                                && gu.getFlag(GridUnit.FIRST_IN_TABLE)) {
-                            flags |= CollapsingBorderModel.VERTICAL_START_END_OF_TABLE;
-                        }
-                        gu.resolveBorder(other, 
-                                CommonBorderPaddingBackground.BEFORE, flags);
-                    }
-                    
-                    flags = 0;
-                    if (nextRow != null && i < nextRow.getGridUnits().size()) {
-                        other = nextRow.getGridUnit(i);
-                    } else {
-                        other = null;
-                    }
-                    if (other == null 
-                            || other.isEmpty() 
-                            || gu.isEmpty() 
-                            || gu.getPrimary() != other.getPrimary()) {
-                        if ((thisIter == bodyIter)
-                                && gu.getFlag(GridUnit.LAST_IN_TABLE)
-                                && (footerIter == null)) {
-                            flags |= CollapsingBorderModel.VERTICAL_START_END_OF_TABLE;
-                        }
-                        if ((thisIter == footerIter)
-                                && gu.getFlag(GridUnit.LAST_IN_TABLE)) {
-                            flags |= CollapsingBorderModel.VERTICAL_START_END_OF_TABLE;
-                        }
-                        gu.resolveBorder(other, 
-                                CommonBorderPaddingBackground.AFTER, flags);
-                    }
-                }
-            }
-        }
     }
 
     /**
@@ -271,6 +166,7 @@ class RowGroupLayoutManager {
                     PrimaryGridUnit primary = gu.getPrimary();
                     
                     if (gu.isPrimary()) {
+                        primary.createCellLM(); // TODO a new LM must be created for every new static-content
                         primary.getCellLM().setParent(tableLM);
                      
                         //Determine the table-row if any

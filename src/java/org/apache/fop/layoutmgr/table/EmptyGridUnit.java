@@ -19,9 +19,12 @@
 
 package org.apache.fop.layoutmgr.table;
 
+import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.flow.table.BorderSpecification;
+import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableBody;
-import org.apache.fop.fo.flow.table.TableColumn;
 import org.apache.fop.fo.flow.table.TableRow;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 
 /**
  * GridUnit subclass for empty grid units.
@@ -30,25 +33,34 @@ public class EmptyGridUnit extends GridUnit {
 
     private TableRow row;
     private TableBody body;
-    
+
     /**
-     * @param row Optional table-row instance
-     * @param column table-column instance
-     * @param body table-body the grid unit belongs to
-     * @param startCol column index 
+     * @param table the containing table
+     * @param startRow index of the row this grid unit belongs to, 0-based
+     * @param startCol column index, 0-based
      */
-    public EmptyGridUnit(TableRow row, TableColumn column, TableBody body, 
-            int startCol) {
-        super(null, null, column, startCol, 0);
-        this.row = row;
-        this.body = body;
+    public EmptyGridUnit(Table table, int startRow, int startCol) {
+        super(table, table.getColumn(startCol), startCol, 0, 0);
     }
-    
+
+    /** {@inheritDoc} */
+    protected void setBorder(int side) {
+        resolvedBorders[side] = new BorderSpecification(
+                new CommonBorderPaddingBackground.BorderInfo(Constants.EN_NONE, null, null),
+                Constants.FO_TABLE_CELL);
+    }
+
+    /** {@inheritDoc} */
+    public PrimaryGridUnit getPrimary() {
+        throw new UnsupportedOperationException();
+//        return this; TODO
+    }
+
     /** {@inheritDoc} */
     public boolean isPrimary() {
         return true;
     }
-    
+
     /** {@inheritDoc} */
     public TableBody getBody() {
         return this.body;
@@ -57,5 +69,15 @@ public class EmptyGridUnit extends GridUnit {
     /** {@inheritDoc} */
     public TableRow getRow() {
         return this.row;
+    }
+
+    /** {@inheritDoc} */
+    public boolean isLastGridUnitColSpan() {
+        return true;
+    }
+
+    /** {@inheritDoc} */
+    public boolean isLastGridUnitRowSpan() {
+        return true;
     }
 }

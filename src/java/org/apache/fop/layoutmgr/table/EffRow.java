@@ -47,12 +47,14 @@ class EffRow {
      * Creates a new effective row instance.
      * @param index index of the row
      * @param bodyType type of body (one of HEADER, FOOTER, BODY as found on TableRowIterator)
+     * @param gridUnits the grid units this row is made of
      */
-    public EffRow(int index, int bodyType) {
+    public EffRow(int index, int bodyType, List gridUnits) {
         this.index = index;
         this.bodyType = bodyType;
+        this.gridUnits = gridUnits;
     }
-    
+
     /** @return the index of the EffRow in the sequence of rows */
     public int getIndex() {
         return this.index;

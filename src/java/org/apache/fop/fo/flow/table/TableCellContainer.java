@@ -93,6 +93,13 @@ public abstract class TableCellContainer extends TableFObj implements ColumnNumb
         }
     }
 
+    /**
+     * Returns the enclosing table-header/footer/body of this container.
+     * 
+     * @return <code>this</code> for TableBody, or the parent element for TableRow
+     */
+    abstract TableBody getTablePart();
+
     /** {@inheritDoc} */
     public ColumnNumberManager getColumnNumberManager() {
         return columnNumberManager;
