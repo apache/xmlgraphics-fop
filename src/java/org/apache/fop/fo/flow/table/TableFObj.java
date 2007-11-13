@@ -42,7 +42,7 @@ public abstract class TableFObj extends FObj {
     private Numeric borderEndPrecedence;
     private Numeric borderStartPrecedence;
 
-    public/*TODO*/ BorderSpecification[] resolvedBorders = new BorderSpecification[4]; // TODO
+    BorderSpecification[] resolvedBorders = new BorderSpecification[4]; // TODO
 
     CollapsingBorderModel collapsingBorderModel;
     
