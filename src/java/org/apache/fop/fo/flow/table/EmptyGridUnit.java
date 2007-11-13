@@ -42,7 +42,7 @@ public class EmptyGridUnit extends GridUnit {
     /** {@inheritDoc} */
     protected void setBorder(int side) {
         resolvedBorders[side] = new BorderSpecification(
-                new CommonBorderPaddingBackground.BorderInfo(Constants.EN_NONE, null, null),
+                CommonBorderPaddingBackground.getDefaultBorderInfo(),
                 Constants.FO_TABLE_CELL);
     }
 

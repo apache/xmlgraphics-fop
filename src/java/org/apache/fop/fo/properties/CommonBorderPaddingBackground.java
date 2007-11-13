@@ -83,7 +83,7 @@ public class CommonBorderPaddingBackground {
         private Color mColor; // Border color
         private CondLengthProperty mWidth;
 
-        public BorderInfo(int style, CondLengthProperty width, Color color) {
+        BorderInfo(int style, CondLengthProperty width, Color color) {
             mStyle = style;
             mWidth = width;
             mColor = color;
@@ -122,6 +122,25 @@ public class CommonBorderPaddingBackground {
             sb.append("}");
             return sb.toString();
         }
+    }
+
+    /**
+     * A border info with style none. Used as a singleton, in the collapsing-border model,
+     * for elements which don't specify any border on some of their sides.
+     */
+    private static BorderInfo defaultBorderInfo;
+
+    /**
+     * Returns a default BorderInfo of style none.
+     * 
+     * @return a BorderInfo instance with style set to {@link Constants#EN_NONE}
+     */
+    public static synchronized BorderInfo getDefaultBorderInfo() {
+        if (defaultBorderInfo == null) {
+            /* It is enough to set color and width to null, as they should never be consulted */
+            defaultBorderInfo = new BorderInfo(Constants.EN_NONE, null, null);
+        }
+        return defaultBorderInfo;
     }
 
     private BorderInfo[] borderInfo = new BorderInfo[4];
@@ -228,7 +247,7 @@ public class CommonBorderPaddingBackground {
      */
     public BorderInfo getBorderInfo(int side) {
         if (this.borderInfo[side] == null) {
-            return new BorderInfo(Constants.EN_NONE, null, null); // TODO
+            return getDefaultBorderInfo();
         } else {
             return this.borderInfo[side];
         }
