@@ -76,15 +76,12 @@ public class TableContentLayoutManager implements PercentBaseContext {
     public TableContentLayoutManager(TableLayoutManager parent) {
         this.tableLM = parent;
         Table table = getTableLM().getTable();
-        this.bodyIter = new TableRowIterator(table, getTableLM().getColumns(),
-                TableRowIterator.BODY);
+        this.bodyIter = new TableRowIterator(table, TableRowIterator.BODY);
         if (table.getTableHeader() != null) {
-            headerIter = new TableRowIterator(table, 
-                    getTableLM().getColumns(), TableRowIterator.HEADER);
+            headerIter = new TableRowIterator(table, TableRowIterator.HEADER);
         }
         if (table.getTableFooter() != null) {
-            footerIter = new TableRowIterator(table, 
-                    getTableLM().getColumns(), TableRowIterator.FOOTER);
+            footerIter = new TableRowIterator(table, TableRowIterator.FOOTER);
         }
     }
     
@@ -213,7 +210,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
         int breakBetween = Constants.EN_AUTO;
         while ((rowGroup = iter.getNextRowGroup()) != null) {
             RowGroupLayoutManager rowGroupLM = new RowGroupLayoutManager(getTableLM(), rowGroup,
-                    bodyIter, headerIter, footerIter, iter, stepper);
+                    stepper);
             if (breakBetween == Constants.EN_AUTO) {
                 // TODO improve
                 breakBetween = rowGroupLM.getBreakBefore();

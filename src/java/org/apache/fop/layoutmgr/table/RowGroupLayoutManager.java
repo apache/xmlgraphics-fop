@@ -49,21 +49,12 @@ class RowGroupLayoutManager {
 
     private TableLayoutManager tableLM;
 
-    private TableRowIterator bodyIter;
-    private TableRowIterator headerIter;
-    private TableRowIterator footerIter;
-    private TableRowIterator thisIter;
     private TableStepper tableStepper;
 
-    RowGroupLayoutManager(TableLayoutManager tableLM, EffRow[] rowGroup, TableRowIterator bodyIter,
-            TableRowIterator headerIter, TableRowIterator footerIter, TableRowIterator thisIter,
+    RowGroupLayoutManager(TableLayoutManager tableLM, EffRow[] rowGroup,
             TableStepper tableStepper) {
         this.tableLM = tableLM;
         this.rowGroup = rowGroup;
-        this.bodyIter = bodyIter;
-        this.headerIter = headerIter;
-        this.footerIter = footerIter;
-        this.thisIter = thisIter;
         this.tableStepper = tableStepper;
     }
 
@@ -160,7 +151,7 @@ class RowGroupLayoutManager {
             int maxCellHeight = 0;
             int effRowContentHeight = 0;
             for (int j = 0; j < row.getGridUnits().size(); j++) {
-//                assert maxColumnCount == 0 || maxColumnCount == row.getGridUnits().size(); // TODO vh
+                assert maxColumnCount == 0 || maxColumnCount == row.getGridUnits().size();
                 maxColumnCount = Math.max(maxColumnCount, row.getGridUnits().size());
                 GridUnit gu = row.getGridUnit(j);
                 if ((gu.isPrimary() || (gu.getColSpanIndex() == 0 && gu.isLastGridUnitRowSpan())) 
