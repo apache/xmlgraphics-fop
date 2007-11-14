@@ -52,6 +52,8 @@ public class TableRowIterator {
 
     private Iterator rowGroupsIter;
 
+    private int rowIndex = 0;
+
     /**
      * Creates a new TableRowIterator.
      * @param table the table to iterate over
@@ -94,8 +96,7 @@ public class TableRowIterator {
         int i = 0;
         for (Iterator rowIter = rowGroup.iterator(); rowIter.hasNext();) {
             List gridUnits = (List) rowIter.next();
-            effRowGroup[i] = new EffRow(i, tablePart, gridUnits);
-            i++;
+            effRowGroup[i++] = new EffRow(rowIndex++, tablePart, gridUnits);
         }
         return effRowGroup;
     }
