@@ -1,0 +1,4 @@
+org.apache.fop.image2.impl.ImageConverterBuffered2Rendered
+org.apache.fop.image2.impl.ImageConverterG2D2Bitmap
+org.apache.fop.image2.impl.batik.ImageConverterSVG2G2D
+org.apache.fop.image2.impl.batik.ImageConverterWMF2G2D
