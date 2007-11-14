@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FONode.FONodeIterator;
+import org.apache.fop.fo.flow.table.EffRow;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableBody;
 
