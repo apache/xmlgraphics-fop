@@ -86,7 +86,7 @@ class FixedColRowGroupBuilder extends RowGroupBuilder {
         }
         int columnIndex = cell.getColumnNumber() - 1;
         PrimaryGridUnit pgu = new PrimaryGridUnit(cell, currentTableRow,
-                table.getColumn(columnIndex), columnIndex, currentRowIndex);
+                table.getColumn(columnIndex), columnIndex);
         List row = (List) rows.get(currentRowIndex);
         row.set(columnIndex, pgu);
         // TODO

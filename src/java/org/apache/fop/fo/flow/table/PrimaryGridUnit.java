@@ -54,9 +54,8 @@ public class PrimaryGridUnit extends GridUnit {
      * @param startCol index of the column this grid unit belongs to, zero-based
      * @param startRow index of the row this grid unit belongs to, zero-based
      */
-    PrimaryGridUnit(TableCell cell, TableRow row, TableColumn column, int startCol, int startRow) {
+    PrimaryGridUnit(TableCell cell, TableRow row, TableColumn column, int startCol) {
         super(cell, row, column, startCol, 0, 0);
-        this.startRow = startRow;
         log.trace("PrimaryGridUnit created, row " + startRow + " col " + startCol);
     }
 
@@ -179,6 +178,10 @@ public class PrimaryGridUnit extends GridUnit {
             rows = new java.util.ArrayList();
         }
         rows.add(row);
+    }
+
+    void setStartRow(int startRow) {
+        this.startRow = startRow;
     }
 
     /**

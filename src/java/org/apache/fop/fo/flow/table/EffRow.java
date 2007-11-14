@@ -53,6 +53,13 @@ public class EffRow {
         this.index = index;
         this.bodyType = bodyType;
         this.gridUnits = gridUnits;
+        // TODO this is ugly, but we may eventually be able to do without that index
+        for (Iterator guIter = gridUnits.iterator(); guIter.hasNext();) {
+            Object gu = guIter.next();
+            if (gu instanceof PrimaryGridUnit) {
+                ((PrimaryGridUnit) gu).setStartRow(index);
+            }
+        }
     }
 
     /** @return the index of the EffRow in the sequence of rows */
@@ -126,19 +133,6 @@ public class EffRow {
             return (GridUnit)gridUnits.get(column);
         } else {
             return null;
-        }
-    }
-    
-    /**
-     * Sets a flag on all grid units of this effective row.
-     * @param flag which flag to set (on of the GridUnit.* constants)
-     * @param value new value for the flag
-     */
-    public void setFlagForAllGridUnits(int flag, boolean value) {
-        Iterator iter = gridUnits.iterator();
-        while (iter.hasNext()) {
-            GridUnit gu = (GridUnit)iter.next();
-            gu.setFlag(flag, value);
         }
     }
 
