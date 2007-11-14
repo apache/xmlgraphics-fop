@@ -69,7 +69,7 @@ public class GridUnit {
     /** Table cell which occupies this grid unit */
     protected TableCell cell;
 
-    /** Table row which occupies this grid unit (may be null) */
+    /** Table row occupied by this grid unit (may be null). */
     private TableRow row;
 
     /** Table column that this grid unit belongs to */
@@ -98,14 +98,15 @@ public class GridUnit {
      * Creates a new grid unit.
      * 
      * @param table the containing table
+     * @param row the table-row element this grid unit belongs to (if any)
      * @param column table column this grid unit belongs to
      * @param startCol index of the column this grid unit belongs to
      * @param colSpanIndex index of this grid unit in the span, in column direction
      * @param rowSpanIndex index of this grid unit in the span, in row direction
      */
-    protected GridUnit(Table table, TableColumn column, int startCol, int colSpanIndex,
-            int rowSpanIndex) {
-        this(column, startCol, colSpanIndex, rowSpanIndex);
+    protected GridUnit(Table table, TableRow row, TableColumn column, int startCol,
+            int colSpanIndex, int rowSpanIndex) {
+        this(row, column, startCol, colSpanIndex, rowSpanIndex);
         setBorders(table);
     }
 
@@ -113,14 +114,15 @@ public class GridUnit {
      * Creates a new grid unit.
      * 
      * @param cell table cell which occupies this grid unit
+     * @param row the table-row element this grid unit belongs to (if any)
      * @param column table column this grid unit belongs to
      * @param startCol index of the column this grid unit belongs to
      * @param colSpanIndex index of this grid unit in the span, in column direction
      * @param rowSpanIndex index of this grid unit in the span, in row direction
      */
-    protected GridUnit(TableCell cell, TableColumn column, int startCol, int colSpanIndex,
-            int rowSpanIndex) {
-        this(column, startCol, colSpanIndex, rowSpanIndex);
+    protected GridUnit(TableCell cell, TableRow row, TableColumn column, int startCol,
+            int colSpanIndex, int rowSpanIndex) {
+        this(row, column, startCol, colSpanIndex, rowSpanIndex);
         this.cell = cell;
         setBorders(cell.getTable());
     }
@@ -129,18 +131,21 @@ public class GridUnit {
      * Creates a new grid unit.
      * 
      * @param primary the before-start grid unit of the cell containing this grid unit
+     * @param row the table-row element this grid unit belongs to (if any)
      * @param column table column this grid unit belongs to
      * @param startCol index of the column this grid unit belongs to
      * @param colSpanIndex index of this grid unit in the span, in column direction
      * @param rowSpanIndex index of this grid unit in the span, in row direction
      */
-    GridUnit(PrimaryGridUnit primary, TableColumn column, int startCol, int colSpanIndex,
-            int rowSpanIndex) {
-        this(primary.getCell(), column, startCol, colSpanIndex, rowSpanIndex);
+    GridUnit(PrimaryGridUnit primary, TableRow row, TableColumn column, int startCol,
+            int colSpanIndex, int rowSpanIndex) {
+        this(primary.getCell(), row, column, startCol, colSpanIndex, rowSpanIndex);
         this.primary = primary;
     }
 
-    private GridUnit(TableColumn column, int startCol, int colSpanIndex, int rowSpanIndex) {
+    private GridUnit(TableRow row, TableColumn column, int startCol, int colSpanIndex,
+            int rowSpanIndex) {
+        this.row = row;
         this.column = column;
         this.startCol = startCol;
         this.colSpanIndex = colSpanIndex;
@@ -181,23 +186,14 @@ public class GridUnit {
         return column;
     }
 
-    public TableRow getRow() {
-        if (row != null) {
-            return row;
-        } else if (getCell().getParent() instanceof TableRow) {
-            return (TableRow) getCell().getParent();
-        } else {
-            return null;
-        }
-    }
-
     /**
-     * Sets the table-row FO, if applicable.
+     * Returns the fo:table-row element (if any) this grid unit belongs to.
      * 
-     * @param row the table-row FO
+     * @return the row containing this grid unit, or null if there is no fo:table-row
+     * element in the corresponding table-part
      */
-    public void setRow(TableRow row) {
-        this.row = row;
+    public TableRow getRow() {
+        return row;
     }
 
     public TableBody getBody() {

@@ -49,12 +49,13 @@ public class PrimaryGridUnit extends GridUnit {
      * Creates a new primary grid unit.
      *
      * @param cell table cell which occupies this grid unit
+     * @param row the table-row element this grid unit belongs to (if any)
      * @param column table column this grid unit belongs to
      * @param startCol index of the column this grid unit belongs to, zero-based
      * @param startRow index of the row this grid unit belongs to, zero-based
      */
-    PrimaryGridUnit(TableCell cell, TableColumn column, int startCol, int startRow) {
-        super(cell, column, startCol, 0, 0);
+    PrimaryGridUnit(TableCell cell, TableRow row, TableColumn column, int startCol, int startRow) {
+        super(cell, row, column, startCol, 0, 0);
         this.startRow = startRow;
         log.trace("PrimaryGridUnit created, row " + startRow + " col " + startCol);
     }

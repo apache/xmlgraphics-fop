@@ -27,16 +27,16 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
  */
 public class EmptyGridUnit extends GridUnit {
 
-    private TableRow row;
     private TableBody body;
 
     /**
      * @param table the containing table
+     * @param row the table-row element this grid unit belongs to (if any)
      * @param startRow index of the row this grid unit belongs to, 0-based
      * @param startCol column index, 0-based
      */
-    EmptyGridUnit(Table table, int startRow, int startCol) {
-        super(table, table.getColumn(startCol), startCol, 0, 0);
+    EmptyGridUnit(Table table, TableRow row, int startRow, int startCol) {
+        super(table, row, table.getColumn(startCol), startCol, 0, 0);
     }
 
     /** {@inheritDoc} */
@@ -60,11 +60,6 @@ public class EmptyGridUnit extends GridUnit {
     /** {@inheritDoc} */
     public TableBody getBody() {
         return this.body;
-    }
-
-    /** {@inheritDoc} */
-    public TableRow getRow() {
-        return this.row;
     }
 
     /** {@inheritDoc} */

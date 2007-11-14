@@ -64,6 +64,15 @@ class VariableColRowGroupBuilder extends RowGroupBuilder {
     }
 
     /** {@inheritDoc} */
+    void startRow(final TableRow tableRow) {
+        events.add(new Event() {
+            public void play(RowGroupBuilder rowGroupBuilder) {
+                rowGroupBuilder.startRow(tableRow);
+            }
+        });
+    }
+
+    /** {@inheritDoc} */
     void endRow(final TableCellContainer container) {
         events.add(new Event() {
             public void play(RowGroupBuilder rowGroupBuilder) {

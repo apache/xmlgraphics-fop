@@ -35,6 +35,8 @@ class FixedColRowGroupBuilder extends RowGroupBuilder {
     /** Number of columns in the corresponding table. */
     private int numberOfColumns;
 
+    private TableRow currentTableRow = null;
+
     /** 0-based, index in the row group. */
     private int currentRowIndex;
 
@@ -83,15 +85,15 @@ class FixedColRowGroupBuilder extends RowGroupBuilder {
             rows.add(effRow);
         }
         int columnIndex = cell.getColumnNumber() - 1;
-        PrimaryGridUnit pgu = new PrimaryGridUnit(cell, table.getColumn(columnIndex), columnIndex,
-                currentRowIndex);
+        PrimaryGridUnit pgu = new PrimaryGridUnit(cell, currentTableRow,
+                table.getColumn(columnIndex), columnIndex, currentRowIndex);
         List row = (List) rows.get(currentRowIndex);
         row.set(columnIndex, pgu);
         // TODO
         GridUnit[] cellRow = new GridUnit[cell.getNumberColumnsSpanned()];
         cellRow[0] = pgu;
         for (int j = 1; j < cell.getNumberColumnsSpanned(); j++) {
-            GridUnit gu = new GridUnit(pgu, table.getColumn(columnIndex + j),
+            GridUnit gu = new GridUnit(pgu, currentTableRow, table.getColumn(columnIndex + j),
                     columnIndex + j, j, 0);
             row.set(columnIndex + j, gu);
             cellRow[j] = gu;
@@ -101,7 +103,7 @@ class FixedColRowGroupBuilder extends RowGroupBuilder {
             row = (List) rows.get(currentRowIndex + i);
             cellRow = new GridUnit[cell.getNumberColumnsSpanned()];
             for (int j = 0; j < cell.getNumberColumnsSpanned(); j++) {
-                GridUnit gu = new GridUnit(pgu, table.getColumn(columnIndex + j),
+                GridUnit gu = new GridUnit(pgu, currentTableRow, table.getColumn(columnIndex + j),
                         columnIndex + j, j, i);
                 row.set(columnIndex + j, gu);
                 cellRow[j] = gu;
@@ -117,13 +119,18 @@ class FixedColRowGroupBuilder extends RowGroupBuilder {
     }
 
     /** {@inheritDoc} */
+    void startRow(TableRow tableRow) {
+        currentTableRow = tableRow;
+    }
+
+    /** {@inheritDoc} */
     void endRow(TableCellContainer container) {
         List currentRow = (List) rows.get(currentRowIndex);
         lastRow = currentRow;
         // Fill gaps with empty grid units
         for (int i = 0; i < numberOfColumns; i++) {
             if (currentRow.get(i) == null) {
-                currentRow.set(i, new EmptyGridUnit(table, currentRowIndex, i));
+                currentRow.set(i, new EmptyGridUnit(table, currentTableRow, currentRowIndex, i));
             }
         }
         borderResolver.endRow(currentRow, container);
@@ -146,6 +153,7 @@ class FixedColRowGroupBuilder extends RowGroupBuilder {
         } else {
             currentRowIndex++;
         }
+        currentTableRow = null;
     }
 
     /** {@inheritDoc} */

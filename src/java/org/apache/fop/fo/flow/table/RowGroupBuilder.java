@@ -49,6 +49,13 @@ abstract class RowGroupBuilder {
     abstract void addTableCell(TableCell cell);
 
     /**
+     * Receives notification of the start of an fo:table-row element.
+     * 
+     * @param tableRow the row being started
+     */
+    abstract void startRow(TableRow tableRow);
+
+    /**
      * Receives notification of the end of the current row. If the current row finishes
      * the row group, the {@link TableBody#addRowGroup(List)} method of the parent table
      * part (i.e., the given container itself or its parent if this is a table-row) will

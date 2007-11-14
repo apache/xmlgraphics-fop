@@ -202,6 +202,7 @@ public class TableBody extends TableCellContainer {
                 }
                 rowsStarted = true;
                 lastRow = (TableRow) child;
+                getTable().getRowGroupBuilder().startRow(lastRow);
                 break;
             case FO_TABLE_CELL:
                 if (!rowsStarted) {
