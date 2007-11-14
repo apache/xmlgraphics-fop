@@ -53,7 +53,7 @@ public class PrimaryGridUnit extends GridUnit {
      * @param startCol index of the column this grid unit belongs to, zero-based
      * @param startRow index of the row this grid unit belongs to, zero-based
      */
-    public PrimaryGridUnit(TableCell cell, TableColumn column, int startCol, int startRow) {
+    PrimaryGridUnit(TableCell cell, TableColumn column, int startCol, int startRow) {
         super(cell, column, startCol, 0, 0);
         this.startRow = startRow;
         log.trace("PrimaryGridUnit created, row " + startRow + " col " + startCol);

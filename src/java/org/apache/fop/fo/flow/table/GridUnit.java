@@ -134,7 +134,7 @@ public class GridUnit {
      * @param colSpanIndex index of this grid unit in the span, in column direction
      * @param rowSpanIndex index of this grid unit in the span, in row direction
      */
-    public GridUnit(PrimaryGridUnit primary, TableColumn column, int startCol, int colSpanIndex,
+    GridUnit(PrimaryGridUnit primary, TableColumn column, int startCol, int colSpanIndex,
             int rowSpanIndex) {
         this(primary.getCell(), column, startCol, colSpanIndex, rowSpanIndex);
         this.primary = primary;
@@ -321,7 +321,7 @@ public class GridUnit {
      * Assigns the borders from the given cell to this cell info. Used in case of separate
      * border model.
      */
-    public void assignBorderForSeparateBorderModel() {
+    void assignBorderForSeparateBorderModel() {
         if (cell != null) {
             effectiveBorders = cell.getCommonBorderPaddingBackground();
         }
@@ -335,7 +335,7 @@ public class GridUnit {
      * @param side the side to resolve (one of
      * CommonBorderPaddingBackground.BEFORE|AFTER|START|END)
      */
-    public void resolveBorder(GridUnit other, int side) {
+    void resolveBorder(GridUnit other, int side) {
         BorderSpecification resolvedBorder = collapsingBorderModel.determineWinner(
                 resolvedBorders[side], other.resolvedBorders[CollapsingBorderModel
                         .getOtherSide(side)]);
@@ -353,7 +353,7 @@ public class GridUnit {
      * CommonBorderPaddingBackground.BEFORE|AFTER|START|END)
      * @param parent the parent element holding a competing border
      */
-    public void resolveBorder(int side, TableFObj parent) {
+    void resolveBorder(int side, TableFObj parent) {
         resolvedBorders[side] = collapsingBorderModel.determineWinner(resolvedBorders[side],
                 parent.resolvedBorders[side]);
     }

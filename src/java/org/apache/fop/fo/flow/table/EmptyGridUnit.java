@@ -35,7 +35,7 @@ public class EmptyGridUnit extends GridUnit {
      * @param startRow index of the row this grid unit belongs to, 0-based
      * @param startCol column index, 0-based
      */
-    public EmptyGridUnit(Table table, int startRow, int startCol) {
+    EmptyGridUnit(Table table, int startRow, int startCol) {
         super(table, table.getColumn(startCol), startCol, 0, 0);
     }
 
