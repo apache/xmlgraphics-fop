@@ -17,20 +17,19 @@
 
 /* $Id$ */
 
-package org.apache.fop.layoutmgr.table;
+package org.apache.fop.fo.flow.table;
 
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.fop.fo.flow.table.GridUnit;
-import org.apache.fop.fo.flow.table.TableRow;
+import org.apache.fop.layoutmgr.table.TableRowIterator;
 import org.apache.fop.traits.MinOptMax;
 
 /**
  * This class represents an effective row in a table and holds a list of grid units occupying
  * the row as well as some additional values.
  */
-class EffRow {
+public class EffRow {
     
     /** Indicates that the row is the first in a table-body */
     public static final int FIRST_IN_PART = GridUnit.FIRST_IN_PART;

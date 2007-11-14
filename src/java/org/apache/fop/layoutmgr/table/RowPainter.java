@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.fo.flow.table.EffRow;
 import org.apache.fop.fo.flow.table.GridUnit;
 import org.apache.fop.fo.flow.table.PrimaryGridUnit;
 import org.apache.fop.fo.flow.table.TableRow;
