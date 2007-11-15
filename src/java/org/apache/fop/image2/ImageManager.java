@@ -223,6 +223,60 @@ public class ImageManager {
     }
     
     /**
+     * Loads an image. The caller can indicate what kind of image flavors are requested. When this
+     * method is called the code looks for a suitable ImageLoader and, if necessary, builds
+     * a conversion pipeline so it can return the image in exactly the form the caller needs.
+     * The array of image flavors is ordered, so the first image flavor is given highest priority.
+     * <p>
+     * Optionally, it is possible to pass in Map of hints. These hints may be used by ImageLoaders
+     * and ImageConverters to act on the image. See {@link ImageProcessingHints} for common hints
+     * used by the bundled implementations. You can, of course, define your own hints.
+     * @param info the ImageInfo instance for the image (obtained by 
+     *                  {@link #preloadImage(String, FOUserAgent)})
+     * @param flavors the requested image flavors (in preferred order).
+     * @param hints a Map of hints to any of the background components or null
+     * @return the fully loaded image
+     * @throws ImageException If no suitable loader/converter combination is available to fulfill
+     *                  the request or if an error occurred while loading the image.
+     * @throws IOException If an I/O error occurs
+     */
+    public Image getImage(ImageInfo info, ImageFlavor[] flavors, Map hints)
+                throws ImageException, IOException {
+        if (hints == null) {
+            hints = Collections.EMPTY_MAP;
+        }
+        String mime = info.getMimeType();
+
+        Image img = null;
+        int count = flavors.length;
+        ImageConverterPipeline[] candidates = new ImageConverterPipeline[count];
+        for (int i = 0; i < count; i++) {
+            candidates[i] = registry.newImageConverterPipeline(mime, flavors[i]);
+        }
+        ImageConverterPipeline pipeline = null;
+        int minPenalty = Integer.MAX_VALUE;
+        for (int i = count - 1; i >= 0; i--) {
+            if (candidates[i] == null) {
+                continue;
+            }
+            int penalty = candidates[i].getConversionPenalty();
+            if (penalty < minPenalty) {
+                pipeline = candidates[i];
+                minPenalty = penalty;
+            }
+        }    
+        if (pipeline != null) {
+            img = pipeline.execute(info, hints);
+        }
+        if (img == null) {
+            throw new ImageException(
+                    "Cannot load image (no suitable loader/converter combination available) for "
+                            + info);
+        }
+        return img;
+    }
+
+    /**
      * Loads an image with no hints. See {@link #getImage(ImageInfo, ImageFlavor, Map)} for more
      * information.
      * @param info the ImageInfo instance for the image (obtained by 
@@ -238,4 +292,20 @@ public class ImageManager {
         return getImage(info, flavor, null);
     }
 
+    /**
+     * Loads an image with no hints. See {@link #getImage(ImageInfo, ImageFlavor[], Map)} for more
+     * information.
+     * @param info the ImageInfo instance for the image (obtained by 
+     *                  {@link #preloadImage(String, FOUserAgent)})
+     * @param flavors the requested image flavors (in preferred order).
+     * @return the fully loaded image
+     * @throws ImageException If no suitable loader/converter combination is available to fulfill
+     *                  the request or if an error occurred while loading the image.
+     * @throws IOException If an I/O error occurs
+     */
+    public Image getImage(ImageInfo info, ImageFlavor[] flavors)
+            throws ImageException, IOException {
+        return getImage(info, flavors, null);
+    }
+    
 }

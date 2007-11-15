@@ -20,15 +20,16 @@
 package org.apache.fop.image2;
 
 import java.io.File;
-import java.util.Map;
 
 import junit.framework.TestCase;
+
+import org.apache.xmlgraphics.image.writer.ImageWriterUtil;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.image2.impl.ImageRendered;
 import org.apache.fop.image2.impl.ImageXMLDOM;
-import org.apache.xmlgraphics.image.writer.ImageWriterUtil;
+import org.apache.fop.image2.util.ImageUtil;
 
 /**
  * Tests for bundled ImageLoader implementations.
@@ -107,7 +108,8 @@ public class ImageLoaderTestCase extends TestCase {
         assertEquals(16000, info.getSize().getWidthMpt());
         assertEquals(16000, info.getSize().getHeightMpt());
         
-        img = manager.getImage(info, ImageFlavor.RENDERED_IMAGE, getDefaultHints(userAgent));
+        img = manager.getImage(info, ImageFlavor.RENDERED_IMAGE,
+                    ImageUtil.getDefaultHints(userAgent));
         assertNotNull("Image must not be null", img);
         assertEquals(ImageFlavor.RENDERED_IMAGE, img.getFlavor());
         ImageRendered imgRed = (ImageRendered)img;
@@ -133,7 +135,8 @@ public class ImageLoaderTestCase extends TestCase {
         ImageInfo info = manager.preloadImage(uri, userAgent);
         assertNotNull("ImageInfo must not be null", info);
         
-        Image img = manager.getImage(info, ImageFlavor.RENDERED_IMAGE, getDefaultHints(userAgent));
+        Image img = manager.getImage(info, ImageFlavor.RENDERED_IMAGE,
+                ImageUtil.getDefaultHints(userAgent));
         assertNotNull("Image must not be null", img);
         assertEquals(ImageFlavor.RENDERED_IMAGE, img.getFlavor());
         ImageRendered imgRed = (ImageRendered)img;
@@ -150,14 +153,5 @@ public class ImageLoaderTestCase extends TestCase {
         assertEquals(612000, info.getSize().getHeightMpt());
     }
  
-    private Map getDefaultHints(FOUserAgent userAgent) {
-        java.util.Map hints = new java.util.HashMap();
-        hints.put(ImageProcessingHints.SOURCE_RESOLUTION,
-                new Float(userAgent.getSourceResolution()));
-        hints.put(ImageProcessingHints.TARGET_RESOLUTION,
-                new Float(userAgent.getTargetResolution()));
-        return hints;
-    }
-    
     
 }

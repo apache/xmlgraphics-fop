@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 import javax.imageio.stream.ImageInputStream;
@@ -32,6 +33,8 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.IOUtils;
 
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.image2.ImageProcessingHints;
 import org.apache.fop.image2.ImageSource;
 
 /**
@@ -230,6 +233,22 @@ public class ImageUtil {
             return new GZIPInputStream(in);
         }
         return in;
+    }
+
+    /**
+     * Creates a new hint Map with values from the FOUserAgent.
+     * @param userAgent the user agent
+     * @return a Map of hints
+     */
+    public static Map getDefaultHints(FOUserAgent userAgent) {
+        //TODO Maybe remove the reference to FOUserAgent from the image package completely.
+        //This could improve the usefulness of the package for external projects. 
+        java.util.Map hints = new java.util.HashMap();
+        hints.put(ImageProcessingHints.SOURCE_RESOLUTION,
+                new Float(userAgent.getSourceResolution()));
+        hints.put(ImageProcessingHints.TARGET_RESOLUTION,
+                new Float(userAgent.getTargetResolution()));
+        return hints;
     }
     
 }

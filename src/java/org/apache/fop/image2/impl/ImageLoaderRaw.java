@@ -20,25 +20,43 @@
 package org.apache.fop.image2.impl;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.apache.fop.image2.Image;
 import org.apache.fop.image2.ImageException;
+import org.apache.fop.image2.ImageFlavor;
 import org.apache.fop.image2.ImageInfo;
-import org.apache.fop.image2.spi.ImageLoader;
 
 /**
- * Simple abstract base class for ImageLoaders.
+ * ImageLoader for formats consumed "raw" (undecoded). Provides a raw/undecoded stream.
  */
-public abstract class AbstractImageLoader implements ImageLoader {
+public class ImageLoaderRaw extends AbstractImageLoader {
 
-    /** {@inheritDoc} */ 
-    public Image loadImage(ImageInfo info) throws ImageException, IOException {
-        return loadImage(info, null);
+    private String mime;
+    private ImageFlavor targetFlavor;
+
+    /**
+     * Main constructor.
+     * @param targetFlavor the target flavor
+     */
+    public ImageLoaderRaw(ImageFlavor targetFlavor) {
+        this.targetFlavor = targetFlavor;
+        this.mime = ImageLoaderFactoryRaw.getMimeForRawFlavor(targetFlavor);
+    }        
+
+    /** {@inheritDoc} */
+    public ImageFlavor getTargetFlavor() {
+        return this.targetFlavor;
     }
 
     /** {@inheritDoc} */
-    public int getUsagePenalty() {
-        return 0;
+    public Image loadImage(ImageInfo info, Map hints) throws ImageException, IOException {
+        if (!this.mime.equals(info.getMimeType())) {
+            throw new IllegalArgumentException(
+                    "ImageInfo must be from a image with MIME type: " + this.mime);
+        }
+        ImageRawStream rawImage = new ImageRawStream(info, getTargetFlavor());
+        return rawImage;
     }
 
 }

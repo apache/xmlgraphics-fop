@@ -19,6 +19,7 @@
  
 package org.apache.fop.image2.spi;
 
+import java.io.IOException;
 import java.util.Map;
 
 import org.apache.fop.image2.Image;
@@ -43,8 +44,9 @@ public interface ImageConverter {
      * @param hints the conversion hints
      * @return the converted image
      * @throws ImageException if an error occurs while converting the image
+     * @throws IOException if an I/O error occurs while converting the image
      */
-    Image convert(Image src, Map hints) throws ImageException;
+    Image convert(Image src, Map hints) throws ImageException, IOException;
     
     /**
      * Returns the flavor that this converter converts images into.

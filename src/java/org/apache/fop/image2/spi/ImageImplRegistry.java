@@ -27,11 +27,12 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.xmlgraphics.util.Service;
+
 import org.apache.fop.image2.ImageFlavor;
 import org.apache.fop.util.dijkstra.DefaultEdgeDirectory;
 import org.apache.fop.util.dijkstra.DijkstraAlgorithm;
 import org.apache.fop.util.dijkstra.Vertex;
-import org.apache.xmlgraphics.util.Service;
 
 /**
  * This class is the registry for all implementations of the various service provider interfaces
@@ -258,7 +259,7 @@ public class ImageImplRegistry {
                     for (int j = 0, cj = flavors.length; j < cj; j++) {
                         DijkstraAlgorithm dijkstra = new DijkstraAlgorithm(
                                 this.converterEdgeDirectory);
-                        ImageRepresentation origin = new ImageRepresentation(flavors[i]); 
+                        ImageRepresentation origin = new ImageRepresentation(flavors[j]); 
                         dijkstra.execute(origin, destination);
                         if (log.isDebugEnabled()) {
                             log.debug("Lowest penalty: " + dijkstra.getLowestPenalty(destination));
@@ -267,27 +268,30 @@ public class ImageImplRegistry {
                         Vertex prev = destination;
                         Vertex pred = dijkstra.getPredecessor(destination);
                         if (pred == null) {
-                            log.error("No route found!");
+                            if (log.isDebugEnabled()) {
+                                log.debug("No route found!");
+                            }
+                        } else {
+                            LinkedList stops = new LinkedList();
+                            //stops.addLast(destination);
+                            while ((pred = dijkstra.getPredecessor(prev)) != null) {
+                                ImageConversionEdge edge = (ImageConversionEdge)
+                                        this.converterEdgeDirectory.getBestEdge(pred, prev);
+                                stops.addFirst(edge);
+                                prev = pred;
+                            }
+                            ImageLoader loader = loaderFactory.newImageLoader(flavors[i]);
+                            pipeline = new ImageConverterPipeline(loader);
+                            Iterator iter = stops.iterator();
+                            while (iter.hasNext()) {
+                                ImageConversionEdge edge = (ImageConversionEdge)iter.next(); 
+                                pipeline.addConverter(edge.getImageConverter());
+                            }
+                            if (log.isDebugEnabled()) {
+                                log.debug("Pipeline: " + pipeline);
+                            }
+                            return pipeline;
                         }
-                        LinkedList stops = new LinkedList();
-                        //stops.addLast(destination);
-                        while ((pred = dijkstra.getPredecessor(prev)) != null) {
-                            ImageConversionEdge edge = (ImageConversionEdge)
-                                    this.converterEdgeDirectory.getBestEdge(pred, prev);
-                            stops.addFirst(edge);
-                            prev = pred;
-                        }
-                        ImageLoader loader = loaderFactory.newImageLoader(flavors[i]);
-                        pipeline = new ImageConverterPipeline(loader);
-                        Iterator iter = stops.iterator();
-                        while (iter.hasNext()) {
-                            ImageConversionEdge edge = (ImageConversionEdge)iter.next(); 
-                            pipeline.addConverter(edge.getImageConverter());
-                        }
-                        if (log.isDebugEnabled()) {
-                            log.debug("Pipeline: " + pipeline);
-                        }
-                        return pipeline;
                     }
                 }
                 
