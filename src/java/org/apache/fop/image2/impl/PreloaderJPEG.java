@@ -120,8 +120,8 @@ public class PreloaderJPEG extends AbstractImagePreloader {
                 case SOFA:
                     in.skipBytes(2); //length field
                     in.skipBytes(1);
-                    int width = in.readUnsignedShort();
                     int height = in.readUnsignedShort();
+                    int width = in.readUnsignedShort();
                     size.setSizeInPixels(width, height);
                     size.calcSizeFromPixels();
                     return size;

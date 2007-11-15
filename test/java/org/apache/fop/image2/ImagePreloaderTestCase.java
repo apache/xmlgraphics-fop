@@ -179,7 +179,7 @@ public class ImagePreloaderTestCase extends TestCase {
         assertEquals(56665, info.getSize().getHeightMpt());
     }
  
-    public void testJPEG() throws Exception {
+    public void testJPEG1() throws Exception {
         String uri = "test/resources/images/bgimg300dpi.jpg";
         
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
@@ -194,6 +194,23 @@ public class ImagePreloaderTestCase extends TestCase {
         assertEquals(300, info.getSize().getDpiHorizontal(), 0.1);
         assertEquals(46080, info.getSize().getWidthMpt());
         assertEquals(46080, info.getSize().getHeightMpt());
+    }
+ 
+    public void testJPEG2() throws Exception {
+        String uri = "test/resources/images/cmyk.jpg";
+        
+        FOUserAgent userAgent = fopFactory.newFOUserAgent();
+        
+        ImageManager manager = fopFactory.getImageManager();
+        ImageInfo info = manager.preloadImage(uri, userAgent);
+        assertNotNull("ImageInfo must not be null", info);
+        assertEquals(MimeConstants.MIME_JPEG, info.getMimeType());
+        assertEquals(uri, info.getOriginalURI());
+        assertEquals(160, info.getSize().getWidthPx());
+        assertEquals(35, info.getSize().getHeightPx());
+        assertEquals(72, info.getSize().getDpiHorizontal(), 0.1);
+        assertEquals(160000, info.getSize().getWidthMpt());
+        assertEquals(35000, info.getSize().getHeightMpt());
     }
  
     public void testBMP() throws Exception {
