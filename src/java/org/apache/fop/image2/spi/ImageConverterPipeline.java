@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.image2.Image;
 import org.apache.fop.image2.ImageException;
 import org.apache.fop.image2.ImageInfo;
@@ -101,6 +102,22 @@ public class ImageConverterPipeline {
             sb.append(converters);
         }
         return sb.toString();
+    }
+
+    /**
+     * Returns the overall conversion penalty for the pipeline. This can be used to choose among
+     * different possible pipelines.
+     * @return the overall penalty (a non-negative integer)
+     */
+    public int getConversionPenalty() {
+        int penalty = 0;
+        penalty += loader.getUsagePenalty();
+        Iterator iter = converters.iterator();
+        while (iter.hasNext()) {
+            ImageConverter converter = (ImageConverter)iter.next();
+            penalty += converter.getConversionPenalty();
+        }
+        return penalty;
     }
     
 }

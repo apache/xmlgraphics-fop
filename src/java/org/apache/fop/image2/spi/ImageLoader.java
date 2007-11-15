@@ -59,4 +59,11 @@ public interface ImageLoader {
      */
     ImageFlavor getTargetFlavor();
     
+    /**
+     * Returns the penalty assigned to using this image loader. The value is used to select the
+     * best processing chain for images.
+     * @return the usage penalty (must be a non-negative integer)
+     */
+    int getUsagePenalty();
+    
 }
