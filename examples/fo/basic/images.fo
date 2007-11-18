@@ -146,6 +146,21 @@
 
     <fo:block keep-with-next.within-column="always">Properties: width="60mm" content-width="scale-to-fit"</fo:block>
     <fo:block><fo:external-graphic src="../graphics/asf-logo-nt.png" width="60mm" content-width="scale-to-fit" border="solid 0.1pt" background-color="yellow"/></fo:block>
+
+    <fo:block break-before="page"/> 
+    <fo:block keep-with-next.within-column="always">Properties: width="100%" content-width="scale-to-fit"</fo:block>
+    <fo:block><fo:external-graphic src="../graphics/asf-logo-nt.png" width="100%" content-width="scale-to-fit" border="solid 0.1pt" background-color="yellow"/></fo:block>
+    <fo:block space-before="0.5em">
+      The following example shows how to fit an oversized image into the 
+      available width, but not scale smaller images up. This is a work-around
+      until "scale-down-to-fit" is supported. The second feather below is in
+      a block-container with a width of 40mm to simulate an oversized image.
+    </fo:block>  
+    <fo:block keep-with-next.within-column="always">Properties: width="100%" content-width="scale-to-fit" content-height="100%"</fo:block>
+    <fo:block><fo:external-graphic src="../graphics/asf-logo-nt.png" width="100%" content-width="scale-to-fit" content-height="100%" border="solid 0.1pt" background-color="yellow"/></fo:block>
+    <fo:block-container width="40mm" background-color="lightgray">
+      <fo:block><fo:external-graphic src="../graphics/asf-logo-nt.png" width="100%" content-width="scale-to-fit" content-height="100%" border="solid 0.1pt" background-color="yellow"/></fo:block>
+    </fo:block-container>
   </fo:block>
 </fo:flow>
 
