@@ -28,6 +28,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="add" fixes-bug="43605" due-to="V. Schappert">
+        Added methods for fo:page-number-citation(-last) in FOEventHandler.
+      </action>
       <action context="Code" dev="VH" type="add">
         Step towards performance: the collapsing-border resolution algorithm no longer triggers the
         retrieving of the whole table, when possible.

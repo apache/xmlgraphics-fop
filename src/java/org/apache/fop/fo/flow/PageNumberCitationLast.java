@@ -19,6 +19,7 @@
 
 package org.apache.fop.fo.flow;
 
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 
 /**
@@ -28,7 +29,7 @@ import org.apache.fop.fo.FONode;
  * block referenced with the ref-id attribute.
  * @since XSL 1.1
  */
-public class PageNumberCitationLast extends PageNumberCitation {
+public class PageNumberCitationLast extends AbstractPageNumberCitation {
 
     /**
      * Main constructor
@@ -39,6 +40,18 @@ public class PageNumberCitationLast extends PageNumberCitation {
     }
     
     /** {@inheritDoc} */
+    protected void startOfNode() throws FOPException {
+        super.startOfNode();
+        getFOEventHandler().startPageNumberCitationLast(this);
+    }
+
+    /** {@inheritDoc} */
+    protected void endOfNode() throws FOPException {
+        super.endOfNode();
+        getFOEventHandler().endPageNumberCitationLast(this);
+    }
+
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "page-number-citation-last";
     }
@@ -47,4 +60,5 @@ public class PageNumberCitationLast extends PageNumberCitation {
     public int getNameId() {
         return FO_PAGE_NUMBER_CITATION_LAST;
     }
+
 }

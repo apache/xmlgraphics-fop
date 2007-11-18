@@ -19,12 +19,11 @@
 
 package org.apache.fop.fo;
 
-// Java
 import java.util.HashSet;
 import java.util.Set;
+
 import org.xml.sax.SAXException;
 
-// Apache
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.Block;
@@ -39,6 +38,8 @@ import org.apache.fop.fo.flow.Leader;
 import org.apache.fop.fo.flow.ListBlock;
 import org.apache.fop.fo.flow.ListItem;
 import org.apache.fop.fo.flow.PageNumber;
+import org.apache.fop.fo.flow.PageNumberCitation;
+import org.apache.fop.fo.flow.PageNumberCitationLast;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableBody;
 import org.apache.fop.fo.flow.table.TableCell;
@@ -47,7 +48,6 @@ import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fonts.FontInfo;
-
 
 /**
  * Abstract class defining what should be done with SAX events that map to
@@ -204,6 +204,34 @@ public abstract class FOEventHandler {
      * @param pagenum PageNumber that is ending.
      */
     public void endPageNumber(PageNumber pagenum) {
+    }
+
+    /**
+     * 
+     * @param pageCite PageNumberCitation that is starting.
+     */
+    public void startPageNumberCitation(PageNumberCitation pageCite) {
+    }
+
+    /**
+     * 
+     * @param pageCite PageNumberCitation that is ending.
+     */
+    public void endPageNumberCitation(PageNumberCitation pageCite) {
+    }
+
+    /**
+     * 
+     * @param pageLast PageNumberCitationLast that is starting.
+     */
+    public void startPageNumberCitationLast(PageNumberCitationLast pageLast) {
+    }
+
+    /**
+     * 
+     * @param pageLast PageNumberCitationLast that is ending.
+     */
+    public void endPageNumberCitationLast(PageNumberCitationLast pageLast) {
     }
 
     /**
