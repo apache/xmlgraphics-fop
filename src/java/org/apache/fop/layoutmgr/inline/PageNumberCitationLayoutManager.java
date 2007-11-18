@@ -19,33 +19,19 @@
 
 package org.apache.fop.layoutmgr.inline;
 
-import org.apache.fop.fo.flow.PageNumberCitation;
 import org.apache.fop.area.PageViewport;
-import org.apache.fop.area.Resolvable;
-import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.area.inline.UnresolvedPageNumber;
 import org.apache.fop.area.inline.TextArea;
-import org.apache.fop.fonts.Font;
-import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.fonts.FontTriplet;
+import org.apache.fop.area.inline.UnresolvedPageNumber;
+import org.apache.fop.fo.flow.PageNumberCitation;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LayoutManager;
-import org.apache.fop.layoutmgr.PositionIterator;
-import org.apache.fop.layoutmgr.TraitSetter;
 
 /**
  * LayoutManager for the fo:page-number-citation formatting object
  */
-public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
+public class PageNumberCitationLayoutManager extends AbstractPageNumberCitationLayoutManager {
 
-    private PageNumberCitation fobj;
-    /** Font for the page-number-citation */
-    protected Font font;
-    
-    /** Indicates whether the page referred to by the citation has been resolved yet */
-    protected boolean resolved = false;
-    
     /**
      * Constructor
      *
@@ -54,47 +40,12 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
      */
     public PageNumberCitationLayoutManager(PageNumberCitation node) {
         super(node);
-        fobj = node;
     }
     
-    /** {@inheritDoc} */
-    public void initialize() {
-        FontInfo fi = fobj.getFOEventHandler().getFontInfo();
-        FontTriplet[] fontkeys = fobj.getCommonFont().getFontState(fi);
-        font = fi.getFontInstance(fontkeys[0], fobj.getCommonFont().fontSize.getValue(this));
-        setCommonBorderPaddingBackground(fobj.getCommonBorderPaddingBackground());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected AlignmentContext makeAlignmentContext(LayoutContext context) {
-        return new AlignmentContext(
-                font
-                , fobj.getLineHeight().getOptimum(this).getLength().getValue(this)
-                , fobj.getAlignmentAdjust()
-                , fobj.getAlignmentBaseline()
-                , fobj.getBaselineShift()
-                , fobj.getDominantBaseline()
-                , context.getAlignmentContext()
-            );
-    }
-
     /** {@inheritDoc} */
     public InlineArea get(LayoutContext context) {
         curArea = getPageNumberCitationInlineArea(parentLM);
         return curArea;
-    }
-    
-    /**
-     * {@inheritDoc}
-     *                                                                      , LayoutContext) 
-     */
-    public void addAreas(PositionIterator posIter, LayoutContext context) {
-        super.addAreas(posIter, context);
-        if (!resolved) {
-            getPSLM().addUnresolvedArea(fobj.getRefId(), (Resolvable) curArea);
-        }
     }
     
     /**
@@ -124,34 +75,5 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
         return text;
     }
     
-    /**
-     * Updates the traits for the generated text area. 
-     * @param text the text area
-     */
-    protected void updateTextAreaTraits(TextArea text) {
-        TraitSetter.setProducerID(text, fobj.getId());
-        text.setBPD(font.getAscender() - font.getDescender());
-        text.setBaselineOffset(font.getAscender());
-        TraitSetter.addFontTraits(text, font);
-        text.addTrait(Trait.COLOR, fobj.getColor());
-        TraitSetter.addTextDecoration(text, fobj.getTextDecoration());
-    }
-    
-    /**
-     * @param str string to be measured
-     * @return width (in millipoints ??) of the string
-     */
-    protected int getStringWidth(String str) {
-        int width = 0;
-        for (int count = 0; count < str.length(); count++) {
-            width += font.getCharWidth(str.charAt(count));
-        }
-        return width;
-    }
-
-    /** {@inheritDoc} */
-    protected void addId() {
-        getPSLM().addIDToPage(fobj.getId());
-    }
 }
 
