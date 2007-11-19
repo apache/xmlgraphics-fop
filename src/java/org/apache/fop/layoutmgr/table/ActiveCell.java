@@ -251,7 +251,7 @@ class ActiveCell {
      * @return true if this cell's first step is inferior or equal to the current one 
      */
     boolean hasStarted() {
-        return includedLength > 0;
+        return includedLength >= 0;
     }
 
     /**
