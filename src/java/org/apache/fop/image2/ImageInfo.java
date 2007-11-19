@@ -130,7 +130,7 @@ public class ImageInfo {
 
     /** {@inheritDoc} */
     public String toString() {
-        return getMimeType() + ": " + getOriginalURI();
+        return getOriginalURI() + " (" + getMimeType() + ")";
     }
     
 }
