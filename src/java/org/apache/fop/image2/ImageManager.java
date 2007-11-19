@@ -260,7 +260,7 @@ public class ImageManager {
                 continue;
             }
             int penalty = candidates[i].getConversionPenalty();
-            if (penalty < minPenalty) {
+            if (penalty <= minPenalty) {
                 pipeline = candidates[i];
                 minPenalty = penalty;
             }
