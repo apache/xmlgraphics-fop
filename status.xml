@@ -28,6 +28,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix">
+        Memory Leak fixed in the Property Cache. Fixed by Jeremias Maerki. Reported and Tested By
+        Chris Bowditch.
+      </action>
       <action context="Code" dev="VH" type="fix">
         Bugfix in tables: wrong element generation by the merging algorithm when glues must be
         produced to cope with conditional spaces. The corresponding length was added twice: one in
