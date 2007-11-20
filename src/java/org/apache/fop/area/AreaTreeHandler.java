@@ -21,30 +21,27 @@ package org.apache.fop.area;
 
 // Java
 import java.io.OutputStream;
-import java.util.List;
 import java.util.Iterator;
+import java.util.List;
 
-// XML
 import org.xml.sax.SAXException;
 
-// Apache
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FormattingResults;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
+import org.apache.fop.fo.extensions.destination.Destination;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.Root;
 import org.apache.fop.fo.pagination.bookmarks.BookmarkTree;
-import org.apache.fop.layoutmgr.PageSequenceLayoutManager;
 import org.apache.fop.layoutmgr.LayoutManagerMaker;
 import org.apache.fop.layoutmgr.LayoutManagerMapping;
-
-import org.apache.fop.area.DestinationData;
-import org.apache.fop.fo.extensions.destination.Destination;
+import org.apache.fop.layoutmgr.PageSequenceLayoutManager;
 
 /**
  * Area tree handler for formatting objects.
@@ -261,25 +258,26 @@ public class AreaTreeHandler extends FOEventHandler {
 
         finishPrevPageSequence(null);
         // process fox:destination elements
-        List destinationList = rootFObj.getDestinationList();
-        if (destinationList != null) {
-            while (destinationList.size() > 0) {
-                Destination destination = (Destination) destinationList.remove(0);
-                DestinationData destinationData = new DestinationData(destination);
-                addOffDocumentItem(destinationData);
+        if (rootFObj != null) {
+            List destinationList = rootFObj.getDestinationList();
+            if (destinationList != null) {
+                while (destinationList.size() > 0) {
+                    Destination destination = (Destination) destinationList.remove(0);
+                    DestinationData destinationData = new DestinationData(destination);
+                    addOffDocumentItem(destinationData);
+                }
+            }
+            // process fo:bookmark-tree
+            BookmarkTree bookmarkTree = rootFObj.getBookmarkTree();
+            if (bookmarkTree != null) {
+                BookmarkData data = new BookmarkData(bookmarkTree);
+                addOffDocumentItem(data);
+                if (!data.isResolved()) {
+                    // bookmarks did not fully resolve, add anyway. (hacky? yeah)
+                    model.handleOffDocumentItem(data);
+                }
             }
         }
-        // process fo:bookmark-tree
-        BookmarkTree bookmarkTree = rootFObj.getBookmarkTree();
-        if (bookmarkTree != null) {
-            BookmarkData data = new BookmarkData(bookmarkTree);
-            addOffDocumentItem(data);
-            if (!data.isResolved()) {
-                // bookmarks did not fully resolve, add anyway. (hacky? yeah)
-                model.handleOffDocumentItem(data);
-            }
-        }
-
         model.endDocument();
 
         if (statistics != null) {
