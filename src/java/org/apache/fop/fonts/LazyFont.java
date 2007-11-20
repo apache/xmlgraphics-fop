@@ -27,10 +27,12 @@ import java.util.Set;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
+import org.xml.sax.InputSource;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.apps.FOPException;
-import org.xml.sax.InputSource;
 
 /**
  * This class is used to defer the loading of a font until it is really used.
@@ -95,8 +97,10 @@ public class LazyFont extends Typeface implements FontDescriptor {
                             in = new java.net.URL(source.getSystemId()).openStream();
                         }
                         if (in == null) {
-                            String err = "Cannot load font: failed to create InputStream from"
-                                + " Source for metrics file " + metricsFileName; 
+                            String err = "Cannot load font: After URI resolution, the returned"
+                                + " Source object does not contain an InputStream"
+                                + " or a valid URL (system identifier) for metrics file: "
+                                + metricsFileName; 
                             if (fail) {
                                 throw new RuntimeException(err);
                             } else {

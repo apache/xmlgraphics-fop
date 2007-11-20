@@ -28,6 +28,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix">
+        Bugfix for URI resolution: Make StreamSources without system identifier work again.
+      </action>
       <action context="Code" dev="JM" type="fix" fixes-bug="43910" due-to="David Delbecq">
         Avoid a NullPointerException in AreaTreeHandler.endDocument().
       </action>
