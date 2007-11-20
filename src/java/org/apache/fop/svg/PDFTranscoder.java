@@ -20,7 +20,12 @@
 package org.apache.fop.svg;
 
 import java.awt.Color;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.svg.SVGLength;
 
 import org.apache.avalon.framework.configuration.Configurable;
 import org.apache.avalon.framework.configuration.Configuration;
@@ -36,10 +41,9 @@ import org.apache.batik.transcoder.TranscodingHints;
 import org.apache.batik.transcoder.image.ImageTranscoder;
 import org.apache.batik.transcoder.keys.BooleanKey;
 import org.apache.batik.transcoder.keys.FloatKey;
+
 import org.apache.fop.Version;
 import org.apache.fop.fonts.FontInfo;
-import org.w3c.dom.Document;
-import org.w3c.dom.svg.SVGLength;
 
 /**
  * This class enables to transcode an input to a pdf document.
@@ -195,7 +199,11 @@ public class PDFTranscoder extends AbstractFOPTranscoder
             if (hints.containsKey(KEY_DEVICE_RESOLUTION)) {
                 graphics.setDeviceDPI(((Float)hints.get(KEY_DEVICE_RESOLUTION)).floatValue());
             }
-            graphics.setupDocument(output.getOutputStream(), w, h);
+            OutputStream out = output.getOutputStream();
+            if (!(out instanceof BufferedOutputStream)) {
+                out = new BufferedOutputStream(out);
+            }
+            graphics.setupDocument(out, w, h);
             graphics.setSVGDimension(width, height);
 
             if (hints.containsKey(ImageTranscoder.KEY_BACKGROUND_COLOR)) {
