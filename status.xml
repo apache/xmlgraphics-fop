@@ -28,6 +28,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="VH" type="fix" fixes-bug="43803">
+        Restored proper handling of fo:table-cell having no children, which is allowed in relaxed
+        validation mode.
+      </action>
       <action context="Code" dev="JM" type="fix">
         Memory Leak fixed in the Property Cache. Fixed by Jeremias Maerki. Reported and Tested By
         Chris Bowditch.

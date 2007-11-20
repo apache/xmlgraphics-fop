@@ -23,6 +23,9 @@ import java.util.LinkedList;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.area.Area;
+import org.apache.fop.area.Block;
+import org.apache.fop.area.Trait;
 import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.table.GridUnit;
@@ -34,18 +37,16 @@ import org.apache.fop.layoutmgr.AreaAdditionUtil;
 import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.BreakElement;
+import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.ListElement;
-import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.Position;
+import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.SpaceResolver;
 import org.apache.fop.layoutmgr.TraitSetter;
-import org.apache.fop.area.Area;
-import org.apache.fop.area.Block;
-import org.apache.fop.area.Trait;
 import org.apache.fop.traits.MinOptMax;
 
 /**
@@ -232,8 +233,15 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
         }
 
         returnedList = new LinkedList();
-        wrapPositionElements(contentList, returnList);
-
+        if (contentList.size() > 0) {
+            wrapPositionElements(contentList, returnList);
+        } else {
+            // In relaxed validation mode, table-cells having no children are authorised.
+            // Add a zero-width block here to not have to take this special case into
+            // account later
+            // Copied from BlockStackingLM
+            returnList.add(new KnuthBox(0, notifyPos(new Position(this)), true));
+        }
         //Space resolution
         SpaceResolver.resolveElementList(returnList);
 
