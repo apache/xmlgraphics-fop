@@ -242,6 +242,8 @@ class ActiveCell {
      * @return true if this cell's next step is inferior or equal to the next minimal step
      */
     boolean contributesContent() {
+        // return includedInLastStep() && the cell hasn't finished yet, otherwise there's
+        // nothing more to contribute
         return includedInLastStep() && end >= start;
     }
 
