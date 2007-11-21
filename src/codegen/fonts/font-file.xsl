@@ -30,7 +30,6 @@
   <xsl:output method="text"/>
 
   <xsl:param name="encoding" select="/font-metrics/encoding"/>
-  <xsl:variable name="native-encoding" select="/font-metrics/encoding"/>
   <xsl:variable name="glyphs" select="document('encodings.xml')/encoding-set/encoding[@id=$encoding]/glyph"/>
 
   <xsl:template match="font-metrics">
@@ -48,7 +47,7 @@ public class <xsl:value-of select="class-name"/> extends Typeface {
     private final static String fontName = "<xsl:value-of select="font-name"/>";
     private final static String fullName = "<xsl:value-of select="full-name"/>";
     private final static Set familyNames;
-    private final static String encoding = <xsl:choose><xsl:when test="$encoding != $native-encoding">"<xsl:value-of select="$encoding"/>"</xsl:when><xsl:otherwise>null</xsl:otherwise></xsl:choose>;
+    private final static String encoding = "<xsl:value-of select="$encoding"/>";
     private final static int capHeight = <xsl:value-of select="cap-height"/>;
     private final static int xHeight = <xsl:value-of select="x-height"/>;
     private final static int ascender = <xsl:value-of select="ascender"/>;

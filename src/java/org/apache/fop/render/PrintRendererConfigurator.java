@@ -27,12 +27,15 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
 
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
@@ -222,7 +225,15 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
             }
         }
     }
-        
+
+    private static void closeSource(Source src) {
+        if (src instanceof StreamSource) {
+            StreamSource streamSource = (StreamSource)src;
+            IOUtils.closeQuietly(streamSource.getInputStream());
+            IOUtils.closeQuietly(streamSource.getReader());
+        }
+    }
+
     /**
      * Returns a font info from a font node Configuration definition
      * 
@@ -243,23 +254,27 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
             LogUtil.handleError(log, "Font configuration without metric-url or embed-url", strict);
             return null;
         }
-        if (embedUrl != null) {
-            Source source = fontResolver.resolve(embedUrl);
-            if (source == null) {
-                LogUtil.handleError(log,
-                        "Failed to resolve font with embed-url '" + embedUrl + "'", strict);
-                return null;
+        if (strict) {
+            //This section just checks early whether the URIs can be resolved
+            //Stream are immediately closed again since they will never be used anyway
+            if (embedUrl != null) {
+                Source source = fontResolver.resolve(embedUrl);
+                closeSource(source);
+                if (source == null) {
+                    LogUtil.handleError(log,
+                            "Failed to resolve font with embed-url '" + embedUrl + "'", strict);
+                    return null;
+                }
             }
-            embedUrl = source.getSystemId(); // absolute path/url
-        }
-        if (metricsUrl != null) {
-            Source source = fontResolver.resolve(metricsUrl);
-            if (source == null) {
-                LogUtil.handleError(log,
-                        "Failed to resolve font with metric-url '" + metricsUrl + "'", strict);
-                return null;
+            if (metricsUrl != null) {
+                Source source = fontResolver.resolve(metricsUrl);
+                closeSource(source);
+                if (source == null) {
+                    LogUtil.handleError(log,
+                            "Failed to resolve font with metric-url '" + metricsUrl + "'", strict);
+                    return null;
+                }
             }
-            metricsUrl = source.getSystemId(); // absolute path/url
         }
         boolean useKerning = fontCfg.getAttributeAsBoolean("kerning", true);
                         

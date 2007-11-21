@@ -19,6 +19,9 @@
 
 package org.apache.fop.layoutmgr.table;
 
+import org.apache.fop.fo.flow.table.GridUnit;
+import org.apache.fop.fo.flow.table.PrimaryGridUnit;
+
 /**
  * Represents a non-dividable part of a grid unit. Used by the table stepper.
  */

@@ -218,7 +218,7 @@ public class FontSetup {
         java.awt.Font[] fonts = env.getAllFonts();
         for (int i = 0; i < fonts.length; i++) {
             java.awt.Font f = fonts[i];
-            if (HARDCODED_FONT_NAMES.contains(f.getFontName())) {
+            if (HARDCODED_FONT_NAMES.contains(f.getName())) {
                 continue; //skip
             }
             
@@ -231,20 +231,20 @@ public class FontSetup {
                         + ", Style: " + f.getStyle());
             }
             
-            String searchName = FontUtil.stripWhiteSpace(f.getFontName()).toLowerCase();
+            String searchName = FontUtil.stripWhiteSpace(f.getName()).toLowerCase();
             String guessedStyle = FontUtil.guessStyle(searchName);
             int guessedWeight = FontUtil.guessWeight(searchName);
 
             num++;
             String fontKey = "F" + num;
             int style = convertToAWTFontStyle(guessedStyle, guessedWeight);
-            addFontMetricsMapper(fontInfo, f.getFontName(), fontKey, graphics, style);
+            addFontMetricsMapper(fontInfo, f.getName(), fontKey, graphics, style);
             
             //Register appropriate font triplets matching the font. Two different strategies:
             //Example: "Arial Bold", normal, normal
-            addFontTriplet(fontInfo, f.getFontName(),
+            addFontTriplet(fontInfo, f.getName(),
                     Font.STYLE_NORMAL, Font.WEIGHT_NORMAL, fontKey);
-            if (!f.getFontName().equals(f.getFamily())) {
+            if (!f.getName().equals(f.getFamily())) {
                 //Example: "Arial", bold, normal
                 addFontTriplet(fontInfo, f.getFamily(),
                         guessedStyle, guessedWeight, fontKey);

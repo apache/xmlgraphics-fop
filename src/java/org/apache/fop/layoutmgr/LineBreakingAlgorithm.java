@@ -97,11 +97,14 @@ public class LineBreakingAlgorithm extends BreakingAlgorithm {
             addedPositions = 0;
         }
 
-        if (difference + bestActiveNode.availableShrink < 0) {
-            if (super.log.isWarnEnabled()) {
-                super.log.warn(FONode.decorateWithContextInfo(
-                        "Line " + (addedPositions + 1) 
-                        + " of a paragraph overflows the available area.", thisLLM.getFObj()));
+        if (log.isWarnEnabled()) {
+            int lack = difference + bestActiveNode.availableShrink; 
+            if (lack < 0) {
+                String textDiff = (lack < -50000 ? "more than 50 points" : (-lack) + "mpt");
+                log.warn(FONode.decorateWithContextInfo
+                         ("Line " + (addedPositions + 1) 
+                          + " of a paragraph overflows the available area by "
+                          + textDiff + ".", thisLLM.getFObj()));
             }
         }
         

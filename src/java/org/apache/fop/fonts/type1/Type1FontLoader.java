@@ -56,7 +56,13 @@ public class Type1FontLoader extends FontLoader {
         pfm.load(in);
         singleFont = new SingleByteFont();
         singleFont.setFontType(FontType.TYPE1);
-        singleFont.setEncoding(pfm.getCharSetName() + "Encoding");
+        if (pfm.getCharSet() >= 0 && pfm.getCharSet() <= 2) {
+            singleFont.setEncoding(pfm.getCharSetName() + "Encoding");
+        } else {
+            log.warn("The PFM reports an unsupported encoding (" 
+                    + pfm.getCharSetName() + "). The font may not work as expected.");
+            singleFont.setEncoding("WinAnsiEncoding"); //Try fallback, no guarantees!
+        }
         singleFont.setResolver(this.resolver);
         returnFont = singleFont;
         returnFont.setFontName(pfm.getPostscriptName());
@@ -73,7 +79,7 @@ public class Type1FontLoader extends FontLoader {
         returnFont.setDescender(pfm.getLowerCaseDescent());
         returnFont.setFontBBox(pfm.getFontBBox());
         returnFont.setFirstChar(pfm.getFirstChar());
-        returnFont.setLastChar(pfm.getFirstChar());
+        returnFont.setLastChar(pfm.getLastChar());
         returnFont.setFlags(pfm.getFlags());
         returnFont.setStemV(pfm.getStemV());
         returnFont.setItalicAngle(pfm.getItalicAngle());

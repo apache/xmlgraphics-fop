@@ -20,8 +20,8 @@
 package org.apache.fop.layoutmgr.inline;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
@@ -195,7 +195,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         // With CID fonts, space isn't neccesary currentFontState.width(32)
         spaceCharIPD = font.getCharWidth(' ');
         // Use hyphenationChar property
-        hyphIPD = font.getCharWidth(foText.getCommonHyphenation().hyphenationCharacter.getCharacter());
+        hyphIPD = foText.getCommonHyphenation().getHyphIPD(font);
         
         SpaceVal ls = SpaceVal.makeLetterSpacing(foText.getLetterSpacing());
         halfLS = new SpaceVal(MinOptMax.multiply(ls.getSpace(), 0.5),
@@ -508,7 +508,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                         && i == lastIndex 
                         && areaInfo.bHyphenated) {
                         // add the hyphenation character
-                        wordChars.append(foText.getCommonHyphenation().hyphenationCharacter.getCharacter());
+                        wordChars.append(foText.getCommonHyphenation().getHyphChar(font));
                     }
                     textArea.addWord(wordChars.toString(), 0, letterAdjust);
                     wordStartIndex = -1;

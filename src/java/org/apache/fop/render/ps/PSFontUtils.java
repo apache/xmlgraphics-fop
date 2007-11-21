@@ -100,8 +100,11 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
             if (fm instanceof LazyFont && ((LazyFont)fm).getRealFont() == null) {
                 continue;
             } else if (null == fm.getEncoding()) {
-                //ignore (ZapfDingbats and Symbol run through here
-                //TODO: ZapfDingbats and Symbol should get getEncoding() fixed!
+                //ignore (ZapfDingbats and Symbol used to run through here, kept for safety reasons)
+            } else if ("SymbolEncoding".equals(fm.getEncoding())) {
+                //ignore (no encoding redefinition)
+            } else if ("ZapfDingbatsEncoding".equals(fm.getEncoding())) {
+                //ignore (no encoding redefinition)
             } else if ("WinAnsiEncoding".equals(fm.getEncoding())) {
                 redefineFontEncoding(gen, fm.getFontName(), fm.getEncoding());
             } else {

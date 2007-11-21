@@ -31,6 +31,8 @@ import org.apache.fop.area.Trait;
 import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.flow.table.EffRow;
+import org.apache.fop.fo.flow.table.GridUnit;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableBody;
 import org.apache.fop.fo.flow.table.TableRow;
@@ -75,15 +77,12 @@ public class TableContentLayoutManager implements PercentBaseContext {
     public TableContentLayoutManager(TableLayoutManager parent) {
         this.tableLM = parent;
         Table table = getTableLM().getTable();
-        this.bodyIter = new TableRowIterator(table, getTableLM().getColumns(),
-                TableRowIterator.BODY);
+        this.bodyIter = new TableRowIterator(table, TableRowIterator.BODY);
         if (table.getTableHeader() != null) {
-            headerIter = new TableRowIterator(table, 
-                    getTableLM().getColumns(), TableRowIterator.HEADER);
+            headerIter = new TableRowIterator(table, TableRowIterator.HEADER);
         }
         if (table.getTableFooter() != null) {
-            footerIter = new TableRowIterator(table, 
-                    getTableLM().getColumns(), TableRowIterator.FOOTER);
+            footerIter = new TableRowIterator(table, TableRowIterator.FOOTER);
         }
     }
     
@@ -212,7 +211,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
         int breakBetween = Constants.EN_AUTO;
         while ((rowGroup = iter.getNextRowGroup()) != null) {
             RowGroupLayoutManager rowGroupLM = new RowGroupLayoutManager(getTableLM(), rowGroup,
-                    bodyIter, headerIter, footerIter, iter, stepper);
+                    stepper);
             if (breakBetween == Constants.EN_AUTO) {
                 // TODO improve
                 breakBetween = rowGroupLM.getBreakBefore();
@@ -233,7 +232,8 @@ public class TableContentLayoutManager implements PercentBaseContext {
         // Break after the table's last row
         // TODO should eventually be handled at the table level
         if (breakBetween != Constants.EN_AUTO) {
-            if (returnList.size() > 0) {
+            if (returnList.size() > 0 && ((ListElement) returnList.getLast()).isPenalty()) {
+                // May be a glue if the unbroken height is greater than the broken heights
                 BreakElement breakPoss = (BreakElement) returnList.getLast();
                 breakPoss.setPenaltyValue(-KnuthPenalty.INFINITE);
                 breakPoss.setBreakClass(breakBetween);

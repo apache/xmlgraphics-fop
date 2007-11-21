@@ -19,12 +19,7 @@
 
 package org.apache.fop.fo.flow.table;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.layoutmgr.table.GridUnit;
-import org.apache.fop.layoutmgr.table.PrimaryGridUnit;
 
 /**
  * A class that creates groups of rows belonging to a same set of spans. The first row of
@@ -34,16 +29,7 @@ import org.apache.fop.layoutmgr.table.PrimaryGridUnit;
  */
 abstract class RowGroupBuilder {
 
-    /** Number of columns in the corresponding table. */
-    protected int numberOfColumns;
-
-    /** 0-based, index in the row group. */
-    private int currentRowIndex;
-
-    private Table table;
-
-    /** The rows belonging to this row group. List of List of {@link GridUnit}s. */
-    protected List rows;
+    protected Table table;
 
     /**
      * Creates and initialises a new builder for the given table.
@@ -52,81 +38,55 @@ abstract class RowGroupBuilder {
      */
     protected RowGroupBuilder(Table t) {
         table = t;
-        initialize();
     }
 
-    /**
-     * Prepares this builder for creating a new row group.
-     */
-    private void initialize() {
-        rows = new ArrayList();
-        currentRowIndex = 0;
-    }
 
     /**
-     * Adds a table-cell to the row-group, creating {@link GridUnit}s accordingly.
+     * Adds a table-cell to the current row-group, creating {@link GridUnit}s accordingly.
      * 
-     * @param cell
+     * @param cell the cell to add
      */
-    void addTableCell(TableCell cell) {
-        for (int i = rows.size(); i < currentRowIndex + cell.getNumberRowsSpanned(); i++) {
-            List effRow = new ArrayList(numberOfColumns);
-            for (int j = 0; j < numberOfColumns; j++) {
-                effRow.add(null);
-            }
-            rows.add(effRow);
-        }
-        int columnIndex = cell.getColumnNumber() - 1;
-        PrimaryGridUnit pgu = new PrimaryGridUnit(cell, table.getColumn(columnIndex), columnIndex,
-                currentRowIndex);
-        List row = (List) rows.get(currentRowIndex);
-        row.set(columnIndex, pgu);
-        for (int j = 1; j < cell.getNumberColumnsSpanned(); j++) {
-            row.set(j + columnIndex,
-                    new GridUnit(pgu, table.getColumn(columnIndex + j), columnIndex + j, j));
-        }
-        for (int i = 1; i < cell.getNumberRowsSpanned(); i++) {
-            row = (List) rows.get(currentRowIndex + i);
-            for (int j = 0; j < cell.getNumberColumnsSpanned(); j++) {
-                row.set(j + columnIndex,
-                        new GridUnit(pgu, table.getColumn(columnIndex + j), columnIndex + j, j));
-            }
-        }
-        
-    }
+    abstract void addTableCell(TableCell cell);
 
     /**
-     * Signals that a table row has just ended, potentially finishing the current row
-     * group.
+     * Receives notification of the start of an fo:table-row element.
      * 
-     * @param body the table-body containing the row. Its
-     * {@link TableBody#addRowGroup(List)} method will be called if the current row group
-     * is finished.
+     * @param tableRow the row being started
      */
-    void signalRowEnd(TableBody body) {
-        if (currentRowIndex == rows.size() - 1) {
-            // Means that the current row has no cell spanning over following rows
-            body.addRowGroup(rows);
-            initialize();
-        } else {
-            currentRowIndex++;
-        }
-    }
+    abstract void startRow(TableRow tableRow);
 
     /**
-     * Signals that the end of a table-header/footer/body has been reached. The current
+     * Receives notification of the end of the current row. If the current row finishes
+     * the row group, the {@link TableBody#addRowGroup(List)} method of the parent table
+     * part (i.e., the given container itself or its parent if this is a table-row) will
+     * be called
+     * 
+     * @param container the parent element of the current row
+     */
+    abstract void endRow(TableCellContainer container);
+
+    /**
+     * Receives notification of the start of a table-header/footer/body.
+     * 
+     * @param part the part being started
+     */
+    abstract void startTablePart(TableBody part);
+
+    /**
+     * Receives notification of the end of a table-header/footer/body. The current
      * row-group is checked for emptiness. This row group builder is reset for handling
      * further possible table parts.
      * 
-     * @param tableBody the table part being finished
-     * @throws ValidationException if a cell is spanning further than the given table part
+     * @param tableBody the table part being ended
+     * @throws ValidationException if a row-spanning cell overflows the given table part
      */
-    void signalEndOfPart(TableBody tableBody) throws ValidationException {
-        if (rows.size() > 0) {
-            throw new ValidationException(
-                    "A table-cell is spanning more rows than available in its parent element.");
-        }
-        initialize();
-    }
+    abstract void endTablePart(TableBody tableBody) throws ValidationException;
 
+    /**
+     * Receives notification of the end of the table.
+     * 
+     * @param lastTablePart the last part of the table
+     * @throws ValidationException if a row-spanning cell overflows one of the table's parts
+     */
+    abstract void endTable(TableBody lastTablePart) throws ValidationException;
 }

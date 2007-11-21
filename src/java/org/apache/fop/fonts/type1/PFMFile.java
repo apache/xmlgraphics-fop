@@ -28,6 +28,7 @@ import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.fonts.Glyphs;
 
 /**
@@ -297,22 +298,24 @@ public class PFMFile {
      * @return The name of the charset.
      */
     public String getCharSetName() {
+        //TODO Had to remove the detection for Expert(Subset) encoding. The PFM is not suitable
+        //for detecting these character sets. We have to parse the AFM for that.
         switch (dfCharSet) {
         case 0:
             return "WinAnsi"; // AKA ISOAdobe
-        case 1:
-            return "Expert";
         case 2:
             if ("Symbol".equals(getPostscriptName())) {
                 return "Symbol";
-            } else {
-                return "ExpertSubset";
             }
+            break;
         case 128:
             return "Shift-JIS (Japanese)";
         default:
-            return "Unknown (" + dfCharSet + ", 0x" + Integer.toHexString(dfCharSet) + ")";
+            log.warn("Unknown charset detected (" + dfCharSet
+                    + ", 0x" + Integer.toHexString(dfCharSet)
+                    + "). Trying fallback to WinAnsi.");
         }
+        return "WinAnsi"; 
     }
 
     /**
@@ -403,6 +406,15 @@ public class PFMFile {
     }
 
     /**
+     * Indicates whether the font is non-symbolic (Font uses the Adobe standard Latin character 
+     * set or a subset of it).
+     * @return true if the font is non-symbolic
+     */
+    public boolean isNonSymbolic() {
+        return (dfCharSet != 2); //!= Symbol fonts
+    }
+    
+    /**
      * Returns the characteristics flags for the font as
      * needed for a PDF font descriptor (See PDF specs).
      *
@@ -411,19 +423,22 @@ public class PFMFile {
     public int getFlags() {
         int flags = 0;
         if (!getIsProportional()) {
-            flags |= 1;
+            flags |= 1; //bit 1: FixedPitch
         }
-        if ((dfPitchAndFamily & 16) == 16) {
-            flags |= 2;
+        if (isNonSymbolic()) {
+            flags |= 32; //bit 6: Nonsymbolic
+        } else {
+            flags |= 4; //bit 3: Symbolic
         }
-        if ((dfPitchAndFamily & 64) == 64) {
-            flags |= 4;
+        //int serif = dfPitchAndFamily & 0xFFFE;
+        if ((dfPitchAndFamily & 16) != 0) {
+            flags |= 2; //bit 2: Serif
         }
-        if (dfCharSet == 0) {
-            flags |= 6;
+        if ((dfPitchAndFamily & 64) != 0) {
+            flags |= 8; //bit 4: Script
         }
         if (dfItalic != 0) {
-            flags |= 7;
+            flags |= 64; //bit 7: Italic
         }
         return flags;
     }

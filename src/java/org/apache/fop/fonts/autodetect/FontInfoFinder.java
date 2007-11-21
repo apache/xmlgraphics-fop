@@ -21,11 +21,14 @@ package org.apache.fop.fonts.autodetect;
 
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fonts.CachedFontInfo;
@@ -62,7 +65,7 @@ public class FontInfoFinder {
         }
 
         // default style and weight triplet vales (fallback)
-        String strippedName = customFont.getStrippedFontName();
+        String strippedName = stripQuotes(customFont.getStrippedFontName());
         String subName = customFont.getFontSubName();
         String searchName = strippedName.toLowerCase();
         if (subName != null) {
@@ -74,7 +77,7 @@ public class FontInfoFinder {
 
         //Full Name usually includes style/weight info so don't use these traits
         //If we still want to use these traits, we have to make FontInfo.fontLookup() smarter
-        String fullName = customFont.getFullName();
+        String fullName = stripQuotes(customFont.getFullName());
         triplets.add(new FontTriplet(fullName, Font.STYLE_NORMAL, Font.WEIGHT_NORMAL));
         if (!fullName.equals(strippedName)) {
             triplets.add(new FontTriplet(strippedName, Font.STYLE_NORMAL, Font.WEIGHT_NORMAL));
@@ -82,11 +85,17 @@ public class FontInfoFinder {
         Set familyNames = customFont.getFamilyNames();
         Iterator iter = familyNames.iterator();
         while (iter.hasNext()) {
-            String familyName = (String)iter.next();
+            String familyName = stripQuotes((String)iter.next());
             if (!fullName.equals(familyName)) {
                 triplets.add(new FontTriplet(familyName, style, weight));
             }
         }
+    }
+    
+    private final Pattern quotePattern = Pattern.compile("'");
+    
+    private String stripQuotes(String name) {
+        return quotePattern.matcher(name).replaceAll("");
     }
 
     private String guessStyle(CustomFont customFont, String fontName) {
@@ -136,7 +145,13 @@ public class FontInfoFinder {
         long fileLastModified = -1;
         if (fontCache != null) {
             try {
-                fileLastModified = fontUrl.openConnection().getLastModified();
+                URLConnection conn = fontUrl.openConnection();
+                try {
+                    fileLastModified = conn.getLastModified();
+                } finally {
+                    //An InputStream is created even if it's not accessed, but we need to close it.
+                    IOUtils.closeQuietly(conn.getInputStream());
+                }
             } catch (IOException e) {
                 // Should never happen, because URL must be local
                 log.debug("IOError: " + e.getMessage());
