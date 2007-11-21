@@ -232,7 +232,8 @@ public class TableContentLayoutManager implements PercentBaseContext {
         // Break after the table's last row
         // TODO should eventually be handled at the table level
         if (breakBetween != Constants.EN_AUTO) {
-            if (returnList.size() > 0) {
+            if (returnList.size() > 0 && ((ListElement) returnList.getLast()).isPenalty()) {
+                // May be a glue if the unbroken height is greater than the broken heights
                 BreakElement breakPoss = (BreakElement) returnList.getLast();
                 breakPoss.setPenaltyValue(-KnuthPenalty.INFINITE);
                 breakPoss.setBreakClass(breakBetween);
