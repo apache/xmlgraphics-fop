@@ -30,7 +30,7 @@ import java.util.LinkedList;
 public class FootnoteBodyLayoutManager extends BlockStackingLayoutManager {
     
     /* Holds the Knuth elements of the footnote */
-    private LinkedList elementList = null;
+    private BlockKnuthSequence elementList = null;
 
     /**
      * Creates a new FootnoteBodyLayoutManager.
@@ -97,7 +97,7 @@ public class FootnoteBodyLayoutManager extends BlockStackingLayoutManager {
     /**
      * @return the elementList
      */
-    public LinkedList getElementList() {
+    public BlockKnuthSequence getElementList() {
         return elementList;
     }
 
@@ -106,6 +106,7 @@ public class FootnoteBodyLayoutManager extends BlockStackingLayoutManager {
      * @param alignment
      */
     public void getKnuthElements(LayoutContext context, int alignment) {
-        this.elementList = getNextKnuthElements(context, alignment);
+        LinkedList returnedList = getNextKnuthElements(context, alignment); 
+        this.elementList = new BlockKnuthSequence(returnedList); 
     }
 }

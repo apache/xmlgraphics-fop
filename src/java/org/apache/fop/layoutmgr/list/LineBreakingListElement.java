@@ -24,6 +24,24 @@ public abstract class LineBreakingListElement extends ListElement {
 
     public abstract LinkedList doLineBreaking();
 
+    public abstract boolean lineBreakingIsStarting();
+
     public abstract boolean lineBreakingIsFinished();
+
+    public boolean isStartOfSubsequence() {
+        return false;
+    }
+
+    public boolean isEndOfSubsequence() {
+        return false;
+    }
+    
+    public int getWidowRowLimit() {
+        return 0;
+    }
+    
+    public int getOrphanRowLimit() {
+        return 0;
+    }
 
 }

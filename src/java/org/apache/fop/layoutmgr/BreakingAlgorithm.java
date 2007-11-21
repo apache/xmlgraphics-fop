@@ -592,7 +592,7 @@ public abstract class BreakingAlgorithm {
      * @param seq the Knuth Sequence
      * @param startIndex the start index
      */
-    void resolveElements(List seq, int startIndex) {
+    void resolveElements(KnuthSequence seq, int startIndex) {
         ;
     }
 

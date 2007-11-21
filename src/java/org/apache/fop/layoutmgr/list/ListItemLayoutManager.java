@@ -82,6 +82,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
     private int[] end = {-1, -1};
     int addedBoxHeight = 0;
     
+    private boolean lineBreakingStarting = true; 
     private boolean lineBreakingFinished = false; 
 
     private int listItemHeight;
@@ -95,7 +96,12 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
     
     private boolean keepWithNextPendingOnLabel;
     private boolean keepWithNextPendingOnBody;
-  
+    
+    private int widowRowLimit = 0;
+    private int orphanRowLimit = 0;
+    private boolean isStartOfSubsequence = false;
+    private boolean isEndOfSubsequence = false;
+    
     private class ListItemPosition extends Position {
         private int iLabelFirstIndex;
         private int iLabelLastIndex;
@@ -272,6 +278,10 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         return returnList;
     }
     
+    public boolean lineBreakingIsStarting() {
+        return lineBreakingStarting;
+    }
+    
     public boolean lineBreakingIsFinished() {
         return lineBreakingFinished;
     }
@@ -289,6 +299,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         
         step = getNextStep();
 
+        lineBreakingStarting = false;
         lineBreakingFinished = true;
         boolean keepWithNextActive = false;
         if (end[0] + 1 == elementLists[0].size()) {
@@ -415,6 +426,62 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         }
 
         return step;
+    }
+
+    /**
+     * @return the widowRowLimit
+     */
+    public int getWidowRowLimit() {
+        return widowRowLimit;
+    }
+
+    /**
+     * @param widowRowLimit the widowRowLimit to set
+     */
+    public void setWidowRowLimit(int widowRowLimit) {
+        this.widowRowLimit = widowRowLimit;
+    }
+
+    /**
+     * @return the orphanRowLimit
+     */
+    public int getOrphanRowLimit() {
+        return orphanRowLimit;
+    }
+
+    /**
+     * @param orphanRowLimit the orphanRowLimit to set
+     */
+    public void setOrphanRowLimit(int orphanRowLimit) {
+        this.orphanRowLimit = orphanRowLimit;
+    }
+    
+    /**
+     * @return the bIsStartOfSubsequence
+     */
+    public boolean isStartOfSubsequence() {
+        return isStartOfSubsequence;
+    }
+    
+    /**
+     * @param isStartOfSubsequence the isStartOfSubsequence to set
+     */
+    public void setIsStartOfSubsequence(boolean isStartOfSubsequence) {
+        this.isStartOfSubsequence = isStartOfSubsequence;
+    }
+
+    /**
+     * @return the bIsEndOfSubsequence
+     */
+    public boolean isEndOfSubsequence() {
+        return isEndOfSubsequence;
+    }
+
+    /**
+     * @param isEndOfSubsequence the isEndOfSubsequence to set
+     */
+    public void setIsEndOfSubsequence(boolean isEndOfSubsequence) {
+        this.isEndOfSubsequence = isEndOfSubsequence;
     }
 
     /**
@@ -740,7 +807,6 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
             log.debug(this + ": Padding " + side + " -> " + effectiveLength);
         }
     }
-
     
 }
 

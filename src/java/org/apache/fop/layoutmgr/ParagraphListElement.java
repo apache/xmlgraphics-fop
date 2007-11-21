@@ -32,6 +32,7 @@ import org.apache.fop.layoutmgr.list.LineBreakingListElement;
 public class ParagraphListElement extends LineBreakingListElement {
 
     private KnuthParagraph para;
+    private boolean lineBreakingStarting = true;
     private boolean lineBreakingFinished = false;
     
     /**
@@ -60,8 +61,16 @@ public class ParagraphListElement extends LineBreakingListElement {
     public LinkedList doLineBreaking() {
         LinkedList returnList = para.getLineLayoutManager().createLineBreaks(para);
         wrapPositions(returnList);
+        lineBreakingStarting = false;
         lineBreakingFinished = true;
         return returnList;
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.fop.layoutmgr.list.LineBreakingListElement#lineBreakingIsStarting()
+     */
+    public boolean lineBreakingIsStarting() {
+        return lineBreakingStarting;
     }
 
     /* (non-Javadoc)
