@@ -27,6 +27,7 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.fonts.FontUtil;
 import org.apache.fop.fonts.Glyphs;
 
 /**
@@ -543,7 +544,11 @@ public class TTFFile {
      * @return String The PostScript name
      */
     public String getPostScriptName() {
-        return postScriptName;
+        if (postScriptName.length() == 0) {
+            return FontUtil.stripWhiteSpace(getFullName());
+        } else {
+            return postScriptName;
+        }
     }
 
     /**

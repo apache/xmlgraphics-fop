@@ -20,7 +20,6 @@
 package org.apache.fop.fo.flow.table;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.fop.apps.FOPException;
@@ -154,7 +153,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
     /**
      * {@inheritDoc}
      */
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
         super.startOfNode();
         getFOEventHandler().startTable(this);
     }
@@ -211,7 +210,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
     /**
      * {@inheritDoc}
      */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
 
         if (!tableBodyFound) {
            missingChildElementError(
@@ -219,6 +218,11 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
                        + ",table-body+)");
         }
         if (!inMarker()) {
+            if (tableFooter != null) {
+                rowGroupBuilder.endTable(tableFooter);
+            } else {
+                rowGroupBuilder.endTable((TableBody) getChildNodes().lastNode());
+            }
             /* clean up */
             for (int i = columns.size(); --i >= 0;) {
                 TableColumn col = (TableColumn) columns.get(i);
@@ -278,6 +282,13 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
         }
     }
 
+    protected void setCollapsedBorders() {
+        createBorder(CommonBorderPaddingBackground.START);
+        createBorder(CommonBorderPaddingBackground.END);
+        createBorder(CommonBorderPaddingBackground.BEFORE);
+        createBorder(CommonBorderPaddingBackground.AFTER);
+    }
+
     private void finalizeColumns() throws FOPException {
         for (int i = 0; i < columns.size(); i++) {
             if (columns.get(i) == null) {
@@ -305,32 +316,6 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
         for (int i = columns.size() + 1; i <= columnNumber; i++) {
             columns.add(createImplicitColumn(i));
         }
-        ((VariableColRowGroupBuilder) rowGroupBuilder).ensureNumberOfColumns(columnNumber);
-        if (tableHeader != null) {
-            for (Iterator iter = tableHeader.getRowGroups().iterator(); iter.hasNext();) {
-                VariableColRowGroupBuilder.fillWithEmptyGridUnits((List) iter.next(),
-                        columnNumber); 
-            }
-        }
-        if (tableFooter != null) {
-            for (Iterator iter = tableFooter.getRowGroups().iterator(); iter.hasNext();) {
-                VariableColRowGroupBuilder.fillWithEmptyGridUnits((List) iter.next(),
-                        columnNumber); 
-            }
-        }
-        FONodeIterator bodyIter = getChildNodes();
-        if (bodyIter != null) {
-            while (bodyIter.hasNext()) {
-                FONode node = bodyIter.nextNode();
-                if (node instanceof TableBody) { // AFAIK, may be a marker
-                    for (Iterator iter = ((TableBody) node).getRowGroups().iterator();
-                            iter.hasNext();) {
-                        VariableColRowGroupBuilder.fillWithEmptyGridUnits((List) iter.next(),
-                                columnNumber); 
-                    }
-                }
-            }
-        }
     }
 
     private TableColumn createImplicitColumn(int colNumber)
@@ -342,6 +327,9 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
         implicitColumn.bind(pList);
         implicitColumn.setColumnWidth(new TableColLength(1.0, implicitColumn));
         implicitColumn.setColumnNumber(colNumber);
+        if (!isSeparateBorderModel()) {
+            implicitColumn.setCollapsedBorders(collapsingBorderModel); // TODO
+        }
         return implicitColumn;
     }
 

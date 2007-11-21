@@ -25,7 +25,6 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.image.FopImage;
@@ -125,6 +124,25 @@ public class CommonBorderPaddingBackground {
         }
     }
 
+    /**
+     * A border info with style none. Used as a singleton, in the collapsing-border model,
+     * for elements which don't specify any border on some of their sides.
+     */
+    private static BorderInfo defaultBorderInfo;
+
+    /**
+     * Returns a default BorderInfo of style none.
+     * 
+     * @return a BorderInfo instance with style set to {@link Constants#EN_NONE}
+     */
+    public static synchronized BorderInfo getDefaultBorderInfo() {
+        if (defaultBorderInfo == null) {
+            /* It is enough to set color and width to null, as they should never be consulted */
+            defaultBorderInfo = new BorderInfo(Constants.EN_NONE, null, null);
+        }
+        return defaultBorderInfo;
+    }
+
     private BorderInfo[] borderInfo = new BorderInfo[4];
     private CondLengthProperty[] padding = new CondLengthProperty[4];
 
@@ -139,7 +157,6 @@ public class CommonBorderPaddingBackground {
      * Construct a CommonBorderPaddingBackground object.
      * 
      * @param pList The PropertyList to get properties from.
-     * @param fobj The FO to create this instance for.
      * @throws PropertyException if there's an error while binding the properties
      */
     public CommonBorderPaddingBackground(PropertyList pList) throws PropertyException {
@@ -229,7 +246,11 @@ public class CommonBorderPaddingBackground {
      * @return the border info for a side
      */
     public BorderInfo getBorderInfo(int side) {
-        return this.borderInfo[side];
+        if (this.borderInfo[side] == null) {
+            return getDefaultBorderInfo();
+        } else {
+            return this.borderInfo[side];
+        }
     }
     
     /**

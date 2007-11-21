@@ -47,13 +47,13 @@ public class FontInfo {
     protected static Log log = LogFactory.getLog(FontInfo.class);
 
     /** Map containing fonts that have been used */
-    private Map usedFonts;
+    private Map usedFonts; //Map<String,FontMetrics> (String = font key)
     
     /** look up a font-triplet to find a font-name */
-    private Map triplets;
+    private Map triplets; //Map<FontTriplet,String> (String = font key)
     
     /** look up a font-name to get a font (that implements FontMetrics at least) */
-    private Map fonts;
+    private Map fonts; //Map<String,FontMetrics> (String = font key)
     
     /** collection of missing fonts; used to make sure the user gets 
      *  a warning for a missing font only once (not every time the font is used)
@@ -290,21 +290,30 @@ public class FontInfo {
      */
     public FontTriplet[] fontLookup(String[] families, String style,
                              int weight) {
+        if (families.length == 0) {
+            throw new IllegalArgumentException("Specify at least one font family");
+        }
         FontTriplet triplet;
         List tmpTriplets = new ArrayList();
-        for (int i = 0; i < families.length; i++) {
+        for (int i = 0, c = families.length; i < c; i++) {
             triplet = fontLookup(families[i], style, weight, (i >= families.length - 1));
             if (triplet != null) {
                 tmpTriplets.add(triplet);
             }
         }
         if (tmpTriplets.size() != 0) {
-            FontTriplet[] triplets = (FontTriplet[]) tmpTriplets.toArray(TRIPLETS_TYPE);
-            return (FontTriplet[]) triplets;
+            return (FontTriplet[]) tmpTriplets.toArray(TRIPLETS_TYPE);
+        }
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0, c = families.length; i < c; i++) {
+            if (i > 0) {
+                sb.append(", ");
+            }
+            sb.append(families[i]);
         }
         throw new IllegalStateException(
                     "fontLookup must return an array with at least one "
-                    + "FontTriplet on the last call.");
+                    + "FontTriplet on the last call. Lookup: " + sb.toString());
     }
     
     private void notifyFontReplacement(FontTriplet replacedKey, FontTriplet newKey) {
@@ -399,13 +408,21 @@ public class FontInfo {
     }
 
     /**
-     * Gets a Map of all registred fonts.
+     * Gets a Map of all registered fonts.
      * @return a read-only Map with font key/FontMetrics pairs
      */
     public Map getFonts() {
         return java.util.Collections.unmodifiableMap(this.fonts);
     }
 
+    /**
+     * Gets a Map of all registered font triplets.
+     * @return a read-only Map with FontTriplet/font key pairs
+     */
+    public Map getFontTriplets() {
+        return java.util.Collections.unmodifiableMap(this.triplets);
+    }
+    
     /**
      * This is used by the renderers to retrieve all the
      * fonts used in the document.

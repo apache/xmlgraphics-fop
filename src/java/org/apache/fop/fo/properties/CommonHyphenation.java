@@ -19,9 +19,13 @@
 
 package org.apache.fop.fo.properties;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fonts.FontMetrics;
+import org.apache.fop.fonts.Typeface;
 
 /**
  * Store all common hyphenation properties.
@@ -29,6 +33,9 @@ import org.apache.fop.fo.expr.PropertyException;
  * Public "structure" allows direct member access.
  */
 public final class CommonHyphenation {
+
+    /** Logger */
+    protected static Log log = LogFactory.getLog(CommonHyphenation.class);
     
     private static final PropertyCache cache = new PropertyCache();
     
@@ -111,7 +118,71 @@ public final class CommonHyphenation {
         
     }
     
-    /** {@inheritDoc */
+    private static final char HYPHEN_MINUS = '-';
+    private static final char MINUS_SIGN = '\u2212';
+    
+    /**
+     * Returns the effective hyphenation character for a font. The hyphenation character specified
+     * in XSL-FO may be substituted if it's not available in the font.
+     * @param font the font
+     * @return the effective hyphenation character.
+     */
+    public char getHyphChar(org.apache.fop.fonts.Font font) {
+        char hyphChar = hyphenationCharacter.getCharacter();
+        if (font.hasChar(hyphChar)) {
+            return hyphChar; //short-cut
+        }
+        char effHyphChar = hyphChar;
+        boolean warn = false;
+        if (font.hasChar(HYPHEN_MINUS)) {
+            effHyphChar = HYPHEN_MINUS;
+            warn = true;
+        } else if (font.hasChar(MINUS_SIGN)) {
+            effHyphChar = MINUS_SIGN;
+            FontMetrics metrics = font.getFontMetrics();
+            if (metrics instanceof Typeface) {
+                Typeface typeface = (Typeface)metrics;
+                if ("SymbolEncoding".equals(typeface.getEncoding())) {
+                    //SymbolEncoding doesn't have HYPHEN_MINUS, so replace by MINUS_SIGN
+                } else {
+                    //only warn if the encoding is not SymbolEncoding
+                    warn = true;
+                }
+            }
+        } else {
+            effHyphChar = ' ';
+            FontMetrics metrics = font.getFontMetrics();
+            if (metrics instanceof Typeface) {
+                Typeface typeface = (Typeface)metrics;
+                if ("ZapfDingbatsEncoding".equals(typeface.getEncoding())) {
+                    //ZapfDingbatsEncoding doesn't have HYPHEN_MINUS, so replace by ' '
+                } else {
+                    //only warn if the encoding is not ZapfDingbatsEncoding
+                    warn = true;
+                }
+            }
+        }
+        if (warn) {
+            log.warn("Substituted specified hyphenation character (0x"
+                    + Integer.toHexString(hyphChar)
+                    + ") with 0x" + Integer.toHexString(effHyphChar) 
+                    + " because the font doesn't have the specified hyphenation character: " 
+                    + font.getFontTriplet());
+        }
+        return effHyphChar;
+    }
+    
+    /**
+     * Returns the IPD for the hyphenation character for a font.
+     * @param font the font
+     * @return the IPD in millipoints for the hyphenation character.
+     */
+    public int getHyphIPD(org.apache.fop.fonts.Font font) {
+        char hyphChar = getHyphChar(font);
+        return font.getCharWidth(hyphChar);
+    }
+    
+    /** {@inheritDoc} */
     public boolean equals(Object obj) {
         if (obj == this) {
             return true;

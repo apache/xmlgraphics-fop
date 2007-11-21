@@ -23,12 +23,13 @@ import java.util.Iterator;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FObjMixed;
-import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.flow.table.Table;
+import org.apache.fop.fo.flow.table.TableFObj;
 import org.xml.sax.Locator;
 
 /**
@@ -126,6 +127,12 @@ public class RetrieveMarker extends FObjMixed {
                         getLocator(),
                         pList,
                         newPropertyList);
+                if (newChild instanceof TableFObj) {
+                    // TODO calling startOfNode (and endOfNode, below) on other fobjs may
+                    // have undesirable side-effects. This is really ugly and will need to
+                    // be addressed sooner or later
+                    ((TableFObj) newChild).startOfNode();
+                }
                 addChildTo(newChild, (FObj) newParent);
                 if (newChild.getNameId() == FO_TABLE) {
                     Table t = (Table) child;
@@ -138,6 +145,10 @@ public class RetrieveMarker extends FObjMixed {
                 }
                 cloneSubtree(child.getChildNodes(), newChild,
                         marker, newPropertyList);
+                if (newChild instanceof TableFObj) {
+                    // TODO this is ugly
+                    ((TableFObj) newChild).endOfNode();
+                }
             } else if (child instanceof FOText) {
                 FOText ft = (FOText) newChild;
                 ft.bind(parentPropertyList);

@@ -76,6 +76,10 @@ public final class PropertyCache {
             this.ref = old.ref;
             this.hash = old.hash;
         }
+
+        public boolean isCleared() {
+            return (ref == null || ref.get() == null);
+        }
         
     }
     
@@ -116,10 +120,8 @@ public final class PropertyCache {
                 
                 int index = this.hash & (table.length - 1);
                 CacheEntry first = table[index];
-                WeakReference ref;
                 for (CacheEntry e = first; e != null; e = e.next) {
-                    ref = e.ref;
-                    if (ref != null && ref.get() == null) {
+                    if (e.isCleared()) {
                         /* remove obsolete entry
                         /* 1. clear value, cause interference for non-blocking get() */
                         e.ref = null;
@@ -127,7 +129,9 @@ public final class PropertyCache {
                         /* 2. clone the segment, without the obsolete entry */
                         CacheEntry head = e.next;
                         for (CacheEntry c = first; c != e; c = c.next) {
-                            head = new CacheEntry(c, head);
+                            if (!c.isCleared()) {
+                                head = new CacheEntry(c, head);
+                            }
                         }
                         table[index] = head;
                         segment.count--;
@@ -177,7 +181,7 @@ public final class PropertyCache {
                 /* launch cleanup in a separate thread, 
                  * so it acquires its own lock, and put()
                  * can return immediately */
-                Thread cleaner = new Thread(new CacheCleaner(hash));
+                Thread cleaner = new Thread(new CacheCleaner(hash), "FOP PropertyCache Cleaner");
                 cleaner.start();
             }
         }
@@ -273,11 +277,13 @@ public final class PropertyCache {
                     for (int i = table.length; --i >= 0;) {
                         for (CacheEntry c = table[i]; c != null; c = c.next) {
                             ref = c.ref;
-                            if ((o = ref.get()) != null) {
-                                hash = hash(o);
-                                idx = hash & newLength;
-                                newTable[idx] = new CacheEntry(c, newTable[idx]);
-                                segments[hash & SEGMENT_MASK].count++;
+                            if (ref != null) {
+                                if ((o = ref.get()) != null) {
+                                    hash = hash(o);
+                                    idx = hash & newLength;
+                                    newTable[idx] = new CacheEntry(c, newTable[idx]);
+                                    segments[hash & SEGMENT_MASK].count++;
+                                }
                             }
                         }
                     }

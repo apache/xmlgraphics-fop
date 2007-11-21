@@ -97,7 +97,7 @@ public class TableRow extends TableCellContainer {
     /**
      * {@inheritDoc}
      */
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
         super.startOfNode();
         getFOEventHandler().startRow(this);
     }
@@ -105,7 +105,7 @@ public class TableRow extends TableCellContainer {
     /**
      * {@inheritDoc}
      */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
         if (firstChild == null) {
             missingChildElementError("(table-cell+)");
         }
@@ -126,6 +126,25 @@ public class TableRow extends TableCellContainer {
         if (!(FO_URI.equals(nsURI) && localName.equals("table-cell"))) {
             invalidChildError(loc, nsURI, localName);
         }
+    }
+
+    /** {@inheritDoc} */
+    TableBody getTablePart() {
+        return (TableBody) parent;
+    }
+
+    /** {@inheritDoc} */
+    boolean isTableRow() {
+        return true;
+    }
+
+    /** {inheritDoc} */
+    protected void setCollapsedBorders() {
+        TableBody body = (TableBody) parent;
+        createBorder(CommonBorderPaddingBackground.START, body);
+        createBorder(CommonBorderPaddingBackground.END, body);
+        createBorder(CommonBorderPaddingBackground.BEFORE);
+        createBorder(CommonBorderPaddingBackground.AFTER);
     }
 
     /** @return the "break-after" property. */

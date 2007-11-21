@@ -27,6 +27,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.flow.table.EffRow;
+import org.apache.fop.fo.flow.table.GridUnit;
+import org.apache.fop.fo.flow.table.PrimaryGridUnit;
 import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.KnuthBox;
@@ -153,15 +156,15 @@ public class TableStepper {
         boolean signalKeepWithNext = false;
         int laststep = 0;
         int step;
-        int addedBoxLen = 0;
+        int cumulateLength = 0; // Length of the content accumulated before the break
         TableContentPosition lastTCPos = null;
         LinkedList returnList = new LinkedList();
         while ((step = getNextStep()) >= 0) {
             int normalRow = activeRowIndex;
             int increase = step - laststep;
             int penaltyOrGlueLen = step + getMaxRemainingHeight() - totalHeight;
-            int boxLen = step - addedBoxLen - Math.max(0, penaltyOrGlueLen);
-            addedBoxLen += boxLen;
+            int boxLen = step - cumulateLength - Math.max(0, penaltyOrGlueLen)/* the penalty, if any */;
+            cumulateLength += boxLen + Math.max(0, -penaltyOrGlueLen)/* the glue, if any */;
 
             boolean forcedBreak = false;
             int breakClass = -1;
