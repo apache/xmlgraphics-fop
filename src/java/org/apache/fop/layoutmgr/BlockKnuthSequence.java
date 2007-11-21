@@ -20,7 +20,7 @@
 package org.apache.fop.layoutmgr;
 
 import java.util.List;
-
+import java.util.Stack;
 
 /**
  * Represents a list of block level Knuth elements.
@@ -28,6 +28,8 @@ import java.util.List;
 public class BlockKnuthSequence extends KnuthSequence {
     
     private boolean isClosed = false;
+    
+    private Stack subSequences;
     
     /**
      * Creates a new and empty list.
@@ -83,4 +85,57 @@ public class BlockKnuthSequence extends KnuthSequence {
         return this;
     }
 
+    public class SubSequence {
+        private KnuthBox firstBox = null;
+        private int widowRowLimit = 0;
+        private SubSequence(KnuthBox firstBox) {
+            this.firstBox = firstBox;
+        }
+        private SubSequence(KnuthBox firstBox, int widowRowLimit) {
+            this.firstBox = firstBox;
+            this.widowRowLimit = widowRowLimit;
+        }
+        
+        /**
+         * @return the firstBox
+         */
+        public KnuthBox getFirstBox() {
+            return firstBox;
+        }
+        
+        /**
+         * @return the widowRowLimit
+         */
+        public int getWidowRowLimit() {
+            return widowRowLimit;
+        }
+
+    }
+    
+    public void addSubSequence(KnuthBox firstBox) {
+        if (subSequences == null) {
+            subSequences = new Stack();
+        }
+        subSequences.push(new SubSequence(firstBox));
+    }
+
+    public void addSubSequence(KnuthBox firstBox, int orphanRowLimit) {
+        if (subSequences == null) {
+            subSequences = new Stack();
+        }
+        subSequences.push(new SubSequence(firstBox, orphanRowLimit));
+    }
+    
+    public boolean hasSubSequence() {
+        return !(subSequences == null || subSequences.isEmpty());
+    }
+    
+    public SubSequence getSubSequence() {
+        return (SubSequence) subSequences.peek();
+    }
+
+    public SubSequence removeSubSequence() {
+        return (SubSequence) subSequences.pop();
+    }
+    
 }

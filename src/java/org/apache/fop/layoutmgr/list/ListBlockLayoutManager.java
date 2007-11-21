@@ -19,28 +19,27 @@
  
 package org.apache.fop.layoutmgr.list;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.area.Area;
+import org.apache.fop.area.Block;
 import org.apache.fop.fo.flow.ListBlock;
 import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.ConditionalElementListener;
-import org.apache.fop.layoutmgr.ElementListUtils;
-import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LayoutContext;
-import org.apache.fop.layoutmgr.PositionIterator;
-import org.apache.fop.layoutmgr.Position;
+import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.NonLeafPosition;
+import org.apache.fop.layoutmgr.Position;
+import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.RelSide;
 import org.apache.fop.layoutmgr.TraitSetter;
-import org.apache.fop.area.Area;
-import org.apache.fop.area.Block;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
-
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * LayoutManager for a list-block FO.
@@ -118,16 +117,24 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
         resetSpaces(); 
         LinkedList returnList = super.getNextKnuthElements(context, alignment);
 
-        //fox:widow-content-limit
-        int widowRowLimit = getListBlockFO().getWidowContentLimit().getValue(); 
-        if (widowRowLimit != 0) {
-            ElementListUtils.removeLegalBreaks(returnList, widowRowLimit);
-        }
+        if (childLMs != null && !childLMs.isEmpty()) {
+            //fox:widow-content-limit
+            int widowRowLimit = getListBlockFO().getWidowContentLimit().getValue(); 
+            if (widowRowLimit != 0) {
+                ((ListItemLayoutManager) childLMs.get(0)).setWidowRowLimit(widowRowLimit);
+            }
 
-        //fox:orphan-content-limit
-        int orphanRowLimit = getListBlockFO().getOrphanContentLimit().getValue(); 
-        if (orphanRowLimit != 0) {
-            ElementListUtils.removeLegalBreaksFromEnd(returnList, orphanRowLimit);
+            //fox:orphan-content-limit
+            int orphanRowLimit = getListBlockFO().getOrphanContentLimit().getValue(); 
+            if (orphanRowLimit != 0) {
+                ((ListItemLayoutManager) childLMs.get(childLMs.size() - 1)).setOrphanRowLimit(orphanRowLimit);
+            }
+
+            // create a subsequence only if there is a widow or orphan content limit 
+            if (widowRowLimit != 0 || orphanRowLimit != 0) {
+                ((ListItemLayoutManager) childLMs.get(0)).setIsStartOfSubsequence(true);
+                ((ListItemLayoutManager) childLMs.get(childLMs.size() - 1)).setIsEndOfSubsequence(true);
+            }
         }
 
         return returnList;

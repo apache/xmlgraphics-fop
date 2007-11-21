@@ -30,8 +30,8 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.layoutmgr.AbstractBreaker.PageBreakPosition;
+import org.apache.fop.layoutmgr.BlockKnuthSequence.SubSequence;
 import org.apache.fop.layoutmgr.list.LineBreakingListElement;
-import org.apache.fop.layoutmgr.list.ListItemListElement;
 import org.apache.fop.traits.MinOptMax;
 
 class PageBreakingAlgorithm extends BreakingAlgorithm {
@@ -249,7 +249,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         // compute the total length of the footnotes
         ListIterator elementListsIterator = elementLists.listIterator();
         while (elementListsIterator.hasNext()) {
-            LinkedList noteList = (LinkedList) elementListsIterator.next();
+            BlockKnuthSequence noteList = (BlockKnuthSequence) elementListsIterator.next();
             
             /* Line breaking and space resolution
              * (Note: this does not respect possible stacking constraints 
@@ -293,7 +293,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
 
     private void resetFootnotes(LinkedList elementLists) {
         for (int i = 0; i < elementLists.size(); i++) {
-            LinkedList removedList = (LinkedList) footnotesList.remove(footnotesList.size() - 1);
+            footnotesList.remove(footnotesList.size() - 1);
             lengthList.remove(lengthList.size() - 1);
 
             // update totalFootnotesLength
@@ -336,7 +336,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                     actualWidth += allFootnotes;
                     insertedFootnotesLength = pageNode.totalFootnotes + allFootnotes;
                     footnoteListIndex = footnotesList.size() - 1;
-                    footnoteElementIndex = ((LinkedList) footnotesList.get(footnoteListIndex)).size() - 1;
+                    footnoteElementIndex = ((List) footnotesList.get(footnoteListIndex)).size() - 1;
                 } else if (((canDeferOldFootnotes = checkCanDeferOldFootnotes(pageNode, elementIndex))
                             || newFootnotes)
                            && (footnoteSplit = getFootnoteSplit(pageNode, getLineWidth() - actualWidth,
@@ -360,7 +360,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                     actualWidth += allFootnotes;
                     insertedFootnotesLength = pageNode.totalFootnotes + allFootnotes;
                     footnoteListIndex = footnotesList.size() - 1;
-                    footnoteElementIndex = ((LinkedList) footnotesList.get(footnoteListIndex)).size() - 1;
+                    footnoteElementIndex = ((List) footnotesList.get(footnoteListIndex)).size() - 1;
                 }
             } else {
                 // all footnotes have already been placed on previous pages
@@ -443,7 +443,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         return ((newFootnotes
                  && firstNewFootnoteIndex != 0
                  && (listIndex < firstNewFootnoteIndex - 1
-                     || elementIndex < ((LinkedList) footnotesList.get(listIndex)).size() - 1))
+                     || elementIndex < ((List) footnotesList.get(listIndex)).size() - 1))
                 || length < totalFootnotesLength);
     }
 
@@ -485,7 +485,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
             // already placed in a page: advance to the next element
             int listIndex = prevListIndex;
             int elementIndex = prevElementIndex;
-            if (elementIndex == ((LinkedList) footnotesList.get(listIndex)).size() - 1) {
+            if (elementIndex == ((List) footnotesList.get(listIndex)).size() - 1) {
                 listIndex++;
                 elementIndex = 0;
             } else {
@@ -518,7 +518,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
             }
 
             // try adding a split of the next note
-            noteListIterator = ((LinkedList) footnotesList.get(listIndex)).listIterator(elementIndex);
+            noteListIterator = ((List) footnotesList.get(listIndex)).listIterator(elementIndex);
 
             int prevSplitLength = 0;
             int prevIndex = -1;
@@ -576,7 +576,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                 footnoteListIndex = (prevIndex != -1) ? listIndex : listIndex - 1;
                 footnoteElementIndex = (prevIndex != -1)
                     ? prevIndex 
-                    : ((LinkedList) footnotesList.get(footnoteListIndex)).size() - 1;
+                    : ((List) footnotesList.get(footnoteListIndex)).size() - 1;
             }
             return prevSplitLength;
         }
@@ -646,7 +646,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                                 * deferredFootnoteDemerits;
             }
             if (footnoteElementIndex 
-                    < ((LinkedList) footnotesList.get(footnoteListIndex)).size() - 1) {
+                    < ((List) footnotesList.get(footnoteListIndex)).size() - 1) {
                 // add demerits for the footnote split between pages
                 demerits += splitFootnoteDemerits;
             }
@@ -686,7 +686,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                                 - insertedFootnotesLength;
                 insertedFootnotesLength = ((Integer)lengthList.get(footnoteListIndex)).intValue();
                 footnoteElementIndex
-                    = ((LinkedList)footnotesList.get(footnoteListIndex)).size() - 1;
+                    = ((List)footnotesList.get(footnoteListIndex)).size() - 1;
             } else if ((split = getFootnoteSplit(footnoteListIndex, footnoteElementIndex,
                                                  insertedFootnotesLength, availableBPD, true))
                        > 0) {
@@ -787,7 +787,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         int firstListIndex = ((KnuthPageNode) bestActiveNode.previous).footnoteListIndex;
         int firstElementIndex = ((KnuthPageNode) bestActiveNode.previous).footnoteElementIndex;
         if (footnotesList != null
-            && firstElementIndex == ((LinkedList) footnotesList.get(firstListIndex)).size() - 1) {
+            && firstElementIndex == ((List) footnotesList.get(firstListIndex)).size() - 1) {
             // advance to the next list
             firstListIndex++;
             firstElementIndex = 0;
@@ -822,19 +822,61 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
      * @param startIndex the start index
      * @param doall resolve all elements or not
      */
-    void resolveElements(List seq, int startIndex, boolean doall) {
+    void resolveElements(BlockKnuthSequence seq, int startIndex, boolean doall) {
         for (int i = startIndex; i < seq.size(); ++i) {
             ListElement elt = (ListElement) seq.get(i);
             if (!doall && !elt.isUnresolvedElement()
-                    && !(elt instanceof LineBreakingListElement)) {
+                    && !(elt instanceof LineBreakingListElement)
+                    && !((AbstractBreaker.BlockSequence)seq).hasSubSequence()) {
                 break;
             }
             if (elt instanceof LineBreakingListElement) {
-                LinkedList lineElts = ((LineBreakingListElement) elt).doLineBreaking();
-                if (((LineBreakingListElement) elt).lineBreakingIsFinished()) {
+                LineBreakingListElement lbelt = (LineBreakingListElement) elt;
+                boolean startOfSubsequence =
+                    lbelt.lineBreakingIsStarting() && lbelt.isStartOfSubsequence();
+                LinkedList lineElts = lbelt.doLineBreaking();
+                
+                if (startOfSubsequence) {
+                    KnuthBox box = ElementListUtils.firstKnuthBox(lineElts);
+                    if (box == null) {
+                        log.debug("Could not find a KnuthBox in step");
+                    } else {
+                        seq.addSubSequence(box, lbelt.getWidowRowLimit());
+                    }
+                }
+                
+                boolean endOfSubsequence = false;
+                if (lbelt.lineBreakingIsFinished()) {
                     seq.remove(i);
+                    endOfSubsequence = lbelt.isEndOfSubsequence();
                 }
                 seq.addAll(i, lineElts);
+                
+                if (endOfSubsequence) {
+                    SubSequence sseq;
+                    // may throw EmptyStackException
+                    sseq = seq.removeSubSequence();
+                    int widowRowLimit = sseq.getWidowRowLimit();
+                    int orphanRowLimit = lbelt.getOrphanRowLimit();
+                    Object nextElt = seq.get(i);
+                    KnuthBox box = ElementListUtils.lastKnuthBox(lineElts);
+                    if (box == null) {
+                        log.debug("Could not find a KnuthBox in step");
+                    } else {
+                        int fromIndex = seq.indexOf(sseq.getFirstBox());
+                        int toIndex = seq.indexOf(box);
+                        List subList = seq.subList(fromIndex, toIndex+1);
+                        SpaceResolver.resolveElementList(subList, 0, true);
+                        if (widowRowLimit != 0) {
+                            ElementListUtils.removeLegalBreaks(subList, widowRowLimit);
+                        }
+                        if (orphanRowLimit != 0) {
+                            ElementListUtils.removeLegalBreaksFromEnd(subList, orphanRowLimit);
+                        }
+                        i = seq.indexOf(nextElt);
+                    }
+                }
+                
                 // consider the new element at i
                 --i;
             }
@@ -849,15 +891,15 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
      * @param seq the Knuth Sequence
      * @param startIndex the start index
      */
-    void resolveElements(List seq, int startIndex) {
-        resolveElements(seq, startIndex, false);
+    void resolveElements(KnuthSequence seq, int startIndex) {
+        resolveElements((BlockKnuthSequence) seq, startIndex, false);
     }
     
     /**
      * Resolve all elements in seq
      * @param seq the Knuth Sequence
      */
-    void resolveElements(List seq) {
+    void resolveElements(BlockKnuthSequence seq) {
         resolveElements(seq, 0, true);
     }
 
@@ -883,8 +925,8 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         return bestActiveNode.line;
     }
 
-    public LinkedList getFootnoteList(int index) {
-        return (LinkedList) footnotesList.get(index);
+    public BlockKnuthSequence getFootnoteList(int index) {
+        return (BlockKnuthSequence) footnotesList.get(index);
     }
     
     /** @return the associated top-level formatting object. */

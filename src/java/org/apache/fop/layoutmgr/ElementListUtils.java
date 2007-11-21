@@ -19,6 +19,7 @@
 
 package org.apache.fop.layoutmgr;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -34,7 +35,7 @@ public class ElementListUtils {
      * Removes all legal breaks in an element list.
      * @param elements the element list
      */
-    public static void removeLegalBreaks(LinkedList elements) {
+    public static void removeLegalBreaks(List elements) {
         ListIterator i = elements.listIterator();
         while (i.hasNext()) {
             ListElement el = (ListElement)i.next();
@@ -63,7 +64,7 @@ public class ElementListUtils {
      * @param constraint min/opt/max value to restrict the range in which the breaks are removed.
      * @return true if the opt constraint is bigger than the list contents
      */
-    public static boolean removeLegalBreaks(LinkedList elements, MinOptMax constraint) {
+    public static boolean removeLegalBreaks(List elements, MinOptMax constraint) {
         return removeLegalBreaks(elements, constraint.opt);
     }
     
@@ -75,7 +76,7 @@ public class ElementListUtils {
      * @param constraint value to restrict the range in which the breaks are removed.
      * @return true if the constraint is bigger than the list contents
      */
-    public static boolean removeLegalBreaks(LinkedList elements, int constraint) {
+    public static boolean removeLegalBreaks(List elements, int constraint) {
         int len = 0;
         ListIterator iter = elements.listIterator();
         while (iter.hasNext()) {
@@ -122,7 +123,7 @@ public class ElementListUtils {
      * @param constraint value to restrict the range in which the breaks are removed.
      * @return true if the constraint is bigger than the list contents
      */
-    public static boolean removeLegalBreaksFromEnd(LinkedList elements, int constraint) {
+    public static boolean removeLegalBreaksFromEnd(List elements, int constraint) {
         int len = 0;
         ListIterator i = elements.listIterator(elements.size());
         while (i.hasPrevious()) {
@@ -231,6 +232,32 @@ public class ElementListUtils {
             prevBreak--;
         }
         return prevBreak;
+    }
+    
+    public static KnuthBox firstKnuthBox(List list) {
+        Iterator iter = list.iterator();
+        KnuthBox box = null;
+        while (iter.hasNext()) {
+            Object o = iter.next();
+            if (o instanceof KnuthBox) {
+                box = (KnuthBox) o;
+                break;
+            }
+        }
+        return box;
+    }
+    
+    public static KnuthBox lastKnuthBox(List list) {
+        ListIterator iter = list.listIterator(list.size());
+        KnuthBox box = null;
+        while (iter.hasPrevious()) {
+            Object o = iter.previous();
+            if (o instanceof KnuthBox) {
+                box = (KnuthBox) o;
+                break;
+            }
+        }
+        return box;
     }
     
 }

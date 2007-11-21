@@ -22,6 +22,7 @@ package org.apache.fop.layoutmgr;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Stack;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

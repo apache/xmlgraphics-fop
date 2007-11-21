@@ -64,6 +64,20 @@ public class ListItemListElement extends LineBreakingListElement {
     }
 
     /**
+     * @return the widowRowLimit
+     */
+    public int getWidowRowLimit() {
+        return lm.getWidowRowLimit();
+    }
+
+    /**
+     * @return the orphanRowLimit
+     */
+    public int getOrphanRowLimit() {
+        return lm.getOrphanRowLimit();
+    }
+
+    /**
      * Wrap the position in each element in list in a position stack
      * which is a copy of the position stack of this paragraph list element.
      * @param list
@@ -79,10 +93,31 @@ public class ListItemListElement extends LineBreakingListElement {
     }
     
     /* (non-Javadoc)
+     * @see org.apache.fop.layoutmgr.list.LineBreakingListElement#lineBreakingIsStarting()
+     */
+    public boolean lineBreakingIsStarting() {
+        return lm.lineBreakingIsStarting();
+    }
+
+    /* (non-Javadoc)
      * @see org.apache.fop.layoutmgr.list.LineBreakingListElement#lineBreakingIsFinished()
      */
     public boolean lineBreakingIsFinished() {
         return lm.lineBreakingIsFinished();
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.fop.layoutmgr.list.LineBreakingListElement#isStartOfSubsequence()
+     */
+    public boolean isStartOfSubsequence() {
+        return lm.isStartOfSubsequence();
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.fop.layoutmgr.list.LineBreakingListElement#isEndOfSubsequence()
+     */
+    public boolean isEndOfSubsequence() {
+        return lm.isEndOfSubsequence();
     }
 
 }
