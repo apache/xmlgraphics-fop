@@ -51,5 +51,9 @@
   </fo>
   <checks>
     <eval expected="3" xpath="count(//pageViewport)"/>
+    <element-list category="breaker" index="1">
+      <box w="0" aux="true"/> <!-- auxiliary box for empty box -->
+      <skip>3</skip>
+    </element-list>
   </checks>
 </testcase>

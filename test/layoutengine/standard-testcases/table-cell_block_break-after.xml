@@ -84,12 +84,10 @@
     <eval expected="75000" xpath="//pageViewport[@nr=2]//flow/block[1]/block[1]/@ipda"/>
     <eval expected="20800" xpath="//pageViewport[@nr=2]//flow/block[1]/block[1]/@bpd"/>
     <eval expected="28800" xpath="//pageViewport[@nr=2]//flow/block[1]/block[1]/@bpda"/>
-    <!-- Two blocks expected in the second cell -->
-    <eval expected="2" xpath="count(//pageViewport[@nr=2]//flow/block[1]/block[2]/block)"/>
-    <!-- First block has zero bpd -->
-    <eval expected="0" xpath="//pageViewport[@nr=2]//flow/block[1]/block[2]/block[1]/@bpd"/>
-    <!-- One line in the second block -->
-    <eval expected="1" xpath="count(//pageViewport[@nr=2]//flow/block[1]/block[2]/block[2]//lineArea)"/>
+    <!-- One block expected in the second cell -->
+    <eval expected="1" xpath="count(//pageViewport[@nr=2]//flow/block[1]/block[2]/block)"/>
+    <!-- One line in the block -->
+    <eval expected="1" xpath="count(//pageViewport[@nr=2]//flow/block[1]/block[2]/block[1]//lineArea)"/>
     <eval expected="63000" xpath="//pageViewport[@nr=2]//flow/block[1]/block[2]/@ipd"/>
     <eval expected="75000" xpath="//pageViewport[@nr=2]//flow/block[1]/block[2]/@ipda"/>
     <eval expected="16800" xpath="//pageViewport[@nr=2]//flow/block[1]/block[2]/@bpd"/>
