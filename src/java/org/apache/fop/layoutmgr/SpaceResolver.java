@@ -25,6 +25,7 @@ import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.traits.MinOptMax;
 
 /**
@@ -441,7 +442,6 @@ public class SpaceResolver {
         glue2shrink -= glue3.opt - glue3.min;
         
         boolean hasPrecedingNonBlock = false;
-        boolean forcedBreak = false;
         if (log.isDebugEnabled()) {
             log.debug("noBreakLength=" + noBreakLength 
                     + ", glue1=" + glue1 
@@ -449,11 +449,16 @@ public class SpaceResolver {
                     + ", glue3=" + glue3);
         }
         if (breakPoss != null) {
+            boolean forcedBreak = breakPoss.isForcedBreak();
             if (glue1.isNonZero()) {
                 iter.add(new KnuthPenalty(0, KnuthPenalty.INFINITE, 
                         false, (Position)null, true));
                 iter.add(new KnuthGlue(glue1.opt, glue1.max - glue1.opt, glue1.opt - glue1.min, 
                         (Position)null, true));
+                if (forcedBreak) {
+                    //Otherwise, the preceding penalty and glue will be cut off
+                    iter.add(new KnuthBox(0, (Position)null, true));
+                }
             }
             iter.add(new KnuthPenalty(breakPoss.getPenaltyWidth(), breakPoss.getPenaltyValue(), 
                     false, breakPoss.getBreakClass(), 

@@ -153,7 +153,10 @@
       <penalty p="0" w="0"/>
       <glue w="25000"/>           <!-- The space between lines -->
       <box w="16800"/>            <!-- Line 2 -->
-      <skip>3</skip>              <!-- glue for end of page TODO missing element for border-after!! -->
+      <penalty p="INF" w="0"/>
+      <glue w="4000"/>            <!-- The border after -->
+      <box w="0" aux="true"/>     <!-- aux. box to prohibit cutting away the border -->
+      <skip>3</skip>              <!-- glue for end of page -->
     </element-list>
   </checks>
 </testcase>

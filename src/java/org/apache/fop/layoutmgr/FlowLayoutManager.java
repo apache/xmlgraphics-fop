@@ -19,16 +19,17 @@
 
 package org.apache.fop.layoutmgr;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.fop.fo.pagination.Flow;
-import org.apache.fop.layoutmgr.inline.InlineLevelLayoutManager;
-import org.apache.fop.area.Area;
-import org.apache.fop.area.BlockParent;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.apache.fop.area.Area;
+import org.apache.fop.area.BlockParent;
+import org.apache.fop.fo.pagination.Flow;
+import org.apache.fop.layoutmgr.inline.InlineLevelLayoutManager;
 
 /**
  * LayoutManager for an fo:flow object.
@@ -132,6 +133,13 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
                 if (returnedList.size() > 0) {
                     returnList.addAll(returnedList);
                     if (ElementListUtils.endsWithForcedBreak(returnList)) {
+                        if (curLM.isFinished() && !hasNextChildLM()) {
+                            //If the layout manager is finished at this point, the pending
+                            //marks become irrelevant.
+                            childLC.clearPendingMarks();
+                            //setFinished(true);
+                            break;
+                        }
                         // a descendant of this flow has break-after
                         return returnList;
                     }
