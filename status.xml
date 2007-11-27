@@ -28,6 +28,14 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix" fixes-bug="43917">
+        Bugfix for border-after painting and element list generation when a
+        forced break is involved.
+      </action>
+      <action context="Code" dev="JM" type="fix" fixes-bug="40230">
+        Bugfix: no empty page is generated anymore if there's no content
+        after a break-after.
+      </action>
       <action context="Code" dev="VH" type="fix" fixes-bug="43803">
         Restored proper handling of fo:table-cell having no children, which is allowed in relaxed
         validation mode.
