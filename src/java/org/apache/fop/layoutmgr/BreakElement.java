@@ -119,6 +119,16 @@ public class BreakElement extends UnresolvedListElement {
         return this.pendingAfterMarks;
     }
     
+    /**
+     * Clears all pending marks associated with this break element. This is used in break
+     * cases where we only know very late if the break is actually after all the content
+     * of an FO has been generated.
+     */
+    public void clearPendingMarks() {
+        this.pendingBeforeMarks = null;
+        this.pendingAfterMarks = null;
+    }
+    
     /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer();
