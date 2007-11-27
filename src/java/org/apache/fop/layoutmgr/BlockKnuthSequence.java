@@ -19,13 +19,21 @@
 
 package org.apache.fop.layoutmgr;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.fop.layoutmgr.list.LineBreakingListElement;
 
 /**
  * Represents a list of block level Knuth elements.
  */
 public class BlockKnuthSequence extends KnuthSequence {
+
+    /** the logger for the class */
+    private static Log log = LogFactory.getLog(BlockKnuthSequence.class);
     
     private boolean isClosed = false;
     
@@ -136,6 +144,100 @@ public class BlockKnuthSequence extends KnuthSequence {
 
     public SubSequence removeSubSequence() {
         return (SubSequence) subSequences.pop();
+    }
+
+    /**
+     * The iteration stops at the first resolved element (after line breaking).
+     * After space resolution it is guaranteed that seq does not to contain
+     * Paragraph or ListItemListElements until the first resolved element.
+     * @param seq the Knuth Sequence
+     * @param startIndex the start index
+     */
+    public void resolveElements(int startIndex) {
+        resolveElements(startIndex, false);
+    }
+    
+    /**
+     * Resolve all elements in seq
+     * @param seq the Knuth Sequence
+     */
+    public void resolveElements() {
+        resolveElements(0, true);
+    }
+    
+    /**
+     * This method iterates over seq starting at startIndex.
+     * If it finds a ParagraphListElement, the paragraph is broken into lines,
+     * and the ParagraphListElement is replaced by the resulting elements.
+     * If it finds a ListItemListElement, the paragraphs in the next step
+     * of the list item are broken into lines,
+     * the elements of the next step are added to the sequence before the ListItemListElement,
+     * and the ListItemListElement is removed from the sequence if all steps have been returned.  
+     * Then space resolution is done on seq starting at startIndex.
+     * @param seq the Knuth Sequence
+     * @param startIndex the start index
+     * @param doall resolve all elements or not
+     */
+    private void resolveElements(int startIndex, boolean doall) {
+        for (int i = startIndex; i < size(); ++i) {
+            ListElement elt = (ListElement) get(i);
+            if (!doall && !elt.isUnresolvedElement()
+                    && !(elt instanceof LineBreakingListElement)
+                    && !hasSubSequence()) {
+                break;
+            }
+            if (elt instanceof LineBreakingListElement) {
+                LineBreakingListElement lbelt = (LineBreakingListElement) elt;
+                boolean startOfSubsequence =
+                    lbelt.lineBreakingIsStarting() && lbelt.isStartOfSubsequence();
+                LinkedList lineElts = lbelt.doLineBreaking();
+                
+                if (startOfSubsequence) {
+                    KnuthBox box = ElementListUtils.firstKnuthBox(lineElts);
+                    if (box == null) {
+                        log.debug("Could not find a KnuthBox in step");
+                    } else {
+                        addSubSequence(box, lbelt.getWidowRowLimit());
+                    }
+                }
+                
+                boolean endOfSubsequence = false;
+                if (lbelt.lineBreakingIsFinished()) {
+                    remove(i);
+                    endOfSubsequence = lbelt.isEndOfSubsequence();
+                }
+                addAll(i, lineElts);
+                
+                if (endOfSubsequence) {
+                    SubSequence sseq;
+                    // may throw EmptyStackException
+                    sseq = removeSubSequence();
+                    int widowRowLimit = sseq.getWidowRowLimit();
+                    int orphanRowLimit = lbelt.getOrphanRowLimit();
+                    Object nextElt = get(i);
+                    KnuthBox box = ElementListUtils.lastKnuthBox(lineElts);
+                    if (box == null) {
+                        log.debug("Could not find a KnuthBox in step");
+                    } else {
+                        int fromIndex = indexOf(sseq.getFirstBox());
+                        int toIndex = indexOf(box);
+                        List subList = subList(fromIndex, toIndex+1);
+                        SpaceResolver.resolveElementList(subList, 0, true);
+                        if (widowRowLimit != 0) {
+                            ElementListUtils.removeLegalBreaks(subList, widowRowLimit);
+                        }
+                        if (orphanRowLimit != 0) {
+                            ElementListUtils.removeLegalBreaksFromEnd(subList, orphanRowLimit);
+                        }
+                        i = indexOf(nextElt);
+                    }
+                }
+                
+                // consider the new element at i
+                --i;
+            }
+        }
+        SpaceResolver.resolveElementList(this, startIndex, doall);
     }
     
 }

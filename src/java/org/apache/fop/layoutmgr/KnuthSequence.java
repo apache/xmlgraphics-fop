@@ -176,4 +176,19 @@ public abstract class KnuthSequence extends ArrayList {
      */
     public abstract boolean isInlineSequence();
 
+    /**
+     * The iteration stops at the first resolved element (after line breaking).
+     * After space resolution it is guaranteed that seq does not to contain
+     * Paragraph or ListItemListElements until the first resolved element.
+     * @param seq the Knuth Sequence
+     * @param startIndex the start index
+     */
+    public abstract void resolveElements(int startIndex);
+    
+    /**
+     * Resolve all elements in seq
+     * @param seq the Knuth Sequence
+     */
+    public abstract void resolveElements();
+
 }

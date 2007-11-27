@@ -441,7 +441,7 @@ public abstract class BreakingAlgorithm {
             if (alignment != org.apache.fop.fo.Constants.EN_CENTER) {
                 while (par.size() > firstBoxIndex) {
                     // scan for unresolved elements and paragraphs
-                    resolveElements(par, firstBoxIndex);
+                    par.resolveElements(firstBoxIndex);
                     thisElement = (KnuthElement) par.get(firstBoxIndex);
                     if (thisElement.isBox()) {
                         break;
@@ -461,7 +461,7 @@ public abstract class BreakingAlgorithm {
 
         // main loop
         for (int i = startIndex; i < par.size(); i++) {
-            resolveElements(par, i);
+            par.resolveElements(i);
             // resolveElements may have removed element i
             // without adding any element, so that i == par.size()
             if (i >= par.size() - 1) {
@@ -585,15 +585,6 @@ public abstract class BreakingAlgorithm {
 
         activeLines = null;
         return line;
-    }
-
-    /**
-     * This method is only implemented in a non-trivial way in PageBreakingAlgorithm
-     * @param seq the Knuth Sequence
-     * @param startIndex the start index
-     */
-    void resolveElements(KnuthSequence seq, int startIndex) {
-        ;
     }
 
     /**

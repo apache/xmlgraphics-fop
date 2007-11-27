@@ -255,7 +255,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
              * (Note: this does not respect possible stacking constraints 
              * between footnotes!)
              */
-            resolveElements(noteList);
+            noteList.resolveElements();
             
             int noteLength = 0;
             footnotesList.add(noteList);
@@ -809,100 +809,6 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                 ratio, difference));
     }
     
-    /**
-     * This method iterates over seq starting at startIndex.
-     * If it finds a ParagraphListElement, the paragraph is broken into lines,
-     * and the ParagraphListElement is replaced by the resulting elements.
-     * If it finds a ListItemListElement, the paragraphs in the next step
-     * of the list item are broken into lines,
-     * the elements of the next step are added to the sequence before the ListItemListElement,
-     * and the ListItemListElement is removed from the sequence if all steps have been returned.  
-     * Then space resolution is done on seq starting at startIndex.
-     * @param seq the Knuth Sequence
-     * @param startIndex the start index
-     * @param doall resolve all elements or not
-     */
-    void resolveElements(BlockKnuthSequence seq, int startIndex, boolean doall) {
-        for (int i = startIndex; i < seq.size(); ++i) {
-            ListElement elt = (ListElement) seq.get(i);
-            if (!doall && !elt.isUnresolvedElement()
-                    && !(elt instanceof LineBreakingListElement)
-                    && !((AbstractBreaker.BlockSequence)seq).hasSubSequence()) {
-                break;
-            }
-            if (elt instanceof LineBreakingListElement) {
-                LineBreakingListElement lbelt = (LineBreakingListElement) elt;
-                boolean startOfSubsequence =
-                    lbelt.lineBreakingIsStarting() && lbelt.isStartOfSubsequence();
-                LinkedList lineElts = lbelt.doLineBreaking();
-                
-                if (startOfSubsequence) {
-                    KnuthBox box = ElementListUtils.firstKnuthBox(lineElts);
-                    if (box == null) {
-                        log.debug("Could not find a KnuthBox in step");
-                    } else {
-                        seq.addSubSequence(box, lbelt.getWidowRowLimit());
-                    }
-                }
-                
-                boolean endOfSubsequence = false;
-                if (lbelt.lineBreakingIsFinished()) {
-                    seq.remove(i);
-                    endOfSubsequence = lbelt.isEndOfSubsequence();
-                }
-                seq.addAll(i, lineElts);
-                
-                if (endOfSubsequence) {
-                    SubSequence sseq;
-                    // may throw EmptyStackException
-                    sseq = seq.removeSubSequence();
-                    int widowRowLimit = sseq.getWidowRowLimit();
-                    int orphanRowLimit = lbelt.getOrphanRowLimit();
-                    Object nextElt = seq.get(i);
-                    KnuthBox box = ElementListUtils.lastKnuthBox(lineElts);
-                    if (box == null) {
-                        log.debug("Could not find a KnuthBox in step");
-                    } else {
-                        int fromIndex = seq.indexOf(sseq.getFirstBox());
-                        int toIndex = seq.indexOf(box);
-                        List subList = seq.subList(fromIndex, toIndex+1);
-                        SpaceResolver.resolveElementList(subList, 0, true);
-                        if (widowRowLimit != 0) {
-                            ElementListUtils.removeLegalBreaks(subList, widowRowLimit);
-                        }
-                        if (orphanRowLimit != 0) {
-                            ElementListUtils.removeLegalBreaksFromEnd(subList, orphanRowLimit);
-                        }
-                        i = seq.indexOf(nextElt);
-                    }
-                }
-                
-                // consider the new element at i
-                --i;
-            }
-        }
-        SpaceResolver.resolveElementList(seq, startIndex, doall);
-    }
-
-    /**
-     * The iteration stops at the first resolved element (after line breaking).
-     * After space resolution it is guaranteed that seq does not to contain
-     * Paragraph or ListItemListElements until the first resolved element.
-     * @param seq the Knuth Sequence
-     * @param startIndex the start index
-     */
-    void resolveElements(KnuthSequence seq, int startIndex) {
-        resolveElements((BlockKnuthSequence) seq, startIndex, false);
-    }
-    
-    /**
-     * Resolve all elements in seq
-     * @param seq the Knuth Sequence
-     */
-    void resolveElements(BlockKnuthSequence seq) {
-        resolveElements(seq, 0, true);
-    }
-
     protected int filterActiveNodes() {
         // leave only the active node with fewest total demerits
         KnuthNode bestActiveNode = null;
