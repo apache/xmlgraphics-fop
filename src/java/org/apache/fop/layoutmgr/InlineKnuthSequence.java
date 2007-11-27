@@ -151,4 +151,19 @@ public class InlineKnuthSequence extends KnuthSequence  {
         }
     }
 
+    /**
+     * The iteration stops at the first resolved element (after line breaking).
+     * After space resolution it is guaranteed that seq does not to contain
+     * Paragraph or ListItemListElements until the first resolved element.
+     * @param seq the Knuth Sequence
+     * @param startIndex the start index
+     */
+    public void resolveElements(int startIndex) {}
+    
+    /**
+     * Resolve all elements in seq
+     * @param seq the Knuth Sequence
+     */
+    public void resolveElements() {}
+
 }
