@@ -44,7 +44,7 @@
         Memory Leak fixed in the Property Cache. Fixed by Jeremias Maerki. Reported and Tested By
         Chris Bowditch.
       </action>
-      <action context="Code" dev="VH" type="fix">
+      <action context="Code" dev="VH" type="fix" fixes-bug="43712">
         Bugfix in tables: wrong element generation by the merging algorithm when glues must be
         produced to cope with conditional spaces. The corresponding length was added twice: one in
         the glue itself and one in the following box.
@@ -74,7 +74,7 @@
         Fixed the resolution of borders with table-columns (border-before/after was wrongly applied
         to every cell of the column).
       </action>
-      <action context="Code" dev="VH" type="fix">
+      <action context="Code" dev="VH" type="fix" fixes-bug="42768">
         Fixed the resolution of border-end on cells spanning several rows.
       </action>
       <action context="Code" dev="JM" type="fix" fixes-bug="43835" due-to="David Churavy">
