@@ -85,8 +85,18 @@ public class PreloaderBMP extends AbstractImagePreloader {
             
             in.skipBytes(12);
             int xRes = in.readInt();
+            double xResDPI = UnitConv.in2mm(xRes / 1000d);
+            if (xResDPI == 0) {
+                xResDPI = userAgent.getSourceResolution();
+            }
+
             int yRes = in.readInt();
-            size.setResolution(UnitConv.in2mm(xRes / 1000d), UnitConv.in2mm(yRes / 1000d));
+            double yResDPI = UnitConv.in2mm(yRes / 1000d);
+            if (yResDPI == 0) {
+                yResDPI = userAgent.getSourceResolution();
+            }
+            
+            size.setResolution(xResDPI, yResDPI);
             size.calcSizeFromPixels();
             return size;
         } finally {

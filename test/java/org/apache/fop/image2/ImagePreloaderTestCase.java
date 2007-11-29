@@ -230,6 +230,23 @@ public class ImagePreloaderTestCase extends TestCase {
         assertEquals(46092, info.getSize().getHeightMpt());
     }
  
+    public void testBMPNoResolution() throws Exception {
+        String uri = "test/resources/images/no-resolution.bmp";
+        
+        FOUserAgent userAgent = fopFactory.newFOUserAgent();
+        
+        ImageManager manager = fopFactory.getImageManager();
+        ImageInfo info = manager.preloadImage(uri, userAgent);
+        assertNotNull("ImageInfo must not be null", info);
+        assertEquals("image/bmp", info.getMimeType());
+        assertEquals(uri, info.getOriginalURI());
+        assertEquals(50, info.getSize().getWidthPx());
+        assertEquals(50, info.getSize().getHeightPx());
+        assertEquals(userAgent.getSourceResolution(), info.getSize().getDpiHorizontal(), 0.1);
+        assertEquals(50000, info.getSize().getWidthMpt());
+        assertEquals(50000, info.getSize().getHeightMpt());
+    }
+ 
     public void testEPSAscii() throws Exception {
         String uri = "test/resources/images/barcode.eps";
         
