@@ -20,6 +20,8 @@
 package org.apache.fop.image2;
 
 import java.io.File;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 import junit.framework.TestCase;
 
@@ -27,6 +29,7 @@ import org.apache.xmlgraphics.image.writer.ImageWriterUtil;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
+import org.apache.fop.image2.impl.ImageRawStream;
 import org.apache.fop.image2.impl.ImageRendered;
 import org.apache.fop.image2.impl.ImageXMLDOM;
 import org.apache.fop.image2.util.ImageUtil;
@@ -153,5 +156,50 @@ public class ImageLoaderTestCase extends TestCase {
         assertEquals(612000, info.getSize().getHeightMpt());
     }
  
-    
+    public void testEPSASCII() throws Exception {
+        String uri = "test/resources/images/barcode.eps";
+        
+        FOUserAgent userAgent = fopFactory.newFOUserAgent();
+        
+        ImageManager manager = fopFactory.getImageManager();
+        ImageInfo info = manager.preloadImage(uri, userAgent);
+        assertNotNull("ImageInfo must not be null", info);
+        
+        Image img = manager.getImage(info, ImageFlavor.RAW_EPS,
+                ImageUtil.getDefaultHints(userAgent));
+        assertNotNull("Image must not be null", img);
+        assertEquals(ImageFlavor.RAW_EPS, img.getFlavor());
+        ImageRawStream imgEPS = (ImageRawStream)img;
+        assertNotNull(imgEPS.getInputStream());
+        Reader reader = new InputStreamReader(imgEPS.getInputStream(), "US-ASCII");
+        char[] c = new char[4];
+        reader.read(c);
+        if (!("%!PS".equals(new String(c)))) {
+            fail("EPS header expected");
+        }
+    }
+ 
+    public void testEPSBinary() throws Exception {
+        String uri = "test/resources/images/img-with-tiff-preview.eps";
+        
+        FOUserAgent userAgent = fopFactory.newFOUserAgent();
+        
+        ImageManager manager = fopFactory.getImageManager();
+        ImageInfo info = manager.preloadImage(uri, userAgent);
+        assertNotNull("ImageInfo must not be null", info);
+        
+        Image img = manager.getImage(info, ImageFlavor.RAW_EPS,
+                ImageUtil.getDefaultHints(userAgent));
+        assertNotNull("Image must not be null", img);
+        assertEquals(ImageFlavor.RAW_EPS, img.getFlavor());
+        ImageRawStream imgEPS = (ImageRawStream)img;
+        assertNotNull(imgEPS.getInputStream());
+        Reader reader = new InputStreamReader(imgEPS.getInputStream(), "US-ASCII");
+        char[] c = new char[4];
+        reader.read(c);
+        if (!("%!PS".equals(new String(c)))) {
+            fail("EPS header expected");
+        }
+    }
+ 
 }

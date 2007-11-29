@@ -26,12 +26,6 @@ import java.nio.ByteOrder;
 import javax.imageio.stream.ImageInputStream;
 import javax.xml.transform.Source;
 
-import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.image2.ImageInfo;
-import org.apache.fop.image2.ImageSize;
-import org.apache.fop.image2.util.ImageInputStreamAdapter;
-import org.apache.fop.image2.util.ImageUtil;
 import org.apache.xmlgraphics.ps.DSCConstants;
 import org.apache.xmlgraphics.ps.dsc.DSCException;
 import org.apache.xmlgraphics.ps.dsc.DSCParser;
@@ -40,11 +34,23 @@ import org.apache.xmlgraphics.ps.dsc.events.DSCComment;
 import org.apache.xmlgraphics.ps.dsc.events.DSCCommentBoundingBox;
 import org.apache.xmlgraphics.ps.dsc.events.DSCEvent;
 
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.image2.ImageInfo;
+import org.apache.fop.image2.ImageSize;
+import org.apache.fop.image2.util.ImageInputStreamAdapter;
+import org.apache.fop.image2.util.ImageUtil;
+
 /**
  * Image preloader for EPS images (Encapsulated PostScript).
  */
 public class PreloaderEPS extends AbstractImagePreloader {
 
+    /** Key for binary header object used in custom objects of the ImageInfo class. */
+    public static final Object EPS_BINARY_HEADER = EPSBinaryFileHeader.class;
+    /** Key for bounding box used in custom objects of the ImageInfo class. */
+    public static final Object EPS_BOUNDING_BOX = Rectangle2D.class;
+    
     /** {@inheritDoc} */
     public ImageInfo preloadImage(String uri, Source src, FOUserAgent userAgent)
             throws IOException {
@@ -55,32 +61,41 @@ public class PreloaderEPS extends AbstractImagePreloader {
         in.mark();
         ByteOrder originalByteOrder = in.getByteOrder();
         in.setByteOrder(ByteOrder.LITTLE_ENDIAN);
+        EPSBinaryFileHeader binaryHeader = null;
         try {
             long magic = in.readUnsignedInt();
             // Check if binary header
             boolean supported = false;
             if (magic == 0xC6D3D0C5L) {
-                supported = true;
+                supported = true; //binary EPS
 
-                EPSBinaryFileHeader offsets = readBinaryFileHeader(in);
+                binaryHeader = readBinaryFileHeader(in);
                 in.reset();
-                in.seek(offsets.psStart);
+                in.mark(); //Mark start of file again
+                in.seek(binaryHeader.psStart);
                 
             } else if (magic == 0x53502125L) { //"%!PS" in little endian
-                supported = true;
+                supported = true; //ascii EPS
                 in.reset();
+                in.mark(); //Mark start of file again
             } else {
                 in.reset();
             }
             
             if (supported) {
-                ImageSize size = determineSize(in, userAgent);
-                if (size == null) {
+                ImageInfo info = new ImageInfo(uri, src, getMimeType());
+                boolean success = determineSize(in, userAgent, info);
+                in.reset(); //Need to go back to start of file
+                if (!success) {
                     //No BoundingBox found, so probably no EPS
                     return null;
                 }
-                ImageInfo info = new ImageInfo(uri, src, getMimeType());
-                info.setSize(size);
+                if (in.getStreamPosition() != 0) {
+                    throw new IllegalStateException("Need to be at the start of the file here");
+                }
+                if (binaryHeader != null) {
+                    info.getCustomObjects().put(EPS_BINARY_HEADER, binaryHeader);
+                }
                 return info;
             } else {
                 return null;
@@ -106,7 +121,7 @@ public class PreloaderEPS extends AbstractImagePreloader {
         return offsets;
     }
     
-    private ImageSize determineSize(ImageInputStream in, FOUserAgent userAgent)
+    private boolean determineSize(ImageInputStream in, FOUserAgent userAgent, ImageInfo info)
             throws IOException {
 
         in.mark();
@@ -143,7 +158,7 @@ public class PreloaderEPS extends AbstractImagePreloader {
                     }
                 }
                 if (bbox == null) {
-                    return null;
+                    return false;
                 }
             } catch (DSCException e) {
                 throw new IOException("Error while parsing EPS file: " + e.getMessage());
@@ -155,7 +170,9 @@ public class PreloaderEPS extends AbstractImagePreloader {
                     (int)Math.round(bbox.getHeight() * 1000));
             size.setResolution(userAgent.getSourceResolution());
             size.calcPixelsFromSize();
-            return size;
+            info.setSize(size);
+            info.getCustomObjects().put(EPS_BOUNDING_BOX, bbox);
+            return true;
         } finally {
             in.reset();
         }

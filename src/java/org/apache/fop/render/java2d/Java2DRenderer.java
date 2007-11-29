@@ -25,7 +25,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.color.ColorSpace;
 import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
@@ -33,14 +32,6 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.ComponentColorModel;
-import java.awt.image.DataBuffer;
-import java.awt.image.DataBufferByte;
-import java.awt.image.PixelInterleavedSampleModel;
-import java.awt.image.Raster;
-import java.awt.image.SampleModel;
-import java.awt.image.WritableRaster;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
@@ -50,8 +41,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
-
-import org.w3c.dom.Document;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
@@ -65,13 +54,19 @@ import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.WordArea;
+import org.apache.fop.datatypes.URISpecification;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.Typeface;
-import org.apache.fop.image.FopImage;
-import org.apache.fop.image.ImageFactory;
-import org.apache.fop.image.XMLImage;
+import org.apache.fop.image2.ImageException;
+import org.apache.fop.image2.ImageFlavor;
+import org.apache.fop.image2.ImageInfo;
+import org.apache.fop.image2.ImageManager;
+import org.apache.fop.image2.impl.ImageGraphics2D;
+import org.apache.fop.image2.impl.ImageRendered;
+import org.apache.fop.image2.impl.ImageXMLDOM;
+import org.apache.fop.image2.util.ImageUtil;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
@@ -884,15 +879,55 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     /**
      * {@inheritDoc}
      */
-    protected void drawImage(String url, Rectangle2D pos, Map foreignAttributes) {
+    protected void drawImage(String uri, Rectangle2D pos, Map foreignAttributes) {
 
         int x = currentIPPosition + (int)Math.round(pos.getX());
         int y = currentBPPosition + (int)Math.round(pos.getY());
-        url = ImageFactory.getURL(url);
+        uri = URISpecification.getURL(uri);
+        
+        //ImageFactory fact = userAgent.getFactory().getImageFactory();
+        //FopImage fopimage = fact.getImage(url, userAgent);
+        ImageManager manager = getUserAgent().getFactory().getImageManager();
+        ImageInfo info = null;
+        try {
+            info = manager.preloadImage(uri, getUserAgent());
+            final ImageFlavor[] flavors = new ImageFlavor[]
+                {ImageFlavor.GRAPHICS2D,
+                    ImageFlavor.BUFFERED_IMAGE, 
+                    ImageFlavor.RENDERED_IMAGE, 
+                    ImageFlavor.XML_DOM};
+            Map hints = ImageUtil.getDefaultHints(getUserAgent());
+            org.apache.fop.image2.Image img = manager.getImage(info, flavors, hints);
+            if (img instanceof ImageGraphics2D) {
+                ImageGraphics2D imageG2D = (ImageGraphics2D)img;
+                int width = (int)pos.getWidth();
+                int height = (int)pos.getHeight();
+                RendererContext context = createRendererContext(
+                        x, y, width, height, foreignAttributes);
+                getGraphics2DAdapter().paintImage(imageG2D.getGraphics2DImagePainter(),
+                        context, x, y, width, height);
+            } else if (img instanceof ImageRendered) {
+                ImageRendered imgRend = (ImageRendered)img;
+                AffineTransform at = new AffineTransform();
+                at.translate(x / 1000f, y / 1000f);
+                double sx = pos.getWidth() / info.getSize().getWidthMpt();
+                double sy = pos.getHeight() / info.getSize().getHeightMpt();
+                at.scale(sx, sy);
+                state.getGraph().drawRenderedImage(imgRend.getRenderedImage(), at);
+            } else if (img instanceof ImageXMLDOM) {
+                ImageXMLDOM imgXML = (ImageXMLDOM)img;
+                renderDocument(imgXML.getDocument(), imgXML.getRootNamespace(),
+                        pos, foreignAttributes);
+            }
+        } catch (ImageException ie) {
+            log.error("Error while processing image: "
+                    + (info != null ? info.toString() : uri), ie);
+        } catch (IOException ioe) {
+            log.error("I/O error while processing image: "
+                    + (info != null ? info.toString() : uri), ioe);
+        }
 
-        ImageFactory fact = userAgent.getFactory().getImageFactory();
-        FopImage fopimage = fact.getImage(url, userAgent);
-
+        /*
         if (fopimage == null) {
             return;
         }
@@ -948,7 +983,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
             state.getGraph().drawImage(awtImage, 
                     (int)(x / 1000f), (int)(y / 1000f), 
                     (int)(pos.getWidth() / 1000f), (int)(pos.getHeight() / 1000f), null);
-        }
+        }*/
     }
 
     /**

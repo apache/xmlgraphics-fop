@@ -39,6 +39,8 @@ public class ImageFlavor {
     public static final ImageFlavor RAW_JPEG = new ImageFlavor("RawJPEG");
     /** An image in form of a raw EMF (Windows Enhanced Metafile) file/stream */
     public static final ImageFlavor RAW_EMF = new ImageFlavor("RawEMF");
+    /** An image in form of a raw EPS (Encapsulated PostScript) file/stream */
+    public static final ImageFlavor RAW_EPS = new ImageFlavor("RawEPS");
     /** An image in form of a Graphics2DImage (can be painted on a Graphics2D interface) */
     public static final ImageFlavor GRAPHICS2D = new ImageFlavor("Graphics2DImage");
     

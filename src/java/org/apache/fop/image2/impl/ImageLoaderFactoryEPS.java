@@ -25,40 +25,17 @@ import org.apache.fop.image2.spi.ImageLoader;
 import org.apache.fop.image2.spi.ImageLoaderFactory;
 
 /**
- * Factory class for the ImageLoader for raw/undecoded images.
+ * Factory class for the ImageLoader for EPS (Encapsulated PostScript) images.
  */
-public class ImageLoaderFactoryRaw implements ImageLoaderFactory {
+public class ImageLoaderFactoryEPS implements ImageLoaderFactory {
 
-    /** MIME type for EMF (Windows Enhanced Metafile) */
-    public static final String MIME_EMF = "image/x-emf"; 
-    
     private static final String[] MIMES = new String[] {
-        MimeConstants.MIME_PNG,
-        MimeConstants.MIME_JPEG,
-        MIME_EMF};
+        MimeConstants.MIME_EPS};
     
-    private static final ImageFlavor[][] FLAVORS = new ImageFlavor[][] {
-        {ImageFlavor.RAW_PNG}, {ImageFlavor.RAW_JPEG}, {ImageFlavor.RAW_EMF}};
+    private static final ImageFlavor[] FLAVORS = new ImageFlavor[] {
+        ImageFlavor.RAW_EPS};
 
     
-    /**
-     * Returns the MIME type for a given ImageFlavor if it is from a format that is consumed
-     * without being undecoded. If the ImageFlavor is no raw flavor, an IllegalArgumentException
-     * is thrown.
-     * @param flavor the image flavor
-     * @return the associated MIME type
-     */
-    public static String getMimeForRawFlavor(ImageFlavor flavor) {
-        for (int i = 0, ci = FLAVORS.length; i < ci; i++) {
-            for (int j = 0, cj = FLAVORS[i].length; j < cj; j++) {
-                if (FLAVORS[i][j].equals(flavor)) {
-                    return MIMES[i];
-                }
-            }
-        }
-        throw new IllegalArgumentException("ImageFlavor is not a \"raw\" flavor: " + flavor);
-    }
-
     /** {@inheritDoc} */
     public String[] getSupportedMIMETypes() {
         return MIMES;
@@ -66,21 +43,15 @@ public class ImageLoaderFactoryRaw implements ImageLoaderFactory {
     
     /** {@inheritDoc} */
     public ImageFlavor[] getSupportedFlavors(String mime) {
-        for (int i = 0, c = MIMES.length; i < c; i++) {
-            if (MIMES[i].equals(mime)) {
-                return FLAVORS[i];
-            }
+        if (MimeConstants.MIME_EPS.equals(mime)) {
+            return FLAVORS;
         }
         throw new IllegalArgumentException("Unsupported MIME type: " + mime);
     }
     
     /** {@inheritDoc} */
     public ImageLoader newImageLoader(ImageFlavor targetFlavor) {
-        if (targetFlavor.equals(ImageFlavor.RAW_JPEG)) {
-            return new ImageLoaderRawJPEG();
-        } else {
-            return new ImageLoaderRaw(targetFlavor);
-        }
+        return new ImageLoaderEPS();
     }
     
     /** {@inheritDoc} */
