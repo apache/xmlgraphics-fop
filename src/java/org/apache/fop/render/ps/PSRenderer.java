@@ -38,8 +38,18 @@ import javax.xml.transform.Source;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.xmlgraphics.ps.DSCConstants;
+import org.apache.xmlgraphics.ps.ImageEncoder;
+import org.apache.xmlgraphics.ps.PSGenerator;
+import org.apache.xmlgraphics.ps.PSProcSets;
+import org.apache.xmlgraphics.ps.PSResource;
+import org.apache.xmlgraphics.ps.PSState;
+import org.apache.xmlgraphics.ps.dsc.DSCException;
+import org.apache.xmlgraphics.ps.dsc.ResourceTracker;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.CTM;
@@ -56,15 +66,23 @@ import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.WordArea;
+import org.apache.fop.datatypes.URISpecification;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.fonts.Typeface;
-import org.apache.fop.image.EPSImage;
-import org.apache.fop.image.FopImage;
-import org.apache.fop.image.ImageFactory;
-import org.apache.fop.image.XMLImage;
+import org.apache.fop.image2.ImageException;
+import org.apache.fop.image2.ImageFlavor;
+import org.apache.fop.image2.ImageInfo;
+import org.apache.fop.image2.ImageManager;
+import org.apache.fop.image2.impl.ImageGraphics2D;
+import org.apache.fop.image2.impl.ImageRawEPS;
+import org.apache.fop.image2.impl.ImageRawJPEG;
+import org.apache.fop.image2.impl.ImageRawStream;
+import org.apache.fop.image2.impl.ImageRendered;
+import org.apache.fop.image2.impl.ImageXMLDOM;
+import org.apache.fop.image2.util.ImageUtil;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.ImageAdapter;
@@ -75,14 +93,6 @@ import org.apache.fop.render.ps.extensions.PSExtensionAttachment;
 import org.apache.fop.render.ps.extensions.PSSetPageDevice;
 import org.apache.fop.render.ps.extensions.PSSetupCode;
 import org.apache.fop.util.CharUtilities;
-import org.apache.xmlgraphics.ps.DSCConstants;
-import org.apache.xmlgraphics.ps.PSGenerator;
-import org.apache.xmlgraphics.ps.PSProcSets;
-import org.apache.xmlgraphics.ps.PSResource;
-import org.apache.xmlgraphics.ps.PSState;
-import org.apache.xmlgraphics.ps.dsc.DSCException;
-import org.apache.xmlgraphics.ps.dsc.ResourceTracker;
-import org.w3c.dom.Document;
 
 /**
  * Renderer that renders to PostScript.
@@ -369,12 +379,98 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         }
     }
 
+    private final ImageFlavor[] level2Flavors = new ImageFlavor[]
+                                                  {ImageFlavor.RAW_EPS,
+                                                   ImageFlavor.GRAPHICS2D,
+                                                   ImageFlavor.BUFFERED_IMAGE, 
+                                                   ImageFlavor.RENDERED_IMAGE, 
+                                                   ImageFlavor.XML_DOM};
+
+    private final ImageFlavor[] level3Flavors = new ImageFlavor[]
+                                                  {ImageFlavor.RAW_EPS,
+                                                   ImageFlavor.RAW_JPEG,
+                                                   ImageFlavor.GRAPHICS2D,
+                                                   ImageFlavor.BUFFERED_IMAGE, 
+                                                   ImageFlavor.RENDERED_IMAGE, 
+                                                   ImageFlavor.XML_DOM};
     /** {@inheritDoc} */
     protected void drawImage(String uri, Rectangle2D pos, Map foreignAttributes) {
         endTextObject();
-        uri = ImageFactory.getURL(uri);
-        ImageFactory fact = userAgent.getFactory().getImageFactory();
-        FopImage fopimage = fact.getImage(uri, userAgent);
+        int x = currentIPPosition + (int)Math.round(pos.getX());
+        int y = currentBPPosition + (int)Math.round(pos.getY());
+        uri = URISpecification.getURL(uri);
+        if (log.isDebugEnabled()) {
+            log.debug("Handling image: " + uri);
+        }
+        
+        ImageManager manager = getUserAgent().getFactory().getImageManager();
+        ImageInfo info = null;
+        try {
+            info = manager.preloadImage(uri, getUserAgent());
+            Map hints = ImageUtil.getDefaultHints(getUserAgent());
+            ImageFlavor[] flavors;
+            if (gen.getPSLevel() >= 3) {
+                flavors = level3Flavors;
+            } else {
+                flavors = level2Flavors;
+            }
+            int width = (int)pos.getWidth();
+            int height = (int)pos.getHeight();
+            org.apache.fop.image2.Image img = manager.getImage(info, flavors, hints);
+            if (img instanceof ImageGraphics2D) {
+                ImageGraphics2D imageG2D = (ImageGraphics2D)img;
+                RendererContext context = createRendererContext(
+                        x, y, width, height, foreignAttributes);
+                getGraphics2DAdapter().paintImage(imageG2D.getGraphics2DImagePainter(),
+                        context, x, y, width, height);
+            } else if (img instanceof ImageRendered) {
+                ImageRendered imgRend = (ImageRendered)img;
+                RendererContext context = createRendererContext(
+                        x, y, width, height, foreignAttributes);
+                paintImage(imgRend.getRenderedImage(), context, x, y, width, height);
+            } else if (img instanceof ImageXMLDOM) {
+                ImageXMLDOM imgXML = (ImageXMLDOM)img;
+                renderDocument(imgXML.getDocument(), imgXML.getRootNamespace(),
+                        pos, foreignAttributes);
+            } else if (img instanceof ImageRawStream) {
+                final ImageRawStream raw = (ImageRawStream)img;
+                if (MimeConstants.MIME_EPS.equals(raw.getInfo().getMimeType())) {
+                    ImageRawEPS eps = (ImageRawEPS)raw;
+                    Rectangle2D bbox = eps.getBoundingBox(); 
+                    PSImageUtils.renderEPS(raw.getInputStream(), uri,
+                        x / 1000f, y / 1000f,
+                        width / 1000f, height / 1000f,
+                        (float)bbox.getX(), (float)bbox.getY(),
+                        (float)bbox.getWidth(), (float)bbox.getHeight(),
+                        gen);
+                } else if (MimeConstants.MIME_JPEG.equals(raw.getInfo().getMimeType())) {
+                    ImageRawJPEG jpeg = (ImageRawJPEG)raw;
+                    ImageEncoder encoder = new ImageEncoder() {
+                        public void writeTo(OutputStream out) throws IOException {
+                            IOUtils.copy(raw.getInputStream(), out);
+                        }
+                        public String getImplicitFilter() {
+                            return "<< >> /DCTDecode";
+                        }
+                    };
+                    Rectangle2D targetRect = new Rectangle2D.Float(
+                            x / 1000f, y / 1000f,
+                            width / 1000f, height / 1000f);
+                    PSImageUtils.writeImage(encoder, info.getSize().getDimensionPx(),
+                            uri, targetRect,
+                            jpeg.getColorSpace(), jpeg.isInverted(), gen);
+                } else {
+                    throw new UnsupportedOperationException("Unsupported raw image: " + info);
+                }
+            }
+        } catch (ImageException ie) {
+            log.error("Error while processing image: "
+                    + (info != null ? info.toString() : uri), ie);
+        } catch (IOException ioe) {
+            handleIOTrouble(ioe);
+        }
+
+        /*
         if (fopimage == null) {
             return;
         }
@@ -418,9 +514,15 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         } catch (IOException ioe) {
             handleIOTrouble(ioe);
         }
+        */
     }
 
-    protected PSResource getFormForImage(String uri, FopImage fopimage) {
+    /**
+     * Returns a PSResource instance representing a image as a PostScript form.
+     * @param uri the image URI
+     * @return a PSResource instance
+     */
+    protected PSResource getFormForImage(String uri) {
         if (this.formResources == null) {
             this.formResources = new java.util.HashMap();
         }
@@ -431,8 +533,14 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         }
         return form;
     }
-    
-    protected boolean isImageInlined(String uri, FopImage image) {
+
+    /**
+     * Indicates whether an image with the given URI should be inlined or added as a PostScript
+     * form.
+     * @param uri the image URI
+     * @return true if the image should be inlined rather than added as a form
+     */
+    protected boolean isImageInlined(String uri) {
         return !isOptimizeResources();
     }
     

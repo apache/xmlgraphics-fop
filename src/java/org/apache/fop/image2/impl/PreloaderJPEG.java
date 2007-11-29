@@ -34,25 +34,8 @@ import org.apache.fop.image2.util.ImageUtil;
 /**
  * Image preloader for JPEG images.
  */
-public class PreloaderJPEG extends AbstractImagePreloader {
+public class PreloaderJPEG extends AbstractImagePreloader  implements JPEGConstants {
 
-    /**
-     * Only SOFn and APPn markers are defined as SOFn is needed for the height
-     * and width search. APPn is also defined because if the JPEG contains
-     * thumbnails the dimensions of the thumbnail would also be after the SOFn
-     * marker enclosed inside the APPn marker. And we don't want to confuse
-     * those dimensions with the image dimensions.
-     */
-    private static final int MARK = 0xff; // Beginning of a Marker
-    private static final int NULL = 0x00; // Special case for 0xff00
-    private static final int SOF1 = 0xc0; // Baseline DCT
-    private static final int SOF2 = 0xc1; // Extended Sequential DCT
-    private static final int SOF3 = 0xc2; // Progressive DCT only PDF 1.3
-    private static final int SOFA = 0xca; // Progressive DCT only PDF 1.3
-    private static final int APP0 = 0xe0; // Application marker, JFIF
-    //private static final int APPF = 0xef; // Application marker
-    //private static final int SOS = 0xda; // Start of Scan
-    private static final int SOI = 0xd8; // start of Image
     private static final int JPG_SIG_LENGTH = 3;
 
     /** {@inheritDoc} 
@@ -114,9 +97,9 @@ public class PreloaderJPEG extends AbstractImagePreloader {
                     }
                     in.skipBytes(reclen - 14);
                     break;
+                case SOF0:
                 case SOF1:
-                case SOF2:
-                case SOF3: // SOF3 and SOFA are only supported by PDF 1.3
+                case SOF2: // SOF2 and SOFA are only supported by PDF 1.3
                 case SOFA:
                     in.skipBytes(2); //length field
                     in.skipBytes(1);
