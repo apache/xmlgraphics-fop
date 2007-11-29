@@ -33,9 +33,11 @@ public class ImageSize {
     
     private int widthMpt;
     private int heightMpt;
+    private int baselinePositionFromBottomMpt;
     
     private double dpiHorizontal;
     private double dpiVertical;
+    
     
     /**
      * Constructor.
@@ -105,6 +107,28 @@ public class ImageSize {
     }
     
     /**
+     * Sets the vertical position of the baseline of the image relative to the bottom of the image.
+     * The default is 0mpt (i.e. the image is bottom-aligned). This is used for MathML images, for
+     * example, which have a baseline. Using the value the images can be properly aligned with
+     * other text. Most other image don't have an implicit baseline.
+     * @param distance the distance from the bottom of the image in millipoints 
+     */
+    public void setBaselinePositionFromBottom(int distance) {
+        this.baselinePositionFromBottomMpt = distance;
+    }
+    
+    /**
+     * Returns the vertical position of the baseline of the image relative to the bottom of the
+     * image. The default is 0mpt (i.e. the image is bottom-aligned). This is used for MathML
+     * images, for example, which have a baseline. Using the value the images can be properly
+     * aligned with other text. Most other image don't have an implicit baseline.
+     * @return the distance from the bottom of the image in millipoints
+     */
+    public int getBaselinePositionFromBottom() {
+        return this.baselinePositionFromBottomMpt;
+    }
+    
+    /**
      * Returns the image's width in pixels.
      * @return the width in pixels
      */
@@ -158,6 +182,14 @@ public class ImageSize {
      */
     public Dimension getDimensionMpt() {
         return new Dimension(getWidthMpt(), getHeightMpt());
+    }
+    
+    /**
+     * Returns the size in pixels as a Dimension object.
+     * @return the size in pixels
+     */
+    public Dimension getDimensionPx() {
+        return new Dimension(getWidthPx(), getHeightPx());
     }
     
     /**
