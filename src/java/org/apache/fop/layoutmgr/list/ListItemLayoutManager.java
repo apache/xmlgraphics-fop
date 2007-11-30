@@ -19,7 +19,6 @@
 
 package org.apache.fop.layoutmgr.list;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -31,6 +30,7 @@ import org.apache.fop.area.Block;
 import org.apache.fop.fo.flow.ListItem;
 import org.apache.fop.fo.flow.ListItemBody;
 import org.apache.fop.fo.flow.ListItemLabel;
+import org.apache.fop.layoutmgr.BlockKnuthSequence;
 import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.BreakElement;
@@ -46,7 +46,6 @@ import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LeafPosition;
 import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.NonLeafPosition;
-import org.apache.fop.layoutmgr.ParagraphListElement;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.RelSide;
@@ -76,7 +75,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
     private LinkedList bodyList = null;
 
     // these data are used during getCombinedKnuthElementsForListItem;
-    private List[] elementLists = null;
+    private BlockKnuthSequence[] elementLists = null;
     private int[] partialHeights = {0, 0};
     private int[] start = {-1, -1};
     private int[] end = {-1, -1};
@@ -290,8 +289,9 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         // At the first invocation of this method the elements in labelList and bodyList
         // are copied to array lists to improve element access performance
         if (elementLists == null) {
-            elementLists = 
-                new List[] {new ArrayList(labelList), new ArrayList(bodyList)};
+            elementLists =
+                new BlockKnuthSequence[] {new BlockKnuthSequence(labelList),
+                                          new BlockKnuthSequence(bodyList)};
         }
                  
         int step;
@@ -373,7 +373,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
             while (end[i] + 1 < elementLists[i].size()) {
                 end[i]++;
                 // scan for unresolved elements and paragraphs
-                resolveElements(elementLists[i], end[i]);
+                elementLists[i].resolveElements(end[i]);
                 KnuthElement el = (KnuthElement) elementLists[i].get(end[i]);
                 if (el.isPenalty()) {
                     if (el.getP() < KnuthElement.INFINITE) {
@@ -482,32 +482,6 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
      */
     public void setIsEndOfSubsequence(boolean isEndOfSubsequence) {
         this.isEndOfSubsequence = isEndOfSubsequence;
-    }
-
-    /**
-     * The iteration stops at the first resolved element (after line breaking).
-     * After space resolution it is guaranteed that seq does not to contain
-     * ParagraphListElements until the first resolved element.
-     * @param seq the Knuth Sequence
-     * @param startIndex the start index
-     */
-    private void resolveElements(List seq, int startIndex) {
-        for (int i = startIndex; i < seq.size(); ++i) {
-            ListElement elt = (ListElement) seq.get(i);
-            if (!elt.isUnresolvedElement() && !(elt instanceof ParagraphListElement)) {
-                break;
-            }
-            if (elt instanceof ParagraphListElement) {
-                LinkedList lineElts = ((ParagraphListElement) elt).doLineBreaking();
-                seq.remove(i);
-                seq.addAll(i, lineElts);
-                // consider the new element at i
-                --i;
-            }
-        }
-
-        //Space resolution as if the contents were placed in a new reference area
-        SpaceResolver.resolveElementList(seq, startIndex);
     }
 
     /**
