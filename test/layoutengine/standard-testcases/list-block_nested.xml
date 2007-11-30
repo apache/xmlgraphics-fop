@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks the ability of FOP to render nested lists.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg"
+      xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true" widows="0" orphans="0">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>Some text</fo:block>
+          <fo:list-block 
+            provisional-distance-between-starts="12pt" provisional-label-separation="5pt">
+            <fo:list-item>
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block>•</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec felis ipsum, viverra ut, aliquam porttitor, convallis id, risus. Fusce malesuada nunc nec orci.</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+            <fo:list-item>
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block>•</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>A nested list:</fo:block>
+                <fo:list-block 
+                  provisional-distance-between-starts="12pt" provisional-label-separation="5pt">
+                  <fo:list-item>
+                    <fo:list-item-label end-indent="label-end()">
+                      <fo:block>—</fo:block>
+                    </fo:list-item-label>
+                    <fo:list-item-body start-indent="body-start()">
+                      <fo:block>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec felis ipsum, viverra ut, aliquam porttitor, convallis id, risus. Fusce malesuada nunc nec orci.</fo:block>
+                    </fo:list-item-body>
+                  </fo:list-item>
+                  <fo:list-item>
+                    <fo:list-item-label end-indent="label-end()">
+                      <fo:block>—</fo:block>
+                    </fo:list-item-label>
+                    <fo:list-item-body start-indent="body-start()">
+                      <fo:block>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec felis ipsum.</fo:block>
+                    </fo:list-item-body>
+                  </fo:list-item>
+                </fo:list-block>
+              </fo:list-item-body>
+            </fo:list-item>
+            <fo:list-item>
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block>•</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec felis ipsum.</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+          </fo:list-block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- one page -->
+    <eval expected="1" xpath="count(/areaTree/pageSequence/pageViewport)"/>
+    <!-- two top level blocks: text and first-order list -->
+    <eval expected="2" xpath="count(/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block)"/>
+    <!-- three second level blocks: three first-order list items -->
+    <eval expected="3" xpath="count(/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/block)"/>
+    <!-- three lines in first item of nested list -->
+    <eval expected="3" xpath="count(/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/block[2]/block[2]/block[2]/block[1]/block[2]/block[1]/lineArea)"/>
+    <!-- two lines in second item of nested list -->
+    <eval expected="2" xpath="count(/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/block[2]/block[2]/block[2]/block[2]/block[2]/block[1]/lineArea)"/>
+  </checks>
+</testcase>
+
