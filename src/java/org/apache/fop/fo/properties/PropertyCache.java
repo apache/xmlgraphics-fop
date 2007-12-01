@@ -19,6 +19,7 @@
 
 package org.apache.fop.fo.properties;
 
+import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 
 /**
@@ -41,10 +42,15 @@ public final class PropertyCache {
     /** the table of hash-buckets */
     private CacheEntry[] table = new CacheEntry[8];
     
+    boolean[] votesForRehash = new boolean[SEGMENT_MASK + 1];
+    
     /* same hash function as used by java.util.HashMap */
     private static int hash(Object x) {
-        int h = x.hashCode();
-
+        return hash(x.hashCode());
+    }
+    
+    private static int hash(int hashCode) {
+        int h = hashCode;
         h += ~(h << 9);
         h ^= (h >>> 14);
         h += (h << 4);
@@ -58,27 +64,15 @@ public final class PropertyCache {
     }
     
     /* Class modeling a cached entry */
-    private final class CacheEntry {
-        final CacheEntry next;
-        volatile WeakReference ref;
+    private final class CacheEntry extends WeakReference {
+        volatile CacheEntry nextEntry;
         final int hash;
         
         /* main constructor */
-        CacheEntry(Object p, CacheEntry next) {
-            this.next = next;
-            this.ref = new WeakReference(p);
+        public CacheEntry(Object p, CacheEntry nextEntry, ReferenceQueue refQueue) {
+            super(p, refQueue);
+            this.nextEntry = nextEntry;
             this.hash = p.hashCode();
-        }
-        
-        /* clone constructor */
-        CacheEntry(CacheEntry old, CacheEntry next) {
-            this.next = next;
-            this.ref = old.ref;
-            this.hash = old.hash;
-        }
-
-        public boolean isCleared() {
-            return (ref == null || ref.get() == null);
         }
         
     }
@@ -86,62 +80,63 @@ public final class PropertyCache {
     /* Wrapper objects to synchronize on */
     private final class CacheSegment {
         private int count = 0;
-    }
+        private ReferenceQueue staleEntries = new ReferenceQueue();
+    }    
     
-    /*
-     * Class modeling a cleanup thread.
-     * 
-     * Once run() is called, the segment is locked and the hash-bucket
-     * will be traversed, removing any obsolete entries.
-     * If the cleanup has no effect, rehash() is called.
-     */
-    private final class CacheCleaner implements Runnable {
-        
-        private int hash;
-        
-        CacheCleaner(int hash) {
-            this.hash = hash;
-        }
-        
-        public void run() {
-            //System.out.println("Cleaning segment " + this.segment);
-            CacheSegment segment = segments[this.hash & SEGMENT_MASK];
-            int oldCount;
-            int newCount;
-            synchronized (segment) {
-                oldCount = segment.count;
-                /* check first to see if another cleaner thread already
-                 * pushed the number of entries back below the threshold
-                 * if so, return immediately
-                 */
-                if (segment.count < (2 * table.length)) {
-                    return;
+    private final void cleanSegment(int segmentIndex) {
+        CacheEntry entry;
+        CacheSegment segment = segments[segmentIndex];
+        int bucketIndex;
+        int oldCount = segment.count;
+
+        while ((entry = (CacheEntry) segment.staleEntries.poll()) != null) {
+            bucketIndex = hash(entry.hash) & (table.length - 1);
+            /* remove obsolete entry */
+            /* 1. move to the corresponding entry */
+            CacheEntry prev = null;
+            CacheEntry e = table[bucketIndex];
+            while (e != null
+                    && e.nextEntry != null
+                    && e.hash != entry.hash) {
+                prev = e;
+                e = e.nextEntry;
+            }
+            if (e != null) {
+                /* 2. remove reference from the chain */
+                if (prev == null) {
+                    table[bucketIndex] = e.nextEntry;
+                } else {
+                    prev.nextEntry = e.nextEntry;
                 }
-                
-                int index = this.hash & (table.length - 1);
-                CacheEntry first = table[index];
-                for (CacheEntry e = first; e != null; e = e.next) {
-                    if (e.isCleared()) {
-                        /* remove obsolete entry
-                        /* 1. clear value, cause interference for non-blocking get() */
-                        e.ref = null;
-                        
-                        /* 2. clone the segment, without the obsolete entry */
-                        CacheEntry head = e.next;
-                        for (CacheEntry c = first; c != e; c = c.next) {
-                            if (!c.isCleared()) {
-                                head = new CacheEntry(c, head);
-                            }
+                segment.count--;
+            }
+        }
+        synchronized (votesForRehash) {
+            if (oldCount > segment.count) {
+                if (votesForRehash[segmentIndex]) {
+                    votesForRehash[segmentIndex] = false;
+                }
+                return;
+            } else {
+                /* cleanup had no effect */
+                if (!votesForRehash[segmentIndex]) {
+                    /* first time for this segment */
+                    votesForRehash[segmentIndex] = true;
+                    int voteCount = 0;
+                    for (int i = SEGMENT_MASK + 1; --i >= 0; ) {
+                        if (votesForRehash[i]) {
+                            voteCount++;
                         }
-                        table[index] = head;
-                        segment.count--;
+                    }
+                    if (voteCount > SEGMENT_MASK / 4) {
+                        rehash(SEGMENT_MASK);
+                        /* reset votes */
+                        for (int i = SEGMENT_MASK + 1; --i >= 0;) {
+                            votesForRehash[i] = false;
+                        }
+    
                     }
                 }
-                newCount = segment.count;
-            }
-            if (oldCount == newCount) {
-                /* cleanup had no effect, try rehashing */
-                rehash(SEGMENT_MASK);
             }
         }
     }
@@ -150,7 +145,7 @@ public final class PropertyCache {
      * Puts a new instance in the cache.
      * If the total number of entries for the corresponding
      * segment exceeds twice the amount of hash-buckets, a
-     * cleanup thread will be launched to remove obsolete
+     * cleanup will be performed to try and remove obsolete
      * entries.
      */
     private final void put(Object o) {
@@ -163,26 +158,22 @@ public final class PropertyCache {
             CacheEntry entry = table[index];
             
             if (entry == null) {
-                entry = new CacheEntry(o, null);
+                entry = new CacheEntry(o, null, segment.staleEntries);
                 table[index] = entry;
                 segment.count++;
             } else {
-                WeakReference ref = entry.ref;
-                if (ref != null && eq(ref.get(), o)) {
+                Object p = entry.get();
+                if (eq(p, o)) {
                     return;
                 } else {
-                    CacheEntry newEntry = new CacheEntry(o, entry);
+                    CacheEntry newEntry = new CacheEntry(o, entry, segment.staleEntries);
                     table[index] = newEntry;
                     segment.count++;
                 }
             }
             
             if (segment.count > (2 * table.length)) {
-                /* launch cleanup in a separate thread, 
-                 * so it acquires its own lock, and put()
-                 * can return immediately */
-                Thread cleaner = new Thread(new CacheCleaner(hash), "FOP PropertyCache Cleaner");
-                cleaner.start();
+                cleanSegment(hash & SEGMENT_MASK);
             }
         }
     }
@@ -195,14 +186,12 @@ public final class PropertyCache {
         int index = hash & (table.length - 1);
         
         CacheEntry entry = table[index];
-        WeakReference r;
         Object q;
         
         /* try non-synched first */
-        for (CacheEntry e = entry; e != null; e = e.next) {
+        for (CacheEntry e = entry; e != null; e = e.nextEntry) {
             if (e.hash == o.hashCode()
-                    && (r = e.ref) != null
-                    && (q = r.get()) != null
+                    && (q = e.get()) != null
                     &&  eq(q, o)) {
                 return q;
             }
@@ -214,10 +203,9 @@ public final class PropertyCache {
         CacheSegment segment = segments[hash & SEGMENT_MASK];
         synchronized (segment) {
             entry = table[index];
-            for (CacheEntry e = entry; e != null; e = e.next) {
+            for (CacheEntry e = entry; e != null; e = e.nextEntry) {
                 if (e.hash == o.hashCode()
-                        && (r = e.ref) != null
-                        && (q = r.get()) != null
+                        && (q = e.get()) != null
                         &&  eq(q, o)) {
                     return q;
                 }
@@ -228,15 +216,7 @@ public final class PropertyCache {
     
     /*
      * Recursively acquires locks on all 32 segments,
-     * then performs a check on the segments first to see `
-     * how many precisely exceed the threshold ( 2 x table.length ). 
-     * If this number exceeds half the amount of buckets, 
      * extends the cache and redistributes the entries.
-     * 
-     * Example:
-     * For a cache with default size of 8 buckets, each bucket is
-     * a segment, and as such, rehash() will only have effect
-     * if more than 4 buckets exceed the size of 16 entries.
      * 
      */
     private final void rehash(int index) {
@@ -250,40 +230,24 @@ public final class PropertyCache {
                 /* double the amount of buckets */
                 int newLength = table.length << 1;
                 if (newLength > 0) { //no overflow?
-                    /* Check segmentcounts first */
-                    int countSegments = 0;
-                    int threshold = table.length * 2;
+                    /* reset segmentcounts */
                     for (int i = segments.length; --i >= 0;) {
-                        if (segments[i].count > threshold) {
-                            countSegments++;
-                        }
-                    }
-                    
-                    if (countSegments <= (table.length / 2)) {
-                        return;
-                    } else {
-                        /* reset segmentcounts */
-                        for (int i = segments.length; --i >= 0;) {
-                            segments[i].count = 0;
-                        }
+                        segments[i].count = 0;
                     }
                     
                     CacheEntry[] newTable = new CacheEntry[newLength];
                     
                     int hash, idx;
-                    WeakReference ref;
                     Object o;
                     newLength--;
                     for (int i = table.length; --i >= 0;) {
-                        for (CacheEntry c = table[i]; c != null; c = c.next) {
-                            ref = c.ref;
-                            if (ref != null) {
-                                if ((o = ref.get()) != null) {
-                                    hash = hash(o);
-                                    idx = hash & newLength;
-                                    newTable[idx] = new CacheEntry(c, newTable[idx]);
-                                    segments[hash & SEGMENT_MASK].count++;
-                                }
+                        for (CacheEntry c = table[i]; c != null; c = c.nextEntry) {
+                            if ((o = c.get()) != null) {
+                                hash = c.hash;
+                                idx = hash & newLength;
+                                newTable[idx] = new CacheEntry(o, newTable[idx], 
+                                        segments[hash & SEGMENT_MASK].staleEntries);
+                                segments[hash & SEGMENT_MASK].count++;
                             }
                         }
                     }
