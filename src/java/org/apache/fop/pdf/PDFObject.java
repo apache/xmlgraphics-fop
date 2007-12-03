@@ -83,7 +83,9 @@ public abstract class PDFObject implements PDFWritable {
      */
     public void setObjectNumber(int objnum) {
         this.objnum = objnum;
-        log.trace("Assigning " + this + " object number " + objnum);
+        if (log.isTraceEnabled()) {
+            log.trace("Assigning " + this + " object number " + objnum);
+        }
     }
 
     /**
