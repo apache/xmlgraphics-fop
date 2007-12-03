@@ -22,13 +22,11 @@ package org.apache.fop.area;
 // Java
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
 import java.util.Iterator;
+import java.util.List;
 
-// XML
 import org.xml.sax.SAXException;
 
-// FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.FontInfo;
@@ -119,6 +117,8 @@ public class RenderPagesModel extends AreaTreeModel {
             try {
                 renderer.renderPage(page);
             } catch (RuntimeException re) {
+                String err = "Error while rendering page " + page.getPageNumberString(); 
+                log.error(err, re);
                 throw re;
             } catch (Exception e) {
                 //TODO use error handler to handle this FOP or IO Exception or propagate exception
