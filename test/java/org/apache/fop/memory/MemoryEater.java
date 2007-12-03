@@ -54,8 +54,6 @@ public class MemoryEater {
         File xsltFile = new File("test/xsl/fo-replicator.xsl");
         Source xslt = new StreamSource(xsltFile);
         replicatorTemplates = tFactory.newTemplates(xslt);
-        
-        fopFactory.setBaseURL("C:/Dev/FOP/testing/xslt-1.0-book");
     }
     
     private void eatMemory(File foFile, int replicatorRepeats) throws Exception {
