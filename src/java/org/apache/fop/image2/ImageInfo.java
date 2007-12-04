@@ -21,8 +21,6 @@ package org.apache.fop.image2;
 
 import java.util.Map;
 
-import javax.xml.transform.Source;
-
 /**
  * Represents an image that may not have been fully loaded. Usually, the loading only goes as far
  * as necessary to know the intrinsic size of the image. The image will only fully loaded later
@@ -40,8 +38,6 @@ public class ImageInfo {
 
     /** Original URI the image was accessed with */
     private String originalURI;
-    /** Source to load the image from (may be null) */
-    private Source src;
     /** MIME type of the image */
     private String mimeType;
 
@@ -57,21 +53,11 @@ public class ImageInfo {
     /**
      * Main constructor.
      * @param originalURI the original URI that was specified by the user (not the resolved URI!)
-     * @param src The Source object from which an image is loaded
      * @param mimeType the MIME type of the image
      */
-    public ImageInfo(String originalURI, Source src, String mimeType) {
+    public ImageInfo(String originalURI, String mimeType) {
         this.originalURI = originalURI;
-        this.src = src;
         this.mimeType = mimeType;
-    }
-
-    /**
-     * Returns the Source that the image is originally loaded from.
-     * @return the Source
-     */
-    public Source getSource() {
-        return this.src;
     }
 
     /**

@@ -16,31 +16,21 @@
  */
 
 /* $Id$ */
+ 
+package org.apache.fop.image2;
 
-package org.apache.fop.image2.impl;
-
-import java.io.IOException;
-
-import org.apache.fop.image2.Image;
-import org.apache.fop.image2.ImageException;
-import org.apache.fop.image2.ImageInfo;
-import org.apache.fop.image2.ImageSessionContext;
-import org.apache.fop.image2.spi.ImageLoader;
 
 /**
- * Simple abstract base class for ImageLoaders.
+ * The ImageContext interface provides session-independent information (mainly configuration
+ * values).
  */
-public abstract class AbstractImageLoader implements ImageLoader {
+public interface ImageContext {
 
-    /** {@inheritDoc} */ 
-    public Image loadImage(ImageInfo info, ImageSessionContext session)
-                throws ImageException, IOException {
-        return loadImage(info, null, session);
-    }
-
-    /** {@inheritDoc} */
-    public int getUsagePenalty() {
-        return 0;
-    }
-
+    /**
+     * Returns the resolution (in dpi) that is to be used when interpreting pixel sizes where no
+     * resolution information is available.
+     * @return the source resolution (in dpi)
+     */
+    float getSourceResolution();
+    
 }

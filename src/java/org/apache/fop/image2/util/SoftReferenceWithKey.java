@@ -17,36 +17,36 @@
 
 /* $Id$ */
  
-package org.apache.fop.image2;
+package org.apache.fop.image2.util;
+
+import java.lang.ref.ReferenceQueue;
+import java.lang.ref.SoftReference;
 
 /**
- * Represents an instance of an image (bitmap or vector graphic). The image may or may not be loaded
- * into memory. Implementing classes will expose additional methods to access the actual image data.
+ * Special SoftReference subclass that holds an additional key object that can be used to remove
+ * a reference from a Map once the referenced object is collected, for example.
  */
-public interface Image {
-
-    /**
-     * Returns an object with basic information (URI, MIME type, intrinsic size) about the image. 
-     * @return the image information object
-     */
-    ImageInfo getInfo();
+public class SoftReferenceWithKey extends SoftReference {
+    
+    private Object key;
     
     /**
-     * Returns the image's intrinsic size. This is a shortcut for getInfo().getSize().
-     * @return the image's intrinsic size
+     * Creates a new SoftReference with a key.
+     * @param referent object the new soft reference will refer to
+     * @param key the key object
+     * @param q queue the soft reference is registered with
      */
-    ImageSize getSize();
+    public SoftReferenceWithKey(Object referent, Object key, ReferenceQueue q) {
+        super(referent, q);
+        this.key = key;
+    }
     
     /**
-     * Returns the flavor of the image.
-     * @return the image flavor
+     * Returns the key associated with this reference.
+     * @return the key
      */
-    ImageFlavor getFlavor();
-    
-    /**
-     * Indicates whether the Image instance is cacheable in memory.
-     * @return true if the Image is cacheable
-     */
-    boolean isCacheable();
+    public Object getKey() {
+        return this.key;
+    }
     
 }

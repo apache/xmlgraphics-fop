@@ -25,7 +25,7 @@ import java.nio.ByteOrder;
 import javax.imageio.stream.ImageInputStream;
 import javax.xml.transform.Source;
 
-import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.image2.ImageContext;
 import org.apache.fop.image2.ImageException;
 import org.apache.fop.image2.ImageInfo;
 import org.apache.fop.image2.ImageSize;
@@ -56,7 +56,7 @@ public class PreloaderEMF extends AbstractImagePreloader {
     private static final int VRES_MM_OFFSET = 84;
 
     /** {@inheritDoc} */
-    public ImageInfo preloadImage(String uri, Source src, FOUserAgent userAgent)
+    public ImageInfo preloadImage(String uri, Source src, ImageContext context)
                 throws IOException, ImageException {
         if (!ImageUtil.hasImageInputStream(src)) {
             return null;
@@ -70,8 +70,8 @@ public class PreloaderEMF extends AbstractImagePreloader {
             && (header[SIGNATURE_OFFSET + 3] == (byte) 0x46) );
 
         if (supported) {
-            ImageInfo info = new ImageInfo(uri, src, getMimeType());
-            info.setSize(determineSize(in, userAgent));
+            ImageInfo info = new ImageInfo(uri, getMimeType());
+            info.setSize(determineSize(in, context));
             return info;
         } else {
             return null;
@@ -83,8 +83,8 @@ public class PreloaderEMF extends AbstractImagePreloader {
         return "image/emf";
     }
 
-    private ImageSize determineSize(ImageInputStream in, FOUserAgent userAgent) throws IOException,
-            ImageException {
+    private ImageSize determineSize(ImageInputStream in, ImageContext context)
+            throws IOException, ImageException {
         in.mark();
         ByteOrder oldByteOrder = in.getByteOrder();
         try {

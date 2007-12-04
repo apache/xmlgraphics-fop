@@ -24,18 +24,19 @@ import java.io.IOException;
 import javax.imageio.stream.ImageInputStream;
 import javax.xml.transform.Source;
 
-import org.apache.fop.apps.FOUserAgent;
+import org.apache.xmlgraphics.image.codec.tiff.TIFFDirectory;
+import org.apache.xmlgraphics.image.codec.tiff.TIFFField;
+import org.apache.xmlgraphics.image.codec.tiff.TIFFImageDecoder;
+import org.apache.xmlgraphics.image.codec.util.SeekableStream;
+
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.image2.ImageContext;
 import org.apache.fop.image2.ImageException;
 import org.apache.fop.image2.ImageInfo;
 import org.apache.fop.image2.ImageSize;
 import org.apache.fop.image2.util.ImageUtil;
 import org.apache.fop.image2.util.SeekableStreamAdapter;
 import org.apache.fop.util.UnitConv;
-import org.apache.xmlgraphics.image.codec.tiff.TIFFDirectory;
-import org.apache.xmlgraphics.image.codec.tiff.TIFFField;
-import org.apache.xmlgraphics.image.codec.tiff.TIFFImageDecoder;
-import org.apache.xmlgraphics.image.codec.util.SeekableStream;
 
 /**
  * Image preloader for TIFF images.
@@ -49,7 +50,7 @@ public class PreloaderTIFF extends AbstractImagePreloader {
 
     /** {@inheritDoc} 
      * @throws ImageException */
-    public ImageInfo preloadImage(String uri, Source src, FOUserAgent userAgent)
+    public ImageInfo preloadImage(String uri, Source src, ImageContext context)
             throws IOException, ImageException {
         if (!ImageUtil.hasImageInputStream(src)) {
             return null;
@@ -77,8 +78,8 @@ public class PreloaderTIFF extends AbstractImagePreloader {
         }
 
         if (supported) {
-            ImageInfo info = new ImageInfo(uri, src, getMimeType());
-            info.setSize(determineSize(in, userAgent));
+            ImageInfo info = new ImageInfo(uri, getMimeType());
+            info.setSize(determineSize(in, context));
             return info;
         } else {
             return null;
@@ -90,7 +91,7 @@ public class PreloaderTIFF extends AbstractImagePreloader {
         return MimeConstants.MIME_TIFF;
     }
 
-    private ImageSize determineSize(ImageInputStream in, FOUserAgent userAgent)
+    private ImageSize determineSize(ImageInputStream in, ImageContext context)
                 throws IOException, ImageException {
         in.mark();
 
@@ -110,7 +111,7 @@ public class PreloaderTIFF extends AbstractImagePreloader {
             TIFFField fldy = dir.getField(TIFFImageDecoder.TIFF_Y_RESOLUTION);
             if (fldx == null || fldy == null) {
                 unit = 2;
-                xRes = userAgent.getSourceResolution();
+                xRes = context.getSourceResolution();
                 yRes = xRes;
             } else {
                 xRes = fldx.getAsFloat(0);
@@ -124,7 +125,7 @@ public class PreloaderTIFF extends AbstractImagePreloader {
                         UnitConv.in2mm(yRes) / 10); //Centimeters
             }
         } else {
-            size.setResolution(userAgent.getSourceResolution());
+            size.setResolution(context.getSourceResolution());
         }
         size.calcSizeFromPixels();
 

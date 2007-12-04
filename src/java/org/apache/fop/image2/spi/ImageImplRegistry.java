@@ -19,8 +19,9 @@
  
 package org.apache.fop.image2.spi;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,9 +31,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.xmlgraphics.util.Service;
 
 import org.apache.fop.image2.ImageFlavor;
-import org.apache.fop.util.dijkstra.DefaultEdgeDirectory;
-import org.apache.fop.util.dijkstra.DijkstraAlgorithm;
-import org.apache.fop.util.dijkstra.Vertex;
 
 /**
  * This class is the registry for all implementations of the various service provider interfaces
@@ -55,8 +53,7 @@ public class ImageImplRegistry {
     private List converters = new java.util.ArrayList();
     //Content: List<ImageConverter>
     
-    /** Holds the EdgeDirectory for all image conversions */
-    private DefaultEdgeDirectory converterEdgeDirectory = new DefaultEdgeDirectory();
+    private int converterModifications;
     
     /** Singleton instance */
     private static ImageImplRegistry defaultInstance;
@@ -159,12 +156,29 @@ public class ImageImplRegistry {
     }
     
     /**
+     * Returns the Collection of registered ImageConverter instances.
+     * @return a Collection<ImageConverter>
+     */
+    public Collection getImageConverters() {
+        return Collections.unmodifiableList(this.converters);
+    }
+    
+    /**
+     * Returns the number of modifications to the collection of registered ImageConverter instances.
+     * This is used to detect changes in the registry concerning ImageConverters.
+     * @return the number of modifications
+     */
+    public int getImageConverterModifications() {
+        return this.converterModifications;
+    }
+    
+    /**
      * Registers a new ImageConverter.
      * @param converter An ImageConverter instance
      */
     public void registerConverter(ImageConverter converter) {
         converters.add(converter);
-        converterEdgeDirectory.addEdge(new ImageConversionEdge(converter));
+        converterModifications++;
         if (log.isDebugEnabled()) {
             log.debug("Registered: " + converter.getClass().getName());
         }
@@ -207,7 +221,13 @@ public class ImageImplRegistry {
         return null;
     }
 
-    private ImageLoaderFactory[] getImageLoaderFactories(String mime) {
+    /**
+     * Returns an array of ImageLoaderFactory instances which support the given MIME type. The
+     * instances are returned in no particular order.
+     * @param mime the MIME type to find ImageLoaderFactories for
+     * @return the array of ImageLoaderFactory instances
+     */
+    public ImageLoaderFactory[] getImageLoaderFactories(String mime) {
         Map flavorMap = (Map)loaders.get(mime);
         if (flavorMap != null) {
             Set factories = new java.util.HashSet();
@@ -223,87 +243,6 @@ public class ImageImplRegistry {
             }
         }
         return null;
-    }
-    
-    /**
-     * Creates and returns an ImageConverterPipeline that allows to load an image of the given
-     * MIME type and present it in the requested image flavor.
-     * @param originalMime the MIME type of the original image
-     * @param targetFlavor the requested image flavor
-     * @return an ImageConverterPipeline or null if no suitable pipeline could be assembled
-     */
-    public ImageConverterPipeline newImageConverterPipeline(
-                String originalMime, ImageFlavor targetFlavor) {
-        ImageConverterPipeline pipeline = null;
-        ImageLoaderFactory loaderFactory = getImageLoaderFactory(originalMime, targetFlavor);
-        if (loaderFactory != null) {
-            //Directly load image and return it
-            ImageLoader loader = loaderFactory.newImageLoader(targetFlavor);
-            pipeline = new ImageConverterPipeline(loader);
-        } else {
-            //Need to use ImageConverters
-            if (log.isDebugEnabled()) {
-                log.debug("No ImageLoaderFactory found that can load this format directly."
-                        + " Trying ImageConverters instead...");
-            }
-            
-            ImageRepresentation destination = new ImageRepresentation(targetFlavor);
-            //Get Loader for originalMIME
-            // --> List of resulting flavors, possibly multiple loaders
-            ImageLoaderFactory[] loaderFactories = getImageLoaderFactories(originalMime);
-            if (loaderFactories != null) {
-                //Find best pipeline -> best loader
-                for (int i = 0, ci = loaderFactories.length; i < ci; i++) {
-                    loaderFactory = loaderFactories[i];
-                    ImageFlavor[] flavors = loaderFactory.getSupportedFlavors(originalMime);
-                    for (int j = 0, cj = flavors.length; j < cj; j++) {
-                        DijkstraAlgorithm dijkstra = new DijkstraAlgorithm(
-                                this.converterEdgeDirectory);
-                        ImageRepresentation origin = new ImageRepresentation(flavors[j]); 
-                        dijkstra.execute(origin, destination);
-                        if (log.isDebugEnabled()) {
-                            log.debug("Lowest penalty: " + dijkstra.getLowestPenalty(destination));
-                        }
-                        
-                        Vertex prev = destination;
-                        Vertex pred = dijkstra.getPredecessor(destination);
-                        if (pred == null) {
-                            if (log.isDebugEnabled()) {
-                                log.debug("No route found!");
-                            }
-                        } else {
-                            LinkedList stops = new LinkedList();
-                            //stops.addLast(destination);
-                            while ((pred = dijkstra.getPredecessor(prev)) != null) {
-                                ImageConversionEdge edge = (ImageConversionEdge)
-                                        this.converterEdgeDirectory.getBestEdge(pred, prev);
-                                stops.addFirst(edge);
-                                prev = pred;
-                            }
-                            ImageLoader loader = loaderFactory.newImageLoader(flavors[i]);
-                            pipeline = new ImageConverterPipeline(loader);
-                            Iterator iter = stops.iterator();
-                            while (iter.hasNext()) {
-                                ImageConversionEdge edge = (ImageConversionEdge)iter.next(); 
-                                pipeline.addConverter(edge.getImageConverter());
-                            }
-                            if (log.isDebugEnabled()) {
-                                log.debug("Pipeline: " + pipeline);
-                            }
-                            return pipeline;
-                        }
-                    }
-                }
-                
-                //Build final pipeline
-                
-            }
-            
-        }
-        if (log.isDebugEnabled()) {
-            log.debug("Pipeline: " + pipeline);
-        }
-        return pipeline;
     }
     
 }

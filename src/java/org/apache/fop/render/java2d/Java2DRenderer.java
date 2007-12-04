@@ -63,6 +63,7 @@ import org.apache.fop.image2.ImageException;
 import org.apache.fop.image2.ImageFlavor;
 import org.apache.fop.image2.ImageInfo;
 import org.apache.fop.image2.ImageManager;
+import org.apache.fop.image2.ImageSessionContext;
 import org.apache.fop.image2.impl.ImageGraphics2D;
 import org.apache.fop.image2.impl.ImageRendered;
 import org.apache.fop.image2.impl.ImageXMLDOM;
@@ -890,14 +891,16 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         ImageManager manager = getUserAgent().getFactory().getImageManager();
         ImageInfo info = null;
         try {
-            info = manager.preloadImage(uri, getUserAgent());
+            ImageSessionContext sessionContext = getUserAgent().getImageSessionContext();
+            info = manager.getImageInfo(uri, sessionContext);
             final ImageFlavor[] flavors = new ImageFlavor[]
                 {ImageFlavor.GRAPHICS2D,
                     ImageFlavor.BUFFERED_IMAGE, 
                     ImageFlavor.RENDERED_IMAGE, 
                     ImageFlavor.XML_DOM};
-            Map hints = ImageUtil.getDefaultHints(getUserAgent());
-            org.apache.fop.image2.Image img = manager.getImage(info, flavors, hints);
+            Map hints = ImageUtil.getDefaultHints(sessionContext);
+            org.apache.fop.image2.Image img = manager.getImage(
+                    info, flavors, hints, sessionContext);
             if (img instanceof ImageGraphics2D) {
                 ImageGraphics2D imageG2D = (ImageGraphics2D)img;
                 int width = (int)pos.getWidth();

@@ -17,8 +17,9 @@
 
 /* $Id$ */
 
-package org.apache.fop.image2.spi;
+package org.apache.fop.image2.pipeline;
 
+import org.apache.fop.image2.spi.ImageConverter;
 import org.apache.fop.util.dijkstra.Edge;
 import org.apache.fop.util.dijkstra.Vertex;
 

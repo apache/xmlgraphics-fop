@@ -25,6 +25,9 @@ import java.io.InputStream;
 
 import javax.xml.transform.Source;
 
+import org.w3c.dom.Element;
+import org.w3c.dom.svg.SVGDocument;
+
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.UnitProcessor;
 import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
@@ -32,9 +35,10 @@ import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.dom.svg.SVGOMDocument;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.apps.FOUserAgent;
+
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.image.XMLImage;
+import org.apache.fop.image2.ImageContext;
 import org.apache.fop.image2.ImageInfo;
 import org.apache.fop.image2.ImageSize;
 import org.apache.fop.image2.impl.AbstractImagePreloader;
@@ -43,8 +47,6 @@ import org.apache.fop.image2.util.ImageUtil;
 import org.apache.fop.svg.SVGUserAgent;
 import org.apache.fop.util.UnclosableInputStream;
 import org.apache.fop.util.UnitConv;
-import org.w3c.dom.Element;
-import org.w3c.dom.svg.SVGDocument;
 
 /**
  * Image preloader for SVG images.
@@ -57,7 +59,7 @@ public class PreloaderSVG extends AbstractImagePreloader {
     private boolean batikAvailable = true;
     
     /** {@inheritDoc} */ 
-    public ImageInfo preloadImage(String uri, Source src, FOUserAgent userAgent)
+    public ImageInfo preloadImage(String uri, Source src, ImageContext context)
             throws IOException {
         if (!ImageUtil.hasInputStream(src)) {
             //TODO Remove this and support DOMSource and possibly SAXSource
@@ -67,7 +69,7 @@ public class PreloaderSVG extends AbstractImagePreloader {
         if (batikAvailable) {
             try {
                 Loader loader = new Loader();
-                return loader.getImage(uri, src, userAgent);
+                info = loader.getImage(uri, src, context);
             } catch (NoClassDefFoundError e) {
                 batikAvailable = false;
                 log.warn("Batik not in class path", e);
@@ -92,7 +94,7 @@ public class PreloaderSVG extends AbstractImagePreloader {
      */
     class Loader {
         private ImageInfo getImage(String uri, Source src,
-                FOUserAgent userAgent) {
+                ImageContext context) {
             // parse document and get the size attributes of the svg element
 
             InputStream in = new UnclosableInputStream(ImageUtil.needInputStream(src));
@@ -127,11 +129,11 @@ public class PreloaderSVG extends AbstractImagePreloader {
                 int height = Math.round(UnitProcessor.svgVerticalLengthToUserSpace(
                         s, SVGOMDocument.SVG_HEIGHT_ATTRIBUTE, uctx));
 
-                ImageInfo info = new ImageInfo(uri, src, getMimeType());
+                ImageInfo info = new ImageInfo(uri, getMimeType());
                 ImageSize size = new ImageSize();
                 size.setSizeInMillipoints(width, height);
                 //Set the resolution to that of the FOUserAgent
-                size.setResolution(userAgent.getSourceResolution());
+                size.setResolution(context.getSourceResolution());
                 size.calcPixelsFromSize();
                 info.setSize(size);
 

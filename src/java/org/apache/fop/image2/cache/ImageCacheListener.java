@@ -17,36 +17,44 @@
 
 /* $Id$ */
  
-package org.apache.fop.image2;
+package org.apache.fop.image2.cache;
+
+import java.util.EventListener;
 
 /**
- * Represents an instance of an image (bitmap or vector graphic). The image may or may not be loaded
- * into memory. Implementing classes will expose additional methods to access the actual image data.
+ * This interface can be implemented by classes which want to know what's going on inside the
+ * image cache.
  */
-public interface Image {
+public interface ImageCacheListener extends EventListener {
 
     /**
-     * Returns an object with basic information (URI, MIME type, intrinsic size) about the image. 
-     * @return the image information object
+     * An URi previously identified as invalid was requested again
+     * @param uri the invalid URI
      */
-    ImageInfo getInfo();
+    void invalidHit(String uri);
     
     /**
-     * Returns the image's intrinsic size. This is a shortcut for getInfo().getSize().
-     * @return the image's intrinsic size
+     * An ImageInfo was found in the cache
+     * @param uri the image's URI
      */
-    ImageSize getSize();
+    void cacheHitImageInfo(String uri);
     
     /**
-     * Returns the flavor of the image.
-     * @return the image flavor
+     * An ImageInfo was not in the cache
+     * @param uri the image's URI
      */
-    ImageFlavor getFlavor();
+    void cacheMissImageInfo(String uri);
     
     /**
-     * Indicates whether the Image instance is cacheable in memory.
-     * @return true if the Image is cacheable
+     * An Image was found in the cache
+     * @param key the image key
      */
-    boolean isCacheable();
+    void cacheHitImage(ImageKey key);
+    
+    /**
+     * An Image was not in the cache
+     * @param key the image key
+     */
+    void cacheMissImage(ImageKey key);
     
 }

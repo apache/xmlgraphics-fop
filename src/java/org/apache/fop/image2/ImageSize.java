@@ -196,6 +196,9 @@ public class ImageSize {
      * Calculates the size in millipoints based on the size in pixels and the resolution.
      */
     public void calcSizeFromPixels() {
+        if (this.dpiHorizontal == 0 || this.dpiVertical == 0) {
+            throw new IllegalStateException("The resolution mus be set");
+        }
         this.widthMpt = (int)Math.round(UnitConv.in2mpt(this.widthPx / this.dpiHorizontal));
         this.heightMpt = (int)Math.round(UnitConv.in2mpt(this.heightPx / this.dpiVertical));
     }
@@ -204,6 +207,9 @@ public class ImageSize {
      * Calculates the size in pixels based on the size in millipoints and the resolution.
      */
     public void calcPixelsFromSize() {
+        if (this.dpiHorizontal == 0 || this.dpiVertical == 0) {
+            throw new IllegalStateException("The resolution mus be set");
+        }
         this.widthPx = (int)Math.round(UnitConv.mpt2in(this.widthMpt * this.dpiHorizontal));
         this.heightPx = (int)Math.round(UnitConv.mpt2in(this.heightMpt * this.dpiVertical));
     }

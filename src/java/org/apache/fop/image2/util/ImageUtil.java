@@ -33,8 +33,8 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.IOUtils;
 
-import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.image2.ImageProcessingHints;
+import org.apache.fop.image2.ImageSessionContext;
 import org.apache.fop.image2.ImageSource;
 
 /**
@@ -94,9 +94,13 @@ public class ImageUtil {
      * @return the ImageInputStream
      */
     public static ImageInputStream needImageInputStream(Source src) {
-        ImageInputStream in = getImageInputStream(src); 
-        if (in != null) {
-            return in;
+        if (src instanceof ImageSource) {
+            ImageSource isrc = (ImageSource)src;
+            if (isrc.getImageInputStream() == null) {
+                throw new IllegalArgumentException(
+                        "ImageInputStream is null/cleared on ImageSource");
+            }
+            return isrc.getImageInputStream();
         } else {
             throw new IllegalArgumentException("Source must be an ImageSource");
         }
@@ -134,12 +138,42 @@ public class ImageUtil {
     }
 
     /**
+     * Removes any references to InputStreams or Readers from the given ImageInfo's Source
+     * to prohibit accidental/unwanted use by a component further downstream.
+     * @param info the ImageInfo object
+     *//*
+    public static void removeStreams(ImageInfo info) {
+        //Synchronize to avoid concurrent tampering with the Source
+        synchronized (info) {
+            removeStreams(info.getSource());
+        }
+    }*/
+    
+    /**
+     * Removes any references to InputStreams or Readers from the given Source to prohibit
+     * accidental/unwanted use by a component further downstream.
+     * @param src the Source object
+     */
+    public static void removeStreams(Source src) {
+        if (src instanceof ImageSource) {
+            ImageSource isrc = (ImageSource)src;
+            isrc.setImageInputStream(null);
+        } else if (src instanceof StreamSource) {
+            StreamSource ssrc = (StreamSource)src;
+            ssrc.setInputStream(null);
+            ssrc.setReader(null);
+        }
+    }
+    
+    /**
      * Closes the InputStreams or ImageInputStreams of Source objects. Any exception occurring
      * while closing the stream is ignored.
      * @param src the Source object
      */
     public static void closeQuietly(Source src) {
-        if (src instanceof StreamSource) {
+        if (src == null) {
+            return;
+        } else if (src instanceof StreamSource) {
             StreamSource streamSource = (StreamSource)src; 
             IOUtils.closeQuietly(streamSource.getInputStream());
             streamSource.setInputStream(null);
@@ -156,7 +190,7 @@ public class ImageUtil {
                 imageSource.setImageInputStream(null);
             }
         } else {
-            throw new IllegalArgumentException("Source not supported!");
+            throw new IllegalArgumentException("Source not supported: " + src.getClass().getName());
         }
     }
     
@@ -237,17 +271,15 @@ public class ImageUtil {
 
     /**
      * Creates a new hint Map with values from the FOUserAgent.
-     * @param userAgent the user agent
+     * @param session the session context
      * @return a Map of hints
      */
-    public static Map getDefaultHints(FOUserAgent userAgent) {
-        //TODO Maybe remove the reference to FOUserAgent from the image package completely.
-        //This could improve the usefulness of the package for external projects. 
+    public static Map getDefaultHints(ImageSessionContext session) {
         java.util.Map hints = new java.util.HashMap();
         hints.put(ImageProcessingHints.SOURCE_RESOLUTION,
-                new Float(userAgent.getSourceResolution()));
+                new Float(session.getParentContext().getSourceResolution()));
         hints.put(ImageProcessingHints.TARGET_RESOLUTION,
-                new Float(userAgent.getTargetResolution()));
+                new Float(session.getTargetResolution()));
         return hints;
     }
     

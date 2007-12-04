@@ -24,6 +24,7 @@ import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.RenderedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.LineNumberReader;
@@ -76,6 +77,7 @@ import org.apache.fop.image2.ImageException;
 import org.apache.fop.image2.ImageFlavor;
 import org.apache.fop.image2.ImageInfo;
 import org.apache.fop.image2.ImageManager;
+import org.apache.fop.image2.ImageSessionContext;
 import org.apache.fop.image2.impl.ImageGraphics2D;
 import org.apache.fop.image2.impl.ImageRawEPS;
 import org.apache.fop.image2.impl.ImageRawJPEG;
@@ -406,8 +408,9 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         ImageManager manager = getUserAgent().getFactory().getImageManager();
         ImageInfo info = null;
         try {
-            info = manager.preloadImage(uri, getUserAgent());
-            Map hints = ImageUtil.getDefaultHints(getUserAgent());
+            ImageSessionContext sessionContext = getUserAgent().getImageSessionContext();
+            info = manager.getImageInfo(uri, sessionContext);
+            Map hints = ImageUtil.getDefaultHints(sessionContext);
             ImageFlavor[] flavors;
             if (gen.getPSLevel() >= 3) {
                 flavors = level3Flavors;
@@ -416,7 +419,8 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
             }
             int width = (int)pos.getWidth();
             int height = (int)pos.getHeight();
-            org.apache.fop.image2.Image img = manager.getImage(info, flavors, hints);
+            org.apache.fop.image2.Image img = manager.getImage(
+                        info, flavors, hints, sessionContext);
             if (img instanceof ImageGraphics2D) {
                 ImageGraphics2D imageG2D = (ImageGraphics2D)img;
                 RendererContext context = createRendererContext(
@@ -437,17 +441,27 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
                 if (MimeConstants.MIME_EPS.equals(raw.getInfo().getMimeType())) {
                     ImageRawEPS eps = (ImageRawEPS)raw;
                     Rectangle2D bbox = eps.getBoundingBox(); 
-                    PSImageUtils.renderEPS(raw.getInputStream(), uri,
-                        x / 1000f, y / 1000f,
-                        width / 1000f, height / 1000f,
-                        (float)bbox.getX(), (float)bbox.getY(),
-                        (float)bbox.getWidth(), (float)bbox.getHeight(),
-                        gen);
+                    InputStream in = raw.createInputStream();
+                    try {
+                        PSImageUtils.renderEPS(in, uri,
+                                x / 1000f, y / 1000f,
+                                width / 1000f, height / 1000f,
+                                (float)bbox.getX(), (float)bbox.getY(),
+                                (float)bbox.getWidth(), (float)bbox.getHeight(),
+                                gen);
+                    } finally {
+                        IOUtils.closeQuietly(in);
+                    }
                 } else if (MimeConstants.MIME_JPEG.equals(raw.getInfo().getMimeType())) {
                     ImageRawJPEG jpeg = (ImageRawJPEG)raw;
                     ImageEncoder encoder = new ImageEncoder() {
                         public void writeTo(OutputStream out) throws IOException {
-                            IOUtils.copy(raw.getInputStream(), out);
+                            InputStream in = raw.createInputStream();
+                            try {
+                                IOUtils.copy(in, out);
+                            } finally {
+                                IOUtils.closeQuietly(in);
+                            }
                         }
                         public String getImplicitFilter() {
                             return "<< >> /DCTDecode";
@@ -466,55 +480,11 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         } catch (ImageException ie) {
             log.error("Error while processing image: "
                     + (info != null ? info.toString() : uri), ie);
+        } catch (FileNotFoundException fe) {
+            log.error(fe.getMessage());
         } catch (IOException ioe) {
             handleIOTrouble(ioe);
         }
-
-        /*
-        if (fopimage == null) {
-            return;
-        }
-        if (!fopimage.load(FopImage.DIMENSIONS)) {
-            return;
-        }
-        float x = (float)pos.getX() / 1000f;
-        x += currentIPPosition / 1000f;
-        float y = (float)pos.getY() / 1000f;
-        y += currentBPPosition / 1000f;
-        float w = (float)pos.getWidth() / 1000f;
-        float h = (float)pos.getHeight() / 1000f;
-        try {
-            String mime = fopimage.getMimeType();
-            if ("text/xml".equals(mime)) {
-                if (!fopimage.load(FopImage.ORIGINAL_DATA)) {
-                    return;
-                }
-                Document doc = ((XMLImage) fopimage).getDocument();
-                String ns = ((XMLImage) fopimage).getNameSpace();
-
-                renderDocument(doc, ns, pos, foreignAttributes);
-            } else if ("image/svg+xml".equals(mime)) {
-                if (!fopimage.load(FopImage.ORIGINAL_DATA)) {
-                    return;
-                }
-                Document doc = ((XMLImage) fopimage).getDocument();
-                String ns = ((XMLImage) fopimage).getNameSpace();
-
-                renderDocument(doc, ns, pos, foreignAttributes);
-            } else if (fopimage instanceof EPSImage) {
-                PSImageUtils.renderEPS((EPSImage)fopimage, x, y, w, h, gen);
-            } else {
-                if (isImageInlined(uri, fopimage)) {
-                    PSImageUtils.renderBitmapImage(fopimage, x, y, w, h, gen);
-                } else {
-                    PSResource form = getFormForImage(uri, fopimage);
-                    PSImageUtils.renderForm(fopimage, form, x, y, w, h, gen);
-                }
-            }
-        } catch (IOException ioe) {
-            handleIOTrouble(ioe);
-        }
-        */
     }
 
     /**

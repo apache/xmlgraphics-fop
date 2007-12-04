@@ -28,11 +28,13 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
+import javax.xml.transform.Source;
 
 import org.apache.fop.image2.Image;
 import org.apache.fop.image2.ImageException;
 import org.apache.fop.image2.ImageFlavor;
 import org.apache.fop.image2.ImageInfo;
+import org.apache.fop.image2.ImageSessionContext;
 import org.apache.fop.image2.impl.AbstractImageLoader;
 import org.apache.fop.image2.impl.ImageBuffered;
 import org.apache.fop.image2.impl.ImageRendered;
@@ -63,8 +65,10 @@ public class ImageLoaderImageIO extends AbstractImageLoader {
     }
 
     /** {@inheritDoc} */
-    public Image loadImage(ImageInfo info, Map hints) throws ImageException, IOException {
-        ImageInputStream imgStream = ImageUtil.needImageInputStream(info.getSource());
+    public Image loadImage(ImageInfo info, Map hints, ImageSessionContext session)
+            throws ImageException, IOException {
+        Source src = session.needSource(info.getOriginalURI());
+        ImageInputStream imgStream = ImageUtil.needImageInputStream(src);
         Iterator iter = ImageIO.getImageReaders(imgStream);
         if (!iter.hasNext()) {
             throw new ImageException("No ImageIO ImageReader found .");

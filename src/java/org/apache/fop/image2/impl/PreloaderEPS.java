@@ -34,8 +34,8 @@ import org.apache.xmlgraphics.ps.dsc.events.DSCComment;
 import org.apache.xmlgraphics.ps.dsc.events.DSCCommentBoundingBox;
 import org.apache.xmlgraphics.ps.dsc.events.DSCEvent;
 
-import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.image2.ImageContext;
 import org.apache.fop.image2.ImageInfo;
 import org.apache.fop.image2.ImageSize;
 import org.apache.fop.image2.util.ImageInputStreamAdapter;
@@ -52,7 +52,7 @@ public class PreloaderEPS extends AbstractImagePreloader {
     public static final Object EPS_BOUNDING_BOX = Rectangle2D.class;
     
     /** {@inheritDoc} */
-    public ImageInfo preloadImage(String uri, Source src, FOUserAgent userAgent)
+    public ImageInfo preloadImage(String uri, Source src, ImageContext context)
             throws IOException {
         if (!ImageUtil.hasImageInputStream(src)) {
             return null;
@@ -83,8 +83,8 @@ public class PreloaderEPS extends AbstractImagePreloader {
             }
             
             if (supported) {
-                ImageInfo info = new ImageInfo(uri, src, getMimeType());
-                boolean success = determineSize(in, userAgent, info);
+                ImageInfo info = new ImageInfo(uri, getMimeType());
+                boolean success = determineSize(in, context, info);
                 in.reset(); //Need to go back to start of file
                 if (!success) {
                     //No BoundingBox found, so probably no EPS
@@ -121,7 +121,7 @@ public class PreloaderEPS extends AbstractImagePreloader {
         return offsets;
     }
     
-    private boolean determineSize(ImageInputStream in, FOUserAgent userAgent, ImageInfo info)
+    private boolean determineSize(ImageInputStream in, ImageContext context, ImageInfo info)
             throws IOException {
 
         in.mark();
@@ -168,7 +168,7 @@ public class PreloaderEPS extends AbstractImagePreloader {
             size.setSizeInMillipoints(
                     (int)Math.round(bbox.getWidth() * 1000),
                     (int)Math.round(bbox.getHeight() * 1000));
-            size.setResolution(userAgent.getSourceResolution());
+            size.setResolution(context.getSourceResolution());
             size.calcPixelsFromSize();
             info.setSize(size);
             info.getCustomObjects().put(EPS_BOUNDING_BOX, bbox);

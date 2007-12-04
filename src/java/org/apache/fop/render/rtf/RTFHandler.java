@@ -82,6 +82,7 @@ import org.apache.fop.image2.ImageException;
 import org.apache.fop.image2.ImageFlavor;
 import org.apache.fop.image2.ImageInfo;
 import org.apache.fop.image2.ImageManager;
+import org.apache.fop.image2.ImageSessionContext;
 import org.apache.fop.image2.impl.ImageRawStream;
 import org.apache.fop.image2.util.ImageUtil;
 import org.apache.fop.render.DefaultFontResolver;
@@ -1106,7 +1107,7 @@ public class RTFHandler extends FOEventHandler {
             //set image data
             FOUserAgent userAgent = eg.getUserAgent();
             ImageManager manager = userAgent.getFactory().getImageManager();
-            ImageInfo info = manager.preloadImage(uri, userAgent);
+            ImageInfo info = manager.getImageInfo(uri, userAgent.getImageSessionContext());
             if (info == null) {
                 log.error("Image could not be found: " + uri);
                 return;
@@ -1181,12 +1182,13 @@ public class RTFHandler extends FOEventHandler {
             ImageFlavor[] flavors = new ImageFlavor[] {
                     ImageFlavor.RAW_EMF, ImageFlavor.RAW_PNG, ImageFlavor.RAW_JPEG
             };
-            Map hints = ImageUtil.getDefaultHints(userAgent);
-            Image image = manager.getImage(info, flavors, hints);
+            ImageSessionContext sessionContext = userAgent.getImageSessionContext();
+            Map hints = ImageUtil.getDefaultHints(sessionContext);
+            Image image = manager.getImage(info, flavors, hints, sessionContext);
 
             if (image instanceof ImageRawStream) {
                 ImageRawStream rawImage = (ImageRawStream)image; 
-                rawData = IOUtils.toByteArray(rawImage.getInputStream());
+                rawData = IOUtils.toByteArray(rawImage.createInputStream());
             }
         } catch (ImageException ie) {
             log.error("Error while loading/processing image: " + info.getOriginalURI(), ie);

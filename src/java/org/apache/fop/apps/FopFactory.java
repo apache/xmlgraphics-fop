@@ -45,6 +45,7 @@ import org.apache.fop.fo.ElementMappingRegistry;
 import org.apache.fop.fonts.FontCache;
 import org.apache.fop.hyphenation.HyphenationTreeResolver;
 import org.apache.fop.image.ImageFactory;
+import org.apache.fop.image2.ImageContext;
 import org.apache.fop.image2.ImageManager;
 import org.apache.fop.layoutmgr.LayoutManagerMaker;
 import org.apache.fop.render.RendererFactory;
@@ -58,7 +59,7 @@ import org.apache.fop.util.ContentHandlerFactoryRegistry;
  * Information that may potentially be different for each rendering run can be
  * found and managed in the FOUserAgent.
  */
-public class FopFactory {
+public class FopFactory implements ImageContext {
     
     /** logger instance */
     private static Log log = LogFactory.getLog(FopFactory.class);
@@ -155,7 +156,7 @@ public class FopFactory {
         this.foURIResolver = new FOURIResolver(validateUserConfigStrictly());
         this.colorSpaceCache = new ColorSpaceCache(foURIResolver);
         this.imageFactory = new ImageFactory();
-        this.imageManager = new ImageManager();
+        this.imageManager = new ImageManager(this);
         this.rendererFactory = new RendererFactory();
         this.xmlHandlers = new XMLHandlerRegistry();
         this.ignoredNamespaces = new java.util.HashSet();

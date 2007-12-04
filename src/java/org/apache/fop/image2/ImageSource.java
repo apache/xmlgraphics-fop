@@ -33,15 +33,18 @@ public class ImageSource implements Source {
     
     private String systemId;
     private ImageInputStream iin;
+    private boolean fastSource;
 
     /**
      * Main constructor.
      * @param in the ImageInputStream to load from
      * @param systemId the system identifier (resolved URI) of the image
+     * @param fastSource true if it's a fast source (accessing local files)
      */
-    public ImageSource(ImageInputStream in, String systemId) {
+    public ImageSource(ImageInputStream in, String systemId, boolean fastSource) {
         this.iin = in;
         this.systemId = systemId;
+        this.fastSource = fastSource;
     }
 
     /**
@@ -49,7 +52,11 @@ public class ImageSource implements Source {
      * @return the InputStream or null if the stream has been closed
      */
     public InputStream getInputStream() {
-        return new ImageInputStreamAdapter(this.iin);
+        if (this.iin == null) {
+            return null;
+        } else {
+            return new ImageInputStreamAdapter(this.iin);
+        }
     }
 
     /**
@@ -76,6 +83,15 @@ public class ImageSource implements Source {
     /** {@inheritDoc} */
     public void setSystemId(String systemId) {
         this.systemId = systemId;
+    }
+    
+    /**
+     * Indicates whether this ImageSource is a fast source, i.e. accesses local files rather than
+     * network resources.
+     * @return true if it's a fast source
+     */
+    public boolean isFastSource() {
+        return this.fastSource;
     }
     
 }

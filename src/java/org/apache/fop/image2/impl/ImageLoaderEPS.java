@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
+import javax.xml.transform.Source;
+
 import org.apache.xmlgraphics.util.io.SubInputStream;
 
 import org.apache.fop.apps.MimeConstants;
@@ -30,6 +32,7 @@ import org.apache.fop.image2.Image;
 import org.apache.fop.image2.ImageException;
 import org.apache.fop.image2.ImageFlavor;
 import org.apache.fop.image2.ImageInfo;
+import org.apache.fop.image2.ImageSessionContext;
 import org.apache.fop.image2.util.ImageUtil;
 
 /**
@@ -49,12 +52,15 @@ public class ImageLoaderEPS extends AbstractImageLoader {
     }
 
     /** {@inheritDoc} */
-    public Image loadImage(ImageInfo info, Map hints) throws ImageException, IOException {
+    public Image loadImage(ImageInfo info, Map hints, ImageSessionContext session)
+                throws ImageException, IOException {
         if (!MimeConstants.MIME_EPS.equals(info.getMimeType())) {
             throw new IllegalArgumentException(
                     "ImageInfo must be from a image with MIME type: " + MimeConstants.MIME_EPS);
         }
-        InputStream in = ImageUtil.needInputStream(info.getSource());
+        Source src = session.needSource(info.getOriginalURI());
+        InputStream in = ImageUtil.needInputStream(src);
+        ImageUtil.removeStreams(src); //so others cannot close them, we take them over
 
         PreloaderEPS.EPSBinaryFileHeader binaryHeader;
         binaryHeader = (PreloaderEPS.EPSBinaryFileHeader)info.getCustomObjects().get(

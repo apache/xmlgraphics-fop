@@ -20,11 +20,13 @@
 package org.apache.fop.image2;
 
 import java.io.File;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
 import junit.framework.TestCase;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.xmlgraphics.image.writer.ImageWriterUtil;
 
 import org.apache.fop.apps.FOUserAgent;
@@ -32,7 +34,6 @@ import org.apache.fop.apps.FopFactory;
 import org.apache.fop.image2.impl.ImageRawStream;
 import org.apache.fop.image2.impl.ImageRendered;
 import org.apache.fop.image2.impl.ImageXMLDOM;
-import org.apache.fop.image2.util.ImageUtil;
 
 /**
  * Tests for bundled ImageLoader implementations.
@@ -56,10 +57,11 @@ public class ImageLoaderTestCase extends TestCase {
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
         
         ImageManager manager = fopFactory.getImageManager();
-        ImageInfo info = manager.preloadImage(uri, userAgent);
+        ImageInfo info = manager.preloadImage(uri, userAgent.getImageSessionContext());
         assertNotNull("ImageInfo must not be null", info);
         
-        Image img = manager.getImage(info, ImageFlavor.RENDERED_IMAGE);
+        Image img = manager.getImage(info, ImageFlavor.RENDERED_IMAGE, 
+                userAgent.getImageSessionContext());
         assertNotNull("Image must not be null", img);
         assertEquals(ImageFlavor.RENDERED_IMAGE, img.getFlavor());
         ImageRendered imgRed = (ImageRendered)img;
@@ -77,10 +79,11 @@ public class ImageLoaderTestCase extends TestCase {
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
         
         ImageManager manager = fopFactory.getImageManager();
-        ImageInfo info = manager.preloadImage(uri, userAgent);
+        ImageInfo info = manager.preloadImage(uri, userAgent.getImageSessionContext());
         assertNotNull("ImageInfo must not be null", info);
         
-        Image img = manager.getImage(info, ImageFlavor.RENDERED_IMAGE);
+        Image img = manager.getImage(info, ImageFlavor.RENDERED_IMAGE, 
+                userAgent.getImageSessionContext());
         assertNotNull("Image must not be null", img);
         assertEquals(ImageFlavor.RENDERED_IMAGE, img.getFlavor());
         ImageRendered imgRed = (ImageRendered)img;
@@ -98,10 +101,11 @@ public class ImageLoaderTestCase extends TestCase {
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
         
         ImageManager manager = fopFactory.getImageManager();
-        ImageInfo info = manager.preloadImage(uri, userAgent);
+        ImageInfo info = manager.preloadImage(uri, userAgent.getImageSessionContext());
         assertNotNull("ImageInfo must not be null", info);
         
-        Image img = manager.getImage(info, ImageFlavor.XML_DOM);
+        Image img = manager.getImage(info, ImageFlavor.XML_DOM, 
+                userAgent.getImageSessionContext());
         assertNotNull("Image must not be null", img);
         assertEquals(ImageFlavor.XML_DOM, img.getFlavor());
         ImageXMLDOM imgDom = (ImageXMLDOM)img;
@@ -112,7 +116,7 @@ public class ImageLoaderTestCase extends TestCase {
         assertEquals(16000, info.getSize().getHeightMpt());
         
         img = manager.getImage(info, ImageFlavor.RENDERED_IMAGE,
-                    ImageUtil.getDefaultHints(userAgent));
+                    userAgent.getImageSessionContext());
         assertNotNull("Image must not be null", img);
         assertEquals(ImageFlavor.RENDERED_IMAGE, img.getFlavor());
         ImageRendered imgRed = (ImageRendered)img;
@@ -135,11 +139,11 @@ public class ImageLoaderTestCase extends TestCase {
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
         
         ImageManager manager = fopFactory.getImageManager();
-        ImageInfo info = manager.preloadImage(uri, userAgent);
+        ImageInfo info = manager.preloadImage(uri, userAgent.getImageSessionContext());
         assertNotNull("ImageInfo must not be null", info);
         
         Image img = manager.getImage(info, ImageFlavor.RENDERED_IMAGE,
-                ImageUtil.getDefaultHints(userAgent));
+                userAgent.getImageSessionContext());
         assertNotNull("Image must not be null", img);
         assertEquals(ImageFlavor.RENDERED_IMAGE, img.getFlavor());
         ImageRendered imgRed = (ImageRendered)img;
@@ -162,20 +166,25 @@ public class ImageLoaderTestCase extends TestCase {
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
         
         ImageManager manager = fopFactory.getImageManager();
-        ImageInfo info = manager.preloadImage(uri, userAgent);
+        ImageInfo info = manager.preloadImage(uri, userAgent.getImageSessionContext());
         assertNotNull("ImageInfo must not be null", info);
         
         Image img = manager.getImage(info, ImageFlavor.RAW_EPS,
-                ImageUtil.getDefaultHints(userAgent));
+                userAgent.getImageSessionContext());
         assertNotNull("Image must not be null", img);
         assertEquals(ImageFlavor.RAW_EPS, img.getFlavor());
         ImageRawStream imgEPS = (ImageRawStream)img;
-        assertNotNull(imgEPS.getInputStream());
-        Reader reader = new InputStreamReader(imgEPS.getInputStream(), "US-ASCII");
-        char[] c = new char[4];
-        reader.read(c);
-        if (!("%!PS".equals(new String(c)))) {
-            fail("EPS header expected");
+        InputStream in = imgEPS.createInputStream();
+        try {
+            assertNotNull(in);
+            Reader reader = new InputStreamReader(in, "US-ASCII");
+            char[] c = new char[4];
+            reader.read(c);
+            if (!("%!PS".equals(new String(c)))) {
+                fail("EPS header expected");
+            }
+        } finally {
+            IOUtils.closeQuietly(in);
         }
     }
  
@@ -185,20 +194,25 @@ public class ImageLoaderTestCase extends TestCase {
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
         
         ImageManager manager = fopFactory.getImageManager();
-        ImageInfo info = manager.preloadImage(uri, userAgent);
+        ImageInfo info = manager.preloadImage(uri, userAgent.getImageSessionContext());
         assertNotNull("ImageInfo must not be null", info);
         
         Image img = manager.getImage(info, ImageFlavor.RAW_EPS,
-                ImageUtil.getDefaultHints(userAgent));
+                userAgent.getImageSessionContext());
         assertNotNull("Image must not be null", img);
         assertEquals(ImageFlavor.RAW_EPS, img.getFlavor());
         ImageRawStream imgEPS = (ImageRawStream)img;
-        assertNotNull(imgEPS.getInputStream());
-        Reader reader = new InputStreamReader(imgEPS.getInputStream(), "US-ASCII");
-        char[] c = new char[4];
-        reader.read(c);
-        if (!("%!PS".equals(new String(c)))) {
-            fail("EPS header expected");
+        InputStream in = imgEPS.createInputStream();
+        try {
+            assertNotNull(in);
+            Reader reader = new InputStreamReader(in, "US-ASCII");
+            char[] c = new char[4];
+            reader.read(c);
+            if (!("%!PS".equals(new String(c)))) {
+                fail("EPS header expected");
+            }
+        } finally {
+            IOUtils.closeQuietly(in);
         }
     }
  
