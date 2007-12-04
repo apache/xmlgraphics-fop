@@ -29,7 +29,6 @@ import javax.xml.transform.Source;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.image2.cache.ImageCache;
 import org.apache.fop.image2.pipeline.ImageProviderPipeline;
 import org.apache.fop.image2.pipeline.PipelineFactory;
@@ -172,7 +171,7 @@ public class ImageManager {
      * and ImageConverters to act on the image. See {@link ImageProcessingHints} for common hints
      * used by the bundled implementations. You can, of course, define your own hints.
      * @param info the ImageInfo instance for the image (obtained by 
-     *                  {@link #preloadImage(String, FOUserAgent)})
+     *                  {@link #getImageInfo(String, ImageSessionContext)})
      * @param flavor the requested image flavor.
      * @param hints a Map of hints to any of the background components or null
      * @param session the session context
@@ -214,7 +213,7 @@ public class ImageManager {
      * and ImageConverters to act on the image. See {@link ImageProcessingHints} for common hints
      * used by the bundled implementations. You can, of course, define your own hints.
      * @param info the ImageInfo instance for the image (obtained by 
-     *                  {@link #preloadImage(String, FOUserAgent)})
+     *                  {@link #getImageInfo(String, ImageSessionContext)})
      * @param flavors the requested image flavors (in preferred order).
      * @param hints a Map of hints to any of the background components or null
      * @param session the session context
@@ -262,10 +261,11 @@ public class ImageManager {
     }
 
     /**
-     * Loads an image with no hints. See {@link #getImage(ImageInfo, ImageFlavor, Map)} for more
+     * Loads an image with no hints. See
+     * {@link #getImage(ImageInfo, ImageFlavor, Map, ImageSessionContext)} for more
      * information.
      * @param info the ImageInfo instance for the image (obtained by 
-     *                  {@link #preloadImage(String, FOUserAgent)})
+     *                  {@link #getImageInfo(String, ImageSessionContext)})
      * @param flavor the requested image flavor.
      * @param session the session context
      * @return the fully loaded image
@@ -279,10 +279,11 @@ public class ImageManager {
     }
 
     /**
-     * Loads an image with no hints. See {@link #getImage(ImageInfo, ImageFlavor[], Map)} for more
+     * Loads an image with no hints. See
+     * {@link #getImage(ImageInfo, ImageFlavor[], Map, ImageSessionContext)} for more
      * information.
      * @param info the ImageInfo instance for the image (obtained by 
-     *                  {@link #preloadImage(String, FOUserAgent)})
+     *                  {@link #getImageInfo(String, ImageSessionContext)})
      * @param flavors the requested image flavors (in preferred order).
      * @param session the session context
      * @return the fully loaded image
