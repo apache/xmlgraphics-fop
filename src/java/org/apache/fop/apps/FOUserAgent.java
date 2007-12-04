@@ -23,17 +23,19 @@ package org.apache.fop.apps;
 import java.io.File;
 import java.util.Date;
 import java.util.Map;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
 
-// commons logging
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-// FOP
 import org.apache.fop.Version;
 import org.apache.fop.fo.FOEventHandler;
+import org.apache.fop.image2.ImageContext;
+import org.apache.fop.image2.ImageSessionContext;
+import org.apache.fop.image2.impl.AbstractImageSessionContext;
 import org.apache.fop.pdf.PDFEncryptionParams;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererFactory;
@@ -109,6 +111,22 @@ public class FOUserAgent {
     protected String title = null;
     /** Set of keywords applicable to this document. */
     protected String keywords = null;
+    
+    private ImageSessionContext imageSessionContext = new AbstractImageSessionContext() {
+
+        public ImageContext getParentContext() {
+            return getFactory();
+        }
+
+        public float getTargetResolution() {
+            return FOUserAgent.this.getTargetResolution();
+        }
+
+        public Source resolveURI(String uri) {
+            return FOUserAgent.this.resolveURI(uri);
+        }
+        
+    };
     
     /**
      * Default constructor
@@ -440,6 +458,14 @@ public class FOUserAgent {
      */
     public void setTargetResolution(int dpi) {
         setTargetResolution((float)dpi);
+    }
+    
+    /**
+     * Returns the image session context for the image package.
+     * @return the ImageSessionContext instance for this rendering run
+     */
+    public ImageSessionContext getImageSessionContext() {
+        return this.imageSessionContext;
     }
     
     // ---------------------------------------------- environment-level stuff

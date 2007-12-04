@@ -45,6 +45,11 @@ public class ImageGraphics2D extends AbstractImage {
         return ImageFlavor.GRAPHICS2D;
     }
 
+    /** {@inheritDoc} */
+    public boolean isCacheable() {
+        return true;
+    }
+    
     /**
      * Returns the contained Graphics2DImagePainter instance.
      * @return the image painter

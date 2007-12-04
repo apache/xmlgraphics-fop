@@ -26,6 +26,7 @@ import org.apache.fop.image2.Image;
 import org.apache.fop.image2.ImageException;
 import org.apache.fop.image2.ImageFlavor;
 import org.apache.fop.image2.ImageInfo;
+import org.apache.fop.image2.ImageSessionContext;
 import org.apache.fop.image2.impl.AbstractImageLoader;
 
 /**
@@ -52,7 +53,8 @@ public class ImageLoaderWMF extends AbstractImageLoader {
     }
 
     /** {@inheritDoc} */
-    public Image loadImage(ImageInfo info, Map hints) throws ImageException, IOException {
+    public Image loadImage(ImageInfo info, Map hints, ImageSessionContext session)
+                throws ImageException, IOException {
         if (!ImageWMF.MIME_WMF.equals(info.getMimeType())) {
             throw new IllegalArgumentException("ImageInfo must be from a WMF image");
         }

@@ -23,11 +23,13 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.apache.batik.dom.svg.SVGDOMImplementation;
+
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.image2.Image;
 import org.apache.fop.image2.ImageException;
 import org.apache.fop.image2.ImageFlavor;
 import org.apache.fop.image2.ImageInfo;
+import org.apache.fop.image2.ImageSessionContext;
 import org.apache.fop.image2.impl.AbstractImageLoader;
 import org.apache.fop.image2.impl.ImageXMLDOM;
 
@@ -55,7 +57,8 @@ public class ImageLoaderSVG extends AbstractImageLoader {
     }
 
     /** {@inheritDoc} */
-    public Image loadImage(ImageInfo info, Map hints) throws ImageException, IOException {
+    public Image loadImage(ImageInfo info, Map hints, ImageSessionContext session)
+                throws ImageException, IOException {
         if (!MimeConstants.MIME_SVG.equals(info.getMimeType())) {
             throw new IllegalArgumentException("ImageInfo must be from an SVG image");
         }

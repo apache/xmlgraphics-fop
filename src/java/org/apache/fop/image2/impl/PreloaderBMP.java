@@ -25,7 +25,7 @@ import java.nio.ByteOrder;
 import javax.imageio.stream.ImageInputStream;
 import javax.xml.transform.Source;
 
-import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.image2.ImageContext;
 import org.apache.fop.image2.ImageException;
 import org.apache.fop.image2.ImageInfo;
 import org.apache.fop.image2.ImageSize;
@@ -44,7 +44,7 @@ public class PreloaderBMP extends AbstractImagePreloader {
     private static final int WIDTH_OFFSET = 18;
 
     /** {@inheritDoc} */
-    public ImageInfo preloadImage(String uri, Source src, FOUserAgent userAgent)
+    public ImageInfo preloadImage(String uri, Source src, ImageContext context)
                 throws IOException, ImageException {
         if (!ImageUtil.hasImageInputStream(src)) {
             return null;
@@ -55,8 +55,8 @@ public class PreloaderBMP extends AbstractImagePreloader {
                 && (header[1] == (byte) 0x4d));
 
         if (supported) {
-            ImageInfo info = new ImageInfo(uri, src, getMimeType());
-            info.setSize(determineSize(in, userAgent));
+            ImageInfo info = new ImageInfo(uri, getMimeType());
+            info.setSize(determineSize(in, context));
             return info;
         } else {
             return null;
@@ -68,8 +68,8 @@ public class PreloaderBMP extends AbstractImagePreloader {
         return "image/bmp";
     }
 
-    private ImageSize determineSize(ImageInputStream in, FOUserAgent userAgent) throws IOException,
-            ImageException {
+    private ImageSize determineSize(ImageInputStream in, ImageContext context)
+            throws IOException, ImageException {
         in.mark();
         ByteOrder oldByteOrder = in.getByteOrder();
         try {
@@ -87,13 +87,13 @@ public class PreloaderBMP extends AbstractImagePreloader {
             int xRes = in.readInt();
             double xResDPI = UnitConv.in2mm(xRes / 1000d);
             if (xResDPI == 0) {
-                xResDPI = userAgent.getSourceResolution();
+                xResDPI = context.getSourceResolution();
             }
 
             int yRes = in.readInt();
             double yResDPI = UnitConv.in2mm(yRes / 1000d);
             if (yResDPI == 0) {
-                yResDPI = userAgent.getSourceResolution();
+                yResDPI = context.getSourceResolution();
             }
             
             size.setResolution(xResDPI, yResDPI);

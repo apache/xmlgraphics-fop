@@ -24,8 +24,8 @@ import java.io.IOException;
 import javax.imageio.stream.ImageInputStream;
 import javax.xml.transform.Source;
 
-import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.image2.ImageContext;
 import org.apache.fop.image2.ImageInfo;
 import org.apache.fop.image2.ImageSize;
 import org.apache.fop.image2.util.ImageUtil;
@@ -38,7 +38,7 @@ public class PreloaderGIF extends AbstractImagePreloader {
     private static final int GIF_SIG_LENGTH = 10;
 
     /** {@inheritDoc} */
-    public ImageInfo preloadImage(String uri, Source src, FOUserAgent userAgent)
+    public ImageInfo preloadImage(String uri, Source src, ImageContext context)
             throws IOException {
         if (!ImageUtil.hasImageInputStream(src)) {
             return null;
@@ -53,8 +53,8 @@ public class PreloaderGIF extends AbstractImagePreloader {
                 && (header[5] == 'a'));
 
         if (supported) {
-            ImageInfo info = new ImageInfo(uri, src, getMimeType());
-            info.setSize(determineSize(header, userAgent));
+            ImageInfo info = new ImageInfo(uri, getMimeType());
+            info.setSize(determineSize(header, context));
             return info;
         } else {
             return null;
@@ -66,7 +66,7 @@ public class PreloaderGIF extends AbstractImagePreloader {
         return MimeConstants.MIME_GIF;
     }
 
-    private ImageSize determineSize(byte[] header, FOUserAgent userAgent) {
+    private ImageSize determineSize(byte[] header, ImageContext context) {
         // little endian notation
         int byte1 = header[6] & 0xff;
         int byte2 = header[7] & 0xff;
@@ -75,7 +75,7 @@ public class PreloaderGIF extends AbstractImagePreloader {
         byte1 = header[8] & 0xff;
         byte2 = header[9] & 0xff;
         int height = ((byte2 << 8) | byte1) & 0xffff;
-        ImageSize size = new ImageSize(width, height, userAgent.getSourceResolution());
+        ImageSize size = new ImageSize(width, height, context.getSourceResolution());
         size.calcSizeFromPixels();
         return size;
     }

@@ -28,8 +28,8 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
 import javax.xml.transform.Source;
 
-import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.image2.ImageContext;
 import org.apache.fop.image2.ImageException;
 import org.apache.fop.image2.ImageInfo;
 import org.apache.fop.image2.ImageSize;
@@ -48,7 +48,7 @@ public class PreloaderPNG extends AbstractImagePreloader {
 
     /** {@inheritDoc} 
      * @throws ImageException */
-    public ImageInfo preloadImage(String uri, Source src, FOUserAgent userAgent)
+    public ImageInfo preloadImage(String uri, Source src, ImageContext context)
             throws IOException, ImageException {
         if (!ImageUtil.hasImageInputStream(src)) {
             return null;
@@ -65,8 +65,8 @@ public class PreloaderPNG extends AbstractImagePreloader {
                 && (header[7] == (byte) 0x0a));
 
         if (supported) {
-            ImageInfo info = new ImageInfo(uri, src, getMimeType());
-            info.setSize(determineSize(in, userAgent));
+            ImageInfo info = new ImageInfo(uri, getMimeType());
+            info.setSize(determineSize(in, context));
             return info;
         } else {
             return null;
@@ -78,7 +78,7 @@ public class PreloaderPNG extends AbstractImagePreloader {
         return MimeConstants.MIME_PNG;
     }
 
-    private ImageSize determineSize(ImageInputStream in, FOUserAgent userAgent)
+    private ImageSize determineSize(ImageInputStream in, ImageContext context)
                 throws IOException, ImageException {
         in.mark();
         
@@ -95,7 +95,7 @@ public class PreloaderPNG extends AbstractImagePreloader {
         size.setSizeInPixels(reader.getWidth(imageIndex), reader.getHeight(imageIndex));
         
         //Resolution (first a default, then try to read the metadata)
-        size.setResolution(userAgent.getSourceResolution());
+        size.setResolution(context.getSourceResolution());
         ImageIOUtil.extractResolution(iiometa, size);
         
         reader.dispose();

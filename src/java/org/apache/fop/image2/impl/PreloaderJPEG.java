@@ -24,8 +24,8 @@ import java.io.IOException;
 import javax.imageio.stream.ImageInputStream;
 import javax.xml.transform.Source;
 
-import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.image2.ImageContext;
 import org.apache.fop.image2.ImageException;
 import org.apache.fop.image2.ImageInfo;
 import org.apache.fop.image2.ImageSize;
@@ -34,13 +34,13 @@ import org.apache.fop.image2.util.ImageUtil;
 /**
  * Image preloader for JPEG images.
  */
-public class PreloaderJPEG extends AbstractImagePreloader  implements JPEGConstants {
+public class PreloaderJPEG extends AbstractImagePreloader implements JPEGConstants {
 
     private static final int JPG_SIG_LENGTH = 3;
 
     /** {@inheritDoc} 
      * @throws ImageException */
-    public ImageInfo preloadImage(String uri, Source src, FOUserAgent userAgent)
+    public ImageInfo preloadImage(String uri, Source src, ImageContext context)
                 throws IOException, ImageException {
         if (!ImageUtil.hasImageInputStream(src)) {
             return null;
@@ -52,8 +52,8 @@ public class PreloaderJPEG extends AbstractImagePreloader  implements JPEGConsta
                 && (header[2] == (byte)MARK));
 
         if (supported) {
-            ImageInfo info = new ImageInfo(uri, src, getMimeType());
-            info.setSize(determineSize(in, userAgent));
+            ImageInfo info = new ImageInfo(uri, getMimeType());
+            info.setSize(determineSize(in, context));
             return info;
         } else {
             return null;
@@ -65,14 +65,17 @@ public class PreloaderJPEG extends AbstractImagePreloader  implements JPEGConsta
         return MimeConstants.MIME_JPEG;
     }
 
-    private ImageSize determineSize(ImageInputStream in, FOUserAgent userAgent) throws IOException,
-            ImageException {
+    private ImageSize determineSize(ImageInputStream in, ImageContext context)
+            throws IOException, ImageException {
         in.mark();
         try {
             ImageSize size = new ImageSize();
 
+            //TODO Read resolution from EXIF if there's no APP0
+            //(for example with JPEGs from digicams)
             while (true) {
                 int segID = readMarkerSegment(in);
+                //System.out.println("Segment: " + Integer.toHexString(segID));
                 switch (segID) {
                 case SOI:
                 case NULL:
@@ -93,7 +96,11 @@ public class PreloaderJPEG extends AbstractImagePreloader  implements JPEGConsta
                         size.setResolution(xdensity, ydensity);
                     } else {
                         //resolution not specified
-                        size.setResolution(userAgent.getSourceResolution());
+                        size.setResolution(context.getSourceResolution());
+                    }
+                    if (size.getWidthPx() != 0) {
+                        size.calcSizeFromPixels();
+                        return size;
                     }
                     in.skipBytes(reclen - 14);
                     break;
@@ -106,7 +113,17 @@ public class PreloaderJPEG extends AbstractImagePreloader  implements JPEGConsta
                     int height = in.readUnsignedShort();
                     int width = in.readUnsignedShort();
                     size.setSizeInPixels(width, height);
-                    size.calcSizeFromPixels();
+                    if (size.getDpiHorizontal() != 0) {
+                        size.calcSizeFromPixels();
+                        return size;
+                    }
+                    break;
+                case SOS:
+                case EOI:
+                    if (size.getDpiHorizontal() == 0) {
+                        size.setResolution(context.getSourceResolution());
+                        size.calcSizeFromPixels();
+                    }
                     return size;
                 default:
                     reclen = in.readUnsignedShort();

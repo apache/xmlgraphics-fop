@@ -19,6 +19,7 @@
 
 package org.apache.fop.image2;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import junit.framework.TestCase;
@@ -50,13 +51,26 @@ public class ImagePreloaderTestCase extends TestCase {
         assertNotNull(ilf);
     }
     
+    public void testFileNotFound() throws Exception {
+        String uri = "doesnotexistanywhere.png";
+        
+        FOUserAgent userAgent = fopFactory.newFOUserAgent();
+        ImageManager manager = fopFactory.getImageManager();
+        try {
+            ImageInfo info = manager.preloadImage(uri, userAgent.getImageSessionContext());
+            fail("Expected a FileNotFoundException!");
+        } catch (FileNotFoundException e) {
+            //expected!
+        }
+    }
+    
     public void testPNG() throws Exception {
         String uri = "examples/fo/graphics/asf-logo.png";
         
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
         
         ImageManager manager = fopFactory.getImageManager();
-        ImageInfo info = manager.preloadImage(uri, userAgent);
+        ImageInfo info = manager.preloadImage(uri, userAgent.getImageSessionContext());
         assertNotNull("ImageInfo must not be null", info);
         assertEquals(MimeConstants.MIME_PNG, info.getMimeType());
         assertEquals("examples/fo/graphics/asf-logo.png", info.getOriginalURI());
@@ -73,7 +87,7 @@ public class ImagePreloaderTestCase extends TestCase {
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
         
         ImageManager manager = fopFactory.getImageManager();
-        ImageInfo info = manager.preloadImage(uri, userAgent);
+        ImageInfo info = manager.preloadImage(uri, userAgent.getImageSessionContext());
         assertNotNull("ImageInfo must not be null", info);
         assertEquals(MimeConstants.MIME_TIFF, info.getMimeType());
         assertEquals(uri, info.getOriginalURI());
@@ -90,7 +104,7 @@ public class ImagePreloaderTestCase extends TestCase {
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
         
         ImageManager manager = fopFactory.getImageManager();
-        ImageInfo info = manager.preloadImage(uri, userAgent);
+        ImageInfo info = manager.preloadImage(uri, userAgent.getImageSessionContext());
         assertNotNull("ImageInfo must not be null", info);
         assertEquals(MimeConstants.MIME_TIFF, info.getMimeType());
         assertEquals(uri, info.getOriginalURI());
@@ -107,7 +121,7 @@ public class ImagePreloaderTestCase extends TestCase {
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
         
         ImageManager manager = fopFactory.getImageManager();
-        ImageInfo info = manager.preloadImage(uri, userAgent);
+        ImageInfo info = manager.preloadImage(uri, userAgent.getImageSessionContext());
         assertNotNull("ImageInfo must not be null", info);
         assertEquals(MimeConstants.MIME_GIF, info.getMimeType());
         assertEquals(uri, info.getOriginalURI());
@@ -134,7 +148,7 @@ public class ImagePreloaderTestCase extends TestCase {
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
         
         ImageManager manager = fopFactory.getImageManager();
-        ImageInfo info = manager.preloadImage(uri, userAgent);
+        ImageInfo info = manager.preloadImage(uri, userAgent.getImageSessionContext());
         assertNotNull("ImageInfo must not be null", info);
         assertEquals(MimeConstants.MIME_SVG, info.getMimeType());
         assertEquals(uri, info.getOriginalURI());
@@ -151,7 +165,7 @@ public class ImagePreloaderTestCase extends TestCase {
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
         
         ImageManager manager = fopFactory.getImageManager();
-        ImageInfo info = manager.preloadImage(uri, userAgent);
+        ImageInfo info = manager.preloadImage(uri, userAgent.getImageSessionContext());
         assertNotNull("ImageInfo must not be null", info);
         assertEquals(ImageWMF.MIME_WMF, info.getMimeType());
         assertEquals(uri, info.getOriginalURI());
@@ -168,7 +182,7 @@ public class ImagePreloaderTestCase extends TestCase {
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
         
         ImageManager manager = fopFactory.getImageManager();
-        ImageInfo info = manager.preloadImage(uri, userAgent);
+        ImageInfo info = manager.preloadImage(uri, userAgent.getImageSessionContext());
         assertNotNull("ImageInfo must not be null", info);
         assertEquals("image/emf", info.getMimeType());
         assertEquals(uri, info.getOriginalURI());
@@ -185,7 +199,7 @@ public class ImagePreloaderTestCase extends TestCase {
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
         
         ImageManager manager = fopFactory.getImageManager();
-        ImageInfo info = manager.preloadImage(uri, userAgent);
+        ImageInfo info = manager.preloadImage(uri, userAgent.getImageSessionContext());
         assertNotNull("ImageInfo must not be null", info);
         assertEquals(MimeConstants.MIME_JPEG, info.getMimeType());
         assertEquals(uri, info.getOriginalURI());
@@ -202,7 +216,7 @@ public class ImagePreloaderTestCase extends TestCase {
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
         
         ImageManager manager = fopFactory.getImageManager();
-        ImageInfo info = manager.preloadImage(uri, userAgent);
+        ImageInfo info = manager.preloadImage(uri, userAgent.getImageSessionContext());
         assertNotNull("ImageInfo must not be null", info);
         assertEquals(MimeConstants.MIME_JPEG, info.getMimeType());
         assertEquals(uri, info.getOriginalURI());
@@ -219,7 +233,7 @@ public class ImagePreloaderTestCase extends TestCase {
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
         
         ImageManager manager = fopFactory.getImageManager();
-        ImageInfo info = manager.preloadImage(uri, userAgent);
+        ImageInfo info = manager.preloadImage(uri, userAgent.getImageSessionContext());
         assertNotNull("ImageInfo must not be null", info);
         assertEquals("image/bmp", info.getMimeType());
         assertEquals(uri, info.getOriginalURI());
@@ -236,7 +250,7 @@ public class ImagePreloaderTestCase extends TestCase {
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
         
         ImageManager manager = fopFactory.getImageManager();
-        ImageInfo info = manager.preloadImage(uri, userAgent);
+        ImageInfo info = manager.preloadImage(uri, userAgent.getImageSessionContext());
         assertNotNull("ImageInfo must not be null", info);
         assertEquals("image/bmp", info.getMimeType());
         assertEquals(uri, info.getOriginalURI());
@@ -253,7 +267,7 @@ public class ImagePreloaderTestCase extends TestCase {
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
         
         ImageManager manager = fopFactory.getImageManager();
-        ImageInfo info = manager.preloadImage(uri, userAgent);
+        ImageInfo info = manager.preloadImage(uri, userAgent.getImageSessionContext());
         assertNotNull("ImageInfo must not be null", info);
         assertEquals(MimeConstants.MIME_EPS, info.getMimeType());
         assertEquals(uri, info.getOriginalURI());
@@ -270,7 +284,7 @@ public class ImagePreloaderTestCase extends TestCase {
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
         
         ImageManager manager = fopFactory.getImageManager();
-        ImageInfo info = manager.preloadImage(uri, userAgent);
+        ImageInfo info = manager.preloadImage(uri, userAgent.getImageSessionContext());
         assertNotNull("ImageInfo must not be null", info);
         assertEquals(MimeConstants.MIME_EPS, info.getMimeType());
         assertEquals(uri, info.getOriginalURI());

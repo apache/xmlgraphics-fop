@@ -22,10 +22,14 @@ package org.apache.fop.image2.impl;
 import java.io.IOException;
 import java.util.Map;
 
+import javax.xml.transform.Source;
+
 import org.apache.fop.image2.Image;
 import org.apache.fop.image2.ImageException;
 import org.apache.fop.image2.ImageFlavor;
 import org.apache.fop.image2.ImageInfo;
+import org.apache.fop.image2.ImageSessionContext;
+import org.apache.fop.image2.util.ImageUtil;
 
 /**
  * ImageLoader for formats consumed "raw" (undecoded). Provides a raw/undecoded stream.
@@ -50,12 +54,15 @@ public class ImageLoaderRaw extends AbstractImageLoader {
     }
 
     /** {@inheritDoc} */
-    public Image loadImage(ImageInfo info, Map hints) throws ImageException, IOException {
+    public Image loadImage(ImageInfo info, Map hints, ImageSessionContext session)
+                throws ImageException, IOException {
         if (!this.mime.equals(info.getMimeType())) {
             throw new IllegalArgumentException(
                     "ImageInfo must be from a image with MIME type: " + this.mime);
         }
-        ImageRawStream rawImage = new ImageRawStream(info, getTargetFlavor());
+        Source src = session.needSource(info.getOriginalURI());
+        ImageRawStream rawImage = new ImageRawStream(info, getTargetFlavor(),
+                ImageUtil.needInputStream(src));
         return rawImage;
     }
 

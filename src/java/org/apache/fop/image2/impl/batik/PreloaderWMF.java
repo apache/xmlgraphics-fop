@@ -31,7 +31,8 @@ import org.apache.commons.io.EndianUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.apps.FOUserAgent;
+
+import org.apache.fop.image2.ImageContext;
 import org.apache.fop.image2.ImageInfo;
 import org.apache.fop.image2.ImageSize;
 import org.apache.fop.image2.impl.AbstractImagePreloader;
@@ -49,7 +50,7 @@ public class PreloaderWMF extends AbstractImagePreloader {
     private boolean batikAvailable = true;
     
     /** {@inheritDoc} */ 
-    public ImageInfo preloadImage(String uri, Source src, FOUserAgent userAgent)
+    public ImageInfo preloadImage(String uri, Source src, ImageContext context)
             throws IOException {
         if (!ImageUtil.hasInputStream(src)) {
             return null;
@@ -58,7 +59,7 @@ public class PreloaderWMF extends AbstractImagePreloader {
         if (batikAvailable) {
             try {
                 Loader loader = new Loader();
-                return loader.getImage(uri, src, userAgent);
+                info = loader.getImage(uri, src, context);
             } catch (NoClassDefFoundError e) {
                 batikAvailable = false;
                 log.warn("Batik not in class path", e);
@@ -83,7 +84,7 @@ public class PreloaderWMF extends AbstractImagePreloader {
      */
     class Loader {
         private ImageInfo getImage(String uri, Source src,
-                FOUserAgent userAgent) {
+                ImageContext context) {
             // parse document and get the size attributes of the svg element
 
             InputStream in = new UnclosableInputStream(ImageUtil.needInputStream(src));
@@ -105,7 +106,7 @@ public class PreloaderWMF extends AbstractImagePreloader {
                 int height = wmfStore.getHeightUnits();
                 int dpi = wmfStore.getMetaFileUnitsPerInch();
                 
-                ImageInfo info = new ImageInfo(uri, src, getMimeType());
+                ImageInfo info = new ImageInfo(uri, getMimeType());
                 ImageSize size = new ImageSize();
                 size.setSizeInPixels(width, height);
                 size.setResolution(dpi);

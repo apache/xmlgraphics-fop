@@ -17,7 +17,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.image2.spi;
+package org.apache.fop.image2.pipeline;
 
 import org.apache.fop.image2.ImageFlavor;
 import org.apache.fop.util.dijkstra.Vertex;
@@ -29,27 +29,16 @@ import org.apache.fop.util.dijkstra.Vertex;
  */
 public class ImageRepresentation implements Vertex {
 
-    //private String mime;
     private ImageFlavor flavor;
     
     /**
      * Main constructor
-     * @param mime the MIME type
      * @param flavor the image flavor
      */
-    public ImageRepresentation(/*String mime,*/ ImageFlavor flavor) {
-        //this.mime = mime;
+    public ImageRepresentation(ImageFlavor flavor) {
         this.flavor = flavor;
     }
     
-    /**
-     * Returns the MIME type.
-     * @return the MIME type
-     *//*
-    public String getMIMEType() {
-        return mime;
-    }*/
-
     /**
      * Returns the image flavor.
      * @return the image flavor
@@ -65,7 +54,7 @@ public class ImageRepresentation implements Vertex {
 
     /** {@inheritDoc} */
     public int hashCode() {
-        return toString().hashCode();
+        return getFlavor().hashCode();
     }
 
     /** {@inheritDoc} */
@@ -75,7 +64,7 @@ public class ImageRepresentation implements Vertex {
     
     /** {@inheritDoc} */
     public String toString() {
-        return /*getMIMEType() +*/ " (" + getFlavor() + ")";
+        return getFlavor().toString();
     }
     
 }

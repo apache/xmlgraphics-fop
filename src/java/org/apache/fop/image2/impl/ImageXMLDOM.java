@@ -19,9 +19,10 @@
 
 package org.apache.fop.image2.impl;
 
+import org.w3c.dom.Document;
+
 import org.apache.fop.image2.ImageFlavor;
 import org.apache.fop.image2.ImageInfo;
-import org.w3c.dom.Document;
 
 /**
  * This class is an implementation of the Image interface exposing an XML DOM (W3C).
@@ -48,6 +49,11 @@ public class ImageXMLDOM extends AbstractImage {
         return ImageFlavor.XML_DOM;
     }
 
+    /** {@inheritDoc} */
+    public boolean isCacheable() {
+        return true;
+    }
+    
     /**
      * Returns the contained W3C DOM document.
      * @return the DOM

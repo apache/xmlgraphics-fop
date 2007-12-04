@@ -47,7 +47,7 @@ public class ImageRawJPEG extends ImageRawStream {
      */
     public ImageRawJPEG(ImageInfo info, java.io.InputStream in,
                 int sofType, ColorSpace colorSpace, ICC_Profile iccProfile, boolean invertImage) {
-        super(info, ImageFlavor.RAW_EPS, in);
+        super(info, ImageFlavor.RAW_JPEG, in);
         this.sofType = sofType;
         this.colorSpace = colorSpace;
         this.iccProfile = iccProfile;

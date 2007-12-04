@@ -69,13 +69,13 @@ public class ExternalGraphic extends AbstractGraphics {
         super.bind(pList);
         src = pList.get(PR_SRC).getString();
         
-        //Additional processing: preload image
+        //Additional processing: obtain the image's intrinsic size and baseline information
         url = URISpecification.getURL(src);
         FOUserAgent userAgent = getUserAgent();
         ImageManager manager = userAgent.getFactory().getImageManager();
         ImageInfo info = null;
         try {
-            info = manager.preloadImage(url, userAgent);
+            info = manager.getImageInfo(url, userAgent.getImageSessionContext());
         } catch (ImageException e) {
             log.error("Image not available: " + e.getMessage());
         } catch (IOException ioe) {

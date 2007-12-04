@@ -20,6 +20,7 @@
 package org.apache.fop.image2.impl.batik;
 
 import org.apache.batik.transcoder.wmf.tosvg.WMFRecordStore;
+
 import org.apache.fop.image2.ImageFlavor;
 import org.apache.fop.image2.ImageInfo;
 import org.apache.fop.image2.impl.AbstractImage;
@@ -52,6 +53,11 @@ public class ImageWMF extends AbstractImage {
         return WMF_IMAGE;
     }
 
+    /** {@inheritDoc} */
+    public boolean isCacheable() {
+        return true;
+    }
+    
     /**
      * Returns the contained WMF record store.
      * @return the WMFRecordStore

@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import javax.imageio.stream.ImageInputStream;
+import javax.xml.transform.Source;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.Log;
@@ -35,6 +36,7 @@ import org.apache.fop.image2.Image;
 import org.apache.fop.image2.ImageException;
 import org.apache.fop.image2.ImageFlavor;
 import org.apache.fop.image2.ImageInfo;
+import org.apache.fop.image2.ImageSessionContext;
 import org.apache.fop.image2.util.ImageUtil;
 import org.apache.fop.util.CMYKColorSpace;
 
@@ -59,7 +61,8 @@ public class ImageLoaderRawJPEG extends AbstractImageLoader implements JPEGConst
     }
 
     /** {@inheritDoc} */
-    public Image loadImage(ImageInfo info, Map hints) throws ImageException, IOException {
+    public Image loadImage(ImageInfo info, Map hints, ImageSessionContext session)
+                throws ImageException, IOException {
         if (!MimeConstants.MIME_JPEG.equals(info.getMimeType())) {
             throw new IllegalArgumentException("ImageInfo must be from a image with MIME type: "
                     + MimeConstants.MIME_JPEG);
@@ -70,14 +73,17 @@ public class ImageLoaderRawJPEG extends AbstractImageLoader implements JPEGConst
         int sofType = 0;
         ByteArrayOutputStream iccStream = null;
         
-        ImageInputStream in = ImageUtil.needImageInputStream(info.getSource());
+        Source src = session.needSource(info.getOriginalURI());
+        ImageInputStream in = ImageUtil.needImageInputStream(src);
         in.mark();
         try {
             outer:
             while (true) {
                 int reclen;
                 int segID = readMarkerSegment(in);
-                log.debug("Seg Marker: " + Integer.toHexString(segID));
+                if (log.isDebugEnabled()) {
+                    log.debug("Seg Marker: " + Integer.toHexString(segID));
+                }
                 switch (segID) {
                 case EOI:
                     log.debug("EOI found. Stopping.");
@@ -191,7 +197,7 @@ public class ImageLoaderRawJPEG extends AbstractImageLoader implements JPEGConst
         }
 
         ImageRawJPEG rawImage = new ImageRawJPEG(info,
-                ImageUtil.needInputStream(info.getSource()),
+                ImageUtil.needInputStream(src),
                 sofType, colorSpace, iccProfile, invertImage);
         return rawImage;
     }

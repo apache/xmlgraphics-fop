@@ -26,6 +26,7 @@ import org.apache.fop.image2.Image;
 import org.apache.fop.image2.ImageException;
 import org.apache.fop.image2.ImageFlavor;
 import org.apache.fop.image2.ImageInfo;
+import org.apache.fop.image2.ImageSessionContext;
 
 /**
  * This interface is implemented by classes which load images from a source. Normally, such a
@@ -38,20 +39,24 @@ public interface ImageLoader {
      * @param info the image info object indicating the image
      * @param hints a Map of hints that can be used by implementations to customize the loading
      *                  process.
+     * @param session the session context
      * @return the fully loaded image
      * @throws ImageException if an error occurs while loading the image
      * @throws IOException if an I/O error occurs while loading the image
      */
-    Image loadImage(ImageInfo info, Map hints) throws ImageException, IOException;
+    Image loadImage(ImageInfo info, Map hints, ImageSessionContext session)
+            throws ImageException, IOException;
  
     /**
      * Loads and returns an image.
      * @param info the image info object indicating the image
+     * @param session the session context
      * @return the fully loaded image
      * @throws ImageException if an error occurs while loading the image
      * @throws IOException if an I/O error occurs while loading the image
      */
-    Image loadImage(ImageInfo info) throws ImageException, IOException;
+    Image loadImage(ImageInfo info, ImageSessionContext session)
+            throws ImageException, IOException;
     
     /**
      * Returns the image flavor that is returned by this ImageLoader implementation.

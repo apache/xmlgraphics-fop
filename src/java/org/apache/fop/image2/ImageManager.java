@@ -19,26 +19,20 @@
  
 package org.apache.fop.image2;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.imageio.ImageIO;
 import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.image2.spi.ImageConverterPipeline;
+import org.apache.fop.image2.cache.ImageCache;
+import org.apache.fop.image2.pipeline.ImageProviderPipeline;
+import org.apache.fop.image2.pipeline.PipelineFactory;
 import org.apache.fop.image2.spi.ImageImplRegistry;
 import org.apache.fop.image2.spi.ImagePreloader;
 import org.apache.fop.image2.util.ImageUtil;
@@ -54,6 +48,22 @@ public class ImageManager {
     /** Holds all registered interface implementations for the image package */
     private ImageImplRegistry registry = ImageImplRegistry.getDefaultInstance();
     
+    /** Provides session-independent information */
+    private ImageContext imageContext;
+
+    /** The image cache for this instance */
+    private ImageCache cache = new ImageCache();
+    
+    private PipelineFactory pipelineFactory = new PipelineFactory(this);
+    
+    /**
+     * Main constructor.
+     * @param context the session-independent context information
+     */
+    public ImageManager(ImageContext context) {
+        this.imageContext = context;
+    }
+    
     /**
      * Returns the ImageImplRegistry in use by the ImageManager.
      * @return the ImageImplRegistry
@@ -62,90 +72,65 @@ public class ImageManager {
         return this.registry;
     }
     
-    protected ImageSource newImageSource(String uri, FOUserAgent userAgent) {
-        Source source = userAgent.resolveURI(uri);
-        if (source == null) {
-            if (log.isDebugEnabled()) {
-                log.debug("URI could not be resolved: " + uri);
-            }
-            return null;
+    /**
+     * Returns the ImageCache in use by the ImageManager.
+     * @return the ImageCache
+     */
+    public ImageCache getCache() {
+        return this.cache;
+    }
+    
+    /**
+     * Returns the PipelineFactory in use by the ImageManager.
+     * @return the PipelineFactory
+     */
+    public PipelineFactory getPipelineFactory() {
+        return this.pipelineFactory;
+    }
+    
+    /**
+     * Returns an ImageInfo object containing its intrinsic size for a given URI. The ImageInfo
+     * is retrieved from an image cache if it has been requested before.
+     * @param uri the URI of the image 
+     * @param session the session context through which to resolve the URI if the image is not in
+     *                the cache
+     * @return the ImageInfo object created from the image
+     * @throws ImageException If no suitable ImagePreloader can be found to load the image or
+     *          if an error occurred while preloading the image.
+     * @throws IOException If an I/O error occurs while preloading the image
+     */
+    public ImageInfo getImageInfo(String uri, ImageSessionContext session)
+                throws ImageException, IOException {
+        if (getCache() != null) {
+            return getCache().needImageInfo(uri, session, this);
+        } else {
+            return preloadImage(uri, session);
         }
-        
-        ImageSource imageSource = null;
-        
-        String resolvedURI = source.getSystemId();
-        URL url;
-        try {
-            url = new URL(resolvedURI);
-        } catch (MalformedURLException e) {
-            url = null;
-        } 
-        File f = FileUtils.toFile(url);
-        if (f != null) {
-            boolean directFileAccess = true;
-            InputStream in = null;
-            if (source instanceof StreamSource) {
-                StreamSource streamSource = (StreamSource)source; 
-                in = streamSource.getInputStream();
-                in = ImageUtil.decorateMarkSupported(in);
-                try {
-                    if (ImageUtil.isGZIPCompressed(in)) {
-                        //GZIPped stream are not seekable, so buffer/cache like other URLs
-                        directFileAccess = false;
-                    }
-                } catch (IOException ioe) {
-                    log.error("Error while checking the InputStream for GZIP compression."
-                            + " Could not load image from system identifier '"
-                            + source.getSystemId() + "' (" + ioe.getMessage() + ")");
-                    return null;
-                }
-            }
-            
-            if (directFileAccess) {
-                //Close as the file is reopened in a more optimal way
-                IOUtils.closeQuietly(in);
-                try {
-                    imageSource = new ImageSource(ImageIO.createImageInputStream(f), resolvedURI);
-                } catch (IOException ioe) {
-                    log.error("Unable to create ImageInputStream for local file"
-                            + " from system identifier '"
-                            + source.getSystemId() + "' (" + ioe.getMessage() + ")");
-                }
-            }
-        }
-        
-        if (imageSource == null) {
-            // Got a valid source, obtain an InputStream from it
-            InputStream in = null;
-            if (source instanceof StreamSource) {
-                in = ((StreamSource)source).getInputStream();
-            }
-            if (in == null && url != null) {
-                try {
-                    in = url.openStream();
-                } catch (Exception ex) {
-                    log.error("Unable to obtain stream from system identifier '" 
-                        + source.getSystemId() + "'");
-                }
-            }
-            if (in == null) {
-                log.error("The Source that was returned from URI resolution didn't contain"
-                        + " an InputStream for URI: " + uri);
-                return null;
-            }
+    }
 
-            try {
-                //Buffer and uncompress if necessary
-                in = ImageUtil.autoDecorateInputStream(in);
-                imageSource = new ImageSource(
-                        ImageIO.createImageInputStream(in), source.getSystemId());
-            } catch (IOException ioe) {
-                log.error("Unable to create ImageInputStream for InputStream"
-                        + " from system identifier '"
-                        + source.getSystemId() + "' (" + ioe.getMessage() + ")");
-            }
-        }
-        return imageSource;
+    /**
+     * Preloads an image, i.e. the format of the image is identified and some basic information
+     * (MIME type, intrinsic size and possibly other values) are loaded and returned as an
+     * ImageInfo object. Note that the image is not fully loaded normally. Only with certain formats
+     * the image is already fully loaded and references added to the ImageInfo's custom objects
+     * (see {@link ImageInfo#getOriginalImage()}).
+     * <p>
+     * The reason for the preloading: Apache FOP, for example, only needs the image's intrinsic
+     * size during layout. Only when the document is rendered to the final format does FOP need
+     * to load the full image. Like this a lot of memory can be saved.
+     * @param uri the original URI of the image
+     * @param session the session context through which to resolve the URI
+     * @return the ImageInfo object created from the image
+     * @throws ImageException If no suitable ImagePreloader can be found to load the image or
+     *          if an error occurred while preloading the image.
+     * @throws IOException If an I/O error occurs while preloading the image
+     */
+    public ImageInfo preloadImage(String uri, ImageSessionContext session)
+            throws ImageException, IOException {
+        Source src = session.needSource(uri);
+        ImageInfo info = preloadImage(uri, src);
+        session.returnSource(uri, src);
+        return info;
     }
     
     /**
@@ -158,30 +143,23 @@ public class ImageManager {
      * The reason for the preloading: Apache FOP, for example, only needs the image's intrinsic
      * size during layout. Only when the document is rendered to the final format does FOP need
      * to load the full image. Like this a lot of memory can be saved.
-     * @param uri the URI to load the image from
-     * @param userAgent the user agent used during the loading process
+     * @param uri the original URI of the image
+     * @param src the Source object to load the image from
      * @return the ImageInfo object created from the image
      * @throws ImageException If no suitable ImagePreloader can be found to load the image or
      *          if an error occurred while preloading the image.
      * @throws IOException If an I/O error occurs while preloading the image
      */
-    public ImageInfo preloadImage(String uri, FOUserAgent userAgent)
-                throws ImageException, IOException {
-        ImageSource imageSource = newImageSource(uri, userAgent);
-        return preloadImage(uri, imageSource, userAgent);
-    }
-
-    private ImageInfo preloadImage(String uri, Source src, FOUserAgent userAgent)
+    public ImageInfo preloadImage(String uri, Source src)
             throws ImageException, IOException {
         Iterator iter = registry.getPreloaderIterator();
         while (iter.hasNext()) {
             ImagePreloader preloader = (ImagePreloader)iter.next();
-            ImageInfo info = preloader.preloadImage(uri, src, userAgent);
+            ImageInfo info = preloader.preloadImage(uri, src, imageContext);
             if (info != null) {
                 return info;
             }
         }
-        ImageUtil.closeQuietly(src);
         throw new ImageException("No ImagePreloader found for " + uri);
     }
 
@@ -197,12 +175,14 @@ public class ImageManager {
      *                  {@link #preloadImage(String, FOUserAgent)})
      * @param flavor the requested image flavor.
      * @param hints a Map of hints to any of the background components or null
+     * @param session the session context
      * @return the fully loaded image
      * @throws ImageException If no suitable loader/converter combination is available to fulfill
      *                  the request or if an error occurred while loading the image.
      * @throws IOException If an I/O error occurs
      */
-    public Image getImage(ImageInfo info, ImageFlavor flavor, Map hints)
+    public Image getImage(ImageInfo info, ImageFlavor flavor, Map hints,
+                ImageSessionContext session)
             throws ImageException, IOException {
         if (hints == null) {
             hints = Collections.EMPTY_MAP;
@@ -210,15 +190,17 @@ public class ImageManager {
         String mime = info.getMimeType();
         
         Image img = null;
-        ImageConverterPipeline pipeline = registry.newImageConverterPipeline(mime, flavor);
+        ImageProviderPipeline pipeline = getPipelineFactory().newImageConverterPipeline(
+                mime, flavor);
         if (pipeline != null) {
-            img = pipeline.execute(info, hints);
+            img = pipeline.execute(info, hints, session);
         }
         if (img == null) {
             throw new ImageException(
                     "Cannot load image (no suitable loader/converter combination available) for "
                         + info);
         }
+        ImageUtil.closeQuietly(session.getSource(info.getOriginalURI()));
         return img;
     }
     
@@ -235,12 +217,14 @@ public class ImageManager {
      *                  {@link #preloadImage(String, FOUserAgent)})
      * @param flavors the requested image flavors (in preferred order).
      * @param hints a Map of hints to any of the background components or null
+     * @param session the session context
      * @return the fully loaded image
      * @throws ImageException If no suitable loader/converter combination is available to fulfill
      *                  the request or if an error occurred while loading the image.
      * @throws IOException If an I/O error occurs
      */
-    public Image getImage(ImageInfo info, ImageFlavor[] flavors, Map hints)
+    public Image getImage(ImageInfo info, ImageFlavor[] flavors, Map hints,
+                        ImageSessionContext session)
                 throws ImageException, IOException {
         if (hints == null) {
             hints = Collections.EMPTY_MAP;
@@ -249,11 +233,11 @@ public class ImageManager {
 
         Image img = null;
         int count = flavors.length;
-        ImageConverterPipeline[] candidates = new ImageConverterPipeline[count];
+        ImageProviderPipeline[] candidates = new ImageProviderPipeline[count];
         for (int i = 0; i < count; i++) {
-            candidates[i] = registry.newImageConverterPipeline(mime, flavors[i]);
+            candidates[i] = getPipelineFactory().newImageConverterPipeline(mime, flavors[i]);
         }
-        ImageConverterPipeline pipeline = null;
+        ImageProviderPipeline pipeline = null;
         int minPenalty = Integer.MAX_VALUE;
         for (int i = count - 1; i >= 0; i--) {
             if (candidates[i] == null) {
@@ -266,13 +250,14 @@ public class ImageManager {
             }
         }    
         if (pipeline != null) {
-            img = pipeline.execute(info, hints);
+            img = pipeline.execute(info, hints, session);
         }
         if (img == null) {
             throw new ImageException(
                     "Cannot load image (no suitable loader/converter combination available) for "
                             + info);
         }
+        ImageUtil.closeQuietly(session.getSource(info.getOriginalURI()));
         return img;
     }
 
@@ -282,14 +267,15 @@ public class ImageManager {
      * @param info the ImageInfo instance for the image (obtained by 
      *                  {@link #preloadImage(String, FOUserAgent)})
      * @param flavor the requested image flavor.
+     * @param session the session context
      * @return the fully loaded image
      * @throws ImageException If no suitable loader/converter combination is available to fulfill
      *                  the request or if an error occurred while loading the image.
      * @throws IOException If an I/O error occurs
      */
-    public Image getImage(ImageInfo info, ImageFlavor flavor)
+    public Image getImage(ImageInfo info, ImageFlavor flavor, ImageSessionContext session)
             throws ImageException, IOException {
-        return getImage(info, flavor, null);
+        return getImage(info, flavor, ImageUtil.getDefaultHints(session), session);
     }
 
     /**
@@ -298,14 +284,15 @@ public class ImageManager {
      * @param info the ImageInfo instance for the image (obtained by 
      *                  {@link #preloadImage(String, FOUserAgent)})
      * @param flavors the requested image flavors (in preferred order).
+     * @param session the session context
      * @return the fully loaded image
      * @throws ImageException If no suitable loader/converter combination is available to fulfill
      *                  the request or if an error occurred while loading the image.
      * @throws IOException If an I/O error occurs
      */
-    public Image getImage(ImageInfo info, ImageFlavor[] flavors)
+    public Image getImage(ImageInfo info, ImageFlavor[] flavors, ImageSessionContext session)
             throws ImageException, IOException {
-        return getImage(info, flavors, null);
+        return getImage(info, flavors, ImageUtil.getDefaultHints(session), session);
     }
     
 }

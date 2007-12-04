@@ -23,7 +23,7 @@ import java.io.IOException;
 
 import javax.xml.transform.Source;
 
-import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.image2.ImageContext;
 import org.apache.fop.image2.ImageException;
 import org.apache.fop.image2.ImageInfo;
 
@@ -40,13 +40,13 @@ public interface ImagePreloader {
      * information. The image is usually not fully loaded at this time to conserve memory.
      * @param originalURI the original (unresolved) URI of the image 
      * @param src a image source the image is loaded from
-     * @param userAgent the user agent providing context and configuration information
+     * @param context the context object that provides configuration information
      * @return an image info object with the basic information about an image
      * @throws ImageException if an error occurs while preloading the image
      * @throws IOException if an I/O error occurs while preloading the image
      */
     ImageInfo preloadImage(String originalURI, 
-            Source src, FOUserAgent userAgent) throws ImageException, IOException;
+            Source src, ImageContext context) throws ImageException, IOException;
     
     /**
      * Returns the MIME type supported by the image preloader.

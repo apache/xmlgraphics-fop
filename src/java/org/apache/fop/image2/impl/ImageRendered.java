@@ -46,6 +46,11 @@ public class ImageRendered extends AbstractImage {
         return ImageFlavor.RENDERED_IMAGE;
     }
 
+    /** {@inheritDoc} */
+    public boolean isCacheable() {
+        return true;
+    }
+    
     /**
      * Returns the contained RenderedImage instance.
      * @return the RenderedImage instance
