@@ -33,40 +33,41 @@ public final class BinaryUtils {
      * to the length specified by bufsize.
      * @param integer The int representation.
      * @param bufsize The required byte array size.
+     * @return the hexadecimal digits as a byte array
      */
     public static byte[] convert(int integer, int bufsize) {
-
         StringBuffer buf = new StringBuffer(Integer.toHexString(integer));
-        if (buf.length() % 2 == 0) {
-            // Ignore even number of digits
-        } else {
-            // Convert to an even number of digits
+        //Convert to an even number of digits
+        if (buf.length() % 2 != 0) {
             buf.insert(0, "0");
         }
         int size = buf.length() / 2;
-        while (size < bufsize) {
-            buf.insert(0, "00");
-            size++;
-        };
-        return convert(buf.toString());
-
+        if (size > bufsize) {
+            buf.delete(0, buf.length() - (bufsize * 2));
+        } else {
+            while (size < bufsize) {
+                buf.insert(0, "00");
+                size++;
+            }
+        }
+        return convert(buf.toString()); 
     }
 
     /**
      * Convert an int into the corresponding byte array by encoding each
      * two hexadecimal digits as a char.
      * @param integer The int representation
+     * @return the hexadecimal digits as a byte array
      */
     public static byte[] convert(int integer) {
-
         return convert(Integer.toHexString(integer));
-
     }
 
     /**
      * Convert a String of hexadecimal digits into the corresponding
      * byte array by encoding each two hexadecimal digits as a byte.
      * @param digits The hexadecimal digits representation.
+     * @return the hexadecimal digits as a byte array
      */
     public static byte[] convert(String digits) {
 
@@ -82,26 +83,28 @@ public final class BinaryUtils {
             char c1 = digits.charAt(i);
             char c2 = digits.charAt(i + 1);
             byte b = 0;
-            if ((c1 >= '0') && (c1 <= '9'))
+            if ((c1 >= '0') && (c1 <= '9')) {
                 b += ((c1 - '0') * 16);
-            else if ((c1 >= 'a') && (c1 <= 'f'))
+            } else if ((c1 >= 'a') && (c1 <= 'f')) {
                 b += ((c1 - 'a' + 10) * 16);
-            else if ((c1 >= 'A') && (c1 <= 'F'))
+            } else if ((c1 >= 'A') && (c1 <= 'F')) {
                 b += ((c1 - 'A' + 10) * 16);
-            else
+            } else {
                 throw new IllegalArgumentException("Bad hexadecimal digit");
-            if ((c2 >= '0') && (c2 <= '9'))
+            }
+            
+            if ((c2 >= '0') && (c2 <= '9')) {
                 b += (c2 - '0');
-            else if ((c2 >= 'a') && (c2 <= 'f'))
+            } else if ((c2 >= 'a') && (c2 <= 'f')) {
                 b += (c2 - 'a' + 10);
-            else if ((c2 >= 'A') && (c2 <= 'F'))
+            } else if ((c2 >= 'A') && (c2 <= 'F')) {
                 b += (c2 - 'A' + 10);
-            else
+            } else {
                 throw new IllegalArgumentException("Bad hexadecimal digit");
+            }
             baos.write(b);
         }
         return (baos.toByteArray());
-
     }
 
     /**
