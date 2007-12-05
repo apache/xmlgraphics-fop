@@ -27,8 +27,8 @@ import org.apache.fop.fonts.Typeface;
 public class FopCharacterSet extends CharacterSet {
 
     /** The character set for this font */
-    private Typeface _characterSet = null;
-    private int _size = 0;
+    private Typeface charSet = null;
+    private int size = 0;
 
     /**
      * Constructor for the CharacterSetMetric object, the character set is used
@@ -37,17 +37,18 @@ public class FopCharacterSet extends CharacterSet {
      * @param encoding the encoding of the font
      * @param name the character set name
      * @param size the font size
-     * @param characterSet the fop character set
+     * @param charSet the fop character set
      */
     public FopCharacterSet(
         String codePage,
         String encoding,
         String name,
         int size,
-        Typeface characterSet) {
+        Typeface charSet) {
+        
         super(codePage, encoding, name, null);
-        _characterSet = characterSet;
-        _size = size * 1000;
+        this.charSet = charSet;
+        this.size = size * 1000;
     }
 
     /**
@@ -63,7 +64,7 @@ public class FopCharacterSet extends CharacterSet {
      * @return the ascender value in millipoints
      */
     public int getAscender() {
-        return _characterSet.getAscender(_size);
+        return charSet.getAscender(size);
     }
 
     /**
@@ -73,7 +74,7 @@ public class FopCharacterSet extends CharacterSet {
      * @return the cap height value in millipoints
      */
     public int getCapHeight() {
-        return _characterSet.getCapHeight(_size);
+        return charSet.getCapHeight(size);
     }
 
     /**
@@ -83,7 +84,7 @@ public class FopCharacterSet extends CharacterSet {
      * @return the descender value in millipoints
      */
     public int getDescender() {
-        return _characterSet.getDescender(_size);
+        return charSet.getDescender(size);
     }
 
     /**
@@ -107,7 +108,7 @@ public class FopCharacterSet extends CharacterSet {
      * @return the widths of all characters
      */
     public int[] getWidths() {
-        return _characterSet.getWidths();
+        return charSet.getWidths();
     }
 
     /**
@@ -115,7 +116,7 @@ public class FopCharacterSet extends CharacterSet {
      * @return the typical height of characters
      */
     public int getXHeight() {
-        return _characterSet.getXHeight(_size);
+        return charSet.getXHeight(size);
     }
 
     /**
@@ -125,7 +126,7 @@ public class FopCharacterSet extends CharacterSet {
      * @return the width of the character
      */
     public int width(int character) {
-        return _characterSet.getWidth(character, _size);
+        return charSet.getWidth(character, size);
     }
 
     /**
@@ -134,7 +135,7 @@ public class FopCharacterSet extends CharacterSet {
      * @return the mapped character
      */
     public char mapChar(char c) {
-        return _characterSet.mapChar(c);
+        return charSet.mapChar(c);
     }
 
 }
