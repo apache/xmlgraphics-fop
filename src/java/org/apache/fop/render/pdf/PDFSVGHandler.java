@@ -154,10 +154,8 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
         int xOffset = pdfInfo.currentXPosition;
         int yOffset = pdfInfo.currentYPosition;
 
-        log.debug("Generating SVG at " 
-                + context.getUserAgent().getTargetResolution()
-                + "dpi.");
         final float deviceResolution = context.getUserAgent().getTargetResolution();
+        log.debug("Generating SVG at " + deviceResolution + "dpi.");
         
         final float uaResolution = context.getUserAgent().getSourceResolution();
         SVGUserAgent ua = new SVGUserAgent(25.4f / uaResolution, new AffineTransform());
