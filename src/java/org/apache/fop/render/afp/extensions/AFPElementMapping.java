@@ -35,14 +35,19 @@ import org.apache.fop.fo.FONode;
  */
 public class AFPElementMapping extends ElementMapping {
 
+    /** page element */
     public static final String PAGE = "page";
 
+    /** page group element */
     public static final String PAGE_GROUP = "page-group";
 
+    /** tag logical element */
     public static final String TAG_LOGICAL_ELEMENT = "tag-logical-element";
 
+    /** include page overlay element */
     public static final String INCLUDE_PAGE_OVERLAY = "include-page-overlay";
 
+    /** include page segment element */
     public static final String INCLUDE_PAGE_SEGMENT = "include-page-segment";
 
     /** NOP */
