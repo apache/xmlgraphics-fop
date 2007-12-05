@@ -103,12 +103,12 @@ public final class ColorProperty extends Property  {
     }
 
     /**
-     * 
-     * @param value
-     * @return
+     * Returns an instance of a color property given a color
+     * @param color the color value
+     * @return the color property
      */
-    public static ColorProperty getInstance(Color value) {
-        return (ColorProperty) cache.fetch(new ColorProperty(value));
+    public static ColorProperty getInstance(Color color) {
+        return (ColorProperty) cache.fetch(new ColorProperty(color));
     }
     
     /**
