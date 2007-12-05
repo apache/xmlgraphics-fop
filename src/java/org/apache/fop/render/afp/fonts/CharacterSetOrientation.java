@@ -19,7 +19,6 @@
 
 package org.apache.fop.render.afp.fonts;
 
-
 /**
  * The IBM Font Object Content Architecture (FOCA) supports presentation
  * of character shapes by defining their characteristics, which include
@@ -31,10 +30,10 @@ package org.apache.fop.render.afp.fonts;
  * that you communicate this information clearly to rotate and position
  * characters correctly on the physical or logical page.
  *
- * This class proivdes font metric information for a particular font
+ * This class provides font metric information for a particular font
  * as by the orientation.
  *
- * This informtaion is obtained directly from the AFP font files which must
+ * This information is obtained directly from the AFP font files which must
  * be installed in the classpath under in the location specified by the path
  * attribute in the afp-font.xml file.
  * <p/>
@@ -44,53 +43,53 @@ public class CharacterSetOrientation {
     /**
      * The code page to which the character set relates
      */
-    private String _codePage;
+    private String codePage;
 
     /**
      * The encoding used for the code page
      */
-    private String _encoding;
+    private String encoding;
 
     /**
      * The ascender height for the character set
      */
-    private int _ascender;
+    private int ascender;
 
     /**
      * The descender depth for the character set
      */
-    private int _descender;
+    private int descender;
 
     /**
      * The height of capital letters
      */
-    private int _capHeight;
+    private int capHeight;
 
     /**
      * The characters in the charcater set
      */
-    private int[] _characters = new int[256];
+    private int[] chars = new int[256];
 
     /**
      * The height of lowercase letters
      */
-    private int _xHeight;
+    private int xHeight;
 
     /**
      * The first character
      */
-    private int _firstCharacter;
+    private int firstChar;
 
     /**
      * The last character
      */
-    private int _lastCharacter;
+    private int lastChar;
 
 
     /**
      * The character set orientation
      */
-    private int _orientation = 0;
+    private int orientation = 0;
 
     /**
      * Constructor for the CharacterSetOrientation, the orientation is
@@ -98,9 +97,7 @@ public class CharacterSetOrientation {
      * @param orientation the character set orientation
      */
     public CharacterSetOrientation(int orientation) {
-
-        _orientation = orientation;
-
+        this.orientation = orientation;
     }
 
     /**
@@ -116,7 +113,7 @@ public class CharacterSetOrientation {
      * @return the ascender value in millipoints
      */
     public int getAscender() {
-        return _ascender;
+        return ascender;
     }
 
     /**
@@ -126,7 +123,7 @@ public class CharacterSetOrientation {
      * @return the cap height value in millipoints
      */
     public int getCapHeight() {
-        return _capHeight;
+        return capHeight;
     }
 
     /**
@@ -136,7 +133,7 @@ public class CharacterSetOrientation {
      * @return the descender value in millipoints
      */
     public int getDescender() {
-        return _descender;
+        return descender;
     }
 
     /**
@@ -144,7 +141,7 @@ public class CharacterSetOrientation {
      * @return the first character
      */
     public int getFirstChar() {
-        return _firstCharacter;
+        return firstChar;
     }
 
     /**
@@ -152,7 +149,7 @@ public class CharacterSetOrientation {
      * @return the last character
      */
     public int getLastChar() {
-        return _lastCharacter;
+        return lastChar;
     }
 
     /**
@@ -160,7 +157,7 @@ public class CharacterSetOrientation {
      * @return the orientation
      */
     public int getOrientation() {
-        return _orientation;
+        return orientation;
     }
 
     /**
@@ -169,11 +166,9 @@ public class CharacterSetOrientation {
      * @return the widths of all characters
      */
     public int[] getWidths() {
-
         int arr[] = new int[(getLastChar() - getFirstChar()) + 1];
-        System.arraycopy(_characters, getFirstChar(), arr, 0, (getLastChar() - getFirstChar()) + 1);
+        System.arraycopy(chars, getFirstChar(), arr, 0, (getLastChar() - getFirstChar()) + 1);
         return arr;
-
     }
 
     /**
@@ -182,7 +177,7 @@ public class CharacterSetOrientation {
      * @return heightX the typical height of characters
      */
     public int getXHeight() {
-        return _xHeight;
+        return xHeight;
     }
 
     /**
@@ -192,7 +187,7 @@ public class CharacterSetOrientation {
      * @return the widths of the character
      */
     public int width(int character) {
-        return _characters[character];
+        return chars[character];
     }
 
     /**
@@ -208,7 +203,7 @@ public class CharacterSetOrientation {
      * @param ascender the ascender to set
      */
     public void setAscender(int ascender) {
-        _ascender = ascender;
+        this.ascender = ascender;
     }
 
     /**
@@ -218,7 +213,7 @@ public class CharacterSetOrientation {
      * @param capHeight the cap height to set
      */
     public void setCapHeight(int capHeight) {
-        _capHeight = capHeight;
+        this.capHeight = capHeight;
     }
 
     /**
@@ -228,23 +223,23 @@ public class CharacterSetOrientation {
      * @param descender the descender value in millipoints
      */
     public void setDescender(int descender) {
-        _descender = descender;
+        this.descender = descender;
     }
 
     /**
      * The first character in the character set
-     * @param firstCharacter the first character
+     * @param firstChar the first character
      */
-    public void setFirstChar(int firstCharacter) {
-        _firstCharacter = firstCharacter;
+    public void setFirstChar(int firstChar) {
+        this.firstChar = firstChar;
     }
 
     /**
      * The last character in the character set
-     * @param lastCharacter the last character
+     * @param lastChar the last character
      */
-    public void setLastChar(int lastCharacter) {
-        _lastCharacter = lastCharacter;
+    public void setLastChar(int lastChar) {
+        this.lastChar = lastChar;
     }
 
     /**
@@ -255,13 +250,13 @@ public class CharacterSetOrientation {
      */
     public void setWidth(int character, int width) {
 
-        if (character >= _characters.length) {
+        if (character >= chars.length) {
             // Increase the size of the array if necessary
-            int arr[] = new int[(character - _firstCharacter) + 1];
-            System.arraycopy(_characters, 0, arr, 0, _characters.length);
-            _characters = arr;
+            int arr[] = new int[(character - firstChar) + 1];
+            System.arraycopy(chars, 0, arr, 0, chars.length);
+            chars = arr;
         }
-        _characters[character] = width;
+        chars[character] = width;
 
     }
 
@@ -271,6 +266,6 @@ public class CharacterSetOrientation {
      * @param xHeight the typical height of characters
      */
     public void setXHeight(int xHeight) {
-        _xHeight = xHeight;
+        this.xHeight = xHeight;
     }
 }
