@@ -43,23 +43,22 @@ public class StructuredFieldReader {
     /**
      * The input stream to read
      */
-    private InputStream _inputStream = null;
+    private InputStream inputStream = null;
 
     /**
      * The constructor for the StructuredFieldReader
      * @param inputStream the input stream to process
      */
     public StructuredFieldReader(InputStream inputStream) {
-
-        _inputStream = inputStream;
-
+        this.inputStream = inputStream;
     }
 
     /**
      * Get the next structured field as identified by the identifer
      * parameter (this must be a valid MO:DCA structured field.
      * @param identifier the three byte identifier
-     * @throws IOException
+     * @throws IOException if an I/O exception occurred
+     * @return the next structured field
      */
     public byte[] getNext(byte[] identifier) throws IOException {
 
@@ -70,7 +69,7 @@ public class StructuredFieldReader {
         }
 
         int c;
-        while ((c = _inputStream.read()) > -1) {
+        while ((c = inputStream.read()) > -1) {
 
             bufferData[bufferPointer] = (byte) c;
 
@@ -116,7 +115,7 @@ public class StructuredFieldReader {
 
                 byte[] retval = new byte[reclength];
 
-                _inputStream.read(retval, 0, reclength);
+                inputStream.read(retval, 0, reclength);
 
                 return retval;
 
@@ -131,7 +130,5 @@ public class StructuredFieldReader {
 
         return new byte[] {
         };
-
     }
-
 }
