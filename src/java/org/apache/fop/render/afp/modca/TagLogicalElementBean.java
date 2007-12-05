@@ -27,10 +27,10 @@ package org.apache.fop.render.afp.modca;
 public class TagLogicalElementBean {
 
     /** The key attribute */
-    private String _key;
+    private String key;
 
     /** The value attribute */
-    private String _value;
+    private String value;
 
     /**
      * Constructor for the TagLogicalElementBean.
@@ -38,8 +38,8 @@ public class TagLogicalElementBean {
      * @param value the value attribute
      */
     public TagLogicalElementBean(String key, String value) {
-        _key = key;
-        _value = value;
+        this.key = key;
+        this.value = value;
     }
 
     /**
@@ -47,7 +47,7 @@ public class TagLogicalElementBean {
      * @return the key
      */
     public String getKey() {
-        return _key;
+        return key;
     }
 
     /**
@@ -55,7 +55,7 @@ public class TagLogicalElementBean {
      * @return the value
      */
     public String getValue() {
-        return _value;
+        return value;
     }
 
 }
