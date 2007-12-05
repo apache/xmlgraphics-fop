@@ -36,7 +36,7 @@ public class AFPAttribute extends StringProperty.Maker {
     /**
      * The attribute property.
      */
-    private Property _property;
+    private Property property;
 
     /**
      * Constructor for the AFPAttribute.
@@ -44,7 +44,7 @@ public class AFPAttribute extends StringProperty.Maker {
      */
     protected AFPAttribute(String name) {
         super(0);
-        _property = null;
+        property = null;
     }
 
     /**
@@ -53,10 +53,10 @@ public class AFPAttribute extends StringProperty.Maker {
      * @return property The property object.
      */
     public Property make(PropertyList propertyList) {
-        if (_property == null) {
-            _property = make(propertyList, "", propertyList.getParentFObj());
+        if (property == null) {
+            property = make(propertyList, "", propertyList.getParentFObj());
         }
-        return _property;
+        return property;
     }
 
 }
