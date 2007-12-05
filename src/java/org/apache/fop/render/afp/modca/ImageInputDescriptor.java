@@ -33,16 +33,15 @@ public class ImageInputDescriptor extends AbstractAFPObject {
     /**
      * The resolution of the raster image (default 240)
      */
-    private int _resolution = 240;
+    private int resolution = 240;
 
 
     /**
      * Accessor method to write the AFP datastream for the Image Input Descriptor
      * @param os The stream to write to
-     * @throws java.io.IOException
+     * @throws java.io.IOException if an I/O exception occurred
      */
-    public void writeDataStream(OutputStream os)
-        throws IOException {
+    public void writeDataStream(OutputStream os) throws IOException {
 
         byte[] data = new byte[45];
 
@@ -75,7 +74,7 @@ public class ImageInputDescriptor extends AbstractAFPObject {
         // Y Base (Fixed x00)
         data[22] = 0x00;
 
-        byte[] imagepoints = BinaryUtils.convert(_resolution * 10, 2);
+        byte[] imagepoints = BinaryUtils.convert(resolution * 10, 2);
 
         /**
          * Specifies the number of image points per unit base for the X axis
@@ -141,7 +140,7 @@ public class ImageInputDescriptor extends AbstractAFPObject {
      * @param resolution The resolution value
      */
     public void setResolution(int resolution) {
-        _resolution = resolution;
+        this.resolution = resolution;
     }
 
 }
