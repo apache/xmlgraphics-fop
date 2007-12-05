@@ -37,22 +37,28 @@ import org.xml.sax.InputSource;
 public class DTDEntityResolver implements EntityResolver {
 
     /** Public ID for the AFP fonts 1.0 DTD. */
-    public static final String AFP_DTD_1_0_ID = "-//APACHE/DTD AFP Installed Font Definition DTD 1.0//EN";
+    public static final String AFP_DTD_1_0_ID
+        = "-//APACHE/DTD AFP Installed Font Definition DTD 1.0//EN";
 
     /** Resource location for the AFP fonts 1.0 DTD. */
-    public static final String AFP_DTD_1_0_RESOURCE =  "afp-fonts-1.0.dtd";
+    public static final String AFP_DTD_1_0_RESOURCE
+        =  "afp-fonts-1.0.dtd";
 
     /** Public ID for the AFP fonts 1.1 DTD. */
-    public static final String AFP_DTD_1_1_ID = "-//APACHE/DTD AFP Installed Font Definition DTD 1.1//EN";
+    public static final String AFP_DTD_1_1_ID
+        = "-//APACHE/DTD AFP Installed Font Definition DTD 1.1//EN";
 
     /** Resource location for the AFP fonts 1.1 DTD. */
-    public static final String AFP_DTD_1_1_RESOURCE =  "afp-fonts-1.1.dtd";
+    public static final String AFP_DTD_1_1_RESOURCE
+        =  "afp-fonts-1.1.dtd";
 
     /** Public ID for the AFP fonts 1.2 DTD. */
-    public static final String AFP_DTD_1_2_ID = "-//APACHE/DTD AFP Installed Font Definition DTD 1.2//EN";
+    public static final String AFP_DTD_1_2_ID
+        = "-//APACHE/DTD AFP Installed Font Definition DTD 1.2//EN";
 
     /** Resource location for the AFP fonts 1.2 DTD. */
-    public static final String AFP_DTD_1_2_RESOURCE =  "afp-fonts-1.2.dtd";
+    public static final String AFP_DTD_1_2_RESOURCE
+        =  "afp-fonts-1.2.dtd";
 
     /**
      * Resolve the combination of system and public identifiers.
@@ -76,7 +82,7 @@ public class DTDEntityResolver implements EntityResolver {
         } else if ( AFP_DTD_1_0_ID.equals(publicId) ) {
             throw new FontRuntimeException(
                 "The AFP Installed Font Definition 1.0 DTD is not longer supported" );
-        } else if( systemId != null && systemId.indexOf("afp-fonts.dtd") >= 0 ) {
+        } else if (systemId != null && systemId.indexOf("afp-fonts.dtd") >= 0 ) {
             throw new FontRuntimeException(
                 "The AFP Installed Font Definition DTD must be specified using the public id" );
         } else {
@@ -105,8 +111,8 @@ public class DTDEntityResolver implements EntityResolver {
 
         URL resource = cl.getResource( resourcePath );
         if (resource == null) {
-            throw new FontRuntimeException( "Resource " + resourcePath +
-                " could not be found on the classpath" );
+            throw new FontRuntimeException( "Resource " + resourcePath
+                    + "could not be found on the classpath" );
         }
 
         return resource;
