@@ -48,32 +48,29 @@ public class ImageRasterData extends AbstractAFPObject {
     /**
      * The image raster data
      */
-    private byte[] _rasterdata;
+    private byte[] rasterData;
 
     /**
      * Constructor for the image raster data object
-     * @param rasterdata The raster image data
+     * @param data The raster image data
      */
-    public ImageRasterData(byte[] rasterdata) {
-
-        _rasterdata = rasterdata;
-
+    public ImageRasterData(byte[] data) {
+        this.rasterData = data;
     }
 
     /**
      * Accessor method to write the AFP datastream for the Image Raster Data
      * @param os The stream to write to
-     * @throws java.io.IOException
+     * @throws java.io.IOException if an I/O exception occurred
      */
-    public void writeDataStream(OutputStream os)
-        throws IOException {
+    public void writeDataStream(OutputStream os) throws IOException {
 
         byte[] data = new byte[9];
 
         data[0] = 0x5A;
 
         // The size of the structured field
-        byte[] x = BinaryUtils.convert(_rasterdata.length + 8, 2);
+        byte[] x = BinaryUtils.convert(rasterData.length + 8, 2);
         data[1] = x[0];
         data[2] = x[1];
 
@@ -85,8 +82,6 @@ public class ImageRasterData extends AbstractAFPObject {
         data[8] = 0x00;
 
         os.write(data);
-        os.write(_rasterdata);
-
+        os.write(rasterData);
     }
-
 }
