@@ -28,19 +28,19 @@ package org.apache.fop.render.afp.fonts;
 public class OutlineFont extends AFPFont {
 
     /** The character set for this font */
-    private CharacterSet _characterSet = null;
+    private CharacterSet charSet = null;
 
     /**
      * Constructor for an outline font.
      *
      * @param name
      *            the name of the font
-     * @param characterSet
+     * @param charSet
      *            the chracter set
      */
-    public OutlineFont(String name, CharacterSet characterSet) {
+    public OutlineFont(String name, CharacterSet charSet) {
         super(name);
-        _characterSet = characterSet;
+        this.charSet = charSet;
     }
 
     /**
@@ -50,7 +50,7 @@ public class OutlineFont extends AFPFont {
      */
     public CharacterSet getCharacterSet() {
 
-        return _characterSet;
+        return charSet;
 
     }
 
@@ -61,26 +61,24 @@ public class OutlineFont extends AFPFont {
      */
     public CharacterSet getCharacterSet(int size) {
 
-        return _characterSet;
+        return charSet;
 
     }
 
     /**
      * Get the first character in this font.
+     * @return the first character in this font
      */
     public int getFirstChar() {
-
-        return _characterSet.getFirstChar();
-
+        return charSet.getFirstChar();
     }
 
     /**
      * Get the last character in this font.
+     * @return the last character in this font
      */
     public int getLastChar() {
-
-        return _characterSet.getLastChar();
-
+        return charSet.getLastChar();
     }
 
     /**
@@ -90,11 +88,10 @@ public class OutlineFont extends AFPFont {
      *
      * @param size
      *            the point size
+     * @return the ascender for the given size
      */
     public int getAscender(int size) {
-
-        return _characterSet.getAscender() / 1000 * size;
-
+        return charSet.getAscender() / 1000 * size;
     }
 
     /**
@@ -102,11 +99,10 @@ public class OutlineFont extends AFPFont {
      *
      * @param size
      *            the point size
+     * @return the cap height for the given size
      */
     public int getCapHeight(int size) {
-
-        return _characterSet.getCapHeight() / 1000 * size;
-
+        return charSet.getCapHeight() / 1000 * size;
     }
 
     /**
@@ -116,11 +112,10 @@ public class OutlineFont extends AFPFont {
      *
      * @param size
      *            the point size
+     * @return the descender for the given size
      */
     public int getDescender(int size) {
-
-        return _characterSet.getDescender() / 1000 * size;
-
+        return charSet.getDescender() / 1000 * size;
     }
 
     /**
@@ -128,20 +123,20 @@ public class OutlineFont extends AFPFont {
      *
      * @param size
      *            the point size
+     * @return the x height for the given size
      */
     public int getXHeight(int size) {
-
-        return _characterSet.getXHeight() / 1000 * size;
-
+        return charSet.getXHeight() / 1000 * size;
     }
 
     /**
      * Obtain the width of the character for the specified point size.
+     * @param character the character
+     * @param size point size
+     * @return the width of the character for the specified point size
      */
     public int getWidth(int character, int size) {
-
-        return _characterSet.width(character) / 1000 * size;
-
+        return charSet.width(character) / 1000 * size;
     }
 
     /**
@@ -153,13 +148,11 @@ public class OutlineFont extends AFPFont {
      * @return the widths of all characters
      */
     public int[] getWidths(int size) {
-
-        int[] widths =  _characterSet.getWidths();
+        int[] widths =  charSet.getWidths();
         for (int i = 0; i < widths.length; i++) {
             widths[i] = widths[i] / 1000 * size;
         }
         return widths;
-
     }
 
     /**
@@ -169,9 +162,7 @@ public class OutlineFont extends AFPFont {
      * @return the widths of all characters
      */
     public int[] getWidths() {
-
         return getWidths(1000);
-
     }
 
     /**
@@ -180,7 +171,7 @@ public class OutlineFont extends AFPFont {
      * @return the mapped character
      */
     public char mapChar(char c) {
-        return _characterSet.mapChar(c);
+        return charSet.mapChar(c);
     }
 
     /**
@@ -188,7 +179,6 @@ public class OutlineFont extends AFPFont {
      * @return the encoding
      */
     public String getEncoding() {
-        return _characterSet.getEncoding();
+        return charSet.getEncoding();
     }
-
 }
