@@ -49,22 +49,22 @@ public class TagLogicalElement extends AbstractAFPObject {
     /**
      * Name of the key, used within the TLE
      */
-    private String _tleName = null;
+    private String tleName = null;
 
     /**
      * Value returned by the key
      */
-    private String _tleValue = null;
+    private String tleValue = null;
 
     /**
      * Byte representaion of the name
      */
-    private byte[] _tleByteName = null;
+    private byte[] tleByteName = null;
 
     /**
      * Byte representaion of the value
      */
-    private byte[] _tleByteValue = null;
+    private byte[] tleByteValue = null;
 
     /**
      * Construct a tag logical element with the name and value specified.
@@ -73,18 +73,18 @@ public class TagLogicalElement extends AbstractAFPObject {
      */
     public TagLogicalElement(String name, String value) {
 
-        _tleName = name;
-        _tleValue = value;
+        this.tleName = name;
+        this.tleValue = value;
 
         try {
 
-            _tleByteName = name.getBytes(AFPConstants.EBCIDIC_ENCODING);
-            _tleByteValue = value.getBytes(AFPConstants.EBCIDIC_ENCODING);
+            this.tleByteName = name.getBytes(AFPConstants.EBCIDIC_ENCODING);
+            this.tleByteValue = value.getBytes(AFPConstants.EBCIDIC_ENCODING);
 
         } catch (UnsupportedEncodingException usee) {
 
-            _tleByteName = name.getBytes();
-            _tleByteValue = value.getBytes();
+            this.tleByteName = name.getBytes();
+            this.tleByteValue = value.getBytes();
             log.warn(
                 "Constructor:: UnsupportedEncodingException translating the name "
                 + name);
@@ -97,16 +97,16 @@ public class TagLogicalElement extends AbstractAFPObject {
      * Accessor method to obtain the byte array AFP datastream for the
      * TagLogicalElement.
      * @param os The outputsteam stream
-     * @throws java.io.IOException
+     * @throws java.io.IOException if an I/O exception occurred
      */
     public void writeDataStream(OutputStream os) throws IOException {
 
-        byte[] data = new byte[17 + _tleName.length() + _tleValue.length()];
+        byte[] data = new byte[17 + tleName.length() + tleValue.length()];
 
         data[0] = 0x5A;
         // Set the total record length
-        byte[] rl1 =
-            BinaryUtils.convert(16 + _tleName.length() + _tleValue.length(), 2);
+        byte[] rl1
+            = BinaryUtils.convert(16 + tleName.length() + tleValue.length(), 2);
         //Ignore first byte
         data[1] = rl1[0];
         data[2] = rl1[1];
@@ -122,28 +122,26 @@ public class TagLogicalElement extends AbstractAFPObject {
 
         //Use 2 triplets, attrubute name and value (the key for indexing)
 
-        byte[] rl2 = BinaryUtils.convert(_tleName.length() + 4, 1);
+        byte[] rl2 = BinaryUtils.convert(tleName.length() + 4, 1);
         data[9] = rl2[0]; // length of the triplet, including this field
         data[10] = 0x02; //Identifies it as a FQN triplet
         data[11] = 0x0B; // GID format
         data[12] = 0x00;
 
         int pos = 13;
-        for (int i = 0; i < _tleByteName.length; i++) {
-            data[pos++] = _tleByteName[i];
+        for (int i = 0; i < tleByteName.length; i++) {
+            data[pos++] = tleByteName[i];
         }
 
-        byte[] rl3 = BinaryUtils.convert(_tleByteValue.length + 4, 1);
+        byte[] rl3 = BinaryUtils.convert(tleByteValue.length + 4, 1);
         data[pos++] = rl3[0]; // length of the triplet, including this field
         data[pos++] = 0x36; //Identifies the triplet, attribute value
         data[pos++] = 0x00; // Reserved
         data[pos++] = 0x00; // Reserved
 
-        for (int i = 0; i < _tleByteValue.length; i++) {
-            data[pos++] = _tleByteValue[i];
+        for (int i = 0; i < tleByteValue.length; i++) {
+            data[pos++] = tleByteValue[i];
         }
         os.write(data);
-
     }
-
 }
