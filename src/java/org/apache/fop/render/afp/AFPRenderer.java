@@ -600,7 +600,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
             AFPFontAttributes afpFontAttributes = (AFPFontAttributes) i.next();
 
             afpDataStream.createFont(
-                afpFontAttributes.getFontReference(),
+                (byte)afpFontAttributes.getFontReference(),
                 afpFontAttributes.getFont(),
                 afpFontAttributes.getPointSize());
 
