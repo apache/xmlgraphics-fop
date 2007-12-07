@@ -93,5 +93,11 @@ public class ImageSource implements Source {
     public boolean isFastSource() {
         return this.fastSource;
     }
+
+    /** {@inheritDoc} */
+    public String toString() {
+        return (isFastSource() ? "FAST " : "") + "ImageSource: "
+            + getSystemId() + " " + getImageInputStream();
+    }
     
 }
