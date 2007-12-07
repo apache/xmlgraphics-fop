@@ -19,20 +19,21 @@
 
 package org.apache.fop.layoutmgr;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.FONode;
+
 import org.apache.fop.area.Area;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.flow.RetrieveMarker;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.ListIterator;
-import java.util.Map;
 
 /**
  * The base class for most LayoutManagers.
@@ -403,7 +404,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
 
     /** {@inheritDoc} */
     public String toString() {
-        return (super.toString() + "[fobj=" + fobj.toString() + "]");
+        return (super.toString() + (fobj != null ? "[fobj=" + fobj.toString() + "]" : ""));
     }
     
     
