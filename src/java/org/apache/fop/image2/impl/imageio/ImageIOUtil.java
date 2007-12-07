@@ -20,6 +20,7 @@
 package org.apache.fop.image2.impl.imageio;
 
 import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.metadata.IIOMetadataFormatImpl;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -28,11 +29,12 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.fop.image2.ImageSize;
-import org.apache.fop.util.UnitConv;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import org.apache.fop.image2.ImageSize;
+import org.apache.fop.util.UnitConv;
 
 /**
  * Helper and convenience methods for ImageIO.
@@ -46,7 +48,8 @@ public class ImageIOUtil {
      */
     public static void extractResolution(IIOMetadata iiometa, ImageSize size) {
         if (iiometa != null && iiometa.isStandardMetadataFormatSupported()) {
-            Element metanode = (Element)iiometa.getAsTree("javax_imageio_1.0");
+            Element metanode = (Element)iiometa.getAsTree(
+                    IIOMetadataFormatImpl.standardMetadataFormatName);
             Element dim = getChild(metanode, "Dimension");
             if (dim != null) {
                 Element child;
@@ -68,7 +71,13 @@ public class ImageIOUtil {
         }
     }
     
-    private static Element getChild(Element el, String name) {
+    /**
+     * Returns a child element of another element or null if there's no such child.
+     * @param el the parent element
+     * @param name the name of the requested child
+     * @return the child or null if there's no such child
+     */
+    public static Element getChild(Element el, String name) {
         NodeList nodes = el.getElementsByTagName(name);
         if (nodes.getLength() > 0) {
             return (Element)nodes.item(0);
