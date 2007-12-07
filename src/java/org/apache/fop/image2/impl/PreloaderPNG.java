@@ -46,6 +46,9 @@ public class PreloaderPNG extends AbstractImagePreloader {
 
     private static final int PNG_SIG_LENGTH = 8;
 
+    /** Key for ImageIO metadata object used in custom objects of the ImageInfo class. */
+    public static final Object IMAGEIO_METADATA = IIOMetadata.class;
+    
     /** {@inheritDoc} 
      * @throws ImageException */
     public ImageInfo preloadImage(String uri, Source src, ImageContext context)
@@ -66,7 +69,7 @@ public class PreloaderPNG extends AbstractImagePreloader {
 
         if (supported) {
             ImageInfo info = new ImageInfo(uri, getMimeType());
-            info.setSize(determineSize(in, context));
+            determineSize(in, info, context);
             return info;
         } else {
             return null;
@@ -78,7 +81,7 @@ public class PreloaderPNG extends AbstractImagePreloader {
         return MimeConstants.MIME_PNG;
     }
 
-    private ImageSize determineSize(ImageInputStream in, ImageContext context)
+    private void determineSize(ImageInputStream in, ImageInfo info, ImageContext context)
                 throws IOException, ImageException {
         in.mark();
         
@@ -102,7 +105,8 @@ public class PreloaderPNG extends AbstractImagePreloader {
         
         in.reset();
         
-        return size;
+        info.getCustomObjects().put(IMAGEIO_METADATA, iiometa);
+        info.setSize(size);
     }
 
 }

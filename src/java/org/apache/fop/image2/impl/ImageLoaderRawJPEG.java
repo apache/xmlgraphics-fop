@@ -221,6 +221,7 @@ public class ImageLoaderRawJPEG extends AbstractImageLoader implements JPEGConst
                 log.warn("An ICC profile is present but it is invalid (" 
                         + iae.getMessage() + "). The color profile will be ignored. (" 
                         + info.getOriginalURI() + ")");
+                return null;
             }
             if (iccProfile.getNumComponents() != colorSpace.getNumComponents()) {
                 log.warn("The number of components of the ICC profile ("

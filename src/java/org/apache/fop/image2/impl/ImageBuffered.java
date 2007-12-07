@@ -19,6 +19,7 @@
 
 package org.apache.fop.image2.impl;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 
 import org.apache.fop.image2.ImageFlavor;
@@ -33,9 +34,10 @@ public class ImageBuffered extends ImageRendered {
      * Main constructor.
      * @param info the image info object
      * @param buffered the BufferedImage instance
+     * @param transparentColor the transparent color or null
      */
-    public ImageBuffered(ImageInfo info, BufferedImage buffered) {
-        super(info, buffered);
+    public ImageBuffered(ImageInfo info, BufferedImage buffered, Color transparentColor) {
+        super(info, buffered, transparentColor);
     }
     
     /** {@inheritDoc} */

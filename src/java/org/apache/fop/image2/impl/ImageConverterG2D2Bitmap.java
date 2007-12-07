@@ -62,7 +62,7 @@ public class ImageConverterG2D2Bitmap extends AbstractImageConverter {
         
         BufferedImage bi = paintToBufferedImage(g2dImage, gray, withAlpha, resolution);
         
-        ImageBuffered bufImage = new ImageBuffered(src.getInfo(), bi);
+        ImageBuffered bufImage = new ImageBuffered(src.getInfo(), bi, null);
         return bufImage;
     }
 

@@ -19,6 +19,9 @@
 
 package org.apache.fop.image2.impl;
 
+import java.awt.color.ColorSpace;
+import java.awt.color.ICC_Profile;
+
 import org.apache.fop.image2.Image;
 import org.apache.fop.image2.ImageInfo;
 import org.apache.fop.image2.ImageSize;
@@ -46,6 +49,16 @@ public abstract class AbstractImage implements Image {
     /** {@inheritDoc} */
     public ImageSize getSize() {
         return getInfo().getSize();
+    }
+
+    /** {@inheritDoc} */
+    public ColorSpace getColorSpace() {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    public ICC_Profile getICCProfile() {
+        return null;
     }
 
 }

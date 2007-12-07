@@ -19,6 +19,10 @@
 
 package org.apache.fop.image2.impl;
 
+import java.awt.Color;
+import java.awt.color.ColorSpace;
+import java.awt.color.ICC_ColorSpace;
+import java.awt.color.ICC_Profile;
 import java.awt.image.RenderedImage;
 
 import org.apache.fop.image2.ImageFlavor;
@@ -30,15 +34,18 @@ import org.apache.fop.image2.ImageInfo;
 public class ImageRendered extends AbstractImage {
 
     private RenderedImage red;
+    private Color transparentColor;
     
     /**
      * Main constructor.
      * @param info the image info object
      * @param red the RenderedImage instance
+     * @param transparentColor the transparent color or null
      */
-    public ImageRendered(ImageInfo info, RenderedImage red) {
+    public ImageRendered(ImageInfo info, RenderedImage red, Color transparentColor) {
         super(info);
         this.red = red;
+        this.transparentColor = transparentColor;
     }
     
     /** {@inheritDoc} */
@@ -58,4 +65,28 @@ public class ImageRendered extends AbstractImage {
     public RenderedImage getRenderedImage() {
         return this.red;
     }
+
+    /** {@inheritDoc} */
+    public ColorSpace getColorSpace() {
+        return getRenderedImage().getColorModel().getColorSpace();
+    }
+
+    /** {@inheritDoc} */
+    public ICC_Profile getICCProfile() {
+        ColorSpace cs = getColorSpace();
+        if (cs instanceof ICC_ColorSpace) {
+            ICC_ColorSpace icccs = (ICC_ColorSpace)cs;
+            return icccs.getProfile();
+        }
+        return null;
+    }
+    
+    /**
+     * Returns the transparent color if available.
+     * @return the transparent color or null
+     */
+    public Color getTransparentColor() {
+        return this.transparentColor;
+    }
+    
 }

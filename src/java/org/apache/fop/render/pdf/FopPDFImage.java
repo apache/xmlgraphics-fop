@@ -25,6 +25,7 @@ import java.io.OutputStream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.image.EPSImage;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.TIFFImage;
@@ -201,10 +202,8 @@ public class FopPDFImage implements PDFImage {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public int getBitsPerPixel() {
+    /** {@inheritDoc} */
+    public int getBitsPerComponent() {
         if (isCCF) {
             return fopImage.getBitsPerPixel();
         } else {
@@ -266,9 +265,7 @@ public class FopPDFImage implements PDFImage {
         return pdfFilter;
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void outputContents(OutputStream out) throws IOException {
         if (isPS) {
             outputPostScriptContents(out);
@@ -327,9 +324,12 @@ public class FopPDFImage implements PDFImage {
         out.write(PDFDocument.encode(post.toString()));
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
+    public void populateXObjectDictionary(PDFDictionary dict) {
+        //nop
+    }
+
+    /** {@inheritDoc} */
     public PDFICCStream getICCStream() {
         return pdfICCStream;
     }
