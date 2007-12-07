@@ -83,7 +83,7 @@ public class PreloaderEPS extends AbstractImagePreloader {
             }
             
             if (supported) {
-                ImageInfo info = new ImageInfo(uri, getMimeType());
+                ImageInfo info = new ImageInfo(uri, MimeConstants.MIME_EPS);
                 boolean success = determineSize(in, context, info);
                 in.reset(); //Need to go back to start of file
                 if (!success) {
@@ -103,11 +103,6 @@ public class PreloaderEPS extends AbstractImagePreloader {
         } finally {
             in.setByteOrder(originalByteOrder);
         }
-    }
-
-    /** {@inheritDoc} */
-    public String getMimeType() {
-        return MimeConstants.MIME_EPS;
     }
 
     private EPSBinaryFileHeader readBinaryFileHeader(ImageInputStream in) throws IOException {

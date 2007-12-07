@@ -53,17 +53,12 @@ public class PreloaderGIF extends AbstractImagePreloader {
                 && (header[5] == 'a'));
 
         if (supported) {
-            ImageInfo info = new ImageInfo(uri, getMimeType());
+            ImageInfo info = new ImageInfo(uri, MimeConstants.MIME_GIF);
             info.setSize(determineSize(header, context));
             return info;
         } else {
             return null;
         }
-    }
-
-    /** {@inheritDoc} */
-    public String getMimeType() {
-        return MimeConstants.MIME_GIF;
     }
 
     private ImageSize determineSize(byte[] header, ImageContext context) {

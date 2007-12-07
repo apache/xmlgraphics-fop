@@ -78,17 +78,12 @@ public class PreloaderTIFF extends AbstractImagePreloader {
         }
 
         if (supported) {
-            ImageInfo info = new ImageInfo(uri, getMimeType());
+            ImageInfo info = new ImageInfo(uri, MimeConstants.MIME_TIFF);
             info.setSize(determineSize(in, context));
             return info;
         } else {
             return null;
         }
-    }
-
-    /** {@inheritDoc} */
-    public String getMimeType() {
-        return MimeConstants.MIME_TIFF;
     }
 
     private ImageSize determineSize(ImageInputStream in, ImageContext context)

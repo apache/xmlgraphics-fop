@@ -21,6 +21,7 @@ package org.apache.fop.image2.spi;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +45,8 @@ public class ImageImplRegistry {
     /** Holds the list of preloaders */
     private List preloaders = new java.util.ArrayList();
     //Content: List<ImagePreloader>
+    private int lastPreloaderIdentifier;
+    private int lastPreloaderSort;
     
     /** Holds the list of ImageLoaderFactories */
     private Map loaders = new java.util.HashMap();
@@ -107,11 +110,50 @@ public class ImageImplRegistry {
     public void registerPreloader(ImagePreloader preloader) {
         if (log.isDebugEnabled()) {
             log.debug("Registered " + preloader.getClass().getName()
-                    + ": MIME = " + preloader.getMimeType());
+                    + " with priority " + preloader.getPriority());
         }
-        preloaders.add(preloader);
+        preloaders.add(newPreloaderHolder(preloader));
     }
 
+    private synchronized PreloaderHolder newPreloaderHolder(ImagePreloader preloader) {
+        PreloaderHolder holder = new PreloaderHolder();
+        holder.preloader = preloader;
+        holder.identifier = ++lastPreloaderIdentifier;
+        return holder;
+    }
+    
+    private class PreloaderHolder {
+        private ImagePreloader preloader;
+        private int identifier;
+        
+        public String toString() {
+            return preloader + " " + identifier;
+        }
+    }
+    
+    private synchronized void sortPreloaders() {
+        if (this.lastPreloaderIdentifier != this.lastPreloaderSort) {
+            Collections.sort(this.preloaders, new Comparator() {
+
+                public int compare(Object o1, Object o2) {
+                    PreloaderHolder h1 = (PreloaderHolder)o1;
+                    PreloaderHolder h2 = (PreloaderHolder)o2;
+                    int p1 = h1.preloader.getPriority();
+                    int p2 = h2.preloader.getPriority();
+                    int diff = p1 - p2;
+                    if (diff != 0) {
+                        return diff;
+                    } else {
+                        diff = h1.identifier - h2.identifier;
+                        return diff;
+                    }
+                }
+                
+            });
+            this.lastPreloaderSort = lastPreloaderIdentifier;
+        }
+    }
+    
     /**
      * Registers a new ImageLoaderFactory.
      * @param loaderFactory An ImageLoaderFactory instance
@@ -189,7 +231,29 @@ public class ImageImplRegistry {
      * @return an iterator over ImagePreloader instances.
      */
     public Iterator getPreloaderIterator() {
-        return this.preloaders.iterator();
+        sortPreloaders();
+        final Iterator iter = this.preloaders.iterator();
+        //Unpack the holders
+        return new Iterator() {
+
+            public boolean hasNext() {
+                return iter.hasNext();
+            }
+
+            public Object next() {
+                Object obj = iter.next();
+                if (obj != null) {
+                    return ((PreloaderHolder)obj).preloader;
+                } else {
+                    return null;
+                }
+            }
+
+            public void remove() {
+                iter.remove();
+            }
+            
+        };
     }
 
     /**

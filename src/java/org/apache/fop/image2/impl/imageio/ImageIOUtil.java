@@ -41,6 +41,9 @@ import org.apache.fop.util.UnitConv;
  */
 public class ImageIOUtil {
 
+    /** Key for ImageInfo's custom objects to embed the ImageIO metadata */
+    public static final Object IMAGEIO_METADATA = IIOMetadata.class;
+    
     /**
      * Extracts the resolution information from the standard ImageIO metadata.
      * @param iiometa the metadata provided by ImageIO

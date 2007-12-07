@@ -1,9 +1,9 @@
-org.apache.fop.image2.impl.PreloaderPNG
 org.apache.fop.image2.impl.PreloaderTIFF
 org.apache.fop.image2.impl.PreloaderGIF
 org.apache.fop.image2.impl.PreloaderJPEG
 org.apache.fop.image2.impl.PreloaderBMP
 org.apache.fop.image2.impl.PreloaderEMF
 org.apache.fop.image2.impl.PreloaderEPS
-org.apache.fop.image2.impl.batik.PreloaderSVG
+org.apache.fop.image2.impl.imageio.PreloaderImageIO
 org.apache.fop.image2.impl.batik.PreloaderWMF
+org.apache.fop.image2.impl.batik.PreloaderSVG

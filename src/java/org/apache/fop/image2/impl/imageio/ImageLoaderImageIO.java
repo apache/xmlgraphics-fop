@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
@@ -38,6 +39,9 @@ import javax.xml.transform.Source;
 
 import org.w3c.dom.Element;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.image2.Image;
 import org.apache.fop.image2.ImageException;
 import org.apache.fop.image2.ImageFlavor;
@@ -46,13 +50,15 @@ import org.apache.fop.image2.ImageSessionContext;
 import org.apache.fop.image2.impl.AbstractImageLoader;
 import org.apache.fop.image2.impl.ImageBuffered;
 import org.apache.fop.image2.impl.ImageRendered;
-import org.apache.fop.image2.impl.PreloaderPNG;
 import org.apache.fop.image2.util.ImageUtil;
 
 /**
  * An ImageLoader implementation based on ImageIO for loading bitmap images.
  */
 public class ImageLoaderImageIO extends AbstractImageLoader {
+
+    /** logger */
+    protected static Log log = LogFactory.getLog(ImageLoaderImageIO.class);
 
     private ImageFlavor targetFlavor;
 
@@ -76,26 +82,49 @@ public class ImageLoaderImageIO extends AbstractImageLoader {
     /** {@inheritDoc} */
     public Image loadImage(ImageInfo info, Map hints, ImageSessionContext session)
             throws ImageException, IOException {
+        BufferedImage imageData = null;
+        IIOException firstException = null;
+
+        IIOMetadata iiometa = (IIOMetadata)info.getCustomObjects().get(
+                ImageIOUtil.IMAGEIO_METADATA);
+        boolean ignoreMetadata = (iiometa != null);
+
         Source src = session.needSource(info.getOriginalURI());
         ImageInputStream imgStream = ImageUtil.needImageInputStream(src);
-        Iterator iter = ImageIO.getImageReaders(imgStream);
-        if (!iter.hasNext()) {
+        try {
+            Iterator iter = ImageIO.getImageReaders(imgStream);
+            while (iter.hasNext()) {
+                ImageReader reader = (ImageReader)iter.next();
+                imgStream.mark();
+                ImageReadParam param = reader.getDefaultReadParam();
+                reader.setInput(imgStream, false, ignoreMetadata);
+                final int pageIndex = 0; //Always the first page at the moment
+                try {
+                    imageData = reader.read(pageIndex, param);
+                    if (iiometa == null) {
+                        iiometa = reader.getImageMetadata(pageIndex);
+                    }
+                    break; //Quit early, we have the image
+                } catch (IIOException iioe) {
+                    if (firstException == null) {
+                        firstException = iioe;
+                    } else {
+                        log.debug("non-first error loading image: " + iioe.getMessage());
+                    }
+                }
+                imgStream.reset();
+            }
+        } finally {
+            ImageUtil.closeQuietly(src);
+        }
+        if (firstException != null) {
+            throw new ImageException("Error while loading image: "
+                    + firstException.getMessage(), firstException);
+        }
+        if (imageData == null) {
             throw new ImageException("No ImageIO ImageReader found .");
         }
 
-        IIOMetadata iiometa = (IIOMetadata)info.getCustomObjects().get(
-                PreloaderPNG.IMAGEIO_METADATA);
-        boolean ignoreMetadata = (iiometa != null);
-        
-        ImageReader reader = (ImageReader)iter.next();
-        ImageReadParam param = reader.getDefaultReadParam();
-        reader.setInput(imgStream, true, ignoreMetadata);
-        final int pageIndex = 0; //Always the first page at the moment
-        BufferedImage imageData = reader.read(pageIndex, param);
-        if (iiometa == null) {
-            iiometa = reader.getImageMetadata(pageIndex);
-        }
-        
         ColorModel cm = imageData.getColorModel();
 
         Color transparentColor = null;

@@ -72,11 +72,6 @@ public class PreloaderWMF extends AbstractImagePreloader {
         return info;
     }
 
-    /** {@inheritDoc} */
-    public String getMimeType() {
-        return "image/x-wmf"; //Don't use constant so no Batik-dependent class is loaded here
-    }
-
     /**
      * This method is put in another class so that the class loader does not
      * attempt to load Batik related classes when constructing the WMFPreloader
@@ -106,7 +101,7 @@ public class PreloaderWMF extends AbstractImagePreloader {
                 int height = wmfStore.getHeightUnits();
                 int dpi = wmfStore.getMetaFileUnitsPerInch();
                 
-                ImageInfo info = new ImageInfo(uri, getMimeType());
+                ImageInfo info = new ImageInfo(uri, "image/x-wmf");
                 ImageSize size = new ImageSize();
                 size.setSizeInPixels(width, height);
                 size.setResolution(dpi);
