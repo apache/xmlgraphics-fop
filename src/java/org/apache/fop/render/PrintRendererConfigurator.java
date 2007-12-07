@@ -50,6 +50,7 @@ import org.apache.fop.fonts.FontUtil;
 import org.apache.fop.fonts.autodetect.FontFileFinder;
 import org.apache.fop.fonts.autodetect.FontInfoFinder;
 import org.apache.fop.util.LogUtil;
+import org.apache.xmlgraphics.util.ClasspathResource;
 
 /**
  * Base Print renderer configurator (mostly handles font configuration)
@@ -159,6 +160,16 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
                 } catch (IOException e) {
                     LogUtil.handleException(log, e, strict);
                 }
+
+                // load fonts from classpath
+                addFontInfoListFromFileList(ClasspathResource.getInstance()
+                        .listResourcesOfMimeType("application/x-font"),
+                        fontInfoList, fontResolver, fontCache);
+                addFontInfoListFromFileList(
+                        ClasspathResource.getInstance()
+                                .listResourcesOfMimeType(
+                                        "application/x-font-truetype"),
+                        fontInfoList, fontResolver, fontCache);
             }
 
             // directory (multiple font) configuration

@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+
+Name: fonts/DejaVuLGCSerif.ttf 
+Content-Type: application/x-font
+
