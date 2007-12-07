@@ -34,6 +34,8 @@ public class PDFFilterList {
     public static final String DEFAULT_FILTER = "default";
     /** Key for the filter used for normal content*/
     public static final String CONTENT_FILTER = "content";
+    /** Key for the filter used for precompressed content */
+    public static final String PRECOMPRESSED_FILTER = "precompressed";
     /** Key for the filter used for images */
     public static final String IMAGE_FILTER = "image";
     /** Key for the filter used for JPEG images */
@@ -177,6 +179,9 @@ public class PDFFilterList {
                 addFilter(new NullFilter());
             } else if (TIFF_FILTER.equals(type)) {
                 //CCITT-encoded images are already well compressed
+                addFilter(new NullFilter());
+            } else if (PRECOMPRESSED_FILTER.equals(type)) {
+                //precompressed content doesn't need further compression
                 addFilter(new NullFilter());
             } else {
                 // built-in default to flate
