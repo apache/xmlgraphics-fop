@@ -101,8 +101,8 @@ public class PipelineFactory {
             pipeline = new ImageProviderPipeline(manager.getCache(), loader);
         } else {
             //Need to use ImageConverters
-            if (log.isDebugEnabled()) {
-                log.debug("No ImageLoaderFactory found that can load this format directly."
+            if (log.isTraceEnabled()) {
+                log.trace("No ImageLoaderFactory found that can load this format directly."
                         + " Trying ImageConverters instead...");
             }
             
@@ -120,15 +120,15 @@ public class PipelineFactory {
                                 dir);
                         ImageRepresentation origin = new ImageRepresentation(flavors[j]); 
                         dijkstra.execute(origin, destination);
-                        if (log.isDebugEnabled()) {
-                            log.debug("Lowest penalty: " + dijkstra.getLowestPenalty(destination));
+                        if (log.isTraceEnabled()) {
+                            log.trace("Lowest penalty: " + dijkstra.getLowestPenalty(destination));
                         }
                         
                         Vertex prev = destination;
                         Vertex pred = dijkstra.getPredecessor(destination);
                         if (pred == null) {
-                            if (log.isDebugEnabled()) {
-                                log.debug("No route found!");
+                            if (log.isTraceEnabled()) {
+                                log.trace("No route found!");
                             }
                         } else {
                             LinkedList stops = new LinkedList();
@@ -146,7 +146,7 @@ public class PipelineFactory {
                                 ImageConversionEdge edge = (ImageConversionEdge)iter.next(); 
                                 pipeline.addConverter(edge.getImageConverter());
                             }
-                            if (log.isDebugEnabled()) {
+                            if (pipeline != null && log.isDebugEnabled()) {
                                 log.debug("Pipeline: " + pipeline);
                             }
                             return pipeline;
@@ -159,7 +159,7 @@ public class PipelineFactory {
             }
             
         }
-        if (log.isDebugEnabled()) {
+        if (pipeline != null && log.isDebugEnabled()) {
             log.debug("Pipeline: " + pipeline);
         }
         return pipeline;

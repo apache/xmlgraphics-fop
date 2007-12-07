@@ -169,16 +169,19 @@ public abstract class AbstractImageSessionContext implements ImageSessionContext
     public Source needSource(String uri) throws FileNotFoundException {
         Source src = getSource(uri);
         if (src == null) {
-            log.debug("Creating new Source for " + uri);
+            if (log.isDebugEnabled()) {
+                log.debug("Creating new Source for " + uri);
+                
+            }
             src = newSource(uri);
             if (src == null) {
                 throw new FileNotFoundException("Image not found: " + uri);
             }
         } else {
-            log.debug("Reusing Source for " + uri);
+            if (log.isDebugEnabled()) {
+                log.debug("Reusing Source for " + uri);
+            }
         }
-        log.debug("  --> " + src);
-        log.debug("  --> " + Thread.currentThread().getName() + " " + Thread.currentThread());
         return src;
     }
     
