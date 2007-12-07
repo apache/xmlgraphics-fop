@@ -154,11 +154,27 @@ public class ImagePreloaderTestCase extends TestCase {
         assertEquals(uri, info.getOriginalURI());
         assertEquals(16, info.getSize().getWidthPx());
         assertEquals(16, info.getSize().getHeightPx());
-        assertEquals(72, info.getSize().getDpiHorizontal(), 0.1);
+        assertEquals(userAgent.getSourceResolution(), info.getSize().getDpiHorizontal(), 0.1);
         assertEquals(16000, info.getSize().getWidthMpt());
         assertEquals(16000, info.getSize().getHeightMpt());
     }
     
+    public void testSVGNoSize() throws Exception {
+        String uri = "test/resources/images/img.svg";
+        FOUserAgent userAgent = fopFactory.newFOUserAgent();
+        
+        ImageManager manager = fopFactory.getImageManager();
+        ImageInfo info = manager.preloadImage(uri, userAgent.getImageSessionContext());
+        assertNotNull("ImageInfo must not be null", info);
+        assertEquals(MimeConstants.MIME_SVG, info.getMimeType());
+        assertEquals(uri, info.getOriginalURI());
+        assertEquals(100, info.getSize().getWidthPx()); //100 = default viewport size
+        assertEquals(100, info.getSize().getHeightPx());
+        assertEquals(userAgent.getSourceResolution(), info.getSize().getDpiHorizontal(), 0.1);
+        assertEquals(100000, info.getSize().getWidthMpt());
+        assertEquals(100000, info.getSize().getHeightMpt());
+    }
+
     public void testWMF() throws Exception {
         String uri = "test/resources/images/testChart.wmf";
         

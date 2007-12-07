@@ -46,7 +46,6 @@ import org.apache.fop.image2.impl.ImageXMLDOM;
 import org.apache.fop.image2.util.ImageUtil;
 import org.apache.fop.svg.SVGUserAgent;
 import org.apache.fop.util.UnclosableInputStream;
-import org.apache.fop.util.UnitConv;
 
 /**
  * Image preloader for SVG images.
@@ -106,7 +105,7 @@ public class PreloaderSVG extends AbstractImagePreloader {
                 SVGDocument doc = (SVGDocument) factory.createSVGDocument(src.getSystemId(), in);
 
                 Element e = doc.getRootElement();
-                float pxUnitToMillimeter = (float)UnitConv.pt2mm(0.001); 
+                float pxUnitToMillimeter = 25.4f / context.getSourceResolution(); 
                 SVGUserAgent userAg = new SVGUserAgent(pxUnitToMillimeter,
                             new AffineTransform());
                 BridgeContext ctx = new BridgeContext(userAg);
@@ -118,20 +117,20 @@ public class PreloaderSVG extends AbstractImagePreloader {
                 if (s.length() == 0) {
                     s = SVGOMDocument.SVG_SVG_WIDTH_DEFAULT_VALUE;
                 }
-                int width = Math.round(UnitProcessor.svgHorizontalLengthToUserSpace(
-                        s, SVGOMDocument.SVG_WIDTH_ATTRIBUTE, uctx));
+                float width = UnitProcessor.svgHorizontalLengthToUserSpace(
+                        s, SVGOMDocument.SVG_WIDTH_ATTRIBUTE, uctx);
 
                 // 'height' attribute - default is 100%
                 s = e.getAttributeNS(null, SVGOMDocument.SVG_HEIGHT_ATTRIBUTE);
                 if (s.length() == 0) {
                     s = SVGOMDocument.SVG_SVG_HEIGHT_DEFAULT_VALUE;
                 }
-                int height = Math.round(UnitProcessor.svgVerticalLengthToUserSpace(
-                        s, SVGOMDocument.SVG_HEIGHT_ATTRIBUTE, uctx));
+                float height = UnitProcessor.svgVerticalLengthToUserSpace(
+                        s, SVGOMDocument.SVG_HEIGHT_ATTRIBUTE, uctx);
 
                 ImageInfo info = new ImageInfo(uri, getMimeType());
                 ImageSize size = new ImageSize();
-                size.setSizeInMillipoints(width, height);
+                size.setSizeInMillipoints(Math.round(width * 1000), Math.round(height * 1000));
                 //Set the resolution to that of the FOUserAgent
                 size.setResolution(context.getSourceResolution());
                 size.calcPixelsFromSize();
