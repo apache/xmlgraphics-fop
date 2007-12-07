@@ -19,8 +19,8 @@
  
 package org.apache.fop.pdf;
 
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import org.apache.xmlgraphics.util.io.FlateEncodeOutputStream;
 
@@ -98,13 +98,13 @@ public class FlateFilter extends PDFFilter {
         if (predictor > PREDICTION_NONE) {
             PDFDictionary dict = new PDFDictionary();
             dict.put("Predictor", predictor);
-            if (colors > 0) {
+            if (colors > 1) {
                 dict.put("Colors", colors);
             }
-            if (bitsPerComponent > 0) {
+            if (bitsPerComponent > 0 && bitsPerComponent != 8) {
                 dict.put("BitsPerComponent", bitsPerComponent);
             }
-            if (columns > 0) {
+            if (columns > 1) {
                 dict.put("Columns", columns);
             }
             return dict;
