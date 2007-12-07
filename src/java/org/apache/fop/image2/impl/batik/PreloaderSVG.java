@@ -81,11 +81,6 @@ public class PreloaderSVG extends AbstractImagePreloader {
         return info;
     }
 
-    /** {@inheritDoc} */
-    public String getMimeType() {
-        return MimeConstants.MIME_SVG;
-    }
-
     /**
      * This method is put in another class so that the class loader does not
      * attempt to load Batik related classes when constructing the SVGPreloader
@@ -128,7 +123,7 @@ public class PreloaderSVG extends AbstractImagePreloader {
                 float height = UnitProcessor.svgVerticalLengthToUserSpace(
                         s, SVGOMDocument.SVG_HEIGHT_ATTRIBUTE, uctx);
 
-                ImageInfo info = new ImageInfo(uri, getMimeType());
+                ImageInfo info = new ImageInfo(uri, MimeConstants.MIME_SVG);
                 ImageSize size = new ImageSize();
                 size.setSizeInMillipoints(Math.round(width * 1000), Math.round(height * 1000));
                 //Set the resolution to that of the FOUserAgent

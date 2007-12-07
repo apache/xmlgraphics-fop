@@ -47,4 +47,9 @@ public abstract class AbstractImagePreloader implements ImagePreloader {
         return header;
     }
 
+    /** {@inheritDoc} */
+    public int getPriority() {
+        return DEFAULT_PRIORITY;
+    }
+    
 }

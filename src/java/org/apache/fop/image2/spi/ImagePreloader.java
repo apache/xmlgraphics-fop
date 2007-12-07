@@ -34,6 +34,9 @@ import org.apache.fop.image2.ImageInfo;
  */
 public interface ImagePreloader {
 
+    /** Default priority for preloaders */
+    public static final int DEFAULT_PRIORITY = 1000;
+    
     /**
      * "Preloads" an image, i.e. indentifies whether the source image is supported by this
      * implementation and determines the image's intrinsic size and possibly some additional
@@ -47,11 +50,11 @@ public interface ImagePreloader {
      */
     ImageInfo preloadImage(String originalURI, 
             Source src, ImageContext context) throws ImageException, IOException;
-    
+
     /**
-     * Returns the MIME type supported by the image preloader.
-     * @return the MIME type
+     * Returns the priority of the preloader. The lower the value, the higher the preloader's
+     * priority.
+     * @return an integer (default is 1000)
      */
-    String getMimeType();
-    
+    int getPriority();
 }

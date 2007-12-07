@@ -52,17 +52,12 @@ public class PreloaderJPEG extends AbstractImagePreloader implements JPEGConstan
                 && (header[2] == (byte)MARK));
 
         if (supported) {
-            ImageInfo info = new ImageInfo(uri, getMimeType());
+            ImageInfo info = new ImageInfo(uri, MimeConstants.MIME_JPEG);
             info.setSize(determineSize(in, context));
             return info;
         } else {
             return null;
         }
-    }
-
-    /** {@inheritDoc} */
-    public String getMimeType() {
-        return MimeConstants.MIME_JPEG;
     }
 
     private ImageSize determineSize(ImageInputStream in, ImageContext context)

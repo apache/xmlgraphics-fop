@@ -55,17 +55,12 @@ public class PreloaderBMP extends AbstractImagePreloader {
                 && (header[1] == (byte) 0x4d));
 
         if (supported) {
-            ImageInfo info = new ImageInfo(uri, getMimeType());
+            ImageInfo info = new ImageInfo(uri, "image/bmp");
             info.setSize(determineSize(in, context));
             return info;
         } else {
             return null;
         }
-    }
-
-    /** {@inheritDoc} */
-    public String getMimeType() {
-        return "image/bmp";
     }
 
     private ImageSize determineSize(ImageInputStream in, ImageContext context)
