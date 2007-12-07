@@ -66,9 +66,7 @@ public class PDFICCStream extends PDFStream {
         return length;
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void outputRawStreamData(OutputStream out) throws IOException {
         cp.write(out);
     }
