@@ -1018,6 +1018,7 @@ NOTE:
         overview="${src.dir}/java/org/apache/fop/overview.html"
         use="true"
         failonerror="true"
+        source="${javac.source}"
         public="${javadoc.public}"
         package="${javadoc.package}"
         private="${javadoc.private}">
