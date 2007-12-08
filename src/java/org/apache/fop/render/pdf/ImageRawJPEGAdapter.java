@@ -19,10 +19,7 @@
 
 package org.apache.fop.render.pdf;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-
-import org.apache.commons.io.IOUtils;
 
 import org.apache.fop.image2.impl.ImageRawJPEG;
 import org.apache.fop.pdf.DCTFilter;
@@ -86,13 +83,7 @@ public class ImageRawJPEGAdapter extends AbstractImageAdapter {
     
     /** {@inheritDoc} */
     public void outputContents(OutputStream out) throws IOException {
-        InputStream in = getImage().createInputStream();
-        try {
-            IOUtils.copy(in, out);
-        } finally {
-            IOUtils.closeQuietly(in);
-        }
-        //TODO IMPLEMENT ME
+        getImage().writeTo(out);
     }
 
     /** {@inheritDoc} */

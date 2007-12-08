@@ -19,7 +19,10 @@
 
 package org.apache.fop.image2.impl;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.apache.commons.io.IOUtils;
 
@@ -85,6 +88,35 @@ public class ImageRawStream extends AbstractImage {
      */
     public InputStream createInputStream() {
         return this.streamFactory.createInputStream();
+    }
+    
+    /**
+     * Writes the content of the image to an OutputStream. The OutputStream in NOT closed at the
+     * end.
+     * @param out the OutputStream
+     * @throws IOException if an I/O error occurs
+     */
+    public void writeTo(OutputStream out) throws IOException {
+        InputStream in = createInputStream();
+        try {
+            IOUtils.copy(in, out);
+        } finally {
+            IOUtils.closeQuietly(in);
+        }
+    }
+    
+    /**
+     * Writes the content of the image to a File.
+     * @param target the file to be written
+     * @throws IOException if an I/O error occurs
+     */
+    public void writeTo(File target) throws IOException {
+        OutputStream out = new java.io.FileOutputStream(target);
+        try {
+            writeTo(out);
+        } finally {
+            IOUtils.closeQuietly(out);
+        }
     }
     
     /**

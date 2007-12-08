@@ -23,6 +23,7 @@ import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.Source;
 
 import org.w3c.dom.Element;
@@ -37,7 +38,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.image.XMLImage;
 import org.apache.fop.image2.ImageContext;
 import org.apache.fop.image2.ImageInfo;
 import org.apache.fop.image2.ImageSize;
@@ -82,6 +82,20 @@ public class PreloaderSVG extends AbstractImagePreloader {
     }
 
     /**
+     * Returns the fully qualified classname of an XML parser for
+     * Batik classes that apparently need it (error messages, perhaps)
+     * @return an XML parser classname
+     */
+    public static String getParserName() {
+        try {
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            return factory.newSAXParser().getXMLReader().getClass().getName();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
      * This method is put in another class so that the class loader does not
      * attempt to load Batik related classes when constructing the SVGPreloader
      * class.
@@ -96,7 +110,7 @@ public class PreloaderSVG extends AbstractImagePreloader {
                 int length = in.available();
                 in.mark(length + 1);
                 SAXSVGDocumentFactory factory = new SAXSVGDocumentFactory(
-                        XMLImage.getParserName());
+                        getParserName());
                 SVGDocument doc = (SVGDocument) factory.createSVGDocument(src.getSystemId(), in);
 
                 Element e = doc.getRootElement();

@@ -456,12 +456,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
                     ImageRawJPEG jpeg = (ImageRawJPEG)raw;
                     ImageEncoder encoder = new ImageEncoder() {
                         public void writeTo(OutputStream out) throws IOException {
-                            InputStream in = raw.createInputStream();
-                            try {
-                                IOUtils.copy(in, out);
-                            } finally {
-                                IOUtils.closeQuietly(in);
-                            }
+                            raw.writeTo(out);
                         }
                         public String getImplicitFilter() {
                             return "<< >> /DCTDecode";

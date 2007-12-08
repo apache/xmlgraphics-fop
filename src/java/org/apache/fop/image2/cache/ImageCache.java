@@ -181,6 +181,9 @@ public class ImageCache {
      * @return the requested image or null if the image is not in the cache
      */
     public Image getImage(String uri, ImageFlavor flavor) {
+        if (uri == null || "".equals(uri)) {
+            return null;
+        }
         ImageKey key = new ImageKey(uri, flavor);
         Image img = (Image)images.get(key);
         if (cacheListener != null) {
@@ -198,12 +201,16 @@ public class ImageCache {
      * @param img the image
      */
     public void putImage(Image img) {
+        String originalURI = img.getInfo().getOriginalURI();
+        if (originalURI == null || "".equals(originalURI)) {
+            return; //Don't cache if there's no URI
+        }
         //An already existing Image is replaced.
         if (!img.isCacheable()) {
             throw new IllegalArgumentException(
                     "Image is not cacheable! (Flavor: " + img.getFlavor() + ")");
         }
-        ImageKey key = new ImageKey(img.getInfo().getOriginalURI(), img.getFlavor());
+        ImageKey key = new ImageKey(originalURI, img.getFlavor());
         images.put(key, img);
     }
 
