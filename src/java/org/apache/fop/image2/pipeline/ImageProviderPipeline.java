@@ -23,6 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -61,7 +62,7 @@ public class ImageProviderPipeline {
      */
     public ImageProviderPipeline(ImageCache cache, ImageLoader loader) {
         this.cache = cache;
-        this.loader = loader;
+        setImageLoader(loader);
     }
     
     /**
@@ -70,6 +71,14 @@ public class ImageProviderPipeline {
      */
     public ImageProviderPipeline(ImageLoader loader) {
         this(null, loader);
+    }
+    
+    /**
+     * Default constructor without caching and without an ImageLoader (or the ImageLoader may
+     * be set later).
+     */
+    public ImageProviderPipeline() {
+        this(null, null);
     }
     
     /**
@@ -86,6 +95,28 @@ public class ImageProviderPipeline {
      */
     public Image execute(ImageInfo info, Map hints, ImageSessionContext context)
                 throws ImageException, IOException {
+        return execute(info, null, hints, context);
+    }
+    
+    /**
+     * Executes the image converter pipeline. First, the image indicated by the ImageInfo instance
+     * is loaded through an ImageLoader and then optionally converted by a series of
+     * ImageConverters. At the end of the pipeline, the fully loaded and converted image is
+     * returned.
+     * @param info the image info object indicating the image to load
+     * @param originalImage the original image to start the pipeline off or null if an ImageLoader
+     *          is used
+     * @param hints a Map of image conversion hints
+     * @param context the session context
+     * @return the requested image
+     * @throws ImageException if an error occurs while loader or converting the image
+     * @throws IOException if an I/O error occurs
+     */
+    public Image execute(ImageInfo info, Image originalImage,
+            Map hints, ImageSessionContext context) throws ImageException, IOException {
+        if (hints == null) {
+            hints = Collections.EMPTY_MAP;
+        }
         long start, duration;
         start = System.currentTimeMillis();
         Image img = null;
@@ -106,15 +137,18 @@ public class ImageProviderPipeline {
                 }
             }
         
-            if (img == null) {
+            if (img == null && loader != null) {
                 //try target flavor of loader from cache
                 ImageFlavor flavor = loader.getTargetFlavor();
                 img = cache.getImage(info, flavor);
             }
         }
+        if (img == null && originalImage != null) {
+            img = originalImage;
+        }
         
         boolean entirelyInCache = true;
-        if (img == null) {
+        if (img == null && loader != null) {
             //Load image
             img = loader.loadImage(info, hints, context);
             if (log.isTraceEnabled()) {
@@ -127,6 +161,10 @@ public class ImageProviderPipeline {
             if (img.isCacheable()) {
                 lastCacheableImage = img;
             }
+        }
+        if (img == null) {
+            throw new ImageException(
+                    "Pipeline fails. No ImageLoader and no original Image available.");
         }
         
         if (converterCount > 0) {
@@ -212,6 +250,15 @@ public class ImageProviderPipeline {
     }
     
     /**
+     * Sets the ImageLoader that is used at the beginning of the pipeline if the image is not
+     * loaded, yet.
+     * @param imageLoader the image loader implementation
+     */
+    public void setImageLoader(ImageLoader imageLoader) {
+        this.loader = imageLoader;
+    }
+    
+    /**
      * Adds an additional ImageConverter to the end of the pipeline.
      * @param converter the ImageConverter instance
      */
@@ -238,7 +285,9 @@ public class ImageProviderPipeline {
      */
     public int getConversionPenalty() {
         int penalty = 0;
-        penalty += loader.getUsagePenalty();
+        if (loader != null) {
+            penalty += loader.getUsagePenalty();
+        }
         Iterator iter = converters.iterator();
         while (iter.hasNext()) {
             ImageConverter converter = (ImageConverter)iter.next();

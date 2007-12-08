@@ -35,7 +35,7 @@ import org.apache.fop.image2.ImageInfo;
 public interface ImagePreloader {
 
     /** Default priority for preloaders */
-    public static final int DEFAULT_PRIORITY = 1000;
+    int DEFAULT_PRIORITY = 1000;
     
     /**
      * "Preloads" an image, i.e. indentifies whether the source image is supported by this

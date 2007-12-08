@@ -61,4 +61,9 @@ public abstract class AbstractImage implements Image {
         return null;
     }
 
+    /** {@inheritDoc} */
+    public String toString() {
+        return getClass().getName() + ": " + getInfo();
+    }
+
 }

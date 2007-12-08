@@ -236,18 +236,8 @@ public class ImageManager {
         for (int i = 0; i < count; i++) {
             candidates[i] = getPipelineFactory().newImageConverterPipeline(mime, flavors[i]);
         }
-        ImageProviderPipeline pipeline = null;
-        int minPenalty = Integer.MAX_VALUE;
-        for (int i = count - 1; i >= 0; i--) {
-            if (candidates[i] == null) {
-                continue;
-            }
-            int penalty = candidates[i].getConversionPenalty();
-            if (penalty <= minPenalty) {
-                pipeline = candidates[i];
-                minPenalty = penalty;
-            }
-        }    
+        ImageProviderPipeline pipeline = choosePipeline(candidates);
+        
         if (pipeline != null) {
             img = pipeline.execute(info, hints, session);
         }
@@ -294,6 +284,86 @@ public class ImageManager {
     public Image getImage(ImageInfo info, ImageFlavor[] flavors, ImageSessionContext session)
             throws ImageException, IOException {
         return getImage(info, flavors, ImageUtil.getDefaultHints(session), session);
+    }
+    
+    /**
+     * Converts an image. The caller can indicate what kind of image flavors are requested. When
+     * this method is called the code looks for a suitable combination of ImageConverters so it
+     * can return the image in exactly the form the caller needs.
+     * The array of image flavors is ordered, so the first image flavor is given highest priority.
+     * <p>
+     * Optionally, it is possible to pass in Map of hints. These hints may be used by
+     * ImageConverters to act on the image. See {@link ImageProcessingHints} for common hints
+     * used by the bundled implementations. You can, of course, define your own hints.
+     * @param image the image to convert
+     * @param flavors the requested image flavors (in preferred order).
+     * @param hints a Map of hints to any of the background components or null
+     * @return the fully loaded image
+     * @throws ImageException If no suitable loader/converter combination is available to fulfill
+     *                  the request or if an error occurred while loading the image.
+     * @throws IOException If an I/O error occurs
+     */
+    public Image convertImage(Image image, ImageFlavor[] flavors, Map hints)
+                throws ImageException, IOException {
+        if (hints == null) {
+            hints = Collections.EMPTY_MAP;
+        }
+        ImageInfo info = image.getInfo();
+        
+        Image img = null;
+        int count = flavors.length;
+        ImageProviderPipeline[] candidates = new ImageProviderPipeline[count];
+        for (int i = 0; i < count; i++) {
+            if (image.getFlavor().equals(flavors[i])) {
+                //Shortcut (the image is already in one of the requested formats)
+                return image;
+            }
+            candidates[i] = getPipelineFactory().newImageConverterPipeline(image, flavors[i]);
+        }
+        ImageProviderPipeline pipeline = choosePipeline(candidates);
+        
+        if (pipeline != null) {
+            img = pipeline.execute(info, image, hints, null);
+        }
+        if (img == null) {
+            throw new ImageException(
+                    "Cannot convert image " + image 
+                    + " (no suitable converter combination available)");
+        }
+        return img;
+    }
+
+    /**
+     * Converts an image with no hints. See
+     * {@link #convertImage(Image, ImageFlavor[], Map)} for more
+     * information.
+     * @param image the image to convert
+     * @param flavors the requested image flavors (in preferred order).
+     * @return the fully loaded image
+     * @throws ImageException If no suitable loader/converter combination is available to fulfill
+     *                  the request or if an error occurred while loading the image.
+     * @throws IOException If an I/O error occurs
+     */
+    public Image convertImage(Image image, ImageFlavor[] flavors)
+                throws ImageException, IOException {
+        return convertImage(image, flavors, null);
+    }
+    
+    private ImageProviderPipeline choosePipeline(ImageProviderPipeline[] candidates) {
+        ImageProviderPipeline pipeline = null;
+        int minPenalty = Integer.MAX_VALUE;
+        int count = candidates.length;
+        for (int i = count - 1; i >= 0; i--) {
+            if (candidates[i] == null) {
+                continue;
+            }
+            int penalty = candidates[i].getConversionPenalty();
+            if (penalty <= minPenalty) {
+                pipeline = candidates[i];
+                minPenalty = penalty;
+            }
+        }
+        return pipeline;
     }
     
 }

@@ -26,6 +26,7 @@ import java.util.LinkedList;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.fop.image2.Image;
 import org.apache.fop.image2.ImageFlavor;
 import org.apache.fop.image2.ImageManager;
 import org.apache.fop.image2.spi.ImageConverter;
@@ -79,11 +80,27 @@ public class PipelineFactory {
     }
     
     /**
-     * Creates and returns an ImageConverterPipeline that allows to load an image of the given
-     * MIME type and present it in the requested image flavor.
+     * Creates and returns an {@link ImageProviderPipeline} that allows to load an image of the
+     * given MIME type and present it in the requested image flavor.
+     * @param originalImage the original image that serves as the origin point of the conversion
+     * @param targetFlavor the requested image flavor
+     * @return an {@link ImageProviderPipeline} or null if no suitable pipeline could be assembled
+     */
+    public ImageProviderPipeline newImageConverterPipeline(
+                Image originalImage, ImageFlavor targetFlavor) {
+        //Get snapshot to avoid concurrent modification problems (thread-safety)
+        DefaultEdgeDirectory dir = getEdgeDirectory();
+        ImageRepresentation destination = new ImageRepresentation(targetFlavor);
+        ImageProviderPipeline pipeline = findPipeline(dir, originalImage.getFlavor(), destination);
+        return pipeline;
+    }
+    
+    /**
+     * Creates and returns an {@link ImageProviderPipeline} that allows to load an image of the
+     * given MIME type and present it in the requested image flavor.
      * @param originalMime the MIME type of the original image
      * @param targetFlavor the requested image flavor
-     * @return an ImageConverterPipeline or null if no suitable pipeline could be assembled
+     * @return an {@link ImageProviderPipeline} or null if no suitable pipeline could be assembled
      */
     public ImageProviderPipeline newImageConverterPipeline(
                 String originalMime, ImageFlavor targetFlavor) {
@@ -116,36 +133,10 @@ public class PipelineFactory {
                     loaderFactory = loaderFactories[i];
                     ImageFlavor[] flavors = loaderFactory.getSupportedFlavors(originalMime);
                     for (int j = 0, cj = flavors.length; j < cj; j++) {
-                        DijkstraAlgorithm dijkstra = new DijkstraAlgorithm(
-                                dir);
-                        ImageRepresentation origin = new ImageRepresentation(flavors[j]); 
-                        dijkstra.execute(origin, destination);
-                        if (log.isTraceEnabled()) {
-                            log.trace("Lowest penalty: " + dijkstra.getLowestPenalty(destination));
-                        }
-                        
-                        Vertex prev = destination;
-                        Vertex pred = dijkstra.getPredecessor(destination);
-                        if (pred == null) {
-                            if (log.isTraceEnabled()) {
-                                log.trace("No route found!");
-                            }
-                        } else {
-                            LinkedList stops = new LinkedList();
-                            //stops.addLast(destination);
-                            while ((pred = dijkstra.getPredecessor(prev)) != null) {
-                                ImageConversionEdge edge = (ImageConversionEdge)
-                                        dir.getBestEdge(pred, prev);
-                                stops.addFirst(edge);
-                                prev = pred;
-                            }
-                            ImageLoader loader = loaderFactory.newImageLoader(flavors[i]);
-                            pipeline = new ImageProviderPipeline(manager.getCache(), loader);
-                            Iterator iter = stops.iterator();
-                            while (iter.hasNext()) {
-                                ImageConversionEdge edge = (ImageConversionEdge)iter.next(); 
-                                pipeline.addConverter(edge.getImageConverter());
-                            }
+                        pipeline = findPipeline(dir, flavors[j], destination);
+                        if (pipeline != null) {
+                            ImageLoader loader = loaderFactory.newImageLoader(flavors[j]);
+                            pipeline.setImageLoader(loader);
                             if (pipeline != null && log.isDebugEnabled()) {
                                 log.debug("Pipeline: " + pipeline);
                             }
@@ -163,6 +154,42 @@ public class PipelineFactory {
             log.debug("Pipeline: " + pipeline);
         }
         return pipeline;
+    }
+    
+    private ImageProviderPipeline findPipeline(DefaultEdgeDirectory dir,
+            ImageFlavor originFlavor, ImageRepresentation destination) {
+        DijkstraAlgorithm dijkstra = new DijkstraAlgorithm(
+                dir);
+        ImageRepresentation origin = new ImageRepresentation(originFlavor); 
+        dijkstra.execute(origin, destination);
+        if (log.isTraceEnabled()) {
+            log.trace("Lowest penalty: " + dijkstra.getLowestPenalty(destination));
+        }
+        
+        Vertex prev = destination;
+        Vertex pred = dijkstra.getPredecessor(destination);
+        if (pred == null) {
+            if (log.isTraceEnabled()) {
+                log.trace("No route found!");
+            }
+            return null;
+        } else {
+            LinkedList stops = new LinkedList();
+            //stops.addLast(destination);
+            while ((pred = dijkstra.getPredecessor(prev)) != null) {
+                ImageConversionEdge edge = (ImageConversionEdge)
+                        dir.getBestEdge(pred, prev);
+                stops.addFirst(edge);
+                prev = pred;
+            }
+            ImageProviderPipeline pipeline = new ImageProviderPipeline(manager.getCache(), null);
+            Iterator iter = stops.iterator();
+            while (iter.hasNext()) {
+                ImageConversionEdge edge = (ImageConversionEdge)iter.next(); 
+                pipeline.addConverter(edge.getImageConverter());
+            }
+            return pipeline;
+        }
     }
     
 }
