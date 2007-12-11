@@ -33,7 +33,7 @@ public interface Graphics2DImagePainter {
      * Called to paint the image. Implementations should scale so the image is
      * painted fully inside the given area indicated by then Rectangle2D object.
      * @param g2d the Graphics2D instance to paint on
-     * @param area the target area for the image
+     * @param area the target area for the image (values are in points)
      */
     void paint(Graphics2D g2d, Rectangle2D area);
 
