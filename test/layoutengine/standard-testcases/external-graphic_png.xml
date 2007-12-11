@@ -45,14 +45,14 @@
     </fo:root>
   </fo>
   <checks>
-    <eval expected="46080" xpath="//flow/block[2]/lineArea/viewport/@ipd"/>
-    <eval expected="46080" xpath="//flow/block[2]/lineArea/viewport/@ipda"/>
-    <eval expected="46080" xpath="//flow/block[2]/lineArea/viewport/@bpd"/>
-    <eval expected="46080" xpath="//flow/block[2]/lineArea/viewport/@bpda"/>
+    <eval expected="46080" tolerance="5" xpath="//flow/block[2]/lineArea/viewport/@ipd"/>
+    <eval expected="46080" tolerance="5" xpath="//flow/block[2]/lineArea/viewport/@ipda"/>
+    <eval expected="46080" tolerance="5" xpath="//flow/block[2]/lineArea/viewport/@bpd"/>
+    <eval expected="46080" tolerance="5" xpath="//flow/block[2]/lineArea/viewport/@bpda"/>
     <!-- Due to unit computations there is a little difference to the expected 192000 -->
-    <eval expected="191975" xpath="//flow/block[4]/lineArea/viewport/@ipd"/>
-    <eval expected="191975" xpath="//flow/block[4]/lineArea/viewport/@ipda"/>
-    <eval expected="191975" xpath="//flow/block[4]/lineArea/viewport/@bpd"/>
-    <eval expected="191975" xpath="//flow/block[4]/lineArea/viewport/@bpda"/>
+    <eval expected="191975" tolerance="5" xpath="//flow/block[4]/lineArea/viewport/@ipd"/>
+    <eval expected="191975" tolerance="5" xpath="//flow/block[4]/lineArea/viewport/@ipda"/>
+    <eval expected="191975" tolerance="5" xpath="//flow/block[4]/lineArea/viewport/@bpd"/>
+    <eval expected="191975" tolerance="5" xpath="//flow/block[4]/lineArea/viewport/@bpda"/>
   </checks>
 </testcase>
