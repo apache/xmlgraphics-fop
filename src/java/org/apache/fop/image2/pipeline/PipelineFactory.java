@@ -20,8 +20,10 @@
 package org.apache.fop.image2.pipeline;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.SortedSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -128,6 +130,7 @@ public class PipelineFactory {
             // --> List of resulting flavors, possibly multiple loaders
             ImageLoaderFactory[] loaderFactories = registry.getImageLoaderFactories(originalMime);
             if (loaderFactories != null) {
+                SortedSet candidates = new java.util.TreeSet(new PipelineComparator());
                 //Find best pipeline -> best loader
                 for (int i = 0, ci = loaderFactories.length; i < ci; i++) {
                     loaderFactory = loaderFactories[i];
@@ -137,23 +140,32 @@ public class PipelineFactory {
                         if (pipeline != null) {
                             ImageLoader loader = loaderFactory.newImageLoader(flavors[j]);
                             pipeline.setImageLoader(loader);
-                            if (pipeline != null && log.isDebugEnabled()) {
-                                log.debug("Pipeline: " + pipeline);
-                            }
-                            return pipeline;
+                            candidates.add(pipeline);
                         }
                     }
                 }
                 
                 //Build final pipeline
-                
+                if (candidates.size() > 0) {
+                    pipeline = (ImageProviderPipeline)candidates.first();
+                }
             }
-            
         }
         if (pipeline != null && log.isDebugEnabled()) {
-            log.debug("Pipeline: " + pipeline);
+            log.debug("Pipeline: " + pipeline + " with penalty " + pipeline.getConversionPenalty());
         }
         return pipeline;
+    }
+    
+    private static class PipelineComparator implements Comparator {
+
+        public int compare(Object o1, Object o2) {
+            ImageProviderPipeline p1 = (ImageProviderPipeline)o1;
+            ImageProviderPipeline p2 = (ImageProviderPipeline)o2;
+            //Lowest penalty first
+            return p1.getConversionPenalty() - p2.getConversionPenalty();
+        }
+        
     }
     
     private ImageProviderPipeline findPipeline(DefaultEdgeDirectory dir,
@@ -191,5 +203,40 @@ public class PipelineFactory {
             return pipeline;
         }
     }
+    
+    /**
+     * Finds and returns an array of {@link ImageProviderPipeline} instances which can handle
+     * the given MIME type and return one of the given {@link ImageFlavor}s.
+     * @param sourceMime the MIME type of the source file
+     * @param flavors the possible target flavors
+     * @return an array of pipelines
+     */
+    public ImageProviderPipeline[] determineCandidatePipelines(String sourceMime,
+            ImageFlavor[] flavors) {
+        int count = flavors.length;
+        ImageProviderPipeline[] candidates = new ImageProviderPipeline[count];
+        for (int i = 0; i < count; i++) {
+            candidates[i] = newImageConverterPipeline(sourceMime, flavors[i]);
+        }
+        return candidates;
+    }
+    
+    /**
+     * Finds and returns an array of {@link ImageProviderPipeline} instances which can handle
+     * the convert the given {@link Image} and return one of the given {@link ImageFlavor}s.
+     * @param sourceImage the image to be converted
+     * @param flavors the possible target flavors
+     * @return an array of pipelines
+     */
+    public ImageProviderPipeline[] determineCandidatePipelines(Image sourceImage,
+            ImageFlavor[] flavors) {
+        int count = flavors.length;
+        ImageProviderPipeline[] candidates = new ImageProviderPipeline[count];
+        for (int i = 0; i < count; i++) {
+            candidates[i] = newImageConverterPipeline(sourceImage, flavors[i]);
+        }
+        return candidates;
+    }
+    
     
 }
