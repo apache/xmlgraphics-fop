@@ -21,29 +21,22 @@ package org.apache.fop.render.pdf;
 import java.awt.color.ColorSpace;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
-import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.zip.Deflater;
-import java.util.zip.DeflaterOutputStream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.xmlgraphics.image.codec.png.PNGEncodeParam;
-import org.apache.xmlgraphics.image.codec.png.PNGImageEncoder;
 import org.apache.xmlgraphics.ps.ImageEncodingHelper;
 
 import org.apache.fop.image2.impl.ImageRendered;
 import org.apache.fop.pdf.AlphaRasterImage;
-import org.apache.fop.pdf.FlateFilter;
 import org.apache.fop.pdf.PDFArray;
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.pdf.PDFDeviceColorSpace;
 import org.apache.fop.pdf.PDFDictionary;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFFilter;
-import org.apache.fop.pdf.PDFFilterException;
 import org.apache.fop.pdf.PDFFilterList;
 import org.apache.fop.pdf.PDFName;
 import org.apache.fop.pdf.PDFReference;
@@ -62,7 +55,6 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
     private PDFFilter pdfFilter = null;
     private String maskRef;
     private PDFReference softMask;
-    private boolean usePredictors = false;
 
     /**
      * Creates a new PDFImage from an Image instance.
@@ -96,22 +88,6 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
         RenderedImage ri = getImage().getRenderedImage();
         ColorModel cm = getEffectiveColorModel();
 
-        if (usePredictors) {
-            //Experiment hasn't worked, yet, so it's disabled
-            FlateFilter flate;
-            try {
-                flate = new FlateFilter();
-                flate.setApplied(true);
-                flate.setPredictor(FlateFilter.PREDICTION_PNG_OPT);
-                flate.setColors(cm.getNumComponents());
-                flate.setColumns(ri.getWidth());
-                flate.setBitsPerComponent(getBitsPerComponent());
-            } catch (PDFFilterException e) {
-                throw new RuntimeException("Unexpected bug while configuring FlateFilter", e);
-            }
-            this.pdfFilter = flate;
-        }
-
         super.setup(doc);
         
         //Handle transparency mask if applicable
@@ -123,7 +99,6 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
             
             AlphaRasterImage alphaImage = new AlphaRasterImage("Mask:" + getKey(), ri);
             this.softMask = doc.addImage(null, alphaImage).makeReference();
-
         }
     }
 
@@ -172,12 +147,6 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
                     i < ((IndexColorModel) cm).getMapSize();
                     i++) {
                 if ((alphas[i] & 0xFF) == 0) {
-                    /*
-                    Color transparentColor = new Color(
-                            (int)(reds[i] & 0xFF),
-                            (int)(greens[i] & 0xFF),
-                            (int)(blues[i] & 0xFF));
-                    */
                     return new Integer(i);
                 }
             }
@@ -223,14 +192,7 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
     
     /** {@inheritDoc} */
     public void outputContents(OutputStream out) throws IOException {
-        if (usePredictors) {
-            PNGEncodeParam param = PNGEncodeParam.getDefaultEncodeParam(
-                    getImage().getRenderedImage());
-            EmbeddedPNGEncoder encoder = new EmbeddedPNGEncoder(out, param);
-            encoder.encode(getImage().getRenderedImage());
-        } else {
-            encodingHelper.encode(out);
-        }
+        encodingHelper.encode(out);
     }
 
     private static final int MAX_HIVAL = 255;
@@ -302,58 +264,7 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
     
     /** {@inheritDoc} */
     public String getFilterHint() {
-        if (usePredictors) {
-            return PDFFilterList.PRECOMPRESSED_FILTER;
-        } else {
-            return PDFFilterList.IMAGE_FILTER;
-        }
-    }
-
-    private static class EmbeddedPNGEncoder extends PNGImageEncoder {
-
-        public EmbeddedPNGEncoder(OutputStream output, PNGEncodeParam param) {
-            super(output, param);
-        }
-        
-        public void encode(RenderedImage image) throws IOException {
-            prepareEncoding(image);
-            
-            DeflaterOutputStream dos
-                = new DeflaterOutputStream(getOutputStream(),
-                        new Deflater(Deflater.DEFAULT_COMPRESSION));
-
-            // Future work - don't convert entire image to a Raster It
-            // might seem that you could just call image.getData() but
-            // 'BufferedImage.subImage' doesn't appear to set the Width
-            // and height properly of the Child Raster, so the Raster
-            // you get back here appears larger than it should.
-            // This solves that problem by bounding the raster to the
-            // image's bounds...
-            /*
-            Raster ras = image.getData(new Rectangle(image.getMinX(), 
-                                                     image.getMinY(),
-                                                     image.getWidth(),
-                                                     image.getHeight()));
-            */
-            Raster ras = image.getData();
-
-            boolean skipAlpha = image.getColorModel().hasAlpha();
-            if (skipAlpha) {
-                int numBands = ras.getNumBands() - 1;
-                int[] bandList = new int[numBands];
-                for (int i = 0; i < numBands; i++) {
-                    bandList[i] = i;
-                }
-                ras = ras.createChild(0, 0,
-                                      ras.getWidth(), ras.getHeight(),
-                                      0, 0,
-                                      bandList);
-            }
-
-            encodePass(dos, ras, 0, 0, 1, 1);
-
-            dos.finish();
-        }
+        return PDFFilterList.IMAGE_FILTER;
     }
 
 }
