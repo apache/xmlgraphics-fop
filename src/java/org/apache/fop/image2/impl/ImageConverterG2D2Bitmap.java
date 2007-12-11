@@ -41,8 +41,7 @@ import org.apache.fop.image2.ImageSize;
 import org.apache.fop.util.UnitConv;
 
 /**
- * This ImageConverter converts WMF images (represented by Batik's WMFRecordStore) to a
- * BufferedImage.
+ * This ImageConverter converts Graphics2D images to a BufferedImage.
  */
 public class ImageConverterG2D2Bitmap extends AbstractImageConverter {
 
