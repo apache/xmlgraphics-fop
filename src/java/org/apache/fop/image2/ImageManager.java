@@ -231,11 +231,8 @@ public class ImageManager {
         String mime = info.getMimeType();
 
         Image img = null;
-        int count = flavors.length;
-        ImageProviderPipeline[] candidates = new ImageProviderPipeline[count];
-        for (int i = 0; i < count; i++) {
-            candidates[i] = getPipelineFactory().newImageConverterPipeline(mime, flavors[i]);
-        }
+        ImageProviderPipeline[] candidates = getPipelineFactory().determineCandidatePipelines(
+                mime, flavors);
         ImageProviderPipeline pipeline = choosePipeline(candidates);
         
         if (pipeline != null) {
@@ -312,14 +309,14 @@ public class ImageManager {
         
         Image img = null;
         int count = flavors.length;
-        ImageProviderPipeline[] candidates = new ImageProviderPipeline[count];
         for (int i = 0; i < count; i++) {
             if (image.getFlavor().equals(flavors[i])) {
                 //Shortcut (the image is already in one of the requested formats)
                 return image;
             }
-            candidates[i] = getPipelineFactory().newImageConverterPipeline(image, flavors[i]);
         }
+        ImageProviderPipeline[] candidates = getPipelineFactory().determineCandidatePipelines(
+                image, flavors);
         ImageProviderPipeline pipeline = choosePipeline(candidates);
         
         if (pipeline != null) {
@@ -349,7 +346,12 @@ public class ImageManager {
         return convertImage(image, flavors, null);
     }
     
-    private ImageProviderPipeline choosePipeline(ImageProviderPipeline[] candidates) {
+    /**
+     * Chooses the best {@link ImageProviderPipeline} from a set of candidates.
+     * @param candidates the candidates
+     * @return the best pipeline
+     */
+    public ImageProviderPipeline choosePipeline(ImageProviderPipeline[] candidates) {
         ImageProviderPipeline pipeline = null;
         int minPenalty = Integer.MAX_VALUE;
         int count = candidates.length;
