@@ -180,7 +180,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
 
     /** {@inheritDoc} */
     public Graphics2DAdapter getGraphics2DAdapter() {
-        return new Java2DGraphics2DAdapter(state);
+        return new Java2DGraphics2DAdapter();
     }
 
     /**
@@ -886,8 +886,6 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         int y = currentBPPosition + (int)Math.round(pos.getY());
         uri = URISpecification.getURL(uri);
         
-        //ImageFactory fact = userAgent.getFactory().getImageFactory();
-        //FopImage fopimage = fact.getImage(url, userAgent);
         ImageManager manager = getUserAgent().getFactory().getImageManager();
         ImageInfo info = null;
         try {
@@ -915,6 +913,8 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
                 at.translate(x / 1000f, y / 1000f);
                 double sx = pos.getWidth() / info.getSize().getWidthMpt();
                 double sy = pos.getHeight() / info.getSize().getHeightMpt();
+                sx *= userAgent.getSourceResolution() / info.getSize().getDpiHorizontal();
+                sy *= userAgent.getSourceResolution() / info.getSize().getDpiVertical();
                 at.scale(sx, sy);
                 state.getGraph().drawRenderedImage(imgRend.getRenderedImage(), at);
             } else if (img instanceof ImageXMLDOM) {
@@ -929,69 +929,9 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
             log.error("I/O error while processing image: "
                     + (info != null ? info.toString() : uri), ioe);
         }
-
-        /*
-        if (fopimage == null) {
-            return;
-        }
-        if (!fopimage.load(FopImage.DIMENSIONS)) {
-            return;
-        }
-        int w = fopimage.getWidth();
-        int h = fopimage.getHeight();
-        String mime = fopimage.getMimeType();
-        if ("text/xml".equals(mime)) {
-            if (!fopimage.load(FopImage.ORIGINAL_DATA)) {
-                return;
-            }
-            Document doc = ((XMLImage) fopimage).getDocument();
-            String ns = ((XMLImage) fopimage).getNameSpace();
-            renderDocument(doc, ns, pos, foreignAttributes);
-
-        } else if ("image/svg+xml".equals(mime)) {
-            if (!fopimage.load(FopImage.ORIGINAL_DATA)) {
-                return;
-            }
-            Document doc = ((XMLImage) fopimage).getDocument();
-            String ns = ((XMLImage) fopimage).getNameSpace();
-
-            renderDocument(doc, ns, pos, foreignAttributes);
-        } else if ("image/eps".equals(mime)) {
-            log.warn("EPS images are not supported by this renderer");
-        } else {
-            if (!fopimage.load(FopImage.BITMAP)) {
-                log.warn("Loading of bitmap failed: " + url);
-                return;
-            }
-
-            byte[] raw = fopimage.getBitmaps();
-
-            // TODO Hardcoded color and sample models, FIX ME!
-            ColorModel cm = new ComponentColorModel(
-                    ColorSpace.getInstance(ColorSpace.CS_LINEAR_RGB), 
-                    new int[] {8, 8, 8},
-                    false, false,
-                    ColorModel.OPAQUE, DataBuffer.TYPE_BYTE);
-            SampleModel sampleModel = new PixelInterleavedSampleModel(
-                    DataBuffer.TYPE_BYTE, w, h, 3, w * 3, new int[] {0, 1, 2});
-            DataBuffer dbuf = new DataBufferByte(raw, w * h * 3);
-
-            WritableRaster raster = Raster.createWritableRaster(sampleModel,
-                    dbuf, null);
-
-            java.awt.Image awtImage;
-            // Combine the color model and raster into a buffered image
-            awtImage = new BufferedImage(cm, raster, false, null);
-
-            state.getGraph().drawImage(awtImage, 
-                    (int)(x / 1000f), (int)(y / 1000f), 
-                    (int)(pos.getWidth() / 1000f), (int)(pos.getHeight() / 1000f), null);
-        }*/
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected RendererContext createRendererContext(int x, int y, int width, int height, 
             Map foreignAttributes) {
         RendererContext context = super.createRendererContext(
@@ -1000,9 +940,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         return context;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int print(Graphics g, PageFormat pageFormat, int pageIndex)
             throws PrinterException {
         if (pageIndex >= getNumberOfPages()) {
@@ -1042,6 +980,10 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         //not necessary in Java2D
     }
 
+    /**
+     * Controls the page background.
+     * @param transparentPageBackground true if the background should be transparent
+     */
     public void setTransparentPageBackground(boolean transparentPageBackground) {
         this.transparentPageBackground = transparentPageBackground;
     }
