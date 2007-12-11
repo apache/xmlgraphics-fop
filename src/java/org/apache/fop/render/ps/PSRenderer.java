@@ -42,6 +42,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.xmlgraphics.ps.DSCConstants;
 import org.apache.xmlgraphics.ps.ImageEncoder;
 import org.apache.xmlgraphics.ps.PSGenerator;
+import org.apache.xmlgraphics.ps.PSImageUtils;
 import org.apache.xmlgraphics.ps.PSProcSets;
 import org.apache.xmlgraphics.ps.PSResource;
 import org.apache.xmlgraphics.ps.PSState;
@@ -84,6 +85,7 @@ import org.apache.fop.image2.impl.ImageRawJPEG;
 import org.apache.fop.image2.impl.ImageRawStream;
 import org.apache.fop.image2.impl.ImageRendered;
 import org.apache.fop.image2.impl.ImageXMLDOM;
+import org.apache.fop.image2.pipeline.ImageProviderPipeline;
 import org.apache.fop.image2.util.ImageUtil;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Graphics2DAdapter;
@@ -115,7 +117,8 @@ import org.apache.fop.util.CharUtilities;
  * @author <a href="mailto:fop-dev@xmlgraphics.apache.org">Apache FOP Development Team</a>
  * @version $Id$
  */
-public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAdapter {
+public class PSRenderer extends AbstractPathOrientedRenderer
+            implements ImageAdapter, PSSupportedFlavors {
 
     /** logging instance */
     private static Log log = LogFactory.getLog(PSRenderer.class);
@@ -381,20 +384,50 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         }
     }
 
-    private final ImageFlavor[] level2Flavors = new ImageFlavor[]
-                                                  {ImageFlavor.RAW_EPS,
-                                                   ImageFlavor.GRAPHICS2D,
-                                                   ImageFlavor.BUFFERED_IMAGE, 
-                                                   ImageFlavor.RENDERED_IMAGE, 
-                                                   ImageFlavor.XML_DOM};
+    /**
+     * Indicates whether an image should be inlined or added as a PostScript form.
+     * @param uri the URI of the image
+     * @return true if the image should be inlined rather than added as a form
+     */
+    protected boolean isImageInlined(String uri) {
+        return !isOptimizeResources() || uri == null || "".equals(uri);
+    }
+    
+    /**
+     * Indicates whether an image should be inlined or added as a PostScript form.
+     * @param info the ImageInfo object of the image
+     * @return true if the image should be inlined rather than added as a form
+     */
+    protected boolean isImageInlined(ImageInfo info) {
+        if (isImageInlined(info.getOriginalURI())) {
+            return true;
+        }
+        
+        if (!isOptimizeResources()) {
+            throw new IllegalStateException("Must not get here if form support is enabled");
+        }
 
-    private final ImageFlavor[] level3Flavors = new ImageFlavor[]
-                                                  {ImageFlavor.RAW_EPS,
-                                                   ImageFlavor.RAW_JPEG,
-                                                   ImageFlavor.GRAPHICS2D,
-                                                   ImageFlavor.BUFFERED_IMAGE, 
-                                                   ImageFlavor.RENDERED_IMAGE, 
-                                                   ImageFlavor.XML_DOM};
+        //Investigate choice for inline mode
+        ImageFlavor[] inlineFlavors = getInlineFlavors();
+        ImageManager manager = getUserAgent().getFactory().getImageManager();
+        ImageProviderPipeline[] inlineCandidates
+            = manager.getPipelineFactory().determineCandidatePipelines(
+                    info.getMimeType(), inlineFlavors);
+        ImageProviderPipeline inlineChoice = manager.choosePipeline(inlineCandidates);
+        ImageFlavor inlineFlavor = (inlineChoice != null ? inlineChoice.getTargetFlavor() : null);
+        
+        //Investigate choice for form mode
+        ImageFlavor[] formFlavors = getFormFlavors();
+        ImageProviderPipeline[] formCandidates
+            = manager.getPipelineFactory().determineCandidatePipelines(
+                    info.getMimeType(), formFlavors);
+        ImageProviderPipeline formChoice = manager.choosePipeline(formCandidates);
+        ImageFlavor formFlavor = (formChoice != null ? formChoice.getTargetFlavor() : null);
+        
+        //Inline if form is not supported or if a better choice is available with inline mode
+        return formFlavor == null || !formFlavor.equals(inlineFlavor);
+    }
+    
     /** {@inheritDoc} */
     protected void drawImage(String uri, Rectangle2D pos, Map foreignAttributes) {
         endTextObject();
@@ -410,68 +443,84 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         try {
             ImageSessionContext sessionContext = getUserAgent().getImageSessionContext();
             info = manager.getImageInfo(uri, sessionContext);
-            Map hints = ImageUtil.getDefaultHints(sessionContext);
-            ImageFlavor[] flavors;
-            if (gen.getPSLevel() >= 3) {
-                flavors = level3Flavors;
-            } else {
-                flavors = level2Flavors;
-            }
             int width = (int)pos.getWidth();
             int height = (int)pos.getHeight();
-            org.apache.fop.image2.Image img = manager.getImage(
-                        info, flavors, hints, sessionContext);
-            if (img instanceof ImageGraphics2D) {
-                ImageGraphics2D imageG2D = (ImageGraphics2D)img;
-                RendererContext context = createRendererContext(
-                        x, y, width, height, foreignAttributes);
-                getGraphics2DAdapter().paintImage(imageG2D.getGraphics2DImagePainter(),
-                        context, x, y, width, height);
-            } else if (img instanceof ImageRendered) {
-                ImageRendered imgRend = (ImageRendered)img;
-                RendererContext context = createRendererContext(
-                        x, y, width, height, foreignAttributes);
-                paintImage(imgRend.getRenderedImage(), context, x, y, width, height);
-            } else if (img instanceof ImageXMLDOM) {
-                ImageXMLDOM imgXML = (ImageXMLDOM)img;
-                renderDocument(imgXML.getDocument(), imgXML.getRootNamespace(),
-                        pos, foreignAttributes);
-            } else if (img instanceof ImageRawStream) {
-                final ImageRawStream raw = (ImageRawStream)img;
-                if (MimeConstants.MIME_EPS.equals(raw.getInfo().getMimeType())) {
-                    ImageRawEPS eps = (ImageRawEPS)raw;
-                    Rectangle2D bbox = eps.getBoundingBox(); 
-                    InputStream in = raw.createInputStream();
-                    try {
-                        PSImageUtils.renderEPS(in, uri,
-                                x / 1000f, y / 1000f,
-                                width / 1000f, height / 1000f,
-                                (float)bbox.getX(), (float)bbox.getY(),
-                                (float)bbox.getWidth(), (float)bbox.getHeight(),
-                                gen);
-                    } finally {
-                        IOUtils.closeQuietly(in);
-                    }
-                } else if (MimeConstants.MIME_JPEG.equals(raw.getInfo().getMimeType())) {
-                    ImageRawJPEG jpeg = (ImageRawJPEG)raw;
-                    ImageEncoder encoder = new ImageEncoder() {
-                        public void writeTo(OutputStream out) throws IOException {
-                            raw.writeTo(out);
-                        }
-                        public String getImplicitFilter() {
-                            return "<< >> /DCTDecode";
-                        }
-                    };
-                    Rectangle2D targetRect = new Rectangle2D.Float(
-                            x / 1000f, y / 1000f,
-                            width / 1000f, height / 1000f);
-                    PSImageUtils.writeImage(encoder, info.getSize().getDimensionPx(),
-                            uri, targetRect,
-                            jpeg.getColorSpace(), jpeg.isInverted(), gen);
-                } else {
-                    throw new UnsupportedOperationException("Unsupported raw image: " + info);
+            
+            //millipoints --> points for PostScript
+            float ptx = x / 1000f;
+            float pty = y / 1000f;
+            float ptw = width / 1000f;
+            float pth = height / 1000f;
+
+            if (isImageInlined(info)) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Image " + info + " is inlined");
                 }
+                //Only now fully load/prepare the image
+                Map hints = ImageUtil.getDefaultHints(sessionContext);
+                org.apache.fop.image2.Image img = manager.getImage(
+                        info, getInlineFlavors(), hints, sessionContext);
+                
+                //...and embed as inline image
+                if (img instanceof ImageGraphics2D) {
+                    ImageGraphics2D imageG2D = (ImageGraphics2D)img;
+                    RendererContext context = createRendererContext(
+                            x, y, width, height, foreignAttributes);
+                    getGraphics2DAdapter().paintImage(imageG2D.getGraphics2DImagePainter(),
+                            context, x, y, width, height);
+                } else if (img instanceof ImageRendered) {
+                    ImageRendered imgRend = (ImageRendered)img;
+                    RenderedImage ri = imgRend.getRenderedImage();
+                    PSImageUtils.renderBitmapImage(ri, ptx, pty, ptw, pth, gen);
+                } else if (img instanceof ImageXMLDOM) {
+                    ImageXMLDOM imgXML = (ImageXMLDOM)img;
+                    renderDocument(imgXML.getDocument(), imgXML.getRootNamespace(),
+                            pos, foreignAttributes);
+                } else if (img instanceof ImageRawStream) {
+                    final ImageRawStream raw = (ImageRawStream)img;
+                    if (MimeConstants.MIME_EPS.equals(raw.getInfo().getMimeType())) {
+                        ImageRawEPS eps = (ImageRawEPS)raw;
+                        Rectangle2D bbox = eps.getBoundingBox(); 
+                        InputStream in = raw.createInputStream();
+                        try {
+                            PSImageUtils.renderEPS(in, uri,
+                                    new Rectangle2D.Float(ptx, pty, ptw, pth),
+                                    bbox,
+                                    gen);
+                        } finally {
+                            IOUtils.closeQuietly(in);
+                        }
+                    } else if (MimeConstants.MIME_JPEG.equals(raw.getInfo().getMimeType())) {
+                        ImageRawJPEG jpeg = (ImageRawJPEG)raw;
+                        ImageEncoder encoder = new ImageEncoder() {
+                            public void writeTo(OutputStream out) throws IOException {
+                                raw.writeTo(out);
+                            }
+                            public String getImplicitFilter() {
+                                return "<< >> /DCTDecode";
+                            }
+                        };
+                        Rectangle2D targetRect = new Rectangle2D.Float(
+                                ptx, pty, ptw, pth);
+                        PSImageUtils.writeImage(encoder, info.getSize().getDimensionPx(),
+                                uri, targetRect,
+                                jpeg.getColorSpace(), jpeg.isInverted(), gen);
+                    } else {
+                        throw new UnsupportedOperationException("Unsupported raw image: " + info);
+                    }
+                } else {
+                    throw new UnsupportedOperationException("Unsupported image type: " + img);
+                }
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("Image " + info + " is embedded as a form later");
+                }
+                //Don't load image at this time, just put a form placeholder in the stream
+                PSResource form = getFormForImage(uri);   
+                Rectangle2D targetRect = new Rectangle2D.Double(ptx, pty, ptw, pth);
+                PSImageUtils.paintForm(form, info.getSize().getDimensionPt(), targetRect, gen);   
             }
+
         } catch (ImageException ie) {
             log.error("Error while processing image: "
                     + (info != null ? info.toString() : uri), ie);
@@ -482,12 +531,35 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         }
     }
 
+    private ImageFlavor[] getInlineFlavors() {
+        ImageFlavor[] flavors;
+        if (gen.getPSLevel() >= 3) {
+            flavors = LEVEL_3_FLAVORS_INLINE;
+        } else {
+            flavors = LEVEL_2_FLAVORS_INLINE;
+        }
+        return flavors;
+    }
+
+    private ImageFlavor[] getFormFlavors() {
+        ImageFlavor[] flavors;
+        if (gen.getPSLevel() >= 3) {
+            flavors = LEVEL_3_FLAVORS_FORM;
+        } else {
+            flavors = LEVEL_2_FLAVORS_FORM;
+        }
+        return flavors;
+    }
+
     /**
      * Returns a PSResource instance representing a image as a PostScript form.
      * @param uri the image URI
      * @return a PSResource instance
      */
     protected PSResource getFormForImage(String uri) {
+        if (uri == null || "".equals(uri)) {
+            throw new IllegalArgumentException("uri must not be empty or null");
+        }
         if (this.formResources == null) {
             this.formResources = new java.util.HashMap();
         }
@@ -499,16 +571,6 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         return form;
     }
 
-    /**
-     * Indicates whether an image with the given URI should be inlined or added as a PostScript
-     * form.
-     * @param uri the image URI
-     * @return true if the image should be inlined rather than added as a form
-     */
-    protected boolean isImageInlined(String uri) {
-        return !isOptimizeResources();
-    }
-    
     /** {@inheritDoc} */
     public void paintImage(RenderedImage image, RendererContext context, 
             int x, int y, int width, int height) throws IOException {
