@@ -48,8 +48,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+import org.w3c.dom.Document;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.xmlgraphics.java2d.GraphicContext;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.Area;
@@ -74,6 +78,7 @@ import org.apache.fop.image.EPSImage;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
 import org.apache.fop.image.XMLImage;
+import org.apache.fop.image2.ImageSize;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.Graphics2DImagePainter;
 import org.apache.fop.render.PrintRenderer;
@@ -86,8 +91,6 @@ import org.apache.fop.render.pcl.extensions.PCLElementMapping;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.util.QName;
 import org.apache.fop.util.UnitConv;
-import org.apache.xmlgraphics.java2d.GraphicContext;
-import org.w3c.dom.Document;
 
 /**
  * Renderer for the PCL 5 printer language. It also uses HP GL/2 for certain graphic elements.
@@ -1151,52 +1154,45 @@ public class PCLRenderer extends PrintRenderer {
             }
     
             // background image
-            if (back.getFopImage() != null) {
-                FopImage fopimage = back.getFopImage();
-                if (fopimage != null && fopimage.load(FopImage.DIMENSIONS)) {
-                    saveGraphicsState();
-                    clipRect(sx, sy, paddRectWidth, paddRectHeight);
-                    int horzCount = (int) ((paddRectWidth * 1000 / fopimage
-                            .getIntrinsicWidth()) + 1.0f);
-                    int vertCount = (int) ((paddRectHeight * 1000 / fopimage
-                            .getIntrinsicHeight()) + 1.0f);
-                    if (back.getRepeat() == EN_NOREPEAT) {
-                        horzCount = 1;
-                        vertCount = 1;
-                    } else if (back.getRepeat() == EN_REPEATX) {
-                        vertCount = 1;
-                    } else if (back.getRepeat() == EN_REPEATY) {
-                        horzCount = 1;
-                    }
-                    // change from points to millipoints
-                    sx *= 1000;
-                    sy *= 1000;
-                    if (horzCount == 1) {
-                        sx += back.getHoriz();
-                    }
-                    if (vertCount == 1) {
-                        sy += back.getVertical();
-                    }
-                    for (int x = 0; x < horzCount; x++) {
-                        for (int y = 0; y < vertCount; y++) {
-                            // place once
-                            Rectangle2D pos;
-                            // Image positions are relative to the currentIP/BP
-                            pos = new Rectangle2D.Float(
-                                    sx - currentIPPosition 
-                                        + (x * fopimage.getIntrinsicWidth()),
-                                    sy - currentBPPosition
-                                        + (y * fopimage.getIntrinsicHeight()),
-                                    fopimage.getIntrinsicWidth(),
-                                    fopimage.getIntrinsicHeight());
-                            drawImage(back.getURL(), pos, null);
-                        }
-                    }
-                    restoreGraphicsState();
-                } else {
-                    log.warn(
-                            "Can't find background image: " + back.getURL());
+            if (back.getImageInfo() != null) {
+                ImageSize imageSize = back.getImageInfo().getSize(); 
+                saveGraphicsState();
+                clipRect(sx, sy, paddRectWidth, paddRectHeight);
+                int horzCount = (int) ((paddRectWidth * 1000 / imageSize.getWidthMpt()) + 1.0f);
+                int vertCount = (int) ((paddRectHeight * 1000 / imageSize.getHeightMpt()) + 1.0f);
+                if (back.getRepeat() == EN_NOREPEAT) {
+                    horzCount = 1;
+                    vertCount = 1;
+                } else if (back.getRepeat() == EN_REPEATX) {
+                    vertCount = 1;
+                } else if (back.getRepeat() == EN_REPEATY) {
+                    horzCount = 1;
                 }
+                // change from points to millipoints
+                sx *= 1000;
+                sy *= 1000;
+                if (horzCount == 1) {
+                    sx += back.getHoriz();
+                }
+                if (vertCount == 1) {
+                    sy += back.getVertical();
+                }
+                for (int x = 0; x < horzCount; x++) {
+                    for (int y = 0; y < vertCount; y++) {
+                        // place once
+                        Rectangle2D pos;
+                        // Image positions are relative to the currentIP/BP
+                        pos = new Rectangle2D.Float(
+                                sx - currentIPPosition 
+                                    + (x * imageSize.getWidthMpt()),
+                                sy - currentBPPosition
+                                    + (y * imageSize.getHeightMpt()),
+                                imageSize.getWidthMpt(),
+                                imageSize.getHeightMpt());
+                        drawImage(back.getURL(), pos, null);
+                    }
+                }
+                restoreGraphicsState();
             }
         }
         
