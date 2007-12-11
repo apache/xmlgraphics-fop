@@ -84,8 +84,10 @@ public class ExternalGraphic extends AbstractGraphics {
         if (info != null) {
             this.intrinsicWidth = info.getSize().getWidthMpt();
             this.intrinsicHeight = info.getSize().getHeightMpt();
-            this.intrinsicAlignmentAdjust = new FixedLength(
-                    -info.getSize().getBaselinePositionFromBottom());
+            int baseline = info.getSize().getBaselinePositionFromBottom();
+            if (baseline != 0) {
+                this.intrinsicAlignmentAdjust = new FixedLength(-baseline);
+            }
         }
         //TODO Report to caller so he can decide to throw an exception
     }
