@@ -27,8 +27,10 @@ import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
+import org.apache.fop.image2.ImageInfo;
+import org.apache.fop.image2.ImageManager;
+import org.apache.fop.image2.ImageSessionContext;
 
 /**
  * Stores all common border and padding properties.
@@ -66,7 +68,7 @@ public class CommonBorderPaddingBackground {
     public Length backgroundPositionVertical;
     
     
-    private FopImage fopimage;
+    private ImageInfo backgroundImageInfo;
     
     
     /** the "before" edge */ 
@@ -160,18 +162,16 @@ public class CommonBorderPaddingBackground {
                     Constants.PR_BACKGROUND_POSITION_VERTICAL).getLength();
             
             //Additional processing: preload image
-            String url = ImageFactory.getURL(backgroundImage);
+            String uri = ImageFactory.getURL(backgroundImage);
             FOUserAgent userAgent = pList.getFObj().getUserAgent();
-            ImageFactory fact = userAgent.getFactory().getImageFactory();
-            fopimage = fact.getImage(url, userAgent);
-            if (fopimage == null) {
-                Property.log.error("Background image not available: " + backgroundImage);
-            } else {
-                // load dimensions
-                if (!fopimage.load(FopImage.DIMENSIONS)) {
-                    Property.log.error("Cannot read background image dimensions: " 
-                            + backgroundImage);
-                }
+            ImageManager manager = userAgent.getFactory().getImageManager();
+            ImageSessionContext sessionContext = userAgent.getImageSessionContext();
+            ImageInfo info;
+            try {
+                info = manager.getImageInfo(uri, sessionContext);
+                this.backgroundImageInfo = info;
+            } catch (Exception e) {
+                Property.log.error("Background image not available: " + uri);
             }
             //TODO Report to caller so he can decide to throw an exception
         }
@@ -239,11 +239,11 @@ public class CommonBorderPaddingBackground {
     }
     
     /**
-     * @return the background image as a preloaded FopImage, null if there is
+     * @return the background image info object, null if there is
      *     no background image.
      */
-    public FopImage getFopImage() {
-        return this.fopimage;
+    public ImageInfo getImageInfo() {
+        return this.backgroundImageInfo;
     }
     
     /**
@@ -379,7 +379,7 @@ public class CommonBorderPaddingBackground {
      * @return true if there is any kind of background to be painted
      */
     public boolean hasBackground() {
-        return ((backgroundColor != null || getFopImage() != null));
+        return ((backgroundColor != null || getImageInfo() != null));
     }
 
     /** @return true if border is non-zero. */

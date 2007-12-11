@@ -36,16 +36,25 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.area.Trait.InternalLink;
 import org.apache.fop.area.Trait.Background;
-import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.area.Trait.InternalLink;
 import org.apache.fop.area.inline.AbstractTextArea;
 import org.apache.fop.area.inline.Character;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
+import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.InlineBlockParent;
 import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.Leader;
@@ -60,20 +69,15 @@ import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.image.FopImage;
-import org.apache.fop.image.ImageFactory;
+import org.apache.fop.image2.ImageInfo;
+import org.apache.fop.image2.ImageManager;
+import org.apache.fop.image2.ImageSessionContext;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.util.ColorUtil;
 import org.apache.fop.util.ContentHandlerFactory;
 import org.apache.fop.util.ContentHandlerFactoryRegistry;
 import org.apache.fop.util.DefaultErrorListener;
 import org.apache.fop.util.QName;
-import org.w3c.dom.DOMImplementation;
-import org.w3c.dom.Document;
-import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * This is a parser for the area tree XML (intermediate format) which is used to reread an area
@@ -1024,22 +1028,19 @@ public class AreaTreeParser {
                         } catch (PropertyException e) {
                             throw new IllegalArgumentException(e.getMessage());
                         }
-                        String url = attributes.getValue("bkg-img");
-                        if (url != null) {
-                            bkg.setURL(url);
+                        String uri = attributes.getValue("bkg-img");
+                        if (uri != null) {
+                            bkg.setURL(uri);
 
-                            ImageFactory fact = userAgent.getFactory().getImageFactory();
-                            FopImage img = fact.getImage(url, userAgent);
-                            if (img == null) {
-                                log.error("Background image not available: " + url);
-                            } else {
-                                // load dimensions
-                                if (!img.load(FopImage.DIMENSIONS)) {
-                                    log.error("Cannot read background image dimensions: "
-                                            + url);
-                                }
+                            try {
+                                ImageManager manager = userAgent.getFactory().getImageManager();
+                                ImageSessionContext sessionContext
+                                    = userAgent.getImageSessionContext();
+                                ImageInfo info = manager.getImageInfo(uri, sessionContext);
+                                bkg.setImageInfo(info);
+                            } catch (Exception e) {
+                                log.error("Background image not available: " + uri, e);
                             }
-                            bkg.setFopImage(img);
 
                             String repeat = attributes.getValue("bkg-repeat");
                             if (repeat != null) {

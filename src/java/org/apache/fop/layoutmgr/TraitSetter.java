@@ -21,20 +21,19 @@ package org.apache.fop.layoutmgr;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.traits.BorderProps;
-import org.apache.fop.traits.MinOptMax;
+
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Trait;
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.datatypes.SimplePercentBaseContext;
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.CommonTextDecoration;
 import org.apache.fop.fonts.Font;
-import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.fonts.FontTriplet;
+import org.apache.fop.traits.BorderProps;
+import org.apache.fop.traits.MinOptMax;
 
 /**
  * This is a helper class used for setting common traits on areas.
@@ -303,9 +302,9 @@ public class TraitSetter {
         Trait.Background back = new Trait.Background();
         back.setColor(backProps.backgroundColor);
 
-        if (backProps.getFopImage() != null) {
+        if (backProps.getImageInfo() != null) {
             back.setURL(backProps.backgroundImage);
-            back.setFopImage(backProps.getFopImage());
+            back.setImageInfo(backProps.getImageInfo());
             back.setRepeat(backProps.backgroundRepeat);
             if (backProps.backgroundPositionHorizontal != null) {
                 if (back.getRepeat() == Constants.EN_NOREPEAT 
@@ -317,7 +316,7 @@ public class TraitSetter {
                         back.setHoriz(backProps.backgroundPositionHorizontal.getValue(
                                 new SimplePercentBaseContext(context, 
                                     LengthBase.IMAGE_BACKGROUND_POSITION_HORIZONTAL,
-                                    (width - back.getFopImage().getIntrinsicWidth())
+                                    (width - back.getImageInfo().getSize().getHeightMpt())
                                 )
                             ));
                     } else {
@@ -338,7 +337,7 @@ public class TraitSetter {
                         back.setVertical(backProps.backgroundPositionVertical.getValue(
                                 new SimplePercentBaseContext(context, 
                                      LengthBase.IMAGE_BACKGROUND_POSITION_VERTICAL,
-                                     (height - back.getFopImage().getIntrinsicHeight())
+                                     (height - back.getImageInfo().getSize().getHeightMpt())
                                 )
                             ));
                     } else {
