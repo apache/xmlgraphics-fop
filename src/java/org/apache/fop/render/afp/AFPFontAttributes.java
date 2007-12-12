@@ -20,10 +20,9 @@
 package org.apache.fop.render.afp;
 
 import org.apache.fop.render.afp.fonts.AFPFont;
-import org.apache.fop.render.afp.tools.BinaryUtils;
 
 /**
- * This class encapsulates the font atributes that need to be included
+ * This class encapsulates the font attributes that need to be included
  * in the AFP data stream. This class does not assist in converting the
  * font attributes to AFP code pages and character set values.
  *
@@ -31,24 +30,24 @@ import org.apache.fop.render.afp.tools.BinaryUtils;
 public class AFPFontAttributes {
 
     /**
-     * The font reference byte
+     * The font reference
      */
-    private byte _fontReference;
+    private int fontReference;
 
     /**
      * The font key
      */
-    private String _fontKey;
+    private String fontKey;
 
     /**
      * The font
      */
-    private AFPFont _font;
+    private AFPFont font;
 
     /**
      * The point size
      */
-    private int _pointSize;
+    private int pointSize;
 
     /**
      * Constructor for the AFPFontAttributes
@@ -56,45 +55,38 @@ public class AFPFontAttributes {
      * @param font the font
      * @param pointSize the point size
      */
-    public AFPFontAttributes(
-
-        String fontKey,
-        AFPFont font,
-        int pointSize) {
-
-        _fontKey = fontKey;
-        _font = font;
-        _pointSize = pointSize;
-
+    public AFPFontAttributes(String fontKey, AFPFont font, int pointSize) {
+        this.fontKey = fontKey;
+        this.font = font;
+        this.pointSize = pointSize;
     }
+
     /**
      * @return the font
      */
     public AFPFont getFont() {
-        return _font;
+        return font;
     }
 
     /**
      * @return the FontKey attribute
      */
     public String getFontKey() {
-
-        return _fontKey + _pointSize;
-
+        return fontKey + pointSize;
     }
 
     /**
      * @return the point size attribute
      */
     public int getPointSize() {
-        return _pointSize;
+        return pointSize;
     }
 
     /**
      * @return the FontReference attribute
      */
-    public byte getFontReference() {
-        return _fontReference;
+    public int getFontReference() {
+        return fontReference;
     }
 
     /**
@@ -102,10 +94,7 @@ public class AFPFontAttributes {
      * @param fontReference the FontReference to set
      */
     public void setFontReference(int fontReference) {
-
-        String id = String.valueOf(fontReference);
-        _fontReference = BinaryUtils.convert(id)[0];
-
+        this.fontReference = fontReference;
     }
 
 }

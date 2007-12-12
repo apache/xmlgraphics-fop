@@ -39,14 +39,15 @@ public class TableHeader extends TableBody {
     /**
      * {@inheritDoc}
      */
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
+        super.startOfNode();
         //getFOEventHandler().startHeader(this);
     }
 
     /**
      * {@inheritDoc}
      */
-    protected void endOfNode() throws FOPException {
+    public void endOfNode() throws FOPException {
 //      getFOEventHandler().endHeader(this);
         if (!(tableRowsFound || tableCellsFound)) {
             missingChildElementError("marker* (table-row+|table-cell+)");

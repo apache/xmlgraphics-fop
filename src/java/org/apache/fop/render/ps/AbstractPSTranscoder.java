@@ -21,7 +21,12 @@ package org.apache.fop.render.ps;
 
 
 import java.awt.Color;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.svg.SVGLength;
 
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.batik.bridge.BridgeContext;
@@ -29,13 +34,12 @@ import org.apache.batik.bridge.UnitProcessor;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.ImageTranscoder;
+import org.apache.xmlgraphics.java2d.ps.AbstractPSDocumentGraphics2D;
+import org.apache.xmlgraphics.java2d.TextHandler;
+
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.svg.AbstractFOPTranscoder;
-import org.apache.xmlgraphics.java2d.ps.AbstractPSDocumentGraphics2D;
-import org.apache.xmlgraphics.java2d.ps.TextHandler;
-import org.w3c.dom.Document;
-import org.w3c.dom.svg.SVGLength;
 
 /**
  * This class enables to transcode an input to a PostScript document.
@@ -114,7 +118,11 @@ public abstract class AbstractPSTranscoder extends AbstractFOPTranscoder {
         getLogger().trace("document size: " + w + "pt x " + h + "pt");
 
         try {
-            graphics.setupDocument(output.getOutputStream(), w, h);
+            OutputStream out = output.getOutputStream();
+            if (!(out instanceof BufferedOutputStream)) {
+                out = new BufferedOutputStream(out);
+            }
+            graphics.setupDocument(out, w, h);
             graphics.setViewportDimension(width, height);
 
             if (hints.containsKey(ImageTranscoder.KEY_BACKGROUND_COLOR)) {

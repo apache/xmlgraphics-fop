@@ -22,6 +22,9 @@ package org.apache.fop.layoutmgr.table;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.apache.fop.fo.flow.table.EffRow;
+import org.apache.fop.fo.flow.table.GridUnit;
+import org.apache.fop.fo.flow.table.PrimaryGridUnit;
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
@@ -239,6 +242,8 @@ class ActiveCell {
      * @return true if this cell's next step is inferior or equal to the next minimal step
      */
     boolean contributesContent() {
+        // return includedInLastStep() && the cell hasn't finished yet, otherwise there's
+        // nothing more to contribute
         return includedInLastStep() && end >= start;
     }
 
@@ -248,7 +253,7 @@ class ActiveCell {
      * @return true if this cell's first step is inferior or equal to the current one 
      */
     boolean hasStarted() {
-        return includedLength > 0;
+        return includedLength >= 0;
     }
 
     /**

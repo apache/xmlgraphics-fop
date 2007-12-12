@@ -17,15 +17,14 @@
 
 /* $Id$ */
 
-package org.apache.fop.layoutmgr.table;
+package org.apache.fop.fo.flow.table;
 
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.fo.flow.table.TableCell;
-import org.apache.fop.fo.flow.table.TableColumn;
+import org.apache.fop.layoutmgr.table.TableCellLayoutManager;
 
 /**
  * This class represents a primary grid unit of a spanned cell. This is the "before-start"
@@ -50,23 +49,27 @@ public class PrimaryGridUnit extends GridUnit {
      * Creates a new primary grid unit.
      *
      * @param cell table cell which occupies this grid unit
+     * @param row the table-row element this grid unit belongs to (if any)
      * @param column table column this grid unit belongs to
      * @param startCol index of the column this grid unit belongs to, zero-based
      * @param startRow index of the row this grid unit belongs to, zero-based
      */
-    public PrimaryGridUnit(TableCell cell, TableColumn column, int startCol, int startRow) {
-        super(cell, column, startCol, 0);
-        this.startRow = startRow;
+    PrimaryGridUnit(TableCell cell, TableRow row, TableColumn column, int startCol) {
+        super(cell, row, column, startCol, 0, 0);
         log.trace("PrimaryGridUnit created, row " + startRow + " col " + startCol);
-        if (cell != null) {
-            cellLM = new TableCellLayoutManager(cell, this);
-        }
     }
 
     public TableCellLayoutManager getCellLM() {
+        assert cellLM != null;
         return cellLM;
     }
 
+    /** {@inheritDoc} */
+    public PrimaryGridUnit getPrimary() {
+        return this;
+    }
+
+    /** {@inheritDoc} */
     public boolean isPrimary() {
         return true;
     }
@@ -177,6 +180,10 @@ public class PrimaryGridUnit extends GridUnit {
         rows.add(row);
     }
 
+    void setStartRow(int startRow) {
+        this.startRow = startRow;
+    }
+
     /**
      * Returns the index of the row this grid unit belongs to.
      *
@@ -223,6 +230,14 @@ public class PrimaryGridUnit extends GridUnit {
     public boolean hasSpanning() {
         return (getCell().getNumberColumnsSpanned() > 1)
             || (getCell().getNumberRowsSpanned() > 1);
+    }
+
+    /**
+     * Creates a cellLM for the corresponding table-cell. A new one must be created
+     * for each new static-content (TODO).
+     */
+    public void createCellLM() {
+        cellLM = new TableCellLayoutManager(cell, this);
     }
 
 }

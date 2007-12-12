@@ -22,7 +22,7 @@ package org.apache.fop.render.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
@@ -37,7 +37,7 @@ public class MapPageOverlay extends AbstractAFPObject {
     /**
      * The collection of overlays (maximum of 254 stored as byte[])
      */
-    private ArrayList _overLays = new ArrayList();
+    private List overLays = new java.util.ArrayList();
 
     /**
      * Constructor for the Map Page Overlay
@@ -51,10 +51,11 @@ public class MapPageOverlay extends AbstractAFPObject {
      *
      * @param name
      *            The name of the overlay.
+     * @throws MaximumSizeExceededException if the maximum size is reached
      */
     public void addOverlay(String name) throws MaximumSizeExceededException {
 
-        if (_overLays.size() > 253) {
+        if (overLays.size() > 253) {
             throw new MaximumSizeExceededException();
         }
 
@@ -72,28 +73,22 @@ public class MapPageOverlay extends AbstractAFPObject {
         try {
 
             data = name.getBytes(AFPConstants.EBCIDIC_ENCODING);
-            _overLays.add(data);
+            overLays.add(data);
 
         } catch (UnsupportedEncodingException usee) {
 
-            log
-                .error("addOverlay():: UnsupportedEncodingException translating the name "
+            log.error("addOverlay():: UnsupportedEncodingException translating the name "
                 + name);
-
         }
-
     }
 
     /**
      * Accessor method to write the AFP datastream for the Map Page Overlay
      * @param os The stream to write to
-     * @throws java.io.IOException
+     * @throws java.io.IOException if an I/O exception occurred
      */
-    public void writeDataStream(OutputStream os)
-        throws IOException {
-
-
-        int oLayCount = _overLays.size();
+    public void writeDataStream(OutputStream os) throws IOException {
+        int oLayCount = overLays.size();
         int recordlength = oLayCount * 18;
 
         byte[] data = new byte[recordlength + 9];
@@ -134,12 +129,10 @@ public class MapPageOverlay extends AbstractAFPObject {
             data[++pos] = 0x00;
 
             //now add the name
-            byte[] name = (byte[]) _overLays.get(i);
+            byte[] name = (byte[]) overLays.get(i);
 
             for (int j = 0; j < name.length; j++) {
-
                 data[++pos] = name[j];
-
             }
 
             data[++pos] = 0x04; //Resource Local Identifier (RLI)
@@ -148,11 +141,7 @@ public class MapPageOverlay extends AbstractAFPObject {
 
             //now add the unique id to the RLI
             data[++pos] = olayref;
-
         }
-
         os.write(data);
-
     }
-
 }

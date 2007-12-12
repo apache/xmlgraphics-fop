@@ -28,11 +28,10 @@ public interface AFPConstants {
     /**
      * The encoding to use to convert to EBCIDIC
      */
-    public String EBCIDIC_ENCODING = "Cp1146";
+    String EBCIDIC_ENCODING = "Cp1146";
 
     /**
      * The encoding to use to convert to ASCII
      */
-    public String ASCII_ENCODING = "Cp1252";
-
+    String ASCII_ENCODING = "Cp1252";
 }

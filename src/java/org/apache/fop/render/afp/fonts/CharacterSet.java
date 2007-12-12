@@ -21,6 +21,7 @@ package org.apache.fop.render.afp.fonts;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -54,42 +55,42 @@ public class CharacterSet {
     /**
      * The code page to which the character set relates
      */
-    protected String _codePage;
+    protected String codePage;
 
     /**
      * The encoding used for the code page
      */
-    protected String _encoding;
+    protected String encoding;
 
     /**
      * The character set relating to the font
      */
-    protected String _name;
+    protected String name;
 
     /**
      * The name of the character set as EBCIDIC bytes
      */
-    private byte[] _nameBytes;
+    private byte[] nameBytes;
 
     /**
      * The path to the installed fonts
      */
-    protected String _path;
+    protected String path;
 
     /**
      * Indicator as to whether to metrics have been loaded
      */
-    private boolean _isMetricsLoaded = false;
+    private boolean isMetricsLoaded = false;
 
     /**
      * The current orientation (currently only 0 is suppoted by FOP)
      */
-    private String _currentOrientation = "0";
+    private String currentOrientation = "0";
 
     /**
      * The collection of objects for each orientation
      */
-    private HashMap _characterSetOrientations;
+    private Map characterSetOrientations = null;
 
     /**
      * Constructor for the CharacterSetMetric object, the character set is used
@@ -112,28 +113,28 @@ public class CharacterSet {
         }
 
         if (name.length() < 8) {
-            _name = StringUtils.rpad(name, ' ', 8);
+            this.name = StringUtils.rpad(name, ' ', 8);
         } else {
-            _name = name;
+            this.name = name;
         }
 
         try {
 
-            _nameBytes = name.getBytes(AFPConstants.EBCIDIC_ENCODING);
+            this.nameBytes = name.getBytes(AFPConstants.EBCIDIC_ENCODING);
 
         } catch (UnsupportedEncodingException usee) {
 
-            _nameBytes = name.getBytes();
+            this.nameBytes = name.getBytes();
             log.warn(
                 "Constructor:: UnsupportedEncodingException translating the name "
                 + name);
 
         }
 
-        _codePage = codePage;
-        _encoding = encoding;
-        _path = path;
-        _characterSetOrientations = new HashMap(4);
+        this.codePage = codePage;
+        this.encoding = encoding;
+        this.path = path;
+        this.characterSetOrientations = new HashMap(4);
 
     }
 
@@ -143,7 +144,7 @@ public class CharacterSet {
      */
     public void addCharacterSetOrientation(CharacterSetOrientation cso) {
 
-        _characterSetOrientations.put(
+        characterSetOrientations.put(
             String.valueOf(cso.getOrientation()),
             cso);
 
@@ -210,7 +211,7 @@ public class CharacterSet {
      * @return the path where the font resources are installed
      */
     public String getPath() {
-        return _path;
+        return path;
     }
 
     /**
@@ -248,11 +249,11 @@ public class CharacterSet {
      */
     private void load() {
 
-        if (!_isMetricsLoaded) {
+        if (!isMetricsLoaded) {
 
             AFPFontReader afpFontReader = new AFPFontReader();
             afpFontReader.loadCharacterSetMetric(this);
-            _isMetricsLoaded = true;
+            isMetricsLoaded = true;
 
         }
 
@@ -263,7 +264,7 @@ public class CharacterSet {
      * @return String
      */
     public String getName() {
-        return _name;
+        return name;
     }
 
     /**
@@ -271,7 +272,7 @@ public class CharacterSet {
      * @return byte[]
      */
     public byte[] getNameBytes() {
-        return _nameBytes;
+        return nameBytes;
     }
 
     /**
@@ -279,7 +280,7 @@ public class CharacterSet {
      * @return String
      */
     public String getCodePage() {
-        return _codePage;
+        return codePage;
     }
 
     /**
@@ -287,7 +288,7 @@ public class CharacterSet {
      * @return String
      */
     public String getEncoding() {
-        return _encoding;
+        return encoding;
     }
 
     /**
@@ -303,9 +304,8 @@ public class CharacterSet {
      */
     private CharacterSetOrientation getCharacterSetOrientation() {
 
-        CharacterSetOrientation c =
-            (CharacterSetOrientation) _characterSetOrientations.get(
-            _currentOrientation);
+        CharacterSetOrientation c
+            = (CharacterSetOrientation) characterSetOrientations.get(currentOrientation);
         return c;
 
     }

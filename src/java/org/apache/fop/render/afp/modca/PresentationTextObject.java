@@ -100,7 +100,7 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
     /**
      * Create the presentation text data for the byte array of data.
      *
-     * @param fontNumber
+     * @param fontReference
      *            The font resource identifier.
      * @param x
      *            The x coordinate for the text data.
@@ -117,7 +117,7 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
      * @param data
      *            The text data to be created.
      */
-    public void createTextData(int fontNumber, int x, int y, int orientation,
+    public void createTextData(int fontReference, int x, int y, int orientation,
         Color col, int vsci, int ica, byte[] data) {
 
         if (currentPresentationTextData == null) {
@@ -126,13 +126,13 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
 
         try {
 
-            currentPresentationTextData.createTextData(fontNumber, x, y,
+            currentPresentationTextData.createTextData(fontReference, x, y,
                 orientation, col, vsci, ica, data);
 
         } catch (MaximumSizeExceededException msee) {
 
             endPresentationTextData();
-            createTextData(fontNumber, x, y, orientation, col, vsci, ica, data);
+            createTextData(fontReference, x, y, orientation, col, vsci, ica, data);
 
         }
 

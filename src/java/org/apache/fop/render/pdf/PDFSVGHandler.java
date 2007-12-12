@@ -157,6 +157,7 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
                 + userAgent.getTargetResolution()
                 + "dpi.");
         final float deviceResolution = userAgent.getTargetResolution();
+        log.debug("Generating SVG at " + deviceResolution + "dpi.");
         
         final float uaResolution = userAgent.getSourceResolution();
         SVGUserAgent ua = new SVGUserAgent(25.4f / uaResolution, new AffineTransform());

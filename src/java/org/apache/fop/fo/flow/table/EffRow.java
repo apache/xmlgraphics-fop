@@ -17,19 +17,19 @@
 
 /* $Id$ */
 
-package org.apache.fop.layoutmgr.table;
+package org.apache.fop.fo.flow.table;
 
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.fop.fo.flow.table.TableRow;
+import org.apache.fop.layoutmgr.table.TableRowIterator;
 import org.apache.fop.traits.MinOptMax;
 
 /**
  * This class represents an effective row in a table and holds a list of grid units occupying
  * the row as well as some additional values.
  */
-class EffRow {
+public class EffRow {
     
     /** Indicates that the row is the first in a table-body */
     public static final int FIRST_IN_PART = GridUnit.FIRST_IN_PART;
@@ -47,12 +47,21 @@ class EffRow {
      * Creates a new effective row instance.
      * @param index index of the row
      * @param bodyType type of body (one of HEADER, FOOTER, BODY as found on TableRowIterator)
+     * @param gridUnits the grid units this row is made of
      */
-    public EffRow(int index, int bodyType) {
+    public EffRow(int index, int bodyType, List gridUnits) {
         this.index = index;
         this.bodyType = bodyType;
+        this.gridUnits = gridUnits;
+        // TODO this is ugly, but we may eventually be able to do without that index
+        for (Iterator guIter = gridUnits.iterator(); guIter.hasNext();) {
+            Object gu = guIter.next();
+            if (gu instanceof PrimaryGridUnit) {
+                ((PrimaryGridUnit) gu).setStartRow(index);
+            }
+        }
     }
-    
+
     /** @return the index of the EffRow in the sequence of rows */
     public int getIndex() {
         return this.index;
@@ -124,19 +133,6 @@ class EffRow {
             return (GridUnit)gridUnits.get(column);
         } else {
             return null;
-        }
-    }
-    
-    /**
-     * Sets a flag on all grid units of this effective row.
-     * @param flag which flag to set (on of the GridUnit.* constants)
-     * @param value new value for the flag
-     */
-    public void setFlagForAllGridUnits(int flag, boolean value) {
-        Iterator iter = gridUnits.iterator();
-        while (iter.hasNext()) {
-            GridUnit gu = (GridUnit)iter.next();
-            gu.setFlag(flag, value);
         }
     }
 

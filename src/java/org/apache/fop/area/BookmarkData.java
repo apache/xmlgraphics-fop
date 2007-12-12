@@ -19,11 +19,13 @@
  
 package org.apache.fop.area;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
-import java.util.HashMap;
+import java.util.Map;
 
-import org.apache.fop.fo.pagination.bookmarks.BookmarkTree;
 import org.apache.fop.fo.pagination.bookmarks.Bookmark;
+import org.apache.fop.fo.pagination.bookmarks.BookmarkTree;
 
 /**
  * An instance of this class is either a PDF bookmark-tree and
@@ -31,6 +33,7 @@ import org.apache.fop.fo.pagination.bookmarks.Bookmark;
  * child bookmark-items under it.
  */
 public class BookmarkData extends AbstractOffDocumentItem implements Resolvable {
+    
     private List subData = new java.util.ArrayList();
 
     // bookmark-title for this fo:bookmark
@@ -46,7 +49,7 @@ public class BookmarkData extends AbstractOffDocumentItem implements Resolvable 
     private PageViewport pageRef = null;
 
     // unresolved idrefs by this bookmark and child bookmarks below it
-    private HashMap unresolvedIDRefs = new HashMap();
+    private Map unresolvedIDRefs = new java.util.HashMap();
 
     /**
      * Create a new bookmark data object.
@@ -79,9 +82,17 @@ public class BookmarkData extends AbstractOffDocumentItem implements Resolvable 
         bookmarkTitle = bookmark.getBookmarkTitle();
         bShow = bookmark.showChildItems();
         this.idRef = bookmark.getInternalDestination();
-        unresolvedIDRefs.put(idRef, this);
     }
 
+    private void putUnresolved(String id, BookmarkData bd) {
+        List refs = (List)unresolvedIDRefs.get(id);
+        if (refs == null) {
+            refs = new java.util.ArrayList();
+            unresolvedIDRefs.put(id, refs);
+        }
+        refs.add(bd);
+    }
+    
     /**
      * Create a new bookmark data root object.
      * This constructor is called by the AreaTreeParser when the
@@ -128,10 +139,10 @@ public class BookmarkData extends AbstractOffDocumentItem implements Resolvable 
     public void addSubData(BookmarkData sub) {
         subData.add(sub);
         if (sub.pageRef == null || sub.pageRef.equals("")) {
-            unresolvedIDRefs.put(sub.getIDRef(), sub);
+            putUnresolved(sub.getIDRef(), sub);
             String[] ids = sub.getIDRefs();
             for (int count = 0; count < ids.length; count++) {
-                unresolvedIDRefs.put(ids[count], sub);
+                putUnresolved(ids[count], sub);
             }
         }
     }
@@ -212,9 +223,13 @@ public class BookmarkData extends AbstractOffDocumentItem implements Resolvable 
      */
     public void resolveIDRef(String id, List pages) {
         if (!id.equals(idRef)) {
-            BookmarkData bd = (BookmarkData) unresolvedIDRefs.get(id);
-            if (bd != null) {
-                bd.resolveIDRef(id, pages);
+            Collection refs = (Collection)unresolvedIDRefs.get(id);
+            if (refs != null) {
+                Iterator iter = refs.iterator();
+                while (iter.hasNext()) {
+                    BookmarkData bd = (BookmarkData)iter.next();
+                    bd.resolveIDRef(id, pages);
+                }
                 unresolvedIDRefs.remove(id);
             }
         } else {

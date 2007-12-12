@@ -110,7 +110,10 @@ public abstract class FontLoader {
         String effURI;
         boolean type1 = isType1(fontFileURI);
         if (type1) {
-            effURI = fontFileURI.substring(0, fontFileURI.length() - 4) + ".pfm";
+            String pfmExt = fontFileURI.substring(
+                    fontFileURI.length() - 3, fontFileURI.length());
+            pfmExt = pfmExt.substring(0, 2) + (Character.isUpperCase(pfmExt.charAt(2)) ? "M" : "m");
+            effURI = fontFileURI.substring(0, fontFileURI.length() - 4) + "." + pfmExt;
         } else {
             effURI = fontFileURI;
         }

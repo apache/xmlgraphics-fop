@@ -21,6 +21,7 @@ package org.apache.fop.layoutmgr.table;
 
 import java.util.List;
 
+import org.apache.fop.fo.flow.table.EffRow;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.Position;
 

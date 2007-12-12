@@ -28,6 +28,7 @@ import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.fonts.Glyphs;
 
 /**
@@ -297,22 +298,24 @@ public class PFMFile {
      * @return The name of the charset.
      */
     public String getCharSetName() {
+        //TODO Had to remove the detection for Expert(Subset) encoding. The PFM is not suitable
+        //for detecting these character sets. We have to parse the AFM for that.
         switch (dfCharSet) {
         case 0:
             return "WinAnsi"; // AKA ISOAdobe
-        case 1:
-            return "Expert";
         case 2:
             if ("Symbol".equals(getPostscriptName())) {
                 return "Symbol";
-            } else {
-                return "ExpertSubset";
             }
+            break;
         case 128:
             return "Shift-JIS (Japanese)";
         default:
-            return "Unknown (" + dfCharSet + ", 0x" + Integer.toHexString(dfCharSet) + ")";
+            log.warn("Unknown charset detected (" + dfCharSet
+                    + ", 0x" + Integer.toHexString(dfCharSet)
+                    + "). Trying fallback to WinAnsi.");
         }
+        return "WinAnsi"; 
     }
 
     /**

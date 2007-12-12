@@ -114,8 +114,8 @@ public class AFPExtensionHandler extends DefaultHandler
     /**
      * {@inheritDoc}
      */
-    public void setObjectBuiltListener(ObjectBuiltListener listener) {
-        this.listener = listener;
+    public void setObjectBuiltListener(ObjectBuiltListener listen) {
+        this.listener = listen;
     }
 
 }

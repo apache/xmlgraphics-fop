@@ -362,9 +362,14 @@ Omit your normal headers and footers, and use (for example) an extended header t
       <section id="fo-total-pages">
         <title>Total Document Pages</title>
         <p>
-          It is frequently desirable to know the total number of pages in a document and to use that number within the document.
-For example, you might wish to show the page number on the first page as being "page 1 of 12".
-To accomplish this, place an empty block with an id at the end of the flow:
+          It is frequently desirable to know the total number of pages in a
+          document and to use that number within the document. For example, you
+          might wish to show the page number on the first page as being
+          "page 1 of 12".
+        </p>
+        <p>
+          To accomplish this in <strong>XSL 1.0</strong>, place an empty block
+          with an id at the end of the flow:
         </p>
         <source><![CDATA[<fo:flow ...>
     ...
@@ -373,10 +378,20 @@ To accomplish this, place an empty block with an id at the end of the flow:
         <p>
           Get the number of the last page as follows:
         </p>
-        <source><![CDATA[ <fo:page-number-citation ref-id="last-page"/>]]></source>
+        <source><![CDATA[<fo:page-number-citation ref-id="last-page"/>]]></source>
         <p>
           This does not work in certain situations: multiple page sequences, an initial page number other than 1, or forcing a certain page count, thereby producing blank pages at the end.
         </p>
+        <p>
+          In <strong>XSL 1.1</strong>, you get another option to do this: make
+          sure an "id" is set on the page-sequence and reference it using
+          fo:page-number-citation-last. First, the page-sequence:
+        </p>
+        <source><![CDATA[<fo:page-sequence id="seq1" ...]]></source>
+        <p>
+          After that, reference the last page the page-sequence generates:
+        </p>
+        <source><![CDATA[<fo:page-number-citation-last ref-id="seq1"/>]]></source>
         <warning>
           There is no reliable way to get the real total page count with FO mechanisms. You can only get <em>page numbers</em>.
         </warning>
@@ -394,27 +409,42 @@ import javax.xml.transform.stream.*;
 
 class rendtest {
 
+  private static FopFactory fopFactory = FopFactory.newInstance();
+  private static TransformerFactory tFactory = TransformerFactory.newInstance();
+
   public static void main(String args[]) {
+    OutputStream out;
     try {
-      Driver driver=new Driver();
-      driver.setOutputStream(new FileOutputStream(args[2]));
-      driver.setRenderer(Driver.RENDER_PDF);
-      Transformer transformer=TransformerFactory.newInstance()
-        .newTransformer(new StreamSource(new File(args[1])));
-      transformer.setParameter("page-count","#");
+      //Load the stylesheet
+      Templates templates = tFactory.newTemplates(
+          new StreamSource(new File(args[1])));
+
+      //First run (to /dev/null)
+      out = new org.apache.commons.io.output.NullOutputStream();
+      FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
+      Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, foUserAgent, out);
+      Transformer transformer = templates.newTransformer();
+      transformer.setParameter("page-count", "#");
       transformer.transform(new StreamSource(new File(args[0])),
-        new SAXResult(driver.getContentHandler()));
-      String pageCount=Integer.toString(driver.getResults().getPageCount());
-      driver=new Driver();
-      driver.setOutputStream(new FileOutputStream(args[2]));
-      driver.setRenderer(Driver.RENDER_PDF);
-      transformer=TransformerFactory.newInstance()
-        .newTransformer(new StreamSource(new File(args[1])));
-      transformer.setParameter("page-count",pageCount);
+          new SAXResult(fop.getDefaultHandler()));
+
+      //Get total page count
+      String pageCount = Integer.toString(driver.getResults().getPageCount());
+
+      //Second run (the real thing)
+      out = new java.io.FileOutputStream(args[2]);
+      out = new java.io.BufferedOutputStream(out);
+      try {
+      foUserAgent = fopFactory.newFOUserAgent();
+      fop = fopFactory.newFop(MimeConstants.MIME_PDF, foUserAgent, out);
+      transformer = templates.newTransformer();
+      transformer.setParameter("page-count", pageCount);
       transformer.transform(new StreamSource(new File(args[0])),
-        new SAXResult(driver.getContentHandler()));
-    }
-    catch( Exception e) {
+          new SAXResult(fop.getDefaultHandler()));
+      } finally {
+        out.close();
+      }
+    } catch( Exception e) {
       e.printStackTrace();
     }
   }

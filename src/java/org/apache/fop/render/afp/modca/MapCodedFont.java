@@ -23,7 +23,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.fop.render.afp.exceptions.FontRuntimeException;
 import org.apache.fop.render.afp.fonts.AFPFont;
@@ -46,44 +47,44 @@ public class MapCodedFont extends AbstractAFPObject {
     /**
      * The collection of map coded fonts (maximum of 254)
      */
-    private ArrayList _fontlist = null;
+    private List fontList = null;
 
     /**
      * Constructor for the MapCodedFont
      */
     public MapCodedFont() {
 
-        _fontlist = new ArrayList();
+        fontList = new java.util.ArrayList();
 
     }
 
     /**
      * Accessor method to write the AFP datastream for the Map Coded Font
      * @param os The stream to write to
-     * @throws java.io.IOException
+     * @throws java.io.IOException an I/O exception of some sort has occurred
      */
-    public void writeDataStream(OutputStream os)
-        throws IOException {
-
+    public void writeDataStream(OutputStream os) throws IOException {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         baos.write(0x5A);
-        baos.write(new byte[] { 0x00, 0x00 });
+        baos.write(new byte[] {0x00, 0x00});
 
         // Field identifier for a MapCodedFont
-        baos.write(new byte[] { (byte) 0xD3, (byte) 0xAB, (byte) 0x8A });
+        baos.write(new byte[] {(byte) 0xD3, (byte) 0xAB, (byte) 0x8A});
 
         // Reserved
-        baos.write(new byte[] { 0x00, 0x00, 0x00 });
+        baos.write(new byte[] {0x00, 0x00, 0x00});
 
-        for (int i = 0; i < _fontlist.size(); i++) {
+        
+        Iterator iter = fontList.iterator();
+        while (iter.hasNext()) {
 
-            FontDefinition fd = (FontDefinition) _fontlist.get(i);
+            FontDefinition fd = (FontDefinition) iter.next();
 
             // Start of repeating groups (occurs 1 to 254)
             baos.write(0x00);
 
-            if (fd._scale == 0) {
+            if (fd.scale == 0) {
                 // Raster Font
                 baos.write(0x22); // Length of 34
             } else {
@@ -96,46 +97,46 @@ public class MapCodedFont extends AbstractAFPObject {
             baos.write(0x02);
             baos.write((byte) 0x86);
             baos.write(0x00);
-            baos.write(fd._characterset);
+            baos.write(fd.characterSet);
 
             // Font Code Page Name Reference
             baos.write(0x0C);
             baos.write(0x02);
             baos.write((byte) 0x85);
             baos.write(0x00);
-            baos.write(fd._codepage);
+            baos.write(fd.codePage);
 
             // Character Rotation
             baos.write(0x04);
             baos.write(0x26);
-            baos.write(fd._orientation);
+            baos.write(fd.orientation);
             baos.write(0x00);
 
             // Resource Local Identifier
             baos.write(0x04);
             baos.write(0x24);
             baos.write(0x05);
-            baos.write(fd._fontReferenceKey);
+            baos.write(fd.fontReferenceKey);
 
-            if (fd._scale != 0) {
+            if (fd.scale != 0) {
                 // Outline Font (triplet '1F')
                 baos.write(0x14);
                 baos.write(0x1F);
                 baos.write(0x00);
                 baos.write(0x00);
 
-                baos.write(BinaryUtils.convert(fd._scale, 2)); // Height
-                baos.write(new byte[] { 0x00, 0x00 }); // Width
+                baos.write(BinaryUtils.convert(fd.scale, 2)); // Height
+                baos.write(new byte[] {0x00, 0x00}); // Width
 
-                baos.write(new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                    0x00, 0x00, 0x00, 0x00, 0x00 });
+                baos.write(new byte[] {0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                    0x00, 0x00, 0x00, 0x00, 0x00});
 
                 baos.write(0x60);
 
                 // Outline Font (triplet '5D')
                 baos.write(0x04);
                 baos.write(0x5D);
-                baos.write(BinaryUtils.convert(fd._scale, 2));
+                baos.write(BinaryUtils.convert(fd.scale, 2));
             }
 
         }
@@ -162,26 +163,27 @@ public class MapCodedFont extends AbstractAFPObject {
      *            the size of the font
      * @param orientation
      *            the orientation of the font
+     * @throws MaximumSizeExceededException if the maximum number of fonts have been exceeded
      */
-    public void addFont(byte fontReference, AFPFont font, int size, int orientation)
+    public void addFont(int fontReference, AFPFont font, int size, int orientation)
         throws MaximumSizeExceededException {
 
         FontDefinition fd = new FontDefinition();
 
-        fd._fontReferenceKey = fontReference;
+        fd.fontReferenceKey = BinaryUtils.convert(fontReference)[0];
 
         switch (orientation) {
             case 90:
-                fd._orientation = 0x2D;
+                fd.orientation = 0x2D;
                 break;
             case 180:
-                fd._orientation = 0x5A;
+                fd.orientation = 0x5A;
                 break;
             case 270:
-                fd._orientation = (byte) 0x87;
+                fd.orientation = (byte) 0x87;
                 break;
             default:
-                fd._orientation = 0x00;
+                fd.orientation = 0x00;
                 break;
         }
 
@@ -198,21 +200,21 @@ public class MapCodedFont extends AbstractAFPObject {
                     throw new FontRuntimeException(msg);
                 }
 
-                fd._characterset = cs.getNameBytes();
+                fd.characterSet = cs.getNameBytes();
 
-                if (fd._characterset.length != 8) {
+                if (fd.characterSet.length != 8) {
                     throw new IllegalArgumentException("The character set "
-                        + new String(fd._characterset,
+                        + new String(fd.characterSet,
                         AFPConstants.EBCIDIC_ENCODING)
                         + " must have a fixed length of 8 characters.");
                 }
 
-                fd._codepage = cs.getCodePage().getBytes(
+                fd.codePage = cs.getCodePage().getBytes(
                     AFPConstants.EBCIDIC_ENCODING);
 
-                if (fd._codepage.length != 8) {
+                if (fd.codePage.length != 8) {
                     throw new IllegalArgumentException("The code page "
-                        + new String(fd._codepage,
+                        + new String(fd.codePage,
                         AFPConstants.EBCIDIC_ENCODING)
                         + " must have a fixed length of 8 characters.");
                 }
@@ -221,18 +223,18 @@ public class MapCodedFont extends AbstractAFPObject {
 
                 OutlineFont outline = (OutlineFont) font;
                 CharacterSet cs = outline.getCharacterSet();
-                fd._characterset = cs.getNameBytes();
+                fd.characterSet = cs.getNameBytes();
 
                 // There are approximately 72 points to 1 inch or 20 1440ths per point.
 
-                fd._scale = ((size / 1000) * 20);
+                fd.scale = ((size / 1000) * 20);
 
-                fd._codepage = cs.getCodePage().getBytes(
+                fd.codePage = cs.getCodePage().getBytes(
                     AFPConstants.EBCIDIC_ENCODING);
 
-                if (fd._codepage.length != 8) {
+                if (fd.codePage.length != 8) {
                     throw new IllegalArgumentException("The code page "
-                        + new String(fd._codepage,
+                        + new String(fd.codePage,
                         AFPConstants.EBCIDIC_ENCODING)
                         + " must have a fixed length of 8 characters.");
                 }
@@ -244,15 +246,13 @@ public class MapCodedFont extends AbstractAFPObject {
                 throw new FontRuntimeException(msg);
             }
 
-            if (_fontlist.size() > 253) {
+            if (fontList.size() > 253) {
 
                 // Throw an exception if the size is exceeded
                 throw new MaximumSizeExceededException();
 
             } else {
-
-                _fontlist.add(fd);
-
+                fontList.add(fd);
             }
 
         } catch (UnsupportedEncodingException ex) {
@@ -260,8 +260,7 @@ public class MapCodedFont extends AbstractAFPObject {
             throw new FontRuntimeException("Failed to create font "
                 + " due to a UnsupportedEncodingException", ex);
 
-        }
-
+        }   
     }
 
     /**
@@ -272,27 +271,27 @@ public class MapCodedFont extends AbstractAFPObject {
         /**
          * The code page of the font
          */
-        private byte[] _codepage;
+        private byte[] codePage;
 
         /**
          * The character set of the font
          */
-        private byte[] _characterset;
+        private byte[] characterSet;
 
         /**
          * The font reference key
          */
-        private byte _fontReferenceKey;
+        private byte fontReferenceKey;
 
         /**
          * The orientation of the font
          */
-        private byte _orientation;
+        private byte orientation;
 
         /**
          * The scale (only specified for outline fonts)
          */
-        private int _scale = 0;
+        private int scale = 0;
 
     }
 
