@@ -19,22 +19,20 @@
 
 package org.apache.fop.layoutmgr.inline;
 
-import org.apache.fop.fo.flow.PageNumberCitationLast;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Resolvable;
 import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.area.inline.UnresolvedPageNumber;
 import org.apache.fop.area.inline.TextArea;
+import org.apache.fop.area.inline.UnresolvedPageNumber;
+import org.apache.fop.fo.flow.PageNumberCitationLast;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LayoutManager;
 
 /**
  * LayoutManager for the fo:page-number-citation-last formatting object
  */
-public class PageNumberCitationLastLayoutManager extends PageNumberCitationLayoutManager {
+public class PageNumberCitationLastLayoutManager extends AbstractPageNumberCitationLayoutManager {
 
-    private PageNumberCitationLast fobj;
-    
     /**
      * Constructor
      *

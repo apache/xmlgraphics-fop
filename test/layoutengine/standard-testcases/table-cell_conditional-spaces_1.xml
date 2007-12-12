@@ -144,5 +144,19 @@
     <eval expected="31800" xpath="//pageViewport[8]//flow/block[2]/block/@bpd"/>
     <eval expected="16800" xpath="//pageViewport[9]//flow/block/@bpd"/>
     <eval expected="16800" xpath="//pageViewport[9]//flow/block/block/@bpd"/>
+
+    <element-list category="breaker">
+      <skip>3</skip>              <!-- The block before the table -->
+      <penalty p="INF" w="0"/>
+      <glue w="4000"/>            <!-- The border before -->
+      <box w="16800"/>            <!-- Line 1 -->
+      <penalty p="0" w="0"/>
+      <glue w="25000"/>           <!-- The space between lines -->
+      <box w="16800"/>            <!-- Line 2 -->
+      <penalty p="INF" w="0"/>
+      <glue w="4000"/>            <!-- The border after -->
+      <box w="0" aux="true"/>     <!-- aux. box to prohibit cutting away the border -->
+      <skip>3</skip>              <!-- glue for end of page -->
+    </element-list>
   </checks>
 </testcase>

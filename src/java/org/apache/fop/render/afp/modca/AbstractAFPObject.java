@@ -44,7 +44,7 @@ public abstract class AbstractAFPObject {
      * DataStream objects must implement the writeDataStream()
      * method to write its data to the given OutputStream
      * @param os The outputsteam stream
-     * @throws java.io.IOException
+     * @throws java.io.IOException in the event that an I/O exception occurred
      */
     public abstract void writeDataStream(OutputStream os) throws IOException;
 
@@ -52,15 +52,14 @@ public abstract class AbstractAFPObject {
      * Help method to write a set of AFPObjects to the AFP datastream.
      * @param afpObjects a list of AFPObjects
      * @param os The stream to write to
-     * @throws java.io.IOException
+     * @throws java.io.IOException in the event that an I/O exception occurred
      */
     protected void writeObjectList(List afpObjects, OutputStream os)
-        throws IOException {
+    throws IOException {
 
-        for (Iterator it = afpObjects.iterator(); it.hasNext(); ) {
+        Iterator it = afpObjects.iterator();
+        while (it.hasNext()) {
             ((AbstractAFPObject)it.next()).writeDataStream(os);
         }
-
     }
-
 }

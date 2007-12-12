@@ -23,9 +23,9 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.fop.fo.Constants;
+import org.apache.fop.layoutmgr.inline.AlignmentContext;
 import org.apache.fop.layoutmgr.inline.HyphContext;
 import org.apache.fop.traits.MinOptMax;
-import org.apache.fop.layoutmgr.inline.AlignmentContext;
 
 
 /**
@@ -262,6 +262,18 @@ public class LayoutContext {
             return Collections.unmodifiableList(this.pendingAfterMarks);
         } else {
             return null;
+        }
+    }
+    
+    /**
+     * Clears all pending marks on the LayoutContext.
+     */
+    public void clearPendingMarks() {
+        if (this.pendingBeforeMarks != null) {
+            this.pendingBeforeMarks.clear();
+        }
+        if (this.pendingAfterMarks != null) {
+            this.pendingAfterMarks.clear();
         }
     }
     

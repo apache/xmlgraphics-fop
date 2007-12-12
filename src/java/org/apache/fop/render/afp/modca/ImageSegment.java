@@ -18,6 +18,7 @@
 /* $Id$ */
 
 package org.apache.fop.render.afp.modca;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
@@ -42,25 +43,23 @@ public class ImageSegment extends AbstractAFPObject {
     /**
      * The name of the image segment
      */
-    private String _name;
+    private String name;
 
     /**
      * The name of the image segment as EBCIDIC bytes
      */
-    private byte[] _nameBytes;
+    private byte[] nameBytes;
 
     /**
      * The ImageContent for the image segment
      */
-    private ImageContent _imageContent = null;
+    private ImageContent imageContent = null;
 
     /**
      * Default constructor for the ImageSegment.
      */
     public ImageSegment() {
-
         this(DEFAULT_NAME);
-
     }
 
     /**
@@ -69,28 +68,20 @@ public class ImageSegment extends AbstractAFPObject {
      * @param name The name of the image.
      */
     public ImageSegment(String name) {
-
         if (name.length() != 4) {
             String msg = "Image segment name must be 4 characters long " + name;
             log.error("Constructor:: " + msg);
             throw new IllegalArgumentException(msg);
         }
-
-        _name = name;
-
+        this.name = name;
         try {
-
-            _nameBytes = name.getBytes(AFPConstants.EBCIDIC_ENCODING);
-
+            this.nameBytes = name.getBytes(AFPConstants.EBCIDIC_ENCODING);
         } catch (UnsupportedEncodingException usee) {
-
-            _nameBytes = name.getBytes();
+            this.nameBytes = name.getBytes();
             log.warn(
                 "Constructor:: UnsupportedEncodingException translating the name "
                 + name);
-
         }
-
     }
 
     /**
@@ -102,10 +93,10 @@ public class ImageSegment extends AbstractAFPObject {
      * @param vsize The vertival size of the image.
      */
     public void setImageSize(int hresol, int vresol, int hsize, int vsize) {
-        if (_imageContent == null) {
-            _imageContent = new ImageContent();
+        if (imageContent == null) {
+            imageContent = new ImageContent();
         }
-        _imageContent.setImageSize(hresol, vresol, hsize, vsize);
+        imageContent.setImageSize(hresol, vresol, hsize, vsize);
     }
 
     /**
@@ -113,10 +104,10 @@ public class ImageSegment extends AbstractAFPObject {
      * @param encoding The image encoding.
      */
     public void setImageEncoding(byte encoding) {
-        if (_imageContent == null) {
-            _imageContent = new ImageContent();
+        if (imageContent == null) {
+            imageContent = new ImageContent();
         }
-        _imageContent.setImageEncoding(encoding);
+        imageContent.setImageEncoding(encoding);
     }
 
     /**
@@ -124,10 +115,10 @@ public class ImageSegment extends AbstractAFPObject {
      * @param compression The image compression.
      */
     public void setImageCompression(byte compression) {
-        if (_imageContent == null) {
-            _imageContent = new ImageContent();
+        if (imageContent == null) {
+            imageContent = new ImageContent();
         }
-        _imageContent.setImageCompression(compression);
+        imageContent.setImageCompression(compression);
     }
 
     /**
@@ -135,10 +126,10 @@ public class ImageSegment extends AbstractAFPObject {
      * @param size The IDE size.
      */
     public void setImageIDESize(byte size) {
-        if (_imageContent == null) {
-            _imageContent = new ImageContent();
+        if (imageContent == null) {
+            imageContent = new ImageContent();
         }
-        _imageContent.setImageIDESize(size);
+        imageContent.setImageIDESize(size);
     }
 
     /**
@@ -146,48 +137,41 @@ public class ImageSegment extends AbstractAFPObject {
      * @param colorModel    the IDE color model.
      */
     public void setImageIDEColorModel(byte colorModel) {
-        if (_imageContent == null) {
-            _imageContent = new ImageContent();
+        if (imageContent == null) {
+            imageContent = new ImageContent();
         }
-        _imageContent.setImageIDEColorModel(colorModel);
+        imageContent.setImageIDEColorModel(colorModel);
     }
 
     /**
      * Set the data of the image.
      * @param data the image data
      */
-    public void setImageData(byte data[]) {
-        if (_imageContent == null) {
-            _imageContent = new ImageContent();
+    public void setImageData(byte[] data) {
+        if (imageContent == null) {
+            imageContent = new ImageContent();
         }
-        _imageContent.setImageData(data);
+        imageContent.setImageData(data);
     }
 
     /**
      * Accessor method to write the AFP datastream for the Image Segment
      * @param os The stream to write to
-     * @throws java.io.IOException
+     * @throws java.io.IOException if an I/O exception occurred
      */
-    public void writeDataStream(OutputStream os)
-        throws IOException {
-
+    public void writeDataStream(OutputStream os) throws IOException {
         writeStart(os);
-
-        if (_imageContent != null) {
-            _imageContent.writeDataStream(os);
+        if (imageContent != null) {
+            imageContent.writeDataStream(os);
         }
-
         writeEnd(os);
-
     }
 
     /**
      * Helper method to write the start of the Image Segment.
      * @param os The stream to write to
      */
-    private void writeStart(OutputStream os)
-        throws IOException {
-
+    private void writeStart(OutputStream os) throws IOException {
         byte[] data = new byte[] {
             0x70, // ID
             0x04, // Length
@@ -196,13 +180,9 @@ public class ImageSegment extends AbstractAFPObject {
             0x00, // Name byte 3
             0x00, // Name byte 4
         };
-
-        for (int i = 0; i < _nameBytes.length; i++) {
-
-            data[2 + i] = _nameBytes[i];
-
+        for (int i = 0; i < nameBytes.length; i++) {
+            data[2 + i] = nameBytes[i];
         }
-
         os.write(data);
 
     }
@@ -211,16 +191,11 @@ public class ImageSegment extends AbstractAFPObject {
      * Helper method to write the end of the Image Segment.
      * @param os The stream to write to
      */
-    private void writeEnd(OutputStream os)
-        throws IOException {
-
+    private void writeEnd(OutputStream os) throws IOException {
         byte[] data = new byte[] {
             0x71, // ID
             0x00, // Length
         };
-
         os.write(data);
-
     }
-
 }

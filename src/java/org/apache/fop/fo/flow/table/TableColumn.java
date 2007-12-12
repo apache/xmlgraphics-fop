@@ -31,6 +31,7 @@ import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.TableColLength;
+import org.apache.fop.layoutmgr.table.CollapsingBorderModel;
 
 /**
  * Class modelling the fo:table-column object.
@@ -114,14 +115,27 @@ public class TableColumn extends TableFObj {
     /**
      * {@inheritDoc}
      */
-    protected void startOfNode() throws FOPException {
+    public void startOfNode() throws FOPException {
+        super.startOfNode();
         getFOEventHandler().startColumn(this);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected void endOfNode() throws FOPException {
+    void setCollapsedBorders(CollapsingBorderModel collapsingBorderModel) {
+        this.collapsingBorderModel = collapsingBorderModel;
+        setCollapsedBorders();
+    }
+
+    /** {@inheritDoc} */
+    protected void setCollapsedBorders() {
+        Table table = (Table) parent;
+        createBorder(CommonBorderPaddingBackground.BEFORE, table);
+        createBorder(CommonBorderPaddingBackground.AFTER, table);
+        createBorder(CommonBorderPaddingBackground.START);
+        createBorder(CommonBorderPaddingBackground.END);
+    }
+
+    /** {@inheritDoc} */
+    public void endOfNode() throws FOPException {
         getFOEventHandler().endColumn(this);
     }
 

@@ -34,24 +34,24 @@ public class ImageOutputControl extends AbstractAFPObject {
     /**
      * The orientation of the image
      */
-    private int _orientation = 0;
+    private int orientation = 0;
 
     /**
      * Specifies the offset, along the X-axis, of the IM image object area
      * origin to the origin of the including page
      */
-    private int _Xcoordinate = 0;
+    private int xCoord = 0;
 
     /**
      * Specifies the offset, along the Y-axis, of the IM image object area
      * origin to the origin of the including page
      */
-    private int _Ycoordinate = 0;
+    private int yCoord = 0;
 
     /**
-     * Map an image point to a single presentation device pel
+     * Map an image point to a single presentation device
      */
-    private boolean _singlepoint = true;
+    private boolean singlePoint = true;
 
     /**
      * Constructor for the ImageOutputControl The x parameter specifies the
@@ -68,18 +68,17 @@ public class ImageOutputControl extends AbstractAFPObject {
      */
     public ImageOutputControl(int x, int y) {
 
-        _Xcoordinate = x;
-        _Ycoordinate = y;
+        xCoord = x;
+        yCoord = y;
 
     }
 
     /**
      * Accessor method to write the AFP datastream for the Image Output Control
      * @param os The stream to write to
-     * @throws java.io.IOException
+     * @throws java.io.IOException if an I/O exception occured
      */
-    public void writeDataStream(OutputStream os)
-        throws IOException {
+    public void writeDataStream(OutputStream os) throws IOException {
 
         byte[] data = new byte[33];
 
@@ -94,18 +93,18 @@ public class ImageOutputControl extends AbstractAFPObject {
         data[8] = 0x00;
 
         // XoaOset
-        byte[] x1 = BinaryUtils.convert(_Xcoordinate, 3);
+        byte[] x1 = BinaryUtils.convert(xCoord, 3);
         data[9] = x1[0];
         data[10] = x1[1];
         data[11] = x1[2];
 
         // YoaOset
-        byte[] x2 = BinaryUtils.convert(_Ycoordinate, 3);
+        byte[] x2 = BinaryUtils.convert(yCoord, 3);
         data[12] = x2[0];
         data[13] = x2[1];
         data[14] = x2[2];
 
-        switch (_orientation) {
+        switch (orientation) {
             case 0:
                 // 0 and 90 degrees respectively
                 data[15] = 0x00;
@@ -154,7 +153,7 @@ public class ImageOutputControl extends AbstractAFPObject {
         data[25] = 0x00;
         data[26] = 0x00;
 
-        if (_singlepoint) {
+        if (singlePoint) {
             data[27] = 0x03;
             data[28] = (byte) 0xE8;
             data[29] = 0x03;
@@ -185,12 +184,11 @@ public class ImageOutputControl extends AbstractAFPObject {
 
         if (orientation == 0 || orientation == 90 || orientation == 180
             || orientation == 270) {
-            _orientation = orientation;
+            this.orientation = orientation;
         } else {
             throw new IllegalArgumentException(
                 "The orientation must be one of the values 0, 90, 180, 270");
         }
-
     }
 
     /**
@@ -202,7 +200,6 @@ public class ImageOutputControl extends AbstractAFPObject {
      *            Use the singlepoint basis when true.
      */
     public void setSinglepoint(boolean singlepoint) {
-        _singlepoint = singlepoint;
+        singlePoint = singlepoint;
     }
-
 }

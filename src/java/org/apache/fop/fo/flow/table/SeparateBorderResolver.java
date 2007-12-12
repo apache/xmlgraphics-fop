@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,45 +17,28 @@
 
 /* $Id$ */
 
-package org.apache.fop.layoutmgr.table;
+package org.apache.fop.fo.flow.table;
 
-import org.apache.fop.fo.flow.table.TableBody;
-import org.apache.fop.fo.flow.table.TableColumn;
-import org.apache.fop.fo.flow.table.TableRow;
+import java.util.List;
 
 /**
- * GridUnit subclass for empty grid units.
+ * A resolver for the separate-border model. Basically this class does nothing.
  */
-public class EmptyGridUnit extends GridUnit {
+class SeparateBorderResolver implements BorderResolver {
 
-    private TableRow row;
-    private TableBody body;
-    
-    /**
-     * @param row Optional table-row instance
-     * @param column table-column instance
-     * @param body table-body the grid unit belongs to
-     * @param startCol column index 
-     */
-    public EmptyGridUnit(TableRow row, TableColumn column, TableBody body, 
-            int startCol) {
-        super(null, null, column, startCol, 0);
-        this.row = row;
-        this.body = body;
-    }
-    
     /** {@inheritDoc} */
-    public boolean isPrimary() {
-        return true;
-    }
-    
-    /** {@inheritDoc} */
-    public TableBody getBody() {
-        return this.body;
+    public void endRow(List row, TableCellContainer container) {
     }
 
     /** {@inheritDoc} */
-    public TableRow getRow() {
-        return this.row;
+    public void startPart(TableBody part) {
+    }
+
+    /** {@inheritDoc} */
+    public void endPart(TableBody part) {
+    }
+
+    /** {@inheritDoc} */
+    public void endTable() {
     }
 }
