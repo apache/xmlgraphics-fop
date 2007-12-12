@@ -15,47 +15,52 @@
  * limitations under the License.
  */
 
-/* $Id$ */
+/* $Id: $ */
 
-package org.apache.fop.render.afp.modca;
+package org.apache.fop.render.afp.modca.goca;
 
 /**
- * The TagLogicalElementBean provides a bean for holding the attributes of
- * a tag logical element as key value pairs.
- * <p/>
+ * A GOCA graphics rectangular box
  */
-public class TagLogicalElementBean {
-
-    /** The key attribute */
-    private String key;
-
-    /** The value attribute */
-    private String value;
+public final class GraphicsBox extends AbstractGraphicsCoord {
 
     /**
-     * Constructor for the TagLogicalElementBean.
-     * @param key the key attribute
-     * @param value the value attribute
+     * @param coords the x/y coordinates for this object
      */
-    public TagLogicalElementBean(String key, String value) {
-        this.key = key;
-        this.value = value;
+    public GraphicsBox(int[] coords) {
+        super(coords);
     }
 
     /**
-     * Getter for the key attribute.
-     * @return the key
+     * {@inheritDoc}
      */
-    public String getKey() {
-        return this.key;
+    protected byte getOrderCode() {
+        return (byte)0xC0;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    protected int getLength() {
+        return 10;
     }
 
     /**
-     * Getter for the value attribute.
-     * @return the value
+     * {@inheritDoc}
      */
-    public String getValue() {
-        return this.value;
+    protected void prepareData() {
+        super.data = createData();
+        final int fromIndex = 4;
+        addCoords(data, fromIndex);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    protected byte[] createData() {
+        byte[] data = super.createData();
+        data[2] = (byte)0x20; // CONTROL draw control flags
+        data[3] = 0x00; // reserved
+        return data;
+    }
 }

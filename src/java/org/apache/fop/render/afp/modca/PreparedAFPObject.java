@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,47 +15,17 @@
  * limitations under the License.
  */
 
-/* $Id$ */
+/* $Id: $ */
 
 package org.apache.fop.render.afp.modca;
 
 /**
- * The TagLogicalElementBean provides a bean for holding the attributes of
- * a tag logical element as key value pairs.
- * <p/>
+ * An AFP object which is able to know its own data length before write()
  */
-public class TagLogicalElementBean {
-
-    /** The key attribute */
-    private String key;
-
-    /** The value attribute */
-    private String value;
-
+public interface PreparedAFPObject {
     /**
-     * Constructor for the TagLogicalElementBean.
-     * @param key the key attribute
-     * @param value the value attribute
+     * @return the current data length of this container including
+     * all enclosed GOCA drawing objects 
      */
-    public TagLogicalElementBean(String key, String value) {
-        this.key = key;
-        this.value = value;
-    }
-
-    /**
-     * Getter for the key attribute.
-     * @return the key
-     */
-    public String getKey() {
-        return this.key;
-    }
-
-    /**
-     * Getter for the value attribute.
-     * @return the value
-     */
-    public String getValue() {
-        return this.value;
-    }
-
+    int getDataLength();
 }

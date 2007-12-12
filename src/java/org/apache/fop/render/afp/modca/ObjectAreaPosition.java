@@ -30,9 +30,9 @@ import org.apache.fop.render.afp.tools.BinaryUtils;
  */
 public class ObjectAreaPosition extends AbstractAFPObject {
 
-    private int _x = 0;
-    private int _y = 0;
-    private int _rot = 0;
+    private int x;
+    private int y;
+    private int rotation;
 
     /**
      * Construct an object area position for the specified object y, y position.
@@ -41,24 +41,25 @@ public class ObjectAreaPosition extends AbstractAFPObject {
      * @param rotation The coordinate system rotation (must be 0, 90, 180, 270).
      */
     public ObjectAreaPosition(int x, int y, int rotation) {
-
-        _x = x;
-        _y = y;
-        _rot = rotation;
+        this.x = x;
+        this.y = y;
+        this.rotation = rotation;
     }
 
     /**
      * Accessor method to write the AFP datastream for the Object Area Position
      * @param os The stream to write to
-     * @throws java.io.IOException
+     * @throws java.io.IOException in the event that an I/O exception of some sort has occurred.
      */
-    public void writeDataStream(OutputStream os)
-        throws IOException {
+    public void writeDataStream(OutputStream os) throws IOException {
+        byte[] len = BinaryUtils.convert(32, 2);
+        byte[] xcoord = BinaryUtils.convert(x, 3);
+        byte[] ycoord = BinaryUtils.convert(y, 3);
 
         byte[] data = new byte[] {
             0x5A,
-            0x00, // Length
-            0x20, // Length
+            len[0], // Length
+            len[1], // Length
             (byte) 0xD3,
             (byte) 0xAC,
             (byte) 0x6B,
@@ -67,15 +68,15 @@ public class ObjectAreaPosition extends AbstractAFPObject {
             0x00, // Reserved
             0x01, // OAPosID = 1
             0x17, // RGLength = 23
-            0x00, // XoaOSet
+            xcoord[0], // XoaOSet
+            xcoord[1],
+            xcoord[2],
+            ycoord[0], // YoaOSet
+            ycoord[1],
+            ycoord[2],
+            (byte)(rotation / 2), // XoaOrent
             0x00,
-            0x00,
-            0x00, // YoaOSet
-            0x00,
-            0x00,
-            (byte)(_rot / 2), // XoaOrent
-            0x00,
-            (byte)(_rot / 2 + 45), // YoaOrent
+            (byte)(rotation / 2 + 45), // YoaOrent
             0x00,
             0x00, // Reserved
             0x00, // XocaOSet
@@ -88,23 +89,9 @@ public class ObjectAreaPosition extends AbstractAFPObject {
             0x00,
             0x2D, // YocaOrent
             0x00,
-            0x01, // RefCSys
+            0x00, // RefCSys
         };
-
-        byte[] l = BinaryUtils.convert(data.length - 1, 2);
-        data[1] = l[0];
-        data[2] = l[1];
-
-        byte[] x = BinaryUtils.convert(_x, 3);
-        data[11] = x[0];
-        data[12] = x[1];
-        data[13] = x[2];
-
-        byte[] y = BinaryUtils.convert(_y, 3);
-        data[14] = y[0];
-        data[15] = y[1];
-        data[16] = y[2];
-
+        
         os.write(data);
 
     }

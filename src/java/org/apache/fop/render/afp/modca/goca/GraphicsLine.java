@@ -15,47 +15,28 @@
  * limitations under the License.
  */
 
-/* $Id$ */
+/* $Id: $ */
 
-package org.apache.fop.render.afp.modca;
+package org.apache.fop.render.afp.modca.goca;
+
 
 /**
- * The TagLogicalElementBean provides a bean for holding the attributes of
- * a tag logical element as key value pairs.
- * <p/>
+ * A GOCA graphics straight line drawn from the
+ * given position or current position.
  */
-public class TagLogicalElementBean {
-
-    /** The key attribute */
-    private String key;
-
-    /** The value attribute */
-    private String value;
+public class GraphicsLine extends AbstractGraphicsCoord {
 
     /**
-     * Constructor for the TagLogicalElementBean.
-     * @param key the key attribute
-     * @param value the value attribute
+     * @param coords the x/y coordinates for this object
      */
-    public TagLogicalElementBean(String key, String value) {
-        this.key = key;
-        this.value = value;
+    public GraphicsLine(int[] coords) {
+        super(coords);
     }
 
     /**
-     * Getter for the key attribute.
-     * @return the key
+     * {@inheritDoc}
      */
-    public String getKey() {
-        return this.key;
+    protected byte getOrderCode() {
+        return (byte)0xC1;                
     }
-
-    /**
-     * Getter for the value attribute.
-     * @return the value
-     */
-    public String getValue() {
-        return this.value;
-    }
-
 }

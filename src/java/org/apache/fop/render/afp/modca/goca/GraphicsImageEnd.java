@@ -15,47 +15,36 @@
  * limitations under the License.
  */
 
-/* $Id$ */
+/* $Id: $ */
 
-package org.apache.fop.render.afp.modca;
+package org.apache.fop.render.afp.modca.goca;
 
 /**
- * The TagLogicalElementBean provides a bean for holding the attributes of
- * a tag logical element as key value pairs.
- * <p/>
+ * A GOCA graphics image data
  */
-public class TagLogicalElementBean {
-
-    /** The key attribute */
-    private String key;
-
-    /** The value attribute */
-    private String value;
-
+public class GraphicsImageEnd extends AbstractPreparedAFPObject {
+    
     /**
-     * Constructor for the TagLogicalElementBean.
-     * @param key the key attribute
-     * @param value the value attribute
+     * Default constructor
      */
-    public TagLogicalElementBean(String key, String value) {
-        this.key = key;
-        this.value = value;
+    public GraphicsImageEnd() {
+        prepareData();
     }
 
     /**
-     * Getter for the key attribute.
-     * @return the key
+     * {@inheritDoc}
      */
-    public String getKey() {
-        return this.key;
+    protected void prepareData() {
+        super.data = new byte[] {
+            (byte) 0x93, // GEIMG order code
+            0x00 // LENGTH
+        };
     }
-
+    
     /**
-     * Getter for the value attribute.
-     * @return the value
+     * {@inheritDoc}
      */
-    public String getValue() {
-        return this.value;
+    public String toString() {
+        return "GraphicsImageEnd";
     }
-
 }

@@ -15,47 +15,40 @@
  * limitations under the License.
  */
 
-/* $Id$ */
+/* $Id: $ */
 
-package org.apache.fop.render.afp.modca;
+package org.apache.fop.render.afp.modca.goca;
 
 /**
- * The TagLogicalElementBean provides a bean for holding the attributes of
- * a tag logical element as key value pairs.
- * <p/>
+ * Sets the line width to use when stroking GOCA shapes (structured fields)
  */
-public class TagLogicalElementBean {
-
-    /** The key attribute */
-    private String key;
-
-    /** The value attribute */
-    private String value;
+public class GraphicsSetLineWidth extends AbstractPreparedAFPObject {
+    /** line width multiplier */
+    private int multiplier = 1;
 
     /**
-     * Constructor for the TagLogicalElementBean.
-     * @param key the key attribute
-     * @param value the value attribute
+     * Main constructor
+     * @param multiplier the line width multiplier
      */
-    public TagLogicalElementBean(String key, String value) {
-        this.key = key;
-        this.value = value;
+    public GraphicsSetLineWidth(int multiplier) {
+        this.multiplier = multiplier;
+        prepareData();
     }
 
     /**
-     * Getter for the key attribute.
-     * @return the key
+     * {@inheritDoc}
      */
-    public String getKey() {
-        return this.key;
+    protected void prepareData() {
+        super.data = new byte[] {
+           0x19, // GSLW order code
+           (byte)multiplier // MH (line-width)
+        };
     }
-
+    
     /**
-     * Getter for the value attribute.
-     * @return the value
+     * {@inheritDoc}
      */
-    public String getValue() {
-        return this.value;
+    public String toString() {
+        return "GraphicsSetLineWidth(multiplier=" + multiplier + ")";
     }
-
 }
