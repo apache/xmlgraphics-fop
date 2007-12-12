@@ -28,6 +28,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="AC" type="add">
+	Added SVG support for AFP (GOCA).
+      </action>
       <action context="Code" dev="JM" type="fix" fixes-bug="37993">
         Bugfix: allow multiple bookmarks to point at the same destination.
       </action>
