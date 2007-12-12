@@ -15,47 +15,39 @@
  * limitations under the License.
  */
 
-/* $Id$ */
+/* $Id: $ */
 
-package org.apache.fop.render.afp.modca;
+package org.apache.fop.render.afp.modca.goca;
 
 /**
- * The TagLogicalElementBean provides a bean for holding the attributes of
- * a tag logical element as key value pairs.
- * <p/>
+ * Sets the arc parameters for a GOCA graphics arc (circle/ellipse)
  */
-public class TagLogicalElementBean {
-
-    /** The key attribute */
-    private String key;
-
-    /** The value attribute */
-    private String value;
+public class GraphicsSetArcParameters extends AbstractGraphicsCoord {
 
     /**
-     * Constructor for the TagLogicalElementBean.
-     * @param key the key attribute
-     * @param value the value attribute
+     * @param xmaj x coordinate of the major axis point
+     * @param ymin y coordinate of the minor axis point
+     * @param xmin x coordinate of the minor axis point
+     * @param ymaj y coordinate of the major axis point
      */
-    public TagLogicalElementBean(String key, String value) {
-        this.key = key;
-        this.value = value;
+    public GraphicsSetArcParameters(int xmaj, int ymin, int xmin, int ymaj) {
+        super(xmaj, ymin, xmin, ymaj);
     }
 
     /**
-     * Getter for the key attribute.
-     * @return the key
+     * {@inheritDoc}
      */
-    public String getKey() {
-        return this.key;
+    protected byte getOrderCode() {
+        return 0x22;
     }
-
+    
     /**
-     * Getter for the value attribute.
-     * @return the value
+     * {@inheritDoc}
      */
-    public String getValue() {
-        return this.value;
+    public String toString() {
+        return getName() + "(xmaj=" + coords[0]
+            + ",ymin=" + coords[1]
+            + ",xmin=" + coords[2]
+            + ",ymaj=" + coords[3] + ")";
     }
-
 }

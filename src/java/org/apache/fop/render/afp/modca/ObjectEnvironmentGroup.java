@@ -18,6 +18,7 @@
 /* $Id$ */
 
 package org.apache.fop.render.afp.modca;
+
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -33,7 +34,7 @@ import java.io.OutputStream;
  * normally contained in the object environment group, or it may specify that one or
  * more default values are to be used.
  */
-public final class ObjectEnvironmentGroup extends AbstractNamedAFPObject {
+public final class ObjectEnvironmentGroup extends AbstractStructuredAFPObject {
 
     /**
      * Default name for the object environment group
@@ -56,12 +57,15 @@ public final class ObjectEnvironmentGroup extends AbstractNamedAFPObject {
     private ImageDataDescriptor imageDataDescriptor = null;
 
     /**
+     * The GraphicsDataDescriptor for the object environment group
+     */
+    private GraphicsDataDescriptor graphicsDataDescriptor = null;
+
+    /**
      * Default constructor for the ObjectEnvironmentGroup.
      */
     public ObjectEnvironmentGroup() {
-
         this(DEFAULT_NAME);
-
     }
 
     /**
@@ -70,9 +74,7 @@ public final class ObjectEnvironmentGroup extends AbstractNamedAFPObject {
      * @param name the object environment group name
      */
     public ObjectEnvironmentGroup(String name) {
-
         super(name);
-
     }
 
     /**
@@ -82,15 +84,14 @@ public final class ObjectEnvironmentGroup extends AbstractNamedAFPObject {
      * @param width the object width
      * @param height the object height
      * @param rotation the object orientation
-     * @param widthResolution the object resolution width
-     * @param heightResolution the object resolution height
+     * @param widthRes the object resolution width
+     * @param heightRes the object resolution height
      */
-    public void setObjectArea(int x, int y, int width, int height, int rotation,
-            int widthResolution, int heightResolution) {
-
-        objectAreaDescriptor = new ObjectAreaDescriptor(width, height,
-                widthResolution, heightResolution);
-        objectAreaPosition = new ObjectAreaPosition(x, y, rotation);
+    public void setObjectArea(int x, int y, int width, int height,
+            int widthRes, int heightRes, int rotation) {
+        this.objectAreaDescriptor = new ObjectAreaDescriptor(width, height,
+                widthRes, heightRes);
+        this.objectAreaPosition = new ObjectAreaPosition(x, y, rotation);
 
     }
 
@@ -102,40 +103,28 @@ public final class ObjectEnvironmentGroup extends AbstractNamedAFPObject {
      * @param height the image height
      */
     public void setImageData(int xresol, int yresol, int width, int height) {
-        imageDataDescriptor = new ImageDataDescriptor(xresol, yresol,  width, height);
+        this.imageDataDescriptor = new ImageDataDescriptor(xresol, yresol,  width, height);
     }
 
     /**
-     * Accessor method to obtain write the AFP datastream for
-     * the object environment group.
-     * @param os The stream to write to
-     * @throws java.io.IOException throw if an I/O exception of some sort has occurred
+     * Set the graphics data descriptor.
+     * @param xresol the x resolution of the graphics window
+     * @param yresol the y resolution of the graphics window
+     * @param xlwind the left edge of the graphics window 
+     * @param xrwind the right edge of the graphics window
+     * @param ybwind the top edge of the graphics window
+     * @param ytwind the bottom edge of the graphics window
      */
-    public void writeDataStream(OutputStream os)
-        throws IOException {
-
-
-        writeStart(os);
-
-        objectAreaDescriptor.writeDataStream(os);
-
-        objectAreaPosition.writeDataStream(os);
-
-        if (imageDataDescriptor != null) {
-            imageDataDescriptor.writeDataStream(os);
-        }
-
-        writeEnd(os);
-
+    public void setGraphicsData(int xresol, int yresol,
+            int xlwind, int xrwind, int ybwind, int ytwind) {
+        this.graphicsDataDescriptor = new GraphicsDataDescriptor(xresol, yresol,
+                xlwind, xrwind, ybwind, ytwind);
     }
 
     /**
-     * Helper method to write the start of the object environment group.
-     * @param os The stream to write to
+     * {@inheritDoc}
      */
-    private void writeStart(OutputStream os)
-        throws IOException {
-
+    protected void writeStart(OutputStream os) throws IOException {
         byte[] data = new byte[] {
             0x5A, // Structured field identifier
             0x00, // Length byte 1
@@ -146,53 +135,57 @@ public final class ObjectEnvironmentGroup extends AbstractNamedAFPObject {
             0x00, // Flags
             0x00, // Reserved
             0x00, // Reserved
-            0x00, // Name
-            0x00, //
-            0x00, //
-            0x00, //
-            0x00, //
-            0x00, //
-            0x00, //
-            0x00, //
+            nameBytes[0], // Name
+            nameBytes[1], //
+            nameBytes[2], //
+            nameBytes[3], //
+            nameBytes[4], //
+            nameBytes[5], //
+            nameBytes[6], //
+            nameBytes[7] //
         };
-
-        for (int i = 0; i < nameBytes.length; i++) {
-
-            data[9 + i] = nameBytes[i];
-
-        }
-
         os.write(data);
-
     }
 
     /**
-     * Helper method to write the end of the object environment group.
-     * @param os The stream to write to
+     * {@inheritDoc}
      */
-    private void writeEnd(OutputStream os)
-        throws IOException {
+    public void writeContent(OutputStream os) throws IOException {
+        objectAreaDescriptor.writeDataStream(os);
+        objectAreaPosition.writeDataStream(os);
 
-        byte[] data = new byte[17];
-
-        data[0] = 0x5A; // Structured field identifier
-        data[1] = 0x00; // Length byte 1
-        data[2] = 0x10; // Length byte 2
-        data[3] = (byte) 0xD3; // Structured field id byte 1
-        data[4] = (byte) 0xA9; // Structured field id byte 2
-        data[5] = (byte) 0xC7; // Structured field id byte 3
-        data[6] = 0x00; // Flags
-        data[7] = 0x00; // Reserved
-        data[8] = 0x00; // Reserved
-
-        for (int i = 0; i < nameBytes.length; i++) {
-
-            data[9 + i] = nameBytes[i];
-
+        if (imageDataDescriptor != null) {
+            imageDataDescriptor.writeDataStream(os);
         }
 
-        os.write(data);
-
+        if (graphicsDataDescriptor != null) {
+            graphicsDataDescriptor.writeDataStream(os);
+        }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    protected void writeEnd(OutputStream os) throws IOException {
+        byte[] data = new byte[] {
+            0x5A, // Structured field identifier
+            0x00, // Length byte 1
+            0x10, // Length byte 2
+            (byte) 0xD3, // Structured field id byte 1
+            (byte) 0xA9, // Structured field id byte 2
+            (byte) 0xC7, // Structured field id byte 3
+            0x00, // Flags
+            0x00, // Reserved
+            0x00, // Reserved                
+            nameBytes[0], // Name
+            nameBytes[1], //
+            nameBytes[2], //
+            nameBytes[3], //
+            nameBytes[4], //
+            nameBytes[5], //
+            nameBytes[6], //
+            nameBytes[7], //
+        };
+        os.write(data);
+    }
 }

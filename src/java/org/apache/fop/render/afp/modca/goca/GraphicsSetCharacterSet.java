@@ -15,47 +15,41 @@
  * limitations under the License.
  */
 
-/* $Id$ */
+/* $Id: $ */
 
-package org.apache.fop.render.afp.modca;
+package org.apache.fop.render.afp.modca.goca;
+
+import org.apache.fop.render.afp.tools.BinaryUtils;
 
 /**
- * The TagLogicalElementBean provides a bean for holding the attributes of
- * a tag logical element as key value pairs.
- * <p/>
+ * Sets the current character set (font) to be used for following graphics strings 
  */
-public class TagLogicalElementBean {
-
-    /** The key attribute */
-    private String key;
-
-    /** The value attribute */
-    private String value;
+public class GraphicsSetCharacterSet extends AbstractPreparedAFPObject {
+    /** font character set reference */
+    private int fontReference;
 
     /**
-     * Constructor for the TagLogicalElementBean.
-     * @param key the key attribute
-     * @param value the value attribute
+     * @param fontReference character set font reference
      */
-    public TagLogicalElementBean(String key, String value) {
-        this.key = key;
-        this.value = value;
+    public GraphicsSetCharacterSet(int fontReference) {
+        this.fontReference = fontReference;
+        prepareData();
     }
 
     /**
-     * Getter for the key attribute.
-     * @return the key
+     * {@inheritDoc}
      */
-    public String getKey() {
-        return this.key;
+    protected void prepareData() {
+        super.data = new byte[] {
+            0x38, // GSCS order code
+            BinaryUtils.convert(fontReference)[0]
+        };
     }
 
     /**
-     * Getter for the value attribute.
-     * @return the value
+     * {@inheritDoc}
      */
-    public String getValue() {
-        return this.value;
+    public String toString() {
+        return "GraphicsSetCharacterSet(" + fontReference + ")";
     }
-
 }
