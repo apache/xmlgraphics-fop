@@ -45,7 +45,7 @@ public abstract class AbstractStructuredAFPObject extends AbstractNamedAFPObject
     /**
      * Helper method to write the start of the Object.
      * @param os The stream to write to
-     * @throws an I/O exception if one occurred
+     * @throws java.io.IOException an I/O exception if one occurred
      */
     protected void writeStart(OutputStream os) throws IOException {
     }
@@ -53,7 +53,7 @@ public abstract class AbstractStructuredAFPObject extends AbstractNamedAFPObject
     /**
      * Helper method to write the contents of the Object.
      * @param os The stream to write to
-     * @throws an I/O exception if one occurred
+     * @throws java.io.IOException an I/O exception if one occurred
      */
     protected void writeContent(OutputStream os) throws IOException {
     }
@@ -61,7 +61,7 @@ public abstract class AbstractStructuredAFPObject extends AbstractNamedAFPObject
     /**
      * Helper method to write the end of the Object.
      * @param os The stream to write to
-     * @throws an I/O exception if one occurred
+     * @throws java.io.IOException an I/O exception if one occurred
      */
     protected void writeEnd(OutputStream os) throws IOException {
     }    
