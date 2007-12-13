@@ -138,15 +138,8 @@ public class TableCell extends TableFObj {
     protected void setCollapsedBorders() {
         createBorder(CommonBorderPaddingBackground.BEFORE);
         createBorder(CommonBorderPaddingBackground.AFTER);
-        Table table = getTable();
-        if (table.hasExplicitColumns()) {
-            TableColumn col = table.getColumn(getColumnNumber() - 1);
-            createBorder(CommonBorderPaddingBackground.START, col);
-            createBorder(CommonBorderPaddingBackground.END, col);
-        } else {
-            createBorder(CommonBorderPaddingBackground.START);
-            createBorder(CommonBorderPaddingBackground.END);
-        }
+        createBorder(CommonBorderPaddingBackground.START);
+        createBorder(CommonBorderPaddingBackground.END);
     }
 
     /** {@inheritDoc} */
