@@ -205,14 +205,22 @@ class CollapsingBorderResolver implements BorderResolver {
             // Resolve start/end borders in the row
             Iterator guIter = row.iterator();
             GridUnit gu = (GridUnit) guIter.next();
+            Iterator colIter = table.getColumns().iterator();
+            TableColumn col = (TableColumn) colIter.next();
+            gu.integrateBorderSegment(CommonBorderPaddingBackground.START, col);
             gu.integrateBorderSegment(CommonBorderPaddingBackground.START, container);
             while (guIter.hasNext()) {
-                GridUnit guEnd = (GridUnit) guIter.next();
+                GridUnit nextGU = (GridUnit) guIter.next();
+                TableColumn nextCol = (TableColumn) colIter.next();
                 if (gu.isLastGridUnitColSpan()) {
-                    gu.resolveBorder(guEnd, CommonBorderPaddingBackground.END);
+                    gu.integrateBorderSegment(CommonBorderPaddingBackground.END, col);
+                    nextGU.integrateBorderSegment(CommonBorderPaddingBackground.START, nextCol);
+                    gu.resolveBorder(nextGU, CommonBorderPaddingBackground.END);
                 }
-                gu = guEnd;
+                gu = nextGU;
+                col = nextCol;
             }
+            gu.integrateBorderSegment(CommonBorderPaddingBackground.END, col);
             gu.integrateBorderSegment(CommonBorderPaddingBackground.END, container);
         }
 
