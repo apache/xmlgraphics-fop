@@ -66,4 +66,9 @@ public class TableHeader extends TableBody {
     public int getNameId() {
         return FO_TABLE_HEADER;
     }
+
+    /** {@inheritDoc} */
+    protected boolean isTableHeader() {
+        return true;
+    }
 }
