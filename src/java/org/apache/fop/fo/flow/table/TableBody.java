@@ -138,7 +138,7 @@ public class TableBody extends TableCellContainer {
 
     protected void finishLastRowGroup() throws ValidationException {
         if (!inMarker()) {
-            RowGroupBuilder rowGroupBuilder = getTable().getRowGroupBuilder(); 
+            RowGroupBuilder rowGroupBuilder = getTable().getRowGroupBuilder();
             if (tableRowsFound) {
                 rowGroupBuilder.endRow(lastRow);
             } else if (!lastCellEndsRow) {
@@ -211,7 +211,7 @@ public class TableBody extends TableCellContainer {
                 rowsStarted = true;
                 TableCell cell = (TableCell) child;
                 addTableCellChild(cell, firstRow);
-                lastCellEndsRow = cell.endsRow(); 
+                lastCellEndsRow = cell.endsRow();
                 if (lastCellEndsRow) {
                     firstRow = false;
                     columnNumberManager.prepareForNextRow(pendingSpans);

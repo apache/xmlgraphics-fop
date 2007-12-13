@@ -48,7 +48,7 @@ public abstract class TableFObj extends FObj {
     BorderSpecification borderEnd;
 
     CollapsingBorderModel collapsingBorderModel;
-    
+
     /**
      * Main constructor
      * 
@@ -208,7 +208,7 @@ public abstract class TableFObj extends FObj {
     }
 
     /*
-     * TODO made public so that RetrieveMarker can access it.  
+     * TODO made public so that RetrieveMarker can access it.
      */
     /** {@inheritDoc} */
     public void endOfNode() throws FOPException {
