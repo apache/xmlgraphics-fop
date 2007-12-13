@@ -136,7 +136,6 @@ public class TableContentLayoutManager implements PercentBaseContext {
         if (headerIter != null && headerList == null) {
             this.headerList = getKnuthElementsForRowIterator(
                     headerIter, context, alignment, TableRowIterator.HEADER);
-            ElementListUtils.removeLegalBreaks(this.headerList);
             this.headerNetHeight
                     = ElementListUtils.calcContentLength(this.headerList);
             if (log.isDebugEnabled()) {
@@ -157,7 +156,6 @@ public class TableContentLayoutManager implements PercentBaseContext {
         if (footerIter != null && footerList == null) {
             this.footerList = getKnuthElementsForRowIterator(
                     footerIter, context, alignment, TableRowIterator.FOOTER);
-            ElementListUtils.removeLegalBreaks(this.footerList);
             this.footerNetHeight
                     = ElementListUtils.calcContentLength(this.footerList);
             if (log.isDebugEnabled()) {
