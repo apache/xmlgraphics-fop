@@ -170,7 +170,7 @@ class FixedColRowGroupBuilder extends RowGroupBuilder {
                     "A table-cell is spanning more rows than available in its parent element.");
         }
         setFlagForCols(GridUnit.LAST_IN_PART, lastRow);
-        borderResolver.endPart(tableBody);
+        borderResolver.endPart();
         inFooter = false;
     }
 
