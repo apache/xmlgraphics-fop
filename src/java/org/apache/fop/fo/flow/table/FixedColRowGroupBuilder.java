@@ -164,7 +164,7 @@ class FixedColRowGroupBuilder extends RowGroupBuilder {
     }
 
     /** {@inheritDoc} */
-    void endTablePart(TableBody tableBody) throws ValidationException {
+    void endTablePart() throws ValidationException {
         if (rows.size() > 0) {
             throw new ValidationException(
                     "A table-cell is spanning more rows than available in its parent element.");

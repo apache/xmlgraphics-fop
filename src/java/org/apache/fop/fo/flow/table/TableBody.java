@@ -145,7 +145,7 @@ public class TableBody extends TableCellContainer {
                 rowGroupBuilder.endRow(this);
             }
             try {
-                rowGroupBuilder.endTablePart(this);
+                rowGroupBuilder.endTablePart();
             } catch (ValidationException e) {
                 e.setLocator(locator);
                 throw e;
