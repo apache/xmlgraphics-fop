@@ -261,6 +261,10 @@ public class TableBody extends TableCellContainer {
         return FO_TABLE_BODY;
     }
 
+    protected boolean isTableHeader() {
+        return false;
+    }
+
     protected boolean isTableFooter() {
         return false;
     }

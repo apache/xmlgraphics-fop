@@ -90,9 +90,12 @@ public class GridUnit {
     /** flags for the grid unit */
     private byte flags = 0;
 
-    protected BorderSpecification[] resolvedBorders;
+    ConditionalBorder borderBefore;
+    ConditionalBorder borderAfter;
+    BorderSpecification borderStart;
+    BorderSpecification borderEnd;
 
-    private CollapsingBorderModel collapsingBorderModel;
+    protected CollapsingBorderModel collapsingBorderModel;
 
     /**
      * Creates a new grid unit.
@@ -156,26 +159,27 @@ public class GridUnit {
         if (table.isSeparateBorderModel()) {
             assignBorderForSeparateBorderModel();
         } else {
-            resolvedBorders = new BorderSpecification[4];
             collapsingBorderModel = CollapsingBorderModel.getBorderModelFor(table
                     .getBorderCollapse());
-            if (rowSpanIndex == 0) {
-                setBorder(CommonBorderPaddingBackground.BEFORE);
-            }
-            if (isLastGridUnitRowSpan()) {
-                setBorder(CommonBorderPaddingBackground.AFTER);
-            }
-            if (colSpanIndex == 0) {
-                setBorder(CommonBorderPaddingBackground.START);
-            }
-            if (isLastGridUnitColSpan()) {
-                setBorder(CommonBorderPaddingBackground.END);
-            }
+            setBordersFromCell();
         }
     }
 
-    protected void setBorder(int side) {
-        resolvedBorders[side] = cell.resolvedBorders[side];
+    protected void setBordersFromCell() {
+        borderBefore = cell.borderBefore.copy();
+        if (rowSpanIndex > 0) {
+            borderBefore.nonLeadingTrailing = null;
+        }
+        borderAfter = cell.borderAfter.copy();
+        if (!isLastGridUnitRowSpan()) {
+            borderAfter.nonLeadingTrailing = null;
+        }
+        if (colSpanIndex == 0) {
+            borderStart = cell.borderStart;
+        }
+        if (isLastGridUnitColSpan()) {
+            borderEnd = cell.borderEnd;
+        }
     }
 
     public TableCell getCell() {
@@ -301,8 +305,30 @@ public class GridUnit {
     }
 
     private void setBorderInfo(int side) {
-        if (resolvedBorders[side] != null) {
-            effectiveBorders.setBorderInfo(resolvedBorders[side].getBorderInfo(), side);
+        switch (side) {
+        case CommonBorderPaddingBackground.BEFORE:
+            if (borderBefore.nonLeadingTrailing/*TODO*/ != null) {
+                effectiveBorders.setBorderInfo(borderBefore.nonLeadingTrailing.getBorderInfo(),
+                        side);
+            }
+            break;
+        case CommonBorderPaddingBackground.AFTER:
+            if (borderAfter.nonLeadingTrailing/*TODO*/ != null) {
+                effectiveBorders.setBorderInfo(borderAfter.nonLeadingTrailing.getBorderInfo(),
+                        side);
+            }
+            break;
+        case CommonBorderPaddingBackground.START:
+            if (borderStart != null) {
+                effectiveBorders.setBorderInfo(borderStart.getBorderInfo(), side);
+            }
+            break;
+        case CommonBorderPaddingBackground.END:
+            if (borderEnd != null) {
+                effectiveBorders.setBorderInfo(borderEnd.getBorderInfo(), side);
+            }
+            break;
+        default: assert false;
         }
     }
 
@@ -332,26 +358,96 @@ public class GridUnit {
      * CommonBorderPaddingBackground.BEFORE|AFTER|START|END)
      */
     void resolveBorder(GridUnit other, int side) {
-        BorderSpecification resolvedBorder = collapsingBorderModel.determineWinner(
-                resolvedBorders[side], other.resolvedBorders[CollapsingBorderModel
-                        .getOtherSide(side)]);
-        if (resolvedBorder != null) {
-            this.resolvedBorders[side] = resolvedBorder;
-            other.resolvedBorders[CollapsingBorderModel.getOtherSide(side)] = resolvedBorder;
+        switch (side) {
+        case CommonBorderPaddingBackground.BEFORE:
+            borderBefore.resolve(other.borderAfter, false, true, false);
+            break;
+        case CommonBorderPaddingBackground.AFTER:
+            borderAfter.resolve(other.borderBefore, false, true, false);
+            break;
+        case CommonBorderPaddingBackground.START:
+            BorderSpecification resolvedBorder = collapsingBorderModel.determineWinner(
+                    borderStart, other.borderEnd);
+            if (resolvedBorder != null) {
+                this.borderStart = resolvedBorder;
+                other.borderEnd = resolvedBorder;
+            }
+            break;
+        case CommonBorderPaddingBackground.END:
+            resolvedBorder = collapsingBorderModel.determineWinner(
+                    borderEnd, other.borderStart);
+            if (resolvedBorder != null) {
+                this.borderEnd = resolvedBorder;
+                other.borderStart = resolvedBorder;
+            }
+            break;
+        default: assert false;
         }
     }
 
     /**
-     * Resolves the border on the given side of this grid unit, comparing it against the
-     * same border of the given parent element.
+     * For the given side, integrates in the conflict resolution the border segment of the
+     * given parent element.
      * 
-     * @param side the side to resolve (one of
-     * CommonBorderPaddingBackground.BEFORE|AFTER|START|END)
-     * @param parent the parent element holding a competing border
+     * @param side the side to consider (either CommonBorderPaddingBackground.BEFORE or
+     * AFTER)
+     * @param parent a table element whose corresponding border coincides on the given
+     * side
      */
-    void resolveBorder(int side, TableFObj parent) {
-        resolvedBorders[side] = collapsingBorderModel.determineWinner(resolvedBorders[side],
-                parent.resolvedBorders[side]);
+    void integrateBorderSegment(int side, TableFObj parent, boolean withLeadingTrailing,
+            boolean withNonLeadingTrailing, boolean withRest) {
+        switch (side) {
+        case CommonBorderPaddingBackground.BEFORE:
+            borderBefore.integrateSegment(parent.borderBefore, withLeadingTrailing,
+                    withNonLeadingTrailing, withRest);
+            break;
+        case CommonBorderPaddingBackground.AFTER:
+            borderAfter.integrateSegment(parent.borderAfter, withLeadingTrailing,
+                    withNonLeadingTrailing, withRest);
+            break;
+        default: assert false;
+        }
+    }
+
+    /**
+     * For the given side, integrates in the conflict resolution the border segment of the
+     * given parent element.
+     * 
+     * @param side the side to consider (one of
+     * CommonBorderPaddingBackground.BEFORE|AFTER|START|END)
+     * @param parent a table element whose corresponding border coincides on the given side
+     */
+    void integrateBorderSegment(int side, TableFObj parent) {
+        switch (side) {
+        case CommonBorderPaddingBackground.BEFORE:
+        case CommonBorderPaddingBackground.AFTER:
+            integrateBorderSegment(side, parent, true, true, true);
+            break;
+        case CommonBorderPaddingBackground.START:
+            borderStart = collapsingBorderModel.determineWinner(borderStart,
+                    parent.borderStart);
+            break;
+        case CommonBorderPaddingBackground.END:
+            borderEnd = collapsingBorderModel.determineWinner(borderEnd,
+                    parent.borderEnd);
+            break;
+        default: assert false;
+        }
+    }
+
+    void integrateCompetingBorder(int side, ConditionalBorder competitor,
+            boolean withLeadingTrailing, boolean withNonLeadingTrailing, boolean withRest) {
+        switch (side) {
+        case CommonBorderPaddingBackground.BEFORE:
+            borderBefore.integrateCompetingSegment(competitor, withLeadingTrailing,
+                    withNonLeadingTrailing, withRest);
+            break;
+        case CommonBorderPaddingBackground.AFTER:
+            borderAfter.integrateCompetingSegment(competitor, withLeadingTrailing,
+                    withNonLeadingTrailing, withRest);
+            break;
+        default: assert false;
+        }
     }
 
     /**

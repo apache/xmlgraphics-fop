@@ -131,14 +131,68 @@ public class CommonBorderPaddingBackground {
     private static BorderInfo defaultBorderInfo;
 
     /**
+     * A conditional length of value 0. Returned by the
+     * {@link CommonBorderPaddingBackground#getBorderInfo(int)} method when the
+     * corresponding border isn't specified, to avoid to callers painful checks for null.
+     */
+    private static class ConditionalNullLength extends CondLengthProperty {
+
+        /** {@inheritDoc} */
+        public Property getComponent(int cmpId) {
+            throw new UnsupportedOperationException();
+        }
+
+        /** {@inheritDoc} */
+        public Property getConditionality() {
+            throw new UnsupportedOperationException();
+        }
+
+        /** {@inheritDoc} */
+        public Length getLength() {
+            throw new UnsupportedOperationException();
+        }
+
+        /** {@inheritDoc} */
+        public Property getLengthComponent() {
+            throw new UnsupportedOperationException();
+        }
+
+        /** {@inheritDoc} */
+        public int getLengthValue() {
+            return 0;
+        }
+
+        /** {@inheritDoc} */
+        public int getLengthValue(PercentBaseContext context) {
+            return 0;
+        }
+
+        /** {@inheritDoc} */
+        public boolean isDiscard() {
+            return true;
+        }
+
+        /** {@inheritDoc} */
+        public void setComponent(int cmpId, Property cmpnValue, boolean isDefault) {
+            throw new UnsupportedOperationException();
+        }
+
+        /** {@inheritDoc} */
+        public String toString() {
+            return "CondLength[0mpt, discard]";
+        }
+    }
+
+    /**
      * Returns a default BorderInfo of style none.
      * 
      * @return a BorderInfo instance with style set to {@link Constants#EN_NONE}
      */
     public static synchronized BorderInfo getDefaultBorderInfo() {
         if (defaultBorderInfo == null) {
-            /* It is enough to set color and width to null, as they should never be consulted */
-            defaultBorderInfo = new BorderInfo(Constants.EN_NONE, null, null);
+            /* It is enough to set color to null, as it should never be consulted */
+            defaultBorderInfo = new BorderInfo(Constants.EN_NONE,
+                    new ConditionalNullLength(), null);
         }
         return defaultBorderInfo;
     }

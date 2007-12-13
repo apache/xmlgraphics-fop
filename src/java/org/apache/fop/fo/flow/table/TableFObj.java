@@ -42,7 +42,10 @@ public abstract class TableFObj extends FObj {
     private Numeric borderEndPrecedence;
     private Numeric borderStartPrecedence;
 
-    BorderSpecification[] resolvedBorders = new BorderSpecification[4]; // TODO
+    ConditionalBorder borderBefore;
+    ConditionalBorder borderAfter;
+    BorderSpecification borderStart;
+    BorderSpecification borderEnd;
 
     CollapsingBorderModel collapsingBorderModel;
     
@@ -200,7 +203,6 @@ public abstract class TableFObj extends FObj {
         if (!inMarker() && !table.isSeparateBorderModel()) {
             collapsingBorderModel = CollapsingBorderModel.getBorderModelFor(table
                     .getBorderCollapse());
-            resolvedBorders = new BorderSpecification[4];
             setCollapsedBorders();
         }
     }
@@ -226,8 +228,23 @@ public abstract class TableFObj extends FObj {
      * @param side one of CommonBorderPaddingBackground.BEFORE|AFTER|START|END
      */
     protected void createBorder(int side) {
-        resolvedBorders[side] = new BorderSpecification(getCommonBorderPaddingBackground()
-                .getBorderInfo(side), getNameId()); 
+        BorderSpecification borderSpec = new BorderSpecification(
+                getCommonBorderPaddingBackground().getBorderInfo(side), getNameId());
+        switch (side) {
+        case CommonBorderPaddingBackground.BEFORE:
+            borderBefore = new ConditionalBorder(borderSpec, collapsingBorderModel);
+            break;
+        case CommonBorderPaddingBackground.AFTER:
+            borderAfter = new ConditionalBorder(borderSpec, collapsingBorderModel);
+            break;
+        case CommonBorderPaddingBackground.START:
+            borderStart = borderSpec;
+            break;
+        case CommonBorderPaddingBackground.END:
+            borderEnd = borderSpec;
+            break;
+        default: assert false;
+        }
     }
 
     /**
@@ -240,7 +257,22 @@ public abstract class TableFObj extends FObj {
      */
     protected void createBorder(int side, TableFObj competitor) {
         createBorder(side);
-        resolvedBorders[side] = collapsingBorderModel.determineWinner(resolvedBorders[side],
-                competitor.resolvedBorders[side]);
+        switch (side) {
+        case CommonBorderPaddingBackground.BEFORE:
+            borderBefore.integrateSegment(competitor.borderBefore, true, true, true);
+            break;
+        case CommonBorderPaddingBackground.AFTER:
+            borderAfter.integrateSegment(competitor.borderAfter, true, true, true);
+            break;
+        case CommonBorderPaddingBackground.START:
+            borderStart = collapsingBorderModel.determineWinner(borderStart,
+                    competitor.borderStart);
+            break;
+        case CommonBorderPaddingBackground.END:
+            borderEnd = collapsingBorderModel.determineWinner(borderEnd,
+                    competitor.borderEnd);
+            break;
+        default: assert false;
+        }
     }
 }
