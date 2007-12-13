@@ -1691,8 +1691,8 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
             return;
         }
         Point origin = new Point(currentIPPosition, currentBPPosition);
-        int x = currentIPPosition + (int)Math.round(pos.getX());
-        int y = currentBPPosition + (int)Math.round(pos.getY());
+        int x = origin.x + posInt.x;
+        int y = origin.y + posInt.y;
 
         ImageManager manager = getUserAgent().getFactory().getImageManager();
         ImageInfo info = null;
@@ -1703,8 +1703,6 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
             
             
             Map hints = ImageUtil.getDefaultHints(sessionContext);
-            int width = (int)pos.getWidth();
-            int height = (int)pos.getHeight();
             org.apache.fop.image2.Image img = manager.getImage(
                         info, imageHandlerRegistry.getSupportedFlavors(), hints, sessionContext);
             
@@ -1716,7 +1714,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                 }
                 try {
                     RendererContext context = createRendererContext(
-                            x, y, width, height, foreignAttributes);
+                            x, y, posInt.width, posInt.height, foreignAttributes);
                     handler.generateImage(context, img, origin, posInt);
                 } catch (IOException ioe) {
                     log.error("I/O error while handling image: " + info, ioe);
