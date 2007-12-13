@@ -192,9 +192,17 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
                     tooManyNodesError(loc, "table-footer");
                 } else {
                     tableFooterFound = true;
-                    if (tableBodyFound && getUserAgent().validateStrictly()) {
-                        nodesOutOfOrderError(loc, "fo:table-footer",
-                            "(table-body+)");
+                    if (tableBodyFound) {
+                        if (getUserAgent().validateStrictly()) {
+                            nodesOutOfOrderError(loc, "fo:table-footer", "(table-body+)");
+                        } else if (!isSeparateBorderModel()) {
+                            nodesOutOfOrderError(loc, "fo:table-footer", "(table-body+)."
+                                    + " This table uses the collapsing border"
+                                    + " model. In order to resolve borders in an efficient way"
+                                    + " the table-footer must be known before any table-body"
+                                    + " is parsed. Either put the footer at the correct place"
+                                    + " or switch to the separate border model");
+                        }
                     }
                 }
             } else if ("table-body".equals(localName)) {
