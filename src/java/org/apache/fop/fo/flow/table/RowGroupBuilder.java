@@ -77,10 +77,9 @@ abstract class RowGroupBuilder {
      * row-group is checked for emptiness. This row group builder is reset for handling
      * further possible table parts.
      * 
-     * @param tableBody the table part being ended
      * @throws ValidationException if a row-spanning cell overflows the given table part
      */
-    abstract void endTablePart(TableBody tableBody) throws ValidationException;
+    abstract void endTablePart() throws ValidationException;
 
     /**
      * Receives notification of the end of the table.
