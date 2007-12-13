@@ -1150,7 +1150,7 @@ public final class FOPropertyMapping implements Constants {
         m.useGeneric(genericSpace);
         corr = new SpacePropertyMaker(m);
         corr.setCorresponding(PR_MARGIN_BOTTOM, PR_MARGIN_BOTTOM, PR_MARGIN_LEFT);
-        corr.setUseParent(false);
+        corr.setUseParent(true);
         corr.setRelative(true);
         addPropertyMaker("space-after", m);
 
