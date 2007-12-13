@@ -199,6 +199,6 @@ public class ConditionalBorder {
     static ConditionalBorder getDefaultBorder(CollapsingBorderModel collapsingBorderModel) {
         BorderSpecification defaultBorderSpec = BorderSpecification.getDefaultBorder();
         return new ConditionalBorder(defaultBorderSpec, defaultBorderSpec, defaultBorderSpec,
-                collapsingBorderModel); 
+                collapsingBorderModel);
     }
 }
