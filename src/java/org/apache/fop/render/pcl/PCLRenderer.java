@@ -24,24 +24,17 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.ComponentColorModel;
-import java.awt.image.DataBuffer;
-import java.awt.image.DataBufferByte;
-import java.awt.image.PixelInterleavedSampleModel;
-import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
-import java.awt.image.SampleModel;
-import java.awt.image.WritableRaster;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
@@ -70,15 +63,21 @@ import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.WordArea;
+import org.apache.fop.datatypes.URISpecification;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontMetrics;
-import org.apache.fop.image.EPSImage;
-import org.apache.fop.image.FopImage;
-import org.apache.fop.image.ImageFactory;
-import org.apache.fop.image.XMLImage;
+import org.apache.fop.image2.ImageException;
+import org.apache.fop.image2.ImageFlavor;
+import org.apache.fop.image2.ImageInfo;
+import org.apache.fop.image2.ImageManager;
+import org.apache.fop.image2.ImageSessionContext;
 import org.apache.fop.image2.ImageSize;
+import org.apache.fop.image2.impl.ImageGraphics2D;
+import org.apache.fop.image2.impl.ImageRendered;
+import org.apache.fop.image2.impl.ImageXMLDOM;
+import org.apache.fop.image2.util.ImageUtil;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.Graphics2DImagePainter;
 import org.apache.fop.render.PrintRenderer;
@@ -135,6 +134,13 @@ public class PCLRenderer extends PrintRenderer {
      */
     private boolean allTextAsBitmaps = false;
 
+    /**
+     * Controls whether an RGB canvas is used when converting Java2D graphics to bitmaps.
+     * This can be used to work around problems with Apache Batik, for example, but setting
+     * this to true will increase memory consumption.
+     */
+    private boolean useColorCanvas = false;
+    
     /**
      * Controls whether the generation of PJL commands gets disabled. 
      */
@@ -992,87 +998,89 @@ public class PCLRenderer extends PrintRenderer {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
+    protected RendererContext createRendererContext(int x, int y, int width, int height, 
+            Map foreignAttributes) {
+        RendererContext context = super.createRendererContext(
+                x, y, width, height, foreignAttributes);
+        context.setProperty(PCLRendererContextConstants.PCL_COLOR_CANVAS,
+                Boolean.valueOf(this.useColorCanvas));
+        return context;
+    }
+
+    /** {@inheritDoc} */
     public void renderImage(Image image, Rectangle2D pos) {
         drawImage(image.getURL(), pos, image.getForeignAttributes());
     }
 
+    /** The flavors supported inline with PostScript level 3 and higher. */
+    private static final ImageFlavor[] FLAVORS = new ImageFlavor[]
+                                             {ImageFlavor.GRAPHICS2D,
+                                              ImageFlavor.BUFFERED_IMAGE, 
+                                              ImageFlavor.RENDERED_IMAGE,
+                                              ImageFlavor.XML_DOM};
     /**
      * Draw an image at the indicated location.
-     * @param url the URI/URL of the image
+     * @param uri the URI/URL of the image
      * @param pos the position of the image
      * @param foreignAttributes an optional Map with foreign attributes, may be null
      */
-    protected void drawImage(String url, Rectangle2D pos, Map foreignAttributes) {
-        url = ImageFactory.getURL(url);
-        ImageFactory fact = userAgent.getFactory().getImageFactory();
-        FopImage fopimage = fact.getImage(url, userAgent);
-        if (fopimage == null) {
-            return;
-        }
-        if (!fopimage.load(FopImage.DIMENSIONS)) {
-            return;
-        }
-        String mime = fopimage.getMimeType();
-        if ("text/xml".equals(mime)) {
-            if (!fopimage.load(FopImage.ORIGINAL_DATA)) {
-                return;
-            }
-            Document doc = ((XMLImage) fopimage).getDocument();
-            String ns = ((XMLImage) fopimage).getNameSpace();
-
-            renderDocument(doc, ns, pos, foreignAttributes);
-        } else if ("image/svg+xml".equals(mime)) {
-            if (!fopimage.load(FopImage.ORIGINAL_DATA)) {
-                return;
-            }
-            Document doc = ((XMLImage) fopimage).getDocument();
-            String ns = ((XMLImage) fopimage).getNameSpace();
-
-            renderDocument(doc, ns, pos, foreignAttributes);
-        } else if (fopimage instanceof EPSImage) {
-            log.warn("EPS images are not supported by this renderer");
-        } else {
-            if (!fopimage.load(FopImage.BITMAP)) {
-                log.error("Bitmap image could not be processed: " + fopimage);
-                return;
-            }
-            byte[] imgmap = fopimage.getBitmaps();
+    protected void drawImage(String uri, Rectangle2D pos, Map foreignAttributes) {
+        uri = URISpecification.getURL(uri);
+        Rectangle posInt = new Rectangle(
+                (int)pos.getX(),
+                (int)pos.getY(),
+                (int)pos.getWidth(),
+                (int)pos.getHeight());
+        Point origin = new Point(currentIPPosition, currentBPPosition);
+        int x = origin.x + posInt.x;
+        int y = origin.y + posInt.y;
+        
+        ImageManager manager = getUserAgent().getFactory().getImageManager();
+        ImageInfo info = null;
+        try {
+            ImageSessionContext sessionContext = getUserAgent().getImageSessionContext();
+            info = manager.getImageInfo(uri, sessionContext);
             
-            ColorModel cm = new ComponentColorModel(
-                    ColorSpace.getInstance(ColorSpace.CS_LINEAR_RGB), 
-                    new int[] {8, 8, 8},
-                    false, false,
-                    ColorModel.OPAQUE, DataBuffer.TYPE_BYTE);
-            int imgw = fopimage.getWidth();
-            int imgh = fopimage.getHeight();
-            SampleModel sampleModel = new PixelInterleavedSampleModel(
-                    DataBuffer.TYPE_BYTE, imgw, imgh, 3, imgw * 3, new int[] {0, 1, 2});
-            DataBuffer dbuf = new DataBufferByte(imgmap, imgw * imgh * 3);
-
-            WritableRaster raster = Raster.createWritableRaster(sampleModel,
-                    dbuf, null);
-
-            // Combine the color model and raster into a buffered image
-            RenderedImage img = new BufferedImage(cm, raster, false, null);
-
-            try {
-                setCursorPos(this.currentIPPosition + (int)pos.getX(),
-                        this.currentBPPosition + (int)pos.getY());
-                gen.paintBitmap(img, 
-                        new Dimension((int)pos.getWidth(), (int)pos.getHeight()), 
+            //Only now fully load/prepare the image
+            Map hints = ImageUtil.getDefaultHints(sessionContext);
+            org.apache.fop.image2.Image img = manager.getImage(
+                    info, FLAVORS, hints, sessionContext);
+            
+            //...and process the image
+            if (img instanceof ImageGraphics2D) {
+                ImageGraphics2D imageG2D = (ImageGraphics2D)img;
+                RendererContext context = createRendererContext(
+                        posInt.x, posInt.y,
+                        posInt.width, posInt.height, foreignAttributes);
+                getGraphics2DAdapter().paintImage(imageG2D.getGraphics2DImagePainter(),
+                        context, x, y, posInt.width, posInt.height);
+            } else if (img instanceof ImageRendered) {
+                ImageRendered imgRend = (ImageRendered)img;
+                RenderedImage ri = imgRend.getRenderedImage();
+                setCursorPos(x, y);
+                gen.paintBitmap(ri, 
+                        new Dimension(posInt.width, posInt.height), 
                         false);
-            } catch (IOException ioe) {
-                handleIOTrouble(ioe);
+            } else if (img instanceof ImageXMLDOM) {
+                ImageXMLDOM imgXML = (ImageXMLDOM)img;
+                renderDocument(imgXML.getDocument(), imgXML.getRootNamespace(),
+                        pos, foreignAttributes);
+            } else {
+                throw new UnsupportedOperationException("Unsupported image type: " + img);
             }
+
+        } catch (ImageException ie) {
+            log.error("Error while processing image: "
+                    + (info != null ? info.toString() : uri), ie);
+        } catch (FileNotFoundException fe) {
+            log.error(fe.getMessage());
+        } catch (IOException ioe) {
+            handleIOTrouble(ioe);
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void renderForeignObject(ForeignObject fo, Rectangle2D pos) {
         Document doc = fo.getDocument();
         String ns = fo.getNameSpace();
@@ -1502,6 +1510,11 @@ public class PCLRenderer extends PrintRenderer {
         }
     }
 
+    /**
+     * Controls whether all text should be generated as bitmaps or only text for which there's
+     * no native font.
+     * @param allTextAsBitmaps true if all text should be painted as bitmaps
+     */
     public void setAllTextAsBitmaps(boolean allTextAsBitmaps) {
         this.allTextAsBitmaps = allTextAsBitmaps;
     }
