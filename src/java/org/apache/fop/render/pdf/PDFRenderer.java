@@ -21,6 +21,8 @@ package org.apache.fop.render.pdf;
 
 // Java
 import java.awt.Color;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_Profile;
 import java.awt.geom.AffineTransform;
@@ -36,8 +38,6 @@ import java.util.Map;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
-
-import org.w3c.dom.Document;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.xmlgraphics.xmp.Metadata;
@@ -73,15 +73,9 @@ import org.apache.fop.fo.extensions.xmp.XMPMetadata;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.image2.ImageException;
-import org.apache.fop.image2.ImageFlavor;
 import org.apache.fop.image2.ImageInfo;
 import org.apache.fop.image2.ImageManager;
 import org.apache.fop.image2.ImageSessionContext;
-import org.apache.fop.image2.impl.ImageGraphics2D;
-import org.apache.fop.image2.impl.ImageRawJPEG;
-import org.apache.fop.image2.impl.ImageRawStream;
-import org.apache.fop.image2.impl.ImageRendered;
-import org.apache.fop.image2.impl.ImageXMLDOM;
 import org.apache.fop.image2.util.ImageUtil;
 import org.apache.fop.pdf.PDFAMode;
 import org.apache.fop.pdf.PDFAction;
@@ -96,7 +90,6 @@ import org.apache.fop.pdf.PDFFilterList;
 import org.apache.fop.pdf.PDFGoTo;
 import org.apache.fop.pdf.PDFICCBasedColorSpace;
 import org.apache.fop.pdf.PDFICCStream;
-import org.apache.fop.pdf.PDFImage;
 import org.apache.fop.pdf.PDFInfo;
 import org.apache.fop.pdf.PDFLink;
 import org.apache.fop.pdf.PDFMetadata;
@@ -1656,29 +1649,38 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     public void renderImage(Image image, Rectangle2D pos) {
         endTextObject();
         String url = image.getURL();
-        putImage(url, pos);
+        putImage(url, pos, image.getForeignAttributes());
     }
 
     /** {@inheritDoc} */
     protected void drawImage(String url, Rectangle2D pos, Map foreignAttributes) {
         endTextObject();
-        putImage(url, pos);
+        putImage(url, pos, foreignAttributes);
     }
     
-    private final ImageFlavor[] supportedFlavors = new ImageFlavor[]
-                                                {ImageFlavor.RAW_JPEG,
-                                                 //ImageUndecodedPNG.UNDECODED_PNG,
-                                                 ImageFlavor.GRAPHICS2D,
-                                                 ImageFlavor.BUFFERED_IMAGE, 
-                                                 ImageFlavor.RENDERED_IMAGE, 
-                                                 ImageFlavor.XML_DOM};
     /**
      * Adds a PDF XObject (a bitmap or form) to the PDF that will later be referenced.
      * @param uri URL of the bitmap
      * @param pos Position of the bitmap
+     * @deprecated Use {@link @putImage(String, Rectangle2D, Map)} instead.
      */
     protected void putImage(String uri, Rectangle2D pos) {
-        //TODO No foreign attributes here like for PSRenderer
+        putImage(uri, pos, null);
+    }
+    
+    /**
+     * Adds a PDF XObject (a bitmap or form) to the PDF that will later be referenced.
+     * @param uri URL of the bitmap
+     * @param pos Position of the bitmap
+     * @param foreignAttributes foreign attributes associated with the image
+     */
+    protected void putImage(String uri, Rectangle2D pos, Map foreignAttributes) {
+        Rectangle posInt = new Rectangle(
+                (int)pos.getX(),
+                (int)pos.getY(),
+                (int)pos.getWidth(),
+                (int)pos.getHeight());
+
         uri = URISpecification.getURL(uri);
         PDFXObject xobject = pdfDoc.getXObject(uri);
         if (xobject != null) {
@@ -1688,6 +1690,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                        (float)pos.getY() / 1000f, w, h, xobject);
             return;
         }
+        Point origin = new Point(currentIPPosition, currentBPPosition);
         int x = currentIPPosition + (int)Math.round(pos.getX());
         int y = currentBPPosition + (int)Math.round(pos.getY());
 
@@ -1696,54 +1699,33 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         try {
             ImageSessionContext sessionContext = getUserAgent().getImageSessionContext();
             info = manager.getImageInfo(uri, sessionContext);
+            
+            
+            
             Map hints = ImageUtil.getDefaultHints(sessionContext);
             int width = (int)pos.getWidth();
             int height = (int)pos.getHeight();
             org.apache.fop.image2.Image img = manager.getImage(
-                        info, supportedFlavors, hints, sessionContext);
-            if (img instanceof ImageGraphics2D) {
-                ImageGraphics2D imageG2D = (ImageGraphics2D)img;
-                RendererContext context = createRendererContext(
-                        x, y, width, height, null);
-                getGraphics2DAdapter().paintImage(imageG2D.getGraphics2DImagePainter(),
-                        context, x, y, width, height);
-            } else if (img instanceof ImageRendered) {
-                ImageRendered imgRend = (ImageRendered)img;
-                PDFImage pdfimage = new ImageRenderedAdapter(imgRend, uri);
-                PDFXObject xobj = pdfDoc.addImage(currentContext, pdfimage);
-
-                float w = (float)pos.getWidth() / 1000f;
-                float h = (float)pos.getHeight() / 1000f;
-                placeImage((float) pos.getX() / 1000,
-                           (float) pos.getY() / 1000, w, h, xobj);
-            } else if (img instanceof ImageXMLDOM) {
-                ImageXMLDOM imgXML = (ImageXMLDOM)img;
-                Document doc = imgXML.getDocument();
-                String ns = imgXML.getRootNamespace();
-                renderDocument(doc, ns, pos, null);
-            } else if (img instanceof ImageRawStream) {
-                final ImageRawStream raw = (ImageRawStream)img;
-                /*if (raw instanceof ImageUndecodedPNG) {
-                    ImageUndecodedPNG png = (ImageUndecodedPNG)raw;
-                    PDFImage pdfimage = new ImageUndecodedPNGAdapter(png, uri);
-                    PDFXObject xobj = pdfDoc.addImage(currentContext, pdfimage);
-
-                    float w = (float)pos.getWidth() / 1000f;
-                    float h = (float)pos.getHeight() / 1000f;
-                    placeImage((float) pos.getX() / 1000,
-                               (float) pos.getY() / 1000, w, h, xobj);
-                } else*/ if (raw instanceof ImageRawJPEG) {
-                    ImageRawJPEG jpeg = (ImageRawJPEG)raw;
-                    PDFImage pdfimage = new ImageRawJPEGAdapter(jpeg, uri);
-                    PDFXObject xobj = pdfDoc.addImage(currentContext, pdfimage);
-
-                    float w = (float)pos.getWidth() / 1000f;
-                    float h = (float)pos.getHeight() / 1000f;
-                    placeImage((float) pos.getX() / 1000,
-                               (float) pos.getY() / 1000, w, h, xobj);
-                } else {
-                    throw new UnsupportedOperationException("Unsupported raw image: " + info);
+                        info, imageHandlerRegistry.getSupportedFlavors(), hints, sessionContext);
+            
+            //First check for a dynamically registered handler
+            PDFImageHandler handler = imageHandlerRegistry.getHandler(img.getClass());
+            if (handler != null) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Using PDFImageHandler: " + handler.getClass().getName());
                 }
+                try {
+                    RendererContext context = createRendererContext(
+                            x, y, width, height, foreignAttributes);
+                    handler.generateImage(context, img, origin, posInt);
+                } catch (IOException ioe) {
+                    log.error("I/O error while handling image: " + info, ioe);
+                    return;
+                }
+            } else {
+                throw new UnsupportedOperationException(
+                        "No PDFImageHandler available for image: "
+                            + info + " (" + img.getClass().getName() + ")");
             }
         } catch (ImageException ie) {
             log.error("Error while processing image: "
@@ -1752,81 +1734,6 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
             log.error("I/O error while processing image: "
                     + (info != null ? info.toString() : uri), ioe);
         }
-        
-        /*
-        //ImageFactory fact = userAgent.getFactory().getImageFactory();
-        //FopImage fopimage = fact.getImage(url, userAgent);
-        //if (fopimage == null) {
-        //    return;
-        //}
-        //if (!fopimage.load(FopImage.DIMENSIONS)) {
-        //    return;
-        //}
-        String mime = fopimage.getMimeType();
-        
-        //First check for a dynamically registered handler
-        PDFImageHandler handler = imageHandlerRegistry.getHandler(mime);
-        if (handler != null) {
-            PDFXObject xobj;
-            try {
-                xobj = handler.generateImage(fopimage, url, pdfDoc);
-            } catch (IOException ioe) {
-                log.error("I/O error while handling " + mime + " image", ioe);
-                return;
-            }
-            fact.releaseImage(url, userAgent);
-            
-            float w = (float)pos.getWidth() / 1000f;
-            float h = (float)pos.getHeight() / 1000f;
-            placeImage((float) pos.getX() / 1000,
-                       (float) pos.getY() / 1000, w, h, xobj);
-        } else if ("text/xml".equals(mime)) {
-            if (!fopimage.load(FopImage.ORIGINAL_DATA)) {
-                return;
-            }
-            Document doc = ((XMLImage) fopimage).getDocument();
-            String ns = ((XMLImage) fopimage).getNameSpace();
-
-            renderDocument(doc, ns, pos, null);
-        } else if ("image/svg+xml".equals(mime)) {
-            if (!fopimage.load(FopImage.ORIGINAL_DATA)) {
-                return;
-            }
-            Document doc = ((XMLImage) fopimage).getDocument();
-            String ns = ((XMLImage) fopimage).getNameSpace();
-
-            renderDocument(doc, ns, pos, null);
-        } else if ("image/eps".equals(mime)) {
-            FopPDFImage pdfimage = new FopPDFImage(fopimage, url);
-            PDFXObject xobj = pdfDoc.addImage(currentContext, pdfimage);
-            fact.releaseImage(url, userAgent);
-            
-            float w = (float)pos.getWidth() / 1000f;
-            float h = (float)pos.getHeight() / 1000f;
-            placeImage((float) pos.getX() / 1000,
-                       (float) pos.getY() / 1000, w, h, xobj);
-        } else if ("image/jpeg".equals(mime) || "image/tiff".equals(mime)) {
-            FopPDFImage pdfimage = new FopPDFImage(fopimage, url);
-            PDFXObject xobj = pdfDoc.addImage(currentContext, pdfimage);
-            fact.releaseImage(url, userAgent);
-
-            float w = (float)pos.getWidth() / 1000f;
-            float h = (float)pos.getHeight() / 1000f;
-            placeImage((float) pos.getX() / 1000,
-                       (float) pos.getY() / 1000, w, h, xobj);
-        } else {
-            if (!fopimage.load(FopImage.BITMAP)) {
-                return;
-            }
-            FopPDFImage pdfimage = new FopPDFImage(fopimage, url);
-            PDFXObject xobj = pdfDoc.addImage(currentContext, pdfimage);
-            fact.releaseImage(url, userAgent);
-
-            float w = (float) pos.getWidth() / 1000f;
-            float h = (float) pos.getHeight() / 1000f;
-            placeImage((float) pos.getX() / 1000f,
-                       (float) pos.getY() / 1000f, w, h, xobj);
-        }*/
 
         // output new data
         try {
@@ -1844,7 +1751,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * @param h height for image
      * @param xobj the image XObject
      */
-    protected void placeImage(float x, float y, float w, float h, PDFXObject xobj) {
+    public void placeImage(float x, float y, float w, float h, PDFXObject xobj) {
         saveGraphicsState();
         currentStream.add(format(w) + " 0 0 "
                           + format(-h) + " "
@@ -1854,10 +1761,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         restoreGraphicsState();
     }
 
-    /**
-     * {@inheritDoc}
-     *          int, int, int, int, java.util.Map)
-     */
+    /** {@inheritDoc} */
     protected RendererContext createRendererContext(int x, int y, int width, int height, 
             Map foreignAttributes) {
         RendererContext context = super.createRendererContext(
