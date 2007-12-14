@@ -301,7 +301,7 @@ public class PDFFilterList {
     private String buildDecodeParms(List parms) {
         StringBuffer sb = new StringBuffer();
         boolean needParmsEntry = false;
-        sb.append("\n/DecodeParams ");
+        sb.append("\n/DecodeParms ");
 
         if (parms.size() > 1) {
             sb.append("[ ");
@@ -340,9 +340,9 @@ public class PDFFilterList {
         }
         if (array.length() > 0 & needParmsEntry) {
             if (array.length() > 1) {
-                dict.put("DecodeParams", array);
+                dict.put("DecodeParms", array);
             } else {
-                dict.put("DecodeParams", array.get(0));
+                dict.put("DecodeParms", array.get(0));
             }
         }
     }
