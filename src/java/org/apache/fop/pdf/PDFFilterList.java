@@ -296,7 +296,7 @@ public class PDFFilterList {
     private String buildDecodeParms(List parms) {
         StringBuffer sb = new StringBuffer();
         boolean needParmsEntry = false;
-        sb.append("\n/DecodeParms ");
+        sb.append("\n/DecodeParams ");
 
         if (parms.size() > 1) {
             sb.append("[ ");
