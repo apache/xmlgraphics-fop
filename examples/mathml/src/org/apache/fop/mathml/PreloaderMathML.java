@@ -108,6 +108,15 @@ public class PreloaderMathML extends AbstractImagePreloader {
                 int displayfontsize = 12;
                 int inlinefontsize = 12;
 
+                if (mathBuilder.getMathRootElement() == null) {
+                    //not a MathML document
+                    try {
+                        in.reset();
+                    } catch (IOException ioe) {
+                        log.error("Error while resetting ImageInputStream", ioe);
+                    }
+                    return null;
+                }
                 final MathBase base = new MathBase(
                                   mathBuilder.getMathRootElement(),
                                   fontname, fontstyle, inlinefontsize,
