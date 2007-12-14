@@ -79,7 +79,7 @@ class RowPainter {
     private int[] partBPD;
     private TableContentLayoutManager tclm;
 
-    public RowPainter(TableContentLayoutManager tclm, LayoutContext layoutContext) {
+    RowPainter(TableContentLayoutManager tclm, LayoutContext layoutContext) {
         this.tclm = tclm;
         this.layoutContext = layoutContext;
         this.colCount = tclm.getColumns().getColumnCount();
@@ -91,7 +91,7 @@ class RowPainter {
         Arrays.fill(end, -1);
     }
 
-    public int getAccumulatedBPD() {
+    int getAccumulatedBPD() {
         return this.accumulatedBPD;
     }
 
@@ -101,7 +101,7 @@ class RowPainter {
      * 
      * @param tcpos a position representing the row fragment
      */
-    public void handleTableContentPosition(TableContentPosition tcpos) {
+    void handleTableContentPosition(TableContentPosition tcpos) {
         if (lastRow != tcpos.row && lastRow != null) {
             addAreasAndFlushRow(false);
         }
@@ -146,7 +146,7 @@ class RowPainter {
      * part
      * @return the height of the (grid) row
      */
-    public int addAreasAndFlushRow(boolean forcedFlush) {
+    int addAreasAndFlushRow(boolean forcedFlush) {
         int actualRowHeight = 0;
 
         int bt = lastRow.getBodyType();
