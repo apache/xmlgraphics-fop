@@ -21,13 +21,14 @@ package org.apache.fop.plan;
 
 import java.awt.geom.Point2D;
 
+import org.w3c.dom.Document;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
-
-import org.w3c.dom.Document;
-import org.xml.sax.Attributes;
-import org.xml.sax.Locator;
 
 /**
  * This class defines the plan element.
@@ -46,9 +47,7 @@ public class PlanElement extends PlanObj {
         super(parent);
     }
 
-    /**
-     * @see org.apache.fop.fo.FONode#processNode
-     */
+    /** {@inheritDoc} */
     public void processNode(String elementName, Locator locator, 
                             Attributes attlist, PropertyList propertyList)
         throws FOPException {
@@ -79,15 +78,13 @@ public class PlanElement extends PlanObj {
 
     }
 
-    /**
-     * @see org.apache.fop.fo.XMLObj#getDOMDocument()
-     */
+    /** {@inheritDoc} */
     public Document getDOMDocument() {
         convertToSVG();
         return doc;
     }
 
-    /** @see org.apache.fop.fo.FONode#getNamespaceURI() */
+    /** {@inheritDoc} */
     public String getNamespaceURI() {
         if (svgDoc == null) {
             return PlanElementMapping.NAMESPACE;
@@ -95,9 +92,7 @@ public class PlanElement extends PlanObj {
         return "http://www.w3.org/2000/svg";
     }
 
-    /**
-     * @see org.apache.fop.fo.XMLObj#getDimension(Point2D)
-     */
+    /** {@inheritDoc} */
     public Point2D getDimension(Point2D view) {
         convertToSVG();
         return new Point2D.Float(width, height);
