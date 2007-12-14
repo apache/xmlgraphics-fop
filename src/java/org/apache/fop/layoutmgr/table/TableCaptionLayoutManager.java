@@ -193,16 +193,5 @@ public class TableCaptionLayoutManager extends BlockStackingLayoutManager {
                 curBlockArea.addBlock((Block) childArea);
         }
     }
-
-    /**
-     * Reset the layout position.
-     *
-     * @param resetPos the position to reset to
-     */
-    public void resetPosition(Position resetPos) {
-        if (resetPos == null) {
-            reset(null);
-        }
-    }
 }
 

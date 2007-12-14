@@ -477,19 +477,6 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
     }
 
     /**
-     * {@inheritDoc}
-     */
-    public void resetPosition(Position resetPos) {
-        if (resetPos == null) {
-            reset(null);
-            childBreaks.clear();
-        } else {
-            //reset(resetPos);
-            LayoutManager lm = resetPos.getLM();
-        }
-    }
-
-    /**
      * convenience method that returns the Block node
      * @return the block node
      */

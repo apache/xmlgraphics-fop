@@ -1556,33 +1556,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     }
 
     /**
-     * Reset the positions to the given position.
-     *
-     * @param resetPos the position to reset to
-     */
-    public void resetPosition(Position resetPos) {
-        if (resetPos == null) {
-            setFinished(false);
-            iReturnedLBP = 0;
-        } else {
-            if (isFinished()) {
-                // if isFinished is true, iReturned LBP == breakpoints.size()
-                // and breakpoints.get(iReturnedLBP) would generate
-                // an IndexOutOfBoundException
-                setFinished(false);
-                iReturnedLBP--;
-            }
-            // It is not clear that the member lineLayouts has the correct value;
-            // because the method is not called, this cannot be checked.
-            while ((LineBreakPosition) lineLayouts.getChosenPosition(iReturnedLBP)
-                   != (LineBreakPosition) resetPos) {
-                iReturnedLBP--;
-            }
-            iReturnedLBP++;
-        }
-    }
-
-    /**
      * Add the areas with the break points.
      *
      * @param parentIter the iterator of break positions
