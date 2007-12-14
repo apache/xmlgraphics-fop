@@ -224,36 +224,6 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
     }
 
-    /**
-     * Reset position for returning next BreakPossibility.
-     *
-     * @param prevPos the position to reset to
-     */
-    public void resetPosition(Position prevPos) {
-        if (prevPos != null) {
-            // ASSERT (prevPos.getLM() == this)
-            if (prevPos.getLM() != this) {
-                log.error("TextLayoutManager.resetPosition: "
-                          + "LM mismatch!!!");
-            }
-            LeafPosition tbp = (LeafPosition) prevPos;
-            AreaInfo ai = (AreaInfo) vecAreaInfo.get(tbp.getLeafPos());
-            if (ai.iBreakIndex != iNextStart) {
-                iNextStart = ai.iBreakIndex;
-                vecAreaInfo.ensureCapacity(tbp.getLeafPos() + 1);
-                // TODO: reset or recalculate total IPD = sum of all word IPD
-                // up to the break position
-                ipdTotal = ai.ipdArea;
-                setFinished(false);
-            }
-        } else {
-            // Reset to beginning!
-            vecAreaInfo.clear();
-            iNextStart = 0;
-            setFinished(false);
-        }
-    }
-
     // TODO: see if we can use normal getNextBreakPoss for this with
     // extra hyphenation information in LayoutContext
     private boolean getHyphenIPD(HyphContext hc, MinOptMax hyphIPD) {

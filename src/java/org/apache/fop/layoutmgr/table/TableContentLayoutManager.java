@@ -74,7 +74,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
      * Main constructor
      * @param parent Parent layout manager
      */
-    public TableContentLayoutManager(TableLayoutManager parent) {
+    TableContentLayoutManager(TableLayoutManager parent) {
         this.tableLM = parent;
         Table table = getTableLM().getTable();
         this.bodyIter = new TableRowIterator(table, TableRowIterator.BODY);
@@ -89,7 +89,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
     /**
      * @return the table layout manager
      */
-    public TableLayoutManager getTableLM() {
+    TableLayoutManager getTableLM() {
         return this.tableLM;
     }
     
@@ -101,7 +101,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
     /**
      * @return the column setup of this table
      */
-    public ColumnSetup getColumns() {
+    ColumnSetup getColumns() {
         return getTableLM().getColumns();
     }
     
@@ -136,7 +136,6 @@ public class TableContentLayoutManager implements PercentBaseContext {
         if (headerIter != null && headerList == null) {
             this.headerList = getKnuthElementsForRowIterator(
                     headerIter, context, alignment, TableRowIterator.HEADER);
-            ElementListUtils.removeLegalBreaks(this.headerList);
             this.headerNetHeight
                     = ElementListUtils.calcContentLength(this.headerList);
             if (log.isDebugEnabled()) {
@@ -157,7 +156,6 @@ public class TableContentLayoutManager implements PercentBaseContext {
         if (footerIter != null && footerList == null) {
             this.footerList = getKnuthElementsForRowIterator(
                     footerIter, context, alignment, TableRowIterator.FOOTER);
-            ElementListUtils.removeLegalBreaks(this.footerList);
             this.footerNetHeight
                     = ElementListUtils.calcContentLength(this.footerList);
             if (log.isDebugEnabled()) {
@@ -283,7 +281,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
      * @param parentIter the position iterator
      * @param layoutContext the layout context for adding areas
      */
-    public void addAreas(PositionIterator parentIter, LayoutContext layoutContext) {
+    void addAreas(PositionIterator parentIter, LayoutContext layoutContext) {
         this.usedBPD = 0;
         RowPainter painter = new RowPainter(this, layoutContext);
 
@@ -439,7 +437,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
      * @param row the table-row object or null
      * @return the row area or null if there's no background to paint
      */
-    public Block getRowArea(TableRow row) {
+    Block getRowArea(TableRow row) {
         if (row == null || !row.getCommonBorderPaddingBackground().hasBackground()) {
             return null;
         } else {
@@ -457,7 +455,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
      * @param ipd inline-progression-dimension of the row
      * @param yoffset Y offset at which to paint
      */
-    public void addRowBackgroundArea(TableRow row, int bpd, int ipd, int yoffset) {
+    void addRowBackgroundArea(TableRow row, int bpd, int ipd, int yoffset) {
         //Add row background if any
         Block rowBackground = getRowArea(row);
         if (rowBackground != null) {
@@ -476,14 +474,14 @@ public class TableContentLayoutManager implements PercentBaseContext {
      * Sets the overall starting x-offset. Used for proper placement of cells.
      * @param startXOffset starting x-offset (table's start-indent)
      */
-    public void setStartXOffset(int startXOffset) {
+    void setStartXOffset(int startXOffset) {
         this.startXOffset = startXOffset;
     }
 
     /**
      * @return the amount of block-progression-dimension used by the content
      */
-    public int getUsedBPD() {
+    int getUsedBPD() {
         return this.usedBPD;
     }
 

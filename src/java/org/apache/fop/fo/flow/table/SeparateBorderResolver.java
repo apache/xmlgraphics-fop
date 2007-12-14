@@ -35,7 +35,7 @@ class SeparateBorderResolver implements BorderResolver {
     }
 
     /** {@inheritDoc} */
-    public void endPart(TableBody part) {
+    public void endPart() {
     }
 
     /** {@inheritDoc} */
