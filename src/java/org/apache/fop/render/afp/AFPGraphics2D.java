@@ -89,13 +89,18 @@ public class AFPGraphics2D extends AbstractGraphics2D {
     }
 
     /**
-     * Creates a new AbstractGraphics2D from an existing instance.
+     * Creates a new AFPGraphics2D from an existing instance.
      * 
      * @param g
-     *            the AbstractGraphics2D whose properties should be copied
+     *            the AFPGraphics2D whose properties should be copied
      */
     public AFPGraphics2D(AFPGraphics2D g) {
         super(g);
+        this.graphicsObj = g.graphicsObj;
+        this.fallbackTextHandler = g.fallbackTextHandler;
+        this.customTextHandler = g.customTextHandler;
+        this.afpInfo = g.afpInfo;
+        this.afpState = g.afpState;
     }
 
     /**
