@@ -138,14 +138,14 @@ public class TableBody extends TableCellContainer {
 
     protected void finishLastRowGroup() throws ValidationException {
         if (!inMarker()) {
-            RowGroupBuilder rowGroupBuilder = getTable().getRowGroupBuilder(); 
+            RowGroupBuilder rowGroupBuilder = getTable().getRowGroupBuilder();
             if (tableRowsFound) {
                 rowGroupBuilder.endRow(lastRow);
             } else if (!lastCellEndsRow) {
                 rowGroupBuilder.endRow(this);
             }
             try {
-                rowGroupBuilder.endTablePart(this);
+                rowGroupBuilder.endTablePart();
             } catch (ValidationException e) {
                 e.setLocator(locator);
                 throw e;
@@ -211,7 +211,7 @@ public class TableBody extends TableCellContainer {
                 rowsStarted = true;
                 TableCell cell = (TableCell) child;
                 addTableCellChild(cell, firstRow);
-                lastCellEndsRow = cell.endsRow(); 
+                lastCellEndsRow = cell.endsRow();
                 if (lastCellEndsRow) {
                     firstRow = false;
                     columnNumberManager.prepareForNextRow(pendingSpans);
@@ -259,6 +259,10 @@ public class TableBody extends TableCellContainer {
      */
     public int getNameId() {
         return FO_TABLE_BODY;
+    }
+
+    protected boolean isTableHeader() {
+        return false;
     }
 
     protected boolean isTableFooter() {

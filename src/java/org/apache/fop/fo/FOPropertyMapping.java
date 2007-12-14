@@ -1141,7 +1141,7 @@ public final class FOPropertyMapping implements Constants {
         m.useGeneric(genericSpace);
         corr = new SpacePropertyMaker(m);
         corr.setCorresponding(PR_MARGIN_TOP, PR_MARGIN_TOP, PR_MARGIN_RIGHT);
-        corr.setUseParent(true);
+        corr.setUseParent(false);
         corr.setRelative(true);
         addPropertyMaker("space-before", m);
 

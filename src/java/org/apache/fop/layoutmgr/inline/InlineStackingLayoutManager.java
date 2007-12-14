@@ -155,41 +155,6 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
     }
 
     /**
-     * Reset position for returning next BreakPossibility.
-     * @param prevPos a Position returned by this layout manager
-     * representing a potential break decision.
-     */
-    public void resetPosition(Position prevPos) {
-        if (prevPos != null) {
-            // ASSERT (prevPos.getLM() == this)
-            if (prevPos.getLM() != this) {
-                //getLogger().error(
-                //  "InlineStackingLayoutManager.resetPosition: " +
-                //  "LM mismatch!!!");
-            }
-            // Back up the child LM Position
-            Position childPos = prevPos.getPosition();
-            reset(childPos);
-            /*
-            if (prevBP != null
-                    && prevBP.getLayoutManager() != childPos.getLM()) {
-                childLC = null;
-            }
-            prevBP = new BreakPoss(childPos);
-            */
-        } else {
-            // Backup to start of first child layout manager
-            //prevBP = null;
-            // super.resetPosition(prevPos);
-            reset(prevPos);
-            // If any areas created, we are restarting!
-            bAreaCreated = false;
-        }
-        // Do we need to reset some context like pending or prevContent?
-        // What about prevBP?
-    }
-
-    /**
      * TODO: Explain this method
      * @param lm ???
      * @return ???

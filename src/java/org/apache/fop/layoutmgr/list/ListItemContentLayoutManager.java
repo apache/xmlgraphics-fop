@@ -220,20 +220,6 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
         }
     }
 
-    /**
-     * Reset the position of the layout.
-     *
-     * @param resetPos the position to reset to
-     */
-    public void resetPosition(Position resetPos) {
-        if (resetPos == null) {
-            reset(null);
-        } else {
-            setFinished(false);
-            //reset(resetPos);
-        }
-    }
-    
     /** {@inheritDoc} */
     public boolean mustKeepTogether() {
         //TODO Keeps will have to be more sophisticated sooner or later

@@ -505,17 +505,6 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
     }
 
     /**
-     * Reset the position of the layout.
-     *
-     * @param resetPos the position to reset to
-     */
-    public void resetPosition(Position resetPos) {
-        if (resetPos == null) {
-            reset(null);
-        }
-    }
-
-    /**
      * {@inheritDoc}
      */
     public int negotiateBPDAdjustment(int adj, KnuthElement lastElement) {

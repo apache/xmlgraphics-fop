@@ -404,17 +404,6 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         }
     }
 
-    /**
-     * Reset the position of this layout manager.
-     *
-     * @param resetPos the position to reset to
-     */
-    public void resetPosition(Position resetPos) {
-        if (resetPos == null) {
-            reset(null);
-        }
-    }
-
     /** {@inheritDoc} */
     public int negotiateBPDAdjustment(int adj, KnuthElement lastElement) {
         // TODO Auto-generated method stub

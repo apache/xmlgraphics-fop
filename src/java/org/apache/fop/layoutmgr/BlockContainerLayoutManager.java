@@ -938,15 +938,6 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void resetPosition(Position resetPos) {
-        if (resetPos == null) {
-            reset(null);
-        }
-    }
-
     /** 
      * Force current area to be added to parent area.
      * {@inheritDoc}
