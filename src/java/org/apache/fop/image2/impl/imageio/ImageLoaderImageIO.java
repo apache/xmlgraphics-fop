@@ -23,6 +23,8 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
+import java.awt.image.Raster;
+import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
@@ -82,7 +84,7 @@ public class ImageLoaderImageIO extends AbstractImageLoader {
     /** {@inheritDoc} */
     public Image loadImage(ImageInfo info, Map hints, ImageSessionContext session)
             throws ImageException, IOException {
-        BufferedImage imageData = null;
+        RenderedImage imageData = null;
         IIOException firstException = null;
 
         IIOMetadata iiometa = (IIOMetadata)info.getCustomObjects().get(
@@ -100,7 +102,11 @@ public class ImageLoaderImageIO extends AbstractImageLoader {
                 reader.setInput(imgStream, false, ignoreMetadata);
                 final int pageIndex = 0; //Always the first page at the moment
                 try {
-                    imageData = reader.read(pageIndex, param);
+                    if (ImageFlavor.BUFFERED_IMAGE.equals(this.targetFlavor)) {
+                        imageData = reader.read(pageIndex, param);
+                    } else {
+                        imageData = reader.readAsRenderedImage(pageIndex, param);
+                    }
                     if (iiometa == null) {
                         iiometa = reader.getImageMetadata(pageIndex);
                     }
@@ -111,6 +117,15 @@ public class ImageLoaderImageIO extends AbstractImageLoader {
                     } else {
                         log.debug("non-first error loading image: " + iioe.getMessage());
                     }
+                }
+                try {
+                    //Try fallback for CMYK images
+                    BufferedImage bi = getFallbackBufferedImage(reader, pageIndex, param);
+                    imageData = bi;
+                    firstException = null; //Clear exception after successful fallback attempt
+                    break;
+                } catch (IIOException iioe) {
+                    //ignore
                 }
                 imgStream.reset();
             }
@@ -160,10 +175,44 @@ public class ImageLoaderImageIO extends AbstractImageLoader {
         }
         
         if (ImageFlavor.BUFFERED_IMAGE.equals(this.targetFlavor)) {
-            return new ImageBuffered(info, imageData, transparentColor);
+            return new ImageBuffered(info, (BufferedImage)imageData, transparentColor);
         } else {
             return new ImageRendered(info, imageData, transparentColor);
         }
+    }
+
+    private BufferedImage getFallbackBufferedImage(ImageReader reader,
+            int pageIndex, ImageReadParam param) throws IOException {
+        //Work-around found at: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4799903
+        //There are some additional ideas there if someone wants to go further.
+        
+        // Try reading a Raster (no color conversion).
+        Raster raster = reader.readRaster(pageIndex, param);
+
+        // Arbitrarily select a BufferedImage type.
+        int imageType;
+        switch(raster.getNumBands()) {
+        case 1:
+            imageType = BufferedImage.TYPE_BYTE_GRAY;
+            break;
+        case 3:
+            imageType = BufferedImage.TYPE_3BYTE_BGR;
+            break;
+        case 4:
+            imageType = BufferedImage.TYPE_4BYTE_ABGR;
+            break;
+        default:
+            throw new UnsupportedOperationException();
+        }
+
+        // Create a BufferedImage.
+        BufferedImage bi = new BufferedImage(raster.getWidth(),
+                                  raster.getHeight(),
+                                  imageType);
+
+        // Set the image data.
+        bi.getRaster().setRect(raster);
+        return bi;
     }
 
 
