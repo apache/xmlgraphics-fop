@@ -1013,7 +1013,6 @@ public class PCLRenderer extends PrintRenderer {
         drawImage(image.getURL(), pos, image.getForeignAttributes());
     }
 
-    /** The flavors supported inline with PostScript level 3 and higher. */
     private static final ImageFlavor[] FLAVORS = new ImageFlavor[]
                                              {ImageFlavor.GRAPHICS2D,
                                               ImageFlavor.BUFFERED_IMAGE, 
