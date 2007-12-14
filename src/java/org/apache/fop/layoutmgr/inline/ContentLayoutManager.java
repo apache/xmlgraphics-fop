@@ -215,13 +215,6 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
     /**
      * {@inheritDoc}
      */
-    public void resetPosition(Position position) {
-        //to be done
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public boolean createNextChildLMs(int pos) {
         return false;
     }

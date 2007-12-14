@@ -277,19 +277,6 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
         }
     }
 
-    /**
-     * Reset the position of this layout manager.
-     *
-     * @param resetPos the position to reset to
-     */
-    public void resetPosition(Position resetPos) {
-        if (resetPos == null) {
-            reset(null);
-        } else {
-            //TODO Something to put here?
-        }
-    }
-    
     /** {@inheritDoc} */
     public boolean mustKeepTogether() {
         //TODO Keeps will have to be more sophisticated sooner or later
