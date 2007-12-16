@@ -45,6 +45,7 @@ public abstract class FONode implements Cloneable {
 
     /** the XSL-FO namespace URI */
     protected static final String FO_URI = FOElementMapping.URI;
+    /** FOP's proprietary extension namespace URI */
     protected static final String FOX_URI = ExtensionElementMapping.URI;
 
     /** Parent FO node */
@@ -197,11 +198,13 @@ public abstract class FONode implements Cloneable {
     /**
      * Checks to make sure, during SAX processing of input document, that the
      * incoming node is valid for the this (parent) node (e.g., checking to
-     * see that fo:table is not an immediate child of fo:root)
-     * called within FObj constructor
+     * see that <code>fo:table</code> is not an immediate child of <code>fo:root</code>)
+     * called from {@link FOTreeBuilder#startElement(String, String, String, Attributes)}
+     * before constructing the child {@link FObj}.
+     * 
      * @param loc location in the FO source file
      * @param namespaceURI namespace of incoming node
-     * @param localName (e.g. "table" for "fo:table")
+     * @param localName name of the incoming node (without namespace prefix)
      * @throws ValidationException if incoming node not valid for parent
      */
     protected void validateChildNode(Locator loc, String namespaceURI, String localName) 
@@ -209,6 +212,27 @@ public abstract class FONode implements Cloneable {
         //nop
     }
 
+    /**
+     * Static version of {@link FONode#validateChildNode(Locator, String, String)} that
+     * can be used by subclasses that need to validate children against a different node
+     * (for example: <code>fo:wrapper</code> needs to check if the incoming node is a 
+     *  valid child to its parent)
+     *  
+     * @param fo    the FONode to validate against
+     * @param loc   location in the source file
+     * @param namespaceURI  namespace of the incoming node
+     * @param localName     name of the incoming node (without namespace prefix) 
+     * @throws ValidationException if the incoming node is not a valid child for the given FO
+     */
+    protected static void validateChildNode(
+                                FONode fo, 
+                                Locator loc, 
+                                String namespaceURI, 
+                                String localName) 
+            throws ValidationException {
+        fo.validateChildNode(loc, namespaceURI, localName);
+    }
+    
     /**
      * Adds characters (does nothing here)
      * @param data array of characters containing text to be added
@@ -572,8 +596,8 @@ public abstract class FONode implements Cloneable {
     }
     
     /**
-     * Returns the Constants class integer value of this node
-     * @return the integer enumeration of this FO (e.g., FO_ROOT)
+     * Returns the {@link Constants} class integer value of this node
+     * @return the integer enumeration of this FO (e.g. FO_ROOT)
      *      if a formatting object, FO_UNKNOWN_NODE otherwise
      */
     public int getNameId() {
@@ -632,6 +656,14 @@ public abstract class FONode implements Cloneable {
         }
     }
     
+    /**
+     * This method is used when adding child nodes to a FO that already
+     * contains at least one child. In this case, the new child becomes a
+     * sibling to the previous one
+     * 
+     * @param precedingSibling  the previous child
+     * @param followingSibling  the new child
+     */
     protected static void attachSiblings(FONode precedingSibling, 
                                          FONode followingSibling) {
         if (precedingSibling.siblings == null) {
@@ -688,7 +720,7 @@ public abstract class FONode implements Cloneable {
          * @return the last node in the list
          * @throws NoSuchElementException if the list is empty
          */
-        public FONode lastNode();        
+        public FONode lastNode();
 
     }
 }
