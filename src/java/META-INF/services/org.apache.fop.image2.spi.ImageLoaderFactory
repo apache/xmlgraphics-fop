@@ -2,4 +2,5 @@ org.apache.fop.image2.impl.imageio.ImageLoaderFactoryImageIO
 org.apache.fop.image2.impl.batik.ImageLoaderFactorySVG
 org.apache.fop.image2.impl.batik.ImageLoaderFactoryWMF
 org.apache.fop.image2.impl.ImageLoaderFactoryRaw
+org.apache.fop.image2.impl.ImageLoaderFactoryRawCCITTFax
 org.apache.fop.image2.impl.ImageLoaderFactoryEPS

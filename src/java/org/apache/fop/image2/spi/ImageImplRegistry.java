@@ -32,6 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.xmlgraphics.util.Service;
 
 import org.apache.fop.image2.ImageFlavor;
+import org.apache.fop.image2.ImageInfo;
 
 /**
  * This class is the registry for all implementations of the various service provider interfaces
@@ -257,13 +258,14 @@ public class ImageImplRegistry {
     }
 
     /**
-     * Returns the best ImageLoaderFactory supporting the given MIME type and image flavor.
+     * Returns the best ImageLoaderFactory supporting the {@link ImageInfo} and image flavor.
      * If there are multiple ImageLoaderFactories the one with the least usage penalty is selected.
-     * @param mime the MIME type
+     * @param imageInfo the image info object
      * @param flavor the image flavor.
      * @return an ImageLoaderFactory instance or null, if no suitable implementation was found
      */
-    public ImageLoaderFactory getImageLoaderFactory(String mime, ImageFlavor flavor) {
+    public ImageLoaderFactory getImageLoaderFactory(ImageInfo imageInfo, ImageFlavor flavor) {
+        String mime = imageInfo.getMimeType();
         Map flavorMap = (Map)loaders.get(mime);
         if (flavorMap != null) {
             List factoryList = (List)flavorMap.get(flavor);
@@ -273,6 +275,9 @@ public class ImageImplRegistry {
                 ImageLoaderFactory bestFactory = null;
                 while (iter.hasNext()) {
                     ImageLoaderFactory factory = (ImageLoaderFactory)iter.next();
+                    if (!factory.isSupported(imageInfo)) {
+                        continue;
+                    }
                     int penalty = factory.getUsagePenalty(mime, flavor); 
                     if (penalty < bestPenalty) {
                         bestPenalty = penalty;
@@ -285,6 +290,56 @@ public class ImageImplRegistry {
         return null;
     }
 
+    /**
+     * Returns an array of {@link ImageLoaderFactory} instances that support the MIME type
+     * indicated by an {@link ImageInfo} object and can generate the given image flavor.
+     * @param imageInfo the image info object
+     * @param flavor the target image flavor
+     * @return the array of image loader factories
+     */
+    public ImageLoaderFactory[] getImageLoaderFactories(ImageInfo imageInfo, ImageFlavor flavor) {
+        String mime = imageInfo.getMimeType();
+        Collection matches = new java.util.TreeSet(new ImageLoaderFactoryComparator(mime, flavor));
+        Map flavorMap = (Map)loaders.get(mime);
+        if (flavorMap != null) {
+            List factoryList = (List)flavorMap.get(flavor);
+            if (factoryList != null && factoryList.size() > 0) {
+                Iterator iter = factoryList.iterator();
+                while (iter.hasNext()) {
+                    ImageLoaderFactory factory = (ImageLoaderFactory)iter.next();
+                    if (factory.isSupported(imageInfo)) {
+                        matches.add(factory);
+                    }
+                }
+            }
+        }
+        if (matches.size() == 0) {
+            return null;
+        } else {
+            return (ImageLoaderFactory[])matches.toArray(new ImageLoaderFactory[matches.size()]);
+        }
+    }
+    
+    private static class ImageLoaderFactoryComparator implements Comparator {
+
+        private String mime;
+        private ImageFlavor targetFlavor;
+        
+        public ImageLoaderFactoryComparator(String mime, ImageFlavor targetFlavor) {
+            this.mime = mime;
+            this.targetFlavor = targetFlavor;
+        }
+        
+        public int compare(Object o1, Object o2) {
+            ImageLoaderFactory f1 = (ImageLoaderFactory)o1;
+            ImageLoaderFactory f2 = (ImageLoaderFactory)o2;
+            //Lowest penalty first
+            return f1.getUsagePenalty(mime, targetFlavor) - f2.getUsagePenalty(mime, targetFlavor);
+        }
+        
+    }
+    
+    
     /**
      * Returns an array of ImageLoaderFactory instances which support the given MIME type. The
      * instances are returned in no particular order.

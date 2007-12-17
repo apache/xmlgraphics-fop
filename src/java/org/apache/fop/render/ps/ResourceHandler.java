@@ -59,6 +59,7 @@ import org.apache.fop.image2.ImageInfo;
 import org.apache.fop.image2.ImageManager;
 import org.apache.fop.image2.ImageSessionContext;
 import org.apache.fop.image2.impl.ImageGraphics2D;
+import org.apache.fop.image2.impl.ImageRawCCITTFax;
 import org.apache.fop.image2.impl.ImageRawEPS;
 import org.apache.fop.image2.impl.ImageRawJPEG;
 import org.apache.fop.image2.impl.ImageRawStream;
@@ -283,16 +284,19 @@ public class ResourceHandler implements DSCParserConstants, PSSupportedFlavors {
                         } finally {
                             IOUtils.closeQuietly(in);
                         }*/
+                    } else if (raw instanceof ImageRawCCITTFax) {
+                        ImageRawCCITTFax jpeg = (ImageRawCCITTFax)raw;
+                        ImageEncoder encoder = new ImageEncoderCCITTFax(jpeg);
+                        FormGenerator formGen = new ImageFormGenerator(
+                                form.getName(), imageDescription,
+                                info.getSize().getDimensionPt(),
+                                info.getSize().getDimensionPx(),
+                                encoder,
+                                jpeg.getColorSpace(), 1, false);
+                        formGen.generate(gen);
                     } else if (raw instanceof ImageRawJPEG) {
                         ImageRawJPEG jpeg = (ImageRawJPEG)raw;
-                        ImageEncoder encoder = new ImageEncoder() {
-                            public void writeTo(OutputStream out) throws IOException {
-                                raw.writeTo(out);
-                            }
-                            public String getImplicitFilter() {
-                                return "<< >> /DCTDecode";
-                            }
-                        };
+                        ImageEncoder encoder = new ImageEncoderJPEG(jpeg);
                         FormGenerator formGen = new ImageFormGenerator(
                                 form.getName(), imageDescription,
                                 info.getSize().getDimensionPt(),

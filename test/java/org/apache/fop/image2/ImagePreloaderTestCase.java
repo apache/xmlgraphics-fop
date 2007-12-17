@@ -46,8 +46,9 @@ public class ImagePreloaderTestCase extends TestCase {
     
     public void testImageLoaderFactory() throws Exception {
         ImageManager manager = fopFactory.getImageManager();
+        ImageInfo info = new ImageInfo(null, MimeConstants.MIME_PNG);
         ImageLoaderFactory ilf = manager.getRegistry().getImageLoaderFactory(
-                MimeConstants.MIME_PNG, ImageFlavor.BUFFERED_IMAGE);
+                info, ImageFlavor.BUFFERED_IMAGE);
         assertNotNull(ilf);
     }
     

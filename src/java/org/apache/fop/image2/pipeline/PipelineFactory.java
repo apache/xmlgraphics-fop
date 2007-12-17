@@ -30,7 +30,9 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.image2.Image;
 import org.apache.fop.image2.ImageFlavor;
+import org.apache.fop.image2.ImageInfo;
 import org.apache.fop.image2.ImageManager;
+import org.apache.fop.image2.impl.CompositeImageLoader;
 import org.apache.fop.image2.spi.ImageConverter;
 import org.apache.fop.image2.spi.ImageImplRegistry;
 import org.apache.fop.image2.spi.ImageLoader;
@@ -100,23 +102,34 @@ public class PipelineFactory {
     /**
      * Creates and returns an {@link ImageProviderPipeline} that allows to load an image of the
      * given MIME type and present it in the requested image flavor.
-     * @param originalMime the MIME type of the original image
+     * @param imageInfo the image info object of the original image
      * @param targetFlavor the requested image flavor
      * @return an {@link ImageProviderPipeline} or null if no suitable pipeline could be assembled
      */
     public ImageProviderPipeline newImageConverterPipeline(
-                String originalMime, ImageFlavor targetFlavor) {
+                ImageInfo imageInfo, ImageFlavor targetFlavor) {
+        String originalMime = imageInfo.getMimeType();
         ImageImplRegistry registry = manager.getRegistry();
         ImageProviderPipeline pipeline = null;
         
         //Get snapshot to avoid concurrent modification problems (thread-safety)
         DefaultEdgeDirectory dir = getEdgeDirectory();
         
-        ImageLoaderFactory loaderFactory = registry.getImageLoaderFactory(
-                originalMime, targetFlavor);
-        if (loaderFactory != null) {
+        ImageLoaderFactory[] loaderFactories = registry.getImageLoaderFactories(
+                imageInfo, targetFlavor);
+        if (loaderFactories != null) {
             //Directly load image and return it
-            ImageLoader loader = loaderFactory.newImageLoader(targetFlavor);
+            ImageLoader loader;
+            if (loaderFactories.length == 1) {
+                 loader = loaderFactories[0].newImageLoader(targetFlavor);
+            } else {
+                int count = loaderFactories.length;
+                ImageLoader[] loaders = new ImageLoader[count];
+                for (int i = 0; i < count; i++) {
+                    loaders[i] = loaderFactories[i].newImageLoader(targetFlavor);
+                }
+                loader = new CompositeImageLoader(loaders);
+            }
             pipeline = new ImageProviderPipeline(manager.getCache(), loader);
         } else {
             //Need to use ImageConverters
@@ -128,12 +141,12 @@ public class PipelineFactory {
             ImageRepresentation destination = new ImageRepresentation(targetFlavor);
             //Get Loader for originalMIME
             // --> List of resulting flavors, possibly multiple loaders
-            ImageLoaderFactory[] loaderFactories = registry.getImageLoaderFactories(originalMime);
+            loaderFactories = registry.getImageLoaderFactories(originalMime);
             if (loaderFactories != null) {
                 SortedSet candidates = new java.util.TreeSet(new PipelineComparator());
                 //Find best pipeline -> best loader
                 for (int i = 0, ci = loaderFactories.length; i < ci; i++) {
-                    loaderFactory = loaderFactories[i];
+                    ImageLoaderFactory loaderFactory = loaderFactories[i];
                     ImageFlavor[] flavors = loaderFactory.getSupportedFlavors(originalMime);
                     for (int j = 0, cj = flavors.length; j < cj; j++) {
                         pipeline = findPipeline(dir, flavors[j], destination);
@@ -187,7 +200,6 @@ public class PipelineFactory {
             return null;
         } else {
             LinkedList stops = new LinkedList();
-            //stops.addLast(destination);
             while ((pred = dijkstra.getPredecessor(prev)) != null) {
                 ImageConversionEdge edge = (ImageConversionEdge)
                         dir.getBestEdge(pred, prev);
@@ -207,16 +219,16 @@ public class PipelineFactory {
     /**
      * Finds and returns an array of {@link ImageProviderPipeline} instances which can handle
      * the given MIME type and return one of the given {@link ImageFlavor}s.
-     * @param sourceMime the MIME type of the source file
+     * @param imageInfo the image info object
      * @param flavors the possible target flavors
      * @return an array of pipelines
      */
-    public ImageProviderPipeline[] determineCandidatePipelines(String sourceMime,
+    public ImageProviderPipeline[] determineCandidatePipelines(ImageInfo imageInfo,
             ImageFlavor[] flavors) {
         int count = flavors.length;
         ImageProviderPipeline[] candidates = new ImageProviderPipeline[count];
         for (int i = 0; i < count; i++) {
-            candidates[i] = newImageConverterPipeline(sourceMime, flavors[i]);
+            candidates[i] = newImageConverterPipeline(imageInfo, flavors[i]);
         }
         return candidates;
     }

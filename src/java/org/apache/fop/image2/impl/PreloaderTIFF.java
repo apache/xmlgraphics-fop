@@ -78,55 +78,82 @@ public class PreloaderTIFF extends AbstractImagePreloader {
         }
 
         if (supported) {
-            ImageInfo info = new ImageInfo(uri, MimeConstants.MIME_TIFF);
-            info.setSize(determineSize(in, context));
+            ImageInfo info = createImageInfo(uri, in, context); 
             return info;
         } else {
             return null;
         }
     }
 
-    private ImageSize determineSize(ImageInputStream in, ImageContext context)
+    private ImageInfo createImageInfo(String uri, ImageInputStream in, ImageContext context)
                 throws IOException, ImageException {
+        ImageInfo info = null;
         in.mark();
-
-        SeekableStream seekable = new SeekableStreamAdapter(in);
-        TIFFDirectory dir = new TIFFDirectory(seekable, 0);
-        int width = (int)dir.getFieldAsLong(TIFFImageDecoder.TIFF_IMAGE_WIDTH);
-        int height = (int)dir.getFieldAsLong(TIFFImageDecoder.TIFF_IMAGE_LENGTH);
-        ImageSize size = new ImageSize();
-        size.setSizeInPixels(width, height);
-        int unit = 2; //inch is default
-        if (dir.isTagPresent(TIFFImageDecoder.TIFF_RESOLUTION_UNIT)) {
-            unit = (int)dir.getFieldAsLong(TIFFImageDecoder.TIFF_RESOLUTION_UNIT);
-        }
-        if (unit == 2 || unit == 3) {
-            float xRes, yRes;
-            TIFFField fldx = dir.getField(TIFFImageDecoder.TIFF_X_RESOLUTION);
-            TIFFField fldy = dir.getField(TIFFImageDecoder.TIFF_Y_RESOLUTION);
-            if (fldx == null || fldy == null) {
-                unit = 2;
-                xRes = context.getSourceResolution();
-                yRes = xRes;
-            } else {
-                xRes = fldx.getAsFloat(0);
-                yRes = fldy.getAsFloat(0);
+        try {
+            SeekableStream seekable = new SeekableStreamAdapter(in);
+            TIFFDirectory dir = new TIFFDirectory(seekable, 0);
+            int width = (int)dir.getFieldAsLong(TIFFImageDecoder.TIFF_IMAGE_WIDTH);
+            int height = (int)dir.getFieldAsLong(TIFFImageDecoder.TIFF_IMAGE_LENGTH);
+            ImageSize size = new ImageSize();
+            size.setSizeInPixels(width, height);
+            int unit = 2; //inch is default
+            if (dir.isTagPresent(TIFFImageDecoder.TIFF_RESOLUTION_UNIT)) {
+                unit = (int)dir.getFieldAsLong(TIFFImageDecoder.TIFF_RESOLUTION_UNIT);
             }
-            if (unit == 2) {
-                size.setResolution(xRes, yRes); //Inch
+            if (unit == 2 || unit == 3) {
+                float xRes, yRes;
+                TIFFField fldx = dir.getField(TIFFImageDecoder.TIFF_X_RESOLUTION);
+                TIFFField fldy = dir.getField(TIFFImageDecoder.TIFF_Y_RESOLUTION);
+                if (fldx == null || fldy == null) {
+                    unit = 2;
+                    xRes = context.getSourceResolution();
+                    yRes = xRes;
+                } else {
+                    xRes = fldx.getAsFloat(0);
+                    yRes = fldy.getAsFloat(0);
+                }
+                if (unit == 2) {
+                    size.setResolution(xRes, yRes); //Inch
+                } else {
+                    size.setResolution(
+                            UnitConv.in2mm(xRes) / 10,
+                            UnitConv.in2mm(yRes) / 10); //Centimeters
+                }
             } else {
-                size.setResolution(
-                        UnitConv.in2mm(xRes) / 10,
-                        UnitConv.in2mm(yRes) / 10); //Centimeters
+                size.setResolution(context.getSourceResolution());
             }
-        } else {
-            size.setResolution(context.getSourceResolution());
+            size.calcSizeFromPixels();
+
+            info = new ImageInfo(uri, MimeConstants.MIME_TIFF);
+            info.setSize(size);
+            
+            TIFFField fld;
+            
+            fld = dir.getField(TIFFImageDecoder.TIFF_COMPRESSION);
+            if (fld != null) {
+                int compression = fld.getAsInt(0);
+                info.getCustomObjects().put("TIFF_COMPRESSION", new Integer(compression));
+            }
+            
+            fld = dir.getField(TIFFImageDecoder.TIFF_TILE_WIDTH);
+            if (fld != null) {
+                info.getCustomObjects().put("TIFF_TILED", Boolean.TRUE);
+            }
+            
+            int stripCount;
+            fld = dir.getField(TIFFImageDecoder.TIFF_ROWS_PER_STRIP);
+            if (fld == null) {
+                stripCount = 1;
+            } else {
+                stripCount = (int)(size.getHeightPx() / fld.getAsLong(0));
+            }
+            info.getCustomObjects().put("TIFF_STRIP_COUNT", new Integer(stripCount));
+            
+        } finally {
+            in.reset();
         }
-        size.calcSizeFromPixels();
 
-        in.reset();
-
-        return size;
+        return info;
     }
 
 }

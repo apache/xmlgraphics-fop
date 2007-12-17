@@ -20,13 +20,13 @@
 package org.apache.fop.image2.impl.batik;
 
 import org.apache.fop.image2.ImageFlavor;
+import org.apache.fop.image2.impl.AbstractImageLoaderFactory;
 import org.apache.fop.image2.spi.ImageLoader;
-import org.apache.fop.image2.spi.ImageLoaderFactory;
 
 /**
  * Factory class for the ImageLoader for WMF (Windows Metafile).
  */
-public class ImageLoaderFactoryWMF implements ImageLoaderFactory {
+public class ImageLoaderFactoryWMF extends AbstractImageLoaderFactory {
 
     private static final ImageFlavor[] FLAVORS = new ImageFlavor[] {
         ImageWMF.WMF_IMAGE};

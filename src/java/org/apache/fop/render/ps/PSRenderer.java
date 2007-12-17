@@ -51,7 +51,6 @@ import org.apache.xmlgraphics.ps.dsc.ResourceTracker;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.CTM;
@@ -80,6 +79,7 @@ import org.apache.fop.image2.ImageInfo;
 import org.apache.fop.image2.ImageManager;
 import org.apache.fop.image2.ImageSessionContext;
 import org.apache.fop.image2.impl.ImageGraphics2D;
+import org.apache.fop.image2.impl.ImageRawCCITTFax;
 import org.apache.fop.image2.impl.ImageRawEPS;
 import org.apache.fop.image2.impl.ImageRawJPEG;
 import org.apache.fop.image2.impl.ImageRawStream;
@@ -412,7 +412,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
         ImageManager manager = getUserAgent().getFactory().getImageManager();
         ImageProviderPipeline[] inlineCandidates
             = manager.getPipelineFactory().determineCandidatePipelines(
-                    info.getMimeType(), inlineFlavors);
+                    info, inlineFlavors);
         ImageProviderPipeline inlineChoice = manager.choosePipeline(inlineCandidates);
         ImageFlavor inlineFlavor = (inlineChoice != null ? inlineChoice.getTargetFlavor() : null);
         
@@ -420,7 +420,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
         ImageFlavor[] formFlavors = getFormFlavors();
         ImageProviderPipeline[] formCandidates
             = manager.getPipelineFactory().determineCandidatePipelines(
-                    info.getMimeType(), formFlavors);
+                    info, formFlavors);
         ImageProviderPipeline formChoice = manager.choosePipeline(formCandidates);
         ImageFlavor formFlavor = (formChoice != null ? formChoice.getTargetFlavor() : null);
         
@@ -478,7 +478,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
                             pos, foreignAttributes);
                 } else if (img instanceof ImageRawStream) {
                     final ImageRawStream raw = (ImageRawStream)img;
-                    if (MimeConstants.MIME_EPS.equals(raw.getInfo().getMimeType())) {
+                    if (raw instanceof ImageRawEPS) {
                         ImageRawEPS eps = (ImageRawEPS)raw;
                         Rectangle2D bbox = eps.getBoundingBox(); 
                         InputStream in = raw.createInputStream();
@@ -490,21 +490,22 @@ public class PSRenderer extends AbstractPathOrientedRenderer
                         } finally {
                             IOUtils.closeQuietly(in);
                         }
-                    } else if (MimeConstants.MIME_JPEG.equals(raw.getInfo().getMimeType())) {
-                        ImageRawJPEG jpeg = (ImageRawJPEG)raw;
-                        ImageEncoder encoder = new ImageEncoder() {
-                            public void writeTo(OutputStream out) throws IOException {
-                                raw.writeTo(out);
-                            }
-                            public String getImplicitFilter() {
-                                return "<< >> /DCTDecode";
-                            }
-                        };
+                    } else if (raw instanceof ImageRawCCITTFax) {
+                        final ImageRawCCITTFax ccitt = (ImageRawCCITTFax)raw;
+                        ImageEncoder encoder = new ImageEncoderCCITTFax(ccitt);
                         Rectangle2D targetRect = new Rectangle2D.Float(
                                 ptx, pty, ptw, pth);
                         PSImageUtils.writeImage(encoder, info.getSize().getDimensionPx(),
                                 uri, targetRect,
-                                jpeg.getColorSpace(), jpeg.isInverted(), gen);
+                                ccitt.getColorSpace(), 1, false, gen);
+                    } else if (raw instanceof ImageRawJPEG) {
+                        ImageRawJPEG jpeg = (ImageRawJPEG)raw;
+                        ImageEncoder encoder = new ImageEncoderJPEG(jpeg);
+                        Rectangle2D targetRect = new Rectangle2D.Float(
+                                ptx, pty, ptw, pth);
+                        PSImageUtils.writeImage(encoder, info.getSize().getDimensionPx(),
+                                uri, targetRect,
+                                jpeg.getColorSpace(), 8, jpeg.isInverted(), gen);
                     } else {
                         throw new UnsupportedOperationException("Unsupported raw image: " + info);
                     }
