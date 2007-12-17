@@ -387,7 +387,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
             if (pos instanceof TableContentPosition) {
                 TableContentPosition tcpos = (TableContentPosition)pos;
                 lst.add(tcpos);
-                GridUnitPart part = (GridUnitPart)tcpos.gridUnitParts.get(0);
+                CellPart part = (CellPart)tcpos.cellParts.get(0);
                 if (body == null) {
                     body = part.pgu.getBody();
                 }

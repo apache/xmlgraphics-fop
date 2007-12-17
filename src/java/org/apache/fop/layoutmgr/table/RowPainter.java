@@ -110,27 +110,27 @@ class RowPainter {
         }
         rowFO = tcpos.row.getTableRow();
         lastRow = tcpos.row;
-        Iterator partIter = tcpos.gridUnitParts.iterator();
+        Iterator partIter = tcpos.cellParts.iterator();
         //Iterate over all grid units in the current step
         while (partIter.hasNext()) {
-            GridUnitPart gup = (GridUnitPart)partIter.next();
+            CellPart cellPart = (CellPart)partIter.next();
             if (log.isDebugEnabled()) {
-                log.debug(">" + gup);
+                log.debug(">" + cellPart);
             }
-            int colIndex = gup.pgu.getStartCol();
-            if (primaryGridUnits[colIndex] != gup.pgu) {
+            int colIndex = cellPart.pgu.getStartCol();
+            if (primaryGridUnits[colIndex] != cellPart.pgu) {
                 if (primaryGridUnits[colIndex] != null) {
                     log.warn("Replacing GU in slot " + colIndex
                             + ". Some content may not be painted.");
                 }
-                primaryGridUnits[colIndex] = gup.pgu;
-                start[colIndex] = gup.start;
-                end[colIndex] = gup.end;
+                primaryGridUnits[colIndex] = cellPart.pgu;
+                start[colIndex] = cellPart.start;
+                end[colIndex] = cellPart.end;
             } else {
-                if (gup.end < end[colIndex]) {
+                if (cellPart.end < end[colIndex]) {
                     throw new IllegalStateException("Internal Error: stepper problem");
                 }
-                end[colIndex] = gup.end;
+                end[colIndex] = cellPart.end;
             }
         }
     }
@@ -175,7 +175,7 @@ class RowPainter {
                 if (forcedFlush || ((end[i] == primaryGridUnits[i].getElements().size() - 1)
                         && (currentGU == null || currentGU.isLastGridUnitRowSpan()))) {
                     //the last line in the "if" above is to avoid a premature end of a
-                    //row-spanned cell because no GridUnitParts are generated after a cell is
+                    //row-spanned cell because no CellParts are generated after a cell is
                     //finished with its content.
                     //See table-cell_number-rows-spanned_bug38397.xml
                     addAreasForCell(primaryGridUnits[i], start[i], end[i], lastRow, partBPD[i],
