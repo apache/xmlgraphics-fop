@@ -173,7 +173,7 @@ class RowPainter {
             
             if (primaryGridUnits[i] != null) {
                 if (forcedFlush || ((end[i] == primaryGridUnits[i].getElements().size() - 1)
-                        && (currentGU == null || currentGU.isLastGridUnitRowSpan()))) {
+                        && currentGU.isLastGridUnitRowSpan())) {
                     //the last line in the "if" above is to avoid a premature end of a
                     //row-spanned cell because no CellParts are generated after a cell is
                     //finished with its content.
@@ -185,7 +185,7 @@ class RowPainter {
                     end[i] = -1;
                     partBPD[i] = 0;
                 }
-            } else if (currentGU != null && !currentGU.isEmpty()
+            } else if (!currentGU.isEmpty()
                     && currentGU.getColSpanIndex() == 0
                     && (forcedFlush || currentGU.isLastGridUnitRowSpan())) {
                 //A row-spanned cell has finished contributing content on the previous page
