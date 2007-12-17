@@ -22,12 +22,11 @@ package org.apache.fop.image2.impl;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.image2.ImageFlavor;
 import org.apache.fop.image2.spi.ImageLoader;
-import org.apache.fop.image2.spi.ImageLoaderFactory;
 
 /**
  * Factory class for the ImageLoader for EPS (Encapsulated PostScript) images.
  */
-public class ImageLoaderFactoryEPS implements ImageLoaderFactory {
+public class ImageLoaderFactoryEPS extends AbstractImageLoaderFactory {
 
     private static final String[] MIMES = new String[] {
         MimeConstants.MIME_EPS};

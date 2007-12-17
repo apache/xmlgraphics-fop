@@ -22,13 +22,13 @@ package org.apache.fop.image2.impl.imageio;
 import javax.imageio.ImageIO;
 
 import org.apache.fop.image2.ImageFlavor;
+import org.apache.fop.image2.impl.AbstractImageLoaderFactory;
 import org.apache.fop.image2.spi.ImageLoader;
-import org.apache.fop.image2.spi.ImageLoaderFactory;
 
 /**
  * Factory class for the ImageLoader based on ImageIO.
  */
-public class ImageLoaderFactoryImageIO implements ImageLoaderFactory {
+public class ImageLoaderFactoryImageIO extends AbstractImageLoaderFactory {
 
     private static final ImageFlavor[] FLAVORS = new ImageFlavor[] {
         ImageFlavor.RENDERED_IMAGE,

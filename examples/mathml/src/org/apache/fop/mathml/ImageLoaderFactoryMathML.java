@@ -20,13 +20,13 @@
 package org.apache.fop.mathml;
 
 import org.apache.fop.image2.ImageFlavor;
+import org.apache.fop.image2.impl.AbstractImageLoaderFactory;
 import org.apache.fop.image2.spi.ImageLoader;
-import org.apache.fop.image2.spi.ImageLoaderFactory;
 
 /**
  * Factory class for the ImageLoader for MathML.
  */
-public class ImageLoaderFactoryMathML implements ImageLoaderFactory {
+public class ImageLoaderFactoryMathML extends AbstractImageLoaderFactory {
 
     /** MathML MIME type */
     public static final String MIME_MATHML = "text/mathml";

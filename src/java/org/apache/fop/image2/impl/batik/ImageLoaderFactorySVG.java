@@ -21,13 +21,13 @@ package org.apache.fop.image2.impl.batik;
 
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.image2.ImageFlavor;
+import org.apache.fop.image2.impl.AbstractImageLoaderFactory;
 import org.apache.fop.image2.spi.ImageLoader;
-import org.apache.fop.image2.spi.ImageLoaderFactory;
 
 /**
  * Factory class for the ImageLoader for SVG.
  */
-public class ImageLoaderFactorySVG implements ImageLoaderFactory {
+public class ImageLoaderFactorySVG extends AbstractImageLoaderFactory {
 
     private static final ImageFlavor[] FLAVORS = new ImageFlavor[] {
         ImageFlavor.XML_DOM};

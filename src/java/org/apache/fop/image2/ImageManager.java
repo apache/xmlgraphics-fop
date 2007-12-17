@@ -186,11 +186,10 @@ public class ImageManager {
         if (hints == null) {
             hints = Collections.EMPTY_MAP;
         }
-        String mime = info.getMimeType();
         
         Image img = null;
         ImageProviderPipeline pipeline = getPipelineFactory().newImageConverterPipeline(
-                mime, flavor);
+                info, flavor);
         if (pipeline != null) {
             img = pipeline.execute(info, hints, session);
         }
@@ -228,11 +227,10 @@ public class ImageManager {
         if (hints == null) {
             hints = Collections.EMPTY_MAP;
         }
-        String mime = info.getMimeType();
 
         Image img = null;
         ImageProviderPipeline[] candidates = getPipelineFactory().determineCandidatePipelines(
-                mime, flavors);
+                info, flavors);
         ImageProviderPipeline pipeline = choosePipeline(candidates);
         
         if (pipeline != null) {
@@ -364,6 +362,9 @@ public class ImageManager {
                 pipeline = candidates[i];
                 minPenalty = penalty;
             }
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Chosen pipeline: " + pipeline);
         }
         return pipeline;
     }

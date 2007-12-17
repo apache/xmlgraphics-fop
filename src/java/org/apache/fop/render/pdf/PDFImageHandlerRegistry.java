@@ -22,8 +22,8 @@ package org.apache.fop.render.pdf;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
-import java.util.SortedSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -52,6 +52,8 @@ public class PDFImageHandlerRegistry {
 
     /** Map containing PDF image handlers for various MIME types */
     private Map handlers = new java.util.HashMap();
+    /** List containing the same handlers as above but ordered by priority */
+    private List handlerList = new java.util.LinkedList();
     
     /** Sorted Set of registered handlers */
     private ImageFlavor[] supportedFlavors = new ImageFlavor[0];
@@ -97,6 +99,17 @@ public class PDFImageHandlerRegistry {
     public synchronized void addHandler(PDFImageHandler handler) {
         Class imageClass = handler.getSupportedImageClass();
         this.handlers.put(imageClass, handler);
+        
+        //Sorted insert
+        ListIterator iter = this.handlerList.listIterator();
+        while (iter.hasNext()) {
+            PDFImageHandler h = (PDFImageHandler)iter.next();
+            if (HANDLER_COMPARATOR.compare(handler, h) < 0) {
+                iter.previous();
+                break;
+            }
+        }
+        iter.add(handler);
         this.handlerRegistrations++;
     }
     
@@ -135,13 +148,9 @@ public class PDFImageHandlerRegistry {
      */
     public synchronized ImageFlavor[] getSupportedFlavors() {
         if (this.lastSync != this.handlerRegistrations) {
-            //Sort...
-            SortedSet sorted = new java.util.TreeSet(HANDLER_COMPARATOR);
-            sorted.addAll(this.handlers.values());
-            
-            //...and extract all ImageFlavors into a single array
+            //Extract all ImageFlavors into a single array
             List flavors = new java.util.ArrayList();
-            Iterator iter = sorted.iterator();
+            Iterator iter = this.handlerList.iterator();
             while (iter.hasNext()) {
                 ImageFlavor[] f = ((PDFImageHandler)iter.next()).getSupportedImageFlavors();
                 for (int i = 0; i < f.length; i++) {

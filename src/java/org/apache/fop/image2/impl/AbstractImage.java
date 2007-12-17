@@ -20,6 +20,7 @@
 package org.apache.fop.image2.impl;
 
 import java.awt.color.ColorSpace;
+import java.awt.color.ICC_ColorSpace;
 import java.awt.color.ICC_Profile;
 
 import org.apache.fop.image2.Image;
@@ -58,7 +59,11 @@ public abstract class AbstractImage implements Image {
 
     /** {@inheritDoc} */
     public ICC_Profile getICCProfile() {
-        return null;
+        if (getColorSpace() instanceof ICC_ColorSpace) {
+            return ((ICC_ColorSpace)getColorSpace()).getProfile();
+        } else {
+            return null;
+        }
     }
 
     /** {@inheritDoc} */

@@ -25,7 +25,7 @@ import java.io.IOException;
 
 import org.apache.fop.image2.Image;
 import org.apache.fop.image2.ImageFlavor;
-import org.apache.fop.image2.impl.ImageRawJPEG;
+import org.apache.fop.image2.impl.ImageRawCCITTFax;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFImage;
 import org.apache.fop.pdf.PDFResourceContext;
@@ -33,12 +33,12 @@ import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.render.RendererContext;
 
 /**
- * PDFImageHandler implementation which handles raw JPEG images.
+ * PDFImageHandler implementation which handles CCITT encoded images (CCITT fax group 3/4).
  */
-public class PDFImageHandlerRawJPEG implements PDFImageHandler {
+public class PDFImageHandlerRawCCITTFax implements PDFImageHandler {
 
     private static final ImageFlavor[] FLAVORS = new ImageFlavor[] {
-        ImageFlavor.RAW_JPEG,
+        ImageFlavor.RAW_CCITTFAX,
     };
     
     /** {@inheritDoc} */
@@ -46,13 +46,13 @@ public class PDFImageHandlerRawJPEG implements PDFImageHandler {
             Point origin, Rectangle pos)
             throws IOException {
         PDFRenderer renderer = (PDFRenderer)context.getRenderer();
-        ImageRawJPEG jpeg = (ImageRawJPEG)image;
+        ImageRawCCITTFax ccitt = (ImageRawCCITTFax)image;
         PDFDocument pdfDoc = (PDFDocument)context.getProperty(
                 PDFRendererContextConstants.PDF_DOCUMENT);
         PDFResourceContext resContext = (PDFResourceContext)context.getProperty(
                 PDFRendererContextConstants.PDF_CONTEXT);
         
-        PDFImage pdfimage = new ImageRawJPEGAdapter(jpeg, image.getInfo().getOriginalURI());
+        PDFImage pdfimage = new ImageRawCCITTFaxAdapter(ccitt, image.getInfo().getOriginalURI());
         PDFXObject xobj = pdfDoc.addImage(resContext, pdfimage);
 
         float x = (float)pos.getX() / 1000f;
@@ -71,7 +71,7 @@ public class PDFImageHandlerRawJPEG implements PDFImageHandler {
 
     /** {@inheritDoc} */
     public Class getSupportedImageClass() {
-        return ImageRawJPEG.class;
+        return ImageRawCCITTFax.class;
     }
 
     /** {@inheritDoc} */

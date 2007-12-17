@@ -26,6 +26,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.RenderedImage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -34,7 +35,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.xmlgraphics.image.codec.tiff.TIFFImage;
 import org.apache.xmlgraphics.ps.ImageEncodingHelper;
 
 import org.apache.fop.apps.FOUserAgent;
@@ -67,6 +70,7 @@ import org.apache.fop.image2.ImageInfo;
 import org.apache.fop.image2.ImageManager;
 import org.apache.fop.image2.ImageSessionContext;
 import org.apache.fop.image2.impl.ImageGraphics2D;
+import org.apache.fop.image2.impl.ImageRawCCITTFax;
 import org.apache.fop.image2.impl.ImageRendered;
 import org.apache.fop.image2.impl.ImageXMLDOM;
 import org.apache.fop.image2.util.ImageUtil;
@@ -744,7 +748,8 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     }
 
     private static final ImageFlavor[] FLAVORS = new ImageFlavor[]
-                                                     {ImageFlavor.GRAPHICS2D,
+                                                     {ImageFlavor.RAW_CCITTFAX,
+                                                      ImageFlavor.GRAPHICS2D,
                                                       ImageFlavor.BUFFERED_IMAGE, 
                                                       ImageFlavor.RENDERED_IMAGE,
                                                       ImageFlavor.XML_DOM};
@@ -798,6 +803,42 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                             posInt.y + currentBPPosition,
                             posInt.width,
                             posInt.height);
+                } else if (img instanceof ImageRawCCITTFax) {
+                    ImageRawCCITTFax ccitt = (ImageRawCCITTFax)img;
+                    int afpx = mpts2units(posInt.x + currentIPPosition);
+                    int afpy = mpts2units(posInt.y + currentBPPosition);
+                    int afpw = mpts2units(posInt.getWidth());
+                    int afph = mpts2units(posInt.getHeight());
+                    int afpres = getResolution();
+                    ImageObject io = afpDataStream.getImageObject(afpx, afpy, afpw, afph,
+                            afpres, afpres);
+                    io.setImageParameters(
+                            (int) (ccitt.getSize().getDpiHorizontal() * 10),
+                            (int) (ccitt.getSize().getDpiVertical() * 10),
+                            ccitt.getSize().getWidthPx(),
+                            ccitt.getSize().getHeightPx());
+                    int compression = ccitt.getCompression();
+                    switch (compression) {
+                    case TIFFImage.COMP_FAX_G3_1D :
+                        io.setImageEncoding((byte) 0x80);
+                        break;
+                    case TIFFImage.COMP_FAX_G3_2D :
+                        io.setImageEncoding((byte) 0x81);
+                        break;
+                    case TIFFImage.COMP_FAX_G4_2D :
+                        io.setImageEncoding((byte) 0x82);
+                        break;
+                    default:
+                        throw new IllegalStateException(
+                                "Invalid compression scheme: " + compression);
+                    }
+                    InputStream in = ccitt.createInputStream();
+                    try {
+                        byte[] buf = IOUtils.toByteArray(in);
+                        io.setImageData(buf);
+                    } finally {
+                        IOUtils.closeQuietly(in);
+                    }
                 } else if (img instanceof ImageXMLDOM) {
                     ImageXMLDOM imgXML = (ImageXMLDOM)img;
                     renderDocument(imgXML.getDocument(), imgXML.getRootNamespace(),

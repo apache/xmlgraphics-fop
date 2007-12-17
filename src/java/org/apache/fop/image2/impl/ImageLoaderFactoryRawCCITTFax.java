@@ -19,27 +19,23 @@
 
 package org.apache.fop.image2.impl;
 
+import org.apache.xmlgraphics.image.codec.tiff.TIFFImage;
+
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.image2.ImageFlavor;
+import org.apache.fop.image2.ImageInfo;
 import org.apache.fop.image2.spi.ImageLoader;
 
 /**
- * Factory class for the ImageLoader for raw/undecoded images.
+ * Factory class for the ImageLoader for raw/undecoded CCITT encoded images.
  */
-public class ImageLoaderFactoryRaw extends AbstractImageLoaderFactory {
+public class ImageLoaderFactoryRawCCITTFax extends AbstractImageLoaderFactory {
 
-    /** MIME type for EMF (Windows Enhanced Metafile) */
-    public static final String MIME_EMF = "image/x-emf"; 
-    
     private static final String[] MIMES = new String[] {
-        MimeConstants.MIME_PNG,
-        MimeConstants.MIME_JPEG,
-        MIME_EMF};
+        MimeConstants.MIME_TIFF};
     
     private static final ImageFlavor[][] FLAVORS = new ImageFlavor[][] {
-        {ImageFlavor.RAW_PNG},
-        {ImageFlavor.RAW_JPEG},
-        {ImageFlavor.RAW_EMF}};
+        {ImageFlavor.RAW_CCITTFAX}};
 
     
     /**
@@ -77,10 +73,10 @@ public class ImageLoaderFactoryRaw extends AbstractImageLoaderFactory {
     
     /** {@inheritDoc} */
     public ImageLoader newImageLoader(ImageFlavor targetFlavor) {
-        if (targetFlavor.equals(ImageFlavor.RAW_JPEG)) {
-            return new ImageLoaderRawJPEG();
+        if (targetFlavor.equals(ImageFlavor.RAW_CCITTFAX)) {
+            return new ImageLoaderRawCCITTFax();
         } else {
-            return new ImageLoaderRaw(targetFlavor);
+            throw new IllegalArgumentException("Unsupported image flavor: " + targetFlavor);
         }
     }
     
@@ -92,6 +88,28 @@ public class ImageLoaderFactoryRaw extends AbstractImageLoaderFactory {
     /** {@inheritDoc} */
     public boolean isAvailable() {
         return true;
+    }
+
+    /** {@inheritDoc} */
+    public boolean isSupported(ImageInfo imageInfo) {
+        Boolean tiled = (Boolean)imageInfo.getCustomObjects().get("TIFF_TILED");
+        if (Boolean.TRUE.equals(tiled)) {
+            //We don't support tiled images
+            return false;
+        }
+        Integer compression = (Integer)imageInfo.getCustomObjects().get("TIFF_COMPRESSION");
+        if (compression == null) {
+            return false;
+        }
+        switch (compression.intValue()) {
+        case TIFFImage.COMP_FAX_G3_1D:
+        case TIFFImage.COMP_FAX_G3_2D:
+        case TIFFImage.COMP_FAX_G4_2D:
+            Integer stripCount = (Integer)imageInfo.getCustomObjects().get("TIFF_STRIP_COUNT");
+            return (stripCount != null && stripCount.intValue() == 1);
+        default:
+            return false;
+        }
     }
 
 }
