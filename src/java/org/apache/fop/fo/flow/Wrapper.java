@@ -24,7 +24,6 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.fo.pagination.Flow;
 import org.xml.sax.Locator;
 
 /**
