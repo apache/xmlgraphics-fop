@@ -97,40 +97,45 @@ public class ImageLoaderImageIO extends AbstractImageLoader {
             Iterator iter = ImageIO.getImageReaders(imgStream);
             while (iter.hasNext()) {
                 ImageReader reader = (ImageReader)iter.next();
-                imgStream.mark();
-                ImageReadParam param = reader.getDefaultReadParam();
-                reader.setInput(imgStream, false, ignoreMetadata);
-                final int pageIndex = 0; //Always the first page at the moment
                 try {
-                    if (ImageFlavor.BUFFERED_IMAGE.equals(this.targetFlavor)) {
-                        imageData = reader.read(pageIndex, param);
-                    } else {
-                        imageData = reader.readAsRenderedImage(pageIndex, param);
+                    imgStream.mark();
+                    ImageReadParam param = reader.getDefaultReadParam();
+                    reader.setInput(imgStream, false, ignoreMetadata);
+                    final int pageIndex = 0; //Always the first page at the moment
+                    try {
+                        if (ImageFlavor.BUFFERED_IMAGE.equals(this.targetFlavor)) {
+                            imageData = reader.read(pageIndex, param);
+                        } else {
+                            imageData = reader.readAsRenderedImage(pageIndex, param);
+                        }
+                        if (iiometa == null) {
+                            iiometa = reader.getImageMetadata(pageIndex);
+                        }
+                        break; //Quit early, we have the image
+                    } catch (IIOException iioe) {
+                        if (firstException == null) {
+                            firstException = iioe;
+                        } else {
+                            log.debug("non-first error loading image: " + iioe.getMessage());
+                        }
                     }
-                    if (iiometa == null) {
-                        iiometa = reader.getImageMetadata(pageIndex);
+                    try {
+                        //Try fallback for CMYK images
+                        BufferedImage bi = getFallbackBufferedImage(reader, pageIndex, param);
+                        imageData = bi;
+                        firstException = null; //Clear exception after successful fallback attempt
+                        break;
+                    } catch (IIOException iioe) {
+                        //ignore
                     }
-                    break; //Quit early, we have the image
-                } catch (IIOException iioe) {
-                    if (firstException == null) {
-                        firstException = iioe;
-                    } else {
-                        log.debug("non-first error loading image: " + iioe.getMessage());
-                    }
+                    imgStream.reset();
+                } finally {
+                    reader.dispose();
                 }
-                try {
-                    //Try fallback for CMYK images
-                    BufferedImage bi = getFallbackBufferedImage(reader, pageIndex, param);
-                    imageData = bi;
-                    firstException = null; //Clear exception after successful fallback attempt
-                    break;
-                } catch (IIOException iioe) {
-                    //ignore
-                }
-                imgStream.reset();
             }
         } finally {
-            ImageUtil.closeQuietly(src);
+            //ImageUtil.closeQuietly(src); //Cannot do that as codecs my do late reading
+            ImageUtil.removeStreams(src);
         }
         if (firstException != null) {
             throw new ImageException("Error while loading image: "
