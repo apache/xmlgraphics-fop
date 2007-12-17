@@ -25,7 +25,7 @@ import org.apache.fop.fo.flow.table.PrimaryGridUnit;
 /**
  * Represents a non-dividable part of a grid unit. Used by the table stepper.
  */
-class GridUnitPart {
+class CellPart {
 
     /** Primary grid unit */
     protected PrimaryGridUnit pgu;
@@ -35,12 +35,12 @@ class GridUnitPart {
     protected int end;
 
     /**
-     * Creates a new GridUnitPart.
+     * Creates a new CellPart.
      * @param pgu Primary grid unit
      * @param start starting element
      * @param end ending element
      */
-    protected GridUnitPart(PrimaryGridUnit pgu, int start, int end) {
+    protected CellPart(PrimaryGridUnit pgu, int start, int end) {
         this.pgu = pgu;
         this.start = start;
         this.end = end;
