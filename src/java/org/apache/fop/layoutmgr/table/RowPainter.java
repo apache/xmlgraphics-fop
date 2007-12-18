@@ -20,6 +20,7 @@
 package org.apache.fop.layoutmgr.table;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -47,17 +48,15 @@ class RowPainter {
     private EffRow lastRow = null;
     private LayoutContext layoutContext;
     /**
-     * For each part of the table (header, footer, body), index of the first row of that
-     * part present on the current page.
+     * Index of the first row of the current part present on the current page.
      */
-    private int[] firstRow = new int[3];
+    private int firstRow;
     /**
-     * Keeps track of the y-offsets of each row on a page (for body, header and footer separately).
+     * Keeps track of the y-offsets of each row on a page.
      * This is particularly needed for spanned cells where you need to know the y-offset
      * of the starting row when the area is generated at the time the cell is closed.
      */
-    private Map[] rowOffsets = new Map[] {new java.util.HashMap(),
-            new java.util.HashMap(), new java.util.HashMap()};
+    private Map rowOffsets = new HashMap();
 
     //These three variables are our buffer to recombine the individual steps into cells
     /** Primary grid units corresponding to the currently handled grid units, per row. */
@@ -87,7 +86,7 @@ class RowPainter {
         this.start = new int[colCount];
         this.end = new int[colCount];
         this.partBPD = new int[colCount];
-        Arrays.fill(firstRow, -1);
+        this.firstRow = -1;
         Arrays.fill(end, -1);
     }
 
@@ -149,17 +148,16 @@ class RowPainter {
     int addAreasAndFlushRow(boolean forcedFlush) {
         int actualRowHeight = 0;
 
-        int bt = lastRow.getBodyType();
         if (log.isDebugEnabled()) {
             log.debug("Remembering yoffset for row " + lastRow.getIndex() + ": " + yoffset);
         }
-        rowOffsets[bt].put(new Integer(lastRow.getIndex()), new Integer(yoffset));
+        rowOffsets.put(new Integer(lastRow.getIndex()), new Integer(yoffset));
 
         for (int i = 0; i < primaryGridUnits.length; i++) {
             if ((primaryGridUnits[i] != null)
                     && (forcedFlush || (end[i] == primaryGridUnits[i].getElements().size() - 1))) {
                 actualRowHeight = Math.max(actualRowHeight, computeSpanHeight(
-                        primaryGridUnits[i], start[i], end[i], i, bt));
+                        primaryGridUnits[i], start[i], end[i], i));
             }
         }
         actualRowHeight += 2 * tclm.getTableLM().getHalfBorderSeparationBPD();
@@ -226,8 +224,7 @@ class RowPainter {
      * {@link TableRowIterator#BODY}
      * @return the cell's height
      */
-    private int computeSpanHeight(PrimaryGridUnit pgu, int start, int end, int columnIndex,
-            int bodyType) {
+    private int computeSpanHeight(PrimaryGridUnit pgu, int start, int end, int columnIndex) {
         if (log.isTraceEnabled()) {
             log.trace("getting len for " + columnIndex + " "
                     + start + "-" + end);
@@ -292,8 +289,8 @@ class RowPainter {
             len += pgu.getHalfMaxBeforeBorderWidth();
             len += pgu.getHalfMaxAfterBorderWidth();
         }
-        int startRow = Math.max(pgu.getStartRow(), firstRow[bodyType]);
-        Integer storedOffset = (Integer)rowOffsets[bodyType].get(new Integer(startRow));
+        int startRow = Math.max(pgu.getStartRow(), firstRow);
+        Integer storedOffset = (Integer)rowOffsets.get(new Integer(startRow));
         int effYOffset;
         if (storedOffset != null) {
             effYOffset = storedOffset.intValue();
@@ -306,12 +303,11 @@ class RowPainter {
 
     private void addAreasForCell(PrimaryGridUnit pgu, int startPos, int endPos,
             EffRow row, int contentHeight, int rowHeight) {
-        int bt = row.getBodyType();
-        if (firstRow[bt] < 0) {
-            firstRow[bt] = row.getIndex();
+        if (firstRow < 0) {
+            firstRow = row.getIndex();
         }
         //Determine the first row in this sequence
-        int startRowIndex = Math.max(pgu.getStartRow(), firstRow[bt]);
+        int startRowIndex = Math.max(pgu.getStartRow(), firstRow);
         int lastRowIndex = lastRow.getIndex();
 
         // In collapsing-border model, if the cell spans over several columns/rows then
@@ -321,9 +317,9 @@ class RowPainter {
         int[] spannedGridRowHeights = null;
         if (!tclm.getTableLM().getTable().isSeparateBorderModel() && pgu.hasSpanning()) {
             spannedGridRowHeights = new int[lastRowIndex - startRowIndex + 1];
-            int prevOffset = ((Integer)rowOffsets[bt].get(new Integer(startRowIndex))).intValue();
+            int prevOffset = ((Integer)rowOffsets.get(new Integer(startRowIndex))).intValue();
             for (int i = 0; i < lastRowIndex - startRowIndex; i++) {
-                int newOffset = ((Integer) rowOffsets[bt].get(new Integer(startRowIndex + i + 1)))
+                int newOffset = ((Integer) rowOffsets.get(new Integer(startRowIndex + i + 1)))
                         .intValue();
                 spannedGridRowHeights[i] = newOffset - prevOffset;
                 prevOffset = newOffset;
@@ -332,12 +328,12 @@ class RowPainter {
         }
 
         //Determine y offset for the cell
-        Integer offset = (Integer)rowOffsets[bt].get(new Integer(startRowIndex));
+        Integer offset = (Integer)rowOffsets.get(new Integer(startRowIndex));
         while (offset == null) {
             //TODO Figure out what this does and when it's triggered
             //This block is probably never used, at least it's not triggered by any of our tests
             startRowIndex--;
-            offset = (Integer)rowOffsets[bt].get(new Integer(startRowIndex));
+            offset = (Integer)rowOffsets.get(new Integer(startRowIndex));
         }
         int effYOffset = offset.intValue();
         int effCellHeight = rowHeight;
@@ -363,5 +359,10 @@ class RowPainter {
         cellLM.addAreas(new KnuthPossPosIter(pgu.getElements(), startPos, endPos + 1),
                 layoutContext, spannedGridRowHeights, startRowIndex - pgu.getStartRow(),
                 lastRowIndex - pgu.getStartRow() + 1);
+    }
+
+    void endPart() {
+        firstRow = -1;
+        rowOffsets.clear();
     }
 }
