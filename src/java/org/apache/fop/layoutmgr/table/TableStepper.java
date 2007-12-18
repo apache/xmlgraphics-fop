@@ -75,6 +75,7 @@ public class TableStepper {
     private void setup(int columnCount) {
         this.columnCount = columnCount;
         this.activeRowIndex = 0;
+        this.previousRowsLength = 0;
     }
 
     /**
