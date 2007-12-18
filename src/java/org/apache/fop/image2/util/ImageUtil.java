@@ -24,6 +24,8 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
@@ -281,6 +283,52 @@ public class ImageUtil {
         hints.put(ImageProcessingHints.TARGET_RESOLUTION,
                 new Float(session.getTargetResolution()));
         return hints;
+    }
+    
+    private static final String PAGE_INDICATOR = "page=";
+    
+    /**
+     * Extracts page index information from a URI. The expected pattern is "page=x" where x is
+     * a non-negative integer number. The page index must be specified as part of the URI fragment
+     * and is 1-based, i.e. the first page is 1 but the the method returns a zero-based page
+     * index.
+     * An example: <code>http://www.foo.bar/images/scan1.tif#page=4</code> (The method will return
+     * 3.)
+     * <p>
+     * If no page index information is found in the URI or if the URI cannot be parsed, the
+     * method just returns 0 which indicates the first page.
+     * @param uri the URI that should be inspected
+     * @return the page index (0 is the first page)
+     */
+    public static int extractPageIndexFromURI(String uri) {
+        int pageIndex = 0;
+        try {
+            URI u = new URI(uri);
+            String fragment = u.getFragment();
+            if (fragment != null) {
+                int pos = fragment.indexOf(PAGE_INDICATOR);
+                if (pos >= 0) {
+                    pos += PAGE_INDICATOR.length();
+                    StringBuffer sb = new StringBuffer();
+                    while (pos < fragment.length()) {
+                        char c = fragment.charAt(pos);
+                        if (c >= '0' && c <= '9') {
+                            sb.append(c);
+                        } else {
+                            break;
+                        }
+                        pos++;
+                    }
+                    if (sb.length() > 0) {
+                        pageIndex = Integer.parseInt(sb.toString()) - 1;
+                        pageIndex = Math.max(0, pageIndex);
+                    }
+                }
+            }
+        } catch (URISyntaxException e) {
+            //ignore
+        }
+        return pageIndex;
     }
     
 }
