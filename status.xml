@@ -31,7 +31,7 @@
       <action context="Code" dev="VH" type="fix" fixes-bug="43633">
         Bugfix: content of a row with zero height overriding the previous row
       </action>
-      <action context="Code" dev="AC" type="add">
+      <action context="Code" dev="AC" importance="high" type="add">
 	Added SVG support for AFP (GOCA).
       </action>
       <action context="Code" dev="JM" type="fix" fixes-bug="37993">
