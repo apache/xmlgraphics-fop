@@ -418,6 +418,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
             handleMarkersAndPositions(lst, body, firstPos, false, painter);
         }
         painter.addAreasAndFlushRow(true);
+        painter.endPart();
     }
 
     private void handleMarkersAndPositions(List positions, TableBody body, boolean firstPos,
