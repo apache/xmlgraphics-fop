@@ -19,10 +19,10 @@
 
 package org.apache.fop.layoutmgr.table;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -56,7 +56,7 @@ class RowPainter {
      * This is particularly needed for spanned cells where you need to know the y-offset
      * of the starting row when the area is generated at the time the cell is closed.
      */
-    private Map rowOffsets = new HashMap();
+    private List rowOffsets = new ArrayList();
 
     //These three variables are our buffer to recombine the individual steps into cells
     /** Primary grid units corresponding to the currently handled grid units, per row. */
@@ -154,7 +154,7 @@ class RowPainter {
         if (log.isDebugEnabled()) {
             log.debug("Remembering yoffset for row " + lastRow.getIndex() + ": " + yoffset);
         }
-        rowOffsets.put(new Integer(lastRow.getIndex()), new Integer(yoffset));
+        recordRowOffset(lastRow.getIndex(), yoffset);
 
         for (int i = 0; i < primaryGridUnits.length; i++) {
             if ((primaryGridUnits[i] != null)
@@ -292,15 +292,8 @@ class RowPainter {
             len += pgu.getHalfMaxBeforeBorderWidth();
             len += pgu.getHalfMaxAfterBorderWidth();
         }
-        int startRow = Math.max(pgu.getStartRow(), firstRowIndex);
-        Integer storedOffset = (Integer)rowOffsets.get(new Integer(startRow));
-        int effYOffset;
-        if (storedOffset != null) {
-            effYOffset = storedOffset.intValue();
-        } else {
-            effYOffset = yoffset;
-        }
-        len -= yoffset - effYOffset;
+        int cellOffset = getRowOffset(Math.max(pgu.getStartRow(), firstRowIndex));
+        len -= yoffset - cellOffset;
         return len;
     }
 
@@ -317,37 +310,28 @@ class RowPainter {
         int[] spannedGridRowHeights = null;
         if (!tclm.getTableLM().getTable().isSeparateBorderModel() && pgu.hasSpanning()) {
             spannedGridRowHeights = new int[lastRowIndex - startRowIndex + 1];
-            int prevOffset = ((Integer)rowOffsets.get(new Integer(startRowIndex))).intValue();
+            int prevOffset = getRowOffset(startRowIndex);
             for (int i = 0; i < lastRowIndex - startRowIndex; i++) {
-                int newOffset = ((Integer) rowOffsets.get(new Integer(startRowIndex + i + 1)))
-                        .intValue();
+                int newOffset = getRowOffset(startRowIndex + i + 1);
                 spannedGridRowHeights[i] = newOffset - prevOffset;
                 prevOffset = newOffset;
             }
             spannedGridRowHeights[lastRowIndex - startRowIndex] = rowHeight;
         }
 
-        //Determine y offset for the cell
-        Integer offset = (Integer)rowOffsets.get(new Integer(startRowIndex));
-        while (offset == null) {
-            //TODO Figure out what this does and when it's triggered
-            //This block is probably never used, at least it's not triggered by any of our tests
-            startRowIndex--;
-            offset = (Integer)rowOffsets.get(new Integer(startRowIndex));
-        }
-        int effYOffset = offset.intValue();
+        int cellOffset = getRowOffset(startRowIndex);
         int effCellHeight = rowHeight;
-        effCellHeight += yoffset - effYOffset;
+        effCellHeight += yoffset - cellOffset;
         if (log.isDebugEnabled()) {
             log.debug("Creating area for cell:");
             log.debug("  current row: " + row.getIndex());
-            log.debug("  start row: " + pgu.getStartRow() + " " + yoffset + " " + effYOffset);
+            log.debug("  start row: " + pgu.getStartRow() + " " + yoffset + " " + cellOffset);
             log.debug("  contentHeight: " + contentHeight + " rowHeight=" + rowHeight
                     + " effCellHeight=" + effCellHeight);
         }
         TableCellLayoutManager cellLM = pgu.getCellLM();
         cellLM.setXOffset(tclm.getXOffsetOfGridUnit(pgu));
-        cellLM.setYOffset(effYOffset);
+        cellLM.setYOffset(cellOffset);
         cellLM.setContentHeight(contentHeight);
         cellLM.setRowHeight(effCellHeight);
         //cellLM.setRowHeight(row.getHeight().opt);
@@ -359,6 +343,40 @@ class RowPainter {
         cellLM.addAreas(new KnuthPossPosIter(pgu.getElements(), startPos, endPos + 1),
                 layoutContext, spannedGridRowHeights, startRowIndex - pgu.getStartRow(),
                 lastRowIndex - pgu.getStartRow() + 1);
+    }
+
+    /**
+     * Records the y-offset of the row with the given index.
+     * 
+     * @param rowIndex index of the row
+     * @param offset y-offset of the row on the page
+     */
+    private void recordRowOffset(int rowIndex, int offset) {
+        /*
+         * In some very rare cases a row may be skipped. See for example Bugzilla #43633:
+         * in a two-column table, a row contains a row-spanning cell and a missing cell.
+         * In TableStepper#goToNextRowIfCurrentFinished this row will immediately be
+         * considered as finished, since it contains no cell ending on this row. Thus no
+         * TableContentPosition will be created for this row. Thus its index will never be
+         * recorded by the #handleTableContentPosition method.
+         * 
+         * The yoffset for such a row is the same as the next non-empty row. It's needed
+         * to correctly offset blocks for cells starting on this row. Hence the loop
+         * below.
+         */
+        for (int i = rowOffsets.size(); i <= rowIndex - firstRowIndex; i++) {
+            rowOffsets.add(new Integer(offset));
+        }
+    }
+
+    /**
+     * Returns the offset of the row with the given index.
+     * 
+     * @param rowIndex index of the row
+     * @return its y-offset on the page
+     */
+    private int getRowOffset(int rowIndex) {
+        return ((Integer) rowOffsets.get(rowIndex - firstRowIndex)).intValue();
     }
 
     void endPart() {
