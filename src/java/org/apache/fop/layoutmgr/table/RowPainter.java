@@ -50,7 +50,7 @@ class RowPainter {
     /**
      * Index of the first row of the current part present on the current page.
      */
-    private int firstRow;
+    private int firstRowIndex;
     /**
      * Keeps track of the y-offsets of each row on a page.
      * This is particularly needed for spanned cells where you need to know the y-offset
@@ -86,7 +86,7 @@ class RowPainter {
         this.start = new int[colCount];
         this.end = new int[colCount];
         this.partBPD = new int[colCount];
-        this.firstRow = -1;
+        this.firstRowIndex = -1;
         Arrays.fill(end, -1);
     }
 
@@ -109,6 +109,9 @@ class RowPainter {
         }
         rowFO = tcpos.row.getTableRow();
         lastRow = tcpos.row;
+        if (firstRowIndex < 0) {
+            firstRowIndex = lastRow.getIndex();
+        }
         Iterator partIter = tcpos.cellParts.iterator();
         //Iterate over all grid units in the current step
         while (partIter.hasNext()) {
@@ -289,7 +292,7 @@ class RowPainter {
             len += pgu.getHalfMaxBeforeBorderWidth();
             len += pgu.getHalfMaxAfterBorderWidth();
         }
-        int startRow = Math.max(pgu.getStartRow(), firstRow);
+        int startRow = Math.max(pgu.getStartRow(), firstRowIndex);
         Integer storedOffset = (Integer)rowOffsets.get(new Integer(startRow));
         int effYOffset;
         if (storedOffset != null) {
@@ -303,11 +306,8 @@ class RowPainter {
 
     private void addAreasForCell(PrimaryGridUnit pgu, int startPos, int endPos,
             EffRow row, int contentHeight, int rowHeight) {
-        if (firstRow < 0) {
-            firstRow = row.getIndex();
-        }
         //Determine the first row in this sequence
-        int startRowIndex = Math.max(pgu.getStartRow(), firstRow);
+        int startRowIndex = Math.max(pgu.getStartRow(), firstRowIndex);
         int lastRowIndex = lastRow.getIndex();
 
         // In collapsing-border model, if the cell spans over several columns/rows then
@@ -362,7 +362,7 @@ class RowPainter {
     }
 
     void endPart() {
-        firstRow = -1;
+        firstRowIndex = -1;
         rowOffsets.clear();
     }
 }
