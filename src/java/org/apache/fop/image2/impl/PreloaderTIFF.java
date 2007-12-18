@@ -90,8 +90,17 @@ public class PreloaderTIFF extends AbstractImagePreloader {
         ImageInfo info = null;
         in.mark();
         try {
+            int pageIndex = ImageUtil.extractPageIndexFromURI(uri);
+            
             SeekableStream seekable = new SeekableStreamAdapter(in);
-            TIFFDirectory dir = new TIFFDirectory(seekable, 0);
+            TIFFDirectory dir;
+            try {
+                dir = new TIFFDirectory(seekable, pageIndex);
+            } catch (IllegalArgumentException iae) {
+                //Fall back to page 0
+                pageIndex = 0;
+                dir = new TIFFDirectory(seekable, pageIndex);
+            }
             int width = (int)dir.getFieldAsLong(TIFFImageDecoder.TIFF_IMAGE_WIDTH);
             int height = (int)dir.getFieldAsLong(TIFFImageDecoder.TIFF_IMAGE_LENGTH);
             ImageSize size = new ImageSize();

@@ -101,7 +101,7 @@ public class ImageLoaderImageIO extends AbstractImageLoader {
                     imgStream.mark();
                     ImageReadParam param = reader.getDefaultReadParam();
                     reader.setInput(imgStream, false, ignoreMetadata);
-                    final int pageIndex = 0; //Always the first page at the moment
+                    final int pageIndex = ImageUtil.extractPageIndexFromURI(info.getOriginalURI());
                     try {
                         if (ImageFlavor.BUFFERED_IMAGE.equals(this.targetFlavor)) {
                             imageData = reader.read(pageIndex, param);
@@ -112,6 +112,9 @@ public class ImageLoaderImageIO extends AbstractImageLoader {
                             iiometa = reader.getImageMetadata(pageIndex);
                         }
                         break; //Quit early, we have the image
+                    } catch (IndexOutOfBoundsException indexe) {
+                        throw new ImageException("Page does not exist. Invalid image index: "
+                                + pageIndex);
                     } catch (IIOException iioe) {
                         if (firstException == null) {
                             firstException = iioe;
