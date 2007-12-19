@@ -168,10 +168,7 @@ class RowPainter {
         //Add areas for row
         tclm.addRowBackgroundArea(rowFO, actualRowHeight, layoutContext.getRefIPD(), yoffset);
         for (int i = 0; i < primaryGridUnits.length; i++) {
-            GridUnit currentGU = lastRow.safelyGetGridUnit(i);
-            //currentGU can be null if there's no grid unit
-            //at this place in the current row (empty cell and no borders to process)
-            
+            GridUnit currentGU = lastRow.getGridUnit(i);            
             if (primaryGridUnits[i] != null) {
                 if (forcedFlush || ((end[i] == primaryGridUnits[i].getElements().size() - 1)
                         && currentGU.isLastGridUnitRowSpan())) {
