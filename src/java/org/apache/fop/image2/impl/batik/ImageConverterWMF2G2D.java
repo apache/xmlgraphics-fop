@@ -21,7 +21,6 @@ package org.apache.fop.image2.impl.batik;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Map;
 
@@ -87,15 +86,9 @@ public class ImageConverterWMF2G2D extends AbstractImageConverter {
             double h = area.getHeight();
             
             //Fit in paint area
-            Dimension2D imageSize = wmf.getSize().getDimensionPt();
-            double sx = w / imageSize.getWidth();
-            double sy = h / imageSize.getHeight();
-            if (sx != 1.0 || sy != 1.0) {
-                g2d.scale(sx, sy);
-            }
-            //Scale WMF to fit
-            sx = w / wmfStore.getWidthPixels();
-            sy = h / wmfStore.getHeightPixels();
+            g2d.translate(area.getX(), area.getY());
+            double sx = w / wmfStore.getWidthPixels();
+            double sy = h / wmfStore.getHeightPixels();
             if (sx != 1.0 || sy != 1.0) {
                 g2d.scale(sx, sy);
             }

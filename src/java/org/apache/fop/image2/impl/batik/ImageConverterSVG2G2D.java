@@ -91,6 +91,7 @@ public class ImageConverterSVG2G2D extends AbstractImageConverter {
                 float ih = (float) ctx.getDocumentSize().getHeight();
                 float w = (float) area.getWidth();
                 float h = (float) area.getHeight();
+                g2d.translate(area.getX(), area.getY());
                 g2d.scale(w / iw, h / ih);
 
                 root.paint(g2d);
