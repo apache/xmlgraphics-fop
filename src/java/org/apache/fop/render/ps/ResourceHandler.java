@@ -28,6 +28,19 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawCCITTFax;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawEPS;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawJPEG;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawStream;
+import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
+import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
+import org.apache.xmlgraphics.image.loader.util.ImageUtil;
 import org.apache.xmlgraphics.ps.DSCConstants;
 import org.apache.xmlgraphics.ps.FormGenerator;
 import org.apache.xmlgraphics.ps.ImageEncoder;
@@ -53,19 +66,6 @@ import org.apache.xmlgraphics.ps.dsc.tools.DSCTools;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.image2.ImageException;
-import org.apache.fop.image2.ImageFlavor;
-import org.apache.fop.image2.ImageInfo;
-import org.apache.fop.image2.ImageManager;
-import org.apache.fop.image2.ImageSessionContext;
-import org.apache.fop.image2.impl.ImageGraphics2D;
-import org.apache.fop.image2.impl.ImageRawCCITTFax;
-import org.apache.fop.image2.impl.ImageRawEPS;
-import org.apache.fop.image2.impl.ImageRawJPEG;
-import org.apache.fop.image2.impl.ImageRawStream;
-import org.apache.fop.image2.impl.ImageRendered;
-import org.apache.fop.image2.impl.ImageXMLDOM;
-import org.apache.fop.image2.util.ImageUtil;
 
 /**
  * This class is used when two-pass production is used to generate the PostScript file (setting
@@ -230,7 +230,7 @@ public class ResourceHandler implements DSCParserConstants, PSSupportedFlavors {
                     flavors = LEVEL_2_FLAVORS_FORM;
                 }
                 Map hints = ImageUtil.getDefaultHints(sessionContext);
-                org.apache.fop.image2.Image img = manager.getImage(
+                org.apache.xmlgraphics.image.loader.Image img = manager.getImage(
                         info, flavors, hints, sessionContext);
                 
                 String imageDescription = info.getMimeType() + " " + info.getOriginalURI();

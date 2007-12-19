@@ -42,6 +42,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
+import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
+import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
+import org.apache.xmlgraphics.image.loader.util.ImageUtil;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactoryConfigurator;
@@ -59,15 +69,6 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.Typeface;
-import org.apache.fop.image2.ImageException;
-import org.apache.fop.image2.ImageFlavor;
-import org.apache.fop.image2.ImageInfo;
-import org.apache.fop.image2.ImageManager;
-import org.apache.fop.image2.ImageSessionContext;
-import org.apache.fop.image2.impl.ImageGraphics2D;
-import org.apache.fop.image2.impl.ImageRendered;
-import org.apache.fop.image2.impl.ImageXMLDOM;
-import org.apache.fop.image2.util.ImageUtil;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
@@ -897,7 +898,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
                     ImageFlavor.RENDERED_IMAGE, 
                     ImageFlavor.XML_DOM};
             Map hints = ImageUtil.getDefaultHints(sessionContext);
-            org.apache.fop.image2.Image img = manager.getImage(
+            org.apache.xmlgraphics.image.loader.Image img = manager.getImage(
                     info, flavors, hints, sessionContext);
             if (img instanceof ImageGraphics2D) {
                 ImageGraphics2D imageG2D = (ImageGraphics2D)img;

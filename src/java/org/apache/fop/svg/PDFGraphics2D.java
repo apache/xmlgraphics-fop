@@ -62,6 +62,8 @@ import org.apache.batik.ext.awt.RadialGradientPaint;
 import org.apache.batik.ext.awt.RenderingHintsKeyExt;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.gvt.PatternPaint;
+
+import org.apache.xmlgraphics.image.loader.impl.ImageRawJPEG;
 import org.apache.xmlgraphics.java2d.AbstractGraphics2D;
 import org.apache.xmlgraphics.java2d.GraphicContext;
 
@@ -71,7 +73,6 @@ import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.LazyFont;
-import org.apache.fop.image2.impl.ImageRawJPEG;
 import org.apache.fop.pdf.BitmapImage;
 import org.apache.fop.pdf.PDFAnnotList;
 import org.apache.fop.pdf.PDFColor;

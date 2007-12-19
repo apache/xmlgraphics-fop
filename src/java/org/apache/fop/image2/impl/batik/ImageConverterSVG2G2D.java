@@ -29,16 +29,18 @@ import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.gvt.GraphicsNode;
-import org.apache.fop.image2.Image;
-import org.apache.fop.image2.ImageException;
-import org.apache.fop.image2.ImageFlavor;
-import org.apache.fop.image2.ImageProcessingHints;
-import org.apache.fop.image2.impl.AbstractImageConverter;
-import org.apache.fop.image2.impl.ImageGraphics2D;
-import org.apache.fop.image2.impl.ImageXMLDOM;
-import org.apache.fop.render.Graphics2DImagePainter;
+
+import org.apache.xmlgraphics.image.loader.Image;
+import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.ImageProcessingHints;
+import org.apache.xmlgraphics.image.loader.impl.AbstractImageConverter;
+import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
+import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
+import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
+import org.apache.xmlgraphics.util.UnitConv;
+
 import org.apache.fop.svg.SVGUserAgent;
-import org.apache.fop.util.UnitConv;
 
 /**
  * This ImageConverter converts SVG images to Java2D.

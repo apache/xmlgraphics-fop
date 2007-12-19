@@ -28,10 +28,11 @@ import java.io.IOException;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.xmlgraphics.java2d.GraphicContext;
+import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
 
 import org.apache.fop.render.AbstractGraphics2DAdapter;
-import org.apache.fop.render.Graphics2DImagePainter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.util.UnitConv;
 

@@ -23,9 +23,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.xmlgraphics.image.codec.tiff.TIFFImage;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawCCITTFax;
 import org.apache.xmlgraphics.ps.ImageEncoder;
-
-import org.apache.fop.image2.impl.ImageRawCCITTFax;
 
 /**
  * ImageEncoder implementation for CCITT encoded images.

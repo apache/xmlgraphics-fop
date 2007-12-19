@@ -21,6 +21,10 @@ package org.apache.fop.fo.properties;
 
 import java.awt.Color;
 
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.PercentBaseContext;
@@ -28,9 +32,6 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.image.ImageFactory;
-import org.apache.fop.image2.ImageInfo;
-import org.apache.fop.image2.ImageManager;
-import org.apache.fop.image2.ImageSessionContext;
 
 /**
  * Stores all common border and padding properties.

@@ -19,7 +19,7 @@
  
 package org.apache.fop.render.ps;
 
-import org.apache.fop.image2.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
 
 /**
  * Defines the set of supported ImageFlavors for the PostScript renderer.

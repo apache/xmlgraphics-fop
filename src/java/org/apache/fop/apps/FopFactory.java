@@ -40,13 +40,14 @@ import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.xmlgraphics.image.loader.ImageContext;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.ElementMappingRegistry;
 import org.apache.fop.fonts.FontCache;
 import org.apache.fop.hyphenation.HyphenationTreeResolver;
 import org.apache.fop.image.ImageFactory;
-import org.apache.fop.image2.ImageContext;
-import org.apache.fop.image2.ImageManager;
 import org.apache.fop.layoutmgr.LayoutManagerMaker;
 import org.apache.fop.render.RendererFactory;
 import org.apache.fop.render.XMLHandlerRegistry;

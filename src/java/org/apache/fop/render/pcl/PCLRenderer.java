@@ -45,7 +45,19 @@ import org.w3c.dom.Document;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.apache.xmlgraphics.image.loader.ImageSize;
+import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
+import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
+import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
+import org.apache.xmlgraphics.image.loader.util.ImageUtil;
 import org.apache.xmlgraphics.java2d.GraphicContext;
+import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.MimeConstants;
@@ -68,18 +80,7 @@ import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontMetrics;
-import org.apache.fop.image2.ImageException;
-import org.apache.fop.image2.ImageFlavor;
-import org.apache.fop.image2.ImageInfo;
-import org.apache.fop.image2.ImageManager;
-import org.apache.fop.image2.ImageSessionContext;
-import org.apache.fop.image2.ImageSize;
-import org.apache.fop.image2.impl.ImageGraphics2D;
-import org.apache.fop.image2.impl.ImageRendered;
-import org.apache.fop.image2.impl.ImageXMLDOM;
-import org.apache.fop.image2.util.ImageUtil;
 import org.apache.fop.render.Graphics2DAdapter;
-import org.apache.fop.render.Graphics2DImagePainter;
 import org.apache.fop.render.PrintRenderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.RendererContextConstants;
@@ -1043,7 +1044,7 @@ public class PCLRenderer extends PrintRenderer {
             
             //Only now fully load/prepare the image
             Map hints = ImageUtil.getDefaultHints(sessionContext);
-            org.apache.fop.image2.Image img = manager.getImage(
+            org.apache.xmlgraphics.image.loader.Image img = manager.getImage(
                     info, FLAVORS, hints, sessionContext);
             
             //...and process the image

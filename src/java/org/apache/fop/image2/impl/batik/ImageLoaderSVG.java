@@ -24,14 +24,14 @@ import java.util.Map;
 
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 
-import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.image2.Image;
-import org.apache.fop.image2.ImageException;
-import org.apache.fop.image2.ImageFlavor;
-import org.apache.fop.image2.ImageInfo;
-import org.apache.fop.image2.ImageSessionContext;
-import org.apache.fop.image2.impl.AbstractImageLoader;
-import org.apache.fop.image2.impl.ImageXMLDOM;
+import org.apache.xmlgraphics.image.loader.Image;
+import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.apache.xmlgraphics.image.loader.impl.AbstractImageLoader;
+import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
+import org.apache.xmlgraphics.util.MimeConstants;
 
 /**
  * ImageLoader for SVG (using Apache Batik).

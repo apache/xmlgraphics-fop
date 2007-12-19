@@ -20,20 +20,19 @@
 package org.apache.fop.image2;
 
 import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 
 import junit.framework.TestCase;
 
-import org.apache.commons.io.IOUtils;
+import org.apache.xmlgraphics.image.loader.Image;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
+import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
 import org.apache.xmlgraphics.image.writer.ImageWriterUtil;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
-import org.apache.fop.image2.impl.ImageRawStream;
-import org.apache.fop.image2.impl.ImageRendered;
-import org.apache.fop.image2.impl.ImageXMLDOM;
 
 /**
  * Tests for bundled ImageLoader implementations.
@@ -49,50 +48,6 @@ public class ImageLoaderTestCase extends TestCase {
         fopFactory = FopFactory.newInstance();
         fopFactory.setSourceResolution(72);
         fopFactory.setTargetResolution(300);
-    }
-    
-    public void testPNG() throws Exception {
-        String uri = "examples/fo/graphics/asf-logo.png";
-        
-        FOUserAgent userAgent = fopFactory.newFOUserAgent();
-        
-        ImageManager manager = fopFactory.getImageManager();
-        ImageInfo info = manager.preloadImage(uri, userAgent.getImageSessionContext());
-        assertNotNull("ImageInfo must not be null", info);
-        
-        Image img = manager.getImage(info, ImageFlavor.RENDERED_IMAGE, 
-                userAgent.getImageSessionContext());
-        assertNotNull("Image must not be null", img);
-        assertEquals(ImageFlavor.RENDERED_IMAGE, img.getFlavor());
-        ImageRendered imgRed = (ImageRendered)img;
-        assertNotNull(imgRed.getRenderedImage());
-        assertEquals(169, imgRed.getRenderedImage().getWidth());
-        assertEquals(51, imgRed.getRenderedImage().getHeight());
-        info = imgRed.getInfo(); //Switch to the ImageInfo returned by the image
-        assertEquals(126734, info.getSize().getWidthMpt());
-        assertEquals(38245, info.getSize().getHeightMpt());
-    }
-    
-    public void testGIF() throws Exception {
-        String uri = "test/resources/images/bgimg72dpi.gif";
-        
-        FOUserAgent userAgent = fopFactory.newFOUserAgent();
-        
-        ImageManager manager = fopFactory.getImageManager();
-        ImageInfo info = manager.preloadImage(uri, userAgent.getImageSessionContext());
-        assertNotNull("ImageInfo must not be null", info);
-        
-        Image img = manager.getImage(info, ImageFlavor.RENDERED_IMAGE, 
-                userAgent.getImageSessionContext());
-        assertNotNull("Image must not be null", img);
-        assertEquals(ImageFlavor.RENDERED_IMAGE, img.getFlavor());
-        ImageRendered imgRed = (ImageRendered)img;
-        assertNotNull(imgRed.getRenderedImage());
-        assertEquals(192, imgRed.getRenderedImage().getWidth());
-        assertEquals(192, imgRed.getRenderedImage().getHeight());
-        info = imgRed.getInfo(); //Switch to the ImageInfo returned by the image
-        assertEquals(192000, info.getSize().getWidthMpt());
-        assertEquals(192000, info.getSize().getHeightMpt());
     }
     
     public void testSVG() throws Exception {
@@ -158,62 +113,6 @@ public class ImageLoaderTestCase extends TestCase {
         info = imgRed.getInfo(); //Switch to the ImageInfo returned by the image
         assertEquals(792000, info.getSize().getWidthMpt());
         assertEquals(612000, info.getSize().getHeightMpt());
-    }
- 
-    public void testEPSASCII() throws Exception {
-        String uri = "test/resources/images/barcode.eps";
-        
-        FOUserAgent userAgent = fopFactory.newFOUserAgent();
-        
-        ImageManager manager = fopFactory.getImageManager();
-        ImageInfo info = manager.preloadImage(uri, userAgent.getImageSessionContext());
-        assertNotNull("ImageInfo must not be null", info);
-        
-        Image img = manager.getImage(info, ImageFlavor.RAW_EPS,
-                userAgent.getImageSessionContext());
-        assertNotNull("Image must not be null", img);
-        assertEquals(ImageFlavor.RAW_EPS, img.getFlavor());
-        ImageRawStream imgEPS = (ImageRawStream)img;
-        InputStream in = imgEPS.createInputStream();
-        try {
-            assertNotNull(in);
-            Reader reader = new InputStreamReader(in, "US-ASCII");
-            char[] c = new char[4];
-            reader.read(c);
-            if (!("%!PS".equals(new String(c)))) {
-                fail("EPS header expected");
-            }
-        } finally {
-            IOUtils.closeQuietly(in);
-        }
-    }
- 
-    public void testEPSBinary() throws Exception {
-        String uri = "test/resources/images/img-with-tiff-preview.eps";
-        
-        FOUserAgent userAgent = fopFactory.newFOUserAgent();
-        
-        ImageManager manager = fopFactory.getImageManager();
-        ImageInfo info = manager.preloadImage(uri, userAgent.getImageSessionContext());
-        assertNotNull("ImageInfo must not be null", info);
-        
-        Image img = manager.getImage(info, ImageFlavor.RAW_EPS,
-                userAgent.getImageSessionContext());
-        assertNotNull("Image must not be null", img);
-        assertEquals(ImageFlavor.RAW_EPS, img.getFlavor());
-        ImageRawStream imgEPS = (ImageRawStream)img;
-        InputStream in = imgEPS.createInputStream();
-        try {
-            assertNotNull(in);
-            Reader reader = new InputStreamReader(in, "US-ASCII");
-            char[] c = new char[4];
-            reader.read(c);
-            if (!("%!PS".equals(new String(c)))) {
-                fail("EPS header expected");
-            }
-        } finally {
-            IOUtils.closeQuietly(in);
-        }
     }
  
 }

@@ -21,7 +21,8 @@ package org.apache.fop.render.pdf;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.fop.image2.impl.ImageRawJPEG;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawJPEG;
+
 import org.apache.fop.pdf.DCTFilter;
 import org.apache.fop.pdf.PDFDeviceColorSpace;
 import org.apache.fop.pdf.PDFDocument;

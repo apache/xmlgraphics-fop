@@ -27,9 +27,10 @@ import java.io.OutputStream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
 import org.apache.xmlgraphics.ps.ImageEncodingHelper;
 
-import org.apache.fop.image2.impl.ImageRendered;
 import org.apache.fop.pdf.AlphaRasterImage;
 import org.apache.fop.pdf.PDFArray;
 import org.apache.fop.pdf.PDFColor;

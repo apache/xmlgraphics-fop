@@ -22,13 +22,13 @@ package org.apache.fop.mathml;
 import java.io.IOException;
 import java.util.Map;
 
-import org.apache.fop.image2.Image;
-import org.apache.fop.image2.ImageException;
-import org.apache.fop.image2.ImageFlavor;
-import org.apache.fop.image2.ImageInfo;
-import org.apache.fop.image2.ImageSessionContext;
-import org.apache.fop.image2.impl.AbstractImageLoader;
-import org.apache.fop.image2.impl.ImageGraphics2D;
+import org.apache.xmlgraphics.image.loader.Image;
+import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.apache.xmlgraphics.image.loader.impl.AbstractImageLoader;
+import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
 
 /**
  * ImageLoader for MathML (using JEuclid).

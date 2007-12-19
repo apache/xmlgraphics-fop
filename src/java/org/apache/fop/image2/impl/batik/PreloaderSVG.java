@@ -37,13 +37,14 @@ import org.apache.batik.dom.svg.SVGOMDocument;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.image2.ImageContext;
-import org.apache.fop.image2.ImageInfo;
-import org.apache.fop.image2.ImageSize;
-import org.apache.fop.image2.impl.AbstractImagePreloader;
-import org.apache.fop.image2.impl.ImageXMLDOM;
-import org.apache.fop.image2.util.ImageUtil;
+import org.apache.xmlgraphics.image.loader.ImageContext;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageSize;
+import org.apache.xmlgraphics.image.loader.impl.AbstractImagePreloader;
+import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
+import org.apache.xmlgraphics.image.loader.util.ImageUtil;
+import org.apache.xmlgraphics.util.MimeConstants;
+
 import org.apache.fop.svg.SVGUserAgent;
 import org.apache.fop.util.UnclosableInputStream;
 

@@ -23,8 +23,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.xmlgraphics.image.codec.tiff.TIFFImage;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawCCITTFax;
 
-import org.apache.fop.image2.impl.ImageRawCCITTFax;
 import org.apache.fop.pdf.CCFFilter;
 import org.apache.fop.pdf.PDFDeviceColorSpace;
 import org.apache.fop.pdf.PDFDictionary;

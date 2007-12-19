@@ -27,6 +27,8 @@ import java.util.Map;
 
 import org.w3c.dom.Document;
 
+import org.apache.xmlgraphics.image.loader.ImageSize;
+
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.BlockViewport;
@@ -38,7 +40,6 @@ import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.FontMetrics;
-import org.apache.fop.image2.ImageSize;
 import org.apache.fop.traits.BorderProps;
 
 /**

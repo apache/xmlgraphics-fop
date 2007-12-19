@@ -27,10 +27,10 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.xmlgraphics.util.Service;
 
-import org.apache.fop.image2.Image;
-import org.apache.fop.image2.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.Image;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.util.Service;
 
 /**
  * This class holds references to various image handlers used by the PDF renderer. It also

@@ -32,15 +32,15 @@ import org.apache.batik.gvt.AbstractGraphicsNode;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.util.ParsedURL;
 
-import org.apache.fop.image2.Image;
-import org.apache.fop.image2.ImageException;
-import org.apache.fop.image2.ImageFlavor;
-import org.apache.fop.image2.ImageInfo;
-import org.apache.fop.image2.ImageManager;
-import org.apache.fop.image2.ImageSessionContext;
-import org.apache.fop.image2.impl.ImageGraphics2D;
-import org.apache.fop.image2.impl.ImageRawJPEG;
-import org.apache.fop.image2.impl.ImageXMLDOM;
+import org.apache.xmlgraphics.image.loader.Image;
+import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawJPEG;
+import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
 
 /**
  * Bridge class for the &lt;image> element when jpeg images.
