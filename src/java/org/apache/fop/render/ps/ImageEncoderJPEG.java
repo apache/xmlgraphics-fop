@@ -22,9 +22,8 @@ package org.apache.fop.render.ps;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.xmlgraphics.image.loader.impl.ImageRawJPEG;
 import org.apache.xmlgraphics.ps.ImageEncoder;
-
-import org.apache.fop.image2.impl.ImageRawJPEG;
 
 /**
  * ImageEncoder implementation for JPEG images.

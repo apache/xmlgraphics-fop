@@ -19,10 +19,10 @@
 
 package org.apache.fop.image2.impl.batik;
 
-import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.image2.ImageFlavor;
-import org.apache.fop.image2.impl.AbstractImageLoaderFactory;
-import org.apache.fop.image2.spi.ImageLoader;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.impl.AbstractImageLoaderFactory;
+import org.apache.xmlgraphics.image.loader.spi.ImageLoader;
+import org.apache.xmlgraphics.util.MimeConstants;
 
 /**
  * Factory class for the ImageLoader for SVG.

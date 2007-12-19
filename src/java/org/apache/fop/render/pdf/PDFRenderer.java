@@ -40,6 +40,12 @@ import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.IOUtils;
+
+import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.apache.xmlgraphics.image.loader.util.ImageUtil;
 import org.apache.xmlgraphics.xmp.Metadata;
 import org.apache.xmlgraphics.xmp.schemas.XMPBasicAdapter;
 import org.apache.xmlgraphics.xmp.schemas.XMPBasicSchema;
@@ -72,11 +78,6 @@ import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fo.extensions.xmp.XMPMetadata;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.Typeface;
-import org.apache.fop.image2.ImageException;
-import org.apache.fop.image2.ImageInfo;
-import org.apache.fop.image2.ImageManager;
-import org.apache.fop.image2.ImageSessionContext;
-import org.apache.fop.image2.util.ImageUtil;
 import org.apache.fop.pdf.PDFAMode;
 import org.apache.fop.pdf.PDFAction;
 import org.apache.fop.pdf.PDFAnnotList;
@@ -1703,7 +1704,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
             
             
             Map hints = ImageUtil.getDefaultHints(sessionContext);
-            org.apache.fop.image2.Image img = manager.getImage(
+            org.apache.xmlgraphics.image.loader.Image img = manager.getImage(
                         info, imageHandlerRegistry.getSupportedFlavors(), hints, sessionContext);
             
             //First check for a dynamically registered handler

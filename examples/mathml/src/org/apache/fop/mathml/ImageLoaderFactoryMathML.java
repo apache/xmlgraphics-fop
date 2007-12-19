@@ -19,9 +19,9 @@
 
 package org.apache.fop.mathml;
 
-import org.apache.fop.image2.ImageFlavor;
-import org.apache.fop.image2.impl.AbstractImageLoaderFactory;
-import org.apache.fop.image2.spi.ImageLoader;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.impl.AbstractImageLoaderFactory;
+import org.apache.xmlgraphics.image.loader.spi.ImageLoader;
 
 /**
  * Factory class for the ImageLoader for MathML.

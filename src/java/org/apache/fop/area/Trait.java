@@ -22,9 +22,10 @@ package org.apache.fop.area;
 import java.awt.Color;
 import java.io.Serializable;
 
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.FontTriplet;
-import org.apache.fop.image2.ImageInfo;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.util.ColorUtil;
 

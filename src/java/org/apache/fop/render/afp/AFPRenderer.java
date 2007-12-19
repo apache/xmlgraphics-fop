@@ -37,7 +37,18 @@ import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
+
 import org.apache.xmlgraphics.image.codec.tiff.TIFFImage;
+import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawCCITTFax;
+import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
+import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
+import org.apache.xmlgraphics.image.loader.util.ImageUtil;
 import org.apache.xmlgraphics.ps.ImageEncodingHelper;
 
 import org.apache.fop.apps.FOUserAgent;
@@ -64,16 +75,6 @@ import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.base14.Courier;
 import org.apache.fop.fonts.base14.Helvetica;
 import org.apache.fop.fonts.base14.TimesRoman;
-import org.apache.fop.image2.ImageException;
-import org.apache.fop.image2.ImageFlavor;
-import org.apache.fop.image2.ImageInfo;
-import org.apache.fop.image2.ImageManager;
-import org.apache.fop.image2.ImageSessionContext;
-import org.apache.fop.image2.impl.ImageGraphics2D;
-import org.apache.fop.image2.impl.ImageRawCCITTFax;
-import org.apache.fop.image2.impl.ImageRendered;
-import org.apache.fop.image2.impl.ImageXMLDOM;
-import org.apache.fop.image2.util.ImageUtil;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
@@ -781,7 +782,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                 
                 //Only now fully load/prepare the image
                 Map hints = ImageUtil.getDefaultHints(sessionContext);
-                org.apache.fop.image2.Image img = manager.getImage(
+                org.apache.xmlgraphics.image.loader.Image img = manager.getImage(
                         info, FLAVORS, hints, sessionContext);
                 
                 //...and process the image

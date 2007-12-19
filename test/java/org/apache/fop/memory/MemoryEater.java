@@ -36,6 +36,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.output.NullOutputStream;
 
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
@@ -54,6 +55,8 @@ public class MemoryEater {
         File xsltFile = new File("test/xsl/fo-replicator.xsl");
         Source xslt = new StreamSource(xsltFile);
         replicatorTemplates = tFactory.newTemplates(xslt);
+        
+        //fopFactory.setBaseURL("C:/Dev/FOP/testing/xslt-1.0-book");
     }
     
     private void eatMemory(File foFile, int replicatorRepeats) throws Exception {
@@ -63,7 +66,9 @@ public class MemoryEater {
         transformer.setParameter("repeats", new Integer(replicatorRepeats));
         
         OutputStream out = new NullOutputStream(); //write to /dev/nul
-        Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, out);
+        FOUserAgent userAgent = fopFactory.newFOUserAgent();
+        userAgent.setBaseURL(foFile.getParentFile().toURL().toExternalForm());
+        Fop fop = fopFactory.newFop(MimeConstants.MIME_POSTSCRIPT, out);
         Result res = new SAXResult(fop.getDefaultHandler());
         
         transformer.transform(src, res);
@@ -94,6 +99,7 @@ public class MemoryEater {
                 runRepeats = Integer.parseInt(args[1]);
             }
             File testFile = new File("examples/fo/basic/readme.fo");
+            testFile = new File("C:/Dev/FOP/temp/image-cache-test.fo");
             
             System.out.println("MemoryEater! About to replicate the test file " 
                     + replicatorRepeats + " times and run it " + runRepeats + " times...");

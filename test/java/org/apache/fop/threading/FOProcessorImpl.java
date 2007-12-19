@@ -42,8 +42,6 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.image2.cache.ImageCacheLoggingStatistics;
-import org.apache.fop.image2.cache.ImageCacheStatistics;
 
 /**
  * Default implementation of the FOProcessor interface using FOP.
@@ -70,8 +68,6 @@ public class FOProcessorImpl extends AbstractLogEnabled
             getLogger().debug("Setting user config: " + userconfig);
             fopFactory.setUserConfig(this.userconfig);
         }
-        ImageCacheStatistics stats = new ImageCacheLoggingStatistics(true);
-        fopFactory.getImageManager().getCache().setCacheListener(stats);
     }
 
     /** {@inheritDoc} */

@@ -21,9 +21,9 @@ package org.apache.fop.image2.impl.batik;
 
 import org.apache.batik.transcoder.wmf.tosvg.WMFRecordStore;
 
-import org.apache.fop.image2.ImageFlavor;
-import org.apache.fop.image2.ImageInfo;
-import org.apache.fop.image2.impl.AbstractImage;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.impl.AbstractImage;
 
 /**
  * This class is an implementation of the Image interface exposing a RenderedImage.

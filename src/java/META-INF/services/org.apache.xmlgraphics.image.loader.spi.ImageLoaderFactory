@@ -1,0 +1,2 @@
+org.apache.fop.image2.impl.batik.ImageLoaderFactorySVG
+org.apache.fop.image2.impl.batik.ImageLoaderFactoryWMF

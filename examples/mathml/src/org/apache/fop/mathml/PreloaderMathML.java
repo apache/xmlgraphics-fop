@@ -38,14 +38,15 @@ import net.sourceforge.jeuclid.SAXMathBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.fop.image2.Image;
-import org.apache.fop.image2.ImageContext;
-import org.apache.fop.image2.ImageInfo;
-import org.apache.fop.image2.ImageSize;
-import org.apache.fop.image2.impl.AbstractImagePreloader;
-import org.apache.fop.image2.impl.ImageGraphics2D;
-import org.apache.fop.image2.util.ImageUtil;
-import org.apache.fop.render.Graphics2DImagePainter;
+import org.apache.xmlgraphics.image.loader.Image;
+import org.apache.xmlgraphics.image.loader.ImageContext;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageSize;
+import org.apache.xmlgraphics.image.loader.impl.AbstractImagePreloader;
+import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
+import org.apache.xmlgraphics.image.loader.util.ImageUtil;
+import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
+
 import org.apache.fop.util.UnclosableInputStream;
 
 /**

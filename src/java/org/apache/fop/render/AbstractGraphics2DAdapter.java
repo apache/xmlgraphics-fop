@@ -50,7 +50,8 @@ public abstract class AbstractGraphics2DAdapter implements Graphics2DAdapter {
      * @param withAlpha true if an alpha channel should be created
      * @return the generated BufferedImage
      */
-    protected BufferedImage paintToBufferedImage(Graphics2DImagePainter painter, 
+    protected BufferedImage paintToBufferedImage(
+            org.apache.xmlgraphics.java2d.Graphics2DImagePainter painter, 
              RendererContextWrapper context, int resolution, boolean gray, boolean withAlpha) {
         int bmw = (int)Math.ceil(UnitConv.mpt2px(context.getWidth(), resolution));
         int bmh = (int)Math.ceil(UnitConv.mpt2px(context.getHeight(), resolution));

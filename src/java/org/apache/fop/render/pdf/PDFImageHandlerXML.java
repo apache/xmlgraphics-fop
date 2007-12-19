@@ -26,9 +26,10 @@ import java.util.Map;
 
 import org.w3c.dom.Document;
 
-import org.apache.fop.image2.Image;
-import org.apache.fop.image2.ImageFlavor;
-import org.apache.fop.image2.impl.ImageXMLDOM;
+import org.apache.xmlgraphics.image.loader.Image;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
+
 import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.render.RendererContext;
 

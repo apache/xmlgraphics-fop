@@ -45,12 +45,13 @@ import org.apache.batik.transcoder.keys.BooleanKey;
 import org.apache.batik.transcoder.keys.FloatKey;
 import org.apache.batik.util.ParsedURL;
 
+import org.apache.xmlgraphics.image.loader.ImageContext;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.apache.xmlgraphics.image.loader.impl.AbstractImageSessionContext;
+
 import org.apache.fop.Version;
 import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.image2.ImageContext;
-import org.apache.fop.image2.ImageManager;
-import org.apache.fop.image2.ImageSessionContext;
-import org.apache.fop.image2.impl.AbstractImageSessionContext;
 
 /**
  * This class enables to transcode an input to a pdf document.

@@ -23,9 +23,10 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.IOException;
 
-import org.apache.fop.image2.Image;
-import org.apache.fop.image2.ImageFlavor;
-import org.apache.fop.image2.impl.ImageGraphics2D;
+import org.apache.xmlgraphics.image.loader.Image;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
+
 import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.render.RendererContext;
 

@@ -23,6 +23,10 @@ import java.io.IOException;
 
 import org.xml.sax.Locator;
 
+import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.datatypes.Length;
@@ -31,9 +35,6 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.FixedLength;
-import org.apache.fop.image2.ImageException;
-import org.apache.fop.image2.ImageInfo;
-import org.apache.fop.image2.ImageManager;
 
 /**
  * Class modelling the fo:external-graphic object.

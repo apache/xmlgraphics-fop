@@ -24,7 +24,8 @@ import java.awt.color.ICC_Profile;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.fop.image2.Image;
+import org.apache.xmlgraphics.image.loader.Image;
+
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.pdf.PDFConformanceException;
 import org.apache.fop.pdf.PDFDeviceColorSpace;

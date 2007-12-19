@@ -30,11 +30,11 @@ import org.apache.batik.transcoder.wmf.tosvg.WMFRecordStore;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.fop.image2.Image;
-import org.apache.fop.image2.ImageFlavor;
-import org.apache.fop.image2.impl.AbstractImageConverter;
-import org.apache.fop.image2.impl.ImageGraphics2D;
-import org.apache.fop.render.Graphics2DImagePainter;
+import org.apache.xmlgraphics.image.loader.Image;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.impl.AbstractImageConverter;
+import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
+import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
 
 /**
  * This ImageConverter converts WMF (Windows Metafile) images (represented by Batik's
