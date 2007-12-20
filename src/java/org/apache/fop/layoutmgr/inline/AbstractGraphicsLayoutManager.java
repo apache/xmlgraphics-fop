@@ -104,21 +104,45 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
         int cheight = -1;
         len = fobj.getContentWidth();
         if (len.getEnum() != EN_AUTO) {
-            if (len.getEnum() == EN_SCALE_TO_FIT) {
+            switch (len.getEnum()) {
+            case EN_SCALE_TO_FIT:
                 if (ipd != -1) {
                     cwidth = ipd;
                 }
-            } else {
+                break;
+            case EN_SCALE_DOWN_TO_FIT:
+                if (ipd != -1 && fobj.getIntrinsicWidth() > ipd) {
+                    cwidth = ipd;
+                }
+                break;
+            case EN_SCALE_UP_TO_FIT:
+                if (ipd != -1 && fobj.getIntrinsicWidth() < ipd) {
+                    cwidth = ipd;
+                }
+                break;
+            default:
                 cwidth = len.getValue(this);
             }
         }
         len = fobj.getContentHeight();
         if (len.getEnum() != EN_AUTO) {
-            if (len.getEnum() == EN_SCALE_TO_FIT) {
+            switch (len.getEnum()) {
+            case EN_SCALE_TO_FIT:
                 if (bpd != -1) {
                     cheight = bpd;
                 }
-            } else {
+                break;
+            case EN_SCALE_DOWN_TO_FIT:
+                if (bpd != -1 && fobj.getIntrinsicHeight() > bpd) {
+                    cheight = bpd;
+                }
+                break;
+            case EN_SCALE_UP_TO_FIT:
+                if (bpd != -1 && fobj.getIntrinsicHeight() < bpd) {
+                    cheight = bpd;
+                }
+                break;
+            default:
                 cheight = len.getValue(this);
             }
         }

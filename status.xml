@@ -28,6 +28,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="add">
+        Added support for scale-down-to-fit and scale-up-to-fit (introduced in XSL 1.1).
+      </action>
       <action context="Code" dev="VH" type="fix" fixes-bug="43633">
         Bugfix: content of a row with zero height overriding the previous row
       </action>

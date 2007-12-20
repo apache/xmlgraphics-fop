@@ -25,13 +25,13 @@ import java.util.Map;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.flow.table.TableFObj.ColumnNumberPropertyMaker;
 import org.apache.fop.fo.properties.BackgroundPositionShorthandParser;
 import org.apache.fop.fo.properties.BorderSpacingShorthandParser;
 import org.apache.fop.fo.properties.BorderWidthPropertyMaker;
 import org.apache.fop.fo.properties.BoxPropShorthandParser;
 import org.apache.fop.fo.properties.CharacterProperty;
 import org.apache.fop.fo.properties.ColorProperty;
-import org.apache.fop.fo.flow.table.TableFObj.ColumnNumberPropertyMaker;
 import org.apache.fop.fo.properties.CondLengthProperty;
 import org.apache.fop.fo.properties.CorrespondingPropertyMaker;
 import org.apache.fop.fo.properties.DimensionPropertyMaker;
@@ -1353,6 +1353,8 @@ public final class FOPropertyMapping implements Constants {
         l.setInherited(false);
         l.addEnum("auto", getEnumProperty(EN_AUTO, "AUTO"));
         l.addEnum("scale-to-fit", getEnumProperty(EN_SCALE_TO_FIT, "SCALE_TO_FIT"));
+        l.addEnum("scale-down-to-fit", getEnumProperty(EN_SCALE_DOWN_TO_FIT, "SCALE_DOWN_TO_FIT"));
+        l.addEnum("scale-up-to-fit", getEnumProperty(EN_SCALE_UP_TO_FIT, "SCALE_UP_TO_FIT"));
         l.setDefault("auto");
         l.setPercentBase(LengthBase.IMAGE_INTRINSIC_HEIGHT);
         addPropertyMaker("content-height", l);
@@ -1362,6 +1364,8 @@ public final class FOPropertyMapping implements Constants {
         l.setInherited(false);
         l.addEnum("auto", getEnumProperty(EN_AUTO, "AUTO"));
         l.addEnum("scale-to-fit", getEnumProperty(EN_SCALE_TO_FIT, "SCALE_TO_FIT"));
+        l.addEnum("scale-down-to-fit", getEnumProperty(EN_SCALE_DOWN_TO_FIT, "SCALE_DOWN_TO_FIT"));
+        l.addEnum("scale-up-to-fit", getEnumProperty(EN_SCALE_UP_TO_FIT, "SCALE_UP_TO_FIT"));
         l.setDefault("auto");
         l.setPercentBase(LengthBase.IMAGE_INTRINSIC_WIDTH);
         addPropertyMaker("content-width", l);
@@ -2223,6 +2227,7 @@ public final class FOPropertyMapping implements Constants {
         m.addEnum("last", getEnumProperty(EN_LAST, "LAST"));
         m.addEnum("rest", getEnumProperty(EN_REST, "REST"));
         m.addEnum("any", getEnumProperty(EN_ANY, "ANY"));
+        m.addEnum("only", getEnumProperty(EN_ONLY, "ONLY")); //XSL 1.1
         m.setDefault("any");
         addPropertyMaker("page-position", m);
 
