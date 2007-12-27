@@ -173,7 +173,7 @@ public class RenderPagesModel extends AreaTreeModel {
                     }
                 } catch (Exception e) {
                     // use error handler to handle this FOP or IO Exception
-                    log.error(e);
+                    log.error("Error while rendering page " + pageViewport.getPageIndex(), e);
                     if (e instanceof RuntimeException) {
                         throw (RuntimeException)e;
                     }

@@ -17,109 +17,99 @@
 
 /* $Id$ */
 
-package org.apache.fop.fo.flow;
+package org.apache.fop.fo.extensions;
+
+import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.GraphicsProperties;
 import org.apache.fop.fo.PropertyList;
-import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.pagination.AbstractPageSequence;
 import org.apache.fop.fo.properties.LengthRangeProperty;
-import org.apache.fop.fo.properties.SpaceProperty;
 
 /**
- * Common base class for instream-foreign-object and external-graphics
- * flow formatting objects.
+ * Class for the fox:external-document extenstion element.
  */
-public abstract class AbstractGraphics extends FObj implements GraphicsProperties {
-    
-    // The value of properties relevant for fo:instream-foreign-object
-    // and external-graphics.
-    private CommonBorderPaddingBackground commonBorderPaddingBackground;
-    private Length alignmentAdjust;
-    private int alignmentBaseline;
-    private Length baselineShift;
+public class ExternalDocument extends AbstractPageSequence implements GraphicsProperties {
+
+    // The value of properties relevant for fox:external-document
     private LengthRangeProperty blockProgressionDimension;
-    // private ToBeImplementedProperty clip;
     private Length contentHeight;
     private Length contentWidth;
     private int displayAlign;
-    private int dominantBaseline;
     private Length height;
-    private String id;
     private LengthRangeProperty inlineProgressionDimension;
-    private SpaceProperty lineHeight;
     private int overflow;
     private int scaling;
+    private String src;
     private int textAlign;
     private Length width;
     // Unused but valid items, commented out for performance:
     //     private CommonAccessibility commonAccessibility;
     //     private CommonAural commonAural;
-    //     private CommonMarginInline commonMarginInline;
-    //     private CommonRelativePosition commonRelativePosition;
     //     private String contentType;
-    //     private KeepProperty keepWithNext;
-    //     private KeepProperty keepWithPrevious;
     //     private int scalingMethod;
     // End of property values
 
-
-
     /**
-     * constructs an instream-foreign-object object (called by Maker).
-     *
+     * Constructs a ExternalDocument object (called by Maker).
      * @param parent the parent formatting object
      */
-    public AbstractGraphics(FONode parent) {
+    public ExternalDocument(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
-        commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
-        alignmentAdjust = pList.get(PR_ALIGNMENT_ADJUST).getLength();
-        alignmentBaseline = pList.get(PR_ALIGNMENT_BASELINE).getEnum();
-        baselineShift = pList.get(PR_BASELINE_SHIFT).getLength();
+        super.bind(pList);
         blockProgressionDimension = pList.get(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange();
-        // clip = pList.get(PR_CLIP);
         contentHeight = pList.get(PR_CONTENT_HEIGHT).getLength();
         contentWidth = pList.get(PR_CONTENT_WIDTH).getLength();
         displayAlign = pList.get(PR_DISPLAY_ALIGN).getEnum();
-        dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
         height = pList.get(PR_HEIGHT).getLength();
-        id = pList.get(PR_ID).getString();
         inlineProgressionDimension = pList.get(PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
-        lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
         overflow = pList.get(PR_OVERFLOW).getEnum();
         scaling = pList.get(PR_SCALING).getEnum();
         textAlign = pList.get(PR_TEXT_ALIGN).getEnum();
         width = pList.get(PR_WIDTH).getLength();
+        src = pList.get(PR_SRC).getString();
+        
+        if (this.src == null || this.src.length() == 0) {
+            missingPropertyError("src");
+        }
+    }
+
+    protected void startOfNode() throws FOPException {
+        super.startOfNode();
+        getFOEventHandler().startExternalDocument(this);
     }
 
     /**
-     * @return the "id" property.
+     * @see org.apache.fop.fo.FONode#endOfNode
      */
-    public String getId() {
-        return id;
+    protected void endOfNode() throws FOPException {
+        getFOEventHandler().endExternalDocument(this);
+        super.endOfNode();
     }
 
     /**
-     * @return the Common Border, Padding, and Background Properties.
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+        XSL/FOP: empty
      */
-    public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
-        return commonBorderPaddingBackground;
+    protected void validateChildNode(Locator loc, String nsURI, String localName)
+        throws ValidationException {
+            invalidChildError(loc, nsURI, localName);
     }
 
     /**
-     * @return the "line-height" property.
+     * Returns the src attribute (the URI to the embedded document).
+     * @return the src attribute
      */
-    public SpaceProperty getLineHeight() {
-        return lineHeight;
+    public String getSrc() {
+        return this.src;
     }
 
     /** {@inheritDoc} */
@@ -132,16 +122,12 @@ public abstract class AbstractGraphics extends FObj implements GraphicsPropertie
         return blockProgressionDimension;
     }
 
-    /**
-     * @return the "height" property.
-     */
+    /** {@inheritDoc} */
     public Length getHeight() {
         return height;
     }
 
-    /**
-     * @return the "width" property.
-     */
+    /** {@inheritDoc} */
     public Length getWidth() {
         return width;
     }
@@ -176,52 +162,20 @@ public abstract class AbstractGraphics extends FObj implements GraphicsPropertie
         return textAlign;
     }
 
-    /**
-     * @return the "alignment-adjust" property
-     */
-    public Length getAlignmentAdjust() {
-        if (alignmentAdjust.getEnum() == EN_AUTO) {
-            final Length intrinsicAlignmentAdjust = this.getIntrinsicAlignmentAdjust();
-            if (intrinsicAlignmentAdjust != null) {
-                return intrinsicAlignmentAdjust;
-            }
-        }
-        return alignmentAdjust;
+    /** @see org.apache.fop.fo.FONode#getNamespaceURI() */
+    public String getNamespaceURI() {
+        return ExtensionElementMapping.URI;
     }
-    
-    /**
-     * @return the "alignment-baseline" property
-     */
-    public int getAlignmentBaseline() {
-        return alignmentBaseline;
-    }
-    
-    /**
-     * @return the "baseline-shift" property
-     */
-    public Length getBaselineShift() {
-        return baselineShift;
-    }
-    
-    /**
-     * @return the "dominant-baseline" property
-     */
-    public int getDominantBaseline() {
-        return dominantBaseline;
-    }
-    
-    /**
-     * @return the graphics intrinsic width in millipoints
-     */
-    public abstract int getIntrinsicWidth();
 
-    /**
-     * @return the graphics intrinsic height in millipoints
-     */
-    public abstract int getIntrinsicHeight();
+    /** @see org.apache.fop.fo.FONode#getNormalNamespacePrefix() */
+    public String getNormalNamespacePrefix() {
+        return "fox";
+    }
 
-    /**
-     * @return the graphics intrinsic alignment-adjust
-     */
-    public abstract Length getIntrinsicAlignmentAdjust();
+    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    public String getLocalName() {
+        return "external-document";
+    }
+
 }
+

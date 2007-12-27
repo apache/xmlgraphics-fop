@@ -49,6 +49,7 @@ public class RepeatablePageMasterAlternatives extends FObj
 
     private List conditionalPageMasterRefs;
     private boolean hasPagePositionLast = false;
+    private boolean hasPagePositionOnly = false;
 
     /**
      * @see org.apache.fop.fo.FONode#FONode(FONode)
@@ -124,6 +125,7 @@ public class RepeatablePageMasterAlternatives extends FObj
     public String getNextPageMasterName(boolean isOddPage,
                                         boolean isFirstPage,
                                         boolean isLastPage,
+                                        boolean isOnlyPage,
                                         boolean isBlankPage) {
         if (getMaximumRepeats() != INFINITE) {
             if (numberConsumed < getMaximumRepeats()) {
@@ -138,7 +140,7 @@ public class RepeatablePageMasterAlternatives extends FObj
         for (int i = 0; i < conditionalPageMasterRefs.size(); i++) {
             ConditionalPageMasterReference cpmr
                 = (ConditionalPageMasterReference)conditionalPageMasterRefs.get(i);
-            if (cpmr.isValid(isOddPage, isFirstPage, isLastPage, isBlankPage)) {
+            if (cpmr.isValid(isOddPage, isFirstPage, isLastPage, isOnlyPage, isBlankPage)) {
                 return cpmr.getMasterReference();
             }
         }
@@ -154,6 +156,9 @@ public class RepeatablePageMasterAlternatives extends FObj
         this.conditionalPageMasterRefs.add(cpmr);
         if (cpmr.getPagePosition() == EN_LAST) {
             this.hasPagePositionLast = true;
+        }
+        if (cpmr.getPagePosition() == EN_ONLY) {
+            this.hasPagePositionOnly = true;
         }
     }
 
@@ -178,6 +183,12 @@ public class RepeatablePageMasterAlternatives extends FObj
     }
     
     /** {@inheritDoc} */
+    /** @see org.apache.fop.fo.pagination.SubSequenceSpecifier#hasPagePositionOnly() */
+    public boolean hasPagePositionOnly() {
+        return this.hasPagePositionOnly;
+    }
+    
+    /** @see org.apache.fop.fo.FONode#getLocalName() */
     public String getLocalName() {
         return "repeatable-page-master-alternatives";
     }

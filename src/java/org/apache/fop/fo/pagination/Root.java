@@ -25,6 +25,7 @@ import java.util.List;
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
@@ -85,7 +86,7 @@ public class Root extends FObj {
     protected void endOfNode() throws FOPException {
         if (!pageSequenceFound || layoutMasterSet == null) {
             missingChildElementError("(layout-master-set, declarations?, " + 
-                "bookmark-tree?, page-sequence+)");
+                "bookmark-tree?, (page-sequence+|fox:external-document))");
         }
     }
 
@@ -129,7 +130,21 @@ public class Root extends FObj {
                 invalidChildError(loc, nsURI, localName);
             }
         } else {
-            invalidChildError(loc, nsURI, localName);
+            if (FOX_URI.equals(nsURI)) {
+                if ("external-document".equals(localName)) {
+                    pageSequenceFound = true;
+                }
+            }
+            //invalidChildError(loc, nsURI, localName);
+            //Ignore non-FO elements under root
+        }
+    }
+    
+
+    /** @inheritDoc */
+    protected void validateChildNode(Locator loc, FONode child) throws ValidationException {
+        if (child instanceof AbstractPageSequence) {
+            pageSequenceFound = true;
         }
     }
 

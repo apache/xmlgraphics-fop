@@ -387,7 +387,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
             if (pos instanceof TableContentPosition) {
                 TableContentPosition tcpos = (TableContentPosition)pos;
                 lst.add(tcpos);
-                GridUnitPart part = (GridUnitPart)tcpos.gridUnitParts.get(0);
+                CellPart part = (CellPart)tcpos.cellParts.get(0);
                 if (body == null) {
                     body = part.pgu.getBody();
                 }
@@ -418,6 +418,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
             handleMarkersAndPositions(lst, body, firstPos, false, painter);
         }
         painter.addAreasAndFlushRow(true);
+        painter.endPart();
     }
 
     private void handleMarkersAndPositions(List positions, TableBody body, boolean firstPos,

@@ -199,7 +199,8 @@ public class RTFHandler extends FOEventHandler {
                     log.warn("Using default simple-page-master from page-sequence-master...");
                     PageSequenceMaster master 
                         = pageSeq.getRoot().getLayoutMasterSet().getPageSequenceMaster(reference);
-                    this.pagemaster = master.getNextSimplePageMaster(false, false, false, false);
+                    this.pagemaster = master.getNextSimplePageMaster(
+                            false, false, false, false, false);
                 }
             }
 
