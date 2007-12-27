@@ -93,14 +93,20 @@ public class ConditionalPageMasterReference extends FObj {
      * @param isFirstPage True if page is first page
      * @param isLastPage True if page is last page
      * @param isBlankPage True if page is blank
+     * @param isOnlyPage True if page is the only page
      * @return True if the conditions for this reference are met
      */
     protected boolean isValid(boolean isOddPage,
                               boolean isFirstPage,
                               boolean isLastPage,
+                              boolean isOnlyPage,
                               boolean isBlankPage) {
         // page-position
-        if (isFirstPage) {
+        if (isOnlyPage) {
+            if (pagePosition != EN_ONLY) {
+                return false;
+            }
+        } else if (isFirstPage) {
             if (pagePosition == EN_REST) {
                 return false;
             } else if (pagePosition == EN_LAST) {

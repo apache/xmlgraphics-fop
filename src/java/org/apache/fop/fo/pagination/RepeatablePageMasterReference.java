@@ -93,6 +93,7 @@ public class RepeatablePageMasterReference extends FObj
     public String getNextPageMasterName(boolean isOddPage,
                                         boolean isFirstPage,
                                         boolean isLastPage,
+                                        boolean isOnlyPage,
                                         boolean isEmptyPage) {
         if (getMaximumRepeats() != INFINITE) {
             if (numberConsumed < getMaximumRepeats()) {
@@ -141,6 +142,11 @@ public class RepeatablePageMasterReference extends FObj
     }
 
     /** {@inheritDoc} */
+    public boolean hasPagePositionOnly() {
+        return false;
+    }
+
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "repeatable-page-master-reference";
     }
@@ -149,5 +155,6 @@ public class RepeatablePageMasterReference extends FObj
     public int getNameId() {
         return FO_REPEATABLE_PAGE_MASTER_REFERENCE;
     }
+
 
 }
