@@ -62,12 +62,19 @@ public class ExtensionElementMapping extends ElementMapping {
             foObjs.put("outline", new UnknownXMLObj.Maker(URI));
             foObjs.put("label", new UnknownXMLObj.Maker(URI));
             foObjs.put("destination", new DestinationMaker());
+            foObjs.put("external-document", new ExternalDocumentMaker());
         }
     }
     
     static class DestinationMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new Destination(parent);
+        }
+    }
+
+    static class ExternalDocumentMaker extends ElementMapping.Maker {
+        public FONode make(FONode parent) {
+            return new ExternalDocument(parent);
         }
     }
 

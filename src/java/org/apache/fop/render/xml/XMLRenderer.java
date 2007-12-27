@@ -524,7 +524,9 @@ public class XMLRenderer extends PrintRenderer {
         addAttribute("key", page.getKey());
         addAttribute("nr", page.getPageNumber());
         addAttribute("formatted-nr", page.getPageNumberString());
-        addAttribute("simple-page-master-name", page.getSimplePageMasterName());
+        if (page.getSimplePageMasterName() != null) {
+            addAttribute("simple-page-master-name", page.getSimplePageMasterName());
+        }
         if (page.isBlank()) {
             addAttribute("blank", "true");
         }

@@ -36,8 +36,8 @@ class TableContentPosition extends Position {
     /** The position is the last of the row group. */
     public static final int LAST_IN_ROWGROUP = 2;
 
-    /** the list of GridUnitParts making up this position */
-    protected List gridUnitParts;
+    /** the list of CellParts making up this position */
+    protected List cellParts;
     /** effective row this position belongs to */
     protected EffRow row;
     /** flags for the position */
@@ -46,13 +46,13 @@ class TableContentPosition extends Position {
     /**
      * Creates a new TableContentPosition.
      * @param lm applicable layout manager
-     * @param gridUnitParts the list of GridUnitPart instances
+     * @param cellParts the list of CellPart instances
      * @param row effective row this position belongs to
      */
-    protected TableContentPosition(LayoutManager lm, List gridUnitParts,
+    protected TableContentPosition(LayoutManager lm, List cellParts,
             EffRow row) {
         super(lm);
-        this.gridUnitParts = gridUnitParts;
+        this.cellParts = cellParts;
         this.row = row;
     }
 
@@ -90,7 +90,7 @@ class TableContentPosition extends Position {
         sb.append(getFlag(FIRST_IN_ROWGROUP) ? "F" : "-");
         sb.append(getFlag(LAST_IN_ROWGROUP) ? "L" : "-").append("]");
         sb.append("(");
-        sb.append(gridUnitParts);
+        sb.append(cellParts);
         sb.append(")");
         return sb.toString();
     }

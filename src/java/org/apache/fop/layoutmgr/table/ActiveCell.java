@@ -266,12 +266,12 @@ class ActiveCell {
     }
 
     /**
-     * Creates and returns a GridUnitPart instance for the content of this cell which
+     * Creates and returns a CellPart instance for the content of this cell which
      * is included in the next step.
      * 
-     * @return a GridUnitPart instance
+     * @return a CellPart instance
      */
-    GridUnitPart createGridUnitPart() {
+    CellPart createCellPart() {
         if (end + 1 == elementList.size()) {
             if (pgu.getFlag(GridUnit.KEEP_WITH_NEXT_PENDING)) {
                 keepWithNextSignal = true;
@@ -284,9 +284,9 @@ class ActiveCell {
                 && elementList.size() == 1
                 && elementList.get(0) instanceof KnuthBoxCellWithBPD) {
             //Special case: Cell with fixed BPD
-            return new GridUnitPart(pgu, 0, pgu.getElements().size() - 1);
+            return new CellPart(pgu, 0, pgu.getElements().size() - 1);
         } else {
-            return new GridUnitPart(pgu, start, end);
+            return new CellPart(pgu, start, end);
         }
     }
 

@@ -1087,6 +1087,12 @@ public interface Constants {
     int EN_SMALL_CAPTION = 184;
     /** Enumeration constant -- font shorthand */
     int EN_STATUS_BAR = 185;
+    /** Enumeration constant -- for page-position, XSL 1.1 */
+    int EN_ONLY = 186; 
+    /** Enumeration constant -- for instream-foreign-object and external-graphic, XSL 1.1 */
+    int EN_SCALE_DOWN_TO_FIT = 187; 
+    /** Enumeration constant -- for instream-foreign-object and external-graphic, XSL 1.1 */
+    int EN_SCALE_UP_TO_FIT = 188; 
     /** Number of enumeration constants defined */
-    int ENUM_COUNT = 185;
+    int ENUM_COUNT = 188;
 }

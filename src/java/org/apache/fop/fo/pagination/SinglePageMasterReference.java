@@ -85,6 +85,7 @@ public class SinglePageMasterReference extends FObj
     public String getNextPageMasterName(boolean isOddPage,
                                         boolean isFirstPage,
                                         boolean isLastPage,
+                                        boolean isOnlyPage,
                                         boolean isEmptyPage) {
         if (this.state == FIRST) {
             this.state = DONE;
@@ -117,6 +118,11 @@ public class SinglePageMasterReference extends FObj
     }
 
     /** {@inheritDoc} */
+    public boolean hasPagePositionOnly() {
+        return false;
+    }
+    
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "single-page-master-reference";
     }
@@ -125,5 +131,6 @@ public class SinglePageMasterReference extends FObj
     public int getNameId() {
         return FO_SINGLE_PAGE_MASTER_REFERENCE;
     }
+
 }
 

@@ -24,7 +24,6 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.fo.pagination.Flow;
 import org.xml.sax.Locator;
 
 /**
@@ -38,49 +37,43 @@ public class Wrapper extends FObjMixed {
     
     // used for FO validation
     private boolean blockOrInlineItemFound = false;
-    private boolean isFlowChild = false;
+    private boolean inlineChildrenAllowed = false;
 
     /**
      * @param parent FONode that is the parent of this object
      */
     public Wrapper(FONode parent) {
         super(parent);
-        /* Check if the fo:wrapper is a child of an fo:flow or fo:static-content
+        /* Check if the fo:wrapper is a child of a FO that allows mixed content
          * (or a descendant in nested fo:wrapper sequence, the first of which
-         *  is a child of an fo:flow or fo:static-content */
+         *  is a child of a FO that allows mixed content) */
         FONode ancestor = this.parent;
-        while (!(ancestor instanceof Flow)
-                && ancestor instanceof Wrapper) {
+        while (ancestor instanceof Wrapper) {
             ancestor = ancestor.getParent();
         }
-        if (ancestor instanceof Flow) {
-            this.isFlowChild = true;
+        if (ancestor instanceof FObjMixed ) {
+            inlineChildrenAllowed = true;
         }
     }
 
     /**
      * {@inheritDoc}
-     * XSL Content Model: marker* (#PCDATA|%inline;|%block;)*
-     * Additionally (unimplemented): "An fo:wrapper that is a child of an 
+     * <br>XSL Content Model: marker* (#PCDATA|%inline;|%block;)*
+     * <br><i>Additionally (unimplemented): "An fo:wrapper that is a child of an 
      * fo:multi-properties is only permitted to have children that would 
-     * be permitted in place of the fo:multi-properties."
+     * be permitted in place of the fo:multi-properties."</i>
      * 
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
-        if (FO_URI.equals(nsURI) && localName.equals("marker")) {
+        if (FO_URI.equals(nsURI) && "marker".equals(localName)) {
             if (blockOrInlineItemFound) {
                nodesOutOfOrderError(loc, "fo:marker", 
                     "(#PCDATA|%inline;|%block;)");
             }
         } else if (isBlockOrInlineItem(nsURI, localName)) {
-            if (isFlowChild
-                    && isInlineItem(nsURI, localName)
-                    && !isNeutralItem(nsURI, localName)) {
-                invalidChildError(loc, nsURI, localName,
-                        "fo:" + localName + " not allowed as child of an fo:wrapper "
-                        + "that is a child of an fo:flow or fo:static-content");
-            }
+            //delegate validation to parent
+            FONode.validateChildNode(this.parent, loc, nsURI, localName);
             blockOrInlineItemFound = true;
         } else {
             invalidChildError(loc, nsURI, localName);
@@ -94,9 +87,8 @@ public class Wrapper extends FObjMixed {
                 int end, 
                 PropertyList pList, 
                 Locator locator) throws FOPException {
-        /* Only add text if the fo:wrapper is not a child of an fo:flow 
-         * or fo:static-content */
-        if (!this.isFlowChild) {
+        /* Only add text if the fo:wrapper's parent allows inline children */
+        if (this.inlineChildrenAllowed) {
             super.addCharacters(data, start, end, pList, locator);
         }
     }
