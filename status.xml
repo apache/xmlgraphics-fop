@@ -29,6 +29,11 @@
   <changes>
     <release version="FOP Trunk">
       <action context="Code" dev="JM" type="add">
+        Added new extension element: fox:external-document. It allows to add whole documents
+        such as multi-page TIFF images to be inserted as peers to a page-sequence. Each image
+        will make up an entire page. See the documentation for details.
+      </action>
+      <action context="Code" dev="JM" type="add">
         Added support for scale-down-to-fit and scale-up-to-fit (introduced in XSL 1.1).
       </action>
       <action context="Code" dev="VH" type="fix" fixes-bug="43633">

@@ -224,9 +224,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
         return newLMs;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public PageSequenceLayoutManager getPSLM() {
         return parentLM.getPSLM();
     }

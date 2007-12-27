@@ -21,7 +21,7 @@ package org.apache.fop.apps;
 
 import java.util.List;
 
-import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.fo.pagination.AbstractPageSequence;
 
 /**
  * Class for reporting back formatting results to the calling application.
@@ -69,10 +69,10 @@ public class FormattingResults {
      * Reports the result of one page sequence rendering
      * back into this object.
      *
-     * @param pageSequence  the PageSequence which just completed rendering
+     * @param pageSequence  the page sequence which just completed rendering
      * @param pageCount     the number of pages rendered for that PageSequence
      */
-    public void haveFormattedPageSequence(PageSequence pageSequence, int pageCount) {
+    public void haveFormattedPageSequence(AbstractPageSequence pageSequence, int pageCount) {
         this.pageCount += pageCount;
         if (this.pageSequences == null) {
             this.pageSequences = new java.util.ArrayList();
