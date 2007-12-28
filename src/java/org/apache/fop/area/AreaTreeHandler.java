@@ -189,12 +189,12 @@ public class AreaTreeHandler extends FOEventHandler {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     * @param pageSequence
-     *            is the pageSequence being started
-     */
+    /** {@inheritDoc} */
     public void startPageSequence(PageSequence pageSequence) {
+        startAbstractPageSequence(pageSequence);
+    }
+    
+    private void startAbstractPageSequence(AbstractPageSequence pageSequence) {
         rootFObj = pageSequence.getRoot();
         finishPrevPageSequence(pageSequence.getInitialPageNumber());
         pageSequence.initPageNumber();
@@ -238,18 +238,12 @@ public class AreaTreeHandler extends FOEventHandler {
         }
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#startExternalDocument(org.apache.fop.fo.extensions.ExternalDocument)
-     */
+    /** {@inheritDoc} */
     public void startExternalDocument(ExternalDocument document) {
-        rootFObj = document.getRoot();
-        finishPrevPageSequence(document.getInitialPageNumber());
-        document.initPageNumber();
+        startAbstractPageSequence(document);
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#endExternalDocument(org.apache.fop.fo.extensions.ExternalDocument)
-     */
+    /** {@inheritDoc} */
     public void endExternalDocument(ExternalDocument document) {
         if (statistics != null) {
             statistics.end();
