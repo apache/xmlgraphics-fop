@@ -21,25 +21,27 @@ package org.apache.fop.fo;
 
 import java.io.OutputStream;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.fop.fo.extensions.ExtensionElementMapping;
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.FormattingResults;
-import org.apache.fop.area.AreaTreeHandler;
-import org.apache.fop.fo.ElementMapping.Maker;
-import org.apache.fop.fo.pagination.Root;
-import org.apache.fop.image.ImageFactory;
-import org.apache.fop.util.ContentHandlerFactory;
-import org.apache.fop.util.ContentHandlerFactory.ObjectSource;
-import org.apache.fop.util.ContentHandlerFactory.ObjectBuiltListener;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.FormattingResults;
+import org.apache.fop.area.AreaTreeHandler;
+import org.apache.fop.fo.ElementMapping.Maker;
+import org.apache.fop.fo.extensions.ExtensionElementMapping;
+import org.apache.fop.fo.pagination.Root;
+import org.apache.fop.image.ImageFactory;
+import org.apache.fop.util.ContentHandlerFactory;
+import org.apache.fop.util.ContentHandlerFactory.ObjectBuiltListener;
+import org.apache.fop.util.ContentHandlerFactory.ObjectSource;
 
 /**
  * SAX Handler that passes parsed data to the various
@@ -268,9 +270,7 @@ public class FOTreeBuilder extends DefaultHandler {
          */
         private int nestedMarkerDepth = 0;
 
-        /**
-         * {@inheritDoc} 
-         */
+        /** {@inheritDoc} */
         public void startElement(String namespaceURI, String localName, String rawName,
                                  Attributes attlist) throws SAXException {
 
@@ -350,19 +350,16 @@ public class FOTreeBuilder extends DefaultHandler {
             }
         }
 
-        /**
-         * {@inheritDoc} 
-         */
+        /** {@inheritDoc} */
         public void endElement(String uri, String localName, String rawName)
                     throws SAXException {
             if (currentFObj == null) {
-                throw new IllegalStateException(
+                throw new SAXException(
                         "endElement() called for " + rawName 
                             + " where there is no current element.");
-            } else
-            if (!currentFObj.getLocalName().equals(localName) 
+            } else if (!currentFObj.getLocalName().equals(localName) 
                     || !currentFObj.getNamespaceURI().equals(uri)) {
-                log.warn("Mismatch: " + currentFObj.getLocalName() 
+                throw new SAXException("Mismatch: " + currentFObj.getLocalName() 
                         + " (" + currentFObj.getNamespaceURI() 
                         + ") vs. " + localName + " (" + uri + ")");
             }
