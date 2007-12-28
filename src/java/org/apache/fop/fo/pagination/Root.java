@@ -25,14 +25,13 @@ import java.util.List;
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.fo.pagination.bookmarks.BookmarkTree;
 import org.apache.fop.fo.extensions.destination.Destination;
+import org.apache.fop.fo.pagination.bookmarks.BookmarkTree;
 
 /**
  * The fo:root formatting object. Contains page masters, page-sequences.
@@ -73,20 +72,16 @@ public class Root extends FObj {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         mediaUsage = pList.get(PR_MEDIA_USAGE).getEnum();
     }
 
-    /**
-     * Signal end of this xml element.
-     */
+    /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         if (!pageSequenceFound || layoutMasterSet == null) {
-            missingChildElementError("(layout-master-set, declarations?, " + 
-                "bookmark-tree?, (page-sequence+|fox:external-document))");
+            missingChildElementError("(layout-master-set, declarations?, " 
+                + "bookmark-tree?, (page-sequence|fox:external-document)+)");
         }
     }
 
