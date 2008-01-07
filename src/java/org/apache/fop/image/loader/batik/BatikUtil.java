@@ -17,7 +17,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.image2.impl.batik;
+package org.apache.fop.image.loader.batik;
 
 /**
  * Helper utilities for Apache Batik.

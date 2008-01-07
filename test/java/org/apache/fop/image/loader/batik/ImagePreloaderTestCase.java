@@ -17,7 +17,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.image2;
+package org.apache.fop.image.loader.batik;
 
 import java.io.IOException;
 
@@ -30,7 +30,7 @@ import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.image2.impl.batik.ImageWMF;
+import org.apache.fop.image.loader.batik.ImageWMF;
 
 /**
  * Tests for bundled image preloader implementations.

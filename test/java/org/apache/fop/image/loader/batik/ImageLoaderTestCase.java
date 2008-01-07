@@ -17,7 +17,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.image2;
+package org.apache.fop.image.loader.batik;
 
 import java.io.File;
 
