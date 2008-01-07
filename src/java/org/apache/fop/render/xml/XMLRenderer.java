@@ -41,7 +41,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.AttributesImpl;
 
-import org.apache.fop.util.QName;
+import org.apache.xmlgraphics.util.XMLizable;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
@@ -51,21 +52,22 @@ import org.apache.fop.area.BeforeFloat;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.BodyRegion;
+import org.apache.fop.area.BookmarkData;
 import org.apache.fop.area.CTM;
+import org.apache.fop.area.DestinationData;
 import org.apache.fop.area.Footnote;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.MainReference;
 import org.apache.fop.area.NormalFlow;
 import org.apache.fop.area.OffDocumentExtensionAttachment;
 import org.apache.fop.area.OffDocumentItem;
-import org.apache.fop.area.BookmarkData;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.RegionReference;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Span;
 import org.apache.fop.area.Trait;
-import org.apache.fop.area.Trait.InternalLink;
 import org.apache.fop.area.Trait.Background;
+import org.apache.fop.area.Trait.InternalLink;
 import org.apache.fop.area.inline.Container;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
@@ -87,7 +89,7 @@ import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.XMLHandler;
 import org.apache.fop.util.ColorUtil;
-import org.apache.fop.util.XMLizable;
+import org.apache.fop.util.QName;
 
 /**
  * Renderer that renders areas to XML for debugging purposes.
@@ -419,6 +421,8 @@ public class XMLRenderer extends PrintRenderer {
     public void processOffDocumentItem(OffDocumentItem oDI) {
         if (oDI instanceof BookmarkData) {
             renderBookmarkTree((BookmarkData) oDI);
+        } else if (oDI instanceof DestinationData) {
+            renderDestination((DestinationData) oDI);
         } else if (oDI instanceof OffDocumentExtensionAttachment) {
             ExtensionAttachment attachment = ((OffDocumentExtensionAttachment)oDI).getAttachment();
             if (extensionAttachments == null) {
@@ -466,8 +470,23 @@ public class XMLRenderer extends PrintRenderer {
     }
 
     /**
-     * {@inheritDoc}
+     * Renders a DestinationData object (named destination)
+     * @param destination the destination object
      */
+    protected void renderDestination(DestinationData destination) {
+        if (destination.getWhenToProcess() == OffDocumentItem.END_OF_DOC) {
+            endPageSequence();
+        }
+        atts.clear();
+        PageViewport pv = destination.getPageViewport();
+        String pvKey = pv == null ? null : pv.getKey();
+        addAttribute("internal-link",
+                InternalLink.makeXMLAttribute(pvKey, destination.getIDRef()));
+        startElement("destination", atts);
+        endElement("destination");
+    }
+
+    /** {@inheritDoc} */
     public void startRenderer(OutputStream outputStream)
                 throws IOException {
         log.debug("Rendering areas to Area Tree XML");
