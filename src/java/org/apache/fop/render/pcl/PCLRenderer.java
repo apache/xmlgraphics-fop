@@ -48,8 +48,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+import org.w3c.dom.Document;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.xmlgraphics.java2d.GraphicContext;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.Area;
@@ -86,8 +90,6 @@ import org.apache.fop.render.pcl.extensions.PCLElementMapping;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.util.QName;
 import org.apache.fop.util.UnitConv;
-import org.apache.xmlgraphics.java2d.GraphicContext;
-import org.w3c.dom.Document;
 
 /**
  * Renderer for the PCL 5 printer language. It also uses HP GL/2 for certain graphic elements.
@@ -182,7 +184,7 @@ public class PCLRenderer extends PrintRenderer {
         //The next line is important to get accurate font metrics!
         g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, 
                 RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-        FontSetup.setup(fontInfo, g);
+        FontSetup.setup(fontInfo, fontList, fontResolver, g);
     }
 
     /**

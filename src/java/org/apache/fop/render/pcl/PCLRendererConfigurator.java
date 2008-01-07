@@ -20,6 +20,7 @@
 package org.apache.fop.render.pcl;
 
 import org.apache.avalon.framework.configuration.Configuration;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.render.PrintRendererConfigurator;
@@ -73,5 +74,6 @@ public class PCLRendererConfigurator extends PrintRendererConfigurator {
             
             pclRenderer.setPJLDisabled(cfg.getChild("disable-pjl").getValueAsBoolean(false));
         }
+        super.configure(renderer);
     }
 }
