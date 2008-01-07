@@ -28,6 +28,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="add" fixes-bug="44176" due-to="Patrick Jaromin">
+        Added support for custom fonts in Java2DRenderer and derived renderers.
+      </action>
       <action context="Code" dev="JM" type="add">
         Added new extension element: fox:external-document. It allows to add whole documents
         such as multi-page TIFF images to be inserted as peers to a page-sequence. Each image
