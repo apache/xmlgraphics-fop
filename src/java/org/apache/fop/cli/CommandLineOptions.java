@@ -789,12 +789,12 @@ public class CommandLineOptions {
                         "FO output mode is only available if you use -xml and -xsl");
             }
             if (xmlfile != null) {
-                log.warn("area tree input mode, but XML file is set:");
+                log.warn("image input mode, but XML file is set:");
                 log.error("XML file: " + xmlfile.toString());
             }
             if (!imagefile.exists()) {
                 throw new FileNotFoundException("Error: image file "
-                                              + areatreefile.getAbsolutePath()
+                                              + imagefile.getAbsolutePath()
                                               + " not found ");
             }
         }
