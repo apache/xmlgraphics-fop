@@ -1,2 +1,2 @@
-org.apache.fop.image2.impl.batik.PreloaderWMF
-org.apache.fop.image2.impl.batik.PreloaderSVG
+org.apache.fop.image.loader.batik.PreloaderWMF
+org.apache.fop.image.loader.batik.PreloaderSVG

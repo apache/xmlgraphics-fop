@@ -17,18 +17,23 @@
 
 /* $Id$ */
  
-package org.apache.fop.image2.impl.batik;
+package org.apache.fop.image.loader.batik;
 
-import java.io.DataInputStream;
+import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.Source;
 
-import org.apache.batik.transcoder.wmf.WMFConstants;
-import org.apache.batik.transcoder.wmf.tosvg.WMFRecordStore;
-import org.apache.commons.io.EndianUtils;
-import org.apache.commons.io.IOUtils;
+import org.w3c.dom.Element;
+import org.w3c.dom.svg.SVGDocument;
+
+import org.apache.batik.bridge.BridgeContext;
+import org.apache.batik.bridge.UnitProcessor;
+import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
+import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.batik.dom.svg.SVGOMDocument;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -36,17 +41,20 @@ import org.apache.xmlgraphics.image.loader.ImageContext;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.xmlgraphics.image.loader.ImageSize;
 import org.apache.xmlgraphics.image.loader.impl.AbstractImagePreloader;
+import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
 import org.apache.xmlgraphics.image.loader.util.ImageUtil;
+import org.apache.xmlgraphics.util.MimeConstants;
 
+import org.apache.fop.svg.SVGUserAgent;
 import org.apache.fop.util.UnclosableInputStream;
 
 /**
- * Image preloader for WMF images (Windows Metafile).
+ * Image preloader for SVG images.
  */
-public class PreloaderWMF extends AbstractImagePreloader {
+public class PreloaderSVG extends AbstractImagePreloader {
 
     /** Logger instance */
-    private static Log log = LogFactory.getLog(PreloaderWMF.class);
+    private static Log log = LogFactory.getLog(PreloaderSVG.class);
 
     private boolean batikAvailable = true;
     
@@ -54,6 +62,7 @@ public class PreloaderWMF extends AbstractImagePreloader {
     public ImageInfo preloadImage(String uri, Source src, ImageContext context)
             throws IOException {
         if (!ImageUtil.hasInputStream(src)) {
+            //TODO Remove this and support DOMSource and possibly SAXSource
             return null;
         }
         ImageInfo info = null;
@@ -74,8 +83,22 @@ public class PreloaderWMF extends AbstractImagePreloader {
     }
 
     /**
+     * Returns the fully qualified classname of an XML parser for
+     * Batik classes that apparently need it (error messages, perhaps)
+     * @return an XML parser classname
+     */
+    public static String getParserName() {
+        try {
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            return factory.newSAXParser().getXMLReader().getClass().getName();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
      * This method is put in another class so that the class loader does not
-     * attempt to load Batik related classes when constructing the WMFPreloader
+     * attempt to load Batik related classes when constructing the SVGPreloader
      * class.
      */
     class Loader {
@@ -85,31 +108,48 @@ public class PreloaderWMF extends AbstractImagePreloader {
 
             InputStream in = new UnclosableInputStream(ImageUtil.needInputStream(src));
             try {
-                in.mark(4 + 1);
-                
-                DataInputStream din = new DataInputStream(in);
-                int magic = EndianUtils.swapInteger(din.readInt());
-                din.reset();
-                if (magic != WMFConstants.META_ALDUS_APM) {
-                    return null; //Not a WMF file
-                }
+                int length = in.available();
+                in.mark(length + 1);
+                SAXSVGDocumentFactory factory = new SAXSVGDocumentFactory(
+                        getParserName());
+                SVGDocument doc = (SVGDocument) factory.createSVGDocument(src.getSystemId(), in);
 
-                WMFRecordStore wmfStore = new WMFRecordStore();
-                wmfStore.read(din);
-                IOUtils.closeQuietly(din);
-                
-                int width = wmfStore.getWidthUnits();
-                int height = wmfStore.getHeightUnits();
-                int dpi = wmfStore.getMetaFileUnitsPerInch();
-                
-                ImageInfo info = new ImageInfo(uri, "image/x-wmf");
+                Element e = doc.getRootElement();
+                float pxUnitToMillimeter = 25.4f / context.getSourceResolution(); 
+                SVGUserAgent userAg = new SVGUserAgent(pxUnitToMillimeter,
+                            new AffineTransform());
+                BridgeContext ctx = new BridgeContext(userAg);
+                UnitProcessor.Context uctx = UnitProcessor.createContext(ctx, e);
+
+                String s;
+                // 'width' attribute - default is 100%
+                s = e.getAttributeNS(null, SVGOMDocument.SVG_WIDTH_ATTRIBUTE);
+                if (s.length() == 0) {
+                    s = SVGOMDocument.SVG_SVG_WIDTH_DEFAULT_VALUE;
+                }
+                float width = UnitProcessor.svgHorizontalLengthToUserSpace(
+                        s, SVGOMDocument.SVG_WIDTH_ATTRIBUTE, uctx);
+
+                // 'height' attribute - default is 100%
+                s = e.getAttributeNS(null, SVGOMDocument.SVG_HEIGHT_ATTRIBUTE);
+                if (s.length() == 0) {
+                    s = SVGOMDocument.SVG_SVG_HEIGHT_DEFAULT_VALUE;
+                }
+                float height = UnitProcessor.svgVerticalLengthToUserSpace(
+                        s, SVGOMDocument.SVG_HEIGHT_ATTRIBUTE, uctx);
+
+                ImageInfo info = new ImageInfo(uri, MimeConstants.MIME_SVG);
                 ImageSize size = new ImageSize();
-                size.setSizeInPixels(width, height);
-                size.setResolution(dpi);
-                size.calcSizeFromPixels();
+                size.setSizeInMillipoints(Math.round(width * 1000), Math.round(height * 1000));
+                //Set the resolution to that of the FOUserAgent
+                size.setResolution(context.getSourceResolution());
+                size.calcPixelsFromSize();
                 info.setSize(size);
-                ImageWMF img = new ImageWMF(info, wmfStore);
-                info.getCustomObjects().put(ImageInfo.ORIGINAL_IMAGE, img);
+
+                //The whole image had to be loaded for this, so keep it
+                ImageXMLDOM xmlImage = new ImageXMLDOM(info,
+                        doc, SVGDOMImplementation.SVG_NAMESPACE_URI);
+                info.getCustomObjects().put(ImageInfo.ORIGINAL_IMAGE, xmlImage);
                 
                 return info;
             } catch (NoClassDefFoundError ncdfe) {
@@ -125,7 +165,7 @@ public class PreloaderWMF extends AbstractImagePreloader {
                 // If the svg is invalid then it throws an IOException
                 // so there is no way of knowing if it is an svg document
 
-                log.debug("Error while trying to load stream as an WMF file: "
+                log.debug("Error while trying to load stream as an SVG file: "
                                        + e.getMessage());
                 // assuming any exception means this document is not svg
                 // or could not be loaded for some reason

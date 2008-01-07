@@ -17,7 +17,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.image2.impl.batik;
+package org.apache.fop.image.loader.batik;
 
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.xmlgraphics.image.loader.impl.AbstractImageLoaderFactory;
