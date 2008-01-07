@@ -63,8 +63,7 @@
       </section>
       <section id="named-destinations">
         <title>Anchors or Named Destinations</title>
-        <p>This extension element hasn't been reimplemented for the redesigned code, yet.</p>
-        <!--p>Use the fox:destination element to define "named destinations" inside a PDF document.
+        <p>Use the fox:destination element to define "named destinations" inside a PDF document.
 These are useful as fragment identifiers, e.g. "http://server/document.pdf#anchor-name".
 fox:destination elements can be placed almost anywhere in the fo document, including a child of
 root, a block-level element, or an inline-level element.
@@ -77,7 +76,7 @@ PDF document. The fox:destination simply gives that view an independent name.
 <fo:block id="table-of-contents">Table of Contents</fo:block>]]></source>
         <warning>It is possible that in some future release of FOP, <em>all </em>elements with
 "id" attributes will generate named-destinations, which will eliminate the need for
-fox:destination.</warning-->
+fox:destination.</warning>
       </section>
       <section id="table-continue-label">
         <title>Table Continuation Label</title>
@@ -136,7 +135,7 @@ to following pages. Here is an example of FO code creating such a table-header:<
         </p>
         <p>
           <code>
-            (layout-master-set, declarations?, bookmark-tree?, (page-sequence|page-sequence-wrapper|fox:external-document)+)
+            (layout-master-set, declarations?, bookmark-tree?, (page-sequence|page-sequence-wrapper|fox:external-document|fox:destination)+)
           </code>
         </p>
         <section>
