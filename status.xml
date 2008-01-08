@@ -34,6 +34,10 @@
         will make up an entire page. See the documentation for details.
       </action>
       <action context="Code" dev="JM" type="add">
+        Added minimal support for the .minimum/.maximum components of block/inline-progression-dimension 
+        on fo:external-graphic and fo:instream-foreign-object.
+      </action>
+      <action context="Code" dev="JM" type="add">
         Added support for scale-down-to-fit and scale-up-to-fit (introduced in XSL 1.1).
       </action>
       <action context="Code" dev="VH" type="fix" fixes-bug="43633">
