@@ -38,8 +38,8 @@ public class ImageSizeParameter extends AbstractAFPObject {
      * resolution, hsize and vsize.
      * @param hresol The horizontal resolution of the image.
      * @param vresol The vertical resolution of the image.
-     * @param hsize The hsize of the image.
-     * @param vsize The vsize of the vsize.
+     * @param hsize The horizontal size of the image.
+     * @param vsize The vertical size of the image.
      */
     public ImageSizeParameter(int hresol, int vresol, int hsize, int vsize) {
         this.hRes = hresol;
