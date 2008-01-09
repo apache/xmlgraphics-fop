@@ -50,18 +50,18 @@ public class FontSetup {
 
     /** logging instance */
     protected static Log log = LogFactory.getLog(FontSetup.class);
-    
+
     private static final int LAST_PREDEFINED_FONT_NUMBER = 14;
 
     private static final Set HARDCODED_FONT_NAMES;
-    
+
     static {
         HARDCODED_FONT_NAMES = new java.util.HashSet();
         HARDCODED_FONT_NAMES.add("any");
         HARDCODED_FONT_NAMES.add("sans-serif");
         HARDCODED_FONT_NAMES.add("serif");
         HARDCODED_FONT_NAMES.add("monospace");
-        
+
         HARDCODED_FONT_NAMES.add("Helvetica");
         HARDCODED_FONT_NAMES.add("Times");
         HARDCODED_FONT_NAMES.add("Courier");
@@ -71,7 +71,7 @@ public class FontSetup {
         HARDCODED_FONT_NAMES.add("Times-Roman");
         HARDCODED_FONT_NAMES.add("Computer-Modern-Typewriter");
     }
-    
+
     /**
      * Sets up the font info object.
      *
@@ -85,7 +85,7 @@ public class FontSetup {
      */
     public static void setup(FontInfo fontInfo, List configuredFontList,
             FontResolver resolver, Graphics2D graphics) {
-	FontMetricsMapper metric;
+        FontMetricsMapper metric;
         int normal, bold, bolditalic, italic;
 
         /*
@@ -218,32 +218,32 @@ public class FontSetup {
         fontInfo.addFontProperties("F8", "Times Roman", "italic", Font.WEIGHT_BOLD);
         fontInfo.addFontProperties("F9", "Computer-Modern-Typewriter",
                                    "normal", Font.WEIGHT_NORMAL);
-        
-	int lastNum = configureInstalledAWTFonts(fontInfo, graphics, LAST_PREDEFINED_FONT_NUMBER + 1);
-	addConfiguredFonts(fontInfo, configuredFontList, resolver, lastNum++);
+
+        int lastNum = configureInstalledAWTFonts(fontInfo, graphics, LAST_PREDEFINED_FONT_NUMBER + 1);
+        addConfiguredFonts(fontInfo, configuredFontList, resolver, lastNum++);
     }
 
-    private static int configureInstalledAWTFonts(FontInfo fontInfo, Graphics2D graphics, 
+    private static int configureInstalledAWTFonts(FontInfo fontInfo, Graphics2D graphics,
             int startNumber) {
         int num = startNumber;
         GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        
+
         java.awt.Font[] fonts = env.getAllFonts();
         for (int i = 0; i < fonts.length; i++) {
             java.awt.Font f = fonts[i];
             if (HARDCODED_FONT_NAMES.contains(f.getName())) {
                 continue; //skip
             }
-            
+
             if (log.isTraceEnabled()) {
-                log.trace("AWT Font: " + f.getFontName() 
-                        + ", family: " + f.getFamily() 
-                        + ", PS: " + f.getPSName() 
+                log.trace("AWT Font: " + f.getFontName()
+                        + ", family: " + f.getFamily()
+                        + ", PS: " + f.getPSName()
                         + ", Name: " + f.getName()
                         + ", Angle: " + f.getItalicAngle()
                         + ", Style: " + f.getStyle());
             }
-            
+
             String searchName = FontUtil.stripWhiteSpace(f.getName()).toLowerCase();
             String guessedStyle = FontUtil.guessStyle(searchName);
             int guessedWeight = FontUtil.guessWeight(searchName);
@@ -252,7 +252,7 @@ public class FontSetup {
             String fontKey = "F" + num;
             int style = convertToAWTFontStyle(guessedStyle, guessedWeight);
             addFontMetricsMapper(fontInfo, f.getName(), fontKey, graphics, style);
-            
+
             //Register appropriate font triplets matching the font. Two different strategies:
             //Example: "Arial Bold", normal, normal
             addFontTriplet(fontInfo, f.getName(),
@@ -320,12 +320,12 @@ public class FontSetup {
                     fontInfo.addFontProperties(internalName, triplet);
                 }
             } catch (Exception e) {
-        	 log.warn("Unable to load custom font from file '" + fontFile + "'", e);
+                log.warn("Unable to load custom font from file '" + fontFile + "'", e);
             }
         }
     }
 
-    
+
     private static void addFontTriplet(FontInfo fontInfo, String fontName, String fontStyle,
             int fontWeight, String fontKey) {
         FontTriplet triplet = FontInfo.createFontKey(fontName, fontStyle, fontWeight);
@@ -334,7 +334,7 @@ public class FontSetup {
 
     private static void addFontMetricsMapper(FontInfo fontInfo, String family, String fontKey,
             Graphics2D graphics, int style) {
-	FontMetricsMapper metric = new SystemFontMetricsMapper(family, style, graphics);
+        FontMetricsMapper metric = new SystemFontMetricsMapper(family, style, graphics);
         fontInfo.addMetrics(fontKey, metric);
     }
 
@@ -348,6 +348,6 @@ public class FontSetup {
         }
         return style;
     }
-    
+
 }
 
