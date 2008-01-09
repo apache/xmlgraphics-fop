@@ -43,7 +43,7 @@ public interface MutableFont {
 
     /**
      * Sets the font's family names (Example: "Helvetica").
-     * @param name the font's family names (a Set of Strings)
+     * @param names the font's family names (a Set of Strings)
      */
     void setFamilyNames(Set names);
     

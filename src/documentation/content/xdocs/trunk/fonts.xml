@@ -25,6 +25,7 @@
       <person name="Jeremias Märki" email=""/>
       <person name="Tore Engvig" email=""/>
       <person name="Adrian Cumiskey" email=""/>
+      <person name="Max Berger" email=""/>
     </authors>
   </header>
   <body>
@@ -301,6 +302,16 @@ It will display all of the font names and exit with an Exception.</p>
           </li>
         </ul>
         <!--note>Cocoon users will need to setup the config, see FOPSerializer for more information.</note-->
+      </section>
+      <section id="autodetect">
+        <title>Auto-Detect and auto-embedd feature</title>
+      <p>When the "auto-detect" flag is set in the configuration, FOP will automatically search for fonts in the default paths for your operating system.</p>
+      <p>FOP will also auto-detect fonts which are available in the classpath, if they are described as "application/x-font" in the MANIFEST.MF file. For example, if your .jar file contains font/myfont.ttf:</p>
+      <source>Manifest-Version: 1.0
+
+Name: font/myfont.ttf
+Content-Type: application/x-font</source>
+      <p>This feature allows you to create JAR files containing fonts. The JAR files can be added to fop by providem them in the classpath, e.g. copying them into the lib/ directory.</p>
       </section>
       <section id="embedding">
         <title>Embedding</title>

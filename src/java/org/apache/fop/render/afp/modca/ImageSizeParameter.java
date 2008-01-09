@@ -28,10 +28,10 @@ import org.apache.fop.render.afp.tools.BinaryUtils;
  */
 public class ImageSizeParameter extends AbstractAFPObject {
 
-    private int _hresol = 0;
-    private int _vresol = 0;
-    private int _hsize = 0;
-    private int _vsize = 0;
+    private int hRes = 0;
+    private int vRes = 0;
+    private int hSize = 0;
+    private int vSize = 0;
 
     /**
      * Constructor for a ImageSizeParameter for the specified
@@ -42,22 +42,18 @@ public class ImageSizeParameter extends AbstractAFPObject {
      * @param vsize The vsize of the vsize.
      */
     public ImageSizeParameter(int hresol, int vresol, int hsize, int vsize) {
-
-        _hresol = hresol;
-        _vresol = vresol;
-        _hsize = hsize;
-        _vsize = vsize;
-
+        this.hRes = hresol;
+        this.vRes = vresol;
+        this.hSize = hsize;
+        this.vSize = vsize;
     }
 
     /**
      * Accessor method to write the AFP datastream for the Image Size Parameter
      * @param os The stream to write to
-     * @throws java.io.IOException
+     * @throws java.io.IOException if an I/O exception occured
      */
-    public void writeDataStream(OutputStream os)
-        throws IOException {
-
+    public void writeDataStream(OutputStream os) throws IOException {
         byte[] data = new byte[] {
             (byte)0x94, // ID = Image Size Parameter
             0x09, // Length
@@ -72,24 +68,22 @@ public class ImageSizeParameter extends AbstractAFPObject {
             0x00, //
         };
 
-        byte[] x = BinaryUtils.convert(_hresol, 2);
+        byte[] x = BinaryUtils.convert(hRes, 2);
         data[3] = x[0];
         data[4] = x[1];
 
-        byte[] y = BinaryUtils.convert(_vresol, 2);
+        byte[] y = BinaryUtils.convert(vRes, 2);
         data[5] = y[0];
         data[6] = y[1];
 
-        byte[] w = BinaryUtils.convert(_hsize, 2);
+        byte[] w = BinaryUtils.convert(hSize, 2);
         data[7] = w[0];
         data[8] = w[1];
 
-        byte[] h = BinaryUtils.convert(_vsize, 2);
+        byte[] h = BinaryUtils.convert(vSize, 2);
         data[9] = h[0];
         data[10] = h[1];
 
         os.write(data);
-
     }
-
 }

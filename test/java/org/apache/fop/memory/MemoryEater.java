@@ -23,15 +23,19 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
+import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.output.NullOutputStream;
+
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
@@ -41,17 +45,21 @@ import org.apache.fop.apps.MimeConstants;
  */
 public class MemoryEater {
 
-    private static void eatMemory(File foFile, int replicatorRepeats) throws Exception {
-
-        SAXTransformerFactory tFactory = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
-        FopFactory fopFactory = FopFactory.newInstance();
-        
+    private SAXTransformerFactory tFactory
+            = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
+    private FopFactory fopFactory = FopFactory.newInstance();
+    private Templates replicatorTemplates;
+    
+    public MemoryEater() throws TransformerConfigurationException, MalformedURLException {
         File xsltFile = new File("test/xsl/fo-replicator.xsl");
         Source xslt = new StreamSource(xsltFile);
-        
+        replicatorTemplates = tFactory.newTemplates(xslt);
+    }
+    
+    private void eatMemory(File foFile, int replicatorRepeats) throws Exception {
         Source src = new StreamSource(foFile);
         
-        Transformer transformer = tFactory.newTransformer(xslt);
+        Transformer transformer = replicatorTemplates.newTransformer();
         transformer.setParameter("repeats", new Integer(replicatorRepeats));
         
         OutputStream out = new NullOutputStream(); //write to /dev/nul
@@ -78,13 +86,17 @@ public class MemoryEater {
         boolean doPrompt = true; //true if you want a chance to start the monitoring console
         try {
             int replicatorRepeats = 2;
+            int runRepeats = 1;
             if (args.length > 0) {
                 replicatorRepeats = Integer.parseInt(args[0]);
+            }
+            if (args.length > 1) {
+                runRepeats = Integer.parseInt(args[1]);
             }
             File testFile = new File("examples/fo/basic/readme.fo");
             
             System.out.println("MemoryEater! About to replicate the test file " 
-                    + replicatorRepeats + " times...");
+                    + replicatorRepeats + " times and run it " + runRepeats + " times...");
             if (doPrompt) {
                 prompt();
             }
@@ -92,7 +104,10 @@ public class MemoryEater {
             System.out.println("Processing..."); 
             long start = System.currentTimeMillis();
             
-            eatMemory(testFile, replicatorRepeats);
+            MemoryEater app = new MemoryEater();
+            for (int i = 0; i < runRepeats; i++) {
+                app.eatMemory(testFile, replicatorRepeats);
+            }
             
             long duration = System.currentTimeMillis() - start;
             System.out.println("Success! Job took " + duration + " ms");

@@ -25,6 +25,11 @@ package org.apache.fop.render.afp.modca;
  */
 public class MaximumSizeExceededException extends Exception {
 
+    private static final long serialVersionUID = 7823120005542216446L;
+
+    /**
+     * Default constructor
+     */
     public MaximumSizeExceededException() {
         super();
     }

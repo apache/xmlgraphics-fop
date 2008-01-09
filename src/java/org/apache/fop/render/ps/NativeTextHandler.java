@@ -28,14 +28,14 @@ import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.xmlgraphics.java2d.ps.PSGraphics2D;
-import org.apache.xmlgraphics.java2d.ps.TextHandler;
+import org.apache.xmlgraphics.java2d.ps.PSTextHandler;
 import org.apache.xmlgraphics.ps.PSGenerator;
 
 /**
  * Specialized TextHandler implementation that the PSGraphics2D class delegates to to paint text
  * using PostScript text operations.
  */
-public class NativeTextHandler implements TextHandler {
+public class NativeTextHandler implements PSTextHandler {
 
     private PSGraphics2D g2d;
     

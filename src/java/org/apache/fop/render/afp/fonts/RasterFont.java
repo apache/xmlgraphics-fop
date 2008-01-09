@@ -39,9 +39,9 @@ public class RasterFont extends AFPFont {
     /** Static logging instance */
     protected static final Log log = LogFactory.getLog("org.apache.fop.render.afp.fonts");
 
-    private HashMap _characterSets = new HashMap();
+    private Map charSets = new HashMap();
 
-    private CharacterSet _characterSet = null;
+    private CharacterSet charSet = null;
 
     /**
      * Constructor for the raster font requires the name, weight and style
@@ -54,12 +54,14 @@ public class RasterFont extends AFPFont {
         super(name);
     }
 
+    /**
+     * Adds the character set for the given point size
+     * @param size point size
+     * @param characterSet character set
+     */
     public void addCharacterSet(int size, CharacterSet characterSet) {
-
-        _characterSets.put(String.valueOf(size), characterSet);
-
-        _characterSet = characterSet;
-
+        this.charSets.put(String.valueOf(size), characterSet);
+        this.charSet = characterSet;
     }
 
     /**
@@ -71,14 +73,14 @@ public class RasterFont extends AFPFont {
     public CharacterSet getCharacterSet(int size) {
 
         String pointsize = String.valueOf(size / 1000);
-        CharacterSet csm = (CharacterSet) _characterSets.get(pointsize);
+        CharacterSet csm = (CharacterSet) charSets.get(pointsize);
         if (csm == null) {
-            csm = (CharacterSet) _characterSets.get(size + "mpt");
+            csm = (CharacterSet) charSets.get(size + "mpt");
         }
         if (csm == null) {
             // Get char set with nearest font size
             int distance = Integer.MAX_VALUE;
-            for (Iterator it = _characterSets.entrySet().iterator(); it.hasNext(); ) {
+            for (Iterator it = charSets.entrySet().iterator(); it.hasNext();) {
                 Map.Entry me = (Map.Entry)it.next();
                 String key = (String)me.getKey();
                 if (!key.endsWith("mpt")) {
@@ -91,7 +93,7 @@ public class RasterFont extends AFPFont {
                 }
             }
             if (csm != null) {
-                _characterSets.put(size + "mpt", csm);
+                charSets.put(size + "mpt", csm);
                 String msg = "No " + (size / 1000) + "pt font " + getFontName()
                     + " found, substituted with " + pointsize + "pt font";
                 log.warn(msg);
@@ -109,29 +111,29 @@ public class RasterFont extends AFPFont {
 
     /**
      * Get the first character in this font.
+     * @return the first character in this font.
      */
     public int getFirstChar() {
-
-        Iterator i = _characterSets.values().iterator();
-        if (i.hasNext()) {
-            CharacterSet csm = (CharacterSet) i.next();
+        Iterator it = charSets.values().iterator();
+        if (it.hasNext()) {
+            CharacterSet csm = (CharacterSet) it.next();
             return csm.getFirstChar();
         } else {
             String msg = "getFirstChar() - No character set found for font:" + getFontName();
             log.error(msg);
             throw new FontRuntimeException(msg);
         }
-
     }
 
     /**
      * Get the last character in this font.
+     * @return the last character in this font.
      */
     public int getLastChar() {
 
-        Iterator i = _characterSets.values().iterator();
-        if (i.hasNext()) {
-            CharacterSet csm = (CharacterSet) i.next();
+        Iterator it = charSets.values().iterator();
+        if (it.hasNext()) {
+            CharacterSet csm = (CharacterSet) it.next();
             return csm.getLastChar();
         } else {
             String msg = "getLastChar() - No character set found for font:" + getFontName();
@@ -147,22 +149,20 @@ public class RasterFont extends AFPFont {
      * used to denote the part of the letter extending above the x-height.
      *
      * @param size the point size
+     * @return the ascender for the given point size
      */
     public int getAscender(int size) {
-
         return getCharacterSet(size).getAscender();
-
     }
 
     /**
      * Obtains the height of capital letters for the specified point size.
      *
      * @param size the point size
+     * @return the cap height for the specified point size
      */
     public int getCapHeight(int size) {
-
         return getCharacterSet(size).getCapHeight();
-
     }
 
     /**
@@ -171,31 +171,30 @@ public class RasterFont extends AFPFont {
      * letter extending below the base line.
      *
      * @param size the point size
+     * @return the descender for the specified point size
      */
     public int getDescender(int size) {
-
         return getCharacterSet(size).getDescender();
-
     }
 
     /**
      * The "x-height" (the height of the letter "x").
      *
      * @param size the point size
+     * @return the x height for the given point size
      */
     public int getXHeight(int size) {
-
         return getCharacterSet(size).getXHeight();
-
     }
 
     /**
      * Obtain the width of the character for the specified point size.
+     * @param character the character
+     * @param size the point size
+     * @return the width for the given point size
      */
     public int getWidth(int character, int size) {
-
         return getCharacterSet(size).width(character);
-
     }
 
     /**
@@ -207,9 +206,7 @@ public class RasterFont extends AFPFont {
      * @return the widths of all characters
      */
     public int[] getWidths(int size) {
-
         return getCharacterSet(size).getWidths();
-
     }
 
     /**
@@ -219,9 +216,7 @@ public class RasterFont extends AFPFont {
      * @return the widths of all characters
      */
     public int[] getWidths() {
-
         return getWidths(1000);
-
     }
 
     /**
@@ -230,7 +225,7 @@ public class RasterFont extends AFPFont {
      * @return the mapped character
      */
     public char mapChar(char c) {
-        return _characterSet.mapChar(c);
+        return charSet.mapChar(c);
     }
 
     /**
@@ -238,7 +233,7 @@ public class RasterFont extends AFPFont {
      * @return the encoding
      */
     public String getEncoding() {
-        return _characterSet.getEncoding();
+        return charSet.getEncoding();
     }
 
 }

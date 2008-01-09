@@ -40,7 +40,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.java2d.ps.PSGraphics2D;
-import org.apache.xmlgraphics.java2d.ps.TextHandler;
+import org.apache.xmlgraphics.java2d.TextHandler;
 
 import org.apache.batik.dom.svg.SVGOMTextElement;
 import org.apache.batik.gvt.text.Mark;
@@ -385,7 +385,6 @@ public class PSTextPainter implements TextPainter {
         String style = getStyle(aci);
         int weight = getWeight(aci);
 
-        boolean found = false;
         String fontFamily = null;
         List gvtFonts = (List) aci.getAttribute(
                       GVTAttributedCharacterIterator.TextAttribute.GVT_FONT_FAMILIES);
