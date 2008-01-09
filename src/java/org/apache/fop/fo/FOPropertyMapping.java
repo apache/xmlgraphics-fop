@@ -1802,7 +1802,7 @@ public final class FOPropertyMapping implements Constants {
         // keep-together
         m  = new KeepProperty.Maker(PR_KEEP_TOGETHER);
         m.useGeneric(genericKeep);
-        m.setInherited(false);
+        m.setInherited(true);
         m.setDefault("auto");
         m.addShorthand(s_generics[PR_PAGE_BREAK_INSIDE]);
         addPropertyMaker("keep-together", m);
