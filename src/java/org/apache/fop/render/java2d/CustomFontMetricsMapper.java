@@ -64,7 +64,7 @@ public class CustomFontMetricsMapper extends Typeface implements FontMetricsMapp
      * @throws IOException
      */
     public CustomFontMetricsMapper(final CustomFont fontMetrics)
-    	throws FontFormatException, IOException {
+            throws FontFormatException, IOException {
         this.typeface = fontMetrics;
         initialize(fontMetrics.getEmbedFileSource());
     }
@@ -77,13 +77,13 @@ public class CustomFontMetricsMapper extends Typeface implements FontMetricsMapp
      * @throws IOException
      */
     public CustomFontMetricsMapper(final LazyFont fontMetrics, final Source fontSource)
-    		throws FontFormatException, IOException {
+            throws FontFormatException, IOException {
         this.typeface = fontMetrics;
         initialize(fontSource);
     }
 
     private static final int TYPE1_FONT = 1; //Defined in Java 1.5
-    
+
     /**
      * Loads the java.awt.Font
      * @param source
