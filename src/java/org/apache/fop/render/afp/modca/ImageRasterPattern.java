@@ -685,6 +685,7 @@ public class ImageRasterPattern {
      * grey scale specified. The scale should be between 0 (darkest)
      * and 16 (lightest).
      * @param greyscale The grey scale value (0 - 16)
+     * @return the raster data byte array for the given greyscale value
      */
     public static byte[] getRasterData(int greyscale) {
 
@@ -751,13 +752,8 @@ public class ImageRasterPattern {
         }
 
         for (int i = 0; i < repeat; i++) {
-
             System.arraycopy(greypattern, 0, rasterdata, i * 32, 32);
-
         }
-
         return rasterdata;
-
     }
-
 }

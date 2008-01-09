@@ -32,32 +32,32 @@ public class ImageCellPosition extends AbstractAFPObject {
     /**
      * Offset of image cell in X direction
      */
-    private int _XcoSet = 0;
+    private int xOffset = 0;
 
     /**
      * Offset of image cell in Y direction
      */
-    private int _YcoSet = 0;
+    private int yOffset = 0;
 
     /**
      * Size of image cell in X direction
      */
-    private byte[] _XcSize = new byte[] { (byte)0xFF, (byte)0xFF };
+    private byte[] xSize = new byte[] {(byte)0xFF, (byte)0xFF};
 
     /**
      * Size of image cell in Y direction
      */
-    private byte[] _YcSize = new byte[] { (byte)0xFF, (byte)0xFF };
+    private byte[] ySize = new byte[] {(byte)0xFF, (byte)0xFF};
 
     /**
      * Size of fill rectangle in X direction
      */
-    private byte[] _XFillSize = new byte[] { (byte)0xFF, (byte)0xFF };
+    private byte[] xFillSize = new byte[] {(byte)0xFF, (byte)0xFF};
 
     /**
      * Size of fill rectangle in Y direction
      */
-    private byte[] _YFillSize = new byte[] { (byte)0xFF, (byte)0xFF };
+    private byte[] yFillSize = new byte[] {(byte)0xFF, (byte)0xFF};
 
     /**
      * Constructor for the ImageCellPosition
@@ -65,20 +65,16 @@ public class ImageCellPosition extends AbstractAFPObject {
      * @param y The offset of image cell in Y direction
      */
     public ImageCellPosition(int x, int y) {
-
-        _XcoSet = x;
-        _YcoSet = y;
-
+        xOffset = x;
+        yOffset = y;
     }
 
     /**
      * Accessor method to write the AFP datastream for the Image Cell Position
      * @param os The stream to write to
-     * @throws java.io.IOException
+     * @throws java.io.IOException if an I/O exception occurred
      */
-    public void writeDataStream(OutputStream os)
-        throws IOException {
-
+    public void writeDataStream(OutputStream os) throws IOException {
         byte[] data = new byte[21];
 
         data[0] = 0x5A;
@@ -97,7 +93,7 @@ public class ImageCellPosition extends AbstractAFPObject {
          * Specifies the offset along the Xp direction, in image points,
          * of this image cell from the IM image object area origin.
          */
-        byte[] x1 = BinaryUtils.convert(_XcoSet, 2);
+        byte[] x1 = BinaryUtils.convert(xOffset, 2);
         data[9] = x1[0];
         data[10] = x1[1];
 
@@ -105,24 +101,23 @@ public class ImageCellPosition extends AbstractAFPObject {
          * Specifies the offset along the Yp direction, in image points,
          * of this image cell from the IM image object area origin.
          */
-        byte[] x2 = BinaryUtils.convert(_YcoSet, 2);
+        byte[] x2 = BinaryUtils.convert(yOffset, 2);
         data[11] = x2[0];
         data[12] = x2[1];
 
-        data[13] = _XcSize[0];
-        data[14] = _XcSize[1];
+        data[13] = xSize[0];
+        data[14] = xSize[1];
 
-        data[15] = _YcSize[0];
-        data[16] = _YcSize[1];
+        data[15] = ySize[0];
+        data[16] = ySize[1];
 
-        data[17] = _XFillSize[0];
-        data[18] = _XFillSize[1];
+        data[17] = xFillSize[0];
+        data[18] = xFillSize[1];
 
-        data[19] = _YFillSize[0];
-        data[20] = _YFillSize[1];
+        data[19] = yFillSize[0];
+        data[20] = yFillSize[1];
 
         os.write(data);
-
     }
 
     /**
@@ -133,11 +128,9 @@ public class ImageCellPosition extends AbstractAFPObject {
      * @param xcSize The size to set.
      */
     public void setXSize(int xcSize) {
-
         byte[] x = BinaryUtils.convert(xcSize, 2);
-        _XcSize[0] = x[0];
-        _XcSize[1] = x[1];
-
+        xSize[0] = x[0];
+        xSize[1] = x[1];
     }
 
     /**
@@ -148,14 +141,12 @@ public class ImageCellPosition extends AbstractAFPObject {
      * be used as the fill rectangle X-extent. The fill rectangle is
      * filled in the X direction by repeating the image cell in the
      * X direction. The image cell can be truncated to fit the rectangle.
-     * @param xFillSize The size to set.
+     * @param size The size to set.
      */
-    public void setXFillSize(int xFillSize) {
-
-        byte[] x = BinaryUtils.convert(xFillSize, 2);
-        _XFillSize[0] = x[0];
-        _XFillSize[1] = x[1];
-
+    public void setXFillSize(int size) {
+        byte[] x = BinaryUtils.convert(size, 2);
+        this.xFillSize[0] = x[0];
+        this.xFillSize[1] = x[1];
     }
 
     /**
@@ -163,14 +154,12 @@ public class ImageCellPosition extends AbstractAFPObject {
      * of this image cell. A value of X'FFFF' indicates that the
      * default extent specified in bytes 30 and 31 of the Image
      * Input Descriptor (IID) is to be used.
-     * @param ycSize The size to set.
+     * @param size The size to set.
      */
-    public void setYSize(int ycSize) {
-
-        byte[] x = BinaryUtils.convert(ycSize, 2);
-        _YcSize[0] = x[0];
-        _YcSize[1] = x[1];
-
+    public void setYSize(int size) {
+        byte[] x = BinaryUtils.convert(size, 2);
+        this.ySize[0] = x[0];
+        this.ySize[1] = x[1];
     }
 
     /**
@@ -181,14 +170,11 @@ public class ImageCellPosition extends AbstractAFPObject {
      * be used as the fill rectangle Y-extent. The fill rectangle is
      * filled in the Y direction by repeating the image cell in the
      * Y direction. The image cell can be truncated to fit the rectangle.
-     * @param yFillSize The size to set.
+     * @param size The size to set.
      */
-    public void setYFillSize(int yFillSize) {
-
-        byte[] x = BinaryUtils.convert(yFillSize, 2);
-        _YFillSize[0] = x[0];
-        _YFillSize[1] = x[1];
-
+    public void setYFillSize(int size) {
+        byte[] x = BinaryUtils.convert(size, 2);
+        this.yFillSize[0] = x[0];
+        this.yFillSize[1] = x[1];
     }
-
 }

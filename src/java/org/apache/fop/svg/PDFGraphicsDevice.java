@@ -68,7 +68,7 @@ class PDFGraphicsDevice extends GraphicsDevice {
     /**
      * Return out sole GraphicsConfig.
      *
-     * @return the grpahics configuration that created this object
+     * @return the graphics configuration that created this object
      */
     public GraphicsConfiguration getDefaultConfiguration() {
         return gc;

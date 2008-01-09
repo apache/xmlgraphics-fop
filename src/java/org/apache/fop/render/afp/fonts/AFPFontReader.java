@@ -65,28 +65,28 @@ public final class AFPFontReader {
     private static final CharacterSetOrientation[] EMPTY_CSO_ARRAY = new CharacterSetOrientation[0];
 
     /** Codepage MO:DCA structured field. */
-    private static final byte[] CODEPAGE_SF = new byte[] { (byte) 0xD3,
-        (byte) 0xA8, (byte) 0x87 };
+    private static final byte[] CODEPAGE_SF = new byte[] {
+        (byte) 0xD3, (byte) 0xA8, (byte) 0x87};
 
     /** Character table MO:DCA structured field. */
-    private static final byte[] CHARACTER_TABLE_SF = new byte[] { (byte) 0xD3,
-        (byte) 0x8C, (byte) 0x87 };
+    private static final byte[] CHARACTER_TABLE_SF = new byte[] {
+        (byte) 0xD3, (byte) 0x8C, (byte) 0x87};
 
     /** Font control MO:DCA structured field. */
-    private static final byte[] FONT_CONTROL_SF = new byte[] { (byte) 0xD3,
-        (byte) 0xA7, (byte) 0x89 };
+    private static final byte[] FONT_CONTROL_SF = new byte[] {
+        (byte) 0xD3, (byte) 0xA7, (byte) 0x89 };
 
     /** Font orientation MO:DCA structured field. */
-    private static final byte[] FONT_ORIENTATION_SF = new byte[] { (byte) 0xD3,
-        (byte) 0xAE, (byte) 0x89 };
+    private static final byte[] FONT_ORIENTATION_SF = new byte[] {
+        (byte) 0xD3, (byte) 0xAE, (byte) 0x89 };
 
     /** Font position MO:DCA structured field. */
-    private static final byte[] FONT_POSITION_SF = new byte[] { (byte) 0xD3,
-        (byte) 0xAC, (byte) 0x89 };
+    private static final byte[] FONT_POSITION_SF = new byte[] {
+        (byte) 0xD3, (byte) 0xAC, (byte) 0x89 };
 
     /** Font index MO:DCA structured field. */
-    private static final byte[] FONT_INDEX_SF = new byte[] { (byte) 0xD3,
-        (byte) 0x8C, (byte) 0x89 };
+    private static final byte[] FONT_INDEX_SF = new byte[] {
+        (byte) 0xD3, (byte) 0x8C, (byte) 0x89 };
 
     /**
      * The conversion factor to millipoints for 240 dpi
@@ -111,7 +111,7 @@ public final class AFPFontReader {
     /**
      * The collection of code pages
      */
-    private HashMap _codePages = new HashMap();
+    private HashMap codePages = new HashMap();
 
     /**
      * Load the font details and metrics into the CharacterSetMetric object,
@@ -134,11 +134,11 @@ public final class AFPFontReader {
             String cp = new String(characterSet.getCodePage());
             String path = characterSet.getPath();
 
-            HashMap codepage = (HashMap) _codePages.get(cp);
+            HashMap codepage = (HashMap) codePages.get(cp);
 
             if (codepage == null) {
                 codepage = loadCodePage(cp, characterSet.getEncoding(), path);
-                _codePages.put(cp, codepage);
+                codePages.put(cp, codepage);
             }
 
             /**
@@ -243,7 +243,7 @@ public final class AFPFontReader {
      *            the encoding to use for the character decoding
      */
     private static HashMap loadCodePage(String codePage, String encoding,
-        String path) throws IOException, FileNotFoundException {
+        String path) throws IOException {
 
         // Create the HashMap to store code page information
         HashMap codepages = new HashMap();
@@ -271,7 +271,6 @@ public final class AFPFontReader {
                 log.error(msg);
                 throw new FileNotFoundException(msg);
             }
-
         }
 
         File directory = new File(url.getPath());
@@ -330,7 +329,7 @@ public final class AFPFontReader {
                 String gcgiString = new String(gcgiBytes,
                     AFPConstants.EBCIDIC_ENCODING);
                 String charString = new String(charBytes, encoding);
-                int value = charString.charAt(0);
+//                int value = charString.charAt(0);
                 codepages.put(gcgiString, charString);
             } else {
                 position++;
@@ -358,7 +357,7 @@ public final class AFPFontReader {
 
         byte[] fncData = sfr.getNext(FONT_CONTROL_SF);
 
-        int position = 0;
+//        int position = 0;
 
         FontControl fontControl = new AFPFontReader().new FontControl();
 
@@ -590,16 +589,16 @@ public final class AFPFontReader {
 
     private class FontControl {
 
-        private int _dpi;
+        private int dpi;
 
         private boolean isRelative = false;
 
         public int getDpi() {
-            return _dpi;
+            return dpi;
         }
 
         public void setDpi(int i) {
-            _dpi = i;
+            dpi = i;
         }
 
         public boolean isRelative() {

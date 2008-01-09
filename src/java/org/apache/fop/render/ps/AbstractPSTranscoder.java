@@ -35,7 +35,7 @@ import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.ImageTranscoder;
 import org.apache.xmlgraphics.java2d.ps.AbstractPSDocumentGraphics2D;
-import org.apache.xmlgraphics.java2d.ps.TextHandler;
+import org.apache.xmlgraphics.java2d.TextHandler;
 
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontSetup;
