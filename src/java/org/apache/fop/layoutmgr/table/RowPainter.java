@@ -169,27 +169,11 @@ class RowPainter {
         tclm.addRowBackgroundArea(rowFO, actualRowHeight, layoutContext.getRefIPD(), yoffset);
         for (int i = 0; i < primaryGridUnits.length; i++) {
             GridUnit currentGU = lastRow.getGridUnit(i);            
-            if (primaryGridUnits[i] != null) {
-                if (forcedFlush || currentGU.isLastGridUnitRowSpan()) {
-                    //the last line in the "if" above is to avoid a premature end of a
-                    //row-spanned cell because no CellParts are generated after a cell is
-                    //finished with its content.
-                    //See table-cell_number-rows-spanned_bug38397.xml
-                    addAreasForCell(primaryGridUnits[i], start[i], end[i], lastRow, partBPD[i],
-                            actualRowHeight);
-                    primaryGridUnits[i] = null;
-                    start[i] = 0;
-                    end[i] = -1;
-                    partBPD[i] = 0;
-                }
-            } else if (!currentGU.isEmpty()
-                    && currentGU.getColSpanIndex() == 0
+            if (!currentGU.isEmpty() && currentGU.getColSpanIndex() == 0
                     && (forcedFlush || currentGU.isLastGridUnitRowSpan())) {
-                //A row-spanned cell has finished contributing content on the previous page
-                //and now still has to cause grid units to be painted.
-                //See table-cell_page-break_span.xml
                 addAreasForCell(currentGU.getPrimary(), start[i], end[i], lastRow, partBPD[i],
                         actualRowHeight);
+                primaryGridUnits[i] = null;
                 start[i] = 0;
                 end[i] = -1;
                 partBPD[i] = 0;
