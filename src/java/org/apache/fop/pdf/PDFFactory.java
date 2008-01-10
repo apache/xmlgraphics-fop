@@ -849,6 +849,17 @@ public class PDFFactory {
     }
 
     /**
+     * Make a names dictionary (the /PageLabels object).
+     * @return the new PDFPageLabels object
+     */
+    public PDFPageLabels makePageLabels() {
+        PDFPageLabels pageLabels = new PDFPageLabels();
+        getDocument().assignObjectNumber(pageLabels);
+        getDocument().addTrailerObject(pageLabels);
+        return pageLabels;
+    }
+
+    /**
      * Make a the head object of the name dictionary (the /Dests object).
      *
      * @param destinationList a list of PDFDestination instances

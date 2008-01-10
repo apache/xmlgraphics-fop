@@ -23,6 +23,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.GraphicsProperties;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.LengthRangeProperty;
@@ -32,7 +33,7 @@ import org.apache.fop.fo.properties.SpaceProperty;
  * Common base class for instream-foreign-object and external-graphics
  * flow formatting objects.
  */
-public abstract class AbstractGraphics extends FObj {
+public abstract class AbstractGraphics extends FObj implements GraphicsProperties {
     
     // The value of properties relevant for fo:instream-foreign-object
     // and external-graphics.
@@ -101,56 +102,6 @@ public abstract class AbstractGraphics extends FObj {
     }
 
     /**
-     * Given the ipd and the content width calculates the
-     * required x offset based on the text-align property
-     * @param ipd the inline-progression-dimension of the object
-     * @param cwidth the calculated content width of the object
-     * @return the X offset
-     */
-    public int computeXOffset (int ipd, int cwidth) {
-        int xoffset = 0;
-        switch (textAlign) {
-            case EN_CENTER:
-                xoffset = (ipd - cwidth) / 2;
-                break;
-            case EN_END:
-                xoffset = ipd - cwidth;
-                break;
-            case EN_START:
-                break;
-            case EN_JUSTIFY:
-            default:
-                break;
-        }
-        return xoffset;
-    }
-
-    /**
-     * Given the bpd and the content height calculates the
-     * required y offset based on the display-align property
-     * @param bpd the block-progression-dimension of the object
-     * @param cheight the calculated content height of the object
-     * @return the Y offset
-     */
-    public int computeYOffset(int bpd, int cheight) {
-        int yoffset = 0;
-        switch (displayAlign) {
-            case EN_BEFORE:
-                break;
-            case EN_AFTER:
-                yoffset = bpd - cheight;
-                break;
-            case EN_CENTER:
-                yoffset = (bpd - cheight) / 2;
-                break;
-            case EN_AUTO:
-            default:
-                break;
-        }
-        return yoffset;
-    }
-
-    /**
      * @return the "id" property.
      */
     public String getId() {
@@ -171,16 +122,12 @@ public abstract class AbstractGraphics extends FObj {
         return lineHeight;
     }
 
-    /**
-     * @return the "inline-progression-dimension" property.
-     */
+    /** {@inheritDoc} */
     public LengthRangeProperty getInlineProgressionDimension() {
         return inlineProgressionDimension;
     }
 
-    /**
-     * @return the "block-progression-dimension" property.
-     */
+    /** {@inheritDoc} */
     public LengthRangeProperty getBlockProgressionDimension() {
         return blockProgressionDimension;
     }
@@ -199,32 +146,34 @@ public abstract class AbstractGraphics extends FObj {
         return width;
     }
 
-    /**
-     * @return the "content-height" property.
-     */
+    /** {@inheritDoc} */
     public Length getContentHeight() {
         return contentHeight;
     }
 
-    /**
-     * @return the "content-width" property.
-     */
+    /** {@inheritDoc} */
     public Length getContentWidth() {
         return contentWidth;
     }
 
-    /**
-     * @return the "scaling" property.
-     */
+    /** {@inheritDoc} */
     public int getScaling() {
         return scaling;
     }
 
-    /**
-     * @return the "overflow" property.
-     */
+    /** {@inheritDoc} */
     public int getOverflow() {
         return overflow;
+    }
+
+    /** {@inheritDoc} */
+    public int getDisplayAlign() {
+        return displayAlign;
+    }
+
+    /** {@inheritDoc} */
+    public int getTextAlign() {
+        return textAlign;
     }
 
     /**

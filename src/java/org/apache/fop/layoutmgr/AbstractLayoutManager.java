@@ -130,45 +130,6 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
     }
 
     /**
-     * Reset the layoutmanager "iterator" so that it will start
-     * with the passed Position's generating LM
-     * on the next call to getChildLM.
-     * @param pos a Position returned by a child layout manager
-     * representing a potential break decision.
-     * If pos is null, then back up to the first child LM.
-     */
-    protected void reset(org.apache.fop.layoutmgr.Position pos) {
-        //if (lm == null) return;
-        LayoutManager lm = (pos != null) ? pos.getLM() : null;
-        if (curChildLM != lm) {
-            // ASSERT curChildLM == (LayoutManager)childLMiter.previous()
-            if (childLMiter.hasPrevious() && curChildLM
-                    != (LayoutManager) childLMiter.previous()) {
-                //log.error("LMiter problem!");
-            }
-            while (curChildLM != lm && childLMiter.hasPrevious()) {
-                curChildLM.resetPosition(null);
-                curChildLM = (LayoutManager) childLMiter.previous();
-            }
-            // Otherwise next returns same object
-            childLMiter.next();
-        }
-        if (curChildLM != null) {
-            curChildLM.resetPosition(pos);
-        }
-        if (isFinished()) {
-            setFinished(false);
-        }
-    }
-
-    /** {@inheritDoc} */
-    public void resetPosition(Position resetPos) {
-        //  if (resetPos == null) {
-        //      reset(null);
-        //  }
-    }
-
-    /**
      * Tell whether this LayoutManager has handled all of its content.
      * @return True if there are no more break possibilities,
      * ie. the last one returned represents the end of the content.
@@ -263,9 +224,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
         return newLMs;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public PageSequenceLayoutManager getPSLM() {
         return parentLM.getPSLM();
     }

@@ -171,11 +171,21 @@ public class PageSequenceMaster extends FObj {
         }
     }
     
+    /** @return true if the page-sequence-master has a page-master with page-position="only" */
+    public boolean hasPagePositionOnly() {
+        if (currentSubSequence != null) {
+            return currentSubSequence.hasPagePositionOnly();
+        } else {
+            return false;
+        }
+    }
+    
     /**
      * Returns the next simple-page-master.
      * @param isOddPage True if the next page number is odd
      * @param isFirstPage True if the next page is the first
      * @param isLastPage True if the next page is the last
+     * @param isOnlyPage True if the next page is the only page
      * @param isBlankPage True if the next page is blank
      * @return the requested page master
      * @throws FOPException if there's a problem determining the next page master
@@ -183,6 +193,7 @@ public class PageSequenceMaster extends FObj {
     public SimplePageMaster getNextSimplePageMaster(boolean isOddPage,
                                                     boolean isFirstPage,
                                                     boolean isLastPage,
+                                                    boolean isOnlyPage,
                                                     boolean isBlankPage)
                                                       throws FOPException {
         if (currentSubSequence == null) {
@@ -193,7 +204,7 @@ public class PageSequenceMaster extends FObj {
             }
         }
         String pageMasterName = currentSubSequence
-            .getNextPageMasterName(isOddPage, isFirstPage, isLastPage, isBlankPage);
+            .getNextPageMasterName(isOddPage, isFirstPage, isLastPage, isOnlyPage, isBlankPage);
         boolean canRecover = true;
         while (pageMasterName == null) {
             SubSequenceSpecifier nextSubSequence = getNextSubSequence();
@@ -212,7 +223,7 @@ public class PageSequenceMaster extends FObj {
                 currentSubSequence = nextSubSequence;
             }
             pageMasterName = currentSubSequence
-                .getNextPageMasterName(isOddPage, isFirstPage, isLastPage, isBlankPage);
+                .getNextPageMasterName(isOddPage, isFirstPage, isLastPage, isOnlyPage, isBlankPage);
         }
         SimplePageMaster pageMaster = this.layoutMasterSet
             .getSimplePageMaster(pageMasterName);

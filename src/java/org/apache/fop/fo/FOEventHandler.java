@@ -25,6 +25,7 @@ import java.util.Set;
 import org.xml.sax.SAXException;
 
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.fo.extensions.ExternalDocument;
 import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.BlockContainer;
@@ -555,6 +556,20 @@ public abstract class FOEventHandler {
      * @param length Portion of array to process.
      */
     public void characters(char data[], int start, int length) {
+    }
+
+    /**
+     * Process the start of the external-document extension.
+     * @param document the external-document node
+     */
+    public void startExternalDocument(ExternalDocument document) {
+    }
+
+    /**
+     * Process the end of the external-document extension.
+     * @param document the external-document node
+     */
+    public void endExternalDocument(ExternalDocument document) {
     }
 
 }

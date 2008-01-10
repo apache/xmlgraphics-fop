@@ -63,8 +63,7 @@
       </section>
       <section id="named-destinations">
         <title>Anchors or Named Destinations</title>
-        <p>This extension element hasn't been reimplemented for the redesigned code, yet.</p>
-        <!--p>Use the fox:destination element to define "named destinations" inside a PDF document.
+        <p>Use the fox:destination element to define "named destinations" inside a PDF document.
 These are useful as fragment identifiers, e.g. "http://server/document.pdf#anchor-name".
 fox:destination elements can be placed almost anywhere in the fo document, including a child of
 root, a block-level element, or an inline-level element.
@@ -77,7 +76,7 @@ PDF document. The fox:destination simply gives that view an independent name.
 <fo:block id="table-of-contents">Table of Contents</fo:block>]]></source>
         <warning>It is possible that in some future release of FOP, <em>all </em>elements with
 "id" attributes will generate named-destinations, which will eliminate the need for
-fox:destination.</warning-->
+fox:destination.</warning>
       </section>
       <section id="table-continue-label">
         <title>Table Continuation Label</title>
@@ -114,6 +113,79 @@ to following pages. Here is an example of FO code creating such a table-header:<
           the you'll have at least three lines (assuming line-height="1.2") together on a table
           or list-block.
         </p>
+      </section>
+      <section id="external-document">
+        <title>fox:external-document</title>
+        <note>
+          This feature is incomplete. Support for multi-page documents will be added shortly.
+          At the moment, only single-page images will work. And this will not work with RTF output.
+        </note>
+        <p>
+          This is a proprietary extension element which allows to add whole images as pages to
+          an FO document. For example, if you have a scanned document or a fax as multi-page TIFF
+          file, you can append or insert this document using the <code>fox:external-document</code>
+          element. Each page of the external document will create one full page in the target
+          format.
+        </p>
+        <p>
+          The <code>fox:external-document</code> element is structurally a peer to
+          <code>fo:page-sequence</code>, so wherever you can put an <code>fo:page-sequence</code>
+          you could also place a <code>fox:external-document</code>.
+          Therefore, the specified contents for <code>fo:root</code> change to: 
+        </p>
+        <p>
+          <code>
+            (layout-master-set, declarations?, bookmark-tree?, (page-sequence|page-sequence-wrapper|fox:external-document|fox:destination)+)
+          </code>
+        </p>
+        <section>
+          <title>Specification</title>
+          <p>
+            The <code>fox:external-document</code> extension formatting object is used to specify
+            how to create a (sub-)sequence of pages within a document. The content of these pages
+            comes from the individual subimages/pages of an image or paged document (for example:
+            multi-page TIFF in the form of faxes or scanned documents, or PDF files). The
+            formatting object creates the necessary areas to display one image per page.
+          </p>
+          <p>
+            In terms of page numbers, the behaviour is the same as for
+            <code>fo:page-sequence</code>. The placement of the image inside the page is similar
+            to that of <code>fo:external-graphic</code> or <code>fo:instream-foreign-object</code>,
+            i.e. the viewport (and therefore the page size) is defined by either the intrinsic
+            size of the image or by the size properties that apply to this formatting object.
+          </p>
+          <p>Content: EMPTY</p>
+          <p>The following properties apply to this formatting object:</p>
+          <ul>
+            <li>(Common Accessibility Properties) (not implemented, yet)</li>
+            <li>(Common Aural Properties) (not implemented, yet)</li>
+            <li>block-progression-dimension</li>
+            <li>content-height</li>
+            <li>content-type</li>
+            <li>content-width</li>
+            <li>display-align</li>
+            <li>height</li>
+            <li>id</li>
+            <li>inline-progression-dimension</li>
+            <li>overflow</li>
+            <li>pages: &lt;page-set&gt; (see below) (not implemented, yet)</li>
+            <li>reference-orientation</li>
+            <li>scaling</li>
+            <li>scaling-method</li>
+            <li>src</li>
+            <li>text-align</li>
+            <li>width</li>
+          </ul>
+          <p>
+            Datatype "page-set": Value: auto | &lt;integer-range&gt;,
+            Default: "auto" which means all pages/subimages of the document.
+            &lt;integer-range&gt; allows values such as "7" or "1-3"
+          </p>
+          <note>
+            <code>fox:external-document</code> is not suitable for concatenating FO documents.
+            For this, XInclude is recommended.
+          </note>
+        </section>
       </section>
     </section>
   </body>

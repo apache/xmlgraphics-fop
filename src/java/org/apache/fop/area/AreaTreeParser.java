@@ -36,16 +36,25 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.area.Trait.InternalLink;
 import org.apache.fop.area.Trait.Background;
-import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.area.Trait.InternalLink;
 import org.apache.fop.area.inline.AbstractTextArea;
 import org.apache.fop.area.inline.Character;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
+import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.InlineBlockParent;
 import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.Leader;
@@ -68,12 +77,6 @@ import org.apache.fop.util.ContentHandlerFactory;
 import org.apache.fop.util.ContentHandlerFactoryRegistry;
 import org.apache.fop.util.DefaultErrorListener;
 import org.apache.fop.util.QName;
-import org.w3c.dom.DOMImplementation;
-import org.w3c.dom.Document;
-import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * This is a parser for the area tree XML (intermediate format) which is used to reread an area
@@ -179,6 +182,7 @@ public class AreaTreeParser {
             makers.put("foreignObject", new ForeignObjectMaker());
             makers.put("bookmarkTree", new BookmarkTreeMaker());
             makers.put("bookmark", new BookmarkMaker());
+            makers.put("destination", new DestinationMaker());
         }
 
         private static Rectangle2D parseRect(String rect) {
@@ -919,6 +923,26 @@ public class AreaTreeParser {
 
             public void endElement() {
                 assertObjectOfClass(areaStack.pop(), BookmarkData.class);
+            }
+        }
+
+        private class DestinationMaker extends AbstractMaker {
+
+            public void startElement(Attributes attributes) {
+                String[] linkdata
+                    = InternalLink.parseXMLAttribute(lastAttributes.getValue("internal-link"));
+                PageViewport pv = (PageViewport) pageViewportsByKey.get(linkdata[0]);
+                DestinationData dest = new DestinationData(linkdata[1]);
+                List pages = new java.util.ArrayList();
+                pages.add(pv);
+                dest.resolveIDRef(linkdata[1], pages);
+                areaStack.push(dest);
+            }
+
+            public void endElement() {
+                Object tos = areaStack.pop();
+                assertObjectOfClass(tos, DestinationData.class);
+                treeModel.handleOffDocumentItem((DestinationData) tos);
             }
         }
 

@@ -32,6 +32,7 @@ import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.FObjMixed;
+import org.apache.fop.fo.extensions.ExternalDocument;
 import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.BidiOverride;
 import org.apache.fop.fo.flow.Block;
@@ -403,6 +404,11 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
                 makeLayoutManagers(child, lms);
             }
         }       
+    }
+
+    public ExternalDocumentLayoutManager makeExternalDocumentLayoutManager(
+        AreaTreeHandler ath, ExternalDocument ed) {
+        return new ExternalDocumentLayoutManager(ath, ed);
     }
 
 }

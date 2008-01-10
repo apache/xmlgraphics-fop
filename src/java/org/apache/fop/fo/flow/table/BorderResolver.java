@@ -44,10 +44,8 @@ interface BorderResolver {
 
     /**
      * Receives notification of the end of a table-header/footer/body.
-     * 
-     * @param part the part that has ended
      */
-    void endPart(TableBody part);
+    void endPart();
 
     /**
      * Receives notification of the end of the table.

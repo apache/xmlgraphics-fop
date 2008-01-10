@@ -35,9 +35,22 @@ import java.util.Map;
 
 import javax.xml.transform.Source;
 
+import org.w3c.dom.Document;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.xmlgraphics.ps.DSCConstants;
+import org.apache.xmlgraphics.ps.PSGenerator;
+import org.apache.xmlgraphics.ps.PSProcSets;
+import org.apache.xmlgraphics.ps.PSResource;
+import org.apache.xmlgraphics.ps.PSState;
+import org.apache.xmlgraphics.ps.dsc.DSCException;
+import org.apache.xmlgraphics.ps.dsc.ResourceTracker;
+import org.apache.xmlgraphics.ps.dsc.events.DSCCommentBoundingBox;
+import org.apache.xmlgraphics.ps.dsc.events.DSCCommentHiResBoundingBox;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.Area;
@@ -75,14 +88,6 @@ import org.apache.fop.render.ps.extensions.PSExtensionAttachment;
 import org.apache.fop.render.ps.extensions.PSSetPageDevice;
 import org.apache.fop.render.ps.extensions.PSSetupCode;
 import org.apache.fop.util.CharUtilities;
-import org.apache.xmlgraphics.ps.DSCConstants;
-import org.apache.xmlgraphics.ps.PSGenerator;
-import org.apache.xmlgraphics.ps.PSProcSets;
-import org.apache.xmlgraphics.ps.PSResource;
-import org.apache.xmlgraphics.ps.PSState;
-import org.apache.xmlgraphics.ps.dsc.DSCException;
-import org.apache.xmlgraphics.ps.dsc.ResourceTracker;
-import org.w3c.dom.Document;
 
 /**
  * Renderer that renders to PostScript.
@@ -152,6 +157,9 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
     /** Whether or not Dublin Core Standard (dsc) compliant output is enforced */
     private boolean dscCompliant = true;
 
+    /** Is used to determine the document's bounding box */
+    private Rectangle2D documentBoundingBox;
+    
     /** This is a collection holding all document header comments */
     private Collection headerComments;
 
@@ -776,6 +784,9 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         gen.writeDSCComment(DSCConstants.CREATION_DATE, new Object[] {new java.util.Date()});
         gen.writeDSCComment(DSCConstants.LANGUAGE_LEVEL, new Integer(gen.getPSLevel()));
         gen.writeDSCComment(DSCConstants.PAGES, new Object[] {DSCConstants.ATEND});
+        gen.writeDSCComment(DSCConstants.BBOX, DSCConstants.ATEND);
+        gen.writeDSCComment(DSCConstants.HIRES_BBOX, DSCConstants.ATEND);
+        this.documentBoundingBox = new Rectangle2D.Double();
         gen.writeDSCComment(DSCConstants.DOCUMENT_SUPPLIED_RESOURCES, 
                 new Object[] {DSCConstants.ATEND});
         if (headerComments != null) {
@@ -833,6 +844,8 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
             footerComments.clear();
         }
         gen.writeDSCComment(DSCConstants.PAGES, new Integer(this.currentPageNumber));
+        new DSCCommentBoundingBox(this.documentBoundingBox).generate(gen);
+        new DSCCommentHiResBoundingBox(this.documentBoundingBox).generate(gen);
         gen.getResourceTracker().writeResources(false, gen);
         gen.writeDSCComment(DSCConstants.EOF);
         gen.flush();
@@ -863,7 +876,8 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         try {
             try {
                 ResourceHandler.process(this.userAgent, in, this.outputStream, 
-                        this.fontInfo, resTracker, this.formResources, this.currentPageNumber);
+                        this.fontInfo, resTracker, this.formResources,
+                        this.currentPageNumber, this.documentBoundingBox);
                 this.outputStream.flush();
             } catch (DSCException e) {
                 throw new RuntimeException(e.getMessage());
@@ -1031,7 +1045,9 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
             log.error(e.getMessage());
         }
         final Integer zero = new Integer(0);
+        Rectangle2D pageBoundingBox = new Rectangle2D.Double();
         if (rotate) {
+            pageBoundingBox.setRect(0, 0, pageHeight, pageWidth);
             gen.writeDSCComment(DSCConstants.PAGE_BBOX, new Object[] {
                     zero, zero, new Long(Math.round(pageHeight)),
                     new Long(Math.round(pageWidth)) });
@@ -1040,6 +1056,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
                     new Double(pageWidth) });
             gen.writeDSCComment(DSCConstants.PAGE_ORIENTATION, "Landscape");
         } else {
+            pageBoundingBox.setRect(0, 0, pageWidth, pageHeight);
             gen.writeDSCComment(DSCConstants.PAGE_BBOX, new Object[] {
                     zero, zero, new Long(Math.round(pageWidth)),
                     new Long(Math.round(pageHeight)) });
@@ -1051,6 +1068,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
                         "Portrait");
             }
         }
+        this.documentBoundingBox.add(pageBoundingBox);
         gen.writeDSCComment(DSCConstants.PAGE_RESOURCES,
                 new Object[] {DSCConstants.ATEND});
 

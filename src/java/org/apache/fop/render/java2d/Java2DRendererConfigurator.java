@@ -53,5 +53,6 @@ public class Java2DRendererConfigurator extends PrintRendererConfigurator {
                 java2dRenderer.setTransparentPageBackground("true".equalsIgnoreCase(value));
             }
         }
+        super.configure(renderer);
     }
 }

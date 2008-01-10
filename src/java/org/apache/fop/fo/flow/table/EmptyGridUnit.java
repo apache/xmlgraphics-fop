@@ -19,8 +19,6 @@
 
 package org.apache.fop.fo.flow.table;
 
-import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 
 /**
  * GridUnit subclass for empty grid units.
@@ -40,10 +38,11 @@ public class EmptyGridUnit extends GridUnit {
     }
 
     /** {@inheritDoc} */
-    protected void setBorder(int side) {
-        resolvedBorders[side] = new BorderSpecification(
-                CommonBorderPaddingBackground.getDefaultBorderInfo(),
-                Constants.FO_TABLE_CELL);
+    protected void setBordersFromCell() {
+        borderBefore = ConditionalBorder.getDefaultBorder(collapsingBorderModel);
+        borderAfter = ConditionalBorder.getDefaultBorder(collapsingBorderModel);
+        borderStart = BorderSpecification.getDefaultBorder();
+        borderEnd = BorderSpecification.getDefaultBorder();
     }
 
     /** {@inheritDoc} */

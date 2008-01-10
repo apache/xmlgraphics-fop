@@ -73,6 +73,7 @@ import org.apache.fop.pdf.PDFAction;
 import org.apache.fop.pdf.PDFAnnotList;
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.pdf.PDFConformanceException;
+import org.apache.fop.pdf.PDFDictionary;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFEncryptionManager;
 import org.apache.fop.pdf.PDFEncryptionParams;
@@ -88,6 +89,7 @@ import org.apache.fop.pdf.PDFNumber;
 import org.apache.fop.pdf.PDFOutline;
 import org.apache.fop.pdf.PDFOutputIntent;
 import org.apache.fop.pdf.PDFPage;
+import org.apache.fop.pdf.PDFPageLabels;
 import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.pdf.PDFResources;
 import org.apache.fop.pdf.PDFState;
@@ -715,6 +717,19 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
             page.getPageIndex());
         pageReferences.put(page.getKey(), currentPage.referencePDF());
         pvReferences.put(page.getKey(), page);
+        
+        //Produce page labels
+        PDFPageLabels pageLabels = this.pdfDoc.getRoot().getPageLabels();
+        if (pageLabels == null) {
+            //Set up PageLabels
+            pageLabels = this.pdfDoc.getFactory().makePageLabels();
+            this.pdfDoc.getRoot().setPageLabels(pageLabels);
+        }
+        PDFDictionary dict = new PDFDictionary();
+        dict.put("P", page.getPageNumberString());
+        //TODO If the sequence of generated page numbers were inspected, this could be
+        //expressed in a more space-efficient way
+        pageLabels.getNums().put(page.getPageIndex(), dict);
     }
     
     /**

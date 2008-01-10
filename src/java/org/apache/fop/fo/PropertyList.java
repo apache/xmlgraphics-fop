@@ -20,6 +20,8 @@
 package org.apache.fop.fo;
 
 // Java
+import java.text.MessageFormat;
+
 import org.xml.sax.Attributes;
 
 import org.apache.commons.logging.Log;
@@ -355,9 +357,9 @@ public abstract class PropertyList {
         if (propId == -1 
                 || (subpropId == -1 
                         && findSubPropertyName(propertyName) != null)) {
-            StringBuffer errorMessage = new StringBuffer().append(
-                        "Invalid property name \'").append(propertyName);
-            handleInvalidProperty(errorMessage.toString(), propertyName);
+            String errorMessage = MessageFormat.format(
+                    "Invalid property name ''{0}''.", new Object[] {propertyName});
+            handleInvalidProperty(errorMessage, propertyName);
             return false;
         }
         return true;

@@ -32,31 +32,6 @@ import org.apache.fop.traits.MinOptMax;
 public class ElementListUtils {
 
     /**
-     * Removes all legal breaks in an element list.
-     * @param elements the element list
-     */
-    public static void removeLegalBreaks(List elements) {
-        ListIterator i = elements.listIterator();
-        while (i.hasNext()) {
-            ListElement el = (ListElement)i.next();
-            if (el.isPenalty()) {
-                BreakElement breakPoss = (BreakElement)el;
-                //Convert all penalties no break inhibitors
-                if (breakPoss.getPenaltyValue() < KnuthPenalty.INFINITE) {
-                    breakPoss.setPenaltyValue(KnuthPenalty.INFINITE);
-                }
-            } else if (el.isGlue()) {
-                i.previous();
-                if (el.isBox()) {
-                    i.next();
-                    i.add(new KnuthPenalty(0, KnuthPenalty.INFINITE, false, 
-                            null, false));
-                }
-            }
-        }
-    }
-    
-    /**
      * Removes legal breaks in an element list. A constraint can be specified to limit the
      * range in which the breaks are removed. Legal breaks occuring before at least 
      * constraint.opt space is filled will be removed.
@@ -67,7 +42,7 @@ public class ElementListUtils {
     public static boolean removeLegalBreaks(List elements, MinOptMax constraint) {
         return removeLegalBreaks(elements, constraint.opt);
     }
-    
+
     /**
      * Removes legal breaks in an element list. A constraint can be specified to limit the
      * range in which the breaks are removed. Legal breaks occuring before at least 
@@ -85,7 +60,7 @@ public class ElementListUtils {
                 KnuthPenalty penalty = (KnuthPenalty)el;
                 //Convert all penalties to break inhibitors
                 if (penalty.getP() < KnuthPenalty.INFINITE) {
-                    iter.set(new KnuthPenalty(penalty.getW(), KnuthPenalty.INFINITE, 
+                    iter.set(new KnuthPenalty(penalty.getW(), KnuthPenalty.INFINITE,
                             penalty.isFlagged(), penalty.getPosition(), penalty.isAuxiliary()));
                 }
             } else if (el.isGlue()) {
@@ -95,7 +70,7 @@ public class ElementListUtils {
                 el = (ListElement)iter.previous();
                 iter.next();
                 if (el.isBox()) {
-                    iter.add(new KnuthPenalty(0, KnuthPenalty.INFINITE, false, 
+                    iter.add(new KnuthPenalty(0, KnuthPenalty.INFINITE, false,
                             null, false));
                 }
                 iter.next();
@@ -132,7 +107,7 @@ public class ElementListUtils {
                 KnuthPenalty penalty = (KnuthPenalty)el;
                 //Convert all penalties to break inhibitors
                 if (penalty.getP() < KnuthPenalty.INFINITE) {
-                    i.set(new KnuthPenalty(penalty.getW(), KnuthPenalty.INFINITE, 
+                    i.set(new KnuthPenalty(penalty.getW(), KnuthPenalty.INFINITE,
                             penalty.isFlagged(), penalty.getPosition(), penalty.isAuxiliary()));
                 }
             } else if (el.isGlue()) {
@@ -141,7 +116,7 @@ public class ElementListUtils {
                 el = (ListElement)i.previous();
                 i.next();
                 if (el.isBox()) {
-                    i.add(new KnuthPenalty(0, KnuthPenalty.INFINITE, false, 
+                    i.add(new KnuthPenalty(0, KnuthPenalty.INFINITE, false,
                             null, false));
                 }
             } else if (el.isUnresolvedElement()) {
@@ -164,7 +139,7 @@ public class ElementListUtils {
         }
         return true;
     }
-    
+
     /**
      * Calculates the content length of the given element list. Warning: It doesn't take any
      * stretch and shrink possibilities into account.
@@ -194,7 +169,7 @@ public class ElementListUtils {
         }
         return len;
     }
-    
+
     /**
      * Calculates the content length of the given element list. Warning: It doesn't take any
      * stretch and shrink possibilities into account.
@@ -204,7 +179,7 @@ public class ElementListUtils {
     public static int calcContentLength(List elems) {
         return calcContentLength(elems, 0, elems.size() - 1);
     }
-    
+
     /**
      * Indicates whether the given element list ends with a forced break.
      * @param elems the element list
@@ -214,7 +189,7 @@ public class ElementListUtils {
         ListElement last = (ListElement)elems.getLast();
         return last.isForcedBreak();
     }
-    
+
     /**
      * Determines the position of the previous break before the start index on an
      * element list.
@@ -233,7 +208,7 @@ public class ElementListUtils {
         }
         return prevBreak;
     }
-    
+
     public static KnuthBox firstKnuthBox(List list) {
         Iterator iter = list.iterator();
         KnuthBox box = null;
