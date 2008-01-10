@@ -145,9 +145,8 @@ class RowPainter {
      * @param forcedFlush true if the elements must be drawn even if the row isn't
      * finished yet (last row on the page), or if the row is the last of the current table
      * part
-     * @return the height of the (grid) row
      */
-    int addAreasAndFlushRow(boolean forcedFlush) {
+    void addAreasAndFlushRow(boolean forcedFlush) {
         int actualRowHeight = 0;
 
         if (log.isDebugEnabled()) {
@@ -190,7 +189,6 @@ class RowPainter {
             firstRowIndex = -1;
             rowOffsets.clear();
         }
-        return actualRowHeight;
     }
 
     /**
