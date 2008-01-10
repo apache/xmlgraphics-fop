@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.table.TableCellLayoutManager;
 
 /**
@@ -142,13 +143,11 @@ public class PrimaryGridUnit extends GridUnit {
         return getHalfMaxBeforeBorderWidth() + getHalfMaxAfterBorderWidth();
     }
 
-    /** @param value The length of the cell content to remember. */
-    public void setContentLength(int value) {
-        this.contentLength = value;
-    }
-
     /** @return the length of the cell content. */
     public int getContentLength() {
+        if (contentLength < 0) {
+            contentLength = ElementListUtils.calcContentLength(elements);
+        }
         return contentLength;
     }
 

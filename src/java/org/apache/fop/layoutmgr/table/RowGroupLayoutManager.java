@@ -148,9 +148,9 @@ class RowGroupLayoutManager {
             TableRow tableRow = null;
             // The row's minimum content height; 0 if the row's height is auto, otherwise
             // the .minimum component of the explicitly specified value
-            int minContentHeight = 0;
-            int maxCellHeight = 0;
-            int effRowContentHeight = 0;
+            int minRowBPD = 0;
+            // The BPD of the biggest cell in the row
+            int maxCellBPD = 0;
             for (int j = 0; j < row.getGridUnits().size(); j++) {
                 assert maxColumnCount == 0 || maxColumnCount == row.getGridUnits().size();
                 maxColumnCount = Math.max(maxColumnCount, row.getGridUnits().size());
@@ -168,14 +168,12 @@ class RowGroupLayoutManager {
                             tableRow = primary.getRow();
                             
                             //Check for bpd on row, see CSS21, 17.5.3 Table height algorithms
-                            LengthRangeProperty bpd = tableRow.getBlockProgressionDimension();
-                            if (!bpd.getMinimum(tableLM).isAuto()) {
-                                minContentHeight = Math.max(
-                                        minContentHeight, 
-                                        bpd.getMinimum(
-                                                tableLM).getLength().getValue(tableLM));
+                            LengthRangeProperty rowBPD = tableRow.getBlockProgressionDimension();
+                            if (!rowBPD.getMinimum(tableLM).isAuto()) {
+                                minRowBPD = Math.max(minRowBPD,
+                                        rowBPD.getMinimum(tableLM).getLength().getValue(tableLM));
                             }
-                            MinOptMaxUtil.restrict(explicitRowHeights[rgi], bpd, tableLM);
+                            MinOptMaxUtil.restrict(explicitRowHeights[rgi], rowBPD, tableLM);
                             
                         }
 
@@ -218,31 +216,27 @@ class RowGroupLayoutManager {
                         }
                     }
 
-                    
-                    //Calculate height of cell contents
-                    primary.setContentLength(ElementListUtils.calcContentLength(
-                            primary.getElements()));
-                    maxCellHeight = Math.max(maxCellHeight, primary.getContentLength());
-
                     //Calculate height of row, see CSS21, 17.5.3 Table height algorithms
                     if (gu.isLastGridUnitRowSpan()) {
-                        int effCellContentHeight = minContentHeight;
-                        LengthRangeProperty bpd = primary.getCell().getBlockProgressionDimension();
-                        if (!bpd.getMinimum(tableLM).isAuto()) {
-                            effCellContentHeight = Math.max(
-                                effCellContentHeight,
-                                bpd.getMinimum(tableLM).getLength().getValue(tableLM));
+                        // The effective cell's bpd, after taking into account bpd
+                        // (possibly explicitly) set on the row or on the cell, and the
+                        // cell's content length
+                        int effectiveCellBPD = minRowBPD;
+                        LengthRangeProperty cellBPD = primary.getCell()
+                                .getBlockProgressionDimension();
+                        if (!cellBPD.getMinimum(tableLM).isAuto()) {
+                            effectiveCellBPD = Math.max(effectiveCellBPD,
+                                    cellBPD.getMinimum(tableLM).getLength().getValue(tableLM));
                         }
-                        if (!bpd.getOptimum(tableLM).isAuto()) {
-                            effCellContentHeight = Math.max(
-                                effCellContentHeight,
-                                bpd.getOptimum(tableLM).getLength().getValue(tableLM));
+                        if (!cellBPD.getOptimum(tableLM).isAuto()) {
+                            effectiveCellBPD = Math.max(effectiveCellBPD,
+                                    cellBPD.getOptimum(tableLM).getLength().getValue(tableLM));
                         }
                         if (gu.getRowSpanIndex() == 0) {
                             //TODO ATM only non-row-spanned cells are taken for this
-                            MinOptMaxUtil.restrict(explicitRowHeights[rgi], bpd, tableLM);
+                            MinOptMaxUtil.restrict(explicitRowHeights[rgi], cellBPD, tableLM);
                         }
-                        effCellContentHeight = Math.max(effCellContentHeight, 
+                        effectiveCellBPD = Math.max(effectiveCellBPD, 
                                 primary.getContentLength());
                         
                         int borderWidths;
@@ -253,13 +247,12 @@ class RowGroupLayoutManager {
                             borderWidths = primary.getHalfMaxBorderWidth();
                         }
                         int padding = 0;
-                        effRowContentHeight = Math.max(effRowContentHeight,
-                                effCellContentHeight);
+                        maxCellBPD = Math.max(maxCellBPD, effectiveCellBPD);
                         CommonBorderPaddingBackground cbpb 
                             = primary.getCell().getCommonBorderPaddingBackground(); 
                         padding += cbpb.getPaddingBefore(false, primary.getCellLM());
                         padding += cbpb.getPaddingAfter(false, primary.getCellLM());
-                        int effRowHeight = effCellContentHeight 
+                        int effRowHeight = effectiveCellBPD 
                                 + padding + borderWidths
                                 + 2 * tableLM.getHalfBorderSeparationBPD();
                         for (int previous = 0; previous < gu.getRowSpanIndex(); previous++) {
@@ -279,13 +272,13 @@ class RowGroupLayoutManager {
 
             row.setHeight(rowHeights[rgi]);
             row.setExplicitHeight(explicitRowHeights[rgi]);
-            if (effRowContentHeight > row.getExplicitHeight().max) {
+            if (maxCellBPD > row.getExplicitHeight().max) {
                 log.warn(FONode.decorateWithContextInfo(
                         "The contents of row " + (row.getIndex() + 1) 
                         + " are taller than they should be (there is a"
                         + " block-progression-dimension or height constraint on the indicated row)."
                         + " Due to its contents the row grows"
-                        + " to " + effRowContentHeight + " millipoints, but the row shouldn't get"
+                        + " to " + maxCellBPD + " millipoints, but the row shouldn't get"
                         + " any taller than " + row.getExplicitHeight() + " millipoints.", 
                         row.getTableRow()));
             }
