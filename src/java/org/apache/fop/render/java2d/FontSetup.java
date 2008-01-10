@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,14 +22,23 @@ package org.apache.fop.render.java2d;
 // FOP
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
+import java.util.List;
 import java.util.Set;
+
+import javax.xml.transform.Source;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.fop.fonts.CustomFont;
+import org.apache.fop.fonts.EmbedFontInfo;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontLoader;
+import org.apache.fop.fonts.FontResolver;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.FontUtil;
+import org.apache.fop.fonts.LazyFont;
 
 /**
  * Sets up the Java2D/AWT fonts. It is similar to
@@ -41,18 +50,18 @@ public class FontSetup {
 
     /** logging instance */
     protected static Log log = LogFactory.getLog(FontSetup.class);
-    
+
     private static final int LAST_PREDEFINED_FONT_NUMBER = 14;
 
     private static final Set HARDCODED_FONT_NAMES;
-    
+
     static {
         HARDCODED_FONT_NAMES = new java.util.HashSet();
         HARDCODED_FONT_NAMES.add("any");
         HARDCODED_FONT_NAMES.add("sans-serif");
         HARDCODED_FONT_NAMES.add("serif");
         HARDCODED_FONT_NAMES.add("monospace");
-        
+
         HARDCODED_FONT_NAMES.add("Helvetica");
         HARDCODED_FONT_NAMES.add("Times");
         HARDCODED_FONT_NAMES.add("Courier");
@@ -62,7 +71,7 @@ public class FontSetup {
         HARDCODED_FONT_NAMES.add("Times-Roman");
         HARDCODED_FONT_NAMES.add("Computer-Modern-Typewriter");
     }
-    
+
     /**
      * Sets up the font info object.
      *
@@ -70,9 +79,12 @@ public class FontSetup {
      * triplets for lookup.
      *
      * @param fontInfo the font info object to set up
-     * @param graphics needed for acces to font metrics
+     * @param configuredFontList of fop config fonts
+     * @param resolver for resolving the font file URI
+     * @param graphics needed for access to font metrics
      */
-    public static void setup(FontInfo fontInfo, Graphics2D graphics) {
+    public static void setup(FontInfo fontInfo, List configuredFontList,
+            FontResolver resolver, Graphics2D graphics) {
         FontMetricsMapper metric;
         int normal, bold, bolditalic, italic;
 
@@ -87,47 +99,47 @@ public class FontSetup {
         italic = java.awt.Font.ITALIC;
         bolditalic = java.awt.Font.BOLD + java.awt.Font.ITALIC;
 
-        metric = new FontMetricsMapper("SansSerif", normal, graphics);
+        metric = new SystemFontMetricsMapper("SansSerif", normal, graphics);
         // --> goes to  F1
         fontInfo.addMetrics("F1", metric);
-        metric = new FontMetricsMapper("SansSerif", italic, graphics);
+        metric = new SystemFontMetricsMapper("SansSerif", italic, graphics);
         // --> goes to  F2
         fontInfo.addMetrics("F2", metric);
-        metric = new FontMetricsMapper("SansSerif", bold, graphics);
+        metric = new SystemFontMetricsMapper("SansSerif", bold, graphics);
         // --> goes to  F3
         fontInfo.addMetrics("F3", metric);
-        metric = new FontMetricsMapper("SansSerif", bolditalic, graphics);
+        metric = new SystemFontMetricsMapper("SansSerif", bolditalic, graphics);
         // --> goes to  F4
         fontInfo.addMetrics("F4", metric);
 
 
-        metric = new FontMetricsMapper("Serif", normal, graphics);
+        metric = new SystemFontMetricsMapper("Serif", normal, graphics);
         // --> goes to  F5
         fontInfo.addMetrics("F5", metric);
-        metric = new FontMetricsMapper("Serif", italic, graphics);
+        metric = new SystemFontMetricsMapper("Serif", italic, graphics);
         // --> goes to  F6
         fontInfo.addMetrics("F6", metric);
-        metric = new FontMetricsMapper("Serif", bold, graphics);
+        metric = new SystemFontMetricsMapper("Serif", bold, graphics);
         // --> goes to  F7
         fontInfo.addMetrics("F7", metric);
-        metric = new FontMetricsMapper("Serif", bolditalic, graphics);
+        metric = new SystemFontMetricsMapper("Serif", bolditalic, graphics);
         // --> goes to  F8
         fontInfo.addMetrics("F8", metric);
 
-        metric = new FontMetricsMapper("MonoSpaced", normal, graphics);
+        metric = new SystemFontMetricsMapper("MonoSpaced", normal, graphics);
         // --> goes to  F9
         fontInfo.addMetrics("F9", metric);
-        metric = new FontMetricsMapper("MonoSpaced", italic, graphics);
+        metric = new SystemFontMetricsMapper("MonoSpaced", italic, graphics);
         // --> goes to  F10
         fontInfo.addMetrics("F10", metric);
-        metric = new FontMetricsMapper("MonoSpaced", bold, graphics);
+        metric = new SystemFontMetricsMapper("MonoSpaced", bold, graphics);
         // --> goes to  F11
         fontInfo.addMetrics("F11", metric);
-        metric = new FontMetricsMapper("MonoSpaced", bolditalic, graphics);
+        metric = new SystemFontMetricsMapper("MonoSpaced", bolditalic, graphics);
         // --> goes to  F12
         fontInfo.addMetrics("F12", metric);
 
-        metric = new FontMetricsMapper("Serif", normal, graphics);
+        metric = new SystemFontMetricsMapper("Serif", normal, graphics);
         //"Symbol" doesn't seem to work here, but "Serif" does the job just fine. *shrug*
         // --> goes to  F13 and F14
         fontInfo.addMetrics("F13", metric);
@@ -206,31 +218,32 @@ public class FontSetup {
         fontInfo.addFontProperties("F8", "Times Roman", "italic", Font.WEIGHT_BOLD);
         fontInfo.addFontProperties("F9", "Computer-Modern-Typewriter",
                                    "normal", Font.WEIGHT_NORMAL);
-        
-        configureInstalledAWTFonts(fontInfo, graphics, LAST_PREDEFINED_FONT_NUMBER + 1);
+
+        int lastNum = configureInstalledAWTFonts(fontInfo, graphics, LAST_PREDEFINED_FONT_NUMBER + 1);
+        addConfiguredFonts(fontInfo, configuredFontList, resolver, lastNum++);
     }
 
-    private static void configureInstalledAWTFonts(FontInfo fontInfo, Graphics2D graphics, 
+    private static int configureInstalledAWTFonts(FontInfo fontInfo, Graphics2D graphics,
             int startNumber) {
         int num = startNumber;
         GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        
+
         java.awt.Font[] fonts = env.getAllFonts();
         for (int i = 0; i < fonts.length; i++) {
             java.awt.Font f = fonts[i];
             if (HARDCODED_FONT_NAMES.contains(f.getName())) {
                 continue; //skip
             }
-            
+
             if (log.isTraceEnabled()) {
-                log.trace("AWT Font: " + f.getFontName() 
-                        + ", family: " + f.getFamily() 
-                        + ", PS: " + f.getPSName() 
+                log.trace("AWT Font: " + f.getFontName()
+                        + ", family: " + f.getFamily()
+                        + ", PS: " + f.getPSName()
                         + ", Name: " + f.getName()
                         + ", Angle: " + f.getItalicAngle()
                         + ", Style: " + f.getStyle());
             }
-            
+
             String searchName = FontUtil.stripWhiteSpace(f.getName()).toLowerCase();
             String guessedStyle = FontUtil.guessStyle(searchName);
             int guessedWeight = FontUtil.guessWeight(searchName);
@@ -239,7 +252,7 @@ public class FontSetup {
             String fontKey = "F" + num;
             int style = convertToAWTFontStyle(guessedStyle, guessedWeight);
             addFontMetricsMapper(fontInfo, f.getName(), fontKey, graphics, style);
-            
+
             //Register appropriate font triplets matching the font. Two different strategies:
             //Example: "Arial Bold", normal, normal
             addFontTriplet(fontInfo, f.getName(),
@@ -250,8 +263,68 @@ public class FontSetup {
                         guessedStyle, guessedWeight, fontKey);
             }
         }
+        return num;
 
     }
+
+    /**
+     * Add fonts from configuration file starting with internal name F<num>.
+     *
+     * @param fontInfo the font info object to set up
+     * @param fontList a list of EmbedFontInfo objects
+     * @param num starting index for internal font numbering
+     * @param resolver the font resolver
+     */
+    private static void addConfiguredFonts(FontInfo fontInfo, List fontList, FontResolver resolver, int num) {
+
+        if (fontList == null || fontList.size() < 1) {
+            log.debug("No user configured fonts found.");
+            return;
+        }
+        if (resolver == null) {
+            // Ensure that we have minimal font resolution capabilities
+            resolver = org.apache.fop.fonts.FontSetup
+                .createMinimalFontResolver();
+        }
+        String internalName = null;
+
+        for (int i = 0; i < fontList.size(); i++) {
+
+            EmbedFontInfo configFontInfo = (EmbedFontInfo) fontList.get(i);
+            String fontFile = configFontInfo.getEmbedFile();
+            internalName = "F" + num;
+            num++;
+            try {
+                FontMetricsMapper font = null;
+                String metricsUrl = configFontInfo.getMetricsFile();
+                // If the user specified an XML-based metrics file, we'll use it
+                // Otherwise, calculate metrics directly from the font file.
+                if (metricsUrl != null) {
+                    LazyFont fontMetrics = new LazyFont(configFontInfo, resolver);
+                    Source fontSource = resolver.resolve(configFontInfo.getEmbedFile());
+                    font = new CustomFontMetricsMapper(fontMetrics, fontSource);
+                } else {
+                    CustomFont fontMetrics = FontLoader.loadFont(fontFile, resolver);
+                    font = new CustomFontMetricsMapper(fontMetrics);
+                }
+
+                fontInfo.addMetrics(internalName, font);
+
+                List triplets = configFontInfo.getFontTriplets();
+                for (int c = 0; c < triplets.size(); c++) {
+                    FontTriplet triplet = (FontTriplet) triplets.get(c);
+
+                    if (log.isDebugEnabled()) {
+                        log.debug("Registering: " + triplet + " under " + internalName);
+                    }
+                    fontInfo.addFontProperties(internalName, triplet);
+                }
+            } catch (Exception e) {
+                log.warn("Unable to load custom font from file '" + fontFile + "'", e);
+            }
+        }
+    }
+
 
     private static void addFontTriplet(FontInfo fontInfo, String fontName, String fontStyle,
             int fontWeight, String fontKey) {
@@ -261,7 +334,7 @@ public class FontSetup {
 
     private static void addFontMetricsMapper(FontInfo fontInfo, String family, String fontKey,
             Graphics2D graphics, int style) {
-        FontMetricsMapper metric = new FontMetricsMapper(family, style, graphics);
+        FontMetricsMapper metric = new SystemFontMetricsMapper(family, style, graphics);
         fontInfo.addMetrics(fontKey, metric);
     }
 
@@ -275,6 +348,6 @@ public class FontSetup {
         }
         return style;
     }
-    
+
 }
 

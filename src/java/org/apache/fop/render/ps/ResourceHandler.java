@@ -19,6 +19,7 @@
 
 package org.apache.fop.render.ps;
 
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -26,10 +27,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.image.FopImage;
-import org.apache.fop.image.ImageFactory;
 import org.apache.xmlgraphics.ps.DSCConstants;
 import org.apache.xmlgraphics.ps.PSGenerator;
 import org.apache.xmlgraphics.ps.dsc.DSCException;
@@ -39,8 +36,10 @@ import org.apache.xmlgraphics.ps.dsc.DSCParserConstants;
 import org.apache.xmlgraphics.ps.dsc.DefaultNestedDocumentHandler;
 import org.apache.xmlgraphics.ps.dsc.ResourceTracker;
 import org.apache.xmlgraphics.ps.dsc.events.DSCComment;
+import org.apache.xmlgraphics.ps.dsc.events.DSCCommentBoundingBox;
 import org.apache.xmlgraphics.ps.dsc.events.DSCCommentDocumentNeededResources;
 import org.apache.xmlgraphics.ps.dsc.events.DSCCommentDocumentSuppliedResources;
+import org.apache.xmlgraphics.ps.dsc.events.DSCCommentHiResBoundingBox;
 import org.apache.xmlgraphics.ps.dsc.events.DSCCommentLanguageLevel;
 import org.apache.xmlgraphics.ps.dsc.events.DSCCommentPage;
 import org.apache.xmlgraphics.ps.dsc.events.DSCCommentPages;
@@ -48,6 +47,11 @@ import org.apache.xmlgraphics.ps.dsc.events.DSCEvent;
 import org.apache.xmlgraphics.ps.dsc.events.DSCHeaderComment;
 import org.apache.xmlgraphics.ps.dsc.events.PostScriptComment;
 import org.apache.xmlgraphics.ps.dsc.tools.DSCTools;
+
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.image.FopImage;
+import org.apache.fop.image.ImageFactory;
 
 /**
  * This class is used when two-pass production is used to generate the PostScript file (setting
@@ -67,11 +71,14 @@ public class ResourceHandler implements DSCParserConstants {
      * @param resTracker the resource tracker to use
      * @param formResources Contains all forms used by this document (maintained by PSRenderer)
      * @param pageCount the number of pages (given here because PSRenderer writes an "(atend)")
+     * @param documentBoundingBox the document's bounding box
+     *                                  (given here because PSRenderer writes an "(atend)")
      * @throws DSCException If there's an error in the DSC structure of the PS file
      * @throws IOException In case of an I/O error
      */
     public static void process(FOUserAgent userAgent, InputStream in, OutputStream out, 
-            FontInfo fontInfo, ResourceTracker resTracker, Map formResources, int pageCount)
+            FontInfo fontInfo, ResourceTracker resTracker, Map formResources,
+            int pageCount, Rectangle2D documentBoundingBox)
                     throws DSCException, IOException {
         DSCParser parser = new DSCParser(in);
         PSGenerator gen = new PSGenerator(out);
@@ -86,6 +93,8 @@ public class ResourceHandler implements DSCParserConstants {
             {
                 //We rewrite those as part of the processing
                 filtered.add(DSCConstants.PAGES);
+                filtered.add(DSCConstants.BBOX);
+                filtered.add(DSCConstants.HIRES_BBOX);
                 filtered.add(DSCConstants.DOCUMENT_NEEDED_RESOURCES);
                 filtered.add(DSCConstants.DOCUMENT_SUPPLIED_RESOURCES);
             }
@@ -109,6 +118,8 @@ public class ResourceHandler implements DSCParserConstants {
                 //Set number of pages
                 DSCCommentPages pages = new DSCCommentPages(pageCount);
                 pages.generate(gen);
+                new DSCCommentBoundingBox(documentBoundingBox).generate(gen);
+                new DSCCommentHiResBoundingBox(documentBoundingBox).generate(gen);
 
                 PSFontUtils.determineSuppliedFonts(resTracker, fontInfo, fontInfo.getUsedFonts());
                 registerSuppliedForms(resTracker, formResources);

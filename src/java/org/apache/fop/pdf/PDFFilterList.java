@@ -335,9 +335,9 @@ public class PDFFilterList {
         }
         if (array.length() > 0 & needParmsEntry) {
             if (array.length() > 1) {
-                dict.put("DecodeParams", array);
+                dict.put("DecodeParms", array);
             } else {
-                dict.put("DecodeParams", array.get(0));
+                dict.put("DecodeParms", array.get(0));
             }
         }
     }

@@ -19,6 +19,8 @@
 
 package org.apache.fop.layoutmgr;
 
+import java.awt.geom.Rectangle2D;
+
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 
@@ -43,6 +45,18 @@ public class Page {
     public Page(SimplePageMaster spm, int pageNumber, String pageNumberStr, boolean blank) {
         this.spm = spm;
         this.pageViewport = new PageViewport(spm, pageNumber, pageNumberStr, blank);
+    }
+    
+    /**
+     * Auxiliary constructor used when there's no SimplePageMaster.
+     * @param viewArea the view area of the page
+     * @param pageNumber the page number (as an int)
+     * @param pageNumberStr the page number (as a String) 
+     * @param blank true if this is a blank page
+     */
+    public Page(Rectangle2D viewArea, int pageNumber, String pageNumberStr, boolean blank) {
+        this.spm = null;
+        this.pageViewport = new PageViewport(viewArea, pageNumber, pageNumberStr, null, blank);
     }
     
     /** @return the simple-page-master that created this page */

@@ -75,6 +75,7 @@ public class TableStepper {
     private void setup(int columnCount) {
         this.columnCount = columnCount;
         this.activeRowIndex = 0;
+        this.previousRowsLength = 0;
     }
 
     /**
@@ -169,26 +170,27 @@ public class TableStepper {
             boolean forcedBreak = false;
             int breakClass = -1;
             //Put all involved grid units into a list
-            List gridUnitParts = new java.util.ArrayList(maxColumnCount);
+            List cellParts = new java.util.ArrayList(maxColumnCount);
             for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
                 ActiveCell activeCell = (ActiveCell) iter.next();
                 if (activeCell.contributesContent()) {
-                    GridUnitPart gup = activeCell.createGridUnitPart();
-                    gridUnitParts.add(gup);
+                    CellPart part = activeCell.createCellPart();
+                    cellParts.add(part);
                     forcedBreak = activeCell.isLastForcedBreak();
                     if (forcedBreak) {
                         breakClass = activeCell.getLastBreakClass();
                     }
-                    if (returnList.size() == 0 && gup.isFirstPart() && gup.mustKeepWithPrevious()) {
+                    if (returnList.size() == 0 && part.isFirstPart()
+                            && part.mustKeepWithPrevious()) {
                         context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
                     }
                 }
             }
-            //log.debug(">>> guPARTS: " + gridUnitParts);
+            //log.debug(">>> guPARTS: " + cellParts);
 
             //Create elements for step
             TableContentPosition tcpos = new TableContentPosition(getTableLM(),
-                    gridUnitParts, rowGroup[normalRow]);
+                    cellParts, rowGroup[normalRow]);
             if (returnList.size() == 0) {
                 tcpos.setFlag(TableContentPosition.FIRST_IN_ROWGROUP, true);
             }

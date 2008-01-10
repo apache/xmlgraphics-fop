@@ -332,14 +332,6 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
     }
 
     /**
-     * {@inheritDoc}
-     */
-    public void resetPosition(Position resetPos) {
-        if (resetPos == null) {
-            reset(null);
-        }
-    }
-    /**
      * Returns the IPD of the content area
      * @return the IPD of the content area
      */

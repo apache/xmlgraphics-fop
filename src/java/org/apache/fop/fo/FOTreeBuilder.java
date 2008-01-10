@@ -21,25 +21,27 @@ package org.apache.fop.fo;
 
 import java.io.OutputStream;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.fop.fo.extensions.ExtensionElementMapping;
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.FormattingResults;
-import org.apache.fop.area.AreaTreeHandler;
-import org.apache.fop.fo.ElementMapping.Maker;
-import org.apache.fop.fo.pagination.Root;
-import org.apache.fop.image.ImageFactory;
-import org.apache.fop.util.ContentHandlerFactory;
-import org.apache.fop.util.ContentHandlerFactory.ObjectSource;
-import org.apache.fop.util.ContentHandlerFactory.ObjectBuiltListener;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.FormattingResults;
+import org.apache.fop.area.AreaTreeHandler;
+import org.apache.fop.fo.ElementMapping.Maker;
+import org.apache.fop.fo.extensions.ExtensionElementMapping;
+import org.apache.fop.fo.pagination.Root;
+import org.apache.fop.image.ImageFactory;
+import org.apache.fop.util.ContentHandlerFactory;
+import org.apache.fop.util.ContentHandlerFactory.ObjectBuiltListener;
+import org.apache.fop.util.ContentHandlerFactory.ObjectSource;
 
 /**
  * SAX Handler that passes parsed data to the various
@@ -79,6 +81,7 @@ public class FOTreeBuilder extends DefaultHandler {
     private FOUserAgent userAgent;
     
     private boolean used = false;
+    private boolean empty = true;
     
     private int depth;
     
@@ -145,6 +148,7 @@ public class FOTreeBuilder extends DefaultHandler {
                     + " Please instantiate a new instance.");
         }
         used = true;
+        empty = true;
         rootFObj = null;    // allows FOTreeBuilder to be reused
         if (log.isDebugEnabled()) {
             log.debug("Building formatting object tree");
@@ -160,6 +164,10 @@ public class FOTreeBuilder extends DefaultHandler {
      */
     public void endDocument() throws SAXException {
         this.delegate.endDocument();
+        if (this.rootFObj == null && empty) {
+            throw new ValidationException(
+                    "Document is empty (something might be wrong with your XSLT stylesheet).");
+        }
         rootFObj = null;
         if (log.isDebugEnabled()) {
             log.debug("Parsing of document complete");
@@ -280,6 +288,7 @@ public class FOTreeBuilder extends DefaultHandler {
 
             // Check to ensure first node encountered is an fo:root
             if (rootFObj == null) {
+                empty = false;
                 if (!namespaceURI.equals(FOElementMapping.URI) 
                     || !localName.equals("root")) {
                     throw new ValidationException(

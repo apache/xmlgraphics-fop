@@ -252,7 +252,7 @@ public class PageProvider implements Constants {
         try {
             String pageNumberString = pageSeq.makeFormattedPageNumber(index);
             SimplePageMaster spm = pageSeq.getNextSimplePageMaster(
-                    index, (startPageOfPageSequence == index), isLastPage, isBlank);
+                    index, (startPageOfPageSequence == index), isLastPage, false, isBlank);
                 
             Region body = spm.getRegion(FO_REGION_BODY);
             if (!pageSeq.getMainFlow().getFlowName().equals(body.getRegionName())) {

@@ -91,11 +91,11 @@ class VariableColRowGroupBuilder extends RowGroupBuilder {
     }
 
     /** {@inheritDoc} */
-    void endTablePart(final TableBody tableBody) throws ValidationException {
+    void endTablePart() throws ValidationException {
         // TODO catch the ValidationException sooner?
         events.add(new Event() {
             public void play(RowGroupBuilder rowGroupBuilder) throws ValidationException {
-                rowGroupBuilder.endTablePart(tableBody);
+                rowGroupBuilder.endTablePart();
             }
         });
     }

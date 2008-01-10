@@ -118,7 +118,7 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
             boolean strict, FontCache fontCache) throws FOPException {
         List fontInfoList = new java.util.ArrayList();
 
-        Configuration fonts = cfg.getChild("fonts");
+        Configuration fonts = cfg.getChild("fonts", false);
         if (fonts != null) {
             long start = 0;
             if (log.isDebugEnabled()) {
