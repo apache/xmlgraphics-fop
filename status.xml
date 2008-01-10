@@ -28,6 +28,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="add">
+        Added support for PDF page labels.
+      </action>
       <action context="Code" dev="JM" type="add" fixes-bug="44176" due-to="Patrick Jaromin">
         Added support for custom fonts in Java2DRenderer and derived renderers.
       </action>
