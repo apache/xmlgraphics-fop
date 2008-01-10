@@ -29,6 +29,9 @@
   <changes>
     <release version="FOP Trunk">
       <action context="Code" dev="JM" type="add">
+        PostScript output now generates the bounding box DSC comments for the whole document.
+      </action>
+      <action context="Code" dev="JM" type="add">
         Added support for PDF page labels.
       </action>
       <action context="Code" dev="JM" type="add" fixes-bug="44176" due-to="Patrick Jaromin">
