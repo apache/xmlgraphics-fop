@@ -43,7 +43,6 @@ class RowPainter {
     private TableRow rowFO = null;
     private int colCount;
     private int yoffset = 0;
-    private int accumulatedBPD = 0;
     /** Currently handled row (= last encountered row). */
     private EffRow lastRow = null;
     private LayoutContext layoutContext;
@@ -91,7 +90,7 @@ class RowPainter {
     }
 
     int getAccumulatedBPD() {
-        return this.accumulatedBPD;
+        return yoffset;
     }
 
     /**
@@ -180,7 +179,6 @@ class RowPainter {
             }
         }
         yoffset += actualRowHeight;
-        accumulatedBPD += actualRowHeight;
         if (forcedFlush) {
             // Either the end of the page is reached, then this was the last call of this
             // method and we no longer care about lastRow; or the end of a table-part
