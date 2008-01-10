@@ -170,8 +170,7 @@ class RowPainter {
         for (int i = 0; i < primaryGridUnits.length; i++) {
             GridUnit currentGU = lastRow.getGridUnit(i);            
             if (primaryGridUnits[i] != null) {
-                if (forcedFlush || ((end[i] == primaryGridUnits[i].getElements().size() - 1)
-                        && currentGU.isLastGridUnitRowSpan())) {
+                if (forcedFlush || currentGU.isLastGridUnitRowSpan()) {
                     //the last line in the "if" above is to avoid a premature end of a
                     //row-spanned cell because no CellParts are generated after a cell is
                     //finished with its content.
