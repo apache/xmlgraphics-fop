@@ -187,8 +187,10 @@ class RowPainter {
             // (header, footer, body) has been reached, and the next row will anyway be
             // different from the current one, and this is unnecessary to recall this
             // method in the first lines of handleTableContentPosition, so we may reset
-            // lastRow
+            // the following variables
             lastRow = null;
+            firstRowIndex = -1;
+            rowOffsets.clear();
         }
         return actualRowHeight;
     }
@@ -357,10 +359,5 @@ class RowPainter {
      */
     private int getRowOffset(int rowIndex) {
         return ((Integer) rowOffsets.get(rowIndex - firstRowIndex)).intValue();
-    }
-
-    void endPart() {
-        firstRowIndex = -1;
-        rowOffsets.clear();
     }
 }
