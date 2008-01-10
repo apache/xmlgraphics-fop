@@ -42,9 +42,9 @@ class RowPainter {
     /** The fo:table-row containing the currently handled grid rows. */
     private TableRow rowFO = null;
     private int colCount;
-    private int yoffset = 0;
+    private int currentRowOffset = 0;
     /** Currently handled row (= last encountered row). */
-    private EffRow lastRow = null;
+    private EffRow currentRow = null;
     private LayoutContext layoutContext;
     /**
      * Index of the first row of the current part present on the current page.
@@ -90,7 +90,7 @@ class RowPainter {
     }
 
     int getAccumulatedBPD() {
-        return yoffset;
+        return currentRowOffset;
     }
 
     /**
@@ -100,16 +100,16 @@ class RowPainter {
      * @param tcpos a position representing the row fragment
      */
     void handleTableContentPosition(TableContentPosition tcpos) {
-        if (lastRow != tcpos.row && lastRow != null) {
+        if (tcpos.row != currentRow && currentRow != null) {
             addAreasAndFlushRow(false);
         }
         if (log.isDebugEnabled()) {
             log.debug("===handleTableContentPosition(" + tcpos);
         }
         rowFO = tcpos.row.getTableRow();
-        lastRow = tcpos.row;
+        currentRow = tcpos.row;
         if (firstRowIndex < 0) {
-            firstRowIndex = lastRow.getIndex();
+            firstRowIndex = currentRow.getIndex();
         }
         Iterator partIter = tcpos.cellParts.iterator();
         //Iterate over all grid units in the current step
@@ -150,9 +150,10 @@ class RowPainter {
         int actualRowHeight = 0;
 
         if (log.isDebugEnabled()) {
-            log.debug("Remembering yoffset for row " + lastRow.getIndex() + ": " + yoffset);
+            log.debug("Remembering yoffset for row " + currentRow.getIndex() + ": "
+                    + currentRowOffset);
         }
-        recordRowOffset(lastRow.getIndex(), yoffset);
+        recordRowOffset(currentRow.getIndex(), currentRowOffset);
 
         for (int i = 0; i < primaryGridUnits.length; i++) {
             if ((primaryGridUnits[i] != null)
@@ -164,12 +165,13 @@ class RowPainter {
         actualRowHeight += 2 * tclm.getTableLM().getHalfBorderSeparationBPD();
 
         //Add areas for row
-        tclm.addRowBackgroundArea(rowFO, actualRowHeight, layoutContext.getRefIPD(), yoffset);
+        tclm.addRowBackgroundArea(rowFO, actualRowHeight, layoutContext.getRefIPD(),
+                currentRowOffset);
         for (int i = 0; i < primaryGridUnits.length; i++) {
-            GridUnit currentGU = lastRow.getGridUnit(i);            
+            GridUnit currentGU = currentRow.getGridUnit(i);            
             if (!currentGU.isEmpty() && currentGU.getColSpanIndex() == 0
                     && (forcedFlush || currentGU.isLastGridUnitRowSpan())) {
-                addAreasForCell(currentGU.getPrimary(), start[i], end[i], lastRow, partBPD[i],
+                addAreasForCell(currentGU.getPrimary(), start[i], end[i], currentRow, partBPD[i],
                         actualRowHeight);
                 primaryGridUnits[i] = null;
                 start[i] = 0;
@@ -177,15 +179,15 @@ class RowPainter {
                 partBPD[i] = 0;
             }
         }
-        yoffset += actualRowHeight;
+        currentRowOffset += actualRowHeight;
         if (forcedFlush) {
             // Either the end of the page is reached, then this was the last call of this
-            // method and we no longer care about lastRow; or the end of a table-part
+            // method and we no longer care about currentRow; or the end of a table-part
             // (header, footer, body) has been reached, and the next row will anyway be
             // different from the current one, and this is unnecessary to recall this
             // method in the first lines of handleTableContentPosition, so we may reset
             // the following variables
-            lastRow = null;
+            currentRow = null;
             firstRowIndex = -1;
             rowOffsets.clear();
         }
@@ -194,8 +196,7 @@ class RowPainter {
     /**
      * Computes the total height of the part of the given cell spanning on the current
      * active row, including borders and paddings. The bpd is also stored in partBPD, and
-     * it is ensured that the cell's or row's explicit height is respected. yoffset is
-     * updated accordingly.
+     * it is ensured that the cell's or row's explicit height is respected.
      * 
      * @param pgu primary grid unit corresponding to the cell
      * @param start index of the first element of the cell occuring on the current page
@@ -271,7 +272,7 @@ class RowPainter {
             len += pgu.getHalfMaxAfterBorderWidth();
         }
         int cellOffset = getRowOffset(Math.max(pgu.getStartRow(), firstRowIndex));
-        len -= yoffset - cellOffset;
+        len -= currentRowOffset - cellOffset;
         return len;
     }
 
@@ -279,7 +280,7 @@ class RowPainter {
             EffRow row, int contentHeight, int rowHeight) {
         //Determine the first row in this sequence
         int startRowIndex = Math.max(pgu.getStartRow(), firstRowIndex);
-        int lastRowIndex = lastRow.getIndex();
+        int currentRowIndex = currentRow.getIndex();
 
         // In collapsing-border model, if the cell spans over several columns/rows then
         // dedicated areas will be created for each grid unit to hold the corresponding
@@ -287,23 +288,24 @@ class RowPainter {
         // grid row spanned over by the cell
         int[] spannedGridRowHeights = null;
         if (!tclm.getTableLM().getTable().isSeparateBorderModel() && pgu.hasSpanning()) {
-            spannedGridRowHeights = new int[lastRowIndex - startRowIndex + 1];
+            spannedGridRowHeights = new int[currentRowIndex - startRowIndex + 1];
             int prevOffset = getRowOffset(startRowIndex);
-            for (int i = 0; i < lastRowIndex - startRowIndex; i++) {
+            for (int i = 0; i < currentRowIndex - startRowIndex; i++) {
                 int newOffset = getRowOffset(startRowIndex + i + 1);
                 spannedGridRowHeights[i] = newOffset - prevOffset;
                 prevOffset = newOffset;
             }
-            spannedGridRowHeights[lastRowIndex - startRowIndex] = rowHeight;
+            spannedGridRowHeights[currentRowIndex - startRowIndex] = rowHeight;
         }
 
         int cellOffset = getRowOffset(startRowIndex);
         int effCellHeight = rowHeight;
-        effCellHeight += yoffset - cellOffset;
+        effCellHeight += currentRowOffset - cellOffset;
         if (log.isDebugEnabled()) {
             log.debug("Creating area for cell:");
             log.debug("  current row: " + row.getIndex());
-            log.debug("  start row: " + pgu.getStartRow() + " " + yoffset + " " + cellOffset);
+            log.debug("  start row: " + pgu.getStartRow() + " " + currentRowOffset + " "
+                    + cellOffset);
             log.debug("  contentHeight: " + contentHeight + " rowHeight=" + rowHeight
                     + " effCellHeight=" + effCellHeight);
         }
@@ -320,7 +322,7 @@ class RowPainter {
         }
         cellLM.addAreas(new KnuthPossPosIter(pgu.getElements(), startPos, endPos + 1),
                 layoutContext, spannedGridRowHeights, startRowIndex - pgu.getStartRow(),
-                lastRowIndex - pgu.getStartRow() + 1);
+                currentRowIndex - pgu.getStartRow() + 1);
     }
 
     /**
@@ -338,7 +340,7 @@ class RowPainter {
          * TableContentPosition will be created for this row. Thus its index will never be
          * recorded by the #handleTableContentPosition method.
          * 
-         * The yoffset for such a row is the same as the next non-empty row. It's needed
+         * The offset of such a row is the same as the next non-empty row. It's needed
          * to correctly offset blocks for cells starting on this row. Hence the loop
          * below.
          */
