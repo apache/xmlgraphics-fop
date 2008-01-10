@@ -101,16 +101,26 @@ public class PDFDictionary extends PDFObject {
      */
     protected void writeDictionary(StringBuffer sb) {
         sb.append("<<");
+        boolean compact = (this.order.size() <= 2);
         Iterator iter = this.order.iterator();
         while (iter.hasNext()) {
             String key = (String)iter.next();
-            sb.append("\n  /");
-            sb.append(key);
-            sb.append(" ");
+            if (compact) {
+                sb.append(' ');
+            } else {
+                sb.append("\n  ");
+            }
+            sb.append('/').append(key);
+            sb.append(' ');
             Object obj = this.entries.get(key);
             formatObject(obj, sb);
         }
-        sb.append("\n>>\n");
+        if (compact) {
+            sb.append(' ');
+        } else {
+            sb.append('\n');
+        }
+        sb.append(">>\n");
     }
 
 }
