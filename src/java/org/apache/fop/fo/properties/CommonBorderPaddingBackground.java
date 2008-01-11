@@ -28,10 +28,10 @@ import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.PercentBaseContext;
+import org.apache.fop.datatypes.URISpecification;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.image.ImageFactory;
 
 /**
  * Stores all common border and padding properties.
@@ -235,7 +235,7 @@ public class CommonBorderPaddingBackground {
                     Constants.PR_BACKGROUND_POSITION_VERTICAL).getLength();
 
             //Additional processing: preload image
-            String uri = ImageFactory.getURL(backgroundImage);
+            String uri = URISpecification.getURL(backgroundImage);
             FOUserAgent userAgent = pList.getFObj().getUserAgent();
             ImageManager manager = userAgent.getFactory().getImageManager();
             ImageSessionContext sessionContext = userAgent.getImageSessionContext();
