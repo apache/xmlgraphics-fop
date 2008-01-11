@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks if content is properly squeezed (spaces reduced) inside block-containers to fit content in the box if possible.
+    </p>
+    <p>
+      Note: if there are no break points and the content would overflow, the content may be squeezed by more than the available shrink.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in" margin="20pt">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" text-align="justify">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block-container id="bc" height="10em" background-color="yellow">
+            <fo:block id="b1" space-after.optimum="3em" space-after.minimum="0pt">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nam hendrerit posuere nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Pellentesque placerat semper nulla.</fo:block>
+            <fo:block id="b2">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nam hendrerit posuere nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Pellentesque placerat semper nulla.</fo:block>
+          </fo:block-container>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="62400" xpath="//block[@prod-id = 'b1']/@bpda"/>
+    <eval expected="57600" xpath="//block[@prod-id = 'b2']/@bpda"/>
+    <eval expected="120000" xpath="//block[@prod-id = 'bc' and @is-reference-area = 'true']/@bpd"/>
+    <true xpath="//block[@prod-id = 'bc' and @is-reference-area = 'true']/@bpd = (//block[@prod-id = 'b1']/@bpda + //block[@prod-id = 'b2']/@bpda)"/>
+    <eval expected="4800" xpath="//block[@prod-id = 'b1']/@space-after"/>
+  </checks>
+</testcase>

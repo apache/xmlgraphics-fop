@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks table width in certain situations.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block-container width="100%" height="10pt" background-color="lightgray">
+            <fo:block/>
+          </fo:block-container>
+          <fo:table table-layout="fixed" width="100%" border-collapse="separate">
+            <fo:table-column column-width="proportional-column-width(3)"/>
+            <fo:table-column column-width="proportional-column-width(2)"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>cell1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell background-color="yellow">
+                  <fo:block>cell2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+          <fo:block start-indent="1in" end-indent="1in">
+            <fo:block-container width="100%" height="10pt" background-color="lightgray">
+              <fo:block/>
+            </fo:block-container>
+            <fo:table table-layout="fixed" width="100%" border-collapse="separate" background-color="gray">
+              <fo:table-column column-width="proportional-column-width(3)"/>
+              <fo:table-column column-width="proportional-column-width(2)"/>
+              <fo:table-body start-indent="0cm" end-indent="0cm">
+                <fo:table-row>
+                  <fo:table-cell>
+                    <fo:block>cell1</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell background-color="yellow">
+                    <fo:block>cell2</fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+              </fo:table-body>
+            </fo:table>
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- width of the first block-container -->
+    <eval expected="360000" xpath="//flow/block[1]/@ipd"/>
+
+    <!-- width of the first table -->
+    <eval expected="360000" xpath="//flow/block[2]/@ipd"/>
+    <eval expected="216000" xpath="//flow/block[2]/block[1]/@ipd"/>
+    <eval expected="144000" xpath="//flow/block[2]/block[2]/@ipd"/>
+    
+    <!-- width of the enclosing block establishing the indents -->
+    <eval expected="216000" xpath="//flow/block[3]/@ipd"/>
+    <eval expected="72000" xpath="//flow/block[3]/@start-indent"/>
+    <eval expected="72000" xpath="//flow/block[3]/@end-indent"/>
+    
+    <!-- width of the second block-container -->
+    <eval expected="216000" xpath="//flow/block[3]/block[1]/@ipd"/>
+    <eval expected="72000" xpath="//flow/block[3]/block[1]/@start-indent"/>
+    <eval expected="72000" xpath="//flow/block[3]/block[1]/@end-indent"/>
+
+    <!-- width of the second table -->
+    <eval expected="216000" xpath="//flow/block[3]/block[2]/@ipd"/>
+    <eval expected="129600" xpath="//flow/block[3]/block[2]/block[1]/@ipd"/>
+    <eval expected="86400" xpath="//flow/block[3]/block[2]/block[2]/@ipd"/>
+  </checks>
+</testcase>
