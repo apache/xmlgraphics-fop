@@ -1490,9 +1490,6 @@ public class PDFFactory {
      */
     public PDFICCStream makePDFICCStream() {
         PDFICCStream iccStream = new PDFICCStream();
-        iccStream.getFilterList().addDefaultFilters(
-                getDocument().getFilterMap(),
-                PDFFilterList.CONTENT_FILTER);
 
         getDocument().registerObject(iccStream);
         //getDocument().applyEncryption(iccStream);

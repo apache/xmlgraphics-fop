@@ -38,15 +38,15 @@
     <eval expected="1" xpath="count(//pageViewport)"/>
     <eval expected="1" xpath="/areaTree/pageSequence/pageViewport/@formatted-nr"/>
     <eval expected="1" xpath="/areaTree/pageSequence/pageViewport/@nr"/>
-    <eval expected="0 0 191975 191975" xpath="/areaTree/pageSequence/pageViewport/@bounds"/>
+    <eval expected="0 0 191976 191976" xpath="/areaTree/pageSequence/pageViewport/@bounds"/>
     
-    <eval expected="191975" xpath="//regionViewport/@ipd"/>
-    <eval expected="191975" xpath="//regionViewport/@bpd"/>
-    <eval expected="191975" xpath="//lineArea/@ipd"/>
-    <eval expected="191975" xpath="//lineArea/@bpd"/>
-    <eval expected="191975" xpath="//viewport/@ipd"/>
-    <eval expected="191975" xpath="//viewport/@bpd"/>
-    <eval expected="0 0 191975 191975" xpath="//viewport/@pos"/>
+    <eval expected="191976" xpath="//regionViewport/@ipd"/>
+    <eval expected="191976" xpath="//regionViewport/@bpd"/>
+    <eval expected="191976" xpath="//lineArea/@ipd"/>
+    <eval expected="191976" xpath="//lineArea/@bpd"/>
+    <eval expected="191976" xpath="//viewport/@ipd"/>
+    <eval expected="191976" xpath="//viewport/@bpd"/>
+    <eval expected="0 0 191976 191976" xpath="//viewport/@pos"/>
     <eval expected="img" xpath="//viewport/@prod-id"/>
     <eval expected="img" xpath="//image/@prod-id"/>
   </checks>

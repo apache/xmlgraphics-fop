@@ -28,69 +28,53 @@ import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.stream.StreamSource;
 
-import org.apache.avalon.framework.logger.AbstractLogEnabled;
+import org.apache.avalon.framework.activity.Initializable;
 import org.apache.avalon.framework.configuration.Configurable;
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
+import org.apache.avalon.framework.logger.AbstractLogEnabled;
 
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
-import org.apache.avalon.framework.activity.Initializable;
 
+/**
+ * Default implementation of the FOProcessor interface using FOP.
+ */
 public class FOProcessorImpl extends AbstractLogEnabled
             implements FOProcessor, Configurable, Initializable {
 
     private FopFactory fopFactory = FopFactory.newInstance();
     private TransformerFactory factory = TransformerFactory.newInstance();
-    private String baseDir;
-    private String fontBaseDir;
     private String userconfig;
-    private boolean strokeSVGText;
+    private String mime;
+    private String fileExtension;
 
+    /** {@inheritDoc} */
     public void configure(Configuration configuration) throws ConfigurationException {
-        this.baseDir = configuration.getChild("basedir").getValue(null);
-        this.fontBaseDir = configuration.getChild("fontbasedir").getValue(null);
         this.userconfig = configuration.getChild("userconfig").getValue(null);
-        this.strokeSVGText = configuration.getChild("strokesvgtext").getValueAsBoolean(true);
+        this.mime = configuration.getChild("mime").getValue(MimeConstants.MIME_PDF);
+        this.fileExtension = configuration.getChild("extension").getValue(".pdf");
     }
 
-
+    /** {@inheritDoc} */
     public void initialize() throws Exception {
-        /*
-        org.apache.fop.messaging.MessageHandler.setScreenLogger(getLogger());
-        if (userconfig != null) {
-            getLogger().info("Using user config: "+userconfig);
-            InputStream in = org.apache.fop.tools.URLBuilder.buildURL(userconfig).openStream();
-            try {
-                new org.apache.fop.apps.Options(in);
-            } finally {
-                in.close();
-            }
+        if (this.userconfig != null) {
+            getLogger().debug("Setting user config: " + userconfig);
+            fopFactory.setUserConfig(this.userconfig);
         }
-        if (this.baseDir != null) {
-            getLogger().info("Setting base dir: "+baseDir);
-            org.apache.fop.configuration.Configuration.put("baseDir", this.baseDir);
-        }
-        if (this.fontBaseDir != null) {
-            getLogger().info("Setting font base dir: "+fontBaseDir);
-            org.apache.fop.configuration.Configuration.put("fontBaseDir", this.fontBaseDir);
-        }
-        String value = (this.strokeSVGText?"true":"false");
-        org.apache.fop.configuration.Configuration.put("strokeSVGText", value);
-        */
     }
 
-
+    /** {@inheritDoc} */
     public void process(InputStream in, Templates templates, OutputStream out) 
                 throws org.apache.fop.apps.FOPException, java.io.IOException {
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
-        Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, foUserAgent, out);
+        Fop fop = fopFactory.newFop(this.mime, foUserAgent, out);
 
         try {
             Transformer transformer;
@@ -105,6 +89,11 @@ public class FOProcessorImpl extends AbstractLogEnabled
         } catch (TransformerException e) {
             throw new FOPException(e);
         }
+    }
+
+    /** {@inheritDoc} */
+    public String getTargetFileExtension() {
+        return this.fileExtension;
     }
 
 }

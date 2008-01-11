@@ -21,12 +21,14 @@ package org.apache.fop.render.java2d;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 
+import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
+
 import org.apache.fop.render.Graphics2DAdapter;
-import org.apache.fop.render.Graphics2DImagePainter;
 import org.apache.fop.render.RendererContext;
 
 /**
@@ -34,16 +36,6 @@ import org.apache.fop.render.RendererContext;
  */
 public class Java2DGraphics2DAdapter implements Graphics2DAdapter {
 
-    private Java2DGraphicsState state;
-
-    /**
-     * Main constructor
-     * @param state the state tracker for this rendering run
-     */
-    public Java2DGraphics2DAdapter(Java2DGraphicsState state) {
-        this.state = state;
-    }
-    
     /** {@inheritDoc} */
     public void paintImage(Graphics2DImagePainter painter,
             RendererContext context,
@@ -63,26 +55,28 @@ public class Java2DGraphics2DAdapter implements Graphics2DAdapter {
         float sy = fheight / (float)imh;
 
         Java2DRenderer renderer = (Java2DRenderer)context.getRenderer();
-        renderer.saveGraphicsState();
-        state.getGraph().setColor(Color.black);
-        state.getGraph().setBackground(Color.black);
+        Java2DGraphicsState state = renderer.state;
+        
+        //Create copy and paint on that
+        Graphics2D g2d = (Graphics2D)state.getGraph().create();
+        g2d.setColor(Color.black);
+        g2d.setBackground(Color.black);
         
         //TODO Clip to the image area.
 
         // transform so that the coordinates (0,0) is from the top left
         // and positive is down and to the right. (0,0) is where the
         // viewBox puts it.
-        state.getGraph().translate(fx, fy);
+        g2d.translate(fx, fy);
         AffineTransform at = AffineTransform.getScaleInstance(sx, sy);
         if (!at.isIdentity()) {
-            state.getGraph().transform(at);
+            g2d.transform(at);
         }
 
         Rectangle2D area = new Rectangle2D.Double(0.0, 0.0, imw, imh);
-        painter.paint(state.getGraph(), area);
+        painter.paint(g2d, area);
 
-        renderer.restoreGraphicsState();
-    
+        g2d.dispose();
     }
 
 }

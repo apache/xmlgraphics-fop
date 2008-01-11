@@ -30,7 +30,7 @@ import java.io.OutputStream;
 public class BitmapImage implements PDFImage {
     private int height;
     private int width;
-    private int bitsPerPixel;
+    private int bitsPerComponent;
     private PDFDeviceColorSpace colorSpace;
     private byte[] bitmaps;
     private PDFReference maskRef;
@@ -53,10 +53,12 @@ public class BitmapImage implements PDFImage {
         this.key = k;
         this.height = height;
         this.width = width;
-        this.bitsPerPixel = 8;
+        this.bitsPerComponent = 8;
         this.colorSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
         this.bitmaps = data;
-        maskRef = new PDFReference(mask);
+        if (mask != null) {
+            maskRef = new PDFReference(mask);
+        }
     }
 
     /**
@@ -117,13 +119,9 @@ public class BitmapImage implements PDFImage {
         return colorSpace;
     }
 
-    /**
-     * Get the number of bits per pixel.
-     *
-     * @return the number of bits per pixel
-     */
-    public int getBitsPerPixel() {
-        return bitsPerPixel;
+    /** {@inheritDoc} */
+    public int getBitsPerComponent() {
+        return bitsPerComponent;
     }
 
     /**
@@ -173,13 +171,16 @@ public class BitmapImage implements PDFImage {
         return false;
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void outputContents(OutputStream out) throws IOException {
         out.write(bitmaps);
     }
     
+    /** {@inheritDoc} */
+    public void populateXObjectDictionary(PDFDictionary dict) {
+        //nop
+    }
+
     /**
      * Get the ICC stream.
      * @return always returns null since this has no icc color space

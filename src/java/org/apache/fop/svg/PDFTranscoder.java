@@ -23,6 +23,10 @@ import java.awt.Color;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.InputStream;
+
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.svg.SVGLength;
@@ -41,6 +45,12 @@ import org.apache.batik.transcoder.TranscodingHints;
 import org.apache.batik.transcoder.image.ImageTranscoder;
 import org.apache.batik.transcoder.keys.BooleanKey;
 import org.apache.batik.transcoder.keys.FloatKey;
+import org.apache.batik.util.ParsedURL;
+
+import org.apache.xmlgraphics.image.loader.ImageContext;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.apache.xmlgraphics.image.loader.impl.AbstractImageSessionContext;
 
 import org.apache.fop.Version;
 import org.apache.fop.fonts.FontInfo;
@@ -99,6 +109,9 @@ public class PDFTranscoder extends AbstractFOPTranscoder
     /** Graphics2D instance that is used to paint to */
     protected PDFDocumentGraphics2D graphics = null;
 
+    private ImageManager imageManager;
+    private ImageSessionContext imageSessionContext;
+    
     /**
      * Constructs a new <tt>PDFTranscoder</tt>.
      */
@@ -141,6 +154,11 @@ public class PDFTranscoder extends AbstractFOPTranscoder
         graphics.getPDFDocument().getInfo().setProducer("Apache FOP Version " 
                 + Version.getVersion() 
                 + ": PDF Transcoder for Batik");
+        if (hints.containsKey(KEY_DEVICE_RESOLUTION)) {
+            graphics.setDeviceDPI(((Float)hints.get(KEY_DEVICE_RESOLUTION)).floatValue());
+        }
+        
+        setupImageInfrastructure(uri);
         
         try {
             Configuration effCfg = this.cfg; 
@@ -196,9 +214,6 @@ public class PDFTranscoder extends AbstractFOPTranscoder
         //int h = (int)(height + 0.5);
 
         try {
-            if (hints.containsKey(KEY_DEVICE_RESOLUTION)) {
-                graphics.setDeviceDPI(((Float)hints.get(KEY_DEVICE_RESOLUTION)).floatValue());
-            }
             OutputStream out = output.getOutputStream();
             if (!(out instanceof BufferedOutputStream)) {
                 out = new BufferedOutputStream(out);
@@ -227,6 +242,39 @@ public class PDFTranscoder extends AbstractFOPTranscoder
         }
     }
 
+    private void setupImageInfrastructure(final String baseURI) {
+        final ImageContext imageContext = new ImageContext() {
+            public float getSourceResolution() {
+                return 25.4f / userAgent.getPixelUnitToMillimeter();
+            }
+        };
+        this.imageManager = new ImageManager(imageContext);
+        this.imageSessionContext = new AbstractImageSessionContext() {
+
+            public ImageContext getParentContext() {
+                return imageContext;
+            }
+
+            public float getTargetResolution() {
+                return graphics.getDeviceDPI();
+            }
+
+            public Source resolveURI(String uri) {
+                System.out.println("resolve " + uri);
+                try {
+                    ParsedURL url = new ParsedURL(baseURI, uri);
+                    InputStream in = url.openStream();
+                    StreamSource source = new StreamSource(in, url.toString());
+                    return source;
+                } catch (IOException ioe) {
+                    userAgent.displayError(ioe);
+                    return null;
+                }
+            }
+            
+        };
+    }
+
     /** {@inheritDoc} */
     protected BridgeContext createBridgeContext() {
         //For compatibility with Batik 1.6
@@ -239,7 +287,8 @@ public class PDFTranscoder extends AbstractFOPTranscoder
         if (isTextStroked()) {
             fontInfo = null;
         }
-        BridgeContext ctx = new PDFBridgeContext(userAgent, fontInfo);
+        BridgeContext ctx = new PDFBridgeContext(userAgent, fontInfo,
+                this.imageManager, this.imageSessionContext);
         return ctx;
     }
     

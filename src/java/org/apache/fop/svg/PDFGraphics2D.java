@@ -62,13 +62,17 @@ import org.apache.batik.ext.awt.RadialGradientPaint;
 import org.apache.batik.ext.awt.RenderingHintsKeyExt;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.gvt.PatternPaint;
+
+import org.apache.xmlgraphics.image.loader.impl.ImageRawJPEG;
+import org.apache.xmlgraphics.java2d.AbstractGraphics2D;
+import org.apache.xmlgraphics.java2d.GraphicContext;
+
 import org.apache.fop.fonts.CIDFont;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.LazyFont;
-import org.apache.fop.image.JpegImage;
 import org.apache.fop.pdf.BitmapImage;
 import org.apache.fop.pdf.PDFAnnotList;
 import org.apache.fop.pdf.PDFColor;
@@ -76,6 +80,7 @@ import org.apache.fop.pdf.PDFConformanceException;
 import org.apache.fop.pdf.PDFDeviceColorSpace;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFGState;
+import org.apache.fop.pdf.PDFImage;
 import org.apache.fop.pdf.PDFImageXObject;
 import org.apache.fop.pdf.PDFLink;
 import org.apache.fop.pdf.PDFName;
@@ -86,10 +91,8 @@ import org.apache.fop.pdf.PDFResources;
 import org.apache.fop.pdf.PDFState;
 import org.apache.fop.pdf.PDFText;
 import org.apache.fop.pdf.PDFXObject;
-import org.apache.fop.render.pdf.FopPDFImage;
+import org.apache.fop.render.pdf.ImageRawJPEGAdapter;
 import org.apache.fop.util.ColorExt;
-import org.apache.xmlgraphics.java2d.AbstractGraphics2D;
-import org.apache.xmlgraphics.java2d.GraphicContext;
 
 /**
  * PDF Graphics 2D.
@@ -397,7 +400,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * @param width the width to draw the image
      * @param height the height to draw the image
      */
-    public void addJpegImage(JpegImage jpeg, float x, float y, 
+    public void addJpegImage(ImageRawJPEG jpeg, float x, float y, 
                              float width, float height) {
         preparePainting();
         // Need to include hash code as when invoked from FO you
@@ -405,9 +408,9 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         // count is not enough.
         String key = "__AddJPEG_" + hashCode() + "_" + jpegCount[0];
         jpegCount[0]++;
-        FopPDFImage fopimage = new FopPDFImage(jpeg, key);
+        PDFImage pdfimage = new ImageRawJPEGAdapter(jpeg, key);
         PDFName imageName = this.pdfDoc.addImage(resourceContext, 
-                                              fopimage).getName();
+                                              pdfimage).getName();
         AffineTransform at = getTransform();
         double[] matrix = new double[6];
         at.getMatrix(matrix);

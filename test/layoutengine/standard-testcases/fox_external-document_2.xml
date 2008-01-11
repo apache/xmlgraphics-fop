@@ -63,19 +63,19 @@
     <eval expected="0 0 360000 360000" xpath="//pageViewport[@nr = '2']/@bounds"/>
     <eval expected="0 0 360000 360000" xpath="//pageViewport[@nr = '3']/@bounds"/>
     <eval expected="0 0 360000 360000" xpath="//pageViewport[@nr = '5']/@bounds"/>
-    <eval expected="0 0 843913 597171" xpath="//pageViewport[@nr = '6']/@bounds"/>
+    <eval expected="0 0 843913 597172" xpath="//pageViewport[@nr = '6']/@bounds"/>
     
-    <eval expected="84012 84012 191975 191975" xpath="//viewport[@prod-id = 'img1']/@pos"/>
+    <eval expected="84012 84012 191976 191976" xpath="//viewport[@prod-id = 'img1']/@pos"/>
     <eval expected="0 0 360000 360000" xpath="//viewport[@prod-id = 'img2']/@pos"/>
-    <eval expected="0 0 191975 191975" xpath="//viewport[@prod-id = 'img3']/@pos"/>
-    <eval expected="0 0 597171 843913" xpath="//viewport[@prod-id = 'img4']/@pos"/>
+    <eval expected="0 0 191976 191976" xpath="//viewport[@prod-id = 'img3']/@pos"/>
+    <eval expected="0 0 597172 843913" xpath="//viewport[@prod-id = 'img4']/@pos"/>
 
-    <eval expected="0 0 843913 597171" xpath="//pageViewport[@nr = '6']/page/regionViewport/@rect"/>
+    <eval expected="0 0 843913 597172" xpath="//pageViewport[@nr = '6']/page/regionViewport/@rect"/>
     <eval expected="843913" xpath="//pageViewport[@nr = '6']/page/regionViewport/@ipd"/>
-    <eval expected="597171" xpath="//pageViewport[@nr = '6']/page/regionViewport/@bpd"/>
-    <eval expected="597171" xpath="//pageViewport[@nr = '6']/page/regionViewport/regionBody/@ipd"/>
+    <eval expected="597172" xpath="//pageViewport[@nr = '6']/page/regionViewport/@bpd"/>
+    <eval expected="597172" xpath="//pageViewport[@nr = '6']/page/regionViewport/regionBody/@ipd"/>
     <eval expected="843913" xpath="//pageViewport[@nr = '6']/page/regionViewport/regionBody/@bpd"/>
-    <eval expected="[0.0 -1.0 1.0 0.0 0.0 597171.0]" xpath="//pageViewport[@nr = '6']/page/regionViewport/regionBody/@ctm"/>
+    <eval expected="[0.0 -1.0 1.0 0.0 0.0 597172.0]" xpath="//pageViewport[@nr = '6']/page/regionViewport/regionBody/@ctm"/>
     
   </checks>
 </testcase>

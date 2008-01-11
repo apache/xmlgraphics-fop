@@ -53,21 +53,21 @@
     </fo:root>
   </fo>
   <checks>
-    <eval expected="46080" xpath="//flow/block[2]/lineArea/viewport/@ipd"/>
-    <eval expected="46080" xpath="//flow/block[2]/lineArea/viewport/@ipda"/>
-    <eval expected="46080" xpath="//flow/block[2]/lineArea/viewport/@bpd"/>
-    <eval expected="46080" xpath="//flow/block[2]/lineArea/viewport/@bpda"/>
-    <eval expected="192000" xpath="//flow/block[4]/lineArea/viewport/@ipd"/>
-    <eval expected="192000" xpath="//flow/block[4]/lineArea/viewport/@ipda"/>
-    <eval expected="192000" xpath="//flow/block[4]/lineArea/viewport/@bpd"/>
-    <eval expected="192000" xpath="//flow/block[4]/lineArea/viewport/@bpda"/>
-    <eval expected="550588" xpath="//flow/block[6]/lineArea/viewport/@ipd"/>
-    <eval expected="550588" xpath="//flow/block[6]/lineArea/viewport/@ipda"/>
-    <eval expected="66705" xpath="//flow/block[6]/lineArea/viewport/@bpd"/>
-    <eval expected="66705" xpath="//flow/block[6]/lineArea/viewport/@bpda"/>
-    <eval expected="550588" xpath="//flow/block[8]/lineArea/viewport/@ipd"/>
-    <eval expected="550588" xpath="//flow/block[8]/lineArea/viewport/@ipda"/>
-    <eval expected="66705" xpath="//flow/block[8]/lineArea/viewport/@bpd"/>
-    <eval expected="66705" xpath="//flow/block[8]/lineArea/viewport/@bpda"/>
+    <eval expected="46080" tolerance="5" xpath="//flow/block[2]/lineArea/viewport/@ipd"/>
+    <eval expected="46080" tolerance="5" xpath="//flow/block[2]/lineArea/viewport/@ipda"/>
+    <eval expected="46080" tolerance="5" xpath="//flow/block[2]/lineArea/viewport/@bpd"/>
+    <eval expected="46080" tolerance="5" xpath="//flow/block[2]/lineArea/viewport/@bpda"/>
+    <eval expected="192000" tolerance="5" xpath="//flow/block[4]/lineArea/viewport/@ipd"/>
+    <eval expected="192000" tolerance="5" xpath="//flow/block[4]/lineArea/viewport/@ipda"/>
+    <eval expected="192000" tolerance="5" xpath="//flow/block[4]/lineArea/viewport/@bpd"/>
+    <eval expected="192000" tolerance="5" xpath="//flow/block[4]/lineArea/viewport/@bpda"/>
+    <eval expected="550588" tolerance="5" xpath="//flow/block[6]/lineArea/viewport/@ipd"/>
+    <eval expected="550588" tolerance="5" xpath="//flow/block[6]/lineArea/viewport/@ipda"/>
+    <eval expected="66705" tolerance="5" xpath="//flow/block[6]/lineArea/viewport/@bpd"/>
+    <eval expected="66705" tolerance="5" xpath="//flow/block[6]/lineArea/viewport/@bpda"/>
+    <eval expected="550588" tolerance="5" xpath="//flow/block[8]/lineArea/viewport/@ipd"/>
+    <eval expected="550588" tolerance="5" xpath="//flow/block[8]/lineArea/viewport/@ipda"/>
+    <eval expected="66705" tolerance="5" xpath="//flow/block[8]/lineArea/viewport/@bpd"/>
+    <eval expected="66705" tolerance="5" xpath="//flow/block[8]/lineArea/viewport/@bpda"/>
   </checks>
 </testcase>

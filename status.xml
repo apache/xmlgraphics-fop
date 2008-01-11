@@ -28,6 +28,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" importance="high" type="fix">
+        A new image loading framework has been introduced to fix various problems with external
+        graphics and improve performance.
+      </action>
       <action context="Code" dev="JM" type="fix">
         Fixed generation of named destinations so it works when the PDF document is encrypted.
       </action>
@@ -46,13 +50,17 @@
         will make up an entire page. See the documentation for details.
       </action>
       <action context="Code" dev="JM" type="add">
+        Added minimal support for the .minimum/.maximum components of block/inline-progression-dimension 
+        on fo:external-graphic and fo:instream-foreign-object.
+      </action>
+      <action context="Code" dev="JM" type="add">
         Added support for scale-down-to-fit and scale-up-to-fit (introduced in XSL 1.1).
       </action>
       <action context="Code" dev="VH" type="fix" fixes-bug="43633">
         Bugfix: content of a row with zero height overriding the previous row
       </action>
       <action context="Code" dev="AC" importance="high" type="add">
-	Added SVG support for AFP (GOCA).
+        Added SVG support for AFP (GOCA).
       </action>
       <action context="Code" dev="JM" type="fix" fixes-bug="37993">
         Bugfix: allow multiple bookmarks to point at the same destination.

@@ -26,6 +26,10 @@ import org.apache.batik.bridge.Bridge;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.DocumentLoader;
 import org.apache.batik.bridge.UserAgent;
+
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+
 import org.apache.fop.fonts.FontInfo;
 
 /**
@@ -35,6 +39,9 @@ public class PDFBridgeContext extends BridgeContext {
     
     /** The font list. */
     private final FontInfo fontInfo;
+
+    private final ImageManager imageManager;
+    private final ImageSessionContext imageSessionContext;
 
     private AffineTransform linkTransform;
     
@@ -50,9 +57,13 @@ public class PDFBridgeContext extends BridgeContext {
     public PDFBridgeContext(UserAgent userAgent,
                             DocumentLoader loader,
                             FontInfo fontInfo,
+                            ImageManager imageManager,
+                            ImageSessionContext imageSessionContext,
                             AffineTransform linkTransform) {
         super(userAgent, loader);
         this.fontInfo = fontInfo;
+        this.imageManager = imageManager;
+        this.imageSessionContext = imageSessionContext;
         this.linkTransform = linkTransform;
     }
 
@@ -66,9 +77,13 @@ public class PDFBridgeContext extends BridgeContext {
      */
     public PDFBridgeContext(UserAgent userAgent, 
                             FontInfo fontInfo, 
+                            ImageManager imageManager,
+                            ImageSessionContext imageSessionContext,
                             AffineTransform linkTransform) {
         super(userAgent);
         this.fontInfo = fontInfo;
+        this.imageManager = imageManager;
+        this.imageSessionContext = imageSessionContext;
         this.linkTransform = linkTransform;
     }
 
@@ -78,10 +93,29 @@ public class PDFBridgeContext extends BridgeContext {
      * @param fontInfo the font list for the text painter, may be null
      *                 in which case text is painted as shapes
      */
-    public PDFBridgeContext(UserAgent userAgent, FontInfo fontInfo) {
-        this(userAgent, fontInfo, null);
+    public PDFBridgeContext(UserAgent userAgent,
+                            FontInfo fontInfo,
+                            ImageManager imageManager,
+                            ImageSessionContext imageSessionContext) {
+        this(userAgent, fontInfo, imageManager, imageSessionContext, null);
     }
 
+    /**
+     * Returns the ImageManager to be used by the ImageElementBridge.
+     * @return the image manager
+     */
+    public ImageManager getImageManager() {
+        return this.imageManager;
+    }
+
+    /**
+     * Returns the ImageSessionContext to be used by the ImageElementBridge.
+     * @return the image session context
+     */
+    public ImageSessionContext getImageSessionContext() {
+        return this.imageSessionContext;
+    }
+    
     private void putPDFElementBridgeConditional(String className, String testFor) {
         try {
             Class.forName(testFor);
@@ -136,7 +170,10 @@ public class PDFBridgeContext extends BridgeContext {
     //TODO There's no matching method in the super-class here
     public BridgeContext createBridgeContext() {
         return new PDFBridgeContext(getUserAgent(), getDocumentLoader(),
-                                    fontInfo, linkTransform);
+                                    fontInfo,
+                                    getImageManager(),
+                                    getImageSessionContext(),
+                                    linkTransform);
     }
-    
+
 }

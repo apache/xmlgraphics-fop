@@ -89,20 +89,6 @@ public class PDFAConformanceTestCase extends BasePDFTestCase {
     }
     
     /**
-     * Test exception when PDF/A-1 is enabled and an EPS is used.
-     * @throws Exception if the test fails
-     */
-    public void testEPSUsage() throws Exception {
-        File foFile = new File(foBaseDir, "with-eps.fo");
-        try {
-            convertFO(foFile, getUserAgent(), dumpPDF);
-            fail("Expected PDFConformanceException. PDF/A-1 does not allow PostScript XObjects.");
-        } catch (PDFConformanceException e) {
-            //Good!
-        }
-    }
-    
-    /**
      * Test exception when PDF/A-1 is enabled and images.
      * @throws Exception if the test fails
      */

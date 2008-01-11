@@ -276,14 +276,23 @@ public abstract class PDFObject implements PDFWritable {
      */
     protected byte[] encodeString(String string) {
         return encodeText(string);
-        /*
-        final byte[] buf = encode(PDFText.escapeString(string));
+    }
+    
+    /**
+     * Encodes binary data as hexadecimal string object.
+     * @param data the binary data
+     * @param out the OutputStream to write the encoded object to
+     * @throws IOException if an I/O error occurs
+     */
+    protected void encodeBinaryToHexString(byte[] data, OutputStream out) throws IOException {
+        out.write('<');
         if (getDocumentSafely().isEncryptionActive()) {
-            return PDFText.escapeByteArray(
-                getDocument().getEncryption().encrypt(buf, this));
-        } else {
-            return buf;
-        }*/
+            data = getDocument().getEncryption().encrypt(data, this);
+        }
+        String hex = PDFText.toHex(data, false);
+        byte[] encoded = hex.getBytes("US-ASCII");
+        out.write(encoded);
+        out.write('>');
     }
     
     /**
@@ -307,6 +316,9 @@ public abstract class PDFObject implements PDFWritable {
             }
         } else if (obj instanceof Boolean) {
             writer.write(obj.toString());
+        } else if (obj instanceof byte[]) {
+            writer.flush();
+            encodeBinaryToHexString((byte[])obj, out);
         } else {
             writer.flush();
             out.write(encodeText(obj.toString()));

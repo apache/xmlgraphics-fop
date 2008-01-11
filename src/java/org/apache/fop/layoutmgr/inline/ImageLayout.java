@@ -29,7 +29,11 @@ import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.GraphicsProperties;
+import org.apache.fop.fo.properties.LengthRangeProperty;
 
+/**
+ * Helper class which calculates the size and position in the viewport of an image.
+ */
 public class ImageLayout implements Constants {
     
     /** logging instance */
@@ -45,6 +49,12 @@ public class ImageLayout implements Constants {
     private Dimension viewportSize = new Dimension(-1, -1);
     private boolean clip;
     
+    /**
+     * Main constructor
+     * @param props the properties for the image
+     * @param percentBaseContext the context object for percentage calculations
+     * @param intrinsicSize the image's intrinsic size
+     */
     public ImageLayout(GraphicsProperties props, PercentBaseContext percentBaseContext,
             Dimension intrinsicSize) {
         this.props = props;
@@ -54,6 +64,9 @@ public class ImageLayout implements Constants {
         doLayout();
     }
 
+    /**
+     * Does the actual calculations for the image.
+     */
     protected void doLayout() {
         Length len;
 
@@ -63,25 +76,26 @@ public class ImageLayout implements Constants {
         len = props.getBlockProgressionDimension().getOptimum(percentBaseContext).getLength();
         if (len.getEnum() != EN_AUTO) {
             bpd = len.getValue(percentBaseContext);
-        } else {
-            len = props.getHeight();
-            if (len.getEnum() != EN_AUTO) {
-                bpd = len.getValue(percentBaseContext);
-            }
+        }
+        len = props.getBlockProgressionDimension().getMinimum(percentBaseContext).getLength();
+        if (bpd == -1 && len.getEnum() != EN_AUTO) {
+            //Establish minimum viewport size
+            bpd = len.getValue(percentBaseContext);
         }
 
         len = props.getInlineProgressionDimension().getOptimum(percentBaseContext).getLength();
         if (len.getEnum() != EN_AUTO) {
             ipd = len.getValue(percentBaseContext);
-        } else {
-            len = props.getWidth();
-            if (len.getEnum() != EN_AUTO) {
-                ipd = len.getValue(percentBaseContext);
-            }
+        }
+        len = props.getInlineProgressionDimension().getMinimum(percentBaseContext).getLength();
+        if (ipd == -1 && len.getEnum() != EN_AUTO) {
+            //Establish minimum viewport size
+            ipd = len.getValue(percentBaseContext);
         }
 
         // if auto then use the intrinsic size of the content scaled
         // to the content-height and content-width
+        boolean constrainIntrinsicSize = false;
         int cwidth = -1;
         int cheight = -1;
         len = props.getContentWidth();
@@ -91,16 +105,19 @@ public class ImageLayout implements Constants {
                 if (ipd != -1) {
                     cwidth = ipd;
                 }
+                constrainIntrinsicSize = true;
                 break;
             case EN_SCALE_DOWN_TO_FIT:
                 if (ipd != -1 && intrinsicSize.width > ipd) {
                     cwidth = ipd;
                 }
+                constrainIntrinsicSize = true;
                 break;
             case EN_SCALE_UP_TO_FIT:
                 if (ipd != -1 && intrinsicSize.width < ipd) {
                     cwidth = ipd;
                 }
+                constrainIntrinsicSize = true;
                 break;
             default:
                 cwidth = len.getValue(percentBaseContext);
@@ -113,64 +130,43 @@ public class ImageLayout implements Constants {
                 if (bpd != -1) {
                     cheight = bpd;
                 }
+                constrainIntrinsicSize = true;
                 break;
             case EN_SCALE_DOWN_TO_FIT:
                 if (bpd != -1 && intrinsicSize.height > bpd) {
                     cheight = bpd;
                 }
+                constrainIntrinsicSize = true;
                 break;
             case EN_SCALE_UP_TO_FIT:
                 if (bpd != -1 && intrinsicSize.height < bpd) {
                     cheight = bpd;
                 }
+                constrainIntrinsicSize = true;
                 break;
             default:
                 cheight = len.getValue(percentBaseContext);
             }
         }
 
-        int scaling = props.getScaling();
-        if ((scaling == EN_UNIFORM) || (cwidth == -1) || cheight == -1) {
-            if (cwidth == -1 && cheight == -1) {
-                cwidth = intrinsicSize.width;
-                cheight = intrinsicSize.height;
-            } else if (cwidth == -1) {
-                if (intrinsicSize.height == 0) {
-                    cwidth = 0;
-                } else {
-                    cwidth = (int)(intrinsicSize.width * (double)cheight 
-                            / intrinsicSize.height);
-                }
-            } else if (cheight == -1) {
-                if (intrinsicSize.width == 0) {
-                    cheight = 0;
-                } else {
-                    cheight = (int)(intrinsicSize.height * (double)cwidth 
-                            / intrinsicSize.width);
-                }
-            } else {
-                // adjust the larger
-                if (intrinsicSize.width == 0 || intrinsicSize.height == 0) {
-                    cwidth = 0;
-                    cheight = 0;
-                } else {
-                    double rat1 = (double) cwidth / intrinsicSize.width;
-                    double rat2 = (double) cheight / intrinsicSize.height;
-                    if (rat1 < rat2) {
-                        // reduce cheight
-                        cheight = (int)(rat1 * intrinsicSize.height);
-                    } else if (rat1 > rat2) {
-                        cwidth = (int)(rat2 * intrinsicSize.width);
-                    }
-                }
-            }
+        Dimension constrainedIntrinsicSize;
+        if (constrainIntrinsicSize) {
+            constrainedIntrinsicSize = constrain(intrinsicSize);
+        } else {
+            constrainedIntrinsicSize = intrinsicSize;
         }
+        
+        //Derive content extents where not explicit
+        Dimension adjustedDim = adjustContentSize(cwidth, cheight, constrainedIntrinsicSize);
+        cwidth = adjustedDim.width;
+        cheight = adjustedDim.height;
 
+        //Adjust viewport if not explicit
         if (ipd == -1) {
-            ipd = cwidth;
+            ipd = constrainExtent(cwidth, props.getInlineProgressionDimension());
         }
         if (bpd == -1) {
-            bpd = cheight;
+            bpd = constrainExtent(cheight, props.getBlockProgressionDimension());
         }
 
         this.clip = false;
@@ -191,6 +187,90 @@ public class ImageLayout implements Constants {
         //Build calculation results
         this.viewportSize.setSize(ipd, bpd);
         this.placement = new Rectangle(xoffset, yoffset, cwidth, cheight);
+    }
+    
+    private int constrainExtent(int extent, LengthRangeProperty range) {
+        Length len;
+        len = range.getMaximum(percentBaseContext).getLength();
+        if (len.getEnum() != EN_AUTO) {
+            int max = len.getValue(percentBaseContext);
+            if (max != -1) {
+                extent = Math.min(extent, max);
+            }
+        }
+        len = range.getMinimum(percentBaseContext).getLength();
+        if (len.getEnum() != EN_AUTO) {
+            int min = len.getValue(percentBaseContext);
+            if (min != -1) {
+                extent = Math.max(extent, min);
+            }
+        }
+        return extent;
+    }
+    
+    private Dimension constrain(Dimension size) {
+        Dimension adjusted = new Dimension(size);
+        int effWidth = constrainExtent(size.width, props.getInlineProgressionDimension());
+        int effHeight = constrainExtent(size.height, props.getBlockProgressionDimension());
+        int scaling = props.getScaling();
+        if (scaling == EN_UNIFORM) {
+            double rat1 = (double)effWidth / size.width;
+            double rat2 = (double)effHeight / size.height;
+            if (rat1 < rat2) {
+                adjusted.width = effWidth;
+                adjusted.height = (int)(rat1 * size.height);
+            } else if (rat1 > rat2) {
+                adjusted.width = (int)(rat2 * size.width);
+                adjusted.height = effHeight;
+            }
+        } else {
+            adjusted.width = effWidth;
+            adjusted.height = effHeight;
+        }
+        return adjusted;
+    }
+    
+    private Dimension adjustContentSize(
+            final int cwidth, final int cheight,
+            Dimension defaultSize) {
+        Dimension dim = new Dimension(cwidth, cheight);
+        int scaling = props.getScaling();
+        if ((scaling == EN_UNIFORM) || (cwidth == -1) || cheight == -1) {
+            if (cwidth == -1 && cheight == -1) {
+                dim.width = defaultSize.width;
+                dim.height = defaultSize.height;
+            } else if (cwidth == -1) {
+                if (defaultSize.height == 0) {
+                    dim.width = 0;
+                } else {
+                    dim.width = (int)(defaultSize.width * (double)cheight 
+                            / defaultSize.height);
+                }
+            } else if (cheight == -1) {
+                if (defaultSize.width == 0) {
+                    dim.height = 0;
+                } else {
+                    dim.height = (int)(defaultSize.height * (double)cwidth 
+                            / defaultSize.width);
+                }
+            } else {
+                // adjust the larger
+                if (defaultSize.width == 0 || defaultSize.height == 0) {
+                    dim.width = 0;
+                    dim.height = 0;
+                } else {
+                    double rat1 = (double)cwidth / defaultSize.width;
+                    double rat2 = (double)cheight / defaultSize.height;
+                    if (rat1 < rat2) {
+                        // reduce height
+                        dim.height = (int)(rat1 * defaultSize.height);
+                    } else if (rat1 > rat2) {
+                        dim.width = (int)(rat2 * defaultSize.width);
+                    }
+                }
+            }
+        }
+        return dim;
     }
     
     /**
@@ -243,18 +323,34 @@ public class ImageLayout implements Constants {
         return yoffset;
     }
 
+    /**
+     * Returns the placement of the image inside the viewport.
+     * @return the placement of the image inside the viewport (coordinates in millipoints)
+     */
     public Rectangle getPlacement() {
         return this.placement;
     }
     
+    /**
+     * Returns the size of the image's viewport.
+     * @return the viewport size (in millipoints)
+     */
     public Dimension getViewportSize() {
         return this.viewportSize;
     }
     
+    /**
+     * Returns the size of the image's intrinsic (natural) size.
+     * @return the intrinsic size (in millipoints)
+     */
     public Dimension getIntrinsicSize() {
         return this.intrinsicSize;
     }
     
+    /**
+     * Indicates whether the image is clipped.
+     * @return true if the image shall be clipped
+     */
     public boolean isClipped() {
         return this.clip;
     }

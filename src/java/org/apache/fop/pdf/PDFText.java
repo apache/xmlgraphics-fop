@@ -25,12 +25,12 @@ import org.apache.avalon.framework.CascadingRuntimeException;
 
 /**
  * This class represents a simple number object. It also contains contains some 
- * utility methods for outputing numbers to PDF.
+ * utility methods for outputting numbers to PDF.
  */
 public class PDFText extends PDFObject {
 
-    private static final char[] DIGITS = 
-                                 {'0', '1', '2', '3', '4', '5', '6', '7',
+    private static final char[] DIGITS 
+                               = {'0', '1', '2', '3', '4', '5', '6', '7',
                                   '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
                                   
     private String text;
@@ -145,17 +145,31 @@ public class PDFText extends PDFObject {
     /**
      * Converts a byte array to a Hexadecimal String (3.2.3 in PDF 1.4 specs)
      * @param data the data to encode
+     * @param brackets true if enclosing brackets should be included
      * @return String the resulting string
      */
-    public static final String toHex(byte[] data) {
+    public static final String toHex(byte[] data, boolean brackets) {
         final StringBuffer sb = new StringBuffer(data.length * 2);
-        sb.append("<");
+        if (brackets) {
+            sb.append("<");
+        }
         for (int i = 0; i < data.length; i++) {
             sb.append(DIGITS[(data[i] >>> 4) & 0x0F]);
             sb.append(DIGITS[data[i] & 0x0F]);
         }
-        sb.append(">");
+        if (brackets) {
+            sb.append(">");
+        }
         return sb.toString();
+    }
+    
+    /**
+     * Converts a byte array to a Hexadecimal String (3.2.3 in PDF 1.4 specs)
+     * @param data the data to encode
+     * @return String the resulting string
+     */
+    public static final String toHex(byte[] data) {
+        return toHex(data, true);
     }
     
     /**
