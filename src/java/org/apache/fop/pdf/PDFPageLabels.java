@@ -19,24 +19,30 @@
  
 package org.apache.fop.pdf;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.Writer;
-
 /**
- * This interface is implemented by classes that can be serialized to a PDF file either by
- * serializing the object or by writing a indirect reference to the actual object.
+ * Class representing a PDF /PageLabels dictionary.
  */
-public interface PDFWritable {
+public class PDFPageLabels extends PDFNumberTreeNode {
     
     /**
-     * Writes a "direct object" (inline object) representation to the stream. A Writer is given
-     * for optimized encoding of text content. Since the Writer is buffered, make sure
-     * <code>flush()</code> is called before any direct calls to <code>out</code> are made.
-     * @param out the OutputStream (for binary content)
-     * @param writer the Writer (for text content, wraps the above OutputStream)
-     * @throws IOException if an I/O error occurs
+     * Create the /PageLabels dictionary
      */
-    void outputInline(OutputStream out, Writer writer) throws IOException;
+    public PDFPageLabels() {
+        super();
+    }
+
+    /**
+     * Returns the Nums object
+     * @return the Nums object (an empty PDFNumsArray for the "/Nums" entry is created
+     *       if it doesn't exist)
+     */
+    public PDFNumsArray getNums() {
+        PDFNumsArray nums = super.getNums();
+        if (nums == null) {
+            nums = new PDFNumsArray(this);
+            setNums(nums);
+        }
+        return nums;
+    }
     
 }

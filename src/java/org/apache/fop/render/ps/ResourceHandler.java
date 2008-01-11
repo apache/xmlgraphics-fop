@@ -21,6 +21,7 @@ package org.apache.fop.render.ps;
 
 import java.awt.geom.Dimension2D;
 import java.awt.image.RenderedImage;
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -54,8 +55,10 @@ import org.apache.xmlgraphics.ps.dsc.DSCParserConstants;
 import org.apache.xmlgraphics.ps.dsc.DefaultNestedDocumentHandler;
 import org.apache.xmlgraphics.ps.dsc.ResourceTracker;
 import org.apache.xmlgraphics.ps.dsc.events.DSCComment;
+import org.apache.xmlgraphics.ps.dsc.events.DSCCommentBoundingBox;
 import org.apache.xmlgraphics.ps.dsc.events.DSCCommentDocumentNeededResources;
 import org.apache.xmlgraphics.ps.dsc.events.DSCCommentDocumentSuppliedResources;
+import org.apache.xmlgraphics.ps.dsc.events.DSCCommentHiResBoundingBox;
 import org.apache.xmlgraphics.ps.dsc.events.DSCCommentLanguageLevel;
 import org.apache.xmlgraphics.ps.dsc.events.DSCCommentPage;
 import org.apache.xmlgraphics.ps.dsc.events.DSCCommentPages;
@@ -85,11 +88,14 @@ public class ResourceHandler implements DSCParserConstants, PSSupportedFlavors {
      * @param resTracker the resource tracker to use
      * @param formResources Contains all forms used by this document (maintained by PSRenderer)
      * @param pageCount the number of pages (given here because PSRenderer writes an "(atend)")
+     * @param documentBoundingBox the document's bounding box
+     *                                  (given here because PSRenderer writes an "(atend)")
      * @throws DSCException If there's an error in the DSC structure of the PS file
      * @throws IOException In case of an I/O error
      */
     public static void process(FOUserAgent userAgent, InputStream in, OutputStream out, 
-            FontInfo fontInfo, ResourceTracker resTracker, Map formResources, int pageCount)
+            FontInfo fontInfo, ResourceTracker resTracker, Map formResources,
+            int pageCount, Rectangle2D documentBoundingBox)
                     throws DSCException, IOException {
         DSCParser parser = new DSCParser(in);
         PSGenerator gen = new PSGenerator(out);
@@ -104,6 +110,8 @@ public class ResourceHandler implements DSCParserConstants, PSSupportedFlavors {
             {
                 //We rewrite those as part of the processing
                 filtered.add(DSCConstants.PAGES);
+                filtered.add(DSCConstants.BBOX);
+                filtered.add(DSCConstants.HIRES_BBOX);
                 filtered.add(DSCConstants.DOCUMENT_NEEDED_RESOURCES);
                 filtered.add(DSCConstants.DOCUMENT_SUPPLIED_RESOURCES);
             }
@@ -127,6 +135,8 @@ public class ResourceHandler implements DSCParserConstants, PSSupportedFlavors {
                 //Set number of pages
                 DSCCommentPages pages = new DSCCommentPages(pageCount);
                 pages.generate(gen);
+                new DSCCommentBoundingBox(documentBoundingBox).generate(gen);
+                new DSCCommentHiResBoundingBox(documentBoundingBox).generate(gen);
 
                 PSFontUtils.determineSuppliedFonts(resTracker, fontInfo, fontInfo.getUsedFonts());
                 registerSuppliedForms(resTracker, formResources);

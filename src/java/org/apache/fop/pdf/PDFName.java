@@ -19,6 +19,10 @@
  
 package org.apache.fop.pdf;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
+
 /**
  * Class representing a PDF name object.
  */
@@ -65,15 +69,14 @@ public class PDFName implements PDFWritable {
         sb.append(DIGITS[ch & 0x0F]);
     }
     
-    
-    /** {@inheritDoc} */
-    public String toInlinePDFString() {
-        return this.name;
-    }
-    
     /** {@inheritDoc} */
     public String toString() {
-        return toInlinePDFString();
+        return this.name;
+    }
+
+    /** {@inheritDoc} */
+    public void outputInline(OutputStream out, Writer writer) throws IOException {
+        writer.write(toString());
     }
     
 }

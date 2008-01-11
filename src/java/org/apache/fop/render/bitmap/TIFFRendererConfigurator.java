@@ -68,5 +68,6 @@ public class TIFFRendererConfigurator extends PrintRendererConfigurator {
                 log.info("TIFF compression set to " + name);
             }
         }
+        super.configure(renderer);
     }
 }

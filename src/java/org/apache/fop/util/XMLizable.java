@@ -25,20 +25,11 @@ package org.apache.fop.util;
  *                                           src/java/org/apache/excalibur/xml/sax/XMLizable.java
  */
 
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-
 /**
  * This interface can be implemented by classes willing to provide an XML representation
  * of their current state as SAX events.
+ * @deprecated Use the interface in Apache XML Graphics Commons instead.
  */
-public interface XMLizable {
-    
-    /**
-     * Generates SAX events representing the object's state.
-     * @param handler ContentHandler instance to send the SAX events to
-     * @throws SAXException if there's a problem generating the SAX events
-     */
-    void toSAX(ContentHandler handler) throws SAXException;
+public interface XMLizable extends org.apache.xmlgraphics.util.XMLizable {
     
 }

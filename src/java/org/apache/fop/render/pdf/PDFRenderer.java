@@ -39,9 +39,11 @@ import java.util.Map;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.commons.io.IOUtils;
+import org.w3c.dom.Document;
 
-import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.CountingOutputStream;
+
 import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
@@ -83,6 +85,7 @@ import org.apache.fop.pdf.PDFAction;
 import org.apache.fop.pdf.PDFAnnotList;
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.pdf.PDFConformanceException;
+import org.apache.fop.pdf.PDFDictionary;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFEncryptionManager;
 import org.apache.fop.pdf.PDFEncryptionParams;
@@ -95,9 +98,11 @@ import org.apache.fop.pdf.PDFInfo;
 import org.apache.fop.pdf.PDFLink;
 import org.apache.fop.pdf.PDFMetadata;
 import org.apache.fop.pdf.PDFNumber;
+import org.apache.fop.pdf.PDFNumsArray;
 import org.apache.fop.pdf.PDFOutline;
 import org.apache.fop.pdf.PDFOutputIntent;
 import org.apache.fop.pdf.PDFPage;
+import org.apache.fop.pdf.PDFPageLabels;
 import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.pdf.PDFResources;
 import org.apache.fop.pdf.PDFState;
@@ -361,7 +366,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         this.pdfDoc.getInfo().setTitle(userAgent.getTitle());
         this.pdfDoc.getInfo().setKeywords(userAgent.getKeywords());
         this.pdfDoc.setFilterMap(filterMap);
-        this.pdfDoc.outputHeader(stream);
+        this.pdfDoc.outputHeader(ostream);
 
         //Setup encryption if necessary
         PDFEncryptionManager.setupPDFEncryption(encryptionParams, this.pdfDoc);
@@ -721,6 +726,20 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
             page.getPageIndex());
         pageReferences.put(page.getKey(), currentPage.referencePDF());
         pvReferences.put(page.getKey(), page);
+        
+        //Produce page labels
+        PDFPageLabels pageLabels = this.pdfDoc.getRoot().getPageLabels();
+        if (pageLabels == null) {
+            //Set up PageLabels
+            pageLabels = this.pdfDoc.getFactory().makePageLabels();
+            this.pdfDoc.getRoot().setPageLabels(pageLabels);
+        }
+        PDFNumsArray nums = pageLabels.getNums(); 
+        PDFDictionary dict = new PDFDictionary(nums);
+        dict.put("P", page.getPageNumberString());
+        //TODO If the sequence of generated page numbers were inspected, this could be
+        //expressed in a more space-efficient way
+        nums.put(page.getPageIndex(), dict);
     }
     
     /**
