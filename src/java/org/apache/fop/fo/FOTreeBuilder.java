@@ -276,9 +276,7 @@ public class FOTreeBuilder extends DefaultHandler {
          */
         private int nestedMarkerDepth = 0;
 
-        /**
-         * {@inheritDoc} 
-         */
+        /** {@inheritDoc} */
         public void startElement(String namespaceURI, String localName, String rawName,
                                  Attributes attlist) throws SAXException {
 
@@ -359,19 +357,16 @@ public class FOTreeBuilder extends DefaultHandler {
             }
         }
 
-        /**
-         * {@inheritDoc} 
-         */
+        /** {@inheritDoc} */
         public void endElement(String uri, String localName, String rawName)
                     throws SAXException {
             if (currentFObj == null) {
-                throw new IllegalStateException(
+                throw new SAXException(
                         "endElement() called for " + rawName 
                             + " where there is no current element.");
-            } else
-            if (!currentFObj.getLocalName().equals(localName) 
+            } else if (!currentFObj.getLocalName().equals(localName) 
                     || !currentFObj.getNamespaceURI().equals(uri)) {
-                log.warn("Mismatch: " + currentFObj.getLocalName() 
+                throw new SAXException("Mismatch: " + currentFObj.getLocalName() 
                         + " (" + currentFObj.getNamespaceURI() 
                         + ") vs. " + localName + " (" + uri + ")");
             }

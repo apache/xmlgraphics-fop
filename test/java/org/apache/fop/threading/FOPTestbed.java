@@ -19,12 +19,12 @@
 
 package org.apache.fop.threading;
 
-import java.util.List;
-import java.util.Iterator;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
@@ -40,35 +40,45 @@ import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.avalon.framework.container.ContainerUtil;
 import org.apache.avalon.framework.logger.AbstractLogEnabled;
-import org.apache.avalon.framework.logger.Logger;
 import org.apache.commons.io.IOUtils;
 
+/**
+ * Testbed for multi-threading tests. The class can run a configurable set of task a number of
+ * times in a configurable number of threads to easily reproduce multi-threading issues.
+ */
 public class FOPTestbed extends AbstractLogEnabled 
             implements Configurable, Initializable {
 
     private int repeat;
-    private List tasks = new java.util.ArrayList();
+    private List taskList = new java.util.ArrayList();
     private int threads;
     private File outputDir;
     private Configuration fopCfg;
+    private FOProcessor foprocessor;
 
     private int counter = 0;
     
+    /** {@inheritDoc} */
     public void configure(Configuration configuration) throws ConfigurationException {
         this.threads = configuration.getChild("threads").getValueAsInteger(10);
         this.outputDir = new File(configuration.getChild("output-dir").getValue());
         Configuration tasks = configuration.getChild("tasks");
         this.repeat = tasks.getAttributeAsInteger("repeat", 1);
         Configuration[] entries = tasks.getChildren("task");
-        for (int i=0; i<entries.length; i++) {
-            this.tasks.add(new TaskDef(entries[i]));
+        for (int i = 0; i < entries.length; i++) {
+            this.taskList.add(new TaskDef(entries[i]));
         }
         this.fopCfg = configuration.getChild("foprocessor");
     }
 
+    /** {@inheritDoc} */
     public void initialize() throws Exception {
+        this.foprocessor = createFOProcessor();
     }
 
+    /**
+     * Starts the stress test.
+     */
     public void doStressTest() {
         getLogger().info("Starting stress test...");
         long start = System.currentTimeMillis();
@@ -99,6 +109,7 @@ public class FOPTestbed extends AbstractLogEnabled
             try {
                 Thread.sleep(100);
             } catch (InterruptedException ie) {
+                //ignore
             }
         }
         getLogger().info("Stress test duration: " + (System.currentTimeMillis() - start) + "ms");
@@ -109,10 +120,10 @@ public class FOPTestbed extends AbstractLogEnabled
         public void run() {
             try {
                 for (int r = 0; r < repeat; r++) {
-                    Iterator i = tasks.iterator();
+                    Iterator i = taskList.iterator();
                     while (i.hasNext()) {
                         TaskDef def = (TaskDef)i.next();
-                        final Task task = new Task(def, counter++);
+                        final Task task = new Task(def, counter++, foprocessor);
                         ContainerUtil.enableLogging(task, getLogger());
                         task.execute();
                     }
@@ -124,7 +135,10 @@ public class FOPTestbed extends AbstractLogEnabled
 
     }
     
-    
+    /**
+     * Creates a new FOProcessor.
+     * @return the newly created instance
+     */
     public FOProcessor createFOProcessor() {
         try {
             Class clazz = Class.forName(this.fopCfg.getAttribute("class", 
@@ -197,18 +211,19 @@ public class FOPTestbed extends AbstractLogEnabled
 
         private TaskDef def;
         private int num;
+        private FOProcessor fop;
 
-        public Task(TaskDef def, int num) {
+        public Task(TaskDef def, int num, FOProcessor fop) {
             this.def = def;
             this.num = num;
+            this.fop = fop;
         }
 
 
         public void execute() throws Exception {
             getLogger().info("Processing: " + def);
-            FOProcessor fop = (FOProcessor)createFOProcessor();
             DecimalFormat df = new DecimalFormat("00000");
-            File outfile = new File(outputDir, df.format(num) + ".pdf");
+            File outfile = new File(outputDir, df.format(num) + fop.getTargetFileExtension());
             OutputStream out = new java.io.FileOutputStream(outfile);
             try {
                 InputStream in;

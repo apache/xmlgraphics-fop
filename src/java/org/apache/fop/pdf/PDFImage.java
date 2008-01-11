@@ -69,11 +69,11 @@ public interface PDFImage {
     PDFDeviceColorSpace getColorSpace();
 
     /**
-     * Get the bits per pixel for this image.
+     * Get the bits per color component for this image.
      *
-     * @return the bits per pixel
+     * @return the bits per component
      */
-    int getBitsPerPixel();
+    int getBitsPerComponent();
 
     /**
      * Check if this image is a PostScript image.
@@ -129,6 +129,14 @@ public interface PDFImage {
      */
     void outputContents(OutputStream out) throws IOException;
 
+    /**
+     * Populates the XObject's dictionary with additional values. The values are added to the
+     * dictionary after all the values obtained from other methods from this interface have
+     * been put into the dictionary. That allows to override certain values. 
+     * @param dict the dictionary to fill
+     */
+    void populateXObjectDictionary(PDFDictionary dict);
+    
     /**
      * Get the ICC stream for this image.
      *

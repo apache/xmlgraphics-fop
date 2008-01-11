@@ -22,6 +22,7 @@ package org.apache.fop.render.pcl;
 // FOP
 import org.apache.fop.render.AbstractGenericSVGHandler;
 import org.apache.fop.render.Renderer;
+import org.apache.fop.render.RendererContext;
 
 /**
  * PCL XML handler for SVG. Uses Apache Batik for SVG processing.
@@ -34,6 +35,13 @@ public class PCLSVGHandler extends AbstractGenericSVGHandler {
     /** {@inheritDoc} */
     public boolean supportsRenderer(Renderer renderer) {
         return (renderer instanceof PCLRenderer);
+    }
+    
+    /** {@inheritDoc} */
+    protected void updateRendererContext(RendererContext context) {
+        //Work around a problem in Batik: Gradients cannot be done in ColorSpace.CS_GRAY
+        context.setProperty(PCLRendererContextConstants.PCL_COLOR_CANVAS,
+                Boolean.TRUE);
     }
     
 }

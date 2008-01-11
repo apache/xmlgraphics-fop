@@ -19,17 +19,12 @@
  
 package org.apache.fop.mathml;
 
-import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.ElementMapping;
-import org.apache.fop.image.analyser.XMLReader;
-import org.apache.fop.image.FopImage;
-import org.w3c.dom.DOMImplementation;
-import org.w3c.dom.Document;
-
 import java.util.HashMap;
 
-import net.sourceforge.jeuclid.MathBase;
-import net.sourceforge.jeuclid.DOMMathBuilder;
+import org.w3c.dom.DOMImplementation;
+
+import org.apache.fop.fo.ElementMapping;
+import org.apache.fop.fo.FONode;
 
 /**
  * This class provides the element mapping for FOP.
@@ -44,19 +39,17 @@ public class MathMLElementMapping extends ElementMapping {
         this.namespaceURI = NAMESPACE;
     }
 
-    /** @see org.apache.fop.fo.ElementMapping#getDOMImplementation() */
+    /** {@inheritDoc} */
     public DOMImplementation getDOMImplementation() {
         return getDefaultDOMImplementation();
     }
 
-    /** @see org.apache.fop.fo.ElementMapping#initialize() */
+    /** {@inheritDoc} */
     protected void initialize() {
         if (foObjs == null) {
             foObjs = new HashMap();
             foObjs.put("math", new ME());
             foObjs.put(DEFAULT, new MathMLMaker());
-
-            XMLReader.setConverter(this.namespaceURI, new MathMLConverter());
         }
     }
 
@@ -69,40 +62,6 @@ public class MathMLElementMapping extends ElementMapping {
     static class ME extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new MathMLElement(parent);
-        }
-    }
-
-    static class MathMLConverter implements XMLReader.Converter {
-        public FopImage.ImageInfo convert(Document doc) {
-            try {
-                FopImage.ImageInfo info = new FopImage.ImageInfo();
-                String fontname = "Helvetica";
-                int fontstyle = 0;
-                int inlinefontstyle = 0;
-                int inlinefontsize = 12;
-                int displayfontsize = 12;
-
-                MathBase base = new MathBase(
-                                  (new DOMMathBuilder(doc)).getMathRootElement(),
-                                  fontname, fontstyle, inlinefontsize,
-                                  displayfontsize);
-
-                base.setDebug(false);
-
-                info.data = MathMLElement.createSVG(base);
-
-                info.width = base.getWidth();
-                info.height = base.getHeight();
-
-                info.mimeType = "image/svg+xml";
-                info.str = "http://www.w3.org/2000/svg";
-
-                return info;
-            } catch (Throwable t) {
-                /**@todo log that properly */
-            }
-            return null;
-
         }
     }
 

@@ -29,6 +29,11 @@ import java.util.Vector;
 
 import javax.swing.UIManager;
 
+import org.xml.sax.SAXException;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.Version;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
@@ -38,18 +43,11 @@ import org.apache.fop.pdf.PDFAMode;
 import org.apache.fop.pdf.PDFEncryptionManager;
 import org.apache.fop.pdf.PDFEncryptionParams;
 import org.apache.fop.pdf.PDFXMode;
-import org.apache.fop.render.awt.AWTRenderer;
 import org.apache.fop.render.Renderer;
+import org.apache.fop.render.awt.AWTRenderer;
 import org.apache.fop.render.pdf.PDFRenderer;
 import org.apache.fop.render.xml.XMLRenderer;
 import org.apache.fop.util.CommandLineLogger;
-
-// commons logging
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-// SAX
-import org.xml.sax.SAXException;
 
 /**
  * Options parses the commandline arguments
@@ -71,6 +69,8 @@ public class CommandLineOptions {
     public static final int XSLT_INPUT = 2;
     /** input: Area Tree XML file */
     public static final int AREATREE_INPUT = 3;
+    /** input: Image file */
+    public static final int IMAGE_INPUT = 4;
 
     /* show configuration information */
     private Boolean showConfiguration = Boolean.FALSE;
@@ -86,6 +86,8 @@ public class CommandLineOptions {
     private File xmlfile = null;
     /* area tree input file */
     private File areatreefile = null;
+    /* area tree input file */
+    private File imagefile = null;
     /* output file */
     private File outfile = null;
     /* input mode */
@@ -249,6 +251,8 @@ public class CommandLineOptions {
                 i = i + parseXMLInputOption(args, i);
             } else if (args[i].equals("-atin")) {
                 i = i + parseAreaTreeInputOption(args, i);
+            } else if (args[i].equals("-imagein")) {
+                i = i + parseImageInputOption(args, i);
             } else if (args[i].equals("-awt")) {
                 i = i + parseAWTOutputOption(args, i);
             } else if (args[i].equals("-pdf")) {
@@ -594,6 +598,17 @@ public class CommandLineOptions {
         }
     }
 
+    private int parseImageInputOption(String[] args, int i) throws FOPException {
+        inputmode = IMAGE_INPUT;
+        if ((i + 1 == args.length)
+                || (args[i + 1].charAt(0) == '-')) {
+            throw new FOPException("you must specify the image file for the '-imagein' option");
+        } else {
+            imagefile = new File(args[i + 1]);
+            return 1;
+        }
+    }
+
     private PDFEncryptionParams getPDFEncryptionParams() throws FOPException {
         PDFEncryptionParams params = (PDFEncryptionParams)renderingOptions.get(
                         PDFRenderer.ENCRYPTION_PARAMS); 
@@ -768,6 +783,20 @@ public class CommandLineOptions {
                                               + areatreefile.getAbsolutePath()
                                               + " not found ");
             }
+        } else if (inputmode == IMAGE_INPUT) {
+            if (outputmode.equals(MimeConstants.MIME_XSL_FO)) {
+                throw new FOPException(
+                        "FO output mode is only available if you use -xml and -xsl");
+            }
+            if (xmlfile != null) {
+                log.warn("image input mode, but XML file is set:");
+                log.error("XML file: " + xmlfile.toString());
+            }
+            if (!imagefile.exists()) {
+                throw new FileNotFoundException("Error: image file "
+                                              + imagefile.getAbsolutePath()
+                                              + " not found ");
+            }
         }
     }    // end checkSettings
 
@@ -814,6 +843,8 @@ public class CommandLineOptions {
                 return new AreaTreeInputHandler(areatreefile);
             case XSLT_INPUT:
                 return new InputHandler(xmlfile, xsltfile, xsltParams);
+            case IMAGE_INPUT:
+                return new ImageInputHandler(imagefile, xsltfile, xsltParams);
             default:
                 throw new IllegalArgumentException("Error creating InputHandler object.");
         }
@@ -920,6 +951,7 @@ public class CommandLineOptions {
             + "  -fo  infile       xsl:fo input file  \n"
             + "  -xml infile       xml input file, must be used together with -xsl \n"
             + "  -atin infile      area tree input file \n"
+            + "  -imagein infile   image input file \n"
             + "  -xsl stylesheet   xslt stylesheet \n \n"
             + "  -param name value <value> to use for parameter <name> in xslt stylesheet\n"
             + "                    (repeat '-param name value' for each parameter)\n \n"

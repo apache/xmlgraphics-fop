@@ -28,11 +28,13 @@ import java.io.IOException;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.xmlgraphics.java2d.GraphicContext;
+import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
+
 import org.apache.fop.render.AbstractGraphics2DAdapter;
-import org.apache.fop.render.Graphics2DImagePainter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.util.UnitConv;
-import org.apache.xmlgraphics.java2d.GraphicContext;
 
 /**
  * Graphics2DAdapter implementation for PCL and HP GL/2.
@@ -110,7 +112,8 @@ public class PCLGraphics2DAdapter extends AbstractGraphics2DAdapter {
         if (!painted) {
             //Fallback solution: Paint to a BufferedImage
             int resolution = (int)Math.round(context.getUserAgent().getTargetResolution());
-            BufferedImage bi = paintToBufferedImage(painter, pclContext, resolution, true, false);
+            BufferedImage bi = paintToBufferedImage(painter, pclContext,
+                    resolution, !pclContext.isColorCanvas(), false);
 
             pcl.setCursorPos(x, y);
             gen.paintBitmap(bi, new Dimension(width, height), pclContext.isSourceTransparency());

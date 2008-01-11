@@ -19,15 +19,22 @@
 
 package org.apache.fop.fo.flow;
 
+import java.io.IOException;
+
+import org.xml.sax.Locator;
+
+import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.datatypes.Length;
+import org.apache.fop.datatypes.URISpecification;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.image.FopImage;
-import org.apache.fop.image.ImageFactory;
-import org.xml.sax.Locator;
+import org.apache.fop.fo.properties.FixedLength;
 
 /**
  * Class modelling the fo:external-graphic object.
@@ -63,21 +70,25 @@ public class ExternalGraphic extends AbstractGraphics {
         super.bind(pList);
         src = pList.get(PR_SRC).getString();
         
-        //Additional processing: preload image
-        url = ImageFactory.getURL(getSrc());
+        //Additional processing: obtain the image's intrinsic size and baseline information
+        url = URISpecification.getURL(src);
         FOUserAgent userAgent = getUserAgent();
-        ImageFactory fact = userAgent.getFactory().getImageFactory();
-        FopImage fopimage = fact.getImage(url, userAgent);
-        if (fopimage == null) {
-            log.error("Image not available: " + getSrc());
-        } else {
-            // load dimensions
-            if (!fopimage.load(FopImage.DIMENSIONS)) {
-                log.error("Cannot read image dimensions: " + getSrc());
+        ImageManager manager = userAgent.getFactory().getImageManager();
+        ImageInfo info = null;
+        try {
+            info = manager.getImageInfo(url, userAgent.getImageSessionContext());
+        } catch (ImageException e) {
+            log.error("Image not available: " + e.getMessage());
+        } catch (IOException ioe) {
+            log.error("I/O error while loading image: " + ioe.getMessage());
+        }
+        if (info != null) {
+            this.intrinsicWidth = info.getSize().getWidthMpt();
+            this.intrinsicHeight = info.getSize().getHeightMpt();
+            int baseline = info.getSize().getBaselinePositionFromBottom();
+            if (baseline != 0) {
+                this.intrinsicAlignmentAdjust = new FixedLength(-baseline);
             }
-            this.intrinsicWidth = fopimage.getIntrinsicWidth();
-            this.intrinsicHeight = fopimage.getIntrinsicHeight();
-            this.intrinsicAlignmentAdjust = fopimage.getIntrinsicAlignmentAdjust();
         }
         //TODO Report to caller so he can decide to throw an exception
     }

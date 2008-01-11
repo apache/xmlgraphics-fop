@@ -51,6 +51,19 @@ Normal Dependencies
     
     Apache License v2.0
 
+- Apache XML Commons Externals
+
+    xml-apis-ext-*.jar
+    http://xml.apache.org/commons/components/external/
+    (additional DOM APIs from W3C, like SVG, SMIL and Simple API for CSS)
+    
+    Apache License v2.0 (applies to the distribution)
+    W3C Software Notice and License (applies to the various DOM Java bindings)
+    W3C Document License (applies to the DOM documentation)
+        http://www.w3.org/Consortium/Legal/copyright-software
+        http://www.w3.org/Consortium/Legal/copyright-documents
+        http://www.w3.org/Consortium/Legal/
+
 
 
 Special Dependencies

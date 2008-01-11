@@ -33,8 +33,6 @@ import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 
-import org.apache.fop.render.Graphics2DAdapter;
-import org.apache.fop.render.Graphics2DImagePainter;
 import org.apache.fop.render.RendererContext.RendererContextWrapper;
 import org.apache.fop.util.UnitConv;
 
@@ -49,9 +47,11 @@ public abstract class AbstractGraphics2DAdapter implements Graphics2DAdapter {
      * @param context the renderer context for the current renderer
      * @param resolution the requested bitmap resolution
      * @param gray true if the generated image should be in grayscales
+     * @param withAlpha true if an alpha channel should be created
      * @return the generated BufferedImage
      */
-    protected BufferedImage paintToBufferedImage(Graphics2DImagePainter painter, 
+    protected BufferedImage paintToBufferedImage(
+            org.apache.xmlgraphics.java2d.Graphics2DImagePainter painter, 
              RendererContextWrapper context, int resolution, boolean gray, boolean withAlpha) {
         int bmw = (int)Math.ceil(UnitConv.mpt2px(context.getWidth(), resolution));
         int bmh = (int)Math.ceil(UnitConv.mpt2px(context.getHeight(), resolution));
