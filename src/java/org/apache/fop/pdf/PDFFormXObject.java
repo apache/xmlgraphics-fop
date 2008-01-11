@@ -63,7 +63,7 @@ public class PDFFormXObject extends PDFXObject {
     public void setBBox(Rectangle2D bbox) {
         PDFArray array = (PDFArray)get("BBox");
         if (array == null) {
-            array = new PDFArray();
+            array = new PDFArray(this);
             array.add(bbox.getX());
             array.add(bbox.getY());
             array.add(bbox.getWidth());
@@ -105,7 +105,7 @@ public class PDFFormXObject extends PDFXObject {
         double[] m = new double[6];
         at.getMatrix(m);
         if (array == null) {
-            array = new PDFArray();
+            array = new PDFArray(this);
             array.add(m[0]);
             array.add(m[1]);
             array.add(m[2]);
@@ -170,7 +170,7 @@ public class PDFFormXObject extends PDFXObject {
     /** {@inheritDoc} */
     protected void populateStreamDict(Object lengthEntry) {
         if (get("Matrix") == null) {
-            put("Matrix", new PDFArray(new int[] {1, 0, 0, 1, 0, 0}));
+            put("Matrix", new PDFArray(this, new int[] {1, 0, 0, 1, 0, 0}));
         }
         put("Resources", resRef);
         super.populateStreamDict(lengthEntry);

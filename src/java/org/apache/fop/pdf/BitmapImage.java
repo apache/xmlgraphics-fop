@@ -163,15 +163,6 @@ public class BitmapImage implements PDFImage {
         return null;
     }
 
-    /**
-     * Get the soft mask reference for this image.
-     *
-     * @return the soft mask reference if any
-     */
-    public String getSoftMask() {
-        return maskRef.toInlinePDFString();
-    }
-    
     /** {@inheritDoc} */
     public PDFReference getSoftMaskReference() {
         return maskRef;

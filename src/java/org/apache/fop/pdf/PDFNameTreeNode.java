@@ -108,7 +108,7 @@ public class PDFNameTreeNode extends PDFDictionary {
     private PDFArray prepareLimitsArray() {
         PDFArray limits = (PDFArray)get(LIMITS);
         if (limits == null) {
-            limits = new PDFArray(new Object[2]);
+            limits = new PDFArray(this, new Object[2]);
             put(LIMITS, limits);
         }
         if (limits.length() != 2) {

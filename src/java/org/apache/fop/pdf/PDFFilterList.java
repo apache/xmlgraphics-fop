@@ -277,7 +277,7 @@ public class PDFFilterList {
     }
 
     private void putFilterEntries(PDFDictionary dict, List names) {
-        PDFArray array = new PDFArray();
+        PDFArray array = new PDFArray(dict);
         for (int i = 0, c = names.size(); i < c; i++) {
             final String name = (String)names.get(i);
             if (name.length() > 0) {
@@ -323,7 +323,7 @@ public class PDFFilterList {
 
     private void putDecodeParams(PDFDictionary dict, List parms) {
         boolean needParmsEntry = false;
-        PDFArray array = new PDFArray();
+        PDFArray array = new PDFArray(dict);
         for (int i = 0, c = parms.size(); i < c; i++) {
             Object obj = parms.get(i);
             if (obj != null) {

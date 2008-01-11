@@ -225,7 +225,7 @@ public class PDFRoot extends PDFDictionary {
         if (getDocumentSafely().getPDFVersion() >= PDFDocument.PDF_VERSION_1_4) {
             PDFArray outputIntents = getOutputIntents(); 
             if (outputIntents == null) {
-                outputIntents = new PDFArray();
+                outputIntents = new PDFArray(this);
                 put("OutputIntents", outputIntents);
             }
             outputIntents.add(outputIntent);
