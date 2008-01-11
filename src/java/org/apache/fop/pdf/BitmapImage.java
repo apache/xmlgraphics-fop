@@ -56,7 +56,9 @@ public class BitmapImage implements PDFImage {
         this.bitsPerComponent = 8;
         this.colorSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
         this.bitmaps = data;
-        maskRef = new PDFReference(mask);
+        if (mask != null) {
+            maskRef = new PDFReference(mask);
+        }
     }
 
     /**

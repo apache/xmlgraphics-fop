@@ -36,8 +36,6 @@ import java.util.Map;
 
 import javax.xml.transform.Source;
 
-import org.w3c.dom.Document;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -65,6 +63,8 @@ import org.apache.xmlgraphics.ps.PSResource;
 import org.apache.xmlgraphics.ps.PSState;
 import org.apache.xmlgraphics.ps.dsc.DSCException;
 import org.apache.xmlgraphics.ps.dsc.ResourceTracker;
+import org.apache.xmlgraphics.ps.dsc.events.DSCCommentBoundingBox;
+import org.apache.xmlgraphics.ps.dsc.events.DSCCommentHiResBoundingBox;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
