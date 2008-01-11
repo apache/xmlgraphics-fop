@@ -19,6 +19,10 @@
  
 package org.apache.fop.pdf;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
+
 /**
  * This interface is implemented by classes that can be serialized to a PDF file either by
  * serializing the object or by writing a indirect reference to the actual object.
@@ -26,11 +30,13 @@ package org.apache.fop.pdf;
 public interface PDFWritable {
     
     /**
-     * Returns a representation of this object for in-object placement, i.e. if the object
-     * has an object number its reference is returned. Otherwise, its PDF representation is
-     * returned.
-     * @return the String representation
+     * Writes a "direct object" (inline object) representation to the stream. A Writer is given
+     * for optimized encoding of text content. Since the Writer is buffered, make sure
+     * <code>flush()</code> is called before any direct calls to <code>out</code> are made.
+     * @param out the OutputStream (for binary content)
+     * @param writer the Writer (for text content, wraps the above OutputStream)
+     * @throws IOException if an I/O error occurs
      */
-    String toInlinePDFString();
+    void outputInline(OutputStream out, Writer writer) throws IOException;
     
 }

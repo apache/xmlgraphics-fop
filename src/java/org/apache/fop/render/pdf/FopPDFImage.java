@@ -25,6 +25,7 @@ import java.io.OutputStream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.image.EPSImage;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.TIFFImage;
@@ -235,11 +236,6 @@ public class FopPDFImage implements PDFImage {
      */
     public String getMask() {
         return maskRef;
-    }
-
-    /** {@inheritDoc} */
-    public String getSoftMask() {
-        return softMask.toInlinePDFString();
     }
 
     /** {@inheritDoc} */

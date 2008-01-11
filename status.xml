@@ -28,6 +28,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix">
+        Fixed generation of named destinations so it works when the PDF document is encrypted.
+      </action>
       <action context="Code" dev="JM" type="add">
         PostScript output now generates the bounding box DSC comments for the whole document.
       </action>

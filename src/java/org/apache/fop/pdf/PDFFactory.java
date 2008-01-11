@@ -39,6 +39,9 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.xmlgraphics.xmp.Metadata;
+
 import org.apache.fop.fonts.CIDFont;
 import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.FontDescriptor;
@@ -51,7 +54,6 @@ import org.apache.fop.fonts.truetype.FontFileReader;
 import org.apache.fop.fonts.truetype.TTFSubSetFile;
 import org.apache.fop.fonts.type1.PFBData;
 import org.apache.fop.fonts.type1.PFBParser;
-import org.apache.xmlgraphics.xmp.Metadata;
 
 /**
  * This class provides method to create and register PDF objects.
@@ -872,7 +874,7 @@ public class PDFFactory {
         //true for a "deep" structure (one node per entry), true for a "flat" structure
         if (deep) {
             dests = new PDFDests();
-            PDFArray kids = new PDFArray();
+            PDFArray kids = new PDFArray(dests);
             Iterator iter = destinationList.iterator();
             while (iter.hasNext()) {
                 PDFDestination dest = (PDFDestination)iter.next();
@@ -880,8 +882,9 @@ public class PDFFactory {
                 getDocument().registerObject(node);
                 node.setLowerLimit(dest.getIDRef());
                 node.setUpperLimit(dest.getIDRef());
-                node.setNames(new PDFArray());
-                node.getNames().add(dest);
+                node.setNames(new PDFArray(node));
+                PDFArray names = node.getNames();
+                names.add(dest);
                 kids.add(node);
             }
             dests.setLowerLimit(((PDFNameTreeNode)kids.get(0)).getLowerLimit());
@@ -1527,7 +1530,7 @@ public class PDFFactory {
      * @return the PDF Array with the int values
      */
     public PDFArray makeArray(int[] values) {
-        PDFArray array = new PDFArray(values);
+        PDFArray array = new PDFArray(null, values);
 
         getDocument().registerObject(array);
         return array;
