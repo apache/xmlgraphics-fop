@@ -615,7 +615,6 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                     bclm.wrapPositionElements(returnedList, returnList);
                 }
             }
-            SpaceResolver.resolveElementList(returnList);
             setFinished(true);
             return returnList;
         }

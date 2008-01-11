@@ -19,7 +19,6 @@
 
 package org.apache.fop.layoutmgr;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -620,7 +619,7 @@ public class SpaceResolver {
         if (log.isTraceEnabled()) {
             log.trace(elems);
         }
-        boolean first = true;
+        boolean first = (startIndex == 0);
         boolean last = false;
         boolean skipNextElement = false;
         List unresolvedFirst = new java.util.ArrayList();
@@ -631,6 +630,7 @@ public class SpaceResolver {
             ListElement el = (ListElement)iter.next();
             if (!el.isUnresolvedElement()) {
                 if (doall) {
+                    first = false;
                     continue;
                 } else {
                     break;
