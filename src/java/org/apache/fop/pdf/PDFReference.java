@@ -19,6 +19,9 @@
  
 package org.apache.fop.pdf;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 
@@ -68,13 +71,13 @@ public class PDFReference implements PDFWritable {
     }
     
     /** {@inheritDoc} */
-    public String toInlinePDFString() {
+    public String toString() {
         return this.indirectReference;
     }
     
     /** {@inheritDoc} */
-    public String toString() {
-        return toInlinePDFString();
+    public void outputInline(OutputStream out, Writer writer) throws IOException {
+        writer.write(toString());
     }
     
 }

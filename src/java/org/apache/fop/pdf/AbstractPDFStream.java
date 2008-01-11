@@ -21,8 +21,10 @@ package org.apache.fop.pdf;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Writer;
 
 import org.apache.commons.io.output.CountingOutputStream;
+
 import org.apache.fop.util.CloseBlockerOutputStream;
 
 /**
@@ -169,8 +171,12 @@ public abstract class AbstractPDFStream extends PDFDictionary {
      * {@inheritDoc}
      */
     protected int output(OutputStream stream) throws IOException {
-        int length = 0;
         setupFilterList();
+
+        CountingOutputStream cout = new CountingOutputStream(stream);
+        Writer writer = PDFDocument.getWriterFor(cout);
+        writer.write(getObjectID());
+        //int length = 0;
         
         StreamCache encodedStream = null;
         PDFNumber refLength = null;
@@ -184,38 +190,21 @@ public abstract class AbstractPDFStream extends PDFDictionary {
             lengthEntry = new Integer(encodedStream.getSize() + 1);
         }
         
-        byte[] p = encode(buildStreamDict(lengthEntry));
-        stream.write(p);
-        length += p.length;
+        populateStreamDict(lengthEntry);
+        writeDictionary(cout, writer);
         
         //Send encoded stream to target OutputStream
+        writer.flush();
         if (encodedStream == null) {
-            int bytesWritten = encodeAndWriteStream(stream, refLength);
-            length += bytesWritten;
+            encodeAndWriteStream(cout, refLength);
         } else {
-            length += outputStreamData(encodedStream, stream);
+            outputStreamData(encodedStream, cout);
             encodedStream.clear(); //Encoded stream can now be discarded
         }
         
-        p = encode("\nendobj\n");
-        stream.write(p);
-        length += p.length;
-        return length;
-    }
-
-    /**
-     * Constructs the dictionary for the stream. Override this method if you
-     * need additional entries.
-     * @param lengthEntry value for the /Length entry
-     * @return the newly constructed dictionary
-     */
-    protected String buildStreamDict(Object lengthEntry) {
-        StringBuffer sb = new StringBuffer();
-        sb.append(getObjectID());
-        populateStreamDict(lengthEntry);
-        
-        writeDictionary(sb);
-        return sb.toString();
+        writer.write("\nendobj\n");
+        writer.flush();
+        return cout.getCount();
     }
 
     /**

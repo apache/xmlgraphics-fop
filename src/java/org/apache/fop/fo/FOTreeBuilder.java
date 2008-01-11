@@ -81,6 +81,7 @@ public class FOTreeBuilder extends DefaultHandler {
     private FOUserAgent userAgent;
     
     private boolean used = false;
+    private boolean empty = true;
     
     private int depth;
     
@@ -147,6 +148,7 @@ public class FOTreeBuilder extends DefaultHandler {
                     + " Please instantiate a new instance.");
         }
         used = true;
+        empty = true;
         rootFObj = null;    // allows FOTreeBuilder to be reused
         if (log.isDebugEnabled()) {
             log.debug("Building formatting object tree");
@@ -162,6 +164,10 @@ public class FOTreeBuilder extends DefaultHandler {
      */
     public void endDocument() throws SAXException {
         this.delegate.endDocument();
+        if (this.rootFObj == null && empty) {
+            throw new ValidationException(
+                    "Document is empty (something might be wrong with your XSLT stylesheet).");
+        }
         rootFObj = null;
         if (log.isDebugEnabled()) {
             log.debug("Parsing of document complete");
@@ -280,6 +286,7 @@ public class FOTreeBuilder extends DefaultHandler {
 
             // Check to ensure first node encountered is an fo:root
             if (rootFObj == null) {
+                empty = false;
                 if (!namespaceURI.equals(FOElementMapping.URI) 
                     || !localName.equals("root")) {
                     throw new ValidationException(

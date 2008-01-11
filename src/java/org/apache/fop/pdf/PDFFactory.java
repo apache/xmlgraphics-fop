@@ -850,6 +850,17 @@ public class PDFFactory {
     }
 
     /**
+     * Make a names dictionary (the /PageLabels object).
+     * @return the new PDFPageLabels object
+     */
+    public PDFPageLabels makePageLabels() {
+        PDFPageLabels pageLabels = new PDFPageLabels();
+        getDocument().assignObjectNumber(pageLabels);
+        getDocument().addTrailerObject(pageLabels);
+        return pageLabels;
+    }
+
+    /**
      * Make a the head object of the name dictionary (the /Dests object).
      *
      * @param destinationList a list of PDFDestination instances
@@ -862,7 +873,7 @@ public class PDFFactory {
         //true for a "deep" structure (one node per entry), true for a "flat" structure
         if (deep) {
             dests = new PDFDests();
-            PDFArray kids = new PDFArray();
+            PDFArray kids = new PDFArray(dests);
             Iterator iter = destinationList.iterator();
             while (iter.hasNext()) {
                 PDFDestination dest = (PDFDestination)iter.next();
@@ -870,8 +881,9 @@ public class PDFFactory {
                 getDocument().registerObject(node);
                 node.setLowerLimit(dest.getIDRef());
                 node.setUpperLimit(dest.getIDRef());
-                node.setNames(new PDFArray());
-                node.getNames().add(dest);
+                node.setNames(new PDFArray(node));
+                PDFArray names = node.getNames();
+                names.add(dest);
                 kids.add(node);
             }
             dests.setLowerLimit(((PDFNameTreeNode)kids.get(0)).getLowerLimit());
@@ -1514,7 +1526,7 @@ public class PDFFactory {
      * @return the PDF Array with the int values
      */
     public PDFArray makeArray(int[] values) {
-        PDFArray array = new PDFArray(values);
+        PDFArray array = new PDFArray(null, values);
 
         getDocument().registerObject(array);
         return array;

@@ -192,7 +192,7 @@ public class PCLRenderer extends PrintRenderer {
         //The next line is important to get accurate font metrics!
         g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, 
                 RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-        FontSetup.setup(fontInfo, g);
+        FontSetup.setup(fontInfo, fontList, fontResolver, g);
     }
 
     /**

@@ -80,13 +80,20 @@ public class EffRow {
         return getGridUnit(0).getRow();
     }
     
-    /** @return the calculated height for this EffRow. */
+    /**
+     * Returns the calculated height for this EffRow, including the cells'
+     * bpds/paddings/borders, and the table's border-separation.
+     * 
+     * @return the row's height
+     */
     public MinOptMax getHeight() {
         return this.height;
     }
     
     /**
-     * Sets the calculated height for this EffRow.
+     * Sets the calculated height for this EffRow, including everything (cells' bpds,
+     * paddings, borders, and border-separation).
+     * 
      * @param mom the calculated height
      */
     public void setHeight(MinOptMax mom) {

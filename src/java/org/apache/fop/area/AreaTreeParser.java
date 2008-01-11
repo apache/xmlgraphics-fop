@@ -184,6 +184,7 @@ public class AreaTreeParser {
             makers.put("foreignObject", new ForeignObjectMaker());
             makers.put("bookmarkTree", new BookmarkTreeMaker());
             makers.put("bookmark", new BookmarkMaker());
+            makers.put("destination", new DestinationMaker());
         }
 
         private static Rectangle2D parseRect(String rect) {
@@ -924,6 +925,26 @@ public class AreaTreeParser {
 
             public void endElement() {
                 assertObjectOfClass(areaStack.pop(), BookmarkData.class);
+            }
+        }
+
+        private class DestinationMaker extends AbstractMaker {
+
+            public void startElement(Attributes attributes) {
+                String[] linkdata
+                    = InternalLink.parseXMLAttribute(lastAttributes.getValue("internal-link"));
+                PageViewport pv = (PageViewport) pageViewportsByKey.get(linkdata[0]);
+                DestinationData dest = new DestinationData(linkdata[1]);
+                List pages = new java.util.ArrayList();
+                pages.add(pv);
+                dest.resolveIDRef(linkdata[1], pages);
+                areaStack.push(dest);
+            }
+
+            public void endElement() {
+                Object tos = areaStack.pop();
+                assertObjectOfClass(tos, DestinationData.class);
+                treeModel.handleOffDocumentItem((DestinationData) tos);
             }
         }
 

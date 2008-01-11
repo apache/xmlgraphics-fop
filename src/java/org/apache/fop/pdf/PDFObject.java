@@ -22,6 +22,7 @@ package org.apache.fop.pdf;
 // Java
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -57,6 +58,9 @@ public abstract class PDFObject implements PDFWritable {
      */
     private PDFDocument document;
 
+    /** the parent PDFObject (may be null and may not always be set, needed for encryption) */
+    private PDFObject parent;
+    
     /**
      * Returns the object's number.
      * @return the PDF Object number
@@ -66,6 +70,21 @@ public abstract class PDFObject implements PDFWritable {
             throw new IllegalStateException("Object has no number assigned: " + this.toString());
         }
         return this.objnum;
+    }
+    
+    /**
+     * Default constructor.
+     */
+    public PDFObject() {
+        //nop
+    }
+    
+    /**
+     * Constructor for direct objects.
+     * @param parent the containing PDFObject instance
+     */
+    public PDFObject(PDFObject parent) {
+        setParent(parent);
     }
     
     /**
@@ -102,7 +121,13 @@ public abstract class PDFObject implements PDFWritable {
      * has not been assigned)
      */
     public final PDFDocument getDocument() {
-        return this.document;
+        if (this.document != null) {
+            return this.document;
+        } else if (getParent() != null) {
+            return getParent().getDocument();
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -125,6 +150,22 @@ public abstract class PDFObject implements PDFWritable {
      */
     public void setDocument(PDFDocument doc) {
         this.document = doc;
+    }
+
+    /**
+     * Returns this objects's parent. The parent is null if it is a "direct object".
+     * @return the parent or null if there's no parent (or it hasn't been set)
+     */
+    public PDFObject getParent() {
+        return this.parent;
+    }
+    
+    /**
+     * Sets the direct parent object.
+     * @param parent the direct parent
+     */
+    public void setParent(PDFObject parent) {
+        this.parent = parent;
     }
 
     /**
@@ -169,6 +210,16 @@ public abstract class PDFObject implements PDFWritable {
         return pdf.length;
     }
 
+    /** {@inheritDoc} */
+    public void outputInline(OutputStream out, Writer writer) throws IOException {
+        if (hasObjectNumber()) {
+            writer.write(referencePDF());
+        } else {
+            writer.flush();
+            output(out);
+        }
+    }
+    
     /**
      * Encodes the object as a byte array for output to a PDF file.
      *
@@ -184,26 +235,14 @@ public abstract class PDFObject implements PDFWritable {
      * is normally converted/encoded to a byte array by toPDF(). Only use 
      * this method to implement the serialization if the object can be fully 
      * represented as text. If the PDF representation of the object contains
-     * binary content use toPDF() or output(OutputStream) instead.
+     * binary content use toPDF() or output(OutputStream) instead. This applies
+     * to any object potentially containing a string object because string object
+     * are encrypted and therefore need to be binary.
      * @return String the String representation
      */
     protected String toPDFString() {
         throw new UnsupportedOperationException("Not implemented. "
                     + "Use output(OutputStream) instead.");
-    }
-    
-    /**
-     * Returns a representation of this object for in-object placement, i.e. if the object
-     * has an object number its reference is returned. Otherwise, its PDF representation is
-     * returned.
-     * @return the String representation
-     */
-    public String toInlinePDFString() {
-        if (hasObjectNumber()) {
-            return referencePDF();
-        } else {
-            return toPDFString();
-        }
     }
     
     /**
@@ -250,23 +289,27 @@ public abstract class PDFObject implements PDFWritable {
     /**
      * Formats an object for serialization to PDF.
      * @param obj the object
-     * @param sb the StringBuffer to write to
+     * @param out the OutputStream to write to
+     * @param writer a Writer for text content (will always be a wrapper around the above
+     *                  OutputStream. Make sure <code>flush</code> is called when mixing calls)
+     * @throws IOException If an I/O error occurs
      */
-    protected void formatObject(Object obj, StringBuffer sb) {
+    protected void formatObject(Object obj, OutputStream out, Writer writer) throws IOException {
         if (obj == null) {
-            sb.append("null");
+            writer.write("null");
         } else if (obj instanceof PDFWritable) {
-            sb.append(((PDFWritable)obj).toInlinePDFString());
+            ((PDFWritable)obj).outputInline(out, writer);
         } else if (obj instanceof Number) {
             if (obj instanceof Double || obj instanceof Float) {
-                sb.append(PDFNumber.doubleOut(((Number)obj).doubleValue()));
+                writer.write(PDFNumber.doubleOut(((Number)obj).doubleValue()));
             } else {
-                sb.append(obj);
+                writer.write(obj.toString());
             }
         } else if (obj instanceof Boolean) {
-            sb.append(obj);
+            writer.write(obj.toString());
         } else {
-            sb.append("(").append(obj).append(")");
+            writer.flush();
+            out.write(encodeText(obj.toString()));
         }
     }
     
