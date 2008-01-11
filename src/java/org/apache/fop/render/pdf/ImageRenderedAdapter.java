@@ -25,6 +25,7 @@ import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -41,7 +42,6 @@ import org.apache.fop.pdf.PDFFilter;
 import org.apache.fop.pdf.PDFFilterList;
 import org.apache.fop.pdf.PDFName;
 import org.apache.fop.pdf.PDFReference;
-import org.apache.fop.pdf.PDFWritable;
 
 /**
  * PDFImage implementation for the PDF renderer which handles RenderedImages.
@@ -177,11 +177,6 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
     }
 
     /** {@inheritDoc} */
-    public String getSoftMask() {
-        return softMask.toInlinePDFString();
-    }
-
-    /** {@inheritDoc} */
     public PDFReference getSoftMaskReference() {
         return softMask;
     }
@@ -203,7 +198,7 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
         ColorModel cm = getEffectiveColorModel();
         if (cm instanceof IndexColorModel) {
             IndexColorModel icm = (IndexColorModel)cm;
-            PDFArray indexed = new PDFArray();
+            PDFArray indexed = new PDFArray(dict);
             indexed.add(new PDFName("Indexed"));
             
             if (icm.getColorSpace().getType() != ColorSpace.TYPE_RGB) {
@@ -219,47 +214,29 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
                 throw new UnsupportedOperationException("hival must not go beyond " + MAX_HIVAL);
             }
             indexed.add(new Integer(hival));
-            final StringBuffer sb = new StringBuffer("<");
             int[] palette = new int[c];
             icm.getRGBs(palette);
+            ByteArrayOutputStream baout = new ByteArrayOutputStream();
             for (int i = 0; i < c; i++) {
-                if (i > 0) {
-                    sb.append(" ");
-                }
                 //TODO Probably doesn't work for non RGB based color spaces
-                rgb2Hex(palette[i], sb);
+                //See log warning above
+                int entry = palette[i];
+                baout.write((entry & 0xFF0000) >> 16);
+                baout.write((entry & 0xFF00) >> 8);
+                baout.write(entry & 0xFF);
             }
-            sb.append(">");
-            indexed.add(new PDFWritable() {
-                public String toInlinePDFString() {
-                    //Work-around String escaping. Maybe a little hacky.
-                    return sb.toString();
-                }
-            });
+            indexed.add(baout.toByteArray());
 
             dict.put("ColorSpace", indexed);
             dict.put("BitsPerComponent", icm.getPixelSize());
             
             Integer index = getIndexOfFirstTransparentColorInPalette(getImage().getRenderedImage());
             if (index != null) {
-                PDFArray mask = new PDFArray();
+                PDFArray mask = new PDFArray(dict);
                 mask.add(index);
                 mask.add(index);
                 dict.put("Mask", mask);
             }
-        }
-    }
-    
-    private static final char[] HEX = {
-        '0', '1', '2', '3', '4', '5', '6', '7',
-        '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
-    };
-
-    private static void rgb2Hex(int rgb, StringBuffer sb) {
-        for (int i = 5; i >= 0; i--) {
-            int shift = i * 4;
-            int n = (rgb & (15 << shift)) >> shift;
-            sb.append(HEX[n % 16]);
         }
     }
     

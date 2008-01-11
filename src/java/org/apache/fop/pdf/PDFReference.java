@@ -51,6 +51,9 @@ public class PDFReference implements PDFWritable {
      * @param ref an object reference
      */
     public PDFReference(String ref) {
+        if (ref == null) {
+            throw new NullPointerException("ref must not be null");
+        }
         this.indirectReference = ref;
     }
 
