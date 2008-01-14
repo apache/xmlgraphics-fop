@@ -46,6 +46,13 @@ public class PDFArray extends PDFObject {
     }
 
     /**
+     * Create a new, empty array object with no parent.
+     */
+    public PDFArray() {
+        this(null);
+    }
+
+    /**
      * Create an array object.
      * @param parent the array's parent if any
      * @param values the actual array wrapped by this object
@@ -124,18 +131,10 @@ public class PDFArray extends PDFObject {
      * Adds a new value to the array.
      * @param obj the value
      */
-    public void add(PDFObject obj) {
-        if (obj != null) {
-            obj.setParent(this);
-        }
-        this.values.add(obj);
-    }
-    
-    /**
-     * Adds a new value to the array.
-     * @param obj the value
-     */
     public void add(Object obj) {
+        if (obj instanceof PDFObject) {
+            ((PDFObject)obj).setParent(this);
+        }
         this.values.add(obj);
     }
     
