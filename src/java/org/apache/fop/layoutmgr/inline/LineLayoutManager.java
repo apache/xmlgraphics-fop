@@ -557,13 +557,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
 
         LinkedList returnList = new LinkedList();
 
-        // null penalty between paragraphs
         int parIndex = knuthParagraphs.indexOf(par);
-        if (parIndex > 0 && !((BlockLevelLayoutManager) parentLM).mustKeepTogether()) {
-            returnList.add(new BreakElement(new Position(this), 0, context));
-            //returnList.add(new KnuthPenalty(0, 0, false, new Position(this), false));
-        }
-
         if (par.isInlineSequence() && context.getBPAlignment() == EN_JUSTIFY) {
             /* justified vertical alignment (not in the XSL FO recommendation):
                    create a multi-layout sequence whose elements will contain 
