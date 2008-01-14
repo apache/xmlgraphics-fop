@@ -44,6 +44,7 @@ import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.datatypes.FODimension;
+import org.apache.fop.datatypes.URISpecification;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExternalDocument;
 import org.apache.fop.layoutmgr.inline.ImageLayout;
@@ -114,7 +115,7 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
                 }
                 URI originalURI;
                 try {
-                    originalURI = new URI(uri);
+                    originalURI = new URI(URISpecification.escapeURI(uri));
                     int pageIndex = 1;
                     while (hasMoreImages) {
                         URI tempURI = new URI(originalURI.getScheme(),
