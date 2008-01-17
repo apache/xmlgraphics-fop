@@ -364,10 +364,10 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
         }
         subPos = subPos.getLM().rewrapPosition(subPos, basePos);
         Position newPos = new NonLeafPosition(this, subPos);
-        newPos.setIndex(pos.getIndex());
         if (isLast(pos)) {
-            pos.setIndex(-1);
-            notifyPos(pos);
+            notifyPos(newPos);
+        } else {
+            newPos.setIndex(pos.getIndex());
         }
         return newPos;
     }
