@@ -22,6 +22,7 @@ package org.apache.fop.render.afp;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.RenderedImage;
 import java.io.FileNotFoundException;
@@ -525,6 +526,12 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         // currentFontName = saveFontName;
     }
 
+    /** {@inheritDoc} */
+    protected void concatenateTransformationMatrix(AffineTransform at) {
+        //Not used here since AFPRenderer defines its own renderBlockViewport() method.
+        throw new UnsupportedOperationException("NYI");
+    }
+    
     /**
      * {@inheritDoc}
      */

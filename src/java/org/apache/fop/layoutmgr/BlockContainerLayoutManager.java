@@ -19,25 +19,26 @@
 
 package org.apache.fop.layoutmgr;
 
+import java.awt.Point;
+import java.awt.geom.Rectangle2D;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-import java.awt.Point;
-import java.awt.geom.Rectangle2D;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.area.Area;
-import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.Block;
+import org.apache.fop.area.BlockViewport;
+import org.apache.fop.area.CTM;
 import org.apache.fop.area.Trait;
+import org.apache.fop.datatypes.FODimension;
+import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.BlockContainer;
 import org.apache.fop.fo.properties.CommonAbsolutePosition;
 import org.apache.fop.layoutmgr.inline.InlineLayoutManager;
-import org.apache.fop.area.CTM;
-import org.apache.fop.datatypes.FODimension;
-import org.apache.fop.datatypes.Length;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
 
@@ -485,15 +486,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         vpContentBPD = allocBPD - getBPIndents();
         setContentAreaIPD(allocIPD - getIPIndents());
         
-        double contentRectOffsetX = offset.getX();
-        contentRectOffsetX += getBlockContainerFO()
-                .getCommonMarginBlock().startIndent.getValue(this);
-        double contentRectOffsetY = offset.getY();
-        contentRectOffsetY += getSpaceBefore(); //TODO Uhm, is that necessary?
-        contentRectOffsetY += getBlockContainerFO()
-                .getCommonBorderPaddingBackground().getBorderBeforeWidth(false);
-        contentRectOffsetY += getBlockContainerFO()
-                .getCommonBorderPaddingBackground().getPaddingBefore(false, this);
+        double contentRectOffsetX = 0;
+        double contentRectOffsetY = 0;
         
         Rectangle2D rect = new Rectangle2D.Double(
                 contentRectOffsetX, contentRectOffsetY, 
@@ -871,7 +865,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             } else {
                 viewportBlockArea.setBPD(getContentAreaBPD());
             }
-
+            transferForeignAttributes(viewportBlockArea);
+            
             TraitSetter.setProducerID(viewportBlockArea, getBlockContainerFO().getId());
             TraitSetter.addBorders(viewportBlockArea, 
                     getBlockContainerFO().getCommonBorderPaddingBackground(), 

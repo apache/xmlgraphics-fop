@@ -20,6 +20,7 @@
 package org.apache.fop.area;
 
 import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 
@@ -98,6 +99,22 @@ public class CTM implements Serializable {
         this.d = ctm.d;
         this.e = ctm.e;
         this.f = ctm.f;
+    }
+
+    /**
+     * Initialize a CTM with the values of an AffineTransform.
+     *
+     * @param at the transformation matrix
+     */
+    public CTM(AffineTransform at) {
+        double[] matrix = new double[6];
+        at.getMatrix(matrix);
+        this.a = matrix[0];
+        this.b = matrix[1];
+        this.c = matrix[2];
+        this.d = matrix[3];
+        this.e = matrix[4];
+        this.f = matrix[5];
     }
 
     /**
@@ -245,6 +262,14 @@ public class CTM implements Serializable {
         return new double[]{a, b, c, d, e, f};
     }
 
+    /**
+     * Returns this CTM as an AffineTransform object.
+     * @return the AffineTransform representation
+     */
+    public AffineTransform toAffineTransform() {
+        return new AffineTransform(toArray());
+    }
+    
     /**
      * Construct a coordinate transformation matrix (CTM).
      * @param absRefOrient absolute reference orientation

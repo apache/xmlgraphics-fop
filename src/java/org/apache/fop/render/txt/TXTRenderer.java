@@ -21,6 +21,7 @@ package org.apache.fop.render.txt;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -322,6 +323,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
      * {@inheritDoc}
      */
     protected void saveGraphicsState() {
+        currentState.push(new CTM());
     }
 
     /**
@@ -329,6 +331,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
      * {@inheritDoc}
      */
     protected void restoreGraphicsState() {
+        currentState.pop();
     }
 
     /**
@@ -564,4 +567,10 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
     protected void endVParea() {
         currentState.pop();
     }
+    
+    /** {@inheritDoc} */
+    protected void concatenateTransformationMatrix(AffineTransform at) {
+        currentState.push(new CTM(ptToMpt(at)));
+    }
+    
 }
