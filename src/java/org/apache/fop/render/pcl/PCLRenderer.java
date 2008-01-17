@@ -66,6 +66,7 @@ import org.apache.fop.area.Block;
 import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.CTM;
 import org.apache.fop.area.PageViewport;
+import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.AbstractTextArea;
 import org.apache.fop.area.inline.ForeignObject;
@@ -91,6 +92,12 @@ import org.apache.fop.render.pcl.extensions.PCLElementMapping;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.util.QName;
 import org.apache.fop.util.UnitConv;
+
+/* Note:
+ * There are some commonalities with AbstractPathOrientedRenderer but it's not possible
+ * to derive from it due to PCL's restrictions. We may need an additional common subclass to
+ * avoid methods copied from AbstractPathOrientedRenderer. Or we wait until after the IF redesign.
+ */
 
 /**
  * Renderer for the PCL 5 printer language. It also uses HP GL/2 for certain graphic elements.
@@ -582,6 +589,24 @@ public class PCLRenderer extends PrintRenderer {
 
     /**
      * {@inheritDoc}
+     * @todo Copied from AbstractPathOrientedRenderer
+     */
+    protected void handleRegionTraits(RegionViewport region) {
+        Rectangle2D viewArea = region.getViewArea();
+        float startx = (float)(viewArea.getX() / 1000f);
+        float starty = (float)(viewArea.getY() / 1000f);
+        float width = (float)(viewArea.getWidth() / 1000f);
+        float height = (float)(viewArea.getHeight() / 1000f);
+
+        if (region.getRegionReference().getRegionClass() == FO_REGION_BODY) {
+            currentBPPosition = region.getBorderAndPaddingWidthBefore();
+            currentIPPosition = region.getBorderAndPaddingWidthStart();
+        }
+        drawBackAndBorders(region, startx, starty, width, height);
+    }
+
+    /**
+     * {@inheritDoc}
      */
     protected void renderText(final TextArea text) {
         renderInlineAreaBackAndBorders(text);
@@ -881,14 +906,10 @@ public class PCLRenderer extends PrintRenderer {
         // save positions
         int saveIP = currentIPPosition;
         int saveBP = currentBPPosition;
-        //String saveFontName = currentFontName;
 
         CTM ctm = bv.getCTM();
         int borderPaddingStart = bv.getBorderAndPaddingWidthStart();
         int borderPaddingBefore = bv.getBorderAndPaddingWidthBefore();
-        float x, y;
-        x = (float)(bv.getXOffset() + containingIPPosition) / 1000f;
-        y = (float)(bv.getYOffset() + containingBPPosition) / 1000f;
         //This is the content-rect
         float width = (float)bv.getIPD() / 1000f;
         float height = (float)bv.getBPD() / 1000f;
@@ -896,9 +917,6 @@ public class PCLRenderer extends PrintRenderer {
 
         if (bv.getPositioning() == Block.ABSOLUTE
                 || bv.getPositioning() == Block.FIXED) {
-
-            currentIPPosition = bv.getXOffset();
-            currentBPPosition = bv.getYOffset();
 
             //For FIXED, we need to break out of the current viewports to the
             //one established by the page. We save the state stack for restoration
@@ -908,36 +926,42 @@ public class PCLRenderer extends PrintRenderer {
                 breakOutList = breakOutOfStateStack();
             }
             
-            CTM tempctm = new CTM(containingIPPosition, containingBPPosition);
-            ctm = tempctm.multiply(ctm);
-
-            //Adjust for spaces (from margin or indirectly by start-indent etc.
-            x += bv.getSpaceStart() / 1000f;
-            currentIPPosition += bv.getSpaceStart();
+            AffineTransform positionTransform = new AffineTransform();
+            positionTransform.translate(bv.getXOffset(), bv.getYOffset());
             
-            y += bv.getSpaceBefore() / 1000f;
-            currentBPPosition += bv.getSpaceBefore(); 
+            //"left/"top" (bv.getX/YOffset()) specify the position of the content rectangle
+            positionTransform.translate(-borderPaddingStart, -borderPaddingBefore);
 
+            saveGraphicsState();
+            //Viewport position
+            concatenateTransformationMatrix(mptToPt(positionTransform));
+            
+            //Background and borders
             float bpwidth = (borderPaddingStart + bv.getBorderAndPaddingWidthEnd()) / 1000f;
             float bpheight = (borderPaddingBefore + bv.getBorderAndPaddingWidthAfter()) / 1000f;
+            drawBackAndBorders(bv, 0, 0, width + bpwidth, height + bpheight);
 
-            drawBackAndBorders(bv, x, y, width + bpwidth, height + bpheight);
-
-            //Now adjust for border/padding
-            currentIPPosition += borderPaddingStart;
-            currentBPPosition += borderPaddingBefore;
+            //Shift to content rectangle after border painting
+            AffineTransform contentRectTransform = new AffineTransform();
+            contentRectTransform.translate(borderPaddingStart, borderPaddingBefore);
+            concatenateTransformationMatrix(mptToPt(contentRectTransform));
             
-            Rectangle2D clippingRect = null;
+            //Clipping
             if (bv.getClip()) {
-                clippingRect = new Rectangle(currentIPPosition, currentBPPosition, 
-                        bv.getIPD(), bv.getBPD());
+                clipRect(0f, 0f, width, height);
             }
 
-            startVParea(ctm, clippingRect);
+            saveGraphicsState();
+            //Set up coordinate system for content rectangle
+            AffineTransform contentTransform = ctm.toAffineTransform();
+            concatenateTransformationMatrix(mptToPt(contentTransform));
+            
             currentIPPosition = 0;
             currentBPPosition = 0;
             renderBlocks(bv, children);
-            endVParea();
+
+            restoreGraphicsState();
+            restoreGraphicsState();
 
             if (breakOutList != null) {
                 restoreStateStackAfterBreakOut(breakOutList);
@@ -981,6 +1005,18 @@ public class PCLRenderer extends PrintRenderer {
         //currentFontName = saveFontName;
     }
 
+    /**
+     * Concatenates the current transformation matrix with the given one, therefore establishing
+     * a new coordinate system.
+     * @param at the transformation matrix to process (coordinates in points)
+     */
+    protected void concatenateTransformationMatrix(AffineTransform at) {
+        if (!at.isIdentity()) {
+            graphicContext.transform(ptToMpt(at));
+            changePrintDirection();
+        }
+    }
+    
     private List breakOutOfStateStack() {
         log.debug("Block.FIXED --> break out");
         List breakOutList = new java.util.ArrayList();
@@ -1280,8 +1316,8 @@ public class PCLRenderer extends PrintRenderer {
             final BorderProps bpsStart, final BorderProps bpsEnd) {
         Graphics2DAdapter g2a = getGraphics2DAdapter();
         final Rectangle.Float effBorderRect = new Rectangle2D.Float(
-                 borderRect.x - (currentIPPosition / 1000f),
-                 borderRect.y - (currentBPPosition / 1000f),
+                 0,
+                 0,
                  borderRect.width,
                  borderRect.height);
         final Rectangle paintRect = new Rectangle(

@@ -639,16 +639,24 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         }
     }
 
-    /** Saves the graphics state of the rendering engine. */
+    /** {@inheritDoc} */
     protected void saveGraphicsState() {
         endTextObject();
+        currentState.push();
         currentStream.add("q\n");
     }
 
-    /** Restores the last graphics state of the rendering engine. */
-    protected void restoreGraphicsState() {
+    private void restoreGraphicsState(boolean popState) {
         endTextObject();
         currentStream.add("Q\n");
+        if (popState) {
+            currentState.pop();
+        }
+    }
+
+    /** {@inheritDoc} */
+    protected void restoreGraphicsState() {
+        restoreGraphicsState(true);
     }
 
     /** Indicates the beginning of a text object. */
@@ -786,16 +794,14 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         this.pdfDoc.output(ostream);
     }
 
-    /**
-     * {@inheritDoc} 
-     */
+    /** {@inheritDoc} */
     protected void startVParea(CTM ctm, Rectangle2D clippingRect) {
+        saveGraphicsState();
+        //currentState.push();
         // Set the given CTM in the graphics state
-        currentState.push();
         currentState.concatenate(
                 new AffineTransform(CTMHelper.toPDFArray(ctm)));
 
-        saveGraphicsState();
         if (clippingRect != null) {
             clipRect((float)clippingRect.getX() / 1000f, 
                     (float)clippingRect.getY() / 1000f, 
@@ -806,14 +812,21 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         currentStream.add(CTMHelper.toPDFString(ctm) + " cm\n");
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void endVParea() {
         restoreGraphicsState();
-        currentState.pop();
+        //currentState.pop();
     }
 
+    /** {@inheritDoc} */
+    protected void concatenateTransformationMatrix(AffineTransform at) {
+        System.out.println(at);
+        if (!at.isIdentity()) {
+            currentState.concatenate(at);
+            currentStream.add(CTMHelper.toPDFString(at, false) + " cm\n");
+        }
+    }
+    
     /**
      * Handle the traits for a region
      * This is used to draw the traits for the given page region.
@@ -1015,15 +1028,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         }
     }
     
-    /**
-     * Clip a rectangular area.
-     * write a clipping operation given coordinates in the current
-     * transform.
-     * @param x the x coordinate
-     * @param y the y coordinate
-     * @param width the width of the area
-     * @param height the height of the area
-     */
+    /** {@inheritDoc} */
     protected void clipRect(float x, float y, float width, float height) {
         currentStream.add(format(x) + " " + format(y) + " " 
                 + format(width) + " " + format(height) + " re ");
@@ -1104,7 +1109,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                 comment("------ break out!");
             }
             breakOutList.add(0, data); //Insert because of stack-popping
-            restoreGraphicsState();
+            restoreGraphicsState(false);
         }
         return breakOutList;
     }
@@ -1114,23 +1119,14 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * @param breakOutList the state stack to restore.
      */
     protected void restoreStateStackAfterBreakOut(List breakOutList) {
-        CTM tempctm;
         comment("------ restoring context after break-out...");
         PDFState.Data data;
         Iterator i = breakOutList.iterator();
-        double[] matrix = new double[6];
         while (i.hasNext()) {
             data = (PDFState.Data)i.next();
-            currentState.push();
             saveGraphicsState();
             AffineTransform at = data.getTransform();
-            if (!at.isIdentity()) {
-                currentState.concatenate(at);
-                at.getMatrix(matrix);
-                tempctm = new CTM(matrix[0], matrix[1], matrix[2], matrix[3], 
-                                  matrix[4] * 1000, matrix[5] * 1000);
-                currentStream.add(CTMHelper.toPDFString(tempctm) + " cm\n");
-            }
+            concatenateTransformationMatrix(at);
             //TODO Break-out: Also restore items such as line width and color
             //Left out for now because all this painting stuff is very
             //inconsistent. Some values go over PDFState, some don't.

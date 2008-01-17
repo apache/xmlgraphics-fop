@@ -399,9 +399,12 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         state = (Java2DGraphicsState)stateStack.pop();
     }
     
-    /**
-     * {@inheritDoc} 
-     */
+    /** {@inheritDoc} */
+    protected void concatenateTransformationMatrix(AffineTransform at) {
+        state.transform(at);
+    }
+    
+    /** {@inheritDoc} */
     protected void startVParea(CTM ctm, Rectangle2D clippingRect) {
 
         saveGraphicsState();

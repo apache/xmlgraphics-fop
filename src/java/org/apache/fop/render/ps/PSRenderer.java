@@ -21,6 +21,7 @@ package org.apache.fop.render.ps;
 
 // Java
 import java.awt.Color;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.RenderedImage;
 import java.io.File;
@@ -326,15 +327,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
         writeln("clip newpath");
     }
     
-    /**
-     * Clip an area.
-     * Write a clipping operation given coordinates in the current
-     * transform.
-     * @param x the x coordinate
-     * @param y the y coordinate
-     * @param width the width of the area
-     * @param height the height of the area
-     */
+    /** {@inheritDoc} */
     protected void clipRect(float x, float y, float width, float height) {
         try {
             gen.defineRect(x, y, width, height);
@@ -619,6 +612,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
     /** Restores the last graphics state of the rendering engine. */
     public void restoreGraphicsState() {
         try {
+            endTextObject();
             //delegate
             gen.restoreGraphicsState();
         } catch (IOException ioe) {
@@ -657,6 +651,15 @@ public class PSRenderer extends AbstractPathOrientedRenderer
         }
     }
 
+    /** {@inheritDoc} */
+    protected void concatenateTransformationMatrix(AffineTransform at) {
+        try {
+            gen.concatMatrix(at);
+        } catch (IOException ioe) {
+            handleIOTrouble(ioe);
+        }
+    }
+    
     private String getPostScriptNameForFontKey(String key) {
         Map fonts = fontInfo.getFonts();
         Typeface tf = (Typeface)fonts.get(key);
@@ -1284,9 +1287,9 @@ public class PSRenderer extends AbstractPathOrientedRenderer
     /** Indicates the end of a text object. */
     protected void endTextObject() {
         if (inTextMode) {
+            inTextMode = false; //set before restoreGraphicsState() to avoid recursion
             writeln("ET");
             restoreGraphicsState();
-            inTextMode = false;
         }
     }
 
@@ -1466,7 +1469,6 @@ public class PSRenderer extends AbstractPathOrientedRenderer
      * {@inheritDoc}
      */
     protected void endVParea() {
-        endTextObject();
         restoreGraphicsState();
     }
 

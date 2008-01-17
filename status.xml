@@ -28,6 +28,22 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="JM" type="fix">
+        Compliance fix: for absolutely positioned block-containers, "top" wasn't
+        interpreted correctly.
+      </action>
+      <action context="Code" dev="JM" type="add">
+        New extension attribute fox:transform on fo:block-container allows free-form transformation
+        (rotation, scaling etc.) of absolute and fixed block-containers. Supported only
+        for PDF, PS and Java2D-based renderers.
+      </action>
+      <action context="Code" dev="JM" type="fix">
+        Fixed logic error setting the transformation matrix for block-container viewports
+        (applies to absolute and fixed block-containers only).
+        Important: External renderer implementations need to adjust for the change and implement
+        the new method concatenateTransformationMatrix(AffineTransform) if the renderer is
+        derived from AbstractPathOrientedRenderer.
+      </action>
       <action context="Code" dev="JM" importance="high" type="fix">
         A new image loading framework has been introduced to fix various problems with external
         graphics and improve performance.
