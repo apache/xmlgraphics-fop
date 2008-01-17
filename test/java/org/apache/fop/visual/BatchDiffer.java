@@ -39,6 +39,7 @@ import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.xmlgraphics.image.writer.ImageWriterUtil;
 
 import org.apache.fop.layoutengine.LayoutEngineTestSuite;
@@ -146,7 +147,7 @@ public class BatchDiffer {
             if (!srcDir.exists()) {
                 throw new RuntimeException("source-directory does not exist: " + srcDir);
             }
-            File targetDir = new File(cfg.getChild("target-directory").getValue());
+            final File targetDir = new File(cfg.getChild("target-directory").getValue());
             targetDir.mkdirs();
             if (!targetDir.exists()) {
                 throw new RuntimeException("target-directory is invalid: " + targetDir);
@@ -154,10 +155,9 @@ public class BatchDiffer {
             context.setTargetDir(targetDir);
             
             boolean stopOnException = cfg.getChild("stop-on-exception").getValueAsBoolean(true);
-            boolean createDiffs = cfg.getChild("create-diffs").getValueAsBoolean(true);
+            final boolean createDiffs = cfg.getChild("create-diffs").getValueAsBoolean(true);
             
             //RUN!
-            BufferedImage[] bitmaps = new BufferedImage[producers.length];
             
             IOFileFilter filter = new SuffixFileFilter(new String[] {".xml", ".fo"});
             //Same filtering as in layout engine tests
@@ -169,10 +169,11 @@ public class BatchDiffer {
             Collection files = FileUtils.listFiles(srcDir, filter, null);
             Iterator i = files.iterator();
             while (i.hasNext()) {
-                File f = (File)i.next();
+                final File f = (File)i.next();
                 try {
                     log.info("---=== " + f + " ===---");
                     long[] times = new long[producers.length];
+                    final BufferedImage[] bitmaps = new BufferedImage[producers.length];
                     for (int j = 0; j < producers.length; j++) {
                         times[j] = System.currentTimeMillis();
                         bitmaps[j] = producers[j].produce(f, context);
@@ -193,24 +194,18 @@ public class BatchDiffer {
                         throw new RuntimeException("First producer didn't return a bitmap for " 
                                 + f + ". Cannot continue.");
                     }
-                    BufferedImage combined = BitmapComparator.buildCompareImage(bitmaps);
                     
-                    //Save combined bitmap as PNG file
-                    File outputFile = new File(targetDir, f.getName() + "._combined.png");
-                    ImageWriterUtil.saveAsPNG(combined, outputFile);
-
-                    if (createDiffs) {
-                        for (int k = 1; k < bitmaps.length; k++) {
-                            BufferedImage diff = BitmapComparator.buildDiffImage(
-                                    bitmaps[0], bitmaps[k]);
-                            outputFile = new File(targetDir, f.getName() + "._diff" + k + ".png");
-                            ImageWriterUtil.saveAsPNG(diff, outputFile);
+                    Runnable runnable = new Runnable() {
+                        public void run() {
+                            try {
+                                saveBitmaps(targetDir, f, createDiffs, bitmaps);
+                            } catch (IOException e) {
+                                log.error("IO error while saving bitmaps: " + e.getMessage());
+                            }
                         }
-                    }
-                    //Release memory as soon as possible. These images are huge!
-                    for (int k = 0; k < bitmaps.length; k++) {
-                        bitmaps[k] = null;
-                    }
+                    };
+                    //This speeds it up a little on multi-core CPUs (very cheap, I know)
+                    new Thread(runnable).start();
                 } catch (RuntimeException e) {
                     log.error("Catching RE on file " + f + ": " + e.getMessage());
                     if (stopOnException) {
@@ -229,6 +224,24 @@ public class BatchDiffer {
         } catch (ConfigurationException e) {
             log.error("Error while configuring BatchDiffer", e);
             throw new RuntimeException("Error while configuring BatchDiffer: " + e.getMessage());
+        }
+    }
+    
+    private void saveBitmaps(File targetDir, File srcFile, boolean createDiffs,
+            BufferedImage[] bitmaps) throws IOException {
+        BufferedImage combined = BitmapComparator.buildCompareImage(bitmaps);
+        
+        //Save combined bitmap as PNG file
+        File outputFile = new File(targetDir, srcFile.getName() + "._combined.png");
+        ImageWriterUtil.saveAsPNG(combined, outputFile);
+
+        if (createDiffs) {
+            for (int k = 1; k < bitmaps.length; k++) {
+                BufferedImage diff = BitmapComparator.buildDiffImage(
+                        bitmaps[0], bitmaps[k]);
+                outputFile = new File(targetDir, srcFile.getName() + "._diff" + k + ".png");
+                ImageWriterUtil.saveAsPNG(diff, outputFile);
+            }
         }
     }
     
@@ -272,7 +285,7 @@ public class BatchDiffer {
             
             System.out.println("Regular exit...");
         } catch (Exception e) {
-            System.out.println("Exception caugth...");
+            System.out.println("Exception caught...");
             e.printStackTrace();
         }
     }
