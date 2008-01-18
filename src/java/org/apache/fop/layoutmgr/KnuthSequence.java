@@ -166,8 +166,16 @@ public abstract class KnuthSequence extends ArrayList {
      * @param index The index of the element to be returned
      * @return the element at index index.
      */
-    public ListElement getElement(int index) {
+    public ListElement getListElement(int index) {
         return (ListElement) get(index);
+    }
+
+    /**
+     * @param index The index of the element to be returned
+     * @return the element at index index.
+     */
+    public KnuthElement getKnuthElement(int index) {
+        return (KnuthElement) get(index);
     }
 
     /**
@@ -185,6 +193,13 @@ public abstract class KnuthSequence extends ArrayList {
      */
     public abstract void resolveElements(int startIndex);
     
+    /**
+     * Resolve elements and get element index
+     * @param index the index to get
+     * @return the Knuth Element at index
+     */
+    public abstract KnuthElement resolveAndGetKnuthElement(int index);
+
     /**
      * Resolve all elements in seq
      * @param seq the Knuth Sequence

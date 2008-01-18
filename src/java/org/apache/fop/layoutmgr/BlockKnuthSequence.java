@@ -157,6 +157,18 @@ public class BlockKnuthSequence extends KnuthSequence {
         resolveElements(startIndex, false);
     }
     
+    /* (non-Javadoc)
+     * @see org.apache.fop.layoutmgr.KnuthSequence#resolveAndGetElement(int)
+     */
+    public KnuthElement resolveAndGetKnuthElement(int index) {
+        resolveElements(index);
+        if (index < size()) {
+            return getKnuthElement(index);
+        } else {
+            return null;
+        }
+    }
+
     /**
      * Resolve all elements in seq
      * @param seq the Knuth Sequence
@@ -179,7 +191,8 @@ public class BlockKnuthSequence extends KnuthSequence {
      * @param doall resolve all elements or not
      */
     private void resolveElements(int startIndex, boolean doall) {
-        for (int i = startIndex; i < size(); ++i) {
+        int i;
+        for (i = startIndex; i < size(); ++i) {
             ListElement elt = (ListElement) get(i);
             if (!doall && !elt.isUnresolvedElement()
                     && !(elt instanceof LineBreakingListElement)
@@ -238,6 +251,11 @@ public class BlockKnuthSequence extends KnuthSequence {
             }
         }
         SpaceResolver.resolveElementList(this, startIndex, doall);
+        // resolveElements may have removed element startIndex
+        // without adding any element, so that startIndex == par.size()
+        if (startIndex >= size() - 1) {
+            endBlockSequence();
+        }
     }
     
 }

@@ -483,7 +483,7 @@ public abstract class AbstractBreaker {
             if (p == 0) {
                 lastBreakClass = effectiveList.getStartOn();
             } else {
-                ListElement lastBreakElement = effectiveList.getElement(endElementIndex);
+                ListElement lastBreakElement = effectiveList.getListElement(endElementIndex);
                 if (lastBreakElement.isPenalty()) {
                     KnuthPenalty pen = (KnuthPenalty)lastBreakElement;
                     lastBreakClass = pen.getBreakClass();
