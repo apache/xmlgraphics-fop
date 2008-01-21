@@ -797,7 +797,6 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     /** {@inheritDoc} */
     protected void startVParea(CTM ctm, Rectangle2D clippingRect) {
         saveGraphicsState();
-        //currentState.push();
         // Set the given CTM in the graphics state
         currentState.concatenate(
                 new AffineTransform(CTMHelper.toPDFArray(ctm)));
@@ -815,12 +814,10 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     /** {@inheritDoc} */
     protected void endVParea() {
         restoreGraphicsState();
-        //currentState.pop();
     }
 
     /** {@inheritDoc} */
     protected void concatenateTransformationMatrix(AffineTransform at) {
-        System.out.println(at);
         if (!at.isIdentity()) {
             currentState.concatenate(at);
             currentStream.add(CTMHelper.toPDFString(at, false) + " cm\n");
