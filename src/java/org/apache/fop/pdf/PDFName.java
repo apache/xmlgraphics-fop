@@ -85,7 +85,7 @@ public class PDFName extends PDFObject {
             writer.write(getObjectID());
         }
 
-        outputInline(stream, writer);
+        writer.write(toString());
         
         if (hasObjectNumber()) {
             writer.write("\nendobj\n");
@@ -97,7 +97,11 @@ public class PDFName extends PDFObject {
     
     /** {@inheritDoc} */
     public void outputInline(OutputStream out, Writer writer) throws IOException {
-        writer.write(toString());
+        if (hasObjectNumber()) {
+            writer.write(referencePDF());
+        } else {
+            writer.write(toString());
+        }
     }
     
 }
