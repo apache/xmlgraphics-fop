@@ -23,10 +23,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
 
+import org.apache.commons.io.output.CountingOutputStream;
+
 /**
  * Class representing a PDF name object.
  */
-public class PDFName implements PDFWritable {
+public class PDFName extends PDFObject {
     
     private String name;
     
@@ -35,6 +37,7 @@ public class PDFName implements PDFWritable {
      * @param name the name value
      */
     public PDFName(String name) {
+        super();
         this.name = escapeName(name);
     }
 
@@ -74,6 +77,24 @@ public class PDFName implements PDFWritable {
         return this.name;
     }
 
+    /** {@inheritDoc} */
+    protected int output(OutputStream stream) throws IOException {
+        CountingOutputStream cout = new CountingOutputStream(stream);
+        Writer writer = PDFDocument.getWriterFor(cout);
+        if (hasObjectNumber()) {
+            writer.write(getObjectID());
+        }
+
+        outputInline(stream, writer);
+        
+        if (hasObjectNumber()) {
+            writer.write("\nendobj\n");
+        }
+        
+        writer.flush();
+        return cout.getCount();
+    }
+    
     /** {@inheritDoc} */
     public void outputInline(OutputStream out, Writer writer) throws IOException {
         writer.write(toString());
