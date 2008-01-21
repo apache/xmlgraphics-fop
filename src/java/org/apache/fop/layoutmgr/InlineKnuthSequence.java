@@ -74,7 +74,7 @@ public class InlineKnuthSequence extends KnuthSequence  {
         // does the first element of the first paragraph add to an existing word?
         ListElement lastOldElement, firstNewElement;
         lastOldElement = getLast();
-        firstNewElement = sequence.getListElement(0);
+        firstNewElement = sequence.getElement(0);
         if (firstNewElement.isBox() && !((KnuthElement) firstNewElement).isAuxiliary()
                 && lastOldElement.isBox() && ((KnuthElement) lastOldElement).getW() != 0) {
             addALetterSpace();
@@ -107,9 +107,9 @@ public class InlineKnuthSequence extends KnuthSequence  {
         KnuthBox prevBox = (KnuthBox) getLast();
         if (prevBox.isAuxiliary()
             && (size() < 4
-                || !getListElement(size() - 2).isGlue()
-                || !getListElement(size() - 3).isPenalty()
-                || !getListElement(size() - 4).isBox()
+                || !getElement(size() - 2).isGlue()
+                || !getElement(size() - 3).isPenalty()
+                || !getElement(size() - 4).isBox()
                )
            ) {
             // Not the sequence we are expecting
@@ -164,7 +164,7 @@ public class InlineKnuthSequence extends KnuthSequence  {
      * @see org.apache.fop.layoutmgr.KnuthSequence#resolveAndGetElement(int)
      */
     public KnuthElement resolveAndGetKnuthElement(int index) {
-        return getKnuthElement(index);
+        return (KnuthElement) get(index);
     }
 
     /**

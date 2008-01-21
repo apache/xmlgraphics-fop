@@ -279,7 +279,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
             // remove from footnotesList the note lists that will be met
             // after the restarting point
             for (int j = currentIndex; j >= restartingNode.position; j--) {
-                KnuthElement resettedElement = par.getKnuthElement(j);
+                KnuthElement resettedElement = getElement(j);
                 if (resettedElement instanceof KnuthBlockBox
                     && ((KnuthBlockBox) resettedElement).hasAnchors()) {
                     resetFootnotes(((KnuthBlockBox) resettedElement).getFootnoteElementLists());
@@ -407,7 +407,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
             int index;
             // ignore suppressed elements
             for (index = prevBreakIndex + 1;
-                    !par.getListElement(index).isBox();
+                    !par.getElement(index).isBox();
                     index++) {
                 //nop
             }
@@ -415,9 +415,9 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
             for (;
                  index < breakIndex;
                  index++) {
-                if (par.getListElement(index).isGlue() && par.getListElement(index - 1).isBox()
-                    || par.getListElement(index).isPenalty() 
-                       && ((KnuthElement) par.getListElement(index)).getP() < KnuthElement.INFINITE) {
+                if (par.getElement(index).isGlue() && par.getElement(index - 1).isBox()
+                    || par.getElement(index).isPenalty() 
+                       && ((KnuthElement) par.getElement(index)).getP() < KnuthElement.INFINITE) {
                     // break found
                     break;
                 }
@@ -626,8 +626,8 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         }
 
         if (element.isPenalty() && ((KnuthPenalty) element).isFlagged()
-            && par.getKnuthElement(activeNode.position).isPenalty()
-            && ((KnuthPenalty) par.getKnuthElement(activeNode.position)).isFlagged()) {
+            && getElement(activeNode.position).isPenalty()
+            && ((KnuthPenalty) getElement(activeNode.position)).isFlagged()) {
             // add demerit for consecutive breaks at flagged penalties
             demerits += repeatedFlaggedDemerit;
         }

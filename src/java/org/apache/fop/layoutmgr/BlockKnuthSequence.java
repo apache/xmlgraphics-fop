@@ -163,7 +163,7 @@ public class BlockKnuthSequence extends KnuthSequence {
     public KnuthElement resolveAndGetKnuthElement(int index) {
         resolveElements(index);
         if (index < size()) {
-            return getKnuthElement(index);
+            return (KnuthElement) get(index);
         } else {
             return null;
         }
@@ -191,8 +191,7 @@ public class BlockKnuthSequence extends KnuthSequence {
      * @param doall resolve all elements or not
      */
     private void resolveElements(int startIndex, boolean doall) {
-        int i;
-        for (i = startIndex; i < size(); ++i) {
+        for (int i = startIndex; i < size(); ++i) {
             ListElement elt = (ListElement) get(i);
             if (!doall && !elt.isUnresolvedElement()
                     && !(elt instanceof LineBreakingListElement)
