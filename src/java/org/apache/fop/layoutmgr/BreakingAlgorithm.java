@@ -38,9 +38,6 @@ import org.apache.fop.fo.FONode;
  * }
  * </pre> 
  */
-/**
- * 
- */
 public abstract class BreakingAlgorithm {
 
     /** the logger for the class */
@@ -439,7 +436,6 @@ public abstract class BreakingAlgorithm {
             if (alignment != org.apache.fop.fo.Constants.EN_CENTER) {
                 while (par.size() > firstBoxIndex) {
                     // scan for unresolved elements and paragraphs
-                    // par.resolveElements(firstBoxIndex);
                     thisElement = par.resolveAndGetKnuthElement(firstBoxIndex);
                     if (thisElement == null || thisElement.isBox()) {
                         break;
@@ -583,10 +579,10 @@ public abstract class BreakingAlgorithm {
      * @return the requested context FO note or null, if no context node could be determined
      */
     private FONode findContextFO(KnuthSequence seq, int position) {
-        ListElement el = seq.getListElement(position);
+        ListElement el = seq.getElement(position);
         while (el.getLayoutManager() == null && position < seq.size() - 1) {
             position++;
-            el = seq.getListElement(position);
+            el = seq.getElement(position);
         }
         Position pos = (el != null ? el.getPosition() : null);
         LayoutManager lm = (pos != null ? pos.getLM() : null);
@@ -671,7 +667,7 @@ public abstract class BreakingAlgorithm {
         // these elements twice
         int restartingIndex = restartingNode.position;
         while (restartingIndex + 1 < par.size()
-               && !(par.getKnuthElement(restartingIndex + 1).isBox())) {
+               && !(getElement(restartingIndex + 1).isBox())) {
             restartingIndex++;
         }
         return restartingIndex;
@@ -817,7 +813,7 @@ public abstract class BreakingAlgorithm {
         // was just before the next box element, thus ignoring glues and
         // penalties between the "real" break and the following box
         for (int i = elementIdx; i < par.size(); i++) {
-            KnuthElement tempElement = par.getKnuthElement(i);
+            KnuthElement tempElement = getElement(i);
             if (tempElement.isBox()) {
                 break;
             } else if (tempElement.isGlue()) {
@@ -949,8 +945,8 @@ public abstract class BreakingAlgorithm {
         }
     
         if (element.isPenalty() && ((KnuthPenalty) element).isFlagged()
-            && par.getKnuthElement(activeNode.position).isPenalty()
-            && ((KnuthPenalty) par.getKnuthElement(activeNode.position)).isFlagged()) {
+            && getElement(activeNode.position).isPenalty()
+            && ((KnuthPenalty) getElement(activeNode.position)).isFlagged()) {
             // add demerit for consecutive breaks at flagged penalties
             demerits += repeatedFlaggedDemerit;
             // there are at least two consecutive lines ending with a flagged penalty;
@@ -960,7 +956,7 @@ public abstract class BreakingAlgorithm {
             for (KnuthNode prevNode = activeNode.previous;
                  prevNode != null && flaggedPenaltiesCount <= maxFlaggedPenaltiesCount;
                  prevNode = prevNode.previous) {
-                KnuthElement prevElement = par.getKnuthElement(prevNode.position);
+                KnuthElement prevElement = getElement(prevNode.position);
                 if (prevElement.isPenalty()
                     && ((KnuthPenalty) prevElement).isFlagged()) {
                     // the previous line ends with a flagged penalty too
@@ -988,6 +984,15 @@ public abstract class BreakingAlgorithm {
     }
 
     protected void finish() {
+    }
+
+    /**
+     * Return the element at index idx in the paragraph.
+     * @param idx index of the element.
+     * @return the element at index idx in the paragraph.
+     */
+    protected KnuthElement getElement(int idx) {
+        return (KnuthElement) par.get(idx);
     }
 
     /**

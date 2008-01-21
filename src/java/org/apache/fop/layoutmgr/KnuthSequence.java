@@ -26,9 +26,6 @@ import java.util.ListIterator;
 /**
  * Represents a list of Knuth elements.
  */
-/**
- * 
- */
 public abstract class KnuthSequence extends ArrayList {
     /**
      * Creates a new and empty list.
@@ -166,16 +163,8 @@ public abstract class KnuthSequence extends ArrayList {
      * @param index The index of the element to be returned
      * @return the element at index index.
      */
-    public ListElement getListElement(int index) {
+    public ListElement getElement(int index) {
         return (ListElement) get(index);
-    }
-
-    /**
-     * @param index The index of the element to be returned
-     * @return the element at index index.
-     */
-    public KnuthElement getKnuthElement(int index) {
-        return (KnuthElement) get(index);
     }
 
     /**
