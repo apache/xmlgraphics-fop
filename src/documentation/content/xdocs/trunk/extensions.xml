@@ -200,8 +200,10 @@ to following pages. Here is an example of FO code creating such a table-header:<
           and after them.
         </p>
         <p>
-          An example: <code>fox:transform="rotate(45)"</code> would rotate the block-container
+          Examples: <code>fox:transform="rotate(45)"</code> would rotate the block-container
           by 45 degrees clock-wise around its upper-left corner.
+          <code>fox:transform="translate(10000,0)"</code> would move the block-container to the
+          right by 10 points (=10000 millipoints, FOP uses millipoints internally!).
         </p>
         <note>
           This extension attribute doesn't work for all output formats! It's currently only
