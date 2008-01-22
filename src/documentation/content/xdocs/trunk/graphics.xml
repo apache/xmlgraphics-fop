@@ -155,8 +155,8 @@
         <p>
           Not all image formats are supported for all output formats! For example, while you can
           use EPS (Encapsulated PostScript) files when you generate PostScript output, this format
-          will not be supported by any other output format. Here's an overview which image formats
-          are supported by which output format:
+          will not be supported by any other output format. Here's an overview of which image
+          formats are supported by which output format:
         </p>
         <table>
           <tr>
@@ -269,8 +269,8 @@
         <title>XML Graphics Commons Native</title>
         <p>
           <a href="ext:xmlgraphics.apache.org/commons">XML Graphics Commons</a> supports a number
-          graphic file formats natively as basic functionality: all bitmap formats for which there
-          are Image I/O codecs available (JPEG, PNG, GIF, TIFF, etc.), EPS and EMF.
+          of graphic file formats natively as basic functionality: all bitmap formats for which
+          there are Image I/O codecs available (JPEG, PNG, GIF, TIFF, etc.), EPS and EMF.
         </p>
       </section>
       <section id="fop-native">
@@ -501,7 +501,7 @@
         Some bitmapped image file formats store a dots-per-inch (dpi) or other resolution 
         values. FOP tries to use this resolution information whenever possible to determine
         the image's intrinsic size. This size is used during the layout process when it is not
-        superceeded by an explicit size on fo:external-graphic (content-width and content-height 
+        superseded by an explicit size on fo:external-graphic (content-width and content-height 
         properties).
       </p>
       <p>
