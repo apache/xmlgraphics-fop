@@ -161,7 +161,7 @@ public void init() throws ServletException {
         <ul>
           <li>
             Instead of java.io.ByteArrayOutputStream consider using the ByteArrayOutputStream
-            implementation from the <a href="ext:jakarta/commons/io">Jakarta Commons IO project</a> which allocates less memory.
+            implementation from the <a href="ext:commons-io">Jakarta Commons IO project</a> which allocates less memory.
             The full class name is: <code>org.apache.commons.io.output.ByteArrayOutputStream</code>
           </li>
           <li>

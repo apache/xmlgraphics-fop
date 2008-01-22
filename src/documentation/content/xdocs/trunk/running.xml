@@ -28,21 +28,24 @@
       <title>System Requirements</title>
       <p>The following software must be installed:</p>
       <ul>
-        <li>Java 1.3.x or later Runtime Environment.</li>
+        <li>
+          Java 1.4.x or later Runtime Environment.
+          <ul>
+            <li>
+              Many JREs >=1.4 contain older JAXP implementations (which often contain bugs). It's
+              usually a good idea to replace them with a current implementation.
+            </li>
+          </ul>
+        </li>
         <li>
           Apache FOP. The <a href="../download.html">FOP distribution</a> includes all libraries that you will 
           need to run a basic FOP installation. These can be found in the [fop-root]/lib directory. These 
           libraries include the following:
           <ul>
-            <li>
-              A JAXP-compatible XML Parser (FOP comes with <a class="fork" href="ext:xerces">Apache Xerces-J</a>).
-            </li>
-            <li>
-              A JAXP-compatible XSLT Processor (FOP comes with <a class="fork" href="ext:xalan">Apache Xalan-J</a>).
-            </li>
+            <li><a class="fork" href="ext:xmlgraphics.apache.org/commons">Apache XML Graphics Commons</a>, an shared library for Batik and FOP.</li>
             <li><a class="fork" href="ext:batik">Apache Batik</a>, an SVG library.</li>
-            <li><a class="fork" href="ext:jakarta/commons/logging">Apache Jakarta Commons Logging</a>, a logger abstraction kit.</li>
-            <li><a class="fork" href="ext:jakarta/commons/io">Apache Jakarta Commons IO</a>, a library with I/O utilities.</li>
+            <li><a class="fork" href="ext:commons-logging">Apache Commons Logging</a>, a logger abstraction kit.</li>
+            <li><a class="fork" href="ext:commons-io">Apache Commons IO</a>, a library with I/O utilities.</li>
             <li><a class="fork" href="ext:excalibur/framework">Apache Excalibur/Avalon Framework</a>, for XML configuration handling.</li>
           </ul>
         </li>
@@ -51,8 +54,7 @@
       <ul>
         <li>
           Graphics libraries. Generally, FOP contains direct support for the most important
-          bitmap image formats (including PNG, TIFF, JPEG and GIF). If you're using JDK 1.3, 
-          you may need additional packages to get GIF images to work. See 
+          bitmap image formats (including PNG, JPEG and GIF). See 
           <a href="graphics.html">FOP: Graphics Formats</a> for details.
         </li>
         <li>
