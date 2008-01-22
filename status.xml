@@ -28,6 +28,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Layout" dev="JM" type="fix" fixes-bug="44160">
+        Fixed a possible IndexOutOfBoundsException that could happen with certain constellations
+        when footnotes are used.
+      </action>
       <action context="Layout" dev="JM" type="fix">
         Compliance fix: for absolutely positioned block-containers, "top" wasn't
         interpreted correctly.

@@ -25,11 +25,11 @@ import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.layoutmgr.AbstractBreaker.PageBreakPosition;
-
 import org.apache.fop.traits.MinOptMax;
 
 class PageBreakingAlgorithm extends BreakingAlgorithm {
@@ -641,10 +641,14 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                 demerits += (footnotesList.size() - 1 - footnoteListIndex) 
                                 * deferredFootnoteDemerits;
             }
-            if (footnoteElementIndex 
-                    < ((LinkedList) footnotesList.get(footnoteListIndex)).size() - 1) {
-                // add demerits for the footnote split between pages
-                demerits += splitFootnoteDemerits;
+            if (footnoteListIndex < footnotesList.size()) {
+                if (footnoteElementIndex 
+                        < ((LinkedList) footnotesList.get(footnoteListIndex)).size() - 1) {
+                    // add demerits for the footnote split between pages
+                    demerits += splitFootnoteDemerits;
+                }
+            } else {
+                //TODO Why can this happen in the first place? Does anybody know? See #44160
             }
         }
         demerits += activeNode.totalDemerits;
