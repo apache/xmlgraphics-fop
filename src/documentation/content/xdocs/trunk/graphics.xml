@@ -305,8 +305,7 @@
         <p>Here are some workarounds:</p>
         <ul>
           <li>
-            If you are using JDK 1.4, start it with the <code>-Djava.awt.headless=true</code>
-            command line option.
+            Start Java with the <code>-Djava.awt.headless=true</code> command line option.
           </li>
           <li>
             Install an X server which provides an in-memory framebuffer without actually using a
