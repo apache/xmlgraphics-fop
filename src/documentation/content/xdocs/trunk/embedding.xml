@@ -166,7 +166,7 @@ try {
       <title>Logging</title>
       <p>
         Logging is now a little different than it was in FOP 0.20.5. We've switched from
-        Avalon Logging to <a href="ext:jakarta/commons/logging">Jakarta Commons Logging</a>.
+        Avalon Logging to <a href="ext:commons-logging">Jakarta Commons Logging</a>.
         While with Avalon Logging the loggers were directly given to FOP, FOP now retrieves
         its logger(s) through a statically available LogFactory. This is similar to the
         general pattern that you use when you work with Apache Log4J directly, for example.
@@ -187,10 +187,10 @@ try {
         which documents what we're going to build.
       </note>
       <p>
-        By default, <a href="ext:jakarta/commons/logging">Jakarta Commons Logging</a> uses
+        By default, <a href="ext:commons-logging">Jakarta Commons Logging</a> uses
         JDK logging (available in JDKs 1.4 or higher) as its backend. You can configure Commons
         Logging to use an alternative backend, for example Log4J. Please consult the
-        <a href="ext:jakarta/commons/logging">documentation for Jakarta Commons Logging</a> on
+        <a href="ext:commons-logging">documentation for Jakarta Commons Logging</a> on
         how to configure alternative backends.
       </p>
     </section>
