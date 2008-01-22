@@ -150,6 +150,12 @@
           support for additional formats.
         </li>
       </ul>
+      <note>
+        <a href="http://jai-imageio.dev.java.net/">JAI Image I/O Tools</a> is not the same as the
+        <a href="http://java.sun.com/javase/technologies/desktop/media/jai/">JAI library</a>! The
+        former simply exposes JAI's codecs using the Image&nbsp;I/O API but does not include all
+        the image manipulation functionality.
+      </note>
       <section id="format-map">
         <title>Map of supported image formats by output format</title>
         <p>
