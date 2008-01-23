@@ -19,6 +19,7 @@
 
 package org.apache.fop.layoutmgr.table;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -125,7 +126,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
         return this.footerList;
     }
 
-    /** @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(LayoutContext, int) */
+    /** {@inheritDoc} */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         if (log.isDebugEnabled()) {
             log.debug("==> Columns: " + getTableLM().getColumns());
@@ -321,9 +322,12 @@ public class TableContentLayoutManager implements PercentBaseContext {
             } else if (pos instanceof TableHFPenaltyPosition) {
                 //ignore for now, see special handling below if break is at a penalty
                 //Only if the last position in this part/page us such a position it will be used 
-            } else {
-                //leave order as is for the rest
+            } else if (pos instanceof TableContentPosition) {
                 positions.add(pos);
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("Ignoring position: " + pos);
+                }
             }
         }
         if (lastPos instanceof TableHFPenaltyPosition) {
@@ -349,17 +353,20 @@ public class TableContentLayoutManager implements PercentBaseContext {
             //header positions for the last part are the second-to-last element and need to
             //be handled first before all other TableContentPositions
             PositionIterator nestedIter = new KnuthPossPosIter(headerElements);
-            iterateAndPaintPositions(nestedIter, painter);
+            iterateAndPaintPositions(nestedIter, painter, false);
         }
         
         //Iterate over all steps
         Iterator posIter = positions.iterator();
-        iterateAndPaintPositions(posIter, painter);
+        painter.startBody();
+        // Here we are sure that posIter iterates only over TableContentPosition instances
+        iterateAndPaintPositions(posIter, painter, footerElements == null);
+        painter.endBody();
 
         if (footerElements != null) {
             //Positions for footers are simply added at the end
             PositionIterator nestedIter = new KnuthPossPosIter(footerElements);
-            iterateAndPaintPositions(nestedIter, painter);
+            iterateAndPaintPositions(nestedIter, painter, true);
         }
         
         this.usedBPD += painter.getAccumulatedBPD();
@@ -377,9 +384,12 @@ public class TableContentLayoutManager implements PercentBaseContext {
      * @param iterator iterator over Position elements. Those positions correspond to the
      * elements of the table present on the current page
      * @param painter
+     * @param lastOnPage true if the corresponding part will be the last on the page
+     * (either body or footer, obviously)
      */
-    private void iterateAndPaintPositions(Iterator iterator, RowPainter painter) {
-        List lst = new java.util.ArrayList();
+    private void iterateAndPaintPositions(Iterator iterator, RowPainter painter,
+            boolean lastOnPage) {
+        List lst = new ArrayList();
         boolean firstPos = false;
         TableBody body = null;
         while (iterator.hasNext()) {
@@ -405,10 +415,6 @@ public class TableContentLayoutManager implements PercentBaseContext {
                     body = null;
                     lst.clear();
                 }
-            } else {
-                if (log.isDebugEnabled()) {
-                    log.debug("Ignoring position: " + pos);
-                }
             }
         }
         if (body != null) {
@@ -417,7 +423,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
             // lastPos is necessarily false
             handleMarkersAndPositions(lst, body, firstPos, false, painter);
         }
-        painter.addAreasAndFlushRow(true);
+        painter.addAreasAndFlushRow(true, lastOnPage);
     }
 
     private void handleMarkersAndPositions(List positions, TableBody body, boolean firstPos,

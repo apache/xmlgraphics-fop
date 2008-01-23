@@ -26,16 +26,17 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.fo.flow.table.ConditionalBorder;
 import org.apache.fop.fo.flow.table.EffRow;
 import org.apache.fop.fo.flow.table.GridUnit;
 import org.apache.fop.fo.flow.table.PrimaryGridUnit;
 import org.apache.fop.fo.flow.table.TableRow;
-import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthPossPosIter;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.SpaceResolver;
+import org.apache.fop.traits.BorderProps;
 
 class RowPainter {
     private static Log log = LogFactory.getLog(RowPainter.class);
@@ -50,6 +51,14 @@ class RowPainter {
      * Index of the first row of the current part present on the current page.
      */
     private int firstRowIndex;
+
+    /**
+     * Index of the very first row on the current page. Needed to properly handle
+     * {@link BorderProps#COLLAPSE_OUTER}. This is not the same as {@link #firstRowIndex}
+     * when the table has headers!
+     */
+    private int firstRowOnPageIndex;
+
     /**
      * Keeps track of the y-offsets of each row on a page.
      * This is particularly needed for spanned cells where you need to know the y-offset
@@ -57,36 +66,23 @@ class RowPainter {
      */
     private List rowOffsets = new ArrayList();
 
-    //These three variables are our buffer to recombine the individual steps into cells
-    /** Primary grid units corresponding to the currently handled grid units, per row. */
-    private PrimaryGridUnit[] primaryGridUnits;
-    /**
-     * Index, in the corresponding table cell's list of Knuth elements, of the first
-     * element present on the current page, per column.
-     */
-    private int[] start;
-    /**
-     * Index, in the corresponding table cell's list of Knuth elements, of the last
-     * element present on the current page, per column.
-     */
-    private int[] end;
-    /**
-     * Length, for each column, of the elements from the current cell put on the
-     * current page. This is the corresponding area's bpd.
-     */
-    private int[] partBPD;
+    private int[] cellHeights;
+    private boolean[] firstCellOnPage;
+    private CellPart[] firstCellParts;
+    private CellPart[] lastCellParts;
+
     private TableContentLayoutManager tclm;
 
     RowPainter(TableContentLayoutManager tclm, LayoutContext layoutContext) {
         this.tclm = tclm;
         this.layoutContext = layoutContext;
         this.colCount = tclm.getColumns().getColumnCount();
-        this.primaryGridUnits = new PrimaryGridUnit[colCount];
-        this.start = new int[colCount];
-        this.end = new int[colCount];
-        this.partBPD = new int[colCount];
+        this.cellHeights = new int[colCount];
+        this.firstCellOnPage = new boolean[colCount];
+        this.firstCellParts = new CellPart[colCount];
+        this.lastCellParts = new CellPart[colCount];
         this.firstRowIndex = -1;
-        Arrays.fill(end, -1);
+        this.firstRowOnPageIndex = -1;
     }
 
     int getAccumulatedBPD() {
@@ -101,7 +97,7 @@ class RowPainter {
      */
     void handleTableContentPosition(TableContentPosition tcpos) {
         if (tcpos.row != currentRow && currentRow != null) {
-            addAreasAndFlushRow(false);
+            addAreasAndFlushRow(false, false);
         }
         if (log.isDebugEnabled()) {
             log.debug("===handleTableContentPosition(" + tcpos);
@@ -110,6 +106,9 @@ class RowPainter {
         currentRow = tcpos.row;
         if (firstRowIndex < 0) {
             firstRowIndex = currentRow.getIndex();
+            if (firstRowOnPageIndex < 0) {
+                firstRowOnPageIndex = firstRowIndex;
+            }
         }
         Iterator partIter = tcpos.cellParts.iterator();
         //Iterate over all grid units in the current step
@@ -119,173 +118,153 @@ class RowPainter {
                 log.debug(">" + cellPart);
             }
             int colIndex = cellPart.pgu.getStartCol();
-            if (primaryGridUnits[colIndex] != cellPart.pgu) {
-                if (primaryGridUnits[colIndex] != null) {
-                    log.warn("Replacing GU in slot " + colIndex
-                            + ". Some content may not be painted.");
-                }
-                primaryGridUnits[colIndex] = cellPart.pgu;
-                start[colIndex] = cellPart.start;
-                end[colIndex] = cellPart.end;
+            if (firstCellParts[colIndex] == null) {
+                firstCellParts[colIndex] = cellPart;
+                cellHeights[colIndex] = cellPart.getBorderPaddingBefore(firstCellOnPage[colIndex]);
             } else {
-                if (cellPart.end < end[colIndex]) {
-                    throw new IllegalStateException("Internal Error: stepper problem");
-                }
-                end[colIndex] = cellPart.end;
+                assert firstCellParts[colIndex].pgu == cellPart.pgu; 
+                cellHeights[colIndex] += cellPart.getConditionalBeforeContentLength();
             }
+            cellHeights[colIndex] += cellPart.getLength();
+            lastCellParts[colIndex] = cellPart;
         }
     }
 
     /**
-     * Create the areas corresponding to the last row. This method is called either
-     * because the row is finished (all of the elements present on this row have been
-     * added), or because this is the last row on the current page, and the part of it
-     * lying on the current page must be drawn.
+     * Creates the areas corresponding to the last row. That is, an area with background
+     * for the row, plus areas for all the cells that finish on the row (not spanning over
+     * further rows).
      * 
-     * @param forcedFlush true if the elements must be drawn even if the row isn't
-     * finished yet (last row on the page), or if the row is the last of the current table
-     * part
+     * @param lastInPart true if the row is the last from its table part to be displayed
+     * on the current page. In which case all the cells must be flushed even if they
+     * aren't finished, plus the proper collapsed borders must be selected (trailing
+     * instead of normal, or rest if the cell is unfinished)
+     * @param lastOnPage true if the row is the very last row of the table that will be
+     * displayed on the current page. In which case collapsed after borders must be drawn
+     * in the outer mode
      */
-    void addAreasAndFlushRow(boolean forcedFlush) {
-        int actualRowHeight = 0;
-
+    void addAreasAndFlushRow(boolean lastInPart, boolean lastOnPage) {
         if (log.isDebugEnabled()) {
             log.debug("Remembering yoffset for row " + currentRow.getIndex() + ": "
                     + currentRowOffset);
         }
         recordRowOffset(currentRow.getIndex(), currentRowOffset);
 
-        for (int i = 0; i < primaryGridUnits.length; i++) {
-            if ((primaryGridUnits[i] != null)
-                    && (forcedFlush || (end[i] == primaryGridUnits[i].getElements().size() - 1))) {
-                actualRowHeight = Math.max(actualRowHeight, computeSpanHeight(
-                        primaryGridUnits[i], start[i], end[i], i));
-            }
-        }
-        actualRowHeight += 2 * tclm.getTableLM().getHalfBorderSeparationBPD();
-
-        //Add areas for row
-        tclm.addRowBackgroundArea(rowFO, actualRowHeight, layoutContext.getRefIPD(),
-                currentRowOffset);
-        for (int i = 0; i < primaryGridUnits.length; i++) {
+        // Need to compute the actual row height first
+        int actualRowHeight = 0;
+        for (int i = 0; i < colCount; i++) {
             GridUnit currentGU = currentRow.getGridUnit(i);            
             if (!currentGU.isEmpty() && currentGU.getColSpanIndex() == 0
-                    && (forcedFlush || currentGU.isLastGridUnitRowSpan())) {
-                addAreasForCell(currentGU.getPrimary(), start[i], end[i], currentRow, partBPD[i],
-                        actualRowHeight);
-                primaryGridUnits[i] = null;
-                start[i] = 0;
-                end[i] = -1;
-                partBPD[i] = 0;
+                    && (lastInPart || currentGU.isLastGridUnitRowSpan())) {
+                int cellHeight = cellHeights[i];
+                cellHeight += lastCellParts[i].getConditionalAfterContentLength();
+                cellHeight += lastCellParts[i].getBorderPaddingAfter(lastInPart);
+                int cellOffset = getRowOffset(Math.max(firstCellParts[i].pgu.getStartRow(),
+                        firstRowIndex));
+                actualRowHeight = Math.max(actualRowHeight, cellOffset + cellHeight
+                        - currentRowOffset);
+            }
+        }
+
+        // Then add areas for cells finishing on the current row
+        tclm.addRowBackgroundArea(rowFO, actualRowHeight, layoutContext.getRefIPD(),
+                currentRowOffset);
+        for (int i = 0; i < colCount; i++) {
+            GridUnit currentGU = currentRow.getGridUnit(i);            
+            if (!currentGU.isEmpty() && currentGU.getColSpanIndex() == 0
+                    && (lastInPart || currentGU.isLastGridUnitRowSpan())) {
+                assert firstCellParts[i].pgu == currentGU.getPrimary();
+                int borderBeforeWhich;
+                if (firstCellParts[i].start == 0) {
+                    if (firstCellOnPage[i]) {
+                        borderBeforeWhich = ConditionalBorder.LEADING_TRAILING;
+                    } else {
+                        borderBeforeWhich = ConditionalBorder.NORMAL;
+                    }
+                } else {
+                    assert firstCellOnPage[i];
+                    borderBeforeWhich = ConditionalBorder.REST;
+                }
+                int borderAfterWhich;
+                if (lastCellParts[i].isLastPart()) {
+                    if (lastInPart) {
+                        borderAfterWhich = ConditionalBorder.LEADING_TRAILING;
+                    } else {
+                        borderAfterWhich = ConditionalBorder.NORMAL;
+                    }
+                } else {
+                    borderAfterWhich = ConditionalBorder.REST;
+                }
+                addAreasForCell(firstCellParts[i].pgu,
+                        firstCellParts[i].start, lastCellParts[i].end,
+                        actualRowHeight, borderBeforeWhich, borderAfterWhich,
+                        lastOnPage);
+                firstCellParts[i] = null;
+                firstCellOnPage[i] = false;
             }
         }
         currentRowOffset += actualRowHeight;
-        if (forcedFlush) {
-            // Either the end of the page is reached, then this was the last call of this
-            // method and we no longer care about currentRow; or the end of a table-part
-            // (header, footer, body) has been reached, and the next row will anyway be
-            // different from the current one, and this is unnecessary to recall this
-            // method in the first lines of handleTableContentPosition, so we may reset
-            // the following variables
+        if (lastInPart) {
+            /*
+             * Either the end of the page is reached, then this was the last call of this
+             * method and we no longer care about currentRow; or the end of a table-part
+             * (header, footer, body) has been reached, and the next row will anyway be
+             * different from the current one, and this is unnecessary to call this method
+             * again in the first lines of handleTableContentPosition, so we may reset the
+             * following variables.
+             */
             currentRow = null;
             firstRowIndex = -1;
             rowOffsets.clear();
+            /*
+             * The current table part has just been handled. Be it the first one or not,
+             * the header or the body, in any case the borders-before of the next row
+             * (i.e., the first row of the next part if any) must be painted in
+             * COLLAPSE_INNER mode. So the firstRowOnPageIndex indicator must be kept
+             * disabled. The following way is not the most elegant one but will be good
+             * enough.
+             */
+            firstRowOnPageIndex = Integer.MAX_VALUE;
         }
     }
 
-    /**
-     * Computes the total height of the part of the given cell spanning on the current
-     * active row, including borders and paddings. The bpd is also stored in partBPD, and
-     * it is ensured that the cell's or row's explicit height is respected.
-     * 
-     * @param pgu primary grid unit corresponding to the cell
-     * @param start index of the first element of the cell occuring on the current page
-     * @param end index of the last element of the cell occuring on the current page
-     * @param columnIndex column index of the cell
-     * @param bodyType {@link TableRowIterator#HEADER}, {@link TableRowIterator#FOOTER}, or
-     * {@link TableRowIterator#BODY}
-     * @return the cell's height
-     */
-    private int computeSpanHeight(PrimaryGridUnit pgu, int start, int end, int columnIndex) {
-        if (log.isTraceEnabled()) {
-            log.trace("getting len for " + columnIndex + " "
-                    + start + "-" + end);
-        }
-        int actualStart = start;
-        // Skip from the content length calculation glues and penalties occuring at the
+    // TODO this is not very efficient and should probably be done another way
+    // this method is only necessary when display-align = center or after, in which case
+    // the exact content length is needed to compute the size of the empty block that will
+    // be used as padding.
+    // This should be handled automatically by a proper use of Knuth elements
+    private int computeContentLength(PrimaryGridUnit pgu, int startIndex, int endIndex) {
+        int actualStart = startIndex;
+        // Skip from the content length calculation glues and penalties occurring at the
         // beginning of the page
-        while (actualStart <= end && !((KnuthElement)pgu.getElements().get(actualStart)).isBox()) {
+        while (actualStart <= endIndex
+                && !((KnuthElement) pgu.getElements().get(actualStart)).isBox()) {
             actualStart++;
         }
         int len = ElementListUtils.calcContentLength(
-                pgu.getElements(), actualStart, end);
-        KnuthElement el = (KnuthElement)pgu.getElements().get(end);
+                pgu.getElements(), actualStart, endIndex);
+        KnuthElement el = (KnuthElement)pgu.getElements().get(endIndex);
         if (el.isPenalty()) {
             len += el.getW();
         }
-        partBPD[columnIndex] = len;
-        if (log.isTraceEnabled()) {
-            log.trace("len of part: " + len);
-        }
-
-        if (start == 0) {
-            LengthRangeProperty bpd = pgu.getCell()
-                    .getBlockProgressionDimension();
-            if (!bpd.getMinimum(tclm.getTableLM()).isAuto()) {
-                int min = bpd.getMinimum(tclm.getTableLM())
-                            .getLength().getValue(tclm.getTableLM());
-                if (min > 0) {
-                    len = Math.max(len, min);
-                }
-            }
-            if (!bpd.getOptimum(tclm.getTableLM()).isAuto()) {
-                int opt = bpd.getOptimum(tclm.getTableLM())
-                            .getLength().getValue(tclm.getTableLM());
-                if (opt > 0) {
-                    len = Math.max(len, opt);
-                }
-            }
-            if (pgu.getRow() != null) {
-                bpd = pgu.getRow().getBlockProgressionDimension();
-                if (!bpd.getMinimum(tclm.getTableLM()).isAuto()) {
-                    int min = bpd.getMinimum(tclm.getTableLM()).getLength()
-                                .getValue(tclm.getTableLM());
-                    if (min > 0) {
-                        len = Math.max(len, min);
-                    }
-                }
-            }
-        }
-
-        // Add the padding if any
-        len += pgu.getBorders()
-                        .getPaddingBefore(false, pgu.getCellLM());
-        len += pgu.getBorders()
-                        .getPaddingAfter(false, pgu.getCellLM());
-
-        //Now add the borders to the contentLength
-        if (tclm.isSeparateBorderModel()) {
-            len += pgu.getBorders().getBorderBeforeWidth(false);
-            len += pgu.getBorders().getBorderAfterWidth(false);
-        } else {
-            len += pgu.getHalfMaxBeforeBorderWidth();
-            len += pgu.getHalfMaxAfterBorderWidth();
-        }
-        int cellOffset = getRowOffset(Math.max(pgu.getStartRow(), firstRowIndex));
-        len -= currentRowOffset - cellOffset;
         return len;
     }
 
     private void addAreasForCell(PrimaryGridUnit pgu, int startPos, int endPos,
-            EffRow row, int contentHeight, int rowHeight) {
-        //Determine the first row in this sequence
+            int rowHeight, int borderBeforeWhich, int borderAfterWhich, boolean lastOnPage) {
+        /*
+         * Determine the index of the first row of this cell that will be displayed on the
+         * current page.
+         */
         int startRowIndex = Math.max(pgu.getStartRow(), firstRowIndex);
         int currentRowIndex = currentRow.getIndex();
 
-        // In collapsing-border model, if the cell spans over several columns/rows then
-        // dedicated areas will be created for each grid unit to hold the corresponding
-        // borders. For that we need to know the height of each grid unit, that is of each
-        // grid row spanned over by the cell
+        /*
+         * In collapsing-border model, if the cell spans over several columns/rows then
+         * dedicated areas will be created for each grid unit to hold the corresponding
+         * borders. For that we need to know the height of each grid unit, that is of each
+         * grid row spanned over by the cell
+         */
         int[] spannedGridRowHeights = null;
         if (!tclm.getTableLM().getTable().isSeparateBorderModel() && pgu.hasSpanning()) {
             spannedGridRowHeights = new int[currentRowIndex - startRowIndex + 1];
@@ -297,24 +276,19 @@ class RowPainter {
             }
             spannedGridRowHeights[currentRowIndex - startRowIndex] = rowHeight;
         }
-
         int cellOffset = getRowOffset(startRowIndex);
-        int effCellHeight = rowHeight;
-        effCellHeight += currentRowOffset - cellOffset;
+        int cellTotalHeight = rowHeight + currentRowOffset - cellOffset;
         if (log.isDebugEnabled()) {
             log.debug("Creating area for cell:");
-            log.debug("  current row: " + row.getIndex());
             log.debug("  start row: " + pgu.getStartRow() + " " + currentRowOffset + " "
                     + cellOffset);
-            log.debug("  contentHeight: " + contentHeight + " rowHeight=" + rowHeight
-                    + " effCellHeight=" + effCellHeight);
+            log.debug(" rowHeight=" + rowHeight + " cellTotalHeight=" + cellTotalHeight);
         }
         TableCellLayoutManager cellLM = pgu.getCellLM();
         cellLM.setXOffset(tclm.getXOffsetOfGridUnit(pgu));
         cellLM.setYOffset(cellOffset);
-        cellLM.setContentHeight(contentHeight);
-        cellLM.setRowHeight(effCellHeight);
-        //cellLM.setRowHeight(row.getHeight().opt);
+        cellLM.setContentHeight(computeContentLength(pgu, startPos, endPos));
+        cellLM.setTotalHeight(cellTotalHeight);
         int prevBreak = ElementListUtils.determinePreviousBreak(pgu.getElements(), startPos);
         if (endPos >= 0) {
             SpaceResolver.performConditionalsNotification(pgu.getElements(),
@@ -322,7 +296,8 @@ class RowPainter {
         }
         cellLM.addAreas(new KnuthPossPosIter(pgu.getElements(), startPos, endPos + 1),
                 layoutContext, spannedGridRowHeights, startRowIndex - pgu.getStartRow(),
-                currentRowIndex - pgu.getStartRow() + 1);
+                currentRowIndex - pgu.getStartRow(), borderBeforeWhich, borderAfterWhich,
+                startRowIndex == firstRowOnPageIndex, lastOnPage);
     }
 
     /**
@@ -357,5 +332,15 @@ class RowPainter {
      */
     private int getRowOffset(int rowIndex) {
         return ((Integer) rowOffsets.get(rowIndex - firstRowIndex)).intValue();
+    }
+
+    // TODO get rid of that
+    void startBody() {
+        Arrays.fill(firstCellOnPage, true);
+    }
+
+    // TODO get rid of that
+    void endBody() {
+        Arrays.fill(firstCellOnPage, false);
     }
 }

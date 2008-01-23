@@ -395,7 +395,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
      * @param index index of the column to be retrieved, 0-based
      * @return the corresponding column (may be an implicitly created column)
      */
-    TableColumn getColumn(int index) {
+    public TableColumn getColumn(int index) {
         return (TableColumn) columns.get(index);
     }
 
@@ -404,7 +404,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
      * 
      * @return the number of columns, implicit or explicit, in this table
      */
-    int getNumberOfColumns() {
+    public int getNumberOfColumns() {
         return columns.size();
     }
 

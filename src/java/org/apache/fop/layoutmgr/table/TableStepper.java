@@ -133,7 +133,8 @@ public class TableStepper {
         for (int i = 0; i < columnCount; i++) {
             GridUnit gu = getActiveGridUnit(i);
             if (gu != null && !gu.isEmpty() && gu.isPrimary()) {
-                activeCells.add(new ActiveCell((PrimaryGridUnit) gu, row, activeRowIndex, previousRowsLength, getTableLM()));
+                activeCells.add(new ActiveCell((PrimaryGridUnit) gu, row, activeRowIndex,
+                        previousRowsLength, getTableLM()));
             }
         }
     }
@@ -173,17 +174,17 @@ public class TableStepper {
             List cellParts = new java.util.ArrayList(maxColumnCount);
             for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
                 ActiveCell activeCell = (ActiveCell) iter.next();
+                CellPart part = activeCell.createCellPart();
+                cellParts.add(part);
                 if (activeCell.contributesContent()) {
-                    CellPart part = activeCell.createCellPart();
-                    cellParts.add(part);
                     forcedBreak = activeCell.isLastForcedBreak();
                     if (forcedBreak) {
                         breakClass = activeCell.getLastBreakClass();
                     }
-                    if (returnList.size() == 0 && part.isFirstPart()
-                            && part.mustKeepWithPrevious()) {
-                        context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
-                    }
+                }
+                if (returnList.size() == 0 && part.isFirstPart()
+                        && part.mustKeepWithPrevious()) {
+                    context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
                 }
             }
             //log.debug(">>> guPARTS: " + cellParts);
@@ -327,6 +328,7 @@ public class TableStepper {
     private void removeCellsEndingOnCurrentRow() {
         for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
             ActiveCell activeCell = (ActiveCell) iter.next();
+            activeCell.endRow(activeRowIndex);
             if (activeCell.endsOnRow(activeRowIndex)) {
                 iter.remove();
             }

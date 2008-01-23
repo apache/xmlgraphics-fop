@@ -36,6 +36,12 @@ import org.apache.fop.layoutmgr.table.CollapsingBorderModel;
  */
 public class ConditionalBorder {
 
+    public static final int NORMAL = 0;
+
+    public static final int LEADING_TRAILING = 1;
+
+    public static final int REST = 2;
+
     /** Special case: the cell is at the top or the bottom of the page. */
     BorderSpecification leadingTrailing;
 

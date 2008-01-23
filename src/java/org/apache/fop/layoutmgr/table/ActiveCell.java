@@ -22,9 +22,11 @@ package org.apache.fop.layoutmgr.table;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.apache.fop.fo.flow.table.ConditionalBorder;
 import org.apache.fop.fo.flow.table.EffRow;
 import org.apache.fop.fo.flow.table.GridUnit;
 import org.apache.fop.fo.flow.table.PrimaryGridUnit;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
@@ -39,15 +41,8 @@ class ActiveCell {
     private List elementList;
     /** Iterator over the Knuth element list. */
     private ListIterator knuthIter;
-    private boolean prevIsBox = false;
     /** Number of the row where the row-span ends, zero-based. */
     private int endRowIndex;
-    /** Index, in the list of Knuth elements, of the element starting the current step. */
-    private int start;
-    /** Index, in the list of Knuth elements, of the element ending the current step. */
-    private int end;
-    /** Length of the Knuth elements up to the next feasible break. */
-    private int nextStepLength;
     /** Length of the Knuth elements not yet included in the steps. */
     private int remainingLength;
     /** Heights of the rows (in the row-group) preceding the one where this cell starts. */
@@ -56,17 +51,81 @@ class ActiveCell {
     private int totalLength;
     /** Length of the Knuth elements already included in the steps. */
     private int includedLength;
-    private int borderBefore;
-    private int borderAfter;
-    private int paddingBefore;
-    private int paddingAfter;
+
+    private int borderBeforeNormal;
+    private int borderBeforeLeading;
+    private int borderAfterNormal;
+    private int borderAfterTrailing;
+    private int paddingBeforeNormal;
+    private int paddingBeforeLeading;
+    private int paddingAfterNormal;
+    private int paddingAfterTrailing;
+
     private boolean keepWithNextSignal;
-    /** Length of the penalty ending the last step, if any. */
-    private int lastPenaltyLength;
+
+    private int spanIndex = 0;
+    private CellPart lastCellPart;
+
+    private Step previousStep;
+    private Step nextStep;
+
+    /**
+     * Auxiliary class to store all the informations related to a breaking step.
+     */
+    private static class Step {
+        /** Index, in the list of Knuth elements, of the element starting this step. */
+        private int start;
+        /** Index, in the list of Knuth elements, of the element ending this step. */
+        private int end;
+        /** Length of the Knuth elements up to this step. */
+        private int contentLength;
+        /** Total length up to this step, including paddings and borders. */
+        private int totalLength;
+        /** Length of the penalty ending this step, if any. */
+        private int penaltyLength;
+        /**
+         * Length of the optional content for the next step. That is, content that will
+         * not appear if the next step starts a new page.
+         */
+        private int nextCondBeforeContentLength;
+
+        Step(int contentLength) {
+            this.contentLength = contentLength;
+            // TODO necessary if a cell part must be created while this cell hasn't
+            // contributed any content yet. To be removed along with the 900-penalty
+            // mechanism
+            this.end = -1;
+        }
+
+        Step(Step other) {
+            set(other);
+        }
+
+        void set(Step other) {
+            this.start         = other.start;
+            this.end           = other.end;
+            this.contentLength = other.contentLength;
+            this.totalLength   = other.totalLength;
+            this.penaltyLength = other.penaltyLength;
+            this.nextCondBeforeContentLength = other.nextCondBeforeContentLength;
+        }
+    }
 
     ActiveCell(PrimaryGridUnit pgu, EffRow row, int rowIndex, int previousRowsLength,
             TableLayoutManager tableLM) {
         this.pgu = pgu;
+        CommonBorderPaddingBackground bordersPaddings = pgu.getCell()
+                .getCommonBorderPaddingBackground();
+        borderBeforeNormal = pgu.getBeforeBorderWidth(0, ConditionalBorder.NORMAL);
+        borderBeforeLeading = pgu.getBeforeBorderWidth(0, ConditionalBorder.REST);
+        borderAfterNormal = pgu.getAfterBorderWidth(ConditionalBorder.NORMAL);
+        borderAfterTrailing = pgu.getAfterBorderWidth(0, ConditionalBorder.REST);
+        TableCellLayoutManager cellLM = pgu.getCellLM();
+        paddingBeforeNormal = bordersPaddings.getPaddingBefore(false, cellLM);
+        paddingBeforeLeading = bordersPaddings.getPaddingBefore(true, cellLM);
+        paddingAfterNormal = bordersPaddings.getPaddingAfter(false, cellLM);
+        paddingAfterTrailing = bordersPaddings.getPaddingAfter(true, cellLM);
+
         boolean makeBoxForWholeRow = false;
         if (row.getExplicitHeight().min > 0) {
             boolean contentsSmaller = ElementListUtils.removeLegalBreaks(
@@ -81,38 +140,24 @@ class ActiveCell {
         }
         if (makeBoxForWholeRow) {
             elementList = new java.util.ArrayList(1);
-            int height = row.getExplicitHeight().opt;
-            if (height == 0) {
-                height = row.getHeight().opt;
-            }
+            int height = row.getHeight().opt;
+            height -= 2 * tableLM.getHalfBorderSeparationBPD();
+            height -= borderBeforeNormal + borderAfterNormal;  // TODO conditionals
+            height -= paddingBeforeNormal + paddingAfterNormal;
             elementList.add(new KnuthBoxCellWithBPD(height));
         } else {
             elementList = pgu.getElements();
-//          if (log.isTraceEnabled()) {
-//  log.trace("column " + (column+1) + ": recording " + elementLists.size() + " element(s)");
-//          }
         }
         knuthIter = elementList.listIterator();
         includedLength = -1;  // Avoid troubles with cells having content of zero length
         this.previousRowsLength = previousRowsLength;
-        nextStepLength = previousRowsLength;
         totalLength = previousRowsLength + ElementListUtils.calcContentLength(elementList);
-        if (tableLM.getTable().isSeparateBorderModel()) {
-            borderBefore = pgu.getBorders().getBorderBeforeWidth(false)
-                    + tableLM.getHalfBorderSeparationBPD();
-            borderAfter = pgu.getBorders().getBorderAfterWidth(false)
-                    + tableLM.getHalfBorderSeparationBPD();
-        } else {
-            borderBefore = pgu.getHalfMaxBeforeBorderWidth();
-            borderAfter = pgu.getHalfMaxAfterBorderWidth();
-        }
-        paddingBefore = pgu.getBorders().getPaddingBefore(false, pgu.getCellLM());
-        paddingAfter = pgu.getBorders().getPaddingAfter(false, pgu.getCellLM());
-        start = 0;
-        end = -1;
         endRowIndex = rowIndex + pgu.getCell().getNumberRowsSpanned() - 1;
         keepWithNextSignal = false;
         remainingLength = totalLength - previousRowsLength;
+
+        nextStep = new Step(previousRowsLength);
+        previousStep = new Step(nextStep);
         goToNextLegalBreak();
     }
 
@@ -139,36 +184,48 @@ class ActiveCell {
         } else if (includedLength == totalLength) {
             return 0;
         } else {
-            return remainingLength + borderBefore + borderAfter + paddingBefore + paddingAfter;
+            return borderBeforeLeading + paddingBeforeLeading + remainingLength
+                    + paddingAfterNormal + borderAfterNormal;
         }
     }
 
     private void goToNextLegalBreak() {
-        lastPenaltyLength = 0;
+        nextStep.penaltyLength = 0;
         boolean breakFound = false;
+        boolean prevIsBox = false;
         while (!breakFound && knuthIter.hasNext()) {
             KnuthElement el = (KnuthElement) knuthIter.next();
             if (el.isPenalty()) {
                 prevIsBox = false;
                 if (el.getP() < KnuthElement.INFINITE) {
-                    //First legal break point
-                    lastPenaltyLength = el.getW();
+                    // First legal break point
+                    nextStep.penaltyLength = el.getW();
                     breakFound = true;
                 }
             } else if (el.isGlue()) {
                 if (prevIsBox) {
-                    //Second legal break point
+                    // Second legal break point
                     breakFound = true;
                 } else {
-                    nextStepLength += el.getW();
+                    nextStep.contentLength += el.getW();
                 }
                 prevIsBox = false;
             } else {
                 prevIsBox = true;
-                nextStepLength += el.getW();
+                nextStep.contentLength += el.getW();
             }
         }
-        end = knuthIter.nextIndex() - 1;
+        nextStep.end = knuthIter.nextIndex() - 1;
+        if (nextStep.end == elementList.size() - 1) {
+            // TODO wait that every cell on the row has finished before including border-after!!
+            nextStep.totalLength = borderBeforeNormal + paddingBeforeNormal
+                    + nextStep.contentLength + nextStep.penaltyLength
+                    + paddingAfterNormal + borderAfterNormal;
+        } else {
+            nextStep.totalLength = borderBeforeNormal + paddingBeforeNormal
+                    + nextStep.contentLength + nextStep.penaltyLength
+                    + paddingAfterTrailing + borderAfterTrailing; 
+        }
     }
 
     /**
@@ -177,23 +234,20 @@ class ActiveCell {
      * @return the total length up to the next legal break (-1 signals no further step)
      */
     int getNextStep() {
-        if (!includedInLastStep()) {
-            return nextStepLength + lastPenaltyLength 
-                    + borderBefore + borderAfter + paddingBefore + paddingAfter;
-        } else {
-            start = end + 1;
-            if (knuthIter.hasNext()) {
-                goToNextLegalBreak();
-                return nextStepLength + lastPenaltyLength 
-                        + borderBefore + borderAfter + paddingBefore + paddingAfter; 
-            } else {
+        if (includedInLastStep()) {
+            previousStep.set(nextStep);
+            nextStep.start = nextStep.end + 1;
+            if (!knuthIter.hasNext()) {
                 return -1;
+            } else {
+                goToNextLegalBreak();
             }
         }
+        return nextStep.totalLength;
     }
 
     private boolean includedInLastStep() {
-        return includedLength == nextStepLength;
+        return includedLength == nextStep.contentLength;
     }
 
     /**
@@ -204,14 +258,26 @@ class ActiveCell {
      * @return
      */
     boolean signalMinStep(int minStep) {
-        if (nextStepLength + lastPenaltyLength 
-                + borderBefore + borderAfter + paddingBefore + paddingAfter <= minStep) {
-            includedLength = nextStepLength;
+        if (nextStep.totalLength <= minStep) {
+            includedLength = nextStep.contentLength;
             computeRemainingLength();
             return false;
         } else {
-            return previousRowsLength + borderBefore 
-                    + borderAfter + paddingBefore + paddingAfter > minStep;
+            return borderBeforeNormal + paddingBeforeNormal + previousRowsLength
+                    + paddingAfterTrailing + borderAfterTrailing > minStep;
+        }
+    }
+
+    void endRow(int rowIndex) {
+        if (endsOnRow(rowIndex)) {
+            int bpAfterNormal = paddingAfterNormal + borderAfterNormal;
+            int bpAfterLast = paddingAfterNormal
+                    + pgu.getAfterBorderWidth(ConditionalBorder.LEADING_TRAILING);
+            lastCellPart.setLast(bpAfterNormal, bpAfterLast);
+        } else {
+            spanIndex++;
+            borderBeforeLeading = pgu.getBeforeBorderWidth(spanIndex, ConditionalBorder.REST);
+            borderAfterTrailing = pgu.getAfterBorderWidth(spanIndex, ConditionalBorder.REST);
         }
     }
 
@@ -221,13 +287,15 @@ class ActiveCell {
      * paddings are not considered here.
      */
     private void computeRemainingLength() {
-        remainingLength = totalLength - nextStepLength;
+        remainingLength = totalLength - nextStep.contentLength;
+        nextStep.nextCondBeforeContentLength = 0;
         // Save the current location in the element list
         int oldIndex = knuthIter.nextIndex();
         KnuthElement el;
         while (knuthIter.hasNext() && !(el = (KnuthElement) knuthIter.next()).isBox()) {
             if (el.isGlue()) {
                 remainingLength -= el.getW();
+                nextStep.nextCondBeforeContentLength += el.getW();
             }
         }
         // Reset the iterator to the current location
@@ -244,7 +312,7 @@ class ActiveCell {
     boolean contributesContent() {
         // return includedInLastStep() && the cell hasn't finished yet, otherwise there's
         // nothing more to contribute
-        return includedInLastStep() && end >= start;
+        return includedInLastStep() && nextStep.end >= nextStep.start;
     }
 
     /**
@@ -262,7 +330,7 @@ class ActiveCell {
      * @return true if the end of this cell is reached
      */
     boolean isFinished() {
-        return includedInLastStep() && (end == elementList.size() - 1);
+        return includedInLastStep() && (nextStep.end == elementList.size() - 1);
     }
 
     /**
@@ -272,7 +340,7 @@ class ActiveCell {
      * @return a CellPart instance
      */
     CellPart createCellPart() {
-        if (end + 1 == elementList.size()) {
+        if (nextStep.end + 1 == elementList.size()) {
             if (pgu.getFlag(GridUnit.KEEP_WITH_NEXT_PENDING)) {
                 keepWithNextSignal = true;
             }
@@ -280,22 +348,47 @@ class ActiveCell {
                 keepWithNextSignal = true;
             }
         }
-        if (start == 0 && end == 0
+        int bpBeforeNormal;
+        int bpBeforeFirst;
+        int bpAfterNormal;
+        int bpAfterLast;
+        if (nextStep.start == 0) {
+            bpBeforeNormal = borderBeforeNormal + paddingBeforeNormal;
+            bpBeforeFirst = pgu.getBeforeBorderWidth(0, ConditionalBorder.LEADING_TRAILING)
+                    + paddingBeforeNormal;
+        } else {
+            bpBeforeNormal = 0;
+            bpBeforeFirst = borderBeforeLeading + paddingBeforeLeading;
+        }
+        bpAfterNormal = 0;
+        bpAfterLast = paddingAfterTrailing + borderAfterTrailing;
+        int length = nextStep.contentLength - previousStep.contentLength
+                - previousStep.nextCondBeforeContentLength;
+        if (!includedInLastStep() || nextStep.start == elementList.size()) {
+            lastCellPart = new CellPart(pgu, nextStep.start, previousStep.end,
+                    0, 0, previousStep.penaltyLength,
+                    bpBeforeNormal, bpBeforeFirst, bpAfterNormal, bpAfterLast);
+        } else if (nextStep.start == 0 && nextStep.end == 0
                 && elementList.size() == 1
                 && elementList.get(0) instanceof KnuthBoxCellWithBPD) {
             //Special case: Cell with fixed BPD
-            return new CellPart(pgu, 0, pgu.getElements().size() - 1);
+            lastCellPart = new CellPart(pgu, 0, pgu.getElements().size() - 1,
+                    previousStep.nextCondBeforeContentLength, length, nextStep.penaltyLength,
+                    bpBeforeNormal, bpBeforeFirst, bpAfterNormal, bpAfterLast);
         } else {
-            return new CellPart(pgu, start, end);
+            lastCellPart = new CellPart(pgu, nextStep.start, nextStep.end,
+                    previousStep.nextCondBeforeContentLength, length, nextStep.penaltyLength,
+                    bpBeforeNormal, bpBeforeFirst, bpAfterNormal, bpAfterLast);
         }
+        return lastCellPart;
     }
 
     boolean isLastForcedBreak() {
-        return ((KnuthElement)elementList.get(end)).isForcedBreak();
+        return ((KnuthElement)elementList.get(nextStep.end)).isForcedBreak();
     }
 
     int getLastBreakClass() {
-        return ((KnuthPenalty)elementList.get(end)).getBreakClass();
+        return ((KnuthPenalty)elementList.get(nextStep.end)).getBreakClass();
     }
 
     boolean keepWithNextSignal() {

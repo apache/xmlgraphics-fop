@@ -28,6 +28,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Layout" dev="VH" type="add" importance="high" fixes-bug="43934">
+          Added support for conditional borders in tables, for both the separate and the collapsing
+          border model.
+      </action>
       <action context="Layout" dev="JM" type="fix" fixes-bug="44160">
         Fixed a possible IndexOutOfBoundsException that could happen with certain constellations
         when footnotes are used.
