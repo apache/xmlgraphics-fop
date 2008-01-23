@@ -53,6 +53,9 @@
                 <fo:table-cell id="cell4" number-columns-spanned="2" number-rows-spanned="2" border="solid 0.5pt"  background-color="lightgray">
                   <fo:block>cell4</fo:block>
                 </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block> </fo:block>
+                </fo:table-cell>
               </fo:table-row>
               <fo:table-row>
                 <fo:table-cell id="cell5" border="solid 0.5pt">
@@ -78,7 +81,7 @@
     <eval expected="1" xpath="count(//block[@prod-id = 'cell4'])"/>
     <eval expected="1" xpath="count(//block[@prod-id = 'cell5'])"/>
     <eval expected="1" xpath="count(//block[@prod-id = 'cell6'])"/>
-    <eval expected="45200" xpath="//block[@prod-id = 'cell2']/@bpd"/>
-    <eval expected="29800" xpath="//block[@prod-id = 'cell4']/@bpd"/>
+    <eval expected="44200" xpath="//block[@prod-id = 'cell2']/@bpd"/>
+    <eval expected="28800" xpath="//block[@prod-id = 'cell4']/@bpd"/>
   </checks>
 </testcase>

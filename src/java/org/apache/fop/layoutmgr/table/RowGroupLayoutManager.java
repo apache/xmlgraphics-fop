@@ -34,7 +34,6 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.ElementListObserver;
-import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.LayoutContext;
@@ -239,13 +238,7 @@ class RowGroupLayoutManager {
                         effectiveCellBPD = Math.max(effectiveCellBPD, 
                                 primary.getContentLength());
                         
-                        int borderWidths;
-                        if (tableLM.getTable().isSeparateBorderModel()) {
-                            borderWidths = primary.getBorders().getBorderBeforeWidth(false)
-                                    + primary.getBorders().getBorderAfterWidth(false);
-                        } else {
-                            borderWidths = primary.getHalfMaxBorderWidth();
-                        }
+                        int borderWidths = primary.getBeforeAfterBorderWidth();
                         int padding = 0;
                         maxCellBPD = Math.max(maxCellBPD, effectiveCellBPD);
                         CommonBorderPaddingBackground cbpb 
@@ -253,8 +246,7 @@ class RowGroupLayoutManager {
                         padding += cbpb.getPaddingBefore(false, primary.getCellLM());
                         padding += cbpb.getPaddingAfter(false, primary.getCellLM());
                         int effRowHeight = effectiveCellBPD 
-                                + padding + borderWidths
-                                + 2 * tableLM.getHalfBorderSeparationBPD();
+                                + padding + borderWidths;
                         for (int previous = 0; previous < gu.getRowSpanIndex(); previous++) {
                             effRowHeight -= rowHeights[rgi - previous - 1].opt;
                         }

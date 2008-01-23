@@ -43,18 +43,12 @@ class FixedColRowGroupBuilder extends RowGroupBuilder {
     /** The rows belonging to this row group. List of List of {@link GridUnit}s. */
     private List/*<List<GridUnit>>*/ rows;
 
-    private boolean firstInTable = true;
-
     private boolean firstInPart = true;
 
     /** The last encountered row. This is the last row of the table if it has no footer. */
     private List lastRow;
 
     private BorderResolver borderResolver;
-
-    private boolean inFooter;
-
-    private List lastFooterRow;
 
     FixedColRowGroupBuilder(Table t) {
         super(t);
@@ -134,14 +128,6 @@ class FixedColRowGroupBuilder extends RowGroupBuilder {
             }
         }
         borderResolver.endRow(currentRow, container);
-        ((GridUnit) currentRow.get(0)).setFlag(GridUnit.IN_FIRST_COLUMN);
-        ((GridUnit) currentRow.get(numberOfColumns - 1)).setFlag(GridUnit.IN_LAST_COLUMN);
-        if (inFooter) {
-            lastFooterRow = currentRow;
-        } else if (firstInTable) {
-            setFlagForCols(GridUnit.FIRST_IN_TABLE, currentRow);
-            firstInTable = false;
-        }
         if (firstInPart) {
             setFlagForCols(GridUnit.FIRST_IN_PART, currentRow);
             firstInPart = false;
@@ -159,7 +145,6 @@ class FixedColRowGroupBuilder extends RowGroupBuilder {
     /** {@inheritDoc} */
     void startTablePart(TableBody part) {
         firstInPart = true;
-        inFooter = part.isTableFooter();
         borderResolver.startPart(part);
     }
 
@@ -171,18 +156,10 @@ class FixedColRowGroupBuilder extends RowGroupBuilder {
         }
         setFlagForCols(GridUnit.LAST_IN_PART, lastRow);
         borderResolver.endPart();
-        inFooter = false;
     }
 
     /** {@inheritDoc} */
     void endTable(TableBody lastTablePart) {
-        List lastTableRow;
-        if (lastFooterRow != null) {
-            lastTableRow = lastFooterRow;
-        } else {
-            lastTableRow = lastRow;
-        }
-        setFlagForCols(GridUnit.LAST_IN_TABLE, lastTableRow);
         borderResolver.endTable();
     }
 }

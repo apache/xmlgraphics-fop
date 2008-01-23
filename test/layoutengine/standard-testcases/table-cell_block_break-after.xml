@@ -66,14 +66,14 @@
     <eval expected="3" xpath="count(//pageViewport[@nr=1]//flow/block[1]/block[1]/block)"/>
     <eval expected="67000" xpath="//pageViewport[@nr=1]//flow/block[1]/block[1]/@ipd"/>
     <eval expected="75000" xpath="//pageViewport[@nr=1]//flow/block[1]/block[1]/@ipda"/>
-    <eval expected="71200" xpath="//pageViewport[@nr=1]//flow/block[1]/block[1]/@bpd"/>
-    <eval expected="79200" xpath="//pageViewport[@nr=1]//flow/block[1]/block[1]/@bpda"/>
+    <eval expected="69200" xpath="//pageViewport[@nr=1]//flow/block[1]/block[1]/@bpd"/>
+    <eval expected="73200" xpath="//pageViewport[@nr=1]//flow/block[1]/block[1]/@bpda"/>
     <!-- 2 blocks in the second cell -->
     <eval expected="2" xpath="count(//pageViewport[@nr=1]//flow/block[1]/block[2]/block)"/>
     <eval expected="63000" xpath="//pageViewport[@nr=1]//flow/block[1]/block[2]/@ipd"/>
     <eval expected="75000" xpath="//pageViewport[@nr=1]//flow/block[1]/block[2]/@ipda"/>
     <eval expected="67200" xpath="//pageViewport[@nr=1]//flow/block[1]/block[2]/@bpd"/>
-    <eval expected="79200" xpath="//pageViewport[@nr=1]//flow/block[1]/block[2]/@bpda"/>
+    <eval expected="73200" xpath="//pageViewport[@nr=1]//flow/block[1]/block[2]/@bpda"/>
     <!-- 3 lines in the second block of the second cell -->
     <eval expected="3" xpath="count(//pageViewport[@nr=1]//flow/block[1]/block[2]/block[2]//lineArea)"/>
 
@@ -82,8 +82,8 @@
     <eval expected="0" xpath="count(//pageViewport[@nr=2]//flow/block[1]/block[1]/block)"/>
     <eval expected="67000" xpath="//pageViewport[@nr=2]//flow/block[1]/block[1]/@ipd"/>
     <eval expected="75000" xpath="//pageViewport[@nr=2]//flow/block[1]/block[1]/@ipda"/>
-    <eval expected="20800" xpath="//pageViewport[@nr=2]//flow/block[1]/block[1]/@bpd"/>
-    <eval expected="28800" xpath="//pageViewport[@nr=2]//flow/block[1]/block[1]/@bpda"/>
+    <eval expected="18800" xpath="//pageViewport[@nr=2]//flow/block[1]/block[1]/@bpd"/>
+    <eval expected="22800" xpath="//pageViewport[@nr=2]//flow/block[1]/block[1]/@bpda"/>
     <!-- One block expected in the second cell -->
     <eval expected="1" xpath="count(//pageViewport[@nr=2]//flow/block[1]/block[2]/block)"/>
     <!-- One line in the block -->
@@ -91,6 +91,6 @@
     <eval expected="63000" xpath="//pageViewport[@nr=2]//flow/block[1]/block[2]/@ipd"/>
     <eval expected="75000" xpath="//pageViewport[@nr=2]//flow/block[1]/block[2]/@ipda"/>
     <eval expected="16800" xpath="//pageViewport[@nr=2]//flow/block[1]/block[2]/@bpd"/>
-    <eval expected="28800" xpath="//pageViewport[@nr=2]//flow/block[1]/block[2]/@bpda"/>
+    <eval expected="22800" xpath="//pageViewport[@nr=2]//flow/block[1]/block[2]/@bpda"/>
   </checks>
 </testcase>

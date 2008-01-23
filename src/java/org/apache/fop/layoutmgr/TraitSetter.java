@@ -21,7 +21,6 @@ package org.apache.fop.layoutmgr;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Trait;
 import org.apache.fop.datatypes.LengthBase;
@@ -31,6 +30,7 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.CommonTextDecoration;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground.BorderInfo;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.MinOptMax;
@@ -178,32 +178,30 @@ public class TraitSetter {
      * Layout managers that create areas with borders can use this to
      * add the borders to the area.
      * @param area the area to set the traits on.
-     * @param bordProps border properties
+     * @param borderBefore the resolved before border
+     * @param borderAfter the resolved after border
+     * @param borderStart the resolved start border
+     * @param borderEnd the resolved end border
      * @param outer 4 boolean values indicating if the side represents the 
      *     table's outer border. Order: before, after, start, end
-     * @param context Property evaluation context
      */
-    public static void addCollapsingBorders(Area area, 
-            CommonBorderPaddingBackground bordProps,
-            boolean[] outer,
-            PercentBaseContext context) {
-        BorderProps bps = getCollapsingBorderProps(bordProps, 
-                CommonBorderPaddingBackground.BEFORE, outer[0]);
+    public static void addCollapsingBorders(Area area,
+            BorderInfo borderBefore, BorderInfo borderAfter,
+            BorderInfo borderStart, BorderInfo borderEnd,
+            boolean[] outer) {
+        BorderProps bps = getCollapsingBorderProps(borderBefore, outer[0]);
         if (bps != null) {
             area.addTrait(Trait.BORDER_BEFORE, bps);
         }
-        bps = getCollapsingBorderProps(bordProps, 
-                CommonBorderPaddingBackground.AFTER, outer[1]);
+        bps = getCollapsingBorderProps(borderAfter, outer[1]);
         if (bps != null) {
             area.addTrait(Trait.BORDER_AFTER, bps);
         }
-        bps = getCollapsingBorderProps(bordProps, 
-                CommonBorderPaddingBackground.START, outer[2]);
+        bps = getCollapsingBorderProps(borderStart, outer[2]);
         if (bps != null) {
             area.addTrait(Trait.BORDER_START, bps);
         }
-        bps = getCollapsingBorderProps(bordProps, 
-                CommonBorderPaddingBackground.END, outer[3]);
+        bps = getCollapsingBorderProps(borderEnd, outer[3]);
         if (bps != null) {
             area.addTrait(Trait.BORDER_END, bps);
         }
@@ -270,13 +268,11 @@ public class TraitSetter {
         }
     }
 
-    private static BorderProps getCollapsingBorderProps(
-            CommonBorderPaddingBackground bordProps, int side, boolean outer) {
-        int width = bordProps.getBorderWidth(side, false);
+    private static BorderProps getCollapsingBorderProps(BorderInfo borderInfo, boolean outer) {
+        assert borderInfo != null;
+        int width = borderInfo.getRetainedWidth();
         if (width != 0) {
-            BorderProps bps;
-            bps = new BorderProps(bordProps.getBorderStyle(side),
-                    width, bordProps.getBorderColor(side),
+            BorderProps bps = new BorderProps(borderInfo.getStyle(), width, borderInfo.getColor(),
                     (outer ? BorderProps.COLLAPSE_OUTER : BorderProps.COLLAPSE_INNER));
             return bps;
         } else {
