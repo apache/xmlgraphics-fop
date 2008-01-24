@@ -69,7 +69,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
     private int startXOffset;
     private int usedBPD;
     
-    private TableStepper stepper = new TableStepper(this);
+    private TableStepper stepper;
         
     /**
      * Main constructor
@@ -85,6 +85,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
         if (table.getTableFooter() != null) {
             footerIter = new TableRowIterator(table, TableRowIterator.FOOTER);
         }
+        stepper = new TableStepper(this);
     }
     
     /**

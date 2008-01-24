@@ -65,15 +65,16 @@ public class TableStepper {
      */
     public TableStepper(TableContentLayoutManager tclm) {
         this.tclm = tclm;
+        this.columnCount = tclm.getTableLM().getTable().getNumberOfColumns();
     }
 
     /**
      * Initializes the fields of this instance to handle a new row group.
      * 
-     * @param columnCount number of columns the row group has 
+     * @param rowGroup the new row group to handle
      */
-    private void setup(int columnCount) {
-        this.columnCount = columnCount;
+    private void setup(EffRow[] rowGroup) {
+        this.rowGroup = rowGroup;
         this.activeRowIndex = 0;
         this.previousRowsLength = 0;
     }
@@ -143,15 +144,12 @@ public class TableStepper {
      * Creates the combined element list for a row group.
      * @param context Active LayoutContext
      * @param rowGroup the row group
-     * @param maxColumnCount the maximum number of columns to expect
      * @param bodyType Indicates what type of body is processed (body, header or footer)
      * @return the combined element list
      */
-    public LinkedList getCombinedKnuthElementsForRowGroup(
-            LayoutContext context,
-            EffRow[] rowGroup, int maxColumnCount, int bodyType) {
-        this.rowGroup = rowGroup;
-        setup(maxColumnCount);
+    public LinkedList getCombinedKnuthElementsForRowGroup(LayoutContext context, EffRow[] rowGroup,
+            int bodyType) {
+        setup(rowGroup);
         initializeElementLists();
         calcTotalHeight();
 
@@ -171,7 +169,7 @@ public class TableStepper {
             boolean forcedBreak = false;
             int breakClass = -1;
             //Put all involved grid units into a list
-            List cellParts = new java.util.ArrayList(maxColumnCount);
+            List cellParts = new java.util.ArrayList(columnCount);
             for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
                 ActiveCell activeCell = (ActiveCell) iter.next();
                 CellPart part = activeCell.createCellPart();

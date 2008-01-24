@@ -136,7 +136,6 @@ class RowGroupLayoutManager {
         MinOptMax[] rowHeights = new MinOptMax[rowGroup.length];
         MinOptMax[] explicitRowHeights = new MinOptMax[rowGroup.length];
         EffRow row;
-        int maxColumnCount = 0;
         List pgus = new java.util.ArrayList(); //holds a list of a row's primary grid units
         for (int rgi = 0; rgi < rowGroup.length; rgi++) {
             row = rowGroup[rgi];
@@ -151,8 +150,6 @@ class RowGroupLayoutManager {
             // The BPD of the biggest cell in the row
             int maxCellBPD = 0;
             for (int j = 0; j < row.getGridUnits().size(); j++) {
-                assert maxColumnCount == 0 || maxColumnCount == row.getGridUnits().size();
-                maxColumnCount = Math.max(maxColumnCount, row.getGridUnits().size());
                 GridUnit gu = row.getGridUnit(j);
                 if ((gu.isPrimary() || (gu.getColSpanIndex() == 0 && gu.isLastGridUnitRowSpan())) 
                         && !gu.isEmpty()) {
@@ -281,8 +278,8 @@ class RowGroupLayoutManager {
                 log.debug("  height=" + rowHeights[i] + " explicit=" + explicitRowHeights[i]);
             }
         }
-        LinkedList returnedList = tableStepper.getCombinedKnuthElementsForRowGroup(
-                context, rowGroup, maxColumnCount, bodyType);
+        LinkedList returnedList = tableStepper.getCombinedKnuthElementsForRowGroup(context,
+                rowGroup, bodyType);
         if (returnedList != null) {
             returnList.addAll(returnedList);
         }
