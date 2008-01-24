@@ -87,8 +87,7 @@ class FixedColRowGroupBuilder extends RowGroupBuilder {
         GridUnit[] cellRow = new GridUnit[cell.getNumberColumnsSpanned()];
         cellRow[0] = pgu;
         for (int j = 1; j < cell.getNumberColumnsSpanned(); j++) {
-            GridUnit gu = new GridUnit(pgu, currentTableRow, table.getColumn(columnIndex + j),
-                    columnIndex + j, j, 0);
+            GridUnit gu = new GridUnit(pgu, currentTableRow, table.getColumn(columnIndex + j), j, 0);
             row.set(columnIndex + j, gu);
             cellRow[j] = gu;
         }
@@ -98,7 +97,7 @@ class FixedColRowGroupBuilder extends RowGroupBuilder {
             cellRow = new GridUnit[cell.getNumberColumnsSpanned()];
             for (int j = 0; j < cell.getNumberColumnsSpanned(); j++) {
                 GridUnit gu = new GridUnit(pgu, currentTableRow, table.getColumn(columnIndex + j),
-                        columnIndex + j, j, i);
+                        j, i);
                 row.set(columnIndex + j, gu);
                 cellRow[j] = gu;
             }
@@ -124,7 +123,7 @@ class FixedColRowGroupBuilder extends RowGroupBuilder {
         // Fill gaps with empty grid units
         for (int i = 0; i < numberOfColumns; i++) {
             if (currentRow.get(i) == null) {
-                currentRow.set(i, new EmptyGridUnit(table, currentTableRow, currentRowIndex, i));
+                currentRow.set(i, new EmptyGridUnit(table, currentTableRow, i));
             }
         }
         borderResolver.endRow(currentRow, container);

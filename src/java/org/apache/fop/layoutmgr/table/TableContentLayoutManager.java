@@ -33,7 +33,7 @@ import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.flow.table.EffRow;
-import org.apache.fop.fo.flow.table.GridUnit;
+import org.apache.fop.fo.flow.table.PrimaryGridUnit;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableBody;
 import org.apache.fop.fo.flow.table.TableRow;
@@ -273,8 +273,8 @@ public class TableContentLayoutManager implements PercentBaseContext {
      * @param gu the grid unit
      * @return the requested X offset
      */
-    protected int getXOffsetOfGridUnit(GridUnit gu) {
-        int col = gu.getStartCol();
+    protected int getXOffsetOfGridUnit(PrimaryGridUnit gu) {
+        int col = gu.getColIndex();
         return startXOffset + getTableLM().getColumns().getXOffset(col + 1, getTableLM());
     }
     

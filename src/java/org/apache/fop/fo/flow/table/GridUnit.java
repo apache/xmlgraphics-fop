@@ -59,9 +59,6 @@ public class GridUnit {
     /** Table column that this grid unit belongs to */
     private TableColumn column;
 
-    /** start index of grid unit within row in column direction */
-    private int startCol;
-
     /** index of grid unit within cell in column direction */
     private int colSpanIndex;
 
@@ -84,13 +81,12 @@ public class GridUnit {
      * @param table the containing table
      * @param row the table-row element this grid unit belongs to (if any)
      * @param column table column this grid unit belongs to
-     * @param startCol index of the column this grid unit belongs to
      * @param colSpanIndex index of this grid unit in the span, in column direction
      * @param rowSpanIndex index of this grid unit in the span, in row direction
      */
-    protected GridUnit(Table table, TableRow row, TableColumn column, int startCol,
-            int colSpanIndex, int rowSpanIndex) {
-        this(row, column, startCol, colSpanIndex, rowSpanIndex);
+    protected GridUnit(Table table, TableRow row, TableColumn column, int colSpanIndex,
+            int rowSpanIndex) {
+        this(row, column, colSpanIndex, rowSpanIndex);
         setBorders(table);
     }
 
@@ -100,13 +96,12 @@ public class GridUnit {
      * @param cell table cell which occupies this grid unit
      * @param row the table-row element this grid unit belongs to (if any)
      * @param column table column this grid unit belongs to
-     * @param startCol index of the column this grid unit belongs to
      * @param colSpanIndex index of this grid unit in the span, in column direction
      * @param rowSpanIndex index of this grid unit in the span, in row direction
      */
-    protected GridUnit(TableCell cell, TableRow row, TableColumn column, int startCol,
-            int colSpanIndex, int rowSpanIndex) {
-        this(row, column, startCol, colSpanIndex, rowSpanIndex);
+    protected GridUnit(TableCell cell, TableRow row, TableColumn column, int colSpanIndex,
+            int rowSpanIndex) {
+        this(row, column, colSpanIndex, rowSpanIndex);
         this.cell = cell;
         setBorders(cell.getTable());
     }
@@ -117,21 +112,18 @@ public class GridUnit {
      * @param primary the before-start grid unit of the cell containing this grid unit
      * @param row the table-row element this grid unit belongs to (if any)
      * @param column table column this grid unit belongs to
-     * @param startCol index of the column this grid unit belongs to
      * @param colSpanIndex index of this grid unit in the span, in column direction
      * @param rowSpanIndex index of this grid unit in the span, in row direction
      */
-    GridUnit(PrimaryGridUnit primary, TableRow row, TableColumn column, int startCol,
-            int colSpanIndex, int rowSpanIndex) {
-        this(primary.getCell(), row, column, startCol, colSpanIndex, rowSpanIndex);
+    GridUnit(PrimaryGridUnit primary, TableRow row, TableColumn column, int colSpanIndex,
+            int rowSpanIndex) {
+        this(primary.getCell(), row, column, colSpanIndex, rowSpanIndex);
         this.primary = primary;
     }
 
-    private GridUnit(TableRow row, TableColumn column, int startCol, int colSpanIndex,
-            int rowSpanIndex) {
+    private GridUnit(TableRow row, TableColumn column, int colSpanIndex, int rowSpanIndex) {
         this.row = row;
         this.column = column;
-        this.startCol = startCol;
         this.colSpanIndex = colSpanIndex;
         this.rowSpanIndex = rowSpanIndex;
     }
@@ -220,15 +212,6 @@ public class GridUnit {
      */
     public boolean isEmpty() {
         return cell == null;
-    }
-
-    /**
-     * Returns the index of the column this grid unit belongs to.
-     * 
-     * @return the column index, 0-based
-     */
-    public int getStartCol() {
-        return startCol;
     }
 
     /** @return true if the grid unit is the last in column spanning direction */
@@ -474,10 +457,9 @@ public class GridUnit {
                 buffer.append("(last)");
             }
         }
-        buffer.append(" startCol=").append(startCol);
         if (!isPrimary() && getPrimary() != null) {
-            buffer.append(" primary=").append(getPrimary().getStartRow());
-            buffer.append("/").append(getPrimary().getStartCol());
+            buffer.append(" primary=").append(getPrimary().getRowIndex());
+            buffer.append("/").append(getPrimary().getColIndex());
             if (getPrimary().getCell() != null) {
                 buffer.append(" id=" + getPrimary().getCell().getId());
             }

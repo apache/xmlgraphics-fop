@@ -57,7 +57,7 @@ public class EffRow {
         for (Iterator guIter = gridUnits.iterator(); guIter.hasNext();) {
             Object gu = guIter.next();
             if (gu instanceof PrimaryGridUnit) {
-                ((PrimaryGridUnit) gu).setStartRow(index);
+                ((PrimaryGridUnit) gu).setRowIndex(index);
             }
         }
     }

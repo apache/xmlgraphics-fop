@@ -30,11 +30,10 @@ public class EmptyGridUnit extends GridUnit {
     /**
      * @param table the containing table
      * @param row the table-row element this grid unit belongs to (if any)
-     * @param startRow index of the row this grid unit belongs to, 0-based
-     * @param startCol column index, 0-based
+     * @param colIndex column index, 0-based
      */
-    EmptyGridUnit(Table table, TableRow row, int startRow, int startCol) {
-        super(table, row, table.getColumn(startCol), startCol, 0, 0);
+    EmptyGridUnit(Table table, TableRow row, int colIndex) {
+        super(table, row, table.getColumn(colIndex), 0, 0);
     }
 
     /** {@inheritDoc} */

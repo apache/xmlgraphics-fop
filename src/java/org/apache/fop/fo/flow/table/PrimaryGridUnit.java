@@ -22,8 +22,6 @@ package org.apache.fop.fo.flow.table;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.table.TableCellLayoutManager;
@@ -34,14 +32,17 @@ import org.apache.fop.layoutmgr.table.TableCellLayoutManager;
  */
 public class PrimaryGridUnit extends GridUnit {
 
-    private static Log log = LogFactory.getLog(PrimaryGridUnit.class);
-
     /** Cell layout manager. */
     private TableCellLayoutManager cellLM;
     /** List of Knuth elements representing the contents of the cell. */
     private LinkedList elements;
-    /** Index of row where this cell starts */
-    private int startRow;
+
+    /** Index of the row where this cell starts. */
+    private int rowIndex;
+
+    /** Index of the column where this cell starts. */
+    private int colIndex;
+
     /** Links to the spanned grid units. (List of GridUnit arrays, one array represents a row) */
     private List rows;
     /** The calculated size of the cell's content. (cached value) */
@@ -56,15 +57,14 @@ public class PrimaryGridUnit extends GridUnit {
      * @param cell table cell which occupies this grid unit
      * @param row the table-row element this grid unit belongs to (if any)
      * @param column table column this grid unit belongs to
-     * @param startCol index of the column this grid unit belongs to, zero-based
-     * @param startRow index of the row this grid unit belongs to, zero-based
+     * @param colIndex index of the column this grid unit belongs to, zero-based
      */
-    PrimaryGridUnit(TableCell cell, TableRow row, TableColumn column, int startCol) {
-        super(cell, row, column, startCol, 0, 0);
+    PrimaryGridUnit(TableCell cell, TableRow row, TableColumn column, int colIndex) {
+        super(cell, row, column, 0, 0);
+        this.colIndex = colIndex;
         this.isSeparateBorderModel = column.getTable().isSeparateBorderModel(); // TODO
         this.halfBorderSeparationBPD = column.getTable().getBorderSeparation().getBPD().getLength()
                 .getValue() / 2;  // TODO
-        log.trace("PrimaryGridUnit created, row " + startRow + " col " + startCol);
     }
 
     public TableCellLayoutManager getCellLM() {
@@ -248,17 +248,29 @@ public class PrimaryGridUnit extends GridUnit {
         rows.add(row);
     }
 
-    void setStartRow(int startRow) {
-        this.startRow = startRow;
+    void setRowIndex(int rowIndex) {
+        this.rowIndex = rowIndex;
     }
 
     /**
-     * Returns the index of the row this grid unit belongs to.
-     *
-     * @return the index of the row this grid unit belongs to.
+     * Returns the index of the row this grid unit belongs to. This is the index, in the
+     * enclosing table part, of the first row spanned by the cell. Note that if the table
+     * has several table-body children, then the index grows continuously across them;
+     * they are considered to form one single part, the "body of the table".
+     * 
+     * @return the index of the row this grid unit belongs to, 0-based.
      */
-    public int getStartRow() {
-        return this.startRow;
+    public int getRowIndex() {
+        return rowIndex;
+    }
+
+    /**
+     * Returns the index of the column this grid unit belongs to.
+     * 
+     * @return the column index, 0-based
+     */
+    public int getColIndex() {
+        return colIndex;
     }
 
     /**
@@ -290,7 +302,7 @@ public class PrimaryGridUnit extends GridUnit {
     /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer(super.toString());
-        sb.append(" startRow=").append(startRow);
+        sb.append(" rowIndex=").append(rowIndex);
         return sb.toString();
     }
 

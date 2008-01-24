@@ -175,8 +175,8 @@ class RowGroupLayoutManager {
 
                         //Calculate width of cell
                         int spanWidth = 0;
-                        for (int i = primary.getStartCol(); 
-                                i < primary.getStartCol() 
+                        for (int i = primary.getColIndex(); 
+                                i < primary.getColIndex() 
                                         + primary.getCell().getNumberColumnsSpanned();
                                 i++) {
                             if (tableLM.getColumns().getColumn(i + 1) != null) {

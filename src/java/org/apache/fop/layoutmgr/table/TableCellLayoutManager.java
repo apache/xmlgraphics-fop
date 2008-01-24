@@ -346,8 +346,8 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
                         false, false, this);
             }
         } else {
-            boolean inFirstColumn = (primaryGridUnit.getStartCol() == 0);
-            boolean inLastColumn = (primaryGridUnit.getStartCol()
+            boolean inFirstColumn = (primaryGridUnit.getColIndex() == 0);
+            boolean inLastColumn = (primaryGridUnit.getColIndex()
                     + getTableCell().getNumberColumnsSpanned() == getTable()
                     .getNumberOfColumns());
             if (!primaryGridUnit.hasSpanning()) {
@@ -407,7 +407,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
                     int bpd = spannedGridRowHeights[y - startRow];
                     int dx = xoffset;
                     for (int x = 0; x < gridUnits.length; x++) {
-                        int ipd = getTable().getColumn(primaryGridUnit.getStartCol() + x)
+                        int ipd = getTable().getColumn(primaryGridUnit.getColIndex() + x)
                                 .getColumnWidth().getValue((PercentBaseContext) getParent());
                         if (blocks[y][x] != null) {
                             Block block = blocks[y][x];
