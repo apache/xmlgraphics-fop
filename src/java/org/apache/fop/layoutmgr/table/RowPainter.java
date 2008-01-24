@@ -117,7 +117,7 @@ class RowPainter {
             if (log.isDebugEnabled()) {
                 log.debug(">" + cellPart);
             }
-            int colIndex = cellPart.pgu.getStartCol();
+            int colIndex = cellPart.pgu.getColIndex();
             if (firstCellParts[colIndex] == null) {
                 firstCellParts[colIndex] = cellPart;
                 cellHeights[colIndex] = cellPart.getBorderPaddingBefore(firstCellOnPage[colIndex]);
@@ -159,7 +159,7 @@ class RowPainter {
                 int cellHeight = cellHeights[i];
                 cellHeight += lastCellParts[i].getConditionalAfterContentLength();
                 cellHeight += lastCellParts[i].getBorderPaddingAfter(lastInPart);
-                int cellOffset = getRowOffset(Math.max(firstCellParts[i].pgu.getStartRow(),
+                int cellOffset = getRowOffset(Math.max(firstCellParts[i].pgu.getRowIndex(),
                         firstRowIndex));
                 actualRowHeight = Math.max(actualRowHeight, cellOffset + cellHeight
                         - currentRowOffset);
@@ -256,7 +256,7 @@ class RowPainter {
          * Determine the index of the first row of this cell that will be displayed on the
          * current page.
          */
-        int startRowIndex = Math.max(pgu.getStartRow(), firstRowIndex);
+        int startRowIndex = Math.max(pgu.getRowIndex(), firstRowIndex);
         int currentRowIndex = currentRow.getIndex();
 
         /*
@@ -280,7 +280,7 @@ class RowPainter {
         int cellTotalHeight = rowHeight + currentRowOffset - cellOffset;
         if (log.isDebugEnabled()) {
             log.debug("Creating area for cell:");
-            log.debug("  start row: " + pgu.getStartRow() + " " + currentRowOffset + " "
+            log.debug("  start row: " + pgu.getRowIndex() + " " + currentRowOffset + " "
                     + cellOffset);
             log.debug(" rowHeight=" + rowHeight + " cellTotalHeight=" + cellTotalHeight);
         }
@@ -295,8 +295,8 @@ class RowPainter {
                     startPos, endPos, prevBreak);
         }
         cellLM.addAreas(new KnuthPossPosIter(pgu.getElements(), startPos, endPos + 1),
-                layoutContext, spannedGridRowHeights, startRowIndex - pgu.getStartRow(),
-                currentRowIndex - pgu.getStartRow(), borderBeforeWhich, borderAfterWhich,
+                layoutContext, spannedGridRowHeights, startRowIndex - pgu.getRowIndex(),
+                currentRowIndex - pgu.getRowIndex(), borderBeforeWhich, borderAfterWhich,
                 startRowIndex == firstRowOnPageIndex, lastOnPage);
     }
 
