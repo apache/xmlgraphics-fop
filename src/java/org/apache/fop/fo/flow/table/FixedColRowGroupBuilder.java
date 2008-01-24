@@ -79,15 +79,14 @@ class FixedColRowGroupBuilder extends RowGroupBuilder {
             rows.add(effRow);
         }
         int columnIndex = cell.getColumnNumber() - 1;
-        PrimaryGridUnit pgu = new PrimaryGridUnit(cell, currentTableRow,
-                table.getColumn(columnIndex), columnIndex);
+        PrimaryGridUnit pgu = new PrimaryGridUnit(cell, currentTableRow, columnIndex);
         List row = (List) rows.get(currentRowIndex);
         row.set(columnIndex, pgu);
         // TODO
         GridUnit[] cellRow = new GridUnit[cell.getNumberColumnsSpanned()];
         cellRow[0] = pgu;
         for (int j = 1; j < cell.getNumberColumnsSpanned(); j++) {
-            GridUnit gu = new GridUnit(pgu, currentTableRow, table.getColumn(columnIndex + j), j, 0);
+            GridUnit gu = new GridUnit(pgu, currentTableRow, j, 0);
             row.set(columnIndex + j, gu);
             cellRow[j] = gu;
         }
@@ -96,8 +95,7 @@ class FixedColRowGroupBuilder extends RowGroupBuilder {
             row = (List) rows.get(currentRowIndex + i);
             cellRow = new GridUnit[cell.getNumberColumnsSpanned()];
             for (int j = 0; j < cell.getNumberColumnsSpanned(); j++) {
-                GridUnit gu = new GridUnit(pgu, currentTableRow, table.getColumn(columnIndex + j),
-                        j, i);
+                GridUnit gu = new GridUnit(pgu, currentTableRow, j, i);
                 row.set(columnIndex + j, gu);
                 cellRow[j] = gu;
             }

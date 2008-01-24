@@ -56,14 +56,13 @@ public class PrimaryGridUnit extends GridUnit {
      *
      * @param cell table cell which occupies this grid unit
      * @param row the table-row element this grid unit belongs to (if any)
-     * @param column table column this grid unit belongs to
      * @param colIndex index of the column this grid unit belongs to, zero-based
      */
-    PrimaryGridUnit(TableCell cell, TableRow row, TableColumn column, int colIndex) {
-        super(cell, row, column, 0, 0);
+    PrimaryGridUnit(TableCell cell, TableRow row, int colIndex) {
+        super(cell, row, 0, 0);
         this.colIndex = colIndex;
-        this.isSeparateBorderModel = column.getTable().isSeparateBorderModel(); // TODO
-        this.halfBorderSeparationBPD = column.getTable().getBorderSeparation().getBPD().getLength()
+        this.isSeparateBorderModel = cell.getTable().isSeparateBorderModel(); // TODO
+        this.halfBorderSeparationBPD = cell.getTable().getBorderSeparation().getBPD().getLength()
                 .getValue() / 2;  // TODO
     }
 
