@@ -362,10 +362,10 @@ class CollapsingBorderResolver implements BorderResolver {
             } else {
                 // Trailing and rest borders already resolved with integrateTrailingBorders
                 resolveBordersLastRowInTable(previousRow, false, true, false);
-                for (Iterator iter = previousRow.iterator(); iter.hasNext();) {
-                    GridUnit gu = (GridUnit) iter.next();
-                    gu.borderAfter.leadingTrailing = gu.borderAfter.nonLeadingTrailing;
-                }
+            }
+            for (Iterator iter = previousRow.iterator(); iter.hasNext();) {
+                GridUnit gu = (GridUnit) iter.next();
+                gu.borderAfter.leadingTrailing = gu.borderAfter.nonLeadingTrailing;
             }
         }
     }
@@ -385,7 +385,7 @@ class CollapsingBorderResolver implements BorderResolver {
         if (part.isTableHeader()) {
             delegate = new ResolverInHeader();
         } else {
-            if (leadingBorders == null) {
+            if (leadingBorders == null || table.omitHeaderAtBreak()) {
                 // No header, leading borders determined by the table
                 leadingBorders = new ArrayList(table.getNumberOfColumns());
                 for (Iterator colIter = table.getColumns().iterator(); colIter.hasNext();) {
@@ -399,7 +399,7 @@ class CollapsingBorderResolver implements BorderResolver {
                 resolverInFooter = new ResolverInFooter();
                 delegate = resolverInFooter;
             } else {
-                if (trailingBorders == null) {
+                if (trailingBorders == null || table.omitFooterAtBreak()) {
                     // No footer, trailing borders determined by the table
                     trailingBorders = new ArrayList(table.getNumberOfColumns());
                     for (Iterator colIter = table.getColumns().iterator(); colIter.hasNext();) {
