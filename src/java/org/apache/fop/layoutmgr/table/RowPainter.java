@@ -234,20 +234,26 @@ class RowPainter {
     // be used as padding.
     // This should be handled automatically by a proper use of Knuth elements
     private int computeContentLength(PrimaryGridUnit pgu, int startIndex, int endIndex) {
-        int actualStart = startIndex;
-        // Skip from the content length calculation glues and penalties occurring at the
-        // beginning of the page
-        while (actualStart <= endIndex
-                && !((KnuthElement) pgu.getElements().get(actualStart)).isBox()) {
-            actualStart++;
+        if (startIndex >= endIndex) {
+             // May happen if the cell contributes no content on the current page (empty
+             // cell, in most cases)
+            return 0;
+        } else {
+            int actualStart = startIndex;
+            // Skip from the content length calculation glues and penalties occurring at the
+            // beginning of the page
+            while (actualStart <= endIndex
+                    && !((KnuthElement) pgu.getElements().get(actualStart)).isBox()) {
+                actualStart++;
+            }
+            int len = ElementListUtils.calcContentLength(
+                    pgu.getElements(), actualStart, endIndex);
+            KnuthElement el = (KnuthElement)pgu.getElements().get(endIndex);
+            if (el.isPenalty()) {
+                len += el.getW();
+            }
+            return len;
         }
-        int len = ElementListUtils.calcContentLength(
-                pgu.getElements(), actualStart, endIndex);
-        KnuthElement el = (KnuthElement)pgu.getElements().get(endIndex);
-        if (el.isPenalty()) {
-            len += el.getW();
-        }
-        return len;
     }
 
     private void addAreasForCell(PrimaryGridUnit pgu, int startPos, int endPos,
