@@ -76,7 +76,7 @@ public class PreloaderSVG extends AbstractImagePreloader {
                 return null;
             }
         }
-        if (info != null && ImageUtil.hasInputStream(src)) {
+        if (info != null) {
             ImageUtil.closeQuietly(src); //Image is fully read
         }
         return info;
