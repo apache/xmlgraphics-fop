@@ -25,6 +25,7 @@ import java.io.InputStream;
 
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.svg.SVGDocument;
@@ -61,14 +62,13 @@ public class PreloaderSVG extends AbstractImagePreloader {
     /** {@inheritDoc} */ 
     public ImageInfo preloadImage(String uri, Source src, ImageContext context)
             throws IOException {
-        if (!ImageUtil.hasInputStream(src)) {
-            //TODO Remove this and support DOMSource and possibly SAXSource
-            return null;
-        }
         ImageInfo info = null;
         if (batikAvailable) {
             try {
                 Loader loader = new Loader();
+                if (!loader.isSupportedSource(src)) {
+                    return null;
+                }
                 info = loader.getImage(uri, src, context);
             } catch (NoClassDefFoundError e) {
                 batikAvailable = false;
@@ -76,7 +76,7 @@ public class PreloaderSVG extends AbstractImagePreloader {
                 return null;
             }
         }
-        if (info != null) {
+        if (info != null && ImageUtil.hasInputStream(src)) {
             ImageUtil.closeQuietly(src); //Image is fully read
         }
         return info;
@@ -106,57 +106,30 @@ public class PreloaderSVG extends AbstractImagePreloader {
                 ImageContext context) {
             // parse document and get the size attributes of the svg element
 
-            InputStream in = new UnclosableInputStream(ImageUtil.needInputStream(src));
+            InputStream in = null;
             try {
-                int length = in.available();
-                in.mark(length + 1);
-                SAXSVGDocumentFactory factory = new SAXSVGDocumentFactory(
-                        getParserName());
-                SVGDocument doc = (SVGDocument) factory.createSVGDocument(src.getSystemId(), in);
-
-                Element e = doc.getRootElement();
-                float pxUnitToMillimeter = 25.4f / context.getSourceResolution(); 
-                SVGUserAgent userAg = new SVGUserAgent(pxUnitToMillimeter,
-                            new AffineTransform());
-                BridgeContext ctx = new BridgeContext(userAg);
-                UnitProcessor.Context uctx = UnitProcessor.createContext(ctx, e);
-
-                String s;
-                // 'width' attribute - default is 100%
-                s = e.getAttributeNS(null, SVGOMDocument.SVG_WIDTH_ATTRIBUTE);
-                if (s.length() == 0) {
-                    s = SVGOMDocument.SVG_SVG_WIDTH_DEFAULT_VALUE;
+                SVGDocument doc;
+                if (src instanceof DOMSource) {
+                    DOMSource domSrc = (DOMSource)src;
+                    doc = (SVGDocument)domSrc.getNode();
+                } else {
+                    in = new UnclosableInputStream(ImageUtil.needInputStream(src));
+                    int length = in.available();
+                    in.mark(length + 1);
+                    SAXSVGDocumentFactory factory = new SAXSVGDocumentFactory(
+                            getParserName());
+                    doc = (SVGDocument) factory.createSVGDocument(src.getSystemId(), in);
                 }
-                float width = UnitProcessor.svgHorizontalLengthToUserSpace(
-                        s, SVGOMDocument.SVG_WIDTH_ATTRIBUTE, uctx);
-
-                // 'height' attribute - default is 100%
-                s = e.getAttributeNS(null, SVGOMDocument.SVG_HEIGHT_ATTRIBUTE);
-                if (s.length() == 0) {
-                    s = SVGOMDocument.SVG_SVG_HEIGHT_DEFAULT_VALUE;
-                }
-                float height = UnitProcessor.svgVerticalLengthToUserSpace(
-                        s, SVGOMDocument.SVG_HEIGHT_ATTRIBUTE, uctx);
-
-                ImageInfo info = new ImageInfo(uri, MimeConstants.MIME_SVG);
-                ImageSize size = new ImageSize();
-                size.setSizeInMillipoints(Math.round(width * 1000), Math.round(height * 1000));
-                //Set the resolution to that of the FOUserAgent
-                size.setResolution(context.getSourceResolution());
-                size.calcPixelsFromSize();
-                info.setSize(size);
-
-                //The whole image had to be loaded for this, so keep it
-                ImageXMLDOM xmlImage = new ImageXMLDOM(info,
-                        doc, SVGDOMImplementation.SVG_NAMESPACE_URI);
-                info.getCustomObjects().put(ImageInfo.ORIGINAL_IMAGE, xmlImage);
+                ImageInfo info = createImageInfo(uri, context, doc);
                 
                 return info;
             } catch (NoClassDefFoundError ncdfe) {
-                try {
-                    in.reset();
-                } catch (IOException ioe) {
-                    // we're more interested in the original exception
+                if (in != null) {
+                    try {
+                        in.reset();
+                    } catch (IOException ioe) {
+                        // we're more interested in the original exception
+                    }
                 }
                 batikAvailable = false;
                 log.warn("Batik not in class path", ncdfe);
@@ -177,6 +150,56 @@ public class PreloaderSVG extends AbstractImagePreloader {
                 return null;
             }
         }
+
+        private ImageInfo createImageInfo(String uri, ImageContext context, SVGDocument doc) {
+            Element e = doc.getRootElement();
+            float pxUnitToMillimeter = 25.4f / context.getSourceResolution(); 
+            SVGUserAgent userAg = new SVGUserAgent(pxUnitToMillimeter,
+                        new AffineTransform());
+            BridgeContext ctx = new BridgeContext(userAg);
+            UnitProcessor.Context uctx = UnitProcessor.createContext(ctx, e);
+
+            String s;
+            // 'width' attribute - default is 100%
+            s = e.getAttributeNS(null, SVGOMDocument.SVG_WIDTH_ATTRIBUTE);
+            if (s.length() == 0) {
+                s = SVGOMDocument.SVG_SVG_WIDTH_DEFAULT_VALUE;
+            }
+            float width = UnitProcessor.svgHorizontalLengthToUserSpace(
+                    s, SVGOMDocument.SVG_WIDTH_ATTRIBUTE, uctx);
+
+            // 'height' attribute - default is 100%
+            s = e.getAttributeNS(null, SVGOMDocument.SVG_HEIGHT_ATTRIBUTE);
+            if (s.length() == 0) {
+                s = SVGOMDocument.SVG_SVG_HEIGHT_DEFAULT_VALUE;
+            }
+            float height = UnitProcessor.svgVerticalLengthToUserSpace(
+                    s, SVGOMDocument.SVG_HEIGHT_ATTRIBUTE, uctx);
+
+            ImageInfo info = new ImageInfo(uri, MimeConstants.MIME_SVG);
+            ImageSize size = new ImageSize();
+            size.setSizeInMillipoints(Math.round(width * 1000), Math.round(height * 1000));
+            //Set the resolution to that of the FOUserAgent
+            size.setResolution(context.getSourceResolution());
+            size.calcPixelsFromSize();
+            info.setSize(size);
+
+            //The whole image had to be loaded for this, so keep it
+            ImageXMLDOM xmlImage = new ImageXMLDOM(info,
+                    doc, SVGDOMImplementation.SVG_NAMESPACE_URI);
+            info.getCustomObjects().put(ImageInfo.ORIGINAL_IMAGE, xmlImage);
+            return info;
+        }
+        
+        private boolean isSupportedSource(Source src) {
+            if (src instanceof DOMSource) {
+                DOMSource domSrc = (DOMSource)src;
+                return (domSrc.getNode() instanceof SVGDocument);
+            } else {
+                return ImageUtil.hasInputStream(src);
+            }
+        }
+
     }
 
 }
