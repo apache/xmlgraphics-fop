@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><event-model>
+<producer name="org.apache.fop.events.TestEventProducer">
+<method name="complain" severity="INFO">
+<parameter type="java.lang.String" name="reason"/>
+<parameter type="java.lang.Integer" name="blah"/>
+</method>
+<method name="enjoy" severity="INFO">
+<parameter type="java.lang.String" name="what"/>
+</method>
+</producer>
+</event-model>

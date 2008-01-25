@@ -23,6 +23,11 @@ import junit.framework.TestCase;
 
 public class BasicEventTestCase extends TestCase {
 
+    static {
+        //Use local event model
+        DefaultEventBroadcaster.loadModel(BasicEventTestCase.class, "test-event-model.xml");
+    }
+    
     public void testBasics() throws Exception {
         
         MyEventListener listener = new MyEventListener();
@@ -38,7 +43,8 @@ public class BasicEventTestCase extends TestCase {
                     .build());
         broadcaster.broadcastEvent(ev);
         
-        assertNotNull(listener.event);
+        ev = listener.event;
+        assertNotNull(ev);
         assertEquals("123", listener.event.getEventID());
         assertEquals("I'm tired", ev.getParam("reason"));
         assertEquals(new Integer(23), ev.getParam("blah"));
@@ -50,6 +56,31 @@ public class BasicEventTestCase extends TestCase {
         broadcaster.broadcastEvent(ev);
     }
 
+    public void testEventProducer() throws Exception {
+        MyEventListener listener = new MyEventListener();
+
+        EventBroadcaster broadcaster = new DefaultEventBroadcaster();
+        broadcaster.addFopEventListener(listener);
+        assertEquals(1, broadcaster.getListenerCount());
+        
+        TestEventProducer producer = (TestEventProducer)broadcaster.getEventProducerFor(
+                TestEventProducer.class);
+        producer.complain(this, "I'm tired", 23);
+        
+        FopEvent ev = listener.event;
+        assertNotNull(ev);
+        assertEquals("org.apache.fop.events.TestEventProducer.complain",
+                listener.event.getEventID());
+        assertEquals("I'm tired", ev.getParam("reason"));
+        assertEquals(new Integer(23), ev.getParam("blah"));
+        
+        broadcaster.removeFopEventListener(listener);
+        assertEquals(0, broadcaster.getListenerCount());
+
+        //Just check that there are no NPEs
+        broadcaster.broadcastEvent(ev);
+    }
+    
     private class MyEventListener implements FopEventListener {
 
         private FopEvent event;

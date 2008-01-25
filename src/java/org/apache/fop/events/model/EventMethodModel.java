@@ -45,8 +45,10 @@ public class EventMethodModel implements Serializable, XMLizable {
         this.params.add(param);
     }
     
-    public void addParameter(Class type, String name) {
-        this.params.add(new Parameter(type, name));
+    public Parameter addParameter(Class type, String name) {
+        Parameter param = new Parameter(type, name); 
+        this.params.add(param);
+        return param;
     }
     
     public void setMethodName(String name) {

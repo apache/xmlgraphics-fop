@@ -118,13 +118,15 @@ list of possible build targets.
     </fileset>
   </path>
 
+  <path id="libs-build-tools-classpath">
+    <path refid="libs-build-classpath"/>
+    <fileset dir="${basedir}/lib/build">
+      <include name="*.jar"/>
+    </fileset>
+  </path>
+  
   <path id="libs-run-classpath">
-    <fileset dir="${basedir}/lib">
-      <include name="*.jar"/>
-    </fileset>
-    <fileset dir="${optional.lib.dir}">
-      <include name="*.jar"/>
-    </fileset>
+    <path refid="libs-build-classpath"/>
     <fileset dir="${basedir}/build">
       <include name="fop.jar"/>
       <include name="fop-hyph.jar" />
@@ -393,7 +395,7 @@ list of possible build targets.
   <!-- =================================================================== -->
   <!-- Compiles the source directory                                       -->
   <!-- =================================================================== -->
-  <target name="compile-java" depends="init, codegen" description="Compiles the source code">
+  <target name="compile-java" depends="init, codegen">
     <!-- create directories -->
     <mkdir dir="${build.classes.dir}"/>
     <javac destdir="${build.classes.dir}" fork="${javac.fork}" debug="${javac.debug}"
@@ -409,21 +411,6 @@ list of possible build targets.
       <patternset refid="exclude-jimi"/>
       <classpath refid="libs-build-classpath"/>
     </javac>
-    <copy todir="${build.classes.dir}">
-      <fileset dir="${src.java.dir}">
-        <include name="META-INF/**"/>
-        <include name="**/*.icm"/>
-        <include name="**/*.LICENSE.txt"/>
-      </fileset>
-    </copy>
-    <mkdir dir="${build.viewer.resources.dir}"/>
-    <copy todir="${build.viewer.resources.dir}">
-      <fileset dir="${src.viewer.resources.dir}"/>
-    </copy>
-    <mkdir dir="${build.viewer.images.dir}"/>
-    <copy todir="${build.viewer.images.dir}">
-      <fileset dir="${src.viewer.images.dir}"/>
-    </copy>
 
     <mkdir dir="${build.sandbox-classes.dir}"/>
     <javac destdir="${build.sandbox-classes.dir}" fork="${javac.fork}" debug="${javac.debug}"
@@ -437,18 +424,75 @@ list of possible build targets.
         <pathelement location="${build.classes.dir}"/>
       </classpath>
     </javac>
+  </target>
+
+  <target name="resourcegen" depends="compile-java">
+    <mkdir dir="${build.codegen-classes.dir}"/>
+    <javac destdir="${build.codegen-classes.dir}" fork="${javac.fork}" debug="${javac.debug}"
+      deprecation="${javac.deprecation}" optimize="${javac.optimize}"
+      source="${javac.source}" target="${javac.target}">
+      <src path="${src.codegen.dir}/java"/>
+      <patternset includes="**/*.java"/>
+      <classpath>
+        <path refid="libs-build-tools-classpath"/>
+        <pathelement location="${build.classes.dir}"/>
+      </classpath>
+    </javac>
+    
+    <taskdef name="eventResourceGenerator"
+      classname="org.apache.fop.tools.EventProducerCollectorTask">
+      <classpath>
+        <path refid="libs-build-tools-classpath"/>
+        <pathelement location="${build.classes.dir}"/>
+        <pathelement location="${build.codegen-classes.dir}"/>
+      </classpath>
+    </taskdef>
+  
+    <eventResourceGenerator modelfile="${src.java.dir}/org/apache/fop/events/event-model.xml">
+      <fileset dir="${src.java.dir}">
+        <include name="**/*.java"/>
+      </fileset>
+    </eventResourceGenerator>
+    <eventResourceGenerator modelfile="${basedir}/test/java/org/apache/fop/events/test-event-model.xml">
+      <fileset dir="${basedir}/test/java">
+        <include name="**/*.java"/>
+      </fileset>
+    </eventResourceGenerator>
+  </target>
+  
+  <target name="compile-copy-resources" depends="resourcegen">
+    <copy todir="${build.classes.dir}">
+      <fileset dir="${src.java.dir}">
+        <include name="META-INF/**"/>
+        <include name="**/*.icm"/>
+        <include name="**/*.xml"/>
+        <include name="**/*.LICENSE.txt"/>
+      </fileset>
+    </copy>
+    <mkdir dir="${build.viewer.resources.dir}"/>
+    <copy todir="${build.viewer.resources.dir}">
+      <fileset dir="${src.viewer.resources.dir}"/>
+    </copy>
+    <mkdir dir="${build.viewer.images.dir}"/>
+    <copy todir="${build.viewer.images.dir}">
+      <fileset dir="${src.viewer.images.dir}"/>
+    </copy>
+    
+    <!-- sandbox -->
     <copy todir="${build.sandbox-classes.dir}">
       <fileset dir="${src.sandbox.dir}">
         <include name="META-INF/**"/>
       </fileset>
     </copy>
+    
   </target>
-
+  
+  <target name="compile" depends="compile-java, compile-copy-resources" description="Compiles the source code"/>
 
   <!-- =================================================================== -->
   <!-- compiles hyphenation patterns                                       -->
   <!-- =================================================================== -->
-  <target name="compile-hyphenation" depends="compile-java">
+  <target name="compile-hyphenation" depends="compile">
     <path id="hyph-classpath">
       <path refid="libs-build-classpath"/>
       <pathelement location="${build.classes.dir}"/>
@@ -486,13 +530,13 @@ list of possible build targets.
   <!-- main FOP JARs                                                       -->
   <!-- =================================================================== -->
 
-  <target name="uptodate-jar-main" depends="compile-java">
+  <target name="uptodate-jar-main" depends="compile">
     <uptodate property="jar.main.uptodate" targetfile="${build.dir}/fop.jar">
       <srcfiles dir= "${build.classes.dir}"/>
     </uptodate>
   </target>
 
-  <target name="jar-main" depends="compile-java,uptodate-jar-main" description="Generates the main jar file" unless="jar.main.uptodate">
+  <target name="jar-main" depends="compile,uptodate-jar-main" description="Generates the main jar file" unless="jar.main.uptodate">
     <tstamp>
       <format property="ts" pattern="yyyyMMdd-HHmmss-z"/>
     </tstamp>
@@ -521,13 +565,13 @@ list of possible build targets.
     </jar>
   </target>
 
-  <target name="uptodate-jar-sandbox" depends="compile-java">
+  <target name="uptodate-jar-sandbox" depends="compile">
     <uptodate property="jar.sandbox.uptodate" targetfile="${build.dir}/fop-sandbox.jar">
       <srcfiles dir= "${build.sandbox-classes.dir}"/>
     </uptodate>
   </target>
 
-  <target name="jar-sandbox" depends="compile-java,uptodate-jar-sandbox" description="Generates the sandbox jar file" unless="jar.sandbox.uptodate">
+  <target name="jar-sandbox" depends="compile,uptodate-jar-sandbox" description="Generates the sandbox jar file" unless="jar.sandbox.uptodate">
     <tstamp>
       <format property="ts" pattern="yyyyMMdd-HHmmss-z"/>
     </tstamp>
@@ -643,14 +687,14 @@ list of possible build targets.
     <include name="xmlgraphics-commons*.jar"/>
   </fileset>
   
-  <target name="uptodate-transcoder-pkg" depends="compile-java">
+  <target name="uptodate-transcoder-pkg" depends="compile">
     <uptodate property="transcoder.pkg.uptodate" targetfile="${build.dir}/fop-transcoder.jar">
       <srcfiles refid="transcoder-classes-files"/>
       <srcfiles refid="transcoder-lib-files"/>
     </uptodate>
   </target>
 
-  <target name="transcoder-pkg" depends="uptodate-transcoder-pkg, compile-java" description="Generates the jar for the transcoder package for Batik" unless="transcoder.pkg.uptodate">
+  <target name="transcoder-pkg" depends="uptodate-transcoder-pkg, compile" description="Generates the jar for the transcoder package for Batik" unless="transcoder.pkg.uptodate">
     <echo message="Creating the jar file ${build.dir}/fop-transcoder.jar"/>
 
     <property name="fop-transcoder.name" value="FOP Transcoder Package"/>
@@ -742,6 +786,11 @@ list of possible build targets.
         </fileset>
       </classpath>
     </javac>
+    <copy todir="${build.dir}/test-classes">
+      <fileset dir="${basedir}/test/java">
+        <include name="**/*.xml"/>
+      </fileset>
+    </copy>
   </target>
 
   <target name="junit-transcoder" depends="junit-compile" description="Runs FOP's JUnit transcoder tests" if="junit.present">

@@ -20,9 +20,8 @@
 package org.apache.fop.events.model;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
 
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -33,7 +32,7 @@ import org.apache.xmlgraphics.util.XMLizable;
 public class EventProducerModel implements Serializable, XMLizable {
 
     private String interfaceName;
-    private List methods = new java.util.ArrayList();
+    private Map methods = new java.util.LinkedHashMap();
     
     public EventProducerModel(String interfaceName) {
         this.interfaceName = interfaceName;
@@ -48,11 +47,15 @@ public class EventProducerModel implements Serializable, XMLizable {
     }
     
     public void addMethod(EventMethodModel method) {
-        this.methods.add(method);
+        this.methods.put(method.getMethodName(), method);
     }
     
-    public List getMethods() {
-        return Collections.unmodifiableList(this.methods);
+    public EventMethodModel getMethod(String methodName) {
+        return (EventMethodModel)this.methods.get(methodName);
+    }
+    
+    public Iterator getMethods() {
+        return this.methods.values().iterator();
     }
 
     /** {@inheritDoc} */
@@ -61,11 +64,12 @@ public class EventProducerModel implements Serializable, XMLizable {
         atts.addAttribute(null, "name", "name", "CDATA", getInterfaceName());
         String elName = "producer";
         handler.startElement(null, elName, elName, atts);
-        Iterator iter = this.methods.iterator();
+        Iterator iter = getMethods();
         while (iter.hasNext()) {
             ((XMLizable)iter.next()).toSAX(handler);
         }
         handler.endElement(null, elName, elName);
     }
+
     
 }

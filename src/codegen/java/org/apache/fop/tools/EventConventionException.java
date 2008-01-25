@@ -17,19 +17,12 @@
 
 /* $Id$ */
 
-package org.apache.fop.events;
+package org.apache.fop.tools;
 
+public class EventConventionException extends Exception {
 
-public interface EventBroadcaster {
-
-    void addFopEventListener(FopEventListener listener);
-    
-    void removeFopEventListener(FopEventListener listener);
- 
-    int getListenerCount();
-    
-    void broadcastEvent(FopEvent event);
-    
-    EventProducer getEventProducerFor(Class clazz);
+    public EventConventionException(String message) {
+        super(message);
+    }
     
 }
