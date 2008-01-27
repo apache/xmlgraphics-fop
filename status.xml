@@ -28,6 +28,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="AD" type="fix" fixes-bug="44286" due-to="Stefan Ziel">
+        Fixed a memory-leak in XMLWhiteSpaceHandler.
+      </action>
       <action context="Layout" dev="VH" type="fix" fixes-bug="44289">
         Fixed the resolution of borders when header/footer is omitted at page breaks.
       </action>
