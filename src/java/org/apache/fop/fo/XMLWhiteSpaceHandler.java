@@ -68,12 +68,9 @@ public class XMLWhiteSpaceHandler {
     /** Counter, increased every time a non-white-space is encountered */
     private int nonWhiteSpaceCount;
     
-    private Block currentBlock;
-    private FObj currentFO;
     private int linefeedTreatment;
     private int whiteSpaceTreatment;
     private int whiteSpaceCollapse;
-    private FONode nextChild;
     private boolean endOfBlock;
     private boolean nextChildIsBlockLevel;
     private RecursiveCharIterator charIter;
@@ -87,19 +84,28 @@ public class XMLWhiteSpaceHandler {
      * firstTextNode
      * @param fo    the FO for which to handle white-space
      * @param firstTextNode the node at which to start
+     * @param nextChild the node that will be added to the list
+     *                  after firstTextNode
      */
-    public void handleWhiteSpace(FObjMixed fo, FONode firstTextNode) {
+    public void handleWhiteSpace(FObjMixed fo, FONode firstTextNode, FONode nextChild) {
         
+        Block currentBlock = null;
         int foId = fo.getNameId();
         
         if (foId == Constants.FO_BLOCK) {
-            if (nextChild != null && currentBlock != null) {
-                /* if already in a block, push the current block 
-                 * onto the stack of nested blocks
-                 */
-                nestedBlockStack.push(currentBlock);
-            }
             currentBlock = (Block) fo;
+            if (nestedBlockStack.isEmpty() || fo != nestedBlockStack.peek()) {
+                if (nextChild != null) {
+                    /* if already in a block, push the current block 
+                     * onto the stack of nested blocks
+                     */
+                    nestedBlockStack.push(currentBlock);
+                }
+            } else {
+                if (nextChild == null) {
+                    nestedBlockStack.pop();
+                }
+            }
         } else if (foId == Constants.FO_RETRIEVE_MARKER) {
             /* look for the nearest block ancestor, if any */
             FONode ancestor = fo;
@@ -111,6 +117,8 @@ public class XMLWhiteSpaceHandler {
             if (ancestor.getNameId() == Constants.FO_BLOCK) {
                 currentBlock = (Block) ancestor;
             }
+        } else if (!nestedBlockStack.isEmpty()) {
+            currentBlock = (Block) nestedBlockStack.peek();
         }
         
         if (currentBlock != null) {
@@ -123,8 +131,6 @@ public class XMLWhiteSpaceHandler {
             whiteSpaceTreatment = Constants.EN_IGNORE_IF_SURROUNDING_LINEFEED;
         }
         
-        currentFO = fo;
-
         if (firstTextNode == null) {
             //nothing to do but initialize related properties
             return;
@@ -133,20 +139,20 @@ public class XMLWhiteSpaceHandler {
         charIter = new RecursiveCharIterator(fo, firstTextNode);
         inWhiteSpace = false;
         
-        if (currentFO == currentBlock
+        if (fo == currentBlock
                 || currentBlock == null
                 || (foId == Constants.FO_RETRIEVE_MARKER
-                        && currentFO.getParent() == currentBlock)) {
+                        && fo.getParent() == currentBlock)) {
             afterLinefeed = (
                     (firstTextNode == fo.firstChild)
                         || (firstTextNode.siblings[0].getNameId()
                                 == Constants.FO_BLOCK));
         }
         
-        endOfBlock = (nextChild == null && currentFO == currentBlock);
+        endOfBlock = (nextChild == null && fo == currentBlock);
         
         if (nextChild != null) {
-            int nextChildId = this.nextChild.getNameId();
+            int nextChildId = nextChild.getNameId();
             nextChildIsBlockLevel = (
                     nextChildId == Constants.FO_BLOCK
                     || nextChildId == Constants.FO_TABLE_AND_CAPTION
@@ -159,7 +165,7 @@ public class XMLWhiteSpaceHandler {
         
         handleWhiteSpace();
         
-        if (currentFO == currentBlock 
+        if (fo == currentBlock 
                 && pendingInlines != null 
                 && !pendingInlines.isEmpty()) {
             /* current FO is a block, and has pending inlines */
@@ -183,7 +189,7 @@ public class XMLWhiteSpaceHandler {
         }
         
         if (nextChild == null) {
-            if (currentFO != currentBlock) {
+            if (fo != currentBlock) {
                 /* current FO is not a block, and is about to end */
                 if (nonWhiteSpaceCount > 0 && pendingInlines != null) {
                     /* there is non-white-space text between the pending 
@@ -204,7 +210,6 @@ public class XMLWhiteSpaceHandler {
                 } else {
                     currentBlock = null;
                 }
-                currentFO = null;
                 charIter = null;
             }
         }
@@ -218,10 +223,8 @@ public class XMLWhiteSpaceHandler {
      * @param nextChild the child-node that will be added to the list after
      *                  the last text-node
      */
-    public void handleWhiteSpace(FObjMixed fo, FONode firstTextNode, FONode nextChild) {
-        this.nextChild = nextChild;
-        handleWhiteSpace(fo, firstTextNode);
-        this.nextChild = null;
+    public void handleWhiteSpace(FObjMixed fo, FONode firstTextNode) {
+        handleWhiteSpace(fo, firstTextNode, null);
     }
     
     private void handleWhiteSpace() {
