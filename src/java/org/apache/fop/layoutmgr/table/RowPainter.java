@@ -234,7 +234,7 @@ class RowPainter {
     // be used as padding.
     // This should be handled automatically by a proper use of Knuth elements
     private int computeContentLength(PrimaryGridUnit pgu, int startIndex, int endIndex) {
-        if (startIndex >= endIndex) {
+        if (startIndex > endIndex) {
              // May happen if the cell contributes no content on the current page (empty
              // cell, in most cases)
             return 0;
