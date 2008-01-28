@@ -39,6 +39,7 @@ import org.apache.fop.area.Block;
 import org.apache.fop.area.BodyRegion;
 import org.apache.fop.area.CTM;
 import org.apache.fop.area.LineArea;
+import org.apache.fop.area.PageSequence;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.inline.Image;
@@ -102,7 +103,7 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
             Dimension intrinsicSize = info.getSize().getDimensionMpt();
             ImageLayout layout = new ImageLayout(getExternalDocument(), this, intrinsicSize);
 
-            areaTreeHandler.getAreaTreeModel().startPageSequence(null);
+            areaTreeHandler.getAreaTreeModel().startPageSequence(new PageSequence(null));
             if (log.isDebugEnabled()) {
                 log.debug("Starting layout");
             }
@@ -200,6 +201,7 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
         }
     }
 
+    /** {@inheritDoc} */
     protected Page createPage(int pageNumber, boolean isBlank) {
         String pageNumberString = pageSeq.makeFormattedPageNumber(pageNumber);
         

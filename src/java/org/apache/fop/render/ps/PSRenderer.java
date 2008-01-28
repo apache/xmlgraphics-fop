@@ -72,7 +72,6 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.CTM;
-import org.apache.fop.area.LineArea;
 import org.apache.fop.area.OffDocumentExtensionAttachment;
 import org.apache.fop.area.OffDocumentItem;
 import org.apache.fop.area.PageViewport;
@@ -1080,11 +1079,6 @@ public class PSRenderer extends AbstractPathOrientedRenderer
             }
         }
         super.processOffDocumentItem(oDI);
-    }
-    
-    /** {@inheritDoc} */
-    public void startPageSequence(LineArea seqTitle) {
-        super.startPageSequence(seqTitle);
     }
     
     /**
