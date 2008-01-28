@@ -2546,7 +2546,14 @@
         yes      </td>
       <td class="yes">
         yes      </td>
-      <td align="center">&nbsp;      </td>
+      <td align="left">
+        <ul>
+          <li>
+            [0.94 and earlier] Only used for controlling hyphenation.</li>
+          <li>
+            [trunk] For PDF output: Only 2-letter codes from ISO 3166 are supported properly to identify the natural language!</li>
+        </ul>
+      </td>
     </tr>
     <tr>
       <td>
@@ -2562,7 +2569,14 @@
         yes      </td>
       <td class="yes">
         yes      </td>
-      <td align="center">&nbsp;      </td>
+      <td align="left">
+        <ul>
+          <li>
+            [0.94 and earlier] Only used for controlling hyphenation.</li>
+          <li>
+            [trunk] For PDF output: Only 2-letter codes from ISO 639 are supported properly to identify the natural language!</li>
+        </ul>
+      </td>
     </tr>
     <tr>
       <td>
