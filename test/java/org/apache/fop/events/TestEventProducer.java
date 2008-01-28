@@ -24,5 +24,12 @@ public interface TestEventProducer extends EventProducer {
     void complain(Object source, String reason, int blah);
     
     void enjoy(Object source, String what);
+ 
+    public class Factory {
+        
+        public static TestEventProducer create(EventBroadcaster broadcaster) {
+            return (TestEventProducer)broadcaster.getEventProducerFor(TestEventProducer.class);
+        }
+    }
     
 }

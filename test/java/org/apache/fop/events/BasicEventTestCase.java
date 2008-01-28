@@ -63,8 +63,8 @@ public class BasicEventTestCase extends TestCase {
         broadcaster.addFopEventListener(listener);
         assertEquals(1, broadcaster.getListenerCount());
         
-        TestEventProducer producer = (TestEventProducer)broadcaster.getEventProducerFor(
-                TestEventProducer.class);
+        
+        TestEventProducer producer = TestEventProducer.Factory.create(broadcaster);
         producer.complain(this, "I'm tired", 23);
         
         FopEvent ev = listener.event;
