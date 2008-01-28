@@ -78,9 +78,7 @@
     <!-- The 10% are ignored in this case. -->
     <eval expected="57600" xpath="//flow/block[4]/@bpd"/> <!-- 4 lines -->
     <eval expected="100000" xpath="//flow/block[4]/@ipd"/>
-    <eval expected="28800" xpath="//flow/block[4]/block[1]/block[1]/@bpd"/> <!-- the first 2 lines ... -->
+    <eval expected="57600" xpath="//flow/block[4]/block[1]/block[1]/@bpd"/>
     <eval expected="50000" xpath="//flow/block[4]/block[1]/block[1]/@ipd"/>
-    <eval expected="28800" xpath="//flow/block[4]/block[1]/block[2]/@bpd"/> <!-- ... and the other 2 lines -->
-    <eval expected="50000" xpath="//flow/block[4]/block[1]/block[2]/@ipd"/>
   </checks>
 </testcase>

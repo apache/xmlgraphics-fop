@@ -734,6 +734,20 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         pageBreaks.addFirst(pageBreak);
     }
     
+    /**
+     * Removes all page breaks from the result list. This is used by block-containers and
+     * static-content when it is only desired to know where there is an overflow but later the
+     * whole content should be painted as one part.
+     */
+    public void removeAllPageBreaks() {
+        if (pageBreaks == null) {
+            return;
+        }
+        while (pageBreaks.size() > 1) {
+            pageBreaks.removeFirst();
+        }
+    }
+    
     private int getPartCount() {
         if (pageBreaks == null) {
             return 0;
