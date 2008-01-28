@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.area.AreaTreeHandler;
+import org.apache.fop.area.AreaTreeModel;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.PageSequenceMaster;
@@ -88,7 +89,12 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
             }
         }
 
-        areaTreeHandler.getAreaTreeModel().startPageSequence(title);
+        AreaTreeModel areaTreeModel = areaTreeHandler.getAreaTreeModel();
+        org.apache.fop.area.PageSequence pageSequenceAreaObject
+                = new org.apache.fop.area.PageSequence(title);
+        pageSequenceAreaObject.setLanguage(getPageSequence().getLanguage());
+        pageSequenceAreaObject.setCountry(getPageSequence().getCountry());
+        areaTreeModel.startPageSequence(pageSequenceAreaObject);
         if (log.isDebugEnabled()) {
             log.debug("Starting layout");
         }

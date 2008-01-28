@@ -94,7 +94,7 @@ public class PDFAMetadataTestCase extends TestCase {
         cal2.set(Calendar.MILLISECOND, 0);
         info.setModDate(cal2.getTime());
         
-        Metadata meta = PDFMetadata.createXMPFromUserAgent(doc);
+        Metadata meta = PDFMetadata.createXMPFromPDFDocument(doc);
         
         DublinCoreAdapter dc = DublinCoreSchema.getAdapter(meta);
         assertEquals("MyTitle", dc.getTitle());

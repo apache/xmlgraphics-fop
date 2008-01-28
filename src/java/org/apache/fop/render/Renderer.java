@@ -20,16 +20,16 @@
 package org.apache.fop.render;
 
 // Java
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
-// FOP
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.area.PageViewport;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.OffDocumentItem;
+import org.apache.fop.area.PageSequence;
+import org.apache.fop.area.PageViewport;
 import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.apps.FOUserAgent;
 
 
 /**
@@ -142,8 +142,16 @@ public interface Renderer {
      * Tells the renderer that a new page sequence starts.
      *
      * @param seqTitle  The title of the page sequence
+     * @deprecated Use startPageSequence(PageSequence) instead
      */
     void startPageSequence(LineArea seqTitle);
+
+    /**
+     * Tells the renderer that a new page sequence starts.
+     *
+     * @param pageSequence the page sequence
+     */
+    void startPageSequence(PageSequence pageSequence);
 
     /**
      * Tells the renderer to render a particular page. A renderer typically

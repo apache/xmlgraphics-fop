@@ -28,6 +28,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Renderers" dev="JM" type="add">
+        Added support for the natural language indentifier ("Lang" in the document catalog)
+        for PDF documents based on the language/country values on fo:page-sequence.
+      </action>
       <action context="Code" dev="AD" type="fix" fixes-bug="44286" due-to="Stefan Ziel">
         Fixed a memory-leak in XMLWhiteSpaceHandler.
       </action>

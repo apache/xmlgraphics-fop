@@ -61,6 +61,7 @@ import org.apache.fop.area.MainReference;
 import org.apache.fop.area.NormalFlow;
 import org.apache.fop.area.OffDocumentExtensionAttachment;
 import org.apache.fop.area.OffDocumentItem;
+import org.apache.fop.area.PageSequence;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.RegionReference;
 import org.apache.fop.area.RegionViewport;
@@ -585,14 +586,20 @@ public class XMLRenderer extends PrintRenderer {
         handleExtensionAttachments(page.getExtensionAttachments());
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void startPageSequence(LineArea seqTitle) {
+    /** {@inheritDoc} */
+    public void startPageSequence(PageSequence pageSequence) {
         handleDocumentExtensionAttachments();
         endPageSequence();  // move this before handleDocumentExtensionAttachments() ?
         startedSequence = true;
-        startElement("pageSequence");
+        atts.clear();
+        if (pageSequence.getLanguage() != null) {
+            addAttribute("language", pageSequence.getLanguage());
+        }
+        if (pageSequence.getCountry() != null) {
+            addAttribute("country", pageSequence.getCountry());
+        }
+        startElement("pageSequence", atts);
+        LineArea seqTitle = pageSequence.getTitle();
         if (seqTitle != null) {
             startElement("title");
             List children = seqTitle.getInlineAreas();

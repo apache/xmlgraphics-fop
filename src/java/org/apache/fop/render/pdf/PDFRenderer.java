@@ -61,6 +61,7 @@ import org.apache.fop.area.DestinationData;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.OffDocumentExtensionAttachment;
 import org.apache.fop.area.OffDocumentItem;
+import org.apache.fop.area.PageSequence;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
@@ -611,7 +612,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
 
     private void renderXMPMetadata(XMPMetadata metadata) {
         Metadata docXMP = metadata.getMetadata();
-        Metadata fopXMP = PDFMetadata.createXMPFromUserAgent(pdfDoc);
+        Metadata fopXMP = PDFMetadata.createXMPFromPDFDocument(pdfDoc);
         //Merge FOP's own metadata into the one from the XSL-FO document
         fopXMP.mergeInto(docXMP);
         XMPBasicAdapter xmpBasic = XMPBasicSchema.getAdapter(docXMP);
@@ -679,13 +680,15 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Start the next page sequence.
-     * For the pdf renderer there is no concept of page sequences
+     * For the PDF renderer there is no concept of page sequences
      * but it uses the first available page sequence title to set
-     * as the title of the pdf document.
-     *
-     * @param seqTitle the title of the page sequence
+     * as the title of the PDF document, and the language of the
+     * document.
+     * @param pageSequence the page sequence
      */
-    public void startPageSequence(LineArea seqTitle) {
+    public void startPageSequence(PageSequence pageSequence) {
+        super.startPageSequence(pageSequence);
+        LineArea seqTitle = pageSequence.getTitle();
         if (seqTitle != null) {
             String str = convertTitleToString(seqTitle);
             PDFInfo info = this.pdfDoc.getInfo();
@@ -693,10 +696,20 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                 info.setTitle(str);
             }
         }
+        if (pageSequence.getLanguage() != null) {
+            String lang = pageSequence.getLanguage();
+            String country = pageSequence.getCountry();
+            String langCode = lang + (country != null ? "-" + country : "");
+            if (pdfDoc.getRoot().getLanguage() == null) {
+                //Only set if not set already (first non-null is used)
+                //Note: No checking is performed whether the values are valid!
+                pdfDoc.getRoot().setLanguage(langCode);
+            }
+        }
         if (pdfDoc.getRoot().getMetadata() == null) {
             //If at this time no XMP metadata for the overall document has been set, create it
             //from the PDFInfo object.
-            Metadata xmp = PDFMetadata.createXMPFromUserAgent(pdfDoc);
+            Metadata xmp = PDFMetadata.createXMPFromPDFDocument(pdfDoc);
             PDFMetadata pdfMetadata = pdfDoc.getFactory().makeMetadata(
                     xmp, true);
             pdfDoc.getRoot().setMetadata(pdfMetadata);
