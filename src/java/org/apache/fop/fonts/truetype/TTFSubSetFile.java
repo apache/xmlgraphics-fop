@@ -21,8 +21,8 @@ package org.apache.fop.fonts.truetype;
 
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -71,7 +71,10 @@ public class TTFSubSetFile extends TTFFile {
      * Create the directory table
      */
     private void createDirectory() {
-        int numTables = 9;
+        int numTables = 8;
+        if (hasFpgm()) {
+            numTables++;
+        }
         // Create the TrueType header
         writeByte((byte)0);
         writeByte((byte)1);
