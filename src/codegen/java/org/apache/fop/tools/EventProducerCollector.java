@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 
+import org.apache.fop.events.EventProducer;
 import org.apache.fop.events.model.EventMethodModel;
 import org.apache.fop.events.model.EventModel;
 import org.apache.fop.events.model.EventProducerModel;
@@ -39,7 +40,7 @@ import com.thoughtworks.qdox.model.Type;
 
 public class EventProducerCollector {
 
-    private static final String CLASSNAME_EVENT_PRODUCER = "org.apache.fop.events.EventProducer";
+    private static final String CLASSNAME_EVENT_PRODUCER = EventProducer.class.getName();
     private static final Map PRIMITIVE_MAP;
     
     static {
