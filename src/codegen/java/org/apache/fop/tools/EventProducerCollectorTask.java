@@ -41,6 +41,7 @@ public class EventProducerCollectorTask extends Task {
         try {
             EventProducerCollector collector = new EventProducerCollector();
             processFileSets(collector);
+            getModelFile().getParentFile().mkdirs();
             collector.saveModelToXML(getModelFile());
             log("Event model written to " + getModelFile());
         } catch (ClassNotFoundException e) {

@@ -448,13 +448,8 @@ list of possible build targets.
       </classpath>
     </taskdef>
   
-    <eventResourceGenerator modelfile="${src.java.dir}/org/apache/fop/events/event-model.xml">
+    <eventResourceGenerator modelfile="${build.gensrc.dir}/org/apache/fop/events/event-model.xml">
       <fileset dir="${src.java.dir}">
-        <include name="**/*.java"/>
-      </fileset>
-    </eventResourceGenerator>
-    <eventResourceGenerator modelfile="${basedir}/test/java/org/apache/fop/events/test-event-model.xml">
-      <fileset dir="${basedir}/test/java">
         <include name="**/*.java"/>
       </fileset>
     </eventResourceGenerator>
@@ -467,6 +462,9 @@ list of possible build targets.
         <include name="**/*.icm"/>
         <include name="**/*.xml"/>
         <include name="**/*.LICENSE.txt"/>
+      </fileset>
+      <fileset dir="${build.gensrc.dir}">
+        <include name="**/*.xml"/>
       </fileset>
     </copy>
     <mkdir dir="${build.viewer.resources.dir}"/>
@@ -772,6 +770,7 @@ list of possible build targets.
   </target>
   <target name="junit-compile" depends="package, transcoder-pkg, junit-with-xmlunit, junit-without-xmlunit" description="Runs FOP's JUnit tests" if="junit.present">
     <mkdir dir="${build.dir}/test-classes"/>
+    <mkdir dir="${build.dir}/test-gensrc"/>
     <mkdir dir="${junit.reports.dir}"/>
     <javac destdir="${build.dir}/test-classes" fork="${javac.fork}"
            debug="${javac.debug}" deprecation="${javac.deprecation}"
@@ -786,8 +785,16 @@ list of possible build targets.
         </fileset>
       </classpath>
     </javac>
+    <eventResourceGenerator modelfile="${build.dir}/test-gensrc/org/apache/fop/events/test-event-model.xml">
+      <fileset dir="${basedir}/test/java">
+        <include name="**/*.java"/>
+      </fileset>
+    </eventResourceGenerator>
     <copy todir="${build.dir}/test-classes">
       <fileset dir="${basedir}/test/java">
+        <include name="**/*.xml"/>
+      </fileset>
+      <fileset dir="${build.dir}/test-gensrc">
         <include name="**/*.xml"/>
       </fileset>
     </copy>
