@@ -29,6 +29,7 @@ import org.apache.fop.util.DataURIResolverTestCase;
 import org.apache.fop.util.ElementListUtilsTestCase;
 import org.apache.fop.util.PDFNumberTestCase;
 import org.apache.fop.util.UnitConvTestCase;
+import org.apache.fop.util.XMLResourceBundleTestCase;
 
 /**
  * Test suite for FOP's utility classes.
@@ -50,6 +51,7 @@ public class UtilityCodeTestSuite {
         suite.addTest(new TestSuite(ElementListUtilsTestCase.class));
         suite.addTest(new TestSuite(DataURIResolverTestCase.class));
         suite.addTest(new TestSuite(BasicEventTestCase.class));
+        suite.addTest(new TestSuite(XMLResourceBundleTestCase.class));
         //$JUnit-END$
         return suite;
     }
