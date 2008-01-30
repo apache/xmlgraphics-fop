@@ -32,9 +32,6 @@
         Bugfix for handling of optional tables in subset TrueType fonts. This bug caused errors
         in various PDF viewers.
       </action>
-      <action context="Fonts" dev="JM" type="fix">
-        Bugfix for invalid numTables entry in subset TrueType fonts if there was no "fpgm" table.
-      </action>
       <action context="Renderers" dev="JM" type="add">
         Added support for the natural language indentifier ("Lang" in the document catalog)
         for PDF documents based on the language/country values on fo:page-sequence.
