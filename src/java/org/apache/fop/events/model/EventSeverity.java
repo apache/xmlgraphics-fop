@@ -57,13 +57,13 @@ public final class EventSeverity implements Serializable {
      * @return the enumeration object
      */
     public static EventSeverity valueOf(String name) {
-        if (INFO.getName().equals(name)) {
+        if (INFO.getName().equalsIgnoreCase(name)) {
             return INFO;
-        } else if (WARN.getName().equals(name)) {
+        } else if (WARN.getName().equalsIgnoreCase(name)) {
             return WARN;
-        } else if (ERROR.getName().equals(name)) {
+        } else if (ERROR.getName().equalsIgnoreCase(name)) {
             return ERROR;
-        } else if (FATAL.getName().equals(name)) {
+        } else if (FATAL.getName().equalsIgnoreCase(name)) {
             return FATAL;
         } else {
             throw new IllegalArgumentException("Illegal value for enumeration: " + name);

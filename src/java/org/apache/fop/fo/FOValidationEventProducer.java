@@ -17,19 +17,19 @@
 
 /* $Id$ */
 
-package org.apache.fop.events;
+package org.apache.fop.fo;
 
+import org.apache.fop.events.EventProducer;
 
-public interface EventBroadcaster {
+public interface FOValidationEventProducer extends EventProducer {
 
-    void addFopEventListener(EventListener listener);
-    
-    void removeFopEventListener(EventListener listener);
- 
-    int getListenerCount();
-    
-    void broadcastEvent(Event event);
-    
-    EventProducer getEventProducerFor(Class clazz);
-    
+    /**
+     * Express joy about something.
+     * @param source the event source
+     * @param node the context node
+     * @param elementName the name of the context node
+     * @param propertyName the name of the missing property
+     * @event.severity FATAL
+     */
+    void missingProperty(Object source, FONode node, String elementName, String propertyName);
 }

@@ -43,12 +43,12 @@ public class DefaultEventBroadcaster implements EventBroadcaster {
     private List listeners = new java.util.ArrayList();
     
     /** {@inheritDoc} */
-    public void addFopEventListener(FopEventListener listener) {
+    public void addFopEventListener(EventListener listener) {
         this.listeners.add(listener);
     }
 
     /** {@inheritDoc} */
-    public void removeFopEventListener(FopEventListener listener) {
+    public void removeFopEventListener(EventListener listener) {
         this.listeners.remove(listener);
     }
 
@@ -58,9 +58,9 @@ public class DefaultEventBroadcaster implements EventBroadcaster {
     }
     
     /** {@inheritDoc} */
-    public void broadcastEvent(FopEvent event) {
+    public void broadcastEvent(Event event) {
         for (int i = 0, c = getListenerCount(); i < c; i++) {
-            FopEventListener listener = (FopEventListener)this.listeners.get(i);
+            EventListener listener = (EventListener)this.listeners.get(i);
             listener.processEvent(event);
         }
     }
@@ -90,7 +90,7 @@ public class DefaultEventBroadcaster implements EventBroadcaster {
             IOUtils.closeQuietly(in);
         }
     }
-    
+
     public EventProducer getEventProducerFor(Class clazz) {
         if (!EventProducer.class.isAssignableFrom(clazz)) {
             throw new IllegalArgumentException(
@@ -136,7 +136,7 @@ public class DefaultEventBroadcaster implements EventBroadcaster {
                             params.put(param.getName(), args[i]);
                             i++;
                         }
-                        FopEvent ev = new FopEvent(args[0], eventID, params);
+                        Event ev = new Event(args[0], eventID, methodModel.getSeverity(), params);
                         broadcastEvent(ev);
                         return null;
                     }

@@ -438,6 +438,11 @@ list of possible build targets.
         <pathelement location="${build.classes.dir}"/>
       </classpath>
     </javac>
+    <copy todir="${build.codegen-classes.dir}">
+      <fileset dir="${src.codegen.dir}/java">
+        <include name="**/*.xsl"/>
+      </fileset>
+    </copy>
     
     <taskdef name="eventResourceGenerator"
       classname="org.apache.fop.tools.EventProducerCollectorTask">
@@ -448,7 +453,9 @@ list of possible build targets.
       </classpath>
     </taskdef>
   
-    <eventResourceGenerator modelfile="${build.gensrc.dir}/org/apache/fop/events/event-model.xml">
+    <eventResourceGenerator
+        modelfile="${build.gensrc.dir}/org/apache/fop/events/event-model.xml"
+        translationfile="${src.java.dir}/org/apache/fop/events/EventFormatter.xml">
       <fileset dir="${src.java.dir}">
         <include name="**/*.java"/>
       </fileset>

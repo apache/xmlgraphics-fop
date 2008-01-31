@@ -19,10 +19,8 @@
 
 package org.apache.fop.events;
 
-import java.util.EventListener;
+public interface EventListener extends java.util.EventListener {
 
-public interface FopEventListener extends EventListener {
-
-    void processEvent(FopEvent event);
+    void processEvent(Event event);
     
 }

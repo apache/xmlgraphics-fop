@@ -32,6 +32,7 @@ import org.apache.fop.events.model.EventSeverity;
 
 import com.thoughtworks.qdox.JavaDocBuilder;
 import com.thoughtworks.qdox.model.DefaultDocletTagFactory;
+import com.thoughtworks.qdox.model.DocletTag;
 import com.thoughtworks.qdox.model.DocletTagFactory;
 import com.thoughtworks.qdox.model.JavaClass;
 import com.thoughtworks.qdox.model.JavaMethod;
@@ -116,8 +117,15 @@ public class EventProducerCollector {
             }
             
             //build method model
+            DocletTag tag = method.getTagByName("event.severity");
+            EventSeverity severity;
+            if (tag != null) {
+                severity = EventSeverity.valueOf(tag.getValue());
+            } else { 
+                severity = EventSeverity.INFO;
+            }
             EventMethodModel methodMeta = new EventMethodModel(
-                    method.getName(), EventSeverity.INFO);
+                    method.getName(), severity);
             if (params.length > 1) {
                 for (int j = 1, cj = params.length; j < cj; j++) {
                     JavaParameter p = params[j];

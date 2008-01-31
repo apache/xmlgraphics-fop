@@ -21,6 +21,8 @@ package org.apache.fop.events;
 
 import junit.framework.TestCase;
 
+import org.apache.fop.events.model.EventSeverity;
+
 public class BasicEventTestCase extends TestCase {
 
     static {
@@ -36,8 +38,8 @@ public class BasicEventTestCase extends TestCase {
         broadcaster.addFopEventListener(listener);
         assertEquals(1, broadcaster.getListenerCount());
         
-        FopEvent ev = new FopEvent(this, "123",
-                FopEvent.paramsBuilder()
+        Event ev = new Event(this, "123", EventSeverity.INFO,
+                Event.paramsBuilder()
                     .param("reason", "I'm tired")
                     .param("blah", new Integer(23))
                     .build());
@@ -46,6 +48,7 @@ public class BasicEventTestCase extends TestCase {
         ev = listener.event;
         assertNotNull(ev);
         assertEquals("123", listener.event.getEventID());
+        assertEquals(EventSeverity.INFO, listener.event.getSeverity());
         assertEquals("I'm tired", ev.getParam("reason"));
         assertEquals(new Integer(23), ev.getParam("blah"));
         
@@ -67,10 +70,11 @@ public class BasicEventTestCase extends TestCase {
         TestEventProducer producer = TestEventProducer.Factory.create(broadcaster);
         producer.complain(this, "I'm tired", 23);
         
-        FopEvent ev = listener.event;
+        Event ev = listener.event;
         assertNotNull(ev);
         assertEquals("org.apache.fop.events.TestEventProducer.complain",
                 listener.event.getEventID());
+        assertEquals(EventSeverity.WARN, listener.event.getSeverity());
         assertEquals("I'm tired", ev.getParam("reason"));
         assertEquals(new Integer(23), ev.getParam("blah"));
         
@@ -81,11 +85,11 @@ public class BasicEventTestCase extends TestCase {
         broadcaster.broadcastEvent(ev);
     }
     
-    private class MyEventListener implements FopEventListener {
+    private class MyEventListener implements EventListener {
 
-        private FopEvent event;
+        private Event event;
         
-        public void processEvent(FopEvent event) {
+        public void processEvent(Event event) {
             if (this.event != null) {
                 fail("Multiple events received");
             }

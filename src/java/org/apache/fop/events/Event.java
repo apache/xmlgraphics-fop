@@ -23,19 +23,27 @@ import java.util.Collections;
 import java.util.EventObject;
 import java.util.Map;
 
-public class FopEvent extends EventObject {
+import org.apache.fop.events.model.EventSeverity;
+
+public class Event extends EventObject {
 
     private String eventID;
+    private EventSeverity severity;
     private Map params;
     
-    public FopEvent(Object source, String eventID, Map params) {
+    public Event(Object source, String eventID, EventSeverity severity, Map params) {
         super(source);
         this.eventID = eventID;
+        this.severity = severity;
         this.params = params;
     }
     
     public String getEventID() {
         return this.eventID;
+    }
+    
+    public EventSeverity getSeverity() {
+        return this.severity;
     }
 
     public Object getParam(String key) {

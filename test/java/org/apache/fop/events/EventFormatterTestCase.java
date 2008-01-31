@@ -19,30 +19,29 @@
 
 package org.apache.fop.events;
 
-public interface TestEventProducer extends EventProducer {
+import junit.framework.TestCase;
 
-    /**
-     * Complain about something.
-     * @param source the event source
-     * @param reason the reason for the complaint
-     * @param blah the complaint
-     * @event.severity WARN
-     */
-    void complain(Object source, String reason, int blah);
-    
-    /**
-     * Express joy about something.
-     * @param source the event source
-     * @param what the cause for the joy
-     * @event.severity INFO
-     */
-    void enjoy(Object source, String what);
- 
-    public class Factory {
+import org.apache.fop.events.model.EventSeverity;
+
+/**
+ * Tests for EventFormatter.
+ */
+public class EventFormatterTestCase extends TestCase {
+
+    public void testFormatting() throws Exception {
+        Event ev;
+        String msg;
         
-        public static TestEventProducer create(EventBroadcaster broadcaster) {
-            return (TestEventProducer)broadcaster.getEventProducerFor(TestEventProducer.class);
-        }
+        ev = new Event(this, "org.apache.fop.fo.FOValidationEventProducer.missingProperty",
+                EventSeverity.FATAL, Event.paramsBuilder()
+                .param("node", new Object())
+                .param("elementName", "fo:external-graphic")
+                .param("propertyName", "src")
+                .build());
+        String template
+            = "Element \"${elementName}\" is missing required property \"${propertyName}\"!";
+        msg = EventFormatter.format(ev, template);
+        assertEquals("Element \"fo:external-graphic\" is missing required property \"src\"!", msg);
     }
     
 }
