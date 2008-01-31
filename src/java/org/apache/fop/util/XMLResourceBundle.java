@@ -44,7 +44,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * This class is a ResourceBundle that loads its contents from XML files instead of properties
- * files (like PropertiesResourceBunde).
+ * files (like PropertiesResourceBundle).
  * <p>
  * The XML format for this resource bundle implementation is the following
  * (the same as Apache Cocoon's XMLResourceBundle):
@@ -87,7 +87,7 @@ public class XMLResourceBundle extends ResourceBundle {
      * Gets a resource bundle using the specified base name, default locale, and class loader.
      * @param baseName the base name of the resource bundle, a fully qualified class name
      * @param loader the class loader from which to load the resource bundle
-     * @return a resource bundle for the given base name and locale
+     * @return a resource bundle for the given base name and the default locale
      * @throws MissingResourceException if no resource bundle for the specified base name can be
      *                                          found
      * @see java.util.ResourceBundle#getBundle(String)
