@@ -79,6 +79,8 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
             ImageInfo info = manager.getImageInfo(purl.toString(), sessionContext);
             Image image = manager.getImage(info, supportedFlavors, sessionContext);
             
+            //TODO color profile overrides aren't handled, yet!
+            //ICCColorSpaceExt colorspaceOverride = extractColorSpace(e, ctx);
             AbstractGraphicsNode specializedNode = null;
             if (image instanceof ImageXMLDOM) {
                 ImageXMLDOM xmlImage = (ImageXMLDOM)image;
