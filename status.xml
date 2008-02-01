@@ -28,6 +28,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="AD" type="fix" fixes-bug="44343">
+        Fixed a bug when using relative font-size (smaller/larger) in combination
+        with percentages.
+      </action>
       <action context="Fonts" dev="JM" type="fix">
         Bugfix for handling of optional tables in subset TrueType fonts. This bug caused errors
         in various PDF viewers.
