@@ -19,11 +19,9 @@
 
 package org.apache.fop.events;
 
-import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+import org.apache.fop.util.AdvancedMessageFormat;
 import org.apache.fop.util.XMLResourceBundle;
 
 /**
@@ -43,33 +41,9 @@ public class EventFormatter {
         return format(event, template);
     }
 
-    public static String format(Event event, String template) {
-        Map params = event.getParams();
-        Pattern p = Pattern.compile("\\$\\{[^\\}]+\\}");
-        Matcher m = p.matcher(template);
-        StringBuffer sb = new StringBuffer();
-        while (m.find()) {
-            String formatElement = m.group();
-            formatElement = formatElement.substring(2, formatElement.length() - 1);
-            //TODO Handle conditional sub-formats
-            //TODO Add advanced formatting like in MessageFormat here
-            String key = formatElement;
-            if (!params.containsKey(key)) {
-                throw new IllegalArgumentException(
-                        "Message template contains unsupported variable key: " + key);
-            }
-            Object obj = params.get(key);
-            String value;
-            if (obj == null) {
-                value = "";
-            } else {
-                value = obj.toString();
-            }
-            m.appendReplacement(sb, value);
-        }
-        m.appendTail(sb);
-        
-        return sb.toString();
+    public static String format(Event event, String pattern) {
+        AdvancedMessageFormat format = new AdvancedMessageFormat(pattern);
+        return format.format(event.getParams());
     }
-
+    
 }
