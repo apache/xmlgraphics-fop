@@ -35,7 +35,7 @@ public class BasicEventTestCase extends TestCase {
         MyEventListener listener = new MyEventListener();
 
         EventBroadcaster broadcaster = new DefaultEventBroadcaster();
-        broadcaster.addFopEventListener(listener);
+        broadcaster.addEventListener(listener);
         assertEquals(1, broadcaster.getListenerCount());
         
         Event ev = new Event(this, "123", EventSeverity.INFO,
@@ -52,7 +52,7 @@ public class BasicEventTestCase extends TestCase {
         assertEquals("I'm tired", ev.getParam("reason"));
         assertEquals(new Integer(23), ev.getParam("blah"));
         
-        broadcaster.removeFopEventListener(listener);
+        broadcaster.removeEventListener(listener);
         assertEquals(0, broadcaster.getListenerCount());
 
         //Just check that there are no NPEs
@@ -63,7 +63,7 @@ public class BasicEventTestCase extends TestCase {
         MyEventListener listener = new MyEventListener();
 
         EventBroadcaster broadcaster = new DefaultEventBroadcaster();
-        broadcaster.addFopEventListener(listener);
+        broadcaster.addEventListener(listener);
         assertEquals(1, broadcaster.getListenerCount());
         
         
@@ -78,7 +78,7 @@ public class BasicEventTestCase extends TestCase {
         assertEquals("I'm tired", ev.getParam("reason"));
         assertEquals(new Integer(23), ev.getParam("blah"));
         
-        broadcaster.removeFopEventListener(listener);
+        broadcaster.removeEventListener(listener);
         assertEquals(0, broadcaster.getListenerCount());
 
         //Just check that there are no NPEs

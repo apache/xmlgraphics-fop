@@ -43,12 +43,12 @@ public class DefaultEventBroadcaster implements EventBroadcaster {
     private List listeners = new java.util.ArrayList();
     
     /** {@inheritDoc} */
-    public void addFopEventListener(EventListener listener) {
+    public void addEventListener(EventListener listener) {
         this.listeners.add(listener);
     }
 
     /** {@inheritDoc} */
-    public void removeFopEventListener(EventListener listener) {
+    public void removeEventListener(EventListener listener) {
         this.listeners.remove(listener);
     }
 

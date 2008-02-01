@@ -22,9 +22,9 @@ package org.apache.fop.events;
 
 public interface EventBroadcaster {
 
-    void addFopEventListener(EventListener listener);
+    void addEventListener(EventListener listener);
     
-    void removeFopEventListener(EventListener listener);
+    void removeEventListener(EventListener listener);
  
     int getListenerCount();
     
