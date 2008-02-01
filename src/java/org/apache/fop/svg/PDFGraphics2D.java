@@ -41,7 +41,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
-import java.awt.image.DataBufferInt;
 import java.awt.image.DirectColorModel;
 import java.awt.image.ImageObserver;
 import java.awt.image.Raster;
@@ -65,6 +64,7 @@ import org.apache.batik.gvt.PatternPaint;
 
 import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.xmlgraphics.image.loader.ImageSize;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawCCITTFax;
 import org.apache.xmlgraphics.image.loader.impl.ImageRawJPEG;
 import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
 import org.apache.xmlgraphics.java2d.AbstractGraphics2D;
@@ -86,7 +86,6 @@ import org.apache.fop.pdf.PDFGState;
 import org.apache.fop.pdf.PDFImage;
 import org.apache.fop.pdf.PDFImageXObject;
 import org.apache.fop.pdf.PDFLink;
-import org.apache.fop.pdf.PDFName;
 import org.apache.fop.pdf.PDFNumber;
 import org.apache.fop.pdf.PDFPattern;
 import org.apache.fop.pdf.PDFResourceContext;
@@ -94,6 +93,7 @@ import org.apache.fop.pdf.PDFResources;
 import org.apache.fop.pdf.PDFState;
 import org.apache.fop.pdf.PDFText;
 import org.apache.fop.pdf.PDFXObject;
+import org.apache.fop.render.pdf.ImageRawCCITTFaxAdapter;
 import org.apache.fop.render.pdf.ImageRawJPEGAdapter;
 import org.apache.fop.render.pdf.ImageRenderedAdapter;
 import org.apache.fop.util.ColorExt;
@@ -143,10 +143,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     protected int baseLevel = 0;
 
     /**
-     * The count of JPEG images added to document so they recieve
+     * The count of natively handled images added to document so they receive
      * unique keys.
      */
-    protected int[] jpegCount = {0};
+    protected int nativeCount = 0;
 
     /**
      * The current font information.
@@ -232,7 +232,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         this.pageRef = g.pageRef;
         this.graphicsState = g.graphicsState;
         this.currentStream = g.currentStream;
-        this.jpegCount = g.jpegCount;
+        this.nativeCount = g.nativeCount;
         this.outputStream = g.outputStream;
         this.ovFontState = g.ovFontState;
     }
@@ -401,44 +401,41 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     }
 
     /**
-     * Add a JPEG image directly to the PDF document.
-     * This is used by the PDFImageElementBridge to draw a JPEG
-     * directly into the pdf document rather than converting the image into
+     * Add a natively handled image directly to the PDF document.
+     * This is used by the PDFImageElementBridge to draw a natively handled image
+     * (like JPEG or CCITT images)
+     * directly into the PDF document rather than converting the image into
      * a bitmap and increasing the size.
      *
-     * @param jpeg the jpeg image to draw
+     * @param image the image to draw
      * @param x the x position
      * @param y the y position
      * @param width the width to draw the image
      * @param height the height to draw the image
      */
-    public void addJpegImage(ImageRawJPEG jpeg, float x, float y, 
+    void addNativeImage(org.apache.xmlgraphics.image.loader.Image image, float x, float y, 
                              float width, float height) {
         preparePainting();
-        // Need to include hash code as when invoked from FO you
-        // may have several 'independent' PDFGraphics2D so the
-        // count is not enough.
-        String key = "__AddJPEG_" + hashCode() + "_" + jpegCount[0];
-        jpegCount[0]++;
-        PDFImage pdfimage = new ImageRawJPEGAdapter(jpeg, key);
-        PDFName imageName = this.pdfDoc.addImage(resourceContext, 
-                                              pdfimage).getName();
-        AffineTransform at = getTransform();
-        double[] matrix = new double[6];
-        at.getMatrix(matrix);
-        currentStream.write("q\n");
-        if (!at.isIdentity()) {
-            concatMatrix(matrix);
+        String key = image.getInfo().getOriginalURI();
+        if (key == null) {
+            // Need to include hash code as when invoked from FO you
+            // may have several 'independent' PDFGraphics2D so the
+            // count is not enough.
+            key = "__AddNative_" + hashCode() + "_" + nativeCount; 
+            nativeCount++;
         }
-        Shape imclip = getClip();
-        writeClip(imclip);
-
-        currentStream.write("" + width + " 0 0 "
-                          + (-height) + " "
-                          + x + " "
-                          + (y + height) + " cm\n"
-                          + imageName + " Do\nQ\n");
-
+        
+        PDFImage pdfImage;
+        if (image instanceof ImageRawJPEG) {
+            pdfImage = new ImageRawJPEGAdapter((ImageRawJPEG)image, key);
+        } else if (image instanceof ImageRawCCITTFax) {
+            pdfImage = new ImageRawCCITTFaxAdapter((ImageRawCCITTFax)image, key);
+        } else {
+            throw new IllegalArgumentException(
+                    "Unsupported Image subclass: " + image.getClass().getName());
+        }
+        
+        PDFXObject xObject = this.pdfDoc.addImage(resourceContext, pdfImage);
         if (outputStream != null) {
             try {
                 this.pdfDoc.output(outputStream);
@@ -446,6 +443,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                 // ignore exception, will be thrown again later
             }
         }
+
+        AffineTransform at = new AffineTransform();
+        at.translate(x, y);
+        useXObject(xObject, at, width, height);
     }
 
     /**
@@ -492,40 +493,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                                  BufferedImage.TYPE_INT_ARGB);
     }
 
-    /**
-     * Draws as much of the specified image as has already been scaled
-     * to fit inside the specified rectangle.
-     * <p>
-     * The image is drawn inside the specified rectangle of this
-     * graphics context's coordinate space, and is scaled if
-     * necessary. Transparent pixels do not affect whatever pixels
-     * are already there.
-     * <p>
-     * This method returns immediately in all cases, even if the
-     * entire image has not yet been scaled, dithered, and converted
-     * for the current output device.
-     * If the current output representation is not yet complete, then
-     * <code>drawImage</code> returns <code>false</code>. As more of
-     * the image becomes available, the process that draws the image notifies
-     * the image observer by calling its <code>imageUpdate</code> method.
-     * <p>
-     * A scaled version of an image will not necessarily be
-     * available immediately just because an unscaled version of the
-     * image has been constructed for this output device.  Each size of
-     * the image may be cached separately and generated from the original
-     * data in a separate image production sequence.
-     * @param    img    the specified image to be drawn.
-     * @param    x      the <i>x</i> coordinate.
-     * @param    y      the <i>y</i> coordinate.
-     * @param    width  the width of the rectangle.
-     * @param    height the height of the rectangle.
-     * @param    observer    object to be notified as more of
-     * the image is converted.
-     * @return true if the image was drawn
-     * @see      java.awt.Image
-     * @see      java.awt.image.ImageObserver
-     * @see      java.awt.image.ImageObserver#imageUpdate(java.awt.Image, int, int, int, int, int)
-     */
+    /** {@inheritDoc} */
     public boolean drawImage(Image img, int x, int y, int width, int height,
                                ImageObserver observer) {
         preparePainting();
@@ -533,8 +501,9 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         // the pdf document. If so, we just reuse the reference;
         // otherwise we have to build a FopImage and add it to the pdf
         // document
-        PDFXObject imageInfo = pdfDoc.getXObject("TempImage:" + img.toString());
-        if (imageInfo == null) {
+        String key = "TempImage:" + img.toString();
+        PDFXObject xObject = pdfDoc.getXObject(key);
+        if (xObject == null) {
             // OK, have to build and add a PDF image
 
             Dimension size = new Dimension(width, height);
@@ -553,92 +522,14 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             }
             g.dispose();
 
-            final byte[] result = new byte[buf.getWidth() * buf.getHeight() * 3 /*for RGB*/];
-            byte[] mask = new byte[buf.getWidth() * buf.getHeight()];
-            boolean hasMask = false;
-            //boolean binaryMask = true;
-
-            Raster raster = buf.getData();
-            DataBuffer bd = raster.getDataBuffer();
-
-            int count = 0;
-            int maskpos = 0;
-            int[] iarray;
-            int i, j, val, alpha;
-            switch (bd.getDataType()) {
-                case DataBuffer.TYPE_INT:
-                int[][] idata = ((DataBufferInt)bd).getBankData();
-                for (i = 0; i < idata.length; i++) {
-                    iarray = idata[i];
-                    for (j = 0; j < iarray.length; j++) {
-                        val = iarray[j];
-                        alpha = val >>> 24;
-                        mask[maskpos++] = (byte)(alpha & 0xFF);
-                        if (alpha != 255) {
-                            hasMask = true;
-                        }
-                        result[count++] = (byte)((val >> 16) & 0xFF);
-                        result[count++] = (byte)((val >> 8) & 0xFF);
-                        result[count++] = (byte)((val) & 0xFF);
-                    }
-                }
-                break;
-                default:
-                // error
-                break;
-            }
-            String ref = null;
-            if (hasMask) {
-                // if the mask is binary then we could convert it into a bitmask
-                BitmapImage fopimg = new BitmapImage("TempImageMask:"
-                                             + img.toString(), buf.getWidth(),
-                                             buf.getHeight(), mask, null);
-                fopimg.setColorSpace(new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_GRAY));
-                PDFImageXObject xobj = pdfDoc.addImage(resourceContext, fopimg);
-                ref = xobj.referencePDF();
-
-                if (outputStream != null) {
-                    try {
-                        this.pdfDoc.output(outputStream);
-                    } catch (IOException ioe) {
-                        // ignore exception, will be thrown again later
-                    }
-                }
-            } else {
-                mask = null;
-            }
-
-            BitmapImage fopimg = new BitmapImage("TempImage:"
-                                          + img.toString(), buf.getWidth(),
-                                          buf.getHeight(), result, ref);
-            imageInfo = pdfDoc.addImage(resourceContext, fopimg);
-            //int xObjectNum = imageInfo.getXNumber();
-
-            if (outputStream != null) {
-                try {
-                    this.pdfDoc.output(outputStream);
-                } catch (IOException ioe) {
-                    // ignore exception, will be thrown again later
-                }
-            }
+            xObject = addRenderedImage(key, buf);
         } else {
-            resourceContext.getPDFResources().addXObject(imageInfo);
+            resourceContext.getPDFResources().addXObject(xObject);
         }
 
-        // now do any transformation required and add the actual image
-        // placement instance
-        AffineTransform at = getTransform();
-        double[] matrix = new double[6];
-        at.getMatrix(matrix);
-        currentStream.write("q\n");
-        if (!at.isIdentity()) {
-            concatMatrix(matrix);
-        }
-        Shape imclip = getClip();
-        writeClip(imclip);
-        currentStream.write("" + width + " 0 0 " + (-height) + " " + x
-                            + " " + (y + height) + " cm\n"
-                            + imageInfo.getName() + " Do\nQ\n");
+        AffineTransform at = new AffineTransform();
+        at.translate(x, y);
+        useXObject(xObject, at, width, height);
         return true;
     }
 
@@ -1342,18 +1233,24 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
     /** {@inheritDoc} */
     public void drawRenderedImage(RenderedImage img, AffineTransform xform) {
-        preparePainting();
         String key = "TempImage:" + img.toString();
+        drawInnerRenderedImage(key, img, xform);
+    }
+
+    /** {@inheritDoc} */
+    public void drawInnerRenderedImage(String key, RenderedImage img, AffineTransform xform) {
+        preparePainting();
         PDFXObject xObject = pdfDoc.getXObject(key);
         if (xObject == null) {
-            ImageInfo info = new ImageInfo(null, "image/unknown");
-            ImageSize size = new ImageSize(img.getWidth(), img.getHeight(), 72);
-            info.setSize(size);
-            ImageRendered imgRend = new ImageRendered(info, img, null);
-            ImageRenderedAdapter adapter = new ImageRenderedAdapter(imgRend, key);
-            xObject = pdfDoc.addImage(resourceContext, adapter);
+            xObject = addRenderedImage(key, img);
+        } else {
+            resourceContext.getPDFResources().addXObject(xObject);
         }
 
+        useXObject(xObject, xform, img.getWidth(), img.getHeight());
+    }
+
+    private void useXObject(PDFXObject xObject, AffineTransform xform, float width, float height) {
         // now do any transformation required and add the actual image
         // placement instance
         currentStream.write("q\n");
@@ -1361,9 +1258,27 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         Shape imclip = getClip();
         writeClip(imclip);
         concatMatrix(xform);
-        currentStream.write("" + img.getWidth() + " 0 0 " + (-img.getHeight()) + " 0"
-                + " " + (img.getHeight()) + " cm\n"
+        String w = PDFNumber.doubleOut(width, DEC);
+        String h = PDFNumber.doubleOut(height, DEC);
+        currentStream.write("" + w + " 0 0 -" + h + " 0 " + h + " cm\n"
                 + xObject.getName() + " Do\nQ\n");
+    }
+
+    private PDFXObject addRenderedImage(String key, RenderedImage img) {
+        ImageInfo info = new ImageInfo(null, "image/unknown");
+        ImageSize size = new ImageSize(img.getWidth(), img.getHeight(), 72);
+        info.setSize(size);
+        ImageRendered imgRend = new ImageRendered(info, img, null);
+        ImageRenderedAdapter adapter = new ImageRenderedAdapter(imgRend, key);
+        PDFXObject xObject = pdfDoc.addImage(resourceContext, adapter);
+        if (outputStream != null) {
+            try {
+                this.pdfDoc.output(outputStream);
+            } catch (IOException ioe) {
+                // ignore exception, will be thrown again later
+            }
+        }
+        return xObject;
     }
 
     /** {@inheritDoc} */

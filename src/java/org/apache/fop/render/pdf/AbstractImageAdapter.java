@@ -59,6 +59,9 @@ public abstract class AbstractImageAdapter implements PDFImage {
     public AbstractImageAdapter(Image image, String key) {
         this.image = image;
         this.key = key;
+        if (log.isDebugEnabled()) {
+            log.debug("New ImageAdapter created for key: " + key);
+        }
     }
 
     /** {@inheritDoc} */
@@ -96,11 +99,16 @@ public abstract class AbstractImageAdapter implements PDFImage {
                     pdfICCStream = cs.getICCStream();
                 }
             } else {
-                if (cs == null && "sRGB".equals(desc)) {
+                if (cs == null && desc.startsWith("sRGB")) {
                     //It's the default sRGB profile which we mapped to DefaultRGB in PDFRenderer
                     cs = doc.getResources().getColorSpace("DefaultRGB");
                 }
-                pdfICCStream = cs.getICCStream();
+                if (cs != null) {
+                    pdfICCStream = cs.getICCStream();
+                } else {
+                    //DefaultRGB hasn't been mapped to sRGB
+                    //(that's the case with a plain PDFGraphics2D)
+                }
             }
         }
         if (doc.getProfile().getPDFAMode().isPDFA1LevelB()) {
