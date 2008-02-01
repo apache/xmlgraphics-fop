@@ -63,7 +63,10 @@ import org.apache.batik.ext.awt.RenderingHintsKeyExt;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.gvt.PatternPaint;
 
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageSize;
 import org.apache.xmlgraphics.image.loader.impl.ImageRawJPEG;
+import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
 import org.apache.xmlgraphics.java2d.AbstractGraphics2D;
 import org.apache.xmlgraphics.java2d.GraphicContext;
 
@@ -92,6 +95,7 @@ import org.apache.fop.pdf.PDFState;
 import org.apache.fop.pdf.PDFText;
 import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.render.pdf.ImageRawJPEGAdapter;
+import org.apache.fop.render.pdf.ImageRenderedAdapter;
 import org.apache.fop.util.ColorExt;
 
 /**
@@ -347,6 +351,14 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                 + PDFNumber.doubleOut(matrix[5], DEC) + " cm\n");
     }
 
+    private void concatMatrix(AffineTransform transform) {
+        if (!transform.isIdentity()) {
+            double[] matrix = new double[6];
+            transform.getMatrix(matrix);
+            concatMatrix(matrix);
+        }
+    }
+    
     /**
      * This is mainly used for shading patterns which use the document-global coordinate system
      * instead of the local one.
@@ -1328,63 +1340,37 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         }
     }
 
-    /**
-     * Renders a {@link RenderedImage},
-     * applying a transform from image
-     * space into user space before drawing.
-     * The transformation from user space into device space is done with
-     * the current <code>Transform</code> in the <code>Graphics2D</code>.
-     * The specified transformation is applied to the image before the
-     * transform attribute in the <code>Graphics2D</code> context is applied.
-     * The rendering attributes applied include the <code>Clip</code>,
-     * <code>Transform</code>, and <code>Composite</code> attributes. Note
-     * that no rendering is done if the specified transform is
-     * noninvertible.
-     * @param img the image to be rendered
-     * @param xform the transformation from image space into user space
-     * @see #transform
-     * @see #setTransform
-     * @see #setComposite
-     * @see #clip
-     * @see #setClip
-     */
+    /** {@inheritDoc} */
     public void drawRenderedImage(RenderedImage img, AffineTransform xform) {
-        //NYI
+        preparePainting();
+        String key = "TempImage:" + img.toString();
+        PDFXObject xObject = pdfDoc.getXObject(key);
+        if (xObject == null) {
+            ImageInfo info = new ImageInfo(null, "image/unknown");
+            ImageSize size = new ImageSize(img.getWidth(), img.getHeight(), 72);
+            info.setSize(size);
+            ImageRendered imgRend = new ImageRendered(info, img, null);
+            ImageRenderedAdapter adapter = new ImageRenderedAdapter(imgRend, key);
+            xObject = pdfDoc.addImage(resourceContext, adapter);
+        }
+
+        // now do any transformation required and add the actual image
+        // placement instance
+        currentStream.write("q\n");
+        concatMatrix(getTransform());
+        Shape imclip = getClip();
+        writeClip(imclip);
+        concatMatrix(xform);
+        currentStream.write("" + img.getWidth() + " 0 0 " + (-img.getHeight()) + " 0"
+                + " " + (img.getHeight()) + " cm\n"
+                + xObject.getName() + " Do\nQ\n");
     }
 
-    /**
-     * Renders a
-     * {@link RenderableImage},
-     * applying a transform from image space into user space before drawing.
-     * The transformation from user space into device space is done with
-     * the current <code>Transform</code> in the <code>Graphics2D</code>.
-     * The specified transformation is applied to the image before the
-     * transform attribute in the <code>Graphics2D</code> context is applied.
-     * The rendering attributes applied include the <code>Clip</code>,
-     * <code>Transform</code>, and <code>Composite</code> attributes. Note
-     * that no rendering is done if the specified transform is
-     * noninvertible.
-     * <p>
-     * Rendering hints set on the <code>Graphics2D</code> object might
-     * be used in rendering the <code>RenderableImage</code>.
-     * If explicit control is required over specific hints recognized by a
-     * specific <code>RenderableImage</code>, or if knowledge of which hints
-     * are used is required, then a <code>RenderedImage</code> should be
-     * obtained directly from the <code>RenderableImage</code>
-     * and rendered using
-     * {@link #drawRenderedImage(RenderedImage, AffineTransform) drawRenderedImage}.
-     * @param img the image to be rendered
-     * @param xform the transformation from image space into user space
-     * @see #transform
-     * @see #setTransform
-     * @see #setComposite
-     * @see #clip
-     * @see #setClip
-     * @see #drawRenderedImage
-     */
+    /** {@inheritDoc} */
     public void drawRenderableImage(RenderableImage img,
                                     AffineTransform xform) {
-        //NYI
+        //TODO Check if this is good enough
+        drawRenderedImage(img.createDefaultRendering(), xform);
     }
 
     /**
