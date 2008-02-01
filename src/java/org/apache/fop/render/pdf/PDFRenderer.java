@@ -23,7 +23,6 @@ package org.apache.fop.render.pdf;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.color.ColorSpace;
 import java.awt.color.ICC_Profile;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
@@ -391,24 +390,8 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         if (this.sRGBColorSpace != null) {
             return;
         }
-        ICC_Profile profile;
-        PDFICCStream sRGBProfile = pdfDoc.getFactory().makePDFICCStream();
-        InputStream in = PDFDocument.class.getResourceAsStream("sRGB Color Space Profile.icm");
-        if (in != null) {
-            try {
-                profile = ICC_Profile.getInstance(in);
-            } finally {
-                IOUtils.closeQuietly(in);
-            }
-        } else {
-            //Fallback: Use the sRGB profile from the JRE (about 140KB)
-            profile = ICC_Profile.getInstance(ColorSpace.CS_sRGB);
-        }
-        sRGBProfile.setColorSpace(profile, null);
-        
         //Map sRGB as default RGB profile for DeviceRGB
-        this.sRGBColorSpace = pdfDoc.getFactory().makeICCBasedColorSpace(
-                null, "DefaultRGB", sRGBProfile);
+        this.sRGBColorSpace = PDFICCBasedColorSpace.setupsRGBAsDefaultRGBColorSpace(pdfDoc);
     }
     
     private void addDefaultOutputProfile() throws IOException {
