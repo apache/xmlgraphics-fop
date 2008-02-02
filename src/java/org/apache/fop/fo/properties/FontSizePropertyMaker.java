@@ -55,7 +55,7 @@ public class FontSizePropertyMaker
         if (p instanceof PercentLength) {
             Property pp = propertyList.getFromParent(this.propId);
             p = FixedLength.getInstance(
-                    pp.getLength().getValue() * ((PercentLength)p).getPercentage() / 100, "mpt");
+                    pp.getLength().getValue() * ((PercentLength)p).getPercentage() / 100);
         }
         return p;
     }
@@ -74,10 +74,10 @@ public class FontSizePropertyMaker
             int baseFontSize = computeClosestAbsoluteFontSize(pp.getLength().getValue());
             if (p.getEnum() == EN_LARGER) {
                 return FixedLength.getInstance(
-                        Math.round(baseFontSize * FONT_SIZE_GROWTH_FACTOR), "mpt");
+                        Math.round(baseFontSize * FONT_SIZE_GROWTH_FACTOR));
             } else {
                 return FixedLength.getInstance(
-                        Math.round(baseFontSize / FONT_SIZE_GROWTH_FACTOR), "mpt");
+                        Math.round(baseFontSize / FONT_SIZE_GROWTH_FACTOR));
             }
         }
         return super.convertProperty(p, propertyList, fo);
