@@ -82,7 +82,7 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
                         log.warn(FObj.decorateWithContextInfo(
                                 "Replaced negative value (" + len + ") for " + getName()
                                 + " with 0mpt", fo));
-                        p = FixedLength.getInstance(0);
+                        p = FixedLength.ZERO_FIXED_LENGTH;
                     }
                 }
             }
@@ -105,7 +105,7 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
                         log.warn("Replaced negative value (" + len + ") for " + getName()
                                 + " with 0mpt");
                         val.setComponent(subpropertyId,
-                                FixedLength.getInstance(0), false);
+                                FixedLength.ZERO_FIXED_LENGTH, false);
                         return baseProperty;
                     }
                 }

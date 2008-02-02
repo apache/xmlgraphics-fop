@@ -63,7 +63,7 @@ public class BorderWidthPropertyMaker extends LengthProperty.Maker {
         // Calculate the values as described in 7.7.20.
         Property style = propertyList.get(borderStyleId);
         if (style.getEnum() == Constants.EN_NONE) {
-            return FixedLength.getInstance(0);
+            return FixedLength.ZERO_FIXED_LENGTH;
         }
         return p;
     }
