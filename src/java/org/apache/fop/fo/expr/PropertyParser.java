@@ -19,7 +19,6 @@
 
 package org.apache.fop.fo.expr;
 
-import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.properties.ColorProperty;
@@ -266,8 +265,8 @@ public final class PropertyParser extends PropertyTokenizer {
              * Get the length base value object from the Maker. If null, then
              * this property can't have % values. Treat it as a real number.
              */
-            double pcval = new Double(currentTokenValue.substring(0,
-                        currentTokenValue.length() - 1)).doubleValue() / 100.0;
+            double pcval = Double.parseDouble(
+                    currentTokenValue.substring(0, currentTokenValue.length() - 1)) / 100.0;
             PercentBase pcBase = this.propInfo.getPercentBase();
             if (pcBase != null) {
                 if (pcBase.getDimension() == 0) {
@@ -287,22 +286,30 @@ public final class PropertyParser extends PropertyTokenizer {
             // A number plus a valid unit name.
             int numLen = currentTokenValue.length() - currentUnitLength;
             String unitPart = currentTokenValue.substring(numLen);
-            Double numPart = new Double(currentTokenValue.substring(0,
-                    numLen));
-            if (unitPart.equals(RELUNIT)) {
+            double numPart = Double.parseDouble(currentTokenValue.substring(0, numLen));
+            if (RELUNIT.equals(unitPart)) {
                 prop = (Property) NumericOp.multiply(
-                                    NumberProperty.getInstance(numPart.doubleValue()),
+                                    NumberProperty.getInstance(numPart),
                                     propInfo.currentFontSize());
             } else {
-                prop = FixedLength.getInstance(numPart.doubleValue(), unitPart);
+                if ("px".equals(unitPart)) {
+                    //pass the ratio between source-resolution and 
+                    //the default resolution of 72dpi
+                    prop = FixedLength.getInstance(
+                            numPart, unitPart, 
+                            propInfo.getPropertyList().getFObj()
+                                    .getUserAgent().getSourceResolution() / 72.0f);
+                } else {
+                    //use default resolution of 72dpi
+                    prop = FixedLength.getInstance(numPart, unitPart);
+                }
             }
             break;
 
         case TOK_COLORSPEC:
-            FOUserAgent ua = (propInfo == null) 
-                ? null
-                : (propInfo.getFO() == null ? null : propInfo.getFO().getUserAgent());
-            prop = ColorProperty.getInstance(ua, currentTokenValue);
+            prop = ColorProperty.getInstance(
+                    propInfo.getPropertyList().getFObj().getUserAgent(), 
+                    currentTokenValue);
             break;
 
         case TOK_FUNCTION_LPAR:
