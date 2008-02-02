@@ -69,7 +69,7 @@ public final class FixedLength extends LengthProperty {
      * @param dvalue quantity of input units
      * @param unit input unit specifier (in, cm, etc.)
      */
-    protected void convert(double dvalue, String unit) {
+    private void convert(double dvalue, String unit) {
         // TODO: the whole routine smells fishy.
 
         int assumedResolution = 1;    // points/pixel = 72dpi
@@ -107,30 +107,22 @@ public final class FixedLength extends LengthProperty {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int getValue() {
         return millipoints;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int getValue(PercentBaseContext context) {
         return millipoints;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public double getNumericValue() {
         return millipoints;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public double getNumericValue(PercentBaseContext context) {
         return millipoints;
     }
@@ -143,16 +135,12 @@ public final class FixedLength extends LengthProperty {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String toString() {
         return millipoints + "mpt";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean equals(Object obj) {
         if (obj instanceof FixedLength) {
             return (((FixedLength)obj).millipoints == this.millipoints);
@@ -161,9 +149,7 @@ public final class FixedLength extends LengthProperty {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int hashCode() {
         return millipoints;
     }
