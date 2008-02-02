@@ -44,7 +44,12 @@ public class FontSizePropertyMaker
     }
     
     
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * Contrary to basic lengths, percentages for font-size can be resolved
+     * here already: if the property evaluates to a {@link PercentLength}, 
+     * it is immediately replaced by the resolved {@link FixedLength}.
+     */
     public Property make(PropertyList propertyList, String value, FObj fo) throws PropertyException {
         Property p = super.make(propertyList, value, fo);
         if (p instanceof PercentLength) {
@@ -68,9 +73,11 @@ public class FontSizePropertyMaker
             Property pp = propertyList.getFromParent(this.propId);
             int baseFontSize = computeClosestAbsoluteFontSize(pp.getLength().getValue());
             if (p.getEnum() == EN_LARGER) {
-                return FixedLength.getInstance((int)Math.round((baseFontSize * FONT_SIZE_GROWTH_FACTOR)), "mpt");
+                return FixedLength.getInstance(
+                        Math.round(baseFontSize * FONT_SIZE_GROWTH_FACTOR), "mpt");
             } else {
-                return FixedLength.getInstance((int)Math.round((baseFontSize / FONT_SIZE_GROWTH_FACTOR)), "mpt");
+                return FixedLength.getInstance(
+                        Math.round(baseFontSize / FONT_SIZE_GROWTH_FACTOR), "mpt");
             }
         }
         return super.convertProperty(p, propertyList, fo);
