@@ -108,7 +108,7 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
             //Margin is used
             Numeric margin = propertyList.get(marginProp).getNumeric();
             
-            Numeric v = FixedLength.getInstance(0, "mpt");
+            Numeric v = FixedLength.ZERO_FIXED_LENGTH;
             if (!propertyList.getFObj().generatesReferenceAreas()) {
                 // The inherited_value_of([start|end]-indent)
                 v = NumericOp.addition(v, propertyList.getInherited(baseMaker.propId).getNumeric());
@@ -173,7 +173,7 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
                 if (isInherited(propertyList) || !marginNearest) {
                     return null;
                 } else {
-                    return FixedLength.getInstance(0);
+                    return FixedLength.ZERO_FIXED_LENGTH;
                 }
             } else {
                 return indent;
@@ -182,7 +182,7 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
             //Margin is used
             Numeric margin = propertyList.get(marginProp).getNumeric();
             
-            Numeric v = FixedLength.getInstance(0);
+            Numeric v = FixedLength.ZERO_FIXED_LENGTH;
             if (isInherited(propertyList)) {
                 // The inherited_value_of([start|end]-indent)
                 v = NumericOp.addition(v, propertyList.getInherited(baseMaker.propId).getNumeric());
