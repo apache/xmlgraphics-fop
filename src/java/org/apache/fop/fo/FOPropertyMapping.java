@@ -66,6 +66,7 @@ import org.apache.fop.fo.properties.TextDecorationProperty;
 import org.apache.fop.fo.properties.ToBeImplementedProperty;
 import org.apache.fop.fo.properties.VerticalAlignShorthandParser;
 import org.apache.fop.fo.properties.WhiteSpaceShorthandParser;
+import org.apache.fop.fo.properties.XMLLangShorthandParser;
 
 /**
  * This class creates and returns an array of Property.Maker instances
@@ -1060,12 +1061,14 @@ public final class FOPropertyMapping implements Constants {
         m  = new StringProperty.Maker(PR_COUNTRY);
         m.setInherited(true);
         m.setDefault("none");
+        m.addShorthand(s_generics[PR_XML_LANG]);
         addPropertyMaker("country", m);
 
         // language
         m  = new StringProperty.Maker(PR_LANGUAGE);
         m.setInherited(true);
         m.setDefault("none");
+        m.addShorthand(s_generics[PR_XML_LANG]);
         addPropertyMaker("language", m);
 
         // script
@@ -2722,9 +2725,10 @@ public final class FOPropertyMapping implements Constants {
         addPropertyMaker("white-space", m);
         
         // xml:lang
-        m  = new ToBeImplementedProperty.Maker(PR_XML_LANG);
+        m  = new StringProperty.Maker(PR_XML_LANG);
         m.setInherited(true);
         m.setDefault("");
+        m.setDatatypeParser(new XMLLangShorthandParser());
         addPropertyMaker("xml:lang", m);
 
        }
