@@ -310,11 +310,13 @@ public abstract class PropertyList {
         String attributeNS;
         FopFactory factory = getFObj().getUserAgent().getFactory(); 
         for (int i = 0; i < attributes.getLength(); i++) {
-            /* convert all attributes with the same namespace as the fo element for this fObj */
+            /* convert all attributes with the same namespace as the fo element
+             * the "xml:lang" property is a special case */
             attributeNS = attributes.getURI(i);
             attributeName = attributes.getQName(i);
             attributeValue = attributes.getValue(i);
-            if (attributeNS == null || attributeNS.length() == 0) {
+            if (attributeNS == null || attributeNS.length() == 0 
+                    || "xml:lang".equals(attributeName)) {
                 convertAttributeToProperty(attributes, attributeName, attributeValue);
             } else if (!factory.isNamespaceIgnored(attributeNS)) {
                 ElementMapping mapping = factory.getElementMappingRegistry().getElementMapping(

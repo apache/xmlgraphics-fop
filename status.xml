@@ -28,6 +28,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="AD" type="add">
+        Added very basic parsing for the xml:lang shorthand.
+      </action>
       <action context="Code" dev="AD" type="fix" fixes-bug="44343">
         Fixed a bug when using relative font-size (smaller/larger) in combination
         with percentages.
