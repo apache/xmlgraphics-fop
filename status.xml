@@ -28,6 +28,11 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="AD" type="fix" fixes-bug="43705">
+        Fixed a bug when the rgb-icc() function was used either before the fo:declarations,
+        or in documents without a fo:declarations node. In such cases, the sRGB fallback
+        is now used to avoid an ugly NullPointerException.
+      </action>
       <action context="Code" dev="AD" type="add">
         Added very basic parsing for the xml:lang shorthand.
       </action>
