@@ -19,6 +19,7 @@
  
 package org.apache.fop.fo.expr;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.pagination.ColorProfile;
 import org.apache.fop.fo.pagination.Declarations;
 import org.apache.fop.fo.properties.ColorProperty;
@@ -39,6 +40,11 @@ class ICCColorFunction extends FunctionBase {
     }
     
     /** {@inheritDoc} */
+    public PercentBase getPercentBase() {
+        return new RGBColorFunction.RGBPercentBase();
+    }
+
+    /** {@inheritDoc} */
     public Property eval(Property[] args,
                          PropertyInfo pInfo) throws PropertyException {
         StringBuffer sb = new StringBuffer();
@@ -46,12 +52,24 @@ class ICCColorFunction extends FunctionBase {
         // Map color profile NCNAME to src from declarations/color-profile element
         String colorProfileName = args[3].getString();
         Declarations decls = pInfo.getFO().getRoot().getDeclarations();
-        ColorProfile cp = decls.getColorProfile(colorProfileName);
-        if (cp == null) {
-            PropertyException pe = new PropertyException("The " + colorProfileName 
-                    + " color profile was not declared");
-            pe.setPropertyInfo(pInfo);
-            throw pe;
+        ColorProfile cp = null;
+        if (decls == null) {
+            //function used in a color-specification 
+            //on a FO occurring:
+            //a) before the fo:declarations,
+            //b) or in a document without fo:declarations?
+            //=> return the sRGB fallback
+            Property[] rgbArgs = new Property[3];
+            System.arraycopy(args, 0, rgbArgs, 0, 3);
+            return new RGBColorFunction().eval(rgbArgs, pInfo);
+        } else {
+            cp = decls.getColorProfile(colorProfileName);
+            if (cp == null) {
+                PropertyException pe = new PropertyException("The " + colorProfileName 
+                        + " color profile was not declared");
+                pe.setPropertyInfo(pInfo);
+                throw pe;
+            }
         }
         String src = cp.getSrc();
         
