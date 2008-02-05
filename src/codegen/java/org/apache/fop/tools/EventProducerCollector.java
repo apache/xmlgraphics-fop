@@ -144,6 +144,13 @@ public class EventProducerCollector {
                     methodMeta.addParameter(type, p.getName());
                 }
             }
+            Type[] exceptions = method.getExceptions();
+            if (exceptions != null && exceptions.length > 0) {
+                //We only use the first declared exception because that is always thrown
+                JavaClass cl = exceptions[0].getJavaClass();
+                methodMeta.setExceptionClass(cl.getFullyQualifiedName());
+                methodMeta.setSeverity(EventSeverity.FATAL); //In case it's not set in the comments
+            }
             prodMeta.addMethod(methodMeta);
         }
         this.model.addProducer(prodMeta);

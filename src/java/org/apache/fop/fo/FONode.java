@@ -21,6 +21,7 @@ package org.apache.fop.fo;
 
 // Java
 import java.util.ListIterator;
+import java.util.NoSuchElementException;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
@@ -28,6 +29,8 @@ import org.xml.sax.helpers.LocatorImpl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.xmlgraphics.util.QName;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
@@ -374,23 +377,34 @@ public abstract class FONode implements Cloneable {
      */
     protected void tooManyNodesError(Locator loc, String nsURI, String lName) 
                 throws ValidationException {
-        throw new ValidationException(errorText(loc) + "For " + getName() 
-            + ", only one " + getNodeString(nsURI, lName) + " may be declared.", 
-            loc);
+        tooManyNodesError(loc, new QName(nsURI, lName));
     }
 
     /**
      * Helper function to standardize "too many" error exceptions
      * (e.g., two fo:declarations within fo:root)
-     * This overrloaded method helps make the caller code better self-documenting
+     * @param loc org.xml.sax.Locator object of the error (*not* parent node)
+     * @param offendingNode the qualified name of the offending node
+     * @throws ValidationException the validation error provoked by the method call
+     */
+    protected void tooManyNodesError(Locator loc, QName offendingNode) 
+                throws ValidationException {
+        FOValidationEventProducer producer = FOValidationEventProducer.Factory.create(
+                getUserAgent().getEventBroadcaster());
+        producer.tooManyNodes(this, getName(), offendingNode, loc);
+    }
+
+    /**
+     * Helper function to standardize "too many" error exceptions
+     * (e.g., two fo:declarations within fo:root)
+     * This overloaded method helps make the caller code better self-documenting
      * @param loc org.xml.sax.Locator object of the error (*not* parent node)
      * @param offendingNode incoming node that would cause a duplication.
      * @throws ValidationException the validation error provoked by the method call
      */
     protected void tooManyNodesError(Locator loc, String offendingNode) 
                 throws ValidationException {
-        throw new ValidationException(errorText(loc) + "For " + getName() 
-            + ", only one " + offendingNode + " may be declared.", loc);
+        tooManyNodesError(loc, new QName(FO_URI, offendingNode));
     }
 
     /**
@@ -402,9 +416,10 @@ public abstract class FONode implements Cloneable {
      * @throws ValidationException the validation error provoked by the method call
      */
     protected void nodesOutOfOrderError(Locator loc, String tooLateNode, 
-        String tooEarlyNode) throws ValidationException {
-        throw new ValidationException(errorText(loc) + "For " + getName() + ", " + tooLateNode 
-            + " must be declared before " + tooEarlyNode + ".", loc);
+            String tooEarlyNode) throws ValidationException {
+        FOValidationEventProducer producer = FOValidationEventProducer.Factory.create(
+                getUserAgent().getEventBroadcaster());
+        producer.nodeOutOfOrder(this, getName(), tooLateNode, tooEarlyNode, loc);
     }
     
     /**
@@ -432,9 +447,10 @@ public abstract class FONode implements Cloneable {
     protected void invalidChildError(Locator loc, String nsURI, String lName,
                 String ruleViolated)
                 throws ValidationException {
-        throw new ValidationException(errorText(loc) + getNodeString(nsURI, lName) 
-            + " is not a valid child element of " + getName() 
-            + ((ruleViolated != null) ? ": " + ruleViolated : "."), loc);
+        FOValidationEventProducer producer = FOValidationEventProducer.Factory.create(
+                getUserAgent().getEventBroadcaster());
+        //TODO Localize ruleViolated somehow!
+        producer.invalidChild(this, getName(), new QName(nsURI, lName), ruleViolated, loc);
     }
 
     /**
@@ -446,9 +462,9 @@ public abstract class FONode implements Cloneable {
      */
     protected void missingChildElementError(String contentModel)
                 throws ValidationException {
-        throw new ValidationException(errorText(locator) + getName() 
-            + " is missing child elements. \nRequired Content Model: " 
-            + contentModel, locator);
+        FOValidationEventProducer producer = FOValidationEventProducer.Factory.create(
+                getUserAgent().getEventBroadcaster());
+        producer.missingChildElement(this, getName(), contentModel, locator);
     }
 
     /**
@@ -458,8 +474,9 @@ public abstract class FONode implements Cloneable {
      */
     protected void missingPropertyError(String propertyName)
                 throws ValidationException {
-        throw new ValidationException(errorText(locator) + getName()
-            + " is missing required \"" + propertyName + "\" property.", locator);
+        FOValidationEventProducer producer = FOValidationEventProducer.Factory.create(
+                getUserAgent().getEventBroadcaster());
+        producer.missingProperty(this, getName(), propertyName, locator);
     }
 
     /**

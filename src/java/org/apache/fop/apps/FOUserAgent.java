@@ -36,6 +36,8 @@ import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 import org.apache.xmlgraphics.image.loader.impl.AbstractImageSessionContext;
 
 import org.apache.fop.Version;
+import org.apache.fop.events.DefaultEventBroadcaster;
+import org.apache.fop.events.EventBroadcaster;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.pdf.PDFEncryptionParams;
 import org.apache.fop.render.Renderer;
@@ -90,6 +92,7 @@ public class FOUserAgent {
     private Renderer rendererOverride = null;
     private FOEventHandler foEventHandlerOverride = null;
     private boolean locatorEnabled = true; // true by default (for error messages).
+    private EventBroadcaster eventBroadcaster = new DefaultEventBroadcaster();
     
     /** Producer:  Metadata element for the system/software that produces
      * the document. (Some renderers can store this in the document.)
@@ -562,6 +565,16 @@ public class FOUserAgent {
      */
     public boolean isLocatorEnabled() {
         return locatorEnabled;
+    }
+
+    /**
+     * Returns the event broadcaster that control events sent inside a processing run. Clients
+     * can register event listeners with the event broadcaster to listen for events that occur
+     * while a document is being processed.
+     * @return the event broadcaster.
+     */
+    public EventBroadcaster getEventBroadcaster() {
+        return this.eventBroadcaster;
     }
 
 }

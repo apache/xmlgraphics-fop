@@ -37,6 +37,7 @@ import org.apache.fop.events.model.EventMethodModel;
 import org.apache.fop.events.model.EventModel;
 import org.apache.fop.events.model.EventModelParser;
 import org.apache.fop.events.model.EventProducerModel;
+import org.apache.fop.events.model.EventSeverity;
 
 public class DefaultEventBroadcaster implements EventBroadcaster {
 
@@ -138,6 +139,10 @@ public class DefaultEventBroadcaster implements EventBroadcaster {
                         }
                         Event ev = new Event(args[0], eventID, methodModel.getSeverity(), params);
                         broadcastEvent(ev);
+                        if (methodModel.getSeverity() == EventSeverity.FATAL) {
+                            EventExceptionManager.throwException(ev,
+                                    methodModel.getExceptionClass());
+                        }
                         return null;
                     }
                 });

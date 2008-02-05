@@ -35,6 +35,7 @@ public class EventMethodModel implements Serializable, XMLizable {
     private String methodName;
     private EventSeverity severity;
     private List params = new java.util.ArrayList();
+    private String exceptionClass;
     
     public EventMethodModel(String methodName, EventSeverity severity) {
         this.methodName = methodName;
@@ -71,11 +72,22 @@ public class EventMethodModel implements Serializable, XMLizable {
         return Collections.unmodifiableList(this.params);
     }
     
+    public void setExceptionClass(String exceptionClass) {
+        this.exceptionClass = exceptionClass;
+    }
+    
+    public String getExceptionClass() {
+        return this.exceptionClass;
+    }
+    
     /** {@inheritDoc} */
     public void toSAX(ContentHandler handler) throws SAXException {
         AttributesImpl atts = new AttributesImpl();
         atts.addAttribute(null, "name", "name", "CDATA", getMethodName());
         atts.addAttribute(null, "severity", "severity", "CDATA", getSeverity().getName());
+        if (getExceptionClass() != null) {
+            atts.addAttribute(null, "exception", "exception", "CDATA", getExceptionClass());
+        }
         String elName = "method";
         handler.startElement(null, elName, elName, atts);
         Iterator iter = this.params.iterator();

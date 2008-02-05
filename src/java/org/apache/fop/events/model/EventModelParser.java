@@ -102,8 +102,12 @@ public class EventModelParser {
                     objectStack.push(producer);
                 } else if ("method".equals(localName)) {
                     EventSeverity severity = EventSeverity.valueOf(attributes.getValue("severity"));
+                    String ex = attributes.getValue("exception");
                     EventMethodModel method = new EventMethodModel(
                             attributes.getValue("name"), severity);
+                    if (ex != null && ex.length() > 0) {
+                        method.setExceptionClass(ex);
+                    }
                     EventProducerModel parent = (EventProducerModel)objectStack.peek();
                     parent.addMethod(method);
                     objectStack.push(method);

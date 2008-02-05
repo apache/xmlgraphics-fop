@@ -19,6 +19,7 @@
 
 package org.apache.fop.events;
 
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import org.apache.fop.util.AdvancedMessageFormat;
@@ -36,7 +37,15 @@ public class EventFormatter {
         return format(event, defaultBundle);
     }
     
-    public static String format(Event event, ResourceBundle bundle) {
+    public static String format(Event event, Locale locale) {
+        ResourceBundle bundle = XMLResourceBundle.getXMLBundle(
+                EventFormatter.class.getName(),
+                locale,
+                EventFormatter.class.getClassLoader());
+        return format(event, bundle);
+    }
+
+    private static String format(Event event, ResourceBundle bundle) {
         String template = bundle.getString(event.getEventID());
         return format(event, template);
     }
