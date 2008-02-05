@@ -23,6 +23,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.xml.sax.Locator;
+
 /**
  * Formats messages based on a template and with a set of named parameters. This is similar to
  * {@link java.util.MessageFormat} but uses named parameters and supports conditional sub-groups.
@@ -30,11 +32,21 @@ import java.util.Map;
  * Example:
  * </p>
  * <p><code>Missing field "{fieldName}"[ at location: {location}]!</code></p>
+ * <ul>
+ *   <li>Curly brackets ("{}") are used for fields.</li>
+ *   <li>Square brackets ("[]") are used to delimit conditional sub-groups. A sub-group is
+ *     conditional when all fields inside the sub-group have a null value. In the case, everything
+ *     between the brackets is skipped.</li>
+ * </ul>
  */
 public class AdvancedMessageFormat {
 
     private CompositePart rootPart;
     
+    /**
+     * Construct a new message format.
+     * @param pattern the message format pattern.
+     */
     public AdvancedMessageFormat(CharSequence pattern) {
         parsePattern(pattern);
     }
@@ -45,7 +57,8 @@ public class AdvancedMessageFormat {
         parseInnerPattern(pattern, rootPart, sb, 0);
     }
     
-    private int parseInnerPattern(CharSequence pattern, CompositePart parent, StringBuffer sb, int start) {
+    private int parseInnerPattern(CharSequence pattern, CompositePart parent,
+            StringBuffer sb, int start) {
         assert sb.length() == 0;
         int i = start;
         int len = pattern.length();
@@ -123,6 +136,11 @@ public class AdvancedMessageFormat {
         boolean isGenerated(Map params);
     }
     
+    private interface ObjectFormatter {
+        void format(StringBuffer sb, Object obj);
+        boolean supportsObject(Object obj);
+    }
+    
     private class TextPart implements Part {
         
         private String text;
@@ -145,7 +163,13 @@ public class AdvancedMessageFormat {
         }
     }
     
-    private class SimpleFieldPart implements Part {
+    private static class SimpleFieldPart implements Part {
+        
+        private static final List OBJECT_FORMATTERS = new java.util.ArrayList();
+        
+        static {
+            OBJECT_FORMATTERS.add(new LocatorFormatter());
+        }
         
         private String fieldName;
         
@@ -159,13 +183,23 @@ public class AdvancedMessageFormat {
                         "Message pattern contains unsupported field name: " + fieldName);
             }
             Object obj = params.get(fieldName);
-            String value;
-            if (obj == null) {
-                value = "";
+            if (obj instanceof String) {
+                sb.append(obj);
             } else {
-                value = obj.toString();
+                boolean handled = false;
+                Iterator iter = OBJECT_FORMATTERS.iterator();
+                while (iter.hasNext()) {
+                    ObjectFormatter formatter = (ObjectFormatter)iter.next();
+                    if (formatter.supportsObject(obj)) {
+                        formatter.format(sb, obj);
+                        handled = true;
+                        break;
+                    }
+                }
+                if (!handled) {
+                    sb.append(obj.toString());
+                }
             }
-            sb.append(value);
         }
 
         public boolean isGenerated(Map params) {
@@ -219,5 +253,18 @@ public class AdvancedMessageFormat {
         public String toString() {
             return this.parts.toString();
         }
+    }
+    
+    private static class LocatorFormatter implements ObjectFormatter {
+
+        public void format(StringBuffer sb, Object obj) {
+            Locator loc = (Locator)obj;
+            sb.append(loc.getLineNumber()).append(":").append(loc.getColumnNumber());
+        }
+
+        public boolean supportsObject(Object obj) {
+            return obj instanceof Locator;
+        }
+        
     }
 }

@@ -23,6 +23,8 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.xml.sax.helpers.LocatorImpl;
+
 /**
  * Tests for EventFormatter.
  */
@@ -53,6 +55,24 @@ public class AdvancedMessageFormatTestCase extends TestCase {
         format = new AdvancedMessageFormat(pattern);
         msg = format.format(params);
         assertEquals("Testing {escaped [characters], now a normal field fo:external-graphic!", msg);
+    }
+    
+    public void testObjectFormatting() throws Exception {
+        String msg;
+        AdvancedMessageFormat format;
+        
+        String pattern
+            = "Here's a Locator: {locator}";
+        format = new AdvancedMessageFormat(pattern);
+
+        Map params = new java.util.HashMap();
+        LocatorImpl loc = new LocatorImpl();
+        loc.setColumnNumber(7);
+        loc.setLineNumber(12);
+        params.put("locator", loc);
+        
+        msg = format.format(params);
+        assertEquals("Here\'s a Locator: 12:7", msg);
     }
     
 }
