@@ -406,7 +406,8 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
         
     }
     
-    private final QName FOX_TRANSFORM = new QName(ExtensionElementMapping.URI, "fox:transform");
+    private static final QName FOX_TRANSFORM
+            = new QName(ExtensionElementMapping.URI, "fox:transform");
     
     /** {@inheritDoc} */
     protected void renderBlockViewport(BlockViewport bv, List children) {
