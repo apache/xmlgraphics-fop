@@ -56,6 +56,8 @@
     </fo:root>
   </fo>
   <checks>
+    <eval expected="0" xpath="//flow/@bpd"/> <!-- all blocks are absolutely positioned -->
+    
     <!-- first block-container -->
     <true xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@is-viewport-area"/>
     <eval expected="[1.0 0.0 0.0 1.0 0.0 0.0]" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@ctm"/>

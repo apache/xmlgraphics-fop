@@ -65,7 +65,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
     private int vpContentBPD;
     
     // When viewport should grow with the content.
-    private boolean autoHeight = true; 
+    private boolean autoHeight = true;
+    private boolean inlineElementList = false;
     
     /* holds the (one-time use) fo:block space-before
     and -after properties.  Large fo:blocks are split
@@ -196,6 +197,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             return getNextKnuthElementsAbsolute(context, alignment);
         }
         
+        boolean switchedProgressionDirection
+            = (getBlockContainerFO().getReferenceOrientation() % 180 != 0);
         autoHeight = false;
         //boolean rotated = (getBlockContainerFO().getReferenceOrientation() % 180 != 0);
         int maxbpd = context.getStackLimit().opt;
@@ -203,9 +206,13 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         if (height.getEnum() == EN_AUTO 
                 || (!height.isAbsolute() && getAncestorBlockAreaBPD() <= 0)) {
             //auto height when height="auto" or "if that dimension is not specified explicitly 
-            //(i.e., it depends on content's blockprogression-dimension)" (XSL 1.0, 7.14.1)
+            //(i.e., it depends on content's block-progression-dimension)" (XSL 1.0, 7.14.1)
             allocBPD = maxbpd;
             autoHeight = true;
+            if (getBlockContainerFO().getReferenceOrientation() == 0) {
+                //Cannot easily inline element list when ref-or="180" 
+                inlineElementList = true;
+            }
         } else {
             allocBPD = height.getValue(this); //this is the content-height
             allocBPD += getBPIndents();
@@ -229,19 +236,14 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         contentRectOffsetY += getBlockContainerFO()
                 .getCommonBorderPaddingBackground().getPaddingBefore(false, this);
         
-        Rectangle2D rect = new Rectangle2D.Double(
-                contentRectOffsetX, contentRectOffsetY, 
-                getContentAreaIPD(), getContentAreaBPD());
-        relDims = new FODimension(0, 0);
-        absoluteCTM = CTM.getCTMandRelDims(getBlockContainerFO().getReferenceOrientation(),
-                getBlockContainerFO().getWritingMode(), rect, relDims);
+        updateRelDims(contentRectOffsetX, contentRectOffsetY, autoHeight);
 
         int availableIPD = referenceIPD - getIPIndents();
-        if (rect.getWidth() > availableIPD) {
+        if (getContentAreaIPD() > availableIPD) {
             log.warn(FONode.decorateWithContextInfo(
                     "The extent in inline-progression-direction (width) of a block-container is"
                     + " bigger than the available space (" 
-                    + rect.getWidth() + "mpt > " + context.getRefIPD() + "mpt)", 
+                    + getContentAreaIPD() + "mpt > " + context.getRefIPD() + "mpt)", 
                     getBlockContainerFO()));
         }
         
@@ -268,7 +270,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         addKnuthElementsForBorderPaddingBefore(returnList, !firstVisibleMarkServed);
         firstVisibleMarkServed = true;
 
-        if (autoHeight) {
+        if (autoHeight && inlineElementList) {
             //Spaces, border and padding to be repeated at each break
             addPendingMarks(context);
 
@@ -356,6 +358,16 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             BlockContainerBreaker breaker = new BlockContainerBreaker(this, range);
             breaker.doLayout(relDims.bpd, autoHeight);
             boolean contentOverflows = breaker.isOverflow();
+            if (autoHeight) {
+                //Update content BPD now that it is known
+                int newHeight = breaker.deferredAlg.totalWidth;
+                if (switchedProgressionDirection) {
+                    setContentAreaIPD(newHeight);
+                } else {
+                    vpContentBPD = newHeight;
+                }
+                updateRelDims(contentRectOffsetX, contentRectOffsetY, false);
+            }
 
             Position bcPosition = new BlockContainerPosition(this, breaker);
             returnList.add(new KnuthBox(vpContentBPD, notifyPos(bcPosition), false));
@@ -385,6 +397,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
     private LinkedList getNextKnuthElementsAbsolute(LayoutContext context, int alignment) {
         autoHeight = false;
 
+        boolean switchedProgressionDirection
+            = (getBlockContainerFO().getReferenceOrientation() % 180 != 0);
         Point offset = getAbsOffset();
         int allocBPD, allocIPD;
         if (height.getEnum() == EN_AUTO
@@ -432,7 +446,9 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             } else {
                 int maxbpd = context.getStackLimit().opt;
                 allocBPD = maxbpd;
-                autoHeight = true;
+                if (!switchedProgressionDirection) {
+                    autoHeight = true;
+                }
             }
         } else {
             allocBPD = height.getValue(this); //this is the content-height
@@ -474,6 +490,9 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                     */
                     allocIPD = 0;
                 }
+                if (switchedProgressionDirection) {
+                    autoHeight = true;
+                }
             }
         } else {
             allocIPD = width.getValue(this); //this is the content-width
@@ -483,29 +502,29 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         vpContentBPD = allocBPD - getBPIndents();
         setContentAreaIPD(allocIPD - getIPIndents());
         
-        double contentRectOffsetX = 0;
-        double contentRectOffsetY = 0;
-        
-        Rectangle2D rect = new Rectangle2D.Double(
-                contentRectOffsetX, contentRectOffsetY, 
-                getContentAreaIPD(), vpContentBPD);
-        relDims = new FODimension(0, 0);
-        absoluteCTM = CTM.getCTMandRelDims(
-                getBlockContainerFO().getReferenceOrientation(),
-                getBlockContainerFO().getWritingMode(), 
-                rect, relDims);
+        updateRelDims(0, 0, autoHeight);
 
         MinOptMax range = new MinOptMax(relDims.ipd);
         BlockContainerBreaker breaker = new BlockContainerBreaker(this, range);
         breaker.doLayout((autoHeight ? 0 : relDims.bpd), autoHeight);
         boolean contentOverflows = breaker.isOverflow();
+        if (autoHeight) {
+            //Update content BPD now that it is known
+            int newHeight = breaker.deferredAlg.totalWidth;
+            if (switchedProgressionDirection) {
+                setContentAreaIPD(newHeight);
+            } else {
+                vpContentBPD = newHeight;
+            }
+            updateRelDims(0, 0, false);
+        }
         LinkedList returnList = new LinkedList();
         if (!breaker.isEmpty()) {
             Position bcPosition = new BlockContainerPosition(this, breaker);
             returnList.add(new KnuthBox(0, notifyPos(bcPosition), false));
     
             //TODO Maybe check for page overflow when autoHeight=true
-            if (!autoHeight & (contentOverflows/*usedBPD > relDims.bpd*/)) {
+            if (!autoHeight & (contentOverflows)) {
                 log.warn("Contents overflow block-container viewport: clipping");
                 if (getBlockContainerFO().getOverflow() == EN_ERROR_IF_OVERFLOW) {
                     //TODO Throw layout exception
@@ -515,6 +534,18 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
 
         setFinished(true);
         return returnList;
+    }
+
+    private void updateRelDims(double xOffset, double yOffset, boolean skipAutoHeight) {
+        Rectangle2D rect = new Rectangle2D.Double(
+                xOffset, yOffset, 
+                getContentAreaIPD(),
+                this.vpContentBPD);
+        relDims = new FODimension(0, 0);
+        absoluteCTM = CTM.getCTMandRelDims(
+                getBlockContainerFO().getReferenceOrientation(),
+                getBlockContainerFO().getWritingMode(), 
+                rect, relDims);
     }
     
     private class BlockContainerPosition extends NonLeafPosition {
@@ -854,13 +885,18 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
      */
     public Area getParentArea(Area childArea) {
         if (referenceArea == null) {
-            viewportBlockArea = new BlockViewport();
+            boolean switchedProgressionDirection
+                = (getBlockContainerFO().getReferenceOrientation() % 180 != 0);
+            boolean allowBPDUpdate = autoHeight && !switchedProgressionDirection;
+
+            viewportBlockArea = new BlockViewport(allowBPDUpdate);
             viewportBlockArea.addTrait(Trait.IS_VIEWPORT_AREA, Boolean.TRUE);
+            
             viewportBlockArea.setIPD(getContentAreaIPD());
-            if (autoHeight) {
+            if (allowBPDUpdate) {
                 viewportBlockArea.setBPD(0);
             } else {
-                viewportBlockArea.setBPD(getContentAreaBPD());
+                viewportBlockArea.setBPD(this.vpContentBPD);
             }
             transferForeignAttributes(viewportBlockArea);
             
@@ -941,16 +977,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                 getBlockContainerFO().getCommonBorderPaddingBackground(),
                 this);
         
-        // Fake a 0 height for absolute positioned blocks.
-        int saveBPD = viewportBlockArea.getBPD();
-        if (viewportBlockArea.getPositioning() == Block.ABSOLUTE) {
-            viewportBlockArea.setBPD(0);
-        }
         super.flush();
-        // Restore the right height.
-        if (viewportBlockArea.getPositioning() == Block.ABSOLUTE) {
-            viewportBlockArea.setBPD(saveBPD);
-        }
     }
 
     /** {@inheritDoc} */
