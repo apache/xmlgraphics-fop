@@ -34,6 +34,15 @@ public class BlockViewport extends Block {
      * Create a new block viewport area.
      */
     public BlockViewport() {
+        this(false);
+    }
+
+    /**
+     * Create a new block viewport area.
+     * @param allowBPDUpdate true allows the BPD to be updated when children are added
+     */
+    public BlockViewport(boolean allowBPDUpdate) {
+        this.allowBPDUpdate = allowBPDUpdate;
     }
 
     /**
