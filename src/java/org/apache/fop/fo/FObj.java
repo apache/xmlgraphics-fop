@@ -30,11 +30,12 @@ import java.util.Set;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 
+import org.apache.xmlgraphics.util.QName;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.properties.PropertyMaker;
-import org.apache.fop.util.QName;
 
 /**
  * Base class for representation of formatting objects and their processing.

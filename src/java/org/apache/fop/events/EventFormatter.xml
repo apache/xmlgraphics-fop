@@ -27,4 +27,7 @@ Required content model: {contentModel}[ See position {loc}.]</message>
 Any reference to it will be considered a reference to the first occurrence in the document.[ See position {loc}.]</message>
     <message key="org.apache.fop.fo.FOValidationEventProducer.markerNotInitialChild">fo:marker must be an initial child: {mcname}[ (See position {loc}.)]</message>
     <message key="org.apache.fop.fo.FOValidationEventProducer.markerNotUniqueForSameParent">fo:marker "marker-class-name" must be unique for same parent: {mcname}[ (See position {loc}.)]</message>
+    <message key="org.apache.fop.fo.FOValidationEventProducer.invalidProperty">Invalid property encountered on "{elementName}": {attr}[ (See position {loc}.)]</message>
+    <message key="org.apache.fop.fo.FOValidationEventProducer.invalidPropertyWarning">Invalid property ignored on "{elementName}": {attr}[ (See position {loc}.)]</message>
+    <message key="org.apache.fop.fo.FOValidationEventProducer.invalidPropertyValue">Invalid property value encountered in {propName}="{propValue}": {e}[ (See position {loc}.)]</message>
 </catalogue>

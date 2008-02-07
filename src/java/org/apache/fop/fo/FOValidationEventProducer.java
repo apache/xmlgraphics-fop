@@ -25,6 +25,7 @@ import org.apache.xmlgraphics.util.QName;
 
 import org.apache.fop.events.EventBroadcaster;
 import org.apache.fop.events.EventProducer;
+import org.apache.fop.fo.expr.PropertyException;
 
 /**
  * Event producer interface for XSL-FO validation messages.
@@ -148,5 +149,42 @@ public interface FOValidationEventProducer extends EventProducer {
      */
     void markerNotUniqueForSameParent(Object source, String elementName,
             String mcname, Locator loc);
+
+    /**
+     * An invalid property was found.
+     * @param source the event source
+     * @param elementName the name of the context node
+     * @param attr the invalid attribute
+     * @param loc the location of the error or null
+     * @throws ValidationException the validation error provoked by the method call
+     * @event.severity FATAL
+     */
+    void invalidProperty(Object source, String elementName, QName attr,
+            Locator loc) throws ValidationException;
+
+    /**
+     * An invalid property was encountered.
+     * @param source the event source
+     * @param elementName the name of the context node
+     * @param attr the invalid attribute
+     * @param loc the location of the error or null
+     * @event.severity WARN
+     */
+    void invalidPropertyWarning(Object source, String elementName, QName attr,
+            Locator loc);
+
+    /**
+     * An invalid property value was encountered.
+     * @param source the event source
+     * @param elementName the name of the context node
+     * @param propName the property name
+     * @param propValue the property value
+     * @param e the property exception caused by the invalid value
+     * @param loc the location of the error or null
+     * @event.severity ERROR
+     */
+    void invalidPropertyValue(Object source, String elementName,
+            String propName, String propValue, PropertyException e,
+            Locator loc);
 
 }

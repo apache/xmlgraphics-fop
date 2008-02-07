@@ -22,7 +22,7 @@ package org.apache.fop.fo;
 // Java
 import java.util.HashMap;
 
-import org.apache.fop.util.QName;
+import org.apache.xmlgraphics.util.QName;
 
 /**
  * Element mapping class for all XSL-FO elements.

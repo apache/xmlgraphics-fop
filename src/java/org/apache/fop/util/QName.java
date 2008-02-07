@@ -19,22 +19,15 @@
 
 package org.apache.fop.util;
 
-import java.io.Serializable;
-
 /**
  * Represents a qualified name of an XML element or an XML attribute.
  * <p>
  * Note: This class allows to carry a namespace prefix but it is not used in the equals() and 
  * hashCode() methods.
  */
-public class QName implements Serializable {
+public class QName extends org.apache.xmlgraphics.util.QName {
 
     private static final long serialVersionUID = -5225376740044770690L;
-    
-    private String namespaceURI;
-    private String localName;
-    private String prefix;
-    private int hashCode;
     
     /**
      * Main constructor.
@@ -43,16 +36,7 @@ public class QName implements Serializable {
      * @param localName the local name
      */
     public QName(String namespaceURI, String prefix, String localName) {
-        if (localName == null) {
-            throw new NullPointerException("Parameter localName must not be null");
-        }
-        if (localName.length() == 0) {
-            throw new IllegalArgumentException("Parameter localName must not be empty");
-        }
-        this.namespaceURI = namespaceURI;
-        this.prefix = prefix;
-        this.localName = localName;
-        this.hashCode = toHashString().hashCode();
+        super(namespaceURI, prefix, localName);
     }
     
     /**
@@ -61,78 +45,7 @@ public class QName implements Serializable {
      * @param qName the qualified name
      */
     public QName(String namespaceURI, String qName) {
-        if (qName == null) {
-            throw new NullPointerException("Parameter localName must not be null");
-        }
-        if (qName.length() == 0) {
-            throw new IllegalArgumentException("Parameter localName must not be empty");
-        }
-        this.namespaceURI = namespaceURI;
-        int p = qName.indexOf(':');
-        if (p > 0) {
-            this.prefix = qName.substring(0, p);
-            this.localName = qName.substring(p + 1);
-        } else {
-            this.prefix = null;
-            this.localName = qName;
-        }
-        this.hashCode = toHashString().hashCode();
+        super(namespaceURI, qName);
     }
     
-    /** @return the namespace URI */
-    public String getNamespaceURI() {
-        return this.namespaceURI;
-    }
-    
-    /** @return the namespace prefix */
-    public String getPrefix() {
-        return this.prefix;
-    }
-    
-    /** @return the local name */
-    public String getLocalName() {
-        return this.localName;
-    }
-    
-    /** @return the fully qualified name */
-    public String getQName() {
-        return getPrefix() != null ? getPrefix() + ':' + getLocalName() : getLocalName();
-    }
-
-    /** {@inheritDoc} */
-    public int hashCode() {
-        return this.hashCode;
-    }
-
-    /** {@inheritDoc} */
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        } else if (obj == this) {
-            return true;
-        } else {
-            if (obj instanceof QName) {
-                QName other = (QName)obj;
-                if ((getNamespaceURI() == null && other.getNamespaceURI() == null)
-                        || getNamespaceURI().equals(other.getNamespaceURI())) {
-                    return getLocalName().equals(other.getLocalName());
-                }
-            }
-        }
-        return false;
-    }
-
-    /** {@inheritDoc} */
-    public String toString() {
-        return prefix != null
-                ? (prefix + ":" + localName)
-                : toHashString();
-    }
-
-    private String toHashString() {
-        return (namespaceURI != null 
-                ? ("{" + namespaceURI + "}" + localName) 
-                : localName);
-    }
-
 }
