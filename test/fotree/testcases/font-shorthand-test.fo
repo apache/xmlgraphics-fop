@@ -29,7 +29,7 @@
         <test:assert property="font-size" expected="10000mpt"/>
         <test:assert property="font-weight" expected="700" />
         <test:assert property="font-style" expected="NORMAL" />
-        <test:assert property="line-height.optimum" expected="120.0%" />
+        <test:assert property="line-height.optimum" expected="12000mpt" />
         <test:assert property="font-variant" expected="NORMAL" />
       </fo:block>
       <fo:block font="italic small-caps 14pt 'Times New Roman', serif">
@@ -37,7 +37,7 @@
         <test:assert property="font-size" expected="14000mpt"/>
         <test:assert property="font-weight" expected="400" />
         <test:assert property="font-style" expected="ITALIC" />
-        <test:assert property="line-height.optimum" expected="120.0%" />
+        <test:assert property="line-height.optimum" expected="16800mpt" />
         <test:assert property="font-variant" expected="SMALL_CAPS" />
         Test font shorthand
       </fo:block>
@@ -46,7 +46,7 @@
         <test:assert property="font-size" expected="14000mpt"/>
         <test:assert property="font-weight" expected="700" />
         <test:assert property="font-style" expected="ITALIC" />
-        <test:assert property="line-height.optimum" expected="80.0%" />
+        <test:assert property="line-height.optimum" expected="11200mpt" />
         <test:assert property="font-variant" expected="NORMAL" />
         Test font shorthand
       </fo:block>
@@ -55,7 +55,7 @@
         <test:assert property="font-size" expected="20736mpt"/>
         <test:assert property="font-weight" expected="400" />
         <test:assert property="font-style" expected="NORMAL" />
-        <test:assert property="line-height.optimum" expected="140.0%" />
+        <test:assert property="line-height.optimum" expected="29030mpt" />
         <test:assert property="font-variant" expected="NORMAL" />
         Test font shorthand
       </fo:block>
@@ -65,7 +65,7 @@
           <test:assert property="font-size" expected="14000mpt"/>
           <test:assert property="font-weight" expected="700" />
           <test:assert property="font-style" expected="ITALIC" />
-          <test:assert property="line-height.optimum" expected="80.0%" />
+          <test:assert property="line-height.optimum" expected="11200mpt" />
           <test:assert property="font-variant" expected="NORMAL" />
           Test font shorthand inheritance
         </fo:block>
