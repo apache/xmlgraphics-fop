@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<?xml version="1.0" encoding="UTF-8"?><!--
     Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with
     this work for additional information regarding copyright ownership.
@@ -23,4 +22,9 @@
     <message key="org.apache.fop.fo.FOValidationEventProducer.missingChildElement">"{elementName}" is missing child elements.
 Required content model: {contentModel}[ See position {loc}.]</message>
     <message key="org.apache.fop.fo.FOValidationEventProducer.missingProperty">Element "{elementName}" is missing required property "{propertyName}"![ See position {loc}.]</message>
+    <message key="org.apache.fop.fo.FOValidationEventProducer.idNotUnique">Property ID "{id}" (found on "{elementName}") previously used; ID values must be unique within a document![ See position {loc}.]</message>
+    <message key="org.apache.fop.fo.FOValidationEventProducer.idNotUniqueWarning">Found non-unique ID "{id}" on "{elementName}".
+Any reference to it will be considered a reference to the first occurrence in the document.[ See position {loc}.]</message>
+    <message key="org.apache.fop.fo.FOValidationEventProducer.markerNotInitialChild">fo:marker must be an initial child: {mcname}[ (See position {loc}.)]</message>
+    <message key="org.apache.fop.fo.FOValidationEventProducer.markerNotUniqueForSameParent">fo:marker "marker-class-name" must be unique for same parent: {mcname}[ (See position {loc}.)]</message>
 </catalogue>

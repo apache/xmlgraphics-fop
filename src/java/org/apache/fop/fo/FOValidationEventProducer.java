@@ -26,43 +26,15 @@ import org.apache.xmlgraphics.util.QName;
 import org.apache.fop.events.EventBroadcaster;
 import org.apache.fop.events.EventProducer;
 
+/**
+ * Event producer interface for XSL-FO validation messages.
+ */
 public interface FOValidationEventProducer extends EventProducer {
 
     /**
-     * Too many child nodes.
-     * @param source
-     * @param source the event source
-     * @param elementName the name of the context node
-     * @param offendingNode the offending node
-     * @param loc the location of the error or null
-     * @event.severity FATAL
-     */
-    void tooManyNodes(Object source, String elementName, QName offendingNode,
-            Locator loc) throws ValidationException;
-    
-    void nodeOutOfOrder(Object source, String elementName, String tooLateNode, String tooEarlyNode,
-            Locator loc) throws ValidationException;
-    
-    void invalidChild(Object source, String elementName, QName offendingNode, String ruleViolated,
-            Locator loc) throws ValidationException;
-
-    void missingChildElement(Object source, String elementName, String contentModel,
-            Locator locator) throws ValidationException;
-
-    /**
-     * An element is missing a required property.
-     * @param source the event source
-     * @param elementName the name of the context node
-     * @param propertyName the name of the missing property
-     * @event.severity FATAL
-     */
-    void missingProperty(Object source, String elementName, String propertyName,
-            Locator loc) throws ValidationException;
-    
-    /**
      * Factory class for the event producer.
      */
-    public class Factory {
+    class Factory {
         
         /**
          * Creates a new event producer.
@@ -75,6 +47,106 @@ public interface FOValidationEventProducer extends EventProducer {
         }
     }
 
-
+    /**
+     * Too many child nodes.
+     * @param source the event source
+     * @param elementName the name of the context node
+     * @param offendingNode the offending node
+     * @param loc the location of the error or null
+     * @throws ValidationException the validation error provoked by the method call 
+     * @event.severity FATAL
+     */
+    void tooManyNodes(Object source, String elementName, QName offendingNode,
+            Locator loc) throws ValidationException;
     
+    /**
+     * The node order is wrong.
+     * @param source the event source
+     * @param elementName the name of the context node
+     * @param tooLateNode string name of node that should be earlier in document
+     * @param tooEarlyNode string name of node that should be later in document
+     * @param loc the location of the error or null
+     * @throws ValidationException the validation error provoked by the method call
+     */
+    void nodeOutOfOrder(Object source, String elementName, String tooLateNode, String tooEarlyNode,
+            Locator loc) throws ValidationException;
+    
+    /**
+     * An invalid child was encountered.
+     * @param source the event source
+     * @param elementName the name of the context node
+     * @param offendingNode the offending node
+     * @param ruleViolated the rule that was violated or null
+     * @param loc the location of the error or null
+     * @throws ValidationException the validation error provoked by the method call
+     */
+    void invalidChild(Object source, String elementName, QName offendingNode, String ruleViolated,
+            Locator loc) throws ValidationException;
+
+    /**
+     * A required child element is missing.
+     * @param source the event source
+     * @param elementName the name of the context node
+     * @param contentModel the expected content model
+     * @param loc the location of the error or null
+     * @throws ValidationException the validation error provoked by the method call
+     */
+    void missingChildElement(Object source, String elementName, String contentModel,
+            Locator loc) throws ValidationException;
+
+    /**
+     * An element is missing a required property.
+     * @param source the event source
+     * @param elementName the name of the context node
+     * @param propertyName the name of the missing property
+     * @param loc the location of the error or null
+     * @throws ValidationException the validation error provoked by the method call
+     * @event.severity FATAL
+     */
+    void missingProperty(Object source, String elementName, String propertyName,
+            Locator loc) throws ValidationException;
+    
+    /**
+     * An id was used twice in a document.
+     * @param source the event source
+     * @param elementName the name of the context node
+     * @param id the id that was reused
+     * @param loc the location of the error or null
+     * @throws ValidationException the validation error provoked by the method call
+     * @event.severity FATAL
+     */
+    void idNotUnique(Object source, String elementName, String id,
+            Locator loc) throws ValidationException;
+
+    /**
+     * An id was used twice in a document.
+     * @param source the event source
+     * @param elementName the name of the context node
+     * @param id the id that was reused
+     * @param loc the location of the error or null
+     * @event.severity WARN
+     */
+    void idNotUniqueWarning(Object source, String elementName, String id, Locator loc);
+
+    /**
+     * A marker is not an initial child on a node.
+     * @param source the event source
+     * @param elementName the name of the context node
+     * @param mcname the marker class name
+     * @param loc the location of the error or null
+     * @event.severity ERROR
+     */
+    void markerNotInitialChild(Object source, String elementName, String mcname, Locator loc);
+
+    /**
+     * A marker class name is not unique within the same parent.
+     * @param source the event source
+     * @param elementName the name of the context node
+     * @param mcname the marker class name
+     * @param loc the location of the error or null
+     * @event.severity ERROR
+     */
+    void markerNotUniqueForSameParent(Object source, String elementName,
+            String mcname, Locator loc);
+
 }

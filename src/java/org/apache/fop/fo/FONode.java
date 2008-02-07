@@ -346,6 +346,15 @@ public abstract class FONode implements Cloneable {
     }
 
     /**
+     * Returns an instance of the FOValidationEventProducer.
+     * @return an event producer for FO validation
+     */
+    protected FOValidationEventProducer getFOValidationEventProducer() {
+        return FOValidationEventProducer.Factory.create(
+                getUserAgent().getEventBroadcaster());
+    }
+    
+    /**
      * Helper function to standardize property error exceptions
      * (e.g., not specifying either an internal- or an external-destination
      * property for an FO:link)
@@ -389,9 +398,7 @@ public abstract class FONode implements Cloneable {
      */
     protected void tooManyNodesError(Locator loc, QName offendingNode) 
                 throws ValidationException {
-        FOValidationEventProducer producer = FOValidationEventProducer.Factory.create(
-                getUserAgent().getEventBroadcaster());
-        producer.tooManyNodes(this, getName(), offendingNode, loc);
+        getFOValidationEventProducer().tooManyNodes(this, getName(), offendingNode, loc);
     }
 
     /**
@@ -417,9 +424,7 @@ public abstract class FONode implements Cloneable {
      */
     protected void nodesOutOfOrderError(Locator loc, String tooLateNode, 
             String tooEarlyNode) throws ValidationException {
-        FOValidationEventProducer producer = FOValidationEventProducer.Factory.create(
-                getUserAgent().getEventBroadcaster());
-        producer.nodeOutOfOrder(this, getName(), tooLateNode, tooEarlyNode, loc);
+        getFOValidationEventProducer().nodeOutOfOrder(this, getName(), tooLateNode, tooEarlyNode, loc);
     }
     
     /**
@@ -447,10 +452,9 @@ public abstract class FONode implements Cloneable {
     protected void invalidChildError(Locator loc, String nsURI, String lName,
                 String ruleViolated)
                 throws ValidationException {
-        FOValidationEventProducer producer = FOValidationEventProducer.Factory.create(
-                getUserAgent().getEventBroadcaster());
         //TODO Localize ruleViolated somehow!
-        producer.invalidChild(this, getName(), new QName(nsURI, lName), ruleViolated, loc);
+        getFOValidationEventProducer().invalidChild(this, getName(),
+                new QName(nsURI, lName), ruleViolated, loc);
     }
 
     /**
@@ -462,9 +466,7 @@ public abstract class FONode implements Cloneable {
      */
     protected void missingChildElementError(String contentModel)
                 throws ValidationException {
-        FOValidationEventProducer producer = FOValidationEventProducer.Factory.create(
-                getUserAgent().getEventBroadcaster());
-        producer.missingChildElement(this, getName(), contentModel, locator);
+        getFOValidationEventProducer().missingChildElement(this, getName(), contentModel, locator);
     }
 
     /**
@@ -474,9 +476,7 @@ public abstract class FONode implements Cloneable {
      */
     protected void missingPropertyError(String propertyName)
                 throws ValidationException {
-        FOValidationEventProducer producer = FOValidationEventProducer.Factory.create(
-                getUserAgent().getEventBroadcaster());
-        producer.missingProperty(this, getName(), propertyName, locator);
+        getFOValidationEventProducer().missingProperty(this, getName(), propertyName, locator);
     }
 
     /**

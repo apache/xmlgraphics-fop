@@ -27,13 +27,14 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.properties.PropertyMaker;
 import org.apache.fop.util.QName;
-import org.xml.sax.Attributes;
-import org.xml.sax.Locator;
 
 /**
  * Base class for representation of formatting objects and their processing.
@@ -172,23 +173,9 @@ public abstract class FObj extends FONode implements Constants {
                 idrefs.add(id);
             } else {
                 if (getUserAgent().validateStrictly()) {
-                    throw new ValidationException("Property id \"" + id 
-                            + "\" previously used; id values must be unique"
-                            + " in document.", locator);
+                    getFOValidationEventProducer().idNotUnique(this, getName(), id, locator);
                 } else {
-                    if (log.isWarnEnabled()) {
-                        StringBuffer msg = new StringBuffer();
-                        msg.append("Found non-unique id on ").append(getName());
-                        if (locator.getLineNumber() != -1) {
-                            msg.append(" (at ").append(locator.getLineNumber())
-                                .append("/").append(locator.getColumnNumber())
-                                .append(")");
-                        }
-                        msg.append("\nAny reference to it will be considered "
-                                + "a reference to the first occurrence "
-                                + "in the document.");
-                        log.warn(msg);
-                    }
+                    getFOValidationEventProducer().idNotUniqueWarning(this, getName(), id, locator);
                 }
             }
         }
@@ -348,8 +335,8 @@ public abstract class FObj extends FONode implements Constants {
                 if (node instanceof FObj
                         || (node instanceof FOText
                                 && ((FOText) node).willCreateArea())) {
-                    log.error(
-                            "fo:marker must be an initial child: " + mcname);
+                    getFOValidationEventProducer().markerNotInitialChild(this, getName(),
+                            mcname, locator);
                     return;
                 } else if (node instanceof FOText) {
                     iter.remove();
@@ -363,8 +350,8 @@ public abstract class FObj extends FONode implements Constants {
         if (!markers.containsKey(mcname)) {
             markers.put(mcname, marker);
         } else {
-            log.error("fo:marker 'marker-class-name' "
-                    + "must be unique for same parent: " + mcname);
+            getFOValidationEventProducer().markerNotUniqueForSameParent(this, getName(),
+                    mcname, locator);
         }
     }
 
