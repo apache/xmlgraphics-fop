@@ -19,15 +19,16 @@
  
 package org.apache.fop;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import org.apache.fop.pdf.PDFObjectTestCase;
 import org.apache.fop.traits.BorderPropsTestCase;
 import org.apache.fop.traits.TraitColorTestCase;
 import org.apache.fop.util.DataURIResolverTestCase;
 import org.apache.fop.util.ElementListUtilsTestCase;
 import org.apache.fop.util.PDFNumberTestCase;
 import org.apache.fop.util.UnitConvTestCase;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 /**
  * Test suite for FOP's utility classes.
@@ -43,6 +44,7 @@ public class UtilityCodeTestSuite {
             "Test suite for FOP's utility classes");
         //$JUnit-BEGIN$
         suite.addTest(new TestSuite(PDFNumberTestCase.class));
+        suite.addTest(new TestSuite(PDFObjectTestCase.class));
         suite.addTest(new TestSuite(UnitConvTestCase.class));
         suite.addTest(new TestSuite(TraitColorTestCase.class));
         suite.addTest(new TestSuite(BorderPropsTestCase.class));

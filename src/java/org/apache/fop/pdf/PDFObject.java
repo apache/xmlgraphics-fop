@@ -26,6 +26,7 @@ import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import org.apache.commons.logging.Log;
@@ -327,33 +328,34 @@ public abstract class PDFObject implements PDFWritable {
     }
     
     /** Formatting pattern for PDF date */
-    protected static final SimpleDateFormat DATE_FORMAT 
-            = new SimpleDateFormat("'D:'yyyyMMddHHmmss");
+    protected static final SimpleDateFormat DATE_FORMAT;
 
+    static {
+        DATE_FORMAT = new SimpleDateFormat("'D:'yyyyMMddHHmmss", Locale.ENGLISH);
+        DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT"));
+    }
+    
     /**
      * Formats a date/time according to the PDF specification 
      * (D:YYYYMMDDHHmmSSOHH'mm').
      * @param time date/time value to format
+     * @param tz the time zone
      * @return the requested String representation
      */
-    protected String formatDateTime(Date time) {
-        StringBuffer sb = new StringBuffer();
-        sb.append(DATE_FORMAT.format(time));
-        TimeZone tz = TimeZone.getDefault();
-        Calendar cal = Calendar.getInstance();
+    protected String formatDateTime(Date time, TimeZone tz) {
+        Calendar cal = Calendar.getInstance(tz, Locale.ENGLISH);
         cal.setTime(time);
         
-        int era = cal.get(Calendar.ERA);
-        int year = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH);
-        int day = cal.get(Calendar.DAY_OF_MONTH);
-        int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
-        int milliseconds = cal.get(Calendar.HOUR_OF_DAY) * 1000 * 60 * 60;
-        milliseconds += cal.get(Calendar.MINUTE) * 1000 * 60;
-        milliseconds += cal.get(Calendar.SECOND) * 1000;
-        milliseconds += cal.get(Calendar.MILLISECOND);
+        int offset = cal.get(Calendar.ZONE_OFFSET);
+        offset += cal.get(Calendar.DST_OFFSET);
         
-        int offset = tz.getOffset(era, year, month, day, dayOfWeek, milliseconds);
+        //DateFormat is operating on GMT so adjust for time zone offset
+        Date dt1 = new Date(time.getTime() + offset);
+        StringBuffer sb = new StringBuffer();
+        sb.append(DATE_FORMAT.format(dt1));
+        
+        offset /= (1000 * 60); //Convert to minutes
+        
         if (offset == 0) {
             sb.append('Z');
         } else {
@@ -362,9 +364,8 @@ public abstract class PDFObject implements PDFWritable {
             } else {
                 sb.append('-');
             }
-            final int HOUR = (1000 * 60 * 60);
-            int offsetHour = Math.abs(offset / HOUR);
-            int offsetMinutes = (offset - (offsetHour * HOUR)) / (1000 * 60);
+            int offsetHour = Math.abs(offset / 60);
+            int offsetMinutes = Math.abs(offset % 60);
             if (offsetHour < 10) {
                 sb.append('0');
             }
@@ -379,4 +380,14 @@ public abstract class PDFObject implements PDFWritable {
         return sb.toString();
     }
 
+    /**
+     * Formats a date/time according to the PDF specification.
+     * (D:YYYYMMDDHHmmSSOHH'mm').
+     * @param time date/time value to format
+     * @return the requested String representation
+     */
+    protected String formatDateTime(Date time) {
+        return formatDateTime(time, TimeZone.getDefault());
+    }
+    
 }

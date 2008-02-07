@@ -28,6 +28,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Fonts" dev="JM" type="fix">
+        Bugfix for date formatting with negative time zones in the PDF's Info object.
+      </action>
       <action context="Fonts" dev="JM" type="add">
         Added an option to disable the default sRGB profile in PDF output for those who
         don't care about color fidelity, but care about PDF file size.
