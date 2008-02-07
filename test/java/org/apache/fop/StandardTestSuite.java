@@ -19,13 +19,14 @@
  
 package org.apache.fop;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
 import org.apache.fop.render.pdf.PDFAConformanceTestCase;
 import org.apache.fop.render.pdf.PDFCMapTestCase;
 import org.apache.fop.render.pdf.PDFEncodingTestCase;
+import org.apache.fop.render.pdf.PDFsRGBSettingsTestCase;
 import org.apache.fop.render.rtf.RichTextFormatTestSuite;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 /**
  * Test suite for basic functionality of FOP.
@@ -45,6 +46,7 @@ public class StandardTestSuite {
         suite.addTest(new TestSuite(PDFAConformanceTestCase.class));
         suite.addTest(new TestSuite(PDFEncodingTestCase.class));
         suite.addTest(new TestSuite(PDFCMapTestCase.class));
+        suite.addTest(new TestSuite(PDFsRGBSettingsTestCase.class));
         suite.addTest(RichTextFormatTestSuite.suite());
         //$JUnit-END$
         return suite;
