@@ -28,6 +28,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Fonts" dev="JM" type="add">
+        Added an option to disable the default sRGB profile in PDF output for those who
+        don't care about color fidelity, but care about PDF file size.
+      </action>
       <action context="Code" dev="AD" type="fix" fixes-bug="43705">
         Fixed a bug when the rgb-icc() function was used either before the fo:declarations,
         or in documents without a fo:declarations node. In such cases, the sRGB fallback

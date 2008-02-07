@@ -105,7 +105,7 @@ out = proc.getOutputStream();]]></source>
       <section id="pdf-postprocess">
         <title>Post-processing</title>
         <p>
-          FOP does not currently support several desirable PDF features: XMP metadata and watermarks. 
+          FOP does not currently support several desirable PDF features: watermarks and signatures. 
           One workaround is to use Adobe Acrobat (the full version, not the Reader) to process 
           the file manually or with scripting that it supports.
         </p>

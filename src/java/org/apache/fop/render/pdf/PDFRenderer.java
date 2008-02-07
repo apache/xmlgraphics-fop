@@ -147,6 +147,11 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     public static final String PDF_X_MODE = "pdf-x-mode";
     /** Rendering Options key for the ICC profile for the output intent. */
     public static final String KEY_OUTPUT_PROFILE = "output-profile";
+    /**
+     * Rendering Options key for disabling the sRGB color space (only possible if no PDF/A or
+     * PDF/X profile is active).
+     */
+    public static final String KEY_DISABLE_SRGB_COLORSPACE = "disable-srgb-colorspace";
 
     /** Controls whether comments are written to the PDF stream. */
     protected static final boolean WRITE_COMMENTS = true;
@@ -233,10 +238,10 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
 
     /** the ICC stream used as output profile by this document for PDF/A and PDF/X functionality. */
     protected PDFICCStream outputProfile;
-    /** the ICC stream for the sRGB color space. */
-    //protected PDFICCStream sRGBProfile;
     /** the default sRGB color space. */
     protected PDFICCBasedColorSpace sRGBColorSpace;
+    /** controls whether the sRGB color space should be installed */
+    protected boolean disableSRGBColorSpace = false;
     
     /** Optional URI to an output profile to be used. */
     protected String outputProfileURI; 
@@ -344,6 +349,10 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         if (s != null) {
             this.outputProfileURI = s;
         }
+        setting = agent.getRendererOptions().get(KEY_DISABLE_SRGB_COLORSPACE);
+        if (setting != null) {
+            this.disableSRGBColorSpace = booleanValueOf(setting);
+        }
     }
 
     /**
@@ -387,11 +396,21 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     }
 
     private void addsRGBColorSpace() throws IOException {
-        if (this.sRGBColorSpace != null) {
-            return;
+        if (disableSRGBColorSpace) {
+            if (this.pdfAMode != PDFAMode.DISABLED
+                    || this.pdfXMode != PDFXMode.DISABLED
+                    || this.outputProfileURI != null) {
+                throw new IllegalStateException("It is not possible to disable the sRGB color"
+                        + " space if PDF/A or PDF/X functionality is enabled or an"
+                        + " output profile is set!");
+            }
+        } else {
+            if (this.sRGBColorSpace != null) {
+                return;
+            }
+            //Map sRGB as default RGB profile for DeviceRGB
+            this.sRGBColorSpace = PDFICCBasedColorSpace.setupsRGBAsDefaultRGBColorSpace(pdfDoc);
         }
-        //Map sRGB as default RGB profile for DeviceRGB
-        this.sRGBColorSpace = PDFICCBasedColorSpace.setupsRGBAsDefaultRGBColorSpace(pdfDoc);
     }
     
     private void addDefaultOutputProfile() throws IOException {
