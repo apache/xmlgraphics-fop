@@ -19,6 +19,8 @@
 
 package org.apache.fop.fo.expr;
 
+import org.apache.fop.datatypes.Length;
+import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.properties.ColorProperty;
@@ -43,7 +45,7 @@ public final class PropertyParser extends PropertyTokenizer {
 
     private static final String RELUNIT = "em";
     private static final HashMap FUNCTION_TABLE = new HashMap();
-
+    
     static {
         // Initialize the HashMap of XSL-defined functions
         FUNCTION_TABLE.put("ceiling", new CeilingFunction());
@@ -272,6 +274,16 @@ public final class PropertyParser extends PropertyTokenizer {
                 if (pcBase.getDimension() == 0) {
                     prop = NumberProperty.getInstance(pcval * pcBase.getBaseValue());
                 } else if (pcBase.getDimension() == 1) {
+                    if (pcBase instanceof LengthBase) {
+                        //If the base of the percentage is known
+                        //and absolute, it can be resolved by the
+                        //parser
+                        Length base = ((LengthBase)pcBase).getBaseLength();
+                        if (base != null && base.isAbsolute()) {
+                            prop = FixedLength.getInstance(pcval * base.getValue());
+                            break;
+                        }
+                    }
                     prop = new PercentLength(pcval, pcBase);
                 } else {
                     throw new PropertyException("Illegal percent dimension value");
