@@ -126,6 +126,11 @@ public class EventProducerCollectorTask extends Task {
                 transformer.setParameter("generated-url", "my:dom");
             }
             transformer.transform(src, res);
+            if (resultExists) {
+                log("Translation file updated: " + getTranslationFile());
+            } else {
+                log("Translation file generated: " + getTranslationFile());
+            }
         } catch (TransformerException te) {
             throw new IOException(te.getMessage());
         }
