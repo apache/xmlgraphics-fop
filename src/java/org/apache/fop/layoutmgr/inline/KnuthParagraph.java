@@ -33,11 +33,6 @@ public class KnuthParagraph extends InlineKnuthSequence {
     
     private LineLayoutManager lineLM;
 
-    /** Number of elements to ignore at the beginning of the list. */ 
-    private int ignoreAtStart = 0;
-    /** Number of elements to ignore at the end of the list. */
-    private int ignoreAtEnd = 0;
-
     // space at the end of the last line (in millipoints)
     private MinOptMax lineFiller;
     public int textAlignment;
@@ -66,20 +61,6 @@ public class KnuthParagraph extends InlineKnuthSequence {
      */
     public MinOptMax getLineFiller() {
         return lineFiller;
-    }
-    
-    /**
-     * @return the ignoreAtEnd
-     */
-    public int getIgnoreAtEnd() {
-        return ignoreAtEnd;
-    }
-    
-    /**
-     * @return the ignoreAtStart
-     */
-    public int getIgnoreAtStart() {
-        return ignoreAtStart;
     }
     
     /**
@@ -125,26 +106,43 @@ public class KnuthParagraph extends InlineKnuthSequence {
         if (textAlignment == Constants.EN_CENTER && textAlignmentLast != Constants.EN_JUSTIFY) {
             this.add(new KnuthGlue(0, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
                                    null, false));
-            ignoreAtStart++;
+            ppIgnoreAtStart();
         }
 
         // add the element representing text indentation
         // at the beginning of the first paragraph
         if (textIndent != 0) {
             this.add(new KnuthInlineBox(textIndent, null, null, false));
-            ignoreAtStart++;
+            ppIgnoreAtStart();
+        }
+    }
+
+    public void addSequence(InlineKnuthSequence seq) {
+        addAll(seq);
+        if (seq.isClosed()) {
+            // a penalty item whose value is -inf
+            // represents a preserved linefeed,
+            // which forces a line break
+            removeLast();
+            mmIgnoreAtEnd();
+            if (!containsBox()) {
+                //only a forced linefeed on this line 
+                //-> compensate with an auxiliary glue
+                add(new KnuthGlue(lineWidth, 0, lineWidth, null, true));
+            }
+            endSequence();
         }
     }
 
     public KnuthSequence endSequence() {
-        if (this.size() > ignoreAtStart) {
+        if (this.size() > getIgnoreAtStart()) {
             if (textAlignment == Constants.EN_CENTER
                 && textAlignmentLast != Constants.EN_JUSTIFY) {
                 this.add(new KnuthGlue(0, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
                                        null, false));
                 this.add(new KnuthPenalty(lineFiller.opt, -KnuthElement.INFINITE,
                                           false, null, false));
-                ignoreAtEnd = 2;
+                setIgnoreAtEnd(2);
             } else if (textAlignmentLast != Constants.EN_JUSTIFY) {
                 // add the elements representing the space
                 // at the end of the last line
@@ -156,13 +154,14 @@ public class KnuthParagraph extends InlineKnuthSequence {
                         lineFiller.opt - lineFiller.min, null, false));
                 this.add(new KnuthPenalty(lineFiller.opt, -KnuthElement.INFINITE,
                                           false, null, false));
-                ignoreAtEnd = 3;
+                setIgnoreAtEnd(3);
             } else {
                 // add only the element representing the forced break
                 this.add(new KnuthPenalty(lineFiller.opt, -KnuthElement.INFINITE,
                                           false, null, false));
-                ignoreAtEnd = 1;
+                setIgnoreAtEnd(1);
             }
+            setClosed(true);
             return this;
         } else {
             this.clear();

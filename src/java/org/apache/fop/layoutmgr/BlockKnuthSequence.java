@@ -21,10 +21,12 @@ package org.apache.fop.layoutmgr;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Stack;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.layoutmgr.inline.KnuthParagraph;
 import org.apache.fop.layoutmgr.list.LineBreakingListElement;
 
 /**
@@ -91,6 +93,74 @@ public class BlockKnuthSequence extends KnuthSequence {
     public KnuthSequence endSequence() {
         isClosed = true;
         return this;
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.fop.layoutmgr.KnuthSequence#addKnuthElementForBorderPaddingStart(org.apache.fop.layoutmgr.KnuthElement)
+     */
+    public void addKnuthElementForBorderPaddingStart(KnuthBox bap) {
+        ListIterator iter = listIterator();
+        ParagraphListElement parale = null;
+        while (iter.hasNext()) {
+            ListElement le = (ListElement) iter.next();
+            if (le instanceof ParagraphListElement) {
+                parale = (ParagraphListElement) le;
+                break;
+            }
+        }
+        if (parale == null) {
+            log.debug("Failed to add border and padding: block sequence contains no paragraph");
+            return;
+        }
+
+        KnuthParagraph par = parale.getPara();
+        Position newPos;
+        KnuthElement firstElt = (KnuthElement) par.get(par.getIgnoreAtStart());
+        Position firstPos = firstElt.getPosition();
+        LayoutManager firstLM = firstPos.getLM();
+        if (firstPos instanceof NonLeafPosition) {
+            Position firstSubPos = firstPos.getPosition();
+            newPos = new NonLeafPosition(firstLM, firstSubPos);
+        } else {
+            newPos = new LeafPosition(firstLM, -1);
+        }
+        bap.setPosition(newPos);
+        par.addKnuthElementForBorderPaddingStart(bap);
+        ElementListObserver.observe(par, "line", "added-bap-start");
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.fop.layoutmgr.KnuthSequence#addKnuthElementForBorderPaddingEnd(org.apache.fop.layoutmgr.KnuthElement)
+     */
+    public void addKnuthElementForBorderPaddingEnd(KnuthBox bap) {
+        ListIterator iter = listIterator(size());
+        ParagraphListElement parale = null;
+        while (iter.hasPrevious()) {
+            ListElement le = (ListElement) iter.previous();
+            if (le instanceof ParagraphListElement) {
+                parale = (ParagraphListElement) le;
+                break;
+            }
+        }
+        if (parale == null) {
+            log.debug("Failed to add border and padding: block sequence contains no paragraph");
+            return;
+        }
+        
+        KnuthParagraph par = parale.getPara();
+        Position newPos;
+        KnuthElement lastElt = (KnuthElement) par.get(par.size() - 1 - par.getIgnoreAtEnd());
+        Position lastPos = lastElt.getPosition();
+        LayoutManager lastLM = lastPos.getLM();
+        if (lastPos instanceof NonLeafPosition) {
+            Position lastSubPos = lastPos.getPosition();
+            newPos = new NonLeafPosition(lastLM, lastSubPos);
+        } else {
+            newPos = new LeafPosition(lastLM, -1);
+        }
+        bap.setPosition(newPos);
+        par.addKnuthElementForBorderPaddingEnd(bap);
+        ElementListObserver.observe(par, "line", "added-bap-end");
     }
 
     public class SubSequence {

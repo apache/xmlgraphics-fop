@@ -337,29 +337,29 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
             }
 
             if (currLM != prevLM || !oldListIterator.hasNext()) {
-                if (prevLM == this || currLM == this) {
-                    prevLM = currLM;
-                } else if (oldListIterator.hasNext()) {
-                    bSomethingChanged
-                        = prevLM.applyChanges(oldList.subList(fromIndex
-                                                              , oldListIterator.previousIndex()))
+                // prevLM == null occurs when all elements have currLM == null
+                // e.g. a single BorderAndPadding element
+                if (prevLM != null && prevLM != this && currLM != this) {
+                    if (oldListIterator.hasNext()) {
+                        bSomethingChanged = prevLM.applyChanges
+                        (oldList.subList(fromIndex, oldListIterator.previousIndex()))
                         || bSomethingChanged;
-                    prevLM = currLM;
-                    fromIndex = oldListIterator.previousIndex();
-                } else if (currLM == prevLM) {
-                    bSomethingChanged
-                        = prevLM.applyChanges(oldList.subList(fromIndex, oldList.size()))
+                        prevLM = currLM;
+                        fromIndex = oldListIterator.previousIndex();
+                    } else if (currLM == prevLM) {
+                        bSomethingChanged = prevLM.applyChanges
+                        (oldList.subList(fromIndex, oldList.size()))
+                        || bSomethingChanged;
+                    } else {
+                        bSomethingChanged = prevLM.applyChanges
+                        (oldList.subList(fromIndex, oldListIterator.previousIndex()))
+                        || bSomethingChanged;
+                        if (currLM != null) {
+                            bSomethingChanged = currLM.applyChanges
+                            (oldList.subList(oldListIterator.previousIndex(),
+                                             oldList.size()))
                             || bSomethingChanged;
-                } else {
-                    bSomethingChanged
-                        = prevLM.applyChanges(oldList.subList(fromIndex
-                                                              , oldListIterator.previousIndex()))
-                            || bSomethingChanged;
-                    if (currLM != null) {
-                        bSomethingChanged
-                            = currLM.applyChanges(oldList.subList(oldListIterator.previousIndex()
-                                                                  , oldList.size()))
-                            || bSomethingChanged;
+                        }
                     }
                 }
             }
