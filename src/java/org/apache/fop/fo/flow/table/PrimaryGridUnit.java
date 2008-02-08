@@ -302,6 +302,7 @@ public class PrimaryGridUnit extends GridUnit {
     public String toString() {
         StringBuffer sb = new StringBuffer(super.toString());
         sb.append(" rowIndex=").append(rowIndex);
+        sb.append(" colIndex=").append(colIndex);
         return sb.toString();
     }
 
