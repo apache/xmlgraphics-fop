@@ -403,12 +403,12 @@ public class TableContentLayoutManager implements PercentBaseContext {
                     body = part.pgu.getBody();
                 }
                 if (tcpos.getFlag(TableContentPosition.FIRST_IN_ROWGROUP)
-                        && tcpos.row.getFlag(EffRow.FIRST_IN_PART)) {
+                        && tcpos.getRow().getFlag(EffRow.FIRST_IN_PART)) {
                     firstPos = true;
 
                 }
                 if (tcpos.getFlag(TableContentPosition.LAST_IN_ROWGROUP) 
-                        && tcpos.row.getFlag(EffRow.LAST_IN_PART)) {
+                        && tcpos.getRow().getFlag(EffRow.LAST_IN_PART)) {
                     log.trace("LAST_IN_ROWGROUP + LAST_IN_PART");
                     handleMarkersAndPositions(lst, body, firstPos, true, painter);
                     //reset

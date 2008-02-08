@@ -134,19 +134,17 @@
       <box w="0"/>
       <penalty w="0" p="INF"/>
       <glue w="7500"/>
-      <box w="2500"/>
-      <penalty w="10000" p="900"/>
       <box w="12500"/>
-      <penalty w="0"/>
+      <penalty w="2500" p="0"/>
+      <box w="2500"/>
+      <penalty w="7500" p="0"/>
       <box w="7500"/>
-      <penalty w="0" p="900"/>
-      <box w="0"/>
-      <penalty w="5000"/>
-      <box w="12500"/>
-      <penalty w="0"/>
-      <box w="2500"/>
-      <penalty w="0" p="900"/>
-      <box w="12500"/>
+      <penalty w="5000" p="0"/>
+      <box w="5000"/>
+      <penalty w="7500"/>
+      <box w="7500"/>
+      <penalty w="2500"/>
+      <box w="15000"/>
       <penalty w="0" p="INF"/>
       <glue w="7500"/>
 
@@ -156,19 +154,17 @@
       <box w="0"/>
       <penalty w="0" p="INF"/>
       <glue w="7500"/>
-      <box w="2500"/>
-      <penalty w="10000" p="900"/>
       <box w="12500"/>
-      <penalty w="0"/>
+      <penalty w="2500" p="0"/>
+      <box w="2500"/>
+      <penalty w="7500" p="0"/>
       <box w="7500"/>
-      <penalty w="0" p="900"/>
-      <box w="0"/>
-      <penalty w="5000"/>
-      <box w="12500"/>
-      <penalty w="0"/>
-      <box w="2500"/>
-      <penalty w="0" p="900"/>
-      <box w="12500"/>
+      <penalty w="5000" p="0"/>
+      <box w="5000"/>
+      <penalty w="7500"/>
+      <box w="7500"/>
+      <penalty w="2500"/>
+      <box w="15000"/>
       <box w="0"/> <!-- with SpaceHandlingPosition -->
       <penalty w="0" p="INF"/>
       <glue w="7500"/>

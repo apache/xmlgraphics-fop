@@ -49,6 +49,7 @@ class CellPart {
      * @param pgu Primary grid unit
      * @param start starting element
      * @param end ending element
+     * @param last true if this cell part is the last one for the cell
      * @param condBeforeContentLength length of the additional content that will have to
      * be displayed if this part will be the first one on the page
      * @param length length of the content represented by this cell part
@@ -58,16 +59,17 @@ class CellPart {
      * @param bpBeforeFirst width of (possibly optional) border- and padding-before if
      * this part will be the first one on the page
      * @param bpAfterNormal width of border- and padding-after in the normal case
-     * @param bpAfterFirst width of (possibly optional) border- and padding-after if this
+     * @param bpAfterLast width of (possibly optional) border- and padding-after if this
      * part will be the last one on the page
      */
-    protected CellPart(PrimaryGridUnit pgu, int start, int end,
+    protected CellPart(PrimaryGridUnit pgu, int start, int end, boolean last,
             int condBeforeContentLength, int length, int condAfterContentLength,
             int bpBeforeNormal, int bpBeforeFirst,
             int bpAfterNormal, int bpAfterLast) {
         this.pgu = pgu;
         this.start = start;
         this.end = end;
+        this.isLast = last;
         this.condBeforeContentLength = condBeforeContentLength;
         this.length = length;
         this.condAfterContentLength = condAfterContentLength;
@@ -85,12 +87,6 @@ class CellPart {
     /** @return true if this part is the last part of a cell */
     boolean isLastPart() {
         return isLast;
-    }
-
-    void setLast(int bpNormal, int bpLast) {
-        isLast = true;
-        bpAfterNormal = bpNormal;
-        bpAfterLast = bpLast;
     }
 
     int getBorderPaddingBefore(boolean firstOnPage) {
