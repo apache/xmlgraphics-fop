@@ -34,9 +34,9 @@
         <fo:flow flow-name="xsl-region-body">
 
           <fo:block
-            space-after.minimum="20pt"
-            space-after.optimum="30pt"
-            space-after.maximum="40pt"
+            space-after.minimum="25pt"
+            space-after.optimum="35pt"
+            space-after.maximum="45pt"
             >Before the table</fo:block>
           <fo:table width="100%" table-layout="fixed" border="6pt solid black"
             table-omit-header-at-break="true" table-omit-footer-at-break="true">

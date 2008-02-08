@@ -34,9 +34,9 @@
 
           <!-- table 1 -->
           <fo:block
-            space-after.minimum="30pt"
-            space-after.optimum="40pt"
-            space-after.maximum="50pt"
+            space-after.minimum="44pt"
+            space-after.optimum="45pt"
+            space-after.maximum="46pt"
             >Before the table</fo:block>
           <fo:table width="100%" table-layout="fixed" border="6pt solid black">
             <fo:table-column column-width="proportional-column-width(1)" number-columns-repeated="2"/>

@@ -96,14 +96,19 @@ class RowPainter {
      * @param tcpos a position representing the row fragment
      */
     void handleTableContentPosition(TableContentPosition tcpos) {
-        if (tcpos.row != currentRow && currentRow != null) {
-            addAreasAndFlushRow(false, false);
-        }
         if (log.isDebugEnabled()) {
             log.debug("===handleTableContentPosition(" + tcpos);
         }
-        rowFO = tcpos.row.getTableRow();
-        currentRow = tcpos.row;
+        if (currentRow == null) {
+            currentRow = tcpos.getNewPageRow();
+        } else {
+            EffRow row = tcpos.getRow();
+            if (row.getIndex() > currentRow.getIndex()) {
+                addAreasAndFlushRow(false, false);
+                currentRow = row;
+            }
+        }
+        rowFO = currentRow.getTableRow();
         if (firstRowIndex < 0) {
             firstRowIndex = currentRow.getIndex();
             if (firstRowOnPageIndex < 0) {
