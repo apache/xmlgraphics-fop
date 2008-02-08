@@ -168,6 +168,20 @@ public abstract class KnuthSequence extends ArrayList {
     }
 
     /**
+     * Insert element elt at the start of the sequence, even if the sequence is closed.
+     * This is used to add border and padding elements.
+     * @param bap The element to be added
+     */
+    public abstract void addKnuthElementForBorderPaddingStart(KnuthBox bap);
+
+    /**
+     * Insert element elt at the end of the sequence, even if the sequence is closed.
+     * This is used to add border and padding elements.
+     * @param bap The element to be added
+     */
+    public abstract void addKnuthElementForBorderPaddingEnd(KnuthBox bap);
+
+    /**
      * Is this an inline or a block sequence?
      * @return true if this is an inline sequence
      */

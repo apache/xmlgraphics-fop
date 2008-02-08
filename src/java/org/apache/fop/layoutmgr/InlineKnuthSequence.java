@@ -32,6 +32,11 @@ import org.apache.fop.layoutmgr.inline.KnuthInlineBox;
  */
 public class InlineKnuthSequence extends KnuthSequence  {
 
+    /** Number of elements to ignore at the beginning of the list. */ 
+    private int ignoreAtStart = 0;
+    /** Number of elements to ignore at the end of the list. */
+    private int ignoreAtEnd = 0;
+
     private boolean isClosed = false;
 
     /**
@@ -55,6 +60,64 @@ public class InlineKnuthSequence extends KnuthSequence  {
      */
     public boolean isInlineSequence() {
         return true;
+    }
+
+    /**
+     * @return the ignoreAtEnd
+     */
+    public int getIgnoreAtEnd() {
+        return ignoreAtEnd;
+    }
+    
+    /**
+     * @param ignoreAtEnd the ignoreAtEnd to set
+     */
+    public void setIgnoreAtEnd(int ignoreAtEnd) {
+        this.ignoreAtEnd = ignoreAtEnd;
+    }
+
+    /**
+     * decrement the ignoreAtEnd
+     * @return the ignoreAtEnd
+     */
+    public int mmIgnoreAtEnd() {
+        return --ignoreAtEnd;
+    }
+    
+    /**
+     * @return the ignoreAtStart
+     */
+    public int getIgnoreAtStart() {
+        return ignoreAtStart;
+    }
+
+    /**
+     * @param ignoreAtStart the ignoreAtStart to set
+     */
+    public void setIgnoreAtStart(int ignoreAtStart) {
+        this.ignoreAtStart = ignoreAtStart;
+    }
+
+    /**
+     * increment the ignoreAtStart
+     * @return the ignoreAtStart
+     */
+    public int ppIgnoreAtStart() {
+        return ++ignoreAtStart;
+    }
+
+    /**
+     * @return the isClosed
+     */
+    public boolean isClosed() {
+        return isClosed;
+    }
+
+    /**
+     * @param isClosed the isClosed to set
+     */
+    public void setClosed(boolean isClosed) {
+        this.isClosed = isClosed;
     }
 
     /* (non-Javadoc)
@@ -99,8 +162,24 @@ public class InlineKnuthSequence extends KnuthSequence  {
         if (!isClosed) {
             add(new KnuthPenalty(0, -KnuthElement.INFINITE, false, null, false));
             isClosed = true;
+            ++ignoreAtEnd;
         }
         return this;
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.fop.layoutmgr.KnuthSequence#addKnuthElementForBorderPaddingStart(org.apache.fop.layoutmgr.KnuthElement)
+     */
+    public void addKnuthElementForBorderPaddingStart(KnuthBox bap) {
+        add(0, bap);
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.fop.layoutmgr.KnuthSequence#addKnuthElementForBorderPaddingEnd(org.apache.fop.layoutmgr.KnuthElement)
+     */
+
+    public void addKnuthElementForBorderPaddingEnd(KnuthBox bap) {
+        this.add(this.size() - ignoreAtEnd, bap);
     }
 
     public void addALetterSpace() {

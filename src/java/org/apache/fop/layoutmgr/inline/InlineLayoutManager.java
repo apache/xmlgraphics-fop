@@ -553,7 +553,14 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
             int ipStart = borderAndPadding.getBorderStartWidth(false)
                          + borderAndPadding.getPaddingStart(false, this);
             if (ipStart > 0) {
-                returnList.add(0,new KnuthBox(ipStart, getAuxiliaryPosition(), true));
+                KnuthBox bap = new KnuthBox(ipStart, getAuxiliaryPosition(), true);
+                if (returnList instanceof KnuthSequence) {
+                // if (false) {
+                    KnuthSequence seq = (KnuthSequence) returnList;
+                    seq.addKnuthElementForBorderPaddingStart(bap);
+                } else {
+                    returnList.add(0, bap);
+                }
             }
         }
     }
@@ -569,7 +576,14 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
             int ipEnd = borderAndPadding.getBorderEndWidth(false)
                         + borderAndPadding.getPaddingEnd(false, this);
             if (ipEnd > 0) {
-                returnList.add(new KnuthBox(ipEnd, getAuxiliaryPosition(), true));
+                KnuthBox bap = new KnuthBox(ipEnd, getAuxiliaryPosition(), true);
+                if (returnList instanceof KnuthSequence) {
+                // if (false) {
+                    KnuthSequence seq = (KnuthSequence) returnList;
+                    seq.addKnuthElementForBorderPaddingEnd(bap);
+                } else {
+                    returnList.add(bap);
+                }
             }
         }
     }

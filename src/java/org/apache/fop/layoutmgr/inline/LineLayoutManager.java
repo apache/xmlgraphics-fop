@@ -42,6 +42,7 @@ import org.apache.fop.hyphenation.Hyphenator;
 import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.ElementListObserver;
+import org.apache.fop.layoutmgr.InlineKnuthSequence;
 import org.apache.fop.layoutmgr.KnuthBlockBox;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
@@ -480,27 +481,13 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                             trace.append(" +");
                         }
                     }
-                    lastPar.addAll(sequence);
+                    lastPar.addSequence((InlineKnuthSequence) sequence);
                     if (log.isTraceEnabled()) {
                         trace.append(" I");
                     }
                     
-                    // finish last paragraph if it was closed with a linefeed
-                    if (lastElement.isPenalty()
-                            && ((KnuthPenalty) lastElement).getP()
-                            == -KnuthPenalty.INFINITE) {
-                        // a penalty item whose value is -inf
-                        // represents a preserved linefeed,
-                        // which forces a line break
-                        lastPar.removeLast();
-                        if (!lastPar.containsBox()) {
-                            //only a forced linefeed on this line 
-                            //-> compensate with an auxiliary glue
-                            lastPar.add(new KnuthGlue(iLineWidth, 0, iLineWidth, null, true));
-                        }
-                        if (lastPar.endSequence() != null) {
-                            knuthParagraphs.add(lastPar);
-                        }
+                    if (lastPar.isClosed()) {
+                        knuthParagraphs.add(lastPar);
                         ElementListObserver.observe(lastPar, "line", null);
                         lastPar = null;
                         if (log.isTraceEnabled()) {
@@ -951,7 +938,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
 
             // applyChanges() returns true if the LM modifies its data,
             // so it must return new KnuthElements to replace the old ones
-            if (((InlineLevelLayoutManager) currUpdate.inlineLM)
+            if ((currUpdate.inlineLM)
                 .applyChanges(currPar.subList(fromIndex + iAddedElements,
                                               toIndex + iAddedElements))) {
                 // insert the new KnuthElements
