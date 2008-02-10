@@ -28,6 +28,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="AD" type="fix" fixes-bug="41631">
+        Added correct percentage resolution for arguments to the proportional-column-width() function.
+      </action>
       <action context="Fonts" dev="JM" type="fix">
         Bugfix for date formatting with negative time zones in the PDF's Info object.
         This affected PDF/A compliance.
