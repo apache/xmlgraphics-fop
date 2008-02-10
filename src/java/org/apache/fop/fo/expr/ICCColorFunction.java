@@ -18,8 +18,8 @@
 /* $Id$ */
  
 package org.apache.fop.fo.expr;
-import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.datatypes.PercentBase;
+import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.pagination.ColorProfile;
 import org.apache.fop.fo.pagination.Declarations;
 import org.apache.fop.fo.properties.ColorProperty;
@@ -41,14 +41,12 @@ class ICCColorFunction extends FunctionBase {
     
     /** {@inheritDoc} */
     public PercentBase getPercentBase() {
-        return new RGBColorFunction.RGBPercentBase();
+        return new ICCPercentBase();
     }
 
     /** {@inheritDoc} */
     public Property eval(Property[] args,
                          PropertyInfo pInfo) throws PropertyException {
-        StringBuffer sb = new StringBuffer();
-
         // Map color profile NCNAME to src from declarations/color-profile element
         String colorProfileName = args[3].getString();
         Declarations decls = pInfo.getFO().getRoot().getDeclarations();
@@ -75,21 +73,39 @@ class ICCColorFunction extends FunctionBase {
         
         // rgb-icc is replaced with fop-rgb-icc which has an extra fifth argument containing the 
         // color profile src attribute as it is defined in the color-profile declarations element.
-        sb.append("fop-rgb-icc(" + args[0]);
-        for (int ix = 1; ix < args.length; ix++) {
+        StringBuffer sb = new StringBuffer();
+        sb.append("fop-rgb-icc(");
+        for (int ix = 0; ix < args.length; ix++) {
             if (ix == 3) {
-                sb.append("," + colorProfileName); 
-                sb.append(",\"" + src + "\""); 
+                sb.append(',').append(colorProfileName); 
+                sb.append(',').append(src); 
             } else {
-                sb.append("," + args[ix]);
+                if (ix > 0) {
+                    sb.append(',');
+                }
+                sb.append(args[ix]);
             }
         }
         sb.append(")");
-        FOUserAgent ua = (pInfo == null
-                ? null
-                : (pInfo.getFO() == null ? null : pInfo.getFO().getUserAgent()));
-        return ColorProperty.getInstance(ua, sb.toString());
+        
+        return ColorProperty.getInstance(pInfo.getUserAgent(), sb.toString());
     }
 
+    private static final class ICCPercentBase implements PercentBase {
+        
+        /** {@inheritDoc} */
+        public int getBaseLength(PercentBaseContext context) throws PropertyException {
+            return 0;
+        }
 
+        /** {@inheritDoc} */
+        public double getBaseValue() {
+            return 255f;
+        }
+
+        /** {@inheritDoc} */
+        public int getDimension() {
+            return 0;
+        }
+    }
 }
