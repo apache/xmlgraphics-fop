@@ -19,6 +19,8 @@
 
 package org.apache.fop.fo.expr;
 
+import org.apache.fop.datatypes.PercentBase;
+import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.properties.Property;
@@ -38,6 +40,13 @@ public class PPColWidthFunction extends FunctionBase {
         return 1;
     }
 
+    /** 
+     * @return the {@link PercentBase} for the proportional-column-width() 
+     *         function
+     */
+    public PercentBase getPercentBase() {
+        return new PPColWidthPercentBase();
+    }
     /**
      *
      * @param args array of arguments for this function
@@ -69,4 +78,24 @@ public class PPColWidthFunction extends FunctionBase {
         return new TableColLength(d.doubleValue(), pInfo.getFO());
     }
 
+    private static class PPColWidthPercentBase implements PercentBase {
+
+        /** {@inheritDoc} */
+        public int getBaseLength(PercentBaseContext context) throws PropertyException {
+            return 0;
+        }
+
+        /** {@inheritDoc} */
+        public double getBaseValue() {
+            //make sure percentage-arguments are interpreted
+            //as numerics (1% = 1 * 0.01)
+            return 1;
+        }
+
+        /** {@inheritDoc} */
+        public int getDimension() {
+            return 0;
+        }
+        
+    }
 }

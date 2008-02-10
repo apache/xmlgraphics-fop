@@ -67,6 +67,24 @@
               </fo:table-row>
             </fo:table-body>
           </fo:table>
+          <fo:table table-layout="fixed">
+            <fo:table-column column-width="proportional-column-width(25%)"/>
+            <fo:table-column column-width="proportional-column-width(25%)"/>
+            <fo:table-column column-width="proportional-column-width(50%)"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>cell1%</fo:block>
+                </fo:table-cell>
+                <fo:table-cell background-color="yellow">
+                  <fo:block>cell2%</fo:block>
+                </fo:table-cell>
+                <fo:table-cell background-color="orange">
+                  <fo:block>cell3%</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
@@ -95,5 +113,18 @@
     <!-- cell 6 -->
     <eval expected="cell6" xpath="//flow/block[2]/block[3]/block[1]/lineArea"/>
     <eval expected="180000" xpath="//flow/block[2]/block[3]/@ipd"/>
+    
+    <!-- Percentages should yield the same result as numbers -->
+    <!-- cell 1% -->
+    <eval expected="cell1%" xpath="//flow/block[3]/block[1]/block[1]/lineArea"/>
+    <eval expected="90000" xpath="//flow/block[3]/block[1]/@ipd"/>
+
+    <!-- cell 2% -->
+    <eval expected="cell2%" xpath="//flow/block[3]/block[2]/block[1]/lineArea"/>
+    <eval expected="90000" xpath="//flow/block[3]/block[2]/@ipd"/>
+
+    <!-- cell 3% -->
+    <eval expected="cell3%" xpath="//flow/block[3]/block[3]/block[1]/lineArea"/>
+    <eval expected="180000" xpath="//flow/block[3]/block[3]/@ipd"/>
   </checks>
 </testcase>
