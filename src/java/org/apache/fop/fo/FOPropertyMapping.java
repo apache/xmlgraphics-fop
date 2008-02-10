@@ -26,7 +26,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.flow.table.TableFObj.ColumnNumberPropertyMaker;
-import org.apache.fop.fo.properties.BackgroundPositionShorthandParser;
+import org.apache.fop.fo.properties.BackgroundPositionShorthand;
 import org.apache.fop.fo.properties.BorderSpacingShorthandParser;
 import org.apache.fop.fo.properties.BorderWidthPropertyMaker;
 import org.apache.fop.fo.properties.BoxPropShorthandParser;
@@ -2534,15 +2534,33 @@ public final class FOPropertyMapping implements Constants {
         addPropertyMaker("background", m);
 
         // background-position
-        m  = new ListProperty.Maker(PR_BACKGROUND_POSITION);
+        m  = new BackgroundPositionShorthand.Maker(PR_BACKGROUND_POSITION);
         m.setInherited(false);
         m.addKeyword("left", "0% 50%");
+        m.addKeyword("left center", "0% 50%");
+        m.addKeyword("center left", "0% 50%");
         m.addKeyword("right", "100% 50%");
+        m.addKeyword("right center", "100% 50%");
+        m.addKeyword("center right", "100% 50%");
         m.addKeyword("center", "50% 50%");
+        m.addKeyword("center center", "50% 50%");
         m.addKeyword("top", "50% 0%");
+        m.addKeyword("top center", "50% 0%");
+        m.addKeyword("center top", "50% 0%");
         m.addKeyword("bottom", "50% 100%");
+        m.addKeyword("bottom center", "50% 100%");
+        m.addKeyword("center bottom", "50% 100%");
+        m.addKeyword("top left", "0% 0%");
+        m.addKeyword("left top", "0% 0%");
+        m.addKeyword("top right", "100% 0%");
+        m.addKeyword("right top", "100% 0%");
+        m.addKeyword("bottom left", "0% 100%");
+        m.addKeyword("left bottom", "0% 100%");
+        m.addKeyword("bottom right", "100% 100%");
+        m.addKeyword("right bottom", "100% 100%");
         m.setDefault("0% 0%");
-        m.setDatatypeParser(new BackgroundPositionShorthandParser());
+        m.setPercentBase(LengthBase.CUSTOM_BASE);
+        m.setDatatypeParser(new BackgroundPositionShorthand.Parser());
         addPropertyMaker("background-position", m);
 
         // border
