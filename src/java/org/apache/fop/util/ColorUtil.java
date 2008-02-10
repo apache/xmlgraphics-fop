@@ -22,10 +22,7 @@ package org.apache.fop.util;
 import java.awt.Color;
 import java.awt.color.ColorSpace;
 import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -167,30 +164,28 @@ public final class ColorUtil {
         try {
             if (poss != -1 && pose != -1) {
                 value = value.substring(poss + 1, pose);
-                StringTokenizer st = new StringTokenizer(value, ",");
-                if (st.hasMoreTokens()) {
-                    String str = st.nextToken().trim();
-                    red = Float.parseFloat(str.substring(2)) / 255f;
+                String[] args = value.split(",");
+                if (args.length != 3) {
+                    throw new PropertyException(
+                            "Invalid number of arguments for a java.awt.Color: " + value);
                 }
-                if (st.hasMoreTokens()) {
-                    String str = st.nextToken().trim();
-                    green = Float.parseFloat(str.substring(2)) / 255f;
-                }
-                if (st.hasMoreTokens()) {
-                    String str = st.nextToken().trim();
-                    blue = Float.parseFloat(str.substring(2)) / 255f;
-                } else {
-                    throw new NumberFormatException();
-                }
-                if ((red < 0.0 || red > 1.0) || (green < 0.0 || green > 1.0)
+                
+                red = Float.parseFloat(args[0].trim().substring(2)) / 255f;
+                green = Float.parseFloat(args[1].trim().substring(2)) / 255f;
+                blue = Float.parseFloat(args[2].trim().substring(2)) / 255f;
+                if ((red < 0.0 || red > 1.0) 
+                        || (green < 0.0 || green > 1.0)
                         || (blue < 0.0 || blue > 1.0)) {
                     throw new PropertyException("Color values out of range");
                 }
             } else {
-                throw new NullPointerException();
+                throw new IllegalArgumentException(
+                            "Invalid format for a java.awt.Color: " + value);
             }
+        } catch (PropertyException pe) {
+            throw pe;
         } catch (Exception e) {
-            throw new PropertyException("Unknown color format: " + value);
+            throw new PropertyException(e);
         }
         return new Color(red, green, blue);
     }
@@ -210,44 +205,46 @@ public final class ColorUtil {
         int pose = value.indexOf(")");
         if (poss != -1 && pose != -1) {
             value = value.substring(poss + 1, pose);
-            StringTokenizer st = new StringTokenizer(value, ",");
             try {
+                String[] args = value.split(",");
+                if (args.length != 3) {
+                    throw new PropertyException(
+                            "Invalid number of arguments: rgb(" + value + ")");
+                }
                 float red = 0.0f, green = 0.0f, blue = 0.0f;
-                if (st.hasMoreTokens()) {
-                    String str = st.nextToken().trim();
-                    if (str.endsWith("%")) {
-                        red = Float.parseFloat(str.substring(0,
-                                str.length() - 1)) / 100.0f;
-                    } else {
-                        red = Float.parseFloat(str) / 255f;
-                    }
+                String str = args[0].trim();
+                if (str.endsWith("%")) {
+                    red = Float.parseFloat(str.substring(0,
+                            str.length() - 1)) / 100f;
+                } else {
+                    red = Float.parseFloat(str) / 255f;
                 }
-                if (st.hasMoreTokens()) {
-                    String str = st.nextToken().trim();
-                    if (str.endsWith("%")) {
-                        green = Float.parseFloat(str.substring(0,
-                                str.length() - 1)) / 100.0f;
-                    } else {
-                        green = Float.parseFloat(str) / 255f;
-                    }
+                str = args[1].trim();
+                if (str.endsWith("%")) {
+                    green = Float.parseFloat(str.substring(0,
+                            str.length() - 1)) / 100f;
+                } else {
+                    green = Float.parseFloat(str) / 255f;
                 }
-                if (st.hasMoreTokens()) {
-                    String str = st.nextToken().trim();
-                    if (str.endsWith("%")) {
-                        blue = Float.parseFloat(str.substring(0,
-                                str.length() - 1)) / 100.0f;
-                    } else {
-                        blue = Float.parseFloat(str) / 255f;
-                    }
+                str = args[2].trim();
+                if (str.endsWith("%")) {
+                    blue = Float.parseFloat(str.substring(0,
+                            str.length() - 1)) / 100f;
+                } else {
+                    blue = Float.parseFloat(str) / 255f;
                 }
-                if ((red < 0.0 || red > 1.0) || (green < 0.0 || green > 1.0)
+                if ((red < 0.0 || red > 1.0) 
+                        || (green < 0.0 || green > 1.0)
                         || (blue < 0.0 || blue > 1.0)) {
                     throw new PropertyException("Color values out of range");
                 }
                 parsedColor = new Color(red, green, blue);
+            } catch (PropertyException pe) {
+                //simply re-throw
+                throw pe;
             } catch (Exception e) {
-                throw new PropertyException(
-                        "Arguments to rgb() must be [0..255] or [0%..100%]");
+                //wrap in a PropertyException
+                throw new PropertyException(e);
             }
         } else {
             throw new PropertyException("Unknown color format: " + value
@@ -269,29 +266,28 @@ public final class ColorUtil {
         Color parsedColor = null;
         try {
             int len = value.length();
-            if ((len >= 4) && (len <= 5)) {
-                // note: divide by 15 so F = FF = 1 and so on
-                float red = Integer.parseInt(value.substring(1, 2), 16) / 15f;
-                float green = Integer.parseInt(value.substring(2, 3), 16) / 15f;
-                float blue = Integer.parseInt(value.substring(3, 4), 16) / 15f;
-                float alpha = 1.0f;
-                if (len == 5) {
-                    alpha = Integer.parseInt(value.substring(4), 16) / 15f;
-                }
-                parsedColor = new Color(red, green, blue, alpha);
+            int alpha;
+            if (len == 5 || len == 9) {
+                alpha = Integer.parseInt(
+                        value.substring((len == 5) ? 3 : 7), 16);
+            } else {
+                alpha = 0xFF;
+            }
+            int red = 0, green = 0, blue = 0;
+            if ((len == 4) || (len == 5)) {
+                //multiply by 0x11 = 17 = 255/15
+                red = Integer.parseInt(value.substring(1, 2), 16) * 0x11;
+                green = Integer.parseInt(value.substring(2, 3), 16) * 0x11;
+                blue = Integer.parseInt(value.substring(3, 4), 16) *0X11;
             } else if ((len == 7) || (len == 9)) {
-                int red = Integer.parseInt(value.substring(1, 3), 16);
-                int green = Integer.parseInt(value.substring(3, 5), 16);
-                int blue = Integer.parseInt(value.substring(5, 7), 16);
-                int alpha = 255;
-                if (len == 9) {
-                    alpha = Integer.parseInt(value.substring(7), 16);
-                }
-                parsedColor = new Color(red, green, blue, alpha);
+                red = Integer.parseInt(value.substring(1, 3), 16);
+                green = Integer.parseInt(value.substring(3, 5), 16);
+                blue = Integer.parseInt(value.substring(5, 7), 16);
             } else {
                 throw new NumberFormatException();
             }
-        } catch (NumberFormatException e) {
+            parsedColor = new Color(red, green, blue, alpha);
+        } catch (Exception e) {
             throw new PropertyException("Unknown color format: " + value
                     + ". Must be #RGB. #RGBA, #RRGGBB, or #RRGGBBAA");
         }
@@ -311,79 +307,65 @@ public final class ColorUtil {
         int poss = value.indexOf("(");
         int pose = value.indexOf(")");
         if (poss != -1 && pose != -1) {
-            value = value.substring(poss + 1, pose);
-            StringTokenizer st = new StringTokenizer(value, ",");
+            String[] args = value.substring(poss + 1, pose).split(",");
+            
             try {
-                float red = 0.0f, green = 0.0f, blue = 0.0f;
-                if (st.hasMoreTokens()) {
-                    String str = st.nextToken().trim();
-                    red = Float.parseFloat(str);
+                if (args.length < 5) {
+                    throw new PropertyException("Too few arguments for rgb-icc() function");
                 }
-                if (st.hasMoreTokens()) {
-                    String str = st.nextToken().trim();
-                    green = Float.parseFloat(str);
-                }
-                if (st.hasMoreTokens()) {
-                    String str = st.nextToken().trim();
-                    blue = Float.parseFloat(str);
-                }
-                /* Verify rgb replacement arguments */
-                if ((red < 0.0 || red > 1.0) 
-                        || (green < 0.0 || green > 1.0) 
-                        || (blue < 0.0 || blue > 1.0)) {
-                  throw new PropertyException("Color values out of range");
-                 }
                 /* Get and verify ICC profile name */
-                String iccProfileName = null;
-                if (st.hasMoreTokens()) {
-                    iccProfileName = st.nextToken().trim();
-                }
-                if (iccProfileName == null || iccProfileName.length() == 0) {
+                String iccProfileName = args[3].trim();
+                if (iccProfileName == null || "".equals(iccProfileName)) {
                     throw new PropertyException("ICC profile name missing");
                 }
                 /* Get and verify ICC profile source */
-                String iccProfileSrc = null;
-                if (st.hasMoreTokens()) {
-                    iccProfileSrc = st.nextToken().trim();
-                    // Strip quotes
-                    iccProfileSrc = iccProfileSrc.substring(1, iccProfileSrc.length() - 1);
-                }
-                if (iccProfileSrc == null || iccProfileSrc.length() == 0) {
+                String iccProfileSrc = args[4].trim();
+                if (iccProfileSrc == null || "".equals(iccProfileSrc)) {
                     throw new PropertyException("ICC profile source missing");
                 }
                 /* ICC profile arguments */
-                List iccArgList = new LinkedList();
-                while (st.hasMoreTokens()) {
-                    String str = st.nextToken().trim();
-                    iccArgList.add(new Float(str));
-                }
-                /* Copy ICC profile arguments from list to array */
-                float[] iccComponents = new float[iccArgList.size()];
-                for (int ix = 0; ix < iccArgList.size(); ix++) {
-                    iccComponents[ix] = ((Float)iccArgList.get(ix)).floatValue();
+                float[] iccComponents = new float[args.length - 5];
+                for (int ix = 4; ++ix < args.length;) {
+                    iccComponents[ix - 5] = Float.parseFloat(args[ix].trim());
                 }
                 /* Ask FOP factory to get ColorSpace for the specified ICC profile source */
                 ColorSpace colorSpace = (foUserAgent != null
                         ? foUserAgent.getFactory().getColorSpace(
                                 foUserAgent.getBaseURL(), iccProfileSrc) : null);
+                
+                float red = 0, green = 0, blue = 0;
+                red = Float.parseFloat(args[0].trim());
+                green = Float.parseFloat(args[1].trim());
+                blue = Float.parseFloat(args[2].trim());;
+                /* Verify rgb replacement arguments */
+                if ((red < 0 || red > 255) 
+                        || (green < 0 || green > 255) 
+                        || (blue < 0 || blue > 255)) {
+                    throw new PropertyException("Color values out of range. "
+                            + "Arguments to rgb-icc() must be [0..255] or [0%..100%]");
+                }
+
                 if (colorSpace != null) {
                     // ColorSpace available - create ColorExt (keeps track of replacement rgb 
                     // values for possible later colorTOsRGBString call
-                    parsedColor = ColorExt.createFromFoRgbIcc(red, green, blue, 
+                    parsedColor = ColorExt.createFromFoRgbIcc(red/255, green/255, blue/255, 
                             iccProfileName, iccProfileSrc, colorSpace, iccComponents);
                 } else {
                     // ICC profile could not be loaded - use rgb replacement values */
                     log.warn("Color profile '" + iccProfileSrc 
                             + "' not found. Using rgb replacement values.");
-                    parsedColor = new Color(red, green, blue);
+                    parsedColor = new Color((int)red, (int)green, (int)blue);
                 }
+            } catch (PropertyException pe) {
+                //simply re-throw
+                throw pe;
             } catch (Exception e) {
-                throw new PropertyException(
-                        "Arguments to rgb-icc() must be [0..255] or [0%..100%]");
+                //wrap in a PropertyException
+                throw new PropertyException(e);
             }
         } else {
             throw new PropertyException("Unknown color format: " + value
-                    + ". Must be fop-rgb-icc(r,g,b,NCNAME,\"src\",....)");
+                    + ". Must be fop-rgb-icc(r,g,b,NCNAME,src,....)");
         }
         return parsedColor;
     }
@@ -403,61 +385,58 @@ public final class ColorUtil {
         int pose = value.indexOf(")");
         if (poss != -1 && pose != -1) {
             value = value.substring(poss + 1, pose);
-            StringTokenizer st = new StringTokenizer(value, ",");
+            String[] args = value.split(",");
             try {
+                if (args.length != 4) {
+                    throw new PropertyException(
+                            "Invalid number of arguments: cmyk(" + value + ")");
+                }
                 float cyan = 0.0f, magenta = 0.0f, yellow = 0.0f, black = 0.0f;
-                if (st.hasMoreTokens()) {
-                    String str = st.nextToken().trim();
-                    if (str.endsWith("%")) {
-                      cyan  = Float.parseFloat(str.substring(0,
-                                str.length() - 1)) / 100.0f;
-                    } else {
-                      cyan  = Float.parseFloat(str);
-                    }
+                String str = args[0].trim();
+                if (str.endsWith("%")) {
+                  cyan  = Float.parseFloat(str.substring(0,
+                            str.length() - 1)) / 100.0f;
+                } else {
+                  cyan  = Float.parseFloat(str);
                 }
-                if (st.hasMoreTokens()) {
-                    String str = st.nextToken().trim();
-                    if (str.endsWith("%")) {
-                      magenta = Float.parseFloat(str.substring(0,
-                                str.length() - 1)) / 100.0f;
-                    } else {
-                      magenta = Float.parseFloat(str);
-                    }
+                str = args[1].trim();
+                if (str.endsWith("%")) {
+                  magenta = Float.parseFloat(str.substring(0,
+                            str.length() - 1)) / 100.0f;
+                } else {
+                  magenta = Float.parseFloat(str);
                 }
-                if (st.hasMoreTokens()) {
-                    String str = st.nextToken().trim();
-                    if (str.endsWith("%")) {
-                      yellow = Float.parseFloat(str.substring(0,
-                                str.length() - 1)) / 100.0f;
-                    } else {
-                      yellow = Float.parseFloat(str);
-                    }
+                str = args[2].trim();
+                if (str.endsWith("%")) {
+                  yellow = Float.parseFloat(str.substring(0,
+                            str.length() - 1)) / 100.0f;
+                } else {
+                  yellow = Float.parseFloat(str);
                 }
-                if (st.hasMoreTokens()) {
-                  String str = st.nextToken().trim();
-                  if (str.endsWith("%")) {
-                    black = Float.parseFloat(str.substring(0,
-                              str.length() - 1)) / 100.0f;
-                  } else {
-                    black = Float.parseFloat(str);
-                  }
-              }
+                str = args[3].trim();
+                if (str.endsWith("%")) {
+                  black = Float.parseFloat(str.substring(0,
+                            str.length() - 1)) / 100.0f;
+                } else {
+                  black = Float.parseFloat(str);
+                }
+                
                 if ((cyan < 0.0 || cyan > 1.0) 
                         || (magenta < 0.0 || magenta > 1.0)
                         || (yellow < 0.0 || yellow > 1.0)
                         || (black < 0.0 || black > 1.0)) {
-                    throw new PropertyException("Color values out of range");
+                    throw new PropertyException("Color values out of range"
+                            + "Arguments to cmyk() must be in the range [0%-100%] or [0.0-1.0]");
                 }
                 float[] cmyk = new float[] {cyan, magenta, yellow, black};
                 CMYKColorSpace cmykCs = CMYKColorSpace.getInstance();
                 float[] rgb = cmykCs.toRGB(cmyk);
                 parsedColor = ColorExt.createFromFoRgbIcc(rgb[0], rgb[1], rgb[2], 
                         null, "#CMYK", cmykCs, cmyk);
-
-                
+            } catch (PropertyException pe) {
+                throw pe;
             } catch (Exception e) {
-                throw new PropertyException(
-                        "Arguments to cmyk() must be in the range [0%-100%] or [0.0-1.0]");
+                throw new PropertyException(e);
             }
         } else {
             throw new PropertyException("Unknown color format: " + value
@@ -668,7 +647,6 @@ public final class ColorUtil {
         colorMap.put("whitesmoke", new Color(245, 245, 245));
         colorMap.put("yellow", new Color(255, 255, 0));
         colorMap.put("yellowgreen", new Color(154, 205, 50));
-
         colorMap.put("transparent", new Color(0, 0, 0, 0));
     }
 
