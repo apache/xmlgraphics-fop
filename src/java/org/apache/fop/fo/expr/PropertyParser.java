@@ -275,6 +275,11 @@ public final class PropertyParser extends PropertyTokenizer {
                     prop = NumberProperty.getInstance(pcval * pcBase.getBaseValue());
                 } else if (pcBase.getDimension() == 1) {
                     if (pcBase instanceof LengthBase) {
+                        if (pcval == 0.0) {
+                            prop = FixedLength.ZERO_FIXED_LENGTH;
+                            break;
+                        }
+
                         //If the base of the percentage is known
                         //and absolute, it can be resolved by the
                         //parser
@@ -319,9 +324,7 @@ public final class PropertyParser extends PropertyTokenizer {
             break;
 
         case TOK_COLORSPEC:
-            prop = ColorProperty.getInstance(
-                    propInfo.getPropertyList().getFObj().getUserAgent(), 
-                    currentTokenValue);
+            prop = ColorProperty.getInstance(propInfo.getUserAgent(), currentTokenValue);
             break;
 
         case TOK_FUNCTION_LPAR:
