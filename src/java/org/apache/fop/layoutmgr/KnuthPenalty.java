@@ -65,11 +65,13 @@ public class KnuthPenalty extends KnuthElement {
 
     /**
      * Create a new KnuthPenalty.
-     *
+     * 
      * @param w the width of this penalty
      * @param p the penalty value of this penalty
      * @param f is this penalty flagged?
-     * @param iBreakClass the break class of this penalty (one of the break-* constants)
+     * @param iBreakClass the break class of this penalty (one of
+     * {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN}, {@link Constants#EN_PAGE},
+     * {@link Constants#EN_EVEN_PAGE}, {@link Constants#EN_ODD_PAGE})
      * @param pos the Position stored in this penalty
      * @param bAux is this penalty auxiliary?
      */
