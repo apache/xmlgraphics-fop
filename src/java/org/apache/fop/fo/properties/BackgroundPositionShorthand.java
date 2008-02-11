@@ -72,7 +72,7 @@ public class BackgroundPositionShorthand extends ListProperty {
          * Returns a {@link org.apache.fop.datatypes.PercentBase} whose
          * <code>getDimension()</code> returns 1.
          */
-        public PercentBase getP‘rcentBase() {
+        public PercentBase getPercentBase() {
             return new PercentBase() {
                 /** {@inheritDoc} */
                 public int getBaseLength(PercentBaseContext context) throws PropertyException {
