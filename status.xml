@@ -28,6 +28,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Layout" dev="VH" type="add">
+        Added full support for breaks inside the cells of a table.
+      </action>
       <action context="Code" dev="AD" type="fix" fixes-bug="41631">
         Added correct percentage resolution for arguments to the proportional-column-width() function.
       </action>
