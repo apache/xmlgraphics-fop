@@ -24,6 +24,7 @@ import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.table.ConditionalBorder;
 import org.apache.fop.fo.flow.table.EffRow;
 import org.apache.fop.fo.flow.table.GridUnit;
@@ -96,6 +97,13 @@ class ActiveCell {
         /** Length of the penalty ending this step, if any. */
         private int penaltyLength;
         /**
+         * One of {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN},
+         * {@link Constants#EN_PAGE}, {@link Constants#EN_EVEN_PAGE},
+         * {@link Constants#EN_ODD_PAGE}. Set to auto if the break isn't at a penalty
+         * element.
+         */
+        private int breakClass;
+        /**
          * Length of the optional content at the beginning of the step. That is, content
          * that will not appear if this step starts a new page.
          */
@@ -117,6 +125,7 @@ class ActiveCell {
             this.totalLength   = other.totalLength;
             this.penaltyLength = other.penaltyLength;
             this.condBeforeContentLength = other.condBeforeContentLength;
+            this.breakClass    = other.breakClass;
         }
 
         /** {@inheritDoc} */
@@ -210,6 +219,7 @@ class ActiveCell {
     private void gotoNextLegalBreak() {
         afterNextStep.penaltyLength = 0;
         afterNextStep.condBeforeContentLength = 0;
+        afterNextStep.breakClass = Constants.EN_AUTO;
         boolean breakFound = false;
         boolean prevIsBox = false;
         boolean boxFound = false;
@@ -219,8 +229,12 @@ class ActiveCell {
                 prevIsBox = false;
                 if (el.getP() < KnuthElement.INFINITE) {
                     // First legal break point
-                    afterNextStep.penaltyLength = el.getW();
                     breakFound = true;
+                    afterNextStep.penaltyLength = el.getW();
+                    KnuthPenalty p = (KnuthPenalty) el;
+                    if (p.isForcedBreak()) {
+                        afterNextStep.breakClass = p.getBreakClass();
+                    }
                 }
             } else if (el.isGlue()) {
                 if (prevIsBox) {
@@ -276,7 +290,7 @@ class ActiveCell {
      * @see #signalRowLastStep(int)
      */
     private void increaseCurrentStep(int limit) {
-        while (afterNextStep.totalLength <= limit) {
+        while (afterNextStep.totalLength <= limit && nextStep.breakClass == Constants.EN_AUTO) {
             nextStep.set(afterNextStep);
             if (afterNextStep.end >= elementList.size() - 1) {
                 break;
@@ -338,11 +352,18 @@ class ActiveCell {
      * its own step may be included or not.
      * 
      * @param minStep length of the chosen next step
+     * @return the break class of the step, if any. One of {@link Constants#EN_AUTO},
+     * {@link Constants#EN_COLUMN}, {@link Constants#EN_PAGE},
+     * {@link Constants#EN_EVEN_PAGE}, {@link Constants#EN_ODD_PAGE}. EN_AUTO if this
+     * cell's step is not included in the next step.
      */
-    void signalNextStep(int minStep) {
+    int signalNextStep(int minStep) {
         if (nextStep.totalLength <= minStep) {
             includedLength = nextStep.contentLength;
             remainingLength = totalLength - includedLength - afterNextStep.condBeforeContentLength;
+            return nextStep.breakClass;
+        } else {
+            return Constants.EN_AUTO;
         }
     }
 

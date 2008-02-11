@@ -84,6 +84,13 @@ public class TableStepper {
      */
     private boolean rowHeightSmallerThanFirstStep;
 
+    /**
+     * The class of the next break. One of {@link Constants#EN_AUTO},
+     * {@link Constants#EN_COLUMN}, {@link Constants#EN_PAGE},
+     * {@link Constants#EN_EVEN_PAGE}, {@link Constants#EN_ODD_PAGE}. Defaults to
+     * EN_AUTO.
+     */
+    private int nextBreakClass;
 
     /**
      * Main constructor
@@ -190,18 +197,10 @@ public class TableStepper {
                 }
             }
 
-            boolean forcedBreak = false;
-            int breakClass = -1;
             //Put all involved grid units into a list
             List cellParts = new java.util.ArrayList(columnCount);
             for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
                 ActiveCell activeCell = (ActiveCell) iter.next();
-                if (activeCell.contributesContent()) {
-                    forcedBreak = activeCell.isLastForcedBreak();
-                    if (forcedBreak) {
-                        breakClass = activeCell.getLastBreakClass();
-                    }
-                }
                 CellPart part = activeCell.createCellPart();
                 cellParts.add(part);
                 if (returnList.size() == 0 && part.isFirstPart()
@@ -244,14 +243,15 @@ public class TableStepper {
             if (signalKeepWithNext || getTableLM().mustKeepTogether()) {
                 p = KnuthPenalty.INFINITE;
             }
-            if (forcedBreak) {
+            if (nextBreakClass != Constants.EN_AUTO) {
+                log.trace("Forced break encountered");
                 p = -KnuthPenalty.INFINITE; //Overrides any keeps (see 4.8 in XSL 1.0)
             }
             if (rowHeightSmallerThanFirstStep) {
                 rowHeightSmallerThanFirstStep = false;
                 p = KnuthPenalty.INFINITE;
             }
-            returnList.add(new BreakElement(penaltyPos, effPenaltyLen, p, breakClass, context));
+            returnList.add(new BreakElement(penaltyPos, effPenaltyLen, p, nextBreakClass, context));
             if (penaltyOrGlueLen < 0) {
                 returnList.add(new KnuthGlue(-penaltyOrGlueLen, 0, 0, new Position(null), true));
             }
@@ -378,9 +378,36 @@ public class TableStepper {
      * @param step the next step
      */
     private void signalNextStep(int step) {
+        nextBreakClass = Constants.EN_AUTO;
         for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
             ActiveCell activeCell = (ActiveCell) iter.next();
-            activeCell.signalNextStep(step);
+            nextBreakClass = compareBreakClasses(nextBreakClass, activeCell.signalNextStep(step));
+        }
+    }
+
+    // TODO replace that with a proper 1.5 enumeration ASAP
+    // TODO this has nothing to do here
+    private static int getBreakClassPriority(int breakClass) {
+        switch (breakClass) {
+        case Constants.EN_AUTO:      return 0;
+        case Constants.EN_COLUMN:    return 1;
+        case Constants.EN_PAGE:      return 2;
+        case Constants.EN_EVEN_PAGE: return 3;
+        case Constants.EN_ODD_PAGE:  return 3;
+        default: throw new IllegalArgumentException();
+        }
+    }
+
+    // TODO even-page and odd-page can't be compared to each other and instead create a
+    // conflict situation. For now the first encountered break will win, but eventually
+    // some warning message should be sent to the user.
+    private static int compareBreakClasses(int b1, int b2) {
+        int p1 = getBreakClassPriority(b1);
+        int p2 = getBreakClassPriority(b2);
+        if (p1 < p2) {
+            return b2;
+        } else {
+            return b1;
         }
     }
 
