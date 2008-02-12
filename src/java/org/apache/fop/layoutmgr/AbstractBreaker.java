@@ -25,6 +25,7 @@ import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.fo.Constants;
 import org.apache.fop.traits.MinOptMax;
 
@@ -560,10 +561,8 @@ public abstract class AbstractBreaker {
             nextSequenceStartsOn = handleSpanChange(childLC, nextSequenceStartsOn);
             
             Position breakPosition = null;
-            if (((KnuthElement) returnedList.getLast()).isPenalty()
-                    && ((KnuthPenalty) returnedList.getLast()).getP() == -KnuthElement.INFINITE) {
-                KnuthPenalty breakPenalty = (KnuthPenalty) returnedList
-                        .removeLast();
+            if (((KnuthElement) returnedList.getLast()).isForcedBreak()) {
+                KnuthPenalty breakPenalty = (KnuthPenalty)returnedList.removeLast();
                 breakPosition = breakPenalty.getPosition();
                 switch (breakPenalty.getBreakClass()) {
                 case Constants.EN_PAGE:
