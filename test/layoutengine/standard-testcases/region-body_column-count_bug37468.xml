@@ -34,8 +34,8 @@
       <fo:page-sequence master-reference="normal">
         <fo:flow flow-name="xsl-region-body">
           <fo:table table-layout="fixed" width="100%" border-collapse="separate">
-            <fo:table-column/>
-            <fo:table-column/>
+            <fo:table-column column-width="proportional-column-width(1)"/>
+            <fo:table-column column-width="proportional-column-width(1)"/>
             <fo:table-body>
               <fo:table-row>
                 <fo:table-cell>
