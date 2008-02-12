@@ -305,10 +305,4 @@
     <description>A soft hyphen should be a preferred as break compared to a
     normal hyphenation point but is not.</description>
   </testcase>
-  <testcase>
-    <name>Wrong fo.Constants values used for break classes</name>
-    <file>region-body_column-count_bug37468.xml</file>
-    <description>Bugzilla #44393: the Constants.EN_AUTO break class isn't properly recognized by
-      PageBreaker.</description>
-  </testcase>
 </disabled-testcases>
