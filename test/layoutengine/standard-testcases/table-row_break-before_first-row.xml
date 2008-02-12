@@ -62,12 +62,12 @@
               </fo:table-row>
               <fo:table-row border="2pt solid orange">
                 <fo:table-cell border="inherit">
-                  <fo:block>Cell 2.1</fo:block>
-                  <fo:block>Cell 2.1</fo:block>
+                  <fo:block>Cell 3.1</fo:block>
+                  <fo:block>Cell 3.1</fo:block>
                 </fo:table-cell>
                 <fo:table-cell border="inherit">
-                  <fo:block>Cell 2.2</fo:block>
-                  <fo:block>Cell 2.2</fo:block>
+                  <fo:block>Cell 3.2</fo:block>
+                  <fo:block>Cell 3.2</fo:block>
                 </fo:table-cell>
               </fo:table-row>
             </fo:table-body>
