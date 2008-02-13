@@ -83,15 +83,14 @@ public abstract class CIDFont extends CustomFont {
         return 0;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean isMultiByte() {
         return true;
     }
 
     /**
-     * Returns char[] array .
+     * Returns a char array containing all Unicode characters that have been accessed.
+     * @return a char array with all used Unicode characters
      */
     public abstract char[] getCharsUsed();
 }
