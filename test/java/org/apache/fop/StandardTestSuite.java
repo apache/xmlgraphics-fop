@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: BasicDriverTestSuite.java 231325 2005-08-10 21:05:39Z jeremias $ */
+/* $Id$ */
  
 package org.apache.fop;
 
