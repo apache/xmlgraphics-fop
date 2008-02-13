@@ -360,7 +360,7 @@ public abstract class FONode implements Cloneable {
      * (e.g., currently unsupported properties)
      * @param problem text to display that indicates the problem
      */
-    protected void attributeWarning(String problem) {
+    public void attributeWarning(String problem) {
         log.warn(warningText(locator) + getName() + ", " + problem);
     }
 

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.ValidationException;
 
 
@@ -115,7 +116,24 @@ class FixedColRowGroupBuilder extends RowGroupBuilder {
     }
 
     /** {@inheritDoc} */
-    void endRow(TableCellContainer container) {
+    void endRow(TableRow row) {
+        if (currentRowIndex > 0 && row.getBreakBefore() != Constants.EN_AUTO) {
+            row.attributeWarning("break-before ignored because of row spanning "
+                    + "in progress (See XSL 1.1, 7.20.2)");
+        }
+        if (currentRowIndex < rows.size() - 1 && row.getBreakAfter() != Constants.EN_AUTO) {
+            row.attributeWarning("break-after ignored because of row spanning "
+                    + "in progress (See XSL 1.1, 7.20.1)");
+        }
+        handleRowEnd(row);
+    }
+
+    /** {@inheritDoc} */
+    void endRow(TableBody body) {
+        handleRowEnd(body);
+    }
+
+    private void handleRowEnd(TableCellContainer container) {
         List currentRow = (List) rows.get(currentRowIndex);
         lastRow = currentRow;
         // Fill gaps with empty grid units

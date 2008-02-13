@@ -20,7 +20,7 @@
   <info>
     <p>
       This test checks breaks on tables. Breaks on table-row during row spanning are ignored
-      (XSL 1.0, 7.19.1 and 7.19.2).
+      (XSL 1.1, 7.20.1 and 7.20.2).
     </p>
   </info>
   <fo>
@@ -33,10 +33,10 @@
       <fo:page-sequence master-reference="normal" white-space-collapse="true">
         <fo:flow flow-name="xsl-region-body">
           <fo:table table-layout="fixed" width="100%">
-            <fo:table-column/>
-            <fo:table-column/>
+            <fo:table-column column-width="proportional-column-width(1)"
+              number-columns-repeated="2"/>
             <fo:table-body>
-              <fo:table-row>
+              <fo:table-row break-after="page">
                 <fo:table-cell number-rows-spanned="2" background-color="orange">
                   <fo:block>cell1 line 1</fo:block>
                   <fo:block>cell1 line 2</fo:block>

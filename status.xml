@@ -28,6 +28,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Layout" dev="VH" type="fix" fixes-bug="44321">
+        Moved to the FO tree stage the check for break-before/after on table-row while spanning in
+        progress.
+      </action>
       <action context="Layout" dev="VH" type="add">
         Added full support for breaks before and after table cells (that is, break-before/after set
         on the first/last child of a cell).
