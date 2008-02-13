@@ -31,6 +31,7 @@ import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.util.LogUtil;
 
@@ -39,8 +40,11 @@ import org.apache.fop.util.LogUtil;
  */
 public final class FontCache implements Serializable {
     
-    /** Serialization Version UID */
-    private static final long serialVersionUID = 605232520271754717L;
+    /**
+     * Serialization Version UID. Change this value if you want to make sure the user's cache
+     * file is purged after an update.
+     */
+    private static final long serialVersionUID = 605232520271754718L;
 
     /** logging instance */
     private static Log log = LogFactory.getLog(FontCache.class);
