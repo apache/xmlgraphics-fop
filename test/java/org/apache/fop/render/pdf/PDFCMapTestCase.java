@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: PDFCMap.java 426576 2006-07-28 15:44:37Z jeremias $ */
+/* $Id$ */
 
 package org.apache.fop.render.pdf;
 

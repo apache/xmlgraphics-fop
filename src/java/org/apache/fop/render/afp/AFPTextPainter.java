@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: PSTextPainter.java 542237 2007-05-28 14:31:24Z jeremias $ */
+/* $Id$ */
 
 package org.apache.fop.render.afp;
 

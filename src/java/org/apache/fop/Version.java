@@ -41,7 +41,7 @@ public final class Version {
         if (version == null) {
             //Fallback if FOP is used in a development environment
             String headURL 
-                = "$HeadURL$";
+                = "$HeadURL: http://svn.apache.org/repos/asf/xmlgraphics/fop/trunk/src/java/org/apache/fop/Version.java $";
             version = headURL;
             final String pathPrefix = "/xmlgraphics/fop/";
             int pos = version.indexOf(pathPrefix); 
