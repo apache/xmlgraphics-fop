@@ -210,7 +210,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
                     // with a SpaceResolver.SpaceHandlingBreakPosition element, having no
                     // LM associated to it. Thus it will stop early instead of adding
                     // areas for following Positions. The above test aims at preventing
-                    // such a situation from occuring. add a null penalty to allow a break
+                    // such a situation from occurring. add a null penalty to allow a break
                     // between blocks
                     contentList.add(new BreakElement(
                             new Position(this), 0, context));
@@ -246,6 +246,16 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
         }
         //Space resolution
         SpaceResolver.resolveElementList(returnList);
+        if (((KnuthElement) returnList.getFirst()).isForcedBreak()) {
+            primaryGridUnit.setBreakBefore(((KnuthPenalty) returnList.getFirst()).getBreakClass());
+            returnList.removeFirst();
+            assert !returnList.isEmpty();
+        }
+        if (((KnuthElement) returnList.getLast()).isForcedBreak()) {
+            KnuthPenalty p = (KnuthPenalty) returnList.getLast();
+            primaryGridUnit.setBreakAfter(p.getBreakClass());
+            p.setP(0);
+        }
 
         getPSLM().notifyEndOfLayout(((TableCell)getFObj()).getId());
 

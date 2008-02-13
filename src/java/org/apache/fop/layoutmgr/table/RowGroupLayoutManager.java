@@ -40,6 +40,7 @@ import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.MinOptMaxUtil;
 import org.apache.fop.traits.MinOptMax;
+import org.apache.fop.util.BreakUtil;
 
 class RowGroupLayoutManager {
 
@@ -66,11 +67,13 @@ class RowGroupLayoutManager {
      */
     int getBreakBefore() {
         TableRow rowFO = rowGroup[0].getTableRow();
+        int breakBefore;
         if (rowFO == null) {
-            return Constants.EN_AUTO;
+            breakBefore = Constants.EN_AUTO;
         } else {
-            return rowFO.getBreakBefore(); 
+            breakBefore = rowFO.getBreakBefore(); 
         }
+        return BreakUtil.compareBreakClasses(breakBefore, rowGroup[0].getBreakBefore());
     }
 
     /**
@@ -81,11 +84,14 @@ class RowGroupLayoutManager {
      */
     int getBreakAfter() {
         TableRow rowFO = rowGroup[rowGroup.length - 1].getTableRow();
+        int breakAfter;
         if (rowFO == null) {
-            return Constants.EN_AUTO;
+            breakAfter = Constants.EN_AUTO;
         } else {
-            return rowFO.getBreakAfter(); 
+            breakAfter = rowFO.getBreakAfter(); 
         }
+        return BreakUtil.compareBreakClasses(breakAfter,
+                rowGroup[rowGroup.length - 1].getBreakAfter());
     }
 
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment, int bodyType) {

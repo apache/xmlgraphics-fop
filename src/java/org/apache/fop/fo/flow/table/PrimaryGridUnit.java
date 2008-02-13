@@ -22,6 +22,7 @@ package org.apache.fop.fo.flow.table;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.table.TableCellLayoutManager;
@@ -50,6 +51,9 @@ public class PrimaryGridUnit extends GridUnit {
 
     private boolean isSeparateBorderModel;
     private int halfBorderSeparationBPD;
+
+    private int breakBefore = Constants.EN_AUTO;
+    private int breakAfter = Constants.EN_AUTO;
 
     /**
      * Creates a new primary grid unit.
@@ -318,6 +322,44 @@ public class PrimaryGridUnit extends GridUnit {
      */
     public void createCellLM() {
         cellLM = new TableCellLayoutManager(cell, this);
+    }
+
+    /**
+     * Returns the class of the before break for the first child element of this cell.
+     * 
+     * @return one of {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN}, {@link
+     * Constants#EN_PAGE}, {@link Constants#EN_EVEN_PAGE}, {@link Constants#EN_ODD_PAGE}
+     */
+    public int getBreakBefore() {
+        return breakBefore;
+    }
+
+    /**
+     * Don't use, reserved for TableCellLM. TODO
+     * 
+     * @param breakBefore the breakBefore to set
+     */
+    public void setBreakBefore(int breakBefore) {
+        this.breakBefore = breakBefore;
+    }
+
+    /**
+     * Returns the class of the before after for the last child element of this cell.
+     * 
+     * @return one of {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN}, {@link
+     * Constants#EN_PAGE}, {@link Constants#EN_EVEN_PAGE}, {@link Constants#EN_ODD_PAGE}
+     */
+    public int getBreakAfter() {
+        return breakAfter;
+    }
+
+    /**
+     * Don't use, reserved for TableCellLM. TODO
+     * 
+     * @param breakAfter the breakAfter to set
+     */
+    public void setBreakAfter(int breakAfter) {
+        this.breakAfter = breakAfter;
     }
 
 }

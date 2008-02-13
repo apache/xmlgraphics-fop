@@ -52,7 +52,7 @@ public class EmptyGridUnit extends GridUnit {
 
     /** {@inheritDoc} */
     public boolean isPrimary() {
-        return true;
+        return false;
     }
 
     /** {@inheritDoc} */
