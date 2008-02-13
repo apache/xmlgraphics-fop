@@ -160,7 +160,17 @@ class RowPainter {
         for (int i = 0; i < colCount; i++) {
             GridUnit currentGU = currentRow.getGridUnit(i);            
             if (!currentGU.isEmpty() && currentGU.getColSpanIndex() == 0
-                    && (lastInPart || currentGU.isLastGridUnitRowSpan())) {
+                    && (lastInPart || currentGU.isLastGridUnitRowSpan())
+                    && firstCellParts[i] != null) {
+                // TODO
+                // The last test above is a workaround for the stepping algorithm's
+                // fundamental flaw making it unable to produce the right element list for
+                // multiple breaks inside a same row group.
+                // (see http://wiki.apache.org/xmlgraphics-fop/TableLayout/KnownProblems)
+                // In some extremely rare cases (forced breaks, very small page height), a
+                // TableContentPosition produced during row delaying may end up alone on a
+                // page. It will not contain the CellPart instances for the cells starting
+                // the next row, so firstCellParts[i] will still be null for those ones.
                 int cellHeight = cellHeights[i];
                 cellHeight += lastCellParts[i].getConditionalAfterContentLength();
                 cellHeight += lastCellParts[i].getBorderPaddingAfter(lastInPart);
@@ -177,7 +187,8 @@ class RowPainter {
         for (int i = 0; i < colCount; i++) {
             GridUnit currentGU = currentRow.getGridUnit(i);            
             if (!currentGU.isEmpty() && currentGU.getColSpanIndex() == 0
-                    && (lastInPart || currentGU.isLastGridUnitRowSpan())) {
+                    && (lastInPart || currentGU.isLastGridUnitRowSpan())
+                    && firstCellParts[i] != null) {
                 assert firstCellParts[i].pgu == currentGU.getPrimary();
                 int borderBeforeWhich;
                 if (firstCellParts[i].start == 0) {

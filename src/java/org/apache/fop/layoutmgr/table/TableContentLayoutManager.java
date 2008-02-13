@@ -48,6 +48,7 @@ import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.layoutmgr.SpaceResolver.SpaceHandlingBreakPosition;
+import org.apache.fop.util.BreakUtil;
 
 /**
  * Layout manager for table contents, particularly managing the creation of combined element lists.
@@ -212,10 +213,14 @@ public class TableContentLayoutManager implements PercentBaseContext {
         while ((rowGroup = iter.getNextRowGroup()) != null) {
             RowGroupLayoutManager rowGroupLM = new RowGroupLayoutManager(getTableLM(), rowGroup,
                     stepper);
-            if (breakBetween == Constants.EN_AUTO) {
-                // TODO improve
-                breakBetween = rowGroupLM.getBreakBefore();
-            }
+             // TODO
+             // The RowGroupLM.getBreakBefore method will work correctly only after
+             // getNextKnuthElements is called. Indeed TableCellLM will set the values for
+             // breaks on PrimaryGridUnit once it has got the Knuth elements of its
+             // children. This can be changed once all the LMs adopt the same scheme of
+             // querying childrens LMs for breaks instead of producing penalty elements
+            List nextRowGroupElems = rowGroupLM.getNextKnuthElements(context, alignment, bodyType);
+            breakBetween = BreakUtil.compareBreakClasses(breakBetween, rowGroupLM.getBreakBefore());
             if (breakBetween != Constants.EN_AUTO) {
                 if (returnList.size() > 0) {
                     BreakElement breakPoss = (BreakElement) returnList.getLast();
@@ -226,7 +231,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
                             0, -KnuthPenalty.INFINITE, breakBetween, context));
                 }
             }
-            returnList.addAll(rowGroupLM.getNextKnuthElements(context, alignment, bodyType));
+            returnList.addAll(nextRowGroupElems);
             breakBetween = rowGroupLM.getBreakAfter();
         }
         // Break after the table's last row

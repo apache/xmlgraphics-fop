@@ -37,6 +37,7 @@ import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.Position;
+import org.apache.fop.util.BreakUtil;
 
 /**
  * This class processes row groups to create combined element lists for tables.
@@ -243,6 +244,12 @@ public class TableStepper {
             if (signalKeepWithNext || getTableLM().mustKeepTogether()) {
                 p = KnuthPenalty.INFINITE;
             }
+            if (rowFinished && activeRowIndex < rowGroup.length - 1) {
+                nextBreakClass = BreakUtil.compareBreakClasses(nextBreakClass,
+                        rowGroup[activeRowIndex].getBreakAfter());
+                nextBreakClass = BreakUtil.compareBreakClasses(nextBreakClass,
+                        rowGroup[activeRowIndex + 1].getBreakBefore());
+            }
             if (nextBreakClass != Constants.EN_AUTO) {
                 log.trace("Forced break encountered");
                 p = -KnuthPenalty.INFINITE; //Overrides any keeps (see 4.8 in XSL 1.0)
@@ -381,33 +388,8 @@ public class TableStepper {
         nextBreakClass = Constants.EN_AUTO;
         for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
             ActiveCell activeCell = (ActiveCell) iter.next();
-            nextBreakClass = compareBreakClasses(nextBreakClass, activeCell.signalNextStep(step));
-        }
-    }
-
-    // TODO replace that with a proper 1.5 enumeration ASAP
-    // TODO this has nothing to do here
-    private static int getBreakClassPriority(int breakClass) {
-        switch (breakClass) {
-        case Constants.EN_AUTO:      return 0;
-        case Constants.EN_COLUMN:    return 1;
-        case Constants.EN_PAGE:      return 2;
-        case Constants.EN_EVEN_PAGE: return 3;
-        case Constants.EN_ODD_PAGE:  return 3;
-        default: throw new IllegalArgumentException();
-        }
-    }
-
-    // TODO even-page and odd-page can't be compared to each other and instead create a
-    // conflict situation. For now the first encountered break will win, but eventually
-    // some warning message should be sent to the user.
-    private static int compareBreakClasses(int b1, int b2) {
-        int p1 = getBreakClassPriority(b1);
-        int p2 = getBreakClassPriority(b2);
-        if (p1 < p2) {
-            return b2;
-        } else {
-            return b1;
+            nextBreakClass = BreakUtil.compareBreakClasses(nextBreakClass,
+                    activeCell.signalNextStep(step));
         }
     }
 

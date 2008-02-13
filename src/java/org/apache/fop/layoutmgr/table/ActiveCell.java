@@ -335,6 +335,7 @@ class ActiveCell {
             } else {
                 nextStep.set(afterNextStep);
                 nextStep.start = previousStep.end + 1;
+                afterNextStep.start = nextStep.start;
                 if (afterNextStep.end < elementList.size() - 1) {
                     gotoNextLegalBreak();
                 }
@@ -406,17 +407,6 @@ class ActiveCell {
     }
 
     /**
-     * Returns true if some content of this cell is part of the chosen next step.
-     * 
-     * @return true if this cell's next step is inferior or equal to the next minimal step
-     */
-    boolean contributesContent() {
-        // return includedInLastStep() && the cell hasn't finished yet, otherwise there's
-        // nothing more to contribute
-        return includedInLastStep() && nextStep.end >= nextStep.start;
-    }
-
-    /**
      * Returns true if this cell would be finished after the given step. That is, it would
      * be included in the step and the end of its content would be reached.
      * 
@@ -467,14 +457,6 @@ class ActiveCell {
                     nextStep.condBeforeContentLength, length, nextStep.penaltyLength,
                     bpBeforeNormal, bpBeforeFirst, bpAfterNormal, bpAfterTrailing);
         }
-    }
-
-    boolean isLastForcedBreak() {
-        return ((KnuthElement)elementList.get(nextStep.end)).isForcedBreak();
-    }
-
-    int getLastBreakClass() {
-        return ((KnuthPenalty)elementList.get(nextStep.end)).getBreakClass();
     }
 
     boolean keepWithNextSignal() {

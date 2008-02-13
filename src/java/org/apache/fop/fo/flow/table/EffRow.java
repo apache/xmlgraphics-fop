@@ -22,8 +22,10 @@ package org.apache.fop.fo.flow.table;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.fop.fo.Constants;
 import org.apache.fop.layoutmgr.table.TableRowIterator;
 import org.apache.fop.traits.MinOptMax;
+import org.apache.fop.util.BreakUtil;
 
 /**
  * This class represents an effective row in a table and holds a list of grid units occupying
@@ -159,7 +161,50 @@ public class EffRow {
             throw new IllegalArgumentException("Illegal flag queried: " +  which);
         }
     }
-    
+
+
+    /**
+     * Returns the break class for this row. This is a combination of break-before set on
+     * the first children of any cells starting on this row.
+     * <p><strong>Note:</strong> this works only after getNextKuthElements on the
+     * corresponding TableCellLM have been called!</p>
+     * 
+     * @return one of {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN}, {@link
+     * Constants#EN_PAGE}, {@link Constants#EN_EVEN_PAGE}, {@link Constants#EN_ODD_PAGE}
+     */
+    public int getBreakBefore() {
+        int breakBefore = Constants.EN_AUTO;
+        for (Iterator iter = gridUnits.iterator(); iter.hasNext();) {
+            GridUnit gu = (GridUnit) iter.next();
+            if (gu.isPrimary()) {
+                breakBefore = BreakUtil.compareBreakClasses(breakBefore,
+                        gu.getPrimary().getBreakBefore());
+            }
+        }
+        return breakBefore;
+    }
+
+    /**
+     * Returns the break class for this row. This is a combination of break-after set on
+     * the last children of any cells ending on this row.
+     * <p><strong>Note:</strong> this works only after getNextKuthElements on the
+     * corresponding TableCellLM have been called!</p>
+     * 
+     * @return one of {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN}, {@link
+     * Constants#EN_PAGE}, {@link Constants#EN_EVEN_PAGE}, {@link Constants#EN_ODD_PAGE}
+     */
+    public int getBreakAfter() {
+        int breakAfter = Constants.EN_AUTO;
+        for (Iterator iter = gridUnits.iterator(); iter.hasNext();) {
+            GridUnit gu = (GridUnit) iter.next();
+            if (gu.isPrimary()) {
+                breakAfter = BreakUtil.compareBreakClasses(breakAfter,
+                        gu.getPrimary().getBreakAfter());
+            }
+        }
+        return breakAfter;
+    }
+
     /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer("EffRow {");
