@@ -26,11 +26,9 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.table.EffRow;
 import org.apache.fop.fo.flow.table.GridUnit;
 import org.apache.fop.fo.flow.table.PrimaryGridUnit;
-import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthGlue;
@@ -456,20 +454,8 @@ public class TableStepper {
      */
     private void prepareNextRow() {
         if (activeRowIndex < rowGroup.length - 1) {
-            TableRow rowFO = rowGroup[activeRowIndex].getTableRow();
-            if (rowFO != null && rowFO.getBreakAfter() != Constants.EN_AUTO) {
-                log.warn(FONode.decorateWithContextInfo(
-                        "break-after ignored on table-row because of row spanning "
-                        + "in progress (See XSL 1.0, 7.19.1)", rowFO));
-            }
             previousRowsLength += rowGroup[activeRowIndex].getHeight().opt;
             activateCells(nextActiveCells, activeRowIndex + 1);
-            rowFO = rowGroup[activeRowIndex + 1].getTableRow();
-            if (rowFO != null && rowFO.getBreakBefore() != Constants.EN_AUTO) {
-                log.warn(FONode.decorateWithContextInfo(
-                        "break-before ignored on table-row because of row spanning "
-                        + "in progress (See XSL 1.0, 7.19.2)", rowFO));
-            }
             if (log.isTraceEnabled()) {
                 log.trace("Computing first step for row " + (activeRowIndex + 2));
             }

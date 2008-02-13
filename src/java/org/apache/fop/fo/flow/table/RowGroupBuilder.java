@@ -58,12 +58,23 @@ abstract class RowGroupBuilder {
     /**
      * Receives notification of the end of the current row. If the current row finishes
      * the row group, the {@link TableBody#addRowGroup(List)} method of the parent table
-     * part (i.e., the given container itself or its parent if this is a table-row) will
-     * be called
+     * part will be called.
      * 
-     * @param container the parent element of the current row
+     * @param row the row being finished
      */
-    abstract void endRow(TableCellContainer container);
+    abstract void endRow(TableRow row);
+
+    /**
+     * Receives notification of the end of the current row, when the source contains no
+     * fo:table-row element. If the current row finishes the row group, the
+     * {@link TableBody#addRowGroup(List)} method of the given table part will be called.
+     * 
+     * <p>If the source does contain explicit fo:table-row elements, then the
+     * {@link #endRow(TableRow)} method will be called instead.</p>
+     * 
+     * @param part the part containing the current row
+     */
+    abstract void endRow(TableBody part);
 
     /**
      * Receives notification of the start of a table-header/footer/body.
