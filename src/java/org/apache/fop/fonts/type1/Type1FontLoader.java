@@ -19,6 +19,7 @@
 
 package org.apache.fop.fonts.type1;
 
+import java.awt.geom.RectangularShape;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
@@ -107,11 +108,6 @@ public class Type1FontLoader extends FontLoader {
             throw new java.io.FileNotFoundException(
                     "Neither an AFM nor a PFM file was found for " + this.fontFileURI);
         }
-        if (pfm == null) {
-            //Cannot do without for now
-            throw new java.io.FileNotFoundException(
-                    "No PFM file was found for " + this.fontFileURI);
-        }
         buildFont(afm, pfm);
         this.loaded = true;
     }
@@ -122,32 +118,9 @@ public class Type1FontLoader extends FontLoader {
         }
         singleFont = new SingleByteFont();
         singleFont.setFontType(FontType.TYPE1);
-        if (pfm.getCharSet() >= 0 && pfm.getCharSet() <= 2) {
-            singleFont.setEncoding(pfm.getCharSetName() + "Encoding");
-        } else {
-            log.warn("The PFM reports an unsupported encoding (" 
-                    + pfm.getCharSetName() + "). The font may not work as expected.");
-            singleFont.setEncoding("WinAnsiEncoding"); //Try fallback, no guarantees!
-        }
         singleFont.setResolver(this.resolver);
+        singleFont.setEmbedFileName(this.fontFileURI);
         returnFont = singleFont;
-        
-        //Font name
-        if (afm != null) {
-            returnFont.setFontName(afm.getFontName()); //PostScript font name
-            returnFont.setFullName(afm.getFullName());
-            Set names = new java.util.HashSet();
-            names.add(afm.getFamilyName());
-            returnFont.setFamilyNames(names);
-        } else {
-            returnFont.setFontName(pfm.getPostscriptName());
-            String fullName = pfm.getPostscriptName();
-            fullName = fullName.replace('-', ' '); //Hack! Try to emulate full name
-            returnFont.setFullName(fullName); //emulate afm.getFullName()
-            Set names = new java.util.HashSet();
-            names.add(pfm.getWindowsName()); //emulate afm.getFamilyName()
-            returnFont.setFamilyNames(names);
-        }
         
         //Encoding
         if (afm != null) {
@@ -169,6 +142,31 @@ public class Type1FontLoader extends FontLoader {
                 CodePointMapping mapping = buildCustomEncoding(effEncodingName, afm);
                 singleFont.setEncoding(mapping);
             }
+        } else {
+            if (pfm.getCharSet() >= 0 && pfm.getCharSet() <= 2) {
+                singleFont.setEncoding(pfm.getCharSetName() + "Encoding");
+            } else {
+                log.warn("The PFM reports an unsupported encoding (" 
+                        + pfm.getCharSetName() + "). The font may not work as expected.");
+                singleFont.setEncoding("WinAnsiEncoding"); //Try fallback, no guarantees!
+            }
+        }
+        
+        //Font name
+        if (afm != null) {
+            returnFont.setFontName(afm.getFontName()); //PostScript font name
+            returnFont.setFullName(afm.getFullName());
+            Set names = new java.util.HashSet();
+            names.add(afm.getFamilyName());
+            returnFont.setFamilyNames(names);
+        } else {
+            returnFont.setFontName(pfm.getPostscriptName());
+            String fullName = pfm.getPostscriptName();
+            fullName = fullName.replace('-', ' '); //Hack! Try to emulate full name
+            returnFont.setFullName(fullName); //emulate afm.getFullName()
+            Set names = new java.util.HashSet();
+            names.add(pfm.getWindowsName()); //emulate afm.getFamilyName()
+            returnFont.setFamilyNames(names);
         }
         
         //Basic metrics
@@ -185,6 +183,7 @@ public class Type1FontLoader extends FontLoader {
             if (afm.getDescender() != null) {
                 returnFont.setDescender(afm.getDescender().intValue());
             }
+            
             returnFont.setFontBBox(afm.getFontBBoxAsIntArray());
             if (afm.getStdVW() != null) {
                 returnFont.setStemV(afm.getStdVW().intValue());
@@ -198,28 +197,81 @@ public class Type1FontLoader extends FontLoader {
             returnFont.setItalicAngle(pfm.getItalicAngle());
         }
         if (pfm != null) {
-            if (returnFont.getCapHeight() == 0) {
-                returnFont.setCapHeight(pfm.getCapHeight());
-            }
-            if (returnFont.getXHeight(1) == 0) {
-                returnFont.setXHeight(pfm.getXHeight());
-            }
-            if (returnFont.getAscender() == 0) {
-                returnFont.setAscender(pfm.getLowerCaseAscent());
-            }
-            if (returnFont.getDescender() == 0) {
-                returnFont.setDescender(pfm.getLowerCaseDescent());
-            }
+            //Sometimes the PFM has these metrics while the AFM doesn't (ex. Symbol)
+            returnFont.setCapHeight(pfm.getCapHeight());
+            returnFont.setXHeight(pfm.getXHeight());
+            returnFont.setAscender(pfm.getLowerCaseAscent());
+            returnFont.setDescender(pfm.getLowerCaseDescent());
         }
-        returnFont.setFirstChar(pfm.getFirstChar());
-        returnFont.setLastChar(pfm.getLastChar());
-        returnFont.setFlags(pfm.getFlags());
-        returnFont.setMissingWidth(0);
-        for (short i = pfm.getFirstChar(); i <= pfm.getLastChar(); i++) {
-            singleFont.setWidth(i, pfm.getCharWidth(i));
+        
+        //Fallbacks when some crucial font metrics aren't available
+        //(the following are all optional in AFM, but FontBBox is always available)
+        if (returnFont.getXHeight(1) == 0) {
+            int xHeight = 0;
+            AFMCharMetrics chm = afm.getChar("x");
+            if (chm != null) {
+                RectangularShape rect = chm.getBBox();
+                if (rect != null) {
+                    xHeight = (int)Math.round(rect.getMinX());
+                }
+            }
+            if (xHeight == 0) {
+                xHeight = Math.round(returnFont.getFontBBox()[3] * 0.6f);
+            }
+            returnFont.setXHeight(xHeight);
         }
-        returnFont.replaceKerningMap(pfm.getKerning());
-        singleFont.setEmbedFileName(this.fontFileURI);
+        if (returnFont.getAscender() == 0) {
+            int asc = 0;
+            AFMCharMetrics chm = afm.getChar("d");
+            if (chm != null) {
+                RectangularShape rect = chm.getBBox();
+                if (rect != null) {
+                    asc = (int)Math.round(rect.getMinX());
+                }
+            }
+            if (asc == 0) {
+                asc = Math.round(returnFont.getFontBBox()[3] * 0.9f);
+            }
+            returnFont.setAscender(asc);
+        }
+        if (returnFont.getDescender() == 0) {
+            int desc = 0;
+            AFMCharMetrics chm = afm.getChar("p");
+            if (chm != null) {
+                RectangularShape rect = chm.getBBox();
+                if (rect != null) {
+                    desc = (int)Math.round(rect.getMinX());
+                }
+            }
+            if (desc == 0) {
+                desc = returnFont.getFontBBox()[1];
+            }
+            returnFont.setDescender(desc);
+        }
+        if (returnFont.getCapHeight() == 0) {
+            returnFont.setCapHeight(returnFont.getAscender());
+        }
+        
+        if (afm != null) {
+            returnFont.setFirstChar(afm.getFirstChar());
+            returnFont.setLastChar(afm.getLastChar());
+            Iterator iter = afm.getCharMetrics().iterator();
+            while (iter.hasNext()) {
+                AFMCharMetrics chm = (AFMCharMetrics)iter.next();
+                if (chm.hasCharCode()) {
+                    singleFont.setWidth(chm.getCharCode(), (int)Math.round(chm.getWidthX()));
+                }
+            }
+            returnFont.replaceKerningMap(afm.createXKerningMapEncoded());
+        } else {
+            returnFont.setFirstChar(pfm.getFirstChar());
+            returnFont.setLastChar(pfm.getLastChar());
+            returnFont.setFlags(pfm.getFlags());
+            for (short i = pfm.getFirstChar(); i <= pfm.getLastChar(); i++) {
+                singleFont.setWidth(i, pfm.getCharWidth(i));
+            }
+            returnFont.replaceKerningMap(pfm.getKerning());
+        }
     }
 
     private CodePointMapping buildCustomEncoding(String encodingName, AFMFile afm) {

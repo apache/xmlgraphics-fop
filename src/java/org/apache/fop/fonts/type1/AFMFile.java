@@ -19,8 +19,11 @@
 
 package org.apache.fop.fonts.type1;
 
+import java.awt.geom.Dimension2D;
 import java.awt.geom.RectangularShape;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -56,9 +59,11 @@ public class AFMFile {
     //List<AFMCharMetrics>
     private Map charNameToMetrics = new java.util.HashMap();
     //Map<String, AFMCharMetrics>
+    private int firstChar = -1;
+    private int lastChar = -1;
     
     private Map kerningMap;
-    //Map<String, Map<String, Dimension>>
+    //Map<String, Map<String, Dimension2D>>
     
     /**
      * Default constructor.
@@ -314,6 +319,13 @@ public class AFMFile {
             if (name != null) {
                 String u = Glyphs.getUnicodeCodePointsForGlyphName(metrics.getCharName());
                 if (u != null) {
+                    if (u.length() > 1) {
+                        //Lower values (ex. space) are most probably more interesting than
+                        //higher values (ex. non-break-space), so sort just to be sure:
+                        char[] chars = u.toCharArray(); 
+                        Arrays.sort(chars);
+                        u = String.valueOf(chars);
+                    }
                     metrics.setUnicodeChars(u);
                 }
             } else {
@@ -325,6 +337,15 @@ public class AFMFile {
         if (name != null) {
             this.charNameToMetrics.put(name, metrics);
         }
+        int idx = metrics.getCharCode();
+        if (idx >= 0) { //Only if the character is part of the encoding
+            if (firstChar < 0 || idx < firstChar) {
+                firstChar = idx;
+            }
+            if (lastChar < 0 || idx > lastChar) {
+                lastChar = idx;
+            }
+        }
     }
     
     /**
@@ -333,6 +354,22 @@ public class AFMFile {
      */
     public int getCharCount() {
         return this.charMetrics.size();
+    }
+    
+    /**
+     * Returns the first character index in the encoding that has a glyph.
+     * @return the first character index with a glyph
+     */
+    public int getFirstChar() {
+        return this.firstChar;
+    }
+    
+    /**
+     * Returns the last character index in the encoding that has a glyph.
+     * @return the last character index with a glyph
+     */
+    public int getLastChar() {
+        return this.lastChar;
     }
     
     /**
@@ -368,6 +405,57 @@ public class AFMFile {
             this.kerningMap.put(name1, entries);
         }
         entries.put(name2, new Dimension2DDouble(kx, 0));
+    }
+    
+    /**
+     * Indicates whether the font has kerning information.
+     * @return true if there is kerning information
+     */
+    public boolean hasKerning() {
+        return this.kerningMap != null;
+    }
+    
+    /**
+     * Creates and returns a kerning map for writing mode 0 (ltr) with character codes.
+     * @return the kerning map or null if there is no kerning information.
+     */
+    public Map createXKerningMapEncoded() {
+        if (!hasKerning()) {
+            return null;
+        }
+        Map m = new java.util.HashMap();
+        Iterator iterFrom = this.kerningMap.entrySet().iterator();
+        while (iterFrom.hasNext()) {
+            Map.Entry entryFrom = (Map.Entry)iterFrom.next();
+            String name1 = (String)entryFrom.getKey();
+            AFMCharMetrics chm1 = getChar(name1);
+            if (!chm1.hasCharCode()) {
+                continue;
+            }
+            Map container = null;
+            Map entriesTo = (Map)entryFrom.getValue();
+            Iterator iterTo = entriesTo.entrySet().iterator();
+            while (iterTo.hasNext()) {
+                Map.Entry entryTo = (Map.Entry)iterTo.next();
+                String name2 = (String)entryTo.getKey();
+                AFMCharMetrics chm2 = getChar(name2);
+                if (!chm2.hasCharCode()) {
+                    continue;
+                }
+                if (container == null) {
+                    Integer k1 = new Integer(chm1.getCharCode());
+                    container = (Map)m.get(k1);
+                    if (container == null) {
+                        container = new java.util.HashMap();
+                        m.put(k1, container);
+                    }
+                }
+                Dimension2D dim = (Dimension2D)entryTo.getValue();
+                container.put(new Integer(chm2.getCharCode()),
+                        new Integer((int)Math.round(dim.getWidth())));
+            }
+        }
+        return m;
     }
     
     /** {@inheritDoc} */

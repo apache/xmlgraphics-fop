@@ -1153,7 +1153,7 @@ public final class FOPropertyMapping implements Constants {
         m.useGeneric(genericSpace);
         corr = new SpacePropertyMaker(m);
         corr.setCorresponding(PR_MARGIN_BOTTOM, PR_MARGIN_BOTTOM, PR_MARGIN_LEFT);
-        corr.setUseParent(true);
+        corr.setUseParent(false);
         corr.setRelative(true);
         addPropertyMaker("space-after", m);
 
@@ -1163,7 +1163,7 @@ public final class FOPropertyMapping implements Constants {
         m.setDefault("0pt");
         IndentPropertyMaker sCorr = new IndentPropertyMaker(m);
         sCorr.setCorresponding(PR_MARGIN_LEFT, PR_MARGIN_RIGHT, PR_MARGIN_TOP);
-        sCorr.setUseParent(true);
+        sCorr.setUseParent(false);
         sCorr.setRelative(true);
         sCorr.setPaddingCorresponding(new int[] {
              PR_PADDING_LEFT, PR_PADDING_RIGHT, PR_PADDING_TOP
@@ -1179,7 +1179,7 @@ public final class FOPropertyMapping implements Constants {
         m.setDefault("0pt");
         IndentPropertyMaker eCorr = new IndentPropertyMaker(m);
         eCorr.setCorresponding(PR_MARGIN_RIGHT, PR_MARGIN_LEFT, PR_MARGIN_BOTTOM);
-        eCorr.setUseParent(true);
+        eCorr.setUseParent(false);
         eCorr.setRelative(true);
         eCorr.setPaddingCorresponding(new int[] {
             PR_PADDING_RIGHT, PR_PADDING_LEFT, PR_PADDING_BOTTOM

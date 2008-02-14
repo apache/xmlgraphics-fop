@@ -73,6 +73,7 @@ public class AFMParser {
     private static final String W0 = "W0";
     private static final String W1 = "W1";
     private static final String N = "N";
+    private static final String B = "B";
     private static final String START_TRACK_KERN = "StartTrackKern";
     private static final String END_TRACK_KERN = "EndTrackKern";
     //private static final String START_KERN_PAIRS = "StartKernPairs";
@@ -126,6 +127,7 @@ public class AFMParser {
         VALUE_PARSERS.put(W0, new NotImplementedYet(W0));
         VALUE_PARSERS.put(W1, new NotImplementedYet(W1));
         VALUE_PARSERS.put(N, new StringSetter("CharName"));
+        VALUE_PARSERS.put(B, new CharBBox());
         VALUE_PARSERS.put(START_TRACK_KERN, new NotImplementedYet(START_TRACK_KERN));
         VALUE_PARSERS.put(END_TRACK_KERN, new NotImplementedYet(END_TRACK_KERN));
         VALUE_PARSERS.put(START_KERN_PAIRS1, new NotImplementedYet(START_KERN_PAIRS1));
@@ -497,7 +499,13 @@ public class AFMParser {
     
     private static class FontBBox extends AbstractValueHandler {
         public void parse(String line, int startpos, Stack stack) throws IOException {
+            Rectangle rect = parseBBox(line, startpos);
+            
             AFMFile afm = (AFMFile)stack.peek();
+            afm.setFontBBox(rect);
+        }
+
+        protected Rectangle parseBBox(String line, int startpos) {
             Rectangle rect = new Rectangle();
             int endpos;
             
@@ -518,11 +526,19 @@ public class AFMParser {
             v = Integer.parseInt(line.substring(startpos, endpos));
             rect.height = v - rect.y;
             startpos = skipToNonWhiteSpace(line, endpos);
-            
-            afm.setFontBBox(rect);
+            return rect;
         }
     }
     
+    private static class CharBBox extends FontBBox {
+        public void parse(String line, int startpos, Stack stack) throws IOException {
+            Rectangle rect = parseBBox(line, startpos);
+            
+            AFMCharMetrics metrics = (AFMCharMetrics)stack.peek();
+            metrics.setBBox(rect);
+        }
+    }
+
     private static class IsBaseFont extends AbstractValueHandler {
         public void parse(String line, int startpos, Stack stack) throws IOException {
             if (getBooleanValue(line, startpos).booleanValue()) {
