@@ -19,24 +19,35 @@
 
 package org.apache.fop.fonts.type1;
 
+import java.awt.geom.RectangularShape;
+
 
 /**
  * Holds the metrics of a single character from an AFM file.
  */
 public class AFMCharMetrics {
 
-    private int charCode;
+    private int charCode = -1;
     private String unicodeChars;
     private String charName;
     private double widthX;
     private double widthY;
+    private RectangularShape bBox;
     
     /**
      * Returns the character code.
-     * @return the charCode
+     * @return the charCode (-1 if not part of the encoding)
      */
     public int getCharCode() {
         return charCode;
+    }
+    
+    /**
+     * Indicates whether the character has a character code, i.e. is part of the default encoding.
+     * @return true if there is a character code.
+     */
+    public boolean hasCharCode() {
+        return charCode >= 0;
     }
     
     /**
@@ -113,6 +124,22 @@ public class AFMCharMetrics {
         this.widthY = widthY;
     }
     
+    /**
+     * Returns the character's bounding box.
+     * @return the bounding box (or null if it isn't available)
+     */
+    public RectangularShape getBBox() {
+        return bBox;
+    }
+
+    /**
+     * Sets the character's bounding box.
+     * @param box the bounding box
+     */
+    public void setBBox(RectangularShape box) {
+        bBox = box;
+    }
+
     /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer("AFM Char: ");

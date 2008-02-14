@@ -63,14 +63,17 @@ public class CodePointMapping {
         unicodeMap = new char[256];
         Arrays.fill(unicodeMap, CharUtilities.NOT_A_CHARACTER);
         for (int i = 0; i &lt; table.length; i += 2) {
-           if (table[i + 1] &lt; 256) {
-               latin1Map[table[i + 1]] = (char) table[i];
-           } else {
-               ++nonLatin1;
-           }
-           if (unicodeMap[table[i]] == CharUtilities.NOT_A_CHARACTER) {
-               unicodeMap[table[i]] = (char)table[i + 1];
-           }
+            char unicode = (char)table[i + 1];
+            if (unicode &lt; 256) {
+                if (latin1Map[unicode] == 0) {
+                    latin1Map[unicode] = (char) table[i];
+                }
+            } else {
+                ++nonLatin1;
+            }
+            if (unicodeMap[table[i]] == CharUtilities.NOT_A_CHARACTER) {
+                unicodeMap[table[i]] = unicode;
+            }
         }
         characters = new char[nonLatin1];
         codepoints = new char[nonLatin1];
