@@ -80,8 +80,7 @@ public final class NumberProperty extends Property implements Numeric {
     private NumberProperty(double num) {
         //Store the number as an int or a long,
         //if possible
-        if ((num >= 0 && num == Math.floor(num))
-                || num == Math.ceil(num)) {
+        if (num == Math.floor(num)) {
             if (num < Integer.MAX_VALUE) {
                 this.number = new Integer((int)num);
             } else {
