@@ -171,15 +171,7 @@ public abstract class AbstractRenderer
         return this.currentPageViewport;
     }
     
-    /**
-     * Prepare a page for rendering. This is called if the renderer supports
-     * out of order rendering. The renderer should prepare the page so that a
-     * page further on in the set of pages can be rendered. The body of the
-     * page should not be rendered. The page will be rendered at a later time
-     * by the call to render page.
-     *
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void preparePage(PageViewport page) { }
 
     /**
@@ -562,31 +554,20 @@ public abstract class AbstractRenderer
             int saveIP = currentIPPosition;
             int saveBP = currentBPPosition;
 
+            currentIPPosition += block.getXOffset();
+            currentBPPosition += block.getYOffset();
+            currentBPPosition += block.getSpaceBefore();
+
+            handleBlockTraits(block);
+
+            if (children != null) {
+                renderBlocks(block, children);
+            }
+
             if (block.getPositioning() == Block.ABSOLUTE) {
-                currentIPPosition += block.getXOffset();
-                currentBPPosition += block.getYOffset();
-                currentBPPosition += block.getSpaceBefore();
-
-                handleBlockTraits(block);
-
-                if (children != null) {
-                    renderBlocks(block, children);
-                }
-
                 // absolute blocks do not effect the layout
                 currentBPPosition = saveBP;
             } else {
-                // relative blocks are offset
-                currentIPPosition += block.getXOffset();
-                currentBPPosition += block.getYOffset();
-                currentBPPosition += block.getSpaceBefore();
-
-                handleBlockTraits(block);
-
-                if (children != null) {
-                    renderBlocks(block, children);
-                }
-
                 // stacked and relative blocks effect stacking
                 currentIPPosition = saveIP;
                 currentBPPosition = saveBP + block.getAllocBPD();
