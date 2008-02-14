@@ -1565,7 +1565,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                 startPending = false;
             }
             if (!useMultiByte) {
-                if (ch > 127) {
+                if (ch < 32 || ch > 127) {
                     pdf.append("\\");
                     pdf.append(Integer.toOctalString((int) ch));
                 } else {

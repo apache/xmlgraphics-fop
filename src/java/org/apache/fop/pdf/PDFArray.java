@@ -147,7 +147,10 @@ public class PDFArray extends PDFObject {
      */
     public void add(Object obj) {
         if (obj instanceof PDFObject) {
-            ((PDFObject)obj).setParent(this);
+            PDFObject pdfObj = (PDFObject)obj;
+            if (!pdfObj.hasObjectNumber()) {
+                pdfObj.setParent(this);
+            }
         }
         this.values.add(obj);
     }

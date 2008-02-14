@@ -230,9 +230,7 @@ public abstract class CustomFont extends Typeface
      * @return the index of the first character
      */
     public int getFirstChar() {
-        return 0;
-        // return firstChar;
-        /**(todo) Why is this hardcoded??? This code was in SingleByteFont.java */
+        return firstChar;
     }
 
     /**
@@ -408,14 +406,25 @@ public abstract class CustomFont extends Typeface
         this.resolver = resolver;
     }
 
-    /**
-     * {@inheritDoc} 
-     */
+    /** {@inheritDoc} */
     public void putKerningEntry(Integer key, Map value) {
         if (kerning == null) {
             kerning = new java.util.HashMap();
         }
         this.kerning.put(key, value);
+    }
+    
+    /**
+     * Replaces the existing kerning map with a new one.
+     * @param kerningMap the kerning map (Map<Integer, Map<Integer, Integer>, the integers are
+     *                          character codes)
+     */
+    public void replaceKerningMap(Map kerningMap) {
+        if (kerningMap == null) {
+            this.kerning = Collections.EMPTY_MAP;
+        } else {
+            this.kerning = kerningMap;
+        }
     }
 
 }

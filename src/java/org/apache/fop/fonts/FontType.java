@@ -31,7 +31,7 @@ public class FontType extends ValuedEnum {
      */
     public static final FontType OTHER       = new FontType("Other", 0);
     /**
-     * Adobe Type 0 fonts
+     * Adobe Type 0 fonts (composite font)
      */
     public static final FontType TYPE0       = new FontType("Type0", 1);
     /**

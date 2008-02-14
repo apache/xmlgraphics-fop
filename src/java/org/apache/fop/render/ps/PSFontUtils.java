@@ -31,16 +31,18 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.xmlgraphics.ps.DSCConstants;
+import org.apache.xmlgraphics.ps.PSGenerator;
+import org.apache.xmlgraphics.ps.PSResource;
+import org.apache.xmlgraphics.ps.dsc.ResourceTracker;
+
 import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontType;
 import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.fonts.Typeface;
-import org.apache.xmlgraphics.ps.DSCConstants;
-import org.apache.xmlgraphics.ps.PSGenerator;
-import org.apache.xmlgraphics.ps.PSResource;
-import org.apache.xmlgraphics.ps.dsc.ResourceTracker;
 
 /**
  * Utility code for font handling in PostScript.
@@ -108,8 +110,10 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
             } else if ("WinAnsiEncoding".equals(fm.getEncoding())) {
                 redefineFontEncoding(gen, fm.getFontName(), fm.getEncoding());
             } else {
+                /* Don't complain anymore, just use the font's default encoding.
                 gen.commentln("%WARNING: Only WinAnsiEncoding is supported. Font '" 
                     + fm.getFontName() + "' asks for: " + fm.getEncoding());
+                */
             }
         }
         gen.commentln("%FOPEndFontReencode");
