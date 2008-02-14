@@ -197,7 +197,7 @@ public class EffRow {
         int breakAfter = Constants.EN_AUTO;
         for (Iterator iter = gridUnits.iterator(); iter.hasNext();) {
             GridUnit gu = (GridUnit) iter.next();
-            if (gu.isPrimary()) {
+            if (!gu.isEmpty() && gu.getColSpanIndex() == 0 && gu.isLastGridUnitRowSpan()) {
                 breakAfter = BreakUtil.compareBreakClasses(breakAfter,
                         gu.getPrimary().getBreakAfter());
             }
