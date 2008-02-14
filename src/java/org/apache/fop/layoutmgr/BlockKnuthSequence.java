@@ -119,6 +119,8 @@ public class BlockKnuthSequence extends KnuthSequence {
         Position firstPos = firstElt.getPosition();
         LayoutManager firstLM = firstPos.getLM();
         if (firstPos instanceof NonLeafPosition) {
+            // TODO: this branch is not really tested; should the subposition be null?
+            // or do elements of a paragraph always have leaf positions?
             Position firstSubPos = firstPos.getPosition();
             newPos = new NonLeafPosition(firstLM, firstSubPos);
         } else {
@@ -153,6 +155,8 @@ public class BlockKnuthSequence extends KnuthSequence {
         Position lastPos = lastElt.getPosition();
         LayoutManager lastLM = lastPos.getLM();
         if (lastPos instanceof NonLeafPosition) {
+            // TODO: this branch is not really tested; should the subposition be null?
+            // or do elements of a paragraph always have leaf positions?
             Position lastSubPos = lastPos.getPosition();
             newPos = new NonLeafPosition(lastLM, lastSubPos);
         } else {
