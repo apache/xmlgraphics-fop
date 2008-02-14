@@ -103,7 +103,9 @@ public abstract class PDFObject implements PDFWritable {
      */
     public void setObjectNumber(int objnum) {
         this.objnum = objnum;
+        PDFDocument doc = getDocument();
         setParent(null);
+        setDocument(doc); //Restore reference to PDFDocument after setting parent to null
         if (log.isTraceEnabled()) {
             log.trace("Assigning " + this + " object number " + objnum);
         }
@@ -141,7 +143,8 @@ public abstract class PDFObject implements PDFWritable {
     public final PDFDocument getDocumentSafely() {
         final PDFDocument doc = getDocument();
         if (doc == null) {
-            throw new IllegalStateException("Parent PDFDocument is unavailable");
+            throw new IllegalStateException("Parent PDFDocument is unavailable on "
+                    + getClass().getName());
         }
         return doc;
     }

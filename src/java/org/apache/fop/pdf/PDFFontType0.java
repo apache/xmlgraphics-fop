@@ -26,17 +26,7 @@ import org.apache.fop.fonts.FontType;
  * <p>
  * Type0 fonts are specified on page 208 and onwards of the PDF 1.3 spec.
  */
-public class PDFFontType0 extends PDFFontNonBase14 {
-
-    /**
-     * This should be an array of CIDFont but only the first one is used
-     */
-    protected PDFCIDFont descendantFonts;
-
-    /**
-     * The character map
-     */
-    protected PDFCMap cmap;
+public class PDFFontType0 extends PDFFont {
 
     /**
      * Create the /Font object
@@ -48,13 +38,7 @@ public class PDFFontType0 extends PDFFontNonBase14 {
     public PDFFontType0(String fontname, 
                         String basefont,
                         Object encoding) {
-
-        /* generic creation of PDF object */
-        super(fontname, FontType.TYPE0, basefont, encoding /* , mapping */);
-
-        /* set fields using paramaters */
-        this.descendantFonts = null;
-        cmap = null;
+        super(fontname, FontType.TYPE0, basefont, encoding);
     }
 
     /**
@@ -69,12 +53,9 @@ public class PDFFontType0 extends PDFFontNonBase14 {
                         String basefont,
                         Object encoding, 
                         PDFCIDFont descendantFonts) {
+        super(fontname, FontType.TYPE0, basefont, encoding);
 
-        /* generic creation of PDF object */
-        super(fontname, FontType.TYPE0, basefont, encoding /* , mapping */);
-
-        /* set fields using paramaters */
-        this.descendantFonts = descendantFonts;
+        setDescendantFonts(descendantFonts);
     }
 
     /**
@@ -82,7 +63,7 @@ public class PDFFontType0 extends PDFFontNonBase14 {
      * @param descendantFonts the CIDFont upon which this font is based
      */
     public void setDescendantFonts(PDFCIDFont descendantFonts) {
-        this.descendantFonts = descendantFonts;
+        put("DescendantFonts", new PDFArray(this, new PDFObject[] {descendantFonts}));
     }
 
     /**
@@ -90,20 +71,7 @@ public class PDFFontType0 extends PDFFontNonBase14 {
      * @param cmap the character map
      */
     public void setCMAP(PDFCMap cmap) {
-        this.cmap = cmap;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected void fillInPDF(StringBuffer target) {
-        if (descendantFonts != null) {
-            target.append("\n/DescendantFonts [ "
-                     + this.descendantFonts.referencePDF() + " ] ");
-        }
-        if (cmap != null) {
-            target.append("\n/ToUnicode " + cmap.referencePDF());
-        }
+        put("ToUnicode", cmap);
     }
 
 }

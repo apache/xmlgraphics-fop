@@ -40,15 +40,18 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.xmlgraphics.fonts.Glyphs;
 import org.apache.xmlgraphics.xmp.Metadata;
 
 import org.apache.fop.fonts.CIDFont;
+import org.apache.fop.fonts.CodePointMapping;
 import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.FontDescriptor;
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.fonts.FontType;
 import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.fonts.MultiByteFont;
+import org.apache.fop.fonts.SingleByteFont;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.fonts.truetype.FontFileReader;
 import org.apache.fop.fonts.truetype.TTFSubSetFile;
@@ -1182,6 +1185,7 @@ public class PDFFactory {
         }
 
         if (descriptor == null) {
+            //Usually Base 14 fonts
             PDFFont font = new PDFFont(fontname, FontType.TYPE1, basefont, encoding);
             getDocument().registerObject(font);
             return font;
@@ -1190,29 +1194,10 @@ public class PDFFactory {
 
             PDFFontDescriptor pdfdesc = makeFontDescriptor(descriptor);
 
-            PDFFontNonBase14 font = null;
-            if (fonttype == FontType.TYPE0) {
-                /*
-                 * Temporary commented out - customized CMaps
-                 * isn't needed until /ToUnicode support is added
-                 * PDFCMap cmap = new PDFCMap(++this.objectcount,
-                 * "fop-ucs-H",
-                 * new PDFCIDSystemInfo("Adobe",
-                 * "Identity",
-                 * 0));
-                 * cmap.addContents();
-                 * this.objects.add(cmap);
-                 */
-                font = (PDFFontNonBase14)PDFFont.createFont(fontname, fonttype,
-                                                            basefont, "Identity-H");
-            } else {
-
-                font = (PDFFontNonBase14)PDFFont.createFont(fontname, fonttype,
-                                                            basefont, encoding);
-            }
+            PDFFont font = null;
+            font = (PDFFont)PDFFont.createFont(fontname, fonttype,
+                                                        basefont, encoding);
             getDocument().registerObject(font);
-
-            font.setDescriptor(pdfdesc);
 
             if (fonttype == FontType.TYPE0) {
                 CIDFont cidMetrics;
@@ -1233,7 +1218,7 @@ public class PDFFactory {
                                    (PDFCIDFontDescriptor)pdfdesc);
                 getDocument().registerObject(cidFont);
 
-                PDFCMap cmap = new PDFToUnicodeCMap(cidMetrics, "fop-ucs-H",
+                PDFCMap cmap = new PDFToUnicodeCMap(cidMetrics.getCharsUsed(), "fop-ucs-H",
                     new PDFCIDSystemInfo("Adobe",
                         "Identity",
                         0));
@@ -1241,16 +1226,57 @@ public class PDFFactory {
                 ((PDFFontType0)font).setCMAP(cmap);
                 ((PDFFontType0)font).setDescendantFonts(cidFont);
             } else {
-                int firstChar = 0;
-                int lastChar = 255;
-                if (metrics instanceof CustomFont) {
-                    CustomFont cf = (CustomFont)metrics;
-                    firstChar = cf.getFirstChar();
-                    lastChar = cf.getLastChar();
+                PDFFontNonBase14 nonBase14 = (PDFFontNonBase14)font;
+                nonBase14.setDescriptor(pdfdesc);
+
+                SingleByteFont singleByteFont;
+                if (metrics instanceof LazyFont) {
+                    singleByteFont = (SingleByteFont)((LazyFont)metrics).getRealFont();
+                } else {
+                    singleByteFont = (SingleByteFont)metrics;
                 }
-                font.setWidthMetrics(firstChar,
+                int firstChar = singleByteFont.getFirstChar();
+                int lastChar = singleByteFont.getLastChar();
+                nonBase14.setWidthMetrics(firstChar,
                                      lastChar,
                                      makeArray(metrics.getWidths()));
+                
+                //Handle encoding
+                CodePointMapping mapping = singleByteFont.getCodePointMapping();
+                if (PDFEncoding.isPredefinedEncoding(mapping.getName())) {
+                    font.setEncoding(mapping.getName());
+                } else {
+                    CodePointMapping winansi = CodePointMapping.getMapping(
+                            CodePointMapping.WIN_ANSI_ENCODING);
+                    PDFEncoding pdfEncoding = new PDFEncoding(winansi.getName());
+                    PDFEncoding.DifferencesBuilder builder
+                            = pdfEncoding.createDifferencesBuilder();
+                    int start = -1;
+                    for (int i = 0; i < 256; i++) {
+                        char wac = winansi.getUnicodeForIndex(i);
+                        char c = mapping.getUnicodeForIndex(i);
+                        if (wac != c) {
+                            if (start != i) {
+                                builder.addDifference(i);
+                                start = i;
+                            }
+                            builder.addName(Glyphs.charToGlyphName(c));
+                            start++;
+                        }
+                    }
+                    pdfEncoding.setDifferences(builder.toPDFArray());
+                    font.setEncoding(pdfEncoding);
+                    
+                    /* JM: What I thought would be a necessity with custom encodings turned out to
+                     * be a bug in Adobe Acrobat 8. The following section just demonstrates how
+                     * to generate a ToUnicode CMap for a Type 1 font. 
+                    PDFCMap cmap = new PDFToUnicodeCMap(mapping.getUnicodeCharMap(),
+                            "fop-ucs-H",
+                            new PDFCIDSystemInfo("Adobe", "Identity", 0));
+                    getDocument().registerObject(cmap);
+                    nonBase14.setToUnicode(cmap);
+                    */
+                }
             }
 
             return font;

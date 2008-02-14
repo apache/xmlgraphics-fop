@@ -19,12 +19,16 @@
  
 package org.apache.fop.pdf;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
+
 /**
  * class representing a rectangle
  *
  * Rectangles are specified on page 183 of the PDF 1.3 spec.
  */
-public class PDFRectangle {
+public class PDFRectangle implements PDFWritable {
 
     /**
      * lower left x coordinate
@@ -73,23 +77,17 @@ public class PDFRectangle {
         this.ury = array[3];
     }
 
-    /**
-     * produce the PDF representation for the object
-     *
-     * @return the PDF
-     */
-    public byte[] toPDF() {
-        return PDFDocument.encode(toPDFString());
+    private String format() {
+        return "[" + llx + " " + lly + " " + urx + " " + ury + "]";
     }
 
-    /**
-     * Create a PDF string for this rectangle.
-     *
-     * @return the pdf string
-     */
-    public String toPDFString() {
-        return new String(" [" + llx + " " + lly + " " + urx + " " + ury
-                          + "] ");
+    /** {@inheritDoc} */
+    public String toString() {
+        return "PDFRectangle" + format();
     }
 
+    /** {@inheritDoc} */
+    public void outputInline(OutputStream out, Writer writer) throws IOException {
+        writer.write(format());
+    }
 }
