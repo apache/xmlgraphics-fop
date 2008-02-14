@@ -24,6 +24,7 @@ import java.util.HashMap;
 
 //FOP
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.properties.FixedLength;
 
 
 /**  Converts XSL-FO units to RTF units
@@ -51,10 +52,10 @@ final class FoUnitsConverter {
     /** conversion factors keyed by xsl:fo units names */
     private static final Map TWIP_FACTORS = new HashMap();
     static {
-        TWIP_FACTORS.put("mm", new Float(MM_TO_TWIPS));
-        TWIP_FACTORS.put("cm", new Float(CM_TO_TWIPS));
-        TWIP_FACTORS.put("pt", new Float(POINT_TO_TWIPS));
-        TWIP_FACTORS.put("in", new Float(IN_TO_TWIPS));
+        TWIP_FACTORS.put(FixedLength.MM, new Float(MM_TO_TWIPS));
+        TWIP_FACTORS.put(FixedLength.CM, new Float(CM_TO_TWIPS));
+        TWIP_FACTORS.put(FixedLength.POINT, new Float(POINT_TO_TWIPS));
+        TWIP_FACTORS.put(FixedLength.INCH, new Float(IN_TO_TWIPS));
     }
 
     /** singleton pattern */
@@ -125,7 +126,7 @@ final class FoUnitsConverter {
     /** convert a font size given in points like "12pt" */
     int convertFontSize(String size) throws FOPException {
         size = size.trim();
-        final String sFONTSUFFIX = "pt";
+        final String sFONTSUFFIX = FixedLength.POINT;
         if (!size.endsWith(sFONTSUFFIX)) {
             throw new FOPException("Invalid font size '" + size + "', must end with '"
                                    + sFONTSUFFIX + "'");
