@@ -26,11 +26,29 @@ import org.apache.fop.datatypes.PercentBaseContext;
  */
 public final class FixedLength extends LengthProperty {
     
+    /** Describes the unit pica. */
+    public static final String PICA = "pc";
+
+    /** Describes the unit point. */
+    public static final String POINT = "pt";
+
+    /** Describes the unit millimeter. */
+    public static final String MM = "mm";
+
+    /** Describes the unit centimeter. */
+    public static final String CM = "cm";
+
+    /** Describes the unit inch. */
+    public static final String INCH = "in";
+
+    /** Describes the unit millipoint. */
+    public static final String MPT = "mpt";
+
     /** cache holding all canonical FixedLength instances */
     private static final PropertyCache cache = new PropertyCache();
     
     /** canonical zero-length instance */
-    public static final FixedLength ZERO_FIXED_LENGTH = new FixedLength(0, "mpt", 1.0f);
+    public static final FixedLength ZERO_FIXED_LENGTH = new FixedLength(0, FixedLength.MPT, 1.0f);
     
     private int millipoints;
 
@@ -96,7 +114,7 @@ public final class FixedLength extends LengthProperty {
      *          to the given number of units and unit specifier
      */
     public static FixedLength getInstance(double numUnits) {
-        return getInstance(numUnits, "mpt", 1.0f);
+        return getInstance(numUnits, FixedLength.MPT, 1.0f);
         
     }
     
@@ -115,17 +133,17 @@ public final class FixedLength extends LengthProperty {
             //device-dependent units, take the resolution into account
             dvalue *= (res * 1000);
         } else {
-            if ("in".equals(unit)) {
+            if (FixedLength.INCH.equals(unit)) {
                 dvalue *= 72000;
-            } else if ("cm".equals(unit)) {
+            } else if (FixedLength.CM.equals(unit)) {
                 dvalue *= 28346.4567;
-            } else if ("mm".equals(unit)) {
+            } else if (FixedLength.MM.equals(unit)) {
                 dvalue *= 2834.64567;
-            } else if ("pt".equals(unit)) {
+            } else if (FixedLength.POINT.equals(unit)) {
                 dvalue *= 1000;
-            } else if ("pc".equals(unit)) {
+            } else if (FixedLength.PICA.equals(unit)) {
                 dvalue *= 12000;
-            } else if (!"mpt".equals(unit)) {
+            } else if (!FixedLength.MPT.equals(unit)) {
                 dvalue = 0;
                 log.error("Unknown length unit '" + unit + "'");
             }
@@ -163,7 +181,7 @@ public final class FixedLength extends LengthProperty {
 
     /** {@inheritDoc} */
     public String toString() {
-        return millipoints + "mpt";
+        return millipoints + FixedLength.MPT;
     }
 
     /** {@inheritDoc} */

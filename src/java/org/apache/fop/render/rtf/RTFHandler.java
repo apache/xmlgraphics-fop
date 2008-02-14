@@ -85,6 +85,7 @@ import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.fo.properties.FixedLength;
 import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.render.DefaultFontResolver;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfAfterContainer;
@@ -578,7 +579,7 @@ public class RTFHandler extends FOEventHandler {
             Integer iWidth
                 = new Integer(tc.getColumnWidth().getValue(context) / 1000);
             
-            String strWidth = iWidth.toString() + "pt";
+            String strWidth = iWidth.toString() + FixedLength.POINT;
             Float width = new Float(
                     FoUnitsConverter.getInstance().convertToTwips(strWidth));
             builderContext.getTableContext().setNextColumnWidth(width);
@@ -1277,11 +1278,11 @@ public class RTFHandler extends FOEventHandler {
         }
 
         //set width in rtf
-        //newGraphic.setWidth((long) (contentwidth / 1000f) + "pt");
+        //newGraphic.setWidth((long) (contentwidth / 1000f) + FixedLength.POINT);
         rtfGraphic.setWidth((long) (contentwidth / 50f) + "twips");
 
         //set height in rtf
-        //newGraphic.setHeight((long) (contentheight / 1000f) + "pt");
+        //newGraphic.setHeight((long) (contentheight / 1000f) + FixedLength.POINT);
         rtfGraphic.setHeight((long) (contentheight / 50f) + "twips");
 
         //TODO: make this configurable:
