@@ -27,12 +27,12 @@ import org.apache.avalon.framework.ValuedEnum;
 public class CIDFontType extends ValuedEnum {
 
     /**
-     * CID Font Type 0
+     * CID Font Type 0 (based on Type 1 format)
      */
     public static final CIDFontType CIDTYPE0 = new CIDFontType("CIDFontType0", 0);
 
     /**
-     * CID Font Type 2
+     * CID Font Type 2 (based on TrueType format)
      */
     public static final CIDFontType CIDTYPE2 = new CIDFontType("CIDFontType2", 1);
 

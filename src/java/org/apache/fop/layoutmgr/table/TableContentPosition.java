@@ -39,9 +39,11 @@ class TableContentPosition extends Position {
     /** the list of CellParts making up this position */
     protected List cellParts;
     /** effective row this position belongs to */
-    protected EffRow row;
+    private EffRow row;
     /** flags for the position */
     protected int flags;
+
+    private EffRow newPageRow;
 
     /**
      * Creates a new TableContentPosition.
@@ -54,6 +56,27 @@ class TableContentPosition extends Position {
         super(lm);
         this.cellParts = cellParts;
         this.row = row;
+        this.newPageRow = row;
+    }
+
+    /**
+     * Sets the row corresponding to this position if it starts a new page. In which case,
+     * if the delay mechanism is on, this is the delayed row that starts the page, and not
+     * the current row being extended.
+     * 
+     * @param newPageRow the row that will start the page if this position is the first
+     * one on that page
+     */
+    void setNewPageRow(EffRow newPageRow) {
+        this.newPageRow = newPageRow;
+    }
+
+    EffRow getNewPageRow() {
+        return newPageRow;
+    }
+
+    EffRow getRow() {
+        return row;
     }
 
     /**

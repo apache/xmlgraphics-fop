@@ -21,9 +21,17 @@ package org.apache.fop.layoutmgr;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.util.ImageUtil;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.AreaTreeHandler;
@@ -31,15 +39,15 @@ import org.apache.fop.area.Block;
 import org.apache.fop.area.BodyRegion;
 import org.apache.fop.area.CTM;
 import org.apache.fop.area.LineArea;
+import org.apache.fop.area.PageSequence;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.datatypes.FODimension;
+import org.apache.fop.datatypes.URISpecification;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExternalDocument;
-import org.apache.fop.image.FopImage;
-import org.apache.fop.image.ImageFactory;
 import org.apache.fop.layoutmgr.inline.ImageLayout;
 
 /**
@@ -51,14 +59,13 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
 
     private static Log log = LogFactory.getLog(ExternalDocumentLayoutManager.class);
 
-    private FopImage image;
     private ImageLayout imageLayout; 
     
     /**
      * Constructor
      *
      * @param ath the area tree handler object
-     * @param pseq fo:page-sequence to process
+     * @param document fox:external-document to process
      */
     public ExternalDocumentLayoutManager(AreaTreeHandler ath, ExternalDocument document) {
         super(ath, document);
@@ -80,38 +87,78 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
     public void activateLayout() {
         initialize();
 
-        String uri = getExternalDocument().getSrc();
         FOUserAgent userAgent = pageSeq.getUserAgent();
-        ImageFactory fact = userAgent.getFactory().getImageFactory();
-        this.image = fact.getImage(uri, userAgent);
-        if (this.image == null) {
-            log.error("Image not available: " + uri);
-            return;
-        } else {
-            // load dimensions
-            if (!this.image.load(FopImage.DIMENSIONS)) {
-                log.error("Cannot read image dimensions: " + uri);
-                return;
+        ImageManager imageManager = userAgent.getFactory().getImageManager();
+        
+        String uri = getExternalDocument().getSrc();
+        Integer firstPageIndex = ImageUtil.getPageIndexFromURI(uri);
+        boolean hasPageIndex = (firstPageIndex != null);
+        
+        try {
+            ImageInfo info = imageManager.getImageInfo(uri, userAgent.getImageSessionContext());
+            
+            Object moreImages = info.getCustomObjects().get(ImageInfo.HAS_MORE_IMAGES);
+            boolean hasMoreImages = moreImages != null && !Boolean.FALSE.equals(moreImages);
+            
+            Dimension intrinsicSize = info.getSize().getDimensionMpt();
+            ImageLayout layout = new ImageLayout(getExternalDocument(), this, intrinsicSize);
+
+            areaTreeHandler.getAreaTreeModel().startPageSequence(new PageSequence(null));
+            if (log.isDebugEnabled()) {
+                log.debug("Starting layout");
             }
-        }
-        Dimension intrinsicSize = new Dimension(
-                image.getIntrinsicWidth(),
-                image.getIntrinsicHeight());
-        this.imageLayout = new ImageLayout(getExternalDocument(), this, intrinsicSize);
-        
-        areaTreeHandler.getAreaTreeModel().startPageSequence(null);
-        if (log.isDebugEnabled()) {
-            log.debug("Starting layout");
-        }
 
-        curPage = makeNewPage(false, false);
-
-        fillPage(); //TODO Implement multi-page documents (using new image package)
-        
-        finishPage();
+            makePageForImage(info, layout);
+            
+            if (!hasPageIndex && hasMoreImages) {
+                if (log.isTraceEnabled()) {
+                    log.trace("Starting multi-page processing...");
+                }
+                URI originalURI;
+                try {
+                    originalURI = new URI(URISpecification.escapeURI(uri));
+                    int pageIndex = 1;
+                    while (hasMoreImages) {
+                        URI tempURI = new URI(originalURI.getScheme(),
+                                originalURI.getSchemeSpecificPart(),
+                                "page=" + Integer.toString(pageIndex + 1));
+                        if (log.isTraceEnabled()) {
+                            log.trace("Subimage: " + tempURI.toASCIIString());
+                        }
+                        ImageInfo subinfo = imageManager.getImageInfo(
+                                tempURI.toASCIIString(), userAgent.getImageSessionContext());
+                        
+                        moreImages = subinfo.getCustomObjects().get(ImageInfo.HAS_MORE_IMAGES);
+                        hasMoreImages = moreImages != null && !Boolean.FALSE.equals(moreImages);
+                        
+                        intrinsicSize = subinfo.getSize().getDimensionMpt();
+                        layout = new ImageLayout(
+                                getExternalDocument(), this, intrinsicSize);
+                        
+                        makePageForImage(subinfo, layout);
+                        
+                        pageIndex++;
+                    }
+                } catch (URISyntaxException e) {
+                    log.error("Error parsing or constructing URIs based on URI: " + uri);
+                    return;
+                }
+            }
+        } catch (IOException ioe) {
+            log.error("Image not available: " + uri, ioe);
+        } catch (ImageException ie) {
+            log.error("Error while inspecting image: " + uri + " (" + ie.getMessage() + ")");
+        }
     }
 
-    private void fillPage() {
+    private void makePageForImage(ImageInfo info, ImageLayout layout) {
+        this.imageLayout = layout;
+        curPage = makeNewPage(false, false);
+        fillPage(info.getOriginalURI());
+        finishPage();
+    }
+    
+    private void fillPage(String uri) {
 
         Dimension imageSize = this.imageLayout.getViewportSize();
         
@@ -119,7 +166,7 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
         blockArea.setIPD(imageSize.width);
         LineArea lineArea = new LineArea();
         
-        Image imageArea = new Image(getExternalDocument().getSrc());
+        Image imageArea = new Image(uri);
         TraitSetter.setProducerID(imageArea, fobj.getId());
         transferForeignAttributes(imageArea);
 
@@ -154,6 +201,7 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
         }
     }
 
+    /** {@inheritDoc} */
     protected Page createPage(int pageNumber, boolean isBlank) {
         String pageNumberString = pageSeq.makeFormattedPageNumber(pageNumber);
         

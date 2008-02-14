@@ -21,9 +21,16 @@ package org.apache.fop.render;
 
 import java.awt.Color;
 import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 import java.util.Map;
+
+import org.w3c.dom.Document;
+
+import org.apache.batik.parser.AWTTransformProducer;
+
+import org.apache.xmlgraphics.image.loader.ImageSize;
 
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
@@ -35,10 +42,10 @@ import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fonts.FontMetrics;
-import org.apache.fop.image.FopImage;
 import org.apache.fop.traits.BorderProps;
-import org.w3c.dom.Document;
+import org.apache.fop.util.QName;
 
 /**
  * Abstract base class for renderers like PDF and PostScript where many painting operations
@@ -151,51 +158,47 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
                 updateColor(back.getColor(), true);
                 fillRect(sx, sy, paddRectWidth, paddRectHeight);
             }
-            if (back.getFopImage() != null) {
-                FopImage fopimage = back.getFopImage();
-                if (fopimage != null && fopimage.load(FopImage.DIMENSIONS)) {
-                    saveGraphicsState();
-                    clipRect(sx, sy, paddRectWidth, paddRectHeight);
-                    int horzCount = (int)((paddRectWidth 
-                            * 1000 / fopimage.getIntrinsicWidth()) + 1.0f); 
-                    int vertCount = (int)((paddRectHeight 
-                            * 1000 / fopimage.getIntrinsicHeight()) + 1.0f); 
-                    if (back.getRepeat() == EN_NOREPEAT) {
-                        horzCount = 1;
-                        vertCount = 1;
-                    } else if (back.getRepeat() == EN_REPEATX) {
-                        vertCount = 1;
-                    } else if (back.getRepeat() == EN_REPEATY) {
-                        horzCount = 1;
-                    }
-                    //change from points to millipoints
-                    sx *= 1000;
-                    sy *= 1000;
-                    if (horzCount == 1) {
-                        sx += back.getHoriz();
-                    }
-                    if (vertCount == 1) {
-                        sy += back.getVertical();
-                    }
-                    for (int x = 0; x < horzCount; x++) {
-                        for (int y = 0; y < vertCount; y++) {
-                            // place once
-                            Rectangle2D pos;
-                            // Image positions are relative to the currentIP/BP
-                            pos = new Rectangle2D.Float(sx - currentIPPosition 
-                                                            + (x * fopimage.getIntrinsicWidth()),
-                                                        sy - currentBPPosition
-                                                            + (y * fopimage.getIntrinsicHeight()),
-                                                        fopimage.getIntrinsicWidth(),
-                                                        fopimage.getIntrinsicHeight());
-                            drawImage(back.getURL(), pos);
-                        }
-                    }
-                    
-                    restoreGraphicsState();
-                } else {
-                    log.warn("Can't find background image: " + back.getURL());
+            if (back.getImageInfo() != null) {
+                ImageSize imageSize = back.getImageInfo().getSize(); 
+                saveGraphicsState();
+                clipRect(sx, sy, paddRectWidth, paddRectHeight);
+                int horzCount = (int)((paddRectWidth 
+                        * 1000 / imageSize.getWidthMpt()) + 1.0f); 
+                int vertCount = (int)((paddRectHeight 
+                        * 1000 / imageSize.getHeightMpt()) + 1.0f); 
+                if (back.getRepeat() == EN_NOREPEAT) {
+                    horzCount = 1;
+                    vertCount = 1;
+                } else if (back.getRepeat() == EN_REPEATX) {
+                    vertCount = 1;
+                } else if (back.getRepeat() == EN_REPEATY) {
+                    horzCount = 1;
                 }
+                //change from points to millipoints
+                sx *= 1000;
+                sy *= 1000;
+                if (horzCount == 1) {
+                    sx += back.getHoriz();
+                }
+                if (vertCount == 1) {
+                    sy += back.getVertical();
+                }
+                for (int x = 0; x < horzCount; x++) {
+                    for (int y = 0; y < vertCount; y++) {
+                        // place once
+                        Rectangle2D pos;
+                        // Image positions are relative to the currentIP/BP
+                        pos = new Rectangle2D.Float(sx - currentIPPosition 
+                                                        + (x * imageSize.getWidthMpt()),
+                                                    sy - currentBPPosition
+                                                        + (y * imageSize.getHeightMpt()),
+                                                        imageSize.getWidthMpt(),
+                                                        imageSize.getHeightMpt());
+                        drawImage(back.getURL(), pos);
+                    }
+                }
+                
+                restoreGraphicsState();
             }
         }
 
@@ -403,6 +406,9 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
         
     }
     
+    private static final QName FOX_TRANSFORM
+            = new QName(ExtensionElementMapping.URI, "fox:transform");
+    
     /** {@inheritDoc} */
     protected void renderBlockViewport(BlockViewport bv, List children) {
         // clip and position viewport if necessary
@@ -410,24 +416,16 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
         // save positions
         int saveIP = currentIPPosition;
         int saveBP = currentBPPosition;
-        //String saveFontName = currentFontName;
 
         CTM ctm = bv.getCTM();
         int borderPaddingStart = bv.getBorderAndPaddingWidthStart();
         int borderPaddingBefore = bv.getBorderAndPaddingWidthBefore();
-        float x, y;
-        x = (float)(bv.getXOffset() + containingIPPosition) / 1000f;
-        y = (float)(bv.getYOffset() + containingBPPosition) / 1000f;
         //This is the content-rect
         float width = (float)bv.getIPD() / 1000f;
         float height = (float)bv.getBPD() / 1000f;
-        
 
         if (bv.getPositioning() == Block.ABSOLUTE
                 || bv.getPositioning() == Block.FIXED) {
-
-            currentIPPosition = bv.getXOffset();
-            currentBPPosition = bv.getYOffset();
 
             //For FIXED, we need to break out of the current viewports to the
             //one established by the page. We save the state stack for restoration
@@ -437,37 +435,51 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
                 breakOutList = breakOutOfStateStack();
             }
             
-            CTM tempctm = new CTM(containingIPPosition, containingBPPosition);
-            ctm = tempctm.multiply(ctm);
-
-            //Adjust for spaces (from margin or indirectly by start-indent etc.
-            x += bv.getSpaceStart() / 1000f;
-            currentIPPosition += bv.getSpaceStart();
+            AffineTransform positionTransform = new AffineTransform();
+            positionTransform.translate(bv.getXOffset(), bv.getYOffset());
             
-            y += bv.getSpaceBefore() / 1000f;
-            currentBPPosition += bv.getSpaceBefore(); 
+            //"left/"top" (bv.getX/YOffset()) specify the position of the content rectangle
+            positionTransform.translate(-borderPaddingStart, -borderPaddingBefore);
 
-            float bpwidth = (borderPaddingStart + bv.getBorderAndPaddingWidthEnd()) / 1000f;
-            float bpheight = (borderPaddingBefore + bv.getBorderAndPaddingWidthAfter()) / 1000f;
-
-            drawBackAndBorders(bv, x, y, width + bpwidth, height + bpheight);
-
-            //Now adjust for border/padding
-            currentIPPosition += borderPaddingStart;
-            currentBPPosition += borderPaddingBefore;
-            
-            Rectangle2D clippingRect = null;
-            if (bv.getClip()) {
-                clippingRect = new Rectangle(currentIPPosition, currentBPPosition, 
-                        bv.getIPD(), bv.getBPD());
+            //Free transformation for the block-container viewport
+            String transf;
+            transf = bv.getForeignAttributeValue(FOX_TRANSFORM);
+            if (transf != null) {
+                AffineTransform freeTransform = AWTTransformProducer.createAffineTransform(transf);
+                positionTransform.concatenate(freeTransform);
             }
 
-            startVParea(ctm, clippingRect);
+            saveGraphicsState();
+            //Viewport position
+            concatenateTransformationMatrix(mptToPt(positionTransform));
+            
+            //Background and borders
+            float bpwidth = (borderPaddingStart + bv.getBorderAndPaddingWidthEnd()) / 1000f;
+            float bpheight = (borderPaddingBefore + bv.getBorderAndPaddingWidthAfter()) / 1000f;
+            drawBackAndBorders(bv, 0, 0, width + bpwidth, height + bpheight);
+
+            //Shift to content rectangle after border painting
+            AffineTransform contentRectTransform = new AffineTransform();
+            contentRectTransform.translate(borderPaddingStart, borderPaddingBefore);
+            concatenateTransformationMatrix(mptToPt(contentRectTransform));
+            
+            //Clipping
+            if (bv.getClip()) {
+                clipRect(0f, 0f, width, height);
+            }
+
+            saveGraphicsState();
+            //Set up coordinate system for content rectangle
+            AffineTransform contentTransform = ctm.toAffineTransform();
+            concatenateTransformationMatrix(mptToPt(contentTransform));
+            
             currentIPPosition = 0;
             currentBPPosition = 0;
             renderBlocks(bv, children);
-            endVParea();
 
+            restoreGraphicsState();
+            restoreGraphicsState();
+            
             if (breakOutList != null) {
                 restoreStateStackAfterBreakOut(breakOutList);
             }
@@ -507,9 +519,15 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             
             currentBPPosition += (int)(bv.getAllocBPD());
         }
-        //currentFontName = saveFontName;
     }
 
+    /**
+     * Concatenates the current transformation matrix with the given one, therefore establishing
+     * a new coordinate system.
+     * @param at the transformation matrix to process (coordinates in points)
+     */
+    protected abstract void concatenateTransformationMatrix(AffineTransform at);
+    
     /**
      * Render an inline viewport.
      * This renders an inline viewport by clipping if necessary.
@@ -615,10 +633,10 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
         
     /**
      * Clip using a rectangular area.
-     * @param x the x coordinate
-     * @param y the y coordinate
-     * @param width the width of the rectangle
-     * @param height the height of the rectangle
+     * @param x the x coordinate (in points)
+     * @param y the y coordinate (in points)
+     * @param width the width of the rectangle (in points)
+     * @param height the height of the rectangle (in points)
      */
     protected abstract void clipRect(float x, float y, float width, float height);
     

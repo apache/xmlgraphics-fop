@@ -22,9 +22,10 @@ package org.apache.fop.area;
 import java.awt.Color;
 import java.io.Serializable;
 
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.FontTriplet;
-import org.apache.fop.image.FopImage;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.util.ColorUtil;
 
@@ -559,7 +560,7 @@ public class Trait implements Serializable {
         private String url = null;
         
         /** The background image if any. */
-        private FopImage fopimage = null;
+        private ImageInfo imageInfo = null;
 
         /** Background repeat enum for images. */
         private int repeat;
@@ -603,11 +604,11 @@ public class Trait implements Serializable {
         }
 
         /**
-         * Returns the FopImage representing the background image
+         * Returns the ImageInfo object representing the background image
          * @return the background image, null if n/a
          */
-        public FopImage getFopImage() {
-            return fopimage;
+        public ImageInfo getImageInfo() {
+            return imageInfo;
         }
 
         /**
@@ -659,11 +660,11 @@ public class Trait implements Serializable {
         }
 
         /**
-         * Sets the FopImage to use as the background image.
-         * @param fopimage The FopImage to use
+         * Sets the ImageInfo of the image to use as the background image.
+         * @param info The background image's info object
          */
-        public void setFopImage(FopImage fopimage) {
-            this.fopimage = fopimage;
+        public void setImageInfo(ImageInfo info) {
+            this.imageInfo = info;
         }
 
         /**

@@ -26,17 +26,16 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.table.EffRow;
 import org.apache.fop.fo.flow.table.GridUnit;
 import org.apache.fop.fo.flow.table.PrimaryGridUnit;
-import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.Position;
+import org.apache.fop.util.BreakUtil;
 
 /**
  * This class processes row groups to create combined element lists for tables.
@@ -52,12 +51,45 @@ public class TableStepper {
     /** Number of columns in the row group. */
     private int columnCount;
     private int totalHeight;
-    private int previousRowsLength = 0;
+    private int previousRowsLength;
     private int activeRowIndex;
-    private boolean rowBacktrackForLastStep;
-    private boolean skippedStep;
 
+    private boolean rowFinished;
+
+    /** Cells spanning the current row. */
     private List activeCells = new LinkedList();
+
+    /** Cells that will start the next row. */
+    private List nextActiveCells = new LinkedList();
+
+    /**
+     * True if the next row is being delayed, that is, if cells spanning the current and
+     * the next row have steps smaller than the next row's first step. In this case the
+     * next row may be extended to offer additional break possibilities.
+     */
+    private boolean delayingNextRow;
+
+    /**
+     * The first step for a row. This is the minimal step necessary to include some
+     * content from all the cells starting the row.
+     */
+    private int rowFirstStep;
+
+    /**
+     * Flag used to produce an infinite penalty if the height of the current row is
+     * smaller than the first step for that row (may happen with row-spanning cells).
+     * 
+     * @see #considerRowLastStep(int)
+     */
+    private boolean rowHeightSmallerThanFirstStep;
+
+    /**
+     * The class of the next break. One of {@link Constants#EN_AUTO},
+     * {@link Constants#EN_COLUMN}, {@link Constants#EN_PAGE},
+     * {@link Constants#EN_EVEN_PAGE}, {@link Constants#EN_ODD_PAGE}. Defaults to
+     * EN_AUTO.
+     */
+    private int nextBreakClass;
 
     /**
      * Main constructor
@@ -65,37 +97,23 @@ public class TableStepper {
      */
     public TableStepper(TableContentLayoutManager tclm) {
         this.tclm = tclm;
+        this.columnCount = tclm.getTableLM().getTable().getNumberOfColumns();
     }
 
     /**
      * Initializes the fields of this instance to handle a new row group.
      * 
-     * @param columnCount number of columns the row group has 
+     * @param rows the new row group to handle
      */
-    private void setup(int columnCount) {
-        this.columnCount = columnCount;
-        this.activeRowIndex = 0;
-        this.previousRowsLength = 0;
-    }
-
-    /**
-     * Returns the row currently being processed.
-     *
-     * @return the row currently being processed
-     */
-    private EffRow getActiveRow() {
-        return rowGroup[activeRowIndex];
-    }
-
-    /**
-     * Returns the grid unit at the given column number on the active row.
-     *
-     * @param column column number of the grid unit to get
-     * @return the corresponding grid unit (may be null)
-     * {@inheritDoc}
-     */
-    private GridUnit getActiveGridUnit(int column) {
-        return getActiveRow().safelyGetGridUnit(column);
+    private void setup(EffRow[] rows) {
+        rowGroup = rows;
+        previousRowsLength = 0;
+        activeRowIndex = 0;
+        activeCells.clear();
+        nextActiveCells.clear();
+        delayingNextRow = false;
+        rowFirstStep = 0;
+        rowHeightSmallerThanFirstStep = false;
     }
 
     private void calcTotalHeight() {
@@ -110,30 +128,35 @@ public class TableStepper {
 
     private int getMaxRemainingHeight() {
         int maxW = 0;
-        if (!rowBacktrackForLastStep) {
-            for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
-                maxW = Math.max(maxW,
-                        ((ActiveCell) iter.next()).getRemainingHeight(activeRowIndex));
+        for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
+            ActiveCell activeCell = (ActiveCell) iter.next();
+            int remain = activeCell.getRemainingLength();
+            PrimaryGridUnit pgu = activeCell.getPrimaryGridUnit();
+            for (int i = activeRowIndex + 1; i < pgu.getRowIndex() - rowGroup[0].getIndex()
+                    + pgu.getCell().getNumberRowsSpanned(); i++) {
+                remain -= rowGroup[i].getHeight().opt;
             }
+            maxW = Math.max(maxW, remain);
         }
-        for (int i = activeRowIndex + (rowBacktrackForLastStep ? 0 : 1); i < rowGroup.length; i++) {
+        for (int i = activeRowIndex + 1; i < rowGroup.length; i++) {
             maxW += rowGroup[i].getHeight().opt;
         }
-        log.debug("maxRemainingHeight=" + maxW);
         return maxW;
     }
 
     /**
-     * Initializes the informations relative to the Knuth elements, to handle a new row in
-     * the current row group.
+     * Creates ActiveCell instances for cells starting on the row at the given index.
+     * 
+     * @param activeCellList the list that will hold the active cells
+     * @param rowIndex the index of the row from which cells must be activated
      */
-    private void initializeElementLists() {
-        log.trace("Entering initializeElementLists()");
-        EffRow row = getActiveRow();
+    private void activateCells(List activeCellList, int rowIndex) {
+        EffRow row = rowGroup[rowIndex];
         for (int i = 0; i < columnCount; i++) {
-            GridUnit gu = getActiveGridUnit(i);
-            if (gu != null && !gu.isEmpty() && gu.isPrimary()) {
-                activeCells.add(new ActiveCell((PrimaryGridUnit) gu, row, activeRowIndex, previousRowsLength, getTableLM()));
+            GridUnit gu = row.getGridUnit(i);
+            if (!gu.isEmpty() && gu.isPrimary()) {
+                activeCellList.add(new ActiveCell((PrimaryGridUnit) gu, row, rowIndex,
+                        previousRowsLength, getTableLM()));
             }
         }
     }
@@ -141,64 +164,60 @@ public class TableStepper {
     /**
      * Creates the combined element list for a row group.
      * @param context Active LayoutContext
-     * @param rowGroup the row group
-     * @param maxColumnCount the maximum number of columns to expect
+     * @param rows the row group
      * @param bodyType Indicates what type of body is processed (body, header or footer)
      * @return the combined element list
      */
-    public LinkedList getCombinedKnuthElementsForRowGroup(
-            LayoutContext context,
-            EffRow[] rowGroup, int maxColumnCount, int bodyType) {
-        this.rowGroup = rowGroup;
-        setup(maxColumnCount);
-        initializeElementLists();
+    public LinkedList getCombinedKnuthElementsForRowGroup(LayoutContext context, EffRow[] rows,
+            int bodyType) {
+        setup(rows);
+        activateCells(activeCells, 0);
         calcTotalHeight();
 
         boolean signalKeepWithNext = false;
-        int laststep = 0;
-        int step;
         int cumulateLength = 0; // Length of the content accumulated before the break
         TableContentPosition lastTCPos = null;
         LinkedList returnList = new LinkedList();
-        while ((step = getNextStep()) >= 0) {
-            int normalRow = activeRowIndex;
-            int increase = step - laststep;
-            int penaltyOrGlueLen = step + getMaxRemainingHeight() - totalHeight;
-            int boxLen = step - cumulateLength - Math.max(0, penaltyOrGlueLen)/* the penalty, if any */;
+        int laststep = 0;
+        int step = getFirstStep();
+        do {
+            int maxRemainingHeight = getMaxRemainingHeight();
+            int penaltyOrGlueLen = step + maxRemainingHeight - totalHeight;
+            int boxLen = step - cumulateLength - Math.max(0, penaltyOrGlueLen)/* penalty, if any */;
             cumulateLength += boxLen + Math.max(0, -penaltyOrGlueLen)/* the glue, if any */;
 
-            boolean forcedBreak = false;
-            int breakClass = -1;
-            //Put all involved grid units into a list
-            List cellParts = new java.util.ArrayList(maxColumnCount);
-            for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
-                ActiveCell activeCell = (ActiveCell) iter.next();
-                if (activeCell.contributesContent()) {
-                    CellPart part = activeCell.createCellPart();
-                    cellParts.add(part);
-                    forcedBreak = activeCell.isLastForcedBreak();
-                    if (forcedBreak) {
-                        breakClass = activeCell.getLastBreakClass();
-                    }
-                    if (returnList.size() == 0 && part.isFirstPart()
-                            && part.mustKeepWithPrevious()) {
-                        context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
-                    }
+            if (log.isDebugEnabled()) {
+                log.debug("Next step: " + step + " (+" + (step - laststep) + ")");
+                log.debug("           max remaining height: " + maxRemainingHeight);
+                if (penaltyOrGlueLen >= 0) {
+                    log.debug("           box = " + boxLen + " penalty = " + penaltyOrGlueLen);
+                } else {
+                    log.debug("           box = " + boxLen + " glue = " + (-penaltyOrGlueLen));
                 }
             }
-            //log.debug(">>> guPARTS: " + cellParts);
+
+            //Put all involved grid units into a list
+            List cellParts = new java.util.ArrayList(columnCount);
+            for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
+                ActiveCell activeCell = (ActiveCell) iter.next();
+                CellPart part = activeCell.createCellPart();
+                cellParts.add(part);
+                if (returnList.size() == 0 && part.isFirstPart()
+                        && part.mustKeepWithPrevious()) {
+                    context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
+                }
+            }
 
             //Create elements for step
             TableContentPosition tcpos = new TableContentPosition(getTableLM(),
-                    cellParts, rowGroup[normalRow]);
+                    cellParts, rowGroup[activeRowIndex]);
+            if (delayingNextRow) {
+                tcpos.setNewPageRow(rowGroup[activeRowIndex + 1]);
+            }
             if (returnList.size() == 0) {
                 tcpos.setFlag(TableContentPosition.FIRST_IN_ROWGROUP, true);
             }
             lastTCPos = tcpos;
-            if (log.isDebugEnabled()) {
-                log.debug(" - backtrack=" + rowBacktrackForLastStep
-                        + " - row=" + activeRowIndex + " - " + tcpos);
-            }
             returnList.add(new KnuthBox(boxLen, tcpos, false));
 
             int effPenaltyLen = Math.max(0, penaltyOrGlueLen);
@@ -215,48 +234,36 @@ public class TableStepper {
             }
 
             int p = 0;
-            boolean allCellsHaveContributed = true;
             signalKeepWithNext = false;
             for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
                 ActiveCell activeCell = (ActiveCell) iter.next();
-                allCellsHaveContributed &= activeCell.hasStarted();
                 signalKeepWithNext |= activeCell.keepWithNextSignal();
-            }
-            if (!allCellsHaveContributed) {
-                //Not all cells have contributed to a newly started row. The penalty here is
-                //used to avoid breaks resulting in badly broken tables.
-                //See also: http://marc.theaimsgroup.com/?t=112248999600005&r=1&w=2
-                p = 900; //KnuthPenalty.INFINITE; //TODO Arbitrary value. Please refine.
             }
             if (signalKeepWithNext || getTableLM().mustKeepTogether()) {
                 p = KnuthPenalty.INFINITE;
             }
-            if (skippedStep) {
-                p = KnuthPenalty.INFINITE;
-                //Need to avoid breaking because borders and/or paddding from other columns would
-                //not fit in the available space (see getNextStep())
+            if (rowFinished && activeRowIndex < rowGroup.length - 1) {
+                nextBreakClass = BreakUtil.compareBreakClasses(nextBreakClass,
+                        rowGroup[activeRowIndex].getBreakAfter());
+                nextBreakClass = BreakUtil.compareBreakClasses(nextBreakClass,
+                        rowGroup[activeRowIndex + 1].getBreakBefore());
             }
-            if (forcedBreak) {
-                if (skippedStep) {
-                    log.error("This is a conflict situation. The output may be wrong."
-                            + " Please send your FO file to fop-dev@xmlgraphics.apache.org!");
-                }
+            if (nextBreakClass != Constants.EN_AUTO) {
+                log.trace("Forced break encountered");
                 p = -KnuthPenalty.INFINITE; //Overrides any keeps (see 4.8 in XSL 1.0)
             }
-            returnList.add(new BreakElement(penaltyPos, effPenaltyLen, p, breakClass, context));
+            if (rowHeightSmallerThanFirstStep) {
+                rowHeightSmallerThanFirstStep = false;
+                p = KnuthPenalty.INFINITE;
+            }
+            returnList.add(new BreakElement(penaltyPos, effPenaltyLen, p, nextBreakClass, context));
             if (penaltyOrGlueLen < 0) {
                 returnList.add(new KnuthGlue(-penaltyOrGlueLen, 0, 0, new Position(null), true));
             }
 
-            if (log.isDebugEnabled()) {
-                log.debug("step=" + step + " (+" + increase + ")"
-                        + " box=" + boxLen
-                        + " penalty=" + penaltyOrGlueLen
-                        + " effPenalty=" + effPenaltyLen);
-            }
-
             laststep = step;
-        }
+            step = getNextStep();
+        } while (step >= 0);
         if (signalKeepWithNext) {
             //Last step signalled a keep-with-next. Since the last penalty will be removed,
             //we have to signal the still pending last keep-with-next using the LayoutContext.
@@ -269,23 +276,77 @@ public class TableStepper {
     }
 
     /**
-     * Finds the smallest increment leading to the next legal break inside the row-group.
+     * Returns the first step for the current row group.
      * 
-     * @return the size of the increment, -1 if no next step is available (end of row-group reached)
+     * @return the first step for the current row group
+     */
+    private int getFirstStep() {
+        computeRowFirstStep(activeCells);
+        signalRowFirstStep();
+        int minStep = considerRowLastStep(rowFirstStep);
+        signalNextStep(minStep);
+        return minStep;
+    }
+
+    /**
+     * Returns the next break possibility.
+     * 
+     * @return the next step
      */
     private int getNextStep() {
-        log.trace("Entering getNextStep");
-        //Check for forced break conditions
-        /*
-        if (isBreakCondition()) {
-            return -1;
-        }*/
+        if (rowFinished) {
+            if (activeRowIndex == rowGroup.length - 1) {
+                // The row group is finished, no next step
+                return -1;
+            }
+            rowFinished = false;
+            removeCellsEndingOnCurrentRow();
+            log.trace("Delaying next row");
+            delayingNextRow = true;
+        }
+        if (delayingNextRow) {
+            int minStep = computeMinStep();
+            if (minStep < 0 || minStep >= rowFirstStep
+                    || minStep > rowGroup[activeRowIndex].getExplicitHeight().max) {
+                if (log.isTraceEnabled()) {
+                    log.trace("Step = " + minStep);
+                }
+                delayingNextRow = false;
+                minStep = rowFirstStep;
+                switchToNextRow();
+                signalRowFirstStep();
+                minStep = considerRowLastStep(minStep);
+            }
+            signalNextStep(minStep);
+            return minStep;
+        } else {
+            int minStep = computeMinStep();
+            minStep = considerRowLastStep(minStep);
+            signalNextStep(minStep);
+            return minStep;
+        }
+    }
 
-        //set starting points
-        goToNextRowIfCurrentFinished();
+    /**
+     * Computes the minimal necessary step to make the next row fit. That is, so such as
+     * cell on the next row can contribute some content.
+     * 
+     * @param cells the cells occupying the next row (may include cells starting on
+     * previous rows and spanning over this one)
+     */
+    private void computeRowFirstStep(List cells) {
+        for (Iterator iter = cells.iterator(); iter.hasNext();) {
+            ActiveCell activeCell = (ActiveCell) iter.next();
+            rowFirstStep = Math.max(rowFirstStep, activeCell.getFirstStep());
+        }
+    }
 
-        //Get next possible sequence for each cell
-        //Determine smallest possible step
+    /**
+     * Computes the next minimal step.
+     * 
+     * @return the minimal step from the active cells, &lt; 0 if there is no such step
+     */
+    private int computeMinStep() {
         int minStep = Integer.MAX_VALUE;
         boolean stepFound = false;
         for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
@@ -296,32 +357,113 @@ public class TableStepper {
                 minStep = Math.min(minStep, nextStep);
             }
         }
-        if (!stepFound) {
+        if (stepFound) {
+            return minStep;
+        } else {
             return -1;
         }
+    }
 
-
-        //Reset bigger-than-minimum sequences
-        //See http://people.apache.org/~jeremias/fop/NextStepAlgoNotes.pdf
-        rowBacktrackForLastStep = false;
-        skippedStep = false;
+    /**
+     * Signals the first step to the active cells, to allow them to add more content to
+     * the step if possible.
+     * 
+     * @see ActiveCell#signalRowFirstStep(int)
+     */
+    private void signalRowFirstStep() {
         for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
             ActiveCell activeCell = (ActiveCell) iter.next();
-            if (activeCell.signalMinStep(minStep)) {
-                if (activeRowIndex == 0) {
-                    log.debug("  First row. Skip this step.");
-                    skippedStep = true;
-                } else {
-                    log.debug("  row-span situation: backtracking to last row");
-                    //Stay on the previous row for another step because borders and padding on 
-                    //columns may make their contribution to the step bigger than the addition
-                    //of the next element for this step would make the step to grow.
-                    rowBacktrackForLastStep = true;
-                }
+            activeCell.signalRowFirstStep(rowFirstStep);
+        }
+    }
+
+    /**
+     * Signals the next selected step to the active cells.
+     *  
+     * @param step the next step
+     */
+    private void signalNextStep(int step) {
+        nextBreakClass = Constants.EN_AUTO;
+        for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
+            ActiveCell activeCell = (ActiveCell) iter.next();
+            nextBreakClass = BreakUtil.compareBreakClasses(nextBreakClass,
+                    activeCell.signalNextStep(step));
+        }
+    }
+
+    /**
+     * Determines if the given step will finish the current row, and if so switch to the
+     * last step for this row.
+     * <p>If the row is finished then the after borders for the cell may change (their
+     * conditionalities no longer apply for the cells ending on the current row). Thus the
+     * final step may grow with respect to the given one.</p>
+     * <p>In more rare occasions, the given step may correspond to the first step of a
+     * row-spanning cell, and may be greater than the height of the current row (consider,
+     * for example, an unbreakable cell spanning three rows). In such a case the returned
+     * step will correspond to the row height and a flag will be set to produce an
+     * infinite penalty for this step. This will prevent the breaking algorithm from
+     * choosing this break, but still allow to create the appropriate TableContentPosition
+     * for the cells ending on the current row.</p>
+     * 
+     * @param step the next step
+     * @return the updated step if any
+     */
+    private int considerRowLastStep(int step) {
+        rowFinished = true;
+        for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
+            ActiveCell activeCell = (ActiveCell) iter.next();
+            if (activeCell.endsOnRow(activeRowIndex)) {
+                rowFinished &= activeCell.finishes(step);
             }
         }
+        if (rowFinished) {
+            if (log.isTraceEnabled()) {
+                log.trace("Step = " + step);
+                log.trace("Row finished, computing last step");
+            }
+            int maxStep = 0;
+            for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
+                ActiveCell activeCell = (ActiveCell) iter.next();
+                if (activeCell.endsOnRow(activeRowIndex)) {
+                    maxStep = Math.max(maxStep, activeCell.getLastStep());
+                }
+            }
+            if (log.isTraceEnabled()) {
+                log.trace("Max step: " + maxStep);
+            }
+            for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
+                ActiveCell activeCell = (ActiveCell) iter.next();
+                activeCell.endRow(activeRowIndex);                        
+                if (!activeCell.endsOnRow(activeRowIndex)) {
+                    activeCell.signalRowLastStep(maxStep);
+                }
+            }
+            if (maxStep < step) {
+                log.trace("Row height smaller than first step, produced penalty will be infinite");
+                rowHeightSmallerThanFirstStep = true;
+            }
+            step = maxStep;
+            prepareNextRow();
+        }
+        return step;
+    }
 
-        return minStep;
+    /**
+     * Pre-activates the cells that will start the next row, and computes the first step
+     * for that row.
+     */
+    private void prepareNextRow() {
+        if (activeRowIndex < rowGroup.length - 1) {
+            previousRowsLength += rowGroup[activeRowIndex].getHeight().opt;
+            activateCells(nextActiveCells, activeRowIndex + 1);
+            if (log.isTraceEnabled()) {
+                log.trace("Computing first step for row " + (activeRowIndex + 2));
+            }
+            computeRowFirstStep(nextActiveCells);
+            if (log.isTraceEnabled()) {
+                log.trace("Next first step = " + rowFirstStep);
+            }
+        }
     }
 
     private void removeCellsEndingOnCurrentRow() {
@@ -333,40 +475,21 @@ public class TableStepper {
         }
     }
 
-    private void goToNextRowIfCurrentFinished() {
-        // We assume that the current grid row is finished. If this is not the case this
-        // boolean will be reset
-        boolean currentGridRowFinished = true;
+    /**
+     * Actually switches to the next row, increasing activeRowIndex and transferring to
+     * activeCells the cells starting on the next row.
+     */
+    private void switchToNextRow() {
+        activeRowIndex++;
+        if (log.isTraceEnabled()) {
+            log.trace("Switching to row " + (activeRowIndex + 1));
+        }
         for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
             ActiveCell activeCell = (ActiveCell) iter.next();
-            if (activeCell.endsOnRow(activeRowIndex)) {
-                currentGridRowFinished &= activeCell.isFinished();
-            }
+            activeCell.nextRowStarts();
         }
-
-        if (currentGridRowFinished) {
-            removeCellsEndingOnCurrentRow();
-            if (activeRowIndex < rowGroup.length - 1) {
-                TableRow rowFO = getActiveRow().getTableRow();
-                if (rowFO != null && rowFO.getBreakAfter() != Constants.EN_AUTO) {
-                    log.warn(FONode.decorateWithContextInfo(
-                            "break-after ignored on table-row because of row spanning "
-                            + "in progress (See XSL 1.0, 7.19.1)", rowFO));
-                }
-                previousRowsLength += rowGroup[activeRowIndex].getHeight().opt;
-                activeRowIndex++;
-                if (log.isDebugEnabled()) {
-                    log.debug("===> new row: " + activeRowIndex);
-                }
-                initializeElementLists();
-                rowFO = getActiveRow().getTableRow();
-                if (rowFO != null && rowFO.getBreakBefore() != Constants.EN_AUTO) {
-                    log.warn(FONode.decorateWithContextInfo(
-                            "break-before ignored on table-row because of row spanning "
-                            + "in progress (See XSL 1.0, 7.19.2)", rowFO));
-                }
-            }
-        }
+        activeCells.addAll(nextActiveCells);
+        nextActiveCells.clear();
     }
 
     /** @return the table layout manager */

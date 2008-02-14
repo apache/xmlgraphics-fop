@@ -1223,7 +1223,7 @@
         yes      </td>
       <td class="yes">
         yes      </td>
-      <td align="center">&nbsp;      </td>
+      <td align="center">&nbsp;</td>
     </tr>
     <tr>
       <td>
@@ -2546,7 +2546,14 @@
         yes      </td>
       <td class="yes">
         yes      </td>
-      <td align="center">&nbsp;      </td>
+      <td align="left">
+        <ul>
+          <li>
+            [0.94 and earlier] Only used for controlling hyphenation.</li>
+          <li>
+            [trunk] For PDF output: Only 2-letter codes from ISO 3166 are supported properly to identify the natural language!</li>
+        </ul>
+      </td>
     </tr>
     <tr>
       <td>
@@ -2562,7 +2569,14 @@
         yes      </td>
       <td class="yes">
         yes      </td>
-      <td align="center">&nbsp;      </td>
+      <td align="left">
+        <ul>
+          <li>
+            [0.94 and earlier] Only used for controlling hyphenation.</li>
+          <li>
+            [trunk] For PDF output: Only 2-letter codes from ISO 639 are supported properly to identify the natural language!</li>
+        </ul>
+      </td>
     </tr>
     <tr>
       <td>
@@ -5598,9 +5612,9 @@
       <td class="no"> no </td>
       <td class="no">
         no      </td>
-      <td class="no">
-        no      </td>
-      <td align="center">&nbsp;      </td>
+      <td class="yes">
+        yes      </td>
+      <td align="center">[dev] Very basic parsing; no validation of the specified value.</td>
     </tr>
   </table>
 <h1><a name="fo-function-core-library-section">XSL-FO Core Function Library Support Table</a> (<a href="http://www.w3.org/TR/2001/REC-xsl-20011015/slice5.html#section-N8434-Core-Function-Library">&sect;5.10</a>)</h1>

@@ -25,9 +25,10 @@ import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.area.RegionReference;
+
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
+import org.apache.fop.area.RegionReference;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.SideRegion;
@@ -339,11 +340,14 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         
         protected void doPhase3(PageBreakingAlgorithm alg, int partCount, 
                 BlockSequence originalList, BlockSequence effectiveList) {
-            //Directly add areas after finding the breaks
-            this.addAreas(alg, partCount, originalList, effectiveList);
             if (partCount > 1) {
                 overflow = true;
             }
+            //Rendering all parts (not just the first) at once for the case where the parts that 
+            //overflow should be visible.
+            alg.removeAllPageBreaks();
+            //Directly add areas after finding the breaks
+            this.addAreas(alg, 1, originalList, effectiveList);
         }
         
         protected void finishPart(PageBreakingAlgorithm alg, PageBreakPosition pbp) {

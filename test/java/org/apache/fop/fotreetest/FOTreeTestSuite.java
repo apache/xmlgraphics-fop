@@ -36,6 +36,7 @@ import org.apache.commons.io.filefilter.PrefixFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.fop.DebugHelper;
+import org.apache.fop.fo.flow.table.CollapsedConditionalBorderTestCase;
 import org.apache.fop.fo.flow.table.IllegalRowSpanTestCase;
 import org.apache.fop.fo.flow.table.RowGroupBuilderTestCase;
 import org.apache.fop.fo.flow.table.TableColumnColumnNumberTestCase;
@@ -115,6 +116,7 @@ public final class FOTreeTestSuite {
         suite.addTestSuite(IllegalRowSpanTestCase.class);
         suite.addTestSuite(RowGroupBuilderTestCase.class);
         suite.addTestSuite(TableColumnColumnNumberTestCase.class);
+        suite.addTestSuite(CollapsedConditionalBorderTestCase.class);
     }
 
     private static class FOTreeTestCase extends TestCase {

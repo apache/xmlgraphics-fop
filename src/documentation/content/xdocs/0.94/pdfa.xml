@@ -20,7 +20,7 @@
 <document>
   <header>
     <title>PDF/A (ISO 19005)</title>
-    <version>$Revision: 389563 $</version>
+    <version>$Revision$</version>
     <authors>
       <person name="Jeremias Märki" email="jeremias@apache.org"/>
     </authors>

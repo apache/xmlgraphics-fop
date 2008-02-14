@@ -19,112 +19,20 @@
  
 package org.apache.fop.render.ps;
 
-import java.awt.Dimension;
-import java.awt.geom.Rectangle2D;
-import java.io.IOException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.xmlgraphics.ps.PSGenerator;
+
 import org.apache.fop.image.EPSImage;
 import org.apache.fop.image.FopImage;
-import org.apache.fop.image.JpegImage;
-import org.apache.xmlgraphics.ps.PSGenerator;
-import org.apache.xmlgraphics.ps.PSResource;
 
 /**
- * Utility code for rendering images in PostScript. 
+ * Utility code for rendering images in PostScript.
  */
 public class PSImageUtils extends org.apache.xmlgraphics.ps.PSImageUtils {
 
     /** logging instance */
     protected static Log log = LogFactory.getLog(PSImageUtils.class);
-
-    /**
-     * Renders a bitmap image to PostScript.
-     * @param img image to render
-     * @param x x position
-     * @param y y position
-     * @param w width
-     * @param h height
-     * @param gen PS generator
-     * @throws IOException In case of an I/O problem while rendering the image
-     */
-    public static void renderBitmapImage(FopImage img, 
-                float x, float y, float w, float h, PSGenerator gen)
-                    throws IOException {
-        boolean isJPEG = (img instanceof JpegImage && (gen.getPSLevel() >= 3));
-        byte[] imgmap = convertImageToRawBitmapArray(img, isJPEG);
-        if (imgmap == null) {
-            gen.commentln("%Image data is not available: " + img);
-            return; //Image cannot be converted 
-        }
-        
-        String imgDescription = img.getMimeType() + " " + img.getOriginalURI();
-        Dimension imgDim = new Dimension(img.getWidth(), img.getHeight());
-        Rectangle2D targetRect = new Rectangle2D.Double(x, y, w, h);
-        writeImage(imgmap, imgDim, imgDescription, targetRect, isJPEG, 
-                img.getColorSpace(), gen);
-    }
-
-    /**
-     * Renders a bitmap image (as form) to PostScript.
-     * @param img image to render
-     * @param form the form resource
-     * @param x x position
-     * @param y y position
-     * @param w width
-     * @param h height
-     * @param gen PS generator
-     * @throws IOException In case of an I/O problem while rendering the image
-     */
-    public static void renderForm(FopImage img, PSResource form, 
-                float x, float y, float w, float h, PSGenerator gen)
-                    throws IOException {
-        Rectangle2D targetRect = new Rectangle2D.Double(x, y, w, h);
-        paintForm(form, targetRect, gen);
-    }
-    
-    /**
-     * Generates a form resource for a FopImage in PostScript.
-     * @param img image to render
-     * @param form the form resource
-     * @param gen PS generator
-     * @throws IOException In case of an I/O problem while rendering the image
-     */
-    public static void generateFormResourceForImage(FopImage img, PSResource form,
-                PSGenerator gen) throws IOException {
-        boolean isJPEG = (img instanceof JpegImage && (gen.getPSLevel() >= 3));
-        byte[] imgmap = convertImageToRawBitmapArray(img, isJPEG);
-        if (imgmap == null) {
-            gen.commentln("%Image data is not available: " + img);
-            return; //Image cannot be converted 
-        }
-        
-        String imgDescription = img.getMimeType() + " " + img.getOriginalURI();
-        Dimension imgDim = new Dimension(img.getWidth(), img.getHeight());
-        writeReusableImage(imgmap, imgDim, form.getName(), imgDescription, isJPEG, 
-                img.getColorSpace(), gen);
-    }
-
-    private static byte[] convertImageToRawBitmapArray(FopImage img, boolean allowUndecodedJPEG)
-                throws IOException {
-        if (img instanceof JpegImage && allowUndecodedJPEG) {
-            if (!img.load(FopImage.ORIGINAL_DATA)) {
-                return null;
-            }
-        } else {
-            if (!img.load(FopImage.BITMAP)) {
-                return null;
-            }
-        }
-        byte[] imgmap;
-        if (img.getBitmapsSize() > 0) {
-            imgmap = img.getBitmaps();
-        } else {
-            imgmap = img.getRessourceBytes();
-        }
-        return imgmap;
-    }
 
     /**
      * Renders an EPS image to PostScript.
@@ -134,6 +42,8 @@ public class PSImageUtils extends org.apache.xmlgraphics.ps.PSImageUtils {
      * @param w width
      * @param h height
      * @param gen PS generator
+     * @deprecated Use {@link #renderEPS(java.io.InputStream, String, java.awt.geom.Rectangle2D,
+     *          java.awt.geom.Rectangle2D, PSGenerator)} instead
      */
     public static void renderEPS(EPSImage img, 
             float x, float y, float w, float h,

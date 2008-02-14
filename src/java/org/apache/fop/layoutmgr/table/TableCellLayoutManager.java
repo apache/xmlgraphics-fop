@@ -28,11 +28,13 @@ import org.apache.fop.area.Block;
 import org.apache.fop.area.Trait;
 import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.flow.table.ConditionalBorder;
 import org.apache.fop.fo.flow.table.GridUnit;
 import org.apache.fop.fo.flow.table.PrimaryGridUnit;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableCell;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground.BorderInfo;
 import org.apache.fop.layoutmgr.AreaAdditionUtil;
 import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
@@ -47,6 +49,7 @@ import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.SpaceResolver;
 import org.apache.fop.layoutmgr.TraitSetter;
+import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.MinOptMax;
 
 /**
@@ -64,8 +67,6 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
     private PrimaryGridUnit primaryGridUnit;
 
     private Block curBlockArea;
-
-    private int inRowIPDOffset;
 
     private int xoffset;
     private int yoffset;
@@ -137,7 +138,8 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
             startIndent /= 2;
             endIndent /= 2;
         }
-        startIndent += getTableCell().getCommonBorderPaddingBackground().getPaddingStart(false, this);
+        startIndent += getTableCell().getCommonBorderPaddingBackground().getPaddingStart(false,
+                this);
         endIndent += getTableCell().getCommonBorderPaddingBackground().getPaddingEnd(false, this);
         return startIndent + endIndent;
     }
@@ -208,7 +210,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
                     // with a SpaceResolver.SpaceHandlingBreakPosition element, having no
                     // LM associated to it. Thus it will stop early instead of adding
                     // areas for following Positions. The above test aims at preventing
-                    // such a situation from occuring. add a null penalty to allow a break
+                    // such a situation from occurring. add a null penalty to allow a break
                     // between blocks
                     contentList.add(new BreakElement(
                             new Position(this), 0, context));
@@ -244,6 +246,16 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
         }
         //Space resolution
         SpaceResolver.resolveElementList(returnList);
+        if (((KnuthElement) returnList.getFirst()).isForcedBreak()) {
+            primaryGridUnit.setBreakBefore(((KnuthPenalty) returnList.getFirst()).getBreakClass());
+            returnList.removeFirst();
+            assert !returnList.isEmpty();
+        }
+        if (((KnuthElement) returnList.getLast()).isForcedBreak()) {
+            KnuthPenalty p = (KnuthPenalty) returnList.getLast();
+            primaryGridUnit.setBreakAfter(p.getBreakClass());
+            p.setP(0);
+        }
 
         getPSLM().notifyEndOfLayout(((TableCell)getFObj()).getId());
 
@@ -272,15 +284,6 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
     }
 
     /**
-     * Set the IPD offset of this cell inside the table-row.
-     * This offset is used to determine the absolute position of the cell.
-     * @param off the IPD offset
-     */
-    public void setInRowIPDOffset(int off) {
-        this.inRowIPDOffset = off;
-    }
-
-    /**
      * Set the content height for this cell. This method is used during
      * addAreas() stage.
      *
@@ -291,34 +294,13 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
     }
 
     /**
-     * Set the row height that contains this cell. This method is used during
-     * addAreas() stage.
-     *
-     * @param h the height of the row
+     * Sets the total height of this cell on the current page. That is, the cell's bpd
+     * plus before and after borders and paddings, plus the table's border-separation.
+     * 
+     * @param h the height of cell
      */
-    public void setRowHeight(int h) {
+    public void setTotalHeight(int h) {
         rowHeight = h;
-    }
-
-    /**
-     * Returns the bpd of the given grid unit.
-     * @param gu a grid unit belonging to this cell
-     * @return the content height of the grid unit
-     */
-    private int getContentHeight(GridUnit gu) {
-        int bpd = rowHeight;
-        if (isSeparateBorderModel()) {
-            bpd -= gu.getPrimary().getBorders().getBorderBeforeWidth(false);
-            bpd -= gu.getPrimary().getBorders().getBorderAfterWidth(false);
-        } else {
-            bpd -= gu.getPrimary().getHalfMaxBorderWidth();
-        }
-        CommonBorderPaddingBackground cbpb
-            = gu.getCell().getCommonBorderPaddingBackground();
-        bpd -= cbpb.getPaddingBefore(false, this);
-        bpd -= cbpb.getPaddingAfter(false, this);
-        bpd -= 2 * ((TableLayoutManager)getParent()).getHalfBorderSeparationBPD();
-        return bpd;
     }
 
     /**
@@ -336,99 +318,151 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
      * of each spanned grid row
      * @param startRow first grid row on the current page spanned over by the cell,
      * inclusive
-     * @param endRow last grid row on the current page spanned over by the cell, exclusive
+     * @param endRow last grid row on the current page spanned over by the cell, inclusive
+     * @param borderBeforeWhich one of {@link ConditionalBorder#NORMAL},
+     * {@link ConditionalBorder#LEADING_TRAILING} or {@link ConditionalBorder#REST}
+     * @param borderAfterWhich one of {@link ConditionalBorder#NORMAL},
+     * {@link ConditionalBorder#LEADING_TRAILING} or {@link ConditionalBorder#REST}
+     * @param firstOnPage true if the cell will be the very first one on the page, in
+     * which case collapsed before borders must be drawn in the outer mode
+     * @param lastOnPage true if the cell will be the very last one on the page, in which
+     * case collapsed after borders must be drawn in the outer mode
      */
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext,
                          int[] spannedGridRowHeights,
                          int startRow,
-                         int endRow) {
+                         int endRow,
+                         int borderBeforeWhich,
+                         int borderAfterWhich,
+                         boolean firstOnPage,
+                         boolean lastOnPage) {
         getParentArea(null);
 
         getPSLM().addIDToPage(getTableCell().getId());
 
+        int borderBeforeWidth = primaryGridUnit.getBeforeBorderWidth(startRow, borderBeforeWhich);
+        int borderAfterWidth = primaryGridUnit.getAfterBorderWidth(endRow, borderAfterWhich);
         if (isSeparateBorderModel()) {
             if (!emptyCell || getTableCell().showEmptyCells()) {
-                TraitSetter.addBorders(curBlockArea, getTableCell().getCommonBorderPaddingBackground(),
-                        false, false, false, false, this);
-                TraitSetter.addPadding(curBlockArea, getTableCell().getCommonBorderPaddingBackground(),
-                        false, false, false, false, this);
+                if (borderBeforeWidth > 0) {
+                    int halfBorderSepBPD = getTableCell().getTable().getBorderSeparation().getBPD()
+                            .getLength().getValue() / 2;
+                    adjustYOffset(curBlockArea, halfBorderSepBPD);
+                }
+                TraitSetter.addBorders(curBlockArea,
+                        getTableCell().getCommonBorderPaddingBackground(),
+                        borderBeforeWidth == 0, borderAfterWidth == 0,
+                        false, false, this);
             }
         } else {
+            boolean inFirstColumn = (primaryGridUnit.getColIndex() == 0);
+            boolean inLastColumn = (primaryGridUnit.getColIndex()
+                    + getTableCell().getNumberColumnsSpanned() == getTable()
+                    .getNumberOfColumns());
             if (!primaryGridUnit.hasSpanning()) {
+                adjustYOffset(curBlockArea, -borderBeforeWidth);
                 //Can set the borders directly if there's no span
-                boolean[] outer = new boolean[] {
-                        primaryGridUnit.getFlag(GridUnit.FIRST_IN_TABLE),
-                        primaryGridUnit.getFlag(GridUnit.LAST_IN_TABLE),
-                        primaryGridUnit.getFlag(GridUnit.IN_FIRST_COLUMN),
-                        primaryGridUnit.getFlag(GridUnit.IN_LAST_COLUMN)};
+                boolean[] outer = new boolean[] {firstOnPage, lastOnPage, inFirstColumn,
+                        inLastColumn};
                 TraitSetter.addCollapsingBorders(curBlockArea,
-                        primaryGridUnit.getBorders(), outer, this);
+                        primaryGridUnit.getBorderBefore(borderBeforeWhich),
+                        primaryGridUnit.getBorderAfter(borderAfterWhich),
+                        primaryGridUnit.getBorderStart(),
+                        primaryGridUnit.getBorderEnd(), outer);
             } else {
-                boolean[] outer = new boolean[4];
+                adjustYOffset(curBlockArea, borderBeforeWidth);
+                Block[][] blocks = new Block[getTableCell().getNumberRowsSpanned()][getTableCell()
+                        .getNumberColumnsSpanned()];
+                GridUnit[] gridUnits = (GridUnit[]) primaryGridUnit.getRows().get(startRow);
+                for (int x = 0; x < getTableCell().getNumberColumnsSpanned(); x++) {
+                    GridUnit gu = gridUnits[x];
+                    BorderInfo border = gu.getBorderBefore(borderBeforeWhich);
+                    int borderWidth = border.getRetainedWidth() / 2;
+                    if (borderWidth > 0) {
+                        addBorder(blocks, startRow, x, Trait.BORDER_BEFORE, border, firstOnPage);
+                        adjustYOffset(blocks[startRow][x], -borderWidth);
+                        adjustBPD(blocks[startRow][x], -borderWidth);
+                    }
+                }
+                gridUnits = (GridUnit[]) primaryGridUnit.getRows().get(endRow);
+                for (int x = 0; x < getTableCell().getNumberColumnsSpanned(); x++) {
+                    GridUnit gu = gridUnits[x];
+                    BorderInfo border = gu.getBorderAfter(borderAfterWhich);
+                    int borderWidth = border.getRetainedWidth() / 2;
+                    if (borderWidth > 0) {
+                        addBorder(blocks, endRow, x, Trait.BORDER_AFTER, border, lastOnPage);
+                        adjustBPD(blocks[endRow][x], -borderWidth);
+                    }
+                }
+                for (int y = startRow; y <= endRow; y++) {
+                    gridUnits = (GridUnit[]) primaryGridUnit.getRows().get(y);
+                    BorderInfo border = gridUnits[0].getBorderStart();
+                    int borderWidth = border.getRetainedWidth() / 2;
+                    if (borderWidth > 0) {
+                        addBorder(blocks, y, 0, Trait.BORDER_START, border, inFirstColumn);
+                        adjustXOffset(blocks[y][0], borderWidth);
+                        adjustIPD(blocks[y][0], -borderWidth);
+                    }
+                    border = gridUnits[gridUnits.length - 1].getBorderEnd();
+                    borderWidth = border.getRetainedWidth() / 2;
+                    if (borderWidth > 0) {
+                        addBorder(blocks, y, gridUnits.length - 1, Trait.BORDER_END, border,
+                                inLastColumn);
+                        adjustIPD(blocks[y][gridUnits.length - 1], -borderWidth);
+                    }
+                }
                 int dy = yoffset;
-                for (int y = startRow; y < endRow; y++) {
-                    GridUnit[] gridUnits = (GridUnit[])primaryGridUnit.getRows().get(y);
+                for (int y = startRow; y <= endRow; y++) {
+                    int bpd = spannedGridRowHeights[y - startRow];
                     int dx = xoffset;
                     for (int x = 0; x < gridUnits.length; x++) {
-                        GridUnit gu = gridUnits[x];
-                        if (gu.hasBorders()) {
-                            //Blocks for painting grid unit borders
-                            Block block = new Block();
-                            block.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
-                            block.setPositioning(Block.ABSOLUTE);
-    
-                            int bpd = spannedGridRowHeights[y - startRow];
-                            bpd -= gu.getBorders().getBorderBeforeWidth(false) / 2;
-                            bpd -= gu.getBorders().getBorderAfterWidth(false) / 2;
-                            block.setBPD(bpd);
-                            if (log.isTraceEnabled()) {
-                                log.trace("pgu: " + primaryGridUnit + "; gu: " + gu + "; yoffset: "
-                                        + (dy - gu.getBorders().getBorderBeforeWidth(false) / 2)
-                                        + "; bpd: " + bpd);
-                            }
-                            int ipd = gu.getColumn().getColumnWidth().getValue(
-                                    (PercentBaseContext) getParent());
-                            int borderStartWidth = gu.getBorders().getBorderStartWidth(false) / 2;
-                            ipd -= borderStartWidth;
-                            ipd -= gu.getBorders().getBorderEndWidth(false) / 2;
-                            block.setIPD(ipd);
-                            block.setXOffset(dx + borderStartWidth);
-                            block.setYOffset(dy - gu.getBorders().getBorderBeforeWidth(false) / 2);
-                            outer[0] = gu.getFlag(GridUnit.FIRST_IN_TABLE);
-                            outer[1] = gu.getFlag(GridUnit.LAST_IN_TABLE);
-                            outer[2] = gu.getFlag(GridUnit.IN_FIRST_COLUMN);
-                            outer[3] = gu.getFlag(GridUnit.IN_LAST_COLUMN);
-                            TraitSetter.addCollapsingBorders(block, gu.getBorders(), outer, this);
+                        int ipd = getTable().getColumn(primaryGridUnit.getColIndex() + x)
+                                .getColumnWidth().getValue((PercentBaseContext) getParent());
+                        if (blocks[y][x] != null) {
+                            Block block = blocks[y][x];
+                            adjustYOffset(block, dy);
+                            adjustXOffset(block, dx);
+                            adjustIPD(block, ipd);
+                            adjustBPD(block, bpd);
                             parentLM.addChildArea(block);
                         }
-                        dx += gu.getColumn().getColumnWidth().getValue(
-                                (PercentBaseContext) getParent());
+                        dx += ipd;
                     }
-                    dy += spannedGridRowHeights[y - startRow];
+                    dy += bpd;
                 }
             }
         }
-        TraitSetter.addPadding(curBlockArea, primaryGridUnit.getBorders(),
-                false, false, false, false, this);
+
+        CommonBorderPaddingBackground padding = primaryGridUnit.getCell()
+                .getCommonBorderPaddingBackground();
+        TraitSetter.addPadding(curBlockArea,
+                padding,
+                borderBeforeWhich == ConditionalBorder.REST,
+                borderAfterWhich == ConditionalBorder.REST,
+                false, false, this);
+
+        int cellBPD = rowHeight - borderBeforeWidth - borderAfterWidth;
+        cellBPD -= padding.getPaddingBefore(borderBeforeWhich == ConditionalBorder.REST, this);
+        cellBPD -= padding.getPaddingAfter(borderAfterWhich == ConditionalBorder.REST, this);
 
         //Handle display-align
-        int contentBPD = getContentHeight(primaryGridUnit);
-        if (usedBPD < contentBPD) {
+        if (usedBPD < cellBPD) {
             if (getTableCell().getDisplayAlign() == EN_CENTER) {
                 Block space = new Block();
-                space.setBPD((contentBPD - usedBPD) / 2);
+                space.setBPD((cellBPD - usedBPD) / 2);
                 curBlockArea.addBlock(space);
             } else if (getTableCell().getDisplayAlign() == EN_AFTER) {
                 Block space = new Block();
-                space.setBPD((contentBPD - usedBPD));
+                space.setBPD(cellBPD - usedBPD);
                 curBlockArea.addBlock(space);
             }
         }
 
         AreaAdditionUtil.addAreas(this, parentIter, layoutContext);
-
-        curBlockArea.setBPD(contentBPD);
+        // Re-adjust the cell's bpd as it may have been modified by the previous call
+        // for some reason (?)
+        curBlockArea.setBPD(cellBPD);
 
         // Add background after we know the BPD
         if (isSeparateBorderModel()) {
@@ -446,6 +480,34 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
         flush();
 
         curBlockArea = null;
+    }
+
+    private void addBorder(Block[][] blocks, int i, int j, Integer side, BorderInfo border,
+            boolean outer) {
+        if (blocks[i][j] == null) {
+            blocks[i][j] = new Block();
+            blocks[i][j].addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
+            blocks[i][j].setPositioning(Block.ABSOLUTE);
+        }
+        blocks[i][j].addTrait(side, new BorderProps(border.getStyle(),
+                border.getRetainedWidth(), border.getColor(),
+                outer ? BorderProps.COLLAPSE_OUTER : BorderProps.COLLAPSE_INNER));
+    }
+
+    private static void adjustXOffset(Block block, int amount) {
+        block.setXOffset(block.getXOffset() + amount);
+    }
+
+    private static void adjustYOffset(Block block, int amount) {
+        block.setYOffset(block.getYOffset() + amount);
+    }
+
+    private static void adjustIPD(Block block, int amount) {
+        block.setIPD(block.getIPD() + amount);
+    }
+
+    private static void adjustBPD(Block block, int amount) {
+        block.setBPD(block.getBPD() + amount);
     }
 
     /**
@@ -467,25 +529,10 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
             curBlockArea.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
             TraitSetter.setProducerID(curBlockArea, getTableCell().getId());
             curBlockArea.setPositioning(Block.ABSOLUTE);
-            // set position
-            int borderAdjust = 0;
-            if (!isSeparateBorderModel()) {
-                if (primaryGridUnit.hasSpanning()) {
-                    borderAdjust -= primaryGridUnit.getHalfMaxBeforeBorderWidth();
-                } else {
-                    borderAdjust += primaryGridUnit.getHalfMaxBeforeBorderWidth();
-                }
-            } else {
-                //borderAdjust += primaryGridUnit.getBorders().getBorderBeforeWidth(false);
-            }
-            TableLayoutManager tableLM = (TableLayoutManager)getParent();
-            curBlockArea.setXOffset(xoffset + inRowIPDOffset + startIndent);
-            curBlockArea.setYOffset(yoffset - borderAdjust
-                    + tableLM.getHalfBorderSeparationBPD());
+            curBlockArea.setXOffset(xoffset + startIndent);
+            curBlockArea.setYOffset(yoffset);
             curBlockArea.setIPD(cellIPD);
-            //curBlockArea.setHeight();
 
-            // Set up dimensions
             /*Area parentArea =*/ parentLM.getParentArea(curBlockArea);
             // Get reference IPD from parentArea
             setCurrentArea(curBlockArea); // ??? for generic operations

@@ -1,4 +1,20 @@
 #!/usr/bin/python
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+# 
+#      http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 # $Id$
 
 """A testcase generator for conditional borders and the collapsing border model, in the FO
@@ -74,7 +90,7 @@ class TableGenerator:
             ]
 
     bordersBefore = None
-    resBefore = None
+    resBefore = {}
     """The comma between each table; nothing before the first one."""
     separator = ''
 
@@ -85,8 +101,8 @@ class TableGenerator:
         Params:
         borderSet: a list of 5 border specifications for resp. table, table-column,
         table-body, table-row and table-cell
-        resolution: the resolved border for the leading and rest cases (for the normal
-        case the resolution is always the same)
+        resolution: the resolved border for the rest case (for the normal and leading
+        cases the resolution is always the same)
         """
         if not self.bordersBefore:
             self.bordersBefore = borderSet
@@ -110,16 +126,14 @@ class TableGenerator:
             sys.stderr.write(self.separator + '{')
             comma = ''
             for beforeAfter in [self.resBefore, resolution]:
-                for leadRest in range(2):
-                    sys.stderr.write(comma + '{border' + beforeAfter[leadRest]['length']
-                            + ', Color.' + beforeAfter[leadRest]['color']
-                            + '}')
-                    comma = ', '
+                sys.stderr.write(comma + '{border' + beforeAfter['length']
+                        + ', Color.' + beforeAfter['color'] + '}')
+                comma = ', '
             sys.stderr.write('}')
             self.separator = ',\n'
             # Reset
             self.bordersBefore = None
-            self.resBefore = None
+            self.resBefore = {}
 
 class TableHFGenerator:
     """Generates on stdout tables with headers and footers, and the border specifications
@@ -221,7 +235,7 @@ class TableHFGenerator:
                     comma = ', '
             resBody = self.bordersBody[tableNum][1]
             for i in range(4):
-                for normLeadRest in ['non-lead', 'lead', 'rest']:
+                for normLeadRest in ['normal', 'lead', 'rest']:
                     sys.stderr.write(', {border'
                             + resBody[i][normLeadRest][0]
                             + ', Color.' + resBody[i][normLeadRest][1]
@@ -254,7 +268,7 @@ def generateTestCases():
         defaultBorders.append({'length': '4pt', 'cond': 'discard', 'color': color})
     defaultBorders[fo_table]['length'] = '8pt'
 
-    resolution = [{'length': '4pt', 'color': 'yellow'}, {'length': '0pt', 'color': 'black'}]
+    resolution = {'length': '0pt', 'color': 'black'}
     tableGenerator.addBorderSet(defaultBorders, resolution)
     for combinations in createAllCombinations()[1:]:
         for combination in combinations:
@@ -266,9 +280,9 @@ def generateTestCases():
                 if index != fo_table:
                     finalBorders[index]['length'] = '6pt'
                 if fo_table in combination:
-                    resolution = [{'length': '8pt', 'color': 'black'}] * 2
+                    resolution = {'length': '8pt', 'color': 'black'}
                 else:
-                    resolution = [{'length': '6pt', 'color': finalBorders[index]['color']}] * 2
+                    resolution = {'length': '6pt', 'color': finalBorders[index]['color']}
                 tableGenerator.addBorderSet(finalBorders, resolution)
     printFOEnd()
 
@@ -336,10 +350,10 @@ def generateTestCasesHeaderFooter():
                 {'length': '4pt', 'cond': 'discard', 'color': 'magenta'}  # footer > row > cell
                 ]
         defaultResolution = [
-                {'non-lead': ('4pt', 'black'), 'lead': ('4pt', 'black'), 'rest': ('4pt', 'red')},     # border-before cell 1
-                {'non-lead': ('4pt', 'black'), 'lead': ('4pt', 'black'), 'rest': ('4pt', 'magenta')}, # border-after cell 1
-                {'non-lead': ('4pt', 'blue'),  'lead': ('4pt', 'blue'),  'rest': ('4pt', 'red')},     # border-before cell 2
-                {'non-lead': ('4pt', 'blue'),  'lead': ('4pt', 'blue'),  'rest': ('4pt', 'magenta')}  # border-after cell 2
+                {'normal': ('4pt', 'black'), 'lead': ('4pt', 'black'), 'rest': ('4pt', 'red')},     # border-before cell 1
+                {'normal': ('4pt', 'black'), 'lead': ('4pt', 'black'), 'rest': ('4pt', 'magenta')}, # border-after cell 1
+                {'normal': ('4pt', 'blue'),  'lead': ('4pt', 'blue'),  'rest': ('4pt', 'red')},     # border-before cell 2
+                {'normal': ('4pt', 'blue'),  'lead': ('4pt', 'blue'),  'rest': ('4pt', 'magenta')}  # border-after cell 2
                 ]
         # The following contains changes to the default borders. Depending on the object
         # targeted (in header, footer, body1 or body2), the affected border is either before
@@ -350,46 +364,46 @@ def generateTestCasesHeaderFooter():
         # - for footer: border-before
         for setting in [
                 {'borders': [(body2, '8pt', 'discard'), (body1, '6pt', 'discard')], 'res': [
-                    {'non-lead': ('4pt', 'black'), 'lead': ('4pt', 'black'), 'rest': ('4pt', 'red')},
-                    {'non-lead': ('8pt', 'blue'),  'lead': ('6pt', 'black'), 'rest': ('4pt', 'magenta')},
-                    {'non-lead': ('8pt', 'blue'),  'lead': ('8pt', 'blue'),  'rest': ('4pt', 'red')},
-                    {'non-lead': ('4pt', 'blue'),  'lead': ('4pt', 'blue'),  'rest': ('4pt', 'magenta')}]},
+                    {'normal': ('4pt', 'black'), 'lead': ('4pt', 'black'), 'rest': ('4pt', 'red')},
+                    {'normal': ('8pt', 'blue'),  'lead': ('6pt', 'black'), 'rest': ('4pt', 'magenta')},
+                    {'normal': ('8pt', 'blue'),  'lead': ('8pt', 'blue'),  'rest': ('4pt', 'red')},
+                    {'normal': ('4pt', 'blue'),  'lead': ('4pt', 'blue'),  'rest': ('4pt', 'magenta')}]},
                 {'borders': [(row2,  '8pt', 'discard'), (row1,  '6pt', 'retain')], 'res': [
-                    {'non-lead': ('4pt', 'black'), 'lead': ('4pt', 'black'), 'rest': ('4pt', 'red')},
-                    {'non-lead': ('8pt', 'blue'),  'lead': ('6pt', 'black'), 'rest': ('6pt', 'black')},
-                    {'non-lead': ('8pt', 'blue'),  'lead': ('8pt', 'blue'),  'rest': ('4pt', 'red')},
-                    {'non-lead': ('4pt', 'blue'),  'lead': ('4pt', 'blue'),  'rest': ('4pt', 'magenta')}]},
+                    {'normal': ('4pt', 'black'), 'lead': ('4pt', 'black'), 'rest': ('4pt', 'red')},
+                    {'normal': ('8pt', 'blue'),  'lead': ('6pt', 'black'), 'rest': ('6pt', 'black')},
+                    {'normal': ('8pt', 'blue'),  'lead': ('8pt', 'blue'),  'rest': ('4pt', 'red')},
+                    {'normal': ('4pt', 'blue'),  'lead': ('4pt', 'blue'),  'rest': ('4pt', 'magenta')}]},
                 {'borders': [(cell2, '6pt', 'retain'), (cellh, '8pt', 'discard'), (cell1, '4pt', 'retain')], 'res': [
-                    {'non-lead': ('8pt', 'red'),  'lead': ('8pt', 'red'),   'rest': ('8pt', 'red')},
-                    {'non-lead': ('6pt', 'blue'), 'lead': ('4pt', 'black'), 'rest': ('4pt', 'black')},
-                    {'non-lead': ('6pt', 'blue'), 'lead': ('8pt', 'red'),   'rest': ('8pt', 'red')},
-                    {'non-lead': ('4pt', 'blue'), 'lead': ('4pt', 'blue'),  'rest': ('4pt', 'magenta')}]},
+                    {'normal': ('8pt', 'red'),  'lead': ('8pt', 'red'),   'rest': ('8pt', 'red')},
+                    {'normal': ('6pt', 'blue'), 'lead': ('4pt', 'black'), 'rest': ('4pt', 'black')},
+                    {'normal': ('6pt', 'blue'), 'lead': ('8pt', 'red'),   'rest': ('8pt', 'red')},
+                    {'normal': ('4pt', 'blue'), 'lead': ('4pt', 'blue'),  'rest': ('4pt', 'magenta')}]},
                 {'borders': [(body2, '6pt',  'retain'), (rowh,  '8pt', 'discard'), (row1,  '4pt', 'retain')], 'res': [
-                    {'non-lead': ('8pt', 'red'),  'lead': ('8pt', 'red'),   'rest': ('8pt', 'red')},
-                    {'non-lead': ('6pt', 'blue'), 'lead': ('4pt', 'black'), 'rest': ('4pt', 'magenta')},
-                    {'non-lead': ('6pt', 'blue'), 'lead': ('8pt', 'red'),   'rest': ('8pt', 'red')},
-                    {'non-lead': ('4pt', 'blue'), 'lead': ('4pt', 'blue'),  'rest': ('4pt', 'magenta')}]},
+                    {'normal': ('8pt', 'red'),  'lead': ('8pt', 'red'),   'rest': ('8pt', 'red')},
+                    {'normal': ('6pt', 'blue'), 'lead': ('4pt', 'black'), 'rest': ('4pt', 'magenta')},
+                    {'normal': ('6pt', 'blue'), 'lead': ('8pt', 'red'),   'rest': ('8pt', 'red')},
+                    {'normal': ('4pt', 'blue'), 'lead': ('4pt', 'blue'),  'rest': ('4pt', 'magenta')}]},
                 # Almost a copy-paste of the above, swapping 1 and 2, header and footer
                 {'borders': [(body1, '8pt', 'discard'), (body2, '6pt', 'discard')], 'res': [
-                    {'non-lead': ('4pt', 'black'), 'lead': ('4pt', 'black'), 'rest': ('4pt', 'red')},
-                    {'non-lead': ('8pt', 'black'), 'lead': ('8pt', 'black'), 'rest': ('4pt', 'magenta')},
-                    {'non-lead': ('8pt', 'black'), 'lead': ('6pt', 'blue'),  'rest': ('4pt', 'red')},
-                    {'non-lead': ('4pt', 'blue'),  'lead': ('4pt', 'blue'),  'rest': ('4pt', 'magenta')}]},
+                    {'normal': ('4pt', 'black'), 'lead': ('4pt', 'black'), 'rest': ('4pt', 'red')},
+                    {'normal': ('8pt', 'black'), 'lead': ('8pt', 'black'), 'rest': ('4pt', 'magenta')},
+                    {'normal': ('8pt', 'black'), 'lead': ('6pt', 'blue'),  'rest': ('4pt', 'red')},
+                    {'normal': ('4pt', 'blue'),  'lead': ('4pt', 'blue'),  'rest': ('4pt', 'magenta')}]},
                 {'borders': [(cell1,  '8pt', 'discard'), (cell2,  '6pt', 'retain')], 'res': [
-                    {'non-lead': ('4pt', 'black'), 'lead': ('4pt', 'black'), 'rest': ('4pt', 'red')},
-                    {'non-lead': ('8pt', 'black'), 'lead': ('8pt', 'black'), 'rest': ('4pt', 'magenta')},
-                    {'non-lead': ('8pt', 'black'), 'lead': ('6pt', 'blue'),  'rest': ('6pt', 'blue')},
-                    {'non-lead': ('4pt', 'blue'),  'lead': ('4pt', 'blue'),  'rest': ('4pt', 'magenta')}]},
+                    {'normal': ('4pt', 'black'), 'lead': ('4pt', 'black'), 'rest': ('4pt', 'red')},
+                    {'normal': ('8pt', 'black'), 'lead': ('8pt', 'black'), 'rest': ('4pt', 'magenta')},
+                    {'normal': ('8pt', 'black'), 'lead': ('6pt', 'blue'),  'rest': ('6pt', 'blue')},
+                    {'normal': ('4pt', 'blue'),  'lead': ('4pt', 'blue'),  'rest': ('4pt', 'magenta')}]},
                 {'borders': [(row1, '6pt', 'retain'), (footer, '8pt', 'discard'), (body2, '4pt', 'retain')], 'res': [
-                    {'non-lead': ('4pt', 'black'),   'lead': ('4pt', 'black'),   'rest': ('4pt', 'red')},
-                    {'non-lead': ('6pt', 'black'),   'lead': ('8pt', 'magenta'), 'rest': ('8pt', 'magenta')},
-                    {'non-lead': ('6pt', 'black'),   'lead': ('4pt', 'blue'),    'rest': ('4pt', 'red')},
-                    {'non-lead': ('8pt', 'magenta'), 'lead': ('8pt', 'magenta'), 'rest': ('8pt', 'magenta')}]},
+                    {'normal': ('4pt', 'black'),   'lead': ('4pt', 'black'),   'rest': ('4pt', 'red')},
+                    {'normal': ('6pt', 'black'),   'lead': ('8pt', 'magenta'), 'rest': ('8pt', 'magenta')},
+                    {'normal': ('6pt', 'black'),   'lead': ('4pt', 'blue'),    'rest': ('4pt', 'red')},
+                    {'normal': ('8pt', 'magenta'), 'lead': ('8pt', 'magenta'), 'rest': ('8pt', 'magenta')}]},
                 {'borders': [(body1, '8pt',  'retain'), (cellf,  '6pt', 'discard'), (row2,  '4pt', 'retain')], 'res': [
-                    {'non-lead': ('4pt', 'black'),   'lead': ('4pt', 'black'),   'rest': ('4pt', 'red')},
-                    {'non-lead': ('8pt', 'black'),   'lead': ('8pt', 'black'),   'rest': ('8pt', 'black')},
-                    {'non-lead': ('8pt', 'black'),   'lead': ('4pt', 'blue'),    'rest': ('4pt', 'red')},
-                    {'non-lead': ('6pt', 'magenta'), 'lead': ('6pt', 'magenta'), 'rest': ('6pt', 'magenta')}]}]:
+                    {'normal': ('4pt', 'black'),   'lead': ('4pt', 'black'),   'rest': ('4pt', 'red')},
+                    {'normal': ('8pt', 'black'),   'lead': ('8pt', 'black'),   'rest': ('8pt', 'black')},
+                    {'normal': ('8pt', 'black'),   'lead': ('4pt', 'blue'),    'rest': ('4pt', 'red')},
+                    {'normal': ('6pt', 'magenta'), 'lead': ('6pt', 'magenta'), 'rest': ('6pt', 'magenta')}]}]:
             finalBorders = copy.deepcopy(defaultBorders)
             for border in setting['borders']:
                 finalBorders[border[0]]['length'] = border[1]

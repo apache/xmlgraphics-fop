@@ -26,7 +26,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.flow.table.TableFObj.ColumnNumberPropertyMaker;
-import org.apache.fop.fo.properties.BackgroundPositionShorthandParser;
+import org.apache.fop.fo.properties.BackgroundPositionShorthand;
 import org.apache.fop.fo.properties.BorderSpacingShorthandParser;
 import org.apache.fop.fo.properties.BorderWidthPropertyMaker;
 import org.apache.fop.fo.properties.BoxPropShorthandParser;
@@ -66,6 +66,7 @@ import org.apache.fop.fo.properties.TextDecorationProperty;
 import org.apache.fop.fo.properties.ToBeImplementedProperty;
 import org.apache.fop.fo.properties.VerticalAlignShorthandParser;
 import org.apache.fop.fo.properties.WhiteSpaceShorthandParser;
+import org.apache.fop.fo.properties.XMLLangShorthandParser;
 
 /**
  * This class creates and returns an array of Property.Maker instances
@@ -1060,12 +1061,14 @@ public final class FOPropertyMapping implements Constants {
         m  = new StringProperty.Maker(PR_COUNTRY);
         m.setInherited(true);
         m.setDefault("none");
+        m.addShorthand(s_generics[PR_XML_LANG]);
         addPropertyMaker("country", m);
 
         // language
         m  = new StringProperty.Maker(PR_LANGUAGE);
         m.setInherited(true);
         m.setDefault("none");
+        m.addShorthand(s_generics[PR_XML_LANG]);
         addPropertyMaker("language", m);
 
         // script
@@ -1150,7 +1153,7 @@ public final class FOPropertyMapping implements Constants {
         m.useGeneric(genericSpace);
         corr = new SpacePropertyMaker(m);
         corr.setCorresponding(PR_MARGIN_BOTTOM, PR_MARGIN_BOTTOM, PR_MARGIN_LEFT);
-        corr.setUseParent(true);
+        corr.setUseParent(false);
         corr.setRelative(true);
         addPropertyMaker("space-after", m);
 
@@ -1160,7 +1163,7 @@ public final class FOPropertyMapping implements Constants {
         m.setDefault("0pt");
         IndentPropertyMaker sCorr = new IndentPropertyMaker(m);
         sCorr.setCorresponding(PR_MARGIN_LEFT, PR_MARGIN_RIGHT, PR_MARGIN_TOP);
-        sCorr.setUseParent(true);
+        sCorr.setUseParent(false);
         sCorr.setRelative(true);
         sCorr.setPaddingCorresponding(new int[] {
              PR_PADDING_LEFT, PR_PADDING_RIGHT, PR_PADDING_TOP
@@ -1176,7 +1179,7 @@ public final class FOPropertyMapping implements Constants {
         m.setDefault("0pt");
         IndentPropertyMaker eCorr = new IndentPropertyMaker(m);
         eCorr.setCorresponding(PR_MARGIN_RIGHT, PR_MARGIN_LEFT, PR_MARGIN_BOTTOM);
-        eCorr.setUseParent(true);
+        eCorr.setUseParent(false);
         eCorr.setRelative(true);
         eCorr.setPaddingCorresponding(new int[] {
             PR_PADDING_RIGHT, PR_PADDING_LEFT, PR_PADDING_BOTTOM
@@ -2531,15 +2534,33 @@ public final class FOPropertyMapping implements Constants {
         addPropertyMaker("background", m);
 
         // background-position
-        m  = new ListProperty.Maker(PR_BACKGROUND_POSITION);
+        m  = new BackgroundPositionShorthand.Maker(PR_BACKGROUND_POSITION);
         m.setInherited(false);
         m.addKeyword("left", "0% 50%");
+        m.addKeyword("left center", "0% 50%");
+        m.addKeyword("center left", "0% 50%");
         m.addKeyword("right", "100% 50%");
+        m.addKeyword("right center", "100% 50%");
+        m.addKeyword("center right", "100% 50%");
         m.addKeyword("center", "50% 50%");
+        m.addKeyword("center center", "50% 50%");
         m.addKeyword("top", "50% 0%");
+        m.addKeyword("top center", "50% 0%");
+        m.addKeyword("center top", "50% 0%");
         m.addKeyword("bottom", "50% 100%");
+        m.addKeyword("bottom center", "50% 100%");
+        m.addKeyword("center bottom", "50% 100%");
+        m.addKeyword("top left", "0% 0%");
+        m.addKeyword("left top", "0% 0%");
+        m.addKeyword("top right", "100% 0%");
+        m.addKeyword("right top", "100% 0%");
+        m.addKeyword("bottom left", "0% 100%");
+        m.addKeyword("left bottom", "0% 100%");
+        m.addKeyword("bottom right", "100% 100%");
+        m.addKeyword("right bottom", "100% 100%");
         m.setDefault("0% 0%");
-        m.setDatatypeParser(new BackgroundPositionShorthandParser());
+        m.setPercentBase(LengthBase.CUSTOM_BASE);
+        m.setDatatypeParser(new BackgroundPositionShorthand.Parser());
         addPropertyMaker("background-position", m);
 
         // border
@@ -2722,9 +2743,10 @@ public final class FOPropertyMapping implements Constants {
         addPropertyMaker("white-space", m);
         
         // xml:lang
-        m  = new ToBeImplementedProperty.Maker(PR_XML_LANG);
+        m  = new StringProperty.Maker(PR_XML_LANG);
         m.setInherited(true);
         m.setDefault("");
+        m.setDatatypeParser(new XMLLangShorthandParser());
         addPropertyMaker("xml:lang", m);
 
        }

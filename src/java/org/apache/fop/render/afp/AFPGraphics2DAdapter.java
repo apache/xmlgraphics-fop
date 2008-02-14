@@ -22,8 +22,9 @@ package org.apache.fop.render.afp;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
+
 import org.apache.fop.render.AbstractGraphics2DAdapter;
-import org.apache.fop.render.Graphics2DImagePainter;
 import org.apache.fop.render.RendererContext;
 
 /**

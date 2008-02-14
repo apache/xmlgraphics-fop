@@ -26,7 +26,7 @@
     <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" font-family="Gladiator">
       <fo:layout-master-set>
         <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
-          <fo:region-body/>
+          <fo:region-body background-color="rgb-icc(100%,0%,0%,sRGB,1,0.5,0)" />
         </fo:simple-page-master>
       </fo:layout-master-set>
       <fo:declarations>
@@ -47,6 +47,9 @@
   </fo>
   <checks>
     <!-- Check page -->
+    <!-- Special case? rgb-icc() used before fo:declarations
+         Revert to sRGB fallback for now -->
+    <eval expected="color=#ff0000" xpath="//regionViewport[1]/@background" />
     <eval expected="#ff0000" xpath="//block[1]//text/@color"/>
     <eval expected="#ff8000" xpath="//block[2]//text/@color"/>
     <eval expected="#ff8000" xpath="//block[3]//text/@color"/>

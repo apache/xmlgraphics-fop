@@ -21,35 +21,39 @@ package org.apache.fop.render;
 
 // Java
 import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
-// XML
 import org.w3c.dom.Document;
 
-// FOP
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.BeforeFloat;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.BodyRegion;
 import org.apache.fop.area.CTM;
-import org.apache.fop.area.NormalFlow;
 import org.apache.fop.area.Footnote;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.MainReference;
-import org.apache.fop.area.Span;
-import org.apache.fop.area.Page;
-import org.apache.fop.area.PageViewport;
-import org.apache.fop.area.RegionViewport;
-import org.apache.fop.area.RegionReference;
-import org.apache.fop.area.Trait;
+import org.apache.fop.area.NormalFlow;
 import org.apache.fop.area.OffDocumentItem;
+import org.apache.fop.area.Page;
+import org.apache.fop.area.PageSequence;
+import org.apache.fop.area.PageViewport;
+import org.apache.fop.area.RegionReference;
+import org.apache.fop.area.RegionViewport;
+import org.apache.fop.area.Span;
+import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.Character;
 import org.apache.fop.area.inline.Container;
 import org.apache.fop.area.inline.ForeignObject;
@@ -59,15 +63,12 @@ import org.apache.fop.area.inline.InlineBlockParent;
 import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.Space;
-import org.apache.fop.area.inline.Viewport;
-import org.apache.fop.area.inline.TextArea;
-import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.area.inline.SpaceArea;
-import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.area.inline.TextArea;
+import org.apache.fop.area.inline.Viewport;
+import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.FontInfo;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Abstract base class for all renderers. The Abstract renderer does all the
@@ -170,15 +171,7 @@ public abstract class AbstractRenderer
         return this.currentPageViewport;
     }
     
-    /**
-     * Prepare a page for rendering. This is called if the renderer supports
-     * out of order rendering. The renderer should prepare the page so that a
-     * page further on in the set of pages can be rendered. The body of the
-     * page should not be rendered. The page will be rendered at a later time
-     * by the call to render page.
-     *
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void preparePage(PageViewport page) { }
 
     /**
@@ -217,6 +210,11 @@ public abstract class AbstractRenderer
     /** {@inheritDoc} */
     public void startPageSequence(LineArea seqTitle) {
         //do nothing
+    }
+    
+    /** {@inheritDoc} */
+    public void startPageSequence(PageSequence pageSequence) {
+        startPageSequence(pageSequence.getTitle());
     }
 
     // normally this would be overriden to create a page in the
@@ -556,31 +554,20 @@ public abstract class AbstractRenderer
             int saveIP = currentIPPosition;
             int saveBP = currentBPPosition;
 
+            currentIPPosition += block.getXOffset();
+            currentBPPosition += block.getYOffset();
+            currentBPPosition += block.getSpaceBefore();
+
+            handleBlockTraits(block);
+
+            if (children != null) {
+                renderBlocks(block, children);
+            }
+
             if (block.getPositioning() == Block.ABSOLUTE) {
-                currentIPPosition += block.getXOffset();
-                currentBPPosition += block.getYOffset();
-                currentBPPosition += block.getSpaceBefore();
-
-                handleBlockTraits(block);
-
-                if (children != null) {
-                    renderBlocks(block, children);
-                }
-
                 // absolute blocks do not effect the layout
                 currentBPPosition = saveBP;
             } else {
-                // relative blocks are offset
-                currentIPPosition += block.getXOffset();
-                currentBPPosition += block.getYOffset();
-                currentBPPosition += block.getSpaceBefore();
-
-                handleBlockTraits(block);
-
-                if (children != null) {
-                    renderBlocks(block, children);
-                }
-
                 // stacked and relative blocks effect stacking
                 currentIPPosition = saveIP;
                 currentBPPosition = saveBP + block.getAllocBPD();
@@ -835,5 +822,33 @@ public abstract class AbstractRenderer
      */
     public String getMimeType() {
         return null;
+    }
+
+    /**
+     * Converts a millipoint-based transformation matrix to points.
+     * @param at a millipoint-based transformation matrix
+     * @return a point-based transformation matrix
+     */
+    protected AffineTransform mptToPt(AffineTransform at) {
+        double[] matrix = new double[6];
+        at.getMatrix(matrix);
+        //Convert to points
+        matrix[4] = matrix[4] / 1000;
+        matrix[5] = matrix[5] / 1000;
+        return new AffineTransform(matrix);
+    }
+
+    /**
+     * Converts a point-based transformation matrix to millipoints.
+     * @param at a point-based transformation matrix
+     * @return a millipoint-based transformation matrix
+     */
+    protected AffineTransform ptToMpt(AffineTransform at) {
+        double[] matrix = new double[6];
+        at.getMatrix(matrix);
+        //Convert to millipoints
+        matrix[4] = matrix[4] * 1000;
+        matrix[5] = matrix[5] * 1000;
+        return new AffineTransform(matrix);
     }
 }

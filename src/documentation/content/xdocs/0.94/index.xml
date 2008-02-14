@@ -20,7 +20,7 @@
 <document>
   <header>
     <title>Apache FOP Version 0.94</title>
-    <version>$Revision: 201586 $</version>
+    <version>$Revision$</version>
   </header>
   <body>
     <section id="intro">

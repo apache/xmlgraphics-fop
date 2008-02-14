@@ -28,9 +28,9 @@ import java.net.URL;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.fonts.truetype.TTFFontLoader;
 import org.apache.fop.fonts.type1.Type1FontLoader;
 
@@ -46,8 +46,6 @@ public abstract class FontLoader {
 
     /** URI representing the font file */
     protected String fontFileURI = null;
-    /** the InputStream to load the font from */
-    protected InputStream in = null;
     /** the FontResolver to use for font URI resolution */
     protected FontResolver resolver = null;
     /** the loaded font */
@@ -59,12 +57,10 @@ public abstract class FontLoader {
     /**
      * Default constructor.
      * @param fontFileURI the URI to the PFB file of a Type 1 font
-     * @param in the InputStream reading the PFM file of a Type 1 font
      * @param resolver the font resolver used to resolve URIs
      */
-    public FontLoader(String fontFileURI, InputStream in, FontResolver resolver) {
+    public FontLoader(String fontFileURI, FontResolver resolver) {
         this.fontFileURI = fontFileURI;
-        this.in = in;
         this.resolver = resolver;
     }
 
@@ -107,58 +103,25 @@ public abstract class FontLoader {
     public static CustomFont loadFont(String fontFileURI, FontResolver resolver)
                 throws IOException {
         fontFileURI = fontFileURI.trim();
-        String effURI;
         boolean type1 = isType1(fontFileURI);
-        if (type1) {
-            String pfmExt = fontFileURI.substring(
-                    fontFileURI.length() - 3, fontFileURI.length());
-            pfmExt = pfmExt.substring(0, 2) + (Character.isUpperCase(pfmExt.charAt(2)) ? "M" : "m");
-            effURI = fontFileURI.substring(0, fontFileURI.length() - 4) + "." + pfmExt;
-        } else {
-            effURI = fontFileURI;
-        }
-        if (log.isDebugEnabled()) {
-            log.debug("opening " + effURI);
-        }
-        InputStream in = openFontUri(resolver, effURI);
-        return loadFontFromInputStream(fontFileURI, resolver, type1, in);
-    }
-
-    /**
-     * Loads and returns a font given an input stream.
-     * @param fontFileURI font file uri
-     * @param resolver font resolver
-     * @param isType1 is it a type1 font?
-     * @param in input stream
-     * @return the loaded font.
-     * @throws IOException In case of an I/O error
-     */
-    protected static CustomFont loadFontFromInputStream(
-            String fontFileURI, FontResolver resolver, boolean isType1,
-            InputStream in)
-                throws IOException {
         FontLoader loader;
-        try {
-            if (isType1) {
-                loader = new Type1FontLoader(fontFileURI, in, resolver);
-            } else {
-                loader = new TTFFontLoader(fontFileURI, in, resolver);
-            }
-            return loader.getFont();
-        } finally {
-            IOUtils.closeQuietly(in);
+        if (type1) {
+            loader = new Type1FontLoader(fontFileURI, resolver);
+        } else {
+            loader = new TTFFontLoader(fontFileURI, resolver);
         }
+        return loader.getFont();
     }
 
     /**
-     * Opens a font uri and returns an input stream.
+     * Opens a font URI and returns an input stream.
      * @param resolver the FontResolver to use for font URI resolution
      * @param uri the URI representing the font
      * @return the InputStream to read the font from.
      * @throws IOException In case of an I/O error
      * @throws MalformedURLException If an invalid URL is built
      */
-    private static InputStream openFontUri(FontResolver resolver, String uri) 
+    protected static InputStream openFontUri(FontResolver resolver, String uri) 
                     throws IOException, MalformedURLException {
         InputStream in = null;
         if (resolver != null) {
@@ -191,7 +154,11 @@ public abstract class FontLoader {
      */
     protected abstract void read() throws IOException;
 
-    /** @see FontLoader#getFont() */
+    /**
+     * Returns the custom font that was read using this instance of FontLoader.
+     * @return the newly loaded font
+     * @throws IOException if an I/O error occurs
+     */
     public CustomFont getFont() throws IOException {
         if (!loaded) {
             read();

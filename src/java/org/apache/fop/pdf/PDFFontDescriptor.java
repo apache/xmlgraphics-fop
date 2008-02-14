@@ -26,29 +26,7 @@ import org.apache.fop.fonts.FontType;
  * <p>
  * Font descriptors are specified on page 222 and onwards of the PDF 1.3 spec.
  */
-public class PDFFontDescriptor extends PDFObject {
-
-    // Required fields
-    private int ascent;
-    private int capHeight;
-    private int descent;
-    private int flags;
-    private PDFRectangle fontBBox;
-    private String basefont;    // PDF-spec: FontName
-    private int italicAngle;
-    private int stemV;
-    // Optional fields
-    private int stemH = 0;
-    private int xHeight = 0;
-    private int leading = 0;
-    private int avgWidth = 0;
-    private int maxWidth = 0;
-    private int missingWidth = 0;
-    private AbstractPDFStream fontfile;
-    private AbstractPDFStream cidSet;
-    // private String charSet = null;
-
-    private FontType subtype;
+public class PDFFontDescriptor extends PDFDictionary {
 
     /**
      * Create the /FontDescriptor object
@@ -66,19 +44,17 @@ public class PDFFontDescriptor extends PDFObject {
                              int descent, int capHeight, int flags,
                              PDFRectangle fontBBox, int italicAngle,
                              int stemV) {
-
-        /* generic creation of PDF object */
         super();
 
-        /* set fields using paramaters */
-        this.basefont = basefont;
-        this.ascent = ascent;
-        this.descent = descent;
-        this.capHeight = capHeight;
-        this.flags = flags;
-        this.fontBBox = fontBBox;
-        this.italicAngle = italicAngle;
-        this.stemV = stemV;
+        put("Type", new PDFName("FontDescriptor"));
+        put("FontName", new PDFName(basefont));
+        put("FontBBox", fontBBox);
+        put("Flags", flags);
+        put("CapHeight", capHeight);
+        put("Ascent", ascent);
+        put("Descent", descent);
+        put("ItalicAngle", italicAngle);
+        put("StemV", stemV);
     }
 
     /**
@@ -97,12 +73,24 @@ public class PDFFontDescriptor extends PDFObject {
      */
     public void setMetrics(int avgWidth, int maxWidth, int missingWidth,
                            int leading, int stemH, int xHeight) {
-        this.avgWidth = avgWidth;
-        this.maxWidth = maxWidth;
-        this.missingWidth = missingWidth;
-        this.leading = leading;
-        this.stemH = stemH;
-        this.xHeight = xHeight;
+        if (avgWidth != 0) {
+            put("AvgWidth", avgWidth);
+        }
+        if (maxWidth != 0) {
+            put("MaxWidth", maxWidth);
+        }
+        if (missingWidth != 0) {
+            put("MissingWidth", missingWidth);
+        }
+        if (leading != 0) {
+            put("Leading", leading);
+        }
+        if (stemH != 0) {
+            put("StemH", stemH);
+        }
+        if (xHeight != 0) {
+            put("XHeight", xHeight);
+        }
     }
 
     /**
@@ -112,13 +100,24 @@ public class PDFFontDescriptor extends PDFObject {
      * @param fontfile the stream containing an embedded font
      */
     public void setFontFile(FontType subtype, AbstractPDFStream fontfile) {
-        this.subtype = subtype;
-        this.fontfile = fontfile;
+        if (subtype == FontType.TYPE1) {
+            put("FontFile", fontfile);
+        } else {
+            put("FontFile2", fontfile);
+        }
     }
 
     /** @return the FontFile or null if the font is not embedded */
     public AbstractPDFStream getFontFile() {
-        return this.fontfile;
+        AbstractPDFStream stream;
+        stream = (AbstractPDFStream)get("FontFile");
+        if (stream == null) {
+            stream = (AbstractPDFStream)get("FontFile2");
+        }
+        if (stream == null) {
+            stream = (AbstractPDFStream)get("FontFile3");
+        }
+        return stream;
     }
     
     /**
@@ -126,19 +125,18 @@ public class PDFFontDescriptor extends PDFObject {
      * @param cidSet the CIDSet stream
      */
     public void setCIDSet(AbstractPDFStream cidSet) {
-        this.cidSet = cidSet;
+        put("CIDSet", cidSet);
     }
     
     /** @return the CIDSet stream or null if not applicable */
     public AbstractPDFStream getCIDSet() {
-        return this.cidSet;
+        return (AbstractPDFStream)get("CIDSet");
     }
     
-    // public void setCharSet(){}//for subset fonts
-
     /**
      * {@inheritDoc}
      */
+    /*
     public String toPDFString() {
         StringBuffer p = new StringBuffer(128);
         p.append(getObjectID() 
@@ -201,7 +199,7 @@ public class PDFFontDescriptor extends PDFObject {
         fillInPDF(p);
         p.append(" >>\nendobj\n");
         return p.toString();
-    }
+    }*/
 
     /**
      * Fill in the specifics for the font's descriptor.
@@ -209,9 +207,9 @@ public class PDFFontDescriptor extends PDFObject {
      * The given buffer already contains the fields common to all descriptors.
      *
      * @param begin the buffer to be completed with the specific fields
-     */
+     *//*
     protected void fillInPDF(StringBuffer begin) {
         //nop
-    }
+    }*/
 
 }

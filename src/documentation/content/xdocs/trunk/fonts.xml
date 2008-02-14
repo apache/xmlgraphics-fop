@@ -227,17 +227,6 @@ Please note that this information only applies to TrueType fonts and TrueType co
             <td>Limited only by the characters in the font itself.</td>
           </tr>
           <tr>
-            <td>Character Encoding in the Output Document.</td>
-            <td>Correct.</td>
-            <td>Never correct. Search, index, and cut-and-paste operations in the output document
-will produce incorrect results.</td>
-          </tr>
-          <tr>
-            <td>Character Display</td>
-            <td>Correct.</td>
-            <td>Correct, but copy/paste won't work in Acrobat Reader. (FOP currently doesn't emit the /ToUnicode table which is necessary for copy/paste to work.)</td>
-          </tr>
-          <tr>
             <td>Embedding the Font</td>
             <td>Optional.</td>
             <td>Mandatory. Not embedding the font produces invalid PDF documents.</td>
@@ -245,7 +234,7 @@ will produce incorrect results.</td>
         </table>
         <warning>
           You may experience failures with certain TrueType fonts, especially if they don't contain 
-          the so-called "cmap" table. TTFReader can currently not deal with font like this.
+          the so-called Unicode "cmap" table. TTFReader can currently not deal with font like this.
         </warning>
       </section>
       <section id="truetype-collections-metrics">

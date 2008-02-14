@@ -56,8 +56,8 @@
     <true xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@is-viewport-area"/>
     <eval expected="fixed" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@positioning"/>
     <eval expected="absolute" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@positioning"/>
-    <eval expected="[1.0 0.0 0.0 1.0 30000.0 30000.0]" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@ctm"/>
-    <eval expected="[1.0 0.0 0.0 1.0 30000.0 30000.0]" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@ctm"/>
+    <eval expected="[1.0 0.0 0.0 1.0 0.0 0.0]" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@ctm"/>
+    <eval expected="[1.0 0.0 0.0 1.0 0.0 0.0]" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@ctm"/>
     <eval expected="30000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@left-position"/>
     <eval expected="30000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@left-position"/>
     <eval expected="30000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@top-position"/>

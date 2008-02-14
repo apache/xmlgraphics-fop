@@ -47,46 +47,46 @@ public class CollapsedConditionalBorderTestCase extends AbstractTableTestCase {
      * script.
      */
     private Object[][][] resolvedBorders = {
-{{border4pt, Color.yellow}, {border0pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}},
-{{border6pt, Color.red}, {border6pt, Color.red}, {border6pt, Color.magenta}, {border6pt, Color.magenta}},
-{{border6pt, Color.blue}, {border6pt, Color.blue}, {border6pt, Color.yellow}, {border6pt, Color.yellow}},
-{{border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}},
-{{border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}},
-{{border6pt, Color.red}, {border6pt, Color.red}, {border6pt, Color.magenta}, {border6pt, Color.magenta}},
-{{border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}},
-{{border6pt, Color.red}, {border6pt, Color.red}, {border6pt, Color.blue}, {border6pt, Color.blue}},
-{{border6pt, Color.magenta}, {border6pt, Color.magenta}, {border6pt, Color.blue}, {border6pt, Color.blue}},
-{{border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}},
-{{border6pt, Color.red}, {border6pt, Color.red}, {border6pt, Color.yellow}, {border6pt, Color.yellow}},
-{{border6pt, Color.magenta}, {border6pt, Color.magenta}, {border6pt, Color.yellow}, {border6pt, Color.yellow}},
-{{border6pt, Color.blue}, {border6pt, Color.blue}, {border6pt, Color.yellow}, {border6pt, Color.yellow}},
-{{border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}},
-{{border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}},
-{{border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}},
-{{border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}},
-{{border8pt, Color.black}, {border8pt, Color.black}, {border6pt, Color.red}, {border6pt, Color.red}},
-{{border6pt, Color.magenta}, {border6pt, Color.magenta}, {border6pt, Color.blue}, {border6pt, Color.blue}},
-{{border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}},
-{{border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}},
-{{border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}},
-{{border6pt, Color.red}, {border6pt, Color.red}, {border6pt, Color.magenta}, {border6pt, Color.magenta}},
-{{border6pt, Color.yellow}, {border6pt, Color.yellow}, {border8pt, Color.black}, {border8pt, Color.black}},
-{{border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}},
-{{border6pt, Color.red}, {border6pt, Color.red}, {border6pt, Color.blue}, {border6pt, Color.blue}},
-{{border6pt, Color.yellow}, {border6pt, Color.yellow}, {border6pt, Color.magenta}, {border6pt, Color.magenta}},
-{{border6pt, Color.blue}, {border6pt, Color.blue}, {border6pt, Color.yellow}, {border6pt, Color.yellow}},
-{{border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}},
-{{border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}},
-{{border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}},
-{{border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}},
-{{border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}},
-{{border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}},
-{{border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}},
-{{border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}},
-{{border6pt, Color.red}, {border6pt, Color.red}, {border6pt, Color.magenta}, {border6pt, Color.magenta}},
-{{border6pt, Color.blue}, {border6pt, Color.blue}, {border6pt, Color.yellow}, {border6pt, Color.yellow}},
-{{border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}},
-{{border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}}
+            {{border0pt, Color.black}, {border8pt, Color.black}},
+            {{border6pt, Color.red}, {border6pt, Color.magenta}},
+            {{border6pt, Color.blue}, {border6pt, Color.yellow}},
+            {{border8pt, Color.black}, {border8pt, Color.black}},
+            {{border8pt, Color.black}, {border8pt, Color.black}},
+            {{border6pt, Color.red}, {border6pt, Color.magenta}},
+            {{border8pt, Color.black}, {border8pt, Color.black}},
+            {{border6pt, Color.red}, {border6pt, Color.blue}},
+            {{border6pt, Color.magenta}, {border6pt, Color.blue}},
+            {{border8pt, Color.black}, {border8pt, Color.black}},
+            {{border6pt, Color.red}, {border6pt, Color.yellow}},
+            {{border6pt, Color.magenta}, {border6pt, Color.yellow}},
+            {{border6pt, Color.blue}, {border6pt, Color.yellow}},
+            {{border8pt, Color.black}, {border8pt, Color.black}},
+            {{border8pt, Color.black}, {border8pt, Color.black}},
+            {{border8pt, Color.black}, {border8pt, Color.black}},
+            {{border8pt, Color.black}, {border8pt, Color.black}},
+            {{border8pt, Color.black}, {border6pt, Color.red}},
+            {{border6pt, Color.magenta}, {border6pt, Color.blue}},
+            {{border8pt, Color.black}, {border8pt, Color.black}},
+            {{border8pt, Color.black}, {border8pt, Color.black}},
+            {{border8pt, Color.black}, {border8pt, Color.black}},
+            {{border6pt, Color.red}, {border6pt, Color.magenta}},
+            {{border6pt, Color.yellow}, {border8pt, Color.black}},
+            {{border8pt, Color.black}, {border8pt, Color.black}},
+            {{border6pt, Color.red}, {border6pt, Color.blue}},
+            {{border6pt, Color.yellow}, {border6pt, Color.magenta}},
+            {{border6pt, Color.blue}, {border6pt, Color.yellow}},
+            {{border8pt, Color.black}, {border8pt, Color.black}},
+            {{border8pt, Color.black}, {border8pt, Color.black}},
+            {{border8pt, Color.black}, {border8pt, Color.black}},
+            {{border8pt, Color.black}, {border8pt, Color.black}},
+            {{border8pt, Color.black}, {border8pt, Color.black}},
+            {{border8pt, Color.black}, {border8pt, Color.black}},
+            {{border8pt, Color.black}, {border8pt, Color.black}},
+            {{border8pt, Color.black}, {border8pt, Color.black}},
+            {{border6pt, Color.red}, {border6pt, Color.magenta}},
+            {{border6pt, Color.blue}, {border6pt, Color.yellow}},
+            {{border8pt, Color.black}, {border8pt, Color.black}},
+            {{border8pt, Color.black}, {border8pt, Color.black}}
     };
 
     /**
@@ -142,13 +142,13 @@ public class CollapsedConditionalBorderTestCase extends AbstractTableTestCase {
 
             String errorMsge = baseErrorMsge + "border-before";
             checkBorder(errorMsge, gu.borderBefore.nonLeadingTrailing, 8000, Color.black);
-            checkBorder(errorMsge, gu.borderBefore.leadingTrailing, resolvedBorders[tableNum][0]);
-            checkBorder(errorMsge, gu.borderBefore.rest, resolvedBorders[tableNum][1]);
+            checkBorder(errorMsge, gu.borderBefore.leadingTrailing, 8000, Color.black);
+            checkBorder(errorMsge, gu.borderBefore.rest, resolvedBorders[tableNum][0]);
 
             errorMsge = baseErrorMsge + "border-after";
             checkBorder(errorMsge, gu.borderAfter.nonLeadingTrailing, 8000, Color.black);
-            checkBorder(errorMsge, gu.borderAfter.leadingTrailing, resolvedBorders[tableNum][2]);
-            checkBorder(errorMsge, gu.borderAfter.rest, resolvedBorders[tableNum][3]);
+            checkBorder(errorMsge, gu.borderAfter.leadingTrailing, 8000, Color.black);
+            checkBorder(errorMsge, gu.borderAfter.rest, resolvedBorders[tableNum][1]);
 
             tableNum++;
         } while (tableIterator.hasNext());

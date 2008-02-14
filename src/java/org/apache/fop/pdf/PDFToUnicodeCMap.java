@@ -19,7 +19,8 @@
  
 package org.apache.fop.pdf;
 
-import org.apache.fop.fonts.CIDFont;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  * Class representing ToUnicode CMaps.
@@ -37,249 +38,251 @@ import org.apache.fop.fonts.CIDFont;
 public class PDFToUnicodeCMap extends PDFCMap {
 
     /**
-     * handle to read font
+     * The array of Unicode characters ordered by character code
+     * (maps from character code to Unicode code point).
      */
-    protected CIDFont cidFont;
+    protected char[] unicodeCharMap;
 
     /**
      * Constructor.
      *
-     * @param cidMetrics the CID font for which this Unicode CMap is built
+     * @param unicodeCharMap An array of Unicode characters ordered by character code
+     *                          (maps from character code to Unicode code point)
      * @param name One of the registered names found in Table 5.14 in PDF
      * Reference, Second Edition.
      * @param sysInfo The attributes of the character collection of the CIDFont.
      */
-    public PDFToUnicodeCMap(CIDFont cidMetrics, String name, PDFCIDSystemInfo sysInfo) {
+    public PDFToUnicodeCMap(char[] unicodeCharMap, String name, PDFCIDSystemInfo sysInfo) {
         super(name, sysInfo);
-        cidFont = cidMetrics;
+        this.unicodeCharMap = unicodeCharMap;
     }
 
     /** {@inheritDoc} */
-    public void fillInPDF(StringBuffer p) {
-        writeCIDInit(p);
-        writeCIDSystemInfo(p);
-        writeVersionTypeName(p);
-        writeCodeSpaceRange(p);
-        writeBFEntries(p);
-        writeWrapUp(p);
-        add(p.toString());
+    protected CMapBuilder createCMapBuilder(Writer writer) {
+        return new ToUnicodeCMapBuilder(writer);
     }
-
-    /** {@inheritDoc} */
-    protected void writeCIDSystemInfo(StringBuffer p) {
-        p.append("/CIDSystemInfo\n");
-        p.append("<< /Registry (Adobe)\n");
-        p.append("/Ordering (UCS)\n");
-        p.append("/Supplement 0\n");
-        p.append(">> def\n");
-    }
-
-    /** {@inheritDoc} */
-    protected void writeVersionTypeName(StringBuffer p) {
-        p.append("/CMapName /Adobe-Identity-UCS def\n");
-        p.append("/CMapType 2 def\n");
-    }
-
-    /**
-     * Writes the character mappings for this font.
-     * @param p StingBuffer to write to
-     */
-    protected void writeBFEntries(StringBuffer p) {
-        if (cidFont == null) {
-            return;
+    
+    class ToUnicodeCMapBuilder extends CMapBuilder {
+        
+        public ToUnicodeCMapBuilder(Writer writer) {
+            super(writer, null);
         }
 
-        char[] charArray = cidFont.getCharsUsed();
-
-        if (charArray != null) {
-            writeBFCharEntries(p, charArray);
-            writeBFRangeEntries(p, charArray);
-        }
-    }
-
-    /**
-     * Writes the entries for single characters of a base font (only characters which cannot be
-     * expressed as part of a character range).
-     * @param p StringBuffer to write to
-     * @param charArray all the characters to map
-     */
-    protected void writeBFCharEntries(StringBuffer p, char[] charArray) {
-        int totalEntries = 0;
-        for (int i = 0; i < charArray.length; i++) {
-            if (!partOfRange(charArray, i)) {
-                totalEntries++;
-            }
-        }
-        if (totalEntries < 1) {
-            return;
-        }
-        int remainingEntries = totalEntries;
-        int charIndex = 0;
-        do {
-            /* Limited to 100 entries in each section */
-            int entriesThisSection = Math.min(remainingEntries, 100);
-            p.append(entriesThisSection + " beginbfchar\n");
-            for (int i = 0; i < entriesThisSection; i++) {
-                /* Go to the next char not in a range */
-                while (partOfRange(charArray, charIndex)) {
-                    charIndex++;
-                }
-                p.append("<" + padHexString(Integer.toHexString(charIndex), 4) + "> ");
-                p.append("<" + padHexString(Integer.toHexString(charArray[charIndex]), 4) + ">\n");
-                charIndex++;
-            }
-            remainingEntries -= entriesThisSection;
-            p.append("endbfchar\n");
-        } while (remainingEntries > 0);
-    }
-
-    /**
-     * Writes the entries for character ranges for a base font.
-     * @param p StringBuffer to write to
-     * @param charArray all the characters to map
-     */
-    protected void writeBFRangeEntries(StringBuffer p, char[] charArray) {
-        int totalEntries = 0;
-        for (int i = 0; i < charArray.length; i++) {
-            if (startOfRange(charArray, i)) {
-                totalEntries++;
-            }
-        }
-        if (totalEntries < 1) {
-            return;
-        }
-        int remainingEntries = totalEntries;
-        int charIndex = 0;
-        do {
-            /* Limited to 100 entries in each section */
-            int entriesThisSection = Math.min(remainingEntries, 100);
-            p.append(entriesThisSection + " beginbfrange\n");
-            for (int i = 0; i < entriesThisSection; i++) {
-                /* Go to the next start of a range */
-                while (!startOfRange(charArray, charIndex)) {
-                    charIndex++;
-                }
-                p.append("<" + padHexString(Integer.toHexString(charIndex), 4) + "> ");
-                p.append("<"
-                        + padHexString(Integer.toHexString(endOfRange(charArray, charIndex)), 4)
-                        + "> ");
-                p.append("<" + padHexString(Integer.toHexString(charArray[charIndex]), 4) + ">\n");
-                charIndex++;
-            }
-            remainingEntries -= entriesThisSection;
-            p.append("endbfrange\n");
-        } while (remainingEntries > 0);
-    }
-
-    /**
-     * Find the end of the current range.
-     * @param charArray The array which is being tested.
-     * @param startOfRange The index to the array element that is the start of
-     * the range.
-     * @return The index to the element that is the end of the range.
-     */
-    private int endOfRange(char[] charArray, int startOfRange) {
-        int i = startOfRange;
-        while (i < charArray.length - 1 && sameRangeEntryAsNext(charArray, i)) {
-            i++;
-        }
-        return i;
-    }
-
-    /**
-     * Determine whether this array element should be part of a bfchar entry or
-     * a bfrange entry.
-     * @param charArray The array to be tested.
-     * @param arrayIndex The index to the array element to be tested.
-     * @return True if this array element should be included in a range.
-     */
-    private boolean partOfRange(char[] charArray, int arrayIndex) {
-        if (charArray.length < 2) {
-            return false;
-        }
-        if (arrayIndex == 0) {
-            return sameRangeEntryAsNext(charArray, 0);
-        }
-        if (arrayIndex == charArray.length - 1) {
-            return sameRangeEntryAsNext(charArray, arrayIndex - 1);
-        }
-        if (sameRangeEntryAsNext(charArray, arrayIndex - 1)) {
-            return true;
-        }
-        if (sameRangeEntryAsNext(charArray, arrayIndex)) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Determine whether two bytes can be written in the same bfrange entry.
-     * @param charArray The array to be tested.
-     * @param firstItem The first of the two items in the array to be tested.
-     * The second item is firstItem + 1.
-     * @return True if both 1) the next item in the array is sequential with
-     * this one, and 2) the first byte of the character in the first position
-     * is equal to the first byte of the character in the second position.
-     */
-    private boolean sameRangeEntryAsNext(char[] charArray, int firstItem) {
-        if (charArray[firstItem] + 1 != charArray[firstItem + 1]) {
-            return false;
-        }
-        if (firstItem / 256 != (firstItem + 1) / 256) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Determine whether this array element should be the start of a bfrange
-     * entry.
-     * @param charArray The array to be tested.
-     * @param arrayIndex The index to the array element to be tested.
-     * @return True if this array element is the beginning of a range.
-     */
-    private boolean startOfRange(char[] charArray, int arrayIndex) {
-        // Can't be the start of a range if not part of a range.
-        if (!partOfRange(charArray, arrayIndex)) {
-            return false;
-        }
-        // If first element in the array, must be start of a range
-        if (arrayIndex == 0) {
-            return true;
-        }
-        // If last element in the array, cannot be start of a range
-        if (arrayIndex == charArray.length - 1) {
-            return false;
-        }
-        /*
-         * If part of same range as the previous element is, cannot be start
-         * of range.
+        /**
+         * Writes the CMap to a Writer.
+         * @param writer the writer
+         * @throws IOException if an I/O error occurs
          */
-        if (sameRangeEntryAsNext(charArray, arrayIndex - 1)) {
+        public void writeCMap() throws IOException {
+            writeCIDInit();
+            writeCIDSystemInfo("Adobe", "UCS", 0);
+            writeName("Adobe-Identity-UCS");
+            writeType("2");
+            writeCodeSpaceRange();
+            writeBFEntries();
+            writeWrapUp();
+        }
+        
+        /**
+         * Writes the character mappings for this font.
+         * @param p StingBuffer to write to
+         */
+        protected void writeBFEntries() throws IOException {
+            if (unicodeCharMap != null) {
+                writeBFCharEntries(unicodeCharMap);
+                writeBFRangeEntries(unicodeCharMap);
+            }
+        }
+
+        /**
+         * Writes the entries for single characters of a base font (only characters which cannot be
+         * expressed as part of a character range).
+         * @param p StringBuffer to write to
+         * @param charArray all the characters to map
+         * @throws IOException 
+         */
+        protected void writeBFCharEntries(char[] charArray) throws IOException {
+            int totalEntries = 0;
+            for (int i = 0; i < charArray.length; i++) {
+                if (!partOfRange(charArray, i)) {
+                    totalEntries++;
+                }
+            }
+            if (totalEntries < 1) {
+                return;
+            }
+            int remainingEntries = totalEntries;
+            int charIndex = 0;
+            do {
+                /* Limited to 100 entries in each section */
+                int entriesThisSection = Math.min(remainingEntries, 100);
+                writer.write(entriesThisSection + " beginbfchar\n");
+                for (int i = 0; i < entriesThisSection; i++) {
+                    /* Go to the next char not in a range */
+                    while (partOfRange(charArray, charIndex)) {
+                        charIndex++;
+                    }
+                    writer.write("<" + padHexString(Integer.toHexString(charIndex), 4) + "> ");
+                    writer.write("<" + padHexString(Integer.toHexString(charArray[charIndex]), 4)
+                            + ">\n");
+                    charIndex++;
+                }
+                remainingEntries -= entriesThisSection;
+                writer.write("endbfchar\n");
+            } while (remainingEntries > 0);
+        }
+
+        /**
+         * Writes the entries for character ranges for a base font.
+         * @param p StringBuffer to write to
+         * @param charArray all the characters to map
+         * @throws IOException 
+         */
+        protected void writeBFRangeEntries(char[] charArray) throws IOException {
+            int totalEntries = 0;
+            for (int i = 0; i < charArray.length; i++) {
+                if (startOfRange(charArray, i)) {
+                    totalEntries++;
+                }
+            }
+            if (totalEntries < 1) {
+                return;
+            }
+            int remainingEntries = totalEntries;
+            int charIndex = 0;
+            do {
+                /* Limited to 100 entries in each section */
+                int entriesThisSection = Math.min(remainingEntries, 100);
+                writer.write(entriesThisSection + " beginbfrange\n");
+                for (int i = 0; i < entriesThisSection; i++) {
+                    /* Go to the next start of a range */
+                    while (!startOfRange(charArray, charIndex)) {
+                        charIndex++;
+                    }
+                    writer.write("<" + padHexString(Integer.toHexString(charIndex), 4) + "> ");
+                    writer.write("<"
+                            + padHexString(Integer.toHexString(endOfRange(charArray, charIndex)), 4)
+                            + "> ");
+                    writer.write("<" + padHexString(Integer.toHexString(charArray[charIndex]), 4)
+                            + ">\n");
+                    charIndex++;
+                }
+                remainingEntries -= entriesThisSection;
+                writer.write("endbfrange\n");
+            } while (remainingEntries > 0);
+        }
+
+        /**
+         * Find the end of the current range.
+         * @param charArray The array which is being tested.
+         * @param startOfRange The index to the array element that is the start of
+         * the range.
+         * @return The index to the element that is the end of the range.
+         */
+        private int endOfRange(char[] charArray, int startOfRange) {
+            int i = startOfRange;
+            while (i < charArray.length - 1 && sameRangeEntryAsNext(charArray, i)) {
+                i++;
+            }
+            return i;
+        }
+
+        /**
+         * Determine whether this array element should be part of a bfchar entry or
+         * a bfrange entry.
+         * @param charArray The array to be tested.
+         * @param arrayIndex The index to the array element to be tested.
+         * @return True if this array element should be included in a range.
+         */
+        private boolean partOfRange(char[] charArray, int arrayIndex) {
+            if (charArray.length < 2) {
+                return false;
+            }
+            if (arrayIndex == 0) {
+                return sameRangeEntryAsNext(charArray, 0);
+            }
+            if (arrayIndex == charArray.length - 1) {
+                return sameRangeEntryAsNext(charArray, arrayIndex - 1);
+            }
+            if (sameRangeEntryAsNext(charArray, arrayIndex - 1)) {
+                return true;
+            }
+            if (sameRangeEntryAsNext(charArray, arrayIndex)) {
+                return true;
+            }
             return false;
         }
-        // Otherwise, this is start of a range.
-        return true;
-    }
 
-    /**
-     * Prepends the input string with a sufficient number of "0" characters to
-     * get the returned string to be numChars length.
-     * @param input The input string.
-     * @param numChars The minimum characters in the output string.
-     * @return The padded string.
-     */
-    public static String padHexString(String input, int numChars) {
-        int length = input.length();
-        if (length >= numChars) {
-            return input;
+        /**
+         * Determine whether two bytes can be written in the same bfrange entry.
+         * @param charArray The array to be tested.
+         * @param firstItem The first of the two items in the array to be tested.
+         * The second item is firstItem + 1.
+         * @return True if both 1) the next item in the array is sequential with
+         * this one, and 2) the first byte of the character in the first position
+         * is equal to the first byte of the character in the second position.
+         */
+        private boolean sameRangeEntryAsNext(char[] charArray, int firstItem) {
+            if (charArray[firstItem] + 1 != charArray[firstItem + 1]) {
+                return false;
+            }
+            if (firstItem / 256 != (firstItem + 1) / 256) {
+                return false;
+            }
+            return true;
         }
-        StringBuffer returnString = new StringBuffer();
-        for (int i = 1; i <= numChars - length; i++) {
-            returnString.append("0");
-        }
-        returnString.append(input);
-        return returnString.toString();
-    }
 
+        /**
+         * Determine whether this array element should be the start of a bfrange
+         * entry.
+         * @param charArray The array to be tested.
+         * @param arrayIndex The index to the array element to be tested.
+         * @return True if this array element is the beginning of a range.
+         */
+        private boolean startOfRange(char[] charArray, int arrayIndex) {
+            // Can't be the start of a range if not part of a range.
+            if (!partOfRange(charArray, arrayIndex)) {
+                return false;
+            }
+            // If first element in the array, must be start of a range
+            if (arrayIndex == 0) {
+                return true;
+            }
+            // If last element in the array, cannot be start of a range
+            if (arrayIndex == charArray.length - 1) {
+                return false;
+            }
+            /*
+             * If part of same range as the previous element is, cannot be start
+             * of range.
+             */
+            if (sameRangeEntryAsNext(charArray, arrayIndex - 1)) {
+                return false;
+            }
+            // Otherwise, this is start of a range.
+            return true;
+        }
+
+        /**
+         * Prepends the input string with a sufficient number of "0" characters to
+         * get the returned string to be numChars length.
+         * @param input The input string.
+         * @param numChars The minimum characters in the output string.
+         * @return The padded string.
+         */
+        private String padHexString(String input, int numChars) {
+            int length = input.length();
+            if (length >= numChars) {
+                return input;
+            }
+            StringBuffer returnString = new StringBuffer();
+            for (int i = 1; i <= numChars - length; i++) {
+                returnString.append("0");
+            }
+            returnString.append(input);
+            return returnString.toString();
+        }
+
+    }    
+    
 }

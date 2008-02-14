@@ -20,10 +20,14 @@
 package org.apache.fop.render.afp;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -32,7 +36,22 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
+
+import org.apache.xmlgraphics.image.codec.tiff.TIFFImage;
+import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawCCITTFax;
+import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
+import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
+import org.apache.xmlgraphics.image.loader.util.ImageUtil;
+import org.apache.xmlgraphics.ps.ImageEncodingHelper;
+
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.Block;
@@ -49,6 +68,7 @@ import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.WordArea;
+import org.apache.fop.datatypes.URISpecification;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fonts.FontInfo;
@@ -56,10 +76,6 @@ import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.base14.Courier;
 import org.apache.fop.fonts.base14.Helvetica;
 import org.apache.fop.fonts.base14.TimesRoman;
-import org.apache.fop.image.FopImage;
-import org.apache.fop.image.ImageFactory;
-import org.apache.fop.image.TIFFImage;
-import org.apache.fop.image.XMLImage;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
@@ -74,7 +90,6 @@ import org.apache.fop.render.afp.modca.AFPConstants;
 import org.apache.fop.render.afp.modca.AFPDataStream;
 import org.apache.fop.render.afp.modca.ImageObject;
 import org.apache.fop.render.afp.modca.PageObject;
-import org.w3c.dom.Document;
 
 /**
  * This is an implementation of a FOP Renderer that renders areas to AFP.
@@ -511,6 +526,12 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         // currentFontName = saveFontName;
     }
 
+    /** {@inheritDoc} */
+    protected void concatenateTransformationMatrix(AffineTransform at) {
+        //Not used here since AFPRenderer defines its own renderBlockViewport() method.
+        throw new UnsupportedOperationException("NYI");
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -735,20 +756,117 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         return context;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void drawImage(String url, Rectangle2D pos, Map foreignAttributes) {
+    private static final ImageFlavor[] FLAVORS = new ImageFlavor[]
+                                                     {ImageFlavor.RAW_CCITTFAX,
+                                                      ImageFlavor.GRAPHICS2D,
+                                                      ImageFlavor.BUFFERED_IMAGE, 
+                                                      ImageFlavor.RENDERED_IMAGE,
+                                                      ImageFlavor.XML_DOM};
+
+    /** {@inheritDoc} */
+    public void drawImage(String uri, Rectangle2D pos, Map foreignAttributes) {
+        uri = URISpecification.getURL(uri);
+        Rectangle posInt = new Rectangle(
+                (int)pos.getX(),
+                (int)pos.getY(),
+                (int)pos.getWidth(),
+                (int)pos.getHeight());
+        Point origin = new Point(currentIPPosition, currentBPPosition);
+        int x = origin.x + posInt.x;
+        int y = origin.y + posInt.y;
+
         String name = null;
         if (pageSegmentsMap != null) {
-            name = (String) pageSegmentsMap.get(url);
+            name = (String) pageSegmentsMap.get(uri);
         }
         if (name != null) {
-            int x = mpts2units(pos.getX() + currentIPPosition);
-            int y = mpts2units(pos.getY() + currentBPPosition);
-            afpDataStream.createIncludePageSegment(name, x, y);
+            afpDataStream.createIncludePageSegment(name, mpts2units(x), mpts2units(y));
         } else {
-            url = ImageFactory.getURL(url);
+            ImageManager manager = getUserAgent().getFactory().getImageManager();
+            ImageInfo info = null;
+            try {
+                ImageSessionContext sessionContext = getUserAgent().getImageSessionContext();
+                info = manager.getImageInfo(uri, sessionContext);
+                
+                //Only now fully load/prepare the image
+                Map hints = ImageUtil.getDefaultHints(sessionContext);
+                org.apache.xmlgraphics.image.loader.Image img = manager.getImage(
+                        info, FLAVORS, hints, sessionContext);
+                
+                //...and process the image
+                if (img instanceof ImageGraphics2D) {
+                    ImageGraphics2D imageG2D = (ImageGraphics2D)img;
+                    RendererContext context = createRendererContext(
+                            posInt.x, posInt.y,
+                            posInt.width, posInt.height, foreignAttributes);
+                    getGraphics2DAdapter().paintImage(imageG2D.getGraphics2DImagePainter(),
+                            context,
+                            origin.x + posInt.x, origin.y + posInt.y,
+                            posInt.width, posInt.height);
+                } else if (img instanceof ImageRendered) {
+                    ImageRendered imgRend = (ImageRendered)img;
+                    RenderedImage ri = imgRend.getRenderedImage();
+                    
+                    drawBufferedImage(ri, getResolution(),
+                            posInt.x + currentIPPosition,
+                            posInt.y + currentBPPosition,
+                            posInt.width,
+                            posInt.height);
+                } else if (img instanceof ImageRawCCITTFax) {
+                    ImageRawCCITTFax ccitt = (ImageRawCCITTFax)img;
+                    int afpx = mpts2units(posInt.x + currentIPPosition);
+                    int afpy = mpts2units(posInt.y + currentBPPosition);
+                    int afpw = mpts2units(posInt.getWidth());
+                    int afph = mpts2units(posInt.getHeight());
+                    int afpres = getResolution();
+                    ImageObject io = afpDataStream.getImageObject(afpx, afpy, afpw, afph,
+                            afpres, afpres);
+                    io.setImageParameters(
+                            (int) (ccitt.getSize().getDpiHorizontal() * 10),
+                            (int) (ccitt.getSize().getDpiVertical() * 10),
+                            ccitt.getSize().getWidthPx(),
+                            ccitt.getSize().getHeightPx());
+                    int compression = ccitt.getCompression();
+                    switch (compression) {
+                    case TIFFImage.COMP_FAX_G3_1D :
+                        io.setImageEncoding((byte) 0x80);
+                        break;
+                    case TIFFImage.COMP_FAX_G3_2D :
+                        io.setImageEncoding((byte) 0x81);
+                        break;
+                    case TIFFImage.COMP_FAX_G4_2D :
+                        io.setImageEncoding((byte) 0x82);
+                        break;
+                    default:
+                        throw new IllegalStateException(
+                                "Invalid compression scheme: " + compression);
+                    }
+                    InputStream in = ccitt.createInputStream();
+                    try {
+                        byte[] buf = IOUtils.toByteArray(in);
+                        io.setImageData(buf);
+                    } finally {
+                        IOUtils.closeQuietly(in);
+                    }
+                } else if (img instanceof ImageXMLDOM) {
+                    ImageXMLDOM imgXML = (ImageXMLDOM)img;
+                    renderDocument(imgXML.getDocument(), imgXML.getRootNamespace(),
+                            pos, foreignAttributes);
+                } else {
+                    throw new UnsupportedOperationException("Unsupported image type: " + img);
+                }
+
+            } catch (ImageException ie) {
+                log.error("Error while processing image: "
+                        + (info != null ? info.toString() : uri), ie);
+            } catch (FileNotFoundException fe) {
+                log.error(fe.getMessage());
+            } catch (IOException ioe) {
+                log.error("I/O error while processing image: "
+                        + (info != null ? info.toString() : uri), ioe);
+            }
+            
+            /*
             ImageFactory fact = userAgent.getFactory().getImageFactory();
             FopImage fopimage = fact.getImage(url, userAgent);
             if (fopimage == null) {
@@ -768,6 +886,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                 renderDocument(doc, ns, pos, foreignAttributes);
             } else if (MimeConstants.MIME_EPS.equals(mime)) {
                 log.warn("EPS images are not supported by this renderer");
+                */
                 /*
                  * } else if (MimeConstants.MIME_JPEG.equals(mime)) { if
                  * (!fopimage.load(FopImage.ORIGINAL_DATA)) { return; }
@@ -785,7 +904,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                  * io.setImageIDESize((byte)fopimage.getBitsPerPixel());
                  * io.setImageEncoding((byte)0x83);
                  * io.setImageData(fopimage.getRessourceBytes());
-                 */
+                 *//*
             } else if (MimeConstants.MIME_TIFF.equals(mime)
                     && fopimage instanceof TIFFImage) {
                 TIFFImage tiffImage = (TIFFImage) fopimage;
@@ -852,43 +971,30 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                     convertToGrayScaleImage(io, fopimage.getBitmaps(), fopimage
                             .getWidth(), fopimage.getHeight(), this.bitsPerPixel);
                 }
-            }
+            }*/
         }
     }
 
     /**
-     * Writes a BufferedImage to an OutputStream as raw sRGB bitmaps.
+     * Writes a RenderedImage to an OutputStream as raw sRGB bitmaps.
      * 
-     * @param img
-     *            the BufferedImage
+     * @param image
+     *            the RenderedImage
      * @param out
      *            the OutputStream
      * @throws IOException
      *             In case of an I/O error.
      */
-    public static void writeImage(BufferedImage img, OutputStream out)
+    public static void writeImage(RenderedImage image, OutputStream out)
             throws IOException {
-        int w = img.getWidth();
-        int h = img.getHeight();
-        int[] tmpMap = img.getRGB(0, 0, w, h, null, 0, w);
-        for (int i = 0; i < h; i++) {
-            for (int j = 0; j < w; j++) {
-                int p = tmpMap[i * w + j];
-                int r = (p >> 16) & 0xFF;
-                int g = (p >> 8) & 0xFF;
-                int b = (p) & 0xFF;
-                out.write((byte) (r & 0xFF));
-                out.write((byte) (g & 0xFF));
-                out.write((byte) (b & 0xFF));
-            }
-        }
+        ImageEncodingHelper.encodeRenderedImageAsRGB(image, out);
     }
 
     /**
      * Draws a BufferedImage to AFP.
      * 
-     * @param bi
-     *            the BufferedImage
+     * @param image
+     *            the RenderedImage
      * @param imageResolution
      *            the resolution of the BufferedImage
      * @param x
@@ -900,7 +1006,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      * @param h
      *            the height of the viewport (in mpt)
      */
-    public void drawBufferedImage(BufferedImage bi, int imageResolution, int x,
+    public void drawBufferedImage(RenderedImage image, int imageResolution, int x,
             int y, int w, int h) {
         int afpx = mpts2units(x);
         int afpy = mpts2units(y);
@@ -910,21 +1016,24 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
         try {
             // Serialize image
-            writeImage(bi, baout);
+            //TODO Eventually, this should be changed not to buffer as this increases the
+            //memory consumption (see PostScript output)
+            writeImage(image, baout);
             byte[] buf = baout.toByteArray();
 
             // Generate image
             ImageObject io = afpDataStream.getImageObject(afpx, afpy, afpw,
                     afph, afpres, afpres);
             io.setImageParameters(imageResolution, imageResolution,
-                    bi.getWidth(), bi.getHeight());
+                    image.getWidth(), image.getHeight());
             if (colorImages) {
                 io.setImageIDESize((byte)24);
                 io.setImageData(buf);
             } else {
                 // TODO Teach it how to handle grayscale BufferedImages directly
                 // because this is pretty inefficient
-                convertToGrayScaleImage(io, buf, bi.getWidth(), bi.getHeight(), this.bitsPerPixel);
+                convertToGrayScaleImage(io, buf,
+                        image.getWidth(), image.getHeight(), this.bitsPerPixel);
             }
         } catch (IOException ioe) {
             log.error("Error while serializing bitmap: " + ioe.getMessage(),

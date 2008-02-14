@@ -87,15 +87,19 @@
     <eval expected="2" xpath="count(//pageViewport)"/>
     <element-list category="breaker">
       <skip>6</skip>
-      <box w="0"/>
-      <penalty p="900" w="2000"/>
+      <box w="15400"/>
+      <penalty p="0" w="0"/>
       <box w="14400"/>
-      <penalty p="0" w="2000"/>
-      <box w="14400"/>
-      <penalty p="0" w="2000"/>
+      <penalty p="0" w="0"/>
+      <box w="15400"/>
+      <penalty p="0" w="0"/>
       <box w="16400"/>
       <penalty p="0" w="0"/>
-      <skip>16</skip>
+      <box w="16400"/>
+      <penalty p="0" w="0"/>
+      <box w="16400"/>
+      <penalty p="0" w="0"/>
+      <skip>10</skip>
     </element-list>
   </checks>
 </testcase>

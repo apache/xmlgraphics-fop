@@ -19,27 +19,12 @@
  
 package org.apache.fop.render;
 
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
-
 /**
  * This interface is used by the Graphics2DAdapter. Components that can paint using
  * a Graphics2D instance can implement this interface to paint themselves.
+ * @deprecated use {@link org.apache.xmlgraphics.java2d.Graphics2DImagePainter} directly!
  */
-public interface Graphics2DImagePainter {
+public interface Graphics2DImagePainter
+        extends org.apache.xmlgraphics.java2d.Graphics2DImagePainter {
 
-    /**
-     * Called to paint the image. Implementations should scale so the image is
-     * painted fully inside the given area indicated by then Rectangle2D object.
-     * @param g2d the Graphics2D instance to paint on
-     * @param area the target area for the image
-     */
-    void paint(Graphics2D g2d, Rectangle2D area);
-
-    /**
-     * @return the dimensions of the image to be painted in millipoints
-     */
-    Dimension getImageSize();
-    
 }

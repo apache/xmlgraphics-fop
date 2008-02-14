@@ -40,23 +40,40 @@
 
 package org.apache.fop.fonts;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Collections;
 
+import org.apache.fop.util.CharUtilities;
+
 public class CodePointMapping {
+
+<xsl:apply-templates mode="constant"/>
+
+    private String name;
     private char[] latin1Map;
     private char[] characters;
     private char[] codepoints;
+    private char[] unicodeMap; //code point to Unicode char
 
-    private CodePointMapping(int [] table) {
+    public CodePointMapping(String name, int[] table) {
+        this.name = name;
         int nonLatin1 = 0;
         latin1Map = new char[256];
+        unicodeMap = new char[256];
+        Arrays.fill(unicodeMap, CharUtilities.NOT_A_CHARACTER);
         for (int i = 0; i &lt; table.length; i += 2) {
-           if (table[i + 1] &lt; 256) {
-               latin1Map[table[i + 1]] = (char) table[i];
-           } else {
-               ++nonLatin1;
-           }
+            char unicode = (char)table[i + 1];
+            if (unicode &lt; 256) {
+                if (latin1Map[unicode] == 0) {
+                    latin1Map[unicode] = (char) table[i];
+                }
+            } else {
+                ++nonLatin1;
+            }
+            if (unicodeMap[table[i]] == CharUtilities.NOT_A_CHARACTER) {
+                unicodeMap[table[i]] = unicode;
+            }
         }
         characters = new char[nonLatin1];
         codepoints = new char[nonLatin1];
@@ -77,6 +94,10 @@ public class CodePointMapping {
                }
             }
         }
+    }
+
+    public String getName() {
+        return this.name;
     }
 
     public final char mapChar(char c) {
@@ -100,10 +121,26 @@ public class CodePointMapping {
         }
     }
 
+    public final char getUnicodeForIndex(int idx) {
+        return this.unicodeMap[idx];
+    }
+
+    public final char[] getUnicodeCharMap() {
+        char[] copy = new char[this.unicodeMap.length];
+        System.arraycopy(this.unicodeMap, 0, copy, 0, this.unicodeMap.length);
+        return copy;
+    }
+
+    /** {@inheritDoc} */
+    public String toString() {
+        return getName();
+    }
+
     private static Map mappings;
     static {
         mappings = Collections.synchronizedMap(new java.util.HashMap());
     }
+
     public static CodePointMapping getMapping(String encoding) {
         CodePointMapping mapping = (CodePointMapping) mappings.get(encoding);
         if (mapping != null) {
@@ -119,10 +156,12 @@ public class CodePointMapping {
 }
   </xsl:template>
 
+  <xsl:template match="encoding" mode="constant">    public static final String <xsl:value-of select="@constant"/> = "<xsl:value-of select="@id"/>";</xsl:template>
+  
   <xsl:template match="encoding" mode="get">
-        else if (encoding.equals("<xsl:value-of select="@id"/>")) {
-            mapping = new CodePointMapping(enc<xsl:value-of select="@id"/>);
-            mappings.put("<xsl:value-of select="@id"/>", mapping);
+        else if (encoding.equals(<xsl:value-of select="@constant"/>)) {
+            mapping = new CodePointMapping(<xsl:value-of select="@constant"/>, enc<xsl:value-of select="@id"/>);
+            mappings.put(<xsl:value-of select="@constant"/>, mapping);
             return mapping;
         }
   </xsl:template>

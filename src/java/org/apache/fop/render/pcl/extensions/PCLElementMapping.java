@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: AFPElementMapping.java 397875 2006-04-28 11:58:33Z manuel $ */
+/* $Id$ */
 
 package org.apache.fop.render.pcl.extensions;
 

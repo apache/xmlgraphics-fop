@@ -20,26 +20,33 @@
 package org.apache.fop.render.rtf;
 
 // Java
-import java.awt.color.ColorSpace;
 import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.ComponentColorModel;
-import java.awt.image.DataBuffer;
-import java.awt.image.DataBufferByte;
-import java.awt.image.PixelInterleavedSampleModel;
-import java.awt.image.Raster;
-import java.awt.image.SampleModel;
-import java.awt.image.WritableRaster;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Iterator;
+import java.util.Map;
 
-import org.apache.batik.dom.svg.SVGDOMImplementation;
-import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.w3c.dom.Document;
+
+import org.xml.sax.SAXException;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.xmlgraphics.image.loader.Image;
+import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.apache.xmlgraphics.image.loader.ImageSize;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawStream;
+import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
+import org.apache.xmlgraphics.image.loader.util.ImageUtil;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.datatypes.LengthBase;
@@ -78,10 +85,8 @@ import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.fo.properties.FixedLength;
 import org.apache.fop.fonts.FontSetup;
-import org.apache.fop.image.FopImage;
-import org.apache.fop.image.ImageFactory;
-import org.apache.fop.image.XMLImage;
 import org.apache.fop.render.DefaultFontResolver;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfAfterContainer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfBeforeContainer;
@@ -108,10 +113,6 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTextrun;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListItem.RtfListItemLabel;
 import org.apache.fop.render.rtf.rtflib.tools.BuilderContext;
 import org.apache.fop.render.rtf.rtflib.tools.TableContext;
-import org.apache.xmlgraphics.image.writer.ImageWriter;
-import org.apache.xmlgraphics.image.writer.ImageWriterRegistry;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 /**
  * RTF Handler: generates RTF output using the structure events from
@@ -578,7 +579,7 @@ public class RTFHandler extends FOEventHandler {
             Integer iWidth
                 = new Integer(tc.getColumnWidth().getValue(context) / 1000);
             
-            String strWidth = iWidth.toString() + "pt";
+            String strWidth = iWidth.toString() + FixedLength.POINT;
             Float width = new Float(
                     FoUnitsConverter.getInstance().convertToTwips(strWidth));
             builderContext.getTableContext().setNextColumnWidth(width);
@@ -1104,24 +1105,18 @@ public class RTFHandler extends FOEventHandler {
         }
 
         try {
-            String url = eg.getURL();
+            String uri = eg.getURL();
 
             //set image data
             FOUserAgent userAgent = eg.getUserAgent();
-            ImageFactory fact = userAgent.getFactory().getImageFactory();
-            FopImage fopimage = fact.getImage(url, userAgent);
-            if (fopimage == null) {
-                log.error("Image could not be found: " + url);
+            ImageManager manager = userAgent.getFactory().getImageManager();
+            ImageInfo info = manager.getImageInfo(uri, userAgent.getImageSessionContext());
+            if (info == null) {
+                log.error("Image could not be found: " + uri);
                 return;
             }
-            if ("image/gif".equals(fopimage.getMimeType())) {
-                //GIF is not directly supported by RTF, so it must be converted to PNG
-                fopimage.load(FopImage.BITMAP);
-            } else {
-                fopimage.load(FopImage.ORIGINAL_DATA);
-            }
             
-            putGraphic(eg, fopimage);
+            putGraphic(eg, info);
         } catch (Exception e) {
             log.error("Error while handling an external-graphic: " + e.getMessage(), e);
         }
@@ -1140,85 +1135,83 @@ public class RTFHandler extends FOEventHandler {
             Document doc = child.getDOMDocument();
             String ns = child.getNamespaceURI();
             
-            if (SVGDOMImplementation.SVG_NAMESPACE_URI.equals(ns)) {
-                // Build the image info.
-                FopImage.ImageInfo info = new FopImage.ImageInfo();
-                info.mimeType = "image/svg+xml";
-                info.str = SVGDOMImplementation.SVG_NAMESPACE_URI;
-                info.originalURI = "";
-                info.data = doc;
-
-                // Set the resolution to that of the FOUserAgent
-                FOUserAgent ua = ifo.getUserAgent();
-                info.dpiHorizontal = 25.4f / ua.getSourcePixelUnitToMillimeter();
-                info.dpiVertical = info.dpiHorizontal;
-                
-                // Set the image size to the size of the svg.
-                Point2D csize = new Point2D.Float(-1, -1);
-                Point2D intrinsicDimensions = child.getDimension(csize);
-                info.width = (int) intrinsicDimensions.getX();
-                info.height = (int) intrinsicDimensions.getY();
-                
-                FopImage fopImage = new XMLImage(info);
-                fopImage.load(FopImage.ORIGINAL_DATA);
-
-                putGraphic(ifo, fopImage);
-            } else {
-                log.warn("The namespace " + ns
-                        + " for instream-foreign-objects is not supported.");
-            }
+            ImageInfo info = new ImageInfo(null, null);
+            // Set the resolution to that of the FOUserAgent
+            FOUserAgent ua = ifo.getUserAgent();
+            ImageSize size = new ImageSize();
+            size.setResolution(ua.getSourceResolution());
             
+            // Set the image size to the size of the svg.
+            Point2D csize = new Point2D.Float(-1, -1);
+            Point2D intrinsicDimensions = child.getDimension(csize);
+            size.setSizeInMillipoints(
+                    (int)Math.round(intrinsicDimensions.getX() * 1000),
+                    (int)Math.round(intrinsicDimensions.getY() * 1000));
+            size.calcPixelsFromSize();
+            info.setSize(size);
+
+            ImageXMLDOM image = new ImageXMLDOM(info, doc, ns);
+            
+            FOUserAgent userAgent = ifo.getUserAgent();
+            ImageManager manager = userAgent.getFactory().getImageManager();
+            Image converted = manager.convertImage(image, FLAVORS);
+            putGraphic(ifo, converted);
             
         } catch (Exception e) {
             log.error("Error while handling an instream-foreign-object: " + e.getMessage(), e);
         }
     }
 
-    private BufferedImage createBufferedImageFromBitmaps(FopImage image) {
-        // TODO Hardcoded color and sample models, FIX ME!
-        ColorModel cm = new ComponentColorModel(
-                ColorSpace.getInstance(ColorSpace.CS_sRGB), 
-                new int[] {8, 8, 8},
-                false, false,
-                ColorModel.OPAQUE, DataBuffer.TYPE_BYTE);
-        SampleModel sampleModel = new PixelInterleavedSampleModel(
-                DataBuffer.TYPE_BYTE, image.getWidth(), image.getHeight(), 3, image.getWidth() * 3, 
-                new int[] {0, 1, 2});
-        DataBuffer dbuf = new DataBufferByte(image.getBitmaps(), 
-                image.getWidth() * image.getHeight() * 3);
+    private static final ImageFlavor[] FLAVORS = new ImageFlavor[] {
+        ImageFlavor.RAW_EMF, ImageFlavor.RAW_PNG, ImageFlavor.RAW_JPEG
+    };
+    
+    /**
+     * Puts a graphic/image into the generated RTF file.
+     * @param abstractGraphic the graphic (external-graphic or instream-foreign-object)
+     * @param info the image info object
+     * @throws IOException In case of an I/O error
+     */
+    private void putGraphic(AbstractGraphics abstractGraphic, ImageInfo info) 
+            throws IOException {
+        try {
+            FOUserAgent userAgent = abstractGraphic.getUserAgent();
+            ImageManager manager = userAgent.getFactory().getImageManager();
+            ImageSessionContext sessionContext = userAgent.getImageSessionContext();
+            Map hints = ImageUtil.getDefaultHints(sessionContext);
+            Image image = manager.getImage(info, FLAVORS, hints, sessionContext);
 
-        WritableRaster raster = Raster.createWritableRaster(sampleModel,
-                dbuf, null);
-
-        // Combine the color model and raster into a buffered image
-        return new BufferedImage(cm, raster, false, null);
+            putGraphic(abstractGraphic, image);
+        } catch (ImageException ie) {
+            log.error("Error while loading/processing image: " + info.getOriginalURI(), ie);
+        }
     }
     
     /**
      * Puts a graphic/image into the generated RTF file.
      * @param abstractGraphic the graphic (external-graphic or instream-foreign-object)
-     * @param fopImage the image
+     * @param image the image
      * @throws IOException In case of an I/O error
      */
-    private void putGraphic(AbstractGraphics abstractGraphic, FopImage fopImage) 
+    private void putGraphic(AbstractGraphics abstractGraphic, Image image) 
             throws IOException {
-        byte[] rawData;
-        if ("image/svg+xml".equals(fopImage.getMimeType())) {
-            rawData = SVGConverter.convertToJPEG((XMLImage) fopImage);
-        } else if (fopImage.getRessourceBytes() != null) {
-            rawData = fopImage.getRessourceBytes();
-        } else {
-            //TODO Revisit after the image library redesign!!!
-            //Convert the decoded bitmaps to a BufferedImage
-            BufferedImage bufImage = createBufferedImageFromBitmaps(fopImage);
-            ImageWriter writer = ImageWriterRegistry.getInstance().getWriterFor("image/png");
-            ByteArrayOutputStream baout = new ByteArrayOutputStream();
-            writer.writeImage(bufImage, baout);
-            rawData = baout.toByteArray();
+        byte[] rawData = null;
+        
+        ImageInfo info = image.getInfo();
+
+        if (image instanceof ImageRawStream) {
+            ImageRawStream rawImage = (ImageRawStream)image;
+            InputStream in = rawImage.createInputStream();
+            try {
+                rawData = IOUtils.toByteArray(in);
+            } finally {
+                IOUtils.closeQuietly(in);
+            }
         }
+
         if (rawData == null) {
             log.warn(FONode.decorateWithContextInfo("Image could not be embedded: "
-                    + fopImage.getOriginalURI(), abstractGraphic));
+                    + image, abstractGraphic));
             return;
         }
 
@@ -1229,7 +1222,9 @@ public class RTFHandler extends FOEventHandler {
         final RtfExternalGraphic rtfGraphic = c.getTextrun().newImage();
    
         //set URL
-        rtfGraphic.setURL(fopImage.getOriginalURI());
+        if (info.getOriginalURI() != null) {
+            rtfGraphic.setURL(info.getOriginalURI());
+        }
         rtfGraphic.setImageData(rawData);
 
         //set scaling
@@ -1240,7 +1235,7 @@ public class RTFHandler extends FOEventHandler {
         //get width
         int width = 0;
         if (abstractGraphic.getWidth().getEnum() == Constants.EN_AUTO) {
-            width = fopImage.getIntrinsicWidth();
+            width = info.getSize().getWidthMpt();
         } else {
             width = abstractGraphic.getWidth().getValue();
         }
@@ -1248,7 +1243,7 @@ public class RTFHandler extends FOEventHandler {
         //get height
         int height = 0;
         if (abstractGraphic.getWidth().getEnum() == Constants.EN_AUTO) {
-            height = fopImage.getIntrinsicHeight();
+            height = info.getSize().getHeightMpt();
         } else {
             height = abstractGraphic.getHeight().getValue();
         }
@@ -1257,7 +1252,7 @@ public class RTFHandler extends FOEventHandler {
         int contentwidth = 0;
         if (abstractGraphic.getContentWidth().getEnum()
                 == Constants.EN_AUTO) {
-            contentwidth = fopImage.getIntrinsicWidth();
+            contentwidth = info.getSize().getWidthMpt();
         } else if (abstractGraphic.getContentWidth().getEnum()
                 == Constants.EN_SCALE_TO_FIT) {
             contentwidth = width;
@@ -1271,7 +1266,7 @@ public class RTFHandler extends FOEventHandler {
         if (abstractGraphic.getContentHeight().getEnum()
                 == Constants.EN_AUTO) {
 
-            contentheight = fopImage.getIntrinsicHeight();
+            contentheight = info.getSize().getHeightMpt();
 
         } else if (abstractGraphic.getContentHeight().getEnum()
                 == Constants.EN_SCALE_TO_FIT) {
@@ -1283,11 +1278,11 @@ public class RTFHandler extends FOEventHandler {
         }
 
         //set width in rtf
-        //newGraphic.setWidth((long) (contentwidth / 1000f) + "pt");
+        //newGraphic.setWidth((long) (contentwidth / 1000f) + FixedLength.POINT);
         rtfGraphic.setWidth((long) (contentwidth / 50f) + "twips");
 
         //set height in rtf
-        //newGraphic.setHeight((long) (contentheight / 1000f) + "pt");
+        //newGraphic.setHeight((long) (contentheight / 1000f) + FixedLength.POINT);
         rtfGraphic.setHeight((long) (contentheight / 50f) + "twips");
 
         //TODO: make this configurable:

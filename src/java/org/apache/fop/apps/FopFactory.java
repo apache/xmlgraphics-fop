@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: $ */
+/* $Id$ */
 
 package org.apache.fop.apps;
 
@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
@@ -36,9 +37,11 @@ import javax.xml.transform.URIResolver;
 import org.xml.sax.SAXException;
 
 import org.apache.avalon.framework.configuration.Configuration;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.xmlgraphics.image.loader.ImageContext;
+import org.apache.xmlgraphics.image.loader.ImageManager;
 
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.ElementMappingRegistry;
@@ -57,7 +60,7 @@ import org.apache.fop.util.ContentHandlerFactoryRegistry;
  * Information that may potentially be different for each rendering run can be
  * found and managed in the FOUserAgent.
  */
-public class FopFactory {
+public class FopFactory implements ImageContext {
     
     /** logger instance */
     private static Log log = LogFactory.getLog(FopFactory.class);
@@ -82,6 +85,9 @@ public class FopFactory {
     
     /** Image factory for creating fop image objects */
     private ImageFactory imageFactory;
+
+    /** Image manager for loading and caching image objects */
+    private ImageManager imageManager;
 
     /** Configuration layer used to configure fop */
     private FopFactoryConfigurator config = null;
@@ -150,7 +156,8 @@ public class FopFactory {
         this.elementMappingRegistry = new ElementMappingRegistry(this);
         this.foURIResolver = new FOURIResolver(validateUserConfigStrictly());
         this.colorSpaceCache = new ColorSpaceCache(foURIResolver);
-        this.imageFactory = new ImageFactory();        
+        this.imageFactory = new ImageFactory();
+        this.imageManager = new ImageManager(this);
         this.rendererFactory = new RendererFactory();
         this.xmlHandlers = new XMLHandlerRegistry();
         this.ignoredNamespaces = new java.util.HashSet();
@@ -290,6 +297,14 @@ public class FopFactory {
     /** @return the image factory */
     public ImageFactory getImageFactory() {
         return this.imageFactory;
+    }
+
+    /**
+     * Returns the image manager.
+     * @return the image manager
+     */
+    public ImageManager getImageManager() {
+        return this.imageManager;
     }
 
     /**
@@ -748,5 +763,6 @@ public class FopFactory {
      */
     public ColorSpace getColorSpace(String baseUri, String iccProfileSrc) {
         return colorSpaceCache.get(baseUri, iccProfileSrc);
-    }    
+    }
+
 }

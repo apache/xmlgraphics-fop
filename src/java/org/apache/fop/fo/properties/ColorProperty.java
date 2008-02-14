@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: ColorTypeProperty.java 377045 2006-02-11 20:23:47Z jeremias $ */
+/* $Id$ */
 
 package org.apache.fop.fo.properties;
 

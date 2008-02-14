@@ -19,7 +19,9 @@
 
 package org.apache.fop.threading;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 
 import org.apache.avalon.framework.ExceptionUtil;
 import org.apache.avalon.framework.configuration.Configuration;
@@ -27,14 +29,32 @@ import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
 import org.apache.avalon.framework.container.ContainerUtil;
 import org.apache.avalon.framework.logger.ConsoleLogger;
 
+/**
+ * Starter class for the multi-threading testbed.
+ */
 public class Main {
 
+    private static void prompt() throws IOException {
+        BufferedReader in = new BufferedReader(new java.io.InputStreamReader(System.in));
+        System.out.print("Press return to continue...");
+        in.readLine();
+    }
+    
+    /**
+     * Main method.
+     * @param args the command-line arguments
+     */
     public static void main(String[] args) {
         try {
             //Read configuration
             File cfgFile = new File(args[0]);
             DefaultConfigurationBuilder builder = new DefaultConfigurationBuilder();
             Configuration cfg = builder.buildFromFile(cfgFile);
+            
+            boolean doPrompt = cfg.getAttributeAsBoolean("prompt", false);
+            if (doPrompt) {
+                prompt();
+            }
             
             //Setup testbed
             FOPTestbed testbed = new FOPTestbed();

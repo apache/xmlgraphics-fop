@@ -95,18 +95,17 @@ Two blocks, testing conditionality="discard".
       <penalty w="0" p="INF"/>
       <glue w="20000"/>
       
-      <box w="0"/>
-      
-      <penalty w="14400"/> <!-- p is not of interest here -->
-      
       <box w="28800"/>
       
       <penalty w="0" p="0"/>
       
       <box w="14400"/>
       
+      <penalty w="0" p="0"/>
+      
+      <box w="14400"/>
+      
       <!-- skip three more lines -->
-      <skip>2</skip>
       <skip>2</skip>
       <skip>2</skip>
       <skip>2</skip>
@@ -137,8 +136,6 @@ Two blocks, testing conditionality="discard".
     </element-list>
     <element-list category="breaker" id="discard">
       <box w="0"/> <!-- Helper box used to notify the LM for the addAreas stage about the discarded spaces -->
-      <box w="0"/>
-      <penalty w="14400"/> <!-- p is not of interest here -->
       <box w="28800"/>
       <penalty w="0" p="0"/>
       <box w="14400"/>
