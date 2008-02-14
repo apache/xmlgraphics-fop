@@ -20,12 +20,11 @@
 package org.apache.fop.pdf;
 
 // Java
-import java.util.List;
-import java.util.Map;
-import java.util.Iterator;
+import java.util.Collections;
+import java.util.Set;
 
 /**
- * class representing an /Encoding object.
+ * Class representing an /Encoding object.
  *
  * A small object expressing the base encoding name and
  * the differences from the base encoding.
@@ -34,90 +33,113 @@ import java.util.Iterator;
  *
  * Encodings are specified in section 5.5.5 of the PDF 1.4 spec.
  */
-public class PDFEncoding extends PDFObject {
+public class PDFEncoding extends PDFDictionary {
 
-    /**
-     * the name for the standard encoding scheme
-     */
+    /** the name for the standard encoding scheme */
+    public static final String STANDARD_ENCODING = "StandardEncoding";
+    /** the name for the Mac Roman encoding scheme */
     public static final String MAC_ROMAN_ENCODING = "MacRomanEncoding";
-
-    /**
-     * the name for the standard encoding scheme
-     */
+    /** the name for the Mac Export encoding scheme */
     public static final String MAC_EXPERT_ENCODING = "MacExpertEncoding";
-
-    /**
-     * the name for the standard encoding scheme
-     */
+    /** the name for the WinAnsi encoding scheme */
     public static final String WIN_ANSI_ENCODING = "WinAnsiEncoding";
+    /** the name for the PDF document encoding scheme */
+    public static final String PDF_DOC_ENCODING = "PDFDocEncoding";
+
+    /** the set of predefined encodings that can be assumed present in a PDF viewer */
+    private static final Set PREDEFINED_ENCODINGS;
+    
+    static {
+        Set encodings = new java.util.HashSet();
+        encodings.add(STANDARD_ENCODING);
+        encodings.add(MAC_ROMAN_ENCODING);
+        encodings.add(MAC_EXPERT_ENCODING);
+        encodings.add(WIN_ANSI_ENCODING);
+        encodings.add(PDF_DOC_ENCODING);
+        PREDEFINED_ENCODINGS = Collections.unmodifiableSet(encodings);
+    }
 
     /**
-     * the name for the base encoding.
-     * One of the three base encoding scheme names or
-     * the default font's base encoding if null.
-     */
-    protected String basename;
-
-    /**
-     * the differences from the base encoding
-     */
-    protected Map differences;
-
-    /**
-     * create the /Encoding object
+     * Create a new /Encoding object.
      *
      * @param basename the name of the character encoding schema
      */
     public PDFEncoding(String basename) {
-
-        /* generic creation of PDF object */
         super();
 
-        /* set fields using paramaters */
-        this.basename = basename;
-        this.differences = new java.util.HashMap();
-    }
-
-    /**
-     * add differences to the encoding
-     *
-     * @param code the first index of the sequence to be changed
-     * @param sequence the sequence of glyph names (as String)
-     */
-    public void addDifferences(int code, List sequence) {
-        differences.put(new Integer(code), sequence);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String toPDFString() {
-        StringBuffer p = new StringBuffer(128);
-        p.append(getObjectID() 
-            + "<< /Type /Encoding");
-        if ((basename != null) && (!basename.equals(""))) {
-            p.append("\n/BaseEncoding /" + this.basename);
+        put("Type", new PDFName("Encoding"));
+        if (basename != null) {
+            put("BaseEncoding", new PDFName(basename));
         }
-        if (!differences.isEmpty()) {
-            p.append("\n/Differences [ ");
-            Object code;
-            Iterator codes = differences.keySet().iterator();
-            while (codes.hasNext()) {
-                code = codes.next();
-                p.append(" ");
-                p.append(code);
-                List sequence = (List)differences.get(code);
-                for (int i = 0; i < sequence.size(); i++) {
-                    p.append(" /");
-                    p.append((String)sequence.get(i));
-                }
+    }
+
+    /**
+     * Indicates whether a given encoding is one of the predefined encodings.
+     * @param name the encoding name (ex. "StandardEncoding")
+     * @return true if it is a predefined encoding
+     */
+    public static boolean isPredefinedEncoding(String name) {
+        return PREDEFINED_ENCODINGS.contains(name);
+    }
+    
+    /**
+     * Creates and returns a new DifferencesBuilder instance for constructing the Differences
+     * array.
+     * @return the DifferencesBuilder
+     */
+    public DifferencesBuilder createDifferencesBuilder() {
+        return new DifferencesBuilder();
+    }
+
+    /**
+     * Sets the Differences value.
+     * @param differences the differences.
+     */
+    public void setDifferences(PDFArray differences) {
+        put("Differences", differences);
+    }
+    
+    /**
+     * Builder class for constructing the Differences array.
+     */
+    public class DifferencesBuilder {
+        
+        private PDFArray differences = new PDFArray();
+        private int currentCode = -1;
+        
+        /**
+         * Start a new difference.
+         * @param code the starting code index inside the encoding
+         * @return this builder instance
+         */
+        public DifferencesBuilder addDifference(int code) {
+            this.currentCode = code;
+            this.differences.add(new Integer(code));
+            return this;
+        }
+        
+        /**
+         * Adds a character name to the current difference.
+         * @param name the character name
+         * @return this builder instance
+         */
+        public DifferencesBuilder addName(String name) {
+            if (this.currentCode < 0) {
+                throw new IllegalStateException("addDifference(int) must be called first");
             }
-            p.append(" ]");
+            this.differences.add(new PDFName(name));
+            return this;
         }
-        p.append(" >>\nendobj\n");
-        return p.toString();
+        
+        /**
+         * Creates and returns the PDFArray representing the Differences entry.
+         * @return the Differences entry
+         */
+        public PDFArray toPDFArray() {
+            return this.differences;
+        }
     }
-
+    
     /*
      * example (p. 214)
      * 25 0 obj

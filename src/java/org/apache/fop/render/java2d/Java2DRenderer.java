@@ -25,7 +25,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.color.ColorSpace;
 import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
@@ -33,14 +32,6 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.ComponentColorModel;
-import java.awt.image.DataBuffer;
-import java.awt.image.DataBufferByte;
-import java.awt.image.PixelInterleavedSampleModel;
-import java.awt.image.Raster;
-import java.awt.image.SampleModel;
-import java.awt.image.WritableRaster;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
@@ -51,7 +42,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-import org.w3c.dom.Document;
+import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
+import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
+import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
+import org.apache.xmlgraphics.image.loader.util.ImageUtil;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
@@ -65,13 +64,11 @@ import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.WordArea;
+import org.apache.fop.datatypes.URISpecification;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.Typeface;
-import org.apache.fop.image.FopImage;
-import org.apache.fop.image.ImageFactory;
-import org.apache.fop.image.XMLImage;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
@@ -184,7 +181,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
 
     /** {@inheritDoc} */
     public Graphics2DAdapter getGraphics2DAdapter() {
-        return new Java2DGraphics2DAdapter(state);
+        return new Java2DGraphics2DAdapter();
     }
 
     /**
@@ -402,9 +399,12 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         state = (Java2DGraphicsState)stateStack.pop();
     }
     
-    /**
-     * {@inheritDoc} 
-     */
+    /** {@inheritDoc} */
+    protected void concatenateTransformationMatrix(AffineTransform at) {
+        state.transform(at);
+    }
+    
+    /** {@inheritDoc} */
     protected void startVParea(CTM ctm, Rectangle2D clippingRect) {
 
         saveGraphicsState();
@@ -884,76 +884,58 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     /**
      * {@inheritDoc}
      */
-    protected void drawImage(String url, Rectangle2D pos, Map foreignAttributes) {
+    protected void drawImage(String uri, Rectangle2D pos, Map foreignAttributes) {
 
         int x = currentIPPosition + (int)Math.round(pos.getX());
         int y = currentBPPosition + (int)Math.round(pos.getY());
-        url = ImageFactory.getURL(url);
-
-        ImageFactory fact = userAgent.getFactory().getImageFactory();
-        FopImage fopimage = fact.getImage(url, userAgent);
-
-        if (fopimage == null) {
-            return;
-        }
-        if (!fopimage.load(FopImage.DIMENSIONS)) {
-            return;
-        }
-        int w = fopimage.getWidth();
-        int h = fopimage.getHeight();
-        String mime = fopimage.getMimeType();
-        if ("text/xml".equals(mime)) {
-            if (!fopimage.load(FopImage.ORIGINAL_DATA)) {
-                return;
+        uri = URISpecification.getURL(uri);
+        
+        ImageManager manager = getUserAgent().getFactory().getImageManager();
+        ImageInfo info = null;
+        try {
+            ImageSessionContext sessionContext = getUserAgent().getImageSessionContext();
+            info = manager.getImageInfo(uri, sessionContext);
+            final ImageFlavor[] flavors = new ImageFlavor[]
+                {ImageFlavor.GRAPHICS2D,
+                    ImageFlavor.BUFFERED_IMAGE, 
+                    ImageFlavor.RENDERED_IMAGE, 
+                    ImageFlavor.XML_DOM};
+            Map hints = ImageUtil.getDefaultHints(sessionContext);
+            org.apache.xmlgraphics.image.loader.Image img = manager.getImage(
+                    info, flavors, hints, sessionContext);
+            if (img instanceof ImageGraphics2D) {
+                ImageGraphics2D imageG2D = (ImageGraphics2D)img;
+                int width = (int)pos.getWidth();
+                int height = (int)pos.getHeight();
+                RendererContext context = createRendererContext(
+                        x, y, width, height, foreignAttributes);
+                getGraphics2DAdapter().paintImage(imageG2D.getGraphics2DImagePainter(),
+                        context, x, y, width, height);
+            } else if (img instanceof ImageRendered) {
+                ImageRendered imgRend = (ImageRendered)img;
+                AffineTransform at = new AffineTransform();
+                at.translate(x / 1000f, y / 1000f);
+                double sx = pos.getWidth() / info.getSize().getWidthMpt();
+                double sy = pos.getHeight() / info.getSize().getHeightMpt();
+                sx *= userAgent.getSourceResolution() / info.getSize().getDpiHorizontal();
+                sy *= userAgent.getSourceResolution() / info.getSize().getDpiVertical();
+                at.scale(sx, sy);
+                state.getGraph().drawRenderedImage(imgRend.getRenderedImage(), at);
+            } else if (img instanceof ImageXMLDOM) {
+                ImageXMLDOM imgXML = (ImageXMLDOM)img;
+                renderDocument(imgXML.getDocument(), imgXML.getRootNamespace(),
+                        pos, foreignAttributes);
             }
-            Document doc = ((XMLImage) fopimage).getDocument();
-            String ns = ((XMLImage) fopimage).getNameSpace();
-            renderDocument(doc, ns, pos, foreignAttributes);
-
-        } else if ("image/svg+xml".equals(mime)) {
-            if (!fopimage.load(FopImage.ORIGINAL_DATA)) {
-                return;
-            }
-            Document doc = ((XMLImage) fopimage).getDocument();
-            String ns = ((XMLImage) fopimage).getNameSpace();
-
-            renderDocument(doc, ns, pos, foreignAttributes);
-        } else if ("image/eps".equals(mime)) {
-            log.warn("EPS images are not supported by this renderer");
-        } else {
-            if (!fopimage.load(FopImage.BITMAP)) {
-                log.warn("Loading of bitmap failed: " + url);
-                return;
-            }
-
-            byte[] raw = fopimage.getBitmaps();
-
-            // TODO Hardcoded color and sample models, FIX ME!
-            ColorModel cm = new ComponentColorModel(
-                    ColorSpace.getInstance(ColorSpace.CS_LINEAR_RGB), 
-                    new int[] {8, 8, 8},
-                    false, false,
-                    ColorModel.OPAQUE, DataBuffer.TYPE_BYTE);
-            SampleModel sampleModel = new PixelInterleavedSampleModel(
-                    DataBuffer.TYPE_BYTE, w, h, 3, w * 3, new int[] {0, 1, 2});
-            DataBuffer dbuf = new DataBufferByte(raw, w * h * 3);
-
-            WritableRaster raster = Raster.createWritableRaster(sampleModel,
-                    dbuf, null);
-
-            java.awt.Image awtImage;
-            // Combine the color model and raster into a buffered image
-            awtImage = new BufferedImage(cm, raster, false, null);
-
-            state.getGraph().drawImage(awtImage, 
-                    (int)(x / 1000f), (int)(y / 1000f), 
-                    (int)(pos.getWidth() / 1000f), (int)(pos.getHeight() / 1000f), null);
+        } catch (ImageException ie) {
+            log.error("Error while processing image: "
+                    + (info != null ? info.toString() : uri), ie);
+        } catch (IOException ioe) {
+            log.error("I/O error while processing image: "
+                    + (info != null ? info.toString() : uri), ioe);
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected RendererContext createRendererContext(int x, int y, int width, int height, 
             Map foreignAttributes) {
         RendererContext context = super.createRendererContext(
@@ -962,9 +944,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         return context;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int print(Graphics g, PageFormat pageFormat, int pageIndex)
             throws PrinterException {
         if (pageIndex >= getNumberOfPages()) {
@@ -1004,6 +984,10 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         //not necessary in Java2D
     }
 
+    /**
+     * Controls the page background.
+     * @param transparentPageBackground true if the background should be transparent
+     */
     public void setTransparentPageBackground(boolean transparentPageBackground) {
         this.transparentPageBackground = transparentPageBackground;
     }

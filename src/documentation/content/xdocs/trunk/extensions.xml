@@ -187,6 +187,29 @@ to following pages. Here is an example of FO code creating such a table-header:<
           </note>
         </section>
       </section>
+      <section id="transform">
+        <title>Free-form Transformation for fo:block-container</title>
+        <p>
+          For <code>fo:block-container</code> elements whose <code>absolute-position</code> set to
+          "absolute" or "fixed" you can use the extension attribute <code>fox:transform</code>
+          to apply a free-form transformation to the whole block-container. The content of the
+          <code>fox:transform</code> attribute is the same as for
+          <a href="http://www.w3.org/TR/SVG/coords.html#TransformAttribute">SVG's transform attribute</a>.
+          The transformation specified here is performed in addition to other implicit
+          transformations of the block-container (resulting from top, left and other properties)
+          and after them.
+        </p>
+        <p>
+          Examples: <code>fox:transform="rotate(45)"</code> would rotate the block-container
+          by 45 degrees clock-wise around its upper-left corner.
+          <code>fox:transform="translate(10000,0)"</code> would move the block-container to the
+          right by 10 points (=10000 millipoints, FOP uses millipoints internally!).
+        </p>
+        <note>
+          This extension attribute doesn't work for all output formats! It's currently only
+          supported for PDF, PS and Java2D-based renderers.
+        </note>
+      </section>
     </section>
   </body>
 </document>

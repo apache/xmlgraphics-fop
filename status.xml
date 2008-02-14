@@ -28,49 +28,136 @@
 
   <changes>
     <release version="FOP Trunk">
-      <action context="Code" dev="JM" type="add">
+      <action context="Fonts" dev="JM" type="add">
+        Added support for unusual font encodings (like for Symbol or Cyrillic fonts) of Type 1
+        fonts in PDF and PostScript output.
+      </action>
+      <action context="Layout" dev="VH" type="fix" fixes-bug="44321">
+        Moved to the FO tree stage the check for break-before/after on table-row while spanning in
+        progress.
+      </action>
+      <action context="Layout" dev="VH" type="add">
+        Added full support for breaks before and after table cells (that is, break-before/after set
+        on the first/last child of a cell).
+      </action>
+      <action context="Layout" dev="VH" type="add">
+        Added full support for breaks inside the cells of a table.
+      </action>
+      <action context="Code" dev="AD" type="fix" fixes-bug="41631">
+        Added correct percentage resolution for arguments to the proportional-column-width() function.
+      </action>
+      <action context="Fonts" dev="JM" type="fix">
+        Bugfix for date formatting with negative time zones in the PDF's Info object.
+        This affected PDF/A compliance.
+      </action>
+      <action context="Fonts" dev="JM" type="add">
+        Added an option to disable the default sRGB profile in PDF output for those who
+        don't care about color fidelity, but care about PDF file size.
+      </action>
+      <action context="Code" dev="AD" type="fix" fixes-bug="43705">
+        Fixed a bug when the rgb-icc() function was used either before the fo:declarations,
+        or in documents without a fo:declarations node. In such cases, the sRGB fallback
+        is now used to avoid an ugly NullPointerException.
+      </action>
+      <action context="Code" dev="AD" type="add">
+        Added very basic parsing for the xml:lang shorthand.
+      </action>
+      <action context="Code" dev="AD" type="fix" fixes-bug="44343">
+        Fixed a bug when using relative font-size (smaller/larger) in combination
+        with percentages.
+      </action>
+      <action context="Fonts" dev="JM" type="fix">
+        Bugfix for handling of optional tables in subset TrueType fonts. This bug caused errors
+        in various PDF viewers.
+      </action>
+      <action context="Renderers" dev="JM" type="add">
+        Added support for the natural language indentifier ("Lang" in the document catalog)
+        for PDF documents based on the language/country values on fo:page-sequence.
+      </action>
+      <action context="Code" dev="AD" type="fix" fixes-bug="44286" due-to="Stefan Ziel">
+        Fixed a memory-leak in XMLWhiteSpaceHandler.
+      </action>
+      <action context="Layout" dev="VH" type="fix" fixes-bug="44289">
+        Fixed the resolution of borders when header/footer is omitted at page breaks.
+      </action>
+      <action context="Layout" dev="VH" type="add" importance="high" fixes-bug="43934">
+        Added support for conditional borders in tables, for both the separate and the collapsing
+        border model.
+      </action>
+      <action context="Layout" dev="JM" type="fix" fixes-bug="44160">
+        Fixed a possible IndexOutOfBoundsException that could happen with certain constellations
+        when footnotes are used.
+      </action>
+      <action context="Layout" dev="JM" type="fix">
+        Compliance fix: for absolutely positioned block-containers, "top" wasn't
+        interpreted correctly.
+      </action>
+      <action context="Extensions" dev="JM" type="add">
+        New extension attribute fox:transform on fo:block-container allows free-form transformation
+        (rotation, scaling etc.) of absolute and fixed block-containers. Supported only
+        for PDF, PS and Java2D-based renderers.
+      </action>
+      <action context="Renderers" dev="JM" type="fix">
+        Fixed logic error setting the transformation matrix for block-container viewports
+        (applies to absolute and fixed block-containers only).
+        Important: External renderer implementations need to adjust for the change and implement
+        the new method concatenateTransformationMatrix(AffineTransform) if the renderer is
+        derived from AbstractPathOrientedRenderer.
+      </action>
+      <action context="Images" dev="JM" importance="high" type="fix">
+        A new image loading framework has been introduced to fix various problems with external
+        graphics and improve performance.
+      </action>
+      <action context="Renderers" dev="JM" type="fix">
+        Fixed generation of named destinations so it works when the PDF document is encrypted.
+      </action>
+      <action context="Renderers" dev="JM" type="add">
         PostScript output now generates the bounding box DSC comments for the whole document.
       </action>
-      <action context="Code" dev="JM" type="add">
+      <action context="Renderers" dev="JM" type="add">
         Added support for PDF page labels.
       </action>
-      <action context="Code" dev="JM" type="add" fixes-bug="44176" due-to="Patrick Jaromin">
+      <action context="Renderers" dev="JM" type="add" fixes-bug="44176" due-to="Patrick Jaromin">
         Added support for custom fonts in Java2DRenderer and derived renderers.
       </action>
-      <action context="Code" dev="JM" type="add">
+      <action context="Extensions" dev="JM" type="add">
         Added new extension element: fox:external-document. It allows to add whole documents
         such as multi-page TIFF images to be inserted as peers to a page-sequence. Each image
         will make up an entire page. See the documentation for details.
       </action>
-      <action context="Code" dev="JM" type="add">
+      <action context="Layout" dev="JM" type="add">
+        Added minimal support for the .minimum/.maximum components of block/inline-progression-dimension 
+        on fo:external-graphic and fo:instream-foreign-object.
+      </action>
+      <action context="Layout" dev="JM" type="add">
         Added support for scale-down-to-fit and scale-up-to-fit (introduced in XSL 1.1).
       </action>
-      <action context="Code" dev="VH" type="fix" fixes-bug="43633">
+      <action context="Layout" dev="VH" type="fix" fixes-bug="43633">
         Bugfix: content of a row with zero height overriding the previous row
       </action>
-      <action context="Code" dev="AC" importance="high" type="add">
-	Added SVG support for AFP (GOCA).
+      <action context="Renderers" dev="AC" importance="high" type="add">
+        Added SVG support for AFP (GOCA).
       </action>
-      <action context="Code" dev="JM" type="fix" fixes-bug="37993">
+      <action context="Renderers" dev="JM" type="fix" fixes-bug="37993">
         Bugfix: allow multiple bookmarks to point at the same destination.
       </action>
-      <action context="Code" dev="JM" type="fix" fixes-bug="43917">
+      <action context="Layout" dev="JM" type="fix" fixes-bug="43917">
         Bugfix for border-after painting and element list generation when a
         forced break is involved.
       </action>
-      <action context="Code" dev="JM" type="fix" fixes-bug="40230">
+      <action context="Layout" dev="JM" type="fix" fixes-bug="40230">
         Bugfix: no empty page is generated anymore if there's no content
         after a break-after.
       </action>
-      <action context="Code" dev="VH" type="fix" fixes-bug="43803">
+      <action context="Layout" dev="VH" type="fix" fixes-bug="43803">
         Restored proper handling of fo:table-cell having no children, which is allowed in relaxed
         validation mode.
       </action>
-      <action context="Code" dev="JM" type="fix">
+      <action context="Layout" dev="JM" type="fix">
         Memory Leak fixed in the Property Cache. Fixed by Jeremias Maerki. Reported and Tested By
         Chris Bowditch.
       </action>
-      <action context="Code" dev="VH" type="fix" fixes-bug="43712">
+      <action context="Layout" dev="VH" type="fix" fixes-bug="43712">
         Bugfix in tables: wrong element generation by the merging algorithm when glues must be
         produced to cope with conditional spaces. The corresponding length was added twice: one in
         the glue itself and one in the following box.
@@ -81,127 +168,137 @@
       <action context="Code" dev="JM" type="fix" fixes-bug="43910" due-to="David Delbecq">
         Avoid a NullPointerException in AreaTreeHandler.endDocument().
       </action>
-      <action context="Code" dev="VH" type="fix" fixes-bug="43766">
+      <action context="Layout" dev="VH" type="fix" fixes-bug="43766">
         Bugfix: breaks generated by the merging algorithm for a table-row containing empty cells
         had always a penalty of 900.
       </action>
-      <action context="Code" dev="JM" type="add" fixes-bug="43605" due-to="V. Schappert">
+      <action context="Layout" dev="JM" type="add" fixes-bug="43605" due-to="V. Schappert">
         Added methods for fo:page-number-citation(-last) in FOEventHandler.
       </action>
-      <action context="Code" dev="VH" type="add">
+      <action context="Layout" dev="VH" type="add">
         Step towards performance: the collapsing-border resolution algorithm no longer triggers the
         retrieving of the whole table, when possible.
       </action>
-      <action context="Code" dev="VH" type="fix">
+      <action context="Layout" dev="VH" type="fix">
         In case of missing cells the border-end of the table was applied to an inner cell, instead
         of the (empty) cell in the last column.
       </action>
-      <action context="Code" dev="VH" type="fix">
+      <action context="Layout" dev="VH" type="fix">
         Fixed the resolution of borders with table-columns (border-before/after was wrongly applied
         to every cell of the column).
       </action>
-      <action context="Code" dev="VH" type="fix" fixes-bug="42768">
+      <action context="Layout" dev="VH" type="fix" fixes-bug="42768">
         Fixed the resolution of border-end on cells spanning several rows.
       </action>
-      <action context="Code" dev="JM" type="fix" fixes-bug="43835" due-to="David Churavy">
+      <action context="Fonts" dev="JM" type="fix" fixes-bug="43835" due-to="David Churavy">
         Bugfix: Use Font.getName() (logical font name) instead of Font.getFontName()
         (localized) when registering fonts from AWT.
       </action>
-      <action context="Code" dev="JM" type="fix">
+      <action context="Fonts" dev="JM" type="fix">
         Made the way TrueType fonts are embedded in PDF compliant to the
         specification so viewers correctly identify subset fonts.
       </action>
-      <action context="Code" dev="JM" type="fix">
+      <action context="Fonts" dev="JM" type="fix">
         Fixed font-autodetection so fonts with uppercase extensions are
         detected, too.
       </action>
-      <action context="Code" dev="JM" type="update">
+      <action context="Fonts" dev="JM" type="update">
         Improved font auto-detection and handling of AWT-supplied fonts in order
         to achieve better results when using multiple output formats. Whenever
         possible, the font names appearing in the operating system can also
         be used in XSL-FO.
       </action>
-      <action context="Code" dev="JM" type="fix">
+      <action context="Renderers" dev="JM" type="fix">
         Fixed regression: transparent-page-background was not recognized for PNG output.
       </action>
-      <action context="Code" dev="VH" type="add">
+      <action context="Layout" dev="VH" type="add">
         Added check for table-cells which span more rows than available in their parent element
         (table-header/footer/body).
       </action>
-      <action context="Code" dev="AD" type="add">
+      <action context="Layout" dev="AD" type="add">
         Added support for fo:markers in fo:inline and fo:basic-link.
       </action>
-      <action context="Code" dev="JM" type="update">
+      <action context="Renderers" dev="JM" type="update">
         PDF Transcoder (SVG) text painting has been completely rewritten.
         Except for some special cases (with filters for example), all text
         (including flow text) is now painted using PDF text operators.
       </action>
-      <action context="Code" dev="AD" type="add" fixes-bug="42748">
+      <action context="Layout" dev="AD" type="add" fixes-bug="42748">
         Added support for ids on empty fo:inlines.
       </action>
-      <action context="Code" dev="AC" type="add" fixes-bug="42982" due-to="Max Berger">
+      <action context="Fonts" dev="AC" type="add" fixes-bug="42982" due-to="Max Berger">
         Add Font support in jar files.
       </action>
-      <action context="Code" dev="AC" type="fix" fixes-bug="43042" due-to="Andrejus Chaliapinas">
+      <action context="Renderers" dev="AC" type="fix" fixes-bug="43042" due-to="Andrejus Chaliapinas">
         Postscript extension cleanup.
       </action>
-      <action context="Code" dev="AC" type="fix" fixes-bug="43587">
+      <action context="Renderers" dev="AC" type="fix" fixes-bug="43587">
         Fix to avoid ClassCastException where multiple ps:ps-comments are declared within fo:declarations.
       </action>
-      <action context="Code" dev="AC" type="fix" fixes-bug="43143">
-	Fix to avoid NullPointerException when parsing ExpertEncoded and ExpertSubsetEncoded Type 1 fonts.
+      <action context="Fonts" dev="AC" type="fix" fixes-bug="43143">
+        Fix to avoid NullPointerException when parsing ExpertEncoded and ExpertSubsetEncoded Type 1 fonts.
       </action>
-      <action context="Code" dev="AC" type="fix" fixes-bug="43439">
+      <action context="Renderers" dev="AC" type="fix" fixes-bug="43439">
         Fixes missing TLE value attribute when using AreaTree input with the AFP renderer.
       </action>
-      <action context="Code" dev="JM" type="add">
+      <action context="Renderers" dev="JM" type="add">
         Added generic structures to the PDF library in order to support PDF
         file in fo:external-graphic later.
       </action>
       <action context="Code" dev="JM" type="add" fixes-bug="43597" due-to="Max Berger">
         Added support for SVGZ.
       </action>
-      <action context="Code" dev="JM" type="fix">
+      <action context="Layout" dev="JM" type="fix">
         Bugfix for NPE with empty table-row (regression from 0.93).
       </action>
-      <action context="Code" dev="JM" type="add">
+      <action context="Renderers" dev="JM" type="add">
         Added a configuration setting to the PCL renderer to disable PJL commands.
       </action>
-      <action context="Code" dev="JM" type="fix" fixes-bug="43464" due-to="Bruno Feurer">
+      <action context="Renderers" dev="JM" type="fix" fixes-bug="43464" due-to="Bruno Feurer">
         Fix to avoid a ClassCastException in renderer configuration.
       </action>
-      <action context="Code" dev="JM" type="fix" fixes-bug="43439" due-to="Adrian Cumiskey">
+      <action context="Renderers" dev="JM" type="fix" fixes-bug="43439" due-to="Adrian Cumiskey">
         Fixed the restoration of the TLE values from the intermediate format 
         for the AFP extension elements.
       </action>
-      <action context="Code" dev="JM" type="add" fixes-bug="43041" due-to="Adrian Cumiskey">
+      <action context="Renderers" dev="JM" type="add" fixes-bug="43041" due-to="Adrian Cumiskey">
         Added a configuration setting for the renderer/device resolution to the AFP renderer.
       </action>
-      <action context="code" dev="AD" type="update">
-        Facilitate the implementation for font-selection-strategy:
-        * Changed FontInfo.fontLookup to always return an array of FontTriplet
-        * Changed CommonFont.getFontState to return an array of FontTriplet
-        * Initial modifications to the related LMs: initialized with
-          the font corresponding to the first of the triplets
+      <action context="Layout" dev="AD" type="update">
+        <p>
+          Facilitate the implementation for font-selection-strategy:
+        </p>
+        <ul>
+          <li>Changed FontInfo.fontLookup to always return an array of FontTriplet</li>
+          <li>Changed CommonFont.getFontState to return an array of FontTriplet</li>
+          <li>Initial modifications to the related LMs: initialized with
+            the font corresponding to the first of the triplets</li>
+        </ul>
       </action>
-      <action context="code" dev="AD" type="update">
-        PropertyCache phase 2:
-        * improvement of the PropertyCache itself should now guarantee acceptable
-          performance of the static caches in multi-session environments, which is 
-          a possible problem with synchronizedMap
-        * changed CommonFont to use the cache: 
-          added CachedCommonFont to contain the properties that are always cacheable
-          CommonFont itself is only cached if the remaining properties are absolutes
-        * changed CommonHyphenation, KeepProperty, ColorProperty and FontFamilyProperty to use the cache
+      <action context="Layout" dev="AD" type="update">
+        <p>PropertyCache phase 2:</p>
+        <ul>
+          <li>
+            improvement of the PropertyCache itself should now guarantee acceptable
+            performance of the static caches in multi-session environments, which is 
+            a possible problem with synchronizedMap
+          </li>
+          <li>
+            changed CommonFont to use the cache: 
+            added CachedCommonFont to contain the properties that are always cacheable
+            CommonFont itself is only cached if the remaining properties are absolutes
+          </li>
+          <li>changed CommonHyphenation, KeepProperty, ColorProperty and FontFamilyProperty to use the cache</li>
+        </ul>
       </action>
-      <action context="Code" dev="AD" type="fix" fixes-bug="42705">
+      <action context="Layout" dev="AD" type="fix" fixes-bug="42705">
         Fixed swallowing PCDATA in text-node children of
         retrieved markers.
       </action>
-      <action context="Code" dev="AD" type="fix" fixes-bug="42703">
+      <action context="Layout" dev="AD" type="fix" fixes-bug="42703">
         Fixed erroneous white-space removal in retrieved markers.
       </action>
-      <action context="Code" dev="AD" type="fix" fixes-bug="43274" due-to="ckohrn.at.tng.de">
+      <action context="Layout" dev="AD" type="fix" fixes-bug="43274" due-to="ckohrn.at.tng.de">
         Fixed erroneous usage of inherited color-values in SVG.
       </action>
     </release>    

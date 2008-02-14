@@ -231,37 +231,20 @@
   END Development tab
   -->
 
-  <!-- references label="Related Projects">
-    <forrest label="Apache Forrest" href="http://forrest.apache.org/"/>
-    <gump label="Apache Gump" href="http://jakarta.apache.org/gump/"/>
-    <cocoon label="Apache Cocoon" href="http://cocoon.apache.org/"/>
-    <lenya label="Apache Lenya" href="http://cocoon.apache.org/lenya/"/>
-    <centipede label="Krysalis Centipede" href="http://www.krysalis.org/"/>
-  </references -->
-
   <external-refs>
-    <!--cocoon href="http://cocoon.apache.org/2.1/">
-      <ml href="mail-lists.html"/>
-      <actions href="userdocs/concepts/actions.html"/>
-      <catalogs href="userdocs/concepts/catalog.html"/>
-      <sitemap href="userdocs/concepts/sitemap.html"/>
-      <input-modules href="userdocs/concepts/modules.html"/>
-      <views href="userdocs/concepts/views.html"/>
-    </cocoon-->
     <xmlgraphics.apache.org href="http://xmlgraphics.apache.org/">
       <fop href="fop/"/>
       <batik href="batik/"/>
+      <commons href="commons/"/>
     </xmlgraphics.apache.org>
     <svn-repo href="http://svn.apache.org/repos/asf/xmlgraphics/fop/">
       <trunk href="trunk/"/>
-      <stable href="tags/fop-0_93"/>
+      <stable href="tags/fop-0_94"/>
       <maintenance href="branches/fop-0_20_2-maintain/"/>
     </svn-repo>
+    <forrest.apache.org href="http://forrest.apache.org/"/>
     <xml.apache.org href="http://xml.apache.org/">
-      <forrest href="forrest/"/>
       <xindice href="xindice/"/>
-      <fop href="fop/"/>
-      <batik href="batik/"/>
       <commons href="commons/">
         <resolver href="components/resolver/"/>
       </commons>
@@ -270,6 +253,8 @@
     <xerces href="http://xerces.apache.org"/>
     <mail-archive href="http://marc.theaimsgroup.com"/>
     <xpath-tut href="http://www.w3schools.com/xpath/"/>
+    <commons-logging href="http://commons.apache.org/logging/"/>
+    <commons-io href="http://commons.apache.org/io/"/>
     <jakarta href="http://jakarta.apache.org/">
       <commons href="commons/">
         <io href="io/"/>

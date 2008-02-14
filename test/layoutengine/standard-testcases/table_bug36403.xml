@@ -79,20 +79,16 @@
   </fo>
   <checks>
     <element-list category="breaker" id="skipped-step">
-      <box w="0"/>
-      <penalty w="14400" p="INF"/> <!-- Skipped step has an INFINITE penalty -->
       <box w="50400"/>
       <skip>3</skip>
     </element-list>
     <element-list category="breaker" id="backtrack">
-      <box w="0"/>
-      <penalty w="10000"/> <!-- p > 0 && p <= INF -->
       <box w="18400"/>
       <penalty w="0" p="0"/>
       <box w="0"/>
-      <penalty w="1600"/> <!-- p = ??? --> <!-- I'm not sure here what the penalty values should be for these two. -->
+      <penalty w="1600" p="0"/>
       <box w="0"/>
-      <penalty w="11600"/> <!-- p = ??? -->
+      <penalty w="11600"/>
       <box w="24400"/>
       <skip>3</skip>
     </element-list>

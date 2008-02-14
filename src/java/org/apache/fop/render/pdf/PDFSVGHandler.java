@@ -19,42 +19,40 @@
 
 package org.apache.fop.render.pdf;
 
+import java.awt.Color;
+import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
-import java.awt.Color;
-import java.awt.geom.AffineTransform;
 
 import org.w3c.dom.Document;
 
+import org.apache.avalon.framework.configuration.Configuration;
+import org.apache.batik.bridge.BridgeContext;
+import org.apache.batik.bridge.GVTBuilder;
+import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.batik.gvt.GraphicsNode;
+import org.apache.batik.util.SVGConstants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.fo.extensions.ExtensionElementMapping;
+import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.pdf.PDFDocument;
+import org.apache.fop.pdf.PDFPage;
+import org.apache.fop.pdf.PDFResourceContext;
+import org.apache.fop.pdf.PDFState;
+import org.apache.fop.pdf.PDFStream;
 import org.apache.fop.render.AbstractGenericSVGHandler;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.RendererContextConstants;
-import org.apache.fop.pdf.PDFDocument;
-import org.apache.fop.pdf.PDFPage;
-import org.apache.fop.pdf.PDFState;
-import org.apache.fop.pdf.PDFStream;
-import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.svg.PDFAElementBridge;
 import org.apache.fop.svg.PDFBridgeContext;
 import org.apache.fop.svg.PDFGraphics2D;
 import org.apache.fop.svg.SVGUserAgent;
 import org.apache.fop.util.QName;
-import org.apache.fop.fo.extensions.ExtensionElementMapping;
-import org.apache.fop.fonts.FontInfo;
-
-// Commons-Logging
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import org.apache.avalon.framework.configuration.Configuration;
-
-import org.apache.batik.bridge.GVTBuilder;
-import org.apache.batik.bridge.BridgeContext;
-import org.apache.batik.dom.svg.SVGDOMImplementation;
-import org.apache.batik.gvt.GraphicsNode;
-import org.apache.batik.util.SVGConstants;
 
 /**
  * PDF XML handler for SVG (uses Apache Batik).
@@ -154,10 +152,15 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
         int xOffset = pdfInfo.currentXPosition;
         int yOffset = pdfInfo.currentYPosition;
 
-        final float deviceResolution = context.getUserAgent().getTargetResolution();
+        FOUserAgent userAgent = context.getUserAgent(); 
+        log.debug("Generating SVG at " 
+                + userAgent.getTargetResolution()
+                + "dpi.");
+        final float deviceResolution = userAgent.getTargetResolution();
+        log.debug("Generating SVG at " + deviceResolution + "dpi.");
         log.debug("Generating SVG at " + deviceResolution + "dpi.");
         
-        final float uaResolution = context.getUserAgent().getSourceResolution();
+        final float uaResolution = userAgent.getSourceResolution();
         SVGUserAgent ua = new SVGUserAgent(25.4f / uaResolution, new AffineTransform());
 
         //Scale for higher resolution on-the-fly images from Batik
@@ -176,6 +179,8 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
         
         BridgeContext ctx = new PDFBridgeContext(ua, 
                 (strokeText ? null : pdfInfo.fi),
+                userAgent.getFactory().getImageManager(),
+                userAgent.getImageSessionContext(),
                 new AffineTransform());
         
         GraphicsNode root;

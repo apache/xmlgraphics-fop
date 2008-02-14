@@ -43,7 +43,7 @@ public interface Graphics2DAdapter {
      * @param height height of the image
      * @throws IOException In case of an I/O error while writing the output format
      */
-    void paintImage(Graphics2DImagePainter painter, 
+    void paintImage(org.apache.xmlgraphics.java2d.Graphics2DImagePainter painter, 
             RendererContext context,
             int x, int y, int width, int height) throws IOException;
     

@@ -22,9 +22,11 @@ package org.apache.fop.pdf;
 // Java
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import org.apache.commons.logging.Log;
@@ -57,6 +59,9 @@ public abstract class PDFObject implements PDFWritable {
      */
     private PDFDocument document;
 
+    /** the parent PDFObject (may be null and may not always be set, needed for encryption) */
+    private PDFObject parent;
+    
     /**
      * Returns the object's number.
      * @return the PDF Object number
@@ -66,6 +71,21 @@ public abstract class PDFObject implements PDFWritable {
             throw new IllegalStateException("Object has no number assigned: " + this.toString());
         }
         return this.objnum;
+    }
+    
+    /**
+     * Default constructor.
+     */
+    public PDFObject() {
+        //nop
+    }
+    
+    /**
+     * Constructor for direct objects.
+     * @param parent the containing PDFObject instance
+     */
+    public PDFObject(PDFObject parent) {
+        setParent(parent);
     }
     
     /**
@@ -83,6 +103,9 @@ public abstract class PDFObject implements PDFWritable {
      */
     public void setObjectNumber(int objnum) {
         this.objnum = objnum;
+        PDFDocument doc = getDocument();
+        setParent(null);
+        setDocument(doc); //Restore reference to PDFDocument after setting parent to null
         if (log.isTraceEnabled()) {
             log.trace("Assigning " + this + " object number " + objnum);
         }
@@ -102,7 +125,13 @@ public abstract class PDFObject implements PDFWritable {
      * has not been assigned)
      */
     public final PDFDocument getDocument() {
-        return this.document;
+        if (this.document != null) {
+            return this.document;
+        } else if (getParent() != null) {
+            return getParent().getDocument();
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -114,7 +143,8 @@ public abstract class PDFObject implements PDFWritable {
     public final PDFDocument getDocumentSafely() {
         final PDFDocument doc = getDocument();
         if (doc == null) {
-            throw new IllegalStateException("Parent PDFDocument is unavailable");
+            throw new IllegalStateException("Parent PDFDocument is unavailable on "
+                    + getClass().getName());
         }
         return doc;
     }
@@ -125,6 +155,22 @@ public abstract class PDFObject implements PDFWritable {
      */
     public void setDocument(PDFDocument doc) {
         this.document = doc;
+    }
+
+    /**
+     * Returns this objects's parent. The parent is null if it is a "direct object".
+     * @return the parent or null if there's no parent (or it hasn't been set)
+     */
+    public PDFObject getParent() {
+        return this.parent;
+    }
+    
+    /**
+     * Sets the direct parent object.
+     * @param parent the direct parent
+     */
+    public void setParent(PDFObject parent) {
+        this.parent = parent;
     }
 
     /**
@@ -169,6 +215,16 @@ public abstract class PDFObject implements PDFWritable {
         return pdf.length;
     }
 
+    /** {@inheritDoc} */
+    public void outputInline(OutputStream out, Writer writer) throws IOException {
+        if (hasObjectNumber()) {
+            writer.write(referencePDF());
+        } else {
+            writer.flush();
+            output(out);
+        }
+    }
+    
     /**
      * Encodes the object as a byte array for output to a PDF file.
      *
@@ -184,26 +240,14 @@ public abstract class PDFObject implements PDFWritable {
      * is normally converted/encoded to a byte array by toPDF(). Only use 
      * this method to implement the serialization if the object can be fully 
      * represented as text. If the PDF representation of the object contains
-     * binary content use toPDF() or output(OutputStream) instead.
+     * binary content use toPDF() or output(OutputStream) instead. This applies
+     * to any object potentially containing a string object because string object
+     * are encrypted and therefore need to be binary.
      * @return String the String representation
      */
     protected String toPDFString() {
         throw new UnsupportedOperationException("Not implemented. "
                     + "Use output(OutputStream) instead.");
-    }
-    
-    /**
-     * Returns a representation of this object for in-object placement, i.e. if the object
-     * has an object number its reference is returned. Otherwise, its PDF representation is
-     * returned.
-     * @return the String representation
-     */
-    public String toInlinePDFString() {
-        if (hasObjectNumber()) {
-            return referencePDF();
-        } else {
-            return toPDFString();
-        }
     }
     
     /**
@@ -237,67 +281,84 @@ public abstract class PDFObject implements PDFWritable {
      */
     protected byte[] encodeString(String string) {
         return encodeText(string);
-        /*
-        final byte[] buf = encode(PDFText.escapeString(string));
+    }
+    
+    /**
+     * Encodes binary data as hexadecimal string object.
+     * @param data the binary data
+     * @param out the OutputStream to write the encoded object to
+     * @throws IOException if an I/O error occurs
+     */
+    protected void encodeBinaryToHexString(byte[] data, OutputStream out) throws IOException {
+        out.write('<');
         if (getDocumentSafely().isEncryptionActive()) {
-            return PDFText.escapeByteArray(
-                getDocument().getEncryption().encrypt(buf, this));
-        } else {
-            return buf;
-        }*/
+            data = getDocument().getEncryption().encrypt(data, this);
+        }
+        String hex = PDFText.toHex(data, false);
+        byte[] encoded = hex.getBytes("US-ASCII");
+        out.write(encoded);
+        out.write('>');
     }
     
     /**
      * Formats an object for serialization to PDF.
      * @param obj the object
-     * @param sb the StringBuffer to write to
+     * @param out the OutputStream to write to
+     * @param writer a Writer for text content (will always be a wrapper around the above
+     *                  OutputStream. Make sure <code>flush</code> is called when mixing calls)
+     * @throws IOException If an I/O error occurs
      */
-    protected void formatObject(Object obj, StringBuffer sb) {
+    protected void formatObject(Object obj, OutputStream out, Writer writer) throws IOException {
         if (obj == null) {
-            sb.append("null");
+            writer.write("null");
         } else if (obj instanceof PDFWritable) {
-            sb.append(((PDFWritable)obj).toInlinePDFString());
+            ((PDFWritable)obj).outputInline(out, writer);
         } else if (obj instanceof Number) {
             if (obj instanceof Double || obj instanceof Float) {
-                sb.append(PDFNumber.doubleOut(((Number)obj).doubleValue()));
+                writer.write(PDFNumber.doubleOut(((Number)obj).doubleValue()));
             } else {
-                sb.append(obj);
+                writer.write(obj.toString());
             }
         } else if (obj instanceof Boolean) {
-            sb.append(obj);
+            writer.write(obj.toString());
+        } else if (obj instanceof byte[]) {
+            writer.flush();
+            encodeBinaryToHexString((byte[])obj, out);
         } else {
-            sb.append("(").append(obj).append(")");
+            writer.flush();
+            out.write(encodeText(obj.toString()));
         }
     }
     
     /** Formatting pattern for PDF date */
-    protected static final SimpleDateFormat DATE_FORMAT 
-            = new SimpleDateFormat("'D:'yyyyMMddHHmmss");
+    protected static final SimpleDateFormat DATE_FORMAT;
 
+    static {
+        DATE_FORMAT = new SimpleDateFormat("'D:'yyyyMMddHHmmss", Locale.ENGLISH);
+        DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT"));
+    }
+    
     /**
      * Formats a date/time according to the PDF specification 
      * (D:YYYYMMDDHHmmSSOHH'mm').
      * @param time date/time value to format
+     * @param tz the time zone
      * @return the requested String representation
      */
-    protected String formatDateTime(Date time) {
-        StringBuffer sb = new StringBuffer();
-        sb.append(DATE_FORMAT.format(time));
-        TimeZone tz = TimeZone.getDefault();
-        Calendar cal = Calendar.getInstance();
+    protected String formatDateTime(Date time, TimeZone tz) {
+        Calendar cal = Calendar.getInstance(tz, Locale.ENGLISH);
         cal.setTime(time);
         
-        int era = cal.get(Calendar.ERA);
-        int year = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH);
-        int day = cal.get(Calendar.DAY_OF_MONTH);
-        int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
-        int milliseconds = cal.get(Calendar.HOUR_OF_DAY) * 1000 * 60 * 60;
-        milliseconds += cal.get(Calendar.MINUTE) * 1000 * 60;
-        milliseconds += cal.get(Calendar.SECOND) * 1000;
-        milliseconds += cal.get(Calendar.MILLISECOND);
+        int offset = cal.get(Calendar.ZONE_OFFSET);
+        offset += cal.get(Calendar.DST_OFFSET);
         
-        int offset = tz.getOffset(era, year, month, day, dayOfWeek, milliseconds);
+        //DateFormat is operating on GMT so adjust for time zone offset
+        Date dt1 = new Date(time.getTime() + offset);
+        StringBuffer sb = new StringBuffer();
+        sb.append(DATE_FORMAT.format(dt1));
+        
+        offset /= (1000 * 60); //Convert to minutes
+        
         if (offset == 0) {
             sb.append('Z');
         } else {
@@ -306,9 +367,8 @@ public abstract class PDFObject implements PDFWritable {
             } else {
                 sb.append('-');
             }
-            final int HOUR = (1000 * 60 * 60);
-            int offsetHour = Math.abs(offset / HOUR);
-            int offsetMinutes = (offset - (offsetHour * HOUR)) / (1000 * 60);
+            int offsetHour = Math.abs(offset / 60);
+            int offsetMinutes = Math.abs(offset % 60);
             if (offsetHour < 10) {
                 sb.append('0');
             }
@@ -323,4 +383,14 @@ public abstract class PDFObject implements PDFWritable {
         return sb.toString();
     }
 
+    /**
+     * Formats a date/time according to the PDF specification.
+     * (D:YYYYMMDDHHmmSSOHH'mm').
+     * @param time date/time value to format
+     * @return the requested String representation
+     */
+    protected String formatDateTime(Date time) {
+        return formatDateTime(time, TimeZone.getDefault());
+    }
+    
 }

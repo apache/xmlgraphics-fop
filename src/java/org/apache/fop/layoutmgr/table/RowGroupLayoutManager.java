@@ -34,13 +34,13 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.ElementListObserver;
-import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.MinOptMaxUtil;
 import org.apache.fop.traits.MinOptMax;
+import org.apache.fop.util.BreakUtil;
 
 class RowGroupLayoutManager {
 
@@ -67,11 +67,13 @@ class RowGroupLayoutManager {
      */
     int getBreakBefore() {
         TableRow rowFO = rowGroup[0].getTableRow();
+        int breakBefore;
         if (rowFO == null) {
-            return Constants.EN_AUTO;
+            breakBefore = Constants.EN_AUTO;
         } else {
-            return rowFO.getBreakBefore(); 
+            breakBefore = rowFO.getBreakBefore(); 
         }
+        return BreakUtil.compareBreakClasses(breakBefore, rowGroup[0].getBreakBefore());
     }
 
     /**
@@ -82,11 +84,14 @@ class RowGroupLayoutManager {
      */
     int getBreakAfter() {
         TableRow rowFO = rowGroup[rowGroup.length - 1].getTableRow();
+        int breakAfter;
         if (rowFO == null) {
-            return Constants.EN_AUTO;
+            breakAfter = Constants.EN_AUTO;
         } else {
-            return rowFO.getBreakAfter(); 
+            breakAfter = rowFO.getBreakAfter(); 
         }
+        return BreakUtil.compareBreakClasses(breakAfter,
+                rowGroup[rowGroup.length - 1].getBreakAfter());
     }
 
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment, int bodyType) {
@@ -137,7 +142,6 @@ class RowGroupLayoutManager {
         MinOptMax[] rowHeights = new MinOptMax[rowGroup.length];
         MinOptMax[] explicitRowHeights = new MinOptMax[rowGroup.length];
         EffRow row;
-        int maxColumnCount = 0;
         List pgus = new java.util.ArrayList(); //holds a list of a row's primary grid units
         for (int rgi = 0; rgi < rowGroup.length; rgi++) {
             row = rowGroup[rgi];
@@ -152,8 +156,6 @@ class RowGroupLayoutManager {
             // The BPD of the biggest cell in the row
             int maxCellBPD = 0;
             for (int j = 0; j < row.getGridUnits().size(); j++) {
-                assert maxColumnCount == 0 || maxColumnCount == row.getGridUnits().size();
-                maxColumnCount = Math.max(maxColumnCount, row.getGridUnits().size());
                 GridUnit gu = row.getGridUnit(j);
                 if ((gu.isPrimary() || (gu.getColSpanIndex() == 0 && gu.isLastGridUnitRowSpan())) 
                         && !gu.isEmpty()) {
@@ -179,8 +181,8 @@ class RowGroupLayoutManager {
 
                         //Calculate width of cell
                         int spanWidth = 0;
-                        for (int i = primary.getStartCol(); 
-                                i < primary.getStartCol() 
+                        for (int i = primary.getColIndex(); 
+                                i < primary.getColIndex() 
                                         + primary.getCell().getNumberColumnsSpanned();
                                 i++) {
                             if (tableLM.getColumns().getColumn(i + 1) != null) {
@@ -239,13 +241,7 @@ class RowGroupLayoutManager {
                         effectiveCellBPD = Math.max(effectiveCellBPD, 
                                 primary.getContentLength());
                         
-                        int borderWidths;
-                        if (tableLM.getTable().isSeparateBorderModel()) {
-                            borderWidths = primary.getBorders().getBorderBeforeWidth(false)
-                                    + primary.getBorders().getBorderAfterWidth(false);
-                        } else {
-                            borderWidths = primary.getHalfMaxBorderWidth();
-                        }
+                        int borderWidths = primary.getBeforeAfterBorderWidth();
                         int padding = 0;
                         maxCellBPD = Math.max(maxCellBPD, effectiveCellBPD);
                         CommonBorderPaddingBackground cbpb 
@@ -253,8 +249,7 @@ class RowGroupLayoutManager {
                         padding += cbpb.getPaddingBefore(false, primary.getCellLM());
                         padding += cbpb.getPaddingAfter(false, primary.getCellLM());
                         int effRowHeight = effectiveCellBPD 
-                                + padding + borderWidths
-                                + 2 * tableLM.getHalfBorderSeparationBPD();
+                                + padding + borderWidths;
                         for (int previous = 0; previous < gu.getRowSpanIndex(); previous++) {
                             effRowHeight -= rowHeights[rgi - previous - 1].opt;
                         }
@@ -289,8 +284,8 @@ class RowGroupLayoutManager {
                 log.debug("  height=" + rowHeights[i] + " explicit=" + explicitRowHeights[i]);
             }
         }
-        LinkedList returnedList = tableStepper.getCombinedKnuthElementsForRowGroup(
-                context, rowGroup, maxColumnCount, bodyType);
+        LinkedList returnedList = tableStepper.getCombinedKnuthElementsForRowGroup(context,
+                rowGroup, bodyType);
         if (returnedList != null) {
             returnList.addAll(returnedList);
         }

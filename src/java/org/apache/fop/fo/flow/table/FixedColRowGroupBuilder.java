@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.ValidationException;
 
 
@@ -43,18 +44,12 @@ class FixedColRowGroupBuilder extends RowGroupBuilder {
     /** The rows belonging to this row group. List of List of {@link GridUnit}s. */
     private List/*<List<GridUnit>>*/ rows;
 
-    private boolean firstInTable = true;
-
     private boolean firstInPart = true;
 
     /** The last encountered row. This is the last row of the table if it has no footer. */
     private List lastRow;
 
     private BorderResolver borderResolver;
-
-    private boolean inFooter;
-
-    private List lastFooterRow;
 
     FixedColRowGroupBuilder(Table t) {
         super(t);
@@ -85,16 +80,14 @@ class FixedColRowGroupBuilder extends RowGroupBuilder {
             rows.add(effRow);
         }
         int columnIndex = cell.getColumnNumber() - 1;
-        PrimaryGridUnit pgu = new PrimaryGridUnit(cell, currentTableRow,
-                table.getColumn(columnIndex), columnIndex);
+        PrimaryGridUnit pgu = new PrimaryGridUnit(cell, currentTableRow, columnIndex);
         List row = (List) rows.get(currentRowIndex);
         row.set(columnIndex, pgu);
         // TODO
         GridUnit[] cellRow = new GridUnit[cell.getNumberColumnsSpanned()];
         cellRow[0] = pgu;
         for (int j = 1; j < cell.getNumberColumnsSpanned(); j++) {
-            GridUnit gu = new GridUnit(pgu, currentTableRow, table.getColumn(columnIndex + j),
-                    columnIndex + j, j, 0);
+            GridUnit gu = new GridUnit(pgu, currentTableRow, j, 0);
             row.set(columnIndex + j, gu);
             cellRow[j] = gu;
         }
@@ -103,8 +96,7 @@ class FixedColRowGroupBuilder extends RowGroupBuilder {
             row = (List) rows.get(currentRowIndex + i);
             cellRow = new GridUnit[cell.getNumberColumnsSpanned()];
             for (int j = 0; j < cell.getNumberColumnsSpanned(); j++) {
-                GridUnit gu = new GridUnit(pgu, currentTableRow, table.getColumn(columnIndex + j),
-                        columnIndex + j, j, i);
+                GridUnit gu = new GridUnit(pgu, currentTableRow, j, i);
                 row.set(columnIndex + j, gu);
                 cellRow[j] = gu;
             }
@@ -124,24 +116,33 @@ class FixedColRowGroupBuilder extends RowGroupBuilder {
     }
 
     /** {@inheritDoc} */
-    void endRow(TableCellContainer container) {
+    void endRow(TableRow row) {
+        if (currentRowIndex > 0 && row.getBreakBefore() != Constants.EN_AUTO) {
+            row.attributeWarning("break-before ignored because of row spanning "
+                    + "in progress (See XSL 1.1, 7.20.2)");
+        }
+        if (currentRowIndex < rows.size() - 1 && row.getBreakAfter() != Constants.EN_AUTO) {
+            row.attributeWarning("break-after ignored because of row spanning "
+                    + "in progress (See XSL 1.1, 7.20.1)");
+        }
+        handleRowEnd(row);
+    }
+
+    /** {@inheritDoc} */
+    void endRow(TableBody body) {
+        handleRowEnd(body);
+    }
+
+    private void handleRowEnd(TableCellContainer container) {
         List currentRow = (List) rows.get(currentRowIndex);
         lastRow = currentRow;
         // Fill gaps with empty grid units
         for (int i = 0; i < numberOfColumns; i++) {
             if (currentRow.get(i) == null) {
-                currentRow.set(i, new EmptyGridUnit(table, currentTableRow, currentRowIndex, i));
+                currentRow.set(i, new EmptyGridUnit(table, currentTableRow, i));
             }
         }
         borderResolver.endRow(currentRow, container);
-        ((GridUnit) currentRow.get(0)).setFlag(GridUnit.IN_FIRST_COLUMN);
-        ((GridUnit) currentRow.get(numberOfColumns - 1)).setFlag(GridUnit.IN_LAST_COLUMN);
-        if (inFooter) {
-            lastFooterRow = currentRow;
-        } else if (firstInTable) {
-            setFlagForCols(GridUnit.FIRST_IN_TABLE, currentRow);
-            firstInTable = false;
-        }
         if (firstInPart) {
             setFlagForCols(GridUnit.FIRST_IN_PART, currentRow);
             firstInPart = false;
@@ -159,7 +160,6 @@ class FixedColRowGroupBuilder extends RowGroupBuilder {
     /** {@inheritDoc} */
     void startTablePart(TableBody part) {
         firstInPart = true;
-        inFooter = part.isTableFooter();
         borderResolver.startPart(part);
     }
 
@@ -171,18 +171,10 @@ class FixedColRowGroupBuilder extends RowGroupBuilder {
         }
         setFlagForCols(GridUnit.LAST_IN_PART, lastRow);
         borderResolver.endPart();
-        inFooter = false;
     }
 
     /** {@inheritDoc} */
     void endTable(TableBody lastTablePart) {
-        List lastTableRow;
-        if (lastFooterRow != null) {
-            lastTableRow = lastFooterRow;
-        } else {
-            lastTableRow = lastRow;
-        }
-        setFlagForCols(GridUnit.LAST_IN_TABLE, lastTableRow);
         borderResolver.endTable();
     }
 }

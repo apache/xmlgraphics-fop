@@ -15,13 +15,18 @@
  * limitations under the License.
  */
 
-/* $Id: PDFArray.java 588547 2007-10-26 07:48:14Z jeremias $ */
+/* $Id$ */
  
 package org.apache.fop.pdf;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.SortedMap;
+
+import org.apache.commons.io.output.CountingOutputStream;
 
 /**
  * Class representing an "Nums" array object (for Number Trees).
@@ -32,11 +37,11 @@ public class PDFNumsArray extends PDFObject {
     protected SortedMap map = new java.util.TreeMap();
 
     /**
-     * Create a new, empty array object
+     * Create a new, empty array object.
+     * @param parent the object's parent if any
      */
-    public PDFNumsArray() {
-        /* generic creation of PDF object */
-        super();
+    public PDFNumsArray(PDFObject parent) {
+        super(parent);
     }
 
     /**
@@ -66,29 +71,34 @@ public class PDFNumsArray extends PDFObject {
     }
     
     /** {@inheritDoc} */
-    public String toPDFString() {
-        StringBuffer p = new StringBuffer(64);
+    protected int output(OutputStream stream) throws IOException {
+        CountingOutputStream cout = new CountingOutputStream(stream);
+        Writer writer = PDFDocument.getWriterFor(cout);
         if (hasObjectNumber()) {
-            p.append(getObjectID());
+            writer.write(getObjectID());
         }
-        p.append("[");
+        
+        writer.write('[');
         boolean first = true;
         Iterator iter = this.map.entrySet().iterator();
         while (iter.hasNext()) {
             Map.Entry entry = (Map.Entry)iter.next();
             if (!first) {
-                p.append(" ");
+                writer.write(" ");
             }
             first = false;
-            formatObject(entry.getKey(), p);
-            p.append(" ");
-            formatObject(entry.getValue(), p);
+            formatObject(entry.getKey(), cout, writer);
+            writer.write(" ");
+            formatObject(entry.getValue(), cout, writer);
         }
-        p.append("]");
+        writer.write(']');
+        
         if (hasObjectNumber()) {
-            p.append("\nendobj\n");
+            writer.write("\nendobj\n");
         }
-        return p.toString();
+        
+        writer.flush();
+        return cout.getCount();
     }
-
+    
 }

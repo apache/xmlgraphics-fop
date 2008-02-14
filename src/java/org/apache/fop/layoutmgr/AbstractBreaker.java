@@ -26,6 +26,7 @@ import java.util.Stack;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.fo.Constants;
 import org.apache.fop.traits.MinOptMax;
 
@@ -650,8 +651,9 @@ public abstract class AbstractBreaker {
             
 /*          postpone determination of the breakpenalty and the breakclass
             Position breakPosition = null;
-            KnuthPenalty breakPenalty = getBreakPenalty(returnedList);
-            if (breakPenalty != null) {
+            // merging of r627721 created a conflict here
+            if (((KnuthElement) returnedList.getLast()).isForcedBreak()) {
+                KnuthPenalty breakPenalty = (KnuthPenalty)returnedList.removeLast();
                 breakPosition = breakPenalty.getPosition();
                 nextSequenceStartsOn = considerBreakClass(breakPenalty);
             }

@@ -40,7 +40,7 @@ public class PDFDests extends PDFNameTreeNode {
      */
     public PDFDests(List destinationList) {
         this();
-        setNames(new PDFArray(destinationList));
+        setNames(new PDFArray(this, destinationList));
     }
 
 }

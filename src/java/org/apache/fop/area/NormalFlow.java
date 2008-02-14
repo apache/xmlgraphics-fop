@@ -37,7 +37,9 @@ public class NormalFlow extends BlockParent {
     /** {@inheritDoc} */
     public void addBlock(Block block) {
         super.addBlock(block);
-        bpd += block.getAllocBPD();
+        if (block.isStacked()) {
+            bpd += block.getAllocBPD();
+        }
     }
 }
 

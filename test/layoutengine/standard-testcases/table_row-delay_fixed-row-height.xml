@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      Tests the row delaying mechanism when a row has a forced height.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="page" page-height="10cm" page-width="15cm" margin="1cm">
+          <fo:region-body background-color="#F0F0F0"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block break-before="page"
+            space-after.minimum="138pt"
+            space-after.optimum="143pt"
+            space-after.maximum="148pt">Before the table.</fo:block>
+          <fo:table width="100%" table-layout="fixed"
+            font-size="14pt">
+            <fo:table-column number-columns-repeated="3" column-width="proportional-column-width(1)"/>
+            <fo:table-body>
+              <fo:table-row
+                block-progression-dimension.minimum="30pt"
+                block-progression-dimension.optimum="30pt"
+                block-progression-dimension.maximum="40pt">
+                <fo:table-cell border="2pt solid black" number-rows-spanned="2"
+                  border-before-width.length="2pt" border-before-width.conditionality="retain"
+                  border-after-width.length="2pt" border-after-width.conditionality="retain">
+                  <fo:block>Cell 1.1 Line 1</fo:block>
+                  <fo:block>Cell 1.1 Line 2</fo:block>
+                  <fo:block>Cell 1.1 Line 3</fo:block>
+                  <fo:block>Cell 1.1 Line 4</fo:block>
+                  <fo:block>Cell 1.1 Line 5</fo:block>
+                  <fo:block>Cell 1.1 Line 6</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="2pt solid blue" font-size="25pt">
+                  <fo:block>Cell 1.2</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="2pt solid black" number-rows-spanned="2"
+                  border-before-width.length="2pt" border-before-width.conditionality="retain"
+                  border-after-width.length="2pt" border-after-width.conditionality="retain">
+                  <fo:block>Cell 1.3 Line 1</fo:block>
+                  <fo:block>Cell 1.3 Line 2</fo:block>
+                  <fo:block>Cell 1.3 Line 3</fo:block>
+                  <fo:block>Cell 1.3 Line 4</fo:block>
+                  <fo:block>Cell 1.3 Line 5</fo:block>
+                  <fo:block>Cell 1.3 Line 6</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell border="8pt solid red" font-size="25pt"
+                  border-before-width.length="8pt" border-before-width.conditionality="retain"
+                  border-after-width.length="8pt" border-after-width.conditionality="retain">
+                  <fo:block>Cell 2.2</fo:block>
+                  <fo:block>Cell 2.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+
+    </fo:root>
+  </fo>
+  <checks>
+
+    <!-- page 1 -->
+    <eval expected="73000"                               xpath="//pageViewport[@nr='1']//flow/block[2]/@bpd"/>
+    <eval expected="73000"                               xpath="//pageViewport[@nr='1']//flow/block[2]/@bpda"/>
+    <!-- cell 1.2 -->
+    <eval expected="30000"                               xpath="//pageViewport[@nr='1']//flow/block[2]/block[1]/@bpd"/>
+    <eval expected="40000"                               xpath="//pageViewport[@nr='1']//flow/block[2]/block[1]/@bpda"/>
+    <eval expected="(solid,#0000ff,2000,collapse-outer)" xpath="//pageViewport[@nr='1']//flow/block[2]/block[1]/@border-before"/>
+    <eval expected="(solid,#ff0000,8000,collapse-inner)" xpath="//pageViewport[@nr='1']//flow/block[2]/block[1]/@border-after"/>
+    <eval expected="1"                             xpath="count(//pageViewport[@nr='1']//flow/block[2]/block[1]/block)"/>
+    <!-- cell 1.1 -->
+    <eval expected="34000"                               xpath="//pageViewport[@nr='1']//flow/block[2]/block[2]/@bpd"/>
+    <eval expected="36000"                               xpath="//pageViewport[@nr='1']//flow/block[2]/block[2]/@bpda"/>
+    <eval expected="(solid,#000000,2000,collapse-outer)" xpath="//pageViewport[@nr='1']//flow/block[2]/block[2]/@border-before"/>
+    <eval expected=""                                    xpath="//pageViewport[@nr='1']//flow/block[2]/block[2]/@border-after"/>
+    <eval expected="37000"                               xpath="//pageViewport[@nr='1']//flow/block[2]/block[3]/@bpd"/>
+    <eval expected="39000"                               xpath="//pageViewport[@nr='1']//flow/block[2]/block[3]/@bpda"/>
+    <eval expected=""                                    xpath="//pageViewport[@nr='1']//flow/block[2]/block[3]/@border-before"/>
+    <eval expected="(solid,#000000,2000,collapse-outer)" xpath="//pageViewport[@nr='1']//flow/block[2]/block[3]/@border-after"/>
+    <eval expected="4"                             xpath="count(//pageViewport[@nr='1']//flow/block[2]/block[4]/block)"/>
+    <!-- cell 2.2 -->
+    <eval expected="30000"                               xpath="//pageViewport[@nr='1']//flow/block[2]/block[5]/@bpd"/>
+    <eval expected="46000"                               xpath="//pageViewport[@nr='1']//flow/block[2]/block[5]/@bpda"/>
+    <eval expected="(solid,#ff0000,8000,collapse-inner)" xpath="//pageViewport[@nr='1']//flow/block[2]/block[5]/@border-before"/>
+    <eval expected="(solid,#ff0000,8000,collapse-outer)" xpath="//pageViewport[@nr='1']//flow/block[2]/block[5]/@border-after"/>
+    <eval expected="1"                             xpath="count(//pageViewport[@nr='1']//flow/block[2]/block[5]/block)"/>
+    <!-- cell 1.3 -->
+    <eval expected="34000"                               xpath="//pageViewport[@nr='1']//flow/block[2]/block[6]/@bpd"/>
+    <eval expected="36000"                               xpath="//pageViewport[@nr='1']//flow/block[2]/block[6]/@bpda"/>
+    <eval expected="(solid,#000000,2000,collapse-outer)" xpath="//pageViewport[@nr='1']//flow/block[2]/block[6]/@border-before"/>
+    <eval expected=""                                    xpath="//pageViewport[@nr='1']//flow/block[2]/block[6]/@border-after"/>
+    <eval expected="37000"                               xpath="//pageViewport[@nr='1']//flow/block[2]/block[7]/@bpd"/>
+    <eval expected="39000"                               xpath="//pageViewport[@nr='1']//flow/block[2]/block[7]/@bpda"/>
+    <eval expected=""                                    xpath="//pageViewport[@nr='1']//flow/block[2]/block[7]/@border-before"/>
+    <eval expected="(solid,#000000,2000,collapse-outer)" xpath="//pageViewport[@nr='1']//flow/block[2]/block[7]/@border-after"/>
+    <eval expected="4"                             xpath="count(//pageViewport[@nr='1']//flow/block[2]/block[8]/block)"/>
+    <!-- page 2 -->
+    <eval expected="38000"                               xpath="//pageViewport[@nr='2']//flow/block[1]/@bpd"/>
+    <eval expected="38000"                               xpath="//pageViewport[@nr='2']//flow/block[1]/@bpda"/>
+    <!-- cell 1.1 -->
+    <eval expected="36000"                               xpath="//pageViewport[@nr='2']//flow/block[1]/block[1]/@bpd"/>
+    <eval expected="40000"                               xpath="//pageViewport[@nr='2']//flow/block[1]/block[1]/@bpda"/>
+    <eval expected="(solid,#000000,2000,collapse-outer)" xpath="//pageViewport[@nr='2']//flow/block[1]/block[1]/@border-before"/>
+    <eval expected="(solid,#000000,2000,collapse-outer)" xpath="//pageViewport[@nr='2']//flow/block[1]/block[1]/@border-after"/>
+    <eval expected="2"                             xpath="count(//pageViewport[@nr='2']//flow/block[1]/block[2]/block)"/>
+    <!-- cell 2.2 -->
+    <eval expected="30000"                               xpath="//pageViewport[@nr='2']//flow/block[1]/block[3]/@bpd"/>
+    <eval expected="46000"                               xpath="//pageViewport[@nr='2']//flow/block[1]/block[3]/@bpda"/>
+    <eval expected="(solid,#ff0000,8000,collapse-outer)" xpath="//pageViewport[@nr='2']//flow/block[1]/block[3]/@border-before"/>
+    <eval expected="(solid,#ff0000,8000,collapse-outer)" xpath="//pageViewport[@nr='2']//flow/block[1]/block[3]/@border-after"/>
+    <eval expected="1"                             xpath="count(//pageViewport[@nr='2']//flow/block[1]/block[3]/block)"/>
+    <!-- cell 1.3 -->
+    <eval expected="36000"                               xpath="//pageViewport[@nr='2']//flow/block[1]/block[4]/@bpd"/>
+    <eval expected="40000"                               xpath="//pageViewport[@nr='2']//flow/block[1]/block[4]/@bpda"/>
+    <eval expected="(solid,#000000,2000,collapse-outer)" xpath="//pageViewport[@nr='2']//flow/block[1]/block[4]/@border-before"/>
+    <eval expected="(solid,#000000,2000,collapse-outer)" xpath="//pageViewport[@nr='2']//flow/block[1]/block[4]/@border-after"/>
+    <eval expected="2"                             xpath="count(//pageViewport[@nr='2']//flow/block[1]/block[5]/block)"/>
+
+    <element-list category="breaker">
+      <skip>3</skip>
+      <box w="200"/>
+      <penalty w="34800" p="INF"/>
+      <box w="33600"/>
+      <penalty w="1800" p="0"/>
+      <box w="31200"/>
+      <penalty w="8000" p="0"/>
+      <box w="0"/>
+      <penalty w="21000" p="0"/>
+      <box w="0"/>
+      <penalty w="37800" p="0"/>
+      <box w="38000"/>
+      <skip>3</skip>
+    </element-list>
+  </checks>
+</testcase>

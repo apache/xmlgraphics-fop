@@ -36,6 +36,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.output.NullOutputStream;
 
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
@@ -63,7 +64,9 @@ public class MemoryEater {
         transformer.setParameter("repeats", new Integer(replicatorRepeats));
         
         OutputStream out = new NullOutputStream(); //write to /dev/nul
-        Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, out);
+        FOUserAgent userAgent = fopFactory.newFOUserAgent();
+        userAgent.setBaseURL(foFile.getParentFile().toURL().toExternalForm());
+        Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent, out);
         Result res = new SAXResult(fop.getDefaultHandler());
         
         transformer.transform(src, res);

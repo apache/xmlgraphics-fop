@@ -90,11 +90,12 @@ public class PDFImageXObject extends PDFXObject {
         put("Subtype", new PDFName("Image"));
         put("Width", new Integer(pdfimage.getWidth()));
         put("Height", new Integer(pdfimage.getHeight()));
-        put("BitsPerComponent", new Integer(pdfimage.getBitsPerPixel()));
+        put("BitsPerComponent", new Integer(pdfimage.getBitsPerComponent()));
 
         PDFICCStream pdfICCStream = pdfimage.getICCStream();
         if (pdfICCStream != null) {
-            put("ColorSpace", new PDFArray(new Object[] {new PDFName("ICCBased"), pdfICCStream}));
+            put("ColorSpace", new PDFArray(this,
+                    new Object[] {new PDFName("ICCBased"), pdfICCStream}));
         } else {
             PDFDeviceColorSpace cs = pdfimage.getColorSpace();
             put("ColorSpace", new PDFName(cs.getName()));
@@ -107,7 +108,7 @@ public class PDFImageXObject extends PDFXObject {
              */
             final Float zero = new Float(0.0f);
             final Float one = new Float(1.0f);
-            PDFArray decode = new PDFArray();
+            PDFArray decode = new PDFArray(this);
             for (int i = 0, c = pdfimage.getColorSpace().getNumComponents(); i < c; i++) {
                 decode.add(one);
                 decode.add(zero);
@@ -117,19 +118,26 @@ public class PDFImageXObject extends PDFXObject {
 
         if (pdfimage.isTransparent()) {
             PDFColor transp = pdfimage.getTransparentColor();
-            PDFArray mask = new PDFArray();
-            mask.add(new Integer(transp.red255()));
-            mask.add(new Integer(transp.red255()));
-            mask.add(new Integer(transp.green255()));
-            mask.add(new Integer(transp.green255()));
-            mask.add(new Integer(transp.blue255()));
-            mask.add(new Integer(transp.blue255()));
+            PDFArray mask = new PDFArray(this);
+            if (pdfimage.getColorSpace().isGrayColorSpace()) {
+                mask.add(new Integer(transp.red255()));
+                mask.add(new Integer(transp.red255()));
+            } else {
+                mask.add(new Integer(transp.red255()));
+                mask.add(new Integer(transp.red255()));
+                mask.add(new Integer(transp.green255()));
+                mask.add(new Integer(transp.green255()));
+                mask.add(new Integer(transp.blue255()));
+                mask.add(new Integer(transp.blue255()));
+            }
             put("Mask", mask);
         }
         PDFReference ref = pdfimage.getSoftMaskReference();
         if (ref != null) {
             put("SMask", ref);
         }
+        //Important: do this at the end so previous values can be overwritten.
+        pdfimage.populateXObjectDictionary(this);
     }
     
     /** {@inheritDoc} */

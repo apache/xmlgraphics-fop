@@ -26,27 +26,17 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 
-// DOM
 import org.w3c.dom.Document;
 
-// Batik
-import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.bridge.BridgeContext;
+import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.gvt.GraphicsNode;
-
-// FOP
-import org.apache.fop.render.Graphics2DAdapter;
-import org.apache.fop.render.Graphics2DImagePainter;
-import org.apache.fop.render.RendererContextConstants;
-import org.apache.fop.render.XMLHandler;
-import org.apache.fop.render.RendererContext;
-import org.apache.fop.render.RendererContext.RendererContextWrapper;
-import org.apache.fop.svg.SVGUserAgent;
-
-// Commons-Logging
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.fop.render.RendererContext.RendererContextWrapper;
+import org.apache.fop.svg.SVGUserAgent;
 
 /**
  * Generic XML handler for SVG. Uses Apache Batik for SVG processing and simply paints to
@@ -76,6 +66,7 @@ public abstract class AbstractGenericSVGHandler implements XMLHandler, RendererC
      */
     protected void renderSVGDocument(final RendererContext context,
             final Document doc) throws IOException {
+        updateRendererContext(context);
         final RendererContextWrapper wrappedContext = RendererContext.wrapRendererContext(context);
         int x = wrappedContext.getCurrentXPosition();
         int y = wrappedContext.getCurrentYPosition();
@@ -121,6 +112,15 @@ public abstract class AbstractGenericSVGHandler implements XMLHandler, RendererC
         Graphics2DAdapter adapter = context.getRenderer().getGraphics2DAdapter();
         adapter.paintImage(painter, context, 
                 x, y, wrappedContext.getWidth(), wrappedContext.getHeight()); 
+    }
+
+    /**
+     * Override this method to update the renderer context if it needs special settings for
+     * certain conditions.
+     * @param context the renderer context
+     */
+    protected void updateRendererContext(RendererContext context) {
+        //nop
     }
 
     /** {@inheritDoc} */

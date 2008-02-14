@@ -465,7 +465,9 @@ public class PageBreaker extends AbstractBreaker {
         } else if (breakVal == Constants.EN_NONE) {
             curPage.getPageViewport().createSpan(false);
             return;
-        } else if (breakVal == Constants.EN_COLUMN || breakVal <= 0) {
+        } else if (breakVal == Constants.EN_COLUMN
+                || breakVal <= 0
+                || breakVal == Constants.EN_AUTO) {
             PageViewport pv = curPage.getPageViewport();
             
             //Check if previous page was spanned

@@ -24,11 +24,24 @@ import java.io.OutputStream;
 
 import javax.xml.transform.Templates;
 
+/**
+ * Represents an FO processor.
+ */
 public interface FOProcessor {
 
-    String ROLE = FOProcessor.class.getName();
-
+    /**
+     * Process a file.
+     * @param in the InputStream for the FO or XML file
+     * @param templates a JAXP Templates object for an XSLT transformation or null
+     * @param out the OutputStream for the target file
+     * @throws Exception if an error occurs
+     */
     void process(InputStream in, Templates templates, OutputStream out)
-            throws org.apache.fop.apps.FOPException, java.io.IOException;
+            throws Exception;
 
+    /**
+     * Returns the target file extension for the configured output format.
+     * @return the target file extension (for example ".pdf")
+     */
+    String getTargetFileExtension();
 }

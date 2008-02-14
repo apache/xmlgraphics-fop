@@ -33,17 +33,7 @@ package org.apache.fop.pdf;
  * to the memory profile this was causing OOM issues. So, we store
  * only the object ID of the parent, rather than the parent itself.
  */
-public class PDFResourceContext extends PDFObject {
-
-    /**
-     * the page's /Resource object
-     */
-    protected PDFResources resources;
-
-    /**
-     * the list of annotation objects for this page
-     */
-    protected PDFAnnotList annotList;
+public class PDFResourceContext extends PDFDictionary {
 
     /**
      * Creates a new ResourceContext.
@@ -54,9 +44,7 @@ public class PDFResourceContext extends PDFObject {
         super();
 
         /* set fields using parameters */
-        //this.document = doc;
-        this.resources = resources;
-        this.annotList = null;
+        put("Resources", resources);
     }
 
     /**
@@ -65,7 +53,7 @@ public class PDFResourceContext extends PDFObject {
      * @return the resources in this resource context
      */
     public PDFResources getPDFResources() {
-        return this.resources;
+        return (PDFResources)get("Resources");
     }
 
     /**
@@ -74,10 +62,12 @@ public class PDFResourceContext extends PDFObject {
      * @param annot a PDFAnnotList list of annotations
      */
     public void addAnnotation(PDFObject annot) {
-        if (this.annotList == null) {
-            this.annotList = getDocument().getFactory().makeAnnotList();
+        PDFAnnotList annotList = getAnnotations();
+        if (annotList == null) {
+            annotList = getDocument().getFactory().makeAnnotList();
+            put("Annots", annotList);
         }
-        this.annotList.addAnnot(annot);
+        annotList.addAnnot(annot);
     }
 
     /**
@@ -86,7 +76,7 @@ public class PDFResourceContext extends PDFObject {
      * @return the current annotation list
      */
     public PDFAnnotList getAnnotations() {
-        return this.annotList;
+        return (PDFAnnotList)get("Annots");
     }
 
     /**

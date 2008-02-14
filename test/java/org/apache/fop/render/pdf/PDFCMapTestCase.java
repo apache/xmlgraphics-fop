@@ -15,18 +15,20 @@
  * limitations under the License.
  */
 
-/* $Id: PDFCMap.java 426576 2006-07-28 15:44:37Z jeremias $ */
+/* $Id$ */
 
 package org.apache.fop.render.pdf;
 
-import org.apache.fop.pdf.PDFCMap;
+import java.io.StringWriter;
 
 import junit.framework.TestCase;
+
+import org.apache.fop.pdf.CMapBuilder;
 
 /** Simple sanity test of the PDFCmap class */
 public class PDFCMapTestCase extends TestCase {
     
-    public void testPDFCMapFillInPDF() {
+    public void testPDFCMapFillInPDF() throws Exception {
         final String EOL = "\n";
         final String expected = 
             "%!PS-Adobe-3.0 Resource-CMap" + EOL
@@ -59,10 +61,10 @@ public class PDFCMapTestCase extends TestCase {
             +"%%EOF" + EOL
         ;
         
-        final PDFCMap m = new PDFCMap("test", null);
-        final StringBuffer b = new StringBuffer();
-        m.fillInPDF(b);
-        final String actual = b.toString();
+        final StringWriter w = new StringWriter();
+        final CMapBuilder builder = new CMapBuilder(w, "test");
+        builder.writeCMap();
+        final String actual = w.getBuffer().toString();
         assertEquals("PDFCMap output matches expected PostScript code", expected, actual);
     }
 

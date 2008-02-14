@@ -41,9 +41,9 @@
     </fo:root>
   </fo>
   <checks>
-    <eval expected="56692" xpath="//flow/block[2]/lineArea/viewport/@ipd"/>
-    <eval expected="56692" xpath="//flow/block[2]/lineArea/viewport/@ipda"/>
-    <eval expected="56692" xpath="//flow/block[2]/lineArea/viewport/@bpd"/>
-    <eval expected="56692" xpath="//flow/block[2]/lineArea/viewport/@bpda"/>
+    <eval expected="56692" tolerance="40" xpath="//flow/block[2]/lineArea/viewport/@ipd"/>
+    <eval expected="56692" tolerance="40" xpath="//flow/block[2]/lineArea/viewport/@ipda"/>
+    <eval expected="56692" tolerance="40" xpath="//flow/block[2]/lineArea/viewport/@bpd"/>
+    <eval expected="56692" tolerance="40" xpath="//flow/block[2]/lineArea/viewport/@bpda"/>
   </checks>
 </testcase>

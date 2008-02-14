@@ -277,7 +277,23 @@
       <output-profile>C:\FOP\Color\EuropeISOCoatedFOGRA27.icc</output-profile>
       
       <fonts....
-    </renderer>]]></source>
+      </renderer>]]></source>
+      <p>
+        Some people don't have high requirements on color fidelity but instead want the smallest
+        PDF file sizes possible. In this case it's possible to disable the default sRGB color space
+        which XSL-FO requires. This will cause RGB colors to be generated as device-specific RGB.
+        Please note that this option is unavailable (and will cause an error) if you enable
+        PDF/A or PDF/X functionality or if you specify an output profile. This setting will make the
+        PDF about 4KB smaller. To disable the sRGB color space add the following setting:
+      </p>
+      <source><![CDATA[
+    <renderer mime="application/pdf">
+      <filterList...
+      
+      <disable-srgb-colorspace>true</disable-srgb-colorspace>
+      
+      <fonts....
+      </renderer>]]></source>
     </section>
     <section id="ps-renderer">
       <title>Special Settings for the PostScript Renderer</title>

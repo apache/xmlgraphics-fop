@@ -25,6 +25,8 @@ import java.util.Date;
 
 import javax.xml.transform.TransformerConfigurationException;
 
+import org.xml.sax.SAXException;
+
 import org.apache.xmlgraphics.xmp.Metadata;
 import org.apache.xmlgraphics.xmp.XMPSerializer;
 import org.apache.xmlgraphics.xmp.schemas.DublinCoreAdapter;
@@ -35,8 +37,6 @@ import org.apache.xmlgraphics.xmp.schemas.pdf.AdobePDFAdapter;
 import org.apache.xmlgraphics.xmp.schemas.pdf.AdobePDFSchema;
 import org.apache.xmlgraphics.xmp.schemas.pdf.PDFAAdapter;
 import org.apache.xmlgraphics.xmp.schemas.pdf.PDFAXMPSchema;
-
-import org.xml.sax.SAXException;
 
 /**
  * Special PDFStream for Metadata.
@@ -118,10 +118,11 @@ public class PDFMetadata extends PDFStream {
      * @param pdfDoc the PDF Document
      * @return the requested XMP metadata
      */
-    public static Metadata createXMPFromUserAgent(PDFDocument pdfDoc) {
+    public static Metadata createXMPFromPDFDocument(PDFDocument pdfDoc) {
         Metadata meta = new Metadata();
         
         PDFInfo info = pdfDoc.getInfo();
+        PDFRoot root = pdfDoc.getRoot();
 
         //Set creation date if not available, yet
         if (info.getCreationDate() == null) {
@@ -144,6 +145,10 @@ public class PDFMetadata extends PDFStream {
         if (info.getSubject() != null) {
             //Subject maps to dc:description["x-default"] as per ISO-19005-1:2005/Cor.1:2007
             dc.setDescription(null, info.getSubject());
+        }
+        if (root.getLanguage() != null) {
+            //Note: No check is performed to make sure the value is valid RFC 3066!
+            dc.addLanguage(root.getLanguage());
         }
         dc.addDate(info.getCreationDate());
 

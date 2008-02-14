@@ -105,7 +105,7 @@ out = proc.getOutputStream();]]></source>
       <section id="pdf-postprocess">
         <title>Post-processing</title>
         <p>
-          FOP does not currently support several desirable PDF features: XMP metadata and watermarks. 
+          FOP does not currently support several desirable PDF features: watermarks and signatures. 
           One workaround is to use Adobe Acrobat (the full version, not the Reader) to process 
           the file manually or with scripting that it supports.
         </p>
@@ -661,8 +661,14 @@ out = proc.getOutputStream();]]></source>
   <p>
     JFOR, an open source XSL-FO to RTF converter has been integrated into Apache FOP.
     This will create an RTF (rich text format) document that will
-    attempt to contain as much information from the fo document as
-    possible. The RTF output follows Microsoft's RTF specifications
+    attempt to contain as much information from the XSL-FO document as
+    possible. It should be noted that is not possible (due to RTF's limitations) to map all
+    XSL-FO features to RTF. For complex documents, the RTF output will never reach the feature
+    level from PDF, for example. Thus, using RTF output is only recommended for simple documents
+    such as letters.
+  </p>
+  <p>
+    The RTF output follows Microsoft's RTF specifications
     and produces best results on Microsoft Word.
   </p>
   <note>RTF output is currently unmaintained and lacks many features compared to other output

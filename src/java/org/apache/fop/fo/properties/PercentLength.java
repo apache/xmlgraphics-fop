@@ -80,16 +80,12 @@ public class PercentLength extends LengthProperty {
         return false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public double getNumericValue() {
         return getNumericValue(null);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public double getNumericValue(PercentBaseContext context) {
         try {
             resolvedValue = factor * lbase.getBaseLength(context);
@@ -98,6 +94,11 @@ public class PercentLength extends LengthProperty {
             log.error(exc);
             return 0;
         }
+    }
+    
+    /** {@inheritDoc} */
+    public String getString() {
+        return (factor * 100.0) + "%";
     }
 
     /**
@@ -108,9 +109,7 @@ public class PercentLength extends LengthProperty {
         return (int) getNumericValue();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int getValue(PercentBaseContext context) {
         return (int) getNumericValue(context);
     }
@@ -119,8 +118,11 @@ public class PercentLength extends LengthProperty {
      * @return the String equivalent of this
      */
     public String toString() {
-        // TODO: What about the base value?
-        return (new Double(factor * 100.0).toString()) + "%";
+        StringBuffer sb = 
+            new StringBuffer(PercentLength.class.getName())
+                .append("[factor=").append(factor)
+                .append(",lbase=").append(lbase).append("]");
+        return sb.toString();
     }
 
 }

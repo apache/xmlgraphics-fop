@@ -65,9 +65,7 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
                     || (len.isAbsolute() && len.getValue() < 0));
         }
         
-        /**
-         * {@inheritDoc}
-         */        
+        /** {@inheritDoc} */        
         public Property convertProperty(Property p, 
                                 PropertyList propertyList, FObj fo)
                         throws PropertyException {
@@ -84,7 +82,7 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
                         log.warn(FObj.decorateWithContextInfo(
                                 "Replaced negative value (" + len + ") for " + getName()
                                 + " with 0mpt", fo));
-                        p = new FixedLength(0);
+                        p = FixedLength.ZERO_FIXED_LENGTH;
                     }
                 }
             }
@@ -107,7 +105,7 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
                         log.warn("Replaced negative value (" + len + ") for " + getName()
                                 + " with 0mpt");
                         val.setComponent(subpropertyId,
-                                new FixedLength(0), false);
+                                FixedLength.ZERO_FIXED_LENGTH, false);
                         return baseProperty;
                     }
                 }

@@ -63,10 +63,6 @@
     <element-list category="breaker">
       <box w="75600"/> <!-- block-container as spacer -->
       <penalty w="0" p="0"/>
-      <box w="0"/>
-      <penalty w="9600" p="&gt;0"/>
-      <box w="0"/>
-      <penalty w="19200" p="&gt;0"/>
       <box w="28800"/>
       <penalty w="0" p="0"/>
       <box w="28800"/>

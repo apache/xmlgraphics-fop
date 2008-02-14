@@ -19,6 +19,7 @@
 
 package org.apache.fop.layoutmgr.table;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,7 +33,7 @@ import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.flow.table.EffRow;
-import org.apache.fop.fo.flow.table.GridUnit;
+import org.apache.fop.fo.flow.table.PrimaryGridUnit;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableBody;
 import org.apache.fop.fo.flow.table.TableRow;
@@ -47,6 +48,7 @@ import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.layoutmgr.SpaceResolver.SpaceHandlingBreakPosition;
+import org.apache.fop.util.BreakUtil;
 
 /**
  * Layout manager for table contents, particularly managing the creation of combined element lists.
@@ -68,7 +70,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
     private int startXOffset;
     private int usedBPD;
     
-    private TableStepper stepper = new TableStepper(this);
+    private TableStepper stepper;
         
     /**
      * Main constructor
@@ -84,6 +86,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
         if (table.getTableFooter() != null) {
             footerIter = new TableRowIterator(table, TableRowIterator.FOOTER);
         }
+        stepper = new TableStepper(this);
     }
     
     /**
@@ -125,7 +128,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
         return this.footerList;
     }
 
-    /** @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(LayoutContext, int) */
+    /** {@inheritDoc} */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         if (log.isDebugEnabled()) {
             log.debug("==> Columns: " + getTableLM().getColumns());
@@ -210,10 +213,14 @@ public class TableContentLayoutManager implements PercentBaseContext {
         while ((rowGroup = iter.getNextRowGroup()) != null) {
             RowGroupLayoutManager rowGroupLM = new RowGroupLayoutManager(getTableLM(), rowGroup,
                     stepper);
-            if (breakBetween == Constants.EN_AUTO) {
-                // TODO improve
-                breakBetween = rowGroupLM.getBreakBefore();
-            }
+             // TODO
+             // The RowGroupLM.getBreakBefore method will work correctly only after
+             // getNextKnuthElements is called. Indeed TableCellLM will set the values for
+             // breaks on PrimaryGridUnit once it has got the Knuth elements of its
+             // children. This can be changed once all the LMs adopt the same scheme of
+             // querying childrens LMs for breaks instead of producing penalty elements
+            List nextRowGroupElems = rowGroupLM.getNextKnuthElements(context, alignment, bodyType);
+            breakBetween = BreakUtil.compareBreakClasses(breakBetween, rowGroupLM.getBreakBefore());
             if (breakBetween != Constants.EN_AUTO) {
                 if (returnList.size() > 0) {
                     BreakElement breakPoss = (BreakElement) returnList.getLast();
@@ -224,7 +231,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
                             0, -KnuthPenalty.INFINITE, breakBetween, context));
                 }
             }
-            returnList.addAll(rowGroupLM.getNextKnuthElements(context, alignment, bodyType));
+            returnList.addAll(nextRowGroupElems);
             breakBetween = rowGroupLM.getBreakAfter();
         }
         // Break after the table's last row
@@ -271,8 +278,8 @@ public class TableContentLayoutManager implements PercentBaseContext {
      * @param gu the grid unit
      * @return the requested X offset
      */
-    protected int getXOffsetOfGridUnit(GridUnit gu) {
-        int col = gu.getStartCol();
+    protected int getXOffsetOfGridUnit(PrimaryGridUnit gu) {
+        int col = gu.getColIndex();
         return startXOffset + getTableLM().getColumns().getXOffset(col + 1, getTableLM());
     }
     
@@ -321,9 +328,12 @@ public class TableContentLayoutManager implements PercentBaseContext {
             } else if (pos instanceof TableHFPenaltyPosition) {
                 //ignore for now, see special handling below if break is at a penalty
                 //Only if the last position in this part/page us such a position it will be used 
-            } else {
-                //leave order as is for the rest
+            } else if (pos instanceof TableContentPosition) {
                 positions.add(pos);
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("Ignoring position: " + pos);
+                }
             }
         }
         if (lastPos instanceof TableHFPenaltyPosition) {
@@ -349,17 +359,20 @@ public class TableContentLayoutManager implements PercentBaseContext {
             //header positions for the last part are the second-to-last element and need to
             //be handled first before all other TableContentPositions
             PositionIterator nestedIter = new KnuthPossPosIter(headerElements);
-            iterateAndPaintPositions(nestedIter, painter);
+            iterateAndPaintPositions(nestedIter, painter, false);
         }
         
         //Iterate over all steps
         Iterator posIter = positions.iterator();
-        iterateAndPaintPositions(posIter, painter);
+        painter.startBody();
+        // Here we are sure that posIter iterates only over TableContentPosition instances
+        iterateAndPaintPositions(posIter, painter, footerElements == null);
+        painter.endBody();
 
         if (footerElements != null) {
             //Positions for footers are simply added at the end
             PositionIterator nestedIter = new KnuthPossPosIter(footerElements);
-            iterateAndPaintPositions(nestedIter, painter);
+            iterateAndPaintPositions(nestedIter, painter, true);
         }
         
         this.usedBPD += painter.getAccumulatedBPD();
@@ -377,9 +390,12 @@ public class TableContentLayoutManager implements PercentBaseContext {
      * @param iterator iterator over Position elements. Those positions correspond to the
      * elements of the table present on the current page
      * @param painter
+     * @param lastOnPage true if the corresponding part will be the last on the page
+     * (either body or footer, obviously)
      */
-    private void iterateAndPaintPositions(Iterator iterator, RowPainter painter) {
-        List lst = new java.util.ArrayList();
+    private void iterateAndPaintPositions(Iterator iterator, RowPainter painter,
+            boolean lastOnPage) {
+        List lst = new ArrayList();
         boolean firstPos = false;
         TableBody body = null;
         while (iterator.hasNext()) {
@@ -392,22 +408,18 @@ public class TableContentLayoutManager implements PercentBaseContext {
                     body = part.pgu.getBody();
                 }
                 if (tcpos.getFlag(TableContentPosition.FIRST_IN_ROWGROUP)
-                        && tcpos.row.getFlag(EffRow.FIRST_IN_PART)) {
+                        && tcpos.getRow().getFlag(EffRow.FIRST_IN_PART)) {
                     firstPos = true;
 
                 }
                 if (tcpos.getFlag(TableContentPosition.LAST_IN_ROWGROUP) 
-                        && tcpos.row.getFlag(EffRow.LAST_IN_PART)) {
+                        && tcpos.getRow().getFlag(EffRow.LAST_IN_PART)) {
                     log.trace("LAST_IN_ROWGROUP + LAST_IN_PART");
                     handleMarkersAndPositions(lst, body, firstPos, true, painter);
                     //reset
                     firstPos = false;
                     body = null;
                     lst.clear();
-                }
-            } else {
-                if (log.isDebugEnabled()) {
-                    log.debug("Ignoring position: " + pos);
                 }
             }
         }
@@ -417,7 +429,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
             // lastPos is necessarily false
             handleMarkersAndPositions(lst, body, firstPos, false, painter);
         }
-        painter.addAreasAndFlushRow(true);
+        painter.addAreasAndFlushRow(true, lastOnPage);
     }
 
     private void handleMarkersAndPositions(List positions, TableBody body, boolean firstPos,

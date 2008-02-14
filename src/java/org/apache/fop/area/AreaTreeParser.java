@@ -47,6 +47,10 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.Trait.Background;
 import org.apache.fop.area.Trait.InternalLink;
@@ -69,8 +73,6 @@ import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.image.FopImage;
-import org.apache.fop.image.ImageFactory;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.util.ColorUtil;
 import org.apache.fop.util.ContentHandlerFactory;
@@ -139,7 +141,6 @@ public class AreaTreeParser {
 
         private Stack areaStack = new Stack();
         private boolean firstFlow;
-        private boolean pendingStartPageSequence;
 
         private Stack delegateStack = new Stack();
         private ContentHandler delegate;
@@ -347,8 +348,12 @@ public class AreaTreeParser {
         private class PageSequenceMaker extends AbstractMaker {
 
             public void startElement(Attributes attributes) {
-                pendingStartPageSequence = true;
-                //treeModel.startPageSequence(null); Done after title or on the first viewport
+                PageSequence pageSequence = new PageSequence(null);
+                String lang = attributes.getValue("language");
+                pageSequence.setLanguage(lang);
+                String country = attributes.getValue("country");
+                pageSequence.setCountry(country);
+                areaStack.push(pageSequence);
             }
         }
 
@@ -362,19 +367,19 @@ public class AreaTreeParser {
 
             public void endElement() {
                 LineArea line = (LineArea)areaStack.pop();
-                treeModel.startPageSequence(line);
-                pendingStartPageSequence = false;
+                PageSequence pageSequence = (PageSequence)areaStack.peek();
+                pageSequence.setTitle(line);
             }
-
 
         }
 
         private class PageViewportMaker extends AbstractMaker {
 
             public void startElement(Attributes attributes) {
-                if (pendingStartPageSequence) {
-                    treeModel.startPageSequence(null);
-                    pendingStartPageSequence = false;
+                if (!areaStack.isEmpty()) {
+                    PageSequence pageSequence = (PageSequence)areaStack.peek();
+                    treeModel.startPageSequence(pageSequence);
+                    areaStack.pop();
                 }
                 if (currentPageViewport != null) {
                     throw new IllegalStateException("currentPageViewport must be null");
@@ -1048,22 +1053,19 @@ public class AreaTreeParser {
                         } catch (PropertyException e) {
                             throw new IllegalArgumentException(e.getMessage());
                         }
-                        String url = attributes.getValue("bkg-img");
-                        if (url != null) {
-                            bkg.setURL(url);
+                        String uri = attributes.getValue("bkg-img");
+                        if (uri != null) {
+                            bkg.setURL(uri);
 
-                            ImageFactory fact = userAgent.getFactory().getImageFactory();
-                            FopImage img = fact.getImage(url, userAgent);
-                            if (img == null) {
-                                log.error("Background image not available: " + url);
-                            } else {
-                                // load dimensions
-                                if (!img.load(FopImage.DIMENSIONS)) {
-                                    log.error("Cannot read background image dimensions: "
-                                            + url);
-                                }
+                            try {
+                                ImageManager manager = userAgent.getFactory().getImageManager();
+                                ImageSessionContext sessionContext
+                                    = userAgent.getImageSessionContext();
+                                ImageInfo info = manager.getImageInfo(uri, sessionContext);
+                                bkg.setImageInfo(info);
+                            } catch (Exception e) {
+                                log.error("Background image not available: " + uri, e);
                             }
-                            bkg.setFopImage(img);
 
                             String repeat = attributes.getValue("bkg-repeat");
                             if (repeat != null) {

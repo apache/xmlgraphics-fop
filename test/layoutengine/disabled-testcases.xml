@@ -27,13 +27,6 @@
     nominal line.</description>
   </testcase>
   <testcase>
-    <name>Bugzilla #36391: reference-orientation</name>
-    <file>block-container_reference-orientation_bug36391.xml</file>
-    <description>There's a problem involving nested block-containers
-    and reference-orientation 180/-180.</description>
-    <reference>http://issues.apache.org/bugzilla/show_bug.cgi?id=36391</reference>
-  </testcase>
-  <testcase>
     <name>Auto-height block-containers produce fences</name>
     <file>block-container_space-before_space-after_3.xml</file>
     <description>Block-containers with no height currently don't
