@@ -548,14 +548,6 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
      */
     protected void addKnuthElementsForBorderPaddingStart(List returnList) {
         //Border and Padding (start)
-        /**
-         * If the returnlist is a BlockKnuthSequence, the border and padding should be added
-         * to the first paragraph inside it, but it is too late to do that now.
-         * At least, avoid adding it to the bpd sequence.
-         */
-        if (returnList instanceof BlockKnuthSequence) {
-            return;
-        }
         CommonBorderPaddingBackground borderAndPadding = fobj.getCommonBorderPaddingBackground();
         if (borderAndPadding != null) {
             int ipStart = borderAndPadding.getBorderStartWidth(false)
@@ -563,7 +555,6 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
             if (ipStart > 0) {
                 KnuthBox bap = new KnuthBox(ipStart, getAuxiliaryPosition(), true);
                 if (returnList instanceof KnuthSequence) {
-                // if (false) {
                     KnuthSequence seq = (KnuthSequence) returnList;
                     seq.addKnuthElementForBorderPaddingStart(bap);
                 } else {
@@ -579,14 +570,6 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
      */
     protected void addKnuthElementsForBorderPaddingEnd(List returnList) {
         //Border and Padding (after)
-        /**
-         * If the returnlist is a BlockKnuthSequence, the border and padding should be added
-         * to the last paragraph inside it, but it is too late to do that now.
-         * At least, avoid adding it to the bpd sequence.
-         */
-        if (returnList instanceof BlockKnuthSequence) {
-            return;
-        }
         CommonBorderPaddingBackground borderAndPadding = fobj.getCommonBorderPaddingBackground();
         if (borderAndPadding != null) {
             int ipEnd = borderAndPadding.getBorderEndWidth(false)
@@ -594,7 +577,6 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
             if (ipEnd > 0) {
                 KnuthBox bap = new KnuthBox(ipEnd, getAuxiliaryPosition(), true);
                 if (returnList instanceof KnuthSequence) {
-                // if (false) {
                     KnuthSequence seq = (KnuthSequence) returnList;
                     seq.addKnuthElementForBorderPaddingEnd(bap);
                 } else {
