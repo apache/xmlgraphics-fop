@@ -286,7 +286,6 @@ public class TableBody extends TableCellContainer {
                 getTable().getRowGroupBuilder().endRow(this);
             }
         }
-        rowsStarted = true;
     }
 
 }
