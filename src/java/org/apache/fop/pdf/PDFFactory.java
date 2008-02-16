@@ -40,7 +40,6 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.xmlgraphics.fonts.Glyphs;
 import org.apache.xmlgraphics.xmp.Metadata;
 
 import org.apache.fop.fonts.CIDFont;
@@ -1252,15 +1251,17 @@ public class PDFFactory {
                     PDFEncoding.DifferencesBuilder builder
                             = pdfEncoding.createDifferencesBuilder();
                     int start = -1;
+                    String[] winansiNames = winansi.getCharNameMap();
+                    String[] charNameMap = mapping.getCharNameMap();
                     for (int i = 0; i < 256; i++) {
-                        char wac = winansi.getUnicodeForIndex(i);
-                        char c = mapping.getUnicodeForIndex(i);
-                        if (wac != c) {
+                        String wac = winansiNames[i];
+                        String c = charNameMap[i];
+                        if (!wac.equals(c)) {
                             if (start != i) {
                                 builder.addDifference(i);
                                 start = i;
                             }
-                            builder.addName(Glyphs.charToGlyphName(c));
+                            builder.addName(c);
                             start++;
                         }
                     }

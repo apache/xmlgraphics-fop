@@ -40,100 +40,19 @@
 
 package org.apache.fop.fonts;
 
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Collections;
 
-import org.apache.fop.util.CharUtilities;
-
-public class CodePointMapping {
+public class CodePointMapping extends AbstractCodePointMapping {
 
 <xsl:apply-templates mode="constant"/>
 
-    private String name;
-    private char[] latin1Map;
-    private char[] characters;
-    private char[] codepoints;
-    private char[] unicodeMap; //code point to Unicode char
-
     public CodePointMapping(String name, int[] table) {
-        this.name = name;
-        int nonLatin1 = 0;
-        latin1Map = new char[256];
-        unicodeMap = new char[256];
-        Arrays.fill(unicodeMap, CharUtilities.NOT_A_CHARACTER);
-        for (int i = 0; i &lt; table.length; i += 2) {
-            char unicode = (char)table[i + 1];
-            if (unicode &lt; 256) {
-                if (latin1Map[unicode] == 0) {
-                    latin1Map[unicode] = (char) table[i];
-                }
-            } else {
-                ++nonLatin1;
-            }
-            if (unicodeMap[table[i]] == CharUtilities.NOT_A_CHARACTER) {
-                unicodeMap[table[i]] = unicode;
-            }
-        }
-        characters = new char[nonLatin1];
-        codepoints = new char[nonLatin1];
-        int top = 0;
-        for (int i = 0; i &lt; table.length; i += 2) {
-            char c = (char) table[i + 1];
-            if (c >= 256) {
-               ++top;
-               for (int j = top - 1; j >= 0; --j) {
-                   if (j > 0 &amp;&amp; characters[j - 1] >= c) {
-                       characters[j] = characters[j - 1];
-                       codepoints[j] = codepoints[j - 1];
-                   } else {
-                       characters[j] = c;
-                       codepoints[j] = (char) table[i];
-                       break;
-                   }
-               }
-            }
-        }
+        super(name, table);
     }
 
-    public String getName() {
-        return this.name;
-    }
-
-    public final char mapChar(char c) {
-        if (c &lt; 256) {
-            return latin1Map[c];
-        } else {
-            int bot = 0, top = characters.length - 1;
-            while (top >= bot) {
-                int mid = (bot + top) / 2;
-                char mc = characters[mid];
-
-                if (c == mc) {
-                    return codepoints[mid];
-                } else if (c &lt; mc) {
-                    top = mid - 1;
-                } else {
-                    bot = mid + 1;
-                }
-            }
-            return 0;
-        }
-    }
-
-    public final char getUnicodeForIndex(int idx) {
-        return this.unicodeMap[idx];
-    }
-
-    public final char[] getUnicodeCharMap() {
-        char[] copy = new char[this.unicodeMap.length];
-        System.arraycopy(this.unicodeMap, 0, copy, 0, this.unicodeMap.length);
-        return copy;
-    }
-
-    /** {@inheritDoc} */
-    public String toString() {
-        return getName();
+    public CodePointMapping(String name, int[] table, String[] charNameMap) {
+        super(name, table, charNameMap);
     }
 
     private static Map mappings;
@@ -146,13 +65,10 @@ public class CodePointMapping {
         if (mapping != null) {
             return mapping;
         } <xsl:apply-templates mode="get"/>
-        //TODO: Implement support for Expert and ExpertSubset encoding
-        else if (encoding.startsWith("Expert")) {
-            throw new UnsupportedOperationException(encoding + " not implemented yet");
-        }
         throw new UnsupportedOperationException("Unknown encoding: " + encoding);
     }
 <xsl:apply-templates mode="table"/>
+<xsl:apply-templates select="encoding" mode="names"/>
 }
   </xsl:template>
 
@@ -160,7 +76,7 @@ public class CodePointMapping {
   
   <xsl:template match="encoding" mode="get">
         else if (encoding.equals(<xsl:value-of select="@constant"/>)) {
-            mapping = new CodePointMapping(<xsl:value-of select="@constant"/>, enc<xsl:value-of select="@id"/>);
+    mapping = new CodePointMapping(<xsl:value-of select="@constant"/>, enc<xsl:value-of select="@id"/>, names<xsl:value-of select="@id"/>);
             mappings.put(<xsl:value-of select="@constant"/>, mapping);
             return mapping;
         }
@@ -177,5 +93,79 @@ public class CodePointMapping {
             0x<xsl:value-of select="$codepoint"/>, 0x<xsl:value-of select="@codepoint"/>, // <xsl:value-of select="$name"/>
 </xsl:for-each></xsl:for-each>
         };
+  </xsl:template>
+  
+  <xsl:template match="encoding" mode="names">
+    private static final String[] names<xsl:value-of select="@id"/>
+    = {
+<xsl:call-template name="charname">
+  <xsl:with-param name="idx" select="0"/>
+</xsl:call-template>
+        };
+  </xsl:template>
+  
+  <xsl:template name="charname">
+    <xsl:param name="idx"/>
+    <xsl:variable name="idxHEXraw">
+      <xsl:call-template name="toHex">
+        <xsl:with-param name="decimalNumber" select="$idx"/>
+      </xsl:call-template>
+    </xsl:variable>
+    <xsl:variable name="idxHEX">
+      <xsl:call-template name="padnumber">
+        <xsl:with-param name="num" select="$idxHEXraw"/>
+      </xsl:call-template>
+    </xsl:variable>
+    <xsl:variable name="idxhex" select="translate($idxHEX, 'ABCDEF', 'abcdef')"></xsl:variable>
+    <!--
+    <xsl:value-of select="$idx"/>-<xsl:value-of select="$idxHEXraw"/>-<xsl:value-of select="$idxHEX"/>-<xsl:value-of select="$idxhex"/>
+    -->
+    <xsl:if test="($idx mod 4) = 0">
+      <xsl:text>&#x0D;    /*</xsl:text><xsl:value-of select="$idxHEX"/><xsl:text>*/ </xsl:text>
+    </xsl:if>
+    <xsl:variable name="v">
+      <xsl:value-of select="child::glyph[@codepoint = $idxHEX or @codepoint = $idxhex]/@name"/><!--<xsl:value-of select="glyph[@codepoint = $idxhex]/@name"/>-->
+    </xsl:variable>
+    <xsl:choose>
+      <xsl:when test="string-length($v) > 0">
+        <xsl:text>"</xsl:text><xsl:value-of select="$v"/><xsl:text>"</xsl:text>
+      </xsl:when>
+      <xsl:otherwise>null</xsl:otherwise>
+    </xsl:choose>
+    
+    <xsl:if test="$idx &lt; 255">
+      <xsl:text>, </xsl:text>
+      <xsl:call-template name="charname">
+        <xsl:with-param name="idx" select="$idx + 1"/>
+      </xsl:call-template>
+    </xsl:if>
+  </xsl:template>
+  
+  <xsl:variable name="hexDigits" select="'0123456789ABCDEF'"/>
+  <xsl:template name="toHex">
+    <xsl:param name="decimalNumber" />
+    <xsl:if test="$decimalNumber >= 16">
+      <xsl:call-template name="toHex">
+        <xsl:with-param name="decimalNumber" select="floor($decimalNumber div 16)" />
+      </xsl:call-template>
+    </xsl:if>
+    <xsl:value-of select="substring($hexDigits, ($decimalNumber mod 16) + 1, 1)" />
+  </xsl:template>
+  
+  <xsl:template name="padnumber">
+    <xsl:param name="num"/>
+    <xsl:param name="len" select="2"/>
+    <!--
+    <xsl:text> </xsl:text><xsl:value-of select="$num"/>/<xsl:value-of select="$len"/>
+    -->
+    <xsl:choose>
+      <xsl:when test="string-length($num) &lt; $len">
+        <xsl:call-template name="padnumber">
+          <xsl:with-param name="num" select="concat('0',$num)"/>
+          <xsl:with-param name="len" select="$len"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise><xsl:value-of select="$num"/></xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 </xsl:stylesheet>

@@ -28,7 +28,7 @@ import java.awt.geom.RectangularShape;
 public class AFMCharMetrics {
 
     private int charCode = -1;
-    private String unicodeChars;
+    private String unicodeSequence;
     private String charName;
     private double widthX;
     private double widthY;
@@ -59,21 +59,20 @@ public class AFMCharMetrics {
     }
     
     /**
-     * Returns the Unicode characters represented by this object. Some character names can be
-     * mapped to multiple Unicode code points, so expect to find more than one character in the
-     * String.
+     * Returns the Unicode sequence for this character.
      * @return the Unicode characters
+     *                  (or null if no such Unicode sequence exists for this character)
      */
-    public String getUnicodeChars() {
-        return this.unicodeChars;
+    public String getUnicodeSequence() {
+        return this.unicodeSequence;
     }
     
     /**
-     * Sets the Unicode characters represented by this object.
-     * @param unicodeChars the Unicode characters
+     * Sets the Unicode sequence for this character.
+     * @param unicodeSequence the Unicode sequence
      */
-    public void setUnicodeChars(String unicodeChars) {
-        this.unicodeChars = unicodeChars;
+    public void setUnicodeSequence(String unicodeSequence) {
+        this.unicodeSequence = unicodeSequence;
     }
     
     /**
@@ -145,9 +144,9 @@ public class AFMCharMetrics {
         StringBuffer sb = new StringBuffer("AFM Char: ");
         sb.append(getCharCode());
         sb.append(" (");
-        if (getUnicodeChars() != null) {
-            for (int i = 0, c = getUnicodeChars().length(); i < c; i++) {
-                sb.append("0x").append(Integer.toHexString(getUnicodeChars().charAt(i)));
+        if (getUnicodeSequence() != null) {
+            for (int i = 0, c = getUnicodeSequence().length(); i < c; i++) {
+                sb.append("0x").append(Integer.toHexString(getUnicodeSequence().charAt(i)));
                 sb.append(", ");
             }
         }
