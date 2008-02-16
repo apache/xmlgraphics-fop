@@ -198,10 +198,18 @@ public class Type1FontLoader extends FontLoader {
         }
         if (pfm != null) {
             //Sometimes the PFM has these metrics while the AFM doesn't (ex. Symbol)
-            returnFont.setCapHeight(pfm.getCapHeight());
-            returnFont.setXHeight(pfm.getXHeight());
-            returnFont.setAscender(pfm.getLowerCaseAscent());
-            returnFont.setDescender(pfm.getLowerCaseDescent());
+            if (returnFont.getCapHeight() == 0) {
+                returnFont.setCapHeight(pfm.getCapHeight());
+            }
+            if (returnFont.getXHeight(1) == 0) {
+                returnFont.setXHeight(pfm.getXHeight());
+            }
+            if (returnFont.getAscender() == 0) {
+                returnFont.setAscender(pfm.getLowerCaseAscent());
+            }
+            if (returnFont.getDescender() == 0) {
+                returnFont.setDescender(pfm.getLowerCaseDescent());
+            }
         }
         
         //Fallbacks when some crucial font metrics aren't available
@@ -253,6 +261,7 @@ public class Type1FontLoader extends FontLoader {
         }
         
         if (afm != null) {
+            //TODO returnFont.setFlags(flags);
             returnFont.setFirstChar(afm.getFirstChar());
             returnFont.setLastChar(afm.getLastChar());
             Iterator iter = afm.getCharMetrics().iterator();
@@ -264,9 +273,9 @@ public class Type1FontLoader extends FontLoader {
             }
             returnFont.replaceKerningMap(afm.createXKerningMapEncoded());
         } else {
+            returnFont.setFlags(pfm.getFlags());
             returnFont.setFirstChar(pfm.getFirstChar());
             returnFont.setLastChar(pfm.getLastChar());
-            returnFont.setFlags(pfm.getFlags());
             for (short i = pfm.getFirstChar(); i <= pfm.getLastChar(); i++) {
                 singleFont.setWidth(i, pfm.getCharWidth(i));
             }
@@ -282,28 +291,35 @@ public class Type1FontLoader extends FontLoader {
         while (iter.hasNext()) {
             AFMCharMetrics charMetrics = (AFMCharMetrics)iter.next();
             if (charMetrics.getCharCode() >= 0) {
-                String u = charMetrics.getUnicodeChars();
-                if (u != null) {
-                    mappingCount += u.length();
+                String u = charMetrics.getUnicodeSequence();
+                if (u != null && u.length() == 1) {
+                    mappingCount++;
                 }
             }
         }
         //...and now build the table.
         int[] table = new int[mappingCount * 2];
+        String[] charNameMap = new String[256];
         iter = chars.iterator();
         int idx = 0;
         while (iter.hasNext()) {
             AFMCharMetrics charMetrics = (AFMCharMetrics)iter.next();
             if (charMetrics.getCharCode() >= 0) {
-                String unicodes = charMetrics.getUnicodeChars();
-                for (int i = 0, c = unicodes.length(); i < c; i++) {
+                charNameMap[charMetrics.getCharCode()] = charMetrics.getCharName();
+                String unicodes = charMetrics.getUnicodeSequence();
+                if (unicodes == null) {
+                    log.info("No Unicode mapping for glyph: " + charMetrics);
+                } else if (unicodes.length() == 1) {
                     table[idx] = charMetrics.getCharCode();
                     idx++;
-                    table[idx] = unicodes.charAt(i);
+                    table[idx] = unicodes.charAt(0);
                     idx++;
+                } else {
+                    log.warn("Multi-character representation of glyph not currently supported: "
+                            + charMetrics);
                 }
             }
         }
-        return new CodePointMapping(encodingName, table);
+        return new CodePointMapping(encodingName, table, charNameMap);
     }
 }

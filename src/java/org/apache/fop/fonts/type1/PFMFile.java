@@ -29,7 +29,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.fop.fonts.Glyphs;
+import org.apache.xmlgraphics.fonts.Glyphs;
 
 /**
  * This class represents a PFM file (or parts of it) as a Java object.

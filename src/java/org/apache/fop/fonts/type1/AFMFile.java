@@ -21,7 +21,6 @@ package org.apache.fop.fonts.type1;
 
 import java.awt.geom.Dimension2D;
 import java.awt.geom.RectangularShape;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -315,18 +314,11 @@ public class AFMFile {
      */
     public void addCharMetrics(AFMCharMetrics metrics) {
         String name = metrics.getCharName();
-        if (metrics.getUnicodeChars() == null) {
+        if (metrics.getUnicodeSequence() == null) {
             if (name != null) {
-                String u = Glyphs.getUnicodeCodePointsForGlyphName(metrics.getCharName());
+                String u = Glyphs.getUnicodeSequenceForGlyphName(metrics.getCharName());
                 if (u != null) {
-                    if (u.length() > 1) {
-                        //Lower values (ex. space) are most probably more interesting than
-                        //higher values (ex. non-break-space), so sort just to be sure:
-                        char[] chars = u.toCharArray(); 
-                        Arrays.sort(chars);
-                        u = String.valueOf(chars);
-                    }
-                    metrics.setUnicodeChars(u);
+                    metrics.setUnicodeSequence(u);
                 }
             } else {
                 //Ignore as no Unicode assignment is possible

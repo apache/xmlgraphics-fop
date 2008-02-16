@@ -27,8 +27,10 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.xmlgraphics.fonts.Glyphs;
+
 import org.apache.fop.fonts.FontUtil;
-import org.apache.fop.fonts.Glyphs;
 
 /**
  * Reads a TrueType file or a TrueType Collection.
