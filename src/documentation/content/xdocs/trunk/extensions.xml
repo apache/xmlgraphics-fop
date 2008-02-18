@@ -210,6 +210,24 @@ to following pages. Here is an example of FO code creating such a table-header:<
           supported for PDF, PS and Java2D-based renderers.
         </note>
       </section>
+      <section id="color-functions">
+        <title>Color functions</title>
+        <p>
+          XSL-FO supports specifying color using the rgb(), rgb-icc() and system-color() functions.
+          Apache FOP provides additional color functions for special use cases. Please note that
+          using these functions compromises the interoperability of an FO document.
+        </p>
+        <section id="color-function-cmyk">
+          <title>cmyk()</title>
+          <p><code>color cmyk(numeric, numeric, numeric, numeric)</code></p>
+          <p>
+            This function will construct a color in device-specific CMYK color space. The numbers
+            must be between 0.0 and 1.0. For output formats that don't support device-specific
+            color space the CMYK value is converted to an sRGB value.
+          </p>
+        </section>
+      </section>
+      
     </section>
   </body>
 </document>
