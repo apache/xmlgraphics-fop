@@ -23,12 +23,16 @@ import java.io.File;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.xml.sax.SAXException;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
+
 import org.apache.fop.AbstractFOPTestCase;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
@@ -78,21 +82,37 @@ public class BasePDFTestCase extends AbstractFOPTestCase {
      * @throws Exception if the conversion fails
      */
     protected byte[] convertFO(File foFile, FOUserAgent ua, boolean dumpPdfFile)
-            throws Exception {
+             throws Exception {
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
         Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, ua, baout);
         Transformer transformer = tFactory.newTransformer();
         Source src = new StreamSource(foFile);
         SAXResult res = new SAXResult(fop.getDefaultHandler());
-        transformer.transform(src, res);
-        final byte[] result = baout.toByteArray();
-        if (dumpPdfFile) {
-            final File outFile = new File(foFile.getParentFile(), foFile.getName() + ".pdf");
-            FileUtils.writeByteArrayToFile(outFile, result);
+        try {
+            transformer.transform(src, res);
+            final byte[] result = baout.toByteArray();
+            if (dumpPdfFile) {
+                final File outFile = new File(foFile.getParentFile(), foFile.getName() + ".pdf");
+                FileUtils.writeByteArrayToFile(outFile, result);
+            }
+            return result;
+        } catch (TransformerException e) {
+            throw extractOriginalException(e);
         }
-        return result;
     }
 
+    private static Exception extractOriginalException(Exception e) {
+        if (e.getCause() != null) {
+            return extractOriginalException((Exception)e.getCause());
+        } else if (e instanceof SAXException) {
+            SAXException se = (SAXException)e;
+            if (se.getException() != null) {
+                return extractOriginalException(se.getException());
+            }
+        }
+        return e;
+    }
+    
     /** 
      * get FOP config File 
      * @return user config file to be used for testing 
