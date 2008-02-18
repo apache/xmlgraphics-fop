@@ -35,6 +35,7 @@ import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
@@ -929,6 +930,8 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         } catch (ImageException ie) {
             log.error("Error while processing image: "
                     + (info != null ? info.toString() : uri), ie);
+        } catch (FileNotFoundException fnfe) {
+            log.error(fnfe.getMessage());
         } catch (IOException ioe) {
             log.error("I/O error while processing image: "
                     + (info != null ? info.toString() : uri), ioe);

@@ -27,6 +27,7 @@ import java.awt.color.ICC_Profile;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -1754,6 +1755,8 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         } catch (ImageException ie) {
             log.error("Error while processing image: "
                     + (info != null ? info.toString() : uri), ie);
+        } catch (FileNotFoundException fnfe) {
+            log.error(fnfe.getMessage());
         } catch (IOException ioe) {
             log.error("I/O error while processing image: "
                     + (info != null ? info.toString() : uri), ioe);

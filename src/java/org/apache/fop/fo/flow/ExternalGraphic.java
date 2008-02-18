@@ -19,6 +19,7 @@
 
 package org.apache.fop.fo.flow;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.xml.sax.Locator;
@@ -78,6 +79,8 @@ public class ExternalGraphic extends AbstractGraphics {
             info = manager.getImageInfo(url, userAgent.getImageSessionContext());
         } catch (ImageException e) {
             log.error("Image not available: " + e.getMessage());
+        } catch (FileNotFoundException fnfe) {
+            log.error(fnfe.getMessage());
         } catch (IOException ioe) {
             log.error("I/O error while loading image: " + ioe.getMessage());
         }
