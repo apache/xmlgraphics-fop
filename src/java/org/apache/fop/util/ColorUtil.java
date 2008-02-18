@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.expr.PropertyException;
 
@@ -73,8 +74,8 @@ public final class ColorUtil {
      * <li>system-color(colorname)</li>
      * <li>transparent</li>
      * <li>colorname</li>
-     * <li>fop-rgb-icc</li>
-     * <li>cmyk</li>
+     * <li>fop-rgb-icc(r,g,b,cs,cs-src,[num]+) (r/g/b: 0..1, num: 0..1)</li>
+     * <li>cmyk(c,m,y,k) (0..1)</li>
      * </ul>
      * 
      * @param foUserAgent FOUserAgent object  
@@ -278,7 +279,7 @@ public final class ColorUtil {
                 //multiply by 0x11 = 17 = 255/15
                 red = Integer.parseInt(value.substring(1, 2), 16) * 0x11;
                 green = Integer.parseInt(value.substring(2, 3), 16) * 0x11;
-                blue = Integer.parseInt(value.substring(3, 4), 16) *0X11;
+                blue = Integer.parseInt(value.substring(3, 4), 16) * 0X11;
             } else if ((len == 7) || (len == 9)) {
                 red = Integer.parseInt(value.substring(1, 3), 16);
                 green = Integer.parseInt(value.substring(3, 5), 16);
@@ -323,6 +324,12 @@ public final class ColorUtil {
                 if (iccProfileSrc == null || "".equals(iccProfileSrc)) {
                     throw new PropertyException("ICC profile source missing");
                 }
+                if (iccProfileSrc.startsWith("\"") || iccProfileSrc.startsWith("'")) {
+                    iccProfileSrc = iccProfileSrc.substring(1);
+                }
+                if (iccProfileSrc.endsWith("\"") || iccProfileSrc.endsWith("'")) {
+                    iccProfileSrc = iccProfileSrc.substring(0, iccProfileSrc.length() - 1);
+                }
                 /* ICC profile arguments */
                 float[] iccComponents = new float[args.length - 5];
                 for (int ix = 4; ++ix < args.length;) {
@@ -336,25 +343,26 @@ public final class ColorUtil {
                 float red = 0, green = 0, blue = 0;
                 red = Float.parseFloat(args[0].trim());
                 green = Float.parseFloat(args[1].trim());
-                blue = Float.parseFloat(args[2].trim());;
+                blue = Float.parseFloat(args[2].trim());
                 /* Verify rgb replacement arguments */
-                if ((red < 0 || red > 255) 
-                        || (green < 0 || green > 255) 
-                        || (blue < 0 || blue > 255)) {
+                if ((red < 0 || red > 1) 
+                        || (green < 0 || green > 1) 
+                        || (blue < 0 || blue > 1)) {
                     throw new PropertyException("Color values out of range. "
-                            + "Arguments to rgb-icc() must be [0..255] or [0%..100%]");
+                            + "Fallback RGB arguments to fop-rgb-icc() must be [0..1]");
                 }
 
                 if (colorSpace != null) {
                     // ColorSpace available - create ColorExt (keeps track of replacement rgb 
                     // values for possible later colorTOsRGBString call
-                    parsedColor = ColorExt.createFromFoRgbIcc(red/255, green/255, blue/255, 
+                    parsedColor = ColorExt.createFromFoRgbIcc(red, green, blue, 
                             iccProfileName, iccProfileSrc, colorSpace, iccComponents);
                 } else {
                     // ICC profile could not be loaded - use rgb replacement values */
                     log.warn("Color profile '" + iccProfileSrc 
                             + "' not found. Using rgb replacement values.");
-                    parsedColor = new Color((int)red, (int)green, (int)blue);
+                    parsedColor = new Color(Math.round(red * 255),
+                            Math.round(green * 255), Math.round(blue * 255));
                 }
             } catch (PropertyException pe) {
                 //simply re-throw

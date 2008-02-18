@@ -71,19 +71,31 @@ class ICCColorFunction extends FunctionBase {
         }
         String src = cp.getSrc();
         
+        float red = 0, green = 0, blue = 0;
+        red = args[0].getNumber().floatValue();
+        green = args[1].getNumber().floatValue();
+        blue = args[2].getNumber().floatValue();
+        /* Verify rgb replacement arguments */
+        if ((red < 0 || red > 255) 
+                || (green < 0 || green > 255) 
+                || (blue < 0 || blue > 255)) {
+            throw new PropertyException("Color values out of range. "
+                    + "Arguments to rgb-icc() must be [0..255] or [0%..100%]");
+        }
+        
         // rgb-icc is replaced with fop-rgb-icc which has an extra fifth argument containing the 
         // color profile src attribute as it is defined in the color-profile declarations element.
         StringBuffer sb = new StringBuffer();
         sb.append("fop-rgb-icc(");
-        for (int ix = 0; ix < args.length; ix++) {
+        sb.append(red / 255f);
+        sb.append(',').append(green / 255f);
+        sb.append(',').append(blue / 255f);
+        for (int ix = 3; ix < args.length; ix++) {
             if (ix == 3) {
                 sb.append(',').append(colorProfileName); 
                 sb.append(',').append(src); 
             } else {
-                if (ix > 0) {
-                    sb.append(',');
-                }
-                sb.append(args[ix]);
+                sb.append(',').append(args[ix]);
             }
         }
         sb.append(")");
