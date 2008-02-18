@@ -28,6 +28,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="API" dev="JM" type="remove">
+        Removed deprecated methods in the "apps" package that were left-overs from the API
+        discussions.
+      </action>
       <action context="Fonts" dev="JM" type="add">
         Added support for unusual font encodings (like for Symbol or Cyrillic fonts) of Type 1
         fonts in PDF and PostScript output.
