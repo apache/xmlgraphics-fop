@@ -19,6 +19,9 @@
  
 package org.apache.fop.pdf;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 import org.apache.fop.fonts.FontType;
 
 /**
@@ -162,6 +165,12 @@ public class PDFFont extends PDFDictionary {
                     + " fonts, have to be embedded! Offending font: " + getBaseFont());
             }
         }
+    }
+
+    /** {@inheritDoc} */
+    protected int output(OutputStream stream) throws IOException {
+        validate();
+        return super.output(stream);
     }
     
 }
