@@ -57,7 +57,7 @@ public class TTFFontLoader extends FontLoader {
             FontFileReader reader = new FontFileReader(in);
             boolean supported = ttf.readFont(reader, null);
             if (!supported) {
-                throw new IOException("Could not load TrueType font: " + fontFileURI);
+                throw new IOException("TrueType font is not supported: " + fontFileURI);
             }
             buildFont(ttf);
             loaded = true;
