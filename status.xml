@@ -28,6 +28,10 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Fonts" dev="JM" type="fix" fixed-bug="44451" due-to="Justus Piater">
+        Improved the font auto-detection so fonts accessed using the font-family name are
+        selected with higher accuracy.
+      </action>
       <action context="API" dev="JM" type="remove">
         Removed deprecated methods in the "apps" package that were left-overs from the API
         discussions.

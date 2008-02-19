@@ -78,7 +78,7 @@ public abstract class PrintRenderer extends AbstractRenderer {
     }
 
     /**
-     * Returns the internal font key fot a font triplet coming from the area tree
+     * Returns the internal font key for a font triplet coming from the area tree
      * @param area the area from which to retrieve the font triplet information
      * @return the internal font key (F1, F2 etc.) or null if not found
      */
