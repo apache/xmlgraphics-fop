@@ -46,6 +46,7 @@ public abstract class CustomFont extends Typeface
     private int descender = 0;
     private int[] fontBBox = {0, 0, 0, 0};
     private int flags = 4;
+    private int weight = 0; //0 means unknown weight
     private int stemV = 0;
     private int italicAngle = 0;
     private int missingWidth = 0;
@@ -196,6 +197,15 @@ public abstract class CustomFont extends Typeface
         return flags;
     }
 
+    /**
+     * Returns the font weight (100, 200...800, 900). This value may be different from the
+     * one that was actually used to register the font.
+     * @return the font weight (or 0 if the font weight is unknown)
+     */
+    public int getWeight() {
+        return this.weight;
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -349,6 +359,17 @@ public abstract class CustomFont extends Typeface
         this.flags = flags;
     }
 
+    /**
+     * Sets the font weight. Valid values are 100, 200...800, 900.
+     * @param weight the font weight
+     */
+    public void setWeight(int weight) {
+        weight = (weight / 100) * 100;
+        weight = Math.max(100, weight);
+        weight = Math.min(900, weight);
+        this.weight = weight;
+    }
+    
     /**
      * {@inheritDoc}
      */

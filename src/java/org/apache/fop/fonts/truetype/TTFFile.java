@@ -105,6 +105,7 @@ public class TTFFile {
     //Ascender/descender from OS/2 table
     private int os2Ascender = 0;
     private int os2Descender = 0;
+    private int usWeightClass = 0;
 
     private short lastChar = 0;
 
@@ -620,6 +621,13 @@ public class TTFFile {
         return flags;
     }
 
+    /**
+     * Returns the weight class of this font. Valid values are 100, 200....,800, 900.
+     * @return the weight class value (or 0 if there was no OS/2 table in the font)
+     */
+    public int getWeightClass() {
+        return this.usWeightClass;
+    }
 
     /**
      * Returns the StemV attribute of the font.
@@ -978,7 +986,9 @@ public class TTFFile {
     private final void readOS2(FontFileReader in) throws IOException {
         // Check if font is embeddable
         if (dirTabs.get("OS/2") != null) {
-            seekTab(in, "OS/2", 2 * 4);
+            seekTab(in, "OS/2", 2 * 2);
+            this.usWeightClass = in.readTTFUShort();
+            in.skip(2);
             int fsType = in.readTTFUShort();
             if (fsType == 2) {
                 isEmbeddable = false;

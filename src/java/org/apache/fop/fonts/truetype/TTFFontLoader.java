@@ -90,6 +90,7 @@ public class TTFFontLoader extends FontLoader {
         returnFont.setStemV(Integer.parseInt(ttf.getStemV())); //not used for TTF
         returnFont.setItalicAngle(Integer.parseInt(ttf.getItalicAngle()));
         returnFont.setMissingWidth(0);
+        returnFont.setWeight(ttf.getWeightClass());
         
         multiFont.setCIDType(CIDFontType.CIDTYPE2);
         int[] wx = ttf.getWidths();

@@ -72,7 +72,11 @@ public class FontInfoFinder {
         String searchName = fullName.toLowerCase();
 
         String style = guessStyle(customFont, searchName);
-        int weight = FontUtil.guessWeight(searchName);
+        int weight; //= customFont.getWeight();
+        int guessedWeight = FontUtil.guessWeight(searchName); 
+        //We always take the guessed weight for now since it yield much better results.
+        //OpenType's OS/2 usWeightClass value proves to be unreliable.
+        weight = guessedWeight;
 
         //Full Name usually includes style/weight info so don't use these traits
         //If we still want to use these traits, we have to make FontInfo.fontLookup() smarter
