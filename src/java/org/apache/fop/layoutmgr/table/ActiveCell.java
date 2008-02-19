@@ -290,12 +290,14 @@ class ActiveCell {
      * @see #signalRowLastStep(int)
      */
     private void increaseCurrentStep(int limit) {
-        while (afterNextStep.totalLength <= limit && nextStep.breakClass == Constants.EN_AUTO) {
-            nextStep.set(afterNextStep);
-            if (afterNextStep.end >= elementList.size() - 1) {
-                break;
+        if (nextStep.end < elementList.size() - 1) {
+            while (afterNextStep.totalLength <= limit && nextStep.breakClass == Constants.EN_AUTO) {
+                nextStep.set(afterNextStep);
+                if (afterNextStep.end >= elementList.size() - 1) {
+                    break;
+                }
+                gotoNextLegalBreak();
             }
-            gotoNextLegalBreak();
         }
     }
 
