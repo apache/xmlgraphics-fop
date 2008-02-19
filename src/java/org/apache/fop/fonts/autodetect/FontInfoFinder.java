@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.fonts.CachedFontInfo;
 import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.EmbedFontInfo;
@@ -66,28 +67,32 @@ public class FontInfoFinder {
 
         // default style and weight triplet vales (fallback)
         String strippedName = stripQuotes(customFont.getStrippedFontName());
-        String subName = customFont.getFontSubName();
-        String searchName = strippedName.toLowerCase();
-        if (subName != null) {
-            searchName += subName.toLowerCase();
-        }
-        
+        //String subName = customFont.getFontSubName();
+        String fullName = stripQuotes(customFont.getFullName());
+        String searchName = fullName.toLowerCase();
+
         String style = guessStyle(customFont, searchName);
         int weight = FontUtil.guessWeight(searchName);
 
         //Full Name usually includes style/weight info so don't use these traits
         //If we still want to use these traits, we have to make FontInfo.fontLookup() smarter
-        String fullName = stripQuotes(customFont.getFullName());
-        triplets.add(new FontTriplet(fullName, Font.STYLE_NORMAL, Font.WEIGHT_NORMAL));
+        triplets.add(new FontTriplet(fullName, Font.STYLE_NORMAL, Font.WEIGHT_NORMAL, 0));
         if (!fullName.equals(strippedName)) {
-            triplets.add(new FontTriplet(strippedName, Font.STYLE_NORMAL, Font.WEIGHT_NORMAL));
+            triplets.add(new FontTriplet(strippedName, Font.STYLE_NORMAL, Font.WEIGHT_NORMAL, 0));
         }
         Set familyNames = customFont.getFamilyNames();
         Iterator iter = familyNames.iterator();
         while (iter.hasNext()) {
             String familyName = stripQuotes((String)iter.next());
             if (!fullName.equals(familyName)) {
-                triplets.add(new FontTriplet(familyName, style, weight));
+                /* Heuristic:
+                 *   The more similar the family name to the full font name,
+                 *   the higher the priority of its triplet.
+                 * (Lower values indicate higher priorities.) */
+                int priority = fullName.startsWith(familyName)
+                    ? fullName.length() - familyName.length()
+                    : fullName.length();
+                triplets.add(new FontTriplet(familyName, style, weight, priority));
             }
         }
     }
