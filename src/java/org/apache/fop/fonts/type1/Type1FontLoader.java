@@ -216,11 +216,13 @@ public class Type1FontLoader extends FontLoader {
         //(the following are all optional in AFM, but FontBBox is always available)
         if (returnFont.getXHeight(1) == 0) {
             int xHeight = 0;
-            AFMCharMetrics chm = afm.getChar("x");
-            if (chm != null) {
-                RectangularShape rect = chm.getBBox();
-                if (rect != null) {
-                    xHeight = (int)Math.round(rect.getMinX());
+            if (afm != null) {
+                AFMCharMetrics chm = afm.getChar("x");
+                if (chm != null) {
+                    RectangularShape rect = chm.getBBox();
+                    if (rect != null) {
+                        xHeight = (int)Math.round(rect.getMinX());
+                    }
                 }
             }
             if (xHeight == 0) {
@@ -230,11 +232,13 @@ public class Type1FontLoader extends FontLoader {
         }
         if (returnFont.getAscender() == 0) {
             int asc = 0;
-            AFMCharMetrics chm = afm.getChar("d");
-            if (chm != null) {
-                RectangularShape rect = chm.getBBox();
-                if (rect != null) {
-                    asc = (int)Math.round(rect.getMinX());
+            if (afm != null) {
+                AFMCharMetrics chm = afm.getChar("d");
+                if (chm != null) {
+                    RectangularShape rect = chm.getBBox();
+                    if (rect != null) {
+                        asc = (int)Math.round(rect.getMinX());
+                    }
                 }
             }
             if (asc == 0) {
@@ -244,11 +248,13 @@ public class Type1FontLoader extends FontLoader {
         }
         if (returnFont.getDescender() == 0) {
             int desc = 0;
-            AFMCharMetrics chm = afm.getChar("p");
-            if (chm != null) {
-                RectangularShape rect = chm.getBBox();
-                if (rect != null) {
-                    desc = (int)Math.round(rect.getMinX());
+            if (afm != null) {
+                AFMCharMetrics chm = afm.getChar("p");
+                if (chm != null) {
+                    RectangularShape rect = chm.getBBox();
+                    if (rect != null) {
+                        desc = (int)Math.round(rect.getMinX());
+                    }
                 }
             }
             if (desc == 0) {
