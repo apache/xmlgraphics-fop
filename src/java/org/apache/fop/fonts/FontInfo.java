@@ -383,8 +383,14 @@ public class FontInfo {
         String f = null;
         int newWeight = weight;
         if (newWeight < 400) {
-            while (f == null && newWeight > 0) {
+            while (f == null && newWeight > 100) {
                 newWeight -= 100;
+                key = createFontKey(family, style, newWeight);
+                f = getInternalFontKey(key);
+            }
+            newWeight = weight;
+            while (f == null && newWeight < 400) {
+                newWeight += 100;
                 key = createFontKey(family, style, newWeight);
                 f = getInternalFontKey(key);
             }
