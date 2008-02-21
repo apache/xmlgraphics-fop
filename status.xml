@@ -28,6 +28,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Code" dev="MB" type="add">
+        Turned on XInclude processing for the main source given on the command line.
+      </action>
       <action context="Fonts" dev="JM" type="fix" fixed-bug="44451" due-to="Justus Piater">
         Improved the font auto-detection so fonts accessed using the font-family name are
         selected with higher accuracy.
