@@ -19,66 +19,14 @@
 
 package org.apache.fop.render.afp;
 
-import java.awt.Color;
-import java.util.Arrays;
-
 /**
- * This keeps information about the current state when writing to pdf.
+ * This keeps information about the current state when writing to an AFP datastream.
  */
-public class AFPState {
-    /**
-     * The current color
-     */
-    private Color color = null;
+public class AFPState extends org.apache.fop.render.AbstractState {
 
-    /**
-     * The current background color
-     */
-    private Color backColor = null;
-
-    /**
-     * The current font name
-     */
-    private String fontName = null;
-
-    /**
-     * The current font size
-     */
-    private int fontSize = 0;
-
-    /**
-     * The current line width
-     */
-    private float lineWidth = 0;
-
-    /**
-     * The dash array for the current basic stroke (line type)
-     */
-    private float[] dashArray = null;
-
-    /**
-     * The current fill status
-     */
-    private boolean filled = false;
-    
-    /**
-     * The fonts on the current page
-     */
-    private AFPPageFonts pageFonts = null;
-
-    /**
-     * Set the current color.
-     * Check if the new color is a change and then set the current color.
-     *
-     * @param col the color to set
-     * @return true if the color has changed
-     */
-    protected boolean setColor(Color col) {
-        if (!col.equals(this.color)) {
-            this.color = col;
-            return true;
-        }
-        return false;
+    /** {@inheritDoc} */
+    protected AbstractData instantiateData() {
+        return new AFPData();
     }
 
     /**
@@ -87,123 +35,8 @@ public class AFPState {
      * @return true if the fill value has changed
      */
     protected boolean setFill(boolean fill) {
-        if (fill != this.filled) {
-            this.filled = fill;
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Get the color.
-     * @return the color
-     */
-    protected Color getColor() {
-        if (this.color == null) {
-            this.color = Color.black;
-        }
-        return this.color;
-    }
-
-    /**
-     * Set the current line width.
-     * @param width the line width in points
-     * @return true if the line width has changed
-     */
-    protected boolean setLineWidth(float width) {
-        if (this.lineWidth != width) {
-            this.lineWidth = width;
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Sets the dash array (line type) for the current basic stroke
-     * @param dash the line dash array
-     * @return true if the dash array has changed
-     */
-    public boolean setDashArray(float[] dash) {
-        if (!Arrays.equals(dash, this.dashArray)) {
-            this.dashArray = dash;
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Gets the current line width
-     * @return the current line width
-     */
-    protected float getLineWidth() {
-        return lineWidth;
-    }
-
-    /**
-     * Get the background color.
-     * @return the background color
-     */
-    protected Color getBackColor() {
-        if (this.backColor == null) {
-            this.backColor = Color.white;
-        }
-        return backColor;
-    }
-
-    /**
-     * Set the current background color.
-     * Check if the new background color is a change and then set the current background color.
-     *
-     * @param col the background color to set
-     * @return true if the color has changed
-     */
-    protected boolean setBackColor(Color col) {
-        if (!col.equals(this.backColor)) {
-            this.backColor = col;
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Set the current font name
-     * @param internalFontName the internal font name
-     * @return true if the font name has changed
-     */
-    protected boolean setFontName(String internalFontName) {
-        if (!internalFontName.equals(this.fontName)) {
-            this.fontName = internalFontName;
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Gets the current font name
-     * @return the current font name
-     */
-    protected String getFontName() {
-        return this.fontName;
-    }
-    
-    /**
-     * Gets the current font size
-     * @return the current font size
-     */
-    protected int getFontSize() {
-        return this.fontSize;
-    }
-
-    /**
-     * Set the current font size.
-     * Check if the font size is a change and then set the current font size.
-     *
-     * @param size the font size to set
-     * @return true if the font size has changed
-     */
-    protected boolean setFontSize(int size) {
-        if (size != this.fontSize) {
-            this.fontSize = size;
+        if (fill != ((AFPData)getData()).filled) {
+            ((AFPData)getData()).filled = fill;
             return true;
         }
         return false;
@@ -214,25 +47,27 @@ public class AFPState {
      * @return the current page fonts
      */
     protected AFPPageFonts getPageFonts() {
-        if (this.pageFonts == null) {
-            this.pageFonts = new AFPPageFonts();
+        if (((AFPData)getData()).pageFonts == null) {
+            ((AFPData)getData()).pageFonts = new AFPPageFonts();
         }
-        return this.pageFonts;
+        return ((AFPData)getData()).pageFonts;
     }
+    
+    private class AFPData extends org.apache.fop.render.AbstractState.AbstractData {
+        private static final long serialVersionUID = -1789481244175275686L;
 
-    /**
-     * Resets the current state
-     */    
-    protected void reset() {
-        this.color = null;
-        this.backColor = null;
-        this.fontName = null;         
-        this.fontSize = 0;         
-        this.lineWidth = 0;
-        this.dashArray = null;
-        this.filled = false;
-        if (this.pageFonts != null) {
-            this.pageFonts.clear();
+        /** The current fill status */
+        private boolean filled = false;
+        
+        /** The fonts on the current page */
+        private AFPPageFonts pageFonts = null;
+
+        /** {@inheritDoc} */
+        public Object clone() throws CloneNotSupportedException {
+            AFPData obj = (AFPData)super.clone();
+            obj.filled = this.filled;
+            obj.pageFonts = this.pageFonts;
+            return obj;
         }
     }
 }

@@ -242,6 +242,11 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
                 afpRenderer.setResolution(rendererResolutionCfg.getValueAsInteger(
                         AFPRenderer.DPI_240_RESOLUTION));
             }
+
+            Configuration gocaSupportCfg = cfg.getChild("goca-enabled", false);
+            if (gocaSupportCfg != null) {
+                afpRenderer.setGOCAEnabled(true);
+            }
         }
     }
 }

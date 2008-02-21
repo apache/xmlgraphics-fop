@@ -36,13 +36,15 @@ public class AFPPageFonts extends java.util.HashMap {
      */
     public AFPFontAttributes registerFont(String fontName, AFPFont font, int fontSize) {
         String pageFontKey = fontName + "_" + fontSize;
-        AFPFontAttributes afpFontAttributes = (AFPFontAttributes)super.get(pageFontKey);
-        // Add to page font mapping if not already present
-        if (afpFontAttributes == null) {
-            afpFontAttributes = new AFPFontAttributes(fontName, font, fontSize);
-            super.put(pageFontKey, afpFontAttributes);
-            afpFontAttributes.setFontReference(super.size());
+        if (!super.containsKey(pageFontKey)) {
+            AFPFontAttributes afpFontAttributes = (AFPFontAttributes)super.get(pageFontKey);
+            // Add to page font mapping if not already present
+            if (afpFontAttributes == null) {
+                afpFontAttributes = new AFPFontAttributes(fontName, font, fontSize);
+                super.put(pageFontKey, afpFontAttributes);
+                afpFontAttributes.setFontReference(super.size());
+            }
         }
-        return afpFontAttributes;
+        return (AFPFontAttributes)super.get(pageFontKey);
     }
 }

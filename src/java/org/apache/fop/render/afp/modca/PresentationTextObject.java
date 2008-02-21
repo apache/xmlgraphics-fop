@@ -119,23 +119,16 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
      */
     public void createTextData(int fontReference, int x, int y, int orientation,
         Color col, int vsci, int ica, byte[] data) {
-
         if (currentPresentationTextData == null) {
             startPresentationTextData();
         }
-
         try {
-
             currentPresentationTextData.createTextData(fontReference, x, y,
                 orientation, col, vsci, ica, data);
-
         } catch (MaximumSizeExceededException msee) {
-
             endPresentationTextData();
             createTextData(fontReference, x, y, orientation, col, vsci, ica, data);
-
         }
-
     }
 
     /**

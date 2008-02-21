@@ -30,7 +30,7 @@ import org.apache.fop.util.ColorUtil;
 
 /**
  * Border properties.
- * Class to store border trait propties for the area tree.
+ * Class to store border trait properties for the area tree.
  */
 public class BorderProps implements Serializable {
     

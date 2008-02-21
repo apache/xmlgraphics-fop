@@ -158,7 +158,12 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
     
     /** {@inheritDoc} */
     public boolean supportsRenderer(Renderer renderer) {
-        return (renderer instanceof AFPRenderer);
+        //return (renderer instanceof AFPRenderer);
+        if (renderer instanceof AFPRenderer) {
+            AFPRenderer afpRenderer = (AFPRenderer)renderer;
+            return afpRenderer.isGOCAEnabled();
+        }
+        return false;
     }
     
     /** {@inheritDoc} */
