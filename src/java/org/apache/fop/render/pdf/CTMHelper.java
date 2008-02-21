@@ -64,7 +64,7 @@ public final class CTMHelper {
      * @param transform The matrix to convert.
      * @param convertMillipoints Indicates that the matrix needs to be converted from millipoints
      *                           to points.
-     * @return  a space seperated string containing the matrix elements.
+     * @return  a space separated string containing the matrix elements.
      */
     public static String toPDFString(AffineTransform transform, boolean convertMillipoints) {
         if (null == transform) {
