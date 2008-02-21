@@ -24,6 +24,7 @@ import java.awt.color.ICC_Profile;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
+
 import org.apache.fop.util.CMYKColorSpace;
 
 /**
@@ -188,18 +189,18 @@ public class JpegImage extends AbstractFopImage {
             }
             try {
                 iccProfile = ICC_Profile.getInstance(iccStream.toByteArray());
+                if (iccProfile.getNumComponents() != this.colorSpace.getNumComponents()) {
+                    log.warn("The number of components of the ICC profile ("
+                            + iccProfile.getNumComponents() 
+                            + ") doesn't match the image ("
+                            + this.colorSpace.getNumComponents()
+                            + "). Ignoring the ICC color profile.");
+                    this.iccProfile = null;
+                }
             } catch (IllegalArgumentException iae) {
                 log.warn("An ICC profile is present but it is invalid (" 
                         + iae.getMessage() + "). The color profile will be ignored. (" 
                         + this.getOriginalURI() + ")");
-            }
-            if (iccProfile.getNumComponents() != this.colorSpace.getNumComponents()) {
-                log.warn("The number of components of the ICC profile ("
-                        + iccProfile.getNumComponents() 
-                        + ") doesn't match the image ("
-                        + this.colorSpace.getNumComponents()
-                        + "). Ignoring the ICC color profile.");
-                this.iccProfile = null;
             }
         } else if (this.colorSpace == null) {
             log.error("ColorSpace not specified for JPEG image");
