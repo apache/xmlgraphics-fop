@@ -36,6 +36,8 @@ import org.apache.fop.util.ColorUtil;
  */
 public class Trait implements Serializable {
 
+    private static final long serialVersionUID = -7613709600372824471L;
+
     /**
      * Id reference line, not resolved.
      * not sure if this is needed.
@@ -418,6 +420,8 @@ public class Trait implements Serializable {
      */
     public static class InternalLink implements Serializable {
 
+        private static final long serialVersionUID = -6395526777690537059L;
+
         /** The unique key of the PageViewport. */
         private String pvKey;
 
@@ -552,6 +556,8 @@ public class Trait implements Serializable {
      * Used for storing back trait information which are related.
      */
     public static class Background implements Serializable {
+
+        private static final long serialVersionUID = 8452078676273242870L;
 
         /** The background color if any. */
         private Color color = null;

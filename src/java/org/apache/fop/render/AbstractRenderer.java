@@ -276,7 +276,7 @@ public abstract class AbstractRenderer
             handleRegionTraits(port);
 
             //  shouldn't the viewport have the CTM
-            startVParea(regionReference.getCTM(), port.isClip() ? view : null);
+            startVParea(regionReference.getCTM(), getRegionViewportViewArea(port));
             // do after starting viewport area
             if (regionReference.getRegionClass() == FO_REGION_BODY) {
                 renderBodyRegion((BodyRegion) regionReference);
@@ -287,6 +287,10 @@ public abstract class AbstractRenderer
         }
     }
 
+    protected Rectangle2D getRegionViewportViewArea(RegionViewport port) {
+        return port.isClip() ? port.getViewArea() : null;
+    }
+    
     /**
      * Establishes a new viewport area.
      *

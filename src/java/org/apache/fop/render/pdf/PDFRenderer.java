@@ -110,6 +110,7 @@ import org.apache.fop.pdf.PDFText;
 import org.apache.fop.pdf.PDFXMode;
 import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
+import org.apache.fop.render.AbstractState;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.util.CharUtilities;
@@ -839,7 +840,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
             currentStream.add(CTMHelper.toPDFString(at, false) + " cm\n");
         }
     }
-    
+
     /**
      * Handle the traits for a region
      * This is used to draw the traits for the given page region.
@@ -1112,7 +1113,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      */
     protected List breakOutOfStateStack() {
         List breakOutList = new java.util.ArrayList();
-        PDFState.Data data;
+        AbstractState.AbstractData data;
         while (true) {
             data = currentState.getData();
             if (currentState.pop() == null) {
@@ -1133,10 +1134,10 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      */
     protected void restoreStateStackAfterBreakOut(List breakOutList) {
         comment("------ restoring context after break-out...");
-        PDFState.Data data;
+        AbstractState.AbstractData data;
         Iterator i = breakOutList.iterator();
         while (i.hasNext()) {
-            data = (PDFState.Data)i.next();
+            data = (AbstractState.AbstractData)i.next();
             saveGraphicsState();
             AffineTransform at = data.getTransform();
             concatenateTransformationMatrix(at);
