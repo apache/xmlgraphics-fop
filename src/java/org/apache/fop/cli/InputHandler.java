@@ -21,9 +21,13 @@ package org.apache.fop.cli;
 
 // Imported java.io classes
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Vector;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -31,17 +35,20 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.render.awt.viewer.Renderable;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 /**
  * Class for handling files input from command line
@@ -133,11 +140,29 @@ public class InputHandler implements ErrorListener, Renderable {
     }
     
     /**
-     * Creates a Source for the main input file.
+     * Creates a Source for the main input file. Processes XInclude if
+     * available in the XML parser.
+     * 
      * @return the Source for the main input file
      */
     protected Source createMainSource() {
-        return new StreamSource(this.sourcefile);
+        Source result;
+        try {
+            InputSource is = new InputSource(new FileInputStream(
+                    this.sourcefile));
+            SAXParserFactory spf = SAXParserFactory.newInstance();
+            spf.setNamespaceAware(true);
+            spf.setXIncludeAware(true);
+            XMLReader xr = spf.newSAXParser().getXMLReader();
+            result = new SAXSource(xr, is);
+        } catch (SAXException e) {
+            result = new StreamSource(this.sourcefile);
+        } catch (IOException e) {
+            result = new StreamSource(this.sourcefile);
+        } catch (ParserConfigurationException e) {
+            result = new StreamSource(this.sourcefile);
+        }
+        return result;
     }
     
     /**
