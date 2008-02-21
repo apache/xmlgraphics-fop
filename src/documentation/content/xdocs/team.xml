@@ -79,16 +79,16 @@
             page</fork> for some of his private projects.</li>
         <li id="jp"><link href="mailto:pietsch@apache.org">J&#x00F6;rg Pietschmann</link> (JP)</li>
         <li id="ot"><link href="mailto:olegt@apache.org">Oleg Tkachenko</link> (OT)</li>
+        <li id="mb"><link href="mailto:max AT berger DOT name">Max Berger</link> (MB) is currently a
+          PostDoc pursuing an academic career in computer science. His main interest in FOP is to
+          improve the DocBook to PDF tool-chain to produce high quality output, while still
+          conforming to given style-guides. See his <link href="http://max.berger.name">home
+            page</link> for more information.</li>
       </ul>
     </section>
     <section id="contribute-active">
       <title>Active Contributors</title>
       <ul>
-        <li id="mb"><link href="mailto:max AT berger DOT name">Max Berger</link> is currently a
-          PostDoc pursuing an academic career in computer science. His main interest in FOP is to
-          improve the DocBook to PDF tool-chain to produce high quality output, while still
-          conforming to given style-guides. See his <link href="http://max.berger.name">home
-            page</link> for more information.</li>
     <li id="lm">Louis Masters</li>
     <li id="mn">Manoj Nair, Currently consulting for Sony Pictures Entertainment in Los Angeles, CA USA. Previously he worked with Java &amp; related technologies specializing in developing n-tier Web applications.</li>
         <li id="rr"><link href="mailto:renaud.richardet AT gmail DOT com">Renaud Richardet</link> (RR)
