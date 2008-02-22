@@ -151,8 +151,8 @@ public class InputHandler implements ErrorListener, Renderable {
             InputSource is = new InputSource(new FileInputStream(
                     this.sourcefile));
             SAXParserFactory spf = SAXParserFactory.newInstance();
-            spf.setNamespaceAware(true);
-            spf.setXIncludeAware(true);
+            spf.setFeature("http://xml.org/sax/features/namespaces", true);
+            spf.setFeature("http://apache.org/xml/features/xinclude", true);
             XMLReader xr = spf.newSAXParser().getXMLReader();
             result = new SAXSource(xr, is);
         } catch (SAXException e) {
