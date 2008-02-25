@@ -163,10 +163,12 @@ public class ImageLayout implements Constants {
 
         //Adjust viewport if not explicit
         if (ipd == -1) {
-            ipd = constrainExtent(cwidth, props.getInlineProgressionDimension());
+            ipd = constrainExtent(cwidth,
+                    props.getInlineProgressionDimension(), props.getContentWidth());
         }
         if (bpd == -1) {
-            bpd = constrainExtent(cheight, props.getBlockProgressionDimension());
+            bpd = constrainExtent(cheight,
+                    props.getBlockProgressionDimension(), props.getContentHeight());
         }
 
         this.clip = false;
@@ -189,19 +191,21 @@ public class ImageLayout implements Constants {
         this.placement = new Rectangle(xoffset, yoffset, cwidth, cheight);
     }
     
-    private int constrainExtent(int extent, LengthRangeProperty range) {
+    private int constrainExtent(int extent, LengthRangeProperty range, Length contextExtent) {
+        boolean mayScaleUp = (contextExtent.getEnum() != EN_SCALE_DOWN_TO_FIT); 
+        boolean mayScaleDown = (contextExtent.getEnum() != EN_SCALE_UP_TO_FIT); 
         Length len;
         len = range.getMaximum(percentBaseContext).getLength();
         if (len.getEnum() != EN_AUTO) {
             int max = len.getValue(percentBaseContext);
-            if (max != -1) {
+            if (max != -1 && mayScaleDown) {
                 extent = Math.min(extent, max);
             }
         }
         len = range.getMinimum(percentBaseContext).getLength();
         if (len.getEnum() != EN_AUTO) {
             int min = len.getValue(percentBaseContext);
-            if (min != -1) {
+            if (min != -1 && mayScaleUp) {
                 extent = Math.max(extent, min);
             }
         }
@@ -210,8 +214,10 @@ public class ImageLayout implements Constants {
     
     private Dimension constrain(Dimension size) {
         Dimension adjusted = new Dimension(size);
-        int effWidth = constrainExtent(size.width, props.getInlineProgressionDimension());
-        int effHeight = constrainExtent(size.height, props.getBlockProgressionDimension());
+        int effWidth = constrainExtent(size.width,
+                props.getInlineProgressionDimension(), props.getContentWidth());
+        int effHeight = constrainExtent(size.height,
+                props.getBlockProgressionDimension(), props.getContentHeight());
         int scaling = props.getScaling();
         if (scaling == EN_UNIFORM) {
             double rat1 = (double)effWidth / size.width;
