@@ -31,10 +31,9 @@
       </fo:layout-master-set>
       <fo:page-sequence master-reference="normal">
         <fo:flow flow-name="xsl-region-body">
-          <fo:block>block1</fo:block>
-          <fo:table table-layout="fixed">
-            <fo:table-column/>
-            <fo:table-column/>
+          <fo:block space-after="1.5*14.4pt">block1</fo:block>
+          <fo:table table-layout="fixed" width="100%">
+            <fo:table-column number-columns-repeated="2" column-width="proportional-column-width(1)"/>
             <fo:table-body>
               <fo:table-row keep-with-previous.within-page="always">
                 <fo:table-cell id="cell1">

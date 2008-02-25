@@ -27,7 +27,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.table.ConditionalBorder;
 import org.apache.fop.fo.flow.table.EffRow;
-import org.apache.fop.fo.flow.table.GridUnit;
 import org.apache.fop.fo.flow.table.PrimaryGridUnit;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.layoutmgr.ElementListUtils;
@@ -157,10 +156,6 @@ class ActiveCell {
             if (contentsSmaller) {
                 makeBoxForWholeRow = true;
             }
-        }
-        if (pgu.isLastGridUnitRowSpan() && pgu.getRow() != null) {
-            makeBoxForWholeRow |= pgu.getRow().mustKeepTogether();
-            makeBoxForWholeRow |= tableLM.getTable().mustKeepTogether();
         }
         if (makeBoxForWholeRow) {
             elementList = new java.util.ArrayList(1);
@@ -427,12 +422,15 @@ class ActiveCell {
      */
     CellPart createCellPart() {
         if (nextStep.end + 1 == elementList.size()) {
-            if (pgu.getFlag(GridUnit.KEEP_WITH_NEXT_PENDING)) {
-                keepWithNextSignal = true;
-            }
-            if (pgu.getRow() != null && pgu.getRow().mustKeepWithNext()) {
-                keepWithNextSignal = true;
-            }
+            keepWithNextSignal = pgu.mustKeepWithNext();
+            // TODO if keep-with-next is set on the row, must every cell of the row
+            // contribute some content from children blocks?
+            // see http://mail-archives.apache.org/mod_mbox/xmlgraphics-fop-dev/200802.mbox/
+            // %3c47BDA379.4050606@anyware-tech.com%3e
+            // Assuming no, but if yes the following code should enable this behaviour
+//            if (pgu.getRow() != null && pgu.getRow().mustKeepWithNext()) {
+//                keepWithNextSignal = true;
+//            }
         }
         int bpBeforeFirst;
         if (nextStep.start == 0) {

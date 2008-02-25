@@ -133,6 +133,10 @@ public class LayoutContext {
     /** Amount of space to reserve at the end of each line */
     private int lineEndBorderAndPaddingWidth = 0;
 
+    private int breakBefore;
+
+    private int breakAfter;
+
     /**
      * Copy constructor for creating child layout contexts.
      * @param parentLC the parent layout context to copy from
@@ -482,7 +486,54 @@ public class LayoutContext {
     public void setSpaceAfter(int spaceAfter) {
         this.spaceAfter = spaceAfter;
     }
-    
+
+    /**
+     * Returns the value of the break before the element whose
+     * {@link LayoutManager#getNextKnuthElements(LayoutContext, int)} method has just been
+     * called.
+     * 
+     * @return one of {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN},
+     * {@link Constants#EN_PAGE}, {@link Constants#EN_EVEN_PAGE}, or
+     * {@link Constants#EN_ODD_PAGE}
+     */
+    public int getBreakBefore() {
+        return breakBefore;
+    }
+
+    /**
+     * Sets the value of the break before the current element.
+     * 
+     * @param breakBefore the value of the break-before
+     * @see #getBreakBefore()
+     */
+    public void setBreakBefore(int breakBefore) {
+        this.breakBefore = breakBefore;
+    }
+
+    /**
+     * Returns the value of the break after the element whose
+     * {@link LayoutManager#getNextKnuthElements(LayoutContext, int)} method has just been
+     * called.
+     * 
+     * @return one of {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN},
+     * {@link Constants#EN_PAGE}, {@link Constants#EN_EVEN_PAGE}, or
+     * {@link Constants#EN_ODD_PAGE}
+     */
+    public int getBreakAfter() {
+        return breakAfter;
+    }
+
+
+    /**
+     * Sets the value of the break after the current element.
+     * 
+     * @param breakAfter the value of the break-after
+     * @see #getBreakAfter()
+     */
+    public void setBreakAfter(int breakAfter) {
+        this.breakAfter = breakAfter;
+    }
+
     /** {@inheritDoc} */
     public String toString() {
         return "Layout Context:" +
@@ -499,7 +550,9 @@ public class LayoutContext {
         "\nIs Last Area: \t" + isLastArea() +
         "\nTry Hyphenate: \t" + tryHyphenate() + 
         "\nKeeps: \t[" + (isKeepWithNextPending() ? "keep-with-next" : "") + "][" 
-            + (isKeepWithPreviousPending() ? "keep-with-previous" : "") + "] pending";
+            + (isKeepWithPreviousPending() ? "keep-with-previous" : "") + "] pending" +
+        "\nBreaks: \tforced [" + (breakBefore != Constants.EN_AUTO ? "break-before" : "") + "][" 
+        + (breakAfter != Constants.EN_AUTO ? "break-after" : "") + "]";
     }
 
 }

@@ -174,7 +174,6 @@ public class TableStepper {
         activateCells(activeCells, 0);
         calcTotalHeight();
 
-        boolean signalKeepWithNext = false;
         int cumulateLength = 0; // Length of the content accumulated before the break
         TableContentPosition lastTCPos = null;
         LinkedList returnList = new LinkedList();
@@ -202,10 +201,6 @@ public class TableStepper {
                 ActiveCell activeCell = (ActiveCell) iter.next();
                 CellPart part = activeCell.createCellPart();
                 cellParts.add(part);
-                if (returnList.size() == 0 && part.isFirstPart()
-                        && part.mustKeepWithPrevious()) {
-                    context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
-                }
             }
 
             //Create elements for step
@@ -234,15 +229,23 @@ public class TableStepper {
             }
 
             int p = 0;
-            signalKeepWithNext = false;
+            boolean keepWithNext = false;
             for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
                 ActiveCell activeCell = (ActiveCell) iter.next();
-                signalKeepWithNext |= activeCell.keepWithNextSignal();
+                keepWithNext |= activeCell.keepWithNextSignal();
             }
-            if (signalKeepWithNext || getTableLM().mustKeepTogether()) {
+            if (keepWithNext || getTableLM().mustKeepTogether()) {
                 p = KnuthPenalty.INFINITE;
             }
-            if (rowFinished && activeRowIndex < rowGroup.length - 1) {
+            if (!rowFinished) {
+                if (rowGroup[activeRowIndex].mustKeepTogether()) {
+                    p = KnuthPenalty.INFINITE;
+                }
+            } else if (activeRowIndex < rowGroup.length - 1) {
+                if (rowGroup[activeRowIndex].mustKeepWithNext()
+                        || rowGroup[activeRowIndex + 1].mustKeepWithPrevious()) {
+                    p = KnuthPenalty.INFINITE;
+                }
                 nextBreakClass = BreakUtil.compareBreakClasses(nextBreakClass,
                         rowGroup[activeRowIndex].getBreakAfter());
                 nextBreakClass = BreakUtil.compareBreakClasses(nextBreakClass,
@@ -264,13 +267,12 @@ public class TableStepper {
             laststep = step;
             step = getNextStep();
         } while (step >= 0);
-        if (signalKeepWithNext) {
-            //Last step signalled a keep-with-next. Since the last penalty will be removed,
-            //we have to signal the still pending last keep-with-next using the LayoutContext.
-            context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING);
-        }
-        if (lastTCPos != null) {
+        if (!returnList.isEmpty()) {
             lastTCPos.setFlag(TableContentPosition.LAST_IN_ROWGROUP, true);
+            // It's not up to TableStepper to decide whether there can/must be a break
+            // after the row group or not, but to ancestor stacking elements
+            assert returnList.getLast() instanceof BreakElement;
+            returnList.removeLast();
         }
         return returnList;
     }

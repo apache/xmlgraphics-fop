@@ -173,7 +173,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
                 log.debug("child LM signals pending keep with next");
             }
             if (contentList.size() == 0 && childLC.isKeepWithPreviousPending()) {
-                context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
+                primaryGridUnit.setKeepWithPrevious();
                 childLC.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING, false);
             }
 
@@ -232,6 +232,9 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
                 context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING);
             }
             prevLM = curLM;
+        }
+        if (context.isKeepWithNextPending()) {
+            primaryGridUnit.setKeepWithNext();
         }
 
         returnedList = new LinkedList();

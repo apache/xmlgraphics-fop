@@ -126,8 +126,8 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
         orphanContentLimit = pList.get(PR_X_ORPHAN_CONTENT_LIMIT).getLength();
 
         if (!blockProgressionDimension.getOptimum(null).isAuto()) {
-            attributeWarning("only a value of \"auto\" for block-progression-dimension has a well-specified"
-                    + " behavior on fo:table. Falling back to \"auto\"");
+            attributeWarning("only a value of \"auto\" for block-progression-dimension has a"
+                    + " well-specified behavior on fo:table. Falling back to \"auto\"");
             // Anyway, the bpd of a table is not used by the layout code
         }
         if (tableLayout == EN_AUTO) {
@@ -226,11 +226,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
                        + ",table-body+)");
         }
         if (!inMarker()) {
-            if (tableFooter != null) {
-                rowGroupBuilder.endTable(tableFooter);
-            } else {
-                rowGroupBuilder.endTable((TableBody) getChildNodes().lastNode());
-            }
+            rowGroupBuilder.endTable();
             /* clean up */
             for (int i = columns.size(); --i >= 0;) {
                 TableColumn col = (TableColumn) columns.get(i);
@@ -290,6 +286,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
         }
     }
 
+    /** {@inheritDoc} */
     protected void setCollapsedBorders() {
         createBorder(CommonBorderPaddingBackground.START);
         createBorder(CommonBorderPaddingBackground.END);

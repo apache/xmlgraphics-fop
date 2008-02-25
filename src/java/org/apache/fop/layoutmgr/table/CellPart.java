@@ -19,7 +19,6 @@
 
 package org.apache.fop.layoutmgr.table;
 
-import org.apache.fop.fo.flow.table.GridUnit;
 import org.apache.fop.fo.flow.table.PrimaryGridUnit;
 
 /**
@@ -124,11 +123,6 @@ class CellPart {
         sb.append(" [").append(isFirstPart() ? "F" : "-").append(isLastPart() ? "L" : "-");
         sb.append("] ").append(pgu);
         return sb.toString();
-    }
-
-    boolean mustKeepWithPrevious() {
-        return pgu.getFlag(GridUnit.KEEP_WITH_PREVIOUS_PENDING)
-                || (pgu.getRow() != null && pgu.getRow().mustKeepWithPrevious());
     }
 
 }

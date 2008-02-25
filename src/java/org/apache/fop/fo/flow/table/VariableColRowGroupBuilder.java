@@ -64,19 +64,19 @@ class VariableColRowGroupBuilder extends RowGroupBuilder {
     }
 
     /** {@inheritDoc} */
-    void startRow(final TableRow tableRow) {
+    void startTableRow(final TableRow tableRow) {
         events.add(new Event() {
             public void play(RowGroupBuilder rowGroupBuilder) {
-                rowGroupBuilder.startRow(tableRow);
+                rowGroupBuilder.startTableRow(tableRow);
             }
         });
     }
 
     /** {@inheritDoc} */
-    void endRow(final TableRow row) {
+    void endTableRow() {
         events.add(new Event() {
             public void play(RowGroupBuilder rowGroupBuilder) {
-                rowGroupBuilder.endRow(row);
+                rowGroupBuilder.endTableRow();
             }
         });
     }
@@ -110,11 +110,11 @@ class VariableColRowGroupBuilder extends RowGroupBuilder {
     }
 
     /** {@inheritDoc} */
-    void endTable(final TableBody lastTablePart) throws ValidationException {
+    void endTable() throws ValidationException {
         RowGroupBuilder delegate = new FixedColRowGroupBuilder(table);
         for (Iterator eventIter = events.iterator(); eventIter.hasNext();) {
             ((Event) eventIter.next()).play(delegate);
         }
-        delegate.endTable(lastTablePart);
+        delegate.endTable();
     }
 }

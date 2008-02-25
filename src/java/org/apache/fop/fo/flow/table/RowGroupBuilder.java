@@ -53,16 +53,14 @@ abstract class RowGroupBuilder {
      * 
      * @param tableRow the row being started
      */
-    abstract void startRow(TableRow tableRow);
+    abstract void startTableRow(TableRow tableRow);
 
     /**
      * Receives notification of the end of the current row. If the current row finishes
      * the row group, the {@link TableBody#addRowGroup(List)} method of the parent table
      * part will be called.
-     * 
-     * @param row the row being finished
      */
-    abstract void endRow(TableRow row);
+    abstract void endTableRow();
 
     /**
      * Receives notification of the end of the current row, when the source contains no
@@ -70,7 +68,7 @@ abstract class RowGroupBuilder {
      * {@link TableBody#addRowGroup(List)} method of the given table part will be called.
      * 
      * <p>If the source does contain explicit fo:table-row elements, then the
-     * {@link #endRow(TableRow)} method will be called instead.</p>
+     * {@link #endTableRow()} method will be called instead.</p>
      * 
      * @param part the part containing the current row
      */
@@ -95,8 +93,7 @@ abstract class RowGroupBuilder {
     /**
      * Receives notification of the end of the table.
      * 
-     * @param lastTablePart the last part of the table
      * @throws ValidationException if a row-spanning cell overflows one of the table's parts
      */
-    abstract void endTable(TableBody lastTablePart) throws ValidationException;
+    abstract void endTable() throws ValidationException;
 }

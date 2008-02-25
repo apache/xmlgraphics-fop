@@ -52,6 +52,8 @@ public class PrimaryGridUnit extends GridUnit {
     private boolean isSeparateBorderModel;
     private int halfBorderSeparationBPD;
 
+    private boolean keepWithPrevious;
+    private boolean keepWithNext;
     private int breakBefore = Constants.EN_AUTO;
     private int breakAfter = Constants.EN_AUTO;
 
@@ -59,11 +61,10 @@ public class PrimaryGridUnit extends GridUnit {
      * Creates a new primary grid unit.
      *
      * @param cell table cell which occupies this grid unit
-     * @param row the table-row element this grid unit belongs to (if any)
      * @param colIndex index of the column this grid unit belongs to, zero-based
      */
-    PrimaryGridUnit(TableCell cell, TableRow row, int colIndex) {
-        super(cell, row, 0, 0);
+    PrimaryGridUnit(TableCell cell, int colIndex) {
+        super(cell, 0, 0);
         this.colIndex = colIndex;
         this.isSeparateBorderModel = cell.getTable().isSeparateBorderModel(); // TODO
         this.halfBorderSeparationBPD = cell.getTable().getBorderSeparation().getBPD().getLength()
@@ -322,6 +323,40 @@ public class PrimaryGridUnit extends GridUnit {
      */
     public void createCellLM() {
         cellLM = new TableCellLayoutManager(cell, this);
+    }
+
+    /**
+     * Returns true if the first child block (or its descendants) of this cell has
+     * keep-with-previous.
+     * 
+     * @return the value of keep-with-previous
+     */
+    public boolean mustKeepWithPrevious() {
+        return keepWithPrevious;
+    }
+
+    /**
+     * Don't use, reserved for TableCellLM. TODO
+     */
+    public void setKeepWithPrevious() {
+        this.keepWithPrevious = true;
+    }
+
+    /**
+     * Returns true if the last child block (or its descendants) of this cell has
+     * keep-with-next.
+     * 
+     * @return the value of keep-with-next
+     */
+    public boolean mustKeepWithNext() {
+        return keepWithNext;
+    }
+
+    /**
+     * Don't use, reserved for TableCellLM. TODO
+     */
+    public void setKeepWithNext() {
+        this.keepWithNext = true;
     }
 
     /**
