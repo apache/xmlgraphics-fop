@@ -55,11 +55,9 @@
     <eval expected="5" xpath="count(//pageViewport)"/>
     <!-- table -->
     <eval expected="18400" xpath="//pageViewport[@nr=3]//flow/block[1]/@bpd"/>
-    <!--
-    <eval expected="26400" xpath="//pageViewport[@nr=3]//flow/block[1]/@bpda"/>
-    <eval expected="(solid,#000000,4000)" xpath="//pageViewport[@nr=3]//flow/block[1]/@border-before"/>
-    <eval expected="(solid,#000000,4000)" xpath="//pageViewport[@nr=3]//flow/block[1]/@border-after"/>
-    -->
+    <!--eval expected="26400" xpath="//pageViewport[@nr=3]//flow/block[1]/@bpda"/-->
+    <!--eval expected="(solid,#000000,4000)" xpath="//pageViewport[@nr=3]//flow/block[1]/@border-before"/-->
+    <!--eval expected="(solid,#000000,4000)" xpath="//pageViewport[@nr=3]//flow/block[1]/@border-after"/-->
     <!-- cell 1 -->
     <eval expected="14400" xpath="//pageViewport[@nr=3]//flow/block[1]/block[1]/@bpd"/>
     <eval expected="18400" xpath="//pageViewport[@nr=3]//flow/block[1]/block[1]/@bpda"/>

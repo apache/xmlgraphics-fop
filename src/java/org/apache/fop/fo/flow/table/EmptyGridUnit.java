@@ -33,7 +33,8 @@ public class EmptyGridUnit extends GridUnit {
      * @param colIndex column index, 0-based
      */
     EmptyGridUnit(Table table, TableRow row, int colIndex) {
-        super(table, row, 0, 0);
+        super(table, 0, 0);
+        setRow(row);
     }
 
     /** {@inheritDoc} */

@@ -40,7 +40,7 @@ import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.KnuthBox;
-import org.apache.fop.layoutmgr.KnuthPenalty;
+import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthPossPosIter;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.ListElement;
@@ -107,7 +107,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
     ColumnSetup getColumns() {
         return getTableLM().getColumns();
     }
-    
+
     /** @return the net header height */
     protected int getHeaderNetHeight() {
         return this.headerNetHeight;
@@ -208,56 +208,57 @@ public class TableContentLayoutManager implements PercentBaseContext {
     private LinkedList getKnuthElementsForRowIterator(TableRowIterator iter, 
             LayoutContext context, int alignment, int bodyType) {
         LinkedList returnList = new LinkedList();
-        EffRow[] rowGroup = null;
-        int breakBetween = Constants.EN_AUTO;
-        while ((rowGroup = iter.getNextRowGroup()) != null) {
+        EffRow[] rowGroup = iter.getNextRowGroup();
+        // TODO homogenize the handling of keeps and breaks
+        context.unsetFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING
+                | LayoutContext.KEEP_WITH_NEXT_PENDING);
+        context.setBreakBefore(Constants.EN_AUTO);
+        context.setBreakAfter(Constants.EN_AUTO);
+        boolean keepWithPrevious = false;
+        int breakBefore = Constants.EN_AUTO;
+        if (rowGroup != null) {
             RowGroupLayoutManager rowGroupLM = new RowGroupLayoutManager(getTableLM(), rowGroup,
                     stepper);
-             // TODO
-             // The RowGroupLM.getBreakBefore method will work correctly only after
-             // getNextKnuthElements is called. Indeed TableCellLM will set the values for
-             // breaks on PrimaryGridUnit once it has got the Knuth elements of its
-             // children. This can be changed once all the LMs adopt the same scheme of
-             // querying childrens LMs for breaks instead of producing penalty elements
             List nextRowGroupElems = rowGroupLM.getNextKnuthElements(context, alignment, bodyType);
-            breakBetween = BreakUtil.compareBreakClasses(breakBetween, rowGroupLM.getBreakBefore());
-            if (breakBetween != Constants.EN_AUTO) {
-                if (returnList.size() > 0) {
-                    BreakElement breakPoss = (BreakElement) returnList.getLast();
-                    breakPoss.setPenaltyValue(-KnuthPenalty.INFINITE);
-                    breakPoss.setBreakClass(breakBetween);
-                } else {
-                    returnList.add(new BreakElement(new Position(tableLM),
-                            0, -KnuthPenalty.INFINITE, breakBetween, context));
-                }
-            }
+            keepWithPrevious = context.isKeepWithPreviousPending();
+            boolean keepBetween = context.isKeepWithNextPending();
+            breakBefore = context.getBreakBefore();
+            int breakBetween = context.getBreakAfter();
             returnList.addAll(nextRowGroupElems);
-            breakBetween = rowGroupLM.getBreakAfter();
-        }
-        // Break after the table's last row
-        // TODO should eventually be handled at the table level
-        if (breakBetween != Constants.EN_AUTO) {
-            if (returnList.size() > 0 && ((ListElement) returnList.getLast()).isPenalty()) {
-                // May be a glue if the unbroken height is greater than the broken heights
-                BreakElement breakPoss = (BreakElement) returnList.getLast();
-                breakPoss.setPenaltyValue(-KnuthPenalty.INFINITE);
-                breakPoss.setBreakClass(breakBetween);
-            } else {
-                returnList.add(new BreakElement(new Position(tableLM),
-                        0, -KnuthPenalty.INFINITE, breakBetween, context));
-            }
-        }
-        if (returnList.size() > 0) {
-            //Remove the last penalty produced by the combining algorithm (see TableStepper), 
-            //for the last step
-            ListElement last = (ListElement)returnList.getLast();
-            if (last.isPenalty() || last instanceof BreakElement) {
-                if (!last.isForcedBreak()) {
-                    //Only remove if we don't signal a forced break
-                    returnList.removeLast();
+            while ((rowGroup = iter.getNextRowGroup()) != null) {
+                rowGroupLM = new RowGroupLayoutManager(getTableLM(), rowGroup, stepper);
+                nextRowGroupElems = rowGroupLM.getNextKnuthElements(context, alignment, bodyType);
+                int penaltyValue = 0;
+                keepBetween |= context.isKeepWithPreviousPending();
+                if (keepBetween || tableLM.getTable().mustKeepTogether()) {
+                    penaltyValue = KnuthElement.INFINITE;
                 }
+                breakBetween = BreakUtil.compareBreakClasses(breakBetween,
+                        context.getBreakBefore());
+                if (breakBetween != Constants.EN_AUTO) {
+                    penaltyValue = -KnuthElement.INFINITE;
+                }
+                TableHFPenaltyPosition penaltyPos = new TableHFPenaltyPosition(getTableLM());
+                int penaltyLen = 0;
+                if (bodyType == TableRowIterator.BODY) {
+                    if (!getTableLM().getTable().omitHeaderAtBreak()) {
+                        penaltyLen += getHeaderNetHeight();
+                        penaltyPos.headerElements = getHeaderElements();
+                    }
+                    if (!getTableLM().getTable().omitFooterAtBreak()) {
+                        penaltyLen += getFooterNetHeight();
+                        penaltyPos.footerElements = getFooterElements();
+                    }
+                }
+                returnList.add(new BreakElement(penaltyPos, 
+                        penaltyLen, penaltyValue, breakBetween, context));
+                returnList.addAll(nextRowGroupElems);
+                breakBetween = context.getBreakAfter();
+                keepBetween = context.isKeepWithNextPending();
             }
         }
+        context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING, keepWithPrevious);
+        context.setBreakBefore(breakBefore);
 
         //fox:widow-content-limit
         int widowContentLimit = getTableLM().getTable().getWidowContentLimit().getValue(); 

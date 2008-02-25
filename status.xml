@@ -28,6 +28,9 @@
 
   <changes>
     <release version="FOP Trunk">
+      <action context="Layout" dev="VH" type="add">
+        Added full support for keep-with-previous on fo:table-row and in fo:table-cell elements.
+      </action>
       <action context="Code" dev="MB" type="add">
         Turned on XInclude processing for the main source given on the command line.
       </action>
