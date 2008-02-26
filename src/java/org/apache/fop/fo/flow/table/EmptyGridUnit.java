@@ -25,8 +25,6 @@ package org.apache.fop.fo.flow.table;
  */
 public class EmptyGridUnit extends GridUnit {
 
-    private TableBody body;
-
     /**
      * @param table the containing table
      * @param row the table-row element this grid unit belongs to (if any)
@@ -54,11 +52,6 @@ public class EmptyGridUnit extends GridUnit {
     /** {@inheritDoc} */
     public boolean isPrimary() {
         return false;
-    }
-
-    /** {@inheritDoc} */
-    public TableBody getBody() {
-        return this.body;
     }
 
     /** {@inheritDoc} */
