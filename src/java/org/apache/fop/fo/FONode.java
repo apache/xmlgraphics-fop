@@ -146,6 +146,10 @@ public abstract class FONode implements Cloneable {
         return parent.getFOEventHandler();
     }
     
+    /**
+     * Indicates whether this node is a child of an fo:marker.
+     * @return true if this node is a child of an fo:marker
+     */
     protected boolean inMarker() {
         return getFOEventHandler().inMarker();
     }
@@ -242,7 +246,7 @@ public abstract class FONode implements Cloneable {
      * @param start starting array element to add
      * @param end ending array element to add
      * @param pList currently applicable PropertyList 
-     * @param locator location in fo source file.
+     * @param locator location in the XSL-FO source file.
      * @throws FOPException if there's a problem during processing
      */
     protected void addCharacters(char[] data, int start, int end,
@@ -360,6 +364,7 @@ public abstract class FONode implements Cloneable {
      * property for an FO:link)
      * @param problem text to display that indicates the problem
      * @throws ValidationException the validation error provoked by the method call
+     * @deprecated Not localizable!
      */
     protected void attributeError(String problem) 
                 throws ValidationException {
@@ -371,6 +376,7 @@ public abstract class FONode implements Cloneable {
      * Helper function to standardize attribute warnings
      * (e.g., currently unsupported properties)
      * @param problem text to display that indicates the problem
+     * @deprecated Not localizable!
      */
     protected void attributeWarning(String problem) {
         log.warn(warningText(locator) + getName() + ", " + problem);
@@ -424,7 +430,8 @@ public abstract class FONode implements Cloneable {
      */
     protected void nodesOutOfOrderError(Locator loc, String tooLateNode, 
             String tooEarlyNode) throws ValidationException {
-        getFOValidationEventProducer().nodeOutOfOrder(this, getName(), tooLateNode, tooEarlyNode, loc);
+        getFOValidationEventProducer().nodeOutOfOrder(this, getName(),
+                tooLateNode, tooEarlyNode, loc);
     }
     
     /**
@@ -704,7 +711,7 @@ public abstract class FONode implements Cloneable {
          * of child nodes
          * @return  the parent node
          */
-        public FObj parentNode();
+        FObj parentNode();
         
         /**
          * Convenience method with return type of FONode
@@ -712,7 +719,7 @@ public abstract class FONode implements Cloneable {
          * <code>(FONode) next();</code>)
          * @return the next node (if any), as a type FONode
          */
-        public FONode nextNode();
+        FONode nextNode();
         
         /**
          * Convenience method with return type of FONode
@@ -720,7 +727,7 @@ public abstract class FONode implements Cloneable {
          * <code>(FONode) previous();</code>)
          * @return the previous node (if any), as a type FONode
          */
-        public FONode previousNode();
+        FONode previousNode();
         
         /**
          * Returns the first node in the list, and decreases the index,
@@ -728,7 +735,7 @@ public abstract class FONode implements Cloneable {
          * @return the first node in the list
          * @throws NoSuchElementException if the list is empty
          */
-        public FONode firstNode();
+        FONode firstNode();
         
         /**
          * Returns the last node in the list, and advances the
@@ -737,7 +744,7 @@ public abstract class FONode implements Cloneable {
          * @return the last node in the list
          * @throws NoSuchElementException if the list is empty
          */
-        public FONode lastNode();
+        FONode lastNode();
 
     }
 }
