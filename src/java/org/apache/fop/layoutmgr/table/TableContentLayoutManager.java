@@ -406,7 +406,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
                 lst.add(tcpos);
                 CellPart part = (CellPart)tcpos.cellParts.get(0);
                 if (body == null) {
-                    body = part.pgu.getBody();
+                    body = part.pgu.getTableBody();
                 }
                 if (tcpos.getFlag(TableContentPosition.FIRST_IN_ROWGROUP)
                         && tcpos.getRow().getFlag(EffRow.FIRST_IN_PART)) {

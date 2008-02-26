@@ -23,6 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.table.TableCellLayoutManager;
@@ -69,6 +70,19 @@ public class PrimaryGridUnit extends GridUnit {
         this.isSeparateBorderModel = cell.getTable().isSeparateBorderModel(); // TODO
         this.halfBorderSeparationBPD = cell.getTable().getBorderSeparation().getBPD().getLength()
                 .getValue() / 2;  // TODO
+    }
+
+    /**
+     * Returns the fo:table-header/footer/body element containing this cell.
+     * 
+     * @return the enclosing table part
+     */
+    public TableBody getTableBody() {
+        FONode node = cell.getParent();
+        if (node instanceof TableRow) {
+            node = node.getParent();
+        }
+        return (TableBody) node;
     }
 
     public TableCellLayoutManager getCellLM() {
