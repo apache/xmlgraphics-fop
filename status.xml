@@ -28,6 +28,11 @@
 
   <changes>
     <release version="FOP Trunk">
+      <!-- change reverted, to be added back later
+        <action context="Renderers" dev="AC" importance="high" type="add">
+        Added SVG support for AFP (GOCA).
+        </action>
+      -->
       <action context="Layout" dev="VH" type="add">
         Added full support for keep-with-previous on fo:table-row and in fo:table-cell elements.
       </action>
@@ -148,9 +153,6 @@
       </action>
       <action context="Layout" dev="VH" type="fix" fixes-bug="43633">
         Bugfix: content of a row with zero height overriding the previous row
-      </action>
-      <action context="Renderers" dev="AC" importance="high" type="add">
-        Added SVG support for AFP (GOCA).
       </action>
       <action context="Renderers" dev="JM" type="fix" fixes-bug="37993">
         Bugfix: allow multiple bookmarks to point at the same destination.
