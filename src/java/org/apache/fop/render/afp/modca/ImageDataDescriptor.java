@@ -27,17 +27,10 @@ import org.apache.fop.render.afp.tools.BinaryUtils;
  */
 public class ImageDataDescriptor extends AbstractAFPObject {
 
-    /** x resolution */
-    private int xresol = 0;
-    
-    /** y resolution */
-    private int yresol = 0;
-    
-    /** width */
-    private int width = 0;
-    
-    /** height */
-    private int height = 0;
+    private int _xresol = 0;
+    private int _yresol = 0;
+    private int _width = 0;
+    private int _height = 0;
 
     /**
      * Constructor for a ImageDataDescriptor for the specified
@@ -48,25 +41,26 @@ public class ImageDataDescriptor extends AbstractAFPObject {
      * @param height The height of the height.
      */
     public ImageDataDescriptor(int xresol, int yresol, int width, int height) {
-        this.xresol = xresol;
-        this.yresol = yresol;
-        this.width = width;
-        this.height = height;
+
+        _xresol = xresol;
+        _yresol = yresol;
+        _width = width;
+        _height = height;
+
     }
 
     /**
-     * {@inheritDoc}
+     * Accessor method to write the AFP datastream for the Image Data Descriptor
+     * @param os The stream to write to
+     * @throws java.io.IOException
      */
-    public void writeDataStream(OutputStream os) throws IOException {
-        byte[] len = BinaryUtils.convert(21, 2);
-        byte[] xres = BinaryUtils.convert(xresol, 2);
-        byte[] yres = BinaryUtils.convert(yresol, 2);
-        byte[] w = BinaryUtils.convert(width, 2);
-        byte[] h = BinaryUtils.convert(height, 2);
+    public void writeDataStream(OutputStream os)
+        throws IOException {
+
         byte[] data = new byte[] {
             0x5A,
-            len[0],
-            len[1],
+            0x00,
+            0x20,
             (byte) 0xD3,
             (byte) 0xA6,
             (byte) 0xFB,
@@ -74,19 +68,42 @@ public class ImageDataDescriptor extends AbstractAFPObject {
             0x00, // Reserved
             0x00, // Reserved
             0x00, // Unit base - 10 Inches
-            xres[0], // XRESOL
-            xres[1], //
-            yres[0], // YRESOL
-            yres[1], //
-            w[0], // XSIZE
-            w[1], //
-            h[0], // YSIZE
-            h[1], //
+            0x00, // XRESOL
+            0x00, //
+            0x00, // YRESOL
+            0x00, //
+            0x00, // XSIZE
+            0x00, //
+            0x00, // YSIZE
+            0x00, //
             (byte)0xF7, // ID = Set IOCA Function Set
             0x02, // Length
             0x01, // Category = Function set identifier
             0x0B, // FCNSET = IOCA FS 11
         };
+
+        byte[] l = BinaryUtils.convert(data.length - 1, 2);
+        data[1] = l[0];
+        data[2] = l[1];
+
+        byte[] x = BinaryUtils.convert(_xresol, 2);
+        data[10] = x[0];
+        data[11] = x[1];
+
+        byte[] y = BinaryUtils.convert(_yresol, 2);
+        data[12] = y[0];
+        data[13] = y[1];
+
+        byte[] w = BinaryUtils.convert(_width, 2);
+        data[14] = w[0];
+        data[15] = w[1];
+
+        byte[] h = BinaryUtils.convert(_height, 2);
+        data[16] = h[0];
+        data[17] = h[1];
+
         os.write(data);
+
     }
+
 }

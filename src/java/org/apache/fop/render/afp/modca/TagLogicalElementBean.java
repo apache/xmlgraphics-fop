@@ -47,7 +47,7 @@ public class TagLogicalElementBean {
      * @return the key
      */
     public String getKey() {
-        return this.key;
+        return key;
     }
 
     /**
@@ -55,7 +55,7 @@ public class TagLogicalElementBean {
      * @return the value
      */
     public String getValue() {
-        return this.value;
+        return value;
     }
 
 }
