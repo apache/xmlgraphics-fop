@@ -20,7 +20,7 @@
 package org.apache.fop.render.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
+import java.util.ArrayList;
 
 import org.apache.fop.render.afp.fonts.AFPFont;
 
@@ -47,7 +47,7 @@ public final class ActiveEnvironmentGroup extends AbstractNamedAFPObject {
     /**
      * The collection of MapCodedFont objects
      */
-    private List mapCodedFonts = new java.util.ArrayList();
+    private ArrayList mapCodedFonts = new ArrayList();
 
     /**
      * The Object Area Descriptor for the active environment group
@@ -72,19 +72,19 @@ public final class ActiveEnvironmentGroup extends AbstractNamedAFPObject {
     /**
      * The collection of MapPageOverlay objects
      */
-    private List mapPageOverlays = new java.util.ArrayList();
+    private ArrayList mapPageOverlays = new ArrayList();
 
     /**
      * Default constructor for the ActiveEnvironmentGroup.
      * @param width the page width
      * @param height the page height
-     * @param widthRes the page width resolution
-     * @param heightRes the page height resolution
+     * @param widthResolution the page width resolution
+     * @param heightResolution the page height resolution
      */
     public ActiveEnvironmentGroup(int width, int height,
-            int widthRes, int heightRes) {
+            int widthResolution, int heightResolution) {
 
-        this(DEFAULT_NAME, width, height, widthRes, heightRes);
+        this(DEFAULT_NAME, width, height, widthResolution, heightResolution);
 
     }
 
@@ -94,24 +94,24 @@ public final class ActiveEnvironmentGroup extends AbstractNamedAFPObject {
      * @param name the active environment group name
      * @param width the page width
      * @param height the page height
-     * @param widthRes the page width resolution
-     * @param heightRes the page height resolution
+     * @param widthResolution the page width resolution
+     * @param heightResolution the page height resolution
      */
     public ActiveEnvironmentGroup(String name, int width, int height,
-            int widthRes, int heightRes) {
+            int widthResolution, int heightResolution) {
 
         super(name);
 
         // Create PageDescriptor
-        pageDescriptor = new PageDescriptor(width, height, widthRes, heightRes);
+        pageDescriptor = new PageDescriptor(width, height, widthResolution, heightResolution);
 
         // Create ObjectAreaDescriptor
         objectAreaDescriptor = new ObjectAreaDescriptor(width, height,
-                widthRes, heightRes);
+                widthResolution, heightResolution);
 
         // Create PresentationTextDataDescriptor
         presentationTextDataDescriptor = new PresentationTextDescriptor(width, height,
-                    widthRes, heightRes);
+                    widthResolution, heightResolution);
 
     }
 
@@ -243,7 +243,7 @@ public final class ActiveEnvironmentGroup extends AbstractNamedAFPObject {
      * @param orientation the orientation of the font (e.g. 0, 90, 180, 270)
      */
     public void createFont(
-        int fontReference,
+        byte fontReference,
         AFPFont font,
         int size,
         int orientation) {
@@ -256,7 +256,7 @@ public final class ActiveEnvironmentGroup extends AbstractNamedAFPObject {
         }
 
         try {
-            
+
             mcf.addFont(
                 fontReference,
                 font,

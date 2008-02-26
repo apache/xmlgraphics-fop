@@ -35,11 +35,11 @@ public class PageDescriptor extends AbstractDescriptor {
      * and page height.
      * @param width The page width.
      * @param height The page height.
-     * @param widthRes The page width resolution
-     * @param heightRes The page height resolution
+     * @param widthResolution The page width resolution
+     * @param heightResolution The page height resolution
      */
-    public PageDescriptor(int width, int height, int widthRes, int heightRes) {
-        super(width, height, widthRes, heightRes);
+    public PageDescriptor(int width, int height, int widthResolution, int heightResolution) {
+        super(width, height, widthResolution, heightResolution);
     }
 
     /**
@@ -68,12 +68,12 @@ public class PageDescriptor extends AbstractDescriptor {
         data[10] = 0x00; // YpgBase = 10 inches 
         
         // XpgUnits
-        byte[] xdpi = BinaryUtils.convert(widthRes * 10, 2);
+        byte[] xdpi = BinaryUtils.convert(widthResolution * 10, 2);
         data[11] = xdpi[0];
         data[12] = xdpi[1];
 
         // YpgUnits
-        byte[] ydpi = BinaryUtils.convert(heightRes * 10, 2);
+        byte[] ydpi = BinaryUtils.convert(heightResolution * 10, 2);
         data[13] = ydpi[0];
         data[14] = ydpi[1];
             

@@ -22,12 +22,9 @@ package org.apache.fop.render.afp.modca;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Iterator;
-import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.render.afp.AFPFontAttributes;
 import org.apache.fop.render.afp.fonts.AFPFont;
 import org.apache.fop.render.afp.tools.StringUtils;
 
@@ -135,7 +132,7 @@ public class AFPDataStream {
      * The outputstream for the data stream
      */
     private OutputStream outputStream = null;
-    
+
     /**
      * Default constructor for the AFPDataStream.
      */
@@ -150,6 +147,7 @@ public class AFPDataStream {
      *            the outputStream which the document is written to.
      */
     public void startDocument(OutputStream docOutputStream) {
+
         if (document != null) {
             String msg = "Invalid state - document already started.";
             log.warn("startDocument():: " + msg);
@@ -158,6 +156,7 @@ public class AFPDataStream {
 
         this.document = new Document();
         this.outputStream = docOutputStream;
+
     }
 
     /**
@@ -169,6 +168,7 @@ public class AFPDataStream {
      *             throws an I/O exception of some sort has occurred
      */
     public void endDocument() throws IOException {
+
         if (complete) {
             String msg = "Invalid state - document already ended.";
             log.warn("endDocument():: " + msg);
@@ -206,19 +206,19 @@ public class AFPDataStream {
      *            the height of the page
      * @param pageRotation
      *            the rotation of the page
-     * @param pageWidthRes
+     * @param pageWidthResolution
      *            the width resolution of the page
-     * @param pageHeightRes
+     * @param pageHeightResolution
      *            the height resolution of the page
      */
     public void startPage(int pageWidth, int pageHeight, int pageRotation,
-            int pageWidthRes, int pageHeightRes) {
+            int pageWidthResolution, int pageHeightResolution) {
 
         String pageName = "PGN"
                 + StringUtils.lpad(String.valueOf(pageCount++), '0', 5);
 
         currentPageObject = new PageObject(pageName, pageWidth, pageHeight,
-                pageRotation, pageWidthRes, pageHeightRes);
+                pageRotation, pageWidthResolution, pageHeightResolution);
         currentPage = currentPageObject;
         currentOverlay = null;
         setOffsets(0, 0, 0);
@@ -265,9 +265,11 @@ public class AFPDataStream {
      * Helper method to mark the end of the current overlay.
      */
     public void endOverlay() {
+
         currentOverlay.endPage();
         currentOverlay = null;
         currentPage = currentPageObject;
+
     }
 
     /**
@@ -276,6 +278,7 @@ public class AFPDataStream {
      * @return current page object that was saved
      */
     public PageObject savePage() {
+
         PageObject pageObject = currentPageObject;
         if (currentPageGroup != null) {
             currentPageGroup.addPage(currentPageObject);
@@ -285,6 +288,7 @@ public class AFPDataStream {
         currentPageObject = null;
         currentPage = null;
         return pageObject;
+
     }
 
     /**
@@ -294,8 +298,10 @@ public class AFPDataStream {
      *            page object
      */
     public void restorePage(PageObject pageObject) {
+
         currentPageObject = pageObject;
         currentPage = pageObject;
+
     }
 
     /**
@@ -305,6 +311,7 @@ public class AFPDataStream {
      *             thrown when an I/O exception of some sort has occurred
      */
     public void endPage() throws IOException {
+
         currentPageObject.endPage();
         if (currentPageGroup != null) {
             currentPageGroup.addPage(currentPageObject);
@@ -312,8 +319,10 @@ public class AFPDataStream {
             document.addPage(currentPageObject);
             document.writeDataStream(this.outputStream);
         }
+
         currentPageObject = null;
         currentPage = null;
+
     }
 
     /**
@@ -333,21 +342,6 @@ public class AFPDataStream {
     }
 
     /**
-     * Creates the given page fonts in the current page
-     * @param pageFonts a collection of AFP font attributes
-     */
-    public void addFontsToCurrentPage(Map pageFonts) {
-        Iterator iter = pageFonts.values().iterator();
-        while (iter.hasNext()) {
-            AFPFontAttributes afpFontAttributes = (AFPFontAttributes)iter.next();
-            createFont(
-                afpFontAttributes.getFontReference(),
-                afpFontAttributes.getFont(),
-                afpFontAttributes.getPointSize());
-        }
-    }
-
-    /**
      * Helper method to create a map coded font object on the current page, this
      * method delegates the construction of the map coded font object to the
      * active environment group on the current page.
@@ -359,17 +353,18 @@ public class AFPDataStream {
      * @param size
      *            the point size of the font
      */
-    public void createFont(int fontReference, AFPFont font, int size) {
-        currentPage.createFont(fontReference, font, size);
-    }
+    public void createFont(byte fontReference, AFPFont font, int size) {
 
+        currentPage.createFont(fontReference, font, size);
+
+    }
 
     /**
      * Helper method to create text on the current page, this method delegates
      * to the current presentation text object in order to construct the text.
      * 
-     * @param fontReference
-     *            the font reference used as the resource identifier
+     * @param fontNumber
+     *            the font number used as the resource identifier
      * @param x
      *            the x coordinate of the text
      * @param y
@@ -383,125 +378,81 @@ public class AFPDataStream {
      * @param data
      *            the text data to create
      */
-    public void createText(int fontReference, int x, int y, Color col, int vsci,
+    public void createText(int fontNumber, int x, int y, Color col, int vsci,
             int ica, byte[] data) {
-        currentPage.createText(fontReference, x + xOffset, y + yOffset, rotation,
+
+        currentPage.createText(fontNumber, x + xOffset, y + yOffset, rotation,
                 col, vsci, ica, data);
+
     }
 
     /**
      * Returns an ImageObject used to create an image in the datastream.
-     *
+     * 
      * @param x
      *            the x position of the image
      * @param y
      *            the y position of the image
-     * @param width
-     *            the width of the image
-     * @param height
-     *            the height of the image
-     * @param widthRes
-     *            the resolution width of the image
-     * @param heightRes
-     *            the resolution height of the image
-     * @return
-     *            a new image object
-     */
-    public ImageObject getImageObject(int x, int y, int width, int height,
-            int widthRes, int heightRes) {
-        ImageObject imageObj = currentPage.getImageObject();
-        setObjectViewPort(imageObj, x, y, width, height, widthRes, heightRes);
-        return imageObj;
-    }
-
-    /**
-     * Returns an GraphicObject used to create an graphic in the datastream.
-     *
-     * @param x
-     *            the x position of the graphic
-     * @param y
-     *            the y position of the graphic
-     * @param width
-     *            the width of the graphic
-     * @param height
-     *            the height of the graphic
-     * @param widthRes
-     *            the resolution width of the graphic
-     * @param heightRes
-     *            the resolution height of the graphic
-     * @return
-     *            a new graphics object
-     */
-    public GraphicsObject getGraphicsObject(int x, int y, int width, int height,
-            int widthRes, int heightRes) {
-        GraphicsObject graphicsObj = currentPage.getGraphicsObject();
-        setObjectViewPort(graphicsObj, x, y, width, height, widthRes, heightRes);
-        return graphicsObj;
-    }
-
-    /**
-     * Sets the object view port taking into account rotation.
-     *
-     * @param x
-     *            the x position of the object
-     * @param y
-     *            the y position of the object
      * @param w
-     *            the width of the object
+     *            the width of the image
      * @param h
-     *            the height of the object
+     *            the height of the image
      * @param wr
-     *            the resolution width of the object
+     *            the width resolution of the image
      * @param hr
-     *            the resolution height of the object
-     * @return
-     *            a new graphics object
+     *            the height resolution of the image
+     * @return ImageObject used to create an image in the datastream
      */
-    private void setObjectViewPort(AbstractDataObject dataObj,
-            int x, int y, int w, int h, int wr, int hr) {
+    public ImageObject getImageObject(int x, int y, int w, int h, int wr, int hr) {
+
         int xOrigin;
         int yOrigin;
         int width;
         int height;
-        int widthRes;
-        int heightRes;
-        switch (this.rotation) {
+        int widthResolution;
+        int heightResolution;
+
+        switch (rotation) {
         case 90:
             xOrigin = currentPage.getWidth() - y - yOffset;
             yOrigin = x + xOffset;
             width = h;
             height = w;
-            widthRes = hr;
-            heightRes = wr;
+            widthResolution = hr;
+            heightResolution = wr;
             break;
         case 180:
             xOrigin = currentPage.getWidth() - x - xOffset;
             yOrigin = currentPage.getHeight() - y - yOffset;
             width = w;
             height = h;
-            widthRes = wr;
-            heightRes = hr;
+            widthResolution = wr;
+            heightResolution = hr;
             break;
         case 270:
             xOrigin = y + yOffset;
             yOrigin = currentPage.getHeight() - x - xOffset;
             width = h;
             height = w;
-            widthRes = hr;
-            heightRes = wr;
+            widthResolution = hr;
+            heightResolution = wr;
             break;
         default:
             xOrigin = x + xOffset;
             yOrigin = y + yOffset;
             width = w;
             height = h;
-            widthRes = wr;
-            heightRes = hr;
+            widthResolution = wr;
+            heightResolution = hr;
             break;
         }
-        dataObj.setViewport(xOrigin, yOrigin, width, height, widthRes, heightRes, rotation);
+        ImageObject io = currentPage.getImageObject();
+        io.setImageViewport(xOrigin, yOrigin, width, height, rotation,
+                widthResolution, heightResolution);
+        return io;
+
     }
-        
+
     /**
      * Method to create a line on the current page.
      * 
@@ -520,8 +471,10 @@ public class AFPDataStream {
      */
     public void createLine(int x1, int y1, int x2, int y2, int thickness,
             Color col) {
+
         currentPage.createLine(x1 + xOffset, y1 + yOffset, x2 + xOffset, y2
                 + yOffset, thickness, rotation, col);
+
     }
 
     /**
@@ -546,8 +499,10 @@ public class AFPDataStream {
      */
     public void createShading(int x, int y, int w, int h, int red, int green,
             int blue) {
+
         currentPage.createShading(x + xOffset, y + xOffset, w, h, red, green,
                 blue);
+
     }
 
     /**
@@ -558,10 +513,12 @@ public class AFPDataStream {
      *            the name of the static overlay
      */
     public void createIncludePageOverlay(String name) {
+
         currentPageObject.createIncludePageOverlay(name, 0, 0, rotation);
         ActiveEnvironmentGroup aeg = currentPageObject
                 .getActiveEnvironmentGroup();
         aeg.createOverlay(name);
+
     }
 
     /**
@@ -571,10 +528,12 @@ public class AFPDataStream {
      *            the name of the medium map
      */
     public void createInvokeMediumMap(String name) {
+
         if (currentPageGroup == null) {
             startPageGroup();
         }
         currentPageGroup.createInvokeMediumMap(name);
+
     }
 
     /**
@@ -588,6 +547,7 @@ public class AFPDataStream {
      *            the y coordinate for the overlay
      */
     public void createIncludePageSegment(String name, int x, int y) {
+
         int xOrigin;
         int yOrigin;
         switch (rotation) {
@@ -609,6 +569,7 @@ public class AFPDataStream {
             break;
         }
         currentPage.createIncludePageSegment(name, xOrigin, yOrigin);
+
     }
 
     /**
@@ -618,11 +579,13 @@ public class AFPDataStream {
      *            the array of key value pairs.
      */
     public void createPageTagLogicalElement(TagLogicalElementBean[] attributes) {
+
         for (int i = 0; i < attributes.length; i++) {
             String name = (String) attributes[i].getKey();
             String value = (String) attributes[i].getValue();
             currentPage.createTagLogicalElement(name, value);
         }
+
     }
 
     /**
@@ -631,12 +594,15 @@ public class AFPDataStream {
      * @param attributes
      *            the array of key value pairs.
      */
-    public void createPageGroupTagLogicalElement(TagLogicalElementBean[] attributes) {
+    public void createPageGroupTagLogicalElement(
+            TagLogicalElementBean[] attributes) {
+
         for (int i = 0; i < attributes.length; i++) {
             String name = (String) attributes[i].getKey();
             String value = (String) attributes[i].getValue();
             currentPageGroup.createTagLogicalElement(name, value);
         }
+
     }
 
     /**
@@ -648,11 +614,13 @@ public class AFPDataStream {
      *            The tag value
      */
     public void createTagLogicalElement(String name, String value) {
+
         if (currentPageGroup != null) {
             currentPageGroup.createTagLogicalElement(name, value);
         } else {
             currentPage.createTagLogicalElement(name, value);
         }
+
     }
 
     /**
@@ -729,4 +697,5 @@ public class AFPDataStream {
         }
 
     }
+
 }

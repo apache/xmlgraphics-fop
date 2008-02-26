@@ -27,7 +27,12 @@ import org.apache.fop.render.afp.tools.BinaryUtils;
 /**
  * An IOCA Image Data Object
  */
-public class ImageObject extends AbstractDataObject {
+public class ImageObject extends AbstractNamedAFPObject {
+
+    /**
+     * The object environment group
+     */
+    private ObjectEnvironmentGroup objectEnvironmentGroup = null;
 
     /**
      * The image segment
@@ -40,7 +45,34 @@ public class ImageObject extends AbstractDataObject {
      * @param name The name of the image.
      */
     public ImageObject(String name) {
+
         super(name);
+
+    }
+
+    /**
+     * Sets the image display area position and size.
+     *
+     * @param x
+     *            the x position of the image
+     * @param y
+     *            the y position of the image
+     * @param w
+     *            the width of the image
+     * @param h
+     *            the height of the image
+     * @param r
+     *            the rotation of the image
+     * @param wr
+     *            the width resolution of the image
+     * @param hr
+     *            the height resolution of the image
+     */
+    public void setImageViewport(int x, int y, int w, int h, int r, int wr, int hr) {
+        if (objectEnvironmentGroup == null) {
+            objectEnvironmentGroup = new ObjectEnvironmentGroup();
+        }
+        objectEnvironmentGroup.setObjectArea(x, y, w, h, r, wr, hr);
     }
 
     /**
@@ -117,16 +149,24 @@ public class ImageObject extends AbstractDataObject {
     }
 
     /**
+     * Sets the ObjectEnvironmentGroup.
+     * @param objectEnvironmentGroup The objectEnvironmentGroup to set
+     */
+    public void setObjectEnvironmentGroup(ObjectEnvironmentGroup objectEnvironmentGroup) {
+        this.objectEnvironmentGroup = objectEnvironmentGroup;
+    }
+
+    /**
      * Helper method to return the start of the image object.
-     * @param len the length of this ipd start
      * @return byte[] The data stream.
      */
     private byte[] getIPDStart(int len) {
-        byte[] l = BinaryUtils.convert(len + 8, 2);
+
         byte[] data = new byte[] {
+
             0x5A, // Structured field identifier
-            l[0], // Length byte 1
-            l[1], // Length byte 2
+            0x00, // Length byte 1
+            0x10, // Length byte 2
             (byte) 0xD3, // Structured field id byte 1
             (byte) 0xEE, // Structured field id byte 2
             (byte) 0xFB, // Structured field id byte 3
@@ -134,14 +174,29 @@ public class ImageObject extends AbstractDataObject {
             0x00, // Reserved
             0x00, // Reserved
         };
+
+        byte[] l = BinaryUtils.convert(len + 8, 2);
+        data[1] = l[0];
+        data[2] = l[1];
+
         return data;
+
     }
 
     /**
-     * {@inheritDoc}
+     * Accessor method to write the AFP datastream for the Image Object
+     * @param os The stream to write to
+     * @throws java.io.IOException thrown if an I/O exception of some sort has occurred
      */
-    protected void writeContent(OutputStream os) throws IOException {
-        super.writeContent(os);
+    public void writeDataStream(OutputStream os)
+        throws IOException {
+
+        writeStart(os);
+
+        if (objectEnvironmentGroup != null) {
+            objectEnvironmentGroup.writeDataStream(os);
+        }
+
         if (imageSegment != null) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             imageSegment.writeDataStream(baos);
@@ -154,13 +209,20 @@ public class ImageObject extends AbstractDataObject {
                 off += len;
             }
         }
+
+        writeEnd(os);
+
     }
 
     /**
-     * {@inheritDoc}
+     * Helper method to write the start of the Image Object.
+     * @param os The stream to write to
      */
-    protected void writeStart(OutputStream os) throws IOException {
+    private void writeStart(OutputStream os)
+        throws IOException {
+
         byte[] data = new byte[17];
+
         data[0] = 0x5A; // Structured field identifier
         data[1] = 0x00; // Length byte 1
         data[2] = 0x10; // Length byte 2
@@ -170,19 +232,26 @@ public class ImageObject extends AbstractDataObject {
         data[6] = 0x00; // Flags
         data[7] = 0x00; // Reserved
         data[8] = 0x00; // Reserved
+
         for (int i = 0; i < nameBytes.length; i++) {
+
             data[9 + i] = nameBytes[i];
+
         }
+
         os.write(data);
+
     }
 
     /**
      * Helper method to write the end of the Image Object.
      * @param os The stream to write to
-     * @throws IOException in the event
      */
-    protected void writeEnd(OutputStream os) throws IOException {
+    private void writeEnd(OutputStream os)
+        throws IOException {
+
         byte[] data = new byte[17];
+
         data[0] = 0x5A; // Structured field identifier
         data[1] = 0x00; // Length byte 1
         data[2] = 0x10; // Length byte 2
@@ -192,9 +261,15 @@ public class ImageObject extends AbstractDataObject {
         data[6] = 0x00; // Flags
         data[7] = 0x00; // Reserved
         data[8] = 0x00; // Reserved
+
         for (int i = 0; i < nameBytes.length; i++) {
+
             data[9 + i] = nameBytes[i];
+
         }
+
         os.write(data);
+
     }
+
 }
