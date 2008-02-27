@@ -532,10 +532,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
             //Set up coordinate system for content rectangle
             AffineTransform contentTransform = ctm.toAffineTransform();
             //concatenateTransformationMatrix(mptToPt(contentTransform));
-            ptSrc = new Point(0, 0);
-            ptDst = contentTransform.transform(ptSrc, null);
-            contentRect = new Rectangle2D.Double(ptDst.getX(), ptDst.getY(),
-                    1000 * width, 1000 * height);
+            contentRect = new Rectangle2D.Double(0, 0, 1000 * width, 1000 * height);
             pushViewPortPos(new ViewPortPos(contentRect, new CTM(contentTransform)));
             
             currentIPPosition = 0;
@@ -588,7 +585,6 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
             currentBPPosition += (int)(bv.getAllocBPD());
         }
-        // currentFontName = saveFontName;
     }
 
     /** {@inheritDoc} */
