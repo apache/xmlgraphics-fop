@@ -160,7 +160,6 @@ class ActiveCell {
         if (makeBoxForWholeRow) {
             elementList = new java.util.ArrayList(1);
             int height = row.getHeight().opt;
-            height -= 2 * tableLM.getHalfBorderSeparationBPD();
             height -= bpBeforeNormal + bpAfterNormal;
             elementList.add(new KnuthBoxCellWithBPD(height));
         } else {
