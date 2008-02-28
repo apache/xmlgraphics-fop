@@ -33,6 +33,9 @@
         Added SVG support for AFP (GOCA).
         </action>
       -->
+      <action context="Renderers" dev="JM" type="fix" due-to="Gordon Cooke">
+        Slight improvement for thin lines in Java2D/AWT output.
+      </action>
       <action context="Layout" dev="VH" type="add">
         Added full support for keep-with-previous on fo:table-row and in fo:table-cell elements.
       </action>
