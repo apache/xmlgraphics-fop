@@ -221,7 +221,7 @@ public class InputHandler implements ErrorListener, Renderable {
      * {@inheritDoc}
      */
     public void warning(TransformerException exc) {
-        log.warn(exc.toString());
+        log.warn(exc.getLocalizedMessage());
     }
 
     /**
