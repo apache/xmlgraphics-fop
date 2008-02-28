@@ -312,6 +312,8 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
                 graphics.setRenderingHint(RenderingHints.KEY_RENDERING,
                         RenderingHints.VALUE_RENDER_QUALITY);
             }
+            graphics.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL,
+                    RenderingHints.VALUE_STROKE_PURE);
 
             // transform page based on scale factor supplied
             AffineTransform at = graphics.getTransform();
