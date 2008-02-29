@@ -108,6 +108,11 @@ public class Type1FontLoader extends FontLoader {
             throw new java.io.FileNotFoundException(
                     "Neither an AFM nor a PFM file was found for " + this.fontFileURI);
         }
+        if (pfm == null) {      
+            //Cannot do without the PFM for now         
+            throw new java.io.FileNotFoundException(    
+                    "No PFM file was found for " + this.fontFileURI);   
+        }
         buildFont(afm, pfm);
         this.loaded = true;
     }
@@ -266,8 +271,11 @@ public class Type1FontLoader extends FontLoader {
             returnFont.setCapHeight(returnFont.getAscender());
         }
         
+        /* DISABLED because of mismatch with our using WinAnsiEncoding and the AFM
+        delivering the font's default encoding.
         if (afm != null) {
             //TODO returnFont.setFlags(flags);
+             
             returnFont.setFirstChar(afm.getFirstChar());
             returnFont.setLastChar(afm.getLastChar());
             Iterator iter = afm.getCharMetrics().iterator();
@@ -278,7 +286,7 @@ public class Type1FontLoader extends FontLoader {
                 }
             }
             returnFont.replaceKerningMap(afm.createXKerningMapEncoded());
-        } else {
+        } else {*/
             returnFont.setFlags(pfm.getFlags());
             returnFont.setFirstChar(pfm.getFirstChar());
             returnFont.setLastChar(pfm.getLastChar());
@@ -286,7 +294,7 @@ public class Type1FontLoader extends FontLoader {
                 singleFont.setWidth(i, pfm.getCharWidth(i));
             }
             returnFont.replaceKerningMap(pfm.getKerning());
-        }
+        //}
     }
 
     private CodePointMapping buildCustomEncoding(String encodingName, AFMFile afm) {
