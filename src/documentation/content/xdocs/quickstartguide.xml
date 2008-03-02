@@ -1,0 +1,57 @@
+<?xml version="1.0" standalone="no"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id: gethelp.xml 627324 2008-02-13 09:35:01Z maxberger $ -->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "http://forrest.apache.org/dtd/document-v13.dtd">
+<document>
+  <header>
+    <title>FOP: Quick Start Guide</title>
+    <subtitle>Everything you need to start using and appreciating Apache FOP quickly.</subtitle>
+    <version>$Revision: 627324 $</version>
+  </header>
+  <body>
+    <p>The goal of his <strong>Quick Start Guide</strong> is to help novice users get Apache FOP up and running quickly. Typically, you'll need to:</p>
+    <ol>
+    	<li><a href="download.html">Download FOP</a></li>
+    	<li><a href="0.95/compiling.html">Build FOP</a></li>
+    	<li><a href="0.95/configuration.html">Configure FOP</a></li>
+    	<li><a href="0.95/running.html">Run FOP</a></li>
+    </ol>
+    <p>Here are some links to help you find out what FOP can do, as well as how and where to get help:</p>
+    <ul>
+    	<li><a href="0.95/embedding.html">Embed FOP</a></li>
+    	<li><a href="0.95/servlets.html">Using FOP in Servlets</a></li>
+    	<li><a href="0.95/anttask.html">Create an FOP 'Ant' Task</a></li>
+    	<li><a href="compliance.html" title="FOP Compliance">Compliance</a></li>
+    	<li><a href="gethelp.html">Getting Help</a></li>
+    	<li><a href="faq.html">FAQs</a></li>
+    	<li><a href="maillist.html">Mailing Lists</a></li>
+    </ul>
+    <p>The following links will help you understand what FOP supports out of the box, and  how to extend FOP using your own Fonts and Hyphenation files, as well as how to extend FOP with Extensions.</p>
+    <ul>
+    	<li><a href="0.95/output.html">FOP's Output Targets</a></li>
+    	<li><a href="0.95/intermediate.html">FOP's Intermediate Format</a></li>
+    	<li><a href="0.95/pdfencryption.html">FOP's PDF Encryption Support</a></li>
+    	<li><a href="0.95/pdfa.html">FOP's PDF/A Support</a></li>
+    	<li><a href="0.95/pdfx.html">FOP's PDF/X Support</a></li>
+    	<li><a href="0.95/graphics.html">FOP's Graphics Support</a></li>
+    	<li><a href="0.95/fonts.html">FOP's Fonts Support</a></li>
+    	<li><a href="0.95/hyphenation.html">FOP's Hyphenation Support</a></li>
+    	<li><a href="0.95/extensions.html">FOP's Extensions Support</a></li>
+    </ul>
+  </body>
+</document>
