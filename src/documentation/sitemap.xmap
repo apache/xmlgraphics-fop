@@ -23,18 +23,18 @@
     <map:pipeline>
     
       <map:match type="regexp" pattern="^(.*?)([^/]*)changes.xml$">
-        <map:generate type="file" src="{project:status}" />
+        <map:generate type="file" src="{properties:status}" />
         <map:transform src="resources/stylesheets/changes2document.xsl" >
-          <map:parameter name="bugtracking-url" value="{defaults:bugtracking-url}"/>
+          <map:parameter name="bugtracking-url" value="{properties:bugtracking-url}"/>
           <map:parameter name="path" value="{1}{2}"/>
         </map:transform>
         <map:serialize type="xml-document"/>
       </map:match>
     
       <map:match type="regexp" pattern="^(.*?)([^/]*)changes_(.*).xml$">
-        <map:generate type="file" src="{project:status}" />
+        <map:generate type="file" src="{properties:status}" />
         <map:transform src="resources/stylesheets/changes2document.xsl" >
-          <map:parameter name="bugtracking-url" value="{defaults:bugtracking-url}"/>
+          <map:parameter name="bugtracking-url" value="{properties:bugtracking-url}"/>
           <map:parameter name="path" value="{1}{2}"/>
           <map:parameter name="versionNumber" value="{3}"/>
         </map:transform>
@@ -42,7 +42,7 @@
       </map:match>
 
       <map:match type="regexp" pattern="^(.*?)([^/]*)releaseNotes_(.*).xml$">
-        <map:generate type="file" src="{project:status}" />
+        <map:generate type="file" src="{properties:status}" />
         <map:transform src="resources/stylesheets/releaseNotes2document.xsl">
           <map:parameter name="versionNumber" value="{3}"/>
           <map:parameter name="path" value="{1}{2}"/>
@@ -57,7 +57,7 @@
       <map:match type="regexp" pattern="^(.*?)([^/]*)knownissues-raw-layoutengine.xml$">
         <map:generate type="file" src="../../test/layoutengine/disabled-testcases.xml"/>
         <map:transform src="resources/stylesheets/disabled-testcases2document.xsl" >
-          <map:parameter name="bugtracking-url" value="{defaults:bugtracking-url}"/>
+          <map:parameter name="bugtracking-url" value="{properties:bugtracking-url}"/>
           <map:parameter name="path" value="{1}{2}"/>
         </map:transform>
         <map:serialize type="xml-document"/>
@@ -65,13 +65,13 @@
       <map:match type="regexp" pattern="^(.*?)([^/]*)knownissues-raw-fotree.xml$">
         <map:generate type="file" src="../../test/fotree/disabled-testcases.xml"/>
         <map:transform src="resources/stylesheets/disabled-testcases2document.xsl" >
-          <map:parameter name="bugtracking-url" value="{defaults:bugtracking-url}"/>
+          <map:parameter name="bugtracking-url" value="{properties:bugtracking-url}"/>
           <map:parameter name="path" value="{1}{2}"/>
         </map:transform>
         <map:serialize type="xml-document"/>
       </map:match>
       <map:match type="regexp" pattern="^(.*?)([^/]*)knownissues-raw-static.xml$">
-        <!--<map:generate type="file" src="{project:knownissues}"/>-->
+        <!--<map:generate type="file" src="{properties:knownissues}"/>-->
         <map:generate type="file" src="../../known-issues.xml"/>
         <map:transform src="resources/stylesheets/known-issues2document.xsl"/>
         <map:serialize type="xml-document"/>
@@ -80,7 +80,7 @@
       <map:match type="regexp" pattern="^(.*?)([^/]*)knownissues-raw-layoutengine_(.*).xml$">
         <map:generate type="file" src="content/xdocs/{3}/layoutengine/disabled-testcases.xml"/>
         <map:transform src="resources/stylesheets/disabled-testcases2document.xsl" >
-          <map:parameter name="bugtracking-url" value="{defaults:bugtracking-url}"/>
+          <map:parameter name="bugtracking-url" value="{properties:bugtracking-url}"/>
           <map:parameter name="path" value="{1}{2}"/>
         </map:transform>
         <map:serialize type="xml-document"/>
@@ -88,13 +88,13 @@
       <map:match type="regexp" pattern="^(.*?)([^/]*)knownissues-raw-fotree_(.*).xml$">
         <map:generate type="file" src="content/xdocs/{3}/fotree/disabled-testcases.xml"/>
         <map:transform src="resources/stylesheets/disabled-testcases2document.xsl" >
-          <map:parameter name="bugtracking-url" value="{defaults:bugtracking-url}"/>
+          <map:parameter name="bugtracking-url" value="{properties:bugtracking-url}"/>
           <map:parameter name="path" value="{1}{2}"/>
         </map:transform>
         <map:serialize type="xml-document"/>
       </map:match>
       <map:match type="regexp" pattern="^(.*?)([^/]*)knownissues-raw-static_(.*).xml$">
-        <!--<map:generate type="file" src="{project:knownissues}"/>-->
+        <!--<map:generate type="file" src="{properties:knownissues}"/>-->
         <map:generate type="file" src="content/xdocs/{3}/known-issues.xml"/>
         <map:transform src="resources/stylesheets/known-issues2document.xsl"/>
         <map:serialize type="xml-document"/>
