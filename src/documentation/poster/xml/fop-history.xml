@@ -39,13 +39,12 @@
   </p>
   <p>
     In 2005, the redesign finally took a leap forward, which resulted in the first release from
-    the new codebase (FOP&#160;0.90alpha). Shortly thereafter, FOP&#160;0.91beta was released in December
-    2005 and FOP&#160;0.92beta in April&#160;2006. Although 0.92beta still carries the beta tag,
-    it has many advantages over the old version 0.20.5.
+    the new codebase (FOP&#160;0.90alpha). The project team has published a number of releases
+    since then. FOP made big steps forward.
   </p>
   <p>
-    The next version, to be released shortly, will be 0.93. This version should be the last release 
-    before the long-awaited version 1.0, for which the team only has to implement a handful of 
-    additional features.
+    The next version, to be released in March&#160;2008, will be 0.95. Although FOP still carries
+    pre&#160;1.0 version numbers it is production-ready. Some features are still missing before
+    version&#160;1.0 can be released.
   </p>
 </section>

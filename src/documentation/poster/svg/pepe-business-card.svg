@@ -16,7 +16,8 @@
   limitations under the License.
 -->
 <!-- $Id$ -->
-<svg xml:space="preserve" x="-3.05102in" y="-2.2459in" width="3.31009in" height="2.08961in" 
+<svg xmlns="http://www.w3.org/2000/svg"
+    xml:space="preserve" x="-3.05102in" y="-2.2459in" width="3.31009in" height="2.08961in" 
     style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality" viewBox="-30510 0 33101 20896">
   <g>
     <g>

@@ -37,14 +37,14 @@
     <xsl:choose>
       <xsl:when test="ancestor::li and not(preceding-sibling::*)">
         <fo:block
-          space-after="4pt">
+          space-after.optimum="0.3em" space-after.maximum="1em">
           <xsl:apply-templates/>
         </fo:block>
       </xsl:when>
       <xsl:otherwise>
         <fo:block
-          space-before="4pt"
-          space-after="4pt">
+          space-before.optimum="0.3em" space-before.maximum="1em"
+          space-after.optimum="0.3em" space-after.maximum="1em">
           <xsl:apply-templates/>
         </fo:block>
       </xsl:otherwise>
