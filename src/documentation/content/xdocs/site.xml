@@ -96,10 +96,10 @@
   <!--
   BEGIN Version 0.95 documentation tab
   -->
-  <trunk label="FOP 0.95rc" href="0.95/" tab="stableversion">
+  <trunk label="FOP 0.95beta" href="0.95/" tab="stableversion">
     <about label="About" href="index.html"/>
-    <release label="Release Notes" href="releaseNotes_0.95.html"/>
-    <changes label="Changes" href="changes_0.95.html"/>
+    <release label="Release Notes" href="releaseNotes_0.95beta.html"/>
+    <changes label="Changes" href="changes_0.95beta.html"/>
     <knownissues label="Known Issues" href="knownissues_overview.html"/>
     <upgrading label="Upgrading" href="upgrading.html"/>
     
