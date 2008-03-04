@@ -97,9 +97,9 @@ Maintenance branch releases either copy the trunk content to the maintenance bra
           Step-by-step instructions for the deployment process again:
         </p>
         <note>
-          Please make sure you use Forrest from the 0.7 branch for the time being. You will need
+          Please make sure you use Forrest from the Trunk (revision 632959 or later) for the time being. You will need
           to download it directly from SVN:
-          <link href="http://svn.apache.org/repos/asf/forrest/branches/forrest_07_branch">http://svn.apache.org/repos/asf/forrest/branches/forrest_07_branch</link>
+          <link href="http://svn.apache.org/repos/asf/forrest/trunk">http://svn.apache.org/repos/asf/forrest/trunk</link>
         </note>
         <ul>
           <li>Modify the sources of the website and check locally with Forrest (run "forrest run" or just "forrest").</li>
