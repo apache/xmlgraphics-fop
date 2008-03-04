@@ -81,6 +81,17 @@
               in the FO tree.
             </li>
           </ul>
+          <p>
+            Please note that with this release, we've dropped support for Java 1.3.
+            FOP will, from now on, <strong>require at least Java 1.4</strong>.
+          </p>
+          <p>
+            The image libraries Jimi and JAI are no longer needed (and used). Instead we rely
+            completely on the Image I/O API that has been introduced with Java 1.4. If you still
+            need support for bitmap image formats that do not work out-of-the-box, we recommend
+            adding <link href="http://jai-imageio.dev.java.net/">JAI Image I/O Tools</link>
+            (an Image I/O compatible image codec package) to the classpath.
+          </p>
         </section>
       </notes>
       <action context="Renderers" dev="JM" type="fix" due-to="Gordon Cooke">
