@@ -60,6 +60,29 @@
       -->
     <!--/release-->
     <release version="0.95beta" date="8 March 2008">
+      <notes>
+        <section>
+          <title>Notes</title>
+          <p>
+            Besides the important changes listed below, the most important areas with
+            improvements in this release are:
+          </p>
+          <ul>
+            <li>
+              Improvements and bugfixes for tables (keep and break support, border
+              conditionality etc.)
+            </li>
+            <li>
+              Improvements and bugfixes for font handling and font
+              auto-detection/-registration.
+            </li>
+            <li>
+              Performance improvements and memory optimizations for the property handling
+              in the FO tree.
+            </li>
+          </ul>
+        </section>
+      </notes>
       <action context="Renderers" dev="JM" type="fix" due-to="Gordon Cooke">
         Slight improvement for thin lines in Java2D/AWT output.
       </action>
@@ -99,7 +122,7 @@
         Bugfix for date formatting with negative time zones in the PDF's Info object.
         This affected PDF/A compliance.
       </action>
-      <action context="Fonts" dev="JM" type="add">
+      <action context="Renderers" dev="JM" type="add">
         Added an option to disable the default sRGB profile in PDF output for those who
         don't care about color fidelity, but care about PDF file size.
       </action>
@@ -169,7 +192,7 @@
       <action context="Renderers" dev="JM" type="add" fixes-bug="44176" due-to="Patrick Jaromin">
         Added support for custom fonts in Java2DRenderer and derived renderers.
       </action>
-      <action context="Extensions" dev="JM" type="add">
+      <action context="Extensions" dev="JM" type="add" importance="high">
         Added new extension element: fox:external-document. It allows to add whole documents
         such as multi-page TIFF images to be inserted as peers to a page-sequence. Each image
         will make up an entire page. See the documentation for details.
@@ -178,7 +201,7 @@
         Added minimal support for the .minimum/.maximum components of block/inline-progression-dimension 
         on fo:external-graphic and fo:instream-foreign-object.
       </action>
-      <action context="Layout" dev="JM" type="add">
+      <action context="Layout" dev="JM" type="add" importance="high">
         Added support for scale-down-to-fit and scale-up-to-fit (introduced in XSL 1.1).
       </action>
       <action context="Layout" dev="VH" type="fix" fixes-bug="43633">
@@ -264,7 +287,7 @@
       <action context="Layout" dev="AD" type="add">
         Added support for fo:markers in fo:inline and fo:basic-link.
       </action>
-      <action context="Renderers" dev="JM" type="update">
+      <action context="Renderers" dev="JM" type="update" importance="high">
         PDF Transcoder (SVG) text painting has been completely rewritten.
         Except for some special cases (with filters for example), all text
         (including flow text) is now painted using PDF text operators.
