@@ -39,16 +39,18 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.render.awt.viewer.Renderable;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
 
 /**
  * Class for handling files input from command line
@@ -150,6 +152,7 @@ public class InputHandler implements ErrorListener, Renderable {
         try {
             InputSource is = new InputSource(new FileInputStream(
                     this.sourcefile));
+            is.setSystemId(this.sourcefile.toURI().toASCIIString());
             SAXParserFactory spf = SAXParserFactory.newInstance();
             spf.setFeature("http://xml.org/sax/features/namespaces", true);
             spf.setFeature("http://apache.org/xml/features/xinclude", true);
