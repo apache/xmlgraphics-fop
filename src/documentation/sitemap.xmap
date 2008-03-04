@@ -20,37 +20,6 @@
   </map:components>
 
   <map:pipelines>
-    <map:pipeline>
-    
-      <map:match type="regexp" pattern="^(.*?)([^/]*)changes.xml$">
-        <map:generate type="file" src="{properties:status}" />
-        <map:transform src="resources/stylesheets/changes2document.xsl" >
-          <map:parameter name="bugtracking-url" value="{properties:bugtracking-url}"/>
-          <map:parameter name="path" value="{1}{2}"/>
-        </map:transform>
-        <map:serialize type="xml-document"/>
-      </map:match>
-    
-      <map:match type="regexp" pattern="^(.*?)([^/]*)changes_(.*).xml$">
-        <map:generate type="file" src="{properties:status}" />
-        <map:transform src="resources/stylesheets/changes2document.xsl" >
-          <map:parameter name="bugtracking-url" value="{properties:bugtracking-url}"/>
-          <map:parameter name="path" value="{1}{2}"/>
-          <map:parameter name="versionNumber" value="{3}"/>
-        </map:transform>
-        <map:serialize type="xml-document"/>
-      </map:match>
-
-      <map:match type="regexp" pattern="^(.*?)([^/]*)releaseNotes_(.*).xml$">
-        <map:generate type="file" src="{properties:status}" />
-        <map:transform src="resources/stylesheets/releaseNotes2document.xsl">
-          <map:parameter name="versionNumber" value="{3}"/>
-          <map:parameter name="path" value="{1}{2}"/>
-        </map:transform>
-        <map:serialize type="xml-document"/>
-      </map:match>
-
-    </map:pipeline>
     
     <!-- This is used by xinclude statements in knownissues.xml -->
     <map:pipeline internal-only="true">
