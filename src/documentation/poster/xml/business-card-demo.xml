@@ -37,13 +37,13 @@
     <fo:instream-foreign-object xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
       <svg:svg width="150mm" height="70mm" viewBox="0 0 150 70">
         <svg:g transform="rotate(-7)">
-          <svg:image x="0" y="12" width="84" height="53" xlink:href="svg/pepe-business-card.svg"/>
+          <svg:image x="0" y="12" width="84" height="53" xlink:href="../svg/pepe-business-card.svg"/>
         </svg:g>
       </svg:svg>
     </fo:instream-foreign-object>
   </p>
-  <fo:block-container absolute-position="absolute" left="80mm" top="20mm" width="2cm" height="10cm">
-    <fo:block>
+  <fo:block-container absolute-position="absolute" left="80mm" top="20mm" width="3cm" height="10cm">
+    <fo:block font-size="0" line-height="0">
       <fo:instream-foreign-object xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
         <svg xmlns="http://www.w3.org/2000/svg" version="1.0" width="1.8cm" height="10cm" viewBox="0 0 20 100">
           <defs>
@@ -65,11 +65,11 @@
       </fo:instream-foreign-object>
     </fo:block>
   </fo:block-container>
-  <fo:block-container absolute-position="absolute" width="100%" height="100%">
-  <fo:block start-indent="112mm">
-  <p>The XSLT stylesheet which contains the rules to convert the business card XML to XSL-FO:</p>
-  <fo:block text-align="start" font-family="'Lucida Console'" font-size="10pt" white-space="pre"
-  ><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+  <fo:block-container absolute-position="absolute" width="100%">
+    <fo:block start-indent="112mm">
+      <p>The XSLT stylesheet which contains the rules to convert the business card XML to XSL-FO:</p>
+      <fo:block text-align="start" font-family="'Lucida Console'" font-size="10pt" white-space="pre"
+        ><![CDATA[<?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet version="1.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:fo="http://www.w3.org/1999/XSL/Format">
@@ -77,7 +77,8 @@
   <xsl:template match="/">
     <fo:root font-family="Helvetica" font-size="10pt">
       <fo:layout-master-set>
-        <fo:simple-page-master master-name="bc" page-height="53mm" page-width="84mm" margin="3mm">
+        <fo:simple-page-master master-name="bc"
+              page-height="53mm" page-width="84mm" margin="3mm">
           <fo:region-body/>
         </fo:simple-page-master>
       </fo:layout-master-set>
