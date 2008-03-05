@@ -94,6 +94,17 @@
           </p>
         </section>
       </notes>
+      <action context="Layout" dev="VH" type="add" importance="high">
+        Added support for background on fo:table-column and fo:table-header/footer/body elements.
+      </action>
+      <action context="Layout" dev="VH" type="fix">
+        Fixed the rendering of the area of a table corresponding to border-separation, which must
+        be filled with the background of the table, and not the rows.
+      </action>
+      <action context="Layout" dev="VH" type="fix">
+        Improved conformance: even if a table-cell spans several rows its background must
+        correspond to the first row spanned.
+      </action>
       <action context="Renderers" dev="JM" type="fix" due-to="Gordon Cooke">
         Slight improvement for thin lines in Java2D/AWT output.
       </action>

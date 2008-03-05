@@ -34,10 +34,8 @@
       </fo:layout-master-set>
       <fo:page-sequence master-reference="normal" white-space-collapse="true">
         <fo:flow flow-name="xsl-region-body">
-          <fo:table table-layout="fixed">
-            <fo:table-column column-number="1" />
-            <fo:table-column column-number="2" />
-            <fo:table-column column-number="3" />
+          <fo:table table-layout="fixed" width="100%">
+            <fo:table-column number-columns-repeated="3" column-width="proportional-column-width(1)"/>
             <fo:table-header>
               <fo:table-row>
                 <fo:table-cell>
@@ -82,8 +80,20 @@
     </fo:root>
   </fo>
   <checks>
-    <eval expected="360000" xpath="//flow/block/block[4]/@ipd"/>
+    <eval expected="120000" xpath="//flow/block/block[4]/@ipd"/>
     <eval expected="72000" xpath="//flow/block/block[4]/@bpd"/>
     <eval expected="color=#ffff00,url=../../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=156960,vertical=12960" xpath="//flow/block/block[4]/@background"/>
+    <eval expected="" xpath="//flow/block/block[4]/@left-offset"/>
+
+    <eval expected="120000" xpath="//flow/block/block[6]/@ipd"/>
+    <eval expected="72000" xpath="//flow/block/block[6]/@bpd"/>
+    <eval expected="color=#ffff00,url=../../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=36960,vertical=12960" xpath="//flow/block/block[6]/@background"/>
+    <eval expected="120000" xpath="//flow/block/block[6]/@left-offset"/>
+
+    <eval expected="120000" xpath="//flow/block/block[8]/@ipd"/>
+    <eval expected="72000" xpath="//flow/block/block[8]/@bpd"/>
+    <eval expected="color=#ffff00,url=../../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=-83040,vertical=12960" xpath="//flow/block/block[8]/@background"/>
+    <eval expected="240000" xpath="//flow/block/block[8]/@left-offset"/>
+
   </checks>
 </testcase>

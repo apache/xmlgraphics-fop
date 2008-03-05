@@ -27,8 +27,6 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.area.Block;
-import org.apache.fop.area.Trait;
 import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
@@ -36,7 +34,6 @@ import org.apache.fop.fo.flow.table.EffRow;
 import org.apache.fop.fo.flow.table.PrimaryGridUnit;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableBody;
-import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.KnuthBox;
@@ -46,7 +43,6 @@ import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
-import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.layoutmgr.SpaceResolver.SpaceHandlingBreakPosition;
 import org.apache.fop.util.BreakUtil;
 
@@ -293,7 +289,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
         this.usedBPD = 0;
         RowPainter painter = new RowPainter(this, layoutContext);
 
-        List positions = new java.util.ArrayList();
+        List tablePositions = new ArrayList();
         List headerElements = null;
         List footerElements = null;
         Position firstPos = null;
@@ -330,7 +326,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
                 //ignore for now, see special handling below if break is at a penalty
                 //Only if the last position in this part/page us such a position it will be used 
             } else if (pos instanceof TableContentPosition) {
-                positions.add(pos);
+                tablePositions.add(pos);
             } else {
                 if (log.isDebugEnabled()) {
                     log.debug("Ignoring position: " + pos);
@@ -359,21 +355,23 @@ public class TableContentLayoutManager implements PercentBaseContext {
         if (headerElements != null) {
             //header positions for the last part are the second-to-last element and need to
             //be handled first before all other TableContentPositions
-            PositionIterator nestedIter = new KnuthPossPosIter(headerElements);
-            iterateAndPaintPositions(nestedIter, painter, false);
+            addHeaderFooterAreas(headerElements, tableLM.getTable().getTableHeader(), painter,
+                    false);
         }
         
-        //Iterate over all steps
-        Iterator posIter = positions.iterator();
-        painter.startBody();
-        // Here we are sure that posIter iterates only over TableContentPosition instances
-        iterateAndPaintPositions(posIter, painter, footerElements == null);
-        painter.endBody();
+        if (tablePositions.isEmpty()) {
+            // TODO make sure this actually never happens
+            log.error("tablePositions empty."
+                    + " Please send your FO file to fop-users@xmlgraphics.apache.org");
+        } else {
+            // Here we are sure that posIter iterates only over TableContentPosition instances
+            addBodyAreas(tablePositions.iterator(), painter, footerElements == null);
+        }
 
         if (footerElements != null) {
             //Positions for footers are simply added at the end
-            PositionIterator nestedIter = new KnuthPossPosIter(footerElements);
-            iterateAndPaintPositions(nestedIter, painter, true);
+            addHeaderFooterAreas(footerElements, tableLM.getTable().getTableFooter(), painter,
+                    true);
         }
         
         this.usedBPD += painter.getAccumulatedBPD();
@@ -384,105 +382,73 @@ public class TableContentLayoutManager implements PercentBaseContext {
         }
     }
 
-    /**
-     * Iterates over a part of the table (header, footer, body) and paints the related
-     * elements.
-     * 
-     * @param iterator iterator over Position elements. Those positions correspond to the
-     * elements of the table present on the current page
-     * @param painter
-     * @param lastOnPage true if the corresponding part will be the last on the page
-     * (either body or footer, obviously)
-     */
-    private void iterateAndPaintPositions(Iterator iterator, RowPainter painter,
+    private void addHeaderFooterAreas(List elements, TableBody part, RowPainter painter,
             boolean lastOnPage) {
-        List lst = new ArrayList();
-        boolean firstPos = false;
-        TableBody body = null;
-        while (iterator.hasNext()) {
-            Position pos = (Position)iterator.next();
+        List lst = new ArrayList(elements.size());
+        for (Iterator iter = new KnuthPossPosIter(elements); iter.hasNext();) {
+            Position pos = (Position) iter.next();
+            /*
+             * Unlike for the body the Positions associated to the glues generated by
+             * TableStepper haven't been removed yet.
+             */
             if (pos instanceof TableContentPosition) {
-                TableContentPosition tcpos = (TableContentPosition)pos;
-                lst.add(tcpos);
-                CellPart part = (CellPart)tcpos.cellParts.get(0);
-                if (body == null) {
-                    body = part.pgu.getTableBody();
-                }
-                if (tcpos.getFlag(TableContentPosition.FIRST_IN_ROWGROUP)
-                        && tcpos.getRow().getFlag(EffRow.FIRST_IN_PART)) {
-                    firstPos = true;
-
-                }
-                if (tcpos.getFlag(TableContentPosition.LAST_IN_ROWGROUP) 
-                        && tcpos.getRow().getFlag(EffRow.LAST_IN_PART)) {
-                    log.trace("LAST_IN_ROWGROUP + LAST_IN_PART");
-                    handleMarkersAndPositions(lst, body, firstPos, true, painter);
-                    //reset
-                    firstPos = false;
-                    body = null;
-                    lst.clear();
-                }
+                lst.add((TableContentPosition) pos);
             }
         }
-        if (body != null) {
-            // Entering this block means that the end of the current table-part hasn't
-            // been reached (otherwise it would have been caught by the test above). So
-            // lastPos is necessarily false
-            handleMarkersAndPositions(lst, body, firstPos, false, painter);
-        }
-        painter.addAreasAndFlushRow(true, lastOnPage);
-    }
-
-    private void handleMarkersAndPositions(List positions, TableBody body, boolean firstPos,
-            boolean lastPos, RowPainter painter) {
-        getTableLM().getCurrentPV().addMarkers(body.getMarkers(), 
-                true, firstPos, lastPos);
-        int size = positions.size();
-        for (int i = 0; i < size; i++) {
-            painter.handleTableContentPosition((TableContentPosition)positions.get(i));
-        }
-        getTableLM().getCurrentPV().addMarkers(body.getMarkers(), 
-                false, firstPos, lastPos);
+        addTablePartAreas(lst, painter, part, true, true, true, lastOnPage);
     }
 
     /**
-     * Get the area for a row for background.
-     * @param row the table-row object or null
-     * @return the row area or null if there's no background to paint
+     * Iterates over the positions corresponding to the table's body (which may contain
+     * several table-body elements!) and adds the corresponding areas.
+     * 
+     * @param iterator iterator over TableContentPosition elements. Those positions
+     * correspond to the elements of the body present on the current page
+     * @param painter
+     * @param lastOnPage true if the table has no footer (then the last line of the table
+     * that will be present on the page belongs to the body)
      */
-    Block getRowArea(TableRow row) {
-        if (row == null || !row.getCommonBorderPaddingBackground().hasBackground()) {
-            return null;
-        } else {
-            Block block = new Block();
-            block.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
-            block.setPositioning(Block.ABSOLUTE);
-            return block;
+    private void addBodyAreas(Iterator iterator, RowPainter painter,
+            boolean lastOnPage) {
+        painter.startBody();
+        List lst = new ArrayList();
+        TableContentPosition pos = (TableContentPosition) iterator.next();
+        boolean isFirstPos = pos.getFlag(TableContentPosition.FIRST_IN_ROWGROUP)
+                && pos.getRow().getFlag(EffRow.FIRST_IN_PART);
+        TableBody body = pos.getTableBody();
+        lst.add(pos);
+        while (iterator.hasNext()) {
+            pos = (TableContentPosition) iterator.next();
+            if (pos.getTableBody() != body) {
+                addTablePartAreas(lst, painter, body, isFirstPos, true, false, false);
+                isFirstPos = true;
+                lst.clear();
+                body = pos.getTableBody();
+            }
+            lst.add(pos);
         }
+        boolean isLastPos = pos.getFlag(TableContentPosition.LAST_IN_ROWGROUP)
+                && pos.getRow().getFlag(EffRow.LAST_IN_PART);
+        addTablePartAreas(lst, painter, body, isFirstPos, isLastPos, true, lastOnPage);
+        painter.endBody();
     }
 
     /**
-     * Adds the area for the row background if any.
-     * @param row row for which to generate the background
-     * @param bpd block-progression-dimension of the row
-     * @param ipd inline-progression-dimension of the row
-     * @param yoffset Y offset at which to paint
+     * Adds the areas corresponding to a single fo:table-header/footer/body element.
      */
-    void addRowBackgroundArea(TableRow row, int bpd, int ipd, int yoffset) {
-        //Add row background if any
-        Block rowBackground = getRowArea(row);
-        if (rowBackground != null) {
-            rowBackground.setBPD(bpd);
-            rowBackground.setIPD(ipd);
-            rowBackground.setXOffset(this.startXOffset);
-            rowBackground.setYOffset(yoffset);
-            getTableLM().addChildArea(rowBackground);
-            TraitSetter.addBackground(rowBackground, 
-                    row.getCommonBorderPaddingBackground(), getTableLM());
+    private void addTablePartAreas(List positions, RowPainter painter, TableBody body,
+            boolean isFirstPos, boolean isLastPos, boolean lastInBody, boolean lastOnPage) {
+        getTableLM().getCurrentPV().addMarkers(body.getMarkers(), 
+                true, isFirstPos, isLastPos);
+        painter.startTablePart(body);
+        for (Iterator iter = positions.iterator(); iter.hasNext();) {
+            painter.handleTableContentPosition((TableContentPosition) iter.next());
         }
+        getTableLM().getCurrentPV().addMarkers(body.getMarkers(), 
+                false, isFirstPos, isLastPos);
+        painter.endTablePart(lastInBody, lastOnPage);
     }
-    
-    
+
     /**
      * Sets the overall starting x-offset. Used for proper placement of cells.
      * @param startXOffset starting x-offset (table's start-indent)

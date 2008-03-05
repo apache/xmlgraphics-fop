@@ -27,12 +27,14 @@ import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.Trait;
 import org.apache.fop.datatypes.PercentBaseContext;
-import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.table.ConditionalBorder;
 import org.apache.fop.fo.flow.table.GridUnit;
 import org.apache.fop.fo.flow.table.PrimaryGridUnit;
 import org.apache.fop.fo.flow.table.Table;
+import org.apache.fop.fo.flow.table.TableBody;
 import org.apache.fop.fo.flow.table.TableCell;
+import org.apache.fop.fo.flow.table.TableColumn;
+import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground.BorderInfo;
 import org.apache.fop.layoutmgr.AreaAdditionUtil;
@@ -71,7 +73,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
     private int xoffset;
     private int yoffset;
     private int cellIPD;
-    private int rowHeight;
+    private int totalHeight;
     private int usedBPD;
     private int borderAndPaddingBPD;
     private boolean emptyCell = true;
@@ -116,11 +118,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
      * @return the table owning this cell
      */
     public Table getTable() {
-        FONode node = fobj.getParent();
-        while (!(node instanceof Table)) {
-            node = node.getParent();
-        }
-        return (Table)node;
+        return getTableCell().getTable();
     }
 
 
@@ -303,7 +301,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
      * @param h the height of cell
      */
     public void setTotalHeight(int h) {
-        rowHeight = h;
+        totalHeight = h;
     }
 
     /**
@@ -330,6 +328,10 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
      * which case collapsed before borders must be drawn in the outer mode
      * @param lastOnPage true if the cell will be the very last one on the page, in which
      * case collapsed after borders must be drawn in the outer mode
+     * @param painter painter
+     * @param firstRowHeight height of the first row spanned by this cell (may be zero if
+     * this row is placed on a previous page). Used to calculate the placement of the
+     * row's background image if any
      */
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext,
@@ -339,13 +341,24 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
                          int borderBeforeWhich,
                          int borderAfterWhich,
                          boolean firstOnPage,
-                         boolean lastOnPage) {
+                         boolean lastOnPage,
+                         RowPainter painter,
+                         int firstRowHeight) {
         getParentArea(null);
 
         getPSLM().addIDToPage(getTableCell().getId());
 
         int borderBeforeWidth = primaryGridUnit.getBeforeBorderWidth(startRow, borderBeforeWhich);
         int borderAfterWidth = primaryGridUnit.getAfterBorderWidth(endRow, borderAfterWhich);
+
+        CommonBorderPaddingBackground padding = primaryGridUnit.getCell()
+                .getCommonBorderPaddingBackground();
+        int cellBPD = totalHeight - borderBeforeWidth - borderAfterWidth;
+        cellBPD -= padding.getPaddingBefore(borderBeforeWhich == ConditionalBorder.REST, this);
+        cellBPD -= padding.getPaddingAfter(borderAfterWhich == ConditionalBorder.REST, this);
+
+        addBackgroundAreas(painter, firstRowHeight, borderBeforeWidth, cellBPD);
+
         if (isSeparateBorderModel()) {
             if (!emptyCell || getTableCell().showEmptyCells()) {
                 if (borderBeforeWidth > 0) {
@@ -437,17 +450,11 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
             }
         }
 
-        CommonBorderPaddingBackground padding = primaryGridUnit.getCell()
-                .getCommonBorderPaddingBackground();
         TraitSetter.addPadding(curBlockArea,
                 padding,
                 borderBeforeWhich == ConditionalBorder.REST,
                 borderAfterWhich == ConditionalBorder.REST,
                 false, false, this);
-
-        int cellBPD = rowHeight - borderBeforeWidth - borderAfterWidth;
-        cellBPD -= padding.getPaddingBefore(borderBeforeWhich == ConditionalBorder.REST, this);
-        cellBPD -= padding.getPaddingAfter(borderAfterWhich == ConditionalBorder.REST, this);
 
         //Handle display-align
         if (usedBPD < cellBPD) {
@@ -468,21 +475,40 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
         curBlockArea.setBPD(cellBPD);
 
         // Add background after we know the BPD
-        if (isSeparateBorderModel()) {
-            if (!emptyCell || getTableCell().showEmptyCells()) {
-                TraitSetter.addBackground(curBlockArea,
-                        getTableCell().getCommonBorderPaddingBackground(),
-                        this);
-            }
-        } else {
+        if (!isSeparateBorderModel() || !emptyCell || getTableCell().showEmptyCells()) {
             TraitSetter.addBackground(curBlockArea,
-                    getTableCell().getCommonBorderPaddingBackground(),
-                    this);
+                    getTableCell().getCommonBorderPaddingBackground(), this);
         }
 
         flush();
 
         curBlockArea = null;
+    }
+
+    /** Adds background areas for the column, body and row, if any. */
+    private void addBackgroundAreas(RowPainter painter, int firstRowHeight, int borderBeforeWidth,
+            int cellBPD) {
+        TableColumn column = getTable().getColumn(primaryGridUnit.getColIndex());
+        if (column.getCommonBorderPaddingBackground().hasBackground()) {
+            Block colBackgroundArea = getBackgroundArea(cellBPD, borderBeforeWidth);
+            ((TableLayoutManager) parentLM).registerColumnBackgroundArea(column, colBackgroundArea,
+                    -startIndent);
+        }
+
+        TableBody body = primaryGridUnit.getTableBody();
+        if (body.getCommonBorderPaddingBackground().hasBackground()) {
+            painter.registerPartBackgroundArea(getBackgroundArea(cellBPD, borderBeforeWidth));
+        }
+
+        TableRow row = primaryGridUnit.getRow();
+        if (row != null && row.getCommonBorderPaddingBackground().hasBackground()) {
+            Block rowBackgroundArea = getBackgroundArea(cellBPD, borderBeforeWidth);
+            ((TableLayoutManager) parentLM).addBackgroundArea(rowBackgroundArea);
+            TraitSetter.addBackground(rowBackgroundArea, row.getCommonBorderPaddingBackground(),
+                    (TableLayoutManager) parentLM,
+                    -xoffset - startIndent, -borderBeforeWidth,
+                    parentLM.getContentAreaIPD(), firstRowHeight);
+        }
     }
 
     private void addBorder(Block[][] blocks, int i, int j, Integer side, BorderInfo border,
@@ -511,6 +537,17 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
 
     private static void adjustBPD(Block block, int amount) {
         block.setBPD(block.getBPD() + amount);
+    }
+
+    private Block getBackgroundArea(int bpd, int borderBeforeWidth) {
+        Block block = new Block();
+        TraitSetter.setProducerID(block, getTable().getId());
+        block.setPositioning(Block.ABSOLUTE);
+        block.setIPD(cellIPD);
+        block.setBPD(bpd);
+        block.setXOffset(xoffset + startIndent);
+        block.setYOffset(yoffset + borderBeforeWidth);
+        return block;
     }
 
     /**
