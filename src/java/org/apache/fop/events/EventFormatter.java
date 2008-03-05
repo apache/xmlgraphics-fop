@@ -20,6 +20,7 @@
 package org.apache.fop.events;
 
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.fop.util.AdvancedMessageFormat;
@@ -52,6 +53,8 @@ public class EventFormatter {
 
     public static String format(Event event, String pattern) {
         AdvancedMessageFormat format = new AdvancedMessageFormat(pattern);
+        Map params = new java.util.HashMap(event.getParams());
+        params.put("severity", event.getSeverity());
         return format.format(event.getParams());
     }
     
