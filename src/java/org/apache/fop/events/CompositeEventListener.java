@@ -19,43 +19,51 @@
 
 package org.apache.fop.events;
 
-/**
- * The EventBroadcaster is the central relay point for events. It receives events from various
- * parts of the application and forwards them to any registered EventListener.
- */
-public interface EventBroadcaster {
+import java.util.List;
 
+/**
+ * EventListener implementation forwards events to possibly multiple other EventListeners.
+ */
+public class CompositeEventListener implements EventListener {
+
+    private List listeners = new java.util.ArrayList();
+    
     /**
      * Adds an event listener to the broadcaster. It is appended to the list of previously
      * registered listeners (the order of registration defines the calling order).
      * @param listener the listener to be added
      */
-    void addEventListener(EventListener listener);
-    
+    public synchronized void addEventListener(EventListener listener) {
+        this.listeners.add(listener);
+    }
+
     /**
      * Removes an event listener from the broadcaster. If the event listener is not registered,
      * nothing happens.
      * @param listener the listener to be removed
      */
-    void removeEventListener(EventListener listener);
- 
+    public synchronized void removeEventListener(EventListener listener) {
+        this.listeners.remove(listener);
+    }
+
+    private synchronized int getListenerCount() {
+        return this.listeners.size();
+    }
+    
     /**
      * Indicates whether any listeners have been registered with the broadcaster.
      * @return true if listeners are present, false otherwise
      */
-    boolean hasEventListeners();
+    public boolean hasEventListeners() {
+        return (getListenerCount() > 0);
+    }
     
-    /**
-     * Broadcasts an event. This method is usually called from within the observed component.
-     * @param event the event to be broadcast
-     */
-    void broadcastEvent(Event event);
-    
-    /**
-     * Returns an event producer instance for the given interface class.
-     * @param clazz the Class object identifying an {@link EventProducer} interface
-     * @return the event producer instance
-     */
-    EventProducer getEventProducerFor(Class clazz);
-    
+    /** {@inheritDoc} */
+    public synchronized void processEvent(Event event) {
+        for (int i = 0, c = getListenerCount(); i < c; i++) {
+            EventListener listener = (EventListener)this.listeners.get(i);
+            listener.processEvent(event);
+        }
+    }
+
 }

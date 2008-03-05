@@ -24,7 +24,6 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
 
@@ -39,31 +38,33 @@ import org.apache.fop.events.model.EventModelParser;
 import org.apache.fop.events.model.EventProducerModel;
 import org.apache.fop.events.model.EventSeverity;
 
+/**
+ * Default implementation of the EventBroadcaster interface. It holds a list of event listeners
+ * and can provide {@link EventProducer} instances for type-safe event production.
+ */
 public class DefaultEventBroadcaster implements EventBroadcaster {
 
-    private List listeners = new java.util.ArrayList();
+    /** Holds all registered event listeners */
+    protected CompositeEventListener listeners = new CompositeEventListener();
     
     /** {@inheritDoc} */
     public void addEventListener(EventListener listener) {
-        this.listeners.add(listener);
+        this.listeners.addEventListener(listener);
     }
 
     /** {@inheritDoc} */
     public void removeEventListener(EventListener listener) {
-        this.listeners.remove(listener);
+        this.listeners.removeEventListener(listener);
     }
 
     /** {@inheritDoc} */
-    public int getListenerCount() {
-        return this.listeners.size();
+    public boolean hasEventListeners() {
+        return this.listeners.hasEventListeners();
     }
     
     /** {@inheritDoc} */
     public void broadcastEvent(Event event) {
-        for (int i = 0, c = getListenerCount(); i < c; i++) {
-            EventListener listener = (EventListener)this.listeners.get(i);
-            listener.processEvent(event);
-        }
+        this.listeners.processEvent(event);
     }
 
     private static final String EVENT_MODEL_FILENAME = "event-model.xml";
@@ -74,6 +75,11 @@ public class DefaultEventBroadcaster implements EventBroadcaster {
         loadModel(DefaultEventBroadcaster.class, EVENT_MODEL_FILENAME);
     }
 
+    /**
+     * Loads an event model overriding any previously loaded event model.
+     * @param resourceBaseClass base class to use for loading resources
+     * @param resourceName the resource name pointing to the event model to be loaded
+     */
     public static void loadModel(Class resourceBaseClass, String resourceName) {
         InputStream in = resourceBaseClass.getResourceAsStream(resourceName);
         if (in == null) {
@@ -92,6 +98,7 @@ public class DefaultEventBroadcaster implements EventBroadcaster {
         }
     }
 
+    /** {@inheritDoc} */
     public EventProducer getEventProducerFor(Class clazz) {
         if (!EventProducer.class.isAssignableFrom(clazz)) {
             throw new IllegalArgumentException(
@@ -139,7 +146,8 @@ public class DefaultEventBroadcaster implements EventBroadcaster {
                         }
                         Event ev = new Event(args[0], eventID, methodModel.getSeverity(), params);
                         broadcastEvent(ev);
-                        if (methodModel.getSeverity() == EventSeverity.FATAL) {
+                        
+                        if (ev.getSeverity() == EventSeverity.FATAL) {
                             EventExceptionManager.throwException(ev,
                                     methodModel.getExceptionClass());
                         }

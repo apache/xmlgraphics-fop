@@ -37,8 +37,11 @@ import org.apache.xmlgraphics.image.loader.impl.AbstractImageSessionContext;
 
 import org.apache.fop.Version;
 import org.apache.fop.events.DefaultEventBroadcaster;
+import org.apache.fop.events.Event;
 import org.apache.fop.events.EventBroadcaster;
+import org.apache.fop.events.EventListener;
 import org.apache.fop.fo.FOEventHandler;
+import org.apache.fop.fo.FOValidationEventListenerProxy;
 import org.apache.fop.pdf.PDFEncryptionParams;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererFactory;
@@ -68,7 +71,8 @@ import org.apache.fop.render.pdf.PDFRenderer;
 public class FOUserAgent {
 
     /** Defines the default target resolution (72dpi) for FOP */
-    public static final float DEFAULT_TARGET_RESOLUTION = FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION;
+    public static final float DEFAULT_TARGET_RESOLUTION
+                = FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION;
 
     private static Log log = LogFactory.getLog("FOP");
 
@@ -92,7 +96,7 @@ public class FOUserAgent {
     private Renderer rendererOverride = null;
     private FOEventHandler foEventHandlerOverride = null;
     private boolean locatorEnabled = true; // true by default (for error messages).
-    private EventBroadcaster eventBroadcaster = new DefaultEventBroadcaster();
+    private EventBroadcaster eventBroadcaster = new FOPEventBroadcaster();
     
     /** Producer:  Metadata element for the system/software that produces
      * the document. (Some renderers can store this in the document.)
@@ -577,5 +581,21 @@ public class FOUserAgent {
         return this.eventBroadcaster;
     }
 
+    private class FOPEventBroadcaster extends DefaultEventBroadcaster {
+
+        private EventListener rootListener;
+        
+        public FOPEventBroadcaster() {
+            this.rootListener = new FOValidationEventListenerProxy(
+                    this.listeners, FOUserAgent.this);
+        }
+        
+        /** {@inheritDoc} */
+        public void broadcastEvent(Event event) {
+            rootListener.processEvent(event);
+        }
+        
+    }
+    
 }
 
