@@ -72,5 +72,26 @@ public interface TableEventProducer extends EventProducer {
      */
     void noMixRowsAndCells(Object source, String elementName, Locator loc)
             throws ValidationException;
+
+    /**
+     * The table-footer was found after the table-body. FOP cannot recover with collapsed border
+     * model.
+     * @param source the event source
+     * @param elementName the name of the context node
+     * @param loc the location of the error or null
+     * @throws ValidationException the validation error provoked by the method call
+     * @event.severity FATAL
+     */
+    void footerOrderCannotRecover(Object source, String elementName, Locator loc)
+            throws ValidationException;
+    
+    /**
+     * starts-row/ends-row for fo:table-cells non-applicable for children of an fo:table-row
+     * @param source the event source
+     * @param loc the location of the error or null
+     * @event.severity WARN
+     */
+    void startEndRowUnderTableRowWarning(Object source, Locator loc);
+
     
 }

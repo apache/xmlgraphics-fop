@@ -26,6 +26,7 @@ import junit.framework.TestCase;
 import org.xml.sax.helpers.LocatorImpl;
 
 import org.apache.fop.events.model.EventSeverity;
+import org.apache.fop.util.text.AdvancedMessageFormat;
 
 /**
  * Tests for EventFormatter.
@@ -57,6 +58,20 @@ public class AdvancedMessageFormatTestCase extends TestCase {
         format = new AdvancedMessageFormat(pattern);
         msg = format.format(params);
         assertEquals("Testing {escaped [characters], now a normal field fo:external-graphic!", msg);
+
+        pattern = "Multi-conditional: [case1: {var1}|case2: {var2}|case3: {var3}]";
+        format = new AdvancedMessageFormat(pattern);
+        
+        params = new java.util.HashMap();
+        msg = format.format(params);
+        assertEquals("Multi-conditional: ", msg);
+        
+        params.put("var3", "value3");
+        msg = format.format(params);
+        assertEquals("Multi-conditional: case3: value3", msg);
+        params.put("var1", "value1");
+        msg = format.format(params);
+        assertEquals("Multi-conditional: case1: value1", msg);
     }
     
     public void testObjectFormatting() throws Exception {

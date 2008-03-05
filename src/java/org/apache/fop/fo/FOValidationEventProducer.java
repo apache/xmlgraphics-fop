@@ -66,10 +66,12 @@ public interface FOValidationEventProducer extends EventProducer {
      * @param elementName the name of the context node
      * @param tooLateNode string name of node that should be earlier in document
      * @param tooEarlyNode string name of node that should be later in document
+     * @param canRecover indicates whether FOP can recover from this problem and continue working
      * @param loc the location of the error or null
      * @throws ValidationException the validation error provoked by the method call
      */
-    void nodeOutOfOrder(Object source, String elementName, String tooLateNode, String tooEarlyNode,
+    void nodeOutOfOrder(Object source, String elementName,
+            String tooLateNode, String tooEarlyNode, boolean canRecover,
             Locator loc) throws ValidationException;
     
     /**
@@ -124,17 +126,6 @@ public interface FOValidationEventProducer extends EventProducer {
             Locator loc) throws ValidationException;
 
     /**
-     * An id was used twice in a document.
-     * @param source the event source
-     * @param elementName the name of the context node
-     * @param id the id that was reused
-     * @param loc the location of the error or null
-     * @event.severity WARN
-     *//*
-    void idNotUniqueWarning(Object source, String elementName, String id, Locator loc);
-    */
-
-    /**
      * A marker is not an initial child on a node.
      * @param source the event source
      * @param elementName the name of the context node
@@ -167,17 +158,6 @@ public interface FOValidationEventProducer extends EventProducer {
      */
     void invalidProperty(Object source, String elementName, QName attr, boolean canRecover,
             Locator loc) throws ValidationException;
-
-    /**
-     * An invalid property was encountered.
-     * @param source the event source
-     * @param elementName the name of the context node
-     * @param attr the invalid attribute
-     * @param loc the location of the error or null
-     * @event.severity WARN
-     *//*
-    void invalidPropertyWarning(Object source, String elementName, QName attr,
-            Locator loc);*/
 
     /**
      * An invalid property value was encountered.

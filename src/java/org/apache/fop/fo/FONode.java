@@ -430,8 +430,22 @@ public abstract class FONode implements Cloneable {
      */
     protected void nodesOutOfOrderError(Locator loc, String tooLateNode, 
             String tooEarlyNode) throws ValidationException {
+        nodesOutOfOrderError(loc, tooLateNode, tooEarlyNode, false);
+    }
+    
+    /**
+     * Helper function to standardize "out of order" exceptions
+     * (e.g., fo:layout-master-set appearing after fo:page-sequence)
+     * @param loc org.xml.sax.Locator object of the error (*not* parent node)
+     * @param tooLateNode string name of node that should be earlier in document
+     * @param tooEarlyNode string name of node that should be later in document
+     * @param canRecover indicates whether FOP can recover from this problem and continue working
+     * @throws ValidationException the validation error provoked by the method call
+     */
+    protected void nodesOutOfOrderError(Locator loc, String tooLateNode, 
+            String tooEarlyNode, boolean canRecover) throws ValidationException {
         getFOValidationEventProducer().nodeOutOfOrder(this, getName(),
-                tooLateNode, tooEarlyNode, loc);
+                tooLateNode, tooEarlyNode, canRecover, loc);
     }
     
     /**
@@ -552,9 +566,10 @@ public abstract class FONode implements Cloneable {
     
     /**
      * Returns a String containing as much context information as possible about a node. Call
-     * this methods only in exceptional conditions because this method may perform quite extensive
+     * this method only in exceptional conditions because this method may perform quite extensive
      * information gathering inside the FO tree.
-     * @return a String containing 
+     * @return a String containing context information
+     * @deprecated Not localized! Should rename getContextInfoAlt() to getContextInfo() when done!
      */
     public String getContextInfo() {
         StringBuffer sb = new StringBuffer();
@@ -579,6 +594,30 @@ public abstract class FONode implements Cloneable {
             sb.setLength(80);
         }
         return sb.toString();
+    }
+    
+    /**
+     * Returns a String containing as some context information about a node. It does not take the
+     * locator into consideration and returns null if no useful context information can be found.
+     * Call this method only in exceptional conditions because this method may perform quite
+     * extensive information gathering inside the FO tree.
+     * @return a String containing 
+     */
+    public String getContextInfoAlt() {
+        String s = gatherContextInfo();
+        if (s != null) {
+            StringBuffer sb = new StringBuffer();
+            if (getLocalName() != null) {
+                sb.append(getName());
+                sb.append(", ");
+            }
+            sb.append("\"");
+            sb.append(s);
+            sb.append("\"");
+            return sb.toString();
+        } else {
+            return null;
+        }
     }
     
     /**

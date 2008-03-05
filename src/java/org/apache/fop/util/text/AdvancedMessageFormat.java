@@ -17,13 +17,14 @@
 
 /* $Id$ */
 
-package org.apache.fop.util;
+package org.apache.fop.util.text;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.xml.sax.Locator;
+import org.apache.xmlgraphics.util.Service;
+
 
 /**
  * Formats messages based on a template and with a set of named parameters. This is similar to
@@ -41,8 +42,32 @@ import org.xml.sax.Locator;
  */
 public class AdvancedMessageFormat {
 
-    private static final String COMMA_SEPARATOR_REGEX = "(?<!\\\\),";
+    /** Regex that matches "," but not "\," (escaped comma) */
+    static final String COMMA_SEPARATOR_REGEX = "(?<!\\\\),";
+    
+    private static final Map PART_FACTORIES = new java.util.HashMap();
+    private static final List OBJECT_FORMATTERS = new java.util.ArrayList();
+    private static final Map FUNCTIONS = new java.util.HashMap();
+    
     private CompositePart rootPart;
+    
+    static {
+        Iterator iter;
+        iter = Service.providers(PartFactory.class, true);
+        while (iter.hasNext()) {
+            PartFactory factory = (PartFactory)iter.next();
+            PART_FACTORIES.put(factory.getFormat(), factory);
+        }
+        iter = Service.providers(ObjectFormatter.class, true);
+        while (iter.hasNext()) {
+            OBJECT_FORMATTERS.add((ObjectFormatter)iter.next());
+        }
+        iter = Service.providers(Function.class, true);
+        while (iter.hasNext()) {
+            Function function = (Function)iter.next();
+            FUNCTIONS.put(function.getName(), function);
+        }
+    }
     
     /**
      * Construct a new message format.
@@ -98,6 +123,14 @@ public class AdvancedMessageFormat {
                 parent.addChild(composite);
                 i += parseInnerPattern(pattern, composite, sb, i);
                 break;
+            case '|':
+                if (sb.length() > 0) {
+                    parent.addChild(new TextPart(sb.toString()));
+                    sb.setLength(0);
+                }
+                parent.newSection();
+                i++;
+                break;
             case '\\':
                 if (i < len - 1) {
                     i++;
@@ -118,20 +151,29 @@ public class AdvancedMessageFormat {
     
     private Part parseField(String field) {
         String[] parts = field.split(COMMA_SEPARATOR_REGEX, 3);
+        String fieldName = parts[0];
         if (parts.length == 1) {
-            return new SimpleFieldPart(parts[0]);
+            if (fieldName.startsWith("#")) {
+                return new FunctionPart(fieldName.substring(1));
+            } else {
+                return new SimpleFieldPart(fieldName);
+            }
         } else {
             String format = parts[1];
             if (parts.length == 2) {
                 throw new IllegalArgumentException("Pattern must have three parts!");
             }
-            if ("if".equals(format)) {
-                return new IfFieldPart(parts[0], parts[2]);
-            } else if ("equals".equals(format)) {
-                return new EqualsFieldPart(parts[0], parts[2]);
+            PartFactory factory = (PartFactory)PART_FACTORIES.get(format);
+            if (factory == null) {
+                throw new IllegalArgumentException(
+                        "No PartFactory available under the name: " + format);
             }
-            return new SimpleFieldPart(parts[0]);
+            return factory.newPart(fieldName, parts[2]);
         }
+    }
+
+    private static Function getFunction(String functionName) {
+        return (Function)FUNCTIONS.get(functionName);
     }
 
     /**
@@ -145,14 +187,24 @@ public class AdvancedMessageFormat {
         return sb.toString();
     }
 
-    private interface Part {
+    public interface Part {
         void write(StringBuffer sb, Map params);
         boolean isGenerated(Map params);
     }
     
-    private interface ObjectFormatter {
+    public interface PartFactory {
+        Part newPart(String fieldName, String values);
+        String getFormat();
+    }
+    
+    public interface ObjectFormatter {
         void format(StringBuffer sb, Object obj);
         boolean supportsObject(Object obj);
+    }
+    
+    public interface Function {
+        Object evaluate(Map params);
+        Object getName();
     }
     
     private static class TextPart implements Part {
@@ -179,12 +231,6 @@ public class AdvancedMessageFormat {
     
     private static class SimpleFieldPart implements Part {
         
-        private static final List OBJECT_FORMATTERS = new java.util.ArrayList();
-        
-        static {
-            OBJECT_FORMATTERS.add(new LocatorFormatter());
-        }
-        
         private String fieldName;
         
         public SimpleFieldPart(String fieldName) {
@@ -197,23 +243,7 @@ public class AdvancedMessageFormat {
                         "Message pattern contains unsupported field name: " + fieldName);
             }
             Object obj = params.get(fieldName);
-            if (obj instanceof String) {
-                sb.append(obj);
-            } else {
-                boolean handled = false;
-                Iterator iter = OBJECT_FORMATTERS.iterator();
-                while (iter.hasNext()) {
-                    ObjectFormatter formatter = (ObjectFormatter)iter.next();
-                    if (formatter.supportsObject(obj)) {
-                        formatter.format(sb, obj);
-                        handled = true;
-                        break;
-                    }
-                }
-                if (!handled) {
-                    sb.append(obj.toString());
-                }
-            }
+            formatObject(obj, sb);
         }
 
         public boolean isGenerated(Map params) {
@@ -227,131 +257,134 @@ public class AdvancedMessageFormat {
         }
     }
     
-    private static class IfFieldPart implements Part {
-        
-        protected String fieldName;
-        protected String ifValue;
-        protected String elseValue;
-        
-        public IfFieldPart(String fieldName, String values) {
-            this.fieldName = fieldName;
-            parseValues(values);
+    public static void formatObject(Object obj, StringBuffer target) {
+        if (obj instanceof String) {
+            target.append(obj);
+        } else {
+            boolean handled = false;
+            Iterator iter = OBJECT_FORMATTERS.iterator();
+            while (iter.hasNext()) {
+                ObjectFormatter formatter = (ObjectFormatter)iter.next();
+                if (formatter.supportsObject(obj)) {
+                    formatter.format(target, obj);
+                    handled = true;
+                    break;
+                }
+            }
+            if (!handled) {
+                target.append(obj.toString());
+            }
         }
-
-        protected void parseValues(String values) {
-            String[] parts = values.split(COMMA_SEPARATOR_REGEX, 2);
-            if (parts.length == 2) {
-                ifValue = unescapeComma(parts[0]);
-                elseValue = unescapeComma(parts[1]);
-            } else {
-                ifValue = unescapeComma(values);
+    }
+    
+    private static class FunctionPart implements Part {
+        
+        private Function function;
+        
+        public FunctionPart(String functionName) {
+            this.function = getFunction(functionName);
+            if (this.function == null) {
+                throw new IllegalArgumentException("Unknown function: " + functionName);
             }
         }
         
         public void write(StringBuffer sb, Map params) {
-            boolean isTrue = isTrue(params);
-            if (isTrue) {
-                sb.append(ifValue);
-            } else if (elseValue != null) {
-                sb.append(elseValue);
-            }
-        }
-
-        protected boolean isTrue(Map params) {
-            Object obj = params.get(fieldName);
-            boolean isTrue;
-            if (obj instanceof Boolean) {
-                return ((Boolean)obj).booleanValue();
-            } else {
-                return (obj != null);
-            }
+            Object obj = this.function.evaluate(params);
+            formatObject(obj, sb);
         }
 
         public boolean isGenerated(Map params) {
-            return isTrue(params) || (elseValue != null);
+            Object obj = this.function.evaluate(params);
+            return obj != null;
         }
         
         /** {@inheritDoc} */
         public String toString() {
-            return "{" + this.fieldName + ", if...}";
+            return "{#" + this.function.getName() + "}";
         }
     }
-    
-    private static class EqualsFieldPart extends IfFieldPart {
-        
-        private String equalsValue;
-        
-        public EqualsFieldPart(String fieldName, String values) {
-            super(fieldName, values);
-        }
-
-        /** {@inheritDoc} */
-        protected void parseValues(String values) {
-            String[] parts = values.split(COMMA_SEPARATOR_REGEX, 3);
-            this.equalsValue = parts[0];
-            if (parts.length == 1) {
-                throw new IllegalArgumentException(
-                        "'equals' format must have at least 2 parameters");
-            }
-            if (parts.length == 3) {
-                ifValue = unescapeComma(parts[1]);
-                elseValue = unescapeComma(parts[2]);
-            } else {
-                ifValue = unescapeComma(parts[1]);
-            }
-        }
-        
-        protected boolean isTrue(Map params) {
-            Object obj = params.get(fieldName);
-            if (obj != null) {
-                return String.valueOf(obj).equals(this.equalsValue);
-            } else {
-                return false;
-            }
-        }
-
-        /** {@inheritDoc} */
-        public String toString() {
-            return "{" + this.fieldName + ", equals " + this.equalsValue + "}";
-        }
-        
-    }
-    
     
     private static class CompositePart implements Part {
         
-        private List parts = new java.util.ArrayList();
+        protected List parts = new java.util.ArrayList();
         private boolean conditional;
+        private boolean hasSections = false;
         
         public CompositePart(boolean conditional) {
             this.conditional = conditional;
         }
         
-        public void addChild(Part part) {
-            this.parts.add(part);
+        private CompositePart(List parts) {
+            this.parts.addAll(parts);
+            this.conditional = true;
         }
-
+        
+        public void addChild(Part part) {
+            if (part == null) {
+                throw new NullPointerException("part must not be null");
+            }
+            if (hasSections) {
+                CompositePart composite = (CompositePart)this.parts.get(this.parts.size() - 1);
+                composite.addChild(part);
+            } else {
+                this.parts.add(part);
+            }
+        }
+        
+        public void newSection() {
+            if (!hasSections) {
+                List p = this.parts;
+                //Dropping into a different mode...
+                this.parts = new java.util.ArrayList();
+                this.parts.add(new CompositePart(p));
+                hasSections = true;
+            }
+            this.parts.add(new CompositePart(true));
+        }
+        
         public void write(StringBuffer sb, Map params) {
-            if (isGenerated(params)) {
+            if (hasSections) {
                 Iterator iter = this.parts.iterator();
                 while (iter.hasNext()) {
-                    Part part = (Part)iter.next();
-                    part.write(sb, params);
+                    CompositePart part = (CompositePart)iter.next();
+                    if (part.isGenerated(params)) {
+                        part.write(sb, params);
+                        break;
+                    }
+                }
+            } else {
+                if (isGenerated(params)) {
+                    Iterator iter = this.parts.iterator();
+                    while (iter.hasNext()) {
+                        Part part = (Part)iter.next();
+                        part.write(sb, params);
+                    }
                 }
             }
         }
 
         public boolean isGenerated(Map params) {
-            if (conditional) {
+            if (hasSections) {
                 Iterator iter = this.parts.iterator();
                 while (iter.hasNext()) {
                     Part part = (Part)iter.next();
-                    if (!part.isGenerated(params)) {
-                        return false;
+                    if (part.isGenerated(params)) {
+                        return true;
                     }
                 }
+                return false;
+            } else {
+                if (conditional) {
+                    Iterator iter = this.parts.iterator();
+                    while (iter.hasNext()) {
+                        Part part = (Part)iter.next();
+                        if (!part.isGenerated(params)) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
             }
-            return true;
         }
         
         /** {@inheritDoc} */
@@ -360,20 +393,8 @@ public class AdvancedMessageFormat {
         }
     }
     
-    private static class LocatorFormatter implements ObjectFormatter {
-
-        public void format(StringBuffer sb, Object obj) {
-            Locator loc = (Locator)obj;
-            sb.append(loc.getLineNumber()).append(":").append(loc.getColumnNumber());
-        }
-
-        public boolean supportsObject(Object obj) {
-            return obj instanceof Locator;
-        }
-        
-    }
-
-    private static String unescapeComma(String string) {
+    
+    static String unescapeComma(String string) {
         return string.replaceAll("\\\\,", ",");
     }
 }

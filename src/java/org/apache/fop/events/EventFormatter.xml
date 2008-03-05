@@ -17,20 +17,23 @@
 -->
 <!-- $Id$ -->
 <catalogue xml:lang="en">
-    <message key="org.apache.fop.fo.FOValidationEventProducer.tooManyNodes">For "{elementName}", only one "{offendingNode}" may be declared.[ See position {loc}.]</message>
-    <message key="org.apache.fop.fo.FOValidationEventProducer.nodeOutOfOrder">For "{elementName}", "{tooLateNode}" must be declared before "{tooEarlyNode}"![ See position {loc}.]</message>
-    <message key="org.apache.fop.fo.FOValidationEventProducer.invalidChild">"{offendingNode}" is not a valid child element of "{elementName}"![ {ruleViolated}][ See position {loc}.]</message>
-    <message key="org.apache.fop.fo.FOValidationEventProducer.missingChildElement">"{elementName}" is missing child elements.
-Required content model: {contentModel}[ See position {loc}.]</message>
-    <message key="org.apache.fop.fo.FOValidationEventProducer.missingProperty">Element "{elementName}" is missing required property "{propertyName}"![ See position {loc}.]</message>
-    <message key="org.apache.fop.fo.FOValidationEventProducer.idNotUnique">Property ID "{id}" (found on "{elementName}") previously used; ID values must be unique within a document!{severity,equals,EventSeverity:FATAL,,
-Any reference to it will be considered a reference to the first occurrence in the document.}[ See position {loc}.]</message>
-    <message key="org.apache.fop.fo.FOValidationEventProducer.markerNotInitialChild">fo:marker must be an initial child: {mcname}[ (See position {loc}.)]</message>
-    <message key="org.apache.fop.fo.FOValidationEventProducer.markerNotUniqueForSameParent">fo:marker "marker-class-name" must be unique for same parent: {mcname}[ (See position {loc}.)]</message>
-    <message key="org.apache.fop.fo.FOValidationEventProducer.invalidProperty">Invalid property encountered on "{elementName}": {attr}[ (See position {loc}.)]</message>
-    <message key="org.apache.fop.fo.FOValidationEventProducer.invalidPropertyValue">Invalid property value encountered in {propName}="{propValue}"[: {e}][ (See position {loc}.)]</message>
-    <message key="org.apache.fop.fo.FOValidationEventProducer.unimplementedFeature">The following feature isn't implemented by Apache FOP, yet: {feature}[ (See position {loc}.)]</message>
-    <message key="org.apache.fop.fo.flow.table.TableEventProducer.nonAutoBPDOnTable">Only a value of "auto" for block-progression-dimension has a well-specified behavior on fo:table. Falling back to "auto".</message>
-    <message key="org.apache.fop.fo.flow.table.TableEventProducer.noTablePaddingWithCollapsingBorderModel">In collapsing border model a table does not have padding (see http://www.w3.org/TR/REC-CSS2/tables.html#collapsing-borders), but a non-zero value for padding was found. The padding will be ignored.</message>
-    <message key="org.apache.fop.fo.flow.table.TableEventProducer.noMixRowsAndCells">Either fo:table-rows or fo:table-cells may be children of an {elementName} but not both.[ (See position {loc}.)]</message>
+  <message key="locator">[ (See position {loc})| (See {#gatherContextInfo})| (No context info available)]</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.tooManyNodes">For "{elementName}", only one "{offendingNode}" may be declared.{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.nodeOutOfOrder">For "{elementName}", "{tooLateNode}" must be declared before "{tooEarlyNode}"!{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.invalidChild">"{offendingNode}" is not a valid child element of "{elementName}"![ {ruleViolated}]{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.missingChildElement">"{elementName}" is missing child elements.
+Required content model: {contentModel}{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.missingProperty">Element "{elementName}" is missing required property "{propertyName}"!{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.idNotUnique">Property ID "{id}" (found on "{elementName}") previously used; ID values must be unique within a document!{severity,equals,EventSeverity:FATAL,,
+Any reference to it will be considered a reference to the first occurrence in the document.}{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.markerNotInitialChild">fo:marker must be an initial child: {mcname}{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.markerNotUniqueForSameParent">fo:marker "marker-class-name" must be unique for same parent: {mcname}{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.invalidProperty">Invalid property encountered on "{elementName}": {attr}{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.invalidPropertyValue">Invalid property value encountered in {propName}="{propValue}"[: {e}]{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.unimplementedFeature">The following feature isn't implemented by Apache FOP, yet: {feature}{{locator}}</message>
+  <message key="org.apache.fop.fo.flow.table.TableEventProducer.nonAutoBPDOnTable">Only a value of "auto" for block-progression-dimension has a well-specified behavior on fo:table. Falling back to "auto".{{locator}}</message>
+  <message key="org.apache.fop.fo.flow.table.TableEventProducer.noTablePaddingWithCollapsingBorderModel">In collapsing border model a table does not have padding (see http://www.w3.org/TR/REC-CSS2/tables.html#collapsing-borders), but a non-zero value for padding was found. The padding will be ignored.{{locator}}</message>
+  <message key="org.apache.fop.fo.flow.table.TableEventProducer.noMixRowsAndCells">Either fo:table-rows or fo:table-cells may be children of an {elementName} but not both.{{locator}}</message>
+  <message key="org.apache.fop.fo.flow.table.TableEventProducer.footerOrderCannotRecover">This table uses the collapsing border model. In order to resolve borders in an efficient way the table-footer must be known before any table-body is parsed. Either put the footer at the correct place or switch to the separate border model.{{locator}}</message>
+  <message key="org.apache.fop.fo.flow.table.TableEventProducer.startEndRowUnderTableRowWarning">starts-row/ends-row for fo:table-cells non-applicable for children of an fo:table-row.{{locator}}</message>
 </catalogue>

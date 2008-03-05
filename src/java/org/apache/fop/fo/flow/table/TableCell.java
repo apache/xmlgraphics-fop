@@ -102,17 +102,13 @@ public class TableCell extends TableFObj {
      */
     public void endOfNode() throws FOPException {
         if (!blockItemFound) {
-            if (getUserAgent().validateStrictly()) {
-                missingChildElementError("marker* (%block;)+");
-            } else if (firstChild != null) {
-                log.warn("fo:table-cell content that is not "
-                        + "enclosed by a fo:block will be dropped/ignored.");
-            }
+            missingChildElementError("marker* (%block;)+", true);
         }
         if ((startsRow() || endsRow())
                 && getParent().getNameId() == FO_TABLE_ROW ) {
-            log.warn("starts-row/ends-row for fo:table-cells "
-                    + "non-applicable for children of an fo:table-row.");
+            TableEventProducer eventProducer = TableEventProducer.Factory.create(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.startEndRowUnderTableRowWarning(this, getLocator());
         }
         getFOEventHandler().endCell(this);
     }

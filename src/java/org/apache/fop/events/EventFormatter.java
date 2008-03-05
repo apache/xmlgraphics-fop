@@ -22,15 +22,19 @@ package org.apache.fop.events;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import org.apache.fop.util.AdvancedMessageFormat;
 import org.apache.fop.util.XMLResourceBundle;
+import org.apache.fop.util.text.AdvancedMessageFormat;
 
 /**
  * Converts events into human-readable, localized messages.
  */
 public class EventFormatter {
 
+    private static final Pattern INCLUDES_PATTERN = Pattern.compile("\\{\\{.+\\}\\}");
+    
     private static ResourceBundle defaultBundle = XMLResourceBundle.getXMLBundle(
             EventFormatter.class.getName(), EventFormatter.class.getClassLoader());
     
@@ -48,14 +52,42 @@ public class EventFormatter {
 
     private static String format(Event event, ResourceBundle bundle) {
         String template = bundle.getString(event.getEventID());
-        return format(event, template);
+        return format(event, processIncludes(template, bundle));
+    }
+
+    private static String processIncludes(String template, ResourceBundle bundle) {
+        CharSequence input = template;
+        int replacements;
+        StringBuffer sb;
+        do {
+            sb = new StringBuffer(Math.max(16, input.length()));
+            replacements = processIncludesInner(input, sb, bundle);
+            input = sb;
+        } while (replacements > 0);
+        String s = sb.toString();
+        return s;
+    }
+
+    private static int processIncludesInner(CharSequence template, StringBuffer sb,
+            ResourceBundle bundle) {
+        int replacements = 0;
+        Matcher m = INCLUDES_PATTERN.matcher(template);
+        while (m.find()) {
+            String include = m.group();
+            include = include.substring(2, include.length() - 2);
+            m.appendReplacement(sb, bundle.getString(include));
+            replacements++;
+        }
+        m.appendTail(sb);
+        return replacements;
     }
 
     public static String format(Event event, String pattern) {
         AdvancedMessageFormat format = new AdvancedMessageFormat(pattern);
         Map params = new java.util.HashMap(event.getParams());
+        params.put("source", event.getSource());
         params.put("severity", event.getSeverity());
-        return format.format(event.getParams());
+        return format.format(params);
     }
     
 }
