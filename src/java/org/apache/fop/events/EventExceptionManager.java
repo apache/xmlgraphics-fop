@@ -63,6 +63,7 @@ public class EventExceptionManager {
         Throwable createException(Event event);
     }
     
+    //TODO Move me out of here as I'm FOP-dependent!
     private static class ValidationExceptionFactory implements ExceptionFactory {
 
         public Throwable createException(Event event) {
