@@ -25,6 +25,8 @@ import junit.framework.TestCase;
 
 import org.xml.sax.helpers.LocatorImpl;
 
+import org.apache.fop.events.model.EventSeverity;
+
 /**
  * Tests for EventFormatter.
  */
@@ -75,4 +77,68 @@ public class AdvancedMessageFormatTestCase extends TestCase {
         assertEquals("Here\'s a Locator: 12:7", msg);
     }
     
+    public void testIfFormatting() throws Exception {
+        String msg;
+        AdvancedMessageFormat format;
+        
+        format = new AdvancedMessageFormat("You are{isBad,if, not} nice!");
+
+        Map params = new java.util.HashMap();
+
+        params.put("isBad", Boolean.FALSE);
+        msg = format.format(params);
+        assertEquals("You are nice!", msg);
+
+        params.put("isBad", Boolean.TRUE);
+        msg = format.format(params);
+        assertEquals("You are not nice!", msg);
+
+        format = new AdvancedMessageFormat("You are{isGood,if, very, not so} nice!");
+
+        params = new java.util.HashMap();
+
+        msg = format.format(params); //isGood is missing
+        assertEquals("You are not so nice!", msg);
+
+        params.put("isGood", Boolean.FALSE);
+        msg = format.format(params);
+        assertEquals("You are not so nice!", msg);
+
+        params.put("isGood", Boolean.TRUE);
+        msg = format.format(params);
+        assertEquals("You are very nice!", msg);
+
+        format = new AdvancedMessageFormat("You are{isGood,if, very\\, very} nice!");
+
+        params = new java.util.HashMap();
+
+        msg = format.format(params); //isGood is missing
+        assertEquals("You are nice!", msg);
+
+        params.put("isGood", Boolean.FALSE);
+        msg = format.format(params);
+        assertEquals("You are nice!", msg);
+
+        params.put("isGood", Boolean.TRUE);
+        msg = format.format(params);
+        assertEquals("You are very, very nice!", msg);
+    }
+    
+    public void testEqualsFormatting() throws Exception {
+        String msg;
+        AdvancedMessageFormat format;
+        
+        format = new AdvancedMessageFormat(
+                "Error{severity,equals,EventSeverity:FATAL,,\nSome explanation!}");
+
+        Map params = new java.util.HashMap();
+
+        params.put("severity", EventSeverity.FATAL);
+        msg = format.format(params);
+        assertEquals("Error", msg);
+
+        params.put("severity", EventSeverity.WARN);
+        msg = format.format(params);
+        assertEquals("Error\nSome explanation!", msg);
+    }
 }

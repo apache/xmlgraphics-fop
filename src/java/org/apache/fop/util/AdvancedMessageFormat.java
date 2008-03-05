@@ -41,6 +41,7 @@ import org.xml.sax.Locator;
  */
 public class AdvancedMessageFormat {
 
+    private static final String COMMA_SEPARATOR_REGEX = "(?<!\\\\),";
     private CompositePart rootPart;
     
     /**
@@ -116,8 +117,21 @@ public class AdvancedMessageFormat {
     }
     
     private Part parseField(String field) {
-        //TODO Add advanced formatting like in MessageFormat here
-        return new SimpleFieldPart(field);
+        String[] parts = field.split(COMMA_SEPARATOR_REGEX, 3);
+        if (parts.length == 1) {
+            return new SimpleFieldPart(parts[0]);
+        } else {
+            String format = parts[1];
+            if (parts.length == 2) {
+                throw new IllegalArgumentException("Pattern must have three parts!");
+            }
+            if ("if".equals(format)) {
+                return new IfFieldPart(parts[0], parts[2]);
+            } else if ("equals".equals(format)) {
+                return new EqualsFieldPart(parts[0], parts[2]);
+            }
+            return new SimpleFieldPart(parts[0]);
+        }
     }
 
     /**
@@ -141,7 +155,7 @@ public class AdvancedMessageFormat {
         boolean supportsObject(Object obj);
     }
     
-    private class TextPart implements Part {
+    private static class TextPart implements Part {
         
         private String text;
         
@@ -213,7 +227,98 @@ public class AdvancedMessageFormat {
         }
     }
     
-    private class CompositePart implements Part {
+    private static class IfFieldPart implements Part {
+        
+        protected String fieldName;
+        protected String ifValue;
+        protected String elseValue;
+        
+        public IfFieldPart(String fieldName, String values) {
+            this.fieldName = fieldName;
+            parseValues(values);
+        }
+
+        protected void parseValues(String values) {
+            String[] parts = values.split(COMMA_SEPARATOR_REGEX, 2);
+            if (parts.length == 2) {
+                ifValue = unescapeComma(parts[0]);
+                elseValue = unescapeComma(parts[1]);
+            } else {
+                ifValue = unescapeComma(values);
+            }
+        }
+        
+        public void write(StringBuffer sb, Map params) {
+            boolean isTrue = isTrue(params);
+            if (isTrue) {
+                sb.append(ifValue);
+            } else if (elseValue != null) {
+                sb.append(elseValue);
+            }
+        }
+
+        protected boolean isTrue(Map params) {
+            Object obj = params.get(fieldName);
+            boolean isTrue;
+            if (obj instanceof Boolean) {
+                return ((Boolean)obj).booleanValue();
+            } else {
+                return (obj != null);
+            }
+        }
+
+        public boolean isGenerated(Map params) {
+            return isTrue(params) || (elseValue != null);
+        }
+        
+        /** {@inheritDoc} */
+        public String toString() {
+            return "{" + this.fieldName + ", if...}";
+        }
+    }
+    
+    private static class EqualsFieldPart extends IfFieldPart {
+        
+        private String equalsValue;
+        
+        public EqualsFieldPart(String fieldName, String values) {
+            super(fieldName, values);
+        }
+
+        /** {@inheritDoc} */
+        protected void parseValues(String values) {
+            String[] parts = values.split(COMMA_SEPARATOR_REGEX, 3);
+            this.equalsValue = parts[0];
+            if (parts.length == 1) {
+                throw new IllegalArgumentException(
+                        "'equals' format must have at least 2 parameters");
+            }
+            if (parts.length == 3) {
+                ifValue = unescapeComma(parts[1]);
+                elseValue = unescapeComma(parts[2]);
+            } else {
+                ifValue = unescapeComma(parts[1]);
+            }
+        }
+        
+        protected boolean isTrue(Map params) {
+            Object obj = params.get(fieldName);
+            if (obj != null) {
+                return String.valueOf(obj).equals(this.equalsValue);
+            } else {
+                return false;
+            }
+        }
+
+        /** {@inheritDoc} */
+        public String toString() {
+            return "{" + this.fieldName + ", equals " + this.equalsValue + "}";
+        }
+        
+    }
+    
+    
+    private static class CompositePart implements Part {
         
         private List parts = new java.util.ArrayList();
         private boolean conditional;
@@ -266,5 +371,9 @@ public class AdvancedMessageFormat {
             return obj instanceof Locator;
         }
         
+    }
+
+    private static String unescapeComma(String string) {
+        return string.replaceAll("\\\\,", ",");
     }
 }
