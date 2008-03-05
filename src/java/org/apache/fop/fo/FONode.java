@@ -473,7 +473,22 @@ public abstract class FONode implements Cloneable {
      */
     protected void missingChildElementError(String contentModel)
                 throws ValidationException {
-        getFOValidationEventProducer().missingChildElement(this, getName(), contentModel, locator);
+        getFOValidationEventProducer().missingChildElement(this, getName(),
+                contentModel, false, locator);
+    }
+
+    /**
+     * Helper function to throw an error caused by missing mandatory child elements.
+     * E.g., fo:layout-master-set not having any page-master child element.
+     * @param contentModel The XSL Content Model for the fo: object or a similar description 
+     *                     indicating the necessary child elements.
+     * @param canRecover indicates whether FOP can recover from this problem and continue working
+     * @throws ValidationException the validation error provoked by the method call
+     */
+    protected void missingChildElementError(String contentModel, boolean canRecover)
+                throws ValidationException {
+        getFOValidationEventProducer().missingChildElement(this, getName(),
+                contentModel, canRecover, locator);
     }
 
     /**

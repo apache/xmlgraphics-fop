@@ -153,7 +153,7 @@ public class FOTreeBuilder extends DefaultHandler {
         //Backwards-compatibility: Make sure at least the LoggingEventListener is plugged in
         //so no events are just silently swallowed.
         EventBroadcaster broadcaster = userAgent.getEventBroadcaster(); 
-        if (broadcaster.getListenerCount() == 0) {
+        if (!broadcaster.hasEventListeners()) {
             broadcaster.addEventListener(
                     new LoggingEventListener(LogFactory.getLog(FOUserAgent.class)));
         }

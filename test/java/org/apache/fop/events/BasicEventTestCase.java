@@ -36,7 +36,7 @@ public class BasicEventTestCase extends TestCase {
 
         EventBroadcaster broadcaster = new DefaultEventBroadcaster();
         broadcaster.addEventListener(listener);
-        assertEquals(1, broadcaster.getListenerCount());
+        assertTrue(broadcaster.hasEventListeners());
         
         Event ev = new Event(this, "123", EventSeverity.INFO,
                 Event.paramsBuilder()
@@ -53,7 +53,7 @@ public class BasicEventTestCase extends TestCase {
         assertEquals(new Integer(23), ev.getParam("blah"));
         
         broadcaster.removeEventListener(listener);
-        assertEquals(0, broadcaster.getListenerCount());
+        assertFalse(broadcaster.hasEventListeners());
 
         //Just check that there are no NPEs
         broadcaster.broadcastEvent(ev);
@@ -64,7 +64,7 @@ public class BasicEventTestCase extends TestCase {
 
         EventBroadcaster broadcaster = new DefaultEventBroadcaster();
         broadcaster.addEventListener(listener);
-        assertEquals(1, broadcaster.getListenerCount());
+        assertTrue(broadcaster.hasEventListeners());
         
         
         TestEventProducer producer = TestEventProducer.Factory.create(broadcaster);
@@ -79,7 +79,7 @@ public class BasicEventTestCase extends TestCase {
         assertEquals(new Integer(23), ev.getParam("blah"));
         
         broadcaster.removeEventListener(listener);
-        assertEquals(0, broadcaster.getListenerCount());
+        assertFalse(broadcaster.hasEventListeners());
 
         //Just check that there are no NPEs
         broadcaster.broadcastEvent(ev);

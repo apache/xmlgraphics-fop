@@ -62,7 +62,8 @@ public class TableAndCaption extends FObj {
         super(parent);
 
         if (!notImplementedWarningGiven) {
-            log.warn("fo:table-and-caption is not yet implemented.");
+            getFOValidationEventProducer().unimplementedFeature(this, getName(),
+                    "fo:table-and-caption", getLocator());
             notImplementedWarningGiven = true;
         }
     }

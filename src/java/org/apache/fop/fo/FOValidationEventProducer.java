@@ -89,10 +89,13 @@ public interface FOValidationEventProducer extends EventProducer {
      * @param source the event source
      * @param elementName the name of the context node
      * @param contentModel the expected content model
+     * @param canRecover indicates whether FOP can recover from this problem and continue working
      * @param loc the location of the error or null
      * @throws ValidationException the validation error provoked by the method call
+     * @event.severity FATAL
      */
-    void missingChildElement(Object source, String elementName, String contentModel,
+    void missingChildElement(Object source, String elementName,
+            String contentModel, boolean canRecover,
             Locator loc) throws ValidationException;
 
     /**
@@ -112,11 +115,12 @@ public interface FOValidationEventProducer extends EventProducer {
      * @param source the event source
      * @param elementName the name of the context node
      * @param id the id that was reused
+     * @param canRecover indicates whether FOP can recover from this problem and continue working
      * @param loc the location of the error or null
      * @throws ValidationException the validation error provoked by the method call
      * @event.severity FATAL
      */
-    void idNotUnique(Object source, String elementName, String id,
+    void idNotUnique(Object source, String elementName, String id, boolean canRecover,
             Locator loc) throws ValidationException;
 
     /**
@@ -126,8 +130,9 @@ public interface FOValidationEventProducer extends EventProducer {
      * @param id the id that was reused
      * @param loc the location of the error or null
      * @event.severity WARN
-     */
+     *//*
     void idNotUniqueWarning(Object source, String elementName, String id, Locator loc);
+    */
 
     /**
      * A marker is not an initial child on a node.
@@ -155,11 +160,12 @@ public interface FOValidationEventProducer extends EventProducer {
      * @param source the event source
      * @param elementName the name of the context node
      * @param attr the invalid attribute
+     * @param canRecover indicates whether FOP can recover from this problem and continue working
      * @param loc the location of the error or null
      * @throws ValidationException the validation error provoked by the method call
      * @event.severity FATAL
      */
-    void invalidProperty(Object source, String elementName, QName attr,
+    void invalidProperty(Object source, String elementName, QName attr, boolean canRecover,
             Locator loc) throws ValidationException;
 
     /**
@@ -169,9 +175,9 @@ public interface FOValidationEventProducer extends EventProducer {
      * @param attr the invalid attribute
      * @param loc the location of the error or null
      * @event.severity WARN
-     */
+     *//*
     void invalidPropertyWarning(Object source, String elementName, QName attr,
-            Locator loc);
+            Locator loc);*/
 
     /**
      * An invalid property value was encountered.
@@ -185,6 +191,17 @@ public interface FOValidationEventProducer extends EventProducer {
      */
     void invalidPropertyValue(Object source, String elementName,
             String propName, String propValue, PropertyException e,
+            Locator loc);
+
+    /**
+     * A feature is not supported, yet.
+     * @param source the event source
+     * @param elementName the name of the context node
+     * @param feature the unsupported feature
+     * @param loc the location of the error or null
+     * @event.severity WARN
+     */
+    void unimplementedFeature(Object source, String elementName, String feature,
             Locator loc);
 
 }

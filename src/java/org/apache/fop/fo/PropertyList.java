@@ -461,13 +461,8 @@ public abstract class PropertyList {
     protected void handleInvalidProperty(QName attr) 
                     throws ValidationException {
         if (!attr.getQName().startsWith("xmlns")) {
-            if (fobj.getUserAgent().validateStrictly()) {
-                fobj.getFOValidationEventProducer().invalidProperty(this, fobj.getName(),
-                        attr, fobj.locator);
-            } else {
-                fobj.getFOValidationEventProducer().invalidPropertyWarning(this, fobj.getName(),
-                        attr, fobj.locator);
-            }
+            fobj.getFOValidationEventProducer().invalidProperty(this, fobj.getName(),
+                    attr, true, fobj.locator);
         }
     }
 

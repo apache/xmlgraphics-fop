@@ -173,11 +173,7 @@ public abstract class FObj extends FONode implements Constants {
             if (!idrefs.contains(id)) {
                 idrefs.add(id);
             } else {
-                if (getUserAgent().validateStrictly()) {
-                    getFOValidationEventProducer().idNotUnique(this, getName(), id, locator);
-                } else {
-                    getFOValidationEventProducer().idNotUniqueWarning(this, getName(), id, locator);
-                }
+                getFOValidationEventProducer().idNotUnique(this, getName(), id, true, locator);
             }
         }
     }
@@ -271,16 +267,22 @@ public abstract class FObj extends FONode implements Constants {
         return false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public FONodeIterator getChildNodes() {
-        if (firstChild != null) {
+        if (hasChildren()) {
             return new FObjIterator(this);
         }
         return null;
     }
 
+    /**
+     * Indicates whether this formatting object has children.
+     * @return true if there are children
+     */
+    public boolean hasChildren() {
+        return this.firstChild != null;
+    }
+    
     /**
      * Return an iterator over the object's childNodes starting
      * at the passed-in node (= first call to iterator.next() will
