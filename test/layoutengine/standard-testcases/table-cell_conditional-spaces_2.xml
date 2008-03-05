@@ -168,94 +168,108 @@
 
     <!-- 1. table not broken -->
     <eval expected="92200" xpath="//pageViewport[1]//flow/block[2]/@bpd"/>
+    <!-- Cell 1.2 -->
     <!-- Block for yellow background -->
     <eval expected="48600" xpath="//pageViewport[1]//flow/block[2]/block[1]/@bpd"/>
-    <!-- Cell 1.2 -->
     <eval expected="48600" xpath="//pageViewport[1]//flow/block[2]/block[2]/@bpd"/>
     <eval expected="15000" xpath="//pageViewport[1]//flow/block[2]/block[2]/block[1]/@space-after"/>
     <eval expected="0" xpath="count(//pageViewport[1]//flow/block[2]/block[2]/block[2]/@space-before)"/>
-    <!-- Block for grey background -->
-    <eval expected="43600" xpath="//pageViewport[1]//flow/block[2]/block[3]/@bpd"/>
     <!-- Cell 1.1 -->
+    <!-- Block for yellow background -->
+    <eval expected="92200" xpath="//pageViewport[1]//flow/block[2]/block[3]/@bpd"/>
     <eval expected="20000" xpath="//pageViewport[1]//flow/block[2]/block[4]/block[1]/@space-after"/>
     <eval expected="0" xpath="count(//pageViewport[1]//flow/block[2]/block[4]/block[2]/@space-before)"/>
     <!-- Cell 2.2 -->
+    <!-- Block for grey background -->
     <eval expected="43600" xpath="//pageViewport[1]//flow/block[2]/block[5]/@bpd"/>
-    <eval expected="0" xpath="count(//pageViewport[1]//flow/block[2]/block[5]/block[1]/@space-after)"/>
-    <eval expected="10000" xpath="//pageViewport[1]//flow/block[2]/block[5]/block[2]/@space-before"/>
+    <eval expected="43600" xpath="//pageViewport[1]//flow/block[2]/block[6]/@bpd"/>
+    <eval expected="0" xpath="count(//pageViewport[1]//flow/block[2]/block[6]/block[1]/@space-after)"/>
+    <eval expected="10000" xpath="//pageViewport[1]//flow/block[2]/block[6]/block[2]/@space-before"/>
 
     <!-- 2. Cells 1.1 and 1.2 split -->
     <!-- First page -->
     <eval expected="31800" xpath="//pageViewport[2]//flow/block[2]/@bpd"/>
+    <!-- Cell 1.1 Line 1 -->
     <!-- Block for yellow background -->
     <eval expected="31800" xpath="//pageViewport[2]//flow/block[2]/block[1]/@bpd"/>
-    <!-- Cell 1.1 Line 1 -->
     <eval expected="0" xpath="count(//pageViewport[2]//flow/block[2]/block[2]/block[1]/@space-after)"/>
     <!-- Cell 1.2 Line 1 -->
-    <eval expected="15000" xpath="//pageViewport[2]//flow/block[2]/block[3]/block[1]/@space-after"/>
+    <!-- Block for yellow background -->
+    <eval expected="31800" xpath="//pageViewport[2]//flow/block[2]/block[3]/@bpd"/>
+    <eval expected="15000" xpath="//pageViewport[2]//flow/block[2]/block[4]/block[1]/@space-after"/>
     <!-- Second page -->
     <eval expected="60400" xpath="//pageViewport[3]//flow/block[1]/@bpd"/>
+    <!-- Cell 1.2 Line 2 -->
     <!-- Block for yellow background -->
     <eval expected="16800" xpath="//pageViewport[3]//flow/block[1]/block[1]/@bpd"/>
-    <!-- Cell 1.2 Line 2 -->
     <eval expected="16800" xpath="//pageViewport[3]//flow/block[1]/block[2]/@bpd"/>
     <eval expected="0" xpath="count(//pageViewport[3]//flow/block[1]/block[2]/@space-before)"/>
-    <!-- Block for grey background -->
-    <eval expected="43600" xpath="//pageViewport[3]//flow/block[1]/block[3]/@bpd"/>
     <!-- Cell 1.1 Line 2 -->
+    <!-- Block for yellow background -->
+    <eval expected="60400" xpath="//pageViewport[3]//flow/block[1]/block[3]/@bpd"/>
     <eval expected="16800" xpath="//pageViewport[3]//flow/block[1]/block[4]/block[1]/@bpd"/>
     <eval expected="10000" xpath="//pageViewport[3]//flow/block[1]/block[4]/block[1]/@space-before"/>
     <!-- Cell 2.2 -->
+    <!-- Block for grey background -->
     <eval expected="43600" xpath="//pageViewport[3]//flow/block[1]/block[5]/@bpd"/>
-    <eval expected="0" xpath="count(//pageViewport[3]//flow/block[1]/block[5]/block[1]/@space-after)"/>
-    <eval expected="10000" xpath="//pageViewport[3]//flow/block[1]/block[5]/block[2]/@space-before"/>
+    <eval expected="43600" xpath="//pageViewport[3]//flow/block[1]/block[6]/@bpd"/>
+    <eval expected="0" xpath="count(//pageViewport[3]//flow/block[1]/block[6]/block[1]/@space-after)"/>
+    <eval expected="10000" xpath="//pageViewport[3]//flow/block[1]/block[6]/block[2]/@space-before"/>
 
     <!-- 3. Cell 1.1 split, cell 1.2 not -->
     <!-- First page -->
     <eval expected="48600" xpath="//pageViewport[4]//flow/block[2]/@bpd"/>
+    <!-- Cell 1.1 Line 1 -->
     <!-- Block for yellow background -->
     <eval expected="48600" xpath="//pageViewport[4]//flow/block[2]/block[1]/@bpd"/>
-    <!-- Cell 1.1 Line 1 -->
     <eval expected="0" xpath="count(//pageViewport[4]//flow/block[2]/block[2]/block[1]/@space-after)"/>
     <!-- Cell 1.2 Line 1 -->
-    <eval expected="15000" xpath="//pageViewport[4]//flow/block[2]/block[3]/block[1]/@space-after"/>
-    <eval expected="0" xpath="count(//pageViewport[4]//flow/block[2]/block[3]/block[2]/@space-before)"/>
+    <!-- Block for yellow background -->
+    <eval expected="48600" xpath="//pageViewport[4]//flow/block[2]/block[3]/@bpd"/>
+    <eval expected="15000" xpath="//pageViewport[4]//flow/block[2]/block[4]/block[1]/@space-after"/>
+    <eval expected="0" xpath="count(//pageViewport[4]//flow/block[2]/block[4]/block[2]/@space-before)"/>
     <!-- Second page -->
     <eval expected="43600" xpath="//pageViewport[5]//flow/block[1]/@bpd"/>
-    <!-- Block for grey background -->
-    <eval expected="43600" xpath="//pageViewport[5]//flow/block[1]/block[1]/@bpd"/>
     <!-- Cell 1.1 Line 2 -->
+    <!-- Block for yellow background -->
+    <eval expected="43600" xpath="//pageViewport[5]//flow/block[1]/block[1]/@bpd"/>
     <eval expected="16800" xpath="//pageViewport[5]//flow/block[1]/block[2]/block[1]/@bpd"/>
     <eval expected="10000" xpath="//pageViewport[5]//flow/block[1]/block[2]/block[1]/@space-before"/>
     <!-- Cell 2.2 -->
+    <!-- Block for grey background -->
     <eval expected="43600" xpath="//pageViewport[5]//flow/block[1]/block[3]/@bpd"/>
-    <eval expected="0" xpath="count(//pageViewport[5]//flow/block[1]/block[3]/block[1]/@space-after)"/>
-    <eval expected="10000" xpath="//pageViewport[5]//flow/block[1]/block[3]/block[2]/@space-before"/>
+    <eval expected="43600" xpath="//pageViewport[5]//flow/block[1]/block[4]/@bpd"/>
+    <eval expected="0" xpath="count(//pageViewport[5]//flow/block[1]/block[4]/block[1]/@space-after)"/>
+    <eval expected="10000" xpath="//pageViewport[5]//flow/block[1]/block[4]/block[2]/@space-before"/>
 
     <!-- 4. Cell 2.2 split -->
     <!-- First page -->
     <eval expected="65400" xpath="//pageViewport[6]//flow/block[2]/@bpd"/>
+    <!-- Cell 1.2 -->
     <!-- Block for yellow background -->
     <eval expected="48600" xpath="//pageViewport[6]//flow/block[2]/block[1]/@bpd"/>
-    <!-- Cell 1.2 -->
     <eval expected="48600" xpath="//pageViewport[6]//flow/block[2]/block[2]/@bpd"/>
     <eval expected="15000" xpath="//pageViewport[6]//flow/block[2]/block[2]/block[1]/@space-after"/>
     <eval expected="0" xpath="count(//pageViewport[6]//flow/block[2]/block[2]/block[2]/@space-before)"/>
-    <!-- Block for grey background -->
-    <eval expected="16800" xpath="//pageViewport[6]//flow/block[2]/block[3]/@bpd"/>
     <!-- Cell 1.1 -->
+    <!-- Block for yellow background -->
+    <eval expected="65400" xpath="//pageViewport[6]//flow/block[2]/block[3]/@bpd"/>
     <eval expected="20000" xpath="//pageViewport[6]//flow/block[2]/block[4]/block[1]/@space-after"/>
     <eval expected="0" xpath="count(//pageViewport[6]//flow/block[2]/block[4]/block[2]/@space-before)"/>
     <!-- Cell 2.2 Line 1 -->
+    <!-- Block for grey background -->
     <eval expected="16800" xpath="//pageViewport[6]//flow/block[2]/block[5]/@bpd"/>
-    <eval expected="0" xpath="count(//pageViewport[6]//flow/block[2]/block[5]/block[1]/@space-after)"/>
+    <eval expected="16800" xpath="//pageViewport[6]//flow/block[2]/block[6]/@bpd"/>
+    <eval expected="0" xpath="count(//pageViewport[6]//flow/block[2]/block[6]/block[1]/@space-after)"/>
     <!-- Second page -->
     <eval expected="26800" xpath="//pageViewport[7]//flow/block[1]/@bpd"/>
-    <!-- Block for grey background -->
+    <!-- Block for yellow background -->
     <eval expected="26800" xpath="//pageViewport[7]//flow/block[1]/block[1]/@bpd"/>
     <!-- Cell 2.2 Line 2 -->
+    <!-- Block for grey background -->
     <eval expected="26800" xpath="//pageViewport[7]//flow/block[1]/block[3]/@bpd"/>
-    <eval expected="10000" xpath="//pageViewport[7]//flow/block[1]/block[3]/block[1]/@space-before"/>
+    <eval expected="26800" xpath="//pageViewport[7]//flow/block[1]/block[4]/@bpd"/>
+    <eval expected="10000" xpath="//pageViewport[7]//flow/block[1]/block[4]/block[1]/@space-before"/>
 
   </checks>
 </testcase>
