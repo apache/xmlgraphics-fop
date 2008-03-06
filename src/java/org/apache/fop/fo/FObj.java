@@ -373,6 +373,33 @@ public abstract class FObj extends FONode implements Constants {
     }
 
     /** {@inheritDoc} */
+    protected String getContextInfoAlt() {
+        StringBuffer sb = new StringBuffer();
+        if (getLocalName() != null) {
+            sb.append(getName());
+            sb.append(", ");
+        }
+        if (hasId()) {
+            sb.append("id=").append(getId());
+            return sb.toString();
+        }
+        String s = gatherContextInfo();
+        if (s != null) {
+            sb.append("\"");
+            if (s.length() < 32) {
+                sb.append(s);
+            } else {
+                sb.append(s.substring(0, 32));
+                sb.append("...");
+            }
+            sb.append("\"");
+            return sb.toString();
+        } else {
+            return null;
+        }
+    }
+    
+    /** {@inheritDoc} */
     protected String gatherContextInfo() {
         if (getLocator() != null) {
             return super.gatherContextInfo();

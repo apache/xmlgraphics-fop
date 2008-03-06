@@ -21,6 +21,7 @@ package org.apache.fop.fo;
 
 // Java
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.xml.sax.Attributes;
@@ -40,6 +41,7 @@ import org.apache.fop.fo.extensions.svg.SVGElementMapping;
 import org.apache.fop.fo.pagination.Root;
 import org.apache.fop.util.CharUtilities;
 import org.apache.fop.util.ContentHandlerFactory;
+import org.apache.fop.util.text.AdvancedMessageFormat.Function;
 
 /**
  * Base class for nodes in the XML tree
@@ -600,10 +602,11 @@ public abstract class FONode implements Cloneable {
      * Returns a String containing as some context information about a node. It does not take the
      * locator into consideration and returns null if no useful context information can be found.
      * Call this method only in exceptional conditions because this method may perform quite
-     * extensive information gathering inside the FO tree.
-     * @return a String containing 
+     * extensive information gathering inside the FO tree. All text returned by this method that
+     * is not extracted from document content needs to be locale-independent.
+     * @return a String containing context information
      */
-    public String getContextInfoAlt() {
+    protected String getContextInfoAlt() {
         String s = gatherContextInfo();
         if (s != null) {
             StringBuffer sb = new StringBuffer();
@@ -617,6 +620,29 @@ public abstract class FONode implements Cloneable {
             return sb.toString();
         } else {
             return null;
+        }
+    }
+    
+    /** Function for AdvancedMessageFormat to retrieve context info from an FONode. */
+    public static class GatherContextInfoFunction implements Function {
+
+        /** {@inheritDoc} */
+        public Object evaluate(Map params) {
+            Object obj = params.get("source");
+            if (obj instanceof PropertyList) {
+                PropertyList propList = (PropertyList)obj;
+                obj = propList.getFObj();
+            }
+            if (obj instanceof FONode) {
+                FONode node = (FONode)obj;
+                return node.getContextInfoAlt();
+            }
+            return null;
+        }
+
+        /** {@inheritDoc} */
+        public Object getName() {
+            return "gatherContextInfo";
         }
     }
     
