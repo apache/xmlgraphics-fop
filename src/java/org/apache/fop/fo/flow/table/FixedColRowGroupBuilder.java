@@ -20,9 +20,11 @@
 package org.apache.fop.fo.flow.table;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.ValidationException;
 
 
@@ -79,14 +81,14 @@ class FixedColRowGroupBuilder extends RowGroupBuilder {
             rows.add(effRow);
         }
         int columnIndex = cell.getColumnNumber() - 1;
-        PrimaryGridUnit pgu = new PrimaryGridUnit(cell, currentTableRow, columnIndex);
+        PrimaryGridUnit pgu = new PrimaryGridUnit(cell, columnIndex);
         List row = (List) rows.get(currentRowIndex);
         row.set(columnIndex, pgu);
         // TODO
         GridUnit[] cellRow = new GridUnit[cell.getNumberColumnsSpanned()];
         cellRow[0] = pgu;
         for (int j = 1; j < cell.getNumberColumnsSpanned(); j++) {
-            GridUnit gu = new GridUnit(pgu, currentTableRow, j, 0);
+            GridUnit gu = new GridUnit(pgu, j, 0);
             row.set(columnIndex + j, gu);
             cellRow[j] = gu;
         }
@@ -95,7 +97,7 @@ class FixedColRowGroupBuilder extends RowGroupBuilder {
             row = (List) rows.get(currentRowIndex + i);
             cellRow = new GridUnit[cell.getNumberColumnsSpanned()];
             for (int j = 0; j < cell.getNumberColumnsSpanned(); j++) {
-                GridUnit gu = new GridUnit(pgu, currentTableRow, j, i);
+                GridUnit gu = new GridUnit(pgu, j, i);
                 row.set(columnIndex + j, gu);
                 cellRow[j] = gu;
             }
@@ -110,12 +112,38 @@ class FixedColRowGroupBuilder extends RowGroupBuilder {
     }
 
     /** {@inheritDoc} */
-    void startRow(TableRow tableRow) {
+    void startTableRow(TableRow tableRow) {
         currentTableRow = tableRow;
     }
 
     /** {@inheritDoc} */
-    void endRow(TableCellContainer container) {
+    void endTableRow() {
+        assert currentTableRow != null;
+        if (currentRowIndex > 0 && currentTableRow.getBreakBefore() != Constants.EN_AUTO) {
+            currentTableRow.attributeWarning("break-before ignored because of row spanning "
+                    + "in progress (See XSL 1.1, 7.20.2)");
+        }
+        if (currentRowIndex < rows.size() - 1
+                && currentTableRow.getBreakAfter() != Constants.EN_AUTO) {
+            currentTableRow.attributeWarning("break-after ignored because of row spanning "
+                    + "in progress (See XSL 1.1, 7.20.1)");
+        }
+        for (Iterator iter = ((List) rows.get(currentRowIndex)).iterator(); iter.hasNext();) {
+            GridUnit gu = (GridUnit) iter.next();
+            // The row hasn't been filled with empty grid units yet
+            if (gu != null) {
+                gu.setRow(currentTableRow);
+            }
+        }
+        handleRowEnd(currentTableRow);
+    }
+
+    /** {@inheritDoc} */
+    void endRow(TableBody body) {
+        handleRowEnd(body);
+    }
+
+    private void handleRowEnd(TableCellContainer container) {
         List currentRow = (List) rows.get(currentRowIndex);
         lastRow = currentRow;
         // Fill gaps with empty grid units
@@ -156,7 +184,7 @@ class FixedColRowGroupBuilder extends RowGroupBuilder {
     }
 
     /** {@inheritDoc} */
-    void endTable(TableBody lastTablePart) {
+    void endTable() {
         borderResolver.endTable();
     }
 }

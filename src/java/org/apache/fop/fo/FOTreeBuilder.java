@@ -59,9 +59,7 @@ public class FOTreeBuilder extends DefaultHandler {
     /** The registry for ElementMapping instances */
     protected ElementMappingRegistry elementMappingRegistry;
 
-    /**
-     * The root of the formatting object tree
-     */
+    /** The root of the formatting object tree */
     protected Root rootFObj = null;
 
     /** Main DefaultHandler that handles the FO namespace. */
@@ -70,10 +68,7 @@ public class FOTreeBuilder extends DefaultHandler {
     /** Current delegate ContentHandler to receive the SAX events */
     protected ContentHandler delegate;
     
-    /**
-     * The class that handles formatting and rendering to a stream
-     * (mark-fop@inomial.com)
-     */
+    /** The object that handles formatting and rendering to a stream */
     private FOEventHandler foEventHandler;
 
     /** The SAX locator object managing the line and column counters */
@@ -88,14 +83,18 @@ public class FOTreeBuilder extends DefaultHandler {
     private int depth;
     
     /**
-     * FOTreeBuilder constructor
+     * <code>FOTreeBuilder</code> constructor
+     * 
      * @param outputFormat the MIME type of the output format to use (ex. "application/pdf").
-     * @param foUserAgent in effect for this process
-     * @param stream OutputStream to direct results
-     * @throws FOPException if the FOTreeBuilder cannot be properly created
+     * @param foUserAgent   the {@link FOUserAgent} in effect for this process
+     * @param stream    the <code>OutputStream</code> to direct the results to
+     * @throws FOPException if the <code>FOTreeBuilder</code> cannot be properly created
      */
-    public FOTreeBuilder(String outputFormat, FOUserAgent foUserAgent, 
-        OutputStream stream) throws FOPException {
+    public FOTreeBuilder(
+                String outputFormat, 
+                FOUserAgent foUserAgent,
+                OutputStream stream) 
+            throws FOPException {
 
         this.userAgent = foUserAgent;
         this.elementMappingRegistry = userAgent.getFactory().getElementMappingRegistry();        
@@ -110,40 +109,25 @@ public class FOTreeBuilder extends DefaultHandler {
         });
     }
 
-    /**
-     * This method enables to reduce memory consumption of the FO tree slightly. When it returns
-     * true no Locator is passed to the FO tree nodes which would copy the information into
-     * a SAX LocatorImpl instance.
-     * @return true if no context information should be stored on each node in the FO tree.
-     * @deprecated Use FOUserAgent.isLocatorEnabled() instead.
-     */
-    protected boolean isLocatorDisabled() {
-        return !userAgent.isLocatorEnabled();
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void setDocumentLocator(Locator locator) {
         this.locator = locator;
     }
     
-    /** @return a Locator instance if it is available and not disabled */
+    /** 
+     * @return a {@link Locator} instance if it is available and not disabled
+     */
     protected Locator getEffectiveLocator() {
         return (userAgent.isLocatorEnabled() ? this.locator : null);
     }
     
-    /**
-     * {@inheritDoc} 
-     */
+    /** {@inheritDoc} */
     public void characters(char[] data, int start, int length) 
                 throws SAXException {
         delegate.characters(data, start, length);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void startDocument() throws SAXException {
         if (used) {
             throw new IllegalStateException("FOTreeBuilder (and the Fop class) cannot be reused."
@@ -170,9 +154,7 @@ public class FOTreeBuilder extends DefaultHandler {
         this.delegate = this.mainFOHandler;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void endDocument() throws SAXException {
         this.delegate.endDocument();
         if (this.rootFObj == null && empty) {
@@ -190,18 +172,14 @@ public class FOTreeBuilder extends DefaultHandler {
         imageFactory.removeContext(this.userAgent);
     }
 
-    /**
-     * {@inheritDoc} 
-     */
+    /** {@inheritDoc} */
     public void startElement(String namespaceURI, String localName, String rawName,
                              Attributes attlist) throws SAXException {
         this.depth++;
         delegate.startElement(namespaceURI, localName, rawName, attlist);
     }
 
-    /**
-     * {@inheritDoc} 
-     */
+    /** {@inheritDoc} */
     public void endElement(String uri, String localName, String rawName)
                 throws SAXException {
         this.delegate.endElement(uri, localName, rawName);
@@ -217,7 +195,8 @@ public class FOTreeBuilder extends DefaultHandler {
     }
 
     /**
-     * Finds the Maker used to create node objects of a particular type
+     * Finds the {@link Maker} used to create {@link FONode} objects of a particular type
+     * 
      * @param namespaceURI URI for the namespace of the element
      * @param localName name of the Element
      * @return the ElementMapping.Maker that can create an FO object for this element
@@ -229,7 +208,7 @@ public class FOTreeBuilder extends DefaultHandler {
 
     /** {@inheritDoc} */
     public void warning(SAXParseException e) {
-        log.warn(e.toString());
+        log.warn(e.getLocalizedMessage());
     }
 
     /** {@inheritDoc} */
@@ -244,7 +223,8 @@ public class FOTreeBuilder extends DefaultHandler {
     }
 
     /**
-     * Provides access to the underlying FOEventHandler object.
+     * Provides access to the underlying {@link FOEventHandler} object.
+     * 
      * @return the FOEventHandler object
      */
     public FOEventHandler getEventHandler() {
@@ -255,6 +235,7 @@ public class FOTreeBuilder extends DefaultHandler {
      * Returns the results of the rendering process. Information includes
      * the total number of pages generated and the number of pages per
      * page-sequence.
+     * 
      * @return the results of the rendering process.
      */
     public FormattingResults getResults() {
@@ -268,23 +249,17 @@ public class FOTreeBuilder extends DefaultHandler {
     }
     
     /**
-     * Main DefaultHandler implementation which builds the FO tree.
+     * Main <code>DefaultHandler</code> implementation which builds the FO tree.
      */
     private class MainFOHandler extends DefaultHandler {
         
-        /**
-         * Current formatting object being handled
-         */
+        /** Current formatting object being handled */
         protected FONode currentFObj = null;
 
-        /**
-         * Current propertyList for the node being handled.
-         */
+        /** Current propertyList for the node being handled */
         protected PropertyList currentPropertyList;
         
-        /**
-         * Current marker nesting-depth
-         */
+        /** Current marker nesting-depth */
         private int nestedMarkerDepth = 0;
 
         /** {@inheritDoc} */
@@ -309,11 +284,7 @@ public class FOTreeBuilder extends DefaultHandler {
             } else { // check that incoming node is valid for currentFObj
                 if (namespaceURI.equals(FOElementMapping.URI)
                     || namespaceURI.equals(ExtensionElementMapping.URI)) {
-                    try {
-                        currentFObj.validateChildNode(locator, namespaceURI, localName);
-                    } catch (ValidationException e) {
-                        throw e;
-                    }
+                    currentFObj.validateChildNode(locator, namespaceURI, localName);
                 }
             }
             
@@ -402,12 +373,11 @@ public class FOTreeBuilder extends DefaultHandler {
             if (currentFObj.getParent() == null) {
                 log.debug("endElement for top-level " + currentFObj.getName());
             }
+            
             currentFObj = currentFObj.getParent();
         }
 
-        /**
-         * {@inheritDoc} 
-         */
+        /** {@inheritDoc} */
         public void characters(char[] data, int start, int length) 
             throws FOPException {
             if (currentFObj != null) {
@@ -416,6 +386,7 @@ public class FOTreeBuilder extends DefaultHandler {
             }
         }
 
+        /** {@inheritDoc} */
         public void endDocument() throws SAXException {
             currentFObj = null;
         }        

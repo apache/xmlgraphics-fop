@@ -32,7 +32,7 @@
     <fo:flow flow-name="xsl-region-body">
       <!-- Table 1: no header, no footer, one body (1 row) -->
       <fo:table width="10cm" space-before="12pt" table-layout="fixed"
-        border-collapse="separate" border="1pt solid black">
+        border-collapse="collapse" border="1pt solid black">
         <fo:table-column number-columns-repeated="2" column-width="proportional-column-width(1)"/>
         <fo:table-body>
           <fo:table-cell starts-row="true"><fo:block>Cell 1</fo:block></fo:table-cell>
@@ -54,7 +54,7 @@
 
       <!-- Table 3: no header, no footer, two bodies (1 row, 1 row) -->
       <fo:table width="10cm" space-before="12pt" table-layout="fixed"
-        border-collapse="separate" border="1pt solid black">
+        border-collapse="collapse" border="1pt solid black">
         <fo:table-column number-columns-repeated="2" column-width="proportional-column-width(1)"/>
         <fo:table-body>
           <fo:table-cell starts-row="true"><fo:block>Cell 1</fo:block></fo:table-cell>
@@ -88,7 +88,7 @@
 
       <!-- Table 5: one header (1 row), no footer, one body (1 row) -->
       <fo:table width="10cm" space-before="12pt" table-layout="fixed"
-        border-collapse="separate" border="1pt solid black">
+        border-collapse="collapse" border="1pt solid black">
         <fo:table-column number-columns-repeated="2" column-width="proportional-column-width(1)"/>
         <fo:table-header>
           <fo:table-cell starts-row="true"><fo:block>Header 1</fo:block></fo:table-cell>
@@ -116,7 +116,7 @@
 
       <!-- Table 7: one header (1 row), one footer (1 row), one body (1 row) -->
       <fo:table width="10cm" space-before="12pt" table-layout="fixed"
-        border-collapse="separate" border="1pt solid black">
+        border-collapse="collapse" border="1pt solid black">
         <fo:table-column number-columns-repeated="2" column-width="proportional-column-width(1)"/>
         <fo:table-header>
           <fo:table-cell starts-row="true"><fo:block>Header 1</fo:block></fo:table-cell>
@@ -160,7 +160,7 @@
 
       <!-- Table 9: one header (3 rows), one footer (2 rows), three bodies (2 rows, 1 row, 3 rows) -->
       <fo:table width="10cm" space-before="12pt" table-layout="fixed"
-        border-collapse="separate" border="1pt solid black">
+        border-collapse="collapse" border="1pt solid black">
         <fo:table-column number-columns-repeated="2" column-width="proportional-column-width(1)"/>
         <fo:table-header>
           <fo:table-cell starts-row="true"><fo:block>Header 1</fo:block></fo:table-cell>

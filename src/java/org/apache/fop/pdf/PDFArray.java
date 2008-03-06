@@ -69,6 +69,20 @@ public class PDFArray extends PDFObject {
     /**
      * Create an array object.
      * @param parent the array's parent if any
+     * @param values the actual array wrapped by this object
+     */
+    public PDFArray(PDFObject parent, double[] values) {
+        /* generic creation of PDF object */
+        super(parent);
+
+        for (int i = 0, c = values.length; i < c; i++) {
+            this.values.add(new Double(values[i]));
+        }
+    }
+
+    /**
+     * Create an array object.
+     * @param parent the array's parent if any
      * @param values the actual values wrapped by this object
      */
     public PDFArray(PDFObject parent, Collection values) {
@@ -133,7 +147,10 @@ public class PDFArray extends PDFObject {
      */
     public void add(Object obj) {
         if (obj instanceof PDFObject) {
-            ((PDFObject)obj).setParent(this);
+            PDFObject pdfObj = (PDFObject)obj;
+            if (!pdfObj.hasObjectNumber()) {
+                pdfObj.setParent(this);
+            }
         }
         this.values.add(obj);
     }

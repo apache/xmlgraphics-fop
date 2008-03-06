@@ -105,13 +105,13 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
      *            the height of the page.
      * @param rotation
      *            the rotation of the page.
-     * @param widthRes
+     * @param widthResolution
      *            the width resolution of the page.
-     * @param heightRes
+     * @param heightResolution
      *            the height resolution of the page.
      */
     public AbstractPageObject(String name, int width, int height, int rotation,
-            int widthRes, int heightRes) {
+            int widthResolution, int heightResolution) {
 
         super(name);
         this.width = width;
@@ -121,7 +121,8 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
         /**
          * Every page object must have an ActiveEnvironmentGroup
          */
-        activeEnvironmentGroup = new ActiveEnvironmentGroup(width, height, widthRes, heightRes);
+        activeEnvironmentGroup = new ActiveEnvironmentGroup(width, height,
+                widthResolution, heightResolution);
 
         if (rotation != 0) {
             switch (rotation) {
@@ -137,6 +138,13 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
                 default:
             }
         }
+
+        /**
+         * We have a presentation text object per page
+         */
+        presentationTextObject = new PresentationTextObject();
+        objects.add(presentationTextObject);
+
     }
 
     /**
@@ -151,8 +159,10 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
      * @param size
      *            the point size of the font
      */
-    public void createFont(int fontReference, AFPFont font, int size) {
+    public void createFont(byte fontReference, AFPFont font, int size) {
+
         activeEnvironmentGroup.createFont(fontReference, font, size, 0);
+
     }
 
     /**
@@ -176,14 +186,20 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
      */
     public void createLine(int x1, int y1, int x2, int y2, int thickness,
             int lineRotation, Color col) {
-        getPresentationTextObject().createLineData(x1, y1, x2, y2, thickness, lineRotation, col);
+
+        if (presentationTextObject == null) {
+            presentationTextObject = new PresentationTextObject();
+            objects.add(presentationTextObject);
+        }
+        presentationTextObject.createLineData(x1, y1, x2, y2, thickness, lineRotation, col);
+
     }
 
     /**
      * Helper method to create text on the current page, this method delegates
      * to the presentation text object in order to construct the text.
      *
-     * @param fontReference
+     * @param fontNumber
      *            the font number used as the resource identifier
      * @param x
      *            the x coordinate of the text data
@@ -200,10 +216,15 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
      * @param data
      *            the text data to create
      */
-    public void createText(int fontReference, int x, int y, int textRotation, Color col,
+    public void createText(int fontNumber, int x, int y, int textRotation, Color col,
             int vsci, int ica, byte[] data) {
-        getPresentationTextObject().createTextData(
-                fontReference, x, y, textRotation, col, vsci, ica, data);
+
+        if (presentationTextObject == null) {
+            presentationTextObject = new PresentationTextObject();
+            objects.add(presentationTextObject);
+        }
+        presentationTextObject.createTextData(fontNumber, x, y, textRotation, col, vsci, ica, data);
+
     }
 
     /**
@@ -211,10 +232,13 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
      * sequence on the current presenation text object.
      */
     public void endPage() {
+
         if (presentationTextObject != null) {
             presentationTextObject.endControlSequence();
         }
+
         complete = true;
+
     }
 
     /**
@@ -303,19 +327,6 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
     }
 
     /**
-     * Helper method to create a presentation text object
-     * on the current page and to return the object.
-     * @return the presentation text object
-     */
-    private PresentationTextObject getPresentationTextObject() {
-        if (presentationTextObject == null) {
-            this.presentationTextObject = new PresentationTextObject();
-            objects.add(this.presentationTextObject);
-        }
-        return presentationTextObject;
-    }
-    
-    /**
      * Helper method to create an image on the current page and to return
      * the object.
      * @return the image object
@@ -324,32 +335,16 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
 
         if (presentationTextObject != null) {
             presentationTextObject.endControlSequence();
-            presentationTextObject = null;
         }
+        presentationTextObject = null;
+
         String imageName = "IMG"
             + StringUtils.lpad(String.valueOf(objects.size() + 1),
             '0', 5);
-        ImageObject imageObj = new ImageObject(imageName);
-        objects.add(imageObj);
-        return imageObj;
-    }
 
-    /**
-     * Helper method to create a graphic on the current page and to return
-     * the object.
-     * @return the graphics object
-     */
-    public GraphicsObject getGraphicsObject() {
-        if (presentationTextObject != null) {
-            presentationTextObject.endControlSequence();
-            presentationTextObject = null;
-        }
-        String graphicName = "GRA"
-            + StringUtils.lpad(String.valueOf(objects.size() + 1),
-            '0', 5);
-        GraphicsObject graphicsObj = new GraphicsObject(graphicName);
-        objects.add(graphicsObj);
-        return graphicsObj;
+        ImageObject io = new ImageObject(imageName);
+        objects.add(io);
+        return io;
     }
 
     /**
@@ -361,8 +356,10 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
      *            the value of the tag
      */
     public void createTagLogicalElement(String name, String value) {
+
         TagLogicalElement tle = new TagLogicalElement(name, value);
         tagLogicalElements.add(tle);
+
     }
 
     /**
@@ -371,8 +368,10 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
      * @param content the byte data
      */
     public void createNoOperation(String content) {
+
         NoOperation noOp = new NoOperation(content);
         objects.add(noOp);
+
     }
 
     /**
@@ -381,13 +380,15 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
      * @param name
      *            the name of the page segment
      * @param xCoor
-     *            the x coordinate of the page segment.
+     *            the x cooridinate of the page segment.
      * @param yCoor
-     *            the y coordinate of the page segment.
+     *            the y cooridinate of the page segment.
      */
     public void createIncludePageSegment(String name, int xCoor, int yCoor) {
+
         IncludePageSegment ips = new IncludePageSegment(name, xCoor, yCoor);
         segments.add(ips);
+
     }
 
     /**
@@ -430,4 +431,5 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
     public int getRotation() {
         return rotation;
     }
+
 }

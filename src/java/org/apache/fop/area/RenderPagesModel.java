@@ -81,16 +81,11 @@ public class RenderPagesModel extends AreaTreeModel {
         }
     }
 
-    /**
-     * Start a new page sequence.
-     * This tells the renderer that a new page sequence has
-     * started with the given title.
-     * @param title the title of the new page sequence
-     */
-    public void startPageSequence(LineArea title) {
-        super.startPageSequence(title);
+    /** {@inheritDoc} */
+    public void startPageSequence(PageSequence pageSequence) {
+        super.startPageSequence(pageSequence);
         if (renderer.supportsOutOfOrder()) {
-            renderer.startPageSequence(title);
+            renderer.startPageSequence(getCurrentPageSequence());
         }
     }
 
@@ -112,7 +107,7 @@ public class RenderPagesModel extends AreaTreeModel {
         boolean ready = renderer.supportsOutOfOrder() && page.isResolved();
         if (ready) {
             if (!renderer.supportsOutOfOrder() && page.getPageSequence().isFirstPage(page)) {
-                renderer.startPageSequence(this.currentPageSequence.getTitle());
+                renderer.startPageSequence(getCurrentPageSequence());
             }
             try {
                 renderer.renderPage(page);
@@ -159,7 +154,7 @@ public class RenderPagesModel extends AreaTreeModel {
             if (pageViewport.isResolved() || renderUnresolved) {
                 if (!renderer.supportsOutOfOrder()
                         && pageViewport.getPageSequence().isFirstPage(pageViewport)) {
-                    renderer.startPageSequence(this.currentPageSequence.getTitle());
+                    renderer.startPageSequence(getCurrentPageSequence());
                 }
                 try {
                     renderer.renderPage(pageViewport);

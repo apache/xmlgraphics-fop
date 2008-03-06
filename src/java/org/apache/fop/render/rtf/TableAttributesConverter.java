@@ -29,6 +29,7 @@ import org.apache.fop.fo.flow.table.TableCell;
 import org.apache.fop.fo.flow.table.TableHeader;
 import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.fo.properties.FixedLength;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.ITableAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
 
@@ -343,7 +344,7 @@ public final class TableAttributesConverter {
             LengthProperty lengthprop = (LengthProperty)p;
 
             Float f = new Float(lengthprop.getLength().getValue() / 1000f);
-            String sValue = f.toString() + "pt";
+            String sValue = f.toString() + FixedLength.POINT;
 
             attrib.set(BorderAttributesConverter.BORDER_WIDTH,
                        (int)FoUnitsConverter.getInstance().convertToTwips(sValue));

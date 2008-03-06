@@ -229,11 +229,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
             return;
         }
         if (!inMarker()) {
-            if (tableFooter != null) {
-                rowGroupBuilder.endTable(tableFooter);
-            } else {
-                rowGroupBuilder.endTable((TableBody) getChildNodes().lastNode());
-            }
+            rowGroupBuilder.endTable();
             /* clean up */
             for (int i = columns.size(); --i >= 0;) {
                 TableColumn col = (TableColumn) columns.get(i);
@@ -293,6 +289,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
         }
     }
 
+    /** {@inheritDoc} */
     protected void setCollapsedBorders() {
         createBorder(CommonBorderPaddingBackground.START);
         createBorder(CommonBorderPaddingBackground.END);

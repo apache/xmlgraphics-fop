@@ -658,7 +658,7 @@ list of possible build targets.
       <include name="org/apache/fop/image/Abstract*"/>
       <include name="org/apache/fop/image/analyser/*.class"/>
       <include name="org/apache/fop/util/CMYKColorSpace*.class"/>
-      <include name="org/apache/fop/util/ColorExt*.class"/>
+      <include name="org/apache/fop/util/Color*.class"/>
       <include name="org/apache/fop/util/ASCII*.class"/>
       <include name="org/apache/fop/util/*OutputStream.class"/>
       <include name="org/apache/fop/util/SubInputStream.class"/>

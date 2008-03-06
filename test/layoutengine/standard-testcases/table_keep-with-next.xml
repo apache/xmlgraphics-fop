@@ -73,5 +73,30 @@
     <!-- Line "Before the table" plus the table itself on the second page -->
     <eval expected="2" xpath="count(//pageViewport[@nr=2]//flow/block)"/>
     <eval expected="After the table" xpath="//pageViewport[@nr=2]//flow/block[2]/lineArea/text[1]"/>
+    <!-- table -->
+    <eval expected="75200"                xpath="//pageViewport[@nr=2]//flow/block[1]/@bpd"/>
+    <eval expected="83200"                xpath="//pageViewport[@nr=2]//flow/block[1]/@bpda"/>
+    <eval expected="(solid,#000000,4000)" xpath="//pageViewport[@nr=2]//flow/block[1]/@border-before"/>
+    <eval expected="(solid,#000000,4000)" xpath="//pageViewport[@nr=2]//flow/block[1]/@border-after"/>
+    <!-- cell 1.1 -->
+    <eval expected="33600"                xpath="//pageViewport[@nr=2]//flow/block[1]/block[1]/@bpd"/>
+    <eval expected="37600"                xpath="//pageViewport[@nr=2]//flow/block[1]/block[1]/@bpda"/>
+    <eval expected="(solid,#0000ff,2000)" xpath="//pageViewport[@nr=2]//flow/block[1]/block[1]/@border-before"/>
+    <eval expected="(solid,#0000ff,2000)" xpath="//pageViewport[@nr=2]//flow/block[1]/block[1]/@border-after"/>
+    <!-- cell 1.2 -->
+    <eval expected="33600"                xpath="//pageViewport[@nr=2]//flow/block[1]/block[2]/@bpd"/>
+    <eval expected="37600"                xpath="//pageViewport[@nr=2]//flow/block[1]/block[2]/@bpda"/>
+    <eval expected="(solid,#008080,2000)" xpath="//pageViewport[@nr=2]//flow/block[1]/block[2]/@border-before"/>
+    <eval expected="(solid,#008080,2000)" xpath="//pageViewport[@nr=2]//flow/block[1]/block[2]/@border-after"/>
+    <!-- cell 2.1 -->
+    <eval expected="33600"                xpath="//pageViewport[@nr=2]//flow/block[1]/block[3]/@bpd"/>
+    <eval expected="37600"                xpath="//pageViewport[@nr=2]//flow/block[1]/block[3]/@bpda"/>
+    <eval expected="(solid,#008000,2000)" xpath="//pageViewport[@nr=2]//flow/block[1]/block[3]/@border-before"/>
+    <eval expected="(solid,#008000,2000)" xpath="//pageViewport[@nr=2]//flow/block[1]/block[3]/@border-after"/>
+    <!-- cell 2.2 -->
+    <eval expected="33600"                xpath="//pageViewport[@nr=2]//flow/block[1]/block[4]/@bpd"/>
+    <eval expected="37600"                xpath="//pageViewport[@nr=2]//flow/block[1]/block[4]/@bpda"/>
+    <eval expected="(solid,#808000,2000)" xpath="//pageViewport[@nr=2]//flow/block[1]/block[4]/@border-before"/>
+    <eval expected="(solid,#808000,2000)" xpath="//pageViewport[@nr=2]//flow/block[1]/block[4]/@border-after"/>
   </checks>
 </testcase>

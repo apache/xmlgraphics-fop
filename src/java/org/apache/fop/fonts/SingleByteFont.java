@@ -19,8 +19,12 @@
 
 package org.apache.fop.fonts;
 
+import java.util.Set;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.xmlgraphics.fonts.Glyphs;
 
 /**
  * Generic SingleByte font
@@ -32,91 +36,112 @@ public class SingleByteFont extends CustomFont {
 
     private CodePointMapping mapping;
 
-    private String encoding = "WinAnsiEncoding";
-
     private int[] width = null;
 
+    private Set warnedChars;
+    
     /**
      * Main constructor.
      */
     public SingleByteFont() {
-        updateMapping();
+        setEncoding(CodePointMapping.WIN_ANSI_ENCODING);
     }
     
-    /**
-     * Updates the mapping variable based on the encoding.
-     */
-    protected void updateMapping() {
-        try {
-            mapping = CodePointMapping.getMapping(getEncoding());
-        } catch (UnsupportedOperationException e) {
-            log.error("Font '" + super.getFontName() + "': " + e.getMessage());
-        }
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean isEmbeddable() {
         return (getEmbedFileName() == null && getEmbedResourceName() == null) ? false
                : true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String getEncoding() {
-        return encoding;
+        return this.mapping.getName();
     }
 
     /**
-     * Sets the encoding of the font.
-     * @param encoding the encoding (ex. "WinAnsiEncoding" or "SymbolEncoding")
+     * Returns the code point mapping (encoding) of this font.
+     * @return the code point mapping
      */
-    public void setEncoding(String encoding) {
-        this.encoding = encoding;
-        updateMapping();
+    public CodePointMapping getCodePointMapping() {
+        return this.mapping;
     }
-
-    /**
-     * {@inheritDoc} 
-     */
+    
+    /** {@inheritDoc} */
     public int getWidth(int i, int size) {
-        return size * width[i];
+        int idx = i - getFirstChar();
+        if (idx >= 0 && idx < width.length) {
+            return size * width[i - getFirstChar()];
+        } else {
+            return 0;
+        }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int[] getWidths() {
         int[] arr = new int[width.length];
         System.arraycopy(width, 0, arr, 0, width.length - 1);
         return arr;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public char mapChar(char c) {
         notifyMapOperation();
         char d = mapping.mapChar(c);
         if (d != 0) {
             return d;
         } else {
-            log.warn("Glyph " + (int)c + " (0x" + Integer.toHexString(c) 
-                    + ") not available in font " + getFontName());
+            Character ch = new Character(c);
+            if (warnedChars == null) {
+                warnedChars = new java.util.HashSet();
+            }
+            if (warnedChars.size() < 8 && !warnedChars.contains(ch)) {
+                warnedChars.add(ch);
+                if (warnedChars.size() == 8) {
+                    log.warn("Many requested glyphs are not available in font " + getFontName());
+                } else {
+                    log.warn("Glyph " + (int)c + " (0x" + Integer.toHexString(c) 
+                            + ", " + Glyphs.charToGlyphName(c)
+                            + ") not available in font " + getFontName());
+                }
+            }
             return '#';
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean hasChar(char c) {
         return (mapping.mapChar(c) > 0);
     }
 
     /* ---- single byte font specific setters --- */
+
+    /**
+     * Updates the mapping variable based on the encoding.
+     * @param encoding the name of the encoding
+     */
+    protected void updateMapping(String encoding) {
+        try {
+            this.mapping = CodePointMapping.getMapping(encoding);
+        } catch (UnsupportedOperationException e) {
+            log.error("Font '" + super.getFontName() + "': " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Sets the encoding of the font.
+     * @param encoding the encoding (ex. "WinAnsiEncoding" or "SymbolEncoding")
+     */
+    public void setEncoding(String encoding) {
+        updateMapping(encoding);
+    }
+    
+    /**
+     * Sets the encoding of the font.
+     * @param encoding the encoding information
+     */
+    public void setEncoding(CodePointMapping encoding) {
+        this.mapping = encoding;
+    }
 
     /**
      * Sets a width for a character.
@@ -125,9 +150,9 @@ public class SingleByteFont extends CustomFont {
      */
     public void setWidth(int index, int width) {
         if (this.width == null) {
-            this.width = new int[256];
+            this.width = new int[getLastChar() - getFirstChar() + 1];
         }
-        this.width[index] = width;
+        this.width[index - getFirstChar()] = width;
     }
 
 }

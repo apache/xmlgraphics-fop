@@ -19,6 +19,8 @@
 
 package org.apache.fop.fo.properties;
 
+import org.apache.fop.datatypes.Length;
+import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
@@ -85,7 +87,16 @@ public class LineHeightPropertyMaker extends SpaceProperty.Maker {
             FObj fo) throws PropertyException {
         Numeric numval = p.getNumeric();
         if (numval != null && numval.getDimension() == 0) {
-            p = new PercentLength(numval.getNumericValue(), getPercentBase(propertyList));
+            if (getPercentBase(propertyList) instanceof LengthBase) {
+                Length base = ((LengthBase)getPercentBase(propertyList)).getBaseLength();
+                if (base != null && base.isAbsolute()) {
+                    p = FixedLength.getInstance(
+                            numval.getNumericValue() * base.getNumericValue());
+                } else {
+                    p = new PercentLength(
+                            numval.getNumericValue(), getPercentBase(propertyList));
+                }
+            }
             Property spaceProp = super.convertProperty(p, propertyList, fo);
             spaceProp.setSpecifiedValue(String.valueOf(numval.getNumericValue()));
             return spaceProp;

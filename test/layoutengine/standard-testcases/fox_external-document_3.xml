@@ -25,11 +25,11 @@
   <fo>
     <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
         xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
-      <!--fo:layout-master-set>
-        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="dummy" page-width="5in" page-height="5in">
           <fo:region-body reference-orientation="90"/>
         </fo:simple-page-master>
-      </fo:layout-master-set-->
+      </fo:layout-master-set>
       <fox:external-document id="img2" src="../../resources/images/multi-page.tiff"/>
     </fo:root>
   </fo>

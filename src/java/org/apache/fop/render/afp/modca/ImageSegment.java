@@ -18,7 +18,6 @@
 /* $Id$ */
 
 package org.apache.fop.render.afp.modca;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
@@ -68,12 +67,15 @@ public class ImageSegment extends AbstractAFPObject {
      * @param name The name of the image.
      */
     public ImageSegment(String name) {
+
         if (name.length() != 4) {
             String msg = "Image segment name must be 4 characters long " + name;
             log.error("Constructor:: " + msg);
             throw new IllegalArgumentException(msg);
         }
+
         this.name = name;
+
         try {
             this.nameBytes = name.getBytes(AFPConstants.EBCIDIC_ENCODING);
         } catch (UnsupportedEncodingException usee) {
@@ -160,18 +162,24 @@ public class ImageSegment extends AbstractAFPObject {
      * @throws java.io.IOException if an I/O exception occurred
      */
     public void writeDataStream(OutputStream os) throws IOException {
+
         writeStart(os);
+
         if (imageContent != null) {
             imageContent.writeDataStream(os);
         }
+
         writeEnd(os);
+
     }
 
     /**
      * Helper method to write the start of the Image Segment.
      * @param os The stream to write to
      */
-    private void writeStart(OutputStream os) throws IOException {
+    private void writeStart(OutputStream os)
+        throws IOException {
+
         byte[] data = new byte[] {
             0x70, // ID
             0x04, // Length
@@ -180,9 +188,13 @@ public class ImageSegment extends AbstractAFPObject {
             0x00, // Name byte 3
             0x00, // Name byte 4
         };
+
         for (int i = 0; i < nameBytes.length; i++) {
+
             data[2 + i] = nameBytes[i];
+
         }
+
         os.write(data);
 
     }
@@ -192,6 +204,7 @@ public class ImageSegment extends AbstractAFPObject {
      * @param os The stream to write to
      */
     private void writeEnd(OutputStream os) throws IOException {
+
         byte[] data = new byte[] {
             0x71, // ID
             0x00, // Length

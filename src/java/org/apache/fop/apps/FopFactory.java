@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: $ */
+/* $Id$ */
 
 package org.apache.fop.apps;
 
@@ -195,7 +195,7 @@ public class FopFactory implements ImageContext {
      * @throws FOPException when the constructor fails
      */
     public Fop newFop(String outputFormat) throws FOPException {
-        return new Fop(outputFormat, newFOUserAgent());
+        return newFop(outputFormat, newFOUserAgent());
     }
 
     /**
@@ -212,10 +212,7 @@ public class FopFactory implements ImageContext {
      * @throws FOPException  when the constructor fails
      */
     public Fop newFop(String outputFormat, FOUserAgent userAgent) throws FOPException {
-        if (userAgent == null) {
-            throw new NullPointerException("The userAgent parameter must not be null!");
-        }
-        return new Fop(outputFormat, userAgent);
+        return newFop(outputFormat, userAgent, null);
     }
     
     /**
@@ -230,7 +227,7 @@ public class FopFactory implements ImageContext {
      * @throws FOPException when the constructor fails
      */
     public Fop newFop(String outputFormat, OutputStream stream) throws FOPException {
-        return new Fop(outputFormat, newFOUserAgent(), stream);
+        return newFop(outputFormat, newFOUserAgent(), stream);
     }
 
     /**
@@ -333,11 +330,10 @@ public class FopFactory implements ImageContext {
     }
 
     /**
-     * cleans the base url
-     * @param base
-     * @return
-     * @throws MalformedURLException
-     * @throws URISyntaxException 
+     * Checks if the given base URL is acceptable. It also normalizes the URL.
+     * @param base the base URL to check
+     * @return the normalized URL
+     * @throws MalformedURLException if there's a problem with a file URL
      */
     private String checkBaseURL(String base) throws MalformedURLException {
         if (!base.endsWith("/")) {
@@ -364,8 +360,7 @@ public class FopFactory implements ImageContext {
     /**
      * Sets the base URL.
      * @param base base URL
-     * @throws MalformedURLException 
-     * @throws URISyntaxException 
+     * @throws MalformedURLException if there's a problem with a file URL
      */
     public void setBaseURL(String base) throws MalformedURLException {
         this.base = checkBaseURL(base);
@@ -382,8 +377,7 @@ public class FopFactory implements ImageContext {
     /**
      * Sets the font base URL.
      * @param fontBase font base URL
-     * @throws MalformedURLException 
-     * @throws URISyntaxException 
+     * @throws MalformedURLException if there's a problem with a file URL
      */
     public void setFontBaseURL(String fontBase) throws MalformedURLException {
         this.fontBase = checkBaseURL(fontBase);
@@ -402,8 +396,7 @@ public class FopFactory implements ImageContext {
     /**
      * Sets the hyphen base URL.
      * @param hyphenBase hythen base URL
-     * @throws MalformedURLException 
-     * @throws URISyntaxException 
+     * @throws MalformedURLException if there's a problem with a file URL
      * */
     public void setHyphenBaseURL(final String hyphenBase) throws MalformedURLException {
         if (hyphenBase != null) {
@@ -440,8 +433,8 @@ public class FopFactory implements ImageContext {
     }
     
     /**
-     * sets the HyphenationTreeResolver
-     * @param hyphResolver
+     * Sets the HyphenationTreeResolver to be used for resolving user-supplied hyphenation files.
+     * @param hyphResolver the HyphenationTreeResolver instance
      */
     public void setHyphenationTreeResolver(HyphenationTreeResolver hyphResolver) {
         this.hyphResolver = hyphResolver;
@@ -724,6 +717,10 @@ public class FopFactory implements ImageContext {
         return (this.fontCache != null);
     }
 
+    /**
+     * Returns the font cache instance used by this factory.
+     * @return the font cache
+     */
     public FontCache getFontCache() {
         return this.fontCache;
     }

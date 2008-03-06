@@ -22,6 +22,8 @@ package org.apache.fop.pdf;
 import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
+import java.awt.image.SampleModel;
+import java.awt.image.SinglePixelPackedSampleModel;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -137,18 +139,37 @@ public class AlphaRasterImage implements PDFImage {
             throw new UnsupportedOperationException(
                     "Expected only one band/component for the alpha channel");
         }
+
+        //...and write the Raster line by line with a reusable buffer
         int dataType = alpha.getDataBuffer().getDataType();
-        if (dataType != DataBuffer.TYPE_BYTE) {
+        if (dataType == DataBuffer.TYPE_BYTE) {
+            byte[] line = new byte[nbands * w];
+            for (int y = 0; y < h; y++) {
+                alpha.getDataElements(0, y, w, 1, line);
+                out.write(line);
+            }
+        } else if (dataType == DataBuffer.TYPE_INT) {
+            //Is there an better way to get a 8bit raster from a TYPE_INT raster?
+            int shift = 24;
+            SampleModel sampleModel = alpha.getSampleModel();
+            if (sampleModel instanceof SinglePixelPackedSampleModel) {
+                SinglePixelPackedSampleModel m = (SinglePixelPackedSampleModel)sampleModel;
+                shift = m.getBitOffsets()[0];
+            }
+            int[] iline = new int[nbands * w];
+            byte[] line = new byte[nbands * w];
+            for (int y = 0; y < h; y++) {
+                alpha.getDataElements(0, y, w, 1, iline);
+                for (int i = 0; i < w; i++) {
+                    line[i] = (byte)(iline[i] >> shift);
+                }
+                out.write(line);
+            }
+        } else {
             throw new UnsupportedOperationException("Unsupported DataBuffer type: "
                     + alpha.getDataBuffer().getClass().getName());
         }
 
-        //...and write the Raster line by line with a reusable buffer
-        byte[] line = new byte[nbands * w];
-        for (int y = 0; y < h; y++) {
-            alpha.getDataElements(0, y, w, 1, line);
-            out.write(line);
-        }
     }
     
     /** {@inheritDoc} */

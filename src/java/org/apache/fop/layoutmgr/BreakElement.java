@@ -46,10 +46,13 @@ public class BreakElement extends UnresolvedListElement {
     
     /**
      * Constructor for hard breaks.
+     * 
      * @param position the Position instance needed by the addAreas stage of the LMs.
      * @param penaltyWidth the penalty width
      * @param penaltyValue the penalty value for the penalty element to be constructed
-     * @param breakClass the break class of this penalty (one of the break-* constants)
+     * @param breakClass the break class of this penalty (one of {@link Constants#EN_AUTO},
+     * {@link Constants#EN_COLUMN}, {@link Constants#EN_PAGE},
+     * {@link Constants#EN_EVEN_PAGE}, {@link Constants#EN_ODD_PAGE})
      * @param context the layout context which contains the pending conditional elements
      */
     public BreakElement(Position position, int penaltyWidth, int penaltyValue, 
@@ -96,14 +99,23 @@ public class BreakElement extends UnresolvedListElement {
         return penaltyValue == -KnuthElement.INFINITE;
     }
     
-    /** @return the break class of this penalty (one of the break-* constants) */
+    /**
+     * Returns the break class of this penalty.
+     * 
+     * @return one of {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN},
+     * {@link Constants#EN_PAGE}, {@link Constants#EN_EVEN_PAGE},
+     * {@link Constants#EN_ODD_PAGE}
+     */
     public int getBreakClass() {
         return breakClass;
     }
     
     /**
      * Sets the break class.
-     * @param breakClass the new break class
+     * 
+     * @param breakClass one of {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN},
+     * {@link Constants#EN_PAGE}, {@link Constants#EN_EVEN_PAGE},
+     * {@link Constants#EN_ODD_PAGE}
      */
     public void setBreakClass(int breakClass) {
         this.breakClass = breakClass;

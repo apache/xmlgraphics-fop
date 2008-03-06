@@ -19,7 +19,6 @@
 
 package org.apache.fop.fo.flow.table;
 
-import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground.BorderInfo;
 import org.apache.fop.layoutmgr.table.CollapsingBorderModel;
@@ -76,12 +75,11 @@ public class GridUnit {
      * Creates a new grid unit.
      * 
      * @param table the containing table
-     * @param row the table-row element this grid unit belongs to (if any)
      * @param colSpanIndex index of this grid unit in the span, in column direction
      * @param rowSpanIndex index of this grid unit in the span, in row direction
      */
-    protected GridUnit(Table table, TableRow row, int colSpanIndex, int rowSpanIndex) {
-        this(row, colSpanIndex, rowSpanIndex);
+    protected GridUnit(Table table, int colSpanIndex, int rowSpanIndex) {
+        this(colSpanIndex, rowSpanIndex);
         setBorders(table);
     }
 
@@ -89,12 +87,11 @@ public class GridUnit {
      * Creates a new grid unit.
      * 
      * @param cell table cell which occupies this grid unit
-     * @param row the table-row element this grid unit belongs to (if any)
      * @param colSpanIndex index of this grid unit in the span, in column direction
      * @param rowSpanIndex index of this grid unit in the span, in row direction
      */
-    protected GridUnit(TableCell cell, TableRow row, int colSpanIndex, int rowSpanIndex) {
-        this(row, colSpanIndex, rowSpanIndex);
+    protected GridUnit(TableCell cell, int colSpanIndex, int rowSpanIndex) {
+        this(colSpanIndex, rowSpanIndex);
         this.cell = cell;
         setBorders(cell.getTable());
     }
@@ -103,17 +100,15 @@ public class GridUnit {
      * Creates a new grid unit.
      * 
      * @param primary the before-start grid unit of the cell containing this grid unit
-     * @param row the table-row element this grid unit belongs to (if any)
      * @param colSpanIndex index of this grid unit in the span, in column direction
      * @param rowSpanIndex index of this grid unit in the span, in row direction
      */
-    GridUnit(PrimaryGridUnit primary, TableRow row, int colSpanIndex, int rowSpanIndex) {
-        this(primary.getCell(), row, colSpanIndex, rowSpanIndex);
+    GridUnit(PrimaryGridUnit primary, int colSpanIndex, int rowSpanIndex) {
+        this(primary.getCell(), colSpanIndex, rowSpanIndex);
         this.primary = primary;
     }
 
-    private GridUnit(TableRow row, int colSpanIndex, int rowSpanIndex) {
-        this.row = row;
+    private GridUnit(int colSpanIndex, int rowSpanIndex) {
         this.colSpanIndex = colSpanIndex;
         this.rowSpanIndex = rowSpanIndex;
     }
@@ -165,12 +160,8 @@ public class GridUnit {
         return row;
     }
 
-    public TableBody getBody() {
-        FONode node = getCell();
-        while (node != null && !(node instanceof TableBody)) {
-            node = node.getParent();
-        }
-        return (TableBody) node;
+    void setRow(TableRow row) {
+        this.row = row;
     }
 
     /**

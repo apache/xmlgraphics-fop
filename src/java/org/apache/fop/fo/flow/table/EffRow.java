@@ -22,8 +22,10 @@ package org.apache.fop.fo.flow.table;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.fop.fo.Constants;
 import org.apache.fop.layoutmgr.table.TableRowIterator;
 import org.apache.fop.traits.MinOptMax;
+import org.apache.fop.util.BreakUtil;
 
 /**
  * This class represents an effective row in a table and holds a list of grid units occupying
@@ -159,7 +161,108 @@ public class EffRow {
             throw new IllegalArgumentException("Illegal flag queried: " +  which);
         }
     }
-    
+
+    /**
+     * Returns true if the enclosing (if any) fo:table-row element of this row, or if any
+     * of the cells starting on this row, have keep-with-previous set.
+     * 
+     * @return true if this row must be kept with the previous content
+     */
+    public boolean mustKeepWithPrevious() {
+        boolean keepWithPrevious = false;
+        TableRow row = getTableRow();
+        if (row != null) {
+            keepWithPrevious = row.mustKeepWithPrevious();
+        }
+        for (Iterator iter = gridUnits.iterator(); iter.hasNext();) {
+            GridUnit gu = (GridUnit) iter.next();
+            if (gu.isPrimary()) {
+                keepWithPrevious |= gu.getPrimary().mustKeepWithPrevious();
+            }
+        }
+        return keepWithPrevious;
+    }
+
+    /**
+     * Returns true if the enclosing (if any) fo:table-row element of this row, or if any
+     * of the cells ending on this row, have keep-with-next set.
+     * 
+     * @return true if this row must be kept with the next content
+     */
+    public boolean mustKeepWithNext() {
+        boolean keepWithNext = false;
+        TableRow row = getTableRow();
+        if (row != null) {
+            keepWithNext = row.mustKeepWithNext();
+        }
+        for (Iterator iter = gridUnits.iterator(); iter.hasNext();) {
+            GridUnit gu = (GridUnit) iter.next();
+            if (!gu.isEmpty() && gu.getColSpanIndex() == 0 && gu.isLastGridUnitRowSpan()) {
+                keepWithNext |= gu.getPrimary().mustKeepWithNext();
+            }
+        }
+        return keepWithNext;
+    }
+
+    /**
+     * Returns true if this row is enclosed by an fo:table-row element that has
+     * keep-together set.
+     * 
+     * @return true if this row must be kept together
+     */
+    public boolean mustKeepTogether() {
+        TableRow row = getTableRow();
+        return row != null && row.mustKeepTogether();
+    }
+
+    /**
+     * Returns the break class for this row. This is a combination of break-before set on
+     * the first children of any cells starting on this row.
+     * <p><strong>Note:</strong> this method doesn't take into account break-before set on
+     * the enclosing fo:table-row element, if any, as it must be ignored if the row
+     * belongs to a group of spanned rows (see XSL-FO 1.1, 7.20.2).
+     * <p><strong>Note:</strong> this works only after getNextKuthElements on the
+     * corresponding TableCellLM have been called!</p>
+     * 
+     * @return one of {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN}, {@link
+     * Constants#EN_PAGE}, {@link Constants#EN_EVEN_PAGE}, {@link Constants#EN_ODD_PAGE}
+     */
+    public int getBreakBefore() {
+        int breakBefore = Constants.EN_AUTO;
+        for (Iterator iter = gridUnits.iterator(); iter.hasNext();) {
+            GridUnit gu = (GridUnit) iter.next();
+            if (gu.isPrimary()) {
+                breakBefore = BreakUtil.compareBreakClasses(breakBefore,
+                        gu.getPrimary().getBreakBefore());
+            }
+        }
+        return breakBefore;
+    }
+
+    /**
+     * Returns the break class for this row. This is a combination of break-after set on
+     * the last children of any cells ending on this row.
+     * <p><strong>Note:</strong> this method doesn't take into account break-after set on
+     * the enclosing fo:table-row element, if any, as it must be ignored if the row
+     * belongs to a group of spanned rows (see XSL-FO 1.1, 7.20.1).
+     * <p><strong>Note:</strong> this works only after getNextKuthElements on the
+     * corresponding TableCellLM have been called!</p>
+     * 
+     * @return one of {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN}, {@link
+     * Constants#EN_PAGE}, {@link Constants#EN_EVEN_PAGE}, {@link Constants#EN_ODD_PAGE}
+     */
+    public int getBreakAfter() {
+        int breakAfter = Constants.EN_AUTO;
+        for (Iterator iter = gridUnits.iterator(); iter.hasNext();) {
+            GridUnit gu = (GridUnit) iter.next();
+            if (!gu.isEmpty() && gu.getColSpanIndex() == 0 && gu.isLastGridUnitRowSpan()) {
+                breakAfter = BreakUtil.compareBreakClasses(breakAfter,
+                        gu.getPrimary().getBreakAfter());
+            }
+        }
+        return breakAfter;
+    }
+
     /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer("EffRow {");

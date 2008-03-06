@@ -28,22 +28,22 @@ public abstract class AbstractDescriptor extends AbstractAFPObject {
     /** height of this descriptor */
     protected int height = 0;
     /** width resolution of this descriptor */
-    protected int widthRes = 0;
+    protected int widthResolution = 0;
     /** height resolution of this descriptor */
-    protected int heightRes = 0;
+    protected int heightResolution = 0;
 
     /**
      * Constructor a PresentationTextDescriptor for the specified
      * width and height.
      * @param width The width of the page.
      * @param height The height of the page.
-     * @param widthRes The width resolution of the page.
-     * @param heightRes The height resolution of the page.
+     * @param widthResolution The width resolution of the page.
+     * @param heightResolution The height resolution of the page.
      */
-    public AbstractDescriptor(int width, int height, int widthRes, int heightRes) {
+    public AbstractDescriptor(int width, int height, int widthResolution, int heightResolution) {
         this.width = width;
         this.height = height;
-        this.widthRes = widthRes;
-        this.heightRes = heightRes;
+        this.widthResolution = widthResolution;
+        this.heightResolution = heightResolution;
     }
 }

@@ -25,15 +25,14 @@ package org.apache.fop.fo.flow.table;
  */
 public class EmptyGridUnit extends GridUnit {
 
-    private TableBody body;
-
     /**
      * @param table the containing table
      * @param row the table-row element this grid unit belongs to (if any)
      * @param colIndex column index, 0-based
      */
     EmptyGridUnit(Table table, TableRow row, int colIndex) {
-        super(table, row, 0, 0);
+        super(table, 0, 0);
+        setRow(row);
     }
 
     /** {@inheritDoc} */
@@ -52,12 +51,7 @@ public class EmptyGridUnit extends GridUnit {
 
     /** {@inheritDoc} */
     public boolean isPrimary() {
-        return true;
-    }
-
-    /** {@inheritDoc} */
-    public TableBody getBody() {
-        return this.body;
+        return false;
     }
 
     /** {@inheritDoc} */

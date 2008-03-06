@@ -97,17 +97,16 @@ and threw it up on high and caught it; and this ball was her favorite plaything.
       <penalty w="0" p="INF"/>
       <glue w="25000"/>
       
-      <box w="0"/>
-      
+      <box w="28800"/>
       <penalty w="0" p="INF"/>
       <glue w="25000"/>
-      <penalty w="14400"/> <!-- p is not of interest here -->
+      <penalty w="0"/> <!-- p is not of interest here -->
       <glue w="-50000"/>
       <box w="0"/>
       <penalty w="0" p="INF"/>
       <glue w="25000"/>
       
-      <box w="28800"/>
+      <box w="14400"/>
       
       <penalty w="0" p="INF"/>
       <glue w="25000"/>
@@ -120,7 +119,6 @@ and threw it up on high and caught it; and this ball was her favorite plaything.
       <box w="14400"/>
       
       <!-- skip three more lines -->
-      <skip>8</skip>
       <skip>8</skip>
       <skip>8</skip>
       <skip>8</skip>
@@ -148,10 +146,8 @@ and threw it up on high and caught it; and this ball was her favorite plaything.
       <box w="0"/> <!-- Helper box used to notify the LM for the addAreas stage about the discarded spaces -->
       <penalty w="0" p="INF"/>
       <glue w="25000"/>
-      <box w="0"/>
-      <penalty w="14400"/> <!-- p is not of interest here -->
       <box w="28800"/>
-      <penalty w="0" p="0"/>
+      <penalty w="0"/> <!-- p is not of interest here -->
       <box w="14400"/>
       <penalty w="0" p="0"/>
       <box w="14400"/>

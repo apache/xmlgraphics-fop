@@ -232,4 +232,24 @@ public class PDFRoot extends PDFDictionary {
         }
     }
     
+    /**
+     * Returns the language identifier of the document.
+     * @return the language identifier of the document (or null if not set or undefined)
+     * @since PDF 1.4
+     */
+    public String getLanguage() {
+        return (String)get("Lang");
+    }
+    
+    /**
+     * Sets the language identifier of the document.
+     * @param lang the language identifier of the document.
+     */
+    public void setLanguage(String lang) {
+        if (lang == null) {
+            throw new NullPointerException("lang must not be null");
+        }
+        put("Lang", lang);
+    }
+    
 }

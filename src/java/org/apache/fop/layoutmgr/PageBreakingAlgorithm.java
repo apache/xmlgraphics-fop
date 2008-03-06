@@ -364,7 +364,13 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         } else {
             // there are no footnotes
         }
-        return getLineWidth(activeNode.line) - actualWidth;
+        int diff = getLineWidth(activeNode.line) - actualWidth;
+        if (autoHeight && diff < 0) {
+            //getLineWidth() for auto-height parts return 0 so the diff will be negative
+            return 0; //...but we don't want to shrink in this case. Stick to optimum.
+        } else {
+            return diff;
+        }
     }
 
     /** Checks whether footnotes from preceding pages may be deferred to the page after
@@ -732,6 +738,20 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
             pageBreaks = new LinkedList();
         }
         pageBreaks.addFirst(pageBreak);
+    }
+    
+    /**
+     * Removes all page breaks from the result list. This is used by block-containers and
+     * static-content when it is only desired to know where there is an overflow but later the
+     * whole content should be painted as one part.
+     */
+    public void removeAllPageBreaks() {
+        if (pageBreaks == null) {
+            return;
+        }
+        while (pageBreaks.size() > 1) {
+            pageBreaks.removeFirst();
+        }
     }
     
     private int getPartCount() {

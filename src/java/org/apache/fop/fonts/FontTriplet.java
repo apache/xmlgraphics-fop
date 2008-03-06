@@ -32,10 +32,11 @@ public class FontTriplet implements Comparable, Serializable {
     private String name;
     private String style;
     private int weight;
+    private int priority; // priority of this triplet/font mapping
     
     //This is only a cache
     private transient String key;
-    
+
     /**
      * Creates a new font triplet.
      * @param name font name
@@ -43,9 +44,21 @@ public class FontTriplet implements Comparable, Serializable {
      * @param weight font weight (100, 200, 300...800, 900)
      */
     public FontTriplet(String name, String style, int weight) {
+        this(name, style, weight, 0);
+    }
+
+    /**
+     * Creates a new font triplet.
+     * @param name font name
+     * @param style font style (normal, italic etc.)
+     * @param weight font weight (100, 200, 300...800, 900)
+     * @param priority priority of this triplet/font mapping
+     */
+    public FontTriplet(String name, String style, int weight, int priority) {
         this.name = name;
         this.style = style;
         this.weight = weight;
+        this.priority = priority;
     }
 
     /** @return the font name */
@@ -61,6 +74,11 @@ public class FontTriplet implements Comparable, Serializable {
     /** @return the font weight */
     public int getWeight() {
         return weight;
+    }
+
+    /** @return the priority of this triplet/font mapping */
+    public int getPriority() {
+        return priority;
     }
 
     private String getKey() {

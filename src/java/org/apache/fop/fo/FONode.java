@@ -380,7 +380,7 @@ public abstract class FONode implements Cloneable {
      * @param problem text to display that indicates the problem
      * @deprecated Not localizable!
      */
-    protected void attributeWarning(String problem) {
+    public void attributeWarning(String problem) {
         log.warn(warningText(locator) + getName() + ", " + problem);
     }
 

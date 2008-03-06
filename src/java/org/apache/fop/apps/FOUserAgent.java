@@ -42,11 +42,9 @@ import org.apache.fop.events.EventBroadcaster;
 import org.apache.fop.events.EventListener;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.FOValidationEventListenerProxy;
-import org.apache.fop.pdf.PDFEncryptionParams;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererFactory;
 import org.apache.fop.render.XMLHandlerRegistry;
-import org.apache.fop.render.pdf.PDFRenderer;
 
 /**
  * This is the user agent for FOP.
@@ -72,7 +70,7 @@ public class FOUserAgent {
 
     /** Defines the default target resolution (72dpi) for FOP */
     public static final float DEFAULT_TARGET_RESOLUTION
-                = FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION;
+            = FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION;
 
     private static Log log = LogFactory.getLog("FOP");
 
@@ -135,16 +133,6 @@ public class FOUserAgent {
         }
         
     };
-    
-    /**
-     * Default constructor
-     * @see org.apache.fop.apps.FopFactory
-     * @deprecated Provided for compatibility only. Please use the methods from 
-     *             FopFactory to construct FOUserAgent instances!
-     */
-    public FOUserAgent() throws FOPException {
-        this(FopFactory.newInstance());
-    }
     
     /**
      * Main constructor. <b>This constructor should not be called directly. Please use the 
@@ -347,29 +335,6 @@ public class FOUserAgent {
     public URIResolver getURIResolver() {
         return this.uriResolver;
     }
-
-    /**
-     * Returns the parameters for PDF encryption.
-     * @return the PDF encryption parameters, null if not applicable
-     * @deprecated Use (PDFEncryptionParams)getRendererOptions().get("encryption-params") 
-     *             instead.
-     */
-    public PDFEncryptionParams getPDFEncryptionParams() {
-        return (PDFEncryptionParams)getRendererOptions().get(PDFRenderer.ENCRYPTION_PARAMS);
-    }
-
-    /**
-     * Sets the parameters for PDF encryption.
-     * @param pdfEncryptionParams the PDF encryption parameters, null to
-     * disable PDF encryption
-     * @deprecated Use getRendererOptions().put("encryption-params", 
-     *             new PDFEncryptionParams(..)) instead or set every parameter separately: 
-     *             getRendererOptions().put("noprint", Boolean.TRUE).
-     */
-    public void setPDFEncryptionParams(PDFEncryptionParams pdfEncryptionParams) {
-        getRendererOptions().put(PDFRenderer.ENCRYPTION_PARAMS, pdfEncryptionParams);
-    }
-
 
     /**
      * Attempts to resolve the given URI.

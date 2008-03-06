@@ -22,6 +22,8 @@ package org.apache.fop.fo.flow.table;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.table.TableCellLayoutManager;
@@ -51,19 +53,36 @@ public class PrimaryGridUnit extends GridUnit {
     private boolean isSeparateBorderModel;
     private int halfBorderSeparationBPD;
 
+    private boolean keepWithPrevious;
+    private boolean keepWithNext;
+    private int breakBefore = Constants.EN_AUTO;
+    private int breakAfter = Constants.EN_AUTO;
+
     /**
      * Creates a new primary grid unit.
      *
      * @param cell table cell which occupies this grid unit
-     * @param row the table-row element this grid unit belongs to (if any)
      * @param colIndex index of the column this grid unit belongs to, zero-based
      */
-    PrimaryGridUnit(TableCell cell, TableRow row, int colIndex) {
-        super(cell, row, 0, 0);
+    PrimaryGridUnit(TableCell cell, int colIndex) {
+        super(cell, 0, 0);
         this.colIndex = colIndex;
         this.isSeparateBorderModel = cell.getTable().isSeparateBorderModel(); // TODO
         this.halfBorderSeparationBPD = cell.getTable().getBorderSeparation().getBPD().getLength()
                 .getValue() / 2;  // TODO
+    }
+
+    /**
+     * Returns the fo:table-header/footer/body element containing this cell.
+     * 
+     * @return the enclosing table part
+     */
+    public TableBody getTableBody() {
+        FONode node = cell.getParent();
+        if (node instanceof TableRow) {
+            node = node.getParent();
+        }
+        return (TableBody) node;
     }
 
     public TableCellLayoutManager getCellLM() {
@@ -302,6 +321,7 @@ public class PrimaryGridUnit extends GridUnit {
     public String toString() {
         StringBuffer sb = new StringBuffer(super.toString());
         sb.append(" rowIndex=").append(rowIndex);
+        sb.append(" colIndex=").append(colIndex);
         return sb.toString();
     }
 
@@ -317,6 +337,78 @@ public class PrimaryGridUnit extends GridUnit {
      */
     public void createCellLM() {
         cellLM = new TableCellLayoutManager(cell, this);
+    }
+
+    /**
+     * Returns true if the first child block (or its descendants) of this cell has
+     * keep-with-previous.
+     * 
+     * @return the value of keep-with-previous
+     */
+    public boolean mustKeepWithPrevious() {
+        return keepWithPrevious;
+    }
+
+    /**
+     * Don't use, reserved for TableCellLM. TODO
+     */
+    public void setKeepWithPrevious() {
+        this.keepWithPrevious = true;
+    }
+
+    /**
+     * Returns true if the last child block (or its descendants) of this cell has
+     * keep-with-next.
+     * 
+     * @return the value of keep-with-next
+     */
+    public boolean mustKeepWithNext() {
+        return keepWithNext;
+    }
+
+    /**
+     * Don't use, reserved for TableCellLM. TODO
+     */
+    public void setKeepWithNext() {
+        this.keepWithNext = true;
+    }
+
+    /**
+     * Returns the class of the before break for the first child element of this cell.
+     * 
+     * @return one of {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN}, {@link
+     * Constants#EN_PAGE}, {@link Constants#EN_EVEN_PAGE}, {@link Constants#EN_ODD_PAGE}
+     */
+    public int getBreakBefore() {
+        return breakBefore;
+    }
+
+    /**
+     * Don't use, reserved for TableCellLM. TODO
+     * 
+     * @param breakBefore the breakBefore to set
+     */
+    public void setBreakBefore(int breakBefore) {
+        this.breakBefore = breakBefore;
+    }
+
+    /**
+     * Returns the class of the before after for the last child element of this cell.
+     * 
+     * @return one of {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN}, {@link
+     * Constants#EN_PAGE}, {@link Constants#EN_EVEN_PAGE}, {@link Constants#EN_ODD_PAGE}
+     */
+    public int getBreakAfter() {
+        return breakAfter;
+    }
+
+    /**
+     * Don't use, reserved for TableCellLM. TODO
+     * 
+     * @param breakAfter the breakAfter to set
+     */
+    public void setBreakAfter(int breakAfter) {
+        this.breakAfter = breakAfter;
     }
 
 }

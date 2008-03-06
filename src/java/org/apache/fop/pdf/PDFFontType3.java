@@ -32,26 +32,6 @@ import org.apache.fop.fonts.FontType;
 public class PDFFontType3 extends PDFFontNonBase14 {
 
     /**
-     * font's required /FontBBox bounding box
-     */
-    protected PDFRectangle fontBBox;
-
-    /**
-     * font's required /FontMatrix array
-     */
-    protected PDFArray fontMatrix;
-
-    /**
-     * font's required /CharProcs dictionary
-     */
-    protected PDFCharProcs charProcs;
-
-    /**
-     * font's optional /Resources object
-     */
-    protected PDFResources resources;
-
-    /**
      * Create the /Font object
      *
      * @param fontname the internal name for the font
@@ -61,13 +41,7 @@ public class PDFFontType3 extends PDFFontNonBase14 {
     public PDFFontType3(String fontname, 
                         String basefont,
                         Object encoding) {
-
-        /* generic creation of PDF object */
-        super(fontname, FontType.TYPE3, basefont, encoding /* , mapping */);
-
-        this.fontBBox = null;
-        this.fontMatrix = null;
-        this.charProcs = null;
+        super(fontname, FontType.TYPE3, basefont, encoding);
     }
 
     /**
@@ -89,9 +63,9 @@ public class PDFFontType3 extends PDFFontNonBase14 {
         /* generic creation of PDF object */
         super(fontname, FontType.TYPE3, basefont, encoding /* , mapping */);
 
-        this.fontBBox = fontBBox;
-        this.fontMatrix = fontMatrix;
-        this.charProcs = charProcs;
+        setFontBBox(fontBBox);
+        setFontMatrix(fontMatrix);
+        setCharProcs(charProcs);
     }
 
     /**
@@ -100,7 +74,7 @@ public class PDFFontType3 extends PDFFontNonBase14 {
      * @param bbox bounding box for the font
      */
     public void setFontBBox(PDFRectangle bbox) {
-        this.fontBBox = bbox;
+        put("FontBBox", bbox);
     }
 
     /**
@@ -109,7 +83,7 @@ public class PDFFontType3 extends PDFFontNonBase14 {
      * @param matrix the transformation matrix for the font
      */
     public void setFontMatrix(PDFArray matrix) {
-        this.fontMatrix = matrix;
+        put("FontMatrix", matrix);
     }
 
     /**
@@ -120,25 +94,7 @@ public class PDFFontType3 extends PDFFontNonBase14 {
      * @param chars the glyphs' dictionary
      */
     public void setCharProcs(PDFCharProcs chars) {
-        this.charProcs = chars;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected void fillInPDF(StringBuffer target) {
-        if (fontBBox != null) {
-            target.append("\n/FontBBox ");
-            target.append(fontBBox.toPDF());
-        }
-        if (fontMatrix != null) {
-            target.append("\n/FontMatrix ");
-            target.append(fontMatrix.toPDF());
-        }
-        if (charProcs != null) {
-            target.append("\n/CharProcs ");
-            target.append(charProcs.referencePDF());
-        }
+        put("CharProcs", chars);
     }
 
 }

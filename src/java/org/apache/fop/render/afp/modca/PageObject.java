@@ -62,15 +62,15 @@ public class PageObject extends AbstractPageObject {
      *            the height of the page.
      * @param rotation
      *            the rotation of the page.
-     * @param widthRes
+     * @param widthResolution
      *            the width resolution of the page.
-     * @param heightRes
+     * @param heightResolution
      *            the height resolution of the page.
      */
     public PageObject(String name, int width, int height, int rotation,
-            int widthRes, int heightRes) {
+            int widthResolution, int heightResolution) {
 
-        super(name, width, height, rotation, widthRes, heightRes);
+        super(name, width, height, rotation, widthResolution, heightResolution);
 
     }
 

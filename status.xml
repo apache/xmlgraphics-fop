@@ -16,18 +16,161 @@
   limitations under the License.
 -->
 <!-- $Id$ -->
+<!DOCTYPE status PUBLIC "-//APACHE//DTD Status V1.3//EN"
+  "http://forrest.apache.org/dtd/status-v13.dtd">
 <status>
 
   <developers>
-    <!-- Maintained in src/documentation/content/xdocs/team.xml -->
+    <!-- In alphabetical order (last name) -->
+    <person name="Max Berger"        email="mayberger@apache.org"     id="MB"/>
+    <person name="Chris Bowditch"    email="cbowditch@apache.org"     id="CB"/>
+    <person name="Jay Bryant"        email="jbryant@apache.org"       id="JB"/>
+    <person name="Adrian Cumiskey"   email="acumiskey@apache.org"     id="AC"/>
+    <person name="Bertrand Delacrétaz" email="bdelacretaz@apache.org" id="BD"/>
+    <person name="Andreas Delmelle"  email="adelmelle@apache.org"     id="AD"/>
+    <person name="Luca Furini"       email="lfurini@apache.org"       id="LF"/>
+    <person name="Christian Geisert" email="chrisg@apache.org"        id="CG"/>
+    <person name="Vincent Hennebert" email="vhennebert@apache.org"    id="VH"/>
+    <person name="Clay Leeds"        email="clay@apache.org"          id="CL"/>
+    <person name="Manuel Mall"       email="manuel@apache.org"        id="MM"/>
+    <person name="Jeremias Märki"    email="jeremias@apache.org"      id="JM"/>
+    <person name="Simon Pepping"     email="spepping@apache.org"      id="SP"/>
+    <person name="the FOP committers" email="fop-dev@xmlgraphics.apache.org" id="all"/>
+    <person name="Volunteer needed"  email="general@xmlgraphics.apache.org" id="open"/>
+    <!-- See also src/documentation/content/xdocs/team.xml -->
   </developers>
 
-  <todo>
-    <!-- See Bugzilla and http://wiki.apache.org/xmlgraphics-fop/FOPProjectTasks -->
-  </todo>
-
+  <contexts>
+    <context id="Docs" title="Changes to Documentation"/>
+    <context id="Code" title="Changes to the Code Base"/>
+    <context id="Layout" title="Changes to the Layout Engine"/>
+    <context id="Renderers" title="Changes to Renderers (Output Formats)"/>
+    <context id="Fonts" title="Changes to the Font Subsystem"/>
+    <context id="API" title="Changes to the End-User API"/>
+    <context id="Extensions" title="Changes to the Bundled Extensions"/>
+    <context id="Images" title="Changes to the Image Support"/>
+  </contexts>
+  
   <changes>
-    <release version="FOP Trunk">
+    <!--release version="FOP Trunk" date="TBD"-->
+      <!-- change reverted, to be added back later
+        <action context="Renderers" dev="AC" importance="high" type="add">
+        Added SVG support for AFP (GOCA).
+        </action>
+      -->
+    <!--/release-->
+    <release version="0.95beta" date="8 March 2008">
+      <notes>
+        <section>
+          <title>Notes</title>
+          <p>
+            Besides the important changes listed below, the most important areas with
+            improvements in this release are:
+          </p>
+          <ul>
+            <li>
+              Improvements and bugfixes for tables (keep and break support, border
+              conditionality etc.)
+            </li>
+            <li>
+              Improvements and bugfixes for font handling and font
+              auto-detection/-registration.
+            </li>
+            <li>
+              Performance improvements and memory optimizations for the property handling
+              in the FO tree.
+            </li>
+          </ul>
+          <p>
+            Please note that with this release, we've dropped support for Java 1.3.
+            FOP will, from now on, <strong>require at least Java 1.4</strong>.
+          </p>
+          <p>
+            The image libraries Jimi and JAI are no longer needed (and used). Instead we rely
+            completely on the Image I/O API that has been introduced with Java 1.4. If you still
+            need support for bitmap image formats that do not work out-of-the-box, we recommend
+            adding <link href="http://jai-imageio.dev.java.net/">JAI Image I/O Tools</link>
+            (an Image I/O compatible image codec package) to the classpath.
+          </p>
+        </section>
+      </notes>
+      <action context="Layout" dev="VH" type="add" importance="high">
+        Added support for background on fo:table-column and fo:table-header/footer/body elements.
+      </action>
+      <action context="Layout" dev="VH" type="fix">
+        Fixed the rendering of the area of a table corresponding to border-separation, which must
+        be filled with the background of the table, and not the rows.
+      </action>
+      <action context="Layout" dev="VH" type="fix">
+        Improved conformance: even if a table-cell spans several rows its background must
+        correspond to the first row spanned.
+      </action>
+      <action context="Renderers" dev="JM" type="fix" due-to="Gordon Cooke">
+        Slight improvement for thin lines in Java2D/AWT output.
+      </action>
+      <action context="Layout" dev="VH" type="add">
+        Added full support for keep-with-previous on fo:table-row and in fo:table-cell elements.
+      </action>
+      <action context="Code" dev="MB" type="add">
+        Turned on XInclude processing for the main source given on the command line.
+      </action>
+      <action context="Fonts" dev="JM" type="fix" fixes-bug="44451" due-to="Justus Piater">
+        Improved the font auto-detection so fonts accessed using the font-family name are
+        selected with higher accuracy.
+      </action>
+      <action context="API" dev="JM" type="remove">
+        Removed deprecated methods in the "apps" package that were left-overs from the API
+        discussions.
+      </action>
+      <action context="Fonts" dev="JM" type="add">
+        Added support for unusual font encodings (like for Symbol or Cyrillic fonts) of Type 1
+        fonts in PDF and PostScript output.
+      </action>
+      <action context="Layout" dev="VH" type="fix" fixes-bug="44321">
+        Moved to the FO tree stage the check for break-before/after on table-row while spanning in
+        progress.
+      </action>
+      <action context="Layout" dev="VH" type="add">
+        Added full support for breaks before and after table cells (that is, break-before/after set
+        on the first/last child of a cell).
+      </action>
+      <action context="Layout" dev="VH" type="add">
+        Added full support for breaks inside the cells of a table.
+      </action>
+      <action context="Code" dev="AD" type="fix" fixes-bug="41631">
+        Added correct percentage resolution for arguments to the proportional-column-width() function.
+      </action>
+      <action context="Fonts" dev="JM" type="fix">
+        Bugfix for date formatting with negative time zones in the PDF's Info object.
+        This affected PDF/A compliance.
+      </action>
+      <action context="Renderers" dev="JM" type="add">
+        Added an option to disable the default sRGB profile in PDF output for those who
+        don't care about color fidelity, but care about PDF file size.
+      </action>
+      <action context="Code" dev="AD" type="fix" fixes-bug="43705">
+        Fixed a bug when the rgb-icc() function was used either before the fo:declarations,
+        or in documents without a fo:declarations node. In such cases, the sRGB fallback
+        is now used to avoid an ugly NullPointerException.
+      </action>
+      <action context="Code" dev="AD" type="add">
+        Added very basic parsing for the xml:lang shorthand.
+      </action>
+      <action context="Code" dev="AD" type="fix" fixes-bug="44343">
+        Fixed a bug when using relative font-size (smaller/larger) in combination
+        with percentages.
+      </action>
+      <action context="Fonts" dev="JM" type="fix">
+        Bugfix for handling of optional tables in subset TrueType fonts. This bug caused errors
+        in various PDF viewers.
+      </action>
+      <action context="Renderers" dev="JM" type="add">
+        Added support for the natural language indentifier ("Lang" in the document catalog)
+        for PDF documents based on the language/country values on fo:page-sequence.
+      </action>
+      <action context="Code" dev="AD" type="fix" fixes-bug="44286" due-to="Stefan Ziel">
+        Fixed a memory-leak in XMLWhiteSpaceHandler.
+      </action>
       <action context="Layout" dev="VH" type="fix" fixes-bug="44289">
         Fixed the resolution of borders when header/footer is omitted at page breaks.
       </action>
@@ -71,7 +214,7 @@
       <action context="Renderers" dev="JM" type="add" fixes-bug="44176" due-to="Patrick Jaromin">
         Added support for custom fonts in Java2DRenderer and derived renderers.
       </action>
-      <action context="Extensions" dev="JM" type="add">
+      <action context="Extensions" dev="JM" type="add" importance="high">
         Added new extension element: fox:external-document. It allows to add whole documents
         such as multi-page TIFF images to be inserted as peers to a page-sequence. Each image
         will make up an entire page. See the documentation for details.
@@ -80,14 +223,11 @@
         Added minimal support for the .minimum/.maximum components of block/inline-progression-dimension 
         on fo:external-graphic and fo:instream-foreign-object.
       </action>
-      <action context="Layout" dev="JM" type="add">
+      <action context="Layout" dev="JM" type="add" importance="high">
         Added support for scale-down-to-fit and scale-up-to-fit (introduced in XSL 1.1).
       </action>
       <action context="Layout" dev="VH" type="fix" fixes-bug="43633">
         Bugfix: content of a row with zero height overriding the previous row
-      </action>
-      <action context="Renderers" dev="AC" importance="high" type="add">
-        Added SVG support for AFP (GOCA).
       </action>
       <action context="Renderers" dev="JM" type="fix" fixes-bug="37993">
         Bugfix: allow multiple bookmarks to point at the same destination.
@@ -169,7 +309,7 @@
       <action context="Layout" dev="AD" type="add">
         Added support for fo:markers in fo:inline and fo:basic-link.
       </action>
-      <action context="Renderers" dev="JM" type="update">
+      <action context="Renderers" dev="JM" type="update" importance="high">
         PDF Transcoder (SVG) text painting has been completely rewritten.
         Except for some special cases (with filters for example), all text
         (including flow text) is now painted using PDF text operators.
@@ -216,31 +356,21 @@
         Added a configuration setting for the renderer/device resolution to the AFP renderer.
       </action>
       <action context="Layout" dev="AD" type="update">
-        <p>
-          Facilitate the implementation for font-selection-strategy:
-        </p>
-        <ul>
-          <li>Changed FontInfo.fontLookup to always return an array of FontTriplet</li>
-          <li>Changed CommonFont.getFontState to return an array of FontTriplet</li>
-          <li>Initial modifications to the related LMs: initialized with
-            the font corresponding to the first of the triplets</li>
-        </ul>
+        Facilitate the implementation for font-selection-strategy:<br/>
+        • Changed FontInfo.fontLookup to always return an array of FontTriplet.<br/>
+        • Changed CommonFont.getFontState to return an array of FontTriplet.<br/>
+        • Initial modifications to the related LMs: initialized with
+            the font corresponding to the first of the triplets.<br/>
       </action>
       <action context="Layout" dev="AD" type="update">
-        <p>PropertyCache phase 2:</p>
-        <ul>
-          <li>
-            improvement of the PropertyCache itself should now guarantee acceptable
+        PropertyCache phase 2:<br/>
+        • improvement of the PropertyCache itself should now guarantee acceptable
             performance of the static caches in multi-session environments, which is 
-            a possible problem with synchronizedMap
-          </li>
-          <li>
-            changed CommonFont to use the cache: 
+            a possible problem with synchronizedMap.<br/>
+        • changed CommonFont to use the cache: 
             added CachedCommonFont to contain the properties that are always cacheable
-            CommonFont itself is only cached if the remaining properties are absolutes
-          </li>
-          <li>changed CommonHyphenation, KeepProperty, ColorProperty and FontFamilyProperty to use the cache</li>
-        </ul>
+            CommonFont itself is only cached if the remaining properties are absolutes.<br/>
+        • changed CommonHyphenation, KeepProperty, ColorProperty and FontFamilyProperty to use the cache.<br/>
       </action>
       <action context="Layout" dev="AD" type="fix" fixes-bug="42705">
         Fixed swallowing PCDATA in text-node children of
@@ -400,33 +530,36 @@
     </release>    
     <release version="0.93" date="9 January 2007">
       <notes>
-        <p>This is the first production grade release of the new FOP
-        codebase.</p>
-        <ul>
-          <li>It contains the new API first introduced in release 0.92
-            beta. The preceding API has been removed.
-          </li>
-          <li>
-            See the <a href="../compliance.html">compliance page</a> for an
-            overview of the compliance of this release with the XSL 1.0 and
-            1.1 recommendations.
-          </li>
-          <li>
-            This release again contains many bug fixes and new features. See
-            below for details.
-          </li>
-          <li>
-            See the <a href="../knownissues.html">known issues page</a>
-            for an overview of the known issues with this release.
-          </li>
-        </ul>
-        <p>Caveats:</p>
-        <ul>
-          <li>
-            You may experience different behaviour compared to version 0.20.5.
-            Please consult the <a href="upgrading.html">"Upgrading"</a> page for details.
-          </li>
-        </ul>
+        <section>
+          <title>Notes</title>
+          <p>This is the first production grade release of the new FOP
+            codebase.</p>
+          <ul>
+            <li>It contains the new API first introduced in release 0.92
+              beta. The preceding API has been removed.
+            </li>
+            <li>
+              See the <link href="../compliance.html">compliance page</link> for an
+              overview of the compliance of this release with the XSL 1.0 and
+              1.1 recommendations.
+            </li>
+            <li>
+              This release again contains many bug fixes and new features. See
+              below for details.
+            </li>
+            <li>
+              See the <link href="../knownissues.html">known issues page</link>
+              for an overview of the known issues with this release.
+            </li>
+          </ul>
+          <p>Caveats:</p>
+          <ul>
+            <li>
+              You may experience different behaviour compared to version 0.20.5.
+              Please consult the <link href="upgrading.html">"Upgrading"</link> page for details.
+            </li>
+          </ul>
+        </section>
       </notes>
       <action context="Code" dev="BD" type="add" importance="high">
         Added support for the use of Open Type fonts
@@ -1001,9 +1134,18 @@
       <action context="Code" dev="all" type="update">
         For the change log for the maintenance branch 
         (where FOP 0.20.5 came from), please see the "CHANGES" file in the distribution, or 
-        <a href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/branches/fop-0_20_2-maintain/CHANGES?view=markup">the CHANGES file in the SVN repository</a>.
+        <link href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/branches/fop-0_20_2-maintain/CHANGES?view=markup">the CHANGES file in the SVN repository</link>.
       </action>
     </release>
   </changes>
 
+  <todo>
+    <!-- See Bugzilla and http://wiki.apache.org/xmlgraphics-fop/FOPProjectTasks -->
+    <actions>
+      <action dev="open" type="update" context="Docs">
+        Improve the documentation.
+      </action>
+    </actions>
+  </todo>
+  
 </status>

@@ -136,7 +136,7 @@ public class TableBody extends TableCellContainer {
         if (!inMarker()) {
             RowGroupBuilder rowGroupBuilder = getTable().getRowGroupBuilder();
             if (tableRowsFound) {
-                rowGroupBuilder.endRow(lastRow);
+                rowGroupBuilder.endTableRow();
             } else if (!lastCellEndsRow) {
                 rowGroupBuilder.endRow(this);
             }
@@ -193,11 +193,11 @@ public class TableBody extends TableCellContainer {
                     getTable().getRowGroupBuilder().startTablePart(this);
                 } else {
                     columnNumberManager.prepareForNextRow(pendingSpans);
-                    getTable().getRowGroupBuilder().endRow(lastRow);
+                    getTable().getRowGroupBuilder().endTableRow();
                 }
                 rowsStarted = true;
                 lastRow = (TableRow) child;
-                getTable().getRowGroupBuilder().startRow(lastRow);
+                getTable().getRowGroupBuilder().startTableRow(lastRow);
                 break;
             case FO_TABLE_CELL:
                 if (!rowsStarted) {
@@ -281,7 +281,6 @@ public class TableBody extends TableCellContainer {
                 getTable().getRowGroupBuilder().endRow(this);
             }
         }
-        rowsStarted = true;
     }
 
 }

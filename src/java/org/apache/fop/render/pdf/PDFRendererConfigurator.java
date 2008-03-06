@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.pdf.PDFAMode;
@@ -80,6 +81,10 @@ public class PDFRendererConfigurator extends PrintRendererConfigurator {
             s = cfg.getChild(PDFRenderer.KEY_OUTPUT_PROFILE, true).getValue(null);
             if (s != null) {
                 pdfRenderer.setOutputProfileURI(s);
+            }
+            Configuration child = cfg.getChild(PDFRenderer.KEY_DISABLE_SRGB_COLORSPACE, false);
+            if (child != null) {
+                pdfRenderer.disableSRGBColorSpace = child.getValueAsBoolean(false);
             }
         }
     }

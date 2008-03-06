@@ -35,11 +35,11 @@ public class ObjectAreaDescriptor extends AbstractDescriptor {
      * and object height.
      * @param width The page width.
      * @param height The page height.
-     * @param widthRes The page width resolution.
-     * @param heightRes The page height resolution.
+     * @param widthResolution The page width resolution.
+     * @param heightResolution The page height resolution.
      */
-    public ObjectAreaDescriptor(int width, int height, int widthRes, int heightRes) {
-        super(width, height, widthRes, heightRes);
+    public ObjectAreaDescriptor(int width, int height, int widthResolution, int heightResolution) {
+        super(width, height, widthResolution, heightResolution);
     }
 
     /**
@@ -47,7 +47,8 @@ public class ObjectAreaDescriptor extends AbstractDescriptor {
      * @param os The stream to write to
      * @throws java.io.IOException thrown if an I/O exception of some sort has occurred
      */
-    public void writeDataStream(OutputStream os) throws IOException {
+    public void writeDataStream(OutputStream os)
+        throws IOException {
 
         byte[] data = new byte[29];
         data[0] = 0x5A; 
@@ -71,12 +72,12 @@ public class ObjectAreaDescriptor extends AbstractDescriptor {
         data[15] = 0x00; // YaoBase = 10 inches
         
         // XaoUnits
-        byte[] xdpi = BinaryUtils.convert(this.widthRes * 10, 2);
+        byte[] xdpi = BinaryUtils.convert(widthResolution * 10, 2);
         data[16] = xdpi[0];
         data[17] = xdpi[1];
 
         // YaoUnits
-        byte[] ydpi = BinaryUtils.convert(this.heightRes * 10, 2);
+        byte[] ydpi = BinaryUtils.convert(heightResolution * 10, 2);
         data[18] = ydpi[0];
         data[19] = ydpi[1];
         
@@ -84,16 +85,18 @@ public class ObjectAreaDescriptor extends AbstractDescriptor {
         data[21] = 0x4C; // tid = Object Area Size
         data[22] = 0x02; // Size Type
 
-        byte[] x = BinaryUtils.convert(this.width, 3);
+        byte[] x = BinaryUtils.convert(width, 3);
         data[23] = x[0];
         data[24] = x[1];
         data[25] = x[2];
 
-        byte[] y = BinaryUtils.convert(this.height, 3);
+        byte[] y = BinaryUtils.convert(height, 3);
         data[26] = y[0];
         data[27] = y[1];
         data[28] = y[2];
 
         os.write(data);
+
     }
+
 }

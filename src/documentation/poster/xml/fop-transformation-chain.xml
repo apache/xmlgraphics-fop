@@ -19,7 +19,7 @@
 <section xmlns:fo="http://www.w3.org/1999/XSL/Format">
   <title tab-width="80">Transformation Chain</title>
   <fo:block space-before="10pt" space-before.conditionality="retain" space-after="10pt" text-align="center">
-    <fo:external-graphic src="svg/fop-transformation-chain.svg" width="70%" content-width="scale-to-fit"/>
+    <fo:external-graphic src="../svg/fop-transformation-chain.svg" width="70%" content-width="scale-to-fit"/>
   </fo:block>
   <p>
     This diagram shows a complete transformation chain (exemplary). It begins with your data source,

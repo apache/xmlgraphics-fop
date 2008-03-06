@@ -32,9 +32,8 @@
       <fo:page-sequence master-reference="normal">
         <fo:flow flow-name="xsl-region-body">
           <fo:block>block1</fo:block>
-          <fo:table table-layout="fixed">
-            <fo:table-column/>
-            <fo:table-column/>
+          <fo:table table-layout="fixed" width="100%">
+            <fo:table-column number-columns-repeated="2" column-width="proportional-column-width(1)"/>
             <fo:table-body>
               <fo:table-row keep-with-next.within-page="always">
                 <fo:table-cell id="cell1">
@@ -73,7 +72,7 @@
       <box w="14400"/>
       <penalty w="0" p="0"/>
       <box w="14400"/>
-      <penalty w="0" p="INF"/>
+      <penalty w="0" p="0"/>
       <box w="14400"/>
       <penalty w="0" p="INF"/>
       <box w="14400"/>

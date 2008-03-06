@@ -130,5 +130,17 @@ public class LengthBase implements PercentBase {
         return baseLen;
     }
 
+    /** {@inheritDoc} */
+    public String toString() {
+        return super.toString()
+          + "[fo=" + fobj + "," 
+          + "baseType=" + baseType + ","
+          + "baseLength=" + baseLength + "]";
+    }
+    
+    /**@return the base length as a {@link Length} */
+    public Length getBaseLength() {
+        return baseLength;
+    }
 }
 

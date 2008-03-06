@@ -21,9 +21,13 @@ package org.apache.fop.cli;
 
 // Imported java.io classes
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Vector;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -31,8 +35,13 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -133,11 +142,30 @@ public class InputHandler implements ErrorListener, Renderable {
     }
     
     /**
-     * Creates a Source for the main input file.
+     * Creates a Source for the main input file. Processes XInclude if
+     * available in the XML parser.
+     * 
      * @return the Source for the main input file
      */
     protected Source createMainSource() {
-        return new StreamSource(this.sourcefile);
+        Source result;
+        try {
+            InputSource is = new InputSource(new FileInputStream(
+                    this.sourcefile));
+            is.setSystemId(this.sourcefile.toURI().toASCIIString());
+            SAXParserFactory spf = SAXParserFactory.newInstance();
+            spf.setFeature("http://xml.org/sax/features/namespaces", true);
+            spf.setFeature("http://apache.org/xml/features/xinclude", true);
+            XMLReader xr = spf.newSAXParser().getXMLReader();
+            result = new SAXSource(xr, is);
+        } catch (SAXException e) {
+            result = new StreamSource(this.sourcefile);
+        } catch (IOException e) {
+            result = new StreamSource(this.sourcefile);
+        } catch (ParserConfigurationException e) {
+            result = new StreamSource(this.sourcefile);
+        }
+        return result;
     }
     
     /**
@@ -196,7 +224,7 @@ public class InputHandler implements ErrorListener, Renderable {
      * {@inheritDoc}
      */
     public void warning(TransformerException exc) {
-        log.warn(exc.toString());
+        log.warn(exc.getLocalizedMessage());
     }
 
     /**

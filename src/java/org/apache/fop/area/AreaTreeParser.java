@@ -141,7 +141,6 @@ public class AreaTreeParser {
 
         private Stack areaStack = new Stack();
         private boolean firstFlow;
-        private boolean pendingStartPageSequence;
 
         private Stack delegateStack = new Stack();
         private ContentHandler delegate;
@@ -349,8 +348,12 @@ public class AreaTreeParser {
         private class PageSequenceMaker extends AbstractMaker {
 
             public void startElement(Attributes attributes) {
-                pendingStartPageSequence = true;
-                //treeModel.startPageSequence(null); Done after title or on the first viewport
+                PageSequence pageSequence = new PageSequence(null);
+                String lang = attributes.getValue("language");
+                pageSequence.setLanguage(lang);
+                String country = attributes.getValue("country");
+                pageSequence.setCountry(country);
+                areaStack.push(pageSequence);
             }
         }
 
@@ -364,19 +367,19 @@ public class AreaTreeParser {
 
             public void endElement() {
                 LineArea line = (LineArea)areaStack.pop();
-                treeModel.startPageSequence(line);
-                pendingStartPageSequence = false;
+                PageSequence pageSequence = (PageSequence)areaStack.peek();
+                pageSequence.setTitle(line);
             }
-
 
         }
 
         private class PageViewportMaker extends AbstractMaker {
 
             public void startElement(Attributes attributes) {
-                if (pendingStartPageSequence) {
-                    treeModel.startPageSequence(null);
-                    pendingStartPageSequence = false;
+                if (!areaStack.isEmpty()) {
+                    PageSequence pageSequence = (PageSequence)areaStack.peek();
+                    treeModel.startPageSequence(pageSequence);
+                    areaStack.pop();
                 }
                 if (currentPageViewport != null) {
                     throw new IllegalStateException("currentPageViewport must be null");

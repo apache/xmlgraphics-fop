@@ -21,14 +21,8 @@
     
 <tabs software="FOP" title="FOP" copyright="@year@ The Apache Software Foundation" xmlns:xlink="http://www.w3.org/1999/xlink">
   <tab label="Home" dir=""/>
-  <tab label="Version 0.93" dir="0.93/"/>
   <tab label="Version 0.94" dir="0.94/"/>
+  <tab label="Version 0.95beta" dir="0.95/"/>
   <tab label="FOP Trunk" dir="trunk/"/>
   <tab label="Development" dir="dev/"/>
-  <!--
-  <tab label="Design" dir="design/"/>
-  -->
-  <!--
-  <tab label="Alt Design" dir="design/alt.design/"/>
-  -->
 </tabs>

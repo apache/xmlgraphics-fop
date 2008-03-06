@@ -19,7 +19,8 @@
 
 package org.apache.fop.fo.expr;
 
-import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.datatypes.Length;
+import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.properties.ColorProperty;
@@ -44,7 +45,7 @@ public final class PropertyParser extends PropertyTokenizer {
 
     private static final String RELUNIT = "em";
     private static final HashMap FUNCTION_TABLE = new HashMap();
-
+    
     static {
         // Initialize the HashMap of XSL-defined functions
         FUNCTION_TABLE.put("ceiling", new CeilingFunction());
@@ -266,13 +267,28 @@ public final class PropertyParser extends PropertyTokenizer {
              * Get the length base value object from the Maker. If null, then
              * this property can't have % values. Treat it as a real number.
              */
-            double pcval = new Double(currentTokenValue.substring(0,
-                        currentTokenValue.length() - 1)).doubleValue() / 100.0;
+            double pcval = Double.parseDouble(
+                    currentTokenValue.substring(0, currentTokenValue.length() - 1)) / 100.0;
             PercentBase pcBase = this.propInfo.getPercentBase();
             if (pcBase != null) {
                 if (pcBase.getDimension() == 0) {
                     prop = NumberProperty.getInstance(pcval * pcBase.getBaseValue());
                 } else if (pcBase.getDimension() == 1) {
+                    if (pcBase instanceof LengthBase) {
+                        if (pcval == 0.0) {
+                            prop = FixedLength.ZERO_FIXED_LENGTH;
+                            break;
+                        }
+
+                        //If the base of the percentage is known
+                        //and absolute, it can be resolved by the
+                        //parser
+                        Length base = ((LengthBase)pcBase).getBaseLength();
+                        if (base != null && base.isAbsolute()) {
+                            prop = FixedLength.getInstance(pcval * base.getValue());
+                            break;
+                        }
+                    }
                     prop = new PercentLength(pcval, pcBase);
                 } else {
                     throw new PropertyException("Illegal percent dimension value");
@@ -287,22 +303,28 @@ public final class PropertyParser extends PropertyTokenizer {
             // A number plus a valid unit name.
             int numLen = currentTokenValue.length() - currentUnitLength;
             String unitPart = currentTokenValue.substring(numLen);
-            Double numPart = new Double(currentTokenValue.substring(0,
-                    numLen));
-            if (unitPart.equals(RELUNIT)) {
+            double numPart = Double.parseDouble(currentTokenValue.substring(0, numLen));
+            if (RELUNIT.equals(unitPart)) {
                 prop = (Property) NumericOp.multiply(
-                                    NumberProperty.getInstance(numPart.doubleValue()),
+                                    NumberProperty.getInstance(numPart),
                                     propInfo.currentFontSize());
             } else {
-                prop = FixedLength.getInstance(numPart.doubleValue(), unitPart);
+                if ("px".equals(unitPart)) {
+                    //pass the ratio between source-resolution and 
+                    //the default resolution of 72dpi
+                    prop = FixedLength.getInstance(
+                            numPart, unitPart, 
+                            propInfo.getPropertyList().getFObj()
+                                    .getUserAgent().getSourceResolution() / 72.0f);
+                } else {
+                    //use default resolution of 72dpi
+                    prop = FixedLength.getInstance(numPart, unitPart);
+                }
             }
             break;
 
         case TOK_COLORSPEC:
-            FOUserAgent ua = (propInfo == null) 
-                ? null
-                : (propInfo.getFO() == null ? null : propInfo.getFO().getUserAgent());
-            prop = ColorProperty.getInstance(ua, currentTokenValue);
+            prop = ColorProperty.getInstance(propInfo.getUserAgent(), currentTokenValue);
             break;
 
         case TOK_FUNCTION_LPAR:

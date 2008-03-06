@@ -39,6 +39,7 @@ import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawCCITTFax;
 import org.apache.xmlgraphics.image.loader.impl.ImageRawJPEG;
 import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
 
@@ -56,6 +57,7 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
 
     private final ImageFlavor[] supportedFlavors = new ImageFlavor[]
                                                {ImageFlavor.RAW_JPEG,
+                                                ImageFlavor.RAW_CCITTFAX,
                                                 ImageFlavor.GRAPHICS2D,
                                                 ImageFlavor.XML_DOM};
     /**
@@ -77,6 +79,8 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
             ImageInfo info = manager.getImageInfo(purl.toString(), sessionContext);
             Image image = manager.getImage(info, supportedFlavors, sessionContext);
             
+            //TODO color profile overrides aren't handled, yet!
+            //ICCColorSpaceExt colorspaceOverride = extractColorSpace(e, ctx);
             AbstractGraphicsNode specializedNode = null;
             if (image instanceof ImageXMLDOM) {
                 ImageXMLDOM xmlImage = (ImageXMLDOM)image;
@@ -90,9 +94,9 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
                 }
             }
             if (image instanceof ImageRawJPEG) {
-                ImageRawJPEG jpegImage = (ImageRawJPEG)image;
-                specializedNode = new PDFJpegNode(jpegImage, ctx, imageElement, purl);
-                
+                specializedNode = new LoaderImageNode(image, ctx, imageElement, purl);
+            } else if (image instanceof ImageRawCCITTFax) {
+                specializedNode = new LoaderImageNode(image, ctx, imageElement, purl);
             } else if (image instanceof ImageGraphics2D) {
                 ImageGraphics2D g2dImage = (ImageGraphics2D)image;
                 specializedNode = new Graphics2DNode(g2dImage);
@@ -135,29 +139,29 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
 
 
     /**
-     * A PDF jpeg node.
-     * This holds a jpeg image so that it can be drawn into
+     * An image node for natively handled Image instance.
+     * This holds a natively handled image so that it can be drawn into
      * the PDFGraphics2D.
      */
-    public class PDFJpegNode extends AbstractGraphicsNode {
+    public class LoaderImageNode extends AbstractGraphicsNode {
         
-        private ImageRawJPEG jpeg;
+        private Image image;
         private BridgeContext ctx;
         private Element imageElement;
         private ParsedURL purl;
         private GraphicsNode origGraphicsNode = null;
         
         /**
-         * Create a new PDF JPEG node for drawing JPEG images
-         * into pdf graphics.
-         * @param j the JPEG image
+         * Create a new image node for drawing natively handled images
+         * into PDF graphics.
+         * @param image the JPEG image
          * @param ctx the bridge context
          * @param imageElement the SVG image element
          * @param purl the URL to the image
          */
-        public PDFJpegNode(ImageRawJPEG j, BridgeContext ctx, 
+        public LoaderImageNode(Image image, BridgeContext ctx, 
                            Element imageElement, ParsedURL purl) {
-            this.jpeg = j;
+            this.image = image;
             this.ctx  = ctx;
             this.imageElement = imageElement;
             this.purl = purl;
@@ -175,9 +179,9 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
                 float x = 0;
                 float y = 0;
                 try {
-                    float width = jpeg.getSize().getWidthPx();
-                    float height = jpeg.getSize().getHeightPx();
-                    pdfg.addJpegImage(jpeg, x, y, width, height);
+                    float width = image.getSize().getWidthPx();
+                    float height = image.getSize().getHeightPx();
+                    pdfg.addNativeImage(image, x, y, width, height);
                 } catch (Exception e) {
                     ctx.getUserAgent().displayError(e);
                 }
@@ -203,8 +207,8 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
         /** {@inheritDoc} */
         public Rectangle2D getPrimitiveBounds() {
             return new Rectangle2D.Double(0, 0,
-                       jpeg.getSize().getWidthPx(),
-                       jpeg.getSize().getHeightPx());
+                       image.getSize().getWidthPx(),
+                       image.getSize().getHeightPx());
         }
 
         /** {@inheritDoc} */

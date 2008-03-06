@@ -25,6 +25,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
+
 import org.apache.fop.fonts.BFEntry;
 import org.apache.fop.fonts.CIDFontType;
 import org.apache.fop.fonts.FontLoader;
@@ -41,23 +43,30 @@ public class TTFFontLoader extends FontLoader {
     /**
      * Default constructor
      * @param fontFileURI the URI representing the font file
-     * @param in the InputStream to load the font from
      * @param resolver the FontResolver for font URI resolution
      */
-    public TTFFontLoader(String fontFileURI, InputStream in, FontResolver resolver) {
-        super(fontFileURI, in, resolver);
+    public TTFFontLoader(String fontFileURI, FontResolver resolver) {
+        super(fontFileURI, resolver);
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void read() throws IOException {
-        TTFFile ttf = new TTFFile();
-        FontFileReader reader = new FontFileReader(in);
-        boolean supported = ttf.readFont(reader, null);
-        if (!supported) {
-            throw new IOException("Could not load TrueType font: " + fontFileURI);
+        InputStream in = openFontUri(resolver, this.fontFileURI);
+        try {
+            TTFFile ttf = new TTFFile();
+            FontFileReader reader = new FontFileReader(in);
+            boolean supported = ttf.readFont(reader, null);
+            if (!supported) {
+                throw new IOException("TrueType font is not supported: " + fontFileURI);
+            }
+            buildFont(ttf);
+            loaded = true;
+        } finally {
+            IOUtils.closeQuietly(in);
         }
+    }
+
+    private void buildFont(TTFFile ttf) {
         if (ttf.isCFF()) {
             throw new UnsupportedOperationException(
                     "OpenType fonts with CFF data are not supported, yet");
@@ -81,6 +90,7 @@ public class TTFFontLoader extends FontLoader {
         returnFont.setStemV(Integer.parseInt(ttf.getStemV())); //not used for TTF
         returnFont.setItalicAngle(Integer.parseInt(ttf.getItalicAngle()));
         returnFont.setMissingWidth(0);
+        returnFont.setWeight(ttf.getWeightClass());
         
         multiFont.setCIDType(CIDFontType.CIDTYPE2);
         int[] wx = ttf.getWidths();
@@ -98,7 +108,6 @@ public class TTFFontLoader extends FontLoader {
         multiFont.setBFEntries(bfentries);
         copyKerning(ttf, true);
         multiFont.setEmbedFileName(this.fontFileURI);
-        loaded = true;
     }
     
     /**

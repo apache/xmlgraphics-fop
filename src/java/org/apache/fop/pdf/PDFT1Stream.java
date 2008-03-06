@@ -23,7 +23,6 @@ package org.apache.fop.pdf;
 import java.io.IOException;
 import java.io.OutputStream;
 
-// FOP
 import org.apache.fop.fonts.type1.PFBData;
 
 /**
@@ -54,7 +53,9 @@ public class PDFT1Stream extends AbstractPDFStream {
         if (pfb == null) {
             throw new IllegalStateException("pfb must not be null at this point");
         }
-        log.debug("Writing " + pfb.getLength() + " bytes of Type 1 font data");
+        if (log.isDebugEnabled()) {
+            log.debug("Writing " + pfb.getLength() + " bytes of Type 1 font data");
+        }
 
         int length = super.output(stream);
         log.debug("Embedded Type1 font");

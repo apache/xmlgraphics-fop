@@ -23,11 +23,11 @@ package org.apache.fop.render.pdf;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.color.ColorSpace;
 import java.awt.color.ICC_Profile;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -61,6 +61,7 @@ import org.apache.fop.area.DestinationData;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.OffDocumentExtensionAttachment;
 import org.apache.fop.area.OffDocumentItem;
+import org.apache.fop.area.PageSequence;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
@@ -147,6 +148,11 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     public static final String PDF_X_MODE = "pdf-x-mode";
     /** Rendering Options key for the ICC profile for the output intent. */
     public static final String KEY_OUTPUT_PROFILE = "output-profile";
+    /**
+     * Rendering Options key for disabling the sRGB color space (only possible if no PDF/A or
+     * PDF/X profile is active).
+     */
+    public static final String KEY_DISABLE_SRGB_COLORSPACE = "disable-srgb-colorspace";
 
     /** Controls whether comments are written to the PDF stream. */
     protected static final boolean WRITE_COMMENTS = true;
@@ -233,10 +239,10 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
 
     /** the ICC stream used as output profile by this document for PDF/A and PDF/X functionality. */
     protected PDFICCStream outputProfile;
-    /** the ICC stream for the sRGB color space. */
-    //protected PDFICCStream sRGBProfile;
     /** the default sRGB color space. */
     protected PDFICCBasedColorSpace sRGBColorSpace;
+    /** controls whether the sRGB color space should be installed */
+    protected boolean disableSRGBColorSpace = false;
     
     /** Optional URI to an output profile to be used. */
     protected String outputProfileURI; 
@@ -344,6 +350,10 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         if (s != null) {
             this.outputProfileURI = s;
         }
+        setting = agent.getRendererOptions().get(KEY_DISABLE_SRGB_COLORSPACE);
+        if (setting != null) {
+            this.disableSRGBColorSpace = booleanValueOf(setting);
+        }
     }
 
     /**
@@ -387,27 +397,21 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     }
 
     private void addsRGBColorSpace() throws IOException {
-        if (this.sRGBColorSpace != null) {
-            return;
-        }
-        ICC_Profile profile;
-        PDFICCStream sRGBProfile = pdfDoc.getFactory().makePDFICCStream();
-        InputStream in = PDFDocument.class.getResourceAsStream("sRGB Color Space Profile.icm");
-        if (in != null) {
-            try {
-                profile = ICC_Profile.getInstance(in);
-            } finally {
-                IOUtils.closeQuietly(in);
+        if (disableSRGBColorSpace) {
+            if (this.pdfAMode != PDFAMode.DISABLED
+                    || this.pdfXMode != PDFXMode.DISABLED
+                    || this.outputProfileURI != null) {
+                throw new IllegalStateException("It is not possible to disable the sRGB color"
+                        + " space if PDF/A or PDF/X functionality is enabled or an"
+                        + " output profile is set!");
             }
         } else {
-            //Fallback: Use the sRGB profile from the JRE (about 140KB)
-            profile = ICC_Profile.getInstance(ColorSpace.CS_sRGB);
+            if (this.sRGBColorSpace != null) {
+                return;
+            }
+            //Map sRGB as default RGB profile for DeviceRGB
+            this.sRGBColorSpace = PDFICCBasedColorSpace.setupsRGBAsDefaultRGBColorSpace(pdfDoc);
         }
-        sRGBProfile.setColorSpace(profile, null);
-        
-        //Map sRGB as default RGB profile for DeviceRGB
-        this.sRGBColorSpace = pdfDoc.getFactory().makeICCBasedColorSpace(
-                null, "DefaultRGB", sRGBProfile);
     }
     
     private void addDefaultOutputProfile() throws IOException {
@@ -611,7 +615,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
 
     private void renderXMPMetadata(XMPMetadata metadata) {
         Metadata docXMP = metadata.getMetadata();
-        Metadata fopXMP = PDFMetadata.createXMPFromUserAgent(pdfDoc);
+        Metadata fopXMP = PDFMetadata.createXMPFromPDFDocument(pdfDoc);
         //Merge FOP's own metadata into the one from the XSL-FO document
         fopXMP.mergeInto(docXMP);
         XMPBasicAdapter xmpBasic = XMPBasicSchema.getAdapter(docXMP);
@@ -679,13 +683,15 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Start the next page sequence.
-     * For the pdf renderer there is no concept of page sequences
+     * For the PDF renderer there is no concept of page sequences
      * but it uses the first available page sequence title to set
-     * as the title of the pdf document.
-     *
-     * @param seqTitle the title of the page sequence
+     * as the title of the PDF document, and the language of the
+     * document.
+     * @param pageSequence the page sequence
      */
-    public void startPageSequence(LineArea seqTitle) {
+    public void startPageSequence(PageSequence pageSequence) {
+        super.startPageSequence(pageSequence);
+        LineArea seqTitle = pageSequence.getTitle();
         if (seqTitle != null) {
             String str = convertTitleToString(seqTitle);
             PDFInfo info = this.pdfDoc.getInfo();
@@ -693,10 +699,20 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                 info.setTitle(str);
             }
         }
+        if (pageSequence.getLanguage() != null) {
+            String lang = pageSequence.getLanguage();
+            String country = pageSequence.getCountry();
+            String langCode = lang + (country != null ? "-" + country : "");
+            if (pdfDoc.getRoot().getLanguage() == null) {
+                //Only set if not set already (first non-null is used)
+                //Note: No checking is performed whether the values are valid!
+                pdfDoc.getRoot().setLanguage(langCode);
+            }
+        }
         if (pdfDoc.getRoot().getMetadata() == null) {
             //If at this time no XMP metadata for the overall document has been set, create it
             //from the PDFInfo object.
-            Metadata xmp = PDFMetadata.createXMPFromUserAgent(pdfDoc);
+            Metadata xmp = PDFMetadata.createXMPFromPDFDocument(pdfDoc);
             PDFMetadata pdfMetadata = pdfDoc.getFactory().makeMetadata(
                     xmp, true);
             pdfDoc.getRoot().setMetadata(pdfMetadata);
@@ -1550,7 +1566,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                 startPending = false;
             }
             if (!useMultiByte) {
-                if (ch > 127) {
+                if (ch < 32 || ch > 127) {
                     pdf.append("\\");
                     pdf.append(Integer.toOctalString((int) ch));
                 } else {
@@ -1739,6 +1755,8 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         } catch (ImageException ie) {
             log.error("Error while processing image: "
                     + (info != null ? info.toString() : uri), ie);
+        } catch (FileNotFoundException fnfe) {
+            log.error(fnfe.getMessage());
         } catch (IOException ioe) {
             log.error("I/O error while processing image: "
                     + (info != null ? info.toString() : uri), ioe);

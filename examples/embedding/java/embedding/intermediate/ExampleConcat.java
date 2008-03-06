@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: ExampleDOM2PDF.java 332791 2005-11-12 15:58:07Z jeremias $ */
+/* $Id$ */
  
 package embedding.intermediate;
 

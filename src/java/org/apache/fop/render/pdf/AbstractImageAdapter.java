@@ -59,6 +59,9 @@ public abstract class AbstractImageAdapter implements PDFImage {
     public AbstractImageAdapter(Image image, String key) {
         this.image = image;
         this.key = key;
+        if (log.isDebugEnabled()) {
+            log.debug("New ImageAdapter created for key: " + key);
+        }
     }
 
     /** {@inheritDoc} */
@@ -81,27 +84,7 @@ public abstract class AbstractImageAdapter implements PDFImage {
         ICC_Profile prof = image.getICCProfile();
         PDFDeviceColorSpace pdfCS = toPDFColorSpace(getImageColorSpace());
         if (prof != null) {
-            boolean defaultsRGB = ColorProfileUtil.isDefaultsRGB(prof);
-            String desc = ColorProfileUtil.getICCProfileDescription(prof);
-            if (log.isDebugEnabled()) {
-                log.debug("Image returns ICC profile: " + desc + ", default sRGB=" + defaultsRGB);
-            }
-            PDFICCBasedColorSpace cs = doc.getResources().getICCColorSpaceByProfileName(desc);
-            if (!defaultsRGB) {
-                if (cs == null) {
-                    pdfICCStream = doc.getFactory().makePDFICCStream();
-                    pdfICCStream.setColorSpace(prof, pdfCS);
-                    cs = doc.getFactory().makeICCBasedColorSpace(null, null, pdfICCStream);
-                } else {
-                    pdfICCStream = cs.getICCStream();
-                }
-            } else {
-                if (cs == null && "sRGB".equals(desc)) {
-                    //It's the default sRGB profile which we mapped to DefaultRGB in PDFRenderer
-                    cs = doc.getResources().getColorSpace("DefaultRGB");
-                }
-                pdfICCStream = cs.getICCStream();
-            }
+            pdfICCStream = setupColorProfile(doc, prof, pdfCS);
         }
         if (doc.getProfile().getPDFAMode().isPDFA1LevelB()) {
             if (pdfCS != null
@@ -111,10 +94,42 @@ public abstract class AbstractImageAdapter implements PDFImage {
                 //See PDF/A-1, ISO 19005:1:2005(E), 6.2.3.3
                 //FOP is currently restricted to DeviceRGB if PDF/A-1 is active.
                 throw new PDFConformanceException(
-                        "PDF/A-1 does not allow mixing DeviceRGB and DeviceCMYK: " 
-                                + image.getInfo());
+                        "PDF/A-1 does not allow mixing DeviceRGB and DeviceCMYK: "
+                            + image.getInfo());
             }
         }
+    }
+
+    private static PDFICCStream setupColorProfile(PDFDocument doc,
+                ICC_Profile prof, PDFDeviceColorSpace pdfCS) {
+        boolean defaultsRGB = ColorProfileUtil.isDefaultsRGB(prof);
+        String desc = ColorProfileUtil.getICCProfileDescription(prof);
+        if (log.isDebugEnabled()) {
+            log.debug("Image returns ICC profile: " + desc + ", default sRGB=" + defaultsRGB);
+        }
+        PDFICCBasedColorSpace cs = doc.getResources().getICCColorSpaceByProfileName(desc);
+        PDFICCStream pdfICCStream;
+        if (!defaultsRGB) {
+            if (cs == null) {
+                pdfICCStream = doc.getFactory().makePDFICCStream();
+                pdfICCStream.setColorSpace(prof, pdfCS);
+                cs = doc.getFactory().makeICCBasedColorSpace(null, null, pdfICCStream);
+            } else {
+                pdfICCStream = cs.getICCStream();
+            }
+        } else {
+            if (cs == null && desc.startsWith("sRGB")) {
+                //It's the default sRGB profile which we mapped to DefaultRGB in PDFRenderer
+                cs = doc.getResources().getColorSpace("DefaultRGB");
+                if (cs == null) {
+                    //sRGB hasn't been set up for the PDF document
+                    //so install but don't set to DefaultRGB
+                    cs = PDFICCBasedColorSpace.setupsRGBColorSpace(doc);
+                }
+            }
+            pdfICCStream = cs.getICCStream();
+        }
+        return pdfICCStream;
     }
 
     /** {@inheritDoc} */

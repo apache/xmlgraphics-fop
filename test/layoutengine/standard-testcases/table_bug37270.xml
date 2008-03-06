@@ -73,9 +73,9 @@
     <!-- Simply check that FOP doesn't fail with an IndexOutOfBoundsException or an NPE -->
     <element-list category="breaker">
       <box w="0"/>
-      <penalty w="14400"/> <!-- p > 0 && p <= INF -->
+      <penalty w="0" p="INF"/>
       <box w="14400"/>
-      <penalty w="14400"/> <!-- p > 0 && p <= INF -->
+      <penalty w="0" p="INF"/>
       <box w="40000"/>
       <skip>3</skip>
     </element-list>

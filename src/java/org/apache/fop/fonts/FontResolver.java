@@ -28,7 +28,7 @@ public interface FontResolver {
 
     /**
      * Called to resolve an URI to a Source instance. The base URI needed by the URIResolver's
-     * resolve() method is defined to be implicitely available in this case. If the URI cannot
+     * resolve() method is defined to be implicitly available in this case. If the URI cannot
      * be resolved, null is returned and it is assumed that the FontResolver implementation
      * already warned the user about the problem.
      * @param href An href attribute, which may be relative or absolute.

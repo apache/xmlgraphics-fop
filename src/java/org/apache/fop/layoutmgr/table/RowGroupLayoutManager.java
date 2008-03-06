@@ -32,18 +32,15 @@ import org.apache.fop.fo.flow.table.PrimaryGridUnit;
 import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.LengthRangeProperty;
-import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.ElementListObserver;
-import org.apache.fop.layoutmgr.KnuthElement;
-import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.LayoutContext;
-import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.MinOptMaxUtil;
 import org.apache.fop.traits.MinOptMax;
+import org.apache.fop.util.BreakUtil;
 
 class RowGroupLayoutManager {
 
-    private static Log log = LogFactory.getLog(TableContentLayoutManager.class);
+    private static Log log = LogFactory.getLog(RowGroupLayoutManager.class);
 
     private EffRow[] rowGroup;
 
@@ -58,66 +55,30 @@ class RowGroupLayoutManager {
         this.tableStepper = tableStepper;
     }
 
-    /**
-     * 
-     * @return one of {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN},
-     * {@link Constants#EN_PAGE}, {@link Constants#EN_EVEN_PAGE}, or
-     * {@link Constants#EN_ODD_PAGE}
-     */
-    int getBreakBefore() {
-        TableRow rowFO = rowGroup[0].getTableRow();
-        if (rowFO == null) {
-            return Constants.EN_AUTO;
-        } else {
-            return rowFO.getBreakBefore(); 
-        }
-    }
-
-    /**
-     * 
-     * @return one of {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN},
-     * {@link Constants#EN_PAGE}, {@link Constants#EN_EVEN_PAGE}, or
-     * {@link Constants#EN_ODD_PAGE}
-     */
-    int getBreakAfter() {
-        TableRow rowFO = rowGroup[rowGroup.length - 1].getTableRow();
-        if (rowFO == null) {
-            return Constants.EN_AUTO;
-        } else {
-            return rowFO.getBreakAfter(); 
-        }
-    }
-
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment, int bodyType) {
         LinkedList returnList = new LinkedList();
-
-        //Reset keep-with-next when remaining inside the table.
-        //The context flag is only used to propagate keep-with-next to the outside.
-        //The clearing is ok here because createElementsForRowGroup already handles
-        //the keep when inside a table.
-        context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, false);
-
-        //Element list creation
         createElementsForRowGroup(context, alignment, bodyType, returnList);
 
-        //Handle keeps
-        if (context.isKeepWithNextPending()) {
-            log.debug("child LM (row group) signals pending keep-with-next");
+        context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING,
+                rowGroup[0].mustKeepWithPrevious());
+        context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING,
+                rowGroup[rowGroup.length - 1].mustKeepWithNext());
+
+        int breakBefore = Constants.EN_AUTO;
+        TableRow firstRow = rowGroup[0].getTableRow();
+        if (firstRow != null) {
+            breakBefore = firstRow.getBreakBefore(); 
         }
-        if (context.isKeepWithPreviousPending()) {
-            log.debug("child LM (row group) signals pending keep-with-previous");
-            if (returnList.size() > 0) {
-                //Modify last penalty
-                ListElement last = (ListElement)returnList.getLast();
-                if (last.isPenalty()) {
-                    BreakElement breakPoss = (BreakElement)last;
-                    //Only honor keep if there's no forced break
-                    if (!breakPoss.isForcedBreak()) {
-                        breakPoss.setPenaltyValue(KnuthPenalty.INFINITE);
-                    }
-                }
-            }
+        context.setBreakBefore(BreakUtil.compareBreakClasses(breakBefore,
+                rowGroup[0].getBreakBefore()));
+
+        int breakAfter = Constants.EN_AUTO;
+        TableRow lastRow = rowGroup[rowGroup.length - 1].getTableRow();
+        if (lastRow != null) {
+            breakAfter = lastRow.getBreakAfter(); 
         }
+        context.setBreakAfter(BreakUtil.compareBreakClasses(breakAfter,
+                rowGroup[rowGroup.length - 1].getBreakAfter()));
 
         return returnList;
     }
@@ -156,7 +117,8 @@ class RowGroupLayoutManager {
                     PrimaryGridUnit primary = gu.getPrimary();
                     
                     if (gu.isPrimary()) {
-                        primary.createCellLM(); // TODO a new LM must be created for every new static-content
+                        // TODO a new LM must be created for every new static-content
+                        primary.createCellLM();
                         primary.getCellLM().setParent(tableLM);
                      
                         //Determine the table-row if any
@@ -192,24 +154,7 @@ class RowGroupLayoutManager {
                         LinkedList elems = primary.getCellLM().getNextKnuthElements(
                                                 childLC, alignment);
                         ElementListObserver.observe(elems, "table-cell", primary.getCell().getId());
-
-                        if ((elems.size() > 0) 
-                                && ((KnuthElement)elems.getLast()).isForcedBreak()) {
-                            // a descendant of this block has break-after
-                            log.debug("Descendant of table-cell signals break: " 
-                                    + primary.getCellLM().isFinished());
-                        }
-                        
                         primary.setElements(elems);
-                        
-                        if (childLC.isKeepWithNextPending()) {
-                            log.debug("child LM signals pending keep-with-next");
-                            primary.setFlag(GridUnit.KEEP_WITH_NEXT_PENDING, true);
-                        }
-                        if (childLC.isKeepWithPreviousPending()) {
-                            log.debug("child LM signals pending keep-with-previous");
-                            primary.setFlag(GridUnit.KEEP_WITH_PREVIOUS_PENDING, true);
-                        }
                     }
 
                     //Calculate height of row, see CSS21, 17.5.3 Table height algorithms
@@ -278,11 +223,8 @@ class RowGroupLayoutManager {
                 log.debug("  height=" + rowHeights[i] + " explicit=" + explicitRowHeights[i]);
             }
         }
-        LinkedList returnedList = tableStepper.getCombinedKnuthElementsForRowGroup(context,
+        LinkedList elements = tableStepper.getCombinedKnuthElementsForRowGroup(context,
                 rowGroup, bodyType);
-        if (returnedList != null) {
-            returnList.addAll(returnedList);
-        }
-        
+        returnList.addAll(elements);
     }
 }

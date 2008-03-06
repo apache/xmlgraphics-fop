@@ -52,6 +52,10 @@ public class FontInfo {
     /** look up a font-triplet to find a font-name */
     private Map triplets; //Map<FontTriplet,String> (String = font key)
     
+    /** look up a font-triplet to find its priority
+     *  (only used inside addFontProperties()) */
+    private Map tripletPriorities; //Map<FontTriplet,Integer>
+
     /** look up a font-name to get a font (that implements FontMetrics at least) */
     private Map fonts; //Map<String,FontMetrics> (String = font key)
     
@@ -68,6 +72,7 @@ public class FontInfo {
      */
     public FontInfo() {
         this.triplets = new java.util.HashMap();
+        this.tripletPriorities = new java.util.HashMap();
         this.fonts = new java.util.HashMap();
         this.usedFonts = new java.util.HashMap();
     }
@@ -78,6 +83,8 @@ public class FontInfo {
      * @return True if valid
      */
     public boolean isSetupValid() {
+        //We're only called when font setup is done:
+        tripletPriorities = null; // candidate for garbage collection
         return triplets.containsKey(Font.DEFAULT_FONT);
     }
 
@@ -105,7 +112,42 @@ public class FontInfo {
         if (log.isDebugEnabled()) {
             log.debug("Registering: " + triplet + " under " + name);
         }
+        String oldName = (String)triplets.get(triplet);
+        int newPriority = triplet.getPriority();
+        if (oldName != null) {
+            int oldPriority = ((Integer)tripletPriorities.get(triplet)).intValue();
+            if (oldPriority < newPriority) {
+                logDuplicateFont(triplet, false, oldName, oldPriority,
+                            name, newPriority);
+                return;
+            } else {
+                logDuplicateFont(triplet, true, oldName, oldPriority,
+                            name, newPriority);
+            }
+        }
         this.triplets.put(triplet, name);
+        this.tripletPriorities.put(triplet, new Integer(newPriority));
+    }
+
+    /** Log warning about duplicate font triplets.
+     * @param triplet the duplicate font triplet
+     * @param replacing true iff the new font will replace the old one
+     * @param oldKey the old internal font name
+     * @param oldPriority the priority of the existing font mapping
+     * @param newKey the new internal font name
+     * @param newPriority the priority of the duplicate font mapping
+     */
+    private void logDuplicateFont(FontTriplet triplet, boolean replacing,
+                                  String oldKey, int oldPriority,
+                                  String newKey, int newPriority) {
+        if (log.isDebugEnabled()) {
+            log.debug(triplet
+                    + (replacing ? ": Replacing " : ": Not replacing ")
+                    + ((FontMetrics)fonts.get(triplets.get(triplet))).getFullName()
+                    + " (" + oldPriority + ") by "
+                    + ((FontMetrics)fonts.get(newKey)).getFullName()
+                    + " (" + newPriority + ")");
+        }
     }
 
     /**
@@ -341,8 +383,14 @@ public class FontInfo {
         String f = null;
         int newWeight = weight;
         if (newWeight < 400) {
-            while (f == null && newWeight > 0) {
+            while (f == null && newWeight > 100) {
                 newWeight -= 100;
+                key = createFontKey(family, style, newWeight);
+                f = getInternalFontKey(key);
+            }
+            newWeight = weight;
+            while (f == null && newWeight < 400) {
+                newWeight += 100;
                 key = createFontKey(family, style, newWeight);
                 f = getInternalFontKey(key);
             }

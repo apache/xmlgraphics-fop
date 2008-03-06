@@ -65,6 +65,12 @@ public class PDFDictionary extends PDFObject {
      * @param value the value
      */
     public void put(String name, Object value) {
+        if (value instanceof PDFObject) {
+            PDFObject pdfObj = (PDFObject)value;
+            if (!pdfObj.hasObjectNumber()) {
+                pdfObj.setParent(this);
+            }
+        }
         if (!entries.containsKey(name)) {
             this.order.add(name);
         }
