@@ -42,6 +42,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import org.apache.xmlgraphics.util.QName;
+
 /**
  * This class is a ResourceBundle that loads its contents from XML files instead of properties
  * files (like PropertiesResourceBundle).

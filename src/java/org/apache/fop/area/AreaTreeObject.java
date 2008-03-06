@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.fop.util.QName;
+import org.apache.xmlgraphics.util.QName;
 
 /**
  * Abstract base class for all area tree objects.

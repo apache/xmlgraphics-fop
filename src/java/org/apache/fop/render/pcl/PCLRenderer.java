@@ -58,6 +58,7 @@ import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
 import org.apache.xmlgraphics.image.loader.util.ImageUtil;
 import org.apache.xmlgraphics.java2d.GraphicContext;
 import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
+import org.apache.xmlgraphics.util.QName;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.MimeConstants;
@@ -90,7 +91,6 @@ import org.apache.fop.render.java2d.FontSetup;
 import org.apache.fop.render.java2d.Java2DRenderer;
 import org.apache.fop.render.pcl.extensions.PCLElementMapping;
 import org.apache.fop.traits.BorderProps;
-import org.apache.fop.util.QName;
 import org.apache.fop.util.UnitConv;
 
 /* Note:

@@ -50,6 +50,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.apache.xmlgraphics.util.QName;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.Trait.Background;
@@ -78,7 +79,6 @@ import org.apache.fop.util.ColorUtil;
 import org.apache.fop.util.ContentHandlerFactory;
 import org.apache.fop.util.ContentHandlerFactoryRegistry;
 import org.apache.fop.util.DefaultErrorListener;
-import org.apache.fop.util.QName;
 
 /**
  * This is a parser for the area tree XML (intermediate format) which is used to reread an area

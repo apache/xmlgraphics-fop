@@ -24,6 +24,7 @@ package org.apache.fop.util;
  * <p>
  * Note: This class allows to carry a namespace prefix but it is not used in the equals() and 
  * hashCode() methods.
+ * @deprecated Use the XML Graphics Commons variant instead!
  */
 public class QName extends org.apache.xmlgraphics.util.QName {
 
