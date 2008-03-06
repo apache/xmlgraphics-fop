@@ -110,7 +110,7 @@ public interface TableEventProducer extends EventProducer {
      * @param propName the property name
      * @param actualValue the actual value
      * @param loc the location of the error or null
-     * @throws PropertyException the validation error provoked by the method call
+     * @throws PropertyException the property error provoked by the method call
      * @event.severity FATAL
      */
     void valueMustBeBiggerGtEqOne(Object source, String propName,
@@ -124,6 +124,27 @@ public interface TableEventProducer extends EventProducer {
      * @event.severity WARN
      */
     void warnImplicitColumns(Object source, Locator loc);
+
+    /**
+     * padding-* properties are not applicable.
+     * @param source the event source
+     * @param elementName the name of the context node
+     * @param loc the location of the error or null
+     * @event.severity WARN
+     */
+    void paddingNotApplicable(Object source, String elementName, Locator loc);
+
+    /**
+     * Cell overlap.
+     * @param source the event source
+     * @param elementName the name of the context node
+     * @param column the column index of the overlapping cell
+     * @param loc the location of the error or null
+     * @throws PropertyException the property error provoked by the method call
+     * @event.severity FATAL
+     */
+    void cellOverlap(Object source, String elementName, int column,
+            Locator loc) throws PropertyException;
 
     
 }
