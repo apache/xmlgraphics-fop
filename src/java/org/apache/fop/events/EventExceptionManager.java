@@ -47,7 +47,6 @@ public class EventExceptionManager {
      */
     public static void throwException(Event event, String exceptionClass) throws Throwable {
         
-        //TODO Localize exceptions!
         //TODO Complain if there's no ExceptionFactory for the given exceptionClass
         
         ExceptionFactory factory = (ExceptionFactory)EXCEPTION_FACTORIES.get(exceptionClass);
@@ -70,6 +69,9 @@ public class EventExceptionManager {
             Locator loc = (Locator)event.getParam("loc");
             String msg = EventFormatter.format(event, Locale.ENGLISH);
             ValidationException ex = new ValidationException(msg, loc);
+            if (!Locale.ENGLISH.equals(Locale.getDefault())) {
+                ex.setLocalizedMessage(EventFormatter.format(event));
+            }
             return ex;
         }
         

@@ -319,6 +319,11 @@ public class XMLResourceBundle extends ResourceBundle {
         return resources.get(key);
     }
 
+    /** {@inheritDoc} */
+    public String toString() {
+        return "XMLResourceBundle: " + getLocale();
+    }
+
     private class CatalogueHandler extends DefaultHandler {
         
         private static final String CATALOGUE = "catalogue";

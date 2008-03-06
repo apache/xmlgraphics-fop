@@ -17,6 +17,7 @@
 -->
 <!-- $Id$ -->
 <catalogue xml:lang="de">
-  <message key="org.apache.fop.fo.FOValidationEventProducer.tooManyNodes">In "{elementName}" darf nur ein einziges "{offendingNode}" vorkommen![ Siehe Position {loc}]</message>
-  <message key="org.apache.fop.fo.FOValidationEventProducer.missingProperty">Dem Element "{elementName}" fehlt ein verlangtes Property "{propertyName}"![ Siehe Position {loc}]</message>
+  <message key="locator">[ (Siehe Position {loc})| (Siehe {#gatherContextInfo})| (Keine Kontextinformationen verfügbar)]</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.tooManyNodes">In "{elementName}" darf nur ein einziges "{offendingNode}" vorkommen!{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.missingProperty">Dem Element "{elementName}" fehlt ein verlangtes Property "{propertyName}"!{{locator}}</message>
 </catalogue>
