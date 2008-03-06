@@ -76,8 +76,7 @@ public class BasicLink extends Inline {
             externalDestination = null;
         } else if (externalDestination.length() == 0) {
             // slightly stronger than spec "should be specified"
-            attributeError("Missing attribute:  Either external-destination or " +
-                "internal-destination must be specified.");
+            getFOValidationEventProducer().missingLinkDestination(this, getName(), locator);
         }
     }
 

@@ -81,8 +81,8 @@ public class Inline extends InlineLevel {
        int lvlInCntr = findAncestor(FO_INLINE_CONTAINER);
 
        if (lvlLeader > 0) {
-           if (lvlInCntr < 0 ||
-               (lvlInCntr > 0 && lvlInCntr > lvlLeader)) {
+           if (lvlInCntr < 0
+               || (lvlInCntr > 0 && lvlInCntr > lvlLeader)) {
                canHaveBlockLevelChildren = false;
            }
        } else if (lvlFootnote > 0) {
@@ -119,12 +119,7 @@ public class Inline extends InlineLevel {
         } else if (!isBlockOrInlineItem(nsURI, localName)) {
             invalidChildError(loc, nsURI, localName);
         } else if (!canHaveBlockLevelChildren && isBlockItem(nsURI, localName)) {
-            String ruleViolated = 
-                " An fo:inline that is a descendant of an fo:leader" +
-                " or fo:footnote may not have block-level children," +
-                " unless it has a nearer ancestor that is an" +
-                " fo:inline-container.";
-            invalidChildError(loc, nsURI, localName, ruleViolated);
+            invalidChildError(loc, getParent().getName(), nsURI, getName(), "rule.inlineContent");
         } else {
             blockOrInlineItemFound = true;
         }

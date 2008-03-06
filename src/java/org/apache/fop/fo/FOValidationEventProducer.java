@@ -184,4 +184,15 @@ public interface FOValidationEventProducer extends EventProducer {
     void unimplementedFeature(Object source, String elementName, String feature,
             Locator loc);
 
+    /**
+     * Missing internal-/external-destination on basic-link.
+     * @param source the event source
+     * @param elementName the name of the context node
+     * @param loc the location of the error or null
+     * @throws ValidationException the validation error provoked by the method call
+     * @event.severity FATAL
+     */
+    void missingLinkDestination(Object source, String elementName, Locator loc)
+                throws ValidationException;
+
 }

@@ -27,6 +27,8 @@ import java.util.regex.Pattern;
 
 import org.apache.fop.util.XMLResourceBundle;
 import org.apache.fop.util.text.AdvancedMessageFormat;
+import org.apache.fop.util.text.AdvancedMessageFormat.Part;
+import org.apache.fop.util.text.AdvancedMessageFormat.PartFactory;
 
 /**
  * Converts events into human-readable, localized messages.
@@ -90,4 +92,46 @@ public class EventFormatter {
         return format.format(params);
     }
     
+    private static class LookupFieldPart implements Part {
+        
+        private String fieldName;
+        
+        public LookupFieldPart(String fieldName) {
+            this.fieldName = fieldName;
+        }
+
+        public boolean isGenerated(Map params) {
+            return getKey(params) != null;
+        }
+
+        public void write(StringBuffer sb, Map params) {
+            sb.append(defaultBundle.getString(getKey(params)));
+        }
+
+        private String getKey(Map params) {
+            return (String)params.get(fieldName);
+        }
+        
+        /** {@inheritDoc} */
+        public String toString() {
+            return "{" + this.fieldName + ", lookup}";
+        }
+        
+    }
+    
+    /** PartFactory for lookups. */
+    public static class LookupFieldPartFactory implements PartFactory {
+
+        /** {@inheritDoc} */
+        public Part newPart(String fieldName, String values) {
+            return new LookupFieldPart(fieldName);
+        }
+
+        /** {@inheritDoc} */
+        public String getFormat() {
+            return "lookup";
+        }
+        
+    }
+
 }

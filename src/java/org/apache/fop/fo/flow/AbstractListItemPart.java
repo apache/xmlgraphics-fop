@@ -79,17 +79,8 @@ public abstract class AbstractListItemPart extends FObj {
     protected void endOfNode() throws FOPException {
         if (!this.blockItemFound) {
             String contentModel = "marker* (%block;)+";
-            if (getUserAgent().validateStrictly()) {
-                missingChildElementError(contentModel);
-            } else {
-                StringBuffer message = new StringBuffer(
-                        errorText(getLocator()));
-                message.append(getName())
-                    .append(" is missing child elements. ")
-                    .append("Required Content Model: ")
-                    .append(contentModel);
-                log.warn(message.toString());
-            }
+            getFOValidationEventProducer().missingChildElement(this, getName(),
+                    contentModel, true, getLocator());
         }
     }
 

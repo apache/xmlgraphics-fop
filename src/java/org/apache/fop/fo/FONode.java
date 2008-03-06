@@ -460,7 +460,7 @@ public abstract class FONode implements Cloneable {
      */
     protected void invalidChildError(Locator loc, String nsURI, String lName) 
                 throws ValidationException {
-        invalidChildError(loc, nsURI, lName, null);
+        invalidChildError(loc, getName(), nsURI, lName, null);
     }
     
     /**
@@ -469,14 +469,13 @@ public abstract class FONode implements Cloneable {
      * @param loc org.xml.sax.Locator object of the error (*not* parent node)
      * @param nsURI namespace URI of incoming invalid node
      * @param lName local name (i.e., no prefix) of incoming node
-     * @param ruleViolated text explanation of problem
+     * @param ruleViolated name of the rule violated (used to lookup a resource in a bundle)
      * @throws ValidationException the validation error provoked by the method call
      */
-    protected void invalidChildError(Locator loc, String nsURI, String lName,
+    protected void invalidChildError(Locator loc, String parentName, String nsURI, String lName,
                 String ruleViolated)
                 throws ValidationException {
-        //TODO Localize ruleViolated somehow!
-        getFOValidationEventProducer().invalidChild(this, getName(),
+        getFOValidationEventProducer().invalidChild(this, parentName,
                 new QName(nsURI, lName), ruleViolated, loc);
     }
 

@@ -21,6 +21,8 @@ package org.apache.fop.fo.flow;
 
 import java.util.Iterator;
 
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOText;
@@ -30,7 +32,6 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableFObj;
-import org.xml.sax.Locator;
 
 /**
  * Class modelling the fo:retrieve-marker object.
@@ -60,9 +61,8 @@ public class RetrieveMarker extends FObjMixed {
      */
     public void bind(PropertyList pList) throws FOPException {
         if (findAncestor(FO_STATIC_CONTENT) < 0) {
-            invalidChildError(locator, FO_URI, "retrieve-marker", 
-                "An fo:retrieve-marker is permitted only as the " +
-                " descendant of an fo:static-content.");
+            invalidChildError(locator, getParent().getName(), FO_URI, getName(), 
+                "rule.retrieveMarkerDescendatOfStaticContent");
         }
 
         retrieveClassName = pList.get(PR_RETRIEVE_CLASS_NAME).getString();

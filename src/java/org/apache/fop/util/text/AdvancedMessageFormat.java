@@ -160,15 +160,16 @@ public class AdvancedMessageFormat {
             }
         } else {
             String format = parts[1];
-            if (parts.length == 2) {
-                throw new IllegalArgumentException("Pattern must have three parts!");
-            }
             PartFactory factory = (PartFactory)PART_FACTORIES.get(format);
             if (factory == null) {
                 throw new IllegalArgumentException(
                         "No PartFactory available under the name: " + format);
             }
-            return factory.newPart(fieldName, parts[2]);
+            if (parts.length == 2) {
+                return factory.newPart(fieldName, null);
+            } else {
+                return factory.newPart(fieldName, parts[2]);
+            }
         }
     }
 

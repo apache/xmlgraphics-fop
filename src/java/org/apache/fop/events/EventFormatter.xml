@@ -18,9 +18,13 @@
 <!-- $Id$ -->
 <catalogue xml:lang="en">
   <message key="locator">[ (See position {loc})| (See {#gatherContextInfo})| (No context info available)]</message>
+  <message key="rule.markerDescendantOfFlow">An fo:marker is permitted only as the descendant of an fo:flow.</message>
+  <message key="rule.retrieveMarkerDescendatOfStaticContent">An fo:retrieve-marker is permitted only as the descendant of an fo:static-content.</message>
+  <message key="rule.bidiOverrideContent">An fo:bidi-override that is a descendant of an fo:leader or of the fo:inline child of an fo:footnote may not have block-level children, unless it has a nearer ancestor that is an fo:inline-container.</message>
+  <message key="rule.inlineContent">An fo:inline that is a descendant of an fo:leader or fo:footnote may not have block-level children, unless it has a nearer ancestor that is an fo:inline-container.</message>
   <message key="org.apache.fop.fo.FOValidationEventProducer.tooManyNodes">For "{elementName}", only one "{offendingNode}" may be declared.{{locator}}</message>
   <message key="org.apache.fop.fo.FOValidationEventProducer.nodeOutOfOrder">For "{elementName}", "{tooLateNode}" must be declared before "{tooEarlyNode}"!{{locator}}</message>
-  <message key="org.apache.fop.fo.FOValidationEventProducer.invalidChild">"{offendingNode}" is not a valid child element of "{elementName}"![ {ruleViolated}]{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.invalidChild">"{offendingNode}" is not a valid child element of "{elementName}"![ {ruleViolated,lookup}]{{locator}}</message>
   <message key="org.apache.fop.fo.FOValidationEventProducer.missingChildElement">"{elementName}" is missing child elements.
 Required content model: {contentModel}{{locator}}</message>
   <message key="org.apache.fop.fo.FOValidationEventProducer.missingProperty">Element "{elementName}" is missing required property "{propertyName}"!{{locator}}</message>
@@ -41,4 +45,5 @@ Any reference to it will be considered a reference to the first occurrence in th
   <message key="org.apache.fop.fo.flow.table.TableEventProducer.warnImplicitColumns">table-layout=\"fixed\" and column-width unspecified =&gt; falling back to proportional-column-width(1){{locator}}</message>
   <message key="org.apache.fop.fo.flow.table.TableEventProducer.paddingNotApplicable">padding-* properties are not applicable to {elementName}, but a non-zero value for padding was found.{{locator}}</message>
   <message key="org.apache.fop.fo.flow.table.TableEventProducer.cellOverlap">{elementName} overlaps in column {column}.<!-- no locator here, exception will be wrapped --></message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.missingLinkDestination">Missing attribute on {elementName}: Either external-destination or internal-destination must be specified.{{locator}}</message>
 </catalogue>

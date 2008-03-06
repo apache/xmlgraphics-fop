@@ -59,9 +59,8 @@ public class Marker extends FObjMixed {
      */
     public void bind(PropertyList pList) throws FOPException {
         if (findAncestor(FO_FLOW) < 0) {
-            invalidChildError(locator, FO_URI, "marker", 
-                "An fo:marker is permitted only as the descendant " 
-                    + "of an fo:flow");
+            invalidChildError(locator, getParent().getName(), FO_URI, getName(), 
+                "rule.markerDescendantOfFlow");
         }
         
         markerClassName = pList.get(PR_MARKER_CLASS_NAME).getString();
