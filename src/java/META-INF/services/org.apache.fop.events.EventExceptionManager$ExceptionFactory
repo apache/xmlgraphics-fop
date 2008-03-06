@@ -1,0 +1,2 @@
+org.apache.fop.events.ValidationExceptionFactory
+org.apache.fop.events.PropertyExceptionFactory

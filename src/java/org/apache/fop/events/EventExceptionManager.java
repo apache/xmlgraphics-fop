@@ -19,12 +19,10 @@
 
 package org.apache.fop.events;
 
-import java.util.Locale;
+import java.util.Iterator;
 import java.util.Map;
 
-import org.xml.sax.Locator;
-
-import org.apache.fop.fo.ValidationException;
+import org.apache.xmlgraphics.util.Service;
 
 /**
  * This class is reponsible for converting events into exceptions.
@@ -34,9 +32,12 @@ public class EventExceptionManager {
     private static final Map EXCEPTION_FACTORIES = new java.util.HashMap();
     
     static {
-        //TODO Replace with dynamic registration if more than two different exceptions are needed.
-        EXCEPTION_FACTORIES.put(ValidationException.class.getName(),
-                new ValidationExceptionFactory());
+        Iterator iter;
+        iter = Service.providers(ExceptionFactory.class, true);
+        while (iter.hasNext()) {
+            ExceptionFactory factory = (ExceptionFactory)iter.next();
+            EXCEPTION_FACTORIES.put(factory.getExceptionClass().getName(), factory);
+        }
     }
     
     /**
@@ -46,34 +47,36 @@ public class EventExceptionManager {
      * @throws Throwable this happens always
      */
     public static void throwException(Event event, String exceptionClass) throws Throwable {
-        
-        //TODO Complain if there's no ExceptionFactory for the given exceptionClass
-        
         ExceptionFactory factory = (ExceptionFactory)EXCEPTION_FACTORIES.get(exceptionClass);
         if (factory != null) {
             throw factory.createException(event);
         } else {
+            throw new IllegalArgumentException(
+                    "No such ExceptionFactory available: " + exceptionClass);
+            /*
             String msg = EventFormatter.format(event);
             throw new RuntimeException(msg);
+            */
         }
     }
     
-    private interface ExceptionFactory {
-        Throwable createException(Event event);
-    }
-    
-    //TODO Move me out of here as I'm FOP-dependent!
-    private static class ValidationExceptionFactory implements ExceptionFactory {
-
-        public Throwable createException(Event event) {
-            Locator loc = (Locator)event.getParam("loc");
-            String msg = EventFormatter.format(event, Locale.ENGLISH);
-            ValidationException ex = new ValidationException(msg, loc);
-            if (!Locale.ENGLISH.equals(Locale.getDefault())) {
-                ex.setLocalizedMessage(EventFormatter.format(event));
-            }
-            return ex;
-        }
+    /**
+     * This interface is implementation by exception factories that can create exceptions from
+     * events.
+     */
+    public interface ExceptionFactory {
         
+        /**
+         * Creates an exception from an event.
+         * @param event the event
+         * @return the newly created exception
+         */
+        Throwable createException(Event event);
+        
+        /**
+         * Returns the {@link Exception} class created by this factory.
+         * @return the exception class
+         */
+        Class getExceptionClass();
     }
 }

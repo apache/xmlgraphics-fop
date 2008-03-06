@@ -24,6 +24,7 @@ import org.xml.sax.Locator;
 import org.apache.fop.events.EventBroadcaster;
 import org.apache.fop.events.EventProducer;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.expr.PropertyException;
 
 /**
  * Event producer interface for table-specific XSL-FO validation messages.
@@ -92,6 +93,37 @@ public interface TableEventProducer extends EventProducer {
      * @event.severity WARN
      */
     void startEndRowUnderTableRowWarning(Object source, Locator loc);
+
+    /**
+     * Column-number or number of cells in the row overflows the number of fo:table-column 
+     * specified for the table.
+     * @param source the event source
+     * @param loc the location of the error or null
+     * @throws ValidationException the validation error provoked by the method call
+     * @event.severity FATAL
+     */
+    void tooManyCells(Object source, Locator loc) throws ValidationException;
+
+    /**
+     * Property value must be 1 or bigger.
+     * @param source the event source
+     * @param propName the property name
+     * @param actualValue the actual value
+     * @param loc the location of the error or null
+     * @throws PropertyException the validation error provoked by the method call
+     * @event.severity FATAL
+     */
+    void valueMustBeBiggerGtEqOne(Object source, String propName,
+            int actualValue, Locator loc) throws PropertyException;
+
+    /**
+     * table-layout=\"fixed\" and column-width unspecified
+     * => falling back to proportional-column-width(1)
+     * @param source the event source
+     * @param loc the location of the error or null
+     * @event.severity WARN
+     */
+    void warnImplicitColumns(Object source, Locator loc);
 
     
 }

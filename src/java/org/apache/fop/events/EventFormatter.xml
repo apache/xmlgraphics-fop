@@ -36,4 +36,7 @@ Any reference to it will be considered a reference to the first occurrence in th
   <message key="org.apache.fop.fo.flow.table.TableEventProducer.noMixRowsAndCells">Either fo:table-rows or fo:table-cells may be children of an {elementName} but not both.{{locator}}</message>
   <message key="org.apache.fop.fo.flow.table.TableEventProducer.footerOrderCannotRecover">This table uses the collapsing border model. In order to resolve borders in an efficient way the table-footer must be known before any table-body is parsed. Either put the footer at the correct place or switch to the separate border model.{{locator}}</message>
   <message key="org.apache.fop.fo.flow.table.TableEventProducer.startEndRowUnderTableRowWarning">starts-row/ends-row for fo:table-cells non-applicable for children of an fo:table-row.{{locator}}</message>
+  <message key="org.apache.fop.fo.flow.table.TableEventProducer.tooManyCells">The column-number or number of cells in the row overflows the number of fo:table-columns specified for the table.{{locator}}</message>
+  <message key="org.apache.fop.fo.flow.table.TableEventProducer.valueMustBeBiggerGtEqOne">{propName} must be 1 or bigger, but got {actualValue}{{locator}}</message>
+  <message key="org.apache.fop.fo.flow.table.TableEventProducer.warnImplicitColumns">table-layout=\"fixed\" and column-width unspecified => falling back to proportional-column-width(1){{locator}}</message>
 </catalogue>

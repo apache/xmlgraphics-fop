@@ -149,7 +149,7 @@ public abstract class PropertyList {
      * the default value.
      * @param propId The Constants ID of the property whose value is desired.
      * @return the Property corresponding to that name
-     * @throws PropertyException ...
+     * @throws PropertyException if there is a problem evaluating the property 
      */
     public Property get(int propId) throws PropertyException {
         return get(propId, true, true);
@@ -165,7 +165,7 @@ public abstract class PropertyList {
      *                      value is needed
      * @param bTryDefault   true when the default value may be used as a last resort
      * @return the property
-     * @throws PropertyException ...
+     * @throws PropertyException if there is a problem evaluating the property 
      */
     public Property get(int propId, boolean bTryInherit,
                          boolean bTryDefault) throws PropertyException {
