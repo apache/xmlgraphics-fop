@@ -645,6 +645,21 @@ Check the following:</p>
         </p>
       </answer>
     </faq>
+    <faq id="pdf-ps-java2d-differences">
+      <question>Why is the output of Java2D/AWT-based renderers different than, for example, PDF or PS?</question>
+      <answer>
+        <p>
+          If you render the same document once to a PNG or TIFF and once into a PDF, the output
+          may not be the same, i.e. line breaks are different or lines may have different heights.
+          The reason for this: The Java2D-based renderers use the font subsystem of Java2D/AWT. The
+          PDF and PS renderers use FOP's own font subsystem which provides much better font metrics
+          than Java2D. These can lead to different layout decisions when the same document is
+          rendered with different renderers. An alternative approach to fix this problem might be
+          available but it hasn't been tested, yet. See also the
+          <link href="0.95/output.html#general-fonts">notes on fonts in the various output formats</link>.
+        </p>
+      </answer>
+    </faq>
   </part>
   <part id="part-embedding">
     <title>Embedding FOP. Using FOP in a servlet.</title>

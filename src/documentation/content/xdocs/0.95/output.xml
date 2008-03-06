@@ -48,6 +48,35 @@
           The net effect is that the layout of a given FO document can be quite different between 
           renderers that do not use the same font information.
         </p>
+        <p>
+          Theoretically, there's some potential to make the output of the PDF/PS renderers match
+          the output of the Java2D-based renderers. If FOP used the font metrics from its own
+          font subsystem but still used Java2D for text painting in the Java2D-based renderers,
+          this could probably be achieved. However, this approach hasn't been implemented, yet.
+        </p>
+        <p>
+          With a work-around, it is possible to match the PDF/PS output in a Java2D-based
+          renderer pretty closely. The clue is to use the
+          <a href="intermediate.html">intermediate format</a>. The trick is to layout the
+          document using FOP's own font subsystem but then render the document using Java2D.
+          Here are the necessary steps (using the command-line):
+        </p>
+        <ol>
+          <li>
+            Produce an IF file: <code>fop -fo myfile.fo -at application/pdf myfile.at.xml</code><br/>
+            Specifying "application/pdf" for the "-at" parameter causes FOP to use FOP's own
+            font subsystem (which is used by the PDF renderer). Note that no PDF file is created
+            in this step.
+          </li>
+          <li>Render to a PDF file: <code>fop -atin myfile.at.xml -pdf myfile.pdf</code></li>
+          <li>Render to a Java2D-based renderer:
+            <ul>
+              <li><code>fop -atin myfile.at.xml -print</code></li>
+              <li><code>fop -atin myfile.at.xml -awt</code></li>
+              <li><code>fop -atin myfile.at.xml -tiff myfile.tiff</code></li>
+            </ul>
+          </li>
+        </ol>
       </section>
       <section id="general-direct-output">
         <title>Output to a Printer or Other Device</title>
