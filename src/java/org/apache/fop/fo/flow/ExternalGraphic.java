@@ -32,6 +32,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.URISpecification;
+import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
@@ -78,11 +79,17 @@ public class ExternalGraphic extends AbstractGraphics {
         try {
             info = manager.getImageInfo(url, userAgent.getImageSessionContext());
         } catch (ImageException e) {
-            log.error("Image not available: " + e.getMessage());
+            ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageError(this, url, e, getLocator());
         } catch (FileNotFoundException fnfe) {
-            log.error(fnfe.getMessage());
+            ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageNotFound(this, url, fnfe, getLocator());
         } catch (IOException ioe) {
-            log.error("I/O error while loading image: " + ioe.getMessage());
+            ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageIOError(this, url, ioe, getLocator());
         }
         if (info != null) {
             this.intrinsicWidth = info.getSize().getWidthMpt();
@@ -93,7 +100,6 @@ public class ExternalGraphic extends AbstractGraphics {
                     = FixedLength.getInstance(-baseline);
             }
         }
-        //TODO Report to caller so he can decide to throw an exception
     }
 
     /** {@inheritDoc} */

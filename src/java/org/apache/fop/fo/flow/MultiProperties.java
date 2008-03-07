@@ -49,7 +49,8 @@ public class MultiProperties extends FObj {
         super(parent);
 
         if (!notImplementedWarningGiven) {
-            log.warn("fo:multi-properties is not yet implemented.");
+            getFOValidationEventProducer().unimplementedFeature(this, getName(),
+                    getName(), getLocator());
             notImplementedWarningGiven = true;
         }
     }

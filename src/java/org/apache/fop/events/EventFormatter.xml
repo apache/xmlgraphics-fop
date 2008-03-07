@@ -25,8 +25,8 @@
   <message key="org.apache.fop.fo.FOValidationEventProducer.tooManyNodes">For "{elementName}", only one "{offendingNode}" may be declared.{{locator}}</message>
   <message key="org.apache.fop.fo.FOValidationEventProducer.nodeOutOfOrder">For "{elementName}", "{tooLateNode}" must be declared before "{tooEarlyNode}"!{{locator}}</message>
   <message key="org.apache.fop.fo.FOValidationEventProducer.invalidChild">"{offendingNode}" is not a valid child element of "{elementName}"![ {ruleViolated,lookup}]{{locator}}</message>
-  <message key="org.apache.fop.fo.FOValidationEventProducer.missingChildElement">"{elementName}" is missing child elements.
-Required content model: {contentModel}{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.missingChildElement">"{elementName}" is missing child elements.[
+Required content model: {contentModel}]{{locator}}</message>
   <message key="org.apache.fop.fo.FOValidationEventProducer.missingProperty">Element "{elementName}" is missing required property "{propertyName}"!{{locator}}</message>
   <message key="org.apache.fop.fo.FOValidationEventProducer.idNotUnique">Property ID "{id}" (found on "{elementName}") previously used; ID values must be unique within a document!{severity,equals,EventSeverity:FATAL,,
 Any reference to it will be considered a reference to the first occurrence in the document.}{{locator}}</message>
@@ -46,4 +46,8 @@ Any reference to it will be considered a reference to the first occurrence in th
   <message key="org.apache.fop.fo.flow.table.TableEventProducer.paddingNotApplicable">padding-* properties are not applicable to {elementName}, but a non-zero value for padding was found.{{locator}}</message>
   <message key="org.apache.fop.fo.flow.table.TableEventProducer.cellOverlap">{elementName} overlaps in column {column}.<!-- no locator here, exception will be wrapped --></message>
   <message key="org.apache.fop.fo.FOValidationEventProducer.missingLinkDestination">Missing attribute on {elementName}: Either external-destination or internal-destination must be specified.{{locator}}</message>
+  <message key="org.apache.fop.events.ResourceEventProducer.imageNotFound">Image not found. URI: {uri}{{locator}}</message>
+  <message key="org.apache.fop.events.ResourceEventProducer.imageError">Image not available. URI: {uri}. Reason: {e}{{locator}}</message>
+  <message key="org.apache.fop.events.ResourceEventProducer.imageIOError">I/O error while loading image.  URI: {uri}. Reason: {ioe}{{locator}}</message>
+  <message key="org.apache.fop.events.ResourceEventProducer.ifoNoIntrinsiceSize">The intrinsic dimensions of an instream-foreign-object could not be determined.{{locator}}</message>
 </catalogue>

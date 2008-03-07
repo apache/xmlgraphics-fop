@@ -47,7 +47,8 @@ public class MultiSwitch extends FObj {
         super(parent);
 
         if (!notImplementedWarningGiven) {
-            log.warn("fo:multi-switch is not yet implemented.");
+            getFOValidationEventProducer().unimplementedFeature(this, getName(),
+                    getName(), getLocator());
             notImplementedWarningGiven = true;
         }
     }
