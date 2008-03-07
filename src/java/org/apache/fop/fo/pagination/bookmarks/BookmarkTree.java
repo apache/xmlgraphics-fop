@@ -69,10 +69,11 @@ public class BookmarkTree extends FObj {
         XSL/FOP: (bookmark+)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
-        if (!(FO_URI.equals(nsURI) &&
-            localName.equals("bookmark"))) {
+                throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
+            if (!localName.equals("bookmark")) {
                 invalidChildError(loc, nsURI, localName);
+            }
         }
     }
 

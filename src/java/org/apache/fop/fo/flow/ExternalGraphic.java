@@ -113,8 +113,10 @@ public class ExternalGraphic extends AbstractGraphics {
      * <br>XSL Content Model: empty
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
+                throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
             invalidChildError(loc, nsURI, localName);
+        }
     }
 
     /** @return the "src" property */

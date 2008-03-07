@@ -70,13 +70,14 @@ public class MultiProperties extends FObj {
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
-            if (FO_URI.equals(nsURI) && localName.equals("multi-property-set")) {
+        if (FO_URI.equals(nsURI)) {
+            if (localName.equals("multi-property-set")) {
                 if (hasWrapper) {
                     nodesOutOfOrderError(loc, "fo:multi-property-set", "fo:wrapper");
                 } else {
                     hasMultiPropertySet = true;
                 }
-            } else if (FO_URI.equals(nsURI) && localName.equals("wrapper")) {
+            } else if (localName.equals("wrapper")) {
                 if (hasWrapper) {
                     tooManyNodesError(loc, "fo:wrapper");
                 } else {
@@ -85,6 +86,7 @@ public class MultiProperties extends FObj {
             } else {
                 invalidChildError(loc, nsURI, localName);
             }
+        }
     }
     
     /** {@inheritDoc} */

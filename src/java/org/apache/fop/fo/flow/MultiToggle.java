@@ -66,9 +66,11 @@ public class MultiToggle extends FObj {
      * XSL Content Model: (#PCDATA|%inline;|%block;)*
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
-        if (!isBlockOrInlineItem(nsURI, localName)) {
-            invalidChildError(loc, nsURI, localName);
+                throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
+            if (!isBlockOrInlineItem(nsURI, localName)) {
+                invalidChildError(loc, nsURI, localName);
+            }
         }
     }
 

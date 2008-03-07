@@ -20,10 +20,12 @@
 package org.apache.fop.fo.pagination.bookmarks;
 
 import java.util.ArrayList;
+
 import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 
@@ -80,18 +82,20 @@ public class Bookmark extends FObj {
         XSL/FOP: (bookmark-title, bookmark*)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
-            if (FO_URI.equals(nsURI) && localName.equals("bookmark-title")) {
+                throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
+            if (localName.equals("bookmark-title")) {
                 if (bookmarkTitle != null) {
                     tooManyNodesError(loc, "fo:bookmark-title");
                 }
-            } else if (FO_URI.equals(nsURI) && localName.equals("bookmark")) {
+            } else if (localName.equals("bookmark")) {
                 if (bookmarkTitle == null) {
                     nodesOutOfOrderError(loc, "fo:bookmark-title", "fo:bookmark");
                 }                
             } else {
                 invalidChildError(loc, nsURI, localName);
             }
+        }
     }
 
     /**

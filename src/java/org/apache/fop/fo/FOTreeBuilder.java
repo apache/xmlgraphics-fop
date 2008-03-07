@@ -282,8 +282,8 @@ public class FOTreeBuilder extends DefaultHandler {
                         + " Please make sure you're producing a valid XSL-FO document.");
                 }
             } else { // check that incoming node is valid for currentFObj
-                if (namespaceURI.equals(FOElementMapping.URI)
-                    || namespaceURI.equals(ExtensionElementMapping.URI)) {
+                if (currentFObj.getNamespaceURI().equals(FOElementMapping.URI)
+                    || currentFObj.getNamespaceURI().equals(ExtensionElementMapping.URI)) {
                     currentFObj.validateChildNode(locator, namespaceURI, localName);
                 }
             }

@@ -19,6 +19,9 @@
 
 package org.apache.fop.fo.flow.table;
 
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
@@ -27,8 +30,6 @@ import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
-import org.xml.sax.Attributes;
-import org.xml.sax.Locator;
 
 /**
  * Class modelling the fo:table-row object.
@@ -122,9 +123,11 @@ public class TableRow extends TableCellContainer {
      */
     protected void validateChildNode(Locator loc, String nsURI,
                                      String localName)
-        throws ValidationException {
-        if (!(FO_URI.equals(nsURI) && localName.equals("table-cell"))) {
-            invalidChildError(loc, nsURI, localName);
+                throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
+            if (!localName.equals("table-cell")) {
+                invalidChildError(loc, nsURI, localName);
+            }
         }
     }
 

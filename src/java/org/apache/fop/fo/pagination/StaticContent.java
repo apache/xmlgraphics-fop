@@ -66,9 +66,11 @@ public class StaticContent extends Flow {
      * XSL Content Model: (%block;)+
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
-        if (!isBlockItem(nsURI, localName)) {
-            invalidChildError(loc, nsURI, localName);
+                throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
+            if (!isBlockItem(nsURI, localName)) {
+                invalidChildError(loc, nsURI, localName);
+            }
         }
     }
 

@@ -22,6 +22,8 @@ package org.apache.fop.fo.flow;
 import java.awt.Color;
 import java.util.NoSuchElementException;
 
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.CharIterator;
@@ -35,7 +37,6 @@ import org.apache.fop.fo.properties.CommonHyphenation;
 import org.apache.fop.fo.properties.CommonTextDecoration;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.SpaceProperty;
-import org.xml.sax.Locator;
 
 /**
  * Class modelling the fo:character object. 
@@ -134,8 +135,10 @@ public class Character extends FObj {
      * XSL Content Model: empty
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
+                throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
             invalidChildError(loc, nsURI, localName);
+        }
     }
 
     /**

@@ -166,7 +166,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
      * XSL Content Model: (marker*,table-column*,table-header?,table-footer?,table-body+)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName)
-        throws ValidationException {
+                throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             if ("marker".equals(localName)) {
                 if (tableColumnFound || tableHeaderFound || tableFooterFound
@@ -209,8 +209,6 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
             } else {
                 invalidChildError(loc, nsURI, localName);
             }
-        } else {
-            invalidChildError(loc, nsURI, localName);
         }
     }
 

@@ -19,13 +19,13 @@
 
 package org.apache.fop.fo.pagination;
 
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
-
-import org.xml.sax.Locator;
 
 /**
  * The fo:color-profile formatting object.
@@ -59,8 +59,10 @@ public class ColorProfile extends FObj {
         XSL 1.0/FOP: EMPTY (no child nodes permitted)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
-        invalidChildError(loc, nsURI, localName);
+                throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
+            invalidChildError(loc, nsURI, localName);
+        }
     }
 
     /**

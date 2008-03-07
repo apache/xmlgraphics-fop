@@ -119,14 +119,16 @@ public class TableCell extends TableFObj {
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName)
         throws ValidationException {
-        if (FO_URI.equals(nsURI) && localName.equals("marker")) {
-            if (blockItemFound) {
-               nodesOutOfOrderError(loc, "fo:marker", "(%block;)");
+        if (FO_URI.equals(nsURI)) {
+            if (localName.equals("marker")) {
+                if (blockItemFound) {
+                   nodesOutOfOrderError(loc, "fo:marker", "(%block;)");
+                }
+            } else if (!isBlockItem(nsURI, localName)) {
+                invalidChildError(loc, nsURI, localName);
+            } else {
+                blockItemFound = true;
             }
-        } else if (!isBlockItem(nsURI, localName)) {
-            invalidChildError(loc, nsURI, localName);
-        } else {
-            blockItemFound = true;
         }
     }
 

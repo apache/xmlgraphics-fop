@@ -151,7 +151,9 @@ public class TableColumn extends TableFObj {
     protected void validateChildNode(Locator loc,
                         String nsURI, String localName)
         throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
             invalidChildError(loc, nsURI, localName);
+        }
     }
 
     /**

@@ -97,19 +97,21 @@ public class BidiOverride extends FObjMixed {
      *  fo:inline-container."
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
-        if (FO_URI.equals(nsURI) && localName.equals("marker")) {
-            if (blockOrInlineItemFound) {
-               nodesOutOfOrderError(loc, "fo:marker", 
-                    "(#PCDATA|%inline;|%block;)");
+                throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
+            if (localName.equals("marker")) {
+                if (blockOrInlineItemFound) {
+                   nodesOutOfOrderError(loc, "fo:marker", 
+                        "(#PCDATA|%inline;|%block;)");
+                }
+            } else if (!isBlockOrInlineItem(nsURI, localName)) {
+                invalidChildError(loc, nsURI, localName);
+            } else if (!canHaveBlockLevelChildren && isBlockItem(nsURI, localName)) {
+                invalidChildError(loc, getParent().getName(), nsURI, getName(),
+                        "rule.bidiOverrideContent");
+            } else {
+                blockOrInlineItemFound = true;
             }
-        } else if (!isBlockOrInlineItem(nsURI, localName)) {
-            invalidChildError(loc, nsURI, localName);
-        } else if (!canHaveBlockLevelChildren && isBlockItem(nsURI, localName)) {
-            invalidChildError(loc, getParent().getName(), nsURI, getName(),
-                    "rule.bidiOverrideContent");
-        } else {
-            blockOrInlineItemFound = true;
         }
     }
 

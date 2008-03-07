@@ -177,8 +177,6 @@ public class TableBody extends TableCellContainer {
             } else {
                 invalidChildError(loc, nsURI, localName);
             }
-        } else {
-            invalidChildError(loc, nsURI, localName);
         }
     }
 

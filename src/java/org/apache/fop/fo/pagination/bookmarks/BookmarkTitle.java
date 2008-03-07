@@ -21,8 +21,8 @@ package org.apache.fop.fo.pagination.bookmarks;
 
 import org.xml.sax.Locator;
 
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 
@@ -64,8 +64,10 @@ public class BookmarkTitle extends FObj {
         XSL/FOP: empty
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
+                throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
             invalidChildError(loc, nsURI, localName);
+        }
     }
 
     /**

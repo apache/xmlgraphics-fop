@@ -46,9 +46,11 @@ public class Title extends InlineLevel {
         XSL/FOP: (#PCDATA|%inline;)*
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
-        if (!isInlineItem(nsURI, localName)) {
-            invalidChildError(loc, nsURI, localName);
+                throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
+            if (!isInlineItem(nsURI, localName)) {
+                invalidChildError(loc, nsURI, localName);
+            }
         }
     }
 

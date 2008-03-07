@@ -84,30 +84,32 @@ public class TableAndCaption extends FObj {
      * XSL Content Model: marker* table-caption? table
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
+                throws ValidationException {
 
-        if (FO_URI.equals(nsURI) && localName.equals("marker")) {
-            if (tableCaptionFound) {
-                nodesOutOfOrderError(loc, "fo:marker", "fo:table-caption");
-            } else if (tableFound) {
-                nodesOutOfOrderError(loc, "fo:marker", "fo:table");
-            }
-        } else if (FO_URI.equals(nsURI) && localName.equals("table-caption")) {
-            if (tableCaptionFound) {
-                tooManyNodesError(loc, "fo:table-caption");
-            } else if (tableFound) {
-                nodesOutOfOrderError(loc, "fo:table-caption", "fo:table");
+        if (FO_URI.equals(nsURI)) {
+            if (localName.equals("marker")) {
+                if (tableCaptionFound) {
+                    nodesOutOfOrderError(loc, "fo:marker", "fo:table-caption");
+                } else if (tableFound) {
+                    nodesOutOfOrderError(loc, "fo:marker", "fo:table");
+                }
+            } else if (localName.equals("table-caption")) {
+                if (tableCaptionFound) {
+                    tooManyNodesError(loc, "fo:table-caption");
+                } else if (tableFound) {
+                    nodesOutOfOrderError(loc, "fo:table-caption", "fo:table");
+                } else {
+                    tableCaptionFound = true;
+                }
+            } else if (localName.equals("table")) {
+                if (tableFound) {
+                    tooManyNodesError(loc, "fo:table");
+                } else {
+                    tableFound = true;
+                }
             } else {
-                tableCaptionFound = true;
+                invalidChildError(loc, nsURI, localName);
             }
-        } else if (FO_URI.equals(nsURI) && localName.equals("table")) {
-            if (tableFound) {
-                tooManyNodesError(loc, "fo:table");
-            } else {
-                tableFound = true;
-            }
-        } else {
-            invalidChildError(loc, nsURI, localName);
         }
     }
 

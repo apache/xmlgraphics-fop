@@ -95,10 +95,11 @@ public class RepeatablePageMasterAlternatives extends FObj
         XSL/FOP: (conditional-page-master-reference+)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
-        if (!(FO_URI.equals(nsURI)
-                && localName.equals("conditional-page-master-reference"))) {
-            invalidChildError(loc, nsURI, localName);
+                throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
+            if (!localName.equals("conditional-page-master-reference")) {
+                invalidChildError(loc, nsURI, localName);
+            }
         }
     }
 

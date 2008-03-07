@@ -111,9 +111,11 @@ public class Marker extends FObjMixed {
      * @todo implement "additional" constraint, possibly within fo:retrieve-marker
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
-        if (!isBlockOrInlineItem(nsURI, localName)) {
-            invalidChildError(loc, nsURI, localName);
+            throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
+            if (!isBlockOrInlineItem(nsURI, localName)) {
+                invalidChildError(loc, nsURI, localName);
+            }
         }
     }
     

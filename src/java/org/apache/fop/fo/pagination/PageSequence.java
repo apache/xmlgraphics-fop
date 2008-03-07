@@ -128,7 +128,7 @@ public class PageSequence extends AbstractPageSequence {
         XSL Content Model: (title?,static-content*,flow)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
+                throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             if (localName.equals("title")) {
                 if (titleFO != null) {
@@ -149,8 +149,6 @@ public class PageSequence extends AbstractPageSequence {
             } else {
                 invalidChildError(loc, nsURI, localName);
             }
-        } else {
-            invalidChildError(loc, nsURI, localName);
         }
     }
 

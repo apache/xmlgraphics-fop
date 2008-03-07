@@ -81,8 +81,10 @@ public class ConditionalPageMasterReference extends FObj {
      * XSL Content Model: empty
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-           throws ValidationException {
-       invalidChildError(loc, nsURI, localName);
+                throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
+            invalidChildError(loc, nsURI, localName);
+        }
     }
 
     /**

@@ -83,14 +83,12 @@ public class LayoutMasterSet extends FObj {
         XSL/FOP: (simple-page-master|page-sequence-master)+
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
+            throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             if (!localName.equals("simple-page-master") 
                 && !localName.equals("page-sequence-master")) {   
                     invalidChildError(loc, nsURI, localName);
             }
-        } else {
-            invalidChildError(loc, nsURI, localName);
         }
     }
 
