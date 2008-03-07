@@ -273,7 +273,7 @@ public class AdvancedMessageFormat {
                 }
             }
             if (!handled) {
-                target.append(obj.toString());
+                target.append(String.valueOf(obj));
             }
         }
     }
