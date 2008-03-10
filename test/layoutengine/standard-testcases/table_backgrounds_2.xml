@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks background painting for fo:table-row, fo:table-body and fo:table-column
+      when the cells use padding.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:table table-layout="fixed" width="100%">
+            <fo:table-column column-width="proportional-column-width(1)" number-columns-repeated="2"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell id="bg-cell" padding="2pt 4pt" border="solid 2pt" background-color="lightgray">
+                  <fo:block>background on cell</fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding="2pt 4pt" border="solid 2pt" background-color="lightgray">
+                  <fo:block>background on cell</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row background-color="yellow">
+                <fo:table-cell id="bg-row" padding="2pt 4pt" border="solid 2pt">
+                  <fo:block>background on row</fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding="2pt 4pt" border="solid 2pt">
+                  <fo:block>background on row</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+            <fo:table-body background-color="orange">
+              <fo:table-row>
+                <fo:table-cell id="bg-body" padding="2pt 4pt" border="solid 2pt">
+                  <fo:block>background on body</fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding="2pt 4pt" border="solid 2pt">
+                  <fo:block>background on body</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+          <fo:table table-layout="fixed" width="100%">
+            <fo:table-column column-width="proportional-column-width(1)" number-columns-repeated="2"
+              background-color="violet"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell id="bg-col" padding="2pt 4pt" border="solid 2pt">
+                  <fo:block>background on column</fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding="2pt 4pt" border="solid 2pt">
+                  <fo:block>background on column</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+          <fo:table table-layout="fixed" width="100%" background-color="red">
+            <fo:table-column column-width="proportional-column-width(1)" number-columns-repeated="2"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell id="bg-table" padding="2pt 4pt" border="solid 2pt">
+                  <fo:block>background on table</fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding="2pt 4pt" border="solid 2pt">
+                  <fo:block>background on table</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="18400" xpath="//block[@prod-id='bg-row']/preceding-sibling::block[1]/@bpd"/>
+    <eval expected="178000" xpath="//block[@prod-id='bg-row']/preceding-sibling::block[1]/@ipd"/>
+    <eval expected="21400" xpath="//block[@prod-id='bg-row']/preceding-sibling::block[1]/@top-offset"/>
+    <eval expected="1000" xpath="//block[@prod-id='bg-row']/preceding-sibling::block[1]/@left-offset"/>
+    
+    <eval expected="18400" xpath="//block[@prod-id='bg-body']/preceding-sibling::block[1]/@bpd"/>
+    <eval expected="178000" xpath="//block[@prod-id='bg-body']/preceding-sibling::block[1]/@ipd"/>
+    <eval expected="41800" xpath="//block[@prod-id='bg-body']/preceding-sibling::block[1]/@top-offset"/>
+    <eval expected="1000" xpath="//block[@prod-id='bg-body']/preceding-sibling::block[1]/@left-offset"/>
+
+    <eval expected="18400" xpath="//block[@prod-id='bg-col']/preceding-sibling::block[1]/@bpd"/>
+    <eval expected="178000" xpath="//block[@prod-id='bg-col']/preceding-sibling::block[1]/@ipd"/>
+    <eval expected="1000" xpath="//block[@prod-id='bg-col']/preceding-sibling::block[1]/@top-offset"/>
+    <eval expected="1000" xpath="//block[@prod-id='bg-col']/preceding-sibling::block[1]/@left-offset"/>
+  </checks>
+</testcase>
