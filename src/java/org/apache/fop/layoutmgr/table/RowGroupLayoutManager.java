@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.table.EffRow;
@@ -147,7 +148,7 @@ class RowGroupLayoutManager {
                             }
                         }
                         LayoutContext childLC = new LayoutContext(0);
-                        childLC.setStackLimit(context.getStackLimit()); //necessary?
+                        childLC.setStackLimitBP(context.getStackLimitBP()); //necessary?
                         childLC.setRefIPD(spanWidth);
                         
                         //Get the element list for the cell contents

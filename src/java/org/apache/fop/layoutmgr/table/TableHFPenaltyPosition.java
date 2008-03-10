@@ -43,6 +43,11 @@ class TableHFPenaltyPosition extends Position {
         super(lm);
     }
 
+    /** {@inheritDoc} */
+    public boolean generatesAreas() {
+        return true;
+    }
+
     public String toString() {
         StringBuffer sb = new StringBuffer("TableHFPenaltyPosition:");
         sb.append(getIndex()).append("(");

@@ -74,12 +74,21 @@ public class LayoutContext {
     private int flags; // Contains some set of flags defined above
     /**
      * Total available stacking dimension for a "galley-level" layout
-     * manager (Line or Flow). It is passed by the parent LM. For LineLM,
-     * the block LM determines this based on indent properties.
+     * manager in block-progression-direction. It is passed by the
+     * parent LM.
      * These LM <b>may</b> wish to pass this information down to lower
      * level LM to allow them to optimize returned break possibilities.
      */
-    private MinOptMax stackLimit;
+    private MinOptMax stackLimitBP;
+    /**
+     * Total available stacking dimension for a "galley-level" layout
+     * manager in inline-progression-direction. It is passed by the
+     * parent LM. For LineLM, the block LM determines this based on
+     * indent properties.
+     * These LM <b>may</b> wish to pass this information down to lower
+     * level LM to allow them to optimize returned break possibilities.
+     */
+    private MinOptMax stackLimitIP;
 
     /** True if current element list is spanning in multi-column layout. */
     private int nextSpan = Constants.NOT_SET;
@@ -145,7 +154,7 @@ public class LayoutContext {
         this.flags = parentLC.flags;
         this.refIPD = parentLC.refIPD;
         this.writingMode = parentLC.writingMode;
-        this.stackLimit = null; // Don't reference parent MinOptMax!
+        setStackLimitsFrom(parentLC);
         this.leadingSpace = parentLC.leadingSpace; //???
         this.trailingSpace = parentLC.trailingSpace; //???
         this.hyphContext = parentLC.hyphContext;
@@ -166,7 +175,8 @@ public class LayoutContext {
     public LayoutContext(int flags) {
         this.flags = flags;
         this.refIPD = 0;
-        stackLimit = new MinOptMax(0);
+        stackLimitBP = new MinOptMax(0);
+        stackLimitIP = new MinOptMax(0);
         leadingSpace = null;
         trailingSpace = null;
     }
@@ -306,14 +316,47 @@ public class LayoutContext {
         }
     }
     
-    public void setStackLimit(MinOptMax limit) {
-        stackLimit = limit;
+    /**
+     * Sets the stack limit in block-progression-dimension.
+     * @param limit the stack limit
+     */
+    public void setStackLimitBP(MinOptMax limit) {
+        stackLimitBP = limit;
     }
 
-    public MinOptMax getStackLimit() {
-        return stackLimit;
+    /**
+     * Returns the stack limit in block-progression-dimension.
+     * @return the stack limit
+     */
+    public MinOptMax getStackLimitBP() {
+        return stackLimitBP;
     }
 
+    /**
+     * Sets the stack limit in inline-progression-dimension.
+     * @param limit the stack limit
+     */
+    public void setStackLimitIP(MinOptMax limit) {
+        stackLimitIP = limit;
+    }
+
+    /**
+     * Returns the stack limit in inline-progression-dimension.
+     * @return the stack limit
+     */
+    public MinOptMax getStackLimitIP() {
+        return stackLimitIP;
+    }
+
+    /**
+     * Sets (Copies) the stack limits in both directions from another layout context.
+     * @param context the layout context to taje the values from
+     */
+    public void setStackLimitsFrom(LayoutContext context) {
+        setStackLimitBP(context.getStackLimitBP());
+        setStackLimitIP(context.getStackLimitIP());
+    }
+    
     /**
      * Sets the inline-progression-dimension of the nearest ancestor reference area.
      */
@@ -536,22 +579,27 @@ public class LayoutContext {
 
     /** {@inheritDoc} */
     public String toString() {
-        return "Layout Context:" +
-        "\nStack Limit: \t" + (getStackLimit() == null ? "null" : getStackLimit().toString()) +
-        "\nTrailing Space: \t" + (getTrailingSpace() == null ? "null" : getTrailingSpace().toString()) +
-        "\nLeading Space: \t" + (getLeadingSpace() == null ? "null" : getLeadingSpace().toString()) + 
-        "\nReference IPD: \t" + getRefIPD() +
-        "\nSpace Adjust: \t" + getSpaceAdjust() + 
-        "\nIPD Adjust: \t" + getIPDAdjust() +
-        "\nResolve Leading Space: \t" + resolveLeadingSpace() +
-        "\nSuppress Leading Space: \t" + suppressLeadingSpace() +
-        "\nIs First Area: \t" + isFirstArea() + 
-        "\nStarts New Area: \t" + startsNewArea() + 
-        "\nIs Last Area: \t" + isLastArea() +
-        "\nTry Hyphenate: \t" + tryHyphenate() + 
-        "\nKeeps: \t[" + (isKeepWithNextPending() ? "keep-with-next" : "") + "][" 
-            + (isKeepWithPreviousPending() ? "keep-with-previous" : "") + "] pending" +
-        "\nBreaks: \tforced [" + (breakBefore != Constants.EN_AUTO ? "break-before" : "") + "][" 
+        return "Layout Context:"
+        + "\nStack Limit BPD: \t"
+            + (getStackLimitBP() == null ? "null" : getStackLimitBP().toString())
+        + "\nStack Limit IPD: \t"
+            + (getStackLimitIP() == null ? "null" : getStackLimitIP().toString())
+        + "\nTrailing Space: \t"
+            + (getTrailingSpace() == null ? "null" : getTrailingSpace().toString())
+        + "\nLeading Space: \t"
+            + (getLeadingSpace() == null ? "null" : getLeadingSpace().toString()) 
+        + "\nReference IPD: \t" + getRefIPD()
+        + "\nSpace Adjust: \t" + getSpaceAdjust()
+        + "\nIPD Adjust: \t" + getIPDAdjust()
+        + "\nResolve Leading Space: \t" + resolveLeadingSpace()
+        + "\nSuppress Leading Space: \t" + suppressLeadingSpace()
+        + "\nIs First Area: \t" + isFirstArea()
+        + "\nStarts New Area: \t" + startsNewArea()
+        + "\nIs Last Area: \t" + isLastArea()
+        + "\nTry Hyphenate: \t" + tryHyphenate()
+        + "\nKeeps: \t[" + (isKeepWithNextPending() ? "keep-with-next" : "") + "][" 
+            + (isKeepWithPreviousPending() ? "keep-with-previous" : "") + "] pending"
+        + "\nBreaks: \tforced [" + (breakBefore != Constants.EN_AUTO ? "break-before" : "") + "][" 
         + (breakAfter != Constants.EN_AUTO ? "break-after" : "") + "]";
     }
 
