@@ -144,9 +144,9 @@
 
     <element-list category="breaker">
       <skip>3</skip>
-      <box w="200"/>
-      <penalty w="34800" p="INF"/>
-      <box w="33600"/>
+      <box w="17000"/>
+      <penalty w="18000" p="0"/>
+      <box w="16800"/>
       <penalty w="1800" p="0"/>
       <box w="31200"/>
       <penalty w="8000" p="0"/>

@@ -94,6 +94,10 @@
           </p>
         </section>
       </notes>
+      <action context="Layout" dev="VH" type="fix">
+        Bugfix: a forced break inside a cell was ignored when occurring before the minimum height
+        set on the enclosing row was set.
+      </action>
       <action context="Layout" dev="JM" type="fix">
         Fixed exceptions when lists, tables or block-container are children of an inline-level
         FO.

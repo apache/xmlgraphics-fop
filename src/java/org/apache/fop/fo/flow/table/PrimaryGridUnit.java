@@ -238,18 +238,6 @@ public class PrimaryGridUnit extends GridUnit {
         return contentLength;
     }
 
-    /** @return true if cell/row has an explicit BPD/height */
-    public boolean hasBPD() {
-        if (!getCell().getBlockProgressionDimension().getOptimum(null).isAuto()) {
-            return true;
-        }
-        if (getRow() != null
-                && !getRow().getBlockProgressionDimension().getOptimum(null).isAuto()) {
-            return true;
-        }
-        return false;
-    }
-
     /**
      * Returns the grid units belonging to the same span as this one.
      *
