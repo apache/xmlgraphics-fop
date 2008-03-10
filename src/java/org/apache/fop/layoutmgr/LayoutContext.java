@@ -95,6 +95,8 @@ public class LayoutContext {
 
     /** inline-progression-dimension of nearest ancestor reference area */
     private int refIPD;
+    //TODO After the split of stackLimit into stackLimitBP and stackLimitIP there's now some
+    //overlap with refIPD. Need to investigate how best to refactor that.
 
     /** the writing mode established by the nearest ancestor reference area */
     private int writingMode = Constants.EN_LR_TB;

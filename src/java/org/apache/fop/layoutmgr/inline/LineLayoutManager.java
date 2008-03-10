@@ -583,9 +583,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         // Get a break from currently active child LM
         // Set up constraints for inline level managers
 
-        // IPD remaining in line
-        MinOptMax availIPD = context.getStackLimitIP();
-
         clearPrevIPD();
 
         //PHASE 1: Create Knuth elements
