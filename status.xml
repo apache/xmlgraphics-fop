@@ -94,6 +94,10 @@
           </p>
         </section>
       </notes>
+      <action context="Layout" dev="JM" type="fix">
+        Fixed exceptions when lists, tables or block-container are children of an inline-level
+        FO.
+      </action>
       <action context="Layout" dev="VH" type="add" importance="high">
         Added support for background on fo:table-column and fo:table-header/footer/body elements.
       </action>

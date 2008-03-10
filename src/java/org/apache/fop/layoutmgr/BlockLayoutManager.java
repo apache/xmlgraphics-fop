@@ -25,6 +25,7 @@ import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.LineArea;
@@ -389,7 +390,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
             // set last area flag
             lc.setFlags(LayoutContext.LAST_AREA,
                     (layoutContext.isLastArea() && childLM == lastLM));
-            lc.setStackLimit(layoutContext.getStackLimit());
+            lc.setStackLimitBP(layoutContext.getStackLimitBP());
             // Add the line areas to Area
             childLM.addAreas(childPosIter, lc);
         }

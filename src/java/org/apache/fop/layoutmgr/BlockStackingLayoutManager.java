@@ -274,13 +274,14 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             if (curLM instanceof LineLayoutManager) {
                 // curLM is a LineLayoutManager
                 // set stackLimit for lines (stack limit is now i-p-direction, not b-p-direction!)
-                childLC.setStackLimit(new MinOptMax(getContentAreaIPD()));
+                childLC.setStackLimitBP(context.getStackLimitBP());
+                childLC.setStackLimitIP(new MinOptMax(getContentAreaIPD()));
                 childLC.setRefIPD(getContentAreaIPD());
             } else {
                 // curLM is a ?
                 //childLC.setStackLimit(MinOptMax.subtract(context
                 //        .getStackLimit(), stackSize));
-                childLC.setStackLimit(context.getStackLimit());
+                childLC.setStackLimitBP(context.getStackLimitBP());
                 childLC.setRefIPD(referenceIPD);
             }
 

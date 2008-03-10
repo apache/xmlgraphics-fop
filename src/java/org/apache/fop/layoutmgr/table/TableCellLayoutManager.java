@@ -23,6 +23,7 @@ import java.util.LinkedList;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.Trait;
@@ -146,7 +147,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
      * {@inheritDoc}
      */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
-        MinOptMax stackLimit = new MinOptMax(context.getStackLimit());
+        MinOptMax stackLimit = new MinOptMax(context.getStackLimitBP());
 
         referenceIPD = context.getRefIPD();
         cellIPD = referenceIPD;
@@ -161,8 +162,8 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
         while ((curLM = (BlockLevelLayoutManager) getChildLM()) != null) {
             LayoutContext childLC = new LayoutContext(0);
             // curLM is a ?
-            childLC.setStackLimit(MinOptMax.subtract(context
-                    .getStackLimit(), stackLimit));
+            childLC.setStackLimitBP(MinOptMax.subtract(context
+                    .getStackLimitBP(), stackLimit));
             childLC.setRefIPD(cellIPD);
 
             // get elements from curLM
