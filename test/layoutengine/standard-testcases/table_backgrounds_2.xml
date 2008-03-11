@@ -36,28 +36,28 @@
             <fo:table-column column-width="proportional-column-width(1)" number-columns-repeated="2"/>
             <fo:table-body>
               <fo:table-row>
-                <fo:table-cell id="bg-cell" padding="2pt 4pt" border="solid 2pt" background-color="lightgray">
+                <fo:table-cell id="bg-cell" padding="2pt 3pt 4pt 5pt" border="solid 2pt" background-color="lightgray">
                   <fo:block>background on cell</fo:block>
                 </fo:table-cell>
-                <fo:table-cell padding="2pt 4pt" border="solid 2pt" background-color="lightgray">
+                <fo:table-cell padding="2pt 3pt 4pt 5pt" border="solid 2pt" background-color="lightgray">
                   <fo:block>background on cell</fo:block>
                 </fo:table-cell>
               </fo:table-row>
               <fo:table-row background-color="yellow">
-                <fo:table-cell id="bg-row" padding="2pt 4pt" border="solid 2pt">
+                <fo:table-cell id="bg-row" padding="2pt 3pt 4pt 5pt" border="solid 2pt">
                   <fo:block>background on row</fo:block>
                 </fo:table-cell>
-                <fo:table-cell padding="2pt 4pt" border="solid 2pt">
+                <fo:table-cell padding="2pt 3pt 4pt 5pt" border="solid 2pt">
                   <fo:block>background on row</fo:block>
                 </fo:table-cell>
               </fo:table-row>
             </fo:table-body>
             <fo:table-body background-color="orange">
               <fo:table-row>
-                <fo:table-cell id="bg-body" padding="2pt 4pt" border="solid 2pt">
+                <fo:table-cell id="bg-body" padding="2pt 3pt 4pt 5pt" border="solid 2pt">
                   <fo:block>background on body</fo:block>
                 </fo:table-cell>
-                <fo:table-cell padding="2pt 4pt" border="solid 2pt">
+                <fo:table-cell padding="2pt 3pt 4pt 5pt" border="solid 2pt">
                   <fo:block>background on body</fo:block>
                 </fo:table-cell>
               </fo:table-row>
@@ -68,10 +68,10 @@
               background-color="violet"/>
             <fo:table-body>
               <fo:table-row>
-                <fo:table-cell id="bg-col" padding="2pt 4pt" border="solid 2pt">
+                <fo:table-cell id="bg-col" padding="2pt 3pt 4pt 5pt" border="solid 2pt">
                   <fo:block>background on column</fo:block>
                 </fo:table-cell>
-                <fo:table-cell padding="2pt 4pt" border="solid 2pt">
+                <fo:table-cell padding="2pt 3pt 4pt 5pt" border="solid 2pt">
                   <fo:block>background on column</fo:block>
                 </fo:table-cell>
               </fo:table-row>
@@ -81,10 +81,10 @@
             <fo:table-column column-width="proportional-column-width(1)" number-columns-repeated="2"/>
             <fo:table-body>
               <fo:table-row>
-                <fo:table-cell id="bg-table" padding="2pt 4pt" border="solid 2pt">
+                <fo:table-cell id="bg-table" padding="2pt 3pt 4pt 5pt" border="solid 2pt">
                   <fo:block>background on table</fo:block>
                 </fo:table-cell>
-                <fo:table-cell padding="2pt 4pt" border="solid 2pt">
+                <fo:table-cell padding="2pt 3pt 4pt 5pt" border="solid 2pt">
                   <fo:block>background on table</fo:block>
                 </fo:table-cell>
               </fo:table-row>
@@ -95,17 +95,17 @@
     </fo:root>
   </fo>
   <checks>
-    <eval expected="18400" xpath="//block[@prod-id='bg-row']/preceding-sibling::block[1]/@bpd"/>
+    <eval expected="20400" xpath="//block[@prod-id='bg-row']/preceding-sibling::block[1]/@bpd"/>
     <eval expected="178000" xpath="//block[@prod-id='bg-row']/preceding-sibling::block[1]/@ipd"/>
-    <eval expected="21400" xpath="//block[@prod-id='bg-row']/preceding-sibling::block[1]/@top-offset"/>
+    <eval expected="23400" xpath="//block[@prod-id='bg-row']/preceding-sibling::block[1]/@top-offset"/>
     <eval expected="1000" xpath="//block[@prod-id='bg-row']/preceding-sibling::block[1]/@left-offset"/>
     
-    <eval expected="18400" xpath="//block[@prod-id='bg-body']/preceding-sibling::block[1]/@bpd"/>
+    <eval expected="20400" xpath="//block[@prod-id='bg-body']/preceding-sibling::block[1]/@bpd"/>
     <eval expected="178000" xpath="//block[@prod-id='bg-body']/preceding-sibling::block[1]/@ipd"/>
-    <eval expected="41800" xpath="//block[@prod-id='bg-body']/preceding-sibling::block[1]/@top-offset"/>
+    <eval expected="45800" xpath="//block[@prod-id='bg-body']/preceding-sibling::block[1]/@top-offset"/>
     <eval expected="1000" xpath="//block[@prod-id='bg-body']/preceding-sibling::block[1]/@left-offset"/>
 
-    <eval expected="18400" xpath="//block[@prod-id='bg-col']/preceding-sibling::block[1]/@bpd"/>
+    <eval expected="20400" xpath="//block[@prod-id='bg-col']/preceding-sibling::block[1]/@bpd"/>
     <eval expected="178000" xpath="//block[@prod-id='bg-col']/preceding-sibling::block[1]/@ipd"/>
     <eval expected="1000" xpath="//block[@prod-id='bg-col']/preceding-sibling::block[1]/@top-offset"/>
     <eval expected="1000" xpath="//block[@prod-id='bg-col']/preceding-sibling::block[1]/@left-offset"/>
