@@ -545,7 +545,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
     private Block getBackgroundArea(int bpd, int borderBeforeWidth) {
         CommonBorderPaddingBackground padding = getTableCell().getCommonBorderPaddingBackground();
         int paddingStart = padding.getPaddingStart(false, this);
-        int paddingEnd = padding.getPaddingStart(false, this);
+        int paddingEnd = padding.getPaddingEnd(false, this);
         
         Block block = new Block();
         TraitSetter.setProducerID(block, getTable().getId());
