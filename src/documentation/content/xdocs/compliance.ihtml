@@ -482,21 +482,23 @@
 
       <th rowspan="2" align="center">Citation</th>
 
-      <th colspan="3" align="center">Support&nbsp;in&nbsp;FOP</th>
+      <th colspan="4" align="center">Support&nbsp;in&nbsp;FOP</th>
 
       <th rowspan="2">Comments</th>
     </tr>
 
     <tr>
-      <th align="center">0.20.5 (previous)</th>
+      <th align="center">0.20.5 (ancient)</th>
 
-      <th align="center">0.95 (stable)</th>
+      <th align="center">0.94 (stable)</th>
+
+      <th align="center">0.95 (beta)</th>
 
       <th align="center">develop- ment</th>
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-object-decl-section" id=
+      <td class="category" colspan="8"><a name="fo-object-decl-section" id=
       "fo-object-decl-section">Declarations and Pagination and Layout Formatting Objects</a>
       (<a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice6.html#section-N10029-Declarations-and-Pagination-and-Layout-Formatting-Objects">&sect;6.4</a>)</td>
@@ -509,6 +511,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice6.html#fo_root">&sect;6.4.2</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -533,6 +537,8 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -550,6 +556,8 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -560,6 +568,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice6.html#fo_page-sequence">&sect;6.4.5</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -585,6 +595,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -596,6 +608,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice6.html#fo_page-sequence-master">&sect;6.4.7</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -621,6 +635,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -632,6 +648,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice6.html#fo_repeatable-page-master-reference">&sect;6.4.9</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -658,6 +676,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -670,6 +690,8 @@
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice6.html#fo_conditional-page-master-reference">
       &sect;6.4.11</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -695,9 +717,11 @@
 
       <td class="partial">partial</td>
 
+      <td class="partial">partial</td>
+
       <td align="center">
         <ul>
-          <li>[0.93 and later] The page width may not change among pages of the same page-sequence
+          <li>[0.94 and later] The page width may not change among pages of the same page-sequence
           unless a forced break is inserted.</li>
         </ul>
       </td>
@@ -710,6 +734,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice6.html#fo_region-body">&sect;6.4.13</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -734,6 +760,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -744,6 +772,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice6.html#fo_region-after">&sect;6.4.15</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -768,6 +798,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -778,6 +810,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice6.html#fo_region-end">&sect;6.4.17</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -802,6 +836,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -812,6 +848,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice6.html#fo_static-content">&sect;6.4.19</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -836,11 +874,13 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-object-block-section" id=
+      <td class="category" colspan="8"><a name="fo-object-block-section" id=
       "fo-object-block-section">Block Formatting Objects</a> (<a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice6.html#section-N12764-Block-level-Formatting-Objects">&sect;6.5</a>)</td>
     </tr>
@@ -852,6 +892,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice6.html#fo_block">&sect;6.5.2</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -877,21 +919,23 @@
 
       <td class="partial">partial</td>
 
+      <td class="partial">partial</td>
+
       <td align="left">
         <ul>
-          <li>[0.20.5] Currently only works as direct child of fo:flow.</li>
+          <li>[0.20.5] Only works as direct child of fo:flow.</li>
 
           <li>[0.20.5] For absolute positioning, use 'position="absolute"' (as
           'absolute-position="absolute"' is not implemented), and specify all four of "left",
           "top", "width" and "height"</li>
 
-          <li>[0.93 and later] No known restrictions.</li>
+          <li>[0.94 and later] No known restrictions.</li>
         </ul>
       </td>
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-object-inline-section" id=
+      <td class="category" colspan="8"><a name="fo-object-inline-section" id=
       "fo-object-inline-section">Inline Formatting Objects</a> (<a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice6.html#section-N13277-Inline-level-Formatting-Objects">&sect;6.6</a>)</td>
     </tr>
@@ -910,6 +954,8 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -920,6 +966,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice6.html#fo_character">&sect;6.6.3</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -945,6 +993,8 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -963,6 +1013,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -974,6 +1026,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice6.html#fo_instream-foreign-object">&sect;6.6.6</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -1003,6 +1057,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -1014,6 +1070,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice6.html#fo_inline-container">&sect;6.6.8</a></td>
+
+      <td class="no">no</td>
 
       <td class="no">no</td>
 
@@ -1038,6 +1096,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -1048,6 +1108,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice6.html#fo_page-number">&sect;6.6.10</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -1073,20 +1135,22 @@
 
       <td class="partial">partial</td>
 
+      <td class="partial">partial</td>
+
       <td align="left">
         <ul>
           <li>[0.20.5] Only works for table of contents without any problems. The case where the
           page number doesn't fit on a line isn't handled, and any text on the same line and after
           the page-number might not appear exactly where you want it to.</li>
 
-          <li>[0.93 and later] After the page number is known, no relayout is performed. The
+          <li>[0.94 and later] After the page number is known, no relayout is performed. The
           appearance may be suboptimal depending on the use case.</li>
         </ul>
       </td>
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-object-table-section" id=
+      <td class="category" colspan="8"><a name="fo-object-table-section" id=
       "fo-object-table-section">Table Formatting Objects</a> (<a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice6.html#section-N15442-Formatting-Objects-for-Tables">&sect;6.7</a>)</td>
     </tr>
@@ -1099,6 +1163,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice6.html#fo_table-and-caption">&sect;6.7.2</a></td>
+
+      <td class="no">no</td>
 
       <td class="no">no</td>
 
@@ -1123,9 +1189,11 @@
 
       <td class="partial">partial</td>
 
+      <td class="partial">partial</td>
+
       <td align="left">
         <ul>
-          <li>[0.20.5&ndash;0.93] Only border-collapse="separate"</li>
+          <li>[0.20.5] Only border-collapse="separate"</li>
 
           <li>[All] No support for auto layout yet</li>
         </ul>
@@ -1141,6 +1209,8 @@
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice6.html#fo_table-column">&sect;6.7.4</a></td>
 
       <td class="partial">partial</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -1167,6 +1237,8 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -1177,6 +1249,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice6.html#fo_table-header">&sect;6.7.6</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -1201,6 +1275,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -1211,6 +1287,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice6.html#fo_table-body">&sect;6.7.8</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -1235,6 +1313,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -1252,11 +1332,13 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="left">&nbsp;</td>
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-object-list-section" id=
+      <td class="category" colspan="8"><a name="fo-object-list-section" id=
       "fo-object-list-section">List Formatting Objects</a> (<a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice6.html#section-N17076-Formatting-Objects-for-Lists">&sect;6.8</a>)</td>
     </tr>
@@ -1268,6 +1350,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice6.html#fo_list-block">&sect;6.8.2</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -1292,6 +1376,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -1302,6 +1388,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice6.html#fo_list-item-body">&sect;6.8.4</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -1327,11 +1415,13 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-object-link-section" id=
+      <td class="category" colspan="8"><a name="fo-object-link-section" id=
       "fo-object-link-section">Link and Multi Formatting Objects</a> (<a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice6.html#section-N17805-Dynamic-Effects:-Link-and-Multi-Formatting-Objects">&sect;6.9</a>)</td>
     </tr>
@@ -1343,6 +1433,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice6.html#fo_basic-link">&sect;6.9.2</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -1371,6 +1463,8 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -1388,6 +1482,8 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -1398,6 +1494,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice6.html#fo_multi-toggle">&sect;6.9.5</a></td>
+
+      <td class="no">no</td>
 
       <td class="no">no</td>
 
@@ -1423,6 +1521,8 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -1441,11 +1541,13 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-object-bookmarks-section" id=
+      <td class="category" colspan="8"><a name="fo-object-bookmarks-section" id=
       "fo-object-bookmarks-section">Formatting Objects for Bookmarks</a> (<a href=
       "http://www.w3.org/TR/xsl11/#d0e14206">&sect;6.11 in XSL 1.1 WD</a>)</td>
     </tr>
@@ -1460,6 +1562,8 @@
       1.1 WD</a></td>
 
       <td class="no">no</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -1481,6 +1585,8 @@
       WD</a></td>
 
       <td class="no">no</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -1508,17 +1614,19 @@
 
       <td class="partial">partial</td>
 
+      <td class="partial">partial</td>
+
       <td align="left">
         <ul>
           <li>[0.20.5] Uses the proprietary fox:outline extension.</li>
 
-          <li>[0.93 and later] color, font-style and font-weight are not supported, yet.</li>
+          <li>[0.94 and later] color, font-style and font-weight are not supported, yet.</li>
         </ul>
       </td>
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-object-outofline-section" id=
+      <td class="category" colspan="8"><a name="fo-object-outofline-section" id=
       "fo-object-outofline-section">Out-of-line Formatting Objects</a> (<a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice6.html#section-N18509-Out-of-Line-Formatting-Objects">&sect;6.10</a>)</td>
     </tr>
@@ -1530,6 +1638,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice6.html#fo_float">&sect;6.10.2</a></td>
+
+      <td class="no">no</td>
 
       <td class="no">no</td>
 
@@ -1554,11 +1664,13 @@
 
       <td class="partial">partial</td>
 
+      <td class="partial">partial</td>
+
       <td align="left">
         <ul>
           <li>[0.20.5] Footnotes sometimes overlap with the main content</li>
 
-          <li>[0.93 and later] Restrictions with multi-column documents.</li>
+          <li>[0.94 and later] Restrictions with multi-column documents.</li>
         </ul>
       </td>
     </tr>
@@ -1577,11 +1689,13 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-object-other-section" id=
+      <td class="category" colspan="8"><a name="fo-object-other-section" id=
       "fo-object-other-section">Other Formatting Objects</a> (<a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice6.html#section-N19019-Other-Formatting-Objects">&sect;6.11</a>)</td>
     </tr>
@@ -1600,9 +1714,11 @@
 
       <td class="partial">partial</td>
 
+      <td class="partial">partial</td>
+
       <td align="left">
         <ul>
-          <li>[0.93 and later] Only works as expected with inline-level content.</li>
+          <li>[0.94 and later] Only works as expected with inline-level content.</li>
         </ul>
       </td>
     </tr>
@@ -1614,6 +1730,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice6.html#fo_marker">&sect;6.11.3</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -1639,6 +1757,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
   </table>
@@ -1656,21 +1776,23 @@
 
       <th rowspan="2" align="center">Citation</th>
 
-      <th colspan="3" align="center">Support&nbsp;in&nbsp;FOP</th>
+      <th colspan="4" align="center">Support&nbsp;in&nbsp;FOP</th>
 
       <th rowspan="2">Comments</th>
     </tr>
 
     <tr>
-      <th align="center">0.20.5 (previous)</th>
+      <th align="center">0.20.5 (ancient)</th>
 
-      <th align="center">0.95 (stable)</th>
+      <th align="center">0.94 (stable)</th>
+
+      <th align="center">0.95 (beta)</th>
 
       <th align="center">develop- ment</th>
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-property-commonaccess-section" id=
+      <td class="category" colspan="8"><a name="fo-property-commonaccess-section" id=
       "fo-property-commonaccess-section">Common Accessibility Properties</a> (<a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#common-accessibility-properties">&sect;7.4</a>)</td>
     </tr>
@@ -1683,6 +1805,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#source-document">&sect;7.4.1</a></td>
+
+      <td class="na">na</td>
 
       <td class="na">na</td>
 
@@ -1707,11 +1831,13 @@
 
       <td class="na">na</td>
 
+      <td class="na">na</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-property-commonabspos-section" id=
+      <td class="category" colspan="8"><a name="fo-property-commonabspos-section" id=
       "fo-property-commonabspos-section">Common Absolute Position Properties</a> (<a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#common-absolute-position-properties">&sect;7.5</a>)</td>
     </tr>
@@ -1731,11 +1857,13 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="left">
         <ul>
           <li>[0.20.5] Use shorthand position="absolute" as a workaround.</li>
 
-          <li>[0.93 and later] No restrictions. The 0.20.5 work-around is not supported.</li>
+          <li>[0.94 and later] No restrictions. The 0.20.5 work-around is not supported.</li>
         </ul>
       </td>
     </tr>
@@ -1747,6 +1875,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#top">&sect;7.5.2</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -1771,6 +1901,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -1781,6 +1913,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#bottom">&sect;7.5.4</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -1805,11 +1939,13 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-property-commonaural-section" id=
+      <td class="category" colspan="8"><a name="fo-property-commonaural-section" id=
       "fo-property-commonaural-section">Common Aural Properties</a> (<a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#common-aural-properties">&sect;7.6</a>)</td>
     </tr>
@@ -1821,6 +1957,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#azimuth">&sect;7.6.1</a></td>
+
+      <td class="na">na</td>
 
       <td class="na">na</td>
 
@@ -1845,6 +1983,8 @@
 
       <td class="na">na</td>
 
+      <td class="na">na</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -1855,6 +1995,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#cue-before">&sect;7.6.3</a></td>
+
+      <td class="na">na</td>
 
       <td class="na">na</td>
 
@@ -1879,6 +2021,8 @@
 
       <td class="na">na</td>
 
+      <td class="na">na</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -1889,6 +2033,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#pause-after">&sect;7.6.5</a></td>
+
+      <td class="na">na</td>
 
       <td class="na">na</td>
 
@@ -1913,6 +2059,8 @@
 
       <td class="na">na</td>
 
+      <td class="na">na</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -1923,6 +2071,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#pitch">&sect;7.6.7</a></td>
+
+      <td class="na">na</td>
 
       <td class="na">na</td>
 
@@ -1947,6 +2097,8 @@
 
       <td class="na">na</td>
 
+      <td class="na">na</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -1957,6 +2109,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#play-during">&sect;7.6.9</a></td>
+
+      <td class="na">na</td>
 
       <td class="na">na</td>
 
@@ -1981,6 +2135,8 @@
 
       <td class="na">na</td>
 
+      <td class="na">na</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -1991,6 +2147,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#speak">&sect;7.6.11</a></td>
+
+      <td class="na">na</td>
 
       <td class="na">na</td>
 
@@ -2015,6 +2173,8 @@
 
       <td class="na">na</td>
 
+      <td class="na">na</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -2025,6 +2185,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#speak-numeral">&sect;7.6.13</a></td>
+
+      <td class="na">na</td>
 
       <td class="na">na</td>
 
@@ -2050,6 +2212,8 @@
 
       <td class="na">na</td>
 
+      <td class="na">na</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -2060,6 +2224,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#speech-rate">&sect;7.6.15</a></td>
+
+      <td class="na">na</td>
 
       <td class="na">na</td>
 
@@ -2084,6 +2250,8 @@
 
       <td class="na">na</td>
 
+      <td class="na">na</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -2094,6 +2262,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#voice-family">&sect;7.6.17</a></td>
+
+      <td class="na">na</td>
 
       <td class="na">na</td>
 
@@ -2118,11 +2288,13 @@
 
       <td class="na">na</td>
 
+      <td class="na">na</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-property-commonenv-section" id=
+      <td class="category" colspan="8"><a name="fo-property-commonenv-section" id=
       "fo-property-commonenv-section">Common Border, Padding, and Background Properties</a>
       (<a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#common-border-padding-and-background-properties">&sect;7.7</a>)</td>
@@ -2136,6 +2308,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#background-attachment">&sect;7.7.1</a></td>
+
+      <td class="no">no</td>
 
       <td class="no">no</td>
 
@@ -2159,11 +2333,13 @@
 
       <td class="partial">partial</td>
 
-      <td class="partial">partial</td>
+      <td class="yes">yes</td>
+
+      <td class="yes">yes</td>
 
       <td align="left">
         <ul>
-          <li>[0.93 and later] not yet implemented for table-column, table-body, table-header and
+          <li>[0.94] not yet implemented for table-column, table-body, table-header and
           table-footer.</li>
         </ul>
       </td>
@@ -2182,11 +2358,13 @@
 
       <td class="partial">partial</td>
 
-      <td class="partial">partial</td>
+      <td class="yes">yes</td>
+
+      <td class="yes">yes</td>
 
       <td align="left">
         <ul>
-          <li>[0.93 and later] not yet implemented for table-column, table-body, table-header and
+          <li>[0.94] not yet implemented for table-column, table-body, table-header and
           table-footer.</li>
         </ul>
       </td>
@@ -2207,6 +2385,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -2221,11 +2401,14 @@
 
       <td class="no">no</td>
 
-      <td class="yes">yes</td>
+      <td class="partial">partial</td>
 
-      <td class="yes">yes</td>
+      <td class="partial">partial</td>
 
-      <td align="center">&nbsp;</td>
+      <td class="partial">partial</td>
+
+      <td align="center">[0.94 and later] Ignored when background-repeat set to
+      "repeat" or "repeat-x"</td>
     </tr>
 
     <tr>
@@ -2239,11 +2422,14 @@
 
       <td class="no">no</td>
 
-      <td class="yes">yes</td>
+      <td class="partial">partial</td>
 
-      <td class="yes">yes</td>
+      <td class="partial">partial</td>
 
-      <td align="center">&nbsp;</td>
+      <td class="partial">partial</td>
+
+      <td align="center">[0.94 and later] Ignored when background-repeat set to
+      "repeat" or "repeat-y"</td>
     </tr>
 
     <tr>
@@ -2254,6 +2440,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#border-before-color">&sect;7.7.7</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -2279,6 +2467,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="left">
         <ul>
           <li>[0.20.5] only "solid" works</li>
@@ -2297,11 +2487,17 @@
 
       <td class="yes">yes</td>
 
-      <td class="yes">yes</td>
+      <td class="partial">partial</td>
 
       <td class="yes">yes</td>
 
-      <td align="center">&nbsp;</td>
+      <td class="yes">yes</td>
+
+      <td align="center">
+        <ul>
+          <li>[0.94] .conditionality not supported on fo:table-cell</li>
+        </ul>
+      </td>
     </tr>
 
     <tr>
@@ -2312,6 +2508,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#border-after-color">&sect;7.7.10</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -2337,6 +2535,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="left">
         <ul>
           <li>[0.20.5] only "solid" works</li>
@@ -2355,11 +2555,17 @@
 
       <td class="yes">yes</td>
 
-      <td class="yes">yes</td>
+      <td class="partial">partial</td>
 
       <td class="yes">yes</td>
 
-      <td align="center">&nbsp;</td>
+      <td class="yes">yes</td>
+
+      <td align="center">
+        <ul>
+          <li>[0.94] .conditionality not supported on fo:table-cell</li>
+        </ul>
+      </td>
     </tr>
 
     <tr>
@@ -2370,6 +2576,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#border-start-color">&sect;7.7.13</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -2390,6 +2598,8 @@
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#border-start-style">&sect;7.7.14</a></td>
 
       <td class="partial">partial</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -2417,6 +2627,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -2428,6 +2640,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#border-end-color">&sect;7.7.16</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -2448,6 +2662,8 @@
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#border-end-style">&sect;7.7.17</a></td>
 
       <td class="partial">partial</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -2475,6 +2691,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -2486,6 +2704,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#border-top-color">&sect;7.7.19</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -2506,6 +2726,8 @@
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#border-top-style">&sect;7.7.20</a></td>
 
       <td class="partial">partial</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -2533,6 +2755,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -2544,6 +2768,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#border-bottom-color">&sect;7.7.22</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -2564,6 +2790,8 @@
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#border-bottom-style">&sect;7.7.23</a></td>
 
       <td class="partial">partial</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -2591,6 +2819,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -2602,6 +2832,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#border-left-color">&sect;7.7.25</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -2622,6 +2854,8 @@
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#border-left-style">&sect;7.7.26</a></td>
 
       <td class="partial">partial</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -2649,6 +2883,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -2660,6 +2896,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#border-right-color">&sect;7.7.28</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -2680,6 +2918,8 @@
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#border-right-style">&sect;7.7.29</a></td>
 
       <td class="partial">partial</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -2707,6 +2947,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -2720,6 +2962,8 @@
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#padding-before">&sect;7.7.31</a></td>
 
       <td class="partial">partial</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -2753,6 +2997,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="left">
         <ul>
           <li>[0.20.5] same limitations as padding-before</li>
@@ -2769,6 +3015,8 @@
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#padding-start">&sect;7.7.33</a></td>
 
       <td class="partial">partial</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -2795,6 +3043,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="left">
         <ul>
           <li>[0.20.5] same limitations as padding-before</li>
@@ -2811,6 +3061,8 @@
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#padding-top">&sect;7.7.35</a></td>
 
       <td class="partial">partial</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -2838,6 +3090,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="left">
         <ul>
           <li>[0.20.5] same limitations as padding-before</li>
@@ -2854,6 +3108,8 @@
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#padding-left">&sect;7.7.37</a></td>
 
       <td class="partial">partial</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -2880,6 +3136,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="left">
         <ul>
           <li>[0.20.5] same limitations as padding-before</li>
@@ -2888,7 +3146,7 @@
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-property-commonfont-section" id=
+      <td class="category" colspan="8"><a name="fo-property-commonfont-section" id=
       "fo-property-commonfont-section">Common Font Properties</a> (<a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#common-font-properties">&sect;7.8</a>)</td>
     </tr>
@@ -2907,11 +3165,13 @@
 
       <td class="partial">partial</td>
 
+      <td class="partial">partial</td>
+
       <td align="left">
         <ul>
           <li>[0.20.5] font-family lists are not supported, use a single font-family name</li>
 
-          <li>[0.93 and later] font-family lists are allowed but glyph based font selection is not
+          <li>[0.94 and later] font-family lists are allowed but glyph based font selection is not
           supported</li>
         </ul>
       </td>
@@ -2932,6 +3192,8 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -2944,6 +3206,8 @@
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#font-size">&sect;7.8.4</a></td>
 
       <td class="partial">partial</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -2970,6 +3234,8 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -2981,6 +3247,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#font-size-adjust">&sect;7.8.6</a></td>
+
+      <td class="no">no</td>
 
       <td class="no">no</td>
 
@@ -3000,6 +3268,8 @@
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#font-style">&sect;7.8.7</a></td>
 
       <td class="partial">partial</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -3026,6 +3296,8 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -3043,17 +3315,19 @@
 
       <td class="partial">partial</td>
 
+      <td class="partial">partial</td>
+
       <td align="left">
         <ul>
           <li>[0.20.5] "normal", "bolder" and "lighter" are not supported</li>
 
-          <li>[0.93 and later] TODO &lt;relative&gt; font weights</li>
+          <li>[0.94 and later] TODO &lt;relative&gt; font weights</li>
         </ul>
       </td>
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-property-commonhyphen-section" id=
+      <td class="category" colspan="8"><a name="fo-property-commonhyphen-section" id=
       "fo-property-commonhyphen-section">Common Hyphenation Properties</a> (<a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#common-hyphenation-properties">&sect;7.9</a>)</td>
     </tr>
@@ -3065,6 +3339,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#country">&sect;7.9.1</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -3096,6 +3372,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="left">
         <ul>
           <li>[0.94 and earlier] Only used for controlling hyphenation.</li>
@@ -3120,6 +3398,8 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -3130,6 +3410,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#hyphenate">&sect;7.9.4</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -3155,6 +3437,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -3166,6 +3450,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#hyphenation-push-character-count">&sect;7.9.6</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -3191,11 +3477,13 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-property-commonmarginblock-section" id=
+      <td class="category" colspan="8"><a name="fo-property-commonmarginblock-section" id=
       "fo-property-commonmarginblock-section">Common Margin Properties - Block</a> (<a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#common-margin-properties-block">&sect;7.10</a>)</td>
     </tr>
@@ -3209,6 +3497,8 @@
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#margin-top">&sect;7.10.1</a></td>
 
       <td class="partial">partial</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -3235,6 +3525,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="left">
         <ul>
           <li>[0.20.5] only on pages and regions</li>
@@ -3251,6 +3543,8 @@
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#margin-left">&sect;7.10.3</a></td>
 
       <td class="partial">partial</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -3277,6 +3571,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="left">
         <ul>
           <li>[0.20.5] only on pages and regions</li>
@@ -3298,11 +3594,13 @@
 
       <td class="partial">partial</td>
 
+      <td class="partial">partial</td>
+
       <td align="left">
         <ul>
           <li>[0.20.5] space-before.optimum supported</li>
 
-          <li>[0.93 and later] Space adjustment may not fully work everywhere, yet.</li>
+          <li>[0.94 and later] Space adjustment may not fully work everywhere, yet.</li>
         </ul>
       </td>
     </tr>
@@ -3321,11 +3619,13 @@
 
       <td class="partial">partial</td>
 
+      <td class="partial">partial</td>
+
       <td align="left">
         <ul>
           <li>[0.20.5] space-after.optimum supported</li>
 
-          <li>[0.93 and later] Space adjustment may not fully work everywhere, yet.</li>
+          <li>[0.94 and later] Space adjustment may not fully work everywhere, yet.</li>
         </ul>
       </td>
     </tr>
@@ -3337,6 +3637,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#start-indent">&sect;7.10.7</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -3361,11 +3663,13 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-property-commonmargininline-section" id=
+      <td class="category" colspan="8"><a name="fo-property-commonmargininline-section" id=
       "fo-property-commonmargininline-section">Common Margin Properties - Inline</a> (<a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#common-margin-properties-inline">&sect;7.11</a>)</td>
     </tr>
@@ -3377,6 +3681,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#space-end">&sect;7.11.1</a></td>
+
+      <td class="no">no</td>
 
       <td class="no">no</td>
 
@@ -3401,11 +3707,13 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-property-commonrelpos-section" id=
+      <td class="category" colspan="8"><a name="fo-property-commonrelpos-section" id=
       "fo-property-commonrelpos-section">Common Relative Position Properties</a> (<a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#common-relative-position-properties">&sect;7.12</a>)</td>
     </tr>
@@ -3425,11 +3733,13 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-property-areaalign-section" id=
+      <td class="category" colspan="8"><a name="fo-property-areaalign-section" id=
       "fo-property-areaalign-section">Area Alignment Properties</a> (<a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#area-alignment">&sect;7.13</a>)</td>
     </tr>
@@ -3444,6 +3754,8 @@
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#alignment-adjust">&sect;7.13.1</a></td>
 
       <td class="no">no</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -3467,6 +3779,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -3480,6 +3794,8 @@
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#baseline-shift">&sect;7.13.3</a></td>
 
       <td class="partial">partial</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -3506,6 +3822,8 @@
 
       <td class="partial">partial</td>
 
+      <td class="partial">partial</td>
+
       <td align="left">
         <ul>
           <li>[0.20.5] Implemented only for table-cell and block-container.</li>
@@ -3514,7 +3832,7 @@
           setting the height of the table or the table-cell results in vertical centering having no
           effect.</li>
 
-          <li>[0.93 and later] TODO Check e-g, i-f-o.</li>
+          <li>[0.94 and later] TODO Check e-g, i-f-o.</li>
         </ul>
       </td>
     </tr>
@@ -3529,6 +3847,8 @@
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#dominant-baseline">&sect;7.13.5</a></td>
 
       <td class="no">no</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -3552,11 +3872,13 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-property-areadim-section" id=
+      <td class="category" colspan="8"><a name="fo-property-areadim-section" id=
       "fo-property-areadim-section">Area Dimension Properties</a> (<a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#section-N36094-Area-Dimension-Properties">&sect;7.14</a>)</td>
     </tr>
@@ -3571,6 +3893,8 @@
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#block-progression-dimension">&sect;7.14.1</a></td>
 
       <td class="no">no</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -3594,6 +3918,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -3611,6 +3937,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -3621,6 +3949,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#height">&sect;7.14.4</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -3646,6 +3976,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -3656,6 +3988,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#max-height">&sect;7.14.6</a></td>
+
+      <td class="no">no</td>
 
       <td class="no">no</td>
 
@@ -3680,6 +4014,8 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -3690,6 +4026,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#min-height">&sect;7.14.8</a></td>
+
+      <td class="no">no</td>
 
       <td class="no">no</td>
 
@@ -3714,6 +4052,8 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -3731,6 +4071,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -3742,6 +4084,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#scaling-method">&sect;7.14.11</a></td>
+
+      <td class="no">no</td>
 
       <td class="no">no</td>
 
@@ -3766,11 +4110,13 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-property-blockandline-section" id=
+      <td class="category" colspan="8"><a name="fo-property-blockandline-section" id=
       "fo-property-blockandline-section">Block and Line-related Properties</a> (<a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#section-N38191-Block-and-Line-related-Properties">&sect;7.15</a>)</td>
     </tr>
@@ -3783,6 +4129,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#hyphenation-keep">&sect;7.15.1</a></td>
+
+      <td class="no">no</td>
 
       <td class="no">no</td>
 
@@ -3808,6 +4156,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -3826,6 +4176,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -3836,6 +4188,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#line-height">&sect;7.15.4</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -3861,6 +4215,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -3879,9 +4235,11 @@
 
       <td class="partial">partial</td>
 
+      <td class="partial">partial</td>
+
       <td align="left">
         <ul>
-          <li>[0.93 and later] value "line-height" not supported</li>
+          <li>[0.94 and later] value "line-height" not supported</li>
         </ul>
       </td>
     </tr>
@@ -3896,6 +4254,8 @@
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#linefeed-treatment">&sect;7.15.7</a></td>
 
       <td class="no">no</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -3919,9 +4279,11 @@
 
       <td class="partial">partial</td>
 
+      <td class="partial">partial</td>
+
       <td align="left">
         <ul>
-          <li>[0.93 and later] inline elements may interfere with correct handling of this property
+          <li>[0.94 and later] inline elements may interfere with correct handling of this property
           in some cases</li>
         </ul>
       </td>
@@ -3934,6 +4296,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#text-align">&sect;7.15.9</a></td>
+
+      <td class="partial">partial</td>
 
       <td class="partial">partial</td>
 
@@ -3963,6 +4327,8 @@
 
       <td class="partial">partial</td>
 
+      <td class="partial">partial</td>
+
       <td align="left">
         <ul>
           <li>Only start, end, center and justify are supported</li>
@@ -3977,6 +4343,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#text-indent">&sect;7.15.11</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -4002,6 +4370,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -4019,15 +4389,17 @@
 
       <td class="partial">partial</td>
 
+      <td class="partial">partial</td>
+
       <td align="left">
         <ul>
-          <li>[0.93 and later] Only supported on fo:block.</li>
+          <li>[0.94 and later] Only supported on fo:block.</li>
         </ul>
       </td>
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-property-char-section" id=
+      <td class="category" colspan="8"><a name="fo-property-char-section" id=
       "fo-property-char-section">Character Properties</a> (<a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#section-N40545-Character-Properties">&sect;7.16</a>)</td>
     </tr>
@@ -4039,6 +4411,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#character">&sect;7.16.1</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -4064,6 +4438,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -4075,6 +4451,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#suppress-at-line-break">&sect;7.16.3</a></td>
+
+      <td class="no">no</td>
 
       <td class="no">no</td>
 
@@ -4100,6 +4478,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -4110,6 +4490,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#text-shadow">&sect;7.16.5</a></td>
+
+      <td class="no">no</td>
 
       <td class="no">no</td>
 
@@ -4135,6 +4517,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -4146,6 +4530,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#treat-as-word-space">&sect;7.16.7</a></td>
+
+      <td class="no">no</td>
 
       <td class="no">no</td>
 
@@ -4170,11 +4556,13 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-property-color-section" id=
+      <td class="category" colspan="8"><a name="fo-property-color-section" id=
       "fo-property-color-section">Color-related Properties</a> (<a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#section-N42081-Color-related-Properties">&sect;7.17</a>)</td>
     </tr>
@@ -4186,6 +4574,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#color">&sect;7.17.1</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -4211,6 +4601,8 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -4229,11 +4621,13 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-property-float-section" id=
+      <td class="category" colspan="8"><a name="fo-property-float-section" id=
       "fo-property-float-section">Float-related Properties</a> (<a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#section-N42546-Float-related-Properties">&sect;7.18</a>)</td>
     </tr>
@@ -4252,6 +4646,8 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -4262,6 +4658,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#float">&sect;7.18.2</a></td>
+
+      <td class="no">no</td>
 
       <td class="no">no</td>
 
@@ -4287,11 +4685,13 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-property-keepsbreaks-section" id=
+      <td class="category" colspan="8"><a name="fo-property-keepsbreaks-section" id=
       "fo-property-keepsbreaks-section">Keeps and Breaks Properties</a> (<a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#section-N43268-Keeps-and-Breaks-Properties">&sect;7.19</a>)</td>
     </tr>
@@ -4306,11 +4706,17 @@
 
       <td class="yes">yes</td>
 
-      <td class="yes">yes</td>
+      <td class="partial">partial</td>
 
       <td class="yes">yes</td>
 
-      <td align="center">&nbsp;</td>
+      <td class="yes">yes</td>
+
+      <td align="center">
+        <ul>
+          <li>[0.94] Doesn't work on the last row of a table</li>
+        </ul>
+      </td>
     </tr>
 
     <tr>
@@ -4323,11 +4729,19 @@
 
       <td class="yes">yes</td>
 
-      <td class="yes">yes</td>
+      <td class="partial">partial</td>
 
       <td class="yes">yes</td>
 
-      <td align="center">&nbsp;</td>
+      <td class="yes">yes</td>
+
+      <td align="center">
+        <ul>
+          <li>[0.94] Doesn't work on the first row of a table</li>
+          <li>[0.94] When set on the first child of an fo:table-cell,
+          the border-before is still painted on the previous page</li>
+        </ul>
+      </td>
     </tr>
 
     <tr>
@@ -4344,13 +4758,13 @@
 
       <td class="partial">partial</td>
 
+      <td class="partial">partial</td>
+
       <td align="left">
         <ul>
           <li>[0.20.5] works only in table rows</li>
 
-          <li>[0.93] works on all implemented block-level FOs, but not on inline-level FOs.</li>
-
-          <li>[0.93 and later] &lt;integer&gt; values are not supported.</li>
+          <li>[0.94 and later] &lt;integer&gt; values are not supported.</li>
         </ul>
       </td>
     </tr>
@@ -4370,14 +4784,16 @@
 
       <td class="partial">partial</td>
 
+      <td class="partial">partial</td>
+
       <td align="left">
         <ul>
           <li>[0.20.5] works only in table rows</li>
 
-          <li>[0.93 and later] works on all implemented block-level FOs, but not on inline-level
+          <li>[0.94 and later] works on all implemented block-level FOs, but not on inline-level
           FOs.</li>
 
-          <li>[0.93 and later] &lt;integer&gt; values are not supported.</li>
+          <li>[0.94 and later] &lt;integer&gt; values are not supported.</li>
         </ul>
       </td>
     </tr>
@@ -4397,14 +4813,19 @@
 
       <td class="partial">partial</td>
 
+      <td class="partial">partial</td>
+
       <td align="left">
         <ul>
           <li>[0.20.5] works only in table rows</li>
 
-          <li>[0.93 and later] works on all implemented FOs, except list- and table-related and
+          <li>[0.94] works on all implemented FOs, except list- and table-related and
           inline-level FOs.</li>
 
-          <li>[0.93 and later] &lt;integer&gt; values are not supported.</li>
+          <li>[0.95] works on all implemented FOs, except list- and inline-level
+          FOs.</li>
+
+          <li>[0.94 and later] &lt;integer&gt; values are not supported.</li>
         </ul>
       </td>
     </tr>
@@ -4418,6 +4839,8 @@
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#orphans">&sect;7.19.6</a></td>
 
       <td class="no">no</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -4440,11 +4863,13 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-property-layout-section" id=
+      <td class="category" colspan="8"><a name="fo-property-layout-section" id=
       "fo-property-layout-section">Layout-related Properties</a> (<a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#section-N44408-Layout-related-Properties">&sect;7.20</a>)</td>
     </tr>
@@ -4456,6 +4881,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#clip">&sect;7.20.1</a></td>
+
+      <td class="no">no</td>
 
       <td class="no">no</td>
 
@@ -4480,6 +4907,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -4493,6 +4922,8 @@
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#reference-orientation">&sect;7.20.3</a></td>
 
       <td class="no">no</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -4522,11 +4953,13 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-property-leader-section" id=
+      <td class="category" colspan="8"><a name="fo-property-leader-section" id=
       "fo-property-leader-section">Leader and Rule Properties</a> (<a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#section-N45132-Leader-and-Rule-Properties">&sect;7.21</a>)</td>
     </tr>
@@ -4546,11 +4979,13 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="left">
         <ul>
           <li>[0.20.5] not value "page"</li>
 
-          <li>[0.93 and later] Not supported</li>
+          <li>[0.94 and later] Not supported</li>
         </ul>
       </td>
     </tr>
@@ -4570,11 +5005,13 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="left">
         <ul>
           <li>[0.20.5] not value "use-content"</li>
 
-          <li>[0.93 and later] Value "use-content" does not work in all circumstances.</li>
+          <li>[0.94 and later] Value "use-content" does not work in all circumstances.</li>
         </ul>
       </td>
     </tr>
@@ -4594,6 +5031,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="left">&nbsp;</td>
     </tr>
 
@@ -4606,6 +5045,8 @@
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#leader-length">&sect;7.21.4</a></td>
 
       <td class="partial">partial</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -4632,6 +5073,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="left">&nbsp;</td>
     </tr>
 
@@ -4650,11 +5093,13 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="left">&nbsp;</td>
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-property-dynamiceffects-section" id=
+      <td class="category" colspan="8"><a name="fo-property-dynamiceffects-section" id=
       "fo-property-dynamiceffects-section">Properties for Dynamic Effects Formatting Objects</a>
       (<a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#section-N46115-Properties-for-Dynamic-Effects-Formatting-Objects">&sect;7.22</a>)</td>
@@ -4667,6 +5112,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#active-state">&sect;7.22.1</a></td>
+
+      <td class="no">no</td>
 
       <td class="no">no</td>
 
@@ -4691,6 +5138,8 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -4708,6 +5157,8 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -4718,6 +5169,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#case-title">&sect;7.22.4</a></td>
+
+      <td class="no">no</td>
 
       <td class="no">no</td>
 
@@ -4743,6 +5196,8 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -4754,6 +5209,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#external-destination">&sect;7.22.6</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -4779,6 +5236,8 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -4790,6 +5249,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#internal-destination">&sect;7.22.8</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -4815,6 +5276,8 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -4833,9 +5296,11 @@
 
       <td class="partial">partial</td>
 
+      <td class="partial">partial</td>
+
       <td align="left">
         <ul>
-          <li>[0.93 and later] support for starting-state on <a href=
+          <li>[0.94 and later] support for starting-state on <a href=
           "#fo-bookmark">fo:bookmark</a></li>
         </ul>
       </td>
@@ -4848,6 +5313,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#switch-to">&sect;7.22.11</a></td>
+
+      <td class="no">no</td>
 
       <td class="no">no</td>
 
@@ -4873,6 +5340,8 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -4884,6 +5353,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#target-processing-context">&sect;7.22.13</a></td>
+
+      <td class="no">no</td>
 
       <td class="no">no</td>
 
@@ -4909,11 +5380,13 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-property-markers-section" id=
+      <td class="category" colspan="8"><a name="fo-property-markers-section" id=
       "fo-property-markers-section">Properties for Markers</a> (<a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#section-N48193-Properties-for-Markers">&sect;7.23</a>)</td>
     </tr>
@@ -4928,6 +5401,8 @@
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#marker-class-name">&sect;7.23.1</a></td>
 
       <td class="no">no</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -4951,6 +5426,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -4964,6 +5441,8 @@
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#retrieve-position">&sect;7.23.3</a></td>
 
       <td class="no">no</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -4987,11 +5466,13 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-property-numberstring-section" id=
+      <td class="category" colspan="8"><a name="fo-property-numberstring-section" id=
       "fo-property-numberstring-section">Properties for Number to String Conversion</a> (<a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#section-N48804-Properties-for-Number-to-String-Conversion">&sect;7.24</a>)</td>
     </tr>
@@ -5010,6 +5491,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -5021,6 +5504,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#grouping-separator">&sect;7.24.2</a></td>
+
+      <td class="no">no</td>
 
       <td class="no">no</td>
 
@@ -5045,6 +5530,8 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -5062,11 +5549,13 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-property-pagination-section" id=
+      <td class="category" colspan="8"><a name="fo-property-pagination-section" id=
       "fo-property-pagination-section">Pagination and Layout Properties</a> (<a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#section-N49321-Pagination-and-Layout-Properties">&sect;7.25</a>)</td>
     </tr>
@@ -5079,6 +5568,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#blank-or-not-blank">&sect;7.25.1</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -5103,6 +5594,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -5113,6 +5606,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#column-gap">&sect;7.25.3</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -5137,6 +5632,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -5147,6 +5644,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#flow-name">&sect;7.25.5</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -5172,6 +5671,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -5190,6 +5691,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -5200,6 +5703,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#master-name">&sect;7.25.8</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -5225,6 +5730,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -5236,6 +5743,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#maximum-repeats">&sect;7.25.10</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -5260,6 +5769,8 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -5270,6 +5781,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#odd-or-even">&sect;7.25.12</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -5294,6 +5807,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -5306,6 +5821,8 @@
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#page-position">&sect;7.25.14</a></td>
 
       <td class="partial">partial</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -5332,6 +5849,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -5344,6 +5863,8 @@
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#precedence">&sect;7.25.16</a></td>
 
       <td class="no">no</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -5366,11 +5887,13 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-property-table-section" id=
+      <td class="category" colspan="8"><a name="fo-property-table-section" id=
       "fo-property-table-section">Table Properties</a> (<a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#section-N52000-Table-Properties">&sect;7.26</a>)</td>
     </tr>
@@ -5383,6 +5906,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#border-after-precedence">&sect;7.26.1</a></td>
+
+      <td class="no">no</td>
 
       <td class="no">no</td>
 
@@ -5408,6 +5933,8 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -5421,6 +5948,8 @@
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#border-collapse">&sect;7.26.3</a></td>
 
       <td class="partial">partial</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -5448,6 +5977,8 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -5466,6 +5997,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -5477,6 +6010,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#border-start-precedence">&sect;7.26.6</a></td>
+
+      <td class="no">no</td>
 
       <td class="no">no</td>
 
@@ -5501,6 +6036,8 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -5518,6 +6055,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -5530,6 +6069,8 @@
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#column-width">&sect;7.26.9</a></td>
 
       <td class="partial">partial</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -5553,9 +6094,11 @@
 
       <td class="no">no</td>
 
-      <td class="yes">yes</td>
+      <td class="no">no</td>
 
-      <td class="yes">yes</td>
+      <td class="no">no</td>
+
+      <td class="no">no</td>
 
       <td align="center">&nbsp;</td>
     </tr>
@@ -5569,6 +6112,8 @@
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#ends-row">&sect;7.26.11</a></td>
 
       <td class="no">no</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -5592,6 +6137,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -5603,6 +6150,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#number-columns-spanned">&sect;7.26.13</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -5628,6 +6177,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -5645,6 +6196,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -5655,6 +6208,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#table-layout">&sect;7.26.16</a></td>
+
+      <td class="no">no</td>
 
       <td class="no">no</td>
 
@@ -5680,6 +6235,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -5698,11 +6255,13 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-property-writingmode-section" id=
+      <td class="category" colspan="8"><a name="fo-property-writingmode-section" id=
       "fo-property-writingmode-section">Writing-mode-related Properties</a> (<a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#writing-mode-related">&sect;7.27</a>)</td>
     </tr>
@@ -5714,6 +6273,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#direction">&sect;7.27.1</a></td>
+
+      <td class="no">no</td>
 
       <td class="no">no</td>
 
@@ -5739,6 +6300,8 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -5750,6 +6313,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#glyph-orientation-vertical">&sect;7.27.3</a></td>
+
+      <td class="no">no</td>
 
       <td class="no">no</td>
 
@@ -5774,6 +6339,8 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -5784,6 +6351,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#text-depth">&sect;7.27.5</a></td>
+
+      <td class="no">no</td>
 
       <td class="no">no</td>
 
@@ -5808,6 +6377,8 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -5825,11 +6396,13 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-property-misc-section" id=
+      <td class="category" colspan="8"><a name="fo-property-misc-section" id=
       "fo-property-misc-section">Miscellaneous Properties</a> (<a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#section-N56509-Miscellaneous-Properties">&sect;7.28</a>)</td>
     </tr>
@@ -5841,6 +6414,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#content-type">&sect;7.28.1</a></td>
+
+      <td class="no">no</td>
 
       <td class="no">no</td>
 
@@ -5865,9 +6440,11 @@
 
       <td class="partial">partial</td>
 
+      <td class="partial">partial</td>
+
       <td align="left">
         <ul>
-          <li>[0.93 and later] IDs on table-header, table-footer, table-body, table-row,
+          <li>[0.94 and later] IDs on table-header, table-footer, table-body, table-row,
           table-and-caption, table-caption, inline-container and bidi-override are not available,
           yet.</li>
         </ul>
@@ -5882,6 +6459,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#provisional-label-separation">&sect;7.28.3</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -5907,6 +6486,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -5917,6 +6498,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#ref-id">&sect;7.28.5</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -5941,6 +6524,8 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -5951,6 +6536,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#src">&sect;7.28.7</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -5975,6 +6562,8 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -5992,11 +6581,13 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-property-shorthand-section" id=
+      <td class="category" colspan="8"><a name="fo-property-shorthand-section" id=
       "fo-property-shorthand-section">Shorthand Properties</a> (<a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#section-N57854-Shorthand-Properties">&sect;7.29</a>)</td>
     </tr>
@@ -6008,6 +6599,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#background">&sect;7.29.1</a></td>
+
+      <td class="no">no</td>
 
       <td class="no">no</td>
 
@@ -6033,6 +6626,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -6045,6 +6640,8 @@
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#border">&sect;7.29.3</a></td>
 
       <td class="no">no</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -6067,6 +6664,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -6079,6 +6678,8 @@
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#border-color">&sect;7.29.5</a></td>
 
       <td class="partial">partial</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -6105,6 +6706,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -6115,6 +6718,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#border-right">&sect;7.29.7</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -6134,6 +6739,8 @@
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#border-style">&sect;7.29.8</a></td>
 
       <td class="partial">partial</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -6161,6 +6768,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -6171,6 +6780,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#border-top">&sect;7.29.10</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -6195,6 +6806,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -6205,6 +6818,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#cue">&sect;7.29.12</a></td>
+
+      <td class="na">na</td>
 
       <td class="na">na</td>
 
@@ -6229,9 +6844,11 @@
 
       <td class="partial">partial</td>
 
+      <td class="partial">partial</td>
+
       <td align="center">
         <ul>
-          <li>[0.93 and later] Enum values other than "inherit" not yet supported.</li>
+          <li>[0.94 and later] Enum values other than "inherit" not yet supported.</li>
         </ul>
       </td>
     </tr>
@@ -6245,6 +6862,8 @@
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#margin">&sect;7.29.14</a></td>
 
       <td class="partial">partial</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -6266,6 +6885,8 @@
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#padding">&sect;7.29.15</a></td>
 
       <td class="partial">partial</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -6300,6 +6921,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -6313,6 +6936,8 @@
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#page-break-before">&sect;7.29.17</a></td>
 
       <td class="no">no</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -6336,6 +6961,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -6346,6 +6973,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#pause">&sect;7.29.19</a></td>
+
+      <td class="na">na</td>
 
       <td class="na">na</td>
 
@@ -6365,6 +6994,8 @@
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#position">&sect;7.29.20</a></td>
 
       <td class="partial">partial</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -6391,6 +7022,8 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -6409,11 +7042,13 @@
 
       <td class="partial">partial</td>
 
+      <td class="partial">partial</td>
+
       <td align="left">
         <ul>
           <li>[0.20.5] Only works as a shorthand for baseline-shift property.</li>
 
-          <li>[0.93 and later] Percentages are not supported, yet.</li>
+          <li>[0.94 and later] Percentages are not supported, yet.</li>
         </ul>
       </td>
     </tr>
@@ -6432,6 +7067,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -6444,6 +7081,8 @@
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#xml:lang">&sect;7.29.24</a></td>
 
       <td class="no">no</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -6467,21 +7106,23 @@
 
       <th rowspan="2" align="center">Citation</th>
 
-      <th colspan="3" align="center">Support&nbsp;in&nbsp;FOP</th>
+      <th colspan="4" align="center">Support&nbsp;in&nbsp;FOP</th>
 
       <th rowspan="2">Comments</th>
     </tr>
 
     <tr>
-      <th align="center">0.20.5 (previous)</th>
+      <th align="center">0.20.5 (ancient)</th>
 
-      <th align="center">0.95 (stable)</th>
+      <th align="center">0.94 (stable)</th>
+
+      <th align="center">0.95 (beta)</th>
 
       <th align="center">develop- ment</th>
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-function-number-section" id=
+      <td class="category" colspan="8"><a name="fo-function-number-section" id=
       "fo-function-number-section">Number Functions</a> (<a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice5.html#section-N8438-Number-Functions">&sect;5.10.1</a>)</td>
     </tr>
@@ -6493,6 +7134,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice5.html#section-N8438-Number-Functions">&sect;5.10.1</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -6517,6 +7160,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -6527,6 +7172,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice5.html#section-N8438-Number-Functions">&sect;5.10.1</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -6551,6 +7198,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -6561,6 +7210,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice5.html#section-N8438-Number-Functions">&sect;5.10.1</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -6585,11 +7236,13 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-function-color-section" id=
+      <td class="category" colspan="8"><a name="fo-function-color-section" id=
       "fo-function-color-section">Color Functions</a> (<a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice5.html#expr-color-functions">&sect;5.10.2</a>)</td>
     </tr>
@@ -6601,6 +7254,8 @@
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice5.html#expr-color-functions">&sect;5.10.2</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -6625,6 +7280,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -6642,11 +7299,13 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-function-font-section" id=
+      <td class="category" colspan="8"><a name="fo-function-font-section" id=
       "fo-function-font-section">Font Functions</a> (<a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice5.html#section-N8601-Font-Functions">&sect;5.10.3</a>)</td>
     </tr>
@@ -6665,11 +7324,13 @@
 
       <td class="no">no</td>
 
+      <td class="no">no</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
     <tr>
-      <td class="category" colspan="7"><a name="fo-function-property-value-section" id=
+      <td class="category" colspan="8"><a name="fo-function-property-value-section" id=
       "fo-function-property-value-section">Property Value Functions</a> (<a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice5.html#section-N8624-Property-Value-Functions">&sect;5.10.4</a>)</td>
     </tr>
@@ -6683,6 +7344,8 @@
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice5.html#section-N8624-Property-Value-Functions">
       &sect;5.10.4</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -6708,6 +7371,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -6726,6 +7391,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -6737,6 +7404,8 @@
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice5.html#section-N8624-Property-Value-Functions">
       &sect;5.10.4</a></td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -6763,6 +7432,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -6777,6 +7448,8 @@
       &sect;5.10.4</a></td>
 
       <td class="no">no</td>
+
+      <td class="yes">yes</td>
 
       <td class="yes">yes</td>
 
@@ -6801,6 +7474,8 @@
 
       <td class="yes">yes</td>
 
+      <td class="yes">yes</td>
+
       <td align="center">&nbsp;</td>
     </tr>
 
@@ -6813,6 +7488,8 @@
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice5.html#section-N8624-Property-Value-Functions">
       &sect;5.10.4</a></td>
+
+      <td class="no">no</td>
 
       <td class="no">no</td>
 
