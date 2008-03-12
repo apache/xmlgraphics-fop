@@ -29,14 +29,15 @@
       <p>Apache FOP (Formatting Objects Processor) is a print formatter driven by XSL
         formatting objects (XSL-FO) and an output independent formatter. It is a Java
         application that reads a formatting object (FO) tree and renders the resulting
-        pages to a specified output. <link href="0.94/output.html">Output formats</link>
+        pages to a specified output. <link href="0.95/output.html">Output formats</link>
         currently supported include PDF, PS, PCL, AFP, XML (area tree representation),
         Print, AWT and PNG, and to a lesser extent, RTF and TXT. The primary output target is PDF.
       </p>
         <figure width="480" height="260" src="images/document.jpg" alt="Render Diagram" />
     <p>
-      The latest stable version of FOP (<link href="0.94/">0.94</link>) is the second
-      stable release after a large redesign effort and implements a large subset of the
+      A beta release of the latest version of FOP (<link href="0.95/">0.95</link>) is now
+      available. After a short testing period it will become the third
+      stable release after the large redesign effort and will implement a large subset of the
       <link href="http://www.w3.org/TR/xsl11/">XSL-FO Version 1.1 W3C
         Recommendation</link>.
     </p>
