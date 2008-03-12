@@ -59,7 +59,7 @@
         </action>
       -->
     <!--/release-->
-    <release version="0.95beta" date="8 March 2008">
+    <release version="0.95beta" date="17 March 2008">
       <notes>
         <section>
           <title>Notes</title>
@@ -69,8 +69,8 @@
           </p>
           <ul>
             <li>
-              Improvements and bugfixes for tables (keep and break support, border
-              conditionality etc.)
+              Many bugfixes in tables, plus some new features (full support for keeps and
+              breaks, border conditionality, background on columns and header/footer/body)
             </li>
             <li>
               Improvements and bugfixes for font handling and font
@@ -84,6 +84,28 @@
           <p>
             Please note that with this release, we've dropped support for Java 1.3.
             FOP will, from now on, <strong>require at least Java 1.4</strong>.
+          </p>
+          <p>
+            There have been a few changes in tables that make FOP both more strict and more
+            compliant to the Recommendation:
+            <ul>
+              <li>XSL-FO 1.1 explicitly states that a row-spanning fo:table-cell element is not
+                allowed to span further than its enclosing fo:table-header/footer/body element
+                (see bottom of <link href="http://www.w3.org/TR/xsl11/#fo_table">section
+                  6.7.3</link>). From now on FOP will give a validation error if a document
+                contains such an erroneous cell.
+              </li>
+              <li>
+                <p>If an fo:table element contains explicit fo:table-column children, then those
+                  elements set the total number of columns in the table. This means that a
+                  validation error will now occur if a row contains more cells than available
+                  columns. This change allows to improve performance, since the rendering of the
+                  table may start as soon as the table-column elements have been parsed.</p>
+                <p>If more flexibility is needed, then the fo:table-column elements may be just
+                  omitted. The final number of columns will then be set by the row that has the
+                  most cells.</p>
+            </li>
+            </ul>
           </p>
           <p>
             The image libraries Jimi and JAI are no longer needed (and used). Instead we rely
