@@ -76,7 +76,6 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
     private int cellIPD;
     private int totalHeight;
     private int usedBPD;
-    private int borderAndPaddingBPD;
     private boolean emptyCell = true;
 
     /**
@@ -97,22 +96,6 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
 
     private boolean isSeparateBorderModel() {
         return getTable().isSeparateBorderModel();
-    }
-
-    /** {@inheritDoc} */
-    public void initialize() {
-        borderAndPaddingBPD = 0;
-        borderAndPaddingBPD += getTableCell()
-            .getCommonBorderPaddingBackground().getBorderBeforeWidth(false);
-        borderAndPaddingBPD += getTableCell()
-            .getCommonBorderPaddingBackground().getBorderAfterWidth(false);
-        if (!isSeparateBorderModel()) {
-            borderAndPaddingBPD /= 2;
-        }
-        borderAndPaddingBPD += getTableCell().getCommonBorderPaddingBackground()
-                .getPaddingBefore(false, this);
-        borderAndPaddingBPD += getTableCell().getCommonBorderPaddingBackground()
-                .getPaddingAfter(false, this);
     }
 
     /**
