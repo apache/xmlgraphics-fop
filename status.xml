@@ -116,6 +116,10 @@
           </p>
         </section>
       </notes>
+      <action context="Layout" dev="JM" type="fix" fixes-bug="44412">
+        Bugfix: When there was a forced break after a block with (conditional) borders the
+        border-after wasn't painted.
+      </action>
       <action context="Layout" dev="VH" type="fix">
         Bugfix: a forced break inside a cell was ignored when occurring before the minimum height
         set on the enclosing row was set.
