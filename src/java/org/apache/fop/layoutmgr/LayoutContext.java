@@ -285,8 +285,12 @@ public class LayoutContext {
      * Clears all pending marks on the LayoutContext.
      */
     public void clearPendingMarks() {
-        this.pendingBeforeMarks = null;
-        this.pendingAfterMarks = null;
+        if (this.pendingBeforeMarks != null) {
+            this.pendingBeforeMarks.clear();
+        }
+        if (this.pendingAfterMarks != null) {
+            this.pendingAfterMarks.clear();
+        }
     }
     
     /**
