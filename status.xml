@@ -117,6 +117,10 @@
         </section>
       </notes>
       <action context="Layout" dev="JM" type="fix" fixes-bug="44412">
+        Bugfix: The before border of a block is no longer swallowed if its first child issues
+        a break-before.
+      </action>
+      <action context="Layout" dev="JM" type="fix" fixes-bug="44412">
         Bugfix: When there was a forced break after a block with (conditional) borders the
         border-after wasn't painted.
       </action>

@@ -294,15 +294,24 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             if (returnedList != null
                     && returnedList.size() == 1
                     && ((ListElement) returnedList.getFirst()).isForcedBreak()) {
-                // a descendant of this block has break-before
-                contentList.addAll(returnedList);
 
                 if (curLM.isFinished() && !hasNextChildLM()) {
+                    // a descendant of this block has break-before
+                    contentList.addAll(returnedList);
+
                     forcedBreakAfterLast = (BreakElement)contentList.removeLast();
                     context.clearPendingMarks();
                     break;
                 }
 
+                if (contentList.size() == 0) {
+                    // Empty fo:block, zero-length box makes sure the IDs and/or markers 
+                    // are registered and borders/padding are painted.
+                    returnList.add(new KnuthBox(0, notifyPos(new Position(this)), false));
+                }
+                // a descendant of this block has break-before
+                contentList.addAll(returnedList);
+                
                 /* extension: conversione di tutta la sequenza fin'ora ottenuta */
                 if (bpUnit > 0) {
                     storedList = contentList;
