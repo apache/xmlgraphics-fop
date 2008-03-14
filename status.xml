@@ -52,17 +52,13 @@
   </contexts>
   
   <changes>
-    <release version="FOP Trunk" date="TBD">
+    <!--release version="FOP Trunk" date="TBD"-->
       <!-- change reverted, to be added back later
         <action context="Renderers" dev="AC" importance="high" type="add">
         Added SVG support for AFP (GOCA).
         </action>
       -->
-      <action context="Layout" dev="JM" type="fix" fixes-bug="44412">
-        Bugfix: When there was a forced break after a block with (conditional) borders the
-        border-after wasn't painted.
-      </action>
-    </release>
+    <!--/release-->
     <release version="0.95beta" date="17 March 2008">
       <notes>
         <section>

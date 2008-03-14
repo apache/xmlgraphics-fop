@@ -386,9 +386,6 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         }
         addKnuthElementsForBorderPaddingAfter(returnList, true);
         addKnuthElementsForSpaceAfter(returnList, alignment);
-
-        //All child content is processed. Only break-after can occur now, so...        
-        context.clearPendingMarks();
         addKnuthElementsForBreakAfter(returnList, context);
 
         setFinished(true);
