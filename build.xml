@@ -131,15 +131,6 @@ list of possible build targets.
     </fileset>
   </path>
 
-  <patternset id="exclude-jimi">
-    <exclude name="org/apache/fop/image/JimiImage.java" unless="jimi.present"/>
-  </patternset>
-
-  <patternset id="exclude-jai">
-    <exclude name="org/apache/fop/image/JAIImage.java" unless="jai.present"/>
-    <exclude name="org/apache/fop/render/pcl/JAIMonochromeBitmapConverter.java" unless="jai.present"/>
-  </patternset>
-
   <patternset id="exclude-jce-dependencies">
     <exclude name="org/apache/fop/pdf/PDFEncryptionJCE.java" unless="jce.present"/>
   </patternset>
@@ -214,7 +205,7 @@ list of possible build targets.
   <!-- =================================================================== -->
   <!-- Initialization target                                               -->
   <!-- =================================================================== -->
-  <target name="init" depends="init-avail, init-filters-jdk14, init-filters-jdk13">
+  <target name="init" depends="init-avail">
   </target>
 
   <target name="init-avail">
@@ -223,30 +214,6 @@ list of possible build targets.
     <echo message="${ant.version}"/>
     <echo message="VM: ${java.vm.version}, ${java.vm.vendor}"/>
     <echo message="JAVA_HOME: ${env.JAVA_HOME}"/>
-
-    <available property="jimi.present" classname="com.sun.jimi.core.Jimi"
-        classpathref="libs-build-classpath"/>
-    <condition property="jimi.message" value="Jimi Support PRESENT">
-      <equals arg1="${jimi.present}" arg2="true"/>
-    </condition>
-    <condition property="jimi.message" value="Jimi Support NOT Present">
-      <not>
-        <equals arg1="${jimi.present}" arg2="true"/>
-      </not>
-    </condition>
-    <echo message="${jimi.message}"/>
-
-    <available property="jai.present" classname="javax.media.jai.JAI"
-        classpathref="libs-build-classpath"/>
-    <condition property="jai.message" value="JAI Support PRESENT">
-      <equals arg1="${jai.present}" arg2="true"/>
-    </condition>
-    <condition property="jai.message" value="JAI Support NOT Present">
-      <not>
-        <equals arg1="${jai.present}" arg2="true"/>
-      </not>
-    </condition>
-    <echo message="${jai.message}"/>
 
     <available property="jce.present" classname="javax.crypto.Cipher"
         classpathref="libs-build-classpath"/>
@@ -261,7 +228,8 @@ list of possible build targets.
     <echo message="${jce.message}"/>
 
     <available property="jdk14.present" classname="java.lang.CharSequence"/>
-
+    <fail message="${Name} requires at least Java 1.4!" unless="jdk14.present"/>
+    
     <available property="junit.present" classname="junit.framework.TestCase"
         classpathref="libs-build-classpath"/>
     <condition property="junit.message" value="JUnit Support PRESENT">
@@ -290,22 +258,6 @@ list of possible build targets.
     </condition>
     <echo message="${xmlunit.message}"/>
    
-  </target>
-
-  <target name="init-filters-jdk13" depends="init-avail" unless="jdk14.present">
-    <echo message="Use GraphicsConfiguration adapter for JDK 1.3 or earlier."/>
-    <path id="graphics-configuration-adapter">
-      <pathelement location="src/java-1.3"/>
-    </path>
-    <property name="src.java.version.dir" value="${basedir}/src/java-1.3"/>
-  </target>
-
-  <target name="init-filters-jdk14" depends="init-avail" if="jdk14.present">
-    <echo message="Use GraphicsConfiguration adapter for JDK 1.4."/>
-    <path id="graphics-configuration-adapter">
-      <pathelement location="src/java-1.4"/>
-    </path>
-    <property name="src.java.version.dir" value="${basedir}/src/java-1.4"/>
   </target>
 
   <!-- =================================================================== -->
@@ -401,12 +353,8 @@ list of possible build targets.
            source="${javac.source}" target="${javac.target}">
       <src path="${build.gensrc.dir}"/>
       <src path="${src.java.dir}"/>
-      <src refid="graphics-configuration-adapter"/>
       <patternset includes="**/*.java"/>
-      <!--patternset includes="org/apache/fop/svg/GraphicsConfiguration.java"/-->
       <patternset refid="exclude-jce-dependencies"/>
-      <patternset refid="exclude-jai"/>
-      <patternset refid="exclude-jimi"/>
       <classpath refid="libs-build-classpath"/>
     </javac>
     <copy todir="${build.classes.dir}">
@@ -431,7 +379,6 @@ list of possible build targets.
            source="${javac.source}" target="${javac.target}">
       <src path="${src.sandbox.dir}"/>
       <patternset includes="**/*.java"/>
-      <patternset refid="exclude-jai"/>
       <classpath>
         <path refid="libs-build-classpath"/>
         <pathelement location="${build.classes.dir}"/>
@@ -543,7 +490,6 @@ list of possible build targets.
     <uptodate property="jar.sources.uptodate" targetfile="${build.dir}/fop-sources.jar">
       <srcfiles dir="${build.gensrc.dir}"/>
       <srcfiles dir="${src.java.dir}"/>
-      <srcfiles refid="graphics-configuration-adapter"/>
     </uptodate>
   </target>
 
@@ -1032,7 +978,6 @@ NOTE:
         <pathelement path="${src.java.dir}"/>
         <pathelement path="${src.sandbox.dir}"/>
         <pathelement path="${build.gensrc.dir}"/>
-        <path refid="graphics-configuration-adapter"/>
       </sourcepath>
       <tag name="todo" scope="all" description="To do:"/>
       <group title="Control and Startup">
@@ -1206,25 +1151,10 @@ NOTE:
     -->
     <echo message="Make sure you have a proper Forrest installation (see http://forrest.apache.org/)"/>
 
-    <!--<antcall target="site"/>-->
-    
-    <!-- You can provide a JDK 1.4 for a JDK 1.3 build by adding "javahome.jdk14" to build-local.properties -->
-    <condition property="javahome.jdk14.override" value="${javahome.jdk14}">
-      <isset property="javahome.jdk14"/>
-    </condition>
-    <echo message="java home: ${javahome.jdk14.override}"/>
-    <condition property="javahome.jdk14.override" value="${env.JAVA_HOME}">
-      <not>
-        <isset property="javahome.jdk14.override"/>
-      </not>
-    </condition>
-    <echo message="java home: ${javahome.jdk14.override}"/>
     <condition property="forrest.call" value="forrest.bat" else="forrest">
       <os family="windows"/>
     </condition>
-    <exec executable="${forrest.call}">
-      <env key="JAVA_HOME" value="${javahome.jdk14.override}"/>
-    </exec>
+    <exec executable="${forrest.call}"/>
   </target>
   
   <!-- =================================================================== -->
@@ -1234,8 +1164,6 @@ NOTE:
 
   <target name="dist-bin" depends="all,javadocs,docs">
     <echo message="Building the binary distribution files (zip,tar)"/>
-    <fail message="A complete binary build requires Jimi" unless="jimi.present"/>
-    <fail message="A complete binary build requires JAI" unless="jai.present"/>
     <fail message="A complete binary build requires JCE" unless="jce.present"/>
     <mkdir dir="${dist.bin.result.dir}"/>
     <copy todir="${dist.bin.result.dir}">
