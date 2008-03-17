@@ -108,11 +108,13 @@
             </ul>
           </p>
           <p>
-            The image libraries Jimi and JAI are no longer needed (and used). Instead we rely
-            completely on the Image I/O API that has been introduced with Java 1.4. If you still
-            need support for bitmap image formats that do not work out-of-the-box, we recommend
-            adding <link href="http://jai-imageio.dev.java.net/">JAI Image I/O Tools</link>
-            (an Image I/O compatible image codec package) to the classpath.
+            The image libraries Jimi and JAI are no longer needed (and used) for image loading.
+            Instead we rely completely on the Image I/O API that has been introduced with
+            Java 1.4. If you still need support for bitmap image formats that do not work
+            out-of-the-box, we recommend adding
+            <link href="http://jai-imageio.dev.java.net/">JAI Image I/O Tools</link>
+            (an Image I/O compatible image codec package) to the classpath. JAI is still required
+            for building the FOP distribution but it is optional for normal builds and at run-time.
           </p>
         </section>
       </notes>

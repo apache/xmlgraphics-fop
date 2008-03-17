@@ -131,6 +131,11 @@ list of possible build targets.
     </fileset>
   </path>
 
+  <patternset id="exclude-jai">
+    <exclude name="org/apache/fop/image/JAIImage.java" unless="jai.present"/>
+    <exclude name="org/apache/fop/render/pcl/JAIMonochromeBitmapConverter.java" unless="jai.present"/>
+  </patternset>
+
   <patternset id="exclude-jce-dependencies">
     <exclude name="org/apache/fop/pdf/PDFEncryptionJCE.java" unless="jce.present"/>
   </patternset>
@@ -214,6 +219,18 @@ list of possible build targets.
     <echo message="${ant.version}"/>
     <echo message="VM: ${java.vm.version}, ${java.vm.vendor}"/>
     <echo message="JAVA_HOME: ${env.JAVA_HOME}"/>
+
+    <available property="jai.present" classname="javax.media.jai.JAI"
+        classpathref="libs-build-classpath"/>
+    <condition property="jai.message" value="JAI Support PRESENT">
+      <equals arg1="${jai.present}" arg2="true"/>
+    </condition>
+    <condition property="jai.message" value="JAI Support NOT Present">
+      <not>
+        <equals arg1="${jai.present}" arg2="true"/>
+      </not>
+    </condition>
+    <echo message="${jai.message}"/>
 
     <available property="jce.present" classname="javax.crypto.Cipher"
         classpathref="libs-build-classpath"/>
@@ -355,6 +372,7 @@ list of possible build targets.
       <src path="${src.java.dir}"/>
       <patternset includes="**/*.java"/>
       <patternset refid="exclude-jce-dependencies"/>
+      <patternset refid="exclude-jai"/>
       <classpath refid="libs-build-classpath"/>
     </javac>
     <copy todir="${build.classes.dir}">
@@ -379,6 +397,7 @@ list of possible build targets.
            source="${javac.source}" target="${javac.target}">
       <src path="${src.sandbox.dir}"/>
       <patternset includes="**/*.java"/>
+      <patternset refid="exclude-jai"/>
       <classpath>
         <path refid="libs-build-classpath"/>
         <pathelement location="${build.classes.dir}"/>
@@ -1160,11 +1179,15 @@ NOTE:
   <!-- =================================================================== -->
   <!-- Creates the distribution                                            -->
   <!-- =================================================================== -->
-  <target name="dist" depends="dist-src,dist-bin" description="Generates the distribution package"/>
+  <target name="dist" depends="dist-prereq,dist-src,dist-bin" description="Generates the distribution package"/>
+
+  <target name="dist-prereq" depends="init">
+    <fail message="A complete binary build requires JAI" unless="jai.present"/>
+    <fail message="A complete binary build requires JCE" unless="jce.present"/>
+  </target>
 
   <target name="dist-bin" depends="all,javadocs,docs">
     <echo message="Building the binary distribution files (zip,tar)"/>
-    <fail message="A complete binary build requires JCE" unless="jce.present"/>
     <mkdir dir="${dist.bin.result.dir}"/>
     <copy todir="${dist.bin.result.dir}">
       <fileset refid="dist.bin"/>
