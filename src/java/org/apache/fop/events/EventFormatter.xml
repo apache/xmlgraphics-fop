@@ -34,7 +34,18 @@ Any reference to it will be considered a reference to the first occurrence in th
   <message key="org.apache.fop.fo.FOValidationEventProducer.markerNotUniqueForSameParent">fo:marker "marker-class-name" must be unique for same parent: {mcname}{{locator}}</message>
   <message key="org.apache.fop.fo.FOValidationEventProducer.invalidProperty">Invalid property encountered on "{elementName}": {attr}{{locator}}</message>
   <message key="org.apache.fop.fo.FOValidationEventProducer.invalidPropertyValue">Invalid property value encountered in {propName}="{propValue}"[: {e}]{{locator}}</message>
-  <message key="org.apache.fop.fo.FOValidationEventProducer.unimplementedFeature">The following feature isn't implemented by Apache FOP, yet: {feature}{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.unimplementedFeature">The following feature isn't implemented by Apache FOP, yet: {feature} (on {elementName}){{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.missingLinkDestination">Missing attribute on {elementName}: Either external-destination or internal-destination must be specified.{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.markerCloningFailed">Unable to clone subtree of fo:marker (marker-class-name="{markerClassName}") for fo:retrieve-marker.{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.colorProfileNameNotUnique">Duplicate color profile profile name: {name}{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.regionNameMappedToMultipleRegionClasses">Region-name ("{regionName}") is being mapped to multiple region-classes ({defaultRegionClass1} and {defaultRegionClass2}).{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.masterNameNotUnique">The page master name ("{name}") must be unique across page-masters and page-sequence-masters.{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.duplicateFlowNameInPageSequence">Duplicate flow-name "{flowName}" found within {elementName}.{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.flowNameNotMapped">The flow-name "{flowName}" on {elementName} could not be mapped to a region-name in the layout-master-set.{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.masterNotFound">The master-reference "{masterReference}" on {elementName} matches no simple-page-master or page-sequence-master.{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.illegalRegionName">The region-name "{regionName}" for {elementName} is not permitted.{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.nonZeroBorderPaddingOnRegion">Border and padding for {elementName} "{regionName}" must be '0' (See 6.4.13 in XSL 1.0).{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.columnCountErrorOnRegionBodyOverflowScroll">If overflow property is set to "scroll" on {elementName}, a column-count other than "1" may not be specified.{{locator}}</message>
   <message key="org.apache.fop.fo.flow.table.TableEventProducer.nonAutoBPDOnTable">Only a value of "auto" for block-progression-dimension has a well-specified behavior on fo:table. Falling back to "auto".{{locator}}</message>
   <message key="org.apache.fop.fo.flow.table.TableEventProducer.noTablePaddingWithCollapsingBorderModel">In collapsing border model a table does not have padding (see http://www.w3.org/TR/REC-CSS2/tables.html#collapsing-borders), but a non-zero value for padding was found. The padding will be ignored.{{locator}}</message>
   <message key="org.apache.fop.fo.flow.table.TableEventProducer.noMixRowsAndCells">Either fo:table-rows or fo:table-cells may be children of an {elementName} but not both.{{locator}}</message>
@@ -45,10 +56,8 @@ Any reference to it will be considered a reference to the first occurrence in th
   <message key="org.apache.fop.fo.flow.table.TableEventProducer.warnImplicitColumns">table-layout=\"fixed\" and column-width unspecified =&gt; falling back to proportional-column-width(1){{locator}}</message>
   <message key="org.apache.fop.fo.flow.table.TableEventProducer.paddingNotApplicable">padding-* properties are not applicable to {elementName}, but a non-zero value for padding was found.{{locator}}</message>
   <message key="org.apache.fop.fo.flow.table.TableEventProducer.cellOverlap">{elementName} overlaps in column {column}.<!-- no locator here, exception will be wrapped --></message>
-  <message key="org.apache.fop.fo.FOValidationEventProducer.missingLinkDestination">Missing attribute on {elementName}: Either external-destination or internal-destination must be specified.{{locator}}</message>
   <message key="org.apache.fop.events.ResourceEventProducer.imageNotFound">Image not found. URI: {uri}{{locator}}</message>
   <message key="org.apache.fop.events.ResourceEventProducer.imageError">Image not available. URI: {uri}. Reason: {e}{{locator}}</message>
   <message key="org.apache.fop.events.ResourceEventProducer.imageIOError">I/O error while loading image.  URI: {uri}. Reason: {ioe}{{locator}}</message>
   <message key="org.apache.fop.events.ResourceEventProducer.ifoNoIntrinsiceSize">The intrinsic dimensions of an instream-foreign-object could not be determined.{{locator}}</message>
-  <message key="org.apache.fop.fo.FOValidationEventProducer.markerCloningFailed">Unable to clone subtree of fo:marker (marker-class-name="{markerClassName}") for fo:retrieve-marker.{{locator}}</message>
 </catalogue>

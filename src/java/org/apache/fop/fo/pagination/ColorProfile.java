@@ -39,15 +39,15 @@ public class ColorProfile extends FObj {
     // End of property values
 
     /**
+     * Creates a new color-profile element.
+     * @param parent the parent node
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
     public ColorProfile(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         src = pList.get(PR_SRC).getString();
         colorProfileName = pList.get(PR_COLOR_PROFILE_NAME).getString();
@@ -67,6 +67,7 @@ public class ColorProfile extends FObj {
 
     /**
      * Return the "color-profile-name" property.
+     * @return the color-profile-name property
      */
     public String getColorProfileName() {
         return colorProfileName;
@@ -77,9 +78,7 @@ public class ColorProfile extends FObj {
         return "color-profile";
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int getNameId() {
         return FO_COLOR_PROFILE;
     }

@@ -27,7 +27,7 @@ import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.flow.InlineLevel;
 
 /**
- * Class modelling the fo:title object.
+ * Class modeling the fo:title object.
  */
 public class Title extends InlineLevel {
     // The value of properties relevant for fo:title.
@@ -35,6 +35,7 @@ public class Title extends InlineLevel {
     // End of property values
 
     /**
+     * Creates a new title element.
      * @param parent FONode that is the parent of this object
      */
     public Title(FONode parent) {
@@ -54,16 +55,12 @@ public class Title extends InlineLevel {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "title";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int getNameId() {
         return FO_TITLE;
     }

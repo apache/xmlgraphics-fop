@@ -127,6 +127,29 @@ public interface FOValidationEventProducer extends EventProducer {
             Locator loc) throws ValidationException;
 
     /**
+     * There are multiple color profiles defined with the same name.
+     * @param source the event source
+     * @param elementName the name of the context node
+     * @param name the duplicate color profile name
+     * @param loc the location of the error or null
+     * @event.severity WARN
+     */
+    void colorProfileNameNotUnique(Object source, String elementName, String name,
+            Locator loc);
+
+    /**
+     * There are multiple page masters defined with the same name.
+     * @param source the event source
+     * @param elementName the name of the context node
+     * @param name the duplicate page master name
+     * @param loc the location of the error or null
+     * @throws ValidationException the validation error provoked by the method call
+     * @event.severity FATAL
+     */
+    void masterNameNotUnique(Object source, String elementName, String name,
+            Locator loc) throws ValidationException;
+
+    /**
      * A marker is not an initial child on a node.
      * @param source the event source
      * @param elementName the name of the context node
@@ -186,7 +209,7 @@ public interface FOValidationEventProducer extends EventProducer {
             Locator loc);
 
     /**
-     * Missing internal-/external-destination on basic-link.
+     * Missing internal-/external-destination on basic-link or bookmark.
      * @param source the event source
      * @param elementName the name of the context node
      * @param loc the location of the error or null
@@ -205,5 +228,91 @@ public interface FOValidationEventProducer extends EventProducer {
      * @event.severity ERROR
      */
     void markerCloningFailed(Object source, String markerClassName, FOPException fe, Locator loc);
+
+    /**
+     * A region name is mapped to multiple region classes.
+     * @param source the event source
+     * @param regionName the region name
+     * @param defaultRegionClass1 the first default region class
+     * @param defaultRegionClass2 the second default region class
+     * @param loc the location of the error or null
+     * @throws ValidationException the validation error provoked by the method call
+     * @event.severity FATAL
+     */
+    void regionNameMappedToMultipleRegionClasses(Object source, String regionName,
+            String defaultRegionClass1, String defaultRegionClass2, Locator loc)
+                throws ValidationException;
+
+    /**
+     * There are multiple flows with the same name.
+     * @param source the event source
+     * @param elementName the name of the context node
+     * @param flowName the flow name
+     * @param loc the location of the error or null
+     * @throws ValidationException the validation error provoked by the method call
+     * @event.severity FATAL
+     */
+    void duplicateFlowNameInPageSequence(Object source, String elementName, String flowName,
+            Locator loc) throws ValidationException;
+
+    /**
+     * A flow name could not be mapped to a region.
+     * @param source the event source
+     * @param elementName the name of the context node
+     * @param flowName the flow name
+     * @param loc the location of the error or null
+     * @throws ValidationException the validation error provoked by the method call
+     * @event.severity FATAL
+     */
+    void flowNameNotMapped(Object source, String elementName, String flowName,
+            Locator loc) throws ValidationException;
+
+    /**
+     * A page master could not be found.
+     * @param source the event source
+     * @param elementName the name of the context node
+     * @param masterReference the page master reference
+     * @param loc the location of the error or null
+     * @throws ValidationException the validation error provoked by the method call
+     * @event.severity FATAL
+     */
+    void masterNotFound(Object source, String elementName, String masterReference,
+            Locator loc) throws ValidationException;
+
+    /**
+     * An illegal region name was used.
+     * @param source the event source
+     * @param elementName the name of the context node
+     * @param regionName the region name
+     * @param loc the location of the error or null
+     * @throws ValidationException the validation error provoked by the method call
+     * @event.severity FATAL
+     */
+    void illegalRegionName(Object source, String elementName, String regionName,
+            Locator loc) throws ValidationException;
+
+    /**
+     * A non-zero border and/or padding has been encountered on a region.
+     * @param source the event source
+     * @param elementName the name of the context node
+     * @param regionName the region name
+     * @param canRecover indicates whether FOP can recover from this problem and continue working
+     * @param loc the location of the error or null
+     * @throws ValidationException the validation error provoked by the method call
+     * @event.severity FATAL
+     */
+    void nonZeroBorderPaddingOnRegion(Object source, String elementName, String regionName,
+            boolean canRecover, Locator loc) throws ValidationException;
+
+    /**
+     * If overflow property is set to "scroll", a column-count other than "1" may not be specified.
+     * @param source the event source
+     * @param elementName the name of the context node
+     * @param loc the location of the error or null
+     * @throws ValidationException the validation error provoked by the method call
+     * @event.severity FATAL
+     */
+    void columnCountErrorOnRegionBodyOverflowScroll(Object source, String elementName,
+            Locator loc) throws ValidationException;
 
 }

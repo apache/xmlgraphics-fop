@@ -45,15 +45,15 @@ public class ConditionalPageMasterReference extends FObj {
     // End of property values
     
     /**
+     * Creates a new conditional-page-master-reference element.
+     * @param parent the parent node
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
     public ConditionalPageMasterReference(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         masterReference = pList.get(PR_MASTER_REFERENCE).getString();
         pagePosition = pList.get(PR_PAGE_POSITION).getEnum();
@@ -65,9 +65,7 @@ public class ConditionalPageMasterReference extends FObj {
         }        
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         getConcreteParent().addConditionalPageMasterReference(this);
     }

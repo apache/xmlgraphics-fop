@@ -46,6 +46,8 @@ public class SinglePageMasterReference extends FObj
     private int state;
 
     /**
+     * Creates a new single-page-master-reference element.
+     * @param parent the parent node
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
     public SinglePageMasterReference(FONode parent) {
@@ -53,9 +55,7 @@ public class SinglePageMasterReference extends FObj
         this.state = FIRST;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         masterReference = pList.get(PR_MASTER_REFERENCE).getString();
 
@@ -64,9 +64,7 @@ public class SinglePageMasterReference extends FObj
         }        
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         PageSequenceMaster pageSequenceMaster = (PageSequenceMaster) parent;
         pageSequenceMaster.addSubsequenceSpecifier(this);

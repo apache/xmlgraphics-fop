@@ -63,15 +63,15 @@ public class SimplePageMaster extends FObj {
     private boolean hasRegionEnd = false;
 
     /**
+     * Creates a new simple-page-master element.
+     * @param parent the parent node
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
     public SimplePageMaster(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         commonMarginBlock = pList.getMarginBlockProps();
         masterName = pList.get(PR_MASTER_NAME).getString();
@@ -85,9 +85,7 @@ public class SimplePageMaster extends FObj {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         LayoutMasterSet layoutMasterSet = (LayoutMasterSet) parent;
 
@@ -101,9 +99,7 @@ public class SimplePageMaster extends FObj {
         regions = new HashMap(5);
     }
 
-    /**
-     * Make sure content model satisfied.
-     */
+    /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         if (!hasRegionBody) {
             missingChildElementError(
@@ -174,16 +170,12 @@ public class SimplePageMaster extends FObj {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean generatesReferenceAreas() {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void addChildNode(FONode child) throws FOPException {
         if (child instanceof Region) {
             addRegion((Region)child);
@@ -270,9 +262,7 @@ public class SimplePageMaster extends FObj {
         return "simple-page-master";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int getNameId() {
         return FO_SIMPLE_PAGE_MASTER;
     }

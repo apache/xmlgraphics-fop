@@ -21,6 +21,7 @@ package org.apache.fop.fo.pagination.bookmarks;
 
 // Java
 import java.util.ArrayList;
+import java.util.List;
 
 import org.xml.sax.Locator;
 
@@ -39,15 +40,15 @@ public class BookmarkTree extends FObj {
     private ArrayList bookmarks = new ArrayList();
 
     /**
+     * Creates a new bookmark-tree element.
+     * @param parent the parent node
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
     public BookmarkTree(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void addChildNode(FONode obj) {
         if (obj instanceof Bookmark) {
             bookmarks.add(obj);
@@ -77,7 +78,11 @@ public class BookmarkTree extends FObj {
         }
     }
 
-    public ArrayList getBookmarks() {
+    /**
+     * Returns the root bookmarks.
+     * @return the root bookmarks
+     */
+    public List getBookmarks() {
         return bookmarks;
     }
 
@@ -86,9 +91,7 @@ public class BookmarkTree extends FObj {
         return "bookmark-tree";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int getNameId() {
         return FO_BOOKMARK_TREE;
     }

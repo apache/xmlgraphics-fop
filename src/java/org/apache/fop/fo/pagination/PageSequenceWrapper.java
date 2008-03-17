@@ -39,15 +39,14 @@ public class PageSequenceWrapper extends FObj {
     // End of property values
     
     /**
+     * Creates a new page-sequence-wrapper element.
      * @param parent FONode that is the parent of this object
      */
     public PageSequenceWrapper(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
         indexClass = pList.get(PR_INDEX_CLASS).getString();
@@ -83,9 +82,7 @@ public class PageSequenceWrapper extends FObj {
         return "page-sequence-wrapper";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int getNameId() {
         return FO_PAGE_SEQUENCE_WRAPPER;
     }

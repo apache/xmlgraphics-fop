@@ -53,6 +53,8 @@ public class PageSequenceMaster extends FObj {
     // but the actual FO's are MasterReferences.
 
     /**
+     * Creates a new page-sequence-master element.
+     * @param parent the parent node
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
     public PageSequenceMaster(FONode parent) {
@@ -106,7 +108,7 @@ public class PageSequenceMaster extends FObj {
     }
 
     /**
-     * Adds a new suqsequence specifier to the page sequence master.
+     * Adds a new subsequence specifier to the page sequence master.
      * @param pageMasterReference the subsequence to add
      */
     protected void addSubsequenceSpecifier(SubSequenceSpecifier pageMasterReference) {
@@ -238,9 +240,7 @@ public class PageSequenceMaster extends FObj {
         return "page-sequence-master";
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int getNameId() {
         return FO_PAGE_SEQUENCE_MASTER;
     }

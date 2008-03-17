@@ -36,6 +36,11 @@ public class FOValidationEventListenerProxy implements EventListener {
     private EventListener delegate;
     private FOUserAgent userAgent;
     
+    /**
+     * Main constructor.
+     * @param delegate the event listener to delegate events to 
+     * @param userAgent the FO user agent
+     */
     public FOValidationEventListenerProxy(EventListener delegate, FOUserAgent userAgent) {
         this.delegate = delegate;
         this.userAgent = userAgent;

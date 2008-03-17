@@ -20,6 +20,7 @@
 package org.apache.fop.fo.pagination.bookmarks;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.xml.sax.Locator;
 
@@ -70,10 +71,10 @@ public class Bookmark extends FObj {
             externalDestination = null;
         } else if (externalDestination.length() == 0) {
             // slightly stronger than spec "should be specified"
-            attributeError("Missing attribute:  Either external-destination or " +
-                "internal-destination must be specified.");
+            getFOValidationEventProducer().missingLinkDestination(this, getName(), locator);
         } else {
-            attributeWarning("external-destination property not currently supported");
+            getFOValidationEventProducer().unimplementedFeature(this, getName(),
+                    "external-destination", getLocator());
         }
     }
 
@@ -127,10 +128,18 @@ public class Bookmark extends FObj {
         return bookmarkTitle == null ? "" : bookmarkTitle.getTitle();
     }
 
+    /**
+     * Returns the value of the internal-destination property.
+     * @return the internal-destination
+     */
     public String getInternalDestination() {
         return internalDestination;
     }
 
+    /**
+     * Returns the value of the external-destination property.
+     * @return the external-destination
+     */
     public String getExternalDestination() {
         return externalDestination;
     }
@@ -145,7 +154,11 @@ public class Bookmark extends FObj {
         return bShow;
     }
 
-    public ArrayList getChildBookmarks() {
+    /**
+     * Returns a list of child bookmarks.
+     * @return the list of child bookmarks
+     */
+    public List getChildBookmarks() {
         return childBookmarks;
     }
 
@@ -154,9 +167,7 @@ public class Bookmark extends FObj {
         return "bookmark";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int getNameId() {
         return FO_BOOKMARK;
     }

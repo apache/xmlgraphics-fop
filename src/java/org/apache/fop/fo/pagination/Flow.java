@@ -45,16 +45,12 @@ public class Flow extends FObj {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         flowName = pList.get(PR_FLOW_NAME).getString();
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         if (flowName == null || flowName.equals("")) {
             missingPropertyError("flow-name");
@@ -80,10 +76,7 @@ public class Flow extends FObj {
         getFOEventHandler().startFlow(this);
     }
 
-    /**
-     * Make sure content model satisfied, if so then tell the
-     * FOEventHandler that we are at the end of the flow.
-     */
+    /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         if (!blockItemFound) {
             missingChildElementError("marker* (%block;)+");
@@ -110,9 +103,7 @@ public class Flow extends FObj {
         }
     }
 
-    /**
-     * @return true (Flow can generate reference areas)
-     */
+    /** {@inheritDoc} */
     public boolean generatesReferenceAreas() {
         return true;
     }
@@ -127,9 +118,7 @@ public class Flow extends FObj {
         return "flow";
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int getNameId() {
         return FO_FLOW;
     }

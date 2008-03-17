@@ -45,15 +45,16 @@ public class BookmarkTitle extends FObj {
 
     /**
      * Add the characters to this BookmarkTitle.
-     * The text data inside the BookmarkTitle xml element 
+     * The text data inside the BookmarkTitle XML element 
      * is used for the BookmarkTitle string.
      *
      * @param data the character data
      * @param start the start position in the data array
      * @param end the end position in the character array
-     * @param locator location in fo source file.
+     * @param pList the currently valid property list
+     * @param locator location in FO source file.
      */
-    protected void addCharacters(char data[], int start, int end,
+    protected void addCharacters(char[] data, int start, int end,
                                  PropertyList pList,
                                  Locator locator) {
         title += new String(data, start, end - start);
@@ -84,9 +85,7 @@ public class BookmarkTitle extends FObj {
         return "bookmark-title";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int getNameId() {
         return FO_BOOKMARK_TITLE;
     }
