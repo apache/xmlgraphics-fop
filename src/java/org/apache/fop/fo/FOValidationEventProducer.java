@@ -315,4 +315,23 @@ public interface FOValidationEventProducer extends EventProducer {
     void columnCountErrorOnRegionBodyOverflowScroll(Object source, String elementName,
             Locator loc) throws ValidationException;
 
+    /**
+     * fo:root must be root.
+     * @param source the event source
+     * @param elementName the name of the context node
+     * @param loc the location of the error or null
+     * @throws ValidationException the validation error provoked by the method call
+     * @event.severity FATAL
+     */
+    void invalidFORoot(Object source, String elementName,
+            Locator loc) throws ValidationException;
+    
+    /**
+     * No FO document was found.
+     * @param source the event source
+     * @throws ValidationException the validation error provoked by the method call
+     * @event.severity FATAL
+     */
+    void emptyDocument(Object source) throws ValidationException;
+    
 }

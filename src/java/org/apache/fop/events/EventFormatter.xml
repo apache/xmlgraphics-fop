@@ -46,6 +46,8 @@ Any reference to it will be considered a reference to the first occurrence in th
   <message key="org.apache.fop.fo.FOValidationEventProducer.illegalRegionName">The region-name "{regionName}" for {elementName} is not permitted.{{locator}}</message>
   <message key="org.apache.fop.fo.FOValidationEventProducer.nonZeroBorderPaddingOnRegion">Border and padding for {elementName} "{regionName}" must be '0' (See 6.4.13 in XSL 1.0).{{locator}}</message>
   <message key="org.apache.fop.fo.FOValidationEventProducer.columnCountErrorOnRegionBodyOverflowScroll">If overflow property is set to "scroll" on {elementName}, a column-count other than "1" may not be specified.{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.invalidFORoot">First element must be the fo:root formatting object. Found {elementName} instead. Please make sure you're producing a valid XSL-FO document.</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.emptyDocument">Document is empty (something might be wrong with your XSLT stylesheet).</message>
   <message key="org.apache.fop.fo.flow.table.TableEventProducer.nonAutoBPDOnTable">Only a value of "auto" for block-progression-dimension has a well-specified behavior on fo:table. Falling back to "auto".{{locator}}</message>
   <message key="org.apache.fop.fo.flow.table.TableEventProducer.noTablePaddingWithCollapsingBorderModel">In collapsing border model a table does not have padding (see http://www.w3.org/TR/REC-CSS2/tables.html#collapsing-borders), but a non-zero value for padding was found. The padding will be ignored.{{locator}}</message>
   <message key="org.apache.fop.fo.flow.table.TableEventProducer.noMixRowsAndCells">Either fo:table-rows or fo:table-cells may be children of an {elementName} but not both.{{locator}}</message>
@@ -56,9 +58,9 @@ Any reference to it will be considered a reference to the first occurrence in th
   <message key="org.apache.fop.fo.flow.table.TableEventProducer.warnImplicitColumns">table-layout=\"fixed\" and column-width unspecified =&gt; falling back to proportional-column-width(1){{locator}}</message>
   <message key="org.apache.fop.fo.flow.table.TableEventProducer.paddingNotApplicable">padding-* properties are not applicable to {elementName}, but a non-zero value for padding was found.{{locator}}</message>
   <message key="org.apache.fop.fo.flow.table.TableEventProducer.cellOverlap">{elementName} overlaps in column {column}.<!-- no locator here, exception will be wrapped --></message>
+  <message key="org.apache.fop.fo.flow.table.TableEventProducer.breakIgnoredDueToRowSpanning">{breakBefore,if,break-before,break-after} ignored on {elementName} because of row spanning in progress (See XSL 1.1, {breakBefore,if,7.20.2,7.20.1}){{locator}}</message>
   <message key="org.apache.fop.events.ResourceEventProducer.imageNotFound">Image not found. URI: {uri}{{locator}}</message>
   <message key="org.apache.fop.events.ResourceEventProducer.imageError">Image not available. URI: {uri}. Reason: {e}{{locator}}</message>
   <message key="org.apache.fop.events.ResourceEventProducer.imageIOError">I/O error while loading image.  URI: {uri}. Reason: {ioe}{{locator}}</message>
   <message key="org.apache.fop.events.ResourceEventProducer.ifoNoIntrinsiceSize">The intrinsic dimensions of an instream-foreign-object could not be determined.{{locator}}</message>
-  <message key="org.apache.fop.fo.flow.table.TableEventProducer.breakIgnoredDueToRowSpanning">{breakBefore,if,break-before,break-after} ignored on {elementName} because of row spanning in progress (See XSL 1.1, {breakBefore,if,7.20.2,7.20.1}){{locator}}</message>
 </catalogue>
