@@ -337,14 +337,22 @@ class ActiveCell {
     }
 
     /**
-     * Returns the last step for this cell.
+     * Returns the last step for this cell. This includes the normal border- and
+     * padding-before, the whole content, the normal padding-after, and the
+     * <em>trailing</em> after border. Indeed, if the normal border is taken instead,
+     * and appears to be smaller than the trailing one, the last step may be smaller than
+     * the current step (see TableStepper#considerRowLastStep). This will produce a wrong
+     * infinite penalty, plus the cell's content won't be taken into account since the
+     * final step will be smaller than the current one (see {@link #signalNextStep(int)}).
+     * This actually means that the content will be swallowed.
      * 
-     * @return the step including all of the cell's content plus the normal borders and paddings
+     * @return the length of last step
      */
     int getLastStep() {
         assert nextStep.end == elementList.size() - 1;
         assert nextStep.contentLength == totalLength && nextStep.penaltyLength == 0;
-        int lastStep = bpBeforeNormal + totalLength + bpAfterNormal;
+        int lastStep = bpBeforeNormal + totalLength + paddingAfterNormal
+                + pgu.getAfterBorderWidth(ConditionalBorder.LEADING_TRAILING);
         log.debug(this + ": last step = " + lastStep);
         return lastStep;
     }
@@ -466,8 +474,12 @@ class ActiveCell {
      */
     void endRow(int rowIndex) {
         if (endsOnRow(rowIndex)) {
+            // Subtract the old value of bpAfterTrailing...
+            nextStep.totalLength -= bpAfterTrailing;
             bpAfterTrailing = paddingAfterNormal
                     + pgu.getAfterBorderWidth(ConditionalBorder.LEADING_TRAILING);
+            // ... and add the new one
+            nextStep.totalLength += bpAfterTrailing;
             lastCellPart = true;
         } else {
             bpBeforeLeading = paddingBeforeLeading
