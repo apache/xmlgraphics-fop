@@ -23,6 +23,7 @@ import org.xml.sax.Locator;
 
 import org.apache.xmlgraphics.util.QName;
 
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.events.EventBroadcaster;
 import org.apache.fop.events.EventProducer;
 import org.apache.fop.fo.expr.PropertyException;
@@ -194,5 +195,15 @@ public interface FOValidationEventProducer extends EventProducer {
      */
     void missingLinkDestination(Object source, String elementName, Locator loc)
                 throws ValidationException;
+
+    /**
+     * Indicates a problem while cloning a marker (ex. due to invalid property values).
+     * @param source the event source
+     * @param markerClassName the "marker-class-name" of the marker
+     * @param fe the FOP exception that cause this problem
+     * @param loc the location of the error or null
+     * @event.severity ERROR
+     */
+    void markerCloningFailed(Object source, String markerClassName, FOPException fe, Locator loc);
 
 }

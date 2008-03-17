@@ -49,16 +49,14 @@ public class RetrieveMarker extends FObjMixed {
 
     /**
      * Create a retrieve marker object.
-     *
+     * @param parent FONode that is the parent of this object
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
     public RetrieveMarker(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         if (findAncestor(FO_STATIC_CONTENT) < 0) {
             invalidChildError(locator, getParent().getName(), FO_URI, getName(), 
@@ -208,13 +206,12 @@ public class RetrieveMarker extends FObjMixed {
             try {
                 cloneFromMarker(marker);
             } catch (FOPException exc) {
-                log.error("fo:retrieve-marker unable to clone "
-                        + "subtree of fo:marker (marker-class-name="
-                        + marker.getMarkerClassName() + ")", exc);
+                getFOValidationEventProducer().markerCloningFailed(this,
+                        marker.getMarkerClassName(), exc, getLocator());
                 return;
             }
-        } else if (log.isInfoEnabled()) {
-            log.info("Empty marker retrieved...");
+        } else if (log.isDebugEnabled()) {
+            log.debug("Empty marker retrieved...");
         }
         return;
     }
@@ -224,9 +221,7 @@ public class RetrieveMarker extends FObjMixed {
         return "retrieve-marker";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int getNameId() {
         return FO_RETRIEVE_MARKER;
     }    

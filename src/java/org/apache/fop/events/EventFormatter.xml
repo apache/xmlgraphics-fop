@@ -50,4 +50,5 @@ Any reference to it will be considered a reference to the first occurrence in th
   <message key="org.apache.fop.events.ResourceEventProducer.imageError">Image not available. URI: {uri}. Reason: {e}{{locator}}</message>
   <message key="org.apache.fop.events.ResourceEventProducer.imageIOError">I/O error while loading image.  URI: {uri}. Reason: {ioe}{{locator}}</message>
   <message key="org.apache.fop.events.ResourceEventProducer.ifoNoIntrinsiceSize">The intrinsic dimensions of an instream-foreign-object could not be determined.{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.markerCloningFailed">Unable to clone subtree of fo:marker (marker-class-name="{markerClassName}") for fo:retrieve-marker.{{locator}}</message>
 </catalogue>
