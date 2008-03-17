@@ -146,5 +146,16 @@ public interface TableEventProducer extends EventProducer {
     void cellOverlap(Object source, String elementName, int column,
             Locator loc) throws PropertyException;
 
+    /**
+     * Break ignored due to row spanning.
+     * @param source the event source
+     * @param elementName the name of the context node
+     * @param breakBefore true for "break-before", false for "break-after"
+     * @param loc the location of the error or null
+     * @event.severity WARN
+     */
+    void breakIgnoredDueToRowSpanning(Object source, String elementName, boolean breakBefore,
+            Locator loc);
+
     
 }

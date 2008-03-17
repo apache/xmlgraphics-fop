@@ -60,4 +60,5 @@ Any reference to it will be considered a reference to the first occurrence in th
   <message key="org.apache.fop.events.ResourceEventProducer.imageError">Image not available. URI: {uri}. Reason: {e}{{locator}}</message>
   <message key="org.apache.fop.events.ResourceEventProducer.imageIOError">I/O error while loading image.  URI: {uri}. Reason: {ioe}{{locator}}</message>
   <message key="org.apache.fop.events.ResourceEventProducer.ifoNoIntrinsiceSize">The intrinsic dimensions of an instream-foreign-object could not be determined.{{locator}}</message>
+  <message key="org.apache.fop.fo.flow.table.TableEventProducer.breakIgnoredDueToRowSpanning">{breakBefore,if,break-before,break-after} ignored on {elementName} because of row spanning in progress (See XSL 1.1, {breakBefore,if,7.20.2,7.20.1}){{locator}}</message>
 </catalogue>

@@ -361,30 +361,6 @@ public abstract class FONode implements Cloneable {
     }
     
     /**
-     * Helper function to standardize property error exceptions
-     * (e.g., not specifying either an internal- or an external-destination
-     * property for an FO:link)
-     * @param problem text to display that indicates the problem
-     * @throws ValidationException the validation error provoked by the method call
-     * @deprecated Not localizable!
-     */
-    protected void attributeError(String problem) 
-                throws ValidationException {
-        throw new ValidationException(errorText(locator) + getName() 
-                + ", " + problem, locator);
-    }
-
-    /**
-     * Helper function to standardize attribute warnings
-     * (e.g., currently unsupported properties)
-     * @param problem text to display that indicates the problem
-     * @deprecated Not localizable!
-     */
-    public void attributeWarning(String problem) {
-        log.warn(warningText(locator) + getName() + ", " + problem);
-    }
-
-    /**
      * Helper function to standardize "too many" error exceptions
      * (e.g., two fo:declarations within fo:root)
      * @param loc org.xml.sax.Locator object of the error (*not* parent node)

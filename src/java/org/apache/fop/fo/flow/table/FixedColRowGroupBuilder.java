@@ -120,13 +120,17 @@ class FixedColRowGroupBuilder extends RowGroupBuilder {
     void endTableRow() {
         assert currentTableRow != null;
         if (currentRowIndex > 0 && currentTableRow.getBreakBefore() != Constants.EN_AUTO) {
-            currentTableRow.attributeWarning("break-before ignored because of row spanning "
-                    + "in progress (See XSL 1.1, 7.20.2)");
+            TableEventProducer eventProducer = TableEventProducer.Factory.create(
+                    currentTableRow.getUserAgent().getEventBroadcaster());
+            eventProducer.breakIgnoredDueToRowSpanning(this, currentTableRow.getName(), true,
+                    currentTableRow.getLocator());
         }
         if (currentRowIndex < rows.size() - 1
                 && currentTableRow.getBreakAfter() != Constants.EN_AUTO) {
-            currentTableRow.attributeWarning("break-after ignored because of row spanning "
-                    + "in progress (See XSL 1.1, 7.20.1)");
+            TableEventProducer eventProducer = TableEventProducer.Factory.create(
+                    currentTableRow.getUserAgent().getEventBroadcaster());
+            eventProducer.breakIgnoredDueToRowSpanning(this, currentTableRow.getName(), false,
+                    currentTableRow.getLocator());
         }
         for (Iterator iter = ((List) rows.get(currentRowIndex)).iterator(); iter.hasNext();) {
             GridUnit gu = (GridUnit) iter.next();
