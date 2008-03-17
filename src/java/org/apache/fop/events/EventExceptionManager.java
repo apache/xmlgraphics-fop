@@ -41,22 +41,24 @@ public class EventExceptionManager {
     }
     
     /**
-     * Converts an event into an exception and throws that.
+     * Converts an event into an exception and throws that. If the exception class is null,
+     * a {@link RuntimeException} will be thrown.
      * @param event the event to be converted
      * @param exceptionClass the exception class to be thrown
      * @throws Throwable this happens always
      */
     public static void throwException(Event event, String exceptionClass) throws Throwable {
-        ExceptionFactory factory = (ExceptionFactory)EXCEPTION_FACTORIES.get(exceptionClass);
-        if (factory != null) {
-            throw factory.createException(event);
+        if (exceptionClass != null) {
+            ExceptionFactory factory = (ExceptionFactory)EXCEPTION_FACTORIES.get(exceptionClass);
+            if (factory != null) {
+                throw factory.createException(event);
+            } else {
+                throw new IllegalArgumentException(
+                        "No such ExceptionFactory available: " + exceptionClass);
+            }
         } else {
-            throw new IllegalArgumentException(
-                    "No such ExceptionFactory available: " + exceptionClass);
-            /*
             String msg = EventFormatter.format(event);
             throw new RuntimeException(msg);
-            */
         }
     }
     
