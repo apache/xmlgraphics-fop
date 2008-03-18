@@ -1203,10 +1203,9 @@ NOTE:
     <copy todir="${dist.bin.result.dir}/build" file="build/fop.jar"/>
     <chmod file="${dist.bin.result.dir}/fop" perm="ugo+rx"/>
 
-    <property name="bin.suffix" value="bin-jdk${java.specification.version}"/>
-    <zip zipfile="${name}-${version}-${bin.suffix}.zip" basedir="${dist.bin.dir}" includes="**"/>
+    <zip zipfile="${name}-${version}-bin.zip" basedir="${dist.bin.dir}" includes="**"/>
     <tar longfile="gnu"
-         destfile="${name}-${version}-${bin.suffix}.tar">
+         destfile="${name}-${version}-bin.tar">
       <tarfileset dir="${dist.bin.dir}" mode="755">
         <include name="${name}-${version}/fop"/>
       </tarfileset>
@@ -1215,8 +1214,8 @@ NOTE:
         <exclude name="${name}-${version}/fop"/>
       </tarfileset>
     </tar>
-    <gzip zipfile="${name}-${version}-${bin.suffix}.tar.gz" src="${name}-${version}-${bin.suffix}.tar"/>
-    <delete file="${name}-${version}-${bin.suffix}.tar"/>
+    <gzip zipfile="${name}-${version}-bin.tar.gz" src="${name}-${version}-bin.tar"/>
+    <delete file="${name}-${version}-bin.tar"/>
   </target>
 
   <target name="dist-src" depends="all">
