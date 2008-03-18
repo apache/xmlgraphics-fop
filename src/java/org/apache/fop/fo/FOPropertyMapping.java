@@ -412,6 +412,7 @@ public final class FOPropertyMapping implements Constants {
         l.setInherited(false);
         l.addEnum("auto", getEnumProperty(EN_AUTO, "AUTO"));
         l.setDefault("auto");
+        l.setPercentBase(LengthBase.CONTAINING_BLOCK_HEIGHT);
         addPropertyMaker("top", l);
 
         // right
@@ -419,6 +420,7 @@ public final class FOPropertyMapping implements Constants {
         l.setInherited(false);
         l.addEnum("auto", getEnumProperty(EN_AUTO, "AUTO"));
         l.setDefault("auto");
+        l.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
         addPropertyMaker("right", l);
 
         // bottom
@@ -426,6 +428,7 @@ public final class FOPropertyMapping implements Constants {
         l.setInherited(false);
         l.addEnum("auto", getEnumProperty(EN_AUTO, "AUTO"));
         l.setDefault("auto");
+        l.setPercentBase(LengthBase.CONTAINING_BLOCK_HEIGHT);
         addPropertyMaker("bottom", l);
 
         // left
@@ -433,6 +436,7 @@ public final class FOPropertyMapping implements Constants {
         l.setInherited(false);
         l.addEnum("auto", getEnumProperty(EN_AUTO, "AUTO"));
         l.setDefault("auto");
+        l.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
         addPropertyMaker("left", l);
     }
 
@@ -1161,6 +1165,7 @@ public final class FOPropertyMapping implements Constants {
         m = new LengthProperty.Maker(PR_START_INDENT);
         m.setInherited(true);
         m.setDefault("0pt");
+        m.setPercentBase(LengthBase.CONTAINING_REFAREA_WIDTH);
         IndentPropertyMaker sCorr = new IndentPropertyMaker(m);
         sCorr.setCorresponding(PR_MARGIN_LEFT, PR_MARGIN_RIGHT, PR_MARGIN_TOP);
         sCorr.setUseParent(false);
@@ -1177,6 +1182,7 @@ public final class FOPropertyMapping implements Constants {
         m = new LengthProperty.Maker(PR_END_INDENT);
         m.setInherited(true);
         m.setDefault("0pt");
+        m.setPercentBase(LengthBase.CONTAINING_REFAREA_WIDTH);
         IndentPropertyMaker eCorr = new IndentPropertyMaker(m);
         eCorr.setCorresponding(PR_MARGIN_RIGHT, PR_MARGIN_LEFT, PR_MARGIN_BOTTOM);
         eCorr.setUseParent(false);

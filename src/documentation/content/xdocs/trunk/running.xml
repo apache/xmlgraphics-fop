@@ -305,7 +305,7 @@ Fop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-rtf|-tiff|-png|-pcl
       <ul>
         <li>
           Increase memory available to the JVM. See 
-          <a href="http://java.sun.com/j2se/1.3/docs/tooldocs/solaris/java.html">the -Xmx option</a> 
+          <a href="http://java.sun.com/j2se/1.4/docs/tooldocs/solaris/java.html">the -Xmx option</a> 
           for more information.
           <warning>
             It is usually unwise to increase the memory allocated to the JVM beyond the amount of 
