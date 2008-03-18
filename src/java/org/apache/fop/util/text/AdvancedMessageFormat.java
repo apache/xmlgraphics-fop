@@ -22,6 +22,7 @@ package org.apache.fop.util.text;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.xmlgraphics.util.Service;
 
@@ -43,7 +44,7 @@ import org.apache.xmlgraphics.util.Service;
 public class AdvancedMessageFormat {
 
     /** Regex that matches "," but not "\," (escaped comma) */
-    static final String COMMA_SEPARATOR_REGEX = "(?<!\\\\),";
+    static final Pattern COMMA_SEPARATOR_REGEX = Pattern.compile("(?<!\\\\),");
     
     private static final Map PART_FACTORIES = new java.util.HashMap();
     private static final List OBJECT_FORMATTERS = new java.util.ArrayList();
@@ -98,11 +99,17 @@ public class AdvancedMessageFormat {
                     sb.setLength(0);
                 }
                 i++;
+                int nesting = 1;
                 while (i < len) {
                     ch = pattern.charAt(i);
-                    if (ch == '}') {
-                        i++;
-                        break;
+                    if (ch == '{') {
+                        nesting++;
+                    } else if (ch == '}') {
+                        nesting--;
+                        if (nesting == 0) {
+                            i++;
+                            break;
+                        }
                     }
                     sb.append(ch);
                     i++;
@@ -150,7 +157,7 @@ public class AdvancedMessageFormat {
     }
     
     private Part parseField(String field) {
-        String[] parts = field.split(COMMA_SEPARATOR_REGEX, 3);
+        String[] parts = COMMA_SEPARATOR_REGEX.split(field, 3);
         String fieldName = parts[0];
         if (parts.length == 1) {
             if (fieldName.startsWith("#")) {
@@ -184,10 +191,19 @@ public class AdvancedMessageFormat {
      */
     public String format(Map params) {
         StringBuffer sb = new StringBuffer();
-        rootPart.write(sb, params);
+        format(params, sb);
         return sb.toString();
     }
 
+    /**
+     * Formats a message with the given parameters.
+     * @param params a Map of named parameters (Contents: <String, Object>)
+     * @param target the target StringBuffer to write the formatted message to
+     */
+    public void format(Map params, StringBuffer target) {
+        rootPart.write(target, params);
+    }
+    
     public interface Part {
         void write(StringBuffer sb, Map params);
         boolean isGenerated(Map params);

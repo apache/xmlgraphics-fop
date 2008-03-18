@@ -1,3 +1,4 @@
 org.apache.fop.util.text.IfFieldPart$Factory
 org.apache.fop.util.text.EqualsFieldPart$Factory
+org.apache.fop.util.text.ChoiceFieldPart$Factory
 org.apache.fop.events.EventFormatter$LookupFieldPartFactory

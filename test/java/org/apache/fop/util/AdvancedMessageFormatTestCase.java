@@ -156,4 +156,28 @@ public class AdvancedMessageFormatTestCase extends TestCase {
         msg = format.format(params);
         assertEquals("Error\nSome explanation!", msg);
     }
+    
+    public void testChoiceFormatting() throws Exception {
+        String msg;
+        AdvancedMessageFormat format;
+        
+        format = new AdvancedMessageFormat(
+                "You have {amount,choice,0#nothing|0<{amount} bucks|100<more than enough}.");
+
+        Map params = new java.util.HashMap();
+
+        params.put("amount", new Integer(0));
+        msg = format.format(params);
+        assertEquals("You have nothing.", msg);
+
+        params.put("amount", new Integer(7));
+        msg = format.format(params);
+        assertEquals("You have 7 bucks.", msg);
+
+        params.put("amount", new Integer(140));
+        msg = format.format(params);
+        assertEquals("You have more than enough.", msg);
+
+    }
+    
 }

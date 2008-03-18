@@ -19,70 +19,73 @@
 
 package org.apache.fop.util.text;
 
+import java.text.ChoiceFormat;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.fop.util.text.AdvancedMessageFormat.Part;
 import org.apache.fop.util.text.AdvancedMessageFormat.PartFactory;
 
-public class IfFieldPart implements Part {
+/**
+ * Defines a "choice" field part that works like {@link ChoiceFormat}.
+ */
+public class ChoiceFieldPart implements Part {
     
-    protected String fieldName;
-    protected String ifValue;
-    protected String elseValue;
+    private static final Pattern VARIABLE_REGEX = Pattern.compile("\\{([^\\}]+)\\}");
     
-    public IfFieldPart(String fieldName, String values) {
+    private String fieldName;
+    private ChoiceFormat choiceFormat;
+    
+    /**
+     * Creates a new choice part.
+     * @param fieldName the field name to work on
+     * @param choicesPattern the choices pattern (as used by {@link ChoiceFormat})
+     */
+    public ChoiceFieldPart(String fieldName, String choicesPattern) {
         this.fieldName = fieldName;
-        parseValues(values);
+        this.choiceFormat = new ChoiceFormat(choicesPattern);
     }
 
-    protected void parseValues(String values) {
-        String[] parts = AdvancedMessageFormat.COMMA_SEPARATOR_REGEX.split(values, 2);
-        if (parts.length == 2) {
-            ifValue = AdvancedMessageFormat.unescapeComma(parts[0]);
-            elseValue = AdvancedMessageFormat.unescapeComma(parts[1]);
-        } else {
-            ifValue = AdvancedMessageFormat.unescapeComma(values);
-        }
-    }
-    
-    public void write(StringBuffer sb, Map params) {
-        boolean isTrue = isTrue(params);
-        if (isTrue) {
-            sb.append(ifValue);
-        } else if (elseValue != null) {
-            sb.append(elseValue);
-        }
-    }
-
-    protected boolean isTrue(Map params) {
-        Object obj = params.get(fieldName);
-        if (obj instanceof Boolean) {
-            return ((Boolean)obj).booleanValue();
-        } else {
-            return (obj != null);
-        }
-    }
-
+    /** {@inheritDoc} */
     public boolean isGenerated(Map params) {
-        return isTrue(params) || (elseValue != null);
+        Object obj = params.get(fieldName);
+        return obj != null;
     }
-    
+
+    /** {@inheritDoc} */
+    public void write(StringBuffer sb, Map params) {
+        Object obj = params.get(fieldName);
+        Number num = (Number)obj;
+        String result = this.choiceFormat.format(num.doubleValue());
+        Matcher m = VARIABLE_REGEX.matcher(result);
+        if (m.find()) {
+            //Resolve inner variables
+            AdvancedMessageFormat f = new AdvancedMessageFormat(result);
+            f.format(params, sb);
+        } else {
+            sb.append(result);
+        }
+    }
+
     /** {@inheritDoc} */
     public String toString() {
-        return "{" + this.fieldName + ", if...}";
+        return "{" + this.fieldName + ",choice, ....}";
     }
     
+    /** Factory for ChoiceFieldPart. */
     public static class Factory implements PartFactory {
 
         /** {@inheritDoc} */
         public Part newPart(String fieldName, String values) {
-            return new IfFieldPart(fieldName, values);
+            return new ChoiceFieldPart(fieldName, values);
         }
-        
+
         /** {@inheritDoc} */
         public String getFormat() {
-            return "if";
+            return "choice";
         }
         
     }
+
 }

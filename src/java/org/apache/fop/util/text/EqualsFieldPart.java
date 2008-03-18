@@ -34,7 +34,7 @@ public class EqualsFieldPart extends IfFieldPart {
 
     /** {@inheritDoc} */
     protected void parseValues(String values) {
-        String[] parts = values.split(AdvancedMessageFormat.COMMA_SEPARATOR_REGEX, 3);
+        String[] parts = AdvancedMessageFormat.COMMA_SEPARATOR_REGEX.split(values, 3);
         this.equalsValue = parts[0];
         if (parts.length == 1) {
             throw new IllegalArgumentException(
