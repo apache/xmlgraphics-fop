@@ -36,17 +36,19 @@ import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.w3c.dom.Document;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.xpath.XPathAPI;
+import org.apache.xpath.objects.XObject;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.xml.XMLRenderer;
-import org.apache.xpath.XPathAPI;
-import org.apache.xpath.objects.XObject;
-import org.w3c.dom.Document;
 
 /**
  * Tests URI resolution facilities.
@@ -85,9 +87,6 @@ public class URIResolutionTestCase extends AbstractFOPTestCase {
     private void innerTestFO1(boolean withStream) throws Exception {
         FOUserAgent ua = fopFactory.newFOUserAgent();
 
-        //Reset the image caches to force URI resolution!
-        ua.getFactory().getImageFactory().clearCaches();
-        
         File foFile = new File(getBaseDir(), "test/xml/uri-resolution1.fo");
         
         MyURIResolver resolver = new MyURIResolver(withStream); 
