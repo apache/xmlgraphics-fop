@@ -19,9 +19,19 @@
 
 package org.apache.fop.layoutmgr.inline;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.apps.FOUserAgent;
+
+import org.apache.fop.area.Area;
+import org.apache.fop.area.Block;
+import org.apache.fop.area.LineArea;
+import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.pagination.Title;
 import org.apache.fop.layoutmgr.AbstractBaseLayoutManager;
@@ -34,18 +44,7 @@ import org.apache.fop.layoutmgr.PageSequenceLayoutManager;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.SpaceSpecifier;
-import org.apache.fop.area.Area;
-import org.apache.fop.area.LineArea;
-import org.apache.fop.area.inline.InlineArea;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.ArrayList;
-import java.util.Iterator;
 import org.apache.fop.traits.MinOptMax;
-
-import org.apache.fop.area.Block;
 
 /**
  * Content Layout Manager.
@@ -60,7 +59,6 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
      */
     private static Log log = LogFactory.getLog(ContentLayoutManager.class);
 
-    private FOUserAgent userAgent;
     private Area holder;
     private int stackSize;
     private LayoutManager parentLM;

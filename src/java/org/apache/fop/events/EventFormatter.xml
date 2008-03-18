@@ -63,4 +63,6 @@ Any reference to it will be considered a reference to the first occurrence in th
   <message key="org.apache.fop.events.ResourceEventProducer.imageError">Image not available. URI: {uri}. Reason: {e}{{locator}}</message>
   <message key="org.apache.fop.events.ResourceEventProducer.imageIOError">I/O error while loading image.  URI: {uri}. Reason: {ioe}{{locator}}</message>
   <message key="org.apache.fop.events.ResourceEventProducer.ifoNoIntrinsiceSize">The intrinsic dimensions of an instream-foreign-object could not be determined.{{locator}}</message>
+  <message key="org.apache.fop.layoutmgr.inline.InlineLevelEventProducer.leaderWithoutContent">fo:leader is set to "use-content" but has no content.{{locator}}</message>
+  <message key="org.apache.fop.layoutmgr.inline.InlineLevelEventProducer.lineOverflows">Line {line} of a paragraph overflows the available area by {overflowLength,choice,50000#{overflowLength} millipoints|50000&lt;more than 50 points}.{{locator}}</message>
 </catalogue>

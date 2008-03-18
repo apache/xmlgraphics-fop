@@ -26,6 +26,7 @@ import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.area.Area;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.Trait;
@@ -33,7 +34,6 @@ import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.properties.CommonHyphenation;
 import org.apache.fop.fonts.Font;
@@ -383,11 +383,12 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             if (log.isWarnEnabled()) {
                 int lack = difference + bestActiveNode.availableShrink; 
                 if (lack < 0) {
+                    InlineLevelEventProducer eventProducer
+                        = InlineLevelEventProducer.Factory.create(
+                            getFObj().getUserAgent().getEventBroadcaster());
+                    eventProducer.lineOverflows(this, addedPositions + 1,
+                            -lack, getFObj().getLocator());
                     String textDiff = (lack < -50000 ? "more than 50 points" : (-lack) + "mpt");
-                    log.warn(FONode.decorateWithContextInfo(
-                            "Line " + (addedPositions + 1) 
-                            + " of a paragraph overflows the available area by "
-                            + textDiff + ".", getFObj()));
                 }
             }
             
@@ -1432,7 +1433,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                         auxCount++;
                     }
                 }
-                log.trace(" Word to hyphenate: " + sbChars.toString());
+                if (log.isTraceEnabled()) {
+                    log.trace(" Word to hyphenate: " + sbChars.toString());
+                }
                 // find hyphenation points
                 HyphContext hc = getHyphenContext(sbChars);
                 // ask each LM to hyphenate its word fragment
