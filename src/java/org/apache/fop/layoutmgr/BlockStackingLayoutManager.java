@@ -297,9 +297,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
 
                 if (curLM.isFinished() && !hasNextChildLM()) {
                     // a descendant of this block has break-before
-                    contentList.addAll(returnedList);
-
-                    forcedBreakAfterLast = (BreakElement)contentList.removeLast();
+                    forcedBreakAfterLast = (BreakElement) returnedList.getFirst();
                     context.clearPendingMarks();
                     break;
                 }
