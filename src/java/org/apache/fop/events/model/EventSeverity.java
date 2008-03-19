@@ -27,6 +27,8 @@ public final class EventSeverity implements Serializable {
 
     private static final long serialVersionUID = 4108175215810759243L;
     
+    /** debug level */
+    public static final EventSeverity DEBUG = new EventSeverity("DEBUG");
     /** info level */
     public static final EventSeverity INFO = new EventSeverity("INFO");
     /** warning level */
@@ -57,7 +59,9 @@ public final class EventSeverity implements Serializable {
      * @return the enumeration object
      */
     public static EventSeverity valueOf(String name) {
-        if (INFO.getName().equalsIgnoreCase(name)) {
+        if (DEBUG.getName().equalsIgnoreCase(name)) {
+            return DEBUG;
+        } else if (INFO.getName().equalsIgnoreCase(name)) {
             return INFO;
         } else if (WARN.getName().equalsIgnoreCase(name)) {
             return WARN;
