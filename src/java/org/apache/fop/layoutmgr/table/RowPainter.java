@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -298,18 +299,22 @@ class RowPainter {
              // cell, in most cases)
             return 0;
         } else {
-            int actualStart = startIndex;
+            ListIterator iter = pgu.getElements().listIterator(startIndex);
             // Skip from the content length calculation glues and penalties occurring at the
             // beginning of the page
-            while (actualStart <= endIndex
-                    && !((KnuthElement) pgu.getElements().get(actualStart)).isBox()) {
-                actualStart++;
+            boolean nextIsBox = false;
+            while (iter.nextIndex() <= endIndex && !nextIsBox) {
+                nextIsBox = ((KnuthElement) iter.next()).isBox();
             }
-            int len = ElementListUtils.calcContentLength(
-                    pgu.getElements(), actualStart, endIndex);
-            KnuthElement el = (KnuthElement)pgu.getElements().get(endIndex);
-            if (el.isPenalty()) {
-                len += el.getW();
+            int len = 0;
+            if (((KnuthElement) iter.previous()).isBox()) {
+                while (iter.nextIndex() < endIndex) {
+                    KnuthElement el = (KnuthElement) iter.next();
+                    if (el.isBox() || el.isGlue()) {
+                        len += el.getW();
+                    }
+                }
+                len += ActiveCell.getElementContentLength((KnuthElement) iter.next());
             }
             return len;
         }

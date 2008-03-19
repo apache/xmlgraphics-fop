@@ -99,7 +99,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
             //MinOptMax bpd = context.getStackLimit();
 
             LayoutContext childLC = new LayoutContext(0);
-            childLC.setStackLimit(context.getStackLimit());
+            childLC.setStackLimitBP(context.getStackLimitBP());
             childLC.setRefIPD(context.getRefIPD());
             childLC.setWritingMode(getCurrentPage().getSimplePageMaster().getWritingMode());
             

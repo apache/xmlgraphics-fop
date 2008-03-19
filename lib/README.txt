@@ -142,8 +142,16 @@ Please make sure you've read the license of each package.
     https://jai-imageio.dev.java.net/
     BSD license
     
-    Note: Not the whole JAI is needed, only the ImageIO-compatible codecs
-    packaged as "Image I/O Tools". The name may be misleading.
+    Note: This is not the same as JAI! Only the ImageIO-compatible codecs
+    are packaged as "Image I/O Tools". The name may be misleading.
+
+ - JAI (Java Advanced Imaging API) 
+
+    http://java.sun.com/products/java-media/jai 	 
+    Java Research License and Java Distribution License (Check which one applies to you!)
+    
+    Currently used for:
+    - Grayscale error diffusion dithering in the PCL Renderer
 
 - JEuclid (MathML implementation, for the MathML extension)
 

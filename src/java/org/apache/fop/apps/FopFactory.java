@@ -47,7 +47,6 @@ import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.ElementMappingRegistry;
 import org.apache.fop.fonts.FontCache;
 import org.apache.fop.hyphenation.HyphenationTreeResolver;
-import org.apache.fop.image.ImageFactory;
 import org.apache.fop.layoutmgr.LayoutManagerMaker;
 import org.apache.fop.render.RendererFactory;
 import org.apache.fop.render.XMLHandlerRegistry;
@@ -83,9 +82,6 @@ public class FopFactory implements ImageContext {
 
     private ColorSpaceCache colorSpaceCache = null;
     
-    /** Image factory for creating fop image objects */
-    private ImageFactory imageFactory;
-
     /** Image manager for loading and caching image objects */
     private ImageManager imageManager;
 
@@ -156,7 +152,6 @@ public class FopFactory implements ImageContext {
         this.elementMappingRegistry = new ElementMappingRegistry(this);
         this.foURIResolver = new FOURIResolver(validateUserConfigStrictly());
         this.colorSpaceCache = new ColorSpaceCache(foURIResolver);
-        this.imageFactory = new ImageFactory();
         this.imageManager = new ImageManager(this);
         this.rendererFactory = new RendererFactory();
         this.xmlHandlers = new XMLHandlerRegistry();
@@ -289,11 +284,6 @@ public class FopFactory implements ImageContext {
     /** @return the content handler factory registry */
     public ContentHandlerFactoryRegistry getContentHandlerFactoryRegistry() {
         return this.contentHandlerFactoryRegistry;
-    }
-
-    /** @return the image factory */
-    public ImageFactory getImageFactory() {
-        return this.imageFactory;
     }
 
     /**

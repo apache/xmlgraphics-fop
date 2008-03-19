@@ -40,7 +40,6 @@ import org.apache.fop.events.LoggingEventListener;
 import org.apache.fop.fo.ElementMapping.Maker;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fo.pagination.Root;
-import org.apache.fop.image.ImageFactory;
 import org.apache.fop.util.ContentHandlerFactory;
 import org.apache.fop.util.ContentHandlerFactory.ObjectBuiltListener;
 import org.apache.fop.util.ContentHandlerFactory.ObjectSource;
@@ -168,10 +167,6 @@ public class FOTreeBuilder extends DefaultHandler {
             log.debug("Parsing of document complete");
         }
         foEventHandler.endDocument();
-        
-        //Notify the image factory that this user agent has expired.
-        ImageFactory imageFactory = userAgent.getFactory().getImageFactory();
-        imageFactory.removeContext(this.userAgent);
     }
 
     /** {@inheritDoc} */

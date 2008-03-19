@@ -106,10 +106,12 @@ class TableContentPosition extends Position {
         }
     }
 
+    /** {@inheritDoc} */
     public boolean generatesAreas() {
         return true;
     }
 
+    /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer("TableContentPosition:");
         sb.append(getIndex());

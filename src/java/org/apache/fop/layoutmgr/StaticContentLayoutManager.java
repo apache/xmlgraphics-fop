@@ -95,7 +95,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         //TODO Empty this method?!?
         // set layout dimensions
         setContentAreaIPD(context.getRefIPD());
-        setContentAreaBPD(context.getStackLimit().opt);
+        setContentAreaBPD(context.getStackLimitBP().opt);
 
         //TODO Copied from elsewhere. May be worthwhile to factor out the common parts. 
         // currently active LM
@@ -113,10 +113,10 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
             }
 
             // Set up a LayoutContext
-            MinOptMax bpd = context.getStackLimit();
+            MinOptMax bpd = context.getStackLimitBP();
 
             LayoutContext childLC = new LayoutContext(0);
-            childLC.setStackLimit(MinOptMax.subtract(bpd, stackSize));
+            childLC.setStackLimitBP(MinOptMax.subtract(bpd, stackSize));
             childLC.setRefIPD(context.getRefIPD());
 
             // get elements from curLM
@@ -331,7 +331,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
 
             while ((curLM = getChildLM()) != null) {
                 LayoutContext childLC = new LayoutContext(0);
-                childLC.setStackLimit(context.getStackLimit());
+                childLC.setStackLimitBP(context.getStackLimitBP());
                 childLC.setRefIPD(context.getRefIPD());
                 childLC.setWritingMode(context.getWritingMode());
 

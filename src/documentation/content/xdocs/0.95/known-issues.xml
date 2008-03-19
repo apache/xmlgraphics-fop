@@ -64,10 +64,6 @@
         table-body, table-header, table-footer and table-row.
       </known-issue>
       <known-issue>
-        The backgrounds of table-body, table-header, table-footer and 
-        table-column are not painted, yet.
-      </known-issue>
-      <known-issue>
         Column balancing in multi-column documents may not work as expected
         (<a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=36356">Bugzilla #36356</a>)
       </known-issue>

@@ -19,24 +19,24 @@
  
 package org.apache.fop.layoutmgr.list;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.apache.fop.area.Area;
+import org.apache.fop.area.Block;
 import org.apache.fop.fo.flow.AbstractListItemPart;
 import org.apache.fop.fo.flow.ListItemBody;
 import org.apache.fop.fo.flow.ListItemLabel;
 import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
-import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LayoutContext;
-import org.apache.fop.layoutmgr.PositionIterator;
-import org.apache.fop.layoutmgr.Position;
+import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.NonLeafPosition;
+import org.apache.fop.layoutmgr.Position;
+import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.layoutmgr.SpaceResolver.SpaceHandlingBreakPosition;
-import org.apache.fop.area.Area;
-import org.apache.fop.area.Block;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.LinkedList;
 
 /**
  * LayoutManager for a list-item-label or list-item-body FO.
@@ -162,7 +162,7 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
             lc.setFlags(LayoutContext.LAST_AREA, childLM == lastLM);
             // set the space adjustment ratio
             lc.setSpaceAdjust(layoutContext.getSpaceAdjust());
-            lc.setStackLimit(layoutContext.getStackLimit());
+            lc.setStackLimitBP(layoutContext.getStackLimitBP());
             childLM.addAreas(childPosIter, lc);
         }
 

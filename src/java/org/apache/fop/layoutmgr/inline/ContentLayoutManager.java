@@ -28,6 +28,7 @@ import java.util.ListIterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.LineArea;
@@ -113,7 +114,7 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
         childLC.setLeadingSpace(new SpaceSpecifier(false));
         childLC.setTrailingSpace(new SpaceSpecifier(false));
         // set stackLimit for lines
-        childLC.setStackLimit(new MinOptMax(ipd));
+        childLC.setStackLimitIP(new MinOptMax(ipd));
         childLC.setRefIPD(ipd);
 
         int lineHeight = 14000;

@@ -272,7 +272,7 @@ public abstract class AbstractBreaker {
      */
     public void doLayout(int flowBPD, boolean autoHeight) {
         LayoutContext childLC = createLayoutContext();
-        childLC.setStackLimit(new MinOptMax(flowBPD));
+        childLC.setStackLimitBP(new MinOptMax(flowBPD));
 
         if (getCurrentDisplayAlign() == Constants.EN_X_FILL) {
             //EN_X_FILL is non-standard (by LF)
@@ -495,7 +495,7 @@ public abstract class AbstractBreaker {
                     int averageLineLength = optimizeLineLength(effectiveList, 
                             startElementIndex, endElementIndex);
                     if (averageLineLength != 0) {
-                        childLC.setStackLimit(new MinOptMax(averageLineLength));
+                        childLC.setStackLimitBP(new MinOptMax(averageLineLength));
                     }
                 }
                 /* *** *** non-standard extension *** *** */
