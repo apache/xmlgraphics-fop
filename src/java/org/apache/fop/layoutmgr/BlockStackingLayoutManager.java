@@ -201,6 +201,10 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         if (ipd < 0) {
             //5.3.4, XSL 1.0, Overconstrained Geometry
             log.debug("Adjusting end-indent based on overconstrained geometry rules for " + fobj);
+            BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Factory.create(
+                    getFObj().getUserAgent().getEventBroadcaster());
+            eventProducer.overconstrainedAdjustEndIndent(this,
+                    getFObj().getName(), ipd, getFObj().getLocator());
             endIndent += ipd;
             ipd = 0;
             //TODO Should we skip layout for a block that has ipd=0?
@@ -212,7 +216,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     /**
      * Sets the content area IPD by directly supplying the value. 
      * end-indent is adjusted based on overconstrained geometry rules, if necessary.
-     * 
+     * @param contentIPD the IPD of the content
      * @return the resulting content area IPD
      */
     protected int updateContentAreaIPDwithOverconstrainedAdjust(int contentIPD) {
@@ -220,6 +224,10 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         if (ipd < 0) {
             //5.3.4, XSL 1.0, Overconstrained Geometry
             log.debug("Adjusting end-indent based on overconstrained geometry rules for " + fobj);
+            BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Factory.create(
+                    getFObj().getUserAgent().getEventBroadcaster());
+            eventProducer.overconstrainedAdjustEndIndent(this,
+                    getFObj().getName(), ipd, getFObj().getLocator());
             endIndent += ipd;
         }
         setContentAreaIPD(contentIPD);

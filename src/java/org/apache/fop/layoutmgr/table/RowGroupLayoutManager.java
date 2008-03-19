@@ -24,14 +24,15 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.table.EffRow;
 import org.apache.fop.fo.flow.table.GridUnit;
 import org.apache.fop.fo.flow.table.PrimaryGridUnit;
 import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.LengthRangeProperty;
+import org.apache.fop.layoutmgr.BlockLevelEventProducer;
 import org.apache.fop.layoutmgr.ElementListObserver;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.MinOptMaxUtil;
@@ -207,14 +208,10 @@ class RowGroupLayoutManager {
             row.setHeight(rowHeights[rgi]);
             row.setExplicitHeight(explicitRowHeights[rgi]);
             if (maxCellBPD > row.getExplicitHeight().max) {
-                log.warn(FONode.decorateWithContextInfo(
-                        "The contents of row " + (row.getIndex() + 1) 
-                        + " are taller than they should be (there is a"
-                        + " block-progression-dimension or height constraint on the indicated row)."
-                        + " Due to its contents the row grows"
-                        + " to " + maxCellBPD + " millipoints, but the row shouldn't get"
-                        + " any taller than " + row.getExplicitHeight() + " millipoints.", 
-                        row.getTableRow()));
+                BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Factory.create(
+                        tableRow.getUserAgent().getEventBroadcaster());
+                eventProducer.rowTooTall(this, row.getIndex() + 1,
+                        maxCellBPD, row.getExplicitHeight().max, tableRow.getLocator());
             }
         }
         if (log.isDebugEnabled()) {

@@ -100,7 +100,7 @@ public class InstreamForeignObject extends AbstractGraphics {
             if (intrinsicDimensions == null) {
                 ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
                         getUserAgent().getEventBroadcaster());
-                eventProducer.ifoNoIntrinsiceSize(this, getLocator());
+                eventProducer.ifoNoIntrinsicSize(this, getLocator());
             }
             intrinsicAlignmentAdjust = child.getIntrinsicAlignmentAdjust();
         }

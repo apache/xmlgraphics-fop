@@ -78,10 +78,20 @@ public interface ResourceEventProducer extends EventProducer {
     void imageIOError(Object source, String uri, IOException ioe, Locator loc);
 
     /**
+     * Error while handling a URI.
+     * @param source the event source
+     * @param uri the original URI of the image
+     * @param e the original exception
+     * @param loc the location of the error or null
+     * @event.severity ERROR
+     */
+    void uriError(Object source, String uri, Exception e, Locator loc);
+
+    /**
      * Intrinsic size of fo:instream-foreign-object could not be determined.
      * @param source the event source
      * @param loc the location of the error or null
      * @event.severity ERROR
      */
-    void ifoNoIntrinsiceSize(Object source, Locator loc);
+    void ifoNoIntrinsicSize(Object source, Locator loc);
 }

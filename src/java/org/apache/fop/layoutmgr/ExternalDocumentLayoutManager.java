@@ -21,6 +21,7 @@ package org.apache.fop.layoutmgr;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -46,6 +47,7 @@ import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.datatypes.URISpecification;
+import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExternalDocument;
 import org.apache.fop.layoutmgr.inline.ImageLayout;
@@ -140,15 +142,26 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
                         pageIndex++;
                     }
                 } catch (URISyntaxException e) {
-                    log.error("Error parsing or constructing URIs based on URI: " + uri);
+                    getResourceEventProducer().uriError(this, uri, e,
+                            getExternalDocument().getLocator());
                     return;
                 }
             }
+        } catch (FileNotFoundException fnfe) {
+            getResourceEventProducer().imageNotFound(this, uri, fnfe,
+                    getExternalDocument().getLocator());
         } catch (IOException ioe) {
-            log.error("Image not available: " + uri, ioe);
+            getResourceEventProducer().imageIOError(this, uri, ioe,
+                    getExternalDocument().getLocator());
         } catch (ImageException ie) {
-            log.error("Error while inspecting image: " + uri + " (" + ie.getMessage() + ")");
+            getResourceEventProducer().imageError(this, uri, ie,
+                    getExternalDocument().getLocator());
         }
+    }
+
+    private ResourceEventProducer getResourceEventProducer() {
+        return ResourceEventProducer.Factory.create(
+                getExternalDocument().getUserAgent().getEventBroadcaster());
     }
 
     private void makePageForImage(ImageInfo info, ImageLayout layout) {

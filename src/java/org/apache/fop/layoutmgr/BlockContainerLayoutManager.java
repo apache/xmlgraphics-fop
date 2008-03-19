@@ -32,12 +32,9 @@ import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.CTM;
-import org.apache.fop.area.BlockViewport;
-import org.apache.fop.area.CTM;
 import org.apache.fop.area.Trait;
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.datatypes.Length;
-import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.BlockContainer;
 import org.apache.fop.fo.properties.CommonAbsolutePosition;
 import org.apache.fop.layoutmgr.inline.InlineLayoutManager;
@@ -242,11 +239,11 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
 
         int availableIPD = referenceIPD - getIPIndents();
         if (getContentAreaIPD() > availableIPD) {
-            log.warn(FONode.decorateWithContextInfo(
-                    "The extent in inline-progression-direction (width) of a block-container is"
-                    + " bigger than the available space (" 
-                    + getContentAreaIPD() + "mpt > " + context.getRefIPD() + "mpt)", 
-                    getBlockContainerFO()));
+            BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Factory.create(
+                    getBlockContainerFO().getUserAgent().getEventBroadcaster());
+            eventProducer.objectTooWide(this, getBlockContainerFO().getName(),
+                    getContentAreaIPD(), context.getRefIPD(),
+                    getBlockContainerFO().getLocator());
         }
         
         MinOptMax stackLimit = new MinOptMax(relDims.bpd);
@@ -382,10 +379,12 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             */
 
             if (contentOverflows) {
-                log.warn("Contents overflow block-container viewport: clipping");
-                if (getBlockContainerFO().getOverflow() == EN_ERROR_IF_OVERFLOW) {
-                    //TODO Throw layout exception
-                }
+                BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Factory.create(
+                        getBlockContainerFO().getUserAgent().getEventBroadcaster());
+                boolean canRecover = (getBlockContainerFO().getOverflow() != EN_ERROR_IF_OVERFLOW); 
+                eventProducer.viewportOverflow(this, getBlockContainerFO().getName(),
+                        breaker.getOverflowAmount(), needClip(), canRecover,
+                        getBlockContainerFO().getLocator());
             }
         }
         addKnuthElementsForBorderPaddingAfter(returnList, true);
@@ -527,10 +526,12 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
     
             //TODO Maybe check for page overflow when autoHeight=true
             if (!autoHeight & (contentOverflows)) {
-                log.warn("Contents overflow block-container viewport: clipping");
-                if (getBlockContainerFO().getOverflow() == EN_ERROR_IF_OVERFLOW) {
-                    //TODO Throw layout exception
-                }
+                BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Factory.create(
+                        getBlockContainerFO().getUserAgent().getEventBroadcaster());
+                boolean canRecover = (getBlockContainerFO().getOverflow() != EN_ERROR_IF_OVERFLOW); 
+                eventProducer.viewportOverflow(this, getBlockContainerFO().getName(),
+                        breaker.getOverflowAmount(), needClip(), canRecover,
+                        getBlockContainerFO().getLocator());
             }
         }
 
@@ -606,8 +607,15 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             if (isEmpty()) {
                 return false;
             } else {
-                return (deferredAlg.getPageBreaks().size() > 1);
+                return (deferredAlg.getPageBreaks().size() > 1)
+                    || (deferredAlg.totalWidth - deferredAlg.totalShrink) 
+                            > deferredAlg.getLineWidth();
             }
+        }
+        
+        public int getOverflowAmount() {
+            return (deferredAlg.totalWidth - deferredAlg.totalShrink) 
+                - deferredAlg.getLineWidth();
         }
         
         protected LayoutManager getTopLevelLM() {

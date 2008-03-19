@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.fo.Constants;
@@ -74,6 +75,7 @@ public class PageProvider implements Constants {
 
     /**
      * Main constructor.
+     * @param ath the area tree handler
      * @param ps The page-sequence the provider operates on
      */
     public PageProvider(AreaTreeHandler ath, PageSequence ps) {
@@ -258,10 +260,10 @@ public class PageProvider implements Constants {
             if (!pageSeq.getMainFlow().getFlowName().equals(body.getRegionName())) {
                 // this is fine by the XSL Rec (fo:flow's flow-name can be mapped to
                 // any region), but we don't support it yet.
-                throw new FOPException("Flow '" + pageSeq.getMainFlow().getFlowName()
-                    + "' does not map to the region-body in page-master '"
-                    + spm.getMasterName() + "'.  FOP presently "
-                    + "does not support this.");
+                BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Factory.create(
+                        pageSeq.getUserAgent().getEventBroadcaster());
+                eventProducer.flowNotMappingToRegionBody(this,
+                        pageSeq.getMainFlow().getFlowName(), spm.getMasterName(), spm.getLocator());
             }
             Page page = new Page(spm, index, pageNumberString, isBlank);
             //Set unique key obtained from the AreaTreeHandler

@@ -40,8 +40,8 @@ import org.apache.fop.events.DefaultEventBroadcaster;
 import org.apache.fop.events.Event;
 import org.apache.fop.events.EventBroadcaster;
 import org.apache.fop.events.EventListener;
+import org.apache.fop.events.FOPEventListenerProxy;
 import org.apache.fop.fo.FOEventHandler;
-import org.apache.fop.fo.FOValidationEventListenerProxy;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererFactory;
 import org.apache.fop.render.XMLHandlerRegistry;
@@ -551,7 +551,7 @@ public class FOUserAgent {
         private EventListener rootListener;
         
         public FOPEventBroadcaster() {
-            this.rootListener = new FOValidationEventListenerProxy(
+            this.rootListener = new FOPEventListenerProxy(
                     this.listeners, FOUserAgent.this);
         }
         

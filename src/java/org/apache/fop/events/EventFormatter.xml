@@ -62,7 +62,15 @@ Any reference to it will be considered a reference to the first occurrence in th
   <message key="org.apache.fop.events.ResourceEventProducer.imageNotFound">Image not found. URI: {uri}{{locator}}</message>
   <message key="org.apache.fop.events.ResourceEventProducer.imageError">Image not available. URI: {uri}. Reason: {e}{{locator}}</message>
   <message key="org.apache.fop.events.ResourceEventProducer.imageIOError">I/O error while loading image.  URI: {uri}. Reason: {ioe}{{locator}}</message>
-  <message key="org.apache.fop.events.ResourceEventProducer.ifoNoIntrinsiceSize">The intrinsic dimensions of an instream-foreign-object could not be determined.{{locator}}</message>
+  <message key="org.apache.fop.events.ResourceEventProducer.ifoNoIntrinsicSize">The intrinsic dimensions of an instream-foreign-object could not be determined.{{locator}}</message>
+  <message key="org.apache.fop.events.ResourceEventProducer.uriError">Error while handling URI: {uri}. Reason: {e}{{locator}}</message>
   <message key="org.apache.fop.layoutmgr.inline.InlineLevelEventProducer.leaderWithoutContent">fo:leader is set to "use-content" but has no content.{{locator}}</message>
   <message key="org.apache.fop.layoutmgr.inline.InlineLevelEventProducer.lineOverflows">Line {line} of a paragraph overflows the available area by {overflowLength,choice,50000#{overflowLength} millipoints|50000&lt;more than 50 points}.{{locator}}</message>
+  <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.rowTooTall">The contents of table-row {row} are taller than they should be (there is a block-progression-dimension or height constraint on the indicated row). Due to its contents the row grows to {effCellBPD} millipoints, but the row shouldn't get any taller than {maxCellBPD} millipoints.{{locator}}</message>
+  <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.tableFixedAutoWidthNotSupported">table-layout="fixed" and width="auto", but auto-layout not supported =&gt; assuming width="100%".{{locator}}</message>
+  <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.objectTooWide">The extent in inline-progression-direction (width) of a {elementName} is bigger than the available space ({effIPD}mpt &gt; {maxIPD}mpt).{{locator}}</message>
+  <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.overconstrainedAdjustEndIndent">Adjusting end-indent based on overconstrained geometry rules for {elementName}.{{locator}}</message>
+  <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.viewportOverflow">Content overflows the viewport of an {elementName} in block-progression direction by {amount} millipoints.{clip,if, Content will be clipped.}{{locator}}</message>
+  <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.regionOverflow">Content overflows the viewport of the {elementName} on page {page} in block-progression direction by {amount} millipoints.{clip,if, Content will be clipped.}{{locator}}</message>
+  <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.flowNotMappingToRegionBody">Flow "{flowName}" does not map to the region-body in page-master "{masterName}". FOP presently does not support this.{{locator}}</message>
 </catalogue>
