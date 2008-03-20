@@ -82,7 +82,7 @@ public interface BlockLevelEventProducer extends EventProducer {
      * @param elementName the formatting object 
      * @param amount the amount of the adjustment (in mpt)
      * @param loc the location of the error or null
-     * @event.severity DEBUG
+     * @event.severity INFO
      */
     void overconstrainedAdjustEndIndent(Object source, String elementName, int amount, Locator loc);
     

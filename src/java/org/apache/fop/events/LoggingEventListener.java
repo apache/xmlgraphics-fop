@@ -57,9 +57,7 @@ public class LoggingEventListener implements EventListener {
     public void processEvent(Event event) {
         String msg = EventFormatter.format(event);
         EventSeverity severity = event.getSeverity();
-        if (severity == EventSeverity.DEBUG) {
-            log.debug(msg);
-        } else if (severity == EventSeverity.INFO) {
+        if (severity == EventSeverity.INFO) {
             log.info(msg);
         } else if (severity == EventSeverity.WARN) {
             log.warn(msg);
