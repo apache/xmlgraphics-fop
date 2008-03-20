@@ -53,6 +53,7 @@ import org.apache.fop.render.RendererContextConstants;
 import org.apache.fop.svg.PDFAElementBridge;
 import org.apache.fop.svg.PDFBridgeContext;
 import org.apache.fop.svg.PDFGraphics2D;
+import org.apache.fop.svg.SVGEventProducer;
 import org.apache.fop.svg.SVGUserAgent;
 
 /**
@@ -145,8 +146,9 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
             try {
                 super.renderSVGDocument(context, doc);
             } catch (IOException ioe) {
-                log.error("I/O error while rendering SVG graphic: "
-                                       + ioe.getMessage(), ioe);
+                SVGEventProducer eventProducer = SVGEventProducer.Factory.create(
+                        context.getUserAgent().getEventBroadcaster());
+                eventProducer.svgRenderingError(this, ioe, getDocumentURI(doc));
             }
             return;
         }
@@ -154,15 +156,13 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
         int yOffset = pdfInfo.currentYPosition;
 
         FOUserAgent userAgent = context.getUserAgent(); 
-        log.debug("Generating SVG at " 
-                + userAgent.getTargetResolution()
-                + "dpi.");
         final float deviceResolution = userAgent.getTargetResolution();
-        log.debug("Generating SVG at " + deviceResolution + "dpi.");
-        log.debug("Generating SVG at " + deviceResolution + "dpi.");
+        if (log.isDebugEnabled()) {
+            log.debug("Generating SVG at " + deviceResolution + "dpi.");
+        }
         
         final float uaResolution = userAgent.getSourceResolution();
-        SVGUserAgent ua = new SVGUserAgent(25.4f / uaResolution, new AffineTransform());
+        SVGUserAgent ua = new SVGUserAgent(userAgent, new AffineTransform());
 
         //Scale for higher resolution on-the-fly images from Batik
         double s = uaResolution / deviceResolution;
@@ -189,8 +189,9 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
             root = builder.build(ctx, doc);
             builder = null;
         } catch (Exception e) {
-            log.error("svg graphic could not be built: "
-                                   + e.getMessage(), e);
+            SVGEventProducer eventProducer = SVGEventProducer.Factory.create(
+                    context.getUserAgent().getEventBroadcaster());
+            eventProducer.svgNotBuilt(this, e, getDocumentURI(doc));
             return;
         }
         // get the 'width' and 'height' attributes of the SVG document
@@ -262,8 +263,9 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
             root.paint(graphics);
             pdfInfo.currentStream.add(graphics.getString());
         } catch (Exception e) {
-            log.error("svg graphic could not be rendered: "
-                                   + e.getMessage(), e);
+            SVGEventProducer eventProducer = SVGEventProducer.Factory.create(
+                    context.getUserAgent().getEventBroadcaster());
+            eventProducer.svgRenderingError(this, e, getDocumentURI(doc));
         }
         pdfInfo.pdfState.pop();
         renderer.restoreGraphicsState();

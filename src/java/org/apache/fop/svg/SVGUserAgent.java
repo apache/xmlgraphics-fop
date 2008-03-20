@@ -19,49 +19,42 @@
  
 package org.apache.fop.svg;
 
-import javax.xml.parsers.SAXParserFactory;
-import org.apache.batik.bridge.UserAgentAdapter;
-
-// Java
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Dimension2D;
-import java.awt.Dimension;
 
-// Commons-Logging
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.fop.apps.FOUserAgent;
 
 /**
- * The SVG user agent.
- * This is an implementation of the batik svg user agent
- * for handling errors and getting user agent values.
+ * The SVG user agent. This is an implementation of the Batik SVG user agent.
  */
-public class SVGUserAgent extends UserAgentAdapter {
-    private AffineTransform currentTransform = null;
-    private float pixelUnitToMillimeter = 0.0f;
-
-    /**
-     * logging instance
-     */
-    private Log logger = LogFactory.getLog(SVGUserAgent.class);
+public class SVGUserAgent extends SimpleSVGUserAgent {
+    
+    private SVGEventProducer eventProducer;
+    private Exception lastException;
 
     /**
      * Creates a new SVGUserAgent.
-     * @param pixelUnitToMM the pixel to millimeter conversion factor
-     * currently in effect
+     * @param foUserAgent the FO user agent to associate with this SVG user agent
      * @param at the current transform
      */
-    public SVGUserAgent(float pixelUnitToMM, AffineTransform at) {
-        pixelUnitToMillimeter = pixelUnitToMM;
-        currentTransform = at;
+    public SVGUserAgent(FOUserAgent foUserAgent, AffineTransform at) {
+        super(foUserAgent.getSourcePixelUnitToMillimeter(), at);
+        this.eventProducer = SVGEventProducer.Factory.create(foUserAgent.getEventBroadcaster());
     }
 
     /**
-     * Returns the logger associated with this user agent.
-     * @return Logger the logger
+     * Creates a new SVGUserAgent.
+     * @param foUserAgent the FO user agent to associate with this SVG user agent
      */
-    protected final Log getLogger() {
-        return logger;
+    public SVGUserAgent(FOUserAgent foUserAgent) {
+        this(foUserAgent, new AffineTransform());
+    }
+    
+    /**
+     * Returns the last exception sent to the {@link #displayError(Exception)} method.
+     * @return the last exception or null if no exception occurred
+     */
+    public Exception getLastException() {
+        return this.lastException;
     }
 
     /**
@@ -69,7 +62,7 @@ public class SVGUserAgent extends UserAgentAdapter {
      * @param message the message to display
      */
     public void displayError(String message) {
-        logger.error(message);
+        this.eventProducer.error(this, message, null);
     }
 
     /**
@@ -77,7 +70,8 @@ public class SVGUserAgent extends UserAgentAdapter {
      * @param ex the exception to display
      */
     public void displayError(Exception ex) {
-        logger.error("SVG Error" + ex.getMessage(), ex);
+        this.lastException = ex;
+        this.eventProducer.error(this, ex.getLocalizedMessage(), ex);
     }
 
     /**
@@ -86,7 +80,7 @@ public class SVGUserAgent extends UserAgentAdapter {
      * @param message the message to display
      */
     public void displayMessage(String message) {
-        logger.info(message);
+        this.eventProducer.info(this, message);
     }
 
     /**
@@ -94,78 +88,7 @@ public class SVGUserAgent extends UserAgentAdapter {
      * @param message the message to display
      */
     public void showAlert(String message) {
-        logger.warn(message);
-    }
-
-    /**
-     * Returns a customized the pixel to mm factor.
-     * @return the pixel unit to millimeter conversion factor
-     */
-    public float getPixelUnitToMillimeter() {
-        return pixelUnitToMillimeter;
-    }
-
-    /**
-     * Returns the language settings.
-     * @return the languages supported
-     */
-    public String getLanguages() {
-        return "en"; // userLanguages;
-    }
-
-    /**
-     * Returns the media type for this rendering.
-     * @return the media for fo documents is "print"
-     */
-    public String getMedia() {
-        return "print";
-    }
-
-    /**
-     * Returns the user stylesheet uri.
-     * @return null if no user style sheet was specified.
-     */
-    public String getUserStyleSheetURI() {
-        return null; // userStyleSheetURI;
-    }
-
-    /**
-     * Returns the class name of the XML parser.
-     * @return the XML parser class name
-     */
-    public String getXMLParserClassName() {
-        try {
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            return factory.newSAXParser().getXMLReader().getClass().getName();
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    /**
-     * Is the XML parser validating.
-     * @return true if the xml parser is validating
-     */
-    public boolean isXMLParserValidating() {
-        return false;
-    }
-
-    /**
-     * Get the transform of the svg document.
-     * @return the transform
-     */
-    public AffineTransform getTransform() {
-        return currentTransform;
-    }
-
-    /**
-     * Get the default viewport size for an svg document.
-     * This returns a default value of 100x100.
-     * @return the default viewport size
-     */
-    public Dimension2D getViewportSize() {
-        return new Dimension(100, 100);
+        this.eventProducer.alert(this, message);
     }
 
 }
-

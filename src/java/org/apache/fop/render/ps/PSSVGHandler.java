@@ -23,31 +23,25 @@ package org.apache.fop.render.ps;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
 
-// DOM
 import org.w3c.dom.Document;
-import org.w3c.dom.svg.SVGDocument;
-import org.w3c.dom.svg.SVGSVGElement;
 
-// Batik
 import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.bridge.BridgeContext;
-import org.apache.batik.bridge.ViewBox;
-import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.gvt.GraphicsNode;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-// FOP
-import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.render.Renderer;
-import org.apache.fop.render.XMLHandler;
-import org.apache.fop.render.RendererContext;
-import org.apache.fop.svg.SVGUserAgent;
 import org.apache.xmlgraphics.java2d.ps.PSGraphics2D;
 import org.apache.xmlgraphics.ps.PSGenerator;
 
-// Commons-Logging
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.render.AbstractGenericSVGHandler;
+import org.apache.fop.render.Renderer;
+import org.apache.fop.render.RendererContext;
+import org.apache.fop.render.XMLHandler;
+import org.apache.fop.svg.SVGEventProducer;
+import org.apache.fop.svg.SVGUserAgent;
 
 /**
  * PostScript XML handler for SVG. Uses Apache Batik for SVG processing.
@@ -57,7 +51,8 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Id$
  */
-public class PSSVGHandler implements XMLHandler, PSRendererContextConstants {
+public class PSSVGHandler extends AbstractGenericSVGHandler
+            implements XMLHandler, PSRendererContextConstants {
 
     /** logging instance */
     private static Log log = LogFactory.getLog(PSSVGHandler.class);
@@ -66,16 +61,6 @@ public class PSSVGHandler implements XMLHandler, PSRendererContextConstants {
      * Create a new PostScript XML handler for use by the PostScript renderer.
      */
     public PSSVGHandler() {
-    }
-
-    /** {@inheritDoc} */
-    public void handleXML(RendererContext context, 
-                Document doc, String ns) throws Exception {
-        PSInfo psi = getPSInfo(context);
-
-        if (SVGDOMImplementation.SVG_NAMESPACE_URI.equals(ns)) {
-            renderSVGDocument(context, doc, psi);
-        }
     }
 
     /**
@@ -234,10 +219,10 @@ public class PSSVGHandler implements XMLHandler, PSRendererContextConstants {
      * Render the svg document.
      * @param context the renderer context
      * @param doc the svg document
-     * @param psInfo the pdf information of the current context
      */
     protected void renderSVGDocument(RendererContext context,
-            Document doc, PSInfo psInfo) {
+            Document doc) {
+        PSInfo psInfo = getPSInfo(context);
         int xOffset = psInfo.currentXPosition;
         int yOffset = psInfo.currentYPosition;
         PSGenerator gen = psInfo.psGenerator;
@@ -250,9 +235,7 @@ public class PSSVGHandler implements XMLHandler, PSRendererContextConstants {
         }
 
         SVGUserAgent ua
-             = new SVGUserAgent(
-                context.getUserAgent().getSourcePixelUnitToMillimeter(),
-                new AffineTransform());
+             = new SVGUserAgent(context.getUserAgent(), new AffineTransform());
 
         PSGraphics2D graphics = new PSGraphics2D(strokeText, gen);
         graphics.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
@@ -273,8 +256,9 @@ public class PSSVGHandler implements XMLHandler, PSRendererContextConstants {
         try {
             root = builder.build(ctx, doc);
         } catch (Exception e) {
-            log.error("SVG graphic could not be built: "
-                                   + e.getMessage(), e);
+            SVGEventProducer eventProducer = SVGEventProducer.Factory.create(
+                    context.getUserAgent().getEventBroadcaster());
+            eventProducer.svgNotBuilt(this, e, getDocumentURI(doc));
             return;
         }
         // get the 'width' and 'height' attributes of the SVG document
@@ -305,10 +289,10 @@ public class PSSVGHandler implements XMLHandler, PSRendererContextConstants {
             // viewBox puts it.
             gen.concatMatrix(sx, 0, 0, sy, xOffset / 1000f, yOffset / 1000f);
 
+            /*
             SVGSVGElement svg = ((SVGDocument)doc).getRootElement();
             AffineTransform at = ViewBox.getPreserveAspectRatioTransform(svg,
-                    psInfo.getWidth() / 1000f, psInfo.getHeight() / 1000f);
-            /*
+                    psInfo.getWidth() / 1000f, psInfo.getHeight() / 1000f, ctx);
             if (!at.isIdentity()) {
                 double[] vals = new double[6];
                 at.getMatrix(vals);
@@ -322,15 +306,17 @@ public class PSSVGHandler implements XMLHandler, PSRendererContextConstants {
             try {
                 root.paint(graphics);
             } catch (Exception e) {
-                log.error("SVG graphic could not be rendered: "
-                                       + e.getMessage(), e);
+                SVGEventProducer eventProducer = SVGEventProducer.Factory.create(
+                        context.getUserAgent().getEventBroadcaster());
+                eventProducer.svgRenderingError(this, e, getDocumentURI(doc));
             }
 
             gen.restoreGraphicsState();
             gen.commentln("%FOPEndSVG");
         } catch (IOException ioe) {
-            log.error("SVG graphic could not be rendered: "
-                                   + ioe.getMessage(), ioe);
+            SVGEventProducer eventProducer = SVGEventProducer.Factory.create(
+                    context.getUserAgent().getEventBroadcaster());
+            eventProducer.svgRenderingError(this, ioe, getDocumentURI(doc));
         }
     }
 
@@ -339,10 +325,5 @@ public class PSSVGHandler implements XMLHandler, PSRendererContextConstants {
         return (renderer instanceof PSRenderer);
     }
     
-    /** {@inheritDoc} */
-    public String getNamespace() {
-        return SVGDOMImplementation.SVG_NAMESPACE_URI;
-    }
-
 }
 

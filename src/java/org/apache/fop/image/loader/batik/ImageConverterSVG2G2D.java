@@ -27,8 +27,11 @@ import java.util.Map;
 
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.GVTBuilder;
+import org.apache.batik.bridge.UserAgent;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.gvt.GraphicsNode;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageException;
@@ -40,7 +43,7 @@ import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
 import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
 import org.apache.xmlgraphics.util.UnitConv;
 
-import org.apache.fop.svg.SVGUserAgent;
+import org.apache.fop.svg.SimpleSVGUserAgent;
 
 /**
  * This ImageConverter converts SVG images to Java2D.
@@ -51,6 +54,9 @@ import org.apache.fop.svg.SVGUserAgent;
  * which only support bitmap images or rudimentary Java2D support. 
  */
 public class ImageConverterSVG2G2D extends AbstractImageConverter {
+
+    /** logger */
+    private static Log log = LogFactory.getLog(ImageConverterSVG2G2D.class);
 
     /** {@inheritDoc} */
     public Image convert(Image src, Map hints) throws ImageException {
@@ -67,9 +73,7 @@ public class ImageConverterSVG2G2D extends AbstractImageConverter {
         if (ptm != null) {
             pxToMillimeter = (float)UnitConv.mm2in(ptm.doubleValue());
         }
-        SVGUserAgent ua = new SVGUserAgent(
-                pxToMillimeter,
-                new AffineTransform());
+        UserAgent ua = createBatikUserAgent(pxToMillimeter);
         GVTBuilder builder = new GVTBuilder();
         final BridgeContext ctx = new BridgeContext(ua);
 
@@ -105,6 +109,25 @@ public class ImageConverterSVG2G2D extends AbstractImageConverter {
 
         ImageGraphics2D g2dImage = new ImageGraphics2D(src.getInfo(), painter);
         return g2dImage;
+    }
+
+    /**
+     * Creates a user agent for Batik. Override to provide your own user agent.
+     * @param pxToMillimeter the source resolution (in px per millimeter)
+     * @return the newly created user agent
+     */
+    protected SimpleSVGUserAgent createBatikUserAgent(float pxToMillimeter) {
+        return new SimpleSVGUserAgent(
+                pxToMillimeter,
+                new AffineTransform()) {
+
+            /** {@inheritDoc} */
+            public void displayMessage(String message) {
+                //TODO Refine and pipe through to caller
+                log.debug(message);
+            }
+            
+        };
     }
 
     /** {@inheritDoc} */

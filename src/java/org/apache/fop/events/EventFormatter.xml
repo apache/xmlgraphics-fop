@@ -60,7 +60,7 @@ Any reference to it will be considered a reference to the first occurrence in th
   <message key="org.apache.fop.fo.flow.table.TableEventProducer.cellOverlap">{elementName} overlaps in column {column}.<!-- no locator here, exception will be wrapped --></message>
   <message key="org.apache.fop.fo.flow.table.TableEventProducer.breakIgnoredDueToRowSpanning">{breakBefore,if,break-before,break-after} ignored on {elementName} because of row spanning in progress (See XSL 1.1, {breakBefore,if,7.20.2,7.20.1}){{locator}}</message>
   <message key="org.apache.fop.events.ResourceEventProducer.imageNotFound">Image not found. URI: {uri}{{locator}}</message>
-  <message key="org.apache.fop.events.ResourceEventProducer.imageError">Image not available. URI: {uri}. Reason: {e}{{locator}}</message>
+  <message key="org.apache.fop.events.ResourceEventProducer.imageError">Image not available.[ URI: {uri}.] Reason:[ {reason}][ {e}]{{locator}}</message>
   <message key="org.apache.fop.events.ResourceEventProducer.imageIOError">I/O error while loading image.  URI: {uri}. Reason: {ioe}{{locator}}</message>
   <message key="org.apache.fop.events.ResourceEventProducer.ifoNoIntrinsicSize">The intrinsic dimensions of an instream-foreign-object could not be determined.{{locator}}</message>
   <message key="org.apache.fop.events.ResourceEventProducer.uriError">Error while handling URI: {uri}. Reason: {e}{{locator}}</message>
@@ -73,4 +73,12 @@ Any reference to it will be considered a reference to the first occurrence in th
   <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.viewportOverflow">Content overflows the viewport of an {elementName} in block-progression direction by {amount} millipoints.{clip,if, Content will be clipped.}{{locator}}</message>
   <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.regionOverflow">Content overflows the viewport of the {elementName} on page {page} in block-progression direction by {amount} millipoints.{clip,if, Content will be clipped.}{{locator}}</message>
   <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.flowNotMappingToRegionBody">Flow "{flowName}" does not map to the region-body in page-master "{masterName}". FOP presently does not support this.{{locator}}</message>
+  <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.pageSequenceMasterExhausted">Subsequences exhausted in page-sequence-master "{pageSequenceMasterName}", {canRecover,if,using previous subsequence,cannot recover}.{{locator}}</message>
+  <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.missingSubsequencesInPageSequenceMaster">No subsequences in page-sequence-master "{pageSequenceMasterName}".{{locator}}</message>
+  <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.noMatchingPageMaster">No simple-page-master matching "{pageMasterName}" in page-sequence-master "{pageSequenceMasterName}".{{locator}}</message>
+  <message key="org.apache.fop.svg.SVGEventProducer.error">SVG error: {message}</message>
+  <message key="org.apache.fop.svg.SVGEventProducer.alert">SVG alert: {message}</message>
+  <message key="org.apache.fop.svg.SVGEventProducer.info">SVG info: {message}</message>
+  <message key="org.apache.fop.svg.SVGEventProducer.svgNotBuilt">SVG graphic could not be built. Reason: {e}</message>
+  <message key="org.apache.fop.svg.SVGEventProducer.svgRenderingError">SVG graphic could not be rendered. Reason: {e}</message>
 </catalogue>

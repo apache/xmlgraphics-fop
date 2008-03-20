@@ -23,19 +23,17 @@ import java.awt.geom.AffineTransform;
 
 import org.w3c.dom.Document;
 
-import org.apache.fop.render.Renderer;
-import org.apache.fop.render.XMLHandler;
-import org.apache.fop.render.RendererContext;
-import org.apache.fop.svg.SVGUserAgent;
-
-// Commons-Logging
+import org.apache.batik.bridge.BridgeContext;
+import org.apache.batik.bridge.GVTBuilder;
+import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.batik.gvt.GraphicsNode;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.batik.bridge.GVTBuilder;
-import org.apache.batik.bridge.BridgeContext;
-import org.apache.batik.dom.svg.SVGDOMImplementation;
-import org.apache.batik.gvt.GraphicsNode;
+import org.apache.fop.render.Renderer;
+import org.apache.fop.render.RendererContext;
+import org.apache.fop.render.XMLHandler;
+import org.apache.fop.svg.SVGUserAgent;
 
 /**
  * Java2D XML handler for SVG (uses Apache Batik).
@@ -121,8 +119,7 @@ public class Java2DSVGHandler implements XMLHandler, Java2DRendererContextConsta
         int x = info.currentXPosition;
         int y = info.currentYPosition;
         
-        float ptom = context.getUserAgent().getSourcePixelUnitToMillimeter();
-        SVGUserAgent ua = new SVGUserAgent(ptom, new AffineTransform());
+        SVGUserAgent ua = new SVGUserAgent(context.getUserAgent(), new AffineTransform());
         
         GVTBuilder builder = new GVTBuilder();
         BridgeContext ctx = new BridgeContext(ua);

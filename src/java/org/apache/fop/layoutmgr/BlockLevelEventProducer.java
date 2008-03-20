@@ -130,4 +130,39 @@ public interface BlockLevelEventProducer extends EventProducer {
     void flowNotMappingToRegionBody(Object source, String flowName, String masterName,
             Locator loc) throws UnsupportedOperationException;
     
+    /**
+     * A page sequence master is exhausted.
+     * @param source the event source
+     * @param pageSequenceMasterName the name of the page sequence master
+     * @param canRecover indicates whether FOP can recover from this problem and continue working
+     * @param loc the location of the error or null
+     * @throws FOPException the error provoked by the method call
+     * @event.severity FATAL
+     */
+    void pageSequenceMasterExhausted(Object source, String pageSequenceMasterName,
+            boolean canRecover, Locator loc) throws FOPException;
+
+    /**
+     * No subsequences in page sequence master.
+     * @param source the event source
+     * @param pageSequenceMasterName the name of the page sequence master
+     * @param loc the location of the error or null
+     * @throws FOPException the error provoked by the method call
+     * @event.severity FATAL
+     */
+    void missingSubsequencesInPageSequenceMaster(Object source, String pageSequenceMasterName,
+            Locator loc) throws FOPException;
+    
+    /**
+     * No single-page-master matching in page sequence master.
+     * @param source the event source
+     * @param pageSequenceMasterName the name of the page sequence master
+     * @param pageMasterName the name of the page master not matching
+     * @param loc the location of the error or null
+     * @throws FOPException the error provoked by the method call
+     * @event.severity FATAL
+     */
+    void noMatchingPageMaster(Object source, String pageSequenceMasterName,
+            String pageMasterName, Locator loc) throws FOPException;
+    
 }

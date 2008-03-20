@@ -29,6 +29,7 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.layoutmgr.BlockLevelEventProducer;
 
 /**
  * The page-sequence-master formatting object.
@@ -199,8 +200,10 @@ public class PageSequenceMaster extends FObj {
         if (currentSubSequence == null) {
             currentSubSequence = getNextSubSequence();
             if (currentSubSequence == null) {
-                throw new FOPException("no subsequences in page-sequence-master '"
-                                       + masterName + "'");
+                BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Factory.create(
+                        getUserAgent().getEventBroadcaster());
+                eventProducer.missingSubsequencesInPageSequenceMaster(this,
+                        masterName, getLocator());
             }
         }
         String pageMasterName = currentSubSequence
@@ -209,14 +212,10 @@ public class PageSequenceMaster extends FObj {
         while (pageMasterName == null) {
             SubSequenceSpecifier nextSubSequence = getNextSubSequence();
             if (nextSubSequence == null) {
-                if (!canRecover) {
-                    throw new FOPException("subsequences exhausted in page-sequence-master '"
-                                           + masterName
-                                           + "', cannot recover");
-                }
-                log.warn("subsequences exhausted in page-sequence-master '"
-                                 + masterName
-                                 + "', using previous subsequence");
+                BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Factory.create(
+                        getUserAgent().getEventBroadcaster());
+                eventProducer.pageSequenceMasterExhausted(this,
+                        masterName, canRecover, getLocator());
                 currentSubSequence.reset();
                 canRecover = false;
             } else {
@@ -228,9 +227,10 @@ public class PageSequenceMaster extends FObj {
         SimplePageMaster pageMaster = this.layoutMasterSet
             .getSimplePageMaster(pageMasterName);
         if (pageMaster == null) {
-            throw new FOPException("No simple-page-master matching '"
-                                   + pageMasterName + "' in page-sequence-master '"
-                                   + masterName + "'");
+            BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Factory.create(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.noMatchingPageMaster(this,
+                    masterName, pageMasterName, getLocator());
         }
         return pageMaster;
     }

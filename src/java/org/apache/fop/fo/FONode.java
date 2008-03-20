@@ -443,6 +443,7 @@ public abstract class FONode implements Cloneable {
      * Helper function to return "invalid child" exceptions with more
      * complex validation rules (i.e., needing more explanation of the problem)
      * @param loc org.xml.sax.Locator object of the error (*not* parent node)
+     * @param parentName the name of the parent element
      * @param nsURI namespace URI of incoming invalid node
      * @param lName local name (i.e., no prefix) of incoming node
      * @param ruleViolated name of the rule violated (used to lookup a resource in a bundle)
