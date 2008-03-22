@@ -164,6 +164,7 @@ which will be used to configure the chosen Forrest skin.
     .ForrestTable td.partial    { background-color: #FFFFCC; text-align: center; }
     .ForrestTable td.category   { /*background-color: #CFDCED;*/
                                        font-size: 1.2em }
+    .menuitemgroup{ display: block;}
 
   </extra-css>
 
