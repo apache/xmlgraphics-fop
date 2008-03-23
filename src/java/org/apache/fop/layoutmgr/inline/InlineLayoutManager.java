@@ -297,7 +297,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
              );
         }
         
-        while ((curLM = (LayoutManager) getChildLM()) != null) {
+        while ((curLM = getChildLM()) != null) {
             
             if (!(curLM instanceof InlineLevelLayoutManager)) {
                 // A block LM
@@ -436,7 +436,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         // layout context given to lastLM, but must be cleared in the
         // layout context given to the other LMs.
         LinkedList positionList = new LinkedList();
-        NonLeafPosition pos = null;
+        NonLeafPosition pos;
         LayoutManager lastLM = null;// last child LM in this iterator
         Position lastPos = null;
         while (parentIter.hasNext()) {
@@ -598,11 +598,6 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
             this.auxiliaryPosition = new NonLeafPosition(this, null);
         //}
         return this.auxiliaryPosition;
-    }
-    
-    /** {@inheritDoc} */
-    protected void addId() {
-        getPSLM().addIDToPage(fobj.getId());
     }
     
 }

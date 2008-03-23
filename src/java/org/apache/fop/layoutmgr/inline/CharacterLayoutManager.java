@@ -45,7 +45,6 @@ import org.apache.fop.util.CharUtilities;
  * LayoutManager for the fo:character formatting object
  */
 public class CharacterLayoutManager extends LeafNodeLayoutManager {
-    private Character fobj;
     private MinOptMax letterSpaceIPD;
     private int hyphIPD;
     private Font font;
@@ -57,13 +56,13 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
      * @param node the fo:character formatting object
      */
     public CharacterLayoutManager(Character node) {
-        // @todo better null checking of node
         super(node);
-        fobj = node;
     }
     
     /** {@inheritDoc} */
     public void initialize() {
+        Character fobj = (Character)this.fobj;
+        
         FontInfo fi = fobj.getFOEventHandler().getFontInfo();
         FontTriplet[] fontkeys = fobj.getCommonFont().getFontState(fi);
         font = fi.getFontInstance(fontkeys[0], fobj.getCommonFont().fontSize.getValue(this));
@@ -90,7 +89,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
             text.addWord(String.valueOf(ch), 0);
         }
         TraitSetter.setProducerID(text, node.getId());
-        TraitSetter.addTextDecoration(text, fobj.getTextDecoration());
+        TraitSetter.addTextDecoration(text, node.getTextDecoration());
         return text;
     }
 
@@ -105,6 +104,8 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
             return null;
         }
 
+        Character fobj = (Character)this.fobj;
+        
         ipd = new MinOptMax(font.getCharWidth(fobj.getCharacter()));
 
         curArea.setIPD(ipd.opt);
@@ -178,14 +179,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
     /** {@inheritDoc} */
     public boolean applyChanges(List oldList) {
         setFinished(false);
-        if (isSomethingChanged) {
-            // there is nothing to do,
-            // possible changes have already been applied
-            // in the hyphenate() method
-            return true;
-        } else {
-            return false;
-        }
+        return isSomethingChanged;
     }
 
     /** {@inheritDoc} */
@@ -236,11 +230,6 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
 
         setFinished(true);
         return returnList;
-    }
-
-    /** {@inheritDoc} */
-    protected void addId() {
-        getPSLM().addIDToPage(fobj.getId());
     }
 
 }

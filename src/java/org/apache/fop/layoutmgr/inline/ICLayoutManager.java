@@ -31,12 +31,10 @@ import org.apache.fop.fo.flow.InlineContainer;
  * and id areas are maintained for later retrieval.
  */
 public class ICLayoutManager extends LeafNodeLayoutManager {
-    private InlineContainer fobj;
     private List childrenLM;
 
     public ICLayoutManager(InlineContainer node, List childLM) {
         super(node);
-        fobj = node;
         childrenLM = childLM;
     }
 
@@ -44,7 +42,4 @@ public class ICLayoutManager extends LeafNodeLayoutManager {
         return null;
     }
 
-    protected void addId() {
-        getPSLM().addIDToPage(fobj.getId());
-    }
 }

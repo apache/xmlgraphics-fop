@@ -147,7 +147,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
          * @return true if there are more child lms
          */
         public boolean hasNext() {
-            return (curPos < listLMs.size()) ? true : createNextChildLMs(curPos);
+            return (curPos < listLMs.size()) || createNextChildLMs(curPos);
         }
 
         /**
@@ -250,7 +250,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
             addBlockSpacing(0.0, new MinOptMax(layoutContext.getSpaceBefore()));
         }
 
-        LayoutManager childLM = null;
+        LayoutManager childLM;
         LayoutManager lastLM = null;
         LayoutContext lc = new LayoutContext(0);
         lc.setSpaceAdjust(layoutContext.getSpaceAdjust());
@@ -280,7 +280,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
             Position innerPosition = pos;
             if (pos instanceof NonLeafPosition) {
                 //Not all elements are wrapped
-                innerPosition = ((NonLeafPosition) pos).getPosition();
+                innerPosition = pos.getPosition();
             }
             if (innerPosition == null) {
                 // pos was created by this BlockLM and was inside an element
@@ -309,7 +309,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
             }
         }
 
-        getPSLM().addIDToPage(getBlockFO().getId());
+        addId();
         
         addMarkersToPage(true, isFirst(firstPos), isLast(lastPos));
 

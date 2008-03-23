@@ -156,11 +156,11 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
             addBlockSpacing(0.0, new MinOptMax(layoutContext.getSpaceBefore()));
         }
 
-        getPSLM().addIDToPage(getListBlockFO().getId());
+        addId();
 
         // the list block contains areas stacked from each list item
 
-        LayoutManager childLM = null;
+        LayoutManager childLM;
         LayoutContext lc = new LayoutContext(0);
         LayoutManager firstLM = null;
         LayoutManager lastLM = null;
@@ -181,10 +181,10 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
             }
             if (pos instanceof NonLeafPosition
                     && (pos.getPosition() != null)
-                    && ((NonLeafPosition) pos).getPosition().getLM() != this) {
+                    && pos.getPosition().getLM() != this) {
                 // pos was created by a child of this ListBlockLM
-                positionList.add(((NonLeafPosition) pos).getPosition());
-                lastLM = ((NonLeafPosition) pos).getPosition().getLM();
+                positionList.add(pos.getPosition());
+                lastLM = pos.getPosition().getLM();
                 if (firstLM == null) {
                     firstLM = lastLM;
                 }
@@ -218,7 +218,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
         curBlockArea = null;
         resetSpaces();
         
-        getPSLM().notifyEndOfLayout(((ListBlock)getFObj()).getId());
+        getPSLM().notifyEndOfLayout(fobj.getId());
     }
 
     /**

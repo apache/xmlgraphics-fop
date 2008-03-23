@@ -113,7 +113,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
         if (curChildLM != null && !curChildLM.isFinished()) {
             return curChildLM;
         }
-        while (childLMiter.hasNext()) {
+        if (childLMiter.hasNext()) {
             curChildLM = (LayoutManager) childLMiter.next();
             curChildLM.initialize();
             return curChildLM;
@@ -350,6 +350,10 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
     
     /**
      * Registers the FO's markers on the current PageViewport
+     *
+     * @param isStarting    boolean indicating whether the markers qualify as 'starting'
+     * @param isFirst   boolean indicating whether the markers qualify as 'first'
+     * @param isLast    boolean indicating whether the markers qualify as 'last'
      */
     protected void addMarkersToPage(boolean isStarting, boolean isFirst, boolean isLast) {
         if (this.markers != null) {
@@ -361,10 +365,18 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
         }
     }
 
+    /**
+     * Registers the FO's id on the current PageViewport
+     */
+    protected void addId() {
+        if (fobj != null) {
+            getPSLM().addIDToPage(fobj.getId());
+        }
+    }
+    
     /** {@inheritDoc} */
     public String toString() {
         return (super.toString() + (fobj != null ? "[fobj=" + fobj.toString() + "]" : ""));
     }
-    
     
 }

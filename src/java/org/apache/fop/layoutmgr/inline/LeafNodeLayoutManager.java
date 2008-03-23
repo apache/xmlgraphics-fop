@@ -65,8 +65,6 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
     /** The alignment context applying to this area */
     protected AlignmentContext alignmentContext = null;
     
-    private MinOptMax ipd;
-
     /** Flag to indicate if something was changed as part of the getChangeKnuthElements sequence */
     protected boolean isSomethingChanged = false;
     /** Our area info for the Knuth elements */
@@ -202,14 +200,6 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
      */
     protected InlineArea getEffectiveArea() {
         return curArea;
-    }
-    
-    /**
-     * This method is called by addAreas() so IDs can be added to a page for FOs that 
-     * support the 'id' property.
-     */
-    protected void addId() {
-        // Do nothing here, overriden in subclasses that have an 'id' property.
     }
     
     /**
