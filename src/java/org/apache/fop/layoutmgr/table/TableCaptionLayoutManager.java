@@ -23,7 +23,6 @@ import org.apache.fop.fo.flow.table.TableCaption;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.PositionIterator;
-import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 
@@ -34,7 +33,6 @@ import org.apache.fop.area.Block;
  * @todo Implement getNextKnuthElements()
  */
 public class TableCaptionLayoutManager extends BlockStackingLayoutManager {
-    private TableCaption fobj;
 
     private Block curBlockArea;
 
@@ -46,7 +44,6 @@ public class TableCaptionLayoutManager extends BlockStackingLayoutManager {
      */
     public TableCaptionLayoutManager(TableCaption node) {
         super(node);
-        fobj = node;
     }
 
     /**
@@ -133,7 +130,7 @@ public class TableCaptionLayoutManager extends BlockStackingLayoutManager {
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
         getParentArea(null);
-        getPSLM().addIDToPage(fobj.getId());
+        addId();
 
         /* TODO: Reimplement using Knuth approach
         LayoutManager childLM;

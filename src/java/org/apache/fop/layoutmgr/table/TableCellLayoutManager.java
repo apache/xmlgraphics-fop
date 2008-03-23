@@ -136,7 +136,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
         cellIPD = referenceIPD;
         cellIPD -= getIPIndents();
 
-        LinkedList returnedList = null;
+        LinkedList returnedList;
         LinkedList contentList = new LinkedList();
         LinkedList returnList = new LinkedList();
 
@@ -242,7 +242,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
             p.setP(0);
         }
 
-        getPSLM().notifyEndOfLayout(((TableCell)getFObj()).getId());
+        getPSLM().notifyEndOfLayout(fobj.getId());
 
         setFinished(true);
         return returnList;
@@ -330,7 +330,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
                          int firstRowHeight) {
         getParentArea(null);
 
-        getPSLM().addIDToPage(getTableCell().getId());
+        addId();
 
         int borderBeforeWidth = primaryGridUnit.getBeforeBorderWidth(startRow, borderBeforeWhich);
         int borderAfterWidth = primaryGridUnit.getAfterBorderWidth(endRow, borderAfterWhich);
@@ -419,7 +419,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
                     int dx = xoffset;
                     for (int x = 0; x < gridUnits.length; x++) {
                         int ipd = getTable().getColumn(primaryGridUnit.getColIndex() + x)
-                                .getColumnWidth().getValue((PercentBaseContext) getParent());
+                                .getColumnWidth().getValue(getParent());
                         if (blocks[y][x] != null) {
                             Block block = blocks[y][x];
                             adjustYOffset(block, dy);
@@ -491,7 +491,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
             Block rowBackgroundArea = getBackgroundArea(paddingRectBPD, borderBeforeWidth);
             ((TableLayoutManager) parentLM).addBackgroundArea(rowBackgroundArea);
             TraitSetter.addBackground(rowBackgroundArea, row.getCommonBorderPaddingBackground(),
-                    (TableLayoutManager) parentLM,
+                    parentLM,
                     -xoffset - startIndent, -borderBeforeWidth,
                     parentLM.getContentAreaIPD(), firstRowHeight);
         }

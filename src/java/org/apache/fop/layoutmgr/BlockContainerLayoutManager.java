@@ -248,7 +248,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         
         MinOptMax stackLimit = new MinOptMax(relDims.bpd);
 
-        LinkedList returnedList = null;
+        LinkedList returnedList;
         LinkedList contentList = new LinkedList();
         LinkedList returnList = new LinkedList();
         
@@ -602,11 +602,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         }
         
         public boolean isOverflow() {
-            if (isEmpty()) {
-                return false;
-            } else {
-                return (deferredAlg.getPageBreaks().size() > 1);
-            }
+            return !isEmpty() && (deferredAlg.getPageBreaks().size() > 1);
         }
         
         protected LayoutManager getTopLevelLM() {
@@ -708,7 +704,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             addBlockSpacing(0.0, new MinOptMax(layoutContext.getSpaceBefore()));
         }
 
-        LayoutManager childLM = null;
+        LayoutManager childLM;
         LayoutManager lastLM = null;
         LayoutContext lc = new LayoutContext(0);
         lc.setSpaceAdjust(layoutContext.getSpaceAdjust());
@@ -737,7 +733,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             }
             Position innerPosition = pos;
             if (pos instanceof NonLeafPosition) {
-                innerPosition = ((NonLeafPosition)pos).getPosition();
+                innerPosition = pos.getPosition();
             }
             if (pos instanceof BlockContainerPosition) {
                 if (bcpos != null) {
@@ -773,7 +769,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             }
         }
 
-        getPSLM().addIDToPage(getBlockContainerFO().getId());
+        addId();
         
         addMarkersToPage(true, isFirst(firstPos), isLast(lastPos));
         
@@ -874,7 +870,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         referenceArea = null;
         resetSpaces();
         
-        getPSLM().notifyEndOfLayout(((BlockContainer)getFObj()).getId());
+        getPSLM().notifyEndOfLayout(fobj.getId());
     }
     
     /**
