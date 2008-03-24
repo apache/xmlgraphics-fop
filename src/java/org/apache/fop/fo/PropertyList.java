@@ -373,6 +373,11 @@ public abstract class PropertyList {
         
         if (attributeValue != null) {
 
+            if (attributeName.startsWith("xmlns:")) {
+                //Ignore namespace declarations
+                return;
+            }
+            
             /* Handle "compound" properties, ex. space-before.minimum */
             String basePropertyName = findBasePropertyName(attributeName);
             String subPropertyName = findSubPropertyName(attributeName);
