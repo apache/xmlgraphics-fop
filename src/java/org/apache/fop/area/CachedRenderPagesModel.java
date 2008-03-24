@@ -19,24 +19,27 @@
  
 package org.apache.fop.area;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.fonts.FontInfo;
-import org.xml.sax.SAXException;
-
-import java.util.Map;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileInputStream;
-import java.io.ObjectOutputStream;
-import java.io.ObjectInputStream;
-import java.io.OutputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedInputStream;
+import org.xml.sax.SAXException;
+
+import org.apache.commons.io.IOUtils;
+
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.events.ResourceEventProducer;
+import org.apache.fop.fonts.FontInfo;
 
 /**
  * A simple cached render pages model.
@@ -69,46 +72,39 @@ public class CachedRenderPagesModel extends RenderPagesModel {
      */
     protected boolean checkPreparedPages(PageViewport newpage, boolean renderUnresolved) {
         for (Iterator iter = prepared.iterator(); iter.hasNext();) {
-            PageViewport p = (PageViewport)iter.next();
-            if (p.isResolved() || renderUnresolved) {
-                if (p != newpage) {
+            PageViewport pageViewport = (PageViewport)iter.next();
+            if (pageViewport.isResolved() || renderUnresolved) {
+                if (pageViewport != newpage) {
                     try {
                         // load page from cache
-                        String name = (String)pageMap.get(p);
+                        String name = (String)pageMap.get(pageViewport);
                         File tempFile = new File(baseDir, name);
                         log.debug("Loading page from: " + tempFile);
                         ObjectInputStream in = new ObjectInputStream(
                                              new BufferedInputStream(
                                                new FileInputStream(tempFile)));
                         try {
-                            p.loadPage(in);
+                            pageViewport.loadPage(in);
                         } finally {
                             IOUtils.closeQuietly(in);
                         }
                         if (!tempFile.delete()) {
-                            log.warn("Temporary file could not be deleted: " + tempFile);
+                            ResourceEventProducer eventProducer
+                                = ResourceEventProducer.Factory.create(
+                                        renderer.getUserAgent().getEventBroadcaster());
+                            eventProducer.cannotDeleteTempFile(this, tempFile);
                         }
-                        pageMap.remove(p);
+                        pageMap.remove(pageViewport);
                     } catch (Exception e) {
-                        log.error(e);
+                        AreaEventProducer eventProducer
+                            = AreaEventProducer.Factory.create(
+                                renderer.getUserAgent().getEventBroadcaster());
+                        eventProducer.pageLoadError(this, pageViewport.getPageNumberString(), e);
                     }
                 }
 
-                try {
-                    renderer.renderPage(p);
-                    if (!p.isResolved()) {
-                        String[] idrefs = p.getIDRefs();
-                        for (int count = 0; count < idrefs.length; count++) {
-                            log.warn("Page " + p.getPageNumberString()
-                                + ": Unresolved id reference \"" + idrefs[count] 
-                                + "\" found.");
-                        }
-                    }
-                } catch (Exception e) {
-                    // use error handler to handle this FOP or IO Exception
-                    log.error(e);
-                }
-                p.clear();
+                renderPage(pageViewport);
+                pageViewport.clear();
                 iter.remove();
             } else {
                 if (!renderer.supportsOutOfOrder()) {
@@ -147,8 +143,11 @@ public class CachedRenderPagesModel extends RenderPagesModel {
             if (log.isDebugEnabled()) {
                 log.debug("Page saved to temporary file: " + tempFile);
             }
-        } catch (Exception e) {
-            log.error(e);
+        } catch (IOException ioe) {
+            AreaEventProducer eventProducer
+                = AreaEventProducer.Factory.create(
+                    renderer.getUserAgent().getEventBroadcaster());
+            eventProducer.pageSaveError(this, page.getPageNumberString(), ioe);
         }
     }
 

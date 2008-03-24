@@ -53,12 +53,12 @@ public abstract class AreaTreeObject {
         if (atts.size() == 0) {
             return;
         }
-        Iterator iter = atts.keySet().iterator();
+        Iterator iter = atts.entrySet().iterator();
         while (iter.hasNext()) {
-            QName qName = (QName)iter.next();
-            String value = (String)atts.get(qName);
+            Map.Entry entry = (Map.Entry)iter.next();
+            String value = (String)entry.getValue();
             //The casting is only to ensure type safety (too bad we can't use generics, yet) 
-            setForeignAttribute(qName, value);
+            setForeignAttribute((QName)entry.getKey(), value);
         }
     }
     

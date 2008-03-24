@@ -325,8 +325,9 @@ public class AreaTreeHandler extends FOEventHandler {
                 if (pageVPList != null) {
                     res.resolveIDRef(ids[count], pageVPList);
                 } else {
-                    log.warn(odi.getName() + ": Unresolved id reference \""
-                            + ids[count] + "\" found.");
+                    AreaEventProducer eventProducer = AreaEventProducer.Factory.create(
+                            getUserAgent().getEventBroadcaster());
+                    eventProducer.unresolvedIDReference(this, odi.getName(), ids[count]);
                     idTracker.addUnresolvedIDRef(ids[count], res);
                 }
             }

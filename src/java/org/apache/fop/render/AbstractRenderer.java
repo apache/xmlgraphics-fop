@@ -114,21 +114,15 @@ public abstract class AbstractRenderer
     
     private Set warnedXMLHandlers;
     
-    /**
-     *  {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public abstract void setupFontInfo(FontInfo fontInfo);
 
-    /**
-     *  {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void setUserAgent(FOUserAgent agent) {
         userAgent = agent;
     }
 
-    /**
-     *  @return the associated <code>FOUserAgent</code>
-     */
+    /** {@inheritDoc} */
     public FOUserAgent getUserAgent() {
         return userAgent;
     }

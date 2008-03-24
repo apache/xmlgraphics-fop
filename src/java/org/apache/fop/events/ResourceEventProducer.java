@@ -19,6 +19,7 @@
 
 package org.apache.fop.events;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -123,5 +124,13 @@ public interface ResourceEventProducer extends EventProducer {
      * @event.severity ERROR
      */
     void foreignXMLNoHandler(Object source, Document doc, String namespaceURI);
+    
+    /**
+     * Cannot delete a temporary file.
+     * @param source the event source
+     * @param tempFile the temporary file
+     * @event.severity ERROR
+     */
+    void cannotDeleteTempFile(Object source, File tempFile);
     
 }

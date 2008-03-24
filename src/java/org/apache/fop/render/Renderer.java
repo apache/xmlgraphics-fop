@@ -89,6 +89,12 @@ public interface Renderer {
     void setUserAgent(FOUserAgent agent);
 
     /**
+     * Returns the associated user agent.
+     * @return the user agent
+     */
+    FOUserAgent getUserAgent();
+    
+    /**
      * Set up the given FontInfo.
      *
      * @param fontInfo  The font information
