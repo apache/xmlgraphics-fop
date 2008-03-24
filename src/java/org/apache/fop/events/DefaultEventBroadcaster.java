@@ -19,22 +19,18 @@
 
 package org.apache.fop.events;
 
-import java.io.InputStream;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
-import java.util.MissingResourceException;
 
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.stream.StreamSource;
-
-import org.apache.commons.io.IOUtils;
+import org.apache.xmlgraphics.util.Service;
 
 import org.apache.fop.events.model.EventMethodModel;
 import org.apache.fop.events.model.EventModel;
-import org.apache.fop.events.model.EventModelParser;
+import org.apache.fop.events.model.EventModelFactory;
 import org.apache.fop.events.model.EventProducerModel;
 import org.apache.fop.events.model.EventSeverity;
 
@@ -67,37 +63,25 @@ public class DefaultEventBroadcaster implements EventBroadcaster {
         this.listeners.processEvent(event);
     }
 
-    private static final String EVENT_MODEL_FILENAME = "event-model.xml";
-    private static EventModel eventModel;
+    private static List/*<EventModel>*/ eventModels = new java.util.ArrayList();
     private Map proxies = new java.util.HashMap();
     
     static {
-        loadModel(DefaultEventBroadcaster.class, EVENT_MODEL_FILENAME);
+        Iterator iter = Service.providers(EventModelFactory.class, true);
+        while (iter.hasNext()) {
+            EventModelFactory factory = (EventModelFactory)iter.next();
+            addEventModel(factory.createEventModel());
+        }
     }
 
     /**
-     * Loads an event model overriding any previously loaded event model.
-     * @param resourceBaseClass base class to use for loading resources
-     * @param resourceName the resource name pointing to the event model to be loaded
+     * Adds a new {@link EventModel} to the list of registered event models.
+     * @param eventModel the event model instance
      */
-    public static void loadModel(Class resourceBaseClass, String resourceName) {
-        InputStream in = resourceBaseClass.getResourceAsStream(resourceName);
-        if (in == null) {
-            throw new MissingResourceException(
-                    "File " + resourceName + " not found",
-                    DefaultEventBroadcaster.class.getName(), ""); 
-        }
-        try {
-            eventModel = EventModelParser.parse(new StreamSource(in));
-        } catch (TransformerException e) {
-            throw new MissingResourceException(
-                    "Error reading " + resourceName + ": " + e.getMessage(),
-                    DefaultEventBroadcaster.class.getName(), ""); 
-        } finally {
-            IOUtils.closeQuietly(in);
-        }
+    public static void addEventModel(EventModel eventModel) {
+        eventModels.add(eventModel);
     }
-
+    
     /** {@inheritDoc} */
     public EventProducer getEventProducerFor(Class clazz) {
         if (!EventProducer.class.isAssignableFrom(clazz)) {
@@ -114,8 +98,25 @@ public class DefaultEventBroadcaster implements EventBroadcaster {
         return producer;
     }
     
-    private EventProducer createProxyFor(Class clazz) {
-        final EventProducerModel producerModel = eventModel.getProducer(clazz);
+    private EventProducerModel getEventProducerModel(Class clazz) {
+        for (int i = 0, c = eventModels.size(); i < c; i++) {
+            EventModel eventModel = (EventModel)eventModels.get(i);
+            EventProducerModel producerModel = eventModel.getProducer(clazz);
+            if (producerModel != null) {
+                return producerModel;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Creates a dynamic proxy for the given EventProducer interface that will handle the
+     * conversion of the method call into the broadcasting of an event instance.
+     * @param clazz a descendant interface of EventProducer
+     * @return the EventProducer instance
+     */
+    protected EventProducer createProxyFor(Class clazz) {
+        final EventProducerModel producerModel = getEventProducerModel(clazz);
         if (producerModel == null) {
             throw new IllegalStateException("Event model doesn't contain the definition for "
                     + clazz.getName());

@@ -58,6 +58,19 @@ public class Event extends EventObject {
     }
     
     /**
+     * Returns the event group identifier.
+     * @return the event group identifier (or null if there is no group identifier)
+     */
+    public String getEventGroupID() {
+        int pos = this.eventID.lastIndexOf('.');
+        if (pos > 0) {
+            return this.eventID.substring(0, pos);
+        } else {
+            return null;
+        }
+    }
+    
+    /**
      * Returns the severity level.
      * @return the severity level
      */

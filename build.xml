@@ -424,6 +424,51 @@ list of possible build targets.
         translationfile="${src.java.dir}/org/apache/fop/events/EventFormatter.xml">
       <fileset dir="${src.java.dir}">
         <include name="**/*.java"/>
+        <exclude name="org/apache/fop/render/*/**/*.java"/>
+      </fileset>
+    </eventResourceGenerator>
+    <fixcrlf file="${src.java.dir}/org/apache/fop/events/EventFormatter.xml" tab="remove" tablength="2"/>
+    <eventResourceGenerator
+      modelfile="${build.gensrc.dir}/org/apache/fop/render/afp/event-model.xml"
+      translationfile="${src.java.dir}/org/apache/fop/render/afp/AFPEventProducer.xml">
+      <fileset dir="${src.java.dir}">
+        <include name="org/apache/fop/render/afp/**/*.java"/>
+      </fileset>
+    </eventResourceGenerator>
+    <fixcrlf file="${src.java.dir}/org/apache/fop/render/afp/AFPEventFormatter.xml" tab="remove" tablength="2"/>
+    <eventResourceGenerator
+      modelfile="${build.gensrc.dir}/org/apache/fop/render/bitmap/event-model.xml"
+      translationfile="${src.java.dir}/org/apache/fop/render/bitmap/BitmapRendererEventProducer.xml">
+      <fileset dir="${src.java.dir}">
+        <include name="org/apache/fop/render/bitmap/**/*.java"/>
+      </fileset>
+    </eventResourceGenerator>
+    <eventResourceGenerator
+      modelfile="${build.gensrc.dir}/org/apache/fop/render/pcl/event-model.xml"
+      translationfile="${src.java.dir}/org/apache/fop/render/pcl/PCLEventProducer.xml">
+      <fileset dir="${src.java.dir}">
+        <include name="org/apache/fop/render/pcl/**/*.java"/>
+      </fileset>
+    </eventResourceGenerator>
+    <eventResourceGenerator
+      modelfile="${build.gensrc.dir}/org/apache/fop/render/pdf/event-model.xml"
+      translationfile="${src.java.dir}/org/apache/fop/render/pdf/PDFEventProducer.xml">
+      <fileset dir="${src.java.dir}">
+        <include name="org/apache/fop/render/pdf/**/*.java"/>
+      </fileset>
+    </eventResourceGenerator>
+    <eventResourceGenerator
+      modelfile="${build.gensrc.dir}/org/apache/fop/render/ps/event-model.xml"
+      translationfile="${src.java.dir}/org/apache/fop/render/ps/PSEventProducer.xml">
+      <fileset dir="${src.java.dir}">
+        <include name="org/apache/fop/render/ps/**/*.java"/>
+      </fileset>
+    </eventResourceGenerator>
+    <eventResourceGenerator
+      modelfile="${build.gensrc.dir}/org/apache/fop/render/rtf/event-model.xml"
+      translationfile="${src.java.dir}/org/apache/fop/render/rtf/RTFEventProducer.xml">
+      <fileset dir="${src.java.dir}">
+        <include name="org/apache/fop/render/rtf/**/*.java"/>
       </fileset>
     </eventResourceGenerator>
   </target>
@@ -764,6 +809,7 @@ list of possible build targets.
     </eventResourceGenerator>
     <copy todir="${build.dir}/test-classes">
       <fileset dir="${basedir}/test/java">
+        <include name="META-INF/**"/>
         <include name="**/*.xml"/>
       </fileset>
       <fileset dir="${build.dir}/test-gensrc">

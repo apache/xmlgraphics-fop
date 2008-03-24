@@ -44,6 +44,7 @@ public class InstreamForeignObject extends AbstractGraphics {
 
     //Additional value
     private Point2D intrinsicDimensions;
+    private boolean instrisicSizeDetermined;
     
     private Length intrinsicAlignmentAdjust;
     
@@ -93,7 +94,7 @@ public class InstreamForeignObject extends AbstractGraphics {
 
     /** Preloads the image so the intrinsic size is available. */
     private void prepareIntrinsicSize() {
-        if (intrinsicDimensions == null) {
+        if (!this.instrisicSizeDetermined) {
             XMLObj child = (XMLObj) firstChild;
             Point2D csize = new Point2D.Float(-1, -1);
             intrinsicDimensions = child.getDimension(csize);
@@ -103,6 +104,7 @@ public class InstreamForeignObject extends AbstractGraphics {
                 eventProducer.ifoNoIntrinsicSize(this, getLocator());
             }
             intrinsicAlignmentAdjust = child.getIntrinsicAlignmentAdjust();
+            this.instrisicSizeDetermined = true;
         }
     }
 

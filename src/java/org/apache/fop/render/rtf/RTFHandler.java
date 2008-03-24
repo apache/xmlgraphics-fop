@@ -21,6 +21,7 @@ package org.apache.fop.render.rtf;
 
 // Java
 import java.awt.geom.Point2D;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -51,6 +52,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.datatypes.SimplePercentBaseContext;
+import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.FONode;
@@ -88,6 +90,7 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.FixedLength;
 import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.render.DefaultFontResolver;
+import org.apache.fop.render.RendererEventProducer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfAfterContainer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfBeforeContainer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfListContainer;
@@ -159,6 +162,16 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /**
+     * Central exception handler for I/O exceptions.
+     * @param ioe IOException to handle
+     */
+    protected void handleIOTrouble(IOException ioe) {
+        RendererEventProducer eventProducer = RendererEventProducer.Factory.create(
+                getUserAgent().getEventBroadcaster());
+        eventProducer.ioError(this, ioe);
+    }
+
+    /**
      * {@inheritDoc}
      */
     public void startDocument() throws SAXException {
@@ -195,9 +208,9 @@ public class RTFHandler extends FOEventHandler {
                 this.pagemaster
                         = pageSeq.getRoot().getLayoutMasterSet().getSimplePageMaster(reference);
                 if (this.pagemaster == null) {
-                    log.warn("Only simple-page-masters are supported on page-sequences: " 
-                            + reference);
-                    log.warn("Using default simple-page-master from page-sequence-master...");
+                    RTFEventProducer eventProducer = RTFEventProducer.Factory.create(
+                            getUserAgent().getEventBroadcaster());
+                    eventProducer.onlySPMSupported(this, reference, pageSeq.getLocator());
                     PageSequenceMaster master 
                         = pageSeq.getRoot().getLayoutMasterSet().getPageSequenceMaster(reference);
                     this.pagemaster = master.getNextSimplePageMaster(
@@ -218,7 +231,9 @@ public class RTFHandler extends FOEventHandler {
                     PageAttributesConverter.convertPageAttributes(
                             pagemaster));
             } else {
-                log.warn("No simple-page-master could be determined!");
+                RTFEventProducer eventProducer = RTFEventProducer.Factory.create(
+                        getUserAgent().getEventBroadcaster());
+                eventProducer.noSPMFound(this, pageSeq.getLocator());
             }
 
             builderContext.pushContainer(sect);
@@ -226,9 +241,7 @@ public class RTFHandler extends FOEventHandler {
             bHeaderSpecified = false;
             bFooterSpecified = false;
         } catch (IOException ioe) {
-            // TODO could we throw Exception in all FOEventHandler events?
-            log.error("startPageSequence: " + ioe.getMessage(), ioe);
-            //TODO throw new FOPException(ioe);
+            handleIOTrouble(ioe);
         } catch (FOPException fope) {
             // TODO could we throw Exception in all FOEventHandler events?
             log.error("startPageSequence: " + fope.getMessage(), fope);
@@ -338,8 +351,7 @@ public class RTFHandler extends FOEventHandler {
                 log.warn("A " + fl.getLocalName() + " has been skipped: " + fl.getFlowName());
             }
         } catch (IOException ioe) {
-            log.error("startFlow: " + ioe.getMessage());
-            throw new RuntimeException(ioe.getMessage());
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("startFlow: " + e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -396,9 +408,7 @@ public class RTFHandler extends FOEventHandler {
             textrun.pushBlockAttributes(rtfAttr);
             textrun.addBookmark(bl.getId());
         } catch (IOException ioe) {
-            // TODO could we throw Exception in all FOEventHandler events?
-            log.error("startBlock: " + ioe.getMessage());
-            throw new RuntimeException("IOException: " + ioe);
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("startBlock: " + e.getMessage());
             throw new RuntimeException("Exception: " + e);
@@ -427,8 +437,7 @@ public class RTFHandler extends FOEventHandler {
             textrun.popBlockAttributes();
 
         } catch (IOException ioe) {
-            log.error("startBlock:" + ioe.getMessage());
-            throw new RuntimeException(ioe.getMessage());
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("startBlock:" + e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -457,9 +466,7 @@ public class RTFHandler extends FOEventHandler {
             textrun.addParagraphBreak();
             textrun.pushBlockAttributes(rtfAttr);
         } catch (IOException ioe) {
-            // TODO could we throw Exception in all FOEventHandler events?
-            log.error("startBlock: " + ioe.getMessage());
-            throw new RuntimeException("IOException: " + ioe);
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("startBlock: " + e.getMessage());
             throw new RuntimeException("Exception: " + e);
@@ -486,8 +493,7 @@ public class RTFHandler extends FOEventHandler {
             textrun.popBlockAttributes();
 
         } catch (IOException ioe) {
-            log.error("startBlock:" + ioe.getMessage());
-            throw new RuntimeException(ioe.getMessage());
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("startBlock:" + e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -530,6 +536,8 @@ public class RTFHandler extends FOEventHandler {
             table.setBorderAttributes(borderAttributes);
             
             builderContext.pushContainer(table);
+        } catch (IOException ioe) {
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("startTable:" + e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -590,7 +598,6 @@ public class RTFHandler extends FOEventHandler {
             log.error("startColumn: " + e.getMessage());
             throw new RuntimeException(e.getMessage());
         }
-
     }
 
      /**
@@ -649,8 +656,7 @@ public class RTFHandler extends FOEventHandler {
             textrun.pushInlineAttributes(rtfAttr);
             textrun.addBookmark(inl.getId());
         } catch (IOException ioe) {
-            log.error("startInline:" + ioe.getMessage());
-            throw new RuntimeException(ioe.getMessage());
+            handleIOTrouble(ioe);
         } catch (FOPException fe) {
             log.error("startInline:" + fe.getMessage());
             throw new RuntimeException(fe.getMessage());
@@ -677,8 +683,7 @@ public class RTFHandler extends FOEventHandler {
             RtfTextrun textrun = container.getTextrun();
             textrun.popInlineAttributes();
         } catch (IOException ioe) {
-            log.error("startInline:" + ioe.getMessage());
-            throw new RuntimeException(ioe.getMessage());
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("startInline:" + e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -698,6 +703,8 @@ public class RTFHandler extends FOEventHandler {
 
             RtfTable tbl = (RtfTable)builderContext.getContainer(RtfTable.class, true, this);
             tbl.setHeaderAttribs(atts);
+        } catch (IOException ioe) {
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("startBody: " + e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -715,6 +722,8 @@ public class RTFHandler extends FOEventHandler {
         try {
             RtfTable tbl = (RtfTable)builderContext.getContainer(RtfTable.class, true, this);
             tbl.setHeaderAttribs(null);
+        } catch (IOException ioe) {
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("endBody: " + e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -745,6 +754,8 @@ public class RTFHandler extends FOEventHandler {
 
             // reset column iteration index to correctly access column widths
             builderContext.getTableContext().selectFirstColumn();
+        } catch (IOException ioe) {
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("startRow: " + e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -778,6 +789,8 @@ public class RTFHandler extends FOEventHandler {
                 
                 tctx.selectNextColumn();
             }
+        } catch (IOException ioe) {
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("endRow: " + e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -870,6 +883,8 @@ public class RTFHandler extends FOEventHandler {
             }
             
             builderContext.pushContainer(cell);
+        } catch (IOException ioe) {
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("startCell: " + e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -906,8 +921,7 @@ public class RTFHandler extends FOEventHandler {
                 ListAttributesConverter.convertAttributes(lb));
             builderContext.pushContainer(newList);
         } catch (IOException ioe) {
-            log.error("startList: " + ioe.getMessage());
-            throw new RuntimeException(ioe.getMessage());
+            handleIOTrouble(ioe);
         } catch (FOPException fe) {
             log.error("startList: " + fe.getMessage());
             throw new RuntimeException(fe.getMessage());
@@ -961,8 +975,7 @@ public class RTFHandler extends FOEventHandler {
             
             builderContext.pushContainer(list.newListItem());
         } catch (IOException ioe) {
-            log.error("startList: " + ioe.getMessage());
-            throw new RuntimeException(ioe.getMessage());
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("startList: " + e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -995,8 +1008,7 @@ public class RTFHandler extends FOEventHandler {
             RtfListItemLabel label = item.new RtfListItemLabel(item);
             builderContext.pushContainer(label);
         } catch (IOException ioe) {
-            log.error("startPageNumber:" + ioe.getMessage());
-            throw new RuntimeException(ioe.getMessage());
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("startPageNumber: " + e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -1077,8 +1089,7 @@ public class RTFHandler extends FOEventHandler {
             builderContext.pushContainer(link);
 
         } catch (IOException ioe) {
-            log.error("startLink:" + ioe.getMessage());
-            throw new RuntimeException(ioe.getMessage());
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("startLink: " + e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -1104,21 +1115,28 @@ public class RTFHandler extends FOEventHandler {
             return;
         }
 
+        String uri = eg.getURL();
+        ImageInfo info = null;
         try {
-            String uri = eg.getURL();
 
             //set image data
             FOUserAgent userAgent = eg.getUserAgent();
             ImageManager manager = userAgent.getFactory().getImageManager();
-            ImageInfo info = manager.getImageInfo(uri, userAgent.getImageSessionContext());
-            if (info == null) {
-                log.error("Image could not be found: " + uri);
-                return;
-            }
+            info = manager.getImageInfo(uri, userAgent.getImageSessionContext());
             
             putGraphic(eg, info);
-        } catch (Exception e) {
-            log.error("Error while handling an external-graphic: " + e.getMessage(), e);
+        } catch (ImageException ie) {
+            ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageError(this, (info != null ? info.toString() : uri), ie, null);
+        } catch (FileNotFoundException fe) {
+            ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageNotFound(this, (info != null ? info.toString() : uri), fe, null);
+        } catch (IOException ioe) {
+            ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageIOError(this, (info != null ? info.toString() : uri), ioe, null);
         }
     }
 
@@ -1144,6 +1162,12 @@ public class RTFHandler extends FOEventHandler {
             // Set the image size to the size of the svg.
             Point2D csize = new Point2D.Float(-1, -1);
             Point2D intrinsicDimensions = child.getDimension(csize);
+            if (intrinsicDimensions == null) {
+                ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+                        getUserAgent().getEventBroadcaster());
+                eventProducer.ifoNoIntrinsicSize(this, child.getLocator());
+                return;
+            }
             size.setSizeInMillipoints(
                     (int)Math.round(intrinsicDimensions.getX() * 1000),
                     (int)Math.round(intrinsicDimensions.getY() * 1000));
@@ -1157,8 +1181,14 @@ public class RTFHandler extends FOEventHandler {
             Image converted = manager.convertImage(image, FLAVORS);
             putGraphic(ifo, converted);
             
-        } catch (Exception e) {
-            log.error("Error while handling an instream-foreign-object: " + e.getMessage(), e);
+        } catch (ImageException ie) {
+            ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageError(this, null, ie, null);
+        } catch (IOException ioe) {
+            ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageIOError(this, null, ioe, null);
         }
     }
 
@@ -1183,7 +1213,9 @@ public class RTFHandler extends FOEventHandler {
 
             putGraphic(abstractGraphic, image);
         } catch (ImageException ie) {
-            log.error("Error while loading/processing image: " + info.getOriginalURI(), ie);
+            ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageError(this, null, ie, null);
         }
     }
     
@@ -1210,8 +1242,9 @@ public class RTFHandler extends FOEventHandler {
         }
 
         if (rawData == null) {
-            log.warn(FONode.decorateWithContextInfo("Image could not be embedded: "
-                    + image, abstractGraphic));
+            ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageWritingError(this, null);
             return;
         }
 
@@ -1322,9 +1355,7 @@ public class RTFHandler extends FOEventHandler {
             builderContext.pushContainer(rtfFootnote);
 
         } catch (IOException ioe) {
-            // TODO could we throw Exception in all FOEventHandler events?
-            log.error("startFootnote: " + ioe.getMessage());
-            throw new RuntimeException("IOException: " + ioe);
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("startFootnote: " + e.getMessage());
             throw new RuntimeException("Exception: " + e);
@@ -1358,9 +1389,7 @@ public class RTFHandler extends FOEventHandler {
 
             rtfFootnote.startBody();
         } catch (IOException ioe) {
-            // TODO could we throw Exception in all FOEventHandler events?
-            log.error("startFootnoteBody: " + ioe.getMessage());
-            throw new RuntimeException("IOException: " + ioe);
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("startFootnoteBody: " + e.getMessage());
             throw new RuntimeException("Exception: " + e);
@@ -1383,9 +1412,7 @@ public class RTFHandler extends FOEventHandler {
 
             rtfFootnote.endBody();
         } catch (IOException ioe) {
-            // TODO could we throw Exception in all FOEventHandler events?
-            log.error("endFootnoteBody: " + ioe.getMessage());
-            throw new RuntimeException("IOException: " + ioe);
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("endFootnoteBody: " + e.getMessage());
             throw new RuntimeException("Exception: " + e);
@@ -1421,10 +1448,8 @@ public class RTFHandler extends FOEventHandler {
             textrun.pushInlineAttributes(rtfAttr);
             textrun.addString(new String(data, start, length - start));
             textrun.popInlineAttributes();
-         } catch (IOException ioe) {
-            // FIXME could we throw Exception in all FOEventHandler events?
-            log.error("characters: " + ioe.getMessage());
-            throw new RuntimeException(ioe.getMessage());
+        } catch (IOException ioe) {
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("characters:" + e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -1452,8 +1477,7 @@ public class RTFHandler extends FOEventHandler {
             RtfTextrun textrun = container.getTextrun();
             textrun.addPageNumber(rtfAttr);
         } catch (IOException ioe) {
-            log.error("startPageNumber:" + ioe.getMessage());
-            throw new RuntimeException(ioe.getMessage());
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("startPageNumber: " + e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -1611,7 +1635,9 @@ public class RTFHandler extends FOEventHandler {
                 endCell( (TableCell) foNode);
             }
         } else {
-            log.warn("Ignored deferred event for " + foNode);
+            RTFEventProducer eventProducer = RTFEventProducer.Factory.create(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.ignoredDeferredEvent(this, foNode, bStart, foNode.getLocator());
         }
     }
 
@@ -1655,8 +1681,9 @@ public class RTFHandler extends FOEventHandler {
                 }
             } else {
                 //TODO Implement implicit column setup handling!
-                log.warn("No table-columns found on table. RTF output requires that all"
-                        + " table-columns for a table are defined. Output will be incorrect.");
+                RTFEventProducer eventProducer = RTFEventProducer.Factory.create(
+                        getUserAgent().getEventBroadcaster());
+                eventProducer.explicitTableColumnsRequired(this, table.getLocator());
             }
 
             //recurse table-header

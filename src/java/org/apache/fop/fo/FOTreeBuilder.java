@@ -35,8 +35,6 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FormattingResults;
 import org.apache.fop.area.AreaTreeHandler;
-import org.apache.fop.events.EventBroadcaster;
-import org.apache.fop.events.LoggingEventListener;
 import org.apache.fop.fo.ElementMapping.Maker;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fo.pagination.Root;
@@ -131,14 +129,6 @@ public class FOTreeBuilder extends DefaultHandler {
         if (used) {
             throw new IllegalStateException("FOTreeBuilder (and the Fop class) cannot be reused."
                     + " Please instantiate a new instance.");
-        }
-        
-        //Backwards-compatibility: Make sure at least the LoggingEventListener is plugged in
-        //so no events are just silently swallowed.
-        EventBroadcaster broadcaster = userAgent.getEventBroadcaster(); 
-        if (!broadcaster.hasEventListeners()) {
-            broadcaster.addEventListener(
-                    new LoggingEventListener(LogFactory.getLog(FOUserAgent.class)));
         }
         
         used = true;

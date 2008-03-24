@@ -74,6 +74,7 @@ import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.datatypes.URISpecification;
+import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fo.extensions.xmp.XMPMetadata;
@@ -496,13 +497,10 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                 PDFGoTo gt = (PDFGoTo) unfinishedGoTos.get(0);
                 finishIDGoTo(gt, defaultPos);
             }
-            boolean one = count == 1;
-            String pl = one ? ""    : "s";
-            String ww = one ? "was" : "were";
-            String ia = one ? "is"  : "are";
-            log.warn("" + count + " link target" + pl + " could not be fully resolved and "
-                        + ww + " now point to the top of the page or "
-                        + ia + " dysfunctional.");  // dysfunctional if pageref is null
+            PDFEventProducer eventProducer = PDFEventProducer.Factory.create(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.nonFullyResolvedLinkTargets(this, count);
+            // dysfunctional if pageref is null
         }
     }
 
@@ -561,16 +559,17 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
 
     private void renderDestination(DestinationData dd) {
         String targetID = dd.getIDRef();
-        if (targetID != null && targetID.length() > 0) {
-            PageViewport pv = dd.getPageViewport();
-            if (pv == null) {
-                log.warn("Unresolved destination item received: " + dd.getIDRef());
-            }
+        if (targetID == null || targetID.length() == 0) {
+            throw new IllegalArgumentException("DestinationData must contain a ID reference");
+        }
+        PageViewport pv = dd.getPageViewport();
+        if (pv != null) {
             PDFGoTo gt = getPDFGoToForID(targetID, pv.getKey());
             pdfDoc.getFactory().makeDestination(
                     dd.getIDRef(), gt.makeReference());
         } else {
-            log.warn("DestinationData item with null or empty IDRef received.");
+            //Warning already issued by AreaTreeHandler (debug level is sufficient)
+            log.debug("Unresolved destination item received: " + dd.getIDRef());
         }
     }
 
@@ -590,22 +589,22 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         PDFOutline pdfOutline = null;
 
         String targetID = bookmarkItem.getIDRef();
-        if (targetID != null && targetID.length() > 0) {
-            PageViewport pv = bookmarkItem.getPageViewport();
-            if (pv != null) {
-                String pvKey = pv.getKey();
-                PDFGoTo gt = getPDFGoToForID(targetID, pvKey);
-                // create outline object:
-                PDFOutline parent = parentBookmarkItem != null
-                    ? parentBookmarkItem
-                    : pdfDoc.getOutlineRoot();
-                pdfOutline = pdfDoc.getFactory().makeOutline(parent,
-                        bookmarkItem.getBookmarkTitle(), gt, bookmarkItem.showChildItems());
-            } else {
-                log.warn("Bookmark with IDRef \"" + targetID + "\" has a null PageViewport.");
-            }
+        if (targetID == null || targetID.length() == 0) {
+            throw new IllegalArgumentException("DestinationData must contain a ID reference");
+        }
+        PageViewport pv = bookmarkItem.getPageViewport();
+        if (pv != null) {
+            String pvKey = pv.getKey();
+            PDFGoTo gt = getPDFGoToForID(targetID, pvKey);
+            // create outline object:
+            PDFOutline parent = parentBookmarkItem != null
+                ? parentBookmarkItem
+                : pdfDoc.getOutlineRoot();
+            pdfOutline = pdfDoc.getFactory().makeOutline(parent,
+                    bookmarkItem.getBookmarkTitle(), gt, bookmarkItem.showChildItems());
         } else {
-            log.warn("Bookmark item with null or empty IDRef received.");
+            //Warning already issued by AreaTreeHandler (debug level is sufficient)
+            log.debug("Bookmark with IDRef \"" + targetID + "\" has a null PageViewport.");
         }
 
         for (int i = 0; i < bookmarkItem.getCount(); i++) {
@@ -1388,15 +1387,8 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                 if (annotsAllowed) {
                     action = getPDFGoToForID(idRef, pvKey);
                 }
-            } else if (pvKeyOK) {
-                log.warn("Internal link trait with PageViewport key " + pvKey 
-                         + " contains no ID reference.");
-            } else if (idRefOK) {
-                log.warn("Internal link trait with ID reference " + idRef 
-                         + " contains no PageViewport key.");
             } else {
-                log.warn("Internal link trait received with neither PageViewport key"
-                         + " nor ID reference.");
+                //Warnings already issued by AreaTreeHandler
             }
         }
 
@@ -1727,8 +1719,6 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
             ImageSessionContext sessionContext = getUserAgent().getImageSessionContext();
             info = manager.getImageInfo(uri, sessionContext);
             
-            
-            
             Map hints = ImageUtil.getDefaultHints(sessionContext);
             org.apache.xmlgraphics.image.loader.Image img = manager.getImage(
                         info, imageHandlerRegistry.getSupportedFlavors(), hints, sessionContext);
@@ -1744,7 +1734,9 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                             x, y, posInt.width, posInt.height, foreignAttributes);
                     handler.generateImage(context, img, origin, posInt);
                 } catch (IOException ioe) {
-                    log.error("I/O error while handling image: " + info, ioe);
+                    ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+                            getUserAgent().getEventBroadcaster());
+                    eventProducer.imageWritingError(this, ioe);
                     return;
                 }
             } else {
@@ -1753,13 +1745,17 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                             + info + " (" + img.getClass().getName() + ")");
             }
         } catch (ImageException ie) {
-            log.error("Error while processing image: "
-                    + (info != null ? info.toString() : uri), ie);
-        } catch (FileNotFoundException fnfe) {
-            log.error(fnfe.getMessage());
+            ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageError(this, (info != null ? info.toString() : uri), ie, null);
+        } catch (FileNotFoundException fe) {
+            ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageNotFound(this, (info != null ? info.toString() : uri), fe, null);
         } catch (IOException ioe) {
-            log.error("I/O error while processing image: "
-                    + (info != null ? info.toString() : uri), ioe);
+            ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageIOError(this, (info != null ? info.toString() : uri), ioe, null);
         }
 
         // output new data
@@ -1884,18 +1880,34 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         return MIME_TYPE;
     }
     
+    /**
+     * Sets the PDF/A mode for the PDF renderer.
+     * @param mode the PDF/A mode
+     */
     public void setAMode(PDFAMode mode) {
         this.pdfAMode = mode;
     }
 
+    /**
+     * Sets the PDF/X mode for the PDF renderer.
+     * @param mode the PDF/X mode
+     */
     public void setXMode(PDFXMode mode) {
         this.pdfXMode = mode;        
     }
 
+    /**
+     * Sets the output color profile for the PDF renderer.
+     * @param outputProfileURI the URI to the output color profile
+     */
     public void setOutputProfileURI(String outputProfileURI) {
         this.outputProfileURI = outputProfileURI;
     }
 
+    /**
+     * Sets the filter map to be used by the PDF renderer.
+     * @param filterMap the filter map
+     */
     public void setFilterMap(Map filterMap) {
         this.filterMap = filterMap;
     }

@@ -78,6 +78,7 @@ import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.datatypes.URISpecification;
+import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
@@ -86,6 +87,7 @@ import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.PrintRenderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.RendererContextConstants;
+import org.apache.fop.render.RendererEventProducer;
 import org.apache.fop.render.java2d.FontMetricsMapper;
 import org.apache.fop.render.java2d.FontSetup;
 import org.apache.fop.render.java2d.Java2DRenderer;
@@ -208,7 +210,9 @@ public class PCLRenderer extends PrintRenderer {
      */
     protected void handleIOTrouble(IOException ioe) {
         if (!ioTrouble) {
-            log.error("Error while writing to target file", ioe);
+            RendererEventProducer eventProducer = RendererEventProducer.Factory.create(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.ioError(this, ioe);
             ioTrouble = true;
         }
     }
@@ -417,11 +421,15 @@ public class PCLRenderer extends PrintRenderer {
         
         if (this.currentPageDefinition == null) {
             this.currentPageDefinition = PCLPageDefinition.getDefaultPageDefinition();
-            log.warn("Paper type could not be determined. Falling back to: " 
-                    + this.currentPageDefinition.getName());
+            PCLEventProducer eventProducer = PCLEventProducer.Factory.create(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.paperTypeUnavailable(this, pagewidth, pageheight,
+                    this.currentPageDefinition.getName());
         }
-        log.debug("page size: " + currentPageDefinition.getPhysicalPageSize());
-        log.debug("logical page: " + currentPageDefinition.getLogicalPageRect());
+        if (log.isDebugEnabled()) {
+            log.debug("page size: " + currentPageDefinition.getPhysicalPageSize());
+            log.debug("logical page: " + currentPageDefinition.getLogicalPageRect());
+        }
         if (this.currentPageDefinition.isLandscapeFormat()) {
             gen.writeCommand("&l1O"); //Orientation
         } else {
@@ -1107,12 +1115,17 @@ public class PCLRenderer extends PrintRenderer {
             }
 
         } catch (ImageException ie) {
-            log.error("Error while processing image: "
-                    + (info != null ? info.toString() : uri), ie);
+            ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageError(this, (info != null ? info.toString() : uri), ie, null);
         } catch (FileNotFoundException fe) {
-            log.error(fe.getMessage());
+            ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageNotFound(this, (info != null ? info.toString() : uri), fe, null);
         } catch (IOException ioe) {
-            handleIOTrouble(ioe);
+            ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageIOError(this, (info != null ? info.toString() : uri), ioe, null);
         }
     }
 

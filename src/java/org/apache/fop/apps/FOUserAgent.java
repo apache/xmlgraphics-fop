@@ -39,8 +39,9 @@ import org.apache.fop.Version;
 import org.apache.fop.events.DefaultEventBroadcaster;
 import org.apache.fop.events.Event;
 import org.apache.fop.events.EventBroadcaster;
-import org.apache.fop.events.EventListener;
+import org.apache.fop.events.EventProducer;
 import org.apache.fop.events.FOPEventListenerProxy;
+import org.apache.fop.events.LoggingEventListener;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererFactory;
@@ -548,7 +549,7 @@ public class FOUserAgent {
 
     private class FOPEventBroadcaster extends DefaultEventBroadcaster {
 
-        private EventListener rootListener;
+        private FOPEventListenerProxy rootListener;
         
         public FOPEventBroadcaster() {
             this.rootListener = new FOPEventListenerProxy(
@@ -558,6 +559,18 @@ public class FOUserAgent {
         /** {@inheritDoc} */
         public void broadcastEvent(Event event) {
             rootListener.processEvent(event);
+        }
+
+        /** {@inheritDoc} */
+        protected EventProducer createProxyFor(Class clazz) {
+            if (!this.listeners.hasEventListeners()) {
+                //Backwards-compatibility: Make sure at least the LoggingEventListener is plugged
+                //in so no events are just silently swallowed.
+                addEventListener(
+                        new LoggingEventListener(LogFactory.getLog(FOUserAgent.class)));
+                
+            }
+            return super.createProxyFor(clazz);
         }
         
     }

@@ -39,7 +39,6 @@ import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.AbstractGenericSVGHandler;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererContext;
-import org.apache.fop.render.XMLHandler;
 import org.apache.fop.svg.SVGEventProducer;
 import org.apache.fop.svg.SVGUserAgent;
 
@@ -52,7 +51,7 @@ import org.apache.fop.svg.SVGUserAgent;
  * @version $Id$
  */
 public class PSSVGHandler extends AbstractGenericSVGHandler
-            implements XMLHandler, PSRendererContextConstants {
+            implements PSRendererContextConstants {
 
     /** logging instance */
     private static Log log = LogFactory.getLog(PSSVGHandler.class);

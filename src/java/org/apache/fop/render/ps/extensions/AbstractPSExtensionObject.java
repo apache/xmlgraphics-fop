@@ -20,13 +20,14 @@
 package org.apache.fop.render.ps.extensions;
 
 // FOP
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
-import org.xml.sax.Attributes;
-import org.xml.sax.Locator;
 
 /**
  * Base class for the PostScript-specific extension elements.
@@ -36,15 +37,15 @@ public abstract class AbstractPSExtensionObject extends FONode {
     private PSSetupCode setupCode = new PSSetupCode();
     
     /**
+     * Main constructor.
+     * @param parent the parent node
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
     public AbstractPSExtensionObject(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
                 throws ValidationException {
         if (FO_URI.equals(nsURI)) {
@@ -71,7 +72,7 @@ public abstract class AbstractPSExtensionObject extends FONode {
     
     /**{@inheritDoc} */
     public String getNormalNamespacePrefix() {
-        return "fox";
+        return "ps";
     }
 
     /** {@inheritDoc} */

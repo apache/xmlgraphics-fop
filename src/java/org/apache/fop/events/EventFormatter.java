@@ -21,9 +21,13 @@ package org.apache.fop.events;
 
 import java.util.Locale;
 import java.util.Map;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.util.XMLResourceBundle;
 import org.apache.fop.util.text.AdvancedMessageFormat;
@@ -33,22 +37,66 @@ import org.apache.fop.util.text.AdvancedMessageFormat.PartFactory;
 /**
  * Converts events into human-readable, localized messages.
  */
-public class EventFormatter {
+public final class EventFormatter {
 
     private static final Pattern INCLUDES_PATTERN = Pattern.compile("\\{\\{.+\\}\\}");
     
     private static ResourceBundle defaultBundle = XMLResourceBundle.getXMLBundle(
             EventFormatter.class.getName(), EventFormatter.class.getClassLoader());
     
-    public static String format(Event event) {
-        return format(event, defaultBundle);
+    private static Log log = LogFactory.getLog(EventFormatter.class);
+    
+    private EventFormatter() {
+        //utility class
     }
     
+    /**
+     * Formats an event using the default locale.
+     * @param event the event
+     * @return the formatted message
+     */
+    public static String format(Event event) {
+        ResourceBundle bundle = null;
+        String groupID = event.getEventGroupID();
+        if (groupID != null) {
+            try {
+                 bundle = XMLResourceBundle.getXMLBundle(
+                        groupID,
+                        EventFormatter.class.getClassLoader());
+            } catch (MissingResourceException mre) {
+                log.trace("No XMLResourceBundle for " + groupID + " available.");
+            }
+        }
+        if (bundle == null) {
+            bundle = defaultBundle;
+        }
+        return format(event, bundle);
+    }
+    
+    /**
+     * Formats an event using a given locale.
+     * @param event the event
+     * @param locale the locale
+     * @return the formatted message
+     */
     public static String format(Event event, Locale locale) {
-        ResourceBundle bundle = XMLResourceBundle.getXMLBundle(
-                EventFormatter.class.getName(),
-                locale,
-                EventFormatter.class.getClassLoader());
+        ResourceBundle bundle = null;
+        String groupID = event.getEventGroupID();
+        if (groupID != null) {
+            try {
+                 bundle = XMLResourceBundle.getXMLBundle(
+                        groupID, locale,
+                        EventFormatter.class.getClassLoader());
+            } catch (MissingResourceException mre) {
+                log.trace("No XMLResourceBundle for " + groupID + " available.");
+            }
+        }
+        if (bundle == null) {
+            bundle = XMLResourceBundle.getXMLBundle(
+                    EventFormatter.class.getName(),
+                    locale,
+                    EventFormatter.class.getClassLoader());
+        }
         return format(event, bundle);
     }
 
@@ -84,6 +132,13 @@ public class EventFormatter {
         return replacements;
     }
 
+    /**
+     * Formats the event using a given pattern. The pattern needs to be compatible with
+     * {@link AdvancedMessageFormat}.
+     * @param event the event
+     * @param pattern the pattern (compatible with {@link AdvancedMessageFormat})
+     * @return the formatted message
+     */
     public static String format(Event event, String pattern) {
         AdvancedMessageFormat format = new AdvancedMessageFormat(pattern);
         Map params = new java.util.HashMap(event.getParams());

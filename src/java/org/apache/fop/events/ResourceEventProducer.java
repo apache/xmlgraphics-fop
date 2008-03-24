@@ -22,6 +22,8 @@ package org.apache.fop.events;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import org.w3c.dom.Document;
+
 import org.xml.sax.Locator;
 
 import org.apache.xmlgraphics.image.loader.ImageException;
@@ -68,7 +70,7 @@ public interface ResourceEventProducer extends EventProducer {
     void imageError(Object source, String uri, ImageException e, Locator loc);
     
     /**
-     * I/O error while processing image.
+     * I/O error while loading an image.
      * @param source the event source
      * @param uri the original URI of the image
      * @param ioe the I/O exception
@@ -76,6 +78,14 @@ public interface ResourceEventProducer extends EventProducer {
      * @event.severity ERROR
      */
     void imageIOError(Object source, String uri, IOException ioe, Locator loc);
+
+    /**
+     * Error while writing/serializing an image to an output format.
+     * @param source the event source
+     * @param e the original exception
+     * @event.severity ERROR
+     */
+    void imageWritingError(Object source, Exception e);
 
     /**
      * Error while handling a URI.
@@ -94,4 +104,24 @@ public interface ResourceEventProducer extends EventProducer {
      * @event.severity ERROR
      */
     void ifoNoIntrinsicSize(Object source, Locator loc);
+    
+    /**
+     * Error processing foreign XML content.
+     * @param source the event source
+     * @param doc the foreign XML
+     * @param namespaceURI the namespace URI of the foreign XML
+     * @param e the original exception
+     * @event.severity ERROR
+     */
+    void foreignXMLProcessingError(Object source, Document doc, String namespaceURI, Exception e);
+
+    /**
+     * No handler for foreign XML content.
+     * @param source the event source
+     * @param doc the foreign XML
+     * @param namespaceURI the namespace URI of the foreign XML
+     * @event.severity ERROR
+     */
+    void foreignXMLNoHandler(Object source, Document doc, String namespaceURI);
+    
 }

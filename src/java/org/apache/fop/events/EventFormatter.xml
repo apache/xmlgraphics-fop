@@ -22,6 +22,9 @@
   <message key="rule.retrieveMarkerDescendatOfStaticContent">An fo:retrieve-marker is permitted only as the descendant of an fo:static-content.</message>
   <message key="rule.bidiOverrideContent">An fo:bidi-override that is a descendant of an fo:leader or of the fo:inline child of an fo:footnote may not have block-level children, unless it has a nearer ancestor that is an fo:inline-container.</message>
   <message key="rule.inlineContent">An fo:inline that is a descendant of an fo:leader or fo:footnote may not have block-level children, unless it has a nearer ancestor that is an fo:inline-container.</message>
+  <message key="rule.childOfSPM">The element must be a child of fo:simple-page-master.</message>
+  <message key="rule.childOfDeclarations">The element must be a child of fo:declarations.</message>
+  <message key="rule.childOfSPMorDeclarations">The element must be a child of fo:declarations or fo:simple-page-master.</message>
   <message key="org.apache.fop.fo.FOValidationEventProducer.tooManyNodes">For "{elementName}", only one "{offendingNode}" may be declared.{{locator}}</message>
   <message key="org.apache.fop.fo.FOValidationEventProducer.nodeOutOfOrder">For "{elementName}", "{tooLateNode}" must be declared before "{tooEarlyNode}"!{{locator}}</message>
   <message key="org.apache.fop.fo.FOValidationEventProducer.invalidChild">"{offendingNode}" is not a valid child element of "{elementName}"![ {ruleViolated,lookup}]{{locator}}</message>
@@ -59,11 +62,14 @@ Any reference to it will be considered a reference to the first occurrence in th
   <message key="org.apache.fop.fo.flow.table.TableEventProducer.paddingNotApplicable">padding-* properties are not applicable to {elementName}, but a non-zero value for padding was found.{{locator}}</message>
   <message key="org.apache.fop.fo.flow.table.TableEventProducer.cellOverlap">{elementName} overlaps in column {column}.<!-- no locator here, exception will be wrapped --></message>
   <message key="org.apache.fop.fo.flow.table.TableEventProducer.breakIgnoredDueToRowSpanning">{breakBefore,if,break-before,break-after} ignored on {elementName} because of row spanning in progress (See XSL 1.1, {breakBefore,if,7.20.2,7.20.1}){{locator}}</message>
-  <message key="org.apache.fop.events.ResourceEventProducer.imageNotFound">Image not found. URI: {uri}{{locator}}</message>
+  <message key="org.apache.fop.events.ResourceEventProducer.imageNotFound">Image not found.[ URI: {uri}.]{{locator}}</message>
   <message key="org.apache.fop.events.ResourceEventProducer.imageError">Image not available.[ URI: {uri}.] Reason:[ {reason}][ {e}]{{locator}}</message>
-  <message key="org.apache.fop.events.ResourceEventProducer.imageIOError">I/O error while loading image.  URI: {uri}. Reason: {ioe}{{locator}}</message>
+  <message key="org.apache.fop.events.ResourceEventProducer.imageIOError">I/O error while loading image.[ URI: {uri}.][ Reason: {ioe}]{{locator}}</message>
   <message key="org.apache.fop.events.ResourceEventProducer.ifoNoIntrinsicSize">The intrinsic dimensions of an instream-foreign-object could not be determined.{{locator}}</message>
   <message key="org.apache.fop.events.ResourceEventProducer.uriError">Error while handling URI: {uri}. Reason: {e}{{locator}}</message>
+  <message key="org.apache.fop.events.ResourceEventProducer.foreignXMLProcessingError">Some XML content will be ignored. Could not render XML in namespace "{namespaceURI}".[ Reason: {e}]</message>
+  <message key="org.apache.fop.events.ResourceEventProducer.foreignXMLNoHandler">Some XML content will be ignored. No handler defined for XML with namespace "{namespaceURI}".</message>
+  <message key="org.apache.fop.events.ResourceEventProducer.imageWritingError">Error while writing an image to the target file.[ Reason: {e}]</message>
   <message key="org.apache.fop.layoutmgr.inline.InlineLevelEventProducer.leaderWithoutContent">fo:leader is set to "use-content" but has no content.{{locator}}</message>
   <message key="org.apache.fop.layoutmgr.inline.InlineLevelEventProducer.lineOverflows">Line {line} of a paragraph overflows the available area by {overflowLength,choice,50000#{overflowLength} millipoints|50000&lt;more than 50 points}.{{locator}}</message>
   <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.rowTooTall">The contents of table-row {row} are taller than they should be (there is a block-progression-dimension or height constraint on the indicated row). Due to its contents the row grows to {effCellBPD} millipoints, but the row shouldn't get any taller than {maxCellBPD} millipoints.{{locator}}</message>
@@ -81,4 +87,5 @@ Any reference to it will be considered a reference to the first occurrence in th
   <message key="org.apache.fop.svg.SVGEventProducer.info">SVG info: {message}</message>
   <message key="org.apache.fop.svg.SVGEventProducer.svgNotBuilt">SVG graphic could not be built. Reason: {e}</message>
   <message key="org.apache.fop.svg.SVGEventProducer.svgRenderingError">SVG graphic could not be rendered. Reason: {e}</message>
+  <message key="org.apache.fop.render.RendererEventProducer.ioError">I/O error while writing to target file.[ Reason: {ioe}]</message>
 </catalogue>

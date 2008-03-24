@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,39 +17,17 @@
 
 /* $Id$ */
 
-package org.apache.fop.render.ps.extensions;
-
-import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.extensions.ExtensionAttachment;
+package org.apache.fop.events.model;
 
 /**
- * Comment before element
+ * This interface is used to instantiate (load, parse) event models.
  */
-public class PSCommentBeforeElement extends AbstractPSCommentElement {
-
-    /** the element name */
-    protected static final String ELEMENT = "ps-comment-before";
+public interface EventModelFactory {
 
     /**
-     * Main constructor
-     * @param parent parent node
+     * Creates a new EventModel instance.
+     * @return the new EventModel instance
      */
-    public PSCommentBeforeElement(FONode parent) {
-        super(parent);
-    }
-
-    /**
-     * @return local name
-     * @see org.apache.fop.fo.FONode#getLocalName()
-     */
-    public String getLocalName() {
-        return ELEMENT;
-    }
-
-    /**
-     * @return instance of its extension attachment object
-     */
-    protected ExtensionAttachment instantiateExtensionAttachment() {
-        return new PSCommentBefore();
-    }    
+    EventModel createEventModel();
+    
 }

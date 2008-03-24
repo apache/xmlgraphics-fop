@@ -25,11 +25,6 @@ import org.apache.fop.events.model.EventSeverity;
 
 public class BasicEventTestCase extends TestCase {
 
-    static {
-        //Use local event model
-        DefaultEventBroadcaster.loadModel(BasicEventTestCase.class, "test-event-model.xml");
-    }
-    
     public void testBasics() throws Exception {
         
         MyEventListener listener = new MyEventListener();
