@@ -435,7 +435,7 @@ list of possible build targets.
         <include name="org/apache/fop/render/afp/**/*.java"/>
       </fileset>
     </eventResourceGenerator>
-    <fixcrlf file="${src.java.dir}/org/apache/fop/render/afp/AFPEventFormatter.xml" tab="remove" tablength="2"/>
+    <fixcrlf file="${src.java.dir}/org/apache/fop/render/afp/AFPEventProducer.xml" tab="remove" tablength="2"/>
     <eventResourceGenerator
       modelfile="${build.gensrc.dir}/org/apache/fop/render/bitmap/event-model.xml"
       translationfile="${src.java.dir}/org/apache/fop/render/bitmap/BitmapRendererEventProducer.xml">
@@ -443,6 +443,7 @@ list of possible build targets.
         <include name="org/apache/fop/render/bitmap/**/*.java"/>
       </fileset>
     </eventResourceGenerator>
+    <fixcrlf file="${src.java.dir}/org/apache/fop/render/bitmap/BitmapRendererEventProducer.xml" tab="remove" tablength="2"/>
     <eventResourceGenerator
       modelfile="${build.gensrc.dir}/org/apache/fop/render/pcl/event-model.xml"
       translationfile="${src.java.dir}/org/apache/fop/render/pcl/PCLEventProducer.xml">
@@ -450,6 +451,7 @@ list of possible build targets.
         <include name="org/apache/fop/render/pcl/**/*.java"/>
       </fileset>
     </eventResourceGenerator>
+    <fixcrlf file="${src.java.dir}/org/apache/fop/render/pcl/PCLEventProducer.xml" tab="remove" tablength="2"/>
     <eventResourceGenerator
       modelfile="${build.gensrc.dir}/org/apache/fop/render/pdf/event-model.xml"
       translationfile="${src.java.dir}/org/apache/fop/render/pdf/PDFEventProducer.xml">
@@ -457,6 +459,7 @@ list of possible build targets.
         <include name="org/apache/fop/render/pdf/**/*.java"/>
       </fileset>
     </eventResourceGenerator>
+    <fixcrlf file="${src.java.dir}/org/apache/fop/render/pdf/PDFEventProducer.xml" tab="remove" tablength="2"/>
     <eventResourceGenerator
       modelfile="${build.gensrc.dir}/org/apache/fop/render/ps/event-model.xml"
       translationfile="${src.java.dir}/org/apache/fop/render/ps/PSEventProducer.xml">
@@ -464,6 +467,7 @@ list of possible build targets.
         <include name="org/apache/fop/render/ps/**/*.java"/>
       </fileset>
     </eventResourceGenerator>
+    <fixcrlf file="${src.java.dir}/org/apache/fop/render/ps/PSEventProducer.xml" tab="remove" tablength="2"/>
     <eventResourceGenerator
       modelfile="${build.gensrc.dir}/org/apache/fop/render/rtf/event-model.xml"
       translationfile="${src.java.dir}/org/apache/fop/render/rtf/RTFEventProducer.xml">
@@ -471,6 +475,7 @@ list of possible build targets.
         <include name="org/apache/fop/render/rtf/**/*.java"/>
       </fileset>
     </eventResourceGenerator>
+    <fixcrlf file="${src.java.dir}/org/apache/fop/render/rtf/RTFEventProducer.xml" tab="remove" tablength="2"/>
   </target>
   
   <target name="compile-copy-resources" depends="resourcegen">
