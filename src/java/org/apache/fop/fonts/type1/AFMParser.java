@@ -31,6 +31,8 @@ import java.util.Stack;
 
 import org.apache.commons.io.IOUtils;
 
+import org.apache.fop.fonts.NamedCharacter;
+
 /**
  * Parses the contents of a Type 1 AFM font metrics file into an object structure ({@link AFMFile}).
  */
@@ -126,7 +128,7 @@ public class AFMParser {
         VALUE_PARSERS.put(W, new NotImplementedYet(W));
         VALUE_PARSERS.put(W0, new NotImplementedYet(W0));
         VALUE_PARSERS.put(W1, new NotImplementedYet(W1));
-        VALUE_PARSERS.put(N, new StringSetter("CharName"));
+        VALUE_PARSERS.put(N, new NamedCharacterSetter("Character"));
         VALUE_PARSERS.put(B, new CharBBox());
         VALUE_PARSERS.put(START_TRACK_KERN, new NotImplementedYet(START_TRACK_KERN));
         VALUE_PARSERS.put(END_TRACK_KERN, new NotImplementedYet(END_TRACK_KERN));
@@ -376,6 +378,19 @@ public class AFMParser {
             String s = getStringValue(line, startpos);
             Object obj = stack.peek();
             setValue(obj, s);
+        }
+    }
+    
+    private static class NamedCharacterSetter extends BeanSetter {
+        
+        public NamedCharacterSetter(String variable) {
+            super(variable);
+        }
+        
+        public void parse(String line, int startpos, Stack stack) throws IOException {
+            NamedCharacter ch = new NamedCharacter(getStringValue(line, startpos));
+            Object obj = stack.peek();
+            setValue(obj, ch);
         }
     }
     

@@ -21,7 +21,6 @@ package org.apache.fop.pdf;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.StringWriter;
 import java.io.Writer;
 
 /**
@@ -425,10 +424,8 @@ public class PDFCMap extends PDFStream {
     
     /** {@inheritDoc} */
     protected int output(OutputStream stream) throws IOException {
-        StringWriter writer = new StringWriter();
-        CMapBuilder builder = createCMapBuilder(writer);
+        CMapBuilder builder = createCMapBuilder(getBufferWriter());
         builder.writeCMap();
-        add(writer.getBuffer().toString()); //TODO Could be optimized by not buffering
         return super.output(stream);
     }
 }

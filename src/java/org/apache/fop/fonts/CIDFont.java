@@ -20,31 +20,14 @@
 package org.apache.fop.fonts;
 
 //Java
-import java.util.Map;
 
 /**
  * Abstract base class for CID fonts.
  */
 public abstract class CIDFont extends CustomFont {
 
-    /**
-     * usedGlyphs contains orginal, new glyph index
-     */
-    public Map usedGlyphs = new java.util.HashMap();
-
-    /**
-     * usedGlyphsIndex contains new glyph, original index
-     */
-    public Map usedGlyphsIndex = new java.util.HashMap();
-    public int usedGlyphsCount = 0;
-
-    /**
-     * usedCharsIndex contains new glyph, original char
-     */
-    public Map usedCharsIndex = new java.util.HashMap();
-
-    //private PDFWArray warray = new PDFWArray();
-    public int width[] = null;
+    /** Contains the character widths for all characters in the font */
+    protected int[] width = null;
 
     // ---- Required ----
     /**
@@ -73,6 +56,11 @@ public abstract class CIDFont extends CustomFont {
      */
     public abstract int getSupplement();
 
+    /**
+     * Returns the subset information for this font.
+     * @return the subset information
+     */
+    public abstract CIDSubset getCIDSubset();
 
     // ---- Optional ----
     /**
@@ -88,9 +76,4 @@ public abstract class CIDFont extends CustomFont {
         return true;
     }
 
-    /**
-     * Returns a char array containing all Unicode characters that have been accessed.
-     * @return a char array with all used Unicode characters
-     */
-    public abstract char[] getCharsUsed();
 }

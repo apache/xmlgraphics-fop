@@ -52,13 +52,17 @@
   </contexts>
   
   <changes>
-    <!--release version="FOP Trunk" date="TBD"-->
+    <release version="FOP Trunk" date="TBD">
       <!-- change reverted, to be added back later
         <action context="Renderers" dev="AC" importance="high" type="add">
         Added SVG support for AFP (GOCA).
         </action>
       -->
-    <!--/release-->
+      <action context="Fonts" dev="JM" type="add">
+        Added support for addressing all glyphs available in a Type 1 font, not just the ones
+        in the font's primary encoding.
+      </action>
+    </release>
     <release version="0.95beta" date="22 March 2008">
       <notes>
         <section>

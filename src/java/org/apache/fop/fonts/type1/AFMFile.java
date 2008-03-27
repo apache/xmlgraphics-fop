@@ -26,7 +26,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.xmlgraphics.fonts.Glyphs;
 import org.apache.xmlgraphics.java2d.Dimension2DDouble;
 
 /**
@@ -315,15 +314,8 @@ public class AFMFile {
     public void addCharMetrics(AFMCharMetrics metrics) {
         String name = metrics.getCharName();
         if (metrics.getUnicodeSequence() == null) {
-            if (name != null) {
-                String u = Glyphs.getUnicodeSequenceForGlyphName(metrics.getCharName());
-                if (u != null) {
-                    metrics.setUnicodeSequence(u);
-                }
-            } else {
-                //Ignore as no Unicode assignment is possible
-                return;
-            }
+            //Ignore as no Unicode assignment is possible
+            return;
         }
         this.charMetrics.add(metrics);
         if (name != null) {

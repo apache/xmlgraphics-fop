@@ -132,6 +132,14 @@ public class PDFEncoding extends PDFDictionary {
         }
         
         /**
+         * Indicates whether any differences have been recorded.
+         * @return true if there are differences.
+         */
+        public boolean hasDifferences() {
+            return (this.differences.length() > 0);
+        }
+        
+        /**
          * Creates and returns the PDFArray representing the Differences entry.
          * @return the Differences entry
          */

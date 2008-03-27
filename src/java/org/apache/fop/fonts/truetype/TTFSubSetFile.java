@@ -592,8 +592,8 @@ public class TTFSubSetFile extends TTFFile {
                                         + mtxTab[origIndex.intValue()].getOffset()) < 0) {
                         // origIndex is a composite glyph
                         allComposites.put(origIndex, glyphs.get(origIndex));
-                        List composites =
-                            getIncludedGlyphs(in, (int)entry.getOffset(),
+                        List composites
+                            = getIncludedGlyphs(in, (int)entry.getOffset(),
                                               origIndex);
 
                         // Iterate through all composites pointed to
@@ -651,6 +651,9 @@ public class TTFSubSetFile extends TTFFile {
         if (!checkTTC(in, name)) {
             throw new IOException("Failed to read font");
         }
+        
+        //Copy the Map as we're going to modify it
+        Map subsetGlyphs = new java.util.HashMap(glyphs);
 
         output = new byte[in.getFileSize()];
 
@@ -661,14 +664,14 @@ public class TTFSubSetFile extends TTFFile {
         readHorizontalMetrics(in);
         readIndexToLocation(in);
 
-        scanGlyphs(in, glyphs);
+        scanGlyphs(in, subsetGlyphs);
 
         createDirectory();                // Create the TrueType header and directory
 
         createHead(in);
-        createHhea(in, glyphs.size());    // Create the hhea table
-        createHmtx(in, glyphs);           // Create hmtx table
-        createMaxp(in, glyphs.size());    // copy the maxp table
+        createHhea(in, subsetGlyphs.size());    // Create the hhea table
+        createHmtx(in, subsetGlyphs);           // Create hmtx table
+        createMaxp(in, subsetGlyphs.size());    // copy the maxp table
 
         boolean optionalTableFound;
         optionalTableFound = createCvt(in);    // copy the cvt table
@@ -689,8 +692,8 @@ public class TTFSubSetFile extends TTFFile {
             log.debug("TrueType: prep table not present. Skipped.");
         }
 
-        createLoca(glyphs.size());    // create empty loca table
-        createGlyf(in, glyphs);       //create glyf table and update loca table
+        createLoca(subsetGlyphs.size());    // create empty loca table
+        createGlyf(in, subsetGlyphs);       //create glyf table and update loca table
 
         pad4();
         createCheckSumAdjustment();
