@@ -58,6 +58,15 @@
         Added SVG support for AFP (GOCA).
         </action>
       -->
+      <action context="Renderers" dev="JM" type="update">
+        When a JPEG image is embedded, an optionally embedded color profile is filtered out
+        as it's already embedded separately in the PDF file.
+      </action>
+      <action context="Renderers" dev="JM" type="fix">
+        Worked around a problem (PDF renderer) with JPEG image containing RGB color profiles which
+        are not sRGB. The images drifted into yellow. The color profile is simply disabled in this
+        case. Please let us know if you know what the problem could be.
+      </action>
       <action context="Fonts" dev="JM" type="add">
         Added support for addressing all glyphs available in a Type 1 font, not just the ones
         in the font's primary encoding.
