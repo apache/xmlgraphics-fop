@@ -81,7 +81,7 @@ public abstract class AbstractImageAdapter implements PDFImage {
     /** {@inheritDoc} */
     public void setup(PDFDocument doc) {
 
-        ICC_Profile prof = image.getICCProfile();
+        ICC_Profile prof = getEffectiveICCProfile();
         PDFDeviceColorSpace pdfCS = toPDFColorSpace(getImageColorSpace());
         if (prof != null) {
             pdfICCStream = setupColorProfile(doc, prof, pdfCS);
@@ -100,6 +100,14 @@ public abstract class AbstractImageAdapter implements PDFImage {
         }
     }
 
+    /**
+     * Returns the effective ICC profile for the image.
+     * @return an ICC profile or null
+     */
+    protected ICC_Profile getEffectiveICCProfile() {
+        return image.getICCProfile();
+    }
+    
     private static PDFICCStream setupColorProfile(PDFDocument doc,
                 ICC_Profile prof, PDFDeviceColorSpace pdfCS) {
         boolean defaultsRGB = ColorProfileUtil.isDefaultsRGB(prof);
