@@ -18,10 +18,9 @@
 /* $Id$ */
 
 package org.apache.fop.render.afp.modca;
+
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * The document is the highest level of the MO:DCA data-stream document
@@ -48,23 +47,13 @@ import java.util.List;
  * document to be presented.
  *
  */
-public final class Document extends AbstractNamedAFPObject {
+public final class Document extends AbstractResourceEnvironmentGroupContainer {
 
     /**
-     * Ststic default name reference
+     * Static default generated name reference
      */
     private static final String DEFAULT_NAME = "DOC00001";
-
-    /**
-     * A list of the objects in the document
-     */
-    private List objects = new java.util.ArrayList();
-
-    /**
-     * The document started state
-     */
-    private boolean started = false;
-
+    
     /**
      * The document completion state
      */
@@ -82,36 +71,14 @@ public final class Document extends AbstractNamedAFPObject {
      * @param name The name of the document
      */
     public Document(String name) {
-
         super(name);
-
-    }
-
-    /**
-     * Adds a page to the document.
-     * @param page - the Page object
-     */
-    public void addPage(PageObject page) {
-        if (!objects.contains(page)) {
-            objects.add(page);
-        }
-    }
-
-    /**
-     * Adds a PageGroup to the document.
-     * @param pageGroup the PageGroup object
-     */
-    public void addPageGroup(PageGroup pageGroup) {
-        objects.add(pageGroup);
     }
 
     /**
      * Method to mark the end of the page group.
      */
     public void endDocument() {
-
         complete = true;
-
     }
 
     /**
@@ -127,40 +94,17 @@ public final class Document extends AbstractNamedAFPObject {
      * @param os The stream to write to
      * @throws java.io.IOException thrown if an I/O exception of some sort has occurred
      */
-    public void writeDataStream(OutputStream os)
-        throws IOException {
-
-        if (!started) {
-            writeStart(os);
-            started = true;
+    public void writeDataStream(OutputStream os) throws IOException {
+        if (isComplete()) {
+            super.writeDataStream(os);
         }
-
-        for (Iterator it = objects.iterator(); it.hasNext();) {
-            AbstractAFPObject ao = (AbstractAFPObject)it.next();
-            if (ao instanceof PageObject && ((PageObject)ao).isComplete()
-                || ao instanceof PageGroup && ((PageGroup)ao).isComplete()) {
-                ao.writeDataStream(os);
-                it.remove();
-            } else {
-                break;
-            }
-        }
-
-        if (complete) {
-            writeEnd(os);
-        }
-
     }
 
     /**
-     * Helper method to write the start of the Document
-     * @param os The stream to write to
+     * {@inheritDoc}
      */
-    private void writeStart(OutputStream os)
-        throws IOException {
-
+    protected void writeStart(OutputStream os) throws IOException {
         byte[] data = new byte[17];
-
         data[0] = 0x5A; // Structured field identifier
         data[1] = 0x00; // Length byte 1
         data[2] = 0x10; // Length byte 2
@@ -170,26 +114,17 @@ public final class Document extends AbstractNamedAFPObject {
         data[6] = 0x00; // Flags
         data[7] = 0x00; // Reserved
         data[8] = 0x00; // Reserved
-
         for (int i = 0; i < nameBytes.length; i++) {
-
             data[9 + i] = nameBytes[i];
-
         }
-
         os.write(data);
-
     }
 
     /**
-     * Helper method to write the end of the Document.
-     * @param os The stream to write to
+     * {@inheritDoc}
      */
-    private void writeEnd(OutputStream os)
-        throws IOException {
-
+    protected void writeEnd(OutputStream os) throws IOException {
         byte[] data = new byte[17];
-
         data[0] = 0x5A; // Structured field identifier
         data[1] = 0x00; // Length byte 1
         data[2] = 0x10; // Length byte 2
@@ -199,15 +134,16 @@ public final class Document extends AbstractNamedAFPObject {
         data[6] = 0x00; // Flags
         data[7] = 0x00; // Reserved
         data[8] = 0x00; // Reserved
-
         for (int i = 0; i < nameBytes.length; i++) {
-
             data[9 + i] = nameBytes[i];
-
         }
-
         os.write(data);
-
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String toString() {
+        return this.name;
+    }
 }

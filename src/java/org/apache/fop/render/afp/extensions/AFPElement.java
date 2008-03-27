@@ -23,6 +23,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.extensions.ExtensionAttachment;
 
 /**
  * This class extends the org.apache.fop.extensions.ExtensionObj class. The
@@ -54,4 +55,7 @@ public class AFPElement extends AbstractAFPExtensionObject {
         }
     }
 
+    protected ExtensionAttachment instantiateExtensionAttachment() {
+        return null;
+    }
 }

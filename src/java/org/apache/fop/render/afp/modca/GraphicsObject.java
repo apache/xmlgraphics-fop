@@ -23,22 +23,22 @@ import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.fop.render.afp.modca.goca.GraphicsBox;
-import org.apache.fop.render.afp.modca.goca.GraphicsData;
-import org.apache.fop.render.afp.modca.goca.GraphicsFillet;
-import org.apache.fop.render.afp.modca.goca.GraphicsFullArc;
-import org.apache.fop.render.afp.modca.goca.GraphicsImageBegin;
-import org.apache.fop.render.afp.modca.goca.GraphicsImageData;
-import org.apache.fop.render.afp.modca.goca.GraphicsImageEnd;
-import org.apache.fop.render.afp.modca.goca.GraphicsLine;
-import org.apache.fop.render.afp.modca.goca.GraphicsSetArcParameters;
-import org.apache.fop.render.afp.modca.goca.GraphicsSetCharacterSet;
-import org.apache.fop.render.afp.modca.goca.GraphicsSetCurrentPosition;
-import org.apache.fop.render.afp.modca.goca.GraphicsSetLineType;
-import org.apache.fop.render.afp.modca.goca.GraphicsSetLineWidth;
-import org.apache.fop.render.afp.modca.goca.GraphicsSetPatternSymbol;
-import org.apache.fop.render.afp.modca.goca.GraphicsSetProcessColor;
-import org.apache.fop.render.afp.modca.goca.GraphicsString;
+import org.apache.fop.render.afp.goca.GraphicsBox;
+import org.apache.fop.render.afp.goca.GraphicsData;
+import org.apache.fop.render.afp.goca.GraphicsFillet;
+import org.apache.fop.render.afp.goca.GraphicsFullArc;
+import org.apache.fop.render.afp.goca.GraphicsImageBegin;
+import org.apache.fop.render.afp.goca.GraphicsImageData;
+import org.apache.fop.render.afp.goca.GraphicsImageEnd;
+import org.apache.fop.render.afp.goca.GraphicsLine;
+import org.apache.fop.render.afp.goca.GraphicsSetArcParameters;
+import org.apache.fop.render.afp.goca.GraphicsSetCharacterSet;
+import org.apache.fop.render.afp.goca.GraphicsSetCurrentPosition;
+import org.apache.fop.render.afp.goca.GraphicsSetLineType;
+import org.apache.fop.render.afp.goca.GraphicsSetLineWidth;
+import org.apache.fop.render.afp.goca.GraphicsSetPatternSymbol;
+import org.apache.fop.render.afp.goca.GraphicsSetProcessColor;
+import org.apache.fop.render.afp.goca.GraphicsString;
 
 /**
  * Top-level GOCA graphics object.
@@ -309,7 +309,7 @@ public class GraphicsObject extends AbstractDataObject {
      * {@inheritDoc}
      */
     public String toString() {
-        return "GraphicsObject";
+        return "GraphicsObject: " + getName();
     }
 
     /**

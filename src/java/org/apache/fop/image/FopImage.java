@@ -168,13 +168,13 @@ public interface FopImage {
      * Returns the encoded/compressed image as an array of bytes.
      * @return the raw image
      */
-    byte[] getRessourceBytes();
+    byte[] getResourceBytes();
 
     /**
      * Returns the number of bytes of the raw image.
      * @return the size in bytes
      */
-    int getRessourceBytesSize();
+    int getResourceBytesSize();
 
     /**
      * Image info class.

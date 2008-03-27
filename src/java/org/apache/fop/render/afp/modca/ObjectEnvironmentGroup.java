@@ -34,7 +34,7 @@ import java.io.OutputStream;
  * normally contained in the object environment group, or it may specify that one or
  * more default values are to be used.
  */
-public final class ObjectEnvironmentGroup extends AbstractStructuredAFPObject {
+public final class ObjectEnvironmentGroup extends AbstractNamedAFPObject {
 
     /**
      * Default name for the object environment group
@@ -150,7 +150,9 @@ public final class ObjectEnvironmentGroup extends AbstractStructuredAFPObject {
     /**
      * {@inheritDoc}
      */
-    public void writeContent(OutputStream os) throws IOException {
+    protected void writeContent(OutputStream os) throws IOException {
+        super.writeContent(os);
+        
         objectAreaDescriptor.writeDataStream(os);
         objectAreaPosition.writeDataStream(os);
 

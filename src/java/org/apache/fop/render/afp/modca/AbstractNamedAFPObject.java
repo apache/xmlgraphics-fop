@@ -18,14 +18,17 @@
 /* $Id$ */
 
 package org.apache.fop.render.afp.modca;
+
 import java.io.UnsupportedEncodingException;
 
 /**
  * This is the base class for all named data stream objects.
  * A named data stream object has an 8 byte EBCIDIC name.
  */
-public abstract class AbstractNamedAFPObject extends AbstractAFPObject {
-        
+public abstract class AbstractNamedAFPObject extends AbstractStructuredAFPObject {
+
+    private static final int DEFAULT_NAME_LENGTH = 8;
+
     /**
      * The actual name of the object
      */
@@ -41,22 +44,13 @@ public abstract class AbstractNamedAFPObject extends AbstractAFPObject {
      */
     protected AbstractNamedAFPObject() {
     }
-
-    private static final int DEFAULT_NAME_LENGTH = 8;
-
-    /**
-     * @return the name length of this object
-     */
-    protected int getNameLength() {
-        return DEFAULT_NAME_LENGTH;
-    }
-
+    
     /**
      * Constructor for the ActiveEnvironmentGroup, this takes a
      * name parameter which should be 8 characters long.
      * @param name the object name
      */
-    public AbstractNamedAFPObject(String name) {
+    protected AbstractNamedAFPObject(String name) {
         int nameLen = getNameLength();
         if (name.length() < nameLen) {
             this.name = (name + "       ").substring(0, nameLen);
@@ -66,19 +60,27 @@ public abstract class AbstractNamedAFPObject extends AbstractAFPObject {
         } else {
             this.name = name;            
         }
-        
         try {
-            
             this.nameBytes = name.getBytes(AFPConstants.EBCIDIC_ENCODING);
-            
         } catch (UnsupportedEncodingException usee) {
-            
             this.nameBytes = name.getBytes();
             log.warn(
                 "Constructor:: UnsupportedEncodingException translating the name "
                 + name);
-            
         }
-        
+    }
+    
+    /**
+     * @return the name length of this object
+     */
+    protected int getNameLength() {
+        return DEFAULT_NAME_LENGTH;
+    }
+
+    /**
+     * @return the name of the page group
+     */
+    public String getName() {
+        return name;
     }    
 }

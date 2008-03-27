@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id$ */
+/* $Id: $ */
 
 package org.apache.fop.render.afp.modca;
 
@@ -24,83 +24,34 @@ import java.io.OutputStream;
 import java.util.List;
 
 /**
- * A page group is used in the data stream to define a named, logical grouping
- * of sequential pages. Page groups are delimited by begin-end structured fields
- * that carry the name of the page group. Page groups are defined so that the
- * pages that comprise the group can be referenced or processed as a single
- * entity. Page groups are often processed in stand-alone fashion; that is, they
- * are indexed, retrieved, and presented outside the context of the containing
- * document.
- *
- * @author <a href="mailto:pete@townsend.uk.com">Pete Townsend </a>
+ * A page segment is a MO:DCA-P resource object.  It may be stored in an
+ * external resource library or it may be carried in a resource group.
+ * Page segments contain any combination of IOCA image objects and
+ * GOCA graphics objects.
  */
-public class PageGroup extends AbstractResourceEnvironmentGroupContainer {
+public class PageSegment extends AbstractNamedAFPObject {
 
+    private List objects = null;
+    
     /**
-     * The tag logical elements contained within this group
+     * Main constructor
+     * @param name the name of this object
      */
-    private List tagLogicalElements = null;
-
-    /**
-     * The page state
-     */
-    private boolean complete = false;
-
-    /**
-     * Constructor for the PageGroup.
-     *
-     * @param name
-     *            the name of the page group
-     */
-    public PageGroup(String name) {
+    public PageSegment(String name) {
         super(name);
     }
 
-    private List getTagLogicalElements() {
-        if (tagLogicalElements == null) {
-            this.tagLogicalElements = new java.util.ArrayList();
+    /**
+     * Adds a resource object (image/graphic) to this page segment
+     * @param object the resource objec to add to this page segment
+     */
+    public void addObject(AbstractAFPObject object) {
+        if (objects == null) {
+            objects = new java.util.ArrayList();
         }
-        return this.tagLogicalElements;
+        objects.add(object);
     }
     
-    /**
-     * Creates a TagLogicalElement on the page.
-     *
-     * @param name
-     *            the name of the tag
-     * @param value
-     *            the value of the tag
-     */
-    public void createTagLogicalElement(String name, String value) {
-        TagLogicalElement tle = new TagLogicalElement(name, value);
-        if (!getTagLogicalElements().contains(tle)) {
-            getTagLogicalElements().add(tle);
-        }
-    }
-
-    /**
-     * Method to mark the end of the page group.
-     */
-    protected void endPageGroup() {
-        complete = true;
-    }
-
-    /**
-     * Returns an indication if the page group is complete
-     * @return whether or not this page group is complete or not
-     */
-    public boolean isComplete() {
-        return complete;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected void writeContent(OutputStream os) throws IOException {
-        writeObjects(tagLogicalElements, os);
-        super.writeContent(os);
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -111,7 +62,7 @@ public class PageGroup extends AbstractResourceEnvironmentGroupContainer {
         data[2] = 0x10; // Length byte 2
         data[3] = (byte) 0xD3; // Structured field id byte 1
         data[4] = (byte) 0xA8; // Structured field id byte 2
-        data[5] = (byte) 0xAD; // Structured field id byte 3
+        data[5] = (byte) 0x5F; // Structured field id byte 3
         data[6] = 0x00; // Flags
         data[7] = 0x00; // Reserved
         data[8] = 0x00; // Reserved
@@ -131,7 +82,7 @@ public class PageGroup extends AbstractResourceEnvironmentGroupContainer {
         data[2] = 0x10; // Length byte 2
         data[3] = (byte) 0xD3; // Structured field id byte 1
         data[4] = (byte) 0xA9; // Structured field id byte 2
-        data[5] = (byte) 0xAD; // Structured field id byte 3
+        data[5] = (byte) 0x5F; // Structured field id byte 3
         data[6] = 0x00; // Flags
         data[7] = 0x00; // Reserved
         data[8] = 0x00; // Reserved
@@ -139,5 +90,13 @@ public class PageGroup extends AbstractResourceEnvironmentGroupContainer {
             data[9 + i] = nameBytes[i];
         }
         os.write(data);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    protected void writeContent(OutputStream os) throws IOException {
+        super.writeContent(os);
+        writeObjects(objects, os);
     }
 }

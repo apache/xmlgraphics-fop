@@ -18,6 +18,7 @@
 /* $Id$ */
 
 package org.apache.fop.render.afp.modca;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
@@ -37,7 +38,7 @@ import org.apache.fop.render.afp.fonts.AFPFont;
  * containing page or overlay.
  *
  */
-public final class ActiveEnvironmentGroup extends AbstractNamedAFPObject {
+public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
 
     /**
      * Default name for the active environment group
@@ -47,7 +48,12 @@ public final class ActiveEnvironmentGroup extends AbstractNamedAFPObject {
     /**
      * The collection of MapCodedFont objects
      */
-    private List mapCodedFonts = new java.util.ArrayList();
+    private List mapCodedFonts = null;
+
+    /**
+     * The collection of MapDataResource objects
+     */
+    private List mapDataResources = null;
 
     /**
      * The Object Area Descriptor for the active environment group
@@ -70,22 +76,14 @@ public final class ActiveEnvironmentGroup extends AbstractNamedAFPObject {
     private PageDescriptor pageDescriptor = null;
 
     /**
-     * The collection of MapPageOverlay objects
-     */
-    private List mapPageOverlays = new java.util.ArrayList();
-
-    /**
      * Default constructor for the ActiveEnvironmentGroup.
      * @param width the page width
      * @param height the page height
      * @param widthRes the page width resolution
      * @param heightRes the page height resolution
      */
-    public ActiveEnvironmentGroup(int width, int height,
-            int widthRes, int heightRes) {
-
+    public ActiveEnvironmentGroup(int width, int height, int widthRes, int heightRes) {
         this(DEFAULT_NAME, width, height, widthRes, heightRes);
-
     }
 
     /**
@@ -97,9 +95,7 @@ public final class ActiveEnvironmentGroup extends AbstractNamedAFPObject {
      * @param widthRes the page width resolution
      * @param heightRes the page height resolution
      */
-    public ActiveEnvironmentGroup(String name, int width, int height,
-            int widthRes, int heightRes) {
-
+    public ActiveEnvironmentGroup(String name, int width, int height, int widthRes, int heightRes) {
         super(name);
 
         // Create PageDescriptor
@@ -112,7 +108,6 @@ public final class ActiveEnvironmentGroup extends AbstractNamedAFPObject {
         // Create PresentationTextDataDescriptor
         presentationTextDataDescriptor = new PresentationTextDescriptor(width, height,
                     widthRes, heightRes);
-
     }
 
     /**
@@ -122,10 +117,8 @@ public final class ActiveEnvironmentGroup extends AbstractNamedAFPObject {
      * @param rotation the rotation
      */
     public void setPosition(int x, int y, int rotation) {
-
         // Create ObjectAreaPosition
         objectAreaPosition = new ObjectAreaPosition(x, y, rotation);
-
     }
 
     /**
@@ -134,9 +127,7 @@ public final class ActiveEnvironmentGroup extends AbstractNamedAFPObject {
      * @return the page descriptor object
      */
     public PageDescriptor getPageDescriptor() {
-
         return pageDescriptor;
-
     }
 
     /**
@@ -145,47 +136,36 @@ public final class ActiveEnvironmentGroup extends AbstractNamedAFPObject {
      * @return the presentation text descriptor
      */
     public PresentationTextDescriptor getPresentationTextDataDescriptor() {
-
         return presentationTextDataDescriptor;
-
     }
 
     /**
-     * Accessor method to write the AFP datastream for the active environment group.
-     * @param os The stream to write to
-     * @throws java.io.IOException throws if an I/O exception of some sort has occurred
+     * {@inheritDoc}
      */
-    public void writeDataStream(OutputStream os)
-        throws IOException {
-
-        writeStart(os);
-
-        writeObjectList(mapCodedFonts, os);
-
-        writeObjectList(mapPageOverlays, os);
-
-        pageDescriptor.writeDataStream(os);
-
+    public void writeContent(OutputStream os) throws IOException {
+        super.writeTriplets(os);
+        
+        writeObjects(mapCodedFonts, os);
+        writeObjects(mapPageOverlays, os);
+        writeObjects(mapDataResources, os);
+        
+        if (pageDescriptor != null) {
+            pageDescriptor.writeDataStream(os);            
+        }
         if (objectAreaDescriptor != null && objectAreaPosition != null) {
             objectAreaDescriptor.writeDataStream(os);
             objectAreaPosition.writeDataStream(os);
         }
-
-        presentationTextDataDescriptor.writeDataStream(os);
-
-        writeEnd(os);
-
+        if (presentationTextDataDescriptor != null) {
+            presentationTextDataDescriptor.writeDataStream(os);
+        }
     }
 
     /**
-     * Helper method to write the start of the active environment group.
-     * @param os The stream to write to
+     * {@inheritDoc}
      */
-    private void writeStart(OutputStream os)
-        throws IOException {
-
+    protected void writeStart(OutputStream os) throws IOException {
         byte[] data = new byte[17];
-
         data[0] = 0x5A; // Structured field identifier
         data[1] = 0x00; // Length byte 1
         data[2] = 0x10; // Length byte 2
@@ -195,26 +175,17 @@ public final class ActiveEnvironmentGroup extends AbstractNamedAFPObject {
         data[6] = 0x00; // Flags
         data[7] = 0x00; // Reserved
         data[8] = 0x00; // Reserved
-
         for (int i = 0; i < nameBytes.length; i++) {
-
             data[9 + i] = nameBytes[i];
-
         }
-
-       os.write(data);
-
+        os.write(data);
     }
 
     /**
-     * Helper method to write the end of the active environment group.
-     * @param os The stream to write to
+     * {@inheritDoc}
      */
-    private void writeEnd(OutputStream os)
-        throws IOException {
-
+    protected void writeEnd(OutputStream os) throws IOException {
         byte[] data = new byte[17];
-
         data[0] = 0x5A; // Structured field identifier
         data[1] = 0x00; // Length byte 1
         data[2] = 0x10; // Length byte 2
@@ -224,130 +195,75 @@ public final class ActiveEnvironmentGroup extends AbstractNamedAFPObject {
         data[6] = 0x00; // Flags
         data[7] = 0x00; // Reserved
         data[8] = 0x00; // Reserved
-
         for (int i = 0; i < nameBytes.length; i++) {
-
             data[9 + i] = nameBytes[i];
-
         }
-
         os.write(data);
+    }
 
+    private List getMapCodedFonts() {
+        if (mapCodedFonts == null) {
+            mapCodedFonts = new java.util.ArrayList();
+        }
+        return mapCodedFonts;
+    }
+
+    private List getMapDataResources() {
+        if (mapDataResources == null) {
+            mapDataResources = new java.util.ArrayList();
+        }
+        return mapDataResources;
     }
 
     /**
      * Method to create a map coded font object
-     * @param fontReference the font number used as the resource identifier
+     * @param fontRef the font number used as the resource identifier
      * @param font the font
      * @param size the point size of the font
      * @param orientation the orientation of the font (e.g. 0, 90, 180, 270)
      */
-    public void createFont(
-        int fontReference,
-        AFPFont font,
-        int size,
-        int orientation) {
-
+    public void createFont(int fontRef, AFPFont font, int size, int orientation) {
         MapCodedFont mcf = getCurrentMapCodedFont();
-
         if (mcf == null) {
             mcf = new MapCodedFont();
-            mapCodedFonts.add(mcf);
+            getMapCodedFonts().add(mcf);
         }
 
         try {
-            
-            mcf.addFont(
-                fontReference,
-                font,
-                size,
-                orientation);
-
+            mcf.addFont(fontRef, font, size, orientation);
         } catch (MaximumSizeExceededException msee) {
-
             mcf = new MapCodedFont();
-            mapCodedFonts.add(mcf);
+            getMapCodedFonts().add(mcf);
 
             try {
-
-                mcf.addFont(
-                    fontReference,
-                    font,
-                    size,
-                    orientation);
-
+                mcf.addFont(fontRef, font, size, orientation);
             } catch (MaximumSizeExceededException ex) {
-
                 // Should never happen (but log just in case)
                 log.error("createFont():: resulted in a MaximumSizeExceededException");
-
-            }
-
-        }
-
-    }
-
-    /**
-     * Actually creates the MPO object.
-     * Also creates the supporting object (an IPO)
-     * @param name the name of the overlay to be used
-     */
-    public void createOverlay(String name) {
-
-        MapPageOverlay mpo = getCurrentMapPageOverlay();
-
-        if (mpo == null) {
-            mpo = new MapPageOverlay();
-            mapPageOverlays.add(mpo);
-        }
-
-        try {
-
-            mpo.addOverlay(name);
-
-        } catch (MaximumSizeExceededException msee) {
-            mpo = new MapPageOverlay();
-            mapPageOverlays.add(mpo);
-            try {
-                mpo.addOverlay(name);
-            } catch (MaximumSizeExceededException ex) {
-                // Should never happen (but log just in case)
-                log.error("createOverlay():: resulted in a MaximumSizeExceededException");
             }
         }
     }
-
+    
     /**
      * Getter method for the most recent MapCodedFont added to the
      * Active Environment Group (returns null if no MapCodedFonts exist)
      * @return the most recent Map Coded Font.
      */
     private MapCodedFont getCurrentMapCodedFont() {
-
-        int size = mapCodedFonts.size();
+        int size = getMapCodedFonts().size();
         if (size > 0) {
-            return (MapCodedFont) mapCodedFonts.get(mapCodedFonts.size() - 1);
+            return (MapCodedFont)mapCodedFonts.get(size - 1);
         } else {
             return null;
         }
-
     }
-
+    
+    
     /**
-     * Getter method for the most recent MapPageOverlay added to the
-     * Active Environment Group (returns null if no MapPageOverlay exist)
-     * @return the most recent Map Coded Font
+     * Method to create a map data resource object
+     * @param obj creates a map data resource entry for a given AFP data resource object
      */
-    private MapPageOverlay getCurrentMapPageOverlay() {
-
-        int size = mapPageOverlays.size();
-        if (size > 0) {
-            return (MapPageOverlay) mapPageOverlays.get(
-                mapPageOverlays.size() - 1);
-        } else {
-            return null;
-        }
-
+    public void createResource(AbstractStructuredAFPObject obj) {
+        getMapDataResources().add(new MapDataResource(obj));
     }
-
 }

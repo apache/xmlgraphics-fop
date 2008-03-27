@@ -27,8 +27,6 @@ import org.apache.fop.fo.extensions.ExtensionAttachment;
  */
 public class PSCommentAfterElement extends AbstractPSCommentElement {
 
-    protected static final String ELEMENT = "ps-comment-after";
-
     /**
      * Main constructor
      * @param parent node
@@ -42,7 +40,7 @@ public class PSCommentAfterElement extends AbstractPSCommentElement {
      * @see org.apache.fop.fo.FONode#getLocalName()
      */
     public String getLocalName() {
-        return ELEMENT;
+        return PSCommentAfter.ELEMENT;
     }
 
     /**

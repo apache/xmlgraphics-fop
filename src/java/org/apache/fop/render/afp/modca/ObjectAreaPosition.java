@@ -55,7 +55,6 @@ public class ObjectAreaPosition extends AbstractAFPObject {
         byte[] len = BinaryUtils.convert(32, 2);
         byte[] xcoord = BinaryUtils.convert(x, 3);
         byte[] ycoord = BinaryUtils.convert(y, 3);
-
         byte[] data = new byte[] {
             0x5A,
             len[0], // Length
@@ -91,9 +90,6 @@ public class ObjectAreaPosition extends AbstractAFPObject {
             0x00,
             0x00, // RefCSys
         };
-        
         os.write(data);
-
     }
-
 }

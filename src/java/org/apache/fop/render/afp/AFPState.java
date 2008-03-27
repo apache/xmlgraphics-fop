@@ -20,51 +20,18 @@
 package org.apache.fop.render.afp;
 
 import java.awt.Color;
+import java.awt.geom.AffineTransform;
+import java.io.Serializable;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * This keeps information about the current state when writing to pdf.
  */
 public class AFPState {
-    /**
-     * The current color
-     */
-    private Color color = null;
-
-    /**
-     * The current background color
-     */
-    private Color backColor = null;
-
-    /**
-     * The current font name
-     */
-    private String fontName = null;
-
-    /**
-     * The current font size
-     */
-    private int fontSize = 0;
-
-    /**
-     * The current line width
-     */
-    private float lineWidth = 0;
-
-    /**
-     * The dash array for the current basic stroke (line type)
-     */
-    private float[] dashArray = null;
-
-    /**
-     * The current fill status
-     */
-    private boolean filled = false;
+    private Data data = new Data();
     
-    /**
-     * The fonts on the current page
-     */
-    private AFPPageFonts pageFonts = null;
+    private List stateStack = new java.util.ArrayList();
 
     /**
      * Set the current color.
@@ -74,8 +41,8 @@ public class AFPState {
      * @return true if the color has changed
      */
     protected boolean setColor(Color col) {
-        if (!col.equals(this.color)) {
-            this.color = col;
+        if (!col.equals(getData().color)) {
+            getData().color = col;
             return true;
         }
         return false;
@@ -87,8 +54,8 @@ public class AFPState {
      * @return true if the fill value has changed
      */
     protected boolean setFill(boolean fill) {
-        if (fill != this.filled) {
-            this.filled = fill;
+        if (fill != getData().filled) {
+            getData().filled = fill;
             return true;
         }
         return false;
@@ -99,10 +66,10 @@ public class AFPState {
      * @return the color
      */
     protected Color getColor() {
-        if (this.color == null) {
-            this.color = Color.black;
+        if (getData().color == null) {
+            getData().color = Color.black;
         }
-        return this.color;
+        return getData().color;
     }
 
     /**
@@ -111,8 +78,8 @@ public class AFPState {
      * @return true if the line width has changed
      */
     protected boolean setLineWidth(float width) {
-        if (this.lineWidth != width) {
-            this.lineWidth = width;
+        if (getData().lineWidth != width) {
+            getData().lineWidth = width;
             return true;
         }
         return false;
@@ -124,8 +91,8 @@ public class AFPState {
      * @return true if the dash array has changed
      */
     public boolean setDashArray(float[] dash) {
-        if (!Arrays.equals(dash, this.dashArray)) {
-            this.dashArray = dash;
+        if (!Arrays.equals(dash, getData().dashArray)) {
+            getData().dashArray = dash;
             return true;
         }
         return false;
@@ -136,7 +103,7 @@ public class AFPState {
      * @return the current line width
      */
     protected float getLineWidth() {
-        return lineWidth;
+        return getData().lineWidth;
     }
 
     /**
@@ -144,10 +111,10 @@ public class AFPState {
      * @return the background color
      */
     protected Color getBackColor() {
-        if (this.backColor == null) {
-            this.backColor = Color.white;
+        if (getData().backColor == null) {
+            getData().backColor = Color.white;
         }
-        return backColor;
+        return getData().backColor;
     }
 
     /**
@@ -158,8 +125,8 @@ public class AFPState {
      * @return true if the color has changed
      */
     protected boolean setBackColor(Color col) {
-        if (!col.equals(this.backColor)) {
-            this.backColor = col;
+        if (!col.equals(getData().backColor)) {
+            getData().backColor = col;
             return true;
         }
         return false;
@@ -171,8 +138,8 @@ public class AFPState {
      * @return true if the font name has changed
      */
     protected boolean setFontName(String internalFontName) {
-        if (!internalFontName.equals(this.fontName)) {
-            this.fontName = internalFontName;
+        if (!internalFontName.equals(getData().fontName)) {
+            getData().fontName = internalFontName;
             return true;
         }
         return false;
@@ -183,7 +150,7 @@ public class AFPState {
      * @return the current font name
      */
     protected String getFontName() {
-        return this.fontName;
+        return getData().fontName;
     }
     
     /**
@@ -191,7 +158,7 @@ public class AFPState {
      * @return the current font size
      */
     protected int getFontSize() {
-        return this.fontSize;
+        return getData().fontSize;
     }
 
     /**
@@ -202,8 +169,8 @@ public class AFPState {
      * @return true if the font size has changed
      */
     protected boolean setFontSize(int size) {
-        if (size != this.fontSize) {
-            this.fontSize = size;
+        if (size != getData().fontSize) {
+            getData().fontSize = size;
             return true;
         }
         return false;
@@ -214,25 +181,98 @@ public class AFPState {
      * @return the current page fonts
      */
     protected AFPPageFonts getPageFonts() {
-        if (this.pageFonts == null) {
-            this.pageFonts = new AFPPageFonts();
+        if (getData().pageFonts == null) {
+            getData().pageFonts = new AFPPageFonts();
         }
-        return this.pageFonts;
+        return getData().pageFonts;
     }
 
     /**
-     * Resets the current state
-     */    
-    protected void reset() {
-        this.color = null;
-        this.backColor = null;
-        this.fontName = null;         
-        this.fontSize = 0;         
-        this.lineWidth = 0;
-        this.dashArray = null;
-        this.filled = false;
-        if (this.pageFonts != null) {
-            this.pageFonts.clear();
+     * Push the current state onto the stack.
+     * This call should be used when the q operator is used
+     * so that the state is known when popped.
+     */
+    public void push() {
+        Data copy;
+        try {
+            copy = (Data)getData().clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        stateStack.add(copy);
+    }
+
+    /**
+     * Get the current stack level.
+     *
+     * @return the current stack level
+     */
+    public int getStackLevel() {
+        return stateStack.size();
+    }
+
+    /**
+     * Pop the state from the stack and set current values to popped state.
+     * This should be called when a Q operator is used so
+     * the state is restored to the correct values.
+     * @return the restored state, null if the stack is empty
+     */
+    public Data pop() {
+        if (getStackLevel() > 0) {
+            Data popped = (Data)stateStack.remove(stateStack.size() - 1);
+            data = popped;
+            return popped;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * @return the currently valid state
+     */
+    public Data getData() {
+        return data;
+    }
+    
+    public class Data implements Cloneable, Serializable {
+        private static final long serialVersionUID = -1789481244175275686L;
+
+        /** The current color */
+        private Color color = null;
+
+        /** The current background color */
+        private Color backColor = null;
+
+        /** The current font name */
+        private String fontName = null;
+
+        /** The current font size */
+        private int fontSize = 0;
+
+        /** The current line width */
+        private float lineWidth = 0;
+
+        /** The dash array for the current basic stroke (line type) */
+        private float[] dashArray = null;
+
+        /** The current fill status */
+        private boolean filled = false;
+        
+        /** The fonts on the current page */
+        private AFPPageFonts pageFonts = null;
+
+        /** {@inheritDoc} */
+        public Object clone() throws CloneNotSupportedException {
+            Data obj = new Data();
+            obj.color = this.color;
+            obj.backColor = this.backColor;
+            obj.fontName = this.fontName;
+            obj.fontSize = this.fontSize;
+            obj.lineWidth = this.lineWidth;
+            obj.dashArray = this.dashArray;
+            obj.filled = this.filled;
+            obj.pageFonts = this.pageFonts;
+            return obj;
         }
     }
 }

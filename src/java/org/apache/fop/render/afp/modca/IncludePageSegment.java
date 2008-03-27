@@ -59,35 +59,29 @@ public class IncludePageSegment extends AbstractNamedAFPObject {
      * @param y The y position
      */
     public IncludePageSegment(String name, int x, int y) {
-
         super(name);
         this.x = BinaryUtils.convert(x, 3);
         this.y = BinaryUtils.convert(y, 3);
-
     }
 
     /**
-     * Accessor method to write the AFP datastream for the Include Page Segment
-     * @param os The stream to write to
-     * @throws java.io.IOException thrown if an I/O exception of some sort has occurred
+     * {@inheritDoc}
      */
-    public void writeDataStream(OutputStream os)
-        throws IOException {
+    public void writeDataStream(OutputStream os) throws IOException {
 
         byte[] data = new byte[23]; //(9 +14)
 
         data[0] = 0x5A;
 
         // Set the total record length
-        byte[] rl1 = BinaryUtils.convert(22, 2); //Ignore first byte
-        data[1] = rl1[0];
-        data[2] = rl1[1];
+        byte[] len = BinaryUtils.convert(22, 2); //Ignore first byte
+        data[1] = len[0];
+        data[2] = len[1];
 
         // Structured field ID for a IPS
         data[3] = (byte) 0xD3;
         data[4] = (byte) 0xAF;
         data[5] = (byte) 0x5F;
-
         data[6] = 0x00; // Reserved
         data[7] = 0x00; // Reserved
         data[8] = 0x00; // Reserved
@@ -95,11 +89,9 @@ public class IncludePageSegment extends AbstractNamedAFPObject {
         for (int i = 0; i < nameBytes.length; i++) {
             data[9 + i] = nameBytes[i];
         }
-
         data[17] = x[0]; // x coordinate
         data[18] = x[1];
         data[19] = x[2];
-
         data[20] = y[0]; // y coordinate
         data[21] = y[1];
         data[22] = y[2];

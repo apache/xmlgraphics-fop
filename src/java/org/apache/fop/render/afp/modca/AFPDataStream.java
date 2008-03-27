@@ -20,6 +20,7 @@
 package org.apache.fop.render.afp.modca;
 
 import java.awt.Color;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
@@ -28,7 +29,11 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.render.afp.AFPFontAttributes;
+import org.apache.fop.render.afp.DataObjectParameters;
+import org.apache.fop.render.afp.ImageObjectParameters;
+import org.apache.fop.render.afp.ResourceLevel;
 import org.apache.fop.render.afp.fonts.AFPFont;
+import org.apache.fop.render.afp.modca.triplets.FullyQualifiedNameTriplet;
 import org.apache.fop.render.afp.tools.StringUtils;
 
 /**
@@ -47,7 +52,7 @@ import org.apache.fop.render.afp.tools.StringUtils;
  * them.
  * 
  */
-public class AFPDataStream {
+public class AFPDataStream extends AbstractResourceGroupContainer {
 
     /**
      * Static logging instance
@@ -81,6 +86,11 @@ public class AFPDataStream {
     private PageObject currentPageObject = null;
 
     /**
+     * The current resource group
+     */
+//    private ResourceGroup currentResourceGroup = null;
+    
+    /**
      * The current overlay object
      */
     private Overlay currentOverlay = null;
@@ -98,8 +108,7 @@ public class AFPDataStream {
     /**
      * The page group count
      */
-// not used
-//    private int pageGroupCount = 0;
+    private int pageGroupCount = 0;
 
     /**
      * The overlay count
@@ -135,40 +144,71 @@ public class AFPDataStream {
      * The outputstream for the data stream
      */
     private OutputStream outputStream = null;
+
+    /**
+     * A mapping of external resource destinations to resource groups
+     */
+    private Map/*<String,ResourceGroup>*/ externalResourceGroups = null;
     
     /**
      * Default constructor for the AFPDataStream.
      */
     public AFPDataStream() {
+        this.document = new Document();
+    }
+
+    private Document getDocument() {
+        return this.document;
+    }
+    
+    private AbstractPageObject getCurrentPage() {
+        return this.currentPage;
     }
 
     /**
      * The document is started by invoking this method which creates an instance
      * of the AFP Document object.
      * 
-     * @param docOutputStream
-     *            the outputStream which the document is written to.
+     * @param name
+     *            the name of this document.
      */
-    public void startDocument(OutputStream docOutputStream) {
-        if (document != null) {
-            String msg = "Invalid state - document already started.";
-            log.warn("startDocument():: " + msg);
-            throw new IllegalStateException(msg);
-        }
+    public void setDocumentName(String name) {
+//        if (document != null) {
+//            String msg = "Invalid state - document already started.";
+//            log.warn("startDocument():: " + msg);
+//            throw new IllegalStateException(msg);
+//        }
+//        if (document != null) {
+//            String msg = "Invalid state - print file level document already started"; 
+//            log.warn(msg);
+//            throw new IllegalStateException(msg);
+//        }
 
-        this.document = new Document();
-        this.outputStream = docOutputStream;
+        if (name != null) {
+            document.setFullyQualifiedName(
+                    FullyQualifiedNameTriplet.TYPE_BEGIN_DOCUMENT_REF,
+                    FullyQualifiedNameTriplet.FORMAT_CHARSTR,
+                    name);
+        }
     }
 
     /**
-     * The document is ended by invoking this method which creates an instance
+     * Sets the OutputStream
+     * @param outputStream the AFP OutputStream
+     */
+    public void setOutputStream(OutputStream outputStream) {
+        this.outputStream = outputStream;
+    }
+    
+    /**
+     * The document is written/ended by invoking this method which creates an instance
      * of the AFP Document object and registers the start with a validation map
      * which ensures that methods are not invoked out of the correct sequence.
      * 
      * @throws java.io.IOException
      *             throws an I/O exception of some sort has occurred
      */
-    public void endDocument() throws IOException {
+    public void write() throws IOException {
         if (complete) {
             String msg = "Invalid state - document already ended.";
             log.warn("endDocument():: " + msg);
@@ -185,8 +225,22 @@ public class AFPDataStream {
             endPageGroup();
         }
 
-        document.endDocument();
-        document.writeDataStream(this.outputStream);
+        // Write out any external resource groups
+        if (externalResourceGroups != null) {
+            writeExternalResources();
+        }
+
+        // Write out any print-file level resources
+        if (hasResources()) {
+            getResourceGroup().writeDataStream(this.outputStream);
+        }
+
+        // Write out document
+        if (document != null) {
+            document.endDocument();
+            document.writeDataStream(this.outputStream);
+        }
+
         this.outputStream.flush();
 
         complete = true;
@@ -195,7 +249,7 @@ public class AFPDataStream {
 
         this.outputStream = null;
     }
-
+    
     /**
      * Start a new page. When processing has finished on the current page, the
      * {@link #endPage()}method must be invoked to mark the page ending.
@@ -213,7 +267,6 @@ public class AFPDataStream {
      */
     public void startPage(int pageWidth, int pageHeight, int pageRotation,
             int pageWidthRes, int pageHeightRes) {
-
         String pageName = "PGN"
                 + StringUtils.lpad(String.valueOf(pageCount++), '0', 5);
 
@@ -229,34 +282,30 @@ public class AFPDataStream {
      * the {@link #endOverlay()}method must be invoked to mark the overlay
      * ending.
      * 
-     * @param overlayX
+     * @param x
      *            the x position of the overlay on the page
-     * @param overlayY
+     * @param y
      *            the y position of the overlay on the page
-     * @param overlayWidth
+     * @param width
      *            the width of the overlay
-     * @param overlayHeight
+     * @param height
      *            the height of the overlay
-     * @param overlayWidthResolution
+     * @param widthRes
      *            the width resolution of the overlay
-     * @param overlayHeightResolution
+     * @param heightRes
      *            the height resolution of the overlay
-     * @param overlayRotation
+     * @param rotation
      *            the rotation of the overlay
      */
-    public void startOverlay(int overlayX, int overlayY, int overlayWidth,
-            int overlayHeight, int overlayWidthResolution,
-            int overlayHeightResolution, int overlayRotation) {
-
+    public void startOverlay(int x, int y, int width, int height, int widthRes,
+            int heightRes, int rotation) {
         String overlayName = "OVL"
                 + StringUtils.lpad(String.valueOf(ovlCount++), '0', 5);
 
-        currentOverlay = new Overlay(overlayName, overlayWidth, overlayHeight,
-                overlayWidthResolution, overlayHeightResolution,
-                overlayRotation);
-        currentPageObject.addOverlay(currentOverlay);
-        currentPageObject.createIncludePageOverlay(overlayName, overlayX,
-                overlayY, 0);
+        currentOverlay = new Overlay(overlayName, width, height,
+                widthRes, heightRes, rotation);
+        
+        currentPageObject.createIncludePageOverlay(overlayName, x, y, 0);
         currentPage = currentOverlay;
         setOffsets(0, 0, 0);
     }
@@ -300,17 +349,13 @@ public class AFPDataStream {
 
     /**
      * Helper method to mark the end of the current page.
-     * 
-     * @throws java.io.IOException
-     *             thrown when an I/O exception of some sort has occurred
      */
-    public void endPage() throws IOException {
+    public void endPage() {
         currentPageObject.endPage();
         if (currentPageGroup != null) {
             currentPageGroup.addPage(currentPageObject);
         } else {
             document.addPage(currentPageObject);
-            document.writeDataStream(this.outputStream);
         }
         currentPageObject = null;
         currentPage = null;
@@ -363,7 +408,6 @@ public class AFPDataStream {
         currentPage.createFont(fontReference, font, size);
     }
 
-
     /**
      * Helper method to create text on the current page, this method delegates
      * to the current presentation text object in order to construct the text.
@@ -388,55 +432,46 @@ public class AFPDataStream {
         currentPage.createText(fontReference, x + xOffset, y + yOffset, rotation,
                 col, vsci, ica, data);
     }
-
+    
     /**
-     * Returns an ImageObject used to create an image in the datastream.
-     *
-     * @param x
-     *            the x position of the image
-     * @param y
-     *            the y position of the image
-     * @param width
-     *            the width of the image
-     * @param height
-     *            the height of the image
-     * @param widthRes
-     *            the resolution width of the image
-     * @param heightRes
-     *            the resolution height of the image
-     * @return
-     *            a new image object
+     * Returns true if the resource exists within this resource group,
+     * false otherwise.
+     * 
+     * @param uri the uri of the resource
+     * @return true if the resource exists within this resource group
      */
-    public ImageObject getImageObject(int x, int y, int width, int height,
-            int widthRes, int heightRes) {
-        ImageObject imageObj = currentPage.getImageObject();
-        setObjectViewPort(imageObj, x, y, width, height, widthRes, heightRes);
-        return imageObj;
+    public boolean resourceExists(String uri) {
+        return getResourceGroup().resourceExists(uri);
+    }
+    
+    /**
+     * Returns an IncludeObject referencing an image in the datastream.
+     * 
+     * @param params
+     *            the unique uri of the image
+     * @return
+     *            a new include object referencing an image object
+     */
+    public IncludeObject createImageObject(ImageObjectParameters params) {
+        ResourceLevel resourceLevel = params.getResourceLevel();
+        IncludeObject includeObj = getResourceGroup(resourceLevel).addObject(params);
+        currentPage.addObject(includeObj);
+        return includeObj;
     }
 
     /**
-     * Returns an GraphicObject used to create an graphic in the datastream.
+     * Returns an IncludeObject referencing a graphic in the datastream.
      *
-     * @param x
-     *            the x position of the graphic
-     * @param y
-     *            the y position of the graphic
-     * @param width
-     *            the width of the graphic
-     * @param height
-     *            the height of the graphic
-     * @param widthRes
-     *            the resolution width of the graphic
-     * @param heightRes
-     *            the resolution height of the graphic
+     * @param params
+     *            the data object parameters
      * @return
-     *            a new graphics object
+     *            a new include object referencing the graphics object
      */
-    public GraphicsObject getGraphicsObject(int x, int y, int width, int height,
-            int widthRes, int heightRes) {
-        GraphicsObject graphicsObj = currentPage.getGraphicsObject();
-        setObjectViewPort(graphicsObj, x, y, width, height, widthRes, heightRes);
-        return graphicsObj;
+    public IncludeObject createGraphicsObject(DataObjectParameters params) {
+        ResourceLevel resourceLevel = params.getResourceLevel();
+        IncludeObject includeObj = getResourceGroup(resourceLevel).addObject(params);
+        currentPage.addObject(includeObj);         
+        return includeObj;
     }
 
     /**
@@ -559,9 +594,7 @@ public class AFPDataStream {
      */
     public void createIncludePageOverlay(String name) {
         currentPageObject.createIncludePageOverlay(name, 0, 0, rotation);
-        ActiveEnvironmentGroup aeg = currentPageObject
-                .getActiveEnvironmentGroup();
-        aeg.createOverlay(name);
+        currentPageObject.getActiveEnvironmentGroup().createOverlay(name);
     }
 
     /**
@@ -571,10 +604,7 @@ public class AFPDataStream {
      *            the name of the medium map
      */
     public void createInvokeMediumMap(String name) {
-        if (currentPageGroup == null) {
-            startPageGroup();
-        }
-        currentPageGroup.createInvokeMediumMap(name);
+        getCurrentPageGroup().createInvokeMediumMap(name);
     }
 
     /**
@@ -621,7 +651,7 @@ public class AFPDataStream {
         for (int i = 0; i < attributes.length; i++) {
             String name = (String) attributes[i].getKey();
             String value = (String) attributes[i].getValue();
-            currentPage.createTagLogicalElement(name, value);
+            getCurrentPage().createTagLogicalElement(name, value);
         }
     }
 
@@ -635,7 +665,7 @@ public class AFPDataStream {
         for (int i = 0; i < attributes.length; i++) {
             String name = (String) attributes[i].getKey();
             String value = (String) attributes[i].getValue();
-            currentPageGroup.createTagLogicalElement(name, value);
+            getCurrentPageGroup().createTagLogicalElement(name, value);
         }
     }
 
@@ -665,31 +695,33 @@ public class AFPDataStream {
         currentPage.createNoOperation(content);
     }
 
+    private PageGroup getCurrentPageGroup() {
+        if (currentPageGroup == null) {
+            String pageGroupName = "PGP"
+                + StringUtils.lpad(String.valueOf(pageGroupCount++), '0', 5);
+            this.currentPageGroup = new PageGroup(pageGroupName);
+        }
+        return currentPageGroup;
+    }
+ 
     /**
      * Start a new page group. When processing has finished on the current page
      * group the {@link #endPageGroup()}method must be invoked to mark the page
      * group ending.
      */
     public void startPageGroup() {
-
-        String pageGroupName = "PGP"
-                + StringUtils.lpad(String.valueOf(pageCount++), '0', 5);
-
-        currentPageGroup = new PageGroup(pageGroupName);
-
+        getCurrentPageGroup();
     }
 
     /**
      * Helper method to mark the end of the page group.
-     * @throws IOException thrown if an I/O exception of some sort has occurred
      */
-    public void endPageGroup() throws IOException {
-
-        currentPageGroup.endPageGroup();
-        document.addPageGroup(currentPageGroup);
-        document.writeDataStream(outputStream);
-        currentPageGroup = null;
-
+    public void endPageGroup() {
+        if (currentPageGroup != null) {
+            currentPageGroup.endPageGroup();
+            document.addPageGroup(currentPageGroup);
+            currentPageGroup = null;
+        }
     }
 
     /**
@@ -700,7 +732,6 @@ public class AFPDataStream {
      *            The rotation in degrees.
      */
     public void setPortraitRotation(int pageRotation) {
-
         if (pageRotation == 0 || pageRotation == 90 || pageRotation == 180
                 || pageRotation == 270) {
             this.portraitRotation = pageRotation;
@@ -708,7 +739,6 @@ public class AFPDataStream {
             throw new IllegalArgumentException(
                     "The portrait rotation must be one of the values 0, 90, 180, 270");
         }
-
     }
 
     /**
@@ -719,7 +749,6 @@ public class AFPDataStream {
      *            The rotation in degrees.
      */
     public void setLandscapeRotation(int pageRotation) {
-
         if (pageRotation == 0 || pageRotation == 90 || pageRotation == 180
                 || pageRotation == 270) {
             this.landscapeRotation = pageRotation;
@@ -727,6 +756,72 @@ public class AFPDataStream {
             throw new IllegalArgumentException(
                     "The landscape rotation must be one of the values 0, 90, 180, 270");
         }
+    }
 
+    /**
+     * Writes out external AFP resources
+     */
+    private void writeExternalResources() {
+        // write any external resources
+        Iterator it = getExternalResourceGroups().keySet().iterator();
+        while (it.hasNext()) {
+            String externalDest = (String)it.next();
+            ResourceGroup resourceGroup
+                = (ResourceGroup)getExternalResourceGroups().get(externalDest);
+            OutputStream os = null;
+            try {
+                log.debug("Writing external AFP resource file " + externalDest);
+                os = new java.io.FileOutputStream(externalDest);
+                resourceGroup.writeDataStream(os);
+            } catch (FileNotFoundException e) {
+                log.error("Failed to open external AFP resource file "
+                        + externalDest);
+            } catch (IOException e) {
+                log.error("An error occurred when attempting to write external AFP resource file "
+                        + externalDest);
+            } finally {
+                if (os != null) {
+                    try {
+                        os.close();
+                    } catch (IOException e) {
+                        log.error("Failed to close outputstream for external AFP resource file "
+                                + externalDest);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns the resource group for a given resource level
+     * @param resourceLevel a resource level
+     * @return a resource group container for the given level
+     */
+    private ResourceGroup getResourceGroup(ResourceLevel resourceLevel) {
+        ResourceGroup resourceGroup = null;
+        if (resourceLevel.isPrintFile()) {
+            resourceGroup = this.getResourceGroup();
+        } else if (resourceLevel.isDocument()) {
+            resourceGroup = document.getResourceGroup();
+        } else if (resourceLevel.isPageGroup()) {
+            resourceGroup = getCurrentPageGroup().getResourceGroup();
+        } else if (resourceLevel.isPage()) {
+            resourceGroup = getCurrentPage().getResourceGroup(); 
+        } else if (resourceLevel.isExternal()) {
+            String externalDest = resourceLevel.getExternalDest();
+            resourceGroup = (ResourceGroup)getExternalResourceGroups().get(externalDest);
+            if (resourceGroup == null) {
+                resourceGroup = new ResourceGroup();
+                externalResourceGroups.put(externalDest, resourceGroup);
+            }
+        }
+        return resourceGroup;
+    }
+    
+    private Map/*<String,ResourceGroup>*/ getExternalResourceGroups() {
+        if (externalResourceGroups == null) {
+            externalResourceGroups = new java.util.HashMap();
+        }
+        return externalResourceGroups;
     }
 }

@@ -42,8 +42,8 @@ public class PSExtensionElementMapping extends ElementMapping {
             foObjs.put(PSSetupCodeElement.ELEMENT, new PSSetupCodeMaker());
             foObjs.put(PSPageSetupCodeElement.ELEMENT, new PSPageSetupCodeMaker());
             foObjs.put(PSSetPageDeviceElement.ELEMENT, new PSSetPageDeviceMaker());
-            foObjs.put(PSCommentBeforeElement.ELEMENT, new PSCommentBeforeMaker());
-            foObjs.put(PSCommentAfterElement.ELEMENT, new PSCommentAfterMaker());
+            foObjs.put(PSCommentBefore.ELEMENT, new PSCommentBeforeMaker());
+            foObjs.put(PSCommentAfter.ELEMENT, new PSCommentAfterMaker());
         }
     }
 

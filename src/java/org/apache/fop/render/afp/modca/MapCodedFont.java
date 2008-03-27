@@ -138,7 +138,6 @@ public class MapCodedFont extends AbstractAFPObject {
                 baos.write(0x5D);
                 baos.write(BinaryUtils.convert(fd.scale, 2));
             }
-
         }
 
         byte[] data = baos.toByteArray();
@@ -149,7 +148,6 @@ public class MapCodedFont extends AbstractAFPObject {
         data[2] = rl1[1];
 
         os.write(data);
-
     }
 
     /**

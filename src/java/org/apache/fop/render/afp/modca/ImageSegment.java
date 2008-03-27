@@ -21,7 +21,6 @@ package org.apache.fop.render.afp.modca;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 
 /**
  * An Image Segment is represented by a set of self-defining fields, fields
@@ -33,22 +32,12 @@ import java.io.UnsupportedEncodingException;
  *
  * Only one Image Content can exist within a single IOCA Image Segment.
  */
-public class ImageSegment extends AbstractAFPObject {
+public class ImageSegment extends AbstractNamedAFPObject {
 
     /**
      * Default name for the object environment group
      */
     private static final String DEFAULT_NAME = "IS01";
-
-    /**
-     * The name of the image segment
-     */
-    private String name;
-
-    /**
-     * The name of the image segment as EBCIDIC bytes
-     */
-    private byte[] nameBytes;
 
     /**
      * The ImageContent for the image segment
@@ -68,20 +57,14 @@ public class ImageSegment extends AbstractAFPObject {
      * @param name The name of the image.
      */
     public ImageSegment(String name) {
-        if (name.length() != 4) {
-            String msg = "Image segment name must be 4 characters long " + name;
-            log.error("Constructor:: " + msg);
-            throw new IllegalArgumentException(msg);
-        }
-        this.name = name;
-        try {
-            this.nameBytes = name.getBytes(AFPConstants.EBCIDIC_ENCODING);
-        } catch (UnsupportedEncodingException usee) {
-            this.nameBytes = name.getBytes();
-            log.warn(
-                "Constructor:: UnsupportedEncodingException translating the name "
-                + name);
-        }
+        super(name);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected int getNameLength() {
+        return 4;
     }
 
     /**
@@ -155,43 +138,33 @@ public class ImageSegment extends AbstractAFPObject {
     }
 
     /**
-     * Accessor method to write the AFP datastream for the Image Segment
-     * @param os The stream to write to
-     * @throws java.io.IOException if an I/O exception occurred
+     * {@inheritDoc}
      */
-    public void writeDataStream(OutputStream os) throws IOException {
-        writeStart(os);
+    public void writeContent(OutputStream os) throws IOException {
         if (imageContent != null) {
             imageContent.writeDataStream(os);
         }
-        writeEnd(os);
     }
 
     /**
-     * Helper method to write the start of the Image Segment.
-     * @param os The stream to write to
+     * {@inheritDoc}
      */
-    private void writeStart(OutputStream os) throws IOException {
+    protected void writeStart(OutputStream os) throws IOException {
         byte[] data = new byte[] {
             0x70, // ID
             0x04, // Length
-            0x00, // Name byte 1
-            0x00, // Name byte 2
-            0x00, // Name byte 3
-            0x00, // Name byte 4
+            nameBytes[0], // Name byte 1
+            nameBytes[1], // Name byte 2
+            nameBytes[2], // Name byte 3
+            nameBytes[3], // Name byte 4
         };
-        for (int i = 0; i < nameBytes.length; i++) {
-            data[2 + i] = nameBytes[i];
-        }
         os.write(data);
-
     }
 
     /**
-     * Helper method to write the end of the Image Segment.
-     * @param os The stream to write to
+     * {@inheritDoc}
      */
-    private void writeEnd(OutputStream os) throws IOException {
+    protected void writeEnd(OutputStream os) throws IOException {
         byte[] data = new byte[] {
             0x71, // ID
             0x00, // Length

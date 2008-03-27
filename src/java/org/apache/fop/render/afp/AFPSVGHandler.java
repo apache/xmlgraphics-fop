@@ -22,10 +22,12 @@ package org.apache.fop.render.afp;
 // FOP
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
+import java.util.Map;
 
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.GVTBuilder;
+import org.apache.batik.dom.AbstractDocument;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.commons.logging.Log;
@@ -33,7 +35,10 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.render.AbstractGenericSVGHandler;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererContext;
+import org.apache.fop.render.RendererContextConstants;
 import org.apache.fop.render.afp.modca.AFPDataStream;
+import org.apache.fop.render.afp.modca.GraphicsObject;
+import org.apache.fop.render.afp.modca.IncludeObject;
 import org.apache.fop.svg.SVGUserAgent;
 import org.w3c.dom.Document;
 
@@ -65,28 +70,29 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
      */
     public static AFPInfo getAFPInfo(RendererContext context) {
         AFPInfo afpi = new AFPInfo();
-        afpi.width = ((Integer)context.getProperty(WIDTH)).intValue();
-        afpi.height = ((Integer)context.getProperty(HEIGHT)).intValue();
-        afpi.currentXPosition = ((Integer)context.getProperty(XPOS)).intValue();
-        afpi.currentYPosition = ((Integer)context.getProperty(YPOS)).intValue();
-        afpi.cfg = (Configuration)context.getProperty(HANDLER_CONFIGURATION);
-        afpi.fontInfo = (org.apache.fop.fonts.FontInfo)context.getProperty(
-                AFPRendererContextConstants.AFP_FONT_INFO);
-        afpi.resolution = ((Integer)context.getProperty(
-                AFPRendererContextConstants.AFP_RESOLUTION)).intValue();
-        afpi.afpState = (AFPState)context.getProperty(
-                AFPRendererContextConstants.AFP_STATE);
-        afpi.afpDataStream = (AFPDataStream)context.getProperty(
-                AFPRendererContextConstants.AFP_DATASTREAM);
-        afpi.grayscale = ((Boolean)context.getProperty(
-                AFPRendererContextConstants.AFP_GRAYSCALE)).booleanValue();
-        afpi.bitsPerPixel = ((Integer)context.getProperty(
-                AFPRendererContextConstants.AFP_BITS_PER_PIXEL)).intValue();
+        afpi.setWidth(((Integer)context.getProperty(WIDTH)).intValue());
+        afpi.setHeight(((Integer)context.getProperty(HEIGHT)).intValue());
+        afpi.setX(((Integer)context.getProperty(XPOS)).intValue());
+        afpi.setY(((Integer)context.getProperty(YPOS)).intValue());
+        afpi.setHandlerConfiguration((Configuration)context.getProperty(HANDLER_CONFIGURATION));
+        afpi.setFontInfo((org.apache.fop.fonts.FontInfo)context.getProperty(
+                AFPRendererContextConstants.AFP_FONT_INFO));
+        afpi.setResolution(((Integer)context.getProperty(
+                AFPRendererContextConstants.AFP_RESOLUTION)).intValue());
+        afpi.setState((AFPState)context.getProperty(
+                AFPRendererContextConstants.AFP_STATE));
+        afpi.setAFPDataStream((AFPDataStream)context.getProperty(
+                AFPRendererContextConstants.AFP_DATASTREAM));
+        afpi.setColor(!((Boolean)context.getProperty(
+                AFPRendererContextConstants.AFP_GRAYSCALE)).booleanValue());
+        afpi.setBitsPerPixel(((Integer)context.getProperty(
+                AFPRendererContextConstants.AFP_BITS_PER_PIXEL)).intValue());
         return afpi;
     }
 
     /**
      * Render the SVG document.
+     * 
      * @param context the renderer context
      * @param doc the SVG document
      * @param afpInfo the AFPInfo renderer parameters
@@ -100,14 +106,16 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
         graphics.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
         graphics.setAFPInfo(afpInfo);
         
+        String uri = ((AbstractDocument)doc).getDocumentURI();
+        graphics.setDocumentURI(uri);
+        
         GVTBuilder builder = new GVTBuilder();
 
         boolean strokeText = false;
-        Configuration cfg = afpInfo.cfg;
+        Configuration cfg = afpInfo.getHandlerConfiguration();
         if (cfg != null) {
             strokeText = cfg.getChild("stroke-text", true).getValueAsBoolean(strokeText);
         }
-        
         final float uaResolution = context.getUserAgent().getSourceResolution();
         SVGUserAgent svgUserAgent = new SVGUserAgent(25.4f / uaResolution, new AffineTransform());
 
@@ -122,7 +130,7 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
             AFPTextElementBridge tBridge = new AFPTextElementBridge(textPainter);
             ctx.putBridge(tBridge);
         }
-
+        
         GraphicsNode root;
         try {
             root = builder.build(ctx, doc);
@@ -132,33 +140,59 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
             return;
         }
         log.debug("Generating SVG at " 
-                + afpInfo.resolution + "dpi.");
+                + afpInfo.getResolution() + "dpi.");
 
-        int res = afpInfo.resolution;
-        
+        int res = afpInfo.getResolution();
         double w = ctx.getDocumentSize().getWidth() * 1000f;
         double h = ctx.getDocumentSize().getHeight() * 1000f;
         
         // convert to afp inches
-        double sx = ((afpInfo.width / w) * res) / 72f;
-        double sy = ((afpInfo.height / h) * res) / 72f;
-        double xOffset = (afpInfo.currentXPosition * res) / 72000f;
-        double yOffset = ((afpInfo.height - afpInfo.currentYPosition) * res) / 72000f;
+        double sx = ((afpInfo.getWidth() / w) * res) / 72f;
+        double sy = ((afpInfo.getHeight() / h) * res) / 72f;
+        double xOffset = (afpInfo.getX() * res) / 72000f;
+        double yOffset = ((afpInfo.getHeight() - afpInfo.getY()) * res) / 72000f;
 
         // Transformation matrix that establishes the local coordinate system for the SVG graphic
         // in relation to the current coordinate system (note: y axis is inverted)
         AffineTransform trans = new AffineTransform(sx, 0, 0, -sy, xOffset, yOffset);
         graphics.setTransform(trans);
+        
+        int x = (int)Math.round((afpInfo.getX() * 25.4f) / 1000);
+        int y = (int)Math.round((afpInfo.getY() * 25.4f) / 1000);
+        int width = (int)Math.round((afpInfo.getWidth() * res) / 72000f);
+        int height = (int)Math.round((afpInfo.getHeight() * res) / 72000f);
+        
+        DataObjectParameters params = new DataObjectParameters(
+                uri, x, y, width, height, res, res);
+        
+        Map/*<QName, String>*/ foreignAttributes
+            = (Map/*<QName, String>*/)context.getProperty(
+                RendererContextConstants.FOREIGN_ATTRIBUTES);
+
+        if (foreignAttributes != null) {
+            params.setResourceLevelFromForeignAttributes(foreignAttributes);
+        }
+
+        IncludeObject includeObj = afpInfo.getAFPDataStream().createGraphicsObject(params);
+        GraphicsObject graphicsObj = (GraphicsObject)includeObj.getReferencedObject();
+        graphics.setGraphicsObject(graphicsObj);
+        
         try {
             root.paint(graphics);
         } catch (Exception e) {
             log.error("SVG graphic could not be rendered: " + e.getMessage(), e);
         }
+        
+        graphics.dispose();
     }
     
     /** {@inheritDoc} */
     public boolean supportsRenderer(Renderer renderer) {
-        return (renderer instanceof AFPRenderer);
+        if (renderer instanceof AFPRenderer) {
+            AFPRenderer afpRenderer = (AFPRenderer)renderer;
+            return afpRenderer.isGOCAEnabled();
+        }
+        return false;
     }
     
     /** {@inheritDoc} */
@@ -166,4 +200,3 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
         return SVGDOMImplementation.SVG_NAMESPACE_URI;
     }
 }
-

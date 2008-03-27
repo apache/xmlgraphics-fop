@@ -69,7 +69,7 @@ public class IncludePageOverlay extends AbstractNamedAFPObject {
     }
 
     /**
-     * Sets the orienation to use for the overlay.
+     * Sets the orientation to use for the overlay.
      *
      * @param orientation
      *            The orientation (0,90, 180, 270)
@@ -85,15 +85,10 @@ public class IncludePageOverlay extends AbstractNamedAFPObject {
     }
 
     /**
-     * Accessor method to write the AFP datastream for the Include Page Overlay
-     * @param os The stream to write to
-     * @throws java.io.IOException thrown if an I/O exception of some sort has occurred
+     * {@inheritDoc}
      */
-    public void writeDataStream(OutputStream os)
-        throws IOException {
-
+    public void writeDataStream(OutputStream os) throws IOException {
         byte[] data = new byte[25]; //(9 +16)
-
         data[0] = 0x5A;
 
         // Set the total record length

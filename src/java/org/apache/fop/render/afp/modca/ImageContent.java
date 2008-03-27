@@ -26,7 +26,31 @@ import org.apache.fop.render.afp.tools.BinaryUtils;
 /**
  * Image content IOCA object
  */
-public class ImageContent extends AbstractAFPObject {
+public class ImageContent extends AbstractStructuredAFPObject {
+
+    /**
+     * The CCITT T.4 Group 3 Coding Standard (G3 MH-Modified Huffman) is a
+     * compression method standardized by the International Telegraph and
+     * Telephone Consultative Committee (CCITT) for facsimile.  It enables
+     * one-dimensional compression.
+     */
+    public static final byte COMPID_G3_MH = (byte)0x80;
+    
+    /**
+     * The CCITT T.4 Group 3 Coding Option (G3 MR-Modified READ) is a
+     * compression method standardized by the International Telegraph and
+     * Telephone Consultative Committee (CCITT) for facsimile. It enables
+     * two-dimensional compression.
+     */
+    public static final byte COMPID_G3_MR = (byte)0x81;
+
+    /**
+     * The CCITT T.6 Group 4 Coding Standard (G4 MMR-Modified Modified READ) is a
+     * compression method standardized by the International Telegraph and
+     * Telephone Consultative Committee (CCITT) for facsimile.  It enables
+     * two-dimensional compression. 
+     */
+    public static final byte COMPID_G3_MMR = (byte)0x82;
 
     /**
      * The image size parameter
@@ -56,13 +80,12 @@ public class ImageContent extends AbstractAFPObject {
     /**
      * The image data
      */
-    private byte[] data = null;
+    private byte[] imageData = null;
 
     /**
      * Constructor for the image content
      */
     public ImageContent() {
-
     }
 
     /**
@@ -111,70 +134,55 @@ public class ImageContent extends AbstractAFPObject {
 
     /**
      * Set the data of the image.
-     * @param dat the image data
+     * @param data the image data
      */
-    public void setImageData(byte[] dat) {
-        this.data = dat;
+    public void setImageData(byte[] data) {
+        this.imageData = data;
     }
 
     /**
-     * Accessor method to write the AFP datastream for the Image Content
-     * @param os The stream to write to
-     * @throws java.io.IOException if an I/O exception occurs
+     * {@inheritDoc}
      */
-    public void writeDataStream(OutputStream os) throws IOException {
-
-        writeStart(os);
-
+    protected void writeContent(OutputStream os) throws IOException {
         if (imageSizeParam != null) {
             imageSizeParam.writeDataStream(os);
         }
-
         os.write(getImageEncodingParameter());
-
         os.write(getImageIDESizeParameter());
-
         os.write(getIDEStructureParameter());
-
         os.write(getExternalAlgorithmParameter());
-
-        if (data != null) {
+        if (imageData != null) {
             int off = 0;
-            while (off < data.length) {
-                int len = Math.min(30000, data.length - off);
+            while (off < imageData.length) {
+                int len = Math.min(30000, imageData.length - off);
                 os.write(getImageDataStart(len));
-                os.write(data, off, len);
+                os.write(imageData, off, len);
                 off += len;
             }
         }
-
-        writeEnd(os);
-
     }
 
     /**
-     * Helper method to write the start of the Image Content.
-     * @param os The stream to write to
+     * {@inheritDoc}
      */
-    private void writeStart(OutputStream os) throws IOException {
-        byte[] startData = new byte[] {
+    protected void writeStart(OutputStream os) throws IOException {
+        byte[] data = new byte[] {
             (byte)0x91, // ID
                   0x01, // Length
             (byte)0xff, // Object Type = IOCA Image Object
         };
-        os.write(startData);
+        os.write(data);
     }
 
     /**
-     * Helper method to write the end of the Image Content.
-     * @param os The stream to write to
+     * {@inheritDoc}
      */
-    private void writeEnd(OutputStream os) throws IOException {
-        byte[] endData = new byte[] {
+    protected void writeEnd(OutputStream os) throws IOException {
+        byte[] data = new byte[] {
             (byte)0x93, // ID
                   0x00, // Length
         };
-        os.write(endData);
+        os.write(data);
     }
 
     /**

@@ -36,15 +36,21 @@ public class MapPageOverlay extends AbstractAFPObject {
     /**
      * The collection of overlays (maximum of 254 stored as byte[])
      */
-    private List overLays = new java.util.ArrayList();
+    private List overLays = null;
 
     /**
      * Constructor for the Map Page Overlay
      */
     public MapPageOverlay() {
-
     }
 
+    private List getOverlays() {
+        if (overLays == null) {
+            this.overLays = new java.util.ArrayList();
+        }
+        return this.overLays;
+    }
+    
     /**
      * Add an overlay to to the map page overlay object.
      *
@@ -53,23 +59,19 @@ public class MapPageOverlay extends AbstractAFPObject {
      * @throws MaximumSizeExceededException if the maximum size is reached
      */
     public void addOverlay(String name) throws MaximumSizeExceededException {
-
-        if (overLays.size() > 253) {
+        if (getOverlays().size() > 253) {
             throw new MaximumSizeExceededException();
         }
-
         if (name.length() != 8) {
             throw new IllegalArgumentException("The name of overlay " + name
                 + " must be 8 characters");
         }
-
         if (log.isDebugEnabled()) {
             log.debug("addOverlay():: adding overlay " + name);
         }
-
         try {
             byte[] data = name.getBytes(AFPConstants.EBCIDIC_ENCODING);
-            overLays.add(data);
+            getOverlays().add(data);
         } catch (UnsupportedEncodingException usee) {
             log.error("addOverlay():: UnsupportedEncodingException translating the name "
                 + name);
@@ -82,7 +84,7 @@ public class MapPageOverlay extends AbstractAFPObject {
      * @throws java.io.IOException if an I/O exception occurred
      */
     public void writeDataStream(OutputStream os) throws IOException {
-        int oLayCount = overLays.size();
+        int oLayCount = getOverlays().size();
         int recordlength = oLayCount * 18;
 
         byte[] data = new byte[recordlength + 9];

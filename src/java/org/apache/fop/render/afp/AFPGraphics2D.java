@@ -44,14 +44,14 @@ import org.apache.batik.ext.awt.geom.ExtendedGeneralPath;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.render.afp.modca.AFPDataStream;
+import org.apache.fop.render.afp.goca.GraphicsSetLineType;
 import org.apache.fop.render.afp.modca.GraphicsObject;
-import org.apache.fop.render.afp.modca.ImageObject;
-import org.apache.fop.render.afp.modca.goca.GraphicsSetLineType;
+import org.apache.fop.render.afp.modca.IncludeObject;
 import org.apache.xmlgraphics.java2d.AbstractGraphics2D;
 import org.apache.xmlgraphics.java2d.GraphicContext;
 import org.apache.xmlgraphics.java2d.StrokingTextHandler;
 import org.apache.xmlgraphics.java2d.TextHandler;
+import org.apache.xmlgraphics.ps.ImageEncodingHelper;
 
 /**
  * This is a concrete implementation of <tt>AbstractGraphics2D</tt> (and
@@ -77,6 +77,9 @@ public class AFPGraphics2D extends AbstractGraphics2D {
 
     /** Current AFP state */
     private AFPState afpState = null;
+
+    /** The SVG document URI */
+    private String documentURI = null;
 
     /**
      * @param textAsShapes
@@ -295,7 +298,7 @@ public class AFPGraphics2D extends AbstractGraphics2D {
             graphicsObj.addBox(coords);
         } else if (shape instanceof Ellipse2D) {
             Ellipse2D elip = (Ellipse2D) shape;
-            final double factor = afpInfo.resolution / 100f;
+            final double factor = afpInfo.getResolution() / 100f;
             graphicsObj.setArcParams(
                     (int)Math.round(elip.getWidth() * factor),
                     (int)Math.round(elip.getHeight() * factor),
@@ -345,21 +348,8 @@ public class AFPGraphics2D extends AbstractGraphics2D {
      */
     public void handleIOException(IOException ioe) {
         // TODO Surely, there's a better way to do this.
+        log.error(ioe.getMessage());
         ioe.printStackTrace();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void drawRenderableImage(RenderableImage img, AffineTransform xform) {
-        log.debug("drawRenderableImage() NYI: img=" + img + ", xform=" + xform);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void drawRenderedImage(RenderedImage img, AffineTransform xform) {
-        log.debug("drawRenderedImage() NYI: img=" + img + ", xform=" + xform);
     }
 
     /**
@@ -402,7 +392,7 @@ public class AFPGraphics2D extends AbstractGraphics2D {
      * {@inheritDoc}
      */
     public void dispose() {
-        log.debug("dispose() NYI: ");
+        this.graphicsObj = null;
     }
 
     /**
@@ -411,54 +401,62 @@ public class AFPGraphics2D extends AbstractGraphics2D {
     public boolean drawImage(Image img, int x, int y, ImageObserver observer) {
         return drawImage(img, x, y, img.getWidth(observer), img.getHeight(observer), observer);
     }
-
+    
     /**
      * {@inheritDoc}
      */
     public boolean drawImage(Image img, int x, int y, int width, int height,
             ImageObserver observer) {
-        log.debug("drawImage() img=" + img + ", x=" + x + ", y=" + y
+        //TODO: this might be achieved by creating a new IOCA image (ImageObject)
+        // and placing it in an Overlay - but then stacking order would not be preserved.
+        log.debug("drawImage(): NYI img=" + img + ", x=" + x + ", y=" + y
                 + ", width=" + width + ", height=" + height + ", obs=" + observer);
-        
-        int afpres = afpInfo.resolution;
-        int afpBitsPerPixel = afpInfo.bitsPerPixel;
-        int afpx = x;
-        int afpy = y;
-        int afpw = width;
-        int afph = height;
-        boolean colorImages = !afpInfo.grayscale;
-        int imageResolution = afpres;
-        if (img instanceof BufferedImage) {
-            BufferedImage bi = (BufferedImage)img;
-            ByteArrayOutputStream baout = new ByteArrayOutputStream();
-            try {
-                // Serialize image
-                AFPRenderer.writeImage(bi, baout);
-                byte[] buf = baout.toByteArray();
-
-                // Generate image
-                AFPDataStream afpDataStream = afpInfo.afpDataStream;
-                ImageObject io = afpDataStream.getImageObject(afpx, afpy, afpw,
-                    afph, afpres, afpres);
-                io.setImageParameters(imageResolution, imageResolution,
-                    afpw, afph);
-                if (colorImages) {
-                    io.setImageIDESize((byte)24);
-                    io.setImageData(buf);
-                } else {
-                    AFPRenderer.convertToGrayScaleImage(io, buf, afpw, afph, afpBitsPerPixel);
-                }
-            } catch (IOException ioe) {
-                log.error("Error while serializing bitmap: " + ioe.getMessage(),
-                    ioe);
-                return false;
-            }
-            return true;
-        } else {
-            log.debug("drawImage() NYI: img=" + img + ", x=" + x + ", y=" + y
-                    + ", observer=" + observer);
-        }
         return false;
+//        log.debug("drawImage() img=" + img + ", x=" + x + ", y=" + y
+//                + ", width=" + width + ", height=" + height + ", obs=" + observer);
+//        if (img instanceof BufferedImage) {
+//            try {
+//                BufferedImage bi = (BufferedImage)img;
+//                ByteArrayOutputStream baout = new ByteArrayOutputStream();
+//                
+//                // Serialize image
+//                ImageEncodingHelper.encodeRenderedImageAsRGB(bi, baout);
+//                
+//                int res = afpInfo.getResolution();
+//                ImageObjectParameters params = new ImageObjectParameters(
+//                        //TODO: provide a real url
+//                        img.toString(), x, y,
+//                        width, height, res, res, baout.toByteArray(),
+//                        img.getWidth(observer), img.getHeight(observer), 
+//                        afpInfo.isColorSupported(), afpInfo.getBitsPerPixel());
+//                
+//                afpInfo.getAFPDataStream().createImageObject(params);
+//
+//                // Generate image
+//            } catch (IOException ioe) {
+//                log.error("Error while serializing bitmap: " + ioe.getMessage(),
+//                    ioe);
+//                return false;
+//            }
+//            return true;
+//        } else {
+//            log.debug("drawImage() image type not supported: " + img);
+//        }
+//        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void drawRenderableImage(RenderableImage img, AffineTransform xform) {
+        log.debug("drawRenderableImage() NYI: img=" + img + ", xform=" + xform);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void drawRenderedImage(RenderedImage img, AffineTransform xform) {
+        log.debug("drawRenderedImage() NYI: img=" + img + ", xform=" + xform);
     }
 
     /**
@@ -489,18 +487,39 @@ public class AFPGraphics2D extends AbstractGraphics2D {
     }
 
     /**
+     * Sets the SVG document URI
+     * @param documentURI the SVG document URI
+     */
+    public void setDocumentURI(String documentURI) {
+        this.documentURI = documentURI;
+    }
+
+    /**
      * @return the GOCA graphics object
      */
     protected GraphicsObject getGraphicsObject() {
-        if (this.graphicsObj == null) {
-            int x = (int)Math.round((afpInfo.currentXPosition * 25.4f) / 1000);
-            int y = (int)Math.round((afpInfo.currentYPosition * 25.4f) / 1000);
-            int res = afpInfo.resolution;
-            int width = (int)Math.round((afpInfo.width * res) / 72000f);
-            int height = (int)Math.round((afpInfo.height * res) / 72000f);
-            this.graphicsObj = afpInfo.getAFPDataStream().getGraphicsObject(
-                    x, y, width, height, res, res);
-        }
+//        if (this.graphicsObj == null) {
+////          DataObjectParameters params = new DataObjectParameters(
+////          ((AbstractDocument)doc).getDocumentURI(),
+////          afpInfo.getX(), afpInfo.getY(),
+////          afpInfo.getWidth(), afpInfo.getHeight(), res, res);
+////  
+////  afpInfo.getAFPDataStream().createGraphicsObject(params);
+//
+//            int x = (int)Math.round((afpInfo.getX() * 25.4f) / 1000);
+//            int y = (int)Math.round((afpInfo.getY() * 25.4f) / 1000);
+//            int res = afpInfo.getResolution();
+//            int width = (int)Math.round((afpInfo.getWidth() * res) / 72000f);
+//            int height = (int)Math.round((afpInfo.getHeight() * res) / 72000f);
+//            DataObjectParameters params = new DataObjectParameters(
+//                    this.documentURI, x, y, width, height, res, res);
+//            IncludeObject includeObj = afpInfo.getAFPDataStream().createGraphicsObject(params);
+//            this.graphicsObj = (GraphicsObject)includeObj.getReferencedObject();
+//        }
         return this.graphicsObj;
+    }
+
+    protected void setGraphicsObject(GraphicsObject graphicsObj) {
+        this.graphicsObj = graphicsObj;
     }
 }

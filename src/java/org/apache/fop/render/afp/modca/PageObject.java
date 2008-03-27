@@ -18,10 +18,9 @@
 /* $Id$ */
 
 package org.apache.fop.render.afp.modca;
+
 import java.io.IOException;
 import java.io.OutputStream;
-
-
 
 /**
  * Pages contain the data objects that comprise a presentation document. Each
@@ -46,11 +45,6 @@ import java.io.OutputStream;
 public class PageObject extends AbstractPageObject {
 
     /**
-     * The resource group object
-     */
-    private ResourceGroup resourceGroup = null;
-
-    /**
      * Construct a new page object for the specified name argument, the page
      * name should be an 8 character identifier.
      *
@@ -69,20 +63,7 @@ public class PageObject extends AbstractPageObject {
      */
     public PageObject(String name, int width, int height, int rotation,
             int widthRes, int heightRes) {
-
         super(name, width, height, rotation, widthRes, heightRes);
-
-    }
-
-    /**
-     * Adds an overlay to the page resources
-     * @param overlay the overlay to add
-     */
-    public void addOverlay(Overlay overlay) {
-        if (resourceGroup == null) {
-            resourceGroup = new ResourceGroup();
-        }
-        resourceGroup.addOverlay(overlay);
     }
 
     /**
@@ -98,47 +79,14 @@ public class PageObject extends AbstractPageObject {
      *            the orientation required for the overlay
      */
     public void createIncludePageOverlay(String name, int x, int y, int orientation) {
-
-        IncludePageOverlay ipo = new IncludePageOverlay(name, x, y, orientation);
-        objects.add(ipo);
-
+        addObject(new IncludePageOverlay(name, x, y, orientation));
     }
 
     /**
-     * Accessor method to write the AFP datastream for the page.
-     * @param os The stream to write to
-     * @throws java.io.IOException thrown if an I/O exception of some sort has occurred
+     * {@inheritDoc}
      */
-    public void writeDataStream(OutputStream os)
-        throws IOException {
-
-        writeStart(os);
-
-        if (resourceGroup != null) {
-            resourceGroup.writeDataStream(os);
-        }
-
-        activeEnvironmentGroup.writeDataStream(os);
-
-        writeObjectList(segments, os);
-
-        writeObjectList(tagLogicalElements, os);
-
-        writeObjectList(objects, os);
-
-        writeEnd(os);
-
-    }
-
-    /**
-     * Helper method to write the start of the page.
-     * @param os The stream to write to
-     */
-    private void writeStart(OutputStream os)
-        throws IOException {
-
+    protected void writeStart(OutputStream os) throws IOException {
         byte[] data = new byte[17];
-
         data[0] = 0x5A; // Structured field identifier
         data[1] = 0x00; // Length byte 1
         data[2] = 0x10; // Length byte 2
@@ -148,26 +96,17 @@ public class PageObject extends AbstractPageObject {
         data[6] = 0x00; // Flags
         data[7] = 0x00; // Reserved
         data[8] = 0x00; // Reserved
-
         for (int i = 0; i < nameBytes.length; i++) {
-
             data[9 + i] = nameBytes[i];
-
         }
-
         os.write(data);
-
     }
 
     /**
-     * Helper method to write the end of the page.
-     * @param os The stream to write to
+     * {@inheritDoc}
      */
-    private void writeEnd(OutputStream os)
-        throws IOException {
-
+    protected void writeEnd(OutputStream os) throws IOException {
         byte[] data = new byte[17];
-
         data[0] = 0x5A; // Structured field identifier
         data[1] = 0x00; // Length byte 1
         data[2] = 0x10; // Length byte 2
@@ -177,15 +116,9 @@ public class PageObject extends AbstractPageObject {
         data[6] = 0x00; // Flags
         data[7] = 0x00; // Reserved
         data[8] = 0x00; // Reserved
-
         for (int i = 0; i < nameBytes.length; i++) {
-
             data[9 + i] = nameBytes[i];
-
         }
-
         os.write(data);
-
     }
-
 }

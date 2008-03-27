@@ -22,7 +22,7 @@ package org.apache.fop.render.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.fop.render.afp.modca.goca.AbstractGraphicsContainer;
+import org.apache.fop.render.afp.goca.AbstractGraphicsContainer;
 
 /**
  * Abstract base class used by the ImageObject and GraphicsObject which both

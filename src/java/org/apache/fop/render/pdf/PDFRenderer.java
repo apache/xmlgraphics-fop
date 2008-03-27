@@ -1086,10 +1086,10 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     /** 
      * {@inheritDoc} 
      */
-    protected void fillRect(float x, float y, float w, float h) {
-        if (w != 0 && h != 0) {
+    protected void fillRect(float x, float y, float width, float height) {
+        if (width > 0 && height > 0) {
             currentStream.add(format(x) + " " + format(y) + " " 
-                    + format(w) + " " + format(h) + " re f\n");
+                    + format(width) + " " + format(height) + " re f\n");
         }
     }
     
@@ -1684,7 +1684,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         endTextObject();
         putImage(url, pos, foreignAttributes);
     }
-    
+     
     /**
      * Adds a PDF XObject (a bitmap or form) to the PDF that will later be referenced.
      * @param uri URL of the bitmap
@@ -1767,6 +1767,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
             this.pdfDoc.output(ostream);
         } catch (IOException ioe) {
             // ioexception will be caught later
+            log.error(ioe.getMessage());
         }
     }
 

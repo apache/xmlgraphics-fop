@@ -50,6 +50,9 @@ public class AFPElementMapping extends ElementMapping {
     /** include page segment element */
     public static final String INCLUDE_PAGE_SEGMENT = "include-page-segment";
 
+    /** include resource element (external) */
+    public static final String RESOURCE = "resource";
+
     /** NOP */
     public static final String NO_OPERATION = "no-operation";
 

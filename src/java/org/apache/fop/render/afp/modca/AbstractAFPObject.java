@@ -21,8 +21,8 @@ package org.apache.fop.render.afp.modca;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -50,16 +50,18 @@ public abstract class AbstractAFPObject {
 
     /**
      * Help method to write a set of AFPObjects to the AFP datastream.
-     * @param afpObjects a list of AFPObjects
+     * @param objects a list of AFPObjects
      * @param os The stream to write to
      * @throws java.io.IOException in the event that an I/O exception occurred
      */
-    protected void writeObjectList(List afpObjects, OutputStream os)
+    protected void writeObjects(Collection/*<AbstractAFPObject>*/ objects, OutputStream os)
     throws IOException {
-
-        Iterator it = afpObjects.iterator();
-        while (it.hasNext()) {
-            ((AbstractAFPObject)it.next()).writeDataStream(os);
+        if (objects != null) {
+            for (Iterator it = objects.iterator(); it.hasNext();) {
+                Object obj1 = it.next(); 
+                AbstractAFPObject obj = (AbstractAFPObject)obj1; 
+                obj.writeDataStream(os);
+            }
         }
     }
 }

@@ -22,7 +22,7 @@ package org.apache.fop.render.afp.modca;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The Presentation Text object is the data object used in document processing
@@ -47,17 +47,15 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
      */
     private static final String DEFAULT_NAME = "PTO00001";
 
-    private PresentationTextData currentPresentationTextData = null;
+    private PresentationTextData currentPresentationTextData;
 
-    private ArrayList presentationTextData = new ArrayList();
+    private List presentationTextData;
 
     /**
      * Default constructor for the PresentationTextObject
      */
     public PresentationTextObject() {
-
         this(DEFAULT_NAME);
-
     }
 
     /**
@@ -66,15 +64,13 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
      * @param name the name of this presentation object
      */
     public PresentationTextObject(String name) {
-
         super(name);
-
     }
 
     /**
      * Create the presentation text data for the byte array of data.
      *
-     * @param fontNumber
+     * @param fontNum
      *            The font resource identifier.
      * @param x
      *            The x coordinate for the text data.
@@ -89,18 +85,16 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
      * @param data
      *            The text data to be created.
      */
-    public void createTextData(int fontNumber, int x, int y, Color col,
+    public void createTextData(int fontNum, int x, int y, Color col,
             int vsci, int ica, byte[] data) {
-
         // Use a default orientation of zero
-        createTextData(fontNumber, x, y, 0, col, vsci, ica, data);
-
+        createTextData(fontNum, x, y, 0, col, vsci, ica, data);
     }
 
     /**
      * Create the presentation text data for the byte array of data.
      *
-     * @param fontReference
+     * @param fontRef
      *            The font resource identifier.
      * @param x
      *            The x coordinate for the text data.
@@ -117,25 +111,19 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
      * @param data
      *            The text data to be created.
      */
-    public void createTextData(int fontReference, int x, int y, int orientation,
+    public void createTextData(int fontRef, int x, int y, int orientation,
         Color col, int vsci, int ica, byte[] data) {
-
         if (currentPresentationTextData == null) {
             startPresentationTextData();
         }
-
         try {
 
-            currentPresentationTextData.createTextData(fontReference, x, y,
+            currentPresentationTextData.createTextData(fontRef, x, y,
                 orientation, col, vsci, ica, data);
-
         } catch (MaximumSizeExceededException msee) {
-
             endPresentationTextData();
-            createTextData(fontReference, x, y, orientation, col, vsci, ica, data);
-
+            createTextData(fontRef, x, y, orientation, col, vsci, ica, data);
         }
-
     }
 
     /**
@@ -180,47 +168,38 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
      */
     public void createLineData(int x1, int y1, int x2, int y2, int thickness,
         int orientation, Color col) {
-
         if (currentPresentationTextData == null) {
             startPresentationTextData();
         }
-
         try {
-
             currentPresentationTextData.createLineData(x1, y1, x2, y2,
                 thickness, orientation, col);
-
         } catch (MaximumSizeExceededException msee) {
-
             endPresentationTextData();
             createLineData(x1, y1, x2, y2, thickness, orientation, col);
-
         }
-
     }
 
     /**
      * Helper method to mark the start of the presentation text data
      */
     private void startPresentationTextData() {
-
+        if (presentationTextData == null) {
+            presentationTextData = new java.util.ArrayList();
+        }
         if (presentationTextData.size() == 0) {
             currentPresentationTextData = new PresentationTextData(true);
         } else {
             currentPresentationTextData = new PresentationTextData();
         }
-
         presentationTextData.add(currentPresentationTextData);
-
     }
 
     /**
      * Helper method to mark the end of the presentation text data
      */
     private void endPresentationTextData() {
-
         currentPresentationTextData = null;
-
     }
 
     /**
@@ -228,15 +207,10 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
      * @param os The stream to write to
      * @throws java.io.IOException thrown if an I/O exception of some sort has occurred
      */
-    public void writeDataStream(OutputStream os)
-        throws IOException {
-
+    public void writeDataStream(OutputStream os) throws IOException {
         writeStart(os);
-
-        writeObjectList(presentationTextData, os);
-
+        writeObjects(presentationTextData, os);
         writeEnd(os);
-
     }
 
     /**
@@ -244,20 +218,14 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
      * @return the name of this presentation text object
      */
     public String getName() {
-
         return name;
-
     }
 
     /**
-     * Helper method to write the start of the presenation text object.
-     * @param os The stream to write to
+     * {@inheritDoc}
      */
-    private void writeStart(OutputStream os)
-        throws IOException {
-
+    protected void writeStart(OutputStream os) throws IOException {
         byte[] data = new byte[17];
-
         data[0] = 0x5A; // Structured field identifier
         data[1] = 0x00; // Length byte 1
         data[2] = 0x10; // Length byte 2
@@ -267,27 +235,17 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
         data[6] = 0x00; // Flags
         data[7] = 0x00; // Reserved
         data[8] = 0x00; // Reserved
-
         for (int i = 0; i < nameBytes.length; i++) {
-
             data[9 + i] = nameBytes[i];
-
         }
-
         os.write(data);
-
     }
 
     /**
-     * Helper method to write the end of the presenation text object.
-     * @param os The stream to write to
+     * {@inheritDoc}
      */
-    private void writeEnd(OutputStream os)
-        throws IOException {
-
-
+    protected void writeEnd(OutputStream os) throws IOException {
         byte[] data = new byte[17];
-
         data[0] = 0x5A; // Structured field identifier
         data[1] = 0x00; // Length byte 1
         data[2] = 0x10; // Length byte 2
@@ -297,15 +255,10 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
         data[6] = 0x00; // Flags
         data[7] = 0x00; // Reserved
         data[8] = 0x00; // Reserved
-
         for (int i = 0; i < nameBytes.length; i++) {
-
             data[9 + i] = nameBytes[i];
-
         }
-
         os.write(data);
-
     }
 
     /**
@@ -316,22 +269,14 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
      * method terminates the control sequence.
      */
     public void endControlSequence() {
-
         if (currentPresentationTextData == null) {
             startPresentationTextData();
         }
-
         try {
-
             currentPresentationTextData.endControlSequence();
-
         } catch (MaximumSizeExceededException msee) {
-
             endPresentationTextData();
             endControlSequence();
-
         }
-
     }
-
 }

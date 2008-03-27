@@ -28,28 +28,28 @@ import org.apache.fop.render.afp.modca.AFPDataStream;
  */
 public final class AFPInfo {
     /** see WIDTH */
-    protected int width;
+    private int width;
     /** see HEIGHT */
-    protected int height;
+    private int height;
     /** see XPOS */
-    protected int currentXPosition;
+    private int x;
     /** see YPOS */
-    protected int currentYPosition;
+    private int y;
     /** see HANDLER_CONFIGURATION */
-    protected Configuration cfg;
+    private Configuration cfg;
 
     /** see AFP_FONT_INFO */
-    protected FontInfo fontInfo;
+    private FontInfo fontInfo;
     /** See AFP_DATASTREAM */
-    protected AFPDataStream afpDataStream;
+    private AFPDataStream afpDataStream;
     /** See AFP_STATE */
-    protected AFPState afpState;
+    private AFPState afpState;
     /** see AFP_GRAYSCALE */
-    protected boolean grayscale;
+    private boolean color;
     /** see AFP_RESOLUTION */
-    protected int resolution;
+    private int resolution;
     /** see AFP_BITS_PER_PIXEL */
-    protected int bitsPerPixel;
+    private int bitsPerPixel;
 
     /**
      * Returns the width.
@@ -91,6 +91,14 @@ public final class AFPInfo {
     }
 
     /**
+     * Sets the handler configuration
+     * @param cfg the handler configuration
+     */
+    public void setHandlerConfiguration(Configuration cfg) {
+        this.cfg = cfg;
+    }
+    
+    /**
      * @return FontInfo the font info
      */
     public FontInfo getFontInfo() {
@@ -115,6 +123,98 @@ public final class AFPInfo {
      * @return true if supports color
      */
     public boolean isColorSupported() {
-        return !this.grayscale;
+        return this.color;
+    }
+
+    /**
+     * @return the current x position coordinate
+     */
+    protected int getX() {
+        return x;
+    }
+
+    /**
+     * @return the current y position coordinate
+     */
+    protected int getY() {
+        return y;
+    }
+
+    /**
+     * @return the resolution
+     */
+    protected int getResolution() {
+        return resolution;
+    }
+
+    /**
+     * @return the number of bits per pixel to use
+     */
+    protected int getBitsPerPixel() {
+        return bitsPerPixel;
+    }
+
+    /**
+     * Sets the current x position coordinate
+     * @param x the current x position coordinate
+     */
+    protected void setX(int x) {
+        this.x = x;
+    }
+
+    /**
+     * Sets the current y position coordinate
+     * @param y the current y position coordinate
+     */
+    protected void setY(int y) {
+        this.y = y;
+    }
+
+    /**
+     * Sets the current resolution
+     * @param resolution the current resolution
+     */
+    protected void setResolution(int resolution) {
+        this.resolution = resolution;
+    }
+
+    /**
+     * Sets the current font info
+     * @param fontInfo the current font info
+     */
+    protected void setFontInfo(FontInfo fontInfo) {
+        this.fontInfo = fontInfo;
+    }
+
+    /**
+     * Sets the AFP state
+     * @param state the AFP state
+     */
+    public void setState(AFPState state) {
+        this.afpState = state;
+    }
+    
+    /**
+     * Sets the AFP datastream
+     * @param afpDataStream the AFP datastream
+     */
+    public void setAFPDataStream(AFPDataStream afpDataStream) {
+        this.afpDataStream = afpDataStream;
+    }
+
+    /**
+     * Sets if we are supporing color 
+     * @param color true if color is supported
+     */
+    public void setColor(boolean color) {
+        this.color = color;
+    }
+
+    /**
+     * Sets the number of bits per pixel
+     * @param bitsPerPixel the number of bits per pixel 
+     */
+    public void setBitsPerPixel(int bitsPerPixel) {
+        this.bitsPerPixel = bitsPerPixel;
     }
 }

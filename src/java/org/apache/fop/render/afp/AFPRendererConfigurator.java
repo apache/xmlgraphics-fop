@@ -140,18 +140,14 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
             return new AFPFontInfo(font, tripleList);
 
         } else if ("outline".equalsIgnoreCase(type)) {
-
             String characterset = afpFontCfg.getAttribute("characterset");
             if (characterset == null) {
                 log.error("Mandatory afp-font configuration attribute 'characterset=' is missing");
                 return null;
             }
             String name = afpFontCfg.getAttribute("name", characterset);
-
             CharacterSet characterSet = null;
-
             String base14 = afpFontCfg.getAttribute("base14-font", null);
-
             if (base14 != null) {
                 try {
                     Class clazz = Class.forName("org.apache.fop.fonts.base14."
@@ -205,7 +201,6 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
                                   + triplet.getWeight());
                     }
                 }
-
                 fontList.add(afi);
             }
         }
@@ -242,6 +237,31 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
                 afpRenderer.setResolution(rendererResolutionCfg.getValueAsInteger(
                         AFPRenderer.DPI_240_RESOLUTION));
             }
+
+            Configuration gocaSupportCfg = cfg.getChild("goca-enabled", false);
+            if (gocaSupportCfg != null) {
+                afpRenderer.setGOCAEnabled(true);
+            }
+
+//            Configuration resourceGroupsCfg = cfg.getChild("resource-groups", false);
+//            if (resourceGroupsCfg != null) {
+//                resourceGroupsCfg.getValue("print-file-level");
+//            }
+//            if (externalCfg != null) {
+//                Configuration[] resourceGroups = externalCfg.getChildren("resource-groups");
+//                for (int i = 0; i < resourceGroups.length; i++) {
+//                    String resourceresourceGroups[i].getAttribute("url", null);
+//                    Configuration resourceGroup = externalCfg.getChild("resource-group", false);
+//                }
+//            }
+//            Configuration externalResourceGroupCfg = cfg.getChild("external-resource-group", false);
+//            if (externalResourceGroupCfg != null) {
+////                afpRenderer.setExternalResources(true);
+//                String resourceLibraryUrl = externalResourceGroupCfg.getAttribute("url", null);
+//                if (resourceLibraryUrl != null) {
+//                    afpRenderer.setExternalResourceLibraryUrl(resourceLibraryUrl);
+//                }
+//            }
         }
     }
 }

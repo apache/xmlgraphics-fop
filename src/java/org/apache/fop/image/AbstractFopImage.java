@@ -360,7 +360,7 @@ public abstract class AbstractFopImage implements FopImage {
      * Return the original image data (compressed).
      * @return the original image data
      */
-    public byte[] getRessourceBytes() {
+    public byte[] getResourceBytes() {
         return raw;
     }
 
@@ -368,7 +368,7 @@ public abstract class AbstractFopImage implements FopImage {
      * Return the original image data size (compressed).
      * @return the original image data size
      */
-    public int getRessourceBytesSize() {
+    public int getResourceBytesSize() {
         return (raw != null ? raw.length : 0);
     }
 
