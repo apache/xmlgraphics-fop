@@ -110,7 +110,7 @@ public class PDFResources extends PDFObject {
                     desc = (FontDescriptor)font;
                 }
                 addFont(doc.getFactory().makeFont(
-                    f, font.getEmbedFontName(), font.getEncoding(), font, desc));
+                    f, font.getEmbedFontName(), font.getEncodingName(), font, desc));
             }
         }
     }

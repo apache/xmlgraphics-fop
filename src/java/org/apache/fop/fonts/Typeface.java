@@ -19,11 +19,8 @@
  
 package org.apache.fop.fonts;
 
-// FOP
-
-
 /**
- * Base class for PDF font classes
+ * Base class for font classes
  */
 public abstract class Typeface implements FontMetrics {
 
@@ -37,7 +34,7 @@ public abstract class Typeface implements FontMetrics {
      * Get the encoding of the font.
      * @return the encoding
      */
-    public abstract String getEncoding();
+    public abstract String getEncodingName();
 
     /**
      * Map a Unicode character to a code point in the font.

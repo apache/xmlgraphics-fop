@@ -64,11 +64,10 @@ public class LazyFont extends Typeface implements FontDescriptor {
         this.resolver = resolver;
     }
 
-    /**
-     * String representation of LazyFont
-     */
+    /** {@inheritDoc} */
     public String toString() {
-        return ( "metrics-url=" + metricsFileName + ", embed-url=" + fontEmbedPath + ", kerning=" + useKerning );
+        return ( "metrics-url=" + metricsFileName + ", embed-url=" + fontEmbedPath
+                + ", kerning=" + useKerning );
     }
         
     private void load(boolean fail) {
@@ -80,8 +79,9 @@ public class LazyFont extends Typeface implements FontDescriptor {
                     if (resolver != null) {
                         Source source = resolver.resolve(metricsFileName);
                         if (source == null) {
-                            String err = "Cannot load font: failed to create Source from metrics file " 
-                                + metricsFileName; 
+                            String err
+                                = "Cannot load font: failed to create Source from metrics file " 
+                                    + metricsFileName; 
                             if (fail) {
                                 throw new RuntimeException(err);
                             } else {
@@ -112,8 +112,8 @@ public class LazyFont extends Typeface implements FontDescriptor {
                         src.setSystemId(source.getSystemId()); 
                         reader = new FontReader(src);
                     } else {
-                        reader 
-                            = new FontReader(new InputSource(new URL(metricsFileName).openStream()));
+                        reader = new FontReader(new InputSource(
+                                    new URL(metricsFileName).openStream()));
                     }
                     reader.setKerningEnabled(useKerning);
                     reader.setFontEmbedPath(fontEmbedPath);
@@ -153,12 +153,10 @@ public class LazyFont extends Typeface implements FontDescriptor {
     }
 
     // ---- Font ----
-    /**
-     * {@inheritDoc}
-     */
-    public String getEncoding() {
+    /** {@inheritDoc} */
+    public String getEncodingName() {
         load(true);
-        return realFont.getEncoding();
+        return realFont.getEncodingName();
     }
 
     /**

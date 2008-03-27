@@ -70,12 +70,10 @@ import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
 import org.apache.xmlgraphics.java2d.AbstractGraphics2D;
 import org.apache.xmlgraphics.java2d.GraphicContext;
 
-import org.apache.fop.fonts.CIDFont;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.fonts.FontTriplet;
-import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.pdf.BitmapImage;
 import org.apache.fop.pdf.PDFAnnotList;
 import org.apache.fop.pdf.PDFColor;
@@ -1473,14 +1471,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         // This assumes that *all* CIDFonts use a /ToUnicode mapping
         org.apache.fop.fonts.Typeface f
             = (org.apache.fop.fonts.Typeface)fontInfo.getFonts().get(name);
-        if (f instanceof LazyFont) {
-            if (((LazyFont) f).getRealFont() instanceof CIDFont) {
-                return true;
-            }
-        } else if (f instanceof CIDFont) {
-            return true;
-        }
-        return false;
+        return f.isMultiByte();
     }
 
     private void addKerning(StringWriter buf, Integer ch1, Integer ch2,

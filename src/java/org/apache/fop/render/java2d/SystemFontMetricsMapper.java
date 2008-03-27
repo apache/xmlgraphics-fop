@@ -172,7 +172,7 @@ public class SystemFontMetricsMapper extends Typeface implements FontMetricsMapp
     }
 
     /** {@inheritDoc} */
-    public String getEncoding() {
+    public String getEncodingName() {
         return null; //Not applicable to Java2D rendering
     }
 

@@ -89,6 +89,7 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.LazyFont;
+import org.apache.fop.fonts.SingleByteFont;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Graphics2DAdapter;
@@ -660,6 +661,12 @@ public class PSRenderer extends AbstractPathOrientedRenderer
     }
     
     private String getPostScriptNameForFontKey(String key) {
+        int pos = key.indexOf('_');
+        String postFix = null;
+        if (pos > 0) {
+            postFix = key.substring(pos);
+            key = key.substring(0, pos);
+        }
         Map fonts = fontInfo.getFonts();
         Typeface tf = (Typeface)fonts.get(key);
         if (tf instanceof LazyFont) {
@@ -668,7 +675,11 @@ public class PSRenderer extends AbstractPathOrientedRenderer
         if (tf == null) {
             throw new IllegalStateException("Font not available: " + key);
         }
-        return tf.getFontName();
+        if (postFix == null) {
+            return tf.getFontName();
+        } else {
+            return tf.getFontName() + postFix;
+        }
     }
     
     /**
@@ -698,7 +709,6 @@ public class PSRenderer extends AbstractPathOrientedRenderer
     protected void useFont(String key, int size) {
         try {
             PSResource res = getPSResourceForFontKey(key);
-            //gen.useFont(key, size / 1000f);
             gen.useFont("/" + res.getName(), size / 1000f);
             gen.getResourceTracker().notifyResourceUsageOnPage(res);
         } catch (IOException ioe) {
@@ -951,7 +961,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
         if (!isOptimizeResources()) {
             this.fontResources = PSFontUtils.writeFontDict(gen, fontInfo);
         } else {
-            gen.commentln("%FOPFontSetup");
+            gen.commentln("%FOPFontSetup"); //Place-holder, will be replaced in the second pass
         }
         gen.writeDSCComment(DSCConstants.END_SETUP);
     }
@@ -1292,17 +1302,16 @@ public class PSRenderer extends AbstractPathOrientedRenderer
      */
     public void renderText(TextArea area) {
         renderInlineAreaBackAndBorders(area);
-        String fontname = getInternalFontNameForArea(area);
+        String fontkey = getInternalFontNameForArea(area);
         int fontsize = area.getTraitAsInteger(Trait.FONT_SIZE);
 
         // This assumes that *all* CIDFonts use a /ToUnicode mapping
-        Typeface tf = (Typeface) fontInfo.getFonts().get(fontname);
+        Typeface tf = (Typeface) fontInfo.getFonts().get(fontkey);
 
         //Determine position
         int rx = currentIPPosition + area.getBorderAndPaddingWidthStart();
         int bl = currentBPPosition + area.getOffset() + area.getBaselineOffset();
 
-        useFont(fontname, fontsize);
         Color ct = (Color)area.getTrait(Trait.COLOR);
         if (ct != null) {
             try {
@@ -1347,30 +1356,75 @@ public class PSRenderer extends AbstractPathOrientedRenderer
         super.renderSpace(space);
     }
 
+    private Typeface getTypeface(String fontName) {
+        Typeface tf = (Typeface)fontInfo.getFonts().get(fontName);
+        if (tf instanceof LazyFont) {
+            tf = ((LazyFont)tf).getRealFont();
+        }
+        return tf;
+    }
+    
     private void renderText(AbstractTextArea area, String text, int[] letterAdjust) {
+        String fontkey = getInternalFontNameForArea(area);
+        int fontSize = area.getTraitAsInteger(Trait.FONT_SIZE);
         Font font = getFontFromArea(area);
-        Typeface tf = (Typeface) fontInfo.getFonts().get(font.getFontName());
+        Typeface tf = getTypeface(font.getFontName());
+        SingleByteFont singleByteFont = null;
+        if (tf instanceof SingleByteFont) {
+            singleByteFont = (SingleByteFont)tf;
+        }
 
+        int textLen = text.length();
+        if (singleByteFont != null && singleByteFont.hasAdditionalEncodings()) {
+            int start = 0;
+            int currentEncoding = -1;
+            for (int i = 0; i < textLen; i++) {
+                char c = text.charAt(i);
+                char mapped = tf.mapChar(c);
+                int encoding = mapped / 256;
+                if (currentEncoding != encoding) {
+                    if (i > 0) {
+                        writeText(area, text, start, i - start, letterAdjust, fontSize, tf);
+                    }
+                    if (encoding == 0) {
+                        useFont(fontkey, fontSize);
+                    } else {
+                        useFont(fontkey + "_" + Integer.toString(encoding), fontSize);
+                    }
+                    currentEncoding = encoding;
+                    start = i;
+                }
+            }
+            writeText(area, text, start, textLen - start, letterAdjust, fontSize, tf);
+        } else {
+            useFont(fontkey, fontSize);
+            writeText(area, text, 0, textLen, letterAdjust, fontSize, tf);
+        }
+    }
+
+    private void writeText(AbstractTextArea area, String text, int start, int len,
+            int[] letterAdjust, int fontsize, Typeface tf) {
+        int end = start + len;
         int initialSize = text.length();
         initialSize += initialSize / 2;
         StringBuffer sb = new StringBuffer(initialSize);
-        int textLen = text.length();
         if (letterAdjust == null 
                 && area.getTextLetterSpaceAdjust() == 0 
                 && area.getTextWordSpaceAdjust() == 0) {
             sb.append("(");
-            for (int i = 0; i < textLen; i++) {
+            for (int i = start; i < end; i++) {
                 final char c = text.charAt(i);
-                final char mapped = tf.mapChar(c);
+                final char mapped = (char)(tf.mapChar(c) % 256);
                 PSGenerator.escapeChar(mapped, sb);
             }
             sb.append(") t");
         } else {
             sb.append("(");
-            int[] offsets = new int[textLen];
-            for (int i = 0; i < textLen; i++) {
+            int[] offsets = new int[len];
+            for (int i = start; i < end; i++) {
                 final char c = text.charAt(i);
                 final char mapped = tf.mapChar(c);
+                char codepoint = (char)(mapped % 256);
                 int wordSpace;
 
                 if (CharUtilities.isAdjustableSpace(mapped)) {
@@ -1378,14 +1432,14 @@ public class PSRenderer extends AbstractPathOrientedRenderer
                 } else {
                     wordSpace = 0;
                 }
-                int cw = tf.getWidth(mapped, font.getFontSize()) / 1000;
-                int ladj = (letterAdjust != null && i < textLen - 1 ? letterAdjust[i + 1] : 0);
-                int tls = (i < textLen - 1 ? area.getTextLetterSpaceAdjust() : 0); 
-                offsets[i] = cw + ladj + tls + wordSpace;
-                PSGenerator.escapeChar(mapped, sb);
+                int cw = tf.getWidth(mapped, fontsize) / 1000;
+                int ladj = (letterAdjust != null && i < end - 1 ? letterAdjust[i + 1] : 0);
+                int tls = (i < end - 1 ? area.getTextLetterSpaceAdjust() : 0); 
+                offsets[i - start] = cw + ladj + tls + wordSpace;
+                PSGenerator.escapeChar(codepoint, sb);
             }
             sb.append(")" + PSGenerator.LF + "[");
-            for (int i = 0; i < textLen; i++) {
+            for (int i = 0; i < len; i++) {
                 if (i > 0) {
                     if (i % 8 == 0) {
                         sb.append(PSGenerator.LF);
@@ -1398,7 +1452,6 @@ public class PSRenderer extends AbstractPathOrientedRenderer
             sb.append("]" + PSGenerator.LF + "xshow");
         }
         writeln(sb.toString());
-
     }
 
     /** {@inheritDoc} */
