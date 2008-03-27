@@ -54,9 +54,7 @@ public class AFPExtensionHandler extends DefaultHandler
                     || localName.equals(AFPElementMapping.INCLUDE_PAGE_OVERLAY)
                     || localName.equals(AFPElementMapping.INCLUDE_PAGE_SEGMENT)
                     || localName.equals(AFPElementMapping.PAGE)
-                    || localName.equals(AFPElementMapping.PAGE_GROUP)
-                    || localName.equals(AFPElementMapping.PAGE_GROUP)
-                    || localName.equals(AFPResource.ELEMENT)) {
+                    || localName.equals(AFPElementMapping.PAGE_GROUP)) {
                 //handled in endElement
             } else {
                 handled = false;
