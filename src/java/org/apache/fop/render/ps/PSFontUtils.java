@@ -32,16 +32,20 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.xmlgraphics.fonts.Glyphs;
 import org.apache.xmlgraphics.ps.DSCConstants;
 import org.apache.xmlgraphics.ps.PSGenerator;
 import org.apache.xmlgraphics.ps.PSResource;
 import org.apache.xmlgraphics.ps.dsc.ResourceTracker;
 
+import org.apache.fop.fonts.Base14Font;
 import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontType;
 import org.apache.fop.fonts.LazyFont;
+import org.apache.fop.fonts.SingleByteEncoding;
+import org.apache.fop.fonts.SingleByteFont;
 import org.apache.fop.fonts.Typeface;
 
 /**
@@ -81,9 +85,21 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         while (iter.hasNext()) {
             String key = (String)iter.next();
             Typeface tf = getTypeFace(fontInfo, fonts, key);
-            PSResource fontRes = new PSResource("font", tf.getFontName());
+            PSResource fontRes = new PSResource(PSResource.TYPE_FONT, tf.getFontName());
             fontResources.put(key, fontRes);
             embedFont(gen, tf, fontRes);
+            
+            if (tf instanceof SingleByteFont) {
+                SingleByteFont sbf = (SingleByteFont)tf;
+                for (int i = 0, c = sbf.getAdditionalEncodingCount(); i < c; i++) {
+                    SingleByteEncoding encoding = sbf.getAdditionalEncoding(i);
+                    defineEncoding(gen, encoding);
+                    String postFix = "_" + (i + 1);
+                    PSResource derivedFontRes = defineDerivedFont(gen, tf.getFontName(),
+                            tf.getFontName() + postFix, encoding.getName());
+                    fontResources.put(key + postFix, derivedFontRes);
+                }
+            }
         }
         gen.commentln("%FOPEndFontDict");
         reencodeFonts(gen, fonts);
@@ -91,29 +107,35 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
     }
 
     private static void reencodeFonts(PSGenerator gen, Map fonts) throws IOException {
+        ResourceTracker tracker = gen.getResourceTracker();
+        
+        if (!tracker.isResourceSupplied(WINANSI_ENCODING_RESOURCE)) {
+            defineWinAnsiEncoding(gen);
+        }
         gen.commentln("%FOPBeginFontReencode");
-        defineWinAnsiEncoding(gen);
         
         //Rewrite font encodings
         Iterator iter = fonts.keySet().iterator();
         while (iter.hasNext()) {
             String key = (String)iter.next();
-            Typeface fm = (Typeface)fonts.get(key);
-            if (fm instanceof LazyFont && ((LazyFont)fm).getRealFont() == null) {
-                continue;
-            } else if (null == fm.getEncoding()) {
+            Typeface tf = (Typeface)fonts.get(key);
+            if (tf instanceof LazyFont) {
+                tf = ((LazyFont)tf).getRealFont();
+                if (tf == null) {
+                    continue;
+                }
+            }
+            if (null == tf.getEncodingName()) {
                 //ignore (ZapfDingbats and Symbol used to run through here, kept for safety reasons)
-            } else if ("SymbolEncoding".equals(fm.getEncoding())) {
+            } else if ("SymbolEncoding".equals(tf.getEncodingName())) {
                 //ignore (no encoding redefinition)
-            } else if ("ZapfDingbatsEncoding".equals(fm.getEncoding())) {
+            } else if ("ZapfDingbatsEncoding".equals(tf.getEncodingName())) {
                 //ignore (no encoding redefinition)
-            } else if ("WinAnsiEncoding".equals(fm.getEncoding())) {
-                redefineFontEncoding(gen, fm.getFontName(), fm.getEncoding());
             } else {
-                /* Don't complain anymore, just use the font's default encoding.
-                gen.commentln("%WARNING: Only WinAnsiEncoding is supported. Font '" 
-                    + fm.getFontName() + "' asks for: " + fm.getEncoding());
-                */
+                if (tf instanceof Base14Font) {
+                    //Our Base 14 fonts don't use the default encoding 
+                    redefineFontEncoding(gen, tf.getFontName(), tf.getEncodingName());
+                }
             }
         }
         gen.commentln("%FOPEndFontReencode");
@@ -233,10 +255,88 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
                     if (isEmbeddable(cf)) {
                         resTracker.registerSuppliedResource(fontRes);
                     }
+                    if (tf instanceof SingleByteFont) {
+                        SingleByteFont sbf = (SingleByteFont)tf;
+                        for (int i = 0, c = sbf.getAdditionalEncodingCount(); i < c; i++) {
+                            SingleByteEncoding encoding = sbf.getAdditionalEncoding(i);
+                            PSResource encodingRes = new PSResource(
+                                    PSResource.TYPE_ENCODING, encoding.getName());
+                            resTracker.registerSuppliedResource(encodingRes);
+                            PSResource derivedFontRes = new PSResource(
+                                    PSResource.TYPE_FONT, tf.getFontName() + "_" + (i + 1));
+                            resTracker.registerSuppliedResource(derivedFontRes);
+                        }
+                    }
                 }
             }
         }
         return fontResources;
     }
 
+    /**
+     * Defines the single-byte encoding for use in PostScript files.
+     * @param gen the PostScript generator
+     * @param encoding the single-byte encoding
+     * @return the PSResource instance that represents the encoding
+     * @throws IOException In case of an I/O problem
+     */
+    public static PSResource defineEncoding(PSGenerator gen, SingleByteEncoding encoding)
+            throws IOException {
+        PSResource res = new PSResource(PSResource.TYPE_ENCODING, encoding.getName());
+        gen.writeDSCComment(DSCConstants.BEGIN_RESOURCE, res);
+        gen.writeln("/" + encoding.getName() + " [");
+        String[] charNames = encoding.getCharNameMap();
+        for (int i = 0; i < 256; i++) {
+            if (i > 0) {
+                if ((i % 5) == 0) {
+                    gen.newLine();
+                } else {
+                    gen.write(" ");
+                }
+            }
+            String glyphname = null;
+            if (i < charNames.length) {
+                glyphname = charNames[i];
+            }
+            if (glyphname == null || "".equals(glyphname)) {
+                glyphname = Glyphs.NOTDEF;
+            }
+            gen.write("/");
+            gen.write(glyphname);
+        }
+        gen.newLine();
+        gen.writeln("] def");
+        gen.writeDSCComment(DSCConstants.END_RESOURCE);
+        gen.getResourceTracker().registerSuppliedResource(res);
+        return res;
+    }
+
+    /**
+     * Derives a new font based on an existing font with a given encoding. The encoding must
+     * have been registered before.
+     * @param gen the PostScript generator
+     * @param baseFontName the font name of the font to derive from
+     * @param fontName the font name of the new font to be define
+     * @param encoding the new encoding (must be predefined in the PS file)
+     * @return the PSResource representing the derived font
+     * @throws IOException In case of an I/O problem
+     */
+    public static PSResource defineDerivedFont(PSGenerator gen, String baseFontName, String fontName,
+            String encoding) throws IOException {
+        PSResource res = new PSResource(PSResource.TYPE_FONT, fontName);
+        gen.writeDSCComment(DSCConstants.BEGIN_RESOURCE, res);
+        gen.commentln("%XGCDependencies: font " + baseFontName);
+        gen.commentln("%XGC+ encoding " + encoding);
+        gen.writeln("/" + baseFontName + " findfont");
+        gen.writeln("dup length dict begin");
+        gen.writeln("  {1 index /FID ne {def} {pop pop} ifelse} forall");
+        gen.writeln("  /Encoding " + encoding + " def");
+        gen.writeln("  currentdict");
+        gen.writeln("end");
+        gen.writeln("/" + fontName + " exch definefont pop");
+        gen.writeDSCComment(DSCConstants.END_RESOURCE);
+        gen.getResourceTracker().registerSuppliedResource(res);
+        return res;
+    }
+    
 }

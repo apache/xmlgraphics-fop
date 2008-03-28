@@ -235,7 +235,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
 
 
         // Elements for the table-header/footer/body
-        LinkedList contentKnuthElements = null;
+        LinkedList contentKnuthElements;
         contentLM = new TableContentLayoutManager(this);
         LayoutContext childLC = new LayoutContext(0);
         /*
@@ -321,7 +321,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
         getParentArea(null);
-        getPSLM().addIDToPage(getTable().getId());
+        addId();
 
         // add space before, in order to implement display-align = "center" or "after"
         if (layoutContext.getSpaceBefore() != 0) {
@@ -381,7 +381,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         resetSpaces();
         curBlockArea = null;
         
-        getPSLM().notifyEndOfLayout(((Table)getFObj()).getId());
+        getPSLM().notifyEndOfLayout(fobj.getId());
     }
 
     /**

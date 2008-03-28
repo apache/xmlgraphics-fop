@@ -73,8 +73,6 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
     private LinkedList labelList = null;
     private LinkedList bodyList = null;
 
-    private int listItemHeight;
-    
     private boolean discardBorderBefore;
     private boolean discardBorderAfter;
     private boolean discardPaddingBefore;
@@ -84,7 +82,9 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
     
     private boolean keepWithNextPendingOnLabel;
     private boolean keepWithNextPendingOnBody;
-  
+
+    private int listItemHeight;
+    
     private class ListItemPosition extends Position {
         private int iLabelFirstIndex;
         private int iLabelLastIndex;
@@ -307,12 +307,12 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
             int additionalPenaltyHeight = 0;
             KnuthElement endEl = (KnuthElement)elementLists[0].get(end[0]);
             if (endEl instanceof KnuthPenalty) {
-                additionalPenaltyHeight = ((KnuthPenalty)endEl).getW();
+                additionalPenaltyHeight = endEl.getW();
             }
             endEl = (KnuthElement)elementLists[1].get(end[1]);
             if (endEl instanceof KnuthPenalty) {
                 additionalPenaltyHeight = Math.max(
-                        additionalPenaltyHeight, ((KnuthPenalty)endEl).getW());
+                        additionalPenaltyHeight, endEl.getW());
             }
             
             int boxHeight = step - addedBoxHeight - penaltyHeight;
@@ -419,10 +419,10 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         // body
         // "unwrap" the Positions stored in the elements
         ListIterator oldListIterator = oldList.listIterator();
-        KnuthElement oldElement = null;
+        KnuthElement oldElement;
         while (oldListIterator.hasNext()) {
             oldElement = (KnuthElement)oldListIterator.next();
-            Position innerPosition = ((NonLeafPosition) oldElement.getPosition()).getPosition();
+            Position innerPosition = oldElement.getPosition().getPosition();
             //log.debug(" BLM> unwrapping: " + (oldElement.isBox() 
             //  ? "box    " : (oldElement.isGlue() ? "glue   " : "penalty")) 
             //  + " creato da " + oldElement.getLayoutManager().getClass().getName());
@@ -465,7 +465,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
                          LayoutContext layoutContext) {
         getParentArea(null);
 
-        getPSLM().addIDToPage(getListItemFO().getId());
+        addId();
 
         LayoutContext lc = new LayoutContext(0);
         Position firstPos = null;
@@ -484,7 +484,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
             }
             if (pos instanceof NonLeafPosition && pos.getPosition() != null) {
                 // pos contains a ListItemPosition created by this ListBlockLM
-                positionList.add(((NonLeafPosition) pos).getPosition());
+                positionList.add(pos.getPosition());
             }
         }
 
@@ -560,7 +560,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         curBlockArea = null;
         resetSpaces();
         
-        getPSLM().notifyEndOfLayout(((ListItem)getFObj()).getId());
+        getPSLM().notifyEndOfLayout(fobj.getId());
     }
 
     /**

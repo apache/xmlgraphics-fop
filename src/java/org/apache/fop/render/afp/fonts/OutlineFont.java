@@ -174,11 +174,8 @@ public class OutlineFont extends AFPFont {
         return charSet.mapChar(c);
     }
 
-    /**
-     * Get the encoding of the font.
-     * @return the encoding
-     */
-    public String getEncoding() {
+    /** {@inheritDoc} */
+    public String getEncodingName() {
         return charSet.getEncoding();
     }
 }

@@ -67,7 +67,7 @@ public class PDFTTFStream extends PDFStream {
      */
     public void setData(byte[] data, int size) throws IOException {
         this.data.clear();
-        this.data.getOutputStream().write(data, 0, size);
+        getBufferOutputStream().write(data, 0, size);
     }
 
 }

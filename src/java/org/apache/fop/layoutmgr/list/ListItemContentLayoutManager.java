@@ -115,9 +115,9 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
                          LayoutContext layoutContext) {
         getParentArea(null);
         
-        getPSLM().addIDToPage(getPartFO().getId());
+        addId();
 
-        LayoutManager childLM = null;
+        LayoutManager childLM;
         LayoutContext lc = new LayoutContext(0);
         LayoutManager firstLM = null;
         LayoutManager lastLM = null;
@@ -141,8 +141,8 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
             }
             if (pos instanceof NonLeafPosition) {
                 // pos was created by a child of this ListBlockLM
-                positionList.add(((NonLeafPosition) pos).getPosition());
-                lastLM = ((NonLeafPosition) pos).getPosition().getLM();
+                positionList.add(pos.getPosition());
+                lastLM = pos.getPosition().getLM();
                 if (firstLM == null) {
                     firstLM = lastLM;
                 }
@@ -172,7 +172,7 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
 
         curBlockArea = null;
         
-        getPSLM().notifyEndOfLayout(((AbstractListItemPart)getFObj()).getId());
+        getPSLM().notifyEndOfLayout(fobj.getId());
     }
 
     /**

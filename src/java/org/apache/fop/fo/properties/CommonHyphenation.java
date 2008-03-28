@@ -21,6 +21,7 @@ package org.apache.fop.fo.properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
@@ -142,7 +143,7 @@ public final class CommonHyphenation {
             FontMetrics metrics = font.getFontMetrics();
             if (metrics instanceof Typeface) {
                 Typeface typeface = (Typeface)metrics;
-                if ("SymbolEncoding".equals(typeface.getEncoding())) {
+                if ("SymbolEncoding".equals(typeface.getEncodingName())) {
                     //SymbolEncoding doesn't have HYPHEN_MINUS, so replace by MINUS_SIGN
                 } else {
                     //only warn if the encoding is not SymbolEncoding
@@ -154,7 +155,7 @@ public final class CommonHyphenation {
             FontMetrics metrics = font.getFontMetrics();
             if (metrics instanceof Typeface) {
                 Typeface typeface = (Typeface)metrics;
-                if ("ZapfDingbatsEncoding".equals(typeface.getEncoding())) {
+                if ("ZapfDingbatsEncoding".equals(typeface.getEncodingName())) {
                     //ZapfDingbatsEncoding doesn't have HYPHEN_MINUS, so replace by ' '
                 } else {
                     //only warn if the encoding is not ZapfDingbatsEncoding

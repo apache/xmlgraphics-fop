@@ -19,8 +19,9 @@
  
 package org.apache.fop.pdf;
 
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
 
 /**
  * Class representing a PDF stream.
@@ -37,6 +38,8 @@ public class PDFStream extends AbstractPDFStream {
      */
     protected StreamCache data;
 
+    private transient Writer streamWriter;
+    
     /**
      * Create an empty stream object
      */
@@ -44,6 +47,10 @@ public class PDFStream extends AbstractPDFStream {
         super();
         try {
             data = StreamCacheFactory.getInstance().createStreamCache();
+            this.streamWriter = new java.io.OutputStreamWriter(
+                    getBufferOutputStream(), PDFDocument.ENCODING);
+            //Buffer to minimize calls to the converter
+            this.streamWriter = new java.io.BufferedWriter(this.streamWriter);
         } catch (IOException ex) {
             //TODO throw the exception and catch it elsewhere
             ex.printStackTrace();
@@ -57,14 +64,25 @@ public class PDFStream extends AbstractPDFStream {
      */
     public void add(String s) {
         try {
-            data.getOutputStream().write(PDFDocument.encode(s));
+            this.streamWriter.write(s);
         } catch (IOException ex) {
             //TODO throw the exception and catch it elsewhere
             ex.printStackTrace();
         }
-
     }
     
+    private void flush() throws IOException {
+        this.streamWriter.flush();
+    }
+    
+    /**
+     * Returns a Writer that writes to the OutputStream of the buffer.
+     * @return the Writer
+     */
+    public Writer getBufferWriter() {
+        return this.streamWriter;
+    }
+
     /**
      * Returns an OutputStream that can be used to write to the buffer which is used
      * to build up the PDF stream.
@@ -72,6 +90,9 @@ public class PDFStream extends AbstractPDFStream {
      * @throws IOException In case of an I/O problem
      */
     public OutputStream getBufferOutputStream() throws IOException {
+        if (this.streamWriter != null) {
+            flush(); //Just to be sure
+        }
         return this.data.getOutputStream();
     }
     
@@ -91,6 +112,7 @@ public class PDFStream extends AbstractPDFStream {
      */
     public int getDataLength() {
         try {
+            flush();
             return data.getSize();
         } catch (Exception e) {
             //TODO throw the exception and catch it elsewhere
@@ -99,17 +121,15 @@ public class PDFStream extends AbstractPDFStream {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected int getSizeHint() throws IOException {
+        flush();
         return data.getSize();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void outputRawStreamData(OutputStream out) throws IOException {
+        flush();
         data.outputContents(out);
     }
 

@@ -89,8 +89,8 @@ public class PDFGraphics2DAdapter extends AbstractGraphics2DAdapter {
         PDFGraphics2D graphics = new PDFGraphics2D(textAsShapes, 
                 pdfInfo.fi, pdfInfo.pdfDoc,
                 pdfInfo.pdfContext, pdfInfo.pdfPage.referencePDF(),
-                renderer.currentFontName,
-                renderer.currentFontSize);
+                pdfInfo.currentFontName,
+                pdfInfo.currentFontSize);
         graphics.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
         
         AffineTransform transform = new AffineTransform();

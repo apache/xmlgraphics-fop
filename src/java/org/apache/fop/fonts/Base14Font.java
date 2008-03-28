@@ -16,30 +16,12 @@
  */
 
 /* $Id$ */
+ 
+package org.apache.fop.fonts;
 
-package org.apache.fop.layoutmgr.inline;
-
-// Java
-import java.util.List;
-
-// FOP
-import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.fo.flow.InlineContainer;
 /**
- * This creates a single inline container area after
- * laying out the child block areas. All footnotes, floats
- * and id areas are maintained for later retrieval.
+ * Base class for all Base 14 fonts.
  */
-public class ICLayoutManager extends LeafNodeLayoutManager {
-    private List childrenLM;
-
-    public ICLayoutManager(InlineContainer node, List childLM) {
-        super(node);
-        childrenLM = childLM;
-    }
-
-    public InlineArea get(int index) {
-        return null;
-    }
+public abstract class Base14Font extends Typeface {
 
 }

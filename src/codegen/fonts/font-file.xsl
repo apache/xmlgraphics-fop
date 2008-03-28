@@ -40,10 +40,10 @@ import java.util.Map;
 </xsl:if>
 import java.util.Set;
 import org.apache.fop.fonts.FontType;
-import org.apache.fop.fonts.Typeface;
+import org.apache.fop.fonts.Base14Font;
 import org.apache.fop.fonts.CodePointMapping;
 
-public class <xsl:value-of select="class-name"/> extends Typeface {
+public class <xsl:value-of select="class-name"/> extends Base14Font {
     private final static String fontName = "<xsl:value-of select="font-name"/>";
     private final static String fullName = "<xsl:value-of select="full-name"/>";
     private final static Set familyNames;
@@ -84,7 +84,7 @@ public class <xsl:value-of select="class-name"/> extends Typeface {
         this.enableKerning = enableKerning;
     }
 
-    public String getEncoding() {
+    public String getEncodingName() {
         return encoding;
     }
 

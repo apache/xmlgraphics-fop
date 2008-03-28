@@ -18,19 +18,33 @@
 /* $Id$ */
 
 package org.apache.fop.render.pdf;
+import java.awt.color.ICC_Profile;
+import java.io.DataInput;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.apache.commons.io.IOUtils;
+
 import org.apache.xmlgraphics.image.loader.impl.ImageRawJPEG;
+import org.apache.xmlgraphics.image.loader.impl.JPEGConstants;
+import org.apache.xmlgraphics.image.loader.impl.JPEGFile;
+import org.apache.xmlgraphics.image.loader.util.ImageUtil;
 
 import org.apache.fop.pdf.DCTFilter;
 import org.apache.fop.pdf.PDFDeviceColorSpace;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFFilter;
 import org.apache.fop.pdf.PDFFilterList;
+import org.apache.fop.util.ColorProfileUtil;
 
 /**
  * PDFImage implementation for the PDF renderer which handles raw JPEG images.
+ * <p>
+ * The JPEG is copied to the XObject's stream as-is but some elements (marker segments) are
+ * filtered. For example, an embedded color profile is filtered since it is already added as
+ * a PDF object and associated with the XObject. This way, the PDF file size is kept as small
+ * as possible.
  */
 public class ImageRawJPEGAdapter extends AbstractImageAdapter {
 
@@ -68,6 +82,21 @@ public class ImageRawJPEGAdapter extends AbstractImageAdapter {
     }
 
     /** {@inheritDoc} */
+    protected ICC_Profile getEffectiveICCProfile() {
+        ICC_Profile profile = super.getEffectiveICCProfile();
+        if (profile != null 
+                && profile.getNumComponents() == 3
+                && !ColorProfileUtil.isDefaultsRGB(profile)) {
+            //RGB profiles which are not sRGB don't seem to work.
+            //Without this override, the image drifts into yellow for an unknown reason.
+            //TODO Find out why this happens.
+            //Test using a JPEG images with, for example, "Adobe RGB 1998" color profile.
+            profile = null;
+        }
+        return profile;
+    }
+    
+    /** {@inheritDoc} */
     public int getBitsPerComponent() {
         return 8;
     }
@@ -84,7 +113,77 @@ public class ImageRawJPEGAdapter extends AbstractImageAdapter {
     
     /** {@inheritDoc} */
     public void outputContents(OutputStream out) throws IOException {
-        getImage().writeTo(out);
+        InputStream in = getImage().createInputStream();
+        in = ImageUtil.decorateMarkSupported(in);
+        try {
+            JPEGFile jpeg = new JPEGFile(in);
+            DataInput din = jpeg.getDataInput();
+            
+            //Copy the whole JPEG file except:
+            // - the ICC profile
+            //TODO Thumbnails could safely be skipped, too.
+            //TODO Metadata (XMP, IPTC, EXIF) could safely be skipped, too.
+            while (true) {
+                int reclen;
+                int segID = jpeg.readMarkerSegment();
+                switch (segID) {
+                case JPEGConstants.SOI:
+                    out.write(0xFF);
+                    out.write(segID);
+                    break;
+                case JPEGConstants.EOI:
+                case JPEGConstants.SOS:
+                    out.write(0xFF);
+                    out.write(segID);
+                    IOUtils.copy(in, out); //Just copy the rest!
+                    return;
+                /*
+                case JPEGConstants.APP1: //Metadata
+                case JPEGConstants.APPD:
+                    jpeg.skipCurrentMarkerSegment();
+                    break;*/
+                case JPEGConstants.APP2: //ICC (see ICC1V42.pdf)
+                    boolean skipICCProfile = false;
+                    in.mark(16);
+                    try {
+                        reclen = jpeg.readSegmentLength();
+                        // Check for ICC profile
+                        byte[] iccString = new byte[11];
+                        din.readFully(iccString);
+                        din.skipBytes(1); //string terminator (null byte)
+
+                        if ("ICC_PROFILE".equals(new String(iccString, "US-ASCII"))) {
+                            skipICCProfile = (this.image.getICCProfile() != null);
+                        }
+                    } finally {
+                        in.reset();
+                    }
+                    if (skipICCProfile) {
+                        //ICC profile is skipped as it is already embedded as a PDF object
+                        jpeg.skipCurrentMarkerSegment();
+                        break;
+                    }
+                default:
+                    out.write(0xFF);
+                    out.write(segID);
+                    
+                    reclen = jpeg.readSegmentLength();
+                    //write short
+                    out.write((reclen >>> 8) & 0xFF);
+                    out.write((reclen >>> 0) & 0xFF);
+                    int left = reclen - 2;
+                    byte[] buf = new byte[2048];
+                    while (left > 0) {
+                        int part = Math.min(buf.length, left);
+                        din.readFully(buf, 0, part);
+                        out.write(buf, 0, part);
+                        left -= part;
+                    }
+                }
+            }
+        } finally {
+            IOUtils.closeQuietly(in);
+        }
     }
 
     /** {@inheritDoc} */

@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.fo.properties.FixedLength;
 import org.apache.fop.render.afp.exceptions.FontRuntimeException;
 
@@ -229,11 +230,8 @@ public class RasterFont extends AFPFont {
         return charSet.mapChar(c);
     }
 
-    /**
-     * Get the encoding of the font.
-     * @return the encoding
-     */
-    public String getEncoding() {
+    /** {@inheritDoc} */
+    public String getEncodingName() {
         return charSet.getEncoding();
     }
 

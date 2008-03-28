@@ -43,6 +43,7 @@ import org.apache.batik.gvt.renderer.StrokingTextPainter;
 import org.apache.batik.gvt.text.GVTAttributedCharacterIterator;
 import org.apache.batik.gvt.text.TextPaintInfo;
 import org.apache.batik.gvt.text.TextSpanLayout;
+
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
@@ -83,8 +84,12 @@ public class PDFTextPainter extends StrokingTextPainter {
             super.paintTextRuns(textRuns, g2d);
             return;
         }
-        PDFGraphics2D pdf = (PDFGraphics2D)g2d;
-        PDFTextUtil textUtil = new PDFTextUtil(pdf);
+        final PDFGraphics2D pdf = (PDFGraphics2D)g2d;
+        PDFTextUtil textUtil = new PDFTextUtil(pdf.fontInfo) {
+            protected void write(String code) {
+                pdf.currentStream.write(code);
+            }
+        };
         for (int i = 0; i < textRuns.size(); i++) {
             TextRun textRun = (TextRun)textRuns.get(i);
             AttributedCharacterIterator runaci = textRun.getACI();
@@ -134,7 +139,7 @@ public class PDFTextPainter extends StrokingTextPainter {
             }
             
             textUtil.saveGraphicsState();
-            textUtil.concatMatrixCurrentTransform();
+            textUtil.concatMatrix(g2d.getTransform());
             Shape imclip = g2d.getClip();
             pdf.writeClip(imclip);
             

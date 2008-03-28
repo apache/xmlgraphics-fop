@@ -342,11 +342,6 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
     }
 
     /** {@inheritDoc} */
-    protected void addId() {
-        getPSLM().addIDToPage(fobj.getId());
-    }
-
-    /** {@inheritDoc} */
     public int getBaseLength(int lengthBase, FObj fobj) {
         return getParent().getBaseLength(lengthBase, getParent().getFObj());
     }

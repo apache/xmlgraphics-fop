@@ -124,13 +124,6 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
     }
 
     /**
-     * {@inheritDoc}
-     */
-    protected void addId() {
-        getPSLM().addIDToPage(fobj.getId());
-    }
-
-    /**
      * Returns the image of foreign object area to be put into
      * the viewport.
      * @return the appropriate area
