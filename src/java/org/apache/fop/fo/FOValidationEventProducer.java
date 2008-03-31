@@ -333,5 +333,16 @@ public interface FOValidationEventProducer extends EventProducer {
      * @event.severity FATAL
      */
     void emptyDocument(Object source) throws ValidationException;
+ 
+    /**
+     * An unknown/unsupported formatting object has been encountered.
+     * @param source the event source
+     * @param elementName the name of the context node
+     * @param offendingNode the offending node
+     * @param loc the location of the error or null
+     * @event.severity WARN
+     */
+    void unknownFormattingObject(Object source, String elementName,
+            QName offendingNode, Locator loc);
     
 }

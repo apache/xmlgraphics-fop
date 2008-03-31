@@ -37,6 +37,7 @@ import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.EmbedFontInfo;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontCache;
+import org.apache.fop.fonts.FontEventListener;
 import org.apache.fop.fonts.FontLoader;
 import org.apache.fop.fonts.FontResolver;
 import org.apache.fop.fonts.FontTriplet;
@@ -50,6 +51,17 @@ public class FontInfoFinder {
     /** logging instance */
     private Log log = LogFactory.getLog(FontInfoFinder.class);
 
+    private FontEventListener eventListener;
+    
+    /**
+     * Sets the font event listener that can be used to receive events about particular events
+     * in this class.
+     * @param listener the font event listener
+     */
+    public void setEventListener(FontEventListener listener) {
+        this.eventListener = listener;
+    }
+    
     /**
      * Attempts to determine FontTriplets from a given CustomFont.
      * It seems to be fairly accurate but will probably require some tweaking over time
@@ -189,14 +201,16 @@ public class FontInfoFinder {
         try {
             customFont = FontLoader.loadFont(fontUrl, resolver);
         } catch (Exception e) {
-            //TODO Too verbose (it's an error but we don't care if some fonts can't be loaded)
-            if (log.isErrorEnabled()) {
-                log.error("Unable to load font file: " + embedUrl + ". Reason: " + e.getMessage());
+            if (this.eventListener != null) {
+                this.eventListener.fontLoadingErrorAtAutoDetection(this, embedUrl, e);
             }
             if (fontCache != null) {
                 fontCache.registerFailedFont(embedUrl, fileLastModified);
             }
             return null;
+        }
+        if (this.eventListener != null) {
+            customFont.setEventListener(this.eventListener);
         }
         return fontInfoFromCustomFont(fontUrl, customFont, fontCache);     
     }

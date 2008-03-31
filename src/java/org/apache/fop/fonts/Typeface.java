@@ -30,6 +30,9 @@ public abstract class Typeface implements FontMetrics {
      */
     private long charMapOps = 0;
     
+    /** An optional event listener that receives events such as missing glyphs etc. */
+    protected FontEventListener eventListener;
+    
     /**
      * Get the encoding of the font.
      * @return the encoding
@@ -78,6 +81,15 @@ public abstract class Typeface implements FontMetrics {
     /** {@inheritDoc} */
     public int getMaxAscent(int size) {
         return getAscender(size);
+    }
+    
+    /**
+     * Sets the font event listener that can be used to receive events about particular events
+     * in this class.
+     * @param listener the font event listener
+     */
+    public void setEventListener(FontEventListener listener) {
+        this.eventListener = listener;
     }
     
 }

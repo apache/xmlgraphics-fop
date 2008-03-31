@@ -139,6 +139,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
                     throw new RuntimeException(ioex.getMessage());
                 }
             }
+            realFont.setEventListener(this.eventListener);
             isMetricsLoaded = true;
         }
     }

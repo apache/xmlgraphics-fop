@@ -48,6 +48,7 @@ import org.apache.fop.fo.flow.table.TableColumn;
 import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.fonts.FontEventAdapter;
 import org.apache.fop.fonts.FontInfo;
 
 /**
@@ -101,6 +102,7 @@ public abstract class FOEventHandler {
     public FOEventHandler(FOUserAgent foUserAgent) {
         this.foUserAgent = foUserAgent;
         this.fontInfo = new FontInfo();
+        this.fontInfo.setEventListener(new FontEventAdapter(foUserAgent.getEventBroadcaster()));
     }
 
     /**

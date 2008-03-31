@@ -31,6 +31,8 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.xmlgraphics.util.QName;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FormattingResults;
@@ -179,18 +181,6 @@ public class FOTreeBuilder extends DefaultHandler {
                 delegate.endElement(uri, localName, rawName);
             }
         }
-    }
-
-    /**
-     * Finds the {@link Maker} used to create {@link FONode} objects of a particular type
-     * 
-     * @param namespaceURI URI for the namespace of the element
-     * @param localName name of the Element
-     * @return the ElementMapping.Maker that can create an FO object for this element
-     * @throws FOPException if a Maker could not be found for a bound namespace.
-     */
-    private Maker findFOMaker(String namespaceURI, String localName) throws FOPException {
-        return elementMappingRegistry.findFOMaker(namespaceURI, localName, locator);
     }
 
     /** {@inheritDoc} */
@@ -374,7 +364,29 @@ public class FOTreeBuilder extends DefaultHandler {
         /** {@inheritDoc} */
         public void endDocument() throws SAXException {
             currentFObj = null;
-        }        
+        }
+        
+        /**
+         * Finds the {@link Maker} used to create {@link FONode} objects of a particular type
+         * 
+         * @param namespaceURI URI for the namespace of the element
+         * @param localName name of the Element
+         * @return the ElementMapping.Maker that can create an FO object for this element
+         * @throws FOPException if a Maker could not be found for a bound namespace.
+         */
+        private Maker findFOMaker(String namespaceURI, String localName) throws FOPException {
+            Maker maker = elementMappingRegistry.findFOMaker(namespaceURI, localName, locator);
+            if (maker instanceof UnknownXMLObj.Maker) {
+                FOValidationEventProducer eventProducer
+                    = FOValidationEventProducer.Factory.create(
+                        foEventHandler.getUserAgent().getEventBroadcaster());
+                eventProducer.unknownFormattingObject(this, currentFObj.getName(),
+                        new QName(namespaceURI, localName),
+                        getEffectiveLocator());
+            }
+            return maker;
+        }
+
     }
 }
 
