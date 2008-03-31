@@ -108,10 +108,6 @@ public class Event extends EventObject {
         return Collections.unmodifiableMap(this.params);
     }
     
-    public String getLocalizedMessage() {
-        return null;
-    }
-    
     /**
      * Creates and returns a fluent builder object for building up the parameter map.
      * @return the parameter builder
