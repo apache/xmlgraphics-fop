@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
+<document>
+  <header>
+    <title>Events/Processing Feedback</title>
+    <version>$Revision: 634267 $</version>
+  </header>
+  <body>
+    <section id="introduction">
+      <title>Introduction</title>
+      <p>
+        In versions until 0.20.5, FOP used
+        <a href="http://excalibur.apache.org/framework/index.html">Avalon-style Logging</a> where
+        it was possible to supply a logger per processing run. During the redesign
+        the logging infrastructure was switched over to
+        <a href="http://commons.apache.org/logging/">Commons Logging</a> which is (like Log4J or
+        java.util.logging) a "static" logging framework (the logger is accessed through static
+        variables). This made it very difficult in a multi-threaded system to retrieve information
+        for a single processing run.
+      </p>
+      <p>
+        With FOP's event subsystem, we'd like to close this gap again and even go further. The
+        first point is to realize that we have two kinds of "logging". Firstly, we have the logging
+        infrastructure for the (FOP) developer who needs to be able to enable finer log messages
+        for certain parts of FOP to track down a certain problem. Secondly, we have the user who
+        would like to be informed about missing images, overflowing lines or substituted fonts.
+        These messages (or events) are targeted at less technical people and may ideally be
+        localized (translated). Furthermore, tool and solution builders would like to integrate
+        FOP into their own solutions. For example, an FO editor should be able to point the user
+        to the right place where a particular problem occurred while developing a document template.
+        Finally, some integrators would like to abort processing if a resource (an image or a font)
+        has not been found, while others would simply continue. The event system allows to
+        react on these events.
+      </p>
+      <p>
+        On this page, we won't discuss logging as such. We will show how the event subsystem can
+        be used for various tasks. We'll first look at the event subsystem from the consumer side.
+        Finally, the production of events inside FOP will be discussed (this is mostly interesting
+        for FOP developers only).
+      </p>
+    </section>
+    <section id="consumer">
+      <title>The consumer side</title>
+      <p>
+        The event subsystem is located in the <code>org.apache.fop.events</code> package and its
+        base is the <code>Event</code> class. An instance is created for each event and is sent
+        to a set of <code>EventListener</code> instances by the <code>EventBroadcaster</code>.
+        An <code>Event</code> contains an event ID, a source object (which generated the event),
+        a severity level (Info, Warning, Error and Fatal Error) and a map of named parameters.
+        The <code>EventFormatter</code> class can be used to translate the events into
+        human-readable, localized messages.
+      </p>
+      <p>
+        A full example of what is shown here can be found in the
+        <code>examples/embedding/java/embedding/events</code> directory in the FOP distribution.
+        The example can also be accessed
+        <a href="http://svn.apache.org/viewvc/xmlgraphics/fop/trunk/examples/embedding/java/embedding/events/">via the web</a>.
+      </p>
+      <section id="write-listener">
+        <title>Writing an EventListener</title>
+        <p>
+          The following code sample shows a very simple EventListener. It basically just sends
+          all events to System.out (stdout) or System.err (stderr) depending on the event severity.
+        </p>
+        <source><![CDATA[import org.apache.fop.events.Event;
+import org.apache.fop.events.EventFormatter;
+import org.apache.fop.events.EventListener;
+import org.apache.fop.events.model.EventSeverity;
+
+/** A simple event listener that writes the events to stdout and sterr. */
+public class SysOutEventListener implements EventListener {
+
+    /** {@inheritDoc} */
+    public void processEvent(Event event) {
+        String msg = EventFormatter.format(event);
+        EventSeverity severity = event.getSeverity();
+        if (severity == EventSeverity.INFO) {
+            System.out.println("[INFO ] " + msg);
+        } else if (severity == EventSeverity.WARN) {
+            System.out.println("[WARN ] " + msg);
+        } else if (severity == EventSeverity.ERROR) {
+            System.err.println("[ERROR] " + msg);
+        } else if (severity == EventSeverity.FATAL) {
+            System.err.println("[FATAL] " + msg);
+        } else {
+            assert false;
+        }
+    }
+}]]></source>
+        <p>
+          You can see that for every event the method <code>processEvent</code> of the
+          <code>EventListener</code> will be called. Inside this method you can do whatever
+          processing would like including throwing a <code>RuntimeException</code>, if you want
+          to abort the current processing run.
+        </p>
+        <p>
+          The code above also shows how you can turn an event into a human-readable, localized
+          message that can be presented to a user. The <code>EventFormatter</code> class does
+          this for you. It provides additional methods if you'd like to explicitely specify
+          the locale.
+        </p>
+        <p>
+          It is possible to gather all events for a whole processing run so they can be
+          evaluated afterwards. However, care should be taken about memory consumption since
+          the events provide references to objects inside FOP which may themselves have
+          references to other objects. So holding on to these objects may mean that whole
+          object trees cannot be released!
+        </p>
+      </section>
+      <section id="add-listener">
+        <title>Adding an EventListener</title>
+        <p>
+          To register the event listener with FOP, get the <code>EventBroadcaster</code> which
+          is associated with the user agent (<code>FOUserAgent</code>) and add it there:
+        </p>
+        <source><![CDATA[FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
+        foUserAgent.getEventBroadcaster().addEventListener(new SysOutEventListener());]]></source>
+        <p>
+          Please note that this is done separately for each processing run, i.e. for each
+          new user agent.
+        </p>
+      </section>
+      <section id="listener-example1">
+        <title>An additional listener example</title>
+        <p>
+          Here's an additional example of an event listener:
+        </p>
+        <p>
+          By default, FOP continues processing even if an image wasn't found. If you have
+          more strict requirements and want FOP to stop if an image is not available, you can
+          do something like the following:
+        </p>
+        <source><![CDATA[public class MyEventListener implements EventListener {
+
+    public void processEvent(Event event) {
+        if ("org.apache.fop.events.ResourceEventProducer.imageNotFound"
+                .equals(event.getEventID())) {
+            
+            //Get the FileNotFoundException that's part of the event's parameters
+            FileNotFoundException fnfe = (FileNotFoundException)event.getParam("fnfe");
+
+            throw new RuntimeException(EventFormatter.format(event), fnfe);
+        } else {
+            //ignore all other events (or do something of your choice)
+        }
+    }
+    
+}]]></source>
+        <p>
+          This throws a <code>RuntimeException</code> with the <code>FileNotFoundException</code>
+          as the cause. Further processing effectively stops in FOP. You can catch the exception
+          in your code and react as you see necessary.
+        </p>
+      </section>
+    </section>
+    <section id="producer">
+      <title>The producer side (for FOP developers)</title>
+      <p>TODO!</p>
+    </section>
+  </body>
+</document>
