@@ -413,7 +413,7 @@ public class AFMFile {
             Map.Entry entryFrom = (Map.Entry)iterFrom.next();
             String name1 = (String)entryFrom.getKey();
             AFMCharMetrics chm1 = getChar(name1);
-            if (!chm1.hasCharCode()) {
+            if (chm1 == null || !chm1.hasCharCode()) {
                 continue;
             }
             Map container = null;
@@ -423,7 +423,7 @@ public class AFMFile {
                 Map.Entry entryTo = (Map.Entry)iterTo.next();
                 String name2 = (String)entryTo.getKey();
                 AFMCharMetrics chm2 = getChar(name2);
-                if (!chm2.hasCharCode()) {
+                if (chm2 == null || !chm2.hasCharCode()) {
                     continue;
                 }
                 if (container == null) {
