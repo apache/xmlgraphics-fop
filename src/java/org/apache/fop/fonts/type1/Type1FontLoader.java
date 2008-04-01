@@ -108,11 +108,6 @@ public class Type1FontLoader extends FontLoader {
             throw new java.io.FileNotFoundException(
                     "Neither an AFM nor a PFM file was found for " + this.fontFileURI);
         }
-        if (pfm == null) {      
-            //Cannot do without the PFM for now         
-            throw new java.io.FileNotFoundException(    
-                    "No PFM file was found for " + this.fontFileURI);   
-        }
         buildFont(afm, pfm);
         this.loaded = true;
     }
@@ -289,7 +284,25 @@ public class Type1FontLoader extends FontLoader {
         }
         
         if (afm != null) {
-            //TODO returnFont.setFlags(flags);
+            String charSet = afm.getCharacterSet();
+            int flags = 0;
+            if ("Special".equals(charSet)) {
+                flags |= 4; //bit 3: Symbolic
+            } else {
+                if (singleFont.getEncoding().mapChar('A') == 'A') {
+                    //High likelyhood that the font is non-symbolic
+                    flags |= 32; //bit 6: Nonsymbolic
+                } else {
+                    flags |= 4; //bit 3: Symbolic
+                }
+            }
+            if (afm.getWritingDirectionMetrics(0).isFixedPitch()) {
+                flags |= 1; //bit 1: FixedPitch
+            }
+            if (afm.getWritingDirectionMetrics(0).getItalicAngle() != 0.0) {
+                flags |= 64; //bit 7: Italic
+            }
+            returnFont.setFlags(flags);
              
             returnFont.setFirstChar(afm.getFirstChar());
             returnFont.setLastChar(afm.getLastChar());
@@ -302,6 +315,7 @@ public class Type1FontLoader extends FontLoader {
             }
             returnFont.replaceKerningMap(afm.createXKerningMapEncoded());
         } else {
+            returnFont.setFlags(pfm.getFlags());
             returnFont.setFirstChar(pfm.getFirstChar());
             returnFont.setLastChar(pfm.getLastChar());
             for (short i = pfm.getFirstChar(); i <= pfm.getLastChar(); i++) {
@@ -309,7 +323,6 @@ public class Type1FontLoader extends FontLoader {
             }
             returnFont.replaceKerningMap(pfm.getKerning());
         }
-        returnFont.setFlags(pfm.getFlags());
     }
 
     private CodePointMapping buildCustomEncoding(String encodingName, AFMFile afm) {
