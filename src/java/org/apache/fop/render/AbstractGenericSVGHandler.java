@@ -47,7 +47,7 @@ import org.apache.fop.svg.SVGUserAgent;
 public abstract class AbstractGenericSVGHandler implements XMLHandler, RendererContextConstants {
 
     /** logging instance */
-    private static Log log = LogFactory.getLog(AbstractGenericSVGHandler.class);
+    protected static Log log = LogFactory.getLog(AbstractGenericSVGHandler.class);
 
     /** {@inheritDoc} */
     public void handleXML(RendererContext context, 

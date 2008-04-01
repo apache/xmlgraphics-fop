@@ -21,6 +21,8 @@ package org.apache.fop.fonts.type1;
 
 import java.awt.geom.RectangularShape;
 
+import org.apache.fop.fonts.NamedCharacter;
+
 
 /**
  * Holds the metrics of a single character from an AFM file.
@@ -28,8 +30,7 @@ import java.awt.geom.RectangularShape;
 public class AFMCharMetrics {
 
     private int charCode = -1;
-    private String unicodeSequence;
-    private String charName;
+    private NamedCharacter character;
     private double widthX;
     private double widthY;
     private RectangularShape bBox;
@@ -59,36 +60,45 @@ public class AFMCharMetrics {
     }
     
     /**
+     * Returns the named character represented by this instance.
+     * @return the named character (or null if no named character is associated)
+     */
+    public NamedCharacter getCharacter() {
+        return this.character;
+    }
+    
+    /**
+     * Sets the named character represented by this instance.
+     * @param ch the named character
+     */
+    public void setCharacter(NamedCharacter ch) {
+        this.character = ch;
+    }
+    
+    /**
+     * Sets the named character represented by this instance.
+     * @param charName the character name (as defined in the Adobe glyph list)
+     * @param unicodeSequence the Unicode sequence
+     */
+    public void setCharacter(String charName, String unicodeSequence) {
+        setCharacter(new NamedCharacter(charName, unicodeSequence));
+    }
+    
+    /**
      * Returns the Unicode sequence for this character.
      * @return the Unicode characters
      *                  (or null if no such Unicode sequence exists for this character)
      */
     public String getUnicodeSequence() {
-        return this.unicodeSequence;
-    }
-    
-    /**
-     * Sets the Unicode sequence for this character.
-     * @param unicodeSequence the Unicode sequence
-     */
-    public void setUnicodeSequence(String unicodeSequence) {
-        this.unicodeSequence = unicodeSequence;
+        return (getCharacter() != null ? getCharacter().getUnicodeSequence() : null);
     }
     
     /**
      * Returns the PostScript character name.
-     * @return the charName
+     * @return the charName (or null if no character name is associated)
      */
     public String getCharName() {
-        return charName;
-    }
-    
-    /**
-     * Sets the PostScript character name.
-     * @param charName the charName to set
-     */
-    public void setCharName(String charName) {
-        this.charName = charName;
+        return (getCharacter() != null ? getCharacter().getName() : null);
     }
     
     /**

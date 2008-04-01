@@ -19,8 +19,10 @@
 
 package org.apache.fop.layoutmgr.table;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -79,7 +81,27 @@ public class TableLayoutManager extends BlockStackingLayoutManager
     
     private int halfBorderSeparationBPD;
     private int halfBorderSeparationIPD;
-    
+
+    /** See {@link TableLayoutManager#registerColumnBackgroundArea(TableColumn, Block, int)}. */
+    private List columnBackgroundAreas;
+
+    /**
+     * Temporary holder of column background informations for a table-cell's area.
+     * 
+     * @see TableLayoutManager#registerColumnBackgroundArea(TableColumn, Block, int)
+     */
+    private static final class ColumnBackgroundInfo {
+        private TableColumn column;
+        private Block backgroundArea;
+        private int xShift;
+
+        private ColumnBackgroundInfo(TableColumn column, Block backgroundArea, int xShift) {
+            this.column = column;
+            this.backgroundArea = backgroundArea;
+            this.xShift = xShift;
+        }
+    }
+
     /**
      * Create a new table layout manager.
      * @param node the table FO
@@ -211,7 +233,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
 
 
         // Elements for the table-header/footer/body
-        LinkedList contentKnuthElements = null;
+        LinkedList contentKnuthElements;
         contentLM = new TableContentLayoutManager(this);
         LayoutContext childLC = new LayoutContext(0);
         /*
@@ -263,7 +285,30 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         resetSpaces();
         return returnList;
     }
-    
+
+    /**
+     * Registers the given area, that will be used to render the part of column background
+     * covered by a table-cell. If percentages are used to place the background image, the
+     * final bpd of the (fraction of) table that will be rendered on the current page must
+     * be known. The traits can't then be set when the areas for the cell are created
+     * since at that moment this bpd is yet unknown. So they will instead be set in
+     * TableLM's {@link #addAreas(PositionIterator, LayoutContext)} method.
+     * 
+     * @param column the table-column element from which the cell gets background
+     * informations
+     * @param backgroundArea the block of the cell's dimensions that will hold the column
+     * background
+     * @param xShift additional amount by which the image must be shifted to be correctly
+     * placed (to counterbalance the cell's start border)
+     */
+    void registerColumnBackgroundArea(TableColumn column, Block backgroundArea, int xShift) {
+        addBackgroundArea(backgroundArea);
+        if (columnBackgroundAreas == null) {
+            columnBackgroundAreas = new ArrayList();
+        }
+        columnBackgroundAreas.add(new ColumnBackgroundInfo(column, backgroundArea, xShift));
+    }
+
     /**
      * The table area is a reference area that contains areas for
      * columns, bodies, rows and the contents are in cells.
@@ -274,7 +319,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
         getParentArea(null);
-        getPSLM().addIDToPage(getTable().getId());
+        addId();
 
         // add space before, in order to implement display-align = "center" or "after"
         if (layoutContext.getSpaceBefore() != 0) {
@@ -297,6 +342,17 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         tableHeight += contentLM.getUsedBPD();
 
         curBlockArea.setBPD(tableHeight);
+
+        if (columnBackgroundAreas != null) {
+            for (Iterator iter = columnBackgroundAreas.iterator(); iter.hasNext();) {
+                ColumnBackgroundInfo b = (ColumnBackgroundInfo) iter.next();
+                TraitSetter.addBackground(b.backgroundArea,
+                        b.column.getCommonBorderPaddingBackground(), this,
+                        b.xShift, -b.backgroundArea.getYOffset(),
+                        b.column.getColumnWidth().getValue(this), tableHeight);
+            }
+            columnBackgroundAreas.clear();
+        }
 
         if (getTable().isSeparateBorderModel()) {
             TraitSetter.addBorders(curBlockArea, 
@@ -323,7 +379,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         resetSpaces();
         curBlockArea = null;
         
-        getPSLM().notifyEndOfLayout(((Table)getFObj()).getId());
+        getPSLM().notifyEndOfLayout(fobj.getId());
     }
 
     /**
@@ -364,6 +420,15 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         if (curBlockArea != null) {
             curBlockArea.addBlock((Block) childArea);
         }
+    }
+
+    /**
+     * Adds the given area to this layout manager's area, without updating the used bpd.
+     * 
+     * @param background an area
+     */
+    void addBackgroundArea(Block background) {
+        curBlockArea.addChildArea(background);
     }
 
     /** {@inheritDoc} */

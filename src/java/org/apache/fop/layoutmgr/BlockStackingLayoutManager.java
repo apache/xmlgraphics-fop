@@ -274,13 +274,14 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             if (curLM instanceof LineLayoutManager) {
                 // curLM is a LineLayoutManager
                 // set stackLimit for lines (stack limit is now i-p-direction, not b-p-direction!)
-                childLC.setStackLimit(new MinOptMax(getContentAreaIPD()));
+                childLC.setStackLimitBP(context.getStackLimitBP());
+                childLC.setStackLimitIP(new MinOptMax(getContentAreaIPD()));
                 childLC.setRefIPD(getContentAreaIPD());
             } else {
                 // curLM is a ?
                 //childLC.setStackLimit(MinOptMax.subtract(context
                 //        .getStackLimit(), stackSize));
-                childLC.setStackLimit(context.getStackLimit());
+                childLC.setStackLimitBP(context.getStackLimitBP());
                 childLC.setRefIPD(referenceIPD);
             }
 
@@ -293,15 +294,22 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             if (returnedList != null
                     && returnedList.size() == 1
                     && ((ListElement) returnedList.getFirst()).isForcedBreak()) {
-                // a descendant of this block has break-before
-                contentList.addAll(returnedList);
 
                 if (curLM.isFinished() && !hasNextChildLM()) {
-                    forcedBreakAfterLast = (BreakElement)contentList.removeLast();
+                    // a descendant of this block has break-before
+                    forcedBreakAfterLast = (BreakElement) returnedList.getFirst();
                     context.clearPendingMarks();
                     break;
                 }
 
+                if (contentList.size() == 0) {
+                    // Empty fo:block, zero-length box makes sure the IDs and/or markers 
+                    // are registered and borders/padding are painted.
+                    returnList.add(new KnuthBox(0, notifyPos(new Position(this)), false));
+                }
+                // a descendant of this block has break-before
+                contentList.addAll(returnedList);
+                
                 /* extension: conversione di tutta la sequenza fin'ora ottenuta */
                 if (bpUnit > 0) {
                     storedList = contentList;
@@ -392,6 +400,9 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
 
         addKnuthElementsForBorderPaddingAfter(returnList, true);
         addKnuthElementsForSpaceAfter(returnList, alignment);
+        
+        //All child content is processed. Only break-after can occur now, so...        
+        context.clearPendingMarks();
         if (forcedBreakAfterLast == null) {
             addKnuthElementsForBreakAfter(returnList, context);
         }

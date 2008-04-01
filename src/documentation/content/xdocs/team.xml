@@ -31,7 +31,6 @@
       <title>Active Committers</title>
       <note label="Important">Please don't write to any developer directly if you need help on using FOP. Only if you submit questions to the <link href="maillist.html#fop-user">FOP User Mailing List</link> will other FOP users be able to profit from answers given to your question. Another point is that a developer may have gone inactive or is on holidays in which case you may not get an answer in time.</note>
       <ul>
-        <li id="fb"><link href="mailto:bckfnn@worldonline.dk">Finn Bock</link> (FB)</li>
         <li id="cb"><link href="mailto:bowditch_chris@hotmail.com">Chris Bowditch</link> (CB)
             is a Java/VB Programmer from England.</li>
         <li id="jb"><link href="mailto:jay@bryantcs.com">Jay Bryant</link> (JB) is a
@@ -51,10 +50,6 @@
         <li id="vh"><link href="mailto:vhennebert@apache.org">Vincent Hennebert</link>
           (VH), a Java developer from France; with an interest in typography, and in using
           Fop as a pdf renderer for book-like documents.</li>
-        <li id="ph"><link href="mailto:pherweg@web.de">Peter Herweg</link> (PH) is helping to 
-            integrate the jfor project's RTF support into the upcoming FOP 1.0 version.
-            Born in 1978, he has been serving as an application developer for a small 
-            industrial company in Germany since 1999.</li>
         <li id="cl"><link href="mailto:clay@apache.org">Clay Leeds</link> (CL)
           is a web/WAP/Palm developer from Laguna Beach, California, USA. A 
           recent XML/XSL-FO convert, he has been nit-picking FAQs &amp; assorted web 
@@ -78,7 +73,11 @@
             from the TeX/LaTeX world. See his <fork href="http://www.leverkruid.eu">home
             page</fork> for some of his private projects.</li>
         <li id="jp"><link href="mailto:pietsch@apache.org">J&#x00F6;rg Pietschmann</link> (JP)</li>
-        <li id="ot"><link href="mailto:olegt@apache.org">Oleg Tkachenko</link> (OT)</li>
+        <li id="mb"><link href="mailto:max AT berger DOT name">Max Berger</link> (MB) is currently a
+          PostDoc pursuing an academic career in computer science. His main interest in FOP is to
+          improve the DocBook to PDF tool-chain to produce high quality output, while still
+          conforming to given style-guides. See his <link href="http://max.berger.name">home
+            page</link> for more information.</li>
         <li id="mb"><link href="mailto:max AT berger DOT name">Max Berger</link> (MB) is currently a
           PostDoc pursuing an academic career in computer science. His main interest in FOP is to
           improve the DocBook to PDF tool-chain to produce high quality output, while still
@@ -109,11 +108,16 @@
     <section id="commit-inactive">
       <title>Inactive Committers</title>
       <ul>
+        <li id="fb"><link href="mailto:bckfnn@worldonline.dk">Finn Bock</link> (FB)</li>
         <li id="kc"><link href="mailto:kellyc@apache.org">Kelly Campbell</link></li>
         <li id="sc"><link href="mailto:gears@apache.org">Steven Coffman</link></li>
         <li id="bd"><link href="mailto:bdelacretaz@apache.org">Bertrand Delacretaz</link></li>
         <li id="te"><link href="mailto:tore@apache.org">Tore Engvig</link></li>
         <li id="sg"><link href="mailto:stanislav@apache.org">Stanislav Gorkhover</link></li>
+        <li id="ph"><link href="mailto:pherweg@web.de">Peter Herweg</link> (PH)<!-- is helping to 
+          integrate the jfor project's RTF support into the upcoming FOP 1.0 version.
+          Born in 1978, he has been serving as an application developer for a small 
+          industrial company in Germany since 1999.--></li>
         <li id="fj"><link href="mailto:fotis@apache.org">Fotis Jannidis</link></li>
         <li id="kl"><link href="mailto:klease@apache.org">Karen Lease</link></li>
         <li id="kll"><link href="mailto:keiron@apache.org">Keiron Liddle</link></li>
@@ -122,6 +126,7 @@
         <li id="jn"><link href="mailto:jordan@apache.org">Jordan Naftolin</link></li>
         <li id="as"><link href="mailto:arved@apache.org">Arved Sandstrom</link></li>
         <li id="es"><link href="mailto:eschaeffer@apache.org">Eric Schaeffer</link></li>
+        <li id="ot"><link href="mailto:olegt@apache.org">Oleg Tkachenko</link> (OT)</li>
         <li id="aw"><link href="mailto:artw@apache.org">Art Welch</link></li>
         <li id="pbw"><link href="mailto:pbwest@apache.org">Peter B. West</link></li>
       </ul>
@@ -264,7 +269,7 @@
           <td/>
           <td/>
           <td/>
-          <td/>
+          <td>X</td>
           <td/>
           <td/>
           <td/>
@@ -287,6 +292,19 @@
         </tr>
         <tr>
           <td>MIF</td>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+        </tr>
+        <tr>
+          <td>AFP</td>
           <td/>
           <td/>
           <td/>

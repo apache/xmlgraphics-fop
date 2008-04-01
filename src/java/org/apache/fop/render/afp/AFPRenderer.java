@@ -940,10 +940,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         int x = origin.x + posInt.x;
         int y = origin.y + posInt.y;
 
-        String name = null;
-        if (pageSegmentsMap != null) {
-            name = (String) pageSegmentsMap.get(uri);
-        }
+        String name = (String)getPageSegments().get(uri);
         if (name != null) {
             afpDataStream.createIncludePageSegment(name, mpts2units(x), mpts2units(y));
         } else {
@@ -1543,6 +1540,13 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         return MimeConstants.MIME_AFP;
     }
 
+    private Map getPageSegments() {
+        if (pageSegmentsMap == null) {
+            pageSegmentsMap = new java.util.HashMap();
+        }
+        return pageSegmentsMap;
+    }
+    
     /**
      * Method to render the page extension.
      * <p>
@@ -1571,17 +1575,11 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                             .equals(element)) {
                         String name = aps.getName();
                         String source = aps.getValue();
-                        if (pageSegmentsMap == null) {
-                            pageSegmentsMap = new java.util.HashMap();
-                        }
-                        pageSegmentsMap.put(source, name);
+                        getPageSegments().put(source, name);
                     } else if (AFPElementMapping.TAG_LOGICAL_ELEMENT
                             .equals(element)) {
                         String name = aps.getName();
                         String value = aps.getValue();
-                        if (pageSegmentsMap == null) {
-                            pageSegmentsMap = new java.util.HashMap();
-                        }
                         afpDataStream.createTagLogicalElement(name, value);
                     } else if (AFPElementMapping.NO_OPERATION.equals(element)) {
                         String content = aps.getContent();
@@ -1589,7 +1587,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                             afpDataStream.createNoOperation(content);
                         }
                     } else if (AFPElementMapping.RESOURCE.equals(element)) {
-                        System.out.println("resource: " + attachment);
+                        log.info("resource: " + attachment);
                     }
                 }
             }

@@ -38,7 +38,6 @@ import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.BlockContainer;
 import org.apache.fop.fo.properties.CommonAbsolutePosition;
-import org.apache.fop.layoutmgr.inline.InlineLayoutManager;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
 
@@ -201,7 +200,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             = (getBlockContainerFO().getReferenceOrientation() % 180 != 0);
         autoHeight = false;
         //boolean rotated = (getBlockContainerFO().getReferenceOrientation() % 180 != 0);
-        int maxbpd = context.getStackLimit().opt;
+        int maxbpd = context.getStackLimitBP().opt;
         int allocBPD;
         if (height.getEnum() == EN_AUTO 
                 || (!height.isAbsolute() && getAncestorBlockAreaBPD() <= 0)) {
@@ -249,7 +248,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         
         MinOptMax stackLimit = new MinOptMax(relDims.bpd);
 
-        LinkedList returnedList = null;
+        LinkedList returnedList;
         LinkedList contentList = new LinkedList();
         LinkedList returnList = new LinkedList();
         
@@ -280,8 +279,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                 LayoutContext childLC = new LayoutContext(0);
                 childLC.copyPendingMarksFrom(context);
                 // curLM is a ?
-                childLC.setStackLimit(MinOptMax.subtract(context
-                        .getStackLimit(), stackLimit));
+                childLC.setStackLimitBP(MinOptMax.subtract(context.getStackLimitBP(), stackLimit));
                 childLC.setRefIPD(relDims.ipd);
                 childLC.setWritingMode(getBlockContainerFO().getWritingMode());
 
@@ -388,6 +386,9 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         }
         addKnuthElementsForBorderPaddingAfter(returnList, true);
         addKnuthElementsForSpaceAfter(returnList, alignment);
+
+        //All child content is processed. Only break-after can occur now, so...        
+        context.clearPendingMarks();
         addKnuthElementsForBreakAfter(returnList, context);
 
         setFinished(true);
@@ -411,7 +412,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                 if (isFixed()) {
                     availHeight = (int)getCurrentPV().getViewArea().getHeight();
                 } else {
-                    availHeight = context.getStackLimit().opt; 
+                    availHeight = context.getStackLimitBP().opt; 
                 }
                 allocBPD = availHeight;
                 allocBPD -= offset.y;
@@ -444,7 +445,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                     }
                 }
             } else {
-                int maxbpd = context.getStackLimit().opt;
+                int maxbpd = context.getStackLimitBP().opt;
                 allocBPD = maxbpd;
                 if (!switchedProgressionDirection) {
                     autoHeight = true;
@@ -601,11 +602,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         }
         
         public boolean isOverflow() {
-            if (isEmpty()) {
-                return false;
-            } else {
-                return (deferredAlg.getPageBreaks().size() > 1);
-            }
+            return !isEmpty() && (deferredAlg.getPageBreaks().size() > 1);
         }
         
         protected LayoutManager getTopLevelLM() {
@@ -625,7 +622,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
 
             while ((curLM = getChildLM()) != null) {
                 LayoutContext childLC = new LayoutContext(0);
-                childLC.setStackLimit(context.getStackLimit());
+                childLC.setStackLimitBP(context.getStackLimitBP());
                 childLC.setRefIPD(context.getRefIPD());
                 childLC.setWritingMode(getBlockContainerFO().getWritingMode());
                 
@@ -707,7 +704,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             addBlockSpacing(0.0, new MinOptMax(layoutContext.getSpaceBefore()));
         }
 
-        LayoutManager childLM = null;
+        LayoutManager childLM;
         LayoutManager lastLM = null;
         LayoutContext lc = new LayoutContext(0);
         lc.setSpaceAdjust(layoutContext.getSpaceAdjust());
@@ -736,7 +733,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             }
             Position innerPosition = pos;
             if (pos instanceof NonLeafPosition) {
-                innerPosition = ((NonLeafPosition)pos).getPosition();
+                innerPosition = pos.getPosition();
             }
             if (pos instanceof BlockContainerPosition) {
                 if (bcpos != null) {
@@ -772,7 +769,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             }
         }
 
-        getPSLM().addIDToPage(getBlockContainerFO().getId());
+        addId();
         
         addMarkersToPage(true, isFirst(firstPos), isLast(lastPos));
         
@@ -854,7 +851,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                 // set last area flag
                 lc.setFlags(LayoutContext.LAST_AREA,
                         (layoutContext.isLastArea() && childLM == lastLM));
-                /*LF*/lc.setStackLimit(layoutContext.getStackLimit());
+                /*LF*/lc.setStackLimitBP(layoutContext.getStackLimitBP());
                 // Add the line areas to Area
                 childLM.addAreas(childPosIter, lc);
             }
@@ -873,7 +870,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         referenceArea = null;
         resetSpaces();
         
-        getPSLM().notifyEndOfLayout(((BlockContainer)getFObj()).getId());
+        getPSLM().notifyEndOfLayout(fobj.getId());
     }
     
     /**
@@ -992,30 +989,21 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean mustKeepTogether() {
         //TODO Keeps will have to be more sophisticated sooner or later
-        return (!getBlockContainerFO().getKeepTogether().getWithinPage().isAuto()
-                || !getBlockContainerFO().getKeepTogether().getWithinColumn().isAuto()
-                || (getParent() instanceof BlockLevelLayoutManager
-                    && ((BlockLevelLayoutManager) getParent()).mustKeepTogether())
-                || (getParent() instanceof InlineLayoutManager
-                    && ((InlineLayoutManager) getParent()).mustKeepTogether()));
+        return super.mustKeepTogether()
+                || !getBlockContainerFO().getKeepTogether().getWithinPage().isAuto()
+                || !getBlockContainerFO().getKeepTogether().getWithinColumn().isAuto();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean mustKeepWithPrevious() {
         return !getBlockContainerFO().getKeepWithPrevious().getWithinPage().isAuto()
                 || !getBlockContainerFO().getKeepWithPrevious().getWithinColumn().isAuto();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean mustKeepWithNext() {
         return !getBlockContainerFO().getKeepWithNext().getWithinPage().isAuto()
                 || !getBlockContainerFO().getKeepWithNext().getWithinColumn().isAuto();

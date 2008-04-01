@@ -49,9 +49,6 @@ import org.w3c.dom.Document;
  */
 public class AFPSVGHandler extends AbstractGenericSVGHandler {
 
-    /** logging instance */
-    private static Log log = LogFactory.getLog(AFPSVGHandler.class);
-
     /** {@inheritDoc} */
     public void handleXML(RendererContext context, 
                 Document doc, String ns) throws Exception {
@@ -196,7 +193,10 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
     }
     
     /** {@inheritDoc} */
-    public String getNamespace() {
-        return SVGDOMImplementation.SVG_NAMESPACE_URI;
+    protected void updateRendererContext(RendererContext context) {
+        //Work around a problem in Batik: Gradients cannot be done in ColorSpace.CS_GRAY
+        context.setProperty(AFPRendererContextConstants.AFP_GRAYSCALE,
+                Boolean.FALSE);
     }
+    
 }

@@ -19,12 +19,13 @@
 
 package org.apache.fop.layoutmgr.inline;
 
-import java.util.ListIterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.area.Area;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.InlineBlockParent;
@@ -47,12 +48,12 @@ import org.apache.fop.layoutmgr.InlineKnuthSequence;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthSequence;
 import org.apache.fop.layoutmgr.LayoutContext;
-import org.apache.fop.layoutmgr.NonLeafPosition;
-import org.apache.fop.layoutmgr.SpaceSpecifier;
-import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
+import org.apache.fop.layoutmgr.SpaceSpecifier;
+import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
 
@@ -296,7 +297,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
              );
         }
         
-        while ((curLM = (LayoutManager) getChildLM()) != null) {
+        while ((curLM = getChildLM()) != null) {
             
             if (!(curLM instanceof InlineLevelLayoutManager)) {
                 // A block LM
@@ -435,7 +436,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         // layout context given to lastLM, but must be cleared in the
         // layout context given to the other LMs.
         LinkedList positionList = new LinkedList();
-        NonLeafPosition pos = null;
+        NonLeafPosition pos;
         LayoutManager lastLM = null;// last child LM in this iterator
         Position lastPos = null;
         while (parentIter.hasNext()) {
@@ -597,11 +598,6 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
             this.auxiliaryPosition = new NonLeafPosition(this, null);
         //}
         return this.auxiliaryPosition;
-    }
-    
-    /** {@inheritDoc} */
-    protected void addId() {
-        getPSLM().addIDToPage(fobj.getId());
     }
     
 }

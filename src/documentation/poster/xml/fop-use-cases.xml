@@ -19,8 +19,7 @@
 <section xmlns:fo="http://www.w3.org/1999/XSL/Format">
   <title tab-width="50">Use Cases</title>
   <fo:table table-layout="fixed" width="100%" border-collapse="separate">
-    <fo:table-column/>
-    <fo:table-column/>
+    <fo:table-column column-width="proportional-column-width(1)" number-columns-repeated="2"/>
     <fo:table-header>
       <fo:table-row font-weight="bold">
         <fo:table-cell border-bottom="solid 0.5mm black">

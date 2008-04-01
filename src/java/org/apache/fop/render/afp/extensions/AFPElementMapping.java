@@ -19,8 +19,6 @@
 
 package org.apache.fop.render.afp.extensions;
 
-import java.util.HashMap;
-
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.FONode;
 
@@ -39,7 +37,7 @@ public class AFPElementMapping extends ElementMapping {
     public static final String PAGE = "page";
 
     /** page group element */
-    public static final String PAGE_GROUP = "page-group";
+//    public static final String PAGE_GROUP = "page-group";
 
     /** tag logical element */
     public static final String TAG_LOGICAL_ELEMENT = "tag-logical-element";
@@ -78,9 +76,12 @@ public class AFPElementMapping extends ElementMapping {
     protected void initialize() {
 
         if (foObjs == null) {
-            foObjs = new HashMap();
+            super.foObjs = new java.util.HashMap();
             foObjs.put(PAGE, new AFPPageSetupMaker());
-            // foObjs.put(PAGE_GROUP, new AFPMaker());
+//            foObjs.put(
+//            	PAGE_GROUP,
+//            	new AFPPageGroupMaker()
+//            );
             foObjs.put(
                 TAG_LOGICAL_ELEMENT,
                 new AFPTagLogicalElementMaker());
@@ -94,7 +95,6 @@ public class AFPElementMapping extends ElementMapping {
                 NO_OPERATION,
                 new AFPNoOperationMaker());
         }
-
     }
 
     static class AFPPageSetupMaker extends ElementMapping.Maker {
@@ -126,4 +126,10 @@ public class AFPElementMapping extends ElementMapping {
             return new AFPElement(parent, NO_OPERATION);
         }
     }
+
+//    static class AFPPageGroupMaker extends ElementMapping.Maker {
+//        public FONode make(FONode parent) {
+//            return new AFPElement(parent, PAGE_GROUP);
+//        }
+//    }
 }

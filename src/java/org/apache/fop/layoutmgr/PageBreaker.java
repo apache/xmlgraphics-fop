@@ -156,7 +156,7 @@ public class PageBreaker extends AbstractBreaker {
                     // element represents a line with footnote citations
                     bFootnotesPresent = true;
                     LayoutContext footnoteContext = new LayoutContext(context);
-                    footnoteContext.setStackLimit(context.getStackLimit());
+                    footnoteContext.setStackLimitBP(context.getStackLimitBP());
                     footnoteContext.setRefIPD(pslm.getCurrentPV()
                             .getRegionReference(Constants.FO_REGION_BODY).getIPD());
                     LinkedList footnoteBodyLMs = ((KnuthBlockBox) element).getFootnoteBodyLMs();

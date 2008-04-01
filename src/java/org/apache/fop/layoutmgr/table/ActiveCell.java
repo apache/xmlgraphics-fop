@@ -33,6 +33,8 @@ import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthPenalty;
+import org.apache.fop.layoutmgr.MinOptMaxUtil;
+import org.apache.fop.traits.MinOptMax;
 
 /**
  * A cell playing in the construction of steps for a row-group.
@@ -133,6 +135,49 @@ class ActiveCell {
         }
     }
 
+    // TODO to be removed along with the RowPainter#computeContentLength method
+    /** See {@link ActiveCell#handleExplicitHeight(MinOptMax, MinOptMax)}. */
+    private static class FillerPenalty extends KnuthPenalty {
+
+        private int contentLength;
+
+        FillerPenalty(KnuthPenalty p, int length) {
+            super(length, p.getP(), p.isFlagged(), p.getBreakClass(),
+                    p.getPosition(), p.isAuxiliary());
+            contentLength = p.getW();
+        }
+
+        FillerPenalty(int length) {
+            super(length, 0, false, null, true);
+            contentLength = 0;
+        }
+    }
+
+    /** See {@link ActiveCell#handleExplicitHeight(MinOptMax, MinOptMax)}. */
+    private static class FillerBox extends KnuthBox {
+        FillerBox(int length) {
+            super(length, null, true);
+        }
+    }
+
+    /**
+     * Returns the actual length of the content represented by the given element. In the
+     * case where this element is used as a filler to match a row's fixed height, the
+     * value returned by the getW() method will be higher than the actual content.
+     * 
+     * @param el an element
+     * @return the actual content length corresponding to the element
+     */
+    static int getElementContentLength(KnuthElement el) {
+        if (el instanceof FillerPenalty) {
+            return ((FillerPenalty) el).contentLength;
+        } else if (el instanceof FillerBox) {
+            return 0;
+        } else {
+            return el.getW();
+        }
+    }
+
     ActiveCell(PrimaryGridUnit pgu, EffRow row, int rowIndex, int previousRowsLength,
             TableLayoutManager tableLM) {
         this.pgu = pgu;
@@ -149,23 +194,10 @@ class ActiveCell {
                 + pgu.getBeforeBorderWidth(0, ConditionalBorder.REST);
         bpAfterNormal = paddingAfterNormal + pgu.getAfterBorderWidth(ConditionalBorder.NORMAL);
         bpAfterTrailing = paddingAfterTrailing + pgu.getAfterBorderWidth(0, ConditionalBorder.REST);
-        boolean makeBoxForWholeRow = false;
-        if (row.getExplicitHeight().min > 0) {
-            boolean contentsSmaller = ElementListUtils.removeLegalBreaks(
-                    pgu.getElements(), row.getExplicitHeight());
-            if (contentsSmaller) {
-                makeBoxForWholeRow = true;
-            }
-        }
-        if (makeBoxForWholeRow) {
-            elementList = new java.util.ArrayList(1);
-            int height = row.getHeight().opt;
-            height -= 2 * tableLM.getHalfBorderSeparationBPD();
-            height -= bpBeforeNormal + bpAfterNormal;
-            elementList.add(new KnuthBoxCellWithBPD(height));
-        } else {
-            elementList = pgu.getElements();
-        }
+        elementList = pgu.getElements();
+        handleExplicitHeight(
+                MinOptMaxUtil.toMinOptMax(pgu.getCell().getBlockProgressionDimension(), tableLM),
+                row.getExplicitHeight());
         knuthIter = elementList.listIterator();
         includedLength = -1;  // Avoid troubles with cells having content of zero length
         totalLength = previousRowsLength + ElementListUtils.calcContentLength(elementList);
@@ -179,6 +211,46 @@ class ActiveCell {
         nextStep = new Step(afterNextStep);
         if (afterNextStep.end < elementList.size() - 1) {
             gotoNextLegalBreak();
+        }
+    }
+
+    /**
+     * Modifies the cell's element list by putting filler elements, so that the cell's or
+     * row's explicit height is always reached.
+     * 
+     * TODO this will work properly only for the first break. Then the limitation
+     * explained on http://wiki.apache.org/xmlgraphics-fop/TableLayout/KnownProblems
+     * occurs. The list of elements needs to be re-adjusted after each break.
+     */
+    private void handleExplicitHeight(MinOptMax cellBPD, MinOptMax rowBPD) {
+        int minBPD = Math.max(cellBPD.min, rowBPD.min);
+        if (minBPD > 0) {
+            ListIterator iter = elementList.listIterator();
+            int cumulateLength = 0;
+            boolean prevIsBox = false;
+            while (iter.hasNext() && cumulateLength < minBPD) {
+                KnuthElement el = (KnuthElement) iter.next();
+                if (el.isBox()) {
+                    prevIsBox = true;
+                    cumulateLength += el.getW();
+                } else if (el.isGlue()) {
+                    if (prevIsBox) {
+                        elementList.add(iter.nextIndex() - 1,
+                                new FillerPenalty(minBPD - cumulateLength));
+                    }
+                    prevIsBox = false;
+                    cumulateLength += el.getW();
+                } else {
+                    prevIsBox = false;
+                    if (cumulateLength + el.getW() < minBPD) {
+                        iter.set(new FillerPenalty((KnuthPenalty) el, minBPD - cumulateLength));
+                    }
+                }
+            }
+        }
+        int optBPD = Math.max(minBPD, Math.max(cellBPD.opt, rowBPD.opt));
+        if (pgu.getContentLength() < optBPD) {
+            elementList.add(new FillerBox(optBPD - pgu.getContentLength()));
         }
     }
 
@@ -265,14 +337,22 @@ class ActiveCell {
     }
 
     /**
-     * Returns the last step for this cell.
+     * Returns the last step for this cell. This includes the normal border- and
+     * padding-before, the whole content, the normal padding-after, and the
+     * <em>trailing</em> after border. Indeed, if the normal border is taken instead,
+     * and appears to be smaller than the trailing one, the last step may be smaller than
+     * the current step (see TableStepper#considerRowLastStep). This will produce a wrong
+     * infinite penalty, plus the cell's content won't be taken into account since the
+     * final step will be smaller than the current one (see {@link #signalNextStep(int)}).
+     * This actually means that the content will be swallowed.
      * 
-     * @return the step including all of the cell's content plus the normal borders and paddings
+     * @return the length of last step
      */
     int getLastStep() {
         assert nextStep.end == elementList.size() - 1;
         assert nextStep.contentLength == totalLength && nextStep.penaltyLength == 0;
-        int lastStep = bpBeforeNormal + totalLength + bpAfterNormal;
+        int lastStep = bpBeforeNormal + totalLength + paddingAfterNormal
+                + pgu.getAfterBorderWidth(ConditionalBorder.LEADING_TRAILING);
         log.debug(this + ": last step = " + lastStep);
         return lastStep;
     }
@@ -394,8 +474,12 @@ class ActiveCell {
      */
     void endRow(int rowIndex) {
         if (endsOnRow(rowIndex)) {
+            // Subtract the old value of bpAfterTrailing...
+            nextStep.totalLength -= bpAfterTrailing;
             bpAfterTrailing = paddingAfterNormal
                     + pgu.getAfterBorderWidth(ConditionalBorder.LEADING_TRAILING);
+            // ... and add the new one
+            nextStep.totalLength += bpAfterTrailing;
             lastCellPart = true;
         } else {
             bpBeforeLeading = paddingBeforeLeading
@@ -445,13 +529,6 @@ class ActiveCell {
             return new CellPart(pgu, nextStep.start, previousStep.end, lastCellPart,
                     0, 0, previousStep.penaltyLength,
                     bpBeforeNormal, bpBeforeFirst, bpAfterNormal, bpAfterTrailing);
-        } else if (nextStep.start == 0 && nextStep.end == 0
-                && elementList.size() == 1
-                && elementList.get(0) instanceof KnuthBoxCellWithBPD) {
-            //Special case: Cell with fixed BPD
-            return new CellPart(pgu, 0, pgu.getElements().size() - 1, lastCellPart,
-                    nextStep.condBeforeContentLength, length, nextStep.penaltyLength,
-                    bpBeforeNormal, bpBeforeFirst, bpAfterNormal, bpAfterTrailing);
         } else {
             return new CellPart(pgu, nextStep.start, nextStep.end, lastCellPart,
                     nextStep.condBeforeContentLength, length, nextStep.penaltyLength,
@@ -463,20 +540,9 @@ class ActiveCell {
         return keepWithNextSignal;
     }
 
-    
+
     /** {@inheritDoc} */
     public String toString() {
         return "Cell " + (pgu.getRowIndex() + 1) + "." + (pgu.getColIndex() + 1);
-    }
-
-
-    /**
-     * Marker class denoting table cells fitting in just one box (no legal break inside).
-     */
-    private static class KnuthBoxCellWithBPD extends KnuthBox {
-
-        public KnuthBoxCellWithBPD(int w) {
-            super(w, null, true);
-        }
     }
 }

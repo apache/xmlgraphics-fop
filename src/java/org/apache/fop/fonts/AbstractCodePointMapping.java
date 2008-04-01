@@ -29,7 +29,7 @@ import org.apache.fop.util.CharUtilities;
 /**
  * Abstract base class for code point mapping classes (1-byte character encodings).
  */
-public class AbstractCodePointMapping {
+public class AbstractCodePointMapping implements SingleByteEncoding {
 
     private String name;
     private char[] latin1Map;
@@ -114,19 +114,12 @@ public class AbstractCodePointMapping {
         }
     }
 
-    /**
-     * Returns the encoding's name.
-     * @return the name of the encoding
-     */
+    /** {@inheritDoc} */
     public String getName() {
         return this.name;
     }
 
-    /**
-     * Maps a Unicode character to a code point in the encoding.
-     * @param c the Unicode character to map
-     * @return the coid point in the encoding or 0 (=.notdef) if not found
-     */
+    /** {@inheritDoc} */
     public final char mapChar(char c) {
         if (c < 256) {
             char latin1 = latin1Map[c];
@@ -172,8 +165,8 @@ public class AbstractCodePointMapping {
             }
         }
         
-        putFallbackCharacter(c, '\0');
-        return 0;
+        putFallbackCharacter(c, NOT_FOUND_CODE_POINT);
+        return NOT_FOUND_CODE_POINT;
     }
 
     private void putFallbackCharacter(char c, char mapTo) {
@@ -227,11 +220,7 @@ public class AbstractCodePointMapping {
         return -1;
     }
     
-    /**
-     * Returns the array of character names for this encoding.
-     * @return the array of character names
-     *                  (unmapped code points are represented by a ".notdef" value)
-     */
+    /** {@inheritDoc} */
     public String[] getCharNameMap() {
         if (this.charNameMap != null) {
             String[] copy = new String[this.charNameMap.length];

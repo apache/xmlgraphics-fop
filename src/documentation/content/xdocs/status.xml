@@ -27,13 +27,13 @@
   <body>
     <section>
       <title>Status</title>
-      <p>[last updated 9 January 2007]</p>
+      <p>[last updated 4 March 2008]</p>
       <figure width="585" height="175" src="images/track.png" alt="Planning and branches of FOP development"/>
       <p>
         This is the development status of Apache FOP. Development on
         the maintenance branch where FOP 0.20.5 came from has been
         halted. The code base has been largely redesigned. The new
-        code base has reached release 0.94.
+        code base has reached release 0.95.
       </p>
     </section>
     <section>
@@ -44,7 +44,7 @@
         handle large documents.</p>
       <p>The redesign of the code base has largely been completed. The
         new code reached production quality with release 0.93. In the
-        course of 2007 we plan to release version 1.0.</p>
+        course of 2008 or 2009 we hope to release version 1.0.</p>
       <p>
         If you're looking for a long-term road-map we have to disappoint you. This is Open
         Source and we're mostly volunteers working in their free time. What we have
@@ -122,7 +122,7 @@
           </tr>
           <tr>
             <td>Image Support</td>
-            <td>stable, but in need of a redesign</td>
+            <td>beta (recently rewritten)</td>
           </tr>
           <tr>
             <td>Hyphenation Subsystem</td>

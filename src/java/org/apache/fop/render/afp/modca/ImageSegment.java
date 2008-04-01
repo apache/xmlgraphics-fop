@@ -18,7 +18,6 @@
 /* $Id$ */
 
 package org.apache.fop.render.afp.modca;
-
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -165,6 +164,7 @@ public class ImageSegment extends AbstractNamedAFPObject {
      * {@inheritDoc}
      */
     protected void writeEnd(OutputStream os) throws IOException {
+
         byte[] data = new byte[] {
             0x71, // ID
             0x00, // Length

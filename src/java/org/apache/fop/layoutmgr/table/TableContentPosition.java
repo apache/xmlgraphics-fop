@@ -22,6 +22,7 @@ package org.apache.fop.layoutmgr.table;
 import java.util.List;
 
 import org.apache.fop.fo.flow.table.EffRow;
+import org.apache.fop.fo.flow.table.TableBody;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.Position;
 
@@ -79,6 +80,10 @@ class TableContentPosition extends Position {
         return row;
     }
 
+    TableBody getTableBody() {
+        return ((CellPart) cellParts.get(0)).pgu.getTableBody();
+    }
+
     /**
      * Returns a flag for this GridUnit.
      * @param which the requested flag
@@ -101,10 +106,12 @@ class TableContentPosition extends Position {
         }
     }
 
+    /** {@inheritDoc} */
     public boolean generatesAreas() {
         return true;
     }
 
+    /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer("TableContentPosition:");
         sb.append(getIndex());

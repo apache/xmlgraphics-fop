@@ -18,13 +18,11 @@
 /* $Id$ */
 
 package org.apache.fop.render.afp.modca;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
 /**
- * Image content IOCA object
  */
 public class ImageContent extends AbstractStructuredAFPObject {
 
@@ -55,27 +53,27 @@ public class ImageContent extends AbstractStructuredAFPObject {
     /**
      * The image size parameter
      */
-    private ImageSizeParameter imageSizeParam = null;
+    private ImageSizeParameter _imageSizeParameter = null;
 
     /**
      * The image encoding
      */
-    private byte encoding = 0x03;
+    private byte _encoding = 0x03;
 
     /**
      * The image ide size
      */
-    private byte size = 1;
+    private byte _size = 1;
 
     /**
      * The image compression
      */
-    private byte compression = (byte)0xC0;
+    private byte _compression = (byte)0xC0;
 
     /**
      * The image color model
      */
-    private byte colorModel = 0x01;
+    private byte _colorModel = 0x01;
 
     /**
      * The image data
@@ -97,39 +95,39 @@ public class ImageContent extends AbstractStructuredAFPObject {
      * @param vsize The vertival size of the image.
      */
     public void setImageSize(int hresol, int vresol, int hsize, int vsize) {
-        this.imageSizeParam = new ImageSizeParameter(hresol, vresol, hsize, vsize);
+        _imageSizeParameter = new ImageSizeParameter(hresol, vresol, hsize, vsize);
     }
 
     /**
      * Sets the image encoding.
-     * @param enc The image encoding.
+     * @param encoding The image encoding.
      */
-    public void setImageEncoding(byte enc) {
-        this.encoding = enc;
+    public void setImageEncoding(byte encoding) {
+        _encoding = encoding;
     }
 
     /**
      * Sets the image compression.
-     * @param comp The image compression.
+     * @param compression The image compression.
      */
-    public void setImageCompression(byte comp) {
-        this.compression = comp;
+    public void setImageCompression(byte compression) {
+        _compression = compression;
     }
 
     /**
      * Sets the image IDE size.
-     * @param siz The IDE size.
+     * @param size The IDE size.
      */
-    public void setImageIDESize(byte siz) {
-        this.size = siz;
+    public void setImageIDESize(byte size) {
+        _size = size;
     }
 
     /**
      * Sets the image IDE color model.
-     * @param model    the IDE color model.
+     * @param colorModel    the IDE color model.
      */
-    public void setImageIDEColorModel(byte model) {
-        this.colorModel = model;
+    public void setImageIDEColorModel(byte colorModel) {
+        _colorModel = colorModel;
     }
 
     /**
@@ -144,8 +142,8 @@ public class ImageContent extends AbstractStructuredAFPObject {
      * {@inheritDoc}
      */
     protected void writeContent(OutputStream os) throws IOException {
-        if (imageSizeParam != null) {
-            imageSizeParam.writeDataStream(os);
+        if (_imageSizeParameter != null) {
+            _imageSizeParameter.writeDataStream(os);
         }
         os.write(getImageEncodingParameter());
         os.write(getImageIDESizeParameter());
@@ -190,16 +188,21 @@ public class ImageContent extends AbstractStructuredAFPObject {
      * @return byte[] The data stream.
      */
     private byte[] getImageDataStart(int len) {
-        byte[] imageDataStartData = new byte[] {
+
+        byte[] data = new byte[] {
             (byte)0xFE, // ID
             (byte)0x92, // ID
                   0x00, // Length
                   0x00, // Length
         };
+
         byte[] l = BinaryUtils.convert(len, 2);
-        imageDataStartData[2] = l[0];
-        imageDataStartData[3] = l[1];
-        return imageDataStartData;
+        data[2] = l[0];
+        data[3] = l[1];
+
+
+        return data;
+
     }
 
     /**
@@ -207,13 +210,16 @@ public class ImageContent extends AbstractStructuredAFPObject {
      * @return byte[] The data stream.
      */
     private byte[] getImageEncodingParameter() {
-        byte[] imageEncParamData = new byte[] {
+
+        byte[] data = new byte[] {
             (byte)0x95, // ID
                   0x02, // Length
-                  encoding,
+                  _encoding,
                   0x01, // RECID
         };
-        return imageEncParamData;
+
+        return data;
+
     }
 
     /**
@@ -221,8 +227,9 @@ public class ImageContent extends AbstractStructuredAFPObject {
      * @return byte[] The data stream.
      */
     private byte[] getExternalAlgorithmParameter() {
-        if (encoding == (byte)0x83 && compression != 0) {
-            byte[] extAlgParamData = new byte[] {
+
+        if (_encoding == (byte)0x83 && _compression != 0) {
+            byte[] data = new byte[] {
                 (byte)0x95, // ID
                       0x00, // Length
                       0x10, // ALGTYPE = Compression Algorithm
@@ -231,13 +238,13 @@ public class ImageContent extends AbstractStructuredAFPObject {
                       0x00, // Reserved
                       0x00, // Reserved
                       0x00, // Reserved
-              compression, // MARKER
+              _compression, // MARKER
                       0x00, // Reserved
                       0x00, // Reserved
                       0x00, // Reserved
             };
-            extAlgParamData[1] = (byte)(extAlgParamData.length - 2);
-            return extAlgParamData;
+            data[1] = (byte)(data.length - 2);
+            return data;
         }
         return new byte[0];
     }
@@ -247,12 +254,15 @@ public class ImageContent extends AbstractStructuredAFPObject {
      * @return byte[] The data stream.
      */
     private byte[] getImageIDESizeParameter() {
-        byte[] imageIDESizeParamData = new byte[] {
+
+        byte[] data = new byte[] {
             (byte)0x96, // ID
                   0x01, // Length
-                  size,
+                  _size,
         };
-        return imageIDESizeParamData;
+
+        return data;
+
     }
 
     /**
@@ -260,14 +270,15 @@ public class ImageContent extends AbstractStructuredAFPObject {
      * @return byte[] The data stream.
      */
     private byte[] getIDEStructureParameter() {
-        if (colorModel != 0 && size == 24) {
-            byte bits = (byte)(size / 3);
-            byte[] ideStructParamData = new byte[] {
+
+        if (_colorModel != 0 && _size == 24) {
+            byte bits = (byte)(_size / 3);
+            byte[] data = new byte[] {
                 (byte)0x9B, // ID
                       0x00, // Length
                       0x00, // FLAGS
                       0x00, // Reserved
-               colorModel, // COLOR MODEL
+               _colorModel, // COLOR MODEL
                       0x00, // Reserved
                       0x00, // Reserved
                       0x00, // Reserved
@@ -275,9 +286,10 @@ public class ImageContent extends AbstractStructuredAFPObject {
                       bits,
                       bits,
             };
-            ideStructParamData[1] = (byte)(ideStructParamData.length - 2);
-            return ideStructParamData;
+            data[1] = (byte)(data.length - 2);
+            return data;
         }
         return new byte[0];
     }
+
 }

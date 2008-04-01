@@ -55,7 +55,8 @@ public class AFPElement extends AbstractAFPExtensionObject {
         }
     }
 
-    protected ExtensionAttachment instantiateExtensionAttachment() {
-        return null;
-    }
+	protected ExtensionAttachment instantiateExtensionAttachment() {
+		return new AFPPageSetup(getName());
+	}
+
 }

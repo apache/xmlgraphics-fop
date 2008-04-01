@@ -77,15 +77,15 @@
     <release>
       <Version>
         <name>Previous release</name>
-        <created>2003-07-16</created>
-        <revision>0.20.5</revision>
+        <created>2007-01-02</created>
+        <revision>0.93</revision>
       </Version>
     </release>
     <release>
       <Version>
         <name>Latest stable release</name>
-        <created>2007-01-02</created>
-        <revision>0.93</revision>
+        <created>2007-08-23</created>
+        <revision>0.94</revision>
       </Version>
     </release>
     <repository>

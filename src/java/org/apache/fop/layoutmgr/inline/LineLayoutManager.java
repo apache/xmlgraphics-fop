@@ -26,6 +26,7 @@ import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.area.Area;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.Trait;
@@ -582,9 +583,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         // Get a break from currently active child LM
         // Set up constraints for inline level managers
 
-        // IPD remaining in line
-        MinOptMax availIPD = context.getStackLimit();
-
         clearPrevIPD();
 
         //PHASE 1: Create Knuth elements
@@ -646,7 +644,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         
         InlineLevelLayoutManager curLM;
         LinkedList returnedList = null;
-        iLineWidth = context.getStackLimit().opt;
+        iLineWidth = context.getStackLimitIP().opt;
             
         // convert all the text in a sequence of paragraphs made
         // of KnuthBox, KnuthGlue and KnuthPenalty objects
@@ -1687,7 +1685,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
              */
             if (false && textAlignment == EN_JUSTIFY) {
                 // re-compute space adjust ratio
-                int updatedDifference = context.getStackLimit().opt
+                int updatedDifference = context.getStackLimitIP().opt
                                         - lbp.lineWidth + lbp.difference;
                 double updatedRatio = 0.0;
                 if (updatedDifference > 0) {
@@ -1701,12 +1699,12 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             } else if (false && textAlignment == EN_CENTER) {
                 // re-compute indent
                 int updatedIndent = lbp.startIndent
-                                    + (context.getStackLimit().opt - lbp.lineWidth) / 2;
+                                    + (context.getStackLimitIP().opt - lbp.lineWidth) / 2;
                 lineArea.addTrait(Trait.START_INDENT, new Integer(updatedIndent));
             } else if (false && textAlignment == EN_END) {
                 // re-compute indent
                 int updatedIndent = lbp.startIndent 
-                                    + (context.getStackLimit().opt - lbp.lineWidth);
+                                    + (context.getStackLimitIP().opt - lbp.lineWidth);
                 lineArea.addTrait(Trait.START_INDENT, new Integer(updatedIndent));
             }
             
@@ -1770,7 +1768,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             // set last area flag
             blocklc.setFlags(LayoutContext.LAST_AREA,
                              (context.isLastArea() && childLM == lastLM));
-            blocklc.setStackLimit(context.getStackLimit());
+            blocklc.setStackLimitsFrom(context);
             // Add the line areas to Area
             childLM.addAreas(childPosIter, blocklc);
             blocklc.setLeadingSpace(blocklc.getTrailingSpace());

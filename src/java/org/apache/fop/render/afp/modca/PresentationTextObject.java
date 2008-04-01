@@ -117,7 +117,6 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
             startPresentationTextData();
         }
         try {
-
             currentPresentationTextData.createTextData(fontRef, x, y,
                 orientation, col, vsci, ica, data);
         } catch (MaximumSizeExceededException msee) {

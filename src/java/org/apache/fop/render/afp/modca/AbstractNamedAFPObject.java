@@ -38,7 +38,7 @@ public abstract class AbstractNamedAFPObject extends AbstractStructuredAFPObject
      * The name of the object in EBCIDIC bytes
      */
     protected byte[] nameBytes;
-
+    
     /**
      * Default constructor
      */
@@ -51,19 +51,17 @@ public abstract class AbstractNamedAFPObject extends AbstractStructuredAFPObject
      * @param name the object name
      */
     protected AbstractNamedAFPObject(String name) {
-        int nameLen = getNameLength();
-        if (name.length() < nameLen) {
-            this.name = (name + "       ").substring(0, nameLen);
-        } else if (name.length() > nameLen) {
-            log.warn("Constructor:: name truncated to " + nameLen + " chars: " + name);
-            this.name = name.substring(0, nameLen);
-        } else {
-            this.name = name;            
+        this.name = name;
+        if (name.length() < 8) {
+            name = (name + "       ").substring(0, 8);
+        } else if (name.length() > 8) {
+            log.warn("Constructor:: name truncated to 8 chars" + name);
+            name = name.substring(0, 8);
         }
         try {
-            this.nameBytes = name.getBytes(AFPConstants.EBCIDIC_ENCODING);
+            nameBytes = name.getBytes(AFPConstants.EBCIDIC_ENCODING);
         } catch (UnsupportedEncodingException usee) {
-            this.nameBytes = name.getBytes();
+            nameBytes = name.getBytes();
             log.warn(
                 "Constructor:: UnsupportedEncodingException translating the name "
                 + name);
@@ -82,5 +80,6 @@ public abstract class AbstractNamedAFPObject extends AbstractStructuredAFPObject
      */
     public String getName() {
         return name;
-    }    
+    }
+    
 }

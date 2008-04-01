@@ -19,28 +19,28 @@
  
 package org.apache.fop.layoutmgr.list;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.fop.fo.flow.ListBlock;
-import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
-import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
-import org.apache.fop.layoutmgr.ConditionalElementListener;
-import org.apache.fop.layoutmgr.ElementListUtils;
-import org.apache.fop.layoutmgr.LayoutManager;
-import org.apache.fop.layoutmgr.LayoutContext;
-import org.apache.fop.layoutmgr.PositionIterator;
-import org.apache.fop.layoutmgr.Position;
-import org.apache.fop.layoutmgr.NonLeafPosition;
-import org.apache.fop.layoutmgr.RelSide;
-import org.apache.fop.layoutmgr.TraitSetter;
-import org.apache.fop.area.Area;
-import org.apache.fop.area.Block;
-import org.apache.fop.traits.MinOptMax;
-import org.apache.fop.traits.SpaceVal;
-
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.apache.fop.area.Area;
+import org.apache.fop.area.Block;
+import org.apache.fop.fo.flow.ListBlock;
+import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
+import org.apache.fop.layoutmgr.ConditionalElementListener;
+import org.apache.fop.layoutmgr.ElementListUtils;
+import org.apache.fop.layoutmgr.LayoutContext;
+import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.NonLeafPosition;
+import org.apache.fop.layoutmgr.Position;
+import org.apache.fop.layoutmgr.PositionIterator;
+import org.apache.fop.layoutmgr.RelSide;
+import org.apache.fop.layoutmgr.TraitSetter;
+import org.apache.fop.traits.MinOptMax;
+import org.apache.fop.traits.SpaceVal;
 
 /**
  * LayoutManager for a list-block FO.
@@ -156,11 +156,11 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
             addBlockSpacing(0.0, new MinOptMax(layoutContext.getSpaceBefore()));
         }
 
-        getPSLM().addIDToPage(getListBlockFO().getId());
+        addId();
 
         // the list block contains areas stacked from each list item
 
-        LayoutManager childLM = null;
+        LayoutManager childLM;
         LayoutContext lc = new LayoutContext(0);
         LayoutManager firstLM = null;
         LayoutManager lastLM = null;
@@ -181,10 +181,10 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
             }
             if (pos instanceof NonLeafPosition
                     && (pos.getPosition() != null)
-                    && ((NonLeafPosition) pos).getPosition().getLM() != this) {
+                    && pos.getPosition().getLM() != this) {
                 // pos was created by a child of this ListBlockLM
-                positionList.add(((NonLeafPosition) pos).getPosition());
-                lastLM = ((NonLeafPosition) pos).getPosition().getLM();
+                positionList.add(pos.getPosition());
+                lastLM = pos.getPosition().getLM();
                 if (firstLM == null) {
                     firstLM = lastLM;
                 }
@@ -200,7 +200,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
             lc.setSpaceAdjust(layoutContext.getSpaceAdjust());
             lc.setFlags(LayoutContext.FIRST_AREA, childLM == firstLM);
             lc.setFlags(LayoutContext.LAST_AREA, childLM == lastLM);
-            lc.setStackLimit(layoutContext.getStackLimit());
+            lc.setStackLimitBP(layoutContext.getStackLimitBP());
             childLM.addAreas(childPosIter, lc);
         }
 
@@ -218,7 +218,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
         curBlockArea = null;
         resetSpaces();
         
-        getPSLM().notifyEndOfLayout(((ListBlock)getFObj()).getId());
+        getPSLM().notifyEndOfLayout(fobj.getId());
     }
 
     /**
@@ -280,7 +280,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
     /** {@inheritDoc} */
     public boolean mustKeepTogether() {
         //TODO Keeps will have to be more sophisticated sooner or later
-        return ((BlockLevelLayoutManager)getParent()).mustKeepTogether() 
+        return super.mustKeepTogether() 
                 || !getListBlockFO().getKeepTogether().getWithinPage().isAuto()
                 || !getListBlockFO().getKeepTogether().getWithinColumn().isAuto();
     }

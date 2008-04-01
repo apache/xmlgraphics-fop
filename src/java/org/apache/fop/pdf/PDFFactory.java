@@ -43,6 +43,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.xmlgraphics.xmp.Metadata;
 
 import org.apache.fop.fonts.CIDFont;
+import org.apache.fop.fonts.CIDSubset;
 import org.apache.fop.fonts.CodePointMapping;
 import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.FontDescriptor;
@@ -50,6 +51,8 @@ import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.fonts.FontType;
 import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.fonts.MultiByteFont;
+import org.apache.fop.fonts.SimpleSingleByteEncoding;
+import org.apache.fop.fonts.SingleByteEncoding;
 import org.apache.fop.fonts.SingleByteFont;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.fonts.truetype.FontFileReader;
@@ -1166,7 +1169,7 @@ public class PDFFactory {
     }
 
     /**
-     * make a Type1 /Font object
+     * Make a Type1 /Font object.
      *
      * @param fontname internal name to use for this font (eg "F1")
      * @param basefont name of the base font (eg "Helvetica")
@@ -1217,10 +1220,12 @@ public class PDFFactory {
                                    (PDFCIDFontDescriptor)pdfdesc);
                 getDocument().registerObject(cidFont);
 
-                PDFCMap cmap = new PDFToUnicodeCMap(cidMetrics.getCharsUsed(), "fop-ucs-H",
-                    new PDFCIDSystemInfo("Adobe",
-                        "Identity",
-                        0));
+                PDFCMap cmap = new PDFToUnicodeCMap(
+                        cidMetrics.getCIDSubset().getSubsetChars(),
+                        "fop-ucs-H",
+                        new PDFCIDSystemInfo("Adobe",
+                            "Identity",
+                            0));
                 getDocument().registerObject(cmap);
                 ((PDFFontType0)font).setCMAP(cmap);
                 ((PDFFontType0)font).setDescendantFonts(cidFont);
@@ -1238,35 +1243,20 @@ public class PDFFactory {
                 int lastChar = singleByteFont.getLastChar();
                 nonBase14.setWidthMetrics(firstChar,
                                      lastChar,
-                                     makeArray(metrics.getWidths()));
+                                     new PDFArray(null, metrics.getWidths()));
                 
                 //Handle encoding
-                CodePointMapping mapping = singleByteFont.getCodePointMapping();
+                SingleByteEncoding mapping = singleByteFont.getEncoding();
                 if (PDFEncoding.isPredefinedEncoding(mapping.getName())) {
                     font.setEncoding(mapping.getName());
                 } else {
-                    CodePointMapping winansi = CodePointMapping.getMapping(
-                            CodePointMapping.WIN_ANSI_ENCODING);
-                    PDFEncoding pdfEncoding = new PDFEncoding(winansi.getName());
-                    PDFEncoding.DifferencesBuilder builder
-                            = pdfEncoding.createDifferencesBuilder();
-                    int start = -1;
-                    String[] winansiNames = winansi.getCharNameMap();
-                    String[] charNameMap = mapping.getCharNameMap();
-                    for (int i = 0; i < 256; i++) {
-                        String wac = winansiNames[i];
-                        String c = charNameMap[i];
-                        if (!wac.equals(c)) {
-                            if (start != i) {
-                                builder.addDifference(i);
-                                start = i;
-                            }
-                            builder.addName(c);
-                            start++;
-                        }
+                    Object pdfEncoding = createPDFEncoding(mapping,
+                            singleByteFont.getFontName());
+                    if (pdfEncoding instanceof PDFEncoding) {
+                        font.setEncoding((PDFEncoding)pdfEncoding);
+                    } else {
+                        font.setEncoding((String)pdfEncoding);
                     }
-                    pdfEncoding.setDifferences(builder.toPDFArray());
-                    font.setEncoding(pdfEncoding);
                     
                     /* JM: What I thought would be a necessity with custom encodings turned out to
                      * be a bug in Adobe Acrobat 8. The following section just demonstrates how
@@ -1278,21 +1268,88 @@ public class PDFFactory {
                     nonBase14.setToUnicode(cmap);
                     */
                 }
+                
+                //Handle additional encodings (characters outside the primary encoding)
+                if (singleByteFont.hasAdditionalEncodings()) {
+                    for (int i = 0, c = singleByteFont.getAdditionalEncodingCount(); i < c; i++) {
+                        SimpleSingleByteEncoding addEncoding
+                            = singleByteFont.getAdditionalEncoding(i);
+                        String name = fontname + "_" + (i + 1);
+                        Object pdfenc = createPDFEncoding(addEncoding,
+                                singleByteFont.getFontName());
+                        PDFFontNonBase14 addFont = (PDFFontNonBase14)PDFFont.createFont(
+                                name, fonttype,
+                                basefont, pdfenc);
+                        addFont.setDescriptor(pdfdesc);
+                        addFont.setWidthMetrics(
+                                addEncoding.getFirstChar(),
+                                addEncoding.getLastChar(),
+                                new PDFArray(null, singleByteFont.getAdditionalWidths(i)));
+                        getDocument().registerObject(addFont);
+                        getDocument().getResources().addFont(addFont);
+                    }
+                }
             }
 
             return font;
         }
     }
 
+    /**
+     * Creates a PDFEncoding instance from a CodePointMapping instance.
+     * @param encoding the code point mapping (encoding)
+     * @return the PDF Encoding dictionary (or a String with the predefined encoding)
+     */
+    public Object createPDFEncoding(SingleByteEncoding encoding, String fontNameHint) {
+        SingleByteEncoding baseEncoding;
+        if (fontNameHint.indexOf("Symbol") >= 0) {
+            baseEncoding = CodePointMapping.getMapping(
+                    CodePointMapping.SYMBOL_ENCODING);
+        } else {
+            baseEncoding = CodePointMapping.getMapping(
+                    CodePointMapping.STANDARD_ENCODING);
+        }
+        PDFEncoding pdfEncoding = new PDFEncoding(baseEncoding.getName());
+        PDFEncoding.DifferencesBuilder builder
+                = pdfEncoding.createDifferencesBuilder();
+        int start = -1;
+        String[] baseNames = baseEncoding.getCharNameMap();
+        String[] charNameMap = encoding.getCharNameMap();
+        for (int i = 0, ci = charNameMap.length; i < ci; i++) {
+            String basec = baseNames[i];
+            String c = charNameMap[i];
+            if (!basec.equals(c)) {
+                if (start != i) {
+                    builder.addDifference(i);
+                    start = i;
+                }
+                builder.addName(c);
+                start++;
+            }
+        }
+        if (builder.hasDifferences()) {
+            pdfEncoding.setDifferences(builder.toPDFArray());
+            return pdfEncoding;
+        } else {
+            return baseEncoding.getName();
+        }
+    }
+
+    /**
+     * Creates and returns a width array with the widths of all the characters in the subset.
+     * @param cidFont the font
+     * @return the width array
+     */
     public PDFWArray getSubsetWidths(CIDFont cidFont) {
         // Create widths for reencoded chars
         PDFWArray warray = new PDFWArray();
-        int[] tmpWidth = new int[cidFont.usedGlyphsCount];
+        int[] widths = cidFont.getWidths();
+        CIDSubset subset = cidFont.getCIDSubset();
+        int[] tmpWidth = new int[subset.getSubsetSize()];
 
-        for (int i = 0; i < cidFont.usedGlyphsCount; i++) {
-            Integer nw = (Integer)cidFont.usedGlyphsIndex.get(new Integer(i));
-            int nwx = (nw == null) ? 0 : nw.intValue();
-            tmpWidth[i] = cidFont.width[nwx];
+        for (int i = 0, c = subset.getSubsetSize(); i < c; i++) {
+            int nwx = Math.max(0, subset.getGlyphIndexForSubsetIndex(i));
+            tmpWidth[i] = widths[nwx];
         }
         warray.addEntry(0, tmpWidth);
         return warray;
@@ -1345,12 +1402,7 @@ public class PDFFactory {
     }
 
     private void buildCIDSet(PDFFontDescriptor descriptor, CIDFont cidFont) {
-        BitSet cidSubset = new BitSet();
-        Iterator iter = cidFont.usedGlyphs.keySet().iterator();
-        while (iter.hasNext()) {
-            Integer cid = (Integer)iter.next();
-            cidSubset.set(cid.intValue());
-        }
+        BitSet cidSubset = cidFont.getCIDSubset().getGlyphIndexBitSet();
         PDFStream cidSet = makeStream(null, true);
         ByteArrayOutputStream baout = new ByteArrayOutputStream(cidSubset.length() / 8 + 1);
         int value = 0;
@@ -1548,14 +1600,13 @@ public class PDFFactory {
     }
 
     /**
-     * make an Array object (ex. Widths array for a font)
+     * Make an Array object (ex. Widths array for a font).
      *
      * @param values the int array values
      * @return the PDF Array with the int values
      */
     public PDFArray makeArray(int[] values) {
         PDFArray array = new PDFArray(null, values);
-
         getDocument().registerObject(array);
         return array;
     }

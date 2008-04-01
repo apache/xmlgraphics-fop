@@ -51,7 +51,7 @@ public abstract class AbstractPageNumberCitationLayoutManager extends LeafNodeLa
      * Constructor
      *
      * @param node the formatting object that creates this area
-     * @todo better retrieval of font info
+     * TODO better retrieval of font info
      */
     public AbstractPageNumberCitationLayoutManager(AbstractPageNumberCitation node) {
         super(node);
@@ -83,7 +83,7 @@ public abstract class AbstractPageNumberCitationLayoutManager extends LeafNodeLa
 
     /** {@inheritDoc} */
     public InlineArea get(LayoutContext context) {
-        curArea = getPageNumberCitationInlineArea(parentLM);
+        curArea = getPageNumberCitationInlineArea();
         return curArea;
     }
     
@@ -99,12 +99,15 @@ public abstract class AbstractPageNumberCitationLayoutManager extends LeafNodeLa
     }
     
     /**
-     * if id can be resolved then simply return a word, otherwise
+     * If id can be resolved then simply return a word, otherwise
      * return a resolvable area
+     *
+     * @param parentLM  the parent LayoutManager
+     * @return a corresponding InlineArea
      */
-    private InlineArea getPageNumberCitationInlineArea(LayoutManager parentLM) {
+    private InlineArea getPageNumberCitationInlineArea() {
         PageViewport page = getPSLM().getFirstPVWithID(fobj.getRefId());
-        TextArea text = null;
+        TextArea text;
         if (page != null) {
             String str = page.getPageNumberString();
             // get page string from parent, build area
@@ -150,9 +153,5 @@ public abstract class AbstractPageNumberCitationLayoutManager extends LeafNodeLa
         return width;
     }
 
-    /** {@inheritDoc} */
-    protected void addId() {
-        getPSLM().addIDToPage(fobj.getId());
-    }
 }
 

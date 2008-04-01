@@ -108,6 +108,11 @@ public class Type1FontLoader extends FontLoader {
             throw new java.io.FileNotFoundException(
                     "Neither an AFM nor a PFM file was found for " + this.fontFileURI);
         }
+        if (pfm == null) {      
+            //Cannot do without the PFM for now         
+            throw new java.io.FileNotFoundException(    
+                    "No PFM file was found for " + this.fontFileURI);   
+        }
         buildFont(afm, pfm);
         this.loaded = true;
     }
@@ -122,12 +127,17 @@ public class Type1FontLoader extends FontLoader {
         singleFont.setEmbedFileName(this.fontFileURI);
         returnFont = singleFont;
         
+        handleEncoding(afm, pfm);
+        handleFontName(afm, pfm);
+        handleMetrics(afm, pfm);
+    }
+
+    private void handleEncoding(AFMFile afm, PFMFile pfm) {
         //Encoding
         if (afm != null) {
             String encoding = afm.getEncodingScheme();
             if ("AdobeStandardEncoding".equals(encoding)) {
-                //Use WinAnsi in this case as it better fits the usual character set people need
-                singleFont.setEncoding(CodePointMapping.WIN_ANSI_ENCODING);
+                singleFont.setEncoding(CodePointMapping.STANDARD_ENCODING);
             } else {
                 String effEncodingName;
                 if ("FontSpecific".equals(encoding)) {
@@ -142,6 +152,14 @@ public class Type1FontLoader extends FontLoader {
                 CodePointMapping mapping = buildCustomEncoding(effEncodingName, afm);
                 singleFont.setEncoding(mapping);
             }
+            List charMetrics = afm.getCharMetrics();
+            for (int i = 0, c = afm.getCharCount(); i < c; i++) {
+                AFMCharMetrics metrics = (AFMCharMetrics)charMetrics.get(i);
+                if (!metrics.hasCharCode() && metrics.getCharacter() != null) {
+                    singleFont.addUnencodedCharacter(metrics.getCharacter(),
+                            (int)Math.round(metrics.getWidthX()));
+                }
+            }
         } else {
             if (pfm.getCharSet() >= 0 && pfm.getCharSet() <= 2) {
                 singleFont.setEncoding(pfm.getCharSetName() + "Encoding");
@@ -151,7 +169,9 @@ public class Type1FontLoader extends FontLoader {
                 singleFont.setEncoding("WinAnsiEncoding"); //Try fallback, no guarantees!
             }
         }
-        
+    }
+
+    private void handleFontName(AFMFile afm, PFMFile pfm) {
         //Font name
         if (afm != null) {
             returnFont.setFontName(afm.getFontName()); //PostScript font name
@@ -168,7 +188,9 @@ public class Type1FontLoader extends FontLoader {
             names.add(pfm.getWindowsName()); //emulate afm.getFamilyName()
             returnFont.setFamilyNames(names);
         }
-        
+    }
+
+    private void handleMetrics(AFMFile afm, PFMFile pfm) {
         //Basic metrics
         if (afm != null) {
             if (afm.getCapHeight() != null) {
@@ -268,6 +290,7 @@ public class Type1FontLoader extends FontLoader {
         
         if (afm != null) {
             //TODO returnFont.setFlags(flags);
+             
             returnFont.setFirstChar(afm.getFirstChar());
             returnFont.setLastChar(afm.getLastChar());
             Iterator iter = afm.getCharMetrics().iterator();
@@ -279,7 +302,6 @@ public class Type1FontLoader extends FontLoader {
             }
             returnFont.replaceKerningMap(afm.createXKerningMapEncoded());
         } else {
-            returnFont.setFlags(pfm.getFlags());
             returnFont.setFirstChar(pfm.getFirstChar());
             returnFont.setLastChar(pfm.getLastChar());
             for (short i = pfm.getFirstChar(); i <= pfm.getLastChar(); i++) {
@@ -287,6 +309,7 @@ public class Type1FontLoader extends FontLoader {
             }
             returnFont.replaceKerningMap(pfm.getKerning());
         }
+        returnFont.setFlags(pfm.getFlags());
     }
 
     private CodePointMapping buildCustomEncoding(String encodingName, AFMFile afm) {

@@ -199,7 +199,7 @@ public class Font {
 
         // Use default CodePointMapping
         char d = CodePointMapping.getMapping("WinAnsiEncoding").mapChar(c);
-        if (d != 0) {
+        if (d != SingleByteEncoding.NOT_FOUND_CODE_POINT) {
             c = d;
         } else {
             log.warn("Glyph " + (int) c + " not available in font " + fontName);

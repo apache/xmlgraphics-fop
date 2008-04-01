@@ -19,8 +19,16 @@
 
 package org.apache.fop.layoutmgr.list;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.fop.area.Area;
+import org.apache.fop.area.Block;
 import org.apache.fop.fo.flow.ListItem;
 import org.apache.fop.fo.flow.ListItemBody;
 import org.apache.fop.fo.flow.ListItemLabel;
@@ -30,27 +38,20 @@ import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.ConditionalElementListener;
 import org.apache.fop.layoutmgr.ElementListObserver;
 import org.apache.fop.layoutmgr.ElementListUtils;
-import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.KnuthBox;
+import org.apache.fop.layoutmgr.KnuthElement;
+import org.apache.fop.layoutmgr.KnuthPenalty;
+import org.apache.fop.layoutmgr.KnuthPossPosIter;
 import org.apache.fop.layoutmgr.LayoutContext;
-import org.apache.fop.layoutmgr.PositionIterator;
-import org.apache.fop.layoutmgr.Position;
+import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.NonLeafPosition;
+import org.apache.fop.layoutmgr.Position;
+import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.RelSide;
 import org.apache.fop.layoutmgr.SpaceResolver;
 import org.apache.fop.layoutmgr.TraitSetter;
-import org.apache.fop.layoutmgr.KnuthElement;
-import org.apache.fop.layoutmgr.KnuthBox;
-import org.apache.fop.layoutmgr.KnuthPenalty;
-import org.apache.fop.layoutmgr.KnuthPossPosIter;
-import org.apache.fop.area.Area;
-import org.apache.fop.area.Block;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.LinkedList;
-import java.util.ListIterator;
 
 /**
  * LayoutManager for a list-item FO.
@@ -72,8 +73,6 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
     private LinkedList labelList = null;
     private LinkedList bodyList = null;
 
-    private int listItemHeight;
-    
     private boolean discardBorderBefore;
     private boolean discardBorderAfter;
     private boolean discardPaddingBefore;
@@ -83,7 +82,9 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
     
     private boolean keepWithNextPendingOnLabel;
     private boolean keepWithNextPendingOnBody;
-  
+
+    private int listItemHeight;
+    
     private class ListItemPosition extends Position {
         private int iLabelFirstIndex;
         private int iLabelLastIndex;
@@ -115,6 +116,11 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
             return iBodyLastIndex;
         }
         
+        /** {@inheritDoc} */
+        public boolean generatesAreas() {
+            return true;
+        }
+
         /** {@inheritDoc} */
         public String toString() {
             StringBuffer sb = new StringBuffer("ListItemPosition:");
@@ -301,12 +307,12 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
             int additionalPenaltyHeight = 0;
             KnuthElement endEl = (KnuthElement)elementLists[0].get(end[0]);
             if (endEl instanceof KnuthPenalty) {
-                additionalPenaltyHeight = ((KnuthPenalty)endEl).getW();
+                additionalPenaltyHeight = endEl.getW();
             }
             endEl = (KnuthElement)elementLists[1].get(end[1]);
             if (endEl instanceof KnuthPenalty) {
                 additionalPenaltyHeight = Math.max(
-                        additionalPenaltyHeight, ((KnuthPenalty)endEl).getW());
+                        additionalPenaltyHeight, endEl.getW());
             }
             
             int boxHeight = step - addedBoxHeight - penaltyHeight;
@@ -413,10 +419,10 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         // body
         // "unwrap" the Positions stored in the elements
         ListIterator oldListIterator = oldList.listIterator();
-        KnuthElement oldElement = null;
+        KnuthElement oldElement;
         while (oldListIterator.hasNext()) {
             oldElement = (KnuthElement)oldListIterator.next();
-            Position innerPosition = ((NonLeafPosition) oldElement.getPosition()).getPosition();
+            Position innerPosition = oldElement.getPosition().getPosition();
             //log.debug(" BLM> unwrapping: " + (oldElement.isBox() 
             //  ? "box    " : (oldElement.isGlue() ? "glue   " : "penalty")) 
             //  + " creato da " + oldElement.getLayoutManager().getClass().getName());
@@ -459,7 +465,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
                          LayoutContext layoutContext) {
         getParentArea(null);
 
-        getPSLM().addIDToPage(getListItemFO().getId());
+        addId();
 
         LayoutContext lc = new LayoutContext(0);
         Position firstPos = null;
@@ -478,7 +484,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
             }
             if (pos instanceof NonLeafPosition && pos.getPosition() != null) {
                 // pos contains a ListItemPosition created by this ListBlockLM
-                positionList.add(((NonLeafPosition) pos).getPosition());
+                positionList.add(pos.getPosition());
             }
         }
 
@@ -510,7 +516,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
             // set the space adjustment ratio
             lc.setSpaceAdjust(layoutContext.getSpaceAdjust());
             // TO DO: use the right stack limit for the label
-            lc.setStackLimit(layoutContext.getStackLimit());
+            lc.setStackLimitBP(layoutContext.getStackLimitBP());
             label.addAreas(labelIter, lc);
         }
 
@@ -531,7 +537,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
             // set the space adjustment ratio
             lc.setSpaceAdjust(layoutContext.getSpaceAdjust());
             // TO DO: use the right stack limit for the body
-            lc.setStackLimit(layoutContext.getStackLimit());
+            lc.setStackLimitBP(layoutContext.getStackLimitBP());
             body.addAreas(bodyIter, lc);
         }
 
@@ -554,7 +560,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         curBlockArea = null;
         resetSpaces();
         
-        getPSLM().notifyEndOfLayout(((ListItem)getFObj()).getId());
+        getPSLM().notifyEndOfLayout(fobj.getId());
     }
 
     /**

@@ -19,7 +19,6 @@
 
 package org.apache.fop.fo.flow.table;
 
-import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground.BorderInfo;
 import org.apache.fop.layoutmgr.table.CollapsingBorderModel;
@@ -163,14 +162,6 @@ public class GridUnit {
 
     void setRow(TableRow row) {
         this.row = row;
-    }
-
-    public TableBody getBody() {
-        FONode node = getCell();
-        while (node != null && !(node instanceof TableBody)) {
-            node = node.getParent();
-        }
-        return (TableBody) node;
     }
 
     /**

@@ -29,6 +29,7 @@ import org.apache.fop.datatypes.SimplePercentBaseContext;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonMarginBlock;
+import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.CommonTextDecoration;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground.BorderInfo;
 import org.apache.fop.fonts.Font;
@@ -281,6 +282,90 @@ public class TraitSetter {
     }
 
     /**
+     * Add background to an area. This method is mainly used by table-related layout
+     * managers to add background for column, body or row. Since the area corresponding to
+     * border-separation must be filled with the table's background, for every cell an
+     * additional area with the same dimensions is created to hold the background for the
+     * corresponding column/body/row. An additional shift must then be added to
+     * background-position-horizontal/vertical to ensure the background images are
+     * correctly placed. Indeed the placement of images must be made WRT the
+     * column/body/row and not the cell.
+     * 
+     * <p>Note: The area's IPD and BPD must be set before calling this method.</p>
+     * 
+     * <p>TODO the regular
+     * {@link #addBackground(Area, CommonBorderPaddingBackground, PercentBaseContext)}
+     * method should be used instead, and a means to retrieve the original area's
+     * dimensions must be found.</p>
+     * 
+     * <p>TODO the placement of images in the x- or y-direction will be incorrect if
+     * background-repeat is set for that direction.</p>
+     * 
+     * @param area the area to set the traits on
+     * @param backProps the background properties
+     * @param context Property evaluation context
+     * @param ipdShift horizontal shift to affect to the background, in addition to the
+     * value of the background-position-horizontal property
+     * @param bpdShift vertical shift to affect to the background, in addition to the
+     * value of the background-position-vertical property
+     * @param referenceIPD value to use as a reference for percentage calculation
+     * @param referenceBPD value to use as a reference for percentage calculation
+     */
+    public static void addBackground(Area area, 
+            CommonBorderPaddingBackground backProps,
+            PercentBaseContext context,
+            int ipdShift, int bpdShift, int referenceIPD, int referenceBPD) {
+        if (!backProps.hasBackground()) {
+            return;
+        }
+        Trait.Background back = new Trait.Background();
+        back.setColor(backProps.backgroundColor);
+
+        if (backProps.getImageInfo() != null) {
+            back.setURL(backProps.backgroundImage);
+            back.setImageInfo(backProps.getImageInfo());
+            back.setRepeat(backProps.backgroundRepeat);
+            if (backProps.backgroundPositionHorizontal != null) {
+                if (back.getRepeat() == Constants.EN_NOREPEAT 
+                        || back.getRepeat() == Constants.EN_REPEATY) {
+                    if (area.getIPD() > 0) {
+                        PercentBaseContext refContext = new SimplePercentBaseContext(context,
+                                LengthBase.IMAGE_BACKGROUND_POSITION_HORIZONTAL,
+                                (referenceIPD - back.getImageInfo().getSize().getWidthMpt()));
+
+                        back.setHoriz(ipdShift
+                                + backProps.backgroundPositionHorizontal.getValue(refContext));
+                    } else {
+                        // TODO Area IPD has to be set for this to work
+                        log.warn("Horizontal background image positioning ignored"
+                                + " because the IPD was not set on the area."
+                                + " (Yes, it's a bug in FOP)");
+                    }
+                }
+            }
+            if (backProps.backgroundPositionVertical != null) {
+                if (back.getRepeat() == Constants.EN_NOREPEAT 
+                        || back.getRepeat() == Constants.EN_REPEATX) {
+                    if (area.getBPD() > 0) {
+                        PercentBaseContext refContext = new SimplePercentBaseContext(context,
+                                LengthBase.IMAGE_BACKGROUND_POSITION_VERTICAL,
+                                (referenceBPD - back.getImageInfo().getSize().getHeightMpt()));
+                        back.setVertical(bpdShift
+                                + backProps.backgroundPositionVertical.getValue(refContext));
+                    } else {
+                        // TODO Area BPD has to be set for this to work
+                        log.warn("Vertical background image positioning ignored"
+                                + " because the BPD was not set on the area."
+                                + " (Yes, it's a bug in FOP)");
+                    }
+                }
+            }
+        }
+
+        area.addTrait(Trait.BACKGROUND, back);
+    }
+
+    /**
      * Add background to an area.
      * Layout managers that create areas with a background can use this to
      * add the background to the area.
@@ -312,7 +397,7 @@ public class TraitSetter {
                         back.setHoriz(backProps.backgroundPositionHorizontal.getValue(
                                 new SimplePercentBaseContext(context, 
                                     LengthBase.IMAGE_BACKGROUND_POSITION_HORIZONTAL,
-                                    (width - back.getImageInfo().getSize().getHeightMpt())
+                                    (width - back.getImageInfo().getSize().getWidthMpt())
                                 )
                             ));
                     } else {

@@ -310,7 +310,7 @@ public abstract class AbstractPageObject extends AbstractResourceGroupContainer 
     private PresentationTextObject getPresentationTextObject() {
         if (presentationTextObject == null) {
             this.presentationTextObject = new PresentationTextObject();
-            addObject(this.presentationTextObject);
+            super.addObject(this.presentationTextObject);
         }
         return presentationTextObject;
     }
