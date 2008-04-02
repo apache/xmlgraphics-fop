@@ -29,31 +29,61 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import org.apache.xmlgraphics.util.XMLizable;
 
+/**
+ * Represents the model of an event producer with multiple event methods.
+ */
 public class EventProducerModel implements Serializable, XMLizable {
 
+    private static final long serialVersionUID = 122267104123721902L;
+    
     private String interfaceName;
     private Map methods = new java.util.LinkedHashMap();
     
+    /**
+     * Creates a new instance.
+     * @param interfaceName the fully qualified interface name of the event producer 
+     */
     public EventProducerModel(String interfaceName) {
         this.interfaceName = interfaceName;
     }
     
+    /**
+     * Returns the fully qualified interface name of the event producer.
+     * @return the fully qualified interface name
+     */
     public String getInterfaceName() {
         return this.interfaceName;
     }
     
+    /**
+     * Sets the fully qualified interface name of the event producer.
+     * @param name the fully qualified interface name
+     */
     public void setInterfaceName(String name) {
         this.interfaceName = name;
     }
     
+    /**
+     * Adds a model instance of an event method.
+     * @param method the event method model
+     */
     public void addMethod(EventMethodModel method) {
         this.methods.put(method.getMethodName(), method);
     }
     
+    /**
+     * Returns the model instance of an event method for the given method name.
+     * @param methodName the method name
+     * @return the model instance (or null if no method with the given name exists)
+     */
     public EventMethodModel getMethod(String methodName) {
         return (EventMethodModel)this.methods.get(methodName);
     }
     
+    /**
+     * Returns an iterator over the contained event producer methods.
+     * @return an iterator (Iterator&lt;EventMethodModel&gt;)
+     */
     public Iterator getMethods() {
         return this.methods.values().iterator();
     }

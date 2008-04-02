@@ -36,19 +36,36 @@ public class LoggingEventListener implements EventListener {
     private Log log;
     private boolean skipFatal;
     
+    /**
+     * Creates an instance logging to the default log category of this class.
+     */
     public LoggingEventListener() {
         this(defaultLog);
     }
     
+    /**
+     * Creates an instance logging to a given logger. Events with fatal severity level will be
+     * skipped.
+     * @param log the target logger
+     */
     public LoggingEventListener(Log log) {
         this(log, true);
     }
     
+    /**
+     * Creates an instance logging to a given logger.
+     * @param log the target logger
+     * @param skipFatal true if events with fatal severity level should be skipped (i.e. not logged)
+     */
     public LoggingEventListener(Log log, boolean skipFatal) {
         this.log = log;
         this.skipFatal = skipFatal;
     }
     
+    /**
+     * Returns the target logger for this instance.
+     * @return the target logger
+     */
     public Log getLog() {
         return this.log;
     }

@@ -40,25 +40,51 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import org.apache.xmlgraphics.util.XMLizable;
 
+/**
+ * Represents a whole event model that supports multiple event producers.
+ */
 public class EventModel implements Serializable, XMLizable {
 
+    private static final long serialVersionUID = 7468592614934605082L;
+    
     private Map producers = new java.util.LinkedHashMap();
     
+    /**
+     * Creates a new, empty event model
+     */
     public EventModel() {
     }
     
+    /**
+     * Adds the model of an event producer to the event model.
+     * @param producer the event producer model
+     */
     public void addProducer(EventProducerModel producer) {
         this.producers.put(producer.getInterfaceName(), producer);
     }
     
+    /**
+     * Returns an iterator over the contained event producer models.
+     * @return an iterator (Iterator&lt;EventProducerModel&gt;)
+     */
     public Iterator getProducers() {
         return this.producers.values().iterator();
     }
 
+    /**
+     * Returns the model of an event producer with the given interface name.
+     * @param interfaceName the fully qualified name of the event producer
+     * @return the model instance for the event producer (or null if it wasn't found)
+     */
     public EventProducerModel getProducer(String interfaceName) {
         return (EventProducerModel)this.producers.get(interfaceName);
     }
     
+    /**
+     * Returns the model of an event producer with the given interface.
+     * @param clazz the interface of the event producer
+     * @return the model instance for the event producer (or null if it wasn't found)
+     */
     public EventProducerModel getProducer(Class clazz) {
         return getProducer(clazz.getName());
     }
@@ -97,6 +123,11 @@ public class EventModel implements Serializable, XMLizable {
         }
     }
 
+    /**
+     * Saves this event model to an XML file.
+     * @param modelFile the target file
+     * @throws IOException if an I/O error occurs
+     */
     public void saveToXML(File modelFile) throws IOException {
         writeXMLizable(this, modelFile);
     }
