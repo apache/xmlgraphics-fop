@@ -64,7 +64,9 @@ public final class EventFormatter {
                         groupID,
                         EventFormatter.class.getClassLoader());
             } catch (MissingResourceException mre) {
-                log.trace("No XMLResourceBundle for " + groupID + " available.");
+                if (log.isTraceEnabled()) {
+                    log.trace("No XMLResourceBundle for " + groupID + " available.");
+                }
             }
         }
         if (bundle == null) {
@@ -88,7 +90,9 @@ public final class EventFormatter {
                         groupID, locale,
                         EventFormatter.class.getClassLoader());
             } catch (MissingResourceException mre) {
-                log.trace("No XMLResourceBundle for " + groupID + " available.");
+                if (log.isTraceEnabled()) {
+                    log.trace("No XMLResourceBundle for " + groupID + " available.");
+                }
             }
         }
         if (bundle == null) {

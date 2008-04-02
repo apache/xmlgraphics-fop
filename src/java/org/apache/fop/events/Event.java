@@ -31,6 +31,8 @@ import org.apache.fop.events.model.EventSeverity;
  */
 public class Event extends EventObject {
 
+    private static final long serialVersionUID = -1310594422868258083L;
+    
     private String eventID;
     private EventSeverity severity;
     private Map params;
