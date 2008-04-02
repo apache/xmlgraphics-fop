@@ -24,17 +24,34 @@ import java.util.Map;
 import org.apache.fop.util.text.AdvancedMessageFormat.Part;
 import org.apache.fop.util.text.AdvancedMessageFormat.PartFactory;
 
+/**
+ * Defines an "if" field part that checks if field's value is true or false.
+ * It returns either of two possible values attached as additional part parameters. Example:
+ * <code>{field,if,Yes,No}</code>
+ */
 public class IfFieldPart implements Part {
     
+    /** the field name for the part */
     protected String fieldName;
+    /** the value being returned if the field is true */
     protected String ifValue;
+    /** the value being returned if the field is false */
     protected String elseValue;
     
+    /**
+     * Creates a new "if" field part.
+     * @param fieldName the field name
+     * @param values the unparsed parameter values
+     */
     public IfFieldPart(String fieldName, String values) {
         this.fieldName = fieldName;
         parseValues(values);
     }
 
+    /**
+     * Parses the parameter values
+     * @param values the unparsed parameter values
+     */
     protected void parseValues(String values) {
         String[] parts = AdvancedMessageFormat.COMMA_SEPARATOR_REGEX.split(values, 2);
         if (parts.length == 2) {
@@ -45,6 +62,7 @@ public class IfFieldPart implements Part {
         }
     }
     
+    /** {@inheritDoc} */
     public void write(StringBuffer sb, Map params) {
         boolean isTrue = isTrue(params);
         if (isTrue) {
@@ -54,6 +72,12 @@ public class IfFieldPart implements Part {
         }
     }
 
+    /**
+     * Indicates whether the field's value is true. If the field is not a boolen, it is true
+     * if the field is not null.
+     * @param params the message parameters
+     * @return true the field's value as boolean
+     */
     protected boolean isTrue(Map params) {
         Object obj = params.get(fieldName);
         if (obj instanceof Boolean) {
@@ -63,6 +87,7 @@ public class IfFieldPart implements Part {
         }
     }
 
+    /** {@inheritDoc} */
     public boolean isGenerated(Map params) {
         return isTrue(params) || (elseValue != null);
     }
@@ -72,6 +97,9 @@ public class IfFieldPart implements Part {
         return "{" + this.fieldName + ", if...}";
     }
     
+    /**
+     * Part factory for "if".
+     */
     public static class Factory implements PartFactory {
 
         /** {@inheritDoc} */

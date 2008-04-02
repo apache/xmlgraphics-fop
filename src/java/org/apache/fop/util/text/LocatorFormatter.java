@@ -23,13 +23,18 @@ import org.xml.sax.Locator;
 
 import org.apache.fop.util.text.AdvancedMessageFormat.ObjectFormatter;
 
+/**
+ * Object formatter for the SAX Locator object.
+ */
 public class LocatorFormatter implements ObjectFormatter {
 
+    /** {@inheritDoc} */
     public void format(StringBuffer sb, Object obj) {
         Locator loc = (Locator)obj;
         sb.append(loc.getLineNumber()).append(":").append(loc.getColumnNumber());
     }
 
+    /** {@inheritDoc} */
     public boolean supportsObject(Object obj) {
         return obj instanceof Locator;
     }

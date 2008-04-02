@@ -24,10 +24,20 @@ import java.util.Map;
 import org.apache.fop.util.text.AdvancedMessageFormat.Part;
 import org.apache.fop.util.text.AdvancedMessageFormat.PartFactory;
 
+/**
+ * Defines an "equals" field part that can compare a field's string value against another string.
+ * It returns either of two possible values attached as additional part parameters. Example:
+ * <code>{field,equals,new,This is new!,This is old!}</code>
+ */
 public class EqualsFieldPart extends IfFieldPart {
     
     private String equalsValue;
     
+    /**
+     * Creates a new "equals" field part.
+     * @param fieldName the field name
+     * @param values the unparsed parameter values
+     */
     public EqualsFieldPart(String fieldName, String values) {
         super(fieldName, values);
     }
@@ -48,6 +58,7 @@ public class EqualsFieldPart extends IfFieldPart {
         }
     }
     
+    /** {@inheritDoc} */
     protected boolean isTrue(Map params) {
         Object obj = params.get(fieldName);
         if (obj != null) {
@@ -62,6 +73,9 @@ public class EqualsFieldPart extends IfFieldPart {
         return "{" + this.fieldName + ", equals " + this.equalsValue + "}";
     }
     
+    /**
+     * Part factory for "equals".
+     */
     public static class Factory implements PartFactory {
 
         /** {@inheritDoc} */
