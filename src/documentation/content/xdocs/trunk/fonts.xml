@@ -308,6 +308,11 @@
         <source>java -cp build\fop.jar;lib\avalon-framework.jar;lib\commons-logging.jar;lib\commons-io.jar
           org.apache.fop.fonts.apps.TTFReader -ttcname "MS Mincho"
           msmincho.ttc msminch.xml</source>
+        <p>
+          Alternatively, the individual sub-fonts of a TrueType Collections can be selected
+          using the "sub-font" attribute on the "font" element. That means that generating
+          an XML font metrics file for TrueType collections is not necessary anymore.
+        </p>
       </section>
       <section id="register">
         <title>Register Fonts with FOP</title>

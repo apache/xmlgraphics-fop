@@ -19,9 +19,8 @@
 
 package org.apache.fop.fonts.autodetect;
 
-import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -32,7 +31,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.fop.fonts.CachedFontInfo;
 import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.EmbedFontInfo;
 import org.apache.fop.fonts.Font;
@@ -41,6 +39,10 @@ import org.apache.fop.fonts.FontLoader;
 import org.apache.fop.fonts.FontResolver;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.FontUtil;
+import org.apache.fop.fonts.MultiByteFont;
+import org.apache.fop.fonts.truetype.FontFileReader;
+import org.apache.fop.fonts.truetype.TTFFile;
+import org.apache.fop.fonts.truetype.TTFFontLoader;
 
 /**
  * Attempts to determine correct FontInfo
@@ -131,8 +133,13 @@ public class FontInfoFinder {
         generateTripletsFromFont(customFont, fontTripletList);
         String embedUrl;
         embedUrl = fontUrl.toExternalForm();
+        String subFontName = null;
+        if (customFont instanceof MultiByteFont) {
+            subFontName = ((MultiByteFont)customFont).getTTCName();
+        }
         EmbedFontInfo fontInfo = new EmbedFontInfo(null, customFont.isKerningEnabled(),
-                fontTripletList, embedUrl);
+                fontTripletList, embedUrl, subFontName);
+        fontInfo.setPostScriptName(customFont.getFontName());        
         if (fontCache != null) {
             fontCache.addFont(fontInfo);
         }
@@ -145,35 +152,21 @@ public class FontInfoFinder {
      * @param fontUrl font URL. Assumed to be local.
      * @param resolver font resolver used to resolve font
      * @param fontCache font cache (may be null)
-     * @return newly created embed font info
+     * @return an array of newly created embed font info. Generally, this array
+     *         will have only one entry, unless the fontUrl is a TrueType Collection
      */
-    public EmbedFontInfo find(URL fontUrl, FontResolver resolver, FontCache fontCache) {
+    public EmbedFontInfo[] find(URL fontUrl, FontResolver resolver, FontCache fontCache) {
         String embedUrl = null;
         embedUrl = fontUrl.toExternalForm();
         
         long fileLastModified = -1;
         if (fontCache != null) {
-            try {
-                URLConnection conn = fontUrl.openConnection();
-                try {
-                    fileLastModified = conn.getLastModified();
-                } finally {
-                    //An InputStream is created even if it's not accessed, but we need to close it.
-                    IOUtils.closeQuietly(conn.getInputStream());
-                }
-            } catch (IOException e) {
-                // Should never happen, because URL must be local
-                log.debug("IOError: " + e.getMessage());
-                fileLastModified = 0;
-            }
+            fileLastModified = FontCache.getLastModified(fontUrl);
             // firstly try and fetch it from cache before loading/parsing the font file
             if (fontCache.containsFont(embedUrl)) {
-                CachedFontInfo fontInfo = fontCache.getFont(embedUrl);
-                if (fontInfo.lastModified() == fileLastModified) {
-                    return fontInfo;
-                } else {
-                    // out of date cache item
-                    fontCache.removeFont(embedUrl);
+                EmbedFontInfo[] fontInfos = fontCache.getFontInfos(embedUrl, fileLastModified);
+                if (fontInfos != null) {
+                    return fontInfos;
                 }
             // is this a previously failed parsed font?
             } else if (fontCache.isFailedFont(embedUrl, fileLastModified)) {
@@ -184,20 +177,81 @@ public class FontInfoFinder {
             }
         }
         
+        
         // try to determine triplet information from font file
         CustomFont customFont = null;
-        try {
-            customFont = FontLoader.loadFont(fontUrl, resolver);
-        } catch (Exception e) {
-            //TODO Too verbose (it's an error but we don't care if some fonts can't be loaded)
-            if (log.isErrorEnabled()) {
-                log.error("Unable to load font file: " + embedUrl + ". Reason: " + e.getMessage());
+        
+        if (fontUrl.toExternalForm().endsWith(".ttc")) {
+            // Get a list of the TTC Font names
+            List ttcNames = null; //List<String>
+            String fontFileURI = fontUrl.toExternalForm().trim();
+            TTFFontLoader ttfLoader = new TTFFontLoader(fontFileURI, resolver);
+            InputStream in = null;
+            try {
+                in = FontLoader.openFontUri(resolver, fontFileURI);
+                TTFFile ttf = new TTFFile();
+                FontFileReader reader = new FontFileReader(in);
+                ttcNames = ttf.getTTCnames(reader);
+            } catch (Exception e) {
+                log.error(e);
+            } finally {
+                IOUtils.closeQuietly(in);
             }
-            if (fontCache != null) {
-                fontCache.registerFailedFont(embedUrl, fileLastModified);
+
+            List embedFontInfoList = new java.util.ArrayList(); //List<EmbedFontInfo>
+
+            // For each font name ...
+            //for (String fontName : ttcNames) {
+            Iterator ttcNamesIterator = ttcNames.iterator();
+            while (ttcNamesIterator.hasNext()) {
+                String fontName = (String)ttcNamesIterator.next();
+
+                if (log.isDebugEnabled()) {
+                    log.debug("Loading " + fontName);
+                }
+                try {
+                    ttfLoader = new TTFFontLoader(fontFileURI, fontName, resolver);
+                    customFont = ttfLoader.getFont();
+                } catch (Exception e) {
+                    //TODO Too verbose (it's an error but we don't care if some fonts can't be loaded)
+                    //if (log.isErrorEnabled()) {
+                    log.error("Unable to load font file: " + embedUrl + ". Reason: " + e.getMessage());
+                    //}
+                    if (fontCache != null) {
+                        fontCache.registerFailedFont(embedUrl, fileLastModified);
+                    }
+                    continue;
+                }
+                EmbedFontInfo fi = fontInfoFromCustomFont(fontUrl, customFont, fontCache);
+                if (fi != null) {
+                    embedFontInfoList.add(fi);
+                } 
             }
-            return null;
+            return (EmbedFontInfo[])embedFontInfoList.toArray(
+                    new EmbedFontInfo[embedFontInfoList.size()]);
+        } else {
+            // The normal case
+            try {
+                customFont = FontLoader.loadFont(fontUrl, null, resolver);
+            } catch (Exception e) {
+                //TODO Too verbose (it's an error but we don't care if some fonts can't be loaded)
+                //if (log.isErrorEnabled()) {
+                    log.error("Unable to load font file: " + embedUrl + ". Reason: " + e.getMessage());
+                //}
+                if (fontCache != null) {
+                    fontCache.registerFailedFont(embedUrl, fileLastModified);
+                }
+                return null;
+            }
+            EmbedFontInfo fi = fontInfoFromCustomFont(fontUrl, customFont, fontCache);
+            if (fi != null) {
+                return new EmbedFontInfo[] {fi};
+            } else {
+                return null;
+            }
         }
-        return fontInfoFromCustomFont(fontUrl, customFont, fontCache);     
+        
+
     }
+
 }

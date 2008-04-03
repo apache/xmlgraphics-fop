@@ -36,10 +36,11 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.xmlgraphics.util.ClasspathResource;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
-import org.apache.fop.fonts.CachedFontInfo;
 import org.apache.fop.fonts.EmbedFontInfo;
 import org.apache.fop.fonts.FontCache;
 import org.apache.fop.fonts.FontInfo;
@@ -50,7 +51,6 @@ import org.apache.fop.fonts.FontUtil;
 import org.apache.fop.fonts.autodetect.FontFileFinder;
 import org.apache.fop.fonts.autodetect.FontInfoFinder;
 import org.apache.fop.util.LogUtil;
-import org.apache.xmlgraphics.util.ClasspathResource;
 
 /**
  * Base Print renderer configurator (mostly handles font configuration)
@@ -230,9 +230,20 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
             URL fontUrl = (URL)iter.next();
             // parse font to ascertain font info
             FontInfoFinder finder = new FontInfoFinder();
-            EmbedFontInfo fontInfo = finder.find(fontUrl, resolver, fontCache);
-            if (fontInfo != null) {
-                fontInfoList.add(fontInfo);                
+            //EmbedFontInfo fontInfo = finder.find(fontUrl, resolver, fontCache);
+            
+            //List<EmbedFontInfo> embedFontInfoList = finder.find(fontUrl, resolver, fontCache);
+            EmbedFontInfo[] embedFontInfos = finder.find(fontUrl, resolver, fontCache);
+
+            if (embedFontInfos == null) {
+                return;
+            }
+
+            for (int i = 0, c = embedFontInfos.length; i < c; i++) {
+                EmbedFontInfo fontInfo = embedFontInfos[i];
+                if (fontInfo != null) {
+                    fontInfoList.add(fontInfo);
+                }
             }
         }
     }
@@ -257,9 +268,10 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
      */
     public static EmbedFontInfo getFontInfoFromConfiguration(
             Configuration fontCfg, FontResolver fontResolver, boolean strict, FontCache fontCache)
-    throws FOPException {
+                    throws FOPException {
         String metricsUrl = fontCfg.getAttribute("metrics-url", null);
         String embedUrl = fontCfg.getAttribute("embed-url", null);
+        String subFont = fontCfg.getAttribute("sub-font", null);
 
         if (metricsUrl == null && embedUrl == null) {
             LogUtil.handleError(log, "Font configuration without metric-url or embed-url", strict);
@@ -296,7 +308,7 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
             LogUtil.handleError(log, "font without font-triplet", strict);
 
             // if not strict try to determine font info from the embed/metrics url
-            File fontFile = CachedFontInfo.getFileFromUrls(new String[] {embedUrl, metricsUrl});
+            File fontFile = FontCache.getFileFromUrls(new String[] {embedUrl, metricsUrl});
             URL fontUrl;
             try {
                 fontUrl = fontFile.toURI().toURL();
@@ -307,7 +319,8 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
             }
             if (fontFile != null) {
                 FontInfoFinder finder = new FontInfoFinder();
-                return finder.find(fontUrl, fontResolver, fontCache);
+                EmbedFontInfo[] infos = finder.find(fontUrl, subFont, fontResolver, fontCache); 
+                return infos[0]; //When subFont is set, only one font is returned
             } else {
                 return null;
             }
@@ -337,7 +350,7 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
                 }
             }
             
-            fontInfo = new EmbedFontInfo(metricsUrl, useKerning, tripleList, embedUrl);
+            fontInfo = new EmbedFontInfo(metricsUrl, useKerning, tripleList, embedUrl, subFont);
             
             if (fontCache != null) {
                 if (!fontCache.containsFont(fontInfo)) {

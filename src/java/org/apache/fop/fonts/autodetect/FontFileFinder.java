@@ -72,14 +72,15 @@ public class FontFileFinder extends DirectoryWalker implements FontFinder {
     }
     
     /**
-     * Font file filter.  Currently searches for files with .ttf and .pfb extensions.
+     * Font file filter.  Currently searches for files with .ttf, .ttc, .otf, and .pfb extensions.
      * @return IOFileFilter font file filter
      */
     protected static IOFileFilter getFileFilter() {
         return FileFilterUtils.andFileFilter(
                 FileFilterUtils.fileFileFilter(),
-                new WildcardFileFilter(new String[] {"*.ttf", "*.otf", "*.pfb"}, IOCase.INSENSITIVE)
-                //TODO Add *.ttc when support for it has been added to the auto-detection mech.
+                new WildcardFileFilter(
+                        new String[] {"*.ttf", "*.otf", "*.pfb", "*.ttc"},
+                        IOCase.INSENSITIVE)
         );
     }
     
