@@ -26,8 +26,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -61,10 +65,11 @@ public final class FontCache implements Serializable {
     /** change lock */
     private transient Object changeLock = new Object();
     
-    /** master mapping of font url -> font info */
-    private Map fontMap = new java.util.HashMap();
+    /** master mapping of font url -> font info.  This needs to be
+     *  a list, since a TTC file may contain more than 1 font. */
+    private Map fontfileMap = new java.util.HashMap(); //Map<String, CachedFontFile>
 
-    /** mapping of font url -> file modified date */
+    /** mapping of font url -> file modified date (for all fonts that have failed to load) */
     private Map failedFontMap = new java.util.HashMap();
 
     /**
@@ -216,7 +221,7 @@ public final class FontCache implements Serializable {
      */
     public boolean containsFont(String embedUrl) {
         if (embedUrl != null) {
-            return fontMap.containsKey(embedUrl);
+            return fontfileMap.containsKey(embedUrl);
         }
         return false;
     }
@@ -228,42 +233,97 @@ public final class FontCache implements Serializable {
      */
     public boolean containsFont(EmbedFontInfo fontInfo) {
         if (fontInfo != null) {
-            return fontMap.containsKey(getCacheKey(fontInfo));
+            return fontfileMap.containsKey(getCacheKey(fontInfo));
         }
         return false;
     }
 
     /**
-     * adds a font info to cache
+     * Tries to identify a File instance from an array of URLs. If there's no file URL in the
+     * array, the method returns null.
+     * @param urls array of possible font urls
+     * @return file font file 
+     */
+    public static File getFileFromUrls(String[] urls) {
+        for (int i = 0; i < urls.length; i++) {
+            String urlStr = urls[i]; 
+            if (urlStr != null) {
+                File fontFile = null;
+                if (urlStr.startsWith("file:")) {
+                    try {
+                        URL url = new URL(urlStr);
+                        fontFile = FileUtils.toFile(url);
+                    } catch (MalformedURLException mfue) {
+                        // do nothing
+                    }
+                }
+                if (fontFile == null) {
+                    fontFile = new File(urlStr);
+                }
+                if (fontFile.exists() && fontFile.canRead()) {
+                    return fontFile;
+                }
+            }
+        } 
+        return null;
+    }
+
+    /**
+     * Adds a font info to cache
      * @param fontInfo font info
      */
     public void addFont(EmbedFontInfo fontInfo) {
         String cacheKey = getCacheKey(fontInfo);
         synchronized (changeLock) {
-            if (!containsFont(cacheKey)) {
+            CachedFontFile cachedFontFile;
+            if (containsFont(cacheKey)) {
+                cachedFontFile = (CachedFontFile)fontfileMap.get(cacheKey);
+                if (!cachedFontFile.containsFont(fontInfo)) {
+                    cachedFontFile.put(fontInfo);
+                }
+            } else {
+                // try and determine modified date
+                File fontFile = getFileFromUrls(new String[]
+                                     {fontInfo.getEmbedFile(), fontInfo.getMetricsFile()});
+                long lastModified = (fontFile != null ? fontFile.lastModified() : -1);
+                cachedFontFile = new CachedFontFile(lastModified);
                 if (log.isTraceEnabled()) {
                     log.trace("Font added to cache: " + cacheKey);
                 }
-                if (fontInfo instanceof CachedFontInfo) {
-                    fontMap.put(cacheKey, fontInfo);
-                } else {
-                    fontMap.put(cacheKey, new CachedFontInfo(fontInfo));
-                }
+                cachedFontFile.put(fontInfo);
+                fontfileMap.put(cacheKey, cachedFontFile);
                 changed = true;
             }
         }
     }
 
     /**
-     * returns a font from the cache
+     * Returns a font from the cache.
      * @param embedUrl font info
-     * @return boolean
+     * @return CachedFontFile object 
      */
-    public CachedFontInfo getFont(String embedUrl) {
+    public CachedFontFile getFontFile(String embedUrl) {
         if (containsFont(embedUrl)) {
-            return (CachedFontInfo)fontMap.get(embedUrl);
+            return (CachedFontFile)fontfileMap.get(embedUrl);
         }
         return null;
+    }
+    
+    /**
+     * Returns the EmbedFontInfo instances belonging to a font file. If the font file was
+     * modified since it was cached the entry is removed and null is returned.
+     * @param embedUrl the font URL
+     * @param lastModified the last modified date/time of the font file
+     * @return the EmbedFontInfo instances or null if there's no cached entry or if it is outdated
+     */
+    public EmbedFontInfo[] getFontInfos(String embedUrl, long lastModified) {
+        CachedFontFile cff = getFontFile(embedUrl);
+        if (cff.lastModified() == lastModified) {
+            return cff.getEmbedFontInfos();
+        } else {
+            removeFont(embedUrl);
+            return null;
+        }
     }
     
     /**
@@ -276,7 +336,7 @@ public final class FontCache implements Serializable {
                 if (log.isTraceEnabled()) {
                     log.trace("Font removed from cache: " + embedUrl);
                 }
-                fontMap.remove(embedUrl);
+                fontfileMap.remove(embedUrl);
                 changed = true;
             }
         }
@@ -326,9 +386,87 @@ public final class FontCache implements Serializable {
             if (log.isTraceEnabled()) {
                 log.trace("Font cache cleared.");
             }
-            fontMap.clear();
+            fontfileMap.clear();
             failedFontMap.clear();
             changed = true;
         }
+    }
+    
+    /**
+     * Retrieve the last modified date/time of a URL.
+     * @param url the URL
+     * @return the last modified date/time
+     */
+    public static long getLastModified(URL url) {
+        try {
+            URLConnection conn = url.openConnection();
+            try {
+                return conn.getLastModified();
+            } finally {
+                //An InputStream is created even if it's not accessed, but we need to close it.
+                IOUtils.closeQuietly(conn.getInputStream());
+            }
+        } catch (IOException e) {
+            // Should never happen, because URL must be local
+            log.debug("IOError: " + e.getMessage());
+            return 0;
+        }
+    }
+    
+    private static class CachedFontFile implements Serializable {
+        /** file modify date (if available) */
+        private long lastModified = -1;
+
+        private Map filefontsMap = new java.util.HashMap(); //Map<String, EmbedFontInfo>
+        
+        public CachedFontFile(long lastModified) {
+            setLastModified(lastModified);
+        }
+
+        void put(EmbedFontInfo efi) {
+            filefontsMap.put(efi.getPostScriptName(), efi);
+        }
+
+        public boolean containsFont(EmbedFontInfo efi) {
+            if (efi.getPostScriptName() != null) {
+                return filefontsMap.containsKey(efi.getPostScriptName());
+            }
+            return false;
+        }
+
+        public Map getFilefontsMap() {
+            return filefontsMap;
+        }
+
+        public EmbedFontInfo[] getEmbedFontInfos() {
+            return (EmbedFontInfo[])this.filefontsMap.values().toArray(
+                    new EmbedFontInfo[this.filefontsMap.size()]);
+        }
+        
+        /**
+         * Gets the modified timestamp for font file (not always available)
+         * @return modified timestamp
+         */
+        public long lastModified() {
+            return this.lastModified;
+        }
+
+        /**
+         * Gets the modified timestamp for font file
+         * (used for the purposes of font info caching) 
+         * @param lastModified modified font file timestamp
+         */
+        public void setLastModified(long lastModified) {
+            this.lastModified = lastModified;
+        }
+        
+        /**
+         * @return string representation of this object 
+         * {@inheritDoc}
+         */
+        public String toString() {
+            return super.toString() + ", lastModified=" + lastModified;
+        }
+
     }
 }

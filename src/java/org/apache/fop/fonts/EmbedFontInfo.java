@@ -28,7 +28,7 @@ import java.util.List;
 public class EmbedFontInfo implements Serializable {
     
     /** Serialization Version UID */
-    private static final long serialVersionUID = -9075848379822693399L;
+    private static final long serialVersionUID = 8755432068669997367L;
     
     /** filename of the metrics file */
     protected String metricsFile;
@@ -38,20 +38,27 @@ public class EmbedFontInfo implements Serializable {
     protected boolean kerning;
     /** the list of associated font triplets */
     protected List fontTriplets;
-      
+    
+    /** the PostScript name of the font */
+    protected String postScriptName = null;
+    /** the sub-fontname of the font (used for TrueType Collections, null otherwise) */
+    protected String subFontName = null;
+
     /**
      * Main constructor
      * @param metricsFile Path to the xml file containing font metrics
      * @param kerning True if kerning should be enabled
      * @param fontTriplets List of font triplets to associate with this font
      * @param embedFile Path to the embeddable font file (may be null)
+     * @param subFontName the sub-fontname used for TrueType Collections (null otherwise)
      */
     public EmbedFontInfo(String metricsFile, boolean kerning,
-                    List fontTriplets, String embedFile) {
+                    List fontTriplets, String embedFile, String subFontName) {
         this.metricsFile = metricsFile;
         this.embedFile = embedFile;
         this.kerning = kerning;
         this.fontTriplets = fontTriplets;
+        this.subFontName = subFontName;
     }
         
     /**
@@ -86,9 +93,35 @@ public class EmbedFontInfo implements Serializable {
         return fontTriplets;
     }
     
+    /**
+     * Returns the sub-fontname name of the font. This is primarily used for TrueType Collections
+     * to select one of the sub-fonts. For all other fonts, this is always null. 
+     * @return the sub-fontname (or null)
+     */
+    public String getSubFontName() {
+        return this.subFontName;
+    }
+    
+    /**
+     * Returns the PostScript name of the font.
+     * @return the PostScript name
+     */
+    public String getPostScriptName() {
+        return postScriptName;
+    }
+    
+    /**
+     * Sets the PostScript name of the font
+     * @param postScriptName the PostScript name
+     */
+    public void setPostScriptName(String postScriptName) {
+        this.postScriptName = postScriptName;
+    }
+    
     /** {@inheritDoc} */
     public String toString() {
         return "metrics-url=" + metricsFile + ",embed-url=" + embedFile
-            + ", kerning=" + kerning + ", font-triplet=" + fontTriplets; 
+            + ", kerning=" + kerning + ", font-triplet=" + fontTriplets
+            + (getSubFontName() != null ? ", sub-font=" + getSubFontName() : ""); 
     }
 }
