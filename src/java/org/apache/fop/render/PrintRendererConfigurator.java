@@ -319,7 +319,7 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
             }
             if (fontFile != null) {
                 FontInfoFinder finder = new FontInfoFinder();
-                EmbedFontInfo[] infos = finder.find(fontUrl, subFont, fontResolver, fontCache); 
+                EmbedFontInfo[] infos = finder.find(fontUrl, fontResolver, fontCache); 
                 return infos[0]; //When subFont is set, only one font is returned
             } else {
                 return null;
