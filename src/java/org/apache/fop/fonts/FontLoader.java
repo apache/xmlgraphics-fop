@@ -71,36 +71,39 @@ public abstract class FontLoader {
     /**
      * Loads a custom font from a File. In the case of Type 1 fonts, the PFB file must be specified.
      * @param fontFile the File representation of the font
+     * @param subFontName the sub-fontname of a font (for TrueType Collections, null otherwise)
      * @param resolver the font resolver to use when resolving URIs
      * @return the newly loaded font
      * @throws IOException In case of an I/O error
      */
-    public static CustomFont loadFont(File fontFile, FontResolver resolver)
+    public static CustomFont loadFont(File fontFile, String subFontName, FontResolver resolver)
                 throws IOException {
-        return loadFont(fontFile.getAbsolutePath(), resolver);
+        return loadFont(fontFile.getAbsolutePath(), subFontName, resolver);
     }
 
     /**
      * Loads a custom font from an URL. In the case of Type 1 fonts, the PFB file must be specified.
      * @param fontUrl the URL representation of the font
+     * @param subFontName the sub-fontname of a font (for TrueType Collections, null otherwise)
      * @param resolver the font resolver to use when resolving URIs
      * @return the newly loaded font
      * @throws IOException In case of an I/O error
      */
-    public static CustomFont loadFont(URL fontUrl, FontResolver resolver)
+    public static CustomFont loadFont(URL fontUrl, String subFontName, FontResolver resolver)
                 throws IOException {
-        return loadFont(fontUrl.toExternalForm(), resolver);
+        return loadFont(fontUrl.toExternalForm(), subFontName, resolver);
     }
     
     
     /**
      * Loads a custom font from a URI. In the case of Type 1 fonts, the PFB file must be specified.
      * @param fontFileURI the URI to the font
+     * @param subFontName the sub-fontname of a font (for TrueType Collections, null otherwise)
      * @param resolver the font resolver to use when resolving URIs
      * @return the newly loaded font
      * @throws IOException In case of an I/O error
      */
-    public static CustomFont loadFont(String fontFileURI, FontResolver resolver)
+    public static CustomFont loadFont(String fontFileURI, String subFontName, FontResolver resolver)
                 throws IOException {
         fontFileURI = fontFileURI.trim();
         boolean type1 = isType1(fontFileURI);
@@ -108,7 +111,7 @@ public abstract class FontLoader {
         if (type1) {
             loader = new Type1FontLoader(fontFileURI, resolver);
         } else {
-            loader = new TTFFontLoader(fontFileURI, resolver);
+            loader = new TTFFontLoader(fontFileURI, subFontName, resolver);
         }
         return loader.getFont();
     }
@@ -121,7 +124,7 @@ public abstract class FontLoader {
      * @throws IOException In case of an I/O error
      * @throws MalformedURLException If an invalid URL is built
      */
-    protected static InputStream openFontUri(FontResolver resolver, String uri) 
+    public static InputStream openFontUri(FontResolver resolver, String uri) 
                     throws IOException, MalformedURLException {
         InputStream in = null;
         if (resolver != null) {

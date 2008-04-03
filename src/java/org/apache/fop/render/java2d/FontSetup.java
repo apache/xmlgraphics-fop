@@ -304,7 +304,7 @@ public class FontSetup {
                     Source fontSource = resolver.resolve(configFontInfo.getEmbedFile());
                     font = new CustomFontMetricsMapper(fontMetrics, fontSource);
                 } else {
-                    CustomFont fontMetrics = FontLoader.loadFont(fontFile, resolver);
+                    CustomFont fontMetrics = FontLoader.loadFont(fontFile, null, resolver);
                     font = new CustomFontMetricsMapper(fontMetrics);
                 }
 

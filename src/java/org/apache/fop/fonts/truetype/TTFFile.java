@@ -988,7 +988,10 @@ public class TTFFile {
         if (dirTabs.get("OS/2") != null) {
             seekTab(in, "OS/2", 2 * 2);
             this.usWeightClass = in.readTTFUShort();
+            
+            // usWidthClass
             in.skip(2);
+            
             int fsType = in.readTTFUShort();
             if (fsType == 2) {
                 isEmbeddable = false;
@@ -1123,7 +1126,12 @@ public class TTFFile {
             if (((platformID == 1 || platformID == 3) 
                     && (encodingID == 0 || encodingID == 1))) {
                 in.seekSet(j + in.readTTFUShort());
-                String txt = in.readTTFString(l);
+                String txt;
+                if (platformID == 3) {
+                    txt = in.readTTFString(l, encodingID);
+                } else {
+                    txt = in.readTTFString(l);
+                }
                 
                 if (log.isDebugEnabled()) {
                     log.debug(platformID + " " 
@@ -1147,7 +1155,7 @@ public class TTFFile {
                     }
                     break;
                 case 4:
-                    if (fullName.length() == 0) {
+                    if (fullName.length() == 0 || (platformID == 3 && languageID == 1033)) {
                         fullName = txt;
                     }
                     break;
@@ -1474,6 +1482,59 @@ public class TTFFile {
         }
     }
 
+    /**
+     * Return TTC font names
+     * @param in FontFileReader to read from
+     * @return True if not collection or font name present, false otherwise
+     * @throws IOException In case of an I/O problem
+     */
+    public final List getTTCnames(FontFileReader in) throws IOException {
+        List fontNames = new java.util.ArrayList();
+
+        String tag = in.readTTFString(4);
+
+        if ("ttcf".equals(tag)) {
+            // This is a TrueType Collection
+            in.skip(4);
+
+            // Read directory offsets
+            int numDirectories = (int)in.readTTFULong();
+            long[] dirOffsets = new long[numDirectories];
+            for (int i = 0; i < numDirectories; i++) {
+                dirOffsets[i] = in.readTTFULong();
+            }
+
+            if (log.isDebugEnabled()) {
+                log.debug("This is a TrueType collection file with "
+                        + numDirectories + " fonts");
+                log.debug("Containing the following fonts: ");
+            }
+
+            for (int i = 0; (i < numDirectories); i++) {
+                in.seekSet(dirOffsets[i]);
+                readDirTabs(in);
+
+                readName(in);
+
+                log.debug(fullName);
+                fontNames.add(fullName);
+
+                // Reset names
+                notice = "";
+                fullName = "";
+                familyNames.clear();
+                postScriptName = "";
+                subFamilyName = "";
+            }
+
+            in.seekSet(0);
+            return fontNames;
+        } else {
+            log.error("Not a TTC!");
+            return null;
+        }
+    }
+    
     /*
      * Helper classes, they are not very efficient, but that really
      * doesn't matter...
@@ -1536,8 +1597,8 @@ public class TTFFile {
      * @throws IOException if unicodeIndex not found
      */
     private Integer unicodeToGlyph(int unicodeIndex) throws IOException {
-        final Integer result = 
-            (Integer) unicodeToGlyphMap.get(new Integer(unicodeIndex));
+        final Integer result
+            = (Integer) unicodeToGlyphMap.get(new Integer(unicodeIndex));
         if (result == null) {
             throw new IOException(
                     "Glyph index not found for unicode value " + unicodeIndex);
