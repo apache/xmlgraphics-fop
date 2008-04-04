@@ -58,6 +58,9 @@
         Added SVG support for AFP (GOCA).
         </action>
       -->
+      <action context="Renderers" dev="JM" type="add" fixes-bug="44743" due-to="Yegor Kozlov">
+        Added a public accessor for reference to the current page to PDFGraphics2D.
+      </action>
       <action context="Fonts" dev="JM" type="add" fixes-bug="44737" due-to="Jason Harrop">
         Added support for auto-configuring TrueType Collections. XML font metrics files for
         *.ttc fonts are not required anymore.

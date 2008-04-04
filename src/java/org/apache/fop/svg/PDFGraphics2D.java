@@ -304,7 +304,15 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     }
 
     /**
-     * Set the Grpahics context.
+     * Gets the PDF reference of the current page.
+     * @return the PDF reference of the current page
+     */
+    public String getPageReference() {
+        return this.pageRef;
+    }
+    
+    /**
+     * Set the Graphics context.
      * @param c the graphics context to use
      */
     public void setGraphicContext(GraphicContext c) {
@@ -390,7 +398,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             if (linkType != PDFLink.EXTERNAL) {
                 String pdfdest = "/FitR " + dest;
                 resourceContext.addAnnotation(
-                    pdfDoc.getFactory().makeLink(rect, pageRef, pdfdest));
+                    pdfDoc.getFactory().makeLink(rect, getPageReference(), pdfdest));
             } else {
                 resourceContext.addAnnotation(
                     pdfDoc.getFactory().makeLink(rect, dest, linkType, 0));
@@ -958,7 +966,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         PDFResources res = pdfDoc.getFactory().makeResources();
         PDFResourceContext context = new PDFResourceContext(res);
         PDFGraphics2D pattGraphic = new PDFGraphics2D(textAsShapes, specialFontInfo,
-                                        pdfDoc, context, pageRef,
+                                        pdfDoc, context, getPageReference(),
                                         "", 0);
         pattGraphic.setGraphicContext(new GraphicContext());
         pattGraphic.gc.validateTransformStack();
