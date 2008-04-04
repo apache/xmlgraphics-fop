@@ -50,8 +50,6 @@ import java.awt.image.renderable.RenderableImage;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
-import java.text.AttributedCharacterIterator;
-import java.text.CharacterIterator;
 import java.util.List;
 import java.util.Map;
 
@@ -1520,7 +1518,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * @see #setTransform
      * @see #setComposite
      * @see #setClip
-     */
+     *//* TODO Reimplement for higher efficiency similar to the way it was done in PDFTextPainter
     public void drawString(AttributedCharacterIterator iterator, float x,
                            float y) {
         preparePainting();
@@ -1585,7 +1583,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         }
 
         currentStream.write("ET\n");
-    }
+    }*/
 
     /**
      * Fills the interior of a <code>Shape</code> using the settings of the
