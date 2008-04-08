@@ -91,7 +91,7 @@ import org.apache.fop.events.EventFormatter;
 import org.apache.fop.events.EventListener;
 import org.apache.fop.events.model.EventSeverity;
 
-/** A simple event listener that writes the events to stdout and sterr. */
+/** A simple event listener that writes the events to stdout and stderr. */
 public class SysOutEventListener implements EventListener {
 
     /** {@inheritDoc} */
@@ -114,13 +114,13 @@ public class SysOutEventListener implements EventListener {
         <p>
           You can see that for every event the method <code>processEvent</code> of the
           <code>EventListener</code> will be called. Inside this method you can do whatever
-          processing would like including throwing a <code>RuntimeException</code>, if you want
+          processing you would like including throwing a <code>RuntimeException</code>, if you want
           to abort the current processing run.
         </p>
         <p>
           The code above also shows how you can turn an event into a human-readable, localized
           message that can be presented to a user. The <code>EventFormatter</code> class does
-          this for you. It provides additional methods if you'd like to explicitely specify
+          this for you. It provides additional methods if you'd like to explicitly specify
           the locale.
         </p>
         <p>
@@ -138,7 +138,7 @@ public class SysOutEventListener implements EventListener {
           is associated with the user agent (<code>FOUserAgent</code>) and add it there:
         </p>
         <source><![CDATA[FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
-        foUserAgent.getEventBroadcaster().addEventListener(new SysOutEventListener());]]></source>
+foUserAgent.getEventBroadcaster().addEventListener(new SysOutEventListener());]]></source>
         <p>
           Please note that this is done separately for each processing run, i.e. for each
           new user agent.
@@ -215,7 +215,7 @@ broadcaster.broadcastEvent(ev);
         <p>
           To simplify event production, the event subsystem provides the <code>EventProducer</code>
           interface. You can create interfaces which extend <code>EventProducer</code>. These
-          interface will contain one method per event to be generated. By contract, each event
+          interfaces will contain one method per event to be generated. By contract, each event
           method must have as its first parameter a parameter named "source" (Type Object) which
           indicates the object that generated the event. After that come an arbitrary number of
           parameters of any type as needed by the event.
@@ -229,7 +229,7 @@ broadcaster.broadcastEvent(ev);
         </p>
         <p>
           To simplify the code needed to get an instance of the event producer interface it is
-          suggested to create an public inner factory class inside the interface.
+          suggested to create a public inner factory class inside the interface.
         </p>
         <p>
           Here's an example of such an event producer interface:
@@ -254,7 +254,7 @@ broadcaster.broadcastEvent(ev);
     
 }]]></source>
         <p>
-          To produce the same event as in the first example above, you'd user the following code:
+          To produce the same event as in the first example above, you'd use the following code:
         </p>
         <source><![CDATA[EventBroadcaster broadcaster = [get it from somewhere];
 TestEventProducer producer = TestEventProducer.Factory.create(broadcaster);
@@ -315,11 +315,11 @@ producer.complain(this, "I'm tired", 23);]]></source>
         </ol>
         <p>
           Event listeners can choose to ignore certain events based on their event severity.
-          Please note that you may receive an event "twice" an a specific case: If there is
+          Please note that you may recieve an event "twice" in a specific case: if there is
           a fatal error an event is generated and sent to the listeners. After that an exception
           is thrown with the same information and processing stops. If the fatal event is
           shown to the user and the following exception is equally presented to the user it
-          may appear that the event is duplicate. Of course, the same information is just
+          may appear that the event is duplicated. Of course, the same information is just
           published through two different channels.
         </p>
       </section>
