@@ -146,8 +146,8 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
         super.writeTriplets(os);
         
         writeObjects(mapCodedFonts, os);
-        writeObjects(mapPageOverlays, os);
         writeObjects(mapDataResources, os);
+        writeObjects(mapPageOverlays, os);
         
         if (pageDescriptor != null) {
             pageDescriptor.writeDataStream(os);            
@@ -258,12 +258,11 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
         }
     }
     
-    
     /**
      * Method to create a map data resource object
      * @param obj creates a map data resource entry for a given AFP data resource object
      */
-    public void createResource(AbstractStructuredAFPObject obj) {
+    public void createResource(IncludeObject obj) {
         getMapDataResources().add(new MapDataResource(obj));
     }
 }

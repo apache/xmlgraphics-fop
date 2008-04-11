@@ -22,38 +22,55 @@ package org.apache.fop.render.afp;
 /**
  * A list of parameters associated with an image
  */
-public class ImageObjectParameters extends DataObjectParameters {
+public class ImageObjectInfo extends DataObjectInfo {
     private int bitsPerPixel;
     private boolean color;
     private int compression = -1;
-    private byte[] imageData;
-    private int imageDataWidth;
-    private int imageDataHeight;
-    
+    private byte[] data;
+    private int dataWidth;
+    private int dataHeight;
+    private String mimeType;    
+
     /**
-     * Main constructor
-     * 
-     * @param uri the image uri
-     * @param x the image x coordinate
-     * @param y the image y coordinate
-     * @param width the image width
-     * @param height the image height
-     * @param widthRes the image width resolution
-     * @param heightRes the image height resolution
+     * Default constructor
      */
-    public ImageObjectParameters(String uri, int x, int y, int width, int height,
-            int widthRes, int heightRes, byte[] imageData,
-            int imageDataWidth, int imageDataHeight, boolean color, int bitsPerPixel) {
-        super(uri, x, y, width, height, widthRes, heightRes);
-        this.imageData = imageData;
-        this.imageDataWidth = imageDataWidth;
-        this.imageDataHeight = imageDataHeight;
-        this.color = color;
+    public ImageObjectInfo() {
+    }
+
+    /**
+     * Sets the number of bits per pixel
+     * @param bitsPerPixel the number of bits per pixel
+     */
+    public void setBitsPerPixel(int bitsPerPixel) {
         this.bitsPerPixel = bitsPerPixel;
     }
 
     /**
-     * @return the numner of bits used per pixel
+     * Sets if this image is color
+     * @param color true if this is a color image
+     */
+    public void setColor(boolean color) {
+        this.color = color;
+    }
+
+    /**
+     * Sets the image data
+     * @param data the image data
+     */
+    public void setData(byte[] data) {
+        this.data = data;
+    }
+
+    /**
+     * Sets the image mime type
+     * @param mimeType the image mime type
+     */
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
+    }
+
+    /**
+     * @return the number of bits used per pixel
      */
     public int getBitsPerPixel() {
         return bitsPerPixel;
@@ -70,7 +87,7 @@ public class ImageObjectParameters extends DataObjectParameters {
      * @return the image data
      */
     public byte[] getData() {
-        return imageData;
+        return data;
     }
     
     /**
@@ -98,40 +115,48 @@ public class ImageObjectParameters extends DataObjectParameters {
     /**
      * @return the image data width
      */
-    public int getImageDataWidth() {
-        return imageDataWidth;
+    public int getDataWidth() {
+        return dataWidth;
     }
 
     /**
      * Sets the image data width
      * @param imageDataWidth the image data width
      */
-    protected void setImageDataWidth(int imageDataWidth) {
-        this.imageDataWidth = imageDataWidth;
+    public void setDataWidth(int imageDataWidth) {
+        this.dataWidth = imageDataWidth;
     }
 
     /**
      * @return the image data height
      */
-    public int getImageDataHeight() {
-        return imageDataHeight;
+    public int getDataHeight() {
+        return dataHeight;
     }
 
     /**
      * Sets the image data height
      * @param imageDataHeight the image data height
      */
-    protected void setImageDataHeight(int imageDataHeight) {
-        this.imageDataHeight = imageDataHeight;
+    public void setDataHeight(int imageDataHeight) {
+        this.dataHeight = imageDataHeight;
     }
-    
+
+    /**
+     * @return the mime type of this image
+     */
+    public String getMimeType() {
+        return mimeType;
+    }
+
     /**
      * {@inheritDoc}
      */
     public String toString() {
         return super.toString() 
-            + ", imageDataWidth=" + imageDataWidth
-            + ", imageDataHeight=" + imageDataHeight
+            + ", mimeType=" + mimeType
+            + ", dataWidth=" + dataWidth
+            + ", dataHeight=" + dataHeight
             + ", color=" + color
             + ", bitPerPixel=" + bitsPerPixel;
     }

@@ -432,10 +432,7 @@ public abstract class AbstractPageObject extends AbstractResourceGroupContainer 
     protected void addObject(AbstractStructuredAFPObject obj) {
         if (obj instanceof IncludeObject) {
             IncludeObject includeObj = (IncludeObject)obj;
-            AbstractStructuredAFPObject refObj = includeObj.getReferencedObject();
-            if (refObj instanceof ImageObject || refObj instanceof GraphicsObject) {
-                getActiveEnvironmentGroup().createResource(refObj);            
-            }
+            getActiveEnvironmentGroup().createResource(includeObj);            
         }
         endPresentationObject();
         super.addObject(obj);

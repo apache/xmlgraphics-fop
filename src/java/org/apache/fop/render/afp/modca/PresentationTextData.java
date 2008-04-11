@@ -54,52 +54,50 @@ public class PresentationTextData extends AbstractAFPObject {
     private static final int MAX_SIZE = 8192;
 
     /**
-     * The afp data relating to this presentaion text data.
+     * The afp data relating to this presentation text data.
      */
-    private ByteArrayOutputStream _baos = new ByteArrayOutputStream(1024);
+    private ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
 
     /**
      * The current x coordinate.
      */
-    private int _currentXCoordinate = -1;
+    private int currentXCoordinate = -1;
 
     /**
      * The current y cooridnate
      */
-    private int _currentYCoordinate = -1;
+    private int currentYCoordinate = -1;
 
     /**
      * The current font
      */
-    private String _currentFont = "";
+    private String currentFont = "";
 
     /**
      * The current orientation
      */
-    private int _currentOrientation = 0;
+    private int currentOrientation = 0;
 
     /**
      * The current color
      */
-    private Color _currentColor = new Color(0, 0, 0);
+    private Color currentColor = new Color(0, 0, 0);
 
     /**
      * The current variable space increment
      */
-    private int _currentVariableSpaceCharacterIncrement = 0;
+    private int currentVariableSpaceCharacterIncrement = 0;
 
     /**
      * The current inter character adjustment
      */
-    private int _currentInterCharacterAdjustment = 0;
+    private int currentInterCharacterAdjustment = 0;
 
     /**
      * Default constructor for the PresentationTextData.
      */
     public PresentationTextData() {
-
         this(false);
-
     }
 
     /**
@@ -111,8 +109,7 @@ public class PresentationTextData extends AbstractAFPObject {
      *            The control sequence indicator.
      */
     public PresentationTextData(boolean controlInd) {
-
-        _baos.write(new byte[] { 0x5A, // Structured field identifier
+        baos.write(new byte[] { 0x5A, // Structured field identifier
             0x00, // Record length byte 1
             0x00, // Record length byte 2
             (byte) 0xD3, // PresentationTextData identifier byte 1
@@ -124,9 +121,8 @@ public class PresentationTextData extends AbstractAFPObject {
         }, 0, 9);
 
         if (controlInd) {
-            _baos.write(new byte[] { 0x2B, (byte) 0xD3 }, 0, 2);
+            baos.write(new byte[] { 0x2B, (byte) 0xD3 }, 0, 2);
         }
-
     }
 
     /**
@@ -140,16 +136,14 @@ public class PresentationTextData extends AbstractAFPObject {
      *            The output stream to which data should be written.
      */
     private void setCodedFont(byte font, ByteArrayOutputStream afpdata) {
-
         // Avoid unnecessary specification of the font
-        if (String.valueOf(font).equals(_currentFont)) {
+        if (String.valueOf(font).equals(currentFont)) {
             return;
         } else {
-            _currentFont = String.valueOf(font);
+            currentFont = String.valueOf(font);
         }
 
         afpdata.write(new byte[] { 0x03, (byte) 0xF1, font, }, 0, 3);
-
     }
 
     /**
@@ -162,15 +156,10 @@ public class PresentationTextData extends AbstractAFPObject {
      * @param afpdata
      *            The output stream to which data should be written.
      */
-    private void absoluteMoveInline(int coordinate,
-        ByteArrayOutputStream afpdata) {
-
+    private void absoluteMoveInline(int coordinate, ByteArrayOutputStream afpdata) {
         byte[] b = BinaryUtils.convert(coordinate, 2);
-
         afpdata.write(new byte[] { 0x04, (byte) 0xC7, b[0], b[1], }, 0, 4);
-
-        _currentXCoordinate = coordinate;
-
+        currentXCoordinate = coordinate;
     }
 
     /**
@@ -183,15 +172,10 @@ public class PresentationTextData extends AbstractAFPObject {
      * @param afpdata
      *            The output stream to which data should be written.
      */
-    private void absoluteMoveBaseline(int coordinate,
-        ByteArrayOutputStream afpdata) {
-
+    private void absoluteMoveBaseline(int coordinate, ByteArrayOutputStream afpdata) {
         byte[] b = BinaryUtils.convert(coordinate, 2);
-
         afpdata.write(new byte[] { 0x04, (byte) 0xD3, b[0], b[1], }, 0, 4);
-
-        _currentYCoordinate = coordinate;
-
+        currentYCoordinate = coordinate;
     }
 
     /**
@@ -204,21 +188,16 @@ public class PresentationTextData extends AbstractAFPObject {
      *            The output stream to which data should be written.
      */
     private void addTransparentData(byte[] data, ByteArrayOutputStream afpdata) {
-
         // Calculate the length
         int l = data.length + 2;
-
         if (l > 255) {
             // Check that we are not exceeding the maximum length
             throw new IllegalArgumentException(
                 "Transparent data is longer than 253 bytes: " + data);
         }
-
         afpdata.write(new byte[] { BinaryUtils.convert(l)[0], (byte) 0xDB, },
             0, 2);
-
         afpdata.write(data, 0, data.length);
-
     }
 
     /**
@@ -233,13 +212,10 @@ public class PresentationTextData extends AbstractAFPObject {
      * @param afpdata
      *            The output stream to which data should be written.
      */
-    private void drawBaxisRule(int length, int width,
-        ByteArrayOutputStream afpdata) {
-
+    private void drawBaxisRule(int length, int width, ByteArrayOutputStream afpdata) {
         afpdata.write(new byte[] { 0x07, // Length
             (byte) 0xE7, // Type
         }, 0, 2);
-
         // Rule length
         byte[] data1 = BinaryUtils.shortToByteArray((short) length);
         afpdata.write(data1, 0, data1.length);
@@ -248,7 +224,6 @@ public class PresentationTextData extends AbstractAFPObject {
         afpdata.write(data2, 0, data2.length);
         // Rule width fraction
         afpdata.write(0x00);
-
     }
 
     /**
@@ -263,13 +238,10 @@ public class PresentationTextData extends AbstractAFPObject {
      * @param afpdata
      *            The output stream to which data should be written.
      */
-    private void drawIaxisRule(int length, int width,
-        ByteArrayOutputStream afpdata) {
-
+    private void drawIaxisRule(int length, int width, ByteArrayOutputStream afpdata) {
         afpdata.write(new byte[] { 0x07, // Length
             (byte) 0xE5, // Type
         }, 0, 2);
-
         // Rule length
         byte[] data1 = BinaryUtils.shortToByteArray((short) length);
         afpdata.write(data1, 0, data1.length);
@@ -278,7 +250,6 @@ public class PresentationTextData extends AbstractAFPObject {
         afpdata.write(data2, 0, data2.length);
         // Rule width fraction
         afpdata.write(0x00);
-
     }
 
     /**
@@ -303,62 +274,60 @@ public class PresentationTextData extends AbstractAFPObject {
      * @throws MaximumSizeExceededException
      */
     public void createTextData(int fontNumber, int x, int y, int orientation,
-        Color col, int vsci, int ica, byte[] data)
-        throws MaximumSizeExceededException {
+        Color col, int vsci, int ica, byte[] data) throws MaximumSizeExceededException {
 
         ByteArrayOutputStream afpdata = new ByteArrayOutputStream();
 
-        if (_currentOrientation != orientation) {
+        if (currentOrientation != orientation) {
             setTextOrientation(orientation, afpdata);
-            _currentOrientation = orientation;
-            _currentXCoordinate = -1;
-            _currentYCoordinate = -1;
+            currentOrientation = orientation;
+            currentXCoordinate = -1;
+            currentYCoordinate = -1;
         }
 
         // Avoid unnecessary specification of the Y co-ordinate
-        if (y != _currentYCoordinate) {
+        if (y != currentYCoordinate) {
             absoluteMoveBaseline(y, afpdata);
-            _currentXCoordinate = -1;
+            currentXCoordinate = -1;
         }
 
         // Avoid unnecessary specification of the X co-ordinate
-        if (x != _currentXCoordinate) {
+        if (x != currentXCoordinate) {
             absoluteMoveInline(x, afpdata);
         }
 
         // Avoid unnecessary specification of the variable space increment
-        if (vsci != _currentVariableSpaceCharacterIncrement) {
+        if (vsci != currentVariableSpaceCharacterIncrement) {
             setVariableSpaceCharacterIncrement(vsci, afpdata);
-            _currentVariableSpaceCharacterIncrement = vsci;
+            currentVariableSpaceCharacterIncrement = vsci;
         }
 
         // Avoid unnecessary specification of the inter character adjustment
-        if (ica != _currentInterCharacterAdjustment) {
+        if (ica != currentInterCharacterAdjustment) {
             setInterCharacterAdjustment(ica, afpdata);
-            _currentInterCharacterAdjustment = ica;
+            currentInterCharacterAdjustment = ica;
         }
 
         // Avoid unnecessary specification of the text color
-        if (!col.equals(_currentColor)) {
+        if (!col.equals(currentColor)) {
             setExtendedTextColor(col, afpdata);
-            _currentColor = col;
+            currentColor = col;
         }
 
         setCodedFont(BinaryUtils.convert(fontNumber)[0], afpdata);
         addTransparentData(data, afpdata);
-        _currentXCoordinate = -1;
+        currentXCoordinate = -1;
 
         int s = afpdata.size();
 
-        if (_baos.size() + s > MAX_SIZE) {
-            _currentXCoordinate = -1;
-            _currentYCoordinate = -1;
+        if (baos.size() + s > MAX_SIZE) {
+            currentXCoordinate = -1;
+            currentYCoordinate = -1;
             throw new MaximumSizeExceededException();
         }
 
         byte[] outputdata = afpdata.toByteArray();
-        _baos.write(outputdata, 0, outputdata.length);
-
+        baos.write(outputdata, 0, outputdata.length);
     }
 
     /**
@@ -385,24 +354,24 @@ public class PresentationTextData extends AbstractAFPObject {
 
         ByteArrayOutputStream afpdata = new ByteArrayOutputStream();
 
-        if (_currentOrientation != orientation) {
+        if (currentOrientation != orientation) {
             setTextOrientation(orientation, afpdata);
-            _currentOrientation = orientation;
+            currentOrientation = orientation;
         }
 
         // Avoid unnecessary specification of the Y coordinate
-        if (y1 != _currentYCoordinate) {
+        if (y1 != currentYCoordinate) {
             absoluteMoveBaseline(y1, afpdata);
         }
 
         // Avoid unnecessary specification of the X coordinate
-        if (x1 != _currentXCoordinate) {
+        if (x1 != currentXCoordinate) {
             absoluteMoveInline(x1, afpdata);
         }
 
-        if (!col.equals(_currentColor)) {
+        if (!col.equals(currentColor)) {
             setExtendedTextColor(col, afpdata);
-            _currentColor = col;
+            currentColor = col;
         }
 
         if (y1 == y2) {
@@ -415,15 +384,14 @@ public class PresentationTextData extends AbstractAFPObject {
 
         int s = afpdata.size();
 
-        if (_baos.size() + s > MAX_SIZE) {
-            _currentXCoordinate = -1;
-            _currentYCoordinate = -1;
+        if (baos.size() + s > MAX_SIZE) {
+            currentXCoordinate = -1;
+            currentYCoordinate = -1;
             throw new MaximumSizeExceededException();
         }
 
         byte[] outputdata = afpdata.toByteArray();
-        _baos.write(outputdata, 0, outputdata.length);
-
+        baos.write(outputdata, 0, outputdata.length);
     }
 
     /**
@@ -440,11 +408,8 @@ public class PresentationTextData extends AbstractAFPObject {
      * @param afpdata
      *            The output stream to which data should be written.
      */
-    private void setTextOrientation(int orientation,
-        ByteArrayOutputStream afpdata) {
-
+    private void setTextOrientation(int orientation, ByteArrayOutputStream afpdata) {
         afpdata.write(new byte[] { 0x06, (byte) 0xF7, }, 0, 2);
-
         switch (orientation) {
             case 90:
                 afpdata.write(0x2D);
@@ -471,7 +436,6 @@ public class PresentationTextData extends AbstractAFPObject {
                 afpdata.write(0x00);
                 break;
         }
-
     }
 
     /**
@@ -528,7 +492,6 @@ public class PresentationTextData extends AbstractAFPObject {
             , b[0]
             , b[1]
         }, 0, 4);
-
     }
 
     /**
@@ -540,11 +503,8 @@ public class PresentationTextData extends AbstractAFPObject {
      * @param afpdata
      *            The output stream to which data should be written.
      */
-    private void setInterCharacterAdjustment(int incr,
-        ByteArrayOutputStream afpdata) {
-
+    private void setInterCharacterAdjustment(int incr, ByteArrayOutputStream afpdata) {
         byte[] b = BinaryUtils.convert(Math.abs(incr), 2);
-
         afpdata.write(new byte[] {
               5                  // Control sequence length
             , (byte)0xC3         // Control sequence function type
@@ -552,25 +512,17 @@ public class PresentationTextData extends AbstractAFPObject {
             , b[1]
             , (byte)(incr >= 0 ? 0 : 1) // Direction
         }, 0, 5);
-
     }
 
     /**
-     * Accessor method to write the AFP datastream for
-     * the text data.
-     * @param os The stream to write to
-     * @throws java.io.IOException
+     * {@inheritDoc}
      */
-    public void writeDataStream(OutputStream os)
-        throws IOException {
-
-        byte[] data = _baos.toByteArray();
+    public void writeDataStream(OutputStream os) throws IOException {
+        byte[] data = baos.toByteArray();
         byte[] size = BinaryUtils.convert(data.length - 1, 2);
         data[1] = size[0];
         data[2] = size[1];
-
         os.write(data);
-
     }
 
     /**
@@ -583,17 +535,12 @@ public class PresentationTextData extends AbstractAFPObject {
      * @throws MaximumSizeExceededException
      */
     public void endControlSequence() throws MaximumSizeExceededException {
-
         byte[] data = new byte[2];
         data[0] = 0x02;
         data[1] = (byte) 0xF8;
-
-        if (data.length + _baos.size() > MAX_SIZE) {
+        if (data.length + baos.size() > MAX_SIZE) {
             throw new MaximumSizeExceededException();
         }
-
-        _baos.write(data, 0, data.length);
-
+        baos.write(data, 0, data.length);
     }
-
 }

@@ -21,10 +21,13 @@ package org.apache.fop.render.afp.modca;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.fop.render.afp.DataObjectParameters;
-import org.apache.fop.render.afp.ImageObjectParameters;
+import org.apache.fop.render.afp.DataObjectInfo;
+import org.apache.fop.render.afp.ImageObjectInfo;
+import org.apache.fop.render.afp.ResourceInfo;
 import org.apache.fop.render.afp.modca.triplets.FullyQualifiedNameTriplet;
 import org.apache.fop.render.afp.tools.StringUtils;
 import org.apache.xmlgraphics.image.codec.tiff.TIFFImage;
@@ -42,13 +45,19 @@ public final class ResourceGroup extends AbstractNamedAFPObject {
     /**
      * Mapping of resource uri to data resource object (image/graphic) 
      */
-    private Map/*<String,AbstractAFPObject>*/ resourceMap = null;
+    private Map/*<String,IncludeObject>*/ resourceMap = null;
+
+    /**
+     * This resource groups container
+     */
+    private AbstractResourceGroupContainer container = null;
 
     /**
      * Default constructor
+     * @param container the resource group container 
      */
-    public ResourceGroup() {
-        this(DEFAULT_NAME);
+    public ResourceGroup(AbstractResourceGroupContainer container) {
+        this(DEFAULT_NAME, container);
     }
 
     /**
@@ -56,159 +65,86 @@ public final class ResourceGroup extends AbstractNamedAFPObject {
      * name parameter which must be 8 characters long.
      * @param name the resource group name
      */
-    public ResourceGroup(String name) {
+    public ResourceGroup(String name, AbstractResourceGroupContainer container) {
         super(name);
+        this.container = container;
     }
 
-    private static final String IMAGE_NAME_PREFIX = "IMG";
-    private static final String GRAPHIC_NAME_PREFIX = "GRA";
-    private static final String PAGE_SEGMENT_NAME_PREFIX = "PAG";
-    private static final String BARCODE_NAME_PREFIX = "BAR";
-    private static final String OTHER_NAME_PREFIX = "OTH";
+    private static final String RESOURCE_NAME_PREFIX = "RES";
+    private static final String INCLUDE_NAME_PREFIX = "INC";
     
     /**
-     * Converts a byte array containing 24 bit RGB image data to a grayscale
-     * image.
-     * 
-     * @param io
-     *            the target image object
-     * @param raw
-     *            the buffer containing the RGB image data
-     * @param width
-     *            the width of the image in pixels
-     * @param height
-     *            the height of the image in pixels
-     * @param bitsPerPixel
-     *            the number of bits to use per pixel
-     */
-    private static void convertToGrayScaleImage(ImageObject io, byte[] raw, int width,
-            int height, int bitsPerPixel) {
-        int pixelsPerByte = 8 / bitsPerPixel;
-        int bytewidth = (width / pixelsPerByte);
-        if ((width % pixelsPerByte) != 0) {
-            bytewidth++;
-        }
-        byte[] bw = new byte[height * bytewidth];
-        byte ib;
-        for (int y = 0; y < height; y++) {
-            ib = 0;
-            int i = 3 * y * width;
-            for (int x = 0; x < width; x++, i += 3) {
-
-                // see http://www.jguru.com/faq/view.jsp?EID=221919
-                double greyVal = 0.212671d * ((int) raw[i] & 0xff) + 0.715160d
-                        * ((int) raw[i + 1] & 0xff) + 0.072169d
-                        * ((int) raw[i + 2] & 0xff);
-                switch (bitsPerPixel) {
-                case 1:
-                    if (greyVal < 128) {
-                        ib |= (byte) (1 << (7 - (x % 8)));
-                    }
-                    break;
-                case 4:
-                    greyVal /= 16;
-                    ib |= (byte) ((byte) greyVal << ((1 - (x % 2)) * 4));
-                    break;
-                case 8:
-                    ib = (byte) greyVal;
-                    break;
-                default:
-                    throw new UnsupportedOperationException(
-                            "Unsupported bits per pixel: " + bitsPerPixel);
-                }
-
-                if ((x % pixelsPerByte) == (pixelsPerByte - 1)
-                        || ((x + 1) == width)) {
-                    bw[(y * bytewidth) + (x / pixelsPerByte)] = ib;
-                    ib = 0;
-                }
-            }
-        }
-        io.setImageIDESize((byte) bitsPerPixel);
-        io.setImageData(bw);
-    }
-
-    /**
-     * Helper method to create an image on the current container and to return
+     * Helper method to create a new resource object in the current container and to return
      * the object.
-     * @param params the set of image object parameters
-     * @return a newly created image object
+     * @return a newly created resource object
      */
-    private ImageObject createImage(ImageObjectParameters params) {
-        String name = IMAGE_NAME_PREFIX
-                + StringUtils.lpad(String.valueOf(getResourceCount() + 1), '0', 5);
-        ImageObject imageObj = new ImageObject(name);
-        if (params.hasCompression()) {
-            int compression = params.getCompression();
-            switch (compression) {
-            case TIFFImage.COMP_FAX_G3_1D:
-                imageObj.setImageEncoding(ImageContent.COMPID_G3_MH);
-                    break;
-                case TIFFImage.COMP_FAX_G3_2D:
-                    imageObj.setImageEncoding(ImageContent.COMPID_G3_MR);
-                    break;
-                case TIFFImage.COMP_FAX_G4_2D:
-                    imageObj.setImageEncoding(ImageContent.COMPID_G3_MMR);
-                    break;
-                default:
-                    throw new IllegalStateException(
-                            "Invalid compression scheme: " + compression);
-            }
-        }
-        imageObj.setFullyQualifiedName(
-                FullyQualifiedNameTriplet.TYPE_BEGIN_RESOURCE_OBJECT_REF,
-                FullyQualifiedNameTriplet.FORMAT_URL, params.getUri());
-        imageObj.setImageParameters(params.getWidthRes(), params.getHeightRes(), 
-                params.getImageDataWidth(), params.getImageDataHeight());
-        if (params.isColor()) {
-            imageObj.setImageIDESize((byte)24);
-            imageObj.setImageData(params.getData());
-        } else {
-            convertToGrayScaleImage(imageObj, params.getData(),
-                    params.getImageDataWidth(), params.getImageDataHeight(),
-                    params.getBitsPerPixel());
-        }
-        return imageObj;
+    private ResourceObject createResourceObject() {
+        String name = RESOURCE_NAME_PREFIX
+        + StringUtils.lpad(String.valueOf(getResourceCount() + 1), '0', 5);
+        ResourceObject resource = new ResourceObject(name);
+        return resource;
     }
     
-    /**
-     * Helper method to create a graphic in the current container and to return
-     * the object.
-     * @param params the data object parameters
-     * @return a newly created graphics object
-     */
-    private GraphicsObject createGraphic(DataObjectParameters params) {
-        String name = GRAPHIC_NAME_PREFIX
-            + StringUtils.lpad(String.valueOf(getResourceCount() + 1), '0', 5);
-        GraphicsObject graphicsObj = new GraphicsObject(name);
-        return graphicsObj;
-    }
+//    /**
+//     * Helper method to create a new resource object in the current container and to return
+//     * the object.
+//     * @return a newly created resource object
+//     */
+//    private IncludeObject createIncludeObject() {
+//        String name = INCLUDE_NAME_PREFIX
+//        + StringUtils.lpad(String.valueOf(getResourceCount() + 1), '0', 5);
+//        IncludeObject includeObj = new IncludeObject(name);
+//        return includeObj;
+//    }
 
     /**
-     * Adds a data object to this resource group
-     * @param params the data object parameters
+     * Creates a data object in this resource group
+     * @param info the data object info
      * @return an include object reference
      */
-    public IncludeObject addObject(DataObjectParameters params) {
-        ResourceObject resourceObj = (ResourceObject)getResourceMap().get(params.getUri());
-        if (resourceObj == null) {
+    public IncludeObject createObject(DataObjectInfo info) {
+        IncludeObject includeObj = (IncludeObject)getResourceMap().get(info.getUri());
+        if (includeObj == null) {
             AbstractDataObject dataObj;
-            if (params instanceof ImageObjectParameters) {
-                dataObj = createImage((ImageObjectParameters)params);
+            if (info instanceof ImageObjectInfo) {
+                dataObj = container.createImage((ImageObjectInfo)info);
             } else {
-                dataObj = createGraphic(params);
+                dataObj = container.createGraphic();
             }
+
+            ResourceInfo resourceInfo = info.getResourceInfo();
+            String resourceName = resourceInfo.getName();
+            if (resourceInfo.isExternal()) {
+                ObjectContainer objectContainer = new ObjectContainer(resourceName, dataObj, info);
+            } else {
+                
+            }
+            
+            // Wrap the data object in a page segment
+            PageSegment pageSegment = container.createPageSegment();
+            pageSegment.addObject(dataObj);
+
+            
             // TODO: AC - rotation?
             int rotation = 0;
-            dataObj.setViewport(params.getX(), params.getY(),
-                    params.getWidth(), params.getHeight(),
-                    params.getWidthRes(), params.getHeightRes(), rotation);
+            dataObj.setViewport(info.getX(), info.getY(),
+                    info.getWidth(), info.getHeight(),
+                    info.getWidthRes(), info.getHeightRes(), rotation);
             
-            // Wrap the data object in a resource object
-            resourceObj = new ResourceObject(dataObj.getName(), dataObj);
-            getResourceMap().put(params.getUri(), resourceObj);
+            includeObj.setResourceInfo(resourceInfo);
+
+            // If resource is to be stored externally,
+            // wrap the page segment in a resource object 
+            if (resourceInfo.isExternal()) {
+                ResourceObject resource = createResourceObject();
+                resource.setReferencedObject(pageSegment);
+                includeObj = new IncludeObject(resource);
+            } else {
+                includeObj = new IncludeObject(pageSegment);
+            }
+            // Add include object to resource map
+            getResourceMap().put(info.getUri(), includeObj);                
         }
-        IncludeObject includeObj = new IncludeObject(resourceObj);
         //includeObj.setObjectAreaSize(params.getX(), params.getY());
         return includeObj;
     }
@@ -218,7 +154,7 @@ public final class ResourceGroup extends AbstractNamedAFPObject {
      */
     public int getResourceCount() {
         if (resourceMap != null) {
-           return resourceMap.size(); 
+            return resourceMap.size(); 
         }
         return 0;
     }
@@ -250,7 +186,13 @@ public final class ResourceGroup extends AbstractNamedAFPObject {
      */
     public void writeContent(OutputStream os) throws IOException {
         if (resourceMap != null) {
-            super.writeObjects(resourceMap.values(), os);
+            Collection includes = resourceMap.values();
+            Iterator it = includes.iterator();
+            while (it.hasNext()) {
+                IncludeObject includeObj = (IncludeObject)it.next();
+                AbstractStructuredAFPObject obj = includeObj.getReferencedObject();
+                obj.writeDataStream(os);
+            }
         }
     }
 

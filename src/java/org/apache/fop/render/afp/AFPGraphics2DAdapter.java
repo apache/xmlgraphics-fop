@@ -52,10 +52,12 @@ public class AFPGraphics2DAdapter extends AbstractGraphics2DAdapter {
         int resolution = (int)Math.round(context.getUserAgent().getTargetResolution());
         BufferedImage bi = paintToBufferedImage(painter, wrappedContext, resolution, gray, false);
         
-        //TODO: uri
-        String uri = null;
-        java.util.Map foreignAttributes = null;
-        afp.drawBufferedImage(uri, bi, resolution, x, y, width, height, foreignAttributes);
+        
+        //TODO: AC - fix
+//        String uri = null;
+//        java.util.Map foreignAttributes = null;
+//        ImageInfo imageInfo = new ImageInfo();
+//        afp.drawBufferedImage(uri, bi, resolution, x, y, width, height, foreignAttributes);
     }
 
 }

@@ -95,7 +95,8 @@ public class ResourceEnvironmentGroup extends AbstractEnvironmentGroup {
      * @param obj the object to add
      */
     public void addObject(AbstractStructuredAFPObject obj) {
-        getMapDataResources().add(new MapDataResource(obj));
+        // TODO: AC - fix
+//        getMapDataResources().add(new MapDataResource(obj));
         getPreprocessPresentationObjects().add(new PreprocessPresentationObject(obj));
     }
         

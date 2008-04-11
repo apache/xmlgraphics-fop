@@ -19,6 +19,7 @@
 
 package org.apache.fop.render.afp;
 
+import java.io.File;
 import java.util.List;
 
 import org.apache.avalon.framework.configuration.Configuration;
@@ -224,7 +225,8 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
                 LogUtil.handleException(log, e,
                         userAgent.getFactory().validateUserConfigStrictly());
             }
-                        
+                    
+            // image information
             Configuration imagesCfg = cfg.getChild("images");
             if (!"color".equalsIgnoreCase(imagesCfg.getAttribute("mode", "b+w"))) {
                 afpRenderer.setBitsPerPixel(imagesCfg.getAttributeAsInteger("bits-per-pixel", 8));
@@ -232,35 +234,36 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
                 afpRenderer.setColorImages(true);
             }
             
+            // renderer resolution
             Configuration rendererResolutionCfg = cfg.getChild("renderer-resolution", false);
             if (rendererResolutionCfg != null) {
                 afpRenderer.setResolution(rendererResolutionCfg.getValueAsInteger(240));
             }
 
+            // a default external resource group file setting
+            Configuration resourceGroupFileCfg = cfg.getChild("resource-group-file", false);
+            if (resourceGroupFileCfg != null) {
+                String resourceGroupDest = null;
+                try {
+                    resourceGroupDest = resourceGroupFileCfg.getValue();
+                } catch (ConfigurationException e) {
+                    LogUtil.handleException(log, e,
+                            userAgent.getFactory().validateUserConfigStrictly());
+                }
+                File resourceGroupFile = new File(resourceGroupDest);
+                if (resourceGroupFile.canWrite()) {
+                    afpRenderer.getAFPDataStream().setDefaultResourceGroupFile(resourceGroupFile);
+                } else {
+                    log.warn("Unable to write to default external resource group file '"
+                            + resourceGroupDest);
+                }
+            }
+
+            // goca enabled
             Configuration gocaSupportCfg = cfg.getChild("goca-enabled", false);
             if (gocaSupportCfg != null) {
                 afpRenderer.setGOCAEnabled(true);
             }
-
-//            Configuration resourceGroupsCfg = cfg.getChild("resource-groups", false);
-//            if (resourceGroupsCfg != null) {
-//                resourceGroupsCfg.getValue("print-file-level");
-//            }
-//            if (externalCfg != null) {
-//                Configuration[] resourceGroups = externalCfg.getChildren("resource-groups");
-//                for (int i = 0; i < resourceGroups.length; i++) {
-//                    String resourceresourceGroups[i].getAttribute("url", null);
-//                    Configuration resourceGroup = externalCfg.getChild("resource-group", false);
-//                }
-//            }
-//            Configuration externalResourceGroupCfg = cfg.getChild("external-resource-group", false);
-//            if (externalResourceGroupCfg != null) {
-////                afpRenderer.setExternalResources(true);
-//                String resourceLibraryUrl = externalResourceGroupCfg.getAttribute("url", null);
-//                if (resourceLibraryUrl != null) {
-//                    afpRenderer.setExternalResourceLibraryUrl(resourceLibraryUrl);
-//                }
-//            }
         }
     }
 }

@@ -31,7 +31,7 @@ import java.util.List;
  */
 public class PageSegment extends AbstractNamedAFPObject {
 
-    private List objects = null;
+    private List/*<AbstractAFPObject>*/ objects = null;
     
     /**
      * Main constructor
@@ -42,14 +42,21 @@ public class PageSegment extends AbstractNamedAFPObject {
     }
 
     /**
+     * @return a list of objects contained within this page segment
+     */
+    public List/*<AbstractAFPObject>*/ getObjects() {
+        if (objects == null) {
+            objects = new java.util.ArrayList();
+        }
+        return objects;
+    }
+
+    /**
      * Adds a resource object (image/graphic) to this page segment
      * @param object the resource objec to add to this page segment
      */
     public void addObject(AbstractAFPObject object) {
-        if (objects == null) {
-            objects = new java.util.ArrayList();
-        }
-        objects.add(object);
+        getObjects().add(object);
     }
     
     /**
@@ -75,6 +82,14 @@ public class PageSegment extends AbstractNamedAFPObject {
     /**
      * {@inheritDoc}
      */
+    protected void writeContent(OutputStream os) throws IOException {
+        super.writeContent(os);
+        writeObjects(objects, os);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     protected void writeEnd(OutputStream os) throws IOException {
         byte[] data = new byte[17];
         data[0] = 0x5A; // Structured field identifier
@@ -90,13 +105,5 @@ public class PageSegment extends AbstractNamedAFPObject {
             data[9 + i] = nameBytes[i];
         }
         os.write(data);
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    protected void writeContent(OutputStream os) throws IOException {
-        super.writeContent(os);
-        writeObjects(objects, os);
-    }
+    }    
 }

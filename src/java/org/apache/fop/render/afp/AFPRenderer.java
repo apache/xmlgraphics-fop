@@ -26,6 +26,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.RenderedImage;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -87,6 +88,7 @@ import org.apache.fop.render.afp.fonts.FopCharacterSet;
 import org.apache.fop.render.afp.fonts.OutlineFont;
 import org.apache.fop.render.afp.modca.AFPConstants;
 import org.apache.fop.render.afp.modca.AFPDataStream;
+import org.apache.fop.render.afp.modca.AbstractNamedAFPObject;
 import org.apache.fop.render.afp.modca.ImageObject;
 import org.apache.fop.render.afp.modca.IncludeObject;
 import org.apache.fop.render.afp.modca.PageObject;
@@ -969,7 +971,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                 } else if (img instanceof ImageRendered) {
                     ImageRendered imgRend = (ImageRendered)img;
                     RenderedImage ri = imgRend.getRenderedImage();
-                    drawBufferedImage(uri, ri, getResolution(),
+                    drawBufferedImage(info, ri, getResolution(),
                             posInt.x + currentIPPosition,
                             posInt.y + currentBPPosition,
                             posInt.width,
@@ -983,17 +985,26 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                     int afpw = mpts2units(posInt.getWidth());
                     int afph = mpts2units(posInt.getHeight());
                     int afpres = getResolution();
-                    ImageObjectParameters params = new ImageObjectParameters(
-                            uri, afpx, afpy, afpw, afph, afpres, afpres,
-                            buf,
-                            ccitt.getSize().getWidthPx(),
-                            ccitt.getSize().getHeightPx(),
-                            colorImages, bitsPerPixel
-                    );
-                    params.setCompression(ccitt.getCompression());
-                    params.setResourceLevelFromForeignAttributes(foreignAttributes);
-//                    params.setData(buf);
-                    afpDataStream.createImageObject(params);
+                    
+                    // create image object parameters
+                    ImageObjectInfo imageObjectInfo = new ImageObjectInfo();
+                    imageObjectInfo.setUri(uri);
+                    imageObjectInfo.setMimeType(info.getMimeType());
+                    imageObjectInfo.setX(afpx);
+                    imageObjectInfo.setY(afpy);
+                    imageObjectInfo.setWidth(afpw);
+                    imageObjectInfo.setHeight(afph);
+                    imageObjectInfo.setWidthRes(afpres);
+                    imageObjectInfo.setHeightRes(afpres);
+                    imageObjectInfo.setData(buf);
+                    imageObjectInfo.setDataHeight(ccitt.getSize().getHeightPx());
+                    imageObjectInfo.setDataWidth(ccitt.getSize().getWidthPx());
+                    imageObjectInfo.setColor(colorImages);
+                    imageObjectInfo.setBitsPerPixel(bitsPerPixel);
+                    imageObjectInfo.setCompression(ccitt.getCompression());
+                    imageObjectInfo.setResourceInfoFromForeignAttributes(foreignAttributes);
+                    
+                    afpDataStream.createObject(imageObjectInfo);
 
                             
 //                    ImageObject io = afpDataStream.getImageObject(afpx, afpy, afpw, afph,
@@ -1193,7 +1204,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      * @param h
      *            the height of the viewport (in mpt)
      */
-    public void drawBufferedImage(String uri, RenderedImage image, int imageRes, int x,
+    public void drawBufferedImage(ImageInfo info, RenderedImage image, int imageRes, int x,
             int y, int w, int h, Map foreignAttributes) {
 //        int afpx = mpts2units(x);
 //        int afpy = mpts2units(y);
@@ -1213,19 +1224,25 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 //        String uri = null;// = image.getProperty(name);
 //        String uri = image.getProperty(name);
         // Generate image
-        ImageObjectParameters params = new ImageObjectParameters(
-                uri,
-                mpts2units(x), mpts2units(y),
-                mpts2units(w), mpts2units(h),
-                imageRes, imageRes,
-                baout.toByteArray(),
-                image.getWidth(),
-                image.getHeight(),
-                colorImages,
-                bitsPerPixel);
+        
+        // create image object parameters
+        ImageObjectInfo imageObjectInfo = new ImageObjectInfo();
+        imageObjectInfo.setUri(info.getOriginalURI());
+        imageObjectInfo.setMimeType(info.getMimeType());
+        imageObjectInfo.setX(mpts2units(x));
+        imageObjectInfo.setY(mpts2units(y));
+        imageObjectInfo.setWidth(mpts2units(w));
+        imageObjectInfo.setHeight(mpts2units(h));
+        imageObjectInfo.setWidthRes(imageRes);
+        imageObjectInfo.setHeightRes(imageRes);
+        imageObjectInfo.setData(baout.toByteArray());
+        imageObjectInfo.setDataHeight(image.getHeight());
+        imageObjectInfo.setDataWidth(image.getWidth());
+        imageObjectInfo.setColor(colorImages);
+        imageObjectInfo.setBitsPerPixel(bitsPerPixel);
+        imageObjectInfo.setResourceInfoFromForeignAttributes(foreignAttributes);
 
-        params.setResourceLevelFromForeignAttributes(foreignAttributes);
-        IncludeObject io = afpDataStream.createImageObject(params);
+        AbstractNamedAFPObject obj = afpDataStream.createObject(imageObjectInfo);
 //            ImageObject io = afpDataStream.getImageObject(afpx, afpy, afpw,
 //                    afph, afpres, afpres);
 //            io.setImageParameters(imageResolution, imageResolution,
@@ -1586,9 +1603,10 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                         if (content != null) {
                             afpDataStream.createNoOperation(content);
                         }
-                    } else if (AFPElementMapping.RESOURCE.equals(element)) {
-                        log.info("resource: " + attachment);
                     }
+//                    else if (AFPElementMapping.RESOURCE.equals(element)) {
+//                        log.info("resource: " + attachment);
+//                    }
                 }
             }
         }

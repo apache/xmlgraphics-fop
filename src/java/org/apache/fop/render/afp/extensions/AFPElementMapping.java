@@ -48,8 +48,8 @@ public class AFPElementMapping extends ElementMapping {
     /** include page segment element */
     public static final String INCLUDE_PAGE_SEGMENT = "include-page-segment";
 
-    /** include resource element (external) */
-    public static final String RESOURCE = "resource";
+//    /** include resource element (external) */
+//    public static final String RESOURCE = "resource";
 
     /** NOP */
     public static final String NO_OPERATION = "no-operation";
@@ -70,7 +70,7 @@ public class AFPElementMapping extends ElementMapping {
     }
 
     /**
-     * Private static synchronized method to set up the element and atribute
+     * Private static synchronized method to set up the element and attribute
      * HashMaps, this defines what elements and attributes are extracted.
      */
     protected void initialize() {
@@ -79,8 +79,8 @@ public class AFPElementMapping extends ElementMapping {
             super.foObjs = new java.util.HashMap();
             foObjs.put(PAGE, new AFPPageSetupMaker());
 //            foObjs.put(
-//            	PAGE_GROUP,
-//            	new AFPPageGroupMaker()
+//              PAGE_GROUP,
+//              new AFPPageGroupMaker()
 //            );
             foObjs.put(
                 TAG_LOGICAL_ELEMENT,

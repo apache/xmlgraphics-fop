@@ -22,6 +22,7 @@ package org.apache.fop.render.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.fop.render.afp.ResourceInfo;
 import org.apache.fop.render.afp.modca.triplets.Triplet;
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
@@ -48,19 +49,37 @@ public class ResourceObject extends AbstractPreparedAFPObject {
     private static final byte FORMDEF_OBJECT = (byte) 0xFE;
         
     /**
-     * the resource object
+     * the referenced data object
      */    
-    private AbstractNamedAFPObject resourceObj = null;
-    
+    private AbstractNamedAFPObject dataObj = null;
+        
     /**
      * Default constructor
      * 
      * @param name the name of this resource (reference id)
-     * @param resourceObj the resource object to be added
+     * @param dataObj the resource object to be added
      */
-    public ResourceObject(String name, AbstractNamedAFPObject resourceObj) {
+    public ResourceObject(String name) {
         super(name);
-        this.resourceObj = resourceObj;
+    }
+        
+    /**
+     * Sets the data object referenced by this resource object
+     * @param dataObj the data object
+     */
+    public void setReferencedObject(AbstractNamedAFPObject dataObj) {
+        this.dataObj = dataObj;
+        setResourceObjectType(dataObj);
+    }
+
+    /**
+     * @return the resource object contained in this envelope 
+     */
+    public AbstractNamedAFPObject getReferencedObject() {
+        return this.dataObj;
+    }
+    
+    private void setResourceObjectType(AbstractNamedAFPObject resourceObj) {
         byte type;
         if (resourceObj instanceof ImageObject) {
             type = IMAGE_OBJECT;
@@ -76,18 +95,7 @@ public class ResourceObject extends AbstractPreparedAFPObject {
             throw new UnsupportedOperationException(
                     "Unsupported resource object type " + resourceObj);
         }
-        setResourceObjectType(type);
-    }
-
-    private void setResourceObjectType(byte type) {
         getTriplets().add(new ResourceObjectTypeTriplet(type));        
-    }
-    
-    /**
-     * @return the resource object contained in this envelope 
-     */
-    public AbstractNamedAFPObject getResource() {
-        return this.resourceObj;
     }
         
     /**
@@ -127,8 +135,8 @@ public class ResourceObject extends AbstractPreparedAFPObject {
      */
     protected void writeContent(OutputStream os) throws IOException {
         super.writeContent(os); // write triplets
-        if (resourceObj != null) {
-            resourceObj.writeDataStream(os);
+        if (dataObj != null) {
+            dataObj.writeDataStream(os);
         }
     }
 
@@ -156,6 +164,13 @@ public class ResourceObject extends AbstractPreparedAFPObject {
            nameBytes[7],
         };
         os.write(data);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String toString() {
+        return this.getName();
     }
     
     private class ResourceObjectTypeTriplet extends Triplet {

@@ -37,6 +37,10 @@
 /* $Id: $ */
 package org.apache.fop.render.afp.modca.triplets;
 
+import java.io.UnsupportedEncodingException;
+
+import org.apache.fop.render.afp.modca.AFPConstants;
+
 
 /**
  * A Fully Qualified Name triplet enable the identification and referencing of
@@ -75,28 +79,39 @@ public class FullyQualifiedNameTriplet extends Triplet {
     public static final byte FORMAT_OID = (byte)0x10;
     public static final byte FORMAT_URL = (byte)0x20;
     
-    private byte[] fqName;
+    private byte[] nameBytes;
     
     /**
      * @return the actual fully qualified name of this triplet
      */
     public byte[] getFullyQualifiedName() {
-        return fqName;
+        return nameBytes;
     }
 
     /**
      * Main constructor
-     * @param fqnType the fully qualified name type
-     * @param fqnFmt the fully qualified name format
-     * @param fqName the fully qualified name
+     * @param type the fully qualified name type
+     * @param format the fully qualified name format
+     * @param name the fully qualified name
      */
-    public FullyQualifiedNameTriplet(byte fqnType, byte fqnFmt, byte[] fqName) {
+    public FullyQualifiedNameTriplet(byte type, byte format, byte[] name) {
         super(FULLY_QUALIFIED_NAME);
-        this.fqName = fqName;
-        super.data = new byte[2 + fqName.length];
-        data[0] = fqnType;
-        data[1] = fqnFmt;
+        this.nameBytes = name;
+        super.data = new byte[2 + name.length];
+        data[0] = type;
+        data[1] = format;
         // FQName
-        System.arraycopy(fqName, 0, data, 2, fqName.length);
+        System.arraycopy(name, 0, data, 2, name.length);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String toString() {
+        try {
+            return new String(nameBytes, AFPConstants.EBCIDIC_ENCODING);
+        } catch (UnsupportedEncodingException e) {
+        }
+        return null;
     }
 }

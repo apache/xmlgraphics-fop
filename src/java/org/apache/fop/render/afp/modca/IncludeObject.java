@@ -19,9 +19,12 @@
 
 package org.apache.fop.render.afp.modca;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.fop.render.afp.ResourceInfo;
+import org.apache.fop.render.afp.modca.triplets.FullyQualifiedNameTriplet;
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
 /**
@@ -94,38 +97,84 @@ public class IncludeObject extends AbstractNamedAFPObject {
      */
     private int yContentOffset = -1;
     
+//    /**
+//     * The object referenced by this include object
+//     */
+//    private Resource resourceObj = null;
+    
     /**
-     * The object referenced by this include object
+     * the level at which this resource object resides
      */
-    private AbstractStructuredAFPObject referencedObject = null;
+    private ResourceInfo level = null;
+
+    /**
+     * the referenced data object
+     */
+    private AbstractNamedAFPObject dataObj = null;
     
     /**
      * Constructor for the include object with the specified name, the name must
      * be a fixed length of eight characters and is the name of the referenced
      * object.
      *
-     * @param resourceObj
-     *            the resource object wrapper
+     * @param resourceObj the resource object wrapper
      */
-    public IncludeObject(ResourceObject resourceObj) {
-        super(resourceObj.getResource().getName());
-        this.referencedObject = resourceObj.getResource();
-        if (referencedObject instanceof ImageObject) {
+    public IncludeObject(AbstractNamedAFPObject dataObj) {
+        super(dataObj.getName());
+        this.dataObj = dataObj;
+//      AbstractStructuredAFPObject referencedObject = resourceObj.getReferencedObject();
+        if (dataObj instanceof ImageObject) {
             this.objectType = TYPE_IMAGE;
-        } else if (referencedObject instanceof GraphicsObject) {
+        } else if (dataObj instanceof GraphicsObject) {
             this.objectType = TYPE_GRAPHIC;
-        } else if (referencedObject instanceof PageSegment) {
+        } else if (dataObj instanceof PageSegment) {
             this.objectType = TYPE_PAGE_SEGMENT;
         } else {
             this.objectType = TYPE_OTHER;
         }
+
+        // set data object reference triplet
+        ResourceInfo resourceInfo = getResourceInfo();
+        if (resourceInfo != null && resourceInfo.isExternal()) {
+            String dest = resourceInfo.getExternalResourceGroupDest();
+            super.setFullyQualifiedName(
+                    FullyQualifiedNameTriplet.TYPE_DATA_OBJECT_EXTERNAL_RESOURCE_REF,
+                    FullyQualifiedNameTriplet.FORMAT_URL, dest);
+        } else {
+            super.setFullyQualifiedName(
+                    FullyQualifiedNameTriplet.TYPE_DATA_OBJECT_INTERNAL_RESOURCE_REF,
+                    FullyQualifiedNameTriplet.FORMAT_CHARSTR, dataObj.getName());            
+        }        
     }
 
     /**
-     * @return the object referenced by this include object
+     * Sets the resource level for this resource object
+     * @param level the resource level
+     */
+    public void setResourceInfo(ResourceInfo level) {
+        this.level = level;
+    }
+    
+    /**
+     * @return the resource info of this resource object
+     */
+    public ResourceInfo getResourceInfo() {
+        return this.level;
+    }
+
+//    /**
+//     * @return the resource container object referenced by this include object
+//     */
+//    public Resource getResource() {
+//        return this.resourceObj;
+//    }
+
+    /**
+     * @return the actual resource data object referenced by this include object
      */
     public AbstractStructuredAFPObject getReferencedObject() {
-        return referencedObject;
+        return this.dataObj;
+        //getResource().getReferencedObject();
     }
 
     /**
@@ -167,12 +216,12 @@ public class IncludeObject extends AbstractNamedAFPObject {
     /**
      * {@inheritDoc}
      */
-    public void writeDataStream(OutputStream os) throws IOException {
+    public void writeDataStream(OutputStream os) throws IOException {       
         byte[] data = new byte[36];
         data[0] = 0x5A;
 
         // Set the total record length
-        byte[] len = BinaryUtils.convert(35, 2); //Ignore first byte
+        byte[] len = BinaryUtils.convert(35 + getTripletDataLength(), 2); //Ignore first byte
         data[1] = len[0];
         data[2] = len[1];
 
@@ -272,8 +321,13 @@ public class IncludeObject extends AbstractNamedAFPObject {
             data[33] = (byte)0xFF;
             data[34] = (byte)0xFF;
         }
-
         data[35] = 0x01;
+
+        // Write structured field data
         os.write(data);
+        
+        // Write triplet for FQN internal/external object reference 
+        byte[] tripletData = super.getTripletData();
+        os.write(tripletData);
     }
 }

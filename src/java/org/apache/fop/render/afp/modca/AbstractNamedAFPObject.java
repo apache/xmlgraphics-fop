@@ -81,5 +81,4 @@ public abstract class AbstractNamedAFPObject extends AbstractStructuredAFPObject
     public String getName() {
         return name;
     }
-    
 }

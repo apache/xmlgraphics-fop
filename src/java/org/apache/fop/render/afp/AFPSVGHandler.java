@@ -159,20 +159,26 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
         int width = (int)Math.round((afpInfo.getWidth() * res) / 72000f);
         int height = (int)Math.round((afpInfo.getHeight() * res) / 72000f);
         
-        DataObjectParameters params = new DataObjectParameters(
-                uri, x, y, width, height, res, res);
-        
+        // set the data object parameters
+        DataObjectInfo info = new DataObjectInfo();
+        info.setUri(uri);
+        info.setX(x);
+        info.setY(y);
+        info.setWidth(width);
+        info.setHeight(height);
+        info.setWidthRes(res);
+        info.setHeightRes(res);
         Map/*<QName, String>*/ foreignAttributes
             = (Map/*<QName, String>*/)context.getProperty(
                 RendererContextConstants.FOREIGN_ATTRIBUTES);
-
         if (foreignAttributes != null) {
-            params.setResourceLevelFromForeignAttributes(foreignAttributes);
+            info.setResourceInfoFromForeignAttributes(foreignAttributes);
         }
 
-        IncludeObject includeObj = afpInfo.getAFPDataStream().createGraphicsObject(params);
-        GraphicsObject graphicsObj = (GraphicsObject)includeObj.getReferencedObject();
-        graphics.setGraphicsObject(graphicsObj);
+        //TODO: AC - fix
+//        IncludeObject includeObj = afpInfo.getAFPDataStream().createObject(info);
+//        GraphicsObject graphicsObj = (GraphicsObject)includeObj.getReferencedObject();
+//        graphics.setGraphicsObject(graphicsObj);
         
         try {
             root.paint(graphics);

@@ -20,6 +20,7 @@
 package org.apache.fop.render.afp.modca;
 
 import java.awt.Color;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -29,9 +30,8 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.render.afp.AFPFontAttributes;
-import org.apache.fop.render.afp.DataObjectParameters;
-import org.apache.fop.render.afp.ImageObjectParameters;
-import org.apache.fop.render.afp.ResourceLevel;
+import org.apache.fop.render.afp.DataObjectInfo;
+import org.apache.fop.render.afp.ResourceInfo;
 import org.apache.fop.render.afp.fonts.AFPFont;
 import org.apache.fop.render.afp.modca.triplets.FullyQualifiedNameTriplet;
 import org.apache.fop.render.afp.tools.StringUtils;
@@ -146,9 +146,9 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
     private OutputStream outputStream = null;
 
     /**
-     * A mapping of external resource destinations to resource groups
+     * The external resource group manager
      */
-    private Map/*<String,ResourceGroup>*/ externalResourceGroups = null;
+    private ExternalResourceGroupManager externalResourceGroupManager = null;
     
     /**
      * Default constructor for the AFPDataStream.
@@ -226,9 +226,7 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
         }
 
         // Write out any external resource groups
-        if (externalResourceGroups != null) {
-            writeExternalResources();
-        }
+        getExternalResourceGroupManager().writeExternalResources();
 
         // Write out any print-file level resources
         if (hasResources()) {
@@ -405,7 +403,7 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
      *            the point size of the font
      */
     public void createFont(int fontReference, AFPFont font, int size) {
-        currentPage.createFont(fontReference, font, size);
+        getCurrentPage().createFont(fontReference, font, size);
     }
 
     /**
@@ -429,51 +427,37 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
      */
     public void createText(int fontReference, int x, int y, Color col, int vsci,
             int ica, byte[] data) {
-        currentPage.createText(fontReference, x + xOffset, y + yOffset, rotation,
+        getCurrentPage().createText(fontReference, x + xOffset, y + yOffset, rotation,
                 col, vsci, ica, data);
     }
-    
-    /**
-     * Returns true if the resource exists within this resource group,
-     * false otherwise.
-     * 
-     * @param uri the uri of the resource
-     * @return true if the resource exists within this resource group
-     */
-    public boolean resourceExists(String uri) {
-        return getResourceGroup().resourceExists(uri);
-    }
-    
-    /**
-     * Returns an IncludeObject referencing an image in the datastream.
-     * 
-     * @param params
-     *            the unique uri of the image
-     * @return
-     *            a new include object referencing an image object
-     */
-    public IncludeObject createImageObject(ImageObjectParameters params) {
-        ResourceLevel resourceLevel = params.getResourceLevel();
-        IncludeObject includeObj = getResourceGroup(resourceLevel).addObject(params);
-        currentPage.addObject(includeObj);
-        return includeObj;
-    }
 
     /**
-     * Returns an IncludeObject referencing a graphic in the datastream.
-     *
-     * @param params
-     *            the data object parameters
+     * Creates a data object in the datastream.  The data object resides according
+     * to its type, info and MO:DCA-L (resource) support.
+     * 
+     * @param dataObjectInfo
+     *            the data object info
      * @return
-     *            a new include object referencing the graphics object
+     *            a data object
      */
-    public IncludeObject createGraphicsObject(DataObjectParameters params) {
-        ResourceLevel resourceLevel = params.getResourceLevel();
-        IncludeObject includeObj = getResourceGroup(resourceLevel).addObject(params);
-        currentPage.addObject(includeObj);         
-        return includeObj;
+    public AbstractNamedAFPObject createObject(DataObjectInfo dataObjectInfo) {
+        ObjectTypeRegistry registry = ObjectTypeRegistry.getInstance();
+        ObjectTypeRegistry.ObjectType objectType = registry.getObjectType(dataObjectInfo);
+        if (objectType != null) {
+            dataObjectInfo.setObjectType(objectType);
+        }        
+        AbstractNamedAFPObject dataObj;
+        // can this data object use the include object (IOB) mechanism?
+        if (objectType.canBeIncluded()) {
+            ResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
+            ResourceGroup resourceGroup = getResourceGroup(resourceInfo);
+            dataObj = resourceGroup.createObject(dataObjectInfo);
+        } else {
+            dataObj = getCurrentPage().createObject(dataObjectInfo);
+        }
+        return dataObj;
     }
-
+    
     /**
      * Sets the object view port taking into account rotation.
      *
@@ -502,7 +486,7 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
         int heightRes;
         switch (this.rotation) {
         case 90:
-            xOrigin = currentPage.getWidth() - y - yOffset;
+            xOrigin = getCurrentPage().getWidth() - y - yOffset;
             yOrigin = x + xOffset;
             width = h;
             height = w;
@@ -510,8 +494,8 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
             heightRes = wr;
             break;
         case 180:
-            xOrigin = currentPage.getWidth() - x - xOffset;
-            yOrigin = currentPage.getHeight() - y - yOffset;
+            xOrigin = getCurrentPage().getWidth() - x - xOffset;
+            yOrigin = getCurrentPage().getHeight() - y - yOffset;
             width = w;
             height = h;
             widthRes = wr;
@@ -519,7 +503,7 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
             break;
         case 270:
             xOrigin = y + yOffset;
-            yOrigin = currentPage.getHeight() - x - xOffset;
+            yOrigin = getCurrentPage().getHeight() - x - xOffset;
             width = h;
             height = w;
             widthRes = hr;
@@ -555,7 +539,7 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
      */
     public void createLine(int x1, int y1, int x2, int y2, int thickness,
             Color col) {
-        currentPage.createLine(x1 + xOffset, y1 + yOffset, x2 + xOffset, y2
+        getCurrentPage().createLine(x1 + xOffset, y1 + yOffset, x2 + xOffset, y2
                 + yOffset, thickness, rotation, col);
     }
 
@@ -581,7 +565,7 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
      */
     public void createShading(int x, int y, int w, int h, int red, int green,
             int blue) {
-        currentPage.createShading(x + xOffset, y + xOffset, w, h, red, green,
+        getCurrentPage().createShading(x + xOffset, y + xOffset, w, h, red, green,
                 blue);
     }
 
@@ -622,23 +606,23 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
         int yOrigin;
         switch (rotation) {
         case 90:
-            xOrigin = currentPage.getWidth() - y - yOffset;
+            xOrigin = getCurrentPage().getWidth() - y - yOffset;
             yOrigin = x + xOffset;
             break;
         case 180:
-            xOrigin = currentPage.getWidth() - x - xOffset;
-            yOrigin = currentPage.getHeight() - y - yOffset;
+            xOrigin = getCurrentPage().getWidth() - x - xOffset;
+            yOrigin = getCurrentPage().getHeight() - y - yOffset;
             break;
         case 270:
             xOrigin = y + yOffset;
-            yOrigin = currentPage.getHeight() - x - xOffset;
+            yOrigin = getCurrentPage().getHeight() - x - xOffset;
             break;
         default:
             xOrigin = x + xOffset;
             yOrigin = y + yOffset;
             break;
         }
-        currentPage.createIncludePageSegment(name, xOrigin, yOrigin);
+        getCurrentPage().createIncludePageSegment(name, xOrigin, yOrigin);
     }
 
     /**
@@ -681,7 +665,7 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
         if (currentPageGroup != null) {
             currentPageGroup.createTagLogicalElement(name, value);
         } else {
-            currentPage.createTagLogicalElement(name, value);
+            getCurrentPage().createTagLogicalElement(name, value);
         }
     }
 
@@ -692,7 +676,7 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
      *            byte data
      */
     public void createNoOperation(String content) {
-        currentPage.createNoOperation(content);
+        getCurrentPage().createNoOperation(content);
     }
 
     private PageGroup getCurrentPageGroup() {
@@ -719,7 +703,7 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
     public void endPageGroup() {
         if (currentPageGroup != null) {
             currentPageGroup.endPageGroup();
-            document.addPageGroup(currentPageGroup);
+            getDocument().addPageGroup(currentPageGroup);
             currentPageGroup = null;
         }
     }
@@ -758,70 +742,143 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
         }
     }
 
+    
     /**
-     * Writes out external AFP resources
+     * Returns the resource group for a given resource into
+     * @param resourceInfo resource info
+     * @return a resource group container for the given resource info
      */
-    private void writeExternalResources() {
-        // write any external resources
-        Iterator it = getExternalResourceGroups().keySet().iterator();
-        while (it.hasNext()) {
-            String externalDest = (String)it.next();
-            ResourceGroup resourceGroup
-                = (ResourceGroup)getExternalResourceGroups().get(externalDest);
-            OutputStream os = null;
-            try {
-                log.debug("Writing external AFP resource file " + externalDest);
-                os = new java.io.FileOutputStream(externalDest);
-                resourceGroup.writeDataStream(os);
-            } catch (FileNotFoundException e) {
-                log.error("Failed to open external AFP resource file "
-                        + externalDest);
-            } catch (IOException e) {
-                log.error("An error occurred when attempting to write external AFP resource file "
-                        + externalDest);
-            } finally {
-                if (os != null) {
-                    try {
-                        os.close();
-                    } catch (IOException e) {
-                        log.error("Failed to close outputstream for external AFP resource file "
-                                + externalDest);
+    private ResourceGroup getResourceGroup(ResourceInfo resourceInfo) {
+        ResourceGroup resourceGroup = null;
+        if (resourceInfo.isPrintFile()) {
+            resourceGroup = getResourceGroup();
+        } else if (resourceInfo.isDocument()) {
+            resourceGroup = getDocument().getResourceGroup();
+        } else if (resourceInfo.isPageGroup()) {
+            resourceGroup = getCurrentPageGroup().getResourceGroup();
+        } else if (resourceInfo.isPage()) {
+            resourceGroup = getCurrentPage().getResourceGroup(); 
+        } else if (resourceInfo.isExternal()) {
+            resourceGroup = getExternalResourceGroupManager().getExternalResourceGroup(
+                    resourceInfo);
+        }
+        return resourceGroup;
+    }
+
+    /**
+     * Sets the default resource group file
+     * @param resourceGroupFile the default resource group file
+     */
+    public void setDefaultResourceGroupFile(File resourceGroupFile) {
+        getExternalResourceGroupManager().setDefaultResourceGroupFile(resourceGroupFile);
+    }
+
+    /**
+     * @return the resource group manager
+     */
+    protected ExternalResourceGroupManager getExternalResourceGroupManager() {
+        if (externalResourceGroupManager == null) {
+            this.externalResourceGroupManager = new ExternalResourceGroupManager(this);
+        }
+        return this.externalResourceGroupManager;
+    }
+
+    
+    /**
+     * Manages the use of resource groups (external and internal)
+     */
+    private final class ExternalResourceGroupManager {
+        /**
+         * A mapping of external resource destinations to resource groups
+         */
+        private Map/*<File, ResourceGroup>*/ externalResourceGroups = null;
+
+        /** sets the default resource group file */
+        private File defaultResourceGroupFile;
+
+        /** the container of this manager */
+        private AbstractResourceGroupContainer container;
+
+        /**
+         * Main constructor
+         * @param container the container of this manager
+         */
+        private ExternalResourceGroupManager(AbstractResourceGroupContainer container) {
+            this.container = container;
+        }
+        
+        /**
+         * Sets the default resource group file
+         * @param resourceGroupFile the default resource group file
+         */
+        private void setDefaultResourceGroupFile(File resourceGroupFile) {
+            this.defaultResourceGroupFile = resourceGroupFile;
+        }
+
+        /**
+         * Writes out external AFP resources
+         */
+        private void writeExternalResources() {
+            // write any external resources
+            Iterator it = getExternalResourceGroups().keySet().iterator();
+            while (it.hasNext()) {
+                String externalDest = (String)it.next();
+                ResourceGroup resourceGroup
+                    = (ResourceGroup)getExternalResourceGroups().get(externalDest);
+                OutputStream os = null;
+                try {
+                    log.debug("Writing external AFP resource file " + externalDest);
+                    os = new java.io.FileOutputStream(externalDest);
+                    resourceGroup.writeDataStream(os);
+                } catch (FileNotFoundException e) {
+                    log.error("Failed to open external AFP resource file "
+                            + externalDest);
+                } catch (IOException e) {
+                    log.error(
+                            "An error occurred when attempting to write external AFP resource file "
+                            + externalDest);
+                } finally {
+                    if (os != null) {
+                        try {
+                            os.close();
+                        } catch (IOException e) {
+                            log.error("Failed to close outputstream for external AFP resource file "
+                                    + externalDest);
+                        }
                     }
                 }
             }
         }
-    }
-
-    /**
-     * Returns the resource group for a given resource level
-     * @param resourceLevel a resource level
-     * @return a resource group container for the given level
-     */
-    private ResourceGroup getResourceGroup(ResourceLevel resourceLevel) {
-        ResourceGroup resourceGroup = null;
-        if (resourceLevel.isPrintFile()) {
-            resourceGroup = this.getResourceGroup();
-        } else if (resourceLevel.isDocument()) {
-            resourceGroup = document.getResourceGroup();
-        } else if (resourceLevel.isPageGroup()) {
-            resourceGroup = getCurrentPageGroup().getResourceGroup();
-        } else if (resourceLevel.isPage()) {
-            resourceGroup = getCurrentPage().getResourceGroup(); 
-        } else if (resourceLevel.isExternal()) {
-            String externalDest = resourceLevel.getExternalDest();
-            resourceGroup = (ResourceGroup)getExternalResourceGroups().get(externalDest);
-            if (resourceGroup == null) {
-                resourceGroup = new ResourceGroup();
-                externalResourceGroups.put(externalDest, resourceGroup);
+        
+        private ResourceGroup getExternalResourceGroup(ResourceInfo resourceInfo) {
+            ResourceGroup resourceGroup;
+            // this resource info does not have a an external resource group file definition
+            if (!resourceInfo.hasExternalResourceGroupFile()) {
+                if (defaultResourceGroupFile != null) {
+                    // fallback to default resource group file
+                    resourceInfo.setExternalResourceGroupFile(defaultResourceGroupFile);
+                    resourceGroup = getExternalResourceGroup(resourceInfo);
+                } else {
+                    // use print-file level resource group in the absence
+                    // of an external resource group file definition
+                    resourceGroup = container.getResourceGroup();
+                }
+            } else {
+                File resourceGroupFile = resourceInfo.getExternalResourceGroupFile();
+                resourceGroup = (ResourceGroup)getExternalResourceGroups().get(resourceGroupFile);
+                if (resourceGroup == null) {        
+                    resourceGroup = new ResourceGroup(container);
+                    externalResourceGroups.put(resourceGroupFile, resourceGroup);
+                }
             }
+            return resourceGroup;
         }
-        return resourceGroup;
-    }
-    
-    private Map/*<String,ResourceGroup>*/ getExternalResourceGroups() {
-        if (externalResourceGroups == null) {
-            externalResourceGroups = new java.util.HashMap();
-        }
-        return externalResourceGroups;
+        
+        private Map/*<File, ResourceGroup>*/ getExternalResourceGroups() {
+            if (externalResourceGroups == null) {
+                externalResourceGroups = new java.util.HashMap/*<File, ResourceGroup>*/();
+            }
+            return externalResourceGroups;
+        }      
     }
 }

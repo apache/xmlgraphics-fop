@@ -31,6 +31,7 @@ import org.apache.fop.render.afp.modca.triplets.FullyQualifiedNameTriplet;
 import org.apache.fop.render.afp.modca.triplets.MeasurementUnitsTriplet;
 import org.apache.fop.render.afp.modca.triplets.ObjectAreaSizeTriplet;
 import org.apache.fop.render.afp.modca.triplets.ObjectClassificationTriplet;
+import org.apache.fop.render.afp.modca.triplets.StrucFlgs;
 import org.apache.fop.render.afp.modca.triplets.Triplet;
 
 /**
@@ -58,6 +59,12 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
      * @return the triplet data length
      */
     protected int getTripletDataLength() {
+        if (tripletData == null) {
+            try {
+                getTripletData();
+            } catch (IOException e) {
+            }
+        }
         if (tripletData != null) {
             return tripletData.length;
         }
@@ -65,27 +72,18 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
     }
     
     /**
-     * Helper method to write the start of the Object.
-     * @param os The stream to write to
-     * @throws IOException an I/O exception if one occurred
+     * @return the triplet data
+     * @throws IOException throws an I/O exception if one occurred
      */
-    protected void writeStart(OutputStream os) throws IOException {
-        if (triplets != null) {
+    protected byte[] getTripletData() throws IOException {
+        if (tripletData == null && triplets != null) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             writeObjects(triplets, baos);
             this.tripletData = baos.toByteArray();
         }
+        return this.tripletData;
     }
-
-    /**
-     * Helper method to write the contents of the Object.
-     * @param os The stream to write to
-     * @throws IOException The stream to write to
-     */
-    protected void writeContent(OutputStream os) throws IOException {
-        writeTriplets(os);
-    }
-
+    
     /**
      * Writes any triplet data
      * @param os The stream to write to
@@ -97,6 +95,24 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
         } else if (triplets != null) {
             writeObjects(triplets, os);
         }        
+    }
+
+    /**
+     * Helper method to write the start of the Object.
+     * @param os The stream to write to
+     * @throws IOException throws an I/O exception if one occurred
+     */
+    protected void writeStart(OutputStream os) throws IOException {
+        getTripletData();
+    }
+
+    /**
+     * Helper method to write the contents of the Object.
+     * @param os The stream to write to
+     * @throws IOException throws an I/O exception if one occurred
+     */
+    protected void writeContent(OutputStream os) throws IOException {
+        writeTriplets(os);
     }
     
     /**
@@ -176,9 +192,8 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
      * @param fqName the fully qualified name of this resource
      */
     public void setFullyQualifiedName(byte fqnType, byte fqnFormat, String fqName) {
-        byte[] fqNameBytes;
         try {
-            fqNameBytes = fqName.getBytes(AFPConstants.EBCIDIC_ENCODING);
+            byte[] fqNameBytes = fqName.getBytes(AFPConstants.EBCIDIC_ENCODING);
             addTriplet(new FullyQualifiedNameTriplet(fqnType, fqnFormat, fqNameBytes));
         } catch (UnsupportedEncodingException e) {
             log.error(e.getMessage());
@@ -191,15 +206,17 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
     public String getFullyQualifiedName() {
         FullyQualifiedNameTriplet fqNameTriplet
             = (FullyQualifiedNameTriplet)getTriplet(Triplet.FULLY_QUALIFIED_NAME);
-        byte[] nameBytes = fqNameTriplet.getFullyQualifiedName();
-        if (nameBytes != null) {
-            try {
-                return new String(nameBytes, AFPConstants.EBCIDIC_ENCODING);
-            } catch (UnsupportedEncodingException e) {
-                log.error(e.getMessage());
+        if (fqNameTriplet != null) {
+            byte[] nameBytes = fqNameTriplet.getFullyQualifiedName();
+            if (nameBytes != null) {
+                try {
+                    return new String(nameBytes, AFPConstants.EBCIDIC_ENCODING);
+                } catch (UnsupportedEncodingException e) {
+                    log.error(e.getMessage());
+                }
+            } else {
+                log.warn(this + " has no fully qualified name");
             }
-        } else {
-            log.warn(this + " has no fully qualified name");
         }
         return null;
     }
@@ -207,12 +224,15 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
     /**
      * Sets the objects classification
      * @param objectClass the classification of the object
-     * @param componentId the component Id of the object 
+     * @param objectType the MOD:CA registry object type entry for the given
+     *        object/component type of the object
+     * @param strucFlgs information on the structure of the object and its container
      */
-    public void setObjectClassification(byte objectClass, byte componentId) {
-        addTriplet(new ObjectClassificationTriplet(objectClass, componentId));
+    public void setObjectClassification(byte objectClass, ObjectTypeRegistry.ObjectType objectType,
+            StrucFlgs strucFlgs) {
+        addTriplet(new ObjectClassificationTriplet(objectClass, objectType, strucFlgs));
     }
-
+        
     /**
      * Specifies the extent of an object area in the X and Y directions
      * @param x the x direction extent
