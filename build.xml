@@ -707,6 +707,11 @@ list of possible build targets.
         </fileset>
       </classpath>
     </javac>
+    <copy todir="${build.dir}/test-classes">
+      <fileset dir="${basedir}/test/java">
+        <include name="**/*.xsl"/>
+      </fileset>
+    </copy>
   </target>
 
   <target name="junit-transcoder" depends="junit-compile" description="Runs FOP's JUnit transcoder tests" if="junit.present">

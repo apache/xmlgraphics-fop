@@ -59,6 +59,11 @@
         </action>
       -->
     <!--/release-->
+    <release version="0.95" date="TBD">
+      <action context="Fonts" dev="JM" type="fix">
+        Fixed NullPointerException when loading a TrueType font using XML font metric files.
+      </action>
+    </release>
     <release version="0.95beta" date="26 March 2008">
       <notes>
         <section>
