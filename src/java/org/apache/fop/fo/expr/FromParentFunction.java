@@ -64,7 +64,13 @@ public class FromParentFunction extends FunctionBase {
          * non-inherited properties too. Perhaps the result is different for
          * a property line line-height which "inherits specified"???
          */
-        return pInfo.getPropertyList().getFromParent(FOPropertyMapping.getPropertyId(propName));
+        int propId = FOPropertyMapping.getPropertyId(propName);
+        if (propId < 0) {
+            throw new PropertyException(
+                    "Unknown property name used with inherited-property-value function: "
+                        + propName);
+        }
+        return pInfo.getPropertyList().getFromParent(propId);
     }
 
 }

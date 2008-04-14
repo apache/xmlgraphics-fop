@@ -23,26 +23,25 @@ import java.awt.geom.AffineTransform;
 
 import org.w3c.dom.Document;
 
-import org.apache.fop.render.Renderer;
-import org.apache.fop.render.XMLHandler;
-import org.apache.fop.render.RendererContext;
-import org.apache.fop.svg.SVGUserAgent;
-
-// Commons-Logging
+import org.apache.batik.bridge.BridgeContext;
+import org.apache.batik.bridge.GVTBuilder;
+import org.apache.batik.gvt.GraphicsNode;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.batik.bridge.GVTBuilder;
-import org.apache.batik.bridge.BridgeContext;
-import org.apache.batik.dom.svg.SVGDOMImplementation;
-import org.apache.batik.gvt.GraphicsNode;
+import org.apache.fop.render.AbstractGenericSVGHandler;
+import org.apache.fop.render.Renderer;
+import org.apache.fop.render.RendererContext;
+import org.apache.fop.svg.SVGEventProducer;
+import org.apache.fop.svg.SVGUserAgent;
 
 /**
  * Java2D XML handler for SVG (uses Apache Batik).
  * This handler handles XML for foreign objects when rendering to Java2D.
  * The properties from the Java2D renderer are subject to change.
  */
-public class Java2DSVGHandler implements XMLHandler, Java2DRendererContextConstants {
+public class Java2DSVGHandler extends AbstractGenericSVGHandler
+            implements Java2DRendererContextConstants {
 
     /** logging instance */
     private static Log log = LogFactory.getLog(Java2DSVGHandler.class);
@@ -52,16 +51,6 @@ public class Java2DSVGHandler implements XMLHandler, Java2DRendererContextConsta
      */
     public Java2DSVGHandler() {
         //nop
-    }
-
-    /** {@inheritDoc} */
-    public void handleXML(RendererContext context, 
-                Document doc, String ns) throws Exception {
-        Java2DInfo pdfi = getJava2DInfo(context);
-
-        if (SVGDOMImplementation.SVG_NAMESPACE_URI.equals(ns)) {
-            renderSVGDocument(context, doc, pdfi);
-        }
     }
 
     /**
@@ -106,23 +95,18 @@ public class Java2DSVGHandler implements XMLHandler, Java2DRendererContextConsta
         }
     }
     
-    /**
-     * Render the svg document.
-     * @param context the renderer context
-     * @param doc the svg document
-     * @param info the pdf information of the current context
-     */
+    /** {@inheritDoc} */
     protected void renderSVGDocument(RendererContext context,
-                                     Document doc,
-                                     Java2DInfo info) {
+                                     Document doc) {
+        Java2DInfo info = getJava2DInfo(context);
+        if (log.isDebugEnabled()) {
+            log.debug("renderSVGDocument(" + context + ", " + doc + ", " + info + ")");
+        }
 
-        log.debug("renderSVGDocument(" + context + ", " + doc + ", " + info + ")");
-        
         int x = info.currentXPosition;
         int y = info.currentYPosition;
         
-        float ptom = context.getUserAgent().getSourcePixelUnitToMillimeter();
-        SVGUserAgent ua = new SVGUserAgent(ptom, new AffineTransform());
+        SVGUserAgent ua = new SVGUserAgent(context.getUserAgent(), new AffineTransform());
         
         GVTBuilder builder = new GVTBuilder();
         BridgeContext ctx = new BridgeContext(ua);
@@ -131,7 +115,9 @@ public class Java2DSVGHandler implements XMLHandler, Java2DRendererContextConsta
         try {
             root = builder.build(ctx, doc);
         } catch (Exception e) {
-            log.error("SVG graphic could not be built: " + e.getMessage(), e);
+            SVGEventProducer eventProducer = SVGEventProducer.Provider.get(
+                    context.getUserAgent().getEventBroadcaster());
+            eventProducer.svgNotBuilt(this, e, getDocumentURI(doc));
             return;
         }
         
@@ -158,7 +144,9 @@ public class Java2DSVGHandler implements XMLHandler, Java2DRendererContextConsta
         try {
             root.paint(info.state.getGraph());
         } catch (Exception e) {
-            log.error("Error while painting SVG", e);
+            SVGEventProducer eventProducer = SVGEventProducer.Provider.get(
+                    context.getUserAgent().getEventBroadcaster());
+            eventProducer.svgRenderingError(this, e, getDocumentURI(doc));
         }
         
         info.state.getGraph().setTransform(origTransform);
@@ -169,9 +157,4 @@ public class Java2DSVGHandler implements XMLHandler, Java2DRendererContextConsta
         return (renderer instanceof Java2DRenderer);
     }
 
-
-    /** {@inheritDoc} */
-    public String getNamespace() {
-        return SVGDOMImplementation.SVG_NAMESPACE_URI;
-    }
 }

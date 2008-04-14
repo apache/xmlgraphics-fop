@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.w3c.dom.DOMImplementation;
+
 import org.xml.sax.Locator;
 
 import org.apache.commons.logging.Log;
@@ -144,7 +145,6 @@ public class ElementMappingRegistry {
                       + "No element mapping definition found for "
                       + FONode.getNodeString(namespaceURI, localName), locator);
             } else {
-                log.warn("Unknown formatting object " + namespaceURI + "^" + localName);
                 fobjMaker = new UnknownXMLObj.Maker(namespaceURI);
             }
         }

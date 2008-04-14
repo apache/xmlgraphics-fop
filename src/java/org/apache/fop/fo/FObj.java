@@ -27,13 +27,15 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+
+import org.apache.xmlgraphics.util.QName;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.properties.PropertyMaker;
-import org.apache.fop.util.QName;
-import org.xml.sax.Attributes;
-import org.xml.sax.Locator;
 
 /**
  * Base class for representation of formatting objects and their processing.
@@ -171,25 +173,7 @@ public abstract class FObj extends FONode implements Constants {
             if (!idrefs.contains(id)) {
                 idrefs.add(id);
             } else {
-                if (getUserAgent().validateStrictly()) {
-                    throw new ValidationException("Property id \"" + id 
-                            + "\" previously used; id values must be unique"
-                            + " in document.", locator);
-                } else {
-                    if (log.isWarnEnabled()) {
-                        StringBuffer msg = new StringBuffer();
-                        msg.append("Found non-unique id on ").append(getName());
-                        if (locator.getLineNumber() != -1) {
-                            msg.append(" (at ").append(locator.getLineNumber())
-                                .append("/").append(locator.getColumnNumber())
-                                .append(")");
-                        }
-                        msg.append("\nAny reference to it will be considered "
-                                + "a reference to the first occurrence "
-                                + "in the document.");
-                        log.warn(msg);
-                    }
-                }
+                getFOValidationEventProducer().idNotUnique(this, getName(), id, true, locator);
             }
         }
     }
@@ -283,16 +267,22 @@ public abstract class FObj extends FONode implements Constants {
         return false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public FONodeIterator getChildNodes() {
-        if (firstChild != null) {
+        if (hasChildren()) {
             return new FObjIterator(this);
         }
         return null;
     }
 
+    /**
+     * Indicates whether this formatting object has children.
+     * @return true if there are children
+     */
+    public boolean hasChildren() {
+        return this.firstChild != null;
+    }
+    
     /**
      * Return an iterator over the object's childNodes starting
      * at the passed-in node (= first call to iterator.next() will
@@ -348,8 +338,8 @@ public abstract class FObj extends FONode implements Constants {
                 if (node instanceof FObj
                         || (node instanceof FOText
                                 && ((FOText) node).willCreateArea())) {
-                    log.error(
-                            "fo:marker must be an initial child: " + mcname);
+                    getFOValidationEventProducer().markerNotInitialChild(this, getName(),
+                            mcname, locator);
                     return;
                 } else if (node instanceof FOText) {
                     iter.remove();
@@ -363,8 +353,8 @@ public abstract class FObj extends FONode implements Constants {
         if (!markers.containsKey(mcname)) {
             markers.put(mcname, marker);
         } else {
-            log.error("fo:marker 'marker-class-name' "
-                    + "must be unique for same parent: " + mcname);
+            getFOValidationEventProducer().markerNotUniqueForSameParent(this, getName(),
+                    mcname, locator);
         }
     }
 
@@ -382,6 +372,33 @@ public abstract class FObj extends FONode implements Constants {
         return markers;
     }
 
+    /** {@inheritDoc} */
+    protected String getContextInfoAlt() {
+        StringBuffer sb = new StringBuffer();
+        if (getLocalName() != null) {
+            sb.append(getName());
+            sb.append(", ");
+        }
+        if (hasId()) {
+            sb.append("id=").append(getId());
+            return sb.toString();
+        }
+        String s = gatherContextInfo();
+        if (s != null) {
+            sb.append("\"");
+            if (s.length() < 32) {
+                sb.append(s);
+            } else {
+                sb.append(s.substring(0, 32));
+                sb.append("...");
+            }
+            sb.append("\"");
+            return sb.toString();
+        } else {
+            return null;
+        }
+    }
+    
     /** {@inheritDoc} */
     protected String gatherContextInfo() {
         if (getLocator() != null) {

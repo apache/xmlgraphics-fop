@@ -22,26 +22,26 @@ package org.apache.fop.fo.pagination;
 // Java
 import java.awt.Rectangle;
 
-// FOP
-import org.apache.fop.fo.FONode;
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.datatypes.SimplePercentBaseContext;
+import org.apache.fop.fo.FONode;
 
 /**
  * The fo:region-end element.
  */
 public class RegionEnd extends RegionSE {
+
     /**
+     * Creates a new region-end element.
+     * @param parent the parent node
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
     public RegionEnd(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc} 
-     */
+    /** {@inheritDoc} */
     public Rectangle getViewportRectangle (FODimension reldims, SimplePageMaster spm) {
         /* Special rules apply to resolving extent as values are resolved relative 
          * to the page size and reference orientation.
@@ -80,9 +80,7 @@ public class RegionEnd extends RegionSE {
         return vpRect;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected String getDefaultRegionName() {
         return "xsl-region-end";
     }
@@ -92,9 +90,7 @@ public class RegionEnd extends RegionSE {
         return "region-end";
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int getNameId() {
         return FO_REGION_END;
     }

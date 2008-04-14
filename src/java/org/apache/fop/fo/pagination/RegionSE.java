@@ -35,15 +35,15 @@ public abstract class RegionSE extends SideRegion {
     // End of property values
 
     /**
+     * Creates a new region (start or end).
+     * @param parent the parent node
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
     protected RegionSE(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
     }

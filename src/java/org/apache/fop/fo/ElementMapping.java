@@ -24,8 +24,9 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.fop.util.QName;
 import org.w3c.dom.DOMImplementation;
+
+import org.apache.xmlgraphics.util.QName;
 
 /**
  * Abstract base class for Element Mappings (including FO Element Mappings)

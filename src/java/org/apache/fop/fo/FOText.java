@@ -19,11 +19,11 @@
 
 package org.apache.fop.fo;
 
-// Java
 import java.awt.Color;
 import java.util.NoSuchElementException;
 
-// FOP
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.flow.Block;
@@ -33,9 +33,6 @@ import org.apache.fop.fo.properties.CommonTextDecoration;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.SpaceProperty;
-
-// SAX
-import org.xml.sax.Locator;
 
 /**
  * A text node (PCDATA) in the formatting object tree.
@@ -396,7 +393,7 @@ public class FOText extends FONode {
                 return ca[i];
             }
         default:
-            log.warn("Invalid text-tranform value: " + textTransform);
+            assert false; //should never happen as the property subsystem catches that case
             return ca[i];
         }
     }

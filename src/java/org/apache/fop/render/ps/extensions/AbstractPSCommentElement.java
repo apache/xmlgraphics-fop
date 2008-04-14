@@ -22,7 +22,6 @@ package org.apache.fop.render.ps.extensions;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.ValidationException;
 
 /**
  * Base postscript commment element class
@@ -46,8 +45,8 @@ public abstract class AbstractPSCommentElement extends AbstractPSExtensionElemen
     protected void startOfNode() throws FOPException {
         if (parent.getNameId() != Constants.FO_DECLARATIONS
                 && parent.getNameId() != Constants.FO_SIMPLE_PAGE_MASTER) {
-          throw new ValidationException(getName()
-          + " must be a child of fo:declarations or fo:simple-page-master.");            
+            invalidChildError(getLocator(), parent.getName(), getNamespaceURI(), getName(),
+                    "rule.childOfSPMorDeclarations");
         }
     }
 

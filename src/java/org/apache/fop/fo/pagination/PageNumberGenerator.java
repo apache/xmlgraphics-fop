@@ -43,7 +43,7 @@ public class PageNumberGenerator {
     private int minPadding = 0;    // for decimal formats
 
     // preloaded strings of zeros
-    private String zeros[] = {
+    private String[] zeros = {
         "", "0", "00", "000", "0000", "00000"
     };
 
@@ -128,10 +128,10 @@ public class PageNumberGenerator {
     }
 
     private String makeRoman(int num) {
-        int arabic[] = {
+        int[] arabic = {
             1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1
         };
-        String roman[] = {
+        String[] roman = {
             "m", "cm", "d", "cd", "c", "xc", "l", "xl", "x", "ix", "v", "iv",
             "i"
         };

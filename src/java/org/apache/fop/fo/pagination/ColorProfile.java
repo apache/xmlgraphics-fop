@@ -19,13 +19,13 @@
 
 package org.apache.fop.fo.pagination;
 
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
-
-import org.xml.sax.Locator;
 
 /**
  * The fo:color-profile formatting object.
@@ -39,15 +39,15 @@ public class ColorProfile extends FObj {
     // End of property values
 
     /**
+     * Creates a new color-profile element.
+     * @param parent the parent node
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
     public ColorProfile(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         src = pList.get(PR_SRC).getString();
         colorProfileName = pList.get(PR_COLOR_PROFILE_NAME).getString();
@@ -59,12 +59,15 @@ public class ColorProfile extends FObj {
         XSL 1.0/FOP: EMPTY (no child nodes permitted)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
-        invalidChildError(loc, nsURI, localName);
+                throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
+            invalidChildError(loc, nsURI, localName);
+        }
     }
 
     /**
      * Return the "color-profile-name" property.
+     * @return the color-profile-name property
      */
     public String getColorProfileName() {
         return colorProfileName;
@@ -75,9 +78,7 @@ public class ColorProfile extends FObj {
         return "color-profile";
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int getNameId() {
         return FO_COLOR_PROFILE;
     }

@@ -117,18 +117,22 @@ public class SingleByteFont extends CustomFont {
         }
         
         //Give up, character is not available
-        Character ch = new Character(c);
-        if (warnedChars == null) {
-            warnedChars = new java.util.HashSet();
-        }
-        if (warnedChars.size() < 8 && !warnedChars.contains(ch)) {
-            warnedChars.add(ch);
-            if (warnedChars.size() == 8) {
-                log.warn("Many requested glyphs are not available in font " + getFontName());
-            } else {
-                log.warn("Glyph " + (int)c + " (0x" + Integer.toHexString(c) 
-                        + ", " + Glyphs.charToGlyphName(c)
-                        + ") not available in font " + getFontName());
+        if (this.eventListener != null) {
+            this.eventListener.glyphNotAvailable(this, c, getFontName());
+        } else {
+            Character ch = new Character(c);
+            if (warnedChars == null) {
+                warnedChars = new java.util.HashSet();
+            }
+            if (warnedChars.size() < 8 && !warnedChars.contains(ch)) {
+                warnedChars.add(ch);
+                if (warnedChars.size() == 8) {
+                    log.warn("Many requested glyphs are not available in font " + getFontName());
+                } else {
+                    log.warn("Glyph " + (int)c + " (0x" + Integer.toHexString(c) 
+                            + ", " + Glyphs.charToGlyphName(c)
+                            + ") not available in font " + getFontName());
+                }
             }
         }
         return NOT_FOUND;

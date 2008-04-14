@@ -67,6 +67,8 @@ public class FontInfo {
     /** Cache for Font instances. */
     private Map fontInstanceCache = new java.util.HashMap();
     
+    private FontEventListener eventListener;
+    
     /**
      * Main constructor
      */
@@ -77,6 +79,15 @@ public class FontInfo {
         this.usedFonts = new java.util.HashMap();
     }
 
+    /**
+     * Sets the font event listener that can be used to receive events about particular events
+     * in this class.
+     * @param listener the font event listener
+     */
+    public void setEventListener(FontEventListener listener) {
+        this.eventListener = listener;
+    }
+    
     /**
      * Checks if the font setup is valid (At least the ultimate fallback font 
      * must be registered.)
@@ -158,6 +169,9 @@ public class FontInfo {
     public void addMetrics(String name, FontMetrics metrics) {
         // add the given metrics as a font with the given name
 
+        if (metrics instanceof Typeface) {
+            ((Typeface)metrics).setEventListener(this.eventListener);
+        }
         this.fonts.put(name, metrics);
     }
 
@@ -364,8 +378,12 @@ public class FontInfo {
         }
         if (!loggedFontKeys.contains(replacedKey)) {
             loggedFontKeys.add(replacedKey);
-            log.warn("Font '" + replacedKey + "' not found. "
-                    + "Substituting with '" + newKey + "'.");
+            if (this.eventListener != null) {
+                this.eventListener.fontSubstituted(this, replacedKey, newKey);
+            } else {
+                log.warn("Font '" + replacedKey + "' not found. "
+                        + "Substituting with '" + newKey + "'.");
+            }
         }
     }
     

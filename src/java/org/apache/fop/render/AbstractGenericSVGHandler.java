@@ -30,12 +30,16 @@ import org.w3c.dom.Document;
 
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.GVTBuilder;
+import org.apache.batik.dom.AbstractDocument;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
+
 import org.apache.fop.render.RendererContext.RendererContextWrapper;
+import org.apache.fop.svg.SVGEventProducer;
 import org.apache.fop.svg.SVGUserAgent;
 
 /**
@@ -73,7 +77,7 @@ public abstract class AbstractGenericSVGHandler implements XMLHandler, RendererC
 
         //Prepare
         SVGUserAgent ua = new SVGUserAgent(
-                context.getUserAgent().getSourcePixelUnitToMillimeter(),
+                context.getUserAgent(),
                 new AffineTransform());
         GVTBuilder builder = new GVTBuilder();
         final BridgeContext ctx = new BridgeContext(ua);
@@ -83,7 +87,9 @@ public abstract class AbstractGenericSVGHandler implements XMLHandler, RendererC
         try {
             root = builder.build(ctx, doc);
         } catch (Exception e) {
-            log.error("SVG graphic could not be built: " + e.getMessage(), e);
+            SVGEventProducer eventProducer = SVGEventProducer.Provider.get(
+                    context.getUserAgent().getEventBroadcaster());
+            eventProducer.svgNotBuilt(this, e, getDocumentURI(doc));
             return;
         }
 
@@ -114,6 +120,20 @@ public abstract class AbstractGenericSVGHandler implements XMLHandler, RendererC
                 x, y, wrappedContext.getWidth(), wrappedContext.getHeight()); 
     }
 
+    /**
+     * Gets the document URI from a Document instance if possible.
+     * @param doc the Document
+     * @return the URI or null
+     */
+    protected String getDocumentURI(Document doc) {
+        String docURI = null;
+        if (doc instanceof AbstractDocument) {
+            AbstractDocument level3Doc = (AbstractDocument)doc;
+            docURI = level3Doc.getDocumentURI();
+        }
+        return docURI;
+    }
+    
     /**
      * Override this method to update the renderer context if it needs special settings for
      * certain conditions.

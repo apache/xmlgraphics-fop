@@ -57,7 +57,8 @@ public class TableCaption extends FObj {
         super(parent);
 
         if (!notImplementedWarningGiven) {
-            log.warn("fo:table-caption is not yet implemented.");
+            getFOValidationEventProducer().unimplementedFeature(this, getName(),
+                    "fo:table-caption", getLocator());
             notImplementedWarningGiven = true;
         }
     }
@@ -83,15 +84,17 @@ public class TableCaption extends FObj {
      * XSL Content Model: marker* (%block;)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
-        if (FO_URI.equals(nsURI) && localName.equals("marker")) {
-            if (blockItemFound) {
-               nodesOutOfOrderError(loc, "fo:marker", "(%block;)");
+            throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
+            if (localName.equals("marker")) {
+                if (blockItemFound) {
+                   nodesOutOfOrderError(loc, "fo:marker", "(%block;)");
+                }
+            } else if (!isBlockItem(nsURI, localName)) {
+                invalidChildError(loc, nsURI, localName);
+            } else {
+                blockItemFound = true;
             }
-        } else if (!isBlockItem(nsURI, localName)) {
-            invalidChildError(loc, nsURI, localName);
-        } else {
-            blockItemFound = true;
         }
     }
 

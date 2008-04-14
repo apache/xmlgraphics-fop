@@ -76,8 +76,7 @@ public class BasicLink extends Inline {
             externalDestination = null;
         } else if (externalDestination.length() == 0) {
             // slightly stronger than spec "should be specified"
-            attributeError("Missing attribute:  Either external-destination or " +
-                "internal-destination must be specified.");
+            getFOValidationEventProducer().missingLinkDestination(this, getName(), locator);
         }
     }
 
@@ -102,15 +101,17 @@ public class BasicLink extends Inline {
      * XSL Content Model: marker* (#PCDATA|%inline;|%block;)*
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
-        if (FO_URI.equals(nsURI) && localName.equals("marker")) {
-            if (blockOrInlineItemFound) {
-               nodesOutOfOrderError(loc, "fo:marker", "(#PCDATA|%inline;|%block;)");
+                throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
+            if (localName.equals("marker")) {
+                if (blockOrInlineItemFound) {
+                   nodesOutOfOrderError(loc, "fo:marker", "(#PCDATA|%inline;|%block;)");
+                }
+            } else if (!isBlockOrInlineItem(nsURI, localName)) {
+                invalidChildError(loc, nsURI, localName);
+            } else {
+                blockOrInlineItemFound = true;
             }
-        } else if (!isBlockOrInlineItem(nsURI, localName)) {
-            invalidChildError(loc, nsURI, localName);
-        } else {
-            blockOrInlineItemFound = true;
         }
     }
 

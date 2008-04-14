@@ -60,6 +60,11 @@ public class NearestSpecPropFunction extends FunctionBase {
         // NOTE: special cases for shorthand property
         // Should return COMPUTED VALUE
         int propId = FOPropertyMapping.getPropertyId(propName);
+        if (propId < 0) {
+            throw new PropertyException(
+                    "Unknown property name used with inherited-property-value function: "
+                        + propName);
+        }
         return pInfo.getPropertyList().getNearestSpecified(propId);
     }
 

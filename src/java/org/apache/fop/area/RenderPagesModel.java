@@ -156,23 +156,7 @@ public class RenderPagesModel extends AreaTreeModel {
                         && pageViewport.getPageSequence().isFirstPage(pageViewport)) {
                     renderer.startPageSequence(getCurrentPageSequence());
                 }
-                try {
-                    renderer.renderPage(pageViewport);
-                    if (!pageViewport.isResolved()) {
-                        String[] idrefs = pageViewport.getIDRefs();
-                        for (int count = 0; count < idrefs.length; count++) {
-                            log.warn("Page " + pageViewport.getPageNumberString()
-                                + ": Unresolved id reference \"" + idrefs[count] 
-                                + "\" found.");
-                        }
-                    }
-                } catch (Exception e) {
-                    // use error handler to handle this FOP or IO Exception
-                    log.error("Error while rendering page " + pageViewport.getPageIndex(), e);
-                    if (e instanceof RuntimeException) {
-                        throw (RuntimeException)e;
-                    }
-                }
+                renderPage(pageViewport);
                 pageViewport.clear();
                 iter.remove();
             } else {
@@ -183,6 +167,33 @@ public class RenderPagesModel extends AreaTreeModel {
             }
         }
         return renderer.supportsOutOfOrder() || prepared.isEmpty();
+    }
+
+    /**
+     * Renders the given page and notified about unresolved IDs if any.
+     * @param pageViewport the page to be rendered.
+     */
+    protected void renderPage(PageViewport pageViewport) {
+        try {
+            renderer.renderPage(pageViewport);
+            if (!pageViewport.isResolved()) {
+                String[] idrefs = pageViewport.getIDRefs();
+                for (int count = 0; count < idrefs.length; count++) {
+                    AreaEventProducer eventProducer = AreaEventProducer.Provider.get(
+                            renderer.getUserAgent().getEventBroadcaster());
+                    eventProducer.unresolvedIDReferenceOnPage(this,
+                            pageViewport.getPageNumberString(), idrefs[count]);
+                }
+            }
+        } catch (Exception e) {
+            AreaEventProducer eventProducer = AreaEventProducer.Provider.get(
+                    renderer.getUserAgent().getEventBroadcaster());
+            eventProducer.pageRenderingError(this,
+                    pageViewport.getPageNumberString(), e);
+            if (e instanceof RuntimeException) {
+                throw (RuntimeException)e;
+            }
+        }
     }
 
     /**

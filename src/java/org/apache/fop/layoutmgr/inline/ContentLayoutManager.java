@@ -60,7 +60,6 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
      */
     private static Log log = LogFactory.getLog(ContentLayoutManager.class);
 
-    private FOUserAgent userAgent;
     private Area holder;
     private int stackSize;
     private LayoutManager parentLM;

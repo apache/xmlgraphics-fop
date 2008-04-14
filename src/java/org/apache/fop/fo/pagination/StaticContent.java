@@ -27,24 +27,22 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.ValidationException;
 
 /**
- * Class modelling the fo:static-content object.
+ * Class modeling the fo:static-content object.
  */
 public class StaticContent extends Flow {
 
     /**
+     * Creates a new static-content element.
      * @param parent FONode that is the parent of this object
      */
     public StaticContent(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         if (getFlowName() == null || getFlowName().equals("")) {
-            throw new ValidationException("A 'flow-name' is required for "
-                                   + getName() + ".", locator);
+            missingPropertyError("flow-name");
         }
         getFOEventHandler().startFlow(this);
     }
@@ -66,9 +64,11 @@ public class StaticContent extends Flow {
      * XSL Content Model: (%block;)+
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
-        if (!isBlockItem(nsURI, localName)) {
-            invalidChildError(loc, nsURI, localName);
+                throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
+            if (!isBlockItem(nsURI, localName)) {
+                invalidChildError(loc, nsURI, localName);
+            }
         }
     }
 

@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.datatypes.LengthBase;
@@ -34,6 +35,7 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableColumn;
+import org.apache.fop.layoutmgr.BlockLevelEventProducer;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.ConditionalElementListener;
@@ -189,9 +191,9 @@ public class TableLayoutManager extends BlockStackingLayoutManager
             updateContentAreaIPDwithOverconstrainedAdjust(contentIPD);
         } else {
             if (!getTable().isAutoLayout()) {
-                log.info("table-layout=\"fixed\" and width=\"auto\", "
-                        + "but auto-layout not supported " 
-                        + "=> assuming width=\"100%\"");
+                BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
+                        getTable().getUserAgent().getEventBroadcaster());
+                eventProducer.tableFixedAutoWidthNotSupported(this, getTable().getLocator());
             }
             updateContentAreaIPDwithOverconstrainedAdjust();
         }
@@ -204,11 +206,11 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         }
         int availableIPD = referenceIPD - getIPIndents();
         if (getContentAreaIPD() > availableIPD) {
-            log.warn(FONode.decorateWithContextInfo(
-                    "The extent in inline-progression-direction (width) of a table is"
-                    + " bigger than the available space (" 
-                    + getContentAreaIPD() + "mpt > " + context.getRefIPD() + "mpt)", 
-                    getTable()));
+            BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
+                    getTable().getUserAgent().getEventBroadcaster());
+            eventProducer.objectTooWide(this, getTable().getName(),
+                    getContentAreaIPD(), context.getRefIPD(),
+                    getTable().getLocator());
         }
         
         /* initialize unit to determine computed values

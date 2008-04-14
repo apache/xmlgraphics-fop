@@ -31,6 +31,7 @@ import org.w3c.dom.Document;
 import org.apache.batik.parser.AWTTransformProducer;
 
 import org.apache.xmlgraphics.image.loader.ImageSize;
+import org.apache.xmlgraphics.util.QName;
 
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
@@ -45,7 +46,6 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.traits.BorderProps;
-import org.apache.fop.util.QName;
 
 /**
  * Abstract base class for renderers like PDF and PostScript where many painting operations

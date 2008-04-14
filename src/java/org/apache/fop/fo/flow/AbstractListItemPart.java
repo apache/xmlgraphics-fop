@@ -62,14 +62,16 @@ public abstract class AbstractListItemPart extends FObj {
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
-        if (FO_URI.equals(nsURI) && localName.equals("marker")) {
-            if (blockItemFound) {
-               nodesOutOfOrderError(loc, "fo:marker", "(%block;)");
+        if (FO_URI.equals(nsURI)) {
+            if (localName.equals("marker")) {
+                if (blockItemFound) {
+                   nodesOutOfOrderError(loc, "fo:marker", "(%block;)");
+                }
+            } else if (!isBlockItem(nsURI, localName)) {
+                invalidChildError(loc, nsURI, localName);
+            } else {
+                blockItemFound = true;
             }
-        } else if (!isBlockItem(nsURI, localName)) {
-            invalidChildError(loc, nsURI, localName);
-        } else {
-            blockItemFound = true;
         }
     }
 
@@ -79,17 +81,8 @@ public abstract class AbstractListItemPart extends FObj {
     protected void endOfNode() throws FOPException {
         if (!this.blockItemFound) {
             String contentModel = "marker* (%block;)+";
-            if (getUserAgent().validateStrictly()) {
-                missingChildElementError(contentModel);
-            } else {
-                StringBuffer message = new StringBuffer(
-                        errorText(getLocator()));
-                message.append(getName())
-                    .append(" is missing child elements. ")
-                    .append("Required Content Model: ")
-                    .append(contentModel);
-                log.warn(message.toString());
-            }
+            getFOValidationEventProducer().missingChildElement(this, getName(),
+                    contentModel, true, getLocator());
         }
     }
 

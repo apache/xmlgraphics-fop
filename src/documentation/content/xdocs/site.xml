@@ -155,6 +155,7 @@
       <fonts label="Fonts" href="fonts.html"/>
       <hyphenation label="Hyphenation" href="hyphenation.html"/>    
       <extensions label="Extensions" href="extensions.html"/>
+      <events label="Events" href="events.html"/>
     </features>
     
   </trunk>

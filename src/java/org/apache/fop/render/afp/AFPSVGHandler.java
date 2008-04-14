@@ -113,8 +113,7 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
         if (cfg != null) {
             strokeText = cfg.getChild("stroke-text", true).getValueAsBoolean(strokeText);
         }
-        final float uaResolution = context.getUserAgent().getSourceResolution();
-        SVGUserAgent svgUserAgent = new SVGUserAgent(25.4f / uaResolution, new AffineTransform());
+        SVGUserAgent svgUserAgent = new SVGUserAgent(context.getUserAgent(), new AffineTransform());
 
         BridgeContext ctx = new BridgeContext(svgUserAgent);
         AFPTextHandler afpTextHandler = null;

@@ -19,14 +19,15 @@
 
 package org.apache.fop.fo.extensions;
 
+import java.util.HashMap;
+import java.util.Set;
+
+import org.apache.xmlgraphics.util.QName;
+
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.UnknownXMLObj;
 import org.apache.fop.fo.extensions.destination.Destination;
-import org.apache.fop.util.QName;
-
-import java.util.HashMap;
-import java.util.Set;
 
 /**
  * Element mapping for FOP's proprietary extension to XSL-FO.

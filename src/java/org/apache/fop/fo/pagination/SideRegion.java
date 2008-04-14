@@ -31,7 +31,11 @@ public abstract class SideRegion extends Region {
 
     private Length extent;
     
-    /** @see org.apache.fop.fo.FONode#FONode(FONode) */
+    /**
+     * Creates a new side region.
+     * @param parent the parent node
+     * @see org.apache.fop.fo.FONode#FONode(FONode)
+     */
     protected SideRegion(FONode parent) {
         super(parent);
     }

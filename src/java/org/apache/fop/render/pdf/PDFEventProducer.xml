@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<catalogue xml:lang="en">
+  <message key="org.apache.fop.render.pdf.PDFEventProducer.nonFullyResolvedLinkTargets">{count} link target{count,equals,1,,s} could not be fully resolved and now point{count,equals,1,,s} to the top of the page or {count,equals,1,is,are} dysfunctional.</message>
+</catalogue>
