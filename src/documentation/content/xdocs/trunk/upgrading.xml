@@ -79,7 +79,7 @@
         </li>
         <li>
           Extensions and Renderers written for version 0.20.5 will not work with the new code! The new FOP 
-          extension for <a href="http://barcode4j.krysalis.org">Barcode4J</a> is available since 
+          extension for <a href="http://barcode4j.sourceforge.net">Barcode4J</a> is available since 
           January 2007.
         </li>
         <li>

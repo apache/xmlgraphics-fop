@@ -34,11 +34,12 @@ import org.apache.fop.fonts.FontResolver;
 import org.apache.fop.fonts.MultiByteFont;
 
 /**
- * Loads a font into memory directly from the original font file.
+ * Loads a TrueType font into memory directly from the original font file.
  */
 public class TTFFontLoader extends FontLoader {
 
     private MultiByteFont multiFont;
+    private String subFontName;
     
     /**
      * Default constructor
@@ -46,27 +47,50 @@ public class TTFFontLoader extends FontLoader {
      * @param resolver the FontResolver for font URI resolution
      */
     public TTFFontLoader(String fontFileURI, FontResolver resolver) {
+        this(fontFileURI, null, resolver);
+    }
+    
+    /**
+     * Additional constructor for TrueType Collections.
+     * @param fontFileURI the URI representing the font file
+     * @param subFontName the sub-fontname of a font in a TrueType Collection (or null for normal
+     *          TrueType fonts)
+     * @param resolver the FontResolver for font URI resolution
+     */
+    public TTFFontLoader(String fontFileURI, String subFontName, FontResolver resolver) {
         super(fontFileURI, resolver);
+        this.subFontName = subFontName;
     }
     
     /** {@inheritDoc} */
     protected void read() throws IOException {
+        read(this.subFontName);
+    }
+
+    /**
+     * Reads a TrueType font. 
+     * @param ttcFontName the TrueType sub-font name of TrueType Collection (may be null for
+     *    normal TrueType fonts)
+     * @throws IOException if an I/O error occurs
+     */
+    private void read(String ttcFontName) throws IOException {
         InputStream in = openFontUri(resolver, this.fontFileURI);
         try {
             TTFFile ttf = new TTFFile();
             FontFileReader reader = new FontFileReader(in);
-            boolean supported = ttf.readFont(reader, null);
+            boolean supported = ttf.readFont(reader, ttcFontName);
             if (!supported) {
                 throw new IOException("TrueType font is not supported: " + fontFileURI);
             }
-            buildFont(ttf);
+            buildFont(ttf, ttcFontName);
             loaded = true;
         } finally {
             IOUtils.closeQuietly(in);
         }
     }
-
-    private void buildFont(TTFFile ttf) {
+    
+    
+    private void buildFont(TTFFile ttf, String ttcFontName) {
         if (ttf.isCFF()) {
             throw new UnsupportedOperationException(
                     "OpenType fonts with CFF data are not supported, yet");
@@ -79,7 +103,7 @@ public class TTFFontLoader extends FontLoader {
         returnFont.setFullName(ttf.getFullName());
         returnFont.setFamilyNames(ttf.getFamilyNames());
         returnFont.setFontSubFamilyName(ttf.getSubFamilyName());
-        //multiFont.setTTCName(ttcName)
+        multiFont.setTTCName(ttcFontName);
         returnFont.setCapHeight(ttf.getCapHeight());
         returnFont.setXHeight(ttf.getXHeight());
         returnFont.setAscender(ttf.getLowerCaseAscent());
@@ -91,7 +115,7 @@ public class TTFFontLoader extends FontLoader {
         returnFont.setItalicAngle(Integer.parseInt(ttf.getItalicAngle()));
         returnFont.setMissingWidth(0);
         returnFont.setWeight(ttf.getWeightClass());
-        
+                
         multiFont.setCIDType(CIDFontType.CIDTYPE2);
         int[] wx = ttf.getWidths();
         multiFont.setWidthArray(wx);
