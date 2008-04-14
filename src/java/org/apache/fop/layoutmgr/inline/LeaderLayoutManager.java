@@ -19,11 +19,15 @@
 
 package org.apache.fop.layoutmgr.inline;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.FilledArea;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.TextArea;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.flow.Leader;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
@@ -40,10 +44,6 @@ import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.traits.MinOptMax;
-
-import java.util.List;
-import java.util.LinkedList;
-import org.apache.fop.fo.FObj;
 
 /**
  * LayoutManager for the fo:leader formatting object
@@ -159,7 +159,9 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             leaderArea = fa;
         } else if (fobj.getLeaderPattern() == EN_USECONTENT) {
             if (fobj.getChildNodes() == null) {
-                fobj.getLogger().error("Leader use-content with no content");
+                InlineLevelEventProducer eventProducer = InlineLevelEventProducer.Provider.get(
+                        getFObj().getUserAgent().getEventBroadcaster());
+                eventProducer.leaderWithoutContent(this, getFObj().getLocator());
                 return null;
             }
 
@@ -339,9 +341,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
         return returnList;
     }
 
-    /**
-     * {@inheritDoc} 
-     */
+    /** {@inheritDoc} */
     public int getBaseLength(int lengthBase, FObj fobj) {
         return getParent().getBaseLength(lengthBase, getParent().getFObj());
     }

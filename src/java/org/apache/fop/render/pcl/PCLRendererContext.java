@@ -19,9 +19,10 @@
 
 package org.apache.fop.render.pcl;
 
+import org.apache.xmlgraphics.util.QName;
+
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.render.RendererContext;
-import org.apache.fop.util.QName;
 
 /**
  * Wrapper on the RendererContext to access the information structure for drawing 

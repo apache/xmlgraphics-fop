@@ -86,15 +86,17 @@ public class InlineContainer extends FObj {
      * XSL Content Model: marker* (%block;)+
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
-        if (FO_URI.equals(nsURI) && localName.equals("marker")) {
-            if (blockItemFound) {
-               nodesOutOfOrderError(loc, "fo:marker", "(%block;)");
+                throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
+            if (localName.equals("marker")) {
+                if (blockItemFound) {
+                   nodesOutOfOrderError(loc, "fo:marker", "(%block;)");
+                }
+            } else if (!isBlockItem(nsURI, localName)) {
+                invalidChildError(loc, nsURI, localName);
+            } else {
+                blockItemFound = true;
             }
-        } else if (!isBlockItem(nsURI, localName)) {
-            invalidChildError(loc, nsURI, localName);
-        } else {
-            blockItemFound = true;
         }
     }
 

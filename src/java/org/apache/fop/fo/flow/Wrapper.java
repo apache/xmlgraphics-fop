@@ -19,12 +19,13 @@
 
 package org.apache.fop.fo.flow;
 
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.xml.sax.Locator;
 
 /**
  * Class modelling the fo:wrapper object.
@@ -66,17 +67,19 @@ public class Wrapper extends FObjMixed {
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
-        if (FO_URI.equals(nsURI) && "marker".equals(localName)) {
-            if (blockOrInlineItemFound) {
-               nodesOutOfOrderError(loc, "fo:marker", 
-                    "(#PCDATA|%inline;|%block;)");
+        if (FO_URI.equals(nsURI)) {
+            if ("marker".equals(localName)) {
+                if (blockOrInlineItemFound) {
+                   nodesOutOfOrderError(loc, "fo:marker", 
+                        "(#PCDATA|%inline;|%block;)");
+                }
+            } else if (isBlockOrInlineItem(nsURI, localName)) {
+                //delegate validation to parent
+                FONode.validateChildNode(this.parent, loc, nsURI, localName);
+                blockOrInlineItemFound = true;
+            } else {
+                invalidChildError(loc, nsURI, localName);
             }
-        } else if (isBlockOrInlineItem(nsURI, localName)) {
-            //delegate validation to parent
-            FONode.validateChildNode(this.parent, loc, nsURI, localName);
-            blockOrInlineItemFound = true;
-        } else {
-            invalidChildError(loc, nsURI, localName);
         }
     }
 

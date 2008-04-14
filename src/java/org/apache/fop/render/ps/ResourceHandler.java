@@ -20,8 +20,8 @@
 package org.apache.fop.render.ps;
 
 import java.awt.geom.Dimension2D;
-import java.awt.image.RenderedImage;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -68,6 +68,7 @@ import org.apache.xmlgraphics.ps.dsc.events.PostScriptComment;
 import org.apache.xmlgraphics.ps.dsc.tools.DSCTools;
 
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.fonts.FontInfo;
 
 /**
@@ -321,7 +322,10 @@ public class ResourceHandler implements DSCParserConstants, PSSupportedFlavors {
                     throw new UnsupportedOperationException("Unsupported image type: " + img);
                 }
             } catch (ImageException ie) {
-                throw new IOException("Error while generating form for image: " + ie.getMessage());
+                ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                        userAgent.getEventBroadcaster());
+                eventProducer.imageError(resTracker, (info != null ? info.toString() : uri),
+                        ie, null);
             }
         }
     }

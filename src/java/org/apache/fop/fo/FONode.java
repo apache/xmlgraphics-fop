@@ -21,6 +21,8 @@ package org.apache.fop.fo;
 
 // Java
 import java.util.ListIterator;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
@@ -28,6 +30,8 @@ import org.xml.sax.helpers.LocatorImpl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.xmlgraphics.util.QName;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
@@ -37,6 +41,7 @@ import org.apache.fop.fo.extensions.svg.SVGElementMapping;
 import org.apache.fop.fo.pagination.Root;
 import org.apache.fop.util.CharUtilities;
 import org.apache.fop.util.ContentHandlerFactory;
+import org.apache.fop.util.text.AdvancedMessageFormat.Function;
 
 /**
  * Base class for nodes in the XML tree
@@ -143,6 +148,10 @@ public abstract class FONode implements Cloneable {
         return parent.getFOEventHandler();
     }
     
+    /**
+     * Indicates whether this node is a child of an fo:marker.
+     * @return true if this node is a child of an fo:marker
+     */
     protected boolean inMarker() {
         return getFOEventHandler().inMarker();
     }
@@ -239,7 +248,7 @@ public abstract class FONode implements Cloneable {
      * @param start starting array element to add
      * @param end ending array element to add
      * @param pList currently applicable PropertyList 
-     * @param locator location in fo source file.
+     * @param locator location in the XSL-FO source file.
      * @throws FOPException if there's a problem during processing
      */
     protected void addCharacters(char[] data, int start, int end,
@@ -343,27 +352,14 @@ public abstract class FONode implements Cloneable {
     }
 
     /**
-     * Helper function to standardize property error exceptions
-     * (e.g., not specifying either an internal- or an external-destination
-     * property for an FO:link)
-     * @param problem text to display that indicates the problem
-     * @throws ValidationException the validation error provoked by the method call
+     * Returns an instance of the FOValidationEventProducer.
+     * @return an event producer for FO validation
      */
-    protected void attributeError(String problem) 
-                throws ValidationException {
-        throw new ValidationException(errorText(locator) + getName() 
-                + ", " + problem, locator);
+    protected FOValidationEventProducer getFOValidationEventProducer() {
+        return FOValidationEventProducer.Provider.get(
+                getUserAgent().getEventBroadcaster());
     }
-
-    /**
-     * Helper function to standardize attribute warnings
-     * (e.g., currently unsupported properties)
-     * @param problem text to display that indicates the problem
-     */
-    public void attributeWarning(String problem) {
-        log.warn(warningText(locator) + getName() + ", " + problem);
-    }
-
+    
     /**
      * Helper function to standardize "too many" error exceptions
      * (e.g., two fo:declarations within fo:root)
@@ -374,23 +370,32 @@ public abstract class FONode implements Cloneable {
      */
     protected void tooManyNodesError(Locator loc, String nsURI, String lName) 
                 throws ValidationException {
-        throw new ValidationException(errorText(loc) + "For " + getName() 
-            + ", only one " + getNodeString(nsURI, lName) + " may be declared.", 
-            loc);
+        tooManyNodesError(loc, new QName(nsURI, lName));
     }
 
     /**
      * Helper function to standardize "too many" error exceptions
      * (e.g., two fo:declarations within fo:root)
-     * This overrloaded method helps make the caller code better self-documenting
+     * @param loc org.xml.sax.Locator object of the error (*not* parent node)
+     * @param offendingNode the qualified name of the offending node
+     * @throws ValidationException the validation error provoked by the method call
+     */
+    protected void tooManyNodesError(Locator loc, QName offendingNode) 
+                throws ValidationException {
+        getFOValidationEventProducer().tooManyNodes(this, getName(), offendingNode, loc);
+    }
+
+    /**
+     * Helper function to standardize "too many" error exceptions
+     * (e.g., two fo:declarations within fo:root)
+     * This overloaded method helps make the caller code better self-documenting
      * @param loc org.xml.sax.Locator object of the error (*not* parent node)
      * @param offendingNode incoming node that would cause a duplication.
      * @throws ValidationException the validation error provoked by the method call
      */
     protected void tooManyNodesError(Locator loc, String offendingNode) 
                 throws ValidationException {
-        throw new ValidationException(errorText(loc) + "For " + getName() 
-            + ", only one " + offendingNode + " may be declared.", loc);
+        tooManyNodesError(loc, new QName(FO_URI, offendingNode));
     }
 
     /**
@@ -402,9 +407,23 @@ public abstract class FONode implements Cloneable {
      * @throws ValidationException the validation error provoked by the method call
      */
     protected void nodesOutOfOrderError(Locator loc, String tooLateNode, 
-        String tooEarlyNode) throws ValidationException {
-        throw new ValidationException(errorText(loc) + "For " + getName() + ", " + tooLateNode 
-            + " must be declared before " + tooEarlyNode + ".", loc);
+            String tooEarlyNode) throws ValidationException {
+        nodesOutOfOrderError(loc, tooLateNode, tooEarlyNode, false);
+    }
+    
+    /**
+     * Helper function to standardize "out of order" exceptions
+     * (e.g., fo:layout-master-set appearing after fo:page-sequence)
+     * @param loc org.xml.sax.Locator object of the error (*not* parent node)
+     * @param tooLateNode string name of node that should be earlier in document
+     * @param tooEarlyNode string name of node that should be later in document
+     * @param canRecover indicates whether FOP can recover from this problem and continue working
+     * @throws ValidationException the validation error provoked by the method call
+     */
+    protected void nodesOutOfOrderError(Locator loc, String tooLateNode, 
+            String tooEarlyNode, boolean canRecover) throws ValidationException {
+        getFOValidationEventProducer().nodeOutOfOrder(this, getName(),
+                tooLateNode, tooEarlyNode, canRecover, loc);
     }
     
     /**
@@ -417,24 +436,24 @@ public abstract class FONode implements Cloneable {
      */
     protected void invalidChildError(Locator loc, String nsURI, String lName) 
                 throws ValidationException {
-        invalidChildError(loc, nsURI, lName, null);
+        invalidChildError(loc, getName(), nsURI, lName, null);
     }
     
     /**
      * Helper function to return "invalid child" exceptions with more
      * complex validation rules (i.e., needing more explanation of the problem)
      * @param loc org.xml.sax.Locator object of the error (*not* parent node)
+     * @param parentName the name of the parent element
      * @param nsURI namespace URI of incoming invalid node
      * @param lName local name (i.e., no prefix) of incoming node
-     * @param ruleViolated text explanation of problem
+     * @param ruleViolated name of the rule violated (used to lookup a resource in a bundle)
      * @throws ValidationException the validation error provoked by the method call
      */
-    protected void invalidChildError(Locator loc, String nsURI, String lName,
+    protected void invalidChildError(Locator loc, String parentName, String nsURI, String lName,
                 String ruleViolated)
                 throws ValidationException {
-        throw new ValidationException(errorText(loc) + getNodeString(nsURI, lName) 
-            + " is not a valid child element of " + getName() 
-            + ((ruleViolated != null) ? ": " + ruleViolated : "."), loc);
+        getFOValidationEventProducer().invalidChild(this, parentName,
+                new QName(nsURI, lName), ruleViolated, loc);
     }
 
     /**
@@ -446,9 +465,22 @@ public abstract class FONode implements Cloneable {
      */
     protected void missingChildElementError(String contentModel)
                 throws ValidationException {
-        throw new ValidationException(errorText(locator) + getName() 
-            + " is missing child elements. \nRequired Content Model: " 
-            + contentModel, locator);
+        getFOValidationEventProducer().missingChildElement(this, getName(),
+                contentModel, false, locator);
+    }
+
+    /**
+     * Helper function to throw an error caused by missing mandatory child elements.
+     * E.g., fo:layout-master-set not having any page-master child element.
+     * @param contentModel The XSL Content Model for the fo: object or a similar description 
+     *                     indicating the necessary child elements.
+     * @param canRecover indicates whether FOP can recover from this problem and continue working
+     * @throws ValidationException the validation error provoked by the method call
+     */
+    protected void missingChildElementError(String contentModel, boolean canRecover)
+                throws ValidationException {
+        getFOValidationEventProducer().missingChildElement(this, getName(),
+                contentModel, canRecover, locator);
     }
 
     /**
@@ -458,8 +490,7 @@ public abstract class FONode implements Cloneable {
      */
     protected void missingPropertyError(String propertyName)
                 throws ValidationException {
-        throw new ValidationException(errorText(locator) + getName()
-            + " is missing required \"" + propertyName + "\" property.", locator);
+        getFOValidationEventProducer().missingProperty(this, getName(), propertyName, locator);
     }
 
     /**
@@ -513,9 +544,10 @@ public abstract class FONode implements Cloneable {
     
     /**
      * Returns a String containing as much context information as possible about a node. Call
-     * this methods only in exceptional conditions because this method may perform quite extensive
+     * this method only in exceptional conditions because this method may perform quite extensive
      * information gathering inside the FO tree.
-     * @return a String containing 
+     * @return a String containing context information
+     * @deprecated Not localized! Should rename getContextInfoAlt() to getContextInfo() when done!
      */
     public String getContextInfo() {
         StringBuffer sb = new StringBuffer();
@@ -540,6 +572,54 @@ public abstract class FONode implements Cloneable {
             sb.setLength(80);
         }
         return sb.toString();
+    }
+    
+    /**
+     * Returns a String containing as some context information about a node. It does not take the
+     * locator into consideration and returns null if no useful context information can be found.
+     * Call this method only in exceptional conditions because this method may perform quite
+     * extensive information gathering inside the FO tree. All text returned by this method that
+     * is not extracted from document content needs to be locale-independent.
+     * @return a String containing context information
+     */
+    protected String getContextInfoAlt() {
+        String s = gatherContextInfo();
+        if (s != null) {
+            StringBuffer sb = new StringBuffer();
+            if (getLocalName() != null) {
+                sb.append(getName());
+                sb.append(", ");
+            }
+            sb.append("\"");
+            sb.append(s);
+            sb.append("\"");
+            return sb.toString();
+        } else {
+            return null;
+        }
+    }
+    
+    /** Function for AdvancedMessageFormat to retrieve context info from an FONode. */
+    public static class GatherContextInfoFunction implements Function {
+
+        /** {@inheritDoc} */
+        public Object evaluate(Map params) {
+            Object obj = params.get("source");
+            if (obj instanceof PropertyList) {
+                PropertyList propList = (PropertyList)obj;
+                obj = propList.getFObj();
+            }
+            if (obj instanceof FONode) {
+                FONode node = (FONode)obj;
+                return node.getContextInfoAlt();
+            }
+            return null;
+        }
+
+        /** {@inheritDoc} */
+        public Object getName() {
+            return "gatherContextInfo";
+        }
     }
     
     /**
@@ -687,7 +767,7 @@ public abstract class FONode implements Cloneable {
          * of child nodes
          * @return  the parent node
          */
-        public FObj parentNode();
+        FObj parentNode();
         
         /**
          * Convenience method with return type of FONode
@@ -695,7 +775,7 @@ public abstract class FONode implements Cloneable {
          * <code>(FONode) next();</code>)
          * @return the next node (if any), as a type FONode
          */
-        public FONode nextNode();
+        FONode nextNode();
         
         /**
          * Convenience method with return type of FONode
@@ -703,7 +783,7 @@ public abstract class FONode implements Cloneable {
          * <code>(FONode) previous();</code>)
          * @return the previous node (if any), as a type FONode
          */
-        public FONode previousNode();
+        FONode previousNode();
         
         /**
          * Returns the first node in the list, and decreases the index,
@@ -711,7 +791,7 @@ public abstract class FONode implements Cloneable {
          * @return the first node in the list
          * @throws NoSuchElementException if the list is empty
          */
-        public FONode firstNode();
+        FONode firstNode();
         
         /**
          * Returns the last node in the list, and advances the
@@ -720,7 +800,7 @@ public abstract class FONode implements Cloneable {
          * @return the last node in the list
          * @throws NoSuchElementException if the list is empty
          */
-        public FONode lastNode();
+        FONode lastNode();
 
     }
 }

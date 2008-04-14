@@ -82,12 +82,13 @@ public class Footnote extends FObj {
      *      generates an absolutely positioned area.
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
-            if (FO_URI.equals(nsURI) && localName.equals("inline")) {
+                throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
+            if (localName.equals("inline")) {
                 if (footnoteCitation != null) {
                     tooManyNodesError(loc, "fo:inline");
                 }
-            } else if (FO_URI.equals(nsURI) && localName.equals("footnote-body")) {
+            } else if (localName.equals("footnote-body")) {
                 if (footnoteCitation == null) {
                     nodesOutOfOrderError(loc, "fo:inline", "fo:footnote-body");
                 } else if (footnoteBody != null) {
@@ -96,6 +97,7 @@ public class Footnote extends FObj {
             } else {
                 invalidChildError(loc, nsURI, localName);
             }
+        }
     }
 
     /**

@@ -31,6 +31,8 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.xmlgraphics.util.QName;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FormattingResults;
@@ -130,6 +132,7 @@ public class FOTreeBuilder extends DefaultHandler {
             throw new IllegalStateException("FOTreeBuilder (and the Fop class) cannot be reused."
                     + " Please instantiate a new instance.");
         }
+        
         used = true;
         empty = true;
         rootFObj = null;    // allows FOTreeBuilder to be reused
@@ -146,8 +149,10 @@ public class FOTreeBuilder extends DefaultHandler {
     public void endDocument() throws SAXException {
         this.delegate.endDocument();
         if (this.rootFObj == null && empty) {
-            throw new ValidationException(
-                    "Document is empty (something might be wrong with your XSLT stylesheet).");
+            FOValidationEventProducer eventProducer
+                = FOValidationEventProducer.Provider.get(
+                    foEventHandler.getUserAgent().getEventBroadcaster());
+            eventProducer.emptyDocument(this);
         }
         rootFObj = null;
         if (log.isDebugEnabled()) {
@@ -176,18 +181,6 @@ public class FOTreeBuilder extends DefaultHandler {
                 delegate.endElement(uri, localName, rawName);
             }
         }
-    }
-
-    /**
-     * Finds the {@link Maker} used to create {@link FONode} objects of a particular type
-     * 
-     * @param namespaceURI URI for the namespace of the element
-     * @param localName name of the Element
-     * @return the ElementMapping.Maker that can create an FO object for this element
-     * @throws FOPException if a Maker could not be found for a bound namespace.
-     */
-    private Maker findFOMaker(String namespaceURI, String localName) throws FOPException {
-        return elementMappingRegistry.findFOMaker(namespaceURI, localName, locator);
     }
 
     /** {@inheritDoc} */
@@ -258,22 +251,21 @@ public class FOTreeBuilder extends DefaultHandler {
             if (rootFObj == null) {
                 empty = false;
                 if (!namespaceURI.equals(FOElementMapping.URI) 
-                    || !localName.equals("root")) {
-                    throw new ValidationException(
-                        "Error: First element must be the fo:root formatting object. "
-                        + "Found " + FONode.getNodeString(namespaceURI, localName) 
-                        + " instead."
-                        + " Please make sure you're producing a valid XSL-FO document.");
+                        || !localName.equals("root")) {
+                    FOValidationEventProducer eventProducer
+                        = FOValidationEventProducer.Provider.get(
+                                foEventHandler.getUserAgent().getEventBroadcaster());
+                    eventProducer.invalidFORoot(this, FONode.getNodeString(namespaceURI, localName),
+                            getEffectiveLocator());
                 }
             } else { // check that incoming node is valid for currentFObj
-                if (namespaceURI.equals(FOElementMapping.URI)
-                    || namespaceURI.equals(ExtensionElementMapping.URI)) {
+                if (currentFObj.getNamespaceURI().equals(FOElementMapping.URI)
+                    || currentFObj.getNamespaceURI().equals(ExtensionElementMapping.URI)) {
                     currentFObj.validateChildNode(locator, namespaceURI, localName);
                 }
             }
             
-            ElementMapping.Maker fobjMaker = 
-                findFOMaker(namespaceURI, localName);
+            ElementMapping.Maker fobjMaker = findFOMaker(namespaceURI, localName);
 
             try {
                 foNode = fobjMaker.make(currentFObj);
@@ -342,8 +334,7 @@ public class FOTreeBuilder extends DefaultHandler {
             if (currentPropertyList != null
                     && currentPropertyList.getFObj() == currentFObj
                     && !foEventHandler.inMarker()) {
-                currentPropertyList = 
-                    currentPropertyList.getParentPropertyList();
+                currentPropertyList = currentPropertyList.getParentPropertyList();
             }
             
             if (currentFObj.getNameId() == Constants.FO_MARKER) {
@@ -373,7 +364,29 @@ public class FOTreeBuilder extends DefaultHandler {
         /** {@inheritDoc} */
         public void endDocument() throws SAXException {
             currentFObj = null;
-        }        
+        }
+        
+        /**
+         * Finds the {@link Maker} used to create {@link FONode} objects of a particular type
+         * 
+         * @param namespaceURI URI for the namespace of the element
+         * @param localName name of the Element
+         * @return the ElementMapping.Maker that can create an FO object for this element
+         * @throws FOPException if a Maker could not be found for a bound namespace.
+         */
+        private Maker findFOMaker(String namespaceURI, String localName) throws FOPException {
+            Maker maker = elementMappingRegistry.findFOMaker(namespaceURI, localName, locator);
+            if (maker instanceof UnknownXMLObj.Maker) {
+                FOValidationEventProducer eventProducer
+                    = FOValidationEventProducer.Provider.get(
+                        foEventHandler.getUserAgent().getEventBroadcaster());
+                eventProducer.unknownFormattingObject(this, currentFObj.getName(),
+                        new QName(namespaceURI, localName),
+                        getEffectiveLocator());
+            }
+            return maker;
+        }
+
     }
 }
 

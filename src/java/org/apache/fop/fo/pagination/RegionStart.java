@@ -32,16 +32,17 @@ import org.apache.fop.datatypes.SimplePercentBaseContext;
  * The fo:region-start element.
  */
 public class RegionStart extends RegionSE {
+
     /**
+     * Creates a new region-start element.
+     * @param parent the parent node
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
     public RegionStart(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc} 
-     */
+    /** {@inheritDoc} */
     public Rectangle getViewportRectangle (FODimension reldims, SimplePageMaster spm) {
         /* Special rules apply to resolving extent as values are resolved relative 
          * to the page size and reference orientation.
@@ -77,9 +78,7 @@ public class RegionStart extends RegionSE {
         return vpRect;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected String getDefaultRegionName() {
         return "xsl-region-start";
     }
@@ -89,9 +88,7 @@ public class RegionStart extends RegionSE {
         return "region-start";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int getNameId() {
         return FO_REGION_START;
     }

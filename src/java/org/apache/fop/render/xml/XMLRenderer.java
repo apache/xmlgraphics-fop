@@ -41,6 +41,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.AttributesImpl;
 
+import org.apache.xmlgraphics.util.QName;
 import org.apache.xmlgraphics.util.XMLizable;
 
 import org.apache.fop.apps.FOPException;
@@ -90,7 +91,6 @@ import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.XMLHandler;
 import org.apache.fop.util.ColorUtil;
-import org.apache.fop.util.QName;
 
 /**
  * Renderer that renders areas to XML for debugging purposes.

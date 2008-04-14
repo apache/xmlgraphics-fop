@@ -108,15 +108,17 @@ public class ListBlock extends FObj {
      * XSL Content Model: marker* (list-item)+
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
-        if (FO_URI.equals(nsURI) && localName.equals("marker")) {
-            if (hasListItem) {
-                nodesOutOfOrderError(loc, "fo:marker", "fo:list-item");
+            throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
+            if (localName.equals("marker")) {
+                if (hasListItem) {
+                    nodesOutOfOrderError(loc, "fo:marker", "fo:list-item");
+                }
+            } else if (localName.equals("list-item")) {
+                hasListItem = true;
+            } else {
+                invalidChildError(loc, nsURI, localName);
             }
-        } else if (FO_URI.equals(nsURI) && localName.equals("list-item")) {
-            hasListItem = true;
-        } else {
-            invalidChildError(loc, nsURI, localName);
         }
     }
 

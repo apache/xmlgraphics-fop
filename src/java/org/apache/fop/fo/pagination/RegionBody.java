@@ -43,29 +43,29 @@ public class RegionBody extends Region {
     // End of property values
 
     /**
+     * Creates a new region-body element.
+     * @param parent the parent node
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
     public RegionBody(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
         commonMarginBlock = pList.getMarginBlockProps();
         columnCount = pList.get(PR_COLUMN_COUNT).getNumeric();
         columnGap = pList.get(PR_COLUMN_GAP).getLength();
         
-        if ((getColumnCount() > 1) && (getOverflow() == EN_SCROLL)) {
+        if ((getColumnCount() != 1) && (getOverflow() == EN_SCROLL)) {
             /* This is an error (See XSL Rec, fo:region-body description).
              * The Rec allows for acting as if "1" is chosen in
              * these cases, but we will need to be able to change Numeric
              * values in order to do this.
              */
-            attributeError("If overflow property is set to \"scroll\"," 
-                    + " a column-count other than \"1\" may not be specified.");
+            getFOValidationEventProducer().columnCountErrorOnRegionBodyOverflowScroll(this,
+                    getName(), getLocator());
         }
     }
 
@@ -93,9 +93,7 @@ public class RegionBody extends Region {
         return columnGap.getValue();
     }
 
-    /**
-     * {@inheritDoc} 
-     */
+    /** {@inheritDoc} */
     public Rectangle getViewportRectangle (FODimension reldims, SimplePageMaster spm) {
         /* Special rules apply to resolving margins in the page context.
          * Contrary to normal margins in this case top and bottom margin
@@ -143,9 +141,7 @@ public class RegionBody extends Region {
                     reldims.bpd - before - after);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected String getDefaultRegionName() {
         return "xsl-region-body";
     }
@@ -155,9 +151,7 @@ public class RegionBody extends Region {
         return "region-body";
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int getNameId() {
         return FO_REGION_BODY;
     }

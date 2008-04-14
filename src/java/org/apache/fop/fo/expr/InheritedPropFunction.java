@@ -58,6 +58,11 @@ public class InheritedPropFunction extends FunctionBase {
         }
 
         int propId = FOPropertyMapping.getPropertyId(propName);
+        if (propId < 0) {
+            throw new PropertyException(
+                    "Unknown property name used with inherited-property-value function: "
+                        + propName);
+        }
         return pInfo.getPropertyList().getInherited(propId);
     }
 

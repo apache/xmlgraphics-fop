@@ -32,6 +32,7 @@ import org.w3c.dom.svg.SVGDocument;
 
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.UnitProcessor;
+import org.apache.batik.bridge.UserAgent;
 import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.dom.svg.SVGOMDocument;
@@ -46,7 +47,7 @@ import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
 import org.apache.xmlgraphics.image.loader.util.ImageUtil;
 import org.apache.xmlgraphics.util.MimeConstants;
 
-import org.apache.fop.svg.SVGUserAgent;
+import org.apache.fop.svg.SimpleSVGUserAgent;
 import org.apache.fop.util.UnclosableInputStream;
 
 /**
@@ -154,8 +155,15 @@ public class PreloaderSVG extends AbstractImagePreloader {
         private ImageInfo createImageInfo(String uri, ImageContext context, SVGDocument doc) {
             Element e = doc.getRootElement();
             float pxUnitToMillimeter = 25.4f / context.getSourceResolution(); 
-            SVGUserAgent userAg = new SVGUserAgent(pxUnitToMillimeter,
-                        new AffineTransform());
+            UserAgent userAg = new SimpleSVGUserAgent(pxUnitToMillimeter,
+                        new AffineTransform()) {
+
+                /** {@inheritDoc} */
+                public void displayMessage(String message) {
+                    log.debug(message);
+                }
+                
+            };
             BridgeContext ctx = new BridgeContext(userAg);
             UnitProcessor.Context uctx = UnitProcessor.createContext(ctx, e);
 

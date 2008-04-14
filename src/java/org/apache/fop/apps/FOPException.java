@@ -32,6 +32,8 @@ public class FOPException extends SAXException {
     private String systemId;
     private int line;
     private int column;
+    
+    private String localizedMessage;
 
     /**
      * Constructs a new FOP exception with the specified detail message.
@@ -210,5 +212,24 @@ public class FOPException extends SAXException {
             }
         }
     }
+    
+    /**
+     * Sets the localized message for this exception.
+     * @param msg the localized message
+     */
+    public void setLocalizedMessage(String msg) {
+        this.localizedMessage = msg;
+    }
 
+    /** {@inheritDoc} */
+    public String getLocalizedMessage() {
+        if (this.localizedMessage != null) {
+            return this.localizedMessage;
+        } else {
+            return super.getLocalizedMessage();
+        }
+    }
+
+    
+    
 }

@@ -67,6 +67,7 @@ import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.WordArea;
+import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.FontInfo;
 
@@ -113,21 +114,15 @@ public abstract class AbstractRenderer
     
     private Set warnedXMLHandlers;
     
-    /**
-     *  {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public abstract void setupFontInfo(FontInfo fontInfo);
 
-    /**
-     *  {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void setUserAgent(FOUserAgent agent) {
         userAgent = agent;
     }
 
-    /**
-     *  @return the associated <code>FOUserAgent</code>
-     */
+    /** {@inheritDoc} */
     public FOUserAgent getUserAgent() {
         return userAgent;
     }
@@ -797,10 +792,11 @@ public abstract class AbstractRenderer
                     = new XMLHandlerConfigurator(userAgent);
                 configurator.configure(ctx, namespace);
                 handler.handleXML(ctx, doc, namespace);
-            } catch (Throwable t) {
+            } catch (Exception e) {
                 // could not handle document
-                log.error("Some XML content will be ignored. "
-                        + "Could not render XML", t);
+                ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                        ctx.getUserAgent().getEventBroadcaster());
+                eventProducer.foreignXMLProcessingError(this, doc, namespace, e);
             }
         } else {
             if (warnedXMLHandlers == null) {
@@ -809,8 +805,9 @@ public abstract class AbstractRenderer
             if (!warnedXMLHandlers.contains(namespace)) {
                 // no handler found for document
                 warnedXMLHandlers.add(namespace);
-                log.warn("Some XML content will be ignored. "
-                        + "No handler defined for XML: " + namespace);
+                ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                        ctx.getUserAgent().getEventBroadcaster());
+                eventProducer.foreignXMLNoHandler(this, doc, namespace);
             }
         }
     }

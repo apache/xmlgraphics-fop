@@ -24,6 +24,7 @@ import java.util.LinkedList;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.table.EffRow;
 import org.apache.fop.fo.flow.table.GridUnit;
@@ -32,6 +33,7 @@ import org.apache.fop.fo.flow.table.TableColumn;
 import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.LengthRangeProperty;
+import org.apache.fop.layoutmgr.BlockLevelEventProducer;
 import org.apache.fop.layoutmgr.ElementListObserver;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.MinOptMaxUtil;
@@ -193,7 +195,9 @@ class RowGroupLayoutManager {
             row.setHeight(rowHeights[rgi]);
             row.setExplicitHeight(explicitRowHeight);
             // TODO re-enable and improve after clarification
+            //See http://markmail.org/message/h25ycwwu7qglr4k4
 //            if (maxCellBPD > row.getExplicitHeight().max) {
+//old:
 //                log.warn(FONode.decorateWithContextInfo(
 //                        "The contents of row " + (row.getIndex() + 1) 
 //                        + " are taller than they should be (there is a"
@@ -203,10 +207,12 @@ class RowGroupLayoutManager {
 //                        + " to " + maxCellBPD + " millipoints, but the row shouldn't get"
 //                        + " any taller than " + row.getExplicitHeight() + " millipoints.", 
 //                        row.getTableRow()));
+//new (with events):
+//                BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Factory.create(
+//                        tableRow.getUserAgent().getEventBroadcaster());
+//                eventProducer.rowTooTall(this, row.getIndex() + 1,
+//                        maxCellBPD, row.getExplicitHeight().max, tableRow.getLocator());
 //            }
-            if (log.isDebugEnabled()) {
-                log.debug("  height=" + rowHeights[rgi] + " explicit=" + explicitRowHeight);
-            }
         }
     }
 }

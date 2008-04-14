@@ -25,7 +25,6 @@ import java.util.List;
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
@@ -62,7 +61,9 @@ public class Root extends FObj {
      */
     private FOEventHandler foEventHandler = null;
      
-     /**
+    /**
+     * Creates a new root element.
+     * @param parent the parent node (must be null)
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
     public Root(FONode parent) {
@@ -136,13 +137,6 @@ public class Root extends FObj {
         }
     }
     
-
-    /** @inheritDoc */
-    protected void validateChildNode(Locator loc, FONode child) throws ValidationException {
-        if (child instanceof AbstractPageSequence) {
-            pageSequenceFound = true;
-        }
-    }
 
     /**
      * Sets the FOEventHandler object that this Root is attached to
@@ -291,9 +285,7 @@ public class Root extends FObj {
         return bookmarkTree;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public Root getRoot() {
         return this;
     }
@@ -303,9 +295,7 @@ public class Root extends FObj {
         return "root";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int getNameId() {
         return FO_ROOT;
     }

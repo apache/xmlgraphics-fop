@@ -22,13 +22,13 @@ package org.apache.fop.render.ps.extensions;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.ValidationException;
 
 /**
  * Extension element for fox:ps-setup-code. 
  */
 public class PSSetupCodeElement extends AbstractPSExtensionObject {
 
+    /** The element name */
     protected static final String ELEMENT = "ps-setup-code";
     
     /**
@@ -43,7 +43,8 @@ public class PSSetupCodeElement extends AbstractPSExtensionObject {
     protected void startOfNode() throws FOPException {
         super.startOfNode();
         if (parent.getNameId() != Constants.FO_DECLARATIONS) {
-            throw new ValidationException(getName() + " must be a child of fo:declarations.");
+            invalidChildError(getLocator(), parent.getName(), getNamespaceURI(), getName(),
+                    "rule.childOfDeclarations");
         }
     }
     

@@ -36,15 +36,15 @@ public abstract class RegionBA extends SideRegion {
     // End of property values
     
     /**
+     * Creates a new region (before or after).
+     * @param parent the parent node
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
     protected RegionBA(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
         precedence = pList.get(PR_PRECEDENCE).getEnum();

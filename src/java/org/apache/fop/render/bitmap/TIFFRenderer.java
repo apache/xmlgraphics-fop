@@ -129,7 +129,10 @@ public class TIFFRenderer extends Java2DRenderer {
         // Creates writer
         ImageWriter writer = ImageWriterRegistry.getInstance().getWriterFor(getMimeType());
         if (writer == null) {
-            throw new NullPointerException("No ImageWriter for " + getMimeType() + " available!");
+            BitmapRendererEventProducer eventProducer
+                = BitmapRendererEventProducer.Provider.get(
+                        getUserAgent().getEventBroadcaster());
+            eventProducer.noImageWriterFound(this, getMimeType());
         }
         if (writer.supportsMultiImageWriter()) {
             MultiImageWriter multiWriter = writer.createMultiImageWriter(outputStream);
@@ -145,8 +148,10 @@ public class TIFFRenderer extends Java2DRenderer {
         } else {
             writer.writeImage((RenderedImage) pageImagesItr.next(), outputStream, writerParams);
             if (pageImagesItr.hasNext()) {
-                log.error("Image encoder does not support multiple images. Only the first page"
-                        + " has been produced.");
+                BitmapRendererEventProducer eventProducer
+                    = BitmapRendererEventProducer.Provider.get(
+                            getUserAgent().getEventBroadcaster());
+                eventProducer.stoppingAfterFirstPageNoFilename(this);
             }
         }
 

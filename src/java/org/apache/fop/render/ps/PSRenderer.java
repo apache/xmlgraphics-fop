@@ -85,6 +85,7 @@ import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.datatypes.URISpecification;
+import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fonts.Font;
@@ -95,6 +96,7 @@ import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.ImageAdapter;
 import org.apache.fop.render.RendererContext;
+import org.apache.fop.render.RendererEventProducer;
 import org.apache.fop.render.ps.extensions.PSCommentAfter;
 import org.apache.fop.render.ps.extensions.PSCommentBefore;
 import org.apache.fop.render.ps.extensions.PSExtensionAttachment;
@@ -296,7 +298,9 @@ public class PSRenderer extends AbstractPathOrientedRenderer
      */
     protected void handleIOTrouble(IOException ioe) {
         if (!ioTrouble) {
-            log.error("Error while writing to target file", ioe);
+            RendererEventProducer eventProducer = RendererEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.ioError(this, ioe);
             ioTrouble = true;
         }
     }
@@ -522,12 +526,17 @@ public class PSRenderer extends AbstractPathOrientedRenderer
             }
 
         } catch (ImageException ie) {
-            log.error("Error while processing image: "
-                    + (info != null ? info.toString() : uri), ie);
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageError(this, (info != null ? info.toString() : uri), ie, null);
         } catch (FileNotFoundException fe) {
-            log.error(fe.getMessage());
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageNotFound(this, (info != null ? info.toString() : uri), fe, null);
         } catch (IOException ioe) {
-            handleIOTrouble(ioe);
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageIOError(this, (info != null ? info.toString() : uri), ioe, null);
         }
     }
 
@@ -1070,8 +1079,9 @@ public class PSRenderer extends AbstractPathOrientedRenderer
                             try {
                                 this.pageDeviceDictionary.putAll(PSDictionary.valueOf(content));
                             } catch (PSDictionaryFormatException e) {
-                                log.error("Failed to parse dictionary string: "
-                                        + e.getMessage() + ", content = '" + content + "'");
+                                PSEventProducer eventProducer = PSEventProducer.Provider.get(
+                                        getUserAgent().getEventBroadcaster());
+                                eventProducer.postscriptDictionaryParseError(this, content, e);
                             }
                         }
                     } else if (attachment instanceof PSCommentBefore) {
@@ -1169,8 +1179,9 @@ public class PSRenderer extends AbstractPathOrientedRenderer
                         try {
                             pageDeviceDictionary.putAll(PSDictionary.valueOf(content));
                         } catch (PSDictionaryFormatException e) {
-                            log.error("failed to parse dictionary string: "
-                                    + e.getMessage() + ", [" + content + "]");
+                            PSEventProducer eventProducer = PSEventProducer.Provider.get(
+                                    getUserAgent().getEventBroadcaster());
+                            eventProducer.postscriptDictionaryParseError(this, content, e);
                         }
                     }
                 }

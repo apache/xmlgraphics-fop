@@ -47,7 +47,8 @@ public class MultiSwitch extends FObj {
         super(parent);
 
         if (!notImplementedWarningGiven) {
-            log.warn("fo:multi-switch is not yet implemented.");
+            getFOValidationEventProducer().unimplementedFeature(this, getName(),
+                    getName(), getLocator());
             notImplementedWarningGiven = true;
         }
     }
@@ -75,9 +76,11 @@ public class MultiSwitch extends FObj {
      * XSL Content Model: (multi-case+)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
-        if (!(FO_URI.equals(nsURI) && localName.equals("multi-case"))) {
-            invalidChildError(loc, nsURI, localName);
+                throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
+            if (!localName.equals("multi-case")) {
+                invalidChildError(loc, nsURI, localName);
+            }
         }
     }
 

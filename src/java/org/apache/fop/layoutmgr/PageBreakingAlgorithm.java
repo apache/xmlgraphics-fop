@@ -27,7 +27,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.layoutmgr.AbstractBreaker.PageBreakPosition;
 import org.apache.fop.traits.MinOptMax;
@@ -289,7 +288,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
 
     private void resetFootnotes(LinkedList elementLists) {
         for (int i = 0; i < elementLists.size(); i++) {
-            LinkedList removedList = (LinkedList) footnotesList.remove(footnotesList.size() - 1);
+            /*LinkedList removedList = (LinkedList)*/footnotesList.remove(footnotesList.size() - 1);
             lengthList.remove(lengthList.size() - 1);
 
             // update totalFootnotesLength
@@ -332,11 +331,13 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                     actualWidth += allFootnotes;
                     insertedFootnotesLength = pageNode.totalFootnotes + allFootnotes;
                     footnoteListIndex = footnotesList.size() - 1;
-                    footnoteElementIndex = ((LinkedList) footnotesList.get(footnoteListIndex)).size() - 1;
-                } else if (((canDeferOldFootnotes = checkCanDeferOldFootnotes(pageNode, elementIndex))
+                    footnoteElementIndex
+                        = ((LinkedList) footnotesList.get(footnoteListIndex)).size() - 1;
+                } else if (((canDeferOldFootnotes
+                                = checkCanDeferOldFootnotes(pageNode, elementIndex))
                             || newFootnotes)
-                           && (footnoteSplit = getFootnoteSplit(pageNode, getLineWidth() - actualWidth,
-                                                                canDeferOldFootnotes)) > 0) {
+                           && (footnoteSplit = getFootnoteSplit(pageNode,
+                                   getLineWidth() - actualWidth, canDeferOldFootnotes)) > 0) {
                     // it is allowed to break or even defer footnotes if either:
                     //  - there are new footnotes in the last piece of content, and
                     //    there is space to add at least a piece of the first one
@@ -356,7 +357,8 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                     actualWidth += allFootnotes;
                     insertedFootnotesLength = pageNode.totalFootnotes + allFootnotes;
                     footnoteListIndex = footnotesList.size() - 1;
-                    footnoteElementIndex = ((LinkedList) footnotesList.get(footnoteListIndex)).size() - 1;
+                    footnoteElementIndex
+                        = ((LinkedList) footnotesList.get(footnoteListIndex)).size() - 1;
                 }
             } else {
                 // all footnotes have already been placed on previous pages
@@ -381,7 +383,8 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
      */
     private boolean checkCanDeferOldFootnotes(KnuthPageNode node, int contentElementIndex) {
         return (noBreakBetween(node.position, contentElementIndex)
-                && deferredFootnotes(node.footnoteListIndex, node.footnoteElementIndex, node.totalFootnotes));
+                && deferredFootnotes(node.footnoteListIndex,
+                        node.footnoteElementIndex, node.totalFootnotes));
     }
 
     /**
@@ -455,7 +458,8 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
      * @param availableLength available space for footnotes
      * @param canDeferOldFootnotes
      */
-    private int getFootnoteSplit(KnuthPageNode activeNode, int availableLength, boolean canDeferOldFootnotes) {
+    private int getFootnoteSplit(KnuthPageNode activeNode, int availableLength,
+                boolean canDeferOldFootnotes) {
         return getFootnoteSplit(activeNode.footnoteListIndex,
                                 activeNode.footnoteElementIndex,
                                 activeNode.totalFootnotes,
@@ -520,7 +524,8 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
             }
 
             // try adding a split of the next note
-            noteListIterator = ((LinkedList) footnotesList.get(listIndex)).listIterator(elementIndex);
+            noteListIterator = ((LinkedList) footnotesList.get(listIndex))
+                    .listIterator(elementIndex);
 
             int prevSplitLength = 0;
             int prevIndex = -1;
@@ -754,14 +759,6 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         }
     }
     
-    private int getPartCount() {
-        if (pageBreaks == null) {
-            return 0;
-        } else {
-            return pageBreaks.size();
-        }
-    }
-    
     public void updateData1(int total, double demerits) {
     }
 
@@ -774,12 +771,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         if (difference + bestActiveNode.availableShrink < 0) {
             if (!autoHeight) {
                 if (layoutListener != null) {
-                    layoutListener.notifyOverflow(bestActiveNode.line - 1, getFObj());
-                } else if (log.isWarnEnabled()) {
-                    log.warn(FONode.decorateWithContextInfo(
-                            "Part/page " + (bestActiveNode.line - 1) 
-                            + " overflows the available area in block-progression dimension.", 
-                            getFObj()));
+                    layoutListener.notifyOverflow(bestActiveNode.line - 1, -difference, getFObj());
                 }
             }
         }
@@ -890,9 +882,10 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         /**
          * Issued when an overflow is detected
          * @param part the number of the part (page) this happens on
+         * @param amount the amount by which the area overflows (in mpt)
          * @param obj the root FO object where this happens
          */
-        void notifyOverflow(int part, FObj obj);
+        void notifyOverflow(int part, int amount, FObj obj);
         
     }
     

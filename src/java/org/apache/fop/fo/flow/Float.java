@@ -46,7 +46,8 @@ public class Float extends FObj {
         super(parent);
         
         if (!notImplementedWarningGiven) {
-            log.warn("fo:float is not yet implemented.");
+            getFOValidationEventProducer().unimplementedFeature(this, getName(),
+                    getName(), getLocator());
             notImplementedWarningGiven = true;
         }
     }
@@ -63,10 +64,12 @@ public class Float extends FObj {
      * XSL Content Model: (%block;)+
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
+                throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
             if (!isBlockItem(nsURI, localName)) {
                 invalidChildError(loc, nsURI, localName);
             }
+        }
     }
 
     /**

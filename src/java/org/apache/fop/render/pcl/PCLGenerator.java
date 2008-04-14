@@ -43,8 +43,10 @@ import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.apache.fop.util.UnitConv;
+
 import org.apache.xmlgraphics.image.GraphicsUtil;
+
+import org.apache.fop.util.UnitConv;
 
 /**
  * This class provides methods for generating PCL print files.
@@ -355,16 +357,16 @@ public class PCLGenerator {
         if (usePCLShades 
                 || Color.black.equals(col)
                 || Color.white.equals(col)) {
-            writeCommand("*c" + formatDouble4(w / 100) + "h" 
-                              + formatDouble4(h / 100) + "V");
+            writeCommand("*c" + formatDouble4(w / 100.0) + "h" 
+                              + formatDouble4(h / 100.0) + "V");
             int lineshade = convertToPCLShade(col);
             writeCommand("*c" + lineshade + "G");
             writeCommand("*c2P"); //Shaded fill
         } else {
             defineGrayscalePattern(col, 32, DITHER_MATRIX_4X4);
 
-            writeCommand("*c" + formatDouble4(w / 100) + "h" 
-                              + formatDouble4(h / 100) + "V");
+            writeCommand("*c" + formatDouble4(w / 100.0) + "h" 
+                              + formatDouble4(h / 100.0) + "V");
             writeCommand("*c32G");
             writeCommand("*c4P"); //User-defined pattern
         }

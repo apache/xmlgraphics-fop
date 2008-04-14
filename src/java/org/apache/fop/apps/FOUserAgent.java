@@ -36,6 +36,12 @@ import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 import org.apache.xmlgraphics.image.loader.impl.AbstractImageSessionContext;
 
 import org.apache.fop.Version;
+import org.apache.fop.events.DefaultEventBroadcaster;
+import org.apache.fop.events.Event;
+import org.apache.fop.events.EventBroadcaster;
+import org.apache.fop.events.EventProducer;
+import org.apache.fop.events.FOPEventListenerProxy;
+import org.apache.fop.events.LoggingEventListener;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererFactory;
@@ -89,6 +95,7 @@ public class FOUserAgent {
     private Renderer rendererOverride = null;
     private FOEventHandler foEventHandlerOverride = null;
     private boolean locatorEnabled = true; // true by default (for error messages).
+    private EventBroadcaster eventBroadcaster = new FOPEventBroadcaster();
     
     /** Producer:  Metadata element for the system/software that produces
      * the document. (Some renderers can store this in the document.)
@@ -530,5 +537,43 @@ public class FOUserAgent {
         return locatorEnabled;
     }
 
+    /**
+     * Returns the event broadcaster that control events sent inside a processing run. Clients
+     * can register event listeners with the event broadcaster to listen for events that occur
+     * while a document is being processed.
+     * @return the event broadcaster.
+     */
+    public EventBroadcaster getEventBroadcaster() {
+        return this.eventBroadcaster;
+    }
+
+    private class FOPEventBroadcaster extends DefaultEventBroadcaster {
+
+        private FOPEventListenerProxy rootListener;
+        
+        public FOPEventBroadcaster() {
+            this.rootListener = new FOPEventListenerProxy(
+                    this.listeners, FOUserAgent.this);
+        }
+        
+        /** {@inheritDoc} */
+        public void broadcastEvent(Event event) {
+            rootListener.processEvent(event);
+        }
+
+        /** {@inheritDoc} */
+        protected EventProducer createProxyFor(Class clazz) {
+            if (!this.listeners.hasEventListeners()) {
+                //Backwards-compatibility: Make sure at least the LoggingEventListener is plugged
+                //in so no events are just silently swallowed.
+                addEventListener(
+                        new LoggingEventListener(LogFactory.getLog(FOUserAgent.class)));
+                
+            }
+            return super.createProxyFor(clazz);
+        }
+        
+    }
+    
 }
 
