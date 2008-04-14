@@ -1,0 +1,7 @@
+org.apache.fop.events.FOPEventModelFactory
+org.apache.fop.render.afp.AFPEventProducer$EventModelFactory
+org.apache.fop.render.bitmap.BitmapRendererEventProducer$EventModelFactory
+org.apache.fop.render.pcl.PCLEventProducer$EventModelFactory
+org.apache.fop.render.pdf.PDFEventProducer$EventModelFactory
+org.apache.fop.render.ps.PSEventProducer$EventModelFactory
+org.apache.fop.render.rtf.RTFEventProducer$EventModelFactory

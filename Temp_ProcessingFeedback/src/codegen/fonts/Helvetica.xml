@@ -1,0 +1,605 @@
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<!-- JKT: these metrics in XML were kindly produced by Fotis Jannidis -->
+<font-metrics>
+   <font-name>Helvetica</font-name>
+   <full-name>Helvetica</full-name>
+   <family-name>Helvetica</family-name>
+   <class-name>Helvetica</class-name>
+   <encoding>StandardEncoding</encoding>
+   <cap-height>718</cap-height>
+   <x-height>523</x-height>
+   <ascender>718</ascender>
+   <descender>-207</descender>
+   <first-char>32</first-char>
+   <last-char>255</last-char>
+   <widths>
+      <char name="A" width="667"/>
+      <char name="AE" width="1000"/>
+      <char name="Aacute" width="667"/>
+      <char name="Acircumflex" width="667"/>
+      <char name="Adieresis" width="667"/>
+      <char name="Agrave" width="667"/>
+      <char name="Aring" width="667"/>
+      <char name="Atilde" width="667"/>
+      <char name="B" width="667"/>
+      <char name="C" width="722"/>
+      <char name="Ccedilla" width="722"/>
+      <char name="D" width="722"/>
+      <char name="E" width="667"/>
+      <char name="Eacute" width="667"/>
+      <char name="Ecircumflex" width="667"/>
+      <char name="Edieresis" width="667"/>
+      <char name="Egrave" width="667"/>
+      <char name="Eth" width="722"/>
+      <char name="Euro" width="556"/>
+      <char name="F" width="611"/>
+      <char name="G" width="778"/>
+      <char name="H" width="722"/>
+      <char name="I" width="278"/>
+      <char name="Iacute" width="278"/>
+      <char name="Icircumflex" width="278"/>
+      <char name="Idieresis" width="278"/>
+      <char name="Igrave" width="278"/>
+      <char name="J" width="500"/>
+      <char name="K" width="667"/>
+      <char name="L" width="556"/>
+      <char name="Lslash" width="556"/>
+      <char name="M" width="833"/>
+      <char name="N" width="722"/>
+      <char name="Ntilde" width="722"/>
+      <char name="O" width="778"/>
+      <char name="OE" width="1000"/>
+      <char name="Oacute" width="778"/>
+      <char name="Ocircumflex" width="778"/>
+      <char name="Odieresis" width="778"/>
+      <char name="Ograve" width="778"/>
+      <char name="Oslash" width="778"/>
+      <char name="Otilde" width="778"/>
+      <char name="P" width="667"/>
+      <char name="Q" width="778"/>
+      <char name="R" width="722"/>
+      <char name="S" width="667"/>
+      <char name="Scaron" width="667"/>
+      <char name="T" width="611"/>
+      <char name="Thorn" width="667"/>
+      <char name="U" width="722"/>
+      <char name="Uacute" width="722"/>
+      <char name="Ucircumflex" width="722"/>
+      <char name="Udieresis" width="722"/>
+      <char name="Ugrave" width="722"/>
+      <char name="V" width="667"/>
+      <char name="W" width="944"/>
+      <char name="X" width="667"/>
+      <char name="Y" width="667"/>
+      <char name="Yacute" width="667"/>
+      <char name="Ydieresis" width="667"/>
+      <char name="Z" width="611"/>
+      <char name="Zcaron" width="611"/>
+      <char name="a" width="556"/>
+      <char name="aacute" width="556"/>
+      <char name="acircumflex" width="556"/>
+      <char name="acute" width="333"/>
+      <char name="adieresis" width="556"/>
+      <char name="ae" width="889"/>
+      <char name="agrave" width="556"/>
+      <char name="ampersand" width="667"/>
+      <char name="aring" width="556"/>
+      <char name="asciicircum" width="469"/>
+      <char name="asciitilde" width="584"/>
+      <char name="asterisk" width="389"/>
+      <char name="at" width="1015"/>
+      <char name="atilde" width="556"/>
+      <char name="b" width="556"/>
+      <char name="backslash" width="278"/>
+      <char name="bar" width="260"/>
+      <char name="braceleft" width="334"/>
+      <char name="braceright" width="334"/>
+      <char name="bracketleft" width="278"/>
+      <char name="bracketright" width="278"/>
+      <char name="breve" width="333"/>
+      <char name="brokenbar" width="260"/>
+      <char name="bullet" width="350"/>
+      <char name="c" width="500"/>
+      <char name="caron" width="333"/>
+      <char name="ccedilla" width="500"/>
+      <char name="cedilla" width="333"/>
+      <char name="cent" width="556"/>
+      <char name="circumflex" width="333"/>
+      <char name="colon" width="278"/>
+      <char name="comma" width="278"/>
+      <char name="copyright" width="737"/>
+      <char name="currency" width="556"/>
+      <char name="d" width="556"/>
+      <char name="dagger" width="556"/>
+      <char name="daggerdbl" width="556"/>
+      <char name="degree" width="400"/>
+      <char name="dieresis" width="333"/>
+      <char name="divide" width="584"/>
+      <char name="dollar" width="556"/>
+      <char name="dotaccent" width="333"/>
+      <char name="dotlessi" width="278"/>
+      <char name="e" width="556"/>
+      <char name="eacute" width="556"/>
+      <char name="ecircumflex" width="556"/>
+      <char name="edieresis" width="556"/>
+      <char name="egrave" width="556"/>
+      <char name="eight" width="556"/>
+      <char name="ellipsis" width="1000"/>
+      <char name="emdash" width="1000"/>
+      <char name="endash" width="556"/>
+      <char name="equal" width="584"/>
+      <char name="eth" width="556"/>
+      <char name="exclam" width="278"/>
+      <char name="exclamdown" width="333"/>
+      <char name="f" width="278"/>
+      <char name="fi" width="500"/>
+      <char name="five" width="556"/>
+      <char name="fl" width="500"/>
+      <char name="florin" width="556"/>
+      <char name="four" width="556"/>
+      <char name="fraction" width="167"/>
+      <char name="g" width="556"/>
+      <char name="germandbls" width="611"/>
+      <char name="grave" width="333"/>
+      <char name="greater" width="584"/>
+      <char name="guillemotleft" width="556"/>
+      <char name="guillemotright" width="556"/>
+      <char name="guilsinglleft" width="333"/>
+      <char name="guilsinglright" width="333"/>
+      <char name="h" width="556"/>
+      <char name="hungarumlaut" width="333"/>
+      <char name="hyphen" width="333"/>
+      <char name="i" width="222"/>
+      <char name="iacute" width="278"/>
+      <char name="icircumflex" width="278"/>
+      <char name="idieresis" width="278"/>
+      <char name="igrave" width="278"/>
+      <char name="j" width="222"/>
+      <char name="k" width="500"/>
+      <char name="l" width="222"/>
+      <char name="less" width="584"/>
+      <char name="logicalnot" width="584"/>
+      <char name="lslash" width="222"/>
+      <char name="m" width="833"/>
+      <char name="macron" width="333"/>
+      <char name="minus" width="324"/>
+      <char name="mu" width="556"/>
+      <char name="multiply" width="584"/>
+      <char name="n" width="556"/>
+      <char name="nine" width="556"/>
+      <char name="ntilde" width="556"/>
+      <char name="numbersign" width="556"/>
+      <char name="o" width="556"/>
+      <char name="oacute" width="556"/>
+      <char name="ocircumflex" width="556"/>
+      <char name="odieresis" width="556"/>
+      <char name="oe" width="944"/>
+      <char name="ogonek" width="333"/>
+      <char name="ograve" width="556"/>
+      <char name="one" width="556"/>
+      <char name="onehalf" width="834"/>
+      <char name="onequarter" width="834"/>
+      <char name="onesuperior" width="333"/>
+      <char name="ordfeminine" width="370"/>
+      <char name="ordmasculine" width="365"/>
+      <char name="oslash" width="611"/>
+      <char name="otilde" width="556"/>
+      <char name="p" width="556"/>
+      <char name="paragraph" width="537"/>
+      <char name="parenleft" width="333"/>
+      <char name="parenright" width="333"/>
+      <char name="percent" width="889"/>
+      <char name="period" width="278"/>
+      <char name="periodcentered" width="278"/>
+      <char name="perthousand" width="1000"/>
+      <char name="plus" width="584"/>
+      <char name="plusminus" width="584"/>
+      <char name="q" width="556"/>
+      <char name="question" width="556"/>
+      <char name="questiondown" width="611"/>
+      <char name="quotedbl" width="355"/>
+      <char name="quotedblbase" width="333"/>
+      <char name="quotedblleft" width="333"/>
+      <char name="quotedblright" width="333"/>
+      <char name="quoteleft" width="222"/>
+      <char name="quoteright" width="222"/>
+      <char name="quotesinglbase" width="222"/>
+      <char name="quotesingle" width="191"/>
+      <char name="r" width="333"/>
+      <char name="registered" width="737"/>
+      <char name="ring" width="333"/>
+      <char name="s" width="500"/>
+      <char name="scaron" width="500"/>
+      <char name="section" width="556"/>
+      <char name="semicolon" width="278"/>
+      <char name="seven" width="556"/>
+      <char name="six" width="556"/>
+      <char name="slash" width="278"/>
+      <char name="space" width="278"/>
+      <!-- JKT: the following has been manually added -->
+      <char name="nbsp" width="278"/>
+      <char name="sterling" width="556"/>
+      <char name="t" width="278"/>
+      <char name="thorn" width="556"/>
+      <char name="three" width="556"/>
+      <char name="threequarters" width="834"/>
+      <char name="threesuperior" width="333"/>
+      <char name="tilde" width="333"/>
+      <char name="trademark" width="1000"/>
+      <char name="two" width="556"/>
+      <char name="twosuperior" width="333"/>
+      <char name="u" width="556"/>
+      <char name="uacute" width="556"/>
+      <char name="ucircumflex" width="556"/>
+      <char name="udieresis" width="556"/>
+      <char name="ugrave" width="556"/>
+      <char name="underscore" width="556"/>
+      <char name="v" width="500"/>
+      <char name="w" width="722"/>
+      <char name="x" width="500"/>
+      <char name="y" width="500"/>
+      <char name="yacute" width="500"/>
+      <char name="ydieresis" width="500"/>
+      <char name="yen" width="556"/>
+      <char name="z" width="500"/>
+      <char name="zcaron" width="500"/>
+      <char name="zero" width="556"/>
+   </widths>
+  <kerning kpx1="107">
+    <pair kern="-20" kpx2="111"/>
+    <pair kern="-20" kpx2="101"/>
+  </kerning>
+  <kerning kpx1="79">
+    <pair kern="-20" kpx2="65"/>
+    <pair kern="-30" kpx2="87"/>
+    <pair kern="-70" kpx2="89"/>
+    <pair kern="-40" kpx2="84"/>
+    <pair kern="-40" kpx2="46"/>
+    <pair kern="-50" kpx2="86"/>
+    <pair kern="-60" kpx2="88"/>
+    <pair kern="-40" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="104">
+    <pair kern="-30" kpx2="121"/>
+  </kerning>
+  <kerning kpx1="87">
+    <pair kern="-30" kpx2="111"/>
+    <pair kern="-40" kpx2="45"/>
+    <pair kern="-20" kpx2="79"/>
+    <pair kern="-40" kpx2="97"/>
+    <pair kern="-50" kpx2="65"/>
+    <pair kern="-30" kpx2="117"/>
+    <pair kern="-20" kpx2="121"/>
+    <pair kern="-80" kpx2="46"/>
+    <pair kern="-30" kpx2="101"/>
+    <pair kern="-80" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="99">
+    <pair kern="-20" kpx2="107"/>
+    <pair kern="-15" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="112">
+    <pair kern="-30" kpx2="121"/>
+    <pair kern="-35" kpx2="46"/>
+    <pair kern="-35" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="80">
+    <pair kern="-50" kpx2="111"/>
+    <pair kern="-40" kpx2="97"/>
+    <pair kern="-120" kpx2="65"/>
+    <pair kern="-180" kpx2="46"/>
+    <pair kern="-50" kpx2="101"/>
+    <pair kern="-180" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="86">
+    <pair kern="-80" kpx2="111"/>
+    <pair kern="-80" kpx2="45"/>
+    <pair kern="-40" kpx2="79"/>
+    <pair kern="-40" kpx2="58"/>
+    <pair kern="-70" kpx2="97"/>
+    <pair kern="-80" kpx2="65"/>
+    <pair kern="-70" kpx2="117"/>
+    <pair kern="-125" kpx2="46"/>
+    <pair kern="-40" kpx2="71"/>
+    <pair kern="-80" kpx2="101"/>
+    <pair kern="-40" kpx2="59"/>
+    <pair kern="-125" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="118">
+    <pair kern="-25" kpx2="111"/>
+    <pair kern="-25" kpx2="97"/>
+    <pair kern="-80" kpx2="46"/>
+    <pair kern="-25" kpx2="101"/>
+    <pair kern="-80" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="59">
+    <pair kern="-50" kpx2="32"/>
+  </kerning>
+  <kerning kpx1="32">
+    <pair kern="-40" kpx2="87"/>
+    <pair kern="-30" kpx2="147"/>
+    <pair kern="-90" kpx2="89"/>
+    <pair kern="-50" kpx2="84"/>
+    <pair kern="-60" kpx2="145"/>
+    <pair kern="-50" kpx2="86"/>
+  </kerning>
+  <kerning kpx1="97">
+    <pair kern="-20" kpx2="119"/>
+    <pair kern="-30" kpx2="121"/>
+    <pair kern="-20" kpx2="118"/>
+  </kerning>
+  <kerning kpx1="65">
+    <pair kern="-30" kpx2="79"/>
+    <pair kern="-40" kpx2="119"/>
+    <pair kern="-50" kpx2="87"/>
+    <pair kern="-30" kpx2="67"/>
+    <pair kern="-30" kpx2="81"/>
+    <pair kern="-30" kpx2="71"/>
+    <pair kern="-70" kpx2="86"/>
+    <pair kern="-40" kpx2="118"/>
+    <pair kern="-50" kpx2="85"/>
+    <pair kern="-30" kpx2="117"/>
+    <pair kern="-100" kpx2="89"/>
+    <pair kern="-120" kpx2="84"/>
+    <pair kern="-40" kpx2="121"/>
+  </kerning>
+  <kerning kpx1="70">
+    <pair kern="-30" kpx2="111"/>
+    <pair kern="-45" kpx2="114"/>
+    <pair kern="-50" kpx2="97"/>
+    <pair kern="-80" kpx2="65"/>
+    <pair kern="-150" kpx2="46"/>
+    <pair kern="-30" kpx2="101"/>
+    <pair kern="-150" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="85">
+    <pair kern="-40" kpx2="65"/>
+    <pair kern="-40" kpx2="46"/>
+    <pair kern="-40" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="115">
+    <pair kern="-30" kpx2="119"/>
+    <pair kern="-15" kpx2="46"/>
+    <pair kern="-15" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="122">
+    <pair kern="-15" kpx2="111"/>
+    <pair kern="-15" kpx2="101"/>
+  </kerning>
+  <kerning kpx1="83">
+    <pair kern="-20" kpx2="46"/>
+    <pair kern="-20" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="111">
+    <pair kern="-15" kpx2="119"/>
+    <pair kern="-30" kpx2="121"/>
+    <pair kern="-40" kpx2="46"/>
+    <pair kern="-30" kpx2="120"/>
+    <pair kern="-15" kpx2="118"/>
+    <pair kern="-40" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="68">
+    <pair kern="-40" kpx2="65"/>
+    <pair kern="-40" kpx2="87"/>
+    <pair kern="-90" kpx2="89"/>
+    <pair kern="-70" kpx2="46"/>
+    <pair kern="-70" kpx2="86"/>
+    <pair kern="-70" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="146">
+    <pair kern="-50" kpx2="100"/>
+    <pair kern="-70" kpx2="32"/>
+    <pair kern="-57" kpx2="146"/>
+    <pair kern="-50" kpx2="114"/>
+    <pair kern="-50" kpx2="115"/>
+  </kerning>
+  <kerning kpx1="82">
+    <pair kern="-20" kpx2="79"/>
+    <pair kern="-30" kpx2="87"/>
+    <pair kern="-40" kpx2="85"/>
+    <pair kern="-50" kpx2="89"/>
+    <pair kern="-30" kpx2="84"/>
+    <pair kern="-50" kpx2="86"/>
+  </kerning>
+  <kerning kpx1="75">
+    <pair kern="-40" kpx2="111"/>
+    <pair kern="-50" kpx2="79"/>
+    <pair kern="-30" kpx2="117"/>
+    <pair kern="-50" kpx2="121"/>
+    <pair kern="-40" kpx2="101"/>
+  </kerning>
+  <kerning kpx1="119">
+    <pair kern="-10" kpx2="111"/>
+    <pair kern="-15" kpx2="97"/>
+    <pair kern="-60" kpx2="46"/>
+    <pair kern="-10" kpx2="101"/>
+    <pair kern="-60" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="58">
+    <pair kern="-50" kpx2="32"/>
+  </kerning>
+  <kerning kpx1="114">
+    <pair kern="15" kpx2="107"/>
+    <pair kern="30" kpx2="58"/>
+    <pair kern="30" kpx2="112"/>
+    <pair kern="15" kpx2="108"/>
+    <pair kern="30" kpx2="118"/>
+    <pair kern="-50" kpx2="44"/>
+    <pair kern="30" kpx2="59"/>
+    <pair kern="15" kpx2="105"/>
+    <pair kern="25" kpx2="109"/>
+    <pair kern="-10" kpx2="97"/>
+    <pair kern="15" kpx2="117"/>
+    <pair kern="40" kpx2="116"/>
+    <pair kern="30" kpx2="121"/>
+    <pair kern="-50" kpx2="46"/>
+    <pair kern="25" kpx2="110"/>
+  </kerning>
+  <kerning kpx1="67">
+    <pair kern="-30" kpx2="46"/>
+    <pair kern="-30" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="145">
+    <pair kern="-57" kpx2="145"/>
+  </kerning>
+  <kerning kpx1="103">
+    <pair kern="-10" kpx2="114"/>
+  </kerning>
+  <kerning kpx1="66">
+    <pair kern="-10" kpx2="85"/>
+    <pair kern="-20" kpx2="46"/>
+    <pair kern="-20" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="81">
+    <pair kern="-10" kpx2="85"/>
+  </kerning>
+  <kerning kpx1="76">
+    <pair kern="-140" kpx2="148"/>
+    <pair kern="-160" kpx2="146"/>
+    <pair kern="-70" kpx2="87"/>
+    <pair kern="-140" kpx2="89"/>
+    <pair kern="-30" kpx2="121"/>
+    <pair kern="-110" kpx2="84"/>
+    <pair kern="-110" kpx2="86"/>
+  </kerning>
+  <kerning kpx1="98">
+    <pair kern="-20" kpx2="117"/>
+    <pair kern="-20" kpx2="121"/>
+    <pair kern="-40" kpx2="46"/>
+    <pair kern="-20" kpx2="108"/>
+    <pair kern="-10" kpx2="98"/>
+    <pair kern="-20" kpx2="118"/>
+    <pair kern="-40" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="44">
+    <pair kern="-100" kpx2="148"/>
+    <pair kern="-100" kpx2="146"/>
+  </kerning>
+  <kerning kpx1="148">
+    <pair kern="-40" kpx2="32"/>
+  </kerning>
+  <kerning kpx1="109">
+    <pair kern="-10" kpx2="117"/>
+    <pair kern="-15" kpx2="121"/>
+  </kerning>
+  <kerning kpx1="248">
+    <pair kern="-55" kpx2="107"/>
+    <pair kern="-55" kpx2="104"/>
+    <pair kern="-55" kpx2="99"/>
+    <pair kern="-55" kpx2="112"/>
+    <pair kern="-55" kpx2="113"/>
+    <pair kern="-70" kpx2="118"/>
+    <pair kern="-55" kpx2="105"/>
+    <pair kern="-55" kpx2="97"/>
+    <pair kern="-55" kpx2="117"/>
+    <pair kern="-55" kpx2="116"/>
+    <pair kern="-55" kpx2="106"/>
+    <pair kern="-55" kpx2="115"/>
+    <pair kern="-55" kpx2="122"/>
+    <pair kern="-55" kpx2="100"/>
+    <pair kern="-55" kpx2="111"/>
+    <pair kern="-70" kpx2="119"/>
+    <pair kern="-55" kpx2="114"/>
+    <pair kern="-55" kpx2="103"/>
+    <pair kern="-55" kpx2="108"/>
+    <pair kern="-55" kpx2="98"/>
+    <pair kern="-95" kpx2="44"/>
+    <pair kern="-55" kpx2="109"/>
+    <pair kern="-55" kpx2="102"/>
+    <pair kern="-70" kpx2="121"/>
+    <pair kern="-95" kpx2="46"/>
+    <pair kern="-55" kpx2="110"/>
+    <pair kern="-85" kpx2="120"/>
+    <pair kern="-55" kpx2="101"/>
+  </kerning>
+  <kerning kpx1="102">
+    <pair kern="60" kpx2="148"/>
+    <pair kern="-30" kpx2="111"/>
+    <pair kern="50" kpx2="146"/>
+    <pair kern="-30" kpx2="97"/>
+    <pair kern="-30" kpx2="46"/>
+    <pair kern="-30" kpx2="101"/>
+    <pair kern="-30" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="74">
+    <pair kern="-20" kpx2="97"/>
+    <pair kern="-20" kpx2="65"/>
+    <pair kern="-20" kpx2="117"/>
+    <pair kern="-30" kpx2="46"/>
+    <pair kern="-30" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="89">
+    <pair kern="-140" kpx2="111"/>
+    <pair kern="-140" kpx2="45"/>
+    <pair kern="-20" kpx2="105"/>
+    <pair kern="-85" kpx2="79"/>
+    <pair kern="-60" kpx2="58"/>
+    <pair kern="-140" kpx2="97"/>
+    <pair kern="-110" kpx2="65"/>
+    <pair kern="-110" kpx2="117"/>
+    <pair kern="-140" kpx2="46"/>
+    <pair kern="-140" kpx2="101"/>
+    <pair kern="-60" kpx2="59"/>
+    <pair kern="-140" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="121">
+    <pair kern="-20" kpx2="111"/>
+    <pair kern="-20" kpx2="97"/>
+    <pair kern="-100" kpx2="46"/>
+    <pair kern="-20" kpx2="101"/>
+    <pair kern="-100" kpx2="44"/>
+  </kerning>
+  <kerning kpx1="84">
+    <pair kern="-120" kpx2="111"/>
+    <pair kern="-40" kpx2="79"/>
+    <pair kern="-20" kpx2="58"/>
+    <pair kern="-120" kpx2="119"/>
+    <pair kern="-120" kpx2="114"/>
+    <pair kern="-120" kpx2="44"/>
+    <pair kern="-20" kpx2="59"/>
+    <pair kern="-140" kpx2="45"/>
+    <pair kern="-120" kpx2="65"/>
+    <pair kern="-120" kpx2="97"/>
+    <pair kern="-120" kpx2="117"/>
+    <pair kern="-120" kpx2="121"/>
+    <pair kern="-120" kpx2="46"/>
+    <pair kern="-120" kpx2="101"/>
+  </kerning>
+  <kerning kpx1="46">
+    <pair kern="-100" kpx2="148"/>
+    <pair kern="-60" kpx2="32"/>
+    <pair kern="-100" kpx2="146"/>
+  </kerning>
+  <kerning kpx1="110">
+    <pair kern="-10" kpx2="117"/>
+    <pair kern="-15" kpx2="121"/>
+    <pair kern="-20" kpx2="118"/>
+  </kerning>
+  <kerning kpx1="120">
+    <pair kern="-30" kpx2="101"/>
+  </kerning>
+  <kerning kpx1="101">
+    <pair kern="-20" kpx2="119"/>
+    <pair kern="-20" kpx2="121"/>
+    <pair kern="-15" kpx2="46"/>
+    <pair kern="-30" kpx2="120"/>
+    <pair kern="-30" kpx2="118"/>
+    <pair kern="-15" kpx2="44"/>
+  </kerning>
+</font-metrics>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+  
+  http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+  targetNamespace="http://xmlgraphics.apache.org/fop/intermediate"
+  xmlns:mf="http://xmlgraphics.apache.org/fop/intermediate">
+  <xs:import namespace="adobe:ns:meta/" schemaLocation="xmp-metadata.xsd"/>
+  <xs:include schemaLocation="fop-intermediate-format-ng-datatypes.xsd"/>
+  <xs:include schemaLocation="fop-intermediate-format-ng-content.xsd"/>
+  <xs:element name="document">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="mf:header"/>
+        <xs:element ref="mf:page-sequence"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="header">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="x:xmpmeta" xmlns:x="adobe:ns:meta/"/>
+        <xs:element ref="mf:bookmark-tree"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="bookmark-tree">
+    <xs:complexType>
+      <xs:sequence minOccurs="1" maxOccurs="unbounded">
+        <xs:element ref="mf:bookmark"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="bookmark">
+    <xs:complexType>
+      <xs:sequence minOccurs="1" maxOccurs="1">
+        <xs:element name="bookmark-title">
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="xs:string">
+                <xs:attribute name="color" type="mf:colorType"/>
+                <xs:attribute name="font-style">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:enumeration value="normal"/>
+                      <xs:enumeration value="italic"/>
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="font-weight">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:enumeration value="normal"/>
+                      <xs:enumeration value="bold"/>
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:attribute>
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType>
+        </xs:element>
+        <xs:element ref="mf:bookmark" maxOccurs="unbounded" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute name="external-destination" type="xs:anyURI"/>
+      <xs:attribute name="internal-destination" type="xs:NCName">
+      </xs:attribute>
+      <xs:attribute name="starting-state">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="show"/>
+            <xs:enumeration value="hide"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="page-sequence">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="mf:page"/>
+      </xs:sequence>
+      <xs:attribute name="id" type="xs:ID"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="page">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="page-header">
+          <xs:complexType>
+            <xs:choice minOccurs="1" maxOccurs="unbounded">
+              <xs:any processContents="skip"/>
+            </xs:choice>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="content" type="mf:contentType"/>
+        <xs:element name="page-trailer" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="target" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:attribute name="x" use="required" type="xs:integer"/>
+                  <xs:attribute name="y" use="required" type="xs:integer"/>
+                  <xs:attribute name="name" use="required" type="xs:ID"/>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="index" type="xs:nonNegativeInteger" use="required"/>
+      <xs:attribute name="name" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

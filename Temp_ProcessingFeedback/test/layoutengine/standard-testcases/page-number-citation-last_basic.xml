@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks fo:page-number-citation-last.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="master1" page-width="5in" page-height="1in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="master1" id="ps1" white-space-collapse="true" force-page-count="no-force">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>page: <fo:page-number/> of <fo:page-number-citation-last ref-id="eof1"/></fo:block>
+          <fo:block>bof3's last area is on page <fo:page-number-citation-last ref-id="long-block"/></fo:block>
+          <fo:block linefeed-treatment="preserve" id="long-block">test
+          test
+          test
+          test
+          test
+          test
+          test
+          </fo:block>
+          <fo:block break-before="page">page: <fo:page-number/></fo:block>
+          <fo:block>bof3's last area is on page <fo:page-number-citation-last ref-id="long-block"/></fo:block>
+          <fo:block>page eof1: <fo:page-number/> of <fo:page-number-citation-last ref-id="eof1"/></fo:block>
+          <fo:block>page eof2: <fo:page-number/> of <fo:page-number-citation-last ref-id="eof2"/></fo:block>
+          <fo:block id="eof1"/>
+        </fo:flow>
+      </fo:page-sequence>
+      <fo:page-sequence master-reference="master1" id="ps2" white-space-collapse="true" initial-page-number="11" force-page-count="no-force">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>page: <fo:page-number/> of <fo:page-number-citation-last ref-id="eof2"/></fo:block>
+          <fo:block>bof3's last area is on page <fo:page-number-citation-last ref-id="long-block"/></fo:block>
+          <fo:block break-before="page">page: <fo:page-number/></fo:block>
+          <fo:block break-before="page">page: <fo:page-number/></fo:block>
+          <fo:block>page eof1: <fo:page-number/> of <fo:page-number-citation-last ref-id="eof1"/></fo:block>
+          <fo:block>page eof2: <fo:page-number/> of <fo:page-number-citation-last ref-id="eof2"/></fo:block>
+          <fo:block id="eof2"/>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="2" xpath="count(//pageSequence)"/>
+    <eval expected="3" xpath="count(//pageSequence[1]/pageViewport)"/>
+    <eval expected="3" xpath="count(//pageSequence[2]/pageViewport)"/>
+    <eval expected="page: 1 of 3" xpath="//pageViewport[@nr=1]//flow/block[1]/lineArea"/>
+    <eval expected="bof3's last area is on page 2" xpath="//pageViewport[@nr=1]//flow/block[2]/lineArea"/>
+    <eval expected="test" xpath="//pageViewport[@nr=1]//flow/block[3]/lineArea[1]"/>
+    <eval expected="test" xpath="//pageViewport[@nr=1]//flow/block[3]/lineArea[2]"/>
+    <eval expected="test" xpath="//pageViewport[@nr=1]//flow/block[3]/lineArea[3]"/>
+
+    <eval expected="test" xpath="//pageViewport[@nr=2]//flow/block[1]/lineArea[1]"/>
+    <eval expected="test" xpath="//pageViewport[@nr=2]//flow/block[1]/lineArea[2]"/>
+    <eval expected="test" xpath="//pageViewport[@nr=2]//flow/block[1]/lineArea[3]"/>
+    <eval expected="test" xpath="//pageViewport[@nr=2]//flow/block[1]/lineArea[4]"/>
+    
+    <eval expected="page: 3" xpath="//pageViewport[@nr=3]//flow/block[1]/lineArea"/>
+    <eval expected="bof3's last area is on page 2" xpath="//pageViewport[@nr=3]//flow/block[2]/lineArea"/>
+    <eval expected="page eof1: 3 of 3" xpath="//pageViewport[@nr=3]//flow/block[3]/lineArea"/>
+    <eval expected="page eof2: 3 of 13" xpath="//pageViewport[@nr=3]//flow/block[4]/lineArea"/>
+
+    <eval expected="page: 11 of 13" xpath="//pageViewport[@nr=11]//flow/block[1]/lineArea"/>
+    <eval expected="bof3's last area is on page 2" xpath="//pageViewport[@nr=11]//flow/block[2]/lineArea"/>
+
+    <eval expected="page: 12" xpath="//pageViewport[@nr=12]//flow/block[1]/lineArea"/>
+
+    <eval expected="page: 13" xpath="//pageViewport[@nr=13]//flow/block[1]/lineArea"/>
+    <eval expected="page eof1: 13 of 3" xpath="//pageViewport[@nr=13]//flow/block[2]/lineArea"/>
+    <eval expected="page eof2: 13 of 13" xpath="//pageViewport[@nr=13]//flow/block[3]/lineArea"/>
+  </checks>
+</testcase>

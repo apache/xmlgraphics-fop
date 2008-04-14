@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks element list generation for table-header and table-footer, or more specifically 
+      a copy/past error that was in the code (regression check).
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:table table-layout="fixed" width="100%">
+            <fo:table-column number-columns-repeated="1"/>
+            <fo:table-header>
+              <fo:table-row background-color="yellow" height="50pt">
+                <fo:table-cell>
+                  <fo:block>header</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-header>
+            <fo:table-footer>
+              <fo:table-row background-color="orange" height="60pt">
+                <fo:table-cell>
+                  <fo:block>footer</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-footer>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>cell1</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell background-color="lightgray">
+                  <fo:block>cell2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <element-list category="breaker">
+      <box w="14400"/>
+      <penalty w="110000" p="0"/>
+      <box w="14400"/>
+      <box w="50000"/> <!--header-->
+      <box w="60000"/> <!--footer-->
+      <skip>3</skip>
+    </element-list>
+  </checks>
+</testcase>

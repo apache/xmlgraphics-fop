@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks line height and its special inheritance behaviour
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block line-height="normal" background-color="yellow">line-height="normal"
+            <fo:block font-size="larger" margin-left="10pt" background-color="blue">font-size="larger" - line height grows</fo:block>
+            <fo:block font-size="smaller" margin-left="10pt" background-color="red">font-size="smaller" - line height shrinks</fo:block>
+          </fo:block>
+          <fo:block line-height="150%" background-color="yellow">line-height="150%"
+            <fo:block font-size="larger" margin-left="10pt" background-color="blue">font-size="larger" - line height same as above</fo:block>
+            <fo:block font-size="smaller" margin-left="10pt" background-color="red">font-size="smaller" - line height same as above</fo:block>
+          </fo:block>
+          <fo:block line-height="20pt" background-color="yellow">line-height="20pt"
+            <fo:block font-size="larger" margin-left="10pt" background-color="blue">font-size="larger" - line height same as above</fo:block>
+            <fo:block font-size="smaller" margin-left="10pt" background-color="red">font-size="smaller" - line height same as above</fo:block>
+          </fo:block>
+          <fo:block line-height="1.5" background-color="yellow">line-height="1.5"
+            <fo:block font-size="larger" margin-left="10pt" background-color="blue">font-size="larger" - line height grows</fo:block>
+            <fo:block font-size="smaller" margin-left="10pt" background-color="red">font-size="smaller" - line height shrinks</fo:block>
+          </fo:block>
+          <fo:block line-height="150% - 5pt" background-color="yellow">line-height="150% - 5pt"
+            <fo:block font-size="larger" margin-left="10pt" background-color="blue">font-size="larger" - line height same as above</fo:block>
+            <fo:block font-size="smaller" margin-left="10pt" background-color="red">font-size="smaller" - line height same as above</fo:block>
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="11100" xpath="//flow/block[1]/lineArea/@bpd"/>
+    <eval expected="14400" xpath="//flow/block[1]/lineArea/@bpda"/>
+    <eval expected="1650" xpath="//flow/block[1]/lineArea/@space-before"/>
+    <eval expected="1650" xpath="//flow/block[1]/lineArea/@space-after"/>
+    <eval expected="13319" xpath="//flow/block[1]/block[1]/lineArea/@bpd"/>
+    <eval expected="17280" xpath="//flow/block[1]/block[1]/lineArea/@bpda"/>
+    <eval expected="1980" xpath="//flow/block[1]/block[1]/lineArea/@space-before"/>
+    <eval expected="1981" xpath="//flow/block[1]/block[1]/lineArea/@space-after"/>
+    <eval expected="9250" xpath="//flow/block[1]/block[2]/lineArea/@bpd"/>
+    <eval expected="12000" xpath="//flow/block[1]/block[2]/lineArea/@bpda"/>
+    <eval expected="1375" xpath="//flow/block[1]/block[2]/lineArea/@space-before"/>
+    <eval expected="1375" xpath="//flow/block[1]/block[2]/lineArea/@space-after"/>
+
+    <eval expected="11100" xpath="//flow/block[2]/lineArea/@bpd"/>
+    <eval expected="18000" xpath="//flow/block[2]/lineArea/@bpda"/>
+    <eval expected="3450" xpath="//flow/block[2]/lineArea/@space-before"/>
+    <eval expected="3450" xpath="//flow/block[2]/lineArea/@space-after"/>
+    <eval expected="13319" xpath="//flow/block[2]/block[1]/lineArea/@bpd"/>
+    <eval expected="18000" xpath="//flow/block[2]/block[1]/lineArea/@bpda"/>
+    <eval expected="2340" xpath="//flow/block[2]/block[1]/lineArea/@space-before"/>
+    <eval expected="2341" xpath="//flow/block[2]/block[1]/lineArea/@space-after"/>
+    <eval expected="9250" xpath="//flow/block[2]/block[2]/lineArea/@bpd"/>
+    <eval expected="18000" xpath="//flow/block[2]/block[2]/lineArea/@bpda"/>
+    <eval expected="4375" xpath="//flow/block[2]/block[2]/lineArea/@space-before"/>
+    <eval expected="4375" xpath="//flow/block[2]/block[2]/lineArea/@space-after"/>
+
+    <eval expected="11100" xpath="//flow/block[3]/lineArea/@bpd"/>
+    <eval expected="20000" xpath="//flow/block[3]/lineArea/@bpda"/>
+    <eval expected="4450" xpath="//flow/block[3]/lineArea/@space-before"/>
+    <eval expected="4450" xpath="//flow/block[3]/lineArea/@space-after"/>
+    <eval expected="13319" xpath="//flow/block[3]/block[1]/lineArea/@bpd"/>
+    <eval expected="20000" xpath="//flow/block[3]/block[1]/lineArea/@bpda"/>
+    <eval expected="3340" xpath="//flow/block[3]/block[1]/lineArea/@space-before"/>
+    <eval expected="3341" xpath="//flow/block[3]/block[1]/lineArea/@space-after"/>
+    <eval expected="9250" xpath="//flow/block[3]/block[2]/lineArea/@bpd"/>
+    <eval expected="20000" xpath="//flow/block[3]/block[2]/lineArea/@bpda"/>
+    <eval expected="5375" xpath="//flow/block[3]/block[2]/lineArea/@space-before"/>
+    <eval expected="5375" xpath="//flow/block[3]/block[2]/lineArea/@space-after"/>
+
+    <eval expected="11100" xpath="//flow/block[4]/lineArea/@bpd"/>
+    <eval expected="18000" xpath="//flow/block[4]/lineArea/@bpda"/>
+    <eval expected="3450" xpath="//flow/block[4]/lineArea/@space-before"/>
+    <eval expected="3450" xpath="//flow/block[4]/lineArea/@space-after"/>
+    <eval expected="13319" xpath="//flow/block[4]/block[1]/lineArea/@bpd"/>
+    <eval expected="21600" xpath="//flow/block[4]/block[1]/lineArea/@bpda"/>
+    <eval expected="4140" xpath="//flow/block[4]/block[1]/lineArea/@space-before"/>
+    <eval expected="4141" xpath="//flow/block[4]/block[1]/lineArea/@space-after"/>
+    <eval expected="9250" xpath="//flow/block[4]/block[2]/lineArea/@bpd"/>
+    <eval expected="15000" xpath="//flow/block[4]/block[2]/lineArea/@bpda"/>
+    <eval expected="2875" xpath="//flow/block[4]/block[2]/lineArea/@space-before"/>
+    <eval expected="2875" xpath="//flow/block[4]/block[2]/lineArea/@space-after"/>
+
+    <eval expected="11100" xpath="//flow/block[5]/lineArea/@bpd"/>
+    <eval expected="13000" xpath="//flow/block[5]/lineArea/@bpda"/>
+    <eval expected="950" xpath="//flow/block[5]/lineArea/@space-before"/>
+    <eval expected="950" xpath="//flow/block[5]/lineArea/@space-after"/>
+    <eval expected="13319" xpath="//flow/block[5]/block[1]/lineArea/@bpd"/>
+    <eval expected="13000" xpath="//flow/block[5]/block[1]/lineArea/@bpda"/>
+    <eval expected="-159" xpath="//flow/block[5]/block[1]/lineArea/@space-before"/>
+    <eval expected="-160" xpath="//flow/block[5]/block[1]/lineArea/@space-after"/>
+    <eval expected="9250" xpath="//flow/block[5]/block[2]/lineArea/@bpd"/>
+    <eval expected="13000" xpath="//flow/block[5]/block[2]/lineArea/@bpda"/>
+    <eval expected="1875" xpath="//flow/block[5]/block[2]/lineArea/@space-before"/>
+    <eval expected="1875" xpath="//flow/block[5]/block[2]/lineArea/@space-after"/>
+  </checks>
+</testcase>

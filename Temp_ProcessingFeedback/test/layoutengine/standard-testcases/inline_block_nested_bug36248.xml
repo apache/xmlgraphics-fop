@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks fo:inline and nested nodes. Regression test for Bugzilla #36248.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true" id="ps1">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>normal<fo:inline><fo:page-number/></fo:inline>normal</fo:block>
+          <fo:block>normal<fo:inline><fo:page-number-citation ref-id="ps1"/></fo:inline>normal</fo:block>
+          <fo:block>normal<fo:inline><fo:character character="x"/></fo:inline>normal</fo:block>
+          <fo:block>normal<fo:inline><fo:external-graphic src="../../resources/images/bgimg300dpi.jpg"/></fo:inline>normal</fo:block>
+          <fo:block>normal<fo:inline><fo:instream-foreign-object content-width="20pt" content-height="20pt">
+              <svg:svg viewBox="0 0 20 20">
+                <svg:g style="fill:red; stroke:#000000">
+                  <svg:rect x="0" y="0" width="15" height="15"/>
+                  <svg:rect x="5" y="5" width="15" height="15"/>
+                </svg:g>
+              </svg:svg>
+            </fo:instream-foreign-object>
+</fo:inline>normal</fo:block>
+          <fo:block>normal<fo:inline><fo:leader/></fo:inline>normal</fo:block>
+          <fo:block>normal<fo:inline><fo:wrapper>wrapped</fo:wrapper></fo:inline>normal</fo:block>
+          <fo:block>normal<fo:inline>TODO: bidi-override is missing here</fo:inline>normal</fo:block>
+          <fo:block>normal<fo:inline><fo:inline>nested inline</fo:inline></fo:inline>normal</fo:block>
+          <fo:block>normal<fo:inline><fo:footnote><fo:inline>bla</fo:inline><fo:footnote-body><fo:block>bla? yawn.</fo:block></fo:footnote-body></fo:footnote></fo:inline>normal</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="10" xpath="count(//flow/block)"/>
+    <!-- We don't really check all this stuff here, rather we're making sure there are no ClassCastExceptions anymore. -->
+  </checks>
+</testcase>

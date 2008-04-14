@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  * Licensed to the Apache Software Foundation (ASF) under one or more
+  * contributor license agreements.  See the NOTICE file distributed with
+  * this work for additional information regarding copyright ownership.
+  * The ASF licenses this file to You under the Apache License, Version 2.0
+  * (the "License"); you may not use this file except in compliance with
+  * the License.  You may obtain a copy of the License at
+  * 
+  *      http://www.apache.org/licenses/LICENSE-2.0
+  * 
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  -->
+
+<!-- $Id$ -->
+
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+          "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+<!ENTITY ch.overview SYSTEM "overview.xml">
+<!ENTITY ch.preparation SYSTEM "preparation.xml">
+<!ENTITY ch.fotree SYSTEM "fotree.xml">
+<!ENTITY ch.areatree SYSTEM "areatree.xml">
+<!ENTITY ch.getnextbreakposs SYSTEM "getnextbreakposs.xml">
+<!ENTITY ch.addareas SYSTEM "addareas.xml">
+<!ENTITY ch.rendering SYSTEM "rendering.xml">
+<!ENTITY ch.foptrees SYSTEM "foptrees.xml">
+<!ENTITY ch.properties SYSTEM "properties.xml">
+<!ENTITY ch.fonts SYSTEM "fonts.xml">
+<!ENTITY ch.configuration SYSTEM "configuration.xml">
+]>
+
+<book>
+  <bookinfo>
+
+	<title>FOP's Design and Implementation</title>
+
+	<authorgroup>
+	  <author>
+		<firstname>Simon</firstname>
+		<surname>Pepping</surname>
+		<affiliation>
+	      <orgname>FOP team</orgname>
+		  <orgdiv>Apache Software Foundation</orgdiv>
+        </affiliation>
+      </author>
+	  <author>
+		<firstname>Renaud</firstname>
+		<surname>Richardet</surname>
+		<affiliation>
+	      <orgname>FOP contributor</orgname>
+		  <orgdiv>Apache Software Foundation</orgdiv>
+        </affiliation>
+      </author>
+    </authorgroup>
+
+	<copyright>
+	  <year>2004</year>
+	  <year>2005</year>
+	  <holder>The Apache Software Foundation</holder>
+	</copyright>
+
+	<legalnotice>
+	  <para>Licensed under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance with the
+License.  You may obtain a copy of the License at
+
+<screen>
+     <ulink url="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</ulink>
+</screen>
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.</para>
+	</legalnotice>
+
+	<revhistory>
+	  <revision>
+		<revnumber>0.x</revnumber>
+		<date>2003, 2004</date>
+		<revremark>Various early, partial versions</revremark>
+	  </revision>
+	  <revision>
+		<revnumber>1.0</revnumber>
+		<date>01 August 2004</date>
+		<revremark>Committed to the FOP code repository</revremark>
+	  </revision>
+	  <revision>
+		<revnumber>1.0.x</revnumber>
+		<date>2005</date>
+		<revremark>Various updates, see the FOP code repository</revremark>
+	  </revision>
+	</revhistory>
+
+	<abstract>
+	  <simpara>FOP is a Formatting Object Processor of the Apache
+project. It aims to provide a standards compliant implementation of
+XSL-FO. It understands Unicode, has bidirectional writing
+capabilities, and implements a wide range of rendering
+formats.</simpara>
+
+	  <simpara>FOP is a work in progress. Its code is under continuing
+development. This documentation describes the state of the code at the
+time the documentation was written. At the time you read this
+documentation the code may be different. Note also that different
+parts of the documentation were written or revised at different
+times.</simpara>
+
+	</abstract>
+
+  </bookinfo>
+
+&ch.overview;
+&ch.preparation;
+&ch.fotree;
+&ch.areatree;
+&ch.getnextbreakposs;
+&ch.addareas;
+&ch.rendering;
+&ch.foptrees;
+&ch.properties;
+&ch.fonts;
+&ch.configuration;
+
+</book>
+
+<!-- Local Variables: --> 
+<!-- current-language-environment: UTF-8 -->
+<!-- coding: utf-8 --> 
+<!-- default-input-method: TeX --> 
+<!-- End: -->

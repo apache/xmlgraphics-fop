@@ -1,0 +1,201 @@
+<?xml version="1.0" standalone="no"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<!--
+  WARNING: this file was semi-automatically generated from RowGroupBuilder_simple.fo and
+  contains the very same tables using starts-row/ends-row instead of fo:table-row objects.
+  Please modify RowGroupBuilder_simple.fo instead.
+-->
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="page" page-height="20cm" page-width="15cm"
+      margin-top="1cm" margin-bottom="1cm" margin-left="1cm" margin-right="1cm">
+      <fo:region-body/>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="page" font-family="serif" font-size="14pt">
+    <fo:flow flow-name="xsl-region-body">
+      <!-- Table 1: no header, no footer, one body (1 row) -->
+      <fo:table width="10cm" space-before="12pt" table-layout="fixed"
+        border-collapse="collapse" border="1pt solid black">
+        <fo:table-column number-columns-repeated="2" column-width="proportional-column-width(1)"/>
+        <fo:table-body>
+          <fo:table-cell starts-row="true"><fo:block>Cell 1</fo:block></fo:table-cell>
+          <fo:table-cell ends-row="true"><fo:block>Cell 2</fo:block></fo:table-cell>
+        </fo:table-body>
+      </fo:table>
+
+      <!-- Table 2: no header, no footer, one body (2 rows) -->
+      <fo:table width="10cm" space-before="12pt" table-layout="fixed"
+        border-collapse="separate" border="1pt solid black">
+        <fo:table-column number-columns-repeated="2" column-width="proportional-column-width(1)"/>
+        <fo:table-body>
+          <fo:table-cell starts-row="true"><fo:block>Cell 1</fo:block></fo:table-cell>
+          <fo:table-cell ends-row="true"><fo:block>Cell 2</fo:block></fo:table-cell>
+          <fo:table-cell starts-row="true"><fo:block>Cell 3</fo:block></fo:table-cell>
+          <fo:table-cell ends-row="true"><fo:block>Cell 4</fo:block></fo:table-cell>
+        </fo:table-body>
+      </fo:table>
+
+      <!-- Table 3: no header, no footer, two bodies (1 row, 1 row) -->
+      <fo:table width="10cm" space-before="12pt" table-layout="fixed"
+        border-collapse="collapse" border="1pt solid black">
+        <fo:table-column number-columns-repeated="2" column-width="proportional-column-width(1)"/>
+        <fo:table-body>
+          <fo:table-cell starts-row="true"><fo:block>Cell 1</fo:block></fo:table-cell>
+          <fo:table-cell ends-row="true"><fo:block>Cell 2</fo:block></fo:table-cell>
+        </fo:table-body>
+        <fo:table-body>
+          <fo:table-cell starts-row="true"><fo:block>Cell 3</fo:block></fo:table-cell>
+          <fo:table-cell ends-row="true"><fo:block>Cell 4</fo:block></fo:table-cell>
+        </fo:table-body>
+      </fo:table>
+
+      <!-- Table 4: no header, no footer, two bodies (2 rows, 3 rows) -->
+      <fo:table width="10cm" space-before="12pt" table-layout="fixed"
+        border-collapse="separate" border="1pt solid black">
+        <fo:table-column number-columns-repeated="2" column-width="proportional-column-width(1)"/>
+        <fo:table-body>
+          <fo:table-cell starts-row="true"><fo:block>Cell 1</fo:block></fo:table-cell>
+          <fo:table-cell ends-row="true"><fo:block>Cell 2</fo:block></fo:table-cell>
+          <fo:table-cell starts-row="true"><fo:block>Cell 3</fo:block></fo:table-cell>
+          <fo:table-cell ends-row="true"><fo:block>Cell 4</fo:block></fo:table-cell>
+        </fo:table-body>
+        <fo:table-body>
+          <fo:table-cell starts-row="true"><fo:block>Cell 5</fo:block></fo:table-cell>
+          <fo:table-cell ends-row="true"><fo:block>Cell 6</fo:block></fo:table-cell>
+          <fo:table-cell starts-row="true"><fo:block>Cell 7</fo:block></fo:table-cell>
+          <fo:table-cell ends-row="true"><fo:block>Cell 8</fo:block></fo:table-cell>
+          <fo:table-cell starts-row="true"><fo:block>Cell 9</fo:block></fo:table-cell>
+          <fo:table-cell ends-row="true"><fo:block>Cell 10</fo:block></fo:table-cell>
+        </fo:table-body>
+      </fo:table>
+
+      <!-- Table 5: one header (1 row), no footer, one body (1 row) -->
+      <fo:table width="10cm" space-before="12pt" table-layout="fixed"
+        border-collapse="collapse" border="1pt solid black">
+        <fo:table-column number-columns-repeated="2" column-width="proportional-column-width(1)"/>
+        <fo:table-header>
+          <fo:table-cell starts-row="true"><fo:block>Header 1</fo:block></fo:table-cell>
+          <fo:table-cell ends-row="true"><fo:block>Header 2</fo:block></fo:table-cell>
+        </fo:table-header>
+        <fo:table-body>
+          <fo:table-cell starts-row="true"><fo:block>Cell 1</fo:block></fo:table-cell>
+          <fo:table-cell ends-row="true"><fo:block>Cell 2</fo:block></fo:table-cell>
+        </fo:table-body>
+      </fo:table>
+
+      <!-- Table 6: no header, one footer (1 row), one body (1 row) -->
+      <fo:table width="10cm" space-before="12pt" table-layout="fixed"
+        border-collapse="separate" border="1pt solid black">
+        <fo:table-column number-columns-repeated="2" column-width="proportional-column-width(1)"/>
+        <fo:table-footer>
+          <fo:table-cell starts-row="true"><fo:block>Footer 1</fo:block></fo:table-cell>
+          <fo:table-cell ends-row="true"><fo:block>Footer 2</fo:block></fo:table-cell>
+        </fo:table-footer>
+        <fo:table-body>
+          <fo:table-cell starts-row="true"><fo:block>Cell 1</fo:block></fo:table-cell>
+          <fo:table-cell ends-row="true"><fo:block>Cell 2</fo:block></fo:table-cell>
+        </fo:table-body>
+      </fo:table>
+
+      <!-- Table 7: one header (1 row), one footer (1 row), one body (1 row) -->
+      <fo:table width="10cm" space-before="12pt" table-layout="fixed"
+        border-collapse="collapse" border="1pt solid black">
+        <fo:table-column number-columns-repeated="2" column-width="proportional-column-width(1)"/>
+        <fo:table-header>
+          <fo:table-cell starts-row="true"><fo:block>Header 1</fo:block></fo:table-cell>
+          <fo:table-cell ends-row="true"><fo:block>Header 2</fo:block></fo:table-cell>
+        </fo:table-header>
+        <fo:table-footer>
+          <fo:table-cell starts-row="true"><fo:block>Footer 1</fo:block></fo:table-cell>
+          <fo:table-cell ends-row="true"><fo:block>Footer 2</fo:block></fo:table-cell>
+        </fo:table-footer>
+        <fo:table-body>
+          <fo:table-cell starts-row="true"><fo:block>Cell 1</fo:block></fo:table-cell>
+          <fo:table-cell ends-row="true"><fo:block>Cell 2</fo:block></fo:table-cell>
+        </fo:table-body>
+      </fo:table>
+
+      <!-- Table 8: one header (2 rows), one footer (3 rows), one body (2 rows) -->
+      <fo:table width="10cm" space-before="12pt" table-layout="fixed"
+        border-collapse="separate" border="1pt solid black">
+        <fo:table-column number-columns-repeated="2" column-width="proportional-column-width(1)"/>
+        <fo:table-header>
+          <fo:table-cell starts-row="true"><fo:block>Header 1</fo:block></fo:table-cell>
+          <fo:table-cell ends-row="true"><fo:block>Header 2</fo:block></fo:table-cell>
+          <fo:table-cell starts-row="true"><fo:block>Header 3</fo:block></fo:table-cell>
+          <fo:table-cell ends-row="true"><fo:block>Header 4</fo:block></fo:table-cell>
+        </fo:table-header>
+        <fo:table-footer>
+          <fo:table-cell starts-row="true"><fo:block>Footer 1</fo:block></fo:table-cell>
+          <fo:table-cell ends-row="true"><fo:block>Footer 2</fo:block></fo:table-cell>
+          <fo:table-cell starts-row="true"><fo:block>Footer 4</fo:block></fo:table-cell>
+          <fo:table-cell ends-row="true"><fo:block>Footer 5</fo:block></fo:table-cell>
+          <fo:table-cell starts-row="true"><fo:block>Footer 5</fo:block></fo:table-cell>
+          <fo:table-cell ends-row="true"><fo:block>Footer 6</fo:block></fo:table-cell>
+        </fo:table-footer>
+        <fo:table-body>
+          <fo:table-cell starts-row="true"><fo:block>Cell 1</fo:block></fo:table-cell>
+          <fo:table-cell ends-row="true"><fo:block>Cell 2</fo:block></fo:table-cell>
+          <fo:table-cell starts-row="true"><fo:block>Cell 3</fo:block></fo:table-cell>
+          <fo:table-cell ends-row="true"><fo:block>Cell 4</fo:block></fo:table-cell>
+        </fo:table-body>
+      </fo:table>
+
+      <!-- Table 9: one header (3 rows), one footer (2 rows), three bodies (2 rows, 1 row, 3 rows) -->
+      <fo:table width="10cm" space-before="12pt" table-layout="fixed"
+        border-collapse="collapse" border="1pt solid black">
+        <fo:table-column number-columns-repeated="2" column-width="proportional-column-width(1)"/>
+        <fo:table-header>
+          <fo:table-cell starts-row="true"><fo:block>Header 1</fo:block></fo:table-cell>
+          <fo:table-cell ends-row="true"><fo:block>Header 2</fo:block></fo:table-cell>
+          <fo:table-cell starts-row="true"><fo:block>Header 3</fo:block></fo:table-cell>
+          <fo:table-cell ends-row="true"><fo:block>Header 4</fo:block></fo:table-cell>
+          <fo:table-cell starts-row="true"><fo:block>Header 5</fo:block></fo:table-cell>
+          <fo:table-cell ends-row="true"><fo:block>Header 6</fo:block></fo:table-cell>
+        </fo:table-header>
+        <fo:table-footer>
+          <fo:table-cell starts-row="true"><fo:block>Footer 1</fo:block></fo:table-cell>
+          <fo:table-cell ends-row="true"><fo:block>Footer 2</fo:block></fo:table-cell>
+          <fo:table-cell starts-row="true"><fo:block>Footer 4</fo:block></fo:table-cell>
+          <fo:table-cell ends-row="true"><fo:block>Footer 5</fo:block></fo:table-cell>
+        </fo:table-footer>
+        <fo:table-body>
+          <fo:table-cell starts-row="true"><fo:block>Cell 1</fo:block></fo:table-cell>
+          <fo:table-cell ends-row="true"><fo:block>Cell 2</fo:block></fo:table-cell>
+          <fo:table-cell starts-row="true"><fo:block>Cell 3</fo:block></fo:table-cell>
+          <fo:table-cell ends-row="true"><fo:block>Cell 4</fo:block></fo:table-cell>
+        </fo:table-body>
+        <fo:table-body>
+          <fo:table-cell starts-row="true"><fo:block>Cell 5</fo:block></fo:table-cell>
+          <fo:table-cell ends-row="true"><fo:block>Cell 6</fo:block></fo:table-cell>
+        </fo:table-body>
+        <fo:table-body>
+          <fo:table-cell starts-row="true"><fo:block>Cell 7</fo:block></fo:table-cell>
+          <fo:table-cell ends-row="true"><fo:block>Cell 8</fo:block></fo:table-cell>
+          <fo:table-cell starts-row="true"><fo:block>Cell 9</fo:block></fo:table-cell>
+          <fo:table-cell ends-row="true"><fo:block>Cell 10</fo:block></fo:table-cell>
+          <fo:table-cell starts-row="true"><fo:block>Cell 10</fo:block></fo:table-cell>
+          <fo:table-cell ends-row="true"><fo:block>Cell 11</fo:block></fo:table-cell>
+        </fo:table-body>
+      </fo:table>
+
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>
